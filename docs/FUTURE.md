@@ -67,7 +67,7 @@ mind we dont have budget for paying for anything"*.
 | Settings | `Settings.SettingsStore` for persistence, `Rebinding` for the input map. |
 | Input | `TumbangPreso.inputactions`: **Keyboard and Mouse only.** Zero gamepad bindings, zero touch bindings, no control schemes. |
 | Build targets | Windows Standalone, WebGL, Linux Dedicated Server. **No Android, no iOS.** |
-| Localisation | **None.** No language setting, no string table. Every string is inline. |
+| Localisation | **None, and it stays none.** English only, § 16.3. |
 | Accessibility | **None beyond rebinding.** No colourblind mode, no UI scale, no subtitle system. |
 
 ⚠️ **THE FIXED VPS POOL IS RETIRED AND ANY NOTE SAYING OTHERWISE IS STALE.** `ServerQuery`'s header
@@ -190,7 +190,7 @@ THIS IS TRUE.** The prose about design intent ages well. The claims about the co
 | Discovery is UGS Lobby, connection is UGS Relay | Read the header of `Assets/TumbangPreso/Runtime/Net/ServerQuery.cs` | The whole of §§ 0.3, 7 and 8 assumes UGS. Re-cost them. |
 | The input map has no gamepad or touch bindings | `grep -c Gamepad Assets/TumbangPreso/Resources/TumbangPreso.inputactions` | Phases 14 and 15 shrink a lot. |
 | Build targets are Windows, WebGL, Linux server only | `ls "/c/Program Files/Unity/Hub/Editor/*/Editor/Data/PlaybackEngines/"` | Phase 15 step 1 may already be done. |
-| There is no localisation and no colourblind support | `grep -rn "Locale\|colourblind\|colorblind" --include=*.cs Assets` | Phase 16 shrinks. |
+| There is no colourblind support and no UI scale | `grep -rn "colourblind|colorblind|UiScale" --include=*.cs Assets` | Phase 16 shrinks. |
 | The roster is 18 characters, 6 lata, 10 tsinelas, 3 maps | `Packages/com.tumbangpreso.core/Runtime/Roster.cs` | Every content count in these files is wrong. Fix them. |
 | Scoring is one host-side writer | `grep -n AddScore Assets/TumbangPreso/Runtime/MatchDirector.cs` | § 8's corroboration design may no longer be the right shape. |
 | `NetSession.ProtocolVersion` is a gate between builds | `grep -n ProtocolVersion Assets/TumbangPreso/Runtime/Net/NetSession.cs` | Read the current number rather than quoting one from here. |
@@ -396,7 +396,7 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
-## PHASE 4 · PROGRESSION: XP, LEVELS AND A FREE SEASON TRACK
+## PHASE 4 · PROGRESSION: XP, LEVELS AND MASTERY
 
 **The point:** give a player who just lost a reason to queue again. Rank goes down when you lose.
 **Progress must never go down.** That asymmetry is the engine of every live game that works.
@@ -404,11 +404,40 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 - Account XP from completion, placement, and a small set of per-match objectives. **Weight
   completion heavily and placement lightly**, so leaving is the only thing that costs.
 - Account level, uncapped, with a new border every 50.
-- A **free season track**, about 50 tiers, entirely cosmetic. There is no paid track and there is
-  no money in this game.
-- Per-character mastery, separately: play Cheska, level Cheska, unlock Cheska's things.
-- ❌ **No soft currency and no shop. CUT 2026-08-31 on scope.** Rewards come straight off the season
-  track and character mastery. That deletes an economy, a shop screen, a price for every item
+- ❌ **No season track. CUT 2026-08-31**, and the question that killed it is the right one to keep
+  asking: *"remove seasonal rewards like dude what can we even give as rewards"*. A 50-tier track
+  is 50 rewards to author every ten weeks, forever, by five students who also have exams, and
+  **the first missed season makes the whole live-service framing collapse.**
+
+### 4.1 ⚠️⚠️ WHAT A REWARD CAN ACTUALLY BE, WHICH IS THE REAL CONSTRAINT
+
+His question was not rhetorical and it deserves a straight answer, because every progression idea
+in these documents quietly assumed an art pipeline that does not exist. **Sort every reward by what
+it costs to make, and only ever promise from the top of this list.**
+
+| Reward | What it actually costs | Verdict |
+|---|---|---|
+| **A title** | A line of text in a data file. | ✅ **Free. This is the reward.** Hundreds are affordable. |
+| **A banner badge** | One flat shape, one colour, no rig, no animation. | ✅ **Nearly free.** Dozens are affordable. |
+| **A character colour variant** | Sixteen numbers. `ToonSkin`'s palette remap already does this per renderer, cached. | ✅ **Nearly free**, and it is the single most under-used asset in this codebase. |
+| **A banner frame** | One 2D border. | ✅ Cheap, a handful per year. |
+| **An emote or victory pose** | An animation. Somebody has to author it. | ⚠️ Expensive. One or two a year, not a track. |
+| **A tsinelas or lata skin** | A new model, UV, texture and import pass. | ⚠️⚠️ **The most expensive thing on this list.** These are the props the whole game looks at, and there are already ten and six of them. Do not spend one on a progression tier. |
+| **A new character** | Weeks. `docs/Voxel_Person_Log.md` records what ZACK actually cost. | ❌ Never a reward. |
+
+⚠️ **So the honest progression is titles, badges and palettes, and that is genuinely enough.**
+`INSPIRATION.md` § 2.5 is the argument: three chosen stat trackers and a title next to your name in
+a lobby buys more status per hour of work than any model in the game. **Status is text and a
+number. It has always been text and a number.**
+
+⚠️ **AND IT MEANS ACCOUNT LEVEL AND CHARACTER MASTERY CARRY THE PROGRESSION ON THEIR OWN.** They
+are permanent, they never reset, they need no seasonal content, and they pay out in exactly the
+three currencies above. A season track was a fourth system delivering the same three things on a
+deadline nobody set.
+
+- Per-character mastery, separately: play Cheska, level Cheska, earn Cheska's title and palette.
+- ❌ **No soft currency and no shop. CUT 2026-08-31 on scope.** Rewards come straight off account
+  level and character mastery. That deletes an economy, a shop screen, a price for every item
   forever, and duplicate protection, and a player loses nothing they can name.
 - ⚠️ **Every reward on every track is cosmetic or expressive.** A player queuing ranked against
   someone 40 levels above them must be facing a better player, never a stronger account.
@@ -429,7 +458,7 @@ much"*, *"dont do diminishing xp"*.
 ⚠️ **He is right and the second cut is the more instructive one.** Rested XP is a better mechanism
 than diminishing returns, and it is still a whole extra system, with a pool to accumulate, a rate to
 track, a UI to explain it and a rule nobody asked for, sitting on top of a progression that already
-has an account level, a per-character mastery, a season track, a currency and a challenge engine.
+has an account level, a per-character mastery and a challenge engine.
 **The problem it solves, that somebody who plays ten hours a day out-levels somebody who plays two,
 is not actually a problem in this game**: nothing on any track affects a match (§ 0.5 rule 4), so a
 higher level buys nothing but a border.
@@ -462,7 +491,7 @@ profile and at the end of a match. One object to author, one to replicate, one t
 **Everything that used to be its own slot is now a field on the banner.**
 
 
-**Sources, all free:** season track, character mastery, ranked season rewards, event challenges,
+**Sources, all free:** account level, character mastery, ranked season rewards, weekly challenges,
 achievements. ❌ **No currency and no shop**, cut on 2026-08-31: § 4. No lootboxes, no gacha, no real money.
 
 **What makes it cheap here:** `RosterBook` and `RosterEntryAsset` already resolve id to model,
@@ -616,7 +645,11 @@ rank, because it turns every good player's win into an accusation.
 - **Visible tiers over the hidden number**, named in the game's own voice rather than
   Bronze-to-Diamond. Suggested shape, five tiers of three divisions plus a numbered apex:
   **BATA, KANTO, BARANGAY, KAMPEON, ALAMAT**, with the apex a live leaderboard. 🧑 names them.
-- **Placement matches:** five to place, wide deviation until then, no tier shown while placing.
+- ❌ **No placement matches. CUT 2026-08-31.** Five games in a hidden state with their own rules
+  and their own UI was a separate concept doing a job Glicko-2 already does by itself. **Start
+  everyone mid-ladder with a wide rating deviation and show the tier immediately.** It converges in
+  the same handful of games, and a new player sees where they stand on their first match instead of
+  their sixth.
 - **Seasons:** ten weeks. Soft reset toward the mean, never a wipe. Keep a permanent peak on the
   profile, because the peak is the thing people brag about.
 - **No decay.** Decay punishes people with jobs and school, which is this whole audience. If the
@@ -627,9 +660,11 @@ rank, because it turns every good player's win into an accusation.
   1.25x for a stomp, is a tuning surface that has to be balanced forever in exchange for a nuance
   nobody will feel. The **demotion buffer**, needing two losses at a tier floor rather than one,
   solves exactly the feeling rank floors already solve, so keeping both is paying twice for one
-  fix. What remains is Glicko pairwise, placements, the soft reset and the floors.
-- **Rewards:** a season border, a tier emblem on the banner, and a tsinelas or can skin earnable
-  no other way. All cosmetic, all Phase 5 content, all free.
+  fix. What remains is Glicko pairwise, the soft reset and the floors.
+- **Rewards: a title and a banner badge, and nothing else.** § 4.1 sorts every possible reward by
+  what it costs to author, and a title is a line of text while a tsinelas skin is a model, a UV, a
+  texture and an import pass. ❌ **The season border and the exclusive tsinelas skin are cut.**
+  A tier title on your banner is the reward, and it is the one people actually screenshot.
 
 **The prompt for this phase is [§ 19.9](#199-prompt-for-phase-9).** Every prompt in
 this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
@@ -755,9 +790,10 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ## PHASE 13 · SEASONS AND LIVE OPS
 
-- **Weekly challenges**, worth a season tier. **The only recurring challenge cadence.**
-- **A ten-week season** with a theme, a track, and an end-of-season summary card designed to be
-  screenshotted.
+- **Weekly challenges**, paying a title or a badge. **The only recurring challenge cadence.**
+- **A ten-week season**, which exists for the ranked soft reset and for an end-of-season summary
+  card built to be screenshotted. ❌ **No season theme and no season track**, cut on 2026-08-31:
+  § 4.1 records what a reward can actually cost to make.
 - **Login streaks that pause rather than reset.** Punishing a break teaches people that missing a
   day is expensive, which is how they decide to stop entirely.
 - **A scheduled weekly hour**, from `INSPIRATION.md` § 2.24, and **LIGA NG BARANGAY**, the weekend
@@ -842,9 +878,9 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
-## PHASE 16 · ACCESSIBILITY AND LOCALISATION
+## PHASE 16 · ACCESSIBILITY
 
-**Two things the game has none of, both of which are cheaper now than at any later point.**
+**The game has none of this, and it is cheaper now than at any later point.**
 
 ### 16.1 ⚠️⚠️ The colourblind problem this game specifically has
 
@@ -879,18 +915,24 @@ Every one of these is small, and together they decide whether some people can pl
 - Colour-independent slipper highlights: the landed and owner rims are already player-chosen
   colours, so add a shape or a pulse as the second channel.
 
-### 16.3 Localisation
+### 16.3 Localisation ❌ CUT 2026-08-31
 
-**There is none: no language setting, no string table, every string inline.**
+**There is none: no language setting, no string table, every string inline. It stays that way.**
 
-- Extract every user-facing string into a table. This is the boring half and it is the whole job.
-- **English and Tagalog first**, and Tagalog is not a nice-to-have here: it is a Filipino street
-  game, made by a Filipino team, entered in a Filipino competition. It is the marketing as much as
-  the accessibility.
-- Then Cebuano, which matters specifically because the nationals are in General Santos.
-- ⚠️ **Darumadrop One has no `×` glyph** and the UI already works around it. Any language added
-  must be checked against the font's coverage before it is promised.
-- Keep the character names, the mode names and TSINELAS untranslated. They are the identity.
+🧑, on a plan to ship English, Tagalog and Cebuano: *"english only"*.
+
+⚠️ **The cost was never the translation, it was the forever.** Extracting every user-facing string
+into a table is a week of boring work; keeping three languages in step for every screen, every
+challenge name, every title and every character added after that is a permanent tax on shipping
+anything. **English only removes the tax entirely.**
+
+⚠️⚠️ **AND HERE IS THE ONE THING TO KNOW IF THIS IS EVER REVISITED: the string table gets more
+expensive every month, not less.** Extracting strings is cheap now and painful at two thousand of
+them. If Tagalog is ever wanted, do the extraction first as its own small job and ship it with one
+language in it, rather than trying to do both at once under a deadline.
+
+**What survives:** § 16.1 and § 16.2, the accessibility half, which is a separate argument and is
+not cut.
 
 **The prompt for this phase is [§ 19.16](#1916-prompt-for-phase-16).** Every prompt in
 this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
@@ -1053,19 +1095,19 @@ by building it anyway.
 | [§ 19.1](#191-prompt-for-phase-1) | Accounts and identity | Nothing | About a week |
 | [§ 19.2](#192-prompt-for-phase-2) | Profile, stats, match history | 1 | About a week |
 | [§ 19.3](#193-prompt-for-phase-3) | Telemetry | 1 | A day, do it with 2 |
-| [§ 19.4](#194-prompt-for-phase-4) | XP, levels, season track | 1, 2 | Days |
+| [§ 19.4](#194-prompt-for-phase-4) | XP, levels, mastery | 1, 2 | Days |
 | [§ 19.5](#195-prompt-for-phase-5) | Cosmetics and customisation | 1, 2, 4 | Over a week, mostly content |
 | [§ 19.6](#196-prompt-for-phase-6) | Social, friends, parties | 1 | Days |
 | [§ 19.7](#197-prompt-for-phase-7) | Matchmaking | 1, 2, 6 | Days |
 | [§ 19.8](#198-prompt-for-phase-8) | Competitive integrity | 2 | Days. **Blocks 9.** |
-| [§ 19.9](#199-prompt-for-phase-9) | Ranked | 1, 2, 6, 7, **8.1** | About a week |
+| [§ 19.9](#199-prompt-for-phase-9) |  Ranked | 1, 2, 6, 7, **8.1** | About a week |
 | [§ 19.10](#1910-prompt-for-phase-10) | Loadouts and achievements | 4, 5 | Weeks, mostly content |
 | [§ 19.11](#1911-prompt-for-phase-11) | Bots, backfill, population | Nothing hard | Days |
 | [§ 19.12](#1912-prompt-for-phase-12) | Modes, maps, custom games | Nothing hard | Weeks |
 | [§ 19.13](#1913-prompt-for-phase-13) | Seasons and live ops | 2, 4 | Days |
 | [§ 19.14](#1914-prompt-for-phase-14) | Controller | Nothing | About a week |
 | [§ 19.15](#1915-prompt-for-phase-15) | Mobile | 14 | **The biggest item here** |
-| [§ 19.16](#1916-prompt-for-phase-16) | Accessibility and localisation | Nothing | About a week |
+| [§ 19.16](#1916-prompt-for-phase-16) | Accessibility | Nothing | Days |
 | [§ 19.17](#1917-prompt-for-phase-17) | Tournaments, LAN, replays | Nothing | ⚠️ **Its first step is urgent** |
 | [§ 19.18](#1918-prompt-for-phase-18) | Distribution | A build worth shipping | Days |
 
@@ -1226,7 +1268,7 @@ one short session and it is cheaper than building a phase against a stale brief.
 
 ### 19.4 Prompt for Phase 4
 
-**XP, levels, mastery and a free season track. This is the phase that makes a player come back
+**XP, levels and per-character mastery. This is the phase that makes a player come back
 tomorrow, and it needs no matchmaking and no ranked to be worth having.**
 
 > Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md`, then `docs/FUTURE.md` §§ 0.5
@@ -1246,8 +1288,9 @@ tomorrow, and it needs no matchmaking and no ranked to be worth having.**
 > 5. ❌ **No soft currency and no shop.** Cut on 2026-08-31: rewards come straight off the track and
 >    mastery. Do not add an economy.
 > 5. A soft currency earned per match.
-> 6. A 50-tier free season track, entirely cosmetic. There is no paid track.
-> 7. The end-of-match XP bar and the season track screen, existing UI kit.
+> 6. ❌ **No season track.** Cut on 2026-08-31: § 4 has the reasoning and § 4.1 has the thing to
+>    read before designing any reward at all, which is what a reward can actually cost to make.
+> 7. The end-of-match XP bar and the mastery screen, existing UI kit.
 >
 > **Constraints.** Every curve and reward table is data in `Packages/com.tumbangpreso.core/` with
 > tests, including one that asserts **no reward on any track changes a gameplay number** (§ 0.5
@@ -1410,7 +1453,8 @@ than no rank, because it turns every good player's win into an accusation.**
 >    one game should.
 > 4. Tiers with divisions and a numbered apex leaderboard. Names come from the game's own voice and
 >    🧑 chooses them; § 9 has a suggested shape.
-> 5. Five placement matches, wide deviation until placed, no tier shown while placing.
+> 5. ❌ **No placement matches**, cut on 2026-08-31: § 9. Start everyone mid-ladder with a wide
+>    deviation and show the tier from match one. Glicko converges in the same handful of games.
 > 6. A seasonal soft reset toward the mean, never a wipe, with a permanent peak on the profile.
 > 7. ❌ **No demotion buffer and no score-margin multiplier**, both cut on 2026-08-31: § 9 says why. Do not add either back.
 > 8. **Rank floors**, per `INSPIRATION.md` § 2.19: once a tier is reached the season cannot fall
@@ -1418,13 +1462,13 @@ than no rank, because it turns every good player's win into an accusation.**
 > 9. The party rule chosen in Phase 6, asserted in a test.
 >
 > **Constraints.** The whole rating model lives in `Packages/com.tumbangpreso.core/` with tests
-> that assert convergence over a simulated season, that a placement player settles inside ten
-> matches, and that a clearly stronger new account climbs out of a low band quickly. The Unity side
+> that assert convergence over a simulated season, that a new player settles inside ten
+> matches from a mid-ladder start, and that a clearly stronger new account climbs out of a low band quickly. The Unity side
 > is submission, display and the season boundary, nothing else. ⚠️ **No rank decay**: it punishes
 > people with school and jobs, which is this entire audience. ⚠️ **Ranked changes stakes and
 > integrity, never the rules in `docs/Design.md`.**
 >
-> **Done when** a simulated season converges, placements settle in ten, ratings are written only by
+> **Done when** a simulated season converges, a new player settles inside ten matches from a mid-ladder start, ratings are written only by
 > the Phase 8 endpoint, and § 0.5 rule 9 is satisfied.
 
 ---
@@ -1537,7 +1581,7 @@ exist.**
 
 ### 19.13 Prompt for Phase 13
 
-**Seasons, dailies and the reason to open it on a Tuesday.**
+**Seasons and the reason to open it on a Tuesday.**
 
 > Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md`, then `docs/FUTURE.md` §§ 0.5
 > and 0.6, then `docs/FUTURE.md` § 13. Do not skip them because this prompt summarises the task;
@@ -1546,9 +1590,10 @@ exist.**
 > **VERIFY FIRST.** Phases 2 and 4 shipped. If `INSPIRATION.md` prompt I3 has already built the
 > challenge engine, **use it and do not build a second one.**
 >
-> **Build.** Three daily challenges with one reroll, weekly challenges worth a season tier, a
-> ten-week season with a theme and a track, an end-of-season summary card designed to be
-> screenshotted, login streaks, and a rotating featured mode. Keep a live-ops calendar in the repo.
+> **Build.** Weekly challenges paying a title or a badge, a ten-week season that exists for the
+> ranked soft reset and its summary card, login streaks, the weekly hour and Liga ng Barangay. ❌ No
+> daily challenges, no season theme, no season track and no featured-mode rotation: all cut on
+> 2026-08-31, § 13. Keep a live-ops calendar in the repo.
 >
 > **Constraints.**
 > - Every challenge is evaluated server-side from the match record. Never claimed by a client.
@@ -1638,8 +1683,7 @@ item in this plan.**
 
 ### 19.16 Prompt for Phase 16
 
-**Accessibility and localisation. Both cheaper now than at any later point, and the game has
-neither.**
+**Accessibility. Cheaper now than at any later point, and the game has none of it.**
 
 > Read `CLAUDE.md` first, then `docs/VISION.md` § 2, then `docs/Art_Direction.md` § 1, then
 > `docs/TODO.md`, then `docs/FUTURE.md` §§ 0.5 and 0.6, then `docs/FUTURE.md` § 16. Do not skip
@@ -1649,7 +1693,7 @@ neither.**
 > `Art_Direction.md` § 1 in full, because the fix below has to hold its colour law for everybody who
 > is not using an accessibility palette.
 >
-> **Build accessibility first, localisation second.**
+> **Build.**
 > 1. ⚠️⚠️ **A second, non-colour channel for the taya-versus-attacker role, everywhere it is
 >    currently hue alone.** A shape on the nameplate, an icon on the marker, a different outline
 >    weight. Orange versus blue survives the most common colourblindness well and the roles being
@@ -1662,17 +1706,14 @@ neither.**
 >    performance mode. Subtitles and captions for callouts and ability sounds. A high-contrast HUD.
 > 4. Extend the existing ability-showcase probe to **assert the reduced mode is measurably calmer**
 >    than the default rather than assuming it.
-> 5. Then extract every user-facing string into a table and ship **English and Tagalog**. Tagalog is
->    not a nice-to-have: it is a Filipino street game by a Filipino team in a Filipino competition,
->    and it is marketing as much as access. Cebuano next, because the nationals are in General
->    Santos.
+> 5. ❌ **No localisation, and no string table.** English only, cut on 2026-08-31: § 16.3 records
+>    why, and records the one thing to know if it is ever revisited.
 >
-> **Constraints.** ⚠️ **Check every added glyph against the UI font's coverage before promising a
-> language.** The font already has a known missing glyph and the UI works around it. Keep character
-> names, mode names and TSINELAS untranslated: they are the identity.
+> **Constraints.** Do not extract strings "while you are in there". § 16.3 is a decision, not an
+> oversight.
 >
-> **Done when** the role is readable with hue removed entirely, a language can be switched at
-> runtime, and § 0.5 rule 9 is satisfied.
+> **Done when** the role is readable with hue removed entirely, the reduced mode is measurably
+> calmer than the default, and § 0.5 rule 9 is satisfied.
 
 ---
 

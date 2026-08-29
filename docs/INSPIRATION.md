@@ -1192,7 +1192,7 @@ value item here.**
 | 21 | **I9** Training room | Independent of everything. Do it whenever somebody wants a self-contained job. |
 | 22 | **F13** Seasons and live ops | Needs everything above to have something to season. |
 | 23 | **F14** Controller, then **F15** Mobile | Independent of the whole column. Start any time somebody wants a break from services. |
-| 24 | **F16** Accessibility and localisation | Independent, overdue, and Tagalog is marketing as much as access. |
+| 24 | **F16** Accessibility | Independent, and overdue. Localisation is cut: English only. |
 | 25 | **F17** Tournaments, LAN, replays | ⚠️ **The LAN half of this is not future work.** See below. |
 | 26 | **F18** Distribution | Last. |
 
@@ -1254,6 +1254,9 @@ a conversation he has already had.
 | **Trust score and behaviour-sorted pools** | § 2.8 | Its whole purpose is sorting players into pools, and this population cannot fill the pools it already has. Reporting and the avoid list do the job. |
 | **Four-peer unanimous corroboration** | `FUTURE.md` § 8.1 | Simplified rather than cut: **host plus one random witness**. Half the traffic and half the code for the same guarantee, because a lying host cannot know which peer will be asked. |
 | **A named practice ladder against bots** | `FUTURE.md` § 11 | A fourth bot feature and a fifth progression track. Practice and `GuidedTraining` already exist. |
+| **The 50-tier season track, and seasonal rewards generally** | `FUTURE.md` §§ 4, 4.1, 9, 13 | 50 rewards to author every ten weeks, forever, and the first missed season collapses the framing. His question is the one to keep asking: *"what can we even give as rewards"*. § 4.1 is the answer, sorting every possible reward by what it costs to make. Account level and character mastery carry the progression instead, and they never reset. |
+| **Placement matches** | `FUTURE.md` § 9 | Five games in a hidden state with their own rules and UI, doing a job Glicko-2 already does alone. Everyone starts mid-ladder with a wide deviation and sees their tier from match one. |
+| **Localisation, including Tagalog** | `FUTURE.md` § 16.3 | *"english only"*. The cost was never the translation, it was keeping three languages in step for every screen and every future addition, forever. ⚠️ The string extraction gets more expensive every month, so if it is ever revisited, do the extraction as its own job first. |
 | **Privacy settings** | `FUTURE.md` § 1.3 | Three visibility levels over three kinds of data is nine states, on a game whose competitive half needs people to be able to look each other up. |
 | **Data export** | `FUTURE.md` § 1.2 | Deferred until somebody asks. Account deletion stays. |
 | **Replay takeover** | § 2.20 | Genuinely possible here and genuinely not worth it: enormous work, an audience of about four people. |
