@@ -1186,6 +1186,203 @@ exists for.
 
 ---
 
+## 79 · The 2026-08-29 evening batch: what he reported, what landed, and what is still open
+
+🧑 played the build and reported twenty-two things in one sitting, with screenshots. **Every one of
+those screenshots is committed at [`docs/reports/2026-08-29/reported/`](reports/2026-08-29/reported/)
+and its README maps each image to the entry below.** ⚠️ **Delete that folder when this section is
+closed**; it is evidence for one batch, not documentation.
+
+⚠️⚠️ **THE SEVEN THAT LANDED ARE IN §§ 78.2 to 78.11 AND IN THE COMMITS OF 2026-08-29.** This entry
+is the REMAINDER, so that the next session starts from a list rather than from the chat log.
+
+### 79.1 ⚠️⚠️ THE CHARACTER SCREEN IS LIT DIFFERENTLY FROM THE GAME, AND IKE IS THE PROOF ⚠️ OPEN
+
+**This subsumes § 78.8.** Images `10` (character select, pale), `11` (the lobby cast, correct) and
+`14` (IKE reading mid grey).
+
+🧑: *"fix shader on chara select too look at pic 1 vs pic 2, it should look more like pic 2"*, and
+on IKE specifically, *"this is what im saying wtf is this its so light"*.
+
+**What is known, measured rather than argued:**
+
+* IKE's body is `Kd 0.052 0.058 0.074` in `tsinelas_sike.mtl`, near black, and it renders on that
+  screen as a mid grey. Roughly half a unit of light is arriving from somewhere.
+* It is **not the mesh or the material**: the same asset through the same `ToonSkin` path renders
+  correctly dark on `ModelSheet`.
+* It is **not the ambient value on its own**: `ModelPreview.PreviewAmbient` is
+  (0.627, 0.576, 0.522) x 0.8775 and the model sheet, where the shoe looks right, uses
+  (0.62, 0.58, 0.52) x 0.78. **Fourteen per cent apart cannot turn black into grey.**
+* `LightingToon` MULTIPLIES by albedo (`s.Albedo * _LightColor0.rgb * level`), so the direct term
+  cannot lift a dark surface either.
+
+⚠️ **SO THE REMAINING SUSPECTS ARE THE PREVIEW'S OWN CAMERA STACK**: its `ColourGrade` at
+`Set(1.0, 1.03, 1.18, 0.92, 1.9)`, its two lights, and whether the ambient reaches
+`o.Albedo * IN.vlight` as the surface-shader generator intends. `ModelPreview` is also the ONLY
+camera in the game carrying a grade without `WorldOutline`, which is the other half of what makes
+image `10` look unlike image `11`.
+
+⚠️⚠️ **DO NOT ADJUST A NUMBER UNTIL YOU CAN SEE THE SCREEN.** Three sessions have now guessed at
+this. **The first task is a probe that renders `ModelPreview` to a PNG**, the way
+`FppArmsSnapshotTool` does for the arms: build the component in an empty scene, `Show()` a subject,
+save the texture. Nothing in this repository can currently photograph the character screen, which
+is exactly why the fault has survived. `docs/TODO.md` § 43's rule applies: *"a render from one
+camera is not evidence about another"*.
+
+**Done looks like:** IKE dark on the character screen, and a cast member on that screen matching
+the same character in the lobby, both shown in one capture.
+
+### 79.2 ⚠️ ILALIM NG TULAY IS HAZIER AND PALER THAN ESKINITA ⚠️ OPEN
+
+Image `12`. 🧑: *"ilalim ng tulay as well should look more like the other map's shaders"*.
+
+Each map carries its own `Visual.MapGrade` (brightness, contrast, saturation, exposure, white) and
+its own ambient and fog, and `ColourGrade` on the camera applies the grade. `IlalimNgTulayBuilder`
+sets one at line ~288 and `MapGradeSanityTests` asserts a band around it, so **the band is the
+first thing to read**: if the value is inside it and the map still looks wrong, the band is wrong.
+
+⚠️ Commit `f36aebd` is *"Stop the ink hull eating decals, and warm Ilalim out of its haze"*, so
+this has been reached for once already. Read what it changed before changing it again.
+
+**Done looks like:** the two maps' lobby frames side by side with the same cast, and a note saying
+which of grade, ambient or fog was the difference.
+
+### 79.3 ⚠️ THE LOBBY CHAT STRIP SHOWS NOTHING, AND THE HISTORY CAP IS UNDOCUMENTED ⚠️ OPEN
+
+Image `18`. 🧑: *"lobby chat ui overflow"*, *"wtf happens if thers more than 100 messages, can i
+scroll thru it?"*, *"u dont see most recent chats in say something"*.
+
+**Two of the three questions already have answers in the source**, and they should be told to him
+rather than investigated:
+
+* the scrollable log keeps `LobbyChat.MaxHistory` = **100 lines** and drops the oldest past that
+  (`_history.RemoveAt(0)`), and it **is** scrollable, through `_historyScroll`;
+* the strip above the field is capped at `LobbyVisibleLines` = **2** by design, with the rest
+  behind the click.
+
+⚠️⚠️ **THE ACTUAL BUG IS THAT THE STRIP SHOWED ZERO LINES, NOT TWO.** In image `18` the log holds
+four messages and the box above the field is empty. `SetLines` fills `_lines[4]` and `_lines[5]`
+for the lobby and deactivates the rest, and the panel is built
+`(LineHeight + 4) * LobbyVisibleLines` tall, so two rows should be visible. **Not reproduced by
+reading.** Drive it: `NetworkedLobbyTypingProbe` already stands up a real lobby, and `LobbyChat`
+is on that screen.
+
+**Done looks like:** the last two lines visible above the field with the log closed, and a decision
+recorded on whether 100 is enough.
+
+### 79.4 ⚠️ AN ORANGE WARNING TRIANGLE FLOATS OVER THE TAYA IN SPECTATOR ⚠️ OPEN, NOT IDENTIFIED
+
+Image `02`. 🧑: *"WHY IS THERE ! FOR SPECTATOR"*.
+
+**Searched and not found.** Ruled out by reading: `Hud._crosshair` and `Hud._vulnerable` are both
+disabled by `EnterSpectatorMode` AND the spectating branch of `Update` returns before the lines
+that re-enable them; `OffscreenIndicators` draws `"▲"` and hides both arrows when the local unit is
+null; `CharacterNameplate` carries no glyph; there is no warning sprite anywhere under `Art/ui`.
+
+⚠️ It renders as a **full-colour** triangle, which legacy `Text` cannot draw, so it is an `Image`
+with a sprite or a world-space object rather than a label. That narrows it and was not chased
+further.
+
+**Done looks like:** the thing named. Fastest route is a spectator capture with the HUD hierarchy
+dumped, since it is reproducible: it was in the first spectator frame he sent.
+
+### 79.5 ✅ THE PICKER TURNS AGAIN AFTER THE PLAYER LETS GO
+
+Image `17`. 🧑: *"this is supposed to be like rotating and shit, both slippers and tsinelas and
+hero"*, *"they stop rotating if we move"*, *"and go back to rotating in character select after"*.
+
+The idle sweep existed and stopped on the first drag, permanently, by design. It now lapses 2.5 s
+after the last drag or zoom. `_turnPhase` is frozen while the player has it rather than advanced
+and ignored, so the sweep resumes where it stopped; the camera keeps the orbit they chose.
+
+### 79.6 ✅ FOUR LABELS AND ONE PANEL THAT DID NOT FIT
+
+Images `01`, `13`, `15`, `16`, `19`, `22`. All shipped 2026-08-29:
+
+* the lata card fits the lines it is showing (§ 78.3);
+* the hero picker's ability rows measure their own summary, and the column is sized to the rows
+  actually built rather than to a constant 289 — the ultimate's plate was drawn outside the panel;
+* `WAITING FOR 4 PLAYERS` and `START MATCH` go through one fit that **grows as well as shrinks**,
+  from a fixed ceiling each call so repeated swaps cannot ratchet the type down;
+* the decorative `EDIT` on the player name field is deleted; the field always took the click.
+
+⚠️ **`HeroPickerLayoutProbe` WAS GREEN THROUGH ALL OF THIS AND SHOULD NOT HAVE BEEN.** It checks
+the gap under the tagline and the tagline's own slack, and asserts **nothing about the bottom of
+the column against the panel**, which is the edge the ultimate ran past. **Add that assertion.**
+
+### 79.7 ✅ EVERY HELD TSINELAS WAS THE PLACEHOLDER COLOUR
+
+Images `20` and `21`. 🧑: *"ingame shader messes up the color of slippers"*, *"doesnt look anything
+like the frigging character select anymore"*, *"pls fix the shaders for slippers i dont want them
+to fuck up the color"*.
+
+`ViewmodelArms.MatchSkin` opened with `if (filter.sharedMesh == source.sharedMesh) return;` and the
+material copy was **below** it. `Build` dresses the viewmodel shoe in `UiTheme.PropFoam` (#7a5741,
+a flat mid brown) as a stand-in, so any path reaching `MatchSkin` with the mesh already right kept
+that stand-in for the whole match. The mesh was correct and the colour was a placeholder, and one
+condition guarded both. The mesh write is still skipped when it would be a no-op; the materials are
+copied every time.
+
+⚠️ `SceneBuilder` also builds slippers and did not set `SeatOfOrigin`, which `MatchRpc.FindSlipper`
+now addresses them by (§ 78.1). Fixed in the same commit: a scene-authored slipper would have been
+present on the host and absent on every client.
+
+### 79.8 ⚠️⚠️ THE FIRST-PERSON SLIPPER IS STILL NOT RIGHT, AND HE HAS SAID SO TWICE ⚠️ OPEN
+
+Images `05` and `07`. 🧑: *"the slippers on my arm dont look right"*, *"iits floating a bit"*, then
+of the fix, *"dude this sucks"*, and *"u dont see the slipper at all bro, i wanna be able to
+inspect the details"*.
+
+**What has been tried, so it is not tried again blindly:**
+
+1. anchored by the mesh's own origin — the shoe hung in space beside the hand, because § 70.2
+   requires every slipper mesh to be **centred on XY and seated on Z = 0**, so its origin is on the
+   sole at one end;
+2. centred on the fist with `Slipper.CarryRotation` — the quarter turn points the toe **at the
+   camera**, and the shoe disappeared into the arm;
+3. laid along the forearm — visible, but it lands exactly where the hand mesh is and the two read
+   as one brown mass, which is what *"this sucks"* was about.
+
+⚠️ **THE ARM'S LOCAL AXES ARE NOT WHAT THEY LOOK LIKE**, and this cost two of the three attempts.
+`RightBasisX/Y/Z` are a baked rotated frame: local **+Y runs toward the hand**, and local **-Z is
+toward the camera and up**. A positive Z offset pushes the shoe **away and down, behind the arm**.
+
+⚠️ **AND THE SNAPSHOT TOOL CANNOT JUDGE THIS.** `FppArmsSnapshotTool` builds the viewmodel with its
+default placeholder mesh dressed in `PropFoam`, so every review of the held slipper so far has been
+against a flat brown blob rather than the real skin. **Fix the tool first**: give it a real
+`Slipper` and call `MatchSkin`, or the next iteration is blind too.
+
+**Done looks like:** the shoe clear of the hand, its profile readable, wearing its own skin, judged
+by 🧑 off a capture that shows the real material.
+
+### 79.9 ⚠️ TWO PRACTICE REPORTS, NEITHER INVESTIGATED ⚠️ OPEN
+
+🧑: *"practice mode broken wtf, when i threw the slipper on the floor (very far from can, it js
+fell)"*, and separately *"sometimes i pick up a slipper in practice mode and a diff slipper gets
+handed to me"*.
+
+⚠️⚠️ **THE SECOND ONE IS NOT A BUG AND MUST NOT BE "FIXED".** `Slipper`'s own note: *"OWNERSHIP IS
+A LABEL, NOT A LOCK. Any attacker may pick up any slipper."* It was reversed twice in one day and
+the open version was chosen deliberately, because a slipper you can lose to a rival is more
+contested than one nobody may touch. **Tell him rather than change it.**
+
+The first is unexamined. A throw that drops at the feet means no impulse reached the shoe;
+`Carrier.StepAttacker` releases at `ThrowRules.PowerFor`, and `Balance.ChargeMinPower` is the tap
+floor. Check whether it reproduces with a full charge before touching a number.
+
+### 79.10 What this batch did NOT get to
+
+* ⚠️⚠️ **NO TWO-MACHINE RUN.** § 78.13 still stands. He has the build on a second laptop now, and
+  both machines must be on **`ProtocolVersion` 12** or the join is refused at approval.
+* ⚠️ **The other five heroes' arms have never been compared to their models.** Dante's were an
+  invented garment in the right palette (§ 78.11); there is no reason to think he is the only one.
+* ⚠️ **`CarryTests` is still failing** on a frame-timing assertion, pre-existing and bisected
+  (§ 78.12).
+* ⚠️ **§ 72 is still open**: the lobby name and code fields in a BUILT player, the one suspect no
+  probe here can reach.
+
+---
+
 ## 0 · Hero Strike is being reworked, and the plan is its own file
 
 **Numbered 0 rather than 1 on purpose: every other entry here keeps the number it already had,
