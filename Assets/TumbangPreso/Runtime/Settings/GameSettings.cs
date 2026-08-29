@@ -42,6 +42,22 @@ namespace TumbangPreso.Settings
         /// </summary>
         public string PlayerName = "";
 
+        // ⚠️ THE ACCOUNT PROFILE IS STORED BESIDE THE OFFLINE TOKEN, NOT IN PlayerPrefs.
+        // The same JSON file already has the required properties: it survives a restart, works
+        // in a disconnected LAN venue, and can fail without preventing the game from booting.
+        // PlayerAccount reconciles these fields with the authenticated profile when UGS answers.
+        public string AccountPlayerId = "";
+        public string AccountUsername = "";
+        public string AccountDiscriminator = "";
+        public string AccountBio = "";
+        public string AccountCountry = "";
+        public string AccountPronouns = "";
+        public string AccountEmail = "";
+        public string AccountCreatedUtc = "";
+        public bool AccountHasPassword = false;
+        public bool AccountUpgradeOfferPending = false;
+        public bool AccountUpgradeOfferShown = false;
+
         // -------------------------------------------------------------------
         // AUDIO
         // -------------------------------------------------------------------
@@ -304,7 +320,16 @@ namespace TumbangPreso.Settings
 
         public void Validate()
         {
-            PlayerName = SanitiseName(PlayerName);
+            if (AccountRules.TryDisplayName(PlayerName, out string accountName))
+                PlayerName = accountName;
+            else
+                PlayerName = SanitiseName(PlayerName);
+
+            AccountDiscriminator = AccountRules.Discriminator(AccountDiscriminator,
+                string.IsNullOrEmpty(AccountPlayerId) ? PlayerToken : AccountPlayerId);
+            AccountBio = AccountRules.Bio(AccountBio);
+            AccountCountry = AccountRules.Country(AccountCountry);
+            AccountPronouns = AccountRules.Pronouns(AccountPronouns);
 
             MasterVolume = Mathf.Clamp01(MasterVolume);
             SfxVolume = Mathf.Clamp01(SfxVolume);

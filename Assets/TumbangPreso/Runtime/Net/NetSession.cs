@@ -32,6 +32,13 @@ namespace TumbangPreso.Net
     /// </summary>
     public sealed class NetSession : MonoBehaviour, INetProvider
     {
+        private static string LocalLobbyName()
+        {
+            string account = GameServices.Account?.LobbyName;
+            if (!string.IsNullOrWhiteSpace(account)) return account;
+            string local = Settings.SettingsStore.Current.PlayerName;
+            return Core.AccountRules.Handle(local, "");
+        }
         public static NetSession Instance { get; private set; }
 
         public const int DefaultPort = LobbySession.DefaultPort;
@@ -412,7 +419,7 @@ namespace TumbangPreso.Net
             {
                 LocalSlot = dedicated ? -1 : 0;
 
-                _beacon.HostName = Settings.SettingsStore.Current.PlayerName;
+                _beacon.HostName = LocalLobbyName();
                 _beacon.JoinCode = Lobby.JoinCode;
                 _beacon.Port = port;
                 _beacon.InProgress = false;
@@ -633,7 +640,7 @@ namespace TumbangPreso.Net
                 if (ok)
                 {
                     LocalSlot = 0;
-                    _beacon.HostName = Settings.SettingsStore.Current.PlayerName;
+                    _beacon.HostName = LocalLobbyName();
                     _beacon.JoinCode = Lobby.JoinCode;
                     _beacon.Port = DefaultPort;
                     _beacon.InProgress = false;
@@ -643,7 +650,7 @@ namespace TumbangPreso.Net
                     if (Query != null)
                     {
                         _ = Query.CreateHostedLobbyAsync(
-                            Settings.SettingsStore.Current.PlayerName,
+                            LocalLobbyName(),
                             Lobby.JoinCode,
                             relayCode,
                             Lobby.SeatedPeerCount(),
@@ -1003,8 +1010,8 @@ namespace TumbangPreso.Net
             var hello = new ConnectionHello
             {
                 Protocol = ProtocolVersion,
-                Token = NetIdentity.Token,
-                Name = string.IsNullOrWhiteSpace(settings.PlayerName) ? "Player" : settings.PlayerName.Trim()
+                Token = GameServices.Account?.ConnectionToken ?? NetIdentity.Token,
+                Name = LocalLobbyName()
             };
 
             _nm.NetworkConfig.ConnectionData = Encoding.UTF8.GetBytes(JsonUtility.ToJson(hello));
@@ -1174,7 +1181,9 @@ namespace TumbangPreso.Net
                     int charPick = s.CharacterPick >= 0 ? s.CharacterPick : 0;
                     int canPick = s.CanPick >= 0 ? s.CanPick : 0;
                     int slipperPick = s.SlipperPick >= 0 ? s.SlipperPick : 0;
-                    MatchRpc.Instance?.IdentifyServerRpc(NetIdentity.Token, s.PlayerName, charPick, canPick, slipperPick);
+                    MatchRpc.Instance?.IdentifyServerRpc(
+                        GameServices.Account?.ConnectionToken ?? NetIdentity.Token,
+                        LocalLobbyName(), charPick, canPick, slipperPick);
                 }
                 return;
             }
@@ -1190,8 +1199,8 @@ namespace TumbangPreso.Net
             {
                 hello = new ConnectionHello
                 {
-                    Token = NetIdentity.Token,
-                    Name = settings.PlayerName
+                    Token = GameServices.Account?.ConnectionToken ?? NetIdentity.Token,
+                    Name = LocalLobbyName()
                 };
             }
             else if (!_helloByClient.TryGetValue(clientId, out hello))

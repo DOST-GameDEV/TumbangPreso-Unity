@@ -1729,5 +1729,37 @@ namespace TumbangPreso.Tests
                             "65535 is the ceiling");
             Assert.AreEqual(LobbySession.DefaultPort, port);
         }
+
+        [Test]
+        public void LobbyAcceptsOnlyCanonicalAccountHandles()
+        {
+            var lobby = new LobbySession();
+            var valid = lobby.Admit(1, "player-one", "Maria Clara#4417", out _);
+            Assert.AreEqual("Maria Clara#4417", valid.Name);
+
+            var forged = lobby.Admit(2, "player-two", "Maria Clara", out _);
+            StringAssert.StartsWith("Player#", forged.Name);
+            Assert.AreEqual(AccountRules.HandleMax, new string('W', AccountRules.DisplayNameMax).Length + 5);
+        }
+
+        [Test]
+        public void AccountFieldsSurviveSettingsValidationOffline()
+        {
+            var settings = new GameSettings
+            {
+                PlayerToken = "offline-token",
+                PlayerName = "  Tournament Guest  ",
+                AccountBio = new string('b', AccountRules.BioMax + 20),
+                AccountCountry = "ph",
+                AccountPronouns = "they/them",
+            };
+
+            settings.Validate();
+            Assert.AreEqual("Tournament Guest", settings.PlayerName);
+            Assert.AreEqual(AccountRules.BioMax, settings.AccountBio.Length);
+            Assert.AreEqual("PH", settings.AccountCountry);
+            Assert.AreEqual("they/them", settings.AccountPronouns);
+            StringAssert.IsMatch("^[0-9]{4}$", settings.AccountDiscriminator);
+        }
     }
 }

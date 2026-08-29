@@ -186,7 +186,7 @@ THIS IS TRUE.** The prose about design intent ages well. The claims about the co
 
 | Claim in these documents | How to check it in one step | If it moved |
 |---|---|---|
-| The auth package is installed and unused | `grep authentication Packages/manifest.json`, then `grep -r AuthenticationService Assets` | Phase 1 may be partly done. Read it before rebuilding it. |
+| Authentication and the account layer are present | `grep authentication Packages/manifest.json`, then `grep -r AuthenticationService Assets`, then `grep -r PlayerAccount Assets` | Phase 1 may have moved. Read `docs/TODO.md` § 88 before changing it. |
 | Discovery is UGS Lobby, connection is UGS Relay | Read the header of `Assets/TumbangPreso/Runtime/Net/ServerQuery.cs` | The whole of §§ 0.3, 7 and 8 assumes UGS. Re-cost them. |
 | The input map has no gamepad or touch bindings | `grep -c Gamepad Assets/TumbangPreso/Resources/TumbangPreso.inputactions` | Phases 14 and 15 shrink a lot. |
 | Build targets are Windows, WebGL, Linux server only | `ls "/c/Program Files/Unity/Hub/Editor/*/Editor/Data/PlaybackEngines/"` | Phase 15 step 1 may already be done. |
@@ -210,13 +210,14 @@ part that stays valuable.
 
 ---
 
-## PHASE 1 · ACCOUNTS AND IDENTITY
+## PHASE 1 · ACCOUNTS AND IDENTITY ⚠️ IN PROGRESS 2026-08-31
 
 **The first part of the overhaul, in his words.** Everything else keys off a stable player id.
 
-**What exists:** `com.unity.services.authentication` 3.7.4, installed and unused.
-`UnityServices.InitializeAsync()` already runs for Lobby and Relay, so the SDK is up before
-anything here needs it.
+**What existed when work began:** `com.unity.services.authentication` 3.7.4 was already active,
+not unused. `NetIdentity` silently signed in anonymously at boot, persisted the UGS session,
+cached one attempt per process and degraded to a local token for LAN. `UgsCheck` exercised the
+same path. `docs/TODO.md` § 88 is the as-built account record.
 
 ### 1.1 Sign-in, in the order that does not annoy anybody
 
@@ -293,7 +294,7 @@ before the first upload, not after.
 - ⚠️ **The lobby name today is whatever the peer sends.** Once accounts exist the name must come
   from the profile and be validated server-side, or the first thing anyone does with the new
   system is impersonate somebody. `LobbySeatInfo` is where it lands.
-- ⚠️ **Anonymous credentials live in `PlayerPrefs` and a player who clears them is gone forever.**
+- ⚠️ **Anonymous credentials live in the UGS authentication cache and a player who clears them is gone forever.**
   Say so in the UI at the moment they earn their first unlock.
 - ⚠️ **Offline must still boot.** The game is played daily off a Windows build, sometimes with no
   connection. A failed sign-in degrades to a local profile and a visible "not signed in" state; it
@@ -303,8 +304,9 @@ before the first upload, not after.
   age gate.
 
 **Done looks like:** a fresh install reaches the menu signed in with no prompt, the id survives a
-restart, a username can be attached later without losing anything, an account can be deleted, and
-pulling the network cable still lets a LAN match start.
+restart, a username can be attached later without losing anything, an account can be deleted,
+an offline tournament guest can enter without replacing the owner's account, and pulling the
+network cable still lets a LAN match start.
 
 **The prompt for this phase is [§ 19.1](#191-prompt-for-phase-1).** Every prompt in
 this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
@@ -1157,9 +1159,10 @@ one short session and it is cheaper than building a phase against a stale brief.
 > skip them because this prompt summarises the task; the summary is not the rules.
 >
 > **VERIFY FIRST.** This brief was written 2026-08-31. Check these before acting:
-> `grep authentication Packages/manifest.json` shows the UGS authentication package installed, and
-> `grep -rn "AuthenticationService" Assets` returns nothing, meaning it is present and unused. If
-> either has changed, follow § 0.5 rule 11.
+> `grep authentication Packages/manifest.json` shows the UGS authentication package installed,
+> `grep -rn "AuthenticationService" Assets` shows the boot/session owner, and
+> `grep -rn "PlayerAccount" Assets` shows whether Phase 1 has started or shipped. Read
+> `docs/TODO.md` § 88 before rebuilding anything. If any of those has changed, follow § 0.5 rule 11.
 >
 > **Build the account layer.**
 > 1. Anonymous sign-in on first launch, silently, before the main menu is interactive. No prompt,

@@ -15,12 +15,43 @@ are eighteen ordered phases in `FUTURE.md`, each with a prompt written to brief 
 `INSPIRATION.md` is the study of thirty other games behind them, plus ten more prompts and the
 combined order. **None of it is scheduled and none of it is open work**, which is exactly why they
 are separate files: an entry in this list is something somebody should do, and those are things
-somebody might decide to do. Written 2026-08-31 on 🧑's brief.
+somebody might decide to do. **Phase 1 was explicitly started on 2026-08-31 and is § 88 below.**
+Written 2026-08-31 on 🧑's brief.
 
 ⚠️ **One item in it is NOT future work.** `FUTURE.md` § 17's first paragraph: the nationals are in
 General Santos City and venue internet cannot be assumed, so a full four-player match must be
 startable and completable on LAN with the internet physically unplugged. `LanBeacon` exists; what
 has never been tested is every screen between the menu and the match with UGS unreachable.
+
+---
+
+## 88 · Accounts and identity ⚠️ IN PROGRESS 2026-08-31
+
+Phase 1 of `FUTURE.md` was explicitly commissioned. Its preflight was stale in an important way:
+Authentication was not unused. `NetIdentity` already signed in anonymously at boot, cached the
+attempt, persisted the UGS session, and degraded to a local token for LAN. `UgsCheck` also exercised
+that path. The account layer extends that proven seam rather than creating a second sign-in owner.
+
+**Built in this phase:** `PlayerAccount` owns the player id, display name, discriminator, bio,
+country, pronouns and signed-in/local state and raises `Changed`; the splash awaits its bounded
+boot barrier before activating the menu; username/password linking uses
+`AddUsernamePasswordAsync` and asserts the anonymous PlayerId did not change; username sign-in can
+move the account to a second device; deletion clears Cloud Save before deleting Authentication;
+the first score queues the upgrade offer for the next menu; and offline tournament guests get an
+ephemeral local identity without overwriting the machine owner's account.
+
+**Database shape:** Authentication owns credentials and the stable id. The server-side Cloud Code
+script `ugs/cloud-code/player-account.js` validates profile writes and stores one protected
+`accountProfile` record in Cloud Save. The client never writes Cloud Save directly. Local JSON is
+the offline cache and remote valid fields win when the endpoint answers.
+
+**Lobby identity:** every local hello, identify message and beacon reads `PlayerAccount.LobbyName`
+rather than `Settings.PlayerName`; the host accepts only a core-validated `display#1234` handle and
+allocates a deterministic fallback tag for an invalid claim.
+
+**Done looks like:** the Phase 1 acceptance list in `FUTURE.md` § 1 plus a deployed
+`player-account` Cloud Code endpoint, Core, EditMode and focused PlayMode green, an unplugged LAN
+run, a clean Windows player on the Desktop, committed and pushed.
 
 ---
 

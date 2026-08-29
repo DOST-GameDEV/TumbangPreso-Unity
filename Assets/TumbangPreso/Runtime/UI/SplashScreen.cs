@@ -113,6 +113,11 @@ namespace TumbangPreso.UI
         {
             BuildSurface();
             BeginPreload();
+            // ⚠️ THE MENU IS ACTIVATED ONLY AFTER THE ACCOUNT BARRIER SETTLES. There is no
+            // prompt and no account form here: a fresh player signs in anonymously while the
+            // existing studio/loading screen is already doing its work, and an unreachable
+            // service settles to the local profile inside PlayerAccount's bounded budget.
+            var accountBarrier = GameServices.Account?.InitializeAsync();
 
             // ⚠️ ONLY IF THE EARLY HOOK DID NOT ALREADY START IT. On a normal launch the sting
             // is already playing across the Unity logo; this is the fallback for entering the
@@ -150,7 +155,8 @@ namespace TumbangPreso.UI
                     ? _elapsed >= 0.5f
                     : (_video.isPrepared && !_video.isPlaying && _elapsed > 0.5f);
 
-                if (presentationComplete && PreloadComplete) break;
+                bool accountReady = accountBarrier == null || accountBarrier.IsCompleted;
+                if (presentationComplete && PreloadComplete && accountReady) break;
 
                 if (!_slowLoadReported && _elapsed >= MaxWait)
                 {

@@ -522,7 +522,7 @@ namespace TumbangPreso.UI
             var banner = find("Banner");
             Transform parent = banner != null ? banner.parent : root;
 
-            string playerName = Settings.SettingsStore.Current.PlayerName;
+            string playerName = GameServices.Account?.LobbyName ?? Settings.SettingsStore.Current.PlayerName;
             if (string.IsNullOrWhiteSpace(playerName)) playerName = "Player";
             else playerName = playerName.Trim();
 
@@ -645,7 +645,7 @@ namespace TumbangPreso.UI
                          string.IsNullOrWhiteSpace(Settings.SettingsStore.Current.PlayerName)
                 ? ""
                 : playerName;
-            field.characterLimit = Core.Balance.PlayerNameMax;
+            field.characterLimit = Core.AccountRules.DisplayNameMax;
             field.lineType = InputField.LineType.SingleLine;
             field.onEndEdit.AddListener(raw =>
             {
@@ -669,8 +669,16 @@ namespace TumbangPreso.UI
                 if (field == null || !field.isActiveAndEnabled) return;
 
                 string clean = Settings.GameSettings.SanitiseName(raw);
-                Settings.SettingsStore.Current.PlayerName = clean;
-                Settings.SettingsStore.Save();
+                var account = GameServices.Account;
+                if (account != null)
+                {
+                    _ = account.SetProfileAsync(clean, account.Bio, account.Country, account.Pronouns);
+                }
+                else
+                {
+                    Settings.SettingsStore.Current.PlayerName = clean;
+                    Settings.SettingsStore.Save();
+                }
                 field.SetTextWithoutNotify(clean);
                 parts.NameCommitted?.Invoke();
             });

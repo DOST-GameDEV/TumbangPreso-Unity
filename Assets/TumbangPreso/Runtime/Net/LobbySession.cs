@@ -232,8 +232,12 @@ namespace TumbangPreso.Net
                 PeerId = peerId,
                 Token = token ?? "",
 
-                // ⚠️ SANITISED ONCE, HERE, ON ARRIVAL. Not at draw time, and not on the client.
-                Name = Settings.GameSettings.SanitiseName(name),
+                // ⚠️ ACCOUNT HANDLE VALIDATED ONCE, HERE, ON ARRIVAL. The display name and
+                // discriminator travel together, so a clipped suffix cannot impersonate a real
+                // account handle on the scoreboard.
+                Name = AccountRules.TrySplitHandle(name, out string display, out string tag)
+                    ? AccountRules.Handle(display, tag)
+                    : AccountRules.Handle("Player", AccountRules.Discriminator("", token)),
             };
 
             // A replacement connection can arrive before the transport's generous 30 second

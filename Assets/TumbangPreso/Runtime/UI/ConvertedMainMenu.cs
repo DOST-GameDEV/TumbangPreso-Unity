@@ -74,6 +74,10 @@ namespace TumbangPreso.UI
             Cursor.visible = true;
 
             GameServices.Music?.Play("menu", GameServices.MenuTrack);
+
+            var account = gameObject.GetComponent<AccountOverlay>();
+            if (account == null) account = gameObject.AddComponent<AccountOverlay>();
+            account.Install();
         }
 
         private void Overlay(string button, string panel)

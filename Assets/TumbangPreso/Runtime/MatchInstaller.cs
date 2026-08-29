@@ -690,7 +690,7 @@ namespace TumbangPreso
 
             if (isLocalHuman)
             {
-                motor.PlayerName = Settings.SettingsStore.Current.PlayerName;
+                motor.PlayerName = GameServices.Account?.LobbyName ?? Settings.SettingsStore.Current.PlayerName;
                 motor.CharacterIndex = Settings.SettingsStore.Current.CharacterPick >= 0
                     ? Settings.SettingsStore.Current.CharacterPick
                     : AiCharacterIndex(slot);

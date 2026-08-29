@@ -37,6 +37,7 @@ namespace TumbangPreso
         public static MatchDirector Match { get; private set; }
         public static RoundDirector Round { get; private set; }
         public static Audio.MusicDirector Music { get; private set; }
+        public static Net.PlayerAccount Account { get; private set; }
 
         /// <summary>The announcer. Godot had it inside AudioManager; it is its own director
         /// here because its take pooling, per-line cooldowns and music ducking are a system,
@@ -112,6 +113,7 @@ namespace TumbangPreso
             Round = _root.AddComponent<RoundDirector>();
             Music = _root.AddComponent<Audio.MusicDirector>();
             Voice = _root.AddComponent<Audio.VoiceDirector>();
+            Account = _root.AddComponent<Net.PlayerAccount>();
         }
 
         /// <summary>
@@ -127,6 +129,7 @@ namespace TumbangPreso
             Match = null;
             Round = null;
             Music = null;
+            Account = null;
 
             _menuTrack = null;
             _matchTrack = null;

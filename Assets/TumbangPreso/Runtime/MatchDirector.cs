@@ -89,6 +89,11 @@ namespace TumbangPreso
             // header: a point that can only be created in one function cannot be created on a
             // client at all, and the same is now true of the noise it makes.
             Net.MatchRpc.Instance?.BroadcastScore(slot, e);
+
+            // A first point is the first durable result the game can honestly call worth
+            // keeping today. PlayerAccount records the offer for the next menu rather than
+            // interrupting the round with a credential form.
+            GameServices.Account?.MarkWorthKeeping();
         }
 
         /// <summary>

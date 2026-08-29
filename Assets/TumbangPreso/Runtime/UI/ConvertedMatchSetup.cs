@@ -1071,7 +1071,7 @@ namespace TumbangPreso.UI
         private static string LocalName()
         {
             string name = Settings.GameSettings.SanitiseName(
-                Settings.SettingsStore.Current.PlayerName);
+                GameServices.Account?.LobbyName ?? Settings.SettingsStore.Current.PlayerName);
 
             name = string.IsNullOrWhiteSpace(name) ? "" : name.Trim();
 
@@ -1124,7 +1124,9 @@ namespace TumbangPreso.UI
 
             var s = Settings.SettingsStore.Current;
 
-            MatchRpc.Instance?.IdentifyServerRpc(NetIdentity.Token, s.PlayerName,
+            MatchRpc.Instance?.IdentifyServerRpc(
+                GameServices.Account?.ConnectionToken ?? NetIdentity.Token,
+                GameServices.Account?.LobbyName ?? s.PlayerName,
                                                  Mathf.Max(0, s.CharacterPick),
                                                  Mathf.Max(0, s.CanPick),
                                                  Mathf.Max(0, s.SlipperPick));
