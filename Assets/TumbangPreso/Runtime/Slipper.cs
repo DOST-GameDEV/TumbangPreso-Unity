@@ -360,6 +360,47 @@ namespace TumbangPreso
         /// that stops at a fixed floor epsilon draws its line to the ground. The line is right;
         /// the tall skin simply stops higher.
         /// </summary>
+        /// <summary>
+        /// The vector from this object's ORIGIN to the middle of the shoe it actually draws, in
+        /// world space at whatever rotation and scale it is wearing right now.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE THE ORIGIN IS NOT IN THE MIDDLE OF THE SHOE, AND THAT IS A
+        /// REQUIREMENT RATHER THAN AN ACCIDENT. `docs/TODO.md` § 70.2 fixed every slipper mesh as
+        /// **centred on XY and seated on Z = 0** — measured, *"every one has `min.y == 0.0000` in
+        /// glTF space"* — so the authored origin sits on the SOLE, at one END of the shoe. Placing
+        /// that origin at a hand therefore hangs the whole visible shoe off into space beside it.
+        ///
+        /// 🧑 2026-08-29, with a posed screenshot: *"also slipper floats for everyone including
+        /// bots, it isnt on their arms i had to do this pose to show it but it floats for all
+        /// poses"*. `docs/TODO.md` § 80.5.
+        ///
+        /// ⚠️⚠️ AND `CarryTests` IS BLIND TO IT BY CONSTRUCTION, WHICH IS WHY IT SHIPPED. That
+        /// test measures `Distance(slipper.transform.position, anchor.position) - RestHeight`,
+        /// which is the ORIGIN against the anchor. `RideAnchor` sets exactly that, so the
+        /// assertion is arithmetically satisfied while the drawn shoe is anywhere at all. **The
+        /// test measures the origin and the player sees the mesh.**
+        ///
+        /// ⚠️ THE VIEWMODEL ALREADY SOLVED THIS, IN THE OTHER VIEW AND WITH THE SAME REASONING.
+        /// `ViewmodelArms.NormaliseHeldSize` subtracts `grip * (bounds.center * k)` for precisely
+        /// this, and § 79.8 records the first-person version of the bug as its attempt 1: *"the
+        /// shoe hung in space beside the hand"*. The two carries were fixed years apart in
+        /// developer time and only one of them got the correction.
+        ///
+        /// ⚠️ READ OFF `Renderer.bounds`, WHICH IS SOLVED PER SKIN RATHER THAN GUESSED. Nine
+        /// slippers from five sources have five ideas of where a shoe's origin is; a constant
+        /// would be right for one of them. The world AABB of a ROTATED mesh is centred on that
+        /// mesh's rotated centre, so this is the true offset and not an approximation, and it
+        /// costs nothing because the renderer maintains those bounds anyway.
+        /// </summary>
+        public Vector3 DrawnCentreOffset
+        {
+            get
+            {
+                var r = GetComponentInChildren<Renderer>();
+                return r != null ? r.bounds.center - transform.position : Vector3.zero;
+            }
+        }
+
         public float RestHeight
         {
             get

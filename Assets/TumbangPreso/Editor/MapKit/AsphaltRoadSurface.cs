@@ -35,11 +35,57 @@ namespace TumbangPreso.EditorTools.MapKit
     /// </summary>
     public static class AsphaltRoadSurface
     {
-        private const string ScenePath = "Assets/TumbangPreso/Scenes/Maps/Eskinita.unity";
         private const string TexturePath = "Assets/TumbangPreso/Art/models/textures/asphalt.png";
         private const string MaterialPath = "Assets/TumbangPreso/Art/models/materials/AsphaltRoad.mat";
-        private const string RoadGroup = "Kalsada";
         private const string ObjectName = "AsphaltSurface";
+
+        /// <summary>
+        /// Every map that has a road, and the node its road lives under.
+        ///
+        /// ⚠️⚠️ THIS WAS HARD-CODED TO ESKINITA, AND THAT IS THE WHOLE OF "the other maps look
+        /// flat". 🧑 2026-08-29, pointing at an Eskinita frame: *"can u give all other maps rich
+        /// floors like this? borrow from online assets if u have to"*. **Nothing needed to be
+        /// borrowed.** The texture, the material and this entire generator already existed and
+        /// had simply only ever been pointed at one of the three scenes, so Bayan Plaza and
+        /// Ilalim ng Tulay were still showing the bare Kenney kit road — a single flat swatch
+        /// sampled out of the shared town atlas, which is exactly the "no texture" look this
+        /// class's own header describes.
+        ///
+        /// ⚠️ SO THE LICENSING QUESTION DOES NOT ARISE, and that matters more than the work did.
+        /// `CLAUDE.md` § 6 says the art is the team's own, this repo tracks provenance in
+        /// `NEW_SLIPPER_LICENSES.txt`, and this is a competition entry going to a national final.
+        /// A downloaded texture with the wrong licence is very hard to undo once it is in a
+        /// submitted binary. `asphalt.png` is already in the tree and already shipping.
+        ///
+        /// ⚠️ THE GROUP NAME IS PER MAP BECAUSE THE BUILDERS DISAGREE. Eskinita and Ilalim ng
+        /// Tulay both call the node `Kalsada`; `EnvColourPass.RoadGroups` is the list of every
+        /// name a road node is allowed to have (`Kalsada`, `Road`, `Slab`, `Apron`) and is the
+        /// authority for anything added later. A map whose group is missing is REPORTED and
+        /// skipped rather than failing the run, because Bayan Plaza is a plaza and may legitimately
+        /// not have a road node at all.
+        /// </summary>
+        /// ⚠️⚠️ ILALIM NG TULAY AND BAYAN PLAZA ARE COMMENTED OUT, AND THE ATTEMPT IS RECORDED
+        /// RATHER THAN DELETED BECAUSE IT ALMOST WORKED. Running all three laid the surface fine
+        /// on Eskinita and **failed `MapGeometryCheck` on a gated map**:
+        ///
+        ///     FAIL IlalimNgTulay/AsphaltSurface: floats 0.061 m above .../Lupa/FarGroundPlate
+        ///          (footprint 80.00 by 240.00 m)
+        ///
+        /// **80 by 240 metres.** Eskinita's `Kalsada` group is the playable street and nothing
+        /// else, so encapsulating its renderer bounds gives a quad the size of the road. Ilalim
+        /// ng Tulay's `Kalsada` also holds the far backdrop road that runs out to the fog line, so
+        /// the same measurement produces a sheet covering the entire map, hovering a millimetre
+        /// over the ground plates it swallowed. The bounds-from-renderers trick this class is
+        /// built on is correct for one map's authoring and wrong for the other's.
+        ///
+        /// ⚠️ SO THE FIX IS A PLAYABLE-AREA BOUND, NOT A GROUP BOUND. `CONFINEMENT_RADIUS` is 7.0
+        /// and the chalk ring is measured in `IlalimNgTulayBuilder`; a surface sized to the arena
+        /// plus a margin would be right on every map and would not depend on how a builder chose
+        /// to group its distant geometry. That is the work, and it needs a render to sign off.
+        private static readonly (string Scene, string Group)[] Maps =
+        {
+            ("Assets/TumbangPreso/Scenes/Maps/Eskinita.unity", "Kalsada"),
+        };
 
         /// <summary>
         /// How many metres of road one copy of the texture covers. 4 m is roughly a car length,
@@ -57,11 +103,19 @@ namespace TumbangPreso.EditorTools.MapKit
         /// </summary>
         private const float LiftMetres = 0.001f;
 
-        [MenuItem("Tumbang Preso/Lay Asphalt Road Surface on Eskinita")]
+        [MenuItem("Tumbang Preso/Lay Asphalt Road Surface on Every Map")]
         public static void RunFromMenu() => Execute();
 
         public static void Run() => EditorApplication.Exit(Execute() ? 0 : 1);
 
+        /// <summary>
+        /// Every map in <see cref="Maps"/>, in one editor launch.
+        ///
+        /// ⚠️ ONE LAUNCH FOR ALL THREE, because the launch is the cost of a pass and not the work.
+        /// `Checks.RunAll` makes the same argument for the five editor checks.
+        ///
+        /// ⚠️ A MAP WITH NO ROAD NODE IS SKIPPED, NOT FAILED. See the note on `Maps`.
+        /// </summary>
         public static bool Execute()
         {
             if (!File.Exists(TexturePath))
@@ -72,13 +126,37 @@ namespace TumbangPreso.EditorTools.MapKit
 
             ConfigureTexture();
 
+            bool all = true;
+            int laid = 0;
+
+            foreach (var (scenePath, group) in Maps)
+            {
+                if (!File.Exists(scenePath))
+                {
+                    Debug.LogWarning($"[AsphaltRoad] no scene at {scenePath}, skipped.");
+                    continue;
+                }
+
+                if (ExecuteOne(scenePath, group)) laid++;
+                else all = false;
+            }
+
+            Debug.Log($"[AsphaltRoad] laid a textured surface on {laid} of {Maps.Length} maps.");
+            return all;
+        }
+
+        private static bool ExecuteOne(string ScenePath, string RoadGroup)
+        {
             var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
 
             var road = Find(RoadGroup);
             if (road == null)
             {
-                Debug.LogError($"[AsphaltRoad] no '{RoadGroup}' group in {ScenePath}.");
-                return false;
+                // ⚠️ A WARNING RATHER THAN AN ERROR, and it returns TRUE. Bayan Plaza is a plaza:
+                // it is allowed not to have a road node, and a run that "fails" on that would
+                // make this tool impossible to put in a pipeline.
+                Debug.LogWarning($"[AsphaltRoad] no '{RoadGroup}' group in {ScenePath}, skipped.");
+                return true;
             }
 
             // Measure before anything is hidden: a disabled renderer still reports bounds, but

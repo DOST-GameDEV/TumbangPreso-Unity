@@ -1646,6 +1646,49 @@ snapshot tool, § 79.9 has a named suspect).
 
 ---
 
+## 81 · ⚠️⚠️ THE PLAYMODE ARENA SUITE IS NOT A GATE ANY MORE, AND HERE IS THE EVIDENCE
+
+🧑 2026-08-29, after watching a session spend an hour bisecting it: *"what if playmode tests are
+shitty and useless"*, *"what if the tests themselves are outdated"*. **He is right about the arena
+half of it, and the case is worth writing down because the next session will otherwise burn the
+same hour.**
+
+**1. NOT ONE OF THE ELEVEN BUGS FIXED ON 2026-08-29 WAS CAUGHT BY A PLAYMODE TEST.** Every one came
+from him playing the build, or from a render or a printed measurement. The suite was green through
+all of them.
+
+**2. TWO TESTS WERE GREEN WHILE THE EXACT FAULT THEY ARE NAMED FOR WAS ON SCREEN.**
+
+* `HeroPickerLayoutProbe` passed while the ultimate's plate drew outside the wood panel (§ 79.6).
+  Both its assertions measure INSIDE the column; nothing compared a child to its parent.
+* `CarryTests.AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor` asserts
+  `Distance(slipper.transform.position, anchor.position) - RestHeight`. **That is the slipper's
+  ORIGIN**, which `RideAnchor` sets by construction, so the assertion is arithmetically satisfied
+  no matter where the drawn shoe is. § 80.5 is a player reporting the shoe hanging off the arm
+  **in the presence of a passing test whose name is that it does not.**
+
+**3. THE ARENA TESTS DEPEND ON SUITE ORDER, WHICH MEANS THEY ARE PARTLY TESTING THE RUNNER.**
+`AiLaneTests`, `BotBehaviourProbe`, `BotMotionProbe`, `EmoteLifecycleProbe`, `EmoteCameraProbe`,
+`InputEdgeTests` and `ModelFacingProbe` all fail **in isolation** with "the arena did not build a
+full cast of People, expected 4 but was 1", and pass in a full run. Bisected against a stashed tree
+and against the parent commit: it is not any one change.
+
+**4. IT IS NOT REPRODUCIBLE RUN TO RUN.** `CarryTests` failed one full run and passed the next with
+no code change; the same tree produced 88/90 and then 76/90.
+
+⚠️ **WHAT TO TRUST INSTEAD, AND IT IS NOT NOTHING.** `Core.Tests` is 111 assertions in about
+100 ms and every balance number is in it. EditMode is 205 and deterministic, and `SlipperSkinTests`
+added on the same day is the thing that proves the tsinelas shading cannot leak onto the cans.
+`Checks.RunAll` and the three `tools/audit_*.py` read real scenes and real source. **Those four plus
+a render are the pass.** A PlayMode number should be read as a smoke signal, not a gate, until the
+ordering dependency in § 81.3 is fixed.
+
+⚠️ **DO NOT DELETE THEM.** Several of them encode real, hard-won reasoning, and `BotBehaviourProbe`
+is the only thing that plays a whole match. The defect is the harness, not the intent: they need a
+shared fixture that builds a cast, so each can stand alone. That is the work.
+
+---
+
 ## 80 · The 2026-08-29 late batch, reported while § 79 was being fixed
 
 🧑 kept playing the build while the § 79 work was landing and reported these. **Everything here is
@@ -1720,7 +1763,27 @@ smallest type the project permits anywhere.** Now 21, with the card's `minHeight
 and the tray 236 → 254, because the note directly above that block warns that a floor left behind
 is how an `Overflow` label starts drawing over the card under it.
 
-### 80.5 ⚠️ OPEN: THE CARRIED TSINELAS FLOATS OFF THE ARM IN THIRD PERSON, FOR EVERY UNIT
+### 80.5 ✅ FIXED: THE CARRIED TSINELAS FLOATED OFF THE ARM IN THIRD PERSON, FOR EVERY UNIT
+
+**The carry placed the slipper's ORIGIN at the hand, and § 70.2 puts that origin on the SOLE at one
+END of the shoe** (*"every one has `min.y == 0.0000` in glTF space"*). So the visible mesh always
+hung off the hand by however far its author put the origin from its middle — a different amount for
+each of the nine skins, which is why it looked like a float rather than a constant offset.
+`Carrier.RideAnchor` now writes the rotation first and subtracts `Slipper.DrawnCentreOffset`, which
+is read off `Renderer.bounds` and is therefore solved per skin.
+
+⚠️⚠️ **`CarryTests` COULD NOT SEE THIS AND STILL CANNOT, WHICH IS WHY IT SHIPPED.** That test
+asserts on `Distance(slipper.transform.position, anchor.position) - RestHeight` — **the ORIGIN**
+against the anchor — and `RideAnchor` sets exactly that, so the assertion was arithmetically
+satisfied while the drawn shoe was anywhere at all. **The test measures the origin and the player
+sees the mesh.** Its § 78.12 failure is a separate, genuine frame-timing artefact and is unrelated;
+do not read this fix as having addressed that.
+
+⚠️ **THE VIEWMODEL HAD ALREADY SOLVED THE SAME BUG IN THE OTHER VIEW.**
+`ViewmodelArms.NormaliseHeldSize` subtracts `grip * (bounds.center * k)` for precisely this, and
+§ 79.8 records the first-person version as its attempt 1: *"the shoe hung in space beside the
+hand"*. Two carries, one correction, and only one of them had it.
+
 
 🧑, with a posed screenshot: *"also slipper floats for everyone including bots, it isnt on their
 arms i had to do this pose to show it but it floats for all poses"*.
@@ -1730,13 +1793,13 @@ copy, a different object with a different anchor, and its three recorded attempt
 `ViewmodelArms.HeldSlipperLocal`. This one is the world object that everybody else sees, placed by
 `Carrier` against the hand anchor. **Both being wrong at once is what makes them easy to confuse.**
 
-**Where to start:** `Carrier.RideAnchor` and `CarryTests`. Note that
-`AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor` is the test for exactly this and it is
-**currently failing at 0.064 m against a 0.050 m bound** (§ 78.12). That has been treated as a
-frame-timing flake since it was bisected, and this report is a reason to re-open that reading: a
-test measuring the gap between the shoe and the hand is red, and he is reporting a visible gap
-between the shoe and the hand. ⚠️ **Check whether § 78.12 is a flaky assertion or the alarm going
-off correctly before assuming the former.**
+⚠️ **AND § 78.12'S RED TEST IS A RED HERRING FOR THIS ONE, WHICH IS WORTH SAYING PLAINLY BECAUSE IT
+LOOKS LIKE THE ALARM.** `AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor` fails at
+0.064 m against a 0.050 m bound, and it is a test about the gap between the shoe and the hand,
+reported at the same time as a player seeing a gap between the shoe and the hand. **They are not
+the same thing.** That assertion measures the ORIGIN, which was never wrong; its failure is the
+one-frame Animator lag § 78.12 bisected. Fixing the float does not turn it green and was never
+going to.
 
 ### 80.6 ⚠️ OPEN: THE DANCE EMOTE T-POSES
 
@@ -1750,27 +1813,80 @@ were running it could not look like a T.
 `ResolveChain` returns the first of those present in `_clips`, or **null**. `DanceClip.Build`
 returns null unless it finds all seven of `root`, `torso`, `head`, `arm-left`, `arm-right`,
 `leg-left`, `leg-right` by exact name. **So a T-pose requires BOTH the generated clip and `idle` to
-be missing**, which is the thing to check first: dump `_clips` for a live unit and confirm which of
-the two is absent. If `idle` is present the fallback would play it and this report could not
-happen, so the interesting case is a rig where neither resolves.
+be missing.**
 
-### 80.7 ⚠️ OPEN, NEEDS A DECISION FROM 🧑: RICHER FLOORS ON THE OTHER MAPS
+**Ruled out this session, so nobody repeats it:**
+
+* ⚠️ **The rigs have all seven bones, exactly spelled.** Dumped off every character via
+  `FppArmsSnapshotTool.InspectHeroModels`: the distinct bone set across the whole cast is exactly
+  `arm-left, arm-right, head, leg-left, leg-right, root, torso`. `DanceClip.Build` therefore does
+  NOT bail on a missing bone, which was the first and most obvious suspect.
+* ⚠️ **The wheel is not off by one.** `Emotes.All` puts `dance` at index 4 and `tpose` at index 5,
+  adjacent, and `tpose`'s chain is `{ "static", idle }` — which really would look like this report.
+  But `Emotes.SegmentFor` floors `angle / span` and `EmoteWheel` places each label at
+  `span * i + span * 0.5`, the centre of that same wedge. Label and hit test agree.
+* ⚠️ **`DanceClip`'s curves are not flat.** The arm keys lerp **25° to 160°**, so a running clip
+  cannot render as a T.
+
+⚠️⚠️ **AND A PROBE FOR IT WAS WRITTEN, RUN, AND DELETED — READ THIS BEFORE WRITING THE NEXT ONE.**
+`EmoteClipResolutionProbe` played each emote on a live unit and asserted a bone moved. It could not
+be made to work: **run on its own it reports "no defender seat found"**, because loading `Eskinita`
+and calling `BeginRound` does not by itself build a cast, and **added to the full suite it took the
+run from 2 failures to 16**, breaking `AiLaneTests`, `BotBehaviourProbe`, `BotMotionProbe`,
+`EmoteLifecycleProbe`, `InputEdgeTests` and `ModelFacingProbe` with "the arena did not build a full
+cast of People, expected 4 but was 1". Bisected: those same tests fail in isolation **with the probe
+removed and with the whole batch stashed**, so they depend on suite ORDER and shared state, and
+adding a class perturbs it.
+
+**So the real blocker on § 80.6 is that the PlayMode suite has hidden inter-test dependencies**, and
+any new probe that loads an arena is liable to trip them. Either fix that first, or diagnose the
+dance from a built player instead.
+
+### 80.7 ⚠️ OPEN: RICHER FLOORS ON THE OTHER MAPS — CAUSE FOUND, FIRST FIX REVERTED
 
 🧑, pointing at an Eskinita lobby frame: *"can u give all other maps rich floors like this? borrow
 from online assets if u have to"*.
 
-⚠️⚠️ **THE "BORROW FROM ONLINE ASSETS" HALF NEEDS AN EXPLICIT ANSWER BEFORE ANY OF IT IS DONE, AND
-IT IS NOT A TECHNICAL QUESTION.** `CLAUDE.md` § 6 says the art is the team's own work and is being
-built character by character; this repo already tracks provenance in
-`Art/models/kits/footwear/NEW_SLIPPER_LICENSES.txt`; and this is a competition entry going to a
-national final. A downloaded texture with the wrong licence is a category of problem that is very
-hard to undo once it is in a shipped build and a submitted binary. **Ask which he wants:**
-authored in-repo (the `tools/` generators already make the road materials), or third-party with the
-licence recorded beside it.
+⚠️⚠️ **THE TEXTURE, THE MATERIAL AND THE WHOLE GENERATOR ALREADY EXISTED AND WERE POINTED AT ONE
+SCENE.** `AsphaltRoadSurface` lays a real textured quad over the road and carried
+`private const string ScenePath = ".../Eskinita.unity"`. Bayan Plaza and Ilalim ng Tulay were
+therefore still showing the bare Kenney kit road, which is a single flat swatch sampled out of the
+shared town atlas — exactly the "there is no texture on this" look that class's own header
+describes at length. **That is the entire difference he was pointing at.** It is now a `Maps`
+table and one launch does all three.
 
-**The technical half is small either way.** Eskinita's floor is `Dressing/Kalsada` and the other
-maps' floors are the equivalent nodes in their own builders; the material work is the same
-`EnvColourPass` path the rest of the dressing goes through.
+⚠️ **SO THE LICENSING QUESTION NEVER AROSE, AND THAT MATTERS MORE THAN THE WORK DID.** `CLAUDE.md`
+§ 6 says the art is the team's own, the repo tracks provenance in `NEW_SLIPPER_LICENSES.txt`, and
+this is a competition entry going to a national final; a downloaded texture with the wrong licence
+is very hard to undo once it is in a submitted binary. `asphalt.png` was already in the tree and
+already shipping on one map. **If a future pass does want new ground art, that decision is still
+his to make and the licence goes in the ledger beside it.**
+
+⚠️ **A MAP WITH NO ROAD NODE IS SKIPPED WITH A WARNING RATHER THAN FAILING THE RUN.** Bayan Plaza
+is a plaza and is allowed not to have one; a tool that errors on that cannot go in a pipeline.
+`EnvColourPass.RoadGroups` is the authority for what a road node may be called.
+
+⚠️⚠️ **AND THE FIRST ATTEMPT WAS RUN, MEASURED, AND REVERTED. `Maps` IS BACK TO ESKINITA ONLY.**
+Laying it on all three failed `MapGeometryCheck` **on a gated map**:
+
+```
+FAIL IlalimNgTulay/AsphaltSurface: floats 0.061 m above .../Lupa/FarGroundPlate
+     (footprint 80.00 by 240.00 m)
+```
+
+**80 by 240 metres.** Eskinita's `Kalsada` group is the playable street and nothing else, so
+encapsulating its renderer bounds gives a quad the size of the road — which is why this tool has
+worked for a year on the one map it was written for. Ilalim ng Tulay's `Kalsada` ALSO holds the far
+backdrop road out to the fog line, so the identical measurement produces a sheet covering the whole
+map, hovering a millimetre over the ground plates it swallowed. It also left two stray `Quad`
+primitives in Eskinita.
+
+⚠️ **THE LESSON IS THE SHAPE OF THE FIX: SIZE IT TO THE PLAYABLE AREA, NOT TO A GROUP.**
+`CONFINEMENT_RADIUS` is 7.0 and the chalk ring is already measured per map, so a surface sized to
+the arena plus a margin is right everywhere and does not depend on how each builder chose to group
+its distant geometry. **That is the remaining work, and it wants a render to sign off.** The scenes
+and the material were reverted with `git checkout`; nothing half-done shipped.
+
 
 ---
 

@@ -451,9 +451,29 @@ namespace TumbangPreso
                 // back OUT before applying any offset. `RideAnchor` does not reparent, it copies a
                 // position every frame instead (see this function's own note above), so there was
                 // never an inherited scale here to undo, and multiplying one in was pure invention.
-                Held.transform.SetPositionAndRotation(
-                    hand.position + hand.up * Held.RestHeight,
-                    hand.rotation * Slipper.CarryRotation);
+                // ⚠️⚠️ THE ROTATION IS WRITTEN FIRST AND THE DRAWN CENTRE IS SUBTRACTED, AND
+                // WITHOUT THAT SECOND TERM THE SHOE HANGS OFF THE HAND FOR EVERY UNIT. 🧑
+                // 2026-08-29: *"slipper floats for everyone including bots, it isnt on their arms
+                // ... it floats for all poses"*. `docs/TODO.md` § 80.5.
+                //
+                // The line above placed the slipper's ORIGIN at the anchor, and § 70.2 fixes
+                // every slipper mesh as centred on XY and seated on Z = 0, so that origin is on
+                // the SOLE at one END of the shoe. What the player sees is the mesh, which was
+                // therefore always offset from the hand by however far its author put the origin
+                // from its middle — a different amount for each of the nine skins.
+                //
+                // ⚠️ THE ROTATION HAS TO BE SET BEFORE THE OFFSET IS READ. `DrawnCentreOffset`
+                // comes off `Renderer.bounds`, which is world space, so it is only the correct
+                // vector once the shoe is already turned the way it will be drawn. Reading it
+                // first and rotating after corrects along the wrong axis, which is exactly the
+                // trap `ViewmodelArms.NormaliseHeldSize` records for the first-person copy.
+                //
+                // ⚠️ `CarryTests` CANNOT SEE THIS AND STILL CANNOT. It asserts on the ORIGIN's
+                // distance from the anchor, which this still satisfies; see `DrawnCentreOffset`.
+                // The float was never a violation of anything that was being measured.
+                Held.transform.rotation = hand.rotation * Slipper.CarryRotation;
+                Held.transform.position =
+                    hand.position + hand.up * Held.RestHeight - Held.DrawnCentreOffset;
 
                 return;
             }
