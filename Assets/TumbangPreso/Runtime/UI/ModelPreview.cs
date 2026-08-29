@@ -535,7 +535,34 @@ namespace TumbangPreso.UI
             //
             // This screen is the one place a player looks at a character up close, so it is also
             // the only place the error was ever going to be visible.
-            Visual.ToonSkin.Apply(_model, Visual.ToonSkin.PersonOutlineWidth, palette);
+            // ⚠️⚠️ A PROP GETS THE PROP WIDTH, AND THIS SCREEN GAVE EVERYTHING THE PERSON ONE.
+            // 🧑 2026-08-29: *"lessen the outline for all slippers that shader applies"*,
+            // *"cant see some details anymore"*, and, on where he was looking: *"character select
+            // is what im talking abt btw"*.
+            //
+            // This tab shows three categories through one rig — the cast, the cans and the
+            // tsinelas — and every one of them was outlined at `PersonOutlineWidth`. That number
+            // is derived for a Person: the note above works it out from `PERSON_SCALE` 2.38 and
+            // the voxel face's own feature size, and it is more than three times
+            // `PropOutlineWidth`. On a 0.432 m shoe it is an ink shell far wider than the strap,
+            // the toe seam or the footbed lip it is supposed to be drawing a border around, which
+            // is the detail he cannot see. `docs/TODO.md` § 43 measured this exact failure on
+            // this exact model and fixed it only for the decal submesh.
+            //
+            // ⚠️ THE PALETTE IS THE DISCRIMINATOR AND IT IS NOT A PROXY. Every `person_*.asset`
+            // carries exactly 16 swatches and every `slipper_*` and `can_*` carries none, checked
+            // across the whole roster, because the sixteen-slot remap is what a Person IS to
+            // `ToonSkin` (see its `Variant`). A prop has no palette to remap, so the same test
+            // that decides whether to remap decides which border to draw.
+            //
+            // ⚠️ THE CAST IS UNCHANGED, WHICH HE ASKED FOR IN TERMS: *"make sure lessening shader
+            // for slippers doesnt lessen everyone's"*. A 16-colour subject still takes the 19 mm
+            // this method's note derives.
+            bool isPerson = palette != null && palette.Length == 16;
+
+            Visual.ToonSkin.Apply(_model,
+                isPerson ? Visual.ToonSkin.PersonOutlineWidth : Visual.ToonSkin.PropOutlineWidth,
+                palette);
 
             if (petModel != null)
             {

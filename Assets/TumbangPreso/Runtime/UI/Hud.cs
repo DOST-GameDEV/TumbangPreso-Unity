@@ -1570,6 +1570,13 @@ namespace TumbangPreso.UI
                 _lataUprightShown = lata.IsUpright ? 1 : 0;
                 _lataLabel.text = lata.IsUpright ? "LATA  ·  UPRIGHT" : "LATA DOWN";
                 _lataLabel.color = lata.IsUpright ? UiTheme.Defense : UiTheme.Offense;
+
+                // ⚠️ RE-FIT ON THE FRAME THE TEXT CHANGES, not on the next one. The call at the
+                // top of this method runs before either row is written, so on its own it would
+                // size the card to what it said LAST frame and the new line would sit in the old
+                // plate for a frame. Both writers re-fit; the guard inside makes the second call
+                // of a frame a pair of string compares.
+                FitLataCard();
             }
 
             bool down = !lata.IsUpright;
@@ -1685,6 +1692,11 @@ namespace TumbangPreso.UI
             _lataHintShown = line;
             _lataHint.text = line;
             _lataHint.enabled = line != "";
+
+            // The hint is the row that actually changes during a round, and it is the one whose
+            // longest member ("CAMPING  ·  DEFENSE SCORE PAUSED") used to hold the whole card
+            // open permanently. See `FitLataCard`.
+            FitLataCard();
         }
 
         /// <summary>
@@ -2930,18 +2942,28 @@ namespace TumbangPreso.UI
             _lataCard.gameObject.SetActive(false);
         }
 
-        /// <summary>Every string `UpdateLataCard` can put in the TITLE row. See
-        /// <see cref="LataHintLines"/> for the hint row and the reason both are lists.</summary>
+        /// <summary>
+        /// Every string `UpdateLataCard` can put in the TITLE row. See <see cref="LataHintLines"/>
+        /// for the hint row and the reason both are lists.
+        ///
+        /// ⚠️⚠️ THE SECOND ENTRY READ `"⚠  LATA DOWN  ⚠"` AND THE CARD HAS NOT DRAWN THAT SINCE
+        /// THE WARNING GLYPHS WERE REMOVED. `UpdateLataCard` writes a bare `"LATA DOWN"`; the
+        /// glyph pair went when the can stopped saying so in three places at once (see that
+        /// method's note on 🧑's *"repetitive lata down"*), and this list was not moved with it.
+        /// It mattered because the fit below MEASURED this array: the card was being sized for
+        /// two glyphs and four spaces it can never show, on every resolution, for a year.
+        /// </summary>
         public static readonly string[] LataTitleLines =
         {
             "LATA  ·  UPRIGHT",
-            "⚠  LATA DOWN  ⚠",
+            "LATA DOWN",
         };
 
         /// <summary>The authored width, which the fit below can only ever widen past.</summary>
         public const float LataCardFloor = 380.0f;
 
         private string _lataFittedLine;
+        private string _lataFittedHint;
         private float _lataFittedScale = -1.0f;
 
         /// <summary>
@@ -2960,6 +2982,26 @@ namespace TumbangPreso.UI
         /// probe an eighth of its frames. The scale changes when the window moves monitors and
         /// the line list never changes, so this runs about once a match.
         /// </summary>
+        /// ⚠️⚠️ IT FITS THE LINES THE CARD IS SHOWING NOW, NOT THE WIDEST IT COULD EVER SHOW.
+        /// 🧑 2026-08-29, over a frame of the card: *"fix this hud, it should only extend when it
+        /// has to, not all the tim"*. This measured all thirteen strings once and took the
+        /// maximum, so the plate sat permanently at the width of `"CAMPING  ·  DEFENSE SCORE
+        /// PAUSED"` — the longest line in the set and one of the rarest — while showing
+        /// `"LATA  ·  UPRIGHT"`. A card sized for its worst case is a card that is the wrong size
+        /// almost always, and the empty wood to the right of the text is what he was pointing at.
+        ///
+        /// ⚠️⚠️ THE PER-FRAME COST THE OLD SHAPE WAS AVOIDING IS STILL AVOIDED, AND THAT IS WHY
+        /// THE SENTINEL IS THE STRINGS RATHER THAN A BOOL. The note above is right that measuring
+        /// through a `Text` generates glyphs and must not run 60 times a second; it was wrong that
+        /// the only way to avoid it was to measure everything once. Keying on the two live
+        /// strings plus the scale makes the common frame a pair of string compares, and an actual
+        /// re-measure costs TWO strings on the frames the card changes what it says — which is
+        /// strictly less work than the thirteen this used to do, and it now happens a handful of
+        /// times a round instead of once a match.
+        ///
+        /// ⚠️ THE HINT IS MEASURED AS EMPTY WHILE IT IS DISABLED. `UpdateLataCard` sets
+        /// `_lataHint.enabled = line != ""`, so a card showing only a title must not be sized for
+        /// the stale sentence still sitting in the disabled label.
         private void FitLataCard()
         {
             if (_lataCard == null || _lataHint == null || _lataLabel == null) return;
@@ -2967,18 +3009,43 @@ namespace TumbangPreso.UI
             var canvas = _lataHint.canvas;
             float scale = canvas != null ? canvas.scaleFactor : 1.0f;
 
-            // The sentinel is the hint label's own identity plus the scale, so the first call
-            // always measures and later ones only re-measure when the canvas rescales.
-            if (_lataFittedLine == "fitted" && Mathf.Approximately(scale, _lataFittedScale)) return;
+            string title = _lataLabel.text ?? "";
+            string hint = _lataHint.enabled ? _lataHint.text ?? "" : "";
 
-            _lataFittedLine = "fitted";
+            // ⚠️ THE TWO LINES ARE CACHED SEPARATELY RATHER THAN JOINED INTO ONE KEY. Under
+            // a bare concatenation the pairs ("AB", "C") and ("A", "BC") produce the same key,
+            // so the card would keep a width that had been measured for different text. A
+            // separator character fixes that only for as long as no line can ever contain it;
+            // two fields cannot collide at all and cost one extra string compare.
+            if (_lataFittedLine == title && _lataFittedHint == hint &&
+                Mathf.Approximately(scale, _lataFittedScale)) return;
+
+            _lataFittedLine = title;
+            _lataFittedHint = hint;
             _lataFittedScale = scale;
 
-            float widest = Mathf.Max(WidestLineWidth(_lataHint, LataHintLines),
-                                     WidestLineWidth(_lataLabel, LataTitleLines));
+            float needed = Mathf.Max(LineWidth(_lataLabel, title), LineWidth(_lataHint, hint));
 
             var rt = _lataCard.rectTransform;
-            rt.sizeDelta = new Vector2(Mathf.Max(LataCardFloor, widest), rt.sizeDelta.y);
+            rt.sizeDelta = new Vector2(Mathf.Max(LataCardFloor, needed), rt.sizeDelta.y);
+        }
+
+        /// <summary>
+        /// The width one line needs, measured through the label that will draw it and padded by
+        /// the `WoodCard` inset. Transcribed from `WidestLineWidth`, which this replaces.
+        /// </summary>
+        private static float LineWidth(Text probe, string line)
+        {
+            if (string.IsNullOrEmpty(line)) return 0.0f;
+
+            string keep = probe.text;
+            probe.text = line;
+            float width = probe.preferredWidth;
+            probe.text = keep;
+
+            // 22 left and 22 right, from `WoodCard`'s padding, plus a pixel so a rounded
+            // `preferredWidth` never lands exactly on the border.
+            return Mathf.Ceil(width) + 45.0f;
         }
 
         /// <summary>
@@ -3011,27 +3078,15 @@ namespace TumbangPreso.UI
             "PROTECTED  9.9s",
         };
 
-        /// <summary>
-        /// The width the card needs for the longest string it can ever show, measured through the
-        /// label that will draw it and padded by the `WoodCard` inset.
-        /// </summary>
-        private static float WidestLineWidth(Text probe, string[] lines)
-        {
-            string keep = probe.text;
-            float widest = 0.0f;
-
-            foreach (string line in lines)
-            {
-                probe.text = line;
-                widest = Mathf.Max(widest, probe.preferredWidth);
-            }
-
-            probe.text = keep;
-
-            // 22 left and 22 right, from `WoodCard`'s padding, plus a pixel so a rounded
-            // `preferredWidth` never lands exactly on the border.
-            return Mathf.Ceil(widest) + 45.0f;
-        }
+        // ⚠️⚠️ `WidestLineWidth` WAS DELETED HERE, AND THE REASON IS THE NOTE IN `BuildLataCard`.
+        // That note records this file's own worst bug of the kind: the method was written, its
+        // line lists were written, both were documented in `docs/TODO.md` § 18 as the worked
+        // example — and nothing called it, so the card shipped 147 units too narrow off the right
+        // edge of the display. `FitLataCard` now measures the two live lines instead of the
+        // thirteen possible ones, which left this with no call site again. Leaving it would
+        // rebuild the exact trap that note exists to describe, so it is gone rather than kept
+        // "in case": `LineWidth` is the one-line form and the lists it used to walk are still
+        // here, still public, and still what `HudOverflowProbe` reads.
 
         /// <summary>
         /// The get-up prompt: which key, and how close the mashing has got.

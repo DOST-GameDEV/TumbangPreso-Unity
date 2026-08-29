@@ -607,6 +607,18 @@ namespace TumbangPreso
             }
 
             var s = go.AddComponent<Slipper>();
+
+            // ⚠️⚠️ THE STABLE IDENTITY IS SET HERE AND NEVER AGAIN, WHICH IS THE POINT OF IT.
+            // `OwnerSlot` below starts equal to it and is then rewritten every round by
+            // `SliceRunner.EquipOwnedSlippers` (the taya's shoe goes to -1). `SeatOfOrigin` does
+            // not move, so `MatchRpc.FindSlipper` has something to address a tsinelas BY that
+            // cannot vanish underneath it. `docs/TODO.md` § 78.1 is what this fixes and
+            // `Slipper.SeatOfOrigin` carries the reasoning.
+            //
+            // ⚠️ ASSIGNED ON EVERY PEER, WHICH IS WHY IT NEEDS NO REPLICATION. This method runs
+            // on host and client alike and indexes by seat in both, so the two ends agree by
+            // construction rather than by being told.
+            s.SeatOfOrigin = slot;
             s.OwnerSlot = slot;
             s.SkinIndex = pick;
 

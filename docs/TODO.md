@@ -429,7 +429,7 @@ opposite, which § 77.3 records.
 
 ---
 
-## 75 · The slipper throw wind-up, and what was actually checked ⚠️ OPEN, NEEDS ONE ANSWER
+## 75 · The slipper throw wind-up, and what was actually checked ✅ CLOSED 2026-08-29
 
 🧑 2026-08-29: *"no wind up charger for slipper throw"*.
 
@@ -459,6 +459,12 @@ want different work:
 
 **Done looks like:** ask which, then do it. Do not guess: (1) changes a number `Design.md`
 owns, and shipping the wrong one of these is a retune that has to be undone.
+
+✅ **ASKED AND ANSWERED 2026-08-29: reading (3).** 🧑 picked *"the arm barely moves, 0.62 rad
+is too subtle"*, so this was presentation and not balance after all. `ViewmodelArms.WindupRad`
+is 1.02 rad and **no number in `Balance` or `Design.md` moved**. § 78.5 has the change and the
+bound that caps it. ⚠️ **The value of this entry is that it was NOT guessed**: readings (1) and
+(2) would each have shipped a change he did not ask for, and (1) would have been a retune.
 
 ## 76 · Holding the pickup key does not right the can in the tutorial ✅ CLOSED 2026-08-29
 
@@ -716,6 +722,386 @@ only when the host refuses a client's cast, and no test in this repository has o
 against another peer's kit. **Done looks like:** a two-process run that forces a refusal, which a
 stale pose induces most easily by holding back the client's `SubmitMove`, and asserts that the
 owner's cooldown comes back.
+
+---
+
+## 78 · The two-machine acceptance test, run at last, and the batch it paid for
+
+🧑 2026-08-29, opening the session: *"thoroughly fix network its heabily broken still especially
+in lan"*. § 77.5 said the acceptance test had never been run and that everything in § 77 was
+"source and arithmetic". It has been run now. **Two built players, two processes, over the Wi-Fi
+adapter's own LAN address (192.168.1.144) rather than loopback**, `NetStateReport` on both.
+
+⚠️⚠️ **THIS IS STILL NOT TWO MACHINES.** One desktop, one NIC, one clock. § 38.20's standing note
+survives and should not be ticked off this entry. What it DOES retire is weaker and was still
+worth buying: until now nothing had ever compared what two live peers believe about the same
+running match, and four of the findings below are things no amount of reading the wire produced.
+
+### 78.0 ⚠️⚠️ THE HARNESS NEEDS `-tp-autostart`, AND WITHOUT IT A TWO-PROCESS RUN MEASURES NOTHING
+
+Recorded first because it cost the first three runs and it looks exactly like a catastrophic
+networking bug.
+
+`-tp-host -tp-allbots` alone, with a client attached, produces: `round 0`, `round active False`,
+every score 0, 0 lata flips, and four bots wandering an arena for 70 s. The identical switches
+with **no** client produce a real match. The obvious reading is "connecting a second peer stops
+the round starting", and it is wrong.
+
+⚠️ `MatchInstaller.UseReadyGate` defaults **true**, so `runner.AutoStart` is false and
+`ReadyGate` owns the round start. `ExpectedReadyCount` is `LobbySession.PlayingPeerCount`, which
+is 1 for a lone host and 2 once a client attaches, and **nothing in `-tp-host` presses R**.
+A solo host trips its own quorum; two peers never do. `NetAutomationProbe` exists for exactly
+this and is the fix: **`-tp-autostart 2` on BOTH processes.** With it the match plays normally,
+which is what every measurement below was taken from.
+
+**Done looks like:** `NetStateReport`'s header naming the ready state, so a run that never
+started says so on its own face instead of looking like a replication failure. Not built.
+
+### 78.1 ⚠️⚠️ WHAT TWO LIVE PEERS AGREE AND DISAGREE ABOUT, MEASURED — AND THE TAYA'S TSINELAS ✅ FIXED
+
+Host `-tp-allbots -tp-autostart 2`; client **without** `-tp-allbots`, so the client runs no bot
+of its own and **everything it believes arrived over the wire**. Reports ~6 s apart (the client
+is given the shorter `-tp-netseconds`, per § 56's note about `Application.Quit`).
+
+| | host | client |
+|---|---|---|
+| round / defender / active | 2 / 1 / True | 2 / 1 / True |
+| characters | 0, 3, 0, 3 | 0, 3, 0, 3 |
+| score seat 0 / 2 | 1650 / 200 | 1650 / 200 |
+| travelled seat 0 / 2 / 3 | 1.40 / 1.50 / 1.59 m/s | 1.30 / 1.52 / 1.66 m/s |
+| lata upright, flips | False, 19 | False, 17 |
+| **slipper 0-3 state** | **0, -1, 0, 0 (all free)** | **1, 1, 1, 1 (all held)** |
+| **slipper 0-3 holder** | **-1, -1, -1, -1** | **0, 1, 2, 3** |
+| **skills seat 3** | **3** | **19** |
+
+✅ **The round, the roster, the taya, the scores and the MOVEMENT all replicate.** Seats 0, 2 and
+3 land within 7 per cent of the host's metres-per-second on a client that is simulating none of
+them. That is the first direct evidence this project has that the transform stream works, and it
+is § 71.3 and § 77.1 doing their job.
+
+⚠️⚠️ **THE SLIPPER STATE DOES NOT, AND ONE ROW OF IT IS A REAL BUG THAT IS NOW DIAGNOSED.**
+
+⚠️ **First, what the 6 s gap DOES explain, said plainly so nobody over-reads the table.** Slippers
+2 and 3 show 31 and 25 transitions on the client against 33 and 27 on the host, so the client is
+receiving those edges; the two peers sampling `Held` versus `Loose` six seconds apart in a live
+round is ordinary and is **not** evidence of anything. Do not quote those two rows as a fault.
+
+⚠⚠ **Slipper 1 is the one that cannot be explained by timing, and it is the taya's.** The
+host reports state `-1`, which is `NetStateReport`'s "no such slipper" and not a `SlipperState`;
+the client reports it `Held` by seat 1. Seat 1 is the DEFENDER in round 2. A taya holding a
+tsinelas is not a six-second window, it is a whole-round property, and it is wrong by the rules.
+
+**The mechanism, and it is one line:** `MatchRpc.FindSlipper` addresses a slipper **by its
+`OwnerSlot`**, and `OwnerSlot` is mutable state that changes every round.
+`SliceRunner.EquipOwnedSlippers` disowns the taya's shoe with
+`slipper.OwnerSlot = index != defenderSlot && seated ? index : -1`, and `FindSlipper` skips
+anything with `owner < 0`. So the moment a seat becomes taya:
+
+1. the host's tick loop does `BroadcastSlipperStateIfChanged(FindSlipper(slot))`, which is
+   `(null)` for the defender's slot and returns immediately, so **that shoe stops being
+   broadcast at all**; and
+2. even if it were sent, `BroadcastSlipperState` writes `OwnerSlot` as the first field and
+   `SyncSlipperClientRpc` opens with `FindSlipper(ownerSlot)`, so a `-1` is **unaddressable on
+   the receiving side too**.
+
+**A client therefore never hears another word about the taya's tsinelas for the whole round**, and
+keeps the last state it did hear: `Held`, by the seat that is now the taya. `Carrier` parents the
+shoe to the carry anchor on every peer, so **every non-host peer renders the taya walking around
+carrying a slipper**, all round, every round. The host cannot see it: on the host that object is
+correctly parked out of play. That is § 38's thesis exactly, one object further in.
+
+⚠️ **IT IS NOT A KEEPALIVE FAILURE, WHICH IS WHY § 77.1 IS NOT AT FAULT.** The 0.5 s keepalive
+works; it is never reached, because the object is filtered out one call earlier by an addressing
+scheme that uses a field the game rewrites each round. **An identity must not be a piece of
+mutable state.**
+
+**Done looks like** the taya's tsinelas parked out of play on a client exactly as it is on the
+host, and slipper 1's row matching. Two candidate fixes, and they are not equal:
+
+* **Address by the slipper's INDEX in `SliceRunner.Slippers`, which never changes**, and let
+  `OwnerSlot` travel as an ordinary replicated field. Correct, and it is a wire change: a new key
+  field on `SyncSlipper` and `SlipperPose`, `ProtocolVersion` 11 → 12, and
+  `TheProtocolCarriesEveryRosterBump` moved in the same commit.
+* **Keep `OwnerSlot` stable as the seat of origin and add a separate replicated `InPlay` flag**
+  for the disown. Smaller on the wire, but `OwnerSlot == -1` currently MEANS "disowned" to
+  `CanBeGrabbedBy`, to scoring and to the pickup rules, so it moves that meaning across several
+  files and is the wider blast radius of the two.
+
+✅ **FIXED, TAKING THE FIRST OPTION.** `Slipper.SeatOfOrigin` is assigned once per match in
+`MatchInstaller.BuildSlipper` and never written again; `MatchRpc.FindSlipper` keys on it, the
+keepalive and change-detection dictionaries key on it, and `SyncSlipper` and `SlipperPose` are
+addressed by it. `OwnerSlot` goes back to being what its own note always said it was — a LABEL for
+the foot arrow and the owner glow — and now TRAVELS as ordinary payload instead of doubling as an
+address.
+
+⚠️ **OWNERSHIP JOINED THE WATCHED SET IN THE SAME EDIT, and leaving it out would have been a
+quieter version of the same bug.** The round that disowns a slipper changes no state, no holder,
+no affinity and no thrower, so with ownership unwatched the change would have been sent only on
+the next half-second keepalive — and every client would have kept the previous round's owner on
+its arrow and its glow until then.
+
+⚠️ **IT IS NOT DERIVED ON THE CLIENT, DELIBERATELY.** A client could work ownership out from the
+defender it already replicates, and that would have avoided the wire field; it would also be a
+second implementation of `EquipOwnedSlippers`' rule, free to drift from the first. One author.
+
+⚠⚠ **`ProtocolVersion` 11 → 12, AND THIS IS THE BUMP `audit_wire_payloads.py` CANNOT ARGUE FOR.**
+The audit compares writer against reader and both halves moved together, so it reads 0 mismatched
+and is correct to. What it cannot see is an 11 peer against a 12 peer, where the field count
+differs by one and everything after the first field is read at the wrong offset — silently misread
+bytes, not an error. § 38.20's last bullet is the general statement; this is the instance.
+`TheProtocolCarriesEveryRosterBump` moved in the same commit.
+
+⚠⚠ **AND THE ADDRESSING FIX ALONE DID NOT WORK. THE VERIFICATION RUN IS WHAT SAID SO, AND
+THIS IS THE MOST USEFUL LINE IN THE ENTRY.** With `SeatOfOrigin` keying everything, the re-run
+still showed the host at `-1` and the client at `Held by 1`. The reason is a second host-only
+action nobody had written down: `EquipOwnedSlippers` does not merely disown the taya's shoe, it
+**switches the object off** — `slipper.gameObject.SetActive(false)`, to take it out of
+`Carrier.TryPickup` and out of the render. Two consequences, both fatal:
+
+1. `MatchRpc.FindSlipper` swept with `FindObjectsInactive.Exclude`, so **the host could not find
+   the object it had just parked** and still never broadcast it; and
+2. nothing on the wire carried "switched off" anyway, so a client had no way to act on it.
+
+**So the complete fix is three things, not one:** address by `SeatOfOrigin`; sweep with
+`FindObjectsInactive.Include` so a parked shoe stays findable; and put the active flag on
+`SyncSlipper` as discrete state, applied on the client with the object switched ON before the
+snapshot and OFF after it (so `ReleasePreviousHolder` runs and the taya's `Carrier` actually lets
+go rather than being left pointing at a hidden object).
+
+⚠️ **"IT IS SWITCHED OFF" IS STATE, AND HOST-ONLY `SetActive` IS A REPLICATION HOLE WHEREVER IT
+APPEARS.** This is worth generalising: a host that hides an object behind `ShouldResolve()` has
+changed the world for itself only. Nothing audits for it — `audit_wire_payloads` compares fields
+that exist and cannot ask about a field that should.
+
+✅ **VERIFIED BY THE SAME MEASUREMENT THAT FOUND IT.** Two processes over the Wi-Fi LAN address,
+host `-tp-allbots`, client simulating nothing, round 2 with seat 1 as taya. Slipper 1's row, both
+peers:
+
+    slipper    on  state  owner  holder  changes
+    1           n      1     -1       1        1
+
+Identical. Before the fix the client had that row `on = y, holder 1` while the host could not
+address the object at all. The `on` column and the `owner` column are new in `NetStateReport` for
+exactly this comparison — the report keyed on `OwnerSlot` too, so **the instrument had the same
+bug as the thing it was measuring** and could only ever print `-1`.
+
+⚠️ The live shoes (2 and 3) still differ between the two reports and that remains expected: they
+are being picked up and thrown while the two samples are ~6 s apart. Only slipper 1 is the
+whole-round property, and it is the one that had to match.
+
+⚠️ **`skills` 19 against 3 on one seat is the same shape one layer up**, and it is NOT the
+all-bots confound this time. § 77.2's `CastDenied` answers a refusal, but a request that fails
+`SenderOwnsClaimedSeat` is still dropped in silence by design, so a client that predicts on a
+seat it does not own diverges permanently. Whether that is what this is has not been established.
+
+**Done looks like:** a run where the two slipper tables match. Reproduce with the scripts in this
+entry's commit message; they take about four minutes.
+
+### 78.2 ⚠️⚠️ THE SPECTATOR CAMERA NEVER HAD THE INK PASS, SO EVERY SCREENSHOT WAS A DIFFERENT GAME ✅
+
+🧑, holding a spectator frame beside a first-person one: *"is it js me or the shaders are very dif
+for spectator and actual"*, then *"spectatator might not be getting shaders"*. He was right.
+
+`CameraRig.Awake` adds three passes: `ColourGrade`, `PostAntiAlias` and `WorldOutline`.
+`SpectatorCamera.Awake` added the first two and **never the third**. The spectator frame has the
+grade and the filter and no ink line anywhere; the gameplay frame has a black edge on every
+silhouette. Same street, same shaders on the models, different picture.
+
+⚠️ **This is the second half of the fault `SpectatorCamera`'s own `ColourGrade` note records.**
+That note says this camera "is a fourth rig with its own object (§ 3a) and was simply never given
+one" — the grade was then added, and the outline, which landed on `CameraRig` in a different
+session for a different reason, was not. **Two rigs that must look identical, built by two
+methods**, which is §§ 53.1, 57.1, 60, 62.1 and 63.1 one surface further out.
+
+⚠️⚠️ **IT MATTERS MORE THAN IT LOOKS BECAUSE SPECTATOR IS THE CINEMATICS CAMERA.** Every recording,
+every sponsor screenshot and every replay this project produces comes out of this rig, so the
+frame the game was being judged by was the one missing its art direction.
+
+**Fixed** by adding `WorldOutline` after `PostAntiAlias` and before the replay capture, which is
+`CameraRig`'s own order. **Anything added to `CameraRig`'s post stack belongs here too.**
+
+### 78.3 ⚠️ THE LATA CARD WAS SIZED FOR ITS WORST CASE AND THEREFORE WRONG ALMOST ALWAYS ✅
+
+🧑, over a frame of it: *"fix this hud, it should only extend when it has to, not all the tim"*.
+
+`FitLataCard` measured all thirteen strings the card can ever hold and took the maximum, once.
+The plate then sat permanently at the width of `"CAMPING  ·  DEFENSE SCORE PAUSED"` — the longest
+line in the set and one of the rarest — while showing `"LATA  ·  UPRIGHT"`.
+
+⚠️ **And one of the thirteen was a string the card cannot show.** `LataTitleLines` still carried
+`"⚠  LATA DOWN  ⚠"`; the glyph pair was removed when the can stopped saying so in three places at
+once, and this list was not moved with it. The card had been sized for two glyphs and four spaces
+for as long as the fit has existed.
+
+**Fixed** by fitting the two lines the card is showing NOW, keyed on those two strings plus the
+canvas scale, and re-fitting on the frame either row changes. ⚠️ The per-frame cost the old shape
+was avoiding is still avoided and is now *lower*: two strings on the few frames the card changes
+what it says, against thirteen once.
+
+⚠️ **`WidestLineWidth` was deleted rather than left unused**, because `BuildLataCard`'s own note
+records this file's worst bug of that kind: that method and its lists were written, documented in
+§ 18 as the worked example, and **nothing called it**, so the card shipped 147 units off the right
+edge of the display. Leaving it with no call site again would rebuild the exact trap.
+
+### 78.4 ⚠️⚠️ THE FIRST-PERSON TSINELAS WAS ANCHORED BY ITS MESH ORIGIN AND NEVER ROTATED ✅
+
+🧑: *"the slippers on my arm dont look right"*, *"iits floating a bit and doesnt look the way a
+slipper would sit on a hand"*, *"pls fix the fpp view on slippers"*.
+
+Two faults, and the screenshot shows both: the shoe hangs in space between the arms, and it lies
+across the view with its sole to the camera.
+
+⚠️ **The float is § 70.2's own requirement meeting a hand-typed offset.** Every slipper mesh is
+**centred on XY and seated on Z = 0** — measured, *"every one has `min.y == 0.0000`"* — so the
+authored origin is on the SOLE at one end of the shoe. `HeldSlipperLocal` placed that ORIGIN at
+the hand, which puts the sole's corner in the fist and the whole shoe out beside it.
+`NormaliseHeldSize` now subtracts the scaled bounds centre, so the MIDDLE of the shoe lands on
+the anchor whatever origin its author chose.
+
+⚠️ **The rotation was simply never applied.** `Carrier` places the world object with
+`hand.rotation * Slipper.CarryRotation`, and § 70.3 fixed **+X as the length convention** for the
+whole roster. The viewmodel set `localPosition` and stopped. It now reuses `Slipper.CarryRotation`
+rather than restating the quarter turn, plus a 14° roll so the footbed shows.
+
+⚠️⚠️ **`SlipperLength` IS UNCHANGED AT 0.46 AND MUST STAY THAT WAY.** It reads oversized in the
+frame and that is deliberate: it was raised from 0.34 on 🧑's explicit *"pls try to make slipper
+look bigger in fpp too bcz it looks so small"*. The report this entry fixes is placement, and
+centring the shoe in the fist changes how it fills the frame on its own. **Do not "also" shrink
+it; that re-opens a closed report.**
+
+### 78.5 ⚠️ § 75 ANSWERED: THE WIND-UP IS PRESENT AND WAS TOO SMALL TO SEE ✅
+
+§ 75 refused to guess between three readings because one of them changes a number `Design.md`
+owns. Asked and answered: 🧑 picked **"the arm barely moves, 0.62 rad is too subtle"**.
+
+`ViewmodelArms.WindupRad` 0.62 → **1.02 rad (36° → 58°)**. `CharacterAnimator.ChargePoseRad` is
+defined as that field, so the third-person body moves with the first-person arm and the other
+three players get the read too.
+
+⚠️⚠️ **NOTHING IN `Balance` MOVED.** `ThrowRules.PowerFor`, `ChargeFullTime` and `ChargeMinPower`
+are untouched, so a tap still throws instantly at the same power. This is presentation only and
+`docs/Design.md` is unaffected — which is precisely why § 75 was worth leaving open for an answer.
+
+⚠️ The .gd's original bound still caps it: the fist must stay inside the frame at the top of the
+swing. 58° holds that; further does not.
+
+### 78.6 ⚠️⚠️ R READIED A SPECTATOR, AND THE VOTE COUNTED IN A QUORUM THAT EXCLUDES THEM ✅
+
+🧑: *"r for spectatotr does ready and replay, conflict"*.
+
+`CLAUDE.md` § 4 lets the spectator set reuse gameplay keys, and the whole permission rests on one
+sentence: *"a spectator has no body, no seat and no `CharacterMotor`, so while watching every
+gameplay action is inert"*. **READY was the exception nobody checked.** `ReadyGate.Update` reads
+the `ReadyUp` action straight off the input asset rather than through a body, so R rolled the
+replay and submitted a vote in the same frame.
+
+⚠️⚠️ **AND IT WAS A CORRECTNESS BUG, NOT ONLY A CONTROL ONE.** `ExpectedReadyCount` counts
+`PlayingPeerCount`, which excludes spectators by construction, while `DeclareReady` keyed the set
+on the sender's peer id and asked no such question. **A watcher's vote was added to a quorum that
+had never counted them**, so three people watching a two-player lobby could start the match on
+their own. The set and the total now come from the same population.
+
+⚠️ Gated on `GameLaunch.Spectator` rather than `_local == null`, because under `AllBots` the gate
+is handed seat 0 as a stand-in local (§ 34's clamp). `NetAutomationProbe` calls
+`DeclareReadyServerRpc` directly, so `-tp-autostart` still works on an all-bots peer.
+
+### 78.7 ⚠️ THE INK WAS TOO HEAVY ON PROPS, IN THREE PLACES ✅
+
+🧑: *"lessen the outline for all slippers that shader applies"*, *"as well as overall effect of
+shader, lessen it"*, *"makes it ugly"*, *"cant see some details anymore"*, and the bound:
+*"make sure lessening shader for slippers doesnt lessen everyone's"*.
+
+1. **`ToonSkin.PropOutlineWidth` 0.012 → 0.006.** § 43 already did this arithmetic and then fixed
+   only the symptom: *"0.012 m of world-space ink for a 0.432 m shoe"* is **2.8 per cent of the
+   model's own length per side**. It stopped the hull eating the swoosh by suppressing the border
+   on slot > 0, and left every other piece of relief on a shoe inside a 12 mm shell.
+2. **`WorldOutline._opacity` 1.0 → 0.6.** The screen-space pass stacks on top of the per-model
+   hull, so every silhouette was lined twice. Opacity rather than thickness: a thinner
+   screen-space line breaks up under camera motion because the edge is found per pixel.
+3. **`ModelPreview` gave PROPS the PERSON width.** The character screen shows the cast, the cans
+   and the tsinelas through one rig and outlined all three at `PersonOutlineWidth`, which is
+   derived for a 2.38-scaled voxel face and is more than three times the prop number.
+
+⚠️ **The cast is untouched in all three.** `PersonOutlineWidth` keeps its measured 0.008 × 2.38.
+The discriminator in `ModelPreview` is the 16-colour palette, which every `person_*.asset` carries
+and no `slipper_*` or `can_*` does — the same test that decides whether to remap decides which
+border to draw.
+
+### 78.8 ⚠️ IKE READS WHITE ON CHARACTER SELECT, AND THE FIRST TWO EXPLANATIONS WERE WRONG ⚠️ OPEN
+
+🧑: *"pls make ike black too, the shader made it white"*, and, asked where: *"character select is
+what im talking abt btw"*.
+
+**Ruled out by measuring, not by reading:**
+
+* **The mesh and the material.** `tsinelas_sike.obj` renders correctly DARK on `ModelSheet`
+  (`Logs/model-sheet.png`, r56c6), wearing the game's own `ToonSkin` material. The `.mtl` still
+  carries § 70.1's `Kd 0.105 0.115 0.145` and the roster asset still points at the `.obj`.
+* **The preview's ambient.** The obvious candidate, because `TumbangPreso/Toon` is a surface
+  shader with no `noambient` and Unity adds `RenderSettings.ambientLight` in **after the tonemap
+  and outside the palette remap**, which lifts a near-black albedo far more than a bright one.
+  ⚠️ **It does not survive arithmetic:** the preview uses (0.627, 0.576, 0.522) × 0.8775 and the
+  model sheet, where the shoe looks right, uses (0.62, 0.58, 0.52) × 0.78. **Those are 14 per cent
+  apart and cannot turn black into white.**
+
+⚠️ **§ 43's rule applies and is why this is still open: a render from one camera is not evidence
+about another.** `ModelSheet` is ORTHOGRAPHIC and `ModelPreview` is PERSPECTIVE at near 0.05, and
+that difference has already produced one IKE fault that was signed off on a clean sheet render and
+was still broken in the build. The prop-width fix in § 78.7 changes this screen and may move it.
+
+**Done looks like:** a capture of the character screen on the TSINELAS tab with IKE selected,
+compared against `Logs/model-sheet.png` r56c6. `tools/shoot_charselect.ps1` drives the built
+player to that screen and is the instrument; it needs the two extra clicks for the tab and the
+row. **Do not adjust a colour until that picture exists.**
+
+### 78.10 ⚠️ DANTE'S ARM MARKINGS WERE WEARING AN INK BORDER WIDER THAN THEMSELVES ✅
+
+🧑 2026-08-29, off a first-person frame: *"fix the markings and toon shader lines or wtv lines
+thes are for dante's fpp bcz it doesnt look like his character's real markings"*.
+
+`ViewmodelArms.AddMeshAccessory` outlined **every** accessory at `ToonSkin.PersonOutlineWidth`,
+which is 0.019 m and is derived for a whole Person (the 2.38 rig scale and the voxel face's
+feature size). Dante's runic glyph and his chevrons are boxes **0.015 to 0.018 m thick**, so the
+inverted-hull border was **wider than the plate it was outlining**: it swallowed the marking, met
+itself around the edges, and what reached the screen was a sprawl of thin dark lines instead of a
+green glyph with a dark edge.
+
+⚠️⚠️ **IT IS § 43 ON A DIFFERENT SURFACE.** That entry measured the identical failure on the IKE
+swoosh — *"a hull far larger than the shape it is supposed to outline, so the ink covers the decal
+and only fragments show through"* — and fixed it by dropping the hull on `slot > 0`, on the rule
+that detail sitting on an already-outlined base needs no border of its own. **An accessory is that
+same thing built from separate objects rather than submeshes**, so the slot rule could not reach
+it and the fault survived on the viewmodel.
+
+**Fixed** by solving the width from the accessory's own geometry: a quarter of its THINNEST axis,
+capped at `PersonOutlineWidth`. ⚠️ **Solved rather than zeroed, because the pieces are not all
+small**: Dante's leather sleeve is 0.30 m and is a form in its own right that still wants the full
+border. A 0.015 m glyph now takes 0.00375 m; anything thicker than 0.076 m is unchanged. Measured
+from the mesh, so `AddCylinderAccessory` and every future shape are covered without a second call
+site to keep in step.
+
+⚠️ **THE HERO KITS ARE STILL STACKED BOXES AND THAT IS A SEPARATE, OPEN QUESTION.**
+`BuildDanteAccessories` is roughly thirty `AddBoxAccessory` calls, which is exactly the
+construction `VISION.md` § 2 rule 3 names: *"Five polygons handed to one builder are one thing."*
+This entry fixes how they are OUTLINED and says nothing about whether they are the right way to
+build an arm. **Done looks like** an FPP capture of each hero's arms next to that hero's character
+art, judged side by side. Not shot this session.
+
+### 78.11 What is still not measured
+
+* ⚠️⚠️ **TWO REAL MACHINES.** § 38.20 stands. This session used two processes on one desktop over
+  the real Wi-Fi address, which is closer than loopback and is not two NICs, two clocks or a
+  switch between them. **The tsinelas twitch § 77.1 predicts** (settles, twitches once, settles
+  again, bounded at 0.5 s and 0.3 m) was NOT looked for: nobody watched the non-host seat, because
+  both windows were driven headlessly and read through `NetStateReport`.
+* ⚠️⚠️ **`CastDenied` HAS STILL NEVER TRAVELLED**, and § 77.5's second item is untouched. Nothing
+  here forces a host refusal of a cast the owner predicted, and no test asserts the cooldown comes
+  back. The `skills` divergence in § 78.1 is adjacent evidence, not that test.
+* ⚠️ **§ 72's built-player suspect is untouched.** The name and code fields were not typed into in
+  a built player this session.
+* ⚠️ **The § 78.1 fix is verified by report comparison, not by eye.** Nobody has WATCHED a
+  client to confirm the taya is no longer carrying a shoe; the two reports agreeing is strong
+  evidence and is not the same thing as looking at it.
 
 ---
 

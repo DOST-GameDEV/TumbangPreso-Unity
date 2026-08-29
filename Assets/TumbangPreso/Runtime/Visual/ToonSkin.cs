@@ -28,9 +28,33 @@ namespace TumbangPreso.Visual
     /// </summary>
     public static class ToonSkin
     {
-        /// <summary>`character_visual.gd::OUTLINE_WORLD_WIDTH`. How thick a prop's ink border
-        /// is in world units, whatever the mesh is scaled by.</summary>
-        public const float PropOutlineWidth = 0.012f;
+        /// <summary>
+        /// `character_visual.gd::OUTLINE_WORLD_WIDTH`. How thick a prop's ink border is in world
+        /// units, whatever the mesh is scaled by.
+        ///
+        /// ⚠️⚠️ 0.006 m, HALVED FROM 0.012, AND IT IS THE SAME ARITHMETIC § 43 ALREADY WROTE
+        /// DOWN. 🧑 2026-08-29: *"lessen the outline for all slippers that shader applies"*,
+        /// *"makes it ugly"*, *"cant see some details anymore"*.
+        ///
+        /// § 43's note on the IKE speckle measured the problem exactly and then fixed only the
+        /// symptom: *"`modelWidth` is derived from the WHOLE MODEL's bounds, 0.012 m of
+        /// world-space ink for a 0.432 m shoe ... Inflating that swoosh by 12 mm in every
+        /// direction produces a hull far larger than the shape it is supposed to outline, so the
+        /// ink covers the decal"*. The answer there was to stop drawing a hull on slot > 0, which
+        /// saved the decal and left every OTHER piece of small relief on a shoe — the strap, the
+        /// footbed lip, the toe seam — inside a 12 mm border on a 432 mm object. **2.8 per cent
+        /// of the model's own length, per side.** That is the detail he cannot see any more.
+        ///
+        /// ⚠️⚠️ PROPS ONLY. THE CAST IS NOT TOUCHED, AND HE ASKED FOR THAT IN TERMS:
+        /// *"make sure lessening shader for slippers doesnt lessen everyone's"*.
+        /// <see cref="PersonOutlineWidth"/> is a separate constant and stays at its measured
+        /// 0.008 x 2.38. The two have always been separate; this is why.
+        ///
+        /// ⚠️ IT IS A WORLD WIDTH, SO IT IS SCALE-FREE AND THE LATA THINS BY THE SAME RATIO. That
+        /// is wanted rather than tolerated: the can is a 0.12 m object wearing the same 12 mm
+        /// border, which is the worst ratio of anything in the game.
+        /// </summary>
+        public const float PropOutlineWidth = 0.006f;
 
         /// <summary>`person_outline.tres` carries 0.008 in the model space of a rig that is then
         /// scaled by PERSON_SCALE 2.38, so the world width it renders at is this.</summary>

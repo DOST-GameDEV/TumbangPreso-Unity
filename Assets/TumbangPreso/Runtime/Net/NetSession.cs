@@ -152,7 +152,22 @@ namespace TumbangPreso.Net
         // and `SyncLata` kept every field and every field order; only the channel some of their
         // packets travel on changed, and delivery is not in the payload. It is recorded here
         // rather than given its own number because it needs none.
-        public const int ProtocolVersion = 11;
+        // ⚠️⚠️ 11 TO 12, FOR A CHANGE OF FIELD MEANING, WHICH IS THE MOST DANGEROUS KIND AND THE
+        // ONE `audit_wire_payloads.py` CANNOT SEE. `docs/TODO.md` § 78.1: `SyncSlipper` and
+        // `SlipperPose` are now addressed by `Slipper.SeatOfOrigin` where their first field used
+        // to be `OwnerSlot`, and `SyncSlipper` gained `OwnerSlot` back as ordinary payload.
+        //
+        // The audit compares the writer and the reader field by field and both halves moved
+        // together, so it reads 0 mismatched and is right to: the two ends of THIS build agree.
+        // What it cannot check is a build on 11 talking to a build on 12, where the field count
+        // differs by one and every field after the first is read from the wrong offset — a
+        // silently misread position, state and holder rather than an error. § 38.20's last bullet
+        // says this in general terms; this is the case it was written for.
+        //
+        // ⚠️ AND THE MEANING CHANGE ALONE WOULD DESERVE IT EVEN AT THE SAME FIELD COUNT. An 11
+        // peer would read a seat index as an owner, which for the taya's tsinelas is exactly the
+        // -1 this change exists to stop happening.
+        public const int ProtocolVersion = 12;
 
         private const string SeatAssignmentMessage = "tp.seat.assignment.v1";
         private readonly Dictionary<ulong, ConnectionHello> _helloByClient =

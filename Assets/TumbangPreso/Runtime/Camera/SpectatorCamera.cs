@@ -289,6 +289,40 @@ namespace TumbangPreso.CameraSystem
             if (GetComponent<Visual.PostAntiAlias>() == null)
                 gameObject.AddComponent<Visual.PostAntiAlias>();
 
+            // ⚠️⚠️ THE INK PASS, AND WITHOUT IT THE SPECTATOR WAS WATCHING A DIFFERENT GAME.
+            // 🧑 2026-08-29, holding a spectator frame beside a first-person one: *"is it js me
+            // or the shaders are very dif for spectator and actual"*, then *"spectatator might
+            // not be getting shaders"*. He was reading it correctly and this is the whole of it.
+            //
+            // `CameraRig.Awake` adds three passes — `ColourGrade`, `PostAntiAlias` and
+            // `WorldOutline` — and this camera was given the first two and never the third. The
+            // ink edge is not an effect on this game, it IS the art direction (`VISION.md` § 6,
+            // *"his UI art is the design system ... wood, amber, cream, ink"*), so a frame
+            // without it does not read as a subtler picture, it reads as an untextured one: the
+            // screenshots show flat pale facades with no line anywhere against the same street
+            // drawn in first person with a black edge on every silhouette.
+            //
+            // ⚠️⚠️ THIS IS THE SECOND HALF OF THE FAULT `ColourGrade`'S NOTE ABOVE RECORDS, AND
+            // IT ARRIVED THE SAME WAY. That note says this camera "is a fourth rig with its own
+            // object (§3a) and was simply never given one" — the grade was then added here and
+            // the outline, added to `CameraRig` in a different session for a different reason,
+            // was not. Two rigs that must look identical and are built by two methods is the
+            // shape `docs/TODO.md` §§ 53.1, 57.1, 60, 62.1 and 63.1 each are, one surface
+            // further out. **Anything added to `CameraRig`'s post stack belongs here too.**
+            //
+            // ⚠️ AFTER `PostAntiAlias` AND BEFORE `SpectatorReplayCapture`, WHICH IS EXACTLY
+            // `CameraRig`'S ORDER. Unity runs image effects in component order, so matching the
+            // order is what makes the two cameras produce the same picture rather than merely
+            // carry the same components. The replay is added in `Start`, so it still records
+            // last, and it now records the frame the spectator actually saw.
+            //
+            // ⚠️ `PrototypeEnabled` IS SET FOR THE REASON `CameraRig` SETS IT: the component's
+            // own toggle defaults false, so attaching it alone would leave the pass inert and
+            // reproduce the *"i dont see any world outlines"* report on this camera only.
+            var outline = GetComponent<Visual.WorldOutline>();
+            if (outline == null) outline = gameObject.AddComponent<Visual.WorldOutline>();
+            outline.PrototypeEnabled = true;
+
             BindActions();
 
             // Start above and behind the base circle, looking at it. The circle is at the

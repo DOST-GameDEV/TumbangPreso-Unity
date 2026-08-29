@@ -458,7 +458,7 @@ every file in a pre-existing output directory was freshly emitted.
   non-zero, so they gate a verification pass:
   - `audit_ability_authority.py` walks every ability call that moves a body or writes score and
     reports whether a `NetAuthority.ShouldResolve()` gate is open at that brace depth. ⚠️ **Every
-    `other` row must read HOST-ONLY.** It is currently 40 sites, 25 gated, **0 ungated on another
+    `other` row must read HOST-ONLY.** It is currently 44 sites, 29 gated, **0 ungated on another
     body**; `docs/TODO.md` § 25.1 is the entry it was written for.
   - `audit_request_call_sites.py` reports every wire entry point in `Runtime/Net/` that nothing
     calls. ⚠️ **Tests deliberately do not count**: a test calling a request proves the method

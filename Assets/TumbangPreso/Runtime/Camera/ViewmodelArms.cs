@@ -35,8 +35,46 @@ namespace TumbangPreso.CameraSystem
         private static readonly Vector3 LeftBasisZ = new Vector3(-0.31474f, -0.65046f, -0.69126f);
         private static readonly Vector3 LeftOrigin = new Vector3(-0.6000f, -1.0400f, -0.3200f);
 
-        /// <summary>Where the carried tsinelas sits on the right forearm.</summary>
-        private static readonly Vector3 HeldSlipperLocal = new Vector3(0.0f, 0.86f, 0.0f);
+        /// <summary>
+        /// Where the carried tsinelas sits on the right forearm.
+        ///
+        /// ⚠️⚠️ THIS IS WHERE THE MESH'S **CENTRE** GOES, NOT WHERE ITS ORIGIN GOES, AND THAT
+        /// DISTINCTION IS THE WHOLE OF THE "IT IS FLOATING" REPORT. 🧑 2026-08-29, off an FPP
+        /// frame: *"the slippers on my arm dont look right"*, *"iits floating a bit and doesnt
+        /// look the way a slipper would sit on a hand"*, *"pls fix the fpp view on slippers"*.
+        ///
+        /// `docs/TODO.md` § 70.2 requires every slipper mesh to be **centred on XY and seated on
+        /// Z = 0** — measured, *"every one has `min.y == 0.0000` in glTF space"*. So the authored
+        /// origin is on the SOLE, at one end of the shoe, not in the middle of it. Parenting the
+        /// object at the hand therefore put the sole's corner in the fist and hung the entire
+        /// shoe off into space beside it, which is exactly the shoe floating clear of both hands
+        /// in the screenshot. <see cref="NormaliseHeldSize"/> now subtracts the scaled bounds
+        /// centre so the middle of the shoe lands here whatever its author chose.
+        ///
+        /// ⚠️ SOLVED PER SKIN RATHER THAN NUDGED, for the same reason <see cref="SlipperLength"/>
+        /// is a presented length rather than a scale multiplier: nine slippers with nine authored
+        /// origins would otherwise need nine offsets, and the tenth would ship wrong.
+        /// </summary>
+        private static readonly Vector3 HeldSlipperLocal = new Vector3(0.0f, 0.82f, 0.0f);
+
+        /// <summary>
+        /// How the tsinelas is turned in the fist.
+        ///
+        /// ⚠️⚠️ THE VIEWMODEL COPY WAS NEVER ROTATED AT ALL, WHILE THE WORLD COPY ALWAYS WAS.
+        /// `Carrier` places the real object with `hand.rotation * Slipper.CarryRotation`, and
+        /// `Slipper.CarryRotation`'s own note records why that quarter turn exists: § 70.3 fixed
+        /// **+X as the length convention** for every slipper mesh in the roster. The viewmodel
+        /// set `localPosition` and stopped, so the shoe kept its authored +X and lay ACROSS the
+        /// view with its sole to the camera instead of running away from the fist.
+        ///
+        /// ⚠️⚠️ IT REUSES `Slipper.CarryRotation` RATHER THAN RESTATING THE QUARTER TURN. Two
+        /// copies of one convention is how the world shoe and the hand shoe drift apart on the
+        /// commit that changes the convention, and § 70.3 is the entry that fixed the convention
+        /// once already. The extra roll is the only part that is specific to the hand: a shoe
+        /// gripped dead flat reads as a plank, and 14 degrees is enough to show the footbed.
+        /// </summary>
+        private static readonly Quaternion HeldSlipperGrip =
+            Slipper.CarryRotation * Quaternion.Euler(0.0f, 0.0f, 14.0f);
 
         /// <summary>The arm colour from the .tscn's shader material.</summary>
         public static readonly Color ArmColour = new Color(0.784f, 0.529f, 0.353f, 1.0f);
@@ -269,8 +307,22 @@ namespace TumbangPreso.CameraSystem
         }
 
         /// <summary>
-        /// Scales the held mesh so it presents at <see cref="SlipperLength"/> whatever the skin
-        /// authored, cancelling the two nested shrinks it inherits.
+        /// Seats the held mesh in the fist: scaled to <see cref="SlipperLength"/>, turned by
+        /// <see cref="HeldSlipperGrip"/>, and moved so its CENTRE lands on
+        /// <see cref="HeldSlipperLocal"/> whatever origin the skin authored.
+        ///
+        /// ⚠️⚠️ ALL THREE ARE SOLVED FROM THE MESH, AND THAT IS WHY THIS IS ONE METHOD. The
+        /// roster is nine slippers from five sources with five different ideas of where a shoe's
+        /// origin is and how long it is; the two that were already solved here (length, and the
+        /// nested parent scale) were solved exactly this way, and the placement was the one that
+        /// was left as a hand-typed constant. It is the constant that was wrong.
+        ///
+        /// ⚠️ THE CENTRE OFFSET IS ROTATED BY THE GRIP BEFORE IT IS SUBTRACTED. The bounds centre
+        /// is in the mesh's own axes and the object is turned by the quarter turn above, so
+        /// subtracting it unrotated would correct along the wrong axis and move the shoe further
+        /// off the hand on skins whose origin is furthest from their middle. Same trap as
+        /// `NormaliseHeldSize`'s existing `parent.lossyScale` division: a correction has to be
+        /// expressed in the space it is applied in.
         /// </summary>
         private void NormaliseHeldSize()
         {
@@ -279,7 +331,8 @@ namespace TumbangPreso.CameraSystem
             var filter = _heldSlipper.GetComponent<MeshFilter>();
             if (filter == null || filter.sharedMesh == null) return;
 
-            var size = filter.sharedMesh.bounds.size;
+            var bounds = filter.sharedMesh.bounds;
+            var size = bounds.size;
             float longest = Mathf.Max(size.x, Mathf.Max(size.y, size.z));
             if (longest <= 0.0001f) return;
 
@@ -287,7 +340,11 @@ namespace TumbangPreso.CameraSystem
             // the carry pose is still interpolating in rather than growing as the arm settles.
             float parent = Mathf.Max(0.0001f, _heldSlipper.parent.lossyScale.x);
 
-            _heldSlipper.localScale = Vector3.one * (SlipperLength / longest / parent);
+            float k = SlipperLength / longest / parent;
+
+            _heldSlipper.localScale = Vector3.one * k;
+            _heldSlipper.localRotation = HeldSlipperGrip;
+            _heldSlipper.localPosition = HeldSlipperLocal - HeldSlipperGrip * (bounds.center * k);
         }
 
         // -------------------------------------------------------------------
@@ -616,12 +673,34 @@ namespace TumbangPreso.CameraSystem
         /// <summary>
         /// § THE WIND-UP. How far the throwing arm cocks back at full charge, radians.
         ///
-        /// ⚠️ 0.62 (~36°) IS THE .gd's OWN NUMBER AND ITS REASONING IS WHY IT IS NOT SMALLER:
-        /// *"the HUD charge meter is on the YOU card at the bottom corner, which nobody looks at
-        /// while aiming. 0.62 rad is enough to be unmistakable in peripheral vision without the
-        /// fist leaving the frame."* The arm IS the charge meter in first person.
+        /// ⚠️⚠️ 1.02 (~58°), UP FROM 0.62 (~36°), AND THIS IS `docs/TODO.md` § 75 ANSWERED.
+        /// 🧑 2026-08-29 reported *"no wind up charger for slipper throw"*. § 75 traced every
+        /// mechanism — the charge accumulator, this pose, the `arm-right` bone on all 25 rigs,
+        /// the YOU card meter, the trajectory preview — and found all of them present and wired,
+        /// which is why that entry asked which of three things he meant rather than guessing.
+        /// **He picked this one: the arm moves, and 0.62 rad is not enough to see it.**
+        ///
+        /// ⚠️⚠️ SO THIS IS A PRESENTATION CHANGE AND NOT A BALANCE ONE, WHICH IS THE WHOLE
+        /// REASON § 75 REFUSED TO ACT WITHOUT AN ANSWER. The other two readings were a minimum
+        /// wind-up time before a throw may leave the hand — a number `docs/Design.md` owns — and
+        /// a second charge meter somewhere central. **Nothing in `Balance` moves here.**
+        /// `ThrowRules.PowerFor`, `Balance.ChargeFullTime` and `Balance.ChargeMinPower` are all
+        /// untouched, so a tap still throws instantly at the same power it always did and no
+        /// tournament number changes. Only how far the arm swings while it happens.
+        ///
+        /// ⚠️ THE .gd's ORIGINAL REASONING IS KEPT BECAUSE IT IS STILL THE BOUND, and it is what
+        /// stops this going further: *"the HUD charge meter is on the YOU card at the bottom
+        /// corner, which nobody looks at while aiming ... enough to be unmistakable in peripheral
+        /// vision without the fist leaving the frame."* The arm IS the charge meter in first
+        /// person, and the constraint that matters is the second half. At 58° the fist is still
+        /// inside the frame at the top of the swing; that is what caps this rather than taste.
+        ///
+        /// ⚠️ ONE CONSTANT, BOTH VIEWS. `CharacterAnimator.ChargePoseRad` is defined as this
+        /// field, so the third-person body and the first-person arm cannot drift apart. Raising
+        /// it here raises the read for the four other players too, which is the half of the
+        /// report a first-person-only fix would have missed.
         /// </summary>
-        public const float WindupRad = 0.62f;
+        public const float WindupRad = 1.02f;
 
         /// <summary>-1 when nothing is charging, 0..1 while something is.</summary>
         private float _charge = -1.0f;
@@ -1806,6 +1885,51 @@ namespace TumbangPreso.CameraSystem
             return AddMeshAccessory(parent, name, mesh, pos, rot, color, emission, toon);
         }
 
+        /// <summary>
+        /// How thick an ink border a viewmodel accessory may wear, solved from its own geometry.
+        ///
+        /// ⚠️⚠️ EVERY ACCESSORY USED `PersonOutlineWidth`, AND THAT IS WHY DANTE'S ARM MARKINGS
+        /// DID NOT LOOK LIKE HIS MARKINGS. 🧑 2026-08-29, off an FPP frame: *"fix the markings and
+        /// toon shader lines or wtv lines thes are for dante's fpp bcz it doesnt look like his
+        /// character's real markings"*.
+        ///
+        /// `PersonOutlineWidth` is **0.019 m** and it is derived for a whole Person — the 2.38
+        /// rig scale and the voxel face's feature size (`ModelPreview` works it out). Dante's
+        /// runic glyph and his chevrons are boxes **0.015 to 0.018 m thick**. The ink hull is an
+        /// inverted shell pushed out along every normal, so a 19 mm shell on a 15 mm plate is
+        /// **wider than the plate it is outlining**: the border swallows the marking, meets
+        /// itself around the edges, and what is left on screen is the sprawl of thin dark lines
+        /// he is pointing at rather than a green glyph with a dark edge.
+        ///
+        /// ⚠️⚠️ THIS IS `docs/TODO.md` § 43 ON A DIFFERENT SURFACE, AND § 43 ALREADY WROTE THE
+        /// RULE: *"Inflating that swoosh by 12 mm in every direction produces a hull far larger
+        /// than the shape it is supposed to outline, so the ink covers the decal and only
+        /// fragments show through."* That was the IKE decal and the answer there was to drop the
+        /// hull on `slot > 0`, because a submesh sits on a base surface that is already outlined.
+        /// **An accessory is the same thing built out of separate objects instead of submeshes**,
+        /// so the same reasoning applies and the slot rule cannot reach it.
+        ///
+        /// ⚠️ SOLVED, NOT ZEROED, BECAUSE THE PIECES ARE NOT ALL SMALL. Dante's leather sleeve is
+        /// 0.30 m and Cheska's cuffs are chunky; those are forms in their own right and want the
+        /// full border. Only the thin ones must come down, so the bound is the accessory's own
+        /// THINNEST axis. A quarter of it keeps the shell comfortably inside the shape: a 0.015 m
+        /// glyph plate gets 0.00375 m and reads as a crisp edge, while anything thicker than
+        /// 0.076 m is unchanged at `PersonOutlineWidth`.
+        ///
+        /// ⚠️ MEASURED FROM THE MESH RATHER THAN PASSED IN, so it covers `AddCylinderAccessory`
+        /// and every future shape without a second call site to keep in step.
+        /// </summary>
+        private static float AccessoryOutlineWidth(Mesh mesh)
+        {
+            if (mesh == null) return Visual.ToonSkin.PersonOutlineWidth;
+
+            var size = mesh.bounds.size;
+            float thinnest = Mathf.Min(size.x, Mathf.Min(size.y, size.z));
+            if (thinnest <= 0.0001f) return Visual.ToonSkin.PersonOutlineWidth;
+
+            return Mathf.Min(Visual.ToonSkin.PersonOutlineWidth, thinnest * 0.25f);
+        }
+
         private static GameObject AddMeshAccessory(Transform parent, string name, Mesh mesh,
             Vector3 pos, Quaternion rot, Color color, float emission, bool toon)
         {
@@ -1825,7 +1949,7 @@ namespace TumbangPreso.CameraSystem
             else
             {
                 Visual.MaterialKit.Dress(mr, color);
-                if (toon) Visual.ToonSkin.Apply(mr, Visual.ToonSkin.PersonOutlineWidth);
+                if (toon) Visual.ToonSkin.Apply(mr, AccessoryOutlineWidth(mesh));
             }
 
             return go;

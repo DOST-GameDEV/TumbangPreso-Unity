@@ -51,6 +51,36 @@ namespace TumbangPreso
         /// </summary>
         public int OwnerSlot { get => _ownerSlot; set => _ownerSlot = value; }
 
+        /// <summary>
+        /// The seat this tsinelas was BUILT for, which never changes for the life of the match.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE `OwnerSlot` WAS BEING USED AS AN ADDRESS AND IT IS NOT ONE.
+        /// `docs/TODO.md` § 78.1 is the measurement that found this on a two-process LAN run.
+        /// `MatchRpc.FindSlipper` looked a slipper up BY `OwnerSlot`, and `OwnerSlot` is state
+        /// the game rewrites every round: `SliceRunner.EquipOwnedSlippers` disowns the taya's
+        /// shoe with `OwnerSlot = -1`, and `FindSlipper` skips anything negative. So the moment a
+        /// seat became taya its tsinelas became **unaddressable on both peers at once** — the
+        /// host stopped broadcasting it (`FindSlipper(defenderSlot)` is null, and
+        /// `BroadcastSlipperStateIfChanged(null)` returns) and a client could not have applied it
+        /// anyway (`SyncSlipperClientRpc` opens with `FindSlipper(ownerSlot)` on a `-1`).
+        ///
+        /// The visible result was that **every non-host peer rendered the taya carrying a
+        /// slipper for the whole round**, frozen in the state it held when they were last an
+        /// attacker, because `Carrier` parents the shoe to the carry anchor on every peer and
+        /// nothing ever told the client to let go. The host could not see it: on the host that
+        /// object is correctly parked out of play. § 38's thesis, one object further in.
+        ///
+        /// ⚠️ **AN IDENTITY MUST NOT BE A PIECE OF MUTABLE STATE.** This is the identity;
+        /// `OwnerSlot` goes back to being what its own note above says it is, a LABEL that the
+        /// foot arrow and the owner glow read.
+        ///
+        /// ⚠️ IT IS NOT ON THE WIRE AND DOES NOT NEED TO BE. `MatchInstaller.BuildSlipper`
+        /// assigns it by seat on every peer, so both ends already agree on it without being told,
+        /// which is the same reason the taya role is derived rather than replicated
+        /// (`VISION.md` § 4).
+        /// </summary>
+        public int SeatOfOrigin { get; set; } = -1;
+
         public SlipperState State { get; private set; } = SlipperState.Loose;
 
         /// <summary>

@@ -197,6 +197,37 @@ namespace TumbangPreso
             }
 
             if (_countingDown || !_awaitingLocalReady) return;
+
+            // ⚠️⚠️ A SPECTATOR'S R IS THE REPLAY KEY AND MUST NOT ALSO BE THE READY KEY.
+            // 🧑 2026-08-29: *"r for spectatotr does ready and replay, conflict"*.
+            //
+            // `CLAUDE.md` § 4 permits the spectator set to reuse gameplay keys, and the whole
+            // permission rests on one sentence: *"a spectator has no body, no seat and no
+            // `CharacterMotor`, so while watching every gameplay action is inert"*. READY was the
+            // exception nobody checked. This method reads the `ReadyUp` action directly off the
+            // input asset rather than through a body, so the press fired for a watcher too and R
+            // rolled the replay AND submitted a vote in the same frame.
+            //
+            // ⚠️⚠️ AND IT WAS A CORRECTNESS BUG, NOT ONLY A CONTROL ONE, WHICH IS WHY THE GATE
+            // IS HERE RATHER THAN IN THE BINDING TABLE. `ExpectedReadyCount` counts
+            // `LobbySession.PlayingPeerCount`, which EXCLUDES spectators by construction — but
+            // `DeclareReady` keyed the set on the sender's peer id and asked no such question, so
+            // a watcher's vote was added to a quorum that had never counted them. Three people
+            // watching a two-player lobby could therefore start the match on their own, and the
+            // two who were actually playing never pressed anything. The set and the total have to
+            // be drawn from the same population.
+            //
+            // ⚠️ IT IS THE SAME TEST `MatchInstaller` USES FOR THE CAMERA, and deliberately not
+            // `_local == null`: under `GameLaunch.AllBots` the gate is handed seat 0 as a stand-in
+            // `local` (`seats[Mathf.Max(0, HumanSeat)]`), so a null check would let an all-bots
+            // run vote with a body nobody is driving. `docs/TODO.md` § 34 is that same clamp
+            // causing a different fault one surface over.
+            //
+            // ⚠️ THE PROBE PATH IS UNAFFECTED. `NetAutomationProbe` calls
+            // `MatchRpc.DeclareReadyServerRpc` itself rather than pressing this action, which is
+            // what keeps `-tp-autostart` working on an all-bots peer that this gate now ignores.
+            if (GameLaunch.Spectator) return;
+
             if (_readyUp == null || !_readyUp.WasPressedThisFrame()) return;
 
             if (_local != null) ReadyGestureRequested?.Invoke(_local);

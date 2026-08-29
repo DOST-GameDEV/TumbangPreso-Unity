@@ -418,29 +418,48 @@ namespace TumbangPreso.Net
         /// ⚠️ A MISS REFILLS THE WHOLE TABLE, so a fresh arena costs ONE scan rather than four.
         /// The sweep keeps FIRST match per seat, which is what the loop it replaced returned.
         /// </summary>
-        private static readonly Slipper[] _slippersByOwner = new Slipper[Balance.PlayerCount];
+        /// ⚠️⚠️ KEYED ON `SeatOfOrigin`, NOT ON `OwnerSlot`, AND THE DIFFERENCE IS A REAL BUG THAT
+        /// A TWO-PROCESS LAN RUN FOUND (`docs/TODO.md` § 78.1). `OwnerSlot` is rewritten every
+        /// round — `SliceRunner.EquipOwnedSlippers` disowns the taya's shoe to -1 — and the loop
+        /// below skips anything negative, so **the defender's tsinelas became unaddressable on
+        /// both peers at once**: the host's tick did `BroadcastSlipperStateIfChanged(null)` and
+        /// stopped sending it, and a client could not have applied it either. Every non-host peer
+        /// therefore drew the taya carrying a slipper for the whole round.
+        /// `Slipper.SeatOfOrigin` is assigned once per match on every peer and never moves.
+        private static readonly Slipper[] _slippersBySeat = new Slipper[Balance.PlayerCount];
 
-        private static Slipper FindSlipper(int ownerSlot)
+        /// ⚠️⚠️ INACTIVE OBJECTS ARE INCLUDED, AND THAT IS THE SECOND HALF OF § 78.1. Keying on
+        /// `SeatOfOrigin` alone did NOT fix the taya's tsinelas, and the verification run is what
+        /// said so. `SliceRunner.EquipOwnedSlippers` does not merely disown the defender's shoe,
+        /// it **switches the object off** — `slipper.gameObject.SetActive(false)`, host-side, to
+        /// take it out of `Carrier.TryPickup` and out of the render. `FindObjectsInactive.Exclude`
+        /// then hid it from this sweep too, so the host could not find the object it had just
+        /// parked and therefore never broadcast a word about it. **An object being switched off
+        /// is a fact the other peers need, so it must stay findable in order to be sent.**
+        ///
+        /// ⚠️ THE CACHED ENTRY NO LONGER TESTS `activeInHierarchy` EITHER, for the same reason:
+        /// the round a seat becomes taya, that test would evict a perfectly good entry and the
+        /// refill below would decline to put it back.
+        private static Slipper FindSlipper(int seatOfOrigin)
         {
-            if (ownerSlot >= 0 && ownerSlot < _slippersByOwner.Length)
+            if (seatOfOrigin >= 0 && seatOfOrigin < _slippersBySeat.Length)
             {
-                var cached = _slippersByOwner[ownerSlot];
-                if (cached != null && cached.gameObject.activeInHierarchy &&
-                    cached.OwnerSlot == ownerSlot)
+                var cached = _slippersBySeat[seatOfOrigin];
+                if (cached != null && cached.SeatOfOrigin == seatOfOrigin)
                     return cached;
             }
 
-            System.Array.Clear(_slippersByOwner, 0, _slippersByOwner.Length);
+            System.Array.Clear(_slippersBySeat, 0, _slippersBySeat.Length);
 
-            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Include))
             {
-                int owner = s.OwnerSlot;
-                if (owner < 0 || owner >= _slippersByOwner.Length) continue;
-                if (_slippersByOwner[owner] == null) _slippersByOwner[owner] = s;
+                int seat = s.SeatOfOrigin;
+                if (seat < 0 || seat >= _slippersBySeat.Length) continue;
+                if (_slippersBySeat[seat] == null) _slippersBySeat[seat] = s;
             }
 
-            return ownerSlot >= 0 && ownerSlot < _slippersByOwner.Length
-                ? _slippersByOwner[ownerSlot]
+            return seatOfOrigin >= 0 && seatOfOrigin < _slippersBySeat.Length
+                ? _slippersBySeat[seatOfOrigin]
                 : null;
         }
 
@@ -2889,16 +2908,35 @@ namespace TumbangPreso.Net
             lata.ApplySnapshotState(pos, rot, isUpright, skinIndex);
         }
 
-        public void SyncSlipperClientRpc(int ownerSlot, int holderSlot, Vector3 pos,
-                                         Quaternion rot, int state, Vector3 velocity,
-                                         float pektusSpin, int affinity, int throwerSlot)
+        public void SyncSlipperClientRpc(int seatOfOrigin, int ownerSlot, bool inPlay,
+                                         int holderSlot, Vector3 pos, Quaternion rot, int state,
+                                         Vector3 velocity, float pektusSpin, int affinity,
+                                         int throwerSlot)
         {
-            var s = FindSlipper(ownerSlot);
+            // ⚠️ LOOKED UP BY SEAT, WRITTEN WITH THE OWNER. `docs/TODO.md` § 78.1: this line read
+            // `FindSlipper(ownerSlot)`, so a disowned taya slipper arrived as -1 and was dropped.
+            var s = FindSlipper(seatOfOrigin);
             if (s == null) return;
+
+            // ⚠️ OWNERSHIP IS APPLIED BEFORE THE STATE, not derived on this side. The host rewrites
+            // it every round and it drives the foot arrow and the owner glow; re-deriving it here
+            // would be a second implementation of `EquipOwnedSlippers`' rule, free to drift.
+            s.OwnerSlot = ownerSlot;
+
+            // ⚠️⚠️ SWITCHED ON BEFORE THE STATE IS APPLIED, AND OFF AFTER IT, WHICH IS NOT
+            // SYMMETRY FOR ITS OWN SAKE. Coming back into play, the object has to exist before
+            // `ApplySnapshotState` puts it in a hand. Going OUT of play, the state has to be
+            // applied FIRST so `ReleasePreviousHolder` runs and the taya's `Carrier` actually
+            // lets go: deactivating first would leave that hand still pointing at a switched-off
+            // shoe, which is the half-cleared relationship `Slipper.ReleasePreviousHolder`'s own
+            // note is about.
+            if (inPlay && !s.gameObject.activeSelf) s.gameObject.SetActive(true);
 
             var holder = holderSlot >= 0 ? Unit(holderSlot) : null;
             s.ApplySnapshotState((SlipperState)state, holder, pos, rot, velocity,
                                  pektusSpin, (SlipperAffinity)affinity, throwerSlot);
+
+            if (!inPlay && s.gameObject.activeSelf) s.gameObject.SetActive(false);
         }
 
         /// <summary>
@@ -3084,6 +3122,14 @@ namespace TumbangPreso.Net
         private readonly Dictionary<int, int> _lastSlipperHolder = new Dictionary<int, int>();
         private readonly Dictionary<int, int> _lastSlipperAffinity = new Dictionary<int, int>();
         private readonly Dictionary<int, int> _lastSlipperThrower = new Dictionary<int, int>();
+
+        /// <summary>Ownership travels now, so a change of it is a discrete change. See
+        /// <see cref="Slipper.SeatOfOrigin"/> and `docs/TODO.md` § 78.1.</summary>
+        private readonly Dictionary<int, int> _lastSlipperOwner = new Dictionary<int, int>();
+
+        /// <summary>Whether the object is switched on. The taya's tsinelas is parked with
+        /// `SetActive(false)` and that never reached a client. See § 78.1.</summary>
+        private readonly Dictionary<int, int> _lastSlipperActive = new Dictionary<int, int>();
         private readonly Dictionary<int, float> _slipperKeepaliveLeft = new Dictionary<int, float>();
 
         private void BroadcastLataStateIfChanged()
@@ -3115,6 +3161,15 @@ namespace TumbangPreso.Net
         {
             if (slipper == null) return;
 
+            // ⚠️⚠️ THE KEY IS THE SEAT OF ORIGIN AND THE OWNER IS NOW A WATCHED FIELD. Both halves
+            // of that matter and `docs/TODO.md` § 78.1 is why. These dictionaries used to be keyed
+            // on `OwnerSlot`, which goes to -1 the round its seat becomes taya, so the taya's shoe
+            // both fell out of the table and stopped being reachable at all. And because ownership
+            // now travels rather than being re-derived on the far side, a CHANGE of owner is a
+            // discrete change like any other: without it, the round that disowns a slipper would
+            // send nothing and every client would keep the previous round's owner on its foot
+            // arrow and its owner glow.
+            int seat = slipper.SeatOfOrigin;
             int owner = slipper.OwnerSlot;
             int state = (int)slipper.State;
             int holder = slipper.Holder != null ? slipper.Holder.PlayerSlot : -1;
@@ -3129,7 +3184,15 @@ namespace TumbangPreso.Net
             int affinity = (int)slipper.Affinity;
             int thrower = slipper.ThrowerSlot;
 
-            float left = _slipperKeepaliveLeft.TryGetValue(owner, out float k) ? k : 0.0f;
+            // ⚠️⚠️ WHETHER THE OBJECT IS SWITCHED ON IS DISCRETE STATE AND IT NEVER TRAVELLED.
+            // `EquipOwnedSlippers` parks the taya's tsinelas with `SetActive(false)` behind the
+            // host gate, so on a client it stayed on, stayed in that seat's hand, and the taya
+            // walked the whole round carrying a shoe (§ 78.1).
+            int active = slipper.gameObject.activeSelf ? 1 : 0;
+
+            if (seat < 0) return;
+
+            float left = _slipperKeepaliveLeft.TryGetValue(seat, out float k) ? k : 0.0f;
             left -= Time.fixedDeltaTime;
 
             // ⚠️⚠️ A CARRIED SHOE IS NOT WORTH A SINGLE POSE PACKET, AND IT WAS COSTING FIFTY A
@@ -3144,32 +3207,39 @@ namespace TumbangPreso.Net
             // and still go reliably the moment they happen, and the keepalive still re-sends the
             // holder twice a second, so a peer that missed the grab is corrected on the same
             // half-second bound as everything else.
-            bool carried = slipper.State == SlipperState.Held;
+            // ⚠️ A PARKED SHOE SENDS NO POSE EITHER, for the same reason a carried one does not:
+            // it is switched off on every peer that has heard about it, so its position is not a
+            // thing anybody draws. The discrete edge that parks it still goes reliably.
+            bool carried = slipper.State == SlipperState.Held || active == 0;
 
             bool moved = !carried
-                         && (!_lastSlipperPosition.TryGetValue(owner, out var previous)
+                         && (!_lastSlipperPosition.TryGetValue(seat, out var previous)
                              || (slipper.transform.position - previous).sqrMagnitude
                                 > PropMoveEpsilon * PropMoveEpsilon);
 
-            bool discrete = !_lastSlipperState.TryGetValue(owner, out int lastState) || lastState != state
-                            || !_lastSlipperHolder.TryGetValue(owner, out int lastHolder) || lastHolder != holder
-                            || !_lastSlipperAffinity.TryGetValue(owner, out int lastAff) || lastAff != affinity
-                            || !_lastSlipperThrower.TryGetValue(owner, out int lastThr) || lastThr != thrower;
+            bool discrete = !_lastSlipperState.TryGetValue(seat, out int lastState) || lastState != state
+                            || !_lastSlipperHolder.TryGetValue(seat, out int lastHolder) || lastHolder != holder
+                            || !_lastSlipperAffinity.TryGetValue(seat, out int lastAff) || lastAff != affinity
+                            || !_lastSlipperThrower.TryGetValue(seat, out int lastThr) || lastThr != thrower
+                            || !_lastSlipperOwner.TryGetValue(seat, out int lastOwner) || lastOwner != owner
+                            || !_lastSlipperActive.TryGetValue(seat, out int lastActive) || lastActive != active;
 
             bool keepalive = left <= 0.0f;
 
             if (!moved && !discrete && !keepalive)
             {
-                _slipperKeepaliveLeft[owner] = left;
+                _slipperKeepaliveLeft[seat] = left;
                 return;
             }
 
-            _lastSlipperPosition[owner] = slipper.transform.position;
-            _lastSlipperState[owner] = state;
-            _lastSlipperHolder[owner] = holder;
-            _lastSlipperAffinity[owner] = affinity;
-            _lastSlipperThrower[owner] = thrower;
-            _slipperKeepaliveLeft[owner] = PropKeepaliveSeconds;
+            _lastSlipperPosition[seat] = slipper.transform.position;
+            _lastSlipperState[seat] = state;
+            _lastSlipperHolder[seat] = holder;
+            _lastSlipperAffinity[seat] = affinity;
+            _lastSlipperThrower[seat] = thrower;
+            _lastSlipperOwner[seat] = owner;
+            _lastSlipperActive[seat] = active;
+            _slipperKeepaliveLeft[seat] = PropKeepaliveSeconds;
 
             // ⚠️⚠️ THIS BRANCH IS THE TSINELAS HALF OF 🧑'S *"the bots and slippers were going
             // out of map"*, AND IT IS THE HALF § 71.3 DID NOT FIX. A shoe in flight moves every
@@ -3227,7 +3297,18 @@ namespace TumbangPreso.Net
 
             int holderSlot = slipper.Holder != null ? slipper.Holder.PlayerSlot : -1;
             using var writer = new FastBufferWriter(128, Allocator.Temp);
+
+            // ⚠️⚠️ THE KEY FIELD IS `SeatOfOrigin` AND OWNERSHIP FOLLOWS IT AS ORDINARY PAYLOAD.
+            // It used to be `OwnerSlot` doing both jobs, which is `docs/TODO.md` § 78.1: the taya's
+            // shoe goes to owner -1 for a round and became unaddressable rather than merely
+            // disowned. The seat never moves, so it can be addressed; the owner does move, so it
+            // is sent.
+            writer.WriteValueSafe(slipper.SeatOfOrigin);
             writer.WriteValueSafe(slipper.OwnerSlot);
+
+            // ⚠️ WHETHER IT IS IN PLAY AT ALL. `EquipOwnedSlippers` switches the taya's shoe off
+            // host-side; without this the client kept it on and in that seat's hand (§ 78.1).
+            writer.WriteValueSafe(slipper.gameObject.activeSelf);
             writer.WriteValueSafe(holderSlot);
             writer.WriteValueSafe(slipper.transform.position);
             writer.WriteValueSafe(slipper.transform.rotation);
@@ -3246,8 +3327,10 @@ namespace TumbangPreso.Net
                 _nm == null || _nm.CustomMessagingManager == null)
                 return;
 
+            // ⚠️ ADDRESSED BY SEAT, LIKE `SyncSlipper`. A pose keyed on a field that goes -1 for
+            // the taya is a pose nobody can apply; see `Slipper.SeatOfOrigin`.
             using var writer = new FastBufferWriter(64, Allocator.Temp);
-            writer.WriteValueSafe(slipper.OwnerSlot);
+            writer.WriteValueSafe(slipper.SeatOfOrigin);
             writer.WriteValueSafe(slipper.transform.position);
             writer.WriteValueSafe(slipper.transform.rotation);
             writer.WriteValueSafe(slipper.Velocity);
@@ -3288,9 +3371,9 @@ namespace TumbangPreso.Net
                 if (s != null)
                 {
                     int holderSlot = s.Holder != null ? s.Holder.PlayerSlot : -1;
-                    SyncSlipperClientRpc(s.OwnerSlot, holderSlot, s.transform.position,
-                        s.transform.rotation, (int)s.State, s.Velocity, s.PektusSpin,
-                        (int)s.Affinity, s.ThrowerSlot);
+                    SyncSlipperClientRpc(s.SeatOfOrigin, s.OwnerSlot, s.gameObject.activeSelf,
+                        holderSlot, s.transform.position, s.transform.rotation, (int)s.State,
+                        s.Velocity, s.PektusSpin, (int)s.Affinity, s.ThrowerSlot);
 
                     BroadcastSlipperState(s);
                 }
@@ -3458,7 +3541,9 @@ namespace TumbangPreso.Net
             // had just produced. See § THE LOOPBACK.
             if (NetAuthority.IsHost) return;
 
+            reader.ReadValueSafe(out int seatOfOrigin);
             reader.ReadValueSafe(out int ownerSlot);
+            reader.ReadValueSafe(out bool inPlay);
             reader.ReadValueSafe(out int holderSlot);
             reader.ReadValueSafe(out Vector3 pos);
             reader.ReadValueSafe(out Quaternion rot);
@@ -3468,8 +3553,8 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out int affinity);
             reader.ReadValueSafe(out int throwerSlot);
 
-            SyncSlipperClientRpc(ownerSlot, holderSlot, pos, rot, state, velocity, pektusSpin,
-                                 affinity, throwerSlot);
+            SyncSlipperClientRpc(seatOfOrigin, ownerSlot, inPlay, holderSlot, pos, rot, state,
+                                 velocity, pektusSpin, affinity, throwerSlot);
         }
 
         // ⚠️ BOTH POSE HANDLERS APPLY A POSITION AND REFUSE TO TOUCH ANYTHING ELSE, which is what
@@ -3490,14 +3575,14 @@ namespace TumbangPreso.Net
         {
             if (NetAuthority.IsHost) return;
 
-            reader.ReadValueSafe(out int ownerSlot);
+            reader.ReadValueSafe(out int seatOfOrigin);
             reader.ReadValueSafe(out Vector3 pos);
             reader.ReadValueSafe(out Quaternion rot);
             reader.ReadValueSafe(out Vector3 velocity);
 
-            if (!ValidSlot(ownerSlot)) return;
+            if (!ValidSlot(seatOfOrigin)) return;
 
-            FindSlipper(ownerSlot)?.ApplySnapshotPose(pos, rot, velocity);
+            FindSlipper(seatOfOrigin)?.ApplySnapshotPose(pos, rot, velocity);
         }
 
         // -------------------------------------------------------------------

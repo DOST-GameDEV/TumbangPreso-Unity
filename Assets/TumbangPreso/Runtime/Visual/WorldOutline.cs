@@ -80,9 +80,29 @@ namespace TumbangPreso.Visual
         [Header("Prototype")]
         [SerializeField] private bool _prototypeEnabled;
 
+        // ⚠️⚠️ THE OPACITY IS 0.6, DOWN FROM A FULLY OPAQUE 1.0. 🧑 2026-08-29, over a live
+        // frame: *"as well as overall effect of shader, lessen it"*, *"makes it ugly"*, *"cant
+        // see some details anymore"*.
+        //
+        // This pass is SCREEN-SPACE and it stacks on top of the per-model ink hull that
+        // `ToonSkin` already draws, so every silhouette in the street was being lined twice: once
+        // by an inflated hull and again by a full-strength depth-and-normal edge. Neither was
+        // wrong on its own and the sum is what reads as heavy. `ToonSkin.PropOutlineWidth` is the
+        // other half of this change and carries the measurement; this half is what brings the
+        // whole frame down rather than only the props.
+        //
+        // ⚠️ OPACITY RATHER THAN `_thickness`. A thinner screen-space line breaks up and
+        // shimmers under camera motion, because the edge is found per pixel and a sub-pixel line
+        // is either on or off; a softer line of the same width stays continuous. The pass is
+        // deliberately still fully present at 0.6 — the ink IS the art direction (`VISION.md`
+        // § 6) and this is a dimmer, not a removal.
+        //
+        // ⚠️ IT REACHES BOTH CAMERAS AS OF THIS SESSION. `SpectatorCamera` was given this pass
+        // in the same batch, so lowering it here lowers it for gameplay and for every recording
+        // and screenshot at once, which is the point: they must match.
         [Header("Ink")]
         [SerializeField] private Color _colour = new Color(0.02f, 0.02f, 0.03f, 1.0f);
-        [SerializeField, Range(0.0f, 1.0f)] private float _opacity = 1.0f;
+        [SerializeField, Range(0.0f, 1.0f)] private float _opacity = 0.6f;
 
         // ------------------------------------------------------------------ § THE FAR PLANE
         //
