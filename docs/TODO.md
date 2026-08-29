@@ -18,10 +18,13 @@ are separate files: an entry in this list is something somebody should do, and t
 somebody might decide to do. **Phase 1 was explicitly started on 2026-08-31 and is § 88 below.**
 Written 2026-08-31 on 🧑's brief.
 
-⚠️ **One item in it is NOT future work.** `FUTURE.md` § 17's first paragraph: the nationals are in
-General Santos City and venue internet cannot be assumed, so a full four-player match must be
-startable and completable on LAN with the internet physically unplugged. `LanBeacon` exists; what
-has never been tested is every screen between the menu and the match with UGS unreachable.
+✅ **The unplugged LAN run is DONE, confirmed by 🧑 on 2026-08-31.** This entry read "what has
+never been tested is every screen between the menu and the match with UGS unreachable", and it was
+carried forward as the one urgent item in the plan. **It has been tested. Stop reporting it as
+outstanding.** The nationals are in General Santos City and venue internet still cannot be assumed,
+so the requirement itself stands: a full four-player match must remain startable and completable on
+LAN with the internet physically unplugged, and **Phase 1 must not break it**. That is now a
+regression to protect rather than a gap to close.
 
 ---
 
@@ -251,9 +254,14 @@ Prefer deleting the test over letting it rot. It probes with `load` rather than 
 `delete` so it never writes a real profile or exercises the destructive path against a live
 project.
 
-**Phase 1 is now done except for the two things that were never part of it:** the impersonation
-gap in § 88.1c, and the four-player LAN run with the cable pulled, which has still never happened
-and is the one item with a deadline attached to it.
+**Phase 1 is now done except for one thing that was never part of it:** the impersonation gap in
+§ 88.1c.
+
+⚠️ **AND THE UNPLUGGED LAN RUN IS NOT OUTSTANDING.** 🧑 confirmed on 2026-08-31 that it has been
+done. Several documents said otherwise and they are corrected in the same commit as this line.
+**The account layer is the thing most likely to regress it**, because a boot that waits on UGS is
+exactly what an unplugged venue produces, so re-run it after any change to `PlayerAccount`'s boot
+path. § 88.1d is the bound that protects it.
 
 ---
 

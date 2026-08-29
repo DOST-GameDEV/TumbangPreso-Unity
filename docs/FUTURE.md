@@ -1006,12 +1006,17 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ## PHASE 17 · TOURNAMENTS, LAN, SPECTATING AND REPLAYS
 
-⚠️ **PART OF THIS IS NOT FUTURE WORK. The nationals are in General Santos City and venue internet
-cannot be assumed.** A tournament build that needs UGS to start a match is a tournament build that
-can fail in the room. Whatever else is deferred, **make sure a full four-player match can be run
-entirely on LAN with no internet at all, and test it with the router unplugged.** `LanBeacon`
-exists; the question is whether every screen between the menu and the match survives UGS being
-unreachable, and Phase 1 must not break it.
+✅ **THE UNPLUGGED LAN RUN HAS BEEN DONE, confirmed by 🧑 on 2026-08-31.** This paragraph was the
+one genuinely urgent item in the whole file and it is closed. **Do not re-raise it as outstanding.**
+
+⚠️ **The requirement it protects is permanent, though.** The nationals are in General Santos City
+and venue internet cannot be assumed: a tournament build that needs UGS to start a match is a
+tournament build that can fail in the room. A full four-player match must stay startable and
+completable entirely on LAN with the router unplugged, and **every screen between the menu and the
+match must survive UGS being unreachable**. That is a regression to guard now rather than a gap to
+close. ⚠️ **The account layer is the most likely thing to break it**, since a boot that waits on
+UGS is precisely what an unplugged venue produces; `docs/TODO.md` § 88.1d is the bound that stops
+that, and § 88 is the phase to re-test after.
 
 **What exists:** `SpectatorCamera` with free, follow and POV modes, a spectator pause that crosses
 the wire, a HUD that already knows how to draw a broadcast clock, and `LobbySession`'s reconnect.
@@ -1139,9 +1144,10 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 integrity beside it and a population to fill it. Built too early it is a ladder with four people on
 it, and an empty ladder is the fastest way to make competitive play feel dead.
 
-⚠️ **AND THE URGENT ITEM IS NOT ON THE LEFT COLUMN AT ALL.** § 17's first paragraph: confirm the
-game runs a full four-player match on LAN with the internet unplugged, before the nationals, and
-keep it true through every phase above.
+✅ **THE ITEM THAT USED TO BE URGENT HERE IS DONE.** This read "confirm the game runs a full
+four-player match on LAN with the internet unplugged, before the nationals". 🧑 confirmed on
+2026-08-31 that it has been run. **What remains is keeping it true through every phase above**,
+which is a regression check after each one rather than a task waiting to be started.
 ---
 
 ## 19 · THE PROMPTS

@@ -395,8 +395,12 @@ Four peers, host authoritative. **Every point is awarded in one function on the 
 resolves by distance on the host, and a client never creates score. Peers join by code or over
 LAN discovery; seats are what a peer joins, so bot-filled seats cannot vote in a rematch.
 
-⚠️ The transport has never been run as two real processes on a LAN. `Port_Ledger.md` carries that
-caveat rather than implying otherwise.
+✅ **The transport HAS been run on a real LAN, with the internet unplugged**, confirmed by 🧑 on
+2026-08-31. This line read "has never been run as two real processes on a LAN" and was stale; the
+same claim was carried in `docs/TODO.md`'s header and `FUTURE.md` § 17 and is corrected in all of
+them together. ⚠️ **The requirement it was guarding is permanent**: venue internet at the nationals
+cannot be assumed, so a four-player match must stay startable and completable with UGS unreachable.
+Treat it as a regression check after any change to the boot or network path, not as an open task.
 
 ---
 
