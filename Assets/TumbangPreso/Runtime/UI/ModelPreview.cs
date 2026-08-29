@@ -840,8 +840,30 @@ namespace TumbangPreso.UI
 
             if (_needsFrame) Frame();
 
+            // ⚠️⚠️ THE HANDOVER EXPIRES NOW, IT IS NOT PERMANENT. 🧑 2026-08-29, on the picker:
+            // *"this is supposed to be like rotating and shit, both slippers and tsinelas and
+            // hero"*, *"they can be movable"*, *"like they stop rotating if we move"*, *"and go
+            // back to rotating in character select after"*.
+            //
+            // The sweep already stopped on the first drag and its own note said that was for
+            // good, so one nudge left every subsequent subject standing still: the screen looks
+            // broken rather than settled, and the turn is what shows a model's back and sides at
+            // all. Letting the takeover lapse gives the three states he asked for in order.
+            //
+            // ⚠️ `_turnPhase` IS FROZEN WHILE THE PLAYER HAS IT, not advanced and ignored, so the
+            // sweep resumes from exactly where it stopped instead of snapping to wherever the
+            // sine would have travelled. The phase only moves inside the branch below.
+            //
+            // ⚠️ THE CAMERA KEEPS THE PLAYER'S ORBIT. Dragging moves `_userYaw` and `_userPitch`,
+            // which are the CAMERA's, while the sweep turns the MODEL; resuming one does not
+            // discard the other, so the subject starts turning again from the angle they chose
+            // rather than jumping back to front-on.
+            if (_userTookOver && Time.unscaledTime - _lastUserInput >= ResumeTurnAfterSeconds)
+                _userTookOver = false;
+
             // THE MODEL TURNS. The idle sweep is a there-and-back through TurnDegrees either
-            // side of front-on, over TurnPeriod seconds. It stops the moment the player drags.
+            // side of front-on, over TurnPeriod seconds. It stops while the player is handling
+            // it and resumes once they have left it alone.
             if (_model != null && !_userTookOver)
             {
                 _turnPhase += Time.unscaledDeltaTime;
@@ -902,9 +924,18 @@ namespace TumbangPreso.UI
         ///
         /// ⚠️ THE FIRST DRAG ENDS THE IDLE SWEEP FOR GOOD. See the class note.
         /// </summary>
+        /// <summary>How long the subject stays still after the player last touched it, before
+        /// the idle sweep takes over again. Long enough to inspect a model without it turning
+        /// under the pointer, short enough that the screen does not look frozen.</summary>
+        private const float ResumeTurnAfterSeconds = 2.5f;
+
+        /// <summary>When the player last dragged or zoomed. See the note in `LateUpdate`.</summary>
+        private float _lastUserInput;
+
         public void Orbit(Vector2 delta)
         {
             _userTookOver = true;
+            _lastUserInput = Time.unscaledTime;
 
             // ⚠️⚠️ THE TWO AXES DO NOT TAKE THE SAME CORRECTION, AND ASSUMING THEY DID IS WHY
             // THIS HAS BEEN WRONG TWICE. The signs were first copied straight from
@@ -937,6 +968,7 @@ namespace TumbangPreso.UI
             if (!_wheelZooms) return;
 
             _userTookOver = true;
+            _lastUserInput = Time.unscaledTime;
             _userZoom = Mathf.Clamp(_userZoom - wheel * ZoomStep, ZoomMin, ZoomMax);
         }
 
