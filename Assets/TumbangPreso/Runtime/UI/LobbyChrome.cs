@@ -597,16 +597,20 @@ namespace TumbangPreso.UI
             element.preferredHeight = CardFieldHeight;
             element.flexibleHeight = 0.0f;
 
-            // The affordance sits at the right end of the field, out of the way of the name. It
-            // is decorative: the field itself takes the click, over its whole width.
-            var hint = MenuKit.Label(fieldGo.transform, "EDIT", MenuKit.MinReadableUnits,
-                                     UiTheme.Amber, Vector2.zero, Vector2.zero, Vector2.zero,
-                                     TextAnchor.MiddleRight);
-            hint.name = "PlayerNameEditHint";
-            hint.raycastTarget = false;
-            MenuKit.Stretch(hint.rectTransform, 0.0f);
-            hint.rectTransform.offsetMin = new Vector2(0.0f, 0.0f);
-            hint.rectTransform.offsetMax = new Vector2(-12.0f, 0.0f);
+            // ⚠️⚠️ THE "EDIT" AFFORDANCE WAS DELETED ON 2026-08-29. 🧑: *"remove edit here bcz it
+            // lowk does nothing"*, *"tap already works"*.
+            //
+            // It was never a button. Its own note said so — *"it is decorative: the field itself
+            // takes the click, over its whole width"* — which is exactly the problem: a word
+            // styled in Amber at the end of a field reads as a control, and the one thing it
+            // cannot do is be pressed. The placeholder below already says TAP TO SET YOUR NAME,
+            // so the affordance was stated twice and the second statement was a lie about where
+            // to click.
+            //
+            // ⚠️ THE FIELD'S CLICK TARGET IS UNCHANGED and is what makes this safe to remove:
+            // the whole field takes the press, which is what `docs/TODO.md` § 72 spent a session
+            // proving (`UiClickProbe` reports the topmost raycast hit at the field's centre as
+            // the field itself). Removing a `raycastTarget = false` label cannot alter that.
 
             var placeholder = MenuKit.Label(fieldGo.transform, "TAP TO SET YOUR NAME", MenuKit.MinReadableUnits,
                                             UiTheme.CreamMuted, Vector2.zero, Vector2.zero,

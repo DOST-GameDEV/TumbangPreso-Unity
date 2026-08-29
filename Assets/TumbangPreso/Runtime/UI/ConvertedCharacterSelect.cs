@@ -310,9 +310,23 @@ namespace TumbangPreso.UI
             // slippers use those values in both modes.
             if (_tab == 0 && SceneFlow.SelectedMode == GameMode.HeroStrike)
             {
-                if (rows.TryGetComponent<LayoutElement>(out var heroRowsLayout))
-                    heroRowsLayout.preferredHeight = 289.0f;
+                // ⚠️⚠️ MEASURED, NOT 289. That constant was three 86 px rows added up, and it
+                // went stale the moment a row stopped needing 86. Sizing the column to the rows
+                // that were actually built is what keeps the ultimate's plate inside the wood.
                 RefreshHeroLoadout(rows, entry.Id);
+
+                float column = _heroLoadoutHeight;
+
+                // ⚠️ THE SPACING COMES OFF THE GROUP, NOT OUT OF A CONSTANT, so a restyle of the
+                // picker cannot silently under-size the block.
+                if (rows.TryGetComponent<VerticalLayoutGroup>(out var heroColumn))
+                {
+                    column += heroColumn.spacing * 2.0f;
+                    column += heroColumn.padding.top + heroColumn.padding.bottom;
+                }
+
+                if (rows.TryGetComponent<LayoutElement>(out var heroRowsLayout))
+                    heroRowsLayout.preferredHeight = column;
                 return;
             }
 
@@ -337,8 +351,18 @@ namespace TumbangPreso.UI
             hint.gameObject.AddComponent<LayoutElement>().preferredHeight = 24.0f;
         }
 
+        /// <summary>
+        /// How tall the three ability rows came out, in the units the column is laid out in.
+        ///
+        /// ⚠️ A FIELD RATHER THAN A RETURN VALUE so the builder keeps its signature and the
+        /// caller can size the column after it. See `RefreshTraits`, which used to hand the
+        /// column a constant 289.
+        /// </summary>
+        private float _heroLoadoutHeight;
+
         private void RefreshHeroLoadout(Transform rows, string heroId)
         {
+            _heroLoadoutHeight = 0.0f;
             var kit = HeroAbilitySystem.CreateKitFor(heroId);
             Color accent = UiTheme.ColorForHero(heroId);
 
@@ -402,9 +426,17 @@ namespace TumbangPreso.UI
                 //
                 // The budget, and it balances exactly: 26 header + 20 description + 3 spacing +
                 // 10 padding = 59, inside 61 with two pixels spare.
+                // ⚠️⚠️ THE HEIGHT IS SET BELOW, ONCE THE SUMMARY'S REAL LINE COUNT IS KNOWN.
+                // It was a flat 86 here, which is 26 header + 44 description + 3 spacing + 10
+                // padding, and that 44 reserves TWO LINES of summary. Every shipped summary is
+                // ONE line, so each row carried about 22 px of empty wood and three of them ran
+                // the ultimate's plate off the bottom of the panel. 🧑 2026-08-29: *"fix this
+                // overflow"*, with the ultimate's border drawn outside the box.
+                //
+                // ⚠️ THIS IS THE LATA CARD'S FAULT ON A SECOND SURFACE (`docs/TODO.md` § 78.3):
+                // a box sized for the worst case is the wrong size almost always. There it was a
+                // width, here a height, and the answer is the same, measure what is being shown.
                 var rowLe = rowGo.AddComponent<LayoutElement>();
-                rowLe.preferredHeight = 86.0f;
-                rowLe.minHeight = rowLe.preferredHeight;
 
                 // ---- header: glyph, key, name, timing ----
                 var header = new GameObject("Header", typeof(RectTransform));
@@ -537,7 +569,26 @@ namespace TumbangPreso.UI
                 descLbl.raycastTarget = false;
                 descLbl.horizontalOverflow = HorizontalWrapMode.Wrap;
                 descLbl.verticalOverflow = VerticalWrapMode.Overflow;
-                descLbl.gameObject.AddComponent<LayoutElement>().preferredHeight = 44.0f;
+                // ⚠️⚠️ ONE LINE OR TWO, MEASURED, RATHER THAN ALWAYS RESERVING TWO. 44 is two
+                // lines at `MinReadableUnits` and 22 is one. `preferredWidth` is what this exact
+                // component needs for the string on ONE line, so comparing it with the room the
+                // row actually has answers whether it will wrap, without depending on a layout
+                // pass that has not run yet. Same idiom as `Hud.LineWidth`.
+                //
+                // ⚠️ AN UNMEASURABLE WIDTH RESERVES TWO LINES. A rect that has not been laid out
+                // reports 0, and guessing "one line" there would clip a wrapped summary against
+                // the plate's border. The safe direction is the taller one.
+                float rowRoom = rows is RectTransform rowsRect ? rowsRect.rect.width - 20.0f : 0.0f;
+                bool summaryWraps = rowRoom <= 1.0f || descLbl.preferredWidth > rowRoom;
+
+                float descHeight = summaryWraps ? 44.0f : 22.0f;
+                descLbl.gameObject.AddComponent<LayoutElement>().preferredHeight = descHeight;
+
+                // 26 header + the summary + 3 spacing + 10 padding, the budget the note above
+                // the row spells out.
+                rowLe.preferredHeight = 26.0f + descHeight + 3.0f + 10.0f;
+                rowLe.minHeight = rowLe.preferredHeight;
+                _heroLoadoutHeight += rowLe.preferredHeight;
             }
 
             // The key chips already communicate Q, E and F. A fourth instruction line below

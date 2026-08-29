@@ -251,9 +251,25 @@ namespace TumbangPreso.CameraSystem
             var filter = _heldSlipper.GetComponent<MeshFilter>();
             if (filter == null) filter = _heldSlipper.gameObject.AddComponent<MeshFilter>();
 
-            if (filter.sharedMesh == source.sharedMesh) return;
-
-            filter.sharedMesh = source.sharedMesh;
+            // ⚠️⚠️ THE EARLY RETURN USED TO SIT HERE AND IT IS WHY EVERY SLIPPER WAS BROWN IN
+            // FIRST PERSON. 🧑 2026-08-29, holding IKE: *"ingame shader messes up the color of
+            // slippers"*, *"doesnt look anything like the frigging character select anymore"*,
+            // *"pls fix the shaders for slippers ... i dont want them to fuck up the color"*.
+            //
+            // It read `if (filter.sharedMesh == source.sharedMesh) return;` and returned BEFORE
+            // the material copy below. `Build` dresses the viewmodel shoe in
+            // `UiTheme.PropFoam` (#7a5741, a flat mid brown) as a placeholder, so any path that
+            // reached this method with the mesh already correct kept that placeholder for the
+            // whole match: the mesh was right, the colour was a stand-in, and the two were being
+            // guarded by one condition. IKE renders as a dark sneaker with a white swoosh
+            // everywhere else in the game and as a plain brown slab in the hand.
+            //
+            // ⚠️ THE MESH ASSIGNMENT IS STILL SKIPPED WHEN IT WOULD BE A NO-OP, because that is
+            // what the guard was actually worth: writing `sharedMesh` dirties the renderer. The
+            // MATERIALS are copied unconditionally, which is cheap and is the thing that was
+            // being missed.
+            bool meshChanged = filter.sharedMesh != source.sharedMesh;
+            if (meshChanged) filter.sharedMesh = source.sharedMesh;
 
             // ⚠️⚠️ ONE MATERIAL PER SUBMESH, AND `sharedMaterial` ASSIGNS AN ARRAY OF LENGTH ONE.
             // A renderer draws submesh `i` with `sharedMaterials[i]` and silently DOES NOT DRAW

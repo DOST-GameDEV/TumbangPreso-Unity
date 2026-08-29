@@ -2187,6 +2187,52 @@ namespace TumbangPreso.UI
         /// the host, the one person who has to decide when to start, was the one person who could
         /// not see how many people were ready.
         /// </summary>
+        /// <summary>
+        /// Writes a button's label and sizes the type to the plate: up to <paramref name="maxSize"/>
+        /// when the string is short, stepping down only far enough to fit when it is long.
+        ///
+        /// ⚠️⚠️ IT GROWS AS WELL AS SHRINKS, WHICH `SetHeadline` DOES NOT. Two complaints about
+        /// this one button on 2026-08-29 and they pull opposite ways: *"fix this overflow"*, with
+        /// WAITING FOR 4 PLAYERS drawn off both ends of the wood, and *"start match text too
+        /// small in practice"*, with START MATCH floating in the middle of a large empty plate.
+        /// A shrink-only fit answers the first and makes the second permanent, because the
+        /// authored size was picked for the long string and every short one then inherits it.
+        ///
+        /// ⚠️ THE SIZE IS RE-DERIVED FROM `maxSize` ON EVERY CALL, NOT FROM THE LABEL'S CURRENT
+        /// SIZE. Reading the live size would ratchet: the long string shrinks the label, the
+        /// short string is fitted from the already-shrunk size, and after a few swaps between the
+        /// two states the button is unreadable. Every call starts from the same ceiling.
+        ///
+        /// ⚠️ A RECT THAT HAS NOT BEEN LAID OUT REPORTS 0 AND IS LEFT ALONE. Fitting against a
+        /// zero width would drive the font to its floor on the first frame, which is the trap
+        /// `ConvertedScreen.SetHeadline` records for the CharacterSelect ribbon.
+        /// </summary>
+        private void SetFittedButtonLabel(string nodeName, string value, int maxSize)
+        {
+            var node = Node(nodeName);
+            if (node == null) return;
+
+            var text = node.GetComponent<Text>() ?? node.GetComponentInChildren<Text>();
+            if (text == null) return;
+
+            text.text = value;
+            text.horizontalOverflow = HorizontalWrapMode.Overflow;
+
+            float room = text.rectTransform.rect.width;
+            if (room <= 1.0f) return;
+
+            text.fontSize = maxSize;
+            while (text.fontSize > MinButtonFontSize && text.preferredWidth > room)
+                text.fontSize -= 2;
+        }
+
+        /// <summary>The floor the fit above will not go under, so a very long state stays
+        /// readable rather than shrinking to nothing.</summary>
+        private const int MinButtonFontSize = 18;
+
+        /// <summary>What a lobby action button may grow to when its string is short.</summary>
+        private const int MaxButtonFontSize = 40;
+
         private void RefreshActionButtons()
         {
             var primNode = Node("PrimaryButton");
@@ -2212,9 +2258,20 @@ namespace TumbangPreso.UI
                     bool fullWithoutBots = AIController.BotsEnabled ||
                                            (NetSession.Instance != null &&
                                             NetSession.Instance.Lobby.OccupiedSeatCount() >= Balance.PlayerCount);
-                    SetText("StartButton", fullWithoutBots
+                    // ⚠️⚠️ FITTED, NOT JUST SET. 🧑 2026-08-29, over this exact plate:
+                    // *"fix this overflow"*. "START MATCH" is 11 characters and fits the authored
+                    // button; "WAITING FOR 4 PLAYERS" is 21 and ran out of both ends of the wood.
+                    // `SetText` writes the string and asks nothing about the box, and every
+                    // converted label carries `m_HorizontalOverflow: 1`, so the overflow is
+                    // silent by construction. `SetHeadline` is the fitting form and its own
+                    // header records this same trap on the CharacterSelect ribbon.
+                    //
+                    // ⚠️ THE AUTHORED SIZE IS PASSED SO THE SHORT STRING IS UNAFFECTED. It only
+                    // steps down while the text is wider than the plate, so START MATCH still
+                    // draws at full size and only the long state shrinks.
+                    SetFittedButtonLabel("StartButton", fullWithoutBots
                         ? "START MATCH"
-                        : "WAITING FOR 4 PLAYERS");
+                        : "WAITING FOR 4 PLAYERS", MaxButtonFontSize);
                     var btn = startNode.GetComponent<Button>();
                     if (btn != null) btn.interactable = fullWithoutBots;
                 }
@@ -2223,6 +2280,7 @@ namespace TumbangPreso.UI
 
             if (startNode != null) startNode.gameObject.SetActive(false);
             if (primNode == null) return;
+
 
             primNode.gameObject.SetActive(true);
             var prim = primNode.GetComponent<Button>();
