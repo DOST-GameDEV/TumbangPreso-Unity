@@ -192,10 +192,42 @@ if anybody reports online play "broken" after pulling.
 Marking it child-directed disables username/password auth and restricts Cloud Save, which is
 exactly the account layer § 88 just built.
 
-**Still open, and it needs him:** enable Authentication (anonymous **and** username/password),
-Relay, Lobby, Cloud Save and Cloud Code under **Products**, then create a service account with
-Cloud Code Editor and Cloud Save Editor and run `ugs login`. The CLI's `project-id` is already
-set to the new id. Then the `player-account` deploy and Phase 2's step 2 unblock together.
+### 88.3 · What the new project actually needed, which was one click and not five
+
+⚠️⚠️ **RELAY, LOBBY AND CLOUD SAVE HAVE NO ENABLE TOGGLE ANY MORE. THEY AUTO-PROVISION ON FIRST
+USE.** Four of the five "services to switch on" written above did not exist as switches. Their
+dashboard pages are documentation with no enable button, and a fresh project answers Relay and
+Lobby calls immediately. Time was spent hunting toggles that were never there.
+
+⚠️ **AND ANONYMOUS SIGN-IN IS NOT AN IDENTITY PROVIDER.** The Identity Providers page reading
+*"You have no identity providers"* is the correct healthy state for a project whose anonymous
+sign-in works, and it was briefly read as a misconfiguration. **The one thing that genuinely had to
+be added was Username & Password**, which IS a provider, and which the account upgrade path needs.
+It is added and Enabled as of 2026-08-31.
+
+✅ **Proven live on `dcf0831e-a5f4-43b4-832e-b687f13a3569`**, `UgsServicesProbe` 3/3:
+anonymous sign-in returned `qmSg3PKweGRSWqRcd9g0Bo80UKH4`, Relay allocated join code `WGF96G` for
+a host of three, and a private lobby was created and deleted.
+
+**`Assets/TumbangPreso/Tests/PlayMode/UgsServicesProbe.cs` is new and is the answer to the
+`UgsCheck` problem in § 88.2.** Play Mode is the one context allowed to initialise UGS, so the
+three calls that a batch `UgsCheck` cannot make are made from there instead. ⚠️ It is
+`[Category("Ugs")]` and excluded from the default PlayMode run, for the same reason `WallClock`
+excludes `AiDiagnosticProbe`: it talks to a live service, needs a network and spends free-tier
+quota. Run it on purpose after a relink:
+
+```
+Unity.exe -batchmode -runTests -projectPath . -testPlatform PlayMode           -testCategory "Ugs" -testResults Logs/ugsprobe.xml -logFile Logs/ugsprobe.log
+```
+
+⚠️ **`OnlineSignInProbe` passing is not the same claim.** It asserts the boot attempt happens and
+settles, which is true offline and true against a project with every service off. It answers "did
+we try"; this answers "did the service say yes". Both are wanted.
+
+**Still open, and it needs him:** a service account with Cloud Code Editor and Cloud Save Editor
+at `https://cloud.unity.com/organizations/18968483660152/settings/service-accounts`, currently
+empty, then `ugs login`. The CLI's `project-id` is already set. That is the last thing between
+here and deploying `player-account`, and Phase 2's step 2 unblocks with it.
 
 ---
 
