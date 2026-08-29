@@ -1280,11 +1280,12 @@ one short session and it is cheaper than building a phase against a stale brief.
 >
 > 1. `grep -rn "PlayerAccount" Assets` finds the service, and `AccountRules` is in
 >    `Packages/com.tumbangpreso.core/`. If not, Phase 1 has moved; read `docs/TODO.md` § 88 first.
-> 2. ⚠️⚠️ **Is the `player-account` Cloud Code endpoint DEPLOYED?** `ugs cloud-code scripts list`.
->    On 2026-08-31 it was NOT: the CLI has no service account, so `ugs/cloud-code/player-account.js`
->    exists in the repo and runs nowhere. **Step 2 below writes through Cloud Code and cannot be
->    verified until this is done.** It needs 🧑 in the UGS dashboard; it is not something to work
->    around by writing Cloud Save from the client, which § 0.5 rule 6 forbids.
+> 2. ✅ **The `player-account` Cloud Code endpoint IS deployed and active** as of 2026-08-31, on
+>    project `dcf0831e-a5f4-43b4-832e-b687f13a3569` under org `matthewtlabrador`. Confirm with
+>    `ugs cloud-code scripts list`, and prove it end to end with
+>    `-testCategory "Ugs"`, whose `TheAccountEndpointAnswersALoad` calls it with a real bearer
+>    token and got `{"output":{"profile":""}}` back. ⚠️ **Do not work around a failure here by
+>    writing Cloud Save from the client**, which § 0.5 rule 6 forbids; fix the deploy instead.
 > 3. `MatchDirector` still raises the scoring events this phase reads. `ScoreEvent` in
 >    `MatchRules.cs` is the enum; `AddScore` is still the single host-side writer per `CLAUDE.md`
 >    § 4 and this phase must not change that.
@@ -1292,10 +1293,11 @@ one short session and it is cheaper than building a phase against a stale brief.
 >    them exists except **clutch rate**, which is derived at read time rather than raised as an
 >    event, so do not go looking for a `Clutch` event.
 >
-> **⚠️ IF THE ENDPOINT IS STILL NOT DEPLOYED**, per § 0.5 rule 11: build steps 1, 3, 4, 5, 6 and 7,
-> which are the majority of the phase and none of which need it. Write step 2's call site behind
-> the same local-queue path step 6 already needs, so deploying later switches it on rather than
-> retro-fitting it. **Say so at the top of the handoff rather than reporting the phase as done.**
+> **⚠️ IF THE ENDPOINT HAS SINCE BEEN BROKEN OR THE PROJECT RELINKED AGAIN**, per § 0.5 rule 11:
+> build steps 1, 3, 4, 5, 6 and 7, which are the majority of the phase and none of which need it.
+> Write step 2's call site behind the same local-queue path step 6 already needs, so deploying
+> later switches it on rather than retro-fitting it. **Say so at the top of the handoff rather
+> than reporting the phase as done.**
 >
 > **Build.**
 > 1. A `PlayerProfile` document: identity, level, XP, career totals, per-mode records,

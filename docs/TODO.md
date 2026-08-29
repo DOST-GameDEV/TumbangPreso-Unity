@@ -224,10 +224,36 @@ Unity.exe -batchmode -runTests -projectPath . -testPlatform PlayMode           -
 settles, which is true offline and true against a project with every service off. It answers "did
 we try"; this answers "did the service say yes". Both are wanted.
 
-**Still open, and it needs him:** a service account with Cloud Code Editor and Cloud Save Editor
-at `https://cloud.unity.com/organizations/18968483660152/settings/service-accounts`, currently
-empty, then `ugs login`. The CLI's `project-id` is already set. That is the last thing between
-here and deploying `player-account`, and Phase 2's step 2 unblocks with it.
+### 88.4 · ✅ The service half is done. Phase 1 is complete.
+
+Service account `tumbangpreso-deploy` exists, `ugs login` is stored locally, and
+`ugs deploy ugs/cloud-code` created **`player-account`**, which reports `script is already
+active` on a publish attempt because deploy publishes it.
+
+✅ **`UgsServicesProbe` 4/4**, and the fourth is the one that matters: `TheAccountEndpointAnswersALoad`
+calls the live endpoint with a real player bearer token and gets `{"output":{"profile":""}}`.
+An empty profile is the correct answer for a player who has never saved one. That single test
+proves the deploy, the publish, the service-account roles and the client's auth all line up,
+which is every part of this that could be misconfigured.
+
+⚠️ **THE CLI NEEDS MORE THAN CLOUD CODE EDITOR AND CLOUD SAVE EDITOR, WHICH COST A ROUND TRIP.**
+With only those two, every command fails `403 Forbidden` on **`GetEnvironments`** rather than on
+the thing being asked for, because the CLI resolves the environment before it does anything else.
+The error names an endpoint nobody asked for, which is what makes it confusing. 🧑 resolved it by
+granting the service account everything. ⚠️ **If that is ever tightened, keep an environments read
+role**, or the CLI breaks again with an error that does not mention environments.
+
+⚠️ **`TheAccountEndpointAnswersALoad` DUPLICATES `PlayerAccount.CallCloudAsync` ON PURPOSE AND THE
+TWO MUST MOVE TOGETHER.** That method is private, and widening it so a test could reach it would
+put a seam in shipping code for one probe. The duplication is the lesser cost, but if the call
+shape drifts, **the probe passes while the game fails**, which is the worst outcome available.
+Prefer deleting the test over letting it rot. It probes with `load` rather than `save` or
+`delete` so it never writes a real profile or exercises the destructive path against a live
+project.
+
+**Phase 1 is now done except for the two things that were never part of it:** the impersonation
+gap in § 88.1c, and the four-player LAN run with the cable pulled, which has still never happened
+and is the one item with a deadline attached to it.
 
 ---
 

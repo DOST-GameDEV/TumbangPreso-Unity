@@ -110,6 +110,54 @@ namespace TumbangPreso.PlayTests
             Debug.Log($"[UgsServicesProbe] relay join code {codeTask.Result}, allocation expires on its own");
         }
 
+        /// <summary>
+        /// The `player-account` Cloud Code endpoint answers a load for the signed-in player.
+        ///
+        /// ⚠️⚠️ THIS MIRRORS `PlayerAccount.CallCloudAsync` AND THE TWO MUST MOVE TOGETHER.
+        /// The URL, the `params` envelope and the bearer header are duplicated here on purpose:
+        /// that method is private, and making it visible only so a test could reach it would put
+        /// a seam in shipping code for the benefit of one probe. The cost is that a change to the
+        /// call shape has to be made twice, so this comment is the reminder. If it ever drifts,
+        /// this probe passes while the game fails, which is the worst possible outcome, so prefer
+        /// deleting this test over letting it rot.
+        ///
+        /// ⚠️ A "load" IS THE SAFE VERB TO PROBE WITH. Save would write a real profile for the
+        /// probe's throwaway anonymous player, and delete would exercise the destructive path
+        /// against a live project. Load proves the deploy, the publish, the roles and the bearer
+        /// token all line up, which is everything that can actually be misconfigured.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator TheAccountEndpointAnswersALoad()
+        {
+            yield return SignedIn();
+
+            string projectId = Application.cloudProjectId;
+            string url = $"https://cloud-code.services.api.unity.com/v1/projects/{projectId}/scripts/player-account";
+            string body = "{\"params\":{\"action\":\"load\",\"profile\":\"\"}}";
+
+            using var request = new UnityEngine.Networking.UnityWebRequest(
+                url, UnityEngine.Networking.UnityWebRequest.kHttpVerbPOST);
+            request.uploadHandler = new UnityEngine.Networking.UploadHandlerRaw(
+                System.Text.Encoding.UTF8.GetBytes(body));
+            request.downloadHandler = new UnityEngine.Networking.DownloadHandlerBuffer();
+            request.SetRequestHeader("Authorization", "Bearer " + AuthenticationService.Instance.AccessToken);
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.SetRequestHeader("Accept", "application/json, application/problem+json");
+
+            var operation = request.SendWebRequest();
+            float deadline = Time.realtimeSinceStartup + 30.0f;
+            while (!operation.isDone && Time.realtimeSinceStartup < deadline)
+                yield return null;
+
+            Assert.IsTrue(operation.isDone, "the account endpoint did not answer inside 30 s");
+            Assert.AreEqual(UnityEngine.Networking.UnityWebRequest.Result.Success, request.result,
+                $"account endpoint returned {request.responseCode}: {request.downloadHandler.text}. " +
+                "404 means it is not deployed or not published; 403 means the service account " +
+                "roles or the player's token are wrong.");
+
+            Debug.Log($"[UgsServicesProbe] player-account answered: {request.downloadHandler.text}");
+        }
+
         [UnityTest]
         public IEnumerator LobbyCreatesAndIsCleanedUp()
         {
