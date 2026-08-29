@@ -59,6 +59,52 @@ namespace TumbangPreso.Visual
 
             /// <summary>A tsinelas left a hand. `actor` threw it; `strength` carries the spin.</summary>
             Throw = 6,
+
+            // -----------------------------------------------------------------
+            // § A HERO POWER LANDING ON SOMEBODY
+            //
+            // ⚠️⚠️ EVERY ONE OF THESE IS `ApplyStagger` FOLLOWED BY A FLOURISH INSIDE A
+            // `ShouldResolve()` GATE, WHICH IS § 83.16's FAULT ONE FILE OVER. The SOUND on each
+            // of them was moved to `NetCue` months ago and the LOOK was not, so a client heard
+            // the poltergeist connect and saw nothing hit anybody.
+            //
+            // ⚠️ THEY ARE SEPARATE KINDS RATHER THAN ONE KIND PLUS A WORD ON THE WIRE, and that
+            // is what keeps the payload at what it already was: kind, two seats, a point and a
+            // scalar. A popup string per hit is a per-frame allocation and a second thing to
+            // keep in step. `strength` carries the stagger's own duration, so the stars last
+            // exactly as long as the hold does on every screen.
+            //
+            // ⚠️ AND THE COLOUR IS DERIVED FROM THE CASTER, NOT SENT. `UiTheme.BrightForHero`
+            // off `actor`'s `CharacterIndex` is the same lookup the local code did by writing
+            // the accent literally, and it cannot drift from the hero it belongs to.
+            // -----------------------------------------------------------------
+
+            /// <summary>A skill connected. Stars for `strength` seconds, in the caster's accent.</summary>
+            HeroHit = 7,
+
+            /// <summary>As <see cref="HeroHit"/>, plus the `BAM!` a burn pulse draws.</summary>
+            HeroBam = 8,
+
+            /// <summary>Nemu's poltergeist reaching somebody: stars and `BOO!`.</summary>
+            HeroBoo = 9,
+
+            /// <summary>Phaister's eclipse: the aura and `CURSED!`.</summary>
+            HeroCursed = 10,
+
+            /// <summary>Her hex sigil ticking: `HEXED!`.</summary>
+            HeroHexed = 11,
+
+            /// <summary>Zack's zone jolting somebody: the zap ring and stars.</summary>
+            HeroZapped = 12,
+
+            /// <summary>Cheska's ice catching somebody out: `WHOA!` at `at`.</summary>
+            HeroWhoa = 13,
+
+            /// <summary>A wall of ice coming down. `at` is where; nobody is hit.</summary>
+            IceShatter = 14,
+
+            /// <summary>Zack's bolt reaching the street. `at` is the strike.</summary>
+            Thunder = 15,
         }
 
         /// <summary>
@@ -114,7 +160,102 @@ namespace TumbangPreso.Visual
                     UI.Hud.ReportStyle(actor, 5.0f + Mathf.Abs(strength) * 7.0f,
                                        Mathf.Abs(strength) >= 0.4f ? "PEKTUS CURVE" : "LET FLY");
                     break;
+
+                case Kind.HeroHit:
+                    PlayHeroHit(Seat(actor), Seat(subject), strength, null, HitFeel.Weight.Solid);
+                    break;
+
+                case Kind.HeroBam:
+                    PlayHeroHit(Seat(actor), Seat(subject), strength, "BAM!", HitFeel.Weight.Jolt);
+                    break;
+
+                case Kind.HeroBoo:
+                    PlayHeroHit(Seat(actor), Seat(subject), strength, "BOO!", HitFeel.Weight.Solid);
+                    break;
+
+                case Kind.HeroCursed:
+                    PlayCursed(Seat(subject), strength);
+                    break;
+
+                case Kind.HeroHexed:
+                    PlayHeroHit(Seat(actor), Seat(subject), strength, "HEXED!", HitFeel.Weight.Jolt);
+                    break;
+
+                case Kind.HeroZapped:
+                    PlayZap(Seat(subject), at);
+                    PlayHeroHit(Seat(actor), Seat(subject), strength, null, HitFeel.Weight.Jolt);
+                    break;
+
+                case Kind.HeroWhoa:
+                    ComicPopup.Whoa(at);
+                    break;
+
+                case Kind.IceShatter:
+                    ComicPopup.Freeze(at);
+                    break;
+
+                case Kind.Thunder:
+                    ComicPopup.Zap(at);
+                    break;
             }
+        }
+
+        /// <summary>
+        /// A hero power landing on a body: the stars, the weight, and the popup if there is one.
+        ///
+        /// ⚠️ THE STARS LAST AS LONG AS THE HOLD, which is why `strength` is the stagger's own
+        /// duration rather than a fixed number. A crown that outlives the stun tells three other
+        /// players somebody is still held when they are not, and the taya reads exactly that to
+        /// decide whether to commit.
+        ///
+        /// ⚠️ AND A SHORT ONE DRAWS NO STARS. The micro-staggers are a quarter of a second and
+        /// `CharacterMotor.ApplyStagger` demotes them to `StunElement.None` anyway; a crown that
+        /// appears and vanishes inside three frames is a flicker, not a read.
+        /// </summary>
+        private static void PlayHeroHit(CharacterMotor caster, CharacterMotor victim,
+                                        float seconds, string word, HitFeel.Weight weight)
+        {
+            if (victim == null) return;
+
+            Color accent = AccentOf(caster);
+
+            if (seconds >= 0.5f) DizzyStars.Attach(victim.transform, seconds, accent);
+
+            if (!string.IsNullOrEmpty(word))
+                ComicPopup.Spawn(victim.transform.position + Vector3.up * 1.2f, word, accent, 1.0f);
+
+            HitFeel.Land(victim, weight, accent);
+        }
+
+        private static void PlayCursed(CharacterMotor victim, float seconds)
+        {
+            if (victim == null) return;
+
+            AbilityVfx.AttachAura(victim.transform, AbilityVfx.Aura.WitchEclipse, 2.5f);
+
+            ComicPopup.Spawn(victim.transform.position + Vector3.up * 1.3f, "CURSED!",
+                             UI.UiTheme.HeroWitchBright, 1.2f);
+
+            if (seconds >= 0.5f)
+                DizzyStars.Attach(victim.transform, seconds, UI.UiTheme.HeroWitchBright);
+        }
+
+        /// <summary>
+        /// The caster's own accent, looked up rather than sent.
+        ///
+        /// ⚠️ `UiTheme.BrightForHero` IS THE ONE TABLE, so a kit retuned to a different element
+        /// cannot leave a stale colour behind on the wire. A missing body falls back to the earth
+        /// accent, which is what that method answers for an unknown id anyway.
+        /// </summary>
+        private static Color AccentOf(CharacterMotor caster)
+        {
+            if (caster == null) return UI.UiTheme.HeroEarthBright;
+
+            var heroes = Roster.GetPeople(GameMode.HeroStrike);
+            if (heroes == null || caster.CharacterIndex < 0 || caster.CharacterIndex >= heroes.Count)
+                return UI.UiTheme.HeroEarthBright;
+
+            return UI.UiTheme.BrightForHero(heroes[caster.CharacterIndex].Id);
         }
 
         /// <summary>

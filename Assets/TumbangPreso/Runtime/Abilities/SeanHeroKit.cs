@@ -143,10 +143,18 @@ namespace TumbangPreso.Abilities
                             // ⚠️ A DASH THROUGH THREE PLAYERS USED TO PRINT THREE "BAM!"s
                             // ON TOP OF ITS OWN "ROCKET!". The stars and the sound already
                             // confirm each hit.
-                            DizzyStars.Attach(p.transform, 1.5f, UiTheme.HeroFireBright);
                             NetCue.Play("bump", p.transform.position);
-                            Visual.HitFeel.Land(p, Visual.HitFeel.Weight.Knockdown,
-                                                UiTheme.HeroFireBright);
+
+                            // ⚠️⚠️ THE STARS AND THE JOLT TRAVEL NOW, AND THE SOUND ALREADY DID.
+                            // `OnTick` opens with `if (!NetAuthority.ShouldResolve()) return;`, so
+                            // three players out of four watched a burning attacker with no crown
+                            // over them and felt nothing when it was their own body. The accent
+                            // and the weight are the same two this line chose by hand;
+                            // `MatchFlair` looks the colour up off the caster's hero instead, so
+                            // it cannot drift from the kit it belongs to.
+                            Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.HeroHit,
+                                                       ctx.Motor != null ? ctx.Motor.PlayerSlot : -1,
+                                                       p.PlayerSlot, p.transform.position, 1.5f);
                         }
                     }
                 }

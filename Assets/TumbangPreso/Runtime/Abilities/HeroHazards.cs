@@ -156,8 +156,13 @@ namespace TumbangPreso.Abilities
                 // of ice failing and coming down in twelve pieces. It is the single worst cue
                 // mismatch left in the game and it is in the one place in Cheska's kit where ice
                 // genuinely does break.
-                ComicPopup.Freeze(transform.position);
-                GameServices.Audio?.PlayAt("sfx_ice_shatter", transform.position);
+                // ⚠️⚠️ BOTH HALVES TRAVEL. `Shatter` is reached only from a host-gated
+                // `Update`, so a wall of ice coming down in twelve pieces did it silently and
+                // invisibly for three players. The note above about the cue being the worst
+                // mismatch in the game is still true of the sound; this is who hears it.
+                NetCue.Play("sfx_ice_shatter", transform.position);
+                Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.IceShatter, -1, -1,
+                                           transform.position);
                 Object.Destroy(gameObject);
             }
         }
@@ -444,7 +449,7 @@ namespace TumbangPreso.Abilities
                     // to thirty marks and each lives 3 s, so trail expiry cues would be thirty
                     // overlapping tails inside three seconds. Same measurement `AbilityVfx` uses
                     // to keep emitters off trails. Singular zones only.
-                    GameServices.Audio?.PlayAt("sfx_ice_thaw", transform.position);
+                    NetCue.Play("sfx_ice_thaw", transform.position);
                     Object.Destroy(gameObject);
                     return;
                 }
@@ -537,7 +542,9 @@ namespace TumbangPreso.Abilities
                             if (resolves && _whoaCooldown <= 0.0f)
                             {
                                 _whoaCooldown = 1.2f;
-                                ComicPopup.Whoa(p.transform.position);
+                                Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.HeroWhoa,
+                                                           OwnerSlot, p.PlayerSlot,
+                                                           p.transform.position);
 
                                 // ⚠️⚠️ `NetCue`, BECAUSE THIS LINE IS NOW BEHIND A HOST GATE.
                                 // Making the zone host-authoritative (`docs/TODO.md` § 38) put
@@ -790,8 +797,13 @@ namespace TumbangPreso.Abilities
                                 CanPulse(_nextStaggerBySlot, p.PlayerSlot, 1.1f))
                             {
                                 p.ApplyStagger(0.25f);
-                                ComicPopup.Zap(p.transform.position);   // Flavour: culled past 15 m
-                                DizzyStars.Attach(p.transform, 1.2f, UiTheme.HeroElectricBright);
+
+                                // ⚠️ RELAYED, and the sound beside it already was. See
+                                // `Visual.MatchFlair`; the zap ring is culled past 15 m by
+                                // `ComicPopup` itself on whichever machine draws it.
+                                Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.HeroZapped,
+                                                           OwnerSlot, p.PlayerSlot,
+                                                           p.transform.position, 1.2f);
                             }
                         }
                     }
@@ -1121,7 +1133,9 @@ namespace TumbangPreso.Abilities
                         if (CanPulse(_nextBurnBySlot, p.PlayerSlot, 0.85f))
                         {
                             p.ApplyStagger(0.2f);
-                            ComicPopup.Bam(p.transform.position);
+                            Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.HeroBam,
+                                                       OwnerSlot, p.PlayerSlot,
+                                                       p.transform.position, 0.2f);
                         }
                     }
                 }
@@ -1277,8 +1291,12 @@ namespace TumbangPreso.Abilities
                         // standing inside a nova.
                         _target.ApplyStagger(1.8f, StunElement.Void, 6);
                         _target.ApplyImpulse(Random.onUnitSphere * 4.0f);
-                        DizzyStars.Attach(_target.transform, 1.8f, UiTheme.HeroSpiritBright);
-                        ComicPopup.Boo(_target.transform.position);
+
+                        // ⚠️ RELAYED, LIKE THE `downed` CUE THREE LINES DOWN. The sound of the
+                        // poltergeist connecting reached every peer and the sight of it did not.
+                        Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.HeroBoo,
+                                                   OwnerSlot, _target.PlayerSlot,
+                                                   _target.transform.position, 1.8f);
 
                         // ⚠️ `NetCue` FOR THE REASON THE ICE SHEET RECORDS: this sits behind the
                         // host gate three lines up, so three of the four players could not hear
@@ -1582,7 +1600,7 @@ namespace TumbangPreso.Abilities
                 if (_left > 0.0f) return;
 
                 if (!string.IsNullOrEmpty(Cue))
-                    GameServices.Audio?.PlayAt(Cue, transform.position);
+                    NetCue.Play(Cue, transform.position);
 
                 Object.Destroy(gameObject);
             }
@@ -1839,7 +1857,7 @@ namespace TumbangPreso.Abilities
                     // ⚠️ IT CUTS RATHER THAN FADES, which is the whole shape of the cue. A tail
                     // that trails off says the danger is lessening; a hole in the world is either
                     // there or it is not, and four players need to know which on one frame.
-                    GameServices.Audio?.PlayAt("sfx_void_close", transform.position);
+                    NetCue.Play("sfx_void_close", transform.position);
                     Object.Destroy(gameObject);
                     return;
                 }
@@ -4121,7 +4139,9 @@ namespace TumbangPreso.Abilities
                         if (CanPulse(_nextHexBySlot, p.PlayerSlot, 1.10f))
                         {
                             p.ApplyStagger(0.35f);
-                            ComicPopup.Spawn(p.transform.position + Vector3.up * 1.2f, "HEXED!", UiTheme.HeroWitchBright, 1.0f);
+                            Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.HeroHexed,
+                                                       OwnerSlot, p.PlayerSlot,
+                                                       p.transform.position, 0.35f);
 
                             // ⚠ THE VICTIM GETS A DIFFERENT CUE FROM THE CAST, and it falls
                             // rather than rises. Every other on-hit sound in this game is an
@@ -4268,8 +4288,12 @@ namespace TumbangPreso.Abilities
             // landed on the sound of a dash, from the deleted ability set. `sfx_lightning_strike`
             // stays on the CAST, where the arc is; this is the bolt reaching the street, and it
             // has the crack, the ground sub and the roll that a dash cannot supply.
-            GameServices.Audio?.PlayAt("sfx_thunder_impact", position);
-            ComicPopup.Zap(position);
+            // ⚠️⚠️ BOTH HALVES TRAVEL NOW. `CreateThunderstrike` is only ever reached
+            // from a host-resolved cast, so the loudest moment in Zack's kit landed on one
+            // machine: no crack, no ring, nothing on the street. `NetCue` carries the sound and
+            // `MatchFlair` the sight, which is the split this whole batch is about.
+            NetCue.Play("sfx_thunder_impact", position);
+            Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.Thunder, -1, -1, position);
 
             // Camera shake on main camera
             if (UnityEngine.Camera.main != null)
@@ -4295,7 +4319,9 @@ namespace TumbangPreso.Abilities
                         // entirely on the rim, and the escape is priced to match.
                         p.ApplyStagger(2.0f, StunElement.Shock, 7);
                         p.ApplyImpulse((diff.sqrMagnitude > 0.01f ? diff.normalized : Vector3.forward) * 12.0f + Vector3.up * 3.5f);
-                        DizzyStars.Attach(p.transform, 2.0f, UiTheme.HeroElectricBright);
+                        Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.HeroHit,
+                                                   sourceSlot, p.PlayerSlot,
+                                                   p.transform.position, 2.0f);
                     }
                 }
             }
@@ -4602,7 +4628,9 @@ namespace TumbangPreso.Abilities
                         // `ApplyStagger`, so the small slipper blast does not dress as a hold.
                         p.ApplyStagger(stunTime, ElementForStyle(style),
                                        Balance.StunBreakPressesDefault);
-                        DizzyStars.Attach(p.transform, stunTime, UiTheme.HeroFireBright);
+                        Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.HeroHit,
+                                                   sourceSlot, p.PlayerSlot,
+                                                   p.transform.position, stunTime);
                     }
                 }
             }
@@ -4758,7 +4786,7 @@ namespace TumbangPreso.Abilities
             //    never reached from here. `AbilityVfx` has one for each of these.
             look.Burst(center, radius);
 
-            GameServices.Audio?.PlayAt(look.Cue, center);
+            NetCue.Play(look.Cue, center);
 
             // Comic Popup
             if (!string.IsNullOrEmpty(comicText))
@@ -4859,7 +4887,7 @@ namespace TumbangPreso.Abilities
                 // ⚠️ THE SHATTER IS TWELVE FLYING SHARDS AND A SOUND. It does not also need
                 // a word, and it fires once per frozen player, so a three-target nova used to
                 // print three of them 2.5 s after the cast.
-                GameServices.Audio?.PlayAt("sfx_ice_freeze", transform.position);
+                NetCue.Play("sfx_ice_freeze", transform.position);
                 Object.Destroy(gameObject);
             }
         }

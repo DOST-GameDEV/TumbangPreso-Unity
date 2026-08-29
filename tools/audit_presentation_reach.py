@@ -111,11 +111,24 @@ def scan():
                     current = (m.group(1), depth)
                     opened = False
                     methods.setdefault((path, m.group(1)),
-                                       {"gated": False, "line": i + 1})
+                                       {"gated": False, "line": i + 1, "gateLine": None})
 
+                # ⚠️⚠️ A GATE ONLY COVERS WHAT COMES AFTER IT, AND IGNORING THAT COST A FALSE
+                # POSITIVE ON THE FIRST CLEAN RUN. `HeroHazards.CreateExplosion` draws its
+                # picture and THEN gates, deliberately — its own note says the order is the
+                # point — so a whole-method flag reported the one call that is already correct.
+                #
+                # ⚠️ AND IT ONLY COUNTS AT THE BODY'S OWN DEPTH. A `ShouldResolve()` return
+                # inside a loop or an `if` guards that block, not the rest of the method; taking
+                # it as a method-wide gate is how the deliberate
+                # `if (ShouldResolve() || p.PlayerSlot == LocalSlot)` split reads as a refusal.
                 if current and GATE.search(line) and "return" in line:
                     gates.append(depth)
-                    methods[(path, current[0])]["gated"] = True
+                    if depth == current[1] + 1:
+                        m2 = methods[(path, current[0])]
+                        if m2["gateLine"] is None:
+                            m2["gateLine"] = i + 1
+                        m2["gated"] = True
 
                 if path not in EXEMPT_FILES and not EXEMPT_LINE.search(line):
                     for kind, pattern in FEEDBACK.items():
@@ -180,8 +193,8 @@ def callers(methods):
             depth = 0
             current = None
             opened = False
-            for line in lines:
-                line = strip_comment(line)
+            for i, raw in enumerate(lines):
+                line = strip_comment(raw)
                 m = SIG.match(line.strip())
                 if m:
                     current = (m.group(1), depth)
@@ -190,7 +203,8 @@ def callers(methods):
                     for call in re.findall(r"(?<![\w.])(\w+)\s*\(", line):
                         if call == current[0]:
                             continue
-                        edges.setdefault((path, call), set()).add((path, current[0]))
+                        edges.setdefault((path, call), set()).add(
+                            (path, current[0], i + 1))
 
                 depth += line.count("{") - line.count("}")
 
@@ -224,7 +238,16 @@ def propagate(methods, edges):
             incoming = edges.get((path, name), set())
             if not incoming:
                 continue
-            if all(reached.get(c, False) for c in incoming):
+
+            # ⚠️ A CALL MADE BEFORE ITS CALLER'S GATE IS NOT BEHIND IT. See the note in `scan`.
+            def behind(edge):
+                cp, cn, cline = edge
+                if not reached.get((cp, cn), False):
+                    return False
+                gl = methods.get((cp, cn), {}).get("gateLine")
+                return gl is None or cline > gl
+
+            if all(behind(e) for e in incoming):
                 reached[(path, name)] = True
                 changed = True
         if not changed:
@@ -239,8 +262,15 @@ def main():
 
     bad, ok = [], []
     for path, line, kind, method, raw in calls:
-        (bad if reached.get((path, method), False) else ok).append(
-            (path, line, kind, method, raw))
+        host_only = reached.get((path, method), False)
+
+        # ⚠️ AND THE SAME RULE FOR A DIRECT CALL: a line above its own method's gate runs on
+        # every peer, which is what `CreateExplosion` does on purpose.
+        gl = methods.get((path, method), {}).get("gateLine")
+        if host_only and gl is not None and line < gl:
+            host_only = False
+
+        (bad if host_only else ok).append((path, line, kind, method, raw))
 
     for path, line, kind, method, raw in sorted(bad):
         print("HOST-ONLY  %-9s %s:%d  %s()\n           %s" % (kind, path, line, method, raw))

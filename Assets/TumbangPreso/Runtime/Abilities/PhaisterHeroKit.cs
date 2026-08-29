@@ -493,9 +493,13 @@ namespace TumbangPreso.Abilities
                     if (diff.magnitude > Reach) continue;
 
                     p.ApplyStagger(CurseHold, StunElement.Hex, CurseBreakPresses);
-                    AbilityVfx.AttachAura(p.transform, AbilityVfx.Aura.WitchEclipse, 2.5f);
-                    ComicPopup.Spawn(p.transform.position + Vector3.up * 1.3f, "CURSED!",
-                                     UiTheme.HeroWitchBright, 1.2f);
+
+                    // ⚠️ RELAYED. The stagger is a RULE and stays here behind the host gate;
+                    // the aura and the CURSED! plate are what three other people could not see.
+                    // See `Visual.MatchFlair`.
+                    Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.HeroCursed,
+                                               mySlot, p.PlayerSlot,
+                                               p.transform.position, CurseHold);
                 }
             }
         }

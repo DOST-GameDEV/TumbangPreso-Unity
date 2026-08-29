@@ -2798,6 +2798,70 @@ where the old string was 23, and this very plate already has a note recording it
 `LOBBY · YOU ARE HOSTIN` with the SPECTATE button over the last letters. `SetHeadline` measures;
 `SetText` never did.
 
+### 83.22 ✅ ZERO HOST-ONLY: THE HERO KITS AND HAZARDS, AND THE GATE THAT KEEPS THEM THAT WAY
+
+The rest of 🧑's *"make sure that all host sided shit is seen by everyone and not js host"*, and
+the closing of § 83.19.
+
+**41 → 22 → 0.** `tools/audit_presentation_reach.py` now reports **93 presentation call sites, 93
+reachable by every peer**, and it exits 1 when that stops being true.
+
+**What was left after § 83.16 was one file's worth, and it had one shape:** `ApplyStagger(...)`
+followed by a flourish, inside a `ShouldResolve()` gate. Every one of them had already had its
+SOUND moved to `NetCue` and none of them had had its LOOK moved anywhere, so **a client heard the
+poltergeist connect and saw nothing hit anybody**:
+
+| what landed | what three players out of four got |
+|---|---|
+| Sean's Ignition dash | the bump, and no stars and no jolt on the body it hit |
+| Nemu's poltergeist | the `downed` thud, and no `BOO!`, no stars |
+| Phaister's eclipse | nothing at all: no aura, no `CURSED!` |
+| Phaister's hex sigil | the falling cue, and no `HEXED!` |
+| Zack's static zone | no zap ring, no stars |
+| Zack's thunderstrike | **no crack, no ring** — the loudest moment in his kit, on one machine |
+| Cheska's ice | no `WHOA!` |
+| Cheska's wall shattering | twelve pieces, silently and invisibly |
+| the burn pulse | no `BAM!` |
+| every explosion's stars | nothing |
+
+Nine new `MatchFlair.Kind` values carry them, and six zone cues that were still on
+`GameServices.Audio` moved to `NetCue`.
+
+⚠️ **THE KINDS ARE SEPARATE VALUES RATHER THAN ONE KIND PLUS A WORD ON THE WIRE**, which keeps the
+payload exactly what it already was: a kind, two seats, a point and a scalar. A popup string per
+hit is a per-frame allocation and a second thing to keep in step.
+
+⚠️ **`strength` CARRIES THE STAGGER'S OWN DURATION**, so the stars last as long as the hold on
+every screen. A crown that outlives the stun tells three other players somebody is still held when
+they are not, and the taya reads exactly that to decide whether to commit.
+
+⚠️ **THE COLOUR IS DERIVED FROM THE CASTER, NOT SENT.** `UiTheme.BrightForHero` off the actor's
+`CharacterIndex` is the same lookup each of these lines was doing by writing the accent literally,
+and it cannot drift from the kit it belongs to.
+
+⚠️⚠️ **AND THE RULES DID NOT MOVE, IN ANY OF THEM.** Every `ApplyStagger`, `ApplyImpulse` and score
+stays on the line it was on, behind the gate it was behind. `MatchFlair` draws and touches no
+state.
+
+**Two rounds of sharpening the audit, both worth keeping:**
+
+⚠️ **NAME-KEYED CALLER EDGES COLLIDE ACROSS TYPES.** One `x.Update(dt)` written inside a host-only
+method made **every** `Update` in the project host-only, and the first fixed run reported 23
+hazards that are spawned on every peer and tick on every peer. Edges are per FILE now, and Unity
+message names are always entry points because the engine calls them.
+
+⚠️⚠️ **A GATE ONLY COVERS WHAT COMES AFTER IT.** `HeroHazards.CreateExplosion` draws its picture
+and THEN gates — its own note says the order is the point — so a whole-method flag reported the
+one call that was already correct. The audit records the LINE a body-depth gate fires on and
+compares, both for a direct call and along every caller edge. It also ignores a gate written
+inside a loop or an `if`, because that guards the block and not the method, which is what the
+deliberate `if (ShouldResolve() || p.PlayerSlot == LocalSlot)` split looks like.
+
+⚠️ **`tools/verify.sh` RUNS IT FIRST, BEFORE `dotnet` AND BEFORE UNITY.** It takes under a second,
+needs no editor, and a fault that needs no compiler should not wait for one. `audit_audio_reach.py`
+is kept: it is the narrower question and it still answers it, and this entry is the record of what
+it could not see.
+
 ---
 
 ## 0 · Hero Strike is being reworked, and the plan is its own file
