@@ -1,0 +1,456 @@
+using System;
+using System.Collections.Generic;
+
+namespace TumbangPreso.Core
+{
+    /// <summary>
+    /// Everything one player has ever done, in one mode, as counts.
+    ///
+    /// ⚠️ THE SAME FIELDS AS `PlayerMatchStats`, SUMMED, AND THAT PAIRING IS THE POINT. A career
+    /// total that cannot be reproduced by adding up the records under it is a number nobody can
+    /// argue with, and `FUTURE.md` § 2.2 is explicit that every stat on a profile becomes an
+    /// argument in a lobby. `ProfileRules.Add` is the only thing that writes any of it.
+    /// </summary>
+    [Serializable]
+    public sealed class CareerTotals
+    {
+        public int Matches;
+        public int Wins;
+        public int Draws;
+
+        /// <summary>Index 0 is 1st place. Length is <see cref="Balance.PlayerCount"/>.
+        /// ⚠️ A 4-PLAYER GAME HAS FOUR OUTCOMES, NOT TWO (`FUTURE.md` § 2.1). A win rate alone
+        /// cannot tell a steady 2nd from a steady 4th, and those are different players.</summary>
+        public int[] Placements = new int[Balance.PlayerCount];
+
+        public float SecondsPlayed;
+
+        public int Throws;
+        public int Knockdowns;
+        public int Retrievals;
+        public int RetrievalsUnderPressure;
+        public int Tags;
+        public int Sabotages;
+        public int RoundsDefended;
+        public int DefenceTicks;
+        public int TayaCampPenalties;
+        public int UnretrievedSlipperPenalties;
+        public int ShoveAttempts;
+        public int ShoveHits;
+        public int LungeAttempts;
+        public int LungeHits;
+        public float DistanceTravelled;
+
+        /// <summary>Summed only over matches where a throw happened, so the average below is
+        /// honest about its own denominator. See <see cref="PlayerMatchStats.TimeToFirstThrow"/>
+        /// for why a never-threw match cannot be averaged in as zero.</summary>
+        public float FirstThrowSecondsTotal;
+        public int MatchesWithAThrow;
+
+        public float LongestLastAttacker;
+        public int Clutches;
+
+        /// <summary>Matches finished in last place at the start of the final round, whether or
+        /// not they were then won. The denominator clutch rate needs.</summary>
+        public int ComebackChances;
+
+        public int CurrentWinStreak;
+        public int LongestWinStreak;
+        public int TotalScore;
+        public int BestScore;
+    }
+
+    /// <summary>Career totals for one mode. ⚠️ Classic and Hero Strike are never merged
+    /// (`FUTURE.md` § 2.1 item 3): they are separate games, and a combined knockdown count is a
+    /// number about neither of them.</summary>
+    [Serializable]
+    public sealed class ModeRecord
+    {
+        public string Mode = "";
+        public CareerTotals Totals = new CareerTotals();
+    }
+
+    /// <summary>Games and wins on one roster entry, keyed by its stable id.</summary>
+    [Serializable]
+    public sealed class PickRecord
+    {
+        public string Id = "";
+        public int Games;
+        public int Wins;
+        public int Score;
+    }
+
+    /// <summary>
+    /// The career document. One per player, written only by the Cloud Code endpoint.
+    ///
+    /// ⚠️⚠️ IDENTITY IS NOT DUPLICATED IN HERE. The display name, tag, bio, country and pronouns
+    /// live in `AccountProfile` and are owned by Authentication and the `player-account`
+    /// endpoint. Two documents that both claim to know a player's name is two names, and the
+    /// one on the scoreboard would be whichever loaded last. This document holds the id and
+    /// nothing else about who the player is.
+    /// </summary>
+    [Serializable]
+    public sealed class PlayerProfile
+    {
+        public string PlayerId = "";
+
+        /// <summary>
+        /// ⚠️⚠️ PHASE 4 OWNS THE CURVE AND THIS PHASE OWNS ONLY THE FIELD. `FUTURE.md` § 2.1
+        /// draws level and border on the header card, so the document has to carry them from day
+        /// one or every profile written before Phase 4 has to be migrated. Nothing in this phase
+        /// awards XP: the value stays 0 and the level stays 1, and the header hides the row
+        /// rather than drawing a level nobody earned. Inventing a curve here would put a
+        /// progression number in the one file `FUTURE.md` § 0.6 says must never carry balance.
+        /// </summary>
+        public int Level = 1;
+        public int Xp;
+
+        /// <summary>⚠️ PHASE 9 OWNS THESE. Carried for the same reason as level: the header card
+        /// is designed around a rank badge and a peak, and a document without the fields cannot
+        /// hold one. Empty means unranked, which is what every profile reads today.</summary>
+        public string RankTier = "";
+        public int RankPoints;
+        public string PeakRankTier = "";
+
+        /// <summary>⚠️ PHASE 5 OWNS THIS. Stable roster ids, append-only, same contract as
+        /// `Roster`'s lists.</summary>
+        public string[] Inventory = Array.Empty<string>();
+
+        public string CreatedUtc = "";
+        public string UpdatedUtc = "";
+
+        /// <summary>Every mode ever played, one entry each.</summary>
+        public List<ModeRecord> Modes = new List<ModeRecord>();
+
+        public List<PickRecord> Characters = new List<PickRecord>();
+        public List<PickRecord> Slippers = new List<PickRecord>();
+
+        /// <summary>
+        /// The ids of matches already counted, newest last.
+        ///
+        /// ⚠️⚠️ THIS IS WHAT MAKES SUBMISSION IDEMPOTENT AND IT IS NOT OPTIONAL. The offline
+        /// queue in `FUTURE.md` § 19.2 step 6 exists to submit a match played with no connection
+        /// on the next sign-in, and a queue that survives a crash will eventually submit the same
+        /// record twice. Without this a player's career doubles a match every time their Wi-Fi
+        /// drops at the wrong moment, and nothing anywhere would report an error.
+        ///
+        /// ⚠️ IT IS CAPPED, SO IT IS A REPLAY WINDOW RATHER THAN A LEDGER. See
+        /// <see cref="ProfileRules.AppliedIdMemory"/> for the size and why.
+        /// </summary>
+        public List<string> AppliedMatchIds = new List<string>();
+    }
+
+    /// <summary>
+    /// A career, a history and the rules for adding a match to both.
+    ///
+    /// ⚠️ EVERY METHOD IS PURE AND ENGINE-FREE, WHICH IS WHY THE HARD PARTS ARE HERE RATHER THAN
+    /// IN THE CLOUD CODE SCRIPT. Idempotency, streaks, comeback denominators and history trimming
+    /// are all counting, and `MatchResult`'s own header records that every bug the rematch vote
+    /// ever had was a counting bug. Counting can be asserted in a millisecond.
+    /// </summary>
+    public static class ProfileRules
+    {
+        /// <summary>
+        /// How many match ids a profile remembers for the replay check.
+        ///
+        /// ⚠️ 200, WHICH IS TWICE <see cref="HistoryLimit"/> ON PURPOSE. The window has to
+        /// outlive the history, or a record that has just been rolled into the totals could be
+        /// resubmitted and counted a second time; keeping it at exactly 100 would make the oldest
+        /// record in the history simultaneously the newest one outside the guard.
+        /// </summary>
+        public const int AppliedIdMemory = 200;
+
+        /// <summary>
+        /// ⚠️ `FUTURE.md` § 2.3: keep 100 full records and roll the rest into the totals. The
+        /// totals are not derived from the history, they are accumulated as records arrive, so
+        /// dropping the 101st loses the row and never the numbers.
+        /// </summary>
+        public const int HistoryLimit = 100;
+
+        public static ModeRecord ModeFor(PlayerProfile profile, string mode)
+        {
+            profile.Modes ??= new List<ModeRecord>();
+            mode = string.IsNullOrWhiteSpace(mode) ? GameMode.Classic.ToString() : mode.Trim();
+
+            foreach (var m in profile.Modes)
+                if (m != null && m.Mode == mode) return m;
+
+            var added = new ModeRecord { Mode = mode, Totals = new CareerTotals() };
+            profile.Modes.Add(added);
+            return added;
+        }
+
+        /// <summary>
+        /// Brings a career loaded from anywhere into a shape the screen can read.
+        ///
+        /// ⚠️⚠️ THE PLACEMENT ARRAY IS THE ONE FIELD THAT CAN ARRIVE THE WRONG LENGTH AND
+        /// CRASH A READER. Everything else on `CareerTotals` is a scalar, but this is an
+        /// array sized from `Balance.PlayerCount`, and a profile is JSON written by a
+        /// server and stored for months: a document written before that constant moved,
+        /// or truncated by a serialiser, hands the profile screen an index it does not
+        /// have. It is RESIZED rather than replaced, so a shorter array keeps the counts
+        /// it does carry.
+        /// </summary>
+        public static PlayerProfile Normalise(PlayerProfile profile)
+        {
+            profile ??= new PlayerProfile();
+            profile.Modes ??= new List<ModeRecord>();
+            profile.Characters ??= new List<PickRecord>();
+            profile.Slippers ??= new List<PickRecord>();
+            profile.AppliedMatchIds ??= new List<string>();
+            profile.Inventory ??= Array.Empty<string>();
+            if (profile.Level < 1) profile.Level = 1;
+
+            foreach (var mode in profile.Modes)
+            {
+                if (mode == null) continue;
+                mode.Totals ??= new CareerTotals();
+
+                var places = mode.Totals.Placements;
+                if (places != null && places.Length == Balance.PlayerCount) continue;
+
+                var resized = new int[Balance.PlayerCount];
+                for (int i = 0; places != null && i < places.Length && i < resized.Length; i++)
+                    resized[i] = places[i];
+                mode.Totals.Placements = resized;
+            }
+
+            return profile;
+        }
+
+        private static PickRecord PickFor(List<PickRecord> list, string id)
+        {
+            foreach (var p in list)
+                if (p != null && p.Id == id) return p;
+
+            var added = new PickRecord { Id = id };
+            list.Add(added);
+            return added;
+        }
+
+        /// <summary>
+        /// Adds one match to a career.
+        ///
+        /// Returns false and changes NOTHING when the record has already been counted, when the
+        /// player is not in it, or when the record is a bot-only match. All three are ordinary
+        /// rather than errors: a replayed queue entry, a spectated match, and a Practice game.
+        ///
+        /// ⚠️⚠️ IT IS ALL-OR-NOTHING. An early return halfway through would leave a career with
+        /// a match counted in one place and not another, which is unrecoverable without the
+        /// record that produced it. Everything that can refuse the record is checked before the
+        /// first field is written.
+        /// </summary>
+        public static bool Apply(PlayerProfile profile, MatchRecord record, string playerId)
+        {
+            if (profile == null || record == null) return false;
+            if (string.IsNullOrEmpty(playerId)) return false;
+            if (string.IsNullOrWhiteSpace(record.MatchId)) return false;
+
+            profile.AppliedMatchIds ??= new List<string>();
+            if (profile.AppliedMatchIds.Contains(record.MatchId)) return false;
+
+            var line = MatchRecordRules.LineFor(record, playerId);
+            if (line == null) return false;
+
+            profile.PlayerId = string.IsNullOrEmpty(profile.PlayerId) ? playerId : profile.PlayerId;
+            profile.Characters ??= new List<PickRecord>();
+            profile.Slippers ??= new List<PickRecord>();
+
+            var totals = ModeFor(profile, record.Mode).Totals;
+            totals.Placements ??= new int[Balance.PlayerCount];
+
+            bool won = record.WinningSlot == line.Slot;
+            bool drew = record.WinningSlot < 0 && line.Placement == 1;
+
+            totals.Matches++;
+            if (won) totals.Wins++;
+            if (drew) totals.Draws++;
+
+            int place = line.Placement;
+            if (place >= 1 && place <= totals.Placements.Length) totals.Placements[place - 1]++;
+
+            totals.SecondsPlayed += record.DurationSeconds;
+            totals.Throws += line.Throws;
+            totals.Knockdowns += line.Knockdowns;
+            totals.Retrievals += line.Retrievals;
+            totals.RetrievalsUnderPressure += line.RetrievalsUnderPressure;
+            totals.Tags += line.Tags;
+            totals.Sabotages += line.Sabotages;
+            totals.RoundsDefended += line.RoundsDefended;
+            totals.DefenceTicks += line.DefenceTicks;
+            totals.TayaCampPenalties += line.TayaCampPenalties;
+            totals.UnretrievedSlipperPenalties += line.UnretrievedSlipperPenalties;
+            totals.ShoveAttempts += line.ShoveAttempts;
+            totals.ShoveHits += line.ShoveHits;
+            totals.LungeAttempts += line.LungeAttempts;
+            totals.LungeHits += line.LungeHits;
+            totals.DistanceTravelled += line.DistanceTravelled;
+            totals.TotalScore += line.Score;
+            if (line.Score > totals.BestScore) totals.BestScore = line.Score;
+
+            if (line.TimeToFirstThrow >= 0.0f)
+            {
+                totals.FirstThrowSecondsTotal += line.TimeToFirstThrow;
+                totals.MatchesWithAThrow++;
+            }
+
+            if (line.LongestLastAttacker > totals.LongestLastAttacker)
+                totals.LongestLastAttacker = line.LongestLastAttacker;
+
+            // ⚠️ THE DENOMINATOR IS COUNTED WHETHER OR NOT THE COMEBACK LANDED, which is what
+            // makes clutch RATE mean anything. Counting only the successes would give a player
+            // who has never been behind an undefined rate and a player who came back once from
+            // one chance a perfect one.
+            if (WasLastEnteringTheFinalRound(record, line))
+            {
+                totals.ComebackChances++;
+                if (won) totals.Clutches++;
+            }
+
+            // ⚠️ A DRAW BREAKS A STREAK RATHER THAN EXTENDING IT. `Scoreboard.WinningSlot`
+            // returns -1 for a tie at the top on purpose, calling it an honest draw; a streak
+            // that survives one is claiming a win the rules refused to award.
+            if (won)
+            {
+                totals.CurrentWinStreak++;
+                if (totals.CurrentWinStreak > totals.LongestWinStreak)
+                    totals.LongestWinStreak = totals.CurrentWinStreak;
+            }
+            else
+            {
+                totals.CurrentWinStreak = 0;
+            }
+
+            if (!string.IsNullOrEmpty(line.CharacterId))
+            {
+                var pick = PickFor(profile.Characters, line.CharacterId);
+                pick.Games++;
+                pick.Score += line.Score;
+                if (won) pick.Wins++;
+            }
+
+            if (!string.IsNullOrEmpty(line.SlipperId))
+            {
+                var pick = PickFor(profile.Slippers, line.SlipperId);
+                pick.Games++;
+                pick.Score += line.Score;
+                if (won) pick.Wins++;
+            }
+
+            profile.AppliedMatchIds.Add(record.MatchId);
+            while (profile.AppliedMatchIds.Count > AppliedIdMemory)
+                profile.AppliedMatchIds.RemoveAt(0);
+
+            profile.UpdatedUtc = record.PlayedUtc;
+            if (string.IsNullOrEmpty(profile.CreatedUtc)) profile.CreatedUtc = record.PlayedUtc;
+            return true;
+        }
+
+        /// <summary>
+        /// Whether this line went into the final round tied-last or worse. The denominator of
+        /// clutch rate, and the reason <see cref="MatchRecordRules.IsClutch"/> can stay a
+        /// question about one finished match.
+        /// </summary>
+        public static bool WasLastEnteringTheFinalRound(MatchRecord record, PlayerMatchStats line)
+        {
+            if (record?.Players == null || line == null || record.Players.Length < 2) return false;
+
+            var entering = new int[record.Players.Length];
+            int self = -1;
+            for (int i = 0; i < record.Players.Length; i++)
+            {
+                entering[i] = record.Players[i]?.ScoreAtFinalRound ?? 0;
+                if (ReferenceEquals(record.Players[i], line)) self = i;
+            }
+            if (self < 0) return false;
+
+            int[] places = MatchRecordRules.Placements(entering);
+            int worst = 0;
+            foreach (int p in places) if (p > worst) worst = p;
+            return places[self] == worst;
+        }
+
+        /// <summary>
+        /// Newest first, capped at <see cref="HistoryLimit"/>, with duplicates refused.
+        ///
+        /// ⚠️ THE CAP IS APPLIED HERE AND AGAIN ON THE SERVER. `FUTURE.md` § 0.5 rule 6 makes the
+        /// endpoint the authority over everything stored, and this copy exists so the OFFLINE
+        /// queue on disk cannot grow without bound on a machine that never signs in.
+        /// </summary>
+        public static List<MatchRecord> Remember(List<MatchRecord> history, MatchRecord record,
+                                                 int limit = HistoryLimit)
+        {
+            history ??= new List<MatchRecord>();
+            if (record == null || string.IsNullOrWhiteSpace(record.MatchId)) return history;
+
+            foreach (var existing in history)
+                if (existing != null && existing.MatchId == record.MatchId) return history;
+
+            history.Insert(0, record);
+            while (history.Count > limit) history.RemoveAt(history.Count - 1);
+            return history;
+        }
+
+        // -------------------------------------------------------------------
+        // § THE RATES, WHICH ARE THE ONLY THING THE SCREEN IS ALLOWED TO PRINT
+        //
+        // ⚠️⚠️ EVERY ONE OF THESE RETURNS A VALUE AND A SEPARATE `Reportable` ANSWER, because
+        // `FUTURE.md` § 2.2 forbids showing a stat that will not survive an argument: *"If a
+        // stat is noisy at low sample size, hide it until the sample supports it and say why."*
+        // A single float cannot express "I do not have enough games to say", and a screen given
+        // one will print 100 per cent over two attempts.
+        // -------------------------------------------------------------------
+
+        public static float WinRate(CareerTotals t)
+            => t == null ? 0.0f : MatchRecordRules.Rate(t.Wins, t.Matches);
+
+        public static float KnockdownsPerThrow(CareerTotals t)
+            => t == null ? 0.0f : MatchRecordRules.Rate(t.Knockdowns, t.Throws);
+
+        public static float TagsPerRoundDefended(CareerTotals t)
+            => t == null ? 0.0f : MatchRecordRules.Rate(t.Tags, t.RoundsDefended);
+
+        public static float ShoveHitRate(CareerTotals t)
+            => t == null ? 0.0f : MatchRecordRules.Rate(t.ShoveHits, t.ShoveAttempts);
+
+        public static float LungeHitRate(CareerTotals t)
+            => t == null ? 0.0f : MatchRecordRules.Rate(t.LungeHits, t.LungeAttempts);
+
+        public static float RetrievalsUnderPressureRate(CareerTotals t)
+            => t == null ? 0.0f : MatchRecordRules.Rate(t.RetrievalsUnderPressure, t.Retrievals);
+
+        public static float ClutchRate(CareerTotals t)
+            => t == null ? 0.0f : MatchRecordRules.Rate(t.Clutches, t.ComebackChances);
+
+        public static float AverageTimeToFirstThrow(CareerTotals t)
+            => t == null ? 0.0f : MatchRecordRules.Rate(t.FirstThrowSecondsTotal, t.MatchesWithAThrow);
+
+        public static float PassiveDefenceSeconds(CareerTotals t)
+            => t == null ? 0.0f : t.DefenceTicks * Balance.DefenseTickInterval;
+
+        /// <summary>Metres per round, so a 4-round Classic career and an 8-round Hero Strike one
+        /// are the same question.</summary>
+        public static float DistancePerRound(CareerTotals t, int roundsPerMatch)
+            => t == null ? 0.0f : MatchRecordRules.Rate(t.DistanceTravelled, (float)t.Matches * roundsPerMatch);
+
+        public static float HoursPlayed(CareerTotals t)
+            => t == null ? 0.0f : t.SecondsPlayed / 3600.0f;
+
+        /// <summary>The pick with the most games, or null. Ties fall to the higher score, then to
+        /// the first seen, so the answer is stable between screen refreshes.</summary>
+        public static PickRecord Favourite(List<PickRecord> picks)
+        {
+            PickRecord best = null;
+            if (picks == null) return null;
+
+            foreach (var p in picks)
+            {
+                if (p == null || p.Games <= 0) continue;
+                if (best == null || p.Games > best.Games ||
+                    (p.Games == best.Games && p.Score > best.Score))
+                    best = p;
+            }
+            return best;
+        }
+    }
+}

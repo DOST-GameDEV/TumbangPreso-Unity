@@ -240,6 +240,12 @@ namespace TumbangPreso
             Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.Throw,
                                        _motor.PlayerSlot, -1, origin, spin);
 
+            // ⚠️ COUNTED HERE AND NOT AT THE INPUT, BECAUSE A PRESS IS NOT A THROW. This body
+            // is behind `NetAuthority.ShouldResolve()` and a live `Held`, so it is reached once
+            // per tsinelas that actually left a hand. `MatchStatsCollector` gates itself again
+            // for the same reason every verb does; the two guards are cheap and independent.
+            GameServices.Stats?.NoteThrow(_motor.PlayerSlot);
+
             var ability = _motor.AbilitySystem;
             ability?.OnThrowReleased();
 
@@ -324,10 +330,46 @@ namespace TumbangPreso
             // ⚠️ ONLY YOUR OWN TSINELAS COUNTS. Picking up somebody else's is a denial play and
             // a fine one, but it is not the run this game is built around and it carries none of
             // the same risk. `OwnerSlot` is authoritative; a slipper nobody owns pays nothing.
+            // ⚠️ MEASURED AT THE SAME PLACE THE ECONOMY IS PAID, AND FOR THE SAME REASON.
+            // This method is the one funnel every pickup arrives through, and the guard above
+            // makes it idempotent, so a retrieval is counted exactly once and cannot be counted
+            // twice by the double call that guard exists for. The distance to the taya is taken
+            // NOW: it is what decides whether this was a run under pressure or a walk, and one
+            // frame later the defender has moved.
+            GameServices.Stats?.NoteRetrieval(
+                _motor.PlayerSlot, what.OwnerSlot == _motor.PlayerSlot, DistanceToTaya());
+
             if (what.OwnerSlot == _motor.PlayerSlot)
                 _motor.AbilitySystem?.OnOwnSlipperRetrieved();
 
             _throwLockLeft = what.ThrowLock;
+        }
+
+        /// <summary>
+        /// Flat distance from this body to the current taya, or -1 when there is not one to
+        /// measure against.
+        ///
+        /// ⚠️ FLAT, LIKE EVERY OTHER CONTACT MEASUREMENT IN THE GAME. Height is what a jump
+        /// and a kerb change, and `CLAUDE.md` § 4's distance rule is about the floor plan.
+        ///
+        /// ⚠️ -1 IS NOT ZERO. Zero would read as the taya standing on top of you, and would
+        /// score every pickup in a Practice round that has no defender in it as made under
+        /// maximum pressure.
+        /// </summary>
+        private float DistanceToTaya()
+        {
+            var round = GameServices.Round;
+            var match = GameServices.Match;
+            if (round == null || match == null) return -1.0f;
+
+            var taya = round.PlayerAt(match.DefenderSlot);
+            if (taya == null || taya == _motor) return -1.0f;
+
+            Vector3 a = transform.position;
+            Vector3 b = taya.transform.position;
+            a.y = 0.0f;
+            b.y = 0.0f;
+            return Vector3.Distance(a, b);
         }
 
         /// <summary>

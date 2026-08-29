@@ -182,6 +182,20 @@ namespace TumbangPreso
                 Net.MatchRpc.Instance?.BroadcastAction(_motor.PlayerSlot, "shove");
 
             var victim = FindInCone(Balance.ShoveRange, Balance.ShoveArcDeg, requireTaggable: false);
+
+            // ⚠️⚠️ COUNTED HERE AND IN `HostResolveShove`, WHICH IS TWO SITES FOR ONE STAT AND
+            // IS NOT A DUPLICATE. These are two different bodies: this line is reached for the
+            // host's own seat and in solo play, and a CLIENT has already returned above at
+            // `ShouldRequest()` so its shove is counted once, on the host, when the request
+            // lands. Counting at the press instead would be one site and would count a shove
+            // twice for every client in the room.
+            //
+            // ⚠️ EVERYTHING THAT CAN REFUSE THE VERB IS ABOVE THIS LINE: the cooldown, being
+            // the taya, a fatigued bar and the stamina spend. A press that never became a
+            // shove is not a miss, and counting it as one makes the hit rate a measure of how
+            // often somebody mashed.
+            GameServices.Stats?.NoteShoveAttempt(_motor.PlayerSlot, victim != null);
+
             if (victim == null)
             {
                 _shoveCooldown = Balance.ShoveMissCooldown;
@@ -269,6 +283,10 @@ namespace TumbangPreso
         private void ReleaseLunge(float power)
         {
             _lungeCooldown = Balance.LungeCooldown;
+
+            // ⚠️ THE SAME TWO-SITE PAIRING THE SHOVE ABOVE EXPLAINS. This is the host's own
+            // body and the solo game; `HostResolveLunge` is a client's, resolved on the host.
+            GameServices.Stats?.NoteLungeAttempt(_motor.PlayerSlot);
             _lungeActiveLeft = Balance.LungeActiveTime;
             _lungeFrom = transform.position;
 
@@ -333,6 +351,12 @@ namespace TumbangPreso
 
                 if (DistanceToSegment(t, a, b) > Balance.LungeTagRadius) continue;
 
+                // ⚠️ COUNTED BEFORE THE TAG RATHER THAN AFTER IT. `ResolveTag` re-checks the
+                // whole world and can still refuse, but a refusal there means the sweep found
+                // somebody the rules protect, not that the lunge missed. A hit rate counting
+                // only the tags that scored would be measuring the victim's state instead of
+                // the taya's aim.
+                GameServices.Stats?.NoteLungeHit(_motor.PlayerSlot);
                 round.ResolveTag(_motor, p);
                 _lungeActiveLeft = 0.0f; // one tag per lunge
                 return;
@@ -377,6 +401,9 @@ namespace TumbangPreso
             _lungeActiveLeft = Balance.LungeActiveTime;
             _lungeFrom = from;
 
+            // The other half of the pair; see `ReleaseLunge`.
+            GameServices.Stats?.NoteLungeAttempt(_motor.PlayerSlot);
+
             Vector3 flat = facing;
             flat.y = 0.0f;
             _motor.ApplyImpulse(flat.normalized * Balance.LungeSpeed * power);
@@ -395,6 +422,9 @@ namespace TumbangPreso
 
             var victim = FindInCone(from, facing, Balance.ShoveRange, Balance.ShoveArcDeg,
                                     requireTaggable: false);
+
+            // The other half of the pair; see the note on the local path above.
+            GameServices.Stats?.NoteShoveAttempt(_motor.PlayerSlot, victim != null);
 
             if (victim == null)
             {

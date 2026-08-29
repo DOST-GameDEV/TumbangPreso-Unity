@@ -113,13 +113,14 @@ namespace TumbangPreso.PlayTests
         /// <summary>
         /// The `player-account` Cloud Code endpoint answers a load for the signed-in player.
         ///
-        /// ⚠️⚠️ THIS MIRRORS `PlayerAccount.CallCloudAsync` AND THE TWO MUST MOVE TOGETHER.
-        /// The URL, the `params` envelope and the bearer header are duplicated here on purpose:
-        /// that method is private, and making it visible only so a test could reach it would put
-        /// a seam in shipping code for the benefit of one probe. The cost is that a change to the
-        /// call shape has to be made twice, so this comment is the reminder. If it ever drifts,
-        /// this probe passes while the game fails, which is the worst possible outcome, so prefer
-        /// deleting this test over letting it rot.
+        /// ⚠️⚠️ IT NOW CALLS `Net.CloudCode`, WHICH IS THE CODE THE GAME CALLS, AND THAT IS A
+        /// CHANGE FROM WHAT `docs/TODO.md` § 88.4 DESCRIBES. This test used to write the URL,
+        /// the `params` envelope and the bearer header out by hand, because the game's copy was
+        /// private and § 88.4 judged that widening it *"would put a seam in shipping code for
+        /// one probe"*. It also named the cost: *"if the call shape drifts, the probe passes
+        /// while the game fails, which is the worst outcome available."* Phase 2 needed a THIRD
+        /// copy for the career endpoint, so the request moved into a shared helper the shipping
+        /// code uses. Calling it from here is not a seam, and the drift § 88.4 feared is gone.
         ///
         /// ⚠️ A "load" IS THE SAFE VERB TO PROBE WITH. Save would write a real profile for the
         /// probe's throwaway anonymous player, and delete would exercise the destructive path
@@ -131,31 +132,43 @@ namespace TumbangPreso.PlayTests
         {
             yield return SignedIn();
 
-            string projectId = Application.cloudProjectId;
-            string url = $"https://cloud-code.services.api.unity.com/v1/projects/{projectId}/scripts/player-account";
-            string body = "{\"params\":{\"action\":\"load\",\"profile\":\"\"}}";
+            var call = Net.CloudCode.CallAsync(
+                "player-account", new { action = "load", profile = "" });
+            yield return Await(call);
 
-            using var request = new UnityEngine.Networking.UnityWebRequest(
-                url, UnityEngine.Networking.UnityWebRequest.kHttpVerbPOST);
-            request.uploadHandler = new UnityEngine.Networking.UploadHandlerRaw(
-                System.Text.Encoding.UTF8.GetBytes(body));
-            request.downloadHandler = new UnityEngine.Networking.DownloadHandlerBuffer();
-            request.SetRequestHeader("Authorization", "Bearer " + AuthenticationService.Instance.AccessToken);
-            request.SetRequestHeader("Content-Type", "application/json");
-            request.SetRequestHeader("Accept", "application/json, application/problem+json");
+            // An empty profile is the correct answer for a player who has never saved one, so
+            // the assertion is that the endpoint ANSWERED rather than that it had something.
+            Assert.IsNotNull(call.Result,
+                "player-account returned no output. 404 means it is not deployed or not " +
+                "published; 403 means the service-account roles or the player token are wrong.");
+            Debug.Log($"[UgsServicesProbe] player-account answered: {call.Result}");
+        }
 
-            var operation = request.SendWebRequest();
-            float deadline = Time.realtimeSinceStartup + 30.0f;
-            while (!operation.isDone && Time.realtimeSinceStartup < deadline)
-                yield return null;
+        /// <summary>
+        /// The `match-record` endpoint answers a load for the signed-in player.
+        ///
+        /// ⚠️⚠️ THIS IS PHASE 2'S HALF OF THE SAME PROOF AND IT IS THE ONLY THING THAT CATCHES A
+        /// SCRIPT THAT WAS WRITTEN BUT NEVER DEPLOYED. `ugs deploy` publishes what is in the
+        /// folder; a career that silently never uploads looks exactly like a career nobody has
+        /// played yet, because `CareerStore` is built to keep a local profile when the service
+        /// is unreachable and to say so quietly rather than to stop the game.
+        ///
+        /// ⚠️ IT PROBES WITH "load" FOR THE SAME REASON THE ACCOUNT TEST DOES. A "submit" would
+        /// write a real career document for the probe's throwaway anonymous player.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator TheCareerEndpointAnswersALoad()
+        {
+            yield return SignedIn();
 
-            Assert.IsTrue(operation.isDone, "the account endpoint did not answer inside 30 s");
-            Assert.AreEqual(UnityEngine.Networking.UnityWebRequest.Result.Success, request.result,
-                $"account endpoint returned {request.responseCode}: {request.downloadHandler.text}. " +
-                "404 means it is not deployed or not published; 403 means the service account " +
-                "roles or the player's token are wrong.");
+            var call = Net.CloudCode.CallAsync(
+                Net.CareerStore.ScriptName, new { action = "load" });
+            yield return Await(call);
 
-            Debug.Log($"[UgsServicesProbe] player-account answered: {request.downloadHandler.text}");
+            Assert.IsNotNull(call.Result,
+                $"{Net.CareerStore.ScriptName} returned no output. Run " +
+                "`ugs deploy ugs/cloud-code` and check `ugs cloud-code scripts list`.");
+            Debug.Log($"[UgsServicesProbe] {Net.CareerStore.ScriptName} answered: {call.Result}");
         }
 
         [UnityTest]

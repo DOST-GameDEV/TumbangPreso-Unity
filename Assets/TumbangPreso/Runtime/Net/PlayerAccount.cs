@@ -5,8 +5,6 @@ using TumbangPreso.Settings;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
-using UnityEngine.Networking;
-using Newtonsoft.Json;
 
 namespace TumbangPreso.Net
 {
@@ -33,12 +31,6 @@ namespace TumbangPreso.Net
         private sealed class CloudProfileResponse
         {
             public string profile;
-        }
-
-        [Serializable]
-        private sealed class CloudProfileEnvelope
-        {
-            public CloudProfileResponse output;
         }
 
         public event Action Changed;
@@ -445,39 +437,26 @@ namespace TumbangPreso.Net
         }
 
         /// <summary>
-        /// Calls the published Cloud Code script with the Authentication bearer token. This is
-        /// the same endpoint and envelope used by the Cloud Code SDK, kept here because this
-        /// repository's generated PackageManager state currently cannot resolve an added package.
-        /// The server script remains the only writer to Cloud Save.
+        /// Asks the `player-account` script for this player's stored profile, or writes it.
+        ///
+        /// ⚠️⚠️ THE REQUEST ITSELF MOVED TO `CloudCode` AND THIS IS NOW ONLY THE SHAPE OF THE
+        /// ANSWER. It was written out by hand here, and `UgsServicesProbe` carried a second
+        /// hand-written copy so a probe could reach a private method without widening it
+        /// (`docs/TODO.md` § 88.4). `CareerStore` needed a third, which is the point at which
+        /// two copies with a note saying they must move together becomes the failure that note
+        /// was warning about. The probe now calls `CloudCode` too, so it exercises the transport
+        /// the game actually uses instead of a lookalike.
+        ///
+        /// ⚠️ THE SERVER SCRIPT REMAINS THE ONLY WRITER TO CLOUD SAVE. `FUTURE.md` § 0.5 rule 6.
         /// </summary>
         private static async Task<CloudProfileResponse> CallCloudAsync(string action, string profile = null)
         {
-            string projectId = Application.cloudProjectId;
-            string accessToken = AuthenticationService.Instance.AccessToken;
-            if (string.IsNullOrEmpty(projectId) || string.IsNullOrEmpty(accessToken))
-                throw new InvalidOperationException("Cloud profile service is unavailable.");
+            string output = await CloudCode.CallAsync(
+                "player-account", new { action, profile = profile ?? "" });
 
-            string url = $"https://cloud-code.services.api.unity.com/v1/projects/{projectId}/scripts/player-account";
-            string body = JsonConvert.SerializeObject(new
-            {
-                @params = new { action, profile = profile ?? "" }
-            });
-
-            using var request = new UnityWebRequest(url, UnityWebRequest.kHttpVerbPOST);
-            request.uploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(body));
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Authorization", "Bearer " + accessToken);
-            request.SetRequestHeader("Content-Type", "application/json");
-            request.SetRequestHeader("Accept", "application/json, application/problem+json");
-
-            UnityWebRequestAsyncOperation operation = request.SendWebRequest();
-            while (!operation.isDone) await Task.Yield();
-
-            if (request.result != UnityWebRequest.Result.Success)
-                throw new InvalidOperationException($"Cloud profile request failed ({request.responseCode}): {request.error}");
-
-            var envelope = JsonUtility.FromJson<CloudProfileEnvelope>(request.downloadHandler.text);
-            return envelope?.output;
+            return string.IsNullOrWhiteSpace(output)
+                ? null
+                : JsonUtility.FromJson<CloudProfileResponse>(output);
         }
 
         private static AccountProfile ReadLocal()

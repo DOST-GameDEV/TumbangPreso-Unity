@@ -199,6 +199,8 @@ THIS IS TRUE.** The prose about design intent ages well. The claims about the co
 | Claim in these documents | How to check it in one step | If it moved |
 |---|---|---|
 | Authentication and the account layer are present | `grep authentication Packages/manifest.json`, then `grep -r AuthenticationService Assets`, then `grep -r PlayerAccount Assets` | Phase 1 may have moved. Read `docs/TODO.md` § 88 before changing it. |
+| The career layer is present, and `match-record` is deployed | `grep -r CareerStore Assets`, then `ugs cloud-code scripts list` | Phase 2 may have moved. Read `docs/TODO.md` § 89 first, and § 89.6 before touching `ProfileRules`, which is written in C# and again in JS. |
+| Every Cloud Code call goes through one helper | `grep -rn "cloud-code.services.api.unity.com" Assets` returns exactly `Net/CloudCode.cs` | A second hand-written request has appeared. `docs/TODO.md` § 89.5 records why that is the shape where the probe passes and the game fails. |
 | Discovery is UGS Lobby, connection is UGS Relay | Read the header of `Assets/TumbangPreso/Runtime/Net/ServerQuery.cs` | The whole of §§ 0.3, 7 and 8 assumes UGS. Re-cost them. |
 | The input map has no gamepad or touch bindings | `grep -c Gamepad Assets/TumbangPreso/Resources/TumbangPreso.inputactions` | Phases 14 and 15 shrink a lot. |
 | Build targets are Windows, WebGL, Linux server only | `ls "/c/Program Files/Unity/Hub/Editor/*/Editor/Data/PlaybackEngines/"` | Phase 15 step 1 may already be done. |
@@ -333,12 +335,22 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
-## PHASE 2 · THE PROFILE, THE STATS AND THE MATCH HISTORY
+## PHASE 2 · THE PROFILE, THE STATS AND THE MATCH HISTORY ✅ SHIPPED 2026-08-30
 
 **Why second:** a rank with nothing under it is a number. Stats are the cheapest retention feature
 in the game and they make every later balance argument answerable.
 
 ### 2.1 The profile screen, laid out
+
+✅ **SHIPPED 2026-08-30 AS `ProfileOverlay`, WITH FOUR ITEMS DELIBERATELY LEFT OUT.** The header
+card, the career strip, the mode tabs, the stat blocks, the paged match history and the match
+detail are on screen. The **avatar** waits on § 1.4, which is still an open argument nobody has
+answered; the **rank badge and peak** wait on Phase 9; the **achievement shelf** waits on Phase
+10; and **compare** waits on Phase 6, because there are no friends to compare against yet. Each
+would be an empty box, and an empty rank badge on every account in the game teaches every player
+that the game has a rank. `docs/TODO.md` § 89.4 is the list with the phase that fills each one.
+⚠️ **Level and border are not in that list**: the FIELD shipped and only the awarding did not, so
+Phase 4 fills it with no migration.
 
 1. **Header card.** Avatar, display name and tag, country flag, title, level and border, **the
    rank badge**, peak rank, account age. Designed so one screenshot is the whole flex.
@@ -392,9 +404,18 @@ and say why.
 - Match history retention: keep 100 full records per player and roll the rest into the totals.
   Storage is the free tier's real limit and 100 is far more than anybody scrolls.
 
+⚠️⚠️ **CORRECTED 2026-08-30, WHEN THIS SHIPPED: THE HOST AUTHORS THE RECORD BUT DOES NOT
+SUBMIT FOR ANYBODY ELSE.** The hole named above is real and is still open, and it is exactly the
+one described: the host counts the match and can lie about every number in it. What did NOT ship
+is the host WRITING four career documents, which would have been a second and much worse hole:
+the endpoint would have to accept any player id its caller named, so a host could rewrite a
+stranger's career forever. The record is broadcast to every peer and each peer submits its own
+line from its own authenticated session, so the cost is **one endpoint call per player per
+match** rather than one per match. `docs/TODO.md` § 89.3 carries the full argument.
+
 **Done looks like:** finishing a match writes exactly one record, the profile updates without a
 reload, career totals survive a reinstall on the same account, and the whole thing is one Cloud
-Code invocation per match rather than one per event.
+Code invocation per player per match rather than one per event (see the correction above).
 
 **The prompt for this phase is [§ 19.2](#192-prompt-for-phase-2).** Every prompt in
 this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
@@ -1279,6 +1300,19 @@ one short session and it is cheaper than building a phase against a stale brief.
 > Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md`, then `docs/FUTURE.md` §§ 0.5
 > and 0.6, then `docs/FUTURE.md` § 2. Do not skip them because this prompt summarises the task; the
 > summary is not the rules.
+>
+> ✅ **PHASE 2 SHIPPED 2026-08-30. THIS PROMPT IS KEPT AS THE RECORD OF WHY IT IS SHAPED THE
+> WAY IT IS**, per § 0.6's maintenance rule. What actually landed is `docs/TODO.md` § 89, and
+> it departs from the text below in three places: **§ 89.2** ("last attacker" is an
+> interpretation, because this game eliminates nobody), **§ 89.3** (each peer submits its own
+> line, so the cost is one call per player per match) and **§ 89.4** (four § 2.1 items wait on
+> later phases). Read those before re-running any of this.
+>
+> All four checks below were run on 2026-08-30 and all four passed: `player-account` is listed by
+> `ugs cloud-code scripts list`; the `Ugs` category returned **4/4 with `total="4"`** at preflight
+> and **5/5** afterwards, once this phase added `TheCareerEndpointAnswersALoad`; `ScoreEvent` and
+> `AddScore` are unchanged and still the single host-side writer; and every stat in § 2.2 exists,
+> with clutch rate derived at read time exactly as check 4 says.
 >
 > **VERIFY FIRST. ⚠️ PHASE 1 IS NOT FULLY SHIPPED AND THIS PROMPT USED TO ASSUME IT WAS.**
 > The client half landed on branch `accounts` on 2026-08-31; the SERVICE half did not, and one of

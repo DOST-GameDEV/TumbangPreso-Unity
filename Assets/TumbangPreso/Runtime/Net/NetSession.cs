@@ -196,8 +196,13 @@ namespace TumbangPreso.Net
         /// The spectator calls a pause, three screens freeze, one carries on playing a match
         /// nobody else is in, and the two versions then disagree about every position for as long
         /// as the pause lasts. That is worse than either a refusal or a missing effect.
+        /// ⚠️⚠️ **15 SINCE 2026-08-30**, for `MatchRecord`, the one message that carries a
+        /// whole finished match to every peer (`MatchRpc.BroadcastMatchRecord`). A peer without
+        /// the handler still plays the match correctly and then silently gets no end-of-match
+        /// summary and no career entry for a game it played, which is the quiet kind of wrong
+        /// this number exists to turn into a refusal. `docs/TODO.md` § 89.
         /// </summary>
-        public const int ProtocolVersion = 14;
+        public const int ProtocolVersion = 15;
 
         private const string SeatAssignmentMessage = "tp.seat.assignment.v1";
         private readonly Dictionary<ulong, ConnectionHello> _helloByClient =

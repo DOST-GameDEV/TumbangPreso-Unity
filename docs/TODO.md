@@ -16,6 +16,9 @@ are eighteen ordered phases in `FUTURE.md`, each with a prompt written to brief 
 combined order. **None of it is scheduled and none of it is open work**, which is exactly why they
 are separate files: an entry in this list is something somebody should do, and those are things
 somebody might decide to do. **Phase 1 was explicitly started on 2026-08-31 and is § 88 below.**
+**Phase 2 followed on 2026-08-30 and is § 89**: the profile, the stats and the match history.
+Read § 89.3 before changing who submits a match record, and § 89.6 before changing any rule in
+`ProfileRules`, which is written twice on purpose.
 Written 2026-08-31 on 🧑's brief.
 
 ✅ **The unplugged LAN run is DONE, confirmed by 🧑 on 2026-08-31.** This entry read "what has
@@ -246,6 +249,13 @@ The error names an endpoint nobody asked for, which is what makes it confusing. 
 granting the service account everything. ⚠️ **If that is ever tightened, keep an environments read
 role**, or the CLI breaks again with an error that does not mention environments.
 
+❌ **SUPERSEDED 2026-08-30, AND THE PARAGRAPH BELOW IS KEPT BECAUSE ITS REASONING IS WHY.**
+The duplicate is gone: Phase 2 needed a THIRD copy of this request, so it moved into
+`Assets/TumbangPreso/Runtime/Net/CloudCode.cs`, which the game itself calls, and the probe now
+calls that. A shared helper the shipping code uses is not the seam this paragraph was refusing,
+and `CareerAndCloudCodeTests.EveryCloudCodeRequestGoesThroughTheOneHelper` fails if a fourth is
+ever written by hand. § 89.5.
+
 ⚠️ **`TheAccountEndpointAnswersALoad` DUPLICATES `PlayerAccount.CallCloudAsync` ON PURPOSE AND THE
 TWO MUST MOVE TOGETHER.** That method is private, and widening it so a test could reach it would
 put a seam in shipping code for one probe. The duplication is the lesser cost, but if the call
@@ -262,6 +272,221 @@ done. Several documents said otherwise and they are corrected in the same commit
 **The account layer is the thing most likely to regress it**, because a boot that waits on UGS is
 exactly what an unplugged venue produces, so re-run it after any change to `PlayerAccount`'s boot
 path. § 88.1d is the bound that protects it.
+
+---
+
+## 89 · The profile, the stats and the match history ⚠️ IN PROGRESS 2026-08-30
+
+Phase 2 of `FUTURE.md`, commissioned off its § 19.2 prompt. Phase 1 (§ 88) is under it, and the
+`player-account` endpoint was re-proved before any of this was planned, per that prompt's own
+VERIFY FIRST block: `ugs cloud-code scripts list` reports `player-account`, and the `Ugs` PlayMode
+category came back **4/4 with `total="4"`**, which is the check `FUTURE.md` § 0.5 rule 9 asks for
+rather than a green tick over an empty run.
+
+**What a match now produces.** The host counts one `MatchRecord` covering all four seats, mints it
+a `MatchId` at the whistle, broadcasts it to every peer, and each peer submits its own line to the
+`match-record` Cloud Code endpoint from its own authenticated session. The endpoint accumulates
+that player's `PlayerProfile` and stores the record in a 100-entry history. Nothing in the loop is
+per event: a Hero Strike match carrying nine hundred passive-defence ticks costs one call per
+player.
+
+**Where the code went**, per `FUTURE.md` § 0.5 rule 3:
+
+| Piece | Where |
+|---|---|
+| `MatchRecord`, `PlayerMatchStats`, `MatchRecordRules` | `Packages/com.tumbangpreso.core/Runtime/MatchRecord.cs` |
+| `PlayerProfile`, `CareerTotals`, `ProfileRules` | `Packages/com.tumbangpreso.core/Runtime/PlayerProfile.cs` |
+| Host-side counting | `Assets/TumbangPreso/Runtime/MatchStatsCollector.cs` |
+| Local cache, offline queue, submission | `Assets/TumbangPreso/Runtime/Net/CareerStore.cs` |
+| The one Cloud Code request | `Assets/TumbangPreso/Runtime/Net/CloudCode.cs` |
+| The server, and the authority | `ugs/cloud-code/match-record.js` |
+| The career page | `Assets/TumbangPreso/Runtime/UI/ProfileOverlay.cs` |
+| The end-of-match summary | `MatchResult.OnRecordReady` |
+
+⚠️ **No rate is ever stored.** Every rate on the profile is two counts divided at read time by
+`MatchRecordRules.Rate`. A stored rate cannot be re-derived after a balance change and cannot be
+summed across two seasons, and adding two seasons together is the first thing anybody does with a
+career page.
+
+⚠️ **Nothing in this phase awards XP, a level or a rank.** The fields are on the document from day
+one so no profile written now has to be migrated later, and Phase 4 and Phase 9 fill them.
+`PlayingAMatchAwardsNoXpAndNoRank` asserts it. The header draws neither: an empty rank badge on
+every account in the game teaches every player that the game has a rank.
+
+### 89.1 · "Retrievals under pressure" needed a threshold, and it is derived rather than picked
+
+`FUTURE.md` § 2.2 asks for retrievals and retrievals under pressure, and names only the reason
+(`VISION.md` § 0: the tension is the retrieval). It does not say how close is close.
+
+`MatchRecordRules.PressureRadius` is **2.30 m** and every part of it is measured.
+`Balance.LungeSpeed²/(2·Balance.Friction)` is the distance the taya's dash covers, which is
+7.746²/(2·30) = **1.00 m**, because `CLAUDE.md` § 4 requires every impulse to be written as a
+distance and solved for a speed; `Balance.LungeTagRadius` is the **1.30 m** the sweep then reaches.
+So the stat asks the only question worth asking of a pickup: could the defender have taken you for
+it, right then, without moving first.
+
+⚠️ **It lives in `MatchRecordRules`, not in `Balance`.** `Balance` holds numbers the MATCH reads,
+and nothing in the match reads this one. A stat threshold sitting among them is the next reader's
+excuse to make gameplay depend on it. `ThePressureRadiusIsTheTayasStandingLungeReach` fails if
+anybody replaces the arithmetic with a literal.
+
+⚠️ **Only your own tsinelas counts as a retrieval**, which is the line `Carrier.NotifyHolding`
+already draws for the hero economy. Picking up somebody else's is a denial play and a good one,
+but it is not the run the game is built around and it carries none of the same risk.
+
+⚠️ **The per-tsinelas record is keyed on `Slipper.SeatOfOrigin`, never on `OwnerSlot`**, which is
+§ 78.1's fault one object further on. `OwnerSlot` is state the game rewrites every round and
+`SliceRunner.EquipOwnedSlippers` sets the taya's to -1, so a record read off it would have no
+slipper for whichever seat was defending, and a per-tsinelas win rate would under-count the
+taya's shoe forever. The scene is searched once per match rather than once per seat.
+⚠️ `MatchBootstrap`, the headless probe path, never assigns `SeatOfOrigin`, so a probe match
+records an empty slipper id. That is correct rather than a gap: a probe has no player whose
+record it could belong to, and `ProfileRules.Apply` skips an empty id instead of inventing one.
+
+### 89.2 · "Longest survival as last attacker" is an interpretation, because nothing is eliminated
+
+`FUTURE.md` § 2.2 asks for *"longest survival as last attacker"*. That is a stat from a game where
+players go out. **This game eliminates nobody.** A tag costs a teleport, a stagger and the whole
+trip again, and the round carries on with all four.
+
+The reading that survives contact with the rules is **the last of the three attackers not yet
+caught this round**: while you are the only one the taya has not taken, you are the only one they
+can still take. `MatchStatsCollector` tracks it off `RoundDirector.Tagged`, opens the clock when
+exactly one attacker is untagged, and closes it when that one is tagged or the round ends.
+
+**This is written down because it is a decision rather than a derivation**, and the next person to
+read § 2.2 will reach for elimination and find none. If it is the wrong reading, the fix is a
+different rule here, not a new event in the match.
+
+### 89.3 · ⚠️⚠️ EACH PEER SUBMITS ITS OWN LINE, WHICH DEPARTS FROM THE LETTER OF § 19.2
+
+`FUTURE.md` § 2.3 says *"the host writes the record and that is a known hole, not an oversight"*,
+and § 19.2's "Done when" says the whole match costs **one endpoint call**. The obvious build is the
+host calling the endpoint once and the endpoint writing all four career documents. **That is not
+what shipped**, per § 0.5 rule 11, and this is the argument.
+
+The hole § 2.3 names is that **the host authors the numbers**. It still does: every count in the
+record comes from `MatchStatsCollector` on one machine, and a modified host can lie about all of
+them. Phase 8 is what closes that, and nothing here claims to.
+
+Letting the host also **write** three other people's career documents is a second hole and a much
+worse one. It is the difference between spoofing a match you played in and editing a stranger's
+account: a host who never plays another game with you could still rewrite your career forever,
+because the endpoint would have to accept any player id its caller named.
+
+So the record is broadcast to every peer, and **each peer submits only its own line, from its own
+authenticated session**. `match-record.js` refuses a record that `context.playerId` is not in, and
+writes only that player's documents. It costs **one call per player per match** instead of one per
+match, which still satisfies what § 0.3 and § 19.2 step 3 are actually protecting: never one call
+per event.
+
+⚠️ **A second thing falls out of it, and is the reason not to reverse this casually.** An offline
+or LAN-only peer has no UGS id, only the local token `GameSettings.MintToken` mints. Under the
+host-writes-everybody design the server would create a career document keyed by that token which
+nothing will ever read. Under this one it simply does not call: it keeps a local career and queues.
+
+### 89.4 · What § 2.1 asks for that is not on the screen, and which phase owns each
+
+The career page draws the header card, the career strip, the mode tabs, the stat blocks, the paged
+match history and the match detail. Four things in § 2.1 are deliberately absent, and each would be
+an empty box today:
+
+| § 2.1 item | Why not now |
+|---|---|
+| Avatar | `FUTURE.md` § 1.4 is still an open argument (an in-game avatar builder rather than a photo upload) and 🧑 has not answered it. There is nothing to draw. |
+| Rank badge, peak rank | Phase 9. The fields are on the document; drawing an empty badge teaches every player the game has a rank. |
+| Achievement and highlight shelf | Phase 10 owns achievements. |
+| Compare with a friend | Phase 6 owns friends. There is nobody to compare against. |
+
+⚠️ **Level and border are a different case and are not in that table**, because the FIELD shipped
+and only the awarding did not. Phase 4 fills it with no migration.
+
+### 89.5 · The protocol is 15, and § 88.4's probe duplication is resolved
+
+⚠️ **`NetSession.ProtocolVersion` is 15**, for the one new message `MatchRecord`
+(`MatchRpc.BroadcastMatchRecord`), which carries a whole finished match to every peer. A peer
+without the handler plays the match correctly and then silently gets no end-of-match summary and no
+career entry for a game it played, which is exactly the quiet kind of wrong this number exists to
+turn into a refusal. **Both machines rebuild off this branch.**
+⚠️ `ChatAndLobbyChromeTests.TheProtocolCarriesEveryRosterBump` caught the bump on the first
+EditMode run of this work, which is the whole reason that tripwire exists; it is re-armed at 15.
+
+⚠️ **§ 88.4 said the probe's hand-written copy of `PlayerAccount.CallCloudAsync` had to stay a
+copy, and that is no longer true.** It kept the duplicate because the method was private and
+widening it *"would put a seam in shipping code for one probe"*, while naming the cost outright:
+*"if the call shape drifts, the probe passes while the game fails, which is the worst outcome
+available."* Phase 2 needed a THIRD copy for the career endpoint, which is the point at which two
+copies with a note becomes the failure the note was warning about. The request now lives in
+`Net.CloudCode`; `PlayerAccount` calls it and so does the probe. A shared helper the game uses is
+not a seam, and the drift § 88.4 feared cannot happen. `TheCareerEndpointAnswersALoad` is the new
+`Ugs` test, and it is the only thing that catches a script that was written but never deployed,
+because `CareerStore` is built to keep a local career quietly when the service is unreachable.
+
+### 89.6 · `ProfileRules` is written twice, in C# and in JavaScript
+
+`ugs/cloud-code/match-record.js` is `ProfileRules.cs` and `MatchRecordRules.cs` again. Cloud Code
+cannot import the C#, and the C# cannot run in Cloud Code, so this is the same trade
+`player-account.js` records about `DisplayNameMax`, applied to a whole file instead of a constant.
+
+- **The C# is the specification** and carries the tests. When the two disagree, the JS is the bug.
+- **The symptom a player sees is a career that changes the moment they come back online**, because
+  `CareerStore` is an optimistic local cache and the server's profile REPLACES it whole on the next
+  answer. There is no merge and there must not be: two counters that both claim to know how many
+  matches you have played cannot be reconciled without the records that produced them, and the
+  records are on the server.
+- **If a rule changes in `ProfileRules`, it changes in the JS in the same commit.** Every function
+  in the script names the C# member it mirrors, so the two can be diffed by eye.
+
+### 89.7 · The offline path, and the LAN run it must not regress
+
+A match played with the internet unplugged updates the local profile, lands in the local history,
+and joins a queue capped at 20 matches. `CareerStore.FlushAsync` sends it on the next successful
+sign-in, oldest first, and **stops at the first failure** rather than firing nineteen more requests
+at a service that is not there.
+
+⚠️ **The queue is written BEFORE the call is tried, not after it fails.** A process killed
+mid-request is the case a queue exists for, and one only written in the failure branch has already
+lost the record by then. A duplicate submission is free: `ProfileRules.Apply` refuses a match id it
+has already counted, on the server as well as on the client.
+
+⚠️⚠️ **§ 88's warning applies to this phase too, and it is the thing to re-test.** The unplugged
+LAN run is DONE and is a regression to protect, not an open task. Nothing in this phase sits on the
+boot path, but `CareerStore` now writes `Application.persistentDataPath/career.json` and subscribes
+to `PlayerAccount.Changed`, so **re-run the unplugged four-player match after this lands**, per
+`FUTURE.md` § 0.5 rule 7.
+
+⚠️ **A career cached for a different account is discarded rather than merged.** Two people share
+this machine at a tournament; merging would hand somebody else's knockdowns to whoever signs in
+next, which is worse than losing an offline queue. `OwnerId` is empty on a fresh install and adopts
+the first account to write, so somebody who has never signed in keeps everything they played
+offline.
+
+---
+
+### 89.8 · Verified
+
+- **Core 164/164** (`dotnet test`), from 135 before this phase. 29 of the new tests are the
+  record and profile rules: placements, clutch, idempotency, streaks, comeback denominators,
+  history trimming, the sample-size gate and the pressure radius.
+- **EditMode 236/236 -> 240/240**, read from `Logs/tests.xml` rather than from the exit code.
+  ⚠️ The first run was 235/236: `TheProtocolCarriesEveryRosterBump` caught the `MatchRecord`
+  message, which is the tripwire working. Re-armed at 15.
+- **`CareerAndCloudCodeTests` is new and reads source as text**, because both faults it looks
+  for are invisible to every other test here: a second hand-written Cloud Code request still
+  works until it drifts, and nothing on this machine compiles the JavaScript. It gates the
+  one-helper rule and pins `PLAYER_COUNT`, `HISTORY_LIMIT`, `APPLIED_ID_MEMORY`,
+  `DISPLAY_NAME_MAX` and `DISPLAY_NAME_MIN` in the two scripts to the core constants. **That
+  makes § 88.1a a gate rather than a paragraph** asking somebody to remember.
+- **`Ugs` category 5/5.** `player-account` answered `{"profile":""}` and `match-record`
+  answered `{"applied":false,"profile":""}`, which is the correct answer for a player who has
+  never finished a match. Both went through `Net.CloudCode`, so the probe now proves the
+  transport the game uses.
+- **`BotBehaviourProbe` 3/3**, whole matches in both modes on both maps, which is what exercises
+  the throw, retrieval, shove and lunge hooks in `Carrier` and `CombatVerbs`.
+
+⚠️ **STILL TO DO ON THIS PHASE, AND IT IS NOT CODE:** the unplugged four-player LAN run, per
+§ 89.7. It is a regression to protect, not an open task, and this is the phase most able to
+break it.
 
 ---
 

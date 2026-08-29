@@ -305,6 +305,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("PlayAction", OnPlayActionMsg);
             cm.RegisterNamedMessageHandler("PlayStyle", OnPlayStyleMsg);
             cm.RegisterNamedMessageHandler("Score", OnScoreMsg);
+            cm.RegisterNamedMessageHandler("MatchRecord", OnMatchRecordMsg);
             cm.RegisterNamedMessageHandler("Chat", OnChatMsg);
             cm.RegisterNamedMessageHandler("ChatLine", OnChatLineMsg);
             cm.RegisterNamedMessageHandler("ReqTime", OnReqTimeMsg);
@@ -2381,6 +2382,63 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(slot);
             writer.WriteValueSafe((int)e);
             _nm.CustomMessagingManager.SendNamedMessageToAll("Score", writer);
+        }
+
+        /// <summary>
+        /// Sends the finished match record to every peer, once, at the end of the match.
+        ///
+        /// ⚠️⚠️ THE HOST IS THE ONLY MACHINE THAT COUNTED THE MATCH, SO WITHOUT THIS A CLIENT
+        /// HAS NO CAREER AT ALL. `MatchStatsCollector` is host-gated for the same reason
+        /// `AddScore` is, which leaves the other three players with nothing to show on the
+        /// end-of-match summary and nothing to submit for their own profile. This is the one
+        /// message that carries a whole match, and it is one message per match.
+        ///
+        /// ⚠️ IT IS SENT AND NOT REQUESTED. A client that had to ask would have to know when to
+        /// ask, and the moment it knows the match ended is a snapshot edge that can arrive
+        /// before the host has finished writing the record.
+        ///
+        /// ⚠️ EVERY PEER RECEIVES THE WHOLE RECORD, INCLUDING THE OTHER THREE LINES, and that is
+        /// deliberate: `FUTURE.md` § 2.1 item 6 draws the full four-player scoreboard in the
+        /// match detail. It carries no account ids for anybody a peer does not already see in
+        /// the lobby, because the ids in it are the same durable tokens seating already uses.
+        /// </summary>
+        public void BroadcastMatchRecord(Core.MatchRecord record)
+        {
+            if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
+            if (record == null) return;
+
+            string json = JsonUtility.ToJson(record);
+            if (string.IsNullOrEmpty(json)) return;
+
+            // ⚠️ SIZED FROM THE STRING RATHER THAN FROM A CONSTANT. A four-player record is
+            // about a kilobyte and a half; a fixed buffer picked by eye is the shape that
+            // truncates silently the day somebody adds a stat.
+            using var writer = new FastBufferWriter(
+                FastBufferWriter.GetWriteSize(json) + 64, Allocator.Temp);
+            writer.WriteValueSafe(json);
+            _nm.CustomMessagingManager.SendNamedMessageToAll("MatchRecord", writer);
+        }
+
+        private void OnMatchRecordMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            // ⚠️ THE HOST IS ITS OWN CLIENT AND `SendNamedMessageToAll` LOOPS BACK TO IT. It
+            // adopted the record before sending; taking it again here would submit the same
+            // match twice. `ProfileRules.Apply` would refuse the duplicate, but a wasted
+            // endpoint call per match is a cost with no upside. See § THE LOOPBACK.
+            if (NetAuthority.IsHost) return;
+            if (!FromHost(senderClientId)) return;
+
+            reader.ReadValueSafe(out string json);
+            if (string.IsNullOrWhiteSpace(json)) return;
+
+            var record = JsonUtility.FromJson<Core.MatchRecord>(json);
+            if (record == null) return;
+
+            // ⚠️ NORMALISED ON ARRIVAL, BECAUSE THIS ARRIVED FROM ANOTHER MACHINE. The host
+            // already normalised it, and that is exactly why a peer cannot assume it did: the
+            // sender is the one party this client has no reason to trust about its own career.
+            Core.MatchRecordRules.Normalise(record);
+            GameServices.Stats?.Adopt(record);
         }
 
         private void OnScoreMsg(ulong senderClientId, FastBufferReader reader)

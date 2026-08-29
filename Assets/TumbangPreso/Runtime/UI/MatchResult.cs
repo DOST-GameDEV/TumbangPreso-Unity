@@ -32,6 +32,20 @@ namespace TumbangPreso.UI
         /// standings. Two facts, two labels.
         /// </summary>
         private Text _rematchTally;
+
+        /// <summary>
+        /// What this match added to your career, under the standings.
+        ///
+        /// ⚠️⚠️ IT IS ITS OWN LABEL FOR THE SAME REASON `_rematchTally` IS. The broadcast line
+        /// already carries the mode and the round count and the tally already carries the vote;
+        /// writing a third fact into either one deletes the first two the moment it appears.
+        ///
+        /// ⚠️ IT ARRIVES LATE ON A CLIENT AND THAT IS NORMAL. The record is counted by the host
+        /// and broadcast, so on a peer this label is empty for the frame or two before
+        /// `MatchRecord` lands. `MatchStatsCollector.RecordReady` fills it in when it does,
+        /// rather than the board waiting on a network message before it can be drawn at all.
+        /// </summary>
+        private Text _yourMatchLine;
         private readonly List<Text[]> _rows = new List<Text[]>();
         private Button _rematch;
         private Button _menu;
@@ -78,11 +92,13 @@ namespace TumbangPreso.UI
         private void OnEnable()
         {
             if (GameServices.Match != null) GameServices.Match.MatchEnded += OnMatchWon;
+            if (GameServices.Stats != null) GameServices.Stats.RecordReady += OnRecordReady;
         }
 
         private void OnDisable()
         {
             if (GameServices.Match != null) GameServices.Match.MatchEnded -= OnMatchWon;
+            if (GameServices.Stats != null) GameServices.Stats.RecordReady -= OnRecordReady;
 
             // ⚠⚠ WHOEVER STOPPED TIME RESTORES IT, ON EVERY PATH INCLUDING DEATH. This
             // board was the second class in the project to stop the clock from an instance and
@@ -135,6 +151,13 @@ namespace TumbangPreso.UI
                 : UiTheme.Amber;
 
             RenderStandings(winningSlot);
+
+            // ⚠️ READ BACK RATHER THAN WAITED FOR. On the host the record is already written by
+            // the time this runs; on a client it is not, and `RecordReady` fills the line in
+            // when the broadcast lands. Clearing it first stops the PREVIOUS match's summary
+            // sitting under a rematch's standings.
+            if (_yourMatchLine != null) _yourMatchLine.text = "";
+            if (GameServices.Stats?.Last != null) OnRecordReady(GameServices.Stats.Last);
 
             _rematchVotes.Clear();
             _rematch.gameObject.SetActive(!IsSpectator);
@@ -234,6 +257,43 @@ namespace TumbangPreso.UI
             }
         }
 
+        /// <summary>
+        /// `FUTURE.md` § 19.2 step 5: the end-of-match summary, showing what this match added.
+        ///
+        /// ⚠️ IT IS THIS MATCH'S LINE, NOT THE CAREER TOTAL. A career total on the results
+        /// board answers a question nobody is asking at that moment, and the career page exists
+        /// for it. What a player wants here is what they just did.
+        ///
+        /// ⚠️ THE UPLOAD STATE IS PART OF THE SENTENCE. A match played with the internet
+        /// unplugged is kept and sent on the next sign-in, and saying so is the difference
+        /// between a game that looks like it lost your match and one that tells you it did not.
+        /// </summary>
+        private void OnRecordReady(Core.MatchRecord record)
+        {
+            if (_yourMatchLine == null || record == null) return;
+
+            string me = GameServices.Account?.ConnectionToken ?? Net.NetIdentity.Token;
+            var line = Core.MatchRecordRules.LineFor(record, me);
+            if (line == null)
+            {
+                // A spectator has no line, and a spectated match adds nothing to a career.
+                _yourMatchLine.text = "";
+                return;
+            }
+
+            var career = GameServices.Career;
+            string queued = career != null && career.QueuedCount > 0
+                ? "  ·  SAVED ON THIS MACHINE, WILL UPLOAD"
+                : "";
+
+            string clutch = Core.MatchRecordRules.IsClutch(record, line.Slot) ? "  ·  CLUTCH" : "";
+
+            _yourMatchLine.text =
+                $"YOUR MATCH   {line.Knockdowns} KNOCKDOWNS  ·  {line.Retrievals} RETRIEVALS  ·  " +
+                $"{line.Tags} TAGS  ·  {Core.MatchRecordRules.PassiveDefenceSeconds(line):0} s DEFENDING" +
+                clutch + queued;
+        }
+
         private static string NameFor(int slot)
         {
             var who = GameServices.Round?.PlayerAt(slot);
@@ -299,6 +359,9 @@ namespace TumbangPreso.UI
             _broadcastLine = CardLabel(card, "BroadcastLine", 18, UiTheme.Amber, 30,
                                        TextAnchor.MiddleCenter);
             _broadcastLine.text = "FINAL STANDINGS";
+
+            _yourMatchLine = CardLabel(card, "YourMatchLine", 17, UiTheme.CreamMuted, 28,
+                                       TextAnchor.MiddleCenter);
 
             Spacer(card, 10.0f);
 

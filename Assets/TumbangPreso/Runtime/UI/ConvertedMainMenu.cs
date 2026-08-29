@@ -78,6 +78,14 @@ namespace TumbangPreso.UI
             var account = gameObject.GetComponent<AccountOverlay>();
             if (account == null) account = gameObject.AddComponent<AccountOverlay>();
             account.Install();
+
+            // ⚠️ ITS OWN BUTTON, NOT A TAB INSIDE THE ACCOUNT PANEL. The account panel is where
+            // you change WHO you are, and the career page is where you look at WHAT you did.
+            // Putting a career behind a form full of password fields is how a stat page stops
+            // being the thing anybody opens.
+            var profile = gameObject.GetComponent<ProfileOverlay>();
+            if (profile == null) profile = gameObject.AddComponent<ProfileOverlay>();
+            profile.Install();
         }
 
         private void Overlay(string button, string panel)

@@ -39,6 +39,14 @@ namespace TumbangPreso
         public static Audio.MusicDirector Music { get; private set; }
         public static Net.PlayerAccount Account { get; private set; }
 
+        /// <summary>Counts what happens in a match, host-side. See its own header for why it
+        /// is not simply a listener on `MatchDirector.Scored`.</summary>
+        public static MatchStatsCollector Stats { get; private set; }
+
+        /// <summary>The career: profile, match history and the queue of records that have not
+        /// reached the server yet.</summary>
+        public static Net.CareerStore Career { get; private set; }
+
         /// <summary>The announcer. Godot had it inside AudioManager; it is its own director
         /// here because its take pooling, per-line cooldowns and music ducking are a system,
         /// not three fields on the SFX player.</summary>
@@ -114,6 +122,17 @@ namespace TumbangPreso
             Music = _root.AddComponent<Audio.MusicDirector>();
             Voice = _root.AddComponent<Audio.VoiceDirector>();
             Account = _root.AddComponent<Net.PlayerAccount>();
+
+            // ⚠️ THE CAREER IS ADDED AFTER THE ACCOUNT, DELIBERATELY. `CareerStore.Awake`
+            // subscribes to `PlayerAccount.Changed` so it can sync the moment a sign-in lands,
+            // and `AddComponent` runs `Awake` immediately: reversing these two lines gives the
+            // career a null account to subscribe to and nothing ever uploads.
+            Career = _root.AddComponent<Net.CareerStore>();
+
+            // ⚠️ AND THE COLLECTOR LAST, because its `OnEnable` subscribes to `Match` and its
+            // `Adopt` reaches `Career`. Same hazard, same answer: order the construction rather
+            // than hoping for one.
+            Stats = _root.AddComponent<MatchStatsCollector>();
         }
 
         /// <summary>
@@ -130,6 +149,8 @@ namespace TumbangPreso
             Round = null;
             Music = null;
             Account = null;
+            Career = null;
+            Stats = null;
 
             _menuTrack = null;
             _matchTrack = null;

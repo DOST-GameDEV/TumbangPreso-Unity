@@ -145,7 +145,14 @@ namespace TumbangPreso.Tests
             // without the `SyncTime` handler **does not stop**: the pause is called, three
             // screens freeze, one keeps playing, and the two builds then disagree about every
             // position for as long as it lasts.
-            Assert.AreEqual(14, NetSession.ProtocolVersion,
+            //
+            // ⚠⚠ 15 SINCE 2026-08-30: `MatchRecord`, the one message that carries a whole
+            // finished match to every peer (docs/TODO.md § 89.5). A peer without the handler
+            // plays the match correctly and then silently gets no end-of-match summary and no
+            // career entry for a game it just played, which is the same quiet kind of wrong the
+            // two entries above describe: nothing errors, and a player is simply missing what
+            // everybody else got.
+            Assert.AreEqual(15, NetSession.ProtocolVersion,
                 "a message or a replicated roster index has been added or removed. Bump this " +
                 "number and `NetSession.ProtocolVersion` together, in the same commit.");
         }
