@@ -2040,6 +2040,316 @@ every peer and has the identical race — and cleared the first time `GameServic
 MatchInProgress` reads true. It is a bandwidth and honesty fix, not a correctness one, now that the
 client refuses the packet.
 
+
+---
+
+## 83 · The 2026-08-29 balance-and-controls batch, reported while § 82 was being pushed
+
+Reported in one stretch from the built player, all 🧑, most of it while he was watching other
+people test. Three groups: the taya is too weak, three controls do nothing, and two panels draw
+one wrong frame when they open.
+
+### 83.1 ✅ ATTACKERS AND BOTS ARE 40% SLOWER, SPRINT INCLUDED
+
+🧑: *"defender kinda hard now so can we slow down all attackers as well as bot, even when they
+sprint, by 40%"*.
+
+`Balance.AttackerSpeedScale` 0.75 → **0.45**, which is 0.75 x 0.60. Walk **3.45 → 2.07 m/s**,
+sprint **5.18 → 3.11 m/s**.
+
+⚠️ **ONE CONSTANT DOES ALL OF IT BECAUSE THE SPEED IS A PRODUCT.** `CharacterMotor` composes
+`Speed * RoleSpeedScale * PersonSpeedScale * sprint * SpeedZones`, so scaling the role term scales
+every state an attacker can be in — walking, sprinting, fatigued, inside a hazard zone — by
+exactly 0.60. Cutting `SprintScale` instead would have left the walk alone **and** slowed the
+taya's sprint, which is the opposite of the ask.
+
+⚠️ **THE BOTS COME FOR FREE.** `AIController` drives the same `InputIntent` through the same
+motor. There is no second speed path, so "as well as bot" needed no second change.
+
+⚠️⚠️ **`TripGraceAfterGetUp` HAD TO MOVE WITH IT, AND LEAVING IT WOULD HAVE REINTRODUCED A LOOP.**
+It was solved against 3.45 m/s: 1.20 s carried an attacker 4.14 m, clear of the 2.60 m widest
+hazard footprint. At 2.07 m/s the same 1.20 s covers **2.48 m**, which is UNDER that footprint — a
+slower attacker would stand up still inside the hazard that felled them with the grace already
+spent, which is exactly the ping-pong that constant exists to stop. Now **1.60 s**, covering
+3.31 m.
+
+### 83.1b ⚠️ OPEN: THE REST OF THE INTERLOCKED SET IS NOT RE-MEASURED
+
+`Stamina`'s header names StaminaMax, StaminaDrainRate, SprintScale and ConfinementRadius as one
+set, dimensioned so a full bar buys roughly one crossing of the danger zone — *"the finding is the
+distance, not the time"*. A 40% slower attacker covers 40% less ground on the same bar, so **a
+sprint no longer buys a crossing.** That is a deliberate consequence of the ask and is most of
+what makes the taya stronger, but nobody has played it and nobody has measured it.
+
+**Done looks like** a `BotBehaviourProbe` round before and after, reporting retrieval attempts
+started versus completed. If retrieval has become impossible rather than merely hard, the lever is
+`StaminaMax`, not `AttackerSpeedScale` — the 40% is his number and it is not the thing to
+quietly undo.
+
+### 83.2 ✅ THE TAYA CATCHES WIDER, AND IS TESTED BEFORE THE CAN
+
+🧑, twice: *"make hit box for defender bigger but make sure it reverts to nroaml when theyre
+attacker ... this is bcz defender kinda feels weak right now"*, then the shape of it: *"make
+hitbox bigger horizontally but not fatter so taht tehy can defend perktus bettert"*, and
+*"make sure defender cna block too"*.
+
+Two changes, both in `Slipper`.
+
+**`Balance.DefenderBlockRadiusBonus` = 0.35 m**, added in `HitsBody` to the FLAT reach and only
+when `who.IsDefender`. The test was `SlipperHitRadius + CharacterController.radius`, about 0.60 m,
+against a projectile crossing it at up to 18.5 m/s — **0.37 m of travel per 50 Hz physics step**.
+A Pektus throw curves ACROSS that window rather than into it, so the taya was being asked to stand
+within a third of a metre of a path they cannot predict.
+
+⚠️⚠️ **IT IS NOT ON THE `CharacterController`, WHICH IS THE WHOLE OF "NOT FATTER".** Growing the
+capsule would widen the physical body: the taya would shove attackers, snag on the map, settle
+differently at spawn and read as a wider character on screen. This number is consulted only when
+deciding whether a slipper CONNECTS.
+
+⚠️ **HORIZONTAL ONLY.** `HitsBody`'s vertical test is untouched, so a throw over the head still
+sails over it.
+
+⚠️ **THE REVERT HE ASKED TO BE SURE OF IS FREE**: `HitsBody` reads `IsDefender` on the frame of
+the test, so the bonus arrives and leaves with the role and there is no per-match state to unwind
+when the taya rotates.
+
+**And the taya's body is now tested BEFORE the can.** `Lata.Connects` is a flat distance with no
+vertical test and the can was checked first, so a taya standing between a throw and the can lost
+the tie inside a single physics step. They were doing the one thing the role is for and the can
+was scored through them.
+
+⚠️ **ONLY THE TAYA IS HOISTED.** An attacker standing over the can must not shield it — that
+would let the throwing side park a body on the objective. The general loop still catches them
+after the can, exactly as before.
+
+⚠️ **AND IT IS NOT A FREE TURTLE.** `ScoreTayaCampPenalty` is -5 a second after
+`TayaCampGracePeriod` inside `TayaCampRadius`, so blocking everything from on top of the can costs
+the round. The counterweight was already in the rules; this makes the trade a real one instead of
+a lost tie.
+
+### 83.3 ✅ THE TAYA IS 10% FASTER, AND THEIR SPEED HAS A NAME NOW
+
+🧑: *"make them a bit faster too"*, in the same breath as the block.
+`Balance.DefenderSpeedScale` = **1.10**, so 4.6 → **5.06 m/s**.
+
+⚠️ **IT WAS A LITERAL `1.0f` INSIDE `Stamina.RoleSpeedScale`**, which is how it survived every
+retune of the attacker's half: a number with no name cannot be found by anybody searching for
+"defender speed". Both scales are named constants now, and the ratio between them is the whole
+balance of chase versus escape.
+
+### 83.4 ✅ R DID NOT SKIP THE BUFFER, BECAUSE IT ASKED FOR AN ACTION MAP THAT DOES NOT EXIST
+
+🧑: *"r skip doesnt work too"*.
+
+`BufferSkipVote.Awake` called `asset.FindActionMap("Gameplay", false)`. **`TumbangPreso.inputactions`
+has exactly one action map and it is called `Player`.** Every other resolver in the game asks for
+that name — `ReadyGate`, `Hud`, `EmoteWheel`, `Rebinding`, `AbilityInspectPanel`,
+`SpectatorCamera`, `PlayerInputReader` — and this one did not. It got null back, `FindAction` was
+never reached, and `_readyUp` was null for the entire lifetime of the component, so `Update`'s own
+null guard swallowed every press in silence.
+
+⚠️ **`throwIfNotFound: false` IS WHAT MADE IT SILENT**, and it is the right argument for a
+resolver that must not crash a match. So the language cannot catch this and a text search can.
+
+⚠️ **AND THE MAP IS ENABLED HERE NOW**, as `ReadyGate.Awake` does. An action that resolves but is
+not enabled reports no press either, so fixing only the name would have moved the silence one line
+down.
+
+**Verified by `InputResolverTests`**, three cases: every `FindActionMap("…")` in the runtime names
+a map that exists, every `FindAction("…")` names an action in some map, and `BufferSkipVote`
+specifically asks for `Player`. The first two are the guard against the whole class.
+
+### 83.5 ✅ `ATTACKERROCKAFORT` — THE YOU CARD'S IDENTITY ROW COLLIDED A SECOND TIME
+
+🧑: *"this has overflow as well"*, with the role and the name drawn on top of each other.
+
+**This row has now done it twice** — `TAYA (DEFENDEDANTE` was the first — and the first fix
+treated the symptom by shortening the role string. Both children carry `flexibleWidth: 1`, so each
+gets half of the 336 px content box, about 163 px. `ATTACKER` at 32 pt does not fit 163 px, and
+`Label` sets `HorizontalWrapMode.Overflow`, so the role drew straight past its half into a name
+anchored `MiddleRight`. **The best-fit on the name shrinks the NAME and can do nothing about a
+label overrunning from the left**, which is why shortening the role bought time rather than a fix.
+
+`flexibleWidth: 0` on the role plus `childControlWidth` is the structural answer: the group asks
+`Text` for its own `preferredWidth` and gives it exactly that, so the role is never clipped and
+never overruns whichever of `TAYA` and `ATTACKER` it holds, and the name takes the remainder with
+a 140 px floor.
+
+### 83.6 ✅ TWO PANELS DREW ONE WRONG FRAME ON OPEN AND CORRECTED THEMSELVES
+
+🧑: *"first time u open pic 1 it overflows and auto fixes itself ... pls make it fixed from the
+start"* (CHOOSE YOUR HERO), and *"this also starts small and becomes bigger when u click shti ...
+can ui make thsi shit start big ... its so small"* (START MATCH).
+
+**Same cause, two fitters.** `rect.rect.width` is 0 until the first layout pass, and the first
+layout pass happens AFTER the frame a panel is switched on. `SetHeadline` bailed and left the
+headline at its authored size; `SetFittedButtonLabel` bailed and set `_refitPending`. § 80.2 made
+that correction deterministic and left it **one frame late** — and one frame late is the frame the
+player is looking at when a panel opens, which is why both reports are about the FIRST time.
+
+`ConvertedScreen.ForceLayoutFor` rebuilds the layout before either one measures, so both are right
+on frame one.
+
+⚠️⚠️ **IT REBUILDS THE OUTERMOST LAYOUT ANCESTOR, NOT THE LABEL.** A `Text` inside a
+`HorizontalLayoutGroup` inside a `VerticalLayoutGroup` is sized by the OUTER one; rebuilding the
+label re-runs a pass that reads a width its parent has not computed yet and returns the same 0.
+Finding that root is the reason it is a method rather than a line at each call site.
+
+⚠️ **THE DEFERRED PATHS STAY.** A canvas that is inactive on this frame cannot be rebuilt at all,
+which `LayoutRebuilder` states outright. Forcing turns the deferred path from the normal case into
+the rare one; it does not remove it.
+
+### 83.7 ✅ READY IS A WORKING CONTROL IN THE LOBBY AGAIN
+
+🧑: *"ready for clients is broken, it js says waiting for host"*, and then, on the branch carrying
+§ 82.2: *"ready logic still not working ... ready in lobby dont work"*.
+
+⚠️⚠️ **§ 80's REMOVAL TOOK THE CONTROL AS WELL AS THE GATE, AND THAT WAS ONE STEP TOO FAR.** It
+answered *"si host lang nakakapag start ng game, yung other players hindi na need mag ready"* by
+deleting the button — but `LobbySeatInfo.Ready` still travels, `LobbyNameplates` still draws a
+tick over every seat, and `BroadcastReadyTally` still counts. What shipped was a lobby that
+**DISPLAYS readiness with nothing anywhere that can set it**: an affordance three players can see
+and none of them can move. That is a stronger reading of "doesn't work" than the missing button on
+its own.
+
+⚠️⚠️ **AND THE TWO INSTRUCTIONS DO NOT CONFLICT, WHICH IS WHY BOTH ARE OBEYED.** His sentence was
+about who STARTS a match, and READY does not start one: `HostStartMatch` is reached only from
+`OnStartPressed`, only on the host, and no tally gates it. READY is a signal to the host that you
+are set — which is what the tick over your head was always drawing — and nobody is blocked by
+forgetting it.
+
+The guest button reads `READY` when it is not set and `WAITING FOR <HOST>` once it is; pressing it
+again takes the tick back off. A spectator's stays `SPECTATING` and dead, because a spectator
+holds no seat, has no tick, and `LobbySession.ReadyVoterCount` excludes them anyway.
+
+⚠️ **THE HOST'S NAME COMES OFF THE ROSTER, NOT FROM PEER 0.** Peer 0 is right on every listen host
+and wrong on the Linux dedicated build, where the server holds no seat and `IsSeatlessReferee`
+keeps it out of the election. The leader id it is matched against is the one § 82.2 stopped
+throwing away.
+
+### 83.8 ⚠️ OPEN, WITH THE PROBE WRITTEN AND EVERY GATE MEASURED PASSING: THE TUTORIAL TAYA LESSON
+
+🧑: *"can hold x to reset here"*, *"u also cant tag"*, and his own diagnosis, *"i think bug in
+tutorial is it still treats u as attacker even tho its asking u to test defender shit"*.
+
+**§ 76 closed this on a report without a measurement and said at the time that it would come
+back. It came back.** `TutorialDefenderProbe` is the PlayMode test that entry asked for, and it is
+now written and green. On a clean route walked lesson by lesson to `DefenderReset`, on Eskinita:
+
+```
+local.IsDefender      = True          intent.Parked         = False
+local.RoundActive     = True          Grab locked           = False
+local.CanAct()        = True          lata.IsUpright        = False
+_defenderResetArmed   = True          lata.IsProtected      = False
+flat distance to can  = 1.150 m       (InteractionRadius 1.6)
+match.DefenderSlot    = 1             round.Players count   = 4
+after holding Grab:   ChannelRatio 0.999, lata.IsUpright = True
+```
+
+⚠️⚠️ **SO THE ROLE SWAP DOES WORK AND HIS DIAGNOSIS IS RULED OUT ON THIS PATH.** `BecomeDefender`
+sets `IsDefender`, the can is down and unprotected, the player is 1.15 m from it against a 1.6 m
+reach, `Grab` is unlocked, and holding it fills the channel and stands the can up. Whatever he hit
+is **not** the lesson's own setup.
+
+⚠️ **WHAT THE PROBE DOES NOT REPRODUCE, IN ORDER OF SUSPICION.** Each is a real difference between
+it and a played run, and the next session should take them in this order rather than re-reading
+`Carrier`:
+
+1. **A hero effect from the lesson BEFORE is still live.** `DefenderReset` is lesson 13 and
+   `Ultimate` is lesson 12, and his screenshot is drenched in the magenta of Nemu's DEVOURING
+   SEANCE. `ResetHeroKit` resets the KIT, not the hazards a practice cast has already put in the
+   world. A live zone that stuns is `CanAct() == false`, and `Carrier.Update` returns before it
+   ever reaches `StepDefender` — which is *both* symptoms at once, the reset and the tag. **The
+   probe never casts anything.**
+2. **The press arrives through `PlayerInputReader`, not through a driven intent.** The probe
+   writes `Verb.Grab` straight onto `InputIntent` and never calls `CommitFrame`, so it cannot see
+   anything that depends on a press EDGE — including `CombatVerbs` consuming the same key. `E`/`X`
+   is contextual by design (tap picks up, hold shoves, hold as taya resets), and the three readers
+   of it agreeing is exactly the thing a driven hold skips over.
+3. **The can rolls.** § 76 flagged this as the one gate a source read cannot settle, and it still
+   is: the probe holds the key immediately, so its can never travels. A real player watches the
+   knockdown, walks after the marker, and arrives somewhere the probe never stands.
+
+**Done looks like** a second case on the same probe that casts the ultimate through
+`HeroAbilitySystem` before entering the lesson, and asserts `CanAct()` on the frame the lesson is
+armed. If that reproduces it, the fix is that `EnterLesson` clears live practice hazards on the
+way past — a lesson must not be able to stun the lesson after it.
+
+### 83.9 ⚠️ OPEN: SOME CLIENTS SEE THE WRONG ABILITY EFFECTS
+
+🧑, watching a four-player test: *"some clients dont see the correct ability effects but host
+do"*.
+
+Not investigated. **Start from `MatchRpc`'s ability wire rather than from the VFX**: § 82.1 is a
+fresh reminder that a client and the host disagreeing about what is happening is usually a packet
+the client refused or never got, and `BroadcastAbilityState` / `SyncAbilityStateClientRpc` carry
+per-slot cooldowns and charges rather than the CAST itself. Establish first whether the wrong
+thing is the effect that PLAYS or the state it is played from.
+
+### 83.10 ⚠️ OPEN: THE MASH STOPS REGISTERING AFTER TWO OR THREE PRESSES
+
+🧑: *"some button mash dont work ... only up to 2-3 button mash and nothing registers anymore"*.
+
+**The trip mash is not the suspect and the arithmetic says so.** `StreetTripHazard` sets
+`TripDuration` 2.50 s, `MinTripDown` is 0.35 and `MashRecoverPerPress` is 0.22, so a trip has 2.15
+s of slack to sell and accepts **about ten** presses.
+
+**The ABILITY stun is.** `Combat.MashOutOfStun` sells `stunTotal - MinStunDown` across
+`breakPresses`, and `StunBreakPressesMin` is **3** — so an ability that declares a low count is
+answered in three presses, after which `stunLeft <= MinStunDown` refuses everything and the player
+is still on the floor for the 1.20 s floor with a meter that has stopped moving. Two or three
+presses and nothing registers is that, exactly.
+
+**Done looks like** an audit of the per-ability `breakPresses` actually declared by the shipped
+kits against `Hero_Strike_Balance.md`, because the constant is a floor for kits that *never said*
+and the fault may be that most of them never said. If the counts are right and it still feels
+dead, the honest fix is feedback — the break meter should show that it has bottomed out — rather
+than moving `MinStunDown`, which is what keeps a control ability worth its cooldown.
+
+### 83.11 ⚠️ OPEN: THE TSINELAS ARE A DIFFERENT COLOUR IN A MATCH THAN ON CHARACTER SELECT
+
+🧑: *"pls js remove shader for slippers, especially the color. idk what does it but the slippers
+are a completley diff color ingame and character select"*.
+
+⚠️ **THE ASK IS "MAKE THE TWO AGREE", AND DELETING THE SHADER IS ONE WAY TO GET THERE AND PROBABLY
+THE WRONG ONE.** § 79.11 deliberately reshaded the tsinelas almost flat, and § 79.7 fixed every
+held tsinelas painting itself the placeholder brown. The two surfaces are lit differently on
+purpose — § 79.1 relit the character screen in Unity's units and the maps in theirs — so a colour
+that differs between them is most likely the LIGHTING disagreeing, not the shader tinting.
+
+**Done looks like** a probe that samples the same tsinelas skin's rendered colour on
+`CharacterSelect` and in a match and prints both. If the material is identical and only the light
+differs, the fix is the screen's light rig; if the material differs, it is `Slipper`'s
+`MaterialPropertyBlock` and § 79.7's fix did not reach the preview. **Ask which one before
+removing anything**, and put the answer here.
+
+### 83.12 OPEN: WRONG AND MISSING SFX ON EVERY NON-HOST
+
+Two reports, one family. 🧑, watching a four-player test:
+
+- *"wrong sfx played for non host, 30 seconds played even tho no 30 seconds yet"*
+- *"non hosts dont have sfx in some plarts, example, lata down/ lata hit has no sound for non
+  host but has sound for host"*
+
+**The second half has a written precedent that names the shape.** `Lata.HostKnockDown`'s own note
+records the knockdown cue being host-only and calls it *"the single most important event in a
+round, and three of the four players could not hear it"*; `MatchDirector.AddScore` records the same
+for the scoring sting. Both were fixed by routing through `NetCue` rather than `GameServices.Audio`.
+So the first question for every silent cue is whether its `PlayAt` sits behind a
+`NetAuthority.ShouldResolve()` or an `IsHost` that the sound has no business being behind.
+
+**The first half is a clock, not a cue.** The 30-second call fires off a threshold on the round
+clock, and a client's clock is not its own: `RoundDirector.ApplySnapshot` writes
+`TimeLeft = Mathf.Clamp(timeLeft, 0.0f, Balance.RoundTime)` from the host's number at 5 Hz. **A
+clamp against a constant is a lie the moment any mode runs a longer round than that constant**, and
+it lies in the direction reported — a client's clock reads LOW, so the callout comes early. Check
+`Balance.RoundTime` against what the host actually starts a Hero Strike round with before looking
+anywhere else.
+
+**Done looks like** an audit in the shape of `tools/audit_cue_audio.py`: every `PlayAt` in the
+runtime, with whether it is reachable on a client, plus one two-process run with the client's
+`TimeLeft` and the host's printed side by side.
+
 ---
 
 ## 0 · Hero Strike is being reworked, and the plan is its own file

@@ -60,9 +60,29 @@ namespace TumbangPreso
             // A second key for the same sentence is a second thing to teach and a second thing to
             // rebind. ⚠️ The two can never fire together: `ReadyGate` only listens during the
             // pre-round window and this only during an intermission.
+            //
+            // ⚠️⚠️ `"Player"`, AND IT SHIPPED AS `"Gameplay"`, WHICH IS A MAP THAT DOES NOT
+            // EXIST. 🧑 2026-08-29: *"r skip doesnt work too"*. `TumbangPreso.inputactions` has
+            // exactly ONE action map and it is called `Player`; every other resolver in the game
+            // asks for that name (`ReadyGate`, `Hud`, `EmoteWheel`, `Rebinding`,
+            // `AbilityInspectPanel`, `SpectatorCamera`, `PlayerInputReader`). This one asked for
+            // `Gameplay`, got null back, and `FindAction` was never reached — so `_readyUp` was
+            // null for the entire lifetime of the component and `Update`'s
+            // `if (_readyUp == null ... ) return;` swallowed every press in silence.
+            //
+            // ⚠️ `throwIfNotFound: false` IS WHAT MADE IT SILENT, and it is still false, because
+            // `PlayerInputReader` is the one resolver that should throw and it already passes
+            // true. The guard against a repeat is that the name now matches the seven other call
+            // sites, so a rename of the map breaks all eight together instead of leaving one
+            // behind.
             var asset = Resources.Load<InputActionAsset>("TumbangPreso");
-            var map = asset != null ? asset.FindActionMap("Gameplay", false) : null;
+            var map = asset != null ? asset.FindActionMap("Player", false) : null;
             _readyUp = map != null ? map.FindAction("ReadyUp", false) : null;
+
+            // ⚠️ ENABLED HERE TOO, LIKE `ReadyGate.Awake`. An action that is resolved but not
+            // enabled never reports a press either, so fixing only the name would have moved the
+            // silence one line down. Enabling a map twice is a no-op.
+            map?.Enable();
         }
 
         private void OnEnable()

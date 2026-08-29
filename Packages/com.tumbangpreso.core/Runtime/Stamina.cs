@@ -225,9 +225,22 @@ namespace TumbangPreso.Core
             _isSprinting = false;
         }
 
-        /// <summary>Role scale is permanent and by ROLE, not by pick: an attacker walks
-        /// at 0.75 of the taya's speed for the whole round they attack.</summary>
+        /// <summary>
+        /// Role scale is permanent and by ROLE, not by pick: an attacker walks at
+        /// `AttackerSpeedScale` of the base speed for the whole round they attack, and the taya
+        /// at `DefenderSpeedScale`, for the whole round they defend.
+        ///
+        /// ⚠️ BOTH SIDES ARE NAMED CONSTANTS NOW. The taya's was a literal `1.0f` here, which is
+        /// how it survived every retune of the attacker's: a number with no name is a number
+        /// nobody searching for "defender speed" can find. Both headers in `Balance` carry the
+        /// 2026-08-29 quotes that moved them.
+        ///
+        /// ⚠️ IT IS READ PER FRAME OFF `IsDefender`, SO THE ROLE SWAP REVERTS IT WITH NOTHING
+        /// TO REMEMBER. 🧑 asked for exactly that about the block radius — *"make sure it
+        /// reverts to nroaml when theyre attacker"* — and the same property is what makes it
+        /// true here: there is no per-match state to unwind when the taya rotates.
+        /// </summary>
         public static float RoleSpeedScale(bool isDefender) =>
-            isDefender ? 1.0f : Balance.AttackerSpeedScale;
+            isDefender ? Balance.DefenderSpeedScale : Balance.AttackerSpeedScale;
     }
 }

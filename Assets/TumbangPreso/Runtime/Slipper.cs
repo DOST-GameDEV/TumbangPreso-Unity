@@ -934,7 +934,37 @@ namespace TumbangPreso
 
             var round = GameServices.Round;
 
-            // The can first: it is the thing being aimed at.
+            // ⚠️⚠️ THE TAYA'S BODY IS TESTED BEFORE THE CAN, AND EVERY OTHER BODY AFTER IT.
+            // 🧑 2026-08-29: *"make sure defender cna block too"*, and *"feels like shit get past
+            // defender very easily"*. `Lata.Connects` is a FLAT distance with no vertical test, and
+            // the can check ran first, so a taya standing between a throw and the can lost the tie
+            // inside a single physics step: at 18.5 m/s a step covers 0.37 m, which is most of the
+            // window their body occupies. The taya was doing the one thing their role is for and
+            // the can was scored through them.
+            //
+            // ⚠️ ONLY THE TAYA IS HOISTED. An ATTACKER standing over the can must not shield it —
+            // that would let the throwing side park a body on the objective, which is the exact
+            // abuse the taya's own camp penalty exists to stop on the other side. The loop below
+            // still catches them, after the can, as it always did.
+            //
+            // ⚠️ AND IT IS NOT A FREE TURTLE. `ScoreTayaCampPenalty` is -5 a second after
+            // `TayaCampGracePeriod` inside `TayaCampRadius`, so standing on the can to block
+            // everything costs the taya the round. The counterweight was already in the rules;
+            // this line is what makes the trade a real one rather than a lost tie.
+            if (round != null && _throwerIgnoreLeft <= 0.0f)
+            {
+                foreach (var p in round.Players)
+                {
+                    if (p == null || !p.IsDefender || p.PlayerSlot == _throwerSlot) continue;
+                    if (!HitsBody(p)) continue;
+
+                    TriggerAffinityImpact();
+                    HostBlockedBy(p);
+                    return;
+                }
+            }
+
+            // The can next: it is the thing being aimed at.
             if (round?.Lata != null && round.Lata.IsUpright && round.Lata.Connects(transform.position))
             {
                 TriggerAffinityImpact();
@@ -1060,7 +1090,19 @@ namespace TumbangPreso
             Vector3 flat = new Vector3(transform.position.x - centre.x, 0.0f,
                                        transform.position.z - centre.z);
 
-            if (flat.magnitude > Balance.SlipperHitRadius + radius) return false;
+            // ⚠️⚠️ THE TAYA CATCHES WIDER, AND ONLY THE TAYA. `Balance.DefenderBlockRadiusBonus`
+            // carries the quotes and the reasoning; the two things to know here are that it is
+            // added to the FLAT test only, so a throw over the head still misses, and that it is
+            // read off `IsDefender` on the frame of the test, so it reverts with the role and
+            // leaves no state behind when the taya rotates.
+            //
+            // ⚠️ THE `CharacterController` IS DELIBERATELY NOT TOUCHED. That is what keeps the
+            // body the size it looks: 🧑 asked for *"bigger horizontally but not fatter"*, and a
+            // fatter capsule would shove attackers, snag on the map and change the spawn settle.
+            float reach = Balance.SlipperHitRadius + radius
+                          + (who.IsDefender ? Balance.DefenderBlockRadiusBonus : 0.0f);
+
+            if (flat.magnitude > reach) return false;
 
             float dy = transform.position.y - centre.y;
             return dy >= -height * 0.5f && dy <= height * 0.5f;

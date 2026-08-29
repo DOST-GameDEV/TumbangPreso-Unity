@@ -140,7 +140,18 @@ namespace TumbangPreso
         /// <summary>Restricts this unit to the given verbs. Null clears the restriction.</summary>
         public void AllowOnly(HashSet<Verb> verbs) => _allowed = verbs;
 
-        private bool Locked(Verb v) => _allowed != null && !_allowed.Contains(v);
+        /// <summary>
+        /// Whether the guided route is currently withholding this verb.
+        ///
+        /// ⚠️ PUBLIC SO A PROBE CAN TELL A LOCK FROM AN UNPRESSED KEY. `Pressed` folds `Parked`,
+        /// `Locked` and "not held" into one false, which is right for the game and useless for a
+        /// diagnosis: *"can hold x to reset here"* has three different causes and they need
+        /// different fixes. `TutorialDefenderProbe` prints all three separately.
+        ///
+        /// ⚠️ IT IS A QUERY AND NOTHING WRITES THROUGH IT. `AllowOnly` remains the only way to
+        /// change the set, and it stays the guided route's to call.
+        /// </summary>
+        public bool Locked(Verb v) => _allowed != null && !_allowed.Contains(v);
 
         public bool Pressed(Verb v) => !Parked && !Locked(v) && _held.Contains(v);
 

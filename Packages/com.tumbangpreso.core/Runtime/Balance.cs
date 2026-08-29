@@ -165,7 +165,51 @@ namespace TumbangPreso.Core
         // -------------------------------------------------------------------
 
         public const float Speed = 4.6f;
-        public const float AttackerSpeedScale = 0.75f;
+
+        /// <summary>
+        /// ⚠️⚠️ 0.45, DOWN FROM 0.75, AND IT IS A 40% CUT HE ASKED FOR BY NAME. 🧑 2026-08-29,
+        /// after playing the 8-round Hero Strike build: *"defender kinda hard now so can we slow
+        /// down all attackers as well as bot, even when they sprint, by 40%"*, and separately
+        /// *"feels like shit get past defender very easily"*.
+        ///
+        /// 0.75 x 0.60 = 0.45. **Walk 2.07 m/s, sprint 3.11 m/s**, against 3.45 and 5.18 before.
+        ///
+        /// ⚠️ THE SPRINT IS CUT BY THE SAME 40% WITHOUT TOUCHING `SprintScale`, WHICH IS WHY IT
+        /// IS THIS CONSTANT THAT MOVED. `CharacterMotor` composes speed as
+        /// `Speed * RoleSpeedScale * PersonSpeedScale * sprint * SpeedZones`, all multiplicative,
+        /// so scaling the role term scales every state an attacker can be in — walking, sprinting,
+        /// fatigued and inside a hazard zone — by exactly 0.60. Cutting `SprintScale` instead
+        /// would have slowed the sprint and left the walk untouched, and would have hit the TAYA's
+        /// sprint too, which is the opposite of the ask.
+        ///
+        /// ⚠️ IT REACHES THE BOTS FOR FREE. `AIController` drives the same `InputIntent` through
+        /// the same motor; there is no second speed path to change. The second half of the quote
+        /// is therefore satisfied by this line and not by anything in `AIController`.
+        ///
+        /// ⚠️⚠️ AND IT MOVES THE INTERLOCKED SET. `Stamina`'s header names StaminaMax,
+        /// StaminaDrainRate, SprintScale and ConfinementRadius as one set dimensioned so the bar
+        /// buys roughly one crossing of the danger zone. A 40% slower attacker covers 40% less
+        /// ground on the same bar, so **a sprint no longer buys a full crossing** — that is a
+        /// deliberate consequence of the ask, not an oversight, and it is what makes the taya
+        /// stronger. `TripGraceAfterGetUp` was re-solved against the new speed; nothing else in
+        /// the set was, and re-measuring it is `docs/TODO.md` § 83.1.
+        /// </summary>
+        public const float AttackerSpeedScale = 0.45f;
+
+        /// <summary>
+        /// The taya's own multiplier, which used to be a literal 1.0 inside `RoleSpeedScale`.
+        ///
+        /// ⚠️ 🧑 2026-08-29, in the same breath as widening the block: *"make them a bit faster
+        /// too"*. 4.6 x 1.10 = **5.06 m/s**. "A bit" is taken at its word: the taya was already
+        /// the faster role and the attacker cut above is doing most of the work.
+        ///
+        /// ⚠️ IT IS A NAMED CONSTANT RATHER THAN A NUMBER IN THE EXPRESSION, because the two role
+        /// scales are read against each other constantly — the ratio is the whole balance of
+        /// chase versus escape — and one of them being invisible is how it stayed at 1.0 through
+        /// every retune of the other.
+        /// </summary>
+        public const float DefenderSpeedScale = 1.10f;
+
         public const float SprintScale = 1.50f;
         public const float Friction = 30.0f;
         public const float Gravity = 20.0f;
@@ -302,6 +346,40 @@ namespace TumbangPreso.Core
 
         public const float LaunchSpeed = 18.5f;
         public const float SlipperHitRadius = 0.23f;
+
+        /// <summary>
+        /// Extra HORIZONTAL reach on the taya's body when a tsinelas is tested against it, and
+        /// on nobody else's.
+        ///
+        /// ⚠️⚠️ 🧑 2026-08-29, twice: *"make hit box for defender bigger but make sure it reverts
+        /// to nroaml when theyre attacker ... this is bcz defender kinda feels weak right now"*,
+        /// and then the shape of it: *"make hitbox bigger horizontally but not fatter so taht
+        /// tehy can defend perktus bettert"*.
+        ///
+        /// **A block is the taya's only way to stop a throw that is already in the air**, and
+        /// `Slipper.HitsBody` tested it against `SlipperHitRadius + CharacterController.radius`
+        /// — about 0.60 m of flat reach for a projectile crossing that window at up to 18.5 m/s,
+        /// which at a 50 Hz physics step is 0.37 m of travel per test. A Pektus throw curves
+        /// ACROSS that window rather than into it, so the taya was being asked to stand within a
+        /// third of a metre of a path they cannot predict.
+        ///
+        /// ⚠️⚠️ IT IS ADDED IN `HitsBody` AND NOT TO THE `CharacterController`, WHICH IS THE
+        /// WHOLE OF "NOT FATTER". Growing the capsule would widen the physical body: the taya
+        /// would push attackers around, snag on the map, spawn-settle differently, and read as a
+        /// wider character on screen. This number is only ever consulted when deciding whether a
+        /// slipper CONNECTS, so the body stays exactly the size it looks.
+        ///
+        /// ⚠️ AND HORIZONTAL ONLY, ON PURPOSE. `HitsBody`'s vertical test is unchanged, so a
+        /// throw sailing over the taya's head still sails over it. Widening both would have made
+        /// the taya a column rather than a person.
+        ///
+        /// ⚠️ THE REVERT IS FREE BECAUSE THERE IS NO STATE. `HitsBody` reads `who.IsDefender` on
+        /// the frame of the test, so the bonus arrives and leaves with the role and there is
+        /// nothing to unwind when the taya rotates — which is precisely what he asked to be sure
+        /// of. `docs/TODO.md` § 83.2.
+        /// </summary>
+        public const float DefenderBlockRadiusBonus = 0.35f;
+
         public const float MaxFlightTime = 6.0f;
 
         /// <summary>
@@ -622,13 +700,22 @@ namespace TumbangPreso.Core
         /// Ilalim ng Tulay meant two hazards 2.6 m apart could pass a player back and forth.
         ///
         /// ⚠ SOLVED AGAINST THE FOOTPRINT, NOT PICKED. An attacker moves at
-        /// `Speed` * `AttackerSpeedScale` = 3.45 m/s, so 1.20 s carries them 4.14 m. The largest
+        /// `Speed` * `AttackerSpeedScale` = 2.07 m/s, so 1.60 s carries them 3.31 m. The largest
         /// hazard footprint on the map is 2.60 m, so the grace covers walking clear of the thing
         /// that felled you from its centre, with margin.
         ///
+        /// ⚠️⚠️ 1.60, RE-SOLVED WHEN `AttackerSpeedScale` WENT TO 0.45 ON 2026-08-29, AND THE OLD
+        /// 1.20 WOULD HAVE REINTRODUCED THE LOOP RATHER THAN MERELY BEEN STALE. It was solved
+        /// against 3.45 m/s and covered 4.14 m; at 2.07 m/s the same 1.20 s covers only **2.48 m**,
+        /// which is UNDER the 2.60 m footprint it exists to clear. A slower attacker would have
+        /// stood up still inside the hazard that felled them, with the grace already expired —
+        /// the exact ping-pong this constant was added to stop. **This is what "re-measure the
+        /// interlocked set" means in practice**, and it is the one member of it that could be
+        /// re-solved by arithmetic rather than by playing.
+        ///
         /// ⚠ IT LIVES ON THE MOTOR, NOT ON THE HAZARD, so every hazard present and future
         /// respects one window rather than each keeping its own.</summary>
-        public const float TripGraceAfterGetUp = 1.20f;
+        public const float TripGraceAfterGetUp = 1.60f;
 
         // -------------------------------------------------------------------
         // § MASHING OUT OF AN ABILITY STUN

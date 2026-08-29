@@ -429,11 +429,34 @@ namespace TumbangPreso.UI
             // 22/19 to 30/28, with a screenshot answered *"text still small"* each time.
             _class = Label(identity.transform, "ClassLabel", 32, UiTheme.Cream,
                            TextAnchor.MiddleLeft);
-            _class.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1.0f;
+
+            // ⚠️⚠️ THE ROLE TAKES ITS OWN WIDTH AND THE NAME TAKES THE REST. IT WAS A 50/50
+            // SPLIT AND THAT IS WHY THE ROW COLLIDED A SECOND TIME. 🧑 2026-08-29, with a
+            // screenshot reading `ATTACKERROCKAFORT`: *"this has overflow as well"*.
+            //
+            // Both children had `flexibleWidth: 1`, so each got half of the 336 px content box —
+            // about 163 px. `ATTACKER` at 32 pt does not fit 163 px in Darumadrop, and `Label`
+            // sets `HorizontalWrapMode.Overflow`, so the role simply drew PAST its half and
+            // straight into a name that is anchored `MiddleRight`. The best-fit added to
+            // `_detail` shrinks the NAME and can do nothing about the label overrunning from the
+            // left, which is why `TAYA (DEFENDEDANTE` came back as `ATTACKERROCKAFORT` the moment
+            // the strings on the two sides were long enough again.
+            //
+            // ⚠️ `flexibleWidth: 0` PLUS `childControlWidth` IS THE FIX: the group asks `Text`
+            // for its own `preferredWidth` and gives it exactly that, so the role is never
+            // clipped and never overruns, whichever of `TAYA` and `ATTACKER` it is holding.
+            _class.gameObject.AddComponent<LayoutElement>().flexibleWidth = 0.0f;
 
             _detail = Label(identity.transform, "DetailLabel", 34, UiTheme.Offense,
                             TextAnchor.MiddleRight);
-            _detail.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1.0f;
+
+            var detailLayout = _detail.gameObject.AddComponent<LayoutElement>();
+            detailLayout.flexibleWidth = 1.0f;
+
+            // ⚠️ AND THE NAME KEEPS A FLOOR, so `ATTACKER` cannot eat the whole row on a wider
+            // font or a smaller card. Below this the best-fit below has nothing to work with and
+            // the name is clipped instead of shrunk.
+            detailLayout.minWidth = 140.0f;
 
             // ⚠️⚠️ THE NAME SHRINKS RATHER THAN OVERLAPPING THE ROLE, AND SHORTENING THE ROLE
             // STRING ALONE WOULD NOT HAVE BEEN ENOUGH. Two `Overflow` labels in one layout row

@@ -272,10 +272,24 @@ namespace TumbangPreso.UI
             text.fontSize = authoredSize;
 
             var rect = text.rectTransform;
+
+            // ⚠️⚠️ LAID OUT BEFORE IT IS MEASURED. 🧑 2026-08-29, off the CHOOSE YOUR HERO
+            // screen: *"first time u open pic 1 it overflows and auto fixes itself ... pls make
+            // it fixed from the start"*. `rect.rect.width` is 0 until the first layout pass, and
+            // the first layout pass is AFTER the frame a panel is switched on — so the guard
+            // below fired on exactly the open, left the headline at its authored size, and the
+            // screen drew one overflowing frame before some later refresh happened to land on a
+            // valid rect and correct it. That is the "auto fixes itself" he is describing, and it
+            // is a race rather than a design.
+            ForceLayoutFor(rect);
+
             float room = rect.rect.width;
 
             // A rect that has not been laid out yet reports 0 and would drive the font to its
             // floor. Leaving it at the authored size is the safe answer: it is what shipped.
+            // ⚠️ STILL REACHABLE, and the force above does not make it dead code: a canvas that
+            // is inactive on this frame cannot be rebuilt at all, which `LayoutRebuilder` states
+            // outright. It is now the rare path instead of the normal one.
             if (room <= 1.0f) return;
 
             // ⚠️ MEASURED THROUGH THIS LABEL, not a spare font metric, for the reason
@@ -284,6 +298,41 @@ namespace TumbangPreso.UI
             const int floorSize = 24;
             while (text.fontSize > floorSize && text.preferredWidth > room)
                 text.fontSize -= 2;
+        }
+
+        /// <summary>
+        /// Makes a rect's width real NOW, so a text fitter measured on the frame a panel opens
+        /// gets the number it will actually have rather than 0.
+        ///
+        /// ⚠️⚠️ IT REBUILDS THE OUTERMOST LAYOUT ANCESTOR, NOT THE LABEL. A `Text` inside a
+        /// `HorizontalLayoutGroup` inside a `VerticalLayoutGroup` is sized by the OUTER one:
+        /// rebuilding the label re-runs a pass that reads a width its parent has not computed
+        /// yet, so it returns the same 0. Unity's own guidance for
+        /// `ForceRebuildLayoutImmediate` is to pass the root of the layout, and finding that
+        /// root is the whole reason this is a method rather than one line at each call site.
+        ///
+        /// ⚠️ THE WALK STOPS AT THE CANVAS. Above it there is nothing a layout group can be on,
+        /// and rebuilding the canvas rect is a whole-screen pass on every label fit.
+        ///
+        /// ⚠️ IT IS NOT FREE AND IT IS NOT HOT. Both callers run from a screen refresh — a panel
+        /// opening, a seat changing, a hero being cycled — not from `Update`. If a fitter is ever
+        /// added to a per-frame path, this call is the first thing to take back out of it.
+        /// </summary>
+        protected static void ForceLayoutFor(RectTransform rect)
+        {
+            if (rect == null) return;
+
+            var root = rect;
+
+            for (var t = rect; t != null; t = t.parent as RectTransform)
+            {
+                if (t.GetComponent<Canvas>() != null) break;
+                if (t.GetComponent<LayoutGroup>() != null ||
+                    t.GetComponent<ContentSizeFitter>() != null)
+                    root = t;
+            }
+
+            LayoutRebuilder.ForceRebuildLayoutImmediate(root);
         }
     }
 }

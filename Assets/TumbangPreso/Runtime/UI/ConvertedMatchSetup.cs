@@ -1325,12 +1325,24 @@ namespace TumbangPreso.UI
 
             if (GameLaunch.Spectator) return;
 
-            // ⚠️ A GUEST IN THE LOBBY PRESSES NOTHING HERE. The button is drawn as WAITING FOR
-            // HOST and is not interactable, so this is unreachable from the UI; the guard is kept
-            // anyway because `RefreshActionButtons` deciding a control is dead and the handler
-            // agreeing are two different claims. This file's own note on the leader arrows says
-            // never to replace a guard with a greyed button.
-            if (IsLobby && !NetAuthority.IsHost) return;
+            // ⚠️⚠️ A GUEST IN THE LOBBY PRESSES READY HERE AGAIN, AND THE GUARD THAT USED TO
+            // REFUSE IT IS GONE ON PURPOSE. 🧑 2026-08-29, on the build carrying the removal:
+            // *"ready logic still not working ... ready in lobby dont work"*.
+            //
+            // The removal answered *"si host lang nakakapag start ng game, yung other players
+            // hindi na need mag ready"* by deleting the CONTROL as well as the gate, and that
+            // went one step too far: `LobbySeatInfo.Ready` still travels, `LobbyNameplates` still
+            // draws a tick over every seat, and `BroadcastReadyTally` still counts. What shipped
+            // was a lobby that DISPLAYS readiness with nothing anywhere that can set it — an
+            // affordance three players can see and none of them can move, which is a stronger
+            // reading of "doesn't work" than the missing button on its own.
+            //
+            // ⚠️⚠️ AND THE TWO INSTRUCTIONS DO NOT ACTUALLY CONFLICT, WHICH IS WHY BOTH ARE
+            // OBEYED. His sentence was about who STARTS a match, and READY does not start one:
+            // `MatchRpc.HostStartMatch` is reached only from `OnStartPressed`, only on the host,
+            // and no tally gates it. READY is now a signal to the host that you are set, which is
+            // what the tick over your head was always drawing. Nobody is blocked by forgetting it.
+            if (IsLobby && GameLaunch.Spectator) return;
 
             // ⚠️ THE PRESS CARRIES ITS STATE, because the button is a toggle and the message was
             // not: un-readying sent a second "I am ready", which the host's set swallowed as a
@@ -2268,6 +2280,23 @@ namespace TumbangPreso.UI
             // The retry below makes that deterministic instead of incidental.
             text.fontSize = maxSize;
 
+            // ⚠️⚠️ THE LAYOUT IS FORCED BEFORE IT IS MEASURED, SO THE FIT IS RIGHT ON FRAME ONE.
+            // 🧑 2026-08-29, off the character screen: *"first time u open pic 1 it overflows and
+            // auto fixes itself ... pls make it fixed from the start"*. The retry below made the
+            // correction DETERMINISTIC and left it one frame LATE, which is the frame the player
+            // is looking at when a panel opens.
+            //
+            // ⚠️ `ForceRebuildLayoutImmediate` IS ASKED OF THE PARENT, NOT OF THE LABEL. A `Text`
+            // inside a `HorizontalLayoutGroup` is sized BY that group, so rebuilding the child
+            // alone re-runs a pass that reads a width nobody has written yet. Walking up to the
+            // topmost rect with a layout group on it is what makes the number real.
+            //
+            // ⚠️ AND THE RETRY BELOW STAYS. A rect can still report 0 when the whole canvas is
+            // inactive on this frame, which no amount of forcing fixes, and that is exactly what
+            // `LayoutRebuilder` documents. Forcing turns the deferred path from the NORMAL case
+            // into the rare one; it does not remove it.
+            ForceLayoutFor(text.rectTransform);
+
             float room = text.rectTransform.rect.width;
 
             if (room <= 1.0f)
@@ -2375,21 +2404,31 @@ namespace TumbangPreso.UI
             // and `ReadyGate` are what the PRE-ROUND gate inside a match runs on, which is a
             // different gate with a different job. Only the LOBBY stops asking.
             //
-            // ⚠️⚠️ AND IT NAMES THE HOST, BECAUSE "WAITING FOR HOST" READ AS A BROKEN SCREEN.
-            // 🧑 2026-08-29, from the guest side of a lobby that was working exactly as designed:
-            // *"ready for clients is broken, it js says waiting for host"*. The paragraph above
-            // already decided that saying who everybody is waiting for is the useful thing left
-            // in this slot, and then the code did not say who: an unnamed role reads as a
-            // placeholder somebody forgot to fill in, while `WAITING FOR MALLOWS` is a fact about
-            // a person in the room and is obviously the screen working.
+            // ⚠️⚠️ THE PARAGRAPH ABOVE IS HISTORY AS OF LATER THE SAME DAY: THE BUTTON IS A
+            // WORKING READY AGAIN. 🧑, on the build that shipped the removal: *"ready for clients
+            // is broken, it js says waiting for host"*, and then *"ready logic still not working
+            // ... ready in lobby dont work"*. `OnPrimaryPressed` carries the reconciliation of
+            // that with his earlier *"si host lang nakakapag start"*: READY signals, it does not
+            // start, and the host's START is still the only thing that loads an arena.
+            //
+            // ⚠️ SO IT IS INTERACTABLE, AND A SPECTATOR'S IS NOT. A spectator holds no seat, has
+            // no tick to set and cannot be waited for; `LobbySession.ReadyVoterCount` excludes
+            // them for the same reason, so a pressable button there would be the dead control
+            // this branch just stopped drawing for everybody else.
+            //
+            // ⚠️ THE READY STATE NAMES THE HOST, WHICH IS WHAT THE OLD LABEL WAS TRYING TO DO.
+            // Once you have readied, the honest thing on the button is who the room is waiting
+            // for, and pressing it again takes the tick back off.
             //
             // ⚠️ FITTED, NOT `SetText`. A player name is unbounded where `WAITING FOR HOST` was
             // 16 fixed characters, and every converted label carries `m_HorizontalOverflow: 1`,
             // so an overflow here would be silent. Same trap the START plate above records.
-            string label = GameLaunch.Spectator ? "SPECTATING" : $"WAITING FOR {HostLabel()}";
+            string label = GameLaunch.Spectator
+                ? "SPECTATING"
+                : _localReady ? $"WAITING FOR {HostLabel()}" : "READY";
 
             SetFittedButtonLabel("PrimaryButton", label, MaxButtonFontSize);
-            if (prim != null) prim.interactable = false;
+            if (prim != null) prim.interactable = !GameLaunch.Spectator;
         }
 
         /// <summary>
