@@ -68,6 +68,37 @@ the whole game, which won its regional, in under two weeks.
 and compilation, tests, probes, renders and builds all run from the command line. Hand back
 only a human judgement ("does this FEEL right", "is this the art we want") or a credential.
 
+### 2.1b ⚠️⚠️ NEVER SIT AND WATCH A TEST RUN. RUN IT IN THE BACKGROUND AND KEEP CODING.
+
+🧑 2026-08-29, watching a fifteen-minute stretch of nothing but Unity launches: *"can u
+make sure ur never wasting time js doing fucking tests, unless its the last thing, i hate it ...
+code or some shit while ur doing tests"*.
+
+A batchmode Unity launch is **three to twelve minutes** and a cold `Library` import is longer.
+Blocking on one is that many minutes of a session spent producing nothing, and this repo's normal
+day is a dozen of them.
+
+**So:**
+
+- **Start every `Unity.exe -runTests`, every `-executeMethod`, every build and every long probe
+  with `run_in_background`.** The harness re-invokes when it finishes; there is nothing to poll
+  and nothing to wait for.
+- **Then immediately start the next piece of work.** Read the next file, write the next fix,
+  draft the next `docs/TODO.md` entry. There is always something that does not depend on the
+  result you are waiting for.
+- **Collect the verdict later**, off `Logs/*.xml`, when the notification arrives. ⚠️ Still assert
+  on the XML and never on the exit code (§ 7).
+- **The one exception is the LAST run before a build**, where the verdict IS the next step and
+  there is genuinely nothing else to do.
+
+⚠️ **`dotnet test` ON `Core.Tests` IS NOT THIS.** It is about 40 ms and needs no editor, so run
+it in the foreground as often as you like — it is the cheapest signal in the repo and the reason
+the rules core is engine-free.
+
+⚠️ **AND DO NOT EDIT `.cs` FILES WHILE A UNITY RUN IS IN FLIGHT.** It recompiles mid-run and
+the result describes neither version. Edit documents, plan, or read while one is going; save the
+code edits for when it lands, or start the run only once a batch is complete.
+
 ### 2.2 The shape of a session: WORK → BUILD → HANDOFF
 
 🧑 2026-08-16: *"ALL TASKS I ASK -> build -> handoff"*, and, watching a build start with six
