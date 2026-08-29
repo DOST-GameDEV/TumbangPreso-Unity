@@ -100,7 +100,7 @@ without rewriting anything else.
 ```
 1  ACCOUNTS ────> 2  PROFILE + STATS ──> 3  TELEMETRY
                        │
-                       ├──> 4  PROGRESSION ──> 5  COSMETICS ──> 10 MASTERY PATHS
+                       ├──> 4  PROGRESSION ──> 5  COSMETICS ──> 10 HERO MASTERY
                        ├──> 6  SOCIAL
                        ├──> 7  MATCHMAKING ──> 8  INTEGRITY ──> 9  RANKED
                        ├──> 11 BOTS + POPULATION
@@ -108,7 +108,7 @@ without rewriting anything else.
                        └──> 13 SEASONS + LIVE OPS
 
 14 CONTROLLER ──> 15 MOBILE                (independent of the whole column above)
-16 ACCESSIBILITY + LOCALISATION            (independent, and overdue)
+16 ACCESSIBILITY                           (independent, and overdue; localisation cut, § 16.3)
 17 TOURNAMENT, LAN, SPECTATE, REPLAYS      (partly urgent: see § 17)
 18 DISTRIBUTION                            (last, and smaller than it looks)
 ```
@@ -169,6 +169,18 @@ If the design needs a paid service, stop and say so in the handoff rather than b
 **10. How to work while Unity runs.**
 Every editor launch goes in the background and you keep coding. Never sit and watch a test run.
 Never edit a `.cs` file while a Unity run is in flight. `CLAUDE.md` § 2.1b.
+
+**11b. ⚠️⚠️ WHAT COUNTS AS A REASON TO CUT SOMETHING, BECAUSE IT IS NOT TEAM SIZE.**
+Asked on 2026-08-31 which phases to drop on what they cost the team, 🧑 refused the question:
+*"i have ai dont think abt 5 students shit"*, and *"the cutting shit i want should be focused onn
+things that overcomplicate game for ppl"*. **So the test for cutting a feature is what the PLAYER
+has to hold in their head, not what it costs to build.** A thing that is cheap to build is still a
+candidate if it adds a bar, a screen, a number or a vocabulary the player has to learn; a thing
+that is expensive survives if the player never has to think about it. `INSPIRATION.md` § 10.3 is
+the register of everything cut on this basis and it names what was offered and DECLINED, which is
+just as binding. ⚠️ **This does not license ignoring cost entirely.** Free-tier limits (rule 8) and
+obligations a person has to carry, content moderation in particular, are real constraints and are
+not the same argument as "this is a lot of work".
 
 **11. What to do when the prompt is wrong.**
 These prompts were written before the code they describe existed. If the design in one is
@@ -338,7 +350,9 @@ in the game and they make every later balance argument answerable.
    duration, date, and a coloured left edge for placement. Clicking opens the detail.
 6. **Match detail.** Full four-player scoreboard, per-round breakdown, who was taya each round,
    every player's per-stat line, and a replay link once Phase 17 exists.
-7. **Character mastery grid.** Eighteen tiles, each with level, win rate and games.
+7. **Mastery grid: six hero tiles**, each with level, win rate and games, plus a plain played-count
+   list for the other twelve. ⚠️ Eighteen mastery tiles until 2026-08-31; § 10 records why the
+   paths narrowed to the heroes.
 8. **Achievement and highlight shelf.** The rare things, pinned by the player.
 9. **Compare.** Put a friend's numbers beside yours. Cheap to build, and it is what makes a stat
    page get shared instead of read once.
@@ -444,7 +458,9 @@ are permanent, they never reset, they need no seasonal content, and they pay out
 three currencies above. A season track was a fourth system delivering the same three things on a
 deadline nobody set.
 
-- Per-character mastery, separately: play Cheska, level Cheska, earn Cheska's title and palette.
+- Per-hero mastery, separately: play a hero, level that hero, earn its title and palette.
+  ⚠️ **The six heroes only.** § 10 has the reasoning; the other twelve characters keep a played
+  count and no path.
 - ❌ **No soft currency and no shop. CUT 2026-08-31 on scope.** Rewards come straight off account
   level and character mastery. That deletes an economy, a shop screen, a price for every item
   forever, and duplicate protection, and a player loses nothing they can name.
@@ -500,8 +516,8 @@ profile and at the end of a match. One object to author, one to replicate, one t
 **Everything that used to be its own slot is now a field on the banner.**
 
 
-**Sources, all free:** account level, character mastery, ranked season rewards, weekly challenges,
-achievements. ❌ **No currency and no shop**, cut on 2026-08-31: § 4. No lootboxes, no gacha, no real money.
+**Sources, all free:** account level, hero mastery, ranked season rewards, achievements.
+⚠️ **Weekly challenges were a source here and are cut**, § 13. ❌ **No currency and no shop**, cut on 2026-08-31: § 4. No lootboxes, no gacha, no real money.
 
 **What makes it cheap here:** `RosterBook` and `RosterEntryAsset` already resolve id to model,
 palette, tint and clips, `ToonSkin`'s palette remap already recolours a whole character from 16
@@ -644,10 +660,21 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 ⚠️⚠️ **DO NOT BUILD THIS BEFORE PHASE 8.1.** A rank a host can award themselves is worse than no
 rank, because it turns every good player's win into an accusation.
 
-- **A rating per mode.** Classic and Hero Strike get separate ladders, because they are separate
-  games and a player who is 1600 in one may be 900 in the other.
-- **Glicko-2, adapted for a 4-player free for all.** Elo is a two-player system and this is not a
-  two-player game. Resolve a result as **six pairwise outcomes** (1st beat 2nd, 1st beat 3rd, and
+- ❌ **NO SECOND LADDER. ONE RANK. CUT 2026-08-31.** Classic and Hero Strike were to get separate
+  ratings, on the reasoning that they are separate games and a player who is 1600 in one may be 900
+  in the other. That reasoning is correct and it is still the wrong trade, because it leaves a
+  player with **two ranks and no answer to "what rank are you"**, which is the only question a
+  ladder exists to answer. **One competitive ladder; the other mode is unranked.** 🧑 chose this on
+  player-facing complexity rather than on cost.
+  ⚠️ **Which mode carries the ladder is not decided here.** Hero Strike is the higher-ceiling mode
+  and `VISION.md` § 1 says it exists to raise the competitive ceiling, so it is the obvious
+  candidate, but 🧑 has not said so. Ask before building.
+- **Glicko-2, adapted for a 4-player free for all.** ⚠️ **THIS IS THE ARITHMETIC, NOT A FEATURE
+  THE PLAYER MEETS.** It is Elo with one addition: it also tracks how confident it is about you, so
+  a new player's rank moves fast and a settled player's moves slowly. The player never sees the
+  number, only the tier, so it costs nothing in player-facing complexity and it is what stops a new
+  account needing fifty games to land near the right tier. Elo is a two-player system and this is
+  not a two-player game. Resolve a result as **six pairwise outcomes** (1st beat 2nd, 1st beat 3rd, and
   so on), feed all six in, and scale the step so one match moves a settled player about as much as
   one game should. Glicko-2's rating deviation is what makes a new player converge in ten games
   instead of a hundred, and it is what makes smurf handling free.
@@ -706,14 +733,28 @@ change idea and the reasoning live in [`INSPIRATION.md`](INSPIRATION.md) § 5. T
 - **Achievements** are the same machinery pointed at bragging rather than at unlocks:
   `INSPIRATION.md` § 5.6.
 
-**Then the part that is pure upside and has no balance risk at all:** per-character mastery paths
+**Then the part that is pure upside and has no balance risk at all:** per-hero mastery paths
 of things that change nothing. A signature victory pose, a character emote, a voice line set, a
 nameplate, that character's own tsinelas, a colour variant, a title, a visible mastery number.
 **Most of the grind should live here.** It is Phase 5 content wearing a Phase 10 structure.
 
-**Classic gets its own path and never gets powers.** `VISION.md` § 1. Street Hype is already
-Classic's identity layer: extend it with Street Hype titles, curve and bank recognitions and
-streak records. Depth without abilities, which is the rule.
+⚠️⚠️ **MASTERY PATHS ARE FOR THE SIX HEROES ONLY, NOT ALL EIGHTEEN CHARACTERS. NARROWED
+2026-08-31.** 🧑, choosing on what the player has to hold in their head: *"for mastery paths only
+give it to the heroes (6)"*. Eighteen paths is eighteen parallel grinds on one profile, and the
+twelve non-hero characters have no kit to learn, so a path behind them is a grind attached to
+nothing. **A hero has skills, an identity and a reason to be studied; that is what a mastery path
+is for.** The other twelve keep a visible played-count and nothing else.
+⚠️ **This does not shrink Phase 5.** The cosmetics themselves still apply to any character. What
+narrows is the number of PATHS the player is asked to track, which is the whole point.
+
+❌ **STREET HYPE IS NOT A SECOND PROGRESSION TRACK. CUT 2026-08-31.** Classic was to get its own
+path, extending Street Hype with titles, a curve, bank recognitions and streak records. That is a
+parallel progression system whose only reason to exist is which mode you happened to pick, so the
+same match feeds a different bar depending on a lobby toggle, and the profile grows a second
+level number nobody can explain. **Street Hype stays exactly what it already is: an in-match feel
+in Classic.** It earns account XP like everything else and it has no track behind it.
+⚠️ **`VISION.md` § 1's rule is untouched: Classic never gets powers.** That rule was never about
+Classic needing its own progression, and this cut does not weaken it.
 
 **The prompt for this phase is [§ 19.10](#1910-prompt-for-phase-10).** Every prompt in
 this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
@@ -799,12 +840,23 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ## PHASE 13 · SEASONS AND LIVE OPS
 
-- **Weekly challenges**, paying a title or a badge. **The only recurring challenge cadence.**
+❌⚠️ **THERE IS NO RECURRING CHALLENGE CADENCE AT ALL NOW. WEEKLIES AND LOGIN STREAKS ARE CUT,
+2026-08-31, ON PLAYER-FACING COMPLEXITY.** Dailies were already gone; weeklies were kept as "the
+only recurring challenge cadence" and streaks as a gentler version of a streak. Both are cut
+together, and the reason is not what they cost the team:
+
+- ❌ **Weekly challenges.** A challenge list is a to-do list. It turns opening the game into
+  reading homework and it quietly tells a player that the way they want to play is worth less than
+  the way the list wants them to play. The game already has a reason to queue: the match.
+- ❌ **Login streaks**, including the pausing kind. A streak's whole mechanism is making a missed
+  day feel expensive, and the thought "I've broken it now" is the one immediately before somebody
+  stops. A feature that punishes absence cannot also be the feature that survives absence.
+
+**What is left of the recurring layer:**
+
 - **A ten-week season**, which exists for the ranked soft reset and for an end-of-season summary
   card built to be screenshotted. ❌ **No season theme and no season track**, cut on 2026-08-31:
   § 4.1 records what a reward can actually cost to make.
-- **Login streaks that pause rather than reset.** Punishing a break teaches people that missing a
-  day is expensive, which is how they decide to stop entirely.
 - **A scheduled weekly hour**, from `INSPIRATION.md` § 2.24, and **LIGA NG BARANGAY**, the weekend
   side-picking event from § 2.10. Those two are the whole event calendar.
 - **A live-ops calendar** in the repo, so the team knows what ships when and players can see it.
@@ -1013,7 +1065,7 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 - **A post-match "best moment" card**, generated from events already raised, designed to be
   screenshotted. Almost free, and it is the thing that gets posted.
-- **Nameplates**: title, emblem, mastery number, visible in the lobby and on the scoreboard. The
+- **Nameplates**: title, emblem, hero mastery number, visible in the lobby and on the scoreboard. The
   cheapest status system that exists and people care about it enormously.
 - **A career page that is one screenshot.** Peak rank, best match, favourite character, hours.
 - **Endorsements**, Overwatch style: after a match, endorse one opponent, level shown on the
@@ -1055,8 +1107,11 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 1. **Population.** A 4-player game at 30 concurrent players has a queue problem that no ranked
    polish fixes. **Phase 11 is the mitigation and it is why bots and backfill are a phase rather
    than a footnote.** Also why the Discord in Phase 18 is not decoration.
-2. **Scope against five students.** Every phase here is weeks. Doing three of them well beats
-   starting eight. Appendix C is the honest order.
+2. **Too much game, which is not the same as too much work.** Every phase here is weeks, and doing
+   three of them well beats starting eight. ⚠️ **But the failure this describes is a player opening
+   a profile with eleven progress bars on it, not a team running out of hours.** § 0.5 rule 11b is
+   the cutting criterion and `INSPIRATION.md` § 10.3 is what has already gone on it. Appendix C is
+   the honest order.
 3. **Cheating, discovered after ranked ships.** Phase 8 before Phase 9 exists for this. A ladder
    that loses trust does not get it back.
 4. **The Relay free tier.** It is the first thing that will actually run out. Watch the bandwidth
@@ -1295,9 +1350,13 @@ tomorrow, and it needs no matchmaking and no ranked to be worth having.**
 > 2. Account XP from completion, placement and a small set of per-match objectives, weighting
 >    completion heavily and placement lightly, so leaving is the only thing that costs.
 > 3. Account level, uncapped, a new border every 50.
+> 4. Per-hero mastery. ⚠️ **The six heroes only**, narrowed 2026-08-31: § 10 has the reasoning.
+>    The other twelve characters get a played count and no path.
 > 5. ❌ **No soft currency and no shop.** Cut on 2026-08-31: rewards come straight off the track and
 >    mastery. Do not add an economy.
-> 5. A soft currency earned per match.
+>    ⚠️ **A leftover step reading "a soft currency earned per match" sat directly under this line
+>    until 2026-08-31**, so the prompt cut the economy and then told the next session to build it.
+>    If a step here ever contradicts a ❌ above it, the ❌ is the decision.
 > 6. ❌ **No season track.** Cut on 2026-08-31: § 4 has the reasoning and § 4.1 has the thing to
 >    read before designing any reward at all, which is what a reward can actually cost to make.
 > 7. The end-of-match XP bar and the mastery screen, existing UI kit.
@@ -1456,13 +1515,19 @@ than no rank, because it turns every good player's win into an accusation.**
 > exists and is the only writer of a result, because ratings go through it and nowhere else.
 >
 > **Build.**
-> 1. **Two independent ladders, Classic and Hero Strike.** Never one shared number: they are
->    separate games and a player can be 1600 in one and 900 in the other.
+> 1. ❌ **NOT two ladders. ONE rank.** This said Classic and Hero Strike each get their own
+>    rating. Cut on 2026-08-31 on player-facing complexity: two ratings leaves a player with two
+>    ranks and no answer to "what rank are you". **One competitive ladder, the other mode
+>    unranked.** ⚠️ Which mode carries it is NOT decided; ask before building. § 9 has the entry.
 > 2. **Glicko-2 adapted for a four-player free for all**: expand each result into six pairwise
 >    outcomes, feed all six in, scale the step so one match moves a settled player about as much as
 >    one game should.
 > 4. Tiers with divisions and a numbered apex leaderboard. Names come from the game's own voice and
 >    🧑 chooses them; § 9 has a suggested shape.
+>    ⚠️ **WHETHER THE DIVISIONS SURVIVE IS AN OPEN QUESTION, ASKED AND NOT ANSWERED 2026-08-31.**
+>    Five tiers times three divisions plus an apex is sixteen rungs of invented vocabulary before a
+>    player knows whether they are any good. 🧑 was asked and chose neither way. **Ask before
+>    building; do not assume the sixteen-rung version.**
 > 5. ❌ **No placement matches**, cut on 2026-08-31: § 9. Start everyone mid-ladder with a wide
 >    deviation and show the tier from match one. Glicko converges in the same handful of games.
 > 6. A seasonal soft reset toward the mean, never a wipe, with a permanent peak on the profile.
@@ -1498,11 +1563,18 @@ line: this is the phase that can quietly turn the competitive mode into an accou
 > defined as a trade at an unchanged budget and that only means something if the budget is real.
 >
 > **Build, in this order, because the first half has no balance risk and the second half does.**
-> 1. Per-character cosmetic and expressive mastery tracks for every character: victory pose,
->    character emote, voice line set, nameplate, that character's own tsinelas, a colour variant, a
->    title, a visible mastery number. **Most of the grind should live here.**
-> 2. A Classic-only Street Hype track containing no abilities of any kind, extending what Classic
->    already has. `VISION.md` § 1: **Classic never gets powers.**
+> 1. Cosmetic and expressive mastery paths **for the six heroes only**: victory pose, character
+>    emote, voice line set, nameplate, that hero's own tsinelas, a colour variant, a title, a
+>    visible mastery number. **Most of the grind should live here.**
+>    ⚠️⚠️ **THE SIX HEROES, NOT ALL EIGHTEEN CHARACTERS.** Narrowed 2026-08-31 on player-facing
+>    complexity: eighteen paths is eighteen parallel grinds, and the twelve non-hero characters
+>    have no kit to learn, so a path behind them is a grind attached to nothing. The other twelve
+>    get a played count and nothing else. § 10 has the entry.
+> 2. ❌ **NOT a Classic-only Street Hype track.** Cut on 2026-08-31: it is a second progression
+>    system whose only reason to exist is which mode you picked, so the same match feeds a
+>    different bar off a lobby toggle. **Street Hype stays an in-match feel in Classic** and earns
+>    account XP like everything else. ⚠️ `VISION.md` § 1's rule that **Classic never gets powers**
+>    is untouched and was never about Classic needing its own track.
 > 3. The Hero Strike loadout: a pool of options per ability slot, chosen before the match.
 > 4. Achievements in the three tiers in `INSPIRATION.md` § 5.6, each paying a title, a badge or a
 >    banner tracker so nothing is a dead list.
@@ -1600,24 +1672,25 @@ exist.**
 > **VERIFY FIRST.** Phases 2 and 4 shipped. If `INSPIRATION.md` prompt I3 has already built the
 > challenge engine, **use it and do not build a second one.**
 >
-> **Build.** Weekly challenges paying a title or a badge, a ten-week season that exists for the
-> ranked soft reset and its summary card, login streaks, the weekly hour and Liga ng Barangay. ❌ No
-> daily challenges, no season theme, no season track and no featured-mode rotation: all cut on
-> 2026-08-31, § 13. Keep a live-ops calendar in the repo.
+> **Build.** A ten-week season that exists for the ranked soft reset and its summary card, the
+> weekly hour and Liga ng Barangay. Keep a live-ops calendar in the repo.
+> ❌ **Cut, all on 2026-08-31, § 13:** daily challenges, **weekly challenges**, **login streaks**,
+> the season theme, the season track and the featured-mode rotation. ⚠️ **There is no recurring
+> challenge cadence left, and that is deliberate** rather than an omission to helpfully restore:
+> a challenge list is a to-do list, and a streak's mechanism is making a missed day feel expensive.
 >
 > **Constraints.**
-> - Every challenge is evaluated server-side from the match record. Never claimed by a client.
-> - The challenge set is data in `Packages/com.tumbangpreso.core/` with a test that each one is
->   achievable in a single match or declares its own multi-match span.
-> - ⚠️ **Challenges drive behaviour and bad ones drive bad behaviour.** "Get 10 knockdowns" teaches
->   a player to ignore the can, and the can is the whole game. Write them against outcomes the game
->   wants: retrievals under pressure, rounds survived as last attacker, tags as taya, matches
->   completed.
-> - ⚠️ **A login streak pauses on a missed day. It never resets.** Punishing a break teaches people
->   that missing a day is expensive, which is how they decide to stop entirely.
+> - Every season boundary and reward is evaluated server-side from match records, never claimed by
+>   a client.
+> - Any event the calendar schedules is data in `Packages/com.tumbangpreso.core/`, not Unity code.
+> - ⚠️ **If a challenge cadence is ever restored, bad challenges drive bad behaviour.** "Get 10
+>   knockdowns" teaches a player to ignore the can, and the can is the whole game. Write them
+>   against outcomes the game wants: retrievals under pressure, rounds survived as last attacker,
+>   tags as taya, matches completed. **This is kept as the rule for a future decision, not as a
+>   task.**
 >
-> **Done when** dailies issue and reroll, a season boundary rolls correctly in a test, the summary
-> card renders, and § 0.5 rule 9 is satisfied.
+> **Done when** a season boundary rolls correctly in a test, the summary card renders, the weekly
+> hour and Liga ng Barangay run off the calendar, and § 0.5 rule 9 is satisfied.
 
 ---
 

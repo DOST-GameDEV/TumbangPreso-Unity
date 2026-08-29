@@ -234,7 +234,9 @@ ghosts of other players' runs, and a full-lobby squad version. **He cut all thre
 daily was a better feature than the original. It was still a whole mode, a leaderboard, a medal
 table, a seed system and a ghost pipeline, sitting beside a season track, a challenge engine,
 achievements, mastery and a rank ladder. **A plan can be full of individually good features and
-still be too much for five students**, and that is what this one was.
+still be too much GAME**, and that is what this one was. ⚠️ This read "too much for five students"
+until 2026-08-31; § 10.3 records why team size is no longer the argument, and note that the season
+track and the challenge engine named in this sentence are both cut now too.
 
 **What is genuinely dead:** the daily mode, the daily leaderboard, medals, ghosts as a daily
 feature, and the squad variant. `INSPIRATION.md` prompt I6 is deleted.
@@ -1253,12 +1255,12 @@ a conversation he has already had.
 | **Soft currency and the shop** | `FUTURE.md` §§ 4, 5 | An economy, a shop screen, a price on every item forever, and duplicate protection. |
 | **Nameplate, title, badge, emblem, frame, border and avatar as SEPARATE cosmetic slots** | `FUTURE.md` § 5 | Seven inventory categories, seven UI rows and seven wire fields collapsed into **the banner**, which does the same job as one object. |
 | **King of the Can, time attack, survival, sudden death, 2v2** | `FUTURE.md` § 12, § 2.16 | Five modes. Nine modes would split thirty players nine ways, and a mode nobody can fill is worse than none. **2v2 is the one most worth revisiting**, because it changes the social shape of a session rather than its rules. |
-| **Daily challenges and the rotating featured mode** | `FUTURE.md` § 13 | Two of six recurring live-ops commitments. Weeklies do the same job at a seventh of the maintenance, and a rotation needs modes to rotate. |
+| **Daily challenges and the rotating featured mode** | `FUTURE.md` § 13 | Two of six recurring live-ops commitments. ⚠️ This read "weeklies do the same job at a seventh of the maintenance" until 2026-08-31, when **weeklies were cut too**, on player-facing complexity rather than scope. See § 10.3. |
 | **Score-margin multiplier and the demotion buffer** | `FUTURE.md` § 9 | Two of six ranked sub-systems. The multiplier is a permanent tuning surface for a nuance nobody feels; the buffer solves the same feeling rank floors already solve. |
 | **Trust score and behaviour-sorted pools** | § 2.8 | Its whole purpose is sorting players into pools, and this population cannot fill the pools it already has. Reporting and the avoid list do the job. |
 | **Four-peer unanimous corroboration** | `FUTURE.md` § 8.1 | Simplified rather than cut: **host plus one random witness**. Half the traffic and half the code for the same guarantee, because a lying host cannot know which peer will be asked. |
 | **A named practice ladder against bots** | `FUTURE.md` § 11 | A fourth bot feature and a fifth progression track. Practice and `GuidedTraining` already exist. |
-| **The 50-tier season track, and seasonal rewards generally** | `FUTURE.md` §§ 4, 4.1, 9, 13 | 50 rewards to author every ten weeks, forever, and the first missed season collapses the framing. His question is the one to keep asking: *"what can we even give as rewards"*. § 4.1 is the answer, sorting every possible reward by what it costs to make. Account level and character mastery carry the progression instead, and they never reset. |
+| **The 50-tier season track, and seasonal rewards generally** | `FUTURE.md` §§ 4, 4.1, 9, 13 | 50 rewards to author every ten weeks, forever, and the first missed season collapses the framing. His question is the one to keep asking: *"what can we even give as rewards"*. § 4.1 is the answer, sorting every possible reward by what it costs to make. Account level and hero mastery carry the progression instead, and they never reset. |
 | **Endorsement decay** | § 2.4 | A timer, a rule and a paragraph of explanation, bought for a difference nobody would notice. Endorsements are a count on the banner and nothing more. |
 | **Placement matches** | `FUTURE.md` § 9 | Five games in a hidden state with their own rules and UI, doing a job Glicko-2 already does alone. Everyone starts mid-ladder with a wide deviation and sees their tier from match one. |
 | **Localisation, including Tagalog** | `FUTURE.md` § 16.3 | *"english only"*. The cost was never the translation, it was keeping three languages in step for every screen and every future addition, forever. ⚠️ The string extraction gets more expensive every month, so if it is ever revisited, do the extraction as its own job first. |
@@ -1268,13 +1270,42 @@ a conversation he has already had.
 | **Souls-style ground messages** | § 9 | A moderation surface for near-zero gameplay value. |
 | **Three of the training room's five drawn ranges** | § 2.21 | The shove cone, the confinement box and the lata's fall frame. A training room that draws everything is as unreadable as one that draws nothing. |
 
-### 10.3 The pattern, which is worth more than the list
+### 10.3 Cut on player-facing complexity, which is a different question from scope
+
+⚠️⚠️ **THIS CATEGORY EXISTS BECAUSE 🧑 REFUSED THE SCOPE FRAMING ON 2026-08-31.** Asked which
+phases to cut on what they cost the team, he answered: *"i have ai dont think abt 5 students
+shit"*, and *"the cutting shit i want should be focused onn things that overcomplicate game for
+ppl"*. **Do not propose a cut here on the grounds that it is a lot of work.** The question is what
+the PLAYER has to hold in their head, and a thing that is cheap to build can still be cut for
+making the game harder to understand.
+
+| Idea | Where | What it removed, and why |
+|---|---|---|
+| **Weekly challenges** | `FUTURE.md` § 13 | The last recurring challenge cadence, after dailies had already gone. A challenge list is a to-do list: it turns opening the game into reading homework and tells a player that the way they want to play is worth less than the way the list wants. **There is now no challenge cadence at all, and that is deliberate.** |
+| **Login streaks**, including the pausing kind | `FUTURE.md` § 13 | A streak's whole mechanism is making a missed day feel expensive, and *"I've broken it now"* is the thought immediately before somebody stops. A feature that punishes absence cannot also be the one that survives absence. |
+| **Street Hype as a Classic-only progression track** | `FUTURE.md` § 10 | A second progression system whose only reason to exist is which mode you picked, so the same match fed a different bar off a lobby toggle and the profile grew a second level number nobody could explain. ⚠️ **Street Hype survives as an in-match feel in Classic.** `VISION.md` § 1's rule that Classic never gets powers is untouched and was never about Classic needing its own track. |
+| **Mastery paths for all eighteen characters** | `FUTURE.md` §§ 4, 10 | Narrowed, not cut: **the six heroes only**. *"for mastery paths only give it to the heroes (6)"*. Eighteen paths is eighteen parallel grinds on one profile, and the twelve non-hero characters have no kit to learn, so a path behind them is a grind attached to nothing. They keep a played count. |
+| **A separate ranked ladder per mode** | `FUTURE.md` § 9 | Two ratings leaves a player with two ranks and no answer to *"what rank are you"*, which is the only question a ladder exists to answer. **One ladder; the other mode is unranked.** ⚠️ Which mode carries it is NOT decided. |
+
+⚠️ **Still open from that same conversation:** whether ranked keeps **three divisions inside each
+of five tiers plus a numbered apex**, which is sixteen rungs of invented vocabulary before a player
+knows if they are any good. 🧑 was asked and chose neither way. **Ask; do not assume.**
+
+⚠️ **Kept on purpose, having been offered as cuts and declined:** endorsements, the Phase 10
+loadout and skill variants (*"meh its good"*), and the Phase 6, 8 and 16 simplifications
+(*"keep all lowkey"*). Do not re-propose these as fresh ideas.
+
+### 10.4 The pattern, which is worth more than the list
 
 **Most of these were cut on scope rather than on design, and several were the IMPROVED second
 version of something.** The daily got better and was still cut. Rested XP was a better mechanism
 than the curve it replaced and was still cut.
 
-⚠️⚠️ **A plan can be full of individually good features and still be too much for five students.**
-When adding anything to these documents the question is not *is this good*, it is **is this good
-enough to displace something already on the list**. If the answer is no, it belongs here.
+⚠️⚠️ **A plan can be full of individually good features and still be too much GAME.** This
+paragraph read "too much for five students" until 2026-08-31, and 🧑 rejected that framing
+directly: he has AI, and team size is not the argument he wants made. **The surviving argument is
+better anyway**, because it is about the player rather than the team: when adding anything to these
+documents the question is not *is this good*, it is **is this good enough to displace something
+already on the list**, and **can a player still explain the game to a friend afterwards**. If the
+answer to either is no, it belongs here.
 
