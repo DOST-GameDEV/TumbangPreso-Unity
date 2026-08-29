@@ -71,20 +71,45 @@ namespace TumbangPreso.Net
         /// <summary>The splash awaits this barrier before it activates the main menu.</summary>
         public Task InitializeAsync() => _initialiseTask ??= InitialiseInternalAsync();
 
+        /// <summary>
+        /// ⚠️⚠️ THE BUDGET COVERS THE WHOLE REMOTE PATH, NOT JUST THE SIGN-IN, AND THIS IS THE
+        /// REASON. The splash holds the menu until this task completes, and the splash's own
+        /// `MaxWait` only logs a warning: its loop waits forever. So anything unbounded in here
+        /// is a game that never reaches the menu. Racing only the sign-in left
+        /// `RefreshFromAuthenticationAsync` unbounded behind it, and that awaits Player Names and
+        /// then Cloud Save. A service that ACCEPTS the connection and then never answers is the
+        /// normal failure on venue Wi-Fi behind a captive portal, which is the network the
+        /// nationals will be played on, and it is the one case a plain try/catch cannot see.
+        ///
+        /// ⚠️ A LATE ANSWER IS STILL USED. The remote work is not cancelled when the budget
+        /// expires; it keeps running and applies itself through `Changed` when it lands, so a slow
+        /// connection costs a few seconds of showing the local name rather than the account.
+        /// </summary>
         private async Task InitialiseInternalAsync()
         {
             AccountProfile local = ReadLocal();
-            Task<bool> signIn = NetIdentity.EnsureSignedInAsync();
-            Task winner = await Task.WhenAny(signIn, Task.Delay(BootNetworkBudgetMs));
+            Task remote = SignInAndRefreshAsync(local);
+            Task winner = await Task.WhenAny(remote, Task.Delay(BootNetworkBudgetMs));
 
-            if (winner != signIn)
+            if (winner != remote)
             {
                 Apply(local, signedIn: false, "UGS did not answer before the menu. Using local profile.");
+                _ = AwaitLateAnswerAsync(remote);
                 return;
             }
 
-            bool online = false;
-            try { online = await signIn; }
+            try { await remote; }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[PlayerAccount] sign-in failed; local profile kept: {e.Message}");
+                Apply(local, signedIn: false, NetIdentity.StateReason);
+            }
+        }
+
+        private async Task SignInAndRefreshAsync(AccountProfile local)
+        {
+            bool online;
+            try { online = await NetIdentity.EnsureSignedInAsync(); }
             catch { online = false; }
 
             if (!online)
@@ -94,6 +119,27 @@ namespace TumbangPreso.Net
             }
 
             await RefreshFromAuthenticationAsync(local);
+        }
+
+        /// <summary>
+        /// Consumes the result of remote work that missed the boot budget.
+        ///
+        /// ⚠️ IT MUST NOT SPEAK OVER A GUEST. By the time a late answer lands the player may have
+        /// started an offline tournament guest, and `RefreshFromAuthenticationAsync` would replace
+        /// that guest with the machine owner's account mid-session. The guest wins while it is
+        /// active; the account is still on disk and `LeaveGuest` returns to it.
+        /// </summary>
+        private async Task AwaitLateAnswerAsync(Task remote)
+        {
+            try { await remote; }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[PlayerAccount] late sign-in failed; local profile kept: {e.Message}");
+                return;
+            }
+
+            if (IsGuest) return;
+            Changed?.Invoke();
         }
 
         private async Task RefreshFromAuthenticationAsync(AccountProfile local)
@@ -157,6 +203,18 @@ namespace TumbangPreso.Net
                 Debug.LogWarning($"[PlayerAccount] Cloud Save profile load failed; local profile kept: {e.Message}");
             }
             AccountProfile resolved = AccountRules.Resolve(local, remote, remoteAvailable: true);
+
+            // ⚠️ A GUEST SESSION OWNS THE VISIBLE PROFILE UNTIL IT LEAVES. This can land after
+            // the boot budget expired and after the player started an offline tournament guest,
+            // and applying it there would swap the guest for the machine owner's account in the
+            // middle of somebody else's match. Park it as what `LeaveGuest` returns to instead,
+            // so the answer is not thrown away either.
+            if (IsGuest)
+            {
+                _primaryProfile = AccountRules.Normalise(resolved);
+                return;
+            }
+
             Apply(resolved, signedIn: true, "Signed in");
         }
 
@@ -193,8 +251,18 @@ namespace TumbangPreso.Net
             Persist();
         }
 
+        /// <summary>
+        /// ⚠️ REFUSED WHILE A GUEST IS SIGNED IN. A guest has no credential and nothing to
+        /// delete, but this method clears the settings file, and the settings file still holds
+        /// the machine owner's account. Deleting from a borrowed seat would wipe the owner rather
+        /// than the guest. `LeaveGuest` first, then delete, and the owner is the one being asked.
+        /// </summary>
         public async Task DeleteAsync()
         {
+            if (IsGuest)
+                throw new InvalidOperationException(
+                    "Leave the guest session before deleting an account; a guest has nothing to delete.");
+
             await InitializeAsync();
             if (IsSignedIn)
             {
@@ -293,11 +361,23 @@ namespace TumbangPreso.Net
             if (IsSignedIn) await SaveCloudProfileAsync();
         }
 
-        /// <summary>Called by the first score event. The offer is shown later on the menu.</summary>
+        /// <summary>
+        /// Called by the first score event. The offer is shown later on the menu.
+        ///
+        /// ⚠️ THE EARLY RETURN ON AN ALREADY-PENDING OFFER IS NOT A MICRO-OPTIMISATION. This is
+        /// reached from `MatchDirector.AddScore`, which is EVERY point, and passive defence pays
+        /// +10 a second while the lata stands. Without it a match writes and reserialises
+        /// `settings.json` roughly once a second per defender for the whole round, on the same
+        /// thread the match is stepping on. One flag, one write, per session.
+        /// </summary>
         public void MarkWorthKeeping()
         {
-            if (IsGuest || HasPassword || SettingsStore.Current.AccountUpgradeOfferShown) return;
-            SettingsStore.Current.AccountUpgradeOfferPending = true;
+            var s = SettingsStore.Current;
+            if (!AccountRules.ShouldQueueUpgradeOffer(
+                    IsGuest, HasPassword, s.AccountUpgradeOfferShown, s.AccountUpgradeOfferPending))
+                return;
+
+            s.AccountUpgradeOfferPending = true;
             SettingsStore.Save();
         }
 
@@ -318,8 +398,19 @@ namespace TumbangPreso.Net
             Changed?.Invoke();
         }
 
+        /// <summary>
+        /// ⚠️⚠️ A GUEST NEVER REACHES THE DISK. `SignInAsGuest` promises it does not replace the
+        /// machine owner's account, and this is the line that has to keep that promise: every
+        /// other write goes through `Apply`, so a guest editing a profile persisted the guest id,
+        /// name, tag and bio straight over the owner's saved account. At an offline tournament
+        /// that is somebody handing their laptop over for one match and getting it back with a
+        /// different account on it. A guest is a process-lifetime identity by design, so there is
+        /// nothing here worth saving.
+        /// </summary>
         private void Persist()
         {
+            if (IsGuest) return;
+
             var s = SettingsStore.Current;
             s.AccountPlayerId = Profile.PlayerId;
             s.AccountUsername = Profile.Username;

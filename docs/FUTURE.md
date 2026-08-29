@@ -252,7 +252,7 @@ same path. `docs/TODO.md` § 88 is the as-built account record.
 |---|---|
 | `PlayerId` | UGS, immutable, never shown. |
 | Username | Sign-in credential, unique, immutable after creation. |
-| Display name | 3 to 16 characters, changeable once every 30 days, profanity filtered, **not unique**. |
+| Display name | 3 to **14** characters, **not unique**. ⚠️ 14, not the 16 this table said until 2026-08-31: `Balance.PlayerNameMax` is 14, `LanBeacon` truncates the broadcast name to it and `Hud`'s row was measured against that many "W"s, so 16 rendered past a measured layout and arrived over LAN clipped. `AccountRules.DisplayNameMax` is now that same constant. ⚠️ The 30-day rename cooldown and the profanity filter are **written here and not built**; nothing rate-limits a rename today. |
 | Discriminator | A 4-digit tag appended to the display name so uniqueness is not needed. `MATTHEW#4417`. |
 | Email | Optional, verified, recovery and nothing else. |
 | Bio | 140 characters, filtered, reportable, off by default until the player writes one. |
@@ -291,9 +291,16 @@ before the first upload, not after.
 
 ### 1.5 Traps
 
-- ⚠️ **The lobby name today is whatever the peer sends.** Once accounts exist the name must come
-  from the profile and be validated server-side, or the first thing anyone does with the new
-  system is impersonate somebody. `LobbySeatInfo` is where it lands.
+- ⚠️⚠️ **THE LOBBY NAME NOW COMES FROM THE PROFILE, AND IT IS STILL NOT IMPERSONATION-PROOF.**
+  Half of this trap is closed: every hello, identify and beacon reads `PlayerAccount.LobbyName`,
+  and `AccountRules.ArrivalHandle` validates what arrives. The other half is **open**, and the
+  first attempt at it was backwards: it rewrote an honest bare name to `Player#tag` while
+  admitting a fully claimed `Maria Clara#4417` verbatim, so it punished LAN peers and waved the
+  actual forgery through. **A peer-hosted lobby cannot verify a claimed handle by itself**,
+  because a real tag is allocated by UGS Player Names and the host cannot recompute it. Closing it
+  needs the host to ask the `player-account` endpoint whether a player id owns a handle, and to
+  fall through to the claim on LAN or when the endpoint is unreachable, per § 0.5 rule 7.
+  `docs/TODO.md` § 88.1c is the entry.
 - ⚠️ **Anonymous credentials live in the UGS authentication cache and a player who clears them is gone forever.**
   Say so in the UI at the moment they earn their first unlock.
 - ⚠️ **Offline must still boot.** The game is played daily off a Windows build, sometimes with no

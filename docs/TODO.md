@@ -53,6 +53,84 @@ allocates a deterministic fallback tag for an invalid claim.
 `player-account` Cloud Code endpoint, Core, EditMode and focused PlayMode green, an unplugged LAN
 run, a clean Windows player on the Desktop, committed and pushed.
 
+### 88.1 · Three things the first pass got wrong, found by running its own tests
+
+The account work above was written but never committed and never run: the session that wrote it
+went looking for a Unity package-manager fault instead. There was none. `Temp/UnityLockfile` was
+stale, which is § 7 of `CLAUDE.md` verbatim, and after removing it the project compiles and the
+suites run. **Nothing was wrong with the editor, the `Library`, or the machine's UPM cache.**
+`AppData\Local\Unity\cache\upm.accounts-backup` is that session's moved-aside copy and can be
+deleted; Unity rebuilt `upm` beside it.
+
+Running the suites then found three real defects, all in the new code.
+
+**88.1a · Two name lengths, and the shorter one is on the wire.** `AccountRules.DisplayNameMax`
+was written as 16 while `Balance.PlayerNameMax` has been 14. That is not a cosmetic
+disagreement. `LanBeacon` truncates the name it broadcasts to the `Balance` value, the settings
+field sets `characterLimit` from it, and `Hud`'s row width was measured against that many "W"s
+(`Hud.cs` ~2895). A 16-character account name therefore renders past a measured layout and
+arrives over LAN clipped, so the name in the profile and the name on the scoreboard stop being
+the same string. `DisplayNameMax` is now `= Balance.PlayerNameMax`, one constant, and
+`TheAccountNameLimitIsTheOneTheWireAndTheHudUse` fails if they are ever split again.
+⚠️ The Cloud Code validator had the same 16 hardcoded, and the server is the authority: it would
+have stored a 15-character name that every client then silently clipped. It reads 14 now, with a
+comment saying it is the one place the number is written twice.
+
+**88.1b · Every LAN peer was renamed `Player#tag`, which is the nationals case.** Arrival kept
+the claimed name only when it was already a full `name#1234` handle and rewrote everything else to
+`Player#tag`. Everything else is: every LAN peer, every build older than this branch, and every
+client whose profile has not finished loading. Four machines joining off the beacon in a hall
+would have rendered as four rows nobody could tell apart, in the one venue where that matters
+most. `AccountRules.ArrivalHandle` now keeps a usable claimed name and allocates the tag from the
+durable token, and falls back to `Player` only for a name that cannot be shown at all. It sits in
+the core rather than in `LobbySession` because it is a rule, per `FUTURE.md` § 0.5 rule 3.
+
+**88.1c · ⚠️⚠️ THE IMPERSONATION GUARD DOES NOT EXIST YET, AND THE TEST SAID IT DID.** The
+brief's reason for routing the lobby name through the account was that *"the first thing anybody
+does with a new account system is impersonate somebody"*. The rule written for it was backwards.
+It rewrote a bare `Maria Clara` on the theory that it was forging `Maria Clara#4417`, while
+admitting a claimed `Maria Clara#4417` **verbatim** in the assertion directly above it. So it
+punished the honest case and waved the actual attack through, and
+`LobbyAcceptsOnlyCanonicalAccountHandles` asserted that as correct behaviour.
+
+**A peer-hosted lobby cannot close this on its own.** The tag of a real account is allocated by
+UGS Player Names, so the host cannot recompute it from the token and cannot tell a genuine
+`Maria Clara#4417` from a claimed one. Closing it needs the host to ask the `player-account`
+endpoint whether this player id owns this handle, cache the answer, and **fall through to the
+claim on LAN or when the endpoint is unreachable**, because § 0.5 rule 7 says a LAN match may
+never sit behind a login. That is the next piece of work on this phase and it is not built.
+The test is now `LobbyKeepsAUsableNameAndAlwaysTagsIt` and asserts only what is true today.
+
+**88.1d · The splash could wait forever on a service that answers slowly rather than not at
+all.** The splash holds the menu until `PlayerAccount.InitializeAsync` completes, and the splash's
+own `MaxWait` only logs a warning: its loop has no upper bound. The boot budget raced **only the
+sign-in**, leaving `RefreshFromAuthenticationAsync` unbounded behind it, and that awaits Player
+Names and then Cloud Save. A service that accepts the connection and then never answers is exactly
+what venue Wi-Fi behind a captive portal does, which is the network the nationals will be played
+on, and it is the one failure a try/catch cannot see. The budget now covers the whole remote path.
+⚠️ A late answer is not thrown away: the work keeps running and applies itself through `Changed`,
+so a slow connection costs a few seconds of showing the local name rather than the account.
+
+**88.1e · A tournament guest overwrote the machine owner's account.** `SignInAsGuest` documents
+that it does not replace the owner's account, and `Persist` broke that promise: every write goes
+through `Apply`, so a guest editing a profile wrote the guest id, name, tag and bio straight over
+the owner's saved account. That is somebody handing their laptop over for one match at an offline
+tournament and getting it back with a different account on it. `Persist` now returns early while a
+guest is active, a guest is refused `DeleteAsync` outright (it clears the settings file, and the
+settings file is still the owner's), and a late remote answer parks itself as what `LeaveGuest`
+returns to rather than applying over the guest mid-session.
+
+**88.1f · The upgrade offer wrote `settings.json` on every point scored.** `MarkWorthKeeping` is
+reached from `MatchDirector.AddScore`, which is every point, and passive defence pays +10 a second
+while the lata stands. It set the pending flag and saved without first checking whether the flag
+was already set, so a round reserialised the settings file about once a second per defender, on
+the thread the match steps on. The decision is now `AccountRules.ShouldQueueUpgradeOffer` in the
+core, with the already-pending term as a named argument and three tests on it, so it is one write
+per session.
+
+**Verified:** Core 135/135 (`dotnet test`), from 69 before the phase. EditMode 236/236, read from
+`Logs/tests.xml` rather than the exit code.
+
 ---
 
 ## 71 · The 2026-08-29 report, and the two faults only a non-host could see

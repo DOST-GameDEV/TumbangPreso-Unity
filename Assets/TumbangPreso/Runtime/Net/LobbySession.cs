@@ -219,6 +219,7 @@ namespace TumbangPreso.Net
         public PeerRecord Admit(int peerId, string token, string name)
             => Admit(peerId, token, name, out _);
 
+
         /// <summary>
         /// Admits a transport and reports an older still-connected transport replaced by the
         /// same durable token. The caller may disconnect that stale socket after the new one has
@@ -235,9 +236,7 @@ namespace TumbangPreso.Net
                 // ⚠️ ACCOUNT HANDLE VALIDATED ONCE, HERE, ON ARRIVAL. The display name and
                 // discriminator travel together, so a clipped suffix cannot impersonate a real
                 // account handle on the scoreboard.
-                Name = AccountRules.TrySplitHandle(name, out string display, out string tag)
-                    ? AccountRules.Handle(display, tag)
-                    : AccountRules.Handle("Player", AccountRules.Discriminator("", token)),
+                Name = AccountRules.ArrivalHandle(name, token),
             };
 
             // A replacement connection can arrive before the transport's generous 30 second

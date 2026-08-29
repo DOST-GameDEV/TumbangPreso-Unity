@@ -13,7 +13,14 @@ namespace TumbangPreso.Core
     public static class AccountRules
     {
         public const int DisplayNameMin = 3;
-        public const int DisplayNameMax = 16;
+
+        // ⚠️ THIS IS `Balance.PlayerNameMax`, NOT A SECOND OPINION ABOUT IT. It briefly read 16
+        // here while `Balance` still read 14, which is not a cosmetic disagreement: `LanBeacon`
+        // truncates the name it puts on the wire to the `Balance` value, the settings field sets
+        // `characterLimit` from it, and `Hud`'s row width was measured against that many "W"s.
+        // A longer name here therefore renders past the measurement and arrives clipped over LAN,
+        // so the account name and the name other players see stop being the same string.
+        public const int DisplayNameMax = Balance.PlayerNameMax;
         public const int DiscriminatorDigits = 4;
         public const int BioMax = 140;
         public const int CountryCodeLength = 2;
@@ -104,6 +111,43 @@ namespace TumbangPreso.Core
 
             discriminator = tag;
             return true;
+        }
+
+        /// <summary>
+        /// Whether a score event should queue the "keep this account" offer for the next menu.
+        ///
+        /// ⚠️ `alreadyPending` IS IN HERE FOR A PERFORMANCE REASON, NOT A LOGICAL ONE. The caller
+        /// is reached from `MatchDirector.AddScore`, which is EVERY point, and passive defence
+        /// pays +10 a second while the lata stands. The first version omitted this term and
+        /// rewrote `settings.json` on roughly every score event for the whole round, on the
+        /// thread the match steps on. Returning false once the flag is already set makes it one
+        /// write per session.
+        ///
+        /// A guest is excluded because it has no progression to keep and no credential to attach.
+        /// </summary>
+        public static bool ShouldQueueUpgradeOffer(
+            bool isGuest, bool hasPassword, bool offerAlreadyShown, bool offerAlreadyPending)
+            => !isGuest && !hasPassword && !offerAlreadyShown && !offerAlreadyPending;
+
+        /// <summary>
+        /// Resolves what an arriving peer is called from what it claimed and the durable token
+        /// it arrived with. The host calls this once, on arrival.
+        ///
+        /// ⚠️ A BARE NAME IS NOT AN IMPERSONATION ATTEMPT. The first cut of this kept only full
+        /// `name#1234` handles and rewrote everything else to `Player#tag` — which is every LAN
+        /// peer, every build older than the account layer, and every client whose profile has not
+        /// finished loading. In a hall where four machines join off the beacon that renders the
+        /// lobby as four identical rows, in the one venue where telling the seats apart matters
+        /// most. A usable claimed name is kept and given a tag; `Player` is only for a name that
+        /// cannot be shown at all.
+        /// </summary>
+        public static string ArrivalHandle(string claimed, string token)
+        {
+            if (TrySplitHandle(claimed, out string display, out string tag))
+                return Handle(display, tag);
+            if (TryDisplayName(claimed, out string bare))
+                return Handle(bare, Discriminator("", token));
+            return Handle("Player", Discriminator("", token));
         }
 
         /// <summary>

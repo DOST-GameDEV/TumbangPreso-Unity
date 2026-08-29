@@ -315,16 +315,28 @@ namespace TumbangPreso.Tests
                 }
             }
 
+            // ⚠️ A SEAT NAME IS A `name#1234` HANDLE SINCE THE ACCOUNT LAYER, AND WHAT THIS
+            // ASSERTS IS THAT THE CLAIMED NAME SURVIVES INTO IT. Both peers here arrive with a
+            // bare name, which is what a LAN peer and any build older than the account layer
+            // send. The first cut of the arrival check kept only full handles and rewrote every
+            // bare name to `Player#tag`, turning a four-machine hall into four identical rows.
+            // Asserting on the display half rather than the whole string keeps the tag free to
+            // be allocated while still failing if the name is ever thrown away again.
+
             // Verify seat 0 (guest)
             Assert.IsTrue(hostSeats[0].Occupied);
-            Assert.AreEqual("GuestPlayer", hostSeats[0].Name);
+            Assert.IsTrue(AccountRules.TrySplitHandle(hostSeats[0].Name, out string guestName, out _),
+                $"seat 0 name '{hostSeats[0].Name}' is not a valid handle");
+            Assert.AreEqual("GuestPlayer", guestName);
             Assert.AreEqual(0, hostSeats[0].CharacterPick);
             Assert.AreEqual(2, hostSeats[0].CanPick);
             Assert.AreEqual(1, hostSeats[0].SlipperPick);
 
             // Verify seat 1 (host)
             Assert.IsTrue(hostSeats[1].Occupied);
-            Assert.AreEqual("HostPlayer", hostSeats[1].Name);
+            Assert.IsTrue(AccountRules.TrySplitHandle(hostSeats[1].Name, out string hostName, out _),
+                $"seat 1 name '{hostSeats[1].Name}' is not a valid handle");
+            Assert.AreEqual("HostPlayer", hostName);
             Assert.AreEqual(2, hostSeats[1].CharacterPick);
             Assert.AreEqual(1, hostSeats[1].CanPick);
             Assert.AreEqual(0, hostSeats[1].SlipperPick);
@@ -342,16 +354,21 @@ namespace TumbangPreso.Tests
                 string expectedName = isHuman ? seatInfo.Name : "";
                 int expectedPick = isHuman && seatInfo.CharacterPick >= 0 ? seatInfo.CharacterPick : MatchInstaller.ResolveAiCharacterIndex(slot);
 
+                // The client resolves the seat name the host broadcast, so this is a handle for
+                // the same reason the seat table above is. Split it rather than matching the
+                // whole string, so the tag stays free to be allocated.
                 if (slot == 0)
                 {
                     Assert.IsTrue(isHuman);
-                    Assert.AreEqual("GuestPlayer", expectedName);
+                    Assert.IsTrue(AccountRules.TrySplitHandle(expectedName, out string seatGuest, out _));
+                    Assert.AreEqual("GuestPlayer", seatGuest);
                     Assert.AreEqual(0, expectedPick);
                 }
                 else if (slot == 1)
                 {
                     Assert.IsTrue(isHuman);
-                    Assert.AreEqual("HostPlayer", expectedName);
+                    Assert.IsTrue(AccountRules.TrySplitHandle(expectedName, out string seatHost, out _));
+                    Assert.AreEqual("HostPlayer", seatHost);
                     Assert.AreEqual(2, expectedPick);
                 }
                 else

@@ -1730,16 +1730,41 @@ namespace TumbangPreso.Tests
             Assert.AreEqual(LobbySession.DefaultPort, port);
         }
 
+        /// <summary>
+        /// ⚠️⚠️ THIS TEST USED TO ASSERT THE OPPOSITE, AND THE RULE IT ASSERTED WAS BACKWARDS.
+        /// It admitted a full `Maria Clara#4417` verbatim and rewrote a bare `Maria Clara` to
+        /// `Player#tag`, on the reading that the bare name was a forgery attempt. It is not: the
+        /// bare name is what every LAN peer and every pre-account build sends. Meanwhile the
+        /// claim it accepted verbatim is the actual attack, because nothing here can check that
+        /// the sender owns that handle. So the old rule punished the honest case and waved the
+        /// forgery through.
+        ///
+        /// ⚠️ WHAT IS TRUE TODAY, AND IT IS NOT IMPERSONATION-PROOF: a peer-hosted lobby cannot
+        /// verify a claimed handle by itself. Doing that needs the host to ask the `player-account`
+        /// endpoint whether this player id owns this handle, which needs the endpoint deployed and
+        /// must never gate a LAN match. `docs/TODO.md` § 88 carries it as the open item. Until
+        /// then this asserts the honest half: a usable name survives, and the tag is always
+        /// well-formed and per-peer.
+        /// </summary>
         [Test]
-        public void LobbyAcceptsOnlyCanonicalAccountHandles()
+        public void LobbyKeepsAUsableNameAndAlwaysTagsIt()
         {
             var lobby = new LobbySession();
-            var valid = lobby.Admit(1, "player-one", "Maria Clara#4417", out _);
-            Assert.AreEqual("Maria Clara#4417", valid.Name);
 
-            var forged = lobby.Admit(2, "player-two", "Maria Clara", out _);
-            StringAssert.StartsWith("Player#", forged.Name);
-            Assert.AreEqual(AccountRules.HandleMax, new string('W', AccountRules.DisplayNameMax).Length + 5);
+            var full = lobby.Admit(1, "player-one", "Maria Clara#4417", out _);
+            Assert.AreEqual("Maria Clara#4417", full.Name);
+
+            // The bare name is kept rather than replaced, and given a tag of its own.
+            var bare = lobby.Admit(2, "player-two", "Maria Clara", out _);
+            Assert.IsTrue(AccountRules.TrySplitHandle(bare.Name, out string bareName, out string bareTag));
+            Assert.AreEqual("Maria Clara", bareName);
+            StringAssert.IsMatch("^[0-9]{4}$", bareTag);
+
+            // A name that cannot be shown at all is the only thing that becomes `Player`.
+            var unusable = lobby.Admit(3, "player-three", "  ", out _);
+            StringAssert.StartsWith("Player#", unusable.Name);
+
+            Assert.AreEqual(AccountRules.HandleMax, AccountRules.DisplayNameMax + 5);
         }
 
         [Test]
@@ -1748,14 +1773,17 @@ namespace TumbangPreso.Tests
             var settings = new GameSettings
             {
                 PlayerToken = "offline-token",
-                PlayerName = "  Tournament Guest  ",
+                // ⚠️ WITHIN `AccountRules.DisplayNameMax`, WHICH IS 14. This read
+                // "Tournament Guest" while the limit was briefly 16 and truncated the moment the
+                // account name went back to the one length the wire and the HUD already used.
+                PlayerName = "  Tourney Guest  ",
                 AccountBio = new string('b', AccountRules.BioMax + 20),
                 AccountCountry = "ph",
                 AccountPronouns = "they/them",
             };
 
             settings.Validate();
-            Assert.AreEqual("Tournament Guest", settings.PlayerName);
+            Assert.AreEqual("Tourney Guest", settings.PlayerName);
             Assert.AreEqual(AccountRules.BioMax, settings.AccountBio.Length);
             Assert.AreEqual("PH", settings.AccountCountry);
             Assert.AreEqual("they/them", settings.AccountPronouns);
