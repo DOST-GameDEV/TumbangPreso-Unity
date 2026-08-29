@@ -144,10 +144,13 @@ belongs on the profile header, the nameplate and the end-of-season card.
 - **On fire.** A meter that fills as you do well, visible only to you.
 - **Arcade**, weekly rotating silly modes with a small reward for three wins.
 
-**What it becomes here:** endorsements go in as-is, one button on the end-of-match screen, level on
-the nameplate. **Street Hype already IS the on-fire meter** and `VISION.md` says it is Classic's
-identity, so extend it rather than adding a second one. Play of the Game becomes the **best moment
-card** in § 4.3: a still image rather than a replay is far cheaper and gets posted more.
+**What it becomes here:** endorsements go in, one button on the end-of-match screen, a count on the
+banner. ⚠️ **A count, not a decaying level. CUT 2026-08-31.** Overwatch decays its endorsement level
+so the number reflects recent behaviour rather than a good week two years ago; here that is a timer,
+a rule and a paragraph of explanation bought for a difference nobody would notice. **Just count
+them.** **Street Hype already IS the on-fire meter** and `VISION.md` says it is Classic's identity,
+so extend it rather than adding a second one. Play of the Game becomes the **best moment card** in
+§ 4.3: a still image rather than a replay is far cheaper and gets posted more.
 
 ⚠️ **Do not copy role queue.** There are no roles here, there is a rotating taya, and it is better.
 
@@ -1037,9 +1040,10 @@ value item here.**
 > if that has been rebalanced since, the fourth item changes shape.
 >
 > **Build three, then investigate the fourth.**
-> 1. **Endorsements**: one button on the end-of-match screen, a level on the nameplate, decaying
->    slowly, shown on the banner. It is the only anti-toxicity system with evidence behind it and it
->    costs one button.
+> 1. **Endorsements**: one button on the end-of-match screen, and a count on the banner. It is the
+>    only anti-toxicity system with evidence behind it and it costs one button.
+>    ❌ **No decay.** Cut on 2026-08-31: a timer, a rule and a thing to explain, on a nice-to-have,
+>    and nobody was going to notice the difference between a count and a decayed count. § 2.4.
 > 2. **Reporting**: one button, a reason, from the end-of-match screen and the profile.
 >    ❌ **No trust score.** It was cut on 2026-08-31 and § 2.8 has the arithmetic. The short version
 >    is that a trust score exists to sort players into separate pools, and this population cannot
@@ -1255,6 +1259,7 @@ a conversation he has already had.
 | **Four-peer unanimous corroboration** | `FUTURE.md` § 8.1 | Simplified rather than cut: **host plus one random witness**. Half the traffic and half the code for the same guarantee, because a lying host cannot know which peer will be asked. |
 | **A named practice ladder against bots** | `FUTURE.md` § 11 | A fourth bot feature and a fifth progression track. Practice and `GuidedTraining` already exist. |
 | **The 50-tier season track, and seasonal rewards generally** | `FUTURE.md` §§ 4, 4.1, 9, 13 | 50 rewards to author every ten weeks, forever, and the first missed season collapses the framing. His question is the one to keep asking: *"what can we even give as rewards"*. § 4.1 is the answer, sorting every possible reward by what it costs to make. Account level and character mastery carry the progression instead, and they never reset. |
+| **Endorsement decay** | § 2.4 | A timer, a rule and a paragraph of explanation, bought for a difference nobody would notice. Endorsements are a count on the banner and nothing more. |
 | **Placement matches** | `FUTURE.md` § 9 | Five games in a hidden state with their own rules and UI, doing a job Glicko-2 already does alone. Everyone starts mid-ladder with a wide deviation and sees their tier from match one. |
 | **Localisation, including Tagalog** | `FUTURE.md` § 16.3 | *"english only"*. The cost was never the translation, it was keeping three languages in step for every screen and every future addition, forever. ⚠️ The string extraction gets more expensive every month, so if it is ever revisited, do the extraction as its own job first. |
 | **Privacy settings** | `FUTURE.md` § 1.3 | Three visibility levels over three kinds of data is nine states, on a game whose competitive half needs people to be able to look each other up. |
