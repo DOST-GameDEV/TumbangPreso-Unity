@@ -192,15 +192,27 @@ population, because it gives a fixed time when everybody is online at once.
 **What it becomes here: § 5, and it is what he actually asked for.** The RoR2 model is the good
 one: challenge-gated, not level-gated, because a challenge teaches the character while it unlocks.
 
-### 2.8 Counter-Strike and the trust problem
+### 2.8 Counter-Strike and the trust problem ❌ REJECTED 2026-08-31
 
 - **Prime and Trust Factor.** A hidden score from account age, matches finished, reports and
   behaviour, used to sort players into cleaner or dirtier pools.
 
-**What it becomes here:** a cheap version costs nothing and is worth having before ranked ships:
-account age, matches finished, report count, leave rate. Use it to keep brand-new accounts and
-heavily-reported accounts in their own pool. It is also the smurf answer that does not need
-anti-cheat. `FUTURE.md` § 8.3.
+⚠️⚠️ **THE ADAPTATION IS CUT, AND THE REASON IS ARITHMETIC RATHER THAN TASTE.** It was proposed as a
+cheap score from account age, matches finished, report count and leave rate, used to keep brand-new
+and heavily-reported accounts in their own pool.
+
+**A trust score's entire purpose is to sort players into separate pools, and this game does not
+have the population to have pools.** § 3.4 already argues that four queues at thirty concurrent
+players is zero queues; a hidden fifth and sixth pool underneath them is the same mistake with the
+seam hidden, and the players who land in the small pool get the worst queue times in the game as a
+reward for being new.
+
+**What does the job instead, at a fraction of the cost:** reporting, and the avoid list in § 2.23.
+Smurfs are handled by Glicko-2's rating deviation, which climbs a clearly-stronger account out of a
+low band in a handful of games for free (`FUTURE.md` § 9).
+
+⚠️ **Revisit this only when the population supports pools**, which is the same condition § 3.4
+already sets for splitting a queue at all. Not before.
 
 ### 2.9 Wordle, Tetris 99 dailies, and the one-attempt hook ❌ REJECTED 2026-08-31
 
@@ -304,14 +316,16 @@ risk. This could make that worse rather than better, which is exactly why it goe
 - **Stocks:** Smash's competitive format is lives, not a timer, because a timer rewards running
   away.
 
-**What it becomes here:** two arcade variants that cost almost nothing, because the rules core
-already owns the round.
+**What it becomes here:** one of the two extra modes the game will ever have.
 
-- **SUDDEN DEATH.** The round timer expires with the can standing and the score tied: the box
-  shrinks every 10 seconds until somebody knocks it down. No draws, ever.
-- **STOCK, or LAST TSINELAS STANDING.** Each attacker gets three tsinelas. Lose them all and you
-  are out. The last attacker standing wins the round. A completely different game from the same
-  parts, and the best candidate on this page for a rotating featured mode.
+- ✅ **LAST TSINELAS STANDING**, from the stocks half. Each attacker gets three tsinelas; lose them
+  all and you are out; the last attacker standing takes the round. **A completely different game
+  out of parts that already exist**, which is why it earns one of the two slots.
+- ❌ **SUDDEN DEATH. CUT 2026-08-31.** A tied round with the can standing would have shrunk the box
+  every 10 seconds until it fell. It is a fine idea and it was cut with four other modes on
+  population grounds: `FUTURE.md` § 12. ⚠️ **If draws turn out to be common enough to matter, this
+  is a tie-break RULE for the existing modes, not a mode of its own**, and that is the shape to
+  bring it back in.
 
 ### 2.17 Dead by Daylight: grading two roles separately
 
@@ -354,14 +368,19 @@ queueing ranked, which is watching a bad night undo a good week.
 
 - **The tower.** Instead of a number you sit on a floor with other players and move up or down. It
   is matchmaking dressed as a place, and it feels far less like a judgement.
-- **Replay takeover.** Pause any replay, take control from that moment, and play it out. The best
-  training feature in any fighting game.
+- ❌ **Replay takeover. CUT 2026-08-31.** Pause a replay, take that seat, play it out. The best
+  training feature in any fighting game, an enormous amount of work, and an audience of about four
+  people. The tower below is the part of this entry that survives.
 
 **What it becomes here:** the tower is worth considering for the **casual** queue at low population
 (§ 3.4), because a room-based structure fills faster than a rating band and reads as a hangout
-rather than a ladder. Call the floors streets. **And replay takeover is genuinely available to this
-project**, because a replay is the `InputIntent` stream and the simulation is deterministic: pause,
-take the seat, play the retrieval again. No other feature on this page teaches the game as fast.
+rather than a ladder. Call the floors streets.
+
+❌ **Replay takeover is cut**, and it is worth recording that it was genuinely available here rather
+than merely wanted: a replay is the input stream and the simulation is deterministic from it, so
+pausing, taking the seat and playing the retrieval again is a real possibility for this codebase.
+It teaches the game faster than anything else on this page and it is still not worth what it costs
+at this size.
 
 ### 2.21 Fighting games in general: the training room
 
@@ -370,10 +389,14 @@ frame data, ranges, recovery.
 
 **What it becomes here, and this game is unusually suited to it:** contact resolves **by distance
 on the host**, never by a trigger volume, which means every combat range in this game is a number
-rather than a mesh. **A training room can draw them exactly.** Show the tag window as a ring on the
-taya, the throw arc as a live trajectory, the shove cone, the confinement box, and the exact moment
-the lata's fall registers. That turns the game's most opaque interactions into something a player
-can see and practise, and the data is already there.
+rather than a mesh. **A training room can draw them exactly**, which turns the game's most opaque
+interactions into something a player can see and practise, and the data is already there.
+
+⚠️ **DRAW TWO THINGS, NOT FIVE. Cut back on 2026-08-31.** The tag window as a ring on the taya, and
+the throw arc as a live trajectory. **Those are the two a player actually needs to learn.** The
+shove cone, the confinement box and the frame on which the lata's fall registers were all on the
+list and they are clutter: a training room that draws everything is as unreadable as one that draws
+nothing.
 
 ### 2.22 Halo and Fortnite: the map editor is how a game outlives its team
 
@@ -389,8 +412,8 @@ build maps from code, which is most of the way to building them from data.
 Dota sorts players by a hidden behaviour number. Overwatch lets you avoid a small number of
 players.
 
-**What it becomes here:** the trust score in § 2.8, plus **an avoid list of three**, which is
-cheaper than a report system and does more for how the game feels. At four players a single
+**What it becomes here: the avoid list of three, and only that.** ⚠️ Dota-style behaviour scoring is cut, § 2.8. An avoid list is
+cheaper than a sorting system and does more for how the game feels. At four players a single
 unpleasant person is a quarter of the lobby, so this matters more here than in a ten-player game.
 
 ### 2.24 Pokemon GO and Animal Crossing: the ritual and the fixed hour
@@ -785,10 +808,10 @@ brief.
 | [I4](#prompt-i4--hero-loadouts) | Hero loadouts | I3 |
 | [I5](#prompt-i5--the-queue-and-mode-structure) | Queue and mode structure | Before Phase 7 |
 | [I7](#prompt-i7--the-moment-best-moment-card-killcam-and-clip-export) | Best-moment card, killcam, clips | Phase 2 |
-| [I8](#prompt-i8--endorsements-trust-the-avoid-list-and-the-dead-round) | Endorsements, trust, dead round | Alongside Phase 8 |
-| [I9](#prompt-i9--the-training-room-and-replay-takeover) | Training room, replay takeover | Phase 17 for the takeover half |
+| [I8](#prompt-i8--endorsements-reporting-the-avoid-list-and-the-dead-round) | Endorsements, reporting, avoid list, dead round | Alongside Phase 8 |
+| [I9](#prompt-i9--the-training-room) | Training room | Nothing |
 | [I10](#prompt-i10--the-population-schedule-in-client-tournaments-and-the-local-leaderboard) | Weekly hour, tournaments, local board | Nothing |
-| [I11](#prompt-i11--arcade-variants-from-parts-that-already-exist) | Arcade variants | Phase 12 |
+| [I11](#prompt-i11--the-two-extra-modes) | The two extra modes | Phase 12 |
 
 ---
 
@@ -1000,7 +1023,7 @@ value item here.**
 
 ---
 
-### PROMPT I8 · Endorsements, trust, the avoid list and the dead round
+### PROMPT I8 · Endorsements, reporting, the avoid list and the dead round
 
 **Run alongside `FUTURE.md` Phase 8. The fourth item is design work, not implementation.**
 
@@ -1015,10 +1038,12 @@ value item here.**
 >
 > **Build three, then investigate the fourth.**
 > 1. **Endorsements**: one button on the end-of-match screen, a level on the nameplate, decaying
->    slowly. It is the only anti-toxicity system with evidence behind it and it costs one button.
-> 2. **A trust score** from account age, matches finished, report count and leave rate, used to pool
->    brand-new and heavily-reported accounts separately. It is also the smurf answer that needs no
->    anti-cheat.
+>    slowly, shown on the banner. It is the only anti-toxicity system with evidence behind it and it
+>    costs one button.
+> 2. **Reporting**: one button, a reason, from the end-of-match screen and the profile.
+>    ❌ **No trust score.** It was cut on 2026-08-31 and § 2.8 has the arithmetic. The short version
+>    is that a trust score exists to sort players into separate pools, and this population cannot
+>    fill the pools it already has.
 > 3. **An avoid list of three** that matchmaking honours. At four players one unpleasant person is a
 >    quarter of the lobby, so this matters more here than in a ten-player game.
 > 4. **The dead round.** § 4.2 records that a player far behind at the final round has ninety
@@ -1040,36 +1065,32 @@ value item here.**
 
 ---
 
-### PROMPT I9 · The training room and replay takeover
+### PROMPT I9 · The training room
 
-**Run after `FUTURE.md` Phase 17's determinism proof for the takeover half. The room itself needs
-nothing.**
+**Run any time. Nothing blocks it.**
 
 > Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/Design.md`, then `docs/TODO.md`, then
 > `docs/Guided_Training.md`, then `docs/FUTURE.md` §§ 0.5 and 0.6, then `docs/INSPIRATION.md`
-> §§ 2.20 and 2.21. Do not skip them because this prompt summarises the task; the summary is not
-> the rules.
+> § 2.21. Do not skip them because this prompt summarises the task; the summary is not the rules.
 >
 > **VERIFY FIRST.** Confirm contact still resolves by distance on the host rather than by a trigger
 > volume, because the entire value of this feature is that every combat range is a number that can
 > be drawn exactly.
 >
-> **Build the training room.** Draw the invisible: the tag window as a ring on the taya, the throw
-> arc as a live trajectory, the shove cone, the confinement box, and the frame on which the lata's
-> fall registers. Add a slow-motion step and a reset-to-position key.
+> **Build the training room, drawing exactly TWO things**: the tag window as a ring on the taya, and
+> the throw arc as a live trajectory. Add a slow-motion step and a reset-to-position key.
+>
+> ⚠️ **Two, not five.** The shove cone, the confinement box and the lata's fall frame were cut on
+> 2026-08-31: a training room that draws everything is as unreadable as one that draws nothing.
+> ❌ **And replay takeover is cut**, § 2.20. Do not build it.
 >
 > ⚠️ **Read every number from `Packages/com.tumbangpreso.core/` rather than restating it**, so the
 > room can never disagree with the game. A training mode that lies is worse than none.
 >
-> **Then, only if `FUTURE.md` § 17 has proved replay determinism: replay takeover.** Pause any
-> replay, take that seat, and play the rest out live. It is the best training feature in any
-> fighting game and this codebase can actually support it, because a replay is the input stream and
-> the simulation is deterministic.
->
 > **Constraints.** Extend `GuidedTraining`; do not build a second training path.
 >
-> **Done when** every range in the game can be seen and practised, the numbers provably come from
-> the core, and `FUTURE.md` § 0.5 rule 9 is satisfied.
+> **Done when** the tag radius and the throw arc can be seen and practised, the numbers provably
+> come from the core, and `FUTURE.md` § 0.5 rule 9 is satisfied.
 
 ---
 
@@ -1104,33 +1125,41 @@ nothing.**
 
 ---
 
-### PROMPT I11 · Arcade variants from parts that already exist
+### PROMPT I11 · The two extra modes
 
 **Run after `FUTURE.md` Phase 12's custom games. Nearly free once those exist.**
 
 > Read `CLAUDE.md` first, then `docs/VISION.md` § 1, then `docs/Design.md`, then `docs/TODO.md`,
-> then `docs/FUTURE.md` §§ 0.5 and 0.6, then `docs/INSPIRATION.md` §§ 2.16 and 2.30. Do not skip
+> then `docs/FUTURE.md` §§ 0.5, 0.6 and 12, then `docs/INSPIRATION.md` §§ 2.16 and 2.30. Do not skip
 > them because this prompt summarises the task; the summary is not the rules.
 >
 > **VERIFY FIRST.** `FUTURE.md` Phase 12's custom games shipped, and the rules core still owns the
-> round, because each variant below is a rules change expressed there rather than in Unity code.
+> round, because each mode below is a rules change expressed there rather than in Unity code.
 >
-> **Build three variants, each as a new mode.**
-> 1. **SUDDEN DEATH.** A round timer expiring with the can standing and the score tied shrinks the
->    box every 10 seconds until it falls. No draws, ever.
-> 2. **LAST TSINELAS STANDING.** Three tsinelas per attacker; lose them all and you are out; the
->    last attacker takes the round. A completely different game from the same parts, and the best
->    candidate here for a rotating featured mode.
-> 3. **RULE TOGGLES.** The modifier pool from § 2.30 as custom-game toggles rather than as a daily,
->    which is where a rule toggle belongs. § 2.9 records why the daily itself was cut.
+> ⚠️⚠️ **TWO MODES, EVER, AND THIS PROMPT IS THE WHOLE ARCADE.** `FUTURE.md` § 12 records the cut:
+> seven were proposed, nine modes would split thirty players nine ways, and a mode nobody can fill
+> is worse than a mode that does not exist. **Do not add a third.**
+>
+> **1. LAST TSINELAS STANDING.** Three tsinelas per attacker; lose them all and you are out; the
+> last attacker takes the round. The most different game available from parts that already exist.
+>
+> **2. MIRROR.** Everyone gets the same character and tsinelas, rotated weekly. One line of lobby
+> logic and a genuinely good competitive format.
+>
+> **Also, and it is not a mode:** the modifier pool from § 2.30 belongs in Phase 12's custom-game
+> **rule toggles**, which is where a rule toggle belongs. § 2.9 records why the daily that used to
+> carry them was cut.
+>
+> ❌ **Sudden death, King of the Can, time attack, survival and 2v2 are all cut**, § 12. Do not
+> build them and do not re-propose them without reading the register in § 10 first.
 >
 > **Constraints.** ⚠️⚠️ **Touch nothing in Classic's own ruleset.** A new mode is a new mode.
-> `docs/Design.md` governs Classic and `VISION.md` § 1 governs why. Every variant's rules go in
+> `docs/Design.md` governs Classic and `VISION.md` § 1 governs why. Both modes' rules go in
 > `Packages/com.tumbangpreso.core/` with tests and are written into `docs/Design.md` or a sibling
 > document in the same commit as the code.
 >
-> **Done when** each variant can be selected in custom games and played to completion, Classic is
-> byte-for-byte unchanged in its rules, and `FUTURE.md` § 0.5 rule 9 is satisfied.
+> **Done when** both modes can be selected in custom games and played to completion, Classic is
+> unchanged in its rules, and `FUTURE.md` § 0.5 rule 9 is satisfied.
 
 ---
 
@@ -1159,8 +1188,8 @@ nothing.**
 | 17 | **F11** Bots, backfill, population | Move this earlier the moment queue times get bad. |
 | 18 | **I4** Hero loadouts | Depth for players who have put fifty hours in. Needs I3. |
 | 19 | **F12** Modes, maps, custom games | Custom games first: every other mode is cheaper afterwards. |
-| 20 | **I11** Arcade variants | Needs F12. Nearly free once custom games exist. |
-| 21 | **I9** Training room, replay takeover | Needs F17's determinism proof for the takeover half; the room itself does not. |
+| 20 | **I11** The two extra modes | Needs F12. Nearly free once custom games exist. |
+| 21 | **I9** Training room | Independent of everything. Do it whenever somebody wants a self-contained job. |
 | 22 | **F13** Seasons and live ops | Needs everything above to have something to season. |
 | 23 | **F14** Controller, then **F15** Mobile | Independent of the whole column. Start any time somebody wants a break from services. |
 | 24 | **F16** Accessibility and localisation | Independent, overdue, and Tagalog is marketing as much as access. |
@@ -1187,7 +1216,6 @@ Things too small to earn a section and too useful to leave out. All of them are 
 | Halo | Post-match carnage report | The full four-player stat grid on the end screen, not just the score. |
 | Valorant | Loadout shown before the round | § 5.5. The build is public. |
 | Splatoon | Choose a side event | LIGA NG BARANGAY. § 2.10. |
-| Souls games | A message left on the ground | A one-line note left where you were tagged, visible to the next player on that map. Cheap, funny, enormously sticky. |
 | Mario Kart | Coin sound on a small win | An audio confirmation for every small good thing, not just the big ones. |
 | Trackmania | Medals | § 2.14. A bar to beat that needs no other player. |
 | Peggle and pinball | The over-the-top finish | The knockdown that wins a match deserves an absurd amount of screen. It is the moment the whole game exists for. |
@@ -1200,21 +1228,45 @@ Things too small to earn a section and too useful to leave out. All of them are 
 ## 10 · The rejected register
 
 ⚠️⚠️ **EVERY IDEA 🧑 HAS KILLED, IN ONE PLACE, SO NOBODY RE-DERIVES ONE AND PRESENTS IT AS NEW.**
-This section is the first thing to check before proposing anything to do with progression, the
-dead round, or a new mode. A rejected idea that comes back with a new name has cost him a
-conversation he already had.
+This is the first thing to check before proposing anything to do with progression, the dead round,
+a new mode, or a new system of any kind. A rejected idea that comes back with a new name costs him
+a conversation he has already had.
 
-| Idea | Where | Killed | Why |
-|---|---|---|---|
-| **Passive defence banks into a stealable pot** | § 2.28 | 2026-08-31 | Design. A taya who defends 80 of 90 seconds and eats one throw walks away with nothing, and that lands on the role everybody is forced into once a match. |
-| **The daily seed**, in both the solo and the three-shape version | § 2.9 | 2026-08-31 | Scope. *"remove daily seed lowkey"*, *"too much shit"*. A mode plus a leaderboard plus medals plus a seed system plus ghosts, beside five progression systems already. |
-| **Diminishing XP after a long session** | `FUTURE.md` § 4 | 2026-08-31 | Players notice and resent it. It is a penalty for playing your favourite game too much, arriving mid-session with no warning. |
-| **Rested XP** (the same curve framed as a returning bonus) | `FUTURE.md` § 4 | 2026-08-31 | Scope. *"doing too much"*, *"dont do diminishing xp"*. A better mechanism than the one it replaced and still a whole extra system solving a problem this game does not have, because nothing on a track affects a match. |
-| **Throw while moving versus planted** | never written in | 2026-08-31 | It makes a new player feel bad at aiming, which is the wrong first impression for a party game. |
+### 10.1 Cut on design
 
-⚠️ **THE PATTERN IN THESE IS WORTH MORE THAN THE LIST.** Three of the five were cut on **scope, not
-on design**, and two of those three were the improved second version of something. **A plan can be
-full of individually good features and still be too much for five students.** When adding anything
-to these documents, the question is not "is this good", it is "is this good enough to displace
-something already on the list".
+| Idea | Where | Why |
+|---|---|---|
+| **Passive defence banks into a stealable pot** | § 2.28 | A taya who defends 80 of 90 seconds and eats one throw walks away with nothing, and that lands on the role everybody is forced into once a match. |
+| **Throw while moving versus planted** | never written in | It makes a new player feel bad at aiming, which is the wrong first impression for a party game. |
+| **Diminishing XP after a long session** | `FUTURE.md` § 4 | Players notice and resent it. A penalty for playing your favourite game too much, arriving mid-session with no warning. |
+
+### 10.2 Cut on scope, which is the more common and more important kind
+
+| Idea | Where | What it removed |
+|---|---|---|
+| **The daily**, solo and three-shape versions both | § 2.9 | A mode, a leaderboard, a medal table, a seed system and a ghost pipeline. |
+| **Rested XP** | `FUTURE.md` § 4 | A pool, a rate, a UI and a rule, solving a problem this game does not have. |
+| **Soft currency and the shop** | `FUTURE.md` §§ 4, 5 | An economy, a shop screen, a price on every item forever, and duplicate protection. |
+| **Nameplate, title, badge, emblem, frame, border and avatar as SEPARATE cosmetic slots** | `FUTURE.md` § 5 | Seven inventory categories, seven UI rows and seven wire fields collapsed into **the banner**, which does the same job as one object. |
+| **King of the Can, time attack, survival, sudden death, 2v2** | `FUTURE.md` § 12, § 2.16 | Five modes. Nine modes would split thirty players nine ways, and a mode nobody can fill is worse than none. **2v2 is the one most worth revisiting**, because it changes the social shape of a session rather than its rules. |
+| **Daily challenges and the rotating featured mode** | `FUTURE.md` § 13 | Two of six recurring live-ops commitments. Weeklies do the same job at a seventh of the maintenance, and a rotation needs modes to rotate. |
+| **Score-margin multiplier and the demotion buffer** | `FUTURE.md` § 9 | Two of six ranked sub-systems. The multiplier is a permanent tuning surface for a nuance nobody feels; the buffer solves the same feeling rank floors already solve. |
+| **Trust score and behaviour-sorted pools** | § 2.8 | Its whole purpose is sorting players into pools, and this population cannot fill the pools it already has. Reporting and the avoid list do the job. |
+| **Four-peer unanimous corroboration** | `FUTURE.md` § 8.1 | Simplified rather than cut: **host plus one random witness**. Half the traffic and half the code for the same guarantee, because a lying host cannot know which peer will be asked. |
+| **A named practice ladder against bots** | `FUTURE.md` § 11 | A fourth bot feature and a fifth progression track. Practice and `GuidedTraining` already exist. |
+| **Privacy settings** | `FUTURE.md` § 1.3 | Three visibility levels over three kinds of data is nine states, on a game whose competitive half needs people to be able to look each other up. |
+| **Data export** | `FUTURE.md` § 1.2 | Deferred until somebody asks. Account deletion stays. |
+| **Replay takeover** | § 2.20 | Genuinely possible here and genuinely not worth it: enormous work, an audience of about four people. |
+| **Souls-style ground messages** | § 9 | A moderation surface for near-zero gameplay value. |
+| **Three of the training room's five drawn ranges** | § 2.21 | The shove cone, the confinement box and the lata's fall frame. A training room that draws everything is as unreadable as one that draws nothing. |
+
+### 10.3 The pattern, which is worth more than the list
+
+**Most of these were cut on scope rather than on design, and several were the IMPROVED second
+version of something.** The daily got better and was still cut. Rested XP was a better mechanism
+than the curve it replaced and was still cut.
+
+⚠️⚠️ **A plan can be full of individually good features and still be too much for five students.**
+When adding anything to these documents the question is not *is this good*, it is **is this good
+enough to displace something already on the list**. If the answer is no, it belongs here.
 

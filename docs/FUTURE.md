@@ -241,8 +241,9 @@ anything here needs it.
   season-end summary if he ever wants one. **Never make it required to play**, because a required
   email at first launch is measurably the largest drop-off point any game of this size has.
 - ⚠️ **An email address is personal data and this changes the obligations.** Once one address is
-  stored, account deletion and data export stop being nice-to-haves. Build both in this phase,
-  where they are an afternoon, rather than after launch, where they are a migration.
+  stored, account deletion stops being a nice-to-have. Build it in this phase,
+  where it is an afternoon, rather than after launch, where it is a migration. ❌ **Data export is
+  cut** until somebody actually asks for it: § 1.5.
 
 ### 1.3 The identity fields, in full
 
@@ -257,8 +258,13 @@ anything here needs it.
 | Country flag | Optional, chosen not detected. Matters for a regional esport and it is free. |
 | Pronouns | Optional, from a short list plus a free field. Cheap, and it costs nothing to be decent. |
 | Avatar | See 1.4. |
-| Privacy | Who can see the profile, the match history and the stats: everyone, friends, nobody. |
 | Created date | Shown on the profile. Founding players like knowing they were early. |
+
+❌ **NO PRIVACY SETTINGS. CUT 2026-08-31.** The field list had a three-way visibility choice over
+three kinds of data, which is nine states to build and test, on a game whose whole competitive half
+depends on people being able to look each other up. **Profiles and match history are public**,
+which is what every competitive game does and what the banner, the leaderboards and the
+compare-with-a-friend feature all assume.
 
 ### 1.4 The profile picture, and a strong recommendation
 
@@ -297,8 +303,8 @@ before the first upload, not after.
   age gate.
 
 **Done looks like:** a fresh install reaches the menu signed in with no prompt, the id survives a
-restart, a username can be attached later without losing anything, an account can be deleted and
-its data exported, and pulling the network cable still lets a LAN match start.
+restart, a username can be attached later without losing anything, an account can be deleted, and
+pulling the network cable still lets a LAN match start.
 
 **The prompt for this phase is [§ 19.1](#191-prompt-for-phase-1).** Every prompt in
 this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
@@ -401,7 +407,9 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 - A **free season track**, about 50 tiers, entirely cosmetic. There is no paid track and there is
   no money in this game.
 - Per-character mastery, separately: play Cheska, level Cheska, unlock Cheska's things.
-- A soft currency earned per match, spendable on a rotating cosmetic shop. **No purchase path.**
+- ❌ **No soft currency and no shop. CUT 2026-08-31 on scope.** Rewards come straight off the season
+  track and character mastery. That deletes an economy, a shop screen, a price for every item
+  forever, and duplicate protection, and a player loses nothing they can name.
 - ⚠️ **Every reward on every track is cosmetic or expressive.** A player queuing ranked against
   someone 40 levels above them must be facing a better player, never a stronger account.
 
@@ -439,11 +447,23 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 🧑: *"we also wanna have customizable characters in the future"*. This is the cosmetic half; Phase
 10 is the skills half, and they are separated on purpose.
 
-**Slots:** body palette, headwear, face, back item, tsinelas skin, can skin, avatar frame,
-nameplate, banner, title, emote wheel, victory pose, throw trail, knockdown effect.
+**Slots:** body palette, headwear, tsinelas skin, can skin, emote wheel, victory pose, and **the
+banner**.
+
+⚠️⚠️ **THE BANNER IS ONE OBJECT AND IT ABSORBS EVERY OTHER IDENTITY SURFACE. CUT 2026-08-31.** An
+earlier version of this list had a nameplate, a title, a badge, an emblem, a frame, a border, a
+mastery number and an avatar as **separate** cosmetic slots, each with its own inventory category,
+its own UI row and its own wire field. They all do the same job: they say who you are next to your
+name.
+
+**So there is one banner**, carrying a frame, a pose, a badge, a title and three chosen stat
+trackers (`INSPIRATION.md` § 2.5), and it is what appears in the lobby, on the scoreboard, on the
+profile and at the end of a match. One object to author, one to replicate, one to earn things for.
+**Everything that used to be its own slot is now a field on the banner.**
+
 
 **Sources, all free:** season track, character mastery, ranked season rewards, event challenges,
-achievements, and the soft currency shop. **No lootboxes, no gacha, no real money.**
+achievements. ❌ **No currency and no shop**, cut on 2026-08-31: § 4. No lootboxes, no gacha, no real money.
 
 **What makes it cheap here:** `RosterBook` and `RosterEntryAsset` already resolve id to model,
 palette, tint and clips, `ToonSkin`'s palette remap already recolours a whole character from 16
@@ -462,9 +482,8 @@ competitive change wearing a cosmetic label. Bound the volume and write the boun
 ⚠️ **Preview through `ModelPreview` with the real shader, never a flat icon.** This project already
 learned that a render from one camera is not evidence about another.
 
-**Two extras that are worth more than they cost:** a **favourite loadout per character**, so
-switching character does not mean re-dressing, and **duplicate protection** in the shop, so the
-currency never buys something already owned.
+**One extra that is worth more than it costs:** a **favourite loadout per character**, so switching
+character does not mean re-dressing.
 
 **The prompt for this phase is [§ 19.5](#195-prompt-for-phase-5).** Every prompt in
 this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
@@ -531,19 +550,29 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ⚠️⚠️ **PHASE 9 DEPENDS ON THIS. IT IS THE PHASE THAT DECIDES WHETHER ANY RANK MEANS ANYTHING.**
 
-### 8.1 Corroborated results, because the host is a player
+### 8.1 A witnessed result, because the host is a player
 
 `MatchDirector.AddScore` runs host-side and the host is one of the four. A modified client that
 hosts can award itself anything.
 
-**The zero-cost answer is corroboration.** Every peer independently derives the scoreboard from the
-events it received and submits it. The Cloud Code endpoint accepts the result only when **all four
-agree**, and flags the match when they do not. It does not stop four colluding players; it does
-stop the overwhelmingly most likely attack, which is one player editing their own client. It costs
-one extra invocation per match and no money.
+**The answer is a witness.** The host submits the scoreboard, and **one peer, chosen at random at
+match end, submits its own independently derived copy.** The endpoint accepts the result when the
+two agree and flags the match when they do not. Two submissions per match, not four.
 
-⚠️ **The clients already have everything needed.** Every peer sees every scoring event, because
-that is how the HUD stays in sync. Nothing new has to cross the wire.
+⚠️ **The clients already have everything needed.** Every peer derives the scoreboard from the
+scoring events it already receives, because that is how the HUD stays in sync. Nothing new has to
+cross the wire.
+
+⚠️⚠️ **THIS WAS FOUR-PEER UNANIMOUS CORROBORATION AND IT WAS SIMPLIFIED ON 2026-08-31.** Requiring
+all four to agree meant four submissions, four derivations to keep in step, and a disagreement
+mechanism with four possible minorities to reason about. **A random witness catches the same
+cheater**: a lying host does not know which peer will be asked, so it has to produce a scoreboard
+that survives an honest check either way, which is exactly the bar unanimity set. Half the traffic
+and half the code for the same guarantee.
+
+⚠️ **What it does not stop**, and this is unchanged: two colluding players, one hosting and one
+witnessing. Neither did the four-peer version stop four colluding players. Write the limit down in
+`docs/TODO.md` rather than implying a stronger claim.
 
 ### 8.2 The real answer, for the day there is a budget
 
@@ -559,9 +588,12 @@ code.
 - Escalating queue cooldowns, and rank loss for a ranked leave.
 - Rate limits on every write, because a free tier is a budget an abusive client can spend.
 - Sanity checks on submitted records: impossible scores, impossible durations, impossible rates.
-- **Smurf handling:** a new account with a very high early win rate gets a wide rating deviation
-  and climbs fast. Glicko-2 does this for free if the deviation is not clamped too tightly, which
-  is a real argument for it over plain Elo.
+- **Smurf handling, and it needs no system at all:** a new account with a very high early win rate
+  gets a wide rating deviation and climbs fast. Glicko-2 does this for free if the deviation is not
+  clamped too tightly, which is a real argument for it over plain Elo.
+- ❌ **No trust score and no behaviour-sorted pools. CUT 2026-08-31.** `INSPIRATION.md` § 2.8 has
+  the reasoning: a trust score exists to sort players into pools, and this population cannot fill
+  the pools it already has. Reporting and the avoid list do the job.
 
 **The prompt for this phase is [§ 19.8](#198-prompt-for-phase-8).** Every prompt in
 this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
@@ -581,9 +613,6 @@ rank, because it turns every good player's win into an accusation.
   so on), feed all six in, and scale the step so one match moves a settled player about as much as
   one game should. Glicko-2's rating deviation is what makes a new player converge in ten games
   instead of a hundred, and it is what makes smurf handling free.
-- **Score margin matters a little.** Finishing 1st by 40 is not the same as by 400. Cap the margin
-  multiplier around 1.25x so a stomp is worth more than a squeak without making the ladder a
-  farming exercise.
 - **Visible tiers over the hidden number**, named in the game's own voice rather than
   Bronze-to-Diamond. Suggested shape, five tiers of three divisions plus a numbered apex:
   **BATA, KANTO, BARANGAY, KAMPEON, ALAMAT**, with the apex a live leaderboard. 🧑 names them.
@@ -592,9 +621,14 @@ rank, because it turns every good player's win into an accusation.
   profile, because the peak is the thing people brag about.
 - **No decay.** Decay punishes people with jobs and school, which is this whole audience. If the
   apex ever needs it, apply it only there.
-- **A demotion buffer.** Falling out of a tier needs two losses at the floor, not one, because a
-  tier badge lost to one bad game is the most common reason people stop queueing ranked.
-- **Rewards:** a season border, a tier emblem on the nameplate, and a tsinelas or can skin earnable
+- **RANK FLOORS.** Once a tier is reached the season cannot fall below it. `INSPIRATION.md` § 2.19.
+- ❌ **No demotion buffer and no score-margin multiplier. CUT 2026-08-31.** Ranked had six
+  sub-systems and two of them were paying for very little. The **margin multiplier**, worth up to
+  1.25x for a stomp, is a tuning surface that has to be balanced forever in exchange for a nuance
+  nobody will feel. The **demotion buffer**, needing two losses at a tier floor rather than one,
+  solves exactly the feeling rank floors already solve, so keeping both is paying twice for one
+  fix. What remains is Glicko pairwise, placements, the soft reset and the floors.
+- **Rewards:** a season border, a tier emblem on the banner, and a tsinelas or can skin earnable
   no other way. All cosmetic, all Phase 5 content, all free.
 
 **The prompt for this phase is [§ 19.9](#199-prompt-for-phase-9).** Every prompt in
@@ -656,8 +690,9 @@ ranked polish fixes, and the fastest way to make a competitive game feel dead is
 - **Bot fill in casual queue after a wait threshold**, disclosed clearly in the UI. A 45-second
   queue that ends in a playable match beats a 4-minute queue that ends in nothing.
 - **Never bots in ranked.** Not once, not "just to fill", not disclosed. That is the line.
-- **A named practice ladder against bots**, so a new player can learn the game before meeting
-  people. `GuidedTraining` already exists to build on.
+- ❌ **No named practice ladder. CUT 2026-08-31.** A separate progression track against bots is a
+  fourth bot feature and a fifth progression system, and Practice plus `GuidedTraining` already
+  give a new player somewhere to learn.
 - ⚠️ **Bots must be visibly labelled.** A player who thinks they beat a person and did not will be
   angrier when they find out than they would have been to know.
 
@@ -677,20 +712,28 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 to that. So spend the cheap answers first.** Every mode below reuses the existing arena, rules and
 art, which is why they are worth more per hour than a new map.
 
-**Modes that cost little and add a lot:**
+**⚠️⚠️ TWO EXTRA MODES, EVER. THE REST ARE CUT.** 🧑, 2026-08-31, on a list of seven proposals:
+**nine modes splits thirty players nine ways**, and a mode nobody can fill is worse than a mode that
+does not exist. Classic and Hero Strike are the game. These two are the whole arcade.
 
-- ❌ **Daily seed. CUT 2026-08-31**, on scope rather than on design. `INSPIRATION.md` § 2.9 records
-  what was proposed, what was reworked and why it still came out. Do not bring it back.
-- **King of the Can.** Continuous rather than round-based, taya changes on knockdown. A five-minute
-  mode for people who do not want a full set.
-- **Time attack.** Solo, one can, retrieve under pressure from bots, ranked by time. Feeds
-  practice, and it is the only place medals and ghosts still make sense.
-- **Survival.** Co-op, three attackers against an escalating bot taya. Co-op is the mode that
-  brings in players who bounce off competition, and this game has none.
-- **Mirror.** Everyone gets the same character and tsinelas, rotated weekly. The cheapest possible
-  "new mode" and a genuinely good competitive format.
-- **2v2**, which the taya rotation does not currently support and is real design work rather than
-  a switch. Costed honestly here rather than assumed.
+- ✅ **LAST TSINELAS STANDING.** Three tsinelas per attacker; lose them all and you are out; the
+  last attacker takes the round. **The most different game available from parts that already
+  exist**, which is why it earns the slot.
+- ✅ **MIRROR.** Everyone gets the same character and tsinelas, rotated weekly. **The cheapest
+  possible new mode**, one line of lobby logic, and a genuinely good competitive format.
+
+**❌ Cut on 2026-08-31, all on population rather than on quality:**
+
+- ❌ **Daily seed.** `INSPIRATION.md` § 2.9 has its longer history.
+- ❌ **King of the Can.** Continuous rather than round-based, taya changes on knockdown.
+- ❌ **Time attack.** Solo, scored on time. It was also the last place medals and ghosts made sense,
+  and they go with it.
+- ❌ **Survival.** Co-op against an escalating bot taya. It was the only co-op idea on the page and
+  it is still cut: co-op needs its own balance pass and there is no population argument for it.
+- ❌ **Sudden death.** Was proposed in `INSPIRATION.md` § 2.16 as a tie-breaker variant.
+- ❌ **2v2.** The taya rotation does not support it and it is real design work rather than a switch.
+  **Of everything cut here this is the one most likely to be worth revisiting**, because it is the
+  only proposal that changes the social shape of a session rather than its rules.
 
 **Maps:** three exist and one has a design document. A map is the most expensive content in the
 game. **Map rotation and a map vote are nearly free and buy most of the same freshness.** Build
@@ -710,16 +753,27 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
-## PHASE 13 · SEASONS, DAILIES AND LIVE OPS
+## PHASE 13 · SEASONS AND LIVE OPS
 
-- **Daily challenges**, three, one rerollable. Achievable in two matches, worth XP.
-- **Weekly challenges**, larger, worth a season tier.
+- **Weekly challenges**, worth a season tier. **The only recurring challenge cadence.**
 - **A ten-week season** with a theme, a track, and an end-of-season summary card designed to be
   screenshotted.
 - **Login streaks that pause rather than reset.** Punishing a break teaches people that missing a
   day is expensive, which is how they decide to stop entirely.
-- **A rotating featured mode**, free once Phase 12 exists.
-- **A live-ops calendar** in the repo, so the team knows what ships when and the players can see it.
+- **A scheduled weekly hour**, from `INSPIRATION.md` § 2.24, and **LIGA NG BARANGAY**, the weekend
+  side-picking event from § 2.10. Those two are the whole event calendar.
+- **A live-ops calendar** in the repo, so the team knows what ships when and players can see it.
+
+⚠️⚠️ **DAILY CHALLENGES ARE CUT, AND SO IS THE ROTATING FEATURED MODE. 2026-08-31.** The plan had
+six recurring things running at once: dailies, weeklies, seasons, a featured mode rotation, the
+weekly hour and Liga ng Barangay. **That is a live-ops calendar that normally has a full-time
+person on it**, and this team is five students who also have to build the game.
+
+- ❌ **Dailies** are the most maintenance for the least value once weeklies exist. Three challenges
+  a day with a reroll is a content treadmill somebody has to feed forever, and a weekly does the
+  same job at a seventh of the cost.
+- ❌ **The featured mode rotation** has nothing to rotate. Phase 12 now ships two extra modes total,
+  so a rotation would cycle between them and stop being a feature.
 
 ⚠️ **CHALLENGES DRIVE BEHAVIOUR AND BAD ONES DRIVE BAD BEHAVIOUR.** "Get 10 knockdowns" teaches a
 player to ignore the can, which is the one thing the game is about. Write challenges against
@@ -1075,11 +1129,12 @@ one short session and it is cheaper than building a phase against a stale brief.
 > 3. Sign-in on a second device by username, migrating progress.
 > 4. Session persistence, so a returning player is signed in before the menu draws.
 > 5. A `PlayerAccount` service beside `NetSession` owning the id, display name, discriminator, bio,
->    country, pronouns, privacy flags and signed-in state, raising an event when any change.
+>    country, pronouns and signed-in state, raising an event when any change. ❌ No privacy flags:
+>    profiles and history are public, cut on 2026-08-31, § 1.3.
 > 6. Route the lobby's player name through it. Today the name is whatever the peer sends, and the
 >    first thing anybody does with a new account system is impersonate somebody.
-> 7. Account deletion and data export. Build them now, where they are an afternoon, not after
->    launch where they are a migration.
+> 7. Account deletion. Build it now, where it is an afternoon, not after
+>    launch where it is a migration. ❌ Data export is cut until somebody asks: § 1.5.
 >
 > **Two decisions that are already made, with reasons in § 1.4 and § 1.2. Do not relitigate them
 > without saying why in your handoff.**
@@ -1096,8 +1151,8 @@ one short session and it is cheaper than building a phase against a stale brief.
 > `Packages/com.tumbangpreso.core/` with tests.
 >
 > **Done when** a fresh install reaches the menu signed in with no prompt, the id survives a
-> restart, a username attaches later without losing anything, an account can be deleted and
-> exported, a LAN match still starts with the network cable pulled, and § 0.5 rule 9 is satisfied.
+> restart, a username attaches later without losing anything, an account can be
+> deleted, a LAN match still starts with the network cable pulled, and § 0.5 rule 9 is satisfied.
 
 ---
 
@@ -1188,7 +1243,8 @@ tomorrow, and it needs no matchmaking and no ranked to be worth having.**
 > 2. Account XP from completion, placement and a small set of per-match objectives, weighting
 >    completion heavily and placement lightly, so leaving is the only thing that costs.
 > 3. Account level, uncapped, a new border every 50.
-> 4. Per-character mastery, separate from account level.
+> 5. ❌ **No soft currency and no shop.** Cut on 2026-08-31: rewards come straight off the track and
+>    mastery. Do not add an economy.
 > 5. A soft currency earned per match.
 > 6. A 50-tier free season track, entirely cosmetic. There is no paid track.
 > 7. The end-of-match XP bar and the season track screen, existing UI kit.
@@ -1220,7 +1276,7 @@ tomorrow, and it needs no matchmaking and no ranked to be worth having.**
 > this phase is affordable.
 >
 > **Build.** The inventory on the profile, a per-character loadout of cosmetic slots, the
-> customisation screen, and a rotating soft-currency shop with duplicate protection. Slots: body
+> customisation screen. ❌ No currency and no shop, cut on 2026-08-31: rewards come off the track and mastery directly. Slots: body
 > palette, headwear, face, back item, tsinelas skin, can skin, avatar frame, nameplate, banner,
 > title, emote wheel, victory pose, throw trail, knockdown effect.
 >
@@ -1307,13 +1363,15 @@ tomorrow, and it needs no matchmaking and no ranked to be worth having.**
 > because this prompt summarises the task; the summary is not the rules.
 >
 > **VERIFY FIRST.** Phase 2 shipped. Confirm that every peer still receives every scoring event,
-> because the whole corroboration design rests on the scoreboard being derivable on all four
-> machines with nothing new crossing the wire.
+> because the witness design rests on the scoreboard being derivable on any peer
+> with nothing new crossing the wire.
 >
 > **Build.**
-> 1. **Corroborated results.** Every peer independently derives the final scoreboard from the
->    events it received and submits it. The endpoint accepts only on unanimous agreement and flags
->    disagreement for review.
+> 1. **A witnessed result.** The host submits the final scoreboard, and ONE peer chosen at random
+>    at match end submits its own independently derived copy. The endpoint accepts when the two
+>    agree and flags the match when they do not. Two submissions, not four: § 8.1 records why the
+>    four-peer unanimous version was simplified on 2026-08-31 and why a random witness catches the
+>    same cheater.
 > 2. Reporting from the end-of-match screen and the profile, with a reason.
 > 3. Leaver penalties that **distinguish a leave from a disconnect** using the reconnect window
 >    `LobbySession` already implements, or a player with bad internet is punished for their ISP.
@@ -1325,9 +1383,9 @@ tomorrow, and it needs no matchmaking and no ranked to be worth having.**
 > single host-side writer during the match, per `CLAUDE.md` § 4. This is a second, independent
 > derivation for verification only.
 >
-> **Done when** a match submits four agreeing scoreboards and is accepted, a deliberately altered
+> **Done when** a match submits two agreeing scoreboards and is accepted, a deliberately altered
 > submission is rejected and flagged, `docs/TODO.md` records **exactly what this scheme does and
-> does not stop including that it does not stop four colluding players**, and § 0.5 rule 9 is
+> does not stop, including that it does not stop a host and its witness colluding**, and § 0.5 rule 9 is
 > satisfied.
 
 ---
@@ -1350,13 +1408,11 @@ than no rank, because it turns every good player's win into an accusation.**
 > 2. **Glicko-2 adapted for a four-player free for all**: expand each result into six pairwise
 >    outcomes, feed all six in, scale the step so one match moves a settled player about as much as
 >    one game should.
-> 3. A score-margin multiplier capped around 1.25x, so a stomp is worth more than a squeak without
->    making the ladder a farming exercise.
 > 4. Tiers with divisions and a numbered apex leaderboard. Names come from the game's own voice and
 >    🧑 chooses them; § 9 has a suggested shape.
 > 5. Five placement matches, wide deviation until placed, no tier shown while placing.
 > 6. A seasonal soft reset toward the mean, never a wipe, with a permanent peak on the profile.
-> 7. A demotion buffer: two losses at a tier floor, not one.
+> 7. ❌ **No demotion buffer and no score-margin multiplier**, both cut on 2026-08-31: § 9 says why. Do not add either back.
 > 8. **Rank floors**, per `INSPIRATION.md` § 2.19: once a tier is reached the season cannot fall
 >    below it. It costs one comparison and it removes the most common reason people stop queueing.
 > 9. The party rule chosen in Phase 6, asserted in a test.
@@ -1434,7 +1490,7 @@ that lives and one that does not.**
 > **Build.** Difficulty tiers for bots exposed in Practice and custom games. Bot backfill of an
 > abandoned seat so a match continues rather than collapsing. Disclosed bot fill in the casual queue
 > after a wait threshold, because a 45-second queue that ends in a playable match beats a
-> four-minute queue that ends in nothing. A named practice ladder against bots for new players.
+> four-minute queue that ends in nothing. ❌ No named practice ladder: cut on 2026-08-31, § 11.
 >
 > **Constraints.**
 > - ⚠️⚠️ **Never bots in ranked. Not once, not to fill, not disclosed.** A test must assert it.
