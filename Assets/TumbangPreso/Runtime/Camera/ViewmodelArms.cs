@@ -55,7 +55,7 @@ namespace TumbangPreso.CameraSystem
         /// is a presented length rather than a scale multiplier: nine slippers with nine authored
         /// origins would otherwise need nine offsets, and the tenth would ship wrong.
         /// </summary>
-        private static readonly Vector3 HeldSlipperLocal = new Vector3(0.0f, 0.82f, 0.0f);
+        private static readonly Vector3 HeldSlipperLocal = new Vector3(0.045f, 0.930f, -0.165f);
 
         /// <summary>
         /// How the tsinelas is turned in the fist.
@@ -74,7 +74,7 @@ namespace TumbangPreso.CameraSystem
         /// gripped dead flat reads as a plank, and 14 degrees is enough to show the footbed.
         /// </summary>
         private static readonly Quaternion HeldSlipperGrip =
-            Slipper.CarryRotation * Quaternion.Euler(0.0f, 0.0f, 14.0f);
+            Quaternion.LookRotation(Vector3.left, Vector3.back);
 
         /// <summary>The arm colour from the .tscn's shader material.</summary>
         public static readonly Color ArmColour = new Color(0.784f, 0.529f, 0.353f, 1.0f);
@@ -1386,44 +1386,70 @@ namespace TumbangPreso.CameraSystem
                 AddBoxAccessory(arm, "GoldCuffRimBot", new Vector3(0.352f, 0.020f, 0.342f),
                     new Vector3(0.0f, 0.325f, 0.0f), Quaternion.identity, goldDark);
 
-                // 4. Forearm Tribal Runic Glyph (Full 360° projection so Empty & Holding views both show the full glyph)
-                // 4a. Front Face (+Z) — Visible in Empty Hands View
-                AddBoxAccessory(arm, "FrontConduitBase", new Vector3(0.050f, 0.17f, 0.015f),
-                    new Vector3(0.060f, 0.490f, 0.126f), Quaternion.identity, robeDark);
-                AddBoxAccessory(arm, "FrontConduitBody", new Vector3(0.042f, 0.16f, 0.018f),
-                    new Vector3(0.060f, 0.490f, 0.128f), Quaternion.identity, robeGreen);
+                // 4. FOREARM MARKING: a lengthwise GREEN BAND, stepped, with a gold strip
+                //    outboard of it.
+                //
+                // ⚠️⚠️ THIS REPLACED A THREE-PIECE "RUNIC GLYPH" HE DOES NOT HAVE. 🧑 2026-08-29,
+                // on the arms: *"he has diff arm markings"*, *"that is not how dante's arms look
+                // like at all"*, and, on the scope of the fix: *"all i needed u to change in old
+                // one was the green markings"*. Everything else on this arm - the leather
+                // sleeve, the harness strap and buckle, the beveled gold cuff - is his and is
+                // untouched. A first pass at this deleted all of it and was rightly rejected:
+                // *"infact old one was better"*.
+                //
+                // **Measured off `Logs/cast-sheet.png`, Dante at r4c1, cropped per arm.** His
+                // right forearm carries ONE green band running ALONG the arm, stepping narrower
+                // in the middle and wider at both ends, with a gold strip outboard of it. The
+                // old conduit/crossbar/hook assembly was a symbol laid ACROSS the arm and is not
+                // on the model in any form.
+                //
+                // ⚠️ READ THE CAST SHEET, NOT THE MODEL SHEET. `ModelSheet` renders with NO palette
+                // ("[no palette, stock atlas colours]" in its own index) and shows Dante in the
+                // source asset's blue and orange, which is a different character. `RunCast`
+                // applies the roster palette and is the only one that shows what the game draws.
+                //
+                // ⚠️ BOTH FACES, for the reason the glyph's own names already gave: local +Z does
+                // not face the same way on the two arms, because `RightBasisX/Y/Z` and
+                // `LeftBasisX/Y/Z` are rotated frames rather than mirrored scales. A band on one
+                // face only is invisible on this arm through most of the swing.
 
-                AddBoxAccessory(arm, "FrontCrossbarBase", new Vector3(0.145f, 0.045f, 0.015f),
-                    new Vector3(-0.010f, 0.535f, 0.126f), Quaternion.identity, robeDark);
-                AddBoxAccessory(arm, "FrontCrossbarBody", new Vector3(0.135f, 0.038f, 0.018f),
-                    new Vector3(-0.010f, 0.535f, 0.128f), Quaternion.identity, robeGreen);
+                // 4a. Front Face (+Z)
+                AddBoxAccessory(arm, "MarkFrontWide1Base", new Vector3(0.100f, 0.128f, 0.015f),
+                    new Vector3(-0.045f, 0.360f, 0.126f), Quaternion.identity, robeDark);
+                AddBoxAccessory(arm, "MarkFrontWide1Body", new Vector3(0.092f, 0.120f, 0.018f),
+                    new Vector3(-0.045f, 0.360f, 0.128f), Quaternion.identity, robeGreen);
+                AddBoxAccessory(arm, "MarkFrontNarrowBase", new Vector3(0.070f, 0.128f, 0.015f),
+                    new Vector3(-0.060f, 0.482f, 0.126f), Quaternion.identity, robeDark);
+                AddBoxAccessory(arm, "MarkFrontNarrowBody", new Vector3(0.062f, 0.120f, 0.018f),
+                    new Vector3(-0.060f, 0.482f, 0.128f), Quaternion.identity, robeGreen);
+                AddBoxAccessory(arm, "MarkFrontWide2Base", new Vector3(0.100f, 0.128f, 0.015f),
+                    new Vector3(-0.045f, 0.604f, 0.126f), Quaternion.identity, robeDark);
+                AddBoxAccessory(arm, "MarkFrontWide2Body", new Vector3(0.092f, 0.120f, 0.018f),
+                    new Vector3(-0.045f, 0.604f, 0.128f), Quaternion.identity, robeGreen);
 
-                AddBoxAccessory(arm, "FrontHookBase", new Vector3(0.045f, 0.090f, 0.015f),
-                    new Vector3(-0.060f, 0.485f, 0.126f), Quaternion.identity, robeDark);
-                AddBoxAccessory(arm, "FrontHookBody", new Vector3(0.038f, 0.080f, 0.018f),
-                    new Vector3(-0.060f, 0.485f, 0.128f), Quaternion.identity, robeGreen);
+                // 4b. Back/Dorsal Face (-Z)
+                AddBoxAccessory(arm, "MarkBackWide1Base", new Vector3(0.100f, 0.128f, 0.015f),
+                    new Vector3(-0.045f, 0.360f, -0.126f), Quaternion.identity, robeDark);
+                AddBoxAccessory(arm, "MarkBackWide1Body", new Vector3(0.092f, 0.120f, 0.018f),
+                    new Vector3(-0.045f, 0.360f, -0.128f), Quaternion.identity, robeGreen);
+                AddBoxAccessory(arm, "MarkBackNarrowBase", new Vector3(0.070f, 0.128f, 0.015f),
+                    new Vector3(-0.060f, 0.482f, -0.126f), Quaternion.identity, robeDark);
+                AddBoxAccessory(arm, "MarkBackNarrowBody", new Vector3(0.062f, 0.120f, 0.018f),
+                    new Vector3(-0.060f, 0.482f, -0.128f), Quaternion.identity, robeGreen);
+                AddBoxAccessory(arm, "MarkBackWide2Base", new Vector3(0.100f, 0.128f, 0.015f),
+                    new Vector3(-0.045f, 0.604f, -0.126f), Quaternion.identity, robeDark);
+                AddBoxAccessory(arm, "MarkBackWide2Body", new Vector3(0.092f, 0.120f, 0.018f),
+                    new Vector3(-0.045f, 0.604f, -0.128f), Quaternion.identity, robeGreen);
 
-                // 4b. Back/Dorsal Face (-Z) — Visible in Holding Slipper & Showcase Views
-                AddBoxAccessory(arm, "BackConduitBase", new Vector3(0.050f, 0.17f, 0.015f),
-                    new Vector3(0.040f, 0.490f, -0.126f), Quaternion.identity, robeDark);
-                AddBoxAccessory(arm, "BackConduitBody", new Vector3(0.042f, 0.16f, 0.018f),
-                    new Vector3(0.040f, 0.490f, -0.128f), Quaternion.identity, robeGreen);
-
-                AddBoxAccessory(arm, "BackCrossbarBase", new Vector3(0.145f, 0.045f, 0.015f),
-                    new Vector3(-0.020f, 0.535f, -0.126f), Quaternion.identity, robeDark);
-                AddBoxAccessory(arm, "BackCrossbarBody", new Vector3(0.135f, 0.038f, 0.018f),
-                    new Vector3(-0.020f, 0.535f, -0.128f), Quaternion.identity, robeGreen);
-
-                AddBoxAccessory(arm, "BackHookBase", new Vector3(0.045f, 0.090f, 0.015f),
-                    new Vector3(-0.065f, 0.485f, -0.126f), Quaternion.identity, robeDark);
-                AddBoxAccessory(arm, "BackHookBody", new Vector3(0.038f, 0.080f, 0.018f),
-                    new Vector3(-0.065f, 0.485f, -0.128f), Quaternion.identity, robeGreen);
-
-                // 4c. Outer Edge Wrap
-                AddBoxAccessory(arm, "RightOuterWrapBase", new Vector3(0.015f, 0.17f, 0.120f),
-                    new Vector3(-0.130f, 0.49f, 0.00f), Quaternion.identity, robeDark);
-                AddBoxAccessory(arm, "RightOuterWrapBody", new Vector3(0.018f, 0.16f, 0.110f),
-                    new Vector3(-0.132f, 0.49f, 0.00f), Quaternion.identity, robeGreen);
+                // 4c. The gold strip outboard of the green, and the outer edge wrap.
+                AddBoxAccessory(arm, "MarkGoldStripFront", new Vector3(0.024f, 0.330f, 0.018f),
+                    new Vector3(-0.108f, 0.482f, 0.128f), Quaternion.identity, gold);
+                AddBoxAccessory(arm, "MarkGoldStripBack", new Vector3(0.024f, 0.330f, 0.018f),
+                    new Vector3(-0.108f, 0.482f, -0.128f), Quaternion.identity, gold);
+                AddBoxAccessory(arm, "MarkOuterWrapBase", new Vector3(0.015f, 0.330f, 0.120f),
+                    new Vector3(-0.130f, 0.482f, 0.00f), Quaternion.identity, robeDark);
+                AddBoxAccessory(arm, "MarkOuterWrapBody", new Vector3(0.018f, 0.320f, 0.110f),
+                    new Vector3(-0.132f, 0.482f, 0.00f), Quaternion.identity, robeGreen);
 
                 // 5. Modeled Hand & Knuckle Anatomy
                 AddHandKnuckles(arm, isRight, 0.280f, skinTone, skinDark);
@@ -1442,41 +1468,85 @@ namespace TumbangPreso.CameraSystem
                 AddBoxAccessory(arm, "ShoulderGreenLining", new Vector3(0.300f, 0.03f, 0.280f),
                     new Vector3(0.0f, 0.155f, 0.0f), Quaternion.identity, robeGreen);
 
-                // 2. Two Canonical Full-Width Chevrons (Y = 0.42, 0.54)
-                // Both chevrons placed so they are fully framed in both Empty and Holding views.
-                // -------------------------------------------------------------------------------------------------------
-
-                // CHEVRON 1: Mid Forearm (Y ~ 0.42)
-                AddBoxAccessory(arm, "Chevron1_LeftBase", new Vector3(0.046f, 0.16f, 0.015f),
-                    new Vector3(-0.055f, 0.380f, 0.126f), Quaternion.Euler(0, 0, -28.0f), robeDark);
-                AddBoxAccessory(arm, "Chevron1_LeftBody", new Vector3(0.040f, 0.15f, 0.018f),
-                    new Vector3(-0.055f, 0.380f, 0.128f), Quaternion.Euler(0, 0, -28.0f), robeGreen);
-                AddBoxAccessory(arm, "Chevron1_RightBase", new Vector3(0.046f, 0.16f, 0.015f),
-                    new Vector3(0.045f, 0.380f, 0.126f), Quaternion.Euler(0, 0, 28.0f), robeDark);
-                AddBoxAccessory(arm, "Chevron1_RightBody", new Vector3(0.040f, 0.15f, 0.018f),
-                    new Vector3(0.045f, 0.380f, 0.128f), Quaternion.Euler(0, 0, 28.0f), robeGreen);
-                AddBoxAccessory(arm, "Chevron1_Apex", new Vector3(0.052f, 0.042f, 0.018f),
-                    new Vector3(-0.005f, 0.420f, 0.128f), Quaternion.identity, robeGreen);
-                AddBoxAccessory(arm, "Chevron1_OuterWrap", new Vector3(0.018f, 0.055f, 0.060f),
-                    new Vector3(-0.132f, 0.350f, 0.02f), Quaternion.identity, robeGreen);
-
-                // CHEVRON 2: Upper Forearm (Y ~ 0.54)
-                AddBoxAccessory(arm, "Chevron2_LeftBase", new Vector3(0.046f, 0.16f, 0.015f),
-                    new Vector3(-0.055f, 0.500f, 0.126f), Quaternion.Euler(0, 0, -28.0f), robeDark);
-                AddBoxAccessory(arm, "Chevron2_LeftBody", new Vector3(0.040f, 0.15f, 0.018f),
-                    new Vector3(-0.055f, 0.500f, 0.128f), Quaternion.Euler(0, 0, -28.0f), robeGreen);
-                AddBoxAccessory(arm, "Chevron2_RightBase", new Vector3(0.046f, 0.16f, 0.015f),
-                    new Vector3(0.045f, 0.500f, 0.126f), Quaternion.Euler(0, 0, 28.0f), robeDark);
-                AddBoxAccessory(arm, "Chevron2_RightBody", new Vector3(0.040f, 0.15f, 0.018f),
-                    new Vector3(0.045f, 0.500f, 0.128f), Quaternion.Euler(0, 0, 28.0f), robeGreen);
-                AddBoxAccessory(arm, "Chevron2_Apex", new Vector3(0.052f, 0.042f, 0.018f),
-                    new Vector3(-0.005f, 0.540f, 0.128f), Quaternion.identity, robeGreen);
-                AddBoxAccessory(arm, "Chevron2_OuterWrap", new Vector3(0.018f, 0.055f, 0.060f),
-                    new Vector3(-0.132f, 0.470f, 0.02f), Quaternion.identity, robeGreen);
+                // 2. TWO GREEN STRIPES RUNNING LENGTHWISE DOWN THE FOREARM, each kinked once.
+                //
+                // ⚠️⚠️ THESE WERE CHEVRONS AND HIS MODEL HAS NO CHEVRONS. 🧑 2026-08-29, cropping
+                // this exact arm out of a render: *"this specifically bcz it doesnt matcht eh arm
+                // of the model"*, after *"he has diff arm markings"*.
+                //
+                // The old geometry drew two "^" arrows ACROSS the arm: two legs angled at
+                // ±28 degrees meeting under a flat apex block, stacked at two heights, like
+                // sergeant's stripes. **Measured off `Logs/cast-sheet.png` (Dante r4c1, left
+                // forearm, cropped and magnified 10x), what he actually wears is two green bands
+                // running ALONG the arm**, parallel to its long axis, separated by a strip of
+                // bare skin, each bending once near the shoulder end. The direction is the whole
+                // difference: lengthwise stripes read as a sleeve pattern, cross-arm arrows read
+                // as rank insignia, and the arm is mostly vertical on screen in first person so
+                // the two orientations could not look less alike.
+                //
+                // ⚠️ THE KINK IS THE SHAPE, NOT A BEVEL. Each stripe steps sideways once about two
+                // thirds of the way up and continues; drawing them dead straight loses the only
+                // feature the pattern has. It is built as lower run, angled bridge, upper run.
+                //
+                // ⚠️ BOTH FACES PLUS THE OUTER EDGE, for the reason the right arm's marking carries:
+                // `RightBasisX/Y/Z` and `LeftBasisX/Y/Z` are rotated frames rather than mirrored
+                // scales, so a stripe on one face alone disappears through most of the swing.
+                AddDanteLengthStripe(arm, "StripeInner", -0.070f, 0.062f, robeGreen, robeDark);
+                AddDanteLengthStripe(arm, "StripeOuter", 0.030f, 0.062f, robeGreen, robeDark);
 
                 // 3. Modeled Hand & Knuckle Anatomy
                 AddHandKnuckles(arm, isRight, 0.280f, skinTone, skinDark);
             }
+        }
+
+        /// <summary>
+        /// One of Dante's left-arm stripes: a run up the forearm, a sideways kink, and a shorter
+        /// run above it, mirrored onto the back face and wrapped onto the outer edge.
+        ///
+        /// ⚠️ THE DARK PLATE UNDER EACH GREEN ONE IS THE MODEL'S OWN SHADOW GREEN and is not a
+        /// substitute for an outline. `AccessoryOutlineWidth` sizes the ink border to each piece's
+        /// own thinness (`docs/TODO.md` § 78.10), which is what stopped these markings being
+        /// swallowed by a hull wider than themselves.
+        /// </summary>
+        private static void AddDanteLengthStripe(Transform arm, string name, float x,
+                                                 float capReach, Color green, Color dark)
+        {
+            // ⚠️⚠️ A SQUARE CORNER, NOT A ROTATED BAR. The first cut of the bend used an angled
+            // bridge between two offset runs, and at 52 degrees it stopped reading as one band:
+            // the render came back as four disconnected diagonal blocks per arm. A rotated box
+            // meets an axis-aligned box along a wedge, so the join is only as wide as the overlap
+            // and the eye loses the line. An L made of two axis-aligned pieces shares a whole
+            // face and reads as one continuous marking, which is what the model's does.
+            //
+            // ⚠️ AND IT IS THE SHAPE ITSELF. 🧑: *"still not how his arms look in model its too
+            // straight"* about the near-straight version, after *"that is not how dante's arms
+            // look like at all"* about the chevrons. The marking runs DOWN the forearm and then
+            // turns ACROSS it once, near the elbow. Straight misses the turn; a shallow kink is
+            // invisible; a steep diagonal is not a turn at all.
+            foreach (float z in new[] { 1.0f, -1.0f })
+            {
+                string face = z > 0.0f ? "Front" : "Back";
+                float baseZ = 0.126f * z;
+                float bodyZ = 0.129f * z;
+
+                // The long run, down the arm.
+                AddBoxAccessory(arm, name + face + "RunBase", new Vector3(0.054f, 0.320f, 0.015f),
+                    new Vector3(x, 0.430f, baseZ), Quaternion.identity, dark);
+                AddBoxAccessory(arm, name + face + "RunBody", new Vector3(0.046f, 0.312f, 0.018f),
+                    new Vector3(x, 0.430f, bodyZ), Quaternion.identity, green);
+
+                // The corner, turning across the arm at the top of the run.
+                AddBoxAccessory(arm, name + face + "CapBase",
+                    new Vector3(Mathf.Abs(capReach) + 0.054f, 0.054f, 0.015f),
+                    new Vector3(x + capReach * 0.5f, 0.603f, baseZ), Quaternion.identity, dark);
+                AddBoxAccessory(arm, name + face + "CapBody",
+                    new Vector3(Mathf.Abs(capReach) + 0.046f, 0.046f, 0.018f),
+                    new Vector3(x + capReach * 0.5f, 0.603f, bodyZ), Quaternion.identity, green);
+            }
+
+            // The outer edge, so the pattern survives the arm turning away from the camera.
+            AddBoxAccessory(arm, name + "OuterWrap", new Vector3(0.018f, 0.300f, 0.055f),
+                new Vector3(-0.132f, 0.470f, 0.030f), Quaternion.identity, green);
         }
 
         private static void BuildCheskaAccessories(Transform arm, bool isRight)

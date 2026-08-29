@@ -10,11 +10,22 @@
 # That is the "IKE is corrupted" report. The mesh itself is clean (33,856 unique
 # positions, 0 degenerate faces, normals and UVs present) so the geometry needs nothing.
 #
-# 0.105/0.115/0.145 is the darkest the body can sit and still separate the toe box from
-# the midsole at gameplay distance. It still reads as a black sneaker.
+# 0.052/0.058/0.074, HALVED FROM 0.105/0.115/0.145 ON 2026-08-29.
+# 🧑 asked twice in one sitting: "make sike darker too", then "sike/ike still aint dark enough".
+#
+# ⚠️ THE OLD NUMBER'S REASONING WAS NOT WRONG, ITS CONDITIONS CHANGED. It was measured as
+# "the darkest the body can sit and still separate the toe box from the midsole" against a
+# 0.012 m prop ink border. That border is 0.006 m as of the same day (ToonSkin.PropOutlineWidth,
+# docs/TODO.md § 78.7), so twice as much of the shoe's own shading is now visible and the
+# separation it was protecting no longer depends on the albedo being that light.
+#
+# ⚠️ STILL NOT ZERO, AND IT MUST NOT GO THERE. The floor is the original bug: a pure black
+# albedo returns nothing under the toon key light, every curve resolves to one value, and the
+# shoe becomes a flat silhouette with the m3 swoosh floating on it. That is the "IKE is
+# corrupted" report and 0 0 0 is what caused it. This is dark, not black.
 newmtl m2
-Kd 0.10500 0.11500 0.14500
-Ks 0.18000 0.18000 0.20000
+Kd 0.05200 0.05800 0.07400
+Ks 0.14000 0.14000 0.16000
 Ns 48.00000
 d 1.00000
 illum 2

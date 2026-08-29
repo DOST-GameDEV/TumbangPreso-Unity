@@ -1080,6 +1080,49 @@ border. A 0.015 m glyph now takes 0.00375 m; anything thicker than 0.076 m is un
 from the mesh, so `AddCylinderAccessory` and every future shape are covered without a second call
 site to keep in step.
 
+### 78.11 ⚠️⚠️ DANTE'S GREEN MARKINGS WERE THE WRONG SHAPE **AND** THE WRONG DIRECTION ✅
+
+🧑 2026-08-29, after § 78.10 fixed the ink: *"he has diff arm markings"*, *"that is not how
+dante's arms look like at all"*, and, cropping the left forearm out of a render, *"this
+specifically bcz it doesnt matcht eh arm of the model"*.
+
+**Measured off `Logs/cast-sheet.png`, Dante at r4c1, cropped per arm and magnified 10x.** He is
+asymmetric and neither arm was right:
+
+| | model | viewmodel had |
+|---|---|---|
+| left forearm | **two green stripes running ALONG the arm**, parallel, separated by bare skin, each kinked once near the top | two "^" CHEVRONS across the arm: angled legs meeting under an apex block, stacked |
+| right forearm | **one green band running ALONG the arm**, stepping narrow in the middle and wide at both ends, gold strip outboard | a three-piece "runic glyph" (conduit, crossbar, hook) projected on four faces |
+
+⚠⚠ **THE DIRECTION IS THE WHOLE FAULT AND IT IS WHY THIS READ AS A DIFFERENT CHARACTER.**
+Both markings run LENGTHWISE on him and both ran CROSSWISE in the viewmodel. In first person the
+forearm is close to vertical on screen, so lengthwise stripes read as a sleeve pattern and
+cross-arm arrows read as rank insignia. Same palette, same two colours, opposite garment.
+
+⚠⚠ **AND THE FIRST ATTEMPT AT THIS OVERSHOT BADLY, WHICH IS THE MORE USEFUL LESSON.** It
+deleted the leather sleeve, the harness strap, the buckle and the gold cuff as well, on the
+reasoning that the model shows bare skin there. 🧑 rejected it outright: *"infact old one was
+better"*, *"all i needed u to change in old one was the green markings"*. **The scope of a fix is
+the reported thing, not everything nearby that also looks arguable.** The original geometry was
+restored from git and only the green was replaced.
+
+⚠️ **BOTH FACES PLUS THE OUTER EDGE**, which the old glyph's own node names already knew:
+`RightBasisX/Y/Z` and `LeftBasisX/Y/Z` are rotated frames rather than mirrored scales, so local
++Z faces opposite ways on the two arms and a marking on one face vanishes through most of the
+swing. A first cut of the right arm's band used the left arm's sign and rendered a bare forearm.
+
+⚠️⚠️ **READ THE CAST SHEET, NEVER THE MODEL SHEET, FOR A CHARACTER.** `ModelSheet` renders the
+full sheet with **no palette** and says so in its own index (`[no palette, stock atlas colours]`),
+so Dante appears there in the source asset's blue and orange and looks like somebody else
+entirely. That render was shown to 🧑 as a reference and the reply was *"thats not our dante"*,
+*"wtf"*, which was correct. `ModelSheet.RunCast` applies `RosterEntryAsset.Palette` and is the
+only one of the two that shows the character the game actually draws. **The palettes are not
+corrupt; the sheet just does not use them.**
+
+**Done looks like** each hero's FPP arms shot next to that hero's cast-sheet crop and judged side
+by side. Dante is done; the other five have never been checked this way and at least one of them
+is likely to carry the same class of invention.
+
 ⚠️ **THE HERO KITS ARE STILL STACKED BOXES AND THAT IS A SEPARATE, OPEN QUESTION.**
 `BuildDanteAccessories` is roughly thirty `AddBoxAccessory` calls, which is exactly the
 construction `VISION.md` § 2 rule 3 names: *"Five polygons handed to one builder are one thing."*
@@ -1087,7 +1130,45 @@ This entry fixes how they are OUTLINED and says nothing about whether they are t
 build an arm. **Done looks like** an FPP capture of each hero's arms next to that hero's character
 art, judged side by side. Not shot this session.
 
-### 78.11 What is still not measured
+### 78.12 ⚠️⚠️ `CarryTests` HAS A FRAME-TIMING ASSERTION THAT FAILS UNDER LOAD ⚠️ OPEN
+
+`AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor` failed twice in a row on 2026-08-29
+with **0.062 m against a 0.050 m bound**, after passing 87/87 three times earlier the same day on
+the same machine.
+
+⚠⚠ **IT IS NOT A REGRESSION, AND THAT WAS ESTABLISHED BY BISECTING RATHER THAN BY ARGUING.**
+The session's uncommitted work was stashed and the test re-run against the committed baseline
+alone: **it failed there too.** So nothing in this batch causes it. Recorded because the obvious
+reading, "the viewmodel slipper work broke the carry", is wrong and would cost the next session an
+afternoon.
+
+**Why it is fragile.** It walks a carrier for 60 RENDERED frames and takes the worst per-frame gap
+between the shoe and the hand anchor, minus `Slipper.RestHeight`. Two things make that
+load-sensitive:
+
+* the loop is `yield return null`, so a dropped frame is a bigger animation step and a bigger
+  one-frame lag between the Animator's pose and the carry; and
+* `RestHeight` is `Mathf.Max(Balance.SlipperRestHeight, r.bounds.extents.y)`, and `r.bounds` is a
+  **world-space AABB**, so the subtracted lift changes as the shoe rotates through the walk. The
+  measurement's own baseline moves with the thing it is measuring.
+
+It failed on a machine that had been running Unity renders and two-process network tests
+back to back for hours, which is exactly the condition `docs/TODO.md` § 6 describes for
+`AiDiagnosticProbe`: *"its result depends on how busy the machine is"*.
+
+**Done looks like** one of:
+
+* `[Category("WallClock")]` on this case, which is what § 6 did for the same class of problem, so
+  it runs on purpose rather than gating every batch; or
+* measuring the gap in the anchor's LOCAL space so the rotating world AABB stops moving the
+  baseline; or
+* a bound derived from the actual per-frame animation step rather than a flat 0.05 m.
+
+⚠️ **Do not simply raise the number.** The assertion is protecting a real fix (the carry running
+in `LateUpdate` rather than `Update`), and a looser bound would stop catching the regression it
+exists for.
+
+### 78.13 What is still not measured
 
 * ⚠️⚠️ **TWO REAL MACHINES.** § 38.20 stands. This session used two processes on one desktop over
   the real Wi-Fi address, which is closer than loopback and is not two NICs, two clocks or a
