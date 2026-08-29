@@ -1865,7 +1865,7 @@ adding a class perturbs it.
 any new probe that loads an arena is liable to trip them. Either fix that first, or diagnose the
 dance from a built player instead.
 
-### 80.7 ⚠️ OPEN: RICHER FLOORS ON THE OTHER MAPS — CAUSE FOUND, FIRST FIX REVERTED
+### 80.7 ✅ FIXED: ILALIM HAS ESKINITA'S ASPHALT GRAIN WITHOUT THE DARK PATCH SLABS
 
 🧑, pointing at an Eskinita lobby frame: *"can u give all other maps rich floors like this? borrow
 from online assets if u have to"*.
@@ -1889,8 +1889,8 @@ his to make and the licence goes in the ledger beside it.**
 is a plaza and is allowed not to have one; a tool that errors on that cannot go in a pipeline.
 `EnvColourPass.RoadGroups` is the authority for what a road node may be called.
 
-⚠️⚠️ **AND THE FIRST ATTEMPT WAS RUN, MEASURED, AND REVERTED. `Maps` IS BACK TO ESKINITA ONLY.**
-Laying it on all three failed `MapGeometryCheck` **on a gated map**:
+⚠️⚠️ **THE FIRST ATTEMPT WAS RUN, MEASURED, AND REVERTED.** Laying it on all three by renderer
+bounds failed `MapGeometryCheck` **on a gated map**:
 
 ```
 FAIL IlalimNgTulay/AsphaltSurface: floats 0.061 m above .../Lupa/FarGroundPlate
@@ -1904,11 +1904,27 @@ backdrop road out to the fog line, so the identical measurement produces a sheet
 map, hovering a millimetre over the ground plates it swallowed. It also left two stray `Quad`
 primitives in Eskinita.
 
-⚠️ **THE LESSON IS THE SHAPE OF THE FIX: SIZE IT TO THE PLAYABLE AREA, NOT TO A GROUP.**
-`CONFINEMENT_RADIUS` is 7.0 and the chalk ring is already measured per map, so a surface sized to
-the arena plus a margin is right everywhere and does not depend on how each builder chose to group
-its distant geometry. **That is the remaining work, and it wants a render to sign off.** The scenes
-and the material were reverted with `git checkout`; nothing half-done shipped.
+⚠️ **THE FIX IS SIZED TO THE PLAYABLE ROAD, NOT TO A GROUP.** Ilalim's surface is **14 by 37 m**:
+the two kerb/chalk lines at x = +/-7, and the north/south wall faces at z = +/-16.5 plus 2 m behind
+each wall so the seam is not visible from the box. It does not depend on the `Kalsada` backdrop,
+and it leaves those source renderers enabled because they continue beyond the skin. Eskinita keeps
+its measured group bound. Each size has its own material so their four-metre texture grain cannot
+overwrite one another through a shared `_MainTex_ST`.
+
+🧑 then circled every dark grey rectangle on the played road and said *"remove this all"*. Those
+were the seven `AsphaltPatch_*` slabs in `BuildRoadSurfaceDetail`, not shadows and not part of the
+texture. They are deleted from the builder and from the scene. Lane paint, manholes and the chalk
+stay above one continuous asphalt surface.
+
+⚠️ **THE MAP PIPELINE LAYS THE SURFACE AFTER EVERY REBUILD.** The builder replaces the whole scene,
+so running it without `AsphaltRoadSurface` would otherwise restore the flat road while leaving the
+generator itself correct. `MapSurfaceTests` opens the saved scene and asserts one 14 by 37 m
+textured, colliderless surface and zero patch slabs.
+
+**Verified:** Core **111/111**, EditMode **206/206**, `Checks.RunAll` **5/5**, all three source
+audits green, `IlalimNgTulayPipeline` green, and fifteen v24 in-engine renders in
+`Logs/shots-ilalim/`; `ilalim_thrower_view_v24.png` and `ilalim_taya_view_v24.png` show the road
+from both playable ends with the patch rectangles gone.
 
 
 ---

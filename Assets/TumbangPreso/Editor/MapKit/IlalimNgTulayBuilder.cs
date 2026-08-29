@@ -2802,7 +2802,6 @@ namespace TumbangPreso.EditorTools.MapKit
 
             Color lanePaint = new Color(0.700f, 0.680f, 0.620f);
             Color fadedPaint = new Color(0.560f, 0.548f, 0.505f);
-            Color patch = new Color(0.238f, 0.250f, 0.278f);
             Color oldPatch = new Color(0.330f, 0.340f, 0.360f);
             Color ironwork = new Color(0.205f, 0.208f, 0.222f);
             Color stain = new Color(0.185f, 0.180f, 0.180f);
@@ -2840,27 +2839,13 @@ namespace TumbangPreso.EditorTools.MapKit
                 }
             }
 
-            // 3. The resurfaced middle. Long, low-contrast rectangles of newer asphalt that
-            //    explain the missing centre line and give the box texture at zero height.
-            (float x, float z, float w, float l)[] patches =
-            {
-                (-0.9f, -4.6f, 3.2f, 7.4f),
-                ( 1.4f,  3.1f, 2.6f, 9.0f),
-                (-2.2f,  9.8f, 2.0f, 5.2f),
-                ( 4.6f, -2.6f, 2.5f, 3.4f),   // the resurfaced trench the TRENCH! hazard sits in
-                ( 4.9f, -9.4f, 2.4f, 4.6f),
-                (-5.4f,  6.2f, 1.9f, 3.8f),
-                ( 0.4f, -13.6f, 4.4f, 5.0f),
-            };
+            // ⚠️⚠️ NO RECTANGULAR ASPHALT PATCHES. Seven flat slabs used to sit here, and in
+            // first person they read as dark grey sheets pasted over the road rather than as
+            // resurfacing. 🧑 circled all seven and asked to remove them. The continuous
+            // `AsphaltRoadSurface` now provides the road grain, so another layer of fake asphalt
+            // would be both redundant and visually louder than the texture replacing it.
 
-            for (int i = 0; i < patches.Length; i++)
-            {
-                var p = patches[i];
-                Mark($"AsphaltPatch_{i}", new Vector3(p.x, RoadTop + 0.004f, p.z),
-                     new Vector3(p.w, 0.008f, p.l), i % 2 == 0 ? patch : oldPatch);
-            }
-
-            // 4. Manholes and inspection covers. Two stand inside the chalk, which is where a
+            // 3. Manholes and inspection covers. Two stand inside the chalk, which is where a
             //    real road puts them, and both clear the can by more than `LataClearance`.
             (float x, float z, float r)[] covers =
             {
@@ -2888,7 +2873,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 collar.name = $"ManholeCollar_{i}";
             }
 
-            // 5. Gutter grates against the kerb line, where the water actually goes.
+            // 4. Gutter grates against the kerb line, where the water actually goes.
             foreach (int side in new[] { -1, 1 })
             {
                 for (int i = 0; i < 5; i++)
@@ -2900,7 +2885,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 }
             }
 
-            // 6. Skid arcs and one oil stain. Both live outside the chalk: they are the marks a
+            // 5. Skid arcs and one oil stain. Both live outside the chalk: they are the marks a
             //    vehicle leaves, and no vehicle is allowed inside the box.
             foreach (int end in new[] { -1, 1 })
             {

@@ -23,21 +23,60 @@ namespace TumbangPreso.EditorTools.MapKit
     /// image properly. That is the entire reason this is a new primitive rather than a material
     /// swap on the existing geometry.
     ///
-    /// ⚠️⚠️ IT COVERS, IT DOES NOT DELETE. The kit road is left in the scene and merely switched
-    /// off, so the change is one checkbox to undo and the original geometry is still there to
-    /// compare against. Deleting map geometry to try a texture is not a reversible experiment.
-    /// `Run` with the road already hidden re-hides it and rebuilds the plane, so it is idempotent.
+    /// ⚠️⚠️ IT COVERS, IT DOES NOT DELETE. The kit road stays in the scene. Eskinita switches its
+    /// source renderers off because its group is exactly the road. Ilalim leaves them enabled
+    /// under the skin because the same group also owns the road beyond the playable surface.
+    /// Deleting map geometry to try a texture is not a reversible experiment. A repeated run
+    /// replaces the old skin and reaches the same scene, so the pass is idempotent.
     ///
-    /// ⚠️ THE SIZE IS MEASURED FROM THE ROAD'S OWN RENDERER BOUNDS RATHER THAN TYPED IN. The
-    /// tiles sit at scattered positions (30.6, 0.1, 6), (-10.89, 0.1, ...) at 5x scale, and a
-    /// hand-copied extent would be wrong the first time a tile moved. Encapsulating the real
-    /// bounds is exact and stays exact.
+    /// ⚠️ ESKINITA'S SIZE IS MEASURED FROM ITS ROAD RENDERERS. Its tiles sit at scattered
+    /// positions and scales, so a hand-copied extent would be wrong the first time one moved.
+    /// Ilalim cannot use that rule because its group includes an 80 by 240 m backdrop road; its
+    /// playable-road derivation is recorded beside `Maps` below.
     /// </summary>
     public static class AsphaltRoadSurface
     {
         private const string TexturePath = "Assets/TumbangPreso/Art/models/textures/asphalt.png";
-        private const string MaterialPath = "Assets/TumbangPreso/Art/models/materials/AsphaltRoad.mat";
+        private const string MaterialDirectory = "Assets/TumbangPreso/Art/models/materials";
+        private const string EskinitaMaterialPath = MaterialDirectory + "/AsphaltRoad.mat";
+        private const string IlalimMaterialPath = MaterialDirectory + "/AsphaltRoad_IlalimNgTulay.mat";
         private const string ObjectName = "AsphaltSurface";
+
+        private readonly struct MapSpec
+        {
+            public readonly string Scene;
+            public readonly string Group;
+            public readonly string Material;
+            public readonly Vector2 SurfaceSize;
+            public readonly Vector3 SurfaceCentre;
+            public readonly float SurfaceTop;
+            public readonly bool HideSource;
+
+            public bool MeasuresSource => SurfaceSize == Vector2.zero;
+
+            public MapSpec(string scene, string group, string material)
+            {
+                Scene = scene;
+                Group = group;
+                Material = material;
+                SurfaceSize = Vector2.zero;
+                SurfaceCentre = Vector3.zero;
+                SurfaceTop = 0.0f;
+                HideSource = true;
+            }
+
+            public MapSpec(string scene, string group, string material, Vector2 surfaceSize,
+                           Vector3 surfaceCentre, float surfaceTop)
+            {
+                Scene = scene;
+                Group = group;
+                Material = material;
+                SurfaceSize = surfaceSize;
+                SurfaceCentre = surfaceCentre;
+                SurfaceTop = surfaceTop;
+                HideSource = false;
+            }
+        }
 
         /// <summary>
         /// Every map that has a road, and the node its road lives under.
@@ -64,9 +103,8 @@ namespace TumbangPreso.EditorTools.MapKit
         /// skipped rather than failing the run, because Bayan Plaza is a plaza and may legitimately
         /// not have a road node at all.
         /// </summary>
-        /// ⚠️⚠️ ILALIM NG TULAY AND BAYAN PLAZA ARE COMMENTED OUT, AND THE ATTEMPT IS RECORDED
-        /// RATHER THAN DELETED BECAUSE IT ALMOST WORKED. Running all three laid the surface fine
-        /// on Eskinita and **failed `MapGeometryCheck` on a gated map**:
+        /// ⚠️⚠️ ILALIM NG TULAY CANNOT USE THE GROUP BOUNDS. The first attempt laid the surface
+        /// fine on Eskinita and failed `MapGeometryCheck` on a gated map:
         ///
         ///     FAIL IlalimNgTulay/AsphaltSurface: floats 0.061 m above .../Lupa/FarGroundPlate
         ///          (footprint 80.00 by 240.00 m)
@@ -78,13 +116,25 @@ namespace TumbangPreso.EditorTools.MapKit
         /// over the ground plates it swallowed. The bounds-from-renderers trick this class is
         /// built on is correct for one map's authoring and wrong for the other's.
         ///
-        /// ⚠️ SO THE FIX IS A PLAYABLE-AREA BOUND, NOT A GROUP BOUND. `CONFINEMENT_RADIUS` is 7.0
-        /// and the chalk ring is measured in `IlalimNgTulayBuilder`; a surface sized to the arena
-        /// plus a margin would be right on every map and would not depend on how a builder chose
-        /// to group its distant geometry. That is the work, and it needs a render to sign off.
-        private static readonly (string Scene, string Group)[] Maps =
+        /// ⚠️ SO ILALIM USES THE PLAYABLE ROAD PLUS A TWO-METRE MARGIN PAST EACH END WALL.
+        /// Its width is the two kerb lines, which are also the chalk lines, and its length is
+        /// `WallHalfZ` plus enough road behind the invisible wall that the seam cannot be seen
+        /// from the box. This is 14 by 37 m, not the 80 by 240 m backdrop group. The kit tiles
+        /// stay enabled under it because the same group also owns the road beyond this skin.
+        ///
+        /// ⚠️ EACH SIZE GETS ITS OWN MATERIAL. Texture tiling is stored on the material, not on
+        /// the renderer, so sharing Eskinita's material with a differently sized quad would make
+        /// one map's four-metre asphalt grain wrong every time the other map was generated.
+        private const float IlalimEndMargin = 2.0f;
+
+        private static readonly MapSpec[] Maps =
         {
-            ("Assets/TumbangPreso/Scenes/Maps/Eskinita.unity", "Kalsada"),
+            new MapSpec("Assets/TumbangPreso/Scenes/Maps/Eskinita.unity", "Kalsada",
+                        EskinitaMaterialPath),
+            new MapSpec(IlalimNgTulayBuilder.ScenePath, "Kalsada", IlalimMaterialPath,
+                        new Vector2(IlalimNgTulayBuilder.RoadHalfX * 2.0f,
+                                    (IlalimNgTulayBuilder.WallHalfZ + IlalimEndMargin) * 2.0f),
+                        Vector3.zero, IlalimNgTulayBuilder.RoadTop),
         };
 
         /// <summary>
@@ -108,10 +158,16 @@ namespace TumbangPreso.EditorTools.MapKit
 
         public static void Run() => EditorApplication.Exit(Execute() ? 0 : 1);
 
+        [MenuItem("Tumbang Preso/Lay Asphalt Road Surface on Ilalim Ng Tulay")]
+        public static void RunIlalimFromMenu() => ExecuteForScene(IlalimNgTulayBuilder.ScenePath);
+
+        public static void RunIlalim() =>
+            EditorApplication.Exit(ExecuteForScene(IlalimNgTulayBuilder.ScenePath) ? 0 : 1);
+
         /// <summary>
         /// Every map in <see cref="Maps"/>, in one editor launch.
         ///
-        /// ⚠️ ONE LAUNCH FOR ALL THREE, because the launch is the cost of a pass and not the work.
+        /// ⚠️ ONE LAUNCH FOR EVERY MAP, because the launch is the cost of a pass and not the work.
         /// `Checks.RunAll` makes the same argument for the five editor checks.
         ///
         /// ⚠️ A MAP WITH NO ROAD NODE IS SKIPPED, NOT FAILED. See the note on `Maps`.
@@ -129,15 +185,15 @@ namespace TumbangPreso.EditorTools.MapKit
             bool all = true;
             int laid = 0;
 
-            foreach (var (scenePath, group) in Maps)
+            foreach (var map in Maps)
             {
-                if (!File.Exists(scenePath))
+                if (!File.Exists(map.Scene))
                 {
-                    Debug.LogWarning($"[AsphaltRoad] no scene at {scenePath}, skipped.");
+                    Debug.LogWarning($"[AsphaltRoad] no scene at {map.Scene}, skipped.");
                     continue;
                 }
 
-                if (ExecuteOne(scenePath, group)) laid++;
+                if (ExecuteOne(map)) laid++;
                 else all = false;
             }
 
@@ -145,17 +201,35 @@ namespace TumbangPreso.EditorTools.MapKit
             return all;
         }
 
-        private static bool ExecuteOne(string ScenePath, string RoadGroup)
+        /// <summary>
+        /// Re-lays the asphalt for one scene after its builder has replaced that scene.
+        /// `IlalimNgTulayPipeline` uses this so a future map rebuild cannot silently restore the
+        /// flat kit road and the dark patch slabs this surface replaced.
+        /// </summary>
+        internal static bool ExecuteForScene(string scenePath)
         {
-            var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            foreach (var map in Maps)
+                if (map.Scene == scenePath) return ExecuteOne(map);
 
-            var road = Find(RoadGroup);
+            Debug.LogError($"[AsphaltRoad] no map specification for {scenePath}.");
+            return false;
+        }
+
+        private static bool ExecuteOne(MapSpec map)
+        {
+            var scene = EditorSceneManager.OpenScene(map.Scene, OpenSceneMode.Single);
+
+            int removedPatches = map.Scene == IlalimNgTulayBuilder.ScenePath
+                ? RemovePatchSlabs()
+                : 0;
+
+            var road = Find(map.Group);
             if (road == null)
             {
                 // ⚠️ A WARNING RATHER THAN AN ERROR, and it returns TRUE. Bayan Plaza is a plaza:
                 // it is allowed not to have a road node, and a run that "fails" on that would
                 // make this tool impossible to put in a pipeline.
-                Debug.LogWarning($"[AsphaltRoad] no '{RoadGroup}' group in {ScenePath}, skipped.");
+                Debug.LogWarning($"[AsphaltRoad] no '{map.Group}' group in {map.Scene}, skipped.");
                 return true;
             }
 
@@ -165,7 +239,7 @@ namespace TumbangPreso.EditorTools.MapKit
 
             if (renderers.Length == 0)
             {
-                Debug.LogError($"[AsphaltRoad] '{RoadGroup}' has no renderers to measure.");
+                Debug.LogError($"[AsphaltRoad] '{map.Group}' has no renderers to measure.");
                 return false;
             }
 
@@ -179,7 +253,14 @@ namespace TumbangPreso.EditorTools.MapKit
                 counted++;
             }
 
-            var material = BuildMaterial(bounds.size);
+            Vector3 surfaceSize = map.MeasuresSource
+                ? bounds.size
+                : new Vector3(map.SurfaceSize.x, 0.0f, map.SurfaceSize.y);
+
+            Vector3 surfaceCentre = map.MeasuresSource ? bounds.center : map.SurfaceCentre;
+            float surfaceTop = map.MeasuresSource ? bounds.max.y : map.SurfaceTop;
+
+            var material = BuildMaterial(surfaceSize, map.Material);
             if (material == null) return false;
 
             // ⚠️⚠️ IT IS PARENTED OUTSIDE `Dressing`, AND PUTTING IT INSIDE TURNED THE ROAD BLACK.
@@ -210,13 +291,13 @@ namespace TumbangPreso.EditorTools.MapKit
             quad.name = ObjectName;
             quad.transform.SetParent(mapRoot, worldPositionStays: true);
 
-            quad.transform.position = new Vector3(bounds.center.x,
-                                                  bounds.max.y + LiftMetres,
-                                                  bounds.center.z);
+            quad.transform.position = new Vector3(surfaceCentre.x,
+                                                  surfaceTop + LiftMetres,
+                                                  surfaceCentre.z);
 
             // Unity's quad faces -Z. Ninety degrees about X lays it flat, facing up.
             quad.transform.rotation = Quaternion.Euler(90.0f, 0.0f, 0.0f);
-            quad.transform.localScale = new Vector3(bounds.size.x, bounds.size.z, 1.0f);
+            quad.transform.localScale = new Vector3(surfaceSize.x, surfaceSize.z, 1.0f);
 
             var collider = quad.GetComponent<Collider>();
             if (collider != null) Object.DestroyImmediate(collider);
@@ -233,6 +314,7 @@ namespace TumbangPreso.EditorTools.MapKit
 
             foreach (var r in renderers)
             {
+                if (!map.HideSource) break;
                 if (r == null || r.gameObject.name == ObjectName) continue;
                 if (!r.enabled) continue;
 
@@ -243,11 +325,37 @@ namespace TumbangPreso.EditorTools.MapKit
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
 
-            Debug.Log($"[AsphaltRoad] measured {counted} kit tiles to {bounds.size.x:F1} x " +
-                      $"{bounds.size.z:F1} m, laid {ObjectName} at y={bounds.max.y + LiftMetres:F3}, " +
-                      $"hid {hidden} kit renderers. Re-enable them to undo.");
+            string source = map.MeasuresSource
+                ? $"measured {counted} kit tiles"
+                : "used the playable-road bound";
+
+            Debug.Log($"[AsphaltRoad] {source}, laid {surfaceSize.x:F1} x {surfaceSize.z:F1} m " +
+                      $"{ObjectName} at y={surfaceTop + LiftMetres:F3}, hid {hidden} kit renderers, " +
+                      $"removed {removedPatches} patch slabs.");
 
             return true;
+        }
+
+        /// <summary>
+        /// Removes the seven dark grey rectangles from an already-authored Ilalim scene.
+        ///
+        /// ⚠️ THIS IS ALSO DONE OUTSIDE THE BUILDER. The builder no longer creates them, but the
+        /// scene is what ships and may have been authored by an older builder. Keeping the cleanup
+        /// beside the asphalt pass makes a targeted surface run produce the same road as the full
+        /// pipeline without rebuilding more than a thousand unrelated map objects.
+        /// </summary>
+        private static int RemovePatchSlabs()
+        {
+            var stale = new System.Collections.Generic.List<GameObject>();
+
+            foreach (var root in UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects())
+            {
+                foreach (var child in root.GetComponentsInChildren<Transform>(true))
+                    if (child.name.StartsWith("AsphaltPatch_")) stale.Add(child.gameObject);
+            }
+
+            foreach (var go in stale) Object.DestroyImmediate(go);
+            return stale.Count;
         }
 
         private static Transform Find(string name)
@@ -301,7 +409,7 @@ namespace TumbangPreso.EditorTools.MapKit
             if (changed) importer.SaveAndReimport();
         }
 
-        private static Material BuildMaterial(Vector3 size)
+        private static Material BuildMaterial(Vector3 size, string materialPath)
         {
             var shader = Shader.Find("Standard");
 
@@ -311,13 +419,13 @@ namespace TumbangPreso.EditorTools.MapKit
                 return null;
             }
 
-            var material = AssetDatabase.LoadAssetAtPath<Material>(MaterialPath);
+            var material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
 
             if (material == null)
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(MaterialPath));
+                Directory.CreateDirectory(Path.GetDirectoryName(materialPath));
                 material = new Material(shader);
-                AssetDatabase.CreateAsset(material, MaterialPath);
+                AssetDatabase.CreateAsset(material, materialPath);
             }
 
             material.shader = shader;
