@@ -172,9 +172,30 @@ cannot see the signed-in account either, which `UgsCheck`'s own step 1 comment a
 `EditorApplication.update` and exits itself, so `-quit` kills it before one UGS call is pumped and
 the log just stops after the compile.
 
-**Open, and it needs him:** create the project under `matthewtlabrador`, enable the five services,
-make a service account with Cloud Code and Cloud Save write access. Then the relink, the
-`player-account` deploy and Phase 2's step 2 all unblock together.
+**✅ RELINKED 2026-08-31.** The project is now
+**`dcf0831e-a5f4-43b4-832e-b687f13a3569`** under org **`matthewtlabrador`**, genesis org
+`18968483660152`, created by 🧑 on his own account. `ProjectSettings.asset` lines 738 and 742 are
+the whole change and `git diff --numstat` on that file reads `2 2`.
+
+**Verified so far:** `OnlineSignInProbe` passes 2/2 against the new project, including
+`ALinkedBuildNeverSettlesOnNotLinked`, so the build resolves the new id rather than reporting
+itself unlinked. ⚠️ **That is not proof the services are on.** The probe asserts the boot attempt
+happens and settles; it passes offline too. Relay and Lobby are only provable from
+`Tumbang Preso > Check UGS Wiring` in an open editor.
+
+⚠️⚠️ **PAUL'S BUILD CANNOT SEE THIS ONE ONLINE UNTIL HE REBUILDS OFF THIS BRANCH.** Different UGS
+project means a join code resolves in a different namespace, so the room is not there and it reads
+as an empty lobby rather than as an error. **LAN is unaffected.** This is the first thing to check
+if anybody reports online play "broken" after pulling.
+
+⚠️ **COPPA on the new project reads "NOT primarily targeting children" and must stay that way.**
+Marking it child-directed disables username/password auth and restricts Cloud Save, which is
+exactly the account layer § 88 just built.
+
+**Still open, and it needs him:** enable Authentication (anonymous **and** username/password),
+Relay, Lobby, Cloud Save and Cloud Code under **Products**, then create a service account with
+Cloud Code Editor and Cloud Save Editor and run `ugs login`. The CLI's `project-id` is already
+set to the new id. Then the `player-account` deploy and Phase 2's step 2 unblock together.
 
 ---
 
