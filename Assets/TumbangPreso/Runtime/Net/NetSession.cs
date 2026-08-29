@@ -1005,9 +1005,17 @@ namespace TumbangPreso.Net
             response.Approved = protocolMatches && hasCapacity;
             response.CreatePlayerObject = false;
             response.Pending = false;
+            // ⚠️ THE REFUSAL SAYS WHAT THE ROOM HOLDS. "Lobby is full" is true of a room with
+            // four players and true of a room with four players and four spectators, and only
+            // one of those two is a thing the person reading it can do anything about — namely
+            // wait for somebody to leave rather than for a match to end. See
+            // `LobbySession.MaxSpectators`.
             response.Reason = !protocolMatches
                 ? $"Game version mismatch (network protocol {ProtocolVersion})"
-                : hasCapacity ? string.Empty : "Lobby is full";
+                : hasCapacity
+                    ? string.Empty
+                    : $"This game is full: {LobbySession.MaxPlayers} players and "
+                      + $"{LobbySession.MaxSpectators} spectators.";
 
             if (response.Approved) _helloByClient[request.ClientNetworkId] = hello;
         }

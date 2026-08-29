@@ -671,9 +671,16 @@ namespace TumbangPreso.Tests
             Assert.IsFalse(full.IsJoinable, "every chair is taken");
             Assert.IsTrue(full.CanSpectate, "there is still room on the wire");
 
-            // Two playing, six watching. Joinable, and the old single count said otherwise.
+            // Two playing and the rest watching, one socket short of the ceiling. Joinable, and
+            // the old single count said otherwise.
+            //
+            // ⚠️ COUNTED OFF `MaxConnections` RATHER THAN TYPED AS 8. It was a literal, and when
+            // the ceiling came down from 12 to 8 (§ 83.21) that literal stopped meaning "busy"
+            // and started meaning "packed" — so this case silently became a duplicate of the one
+            // below it and failed. The thing being asserted is "sockets left over", which is a
+            // position relative to the ceiling, not a number.
             var busy = Lan("Busy", seated: 2, occupied: 2, inProgress: false);
-            busy.Connections = 8;
+            busy.Connections = LobbySession.MaxConnections - 1;
             Assert.IsTrue(busy.IsJoinable,
                 "spectators are not players, and counting them as players hid the lobby");
 
@@ -903,13 +910,30 @@ namespace TumbangPreso.Tests
             Assert.IsTrue(overflow.Spectator, "no chair means a spectator, never a seatless player");
         }
 
+        /// <summary>
+        /// ⚠️ IT ASSERTED THE LITERAL 12 AND BROKE ON § 83.21, WHICH IS THE RIGHT WAY ROUND. The
+        /// ceiling moved to 8 on 🧑's *"up to 8 ppl can join but only the first 4 are players and
+        /// last 4 are spectators"*, and a tripwire on a capacity number is worth having.
+        ///
+        /// What it holds now is the RELATIONSHIP rather than the numbers: the room is the seats
+        /// plus the gallery, and the gallery is not empty. Re-typing 8 here would only prove
+        /// somebody edited two files instead of one.
+        /// </summary>
         [Test]
-        public void MaxConnectionsExceedsMaxPlayersToAccommodateSpectators()
+        public void MaxConnectionsIsTheSeatsPlusTheGallery()
         {
             Assert.Greater(LobbySession.MaxConnections, LobbySession.MaxPlayers,
-                "Relay connection ceiling must exceed player seat count to allow spectators");
-            Assert.AreEqual(12, LobbySession.MaxConnections);
-            Assert.AreEqual(4, LobbySession.MaxPlayers);
+                "the connection ceiling must exceed the seat count or nobody can watch");
+
+            Assert.AreEqual(LobbySession.MaxPlayers + LobbySession.MaxSpectators,
+                            LobbySession.MaxConnections,
+                            "the room is the seats plus the gallery and nothing else");
+
+            Assert.AreEqual(4, LobbySession.MaxPlayers,
+                "four seats is a design rule, not a capacity number");
+
+            Assert.Greater(LobbySession.MaxSpectators, 0,
+                "a gallery of nobody is the refusal § 83.21 removed");
         }
 
         // -------------------------------------------------------------------

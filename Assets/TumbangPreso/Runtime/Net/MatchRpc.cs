@@ -2716,6 +2716,22 @@ namespace TumbangPreso.Net
                     writer.WriteValueSafe(s.SlipperPick);
                     writer.WriteValueSafe(s.Ready);
                 }
+
+                // ⚠️⚠️ THE GALLERY RIDES THE ROSTER, BECAUSE A SPECTATOR HAS NO SEAT AND SO NO
+                // ROW IN THE TABLE ABOVE. 🧑 2026-08-29: *"make it so taht more than 4 ppl can
+                // join, like up to 8 ppl can join but only the first 4 are players and last 4 are
+                // spectators"*. Four people can now be in the room with nothing anywhere on a
+                // client that says so — `LobbySeatInfo` is per SEAT by construction, and a client
+                // cannot count them itself because `LobbySeatInfo`'s own header records that a
+                // client's `LobbySession` is deliberately unpopulated.
+                //
+                // ⚠️ ON THIS MESSAGE RATHER THAN A FIFTH ONE. It already goes out on every seat
+                // change, every ready press and every world snapshot, which is exactly when the
+                // number can move. `docs/TODO.md` § 38.5 found three verbs with two protocols
+                // each and the dead one being the maintained one; a message for one int that an
+                // existing broadcast has a natural place for is how that starts.
+                writer.WriteValueSafe(lobby.SpectatorCount());
+
                 _nm.CustomMessagingManager.SendNamedMessageToAll("SyncLobbyPicks", writer);
             }
 
@@ -2732,9 +2748,22 @@ namespace TumbangPreso.Net
                 }
             }
 
+            // ⚠️ THE HOST SETS ITS OWN, because `SendNamedMessageToAll` is not applied on the
+            // sender (see § THE LOOPBACK) so `OnSyncLobbyPicksMsg` never runs here.
+            SpectatorsWatching = lobby.SpectatorCount();
+
             OnLobbyPicksSynced?.Invoke(table);
             OnLobbyRosterSynced?.Invoke(seats);
         }
+
+        /// <summary>
+        /// How many people are in the room without a seat, as the host last said.
+        ///
+        /// ⚠️ REPLICATED RATHER THAN COUNTED, for the reason `LobbySeatInfo`'s header gives: a
+        /// client's own `LobbySession` is deliberately not populated, so asking it is asking a
+        /// table nobody fills in.
+        /// </summary>
+        public static int SpectatorsWatching { get; private set; }
 
         private void OnSyncLobbyPicksMsg(ulong senderClientId, FastBufferReader reader)
         {
@@ -2775,6 +2804,16 @@ namespace TumbangPreso.Net
                     _replicatedSeats[seat] = info;
                 }
                 if (i < seats.Length) seats[i] = info;
+            }
+
+            // ⚠️ READ AFTER THE SEATS AND ONLY IF IT IS THERE. `FastBufferReader` throws past the
+            // end of a payload, and a message handler that throws drops everything queued behind
+            // it. Protocol 13 guarantees a sender that writes this field, and the length check is
+            // what makes a mixed-build room a missing NUMBER rather than a dead lobby.
+            if (reader.Length > reader.Position)
+            {
+                reader.ReadValueSafe(out int watching);
+                SpectatorsWatching = Mathf.Max(0, watching);
             }
 
             var table = new int[Balance.PlayerCount * 4];

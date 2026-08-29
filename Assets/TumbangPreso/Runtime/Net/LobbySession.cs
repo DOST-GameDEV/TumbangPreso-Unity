@@ -55,11 +55,32 @@ namespace TumbangPreso.Net
         public const int MaxPlayers = 4;
 
         /// <summary>
-        /// ⚠️ MaxConnections (12) is deliberately larger than MaxPlayers (4). Four seats is a
-        /// design rule, twelve connections is a capacity ceiling, and the gap is what lets
-        /// spectators attend a full match. Relay allocations use this count.
+        /// How many people may WATCH on top of the four who play.
+        ///
+        /// ⚠️⚠️ 🧑 2026-08-29: *"make it so taht more than 4 ppl can join, like up to 8 ppl can
+        /// join but only the first 4 are players and last 4 are spectators"*. Four seats is a
+        /// design rule and this is the gallery; together they are the room.
+        ///
+        /// ⚠️ THE MECHANISM WAS ALREADY THERE AND ONLY THE CEILING AND THE LOBBY RULE WERE
+        /// WRONG. `Admit` has always answered a seatless arrival with `Seat = -1, Spectator =
+        /// true`, and everything downstream — the camera, the HUD, the ready quorum, the skip
+        /// vote — already excludes them. What refused a fifth person was `RuleOnArrival`'s last
+        /// line, which said `MatchInProgress ? Spectate : Refuse`: **a running match could be
+        /// watched and a LOBBY could not.** That is now `Spectate` either way.
         /// </summary>
-        public const int MaxConnections = 12;
+        public const int MaxSpectators = 4;
+
+        /// <summary>
+        /// ⚠️ MaxConnections is deliberately larger than MaxPlayers. Four seats is a design rule,
+        /// the total is a capacity ceiling, and the gap is what lets spectators attend. Relay
+        /// allocations use this count.
+        ///
+        /// ⚠️⚠️ IT IS DERIVED NOW, AND IT WAS THE LITERAL 12 WITH FOUR SEATS UNDER IT. Two
+        /// numbers with no arithmetic between them is how "how many can watch" became a thing
+        /// nobody could answer without counting: **8 = 4 + 4** says it, and moving either half
+        /// moves the total without a second edit.
+        /// </summary>
+        public const int MaxConnections = MaxPlayers + MaxSpectators;
 
         /// <summary>
         /// ⚠️ THE ALPHABET EXCLUDES EVERY CONFUSABLE CHARACTER. No 0/O, no 1/I/L. A join code
@@ -174,8 +195,25 @@ namespace TumbangPreso.Net
             // 2. A seat is genuinely free.
             if (FreeSeatCount() > 0) return MidMatchRuling.Seat;
 
-            // 3. Full, but a match ending will free seats. Watch until then.
-            return MatchInProgress ? MidMatchRuling.Spectate : MidMatchRuling.Refuse;
+            // 3. Every seat is taken. Watch.
+            //
+            // ⚠️⚠️ IT USED TO BE `MatchInProgress ? Spectate : Refuse`, SO A RUNNING MATCH COULD
+            // BE WATCHED AND A LOBBY COULD NOT. 🧑 2026-08-29: *"make it so taht more than 4 ppl
+            // can join, like up to 8 ppl can join but only the first 4 are players and last 4 are
+            // spectators"*. A fifth person turning up before START MATCH was turned away, and
+            // that is the case a tournament actually has — everybody arrives at once, four sit
+            // down, the rest want to watch the same room rather than be told to come back.
+            //
+            // ⚠️ THE CAPACITY REFUSAL LIVES IN `NetSession.ApproveConnection` AND NOT HERE, and
+            // that split is deliberate. This method answers "what is this person FOR"; the
+            // transport answers "is there room at all", it answers it before a peer record
+            // exists, and it is the only one of the two that can put a sentence on the wire for
+            // the player to read. A refusal invented here would be a peer admitted and then
+            // silently made useless.
+            //
+            // ⚠️ `Refuse` IS STILL REACHABLE AND STILL MEANS SOMETHING: an empty token, on the
+            // first line. That is a malformed arrival rather than a full room.
+            return MidMatchRuling.Spectate;
         }
 
         public PeerRecord Admit(int peerId, string token, string name)
@@ -561,6 +599,34 @@ namespace TumbangPreso.Net
         /// player is not free, and a browser that says 3/4 for a match that will refuse the next
         /// arrival is worse than one that says 4/4.
         /// </summary>
+        /// <summary>
+        /// How many connected peers are watching rather than playing.
+        ///
+        /// ⚠️ IT COUNTS THE FLAG, NOT `PeerCount - SeatedPeerCount`. A peer mid-admission has a
+        /// record with no seat and no spectator flag for one call, and the subtraction would
+        /// report them as an audience member; `Admit`'s own note records the same distinction
+        /// costing the ready gate a press it waited on forever.
+        ///
+        /// ⚠️ AND THE DEDICATED SERVER IS NOT IN THE GALLERY. It is a referee, it is marked
+        /// `Spectator` so nothing hands it a body, and counting it would advertise a room as
+        /// having one more watcher than it has people.
+        /// </summary>
+        public int SpectatorCount()
+        {
+            int watching = 0;
+            foreach (var p in _peers.Values)
+            {
+                if (p == null || !p.Spectator) continue;
+                if (IsSeatlessReferee(p.PeerId)) continue;
+                watching++;
+            }
+
+            return watching;
+        }
+
+        /// <summary>Is there room for one more person, in any role?</summary>
+        public bool HasRoomForAnother() => ConnectedHumanCount() < MaxConnections;
+
         public int OccupiedSeatCount()
         {
             int taken = 0;

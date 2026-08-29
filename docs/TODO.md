@@ -2719,6 +2719,85 @@ tell a real one from the `||` split in two seconds, and then routing the real on
 split sites: that pattern is correct and its own comment at line 1973 records a previous audit
 being fooled by the same shape.
 
+### 83.20 ✅ R WAS READY *AND* REPLAY, AND ONLY THAT OVERLAP WAS ILLEGAL
+
+🧑 2026-08-29: *"theres a conflict, R for spectator map to replay and ready can u pls fix that"*.
+
+The input asset has five keys carrying both a player action and a spectator one — B, C, F, Tab and
+R — and `Rebinding`'s header calls that **legal rather than an oversight**, with a stated rule:
+*"a spectator has no body, so no throw can be curving while that key means show the overlay"*.
+
+⚠️⚠️ **THE RULE IS RIGHT AND R IS THE ONE CASE IT DOES NOT COVER, BECAUSE READY IS THE ONE
+GAMEPLAY ACTION THAT NEEDS NO BODY.** `ReadyGate` and `BufferSkipVote` both read `ReadyUp` from
+whoever presses it regardless of role — `docs/TODO.md` § 78.6 is an entire entry about a
+spectator's R reaching a quorum that excludes them — so one press fired the pre-round ready, the
+buffer-skip vote **and** the replay. Both sides of that overlap are live in the same context, so
+no context check can separate them.
+
+`SpectatorReplay` is **Y** now. ⚠️ **The other four are untouched**: they are a written decision,
+and re-solving them would be a rebind four players have to relearn to fix a fault only one key
+has.
+
+⚠️ **THE SPECTATOR ACTION MOVED, NOT THE PLAYER ONE.** R is taught on the ready prompt, in the
+rebind panel under ROUND AND SCREEN, and by the buffer-skip row; replay is an operator key nobody
+is taught in a match. When two must part, the one with fewer readers moves. Every screen that
+teaches either reads the live binding through `Hud.KeyLabel`, so nothing else had to change.
+
+### 83.21 ✅ EIGHT MAY JOIN: FOUR PLAY AND FOUR WATCH
+
+🧑 2026-08-29: *"make it so taht more than 4 ppl can join, like up to 8 ppl can join but only the
+first 4 are players and last 4 are spectators"*.
+
+⚠️⚠️ **THE MACHINERY WAS ALREADY THERE AND ONE LINE REFUSED IT.** `LobbySession.Admit` has always
+answered a seatless arrival with `Seat = -1, Spectator = true`, and everything downstream already
+excludes a spectator by design: `PlayingPeerCount`, `ReadyVoterCount`, the skip-vote quorum,
+`MatchInstaller`'s body building and the spectator camera. What turned a fifth person away was the
+last line of `RuleOnArrival`:
+
+```csharp
+return MatchInProgress ? MidMatchRuling.Spectate : MidMatchRuling.Refuse;
+```
+
+**A running match could be watched and a LOBBY could not** — which is exactly backwards for the
+case a tournament has, where everybody arrives at once, four sit down and the rest want to be in
+the same room rather than told to come back. It is `Spectate` either way now.
+
+⚠️ **`Refuse` STILL MEANS SOMETHING**: an empty token, on the first line of the method. That is a
+malformed arrival, not a full room.
+
+**The ceiling is 8 and it is arithmetic rather than a literal.** `MaxSpectators = 4` and
+`MaxConnections = MaxPlayers + MaxSpectators`. It was a bare `12` sitting above a bare `4`, and
+two numbers with no arithmetic between them is how "how many can watch" became a question nobody
+could answer without counting.
+
+⚠️ **THE CAPACITY REFUSAL LIVES IN `NetSession.ApproveConnection` AND NOT IN `RuleOnArrival`**, and
+that split is deliberate: the ruling answers *what is this person for*, the transport answers *is
+there room at all*, it answers before a peer record exists, and it is the only one of the two that
+can put a sentence on the wire. The sentence now names both halves — "4 players and 4 spectators"
+— because "Lobby is full" is true of a room with four people and of a room with eight, and only
+one of those tells the reader whether to wait for a seat or for a whole match.
+
+⚠️⚠️ **AND THE GALLERY IS ON SCREEN, WHICH IS THE HALF THAT WOULD HAVE MADE IT LOOK BROKEN.**
+There are four seat plates and a spectator holds no seat, so four people could be in the room with
+nothing anywhere saying so — and "did they even join?" is the first thing anybody asks. The lobby
+heading reads `LOBBY · YOU ARE HOSTING · 3 WATCHING`, and a spectator's own hint line tells them
+how to stop watching.
+
+⚠️ **THE COUNT IS REPLICATED, NOT COUNTED LOCALLY.** `LobbySeatInfo`'s header records that a
+client's own `LobbySession` is deliberately unpopulated, so a client counting its own peers would
+always draw zero. It rides `SyncLobbyPicks`, which already goes out on every seat change, every
+ready press and every world snapshot — exactly when the number can move — rather than becoming a
+fifth message for one int.
+
+⚠️ **THE READER LENGTH-CHECKS BEFORE TAKING IT.** `FastBufferReader` throws past the end of a
+payload and a handler that throws drops everything queued behind it, so a mixed-build room loses a
+NUMBER rather than the lobby.
+
+⚠️ **AND THE HEADING IS FITTED NOW.** `LOBBY · YOU ARE HOSTING · 4 WATCHING` is 38 characters
+where the old string was 23, and this very plate already has a note recording it drawn as
+`LOBBY · YOU ARE HOSTIN` with the SPECTATE button over the last letters. `SetHeadline` measures;
+`SetText` never did.
+
 ---
 
 ## 0 · Hero Strike is being reworked, and the plan is its own file

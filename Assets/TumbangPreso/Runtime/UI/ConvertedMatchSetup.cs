@@ -472,6 +472,18 @@ namespace TumbangPreso.UI
             SceneFlow.StartMatch();
         }
 
+        /// <summary>
+        /// The authored size of the lobby heading, and the ceiling the fit starts from.
+        ///
+        /// ⚠️⚠️ THE HEADING IS FITTED NOW BECAUSE IT GREW. `LOBBY · YOU ARE HOSTING · 4 WATCHING`
+        /// is 38 characters where `LOBBY · YOU ARE HOSTING` was 23, and this file already carries
+        /// a note about that exact plate: *"still reads `LOBBY · YOU ARE HOSTIN` with the SPECTATE
+        /// button over the last letters"*. `SetText` writes the string and asks nothing about the
+        /// box; `SetHeadline` measures it and steps down, and § 83.6 made that answer correct on
+        /// the frame the panel opens instead of one frame later.
+        /// </summary>
+        private const int LobbyHeadingSize = 28;
+
         private void BuildRightPanelNetwork()
         {
             var heading = Node("SeatHeading");
@@ -1909,7 +1921,26 @@ namespace TumbangPreso.UI
             // Heading & hints
             if (IsLobby && isNetworked)
             {
-                SetText("SeatHeading", NetAuthority.IsHost ? "LOBBY  ·  YOU ARE HOSTING" : "LOBBY  ·  CONNECTED");
+                // ⚠️⚠️ THE GALLERY IS NAMED IN THE HEADING, BECAUSE IT HAS NOWHERE ELSE TO GO.
+                // 🧑 2026-08-29: *"make it so taht more than 4 ppl can join, like up to 8 ppl can
+                // join but only the first 4 are players and last 4 are spectators"*. There are
+                // four seat plates and a spectator holds no seat, so without this line four
+                // people can be in the room with nothing on screen saying they are there — and
+                // "did they join?" is the first question anybody asks.
+                //
+                // ⚠️ IT IS THE REPLICATED COUNT, NOT A LOCAL ONE. `LobbySeatInfo`'s header
+                // records that a client's own `LobbySession` is deliberately unpopulated, so a
+                // client counting its own peers would always draw zero. `MatchRpc.
+                // SpectatorsWatching` rides the roster broadcast.
+                //
+                // ⚠️ AND IT IS OMITTED AT ZERO RATHER THAN DRAWN AS `0 WATCHING`. A count of
+                // nothing is a row that teaches the player a number to ignore.
+                int watching = MatchRpc.SpectatorsWatching;
+                string room = NetAuthority.IsHost ? "LOBBY  ·  YOU ARE HOSTING" : "LOBBY  ·  CONNECTED";
+                if (watching > 0)
+                    room += watching == 1 ? "  ·  1 WATCHING" : $"  ·  {watching} WATCHING";
+
+                SetHeadline("SeatHeading", room, LobbyHeadingSize);
                 // ⚠️ SHORT ENOUGH TO FIT THE SLOT THE LAYOUT GIVES IT. The first version of these
                 // two ran to three wrapped lines in a box the vertical group had sized for two,
                 // and the third line was drawn underneath the seat rows. `FitEverything` now asks
@@ -1919,7 +1950,9 @@ namespace TumbangPreso.UI
                         ? (AIController.BotsEnabled
                             ? "You pick the map and the mode. Click a free seat to move. Empty seats are bots."
                             : "Bots are off. Fill all four seats with players before starting.")
-                        : "The leader picks the map and the mode. Click a free seat to move.");
+                        : GameLaunch.Spectator
+                            ? "You are watching. Click a free seat to join the match."
+                            : "The leader picks the map and the mode. Click a free seat to move.");
 
                 // Network rows
                 if (_addressRow != null)
