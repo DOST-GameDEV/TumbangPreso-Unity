@@ -17,7 +17,7 @@ namespace TumbangPreso.EditorTools
         /// `fpp_nemu_showcase.png` unversioned for its whole life, which is why nobody could
         /// review two iterations of an arm in one sitting.
         /// </summary>
-        private const string Version = "v18";
+        private const string Version = "v21";
         private const int Width = 1280;
         private const int Height = 720;
 
@@ -47,11 +47,25 @@ namespace TumbangPreso.EditorTools
         /// ⚠️ THE WHOLE ROSTER GETS ONE SHOT EACH, ON ONE CHARACTER, because "does the held shoe
         /// wear its own skin" is a question about the SHOE and asking it eighteen times per shoe
         /// is eighteen times the render for no more information.
+        ///
+        /// ⚠️⚠️ THESE ARE `Roster.Slippers` IDS AND A WRONG ONE IS SKIPPED, NOT REPORTED.
+        /// `BuildSlipperSource` logs a warning and returns null, the loop does `continue`, and the
+        /// sweep quietly comes back one picture short. It read `classic`, which is not an id in
+        /// this game, so **every run this tool has ever made produced NINE shoes while the array
+        /// said ten** and `tsinelas`, the default shoe and roster row 0, had never been
+        /// photographed in the hand at all. Found on 2026-08-31 while checking the § 87 colour fix
+        /// against every skin.
+        ///
+        /// ⚠️ THE LIST TO CHECK AGAINST IS `Roster.Slippers`, NOT THE `Roster/` FOLDER. There are
+        /// eleven `slipper_*.asset` files and only TEN of them are in `RosterBook.Slippers`:
+        /// `slipper_pangbanyo.asset` is an orphan left behind when that shoe was folded into the
+        /// PAMBAHAY row rather than appended as its own, which `Roster.Slippers` explains at
+        /// length. Reading the folder would put it back in a sweep it is not in the game.
         /// </summary>
         private static readonly string[] SlipperSweep =
         {
-            "sike", "classic", "spartan", "pantulog", "crocs",
-            "heels", "loafers", "sandals", "pambahay", "alpombra",
+            "tsinelas", "crocs", "pantulog", "sike", "spartan",
+            "alpombra", "pambahay", "heels", "sandals", "loafers",
         };
 
         private static readonly string[] Characters =

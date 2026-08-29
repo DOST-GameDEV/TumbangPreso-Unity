@@ -296,36 +296,101 @@ namespace TumbangPreso.CameraSystem
             // The mesh changed, so the length-normalising scale has to be recomputed.
             NormaliseHeldSize();
 
-            // ⚠⚠⚠ THE COPIED MATERIALS ARE USED VERBATIM, AND A SECOND TOON PASS USED TO RUN HERE.
-            // 🧑 2026-08-30, of HEELS in first person: *"i want it to look like the one in character
-            // select"*, *"remvoe the shaders for it or wwathever is fkn with its colior"*.
+            // ⚠️⚠️⚠️ AND THE PLACEHOLDER TINT IS CLEARED OFF THE RENDERER, WHICH IS THE WHOLE
+            // "EVERY TSINELAS IS BROWN IN FIRST PERSON" BUG AND IT SURVIVED THREE FIXES ABOVE.
+            // 🧑 2026-08-29 through 2026-08-31, four times: *"ingame shader messes up the color of
+            // slippers"*, *"i want it to look like the one in character select"*, *"i want them to
+            // reflect their actual colors"*, *"its all turning brown and ugly, almost all detail
+            // becomes deleted too"*.
             //
-            // The line that stood here was `ToonSkin.ApplySlipper(_heldRenderer,
-            // PropOutlineWidth)`, and its reason was real: the materials copied above were
-            // dressed against the WORLD object's scale, and this copy is fistful-sized, so the
-            // ink border is derived from a different `EffectiveScale` and comes out a different
-            // thickness. Re-deriving it made the border match across the two views.
+            // `Build` calls `MaterialKit.Dress(_heldRenderer, UiTheme.PropFoam)` to give the
+            // placeholder shoe a material at all, and `Dress` writes its tint into a
+            // MaterialPropertyBlock. **A property block is per-RENDERER and it overrides the named
+            // property on EVERY submesh, whatever material is sitting in the slot.** So #7a5741
+            // was still being multiplied over every surface of every skin long after the mesh and
+            // the materials had been copied correctly, and `Toon.shader` does `base *= _Color.rgb`
+            // with `_MainTex` defaulting to white. `tsinelas_crocs.glb` and `tsinelas_heels.glb`
+            // carry NO textures at all, only a `baseColorFactor` per material, so for them
+            // `_Color` is the entire appearance: the block did not tint the shoe, it REPLACED it.
+            // A white croc, a black heel and a five-surface classic all rendered as the same flat
+            // brown slab, which is "almost all detail becomes deleted" exactly.
             //
-            // ⚠⚠ BUT IT BUILT A NEW VARIANT RATHER THAN RETUNING THE ONE IT WAS GIVEN, so the
-            // shoe in the hand was a SECOND dressing of the same skin rather than the same
-            // dressing. `ToonSkin.Variant` resolves back through `Origin` and rebuilds from the
-            // source material, and for a skin with **no texture** — heels is the only tsinelas in
-            // the roster with zero images, see `docs/TODO.md` § 85.5 — the whole appearance rests
-            // on that one rebuild landing identically. It did not, and the only surface where it
-            // showed is the one surface nobody could compare side by side.
+            // ⚠️⚠️ THIS IS WHY EVERY EARLIER FIX LOOKED WRONG AND WAS NOT. Copying the mesh,
+            // padding the material array to the submesh count and dropping the second toon pass
+            // were all real faults and all correctly fixed, and none of them could ever have
+            // changed the colour, because none of them touch the block. The pass that removed
+            // `ToonSkin.ApplySlipper` from here read "the rebuild does not land identically" off a
+            // frame that was brown for this reason instead, and the pass before it flattened the
+            // shading ramp for every shoe in the game off the same frame. See
+            // `ToonSkin`'s § THE TSINELAS FLAT SKIN, REVERTED.
             //
-            // Copying and stopping makes the hand copy identical to the world copy **by
-            // construction**, which is the property he asked for in one sentence: the tsinelas on
-            // your arm is the tsinelas everybody else can see and the one on the character screen.
+            // ⚠️ IT MIRRORS THE WORLD SLIPPER'S BLOCK RATHER THAN JUST CLEARING ITS OWN, and that
+            // is the same "identical by construction" rule the material copy above follows.
+            // `Slipper.RefreshHighlight` writes `_RimStrength`, `_RimColor` and `_OutlineColor`
+            // into the world object's block for the owner glow and the landed highlight; taking
+            // the block wholesale means the shoe in your hand glows when the one on the ground
+            // glows, and it means there is exactly one place a first-person-only tint could come
+            // from. Clearing alone would fix the brown and leave the two views diverging again the
+            // moment anything else writes a block.
             //
-            // ⚠️ THE COST IS THE BORDER, AND IT IS THE RIGHT TRADE TO OFFER HIM. The ink is now
-            // derived from the world object's scale on an object drawn much smaller, so it reads
-            // heavier in first person than in third. That is one visible number against a wrong
-            // colour on the prop the player looks at most, and § 78.7 has already narrowed this
-            // ink once on his instruction. **If the border reads too thick, re-derive the WIDTH
-            // alone** — `_heldRenderer.sharedMaterial.SetFloat` on the outline uniform — rather than
-            // putting this whole call back, which is what re-introduces the rebuild.
+            // ⚠️ `Clear()` FIRST, BECAUSE `GetPropertyBlock` DOES NOT PROMISE TO EMPTY ITS
+            // DESTINATION. A source renderer with no block of its own may leave the buffer exactly
+            // as it was, which on a reused static buffer is the previous renderer's contents.
+            // `MaterialKit.Block` carries the same note for the same reason.
+            if (_heldRenderer != null && sourceRenderer != null)
+            {
+                HeldBlock.Clear();
+                sourceRenderer.GetPropertyBlock(HeldBlock);
+                _heldRenderer.SetPropertyBlock(HeldBlock);
+            }
+
+            // ⚠️⚠️ THE TOON PASS IS RE-DERIVED AT THE VIEWMODEL'S SCALE, AND IT IS BACK ON PURPOSE.
+            // It was removed on 2026-08-30 to make the hand copy identical to the world copy, on
+            // the theory that rebuilding a variant for a texture-less skin like HEELS was what was
+            // changing its colour. It was not; the block above was. What removing it DID cost is
+            // recorded in its own removal note: the copied materials were dressed against the
+            // WORLD object's scale, `ToonSkin` inflates its ink hull in MODEL space, and this copy
+            // is fistful-sized, so a border derived for a 0.43 m shoe on the road renders as a
+            // slab of ink on the same shoe held at arm's length.
+            //
+            // ⚠️ AND IT IS CHEAPER THAN IT LOOKS, BECAUSE `Variant` IS CACHED AND `Origin` MAKES
+            // IT IDEMPOTENT. The materials copied above are already `ToonSkin` variants; `Origin`
+            // resolves each one back to the glTF material it was built from, so this asks the
+            // cache for (that same source, this width) and gets one material per skin per width
+            // for the life of the process. No material is built after the first carry.
+            //
+            // ⚠️ WHAT IT DOES COST IS A SECOND `sharedMaterials` WRITE PER CALL, and that is
+            // accepted rather than optimised away. `CopySurfaces` above rewrites the slots with
+            // the WORLD's variants every call, so `Apply`'s "skip the write when nothing moved"
+            // guard never fires here. The obvious fix is to skip both when the skin has not
+            // changed, and the obvious key for that is `Slipper.SkinIndex`. **But
+            // `FppArmsSnapshotTool.BuildSlipperSource` leaves it at 0 for all ten shoes**, so a
+            // guard on it would make the capture tool render one skin ten times and report it as
+            // ten. One array marshal on one renderer is not worth a trap that silently
+            // invalidates the only pictures anyone reviews these shoes from.
+            Visual.ToonSkin.ApplySlipper(_heldRenderer, Visual.ToonSkin.PropOutlineWidth);
         }
+
+        /// <summary>
+        /// ⚠️ ONE BLOCK, REUSED. Same reasoning as `MaterialKit.Block`: a MaterialPropertyBlock is
+        /// a write buffer rather than state, `MatchSkin` runs on every carry-skin poll, and a
+        /// fresh one per call would allocate on a per-frame path.
+        ///
+        /// ⚠️⚠️ AND IT IS BUILT LAZILY RATHER THAN IN A STATIC FIELD INITIALISER, WHICH IS NOT A
+        /// STYLE CHOICE. `MaterialKit` gets away with `static readonly` because it is a static
+        /// class, so its type initialiser runs on first use inside a method. This is a
+        /// MonoBehaviour, so its type initialiser runs while Unity is CONSTRUCTING the component,
+        /// and `MaterialPropertyBlock`'s native constructor refuses that outright:
+        /// *"CreateImpl is not allowed to be called from a MonoBehaviour constructor (or instance
+        /// field initializer), call it in Awake or Start instead."* It does not fail quietly
+        /// either. The whole type fails to initialise, so every test that so much as adds this
+        /// component dies with a `TypeInitializationException`, which is what four
+        /// `HeroPresentationTests` did the first time this field was written the obvious way.
+        /// </summary>
+        private static MaterialPropertyBlock _heldBlock;
+
+        private static MaterialPropertyBlock HeldBlock =>
+            _heldBlock ?? (_heldBlock = new MaterialPropertyBlock());
 
         /// <summary>Give <paramref name="to"/> one material per submesh, taken from
         /// <paramref name="from"/> and padded with its last entry. See the note at the call
@@ -907,6 +972,11 @@ namespace TumbangPreso.CameraSystem
                 mf.sharedMesh = slipperMesh;
 
                 _heldRenderer = slipperGo.AddComponent<MeshRenderer>();
+                // ⚠️⚠️ THIS TINT IS A PLACEHOLDER AND IT GOES INTO A PROPERTY BLOCK, WHICH MEANS
+                // IT OUTLIVES EVERY MATERIAL ASSIGNED AFTER IT. `MatchSkin` is what takes it back
+                // off, and for two days it did not: read its note before changing anything here.
+                // The `Dress` call itself has to stay, because a MeshRenderer added in code has no
+                // material at all and Unity draws that in magenta.
                 Visual.MaterialKit.Dress(_heldRenderer, UI.UiTheme.PropFoam);
 
                 NormaliseHeldSize();

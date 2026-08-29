@@ -562,7 +562,7 @@ namespace TumbangPreso.UI
         /// which tab it is on, so it is the thing that tells us.
         ///
         /// ⚠️ IT DEFAULTS TO FALSE, so every existing caller keeps the shading it had and only
-        /// the shoe tab changes. See `ToonSkin.SlipperShadowBand`.
+        /// the shoe tab changes. See `ToonSkin.ApplySlipper`.
         /// </summary>
         public bool ShowingSlipper { get; set; }
 

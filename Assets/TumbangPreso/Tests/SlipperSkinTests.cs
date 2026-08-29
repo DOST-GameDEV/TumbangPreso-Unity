@@ -6,24 +6,31 @@ using UnityEngine;
 namespace TumbangPreso.Tests
 {
     /// <summary>
-    /// The tsinelas flat skin: that it is applied, that it is applied EVERYWHERE a shoe is
-    /// dressed, and above all that it reaches nothing else.
+    /// The tsinelas skin: that a shoe wears the SAME toon shading as everything else in the game,
+    /// that every screen dresses it the same way, and that the first-person copy carries no tint
+    /// of its own.
     ///
-    /// ⚠️⚠️ THE SECOND AND THIRD CLAIMS ARE THE ONES 🧑 ASKED FOR IN TERMS. 2026-08-29: *"pls
-    /// overhaul how shader applies to slippers AND ONLY SLIPPERS"*, and *"make sure it doesnt
-    /// affect shader for anything else and it actually reflects in the game as well as all
-    /// maps"*. A test that only checked the shoe would pass while the cans went flat with it.
+    /// ⚠️⚠️ THIS FILE USED TO ASSERT THE OPPOSITE OF ITS FIRST CLAIM, AND THE REVERSAL IS THE
+    /// POINT. It was written on 2026-08-29 to lock in a shoe-only flattening of the two-band ramp
+    /// (`_ShadowBand` 0.86 over a `_BandEdge` of 0.30 against the shader's 0.45 over 0.03), asked
+    /// for in these terms: *"js remove or severely lessen shader coloring effect on slippers as a
+    /// whole"*. It even carried a guard specifically to fail a later pass that set the numbers
+    /// back to the defaults.
     ///
-    /// ⚠️ THE LEAK IS A REAL RISK RATHER THAN A HYPOTHETICAL, WHICH IS WHY IT IS ASSERTED FROM
-    /// BOTH SIDES. `ToonSkin.Variant` caches on (source material, key), and a slipper and a can
-    /// can arrive sharing one imported source material. Before the flat flag was added to the
-    /// key, whichever was dressed first would have handed its shading to the other. That is the
-    /// same fault the palette note in `ToonSkin` records for the cast, where twelve characters
-    /// sharing one source material all got whichever palette was applied first.
+    /// That guard was doing its job against the wrong target. The colour 🧑 was reacting to came
+    /// from a MaterialPropertyBlock on the viewmodel renderer painting every held tsinelas
+    /// #7a5741, not from the ramp, so the flattening could never have fixed it and only cost the
+    /// shoes their form: these models are `baseColorFactor` with no textures, so the ramp is the
+    /// only thing separating an ankle strap from the sole behind it. `ViewmodelArms.MatchSkin` has
+    /// the diagnosis and `ToonSkin`'s § THE TSINELAS FLAT SKIN, REVERTED has the history.
+    ///
+    /// 🧑 2026-08-31, with the original render beside the build: *"the shaders were okay when i
+    /// added the slippers"*, *"it only broke when i asked [for it] to remove them / lessen the
+    /// effect on the slippers"*.
     /// </summary>
     public class SlipperSkinTests
     {
-        /// <summary>`Toon.shader`'s own defaults, which is what every non-slipper must keep.</summary>
+        /// <summary>`Toon.shader`'s own defaults, which is now what a shoe must keep too.</summary>
         private const float DefaultShadowBand = 0.45f;
         private const float DefaultBandEdge = 0.03f;
 
@@ -33,18 +40,21 @@ namespace TumbangPreso.Tests
             return go.GetComponent<Renderer>();
         }
 
+        /// <summary>
+        /// ⚠️⚠️ A SHOE AND A CAN SHARING A SOURCE MATERIAL COME OUT SHADED THE SAME, and that is
+        /// the assertion the old flat-skin test inverted. Both must sit on the shader's own ramp:
+        /// a shoe that is quietly flattened again fails here rather than being noticed weeks later
+        /// off a screenshot, which is how the last one was found.
+        /// </summary>
         [Test]
-        public void ASlipperIsShadedFlatAndAPropSharingItsMaterialIsNot()
+        public void ASlipperWearsTheSameTwoBandRampAsEveryOtherProp()
         {
             var shoe = Cube();
             var can = Cube();
 
-            // ⚠️ THE SAME SOURCE MATERIAL ON BOTH, WHICH IS THE WHOLE POINT OF THE TEST. Two
-            // primitives share one default material, so this reproduces exactly the condition
-            // the cache key has to survive: one source, two categories, dressed in one session.
             Assert.AreSame(shoe.sharedMaterial, can.sharedMaterial,
                 "the two primitives no longer share a source material, so this test is not "
-                + "exercising the cache collision it was written for.");
+                + "comparing the two categories against one common starting point.");
 
             ToonSkin.ApplySlipper(shoe, ToonSkin.PropOutlineWidth);
             ToonSkin.Apply(can, ToonSkin.PropOutlineWidth);
@@ -52,46 +62,45 @@ namespace TumbangPreso.Tests
             var shoeMat = shoe.sharedMaterial;
             var canMat = can.sharedMaterial;
 
-            Assert.AreNotSame(shoeMat, canMat,
-                "the slipper and the can came out wearing the SAME material, so the flat flag is "
-                + "not part of the cache key and one category's shading is being handed to the "
-                + "other.");
-
-            Assert.AreEqual(ToonSkin.SlipperShadowBand, shoeMat.GetFloat("_ShadowBand"), 0.0001f,
-                "the slipper is not carrying the flat shadow band.");
-            Assert.AreEqual(ToonSkin.SlipperBandEdge, shoeMat.GetFloat("_BandEdge"), 0.0001f,
-                "the slipper is not carrying the widened band edge.");
+            Assert.AreEqual(DefaultShadowBand, shoeMat.GetFloat("_ShadowBand"), 0.0001f,
+                "a tsinelas came out with a shadow band that is not the shader's default, so the "
+                + "shoe-only flattening is back. It was reverted on 2026-08-31: the colour it was "
+                + "written to fix came from a property block on the viewmodel renderer, and "
+                + "flattening the ramp only deletes the form of a texture-less shoe. See "
+                + "ToonSkin's THE TSINELAS FLAT SKIN, REVERTED.");
+            Assert.AreEqual(DefaultBandEdge, shoeMat.GetFloat("_BandEdge"), 0.0001f,
+                "a tsinelas came out with a widened band edge, so the shoe-only flattening is "
+                + "back. See ToonSkin's THE TSINELAS FLAT SKIN, REVERTED.");
 
             Assert.AreEqual(DefaultShadowBand, canMat.GetFloat("_ShadowBand"), 0.0001f,
-                "a NON-slipper prop came out with a shadow band that is not the shader's "
-                + "default, so the tsinelas flattening has leaked onto everything else. This is "
-                + "the exact thing that was ruled out: \"make sure it doesnt affect shader for "
-                + "anything else\".");
+                "a non-slipper prop is no longer on the shader's default shadow band.");
             Assert.AreEqual(DefaultBandEdge, canMat.GetFloat("_BandEdge"), 0.0001f,
-                "a NON-slipper prop came out with a widened band edge, so the flattening has "
-                + "leaked.");
+                "a non-slipper prop is no longer on the shader's default band edge.");
 
             Object.DestroyImmediate(shoe.gameObject);
             Object.DestroyImmediate(can.gameObject);
         }
 
+        /// <summary>
+        /// ⚠️ THE INK OUTLINE IS THE OTHER HALF OF THE LOOK HE ASKED TO HAVE BACK. A shoe dressed
+        /// through `ApplySlipper` has to come out on the toon shader carrying a non-zero hull
+        /// width on its base surface, or it renders as a bare silhouette with no border at all.
+        /// </summary>
         [Test]
-        public void TheFlatSkinIsAMeaningfulLesseningRatherThanANoOp()
+        public void ASlipperKeepsItsInkOutline()
         {
-            // ⚠️ A GUARD ON THE NUMBERS THEMSELVES, so a later "tidy up" that sets these back to
-            // the shader defaults fails here rather than silently undoing the request. 🧑 asked
-            // to *"severely lessen"* the shading, not to nudge it.
-            Assert.Greater(ToonSkin.SlipperShadowBand, DefaultShadowBand + 0.25f,
-                "SlipperShadowBand is no longer a severe lessening of the two-band ramp.");
+            var shoe = Cube();
+            ToonSkin.ApplySlipper(shoe, ToonSkin.PropOutlineWidth);
 
-            Assert.Less(ToonSkin.SlipperShadowBand, 1.0f,
-                "SlipperShadowBand of 1.0 is fully unlit, which removes the form of the shoe "
-                + "entirely. tsinelas_sike.mtl's header records that failure: with no shading "
-                + "left the shoe reads as a flat silhouette with the swoosh floating on it.");
+            var mat = shoe.sharedMaterial;
 
-            Assert.Greater(ToonSkin.SlipperBandEdge, DefaultBandEdge * 4.0f,
-                "SlipperBandEdge is still a hard step, so the ramp still cuts a visible seam "
-                + "across a curved upper.");
+            Assert.IsTrue(mat.HasProperty("_OutlineWidth"),
+                "a dressed tsinelas is not on the toon shader at all, so it has no outline pass.");
+            Assert.Greater(mat.GetFloat("_OutlineWidth"), 0.0f,
+                "a dressed tsinelas came out with a zero-width ink hull on its base surface, so "
+                + "the shoe renders with no border.");
+
+            Object.DestroyImmediate(shoe.gameObject);
         }
 
         /// <summary>
@@ -106,7 +115,7 @@ namespace TumbangPreso.Tests
         /// question is a textual one. `SceneScriptCheck` makes the same trade.
         /// </summary>
         [Test]
-        public void EverySiteThatDressesASlipperUsesTheFlatSkin()
+        public void EverySiteThatDressesASlipperUsesTheSlipperEntryPoint()
         {
             const string Root = "Assets/TumbangPreso/";
 
@@ -137,6 +146,37 @@ namespace TumbangPreso.Tests
                     + "these four places changes appearance when it changes screens, which is "
                     + "the bug docs/TODO.md § 79.7 already was.");
             }
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE FIRST-PERSON COPY MUST TAKE THE WORLD COPY'S PROPERTY BLOCK, AND THIS IS THE
+        /// REGRESSION GUARD FOR THE BROWN. `ViewmodelArms.Build` has to `Dress` the placeholder
+        /// renderer or Unity draws it magenta, `Dress` writes its tint into a block, and a block
+        /// overrides `_Color` on every submesh whatever material is in the slot. Without the
+        /// mirror in `MatchSkin` every tsinelas in the player's own hands renders #7a5741.
+        ///
+        /// ⚠️ READ AS TEXT FOR THE SAME REASON AS THE CALL-SITE TEST ABOVE: asserting it live
+        /// needs a camera rig, a carrier and a spawned slipper, and the claim is about which two
+        /// lines exist in one method.
+        /// </summary>
+        [Test]
+        public void TheViewmodelCopyTakesTheWorldSlippersPropertyBlock()
+        {
+            const string File_ = "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.cs";
+
+            Assert.IsTrue(File.Exists(File_), File_ + " is missing");
+
+            string text = File.ReadAllText(File_);
+
+            Assert.IsTrue(text.Contains("sourceRenderer.GetPropertyBlock(HeldBlock);"),
+                "MatchSkin no longer reads the world slipper's property block, so the viewmodel "
+                + "copy keeps whatever tint Build left on it. That is the bug where every "
+                + "tsinelas rendered flat brown in first person.");
+
+            Assert.IsTrue(text.Contains("_heldRenderer.SetPropertyBlock(HeldBlock);"),
+                "MatchSkin no longer writes a property block onto the held renderer, so the "
+                + "placeholder PropFoam tint from Build is never cleared and every held tsinelas "
+                + "renders flat brown.");
         }
     }
 }

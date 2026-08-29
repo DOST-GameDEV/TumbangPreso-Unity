@@ -9,6 +9,18 @@ items move to **Closed** at the bottom with one line on how they were verified.
 Read [`VISION.md`](VISION.md) first if you have not. Several entries here only make sense
 against the readability budget in its § 2.
 
+⚠️ **The live-service and esport plan lives in [`FUTURE.md`](FUTURE.md), NOT here.** Accounts,
+profiles, stats, matchmaking, ranked, progression, cosmetics, mastery paths, controller, mobile,
+accessibility and tournaments are eighteen ordered phases there, each with a prompt written to
+brief a whole session. **None of it is scheduled and none of it is open work**, which is exactly
+why it is a separate file: an entry in this list is something somebody should do, and that plan is
+something somebody might decide to do. Written 2026-08-31 on 🧑's brief.
+
+⚠️ **One item in it is NOT future work.** `FUTURE.md` § 17's first paragraph: the nationals are in
+General Santos City and venue internet cannot be assumed, so a full four-player match must be
+startable and completable on LAN with the internet physically unplugged. `LanBeacon` exists; what
+has never been tested is every screen between the menu and the match with UGS unreachable.
+
 ---
 
 ## 71 · The 2026-08-29 report, and the two faults only a non-host could see
@@ -4099,6 +4111,138 @@ the condition that entry describes. **§ 78.12 was closed on 🧑's report that 
 is reopened here on evidence.** Its own analysis stands unchanged and so does its instruction: take
 the second of its three options — measure the gap in the anchor's LOCAL space so the rotating
 world-space AABB stops moving the baseline — rather than raising the bound.
+
+---
+
+## 87 · Every tsinelas rendered flat brown in first person, and the fix for it flattened the shading on all of them ✅ FIXED 2026-08-31
+
+🧑 2026-08-31, with a screenshot of CROCS on the road beside CROCS in his own hand: *"wtf are the
+shaders doing for FPP view"*, *"slippers on ground look completely diff"*, *"i want them to reflect
+their actual colors wtf"*, *"its all turning brown and ugly, almost all detail becomes deleted
+too"*. Then, with the original HEELS render beside the build: *"the shaders were okay when i added
+the slippers"*, *"it only broke when i asked [for it] to remove them / lessen the effect on the
+slippers"*, *"my problem with it is that it made some slippers look ugly and in ur process of
+fixing it u made all slippers look ugly"*.
+
+**This is one bug, reported five times over three days, and four separate fixes were shipped
+against it without any of them being able to touch it.**
+
+### 87.1 ✅ A MaterialPropertyBlock WAS PAINTING EVERY HELD SLIPPER #7a5741
+
+`ViewmodelArms.Build` creates the held shoe from code, and a `MeshRenderer` added in code has no
+material, which Unity draws in magenta. So it calls `MaterialKit.Dress(_heldRenderer,
+UiTheme.PropFoam)`, and `Dress` writes its tint into a **MaterialPropertyBlock**.
+
+⚠️⚠️ **A PROPERTY BLOCK IS PER-RENDERER AND IT OVERRIDES THE NAMED PROPERTY ON EVERY SUBMESH,
+WHATEVER MATERIAL IS SITTING IN THE SLOT.** Nothing ever cleared it. `MatchSkin` copied the mesh
+and copied one material per submesh off the world object, correctly, and then the block overrode
+`_Color` on all of them anyway.
+
+The numbers are why it deleted the detail as well as the colour. `Toon.shader` does
+`base *= _Color.rgb` with `_MainTex` defaulting to white, and the shoes are `baseColorFactor` and
+nothing else:
+
+| skin | materials | textures |
+|---|---|---|
+| `tsinelas_crocs.glb` | 0.915 white, 0.027 black, 0.5 grey | **none** |
+| `tsinelas_heels.glb` | 0.020, 0.000, 0.077 | **none** |
+
+With no texture, `_Color` **is** the entire appearance of the surface. The block did not tint those
+shoes, it **replaced** them: a white croc, a black heel and the five-surface `tsinelas_classic` all
+rendered as the same flat #7a5741 slab in the hand while every peer, the ground copy and the
+character screen showed the real thing. "Almost all detail becomes deleted" is that, exactly.
+
+**The fix** is in `ViewmodelArms.MatchSkin`: mirror the WORLD slipper's property block onto the
+held renderer rather than only clearing the placeholder. Same "identical by construction" rule the
+material copy already follows, and it carries `Slipper.RefreshHighlight`'s `_RimStrength`,
+`_RimColor` and `_OutlineColor` across, so the shoe in your hand glows when the one on the ground
+does. `SlipperSkinTests.TheViewmodelCopyTakesTheWorldSlippersPropertyBlock` is the regression
+guard.
+
+### 87.2 ✅ WHY FOUR EARLIER FIXES ALL MISSED IT, WHICH IS THE PART WORTH KEEPING
+
+Every one of these was a real fault, was correctly diagnosed, and was correctly fixed. **Not one of
+them touches a property block, so not one of them could ever have changed the colour**, and each
+was signed off against a frame that was still brown for the reason above.
+
+1. **The hardcoded placeholder mesh** (b7c4cb2d). The viewmodel wore `tsinelas_classic` whatever
+   you picked. Fixed: the mesh now comes off the carried object.
+2. **The early return that guarded the material copy with the mesh check** (0e019557). A path that
+   arrived with the mesh already right kept the placeholder dressing. Fixed: the materials are
+   copied unconditionally.
+3. **`sharedMaterial` assigning an array of length one.** A renderer silently does not draw
+   submeshes past the end of its material array, so multi-surface skins lost every surface but the
+   first. Fixed by `CopySurfaces`.
+4. **The second toon pass** (§ 85, 2026-08-30). Removed on the theory that rebuilding a variant for
+   a texture-less skin was what changed its colour. It was not. **This one is now reverted** (87.4).
+
+⚠️ **The lesson is a general one and it is worth more than the fix.** A renderer's final colour
+comes from three layers, and only two of them are visible in the inspector: the shader's
+properties, the material's values, and **the property block on top of both**. When a surface reads
+as one flat colour across skins that share no material, the question is which renderer is carrying
+a block, not how the light is hitting it. A ramp cannot make three materials agree on a colour. A
+block can, and did.
+
+### 87.3 ✅ THE TOON PASS IS BACK ON THE FIRST-PERSON COPY
+
+`ToonSkin.ApplySlipper(_heldRenderer, PropOutlineWidth)` returns to the end of `MatchSkin`. Its own
+removal note recorded the cost of taking it out and that cost was real: `ToonSkin` inflates the ink
+hull in MODEL space, the copied materials were dressed against the WORLD object's scale, and the
+viewmodel copy is fistful-sized, so an ink border derived for a 0.43 m shoe lying on the road
+renders as a slab on the same shoe held at arm's length.
+
+⚠️ It is cheaper than it looks. `Variant` is cached on (source material, quantised width) and
+`Origin` resolves an already-dressed material back to what it was built from, so this asks the
+cache for one material per skin per width for the life of the process, and `Apply` skips the
+`sharedMaterials` write entirely when nothing moved.
+
+### 87.4 ✅ THE TSINELAS FLAT SKIN IS REVERTED, AND HE REVERSED THE INSTRUCTION HIMSELF
+
+`ToonSkin.SlipperShadowBand` 0.86 and `SlipperBandEdge` 0.30 are **deleted**, along with the `flat`
+flag through `Apply`, `Variant` and the cache key. Shoes are back on the shader's own 0.45 over
+0.03, which is what every other prop and the whole cast wear.
+
+It was added on 2026-08-29 for *"js remove or severely lessen shader coloring effect on slippers as
+a whole"*. That was a report written against the brown hand copy, not against the ramp, so
+flattening could never have fixed it, and on these models it cost real form: with no textures
+anywhere in the newer skins, the two-band ramp is the **only** thing in the frame separating an
+ankle strap from the sole behind it. At 0.86 over 0.30 there is 14 per cent of falloff smeared
+across a third of the ramp, so HEELS rendered as a silhouette with the ink outline doing all the
+work. That is the render he held up beside the original and called ugly.
+
+⚠️ `SlipperSkinTests` carried a guard written specifically to fail a later pass that set these back
+to the defaults. **That guard was doing its job against the wrong target**, and it has been
+inverted: the file now asserts that a shoe and a can sharing a source material come out shaded the
+same, and that a dressed shoe keeps a non-zero ink hull.
+
+⚠️ **`ApplySlipper` STAYS as the slipper entry point even though it is now the same dressing as
+`Apply`.** Five unrelated files skin a shoe (`MatchInstaller`, `ViewmodelArms`, `ModelPreview`,
+`ModelSheet`, and the editor probes) and `SlipperSkinTests` reads all of them as text; keeping one
+named entry point is what makes "every screen shows the same shoe" checkable, and it is where the
+next shoe-only change would go.
+
+### 87.5 ✅ THE FPP SWEEP HAD BEEN SHOOTING NINE SHOES AND REPORTING TEN
+
+Found while checking 87.1 against every skin. `FppArmsSnapshotTool.SlipperSweep` listed
+`"classic"`, and there is no such id in this game. `BuildSlipperSource` logs a warning, returns
+null, and the loop does `continue`, so **the sweep came back one picture short and looked
+complete**: ten entries in the array, nine `fpp_held_*.png` on disk, and nobody counting.
+
+⚠️ **The skin it was silently dropping is `tsinelas`**, roster row 0 and the default shoe, so the
+one tsinelas most players hold had never been photographed in the hand on any version of this tool.
+The ids are corrected to `Roster.Slippers` and the capture version is bumped so the complete set
+sits beside v18 and v19 rather than overwriting them.
+
+⚠️⚠️ **AND THE LIST TO CHECK AGAINST IS `Roster.Slippers`, NOT THE `Roster/` FOLDER.** A first
+attempt at this fix guessed `pangbanyo` off the asset filenames and shot nine again: there are
+**eleven** `slipper_*.asset` files and only ten are in `RosterBook.Slippers`.
+`slipper_pangbanyo.asset` is an orphan from when that shoe was folded into the PAMBAHAY ROW rather
+than appended as its own, which `Roster.Slippers` records at length because deleting a row shifts
+every index above it across the wire. The folder is not the roster.
+
+⚠️ **A skipped subject in a sweep is worse than a failed one**, because a failure is loud and a
+`continue` is not. Anything that iterates a roster by string id should be cross-checked against
+`Roster.Slippers` rather than trusted, and the header on `SlipperSweep` now says so.
 
 ---
 

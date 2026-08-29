@@ -86,50 +86,40 @@ namespace TumbangPreso.Visual
         private static readonly int OutlineColorId = Shader.PropertyToID("_OutlineColor");
         private static readonly int OutlineWidthId = Shader.PropertyToID("_OutlineWidth");
         private static readonly int CutoffId = Shader.PropertyToID("_Cutoff");
-        private static readonly int ShadowBandId = Shader.PropertyToID("_ShadowBand");
-        private static readonly int BandEdgeId = Shader.PropertyToID("_BandEdge");
 
-        // ------------------------------------------------------------- § THE TSINELAS FLAT SKIN
+        // -------------------------------------------------- § THE TSINELAS FLAT SKIN, REVERTED
         //
-        // ⚠️⚠️ SLIPPERS ARE SHADED ALMOST FLAT AND NOTHING ELSE IN THE GAME IS. 🧑 2026-08-29,
-        // after the viewmodel placeholder fix had already landed and he was still unhappy:
+        // ⚠️⚠️ SLIPPERS WEAR THE SAME TWO-BAND RAMP AS EVERY OTHER PROP, AND A FLATTENED ONE WAS
+        // TRIED HERE AND TAKEN BACK OUT ON 2026-08-31. What stood here was `_ShadowBand` 0.86
+        // over a `_BandEdge` of 0.30, for shoes only, against the shader's own 0.45 over 0.03,
+        // mixed into the cache key so it could not leak onto the cans. The note stays because the
+        // reason it was added is still on file and its removal would otherwise read as a tidy-up.
+        //
+        // ⚠️⚠️ IT WAS A FIX FOR A SYMPTOM WHOSE CAUSE WAS SOMEWHERE ELSE ENTIRELY. 🧑 2026-08-29:
         // *"pls overhaul how shader applies to slippers AND ONLY SLIPPERS bcz the slippers change
-        // color or form entirely ahha"*, then *"lowk pls js remove or severely lessen shader
-        // coloring effect on slippers as a whole"*, *"it makes it look so shitty"*, and the
-        // constraint on the fix: *"make sure it doesnt affect shader for anything else and it
-        // actually reflects in the game as well as all maps"*.
+        // color or form entirely"*, then *"js remove or severely lessen shader coloring effect on
+        // slippers as a whole"*. The colour he was describing was the one in his own hands, and
+        // it never came from this ramp: `ViewmodelArms.Build` writes `UiTheme.PropFoam` (#7a5741)
+        // into a MaterialPropertyBlock on the held renderer, a block overrides `_Color` for EVERY
+        // submesh whatever material sits in the slot, and nothing ever cleared it. Every tsinelas
+        // in first person rendered as that one flat brown, on every skin, for the whole match.
+        // `ViewmodelArms.MatchSkin` carries the fix and the three passes that missed it.
         //
-        // ⚠️ WHAT WAS ACTUALLY RECOLOURING THEM. `LightingToon` is `Albedo * _LightColor0 * level`
-        // where `level = lerp(_ShadowBand, 1, band)` and `_ShadowBand` defaults to 0.45. So every
-        // surface facing away from the key is multiplied down to 45 per cent, in a hard two-band
-        // step. On a CHARACTER that is the look: the cast is big, its palette is saturated, and
-        // the step reads as cel shading. On a 0.43 m shoe held at arm's length the same step lands
-        // as a single hard division across the whole prop, so the toe box and the midsole render
-        // as two different colours and neither is the colour on the picker. That is "they change
-        // color or form entirely" precisely.
+        // ⚠️ SO FLATTENING THE RAMP COULD NOT HAVE WORKED, AND IT COST EVERY SHOE ITS FORM. These
+        // models are `baseColorFactor` and nothing else: `tsinelas_heels.glb` is three materials
+        // at 0.020, 0.000 and 0.077 with ZERO textures, and `tsinelas_crocs.glb` is 0.915, 0.027
+        // and 0.5, also with none. The two-band ramp is the only thing in the frame separating an
+        // ankle strap from the sole behind it. At 0.86 over 0.30 that is 14 per cent of falloff
+        // smeared across a third of the ramp, which on a black shoe is nothing at all: the heels
+        // rendered as a silhouette with the ink outline doing all the work. 🧑 2026-08-31, with
+        // the original render beside the build: *"the shaders were okay when i added the
+        // slippers"*, *"it only broke when i asked [for it] to remove them / lessen the effect on
+        // the slippers"*, *"in ur process of fixing it u made all slippers look ugly"*.
         //
-        // ⚠️ 0.86 IS "SEVERELY LESSEN", NOT "REMOVE", AND THE FLOOR IS A MEASURED ONE. Going to a
-        // flat 1.0 is genuinely unlit, and `tsinelas_sike.mtl`'s own header records what happens
-        // to a shoe with no shading left: *"a pure-black albedo returns nothing under the toon key
-        // light: every curve on the upper resolves to the same value and the shoe renders as a
-        // flat silhouette"*. That was an albedo of zero rather than a band of one, but the failure
-        // is the same shape — the form disappears and only the ink outline says there is a shoe
-        // there. 0.86 leaves a 14 per cent falloff, which is enough to separate a sole from an
-        // upper and far too little to read as a second colour.
-        //
-        // ⚠️ AND THE EDGE IS WIDENED, WHICH IS THE HALF THAT MATTERS AS MUCH AS THE DEPTH.
-        // `_BandEdge` 0.03 is a `smoothstep` over three per cent of the ramp, which is a HARD
-        // line: that is what draws a visible seam across a curved upper. At 0.30 the same falloff
-        // is a gradient over a third of the ramp, so what is left of the shading describes the
-        // curve instead of cutting it.
-        //
-        // ⚠️⚠️ IT IS OPT-IN PER CALL SITE AND IT IS PART OF THE CACHE KEY. `Variant` caches on
-        // (source material, key), and a slipper and a can can share one source material; without
-        // the flag in the key, whichever was dressed first would hand its shading to the other and
-        // the flattening would silently leak into the cans. That is the same fault the palette
-        // note above this one records for the cast.
-        public const float SlipperShadowBand = 0.86f;
-        public const float SlipperBandEdge = 0.30f;
+        // ⚠️ DO NOT PUT IT BACK WITHOUT CHECKING FOR A PROPERTY BLOCK FIRST. If a shoe ever reads
+        // as one flat colour again, the question is which renderer is carrying a `_Color` in a
+        // block, not how hard the key light is cutting it. A shading ramp cannot make three
+        // materials agree on a single colour. A block can, and did.
 
         // ------------------------------------------------------------------ § THE RENDER STYLE
         //
@@ -309,10 +299,9 @@ namespace TumbangPreso.Visual
         public static void Apply(GameObject model, float worldWidth) => Apply(model, worldWidth, null);
 
         /// <summary>
-        /// Dress a TSINELAS. Identical to <see cref="Apply(GameObject, float)"/> except that the
-        /// two-band ramp is flattened to <see cref="SlipperShadowBand"/> over
-        /// <see cref="SlipperBandEdge"/>, so the shoe renders close to the colour it was authored
-        /// in rather than being cut into two shades by the key light.
+        /// Dress a TSINELAS. The same two-band toon face and ink outline every other prop wears:
+        /// see § THE TSINELAS FLAT SKIN, REVERTED at the top of this file for the shoe-only
+        /// flattening that used to sit behind this entry point and why it came out again.
         ///
         /// ⚠️⚠️ EVERY PLACE A SLIPPER IS DRESSED CALLS THIS, AND THAT IS THE WHOLE REQUIREMENT.
         /// 🧑 asked for it to *"actually reflect in the game as well as all maps"*, and a slipper
@@ -339,7 +328,7 @@ namespace TumbangPreso.Visual
         }
 
         public static void ApplySlipper(Renderer renderer, float worldWidth) =>
-            Apply(renderer, worldWidth, null, flat: true);
+            Apply(renderer, worldWidth, null);
 
         /// <summary>
         /// ⚠️ THE PALETTE IS APPLIED HERE RATHER THAN AS A SEPARATE MATERIAL, and that is what
@@ -358,10 +347,7 @@ namespace TumbangPreso.Visual
         public static void Apply(Renderer renderer, float worldWidth) =>
             Apply(renderer, worldWidth, null);
 
-        public static void Apply(Renderer renderer, float worldWidth, Color[] palette) =>
-            Apply(renderer, worldWidth, palette, flat: false);
-
-        private static void Apply(Renderer renderer, float worldWidth, Color[] palette, bool flat)
+        public static void Apply(Renderer renderer, float worldWidth, Color[] palette)
         {
             if (renderer == null || Shader == null) return;
 
@@ -380,13 +366,7 @@ namespace TumbangPreso.Visual
             // ⚠️ THE PALETTE IS PART OF THE CACHE KEY. Twelve characters share one source
             // material and one outline width, so keying on those two alone would hand the whole
             // cast whichever palette was applied first.
-            // ⚠️ THE FLAT FLAG IS PART OF THE KEY, for the same reason the palette is. A slipper
-            // and a can can arrive here sharing one source material and one outline width, and
-            // keying on those alone would hand whichever was dressed second the other's shading.
-            // The tsinelas flattening leaking onto the cans is exactly what 🧑 ruled out in
-            // terms: *"make sure it doesnt affect shader for anything else"*.
             int key = Mathf.RoundToInt(modelWidth * 10000.0f) * 31 + PaletteKey(palette);
-            if (flat) key = key * 31 + 7919;
 
             var sources = renderer.sharedMaterials;
             if (sources == null || sources.Length == 0) return;
@@ -402,7 +382,7 @@ namespace TumbangPreso.Visual
                 var source = sources[i];
                 if (source != null && Origin.TryGetValue(source, out var origin)) source = origin;
 
-                dressed[i] = Variant(source, key, modelWidth, palette, i, flat);
+                dressed[i] = Variant(source, key, modelWidth, palette, i);
                 changed |= dressed[i] != sources[i];
             }
 
@@ -466,7 +446,7 @@ namespace TumbangPreso.Visual
         }
 
         private static Material Variant(Material source, int key, float modelWidth, Color[] palette,
-                                        int slot = 0, bool flat = false)
+                                        int slot = 0)
         {
             if (Cache.TryGetValue((source, key), out var cached) && cached != null) return cached;
 
@@ -513,18 +493,6 @@ namespace TumbangPreso.Visual
 
             material.SetColor(ColorId, albedo);
             material.SetColor(OutlineColorId, Ink);
-
-            // ⚠️ THE TSINELAS FLAT SKIN. See the constants at the top of this file for why a shoe
-            // is shaded almost flat and nothing else is, and why this is opt-in per call site
-            // rather than sniffed from the renderer. Only the two ramp uniforms move: the albedo,
-            // the texture, the ink colour and the outline width above are untouched, so a slipper
-            // keeps the same border every other prop wears and differs only in how hard the key
-            // light is allowed to cut it.
-            if (flat)
-            {
-                material.SetFloat(ShadowBandId, SlipperShadowBand);
-                material.SetFloat(BandEdgeId, SlipperBandEdge);
-            }
 
             // ⚠️ SIXTEEN OR NOTHING. The shader indexes sixteen slots and a short array reads
             // past its end for the highest one, which on every Person is the lit skin tone.

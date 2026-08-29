@@ -597,8 +597,8 @@ namespace TumbangPreso
                 // drives _RimStrength, which this shader is the one that actually carries.
                 //
                 // ⚠️ `ApplySlipper`, NOT `Apply`, AND THIS IS THE MATCH COPY: the one that has to
-                // look the same on every map. See `ToonSkin.SlipperShadowBand` for why a tsinelas
-                // is shaded almost flat and the lata above it is not.
+                // look the same on every map. `SlipperSkinTests` reads all five sites as text and
+                // fails if any one of them drops back to plain `Apply`.
                 Visual.ToonSkin.ApplySlipper(model, Visual.ToonSkin.PropOutlineWidth);
             }
             else

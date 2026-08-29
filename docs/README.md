@@ -21,6 +21,12 @@ add its row here in the same commit.
 | [`HUMAN.md`](HUMAN.md) | **The standing instructions in his own words**, which is the record of what has already been asked for and what has already been rejected. Check it before proposing something that sounds new. |
 | [`art_refs/`](art_refs/) | The reference art the props were drawn from. ⚠️ `Art_Direction.md` § 4a records that the drawing-derived slippers were deleted and must not be rebuilt. |
 
+## What comes after the port
+
+| File | What it is |
+|---|---|
+| [`FUTURE.md`](FUTURE.md) | **The live-service and esport plan, in eighteen ordered phases, each with a prompt written to brief a whole session.** Accounts, profile and stats, telemetry, progression, cosmetics, social, matchmaking, competitive integrity, ranked, mastery paths, bots and population, modes and maps, seasons, controller, mobile, accessibility and localisation, tournaments and replays, distribution. ⚠️ **It is a plan, not a decision that any of it ships**, and where it disagrees with `VISION.md` about what the game is, `VISION.md` wins. Every phase is costed against a free tier, because there is no budget. |
+
 ## Port work
 
 | File | What it is |
