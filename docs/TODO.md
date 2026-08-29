@@ -1375,10 +1375,23 @@ rect paints nothing at all** while remaining active, non-empty and correctly siz
 suspected mechanism for "the strip showed zero lines, not two".
 
 **The probe passes as written**, so the fault does not reproduce at these four message lengths on
-this canvas scale. That is a real result and not a closed one: it narrows the cause to something
-his session had and this one does not (a longer line, `MatchRpc.MaxChatLength` is 120, or a
-different canvas scale factor). **Next step is to widen the probe's message lengths to 120
-characters and sweep the scale factor**, not to change `SetLines` on a guess.
+this canvas scale.
+
+✅ **AND THE OVERFLOW HE MEANT WAS THE OPEN LOG, NOT THE STRIP.** He sent a second screenshot:
+ten lines against the top of the panel with **the first one clipped in half by the header**, and a
+third of the box empty underneath. That is `OpenHistory` setting
+`_historyScroll.verticalNormalizedPosition = 0.0f`.
+
+⚠️⚠️ **A `ScrollRect` NORMALISES AGAINST `content.height - viewport.height`, SO THAT VALUE IS
+MEANINGLESS WHEN THE CONTENT IS THE SHORTER OF THE TWO.** Unity then leaves the content's
+`anchoredPosition` wherever it last was, which is pushed UP by however tall the log was the last
+time it was long enough to scroll. **So the panel looks correct after a hundred messages and broken
+after ten** — the reverse of how an overflow normally behaves, and the reason reading
+`LobbyVisibleLines` never explained it. `SnapHistoryToNewest` writes a short log flush to the top
+directly; there is no normalised position that expresses "shorter than the box".
+
+⚠️ **THE TWO-LINE STRIP IS STILL UNREPRODUCED** and its probe still passes. If it recurs, the
+`Truncate` mechanism in the note above is the standing suspect.
 
 ### 79.4 ✅ FIXED: IT WAS THE PENALTY HITMARKER, AND THE SEARCH WAS RULED OUT BY A WRONG PREMISE
 
@@ -1472,12 +1485,22 @@ rows actually built, which was the right change and fixed the number `TraitRows`
 CANNOT, and the surplus goes out the bottom of the wood. Pinning min to pref is what converts "a
 tight column" into "a plate drawn outside the panel".
 
-**Done looks like** the last row inside the panel with the descriptions still readable. The lever
-is one of: let the rows compress (drop `minHeight` toward header height and let
-`MenuKit.FitBlock` shrink each description, which is § 79.6's own "grows as well as shrinks"
-pattern applied one level down), or give the hero variant of `ConfigPanel` the ~64 px it is short.
-⚠️ **Do not just raise `MaxBottomOverflow`.** The assertion is correct and is reporting the thing
-he photographed in `reported/13.png`. ⚠️ **The last ROW is measured, not the column's rect**: the column is a
+✅ **FIXED, AND 🧑 FOUND THE TELL HIMSELF:** *"oh shit if i click next it gets fixed"*, *"but yea
+when u open its still fucken broken"*.
+
+⚠️⚠️ **IT IS THE LAYOUT-BLIND FIRST PASS, NOT A SIZING CONSTANT.** `RefreshHeroLoadout` measures
+each ability summary against `rows.rect.width` to decide whether it wraps, and **reserves the
+taller two-line box whenever it cannot measure** — which its own note says is the safe direction
+and is correct. On the frame the panel is switched on `rect.width` is 0, so EVERY row takes that
+branch: `descHeight` 44 instead of 22, three rows, **66 px of surplus against the 64 px the column
+was measured overflowing by.** Cycling the hero re-runs `Refresh` against a real width, most
+summaries fit one line, and the column drops back inside the wood. That is exactly the behaviour
+he described, and it is why the deficit arithmetic above pointed at `minHeight` when the real
+answer was upstream of it.
+
+**The fallback stays and a second pass was added**: `_refreshPending` re-runs `Refresh` on the next
+`LateUpdate`, the same shape as § 80.2's `_refitPending`. ⚠️ **Nothing was made to compress**, so
+no description is clipped. ⚠️ **The last ROW is measured, not the column's rect**: the column is a
 `VerticalLayoutGroup` whose own rect was already correct, and the ultimate row is the child that
 was drawn past the wood, so measuring the container would have passed then too. The two existing
 assertions could not see this class of fault at all, and that is structural rather than an
