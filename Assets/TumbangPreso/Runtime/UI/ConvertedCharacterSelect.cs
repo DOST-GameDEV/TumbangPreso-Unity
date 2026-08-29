@@ -581,6 +581,23 @@ namespace TumbangPreso.UI
                 float rowRoom = rows is RectTransform rowsRect ? rowsRect.rect.width - 20.0f : 0.0f;
                 bool summaryWraps = rowRoom <= 1.0f || descLbl.preferredWidth > rowRoom;
 
+                // ⚠️⚠️ AN UNMEASURABLE WIDTH IS THE ULTIMATE'S PLATE HANGING OUT OF THE PANEL, AND
+                // 🧑 FOUND THE TELL: *"oh shit if i click next it gets fixed"*, *"but yea when u
+                // open its still fucken broken"*. `docs/TODO.md` § 79.6.
+                //
+                // `rect.width` is 0 until the first layout pass, which is the frame this panel is
+                // switched on, so `rowRoom` is 0 and the safe branch above reserves TWO lines for
+                // EVERY row: 44 px each instead of 22. Three rows is **66 px** of surplus, against
+                // the 64 px the column was measured overflowing by. Cycling the hero re-runs
+                // `Refresh` when the rect is real, most summaries fit one line, and the column
+                // shrinks back inside the wood — which is exactly the behaviour he described.
+                //
+                // ⚠️ SO THE FALLBACK IS CORRECT AND WHAT WAS MISSING IS THE SECOND PASS. Reserving
+                // the taller box is the right guess when nothing can be measured (its own note
+                // says so, and guessing one line would clip a wrapped summary). It just has to be
+                // re-asked once there is a width, rather than left as the final answer.
+                if (rowRoom <= 1.0f) _refreshPending = true;
+
                 float descHeight = summaryWraps ? 44.0f : 22.0f;
                 descLbl.gameObject.AddComponent<LayoutElement>().preferredHeight = descHeight;
 
@@ -665,6 +682,29 @@ namespace TumbangPreso.UI
         {
             int n = Entries.Count;
             _pick[_tab] = ((_pick[_tab] + delta) % n + n) % n;
+            Refresh();
+        }
+
+        /// <summary>Set when the ability rows were sized against a rect that had not been laid
+        /// out yet. See the note in `RefreshHeroLoadout`.</summary>
+        private bool _refreshPending;
+
+        /// <summary>
+        /// ⚠️ ONE RETRY ON THE FRAME AFTER A LAYOUT-BLIND REFRESH. Unity has laid the canvas out
+        /// by the next `LateUpdate`, so this is the earliest point `rect.width` is real. The flag
+        /// is cleared BEFORE the refresh, so a second blind pass re-arms it rather than looping,
+        /// and it costs one bool test on every other frame.
+        ///
+        /// ⚠️ IT IS THE SAME SHAPE AS `ConvertedMatchSetup`'s `_refitPending`, and for the same
+        /// underlying reason: this project has several screens that measure themselves on the
+        /// frame they are switched on, and `rect.width` is 0 there. `ModelPreview.EnsureTexture`
+        /// and `LobbyChat`'s panel both carry a note about it.
+        /// </summary>
+        private void LateUpdate()
+        {
+            if (!_refreshPending) return;
+
+            _refreshPending = false;
             Refresh();
         }
 

@@ -99,7 +99,7 @@ namespace TumbangPreso.UI
             _rt.anchorMax = new Vector2(0.5f, 0.0f);
             _rt.pivot = new Vector2(0.5f, 0.0f);
             _rt.anchoredPosition = new Vector2(0, RestY);
-            _rt.sizeDelta = new Vector2(1060, 254);
+            _rt.sizeDelta = new Vector2(1060, 276);
 
             // ⚠️ THE WOOD SET, NOT A SLATE-BLUE GLASS OF ITS OWN. This tray opens over a
             // live match with the wooden scoreboard and clock already on screen, so it was the
@@ -252,9 +252,25 @@ namespace TumbangPreso.UI
             var nameStackLe = nameStack.AddComponent<LayoutElement>();
             nameStackLe.flexibleWidth = 1.0f;
 
+            // ⚠️⚠️ THE BOX IS 1.35x THE TYPE, AND AT 1:1 THE NAME AND THE COOLDOWN DREW ON TOP OF
+            // EACH OTHER. 🧑 2026-08-29, of this tray in a live match: *"tab is unreadable and so
+            // much fucked of text overflow and format"*, with `DEMONIC CARAPACE` overlapping
+            // `62s CD · 4s` and `TITAN FISSURE` overlapping `OBJECTIVE`.
+            //
+            // A 21-unit label was being forced into a 22 px box and an 18-unit one into 18 px.
+            // Legacy `Text` draws at its font's LINE HEIGHT, which is meaningfully taller than
+            // the point size, so a box sized to the number clips the glyphs; and because
+            // `nameCol` has `childControlHeight`, the group holds each child at that height and
+            // the surplus is simply painted over the row underneath. **A text box sized to its
+            // font size is not a text box that fits its text.**
+            //
+            // ⚠️ 1.35 IS THE RATIO THE PICKER ALREADY USES. `ConvertedCharacterSelect.
+            // HeroTaglineHeight` multiplies a measured line by 1.35 for the same reason, and
+            // `HeroPickerLayoutProbe`'s `MaxSlack` note records that a real line measures about
+            // 1.16, so 1.35 is one line plus a descender rather than a guess.
             card.Name = Label(nameStack.transform, "Name", 21, UiTheme.Cream, TextAnchor.MiddleLeft);
             card.Name.fontStyle = FontStyle.Bold;
-            Height(card.Name.gameObject, 22);
+            Height(card.Name.gameObject, 28);
 
             var metaRow = new GameObject("MetaRow", typeof(RectTransform));
             metaRow.transform.SetParent(nameStack.transform, false);
@@ -264,7 +280,9 @@ namespace TumbangPreso.UI
             metaHlg.childForceExpandHeight = true;
             metaHlg.childForceExpandWidth = false;
             metaHlg.spacing = 6.0f;
-            Height(metaRow, 18);
+            // ⚠️ 24, NOT 18, FOR THE REASON ON `card.Name` DIRECTLY ABOVE: an 18-unit label in an
+            // 18 px box paints its descenders over whatever is under it.
+            Height(metaRow, 24);
 
             card.Kind = Label(metaRow.transform, "Kind", MenuKit.MinReadableUnits, UiTheme.Amber,
                               TextAnchor.MiddleLeft);
@@ -311,7 +329,7 @@ namespace TumbangPreso.UI
             // while the round runs; this tray only exists while the player is HOLDING a key and
             // deliberately not playing, so it may spend the room. `VISION.md` § 3 is the rule it
             // serves: the deck carries no sentences and every sentence lives behind this hold.
-            const int BodySize = 21;
+            const int BodySize = 20;
 
             card.Body = Label(go.transform, "Body", BodySize, UiTheme.Cream,
                               TextAnchor.UpperLeft);
@@ -324,7 +342,7 @@ namespace TumbangPreso.UI
             // WARNING FOR EXACTLY THIS: *"a floor left behind is how an `Overflow` label starts
             // drawing over the card under it"*. Four lines at 21 is 126, where four at 18 was
             // 108. The panel's own height grows by the same 18 px.
-            bodyLe.minHeight = 126;
+            bodyLe.minHeight = 120;
 
             return card;
         }
@@ -513,6 +531,32 @@ namespace TumbangPreso.UI
             t.raycastTarget = false;
             t.horizontalOverflow = HorizontalWrapMode.Wrap;
             t.verticalOverflow = VerticalWrapMode.Overflow;
+
+            // ⚠️⚠️ EVERY LABEL ON THIS TRAY GETS AN INK OUTLINE, AND IT IS THE ANSWER TO "BLURRY"
+            // RATHER THAN TO "TOO SMALL". 🧑 2026-08-29, holding TAB: *"text here is genuinely
+            // blurry too btw"*, *"the text when u click tab to see skills maybe add outline to
+            // the gren shit idk"*. He is describing the ability NAME, which is drawn in that
+            // hero's accent — Dante's is a mid green — directly onto `UiTheme.HeroPlateRaised`,
+            // a mid-dark brown.
+            //
+            // ⚠️ IT IS A CONTRAST PROBLEM WEARING A SHARPNESS PROBLEM'S CLOTHES. The tray is
+            // authored at 1060 units wide and the canvas scales it down to whatever the window
+            // is, so a 20-unit glyph can land on eight or nine real pixels. At that size legacy
+            // `Text` has almost no edge left, and a mid green on a mid brown has almost no
+            // luminance step either, so the two failures compound into something that reads as
+            // out of focus. Raising the point size alone cannot fix it, because the scale factor
+            // moves with the window and the panel is already as tall as the band allows.
+            //
+            // ⚠️ SO THE FIX IS THE SAME ONE THE REST OF THE GAME ALREADY USES ON ITS ART: an ink
+            // edge. `ToonSkin.Ink` is what every character and prop is outlined in, and this
+            // borrows the same near-black so the UI and the world agree about what an outline is.
+            // One pixel each way is enough to give a glyph a hard boundary at any scale, which is
+            // exactly what was missing.
+            var outline = go.AddComponent<Outline>();
+            outline.effectColor = new Color(Visual.ToonSkin.Ink.r, Visual.ToonSkin.Ink.g,
+                                            Visual.ToonSkin.Ink.b, 0.85f);
+            outline.effectDistance = new Vector2(1.0f, -1.0f);
+            outline.useGraphicAlpha = true;
 
             return t;
         }

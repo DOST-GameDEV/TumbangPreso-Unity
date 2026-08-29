@@ -755,7 +755,44 @@ namespace TumbangPreso.UI
             _historyPanel.transform.SetAsLastSibling();
 
             Canvas.ForceUpdateCanvases();
-            if (_historyScroll != null) _historyScroll.verticalNormalizedPosition = 0.0f;
+            SnapHistoryToNewest();
+        }
+
+        /// <summary>
+        /// Puts the log on its newest line, and puts a SHORT log flush against the top of the box.
+        ///
+        /// ⚠️⚠️ `verticalNormalizedPosition = 0` IS MEANINGLESS WHEN THE CONTENT IS SHORTER THAN
+        /// THE VIEWPORT, AND THAT IS THE REPORTED OVERFLOW. 🧑 2026-08-29 with a screenshot of the
+        /// open log: ten lines sitting against the top of the panel with the FIRST ONE CLIPPED in
+        /// half by the header, and a third of the box empty underneath them.
+        ///
+        /// A `ScrollRect` normalises the scroll against `content.height - viewport.height`. When
+        /// the content is the shorter of the two that difference is zero or negative, the
+        /// normalised value divides by nothing meaningful, and Unity leaves the content's
+        /// `anchoredPosition` wherever it last was — which here is pushed UP by however tall the
+        /// log was the last time it was long enough to scroll. So the panel looks correct after a
+        /// hundred messages and broken after ten, which is the reverse of what an overflow bug
+        /// normally does and is why reading `LobbyVisibleLines` never explained it.
+        ///
+        /// ⚠️ THE CONTENT IS TOP-ANCHORED AND TOP-PIVOTED (see `BuildHistoryPanel`), so y = 0 is
+        /// flush under the header. Writing it directly is the only thing that reaches this case;
+        /// there is no normalised position that expresses "shorter than the box".
+        /// </summary>
+        private void SnapHistoryToNewest()
+        {
+            if (_historyScroll == null) return;
+
+            var content = _historyScroll.content;
+            var viewport = _historyScroll.viewport;
+            if (content == null || viewport == null) return;
+
+            if (content.rect.height <= viewport.rect.height)
+            {
+                content.anchoredPosition = new Vector2(content.anchoredPosition.x, 0.0f);
+                return;
+            }
+
+            _historyScroll.verticalNormalizedPosition = 0.0f;
         }
 
         private void RefreshHistoryPanel()
