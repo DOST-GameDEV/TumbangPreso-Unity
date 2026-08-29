@@ -2836,10 +2836,65 @@ namespace TumbangPreso.Net
                         vis?.ApplyModel(person.Model, person.Tint, person.Clips,
                                         person.Palette, person.PetModel);
                     }
+
+                    // ⚠️⚠️ 4. AND IT FIXED THE ART WITHOUT FIXING THE POWERS, WHICH IS
+                    // 🧑 2026-08-29: *"some clients dont see the correct ability effects but host
+                    // do"*. The three faults above are all about the MODEL; this table also
+                    // carries the only correction a client ever gets for WHICH HERO a seat is,
+                    // and `MatchInstaller` binds the kit exactly once, at spawn, from whatever
+                    // the lobby table said at that moment. A client that built its arena before
+                    // the picks landed - which § 82.1 shows is routinely the FASTER machine,
+                    // not a rare one - therefore ended up with the right body and somebody
+                    // else's kit, and `ApplyNetworkCast` resolves the replicated cast through
+                    // `AbilityFor(slot)`, so slot 1 of the wrong hero is what it played.
+                    //
+                    // ⚠️ THE HOST IS RIGHT BY CONSTRUCTION, which is exactly the shape of the
+                    // report: it spawns from its own authoritative table and never needs this
+                    // message. Nobody watching the host could see it.
+                    //
+                    // ⚠️ REBOUND ONLY WHEN THE HERO ACTUALLY CHANGES. `BindHero` builds a fresh
+                    // `HeroKit`, which drops every cooldown and the ultimate charge with it, and
+                    // `BroadcastPicks` goes out on every seat change and inside every world
+                    // snapshot. Rebinding on each of those would hand a client a full ultimate
+                    // meter several times a round.
+                    RebindKitIfHeroChanged(who);
                 }
 
                 ApplySlipperSkin(slot, table[i + 3]);
             }
+        }
+
+        /// <summary>
+        /// Give this seat the kit its CURRENT `CharacterIndex` calls for, if it is not already
+        /// holding it.
+        ///
+        /// ⚠️⚠️ IT COMPARES THE KIT'S TYPE RATHER THAN REMEMBERING AN INDEX, so it cannot
+        /// drift out of step with the thing it is guarding. `HeroAbilitySystem` exposes the kit it
+        /// built and `CreateKitFor` is the one function that maps a hero id to a kit; asking
+        /// whether the built kit is the same TYPE the id would produce answers "is this the right
+        /// hero" without a second field for anybody to forget to write.
+        ///
+        /// ⚠️ CLASSIC HAS NO KITS AND MUST NOT GROW ONE HERE. `MatchInstaller` only adds the
+        /// component in Hero Strike (`CLAUDE.md` § 1: the two modes are not variants of each
+        /// other), so a null component is the correct state in Classic and not a seat to repair.
+        /// </summary>
+        private static void RebindKitIfHeroChanged(CharacterMotor who)
+        {
+            var abilities = who.AbilitySystem;
+            if (abilities == null) return;
+
+            var heroPeople = Core.Roster.GetPeople(GameMode.HeroStrike);
+            if (heroPeople == null || heroPeople.Count == 0) return;
+
+            string heroId = who.CharacterIndex >= 0 && who.CharacterIndex < heroPeople.Count
+                ? heroPeople[who.CharacterIndex].Id
+                : "dante";
+
+            var wanted = Abilities.HeroAbilitySystem.CreateKitFor(heroId);
+            if (wanted == null) return;
+            if (abilities.Kit != null && abilities.Kit.GetType() == wanted.GetType()) return;
+
+            abilities.BindHero(heroId);
         }
 
         public void BroadcastPicks()

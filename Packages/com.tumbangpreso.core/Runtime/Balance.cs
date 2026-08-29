@@ -807,13 +807,47 @@ namespace TumbangPreso.Core
         ///
         /// ⚠⚠ IT IS A FLOOR AND IT IS WHAT KEEPS A COOLDOWN WORTH SPENDING. Without one, a
         /// player with fast hands would clear a stun in three presses and every control ability
-        /// in Hero Strike would stop being a control ability. 1.20 s is long enough that the
-        /// caster still gets the opening they paid for and short enough that the victim is not
-        /// spectating. It is the same argument `MinTripDown` makes, at a higher number because
-        /// the thing being escaped cost somebody a cooldown.
+        /// in Hero Strike would stop being a control ability. It is the same argument
+        /// `MinTripDown` makes, at a higher number because the thing being escaped cost somebody
+        /// a cooldown.
         ///
-        /// ⚠ AND IT IS ABOVE `Balance.MashCooldown` BY MORE THAN AN ORDER OF MAGNITUDE, so the
-        /// floor can never be reached by a single lucky press inside one frame's window.</summary>
-        public const float MinStunDown = 1.20f;
+        /// ⚠⚠ **0.60, DOWN FROM 1.20, BECAUSE AT 1.20 THE MASH STOPPED PAYING AFTER TWO OR THREE
+        /// PRESSES AND THE PLAYER WAS STILL HOLDING THE KEY DOWN.** 🧑 2026-08-29: *"some button
+        /// mash dont work ... only up to 2-3 button mash and nothing registers anymore"*.
+        ///
+        /// **The floor was measured against nothing, and the stuns that shipped are short.**
+        /// `Combat.StunMashPerPress` sells `stunTotal - MinStunDown` across the ability's press
+        /// count, and `MashOutOfStun` refuses everything once `stunLeft` reaches the floor. So at
+        /// 1.20 the whole mash was worth this much:
+        ///
+        /// | ability | hold | presses | slack at 1.20 | per press | dead time after |
+        /// |---|---|---|---|---|---|
+        /// | Sean, `StunElement.Fire` | 1.50 s | 4 | **0.30 s** | 0.075 s | 1.10 s |
+        /// | possession, `Void` | 1.80 s | 6 | 0.60 s | 0.100 s | 1.20 s |
+        /// | shock | 2.00 s | 7 | 0.80 s | 0.114 s | 1.20 s |
+        /// | Dante, `Stone` | 2.20 s | 8 | 1.00 s | 0.125 s | 1.20 s |
+        /// | Cheska, `Ice` | 2.50 s | 9 | 1.30 s | 0.144 s | 1.20 s |
+        ///
+        /// Four presses at the 10 Hz `MashCooldown` is 0.4 s of input; the shortest of them then
+        /// spent **1.1 s refusing every further press**, with the meter frozen. That is the
+        /// report exactly, and it is worst on the ability a player meets most.
+        ///
+        /// At 0.60 the same five sell 0.90, 1.20, 1.40, 1.60 and 1.90 s, so **every declared
+        /// press pays and the last one lands on the floor rather than a third of the way to it.**
+        ///
+        /// ⚠ THE PRESS COUNTS ARE UNTOUCHED AND THAT IS THE POINT. They are the per-ability
+        /// tunable — see `StunBreakPressesDefault` — and moving them would have retuned five
+        /// kits to fix one constant. An unanswered stun is still its full length, so the caster's
+        /// cooldown buys exactly what it did before against anybody who does not fight it.
+        ///
+        /// ⚠ AND IT IS STILL ABOVE `Balance.MashCooldown` BY SIX TIMES, so the floor can never be
+        /// reached by a single lucky press inside one frame's window.
+        ///
+        /// ⚠ THE MICRO-STAGGERS ARE STILL UNMASHABLE AND ALWAYS WERE. `ApplyStagger(0.2f)`
+        /// through `ApplyStagger(0.4f)` are under this floor, so `StunMashPerPress` returns 0 and
+        /// `MashOutOfStun` refuses immediately. They are a quarter of a second and nobody mashes
+        /// them; if that ever needs answering the fix is `StunElement.None` on them, not a lower
+        /// floor.</summary>
+        public const float MinStunDown = 0.60f;
     }
 }

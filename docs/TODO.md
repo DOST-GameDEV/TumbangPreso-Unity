@@ -2308,36 +2308,100 @@ it and a played run, and the next session should take them in this order rather 
 armed. If that reproduces it, the fix is that `EnterLesson` clears live practice hazards on the
 way past — a lesson must not be able to stun the lesson after it.
 
-### 83.9 ⚠️ OPEN: SOME CLIENTS SEE THE WRONG ABILITY EFFECTS
+### 83.9 ✅ FIXED: CLIENTS PLAYED THE WRONG HERO'S POWERS, BECAUSE THE PICK SYNC FIXES THE ART AND NOT THE KIT
 
-🧑, watching a four-player test: *"some clients dont see the correct ability effects but host
-do"*.
+🧑 2026-08-29, watching a four-player test: *"some clients dont see the correct ability effects
+but host do"*.
 
-Not investigated. **Start from `MatchRpc`'s ability wire rather than from the VFX**: § 82.1 is a
-fresh reminder that a client and the host disagreeing about what is happening is usually a packet
-the client refused or never got, and `BroadcastAbilityState` / `SyncAbilityStateClientRpc` carry
-per-slot cooldowns and charges rather than the CAST itself. Establish first whether the wrong
-thing is the effect that PLAYS or the state it is played from.
+`MatchRpc.SyncPicksClientRpc` is the only correction a client ever gets for **which hero a seat
+is**. Its header already carries three faults found in it and fixed, and all three are about the
+MODEL: the wrong roster, an index guard that skipped applying the art, and a dropped pet. The
+fourth is that it never touched the KIT.
 
-### 83.10 ⚠️ OPEN: THE MASH STOPS REGISTERING AFTER TWO OR THREE PRESSES
+`MatchInstaller` binds a hero exactly once, at spawn, from whatever the lobby table said at that
+moment:
+
+```csharp
+var abilities = go.AddComponent<Abilities.HeroAbilitySystem>();
+string heroId = heroPeople[motor.CharacterIndex].Id;
+abilities.BindHero(heroId);
+```
+
+⚠️⚠️ **A CLIENT THAT BUILT ITS ARENA BEFORE THE PICKS LANDED THEREFORE HAD THE RIGHT BODY AND
+SOMEBODY ELSE'S POWERS**, and `ApplyNetworkCast` resolves a replicated cast through
+`AbilityFor(slot)` — so what it played was slot 1 **of the wrong hero**. That is "not the correct
+effects" precisely: an effect appears, and it is a different one.
+
+⚠️ **AND § 82.1 IS WHY THAT IS THE COMMON CASE RATHER THAN A RARE ONE.** The client is routinely
+the FASTER machine into the arena; the whole of § 82.1 is what happens when it is.
+
+⚠️ **THE HOST IS RIGHT BY CONSTRUCTION**, which is the exact shape of the report. It spawns from
+its own authoritative table and never receives this message, so nobody watching the host could see
+it.
+
+`RebindKitIfHeroChanged` rebuilds the kit when, and only when, the hero actually changed.
+
+⚠️ **ONLY ON A REAL CHANGE, BECAUSE `BindHero` BUILDS A FRESH `HeroKit`** and drops every cooldown
+and the ultimate charge with it. `BroadcastPicks` goes out on every seat change and inside every
+world snapshot; rebinding on each of those would hand a client a full ultimate meter several times
+a round.
+
+⚠️ **AND IT COMPARES THE KIT'S TYPE RATHER THAN REMEMBERING AN INDEX**, so the guard cannot drift
+out of step with the thing it guards. `CreateKitFor` is the one function mapping a hero id to a
+kit; asking whether the built kit is the same type that id would produce answers "is this the
+right hero" with no second field for anybody to forget to write.
+
+### 83.10 ✅ FIXED: THE MASH STOPPED PAYING AFTER TWO OR THREE PRESSES
 
 🧑: *"some button mash dont work ... only up to 2-3 button mash and nothing registers anymore"*.
 
-**The trip mash is not the suspect and the arithmetic says so.** `StreetTripHazard` sets
-`TripDuration` 2.50 s, `MinTripDown` is 0.35 and `MashRecoverPerPress` is 0.22, so a trip has 2.15
-s of slack to sell and accepts **about ten** presses.
+**The trip mash was not it and the arithmetic says so.** `StreetTripHazard` sets `TripDuration`
+2.50 s, `MinTripDown` is 0.35 and `MashRecoverPerPress` is 0.22, so a trip has 2.15 s of slack and
+accepts about **ten** presses.
 
-**The ABILITY stun is.** `Combat.MashOutOfStun` sells `stunTotal - MinStunDown` across
-`breakPresses`, and `StunBreakPressesMin` is **3** — so an ability that declares a low count is
-answered in three presses, after which `stunLeft <= MinStunDown` refuses everything and the player
-is still on the floor for the 1.20 s floor with a meter that has stopped moving. Two or three
-presses and nothing registers is that, exactly.
+**The ABILITY stun was.** `Combat.StunMashPerPress` sells `stunTotal - MinStunDown` across the
+ability's declared press count, and `MashOutOfStun` refuses everything once `stunLeft` reaches the
+floor. `MinStunDown` was **1.20**, and the stuns that actually shipped are short:
 
-**Done looks like** an audit of the per-ability `breakPresses` actually declared by the shipped
-kits against `Hero_Strike_Balance.md`, because the constant is a floor for kits that *never said*
-and the fault may be that most of them never said. If the counts are right and it still feels
-dead, the honest fix is feedback — the break meter should show that it has bottomed out — rather
-than moving `MinStunDown`, which is what keeps a control ability worth its cooldown.
+| ability | hold | presses | slack at 1.20 | per press | dead time after |
+|---|---|---|---|---|---|
+| Sean, `Fire` | 1.50 s | 4 | **0.30 s** | 0.075 s | 1.10 s |
+| possession, `Void` | 1.80 s | 6 | 0.60 s | 0.100 s | 1.20 s |
+| shock | 2.00 s | 7 | 0.80 s | 0.114 s | 1.20 s |
+| Dante, `Stone` | 2.20 s | 8 | 1.00 s | 0.125 s | 1.20 s |
+| Cheska, `Ice` | 2.50 s | 9 | 1.30 s | 0.144 s | 1.20 s |
+| Phaister, `Hex` | 1.60 s | 5 | 0.40 s | 0.080 s | 1.20 s |
+
+Four presses at the 10 Hz `MashCooldown` is 0.4 s of input, and the shortest of them then spent
+**1.1 s refusing every further press with the meter frozen**. Two or three presses and nothing
+registers is that, exactly, and it is worst on the ability a player meets most.
+
+⚠️⚠️ **SEAN'S OWN COMMENT RECORDED THE SYMPTOM WITHOUT SEEING IT.** It read *"the 1.5 s duration
+leaves only 0.3 s of mashable slack above `Balance.MinStunDown`, so four presses is already
+brisk"* — 0.3 s over four presses is 0.075 s each. The number was written down, correctly, and
+nobody divided it.
+
+`MinStunDown` is **0.60** now. The same six sell 0.90, 1.20, 1.40, 1.60, 1.90 and 1.00 s, so
+**every declared press pays and the last one lands on the floor** instead of a third of the way to
+it.
+
+⚠️ **THE PRESS COUNTS ARE UNTOUCHED AND THAT IS THE POINT.** They are the per-ability tunable
+(`StunBreakPressesDefault`'s note: *"the tunable is how many presses a skill is worth"*), and
+moving them would have retuned six kits to fix one constant. An **unanswered** stun is still its
+full length, so a caster's cooldown buys exactly what it did before against anybody who does not
+fight it.
+
+⚠️ **THE MICRO-STAGGERS ARE STILL UNMASHABLE AND ALWAYS WERE.** `ApplyStagger(0.2f)` through
+`(0.4f)` are under the floor, so `CharacterMotor.ApplyStagger` demotes them to `StunElement.None`
+and they raise no card. They are a quarter of a second; if that ever needs answering the fix is
+the element on them, not a lower floor.
+
+⚠️ **`BalanceTests.ShoveCost_IsPayableAndRoleScaleIsByRole` RE-TYPED TWO BALANCE NUMBERS AND BROKE
+ON § 83.1.** It asserted the literals 1.0 and 0.75. A test that re-types a constant only proves
+somebody edited two files instead of one; it now asserts the two named constants and the invariant
+worth holding — **the taya is the faster role** — which a future retune must not invert by
+accident.
+
 
 ### 83.11 ⚠️ OPEN: THE TSINELAS ARE A DIFFERENT COLOUR IN A MATCH THAN ON CHARACTER SELECT
 

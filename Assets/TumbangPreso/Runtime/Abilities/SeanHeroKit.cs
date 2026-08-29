@@ -124,11 +124,21 @@ namespace TumbangPreso.Abilities
                             Vector3 hitForce = (diff.sqrMagnitude > 0.01f ? diff.normalized : ctx.Forward) * 15.0f;
                             hitForce.y = 4.5f;
                             p.ApplyImpulse(hitForce);
-                            // ⚠️ 4, WHICH IS NEAR THE FLOOR ON PURPOSE. This is a SKILL on
-                            // a short cooldown, not an ultimate: it should interrupt a run and
-                            // be shrugged off, and a burn nobody can shake is a different
-                            // ability. The 1.5 s duration leaves only 0.3 s of mashable slack
-                            // above `Balance.MinStunDown`, so four presses is already brisk.
+                            // ⚠️ 4, WHICH IS THE LIGHTEST HOLD IN THE GAME ON PURPOSE. This is
+                            // a SKILL on a short cooldown, not an ultimate: it should interrupt
+                            // a run and be shrugged off, and a burn nobody can shake is a
+                            // different ability.
+                            //
+                            // ⚠️⚠️ THIS WAS THE WORST CASE OF § 83.14 AND THE NOTE HERE RECORDED
+                            // THE SYMPTOM WITHOUT SEEING IT. It read *"the 1.5 s duration leaves
+                            // only 0.3 s of mashable slack above `Balance.MinStunDown`, so four
+                            // presses is already brisk"* — 0.3 s over four presses is 0.075 s
+                            // each, and once they were spent `MashOutOfStun` refused every press
+                            // for the remaining 1.1 s. Four presses at 10 Hz is 0.4 s of input,
+                            // so the player spent nearly three times that hammering a key that
+                            // did nothing: 🧑's *"only up to 2-3 button mash and nothing registers
+                            // anymore"*. The floor is 0.60 now and the same four presses buy
+                            // 0.225 s each, which is what "brisk" was supposed to mean.
                             p.ApplyStagger(1.5f, StunElement.Fire, 4);
                             // ⚠️ A DASH THROUGH THREE PLAYERS USED TO PRINT THREE "BAM!"s
                             // ON TOP OF ITS OWN "ROCKET!". The stars and the sound already

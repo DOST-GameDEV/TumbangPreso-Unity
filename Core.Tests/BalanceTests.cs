@@ -186,7 +186,15 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(0, s.SpeedZones.Count);
         }
 
-        /// <summary>The shove costs 25 of 60, and an attacker walks at 0.75 of the taya.</summary>
+        /// <summary>
+        /// The shove costs 25 of 60, and the two role scales are the two named constants.
+        ///
+        /// It asserted the LITERALS 1.0 and 0.75, and both moved on 2026-08-29 (docs/TODO.md
+        /// sections 83.1 and 83.3). A test that re-types a balance number tests only that
+        /// somebody edited two files instead of one; what is worth holding is that the scale is
+        /// read from the role and that the taya is the faster of the two, which is the whole
+        /// shape of chase versus escape and is what a retune must not accidentally invert.
+        /// </summary>
         [Fact]
         public void ShoveCost_IsPayableAndRoleScaleIsByRole()
         {
@@ -194,8 +202,11 @@ namespace TumbangPreso.Core.Tests
             Assert.True(s.Spend(Balance.ShoveStaminaCost));
             Assert.Equal(Balance.StaminaMax - Balance.ShoveStaminaCost, s.Current, 3);
 
-            Assert.Equal(1.0f, Stamina.RoleSpeedScale(isDefender: true), 3);
-            Assert.Equal(0.75f, Stamina.RoleSpeedScale(isDefender: false), 3);
+            Assert.Equal(Balance.DefenderSpeedScale, Stamina.RoleSpeedScale(isDefender: true), 3);
+            Assert.Equal(Balance.AttackerSpeedScale, Stamina.RoleSpeedScale(isDefender: false), 3);
+
+            Assert.True(Balance.DefenderSpeedScale > Balance.AttackerSpeedScale,
+                        "the taya must stay the faster role");
         }
 
         // ===================================================================

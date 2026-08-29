@@ -263,22 +263,26 @@ namespace TumbangPreso.Abilities
         /// `docs/TODO.md` § 23 left this open in as many words: *"Phaister's eclipse curse
         /// staggers for 0.50 s, below `Balance.MinStunDown`, so her ultimate does not hold
         /// anybody and gets no coat"*. `CharacterMotor.ApplyStagger` forces anything at or under
-        /// the 1.20 s floor back to `StunElement.None`, so the most expensive power in her kit
+        /// the then-1.20 s floor back to `StunElement.None`, so the most expensive power in her kit
         /// applied a knockback hitch, drew no element coat, raised no mash card, and was
         /// unmashable and unnoticeable at the same time. It was left alone rather than retuned
         /// because it is a balance question; this is the answer, written down.
         ///
         /// ⚠️⚠️ **1.60 s, FIVE PRESSES, AND ONLY INSIDE THE REACH.** The three numbers together:
         ///
-        ///   * **1.60 s** clears `Balance.MinStunDown` by 0.40, which is the smallest hold that
-        ///     actually IS one. Anything at 1.20 or under is silently demoted and this entry is
-        ///     the record of what that costs.
+        ///   * **1.60 s** cleared `Balance.MinStunDown` by 0.40 when that floor was 1.20, which
+        ///     was then the smallest hold that actually IS one; anything at or under the floor is
+        ///     silently demoted and this entry is the record of what that costs. ⚠️ THE FLOOR IS
+        ///     0.60 AS OF § 83.14, so this now clears it by a full second and the hold is not the
+        ///     marginal thing it was written as.
         ///   * **5 presses** against Cheska's 9, Dante's 8, Zack's 7, Nemu's 6 and Sean's 4.
         ///     `docs/TODO.md` § 23's rule is *"how hard the skill is supposed to hit"*, and the
         ///     thing that separates this from Cheska's nova is that it can hold **three people
         ///     at once**. A multi-target hold has to be shorter per victim than a single-target
         ///     one or it is three novas for one price. `perPress = (1.60 - 1.20) / 5 = 0.08 s`,
-        ///     so a player who answers it is free in about 1.2 s against 1.6 unanswered.
+        ///     so a player who answered it was free in about 1.2 s against 1.6 unanswered. At
+        ///     the 0.60 floor the same five presses buy 0.20 s each and free them in 0.6 s, which
+        ///     is the point of § 83.14: every declared press pays.
         ///   * **The 5 m reach**, where it used to hit `round.Players` with no distance test at
         ///     all: an ultimate that reaches a player standing in the far corner of a 14 m box
         ///     cannot be positioned against, and positioning is the counterplay. The reach is
