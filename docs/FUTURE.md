@@ -340,8 +340,11 @@ in the game and they make every later balance argument answerable.
 
 ### 2.1 The profile screen, laid out
 
-1. **Header card.** Avatar, display name and tag, country flag, title, level and border, current
-   rank badge per mode, peak rank, account age. Designed so one screenshot is the whole flex.
+1. **Header card.** Avatar, display name and tag, country flag, title, level and border, **the
+   rank badge**, peak rank, account age. Designed so one screenshot is the whole flex.
+   ⚠️ Read "rank badge per mode" until 2026-08-31, when the second ladder was cut: there is **one**
+   rank now and the other mode is unranked. § 9. Mode tabs in item 3 are about STATS, which stay
+   split by mode, and that is a different thing from having two ranks.
 2. **Career strip.** Matches played, matches won, win rate, hours, favourite character, favourite
    tsinelas, longest win streak.
 3. **Mode tabs.** Classic and Hero Strike, never merged, because they are separate games.
@@ -1271,9 +1274,28 @@ one short session and it is cheaper than building a phase against a stale brief.
 > and 0.6, then `docs/FUTURE.md` § 2. Do not skip them because this prompt summarises the task; the
 > summary is not the rules.
 >
-> **VERIFY FIRST.** Phase 1 must be shipped: `grep -rn "PlayerAccount" Assets` should find the
-> service. Confirm `MatchDirector` still raises the scoring events this phase reads, and confirm
-> the stat list in § 2.2 still matches the verbs the game has.
+> **VERIFY FIRST. ⚠️ PHASE 1 IS NOT FULLY SHIPPED AND THIS PROMPT USED TO ASSUME IT WAS.**
+> The client half landed on branch `accounts` on 2026-08-31; the SERVICE half did not, and one of
+> the build steps below depends on it. Check all four before planning:
+>
+> 1. `grep -rn "PlayerAccount" Assets` finds the service, and `AccountRules` is in
+>    `Packages/com.tumbangpreso.core/`. If not, Phase 1 has moved; read `docs/TODO.md` § 88 first.
+> 2. ⚠️⚠️ **Is the `player-account` Cloud Code endpoint DEPLOYED?** `ugs cloud-code scripts list`.
+>    On 2026-08-31 it was NOT: the CLI has no service account, so `ugs/cloud-code/player-account.js`
+>    exists in the repo and runs nowhere. **Step 2 below writes through Cloud Code and cannot be
+>    verified until this is done.** It needs 🧑 in the UGS dashboard; it is not something to work
+>    around by writing Cloud Save from the client, which § 0.5 rule 6 forbids.
+> 3. `MatchDirector` still raises the scoring events this phase reads. `ScoreEvent` in
+>    `MatchRules.cs` is the enum; `AddScore` is still the single host-side writer per `CLAUDE.md`
+>    § 4 and this phase must not change that.
+> 4. The stat list in § 2.2 still matches the verbs the game has. As of 2026-08-31 every one of
+>    them exists except **clutch rate**, which is derived at read time rather than raised as an
+>    event, so do not go looking for a `Clutch` event.
+>
+> **⚠️ IF THE ENDPOINT IS STILL NOT DEPLOYED**, per § 0.5 rule 11: build steps 1, 3, 4, 5, 6 and 7,
+> which are the majority of the phase and none of which need it. Write step 2's call site behind
+> the same local-queue path step 6 already needs, so deploying later switches it on rather than
+> retro-fitting it. **Say so at the top of the handoff rather than reporting the phase as done.**
 >
 > **Build.**
 > 1. A `PlayerProfile` document: identity, level, XP, career totals, per-mode records,
