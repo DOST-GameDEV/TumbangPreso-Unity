@@ -8,13 +8,14 @@ items move to **Closed** at the bottom with one line on how they were verified.
 
 Read [`VISION.md`](VISION.md) first if you have not. Several entries here only make sense
 against the readability budget in its § 2.
-
-⚠️ **The live-service and esport plan lives in [`FUTURE.md`](FUTURE.md), NOT here.** Accounts,
-profiles, stats, matchmaking, ranked, progression, cosmetics, mastery paths, controller, mobile,
-accessibility and tournaments are eighteen ordered phases there, each with a prompt written to
-brief a whole session. **None of it is scheduled and none of it is open work**, which is exactly
-why it is a separate file: an entry in this list is something somebody should do, and that plan is
-something somebody might decide to do. Written 2026-08-31 on 🧑's brief.
+⚠️ **The live-service and esport plan lives in [`FUTURE.md`](FUTURE.md) and
+[`INSPIRATION.md`](INSPIRATION.md), NOT here.** Accounts, profiles, stats, matchmaking, ranked,
+progression, cosmetics, loadouts, achievements, controller, mobile, accessibility and tournaments
+are eighteen ordered phases in `FUTURE.md`, each with a prompt written to brief a whole session;
+`INSPIRATION.md` is the study of thirty other games behind them, plus eleven more prompts and the
+combined order. **None of it is scheduled and none of it is open work**, which is exactly why they
+are separate files: an entry in this list is something somebody should do, and those are things
+somebody might decide to do. Written 2026-08-31 on 🧑's brief.
 
 ⚠️ **One item in it is NOT future work.** `FUTURE.md` § 17's first paragraph: the nationals are in
 General Santos City and venue internet cannot be assumed, so a full four-player match must be

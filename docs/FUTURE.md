@@ -9,6 +9,10 @@ be pasted straight into a new session as its whole brief.
 not `docs/Design.md`. Where this file and `docs/VISION.md` disagree about what the game IS,
 `VISION.md` wins.
 
+⚠️ **Its companion is [`INSPIRATION.md`](INSPIRATION.md)**, which is the study of what other games
+do and what each thing becomes here. This file is the WHAT and the WHEN; that one is the WHY, and
+it carries eleven more prompts plus the combined order for both files in its § 8.6.
+
 Written 2026-08-31, from 🧑's own words: *"I want this game to be an actual esport like league or
 valorant or overwatch"*, *"competitive ranking, player profile, shit u can grind for like diff
 skills"*, *"ppl can make an acct in it and there is a matchmaking system as well as different
@@ -578,54 +582,56 @@ rank, because it turns every good player's win into an accusation.
 
 ---
 
-## PHASE 10 · MASTERY PATHS AND ABILITY VARIANTS
+## PHASE 10 · LOADOUTS, SKILL VARIANTS AND ACHIEVEMENTS
 
-🧑: *"you know how overwatch or drg has unlockable skill paths or some shit?"*
+🧑: *"you know how overwatch or drg has unlockable skill paths or some shit?"*, then, clarifying
+what he actually meant: *"like skill / ability / passive variations, for example in drg theres
+diff guns"*, and how they are earned: *"u get them like in cod u finish quests or like ror2"*.
 
-⚠️⚠️ **THIS IS THE PHASE THAT CAN BREAK THE GAME, AND HERE IS EXACTLY HOW.** Deep Rock's
-overclocks are a co-op feature: everyone is on the same side, so a player with more unlocks makes
-the team stronger and nobody is on the receiving end. **This game is four players against each
-other.** A skill tree unlocked by grinding is, in a competitive match, an account that beats a
-player. `VISION.md` § 1's Classic rule is one half of the danger. This is the other half, and it
-applies to Hero Strike too.
+**That is a loadout system with challenge-gated unlocks, and it is a better feature than the
+"skill tree" reading it replaced.** The full design, the model it borrows from, the swap-at-role-
+change idea and the reasoning live in [`INSPIRATION.md`](INSPIRATION.md) § 5. The short version:
 
-**The design that gets the feeling without the damage: HORIZONTAL, NOT VERTICAL.**
+- Each hero gets **a small pool of options per slot** (skill 1, skill 2, ultimate, passive), not a
+  ladder of upgrades. You pick a build before the match, the way you pick a primary in Deep Rock.
+- **Every option is a sidegrade at the same ability budget.** Nothing unlocks more damage, range,
+  duration or a shorter cooldown. A test asserts it.
+- **Unlocks are Risk of Rain 2 style challenges**, character-specific and characterful, so earning
+  the variant teaches the character. Not a level wall.
+- ⚠️⚠️ **AND EVERY CHALLENGE MUST BE COMPLETABLE IN PRACTICE AGAINST BOTS.** That single rule is
+  what makes the whole system safe in a competitive game: the gate costs time spent learning a
+  character, never matches won against people, so nobody has to grind ranked to be equipped for
+  ranked. `INSPIRATION.md` § 5.4 has the argument in full.
+- **The build is public.** Shown in the lobby and on the scoreboard, because hidden loadouts in a
+  four-player fight are information asymmetry that feels like cheating.
+- **Achievements** are the same machinery pointed at bragging rather than at unlocks:
+  `INSPIRATION.md` § 5.6.
 
-- Every hero's kit stays exactly as balanced today. Nothing unlocks more damage, range, duration or
-  a shorter cooldown.
-- What unlocks are **variants**: a second way to spend the same ability budget. Cheska's barricade
-  gets a version that is shorter-lived but covers a wider arc. Same budget, different shape,
-  different matchup answer.
-- **Every variant is open to every player in ranked from level zero.** The grind unlocks the
-  variant for casual play and unlocks its **look, its name and its place on the profile**
-  permanently. In ranked the full set is always available to everybody.
-- That keeps every word he asked for: a path to grind, a tree to fill in, a build to talk about, a
-  profile that shows what you have mastered. It removes the one thing that would kill the esport
-  ambition in the same breath as creating it.
+**Then the part that is pure upside and has no balance risk at all:** per-character mastery paths
+of things that change nothing. A signature victory pose, a character emote, a voice line set, a
+nameplate, that character's own tsinelas, a colour variant, a title, a visible mastery number.
+**Most of the grind should live here.** It is Phase 5 content wearing a Phase 10 structure.
 
-**Then the part that is pure upside: mastery paths that are not power at all.** Per character, a
-long path of things worth chasing that change nothing: a signature victory pose, a
-character-specific emote, a voice line set, a nameplate, that character's own tsinelas, a colour
-variant, a title, and a visible mastery number. **Most of the grind should live here**, and it is
-Phase 5 content wearing a Phase 10 structure.
-
-**Classic gets its own path and never gets powers.** Street Hype is already Classic's identity
-layer. Extend it: Street Hype titles, curve and bank recognitions, streak records. Depth without
-abilities, which is the rule.
+**Classic gets its own path and never gets powers.** `VISION.md` § 1. Street Hype is already
+Classic's identity layer: extend it with Street Hype titles, curve and bank recognitions and
+streak records. Depth without abilities, which is the rule.
 
 > ### PROMPT 10
 >
 > Read `CLAUDE.md`, then `docs/VISION.md` § 1 twice, then `docs/TODO.md`,
-> `docs/Hero_Strike_Balance.md` and `docs/FUTURE.md` § 10. Phases 4 and 5 must be in.
+> `docs/Hero_Strike_Balance.md`, `docs/INSPIRATION.md` § 5 and `docs/FUTURE.md` § 10. Phases 4 and
+> 5 must be in.
 >
-> Build the mastery paths. Start with the part that has no balance risk: per-character cosmetic and
-> expressive mastery tracks for all eighteen characters, plus a Classic-only Street Hype track
-> containing no abilities of any kind. Then build ability VARIANTS for Hero Strike as sidegrades
-> that trade one property for another at an unchanged budget, never as upgrades, with every variant
-> unconditionally available to every player in ranked regardless of unlock state. Put the variant
-> definitions and the budget arithmetic in `Packages/com.tumbangpreso.core/` and write a test that
-> fails if any variant is a strict improvement on its base along every axis. Read
-> `docs/FUTURE.md` § 10's opening warning before writing a line.
+> Build the loadout system. Start with the part that has no balance risk: per-character cosmetic
+> and expressive mastery tracks for all eighteen characters, plus a Classic-only Street Hype track
+> containing no abilities of any kind. Then build the hero loadout: a pool of options per ability
+> slot, every one a sidegrade at an unchanged budget, chosen before the match and shown publicly in
+> the lobby and on the scoreboard. Unlock each option with a character-specific challenge in the
+> Risk of Rain 2 style, and make every challenge completable in Practice against bots, which is the
+> rule that keeps the system out of the competitive integrity problem. Put the option definitions,
+> the budget arithmetic and the challenge conditions in `Packages/com.tumbangpreso.core/` and write
+> a test that fails if any option is a strict improvement on its siblings along every axis. Read
+> `docs/INSPIRATION.md` § 5.4 before writing a line.
 
 ---
 

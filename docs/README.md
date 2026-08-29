@@ -26,6 +26,7 @@ add its row here in the same commit.
 | File | What it is |
 |---|---|
 | [`FUTURE.md`](FUTURE.md) | **The live-service and esport plan, in eighteen ordered phases, each with a prompt written to brief a whole session.** Accounts, profile and stats, telemetry, progression, cosmetics, social, matchmaking, competitive integrity, ranked, mastery paths, bots and population, modes and maps, seasons, controller, mobile, accessibility and localisation, tournaments and replays, distribution. ⚠️ **It is a plan, not a decision that any of it ships**, and where it disagrees with `VISION.md` about what the game is, `VISION.md` wins. Every phase is costed against a free tier, because there is no budget. |
+| [`INSPIRATION.md`](INSPIRATION.md) | **What to steal from thirty other games, and what it becomes in a four-player street game with a rotating taya.** The WHY behind `FUTURE.md`'s WHAT. Game by game with a "what it becomes here" for each, plus the queue-versus-mode structure (ranked is its own menu entry, not a third ruleset), the loadout and challenge-unlock design, achievements, and the problems a four-player free for all has that no borrowed system solves: **three of four players lose every match**, and a player far behind at the final round has nothing to play for. Carries eleven paste-ready prompts and a combined order with `FUTURE.md`'s phases. ⚠️ **A plan, not a decision.** |
 
 ## Port work
 
