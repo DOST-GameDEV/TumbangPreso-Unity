@@ -131,6 +131,51 @@ per session.
 **Verified:** Core 135/135 (`dotnet test`), from 69 before the phase. EditMode 236/236, read from
 `Logs/tests.xml` rather than the exit code.
 
+### 88.2 · The UGS project belongs to somebody else, and the service half is blocked on that
+
+🧑, 2026-08-31, shown the dashboard steps: *"can we js connect it to my acct instead bcz this
+isnt mine"*.
+
+**The project is `090f4720-e3f8-466f-b8f5-7679c6b41fb1` under org `paulandreirecio22`.** The Unity
+Hub on this machine is signed in as `M4tyuuu` / `matthewtlabrador@gmail.com`, whose own org is
+`matthewtlabrador`. So the editor is his and the cloud project is not, which is why he cannot make
+the service account that Cloud Code deployment needs.
+
+⚠️ **THE LINK IS TWO LINES AND NO CODE.** `cloudProjectId` and `organizationId` in
+`ProjectSettings/ProjectSettings.asset`, lines 738 and 742. Nothing in `Assets/`,
+`Packages/`, `ugs/` or `docs/` holds a copy; `PlayerAccount.CallCloudAsync` reads
+`Application.cloudProjectId` at runtime and follows the file. `tools/relink_ugs_project.sh` does
+the swap, refuses an id that is not a UUID, and prints what it cannot prove.
+
+**Three things to know before relinking, none of which are reasons not to:**
+
+1. ⚠️ **A UGS PlayerId is scoped to its project, so this is a reset rather than a transfer.** Every
+   existing anonymous id dies. **That costs nothing today and will not stay that way**: once
+   Phase 2 gives people profiles, stats and match history, the same move throws all of it away.
+   **Now is the cheapest this will ever be.**
+2. ⚠️⚠️ **EVERY MACHINE MUST BE ON THE SAME PROJECT OR ONLINE PLAY SILENTLY STOPS WORKING BETWEEN
+   THEM.** Two builds on different UGS projects resolve a join code in different namespaces, so
+   the room is simply not there. It does not read as a misconfiguration, it reads as an empty
+   lobby. His second laptop and any teammate's build must be rebuilt off the same branch.
+   **LAN discovery is unaffected**, because `LanBeacon` never touches UGS.
+3. The new project needs Authentication (anonymous **and** username/password), Relay, Lobby,
+   Cloud Save and Cloud Code enabled. Relay and Lobby are already proven on the old project, so
+   the shapes are known good; only the toggles move.
+
+⚠️⚠️ **AND `UgsCheck` CANNOT VERIFY ANY OF THIS HEADLESSLY, WHICH COST A RUN TO LEARN.**
+`UnityServices.InitializeAsync` refuses outside Play Mode with *"Unity Services can only be
+initialized in Play Mode"*, so a batchmode `UgsCheck.Run` reports step 2 and then FAILS step 3 for
+a reason that has nothing to do with the project. Batchmode also has no Hub session token, so it
+cannot see the signed-in account either, which `UgsCheck`'s own step 1 comment already says.
+**The real check is the menu item `Tumbang Preso > Check UGS Wiring` from an open editor.**
+⚠️ Also do not pass `-quit` alongside `-executeMethod UgsCheck.Run`: it polls from
+`EditorApplication.update` and exits itself, so `-quit` kills it before one UGS call is pumped and
+the log just stops after the compile.
+
+**Open, and it needs him:** create the project under `matthewtlabrador`, enable the five services,
+make a service account with Cloud Code and Cloud Save write access. Then the relink, the
+`player-account` deploy and Phase 2's step 2 all unblock together.
+
 ---
 
 ## 71 · The 2026-08-29 report, and the two faults only a non-host could see
