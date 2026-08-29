@@ -54,6 +54,33 @@ If nothing else on this page gets built, build these.
 
 Each entry: what they do, why it works, **what it becomes here**, and what not to copy.
 
+⚠️⚠️ **ALL THIRTY ENTRIES IN THIS SECTION ARE APPROVED IN PRINCIPLE. 🧑, 2026-08-31, on being shown
+the list: *"thats goated ok i approve all"*.**
+
+**What that approval means and does not mean, because the difference matters and a later session
+will otherwise read it as a mandate:**
+
+- ✅ **It means the DIRECTION is signed off.** Nobody needs to re-argue whether the game should have
+  a performance grade, a banner, rank floors, a daily seed or a weekly hour. Those questions are
+  settled and re-opening them wastes a session.
+- ❌ **It does not mean any of it is scheduled.** Nothing here is open work. `docs/TODO.md` is the
+  worklist and none of this is in it.
+- ❌ **It does not approve a number.** Every threshold, curve, tier count and timing in this file is
+  an illustration for a measurement, not a value to ship. `docs/Design.md` still governs balance
+  and § 0.6 of `FUTURE.md` says so at length.
+- ❌ **It does not override `VISION.md`.** Where an entry here and `VISION.md` disagree about what
+  the game IS, `VISION.md` wins, and § 1's rule that Classic never gets powers is not negotiable by
+  anything on this page.
+- ⚠️ **And two entries are approved as things to PROTOTYPE AND MEASURE, not to build.** They change
+  rules rather than adding systems, and shipping one on the strength of a paragraph here would be
+  exactly the mistake this repository keeps a measurement discipline to avoid: **§ 2.15** (shrinking
+  the box in the last 20 seconds) and **§ 5.5** (swapping loadout at the role change). Each carries
+  its own note saying so. `BotBehaviourProbe` over several runs, then `docs/Design.md` with the
+  measurement.
+- ❌ **§ 2.28 IS REJECTED, and the approval above does not cover it.** 🧑 killed the passive-defence
+  banking proposal the same day it was written. The entry stays as a record so nobody re-derives it.
+
+
 ### 2.1 Brawl Stars: the closest structural cousin
 
 Short matches, small teams, a huge roster, mobile-first, and a progression built for a player with
@@ -392,18 +419,28 @@ scoreboard. If a good player can bank a tsinelas off a wall or cut a corner in a
 cannot, that is skill expression the game should name out loud rather than leave hidden. Street
 Hype is already the mechanism for naming it.
 
-### 2.28 The Finals: the objective that creates comebacks
+### 2.28 The Finals: the objective that creates comebacks ❌ REJECTED 2026-08-31
 
 A cashout takes time and can be stolen. The lead is never safe, so nobody stops playing.
 
-**What it becomes here:** the third candidate answer in § 4.2, given a shape. **Passive defence
-could BANK rather than score**, and a knockdown could steal the bank. The taya's 900 uncontested
-points become 900 points at risk, which addresses `Design.md`'s known balance risk and the dead
-round with one change.
+⚠️⚠️ **THE ADAPTATION WAS PROPOSED AND 🧑 REJECTED IT THE SAME DAY. DO NOT RE-PROPOSE IT.** The
+proposal was that passive defence should BANK into a pot attached to the can rather than score
+directly, with a knockdown stealing the pot, so the taya's 900 uncontested points became 900 points
+at risk. It was argued as a single change that addressed both the known balance risk and the dead
+round in § 4.2.
 
-⚠️ **That is a large rules change to Classic.** `VISION.md` § 1 does not forbid it and `Design.md`
-governs it. Prototype it in a custom game and measure it across several `BotBehaviourProbe` runs.
-Do not ship it into Classic on the strength of this paragraph.
+**It is recorded here rather than deleted because it is the kind of idea that gets re-derived.** It
+looks elegant on paper, it maps cleanly onto a real problem the game has, and the next person to
+read The Finals' cashout will think of it again. **He has already said no.**
+
+⚠️ **The failure mode is the reason it is a bad fit, and it is worth understanding before proposing
+anything shaped like it.** A taya who defends brilliantly for 80 of 90 seconds and eats one lucky
+throw walks away with nothing. That is a punishing, swingy outcome landing on the role that
+everybody is forced to play once per match, and no amount of tuning the steal percentage changes
+what it does to the feel of defending.
+
+**What survives from The Finals:** only the general observation that a lead which cannot be taken
+is a lead that ends the match early. § 4.2's remaining candidates are the live ones.
 
 ### 2.29 Among Us: the frictionless invite
 
@@ -523,7 +560,7 @@ precisely the failure mode of every "performance-based ranked" system that has e
 A cumulative-score format with four rounds has a dead zone: if you are 400 behind at the start of
 the last round, the match is over for you and you have 90 seconds of nothing.
 
-**Three candidate answers, all cheap, none built:**
+**Four candidate answers, all cheap, none built, none measured:**
 
 1. **Pay all four placements**, not just first. 2nd and 3rd worth real rating and XP means the
    fight for 2nd is a live match inside the lost one.
@@ -533,6 +570,13 @@ the last round, the match is over for you and you have 90 seconds of nothing.
 3. **Per-round objectives** that pay regardless of score: survive the round without being tagged,
    land a knockdown from outside the box, retrieve while the taya is within 3 m. A losing player
    always has something to chase.
+4. **A shrinking box in the last 20 seconds**, built on the confinement radius that already exists
+   and that spawns are already computed from. It is the most thematically honest of the four, and
+   it is also the one most likely to make the taya STRONGER rather than weaker, which is the
+   opposite of what is wanted, so it is the one that most needs measuring. § 2.15.
+
+❌ **A fifth was proposed and rejected on 2026-08-31**: passive defence banking into a pot that a
+knockdown steals. § 2.28 records why, so nobody re-derives it.
 
 ⚠️ **This is a real balance question and it belongs in `Design.md` once it is answered.** It is
 listed here because no borrowed system solves it and because it is probably the biggest single
@@ -995,12 +1039,12 @@ feature that works at thirty concurrent players.**
 > 3. **An avoid list of three** that matchmaking honours. At four players one unpleasant person is a
 >    quarter of the lobby, so this matters more here than in a ten-player game.
 > 4. **The dead round.** § 4.2 records that a player far behind at the final round has ninety
->    seconds of nothing, and there are five candidates on the table with none built and none
+>    seconds of nothing, and there are four candidates on the table with none built and none
 >    measured: pay all four placements rather than only first; a final-round multiplier; per-round
->    objectives that pay regardless of score; a shrinking box in the last 20 seconds built on the
->    existing confinement radius (§ 2.15); and passive defence that **banks** rather than scores so
->    a knockdown can steal it (§ 2.28), which would also address the known balance risk and is the
->    largest change of the five.
+>    objectives that pay regardless of score; and a shrinking box in the last 20 seconds built on
+>    the existing confinement radius (§ 2.15). ⚠️ **A fifth was proposed and rejected on
+>    2026-08-31**, passive defence banking into a stealable pot: see § 2.28 for why, and do not
+>    re-derive it.
 >
 > **Constraints on the fourth item.** ⚠️ **Prototype in custom games. Measure across several
 > `BotBehaviourProbe` runs**, because `docs/TODO.md` § 16 records a 20 per cent spread on a single

@@ -195,7 +195,7 @@ THIS IS TRUE.** The prose about design intent ages well. The claims about the co
 | Scoring is one host-side writer | `grep -n AddScore Assets/TumbangPreso/Runtime/MatchDirector.cs` | § 8's corroboration design may no longer be the right shape. |
 | `NetSession.ProtocolVersion` is a gate between builds | `grep -n ProtocolVersion Assets/TumbangPreso/Runtime/Net/NetSession.cs` | Read the current number rather than quoting one from here. |
 | The free tiers named in § 0.3 still exist at those shapes | Check the service's own pricing page | ⚠️ **Vendor free tiers change without notice. Never quote a specific quota from this file to anybody.** |
-| Passive defence pays 900 a round against 100 for a knockdown | `docs/Design.md` and `Balance.cs` | Several arguments in `INSPIRATION.md` §§ 2.15, 2.28 and 4.2 rest on this. |
+| Passive defence pays 900 a round against 100 for a knockdown | `docs/Design.md` and `Balance.cs` | Arguments in `INSPIRATION.md` §§ 2.15 and 4.2 rest on this. |
 
 ⚠️ **AND THE NUMBERS IN THESE FILES ARE ILLUSTRATIONS, NOT BALANCE.** Every rating step, XP curve,
 tier name, challenge target, band width and threshold written here is a starting point for a
