@@ -12,7 +12,7 @@ against the readability budget in its § 2.
 [`INSPIRATION.md`](INSPIRATION.md), NOT here.** Accounts, profiles, stats, matchmaking, ranked,
 progression, cosmetics, loadouts, achievements, controller, mobile, accessibility and tournaments
 are eighteen ordered phases in `FUTURE.md`, each with a prompt written to brief a whole session;
-`INSPIRATION.md` is the study of thirty other games behind them, plus eleven more prompts and the
+`INSPIRATION.md` is the study of thirty other games behind them, plus ten more prompts and the
 combined order. **None of it is scheduled and none of it is open work**, which is exactly why they
 are separate files: an entry in this list is something somebody should do, and those are things
 somebody might decide to do. Written 2026-08-31 on 🧑's brief.

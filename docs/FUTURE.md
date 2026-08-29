@@ -409,25 +409,24 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 pays. Reuse the input telemetry the bots already produce to detect a seat that has not acted for a
 whole round, pay it nothing, and escalate on repeats.
 
-⚠️⚠️ **RESTED XP, NOT DIMINISHING RETURNS, AND THE DIFFERENCE IS ENTIRELY FRAMING.** The first
-version of this said to curve XP down after a few hours so a long session stops paying full rate.
-🧑 flagged it immediately, and he is right: **players always notice and always resent it**, because
-it is a penalty for playing your favourite game too much and it arrives without warning in the
-middle of a good night.
+⚠️⚠️ **THE XP RATE IS FLAT. NO DIMINISHING RETURNS, NO RESTED BONUS, NO DAILY CAP.** A match pays
+what a match pays, forever, for everybody.
 
-**The same arithmetic, inverted, is a gift instead of a punishment.** Everyone earns the base rate
-always, with no decay ever. A player who has been away accumulates a **bonus** pool, and their next
-few matches pay 1.5x until it runs out. The gap between somebody who plays two hours a day and
-somebody who plays ten narrows by exactly as much as the old scheme narrowed it, and nobody is ever
-told they are earning less than they were an hour ago.
+**Two versions of a rate curve were proposed and both were cut.** First diminishing returns, which
+🧑 called correctly: *"players always notice and always complain"*, because it is a penalty for
+playing your favourite game too much that arrives without warning mid-session. Then rested XP, the
+same arithmetic framed as a bonus for returning, which he also cut: *"3 diminishing xp is doing too
+much"*, *"dont do diminishing xp"*.
 
-⚠️ **It also does the harder job the first version could not: it brings back the player who
-stopped.** "You have 5 bonus matches waiting" is a reason to open the game. "Your XP is reduced"
-is a reason to close it.
+⚠️ **He is right and the second cut is the more instructive one.** Rested XP is a better mechanism
+than diminishing returns, and it is still a whole extra system, with a pool to accumulate, a rate to
+track, a UI to explain it and a rule nobody asked for, sitting on top of a progression that already
+has an account level, a per-character mastery, a season track, a currency and a challenge engine.
+**The problem it solves, that somebody who plays ten hours a day out-levels somebody who plays two,
+is not actually a problem in this game**: nothing on any track affects a match (§ 0.5 rule 4), so a
+higher level buys nothing but a border.
 
-⚠️ **AND A DAILY CAP IS STILL WRONG**, which is the one thing the first version got right. A cap
-tells a player in plain terms to stop playing tonight, which is the opposite of everything this
-phase is for.
+**A flat rate is one number, it is explainable in a sentence, and nobody has ever resented it.**
 
 **The prompt for this phase is [§ 19.4](#194-prompt-for-phase-4).** Every prompt in
 this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
@@ -680,15 +679,15 @@ art, which is why they are worth more per hour than a new map.
 
 **Modes that cost little and add a lot:**
 
-- **Daily seed.** The same starting state for everybody that day, one attempt, a leaderboard.
-  Enormous retention for the work, and it needs no matchmaking at all. Build this first.
+- ❌ **Daily seed. CUT 2026-08-31**, on scope rather than on design. `INSPIRATION.md` § 2.9 records
+  what was proposed, what was reworked and why it still came out. Do not bring it back.
 - **King of the Can.** Continuous rather than round-based, taya changes on knockdown. A five-minute
   mode for people who do not want a full set.
 - **Time attack.** Solo, one can, retrieve under pressure from bots, ranked by time. Feeds
-  practice and the daily seed.
+  practice, and it is the only place medals and ghosts still make sense.
 - **Survival.** Co-op, three attackers against an escalating bot taya. Co-op is the mode that
   brings in players who bounce off competition, and this game has none.
-- **Mirror.** Everyone gets the same character and tsinelas, chosen daily. The cheapest possible
+- **Mirror.** Everyone gets the same character and tsinelas, rotated weekly. The cheapest possible
   "new mode" and a genuinely good competitive format.
 - **2v2**, which the taya rotation does not currently support and is real design work rather than
   a switch. Costed honestly here rather than assumed.
@@ -918,7 +917,7 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
   moderation liability and none of the toxicity.
 - **A practice range** with a can, a ghost defender and a retrieval trainer. `GuidedTraining`
   already exists to build on.
-- **The daily seed** from Phase 12. Enormous retention for the work, needs no matchmaking.
+- ~~The daily seed~~. ❌ Cut 2026-08-31 on scope. `INSPIRATION.md` § 2.9.
 - **"Save last 30 seconds" clip export** from Phase 17. The single best growth feature here.
 - **A first-match funnel fix**, whatever Phase 3 says it is. Cheaper than every feature above and
   usually worth more than all of them.
@@ -1196,11 +1195,10 @@ tomorrow, and it needs no matchmaking and no ranked to be worth having.**
 >
 > **Constraints.** Every curve and reward table is data in `Packages/com.tumbangpreso.core/` with
 > tests, including one that asserts **no reward on any track changes a gameplay number** (§ 0.5
-> rule 4). ⚠️⚠️ **RESTED XP, never diminishing returns and never a daily cap.** § 4 has the
-> reasoning: the base rate never drops for anybody, and a player who has been away accumulates a
-> bonus pool that pays 1.5x for their next few matches. It is the same arithmetic as a decay curve
-> and the opposite feeling, and it brings a lapsed player back where a decay curve tells an engaged
-> one to stop.
+> rule 4). ⚠️⚠️ **THE XP RATE IS FLAT.** No diminishing returns, no rested bonus, no daily cap. A
+> match pays what a match pays, for everybody, forever. Two rate curves were proposed and both were
+> cut on 2026-08-31, and § 4 records why: the problem they solve does not exist in a game where
+> nothing on any track affects a match.
 >
 > **Done when** a match awards XP computed server-side from its record, an AFK seat earns nothing,
 > the track pays out, no reward touches a gameplay value and a test proves it, and § 0.5 rule 9 is
@@ -1467,7 +1465,7 @@ exist.**
 > 1. **Custom games**: private lobby, password, round length, score target, character and tsinelas
 >    restrictions, bot count, rule toggles. Everything else in this phase gets cheaper afterwards,
 >    and it is also the tournament tool for Phase 17.
-> 2. The daily seed mode, if `INSPIRATION.md`'s prompt I6 has not already delivered it.
+> 2. ⚠️ **Not the daily seed.** It was cut on 2026-08-31 and `INSPIRATION.md` § 2.9 records why.
 > 3. Map rotation and a map vote. **Do these before building a fourth map**: voting buys most of
 >    the same freshness for a fraction of the work.
 >

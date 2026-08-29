@@ -2,7 +2,7 @@
 
 **What this file is.** A study of the systems that keep people playing other games, each one
 turned into something specific for a four-player Filipino street game with a rotating taya.
-It is the WHY behind [`FUTURE.md`](FUTURE.md), which is the WHAT and the WHEN. **Its eleven
+It is the WHY behind [`FUTURE.md`](FUTURE.md), which is the WHAT and the WHEN. **Its ten
 prompts live in § 8**, and they inherit `FUTURE.md` § 0.5, the standing preamble, and § 0.6, the
 staleness protocol.
 
@@ -31,7 +31,7 @@ That one fact is why § 4 exists and why it is the most important section in thi
 
 ---
 
-## 1 · The ten ideas worth doing, ranked
+## 1 · The nine ideas worth doing, ranked
 
 If nothing else on this page gets built, build these.
 
@@ -42,11 +42,10 @@ If nothing else on this page gets built, build these.
 | 3 | **Loadout variants unlocked by character challenges** | Risk of Rain 2, Deep Rock, CoD | The thing he actually asked for, and it doubles as the best character tutorial you can write. § 5 |
 | 4 | **Trophy Road: a reward track tied to rank that never takes anything back** | Brawl Stars | Solves "rank goes down and I feel worse" for a game whose population cannot afford churn. § 2.1 |
 | 5 | **Endorsements** | Overwatch | One button. The only anti-toxicity system with evidence behind it. § 2.4 |
-| 6 | **The daily, in three shapes: a rule twist on the live queue, a solo time trial with ghosts, and a squad run** | Wordle, Trackmania, Splatoon | Retention that does not need a population, without the marquee daily being the one mode you play alone. § 2.9 |
-| 7 | **In-client tournaments** | Rocket League | This project is going to nationals. The tournament tooling is 70 per cent built already. § 2.6 |
-| 8 | **Rank floors and a ratcheted reward road** | Marvel Snap, Brawl Stars | A bad night can never undo a good week, which is the most common reason people stop queueing ranked. § 2.19 |
-| 9 | **A scheduled weekly hour** | Pokemon GO community day | Not content, a schedule. It concentrates thirty players into full lobbies instead of spreading them across empty ones, and it is nearly free. § 2.24 |
-| 10 | **A training room that draws the invisible ranges** | Fighting game training modes | Contact resolves by distance, never by a volume, so every range in this game is a number that can be drawn exactly. § 2.21 |
+| 6 | **In-client tournaments** | Rocket League | This project is going to nationals. The tournament tooling is 70 per cent built already. § 2.6 |
+| 7 | **Rank floors and a ratcheted reward road** | Marvel Snap, Brawl Stars | A bad night can never undo a good week, which is the most common reason people stop queueing ranked. § 2.19 |
+| 8 | **A scheduled weekly hour** | Pokemon GO community day | Not content, a schedule. It concentrates thirty players into full lobbies instead of spreading them across empty ones, and it is nearly free. § 2.24 |
+| 9 | **A training room that draws the invisible ranges** | Fighting game training modes | Contact resolves by distance, never by a volume, so every range in this game is a number that can be drawn exactly. § 2.21 |
 
 ---
 
@@ -61,7 +60,7 @@ the list: *"thats goated ok i approve all"*.**
 will otherwise read it as a mandate:**
 
 - ✅ **It means the DIRECTION is signed off.** Nobody needs to re-argue whether the game should have
-  a performance grade, a banner, rank floors, a daily seed or a weekly hour. Those questions are
+  a performance grade, a banner, rank floors or a weekly hour. Those questions are
   settled and re-opening them wastes a session.
 - ❌ **It does not mean any of it is scheduled.** Nothing here is open work. `docs/TODO.md` is the
   worklist and none of this is in it.
@@ -203,64 +202,32 @@ account age, matches finished, report count, leave rate. Use it to keep brand-ne
 heavily-reported accounts in their own pool. It is also the smurf answer that does not need
 anti-cheat. `FUTURE.md` § 8.3.
 
-### 2.9 Wordle, Tetris 99 dailies, and the one-attempt hook
+### 2.9 Wordle, Tetris 99 dailies, and the one-attempt hook ❌ REJECTED 2026-08-31
 
 One puzzle a day, the same for everybody, one attempt, a shareable result.
 
-⚠️⚠️ **THE FIRST VERSION OF THIS WAS A SINGLEPLAYER MODE AND THAT WAS WRONG.** It was written as
-one solo match a day against bots, and 🧑 named the problem immediately: **the marquee retention
-feature of a multiplayer game should not be the one you play alone.** A solo daily reads as a
-consolation prize for nobody being online, which is the exact feeling it was supposed to fix.
+⚠️⚠️ **THE DAILY WAS PROPOSED TWICE, REWORKED ONCE, AND CUT. DO NOT BRING IT BACK.** 🧑, on the
+reworked version: *"remove daily seed lowkey"*, *"too much shit"*.
 
-**The seed is the good part. The solitude was not.** A seed is just "everybody gets the same
-starting state today", and that idea works in three shapes rather than one. Build them in this
-order, because each is cheaper than the one after it.
+**What was proposed, so nobody re-derives either version.** First, a solo match a day against bots,
+identical for everybody, with a leaderboard. He rejected that on the grounds that the marquee
+retention feature of a multiplayer game should not be the one you play alone. It was then reworked
+into three shapes: a daily rule twist on the live queue, a solo time trial with medals and the
+ghosts of other players' runs, and a full-lobby squad version. **He cut all three.**
 
-#### 2.9.1 DAILY TWIST, and this is the one to build first
+⚠️ **THE REASON IS SCOPE, NOT DESIGN, AND THAT IS THE MORE IMPORTANT KIND OF NO.** The reworked
+daily was a better feature than the original. It was still a whole mode, a leaderboard, a medal
+table, a seed system and a ghost pipeline, sitting beside a season track, a challenge engine,
+achievements, mastery and a rank ladder. **A plan can be full of individually good features and
+still be too much for five students**, and that is what this one was.
 
-**One rule change a day, applied to the LIVE quick-match queue.** Not a separate mode, not a
-separate queue, not a leaderboard. Today everybody plays with one tsinelas. Tomorrow half stamina.
-Thursday the taya's reach is doubled.
+**What is genuinely dead:** the daily mode, the daily leaderboard, medals, ghosts as a daily
+feature, and the squad variant. `INSPIRATION.md` prompt I6 is deleted.
 
-- **It is multiplayer by construction**, because it is the multiplayer queue.
-- **It costs one field**, because `FUTURE.md` § 12 already builds custom-game rule toggles and this
-  is one of them selected by the date.
-- **It makes the whole game feel different every day** rather than adding a corner of the game that
-  feels different.
-- **It gives the Discord something to say every morning**, which is most of what a daily is for.
-
-⚠️ **It does not go in ranked.** Ranked runs the shipped rules, always. `INSPIRATION.md` § 3.3.
-
-#### 2.9.2 DAILY RUN, the solo one, framed honestly
-
-The score-attack still has a place. **The mistake was calling it a match.** It is not a lonely
-version of the game, it is **the training range with a scoreboard**, and it should look and be
-named like one.
-
-- You are the attacker. The seed fixes the map, the can, the taya bot and its behaviour.
-- Scored on time, not on placement: how fast can you knock the can down and get your tsinelas back.
-- **Medals rather than a ranking**, per § 2.14: bronze, silver, gold, author. You are beating a bar,
-  not beating people, so it cannot feel empty at 3am with nobody online.
-- ⚠️⚠️ **GHOSTS ARE WHAT MAKE IT SOCIAL, AND THEY ARE THE WHOLE FIX.** Race the replays of other
-  people who ran today's seed: your friends first, then the medal-holders. You are alone in the
-  match and surrounded by other players' runs. This is the Trackmania model and **this codebase can
-  actually do it**, because a replay is the input stream and the simulation is deterministic from
-  it (`FUTURE.md` § 17). A ghost is a few hundred kilobytes, not a video.
-- One attempt a day, a short shareable result, and it writes to the local machine leaderboard from
-  § 2.26 as well, so it still has a scoreboard with no internet.
-
-#### 2.9.3 DAILY SQUAD, when there is a population to support it
-
-The same seed played by a **full lobby of four humans**, with the lobby's combined result on a
-board against other lobbies. It turns the daily into a thing a barkada does together in one sitting
-rather than a thing four people each do alone.
-
-⚠️ **Do not build this third one early.** It needs four humans to be worth opening, which is the
-one thing a daily is supposed to work without.
-
-**So the shape is: the twist is for everybody, the run is for the player alone at 3am, and the
-squad is for the group.** Only the middle one is singleplayer, and it is a time trial rather than a
-match, which is a thing people already understand and want.
+**What survives elsewhere, and is not a way to smuggle this back in:** § 2.14's medals still apply
+if a time-trial mode is ever built for its own sake, ghosts remain a natural use of the replay work
+in `FUTURE.md` § 17 if that ships, and § 2.30's modifiers remain available as **custom-game rule
+toggles** in `FUTURE.md` § 12, which is where a rule toggle belongs. None of those is a daily.
 
 ### 2.10 Splatoon and the event that picks a side
 
@@ -309,8 +276,8 @@ it.** The split is the point: casual keeps four people playing, ranked keeps the
 Every track carries author, gold, silver and bronze times. You are not racing people, you are
 racing a bar, and the bar does not care how many players are online.
 
-**What it becomes here, and it is bigger than it sounds:** put **medals on the daily seed and on
-time attack**. A solo skill target is the only kind of progression that works at thirty concurrent
+**What it becomes here, if a time-trial mode is ever built for its own sake:** medals on a
+time attack. A solo skill target is the only kind of progression that works at thirty concurrent
 players, it gives a returning player something to do at 3am, and it is a leaderboard that cannot
 feel empty. Also steal the **ghost**: race the replay of your own best run, which this codebase can
 actually do because the match is deterministic from `InputIntent`.
@@ -453,7 +420,7 @@ The original retention system. Your initials, on the cabinet, in the shop, where
 sees them.
 
 **What it becomes here, and it fits this game's soul better than any online leaderboard:** a
-**local machine leaderboard**. Best daily seed on this PC, best knockdown streak on this PC,
+**local machine leaderboard**. Best knockdown streak and best round on this PC,
 initials and all. This game is played by five friends in one room and it will be played in school
 computer labs. **A leaderboard that needs no internet, no account and no population is the one that
 will actually get looked at**, and it is a text file.
@@ -506,8 +473,8 @@ accidentally put a login wall in front of "play with my friend right now". Do no
 
 A daily climb with modifiers, and a history of every run you have made with the numbers attached.
 
-**What it becomes here:** the modifier pool behind DAILY TWIST in § 2.9.1. One tsinelas only.
-Half stamina. Double the taya's reach. It is a new mode a week, forever, out of a single field.
+**What it becomes here:** a pool of custom-game rule toggles in `FUTURE.md` § 12. One tsinelas only.
+Half stamina. Double the taya reach. A rule toggle belongs in custom games, not in a daily: § 2.9.
 
 ---
 
@@ -529,7 +496,7 @@ transferring to ranked, which is the fastest way to make a competitive game feel
 |---|---|---|
 | **CASUAL** | Quick match, bots allowed to backfill, no rating | Quick match, bots allowed to backfill, no rating |
 | **RANKED** | Own ladder, no bots ever, stricter leaver rules | Own ladder, no bots ever, stricter leaver rules |
-| **ARCADE** | Daily seed, rotating featured mode, events | Same |
+| **ARCADE** | Rotating featured mode, live events | Same |
 | **CUSTOM** | Private code, full rule toggles, tournament mode | Same |
 | **PRACTICE** | Bots, training, the range, challenge completion | Same |
 
@@ -541,7 +508,7 @@ Which is what he is asking for, done in a way that does not fork the game.
 PLAY
  ├─ QUICK MATCH      -> pick CLASSIC or HERO STRIKE
  ├─ RANKED           -> pick CLASSIC or HERO STRIKE, separate ladders, own badge
- ├─ ARCADE           -> daily seed, featured mode, live event
+ ├─ ARCADE           -> featured mode, live event
  ├─ CUSTOM           -> create or join by 4-character code
  └─ PRACTICE         -> bots, guided training, the range
 ```
@@ -817,7 +784,6 @@ brief.
 | [I3](#prompt-i3--the-challenge-engine-achievements-and-loadout-unlocks) | Challenge engine and achievements | Phases 2, 4 |
 | [I4](#prompt-i4--hero-loadouts) | Hero loadouts | I3 |
 | [I5](#prompt-i5--the-queue-and-mode-structure) | Queue and mode structure | Before Phase 7 |
-| [I6](#prompt-i6--the-daily-in-three-shapes) | The daily: twist, run, squad | Phase 12 for the twist, 2 for the run |
 | [I7](#prompt-i7--the-moment-best-moment-card-killcam-and-clip-export) | Best-moment card, killcam, clips | Phase 2 |
 | [I8](#prompt-i8--endorsements-trust-the-avoid-list-and-the-dead-round) | Endorsements, trust, dead round | Alongside Phase 8 |
 | [I9](#prompt-i9--the-training-room-and-replay-takeover) | Training room, replay takeover | Phase 17 for the takeover half |
@@ -1006,56 +972,6 @@ value item here.**
 
 ---
 
-### PROMPT I6 · The daily, in three shapes
-
-**Run the twist any time after `FUTURE.md` Phase 12. The run needs Phase 2. The squad needs a
-population and should wait.**
-
-> Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md`, then `docs/FUTURE.md` §§ 0.5
-> and 0.6, then `docs/INSPIRATION.md` §§ 2.9, 2.14, 2.26 and 2.30. Do not skip them because this
-> prompt summarises the task; the summary is not the rules.
->
-> **VERIFY FIRST.** Check whether `FUTURE.md` Phase 12's custom-game rule toggles exist, because
-> the twist is one of those toggles selected by the date rather than a new system. Check whether
-> replays exist, because the ghosts depend on them.
->
-> ⚠️ **Read § 2.9's opening warning before designing anything.** An earlier version of this was a
-> solo match against bots and it was rejected for a good reason: the marquee retention feature of a
-> multiplayer game must not be the one you play alone.
->
-> **Build in this order, and stop after the second unless there is a population for the third.**
->
-> **1. DAILY TWIST.** One rule change a day applied to the LIVE quick-match queue: one tsinelas
-> only, half stamina, double taya reach. Derive the choice from the date so every client agrees
-> without asking a server. It is multiplayer by construction because it IS the multiplayer queue,
-> it costs one field on top of the existing rule toggles, and it makes the whole game feel different
-> every day rather than adding a lonely corner. Announce it on the main menu.
-> ⚠️ **Never in ranked.** Ranked runs the shipped rules, always.
->
-> **2. DAILY RUN.** A solo time trial, and **name and frame it as a time trial rather than as a
-> match**: you are the attacker, the seed fixes the map, the can and the taya bot, and you are
-> scored on how fast you knock the can down and retrieve your tsinelas. Award **medals** rather than
-> a ranking, per § 2.14, so it cannot feel empty when nobody is online. One attempt a day, a short
-> shareable result, and write it to the local machine leaderboard from § 2.26 as well as to the
-> service, so it still has a scoreboard with no internet.
->
-> ⚠️⚠️ **GHOSTS ARE THE PART THAT FIXES THE SOLITUDE, SO DO NOT CUT THEM TO SAVE TIME.** Race the
-> replays of other people who ran today's seed, friends first, then medal-holders. A ghost is an
-> input stream and this simulation is deterministic from it, so it is a few hundred kilobytes, not a
-> video. If replays do not exist yet, build the run without ghosts, ship nothing to players until
-> they do, and say so in the handoff.
->
-> **3. DAILY SQUAD, only if the population supports it.** The same seed played by a full lobby of
-> four humans with a combined result on a board against other lobbies. ⚠️ **Do not build this
-> early**: it needs four humans to be worth opening, which is the one thing a daily is supposed to
-> work without.
->
-> **Done when** the twist changes the live queue on a date boundary with no server call, the run
-> awards medals and races at least one ghost, both write to the local board, and `FUTURE.md` § 0.5
-> rule 9 is satisfied.
-
----
-
 ### PROMPT I7 · The moment: best-moment card, killcam and clip export
 
 **Run after `FUTURE.md` Phase 2. The card alone is the best growth-per-hour item in either file.**
@@ -1169,7 +1085,7 @@ nothing.**
 > anything for the tournament half: this is mostly wiring rather than invention.
 >
 > **Build three things, cheapest first.**
-> 1. **A local machine leaderboard**: a plain file on disk, best daily seed and best knockdown
+> 1. **A local machine leaderboard**: a plain file on disk, best round and best knockdown
 >    streak on this PC, three-letter initials, arcade style. ⚠️ **It needs no internet, no account
 >    and no other players, which makes it the only leaderboard that works on day one** and in a
 >    school computer lab.
@@ -1205,8 +1121,8 @@ nothing.**
 > 2. **LAST TSINELAS STANDING.** Three tsinelas per attacker; lose them all and you are out; the
 >    last attacker takes the round. A completely different game from the same parts, and the best
 >    candidate here for a rotating featured mode.
-> 3. **DAILY MODIFIERS.** Already covered by DAILY TWIST in § 2.9.1: build it there, on the live
->    queue, rather than as an arcade variant here.
+> 3. **RULE TOGGLES.** The modifier pool from § 2.30 as custom-game toggles rather than as a daily,
+>    which is where a rule toggle belongs. § 2.9 records why the daily itself was cut.
 >
 > **Constraints.** ⚠️⚠️ **Touch nothing in Classic's own ruleset.** A new mode is a new mode.
 > `docs/Design.md` governs Classic and `VISION.md` § 1 governs why. Every variant's rules go in
@@ -1231,30 +1147,29 @@ nothing.**
 | 5 | **I2** Banner and trackers | Turns F2's stats into a thing people build. Cheap. |
 | 6 | **I10** Weekly hour and local leaderboard | Mostly not code, and it is the fastest fix for an empty queue. |
 | 7 | **F4** XP, levels, season track | The reason to come back tomorrow. |
-| 8 | **I6** Daily seed, medals, ghost | Retention that works at thirty players. Independent, do it whenever. |
-| 9 | **I7** Best-moment card, then killcam | The growth engine. Cheapest piece first. |
-| 10 | **F5** Cosmetics and customisation | Now there is something to spend I2, F4 and I3 on. |
-| 11 | **I3** Challenge engine and achievements | One system, four features. Build it once, properly. |
-| 12 | **F6** Social, friends, parties | Population compounds from here. |
-| 13 | **I5** Queue and mode structure | Must land before matchmaking, because it decides what queues exist. |
-| 14 | **F7** Matchmaking | Fills the queues I5 defined. |
-| 15 | **F8** Competitive integrity | Never after ranked. |
-| 16 | **I8** Endorsements, trust, avoid list, dead round | Alongside F8. The dead-round half is real design work, not implementation. |
-| 17 | **F9** Ranked, with rank floors | Only now. It needs matchmaking under it, integrity beside it, population to fill it. |
-| 18 | **F11** Bots, backfill, population | Move this earlier the moment queue times get bad. |
-| 19 | **I4** Hero loadouts | Depth for players who have put fifty hours in. Needs I3. |
-| 20 | **F12** Modes, maps, custom games | Custom games first: every other mode is cheaper afterwards. |
-| 21 | **I11** Arcade variants | Needs F12. Nearly free once custom games exist. |
-| 22 | **I9** Training room, replay takeover | Needs F17's determinism proof for the takeover half; the room itself does not. |
-| 23 | **F13** Seasons and live ops | Needs everything above to have something to season. |
-| 24 | **F14** Controller, then **F15** Mobile | Independent of the whole column. Start any time somebody wants a break from services. |
-| 25 | **F16** Accessibility and localisation | Independent, overdue, and Tagalog is marketing as much as access. |
-| 26 | **F17** Tournaments, LAN, replays | ⚠️ **The LAN half of this is not future work.** See below. |
-| 27 | **F18** Distribution | Last. |
+| 8 | **I7** Best-moment card, then killcam | The growth engine. Cheapest piece first. |
+| 9 | **F5** Cosmetics and customisation | Now there is something to spend I2, F4 and I3 on. |
+| 10 | **I3** Challenge engine and achievements | One system, four features. Build it once, properly. |
+| 11 | **F6** Social, friends, parties | Population compounds from here. |
+| 12 | **I5** Queue and mode structure | Must land before matchmaking, because it decides what queues exist. |
+| 13 | **F7** Matchmaking | Fills the queues I5 defined. |
+| 14 | **F8** Competitive integrity | Never after ranked. |
+| 15 | **I8** Endorsements, trust, avoid list, dead round | Alongside F8. The dead-round half is real design work, not implementation. |
+| 16 | **F9** Ranked, with rank floors | Only now. It needs matchmaking under it, integrity beside it, population to fill it. |
+| 17 | **F11** Bots, backfill, population | Move this earlier the moment queue times get bad. |
+| 18 | **I4** Hero loadouts | Depth for players who have put fifty hours in. Needs I3. |
+| 19 | **F12** Modes, maps, custom games | Custom games first: every other mode is cheaper afterwards. |
+| 20 | **I11** Arcade variants | Needs F12. Nearly free once custom games exist. |
+| 21 | **I9** Training room, replay takeover | Needs F17's determinism proof for the takeover half; the room itself does not. |
+| 22 | **F13** Seasons and live ops | Needs everything above to have something to season. |
+| 23 | **F14** Controller, then **F15** Mobile | Independent of the whole column. Start any time somebody wants a break from services. |
+| 24 | **F16** Accessibility and localisation | Independent, overdue, and Tagalog is marketing as much as access. |
+| 25 | **F17** Tournaments, LAN, replays | ⚠️ **The LAN half of this is not future work.** See below. |
+| 26 | **F18** Distribution | Last. |
 
 ⚠️⚠️ **AND THE URGENT ITEM IS NOT ON THAT LIST AT ALL.** `FUTURE.md` § 17's first paragraph: nobody
 has ever tested a full four-player match end to end with the internet physically disconnected, and
-the nationals are in General Santos City. **Do that before any of the twenty-seven rows above**, and
+the nationals are in General Santos City. **Do that before any of the rows above**, and
 keep it true through every one of them.
 
 ---
@@ -1266,7 +1181,7 @@ Things too small to earn a section and too useful to leave out. All of them are 
 | Borrowed from | The thing | What it becomes here |
 |---|---|---|
 | Fighting games | Input display in training | Show the contextual `E` hold tiers filling, so tap, shove and reset stop being folklore. |
-| Racing games | Ghost of your best run | Race your own daily seed replay. Free once replays exist. |
+| Racing games | Ghost of your best run | Race your own replay in the training room. Free once replays exist. |
 | Rocket League | Quick chat on one key | A ping and comm wheel: "on the can", "behind you", "nice", "sorry". Replaces voice entirely. |
 | Overwatch | Potential Play of the Game teaser | The end-of-round "you were one knockdown from second" line. § 4.3. |
 | Halo | Post-match carnage report | The full four-player stat grid on the end screen, not just the score. |
@@ -1277,6 +1192,29 @@ Things too small to earn a section and too useful to leave out. All of them are 
 | Trackmania | Medals | § 2.14. A bar to beat that needs no other player. |
 | Peggle and pinball | The over-the-top finish | The knockdown that wins a match deserves an absurd amount of screen. It is the moment the whole game exists for. |
 | Chess and Elo history | A rating graph | One sparkline of the season on the profile. Trivial, and people stare at it. |
-| Any speedrun community | Categories | The daily seed leaderboard split by "any tsinelas" and "default tsinelas". Community rules for free. |
 | Streaming culture | Spectator delay | § 2.6 and `FUTURE.md` § 17. Needed the first time a match is streamed. |
 | Old LAN shooters | A scoreboard key you hold | Hold TAB mid-match for the full stat grid rather than the score strip. |
+
+---
+
+## 10 · The rejected register
+
+⚠️⚠️ **EVERY IDEA 🧑 HAS KILLED, IN ONE PLACE, SO NOBODY RE-DERIVES ONE AND PRESENTS IT AS NEW.**
+This section is the first thing to check before proposing anything to do with progression, the
+dead round, or a new mode. A rejected idea that comes back with a new name has cost him a
+conversation he already had.
+
+| Idea | Where | Killed | Why |
+|---|---|---|---|
+| **Passive defence banks into a stealable pot** | § 2.28 | 2026-08-31 | Design. A taya who defends 80 of 90 seconds and eats one throw walks away with nothing, and that lands on the role everybody is forced into once a match. |
+| **The daily seed**, in both the solo and the three-shape version | § 2.9 | 2026-08-31 | Scope. *"remove daily seed lowkey"*, *"too much shit"*. A mode plus a leaderboard plus medals plus a seed system plus ghosts, beside five progression systems already. |
+| **Diminishing XP after a long session** | `FUTURE.md` § 4 | 2026-08-31 | Players notice and resent it. It is a penalty for playing your favourite game too much, arriving mid-session with no warning. |
+| **Rested XP** (the same curve framed as a returning bonus) | `FUTURE.md` § 4 | 2026-08-31 | Scope. *"doing too much"*, *"dont do diminishing xp"*. A better mechanism than the one it replaced and still a whole extra system solving a problem this game does not have, because nothing on a track affects a match. |
+| **Throw while moving versus planted** | never written in | 2026-08-31 | It makes a new player feel bad at aiming, which is the wrong first impression for a party game. |
+
+⚠️ **THE PATTERN IN THESE IS WORTH MORE THAN THE LIST.** Three of the five were cut on **scope, not
+on design**, and two of those three were the improved second version of something. **A plan can be
+full of individually good features and still be too much for five students.** When adding anything
+to these documents, the question is not "is this good", it is "is this good enough to displace
+something already on the list".
+
