@@ -655,12 +655,20 @@ namespace TumbangPreso.UI
                 GameServices.Match?.StartMatch();
         }
 
+        /// <summary>
+        /// ⚠️⚠️ IT ENDS THE SESSION NOW, WHICH THESE FOUR LINES NEVER DID. See
+        /// `SceneFlow.LeaveMatchToMainMenu`: `NetworkManager` is `DontDestroyOnLoad`, so a host
+        /// pressing MAIN MENU walked to the title screen and went on hosting, and the other three
+        /// stayed in a match with no referee until a thirty-second silence timer noticed.
+        ///
+        /// ⚠️ `RestoreTime` STAYS AND IS NOT THE SAME AS THE CLOCK RESET IN THERE. This board
+        /// slows time on the way IN and owns the value it slowed from; the exit only guarantees
+        /// the scale is 1 for whatever comes next.
+        /// </summary>
         private void OnMenuPressed()
         {
             RestoreTime();
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-            SceneFlow.Go(SceneFlow.MainMenu);
+            SceneFlow.LeaveMatchToMainMenu();
         }
     }
 }

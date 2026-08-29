@@ -135,7 +135,11 @@ namespace TumbangPreso.Tests
         [Test]
         public void TheProtocolCarriesEveryRosterBump()
         {
-            Assert.AreEqual(12, NetSession.ProtocolVersion,
+            // ⚠️ 13 SINCE 2026-08-29: `Flair` was added (`Visual.MatchFlair`, docs/TODO.md
+            // § 83.16). A build without that handler drops every one of those messages and its
+            // players silently see none of the tags, blocks, bank shots or zaps the host is
+            // announcing, which is the half-working match this tripwire exists to refuse.
+            Assert.AreEqual(13, NetSession.ProtocolVersion,
                 "a message or a replicated roster index has been added or removed. Bump this " +
                 "number and `NetSession.ProtocolVersion` together, in the same commit.");
         }

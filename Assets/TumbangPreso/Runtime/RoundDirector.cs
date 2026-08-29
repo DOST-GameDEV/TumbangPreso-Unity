@@ -544,41 +544,26 @@ namespace TumbangPreso
         private void ApplyTagPenalty(CharacterMotor taya, CharacterMotor victim)
         {
             victim.ApplyStagger(Balance.TagStunTime);
-            Visual.DizzyStars.Attach(victim.transform, Balance.TagStunTime, UI.UiTheme.Defense);
-            Visual.ComicPopup.Spawn(victim.transform.position, "TAGGED!", UI.UiTheme.Defense, 1.4f);
 
-            // The tag is the taya's moment: the hit itself, the victim going down, and the
-            // announcer, all off the one resolution so they cannot disagree.
-            // ⚠️ THE FREEZE IS THE HIT'S WEIGHT. Without it a tag is instant and reads as the
-            // victim teleporting rather than as being caught.
-            Hitstop.Trigger();
-
-            // ⚠️ A VERB WITH NO FEEDBACK IS A VERB THE PLAYER CANNOT TELL THEY PERFORMED.
-            // The burst is what makes a tag land visibly on the victim rather than merely
-            // changing a number on the scoreboard.
-            Visual.ImpactBurst.SpawnAt(victim.transform.position);
-
-            // ⚠️ THE FLASH WAS BUILT AND NEVER CALLED. It is the read on the BODY, where the
-            // burst is the read in the air: without it a tagged player sees particles beside
-            // someone who looks untouched.
-            victim.GetComponentInChildren<Visual.CharacterVisual>()?.FlashHit();
-            Vector3 hitDirection = victim.transform.position - taya.transform.position;
-            victim.GetComponentInChildren<Visual.CharacterSquashStretch>()?
-                .Impact(hitDirection, 0.30f);
-            taya.GetComponentInChildren<Visual.CharacterSquashStretch>()?
-                .DashStretch(taya.transform.forward, 0.18f);
-
-            // ⚠️ THE SHAKE GOES TO THE VICTIM'S OWN CAMERA AND NOWHERE ELSE. Shaking every
-            // rig would make one player's tag jolt three other screens.
-            var rig = UnityEngine.Camera.main != null
-                ? UnityEngine.Camera.main.GetComponent<CameraSystem.CameraRig>()
-                : null;
-
-            if (rig != null && rig.IsFollowing(victim))
-            {
-                Vector3 impact = victim.transform.position - taya.transform.position;
-                rig.ImpactPunch(impact.sqrMagnitude > 0.01f ? impact.normalized : Vector3.back, 1.0f);
-            }
+            // ⚠️⚠️ EVERY PIECE OF THE TAG'S PRESENTATION USED TO BE WRITTEN HERE, INSIDE A
+            // HOST-ONLY METHOD, AND SO HAPPENED ON ONE SCREEN. 🧑 2026-08-29: *"make sure that
+            // all host sided shit is seen by everyone and not js host"*. The stars, the TAGGED!
+            // popup, the hitstop, the burst, the victim's flash, both squashes, the camera punch
+            // and the HULI! style award were nine lines of feedback for the taya's only scoring
+            // verb, and three of the four people in the room got none of it.
+            //
+            // ⚠️ THE SHAKE IS THE CLEAREST CASE. `rig.IsFollowing(victim)` was already the right
+            // test and it could only ever pass on the host, so a player who was tagged felt
+            // nothing while the host got a jolt for somebody else's tag. Running the same code on
+            // four machines is what makes that line mean what it says.
+            //
+            // ⚠️⚠️ AND THE RULES ARE STILL HOST-ONLY AND STAY IN THIS METHOD. The stagger above,
+            // the stamina refill and the teleport below are decisions; `Visual.MatchFlair` draws
+            // and touches no state. A client that could stun a body from a message is a client
+            // that decides, which is `CLAUDE.md` § 4.
+            Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.Tag,
+                                       taya.PlayerSlot, victim.PlayerSlot,
+                                       victim.transform.position);
 
             // ⚠️⚠️ THROUGH `NetCue`, BECAUSE THE CALLER OPENS WITH `ShouldResolve()` AND THE TAG
             // IS THE TAYA'S ENTIRE PAYOFF. 🧑 2026-08-29: *"non hosts dont have sfx in some
@@ -588,12 +573,11 @@ namespace TumbangPreso
             // deep has the same shape. See `docs/TODO.md` § 83.12.
             NetCue.PlayImpact("tag", "downed", victim.transform.position, 1.0f);
 
-            // ⚠️ THE ANNOUNCER STAYS LOCAL AND MUST. `NetCue`'s header is explicit that it is
-            // for WORLD events only; a voice line is a per-listener commentary track and
-            // relaying it would play one machine's announcer out of another player's speakers at
-            // the wrong moment. The client's own announcer is driven from the replicated state.
-            GameServices.Voice?.OnAttackerTagged();
-            UI.Hud.ReportStyle(taya.PlayerSlot, 36.0f, "HULI!");
+            // ⚠️ THE ANNOUNCER AND THE STYLE AWARD MOVED INTO `MatchFlair.PlayTag` WITH THE REST
+            // OF THE PRESENTATION, so each peer speaks its own line off the event rather than
+            // hearing the host's. `NetCue`'s header is explicit that a commentary track must not
+            // be relayed as a world sound, and this is how that rule is kept while still reaching
+            // everybody.
             victim.Stamina.RefillAndClearFatigue();
             victim.Teleport(SafeZonePointFor(victim));
         }

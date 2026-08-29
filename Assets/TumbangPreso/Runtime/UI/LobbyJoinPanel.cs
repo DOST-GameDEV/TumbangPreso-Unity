@@ -308,6 +308,78 @@ namespace TumbangPreso.UI
             closeElement.minHeight = RowHeight;
             closeElement.preferredHeight = RowHeight;
             closeElement.flexibleHeight = 0.0f;
+
+            // ⚠️⚠️ AND A WAY OUT OF SOMEBODY ELSE'S GAME THAT IS NOT JOINING A THIRD ONE.
+            // 🧑 2026-08-29: *"make it possible to leave someones server too even tho u wont join
+            // another one bcz rn the option for servere is Join and leave (u have to join a new
+            // server to leave) (what if i want to host on my lan)?"*.
+            //
+            // This card offered JOIN and BACK TO LOBBY, and BACK only closes the card. The only
+            // things that actually ended a session were BACK on the lobby screen, which also
+            // leaves the screen, and joining somewhere else — **so the process stayed connected
+            // to a lobby the player had finished with, and a process that is still a client
+            // cannot become a host.** That is why he could not host on his own LAN without
+            // restarting the game.
+            //
+            // ⚠️ IT IS HIDDEN WHEN THERE IS NOTHING TO LEAVE, not greyed. An offline player has
+            // no session, and a dead control on a card with two live ones reads as a fault; the
+            // three-line refusal this file gives for a greyed browser row is about a row that is
+            // always there. `Refresh` sets it every time the card is drawn.
+            _leave = MenuKit.WoodButton(row.transform, "LEAVE GAME", Vector2.zero,
+                                        Vector2.zero, new Vector2(0.0f, RowHeight), Leave,
+                                        "WoodDangerButton");
+            _leave.name = "LeaveGameButton";
+            var leaveElement = _leave.gameObject.AddComponent<LayoutElement>();
+            leaveElement.minHeight = RowHeight;
+            leaveElement.preferredHeight = RowHeight;
+            leaveElement.flexibleHeight = 0.0f;
+            _leave.gameObject.SetActive(false);
+        }
+
+        /// <summary>The LEAVE GAME control. Only on screen while there is a session to end.</summary>
+        private Button _leave;
+
+        /// <summary>
+        /// End this peer's session and stay exactly where we are.
+        ///
+        /// ⚠️⚠️ IT DOES NOT NAVIGATE, AND THAT IS THE WHOLE DIFFERENCE FROM THE LOBBY'S BACK
+        /// BUTTON. Back calls the same `Stop` and then leaves for the main menu; the ask was for
+        /// the player to end up **in their own lobby, able to press HOST**, which is what this
+        /// does. `NetSession.Stop` resets the peer table, the leader, `MatchInProgress` and the
+        /// relay fields, so what is left is the same clean state a freshly opened lobby has.
+        ///
+        /// ⚠️ IT WORKS FOR A HOST TOO, AND ON A HOST IT IS THE ONLY ORDERLY WAY TO CLOSE A
+        /// ROOM FROM THIS SCREEN. `Stop` now sends every peer a real `DisconnectClient` carrying
+        /// `NetSession.HostLeftMessage`, so the other three are told rather than left to a
+        /// silence timer.
+        ///
+        /// ⚠️ THE CARD CLOSES AFTERWARDS. Leaving is finished business, and a browser still
+        /// listing the game you have just left is an invitation to walk straight back into it by
+        /// accident.
+        /// </summary>
+        private void Leave()
+        {
+            if (_net == null || !_net.IsNetworked)
+            {
+                Report("You are not in anybody's game.");
+                return;
+            }
+
+            bool wasHost = NetAuthority.IsHost;
+            _net.Stop();
+
+            Report(wasHost ? "Room closed. You can host again or join somebody."
+                           : "Left the game. You can host now, or join somebody else.");
+
+            Refresh();
+            Close();
+
+            // ⚠️ THE LOBBY IS TOLD, THROUGH THE EVENT IT ALREADY LISTENS TO. `Joined` is the
+            // "something about this session changed, redraw yourself" signal
+            // `ConvertedMatchSetup` subscribes to; raising it here is what turns the seats, the
+            // nameplates and the START/READY button back into a lobby of one. Adding a second
+            // event for the opposite direction would be a second thing to keep in step.
+            Joined?.Invoke();
         }
 
         /// <summary>
@@ -370,6 +442,11 @@ namespace TumbangPreso.UI
         /// </summary>
         private void Refresh()
         {
+            // ⚠️ THE LEAVE CONTROL APPEARS ONLY WHEN THERE IS SOMETHING TO LEAVE. See `Leave`:
+            // an offline player has no session, and this card is opened from the lobby in both
+            // states.
+            if (_leave != null) _leave.gameObject.SetActive(_net != null && _net.IsNetworked);
+
             var lan = _net?.Beacon?.SortedEntries ?? new List<LanEntry>();
 
             _lanTitle.text = lan.Count > 0

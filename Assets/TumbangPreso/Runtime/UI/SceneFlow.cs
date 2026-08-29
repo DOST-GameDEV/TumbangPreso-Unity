@@ -285,6 +285,47 @@ namespace TumbangPreso.UI
             Go(Eskinita);
         }
 
+        /// <summary>
+        /// The one way out of a match, and the only one that ends the session as well as the
+        /// scene.
+        ///
+        /// ⚠️⚠️ ⚠️ THE THREE EXITS FROM A MATCH ALL CALLED `Go(MainMenu)` AND NONE OF THEM
+        /// STOPPED THE NETWORK. 🧑 2026-08-29: *"disconnect logic is thoroughly broken. if lobby
+        /// host leaves the game or disconnects all other palyers stay in the game and if they
+        /// leave they go to this screen and have to restart to do shit"*.
+        ///
+        /// `PausePanel`'s QUIT TO MENU, `MatchResult`'s MAIN MENU and `ConvertedMatchResult`'s
+        /// MenuButton were three copies of the same two lines, and `NetworkManager` is
+        /// `DontDestroyOnLoad`. **So a HOST that quit to the menu was still hosting**: its
+        /// transport kept listening, nobody was disconnected, and three players carried on
+        /// playing a match being refereed by a machine sitting on the title screen. And a CLIENT
+        /// that quit was still connected, holding its seat in a lobby it had left.
+        ///
+        /// ⚠️ IT IS ALSO WHY HE COULD NOT HOST AFTERWARDS. A process that never stopped hosting
+        /// cannot start hosting, which is the *"what if i want to host on my lan"* half of the
+        /// same report.
+        ///
+        /// ⚠️ `Stop` IS SAFE OFFLINE AND SAFE TWICE. It guards its shutdown on `IsListening` and
+        /// everything after it is idempotent bookkeeping, so the practice match and the tutorial
+        /// pay nothing for going through here.
+        ///
+        /// ⚠️ AND THE CURSOR AND THE CLOCK ARE PART OF LEAVING, NOT PART OF THE MENU. A match
+        /// captures the pointer and the result board slows time; the two result screens each
+        /// restored them by hand and the pause panel restored only the clock. One exit, one
+        /// answer, and a screen that is entered from anywhere else is unaffected.
+        /// </summary>
+        public static void LeaveMatchToMainMenu()
+        {
+            Time.timeScale = 1.0f;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+
+            Net.NetSession.Instance?.Stop();
+
+            Networked = false;
+            Go(MainMenu);
+        }
+
         public static void Quit()
         {
 #if UNITY_EDITOR

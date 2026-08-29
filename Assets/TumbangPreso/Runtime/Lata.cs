@@ -235,7 +235,12 @@ namespace TumbangPreso
             if (GameServices.Match != null && throwerSlot == GameServices.Match.DefenderSlot) return;
 
             GameServices.Match.AddScore(throwerSlot, ScoreEvent.LataKnocked);
-            UI.Hud.ReportStyle(throwerSlot, 42.0f, "TUMBA!");
+            // ⚠️⚠️ RELAYED, BECAUSE THE ENCLOSING VERB IS HOST-RESOLVED AND WHAT IT DRAWS IS
+            // FOR EVERYBODY. 🧑 2026-08-29: *"make sure that all host sided shit is seen by
+            // everyone and not js host"*. See `Visual.MatchFlair` and
+            // `tools/audit_presentation_reach.py`, which is what found this one.
+            Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.LataDown,
+                                       throwerSlot, -1, transform.position);
 
             // ⚠️⚠️ THE CAN USED TO REACH INTO `AIController` AND START AN EMOTE FROM HERE, AND
             // THAT CALL IS GONE ON PURPOSE. It was a second path into the celebration: it skipped

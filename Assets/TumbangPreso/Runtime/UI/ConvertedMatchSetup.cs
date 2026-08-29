@@ -197,6 +197,22 @@ namespace TumbangPreso.UI
                 // with the other three chairs drawn as bots because no roster ever arrived. See
                 // `NetSession.ClientDisconnected`.
                 NetSession.ClientDisconnected += HandleClientDisconnected;
+
+                // ⚠️⚠️ BEING ON THIS SCREEN IS THE DEFINITION OF "NO MATCH IS RUNNING HERE", AND
+                // NOTHING SAID SO. `LobbySession.MatchInProgress` was set by `HostStartMatch` and
+                // cleared only when the whole session ended, so a host who played one match and
+                // came back had every later seat request refused by `TryTakeSeat`'s opening
+                // guard — SPECTATE included, silently. See `LobbySession.ReturnToLobby`.
+                //
+                // ⚠️ THE HOST DOES IT AND TELLS EVERYBODY, because the flag is host-authoritative:
+                // a client's copy is written from the `Seating` payload, so the roster broadcast
+                // is what carries the correction to the other three screens. A client running
+                // this on its own would disagree with the machine that decides.
+                if (NetAuthority.IsHost && net.Lobby.MatchInProgress)
+                {
+                    net.Lobby.ReturnToLobby();
+                    MatchRpc.Instance?.BroadcastLobbyPicks();
+                }
             }
 
             _map = Mathf.Max(0, Array.IndexOf(SceneFlow.Maps, SceneFlow.SelectedMap));

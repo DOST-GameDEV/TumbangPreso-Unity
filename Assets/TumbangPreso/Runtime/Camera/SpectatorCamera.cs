@@ -406,6 +406,12 @@ namespace TumbangPreso.CameraSystem
             EndReplay(showLiveToast: false);
             UnhookHighlights();
 
+            // ⚠️ THE BORROWED BODY GOES BACK WHEN THIS CAMERA DOES. A spectator leaving the arena
+            // with a unit still set to `ShadowsOnly` deletes that player from every other view,
+            // including their own, and nothing else would ever put them back. See `StepPovArms`.
+            RestorePovBody();
+            if (_povViewmodel != null) _povViewmodel.gameObject.SetActive(false);
+
             if (_ownsTimeScale)
             {
                 Hitstop.End();
@@ -502,8 +508,14 @@ namespace TumbangPreso.CameraSystem
                     // Yaw is TAKEN from the unit; pitch stays on the mouse.
                     _yawDeg = _follow.transform.eulerAngles.y;
                     ApplyRotation();
+
+                    // ⚠️ THE HANDS OF WHOEVER IS BEING WATCHED. See `StepPovArms`.
+                    StepPovArms(delta);
                     return;
                 }
+
+                // Leaving POV puts the body back and takes the borrowed hands away.
+                StepPovArms(delta);
 
                 // Follow mode holds a fixed offset in the camera's own current bearing, so
                 // the player still owns the angle and only gives up the position.
@@ -1174,6 +1186,137 @@ namespace TumbangPreso.CameraSystem
         /// number-row slow-motion controls and give an operator four predictable camera cuts
         /// without tabbing through the roster on air.
         /// </summary>
+        // -------------------------------------------------------------------
+        // § THE HANDS OF WHOEVER IS BEING WATCHED
+        //
+        // ⚠️⚠️ A POV CUT SHOWED A FIRST-PERSON VIEW WITH NO FIRST PERSON IN IT. 🧑 2026-08-29:
+        // *"f1-f4 for spectator show FPP arms of the ppl ur lookinga t in fpp"*. `CameraRig`
+        // mounts `ViewmodelArms` on the LOCAL player's camera and drives them from that player's
+        // `Carrier` and `CombatVerbs`; this camera is a different object, so pressing F1 parked a
+        // lens at somebody's eyes and drew an empty street. The whole point of a POV cut is that
+        // it is what THEY see.
+        //
+        // ⚠️ THE BODY IS HIDDEN AT THE SAME TIME, AND WITHOUT THAT IT LOOKS WORSE THAN NO ARMS.
+        // `PovForwardOffset` puts the lens 0.34 m in front of the eyes so the chibi head is not
+        // rendered from inside it, which means the unit's REAL arms are in frame. Adding a
+        // viewmodel on top gives four arms. `CameraRig.ApplyFppSelfHide` solves the same problem
+        // for the local player with the same mechanism: `ShadowsOnly`, so the body still casts
+        // its shadow into the shot and only the camera stops seeing it.
+        //
+        // ⚠️ AND IT IS RESTORED WHENEVER POV ENDS, INCLUDING ON A TARGET SWITCH. The hide is per
+        // renderer and per target; leaving it on a unit the operator has cut away from would take
+        // a player out of every other camera in the room, including their own.
+        // -------------------------------------------------------------------
+
+        private CameraSystem.ViewmodelArms _povArms;
+        private Transform _povViewmodel;
+        private CharacterMotor _povHidden;
+        private readonly List<Renderer> _povHiddenRenderers = new List<Renderer>();
+        private readonly List<UnityEngine.Rendering.ShadowCastingMode> _povShadowModes =
+            new List<UnityEngine.Rendering.ShadowCastingMode>();
+
+        private void StepPovArms(float delta)
+        {
+            bool wanted = _pov && _follow != null;
+
+            if (!wanted)
+            {
+                if (_povViewmodel != null) _povViewmodel.gameObject.SetActive(false);
+                RestorePovBody();
+                return;
+            }
+
+            EnsurePovArms();
+            if (_povArms == null) return;
+
+            if (_povHidden != _follow) HidePovBody(_follow);
+
+            if (!_povViewmodel.gameObject.activeSelf) _povViewmodel.gameObject.SetActive(true);
+
+            _povArms.MatchCharacter(_follow);
+
+            // ⚠️ POLLED, NOT EVENT-DRIVEN, for the reason `CameraRig` gives on the same three
+            // lines: what a unit holds changes DURING a round, and an event-driven copy shows the
+            // wrong shoe until the next swap.
+            var carrier = _follow.GetComponent<Carrier>();
+            var held = carrier != null ? carrier.Held : null;
+
+            _povArms.SetHolding(held != null);
+
+            // ⚠️ THE SAME THREE SOURCES IN THE SAME ORDER AS THE LOCAL RIG: a throw wind-up needs
+            // something in hand, so a TAYA would fall through every branch and the POV cut of the
+            // one player everybody is watching would be the one with a dead arm.
+            float charge = -1.0f;
+            if (held != null && carrier != null) charge = carrier.ObservedChargePower;
+
+            if (charge < 0.0f)
+            {
+                var verbs = _follow.GetComponent<CombatVerbs>();
+                if (verbs != null) charge = verbs.ObservedLungeCharge;
+            }
+
+            _povArms.SetCharge(charge);
+
+            if (held != null) _povArms.MatchSkin(held);
+
+            _povArms.StepVisuals(delta);
+        }
+
+        private void EnsurePovArms()
+        {
+            if (_povArms != null) return;
+
+            // ⚠️ THE SAME SEAT AND SCALE THE LOCAL RIG USES, read from it rather than retyped.
+            // Two viewmodels that disagree about where a hand is would make a POV cut look like a
+            // different game from the player's own screen, which is the one thing it must not.
+            var go = new GameObject("~SpectatorViewmodelArms");
+            go.transform.SetParent(transform, false);
+            go.transform.localScale = Vector3.one * CameraSystem.CameraRig.ViewmodelScale;
+            go.transform.localPosition = CameraSystem.CameraRig.ViewmodelSeat;
+            go.transform.localRotation = Quaternion.identity;
+
+            _povArms = go.AddComponent<CameraSystem.ViewmodelArms>();
+
+            foreach (var c in go.GetComponentsInChildren<Collider>(true)) Destroy(c);
+
+            _povViewmodel = go.transform;
+        }
+
+        private void HidePovBody(CharacterMotor who)
+        {
+            RestorePovBody();
+            if (who == null) return;
+
+            _povHidden = who;
+
+            foreach (var r in who.GetComponentsInChildren<Renderer>(true))
+            {
+                if (r == null) continue;
+                if (r.shadowCastingMode == UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly)
+                    continue;
+
+                _povShadowModes.Add(r.shadowCastingMode);
+                r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
+                _povHiddenRenderers.Add(r);
+            }
+        }
+
+        private void RestorePovBody()
+        {
+            for (int i = 0; i < _povHiddenRenderers.Count; i++)
+            {
+                var r = _povHiddenRenderers[i];
+                if (r == null) continue;
+                r.shadowCastingMode = i < _povShadowModes.Count
+                    ? _povShadowModes[i]
+                    : UnityEngine.Rendering.ShadowCastingMode.On;
+            }
+
+            _povHiddenRenderers.Clear();
+            _povShadowModes.Clear();
+            _povHidden = null;
+        }
+
         private void SelectPlayerPov(int slot)
         {
             CharacterMotor wanted = null;

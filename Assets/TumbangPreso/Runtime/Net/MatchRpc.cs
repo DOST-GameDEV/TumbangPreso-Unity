@@ -295,6 +295,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("RebindSeat", OnRebindSeatMsg);
             cm.RegisterNamedMessageHandler("ReqCue", OnReqCueMsg);
             cm.RegisterNamedMessageHandler("PlayCue", OnPlayCueMsg);
+            cm.RegisterNamedMessageHandler("Flair", OnFlairMsg);
             cm.RegisterNamedMessageHandler("ReqAbility", OnReqAbilityMsg);
             cm.RegisterNamedMessageHandler("PlayAbility", OnPlayAbilityMsg);
             cm.RegisterNamedMessageHandler("CastDenied", OnCastDeniedMsg);
@@ -1850,6 +1851,71 @@ namespace TumbangPreso.Net
             // branches together mean every peer plays every cue exactly once.
             GameServices.Audio?.PlayAtVaried(id, position, 0.94f, 1.06f, volumeScale);
             HostRelayCue(id, position, volumeScale, senderClientId);
+        }
+
+        // -------------------------------------------------------------------
+        // § THE VISUAL HALF OF A CUE
+        //
+        // ⚠️⚠️ EVERY POPUP, BURST, STAR, CAMERA PUNCH AND STYLE AWARD IN A HOST-RESOLVED VERB
+        // WAS DRAWN ON ONE SCREEN. 🧑 2026-08-29: *"ur final task is to make sure that all host
+        // sided shit is seen by everyone and not js host"*. `NetCue` had already separated
+        // deciding from announcing for SOUND; the things you look at were still written on the
+        // line after the resolution, inside the same `ShouldResolve()` gate.
+        // `tools/audit_presentation_reach.py` counted 41 of them across seven methods.
+        //
+        // ⚠️ IT CARRIES A KIND AND SEATS, NOT A DESCRIPTION OF AN EFFECT. Every peer already has
+        // all four bodies and the whole roster; what it lacks is the event. `Visual.MatchFlair`
+        // rebuilds the presentation from its own scene, which is also what makes a client's
+        // camera punch land on the client's camera.
+        // -------------------------------------------------------------------
+
+        /// <summary>HOST ONLY. Tells every other peer to draw one match moment.</summary>
+        public void BroadcastFlair(byte kind, int actor, int subject, Vector3 at, float strength)
+        {
+            // ⚠️ A CLIENT THAT REACHES `MatchFlair.Announce` DRAWS AND SENDS NOTHING. The host is
+            // the only peer that may decide a tag happened, so it is the only one whose account
+            // of it may travel; the guard is here rather than at each call site for the same
+            // reason `MatchDirector.AddScore` keeps its own.
+            if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
+            if (!Finite(at) || !Finite(strength)) return;
+
+            using var writer = new FastBufferWriter(64, Allocator.Temp);
+            writer.WriteValueSafe(kind);
+            writer.WriteValueSafe(actor);
+            writer.WriteValueSafe(subject);
+            writer.WriteValueSafe(at);
+            writer.WriteValueSafe(strength);
+            HostRelayFlair(writer);
+        }
+
+        private void HostRelayFlair(FastBufferWriter writer)
+        {
+            foreach (ulong clientId in _nm.ConnectedClientsIds)
+            {
+                // ⚠️ NOT BACK TO THE HOST'S OWN CLIENT ID. `MatchFlair.Announce` has already
+                // drawn it here, on the frame it happened; the same rule `HostRelayCue` states.
+                if (clientId == _nm.LocalClientId) continue;
+                _nm.CustomMessagingManager.SendNamedMessage("Flair", clientId, writer);
+            }
+        }
+
+        private void OnFlairMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!FromHost(senderClientId)) return;
+
+            reader.ReadValueSafe(out byte kind);
+            reader.ReadValueSafe(out int actor);
+            reader.ReadValueSafe(out int subject);
+            reader.ReadValueSafe(out Vector3 at);
+            reader.ReadValueSafe(out float strength);
+
+            if (!Finite(at) || !Finite(strength)) return;
+            if (actor < -1 || actor >= Balance.PlayerCount) return;
+            if (subject < -1 || subject >= Balance.PlayerCount) return;
+
+            // ⚠️ `Play`, NOT `Announce`. A replicated copy must not relay itself onward, which is
+            // the same loop `NetCue.SuppressRelay` exists to break for sounds.
+            Visual.MatchFlair.Play((Visual.MatchFlair.Kind)kind, actor, subject, at, strength);
         }
 
         private void OnPlayCueMsg(ulong senderClientId, FastBufferReader reader)

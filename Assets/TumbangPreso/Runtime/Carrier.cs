@@ -233,9 +233,12 @@ namespace TumbangPreso
             NetCue.PlayVaried("throw_release", origin, 0.94f, 1.07f, 0.95f);
             GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("throw");
             GetComponentInChildren<Visual.CharacterSquashStretch>()?.DashStretch(transform.forward, 0.14f);
-            UI.Hud.ReportStyle(_motor.PlayerSlot,
-                               5.0f + Mathf.Abs(spin) * 7.0f,
-                               Mathf.Abs(spin) >= 0.4f ? "PEKTUS CURVE" : "LET FLY");
+            // ⚠️⚠️ RELAYED, BECAUSE THE ENCLOSING VERB IS HOST-RESOLVED AND WHAT IT DRAWS IS
+            // FOR EVERYBODY. 🧑 2026-08-29: *"make sure that all host sided shit is seen by
+            // everyone and not js host"*. See `Visual.MatchFlair` and
+            // `tools/audit_presentation_reach.py`, which is what found this one.
+            Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.Throw,
+                                       _motor.PlayerSlot, -1, origin, spin);
 
             var ability = _motor.AbilitySystem;
             ability?.OnThrowReleased();

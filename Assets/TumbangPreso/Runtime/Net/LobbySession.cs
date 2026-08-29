@@ -614,6 +614,37 @@ namespace TumbangPreso.Net
             _heldSeats.Clear();
         }
 
+        /// <summary>
+        /// The match is over and everybody is back on the lobby screen.
+        ///
+        /// ⚠️⚠️ NOTHING CLEARED `MatchInProgress` ON THE WAY BACK, AND THAT IS WHY SPECTATE AND
+        /// THE FOUR SEAT BUTTONS WENT DEAD AFTER THE FIRST MATCH. 🧑 2026-08-29: *"spectate
+        /// button dont work in multiplayer"*.
+        ///
+        /// `HostStartMatch` sets it and only `NetSession.Stop` cleared it, which happens when the
+        /// whole session ends. So from the first START MATCH of a session until the process left
+        /// the lobby entirely, this flag stayed true — and `TryTakeSeat` opens with
+        /// `if (MatchInProgress) return false;`. **Every seat request after the first match was
+        /// refused in silence**, including the one SPECTATE sends. From the button it is
+        /// indistinguishable from a control that was never wired up, which is exactly how it was
+        /// reported.
+        ///
+        /// ⚠️ IT IS NOT `EndMatch`, AND THE DIFFERENCE IS THE JOIN CODE. `EndMatch` also clears
+        /// `_seenThisMatch` and the code, which is right when a session is being torn down and
+        /// wrong here: the lobby draws that code for people to type, and wiping it on the way
+        /// back from a match would leave the room unjoinable with the room still open.
+        ///
+        /// ⚠️ THE HELD SEATS GO, THOUGH. A held chair means "somebody in THIS match left it", and
+        /// that promise expires with the match — carrying one into the next one is what
+        /// `StartMatch`'s own note says would hand a fresh match's seat to whoever held it in the
+        /// last one.
+        /// </summary>
+        public void ReturnToLobby()
+        {
+            MatchInProgress = false;
+            _heldSeats.Clear();
+        }
+
         public void EndMatch()
         {
             MatchInProgress = false;

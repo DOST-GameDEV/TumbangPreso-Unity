@@ -821,7 +821,6 @@ namespace TumbangPreso
             }
             else if (Affinity == SlipperAffinity.ElectricZap)
             {
-                Visual.ComicPopup.Zap(transform.position);
                 NetCue.Play("ability_flick_dash", transform.position);
 
                 var round = GameServices.Round;
@@ -845,10 +844,14 @@ namespace TumbangPreso
                         // `docs/Hero_Strike_Balance.md` § 4.4.
                         if (Vector3.Distance(transform.position, p.transform.position) <= 2.0f)
                         {
+                            // ⚠️ THE STAGGER STAYS HERE AND THE FLOURISH TRAVELS. The stun is a
+                            // RULE and belongs on the host behind this gate; the stars, the jolt
+                            // and the zap ring are what three other people could not see. See
+                            // `Visual.MatchFlair`, which draws them from the seat number.
                             p.ApplyStagger(1.5f);
-                            Visual.DizzyStars.Attach(p.transform, 1.5f, UI.UiTheme.HeroElectricBright);
-                            Visual.HitFeel.Land(p, Visual.HitFeel.Weight.Jolt,
-                                                UI.UiTheme.HeroElectricBright);
+                            Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.Zap,
+                                                       _throwerSlot, p.PlayerSlot,
+                                                       transform.position);
                         }
                     }
                 }
@@ -1049,7 +1052,12 @@ namespace TumbangPreso
             // See `docs/TODO.md` § 83.12.
             NetCue.PlayVaried("slipper_bounce", lata.transform.position,
                               1.08f, 1.18f, 0.55f);
-            UI.Hud.ReportStyle(_throwerSlot, 10.0f, "SO CLOSE");
+            // ⚠️⚠️ RELAYED, BECAUSE THE ENCLOSING VERB IS HOST-RESOLVED AND WHAT IT DRAWS IS
+            // FOR EVERYBODY. 🧑 2026-08-29: *"make sure that all host sided shit is seen by
+            // everyone and not js host"*. See `Visual.MatchFlair` and
+            // `tools/audit_presentation_reach.py`, which is what found this one.
+            Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.NearMiss,
+                                       _throwerSlot, -1, lata.transform.position);
         }
 
         /// <summary>
@@ -1182,9 +1190,10 @@ namespace TumbangPreso
 
             if (_bankCount == 1 && Mathf.Abs(PektusSpin) >= Balance.PektusBankSpinThreshold)
             {
-                Visual.ComicPopup.Spawn(transform.position + Vector3.up * 0.35f,
-                    "BANK!", UI.UiTheme.Highlight, 1.0f);
-                UI.Hud.ReportStyle(_throwerSlot, 18.0f, "BANK SHOT");
+                // ⚠️ RELAYED. `FixedUpdate` is host-gated, so the popup and the style award were
+                // drawn on one screen. See `Visual.MatchFlair`.
+                Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.BankShot,
+                                           _throwerSlot, -1, transform.position);
             }
 
             if (_bankCount > Balance.MaxScoringBanks)
@@ -1259,9 +1268,10 @@ namespace TumbangPreso
 
             if (_bankCount == 1 && Mathf.Abs(PektusSpin) >= Balance.PektusBankSpinThreshold)
             {
-                Visual.ComicPopup.Spawn(transform.position + Vector3.up * 0.35f,
-                    "BANK!", UI.UiTheme.Highlight, 1.0f);
-                UI.Hud.ReportStyle(_throwerSlot, 18.0f, "BANK SHOT");
+                // ⚠️ RELAYED. `FixedUpdate` is host-gated, so the popup and the style award were
+                // drawn on one screen. See `Visual.MatchFlair`.
+                Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.BankShot,
+                                           _throwerSlot, -1, transform.position);
             }
 
             // One authored bank can still score. Further wall contacts remain valid
@@ -1299,10 +1309,14 @@ namespace TumbangPreso
         private void HostBlockedBy(CharacterMotor blocker)
         {
             // A body block is a hit too — it is the taya's entire passive verb.
-            blocker.GetComponentInChildren<Visual.CharacterVisual>()?.FlashHit();
-            Visual.ImpactBurst.SpawnAt(blocker.transform.position);
-            blocker.GetComponentInChildren<Visual.CharacterSquashStretch>()?
-                .Impact(_velocity, 0.22f);
+            //
+            // ⚠️⚠️ AND IT WAS DRAWN ON ONE SCREEN. `FixedUpdate` is host-gated, so the flash, the
+            // burst and the squash reached the host and nobody else, which for the taya's only
+            // unpressed verb means three players out of four blocked a throw with no sign that
+            // anything happened. See `Visual.MatchFlair`.
+            Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.Block,
+                                       -1, blocker.PlayerSlot, transform.position,
+                                       _velocity.magnitude);
 
             // ⚠️⚠️ AND IT MAKES A SOUND, WHICH IT DID NOT. `slipper.gd:1170` plays `hit_body` on
             // exactly this path. This function's own header says a verb with no feedback is a
@@ -1315,7 +1329,6 @@ namespace TumbangPreso
             // looks for a gate at the same brace depth and this one is two frames up the stack.
             // See `docs/TODO.md` § 83.12.
             NetCue.PlayImpact("hit_body", "guard_block", transform.position, 0.72f);
-            UI.Hud.ReportStyle(blocker.PlayerSlot, 12.0f, "HARANG!");
 
             float speed = Combat.BlockKnockbackSpeed(_skinIndex, blocker.CharacterIndex);
             Vector3 along = _velocity;

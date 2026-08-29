@@ -62,6 +62,15 @@ namespace TumbangPreso.Net
         /// mismatch is a thing the player can actually fix, and it is indistinguishable from a
         /// host that vanished unless somebody prints it.
         /// </summary>
+        /// <summary>
+        /// What a peer is told when the host closes the session on purpose.
+        ///
+        /// ⚠️ IT IS A SENTENCE, NOT A CODE. `PlayerFacingDisconnectReason` passes a reason
+        /// straight through to the lobby's alert line, so this is read by a player and not by
+        /// software. `LobbySession.MatchFullMessage` is written the same way for the same reason.
+        /// </summary>
+        public const string HostLeftMessage = "The host left the game.";
+
         public static event Action<string> ClientDisconnected;
 
         /// <summary>Why the last client connection ended. Read once by the join screen, which
@@ -167,7 +176,14 @@ namespace TumbangPreso.Net
         // ⚠️ AND THE MEANING CHANGE ALONE WOULD DESERVE IT EVEN AT THE SAME FIELD COUNT. An 11
         // peer would read a seat index as an owner, which for the taya's tsinelas is exactly the
         // -1 this change exists to stop happening.
-        public const int ProtocolVersion = 12;
+        /// <summary>
+        /// ⚠️ 13 SINCE 2026-08-29. `Flair` is a new named message (`Visual.MatchFlair`), so a
+        /// build without its handler drops every one of them and its players see none of the
+        /// tags, blocks, bank shots or zaps the host is announcing — a silent half-working match
+        /// rather than a refusal, which is the case this number exists to prevent. Both machines
+        /// rebuild from the same branch; that is by design.
+        /// </summary>
+        public const int ProtocolVersion = 13;
 
         private const string SeatAssignmentMessage = "tp.seat.assignment.v1";
         private readonly Dictionary<ulong, ConnectionHello> _helloByClient =
@@ -738,6 +754,39 @@ namespace TumbangPreso.Net
             _beacon.StopAll();
             if (Query != null) _ = Query.DeleteHostedLobbyAsync();
 
+            // ⚠️⚠️ A HOST TELLS ITS PEERS IT IS LEAVING. IT USED TO JUST STOP ANSWERING.
+            // 🧑 2026-08-29: *"disconnect logic is thoroughly broken ... if lobby host leaves the
+            // game or disconnects all other palyers stay in the game"*.
+            //
+            // `Shutdown()` alone is not a goodbye. NGO only sets a flag and tears the transport
+            // down from its own update loop (see `WaitForShutdown` below), and whatever the
+            // client end eventually notices, it notices through `DisconnectTimeoutMS` — which is
+            // a silence timer. So three players carried on playing a match with no referee for as
+            // long as that timer runs, and the reports of people "staying in the game" are that
+            // window seen from the room.
+            //
+            // ⚠️ `DisconnectClient` IS AN ACTUAL MESSAGE AND CARRIES A REASON, which is the other
+            // half: `PlayerFacingDisconnectReason` turns it into the line the lobby prints, so a
+            // player who was dropped is told they were dropped rather than watching a lobby empty
+            // itself. A timeout can only ever say "disconnected".
+            //
+            // ⚠️ THE LIST IS COPIED BEFORE IT IS WALKED. `DisconnectClient` mutates
+            // `ConnectedClientsIds` as it goes, and enumerating a collection while it removes
+            // from itself is an exception on the way out of a match.
+            if (_nm != null && _nm.IsListening && _nm.IsServer)
+            {
+                var leaving = new List<ulong>(_nm.ConnectedClientsIds);
+                foreach (ulong clientId in leaving)
+                {
+                    if (clientId == _nm.LocalClientId) continue;
+                    try { _nm.DisconnectClient(clientId, HostLeftMessage); }
+                    catch (Exception e)
+                    {
+                        Debug.LogWarning($"[Net] could not tell {clientId} the host is leaving: {e.Message}");
+                    }
+                }
+            }
+
             if (_nm != null && _nm.IsListening) _nm.Shutdown();
 
             _helloByClient.Clear();
@@ -832,7 +881,18 @@ namespace TumbangPreso.Net
         /// </summary>
         private void ConfigureTimeouts()
         {
-            _utp.DisconnectTimeoutMS = 30000;
+            // ⚠️⚠️ 8000, DOWN FROM 30000, AND THIRTY SECONDS IS NOT A TIMEOUT ANYBODY CAN PLAY
+            // THROUGH. This is the silence timer: how long a peer keeps believing in a machine it
+            // has stopped hearing from. `Stop` now sends a real `DisconnectClient` so an orderly
+            // exit is instant and never reaches this at all, but the case this covers is the one
+            // that cannot say goodbye — alt-F4, a pulled cable, a laptop lid. Half a minute of
+            // four people standing in a match whose host is gone is most of a round.
+            //
+            // ⚠️ AND IT IS NOT SET SHORTER THAN THAT, because it is also what a real network
+            // hiccup is measured against. The VPS is 48 ms from Manila and the LAN is under 2;
+            // eight seconds of complete silence on either is a machine that has gone, not a
+            // machine that is late.
+            _utp.DisconnectTimeoutMS = 8000;
             _utp.ConnectTimeoutMS = 2000;
             _utp.MaxConnectAttempts = 12;
         }

@@ -2509,6 +2509,216 @@ so that is the floor for any further trim.
 ⚠️ Three comments that spelled "15 s" and "fifteen seconds" out in prose were corrected in
 `CharacterMotor` and `BufferSkipVote` rather than left to become the next person's wrong premise.
 
+### 83.14 ✅ FIXED: LEAVING A MATCH NEVER ENDED THE SESSION, SO A HOST THAT QUIT WAS STILL HOSTING
+
+🧑 2026-08-29: *"disconnect logic is thoroughly broken. if lobby host leaves the game or
+disconnects all other palyers stay in the game and if they leave they go to this screen and have
+to restart to do shit"*, and *"it should be taht if hosts disconnects u js go back to ur own lobby
+and leave their server"*.
+
+⚠️⚠️ **THERE WERE THREE EXITS FROM A MATCH AND NOT ONE OF THEM STOPPED THE NETWORK.**
+`PausePanel`'s QUIT TO MENU, `MatchResult`'s MAIN MENU and `ConvertedMatchResult`'s MenuButton
+were three copies of `Time.timeScale = 1; SceneFlow.Go(MainMenu)`. **`NetworkManager` is
+`DontDestroyOnLoad`.**
+
+So a HOST that quit to the menu **was still hosting**: its transport kept listening, nobody was
+disconnected, and the other three carried on playing a match refereed by a machine sitting on the
+title screen. That is the report exactly, and it is not a race or a timing window — it is what
+that code does every time. A CLIENT that quit was still connected too, holding its seat in a lobby
+it had left.
+
+⚠️ **AND IT IS WHY HE COULD NOT HOST AFTERWARDS.** A process that never stopped being a client
+cannot become a host: *"what if i want to host on my lan"*.
+
+`SceneFlow.LeaveMatchToMainMenu` is the one exit now, and it stops the session, restores the clock
+and releases the pointer on the way. ⚠️ The two result boards and the pause panel each restored
+some of those by hand and none of them restored all three.
+
+**Two more things had to move with it.**
+
+⚠️⚠️ **A HOST NOW SAYS GOODBYE INSTEAD OF JUST STOPPING ANSWERING.** `NetSession.Stop` called
+`_nm.Shutdown()`, which is not a goodbye: NGO sets a flag and tears the transport down from its
+own update loop, and whatever a client eventually notices, it notices through
+`DisconnectTimeoutMS` — a **silence timer**. `Stop` now sends every peer a real `DisconnectClient`
+carrying `NetSession.HostLeftMessage`, so the room empties instantly and each player is told why.
+⚠️ The id list is copied before it is walked, because `DisconnectClient` mutates
+`ConnectedClientsIds` as it goes.
+
+⚠️⚠️ **AND `DisconnectTimeoutMS` WAS 30000.** That is the case an orderly exit no longer reaches —
+alt-F4, a pulled cable, a lid closing — and **half a minute of four people standing in a match
+whose host is gone is most of a round.** It is 8000 now. Not shorter: it is also what a real
+network hiccup is measured against, and the VPS is 48 ms from Manila while the LAN is under 2, so
+eight seconds of total silence is a machine that has gone rather than one that is late.
+
+**What a client does when the host vanishes was already right and is now reachable.**
+`MatchRpc.HandleClientDisconnected` sends a disconnected peer to `MatchSetup` with
+`SceneFlow.Networked` set, so they land in their OWN lobby; `ConvertedMatchSetup` has its own
+handler for the case where they are already on that screen. Neither had been firing during a match
+because nothing was disconnecting anybody.
+
+### 83.15 ✅ A LEAVE CONTROL THAT DOES NOT REQUIRE JOINING SOMEWHERE ELSE
+
+🧑: *"make it possible to leave someones server too even tho u wont join another one bcz rn the
+option for servere is Join and leave (u have to join a new server to leave) (what if i want to
+host on my lan)?"*
+
+The join card offered JOIN and BACK TO LOBBY, and BACK only closes the card. **The only two things
+in the game that actually ended a session were BACK on the lobby screen — which also leaves the
+screen — and joining somewhere else.** So a player who was finished with somebody's lobby stayed
+connected to it, and a process that is still a client cannot host.
+
+`LEAVE GAME` sits beside BACK TO LOBBY and calls the same `NetSession.Stop`, then **does not
+navigate**. That is the whole difference from the lobby's BACK button: the ask was to end up in
+your own lobby able to press HOST, and `Stop` resets the peer table, the leader, `MatchInProgress`
+and the relay fields, so what is left is the state a freshly opened lobby has.
+
+⚠️ **IT WORKS FOR A HOST TOO**, and on a host it is the only orderly way to close a room from that
+screen — § 83.14's `DisconnectClient` is what makes closing it polite.
+
+⚠️ **IT IS HIDDEN WHEN THERE IS NOTHING TO LEAVE, NOT GREYED.** An offline player has no session,
+and a dead control on a card with two live ones reads as a fault.
+
+⚠️ **AND IT TELLS THE LOBBY THROUGH `Joined`**, the event `ConvertedMatchSetup` already listens to
+for "something about this session changed, redraw yourself". Adding a second event for the
+opposite direction would be a second thing to keep in step.
+
+### 83.16 ✅ THE VISUAL HALF OF EVERY HOST-RESOLVED MOMENT, AND THE AUDIT THAT FOUND ALL 41
+
+🧑, as the last item of the batch: *"ur final task is to make sure that all host sided shit is seen
+by everyone and not js host"*.
+
+**§ 83.12 fixed eight sounds by hand. This is the same fault for the things you LOOK at, and it
+was found by a tool rather than by reading.**
+
+`tools/audit_presentation_reach.py` is the successor to `audit_audio_reach.py` and differs in two
+ways. It **propagates**: a method is host-only if it is gated itself, or if every call site of it
+is inside a method that is host-only, iterated to a fixed point. And it looks at **presentation,
+not just audio** — `ComicPopup`, `ImpactBurst`, `HitFeel`, `DizzyStars`, `Hud.TriggerHitmarker`,
+`Hud.ReportStyle`, `CameraRig.ImpactPunch` and the announcer, as well as `GameServices.Audio`.
+
+It found **41 host-only call sites across 108**, in seven methods:
+
+| method | what one player out of four saw |
+|---|---|
+| `RoundDirector.ApplyTagPenalty` | stars, TAGGED!, hitstop, burst, flash, both squashes, camera punch, HULI! |
+| `Slipper.HostBlockedBy` | flash, burst, squash, HARANG! |
+| `Slipper.BounceOffObstacles` / `BounceOffBounds` | BANK! and the bank-shot award, twice |
+| `Slipper.TriggerAffinityImpact` | the zap ring, the stars, the jolt |
+| `Slipper.TrackClassicNearMiss` | SO CLOSE |
+| `Lata.HostKnockDown` | TUMBA! |
+| `Carrier.HostThrowAt` | PEKTUS CURVE / LET FLY |
+
+⚠️⚠️ **THE CAMERA PUNCH ON A TAG IS THE CLEAREST OF THEM.** `rig.IsFollowing(victim)` was already
+the correct test and it could **only ever pass on the host**, so a player who got tagged felt
+nothing and the host got a jolt for somebody else's tag. Running the same line on four machines is
+what makes it mean what it says.
+
+**`Visual.MatchFlair` is `NetCue` for the things you look at.** The host calls `Announce`, which
+draws locally and relays; every peer runs `Play`, which **rebuilds the presentation from its own
+scene** given a kind, up to two seat numbers, a point and a scalar.
+
+⚠️ **SEATS AND A POINT, NOT A DESCRIPTION OF AN EFFECT.** Every peer already has all four bodies
+and the whole roster; what it lacks is the EVENT. That is four bytes and two ints against
+serialising a particle system, and it is why a client's camera punch lands on the client's camera.
+
+⚠️⚠️ **THE RULES DID NOT MOVE AND MUST NOT.** The stagger, the stamina refill, the teleport and
+the score all stay behind the host gate in the method that owned them; `MatchFlair` draws and
+touches no state. A client that could stun a body from a message is a client that decides, which
+is `CLAUDE.md` § 4.
+
+⚠️ **THE ANNOUNCER IS SPOKEN PER PEER RATHER THAN RELAYED**, which is `NetCue`'s own rule for a
+commentary track: each machine says its own line off the event, so nobody hears somebody else's
+announcer at the wrong moment.
+
+⚠️ **THE AUDIT EXITS 1 WHEN ANYTHING IS HOST-ONLY**, so it can gate a build, and it is the guard
+against the next forty-one. ⚠️ Its first version reported **zero**, because it closed each method
+on the line after its own signature — the `{` is on the next line in this codebase, so `depth`
+at the signature is still the class depth. It waits for the body to open now, and the note
+recording that is in the file.
+
+### 83.17 ✅ SPECTATE WAS REFUSED IN SILENCE AFTER THE FIRST MATCH
+
+🧑 2026-08-29: *"spectate button dont work in multiplayer"*.
+
+`ToggleSpectate` sends `RequestSeatServerRpc(-1)`, the host runs `LobbySession.TryTakeSeat`, and
+that method opens with:
+
+```csharp
+if (MatchInProgress) return false;
+```
+
+⚠️⚠️ **AND NOTHING CLEARED `MatchInProgress` ON THE WAY BACK TO THE LOBBY.** `HostStartMatch` sets
+it and only `NetSession.Stop` cleared it, which happens when the whole session ends. So from the
+first START MATCH of a session until the process left multiplayer entirely, **every seat request
+was refused**: SPECTATE, and the four seat buttons with it. From the button that is
+indistinguishable from a control nobody wired up, which is exactly how it was reported.
+
+`LobbySession.ReturnToLobby` clears it, and `ConvertedMatchSetup.Wire` calls it on the host,
+because **being on the lobby screen is the definition of "no match is running here"**.
+
+⚠️ **IT IS NOT `EndMatch`, AND THE DIFFERENCE IS THE JOIN CODE.** `EndMatch` also wipes
+`_seenThisMatch` and the code, which is right when a session is torn down and wrong here: the
+lobby draws that code for people to type, and clearing it would leave an open room unjoinable.
+The held seats do go, because a held chair means "somebody in THIS match left it" and that promise
+expires with the match.
+
+⚠️ **THE HOST DOES IT AND BROADCASTS THE ROSTER**, because the flag is host-authoritative: a
+client's copy is written from the `Seating` payload, so a client clearing its own would disagree
+with the machine that decides.
+
+### 83.18 ✅ A SPECTATOR POV CUT NOW HAS THE HANDS OF THE PERSON BEING WATCHED
+
+🧑 2026-08-29: *"f1-f4 for spectator show FPP arms of the ppl ur lookinga t in fpp"*.
+
+`CameraRig` mounts `ViewmodelArms` on the LOCAL player's camera and drives them from that player's
+`Carrier` and `CombatVerbs`. `SpectatorCamera` is a different object, so F1-F4 parked a lens at
+somebody's eyes and drew **an empty street** — a first-person view with no first person in it,
+which is the whole point of the cut.
+
+`StepPovArms` mounts the same component on the spectator camera and drives it from `_follow`, with
+the same three charge sources in the same order. ⚠️ That order is load-bearing and `CameraRig`
+records why: a throw wind-up needs something in hand, so a TAYA falls through every branch — and
+the taya is the player a POV cut is most often on.
+
+⚠️⚠️ **THE BODY IS HIDDEN AT THE SAME TIME, AND WITHOUT THAT IT LOOKS WORSE THAN NO ARMS.**
+`PovForwardOffset` puts the lens 0.34 m in front of the eyes so the chibi head is not rendered
+from inside, which means the unit's REAL arms are in frame; adding a viewmodel on top gives four
+arms. Same mechanism as `CameraRig.ApplyFppSelfHide`: `ShadowsOnly`, so the body still casts its
+shadow into the shot and only this camera stops seeing it.
+
+⚠️ **AND IT IS RESTORED ON EVERY TARGET SWITCH AND ON `OnDisable`.** A unit left on `ShadowsOnly`
+is a player deleted from every other view in the room, including their own, and nothing else would
+ever put them back.
+
+⚠️ The seat and scale are read from `CameraRig`'s own constants rather than retyped. Two
+viewmodels that disagree about where a hand is would make a POV cut look like a different game
+from the player's own screen.
+
+### 83.19 ⚠️ OPEN: 22 PRESENTATION SITES LEFT, ALL IN THE HERO KITS AND HAZARDS
+
+`tools/audit_presentation_reach.py` is down from 41 to 22, and what remains is one file's worth:
+`HeroHazards`, `SeanHeroKit` and `PhaisterHeroKit`.
+
+**They are not all real, and the audit says which is which only approximately.** `HeroHazards` has
+already had this exact treatment — its own notes record *"the whole thing ran behind
+`NetAuthority.ShouldResolve()`, so three of..."* and the deliberate
+`if (ShouldResolve() || p.PlayerSlot == NetAuthority.LocalSlot)` split that replaced it. The audit
+matches a gate as "a line mentioning `ShouldResolve` that also contains `return`", so a method
+holding both that split AND an unrelated early return reads as gated.
+
+**Confirmed real, checked by hand:**
+
+* `SeanHeroKit.OnTick` opens `if (!NetAuthority.ShouldResolve()) return;` and then attaches
+  `DizzyStars` and calls `HitFeel.Land` on the victim. Three players out of four see a burning
+  attacker with no stars and feel no jolt.
+* `HeroHazards` line 1108 and line 1272 `Update`s carry the same bare gate.
+
+**Done looks like** teaching the audit to print the LINE of the gate it matched, so a reviewer can
+tell a real one from the `||` split in two seconds, and then routing the real ones through
+`NetCue` and `Visual.MatchFlair` exactly as § 83.12 and § 83.16 did. ⚠️ Do NOT "fix" the `||`
+split sites: that pattern is correct and its own comment at line 1973 records a previous audit
+being fooled by the same shape.
+
 ---
 
 ## 0 · Hero Strike is being reworked, and the plan is its own file
