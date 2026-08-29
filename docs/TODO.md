@@ -1824,7 +1824,7 @@ the same thing.** That assertion measures the ORIGIN, which was never wrong; its
 one-frame Animator lag § 78.12 bisected. Fixing the float does not turn it green and was never
 going to.
 
-### 80.6 ⚠️ OPEN: THE DANCE EMOTE T-POSES
+### 80.6 ✅ FIXED: THE DANCE WAS A REAL CLIP WITH ZERO CURVES IN THE BUILT PLAYER
 
 🧑: *"dance doesnt make u dance anymore"*, *"it js makes u t pose"*.
 
@@ -1861,9 +1861,42 @@ cast of People, expected 4 but was 1". Bisected: those same tests fail in isolat
 removed and with the whole batch stashed**, so they depend on suite ORDER and shared state, and
 adding a class perturbs it.
 
-**So the real blocker on § 80.6 is that the PlayMode suite has hidden inter-test dependencies**, and
-any new probe that loads an arena is liable to trip them. Either fix that first, or diagnose the
-dance from a built player instead.
+**So the real blocker on § 80.6 was that the PlayMode suite has hidden inter-test dependencies**, and
+any new probe that loads an arena was liable to trip them. The diagnosis had to come from the
+editor-versus-player boundary instead.
+
+⚠️⚠️ **A T-POSE DID NOT MEAN NO CLIP WAS PLAYING. IT MEANT A VALID CLIP WITH ZERO CURVES WAS
+PLAYING.** `DanceClip.Build` creates a non-legacy `AnimationClip` and fills it with
+`AnimationClip.SetCurve`. Unity supports that call for a non-legacy clip in the editor only; at
+runtime it only supports legacy clips, and `AnimationClipPlayable` refuses a legacy clip. The
+Windows player therefore created `generated-dance`, resolved it ahead of `idle`, and played an
+empty clip. An empty clip contributes the rig's bind pose. That is the reported T-pose without a
+missing bone, a bad wheel index or a flat authored curve.
+
+⚠️ **THE FIX IS EDITOR-BAKED PER RIG, NOT ONE SHARED CLIP.** All seven bone names agree, but the
+outer node is part of every binding: Berto's curve starts `character-male-f/root` and Maring's
+starts `character-female-f/root`. `GeneratedAnimationAuthor` writes one
+`GeneratedAnimationSet` under Resources for each of the 18 shipped hierarchies. The player loads
+the set matching the instantiated Animator and never calls `DanceClip.Build`; the editor-only
+fallback remains for hand-built fixtures.
+
+`GeneratedAnimationTests` asserts every saved dance has curves, every curve path binds on the
+roster model whose set carries it, and a sample at 0.50 s moves both arms, with the raised arm past
+100 degrees. A separate temporary Windows player drove the actual `AnimationClipPlayable` at the
+same beat and printed **PASS, left 160.0 degrees, right 25.0 degrees**. It was built under `work/`
+and did not touch the Desktop player.
+
+**Verified:** Core **111/111**, EditMode **215/215**, `Checks.RunAll` **5/5**, all three source
+audits green, and the separate Windows-player `AnimationClipPlayable` probe above.
+
+### 80.8 ⚠️ OPEN: THE GENERATED HERO CASTS USE THE SAME PLAYER-ONLY CURVE API
+
+`HeroAbilityClips.BuildAll` also creates non-legacy clips and fills them with `SetCurve` at runtime.
+That is structurally the same editor-versus-player fault § 80.6 fixed for dance. It was discovered
+while tracing the dance, not reported from a played cast, and was not widened into this fix because
+baking all 18 casts across 18 model-specific paths adds 342 large curve assets. Diagnose one cast
+in a temporary built player, then choose between editor-baked sets and an animation job rather than
+assuming the editor's working curves ship.
 
 ### 80.7 ✅ FIXED: ILALIM HAS ESKINITA'S ASPHALT GRAIN WITHOUT THE DARK PATCH SLABS
 

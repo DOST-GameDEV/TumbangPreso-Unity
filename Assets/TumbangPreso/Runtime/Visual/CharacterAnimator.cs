@@ -344,28 +344,52 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>
-        /// Clips this project builds rather than imports. Today that is § THE DANCE, which
-        /// exists because a seven-bone rig has nothing retargetable to borrow.
+        /// Clips this project authors from mathematical curves rather than imports. The dance
+        /// is baked; the older hero-cast path below is tracked separately in TODO § 80.8.
         ///
-        /// ⚠️ BUILT PER CHARACTER, NOT ONCE AND SHARED, because the curve paths contain the
-        /// instanced model's own node names and the twelve rigs do not agree on them. It is a
-        /// few kilobytes of curve per body.
+        /// ⚠️⚠️ THE DANCE IS BAKED AS AN ASSET, NOT BUILT IN THE PLAYER. `AnimationClip.SetCurve`
+        /// populates a non-legacy clip in the editor and is editor-only for that clip type at
+        /// runtime. The old code called it here in every build, received a valid clip with zero
+        /// curves, and then preferred that empty `generated-dance` over `idle`. A valid empty
+        /// clip is the bind pose, which is exactly the reported dance T-pose.
         ///
-        /// ⚠️ AND IT IS CALLED LAST, so it cannot satisfy the "did this rig ship any animation"
-        /// test that gates the editor's last-resort clip lookup. See the call site.
+        /// `GeneratedAnimationAuthor` writes one set under Resources per rig hierarchy, which
+        /// preserves the curves in a player. The outer node is model-specific, so sharing one
+        /// set would bind `character-male-f/root` onto `character-female-f` and move nothing.
+        /// `GeneratedAnimationTests` asserts the selected set against every roster model.
+        ///
+        /// ⚠️ THE EDITOR FALLBACK EXISTS FOR HAND-BUILT TEST FIXTURES ONLY. It is compiled out
+        /// of a player so this fault cannot return as an apparently successful empty clip.
         /// </summary>
         private void BuildGeneratedClips()
         {
             if (_animator == null) return;
 
-            var dance = DanceClip.Build(_animator.transform);
-            if (dance != null) _clips[DanceClip.ClipName] = dance;
+            string rig = DanceClip.ResourceName(_animator.transform);
+            var baked = string.IsNullOrEmpty(rig)
+                ? null
+                : Resources.Load<GeneratedAnimationSet>($"{DanceClip.ResourceFolder}/{rig}");
+
+            if (baked != null && baked.Clips != null)
+            {
+                foreach (var clip in baked.Clips)
+                    if (clip != null) _clips[clip.name] = clip;
+            }
+
+#if UNITY_EDITOR
+            if (!_clips.ContainsKey(DanceClip.ClipName))
+            {
+                var dance = DanceClip.Build(_animator.transform);
+                if (dance != null) _clips[DanceClip.ClipName] = dance;
+            }
+#endif
 
             var heroClips = HeroAbilityClips.BuildAll(_animator.transform);
             if (heroClips != null)
             {
                 foreach (var kvp in heroClips)
-                    if (kvp.Value != null) _clips[kvp.Key] = kvp.Value;
+                    if (kvp.Value != null && !_clips.ContainsKey(kvp.Key))
+                        _clips[kvp.Key] = kvp.Value;
             }
         }
 

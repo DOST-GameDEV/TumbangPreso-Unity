@@ -38,6 +38,31 @@ namespace TumbangPreso.Visual
     public static class DanceClip
     {
         /// <summary>
+        /// Resources folder containing the editor-baked dance sets. Each rig has one because
+        /// its model-specific outer node is part of every curve path.
+        /// </summary>
+        public const string ResourceFolder = "GeneratedAnimations";
+
+        /// <summary>
+        /// Resource name for the clip set that binds to this Animator hierarchy. It is the first
+        /// node on the path to the skeleton root, which is also the model-specific part of every
+        /// curve binding.
+        /// </summary>
+        public static string ResourceName(Transform animatorRoot)
+        {
+            if (animatorRoot == null) return null;
+
+            Transform bone = FindDeep(animatorRoot, "root");
+            if (bone == null) return null;
+
+            Transform first = bone;
+            while (first.parent != null && first.parent != animatorRoot)
+                first = first.parent;
+
+            return first.parent == animatorRoot ? first.name : null;
+        }
+
+        /// <summary>
         /// The name the clip is cached under, so `EmoteClips` can name it like a shipped clip.
         ///
         /// ⚠️ IT CANNOT COLLIDE WITH AN IMPORTED CLIP. The rig's 32 are all plain lowercase
@@ -63,8 +88,9 @@ namespace TumbangPreso.Visual
         };
 
         /// <summary>
-        /// Builds the clip for one instanced model, or returns null if this model has no rig
-        /// (a Prop, or a model still being assembled).
+        /// Authors the clip for one model in the editor, or returns null if this model has no rig
+        /// (a Prop, or a model still being assembled). `GeneratedAnimationAuthor` persists the
+        /// result as an asset before a player is built.
         /// </summary>
         /// <param name="animatorRoot">
         /// The transform the Animator sits on. Every curve path is relative to it.
@@ -93,7 +119,8 @@ namespace TumbangPreso.Visual
                 name = ClipName,
 
                 // ⚠️ NOT `legacy`. The graph plays this through AnimationClipPlayable, which
-                // refuses a legacy clip outright.
+                // refuses a legacy clip outright. This is why the curves must be baked in the
+                // editor instead of assigned after the player has started.
                 legacy = false,
 
                 // ⚠️⚠️ THIS LINE IS INERT AND THE COMMENT THAT USED TO SIT ON IT SAID THE
