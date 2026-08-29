@@ -2,6 +2,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 using TumbangPreso.Core;
+using UnityEngine;
 
 namespace TumbangPreso.Tests
 {
@@ -109,6 +110,58 @@ namespace TumbangPreso.Tests
         {
             Assert.IsTrue(File.Exists(Path.Combine(CloudCodeRoot, "player-account.js")));
             Assert.IsTrue(File.Exists(Path.Combine(CloudCodeRoot, "match-record.js")));
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE RECORD IS BIGGER THAN A PACKET, AND THIS IS THE MEASUREMENT RATHER THAN THE
+        /// ASSUMPTION. Every other named message in `MatchRpc` is tens of bytes and takes the
+        /// default `ReliableSequenced`, which cannot split a message: an oversized one is
+        /// refused by the transport, the host logs a line nobody reads, and every client
+        /// silently gets no end-of-match summary and no career entry. That is the exact failure
+        /// the protocol bump for this message exists to make impossible, so the delivery is
+        /// asserted here as well as chosen there.
+        ///
+        /// ⚠️ THE FLOOR IS 1300 BYTES, WHICH IS UNDER A PLAIN ETHERNET MTU ON PURPOSE.
+        /// `MatchRpc.PoseDelivery`'s note records that they play over Hamachi, a VPN with a
+        /// smaller MTU and real loss, and that the relay path *"was not better designed, it was
+        /// luckier"*. Sizing anything against 1500 is that mistake one layer up.
+        /// </summary>
+        [Test]
+        public void AFullMatchRecordNeedsMoreThanOnePacketAndIsSentFragmented()
+        {
+            var players = new PlayerMatchStats[Balance.PlayerCount];
+            for (int i = 0; i < players.Length; i++)
+                players[i] = new PlayerMatchStats
+                {
+                    Slot = i,
+                    PlayerId = new string('p', 32),
+                    Handle = new string('W', AccountRules.HandleMax),
+                    CharacterId = "phaister",
+                    SlipperId = "alpombra",
+                };
+
+            var record = new MatchRecord
+            {
+                MatchId = System.Guid.NewGuid().ToString("N"),
+                Mode = GameMode.HeroStrike.ToString(),
+                MapId = "ilalim_ng_tulay",
+                Rounds = Balance.HeroStrikeRounds,
+                PlayedUtc = System.DateTime.UtcNow.ToString("O"),
+                DefenderByRound = new int[Balance.HeroStrikeRounds],
+                Players = players,
+            };
+
+            int bytes = System.Text.Encoding.UTF8.GetByteCount(JsonUtility.ToJson(record));
+            Debug.Log($"[CareerAudit] a full four-player MatchRecord serialises to {bytes} bytes");
+
+            Assert.Greater(bytes, 1300,
+                "a record now fits in one packet, so the fragmented delivery may no longer be " +
+                "needed. Re-measure before simplifying it: this test is the reason it is there.");
+
+            string rpc = File.ReadAllText(Path.Combine(AssetsRoot, "Runtime", "Net", "MatchRpc.cs"));
+            StringAssert.Contains("NetworkDelivery.ReliableFragmentedSequenced", rpc,
+                "the match record is larger than one packet and must not go out on a delivery " +
+                "that cannot split it. docs/TODO.md § 89.5.");
         }
 
         private static int ConstantIn(string js, string name)

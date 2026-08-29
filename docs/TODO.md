@@ -408,6 +408,19 @@ and only the awarding did not. Phase 4 fills it with no migration.
 without the handler plays the match correctly and then silently gets no end-of-match summary and no
 career entry for a game it played, which is exactly the quiet kind of wrong this number exists to
 turn into a refusal. **Both machines rebuild off this branch.**
+⚠️⚠️ **AND THE MESSAGE IS BIGGER THAN A PACKET, WHICH THE DEFAULT DELIVERY WOULD NOT HAVE TOLD
+ANYBODY.** Every other named message in `MatchRpc` is tens of bytes and takes the default
+`ReliableSequenced`. A `MatchRecord` is four players times twenty-six fields of JSON and
+**measures 2312 bytes** at full length;
+`ReliableSequenced` cannot split a message, so an oversized one is refused by the transport,
+the host logs a line nobody reads, and every client silently gets no summary and no career
+entry, which is precisely the failure the version bump above exists to make impossible. It goes
+`ReliableFragmentedSequenced`. ⚠️ Do not size this against a 1500-byte MTU:
+`MatchRpc.PoseDelivery`'s note records that they play over Hamachi, a VPN with a smaller MTU and
+real loss, and that the relay path *"was not better designed, it was luckier"*.
+`AFullMatchRecordNeedsMoreThanOnePacketAndIsSentFragmented` measures the record and fails if
+somebody puts the delivery back.
+
 ⚠️ `ChatAndLobbyChromeTests.TheProtocolCarriesEveryRosterBump` caught the bump on the first
 EditMode run of this work, which is the whole reason that tripwire exists; it is re-armed at 15.
 
@@ -468,9 +481,12 @@ offline.
 - **Core 164/164** (`dotnet test`), from 135 before this phase. 29 of the new tests are the
   record and profile rules: placements, clutch, idempotency, streaks, comeback denominators,
   history trimming, the sample-size gate and the pressure radius.
-- **EditMode 236/236 -> 240/240**, read from `Logs/tests.xml` rather than from the exit code.
+- **EditMode 236/236 -> 241/241**, read from `Logs/tests.xml` rather than from the exit code.
   ⚠️ The first run was 235/236: `TheProtocolCarriesEveryRosterBump` caught the `MatchRecord`
   message, which is the tripwire working. Re-armed at 15.
+- **All five editor checks OK in one launch** (`Checks.RunAll`), and a clean Windows player
+  on the Desktop. `MapGeometryCheck` prints per-prop FAIL lines for Eskinita dressing that
+  it does not gate on; the run's own verdict is OK and nothing in this phase touches a scene.
 - **`CareerAndCloudCodeTests` is new and reads source as text**, because both faults it looks
   for are invisible to every other test here: a second hand-written Cloud Code request still
   works until it drifts, and nothing on this machine compiles the JavaScript. It gates the
@@ -487,6 +503,31 @@ offline.
 ⚠️ **STILL TO DO ON THIS PHASE, AND IT IS NOT CODE:** the unplugged four-player LAN run, per
 § 89.7. It is a regression to protect, not an open task, and this is the phase most able to
 break it.
+
+---
+
+### 89.9 · Two things found by reviewing this phase rather than by running it
+
+Both were caught before the branch was played, and both are the kind that pass every test and
+then fail in front of people.
+
+**The record broadcast would have been silently refused by the transport.** Covered in § 89.5:
+it is 2312 bytes, `ReliableSequenced` cannot split a message, and the whole feature would have
+worked perfectly in single player and done nothing at all online. The measurement is now a test.
+
+**The mastery list overlapped the stat block on the career page.** Laid out at 660 by 120 in the
+bottom-left of the panel, its top edge sat at 188 px from the floor while the last stat row's
+box reached down to 156, and its own bottom ran into the REFRESH and CLOSE row. Eighteen
+characters plus six heroes is a grid rather than a footnote, so it moved behind a CHARACTERS
+button into its own panel, the same shape the match detail already uses. ⚠️ It is also only
+rebuilt while that panel is open: a string for eighteen characters rebuilt on every `Changed`
+from a screen nobody is looking at is the shape `Hud`'s per-frame rebuild took an eighth of the
+probe's frames with.
+
+⚠️ **And the stat block had 14 slots for a 16-row list**, so the two rows appended after the
+fact (average time to first throw, distance per round) fell off the end silently, which is
+exactly the pair nobody would notice missing. They are in the list proper now and a
+`Debug.Assert` fails if the block is ever smaller than what it is asked to write.
 
 ---
 

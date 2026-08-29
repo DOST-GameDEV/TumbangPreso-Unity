@@ -33,13 +33,15 @@ namespace TumbangPreso.UI
         private Canvas _canvas;
         private GameObject _panel;
         private GameObject _detail;
+        private GameObject _masteryPanel;
 
         private Text _handle, _identity, _status, _career;
         private Text _modeTitle;
         private readonly List<Text> _statRows = new List<Text>();
         private readonly List<Button> _historyRows = new List<Button>();
         private readonly List<Text> _historyLabels = new List<Text>();
-        private Text _mastery, _pager, _detailBody;
+        private GameObject _mastery;
+        private Text _pager, _detailBody, _masteryBody;
 
         private GameMode _mode = GameMode.Classic;
         private int _page;
@@ -60,9 +62,11 @@ namespace TumbangPreso.UI
 
             BuildPanel();
             BuildDetail();
+            BuildMastery();
 
             _panel.SetActive(false);
             _detail.SetActive(false);
+            _masteryPanel.SetActive(false);
 
             var career = GameServices.Career;
             if (career != null) career.Changed += Refresh;
@@ -137,15 +141,43 @@ namespace TumbangPreso.UI
             MenuKit.WoodButton(_panel.transform, "OLDER", new Vector2(1, 0),
                 new Vector2(-90, 118), new Vector2(150, 42), () => Page(1));
 
-            // Mastery grid (§ 2.1 item 7), as a played-count list. ⚠️ Mastery LEVELS are Phase 10;
-            // what exists today is games and wins, and that is what is drawn.
-            _mastery = MenuKit.Label(_panel.transform, "", 18, UiTheme.CreamMuted,
-                new Vector2(0, 0), new Vector2(360, 128), new Vector2(660, 120), TextAnchor.UpperLeft);
-
+            // ⚠️⚠️ THE MASTERY LIST (§ 2.1 item 7) IS BEHIND A BUTTON RATHER THAN ON THIS
+            // PANEL, AND THAT IS A LAYOUT DECISION WITH A MEASUREMENT UNDER IT. Laid out where
+            // it was first written, at 660 by 120 in the bottom-left, its top edge sat at 188 px
+            // from the panel floor and the last stat row's box reached down to 156, so the two
+            // overlapped by about 30 px, and its own bottom edge ran into the REFRESH and CLOSE
+            // row. Eighteen characters plus six heroes is a grid, not a footnote: it gets its
+            // own panel, the same way the match detail does.
+            MenuKit.WoodButton(_panel.transform, "CHARACTERS", new Vector2(0, 0),
+                new Vector2(150, 62), new Vector2(220, 46), OpenMastery);
             MenuKit.WoodButton(_panel.transform, "REFRESH", new Vector2(0, 0),
-                new Vector2(150, 62), new Vector2(180, 46), RefreshFromServer);
+                new Vector2(380, 62), new Vector2(180, 46), RefreshFromServer);
             MenuKit.WoodButton(_panel.transform, "CLOSE", new Vector2(0, 0),
-                new Vector2(340, 62), new Vector2(180, 46), Close);
+                new Vector2(570, 62), new Vector2(180, 46), Close);
+        }
+
+        private void BuildMastery()
+        {
+            _masteryPanel = new GameObject("MasteryPanel", typeof(RectTransform), typeof(Image));
+            _masteryPanel.transform.SetParent(_canvas.transform, false);
+            MenuKit.Place((RectTransform)_masteryPanel.transform, new Vector2(0.5f, 0.5f),
+                Vector2.zero, new Vector2(900, 760));
+            _masteryPanel.GetComponent<Image>().color = UiTheme.WoodDark;
+
+            MenuKit.Label(_masteryPanel.transform, "CHARACTERS", 30, UiTheme.Amber,
+                new Vector2(0.5f, 1), new Vector2(0, -44), new Vector2(800, 44));
+
+            _masteryBody = MenuKit.Label(_masteryPanel.transform, "", 19, UiTheme.Cream,
+                new Vector2(0.5f, 1), new Vector2(0, -410), new Vector2(820, 660), TextAnchor.UpperLeft);
+
+            MenuKit.WoodButton(_masteryPanel.transform, "BACK", new Vector2(0.5f, 0),
+                new Vector2(0, 48), new Vector2(200, 48), () => _masteryPanel.SetActive(false));
+        }
+
+        private void OpenMastery()
+        {
+            WriteMastery(GameServices.Career?.Profile);
+            _masteryPanel.SetActive(true);
         }
 
         private void BuildDetail()
@@ -181,6 +213,7 @@ namespace TumbangPreso.UI
         private void Close()
         {
             _detail.SetActive(false);
+            _masteryPanel.SetActive(false);
             _panel.SetActive(false);
         }
 
@@ -246,7 +279,11 @@ namespace TumbangPreso.UI
 
             WriteStats(totals);
             WriteHistory();
-            WriteMastery(profile);
+
+            // ⚠️ ONLY WHILE IT IS OPEN. It is its own panel now, and rebuilding a string for
+            // eighteen characters on every `Changed` from a screen nobody is looking at is the
+            // shape `Hud`'s per-frame string rebuild took an eighth of the probe's frames with.
+            if (_masteryPanel != null && _masteryPanel.activeSelf) WriteMastery(profile);
         }
 
         /// <summary>
@@ -337,18 +374,18 @@ namespace TumbangPreso.UI
                 Percent("LUNGE HIT RATE", t.LungeHits, t.LungeAttempts, "lunges"),
                 $"LONGEST LAST STAND   {t.LongestLastAttacker:0.0} s",
                 Percent("CLUTCH RATE", t.Clutches, t.ComebackChances, "comeback chances"),
+                $"FIRST THROW          {(t.MatchesWithAThrow > 0 ? $"{ProfileRules.AverageTimeToFirstThrow(t):0.0} s avg" : "no throws yet")}",
+                $"DISTANCE / ROUND     {ProfileRules.DistancePerRound(t, MatchRules.RoundCountFor(_mode)):0} m",
             };
+
+            // ⚠️ THE BLOCK HAS TO HOLD EVERY ROW IT WRITES. It was built with 14 slots against
+            // a 16-row list once, and the two that fell off the end were the ones appended
+            // after the fact, which is exactly the pair nobody would notice missing.
+            Debug.Assert(_statRows.Count >= rows.Count,
+                $"the stat block has {_statRows.Count} rows and {rows.Count} to write");
 
             for (int i = 0; i < _statRows.Count; i++)
                 _statRows[i].text = i < rows.Count ? rows[i] : "";
-
-            // The two remaining § 2.2 rows, folded into the block above's spare lines.
-            if (_statRows.Count > rows.Count)
-                _statRows[rows.Count].text =
-                    $"FIRST THROW          {(t.MatchesWithAThrow > 0 ? $"{ProfileRules.AverageTimeToFirstThrow(t):0.0} s avg" : "no throws yet")}";
-            if (_statRows.Count > rows.Count + 1)
-                _statRows[rows.Count + 1].text =
-                    $"DISTANCE / ROUND     {ProfileRules.DistancePerRound(t, MatchRules.RoundCountFor(_mode)):0} m";
         }
 
         /// <summary>
@@ -406,7 +443,13 @@ namespace TumbangPreso.UI
 
         private void WriteMastery(PlayerProfile profile)
         {
-            var lines = new List<string> { "CHARACTERS" };
+            if (_masteryBody == null || profile == null) return;
+
+            var lines = new List<string>
+            {
+                $"{"CHARACTER",-14}{"GAMES",7}{"WON",7}",
+                "",
+            };
 
             foreach (var pick in profile.Characters)
             {
@@ -414,13 +457,16 @@ namespace TumbangPreso.UI
                 string name = pick.Id;
                 foreach (var entry in Roster.AllPeople) if (entry.Id == pick.Id) name = entry.Name;
 
+                // ⚠️ THE SAME SAMPLE GATE AS EVERY OTHER RATE ON THIS SCREEN. A 100 per cent
+                // win rate on one game with a character is the single most quotable wrong
+                // number a profile can produce.
                 lines.Add(MatchRecordRules.IsReportable(pick.Games)
-                    ? $"{name,-12} {pick.Games,3} games   {MatchRecordRules.Rate(pick.Wins, pick.Games) * 100.0f:0}% won"
-                    : $"{name,-12} {pick.Games,3} games   {pick.Wins} won");
+                    ? $"{name,-14}{pick.Games,7}{MatchRecordRules.Rate(pick.Wins, pick.Games) * 100.0f,6:0}%"
+                    : $"{name,-14}{pick.Games,7}{pick.Wins,7}");
             }
 
-            if (lines.Count == 1) lines.Add("Nothing played yet.");
-            _mastery.text = string.Join("\n", lines);
+            if (lines.Count == 2) lines.Add("Nothing played yet.");
+            _masteryBody.text = string.Join("\n", lines);
         }
 
         private void OpenDetail(int row)

@@ -156,6 +156,33 @@ namespace TumbangPreso.Net
         /// </summary>
         private const NetworkDelivery PoseDelivery = NetworkDelivery.UnreliableSequenced;
 
+        /// <summary>
+        /// How the finished match record is sent, and the other place in this file that does
+        /// not take the default.
+        ///
+        /// ⚠️⚠️ IT IS FRAGMENTED BECAUSE THE MESSAGE IS BIGGER THAN A PACKET, AND THE DEFAULT
+        /// WOULD NOT HAVE FAILED LOUDLY. Every other message in this file is tens of bytes;
+        /// a `MatchRecord` is four players times twenty-six fields of JSON, which MEASURES
+        /// **2312 bytes** at full length, which is past the transport's single-packet payload.
+        /// `ReliableSequenced` cannot split a message, so an oversized one is refused by the
+        /// transport rather than delivered in pieces: the host logs a line nobody reads and
+        /// every client silently gets no end-of-match summary and no career entry, which is
+        /// exactly the failure the protocol bump for this message was meant to make
+        /// impossible. `ReliableFragmentedSequenced` is the pipeline that exists for this.
+        ///
+        /// ⚠️ AND MTU IS SMALLER THAN THE NUMBER YOU WOULD GUESS ON THE LINK THEY ACTUALLY
+        /// PLAY ON. `PoseDelivery`'s note above records that Hamachi is a VPN with a smaller
+        /// MTU and real loss, and that the relay path *"was not better designed, it was
+        /// luckier"*. A payload sized against a 1500-byte assumption is the same mistake one
+        /// layer up.
+        ///
+        /// ⚠️ STILL RELIABLE AND STILL SEQUENCED. It is an EVENT that happens once per match
+        /// and nothing later repeats it, which is the same test `PoseDelivery`'s note applies
+        /// to everything else here: only a stream that fully replaces itself every step can
+        /// afford to lose a packet, and a match record is the opposite of that.
+        /// </summary>
+        private const NetworkDelivery RecordDelivery = NetworkDelivery.ReliableFragmentedSequenced;
+
         private void OnEnable() => NetSession.ClientDisconnected += HandleClientDisconnected;
 
         private void OnDisable() => NetSession.ClientDisconnected -= HandleClientDisconnected;
@@ -2410,13 +2437,15 @@ namespace TumbangPreso.Net
             string json = JsonUtility.ToJson(record);
             if (string.IsNullOrEmpty(json)) return;
 
-            // ⚠️ SIZED FROM THE STRING RATHER THAN FROM A CONSTANT. A four-player record is
-            // about a kilobyte and a half; a fixed buffer picked by eye is the shape that
-            // truncates silently the day somebody adds a stat.
+            // ⚠️⚠️ SIZED FROM THE STRING RATHER THAN FROM A CONSTANT, AND THE BUFFER IS NOT THE
+            // SAME QUESTION AS THE PACKET. `FastBufferWriter` needs room for the whole message
+            // in memory, which is what this is; splitting it across the wire is `RecordDelivery`
+            // and is decided separately. A fixed buffer picked by eye is the shape that starts
+            // truncating silently the day somebody adds a stat to `PlayerMatchStats`.
             using var writer = new FastBufferWriter(
                 FastBufferWriter.GetWriteSize(json) + 64, Allocator.Temp);
             writer.WriteValueSafe(json);
-            _nm.CustomMessagingManager.SendNamedMessageToAll("MatchRecord", writer);
+            _nm.CustomMessagingManager.SendNamedMessageToAll("MatchRecord", writer, RecordDelivery);
         }
 
         private void OnMatchRecordMsg(ulong senderClientId, FastBufferReader reader)
