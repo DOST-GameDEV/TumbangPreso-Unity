@@ -31,7 +31,30 @@ namespace TumbangPreso.Core
         public const int PlayerCount = 4;
         public const float RoundTime = 90.0f;
         public const float IntermissionDuration = 3.0f;
-        public const float WarmupBufferDuration = 15.0f;
+
+        /// <summary>
+        /// The pause between rounds, in which the role swap is read and the next taya finds their
+        /// mark.
+        ///
+        /// ⚠️⚠️ 5.0, DOWN FROM 15.0. 🧑 2026-08-29, off a played eight-round match: *"make round
+        /// buffer 5 seconds for all, 15 seconds reportedly too long"* — "reportedly" because it
+        /// came from the people testing rather than from him.
+        ///
+        /// **The arithmetic is why 15 was indefensible once the mode count doubled.** Hero Strike
+        /// is eight rounds, so seven buffers at 15 s is **1 m 45 s of a match with nobody
+        /// playing**, against 12 m of actual play. At 5 s it is 35 s. Classic's four rounds go
+        /// from 45 s to 15 s.
+        ///
+        /// ⚠️ `BufferSkipVote` STAYS AND IS NOT MADE REDUNDANT BY THIS. It was added on the same
+        /// day for the same complaint, and a unanimous vote is what lets a room that is ready end
+        /// even five seconds early; this is what the room that says nothing gets. The clock was
+        /// always the backstop and it is a shorter backstop now.
+        ///
+        /// ⚠️ IT IS THE ROLE SWAP CARD'S BUDGET TOO. `RoleSwapCard.ShowForShot` runs its timeline
+        /// inside this window; anything longer than 5 s of animation there is now cut off by the
+        /// round starting rather than by the card finishing.
+        /// </summary>
+        public const float WarmupBufferDuration = 5.0f;
 
         // -------------------------------------------------------------------
         // SCORING — round_manager.gd

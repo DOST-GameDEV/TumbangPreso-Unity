@@ -1183,7 +1183,25 @@ namespace TumbangPreso.UI
 
             // The announcer's clock warnings ride the same value the clock draws, so "thirty
             // seconds" is spoken on the frame the HUD first shows 30.
-            GameServices.Voice?.TickClock(left);
+            //
+            // ⚠️⚠️ ONLY WHILE A ROUND IS ACTUALLY RUNNING, AND WITHOUT THAT IT SPOKE AT THE WRONG
+            // TIME ON EVERY NON-HOST. 🧑 2026-08-29: *"wrong sfx played for non host, 30 seconds
+            // played even tho no 30 seconds yet"*. This ran unconditionally, including through
+            // the pre-round window and the whole warmup buffer, where `TimeLeft` is whatever the
+            // last round ended at rather than the clock of the round about to start — and on a
+            // client that value arrives from the host at 5 Hz, so the low reading is replicated
+            // and spoken before the round it belongs to has begun.
+            //
+            // ⚠️ THE HOST WAS MOSTLY SPARED BY ACCIDENT, which is why it reads as a client fault.
+            // `RoundStarted` fires there and resets the two flags a frame later; a client never
+            // gets that event at all (`MatchDirector.ApplySnapshot`'s header says why), so on a
+            // client a warning spoken early is a warning spent for good and the real one is
+            // silent as well.
+            if (GameServices.Round.RoundActive && GameServices.Match != null &&
+                GameServices.Match.MatchInProgress)
+            {
+                GameServices.Voice?.TickClock(left);
+            }
 
             // ⚠️ ONLY ON THE SECOND, NOT EVERY FRAME. The clock has one-second resolution, and
             // assigning `Text.text` invalidates the mesh and queues a reshape whether or not the

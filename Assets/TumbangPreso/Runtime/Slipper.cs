@@ -822,7 +822,7 @@ namespace TumbangPreso
             else if (Affinity == SlipperAffinity.ElectricZap)
             {
                 Visual.ComicPopup.Zap(transform.position);
-                GameServices.Audio?.PlayAt("ability_flick_dash", transform.position);
+                NetCue.Play("ability_flick_dash", transform.position);
 
                 var round = GameServices.Round;
                 if (round != null)
@@ -1042,8 +1042,13 @@ namespace TumbangPreso
             // ⚠️ THE CUE AND THE HYPE BOTH STAY. The whip-past sound is what sells the miss, and
             // `ReportStyle` is Classic-only and pays 10 hype rather than printing anything on a
             // Hero Strike screen.
-            GameServices.Audio?.PlayAtVaried("slipper_bounce", lata.transform.position,
-                                             1.08f, 1.18f, 0.55f);
+            // ⚠️⚠️ THROUGH `NetCue`: `FixedUpdate` OPENS WITH `ShouldResolve()`, SO EVERY SOUND
+            // BELOW IT WAS HOST-ONLY. 🧑 2026-08-29: *"non hosts dont have sfx in some plarts"*.
+            // `tools/audit_audio_reach.py` could not see this class of fault at all, because it
+            // looks for a gate at the same brace depth and this one is two frames up the stack.
+            // See `docs/TODO.md` § 83.12.
+            NetCue.PlayVaried("slipper_bounce", lata.transform.position,
+                              1.08f, 1.18f, 0.55f);
             UI.Hud.ReportStyle(_throwerSlot, 10.0f, "SO CLOSE");
         }
 
@@ -1173,8 +1178,7 @@ namespace TumbangPreso
             transform.position = closest.point + normal * (Balance.SlipperHitRadius + 0.02f);
 
             _bankCount++;
-            GameServices.Audio?.PlayAtVaried("slipper_land", transform.position,
-                                             0.88f, 1.08f, 0.85f);
+            NetCue.PlayVaried("slipper_land", transform.position, 0.88f, 1.08f, 0.85f);
 
             if (_bankCount == 1 && Mathf.Abs(PektusSpin) >= Balance.PektusBankSpinThreshold)
             {
@@ -1251,8 +1255,7 @@ namespace TumbangPreso
             if (!bounced) return;
 
             _bankCount++;
-            GameServices.Audio?.PlayAtVaried("slipper_land", transform.position,
-                                             0.88f, 1.08f, 0.85f);
+            NetCue.PlayVaried("slipper_land", transform.position, 0.88f, 1.08f, 0.85f);
 
             if (_bankCount == 1 && Mathf.Abs(PektusSpin) >= Balance.PektusBankSpinThreshold)
             {
@@ -1306,8 +1309,12 @@ namespace TumbangPreso
             // verb the player cannot tell they performed, and it then gave the block a flash and
             // a burst and left it silent — so the one thing a taya can do without pressing
             // anything was the one thing they could not hear.
-            GameServices.Audio?.PlayImpact("hit_body", "guard_block",
-                                           transform.position, 0.72f);
+            // ⚠️⚠️ THROUGH `NetCue`: `FixedUpdate` OPENS WITH `ShouldResolve()`, SO EVERY SOUND
+            // BELOW IT WAS HOST-ONLY. 🧑 2026-08-29: *"non hosts dont have sfx in some plarts"*.
+            // `tools/audit_audio_reach.py` could not see this class of fault at all, because it
+            // looks for a gate at the same brace depth and this one is two frames up the stack.
+            // See `docs/TODO.md` § 83.12.
+            NetCue.PlayImpact("hit_body", "guard_block", transform.position, 0.72f);
             UI.Hud.ReportStyle(blocker.PlayerSlot, 12.0f, "HARANG!");
 
             float speed = Combat.BlockKnockbackSpeed(_skinIndex, blocker.CharacterIndex);
@@ -1469,8 +1476,7 @@ namespace TumbangPreso
             if (fromFlight)
             {
                 TriggerAffinityImpact();
-                GameServices.Audio?.PlayAtVaried("slipper_land", transform.position,
-                                                 0.88f, 1.08f, 0.88f);
+                NetCue.PlayVaried("slipper_land", transform.position, 0.88f, 1.08f, 0.88f);
             }
 
             // § THE LANDED HIGHLIGHT. Written AFTER the state above, never before: SetState

@@ -537,11 +537,12 @@ namespace TumbangPreso
             // that could not push a stunned body is a shove that cannot combo into a tag,
             // which is the interaction `IsTaggable`'s own header exists to protect.
             // ⚠️⚠️ IT ASKS `CanMove()`, NOT `CanAct()`, AND THAT ONE WORD IS 🧑's *"cant move
-            // during buffer time"*. See CanMove: `Balance.WarmupBufferDuration` is FIFTEEN
-            // SECONDS and the HUD spends all of it saying "WARMUP / PRACTICE BUFFER · SCORES
-            // PAUSED", which is an invitation to practise. `EndRound` had cleared `RoundActive`
-            // on every body before that window opened, so what the player actually got was
-            // fifteen seconds of standing still reading an offer they could not take.
+            // during buffer time"*. See CanMove: the HUD spends the whole of
+            // `Balance.WarmupBufferDuration` saying "WARMUP / PRACTICE BUFFER · SCORES PAUSED",
+            // which is an invitation to practise. `EndRound` had cleared `RoundActive` on every
+            // body before that window opened, so what the player actually got was the whole
+            // buffer standing still reading an offer they could not take. It was FIFTEEN SECONDS
+            // when that was found and is 5 now (§ 83.13); the fault would be the same at either.
             bool canSteer = CanMove();
 
             Vector2 axis = canSteer ? Intent.MoveAxis : Vector2.zero;
@@ -1056,12 +1057,13 @@ namespace TumbangPreso
         ///
         /// ⚠️⚠️ THE ROUND IS NOT PART OF IT, AND PUTTING IT BACK RE-BREAKS THE WARMUP.
         /// `RoundDirector.EndRound` clears `RoundActive` on every seat and the next round is
-        /// `Balance.WarmupBufferDuration` away, which is 15 s. `SliceRunner.OnIntermission`
+        /// `Balance.WarmupBufferDuration` away, 5 s since § 83.13 and 15 s when this was found.
+        /// `SliceRunner.OnIntermission`
         /// spends that window putting everyone on their new marks with their tsinelas already in
         /// hand, `MatchDirector.IsWarmupBuffer` suspends scoring for it, and `Hud.WarmupLine`
         /// prints "WARMUP / PRACTICE BUFFER · SCORES PAUSED" across the top. Every part of that
         /// is built to be practised in, and a movement gate reading `RoundActive` froze the whole
-        /// cast for all fifteen seconds of it, four times a match.
+        /// cast for the whole of it, once per round boundary.
         ///
         /// `character_base.gd:932` gates the same code on `state != State.NORMAL` and on nothing
         /// else. The round is a rule about SCORING, not about legs.

@@ -9,7 +9,7 @@ namespace TumbangPreso
     /// Lets the players agree to end the intermission early instead of watching a 15 second
     /// clock run down.
     ///
-    /// ⚠️⚠️ 🧑 2026-08-29: *"vote to skip buffer time"*. `Balance.WarmupBufferDuration` is 15 s
+    /// ⚠️⚠️ 🧑 2026-08-29: *"vote to skip buffer time"*. `Balance.WarmupBufferDuration` was 15 s
     /// and it runs between every round, so a four round Classic match spends 45 s of its length
     /// with nobody playing. The buffer is not padding, it exists so the role swap can be read and
     /// the next taya can find their mark, but that is a job which is finished the moment

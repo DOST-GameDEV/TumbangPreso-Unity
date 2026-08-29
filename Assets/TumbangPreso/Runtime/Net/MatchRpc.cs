@@ -3004,6 +3004,26 @@ namespace TumbangPreso.Net
         private static void ApplyNetworkRoundBoundary(bool wasRoundActive, bool roundActive,
                                                       bool inProgress, int roundNumber)
         {
+            // ⚠️⚠️ THE ANNOUNCER'S PER-ROUND STATE IS RESET HERE, BECAUSE A CLIENT NEVER GETS
+            // `RoundStarted`. 🧑 2026-08-29: *"wrong sfx played for non host, 30 seconds played
+            // even tho no 30 seconds yet"*. `VoiceDirector.OnRoundStarted` clears `_clock30Said`
+            // and `_clock10Said` so each warning speaks once PER ROUND, and it is wired to
+            // `MatchDirector.RoundStarted` — which `ApplySnapshot`'s header records as
+            // deliberately not raised on a client, because its other subscribers teleport bodies
+            // and advance rounds. So on a client the two flags were set in round one and never
+            // cleared again: rounds two through eight got no clock warnings at all, and any
+            // warning spoken at the wrong moment was spent for the rest of the match.
+            //
+            // ⚠️ THE EDGE IS THE ONE THE CARD ALREADY USES AND COSTS NO WIRE CHANGE. `roundActive`
+            // going false → true is a round beginning and happens at no other time; that is the
+            // same derivation this method's header spends four paragraphs defending for the
+            // intermission card, reused rather than re-invented.
+            //
+            // ⚠️ AND IT IS ABOVE THE CARD'S NULL GUARD ON PURPOSE. The announcer is not the card
+            // and must not stop working on a screen that has no card on it.
+            if (!wasRoundActive && roundActive)
+                GameServices.Voice?.OnRoundStarted(roundNumber);
+
             var card = FindFirstObjectByType<UI.RoleSwapCard>();
             if (card == null) return;
 

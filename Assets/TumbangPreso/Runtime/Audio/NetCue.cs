@@ -84,6 +84,39 @@ namespace TumbangPreso
         }
 
         /// <summary>
+        /// A two-layer impact — the hit and its weight — heard on every peer.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE THE AUDIT'S OWN HEADLINE EXAMPLE WAS STILL SILENT ON A CLIENT.
+        /// 🧑 2026-08-29, watching a four-player test: *"non hosts dont have sfx in some plarts,
+        /// example, lata down/ lata hit has no sound for non host but has sound for host"*.
+        /// `Lata.SetUpright` is the ONE place both directions of the can are announced, it is
+        /// reached only from `HostKnockDown` and `HostRestore`, and both of those open with
+        /// `NetAuthority.ShouldResolve()`. A client learns the can went over through
+        /// `ApplySnapshotState`, which bypasses `SetUpright` deliberately so a rejoin does not
+        /// replay the whole round — so the sound of the objective going over reached exactly one
+        /// machine. This class's own header names that cue as the reason it was written, and the
+        /// `lata_seal` refusal was the only part of `Lata` that ever got routed through it.
+        ///
+        /// ⚠️ BOTH LAYERS ARE RELAYED, AT THE VOLUMES `AudioDirector.PlayImpact` MIXES THEM AT.
+        /// Sending only the primary would give the remote peers a thinner hit than the host's,
+        /// which is worse than a consistent one: three players would be told the can went over
+        /// with a different sound from the fourth. The arithmetic is duplicated from that method
+        /// rather than exposed by it because the local call still goes through it, ducking and
+        /// all, and only the WIRE half needs the numbers.
+        /// </summary>
+        public static void PlayImpact(string primary, string weightLayer, Vector3 position,
+                                      float energy = 1.0f)
+        {
+            GameServices.Audio?.PlayImpact(primary, weightLayer, position, energy);
+
+            energy = Mathf.Clamp01(energy);
+            Relay(primary, position, Mathf.Lerp(0.82f, 1.0f, energy));
+
+            if (!string.IsNullOrEmpty(weightLayer) && weightLayer != primary)
+                Relay(weightLayer, position, Mathf.Lerp(0.28f, 0.52f, energy));
+        }
+
+        /// <summary>
         /// ⚠️ THE REMOTE COPY IS NOT PITCH-VARIED, AND THAT IS DELIBERATE RATHER THAN LAZY. The
         /// window exists so a repeated sample does not expose itself as one recording
         /// (`AudioDirector.PlayAtVaried`), and it is a per-LISTENER effect: every peer rolling

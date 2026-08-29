@@ -2323,32 +2323,94 @@ differs, the fix is the screen's light rig; if the material differs, it is `Slip
 `MaterialPropertyBlock` and § 79.7's fix did not reach the preview. **Ask which one before
 removing anything**, and put the answer here.
 
-### 83.12 OPEN: WRONG AND MISSING SFX ON EVERY NON-HOST
+### 83.12 ✅ FIXED: EVERY NON-HOST WAS MISSING HALF THE SOUND, AND THE CLOCK SPOKE EARLY
 
-Two reports, one family. 🧑, watching a four-player test:
+Two reports, one family. 🧑 2026-08-29, watching a four-player test:
 
 - *"wrong sfx played for non host, 30 seconds played even tho no 30 seconds yet"*
 - *"non hosts dont have sfx in some plarts, example, lata down/ lata hit has no sound for non
   host but has sound for host"*
 
-**The second half has a written precedent that names the shape.** `Lata.HostKnockDown`'s own note
-records the knockdown cue being host-only and calls it *"the single most important event in a
-round, and three of the four players could not hear it"*; `MatchDirector.AddScore` records the same
-for the scoring sting. Both were fixed by routing through `NetCue` rather than `GameServices.Audio`.
-So the first question for every silent cue is whether its `PlayAt` sits behind a
-`NetAuthority.ShouldResolve()` or an `IsHost` that the sound has no business being behind.
+⚠️⚠️ **THE AUDIT THAT WAS WRITTEN FOR EXACTLY THIS COULD NOT SEE IT, AND THAT IS THE FINDING
+WORTH KEEPING.** `tools/audit_audio_reach.py` reports a `GameServices.Audio` call as HOST-ONLY
+when a `ShouldResolve()` early return is open **at the same brace depth**. Every site it once
+flagged was fixed months ago and it now reports five, all of them inside `NetCue` and `MatchRpc`
+where being host-side is the point. **It came back clean while eight real sounds were host-only**,
+because in every one of those the gate is in the CALLER:
 
-**The first half is a clock, not a cue.** The 30-second call fires off a threshold on the round
-clock, and a client's clock is not its own: `RoundDirector.ApplySnapshot` writes
-`TimeLeft = Mathf.Clamp(timeLeft, 0.0f, Balance.RoundTime)` from the host's number at 5 Hz. **A
-clamp against a constant is a lie the moment any mode runs a longer round than that constant**, and
-it lies in the direction reported — a client's clock reads LOW, so the callout comes early. Check
-`Balance.RoundTime` against what the host actually starts a Hero Strike round with before looking
-anywhere else.
+| the sound | where it plays | the gate, one or two frames up |
+|---|---|---|
+| `can_knockdown` + `lata_impact` | `Lata.SetUpright` | `HostKnockDown` |
+| `reset_complete` + `lata_seal` | `Lata.SetUpright` | `HostRestore` |
+| `slipper_land`, a throw that missed | `Slipper.Land` | `Slipper.FixedUpdate` |
+| `slipper_land`, a bank off a pillar | `BounceOffObstacles`, `BounceOffBounds` | same |
+| `hit_body` + `guard_block`, a BLOCK | `Slipper.HostBlockedBy` | same |
+| `slipper_bounce`, the near miss | `TrackClassicNearMiss` | same |
+| `ability_flick_dash` | `TriggerAffinityImpact` | same |
+| `tag` + `downed` | `RoundDirector.ApplyTagPenalty` | its caller |
 
-**Done looks like** an audit in the shape of `tools/audit_cue_audio.py`: every `PlayAt` in the
-runtime, with whether it is reachable on a client, plus one two-process run with the client's
-`TimeLeft` and the host's printed side by side.
+That is the throw landing, the block, the tag and the can — **the four things the whole game is
+made of** — audible on one machine out of four. All eight now go through `NetCue`, which was
+written for this and whose header names two of them as the reason it exists. `NetCue.PlayImpact`
+is new and relays both layers at the volumes `AudioDirector` mixes them at, so a client hears the
+same hit as the host rather than a thinner one.
+
+⚠️⚠️ **AND THE VISUAL HALF WENT WITH IT, WHICH IS PART OF WHAT HE MEANT BY CLIENTS NOT SEEING THE
+RIGHT EFFECTS.** `Lata.SetUpright` also owned the `TUMBA!` / `LATA DOWN!` popup, the hitmarker,
+the impact burst, the confetti and the camera punch. All of it sat inside the same host-only
+method, so three players watched the objective fall in silence with nothing on screen.
+`AnnounceUprightChange` is that block extracted, and `ApplySnapshotState` calls it on the upright
+EDGE when this peer is not the host. ⚠️ The impact CUE is deliberately not in there: it travels by
+`NetCue` from the host, and having it in both would play it twice on a client.
+
+⚠️ **THE ANNOUNCER IS NOT RELAYED AND MUST NOT BE.** `NetCue`'s header is explicit that it is for
+WORLD events; a voice line is a per-listener commentary track, so each peer speaks its own off the
+state it has just been told about.
+
+**The "30 seconds" half was a clock, not a cue, and it had two faults.**
+
+`Hud.UpdateTimer` called `VoiceDirector.TickClock` **unconditionally**, including through the
+pre-round window and the whole warmup buffer, where `TimeLeft` is whatever the last round ended at
+rather than the clock of the round about to start. On a client that low value arrives from the
+host at 5 Hz and is spoken before the round it belongs to has begun. It is now gated on
+`RoundActive && MatchInProgress`.
+
+And `VoiceDirector.OnRoundStarted` — which clears `_clock30Said` and `_clock10Said` so each
+warning speaks once **per round** — is wired to `MatchDirector.RoundStarted`, which
+`ApplySnapshot`'s header records as deliberately never raised on a client. **So on a client the
+two flags were set in round one and never cleared again**: rounds two through eight got no clock
+warnings at all, and any warning spoken early was spent for the rest of the match.
+`MatchRpc.ApplyNetworkRoundBoundary` now resets them on the `roundActive` false → true edge — the
+same derived edge that file already defends at length for the intermission card, reused rather
+than re-invented, and costing no wire change.
+
+⚠️ **THE AUDIT SHOULD LEARN TO FOLLOW ONE CALLER**, which is the guard against the next eight.
+Reporting a method as host-only when EVERY call site of it is host-gated would have caught all
+eight of these from a terminal. That is not done and is worth doing before the next audio pass.
+
+### 83.13 ✅ THE ROUND BUFFER IS 5 SECONDS
+
+🧑 2026-08-29: *"make round buffer 5 seconds for all, 15 seconds reportedly too long"* —
+"reportedly" because it came from the people testing rather than from him.
+
+`Balance.WarmupBufferDuration` 15.0 → **5.0**. **The arithmetic is why 15 was indefensible once
+the mode count doubled**: Hero Strike is eight rounds, so seven buffers at 15 s is **1 m 45 s of a
+match with nobody playing**, against about 12 m of play. At 5 s it is 35 s. Classic's four rounds
+go from 45 s to 15 s.
+
+⚠️ **`BufferSkipVote` IS NOT MADE REDUNDANT BY THIS.** It was added the same day for the same
+complaint; a unanimous vote is what lets a room that is ready end even five seconds early, and
+this is what the room that says nothing gets. The clock was always the backstop and it is a
+shorter backstop now.
+
+⚠️ **THE ROLE SWAP CARD FITS, CHECKED RATHER THAN ASSUMED.** `RoleSwapCard` spends `RevealDelay`
+1.2 + `RevealFade` 0.35 + a hold of `max(1, buffer - 1.2 - 0.35 - 1.5)` + 1.5 s on
+`ROUND n — FIGHT!`. At 5 s the hold is 1.95 and the timeline totals 5.0 exactly. Below about
+4.05 s the `max(1, …)` floor takes over and the card starts being cut off by the round beginning,
+so that is the floor for any further trim.
+
+⚠️ Three comments that spelled "15 s" and "fifteen seconds" out in prose were corrected in
+`CharacterMotor` and `BufferSkipVote` rather than left to become the next person's wrong premise.
 
 ---
 

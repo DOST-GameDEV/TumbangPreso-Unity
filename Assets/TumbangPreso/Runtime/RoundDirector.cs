@@ -580,7 +580,18 @@ namespace TumbangPreso
                 rig.ImpactPunch(impact.sqrMagnitude > 0.01f ? impact.normalized : Vector3.back, 1.0f);
             }
 
-            GameServices.Audio?.PlayImpact("tag", "downed", victim.transform.position, 1.0f);
+            // ⚠️⚠️ THROUGH `NetCue`, BECAUSE THE CALLER OPENS WITH `ShouldResolve()` AND THE TAG
+            // IS THE TAYA'S ENTIRE PAYOFF. 🧑 2026-08-29: *"non hosts dont have sfx in some
+            // plarts"*. `tools/audit_audio_reach.py` reported this line clean and it was not:
+            // the audit looks for a gate at the SAME brace depth, and this method has none —
+            // the gate is in the caller. Every sound reached by a host-resolved verb one call
+            // deep has the same shape. See `docs/TODO.md` § 83.12.
+            NetCue.PlayImpact("tag", "downed", victim.transform.position, 1.0f);
+
+            // ⚠️ THE ANNOUNCER STAYS LOCAL AND MUST. `NetCue`'s header is explicit that it is
+            // for WORLD events only; a voice line is a per-listener commentary track and
+            // relaying it would play one machine's announcer out of another player's speakers at
+            // the wrong moment. The client's own announcer is driven from the replicated state.
             GameServices.Voice?.OnAttackerTagged();
             UI.Hud.ReportStyle(taya.PlayerSlot, 36.0f, "HULI!");
             victim.Stamina.RefillAndClearFatigue();
