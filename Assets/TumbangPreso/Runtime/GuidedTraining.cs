@@ -435,6 +435,98 @@ namespace TumbangPreso
             _local.Intent.AllowOnly(_unlocked);
         }
 
+        /// <summary>
+        /// Which side of the game a lesson is about.
+        ///
+        /// ⚠️⚠️ THE ROLE WAS INHERITED FROM WHICHEVER LESSON RAN BEFORE, AND THAT IS THE WHOLE
+        /// FAULT. 🧑 2026-08-29 gave the diagnosis himself and it was right: *"i think its bcz the
+        /// role doesnt change in between those phases"*, with *"can hold x to reset here"* and
+        /// *"u also cant tag"*.
+        ///
+        /// **`DefenderReset` was the only lesson in the route that made you the taya.** `Punch`
+        /// and `Lunge` come straight after it, are titled `PUNCH A VULNERABLE ATTACKER` and
+        /// `LUNGE`, and set no role at all — they only READ `_local.IsDefender` to decide where
+        /// to stand the dummy. And `CombatVerbs` refuses both outright:
+        ///
+        ///     if (... || !_motor.IsDefender || !_motor.CanAct()) return false;
+        ///
+        /// So any route that reached them without passing through `DefenderReset` asked for two
+        /// verbs the player was structurally incapable of performing, and refused every press in
+        /// silence. **That route is one keypress away**: `Update` completes the current lesson on
+        /// `N`, and it auto-completes the four hero lessons for a seat with no kit. Somebody who
+        /// pressed N because the reset looked stuck arrived at PUNCH as an attacker and could not
+        /// tag, which is both halves of his report from one cause.
+        ///
+        /// ⚠️ SO THE ROLE IS DECLARED BY THE LESSON RATHER THAN LEFT TO THE ORDER. The route can
+        /// then be entered anywhere — skipped through, jumped into by a probe, restarted — and
+        /// still be coherent, which is what makes `TutorialDefenderProbe` a test of the game
+        /// rather than a test of one path through it.
+        /// </summary>
+        private static bool LessonIsTheTayas(Lesson lesson)
+            => lesson == Lesson.DefenderReset
+            || lesson == Lesson.Punch
+            || lesson == Lesson.Lunge;
+
+        /// <summary>
+        /// Puts the student on the side the lesson is about, and only when they are not already
+        /// on it.
+        ///
+        /// ⚠️ ONLY ON A CHANGE, because `BecomeDefender` teleports to the can and drops whatever
+        /// is in hand. Re-running it on every lesson would yank a player across the street
+        /// between PUNCH and LUNGE for no reason and undo `PrepareDummyInFront`'s placement.
+        ///
+        /// ⚠️ AND THE ATTACKER SIDE IS APPLIED TOO, NOT JUST THE TAYA. `TripRecovery` and `Emote`
+        /// follow the two taya lessons, and a player left holding the taya's role through them is
+        /// being taught the wrong half of the game: the trip lesson's own text is about being an
+        /// attacker put on the road.
+        /// </summary>
+        private void ApplyLessonRole(Lesson lesson)
+        {
+            if (_local == null || lesson >= Lesson.Complete) return;
+
+            bool wantsTaya = LessonIsTheTayas(lesson);
+            if (_local.IsDefender == wantsTaya) return;
+
+            if (wantsTaya) BecomeDefender();
+            else BecomeAttacker();
+        }
+
+        /// <summary>
+        /// Everything a lesson has to hand the NEXT one, cleared before it starts.
+        ///
+        /// ⚠️⚠️ A LESSON WAS ABLE TO STUN THE LESSON AFTER IT. `DefenderReset` is step 13 and
+        /// `Ultimate` is step 12, and his screenshot of the failure is drenched in the magenta of
+        /// Nemu's DEVOURING SEANCE. A live hazard zone from a practice cast stuns whoever stands
+        /// in it; `CharacterMotor.CanAct()` is `RoundActive &amp;&amp; !IsStunned`, and
+        /// `Carrier.Update` returns before it ever reaches `StepDefender`.
+        ///
+        /// ⚠️ `ResetHeroKit` DID NOT AND COULD NOT COVER THIS. It resets the KIT — cooldowns and
+        /// charge — not the objects a cast has already put in the world, and the four hero
+        /// lessons call it on the way IN with nothing cleaning up on the way out.
+        ///
+        /// ⚠️⚠️ AND IT IS RIGHT WHETHER OR NOT IT WAS A CAUSE. A tutorial that asks you to perform
+        /// a verb has to start you able to perform it; a student held by their own previous
+        /// exercise has been given an objective and had the means to meet it taken away. This is
+        /// a route with an instructor, not a match.
+        ///
+        /// ⚠️ THE HAZARDS GO FIRST AND THE STUN SECOND, because clearing the stun while the zone
+        /// that applied it is still on the road buys exactly one frame before it lands again.
+        /// </summary>
+        private void ClearTheLastLessonsMess()
+        {
+            foreach (var volume in FindObjectsByType<Abilities.HazardVolume>(
+                         FindObjectsSortMode.None))
+            {
+                if (volume != null && volume.gameObject != null) Destroy(volume.gameObject);
+            }
+
+            if (_local == null) return;
+
+            _local.ClearStun();
+            _local.ClearTrip();
+            _local.Stamina.RefillAndClearFatigue();
+        }
+
         private void EnterLesson(Lesson lesson)
         {
             _lesson = lesson;
@@ -445,6 +537,13 @@ namespace TumbangPreso
             _marker?.Bind(null);
             SetProgress(0.0f);
             ApplyVerbLock(lesson);
+
+            // ⚠️ BOTH BEFORE THE SWITCH, NOT AFTER IT. `Lesson.TripRecovery` opens by calling
+            // `_local.ApplyTrip()` and `Lesson.DefenderReset` opens by calling `BecomeDefender`;
+            // clearing or re-roling afterwards would undo the two lessons whose whole subject is
+            // the state being cleared.
+            ClearTheLastLessonsMess();
+            ApplyLessonRole(lesson);
 
             // ⚠️ THE DUMMY GOES AWAY AGAIN BETWEEN THE LESSONS THAT WANT IT. Three of the
             // seventeen need a body in front of you; the other fourteen do not, and a character

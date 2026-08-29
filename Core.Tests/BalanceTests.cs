@@ -55,7 +55,19 @@ namespace TumbangPreso.Core.Tests
 
             Assert.True(s.IsFatigued);
             Assert.Equal(Balance.StaminaMax / Balance.StaminaDrainRate, elapsed, 1);
-            Assert.Equal(1.5f, elapsed, 1);
+
+            // ⚠️ 2.1, UP FROM 1.5, AND THE SECONDS ARE NOT THE THING BEING GUARDED. The drain
+            // went 40 → 24 → 29 across 2026-08-29 so a full bar would keep buying the same
+            // DISTANCE while the attacker speed was cut and then partly restored (§§ 83.1b and
+            // 83.23); the pool is unchanged throughout, so every fraction priced against it —
+            // the shove's 25, the sprint floor's 7.5 — is unchanged too.
+            //
+            // ⚠️ THE LITERAL EARNS ITS PLACE ANYWAY, because the line above it is a tautology:
+            // it restates the formula `Stamina` implements and would pass at any drain rate.
+            // This one says what that formula currently WORKS OUT TO, which is the number a
+            // player experiences. `ASprintBuysOneCrossingOfTheDangerZone` holds the invariant
+            // that says whether it is the right number.
+            Assert.Equal(2.1f, elapsed, 1);
         }
 
         /// <summary>
@@ -184,6 +196,43 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(Balance.StaminaMax, s.Current, 3);
             Assert.Equal(1.0f, s.SpeedZones.Value, 3);
             Assert.Equal(0, s.SpeedZones.Count);
+        }
+
+        /// <summary>
+        /// A full bar buys one crossing of the danger zone, which is the retrieval the whole
+        /// game is about.
+        ///
+        /// ⚠️⚠️ THIS IS THE INVARIANT `Stamina`'s HEADER NAMES AND NOBODY COULD RUN. It says
+        /// StaminaMax, StaminaDrainRate, SprintScale and ConfinementRadius are ONE INTERLOCKED
+        /// SET and that *"a change to any one of the four has to be re-measured against the other
+        /// three rather than reasoned about"* — and then the re-measurement lived only in that
+        /// sentence. When 🧑 asked for attackers to be 40% slower (§ 83.1), the set silently fell
+        /// out of step: a full bar went from 7.76 m of sprint to 4.66 m, so an attacker could
+        /// sprint in to the can and not back out, on every map, every time.
+        ///
+        /// ⚠️ IT IS A DISTANCE AND NOT A TIME, which is the finding that entry records. Asserting
+        /// the seconds would have passed through the whole change without noticing.
+        ///
+        /// ⚠️ THE BAND IS WIDE ON PURPOSE. This is not a knob, it is a guard against a retune
+        /// that quietly halves or doubles what a sprint is worth; anything inside the box's own
+        /// radius and twice it is a design decision, and anything outside is an accident.
+        /// </summary>
+        [Fact]
+        public void ASprintBuysOneCrossingOfTheDangerZone()
+        {
+            float sprintSpeed = Balance.Speed * Balance.AttackerSpeedScale * Balance.SprintScale;
+            float seconds = Balance.StaminaMax / Balance.StaminaDrainRate;
+            float distance = sprintSpeed * seconds;
+
+            Assert.True(distance >= Balance.ConfinementRadius,
+                $"a full bar sprints {distance:0.00} m and the danger zone is "
+                + $"{Balance.ConfinementRadius:0.00} m across. An attacker who can sprint in and "
+                + "not out cannot retrieve, which is the game.");
+
+            Assert.True(distance <= Balance.ConfinementRadius * 2.0f,
+                $"a full bar sprints {distance:0.00} m, which is more than twice the "
+                + $"{Balance.ConfinementRadius:0.00} m zone. A sprint that crosses it twice over "
+                + "makes the taya's positioning free to ignore.");
         }
 
         /// <summary>

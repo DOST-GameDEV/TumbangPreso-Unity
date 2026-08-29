@@ -195,7 +195,26 @@ namespace TumbangPreso.Core
         /// down all attackers as well as bot, even when they sprint, by 40%"*, and separately
         /// *"feels like shit get past defender very easily"*.
         ///
-        /// 0.75 x 0.60 = 0.45. **Walk 2.07 m/s, sprint 3.11 m/s**, against 3.45 and 5.18 before.
+        /// ⚠️⚠️ 0.55 SINCE LATER THE SAME DAY, AND THE NERF STAYS. 🧑, after playing the 40%:
+        /// *"my speed reduction might have been too harsh, u can increase a bit ... js a bit ...
+        /// but i want the nerf to stay for attackers"*.
+        ///
+        /// 0.45 → **0.55**, which is a **27% cut** from the original 0.75 rather than 40%.
+        /// **Walk 2.53 m/s, sprint 3.79 m/s**, against 3.45 and 5.18 before any of this.
+        ///
+        /// | scale | walk | sprint | cut |
+        /// |---|---|---|---|
+        /// | 0.75, original | 3.45 | 5.18 | — |
+        /// | 0.45, first pass | 2.07 | 3.11 | 40% |
+        /// | **0.55, shipped** | **2.53** | **3.79** | **27%** |
+        ///
+        /// ⚠️ THE TAYA IS STILL THE FASTER ROLE BY A WIDE MARGIN: 5.06 m/s walking against an
+        /// attacker's 3.79 m/s SPRINTING. That is the thing he asked for and it is untouched.
+        ///
+        /// ⚠️ AND `StaminaDrainRate` MOVED WITH IT, AGAIN. § 83.1b: the bar buys a DISTANCE, so a
+        /// speed change is a drain change or the interlock breaks. 29 at 0.55, where it was 24 at
+        /// 0.45 and 40 at 0.75, and `ASprintBuysOneCrossingOfTheDangerZone` is what says so
+        /// without anybody having to remember.
         ///
         /// ⚠️ THE SPRINT IS CUT BY THE SAME 40% WITHOUT TOUCHING `SprintScale`, WHICH IS WHY IT
         /// IS THIS CONSTANT THAT MOVED. `CharacterMotor` composes speed as
@@ -217,7 +236,7 @@ namespace TumbangPreso.Core
         /// stronger. `TripGraceAfterGetUp` was re-solved against the new speed; nothing else in
         /// the set was, and re-measuring it is `docs/TODO.md` § 83.1.
         /// </summary>
-        public const float AttackerSpeedScale = 0.45f;
+        public const float AttackerSpeedScale = 0.55f;
 
         /// <summary>
         /// The taya's own multiplier, which used to be a literal 1.0 inside `RoleSpeedScale`.
@@ -286,7 +305,46 @@ namespace TumbangPreso.Core
         // -------------------------------------------------------------------
 
         public const float StaminaMax = 60.0f;
-        public const float StaminaDrainRate = 40.0f;
+        /// <summary>
+        /// Stamina spent per second of sprinting.
+        ///
+        /// ⚠️⚠️ 24, DOWN FROM 40, AND IT MOVED BECAUSE THE ATTACKER'S SPEED DID. `Stamina`'s
+        /// header states the invariant this belongs to and states it as a DISTANCE, not a time:
+        /// *"the bar is dimensioned to roughly one crossing of the danger zone, which is the
+        /// retrieval the whole game is about"*, and *"a change to any one of the four has to be
+        /// re-measured against the other three rather than reasoned about"*. § 83.1 changed one
+        /// of the four. This is that re-measurement, and it is arithmetic rather than taste:
+        ///
+        /// | | sprint | on a full bar | buys |
+        /// |---|---|---|---|
+        /// | before § 83.1 | 4.6 x 0.75 x 1.5 = **5.175 m/s** | 60/40 = 1.50 s | **7.76 m** |
+        /// | at 0.45, drain 40 | 4.6 x 0.45 x 1.5 = **3.105 m/s** | 60/40 = 1.50 s | **4.66 m** |
+        /// | at 0.55, drain 40 | 4.6 x 0.55 x 1.5 = **3.795 m/s** | 60/40 = 1.50 s | **5.69 m** |
+        /// | **at 0.55, drain 29** | **3.795 m/s** | 60/29 = 2.07 s | **7.85 m** |
+        ///
+        /// **About 7.8 m is `ConfinementRadius` plus a margin**, which is what "one crossing"
+        /// means: in from the chalk to the can and back out. At the untouched drain of 40 the
+        /// speed cut left an attacker with **60 to 73% of a crossing on a full bar** depending on
+        /// the scale — they could sprint in and not out, every time, on every map. That is not
+        /// the taya being stronger, it is retrieval being impossible, and § 83.1b flagged it as
+        /// the thing to measure.
+        ///
+        /// ⚠️⚠️ THE DRAIN MOVED AND `StaminaMax` DID NOT, WHICH IS THE HALF THAT MATTERS. Buying
+        /// the same distance by raising the bar to 100 would have worked and would have silently
+        /// retuned everything else priced against it: `ShoveStaminaCost` is 25, which is 42% of a
+        /// 60 bar and 25% of a 100 one, and `StaminaSprintFloor` is 7.5. Slowing the drain keeps
+        /// every fraction on the bar exactly where it was and changes only the thing that had to
+        /// change.
+        ///
+        /// ⚠️ AND THE REGEN IS UNTOUCHED, so a full refill is still `StaminaMax / StaminaRegenRate`
+        /// = 3 s. What a sprint COSTS in time to earn back is unchanged; what it BUYS in ground
+        /// is back to what it was.
+        ///
+        /// ⚠️ `BalanceTests.ASprintBuysOneCrossingOfTheDangerZone` holds this. It asserts the
+        /// DISTANCE against `ConfinementRadius`, so the next person to move the speed, the bar,
+        /// the drain or the box gets told rather than finding out from a playtest.
+        /// </summary>
+        public const float StaminaDrainRate = 29.0f;
         public const float StaminaRegenRate = 20.0f;
         public const float StaminaRegenDelay = 1.0f;
 
@@ -542,7 +600,34 @@ namespace TumbangPreso.Core
         /// machine, so this is computed locally each time it changes and never sent — a
         /// networked glow would light one slipper for everybody.
         /// </summary>
-        public const float OwnerRimStrength = 0.85f;
+        /// <summary>
+        /// How hard the local player's OWN tsinelas is rimmed, so they can pick it out of four.
+        ///
+        /// ⚠️⚠️ 0.0, AND IT IS OFF BECAUSE HE ASKED FOR IT OFF BY NAME. 🧑 2026-08-29: *"pls js
+        /// remove shader for slippers, especially the color. idk what does it but the slippers
+        /// are a completley diff color ingame and character select"*.
+        ///
+        /// **That is exactly what this constant did, and it is the whole of the difference he
+        /// was looking at.** The two surfaces build the tsinelas identically — `MatchInstaller`
+        /// and `ModelPreview` both call `ToonSkin.ApplySlipper(model, PropOutlineWidth)` — so the
+        /// material, the flat shading and the ink are the same in both places. What the MATCH
+        /// adds is `Slipper.RefreshHighlight`, which writes a `MaterialPropertyBlock` rimming
+        /// YOUR shoe in `OwnerRimColour`, a gold chosen precisely so it *cannot* be mistaken for
+        /// any skin. There is no `Slipper` component on the picker, so the picker showed the
+        /// skin he chose and the match showed that skin under gold.
+        ///
+        /// ⚠️ IT IS A ZERO RATHER THAN A DELETION, so the affordance is one number away if the
+        /// team misses it. The rest of the machinery — `SetOwnerGlow`, the per-peer note about
+        /// why it is never replicated, the property block — is untouched and still correct.
+        ///
+        /// ⚠️⚠️ AND "WHICH ONE IS MINE" IS STILL ANSWERED TWICE OVER, which is why this is a
+        /// safe thing to turn off rather than a feature being dropped. `LandedRimStrength` is a
+        /// separate, settings-driven highlight on a tsinelas that has come to REST — the moment
+        /// you have actually lost track of it — and every player picks their own skin, so four
+        /// shoes on the road are four different shoes. The glow was the answer to a question the
+        /// skin picker already answers.
+        /// </summary>
+        public const float OwnerRimStrength = 0.0f;
 
         /// <summary>
         /// The rim strength on a tsinelas that has just been thrown and come to rest.
@@ -723,18 +808,24 @@ namespace TumbangPreso.Core
         /// Ilalim ng Tulay meant two hazards 2.6 m apart could pass a player back and forth.
         ///
         /// ⚠ SOLVED AGAINST THE FOOTPRINT, NOT PICKED. An attacker moves at
-        /// `Speed` * `AttackerSpeedScale` = 2.07 m/s, so 1.60 s carries them 3.31 m. The largest
+        /// `Speed` * `AttackerSpeedScale` = 2.53 m/s, so 1.60 s carries them 4.05 m. The largest
         /// hazard footprint on the map is 2.60 m, so the grace covers walking clear of the thing
         /// that felled you from its centre, with margin.
         ///
-        /// ⚠️⚠️ 1.60, RE-SOLVED WHEN `AttackerSpeedScale` WENT TO 0.45 ON 2026-08-29, AND THE OLD
-        /// 1.20 WOULD HAVE REINTRODUCED THE LOOP RATHER THAN MERELY BEEN STALE. It was solved
-        /// against 3.45 m/s and covered 4.14 m; at 2.07 m/s the same 1.20 s covers only **2.48 m**,
-        /// which is UNDER the 2.60 m footprint it exists to clear. A slower attacker would have
-        /// stood up still inside the hazard that felled them, with the grace already expired —
-        /// the exact ping-pong this constant was added to stop. **This is what "re-measure the
-        /// interlocked set" means in practice**, and it is the one member of it that could be
-        /// re-solved by arithmetic rather than by playing.
+        /// ⚠️⚠️ 1.60, RE-SOLVED WHEN `AttackerSpeedScale` FELL ON 2026-08-29, AND THE OLD 1.20
+        /// WOULD HAVE REINTRODUCED THE LOOP RATHER THAN MERELY BEEN STALE. It was solved against
+        /// 3.45 m/s and covered 4.14 m; at the 2.07 m/s of the first pass the same 1.20 s covers
+        /// only **2.48 m**, which is UNDER the 2.60 m footprint it exists to clear. A slower
+        /// attacker would have stood up still inside the hazard that felled them, with the grace
+        /// already expired — the exact ping-pong this constant was added to stop.
+        ///
+        /// ⚠️ AT THE SHIPPED 0.55 IT IS MARGIN RATHER THAN NECESSITY — 1.20 s would cover 3.04 m
+        /// and clear the footprint — AND IT STAYS AT 1.60 ANYWAY. The cost of the longer window
+        /// is that a hazard cannot re-trip you for four tenths of a second more; the cost of the
+        /// short one is a player passed back and forth between two hazards, which is a bug and
+        /// not a balance number. **This is what "re-measure the interlocked set" means in
+        /// practice**, and it is the one member of it that can be re-solved by arithmetic rather
+        /// than by playing.
         ///
         /// ⚠ IT LIVES ON THE MOTOR, NOT ON THE HAZARD, so every hazard present and future
         /// respects one window rather than each keeping its own.</summary>

@@ -188,5 +188,91 @@ namespace TumbangPreso.PlayTests
                 + "\"can hold x to reset here\". The channel reached "
                 + $"{bestChannel:0.000} of 1.\n" + lines);
         }
+
+        /// <summary>
+        /// The role follows the LESSON, whichever way the route is walked.
+        ///
+        /// ⚠️⚠️ THIS IS THE CASE THE FIRST PROBE COULD NOT SEE, AND 🧑 NAMED IT: *"i think its bcz
+        /// the role doesnt change in between those phases"*, and then *"at throwing stage they
+        /// should be allowed to be attacker and do shit, but the moment theyre asked to raise can
+        /// or tag, they should be given defender role"*.
+        ///
+        /// `DefenderReset` was the only lesson that made you the taya. `Punch` and `Lunge` follow
+        /// it, set no role, and `CombatVerbs` refuses both on `!_motor.IsDefender` — so **any
+        /// route that reached them without passing through `DefenderReset` asked for two verbs the
+        /// player could not perform, and refused every press in silence.** That route is one
+        /// keypress away: `N` completes the current lesson.
+        ///
+        /// ⚠️ IT WALKS THE ROUTE TWICE, STRAIGHT THROUGH AND WITH THE RESET SKIPPED, because the
+        /// straight walk is the one that already passed. The skip is the player's path.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator TheRoleFollowsTheLessonEvenWhenTheResetIsSkipped()
+        {
+            Quiesce();
+
+            GameLaunch.GuidedTutorial = true;
+            GameLaunch.AllBots = false;
+            GameLaunch.Spectator = false;
+
+            var load = SceneManager.LoadSceneAsync("Eskinita", LoadSceneMode.Single);
+            while (load != null && !load.isDone) yield return null;
+
+            for (int i = 0; i < 60; i++) yield return null;
+
+            var route = Object.FindFirstObjectByType<GuidedTraining>();
+            Assert.IsNotNull(route);
+
+            var local = Field<CharacterMotor>(route, "_local");
+            Assert.IsNotNull(local);
+
+            var report = new StringBuilder();
+            report.AppendLine("THE ROLE EACH LESSON PUTS YOU IN:");
+            report.AppendLine();
+
+            // ⚠️ THE WHOLE ROUTE, IN ORDER, WITH NOTHING PERFORMED. Every lesson is entered and
+            // immediately left, which is exactly what holding N does.
+            var wrong = new System.Collections.Generic.List<string>();
+
+            for (var step = GuidedTraining.Lesson.Look;
+                 step < GuidedTraining.Lesson.Complete;
+                 step++)
+            {
+                EnterLesson(route, step);
+                yield return null;
+
+                bool taya = step == GuidedTraining.Lesson.DefenderReset
+                         || step == GuidedTraining.Lesson.Punch
+                         || step == GuidedTraining.Lesson.Lunge;
+
+                report.AppendLine($"  {step,-14} wants {(taya ? "TAYA    " : "attacker")} "
+                                  + $"got {(local.IsDefender ? "TAYA" : "attacker")}");
+
+                if (local.IsDefender != taya)
+                    wrong.Add($"{step} asks for {(taya ? "the taya's" : "an attacker's")} verbs "
+                              + $"while the player is {(local.IsDefender ? "the taya" : "an attacker")}");
+
+                // ⚠️ AND THE STUDENT CAN ACT, EXCEPT IN THE ONE LESSON WHOSE SUBJECT IS NOT
+                // BEING ABLE TO. A lesson that begins with the player held by the PREVIOUS one is
+                // an objective with the means to meet it taken away — that is what
+                // `ClearTheLastLessonsMess` is for. `TripRecovery` opens by calling
+                // `_local.ApplyTrip()` on purpose: being on the road IS the exercise, and the
+                // whole lesson is mashing out of it.
+                //
+                // ⚠️ THE EXEMPTION IS BY LESSON, NOT BY "IS SOMETHING ALREADY WRONG". Whitelisting
+                // the state rather than the step is how a real stun leaking in from step 12 would
+                // be waved through as expected.
+                if (step != GuidedTraining.Lesson.TripRecovery && !local.CanAct())
+                    wrong.Add($"{step} begins with the player unable to act");
+            }
+
+            Directory.CreateDirectory("Logs");
+            File.WriteAllText("Logs/tutorial-roles.txt", report.ToString());
+            Debug.Log("[TutorialRoles]\n" + report);
+
+            Assert.IsEmpty(wrong,
+                "the role must follow the lesson, not whichever lesson happened to run before:\n  "
+                + string.Join("\n  ", wrong) + "\n" + report);
+        }
     }
 }

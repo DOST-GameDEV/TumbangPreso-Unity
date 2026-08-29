@@ -2106,18 +2106,12 @@ slower attacker would stand up still inside the hazard that felled them with the
 spent, which is exactly the ping-pong that constant exists to stop. Now **1.60 s**, covering
 3.31 m.
 
-### 83.1b ⚠️ OPEN: THE REST OF THE INTERLOCKED SET IS NOT RE-MEASURED
+### 83.1b ✅ CLOSED: see the full entry lower in this section
 
-`Stamina`'s header names StaminaMax, StaminaDrainRate, SprintScale and ConfinementRadius as one
-set, dimensioned so a full bar buys roughly one crossing of the danger zone — *"the finding is the
-distance, not the time"*. A 40% slower attacker covers 40% less ground on the same bar, so **a
-sprint no longer buys a crossing.** That is a deliberate consequence of the ask and is most of
-what makes the taya stronger, but nobody has played it and nobody has measured it.
+It was open for about an hour. `StaminaDrainRate` was re-solved twice, the invariant is a
+test now, and the whole measurement is written up under **§ 83.1b** further down, beside
+§ 83.23 which moved the speed again.
 
-**Done looks like** a `BotBehaviourProbe` round before and after, reporting retrieval attempts
-started versus completed. If retrieval has become impossible rather than merely hard, the lever is
-`StaminaMax`, not `AttackerSpeedScale` — the 40% is his number and it is not the thing to
-quietly undo.
 
 ### 83.2 ✅ THE TAYA CATCHES WIDER, AND IS TESTED BEFORE THE CAN
 
@@ -2260,53 +2254,13 @@ and wrong on the Linux dedicated build, where the server holds no seat and `IsSe
 keeps it out of the election. The leader id it is matched against is the one § 82.2 stopped
 throwing away.
 
-### 83.8 ⚠️ OPEN, WITH THE PROBE WRITTEN AND EVERY GATE MEASURED PASSING: THE TUTORIAL TAYA LESSON
+### 83.8 ✅ CLOSED: see the full entry lower in this section
 
-🧑: *"can hold x to reset here"*, *"u also cant tag"*, and his own diagnosis, *"i think bug in
-tutorial is it still treats u as attacker even tho its asking u to test defender shit"*.
+The probe was written and every gate on the reset path measured green, which ruled the
+lesson's own setup out and left the cause elsewhere. 🧑 named it — the role did not follow
+the lesson — and the fix and the second probe case are written up under **§ 83.8** further
+down.
 
-**§ 76 closed this on a report without a measurement and said at the time that it would come
-back. It came back.** `TutorialDefenderProbe` is the PlayMode test that entry asked for, and it is
-now written and green. On a clean route walked lesson by lesson to `DefenderReset`, on Eskinita:
-
-```
-local.IsDefender      = True          intent.Parked         = False
-local.RoundActive     = True          Grab locked           = False
-local.CanAct()        = True          lata.IsUpright        = False
-_defenderResetArmed   = True          lata.IsProtected      = False
-flat distance to can  = 1.150 m       (InteractionRadius 1.6)
-match.DefenderSlot    = 1             round.Players count   = 4
-after holding Grab:   ChannelRatio 0.999, lata.IsUpright = True
-```
-
-⚠️⚠️ **SO THE ROLE SWAP DOES WORK AND HIS DIAGNOSIS IS RULED OUT ON THIS PATH.** `BecomeDefender`
-sets `IsDefender`, the can is down and unprotected, the player is 1.15 m from it against a 1.6 m
-reach, `Grab` is unlocked, and holding it fills the channel and stands the can up. Whatever he hit
-is **not** the lesson's own setup.
-
-⚠️ **WHAT THE PROBE DOES NOT REPRODUCE, IN ORDER OF SUSPICION.** Each is a real difference between
-it and a played run, and the next session should take them in this order rather than re-reading
-`Carrier`:
-
-1. **A hero effect from the lesson BEFORE is still live.** `DefenderReset` is lesson 13 and
-   `Ultimate` is lesson 12, and his screenshot is drenched in the magenta of Nemu's DEVOURING
-   SEANCE. `ResetHeroKit` resets the KIT, not the hazards a practice cast has already put in the
-   world. A live zone that stuns is `CanAct() == false`, and `Carrier.Update` returns before it
-   ever reaches `StepDefender` — which is *both* symptoms at once, the reset and the tag. **The
-   probe never casts anything.**
-2. **The press arrives through `PlayerInputReader`, not through a driven intent.** The probe
-   writes `Verb.Grab` straight onto `InputIntent` and never calls `CommitFrame`, so it cannot see
-   anything that depends on a press EDGE — including `CombatVerbs` consuming the same key. `E`/`X`
-   is contextual by design (tap picks up, hold shoves, hold as taya resets), and the three readers
-   of it agreeing is exactly the thing a driven hold skips over.
-3. **The can rolls.** § 76 flagged this as the one gate a source read cannot settle, and it still
-   is: the probe holds the key immediately, so its can never travels. A real player watches the
-   knockdown, walks after the marker, and arrives somewhere the probe never stands.
-
-**Done looks like** a second case on the same probe that casts the ultimate through
-`HeroAbilitySystem` before entering the lesson, and asserts `CanAct()` on the frame the lesson is
-armed. If that reproduces it, the fix is that `EnterLesson` clears live practice hazards on the
-way past — a lesson must not be able to stun the lesson after it.
 
 ### 83.9 ✅ FIXED: CLIENTS PLAYED THE WRONG HERO'S POWERS, BECAUSE THE PICK SYNC FIXES THE ART AND NOT THE KIT
 
@@ -2403,22 +2357,12 @@ worth holding — **the taya is the faster role** — which a future retune must
 accident.
 
 
-### 83.11 ⚠️ OPEN: THE TSINELAS ARE A DIFFERENT COLOUR IN A MATCH THAN ON CHARACTER SELECT
+### 83.11 ✅ CLOSED: see the full entry lower in this section
 
-🧑: *"pls js remove shader for slippers, especially the color. idk what does it but the slippers
-are a completley diff color ingame and character select"*.
+The guess in this slot was that the two surfaces were lit differently. They are not: they
+build the tsinelas identically and the match adds an owner rim in gold. Written up under
+**§ 83.11** further down.
 
-⚠️ **THE ASK IS "MAKE THE TWO AGREE", AND DELETING THE SHADER IS ONE WAY TO GET THERE AND PROBABLY
-THE WRONG ONE.** § 79.11 deliberately reshaded the tsinelas almost flat, and § 79.7 fixed every
-held tsinelas painting itself the placeholder brown. The two surfaces are lit differently on
-purpose — § 79.1 relit the character screen in Unity's units and the maps in theirs — so a colour
-that differs between them is most likely the LIGHTING disagreeing, not the shader tinting.
-
-**Done looks like** a probe that samples the same tsinelas skin's rendered colour on
-`CharacterSelect` and in a match and prints both. If the material is identical and only the light
-differs, the fix is the screen's light rig; if the material differs, it is `Slipper`'s
-`MaterialPropertyBlock` and § 79.7's fix did not reach the preview. **Ask which one before
-removing anything**, and put the answer here.
 
 ### 83.12 ✅ FIXED: EVERY NON-HOST WAS MISSING HALF THE SOUND, AND THE CLOCK SPOKE EARLY
 
@@ -2694,7 +2638,11 @@ ever put them back.
 viewmodels that disagree about where a hand is would make a POV cut look like a different game
 from the player's own screen.
 
-### 83.19 ⚠️ OPEN: 22 PRESENTATION SITES LEFT, ALL IN THE HERO KITS AND HAZARDS
+### 83.19 ✅ CLOSED BY § 83.22: 22 PRESENTATION SITES LEFT, ALL IN THE HERO KITS AND HAZARDS
+
+All 22 are fixed and the audit reports zero. This entry is kept for the analysis of
+which rows were real and which were the audit misreading a deliberate `||` split; § 83.22
+records what sharpening it took to tell them apart.
 
 `tools/audit_presentation_reach.py` is down from 41 to 22, and what remains is one file's worth:
 `HeroHazards`, `SeanHeroKit` and `PhaisterHeroKit`.
@@ -2861,6 +2809,200 @@ deliberate `if (ShouldResolve() || p.PlayerSlot == LocalSlot)` split looks like.
 needs no editor, and a fault that needs no compiler should not wait for one. `audit_audio_reach.py`
 is kept: it is the narrower question and it still answers it, and this entry is the record of what
 it could not see.
+
+### 83.8 ✅ FIXED: THE TUTORIAL'S ROLE DID NOT FOLLOW THE LESSON, AND HE DIAGNOSED IT HIMSELF
+
+🧑 2026-08-29: *"can hold x to reset here"*, *"u also cant tag"*, and then, twice, the answer:
+*"i think its bcz the role doesnt change in between those phases"*, and *"that role itseld should
+shift between phases. Like at throwing stage they should be allowed to be attacker and do shit,
+but the moment theyre asked to raise can or tag, they should be given defender role and allowed to
+do defender shit"*.
+
+⚠️⚠️ **`DefenderReset` WAS THE ONLY LESSON IN THE ROUTE THAT MADE YOU THE TAYA.** `Punch` and
+`Lunge` come straight after it, are titled `PUNCH A VULNERABLE ATTACKER` and `LUNGE`, and **set no
+role at all** — they only READ `_local.IsDefender` to decide where to stand the dummy. And
+`CombatVerbs` refuses both outright:
+
+```csharp
+if (... || !_motor.IsDefender || !_motor.CanAct()) return false;
+```
+
+**So any route that reached them without passing through `DefenderReset` asked for two verbs the
+player was structurally incapable of performing, and refused every press in silence.**
+
+⚠️ **AND THAT ROUTE IS ONE KEYPRESS AWAY.** `Update` completes the current lesson on `N`, and it
+auto-completes the four hero lessons for a seat with no kit. Somebody who pressed N because the
+reset looked stuck arrived at PUNCH as an attacker and could not tag — **both halves of the report
+from one cause**, and exactly the reading he gave.
+
+The role is declared by the lesson now (`LessonIsTheTayas`) and applied on entry
+(`ApplyLessonRole`). The route can be entered anywhere — skipped through, restarted, jumped into
+by a probe — and still be coherent.
+
+⚠️ **ONLY ON A CHANGE.** `BecomeDefender` teleports to the can and empties the hand; re-running it
+every lesson would yank a player across the street between PUNCH and LUNGE and undo
+`PrepareDummyInFront`'s placement.
+
+⚠️ **AND THE ATTACKER SIDE IS APPLIED TOO, NOT JUST THE TAYA.** `TripRecovery` and `Emote` follow
+the two taya lessons, and the trip lesson's own text is about an attacker being put on the road.
+
+**Second cause, fixed with it: a lesson could stun the lesson after it.** `DefenderReset` is step
+13 and `Ultimate` is step 12, and his screenshot of the failure is drenched in the magenta of
+Nemu's DEVOURING SEANCE. A live hazard zone from a practice cast stuns whoever stands in it,
+`CanAct()` is `RoundActive && !IsStunned`, and `Carrier.Update` returns before it reaches
+`StepDefender`. ⚠️ `ResetHeroKit` could never have covered this: it resets the KIT, not the objects
+a cast has already put in the world. `ClearTheLastLessonsMess` destroys live `HazardVolume`s and
+clears the student's stun, trip and fatigue on every lesson boundary.
+
+⚠️ **BOTH RUN BEFORE THE SWITCH, NOT AFTER IT**, because `TripRecovery` opens by calling
+`ApplyTrip()` and `DefenderReset` opens by calling `BecomeDefender()` — clearing afterwards would
+undo the two lessons whose whole subject is the state being cleared.
+
+**Verified by `TutorialDefenderProbe`, two cases.** The first is the one § 76 asked for and never
+got: it walks to `ROLE SWAP: DEFENDER`, prints every gate on the reset path with its live value,
+holds `Verb.Grab` on a driven `InputIntent` and asserts the can stands up. The second walks the
+**whole route with nothing performed**, which is what holding N does, and asserts at every step
+that the role matches what the lesson is asking for and that the student can act. That second case
+is the one that would have caught this in the first place.
+
+⚠️ **§ 76 CLOSED THIS ON A REPORT AND SAID AT THE TIME IT WOULD COME BACK** — *"a report closing a
+bug nobody deliberately fixed is a bug that can come back on the commit that retunes the arena,
+with nothing anywhere to catch it"*. It came back three days later. The probe is the thing that
+entry asked for, and it exists now.
+
+### 83.1b ✅ CLOSED: THE INTERLOCKED SET, RE-MEASURED, AND THE INVARIANT IS A TEST NOW
+
+`Stamina`'s header has always said StaminaMax, StaminaDrainRate, SprintScale and
+ConfinementRadius are ONE SET, that *"the bar is dimensioned to roughly one crossing of the danger
+zone, which is the retrieval the whole game is about"*, and that *"a change to any one of the four
+has to be re-measured against the other three rather than reasoned about"*.
+
+**§ 83.1 changed one of the four. Here is the measurement.**
+
+| | sprint | on a full bar | buys |
+|---|---|---|---|
+| before § 83.1 | 4.6 x 0.75 x 1.5 = **5.175 m/s** | 60/40 = 1.50 s | **7.76 m** |
+| after, at drain 40 | 4.6 x 0.45 x 1.5 = **3.105 m/s** | 60/40 = 1.50 s | **4.66 m** |
+| after, at drain 24 | 3.105 m/s | 60/24 = 2.50 s | **7.76 m** |
+
+⚠️⚠️ **7.76 m IS `ConfinementRadius` PLUS A MARGIN, WHICH IS WHAT "ONE CROSSING" MEANS**: in from
+the chalk to the can and back out. At drain 40 the 40% speed cut left an attacker with **67% of a
+crossing on a full bar** — sprint in, and not out, on every map, every time. **That is not the
+taya being stronger, it is retrieval being impossible**, and the taya being stronger is what he
+asked for.
+
+`StaminaDrainRate` is **24**, and a full bar buys the 7.76 m it always did.
+
+⚠️⚠️ **THE DRAIN MOVED AND `StaminaMax` DID NOT, WHICH IS THE HALF THAT MATTERS.** Buying the same
+distance by raising the pool from 60 to 100 works too, and silently retunes everything priced
+against it: `ShoveStaminaCost` is 25, which is **42% of a 60 bar and 25% of a 100 one**, and
+`StaminaSprintFloor` is 7.5. Slowing the drain keeps every fraction on the bar exactly where it
+was and changes only the thing that had to change.
+
+⚠️ **AND THE REGEN IS UNTOUCHED**, so a full refill is still `StaminaMax / StaminaRegenRate` = 3 s.
+What a sprint costs in time to earn back is unchanged; what it buys in ground is back to what it
+was.
+
+⚠️⚠️ **THE INVARIANT IS A TEST NOW, WHICH IT NEVER WAS.**
+`BalanceTests.ASprintBuysOneCrossingOfTheDangerZone` asserts the DISTANCE against
+`ConfinementRadius`. The set was documented in a sentence and re-measured by hand or not at all,
+which is exactly how it fell out of step — and it runs in 40 ms with no editor, against the
+alternative of finding out from a playtest at the nationals.
+
+⚠️ **IT IS A BAND, NOT A KNOB.** Anything between the box's radius and twice it is a design
+decision; anything outside is an accident. `SprintToEmpty_TakesPoolOverDrainRate` keeps its
+literal alongside it for the same reason — its other assertion restates the formula and would
+pass at any drain rate.
+
+### 83.11 ✅ FIXED: THE TSINELAS LOOKED DIFFERENT IN A MATCH BECAUSE YOUR OWN ONE WAS RIMMED GOLD
+
+🧑 2026-08-29: *"pls js remove shader for slippers, especially the color. idk what does it but the
+slippers are a completley diff color ingame and character select"*.
+
+⚠️⚠️ **THE TWO SURFACES BUILD THE TSINELAS IDENTICALLY, AND THE MATCH ADDS ONE THING.**
+`MatchInstaller.BuildSlipper` and `ModelPreview` both call
+`ToonSkin.ApplySlipper(model, PropOutlineWidth)`, so the material, the flat shading and the ink
+are the same in both places — § 79.11's work is intact and was never the difference.
+
+What the match adds is `Slipper.RefreshHighlight`, which writes a `MaterialPropertyBlock` rimming
+**your own** shoe in `OwnerRimColour` — a gold chosen precisely so it cannot be mistaken for any
+skin. There is no `Slipper` component on the picker. **So the picker showed the skin he chose and
+the match showed that skin under gold**, which is "a completely different colour" exactly.
+
+`Balance.OwnerRimStrength` is **0**.
+
+⚠️ **A ZERO, NOT A DELETION.** The affordance is one number away if the team misses it, and the
+machinery — `SetOwnerGlow`, the per-peer note about why a glow is never replicated, the property
+block — is untouched and still correct.
+
+⚠️⚠️ **AND "WHICH ONE IS MINE" IS STILL ANSWERED TWICE OVER**, which is what makes this safe rather
+than a feature being dropped. `LandedRimStrength` is a separate, settings-driven highlight on a
+tsinelas that has come to REST — the moment you have actually lost track of it — and every player
+picks their own skin, so four shoes on the road are four different shoes. The glow was answering a
+question the skin picker already answers.
+
+### 83.23 ✅ THE ATTACKER NERF SOFTENED TO 27%, AND THE SPEED PROVABLY FOLLOWS THE ROLE ON EVERY PEER
+
+🧑 2026-08-29, after playing the 40%: *"my speed reduction might have been too harsh, u can
+increase a bit ... js a bit ... but i want the nerf to stay for attackers"*.
+
+`AttackerSpeedScale` 0.45 → **0.55**, a **27% cut** from the original 0.75 rather than 40%.
+
+| scale | walk | sprint | cut |
+|---|---|---|---|
+| 0.75, original | 3.45 | 5.18 | — |
+| 0.45, first pass | 2.07 | 3.11 | 40% |
+| **0.55, shipped** | **2.53** | **3.79** | **27%** |
+
+⚠️ **THE TAYA IS STILL THE FASTER ROLE BY A WIDE MARGIN**: 5.06 m/s WALKING against an attacker's
+3.79 m/s SPRINTING. The thing he asked for in the first place is untouched.
+
+⚠️⚠️ **AND THE TWO DERIVED CONSTANTS MOVED WITH IT, WHICH IS THE POINT OF § 83.1b EXISTING.**
+`StaminaDrainRate` is **29** (40 at 0.75, 24 at 0.45), so a full bar still buys **7.85 m** of
+sprint against a 7.0 m box. `TripGraceAfterGetUp` stays at 1.60 and is now MARGIN rather than
+necessity — 1.20 s would cover 3.04 m and clear the 2.60 m footprint — and it stays because the
+cost of the longer window is four tenths of a second of hazard immunity and the cost of the short
+one is a player passed back and forth between two hazards, which is a bug rather than a balance
+number.
+
+**None of that had to be remembered.** `ASprintBuysOneCrossingOfTheDangerZone` fails the moment
+the bar stops buying a crossing, in 40 ms, with no editor.
+
+### 83.24 ✅ THE SPEED FOLLOWS THE ROLE ON EVERY PEER, AND NOW THERE ARE TESTS THAT SAY SO
+
+🧑, immediately after the retune: *"make sure speed changes when role changes okay, and not just
+host side"*.
+
+**Fair thing to be suspicious of** — this project's recurring network fault is a rule that
+resolves on one machine, and §§ 82.1, 83.9, 83.12 and 83.16 in this very batch are all that shape.
+Worse, "your body moves at the wrong speed for a whole round" is invisible to the person it is
+happening to, because they have nothing to compare against.
+
+**It is already right, for three reasons, and `RoleSpeedTests` is those three reasons written down
+so they cannot quietly stop being true:**
+
+1. **The two roles are two different numbers and the taya is the faster.** Asserted against
+   `DefenderSpeedScale` and `AttackerSpeedScale` rather than against literals.
+
+2. ⚠️⚠️ **THE SCALE IS READ PER PHYSICS STEP FROM THE LIVE FLAG, NOT CACHED.** `CharacterMotor`
+   composes `Balance.Speed * Stamina.RoleSpeedScale(_isDefender) * ...` inside `FixedUpdate`, so
+   whoever writes `IsDefender` — the host from its own rules, a client from the replicated
+   snapshot — the very next step composes the speed from it. A copy taken at spawn or at a round
+   boundary is a body that keeps the previous round's speed, and **on a client nothing would ever
+   correct it**. The test asserts the read is inside the step and that no cached field exists.
+
+3. ⚠️⚠️ **A CLIENT'S `IsDefender` IS STAMPED FROM `SyncWorld` WITH NO GATE ON IT, WHICH IS THE
+   HALF HE WAS ASKING ABOUT.** `RoundDirector.ApplySnapshot` writes `RoundActive` onto the four
+   bodies only `if (matchInProgress)` — that guard is load-bearing and its own note records a
+   client frozen solid without it — and it writes `IsDefender` **outside** that block,
+   unconditionally, at 5 Hz. So a taya rotation reaches every peer as data and each peer's motor
+   acts on it locally. The test asserts the ORDER of those two loops, because moving the role
+   stamp inside the guard is the one edit that would break this and it would look like tidying up.
+
+⚠️ **AND A FOURTH: THE ROLE APPEARS IN THE SPEED PRODUCT EXACTLY ONCE.** The speed is
+`Speed * RoleSpeedScale * PersonSpeedScale * sprint * SpeedZones`; a second term that quietly
+asked about the role would be a second place to keep in step and a second place for the host and a
+client to disagree. The test parses the product and counts.
 
 ---
 
