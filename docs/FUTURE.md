@@ -3,7 +3,9 @@
 **What this file is.** An ordered build plan for the live-service and competitive half of the
 game: accounts, a database, profiles, stats, matchmaking, ranked, progression, unlockables,
 customisation, controller, mobile, tournaments. Every phase carries a **PROMPT** block written to
-be pasted straight into a new session as its whole brief.
+be pasted straight into a new session as its whole brief. **Every prompt lives in § 19**, in
+one place, with an index. § 0.5 is the standing preamble each one inherits, and § 0.6 is the
+staleness protocol: what to re-verify before trusting any of them.
 
 **What this file is not.** It is not a decision that any of it ships, it is not balance, and it is
 not `docs/Design.md`. Where this file and `docs/VISION.md` disagree about what the game IS,
@@ -114,6 +116,98 @@ without rewriting anything else.
 **Do 1, then 2, then 3, then stop and play it for a week.** Everything after that is worth more
 when there is real data to point at.
 
+### 0.5 The standing preamble, which every prompt in both files inherits
+
+⚠️⚠️ **A SESSION RUNNING ANY PROMPT IN `FUTURE.md` OR `INSPIRATION.md` IS BOUND BY THIS SECTION.**
+Each prompt names it rather than repeating it, so there is one copy to fix when it changes and no
+chance of nineteen copies drifting apart. **If you are a session that has just been handed a
+prompt: this is part of your brief. Read it now.**
+
+**1. Read order, before touching anything.**
+`CLAUDE.md`, then `docs/VISION.md`, then `docs/TODO.md`, then this section, then the phase section
+your prompt names. The summary in a prompt is never the rules.
+
+**2. Verify before you trust.**
+Every factual claim in these two documents was true on the date in the file header and may not be
+now. § 0.6 lists the ones most likely to have moved. **Where this document and the code disagree,
+the code is right.** Fix the document in the same commit and say so in your handoff.
+
+**3. Where the code goes.**
+Rules, curves, tables, thresholds, validation and any number that could be argued about go in
+`Packages/com.tumbangpreso.core/`, which must never acquire a `UnityEngine` reference. The Unity
+side is presentation, input and transport. If you find yourself writing an `if` about game rules
+inside a `MonoBehaviour`, it is in the wrong file.
+
+**4. Nothing on any progression track may change a gameplay number.**
+Cosmetic or expressive only. Write the test that proves it.
+
+**5. Wire-facing identity is string ids, and lists are append-only.**
+`Roster.Slippers` records why an index that crosses the wire can never be reordered.
+
+**6. Server-authoritative writes only.**
+Profiles, stats, ratings, XP, currency and unlocks are written by a Cloud Code endpoint computed
+from a match record, never sent by a client and never written by the host directly.
+
+**7. Offline and LAN must keep working.**
+Every feature degrades to a local profile when the network is unreachable. Practice, Training,
+LAN and joining by code must never sit behind a login. See § 17 for why this is not negotiable.
+
+**8. Free tier only.**
+If the design needs a paid service, stop and say so in the handoff rather than building half of it.
+
+**9. Definition of done, for every prompt.**
+- The feature works and you have exercised it yourself, not reasoned that it should work.
+- `dotnet test Core.Tests/TumbangPreso.Core.Tests.csproj` passes.
+- EditMode passes. Assert on `Logs/tests.xml`, never on the exit code.
+- The PlayMode probes that touch what you changed pass, run with `-testFilter`.
+- ⚠️ **A test run that reports `total="0"` is not a pass.** Check the count, not just the result.
+- New rules have new tests in the core.
+- `docs/TODO.md` has a section for the work, in the same commit as the work.
+- Any claim in `FUTURE.md` or `INSPIRATION.md` you found to be stale is corrected, same commit.
+- Committed, pushed, and the handoff written in the chat reply per `CLAUDE.md` § 2.4.
+
+**10. How to work while Unity runs.**
+Every editor launch goes in the background and you keep coding. Never sit and watch a test run.
+Never edit a `.cs` file while a Unity run is in flight. `CLAUDE.md` § 2.1b.
+
+**11. What to do when the prompt is wrong.**
+These prompts were written before the code they describe existed. If the design in one is
+impossible, already done, or made obsolete by something that shipped since, **do not build it
+anyway and do not silently skip it.** Do the part that still makes sense, write what changed into
+`docs/TODO.md`, correct the prompt in the plan file, and put the disagreement at the top of your
+handoff.
+
+### 0.6 How these documents go stale, and what to re-verify
+
+⚠️⚠️ **THESE ARE PLANS WRITTEN AHEAD OF THE WORK. THE FURTHER YOU ARE FROM 2026-08-31 THE LESS OF
+THIS IS TRUE.** The prose about design intent ages well. The claims about the codebase do not.
+
+**Re-verify these before acting on any prompt.** Each is one command or one file.
+
+| Claim in these documents | How to check it in one step | If it moved |
+|---|---|---|
+| The auth package is installed and unused | `grep authentication Packages/manifest.json`, then `grep -r AuthenticationService Assets` | Phase 1 may be partly done. Read it before rebuilding it. |
+| Discovery is UGS Lobby, connection is UGS Relay | Read the header of `Assets/TumbangPreso/Runtime/Net/ServerQuery.cs` | The whole of §§ 0.3, 7 and 8 assumes UGS. Re-cost them. |
+| The input map has no gamepad or touch bindings | `grep -c Gamepad Assets/TumbangPreso/Resources/TumbangPreso.inputactions` | Phases 14 and 15 shrink a lot. |
+| Build targets are Windows, WebGL, Linux server only | `ls "/c/Program Files/Unity/Hub/Editor/*/Editor/Data/PlaybackEngines/"` | Phase 15 step 1 may already be done. |
+| There is no localisation and no colourblind support | `grep -rn "Locale\|colourblind\|colorblind" --include=*.cs Assets` | Phase 16 shrinks. |
+| The roster is 18 characters, 6 lata, 10 tsinelas, 3 maps | `Packages/com.tumbangpreso.core/Runtime/Roster.cs` | Every content count in these files is wrong. Fix them. |
+| Scoring is one host-side writer | `grep -n AddScore Assets/TumbangPreso/Runtime/MatchDirector.cs` | § 8's corroboration design may no longer be the right shape. |
+| `NetSession.ProtocolVersion` is a gate between builds | `grep -n ProtocolVersion Assets/TumbangPreso/Runtime/Net/NetSession.cs` | Read the current number rather than quoting one from here. |
+| The free tiers named in § 0.3 still exist at those shapes | Check the service's own pricing page | ⚠️ **Vendor free tiers change without notice. Never quote a specific quota from this file to anybody.** |
+| Passive defence pays 900 a round against 100 for a knockdown | `docs/Design.md` and `Balance.cs` | Several arguments in `INSPIRATION.md` §§ 2.15, 2.28 and 4.2 rest on this. |
+
+⚠️ **AND THE NUMBERS IN THESE FILES ARE ILLUSTRATIONS, NOT BALANCE.** Every rating step, XP curve,
+tier name, challenge target, band width and threshold written here is a starting point for a
+measurement, not a value to ship. `docs/Design.md` is the balance source of truth and nothing in
+these two files may contradict it without going through `Design.md` first.
+
+**Maintenance rule.** When a phase ships, mark its heading `✅ SHIPPED <date>`, move its numbers
+into `docs/Design.md` or `docs/TODO.md` where they belong, and leave the phase text in place as the
+record of why it is shaped the way it is. **Do not delete a shipped phase.** The reasoning is the
+part that stays valuable.
+
+
 ---
 
 ## PHASE 1 · ACCOUNTS AND IDENTITY
@@ -206,24 +300,9 @@ before the first upload, not after.
 restart, a username can be attached later without losing anything, an account can be deleted and
 its data exported, and pulling the network cable still lets a LAN match start.
 
-> ### PROMPT 1
->
-> Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md`, then `docs/FUTURE.md` § 1.
-> They carry the rules of the repo, what the game is for, what is open, and this phase's brief. Do
-> not skip them because this prompt summarises the task; the summary is not the rules.
->
-> Build the account layer on UGS Authentication, which is already in `Packages/manifest.json` at
-> 3.7.4 and unused. Anonymous sign-in on first launch with no prompt and no blocking UI, an
-> optional username and password upgrade that preserves the anonymous player's data, and sign-in
-> on a second device. Add a `PlayerAccount` service beside `NetSession` that owns the `PlayerId`,
-> the display name and discriminator, the bio, the privacy flags and the signed-in state, and that
-> raises an event when any of them change. Route the lobby's player name through it instead of
-> through whatever the peer sends. Build the avatar as an in-game portrait composed from ids
-> rendered through `ModelPreview`, NOT as an image upload: `docs/FUTURE.md` § 1.4 has the reasoning
-> and it is a decision, not a preference. Implement account deletion and data export in this phase
-> rather than later. Everything degrades to a local-only profile when UGS is unreachable, including
-> LAN, Practice and Training. Put name validation, the discriminator allocation and the local
-> versus remote precedence in `Packages/com.tumbangpreso.core/` with tests.
+**The prompt for this phase is [§ 19.1](#191-prompt-for-phase-1).** Every prompt in
+this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
+one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
@@ -285,19 +364,9 @@ and say why.
 reload, career totals survive a reinstall on the same account, and the whole thing is one Cloud
 Code invocation per match rather than one per event.
 
-> ### PROMPT 2
->
-> Read `CLAUDE.md`, `docs/VISION.md`, `docs/TODO.md` and `docs/FUTURE.md` § 2. Phase 1 must be in.
->
-> Build the player profile, the stat set and the match history on UGS Cloud Save, plus one Cloud
-> Code endpoint that is the only writer of a match record. Define the record and the profile as
-> engine-free types in `Packages/com.tumbangpreso.core/` with their own tests so the shape is
-> asserted without an editor and both toolchains compile it. Collect the stats listed in
-> `docs/FUTURE.md` § 2.2 host-side off the events `MatchDirector` already raises and submit ONE
-> payload at match end. Build the profile screen to the layout in § 2.1 using the existing UI kit
-> and nine-patch art, following `ConvertedScreen`'s conventions rather than inventing a screen
-> type. Add the offline path: a match played with no connection queues its record locally and
-> submits on the next sign-in. Keep 100 full records per player and roll older ones into totals.
+**The prompt for this phase is [§ 19.2](#192-prompt-for-phase-2).** Every prompt in
+this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
+one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
@@ -315,16 +384,9 @@ FPS distribution by hardware, settings actually used, and **where a first-time p
 first queue, first match started, first match FINISHED. It tells you what to fix before anything
 else here is worth building, and it is about forty lines of code.
 
-> ### PROMPT 3
->
-> Read `CLAUDE.md`, `docs/VISION.md`, `docs/TODO.md` and `docs/FUTURE.md` § 3. Do this alongside
-> Phase 2.
->
-> Add telemetry through UGS Analytics, batched and sent once per session rather than per event,
-> with a visible opt-out in Settings that is honoured completely and a clear statement of what is
-> collected. Instrument the first-launch funnel first, then the match-level events in
-> `docs/FUTURE.md` § 3. Keep payloads small and event names stable, because a renamed event is a
-> broken history. Add no personally identifying field to any event.
+**The prompt for this phase is [§ 19.3](#193-prompt-for-phase-3).** Every prompt in
+this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
+one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
@@ -351,18 +413,9 @@ whole round, pay it nothing, and escalate on repeats.
 opposite of the point. Curve the XP down after a few hours instead, so the tenth match of the day
 is still worth something.
 
-> ### PROMPT 4
->
-> Read `CLAUDE.md`, `docs/VISION.md`, `docs/TODO.md` and `docs/FUTURE.md` § 4. Phases 1 and 2 must
-> be in.
->
-> Build account XP, account level, per-character mastery, a soft currency and a 50-tier free season
-> track. Put every curve and reward table in `Packages/com.tumbangpreso.core/` as data with tests,
-> including a test that asserts NO reward on any track changes a gameplay number. XP is awarded by
-> the same Cloud Code endpoint that writes the match record, computed server-side from the record,
-> never sent by a client. Implement the AFK check first and pay an inactive seat nothing. Use
-> diminishing returns rather than a daily cap. Build the end-of-match XP bar and the season track
-> screen with the existing UI kit.
+**The prompt for this phase is [§ 19.4](#194-prompt-for-phase-4).** Every prompt in
+this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
+one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
@@ -398,19 +451,9 @@ learned that a render from one camera is not evidence about another.
 switching character does not mean re-dressing, and **duplicate protection** in the shop, so the
 currency never buys something already owned.
 
-> ### PROMPT 5
->
-> Read `CLAUDE.md`, `docs/VISION.md`, `docs/TODO.md`, `docs/wearables_catalog.md` and
-> `docs/FUTURE.md` § 5. Phases 1, 2 and 4 must be in.
->
-> Build the inventory, the per-character loadout and the customisation screen. Use STRING ids for
-> every cosmetic rather than wire indices, for the reason `Roster.Slippers` gives about append-only
-> lists. Extend `RosterEntryAsset` and `RosterBook` rather than building a parallel content system,
-> and drive character colour variants through `ToonSkin`'s existing 16-slot palette remap.
-> Replicate the loadout through the seat info that already crosses at match start; do not add a
-> protocol. Preview through `ModelPreview` with the real shader. Add a test asserting no cosmetic
-> changes any value read by `Packages/com.tumbangpreso.core/`, and a bound on wearable volume so a
-> cosmetic cannot change how a silhouette reads at range.
+**The prompt for this phase is [§ 19.5](#195-prompt-for-phase-5).** Every prompt in
+this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
+one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
@@ -432,15 +475,9 @@ Decide it in Phase 9 and assert it in a test.
 
 ⚠️ **Extend `LobbyChat`.** It carries hard-won layout notes and there must never be a second one.
 
-> ### PROMPT 6
->
-> Read `CLAUDE.md`, `docs/VISION.md`, `docs/TODO.md` and `docs/FUTURE.md` § 6. Phase 1 must be in.
->
-> Build friends, presence, parties, recent players and blocking on UGS. Extend the existing
-> `LobbyChat` rather than adding a second chat system. Parties queue together through the Phase 7
-> queue and a block is honoured by matchmaking. Add the end-of-match add-friend prompt. Respect the
-> UGS Lobby rate limits: presence polling must not raise the query rate against the free tier, so
-> piggyback on the interval `ServerQuery` already runs.
+**The prompt for this phase is [§ 19.6](#196-prompt-for-phase-6).** Every prompt in
+this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
+one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
@@ -469,19 +506,9 @@ every team-based fairness formula calls it balanced.
 ⚠️ **THE TAYA ROTATION IS WHAT MAKES THIS FAIR AT ALL**, and it is worth saying in the queue UI:
 everyone defends once, so a bad first round is not a lost match.
 
-> ### PROMPT 7
->
-> Read `CLAUDE.md`, `docs/VISION.md`, `docs/TODO.md` and `docs/FUTURE.md` § 7. Phases 1, 2 and 6
-> must be in.
->
-> Build QUICK MATCH as a rating-banded queue on top of the UGS Lobby integration `ServerQuery`
-> already runs, without adding the Matchmaker service. Advertise a band in the lobby data, search
-> for a joinable lobby whose band contains the local player, host one if there is none, and widen
-> the band on the timer in `docs/FUTURE.md` § 7 with the widening visible in the UI. Respect
-> `ServerQuery.QueryInterval`: this must not raise the query rate against the free tier. Support
-> backfill and honour blocks. Put the band arithmetic and the match-quality metric in
-> `Packages/com.tumbangpreso.core/` with tests, including the case that makes a four-player free
-> for all different from a team game: quality is the SPREAD of four ratings.
+**The prompt for this phase is [§ 19.7](#197-prompt-for-phase-7).** Every prompt in
+this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
+one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
@@ -521,19 +548,9 @@ code.
   and climbs fast. Glicko-2 does this for free if the deviation is not clamped too tightly, which
   is a real argument for it over plain Elo.
 
-> ### PROMPT 8
->
-> Read `CLAUDE.md` including § 4 on architecture invariants, then `docs/VISION.md`, `docs/TODO.md`
-> and `docs/FUTURE.md` § 8. Phase 2 must be in. **Phase 9 must NOT be started until this is done.**
->
-> Make a match result trustworthy without dedicated servers. Have every peer independently derive
-> the final scoreboard from the scoring events it already receives, submit it, and have one Cloud
-> Code endpoint accept only on unanimous agreement and flag disagreement for review. Do not change
-> how scoring works: `MatchDirector.AddScore` stays the single host-side writer during the match,
-> per `CLAUDE.md` § 4. This is a second independent derivation for verification only. Add leaver
-> penalties that distinguish a leave from a disconnect using the reconnect window `LobbySession`
-> already implements, add reporting, and rate-limit every write. Write into `docs/TODO.md` exactly
-> what this scheme does and does not stop, including that it does not stop four colluding players.
+**The prompt for this phase is [§ 19.8](#198-prompt-for-phase-8).** Every prompt in
+this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
+one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
@@ -565,20 +582,9 @@ rank, because it turns every good player's win into an accusation.
 - **Rewards:** a season border, a tier emblem on the nameplate, and a tsinelas or can skin earnable
   no other way. All cosmetic, all Phase 5 content, all free.
 
-> ### PROMPT 9
->
-> Read `CLAUDE.md`, `docs/VISION.md`, `docs/TODO.md` and `docs/FUTURE.md` § 9. Phases 1, 2, 6, 7
-> and 8.1 must all be in. Do not start without 8.1.
->
-> Implement ranked. Two independent ladders, Classic and Hero Strike, never one shared number.
-> Implement Glicko-2 for a four-player free for all by expanding each result into six pairwise
-> outcomes with a capped score-margin multiplier, entirely inside
-> `Packages/com.tumbangpreso.core/`, with tests asserting convergence over a simulated season, that
-> a placement player settles inside ten matches, and that a smurf climbs out of a low band quickly.
-> The Unity side is only submission, display and the season boundary. Build tiers, placements, the
-> soft reset, the demotion buffer and the permanent peak. No decay. Ratings are written ONLY by the
-> Cloud Code endpoint from Phase 8.1, never by a client and never by the host directly. Implement
-> the party rule chosen in Phase 6 and assert it.
+**The prompt for this phase is [§ 19.9](#199-prompt-for-phase-9).** Every prompt in
+this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
+one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
@@ -616,22 +622,9 @@ nameplate, that character's own tsinelas, a colour variant, a title, a visible m
 Classic's identity layer: extend it with Street Hype titles, curve and bank recognitions and
 streak records. Depth without abilities, which is the rule.
 
-> ### PROMPT 10
->
-> Read `CLAUDE.md`, then `docs/VISION.md` § 1 twice, then `docs/TODO.md`,
-> `docs/Hero_Strike_Balance.md`, `docs/INSPIRATION.md` § 5 and `docs/FUTURE.md` § 10. Phases 4 and
-> 5 must be in.
->
-> Build the loadout system. Start with the part that has no balance risk: per-character cosmetic
-> and expressive mastery tracks for all eighteen characters, plus a Classic-only Street Hype track
-> containing no abilities of any kind. Then build the hero loadout: a pool of options per ability
-> slot, every one a sidegrade at an unchanged budget, chosen before the match and shown publicly in
-> the lobby and on the scoreboard. Unlock each option with a character-specific challenge in the
-> Risk of Rain 2 style, and make every challenge completable in Practice against bots, which is the
-> rule that keeps the system out of the competitive integrity problem. Put the option definitions,
-> the budget arithmetic and the challenge conditions in `Packages/com.tumbangpreso.core/` and write
-> a test that fails if any option is a strict improvement on its siblings along every axis. Read
-> `docs/INSPIRATION.md` § 5.4 before writing a line.
+**The prompt for this phase is [§ 19.10](#1910-prompt-for-phase-10).** Every prompt in
+this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
+one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
@@ -657,16 +650,9 @@ ranked polish fixes, and the fastest way to make a competitive game feel dead is
 numbers are liveness floors, never comparisons at n=1, and `docs/TODO.md` § 16 carries the noise
 floor. Do not tune bot difficulty off one run.
 
-> ### PROMPT 11
->
-> Read `CLAUDE.md` including § 7.1, `docs/VISION.md`, `docs/TODO.md` §§ 10 and 16, and
-> `docs/FUTURE.md` § 11.
->
-> Build bot difficulty tiers, bot backfill of an abandoned seat, and disclosed bot fill in the
-> casual queue after a wait threshold. Bots are never permitted in ranked and a test must assert
-> it. A match a bot joins becomes unranked immediately. Label every bot visibly in the scoreboard
-> and the nameplate. Tune the tiers against multiple `BotBehaviourProbe` runs, not one, because
-> § 16 records that a single run spreads about 20 per cent.
+**The prompt for this phase is [§ 19.11](#1911-prompt-for-phase-11).** Every prompt in
+this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
+one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
@@ -703,16 +689,9 @@ custom games for free, and it is also the tournament tool from Phase 17.
 that is actually sustainable, which is roughly one substantial thing per season: a hero OR a map OR
 a mode, plus cosmetics, plus balance. A missed cadence is worse than a slow one.
 
-> ### PROMPT 12
->
-> Read `CLAUDE.md`, `docs/VISION.md`, `docs/Design.md`, `docs/TODO.md` and `docs/FUTURE.md` § 12.
->
-> Build custom games first, with a private lobby, a password and rule toggles, because every other
-> mode here is cheaper once it exists. Then the daily seed mode, then map rotation and map voting.
-> Every new mode reuses the existing rules core and adds its rules there rather than in Unity code.
-> Do not touch Classic's rules: a new mode is a new mode, never a change to the one in
-> `docs/Design.md`. Write each mode's rules and win condition into `docs/Design.md` or a sibling
-> document in the same commit.
+**The prompt for this phase is [§ 19.12](#1912-prompt-for-phase-12).** Every prompt in
+this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
+one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
@@ -732,17 +711,9 @@ player to ignore the can, which is the one thing the game is about. Write challe
 outcomes the game wants: retrievals under pressure, rounds survived as last attacker, matches
 completed, tags as taya.
 
-> ### PROMPT 13
->
-> Read `CLAUDE.md`, `docs/VISION.md`, `docs/TODO.md` and `docs/FUTURE.md` § 13. Phases 2 and 4 must
-> be in.
->
-> Build daily and weekly challenges, season boundaries, login streaks and the end-of-season summary
-> card. Every challenge is evaluated server-side from the match record written in Phase 2, never
-> claimed by a client. Define the challenge set as data in `Packages/com.tumbangpreso.core/` with a
-> test that every challenge is achievable in a single match or declares its own multi-match span.
-> Follow `docs/FUTURE.md` § 13 on challenge design: nothing that rewards ignoring the can, and a
-> streak that pauses rather than resets.
+**The prompt for this phase is [§ 19.13](#1913-prompt-for-phase-13).** Every prompt in
+this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
+one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
@@ -764,19 +735,9 @@ binding, no gamepad paths and no control schemes.
   thing that always gets skipped, and is what blocks Phase 15 when it is.
 - **No aim assist. Separate the pools instead**, which is free, exact, and removes the argument.
 
-> ### PROMPT 14
->
-> Read `CLAUDE.md`, `docs/VISION.md`, `docs/TODO.md` and `docs/FUTURE.md` § 14. Independent of
-> phases 1 through 13.
->
-> Add full controller support. Create Keyboard and Mouse and Gamepad control schemes in
-> `TumbangPreso.inputactions`, which today has zero gamepad bindings, and bind every gameplay and
-> spectator action including the contextual `E` hold tiers. Make every on-screen prompt resolve its
-> glyph from the last-used device rather than from a setting. Make every menu fully navigable on a
-> stick with no mouse, including character select, settings and the lobby. Extend `Rebinding`
-> rather than replacing it and keep the one-control-one-action-per-context rule that
-> `InputMapAndAbilityTests` asserts. Add rumble. Do not add aim assist: record in `docs/TODO.md`
-> that input-based matchmaking pools are the chosen answer.
+**The prompt for this phase is [§ 19.14](#1914-prompt-for-phase-14).** Every prompt in
+this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
+one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
@@ -806,18 +767,9 @@ if a Mac appears**.
 peers from different builds. Mobile and desktop must ship the same version at the same time or they
 will refuse each other, correctly, and it will look like a bug.
 
-> ### PROMPT 15
->
-> Read `CLAUDE.md`, `docs/VISION.md`, `docs/TODO.md`, `docs/TESTING.md` and `docs/FUTURE.md` § 15.
-> Phase 14 must be in: touch is built on the control-scheme work.
->
-> Port the game to Android. Step one is a build on a device with the Android module installed
-> through Unity Hub, before any polish. Then touch controls including a radial long press for the
-> contextual grab, then a measured performance pass on the toon outline hull, then phone aspect
-> ratios added to `AspectRatioProbes`. Do not guess at the outline cost: measure it on device and
-> write the number into `docs/TODO.md`. Keep `NetSession.ProtocolVersion` in lockstep with desktop.
-> iOS is out of scope until there is a Mac, and say so in the handoff rather than leaving it
-> implied.
+**The prompt for this phase is [§ 19.15](#1915-prompt-for-phase-15).** Every prompt in
+this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
+one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
@@ -871,19 +823,9 @@ Every one of these is small, and together they decide whether some people can pl
   must be checked against the font's coverage before it is promised.
 - Keep the character names, the mode names and TSINELAS untranslated. They are the identity.
 
-> ### PROMPT 16
->
-> Read `CLAUDE.md`, `docs/VISION.md` § 2, `docs/Art_Direction.md` § 1, `docs/TODO.md` and
-> `docs/FUTURE.md` § 16.
->
-> Do accessibility first and localisation second. Add a second, non-colour channel for the
-> taya-versus-attacker role everywhere it is currently hue alone, then colourblind palettes for
-> deuteranopia, protanopia and tritanopia that keep the two roles maximally separated, without
-> breaking `Art_Direction.md` § 1 for players not using them. Then UI scale, hold-versus-toggle,
-> an FOV slider, a reduced-effects mode, subtitles for callouts, and a high-contrast HUD. Extend
-> `AbilityShowcaseProbe` to assert the reduced mode is measurably calmer than the default rather
-> than assuming it. Then extract every user-facing string into a table and ship English and Tagalog,
-> checking every added glyph against Darumadrop One's coverage first.
+**The prompt for this phase is [§ 19.16](#1916-prompt-for-phase-16).** Every prompt in
+this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
+one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
@@ -918,19 +860,9 @@ the wire, a HUD that already knows how to draw a broadcast clock, and `LobbySess
   mismatch: `NetSession.ProtocolVersion` refuses peers from different branches by design, so every
   machine in the room must be on the same .exe and somebody has to be responsible for that.
 
-> ### PROMPT 17
->
-> Read `CLAUDE.md`, `docs/VISION.md`, `docs/TODO.md` and `docs/FUTURE.md` § 17.
->
-> Start with the urgent half: verify that a full four-player match can be started and completed
-> entirely on LAN with the internet physically disconnected, fix whatever screen fails, and add a
-> test or a probe that keeps it true. Then build tournament mode with a password, fixed rosters,
-> spectator slots that do not consume a seat and an organiser restart. Then replays, recorded as
-> the `InputIntent` stream plus the seed and replayed through the same fixed physics step the bots
-> use; prove determinism first with a test that replays a recorded match and asserts an identical
-> final scoreboard, and if it does not reproduce, find the non-determinism and write it into
-> `docs/TODO.md` before building anything on it. Add clip export and a spectator delay. Extend
-> `SpectatorCamera` rather than writing a second spectator path.
+**The prompt for this phase is [§ 19.17](#1917-prompt-for-phase-17).** Every prompt in
+this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
+one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
@@ -949,14 +881,9 @@ the wire, a HUD that already knows how to draw a broadcast clock, and `LobbySess
 - **The Filipino angle is the marketing and it is not a gimmick.** Nobody else has made this.
 - ⚠️ **No vendor or middleware names in any public material**, per the standing rule.
 
-> ### PROMPT 18
->
-> Read `CLAUDE.md`, `docs/VISION.md`, `docs/TODO.md` and `docs/FUTURE.md` § 18.
->
-> Ship a public build. Automate the itch.io release with butler from a GitHub Action so a tagged
-> commit publishes, and get the existing WebGL target building and playable in a browser with the
-> online path working through Relay. Write the store page copy from `docs/VISION.md`'s own words
-> rather than inventing new ones, and name no vendor or middleware in anything public.
+**The prompt for this phase is [§ 19.18](#1918-prompt-for-phase-18).** Every prompt in
+this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
+one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
@@ -1037,3 +964,705 @@ it, and an empty ladder is the fastest way to make competitive play feel dead.
 ⚠️ **AND THE URGENT ITEM IS NOT ON THE LEFT COLUMN AT ALL.** § 17's first paragraph: confirm the
 game runs a full four-player match on LAN with the internet unplugged, before the nationals, and
 keep it true through every phase above.
+---
+
+## 19 · THE PROMPTS
+
+**One place to copy from.** Every prompt below is written to be pasted into a fresh session as its
+entire brief. They are deliberately uniform: same opening, same shape, same closing, so a session
+that has run one knows how to run any of them.
+
+⚠️ **Each one names § 0.5 rather than repeating it.** That is on purpose: nineteen copies of the
+same rules is nineteen copies to fix. The prompt tells the session to go and read it, which it will.
+
+⚠️ **And each one carries a VERIFY FIRST block**, because these were written on 2026-08-31 against
+a codebase that keeps moving. A prompt that turns out to be wrong is handled by § 0.5 rule 11, not
+by building it anyway.
+
+| Prompt | Phase | Depends on | Rough size |
+|---|---|---|---|
+| [§ 19.1](#191-prompt-for-phase-1) | Accounts and identity | Nothing | About a week |
+| [§ 19.2](#192-prompt-for-phase-2) | Profile, stats, match history | 1 | About a week |
+| [§ 19.3](#193-prompt-for-phase-3) | Telemetry | 1 | A day, do it with 2 |
+| [§ 19.4](#194-prompt-for-phase-4) | XP, levels, season track | 1, 2 | Days |
+| [§ 19.5](#195-prompt-for-phase-5) | Cosmetics and customisation | 1, 2, 4 | Over a week, mostly content |
+| [§ 19.6](#196-prompt-for-phase-6) | Social, friends, parties | 1 | Days |
+| [§ 19.7](#197-prompt-for-phase-7) | Matchmaking | 1, 2, 6 | Days |
+| [§ 19.8](#198-prompt-for-phase-8) | Competitive integrity | 2 | Days. **Blocks 9.** |
+| [§ 19.9](#199-prompt-for-phase-9) | Ranked | 1, 2, 6, 7, **8.1** | About a week |
+| [§ 19.10](#1910-prompt-for-phase-10) | Loadouts and achievements | 4, 5 | Weeks, mostly content |
+| [§ 19.11](#1911-prompt-for-phase-11) | Bots, backfill, population | Nothing hard | Days |
+| [§ 19.12](#1912-prompt-for-phase-12) | Modes, maps, custom games | Nothing hard | Weeks |
+| [§ 19.13](#1913-prompt-for-phase-13) | Seasons and live ops | 2, 4 | Days |
+| [§ 19.14](#1914-prompt-for-phase-14) | Controller | Nothing | About a week |
+| [§ 19.15](#1915-prompt-for-phase-15) | Mobile | 14 | **The biggest item here** |
+| [§ 19.16](#1916-prompt-for-phase-16) | Accessibility and localisation | Nothing | About a week |
+| [§ 19.17](#1917-prompt-for-phase-17) | Tournaments, LAN, replays | Nothing | ⚠️ **Its first step is urgent** |
+| [§ 19.18](#1918-prompt-for-phase-18) | Distribution | A build worth shipping | Days |
+
+---
+
+### 19.0 PROMPT ZERO: refresh this plan before using it
+
+**Run this first if it has been more than a month, or if any prompt below looks wrong.** It costs
+one short session and it is cheaper than building a phase against a stale brief.
+
+> Read `CLAUDE.md`, then `docs/VISION.md`, then `docs/TODO.md`, then `docs/FUTURE.md` §§ 0.5 and
+> 0.6, then `docs/INSPIRATION.md` § 0. They carry the rules of the repo, what the game is for, what
+> is open, and the standing rules for this task. Do not skip them because this prompt summarises
+> the task; the summary is not the rules.
+>
+> **Task.** `docs/FUTURE.md` and `docs/INSPIRATION.md` are plans written on 2026-08-31 ahead of the
+> work they describe. Bring their factual claims back in line with the code, and change nothing
+> else.
+>
+> Work through the table in `docs/FUTURE.md` § 0.6 row by row and run each check. Then sweep both
+> documents for anything else that has moved: content counts, file and class names, section
+> numbers in other documents, package versions, service names, and any phase that has partly or
+> wholly shipped since. For each phase that shipped, mark its heading `✅ SHIPPED <date>`, move its
+> numbers into `docs/Design.md` or `docs/TODO.md` where they belong, and **leave the phase text in
+> place**, because the reasoning is the part that stays valuable.
+>
+> ⚠️ **Correct facts. Do not rewrite arguments.** If the design reasoning in a phase now looks
+> wrong to you, say so at the top of your handoff and leave the text alone. A session refreshing
+> facts is not the session that gets to change the plan.
+>
+> ⚠️ **Do not quote a vendor's free-tier quota anywhere**, in these files or to anybody. They
+> change without notice. Name the service and what runs out first, never the number.
+>
+> **Done when:** every row of § 0.6 has been checked and the result recorded, both documents match
+> the code, `docs/TODO.md` records what changed, and it is committed and pushed. No `.cs` file is
+> touched by this task.
+
+---
+
+### 19.1 Prompt for Phase 1
+
+**Accounts and identity. Nothing else in this plan works without it.**
+
+> Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md`, then `docs/FUTURE.md` §§ 0.5
+> and 0.6, then `docs/FUTURE.md` § 1. They carry the rules of the repo, what the game is for, what
+> is open, the standing rules every prompt in that file inherits, and this phase's brief. Do not
+> skip them because this prompt summarises the task; the summary is not the rules.
+>
+> **VERIFY FIRST.** This brief was written 2026-08-31. Check these before acting:
+> `grep authentication Packages/manifest.json` shows the UGS authentication package installed, and
+> `grep -rn "AuthenticationService" Assets` returns nothing, meaning it is present and unused. If
+> either has changed, follow § 0.5 rule 11.
+>
+> **Build the account layer.**
+> 1. Anonymous sign-in on first launch, silently, before the main menu is interactive. No prompt,
+>    no form, no blocking UI. A player who never makes an account still gets a stable id, a profile
+>    and progression.
+> 2. An optional upgrade to username and password, offered at the moment the player first earns
+>    something worth keeping rather than buried in settings, preserving everything the anonymous
+>    account had.
+> 3. Sign-in on a second device by username, migrating progress.
+> 4. Session persistence, so a returning player is signed in before the menu draws.
+> 5. A `PlayerAccount` service beside `NetSession` owning the id, display name, discriminator, bio,
+>    country, pronouns, privacy flags and signed-in state, raising an event when any change.
+> 6. Route the lobby's player name through it. Today the name is whatever the peer sends, and the
+>    first thing anybody does with a new account system is impersonate somebody.
+> 7. Account deletion and data export. Build them now, where they are an afternoon, not after
+>    launch where they are a migration.
+>
+> **Two decisions that are already made, with reasons in § 1.4 and § 1.2. Do not relitigate them
+> without saying why in your handoff.**
+> - **The avatar is an in-game portrait composed from ids and rendered through `ModelPreview`, not
+>   an image upload.** Uploads mean permanent content moderation run by five students, storage and
+>   bandwidth against a free tier forever, and a photograph sitting beside a voxel cast.
+> - **Email is optional and is recovery only.** It is never required to play. An address is
+>   personal data and requiring one at first launch is the single largest drop-off point a game
+>   this size has.
+>
+> **Constraints.** Everything degrades to a local-only profile when the service is unreachable,
+> including LAN, joining by code, Practice and Training: § 0.5 rule 7, and § 17 for why. Name
+> validation, discriminator allocation and local-versus-remote precedence go in
+> `Packages/com.tumbangpreso.core/` with tests.
+>
+> **Done when** a fresh install reaches the menu signed in with no prompt, the id survives a
+> restart, a username attaches later without losing anything, an account can be deleted and
+> exported, a LAN match still starts with the network cable pulled, and § 0.5 rule 9 is satisfied.
+
+---
+
+### 19.2 Prompt for Phase 2
+
+**The profile, the stats and the match history.**
+
+> Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md`, then `docs/FUTURE.md` §§ 0.5
+> and 0.6, then `docs/FUTURE.md` § 2. Do not skip them because this prompt summarises the task; the
+> summary is not the rules.
+>
+> **VERIFY FIRST.** Phase 1 must be shipped: `grep -rn "PlayerAccount" Assets` should find the
+> service. Confirm `MatchDirector` still raises the scoring events this phase reads, and confirm
+> the stat list in § 2.2 still matches the verbs the game has.
+>
+> **Build.**
+> 1. A `PlayerProfile` document: identity, level, XP, career totals, per-mode records,
+>    per-character records, inventory, rank.
+> 2. A `MatchRecord` carrying the whole four-player scoreboard, **written once per match by one
+>    writer**, through a Cloud Code endpoint. Write it through the endpoint from day one even
+>    though it is spoofable until Phase 8, because retro-fitting the call site later is the
+>    expensive half.
+> 3. Collect the stats in § 2.2 host-side off events that already exist, and submit ONE payload at
+>    match end. Never one call per event: § 0.3 says why.
+> 4. The profile screen to the layout in § 2.1, using the existing UI kit and nine-patch art and
+>    following `ConvertedScreen`'s conventions rather than inventing a screen type.
+> 5. The end-of-match summary showing what this match added.
+> 6. The offline path: a match played with no connection queues its record locally and submits on
+>    the next sign-in.
+> 7. Keep 100 full records per player and roll older ones into totals.
+>
+> **Constraints.** The record and profile shapes are engine-free types in
+> `Packages/com.tumbangpreso.core/` with tests, so both toolchains compile them and the shape is
+> asserted without an editor. ⚠️ **Do not show a stat you would not defend in an argument**: if a
+> stat is noisy at low sample size, hide it until the sample supports it and say so in the UI.
+>
+> **Done when** finishing a match writes exactly one record, the profile updates without a reload,
+> career totals survive a reinstall on the same account, the whole match costs one endpoint call,
+> and § 0.5 rule 9 is satisfied.
+
+---
+
+### 19.3 Prompt for Phase 3
+
+**Telemetry. Small, and it decides what to build next. Do it alongside Phase 2.**
+
+> Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md`, then `docs/FUTURE.md` §§ 0.5
+> and 0.6, then `docs/FUTURE.md` § 3. Do not skip them because this prompt summarises the task; the
+> summary is not the rules.
+>
+> **VERIFY FIRST.** Check whether an analytics package is already present and whether any events
+> are already sent, so this does not become a second system.
+>
+> **Build.**
+> 1. **The first-launch funnel first**, before anything else: launch, sign-in, main menu, first
+>    queue, first match started, first match FINISHED. It is about forty lines and it is the single
+>    most valuable number in this plan.
+> 2. Then the match-level events in § 3.
+> 3. Batched and sent once per session, never per event.
+> 4. A visible opt-out in Settings that is honoured completely, and a plain statement of what is
+>    collected.
+>
+> **Constraints.** No personally identifying field in any event, ever. Keep payloads small and
+> event names stable: ⚠️ **a renamed event is a broken history**, so choose names once and write
+> them into `docs/TODO.md` as the contract.
+>
+> **Done when** a full session produces one batch, the funnel can be read end to end for a new
+> install, the opt-out actually stops all sending, and § 0.5 rule 9 is satisfied.
+
+---
+
+### 19.4 Prompt for Phase 4
+
+**XP, levels, mastery and a free season track. This is the phase that makes a player come back
+tomorrow, and it needs no matchmaking and no ranked to be worth having.**
+
+> Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md`, then `docs/FUTURE.md` §§ 0.5
+> and 0.6, then `docs/FUTURE.md` § 4. Do not skip them because this prompt summarises the task; the
+> summary is not the rules.
+>
+> **VERIFY FIRST.** Phases 1 and 2 shipped, and the Cloud Code endpoint that writes the match
+> record exists, because XP is computed there and never sent by a client.
+>
+> **Build, in this order.**
+> 1. **The AFK check first.** The moment completion pays, standing still pays. Detect a seat that
+>    has not acted for a whole round using the input telemetry the bots already produce, pay it
+>    nothing, and escalate on repeats. Do not build XP before this exists.
+> 2. Account XP from completion, placement and a small set of per-match objectives, weighting
+>    completion heavily and placement lightly, so leaving is the only thing that costs.
+> 3. Account level, uncapped, a new border every 50.
+> 4. Per-character mastery, separate from account level.
+> 5. A soft currency earned per match.
+> 6. A 50-tier free season track, entirely cosmetic. There is no paid track.
+> 7. The end-of-match XP bar and the season track screen, existing UI kit.
+>
+> **Constraints.** Every curve and reward table is data in `Packages/com.tumbangpreso.core/` with
+> tests, including one that asserts **no reward on any track changes a gameplay number** (§ 0.5
+> rule 4). ⚠️ **Diminishing returns, never a daily cap**: a cap tells a player to stop playing,
+> which is the opposite of the point.
+>
+> **Done when** a match awards XP computed server-side from its record, an AFK seat earns nothing,
+> the track pays out, no reward touches a gameplay value and a test proves it, and § 0.5 rule 9 is
+> satisfied.
+
+---
+
+### 19.5 Prompt for Phase 5
+
+**Cosmetics, the inventory and character customisation.**
+
+> Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md`, then `docs/FUTURE.md` §§ 0.5
+> and 0.6, then `docs/FUTURE.md` § 5 and `docs/wearables_catalog.md`. Do not skip them because this
+> prompt summarises the task; the summary is not the rules.
+>
+> **VERIFY FIRST.** Phases 1, 2 and 4 shipped. Confirm `RosterBook` and `RosterEntryAsset` still
+> resolve id to model, palette and tint, and that `ToonSkin`'s 16-slot palette remap still works
+> the way § 5 assumes, because a colour variant of any character being nearly free is the reason
+> this phase is affordable.
+>
+> **Build.** The inventory on the profile, a per-character loadout of cosmetic slots, the
+> customisation screen, and a rotating soft-currency shop with duplicate protection. Slots: body
+> palette, headwear, face, back item, tsinelas skin, can skin, avatar frame, nameplate, banner,
+> title, emote wheel, victory pose, throw trail, knockdown effect.
+>
+> **Constraints, and the first one is the expensive-to-fix one.**
+> - ⚠️⚠️ **STRING IDS FOR EVERY COSMETIC, NOT WIRE INDICES.** `Roster.Slippers` records what
+>   inserting a row into a wire-facing list does. Pay the few extra bytes; it removes the whole
+>   class of bug permanently and this is the last cheap moment to decide it.
+> - ⚠️ **A cosmetic must never change a silhouette enough to change a read.** This is a game about
+>   seeing which of three attackers is committing. Bound the wearable volume, write the bound into
+>   `docs/Art_Direction.md`, and test it.
+> - Extend `RosterEntryAsset` and `RosterBook`; do not build a parallel content system.
+> - Replicate the loadout through the seat info that already crosses at match start. No new
+>   protocol.
+> - Preview through `ModelPreview` with the real shader, never a flat icon.
+>
+> **Done when** a cosmetic can be earned, equipped, seen by every peer and previewed correctly, a
+> test asserts no cosmetic changes any value read by the rules core, and § 0.5 rule 9 is satisfied.
+
+---
+
+### 19.6 Prompt for Phase 6
+
+**Friends, presence, parties, blocking.**
+
+> Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md`, then `docs/FUTURE.md` §§ 0.5
+> and 0.6, then `docs/FUTURE.md` § 6. Do not skip them because this prompt summarises the task; the
+> summary is not the rules.
+>
+> **VERIFY FIRST.** Phase 1 shipped. Read `LobbyChat` before writing any chat code and read
+> `ServerQuery`'s query interval before adding any polling.
+>
+> **Build.** Friends by id, by name and tag, and by share code. Presence: online, in menu, in
+> queue, in a match, spectating. Parties of 2 to 4 that queue together. Invites from the friends
+> list **and from the end-of-match screen**, which is the highest-converting social prompt a game
+> of this shape has. Recent players with a one-click add. Blocking that matchmaking honours.
+>
+> **Constraints.** ⚠️ **Extend `LobbyChat`. There must never be a second chat system**, and it
+> carries hard-won layout notes. Presence polling must not raise the service query rate: piggyback
+> on the interval `ServerQuery` already runs. ⚠️ **A party of four is a full match, which is a
+> ranked problem**: decide the rule in Phase 9 and assert it in a test there.
+>
+> **Done when** two accounts can befriend, see each other's presence, party up, queue together, and
+> a block prevents a match, and § 0.5 rule 9 is satisfied.
+
+---
+
+### 19.7 Prompt for Phase 7
+
+**Matchmaking, built on the lobby service that is already running.**
+
+> Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md`, then `docs/FUTURE.md` §§ 0.5
+> and 0.6, then `docs/FUTURE.md` § 7 and `docs/INSPIRATION.md` § 3. Do not skip them because this
+> prompt summarises the task; the summary is not the rules.
+>
+> **VERIFY FIRST.** Phases 1, 2 and 6 shipped, and `docs/INSPIRATION.md` § 3's queue structure has
+> been built or at least decided, because it determines what queues exist.
+>
+> **Build.** QUICK MATCH as a rating-banded queue on top of the existing lobby integration, with no
+> matchmaker service. Advertise a band in the lobby data, search for a joinable lobby whose band
+> contains the local player, host one if there is none, widen the band on a timer, and **show the
+> widening in the UI so a long queue reads as progress rather than as a hang**. Backfill an
+> abandoned seat. Honour blocks. Separate pools by input device and platform.
+>
+> **Constraints.**
+> - ⚠️⚠️ **The match-quality metric is the SPREAD of four ratings, not the gap between two
+>   averages.** There is no team to balance here. A lobby with one 1400 and three 900s is a bad
+>   match even though every team-based fairness formula calls it balanced. Put the metric in
+>   `Packages/com.tumbangpreso.core/` with a test for exactly that case.
+> - This must not raise the query rate against the free tier.
+> - Say in the queue UI that the taya rotates and everyone defends once. It is why a bad first
+>   round is not a lost match, and the game has never said it out loud.
+>
+> **Done when** four clients queue and land in one match, the band widens visibly, backfill works,
+> and § 0.5 rule 9 is satisfied.
+
+---
+
+### 19.8 Prompt for Phase 8
+
+**Competitive integrity. ⚠️⚠️ PHASE 9 MUST NOT START UNTIL 8.1 IS DONE.**
+
+> Read `CLAUDE.md` including § 4 on architecture invariants, then `docs/VISION.md`, then
+> `docs/TODO.md`, then `docs/FUTURE.md` §§ 0.5 and 0.6, then `docs/FUTURE.md` § 8. Do not skip them
+> because this prompt summarises the task; the summary is not the rules.
+>
+> **VERIFY FIRST.** Phase 2 shipped. Confirm that every peer still receives every scoring event,
+> because the whole corroboration design rests on the scoreboard being derivable on all four
+> machines with nothing new crossing the wire.
+>
+> **Build.**
+> 1. **Corroborated results.** Every peer independently derives the final scoreboard from the
+>    events it received and submits it. The endpoint accepts only on unanimous agreement and flags
+>    disagreement for review.
+> 2. Reporting from the end-of-match screen and the profile, with a reason.
+> 3. Leaver penalties that **distinguish a leave from a disconnect** using the reconnect window
+>    `LobbySession` already implements, or a player with bad internet is punished for their ISP.
+> 4. Escalating queue cooldowns.
+> 5. Rate limits on every write, because a free tier is a budget an abusive client can spend.
+> 6. Sanity checks on submitted records: impossible scores, durations, rates.
+>
+> **Constraints.** ⚠️ **Do not change how scoring works.** `MatchDirector.AddScore` stays the
+> single host-side writer during the match, per `CLAUDE.md` § 4. This is a second, independent
+> derivation for verification only.
+>
+> **Done when** a match submits four agreeing scoreboards and is accepted, a deliberately altered
+> submission is rejected and flagged, `docs/TODO.md` records **exactly what this scheme does and
+> does not stop including that it does not stop four colluding players**, and § 0.5 rule 9 is
+> satisfied.
+
+---
+
+### 19.9 Prompt for Phase 9
+
+**Ranked. ⚠️⚠️ DO NOT START THIS WITHOUT PHASE 8.1. A rank a host can award themselves is worse
+than no rank, because it turns every good player's win into an accusation.**
+
+> Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md`, then `docs/FUTURE.md` §§ 0.5
+> and 0.6, then `docs/FUTURE.md` § 9 and `docs/INSPIRATION.md` §§ 2.19 and 3.3. Do not skip them
+> because this prompt summarises the task; the summary is not the rules.
+>
+> **VERIFY FIRST.** Phases 1, 2, 6, 7 and **8.1** all shipped. Confirm the corroboration endpoint
+> exists and is the only writer of a result, because ratings go through it and nowhere else.
+>
+> **Build.**
+> 1. **Two independent ladders, Classic and Hero Strike.** Never one shared number: they are
+>    separate games and a player can be 1600 in one and 900 in the other.
+> 2. **Glicko-2 adapted for a four-player free for all**: expand each result into six pairwise
+>    outcomes, feed all six in, scale the step so one match moves a settled player about as much as
+>    one game should.
+> 3. A score-margin multiplier capped around 1.25x, so a stomp is worth more than a squeak without
+>    making the ladder a farming exercise.
+> 4. Tiers with divisions and a numbered apex leaderboard. Names come from the game's own voice and
+>    🧑 chooses them; § 9 has a suggested shape.
+> 5. Five placement matches, wide deviation until placed, no tier shown while placing.
+> 6. A seasonal soft reset toward the mean, never a wipe, with a permanent peak on the profile.
+> 7. A demotion buffer: two losses at a tier floor, not one.
+> 8. **Rank floors**, per `INSPIRATION.md` § 2.19: once a tier is reached the season cannot fall
+>    below it. It costs one comparison and it removes the most common reason people stop queueing.
+> 9. The party rule chosen in Phase 6, asserted in a test.
+>
+> **Constraints.** The whole rating model lives in `Packages/com.tumbangpreso.core/` with tests
+> that assert convergence over a simulated season, that a placement player settles inside ten
+> matches, and that a clearly stronger new account climbs out of a low band quickly. The Unity side
+> is submission, display and the season boundary, nothing else. ⚠️ **No rank decay**: it punishes
+> people with school and jobs, which is this entire audience. ⚠️ **Ranked changes stakes and
+> integrity, never the rules in `docs/Design.md`.**
+>
+> **Done when** a simulated season converges, placements settle in ten, ratings are written only by
+> the Phase 8 endpoint, and § 0.5 rule 9 is satisfied.
+
+---
+
+### 19.10 Prompt for Phase 10
+
+**Loadouts, skill variants and achievements. ⚠️ Read § 5.4 of `INSPIRATION.md` before writing a
+line: this is the phase that can quietly turn the competitive mode into an account power check.**
+
+> Read `CLAUDE.md` first, then `docs/VISION.md` § 1 twice, then `docs/TODO.md`, then
+> `docs/FUTURE.md` §§ 0.5 and 0.6, then `docs/FUTURE.md` § 10, `docs/INSPIRATION.md` § 5 and
+> `docs/Hero_Strike_Balance.md`. Do not skip them because this prompt summarises the task; the
+> summary is not the rules.
+>
+> **VERIFY FIRST.** Phases 4 and 5 shipped. Confirm the ability budget assumptions in
+> `docs/Hero_Strike_Balance.md` still describe the shipped kits, because every option below is
+> defined as a trade at an unchanged budget and that only means something if the budget is real.
+>
+> **Build, in this order, because the first half has no balance risk and the second half does.**
+> 1. Per-character cosmetic and expressive mastery tracks for every character: victory pose,
+>    character emote, voice line set, nameplate, that character's own tsinelas, a colour variant, a
+>    title, a visible mastery number. **Most of the grind should live here.**
+> 2. A Classic-only Street Hype track containing no abilities of any kind, extending what Classic
+>    already has. `VISION.md` § 1: **Classic never gets powers.**
+> 3. The Hero Strike loadout: a pool of options per ability slot, chosen before the match.
+> 4. Achievements in the three tiers in `INSPIRATION.md` § 5.6, each paying a title, a badge or a
+>    banner tracker so nothing is a dead list.
+>
+> **The rules that make this safe. All four are load-bearing.**
+> - ⚠️⚠️ **Every option is a sidegrade at an unchanged budget.** Nothing unlocks more damage, range,
+>   duration or a shorter cooldown. **Write a test that fails if any option is a strict improvement
+>   on its siblings along every axis.** That test is what keeps this honest three seasons from now
+>   when somebody adds option four in a hurry.
+> - ⚠️⚠️ **Every unlock challenge must be completable in Practice against bots**, and a test must
+>   assert it for every challenge in the set. This is the rule that dissolves the competitive
+>   problem: the gate then costs time learning a character, never matches won against people.
+> - ⚠️ **The build is public**, shown in the lobby and on the scoreboard. Hidden loadouts in a
+>   four-player fight are information asymmetry that feels like cheating.
+> - ⚠️ **Do not build the swap-at-role-change idea in this pass.** `INSPIRATION.md` § 5.5 explains
+>   why it is the most interesting idea here and also a real balance risk. Prototype it in custom
+>   games afterwards and write the measurement into `docs/TODO.md` before it goes near ranked.
+>
+> **Constraints.** Option definitions, budget arithmetic and challenge conditions live in
+> `Packages/com.tumbangpreso.core/`. Hero Strike only.
+>
+> **Done when** a build can be chosen, seen by opponents, and unlocked by a challenge completed
+> against bots, both tests above exist and pass, and § 0.5 rule 9 is satisfied.
+
+---
+
+### 19.11 Prompt for Phase 11
+
+**Bots, backfill and the population problem. Not glamorous, and it is the difference between a game
+that lives and one that does not.**
+
+> Read `CLAUDE.md` including § 7.1, then `docs/VISION.md`, then `docs/TODO.md` §§ 10 and 16, then
+> `docs/FUTURE.md` §§ 0.5 and 0.6, then `docs/FUTURE.md` § 11. Do not skip them because this prompt
+> summarises the task; the summary is not the rules.
+>
+> **VERIFY FIRST.** Read `docs/TODO.md` § 16 before tuning anything: it records that a single
+> `BotBehaviourProbe` run spreads about 20 per cent, so one run is never a comparison.
+>
+> **Build.** Difficulty tiers for bots exposed in Practice and custom games. Bot backfill of an
+> abandoned seat so a match continues rather than collapsing. Disclosed bot fill in the casual queue
+> after a wait threshold, because a 45-second queue that ends in a playable match beats a
+> four-minute queue that ends in nothing. A named practice ladder against bots for new players.
+>
+> **Constraints.**
+> - ⚠️⚠️ **Never bots in ranked. Not once, not to fill, not disclosed.** A test must assert it.
+> - A match a bot joins becomes unranked from that moment, and the humans who stayed take reduced
+>   rating loss.
+> - ⚠️ **Label every bot visibly** in the scoreboard and the nameplate. A player who thinks they
+>   beat a person and did not will be angrier when they find out.
+> - Tune tiers across several probe runs, never one.
+>
+> **Done when** a seat that leaves is filled within seconds, the match is marked unranked, ranked
+> refuses bots and a test proves it, and § 0.5 rule 9 is satisfied.
+
+---
+
+### 19.12 Prompt for Phase 12
+
+**Custom games first, then modes, then map rotation. Every mode is cheaper once custom games
+exist.**
+
+> Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/Design.md`, then `docs/TODO.md`, then
+> `docs/FUTURE.md` §§ 0.5 and 0.6, then `docs/FUTURE.md` § 12. Do not skip them because this prompt
+> summarises the task; the summary is not the rules.
+>
+> **VERIFY FIRST.** Check what the map list actually is now rather than trusting § 0.2's count, and
+> check whether custom lobbies already exist in any form before building a second path.
+>
+> **Build, in this order.**
+> 1. **Custom games**: private lobby, password, round length, score target, character and tsinelas
+>    restrictions, bot count, rule toggles. Everything else in this phase gets cheaper afterwards,
+>    and it is also the tournament tool for Phase 17.
+> 2. The daily seed mode, if `INSPIRATION.md`'s prompt I6 has not already delivered it.
+> 3. Map rotation and a map vote. **Do these before building a fourth map**: voting buys most of
+>    the same freshness for a fraction of the work.
+>
+> **Constraints.** Every new mode adds its rules to `Packages/com.tumbangpreso.core/`, never to
+> Unity code. ⚠️ **A new mode is a new mode, never a change to Classic.** `docs/Design.md` governs
+> Classic and `VISION.md` § 1 governs why. Write each mode's rules and win condition into
+> `docs/Design.md` or a sibling document in the same commit as the code.
+>
+> **Done when** a private lobby can be created, configured, joined by code and played to
+> completion, map voting works, and § 0.5 rule 9 is satisfied.
+
+---
+
+### 19.13 Prompt for Phase 13
+
+**Seasons, dailies and the reason to open it on a Tuesday.**
+
+> Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md`, then `docs/FUTURE.md` §§ 0.5
+> and 0.6, then `docs/FUTURE.md` § 13. Do not skip them because this prompt summarises the task;
+> the summary is not the rules.
+>
+> **VERIFY FIRST.** Phases 2 and 4 shipped. If `INSPIRATION.md` prompt I3 has already built the
+> challenge engine, **use it and do not build a second one.**
+>
+> **Build.** Three daily challenges with one reroll, weekly challenges worth a season tier, a
+> ten-week season with a theme and a track, an end-of-season summary card designed to be
+> screenshotted, login streaks, and a rotating featured mode. Keep a live-ops calendar in the repo.
+>
+> **Constraints.**
+> - Every challenge is evaluated server-side from the match record. Never claimed by a client.
+> - The challenge set is data in `Packages/com.tumbangpreso.core/` with a test that each one is
+>   achievable in a single match or declares its own multi-match span.
+> - ⚠️ **Challenges drive behaviour and bad ones drive bad behaviour.** "Get 10 knockdowns" teaches
+>   a player to ignore the can, and the can is the whole game. Write them against outcomes the game
+>   wants: retrievals under pressure, rounds survived as last attacker, tags as taya, matches
+>   completed.
+> - ⚠️ **A login streak pauses on a missed day. It never resets.** Punishing a break teaches people
+>   that missing a day is expensive, which is how they decide to stop entirely.
+>
+> **Done when** dailies issue and reroll, a season boundary rolls correctly in a test, the summary
+> card renders, and § 0.5 rule 9 is satisfied.
+
+---
+
+### 19.14 Prompt for Phase 14
+
+**Controller support. Starting point is zero: no gamepad bindings, no control schemes.**
+
+> Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md`, then `docs/FUTURE.md` §§ 0.5
+> and 0.6, then `docs/FUTURE.md` § 14. Do not skip them because this prompt summarises the task;
+> the summary is not the rules.
+>
+> **VERIFY FIRST.** `grep -c Gamepad Assets/TumbangPreso/Resources/TumbangPreso.inputactions`. If
+> it is no longer zero, someone has started this; read what exists before adding to it.
+>
+> **Build.**
+> 1. Keyboard and Mouse and Gamepad control schemes in the input asset.
+> 2. Every gameplay and spectator action bound, including the spectator set that
+>    `Rebinding.SpectatorContext` already names.
+> 3. ⚠️ **The contextual `E` hold tiers**: tap picks up, a short hold shoves, a long hold as taya
+>    resets the lata. A hold on a face button is fine; **the on-screen prompt is the hard part**,
+>    because it names a key today.
+> 4. Every prompt resolves its glyph from the last device used, not from a setting.
+> 5. Rumble on knockdown, tag and can reset.
+> 6. **Full menu navigation on a stick with no mouse**: character select, settings, lobby,
+>    everything. This is a bigger job than the gameplay bindings, it is the thing that always gets
+>    skipped, and skipping it blocks Phase 15.
+>
+> **Constraints.** Extend `Rebinding`; do not replace it. Keep the one-control-one-action-per-
+> context rule that the existing input tests assert. ⚠️ **Do not add aim assist.** Record in
+> `docs/TODO.md` that input-based matchmaking pools are the chosen answer: it is free, exact, and
+> it removes the argument entirely.
+>
+> **Done when** a whole match and every menu can be played from a controller with the mouse
+> unplugged, and § 0.5 rule 9 is satisfied.
+
+---
+
+### 19.15 Prompt for Phase 15
+
+**Mobile. ⚠️ Be honest about the size of this: it is a port, not a feature, and it is the largest
+item in this plan.**
+
+> Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md`, then `docs/TESTING.md`, then
+> `docs/FUTURE.md` §§ 0.5 and 0.6, then `docs/FUTURE.md` § 15. Do not skip them because this prompt
+> summarises the task; the summary is not the rules.
+>
+> **VERIFY FIRST.** Phase 14 shipped, because touch is built on the control-scheme work. Then list
+> the installed build modules: if Android is not among them, installing it through Unity Hub is
+> step zero and it is free.
+>
+> **Build, strictly in this order.**
+> 1. **A build on a real device, however ugly.** Nothing else here means anything until that has
+>    happened once. Do not polish before this.
+> 2. Touch controls: left stick, look drag, buttons for throw, grab, jump, sprint, and a radial
+>    long press with a fill for the contextual grab.
+> 3. **A measured performance pass**, not a guessed one. The toon shader draws an inverted hull per
+>    prop, which doubles draw calls on exactly the hardware least able to afford it. Measure it on
+>    device, write the number into `docs/TODO.md`, then decide whether mobile drops the hull or gets
+>    a cheaper one.
+> 4. Phone aspect ratios added to the existing aspect-ratio probes rather than eyeballed.
+> 5. Cross-play with separate pools, same reasoning as controller.
+> 6. Battery, thermals, and a 30 FPS cap option.
+>
+> **Constraints.** ⚠️ **Keep the protocol version in lockstep with desktop.** Peers from different
+> builds refuse each other by design, so shipping mobile and desktop at different versions will
+> look like a bug and will not be one. **iOS is out of scope until there is a Mac to build on**:
+> say that in the handoff rather than leaving it implied.
+>
+> **Done when** a full match can be played on an Android device against a desktop peer, the
+> performance number is written down, and § 0.5 rule 9 is satisfied.
+
+---
+
+### 19.16 Prompt for Phase 16
+
+**Accessibility and localisation. Both cheaper now than at any later point, and the game has
+neither.**
+
+> Read `CLAUDE.md` first, then `docs/VISION.md` § 2, then `docs/Art_Direction.md` § 1, then
+> `docs/TODO.md`, then `docs/FUTURE.md` §§ 0.5 and 0.6, then `docs/FUTURE.md` § 16. Do not skip
+> them because this prompt summarises the task; the summary is not the rules.
+>
+> **VERIFY FIRST.** Confirm there is still no language setting and no colourblind option, and read
+> `Art_Direction.md` § 1 in full, because the fix below has to hold its colour law for everybody who
+> is not using an accessibility palette.
+>
+> **Build accessibility first, localisation second.**
+> 1. ⚠️⚠️ **A second, non-colour channel for the taya-versus-attacker role, everywhere it is
+>    currently hue alone.** A shape on the nameplate, an icon on the marker, a different outline
+>    weight. Orange versus blue survives the most common colourblindness well and the roles being
+>    distinguished by hue ALONE is the actual problem: it fails for tritanopia, on a bad projector
+>    at a tournament, and on a cheap phone screen.
+> 2. Then palettes for deuteranopia, protanopia and tritanopia that keep the two roles maximally
+>    separated in what the player actually sees.
+> 3. UI scale and larger text. Hold versus toggle for sprint and the contextual grab. An FOV
+>    slider, a camera shake slider, and a reduced-effects mode that doubles as the low-end
+>    performance mode. Subtitles and captions for callouts and ability sounds. A high-contrast HUD.
+> 4. Extend the existing ability-showcase probe to **assert the reduced mode is measurably calmer**
+>    than the default rather than assuming it.
+> 5. Then extract every user-facing string into a table and ship **English and Tagalog**. Tagalog is
+>    not a nice-to-have: it is a Filipino street game by a Filipino team in a Filipino competition,
+>    and it is marketing as much as access. Cebuano next, because the nationals are in General
+>    Santos.
+>
+> **Constraints.** ⚠️ **Check every added glyph against the UI font's coverage before promising a
+> language.** The font already has a known missing glyph and the UI works around it. Keep character
+> names, mode names and TSINELAS untranslated: they are the identity.
+>
+> **Done when** the role is readable with hue removed entirely, a language can be switched at
+> runtime, and § 0.5 rule 9 is satisfied.
+
+---
+
+### 19.17 Prompt for Phase 17
+
+**Tournaments, LAN, spectating and replays. ⚠️⚠️ THE FIRST STEP OF THIS IS NOT FUTURE WORK.**
+
+> Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md`, then `docs/FUTURE.md` §§ 0.5
+> and 0.6, then `docs/FUTURE.md` § 17. Do not skip them because this prompt summarises the task;
+> the summary is not the rules.
+>
+> **VERIFY FIRST.** Read `LobbySession` and `LanBeacon` before writing anything: reconnect, seat
+> reclamation and LAN discovery already exist and must not be rebuilt.
+>
+> **Step one, and do it before anything else in this prompt.** ⚠️⚠️ **Verify that a full
+> four-player match can be started and completed with the internet physically disconnected**, and
+> fix whatever screen fails. The nationals are in General Santos City and venue internet cannot be
+> assumed. A tournament build that needs an online service to start a match is a build that can
+> fail in the room. Add a test or a probe that keeps this true, because every later phase is a
+> chance to put a login wall in front of it.
+>
+> **Then build.**
+> 1. Tournament mode: lobby password, fixed roster, fixed map, no matchmaking, spectator slots that
+>    do not consume a seat, organiser restart.
+> 2. **Replays as the input stream plus the seed, not video.** The match is deterministic from the
+>    input intent because a bot presses the same buttons a human does and one physics step serves
+>    both, which makes a small replay possible instead of a huge one. ⚠️ **Prove determinism first**
+>    with a test that replays a recorded match and asserts an identical final scoreboard. If it does
+>    not reproduce, find the non-determinism and write it into `docs/TODO.md` before building
+>    anything on top of it.
+> 3. Clip export: save the last 30 seconds.
+> 4. A caster overlay laid out for a stream rather than for a player.
+> 5. A configurable spectator delay, so a stream cannot be sniped.
+> 6. Highlight detection off events already raised.
+> 7. An organiser's checklist document. ⚠️ **The thing that loses a tournament is a build
+>    mismatch**: peers from different builds refuse each other by design, so every machine in the
+>    room must be on the same executable and somebody must own that.
+>
+> **Constraints.** Extend `SpectatorCamera`; never write a second spectator path.
+>
+> **Done when** the offline check passes and is protected by a test, a tournament can be run
+> end to end, a replay reproduces a scoreboard exactly, and § 0.5 rule 9 is satisfied.
+
+---
+
+### 19.18 Prompt for Phase 18
+
+**Distribution. Last, and smaller than it looks.**
+
+> Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md`, then `docs/FUTURE.md` §§ 0.5
+> and 0.6, then `docs/FUTURE.md` § 18. Do not skip them because this prompt summarises the task;
+> the summary is not the rules.
+>
+> **VERIFY FIRST.** Confirm the WebGL module is still installed and that the game still builds for
+> it, before promising a browser build to anybody.
+>
+> **Build.** Automate an itch.io release from a tagged commit through a GitHub Action. Get the
+> WebGL target building and playable in a browser with the online path working. Write the store
+> page from `docs/VISION.md`'s own words rather than inventing new ones.
+>
+> **Constraints.** ⚠️ **Name no vendor, engine, middleware or tooling in any public-facing
+> material.** Write the capability, not who supplied it. This is a standing rule and it applies to
+> the store page, the trailer description and the press kit.
+>
+> **Done when** a tag publishes a build without anybody touching a dashboard, the browser build
+> plays a real match, and § 0.5 rule 9 is satisfied.

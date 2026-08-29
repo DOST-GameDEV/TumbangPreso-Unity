@@ -2,7 +2,9 @@
 
 **What this file is.** A study of the systems that keep people playing other games, each one
 turned into something specific for a four-player Filipino street game with a rotating taya.
-It is the WHY behind [`FUTURE.md`](FUTURE.md), which is the WHAT and the WHEN.
+It is the WHY behind [`FUTURE.md`](FUTURE.md), which is the WHAT and the WHEN. **Its eleven
+prompts live in § 8**, and they inherit `FUTURE.md` § 0.5, the standing preamble, and § 0.6, the
+staleness protocol.
 
 **What this file is not.** It is not a decision that any of it ships. It is not balance. Where it
 disagrees with [`VISION.md`](VISION.md) about what the game IS, `VISION.md` wins.
@@ -702,201 +704,407 @@ Cheap, high-value, and none of it needs a service.
 
 ## 8 · The prompts, and the order to run them in
 
-Each block below is a complete brief. Copy one, paste it into a new session, do nothing else.
+**One place to copy from.** Each block below is a complete brief written to be pasted into a fresh
+session on its own. They are uniform on purpose, and they inherit the standing preamble in
+`FUTURE.md` § 0.5 rather than repeating it, so there is one copy of the rules to keep correct.
 
-⚠️ **These interleave with `FUTURE.md`'s eighteen phases rather than replacing them.** § 8.6 is the
-combined order.
+⚠️ **Each carries a VERIFY FIRST block.** These were written on 2026-08-31 against a codebase that
+keeps moving. A prompt that turns out to be wrong is handled by `FUTURE.md` § 0.5 rule 11: do the
+part that still makes sense, correct the plan, and put the disagreement at the top of the handoff.
+
+⚠️ **If it has been more than a month, run `FUTURE.md` § 19.0 first.** It refreshes the factual
+claims in both files in one short session and costs less than building a phase against a stale
+brief.
+
+| Prompt | What | Depends on |
+|---|---|---|
+| [I1](#prompt-i1--the-performance-grade-attacker-and-taya) | Performance grade, attacker and taya | `FUTURE.md` Phase 2 |
+| [I2](#prompt-i2--the-banner-and-stat-trackers) | Banner and stat trackers | Phase 2 |
+| [I3](#prompt-i3--the-challenge-engine-achievements-and-loadout-unlocks) | Challenge engine and achievements | Phases 2, 4 |
+| [I4](#prompt-i4--hero-loadouts) | Hero loadouts | I3 |
+| [I5](#prompt-i5--the-queue-and-mode-structure) | Queue and mode structure | Before Phase 7 |
+| [I6](#prompt-i6--the-daily-seed-with-medals-and-a-ghost) | Daily seed, medals, ghost | Phase 2 |
+| [I7](#prompt-i7--the-moment-best-moment-card-killcam-and-clip-export) | Best-moment card, killcam, clips | Phase 2 |
+| [I8](#prompt-i8--endorsements-trust-the-avoid-list-and-the-dead-round) | Endorsements, trust, dead round | Alongside Phase 8 |
+| [I9](#prompt-i9--the-training-room-and-replay-takeover) | Training room, replay takeover | Phase 17 for the takeover half |
+| [I10](#prompt-i10--the-population-schedule-in-client-tournaments-and-the-local-leaderboard) | Weekly hour, tournaments, local board | Nothing |
+| [I11](#prompt-i11--arcade-variants-from-parts-that-already-exist) | Arcade variants | Phase 12 |
+
+---
 
 ### PROMPT I1 · The performance grade, attacker and taya
 
 **Run after `FUTURE.md` Phase 2. This is the highest-value item in either document.**
 
-> Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md`, then `docs/INSPIRATION.md`
-> §§ 4.1, 2.2 and 2.17. They carry the rules of the repo, what the game is for, what is open, and
-> this task's brief. Do not skip them because this prompt summarises the task; the summary is not
-> the rules.
+> Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md`, then `docs/FUTURE.md` §§ 0.5
+> and 0.6, then `docs/INSPIRATION.md` §§ 4.1, 2.2 and 2.17. They carry the rules of the repo, what
+> the game is for, what is open, the standing rules every prompt inherits, and this task's brief.
+> Do not skip them because this prompt summarises the task; the summary is not the rules.
 >
-> Build a per-match performance grade, S to D, computed independently of placement, because three
-> of four players lose every match in this game and placement alone is a brutal retention curve.
-> Grade against the distribution of that character's performances at that rating band using the
-> stats `FUTURE.md` § 2.2 already collects.
+> **VERIFY FIRST.** `FUTURE.md` Phase 2 shipped, and the stat set in its § 2.2 is actually being
+> collected: the grade is computed from those stats and from nothing else.
 >
-> ⚠️ **It is TWO grades, not one**, per `docs/INSPIRATION.md` § 2.17: every player is taya for one
-> round and an attacker for the others, and those are different games with different inputs. An
-> ATTACKER grade from knockdown rate, retrievals under pressure and time alive as last attacker. A
-> TAYA grade from tags per round defended, passive defence held and time to reset. Combine them by
-> rounds played in each role for the headline, and show both, because "A attacker, C taya" tells a
-> player what to practise and a single letter does not.
+> **Build a per-match performance grade, S to D, computed independently of placement.** Three of
+> four players lose every match in this game, and placement alone is a brutal retention curve.
+> Grade against the distribution of that character's performances at that rating band.
 >
-> Put the whole grading model in `Packages/com.tumbangpreso.core/` with tests, including one that
-> asserts the grade is mathematically independent of placement and one that asserts a player who
-> placed fourth can score an S. The grade must never feed rating: read `docs/INSPIRATION.md` § 4.1
-> on why performance-based rating fails. Show both grades on the end-of-match screen with the two
-> or three stats that drove each, and feed them into character mastery.
+> ⚠️ **It is TWO grades, not one.** Every player is taya for one round and an attacker for the
+> others, and those are different games with different inputs. An ATTACKER grade from knockdown
+> rate, retrievals under pressure and time alive as last attacker. A TAYA grade from tags per round
+> defended, passive defence held and time to reset. Combine by rounds played in each role for a
+> headline, and **show both**, because "A attacker, C taya" tells a player what to practise and a
+> single letter does not.
+>
+> **Constraints.**
+> - The whole grading model lives in `Packages/com.tumbangpreso.core/`.
+> - ⚠️⚠️ **The grade must never feed rating.** Rating is placement, because placement is the game.
+>   Mixing them produces a ladder people farm by playing selfishly, which is the failure mode of
+>   every performance-based ranked system that has ever been tried. § 4.1 has the argument.
+> - Tests: one asserting the grade is mathematically independent of placement, and one asserting a
+>   player who placed **fourth** can score an **S**.
+>
+> **Done when** both grades appear on the end-of-match screen with the two or three stats that
+> drove each, they feed character mastery, and `FUTURE.md` § 0.5 rule 9 is satisfied.
+
+---
 
 ### PROMPT I2 · The banner and stat trackers
 
-**Run after `FUTURE.md` Phase 2, alongside or after Phase 5.**
+**Run after `FUTURE.md` Phase 2, alongside or after Phase 5. Cheap, and it is the second-highest
+value item here.**
 
-> Read `CLAUDE.md`, `docs/VISION.md`, `docs/TODO.md` and `docs/INSPIRATION.md` § 2.5. `FUTURE.md`
-> Phase 2 must be in.
+> Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md`, then `docs/FUTURE.md` §§ 0.5
+> and 0.6, then `docs/INSPIRATION.md` § 2.5. Do not skip them because this prompt summarises the
+> task; the summary is not the rules.
 >
-> Build the player banner: a frame, a character pose, a badge and three stat trackers the player
-> chooses from the full stat list. Show it in the lobby, on the scoreboard, on the profile and on
-> the end-of-match screen. Trackers read from the profile written in `FUTURE.md` Phase 2 and are
-> replicated through the seat info that already crosses at match start rather than through a new
-> protocol. Frames, poses and badges are cosmetics with string ids, per `FUTURE.md` § 5.
+> **VERIFY FIRST.** `FUTURE.md` Phase 2 shipped, so the stats exist to track. If Phase 5 has
+> shipped, frames and poses are cosmetics with string ids and should reuse that inventory rather
+> than adding a second one.
+>
+> **Build the banner:** a frame, a character pose, a badge and **three stat trackers the player
+> chooses from the full stat list**. Show it in the lobby, on the scoreboard, on the profile and on
+> the end-of-match screen.
+>
+> **Why it is worth doing early:** three chosen trackers turn a stats page from something read once
+> into something a player builds. "Most knockdowns in a match: 7" beside a name in the lobby is
+> worth more retention per line of code than anything else in this document.
+>
+> **Constraints.** Trackers read from the profile; they are never a second source of truth.
+> Replicate through the seat info that already crosses at match start rather than adding a
+> protocol. Frames, poses and badges are cosmetics with string ids per `FUTURE.md` § 5.
+>
+> **Done when** a banner is visible to every peer in a lobby, trackers can be changed and persist,
+> and `FUTURE.md` § 0.5 rule 9 is satisfied.
+
+---
 
 ### PROMPT I3 · The challenge engine, achievements and loadout unlocks
 
-**Run after `FUTURE.md` Phase 4. One system, four features.**
+**Run after `FUTURE.md` Phase 4. One system, four features. Build it once, properly.**
 
-> Read `CLAUDE.md`, `docs/VISION.md`, `docs/TODO.md`, `docs/INSPIRATION.md` §§ 5 and 2.12, and
-> `docs/FUTURE.md` § 10. `FUTURE.md` Phases 2 and 4 must be in.
+> Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md`, then `docs/FUTURE.md` §§ 0.5
+> and 0.6, then `docs/INSPIRATION.md` §§ 5.3, 5.4, 5.6 and 2.12, then `docs/FUTURE.md` § 10. Do not
+> skip them because this prompt summarises the task; the summary is not the rules.
 >
-> Build ONE challenge engine in `Packages/com.tumbangpreso.core/` with a single condition type,
-> evaluated server-side from the match record, and use it for all four of: daily challenges, weekly
-> challenges, achievement unlocks and loadout unlocks. Build the achievement set in the three tiers
-> in `docs/INSPIRATION.md` § 5.6, every one paying a title, a badge or a banner tracker so nothing
-> is a dead list. Every challenge must be completable in Practice against bots, which is the rule
-> from § 5.4 that keeps the loadout system out of the competitive integrity problem, and a test
-> must assert it for every challenge in the set. No challenge may reward ignoring the can.
+> **VERIFY FIRST.** `FUTURE.md` Phases 2 and 4 shipped. Check whether Phase 13 has already built a
+> challenge system: if it has, extend it rather than writing a second.
+>
+> **Build ONE challenge engine** in `Packages/com.tumbangpreso.core/`, with a single condition
+> type, evaluated server-side from the match record, and use it for all four of: daily challenges,
+> weekly challenges, achievement unlocks and loadout unlocks. The only difference between them is
+> the reward and whether they repeat.
+>
+> **Then the achievement set**, in three tiers, per § 5.6.
+> - **Bronze, the teaching tier**: first knockdown, first retrieval under pressure, first win as
+>   taya. These exist to be seen in the first hour and to point at parts of the game.
+> - **Silver, the grind tier**: 100 knockdowns, a match with every character, all ten tsinelas used.
+>   Visible progress bars, which are most of the appeal.
+> - **Gold, the story tier**: win from last place at the final round, three knockdowns in one round,
+>   a full round as last attacker without being tagged, win without throwing at all.
+>
+> **Constraints.**
+> - ⚠️⚠️ **Every challenge must be completable in Practice against bots, and a test must assert it
+>   for every challenge in the set.** § 5.4: this is the rule that keeps the loadout system out of
+>   the competitive integrity problem, because the gate then costs time learning a character rather
+>   than matches won against people.
+> - ⚠️ **No challenge may reward ignoring the can.** "Get 10 knockdowns" teaches exactly that, and
+>   the can is the whole game.
+> - Every achievement pays a title, a badge or a banner tracker, so nothing is a dead list.
+> - ⚠️ **Nothing competitive is ever gated behind an achievement.** They are bragging, and bragging
+>   is enough.
+>
+> **Done when** one engine serves all four features, the practice-completable test passes for the
+> whole set, and `FUTURE.md` § 0.5 rule 9 is satisfied.
+
+---
 
 ### PROMPT I4 · Hero loadouts
 
-**Run after I3. This is `FUTURE.md` Phase 10's second half.**
+**Run after I3. This is the second half of `FUTURE.md` Phase 10 and it carries the balance risk.**
 
-> Read `CLAUDE.md`, then `docs/VISION.md` § 1 twice, then `docs/TODO.md`,
-> `docs/Hero_Strike_Balance.md`, `docs/INSPIRATION.md` § 5 and `docs/FUTURE.md` § 10. I3 must be in.
+> Read `CLAUDE.md` first, then `docs/VISION.md` § 1 twice, then `docs/TODO.md`, then
+> `docs/FUTURE.md` §§ 0.5 and 0.6, then `docs/INSPIRATION.md` § 5 in full, then
+> `docs/Hero_Strike_Balance.md` and `docs/FUTURE.md` § 10. Do not skip them because this prompt
+> summarises the task; the summary is not the rules.
 >
-> Build the hero loadout: a pool of options per ability slot as sketched in
-> `docs/INSPIRATION.md` § 5.1, every option a sidegrade at an unchanged ability budget, chosen
-> before the match and shown publicly in the lobby and on the scoreboard. Define the options and
-> the budget arithmetic in `Packages/com.tumbangpreso.core/` and write a test that fails if any
-> option is a strict improvement on its siblings along every axis. Unlock each option with the
-> challenge engine from I3. Do NOT build the swap-at-role-change idea from § 5.5 in this pass:
-> prototype it in custom games afterwards and write the measurement into `docs/TODO.md` before it
-> goes near ranked. Hero Strike only. Classic gets no abilities, ever.
+> **VERIFY FIRST.** I3 shipped, so the challenge engine exists. Confirm the ability budgets in
+> `docs/Hero_Strike_Balance.md` still describe the shipped kits, because every option here is
+> defined as a trade at an unchanged budget and that only means something if the budget is real.
+>
+> **Build the hero loadout:** a pool of options per ability slot as sketched in § 5.1, chosen
+> before the match, unlocked through the I3 challenge engine.
+>
+> **The rules, all load-bearing.**
+> - ⚠️⚠️ **Every option is a sidegrade at an unchanged budget.** Wider but shorter, faster but
+>   louder, stronger but slower to arrive. Nothing unlocks more damage, range, duration or a shorter
+>   cooldown. **Write a test that fails if any option is a strict improvement on its siblings along
+>   every axis.**
+> - ⚠️ **The build is public**, shown in the lobby and on the scoreboard. Hidden loadouts in a
+>   four-player fight are information asymmetry that feels like cheating, and seeing an opponent's
+>   build is where counterplay comes from.
+> - ⚠️ **Do not build the swap-at-role-change idea from § 5.5 in this pass.** It is the most
+>   interesting idea in this document and a real balance risk. Prototype it in custom games
+>   afterwards, measure it, and write the measurement into `docs/TODO.md` before it goes near ranked.
+> - **Hero Strike only. Classic never gets abilities**, per `VISION.md` § 1.
+>
+> **Constraints.** Option definitions and budget arithmetic in `Packages/com.tumbangpreso.core/`.
+>
+> **Done when** a build can be chosen, unlocked by a bot-completable challenge, and seen by
+> opponents, the sidegrade test exists and passes, and `FUTURE.md` § 0.5 rule 9 is satisfied.
+
+---
 
 ### PROMPT I5 · The queue and mode structure
 
-**Run before `FUTURE.md` Phase 7 (matchmaking), because it decides what Phase 7 queues into.**
+**Run before `FUTURE.md` Phase 7, because it decides what Phase 7 queues into.**
 
-> Read `CLAUDE.md`, `docs/VISION.md` § 1, `docs/TODO.md` and `docs/INSPIRATION.md` § 3.
+> Read `CLAUDE.md` first, then `docs/VISION.md` § 1, then `docs/TODO.md`, then `docs/FUTURE.md`
+> §§ 0.5 and 0.6, then `docs/INSPIRATION.md` § 3 in full. Do not skip them because this prompt
+> summarises the task; the summary is not the rules.
 >
-> Restructure the play menu into QUICK MATCH, RANKED, ARCADE, CUSTOM and PRACTICE, with the mode
-> (Classic or Hero Strike) chosen inside each rather than as a peer of them. Modes are rulesets and
-> queues are stakes: do not create a third ruleset called Ranked. Implement the population gating
-> rule from § 3.4 as real logic with the thresholds in configuration, so a queue opens and merges
-> on measured wait times rather than on a guess, and tell the player plainly when a queue is closed.
-> Start with a single casual queue and the structure in place to split it. Extend
-> `ConvertedMainMenu` and `ConvertedMatchSetup` rather than building new screens.
+> **VERIFY FIRST.** Read `ConvertedMainMenu` and `ConvertedMatchSetup` before designing any screen:
+> the practice and multiplayer tabs already exist and this restructures them rather than replacing
+> them.
+>
+> **Build the structure in § 3.2:** PLAY containing QUICK MATCH, RANKED, ARCADE, CUSTOM and
+> PRACTICE, with the mode (Classic or Hero Strike) chosen **inside** each rather than as a peer of
+> them.
+>
+> **The rule this rests on.** ⚠️⚠️ **Modes are rulesets and queues are stakes. Do not create a
+> third ruleset called Ranked.** `VISION.md` § 1 says both modes are first class; a ranked mode with
+> its own rules becomes a third game to balance and, worse, practice in casual stops transferring to
+> ranked, which is the fastest way to make a competitive game feel unfair. RANKED gets its own
+> screen, art and badge. It changes stakes and integrity, never the rules in `docs/Design.md`.
+>
+> **Also build the population gate from § 3.4**, as real logic with the thresholds in
+> configuration: a queue opens when its median wait sits under 60 seconds for a week, and merges
+> back when its 90th percentile exceeds 180 seconds for a week. ⚠️ **Four queues at thirty
+> concurrent players is zero queues.** Start with one casual queue and the structure in place to
+> split it, and **tell the player plainly when a queue is closed**, because "RANKED HERO STRIKE
+> opens at a bigger population" is respectable and a queue that never fills is not.
+>
+> **Optional, and flag it rather than deciding it alone:** § 3.3 argues for unique character
+> selection in ranked only, since four players can currently all pick the same character.
+> Prototype it in custom games and put the question in your handoff.
+>
+> **Done when** the menu matches § 3.2, the gate opens and merges queues off measured waits, and
+> `FUTURE.md` § 0.5 rule 9 is satisfied.
+
+---
 
 ### PROMPT I6 · The daily seed, with medals and a ghost
 
-**Run any time after `FUTURE.md` Phase 2. Independent of everything else.**
+**Run any time after `FUTURE.md` Phase 2. Independent of everything, and it is the only retention
+feature that works at thirty concurrent players.**
 
-> Read `CLAUDE.md`, `docs/VISION.md`, `docs/TODO.md` and `docs/INSPIRATION.md` §§ 2.9, 2.14 and
-> 2.30.
+> Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md`, then `docs/FUTURE.md` §§ 0.5
+> and 0.6, then `docs/INSPIRATION.md` §§ 2.9, 2.14 and 2.30. Do not skip them because this prompt
+> summarises the task; the summary is not the rules.
 >
-> Build the daily seed mode: one deterministic match a day, identical for every player, same map,
-> same taya order, same bots, one attempt, a leaderboard and a short shareable result string. It
-> must need no matchmaking and no other human player, which is what makes it the only retention
-> feature that works at thirty concurrent players. Derive the seed from the date so every client
-> agrees without asking a server. Submit the result through the Cloud Code endpoint from
-> `FUTURE.md` Phase 2, and write it to the local machine leaderboard from I10 as well, so the mode
-> still has a scoreboard with no internet.
+> **VERIFY FIRST.** `FUTURE.md` Phase 2 shipped. Check whether Phase 12 has already added this
+> mode, and check whether replays exist yet, because the ghost depends on them.
 >
-> Add medals in the Trackmania sense, per § 2.14: bronze, silver, gold and author score thresholds
-> published with the seed, so the player is chasing a bar rather than a population. Add a single
-> modifier field per § 2.30, one tsinelas only, half stamina, double taya reach, so a new twist a
-> week costs one line of data. If replays exist by then, add the ghost of the player's own best run.
+> **Build the daily seed:** one deterministic match a day, identical for every player, same map,
+> same taya order, same bots, one attempt, a leaderboard and a short shareable result string.
+> **Derive the seed from the date** so every client agrees without asking a server.
+>
+> **Then the two things that make it stick.**
+> - **Medals**, in the Trackmania sense: bronze, silver, gold and author thresholds published with
+>   the seed, so the player is chasing a bar rather than a population. A solo target is the only
+>   progression that works when nobody else is online.
+> - **A modifier field**, one per day: one tsinelas only, half stamina, double taya reach. A new
+>   twist a week out of a single field.
+> - If replays exist, the **ghost** of the player's own best run.
+>
+> **Constraints.** It must need no matchmaking and no other human player. Submit through the Cloud
+> Code endpoint from `FUTURE.md` Phase 2, **and** write to the local machine leaderboard from I10 if
+> that exists, so the mode still has a scoreboard with no internet.
+>
+> **Done when** two machines on the same date get an identical match, the result submits, medals
+> award, and `FUTURE.md` § 0.5 rule 9 is satisfied.
+
+---
 
 ### PROMPT I7 · The moment: best-moment card, killcam and clip export
 
-**Run after `FUTURE.md` Phase 2.**
+**Run after `FUTURE.md` Phase 2. The card alone is the best growth-per-hour item in either file.**
 
-> Read `CLAUDE.md`, `docs/VISION.md`, `docs/TODO.md` and `docs/INSPIRATION.md` § 4.3.
+> Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md`, then `docs/FUTURE.md` §§ 0.5
+> and 0.6, then `docs/INSPIRATION.md` § 4.3. Do not skip them because this prompt summarises the
+> task; the summary is not the rules.
 >
-> Build the three things that make a good moment survive the half second it happened in: a
-> best-moment card generated as a still from events already raised and framed for a phone
-> screenshot, a three-second replay of the tag that caught you shown to the victim only, and a save
-> the last 30 seconds clip export. Do the card first: it is the cheapest and it is the one that
-> gets posted. The killcam should reuse whatever `FUTURE.md` § 17 determines about replay
-> determinism, so if § 17 is not done, record just the two bodies and the camera rather than
-> building a second replay system.
+> **VERIFY FIRST.** Check whether `FUTURE.md` § 17 has proved replay determinism yet. It changes
+> how the killcam is built and nothing else here depends on it.
+>
+> **Build three things, cheapest first.**
+> 1. **A best-moment card**: a still, generated from events already raised, framed, with the stat
+>    line under it, designed for a phone screenshot. Do this one first. A great retrieval happens in
+>    half a second and in a team game a teammate saw it; here nobody did.
+> 2. **A three-second replay of the tag that caught you, shown to the victim only.** It converts
+>    "that was bullshit" into "I saw what I did wrong", which is the most valuable thing a
+>    competitive game can show a losing player.
+> 3. **Clip export**: save the last 30 seconds.
+>
+> **Constraints.** ⚠️ **Do not build a second replay system.** If § 17's determinism work is done,
+> reuse it. If it is not, record just the two bodies and the camera for the killcam and say so in
+> the handoff.
+>
+> **Done when** a match produces a card worth posting, and `FUTURE.md` § 0.5 rule 9 is satisfied.
+
+---
 
 ### PROMPT I8 · Endorsements, trust, the avoid list and the dead round
 
-**Run alongside `FUTURE.md` Phase 8.**
+**Run alongside `FUTURE.md` Phase 8. The fourth item is design work, not implementation.**
 
-> Read `CLAUDE.md`, `docs/VISION.md`, `docs/Design.md`, `docs/TODO.md` and `docs/INSPIRATION.md`
-> §§ 2.4, 2.8, 2.23, 2.13, 2.15, 2.28 and 4.2.
+> Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/Design.md`, then `docs/TODO.md` § 16,
+> then `docs/FUTURE.md` §§ 0.5 and 0.6, then `docs/INSPIRATION.md` §§ 2.4, 2.8, 2.23, 2.13, 2.15,
+> 2.28 and 4.2. Do not skip them because this prompt summarises the task; the summary is not the
+> rules.
 >
-> Four things. First, endorsements: one button on the end-of-match screen, a level on the
-> nameplate, decaying slowly. Second, a trust score from account age, matches finished, report count
-> and leave rate, used to pool brand-new and heavily-reported accounts separately, per § 2.8. Third,
-> an avoid list of three players that matchmaking honours, per § 2.23: at four players one
-> unpleasant person is a quarter of the lobby, so this is worth more here than in a ten-player game.
+> **VERIFY FIRST.** Read `docs/Design.md` for the current passive-defence and knockdown values.
+> Several arguments below rest on passive defence paying far more per round than a knockdown, and
+> if that has been rebalanced since, the fourth item changes shape.
 >
-> Fourth, and this one is design rather than implementation. § 4.2 records that a player far behind
-> at the final round has nothing to play for, and there are now FOUR candidate answers on the table:
-> pay all four placements rather than only first, a final-round multiplier, per-round objectives
-> that pay regardless of score (§ 4.2), a shrinking box in the last 20 seconds built on the existing
-> `CONFINEMENT_RADIUS` (§ 2.15), and passive defence that BANKS rather than scores so a knockdown
-> can steal it (§ 2.28). The last one would also address the known balance risk that passive defence
-> pays 900 a round against 100 for a knockdown, and it is the largest change of the set. Prototype
-> them in custom games, measure with `BotBehaviourProbe` across multiple runs because `docs/TODO.md`
-> § 16 records a 20 per cent spread on a single run, and write the answer into `docs/Design.md` with
-> the measurement rather than picking one by taste. A casual-only comeback assist per § 2.13 is
-> acceptable; ranked gets none of it.
+> **Build three, then investigate the fourth.**
+> 1. **Endorsements**: one button on the end-of-match screen, a level on the nameplate, decaying
+>    slowly. It is the only anti-toxicity system with evidence behind it and it costs one button.
+> 2. **A trust score** from account age, matches finished, report count and leave rate, used to pool
+>    brand-new and heavily-reported accounts separately. It is also the smurf answer that needs no
+>    anti-cheat.
+> 3. **An avoid list of three** that matchmaking honours. At four players one unpleasant person is a
+>    quarter of the lobby, so this matters more here than in a ten-player game.
+> 4. **The dead round.** § 4.2 records that a player far behind at the final round has ninety
+>    seconds of nothing, and there are five candidates on the table with none built and none
+>    measured: pay all four placements rather than only first; a final-round multiplier; per-round
+>    objectives that pay regardless of score; a shrinking box in the last 20 seconds built on the
+>    existing confinement radius (§ 2.15); and passive defence that **banks** rather than scores so
+>    a knockdown can steal it (§ 2.28), which would also address the known balance risk and is the
+>    largest change of the five.
+>
+> **Constraints on the fourth item.** ⚠️ **Prototype in custom games. Measure across several
+> `BotBehaviourProbe` runs**, because `docs/TODO.md` § 16 records a 20 per cent spread on a single
+> run, so one run is never a comparison. **Write the answer into `docs/Design.md` with the
+> measurement** rather than picking one by taste. A casual-only comeback assist per § 2.13 is
+> acceptable; ⚠️ **ranked gets none of it**.
+>
+> **Done when** the first three ship, the fourth has a measured recommendation written into
+> `docs/Design.md`, and `FUTURE.md` § 0.5 rule 9 is satisfied.
+
+---
 
 ### PROMPT I9 · The training room and replay takeover
 
-**Run after `FUTURE.md` Phase 17's determinism proof. Independent of everything else.**
+**Run after `FUTURE.md` Phase 17's determinism proof for the takeover half. The room itself needs
+nothing.**
 
-> Read `CLAUDE.md`, `docs/VISION.md`, `docs/Design.md`, `docs/TODO.md`, `docs/Guided_Training.md`
-> and `docs/INSPIRATION.md` §§ 2.20 and 2.21.
+> Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/Design.md`, then `docs/TODO.md`, then
+> `docs/Guided_Training.md`, then `docs/FUTURE.md` §§ 0.5 and 0.6, then `docs/INSPIRATION.md`
+> §§ 2.20 and 2.21. Do not skip them because this prompt summarises the task; the summary is not
+> the rules.
 >
-> Build the training room. Contact in this game resolves by DISTANCE on the host and never by a
-> trigger volume, so every combat range is a number rather than a mesh and can be drawn exactly:
-> render the tag window as a ring on the taya, the throw arc as a live trajectory, the shove cone,
-> the confinement box and the frame on which the lata's fall registers. Read the numbers from
-> `Packages/com.tumbangpreso.core/` rather than restating them, so the room can never disagree with
-> the game. Add a slow-motion step and a reset-to-position key. Then, if `FUTURE.md` § 17 has proved
-> replay determinism, add replay takeover: pause any replay, take that seat, and play the rest out
-> live. Extend `GuidedTraining` rather than building a second training path.
+> **VERIFY FIRST.** Confirm contact still resolves by distance on the host rather than by a trigger
+> volume, because the entire value of this feature is that every combat range is a number that can
+> be drawn exactly.
+>
+> **Build the training room.** Draw the invisible: the tag window as a ring on the taya, the throw
+> arc as a live trajectory, the shove cone, the confinement box, and the frame on which the lata's
+> fall registers. Add a slow-motion step and a reset-to-position key.
+>
+> ⚠️ **Read every number from `Packages/com.tumbangpreso.core/` rather than restating it**, so the
+> room can never disagree with the game. A training mode that lies is worse than none.
+>
+> **Then, only if `FUTURE.md` § 17 has proved replay determinism: replay takeover.** Pause any
+> replay, take that seat, and play the rest out live. It is the best training feature in any
+> fighting game and this codebase can actually support it, because a replay is the input stream and
+> the simulation is deterministic.
+>
+> **Constraints.** Extend `GuidedTraining`; do not build a second training path.
+>
+> **Done when** every range in the game can be seen and practised, the numbers provably come from
+> the core, and `FUTURE.md` § 0.5 rule 9 is satisfied.
+
+---
 
 ### PROMPT I10 · The population schedule, in-client tournaments and the local leaderboard
 
-**Run any time. This is the cheapest population work in either document and it is mostly not code.**
+**Run any time. The cheapest population work in either document, and most of it is not code.**
 
-> Read `CLAUDE.md`, `docs/VISION.md`, `docs/TODO.md` and `docs/INSPIRATION.md` §§ 2.6, 2.24 and
-> 2.26. `FUTURE.md` Phase 17's tournament mode helps but is not required.
+> Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md`, then `docs/FUTURE.md` §§ 0.5
+> and 0.6, then `docs/INSPIRATION.md` §§ 2.6, 2.24 and 2.26. Do not skip them because this prompt
+> summarises the task; the summary is not the rules.
 >
-> Three things, cheapest first. One: a local machine leaderboard, a plain file on disk, best daily
-> seed and best knockdown streak on this PC with three-letter initials, which needs no internet, no
-> account and no other players and is therefore the only leaderboard that works on day one. Two: a
-> scheduled weekly hour shown in the main menu with a countdown, so a small population concentrates
-> into full lobbies instead of spreading across empty ones. Three: an in-client tournament that runs
-> in that window, using `SpectatorCamera` and the broadcast clock that already exist and the custom
-> lobby from `FUTURE.md` § 12. Do not build a bracket service: a static page is enough.
+> **VERIFY FIRST.** Check what `SpectatorCamera` and the broadcast clock already do before building
+> anything for the tournament half: this is mostly wiring rather than invention.
+>
+> **Build three things, cheapest first.**
+> 1. **A local machine leaderboard**: a plain file on disk, best daily seed and best knockdown
+>    streak on this PC, three-letter initials, arcade style. ⚠️ **It needs no internet, no account
+>    and no other players, which makes it the only leaderboard that works on day one** and in a
+>    school computer lab.
+> 2. **A scheduled weekly hour**, shown in the main menu with a countdown. A small game does not
+>    have a population problem at every hour, it has one at most hours, and a schedule concentrates
+>    thirty players into full lobbies instead of spreading them across empty ones. **This is a
+>    schedule, not content, and it is nearly free.**
+> 3. **An in-client tournament** that runs in that window, using the spectator camera and broadcast
+>    clock that already exist and the custom lobby from `FUTURE.md` § 12.
+>
+> **Constraints.** ⚠️ **Do not build a bracket service.** A static page is enough and it costs
+> nothing to host.
+>
+> **Done when** the local board persists across sessions with no network, the countdown is visible
+> from the menu, and `FUTURE.md` § 0.5 rule 9 is satisfied.
+
+---
 
 ### PROMPT I11 · Arcade variants from parts that already exist
 
-**Run after `FUTURE.md` Phase 12's custom games.**
+**Run after `FUTURE.md` Phase 12's custom games. Nearly free once those exist.**
 
-> Read `CLAUDE.md`, `docs/VISION.md` § 1, `docs/Design.md`, `docs/TODO.md` and
-> `docs/INSPIRATION.md` §§ 2.16 and 2.30. `FUTURE.md` Phase 12 must be in.
+> Read `CLAUDE.md` first, then `docs/VISION.md` § 1, then `docs/Design.md`, then `docs/TODO.md`,
+> then `docs/FUTURE.md` §§ 0.5 and 0.6, then `docs/INSPIRATION.md` §§ 2.16 and 2.30. Do not skip
+> them because this prompt summarises the task; the summary is not the rules.
 >
-> Build three arcade variants out of rules the core already owns, each as a new mode rather than as
-> a change to Classic or Hero Strike. SUDDEN DEATH: a tied round with the can standing shrinks the
-> box every 10 seconds until it falls, so there are no draws. LAST TSINELAS STANDING: three tsinelas
-> per attacker, lose them all and you are out, last attacker takes the round. DAILY MODIFIERS: one
-> field on the daily seed from I6 that applies a single rule twist, one tsinelas only, half stamina,
-> double taya reach. Every variant's rules go in `Packages/com.tumbangpreso.core/` with tests and
-> get written into `docs/Design.md` or a sibling document in the same commit. Touch nothing in
-> Classic's own ruleset.
+> **VERIFY FIRST.** `FUTURE.md` Phase 12's custom games shipped, and the rules core still owns the
+> round, because each variant below is a rules change expressed there rather than in Unity code.
+>
+> **Build three variants, each as a new mode.**
+> 1. **SUDDEN DEATH.** A round timer expiring with the can standing and the score tied shrinks the
+>    box every 10 seconds until it falls. No draws, ever.
+> 2. **LAST TSINELAS STANDING.** Three tsinelas per attacker; lose them all and you are out; the
+>    last attacker takes the round. A completely different game from the same parts, and the best
+>    candidate here for a rotating featured mode.
+> 3. **DAILY MODIFIERS.** One field on the daily seed from I6 applying a single rule twist.
+>
+> **Constraints.** ⚠️⚠️ **Touch nothing in Classic's own ruleset.** A new mode is a new mode.
+> `docs/Design.md` governs Classic and `VISION.md` § 1 governs why. Every variant's rules go in
+> `Packages/com.tumbangpreso.core/` with tests and are written into `docs/Design.md` or a sibling
+> document in the same commit as the code.
+>
+> **Done when** each variant can be selected in custom games and played to completion, Classic is
+> byte-for-byte unchanged in its rules, and `FUTURE.md` § 0.5 rule 9 is satisfied.
+
+---
 
 ### 8.6 The combined order
 
