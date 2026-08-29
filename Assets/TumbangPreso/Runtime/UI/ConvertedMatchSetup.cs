@@ -1534,7 +1534,17 @@ namespace TumbangPreso.UI
             Refresh();
         }
 
-        private void HandleLobbyRosterSynced(LobbySeatInfo[] seats) => RefreshSeats();
+        /// <summary>
+        /// ⚠️ THE BUTTONS GO WITH THE SEATS NOW. A guest's button reads `WAITING FOR MALLOWS`,
+        /// and the name it draws comes out of this very table: the roster is what turns the
+        /// leader's peer id into a person. Refreshing only the plates left the button saying
+        /// `WAITING FOR HOST` until some unrelated lobby event happened to repaint it.
+        /// </summary>
+        private void HandleLobbyRosterSynced(LobbySeatInfo[] seats)
+        {
+            RefreshSeats();
+            RefreshActionButtons();
+        }
 
         private void HandleModeSynced(int mode) => Refresh();
 
@@ -2364,10 +2374,51 @@ namespace TumbangPreso.UI
             // ⚠️ THE READY WIRE IS NOT DELETED. `DeclareReadyServerRpc`, `BroadcastReadyTally`
             // and `ReadyGate` are what the PRE-ROUND gate inside a match runs on, which is a
             // different gate with a different job. Only the LOBBY stops asking.
-            string label = GameLaunch.Spectator ? "SPECTATING" : "WAITING FOR HOST";
+            //
+            // ⚠️⚠️ AND IT NAMES THE HOST, BECAUSE "WAITING FOR HOST" READ AS A BROKEN SCREEN.
+            // 🧑 2026-08-29, from the guest side of a lobby that was working exactly as designed:
+            // *"ready for clients is broken, it js says waiting for host"*. The paragraph above
+            // already decided that saying who everybody is waiting for is the useful thing left
+            // in this slot, and then the code did not say who: an unnamed role reads as a
+            // placeholder somebody forgot to fill in, while `WAITING FOR MALLOWS` is a fact about
+            // a person in the room and is obviously the screen working.
+            //
+            // ⚠️ FITTED, NOT `SetText`. A player name is unbounded where `WAITING FOR HOST` was
+            // 16 fixed characters, and every converted label carries `m_HorizontalOverflow: 1`,
+            // so an overflow here would be silent. Same trap the START plate above records.
+            string label = GameLaunch.Spectator ? "SPECTATING" : $"WAITING FOR {HostLabel()}";
 
-            SetText("PrimaryButton", label);
+            SetFittedButtonLabel("PrimaryButton", label, MaxButtonFontSize);
             if (prim != null) prim.interactable = false;
+        }
+
+        /// <summary>
+        /// The lobby leader's name in capitals, or `HOST` when this peer cannot yet name them.
+        ///
+        /// ⚠️ THE LEADER IS LOOKED UP IN THE ROSTER RATHER THAN ASSUMED TO BE PEER 0. Peer 0 is
+        /// the listen host and is the right answer in every game he has played, and it is the
+        /// wrong answer on the Linux dedicated build, where the server holds no seat and
+        /// `LobbySession.IsSeatlessReferee` keeps it out of the election entirely. Asking the
+        /// roster costs a loop over four entries and is correct on both.
+        ///
+        /// ⚠️ AND IT FALLS BACK RATHER THAN DRAWING A BLANK. The leader id arrives on `Seating`,
+        /// which a peer gets once, so there is a window before it in which the honest answer is
+        /// the role rather than the person.
+        /// </summary>
+        private static string HostLabel()
+        {
+            var net = NetSession.Instance;
+            int leader = net != null ? net.Lobby.LeaderPeerId : -1;
+            if (leader < 0) return "HOST";
+
+            for (int seat = 0; seat < Balance.PlayerCount; seat++)
+            {
+                var info = MatchRpc.Instance?.GetSeatInfo(seat);
+                if (info != null && info.Occupied && info.PeerId == leader)
+                    return PlayerLabel(info, seat).ToUpperInvariant();
+            }
+
+            return "HOST";
         }
 
         /// <summary>

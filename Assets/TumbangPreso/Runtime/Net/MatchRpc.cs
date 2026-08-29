@@ -696,6 +696,11 @@ namespace TumbangPreso.Net
                 // silently does nothing when the host's `TryTakeSeat` refuses it.
                 net.Lobby.MatchInProgress = inProgress;
 
+                // ⚠️ AND SO WAS THE LEADER, ON THE LINE ABOVE IT. `leaderId` was read off the
+                // wire and dropped; see `LobbySession.ApplyLeaderFromHost`. The lobby's guest
+                // button names the host with it.
+                net.Lobby.ApplyLeaderFromHost(leaderId);
+
                 net.SetLocalSeating(seat, spectator);
             }
 
@@ -2950,6 +2955,20 @@ namespace TumbangPreso.Net
                                                float timeLeft, int[] scores,
                                                bool inProgress, bool roundActive)
         {
+            // ⚠️⚠️ A PACKET THE HOST WROTE BEFORE ITS OWN ARENA LOADED IS DROPPED WHOLE.
+            // `MatchDirector.IsPreStartSnapshot` carries the full account and the quote;
+            // `docs/TODO.md` § 82. In one line: the host keeps streaming `SyncWorld` at 5 Hz
+            // while it loads the arena it has just told everybody to load, and every one of
+            // those packets says the match is NOT running. A client that finished loading first
+            // read that as the match ending one second after it began.
+            //
+            // ⚠️ THE GUARD IS HERE, NOT INSIDE `ApplySnapshot`, BECAUSE THERE ARE TWO DIRECTORS.
+            // The same `inProgress` goes to `RoundDirector.ApplySnapshot` on the next line, which
+            // clears `RoundActive` and with it `CanAct`. Refusing the match half and applying the
+            // round half swaps a phantom result board for a body that cannot move.
+            if (GameServices.Match != null && GameServices.Match.IsPreStartSnapshot(inProgress))
+                return;
+
             bool wasRoundActive = GameServices.Round != null && GameServices.Round.RoundActive;
 
             GameServices.Match?.ApplySnapshot(scores, roundNumber, inProgress);

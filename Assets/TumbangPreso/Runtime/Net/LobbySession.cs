@@ -452,6 +452,29 @@ namespace TumbangPreso.Net
         public bool IsLeader(int peerId) => peerId >= 0 && peerId == LeaderPeerId;
 
         /// <summary>
+        /// The leader, as the HOST has just told this client it is.
+        ///
+        /// ⚠️⚠️ THE FIELD ALREADY TRAVELLED AND WAS THROWN AWAY AT THE DOOR. `SendSeating` writes
+        /// `lobby.LeaderPeerId` into the `Seating` payload and `OnSeatingMsg` read it into a local
+        /// called `leaderId` and never used it, so every client's `LeaderPeerId` stayed at the -1
+        /// it is constructed with. Anything a client wanted to ask about the leader — starting
+        /// with "whose name goes on WAITING FOR HOST" — had no answer available.
+        ///
+        /// ⚠️ IT IS A SEPARATE METHOD FROM `ClaimLeaderIfVacant` AND `ReassignLeader` BECAUSE
+        /// THOSE TWO DECIDE AND THIS ONE OBEYS. Election is a host rule and stays on the host;
+        /// a client applies the answer it was sent and elects nobody, which is the same split
+        /// `HostAssignSeat` and `OnSeatingMsg` already keep for seats.
+        /// </summary>
+        public void ApplyLeaderFromHost(int peerId)
+        {
+            int resolved = peerId < 0 ? -1 : peerId;
+            if (LeaderPeerId == resolved) return;
+
+            LeaderPeerId = resolved;
+            LeaderChanged?.Invoke(resolved);
+        }
+
+        /// <summary>
         /// A dedicated server's own peer holds no seat and plays nothing — it referees.
         /// </summary>
         public bool IsSeatlessReferee(int peerId) => IsDedicated && peerId == 1;

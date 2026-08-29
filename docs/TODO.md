@@ -1927,6 +1927,119 @@ audits green, `IlalimNgTulayPipeline` green, and fifteen v24 in-engine renders i
 from both playable ends with the patch rectangles gone.
 
 
+
+---
+
+## 82 · The 2026-08-29 night batch: the match that was over before it started
+
+Reported from a four-player LAN game with 🧑 as a CLIENT, not the host. Two screenshots: the
+lobby, and the arena eight seconds later with the final standings up.
+
+### 82.1 ✅ FIXED: THE MATCH ENDED FOR EVERY NON-HOST ONE SECOND AFTER IT BEGAN
+
+🧑: *"wtf the game started as done for all non hosts and host is still playing"*.
+
+**The screenshot is the whole diagnosis if you read the two halves against each other.** The
+result board says `DRAW`, `HERO STRIKE · FINAL STANDINGS · 8 ROUNDS`, and four rows of `0 PTS`.
+Behind it the scoreboard reads `PHAISTER 100 · MALLOWS 30 · MATTHEW 0 · ROCKAFORT 0` and the clock
+is at **01:26 of round 1**. So the board is real, the scores underneath it are real and still
+arriving, and the two disagree — which rules out "the match ended" and leaves only "something
+raised the end-of-match event over a live match".
+
+**The cause is a race between the host's own scene load and everybody else's.**
+
+1. `MatchRpc.HostStartMatch` sends the `StartMatch` message to the peers and **then** loads the
+   host's own arena. Every peer, host included, loads its arena independently.
+2. `MatchRpc.FixedUpdate` writes `SyncWorld` at 5 Hz for the whole of that load, and the
+   `inProgress` field on it is `GameServices.Match.MatchInProgress` — which is still **false** on
+   the host, because the flag is set by `SliceRunner.Begin`, which lives in the scene that has not
+   finished loading.
+3. A client whose disk answered first is already in its arena with `MatchInProgress` **true**.
+4. The next of those packets is therefore a true → false edge, and `MatchDirector.ApplySnapshot`
+   raises `MatchEnded` on exactly that edge.
+
+⚠️⚠️ **THE EDGE WAS ADDED TO FIX THE OPPOSITE FAULT AND IT IS STILL RIGHT.** `ApplySnapshot`'s own
+header records why a client needs the end of the match as an event: without it a client never saw
+the final standings and the whole rematch vote was unreachable for anyone but the host. The fault
+is not the edge, it is that **an edge cannot tell "the match you are in has ended" from "the match
+you are in had not started when I wrote this"**, and the host produces five of the second kind per
+second across the load.
+
+⚠️ **WHAT IT COSTS IS MORE THAN A PANEL.** `SliceRunner.OnMatchEnded` runs on the same event and
+parks the cast — `Intent.Parked` is permanent by design — so the three clients were not merely
+looking at a wrong screen, they were **out of the game for the rest of the match** while the host
+played on. That is the same report from the other side.
+
+⚠️ **IT IS A RACE, SO IT IS A COIN FLIP PER CLIENT PER MATCH.** The host is immune by
+construction. That is why it survived every headless probe and every single-machine test: one
+process cannot lose a race to itself, and `NetworkMultiProcessProbes` starts its peers against a
+host that is already in the arena.
+
+**The fix is one question asked in one place.** `MatchDirector.HostConfirmedInProgress` records
+whether the host has described **this** match as running at least once, `StartMatch` clears it, and
+`IsPreStartSnapshot` is the three-term test the guard reads. `MatchRpc.SyncWorldSnapshotClientRpc`
+drops such a packet **whole**.
+
+⚠️ **THE WHOLE PACKET, NOT JUST THE EVENT**, because the same `inProgress` goes to
+`RoundDirector.ApplySnapshot` on the next line, which clears `RoundActive` and with it `CanAct`.
+Believing the guard and applying the state trades a phantom result board for a body that cannot
+move.
+
+⚠️ **NO WIRE CHANGE AND NO PROTOCOL BUMP, AND THE ALTERNATIVE THAT WOULD HAVE NEEDED ONE IS
+WORSE.** A match generation counter in the payload drifts the moment somebody joins late: a joiner
+adopts the host's number from the first packet it receives and then increments past it in its own
+`StartMatch`, after which every packet it receives looks stale forever. `NetSession.ProtocolVersion`
+is untouched at 12.
+
+**Verified:** `MatchStartRaceTests`, five cases — the pre-start packet is dropped, the real end of
+the match still fires, a rematch re-arms the guard, a lobby peer is unaffected, and a late joiner
+is confirmed by the first packet it gets and still sees the result board.
+
+### 82.2 ✅ FIXED: `WAITING FOR HOST` READ AS A BROKEN SCREEN, AND THE LEADER ID WAS ON THE WIRE ALREADY
+
+🧑: *"ready for clients is broken, it js says waiting for host"*.
+
+The guest lobby button is **working as designed** — § 80's decision stands, READY is gone and only
+the host starts — but the label was the reason it did not look like it. The comment above that line
+had already decided the right thing (*"Saying who everybody is waiting for is the useful thing
+left"*) and then the code named a ROLE, not a person, and an unnamed role reads as a placeholder
+somebody forgot to fill in.
+
+It now reads `WAITING FOR MALLOWS`.
+
+⚠️⚠️ **THE NAME NEEDED THE LEADER, AND THE LEADER WAS BEING THROWN AWAY AT THE DOOR.**
+`MatchRpc.SendSeating` has always written `lobby.LeaderPeerId` into the `Seating` payload, and
+`OnSeatingMsg` read it into a local called `leaderId` **and never used it**. Every client's
+`LobbySession.LeaderPeerId` therefore stayed at the -1 it is constructed with, for the whole
+session. `ApplyLeaderFromHost` applies it; election stays a host rule, the same split
+`HostAssignSeat` and `OnSeatingMsg` already keep for seats.
+
+⚠️ **THE LEADER IS LOOKED UP IN THE ROSTER, NOT ASSUMED TO BE PEER 0.** Peer 0 is right on every
+listen host and wrong on the Linux dedicated build, where the server holds no seat and
+`IsSeatlessReferee` keeps it out of the election entirely.
+
+⚠️ **AND IT IS FITTED, NOT `SetText`.** A player name is unbounded where `WAITING FOR HOST` was 16
+fixed characters, and every converted label carries `m_HorizontalOverflow: 1`, so the overflow
+would have been silent — the same trap § 80.2 fixed one plate over.
+
+### 82.3 ⚠️ NOT DONE, AND DELIBERATELY: THE HOST'S HALF OF § 82.1
+
+The client now refuses the stale packet, but **the host is still writing it** — five per second for
+the length of its arena load, each one describing a match it has already told four people to start
+as not running.
+
+The obvious gate is wrong and worth writing down so nobody spends the hour: `LobbySession.
+MatchInProgress` is set by `HostStartMatch` and cleared only by `NetSession`'s shutdown path, so it
+is **still true while the result board is up**. Gating the broadcast on `lobby.MatchInProgress &&
+!match.MatchInProgress` would suppress the packet that ends the match, which is the one packet in
+the exchange that must not be dropped.
+
+**Done looks like** an explicit latch set wherever the host commits to loading an arena — both
+`HostStartMatch` and the rematch path through `MatchResult.BeginRematchLocally`, which reloads on
+every peer and has the identical race — and cleared the first time `GameServices.Match.
+MatchInProgress` reads true. It is a bandwidth and honesty fix, not a correctness one, now that the
+client refuses the packet.
+
 ---
 
 ## 0 · Hero Strike is being reworked, and the plan is its own file
