@@ -165,7 +165,22 @@ namespace TumbangPreso.UI
             _isDefenderPerson = _character.IsPerson && isDefense;
 
             if (_isAttackerPerson) _chargeKey.text = "[LMB]";
-            if (_isDefenderPerson) _resetKey.text = "RIGHTING LATA [E]";
+            // ⚠️⚠️ `RESET [E]`, NOT `RIGHTING LATA [E]`, AND THE OLD ONE WAS DRAWN CLIPPED.
+            // 🧑 2026-08-29, off the taya card in the built player, where it read `RIGHTING LA`:
+            // *"'righting lata' text overflow, maybe shorten that and check for other text
+            // overflows here"*.
+            //
+            // ⚠️ THE ROW IS A METER, SO THE LABEL COLUMN IS NARROW BY DESIGN. This is the same
+            // `BuildMeter` row the other two use, and the key sits beside a fill bar rather than
+            // across the card. Its siblings are `[LMB]` at 5 characters and `LUNGE [RMB]` at 11;
+            // this was **17** and had nowhere to go.
+            //
+            // ⚠️ AND `RESET` IS THE GAME'S OWN WORD FOR IT RATHER THAN A SHORTER SYNONYM.
+            // `docs/Design.md` describes the verb as the taya RESETTING the lata, and the lata
+            // card on the same screen already reads `RESETTING 53%` while it is happening, so the
+            // two surfaces now say the same thing. `RIGHTING` was the only place that word
+            // appeared anywhere in the game.
+            if (_isDefenderPerson) _resetKey.text = "RESET [E]";
 
             _carrier = _character.GetComponent<Carrier>();
             _verbs = _character.GetComponent<CombatVerbs>();

@@ -595,7 +595,11 @@ namespace TumbangPreso
 
                 // The other hero prop. Same reasoning as the lata, and the owner glow below
                 // drives _RimStrength, which this shader is the one that actually carries.
-                Visual.ToonSkin.Apply(model, Visual.ToonSkin.PropOutlineWidth);
+                //
+                // ⚠️ `ApplySlipper`, NOT `Apply`, AND THIS IS THE MATCH COPY: the one that has to
+                // look the same on every map. See `ToonSkin.SlipperShadowBand` for why a tsinelas
+                // is shaded almost flat and the lata above it is not.
+                Visual.ToonSkin.ApplySlipper(model, Visual.ToonSkin.PropOutlineWidth);
             }
             else
             {

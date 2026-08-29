@@ -19,7 +19,7 @@ Numbered in the order he sent them. The quote is his, verbatim.
 | # | what it shows | what he said | entry | state |
 |---|---|---|---|---|
 | `01` | the lata card, its two lines colliding, the plate wider than the text | *"fix this hud, it should only extend when it has to, not all the tim"* | § 78.3 | ✅ |
-| `02` | spectator on Eskinita, an orange **warning triangle over the taya**, mid screen | *"WHY IS THERE ! FOR SPECTATOR"* | § 79.4 | ⚠️ **not identified** |
+| `02` | spectator on Eskinita, an orange **warning triangle over the taya**, mid screen | *"WHY IS THERE ! FOR SPECTATOR"* | § 79.4 | ✅ |
 | `03` | spectator frame: flat, pale, **no ink outline anywhere** | *"is it js me or the shaders are very dif for spectator and actual"* | § 78.2 | ✅ |
 | `04` | first-person frame of the same street: saturated, **heavy black ink** | *"spectatator might not be getting shaders"* | § 78.2 | ✅ |
 | `05` | first person, the tsinelas floating clear of both hands | *"iits floating a bit and doesnt look the way a slipper would sit on a hand"* | § 78.4 | ✅ |
@@ -27,11 +27,11 @@ Numbered in the order he sent them. The quote is his, verbatim.
 | `07` | first person, the shoe merged into the hand as one brown mass | *"dude this sucks"* | § 79.8 | ⚠️ **open** |
 | `08` | Dante's left forearm cropped, the two **chevrons** circled | *"this specifically bcz it doesnt matcht eh arm of the model"* | § 78.11 | ✅ |
 | `09` | the same arm after the first fix, the stripes nearly straight | *"still not how his arms look in model its too straight"* | § 78.11 | ✅ |
-| `10` | **character select**, Cheska: pale, low contrast, washed out | *"fix shader on chara select too look at pic 1 vs pic 2, it should look more like pic 2"* | § 79.1 | ⚠️ **open** |
-| `11` | **the lobby cast**, same characters: rich colour, strong outlines. **This is the target.** | (the "pic 2" above) | § 79.1 | ⚠️ **open** |
-| `12` | Ilalim ng Tulay lobby: hazy, pale, low contrast next to Eskinita | *"ilalim ng tulay as well should look more like the other map's shaders"* | § 79.2 | ⚠️ **open** |
+| `10` | **character select**, Cheska: pale, low contrast, washed out | *"fix shader on chara select too look at pic 1 vs pic 2, it should look more like pic 2"* | § 79.1 | ✅ |
+| `11` | **the lobby cast**, same characters: rich colour, strong outlines. **This is the target.** | (the "pic 2" above) | § 79.1 | ✅ |
+| `12` | Ilalim ng Tulay lobby: hazy, pale, low contrast next to Eskinita | *"ilalim ng tulay as well should look more like the other map's shaders"* | § 79.2 | ✅ |
 | `13` | character select, Dante: the **ultimate's plate drawn past the bottom** of the wood panel | *"fix hud here it overflows"* | § 79.6 | ✅ |
-| `14` | character select, IKE: renders **mid grey** where the material is near black | *"this is what im saying wtf is this its so light"* | § 79.1 / § 78.8 | ⚠️ **open** |
+| `14` | character select, IKE: renders **mid grey** where the material is near black | *"this is what im saying wtf is this its so light"* | § 79.1 / § 78.8 | ✅ |
 | `15` | the player name card with `EDIT` in amber at the end of the field | *"remove edit here bcz it lowk does nothing"*, *"tap already works"* | § 79.6 | ✅ |
 | `16` | the lobby, `WAITING FOR 4 PLAYERS` drawn out of both ends of its plate | *"fix this overflow"* | § 79.6 | ✅ |
 | `17` | a corned beef lata, close up | *"this is supposed to be like rotating and shit, both slippers and tsinelas and hero"*, *"they stop rotating if we move"*, *"and go back to rotating in character select after"* | § 79.5 | ✅ |

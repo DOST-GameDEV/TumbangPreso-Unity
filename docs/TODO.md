@@ -1196,41 +1196,91 @@ closed**; it is evidence for one batch, not documentation.
 ⚠️⚠️ **THE SEVEN THAT LANDED ARE IN §§ 78.2 to 78.11 AND IN THE COMMITS OF 2026-08-29.** This entry
 is the REMAINDER, so that the next session starts from a list rather than from the chat log.
 
-### 79.1 ⚠️⚠️ THE CHARACTER SCREEN IS LIT DIFFERENTLY FROM THE GAME, AND IKE IS THE PROOF ⚠️ OPEN
+✅ **SECOND PASS, 2026-08-29 EVENING.** § 79.1, § 79.2, § 79.4 and § 79.6's probe gap are closed,
+§ 79.11 is new work he asked for in the same sitting (the tsinelas flat skin), and § 79.3, § 79.8
+and § 79.9 are still open but each now has a harness or a named suspect instead of a guess.
+
+⚠️⚠️ **THE ONE THING TO CARRY OUT OF THIS PASS, IF YOU READ NOTHING ELSE: TWO OF THE THREE FAULTS
+WERE INVISIBLE TO A CODE READ AND BOTH WERE FOUND THE SAME WAY.** § 79.1 was a constant that looked
+deliberate (`LightExposure = 1.0f`, documented as the conversion hook and left empty) and § 79.4 was
+excluded by a confident, wrong premise about what legacy `Text` can draw. Neither yields to
+reasoning about the source; both fell over immediately once something rendered the screen and
+printed a number. **The probes are the deliverable, more than the fixes are.**
+
+⚠️ **AND ONE MEASUREMENT TRAP CAUGHT THIS SESSION TWICE, IN BOTH DIRECTIONS.** An image effect does
+not run outside play mode, so an editor-mode capture of any graded camera is a picture of a frame
+the player never sees (§ 79.1). And a value bisected against the wrong lighting is not a value: the
+IKE albedo was solved to 0.0180 while the preview was still lit 1.54x too hot, and rendered pure
+black once that was fixed (§ 79.1, and the ladder in `tsinelas_sike.mtl`). **Fix the light before
+you fix the colour.**
+
+### 79.1 ✅ FIXED: THE CHARACTER SCREEN WAS LIT IN GODOT'S UNITS AND THE MAPS IN UNITY'S
 
 **This subsumes § 78.8.** Images `10` (character select, pale), `11` (the lobby cast, correct) and
 `14` (IKE reading mid grey).
 
-🧑: *"fix shader on chara select too look at pic 1 vs pic 2, it should look more like pic 2"*, and
-on IKE specifically, *"this is what im saying wtf is this its so light"*.
+**THE CAUSE, AND IT IS ONE CONSTANT.** `TscnImporter` converts every imported map light with
+`KeyEnergyToIntensity = 0.651f`, because Godot `light_energy` and Unity `intensity` are not the
+same unit; the factor is calibrated against a captured Godot frame and re-derivable through
+`ToneSweep`. `ModelPreview.BuildLights` transcribed `CharacterSelect.tscn`'s energies of **1.35
+and 0.45 and applied no conversion at all**, so the character portrait has been lit
+**1 / 0.651 = 1.54x hotter than every map in the game** since it was written. That is exactly
+"the character screen is lit differently from the game": the same palette under half a stop more
+key has nowhere left to go, so it reads pale and low contrast there and rich in the lobby.
 
-**What is known, measured rather than argued:**
+⚠️⚠️ **THE HOOK WAS ALREADY THERE AND EMPTY, WHICH IS WHY THREE SESSIONS WALKED PAST IT.**
+`ModelPreview.LightExposure` existed, was documented as *"exists only to keep both call sites tied
+to one explicit conversion value"*, and was set to **1.0**. It reads like a deliberate constant, so
+every previous pass took the lights as given and went looking at the ambient and the grade instead.
+It is now `0.651f`, and `ModelPreviewLightingTests` reads `TscnImporter.cs` as text and fails if
+the two copies ever disagree. They cannot be one constant: the importer is in the Editor assembly
+and the preview is in Runtime.
 
-* IKE's body is `Kd 0.052 0.058 0.074` in `tsinelas_sike.mtl`, near black, and it renders on that
-  screen as a mid grey. Roughly half a unit of light is arriving from somewhere.
-* It is **not the mesh or the material**: the same asset through the same `ToonSkin` path renders
-  correctly dark on `ModelSheet`.
-* It is **not the ambient value on its own**: `ModelPreview.PreviewAmbient` is
-  (0.627, 0.576, 0.522) x 0.8775 and the model sheet, where the shoe looks right, uses
-  (0.62, 0.58, 0.52) x 0.78. **Fourteen per cent apart cannot turn black into grey.**
-* `LightingToon` MULTIPLIES by albedo (`s.Albedo * _LightColor0.rgb * level`), so the direct term
-  cannot lift a dark surface either.
+⚠️ **IKE NEEDED A SECOND, SEPARATE FIX, AND IT IS A COLOUR-SPACE ONE.** `tsinelas_sike.mtl`'s Kd is
+consumed as a **linear** reflectance, not as an sRGB display value. That is why *"make sike darker
+too"* and *"sike/ike still aint dark enough"* both failed: halving 0.105 to 0.052 moves the SCREEN
+value only from about 92/255 to 75/255. Measured on the character screen, with the ladder recorded
+in the `.mtl` itself: 0.0520 renders 111, 0.0300 renders 73, **0.0180 renders 44 (shipped)**,
+0.0110 renders 15, 0.0070 renders 0. Note the direction of the last one: `ColourGrade` **crushes**
+its toe rather than lifting it, so the first attempt at solving this on paper produced a pure black
+shoe. The value is bisected on renders.
 
-⚠️ **SO THE REMAINING SUSPECTS ARE THE PREVIEW'S OWN CAMERA STACK**: its `ColourGrade` at
-`Set(1.0, 1.03, 1.18, 0.92, 1.9)`, its two lights, and whether the ambient reaches
-`o.Albedo * IN.vlight` as the surface-shader generator intends. `ModelPreview` is also the ONLY
-camera in the game carrying a grade without `WorldOutline`, which is the other half of what makes
-image `10` look unlike image `11`.
+⚠️ **AND `ModelPreviewProbe` IS THE THING THAT MADE ALL OF IT VISIBLE**, which is what § 79.1 asked
+for before anything else. `Assets/TumbangPreso/Tests/PlayMode/ModelPreviewProbe.cs` drives the real
+`ModelPreview` and shoots every subject through four arms (shipped, no-ambient, no-grade,
+no-lights), printing the mean over the subject's own pixels using the alpha channel as the mask.
+The `no-lights` arm is what named the direct term: IKE went from 89 to 30 with the two preview
+lights off while killing the ambient moved it only 89 to 83.
 
-⚠️⚠️ **DO NOT ADJUST A NUMBER UNTIL YOU CAN SEE THE SCREEN.** Three sessions have now guessed at
-this. **The first task is a probe that renders `ModelPreview` to a PNG**, the way
-`FppArmsSnapshotTool` does for the arms: build the component in an empty scene, `Show()` a subject,
-save the texture. Nothing in this repository can currently photograph the character screen, which
-is exactly why the fault has survived. `docs/TODO.md` § 43's rule applies: *"a render from one
-camera is not evidence about another"*.
+⚠️⚠️ **IT MUST BE A PLAYMODE TEST AND THE EDITOR-TOOL VERSION OF IT LIED.** The first draft ran as
+`-executeMethod` and reported that disabling the preview's `ColourGrade` changed the frame by
+nothing on all four subjects, which reads exactly like "the character screen has no tonemap" and
+would have been this session's headline finding. `OnRenderImage` only runs on a component marked
+`[ExecuteAlways]` and `ColourGrade` is not, so an edit-mode capture of this screen photographs a
+frame the player never sees. `ModelSheet.BuildLight` records the same trap from the other side and
+compensates its own key and ambient for it. **An image effect cannot be measured outside play
+mode.**
 
-**Done looks like:** IKE dark on the character screen, and a cast member on that screen matching
-the same character in the lobby, both shown in one capture.
+**Four things this entry previously listed as ruled out, and how they held up.** All four readings
+were correct and none of them was the cause, which is worth keeping because the cause was in the
+one place nobody had a way to look at:
+
+* *not the mesh or the material* — correct, and it stayed correct;
+* *not the ambient value on its own* — correct, and the probe put a number on it: killing the
+  ambient outright moves IKE by 6 of 255;
+* *`LightingToon` multiplies by albedo, so the direct term cannot lift a dark surface* — correct
+  as written, and it is why the direct term being 1.54x too strong was invisible to a code read.
+  It does not lift a dark surface, it multiplies one, and a 1.54x multiplier on an albedo that is
+  itself being read in the wrong colour space is how a near-black shoe reaches mid grey;
+* *the preview is the only camera carrying a grade without `WorldOutline`* — still true, still not
+  the cause, and still worth a look for a different reason (image `10` has no ink edge on Cheska
+  where image `11` does).
+
+⚠️ **STILL OPEN, SMALL:** the preview's ambient is NOT scaled by the 0.651 conversion, deliberately.
+`PreviewAmbient` is an `ambient_light_energy` blended with a sky contribution, which
+`TscnImporter.Energised` converts by a different route, and the measured fault was in the direct
+term. Scaling both at once would have been two changes with one measurement between them. If the
+cast still reads a shade flat after a played build, that is the next thing to measure, not a guess.
 
 ### 79.2 ⚠️ ILALIM NG TULAY IS HAZIER AND PALER THAN ESKINITA ⚠️ OPEN
 
@@ -1246,6 +1296,41 @@ this has been reached for once already. Read what it changed before changing it 
 
 **Done looks like:** the two maps' lobby frames side by side with the same cast, and a note saying
 which of grade, ambient or fog was the difference.
+
+✅ **ANSWERED: IT IS THE AMBIENT, AND IT IS NOT THE GRADE.** Measured off the two scene files rather
+than argued, which is the comparison this entry asked for:
+
+| | Eskinita | Ilalim ng Tulay (was) |
+|---|---|---|
+| ambient mode | Flat | Trilight |
+| sky | (0.934, 0.830, 0.700) | (0.78, 0.76, 0.72) |
+| **equator** | **(0.114, 0.125, 0.133)** | **(0.60, 0.58, 0.56)** |
+| **ground** | **(0.047, 0.043, 0.035)** | **(0.24, 0.24, 0.26)** |
+| fog | off | on, near-white, linear 40-120 m |
+
+**Five times Eskinita's ambient on every vertical face and five times on every downward one.**
+`TumbangPreso/Toon` is a surface shader with no `noambient`, so that lands on top of the lit colour
+and outside the palette remap: high key, low contrast, no hue left. That is "hazier and paler"
+exactly, and it is why the grade band was the wrong place to look — the grade is inside its band
+and correct.
+
+⚠️⚠️ **THE 2026-08-28 PASS CAUSED THIS, AND ITS DIAGNOSIS WAS RIGHT.** That pass found a cool
+near-white sky putting 0.98 of blue on up-facing surfaces against 0.45 on the verticals, correctly
+called that spread "dull", and closed the gap by **raising the equator**. Warming the sky was
+right; closing a spread by lifting the dark end rather than lowering the bright one traded a blue
+cast for a white wash. Now 0.78 / 0.34 / 0.14: still three times Eskinita's equator, because this
+is the one arena under a solid deck and that difference is real information about the space, but
+two thirds less wash.
+
+⚠️ **THE FOG IS LEFT ALONE.** It was already pushed from 22.5 m to 40 m on 2026-08-28 with the
+reasoning recorded in place, it clears the whole playable street, and its job (stopping the far
+backdrop plate ending in a hard line) is real.
+
+⚠️⚠️ **THE SCENE IS WHAT SHIPS, SO `IlalimNgTulayPipeline` MUST BE RE-RUN AFTER THIS.** The change
+is in `IlalimNgTulayBuilder` and the player loads `IlalimNgTulay.unity`.
+`MapGradeSanityTests.TheIlalimBuilderAgreesWithTheSceneItGenerates` guards the MapGrade block and
+**does not guard the ambient**, so a builder edit that is never baked diverges silently. That is
+the same trap the test itself was written for.
 
 ### 79.3 ⚠️ THE LOBBY CHAT STRIP SHOWS NOTHING, AND THE HISTORY CAP IS UNDOCUMENTED ⚠️ OPEN
 
@@ -1270,21 +1355,71 @@ is on that screen.
 **Done looks like:** the last two lines visible above the field with the log closed, and a decision
 recorded on whether 100 is enough.
 
-### 79.4 ⚠️ AN ORANGE WARNING TRIANGLE FLOATS OVER THE TAYA IN SPECTATOR ⚠️ OPEN, NOT IDENTIFIED
+⚠️ **THE TWO ANSWERS HE ASKED FOR, TO BE TOLD RATHER THAN INVESTIGATED** (both confirmed in source
+this session): the scrollable log keeps **`LobbyChat.MaxHistory` = 100** lines and drops the oldest
+past that, and **yes it scrolls**, through `_historyScroll`. The strip above the field is capped at
+**`LobbyVisibleLines` = 2** by design, with everything else behind the click.
 
-Image `02`. 🧑: *"WHY IS THERE ! FOR SPECTATOR"*.
+⚠️ **STILL OPEN, AND NOW WITH A HARNESS RATHER THAN A READ.**
+`Assets/TumbangPreso/Tests/PlayMode/LobbyChatStripProbe.cs` stands up a real lobby-mode `LobbyChat`,
+pushes four messages at realistic length through the component's own `Add` path, and asserts two
+things: that `LobbyVisibleLines` rows are active, and that each active row's `preferredHeight` fits
+the rect it is clipped to.
 
-**Searched and not found.** Ruled out by reading: `Hud._crosshair` and `Hud._vulnerable` are both
-disabled by `EnterSpectatorMode` AND the spectating branch of `Update` returns before the lines
-that re-enable them; `OffscreenIndicators` draws `"▲"` and hides both arrows when the local unit is
-null; `CharacterNameplate` carries no glyph; there is no warning sprite anywhere under `Art/ui`.
+⚠️⚠️ **THE SECOND ASSERTION IS THE POINT, AND IT IS WHY CHECKING `Text.text` WOULD HAVE PASSED
+AGAINST HIS SCREENSHOT.** `SetLines` ends by setting `verticalOverflow = Truncate` on every active
+row, after `MenuKit.FitBlock(line, LineHeight * 2.0f)` has been allowed to size the type against a
+TWO-line cap while the row's own `LayoutElement` is pinned to ONE line at `LineHeight` = 26.
+**Legacy `Text` on `Truncate` clips by whole lines, so a label whose content is taller than its
+rect paints nothing at all** while remaining active, non-empty and correctly sized. That is the
+suspected mechanism for "the strip showed zero lines, not two".
 
-⚠️ It renders as a **full-colour** triangle, which legacy `Text` cannot draw, so it is an `Image`
-with a sprite or a world-space object rather than a label. That narrows it and was not chased
-further.
+**The probe passes as written**, so the fault does not reproduce at these four message lengths on
+this canvas scale. That is a real result and not a closed one: it narrows the cause to something
+his session had and this one does not (a longer line, `MatchRpc.MaxChatLength` is 120, or a
+different canvas scale factor). **Next step is to widen the probe's message lengths to 120
+characters and sweep the scale factor**, not to change `SetLines` on a guess.
 
-**Done looks like:** the thing named. Fastest route is a spectator capture with the HUD hierarchy
-dumped, since it is reproducible: it was in the first spectator frame he sent.
+### 79.4 ✅ FIXED: IT WAS THE PENALTY HITMARKER, AND THE SEARCH WAS RULED OUT BY A WRONG PREMISE
+
+Image `02`. 🧑: *"WHY IS THERE ! FOR SPECTATOR"*, then *"i want the ! shit gone completley in
+spectatotr mode"*, *"bcz ⚠️ should not show up in spectator mode"*.
+
+**It is `Hud._hitmarker`** (`Hud.cs`, built around line 3585): a legacy `Text` at dead screen
+centre whose default symbol is `"💥"`. `RoundDirector` pops it with the literal string `"⚠️"` on
+every taya-camp tick (line ~325) and every slipper-idle tick (line ~419). In image `02` the taya is
+near the middle of frame, so the mark lands on them and reads as a world-space marker over that
+player; it is not attached to anything.
+
+⚠️⚠️ **THE PREVIOUS SEARCH FAILED ON ONE FALSE PREMISE, AND IT IS WORTH RECORDING BECAUSE IT IS
+REUSABLE.** This entry said: *"It renders as a full-colour triangle, which legacy `Text` cannot
+draw, so it is an `Image` with a sprite"*. **Legacy `Text` can.** A dynamic font falls back to the
+OS face for any glyph it does not carry, and on Windows that face is Segoe UI Emoji, which is a
+COLOUR font (COLR/CPAL). So "full colour" excluded exactly the right answer, and the two label
+fields the search did check (`_crosshair`, `_vulnerable`) were the wrong two. **Do not rule out a
+`Text` because a glyph is coloured.**
+
+**The fix** is in `PopHitmarker` rather than at the two call sites: it returns early while
+`_spectating`, and `EnterSpectatorMode` clears any mark already on screen. A hitmarker is
+first-person feedback about something happening to YOUR unit and a spectator has no unit, which is
+the same argument `CLAUDE.md` § 4 makes for the whole spectator control set. Gating the callers
+would have left the next caller to rediscover it. It takes the `sfx_hitmarker` cue with it.
+
+### 79.4b ✅ THE BROADCAST CHROME LOST THREE THINGS HE DID NOT WANT
+
+Same frame. 🧑: *"remove live here too"*, *"remove live netwrok here as well as WASD FLY"*.
+
+* `Hud._spectatorLiveBug`, the red `● LIVE` in the top-right corner, now draws nothing in the live
+  state. ⚠️ **The widget is kept and only its default state is blank.** Its other two states,
+  `⏪ INSTANT REPLAY` and `⏸ TACTICAL PAUSE`, each tell a watcher that the frame is NOT the present
+  moment, which is the one thing a broadcast corner is for. Live is the absence of both.
+* `SpectatorCamera.StatusText`'s `● LIVE NETWORK  |  ` prefix is gone for the same reason. The
+  three branches above it (replay, pause, slow-mo) stay. Live was the `else`: it only ever fired
+  in the ordinary case, and it fired on a networked match and stayed silent on a local one, which
+  makes it a netcode readout wearing a broadcast label.
+* `WASD fly` is dropped from `ControlsText`. It is the one item on that line that teaches nothing:
+  every other entry names a key a player would not guess, and WASD is the same walk the whole game
+  is played with.
 
 ### 79.5 ✅ THE PICKER TURNS AGAIN AFTER THE PLAYER LETS GO
 
@@ -1309,6 +1444,46 @@ Images `01`, `13`, `15`, `16`, `19`, `22`. All shipped 2026-08-29:
 ⚠️ **`HeroPickerLayoutProbe` WAS GREEN THROUGH ALL OF THIS AND SHOULD NOT HAVE BEEN.** It checks
 the gap under the tagline and the tagline's own slack, and asserts **nothing about the bottom of
 the column against the panel**, which is the edge the ultimate ran past. **Add that assertion.**
+
+✅ **ADDED 2026-08-29 — AND IT WENT RED IMMEDIATELY, SO § 79.6's FIX WAS INCOMPLETE.** The probe
+now finds the LAST `AbilityRow_` and asserts its bottom edge against `ConfigPanel`'s, tolerance
+`MaxBottomOverflow` = 4 px for the nine-patch border and rounding.
+
+⚠️⚠️ **`AbilityRow_2` IS STILL DRAWN 14 px BELOW THE PANEL. THE ULTIMATE'S PLATE STILL HANGS OUT
+OF THE WOOD, AND IT IS NOT WHAT § 79.6 THOUGHT IT WAS.** Measured, from the probe's own dump:
+
+```
+ConfigPanel   h=540  top=1208 bottom=668   (40 px padding each side, so 460 for the column)
+Rows          h=460  min=338  pref=524     <- wants 524, given 460, DEFICIT 64
+  TabBar      h=62   TabBar/NameRow/Tagline are 62 + 105 + 56
+  NameRow     h=105  min=86  pref=115
+  TaglineLabel h=56  min=56  pref=56
+  TraitRows   h=207  min=104 pref=261      <- wants 261, given 207
+    AbilityRow_0/1/2  h=83 each, min=83, pref=83, flex=1
+```
+
+**Three 83 px rows need 249 plus spacing in a box that is 207.** § 79.6 sized the column to the
+rows actually built, which was the right change and fixed the number `TraitRows` ASKS for
+(`pref=261` is correct). It did not fix the fact that the panel has only 460 px to give.
+
+⚠️⚠️ **AND THE OVERFLOW IS FORCED BY ONE LINE: `rowLe.minHeight = rowLe.preferredHeight`**
+(`ConvertedCharacterSelect.cs` ~590). **A `VerticalLayoutGroup` will not shrink a child below its
+`minHeight`; it overflows the container instead.** So the column CAN be squeezed and its rows
+CANNOT, and the surplus goes out the bottom of the wood. Pinning min to pref is what converts "a
+tight column" into "a plate drawn outside the panel".
+
+**Done looks like** the last row inside the panel with the descriptions still readable. The lever
+is one of: let the rows compress (drop `minHeight` toward header height and let
+`MenuKit.FitBlock` shrink each description, which is § 79.6's own "grows as well as shrinks"
+pattern applied one level down), or give the hero variant of `ConfigPanel` the ~64 px it is short.
+⚠️ **Do not just raise `MaxBottomOverflow`.** The assertion is correct and is reporting the thing
+he photographed in `reported/13.png`. ⚠️ **The last ROW is measured, not the column's rect**: the column is a
+`VerticalLayoutGroup` whose own rect was already correct, and the ultimate row is the child that
+was drawn past the wood, so measuring the container would have passed then too. The two existing
+assertions could not see this class of fault at all, and that is structural rather than an
+oversight: both measure INSIDE the column (one gap between two rows, one box against its own
+text), and a column whose rows are each correctly sized and spaced can still be taller than the
+panel holding it. Only a child edge against the PARENT's edge can see it.
 
 ### 79.7 ✅ EVERY HELD TSINELAS WAS THE PLACEHOLDER COLOUR
 
@@ -1355,6 +1530,27 @@ against a flat brown blob rather than the real skin. **Fix the tool first**: giv
 **Done looks like:** the shoe clear of the hand, its profile readable, wearing its own skin, judged
 by 🧑 off a capture that shows the real material.
 
+✅ **THE TOOL IS FIXED, WHICH WAS THE PRECONDITION.** `FppArmsSnapshotTool` now builds a REAL
+`Slipper` from the roster (`BuildSlipperSource`), dresses it through `ToonSkin.ApplySlipper` exactly
+as `MatchInstaller` does, and calls `arms.MatchSkin(...)` before every capture. It also sweeps ten
+tsinelas on one character (`fpp_held_<id>_v17.png`) so the whole roster is reviewable in a sitting.
+Two traps found writing it, both recorded at the call site:
+
+* ⚠️ **`MatchSkin` must be called AFTER `SetCharacter`**, which rebuilds the arms and re-dresses
+  what hangs off them. Applied first, the placeholder silently wins and the tool goes back to
+  photographing a brown blob with no error.
+* ⚠️ **The source slipper is parked 40 m away rather than deactivated.** `MatchSkin` reads it
+  through `GetComponentInChildren<MeshFilter>()`, which skips inactive objects, so switching it off
+  makes it invisible to the very method it exists for.
+
+⚠️⚠️ **STILL OPEN: THE POSE ITSELF, AND THERE IS NOW A FOURTH THING TO KNOW BEFORE ATTEMPTING IT.**
+`FppArmsSnapshotTool` is an EDITOR tool doing a manual `camera.Render()`, so `ColourGrade` never
+runs in it (`OnRenderImage` needs `[ExecuteAlways]`, which that component does not have and must
+not get). Its captures are therefore a whole stop hotter than the game, the same way `ModelSheet`'s
+are and for the same reason — `ModelSheet.BuildLight` compensates its key and ambient by hand and
+this tool does not. **Judge the shoe's PLACEMENT off it; do not judge its colour off it.** For
+colour, use `ModelPreviewProbe`, which is a PlayMode test and gets the real grade.
+
 ### 79.9 ⚠️ TWO PRACTICE REPORTS, NEITHER INVESTIGATED ⚠️ OPEN
 
 🧑: *"practice mode broken wtf, when i threw the slipper on the floor (very far from can, it js
@@ -1370,16 +1566,211 @@ The first is unexamined. A throw that drops at the feet means no impulse reached
 `Carrier.StepAttacker` releases at `ThrowRules.PowerFor`, and `Balance.ChargeMinPower` is the tap
 floor. Check whether it reproduces with a full charge before touching a number.
 
+⚠️ **STILL OPEN, WITH ONE SUSPECT NARROWED BY READING (not yet driven).** `Carrier.Release` has two
+branches. On `NetAuthority.ShouldRequest()` it predicts the presentation and sends
+`RequestThrowServerRpc`, deliberately NOT clearing `Held`; otherwise it calls `HostThrowAt`, which
+opens `if (!NetAuthority.ShouldResolve() || Held == null) return;`. **A mode where neither
+`ShouldRequest` nor `ShouldResolve` is true drops the throw on the floor with no impulse and no
+error**, and the arm still swings because the presentation half is separate. That is exactly the
+shape of "I threw it and it just fell". Practice is the mode most likely to sit outside both, since
+it is the one that stands up a match without a host relationship.
+
+**Next step is to assert it rather than read it**: a PlayMode case that enters practice, charges to
+full, releases, and asserts the slipper's speed is above `ThrowRules.PowerFor(ChargeFullTime)`
+rather than zero. **Do not touch `ChargeMinPower`** until that says the power is the problem; if
+the authority gate is the problem, a bigger number changes nothing.
+
+### 79.11 ✅ THE TSINELAS ARE SHADED ALMOST FLAT NOW, AND ONLY THE TSINELAS
+
+🧑 2026-08-29, after § 79.7's placeholder fix had already shipped and he was still unhappy: *"pls
+overhaul how shader applies to slippers AND ONLY SLIPPERS bcz the slippers change color or form
+entirely ahha"*, *"lowk pls js remove or severely lessen shader coloring effect on slippers as a
+whole"*, *"it makes it look so shitty"*, and the constraint: *"make sure it doesnt affect shader
+for anything else and it actually reflects in the game as well as all maps"*.
+
+**What was recolouring them.** `LightingToon` is `Albedo * _LightColor0 * level` with
+`level = lerp(_ShadowBand, 1, band)` and `_ShadowBand` = **0.45**, stepped over a `_BandEdge` of
+**0.03**. Every surface facing away from the key is multiplied down to 45 per cent across a hard
+three-per-cent ramp. On a CHARACTER that is the look: big subject, saturated palette, reads as cel
+shading. On a 0.43 m shoe it lands as one hard division across the whole prop, so the toe box and
+the midsole render as two different colours and neither is the colour on the picker.
+
+**`ToonSkin.ApplySlipper`** dresses a shoe with `_ShadowBand` **0.86** over a `_BandEdge` of
+**0.30**: a 14 per cent falloff spread over a third of the ramp, so what shading is left describes
+the curve instead of cutting it.
+
+⚠️ **NOT 1.0, AND THE FLOOR IS SOMEBODY ELSE'S MEASUREMENT.** Fully unlit removes the form;
+`tsinelas_sike.mtl`'s header records that exact failure from the albedo side — *"every curve on the
+upper resolves to the same value and the shoe renders as a flat silhouette"*.
+
+⚠️⚠️ **THE FLAT FLAG IS PART OF THE MATERIAL CACHE KEY, AND WITHOUT THAT IT LEAKS ONTO THE CANS.**
+`ToonSkin.Variant` caches on (source material, key), and a slipper and a can can arrive sharing one
+imported source material; whichever was dressed first would hand its shading to the other. Same
+fault the palette note in that file records for the cast.
+
+⚠️ **FIVE CALL SITES, AND MISSING ONE MEANS THE SHOE CHANGES APPEARANCE WHEN IT CHANGES SCREENS**
+— which is what § 79.7 already was. `MatchInstaller` (the match copy, every map), `ViewmodelArms`
+(the placeholder at build and the real skin in `MatchSkin`), `ModelPreview` (the picker, via the
+new `ShowingSlipper` flag that `ConvertedCharacterSelect` sets from the tsinelas tab), `ModelSheet`
+(the reference sheet, by `tsinelas_*` filename) and `FppArmsSnapshotTool`.
+
+⚠️ **`ModelPreview` CANNOT WORK OUT THAT A SUBJECT IS A SHOE**, which is why the flag is set from
+outside. One rig shows three categories on that screen and a slipper and a can are indistinguishable
+from inside: both arrive with no palette, and the 16-slot palette test only separates a PERSON from
+a prop. The picker's tab is the only thing that knows.
+
+**Asserted by `SlipperSkinTests`** (EditMode, 3 cases): that a slipper carries the flat band, that
+a NON-slipper sharing its source material still carries the shader defaults 0.45 / 0.03, that the
+numbers are a severe lessening rather than a no-op, and that all four shipping call sites still
+route through `ApplySlipper`.
+
 ### 79.10 What this batch did NOT get to
+
+⚠️ **UPDATED 2026-08-29 EVENING.** The four items below were written before the second pass; the
+first, third and fourth still stand exactly as written. Everything else in § 79 is now either
+closed above or carries its own narrowed next step (§ 79.3 has a probe, § 79.8 has a working
+snapshot tool, § 79.9 has a named suspect).
 
 * ⚠️⚠️ **NO TWO-MACHINE RUN.** § 78.13 still stands. He has the build on a second laptop now, and
   both machines must be on **`ProtocolVersion` 12** or the join is refused at approval.
+  ⚠️ **AND THE TWO LAPTOPS HAVE DIFFERENT WINDOWS PROFILES**, `matth` and `Matthew`, so the clone
+  path and `GameBuilder`'s Desktop target both differ. A handoff that names one machine's path
+  sends the other session to a folder that does not exist, which reads exactly like a build that
+  never ran. `CLAUDE.md` § 7 already carries this for the build output.
 * ⚠️ **The other five heroes' arms have never been compared to their models.** Dante's were an
   invented garment in the right palette (§ 78.11); there is no reason to think he is the only one.
 * ⚠️ **`CarryTests` is still failing** on a frame-timing assertion, pre-existing and bisected
   (§ 78.12).
 * ⚠️ **§ 72 is still open**: the lobby name and code fields in a BUILT player, the one suspect no
   probe here can reach.
+
+---
+
+## 80 · The 2026-08-29 late batch, reported while § 79 was being fixed
+
+🧑 kept playing the build while the § 79 work was landing and reported these. **Everything here is
+his, from the built player.** The four that landed are ticked; the four that did not each carry
+what was narrowed, so the next session starts from a suspect rather than from the screenshot.
+
+### 80.1 ✅ FIXED: THE TAYA WAS CARRYING A TSINELAS, IN PRACTICE **AND** IN MULTIPLAYER
+
+🧑, first person, shoe in hand, `TAYA` on his own card: *"why the fuck does taya have slipper in
+practice mode? Does this also happen in multiplayer"*. **It did, on both**, and the answer to the
+second half is the important part: `SliceRunner.EquipOwnedSlippers` is host-side and runs for every
+peer, so nothing about this was practice-specific.
+
+**`Carrier.Held` was assigned `null` in exactly ONE place in the entire file** — at the end of a
+throw. Nothing emptied a hand when its owner became taya. `EquipOwnedSlippers` disowns and
+deactivates the slipper whose INDEX matches the defender's seat and never looks at what anybody is
+actually holding.
+
+⚠️⚠️ **AND DEACTIVATING BY INDEX COULD NEVER HAVE FIXED IT, BECAUSE OWNERSHIP IS A LABEL.**
+§ 79.9 records that being chosen deliberately and reaffirmed: any attacker may pick up any
+tsinelas. So the incoming taya is routinely holding somebody ELSE'S shoe, which that loop leaves
+active and equipped by construction. ⚠️ **The viewmodel is a separate mesh too**, so even for a
+matching index, switching the world object off left the first-person copy in frame.
+
+`Slipper.HostDisarm()` is the inverse of `HostForceEquip`, and `EquipOwnedSlippers` calls it on the
+incoming taya BEFORE its loop, so the freed shoe is still re-homed to its real owner in the same
+pass. ⚠️ **§ 78.13 predicted this exact gap**: *"Nobody has WATCHED a client to confirm the taya is
+no longer carrying a shoe"*. This is what watching found.
+
+### 80.2 ✅ FIXED: `START MATCH` DREW TINY, AND THE SETTINGS UI "RANDOMLY" CORRECTED ITSELF
+
+🧑: *"small ass start match also sometimes the match setttings ui become small then randomly
+updates"*.
+
+`SetFittedButtonLabel` read `if (room <= 1.0f) return;` **before** `text.fontSize = maxSize`. So a
+call landing on a frame where the rect was not laid out yet returned leaving the font at whatever
+the previous call left it — and the previous call is very often `WAITING FOR 4 PLAYERS`, 21
+characters, stepped down to the 18 floor. The seat fills, this fires with `START MATCH`, the rect
+is not ready, and the short string inherits the long string's shrunken size and keeps it.
+
+⚠️ **`rect.width` IS 0 UNTIL THE FIRST LAYOUT PASS, WHICH IS THE FRAME A PANEL IS SWITCHED ON**, so
+this is the normal case for the first refresh after opening, not a rare one. `ModelPreview.
+EnsureTexture` carries a note about the same trap and `LobbyChat`'s panel records it a third time.
+
+The reset is hoisted above the guard, so a bail now leaves the label at its authored size, and a
+`_refitPending` flag re-runs the fit on the next `LateUpdate`. ⚠️ **That flag piggy-backs on the
+EXISTING `LateUpdate`**: Unity binds one message per component and a second one is a hard compile
+error, which a first attempt hit.
+
+### 80.3 ✅ FIXED: `RIGHTING LATA [E]` WAS CLIPPED TO `RIGHTING LA`
+
+🧑: *"'righting lata' text overflow, maybe shorten that and check for other text overflows here"*.
+It is a `BuildMeter` row, so the key sits in a narrow column beside a fill bar; its siblings are
+`[LMB]` at 5 characters and `LUNGE [RMB]` at 11, and this was **17**. Now `RESET [E]`, which is
+also the game's own word: `Design.md` calls the verb resetting the lata and the lata card on the
+same screen already reads `RESETTING 53%`. `RIGHTING` appeared nowhere else in the game.
+
+### 80.4 ✅ FIXED: THE HOLD-TAB TRAY WAS DRAWN THROUGH THE ABILITY DECK, AND ITS TEXT WAS AT THE FLOOR
+
+🧑: *"broken ui placement here when u hold tab"*, and *"also the texthere is hard to read"*.
+
+⚠️⚠️ **THE ARITHMETIC WAS ALREADY WRITTEN DOWN IN `Hud`, WHICH IS HOW WRONG THE PLACEMENT WAS.**
+That file works the bottom band out in full: hero deck **14 to 92**, Classic deck **24 to 124**,
+inspect hint **132 to 150**, ready prompt plate **156 to 190**. `AbilityInspectPanel` is 236 tall
+with a bottom pivot and rested at **16**, so it spanned 16 to 252 — through both decks, through the
+hint that tells you to open it, and through the prompt plate. It now rests at **196**, six px over
+the tallest of them, which is the clearance `Hud` uses between its own stacked lines.
+
+The body text was authored at `MenuKit.MinReadableUnits`. ⚠️ **That is a FLOOR — the size below
+which a fitter may not shrink text — so the one panel whose entire job is to be read was set to the
+smallest type the project permits anywhere.** Now 21, with the card's `minHeight` moved 108 → 126
+and the tray 236 → 254, because the note directly above that block warns that a floor left behind
+is how an `Overflow` label starts drawing over the card under it.
+
+### 80.5 ⚠️ OPEN: THE CARRIED TSINELAS FLOATS OFF THE ARM IN THIRD PERSON, FOR EVERY UNIT
+
+🧑, with a posed screenshot: *"also slipper floats for everyone including bots, it isnt on their
+arms i had to do this pose to show it but it floats for all poses"*.
+
+⚠️ **THIS IS THE THIRD-PERSON CARRY AND IT IS NOT § 79.8.** § 79.8 is the first-person VIEWMODEL
+copy, a different object with a different anchor, and its three recorded attempts are all about
+`ViewmodelArms.HeldSlipperLocal`. This one is the world object that everybody else sees, placed by
+`Carrier` against the hand anchor. **Both being wrong at once is what makes them easy to confuse.**
+
+**Where to start:** `Carrier.RideAnchor` and `CarryTests`. Note that
+`AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor` is the test for exactly this and it is
+**currently failing at 0.064 m against a 0.050 m bound** (§ 78.12). That has been treated as a
+frame-timing flake since it was bisected, and this report is a reason to re-open that reading: a
+test measuring the gap between the shoe and the hand is red, and he is reporting a visible gap
+between the shoe and the hand. ⚠️ **Check whether § 78.12 is a flaky assertion or the alarm going
+off correctly before assuming the former.**
+
+### 80.6 ⚠️ OPEN: THE DANCE EMOTE T-POSES
+
+🧑: *"dance doesnt make u dance anymore"*, *"it js makes u t pose"*.
+
+⚠️ **A T-POSE IS THE BIND POSE, WHICH MEANS NO CLIP IS PLAYING AT ALL** — it is not a wrong clip
+and not a bad pose. `DanceClip.Build` writes arm rotations lerping **25° to 160°**, so if the clip
+were running it could not look like a T.
+
+`CharacterAnimator.EmoteClips["dance"]` is the chain `{ DanceClip.ClipName, "idle" }` and
+`ResolveChain` returns the first of those present in `_clips`, or **null**. `DanceClip.Build`
+returns null unless it finds all seven of `root`, `torso`, `head`, `arm-left`, `arm-right`,
+`leg-left`, `leg-right` by exact name. **So a T-pose requires BOTH the generated clip and `idle` to
+be missing**, which is the thing to check first: dump `_clips` for a live unit and confirm which of
+the two is absent. If `idle` is present the fallback would play it and this report could not
+happen, so the interesting case is a rig where neither resolves.
+
+### 80.7 ⚠️ OPEN, NEEDS A DECISION FROM 🧑: RICHER FLOORS ON THE OTHER MAPS
+
+🧑, pointing at an Eskinita lobby frame: *"can u give all other maps rich floors like this? borrow
+from online assets if u have to"*.
+
+⚠️⚠️ **THE "BORROW FROM ONLINE ASSETS" HALF NEEDS AN EXPLICIT ANSWER BEFORE ANY OF IT IS DONE, AND
+IT IS NOT A TECHNICAL QUESTION.** `CLAUDE.md` § 6 says the art is the team's own work and is being
+built character by character; this repo already tracks provenance in
+`Art/models/kits/footwear/NEW_SLIPPER_LICENSES.txt`; and this is a competition entry going to a
+national final. A downloaded texture with the wrong licence is a category of problem that is very
+hard to undo once it is in a shipped build and a submitted binary. **Ask which he wants:**
+authored in-repo (the `tools/` generators already make the road materials), or third-party with the
+licence recorded beside it.
+
+**The technical half is small either way.** Eskinita's floor is `Dressing/Kalsada` and the other
+maps' floors are the equivalent nodes in their own builders; the material work is the same
+`EnvColourPass` path the rest of the dressing goes through.
 
 ---
 

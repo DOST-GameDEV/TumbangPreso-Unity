@@ -106,7 +106,45 @@ namespace TumbangPreso.UI
         /// than its Godot character-select reference. This factor exists only to keep both call
         /// sites tied to one explicit conversion value.
         /// </summary>
-        public const float LightExposure = 1.0f;
+        /// <remarks>
+        /// ⚠️⚠️ 0.651, NOT 1.0, AND THIS IS THE ANSWER TO `docs/TODO.md` § 79.1. 🧑, holding the
+        /// picker beside the lobby: *"fix shader on chara select too look at pic 1 vs pic 2, it
+        /// should look more like pic 2"*, and after the first pass of this batch, *"yea cheska
+        /// still pale af"*, *"compared to the other 2 maps that have better lighting for
+        /// characters"*.
+        ///
+        /// THE NUMBERS ABOVE ARE GODOT `light_energy` VALUES AND UNITY `intensity` IS NOT THE
+        /// SAME UNIT. `TscnImporter` has known this since the maps were converted and applies
+        /// `KeyEnergyToIntensity = 0.651f` to EVERY light it imports, calibrated against a
+        /// captured Godot frame and asserted by `ToneSweep`. This screen transcribed
+        /// `CharacterSelect.tscn`'s 1.35 and 0.45 and applied no conversion at all, so the
+        /// character portrait has been lit **1 / 0.651 = 1.54x hotter than every map in the
+        /// game** for its whole life. That is precisely "the character screen is lit differently
+        /// from the game", and it is why the cast reads pale and low contrast there and rich in
+        /// the lobby: the same palette under half a stop more key has nowhere left to go.
+        ///
+        /// ⚠️ THE HOOK WAS ALREADY HERE AND EMPTY, which is the part worth noticing. The comment
+        /// this replaces said this factor *"exists only to keep both call sites tied to one
+        /// explicit conversion value"* — it was built to be the conversion and left at 1.0, so
+        /// every later pass read a deliberate-looking constant and moved on. Three sessions
+        /// guessed at the ambient and the grade instead.
+        ///
+        /// ⚠️ IT IS A SECOND COPY OF ONE NUMBER AND THAT IS PINNED BY A TEST RATHER THAN BY THE
+        /// COMPILER, because it has to be. `TscnImporter` lives in the Editor assembly and this
+        /// is Runtime, so the constant cannot be shared: Runtime referencing Editor is the one
+        /// dependency that cannot exist. `TscnImporter`'s own note says `ToneSweep` and
+        /// `tools/read_sweep.py` will re-derive 0.651 if the render path ever changes, and a
+        /// re-derivation that moved one copy and not the other would put the character screen
+        /// back where it started. `ModelPreviewLightingTests` reads both files and fails if they
+        /// disagree.
+        ///
+        /// ⚠️ THE AMBIENT IS DELIBERATELY NOT SCALED BY THIS. See <see cref="PreviewAmbient"/>:
+        /// it is an `ambient_light_energy` blended with a sky contribution, which is a different
+        /// quantity converted a different way (`TscnImporter.Energised`), and the measured fault
+        /// was in the direct term. Scaling both at once would be two changes with one
+        /// measurement between them.
+        /// </remarks>
+        public const float LightExposure = 0.651f;
 
         /// <summary>
         /// ⚠️⚠️ THE PREVIEW HAD NO AMBIENT OF ITS OWN AND INHERITED THE MENU'S, WHICH IS WHY THE
@@ -140,8 +178,31 @@ namespace TumbangPreso.UI
         /// light on every surface and Berto rendered as pale yellow with no skin tone left.
         /// 0.65 of it is 0.5506, which is the number that belongs here.
         /// </remarks>
+        /// <remarks>
+        /// ⚠️⚠️ THE HUE IS THE GAME'S NOW, AT THIS SCREEN'S OWN LEVEL. 🧑 2026-08-29, after the
+        /// map ambience was warmed: *"make sure the ambience shows up in character select too"*.
+        ///
+        /// The base was (0.62745, 0.57647, 0.52157), a red-to-blue ratio of **1.203**. Every map
+        /// in the game sits at Eskinita's **1.33** (its Flat ambient is (0.934, 0.830, 0.700),
+        /// and Ilalim ng Tulay was moved onto the same 1.000 : 0.888 : 0.749 the same day). So
+        /// the character screen was washing its subjects with a cooler, greyer ambient than the
+        /// street they walk out onto, on top of being lit 1.54x too hot — the two halves of
+        /// `docs/TODO.md` § 79.1.
+        ///
+        /// ⚠️ THE LUMINANCE IS PRESERVED EXACTLY AND ONLY THE RATIO MOVES, which is what makes
+        /// this safe to land beside the `LightExposure` fix. Rec. 709 luma of the old value is
+        /// 0.51186; the new base carries the game's hue at the same 0.51186, so it cannot
+        /// brighten or darken the cast and can only warm it. Two changes with one measurement
+        /// between them is what the § 79.1 note warns against, and this is deliberately not that:
+        /// `LightExposure` moves the LEVEL, this moves the COLOUR, and the probe reports both.
+        ///
+        /// ⚠️ IT IS NO LONGER A LITERAL TRANSCRIPTION OF `CharacterSelect.tscn`, AND THAT IS THE
+        /// POINT RATHER THAN A REGRESSION. The Godot Environment's own ambient hue is what the
+        /// numbers above were; the whole complaint is that this screen does not look like the
+        /// game, and matching the game beats matching a scene file the game no longer uses.
+        /// </remarks>
         public static readonly Color PreviewAmbient =
-            new Color(0.62745f, 0.57647f, 0.52157f) * (1.35f * 0.65f);
+            new Color(0.64690f, 0.57440f, 0.48450f) * (1.35f * 0.65f);
 
         public const float TurnDegrees = 38.0f;
         public const float TurnPeriod = 9.0f;
@@ -493,6 +554,19 @@ namespace TumbangPreso.UI
         public void Show(GameObject prefab, AnimationClip[] clips, Color[] palette) => Show(prefab, clips, palette, null);
 
         /// <summary>
+        /// ⚠️⚠️ THE TSINELAS TAB SAYS SO, BECAUSE THIS SCREEN CANNOT WORK IT OUT. One rig shows
+        /// three categories here — the cast, the cans and the tsinelas — and a slipper and a can
+        /// are indistinguishable from inside: both arrive with no palette, and § 79.7 records
+        /// them sharing source materials. The 16-slot palette test below separates a PERSON from
+        /// a prop and cannot separate the two props. `ConvertedCharacterSelect` already knows
+        /// which tab it is on, so it is the thing that tells us.
+        ///
+        /// ⚠️ IT DEFAULTS TO FALSE, so every existing caller keeps the shading it had and only
+        /// the shoe tab changes. See `ToonSkin.SlipperShadowBand`.
+        /// </summary>
+        public bool ShowingSlipper { get; set; }
+
+        /// <summary>
         /// ⚠️ THE SCREEN AND THE MATCH MUST APPLY THE PALETTE THE SAME WAY. What you pick and
         /// what walks out cannot look like two different characters, and the only way to
         /// guarantee that is for both to go through `ToonSkin` with the same sixteen colours.
@@ -560,9 +634,21 @@ namespace TumbangPreso.UI
             // this method's note derives.
             bool isPerson = palette != null && palette.Length == 16;
 
-            Visual.ToonSkin.Apply(_model,
-                isPerson ? Visual.ToonSkin.PersonOutlineWidth : Visual.ToonSkin.PropOutlineWidth,
-                palette);
+            // ⚠️ A TSINELAS TAKES THE FLAT SKIN HERE TOO, AND IT HAS TO BE THE SAME ONE THE MATCH
+            // USES. This screen exists so that what you pick and what walks out cannot look like
+            // two different things, which is the rule stated at the top of this method; dressing
+            // the picker shoe differently from the match shoe would break it in the one place it
+            // is most visible. § 79.7 was that bug in the other direction.
+            if (!isPerson && ShowingSlipper)
+            {
+                Visual.ToonSkin.ApplySlipper(_model, Visual.ToonSkin.PropOutlineWidth);
+            }
+            else
+            {
+                Visual.ToonSkin.Apply(_model,
+                    isPerson ? Visual.ToonSkin.PersonOutlineWidth : Visual.ToonSkin.PropOutlineWidth,
+                    palette);
+            }
 
             if (petModel != null)
             {
@@ -822,7 +908,37 @@ namespace TumbangPreso.UI
             return new Bounds(centre, extents * 2.0f);
         }
 
-        private void LateUpdate()
+        private void LateUpdate() => Step();
+
+        /// <summary>
+        /// Runs one frame's worth of preview work and renders the camera into
+        /// <see cref="Target"/>, for a probe that is photographing this screen outside play mode.
+        ///
+        /// ⚠️⚠️ THIS EXISTS BECAUSE NOTHING IN THE REPOSITORY COULD SEE THE CHARACTER SCREEN, AND
+        /// THREE SESSIONS GUESSED AT A FAULT ON IT INSTEAD. `docs/TODO.md` § 79.1: IKE is
+        /// `Kd 0.052 0.058 0.074` in its own `.mtl` and renders mid grey here, and every
+        /// explanation offered for that was argued from source rather than measured, because the
+        /// only two renderers in the project point somewhere else. `ModelSheet` shoots a
+        /// different camera with a different projection and § 43's rule is that a render from one
+        /// camera is not evidence about another.
+        ///
+        /// ⚠️ IT IS THE REAL COMPONENT OR IT IS WORTHLESS. A probe that rebuilds this camera,
+        /// its two lights, its ambient and its grade beside it is a SECOND implementation, free
+        /// to agree with the screen while the screen is wrong. `LateUpdate` is split rather than
+        /// duplicated for exactly that reason: there is one body and both callers run it.
+        ///
+        /// ⚠️ THE EXPLICIT `Render()` IS THE PART EDIT MODE NEEDS. A camera with a target texture
+        /// draws itself every frame in play mode and never outside it, so a probe that only
+        /// stepped the logic would save whatever the texture happened to hold.
+        /// </summary>
+        public void StepForCapture()
+        {
+            Step();
+
+            if (_camera != null) _camera.Render();
+        }
+
+        private void Step()
         {
             if (_camera == null) return;
 

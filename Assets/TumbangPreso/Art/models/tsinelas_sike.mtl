@@ -10,8 +10,55 @@
 # That is the "IKE is corrupted" report. The mesh itself is clean (33,856 unique
 # positions, 0 degenerate faces, normals and UVs present) so the geometry needs nothing.
 #
-# 0.052/0.058/0.074, HALVED FROM 0.105/0.115/0.145 ON 2026-08-29.
-# 🧑 asked twice in one sitting: "make sike darker too", then "sike/ike still aint dark enough".
+# 0.0400/0.0446/0.0569, FROM 0.052/0.058/0.074 ON 2026-08-29, AND THE THIRD TIME OF ASKING.
+# 🧑, three times in two sittings: "make sike darker too", "sike/ike still aint dark enough",
+# and off the character screen, "this is what im saying wtf is this its so light",
+# "ike in character select should be darker btw not white".
+#
+# ⚠️⚠️ HALVING IT TWICE BARELY MOVED THE PIXEL, AND THAT IS THE WHOLE REASON IT KEPT COMING BACK.
+# THIS NUMBER IS CONSUMED AS LINEAR, NOT AS sRGB. The project is Linear
+# (ProjectSettings m_ActiveColorSpace: 1), and measured through the character screen with
+# ModelPreviewProbe, a Kd of 0.052 renders at 89/255 with the ink outline off the mean. That is
+# the arithmetic of a LINEAR reflectance: 0.052 x 1.35 key = 0.070 linear, which encodes to
+# sRGB 0.294 = 75/255, and the measured darkest decile was 74. Not a coincidence.
+#
+# So the intuition that produced 0.105 -> 0.052 was reading these as display values, where
+# halving black-ish gets you blacker. In linear they are reflectances, and halving 0.105 to 0.052
+# moves the SCREEN value only from about 92/255 to about 75/255: still a mid grey, which is
+# exactly what he photographed and exactly why two rounds of halving did not answer it.
+#
+# ⚠️⚠️ 0.0400 IS BISECTED ON THE RENDER, NOT SOLVED ON PAPER, AND THE PAPER ANSWER WAS WRONG BY
+# A LOT. The first attempt at this reasoned forward through the grade, assumed it LIFTS the low
+# end, and landed on 0.0070. Measured through ModelPreviewProbe, 0.0070 renders the shoe at a
+# mean of 0,0,5: pure black, the exact failure the floor below exists to prevent, arrived at by
+# arithmetic that looked careful. ColourGrade CRUSHES the toe rather than lifting it — the same
+# `lerp(0.5, c, contrast)` behaviour IlalimNgTulayBuilder works out at length for that map, where
+# every linear pixel below a threshold clips to zero before it reaches the screen.
+#
+# So it is measured instead, on the character screen, with the flat skin in place:
+#
+#     Kd 0.0800  ->  mean  87
+#     Kd 0.0550  ->  mean  63
+#     Kd 0.0400  ->  mean  43  THE VALUE SHIPPED HERE: dark, form still readable
+#     Kd 0.0280  ->  mean  22
+#     Kd 0.0200  ->  mean   0  (black, no form left)
+#
+# ⚠️⚠️ AND THE LADDER WAS SWEPT TWICE, BECAUSE THE FIRST SWEEP WAS TAKEN UNDER THE WRONG LIGHTS.
+# It ran while ModelPreview.LightExposure was still 1.0, and answered 0.0180. The character screen
+# was at that point lit 1.54x hotter than every map in the game (docs/TODO.md § 79.1), and once
+# that was corrected to 0.651 the same 0.0180 rendered at mean 0: pure black. **A value bisected
+# against the wrong lighting is not a value.** The ladder above is the re-sweep, and it is the one
+# that matches what ships. The old readings, for the record, were 0.0520 -> 111 (his screenshot,
+# "so light"), 0.0300 -> 73, 0.0180 -> 44.
+#
+# The two other channels keep the original 1 : 1.115 : 1.423 ratio so the shoe stays the same
+# faintly cool near-black it was authored as.
+#
+# ⚠️ MEASURED AFTER THE FLAT SKIN LANDED, NOT BEFORE, AND THE ORDER MATTERS. ToonSkin.ApplySlipper
+# raises the toon shadow band from 0.45 to 0.86 for tsinelas only, so the shoe no longer has a
+# darkened half to hide in: the albedo now carries essentially all of the value. Measured on the
+# same probe, the flat skin alone took this shoe from a mean of 89 to 111. Re-deriving this Kd
+# against the OLD shading would put it back to grey.
 #
 # ⚠️ THE OLD NUMBER'S REASONING WAS NOT WRONG, ITS CONDITIONS CHANGED. It was measured as
 # "the darkest the body can sit and still separate the toe box from the midsole" against a
@@ -24,7 +71,7 @@
 # shoe becomes a flat silhouette with the m3 swoosh floating on it. That is the "IKE is
 # corrupted" report and 0 0 0 is what caused it. This is dark, not black.
 newmtl m2
-Kd 0.05200 0.05800 0.07400
+Kd 0.04000 0.04460 0.05690
 Ks 0.14000 0.14000 0.16000
 Ns 48.00000
 d 1.00000

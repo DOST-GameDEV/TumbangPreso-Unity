@@ -494,6 +494,52 @@ namespace TumbangPreso
             return true;
         }
 
+        /// <summary>
+        /// Takes this tsinelas out of whoever is holding it, without throwing it. The inverse of
+        /// <see cref="HostForceEquip"/>.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE NOTHING EMPTIED THE NEW TAYA'S HAND, AND THE TAYA IS THE ONE
+        /// UNIT THAT MAY NOT CARRY ONE. 🧑 2026-08-29, off the built player with a tsinelas in
+        /// his own first-person hands and `TAYA` on his card: *"why the fuck does taya have
+        /// slipper in practice mode? Does this also happen in multiplayer"*. **It does.**
+        /// `SliceRunner.EquipOwnedSlippers` runs host-side on every peer's behalf and is the only
+        /// thing that touches ownership at a round change; it disowns and deactivates the slipper
+        /// whose INDEX matches the defender's seat, and never looks at what anybody is actually
+        /// holding. `Carrier.Held` was assigned to `null` in exactly one place in the whole file,
+        /// at the end of a throw.
+        ///
+        /// ⚠️ SO IT IS NOT ONLY THE TAYA'S OWN SHOE, WHICH IS WHY DEACTIVATING BY INDEX COULD
+        /// NEVER HAVE FIXED IT. `OwnerSlot` is a label and not a lock — this class says so in as
+        /// many words and `docs/TODO.md` § 79.9 records the decision being taken deliberately and
+        /// twice — so the incoming taya is frequently holding somebody ELSE'S tsinelas, which
+        /// that loop leaves active and equipped by construction.
+        ///
+        /// ⚠️ AND THE VIEWMODEL IS A SEPARATE MESH, so even for a matching index, switching the
+        /// world object off left the first-person copy in frame. `Carrier.NotifyHolding(null)`
+        /// clears `HoldingSlipper`, which is what `ViewmodelArms.SetHolding` reads.
+        /// </summary>
+        public bool HostDisarm()
+        {
+            if (!NetAuthority.ShouldResolve()) return false;
+            if (State != SlipperState.Held || Holder == null) return false;
+
+            var previous = Holder;
+
+            SetState(SlipperState.Loose);
+            Holder = null;
+            _velocity = Vector3.zero;
+
+            previous.HoldingSlipper = false;
+
+            // ⚠️ ONLY IF THAT CARRIER IS STILL POINTING AT *THIS* TSINELAS, which is the same
+            // guard `ReleasePreviousHolder` carries and for the same reason: a body that has
+            // since picked up a different shoe is holding something real.
+            var carrier = previous.GetComponent<Carrier>();
+            if (carrier != null && carrier.Held == this) carrier.NotifyHolding(null);
+
+            return true;
+        }
+
         public float PektusSpin { get; private set; }
 
         /// <summary>

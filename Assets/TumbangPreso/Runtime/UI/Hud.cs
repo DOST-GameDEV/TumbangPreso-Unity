@@ -745,6 +745,18 @@ namespace TumbangPreso.UI
             // character, which is the line this method is drawn along.
             _crosshair.enabled = false;
             _vulnerable.enabled = false;
+
+            // ⚠️ AND THE HITMARKER, WHICH THIS LIST MISSED AND `docs/TODO.md` § 79.4 WAS. It is
+            // the same class of thing as the two lines above it, it was simply not in the list,
+            // and a mark already on screen at the moment a player becomes a watcher would
+            // otherwise finish its 0.28 s fade in the new mode. `PopHitmarker` refuses while
+            // spectating; this clears the one that may already be up.
+            if (_hitmarker != null)
+            {
+                _hitmarker.enabled = false;
+                _hitmarkerTimer = 0.0f;
+            }
+
             _readyPrompt.enabled = false;
             _readyObjective.enabled = false;
             if (_readyPromptPlate != null) _readyPromptPlate.enabled = false;
@@ -830,7 +842,20 @@ namespace TumbangPreso.UI
                                           TextAnchor.MiddleRight, 4);
             Place(_spectatorLiveBug.rectTransform, new Vector2(1.0f, 1.0f),
                   new Vector2(-24, -24), new Vector2(260, 34));
-            _spectatorLiveBug.text = "● LIVE";
+
+            // ⚠️⚠️ THE CORNER STARTS EMPTY, BECAUSE "LIVE" IS THE STATE THAT SAYS NOTHING.
+            // 🧑 2026-08-29, pointing at the red bug in the corner of a spectator frame:
+            // *"remove live here too"*.
+            //
+            // ⚠️ THE WIDGET IS KEPT AND ONLY ITS DEFAULT STATE IS BLANK, WHICH IS NOT THE SAME
+            // AS DELETING IT. The other two states it carries, `⏪ INSTANT REPLAY` and
+            // `⏸ TACTICAL PAUSE`, each tell a watcher that what they are looking at is NOT the
+            // present moment, which is the one thing a broadcast corner is for and the one
+            // thing the bottom status line does not say on its own. Live is the default and
+            // the absence of either of those, so drawing it is a label that is only ever
+            // redundant: `SpectatorCamera.StatusText` already opens `● LIVE NETWORK  |  `
+            // along the bottom of the same frame.
+            _spectatorLiveBug.text = "";
         }
 
         public void SetSpectatorControlsVisible(bool visible)
@@ -879,7 +904,9 @@ namespace TumbangPreso.UI
                 }
                 else
                 {
-                    _spectatorLiveBug.text = "● LIVE";
+                    // See the build site: live is the absence of the other two, so it draws
+                    // nothing rather than a red bug that repeats the bottom status line.
+                    _spectatorLiveBug.text = "";
                     _spectatorLiveBug.color = UiTheme.Danger;
                 }
             }
@@ -3669,9 +3696,30 @@ namespace TumbangPreso.UI
         private Slipper[] _pickupCandidates;
         private float _pickupScanAt = -99.0f;
 
+        /// <summary>
+        /// ⚠️⚠️ A SPECTATOR NEVER SEES ONE, AND THAT IS `docs/TODO.md` § 79.4. 🧑, off a
+        /// spectator frame with an orange triangle sitting over the taya: *"WHY IS THERE ! FOR
+        /// SPECTATOR"*, then *"i want the ! shit gone completley in spectatotr mode"*.
+        ///
+        /// The mark is this label and the symbol is the literal `"⚠️"` that `RoundDirector`
+        /// passes on a taya-camp tick and on a slipper-idle tick. § 79.4 searched for a sprite
+        /// and ruled out legacy `Text` on the grounds that it *"cannot draw a full-colour
+        /// triangle"*: it can, because a dynamic font falls back to the OS emoji face for a
+        /// glyph it does not carry, and Segoe UI Emoji is a COLOUR font. That is the whole
+        /// reason the search missed it, and it is why the two label fields the search DID check
+        /// (`_crosshair` and `_vulnerable`) were the wrong two.
+        ///
+        /// ⚠️ THE GUARD IS HERE RATHER THAN AT THE TWO CALL SITES, because the hitmarker is
+        /// first-person feedback about something happening to YOUR unit, and a spectator has no
+        /// unit for anything to happen to. `CLAUDE.md` § 4 makes that argument for the whole
+        /// spectator control set: no body, no seat, no `CharacterMotor`. Gating the callers
+        /// would leave the next caller to rediscover it.
+        ///
+        /// ⚠️ IT TAKES THE SOUND WITH IT. The cue is the audible half of the same signal, and a
+        /// spectator hearing a penalty land on somebody else's seat is the same fault.
         public void PopHitmarker(Color color, string symbol = "💥")
         {
-            if (_hitmarker == null) return;
+            if (_hitmarker == null || _spectating) return;
             _hitmarkerTimer = 0.28f;
             _hitmarker.text = symbol;
             _hitmarker.color = color;

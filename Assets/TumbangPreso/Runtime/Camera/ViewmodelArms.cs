@@ -301,7 +301,7 @@ namespace TumbangPreso.CameraSystem
             // outline width was measured against the world object's scale rather than the
             // fistful-sized copy in the viewmodel. Re-deriving it here is what keeps the border
             // the same thickness in both views.
-            Visual.ToonSkin.Apply(_heldRenderer, Visual.ToonSkin.PropOutlineWidth);
+            Visual.ToonSkin.ApplySlipper(_heldRenderer, Visual.ToonSkin.PropOutlineWidth);
         }
 
         /// <summary>Give <paramref name="to"/> one material per submesh, taken from
@@ -718,6 +718,40 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         public const float WindupRad = 1.02f;
 
+        /// <summary>
+        /// Which way <see cref="WindupRad"/> turns the VIEWMODEL arm. -1 cocks back and up.
+        ///
+        /// ⚠️⚠️ IT IS THE OPPOSITE OF THE THIRD-PERSON SIGN AND THAT IS NOT AN INCONSISTENCY,
+        /// IT IS TWO DIFFERENT LOCAL BASES. 🧑 2026-08-29, off the built player: *"is wind up even
+        /// in the irght direction? Usually when u wind up btw u pull BACK not put arm forward"*.
+        /// He was right.
+        ///
+        /// `CharacterAnimator.ChargePoseAxis` is `+X` and its note says so with a measurement
+        /// behind it: *"`character_visual.gd` records that the first build of this used -X and
+        /// the hand DROPPED instead of cocking"*. That is correct **for the rig's `arm-right`
+        /// bone**, whose local frame comes from the .glb. This arm is not that bone. It is the
+        /// viewmodel arm, whose basis is baked out of `ViewmodelArms.tscn` into
+        /// <see cref="RightBasisX"/>/`Y`/`Z`, and in that frame local **+Y runs toward the hand**
+        /// while local **-Z is toward the camera and up** — the same rotated frame that cost two
+        /// of the three attempts at the held-slipper placement in `docs/TODO.md` § 79.8.
+        ///
+        /// Turning +58° about THIS local X carries local +Y (-0.301, **+0.622**, -0.723) toward
+        /// local +Z (0.315, **-0.650**, -0.691). The hand's Y goes from +0.62 to -0.65: it swings
+        /// DOWN and slightly forward. Sharing one sign across two unrelated bases reproduced
+        /// exactly the B-131 failure the third-person note is warning about, in the other view.
+        ///
+        /// ⚠️ MEASURED FROM A RENDER, NOT FROM THE ARITHMETIC ALONE. `FppArmsSnapshotTool` now
+        /// shoots `fpp_windup_side_000/050/100` from a PROFILE camera, because a straight-down-
+        /// the-barrel FPP shot flattens the one axis this question lives on: an arm rotating
+        /// about its local X moves mostly toward and away from that lens. At +1 the hand was
+        /// forward and low in frame; at -1 it cocks up and back behind the shoulder line.
+        ///
+        /// ⚠️ THE THIRD-PERSON SIGN IS UNTOUCHED. `ChargePoseRad` is still this file's
+        /// `WindupRad` so the two views agree on HOW FAR, which is the thing that must not drift.
+        /// Only the direction is per-basis, which is the half that was never per-basis.
+        /// </summary>
+        public const float WindupCarry = -1.0f;
+
         /// <summary>-1 when nothing is charging, 0..1 while something is.</summary>
         private float _charge = -1.0f;
 
@@ -780,7 +814,7 @@ namespace TumbangPreso.CameraSystem
 
             if (_charge >= 0.0f)
             {
-                _rightArm.localRotation = Quaternion.Euler(WindupRad * _charge * Mathf.Rad2Deg,
+                _rightArm.localRotation = Quaternion.Euler(WindupCarry * WindupRad * _charge * Mathf.Rad2Deg,
                                                            0.0f, 0.0f);
                 return;
             }
@@ -853,7 +887,7 @@ namespace TumbangPreso.CameraSystem
                 Visual.MaterialKit.Dress(_heldRenderer, UI.UiTheme.PropFoam);
 
                 NormaliseHeldSize();
-                Visual.ToonSkin.Apply(_heldRenderer, Visual.ToonSkin.PropOutlineWidth);
+                Visual.ToonSkin.ApplySlipper(_heldRenderer, Visual.ToonSkin.PropOutlineWidth);
             }
 
             SetHolding(false);

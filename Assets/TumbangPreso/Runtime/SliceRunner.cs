@@ -174,6 +174,34 @@ namespace TumbangPreso
         {
             if (!NetAuthority.ShouldResolve()) return;
 
+            // ⚠️⚠️ THE INCOMING TAYA IS DISARMED FIRST, AND NOTHING USED TO DO THIS AT ALL.
+            // 🧑 2026-08-29, first person, tsinelas in hand, `TAYA` on his own card: *"why the
+            // fuck does taya have slipper in practice mode? Does this also happen in
+            // multiplayer"*. It did, on both: this method is the only thing that touches
+            // ownership at a round change, it runs host-side for every peer, and the loop below
+            // only ever looked at the slipper whose INDEX matches the defender's seat.
+            //
+            // ⚠️ WHICH COULD NEVER HAVE BEEN ENOUGH, because `OwnerSlot` is a label and not a
+            // lock (`Slipper`'s own note, and `docs/TODO.md` § 79.9 records that being chosen
+            // deliberately and reaffirmed). Any attacker may pick up any tsinelas, so the seat
+            // about to become taya is routinely holding somebody else's, which the loop below
+            // leaves active and equipped by construction.
+            //
+            // ⚠️ IT RUNS BEFORE THE LOOP so the shoe it frees is still available to be re-homed
+            // to its real owner in the same pass, rather than being left loose on the road.
+            // `docs/TODO.md` § 78.13 flagged that nobody had ever WATCHED a client to confirm the
+            // taya was not carrying a shoe; this is what that check would have found.
+            var incomingTaya = GameServices.Round.PlayerAt(defenderSlot);
+            var tayaHand = incomingTaya != null ? incomingTaya.GetComponent<Carrier>() : null;
+
+            if (tayaHand != null && tayaHand.Held != null)
+            {
+                var surrendered = tayaHand.Held;
+
+                if (surrendered.HostDisarm())
+                    Net.MatchRpc.Instance?.BroadcastSlipperState(surrendered);
+            }
+
             // ⚠️⚠️ ONLY SEATS THAT EXIST. With the practice lobby set to NONE the three bot seats
             // are never built (`MatchInstaller`), so a tsinelas can be indexed to a body that is
             // not there. That used to be handled by building a list of live attackers and

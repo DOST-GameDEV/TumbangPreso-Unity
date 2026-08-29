@@ -263,9 +263,32 @@ namespace TumbangPreso.EditorTools
             // several of the twelve came out as the same person in the same clothes. That is
             // precisely the failure `RosterEntryAsset.Palette` documents on the play side, and
             // the sheet exists to show what play shows.
-            ToonSkin.Apply(model,
-                           _charactersOnly ? ToonSkin.PersonOutlineWidth : ToonSkin.PropOutlineWidth,
-                           _charactersOnly ? PaletteFor(path) : null);
+            // ⚠️ A TSINELAS TAKES THE FLAT SKIN, SO THIS SHEET KEEPS AGREEING WITH THE GAME.
+            // `ToonSkin.ApplySlipper` is what `MatchInstaller`, `ModelPreview` and
+            // `ViewmodelArms` now dress a shoe with, and a reference sheet that shaded them the
+            // old way would be a picture of a build that does not exist. The whole value of this
+            // output is that it shows what play shows, which is the argument the palette note
+            // above makes for the cast.
+            //
+            // ⚠️ THE TEST IS THE FILENAME AND THAT IS RELIABLE HERE. Every slipper model in the
+            // roster is `Art/models/tsinelas_*`, checked across all eleven, and the alternative
+            // is unavailable: this walks paths rather than roster entries, so there is no
+            // category to ask. `_charactersOnly` already separates the cast from the props and
+            // cannot separate a shoe from a can.
+            bool slipper = !_charactersOnly &&
+                           Path.GetFileName(path).StartsWith("tsinelas_",
+                                                             System.StringComparison.OrdinalIgnoreCase);
+
+            if (slipper)
+            {
+                ToonSkin.ApplySlipper(model, ToonSkin.PropOutlineWidth);
+            }
+            else
+            {
+                ToonSkin.Apply(model,
+                               _charactersOnly ? ToonSkin.PersonOutlineWidth : ToonSkin.PropOutlineWidth,
+                               _charactersOnly ? PaletteFor(path) : null);
+            }
 
             if (_charactersOnly) PoseIdle(path, model);
 

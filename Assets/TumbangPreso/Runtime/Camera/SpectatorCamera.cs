@@ -1308,7 +1308,12 @@ namespace TumbangPreso.CameraSystem
 
             string Key(string action) => Settings.Rebinding.DisplayNameFor(asset, action).ToUpperInvariant();
 
-            return "SPECTATOR    WASD fly · F1-F4 player POV · " + Key("SpectatorCycleTarget")
+            // ⚠️ `WASD fly` IS GONE ON PURPOSE. 🧑 2026-08-29, pointing at this overlay:
+            // *"remove live netwrok here as well as WASD FLY"*. It is the one item on the line
+            // that teaches nothing: every other entry names a key the player would not guess,
+            // while WASD is the same walk the whole game is already played with, and the status
+            // line above it already says `FREE FLIGHT` with the speed.
+            return "SPECTATOR    F1-F4 player POV · " + Key("SpectatorCycleTarget")
                  + " follow · " + Key("SpectatorPov") + " POV/chase · " + Key("SpectatorFreeFly")
                  + " free · WHEEL speed/zoom · " + Key("SpectatorAutopilot") + " autopilot\n"
                  + "BROADCAST    " + Key("SpectatorReplay") + " replay · " + Key("SpectatorPause")
@@ -1335,8 +1340,17 @@ namespace TumbangPreso.CameraSystem
                 broadcast = "⏸ TACTICAL PAUSE  |  ";
             else if (_selectedTimeScale < 0.99f)
                 broadcast = $"SLOW-MO {_selectedTimeScale:0.##}x  |  ";
-            else if (NetAuthority.IsNetworked)
-                broadcast = "● LIVE NETWORK  |  ";
+
+            // ⚠️⚠️ THERE IS NO `● LIVE NETWORK` PREFIX ANY MORE. 🧑 2026-08-29: *"remove live
+            // netwrok here as well as WASD FLY"*, and *"remove live here too"* about the red bug
+            // in the corner, which is the same word in the other place.
+            //
+            // ⚠️ THE THREE BRANCHES ABOVE STAY, AND THAT IS THE WHOLE DISTINCTION. Replay, pause
+            // and slow-mo each say the frame is NOT the present moment, which a watcher cannot
+            // work out by looking. Live was the else: it fired whenever none of those did, so it
+            // only ever announced the ordinary case, and it announced it on a networked match
+            // and stayed silent on a local one, which makes it a netcode readout wearing a
+            // broadcast label.
 
             // ⚠️ THE AUTOPILOT ANNOUNCES ITSELF, AND IT HAS TO. A camera that moves on its own
             // with nothing on screen saying so is indistinguishable from a camera somebody else

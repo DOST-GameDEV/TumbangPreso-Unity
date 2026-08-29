@@ -2005,6 +2005,23 @@ namespace TumbangPreso.UI
             // returns immediately when the height has not moved.
             if (_chrome != null && _chat != null) _chrome.StackRight(_chat.PanelHeight);
 
+            // ⚠️ THE ACTION BUTTON RE-FITS ON THE FRAME AFTER A MEASURE THAT HAD NO RECT. See
+            // `SetFittedButtonLabel`: `rect.width` is 0 until the first layout pass, which is
+            // exactly the frame this panel is switched on, and the old code returned from there
+            // leaving the font at whatever the previous string left it. That is the whole of
+            // 🧑's *"small ass start match ... then randomly updates"* — nothing re-fitted, so the
+            // size corrected itself only when some unrelated lobby event happened to call the
+            // refresh again on a frame when the width was real.
+            //
+            // ⚠️ IT PIGGY-BACKS ON THIS `LateUpdate` RATHER THAN ADDING A SECOND ONE. Unity binds
+            // one message per component and a duplicate is a hard compile error, which is what a
+            // first attempt at this hit.
+            if (_refitPending)
+            {
+                _refitPending = false;
+                RefreshActionButtons();
+            }
+
             if (_fitFrames <= 0) return;
 
             _fitFrames--;
@@ -2218,13 +2235,46 @@ namespace TumbangPreso.UI
             text.text = value;
             text.horizontalOverflow = HorizontalWrapMode.Overflow;
 
-            float room = text.rectTransform.rect.width;
-            if (room <= 1.0f) return;
-
+            // ⚠️⚠️ THE RESET IS ABOVE THE GUARD, AND HAVING IT BELOW IS THE WHOLE OF "small ass
+            // start match". 🧑 2026-08-29, with a screenshot of START MATCH drawn tiny in a full
+            // size plate: *"small ass start match also sometimes the match setttings ui become
+            // small then randomly updates"*.
+            //
+            // This method used to read `if (room <= 1) return;` BEFORE `fontSize = maxSize`, so a
+            // call that landed on a frame where the rect was not laid out yet returned leaving
+            // the font at **whatever the previous call left it**. The previous call is very often
+            // `WAITING FOR 4 PLAYERS`, which is 21 characters and gets stepped down to the 18
+            // floor; the seat then fills, this fires with `START MATCH`, the rect is not ready,
+            // and the short string inherits the long string's shrunken size and keeps it.
+            //
+            // ⚠️ `rect.width` IS 0 UNTIL THE FIRST LAYOUT PASS, which is exactly the frame a panel
+            // is switched on — the same trap `ModelPreview.EnsureTexture` carries a note about and
+            // the same one that makes `LobbyJoinPanel`'s boxes vanish while its headings draw. So
+            // this path is not rare, it is the normal case for the first refresh after opening.
+            //
+            // ⚠️ AND IT IS ALSO THE "randomly updates" HALF. Nothing was re-fitting; the size
+            // corrected itself only when some unrelated lobby event happened to call this again on
+            // a frame when the rect was valid, which reads exactly like the UI updating at random.
+            // The retry below makes that deterministic instead of incidental.
             text.fontSize = maxSize;
+
+            float room = text.rectTransform.rect.width;
+
+            if (room <= 1.0f)
+            {
+                // Left at the authored size, which is correct for every short string and merely
+                // one frame wide for a long one, and asked to measure again once there is a rect.
+                _refitPending = true;
+                return;
+            }
+
             while (text.fontSize > MinButtonFontSize && text.preferredWidth > room)
                 text.fontSize -= 2;
         }
+
+        /// <summary>Set when a fit was asked for before the layout could answer. Read by the
+        /// existing <c>LateUpdate</c>. See <see cref="SetFittedButtonLabel"/>.</summary>
+        private bool _refitPending;
 
         /// <summary>The floor the fit above will not go under, so a very long state stays
         /// readable rather than shrinking to nothing.</summary>

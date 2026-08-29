@@ -836,6 +836,10 @@ namespace TumbangPreso.UI
             //
             // ⚠️ AND THE CLIPS TRAVEL WITH THE MODEL, or the preview stands in a T-pose. They
             // are sub-assets of the `.glb` and this reference is what makes them ship.
+            // ⚠️ THE TAB IS THE ONLY THING THAT KNOWS THIS IS A SHOE. Set before `Show`, because
+            // `Show` is what dresses the model. See `ModelPreview.ShowingSlipper`.
+            preview.ShowingSlipper = _tab == 2;
+
             preview.Show(art == null ? null : art.Model, art == null ? null : art.Clips,
                          art == null ? null : art.Palette, art == null ? null : art.PetModel);
         }

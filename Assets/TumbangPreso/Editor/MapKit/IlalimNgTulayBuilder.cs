@@ -285,8 +285,25 @@ namespace TumbangPreso.EditorTools.MapKit
             // this is matching a known-good frame rather than inventing a number. Saturation
             // stays 1.15: the complaint is value, not colour, and 1.15 is what the cast was
             // graded against.
+            // ⚠️⚠️ BRIGHTNESS 1.00 AND SATURATION 1.18 AS OF 2026-08-29, WHICH IS ESKINITA'S ROW
+            // EXACTLY. 🧑: *"other maps genuinely feel very rich in lighting"*. Two of the five
+            // numbers here were this map's own and both were compensating for faults that are now
+            // fixed:
+            //
+            //   * brightness 1.05 was lifting a frame that was being crushed by the old 0.15
+            //     exposure and then by contrast 1.12. Both of those are corrected, so the lift is
+            //     now just a wash over a correctly exposed image, and a whole-frame multiply is
+            //     the bluntest way there is to lose contrast.
+            //   * saturation 1.15 against Eskinita's 1.18. The note that set it said *"the
+            //     complaint is value, not colour"*, which was true of THAT report and is the
+            //     opposite of this one. Colour is the complaint now.
+            //
+            // Exposure 0.92 and contrast 1.03 already match Eskinita and do not move. With the
+            // ambient hue above, every number that decides this map's colour is now the same as
+            // the map nobody has ever called dull, and what stays different is the ambient LEVEL,
+            // which is the thing that is actually true about being under a viaduct.
             var grade = mapRoot.AddComponent<MapGrade>();
-            grade.Set(1.05f, 1.03f, 1.15f, 0.92f, 1.85f);
+            grade.Set(1.00f, 1.03f, 1.18f, 0.92f, 1.85f);
 
             BuildLighting(mapRoot.transform);
             BuildGameplayRig(mapRoot.transform);
@@ -391,10 +408,50 @@ namespace TumbangPreso.EditorTools.MapKit
             // what it does not is real information about the space. What changes is the SPREAD:
             // the sky comes down and warms toward Eskinita's hue, and the equator comes up so
             // vertical faces are no longer half the brightness of horizontal ones.
+            // ⚠️⚠️ BROUGHT DOWN AGAIN ON 2026-08-29, AND THE 2026-08-28 RAISE ABOVE IS WHAT
+            // CAUSED THE REPORT IT IS BEING LOWERED FOR. 🧑, off the build that shipped it:
+            // *"ilalim ng tulay as well should look more like the other map's shaders"*, with
+            // `docs/reports/2026-08-29/reported/12.png` beside an Eskinita frame. `docs/TODO.md`
+            // § 79.2.
+            //
+            // ⚠️ THE DIFFERENCE IS THE AMBIENT AND IT IS NOT SUBTLE, MEASURED OFF THE TWO SCENE
+            // FILES RATHER THAN ARGUED. Eskinita is Flat at (0.934, 0.830, 0.700) with an
+            // EQUATOR of (0.114, 0.125, 0.133) and a ground of (0.047, 0.043, 0.035). This map
+            // was Trilight with an equator of (0.60, 0.58, 0.56) and a ground of (0.24, 0.24,
+            // 0.26): **five times Eskinita's on every vertical face and five times on every
+            // downward one.** `TumbangPreso/Toon` is a surface shader with no `noambient`, so
+            // that lands on top of the lit colour and outside the palette remap, which is high
+            // key and low contrast by construction. That is "hazier and paler" exactly.
+            //
+            // ⚠️ THE PREVIOUS NOTE'S DIAGNOSIS WAS RIGHT AND ITS CORRECTION OVERSHOT. It found a
+            // cool near-white sky putting 0.98 of blue on every up-facing surface against 0.45 on
+            // the verticals, called that spread "dull", and fixed it by RAISING the equator to
+            // close the gap. Warming the sky was correct; closing the gap by lifting the dark end
+            // rather than lowering the bright one is what traded a blue cast for a white wash.
+            // The spread here is now 0.78 / 0.34 / 0.14, which keeps the deck's shadow legible
+            // (still three times Eskinita's equator, because this is the one arena under a solid
+            // roof and that difference is real information about the space) while removing two
+            // thirds of the wash.
+            // ⚠️⚠️ AND THE HUE IS ESKINITA'S NOW, WHICH IS THE HALF THAT MAKES IT "RICH". 🧑, the
+            // same day and after the level was already brought down: *"pls give ilalim ng tulay
+            // map the same quality of lighting and shader or wtv the shit that makes other maps
+            // look good in terms of color or lighting"*, *"bcz other maps genuinely feel very rich
+            // in lighting"*.
+            //
+            // ⚠️ "RICH" IS A HUE RATIO, AND IT IS MEASURABLE. Eskinita's Flat ambient is
+            // (0.934, 0.830, 0.700): a red-to-blue ratio of **1.33**, strongly warm. This map's
+            // sky was (0.78, 0.76, 0.72), a ratio of **1.08**, which is very nearly neutral grey.
+            // A neutral ambient added on top of every lit surface (the Toon shader has no
+            // `noambient`) desaturates the whole frame toward grey, and grey is what "dull" and
+            // "not rich" describe. Lowering the level alone fixed the WASH and could not fix the
+            // colour, because it does not change the ratio.
+            //
+            // So all three bands now carry Eskinita's exact 1.000 : 0.888 : 0.749 hue at this
+            // map's own levels. The level is still the deck's and the colour is now the game's.
             RenderSettings.ambientMode = AmbientMode.Trilight;
-            RenderSettings.ambientSkyColor = new Color(0.78f, 0.76f, 0.72f);
-            RenderSettings.ambientEquatorColor = new Color(0.60f, 0.58f, 0.56f);
-            RenderSettings.ambientGroundColor = new Color(0.24f, 0.24f, 0.26f);
+            RenderSettings.ambientSkyColor = new Color(0.780f, 0.693f, 0.584f);
+            RenderSettings.ambientEquatorColor = new Color(0.340f, 0.302f, 0.255f);
+            RenderSettings.ambientGroundColor = new Color(0.140f, 0.124f, 0.105f);
 
             // ⚠️ FOG CARRIES THE LAST 40 M, WHICH THE BACKDROP GEOMETRY CANNOT. The far plate
             // stops the map ending in sky; fog stops the far plate ending in a hard line. It
@@ -413,7 +470,12 @@ namespace TumbangPreso.EditorTools.MapKit
             // stretch before the plate.
             RenderSettings.fog = true;
             RenderSettings.fogMode = FogMode.Linear;
-            RenderSettings.fogColor = new Color(0.780f, 0.775f, 0.760f);
+            // ⚠️ WARMED TO THE SAME HUE AS THE AMBIENT, for the same reason. A near-neutral fog
+            // colour is a grey veil over the last 80 m, and grey over warm art is exactly the
+            // "not rich" complaint. The VALUE is unchanged; only the ratio moves, onto the
+            // 1.000 : 0.888 : 0.749 the ambient now uses. The mid-distance ends warm instead of
+            // washing toward slate.
+            RenderSettings.fogColor = new Color(0.780f, 0.740f, 0.685f);
             RenderSettings.fogStartDistance = 40.0f;
             RenderSettings.fogEndDistance = 120.0f;
 

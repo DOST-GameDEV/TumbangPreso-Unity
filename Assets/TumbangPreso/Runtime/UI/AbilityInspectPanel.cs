@@ -58,6 +58,27 @@ namespace TumbangPreso.UI
             public Text Meta;
         }
 
+        /// <summary>
+        /// Where the tray rests, measured up from the bottom of the screen.
+        ///
+        /// ⚠️⚠️ 196, NOT 16, AND AT 16 THIS PANEL WAS DRAWN THROUGH EVERY OTHER BOTTOM ELEMENT
+        /// IN THE GAME. 🧑 2026-08-29, holding TAB in a Hero Strike match: *"broken ui placement
+        /// here when u hold tab"*, with the three cards sitting on top of the ability deck.
+        ///
+        /// ⚠️ THE ARITHMETIC IS ALREADY WRITTEN DOWN IN `Hud`, WHICH IS HOW WRONG THIS WAS. That
+        /// file works out the bottom band in full for the intermission lines: the hero deck spans
+        /// **y 14 to 92** (`DeckBottomMargin` + `DeckHeight`), the Classic deck **24 to 124**, the
+        /// inspect hint **132 to 150** and the ready prompt plate **156 to 190**. This tray is 236
+        /// tall with a bottom pivot, so resting at 16 put it at **16 to 252**: straight through
+        /// both decks, the hint that tells you to open it, and the prompt plate, all four.
+        ///
+        /// ⚠️ SO IT CLEARS THE TALLEST THING BELOW IT RATHER THAN BEING NUDGED. 196 is six px
+        /// over the prompt plate's 190, which is the same clearance `Hud` leaves between its own
+        /// two stacked lines. Stacking upward from the taller deck is what makes one number
+        /// correct in both modes, and that is `Hud`'s own rule for this band.
+        /// </summary>
+        private const float RestY = 196.0f;
+
         public static AbilityInspectPanel Create(Transform parent)
         {
             var go = new GameObject("AbilityInspect", typeof(RectTransform));
@@ -77,8 +98,8 @@ namespace TumbangPreso.UI
             _rt.anchorMin = new Vector2(0.5f, 0.0f);
             _rt.anchorMax = new Vector2(0.5f, 0.0f);
             _rt.pivot = new Vector2(0.5f, 0.0f);
-            _rt.anchoredPosition = new Vector2(0, 16);
-            _rt.sizeDelta = new Vector2(1060, 236);
+            _rt.anchoredPosition = new Vector2(0, RestY);
+            _rt.sizeDelta = new Vector2(1060, 254);
 
             // ⚠️ THE WOOD SET, NOT A SLATE-BLUE GLASS OF ITS OWN. This tray opens over a
             // live match with the wooden scoreboard and clock already on screen, so it was the
@@ -279,13 +300,31 @@ namespace TumbangPreso.UI
             // sentences the deck deliberately refuses to carry, so cutting them off here would
             // leave the full text nowhere in the game at all. `Overflow` rather than
             // `Truncate`, and the card is tall enough for four lines at this size.
-            card.Body = Label(go.transform, "Body", MenuKit.MinReadableUnits, UiTheme.Cream,
+            // ⚠️⚠️ 21, NOT `MinReadableUnits`. 🧑 2026-08-29, of these cards: *"also the texthere
+            // is hard to read"*. `MenuKit.MinReadableUnits` is 18 and it is a FLOOR — the size
+            // below which a fitter is forbidden to shrink text — and this label was authored AT
+            // the floor, so the one panel in the game whose entire job is to be read was set to
+            // the smallest type the project permits anywhere.
+            //
+            // ⚠️ IT IS AFFORDABLE HERE AND NOWHERE ELSE, which is why this is not a global
+            // change. Every other 18 in the HUD is a label competing with the match for space
+            // while the round runs; this tray only exists while the player is HOLDING a key and
+            // deliberately not playing, so it may spend the room. `VISION.md` § 3 is the rule it
+            // serves: the deck carries no sentences and every sentence lives behind this hold.
+            const int BodySize = 21;
+
+            card.Body = Label(go.transform, "Body", BodySize, UiTheme.Cream,
                               TextAnchor.UpperLeft);
             card.Body.horizontalOverflow = HorizontalWrapMode.Wrap;
             card.Body.verticalOverflow = VerticalWrapMode.Overflow;
             var bodyLe = card.Body.gameObject.AddComponent<LayoutElement>();
             bodyLe.flexibleHeight = 1.0f;
-            bodyLe.minHeight = 108;
+
+            // ⚠️ THE FLOOR MOVES WITH THE SIZE, AND THE NOTE DIRECTLY ABOVE THIS BLOCK IS THE
+            // WARNING FOR EXACTLY THIS: *"a floor left behind is how an `Overflow` label starts
+            // drawing over the card under it"*. Four lines at 21 is 126, where four at 18 was
+            // 108. The panel's own height grows by the same 18 px.
+            bodyLe.minHeight = 126;
 
             return card;
         }
@@ -368,7 +407,7 @@ namespace TumbangPreso.UI
             float eased = held ? EaseOutBack(_open) : EaseInQuad(_open);
 
             _group.alpha = Mathf.Clamp01(_open * 1.35f);
-            _rt.anchoredPosition = new Vector2(0, 16 + (1.0f - eased) * -SlideDistance);
+            _rt.anchoredPosition = new Vector2(0, RestY + (1.0f - eased) * -SlideDistance);
 
             for (int i = 0; i < _cards.Length; i++)
             {
@@ -407,7 +446,7 @@ namespace TumbangPreso.UI
             gameObject.SetActive(true);
 
             if (_group != null) _group.alpha = 1.0f;
-            if (_rt != null) _rt.anchoredPosition = new Vector2(0, 16);
+            if (_rt != null) _rt.anchoredPosition = new Vector2(0, RestY);
 
             foreach (var card in _cards)
             {
