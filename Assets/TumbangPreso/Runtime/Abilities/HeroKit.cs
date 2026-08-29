@@ -63,32 +63,46 @@ namespace TumbangPreso.Abilities
         /// True whenever the round clock is NOT running: the warm-up before round one, and the
         /// buffer between rounds.
         ///
-        /// ⚠️⚠️ IT IS A PRACTICE RANGE, NOT A PAUSE, AND THE DISTINCTION IS THE WHOLE FEATURE.
-        /// 🧑 2026-08-23: *"its okay for ult progress to persist after round and into next
-        /// rounds, i js want it to pause when the game isnt ongoing... BUt i want ppl to be able
-        /// to test skills still and shit during buffer period so maybe during buffer period give
-        /// them diff timers"*. Two requirements that pull against each other, and the answer is
-        /// to split the economy from the practice:
+        /// ⚠️⚠️ IT NOW MEANS "NO POWER MAY START", AND IT USED TO MEAN "EVERY POWER IS FREE".
+        /// 🧑 2026-08-30: *"remove unli skill before round bcz ppl fly out of map and shit"*.
         ///
-        ///  * The BANKED charge is frozen. It does not accrue and casting cannot spend it, so
-        ///    warm-up time neither earns an ultimate nor costs one.
-        ///  * The ultimate is nevertheless castable, as many times as the player likes, off a
-        ///    separate practice counter that exists only while this is true.
-        ///  * Skill cooldowns run normally, because the point of practice is learning the real
-        ///    timings.
+        /// ⚠️⚠️ THIS REVERSES A WRITTEN INSTRUCTION, SO HERE IS THE ONE IT REVERSES RATHER THAN
+        /// A DELETION. 🧑 2026-08-23: *"its okay for ult progress to persist after round and into
+        /// next rounds, i js want it to pause when the game isnt ongoing... BUt i want ppl to be
+        /// able to test skills still and shit during buffer period so maybe during buffer period
+        /// give them diff timers"*. That was answered by splitting the economy from the practice:
+        /// the banked charge froze, and the ultimate stayed castable as often as the player liked
+        /// off a counter that did not exist outside the warm-up. **The ask was granted exactly
+        /// and the result is the fault above**, because the warm-up is the one window in the
+        /// game where bodies may walk (`RoundDirector.ApplySnapshot`: `CharacterMotor.RoundActive`
+        /// defaults TRUE so the free-roam window works) while nothing is refereeing. Dante's
+        /// stomp, Sean's Supernova and Zack's charge are all impulses, `Balance` derives every
+        /// one of them from `Friction` as a DISTANCE, and an unlimited number of them fired at
+        /// four bodies standing in a box is people leaving the map.
         ///
-        /// The alternative, gating the ultimate behind the real meter during warm-up, means the
-        /// only players who can ever practise their ultimate are the ones who already banked one
-        /// last round. Nobody would ever practise it in round one.
+        /// ⚠️ THE HALF HE ASKED FOR IN 2026-08-23 IS KEPT AND ONLY THE FREE CAST IS GONE. The
+        /// banked charge still neither accrues nor is spent while the clock is stopped, which is
+        /// the *"pause when the game isnt ongoing"* sentence, and it is the half that has nothing
+        /// to do with launching anybody.
+        ///
+        /// ⚠️ IT IS NOT THE GUIDED TUTORIAL AND IT NEVER WAS. `RoundDirector.FixedUpdate` returns
+        /// on `!RoundActive` before it reaches the `GameLaunch.GuidedTutorial` branch, so a
+        /// tutorial round has `RoundActive` TRUE and this FALSE: the lesson still casts real
+        /// powers on real cooldowns, which is what `GuidedTraining` teaches against.
+        ///
+        /// ⚠️ AND THE PRACTICE MATCH IS A DIFFERENT THING WITH A COLLIDING NAME. The PRACTICE
+        /// button runs real rounds; `ConvertedMatchSetup` carries a note saying so.
         /// </summary>
         public bool PracticeMode { get; set; }
 
         /// <summary>
-        /// ⚠️ ALWAYS READY IN PRACTICE. The card lights up, the cast works, nothing is spent.
-        /// `Ultimate.IsReady` is still consulted so a practice cast cannot re-fire mid-animation.
+        /// ⚠️⚠️ NOT READY WHILE THE CLOCK IS STOPPED, AND THE OLD `PracticeMode ||` HERE WAS THE
+        /// HALF THE PLAYER COULD SEE. It lit the ultimate tile through the whole warm-up, which
+        /// is a promise the cast now refuses; `Hud` reads this property for that tile. The report
+        /// is on <see cref="PracticeMode"/>.
         /// </summary>
         public bool IsUltimateReady =>
-            (PracticeMode || UltimateCharge >= UltimateCost) && (Ultimate == null || Ultimate.IsReady);
+            !PracticeMode && UltimateCharge >= UltimateCost && (Ultimate == null || Ultimate.IsReady);
 
         public HeroKit(string heroId, string heroName)
         {
@@ -215,6 +229,20 @@ namespace TumbangPreso.Abilities
             NoCharge,
 
             /// <summary>
+            /// The round clock is not running, so no power may START. A refusal: answer it and
+            /// clear the buffer.
+            ///
+            /// ⚠️⚠️ IT IS A REFUSAL RATHER THAN <see cref="CannotAct"/>, AND THE DIFFERENCE IS
+            /// WHAT HAPPENS AT "GO". `CannotAct` holds the press and retries it for
+            /// `InputBufferWindow`, which is exactly right for a stun — the player asked for
+            /// something they are allowed to have. Reusing it here would mean every ultimate
+            /// pressed in the last 0.30 s of the warm-up fired on the first frame of the round,
+            /// four bodies deep, which is the fault this outcome was added to stop wearing a
+            /// different hat. The tick says no and the player presses again.
+            /// </summary>
+            NotYet,
+
+            /// <summary>
             /// Stunned, staggered, or the round clock is not running yet.
             ///
             /// ⚠️ NOT A REFUSAL. The player asked for something they are allowed to have and
@@ -234,34 +262,46 @@ namespace TumbangPreso.Abilities
             // ⚠️ THE ORDER MATTERS AND IT IS "CAN I ACT" LAST. A stunned player with an empty
             // meter is told the meter is empty, which is the fact they can do something about,
             // rather than being told to wait for a cast that would be refused anyway.
+            // ⚠️⚠️ THE WARM-UP REFUSES THE CAST NOW, AND IT USED TO MAKE IT FREE. See
+            // <see cref="PracticeMode"/>: this branch read `if (!PracticeMode && UltimateCharge <
+            // UltimateCost) return NoCharge;` and paid out an ultimate that cost nothing and was
+            // never spent.
+            if (PracticeMode) return CastOutcome.NotYet;
+
             if (!Ultimate.IsReady) return CastOutcome.Cooling;
-            if (!PracticeMode && UltimateCharge < UltimateCost) return CastOutcome.NoCharge;
+            if (UltimateCharge < UltimateCost) return CastOutcome.NoCharge;
             if (ctx != null && ctx.Motor != null && !ctx.Motor.CanAct()) return CastOutcome.CannotAct;
             if (!Ultimate.CanActivate(ctx)) return CastOutcome.CannotAct;
 
             Ultimate.Activate(ctx);
 
-            // ⚠️⚠️ A PRACTICE CAST IS FREE AND THAT IS THE POINT. Spending the meter here would
-            // mean a player who tested their ultimate in the warm-up starts the round without
-            // the one they had banked from last round, which is a punishment for reading the
-            // tutorial. Outside practice the meter is spent exactly as before.
-            if (!PracticeMode) UltimateCharge = 0.0f;
+            UltimateCharge = 0.0f;
 
             return CastOutcome.Cast;
         }
 
-        private static CastOutcome Fire(HeroAbility ability, AbilityContext ctx)
+        private CastOutcome Fire(HeroAbility ability, AbilityContext ctx)
         {
             if (ability == null) return CastOutcome.Missing;
 
             // ⚠️ A REACTIVATION IS NOT GATED ON THE COOLDOWN. Nemu's Astral Projection is one
             // press out and one press back, and the return trip has to be available for the
             // whole time the decoy is alive even though the ability is very much not "ready".
+            //
+            // ⚠️⚠️ AND IT SITS ABOVE THE WARM-UP GATE ON PURPOSE. A decoy that is already out
+            // when the round ends has to be recallable, or the hero spends the buffer as a
+            // projection with the return press refused. Ending something already running is not
+            // starting something new, which is the only thing the gate below is stopping.
             if (ability.IsActive && ability.CanReactivate)
             {
                 ability.Reactivate(ctx);
                 return CastOutcome.Cast;
             }
+
+            // ⚠️⚠️ NO POWER STARTS WHILE THE ROUND CLOCK IS STOPPED. See
+            // <see cref="PracticeMode"/> for the report and why this is a refusal rather than a
+            // discount.
+            if (PracticeMode) return CastOutcome.NotYet;
 
             if (!ability.IsReady) return CastOutcome.Cooling;
             if (ctx != null && ctx.Motor != null && !ctx.Motor.CanAct()) return CastOutcome.CannotAct;

@@ -112,18 +112,24 @@ namespace TumbangPreso
         }
 
         /// <summary>
-        /// ⚠️⚠️ `PlayingPeerCount` WANTS A PEER ID AND WAS BEING HANDED A SEAT. Its argument is
-        /// only there so the local peer still counts while its own spectator flag is in flight,
-        /// and it compares that argument against `PeerRecord.PeerId`. Passing `LocalSlot` made
-        /// the comparison land on whichever CLIENT happened to share a number with this peer's
+        /// ⚠️⚠️ `PlayingPeerCount` TOOK A PEER ID AND WAS ONCE HANDED A SEAT, AND THE ARGUMENT
+        /// IS GONE NOW. It existed so the local peer counted while its own spectator flag was
+        /// in flight; it compared against `PeerRecord.PeerId`, and passing `LocalSlot` made the
+        /// comparison land on whichever CLIENT happened to share a number with this peer's
         /// chair, so a host in seat 1 forgave a spectating client 1 and a spectating host in
         /// seat 1 was itself dropped from its own quorum. Same fault class as the peer-versus-seat
         /// collision in `DeclareReady` above, one call frame further out.
+        ///
+        /// ⚠️ THE EXEMPTION ITSELF THEN TURNED OUT TO BE THE BUG — it could only ever count a
+        /// peer already flagged a spectator, which is the one peer `Update` below refuses to
+        /// vote for — so a spectating HOST hung its own gate. `LobbySession.PlayingPeerCount`
+        /// carries the report and the arithmetic. **Do not reintroduce the argument**: this note
+        /// is kept only so the seat-versus-peer collision above is not rediscovered from scratch.
         /// </summary>
         private int ExpectedReadyCount()
         {
             var lobby = Net.NetSession.Instance?.Lobby;
-            return lobby?.PlayingPeerCount(NetAuthority.LocalPeerId) ?? 1;
+            return lobby?.PlayingPeerCount() ?? 1;
         }
 
         private void RaiseNetReady()

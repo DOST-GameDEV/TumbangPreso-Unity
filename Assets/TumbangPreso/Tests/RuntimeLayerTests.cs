@@ -303,6 +303,55 @@ namespace TumbangPreso.Tests
             Object.DestroyImmediate(go);
         }
 
+        /// <summary>
+        /// There is no ceiling on a score, at any point in the path that awards one.
+        ///
+        /// ⚠⚠ THIS EXISTS BECAUSE A PLAYTEST SAID THERE WAS ONE AND A SOURCE READ COULD NOT FIND
+        /// IT. 🧑 2026-08-30: *"theres also a 6k points cap bug pls remove poitns cap"*, *"my
+        /// playtesters found that it didnt go past 6k"*, with a result board reading
+        /// **SEAN 6000 PTS** over 5530, 4880 and 4405.
+        ///
+        /// Every candidate was checked by reading and every one came back clean: `Scoreboard.Add`
+        /// floors at zero and has no ceiling, the field is `int[]`, `MatchResult.RenderStandings`
+        /// prints `ScoreFor` with no clamp, `SyncWorld` carries `int[]` in a 256-byte writer
+        /// against about 54 bytes of payload, and a regex sweep for any four-digit clamp across
+        /// the runtime and the core package returns nothing. `docs/TODO.md` § 84.14 lists the
+        /// whole search so nobody runs it twice.
+        ///
+        /// ⚠ SO THIS IS A TRIPWIRE RATHER THAN A REPRODUCTION. It drives the real award path,
+        /// guards and all, well past the number he reported. **If it is ever red, the cap is in
+        /// this layer and this test names it.** While it is green the fault is somewhere else,
+        /// and the next place to look is what STOPS awards rather than what bounds them:
+        /// `AddScore` returns silently on `!MatchInProgress` and on `IsWarmupBuffer`, and the
+        /// test directly above this one is about the second of those.
+        ///
+        /// ⚠ IT AWARDS THROUGH `AddScore`, NOT THROUGH `Scoreboard`, deliberately. The container
+        /// is engine-free and provably uncapped; the guards are the part that could stop a match
+        /// dead at an arbitrary number, and they are only reachable from here.
+        /// </summary>
+        [Test]
+        public void MatchDirector_HasNoPointsCeiling_PastTheReported6000()
+        {
+            var go = new GameObject("TestScoreCeiling");
+            var match = go.AddComponent<MatchDirector>();
+            match.StartMatch();
+
+            // 100 knockdowns at `ScoreLataKnocked` is 10000, comfortably past 6000 and past any
+            // plausible round-length maximum, on one seat.
+            for (int i = 0; i < 100; i++) match.AddScore(0, ScoreEvent.LataKnocked);
+
+            Assert.AreEqual(Balance.ScoreLataKnocked * 100, match.ScoreFor(0),
+                "the award path stopped short. A ceiling has appeared between MatchDirector."
+                + "AddScore and Scoreboard.Add, which is exactly the 6000 report and this test "
+                + "is where it is now visible.");
+
+            Assert.Greater(match.ScoreFor(0), 6000,
+                "the score did not pass 6000, which is the number the 2026-08-30 playtest "
+                + "reported as a ceiling. docs/TODO.md section 84.14.");
+
+            Object.DestroyImmediate(go);
+        }
+
         [Test]
         public void GameMode_Rosters_AreDistinctAndCorrectSizes()
         {

@@ -497,23 +497,47 @@ namespace TumbangPreso.Tests
         }
 
         /// <summary>
-        /// ⚠️⚠️ AND THE ULTIMATE IS STILL TESTABLE IN THERE. 🧑: *"BUt i want ppl to be
-        /// able to test skills still and shit during buffer period"*. Free to cast, and the cast
-        /// must not spend the bank, or practising costs a player the ultimate they carried in.
+        /// ⚠️⚠️ NO POWER STARTS WHILE THE ROUND CLOCK IS STOPPED, AND THIS TEST USED TO ASSERT
+        /// THE OPPOSITE. It was `PracticeCastsAreFreeAndDoNotSpendTheBank`, and it held 🧑's
+        /// 2026-08-25 ask: *"BUt i want ppl to be able to test skills still and shit during
+        /// buffer period"*. That shipped, and what it produced was 🧑 2026-08-30: *"remove unli
+        /// skill before round bcz ppl fly out of map and shit"* — the warm-up is the one window
+        /// where bodies may walk with nothing refereeing, so an unlimited free ultimate is four
+        /// people being launched out of the arena before the round starts.
+        ///
+        /// ⚠️ THE HALF THAT SURVIVED IS THE BANK, and it is asserted here rather than deleted
+        /// with the rest: the warm-up must still neither earn an ultimate nor spend one, which
+        /// is the *"pause when the game isnt ongoing"* half of the original ask and the half
+        /// that never launched anybody. `HeroKit.PracticeMode` carries both quotes.
         /// </summary>
         [Test]
-        public void PracticeCastsAreFreeAndDoNotSpendTheBank()
+        public void TheWarmUpRefusesEveryPowerAndLeavesTheBankAlone()
         {
             var kit = new ProbeKit { PracticeMode = true };
-            kit.AddUltimateCharge(HeroKit.UltimateMax * 0.5f);
+            kit.AddUltimateCharge(HeroKit.UltimateMax);
             float banked = kit.UltimateCharge;
 
-            Assert.IsTrue(kit.IsUltimateReady,
-                "the ultimate is not castable in practice, so nobody can ever rehearse it");
-            Assert.IsTrue(kit.TryActivateUltimate(null), "the practice cast was refused");
+            Assert.IsFalse(kit.IsUltimateReady,
+                "the ultimate tile reported ready while the round clock was stopped, so the HUD "
+                + "is inviting a press the rules now refuse");
+
+            Assert.AreEqual(HeroKit.CastOutcome.NotYet, kit.CastUltimate(null),
+                "a full meter cast an ultimate during the warm-up");
+            Assert.AreEqual(HeroKit.CastOutcome.NotYet, kit.CastSkill1(null),
+                "a skill cast during the warm-up");
+            Assert.AreEqual(HeroKit.CastOutcome.NotYet, kit.CastSkill2(null),
+                "a skill cast during the warm-up");
 
             Assert.AreEqual(banked, kit.UltimateCharge, 0.0001f,
-                "a practice cast spent the banked charge");
+                "the warm-up spent the banked charge, so carrying an ultimate across a round "
+                + "boundary now costs the player the ultimate they carried");
+
+            // ⚠️ AND THE SAME KIT CASTS THE MOMENT THE CLOCK STARTS. Without this the test
+            // passes just as well against an ability that is broken outright.
+            kit.PracticeMode = false;
+            Assert.IsTrue(kit.IsUltimateReady, "a full meter was not ready in a live round");
+            Assert.AreEqual(HeroKit.CastOutcome.Cast, kit.CastUltimate(null),
+                "the round went live and the ultimate was still refused");
         }
 
         /// <summary>And once the round is live it costs the meter, exactly as before.</summary>

@@ -307,6 +307,8 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("Score", OnScoreMsg);
             cm.RegisterNamedMessageHandler("Chat", OnChatMsg);
             cm.RegisterNamedMessageHandler("ChatLine", OnChatLineMsg);
+            cm.RegisterNamedMessageHandler("ReqTime", OnReqTimeMsg);
+            cm.RegisterNamedMessageHandler("SyncTime", OnSyncTimeMsg);
 
             _handlersOn = cm;
         }
@@ -1051,6 +1053,113 @@ namespace TumbangPreso.Net
             // person who cannot leave the lobby is the one person who cannot see it.
             OnChatLine?.Invoke(who, line);
         }
+
+        // -------------------------------------------------------------------
+        // § THE BROADCAST CLOCK
+        //
+        // ⚠⚠ SPECTATORS MAY STOP THE MATCH, AND THIS REVERSES A WRITTEN RULE. `SpectatorCamera`'s
+        // broadcast block said, in terms: *"Pause and speed manipulation are offline-only by
+        // construction: a remote viewer must never acquire authority over a live tournament simply
+        // by spectating"*, and refused every time control with `LIVE NETWORK · TIME CONTROLS
+        // LOCKED`. 🧑 2026-08-30, asked which of the two pauses he meant and answering plainly:
+        // *"pause is for spectatotr"*, *"give spectators the authority to pause, all of them can
+        // pause"*, *"make sure time pauses if u pause as well as everything happening and spectator
+        // can move"*, *"liek in game like mobile legends"*.
+        //
+        // The old rule was protecting a tournament against a stranger. This game's spectators are
+        // the four people waiting for the next match and whoever is casting it, and the ask is a
+        // broadcast feature: MLBB's observers stop the game to talk over a fight. **All of them
+        // can pause**, which he said twice, so there is no leader check here.
+        //
+        // ⚠⚠ THE HOST IS STILL THE ONLY WRITER, AND THAT IS NOT A CONTRADICTION. A spectator
+        // ASKS (`ReqTime`) and the host DECIDES and TELLS EVERYONE (`SyncTime`), which is
+        // `CLAUDE.md` § 4's rule that state is produced in one place. Four peers each writing their
+        // own `Time.timeScale` is four different matches, and the two that mattered would drift
+        // apart inside a second.
+        //
+        // ⚠ A PLAYER CANNOT. The request is refused unless the sender's `PeerRecord.Spectator` is
+        // set, so somebody losing cannot stop the round they are losing.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// A spectator asking the host to stop or slow the match. Host-applied, then broadcast.
+        /// </summary>
+        public void RequestTimeScaleServerRpc(float scale)
+        {
+            if (NetAuthority.IsHost)
+            {
+                HostSetTimeScale(scale);
+                return;
+            }
+
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+
+            using var writer = new FastBufferWriter(16, Allocator.Temp);
+            writer.WriteValueSafe(scale);
+            _nm.CustomMessagingManager.SendNamedMessage("ReqTime", NetworkManager.ServerClientId, writer);
+        }
+
+        private void OnReqTimeMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
+
+            reader.ReadValueSafe(out float scale);
+
+            // ⚠ THE SENDER MUST BE A WATCHER. `TrySenderSeat` answers the opposite question, so
+            // this asks the lobby directly: a peer with a chair is playing and may not stop the
+            // match it is playing in.
+            var peer = NetSession.Instance?.Lobby?.PeerById((int)senderClientId);
+            if (peer == null || !peer.Spectator) return;
+
+            HostSetTimeScale(scale);
+        }
+
+        /// <summary>
+        /// Apply a broadcast clock on the host and hand the same number to every peer.
+        ///
+        /// ⚠ CLAMPED HOST-SIDE, NOT TRUSTED FROM THE WIRE. 0 is the pause and 1 is normal; a
+        /// hostile or corrupted 50 would run the match at fifty times speed on four machines.
+        /// </summary>
+        public void HostSetTimeScale(float scale)
+        {
+            if (!NetAuthority.IsHost) return;
+
+            float safe = Mathf.Clamp(scale, 0.0f, 1.0f);
+
+            // ⚠ THE HITSTOP IS ENDED FIRST, on every peer, because it is the other writer of
+            // `Time.timeScale` in this project and it restores to 1 when it expires — which would
+            // quietly un-pause a paused match a fraction of a second later.
+            Hitstop.End();
+            Time.timeScale = safe;
+            TimeScaleChanged?.Invoke(safe);
+
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+
+            using var writer = new FastBufferWriter(16, Allocator.Temp);
+            writer.WriteValueSafe(safe);
+            _nm.CustomMessagingManager.SendNamedMessageToAll("SyncTime", writer);
+        }
+
+        private void OnSyncTimeMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            // ⚠ THE HOST IS ITS OWN CLIENT AND `SendNamedMessageToAll` LOOPS BACK TO IT. See
+            // § THE LOOPBACK: applying this again on the host would be harmless but the guard is
+            // the house style and it keeps the event from firing twice.
+            if (NetAuthority.IsHost) return;
+            if (!FromHost(senderClientId)) return;
+
+            reader.ReadValueSafe(out float scale);
+
+            Hitstop.End();
+            Time.timeScale = Mathf.Clamp(scale, 0.0f, 1.0f);
+            TimeScaleChanged?.Invoke(Time.timeScale);
+        }
+
+        /// <summary>
+        /// Raised on every peer when the broadcast clock moves, so a HUD can say why the world
+        /// stopped. A player who is not told is looking at a frozen game with no explanation.
+        /// </summary>
+        public static event System.Action<float> TimeScaleChanged;
 
         private void OnChatLineMsg(ulong senderClientId, FastBufferReader reader)
         {
@@ -2387,6 +2496,12 @@ namespace TumbangPreso.Net
             lobby?.StartMatch();
             _lobbyReady.Clear();
 
+            // ⚠️ THE HOST STOPS TALKING ABOUT A MATCH IT HAS NOT STARTED YET. See
+            // `_loadingOwnArena`: everything below tells four peers to load an arena, and the
+            // host then loads its own while `FixedUpdate` keeps writing `SyncWorld` at 5 Hz
+            // carrying a `MatchInProgress` that is still false. `docs/TODO.md` § 82.3.
+            _loadingOwnArena = true;
+
             // ⚠️⚠️ THE MODE GOES FIRST, BEFORE `StartMatch`, AND THE ORDER IS THE WHOLE POINT.
             // `OnStartMatchMsg` calls `UI.SceneFlow.StartMatch()`, which loads the arena scene
             // and builds every seat through `MatchInstaller`, and `MatchInstaller` reads
@@ -3200,6 +3315,47 @@ namespace TumbangPreso.Net
             if (!wasRoundActive && roundActive) card.DismissAndPractice();
         }
 
+        /// <summary>
+        /// Set the moment the host commits to loading an arena, cleared the first time its own
+        /// `MatchDirector` says the match is running. While it is up, this host has told four
+        /// people to start a match it has not started itself yet.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE THE HOST WAS BROADCASTING "NO MATCH RUNNING" THROUGH ITS OWN
+        /// ARENA LOAD, FIVE TIMES A SECOND. `docs/TODO.md` § 82.3. § 82.1 fixed the receiving
+        /// end — `MatchDirector.IsPreStartSnapshot` drops the packet on the client, and that is
+        /// the half that had to exist because the honest sender cannot be relied on across
+        /// versions — so this is bandwidth and honesty rather than correctness. It is still worth
+        /// having: a stream of packets asserting something false is a trap for the next person
+        /// reading a capture.
+        ///
+        /// ⚠️⚠️ `LobbySession.MatchInProgress` IS THE OBVIOUS GATE AND IT IS WRONG. § 82.3 wrote
+        /// that down so nobody spends the hour twice: it is set by `HostStartMatch` and cleared
+        /// only by `NetSession`'s shutdown path, so it is **still true while the result board is
+        /// up**. Gating on `lobby.MatchInProgress &amp;&amp; !match.MatchInProgress` would suppress
+        /// the packet that ENDS the match, which is the one packet in the whole exchange that
+        /// must not be dropped.
+        ///
+        /// ⚠️ SO IT IS A ONE-SHOT LATCH, NOT A STATE. It answers "is the host mid-load", which no
+        /// existing flag answers, and it can only ever suppress packets that repeat a value the
+        /// host is about to contradict.
+        /// </summary>
+        private bool _loadingOwnArena;
+
+        /// <summary>
+        /// The host has committed to an arena and is about to load it. See
+        /// <see cref="_loadingOwnArena"/>.
+        ///
+        /// ⚠️ THE REMATCH PATH CALLS THIS TOO. `UI.MatchResult.BeginRematchLocally` reloads on
+        /// every peer and has the identical race; a latch set only in `HostStartMatch` would be
+        /// correct for the first match of a session and for no other.
+        /// </summary>
+        public static void HostBeginningArenaLoad()
+        {
+            if (!NetAuthority.IsHost || Instance == null) return;
+
+            Instance._loadingOwnArena = true;
+        }
+
         private void BroadcastMatchState()
         {
             if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
@@ -3207,6 +3363,16 @@ namespace TumbangPreso.Net
             var match = GameServices.Match;
             var round = GameServices.Round;
             if (match == null) return;
+
+            // ⚠️ CLEARED BY THE HOST'S OWN DIRECTOR, NOT BY A SCENE EVENT. `SliceRunner.Begin`
+            // is what sets `MatchInProgress`, so this is the first packet after the host's arena
+            // is genuinely live, which is exactly the moment the suppression stops being true.
+            if (match.MatchInProgress) _loadingOwnArena = false;
+
+            // ⚠️ AND THE SUPPRESSION IS ONLY EVER OF A FALSE `inProgress`. If the host somehow
+            // reaches here with the latch up and a live match, the line above has already cleared
+            // it; there is no path where this drops a packet carrying new information.
+            if (_loadingOwnArena) return;
 
             var scores = new int[Balance.PlayerCount];
             for (int i = 0; i < scores.Length; i++) scores[i] = match.ScoreFor(i);

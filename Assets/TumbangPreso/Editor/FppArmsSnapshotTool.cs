@@ -281,10 +281,52 @@ namespace TumbangPreso.EditorTools
                 return null;
             }
 
+            // ⚠⚠ THE SOURCE IS REIMPORTED BEFORE IT IS PHOTOGRAPHED, AND WITHOUT THIS THE TOOL
+            // CAN PHOTOGRAPH A BUILD THAT DOES NOT EXIST — which is the exact failure § 79.8
+            // records this tool having once, from a different cause. On 2026-08-30 the three
+            // `baseColorFactor` values in `tsinelas_heels.glb` were rewritten and the capture came
+            // back **byte-identical**, which is not a result, it is a stale artifact wearing one.
+            //
+            // ⚠ AND IT PRINTS WHAT IT IS ABOUT TO SHOOT. `docs/VISION.md` § 5: verify by
+            // measuring. A tool whose whole job is to answer "what does the player actually hold"
+            // should say which albedo it resolved, so a render that looks wrong can be told apart
+            // from a render of the wrong thing in one line instead of three sessions.
+            string assetPath = AssetDatabase.GetAssetPath(art.Model);
+            if (!string.IsNullOrEmpty(assetPath))
+                AssetDatabase.ImportAsset(assetPath, ImportAssetOptions.ForceUpdate);
+
             var go = new GameObject($"~FppSlipperSource_{slipperId}");
             go.transform.position = new Vector3(0.0f, -40.0f, 0.0f);
 
             var model = UnityEngine.Object.Instantiate(art.Model, go.transform);
+
+            foreach (var r in model.GetComponentsInChildren<Renderer>(true))
+            {
+                var mats = r.sharedMaterials;
+                for (int i = 0; i < mats.Length; i++)
+                {
+                    var mat = mats[i];
+                    if (mat == null) continue;
+
+                    string colour = "no colour property";
+                    foreach (string name in new[] { "_BaseColor", "_Color", "baseColorFactor", "_TintColor" })
+                    {
+                        if (!mat.HasProperty(name)) continue;
+                        colour = $"{name}={mat.GetColor(name)}";
+                        break;
+                    }
+
+                    string tex = "no texture";
+                    foreach (string name in new[] { "_BaseMap", "_MainTex", "baseColorTexture" })
+                    {
+                        if (!mat.HasProperty(name) || mat.GetTexture(name) == null) continue;
+                        tex = $"{name}={mat.GetTexture(name).name}";
+                        break;
+                    }
+
+                    Debug.Log($"[FppSkin] {slipperId} slot {i} '{mat.name}' shader={mat.shader.name} {colour} {tex}");
+                }
+            }
             model.name = "Visual";
 
             foreach (var c in model.GetComponentsInChildren<Collider>(true))

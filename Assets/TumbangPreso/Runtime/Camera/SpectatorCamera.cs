@@ -613,9 +613,30 @@ namespace TumbangPreso.CameraSystem
         }
 
         // -------------------------------------------------------------------
-        // BROADCAST CONTROLS. Pause and speed manipulation are offline-only by construction:
-        // a remote viewer must never acquire authority over a live tournament simply by
-        // spectating. Replay is a local pixel overlay and is safe on either side of the wire.
+        // BROADCAST CONTROLS.
+        //
+        // ⚠⚠ PAUSE AND SPEED ARE NETWORKED NOW, AND THIS BLOCK USED TO REFUSE THEM OUTRIGHT.
+        // It read *"offline-only by construction: a remote viewer must never acquire authority
+        // over a live tournament simply by spectating"* and answered every press with
+        // `LIVE NETWORK · TIME CONTROLS LOCKED`. 🧑 2026-08-30, after being asked which of the
+        // game's two pauses he meant: *"pause is for spectatotr"*, *"give spectators the authority
+        // to pause, all of them can pause"*, *"make sure time pauses if u pause as well as
+        // everything happening and spectator can move"*, *"liek in game like mobile legends"*.
+        //
+        // The old rule guarded a tournament against a stranger. The spectators here are the people
+        // waiting for the next match and whoever is casting it, and an observer stopping the game
+        // to talk over a fight is the feature he is naming. **Every spectator can**, which he said
+        // twice, so there is no leader check.
+        //
+        // ⚠ THE HOST REMAINS THE ONLY WRITER OF THE CLOCK. This sends a REQUEST and applies
+        // nothing locally; `MatchRpc.RequestTimeScaleServerRpc` carries the whole reasoning and
+        // the refusal for a peer that holds a seat. Four peers each writing `Time.timeScale` is
+        // four matches.
+        //
+        // ⚠ SOLO IS UNCHANGED and still writes the clock directly, because there is nobody to
+        // ask and no second machine to disagree with.
+        //
+        // Replay is a local pixel overlay and is safe on either side of the wire.
 
         private void StepBroadcastKeys()
         {
@@ -664,9 +685,32 @@ namespace TumbangPreso.CameraSystem
                                 || kb.digit2Key.wasPressedThisFrame
                                 || kb.digit3Key.wasPressedThisFrame;
 
+            // ⚠⚠ A NETWORKED TIME PRESS IS A REQUEST, AND ONLY A SPECTATOR MAY MAKE ONE. The
+            // host answers and tells everybody; see the header above and
+            // `MatchRpc.RequestTimeScaleServerRpc`. A peer holding a chair is refused there too,
+            // so this check is the courtesy message rather than the rule.
             if (askedForTime && NetAuthority.IsNetworked)
             {
-                UI.Hud.Instance?.ShowToast("LIVE NETWORK  ·  TIME CONTROLS LOCKED", 1.5f);
+                if (!GameLaunch.Spectator)
+                {
+                    UI.Hud.Instance?.ShowToast("LIVE MATCH  ·  ONLY A SPECTATOR MAY PAUSE", 1.5f);
+                    return;
+                }
+
+                // ⚠ THE LOCAL BOOKKEEPING STILL MOVES, so the next press toggles the other way and
+                // the overlay reads correctly. What it does NOT do is write `Time.timeScale`: the
+                // number arrives back through `SyncTime`, which is what keeps four screens on one
+                // clock even when a packet is late.
+                if (Fired(_pauseKey))
+                {
+                    _broadcastPaused = !_broadcastPaused;
+                    Net.MatchRpc.Instance?.RequestTimeScaleServerRpc(
+                        _broadcastPaused ? 0.0f : _selectedTimeScale);
+                }
+
+                if (kb.digit1Key.wasPressedThisFrame) RequestBroadcastScale(0.25f);
+                if (kb.digit2Key.wasPressedThisFrame) RequestBroadcastScale(0.50f);
+                if (kb.digit3Key.wasPressedThisFrame) RequestBroadcastScale(1.00f);
                 return;
             }
 
@@ -689,6 +733,21 @@ namespace TumbangPreso.CameraSystem
             UI.Hud.Instance?.ShowToast(_broadcastPaused
                 ? "TACTICAL PAUSE  ·  CAMERA STILL LIVE"
                 : $"BACK TO ACTION  ·  {_selectedTimeScale:0.##}x", 1.1f);
+        }
+
+        /// <summary>
+        /// The networked half of <see cref="SetBroadcastScale"/>: pick a speed and ask for it.
+        ///
+        /// ⚠ IT SETS `_selectedTimeScale` LOCALLY SO THE NEXT UN-PAUSE ASKS FOR THE RIGHT SPEED.
+        /// That field is this camera's memory of what "back to action" means, and it is not
+        /// authoritative over anything: the clock everybody actually runs on is whatever
+        /// `SyncTime` last delivered.
+        /// </summary>
+        private void RequestBroadcastScale(float scale)
+        {
+            _broadcastPaused = false;
+            _selectedTimeScale = Mathf.Clamp(scale, 0.25f, 1.0f);
+            Net.MatchRpc.Instance?.RequestTimeScaleServerRpc(_selectedTimeScale);
         }
 
         private void SetBroadcastScale(float scale)

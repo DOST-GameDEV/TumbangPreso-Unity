@@ -158,13 +158,13 @@ namespace TumbangPreso.Tests
             Assert.AreEqual(3, p4.Seat);
 
             Assert.AreEqual(4, lobby.SeatedPeerCount());
-            Assert.AreEqual(4, lobby.PlayingPeerCount(2));
+            Assert.AreEqual(4, lobby.PlayingPeerCount());
 
             // Overflow spectator
             var spec = lobby.Admit(6, "spectator-p5", "Audience");
             Assert.AreEqual(-1, spec.Seat);
             Assert.IsTrue(spec.Spectator);
-            Assert.AreEqual(4, lobby.PlayingPeerCount(2), "Spectators must not inflate playing quorum count");
+            Assert.AreEqual(4, lobby.PlayingPeerCount(), "Spectators must not inflate playing quorum count");
         }
 
         // -------------------------------------------------------------------
@@ -181,7 +181,7 @@ namespace TumbangPreso.Tests
             lobby.Admit(10, "token-p1", "Player 1");
             lobby.Admit(20, "token-p2", "Player 2");
 
-            int expected = lobby.PlayingPeerCount(10);
+            int expected = lobby.PlayingPeerCount();
             Assert.AreEqual(2, expected, "Quorum must equal number of human seated peers (2), not character count (4)");
 
             // Ready tally tracking

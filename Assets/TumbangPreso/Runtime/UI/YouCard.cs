@@ -445,7 +445,33 @@ namespace TumbangPreso.UI
             // ⚠️ `flexibleWidth: 0` PLUS `childControlWidth` IS THE FIX: the group asks `Text`
             // for its own `preferredWidth` and gives it exactly that, so the role is never
             // clipped and never overruns, whichever of `TAYA` and `ATTACKER` it is holding.
-            _class.gameObject.AddComponent<LayoutElement>().flexibleWidth = 0.0f;
+            var classLayout = _class.gameObject.AddComponent<LayoutElement>();
+            classLayout.flexibleWidth = 0.0f;
+
+            // ⚠⚠ AND THE ROLE IS BOUNDED, BECAUSE `flexibleWidth: 0` ALONE LET IT ASK FOR MORE
+            // THAN THE ROW HAS. 🧑 2026-08-30, a THIRD report on this one row: *"Overflowing text
+            // eg. Attacker Rockafort in the bottom left"*.
+            //
+            // `childControlWidth` gives an unbounded child its `preferredWidth`, and a
+            // `HorizontalLayoutGroup` will not shrink a child below its `minWidth` — it overflows
+            // the container instead. So the row asked for `preferredWidth(ATTACKER at 32 pt)` plus
+            // 10 px of spacing plus the name's 140 px floor, and when that sum passes the 336 px
+            // content box the surplus goes out of the wood. **That is exactly the mechanism
+            // `docs/TODO.md` § 79.6 measured on the hero picker** (`rowLe.minHeight =
+            // rowLe.preferredHeight` overflowing a `VerticalLayoutGroup`), arriving on the other
+            // axis: the container CAN be squeezed and the children CANNOT.
+            //
+            // 170 + 10 + 140 = **320 against 336**, so the row now fits by construction whatever
+            // the two strings are, rather than by the arithmetic happening to work out.
+            classLayout.preferredWidth = 170.0f;
+
+            // ⚠ THE ROLE SHRINKS INTO THAT BOUND RATHER THAN BEING CLIPPED BY IT, which is the
+            // half that makes the cap safe. `TAYA` never needs it; `ATTACKER` steps down a point or
+            // two on a narrow card and stays readable, with the same `MenuKit.MinReadableUnits`
+            // floor the name below already uses.
+            _class.resizeTextForBestFit = true;
+            _class.resizeTextMaxSize = 32;
+            _class.resizeTextMinSize = MenuKit.MinReadableUnits;
 
             _detail = Label(identity.transform, "DetailLabel", 34, UiTheme.Offense,
                             TextAnchor.MiddleRight);

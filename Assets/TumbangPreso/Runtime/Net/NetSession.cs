@@ -182,8 +182,15 @@ namespace TumbangPreso.Net
         /// tags, blocks, bank shots or zaps the host is announcing — a silent half-working match
         /// rather than a refusal, which is the case this number exists to prevent. Both machines
         /// rebuild from the same branch; that is by design.
+        ///
+        /// ⚠️⚠️ **14 SINCE 2026-08-30**, for `ReqTime` and `SyncTime`, the two messages behind
+        /// the spectator pause (`MatchRpc` § THE BROADCAST CLOCK). This one is the strongest case
+        /// this number has ever had: a peer without the `SyncTime` handler **does not stop**.
+        /// The spectator calls a pause, three screens freeze, one carries on playing a match
+        /// nobody else is in, and the two versions then disagree about every position for as long
+        /// as the pause lasts. That is worse than either a refusal or a missing effect.
         /// </summary>
-        public const int ProtocolVersion = 13;
+        public const int ProtocolVersion = 14;
 
         private const string SeatAssignmentMessage = "tp.seat.assignment.v1";
         private readonly Dictionary<ulong, ConnectionHello> _helloByClient =
@@ -752,6 +759,16 @@ namespace TumbangPreso.Net
             _localShutdown = true;
             _everConnected = false;
             _beacon.StopAll();
+
+            // ⚠⚠ THE BROADCAST CLOCK IS HANDED BACK, OR A SESSION THAT ENDS MID-PAUSE FREEZES THE
+            // PROCESS. Spectators may stop a live match (`MatchRpc` § THE BROADCAST CLOCK), and
+            // `Time.timeScale` is a global that outlives this object: a host that quits while the
+            // game is paused, or a client dropped during one, would walk back to a title screen
+            // whose every animation and button had stopped, with nothing on screen saying why.
+            // `MatchResult`'s own header records that exact failure happening once already, from
+            // a different writer, and this is the same lifetime rule: whoever can stop time
+            // restores it on every exit path including death.
+            Time.timeScale = 1.0f;
             if (Query != null) _ = Query.DeleteHostedLobbyAsync();
 
             // ⚠️⚠️ A HOST TELLS ITS PEERS IT IS LEAVING. IT USED TO JUST STOP ANSWERING.

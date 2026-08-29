@@ -448,10 +448,52 @@ namespace TumbangPreso.EditorTools.MapKit
             //
             // So all three bands now carry Eskinita's exact 1.000 : 0.888 : 0.749 hue at this
             // map's own levels. The level is still the deck's and the colour is now the game's.
-            RenderSettings.ambientMode = AmbientMode.Trilight;
-            RenderSettings.ambientSkyColor = new Color(0.780f, 0.693f, 0.584f);
-            RenderSettings.ambientEquatorColor = new Color(0.340f, 0.302f, 0.255f);
-            RenderSettings.ambientGroundColor = new Color(0.140f, 0.124f, 0.105f);
+            //
+            // ⚠️⚠️⚠️ EVERY NUMBER IN THE THREE NOTES ABOVE WAS COMPARED AGAINST A FIELD UNITY
+            // NEVER READ, AND THAT IS WHY THIS MAP HAS NOW BEEN "MATCHED TO ESKINITA" THREE
+            // TIMES AND STILL LOOKED WRONG. 🧑 2026-08-30, with the two lobbies side by side:
+            // *"look eskinita vs ilalim ng tulay in lobby, the lighting is so diff"*, *"eskinita
+            // is the better one make ilalim ng tulay matchthat"*.
+            //
+            // **Eskinita is `AmbientMode.Flat`.** Under Flat, Unity lights every direction from
+            // `ambientSkyColor` alone and `ambientEquatorColor` / `ambientGroundColor` are dead
+            // storage. Eskinita's scene file holds an equator of (0.114, 0.125, 0.133) and a
+            // ground of (0.047, 0.043, 0.035), and the whole comparison table in § 79.2 was built
+            // by reading those two lines. They light nothing. Eskinita's real ambient on a
+            // vertical face — a character's front, which is the entire lobby — is its Flat colour
+            // **(0.934, 0.830, 0.700)**.
+            //
+            // So the arithmetic ran backwards. This map's 0.34 equator was called "still three
+            // times Eskinita's" when it is in fact **0.36 OF IT**, and the 2026-08-29 pass that
+            // brought the equator DOWN from 0.60 to 0.34 to remove a "wash" moved it further from
+            // the map it was trying to match, not closer. That is the report above.
+            //
+            // ⚠️⚠️ SO IT IS FLAT NOW, AT ESKINITA'S EXACT COLOUR, AND TRILIGHT IS GONE RATHER
+            // THAN RETUNED. Trilight was kept across two passes on the argument that "this is the
+            // one arena under a solid deck, so the difference between what the sky reaches and
+            // what it does not is real information about the space". That argument is sound and
+            // it is not worth what it costs: three sessions have now mis-set this map by
+            // comparing one of its three bands against whichever of Eskinita's three they
+            // happened to read, and a mode that has two decorative fields sitting beside one live
+            // one is what made that mistake available every time. Matching a map means matching
+            // the number that lights it, and after this there is exactly one.
+            //
+            // ⚠️ THE DECK STILL SHADES THE STREET, through the thing that was always doing it:
+            // the directional light at (1, 0.96, 0.88) intensity 1.15 with shadows on, which is
+            // brighter than Eskinita's own 0.749 sun. What is gone is a floor on the shadow, and
+            // the shadow is what a viaduct is for.
+            //
+            // ⚠️ THE FOG IS UNTOUCHED and stays this map's own, for the reason two notes below.
+            RenderSettings.ambientMode = AmbientMode.Flat;
+            RenderSettings.ambientSkyColor = new Color(0.934f, 0.830f, 0.700f);
+
+            // ⚠️ WRITTEN ANYWAY, AND DELIBERATELY DEAD. Flat reads neither, and leaving the old
+            // Trilight values behind is what let three passes read them back as though they were
+            // live. Setting them to the Flat colour means anything that ever reads one of these
+            // fields, in the Editor or out of the scene YAML, gets the answer the map is
+            // actually lit by.
+            RenderSettings.ambientEquatorColor = new Color(0.934f, 0.830f, 0.700f);
+            RenderSettings.ambientGroundColor = new Color(0.934f, 0.830f, 0.700f);
 
             // ⚠️ FOG CARRIES THE LAST 40 M, WHICH THE BACKDROP GEOMETRY CANNOT. The far plate
             // stops the map ending in sky; fog stops the far plate ending in a hard line. It

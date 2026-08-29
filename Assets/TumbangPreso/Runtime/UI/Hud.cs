@@ -43,18 +43,45 @@ namespace TumbangPreso.UI
         public const int CrosshairOutline = 5;
 
         /// <summary>
-        /// ⚠️ THE HELD DANGER TINT IS 0.16, NOT THE FLASH'S 0.45, and the distinction is the
-        /// whole reconciliation. Two states last tens of seconds — the taya's can being down,
-        /// and an attacker being catchable — and a full-screen red rect held at flash strength
+        /// ⚠️ THE HELD DANGER TINT IS BELOW THE FLASH'S, and the distinction is the whole
+        /// reconciliation. Two states last tens of seconds — the taya's can being down, and an
+        /// attacker being catchable — and a full-screen red rect held at flash strength
         /// *"reads as the renderer being broken: measured on the first captured frame of a live
-        /// match, the entire arena was washed red"*. 0.16 tints the frame enough to be noticed
-        /// in peripheral vision and stays readable through for a whole round. The knockdown
+        /// match, the entire arena was washed red"*. The hold tints the frame enough to be
+        /// noticed in peripheral vision and stays readable for a whole round; the knockdown
         /// PULSE is kept on top of it, so the moment still punches.
+        ///
+        /// ⚠️⚠️ 0.16 WAS SO FAR BELOW IT THAT THE WARNING READ AS DELETED. 🧑 2026-08-30:
+        /// *"bring back the red aura or some shit in the screen of taya (theres like a warning
+        /// that lata is down if ur taya) (i think it got remvoed by accident, js remake it if it
+        /// doesnt exist)"*. It was never removed: `UpdateDanger` has driven it the whole time,
+        /// and `DownedVignette.shader` is in `m_AlwaysIncludedShaders` so it is not a stripping
+        /// fault either. **The level was the fault, and the shader's own header had already
+        /// done the arithmetic**: it records that the material's 0.6 alpha times this 0.16
+        /// puts *"the strongest pixel on screen at about 0.096"*, at the CORNERS, over a centre
+        /// held at zero. 0.096 of red on the four corners of a street scene is not a warning, it
+        /// is a rounding error, and the one person on the reporting end of it said so.
+        ///
+        /// ⚠️ THE SHAPE IS WHAT MADE RAISING IT SAFE, AND IT IS WHY THIS IS NOT A REVERSION.
+        /// The 0.16 was chosen against a FLAT full-screen rect, which is what shipped before
+        /// `DownedVignette.shader` was written: at that time every pixel of the frame carried
+        /// the number, so 0.16 was already most of what the eye could take. The shader put the
+        /// opacity where the player is not looking — `smoothstep(0.3, 1.2, dist)` is dead clear
+        /// inside a radius of 0.3 and only reaches full at the corners — and nothing re-derived
+        /// this constant afterwards. Against the ramp, 0.55 lands at **0.33 in the corners,
+        /// about 0.17 at the middle of each edge, and still exactly zero through the centre of
+        /// the frame**, which is less red over the part of the screen the player actually plays
+        /// in than the old flat 0.16 was.
+        ///
+        /// ⚠️ AND THE PULSE MOVED WITH IT so a knockdown is still an EVENT against the hold.
+        /// `UpdateDanger` takes `Max(pulse, hold)`: leaving the peak at 0.45 under a 0.55 hold
+        /// would have made the loudest single moment in the taya's game invisible, which is the
+        /// same class of fault as the one above arriving one line later.
         /// </summary>
-        public const float DangerHoldAlpha = 0.16f;
+        public const float DangerHoldAlpha = 0.55f;
 
         public const float DownedFlashTime = 0.45f;
-        public const float DownedFlashPeak = 0.45f;
+        public const float DownedFlashPeak = 0.90f;
 
         public const int StatusRowLimit = 4;
         public const int StatusFontSize = 20;
@@ -388,8 +415,15 @@ namespace TumbangPreso.UI
                 // when ready." across 800 px of screen, which is four separate assertions the
                 // player has to parse to find the one instruction in it. All-caps also removes
                 // the word shapes that make a glance enough.
+                // ⚠️⚠️ THE HERO LINE NO LONGER SAYS "PRACTICE", BECAUSE THE POWERS ARE OFF. It
+                // read "Practice freely, scores are paused", which was true while
+                // `HeroKit.PracticeMode` handed out free casts and became a lie the moment 🧑
+                // asked for that to stop (*"remove unli skill before round bcz ppl fly out of
+                // map and shit"*, 2026-08-30). Walking, throwing and picking up are still free,
+                // which is what "warm up" covers and what the free-roam window is for; the
+                // second clause names the one thing that is not.
                 _readyPrompt.text = SceneFlow.SelectedMode == GameMode.HeroStrike
-                    ? $"Practice freely, scores are paused. Press {ready} when ready."
+                    ? $"Warm up freely, powers start with the round. Press {ready} when ready."
                     : $"Warm up freely, scores are paused. Press {ready} when ready.";
                 _readyPrompt.enabled = show;
                 if (_readyPromptPlate != null) _readyPromptPlate.enabled = show;
@@ -580,12 +614,14 @@ namespace TumbangPreso.UI
         private void OnEnable()
         {
             if (GameServices.Match != null) GameServices.Match.Scored += OnScored;
+            Net.MatchRpc.TimeScaleChanged += OnBroadcastClock;
             TrySubscribeRound();
         }
 
         private void OnDisable()
         {
             if (GameServices.Match != null) GameServices.Match.Scored -= OnScored;
+            Net.MatchRpc.TimeScaleChanged -= OnBroadcastClock;
 
             if (_roundHooked && GameServices.Round != null)
             {
@@ -593,6 +629,35 @@ namespace TumbangPreso.UI
             }
 
             _roundHooked = false;
+        }
+
+        /// <summary>
+        /// Say why the world stopped.
+        ///
+        /// ⚠⚠ A FROZEN GAME WITH NO EXPLANATION IS INDISTINGUISHABLE FROM A CRASH, and this
+        /// pause is one the player did not press. 🧑 asked for spectators to be able to stop a
+        /// live match (`MatchRpc` § THE BROADCAST CLOCK), which means three other people's screens
+        /// stop for a reason that is not on any of them. The toast is the only thing that
+        /// separates "an observer called a pause" from "the build hung".
+        ///
+        /// ⚠ IT NAMES THE SPECTATOR AS THE CAUSE rather than saying PAUSED, because a player who
+        /// reads PAUSED looks for the menu they did not open.
+        ///
+        /// ⚠ THE TOAST CLOCK IS `Time.unscaledDeltaTime` (see `Update`), so this one can still
+        /// expire while the match it is announcing is stopped dead. A toast driven by scaled time
+        /// would stay on screen forever at exactly the moment it is needed.
+        /// </summary>
+        private void OnBroadcastClock(float scale)
+        {
+            if (scale <= 0.001f)
+            {
+                ShowToast("PAUSED BY A SPECTATOR", 2.0f);
+                return;
+            }
+
+            ShowToast(scale >= 0.999f
+                ? "BACK TO ACTION"
+                : $"SLOW MOTION  ·  {scale:0.##}x", 1.4f);
         }
 
         private bool _roundHooked;
@@ -1927,8 +1992,9 @@ namespace TumbangPreso.UI
         //
         // ⚠️⚠️ AND IT IS WHY THE SHAPE MATTERS RATHER THAN THE ALPHA. `SetDownedFlash` records
         // the measurement that governs this whole file: a held full-screen tint reads as the
-        // renderer being broken. That is why held states sit at `DangerHoldAlpha` 0.16 while
-        // only a 0.45 s pulse goes to 0.45. A tag stun is FIVE SECONDS: too long for a flash,
+        // renderer being broken. That is why held states sit at `DangerHoldAlpha` while only a
+        // 0.45 s pulse goes to `DownedFlashPeak`, and why both are read through a vignette ramp
+        // rather than painted flat. A tag stun is FIVE SECONDS: too long for a flash,
         // far too punchy to hold at flash strength, and too important to drop to 0.16, because
         // it is the single biggest moment in the defender's game. The reference resolves it by
         // putting the opacity where the player is not looking, so there is no alpha ceiling here
@@ -4500,9 +4566,9 @@ namespace TumbangPreso.UI
             float dt = Time.unscaledDeltaTime;
 
             PaintSkillCard(_skill1Card, kit.Skill1, heroColor, abilitySystem,
-                           Abilities.HeroAbilitySystem.Slot.Skill1, dt);
+                           Abilities.HeroAbilitySystem.Slot.Skill1, dt, kit.PracticeMode);
             PaintSkillCard(_skill2Card, kit.Skill2, heroColor, abilitySystem,
-                           Abilities.HeroAbilitySystem.Slot.Skill2, dt);
+                           Abilities.HeroAbilitySystem.Slot.Skill2, dt, kit.PracticeMode);
             PaintUltimateCard(kit, heroColor, abilitySystem, dt);
         }
 
@@ -4522,7 +4588,8 @@ namespace TumbangPreso.UI
         /// </summary>
         private static void PaintSkillCard(AbilityCard card, Abilities.HeroAbility skill,
                                            Color heroColor, Abilities.HeroAbilitySystem system,
-                                           Abilities.HeroAbilitySystem.Slot slot, float dt)
+                                           Abilities.HeroAbilitySystem.Slot slot, float dt,
+                                           bool roundClockStopped)
         {
             if (card == null) return;
 
@@ -4553,6 +4620,36 @@ namespace TumbangPreso.UI
             card.WasReady = ready;
 
             PaintCharges(card, skill, heroColor, dt);
+
+            // ⚠️⚠️ THE WARM-UP TILE IS DARK, FOR THE SAME REASON THE ULTIMATE'S IS. Since
+            // 2026-08-30 no power may START while the round clock is stopped (🧑: *"remove unli
+            // skill before round bcz ppl fly out of map and shit"*, and `HeroKit.PracticeMode`
+            // carries the whole report). `skill.IsReady` is still TRUE through the warm-up — the
+            // cooldown genuinely is not running — so this tile would draw the Ready arm's lit rim
+            // over a press `HeroKit.Fire` now refuses, which is the anti-clunk rule three
+            // paragraphs down arriving from the other direction: a press that is refused must not
+            // look like a press that worked, and neither must the tile that invited it.
+            //
+            // ⚠️ IT IS PLACED AFTER `PaintCharges` SO THE PIPS STILL DRAW. How many charges the
+            // player will start the round with is true information and does not depend on the
+            // clock; only the invitation to spend one is withdrawn.
+            //
+            // ⚠️ AND AFTER `WasReady`, so the pop still fires on the frame the round begins
+            // rather than being swallowed by a state the tile passed through while dark.
+            if (roundClockStopped && !skill.IsActive)
+            {
+                card.Rim.color = UiTheme.HeroRim;
+                card.Glyph.color = UiTheme.HeroGlyphOff;
+                card.Key.color = UiTheme.CreamMuted;
+                card.State.text = "WAIT";
+
+                if (card.Fill != null) card.Fill.fillAmount = 0.0f;
+                if (card.CooldownSweep != null) card.CooldownSweep.fillAmount = 0.0f;
+
+                ApplyAnswer(card, system, slot, heroColor);
+                ApplyPop(card, dt);
+                return;
+            }
 
             // ⚠️⚠️ A CHARGE SKILL AT ZERO IS NOT "COOLING", AND THAT DISTINCTION IS THE WHOLE
             // REASON THIS BRANCH EXISTS. Its `Cooldown` is 0 so it would fall through to the
@@ -4866,8 +4963,13 @@ namespace TumbangPreso.UI
                 return;
             }
 
+            // ⚠ `NotYet` IS IN THIS LIST BECAUSE IT IS A REFUSAL. A press during the warm-up is
+            // answered and cleared like an empty meter (see `HeroKit.CastOutcome`), so a tile
+            // that did not flash for it would leave the one refusal in the game with no feedback
+            // — on the exact screen 🧑 asked to stop launching people from.
             if (answer == Abilities.HeroKit.CastOutcome.Cooling ||
                 answer == Abilities.HeroKit.CastOutcome.NoCharge ||
+                answer == Abilities.HeroKit.CastOutcome.NotYet ||
                 answer == Abilities.HeroKit.CastOutcome.CannotAct)
             {
                 if (since > RefusalFlashSeconds)
@@ -4924,16 +5026,30 @@ namespace TumbangPreso.UI
 
             if (kit.PracticeMode)
             {
-                // ⚠️ THE PRACTICE TILE IS LIT WITHOUT PRETENDING TO BE CHARGED. The meter still
-                // draws the banked charge, because that IS what the player will start the round
-                // with; the rim says the cast is free right now. Showing 100% here would tell
-                // them they had an ultimate they have not earned.
-                card.Rim.color = heroColor;
-                card.Glyph.color = UiTheme.HeroGlyphOn;
-                card.Key.color = UiTheme.Cream;
-                card.State.text = "";
+                // ⚠️⚠️ THE WARM-UP TILE IS DARK NOW AND IT USED TO BE LIT. It painted the rim in
+                // the hero's colour with an empty state line, which said "castable right now",
+                // and until 2026-08-30 that was true: `HeroKit.PracticeMode` made every power
+                // free while the round clock was stopped. 🧑 *"remove unli skill before round bcz
+                // ppl fly out of map and shit"* ended that, and a tile still promising the cast
+                // would be the HUD disagreeing with the rules — the fault `HeroAbilitySystem`'s
+                // header calls out by name.
+                //
+                // ⚠️ THE METER STILL DRAWS THE BANKED CHARGE, which is the one thing the old
+                // branch had right: that IS what the player starts the round holding, and
+                // blanking it would lose the only readout of an ultimate carried across a round.
+                card.Rim.color = UiTheme.HeroRim;
+                card.Glyph.color = UiTheme.HeroGlyphOff;
+                card.Key.color = UiTheme.CreamMuted;
 
-                PaintUltSegments(card, ratio, heroColor, UiTheme.HeroRim);
+                // ⚠️⚠️ "WAIT", NOT "NOT YET", AND `HudOverflowProbe` IS WHY. The first version of
+                // this line read "NOT YET" and the probe failed it at every one of nine
+                // resolutions: 80 to 84 units of type in a 60-unit `State` box, hanging up to 24
+                // units out of the tile. `docs/TODO.md` § 18's rule is size the card or shorten
+                // the string and NEVER the font, and this box is one of three in a 60 px square
+                // that the rest of the deck is aligned against. So the string is what moved.
+                card.State.text = "WAIT";
+
+                PaintUltSegments(card, ratio, UiTheme.HeroRim, UiTheme.HeroRim);
 
                 _lastUltReady = false;
                 ApplyAnswer(card, system, Abilities.HeroAbilitySystem.Slot.Ultimate, heroColor);

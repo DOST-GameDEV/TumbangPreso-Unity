@@ -530,17 +530,42 @@ namespace TumbangPreso.Net
         ///
         /// ⚠️ FLOORED AT 1 so a host whose peer list has not populated yet still needs its own
         /// press rather than starting instantly on an empty count.
+        ///
+        /// ⚠️⚠️ THE LOCAL PEER USED TO BE EXEMPT FROM THE SPECTATOR TEST AND THAT EXEMPTION
+        /// HUNG THE GATE. 🧑 2026-08-30: *"R doesnt work if theres a spectator"*. The line read
+        /// `if (p.PeerId == localPeerId || !p.Spectator) count++;` under a comment saying the
+        /// local peer counts *"even while its own spectator flag is in flight"* — but the second
+        /// half of that `||` already counts every peer whose flag is not set, so the FIRST half
+        /// could only ever fire for a local peer whose flag was set. It did not protect a
+        /// decision in flight; it counted a decision already taken, the wrong way.
+        ///
+        /// What that costs: `ReadyGate.Update` refuses to send a press for `GameLaunch.Spectator`
+        /// (§ 78.6, and it is right to — the set and the total must come from one population),
+        /// so a HOST who clicked SPECTATE in its own lobby was counted in a quorum it could never
+        /// vote in. Everybody else pressed R, the tally stopped one short, and the match never
+        /// started. `BufferSkipVote.Needed` and `MatchResult.ExpectedVotes` are the same call and
+        /// hung the same way, so the buffer skip and the rematch died with it.
+        ///
+        /// ⚠️ THE IN-FLIGHT CASE IS COVERED BY THE FLOOR, NOT BY AN EXEMPTION. A peer that has
+        /// no record here yet is not counted at all, the count reaches 0, and the floor of 1
+        /// asks for its own press.
+        ///
+        /// ⚠️ AND THE PEER ID ARGUMENT IS GONE WITH IT rather than left unused. It existed only
+        /// to serve that exemption, every caller passed the same expression, and an argument that
+        /// no longer decides anything is the next reader's false lead. `ReadyGate`'s note about
+        /// it being a PEER id and not a SEAT is kept there, because the collision it records is
+        /// still what this method would suffer if the argument ever came back.
         /// </summary>
-        public int PlayingPeerCount(int localPeerId)
+        public int PlayingPeerCount()
         {
             int count = 0;
 
             foreach (var p in _peers.Values)
             {
                 if (IsSeatlessReferee(p.PeerId)) continue;
+                if (p.Spectator) continue;
 
-                // The local peer counts even while its own spectator flag is in flight.
-                if (p.PeerId == localPeerId || !p.Spectator) count++;
+                count++;
             }
 
             return count < 1 ? 1 : count;

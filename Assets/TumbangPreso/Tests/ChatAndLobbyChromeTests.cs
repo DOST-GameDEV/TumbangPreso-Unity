@@ -139,7 +139,13 @@ namespace TumbangPreso.Tests
             // § 83.16). A build without that handler drops every one of those messages and its
             // players silently see none of the tags, blocks, bank shots or zaps the host is
             // announcing, which is the half-working match this tripwire exists to refuse.
-            Assert.AreEqual(13, NetSession.ProtocolVersion,
+            //
+            // ⚠⚠ 14 SINCE 2026-08-30: `ReqTime` and `SyncTime`, the spectator pause
+            // (docs/TODO.md § 86). This is the strongest case the number has ever had. A peer
+            // without the `SyncTime` handler **does not stop**: the pause is called, three
+            // screens freeze, one keeps playing, and the two builds then disagree about every
+            // position for as long as it lasts.
+            Assert.AreEqual(14, NetSession.ProtocolVersion,
                 "a message or a replicated roster index has been added or removed. Bump this " +
                 "number and `NetSession.ProtocolVersion` together, in the same commit.");
         }

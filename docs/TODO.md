@@ -1027,7 +1027,7 @@ The discriminator in `ModelPreview` is the 16-colour palette, which every `perso
 and no `slipper_*` or `can_*` does — the same test that decides whether to remap decides which
 border to draw.
 
-### 78.8 ⚠️ IKE READS WHITE ON CHARACTER SELECT, AND THE FIRST TWO EXPLANATIONS WERE WRONG ⚠️ OPEN
+### 78.8 ✅ CLOSED 2026-08-30: IKE READS WHITE ON CHARACTER SELECT
 
 🧑: *"pls make ike black too, the shader made it white"*, and, asked where: *"character select is
 what im talking abt btw"*.
@@ -1053,6 +1053,31 @@ was still broken in the build. The prop-width fix in § 78.7 changes this screen
 compared against `Logs/model-sheet.png` r56c6. `tools/shoot_charselect.ps1` drives the built
 player to that screen and is the instrument; it needs the two extra clicks for the tab and the
 row. **Do not adjust a colour until that picture exists.**
+
+✅ **CLOSED 2026-08-30 ON 🧑'S OWN REPORT OFF THE SHIPPED BUILD**, and it is recorded that way
+rather than as a fix, because **no change was ever made against this entry**. 🧑: *"78.8 (IKE reads
+white) ... are resolved btw"*.
+
+⚠️ **WHAT ALMOST CERTAINLY DID IT, so a recurrence is not re-diagnosed from zero.** Three later
+entries all landed on the same surface after this one was written, any of which could have moved
+it, and none of which was aimed at it:
+
+* § 78.7 narrowed the prop ink in three places, which this entry had already flagged as *"changes
+  this screen and may move it"*;
+* § 79.7 found that the character screen was lighting props in **Godot's units against Unity's**,
+  which is a whole-screen exposure error and is exactly the shape that turns a near-black albedo
+  white while leaving a bright one looking fine;
+* § 79.11 flattened the tsinelas shading so only the tsinelas changed.
+
+The arithmetic in this entry ruled out the preview's ambient at 14 per cent and was right to; what
+it did not consider is that the LIGHT, not the ambient, was in the wrong unit system. § 79.7 is
+the entry that says so.
+
+⚠️ **THE INSTRUMENT STILL DOES NOT EXIST**, and that is the one thing this entry asked for that
+remains undone. `tools/shoot_charselect.ps1` still needs the two clicks for the TSINELAS tab and
+the IKE row. If a prop ever reads wrong on that screen again, write those two clicks first: this
+entry spent three sessions on arguments that a single capture would have settled, and it was
+closed in the end by a person looking at it rather than by anything in the harness.
 
 ### 78.10 ⚠️ DANTE'S ARM MARKINGS WERE WEARING AN INK BORDER WIDER THAN THEMSELVES ✅
 
@@ -1130,7 +1155,7 @@ This entry fixes how they are OUTLINED and says nothing about whether they are t
 build an arm. **Done looks like** an FPP capture of each hero's arms next to that hero's character
 art, judged side by side. Not shot this session.
 
-### 78.12 ⚠️⚠️ `CarryTests` HAS A FRAME-TIMING ASSERTION THAT FAILS UNDER LOAD ⚠️ OPEN
+### 78.12 ⚠️ REOPENED 2026-08-30: `CarryTests` HAS A FRAME-TIMING ASSERTION THAT FAILS UNDER LOAD
 
 `AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor` failed twice in a row on 2026-08-29
 with **0.062 m against a 0.050 m bound**, after passing 87/87 three times earlier the same day on
@@ -1167,6 +1192,26 @@ back to back for hours, which is exactly the condition `docs/TODO.md` § 6 descr
 ⚠️ **Do not simply raise the number.** The assertion is protecting a real fix (the carry running
 in `LateUpdate` rather than `Update`), and a looser bound would stop catching the regression it
 exists for.
+
+✅ **CLOSED 2026-08-30 ON 🧑'S REPORT: it has been green since.** *"78.12 (flaky CarryTests timing)
+... are resolved btw"*. The 2026-08-29 PlayMode run in § 83.25 is the record: **90/92, and this was
+not one of the two reds.** None of the three fixes listed above was applied, so what closed it is
+the machine being idle rather than the assertion being made robust.
+
+⚠️⚠️ **REOPENED THE SAME DAY, ON EVIDENCE RATHER THAN ON A REPORT.** It failed again in the
+PlayMode run on the §§ 84 and 85 batch, on a machine that had been running Unity renders, an FPP
+capture sweep and two test suites back to back — which is precisely the condition described above.
+§ 86.3 records it beside the two reds that WERE from that batch. **Take the second of the three
+options below**: measure the gap in the anchor's LOCAL space so the rotating world-space AABB stops
+moving the baseline. Closing this on "it was green last time" is what this entry has now done once.
+
+⚠️⚠️ **IT IS A REPORT AND NOT A DEFECT IN THE CARRY, AND THE THREE OPTIONS ABOVE ARE KEPT
+VERBATIM FOR THAT REASON.** Everything this entry measured about WHY it is fragile is still true
+of the code: the loop still steps on `yield return null`, and `RestHeight` still subtracts a
+world-space AABB that rotates through the walk, so the measurement's own baseline still moves with
+the thing it measures. **If this row goes red again, it is this entry and not a new one** — take
+the second option (measure in the anchor's local space), which is the only one of the three that
+removes the fragility instead of scheduling around it.
 
 ### 78.13 What is still not measured
 
@@ -1282,7 +1327,7 @@ one place nobody had a way to look at:
 term. Scaling both at once would have been two changes with one measurement between them. If the
 cast still reads a shade flat after a played build, that is the next thing to measure, not a guess.
 
-### 79.2 ⚠️ ILALIM NG TULAY IS HAZIER AND PALER THAN ESKINITA ⚠️ OPEN
+### 79.2 ✅ CLOSED 2026-08-30: ILALIM NG TULAY IS HAZIER AND PALER THAN ESKINITA
 
 Image `12`. 🧑: *"ilalim ng tulay as well should look more like the other map's shaders"*.
 
@@ -1331,6 +1376,48 @@ is in `IlalimNgTulayBuilder` and the player loads `IlalimNgTulay.unity`.
 `MapGradeSanityTests.TheIlalimBuilderAgreesWithTheSceneItGenerates` guards the MapGrade block and
 **does not guard the ambient**, so a builder edit that is never baked diverges silently. That is
 the same trap the test itself was written for.
+
+---
+
+⚠️⚠️⚠️ **CLOSED 2026-08-30, AND EVERY NUMBER IN THE TABLE ABOVE WAS READ OFF A FIELD UNITY NEVER
+USES.** 🧑, with the two lobbies side by side: *"look eskinita vs ilalim ng tulay in lobby, the
+lighting is so diff"*, *"make lighting similar"*, *"eskinita is the better one make ilalim ng tulay
+matchthat"*. This is the FOURTH pass on this map's ambient and the first three all measured the
+same wrong thing.
+
+**`Eskinita.unity` is `m_AmbientMode: 3`, which is Flat.** Under Flat, Unity lights every direction
+from `m_AmbientSkyColor` alone; `m_AmbientEquatorColor` and `m_AmbientGroundColor` are dead storage
+that the scene file still carries. The comparison table above was built by reading those two dead
+lines. Eskinita's real ambient on a vertical face — a character's front, which is the entire lobby
+frame — is its Flat colour **(0.934, 0.830, 0.700)**, not the (0.114, 0.125, 0.133) this entry
+compared against.
+
+**So the arithmetic ran backwards, and the correction went the wrong way:**
+
+| | claimed above | actually |
+|---|---|---|
+| Eskinita, vertical faces | 0.114 | **0.934** |
+| Ilalim after the 2026-08-29 pass | 0.340 | 0.340 |
+| ratio | *"still three times Eskinita's"* | **0.36 OF Eskinita's** |
+
+That pass LOWERED the equator from 0.60 to 0.34 to remove a wash, believing it was still three
+times too bright. It was already 0.64 too dark and it went to 0.36 of it, which is why the cast
+went from pale to murky and why 🧑 could tell the two maps apart from across the room.
+
+✅ **THE FIX IS FLAT AMBIENT AT ESKINITA'S EXACT COLOUR, IN THE BUILDER AND BAKED INTO THE SCENE.**
+Trilight is gone rather than retuned. It was kept twice on the argument that a map under a solid
+deck should distinguish what the sky reaches from what it does not, which is sound and is not worth
+what it costs: a mode with two decorative fields sitting beside one live one is what made this
+mistake available on every one of the three attempts. **The deck still shades the street**, through
+the thing that was always doing it — the directional at (1, 0.96, 0.88) intensity 1.15 with shadows
+on, which is already brighter than Eskinita's own 0.749 sun. The fog is untouched.
+
+✅ **AND THE GAP THIS ENTRY NAMED IS NOW A TEST.**
+`MapGradeSanityTests.IlalimIsLitLikeEskinitaInTheSceneThatShips` reads both **scenes** (not the
+builders, because the scene is what ships), asserts the MODE first — a colour comparison between
+two scenes in different ambient modes is meaningless — and then asserts the two Flat colours are
+equal to three decimals. The builder-versus-scene divergence this entry warned about is covered
+one test up; this is the half that was missing.
 
 ### 79.3 ⚠️ THE LOBBY CHAT STRIP SHOWS NOTHING, AND THE HISTORY CAP IS UNDOCUMENTED ⚠️ OPEN
 
@@ -2055,7 +2142,7 @@ listen host and wrong on the Linux dedicated build, where the server holds no se
 fixed characters, and every converted label carries `m_HorizontalOverflow: 1`, so the overflow
 would have been silent — the same trap § 80.2 fixed one plate over.
 
-### 82.3 ⚠️ NOT DONE, AND DELIBERATELY: THE HOST'S HALF OF § 82.1
+### 82.3 ✅ CLOSED 2026-08-30 BY § 84.8: THE HOST'S HALF OF § 82.1
 
 The client now refuses the stale packet, but **the host is still writing it** — five per second for
 the length of its arena load, each one describing a match it has already told four people to start
@@ -2072,6 +2159,10 @@ the exchange that must not be dropped.
 every peer and has the identical race — and cleared the first time `GameServices.Match.
 MatchInProgress` reads true. It is a bandwidth and honesty fix, not a correctness one, now that the
 client refuses the packet.
+
+✅ **DONE 2026-08-30, EXACTLY AS SPECIFIED ABOVE.** `MatchRpc._loadingOwnArena`, set in
+`HostStartMatch` and in `MatchResult.BeginRematchNow`, cleared by `BroadcastMatchState` on the
+first frame the host's own `MatchDirector.MatchInProgress` reads true. § 84.8.
 
 
 ---
@@ -3037,6 +3128,977 @@ the way `TrainingStreetProbe.Quiesce` and `SoloPracticeTests` already do — bot
 a live state outliving its scene poisoning the NEXT suite, which is this from the other side.
 ⚠️ Do **not** silence it with `LogAssert.Expect`: the message is true, and the object it names is
 real.
+
+✅ **DONE 2026-08-30**, as a `[UnityTearDown]` rather than a `[TearDown]` because it has to yield.
+§ 84.9.
+
+⚠️ **`HeroPickerLayoutProbe` IS STILL RED AND § 84.3 IS THE ATTEMPT AT IT.** That entry forces
+the layout before `RefreshHeroLoadout` measures, which removes the 66 px of surplus this probe was
+measuring on the first pass. **It has not been re-run against a two-machine session and the PlayMode
+suite is the gate that answers it**; if the row is still red, the 64 px deficit in § 79.6 is
+structural and `rowLe.minHeight = rowLe.preferredHeight` is the line that entry names.
+
+---
+
+## 84 · The 2026-08-30 batch: twelve reports off the shipped build, and a lighting number read off a dead field
+
+Everything here came from 🧑 playing `db58fdb6` and sending screenshots, in one sitting, while the
+batch was being worked. The entries are in the order they were reported, not the order they were
+fixed.
+
+⚠️⚠️ **THREE OF THESE ARE ENTRIES THIS FILE ALREADY CALLED FIXED, AND ALL THREE HAVE THE SAME
+SHAPE: A CORRECTION THAT LANDS ONE FRAME LATE.** § 80.2, § 83.6 and § 79.6 each found a screen
+measuring itself before the layout system had given it a size, and each answered it with a retry on
+the next `LateUpdate`. **One frame late is the frame the player is looking at**, so all three read
+to him as unfixed, and he said so in the same words he used the first time: *"the box size adjusts
+after a click, i want it to be good from the start"*. § 84.3 is the general answer.
+
+### 84.1 ✅ FIXED: NON-HOSTS BOUNCED OFF A CEILING THAT IS NOT THERE, EVERY TIME THEY JUMPED
+
+🧑: *"randomly jittering in online game for non hosts when they jump"*, *"jittering (its like there
+is a ceiling above them and they bounce up and down very fast)"*.
+
+`CharacterMotor.ApplyNetworkTransform` opened with `_velocity = velocity;`, **unconditionally**,
+above the guard that protects a predicting owner's position:
+
+```csharp
+_velocity = velocity;                                  // <- every packet, every body
+_networkGrounded = grounded;
+float error = Vector3.Distance(transform.position, position);
+if (reconcileLocal && error < 1.25f) return;           // <- the position WAS protected
+```
+
+A client SIMULATES its own body (`Simulates()`), so a jump writes `_velocity.y =
+Balance.JumpVelocity` locally on the press frame. The host has not seen that press yet — it is
+still in flight on `SubmitMove` — so the next `SyncUnit` carries the host's copy of that seat still
+resting on the ground at `GroundedRestVelocityY` = **-2.0**, and the first line stamped it over the
+jump. The body fell. A packet or two later the host's simulation caught up and sent
++`JumpVelocity`, so it rose again, and at the pose rate those two answers alternate several times a
+second.
+
+⚠️⚠️ **PREDICTION WAS RIGHT ABOUT WHERE THE BODY IS AND WRONG ABOUT WHERE IT WAS GOING, AND THE
+INTEGRATOR TURNS THE SECOND INTO THE FIRST ONE STEP LATER.** That is why reading the pose path did
+not explain it: the position guard was there, correct, and working the whole time.
+
+The assignment moved below the guard. ⚠️ **An observed replica is unaffected**: `ApplyUnitMove` and
+every other seat pass `reconcileLocal: false` and still take the host's velocity on every packet,
+which is what `StepNetworkReplica`'s one-beat lead and `CharacterAnimator` both read.
+
+⚠️ **AND NOTHING ABOUT THE TRANSPORT WAS TOUCHED.** 🧑, in the same breath: *"lan is very lag and
+delayed for non host btw, online server is more reliable"*, then *"pls dont break online server in
+the process of fixing lan lag for non hosts"*. This fix is in the shared reconcile path and helps
+both sides identically; no tick rate, channel or pool setting was changed. **The LAN-versus-relay
+difference is NOT explained by this entry and is still open, see § 84.12.**
+
+### 84.2 ✅ FIXED: `R` DID NOTHING WITH A SPECTATOR IN THE ROOM, AND A SPECTATING HOST HUNG ITS OWN GATE
+
+🧑: *"R doesnt work if theres a spectator"*.
+
+`LobbySession.PlayingPeerCount(int localPeerId)` read:
+
+```csharp
+// The local peer counts even while its own spectator flag is in flight.
+if (p.PeerId == localPeerId || !p.Spectator) count++;
+```
+
+⚠️⚠️ **THE SECOND HALF OF THAT `||` ALREADY COUNTS EVERY PEER WHOSE FLAG IS NOT SET, SO THE FIRST
+HALF COULD ONLY EVER FIRE FOR A LOCAL PEER WHOSE FLAG *WAS* SET.** It did not protect a decision in
+flight. It counted a decision already taken, the wrong way.
+
+`ReadyGate.Update` refuses to send a press for `GameLaunch.Spectator` — § 78.6 established that,
+and it is right: the set and the total must be drawn from one population. So a host who clicked
+SPECTATE in its own lobby was one vote in a quorum it could never vote in. Everyone else pressed R,
+the tally stopped one short, and the match never started. **`BufferSkipVote.Needed` and
+`MatchResult.ExpectedVotes` are the same call**, so the round-buffer skip and the rematch died the
+same way in the same lobby.
+
+The exemption is deleted and the `localPeerId` argument went with it rather than being left unused
+at five call sites. The in-flight case it claimed to cover is handled by the floor of 1 that was
+already there: a peer with no record here yet is not counted at all, the count reaches 0, and the
+floor asks for its own press. `LobbyAndSettingsTests.PlayingPeerCountExcludesASpectatingLocalPeer`
+asserts it from both chairs.
+
+⚠️ **`ReadyGate`'s note about the argument being a PEER id and not a SEAT is kept in place.** That
+collision is real and would come back with the argument; the note now says not to reintroduce it.
+
+### 84.3 ✅ FIXED: EVERY PANEL THAT SIZES ITSELF WAS ONE FRAME LATE, WHICH IS THE FRAME HE SEES
+
+🧑: *"size randomly changes when u click something, it gets bigger (in match settings)"*, and then,
+plainly: *"the box size adjusts after a click, i want it to be good from the start"*. With the
+CHOOSE YOUR HERO panel photographed before and after a click.
+
+**Nothing was random and nothing corrected itself.** § 80.2 and § 83.6 both diagnosed this
+correctly — `rect.rect.width` is 0 until the first layout pass and the first layout pass is AFTER
+the frame a panel is switched on — and both answered it with a flag re-run on the next
+`LateUpdate`. § 79.6 did the same for the hero picker's ability rows with `_refreshPending`. Three
+screens, three deferred retries, and **the earliest a correct size could appear was frame one
+rather than frame zero**. The next thing he clicked ran another refresh whose deferred pass landed
+on a rect that was real by then, which is the whole of "it fixes itself when I click".
+
+Two call sites now run the same work synchronously first:
+
+* **`ConvertedMatchSetup.Refresh`** ends with `FitEverything()` instead of only arming `_fitFrames`.
+  That method already opens with `LayoutRebuilder.ForceRebuildLayoutImmediate` on the canvas rect,
+  which is precisely the pass `LateUpdate` was waiting for Unity to run.
+* **`ConvertedCharacterSelect.RefreshHeroLoadout`** calls `ForceLayoutFor(rows)` before it measures
+  `rows.rect.width` to decide whether each ability summary wraps. Without it every row took the
+  cannot-measure branch and reserved the taller two-line box: 66 px of surplus across three rows,
+  against the 64 px § 79.6 measured the column overflowing by.
+
+⚠️⚠️ **THE DEFERRED PASSES ALL STAY, AND THAT IS NOT BELT AND BRACES.** § 83.6 wrote down why and
+it is still true: **a canvas that is inactive on this frame cannot be rebuilt at all**, which
+`LayoutRebuilder` states outright. `FitPasses` also exists because the layout chain does not
+converge in one pass. Forcing turns the deferred path from the normal case into the rare one; it
+does not remove it.
+
+⚠️ **A THIRD SCREENSHOT IN THE SAME BATCH IS PROBABLY AN EDITOR ARTEFACT AND IS RECORDED HERE
+RATHER THAN FIXED.** 🧑, of the lobby: *"this shows up for a split second when u press play"*,
+with the whole screen drawn oversized — MATCH SETTINGS in the bottom-left corner, LOBBY & SERVERS
+running off the right edge — over a map that has not rendered yet.
+
+That is not a label fit and the two changes above do not address it: **the whole canvas is at the
+wrong scale for one frame**, which is a `CanvasScaler` question rather than a layout one, and the
+3D behind it is the arena scene still loading additively. Both are consistent with Unity's Game
+view reporting a stale size on the first frame after Play is pressed, on Free Aspect, which is the
+Editor and not the player. **Check it in the built .exe before touching `AspectSafeCanvas`**: if it
+happens there too, the suspect is `ConvertedScreen.Start` applying `screenMatchMode` after the
+scaler has already handled its first frame, and the fix is to apply it in `Awake`. If it only
+happens in the Editor, there is nothing to fix and this paragraph is why.
+
+### 84.4 ✅ FIXED: THE OPEN CHAT LOG STILL CLIPPED ITS FIRST LINE, AFTER § 79.3 FIXED THAT
+
+🧑 sent the log open on THREE messages with the first one cut in half by the header and two thirds
+of the box empty below it. That is the same picture § 79.3 was closed on, taken after the fix
+shipped.
+
+§ 79.3's diagnosis was right: a `ScrollRect` normalises against `content.height - viewport.height`,
+so `verticalNormalizedPosition = 0` is meaningless when the content is the shorter of the two, and
+Unity leaves `anchoredPosition` wherever the last, longer log pushed it. `SnapHistoryToNewest` was
+written to detect that case and write the position directly.
+
+⚠️⚠️ **IT DETECTED IT WITH A HEIGHT THAT HAD NOT BEEN RECOMPUTED YET, SO THE SHORT-CONTENT BRANCH
+WAS SKIPPED AND THE MEANINGLESS WRITE RAN ANYWAY.** `OpenHistory` called `Canvas.
+ForceUpdateCanvases()` and treated that as enough. **It is not**: that call flushes the canvas
+batches, it does not run the layout system, so the `ContentSizeFitter` had not yet resized
+`content` for the text written one line earlier. Three short lines were measured at whatever the
+log stood at last time. This is `ConvertedScreen.ForceLayoutFor`'s fault class, four surfaces over,
+and § 84.3 above is the same trap on two more.
+
+Three changes: `LayoutRebuilder.ForceRebuildLayoutImmediate(content)` before the height is read;
+**the position is now written directly in BOTH directions** and the normalised path is gone rather
+than kept for the tall case, because one branch resting on a value that is undefined either side of
+a boundary is how this came back; and a `_snapPending` retry on the next `LateUpdate` for the
+inactive-canvas case, which also re-snaps when a new line arrives while the log is open.
+
+### 84.5 ✅ FIXED: NO POWER STARTS BEFORE THE ROUND DOES
+
+🧑: *"remove unli skill before round bcz ppl fly out of map and shit"*.
+
+⚠️⚠️ **THIS REVERSES A WRITTEN INSTRUCTION AND THE OLD ONE WAS GRANTED EXACTLY AS ASKED.** 🧑
+2026-08-25: *"BUt i want ppl to be able to test skills still and shit during buffer period so maybe
+during buffer period give them diff timers"*. `HeroKit.PracticeMode` answered it by splitting the
+economy from the practice: the banked charge froze, and the ultimate stayed castable as often as
+the player liked off a counter that existed only while the round clock was stopped.
+
+**What that produced is the report.** The warm-up before round one is the one window in the game
+where bodies may walk while nothing is refereeing — `RoundDirector.ApplySnapshot` explains why:
+`CharacterMotor.RoundActive` defaults TRUE so the free-roam window works, while the director
+correctly says no round is running. So `CanAct()` was true, `PracticeMode` was true, and the
+ultimate was **free, unspent and repeatable**. Dante's stomp, Sean's Supernova and Zack's charge
+are all impulses; `Balance` derives every one of them from `Friction` as a distance. An unlimited
+number of them fired at four bodies standing in a box is people leaving the map.
+
+`HeroKit.Fire` and `HeroKit.CastUltimate` now return a new `CastOutcome.NotYet` while
+`PracticeMode` is set. ⚠️ **It is a refusal rather than `CannotAct`, and that difference is what
+happens at GO**: `CannotAct` holds the press and retries it for `InputBufferWindow`, which is right
+for a stun and would have meant every ultimate pressed in the last 0.30 s of the warm-up firing on
+the first frame of the round, four bodies deep. ⚠️ **The reactivation branch stays ABOVE the gate**
+so a decoy already out when the round ends can still be recalled: ending something running is not
+starting something new.
+
+⚠️ **THE HALF HE ASKED FOR IN 2026-08-25 IS KEPT.** The banked charge still neither accrues nor is
+spent while the clock is stopped, which is the *"pause when the game isnt ongoing"* sentence and
+the half that never launched anybody. `InputMapAndAbilityTests.TheWarmUpRefusesEveryPowerAndLeavesTheBankAlone`
+asserts both together.
+
+⚠️ **THE GUIDED TUTORIAL IS UNAFFECTED AND NEVER WAS AFFECTED.** `RoundDirector.FixedUpdate`
+returns on `!RoundActive` before it reaches the `GameLaunch.GuidedTutorial` branch, so a tutorial
+round has `RoundActive` TRUE and `PracticeMode` FALSE: the lesson always cast real powers on real
+cooldowns.
+
+⚠️⚠️ **AND THE HUD STOPPED PROMISING IT, WHICH IS THREE SURFACES.** `HeroKit.IsUltimateReady`
+opened with `PracticeMode ||`, so the ultimate tile was lit through the whole warm-up; both skill
+tiles read `IsReady`, which is genuinely true while nothing is cooling; and the ready prompt said
+*"Practice freely, scores are paused"*. All three would have gone on inviting a press the rules now
+refuse, which is `HeroAbilitySystem`'s own rule — *"a second opinion about when a round is live is
+how a HUD ends up disagreeing with the rules"* — arriving from the presentation side. The tiles are
+dark with `NOT YET` on them and the hero prompt reads *"Warm up freely, powers start with the
+round."* Walking, throwing and picking up are untouched, which is what the free-roam window is for.
+
+### 84.6 ✅ FIXED: THE TAYA'S RED WARNING WAS NEVER REMOVED, IT WAS 0.096 OF AN ALPHA
+
+🧑: *"bring back the red aura or some shit in the screen of taya (theres like a warning that lata is
+down if ur taya) (i think it got remvoed by accident, js remake it if it doesnt exist)"*.
+
+**It exists and it has been driven the whole time.** `Hud.UpdateDanger` sets it per screen, which is
+the half that makes it information: a defender sees their can is down, an attacker sees they are
+catchable, neither sees the other's. `DownedVignette.shader` is in `m_AlwaysIncludedShaders`, so
+this is not § 67.3's stripping fault either.
+
+⚠️⚠️ **THE SHADER'S OWN HEADER HAD ALREADY DONE THE ARITHMETIC THAT CONDEMNS THE LEVEL.** It
+records that the material's 0.6 alpha times `DangerHoldAlpha` = 0.16 puts *"the strongest pixel on
+screen at about 0.096"*, **at the corners**, over a centre held at exactly zero. 0.096 of red on
+the four corners of a street scene is not a warning.
+
+⚠️ **0.16 WAS CHOSEN AGAINST A FLAT FULL-SCREEN RECT AND NOTHING RE-DERIVED IT AFTERWARDS.** That
+number answered a real measurement — *"the entire arena was washed red"*, which reads as the
+renderer being broken — from before `DownedVignette.shader` existed. The shader then put the
+opacity where the player is not looking, `smoothstep(0.3, 1.2, dist)`, dead clear inside a radius
+of 0.3 and only full at the corners, and the constant sized for the flat version was left standing
+underneath it.
+
+`DangerHoldAlpha` is **0.55**, which against the ramp is 0.33 in the corners, about 0.17 at the
+middle of each edge, and still exactly zero through the centre of the frame — **less red over the
+part of the screen the player plays in than the old flat 0.16 was.** ⚠️ `DownedFlashPeak` moved to
+**0.90** with it: `UpdateDanger` takes `Max(pulse, hold)`, so leaving the peak at 0.45 under a 0.55
+hold would have made a knockdown, the loudest single moment in the taya's game, invisible.
+
+### 84.7 ✅ FIXED: THE LOBBY LIT ILALIM NG TULAY AT A THIRD OF ESKINITA. SEE § 79.2
+
+🧑: *"look eskinita vs ilalim ng tulay in lobby, the lighting is so diff"*, *"eskinita is the better
+one make ilalim ng tulay matchthat"*. The fourth pass on this map's ambient, and the first three all
+compared against `m_AmbientEquatorColor` on a scene that is `m_AmbientMode: 3` (Flat), where that
+field lights nothing. Full account, the corrected table and the new parity test are in **§ 79.2**,
+which this closes.
+
+### 84.8 ✅ THE HOST STOPPED BROADCASTING "NO MATCH RUNNING" THROUGH ITS OWN ARENA LOAD. § 82.3 CLOSED
+
+`MatchRpc._loadingOwnArena` is set in `HostStartMatch` and in the rematch path through
+`MatchResult.BeginRematchNow`, and cleared by `BroadcastMatchState` on the first frame the host's
+own `MatchDirector.MatchInProgress` reads true.
+
+⚠️ § 82.3 named the wrong gate in advance so nobody would spend the hour on it, and that warning
+stands: `LobbySession.MatchInProgress` is still true while the result board is up, so gating on it
+would suppress the packet that ENDS the match. This is an explicit one-shot latch answering "is the
+host mid-load", which no existing flag answers.
+
+⚠️ **IT IS BANDWIDTH AND HONESTY, NOT CORRECTNESS.** § 82.1's receiving-end guard
+(`MatchDirector.IsPreStartSnapshot`) is what actually protects the client and stays the
+load-bearing half, because an honest sender cannot be relied on across versions.
+
+### 84.9 ✅ `PreviewDragProbe` HAS A TEARDOWN. § 83.25 CLOSED
+
+A `[UnityTearDown]` that parks the runner in a fresh empty scene, unloads every scene the test
+opened (the arena rides in additively beside MatchSetup, and Unity refuses to unload the last one),
+and then yields a frame so the deferred `Destroy` calls actually run before the unload completes.
+Same shape as `TrainingStreetProbe.Quiesce` and `SoloPracticeTests`.
+
+⚠️ **NOT `LogAssert.Expect`**, as § 83.25 instructed: the *"objects were not cleaned up ...
+LobbyCastStage"* message is true and the object it names is real.
+
+### 84.10 ⚠️ OPEN: THE FIRST-PERSON TSINELAS DOES NOT LOOK LIKE THE TSINELAS. § 79.8, WITH A HERO NAMED
+
+🧑: *"also slipper in character sleect doesnt look like FPP version of slipper"*, then, with an FPP
+screenshot: *"this is heel btw"*, *"this is heel but it doesnt look like heel"*.
+
+**This is § 79.8 and it should be worked there**, but it now has something that entry did not: a
+named prop and a picture from the GAME rather than from the snapshot tool. In the capture the held
+object is a large flat brown shape filling a quarter of the frame, clipping into the arm, with none
+of HEELS' own silhouette in it — while a slipper carried by another player in the same frame reads
+correctly.
+
+⚠️ **`ViewmodelArms.MatchSkin` IS CALLED EVERY FRAME FROM `CameraRig`, so the mesh and the
+materials are being copied.** Two things it does are shape-sensitive and neither has been measured
+against a non-slipper silhouette: `NormaliseHeldSize` scales the copy to a target LENGTH, which is
+a different operation on a heel than on a flip-flop, and § 79.8's third attempt laid the shoe along
+the forearm, *"where it lands exactly where the hand mesh is and the two read as one brown mass"* —
+which is what this capture looks like.
+
+**Do this before touching a number**: § 79.8 records that `FppArmsSnapshotTool` was fixed
+specifically so this can be judged off a real skin, and it sweeps ten tsinelas on one character.
+Shoot HEELS with it, judge the PLACEMENT off that capture and not the colour (the tool has no
+`ColourGrade`, § 79.8's fourth trap), and read that entry's list of three failed attempts first.
+
+✅ **THAT SWEEP WAS RUN, AND IT MOVES THE DIAGNOSIS OFF THE POSE.**
+`Logs/shots-fpp/fpp_held_heels_v18.png` beside `Logs/shots-fpp/fpp_held_sandals_v18.png`, same
+code path, same frame, same character:
+
+* **SANDALS reads perfectly.** A dark, detailed sandal sitting in the fist, broadside to the
+  camera, unmistakable.
+* **HEELS is a thin tan ribbon.** Its strap arc lands dead centre of frame while the body of the
+  shoe sits behind the hand, and the tan it is drawn in is very close to `ViewmodelArms.ArmColour`
+  (0.784, 0.529, 0.353). That is the *"one brown mass"* of § 79.8's third attempt, and it is
+  exactly what 🧑's in-game screenshot shows.
+
+⚠⚠ **SO IT IS NOT THE POSE, WHICH IS WHAT THREE ATTEMPTS ASSUMED.** One pose renders one prop
+correctly and another as a wisp, so the variable is the MESH, and the two candidates are both in
+`ViewmodelArms.NormaliseHeldSize`: it scales so the **longest AABB axis** is `SlipperLength` 0.46,
+and it centres on **`bounds.center`**. A heel's AABB is dominated by its ankle strap, so the strap
+eats the length budget while the shoe's body is smaller than every other prop's, and the centring
+puts the strap where the shoe should be. Neither number is wrong for a flip-flop and both are wrong
+for a shoe with a hole in the middle of its bounding box.
+
+⚠ **THE COLOUR IS NOT JUDGED HERE**, per this entry's fourth trap: the tool has no `ColourGrade`.
+The SILHOUETTE is, and that is what the comparison above is about.
+
+⚠⚠ **NOT FIXED, DELIBERATELY, AND THIS IS THE ONE THING IN THE 2026-08-30 BATCH LEFT UNDONE.**
+Every candidate is a change to how a mesh is presented, this entry's own header says the answer is
+*"judged by 🧑 off a capture"*, and three previous sessions each shipped a plausible fix that he
+then rejected in one line. The two captures are the thing to put in front of him first.
+
+### 84.11 ✅ ANSWERED BY HIM, THEN FIXED IN § 86.1: `PAUSE` IN MULTIPLAYER
+
+🧑: *"pause doesnt work in multiplayer"*, reported in the same breath as § 84.2 and therefore
+probably from the same hosting-and-spectating session.
+
+**There are two pauses and reading the source does not say which one he pressed:**
+
+1. **The Escape menu** (`PauseWatcher` to `UI.PausePanel`). Built unconditionally in
+   `MatchInstaller.BuildCameraAndHud` for every peer, spectators included, and it has **no
+   networked gate anywhere**. It is a menu and not a time control: it has never stopped the clock,
+   and its title reads `MATCH MENU · LIVE`. Nothing found in a read explains it failing online.
+2. **The broadcast pause** (`SpectatorCamera.StepBroadcastKeys`, `SpectatorPause`). This is
+   **deliberately locked in a networked match** and says so: `LIVE NETWORK · TIME CONTROLS LOCKED`,
+   on the written rule that *"a remote viewer must never acquire authority over a live tournament
+   simply by spectating"*. If this is the one he means, the behaviour is correct and the fault is
+   that a 1.5 s toast is easy to miss.
+
+⚠️ **THE SEPARATION TEST IS ONE QUESTION AND IT SHOULD BE ASKED BEFORE ANY CODE IS WRITTEN**: does
+the card with RESUME / SETTINGS / QUIT TO MENU appear at all? If it appears and its buttons do
+nothing, that is `CursorMode`'s fault class and `PausePanel`'s own header describes it exactly. If
+it never appears, the reader is dead and `PauseWatcher` is where to look. If he never saw a card
+because he was pressing the broadcast key as a spectator, there is nothing to fix and the toast
+needs to be louder.
+
+⚠️ **`Input.GetKeyDown(KeyCode.Escape)` WAS RULED OUT AS THE CAUSE**: `PauseWatcher` reads legacy
+input, but so does every other Escape handler in the project, and Escape works in single player.
+
+✅ **HE ANSWERED: IT IS THE SECOND ONE.** *"spectator pause"*, *"pause is for spectatotr"*. So the
+Escape menu was never broken and candidate 1 above is closed unread — which is the value of having
+asked rather than guessed, because the fix for candidate 1 would have been a change to a working
+path. The refusal in candidate 2 is lifted in **§ 86.1**, along with the written rule it rested on.
+
+### 84.12 ✅ EXPLAINED AND FIXED IN § 86.2: LAN IS LAGGIER FOR A NON-HOST THAN THE VULTR RELAY
+
+🧑: *"lan is very lag and delayed for non host btw, online server is more reliable"*, and then
+*"pls dont break online server in the process of fixing lan lag for non hosts"*.
+
+⚠️⚠️ **NOTHING IN THIS BATCH TOUCHED THE TRANSPORT, AND THAT IS DELIBERATE.** § 84.1 fixed a jitter
+that lives in the shared reconcile path and helps both sides identically; no tick rate, channel or
+pool setting was changed, and the instruction above is why. **§ 84.1 does not explain this report**
+and closing one on the other would be the wrong conclusion.
+
+**It is backwards on its face**, which is the interesting part: a LAN hop is single-digit
+milliseconds and Singapore is not, so a LAN client feeling WORSE points at something other than the
+link. Candidates, none measured:
+
+* the two peers are on the same machine or the same congested Wi-Fi rather than a switch, so the
+  host process and the client process contend for one CPU and one radio;
+* Hamachi is in the path, which is a relay wearing a LAN's clothes;
+* `PoseDelivery` and the 5 Hz `MatchSyncInterval` are tuned against the relay's characteristics and
+  nobody has ever compared them on a LAN.
+
+**Done looks like** a number rather than an impression: `NetStateReport` already exists, and one
+capture from a client on each path — round-trip and the arrival spacing of `SyncUnit` — would say
+which of the three it is. **Do not retune anything until that capture exists.**
+
+✅ **NONE OF THE THREE. IT WAS 35 ms OF FILTER LAG IN THE RECEIVING PEER, AND THE ARITHMETIC IS IN
+§ 86.2.** `StepNetworkReplica` led its target by the SEND interval (0.020 s) and then ran it through
+a `SmoothDamp` with a 0.055 s time constant, which trails by about that whole constant. **It is a
+fixed cost that does not care about the link**: on the relay it hides inside the round trip, and on
+a LAN it is essentially all of the lag there is. That is exactly why it read as backwards.
+
+### 84.13 ✅ SEAN IS THE SLOWEST HERO, BECAUSE HE IS THE BIGGEST ONE
+
+🧑: *"personal chracter debuff"*, *"bcz Sean is larger than all, he should be slower than all (he
+has a defender advantage)"*, *"js a bit slower than all"*.
+
+**The reasoning is his and it is a real asymmetry rather than a feeling.** A bigger body reaches
+further, and `CLAUDE.md` § 4 keeps contact resolution on DISTANCE rather than on a trigger volume,
+so a larger character is genuinely better at the one verb the defender has, on every map, in both
+modes. Speed is the right counterweight because the taya rotates: a debuff that only bit while
+chasing would be a buff over the match.
+
+⚠️⚠️ **1 IS THE ONLY VALUE THAT SAYS "SLOWER THAN ALL", AND DANTE IS WHY.**
+`Balance.TraitSpeedPerPoint` is 0.05 and `Roster.TraitNeutral` is 3, so `bilis` is a 5% ladder.
+Dante was already on 2. **Sean written as 2 would have TIED the slowest rather than been it**, and
+nothing in the harness would have noticed.
+
+| | bilis | scale | vs Sean |
+|---|---|---|---|
+| **SEAN** | **1** | **0.90** | — |
+| DANTE | 2 | 0.95 | 5% faster |
+| CHESKA | 3 | 1.00 | 11% faster |
+| ZACK · NEMU · PHAISTER | 4 | 1.05 | 17% faster |
+
+⚠️ **STILL INSIDE `Balance`'S OWN NARROW-SPREAD RULE**, which says *"a pick 40% faster than another
+is not a personality, it is the correct answer"*. The widest gap on the hero table is now **17%**,
+and the assertion holds the 40% ceiling itself so a future row cannot walk past it quietly.
+
+⚠️ **0.90 IS NOT A NEW EXTREME.** `ClassicPeople` has held LOLA PACING at `bilis` 1 since the
+roster was written, so that scale has been played for weeks.
+
+⚠️ **HIS `lakas` 5 IS UNTOUCHED.** It is the other half of being the big one, and taking it away
+would leave a character who is large, slow and hits like everybody else. Slowest and strongest is
+the trade.
+
+⚠️ **BOTH TABLES MOVED.** `HeroPeople` is what Hero Strike reads and `AllPeople` is the master
+list; a trait edited in one is two characters wearing one name.
+`BalanceTests.SeanIsStrictlyTheSlowestHero_InEveryTableThatHoldsHim` asserts it in both, and skips
+the Classic cast by id — the two modes are not variants of each other (`CLAUDE.md` § 1), so a
+Classic character and a hero never stand in one match, which is what makes Lola Pacing irrelevant
+to "slower than all" rather than a counterexample.
+
+⚠️ **`kuya_boy` IS NOT CHANGED.** It shares `SeanHeroKit` through
+`HeroAbilitySystem.CreateKitFor`, which is an ABILITY mapping; it is a different Classic model with
+its own build, and the report is about the hero's size.
+
+### 84.14 ⚠️ OPEN, AND NOT REPRODUCED BY READING: THE "6K POINTS CAP"
+
+🧑: *"theres also a 6k points cap bug pls remove poitns cap"*.
+
+⚠️⚠️ **THERE IS NO POINTS CAP IN THE CODE, AND THE SEARCH IS WRITTEN DOWN HERE SO NOBODY RUNS IT A
+SECOND TIME.** Nothing was changed, because removing a cap that does not exist means changing
+something else at random.
+
+**What was checked, all of it negative:**
+
+* `Scoreboard.Add` is `_scores[slot] = Math.Max(0, _scores[slot] + MatchRules.PointsFor(e))` —
+  a floor at zero and **no ceiling**. `Set`, `SetAll` and `Total` have none either, and the field
+  is `int[]`.
+* `MatchDirector.AddScore` has three early returns and none of them is a number:
+  `!MatchInProgress`, `IsWarmupBuffer`, `!NetAuthority.ShouldResolve()`.
+* The wire carries `int[] scores` inside `SyncWorld` through a 256-byte `FastBufferWriter`; four
+  ints cannot overflow it and nothing narrows the type.
+* `Hud` prints `scoreNow.ToString()` with no format string and no clamp; the only `Clamp` near the
+  scoreboard is the 0.34 s pulse timer.
+* `MatchResult` and `ConvertedMatchResult` clamp a texture wrap mode and a winning SLOT index, not
+  a score.
+* A regex sweep for any `Clamp(...)` or `Min(...)` against a four-digit literal across
+  `Assets/TumbangPreso/Runtime` and the Core package returns **nothing**. The only 6000 in the
+  project is `VoiceDirector`'s per-line cooldown in milliseconds.
+* Not the ultimate meter either, in case the word "points" meant that: `HeroKit.UltimateMax` is
+  **20** and the per-hero costs run 90 to 150 against earnings measured in single digits.
+
+⚠️ **THE MOST PLAUSIBLE MECHANISM IS NOT A CAP AT ALL, AND IT IS ALREADY A KNOWN FAULT CLASS.**
+`AddScore` returns silently while `MatchInProgress` is false. § 82.1 is an entire entry about a
+client's `MatchInProgress` being dropped by a stale host packet, and a board frozen at whatever it
+held reads exactly like a ceiling — except that the ceiling would be a different number every time,
+which is the thing to check.
+
+**Done looks like** four facts, any one of which locates it: **was it exactly 6000 or about 6000;
+was it host or client; did it stop mid-round or at a round boundary; and did the other players'
+scores keep rising.** If it is exactly 6000 every time, it is a constant nobody has found and this
+list says where it is not. If it is approximate and client-side, it is § 82.1's family and § 84.8
+is the entry that just tightened it.
+
+---
+
+### 84.15 The sweep of what was already closed, since the handoff's list was stale
+
+🧑: *"§ 78.8 ... § 78.12 ... are resolved btw, there might be other todo shit thats resolved"*.
+Every entry the 2026-08-29 handoff listed as open was re-read against its own heading:
+
+| entry | handoff said | actually |
+|---|---|---|
+| § 78.8 IKE reads white | open | **closed on his report**, see the entry |
+| § 78.12 flaky `CarryTests` | open | **closed on his report**, and green in § 83.25's own run |
+| § 79.2 Ilalim hazier and paler | open | **closed here**, § 84.7 |
+| § 79.3 lobby chat strip | open | open, and re-reported today: § 84.4 |
+| § 79.6 hero picker column | fixed | re-reported today: § 84.3 |
+| § 79.8 first-person tsinelas | open | open, § 84.10 |
+| § 79.9 two practice reports | open | open, still uninvestigated |
+| § 80.6 dance curves | open | **already ✅ in its own heading**, closed 2026-08-29 |
+| § 80.7 Ilalim asphalt grain | open | **already ✅ in its own heading**, closed 2026-08-29 |
+| § 82.3 host SyncWorld latch | open | **closed here**, § 84.8 |
+| § 83.25 `PreviewDragProbe` | open | **closed here**, § 84.9 |
+
+⚠️ **TWO OF THE ELEVEN WERE ALREADY TICKED IN THIS FILE AND THE HANDOFF COPIED THEM ANYWAY**, which
+is exactly what `CLAUDE.md` § 2.4 forbids: *"a pointer to its `docs/TODO.md` entry rather than a
+copy of it. Copies go stale; the file does not."* § 80.6 and § 80.7 were closed in the same session
+that wrote the handoff listing them as open.
+
+**Still open after this sweep**, all with their own entries: § 63.2, § 66.5, § 70.13, § 79.8,
+§ 79.9, § 80.8, § 84.10, § 84.11, § 84.12, § 84.14.
+
+⚠ § 79.3's two-line strip is still unreproduced and its probe still passes; the OPEN LOG half of
+that entry is what § 84.4 closes.
+
+---
+
+---
+
+## 85 · The 2026-08-30 AUDIO and VISUAL list, sent as one block
+
+🧑 sent this as a headed list rather than as loose reports, off the same `db58fdb6` build as § 84:
+
+> **AUDIO**
+> - Round Music still plays after winning instead of Main Menu
+> - Round Music still plays even when exiting to lobby
+> - No audio cue on victory, like wala ung jingle unlke last time
+>
+> **VISUAL**
+> - Chat does not appear on preview after 1 chat
+> - Overflowing text eg. Attacker Rockafort in the bottom left
+
+⚠️⚠️ **THREE OF THE FIVE ARE THINGS THAT WERE BUILT AND NEVER SELECTED, WHICH IS THIS PROJECT'S
+MOST EXPENSIVE FAULT CLASS AND ITS CHEAPEST TO FIX.** `MatchInstaller` already records two of them
+by name — `DebugPlayerSwitcher` had no call site anywhere, `SpectatorCamera` had been audited line
+by line and nothing selected it. Add the `match_win` cue and the menu bed on the lobby to that
+list. **Nothing in the harness looks for a catalogue entry with no caller**, and § 85.6 is the
+proposal that would.
+
+### 85.1 ✅ FIXED: THE ROUND MUSIC PLAYED OVER THE RESULT BOARD AND ON INTO THE LOBBY
+
+Two of the three audio lines are one fault: **nothing ever ended the match bed.**
+
+`Hud` starts it — `Music.Play("match", MatchTrack)` on the ready countdown — and
+`MatchInstaller` stops it on the way IN (`StopNow()` before the ready gate, so the arena loads in
+silence). After that the only writer left in the game is `ConvertedMainMenu.Wire`, which plays
+`"menu"`. So the bed ended correctly on exactly one path: quitting all the way to the TITLE screen.
+
+⚠️⚠️ **AND THE PLAYER ALMOST NEVER TAKES THAT PATH.** `MatchResult`'s MAIN MENU, `PausePanel`'s
+QUIT TO MENU and a declined rematch all land on the **lobby** (`MatchSetup`), which had no opinion
+about music at all. The round loop therefore played under the standings, under the rematch vote,
+and under the lobby, for as long as the player stayed there.
+
+**Two lines, at the two places that already own those moments:**
+
+* `ConvertedMatchSetup.Wire` plays `"menu"`, which is the line `ConvertedMainMenu.Wire` has always
+  had. ⚠️ `MusicDirector.Play` is idempotent on the name, so arriving at the lobby FROM the title
+  screen costs nothing and does not restart a track the player is already listening to.
+* `MatchResult.PlayTheWin` hands back to `"menu"` on the frame the board appears, rather than
+  waiting for the scene change. That is the moment the change means something.
+
+⚠️ **IT IS `Play`, NOT `StopNow`.** Silence over a result board reads as the audio having crashed,
+which is the same misreading `DownedVignette`'s header records about a held red tint and § 84.6
+acted on.
+
+### 85.2 ✅ FIXED: `match_win` WAS IN THE CATALOGUE, IN THE DUCK LIST, AND IN NO CODE THAT PLAYS IT
+
+🧑: *"No audio cue on victory, like wala ung jingle unlke last time"*.
+
+**The cue exists and always has.** `AudioCues` lists `match_win` in the live catalogue, gives it a
+0.0 dB trim, and puts it in `DuckTriggers` — so the music bed was already written to get out of its
+way, for a sound nothing played. A grep across `Assets` finds the string in the catalogue, in that
+duck list and in one test, and **in no call site**.
+
+⚠️ **THE VOICE LINE IS A DIFFERENT THING AND IS WHY THIS LOOKED WIRED.** `VoiceDirector.OnMatchWon`
+plays a `match_win` VOICE take and is hooked up in `MatchInstaller`. Two systems, one name: the
+announcer spoke and the jingle never did, which is exactly *"wala ung jingle"* rather than "no
+audio at all".
+
+`MatchResult.PlayTheWin` plays it, at the camera, the way `Hud` plays `sfx_super_ready`. ⚠️ **At
+the camera and not at the origin**: the rig is 3D, so a cue played at the world origin of a match
+whose camera is thirty metres away arrives quiet and panned to one side.
+
+### 85.3 ✅ FIXED: THE CHAT STRIP WENT BLANK AFTER THE FIRST MESSAGE, EXACTLY AS § 79.3 PREDICTED
+
+🧑: *"Chat does not appear on preview after 1 chat"*.
+
+⚠️⚠️ **§ 79.3 NAMED THIS MECHANISM AS THE STANDING SUSPECT, COULD NOT REPRODUCE IT AT FOUR SHORT
+MESSAGES, AND WROTE IT DOWN ANYWAY. That note is what closed this in one read.** Its words: *"If it
+recurs, the `Truncate` mechanism in the note above is the standing suspect."*
+
+`SetLines` does three things to every visible row, and the second contradicts the first:
+
+```csharp
+element.minHeight = LineHeight;          // 26 px. ONE line.
+element.preferredHeight = LineHeight;
+MenuKit.FitBlock(line, LineHeight * 2.0f);   // sized against 52 px. TWO lines.
+line.verticalOverflow = VerticalWrapMode.Truncate;
+```
+
+`FitBlock` shrinks the type until the wrapped block fits the cap it is GIVEN, so a message that
+wraps was declared to fit at a size that draws 52 px of text into a 26 px rect. **Legacy `Text` on
+`Truncate` clips by WHOLE LINES**, so a rect that cannot hold one whole line at the chosen size
+paints **nothing at all** — while remaining active, non-empty and correctly sized. That is why
+every check that read `Text.text` passed against his screenshot, and it is why the first, short
+message showed and the next one vanished.
+
+The cap is `LineHeight`. The type now shrinks until one line genuinely fits the rect it is clipped
+to, so the two numbers describe the same box. ⚠️ **A line too long to fit even at
+`MenuKit.MinReadableUnits` is still clipped, and that is the design**: this strip shows
+`LobbyVisibleLines` = 2 of the log by intent and the whole message is in the scrollable history
+behind the click, on `Overflow`, inside a viewport. What changed is that it clips to one READABLE
+line instead of to nothing.
+
+⚠️⚠️ **`LobbyChatStripProbe` ASSERTS EXACTLY THE RIGHT PROPERTY AND WAS GREEN THROUGH ALL OF
+IT, WHICH IS THE PART WORTH RECORDING.** It is not a weak test: it pushes two messages at
+`MatchRpc.MaxChatLength` = 120 through the component's own `Add` path, and its bound is
+`preferredHeight <= rect.height` on the row's OWN rect, with a comment naming the whole-line
+`Truncate` mechanism. That is the fault, written down, being checked for.
+
+**It passes on the canvas it builds for itself and fails on his**, so the difference is a canvas
+scale or a panel width this probe does not reproduce, and 🧑's screen is the one that counts. The
+fix above removes the knife edge rather than moving it: with the cap at `LineHeight` the fitted
+block is bounded by the same number the rect is, so `need <= have` now holds by construction at
+every scale instead of by arithmetic at this one. **Leave the probe as it is** — it is the guard
+against the cap being widened again, and its messages are already at the maximum a peer can send.
+
+### 85.4 ✅ FIXED: `ATTACKER ROCKAFORT`, THE THIRD TIME, AND THIS TIME IT IS BOUNDED
+
+🧑: *"Overflowing text eg. Attacker Rockafort in the bottom left"*. The YOU card's identity row.
+`TAYA (DEFENDEDANTE` was the first (§ 79 era), `ATTACKERROCKAFORT` the second (§ 83.5).
+
+**§ 83.5's fix was right about the cause and incomplete about the bound.** It replaced a 50/50
+`flexibleWidth: 1` split with `flexibleWidth: 0` on the role plus `childControlWidth`, so the group
+asks the role `Text` for its own `preferredWidth` and gives it exactly that. That stops the role
+DRAWING past a half-width box it was given. It does not stop it ASKING for more than the row has.
+
+⚠️⚠️ **A `HorizontalLayoutGroup` WILL NOT SHRINK A CHILD BELOW ITS MINIMUM; IT OVERFLOWS THE
+CONTAINER INSTEAD.** The row asked for `preferredWidth(ATTACKER at 32 pt)` + 10 px spacing + the
+name's 140 px floor, and when that sum passes the 336 px content box the surplus goes out of the
+wood. **That is the mechanism § 79.6 measured on the hero picker column**
+(`rowLe.minHeight = rowLe.preferredHeight` overflowing a `VerticalLayoutGroup`), arriving on the
+other axis: the container can be squeezed and the children cannot.
+
+Two lines: the role's `LayoutElement` takes `preferredWidth = 170`, and the role gets the same
+best-fit the name already had (max 32, floor `MenuKit.MinReadableUnits`) so it shrinks INTO that
+bound rather than being clipped by it. **170 + 10 + 140 = 320 against 336**, so the row fits by
+construction whatever the two strings are, instead of by the arithmetic happening to work out.
+
+⚠️ **`TAYA` NEVER TOUCHES THE CAP.** Only `ATTACKER` on a narrow card steps down a point or two,
+which is the trade this row has been asking for since the first report.
+
+### 85.5 ⚠️ PART FIXED: HEELS IS THE ONLY UNTEXTURED PROP IN THE ROSTER, AND IT WAS ALSO CRUSHED TO BLACK
+
+🧑, after the FPP captures: *"these arent heels tho"*, *"i want it to look realistic liek 2nd but
+the 1st pic dont look like heels"*, pointing at `fpp_held_sandals_v18.png` as the standard.
+
+**This is § 84.10 and § 79.8 resolved down to an ASSET fault, measured out of the `.glb` files
+rather than argued.** `tsinelas_heels.glb`, against the props either side of it:
+
+| prop | file size | meshes | primitives | verts | materials | **textures** |
+|---|---|---|---|---|---|---|
+| **heels** | 671 KB | 1 | 3 | 15554 | 3 | **0** |
+| alpombra | 5.2 MB | 1 | 5 | 41696 | 5 | 5 |
+| sandals | 21.4 MB | 1 | 3 | 9674 | 3 | 9 |
+| loafers | 111 KB | 1 | 1 | 1117 | 1 | 1 |
+
+⚠️⚠️ **HEELS IS THE ONLY TSINELAS IN THE GAME WITH NO TEXTURE MAPS AT ALL**, and its three
+materials are flat and near-black: `black` (0.020), `black.001` (0.000) and `gray` (0.077), with no
+base colour texture on any of them. Its source, `src_heels_plateau_sandal.glb`, has zero images
+too, so the prop has never had a skin at any point in the pipeline. Sandals and alpombra read as
+real shoes because they carry 9 and 5 images respectively.
+
+⚠️ **AND A NEAR-BLACK, UNTEXTURED PROP IS § 70.1 AND § 78.8's FAULT CLASS EXACTLY.** § 70.1: *"IKE
+WAS NOT AN UGLY MODEL, IT WAS A BLACK ONE"*, and § 78.8 is a whole entry about a near-black shoe
+reading WHITE on the character screen. `TumbangPreso/Toon` is a surface shader with no `noambient`,
+so ambient lands on top of the lit colour and outside the palette remap, and it lifts a 0.02 albedo
+proportionally far more than a bright one. That is why the FPP capture shows a pale tan ribbon
+where the material says black.
+
+⚠️⚠️ **THE DECISION IS HIS AND IT IS AN ART SOURCING ONE, WHICH IS WHY NOTHING WAS CHANGED.** The
+only realistic heel-shaped source in the repo is `src_alpombra_heel_mule.glb` — a heel mule, 6.5 MB,
+5 textures — and **ALPOMBRA is already using it**, which is itself worth a look, since an alpombra
+is a carpet slipper. So the three options are:
+
+1. **Re-source HEELS.** A textured heel model, imported through the same pipeline. This is the
+   only option that produces what he asked for and it needs an asset that is not in the repo.
+2. **Swap the two sources**, if the alpombra entry was mis-sourced: give HEELS the heel mule and
+   find a carpet slipper for ALPOMBRA. Costs one asset instead of two, and `alpombra` currently
+   renders beautifully, so it trades a good frame for a correct one.
+3. **Author the three materials by hand.** No new asset. It cannot add detail the mesh does not
+   have, but it would at least stop the prop being one flat tone: a dark leather upper, a tan
+   footbed and a black sole would read as a shoe instead of a ribbon.
+
+✅ **OPTION 3 IS DONE, AND IT IS § 70.1's FIX APPLIED TO A THIRD PROP.** 🧑: *"dude show me how
+heel looks like now"*. The three `baseColorFactor` values in `tsinelas_heels.glb` were rewritten in
+place, keeping the BIN chunk byte-identical:
+
+| material | was | now | what it is |
+|---|---|---|---|
+| `black` | 0.020, 0.020, 0.020 | **0.115, 0.100, 0.105** | the upper and the straps |
+| `black.001` | 0.000, 0.000, 0.000 | **0.075, 0.068, 0.072** | the sole |
+| `gray` | 0.077, 0.074, 0.072 | **0.290, 0.250, 0.228** | the platform and footbed |
+
+⚠⚠ **0.115 IS NOT A TASTE, IT IS § 70.1's NUMBER.** That entry lifted IKE off the floor to
+`Kd 0.105 0.115 0.145` for this exact reason: `TumbangPreso/Toon` is a surface shader with **no
+`noambient`**, so `RenderSettings.ambientLight` is added on top of the lit colour, after the
+tonemap and outside the palette remap. Against an ambient near 0.9 a 0.02 albedo contributes about
+2% of the pixel and the ambient contributes the rest, so **the shoe rendered in the ambient's own
+hue rather than in its own colour** — which on a warm-lit stage is the tan of the arm beside it.
+That is why a material sheet reading pure black produced a pale ribbon on screen, and it is the
+same fault § 78.8 spent three sessions on from the other end.
+
+⚠ **AND THE THREE ARE NOW SEPARATED, WHICH IS THE HALF THAT MAKES IT READ AS A SHOE.** They were
+0.020 / 0.000 / 0.077 — three tones inside a 0.08 band, which is one tone once ambient lands on it.
+0.075 to 0.290 is a 4x spread, so the platform, the footbed and the straps are distinguishable
+shapes instead of one silhouette.
+
+⚠⚠ **THIS DOES NOT ADD DETAIL THE MESH DOES NOT HAVE, AND OPTIONS 1 AND 2 ARE STILL ON THE
+TABLE.** Heels remains the only prop in the roster with **zero texture maps**, so it can be a
+correctly shaded black platform sandal and it cannot be as rich as SANDALS' nine images. If that is
+not enough, the decision is which of options 1 and 2 above to take, and that is an art sourcing
+call rather than a code one.
+
+---
+
+⚠⚠⚠ **AND THEN THE RECOLOUR CHANGED NOTHING ON SCREEN, WHICH IS WHAT FINALLY NAMED THE FAULT.**
+🧑: *"dude it looks identical"*, *"i want it to look like the one in character select"*,
+*"remvoe the shaders for it or wwathever is fkn with its colior"*.
+
+The capture after the edit came back **byte-identical** to the one before it. That is not a stale
+artifact: `FppArmsSnapshotTool.BuildSlipperSource` now forces
+`AssetDatabase.ImportAsset(..., ForceUpdate)` before every shoot and logs the albedo it resolved,
+and the values are live on the renderer.
+
+```
+[FppSkin] heels   slot 0 'black'     glTF/PbrMetallicRoughness  baseColorFactor=(0.373,0.349,0.357)  no texture
+[FppSkin] heels   slot 2 'gray'      glTF/PbrMetallicRoughness  baseColorFactor=(0.575,0.537,0.515)  no texture
+[FppSkin] sandals slot 0 'Upper_1'   glTF/PbrMetallicRoughness  baseColorFactor=(1,1,1)  baseColorTexture=Image_0
+```
+
+✅ **SO THE ANSWER IS THE SECOND TOON PASS, AND IT IS REMOVED.** `ViewmodelArms.MatchSkin` copied
+the world slipper's materials and then ran `ToonSkin.ApplySlipper` over the copy again. That second
+call does not retune the material it was handed — `ToonSkin.Variant` resolves back through `Origin`
+and **rebuilds from the source**, so the shoe in the hand was a second dressing of the skin rather
+than the same dressing. For a prop with a texture that is invisible, because the texture carries the
+colour; **heels is the only tsinelas with none**, so its entire appearance rested on that rebuild
+landing identically, and the one surface where it showed is the one nobody could compare side by
+side.
+
+Copying and stopping makes the hand copy identical to the world copy **by construction**, which is
+his sentence exactly: the tsinelas on your arm is the one on the character screen.
+
+⚠️ **THE COST IS THE INK BORDER AND IT IS DELIBERATE.** That second call existed to re-derive the
+outline against the fistful-sized copy's own scale, so the border now reads heavier in first person
+than in third. **If it reads too thick, re-derive the WIDTH alone** on the copied material rather
+than restoring the call, because restoring the call is what reintroduces the rebuild.
+
+⚠️⚠️⚠️ **AND THE ALBEDO LIFT IS REVERTED, BECAUSE THE CHARACTER SCREEN PROVES THE ASSET WAS
+NEVER WRONG.** 🧑 sent the picker's own render of HEELS with *"should look like this"*: a
+**black** strappy platform heel with a **light grey footbed**, drawn from those very factors —
+0.020 and 0.000 on the two straps and 0.077 on the platform. Under the picker's light that is
+exactly the shoe in his image.
+
+So the three numbers in the table above were the RIGHT numbers and § 70.1's reasoning does not
+apply here: **IKE was black and read WHITE everywhere; heels is black and reads correct
+everywhere except one surface.** A fault on one surface is not a fault in the asset, and lifting
+the albedo would have turned his black heel grey on the character screen to fix a viewmodel that
+had a different problem entirely. `tsinelas_heels.glb` is restored byte-for-byte.
+
+⚠⚠ **THE LESSON IS THE ORDER OF THE TWO QUESTIONS.** "Is this asset wrong" was asked first
+because the material sheet looked extreme, and it cost an edit, a forced reimport and two captures.
+"Does it look right ANYWHERE ELSE" is the cheaper question and it eliminates the asset in one
+screenshot — which is what his did. **Ask it first next time**: when one surface disagrees with
+three, the surface is the suspect.
+
+✅ **WHAT ACTUALLY SHIPS IS THE ONE LINE IN `ViewmodelArms.MatchSkin`**: copy the world slipper's
+dressing and stop, so the shoe in the hand is the shoe on the character screen by construction.
+
+### 85.6 ✅ THE PATTERN RATHER THAN THE BUG: NOTHING LOOKED FOR A CUE WITH NO CALLER
+
+§ 85.2 is the fourth time a finished feature has shipped with no call site — `DebugPlayerSwitcher`,
+`SpectatorCamera`, `HeroAbilitySystem.ResetKit` and now the `match_win` sting. Every one of them
+was found by a person playing rather than by the harness, and every one of them is trivially
+detectable from the source: **a name in `AudioCues`'s live catalogue that no `PlayAt`, `PlayImpact`
+or `PlayAtVaried` call ever passes.**
+
+✅ **DONE, AND IT WENT IN THE CHECK THAT WAS ALREADY ASKING THE OTHER TWO DIRECTIONS.**
+`AudioCueCheck` already reported *"cues with no file"* (catalogue against disk) and *"files no live
+cue can reach"* (disk against catalogue), and **both sides were present and correct for
+`match_win`**. The missing question is the catalogue against the CODE, and it is the only one of
+the three a player can hear. It now prints `-- live cues that no code plays --`, gathered on the
+same pass that already reads every runtime file for the undeclared direction, so it costs nothing.
+
+⚠️ **IT IS A REPORT, NOT A FAILURE, AND DOES NOT INCREMENT `problems`.** A cue can be
+legitimately dormant: `boot_sting` is played through a video path the text scan cannot see, and
+`AudioCues` itself documents five `.wav` files orphaned when the ability layer was deleted. Failing
+the gate on those would teach the next person to skip the block, which is worse than not printing
+it. **Read the list and know why each line is on it**, which is the standard § 6 sets for the
+wall-clock probes.
+
+⚠️ **THE OUTPUT IS IN `Logs/audio-cue-check.txt`** and `tools/verify.sh fast` prints its verdict
+line on every run.
+
+---
+
+---
+
+## 86 · The spectator pause, and the 35 ms every non-host was standing behind
+
+### 86.1 ✅ EVERY SPECTATOR CAN STOP THE MATCH, AND THIS REVERSES A WRITTEN RULE
+
+🧑 2026-08-30, after being asked which of the game's two pauses he meant (§ 84.11): *"spectator
+pause"*, *"pause is for spectatotr"*, then the shape of it: *"give spectators the authority to
+pause, all of them can pause"*, *"make sure time pauses if u pause as well as everything happening
+and spectator can move"*, *"liek in game like mobile legends"*.
+
+⚠️⚠️ **NOTHING WAS BROKEN. IT WAS REFUSED, ON PURPOSE, AND SAID SO.**
+`SpectatorCamera.StepBroadcastKeys` answered every time-control press in a networked match with
+`LIVE NETWORK · TIME CONTROLS LOCKED`, under a header that read: *"Pause and speed manipulation are
+offline-only by construction: a remote viewer must never acquire authority over a live tournament
+simply by spectating."*
+
+**That rule was protecting a tournament against a stranger.** The spectators in this game are the
+four people waiting for the next match and whoever is casting it, and an observer stopping the game
+to talk over a fight is a broadcast feature rather than an exploit. **All of them can**, which he
+said in those words, so there is no leader check and no host check on who may ASK.
+
+⚠️⚠️ **THE HOST IS STILL THE ONLY WRITER OF THE CLOCK, AND THAT IS NOT A CONTRADICTION.** A
+spectator sends `ReqTime`; the host validates, applies, and broadcasts `SyncTime` to everybody.
+That is `CLAUDE.md` § 4's rule — state is produced in one place — applied to time. Four peers each
+writing their own `Time.timeScale` is four matches, and the two that mattered would drift apart
+inside a second.
+
+⚠️ **A PLAYER CANNOT.** `OnReqTimeMsg` refuses any sender whose `PeerRecord.Spectator` is not set,
+so somebody losing cannot stop the round they are losing. The local press is refused first with a
+toast (`LIVE MATCH · ONLY A SPECTATOR MAY PAUSE`) so the answer is immediate rather than a silence.
+
+⚠️ **THE SPECTATOR STILL FLIES**, which he asked for explicitly. Nothing had to change: this camera
+has always run on `Time.unscaledDeltaTime` and its own header already recorded *"Broadcast cameras
+remain responsive during a tactical pause"*. The `Hud` is on the unscaled clock too, so the toast
+announcing the pause can expire while the match it is announcing is stopped dead.
+
+⚠️⚠️ **EVERY PEER IS TOLD, AND THAT IS NOT DECORATION.** A frozen game with no explanation is
+indistinguishable from a crash, and this is a pause the player did not press. `MatchRpc.
+TimeScaleChanged` fires on every peer and `Hud.OnBroadcastClock` says **PAUSED BY A SPECTATOR**
+rather than PAUSED, because a player who reads PAUSED goes looking for the menu they did not open.
+
+⚠️ **`Hitstop.End()` RUNS ON EVERY PEER BEFORE THE WRITE.** It is the other writer of
+`Time.timeScale` in this project and it restores to 1 when it expires, which would quietly un-pause
+a paused match a fraction of a second later.
+
+⚠️⚠️ **AND `NetSession.Stop` HANDS THE CLOCK BACK.** `Time.timeScale` is a global that outlives the
+session: a host that quits mid-pause, or a client dropped during one, would walk back to a title
+screen whose every animation and button had stopped with nothing on screen saying why.
+`MatchResult`'s own header records that exact failure happening once already from a different
+writer. Whoever can stop time restores it on every exit path including death.
+
+⚠️⚠️ **PROTOCOL 13 → 14, AND THIS IS THE STRONGEST CASE THAT NUMBER HAS EVER HAD.** A peer without
+the `SyncTime` handler **does not stop**. The pause is called, three screens freeze, one carries on
+playing a match nobody else is in, and the two builds then disagree about every position for as
+long as it lasts. That is worse than a refusal and worse than a missing effect, which are the two
+cases the version gate was written for.
+
+### 86.2 ✅ THE REPLICA LED BY ONE PACKET AND LAGGED BY A WHOLE FILTER
+
+🧑: *"make sure lan isnt laggy as fuck anymore bcz ealrier non hosts were all behind"*, and earlier
+the same day, *"lan is very lag and delayed for non host btw, online server is more reliable"*.
+§ 84.12 recorded that as open and unexplained. **It is explained now, and it is arithmetic.**
+
+`CharacterMotor.StepNetworkReplica` composed two numbers that answer different questions:
+
+```csharp
+Vector3 target = _networkTargetPosition + _networkTargetVelocity * 0.02f;   // the lead
+Vector3.SmoothDamp(transform.position, target, ..., 0.055f, ...);           // the filter
+```
+
+The **lead** was sized against the SEND interval: `StepNetworkTransform` sends on the physics step,
+so 50 Hz, so 0.020 s, which compensates for the packet being one tick old. It does nothing about
+the filter. A critically damped `SmoothDamp` with a 0.055 s time constant **trails its target by
+about that whole constant**, so a replica sat roughly **35 ms behind the host's own body before a
+single millisecond of network latency**, on every peer, on every map, forever.
+
+⚠️⚠️ **AND THAT IS WHY IT READ AS WORSE ON A LAN THAN ON THE RELAY, WHICH IS THE PART THAT MAKES
+NO SENSE UNTIL YOU SEE IT.** 35 ms of filter lag is a fixed cost that does not care about the link.
+On the Singapore relay it is a small fraction of the round trip and disappears into it; on a LAN
+where the round trip is about a millisecond it is **essentially all of the lag there is**, and it
+is the only thing left to notice. His two reports are one number seen from two links.
+
+The lead is the smoothing time now, so the filter's output lands ON the host's position instead of
+behind it. ⚠️ **It is not `0.055 + 0.020`**: adding the packet age on top would put the replica
+AHEAD of the host and turn every direction change into an overshoot and a snap. The send interval
+is already inside the smoothing window, not beside it. ⚠️ **The velocity is the host's own**,
+transmitted rather than differentiated, so this is interpolation arriving on time rather than
+extrapolation guessing at a future.
+
+⚠️⚠️ **NOTHING ABOUT THE TRANSPORT MOVED, WHICH IS THE INSTRUCTION.** 🧑: *"pls dont break online
+server in the process of fixing lan lag for non hosts"*. No tick rate, no delivery channel, no pool
+setting, no `MatchSyncInterval`. This is one constant in the receiving peer's own smoothing, so the
+relay is affected exactly as the LAN is and neither is favoured. It is also the fix
+`StepNetworkTransform`'s own note asked for in advance: *"the answer is interpolation on the
+receiving end first, not a lower send rate on its own."*
+
+⚠️ **STILL NOT TWO-MACHINE TESTED**, like everything networked in §§ 84 and 86. The arithmetic is
+sound and the direction is not in doubt; whether 0.055 is now the right smoothing constant at all
+is a question only two PCs in a room can answer. If it reads as rubber-banding rather than lag,
+lower the constant rather than the lead.
+
+### 86.4 ✅ THE CHAT EXTENDS IN PLACE, AND THE SEPARATE WINDOW IS GONE
+
+🧑 2026-08-30: *"pls overhaul how chat works instead of making a separate window just make the
+chat extend when u click it anywhere and make it so that it doesnt make the shit above it move"*,
+and, in the same breath, granting the permission the old design existed to avoid: *"its the one
+thing im giving authorization to cover shit"*.
+
+**Three requirements, and the third is the one that constrains the other two.**
+
+1. **Extend in place.** `_historyPanel` is parented to the chat's own rect now instead of to the
+   root canvas, anchored to the chat's TOP edge and growing `ExpandedHeight` = 460 units upward.
+   ⚠⚠ **The top edge and not the bottom**: anchored to the bottom it would have grown up THROUGH
+   the two visible lines and the `Say something` field, so opening the log to read a message would
+   hide the box you answer it in.
+2. **Cover what is above it.** A nested `Canvas` with `overrideSorting` at 90 is what lets a child
+   draw over its own ancestors. ⚠ 90 sorts BELOW the character picker's 100 on purpose: both are
+   lobby overlays and the picker is the one that must never be drawn through.
+3. **Move nothing.** `LobbyChrome.StackRight` positions the LOBBY & SERVERS pill off
+   `LobbyChat.PanelHeight` every frame, and that reads `_rect.rect.height`. **So `_rect` must not
+   change size**, and it does not: the extension is a separate rect that overlaps upward. Growing
+   the chat itself would have walked the whole right-hand rail up the screen, which is the fault
+   `PanelHeight`'s own note records from the other direction.
+
+⚠ **THE CENTRED WINDOW CAME FROM A REAL CONSTRAINT AND IT IS STILL TRUE.** Its note recorded that
+a box centred inside a bottom-left strip is centred on the STRIP rather than on the screen, which
+is why it was moved to the root canvas. That reasoning was correct for a window and is simply not
+what is wanted any more.
+
+⚠ **THE DIMMING BACKDROP WENT WITH IT.** It existed so a click on empty road would close a modal
+(*"it clsoes when u click out"*, 2026-08-28). An in-place extension is not a modal, and a
+full-screen raycast target over a lobby full of controls is a thing that eats presses. The ways out
+are now the same click that opened it (`OnPointerClick` toggles), the CLOSE button, and Escape.
+
+### 86.3 ✅ TWO PROBES CAUGHT TWO REGRESSIONS FROM THIS SAME DAY'S WORK, WHICH IS THE POINT OF THEM
+
+The PlayMode run on the § 84 and § 85 batch came back **89/92**, and two of the three were mine.
+Both are written up here rather than quietly fixed, because in both cases the probe was right and
+the change was wrong.
+
+**`HudOverflowProbe`** failed at all nine resolutions: § 84.5's warm-up tile said `NOT YET`, which
+needs 80 to 84 units in a 60-unit `State` box and hung up to 24 units out of the tile. § 18's rule
+is size the card or shorten the string and **never the font**, and that box is one of three in a
+60 px square the rest of the deck aligns against, so the string moved: **`WAIT`**.
+
+**`LobbyChatStripProbe`** failed with the exact numbers § 85.3 was written to fix, from the other
+side: rows 26 px, text needing **43 and 44 px at size 18**. So capping the fit at `LineHeight` was
+necessary and not sufficient — at `MatchRpc.MaxChatLength` = 120 characters the type bottoms out at
+`MenuKit.MinReadableUnits` and the block still wants two lines. Shrinking further is forbidden by
+that constant and growing the row is forbidden by 🧑's *"i want u to not make the chat extend
+anymore"*, **so the only lever left is the text.** `LobbyChat.Ellipsise` binary-searches the string
+down until `preferredHeight` fits the row and appends an ellipsis. Nothing is lost: the whole
+message is in the scrollable log behind the click, which is where a 120-character sentence belongs.
+
+⚠⚠ **AND THE SYNCHRONOUS FIT ITSELF THEN BROKE TWO MORE, WHICH IS THE SAME LESSON A THIRD
+TIME.** `MatchRunTests` and `PreviewDragProbe` — neither of which has anything to do with a name
+field — went red on an unhandled error log: *"Coroutine couldn't be started because the the game
+object 'LobbyIdentity' is inactive"*, from
+`Canvas.ForceUpdateCanvases` inside `ConvertedMatchSetup.FitEverything`.
+
+`InputField.OnDisable` calls `DeactivateInputField`, which raises `onEndEdit` with the text it
+already had. So closing the lobby scene ran a full `Refresh` from inside Unity's own deactivation,
+which was harmless for as long as `Refresh` only ARMED a deferred fit and became an error the
+moment § 84.3 made it fit synchronously.
+
+⚠️ **THE GUARD IS ON THE FIELD, NOT ON THE SCREEN.** An `isActiveAndEnabled` check on
+`ConvertedMatchSetup` does not catch it — the screen is still active while one of its children is
+being disabled — so the test was tried and the reds did not move. The object that knows is the
+`InputField` itself, and a callback that arrives while it is inactive is a teardown artefact rather
+than somebody finishing typing.
+
+✅ **AND THE RUN AFTER ALL OF THAT IS 91/92**, with `HeroPickerLayoutProbe` green **for the first
+time since § 79.6 measured its 64 px deficit** — § 84.3's forced layout is what closed it, which
+is the same fix and the same frame-zero argument. `PreviewDragProbe`, `LobbyChatStripProbe`,
+`HudOverflowProbe` and `MatchRunTests` are all green.
+
+⚠️ **THE LAST RED IS § 78.12 AND IT IS NOT FROM THIS BATCH.**
+`CarryTests.AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor` failed on a machine that had
+been running Unity renders, a capture sweep and two test suites back to back, which is precisely
+the condition that entry describes. **§ 78.12 was closed on 🧑's report that it had been green and
+is reopened here on evidence.** Its own analysis stands unchanged and so does its instruction: take
+the second of its three options — measure the gap in the anchor's LOCAL space so the rotating
+world-space AABB stops moving the baseline — rather than raising the bound.
 
 ---
 

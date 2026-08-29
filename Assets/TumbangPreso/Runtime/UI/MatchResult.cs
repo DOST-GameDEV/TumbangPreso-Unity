@@ -156,6 +156,43 @@ namespace TumbangPreso.UI
                 Time.timeScale = 0.0f;
                 _stoppedTime = true;
             }
+
+            PlayTheWin();
+        }
+
+        /// <summary>
+        /// The sound of winning: the sting, and the bed handing back to the menu.
+        ///
+        /// ⚠⚠ `match_win` IS IN THE LIVE CUE CATALOGUE AND HAD NO CALLER ANYWHERE. 🧑
+        /// 2026-08-30: *"No audio cue on victory, like wala ung jingle unlke last time"*. It is
+        /// listed in `AudioCues`, it is one of the six names in `DuckTriggers` so the bed was
+        /// already written to get out of its way, and `grep` across `Assets` finds the string in
+        /// the catalogue, in that duck list and in a test — and in no code that plays it. The
+        /// same dead-feature shape `MatchInstaller` records for `DebugPlayerSwitcher` and
+        /// `SpectatorCamera`: the work was done and nothing selected it.
+        ///
+        /// ⚠⚠ AND THE MATCH BED KEPT PLAYING OVER THE BOARD. *"Round Music still plays after
+        /// winning instead of Main Menu"*. `Hud` starts `"match"` at the countdown and nothing
+        /// ever ended it, so the standings went up over the round loop. Handing back to
+        /// `"menu"` here rather than at the scene change means the change lands on the frame the
+        /// result appears, which is the moment it means something.
+        ///
+        /// ⚠ IT IS `Play`, NOT `StopNow`. Silence over a result board reads as the audio having
+        /// crashed, which is the same misreading `DownedVignette`'s header records about a held
+        /// red tint. `MusicDirector.Play` crossfades, and it is idempotent on the name, so the
+        /// lobby this screen leads back to does not restart the track.
+        ///
+        /// ⚠ THE STING IS PLAYED AT THE CAMERA, like every other UI cue in the project
+        /// (`Hud`'s `sfx_super_ready` is the pattern). The audio rig is 3D, so a cue played at
+        /// the origin of a match whose camera is thirty metres away arrives quiet and panned.
+        /// </summary>
+        private void PlayTheWin()
+        {
+            var camera = UnityEngine.Camera.main;
+            GameServices.Audio?.PlayAt(
+                "match_win", camera != null ? camera.transform.position : Vector3.zero);
+
+            GameServices.Music?.Play("menu", GameServices.MenuTrack);
         }
 
         /// <summary>
@@ -614,7 +651,7 @@ namespace TumbangPreso.UI
         public int ExpectedVotes()
         {
             var lobby = Net.NetSession.Instance?.Lobby;
-            return lobby?.PlayingPeerCount(NetAuthority.LocalPeerId) ?? 1;
+            return lobby?.PlayingPeerCount() ?? 1;
         }
 
         /// <summary>
@@ -646,6 +683,13 @@ namespace TumbangPreso.UI
             _rematch.interactable = true;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
+
+            // ⚠️ THE HOST STOPS ASSERTING "NO MATCH RUNNING" ACROSS ITS OWN RELOAD. See
+            // `Net.MatchRpc.HostBeginningArenaLoad` and `docs/TODO.md` § 82.3: the rematch
+            // reloads on every peer and carries the identical race `HostStartMatch` does, so a
+            // latch set only there would be correct for the first match of a session and for no
+            // other. It clears itself on the first packet after this host's own match is live.
+            Net.MatchRpc.HostBeginningArenaLoad();
 
             // ⚠️ ONLY THE HOST STARTS THE MATCH. Every peer hides its own board and unlocks its
             // own cursor, which is local presentation, but `StartMatch` writes match state and

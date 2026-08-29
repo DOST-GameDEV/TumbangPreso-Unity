@@ -798,8 +798,6 @@ namespace TumbangPreso
         public void ApplyNetworkTransform(Vector3 position, float yaw, Vector3 velocity,
                                           bool grounded, bool reconcileLocal, bool force = false)
         {
-            _velocity = velocity;
-
             // ⚠️ ASSIGNED BEFORE THE RECONCILE RETURN BELOW, AND THAT ORDERING MATTERS. A body
             // whose owner is predicting it skips the rest of this method whenever the error is
             // small, which is most frames; the pose it keeps is its own, but the grounded bit is
@@ -808,6 +806,30 @@ namespace TumbangPreso
 
             float error = Vector3.Distance(transform.position, position);
             if (reconcileLocal && error < 1.25f) return;
+
+            // ⚠️⚠️ THE VELOCITY IS TAKEN WITH THE POSITION OR NOT AT ALL, AND IT USED TO BE
+            // TAKEN ON THE LINE ABOVE `_networkGrounded`, UNCONDITIONALLY. 🧑 2026-08-30, of an
+            // online match: *"randomly jittering in online game for non hosts when they jump"*,
+            // *"its like there is a ceiling above them and they bounce up and down very fast"*.
+            //
+            // A client SIMULATES its own body (`Simulates()`), so a jump writes
+            // `_velocity.y = Balance.JumpVelocity` locally on the press frame. The host has not
+            // seen that press yet — it is still in flight on `SubmitMove` — so the very next
+            // `SyncUnit` carries the host's copy of that seat still resting on the ground at
+            // `GroundedRestVelocityY` = -2.0, and the old first line stamped it straight over
+            // the jump. The body fell. A packet or two later the host's simulation caught up and
+            // sent +`JumpVelocity`, so it rose again, and at the pose rate the two answers
+            // alternate several times a second: a body slamming into a ceiling that is not there.
+            //
+            // ⚠️ THE POSITION HAD THE GUARD ALL ALONG AND THE VELOCITY DID NOT, WHICH IS WHY
+            // READING THE POSE PATH DID NOT EXPLAIN IT. Prediction was correct about WHERE the
+            // body is for the whole 1.25 m window and wrong about where it was GOING every
+            // frame inside it, and the integrator turns the second into the first one step later.
+            //
+            // ⚠️ AN OBSERVED REPLICA IS UNAFFECTED. `ApplyUnitMove` and every other seat pass
+            // `reconcileLocal: false`, so they still take the host's velocity on every packet,
+            // which is what `StepNetworkReplica`'s one-beat lead and the animator both read.
+            _velocity = velocity;
 
             _networkTargetPosition = position;
             _networkTargetYaw = yaw;
@@ -853,10 +875,45 @@ namespace TumbangPreso
             // `docs/TODO.md` § 63.4.
             _grounded = _networkGrounded;
 
-            // Lead by one render-sized beat so a 50 Hz stream does not look one packet behind.
-            Vector3 target = _networkTargetPosition + _networkTargetVelocity * 0.02f;
+            // ⚠️⚠️ THE LEAD IS THE SMOOTHING, AND IT USED TO BE ONE PACKET. 🧑 2026-08-30, of a
+            // LAN match: *"lan isnt laggy as fuck anymore bcz ealrier non hosts were all
+            // behind"*, and separately *"lan is very lag and delayed for non host btw, online
+            // server is more reliable"*.
+            //
+            // The old pair was a 0.020 s lead against a 0.055 s `SmoothDamp`, and those two
+            // numbers are answering different questions. The lead was sized against the SEND
+            // interval — `StepNetworkTransform` sends on the physics step, so 50 Hz, so 0.020 s
+            // — which compensates for the packet being one tick old. It does nothing about the
+            // smoothing itself, and a critically damped filter with a 0.055 s time constant
+            // **trails its target by about that whole time constant**. So a replica sat roughly
+            // 0.055 - 0.020 = **35 ms behind the host's own body before a single millisecond of
+            // network latency**, on every peer, on every map.
+            //
+            // ⚠️⚠️ AND THAT IS WHY IT READ AS WORSE ON A LAN THAN ON THE RELAY, WHICH IS THE PART
+            // THAT MAKES NO SENSE UNTIL YOU SEE IT. 35 ms of filter lag is a fixed cost that does
+            // not care about the link; on the Singapore relay it is a small fraction of the
+            // round trip and invisible, and on a LAN where the round trip is ~1 ms it is
+            // essentially ALL of the lag, and it is the only thing left to notice.
+            //
+            // Leading by the smoothing time is what makes the filter's output land ON the host's
+            // position instead of behind it. The velocity is the host's own, transmitted rather
+            // than differentiated, so this is interpolation arriving on time rather than
+            // extrapolation guessing at a future.
+            //
+            // ⚠️ IT IS NOT `0.055 + 0.020`. Adding the packet age on top would put the replica
+            // AHEAD of the host and turn every direction change into an overshoot-and-snap. The
+            // send interval is already inside the smoothing window, not beside it.
+            //
+            // ⚠️⚠️ THIS IS THE HALF THE SEND-RATE NOTE ABOVE `StepNetworkTransform` PREDICTED.
+            // Its own words: *"If that ever needs to come down, the answer is interpolation on
+            // the receiving end first, not a lower send rate on its own."* Nothing about the
+            // transport, the tick rate or the delivery channel moved, so the relay is affected
+            // exactly as the LAN is and neither is favoured.
+            const float NetworkSmoothTime = 0.055f;
+
+            Vector3 target = _networkTargetPosition + _networkTargetVelocity * NetworkSmoothTime;
             Vector3 position = Vector3.SmoothDamp(transform.position, target,
-                                                   ref _networkSmoothVelocity, 0.055f,
+                                                   ref _networkSmoothVelocity, NetworkSmoothTime,
                                                    40.0f, dt);
             float yaw = Mathf.SmoothDampAngle(transform.eulerAngles.y, _networkTargetYaw,
                                               ref _networkYawVelocity, 0.045f,

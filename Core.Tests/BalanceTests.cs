@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections.Generic;
 using TumbangPreso.Core;
 using Xunit;
@@ -908,6 +909,68 @@ namespace TumbangPreso.Core.Tests
 
             Assert.Equal(Roster.ClassicPeople, Roster.GetPeople(GameMode.Classic));
             Assert.Equal(Roster.HeroPeople, Roster.GetPeople(GameMode.HeroStrike));
+        }
+
+        /// <summary>
+        /// Sean is the slowest hero, strictly, and the two tables that hold him agree.
+        ///
+        /// ⚠⚠ IT IS A SIZE DEBUFF AND `Roster.HeroPeople`'S HEADER CARRIES THE REASONING.
+        /// 🧑 2026-08-30: *"bcz Sean is larger than all, he should be slower than all (he has a
+        /// defender advantage)"*, *"js a bit slower than all"*. A bigger body reaches further and
+        /// contact resolves by DISTANCE, so being large is a real advantage at the one verb the
+        /// taya has.
+        ///
+        /// ⚠⚠ STRICTLY SLOWEST, NOT JOINT-SLOWEST, WHICH IS THE HALF A NUMBER CHANGE CAN LOSE.
+        /// Dante is on 2, so a "slower Sean" written as 2 would have tied rather than led, and
+        /// nothing would have failed. The points are a 5% ladder, so 1 is the only value that
+        /// expresses the ask at all.
+        ///
+        /// ⚠ AND IT IS ASSERTED IN BOTH TABLES. `HeroPeople` is what Hero Strike reads and
+        /// `AllPeople` is the master list; a trait edited in one and not the other is two
+        /// characters wearing one name, which is exactly the fault `AllPersonRows_AreDistinct`
+        /// above exists for, one list over.
+        /// </summary>
+        [Fact]
+        public void SeanIsStrictlyTheSlowestHero_InEveryTableThatHoldsHim()
+        {
+            var heroIds = Roster.HeroPeople.Select(e => e.Id).ToHashSet();
+
+            foreach (var table in new[] { Roster.HeroPeople, Roster.AllPeople })
+            {
+                var sean = table.First(e => e.Id == "sean");
+
+                foreach (var other in table)
+                {
+                    if (other.Id == "sean") continue;
+
+                    // ⚠⚠ HEROES ONLY, AND LOLA PACING IS THE REASON THIS FILTER EXISTS. She is
+                    // `bilis` 1 in `ClassicPeople` and has been since the roster was written, so
+                    // "slower than all" cannot mean the master list: `AllPeople` holds both
+                    // casts and `CLAUDE.md` § 1 says the two modes are not variants of each
+                    // other, so a Classic character and a hero never stand in one match. The ask
+                    // was about the six who do. Her row is also the precedent that says 0.90 is a
+                    // shipped, played value rather than a new extreme.
+                    if (!heroIds.Contains(other.Id)) continue;
+
+                    Assert.True(sean.Bilis < other.Bilis,
+                        $"{other.Name} is not faster than SEAN ({other.Bilis} against " +
+                        $"{sean.Bilis}). Sean is the largest body in the game and the slowest by " +
+                        "design; see Roster.HeroPeople's header.");
+                }
+            }
+
+            // The ladder, so the size of the debuff is on record and not only its direction.
+            Assert.Equal(0.90f, Roster.TraitScale(1, Balance.TraitSpeedPerPoint), 6);
+            Assert.Equal(0.95f, Roster.TraitScale(2, Balance.TraitSpeedPerPoint), 6);
+
+            // ⚠ STILL INSIDE `Balance`'s narrow-spread rule: *"a pick 40% faster than another
+            // is not a personality, it is the correct answer"*. The widest gap is 17%.
+            float slowest = Roster.TraitScale(Roster.TraitMin, Balance.TraitSpeedPerPoint);
+            float fastest = Roster.TraitScale(Roster.TraitMax, Balance.TraitSpeedPerPoint);
+            Assert.True(fastest / slowest < 1.40f,
+                "the speed spread across the roster has passed 40%, which Balance's trait note " +
+                "calls the point where a pick stops being a personality and becomes the correct " +
+                "answer");
         }
 
         /// <summary>

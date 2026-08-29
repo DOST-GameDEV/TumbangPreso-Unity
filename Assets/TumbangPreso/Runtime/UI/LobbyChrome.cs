@@ -649,6 +649,25 @@ namespace TumbangPreso.UI
             field.lineType = InputField.LineType.SingleLine;
             field.onEndEdit.AddListener(raw =>
             {
+                // ⚠⚠ A FIELD BEING SWITCHED OFF RAISES THIS TOO, AND THAT IS A TEARDOWN ARTEFACT
+                // RATHER THAN SOMEBODY FINISHING TYPING. `InputField.OnDisable` calls
+                // `DeactivateInputField`, which fires `onEndEdit` with the text it already had,
+                // so closing the lobby scene ran a full `ConvertedMatchSetup.Refresh` from inside
+                // Unity's own deactivation.
+                //
+                // That was harmless until § 84.3 made `Refresh` fit synchronously: the fit calls
+                // `Canvas.ForceUpdateCanvases`, which tried to start a coroutine on an object
+                // Unity was in the middle of disabling — *"Coroutine couldn't be started because
+                // the the game object 'LobbyIdentity' is inactive"* — and an unhandled error log
+                // fails every PlayMode test in the file. `MatchRunTests` and `PreviewDragProbe`
+                // both went red on it and neither has anything to do with a name field.
+                //
+                // ⚠ THE GUARD IS AT THE SOURCE RATHER THAN INSIDE `Refresh`. An `isActiveAndEnabled`
+                // check on the SCREEN does not catch this, because the screen is still active
+                // while one of its children is being disabled; the object that knows is the field
+                // itself.
+                if (field == null || !field.isActiveAndEnabled) return;
+
                 string clean = Settings.GameSettings.SanitiseName(raw);
                 Settings.SettingsStore.Current.PlayerName = clean;
                 Settings.SettingsStore.Save();

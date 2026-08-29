@@ -172,6 +172,22 @@ namespace TumbangPreso.UI
         {
             for (int i = 0; i < _replicatedPicks.Length; i++) _replicatedPicks[i] = -1;
 
+            // ⚠️⚠️ THE MENU BED, BECAUSE THIS SCREEN IS WHERE A MATCH IS LEFT AND NOTHING PUT IT
+            // BACK. 🧑 2026-08-30: *"Round Music still plays even when exiting to lobby"*, and
+            // *"Round Music still plays after winning instead of Main Menu"*.
+            //
+            // `ConvertedMainMenu.Wire` has always done exactly this line, so the TITLE screen was
+            // fine and only this one was not — and the lobby is where the player actually ends up:
+            // `MatchResult`'s MAIN MENU and `PausePanel`'s QUIT TO MENU both come back through
+            // here, as does every rematch that is declined. `MusicDirector` had no other opinion
+            // about the match bed once `Hud` started it at the countdown, so it simply kept
+            // playing over a lobby.
+            //
+            // ⚠️ `Play` IS IDEMPOTENT ON THE NAME. `MusicDirector.Play` returns without touching
+            // the sources when `Current` already matches, so arriving here from the title screen
+            // costs nothing and does not restart the track the player was already listening to.
+            GameServices.Music?.Play("menu", GameServices.MenuTrack);
+
             // ⚠️ THE SESSION IS CREATED HERE WHEN THIS IS THE LOBBY, rather than inherited from
             // a screen that ran first. `NetSession.Instance` was guaranteed non-null only because
             // `ConvertedMultiplayerSetup.Wire` called `Ensure()` before navigating here; arriving
@@ -2009,6 +2025,45 @@ namespace TumbangPreso.UI
             // inside `LobbyChrome.Apply`, which runs before this method has ever run, so it shipped
             // `CAPTURE` from the authored placeholder on a screen set to Hero Strike.
             _chrome?.RefreshSummary?.Invoke();
+
+            // ⚠️⚠️ ONE PASS RUNS NOW, AND THE DEFERRED ONES ARE THE SAFETY NET RATHER THAN THE
+            // PLAN. 🧑 2026-08-30, of the match settings drawer: *"size randomly changes when u
+            // click something, it gets bigger"*, *"the box size adjusts after a click, i want it
+            // to be good from the start"*.
+            //
+            // Every fit lived in `LateUpdate`, so the earliest a correct size could appear was
+            // the frame AFTER the drawer opened — and the frame after is the one the player is
+            // looking at when they open it. Nothing ever "randomly" corrected: the correction was
+            // always exactly one frame late, and the next thing the player clicked ran another
+            // `Refresh` whose deferred pass then landed on a rect that was real by then.
+            //
+            // ⚠️ IT IS THE SAME CALL, NOT A SECOND CODE PATH. `FitEverything` opens with
+            // `LayoutRebuilder.ForceRebuildLayoutImmediate` on the canvas rect, which is precisely
+            // the pass `LateUpdate` was waiting for Unity to run; running it here means the widths
+            // this method measures against are real on the frame the drawer is switched on. The
+            // same fix as § 83.6's `ConvertedScreen.ForceLayoutFor`, one screen over.
+            //
+            // ⚠️⚠️ AND THE DEFERRED PASSES STAY, FOR THE REASON § 83.6 GIVES: a canvas that is
+            // inactive on this frame cannot be rebuilt at all, which `LayoutRebuilder` states
+            // outright. `FitPasses` also exists because the layout chain does not converge in one
+            // pass, and `FitSelectorValuesTogether` resets to the authored size every time so a
+            // later, better-measured pass can undo an earlier one's pessimism. This call makes
+            // the first of those passes happen on frame zero; it does not remove the rest.
+            //
+            // ⚠⚠ AND IT IS SKIPPED WHILE THIS SCREEN IS NOT ACTIVE, WHICH IS NOT A TIDINESS
+            // GUARD. `MatchRunTests` and `PreviewDragProbe` both went red on it: closing the
+            // scene disables the name field, `InputField.OnDisable` fires its value-changed
+            // callback, that reaches `PublishName` and so `Refresh`, and `ForceUpdateCanvases`
+            // inside `FitEverything` then tries to start a coroutine on a GameObject Unity is
+            // in the middle of deactivating —
+            // *"Coroutine couldn't be started because the the game object 'LobbyIdentity' is
+            // inactive"*. An error log during teardown fails every PlayMode test in the file.
+            //
+            // ⚠ IT IS THE SAME RULE § 83.6 ALREADY WROTE DOWN, arriving from the other side: a
+            // canvas that is inactive on this frame cannot be rebuilt at all. Refreshing the
+            // STRINGS on a hidden screen is free and worth doing; measuring them is not possible
+            // and `_fitFrames` below already covers the frame it comes back.
+            if (isActiveAndEnabled) FitEverything();
 
             _fitFrames = FitPasses;
         }

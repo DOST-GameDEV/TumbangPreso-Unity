@@ -296,12 +296,35 @@ namespace TumbangPreso.CameraSystem
             // The mesh changed, so the length-normalising scale has to be recomputed.
             NormaliseHeldSize();
 
-            // ⚠️ AND THE TOON MATERIAL RE-APPLIED. The line above copies the WORLD slipper's
-            // material, which is already a toon variant carrying that skin's colour, but its
-            // outline width was measured against the world object's scale rather than the
-            // fistful-sized copy in the viewmodel. Re-deriving it here is what keeps the border
-            // the same thickness in both views.
-            Visual.ToonSkin.ApplySlipper(_heldRenderer, Visual.ToonSkin.PropOutlineWidth);
+            // ⚠⚠⚠ THE COPIED MATERIALS ARE USED VERBATIM, AND A SECOND TOON PASS USED TO RUN HERE.
+            // 🧑 2026-08-30, of HEELS in first person: *"i want it to look like the one in character
+            // select"*, *"remvoe the shaders for it or wwathever is fkn with its colior"*.
+            //
+            // The line that stood here was `ToonSkin.ApplySlipper(_heldRenderer,
+            // PropOutlineWidth)`, and its reason was real: the materials copied above were
+            // dressed against the WORLD object's scale, and this copy is fistful-sized, so the
+            // ink border is derived from a different `EffectiveScale` and comes out a different
+            // thickness. Re-deriving it made the border match across the two views.
+            //
+            // ⚠⚠ BUT IT BUILT A NEW VARIANT RATHER THAN RETUNING THE ONE IT WAS GIVEN, so the
+            // shoe in the hand was a SECOND dressing of the same skin rather than the same
+            // dressing. `ToonSkin.Variant` resolves back through `Origin` and rebuilds from the
+            // source material, and for a skin with **no texture** — heels is the only tsinelas in
+            // the roster with zero images, see `docs/TODO.md` § 85.5 — the whole appearance rests
+            // on that one rebuild landing identically. It did not, and the only surface where it
+            // showed is the one surface nobody could compare side by side.
+            //
+            // Copying and stopping makes the hand copy identical to the world copy **by
+            // construction**, which is the property he asked for in one sentence: the tsinelas on
+            // your arm is the tsinelas everybody else can see and the one on the character screen.
+            //
+            // ⚠️ THE COST IS THE BORDER, AND IT IS THE RIGHT TRADE TO OFFER HIM. The ink is now
+            // derived from the world object's scale on an object drawn much smaller, so it reads
+            // heavier in first person than in third. That is one visible number against a wrong
+            // colour on the prop the player looks at most, and § 78.7 has already narrowed this
+            // ink once on his instruction. **If the border reads too thick, re-derive the WIDTH
+            // alone** — `_heldRenderer.sharedMaterial.SetFloat` on the outline uniform — rather than
+            // putting this whole call back, which is what re-introduces the rebuild.
         }
 
         /// <summary>Give <paramref name="to"/> one material per submesh, taken from

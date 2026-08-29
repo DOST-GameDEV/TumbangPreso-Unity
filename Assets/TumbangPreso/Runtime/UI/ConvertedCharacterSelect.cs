@@ -366,6 +366,27 @@ namespace TumbangPreso.UI
             var kit = HeroAbilitySystem.CreateKitFor(heroId);
             Color accent = UiTheme.ColorForHero(heroId);
 
+            // ⚠️⚠️ THE COLUMN IS LAID OUT BEFORE IT IS MEASURED, AND WITHOUT THIS THE FIRST OPEN
+            // IS ALWAYS WRONG. 🧑 2026-08-30, of the CHOOSE YOUR HERO panel again: *"the box size
+            // adjusts after a click, i want it to be good from the start"*, and before that
+            // *"when u open its still fucken broken"* (§ 79.6).
+            //
+            // The loop below reads `rows.rect.width` to decide whether each ability summary
+            // wraps, and reserves the taller two-line box whenever it cannot measure — correct,
+            // and 66 px of surplus across three rows against a column that only overflows by 64.
+            // § 79.6 answered that with `_refreshPending`, a re-run on the NEXT `LateUpdate`,
+            // which fixes the second frame and leaves the first one exactly as reported.
+            //
+            // ⚠️ IT REBUILDS THE OUTERMOST LAYOUT ANCESTOR, NOT `rows`. See
+            // `ConvertedScreen.ForceLayoutFor`: this column sits inside `ConfigPanel`'s own
+            // group, and rebuilding the inner rect re-runs a pass that reads a width its parent
+            // has not computed yet and returns the same 0.
+            //
+            // ⚠️ AND `_refreshPending` STAYS. A canvas that is inactive this frame cannot be
+            // rebuilt at all, which `LayoutRebuilder` states outright, so the retry goes from
+            // being the fix to being the fallback.
+            if (rows is RectTransform toLayOut) ForceLayoutFor(toLayOut);
+
             var abilities = new (string action, HeroAbility ability, bool ult)[]
             {
                 ("Skill1", kit.Skill1, false),

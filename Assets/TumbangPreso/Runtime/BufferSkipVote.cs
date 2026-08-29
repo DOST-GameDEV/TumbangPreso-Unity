@@ -193,7 +193,7 @@ namespace TumbangPreso
             var lobby = NetSession.Instance?.Lobby;
             if (lobby == null) return 1;
 
-            return Mathf.Max(1, lobby.PlayingPeerCount(NetAuthority.LocalPeerId));
+            return Mathf.Max(1, lobby.PlayingPeerCount());
         }
     }
 }

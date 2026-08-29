@@ -1254,21 +1254,58 @@ namespace TumbangPreso.Tests
 
             // Dedicated referee (peer 1) does not count towards ready quorum
             lobby.Admit(1, "ref-token", "Referee");
-            Assert.AreEqual(1, lobby.PlayingPeerCount(1), "Floored at 1 when no human players are seated");
+            Assert.AreEqual(1, lobby.PlayingPeerCount(), "Floored at 1 when no human players are seated");
 
             // Human player 1 (host)
             lobby.Admit(2, "p1-token", "Host Player");
-            Assert.AreEqual(1, lobby.PlayingPeerCount(2));
+            Assert.AreEqual(1, lobby.PlayingPeerCount());
 
             // Human player 2 (guest)
             lobby.Admit(3, "p2-token", "Guest Player");
-            Assert.AreEqual(2, lobby.PlayingPeerCount(2));
+            Assert.AreEqual(2, lobby.PlayingPeerCount());
 
             // Spectator (peer 4)
             var spec = lobby.Admit(4, "spec-token", "Spectator");
             spec.Spectator = true;
             spec.Seat = -1;
-            Assert.AreEqual(2, lobby.PlayingPeerCount(2), "Spectators must not be counted in ready quorum");
+            Assert.AreEqual(2, lobby.PlayingPeerCount(), "Spectators must not be counted in ready quorum");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE PEER DOING THE COUNTING IS COUNTED BY THE SAME RULE AS EVERYBODY ELSE, AND
+        /// UNTIL 2026-08-30 IT WAS NOT. 🧑: *"R doesnt work if theres a spectator"*.
+        ///
+        /// `PlayingPeerCount` used to exempt the local peer from the spectator test so its own
+        /// flag could arrive late. `ReadyGate.Update` returns without voting for
+        /// `GameLaunch.Spectator`, so a host that clicked SPECTATE in its own lobby was one
+        /// vote in a quorum it could not reach: everyone else pressed R and the match never
+        /// started. The set and the total have to be drawn from one population, which is the
+        /// rule § 78.6 already wrote down for the opposite direction.
+        ///
+        /// ⚠️ IT IS ASSERTED FROM BOTH CHAIRS. The spectating peer asking, and a playing peer
+        /// asking about it, must get the same answer, because on a listen host those are the
+        /// same call made by two processes.
+        /// </summary>
+        [Test]
+        public void PlayingPeerCountExcludesASpectatingLocalPeer()
+        {
+            var lobby = new LobbySession();
+            lobby.OpenLobby(new System.Random(7));
+
+            var host = lobby.Admit(2, "host-token", "Hosting Spectator");
+            var guest = lobby.Admit(3, "guest-token", "Guest Player");
+
+            Assert.AreEqual(2, lobby.PlayingPeerCount(), "Two seated humans before anyone watches");
+
+            // The host gives its chair up to watch, which is what the lobby's SPECTATE control
+            // does. Its seat goes back and its record is flagged, exactly as `Admit` flags an
+            // arrival that finds no chair.
+            host.Seat = -1;
+            host.Spectator = true;
+
+            Assert.AreEqual(1, lobby.PlayingPeerCount(),
+                            "A spectating host must not be counted in a quorum it cannot vote in");
+            Assert.AreEqual(1, guest.Seat, "The guest keeps the chair it was admitted to");
         }
 
         [Test]
@@ -1276,7 +1313,7 @@ namespace TumbangPreso.Tests
         {
             var lobby = new LobbySession();
             lobby.OpenLobby(new System.Random(42));
-            Assert.AreEqual(1, lobby.PlayingPeerCount(0), "Empty lobby must floor at 1 so gate does not auto-satisfy");
+            Assert.AreEqual(1, lobby.PlayingPeerCount(), "Empty lobby must floor at 1 so gate does not auto-satisfy");
         }
 
         [Test]
