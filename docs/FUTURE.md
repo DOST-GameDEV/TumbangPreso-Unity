@@ -409,9 +409,25 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 pays. Reuse the input telemetry the bots already produce to detect a seat that has not acted for a
 whole round, pay it nothing, and escalate on repeats.
 
-⚠️ **DIMINISHING RETURNS, NOT A DAILY CAP.** A cap tells a player to stop playing, which is the
-opposite of the point. Curve the XP down after a few hours instead, so the tenth match of the day
-is still worth something.
+⚠️⚠️ **RESTED XP, NOT DIMINISHING RETURNS, AND THE DIFFERENCE IS ENTIRELY FRAMING.** The first
+version of this said to curve XP down after a few hours so a long session stops paying full rate.
+🧑 flagged it immediately, and he is right: **players always notice and always resent it**, because
+it is a penalty for playing your favourite game too much and it arrives without warning in the
+middle of a good night.
+
+**The same arithmetic, inverted, is a gift instead of a punishment.** Everyone earns the base rate
+always, with no decay ever. A player who has been away accumulates a **bonus** pool, and their next
+few matches pay 1.5x until it runs out. The gap between somebody who plays two hours a day and
+somebody who plays ten narrows by exactly as much as the old scheme narrowed it, and nobody is ever
+told they are earning less than they were an hour ago.
+
+⚠️ **It also does the harder job the first version could not: it brings back the player who
+stopped.** "You have 5 bonus matches waiting" is a reason to open the game. "Your XP is reduced"
+is a reason to close it.
+
+⚠️ **AND A DAILY CAP IS STILL WRONG**, which is the one thing the first version got right. A cap
+tells a player in plain terms to stop playing tonight, which is the opposite of everything this
+phase is for.
 
 **The prompt for this phase is [§ 19.4](#194-prompt-for-phase-4).** Every prompt in
 this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
@@ -1180,8 +1196,11 @@ tomorrow, and it needs no matchmaking and no ranked to be worth having.**
 >
 > **Constraints.** Every curve and reward table is data in `Packages/com.tumbangpreso.core/` with
 > tests, including one that asserts **no reward on any track changes a gameplay number** (§ 0.5
-> rule 4). ⚠️ **Diminishing returns, never a daily cap**: a cap tells a player to stop playing,
-> which is the opposite of the point.
+> rule 4). ⚠️⚠️ **RESTED XP, never diminishing returns and never a daily cap.** § 4 has the
+> reasoning: the base rate never drops for anybody, and a player who has been away accumulates a
+> bonus pool that pays 1.5x for their next few matches. It is the same arithmetic as a decay curve
+> and the opposite feeling, and it brings a lapsed player back where a decay curve tells an engaged
+> one to stop.
 >
 > **Done when** a match awards XP computed server-side from its record, an AFK seat earns nothing,
 > the track pays out, no reward touches a gameplay value and a test proves it, and § 0.5 rule 9 is

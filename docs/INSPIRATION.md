@@ -42,7 +42,7 @@ If nothing else on this page gets built, build these.
 | 3 | **Loadout variants unlocked by character challenges** | Risk of Rain 2, Deep Rock, CoD | The thing he actually asked for, and it doubles as the best character tutorial you can write. § 5 |
 | 4 | **Trophy Road: a reward track tied to rank that never takes anything back** | Brawl Stars | Solves "rank goes down and I feel worse" for a game whose population cannot afford churn. § 2.1 |
 | 5 | **Endorsements** | Overwatch | One button. The only anti-toxicity system with evidence behind it. § 2.4 |
-| 6 | **A daily seed with one attempt and a leaderboard** | Tetris 99 dailies, Wordle | Retention with no matchmaking, no population and almost no code. § 2.9 |
+| 6 | **The daily, in three shapes: a rule twist on the live queue, a solo time trial with ghosts, and a squad run** | Wordle, Trackmania, Splatoon | Retention that does not need a population, without the marquee daily being the one mode you play alone. § 2.9 |
 | 7 | **In-client tournaments** | Rocket League | This project is going to nationals. The tournament tooling is 70 per cent built already. § 2.6 |
 | 8 | **Rank floors and a ratcheted reward road** | Marvel Snap, Brawl Stars | A bad night can never undo a good week, which is the most common reason people stop queueing ranked. § 2.19 |
 | 9 | **A scheduled weekly hour** | Pokemon GO community day | Not content, a schedule. It concentrates thirty players into full lobbies instead of spreading them across empty ones, and it is nearly free. § 2.24 |
@@ -207,10 +207,60 @@ anti-cheat. `FUTURE.md` § 8.3.
 
 One puzzle a day, the same for everybody, one attempt, a shareable result.
 
-**What it becomes here: the DAILY SEED, and it is absurdly cheap.** Same map, same taya order, same
-bot opponents, same starting state for everybody that day. One attempt. A leaderboard. A short
-shareable result string. **It needs no matchmaking, no population and no other player**, which
-makes it the only retention feature on this page that works on day one with thirty players.
+⚠️⚠️ **THE FIRST VERSION OF THIS WAS A SINGLEPLAYER MODE AND THAT WAS WRONG.** It was written as
+one solo match a day against bots, and 🧑 named the problem immediately: **the marquee retention
+feature of a multiplayer game should not be the one you play alone.** A solo daily reads as a
+consolation prize for nobody being online, which is the exact feeling it was supposed to fix.
+
+**The seed is the good part. The solitude was not.** A seed is just "everybody gets the same
+starting state today", and that idea works in three shapes rather than one. Build them in this
+order, because each is cheaper than the one after it.
+
+#### 2.9.1 DAILY TWIST, and this is the one to build first
+
+**One rule change a day, applied to the LIVE quick-match queue.** Not a separate mode, not a
+separate queue, not a leaderboard. Today everybody plays with one tsinelas. Tomorrow half stamina.
+Thursday the taya's reach is doubled.
+
+- **It is multiplayer by construction**, because it is the multiplayer queue.
+- **It costs one field**, because `FUTURE.md` § 12 already builds custom-game rule toggles and this
+  is one of them selected by the date.
+- **It makes the whole game feel different every day** rather than adding a corner of the game that
+  feels different.
+- **It gives the Discord something to say every morning**, which is most of what a daily is for.
+
+⚠️ **It does not go in ranked.** Ranked runs the shipped rules, always. `INSPIRATION.md` § 3.3.
+
+#### 2.9.2 DAILY RUN, the solo one, framed honestly
+
+The score-attack still has a place. **The mistake was calling it a match.** It is not a lonely
+version of the game, it is **the training range with a scoreboard**, and it should look and be
+named like one.
+
+- You are the attacker. The seed fixes the map, the can, the taya bot and its behaviour.
+- Scored on time, not on placement: how fast can you knock the can down and get your tsinelas back.
+- **Medals rather than a ranking**, per § 2.14: bronze, silver, gold, author. You are beating a bar,
+  not beating people, so it cannot feel empty at 3am with nobody online.
+- ⚠️⚠️ **GHOSTS ARE WHAT MAKE IT SOCIAL, AND THEY ARE THE WHOLE FIX.** Race the replays of other
+  people who ran today's seed: your friends first, then the medal-holders. You are alone in the
+  match and surrounded by other players' runs. This is the Trackmania model and **this codebase can
+  actually do it**, because a replay is the input stream and the simulation is deterministic from
+  it (`FUTURE.md` § 17). A ghost is a few hundred kilobytes, not a video.
+- One attempt a day, a short shareable result, and it writes to the local machine leaderboard from
+  § 2.26 as well, so it still has a scoreboard with no internet.
+
+#### 2.9.3 DAILY SQUAD, when there is a population to support it
+
+The same seed played by a **full lobby of four humans**, with the lobby's combined result on a
+board against other lobbies. It turns the daily into a thing a barkada does together in one sitting
+rather than a thing four people each do alone.
+
+⚠️ **Do not build this third one early.** It needs four humans to be worth opening, which is the
+one thing a daily is supposed to work without.
+
+**So the shape is: the twist is for everybody, the run is for the player alone at 3am, and the
+squad is for the group.** Only the middle one is singleplayer, and it is a time trial rather than a
+match, which is a thing people already understand and want.
 
 ### 2.10 Splatoon and the event that picks a side
 
@@ -456,7 +506,7 @@ accidentally put a login wall in front of "play with my friend right now". Do no
 
 A daily climb with modifiers, and a history of every run you have made with the numbers attached.
 
-**What it becomes here:** modifiers on the daily seed from § 2.9, once it exists. One tsinelas only.
+**What it becomes here:** the modifier pool behind DAILY TWIST in § 2.9.1. One tsinelas only.
 Half stamina. Double the taya's reach. It is a new mode a week, forever, out of a single field.
 
 ---
@@ -767,7 +817,7 @@ brief.
 | [I3](#prompt-i3--the-challenge-engine-achievements-and-loadout-unlocks) | Challenge engine and achievements | Phases 2, 4 |
 | [I4](#prompt-i4--hero-loadouts) | Hero loadouts | I3 |
 | [I5](#prompt-i5--the-queue-and-mode-structure) | Queue and mode structure | Before Phase 7 |
-| [I6](#prompt-i6--the-daily-seed-with-medals-and-a-ghost) | Daily seed, medals, ghost | Phase 2 |
+| [I6](#prompt-i6--the-daily-in-three-shapes) | The daily: twist, run, squad | Phase 12 for the twist, 2 for the run |
 | [I7](#prompt-i7--the-moment-best-moment-card-killcam-and-clip-export) | Best-moment card, killcam, clips | Phase 2 |
 | [I8](#prompt-i8--endorsements-trust-the-avoid-list-and-the-dead-round) | Endorsements, trust, dead round | Alongside Phase 8 |
 | [I9](#prompt-i9--the-training-room-and-replay-takeover) | Training room, replay takeover | Phase 17 for the takeover half |
@@ -956,36 +1006,53 @@ value item here.**
 
 ---
 
-### PROMPT I6 · The daily seed, with medals and a ghost
+### PROMPT I6 · The daily, in three shapes
 
-**Run any time after `FUTURE.md` Phase 2. Independent of everything, and it is the only retention
-feature that works at thirty concurrent players.**
+**Run the twist any time after `FUTURE.md` Phase 12. The run needs Phase 2. The squad needs a
+population and should wait.**
 
 > Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md`, then `docs/FUTURE.md` §§ 0.5
-> and 0.6, then `docs/INSPIRATION.md` §§ 2.9, 2.14 and 2.30. Do not skip them because this prompt
-> summarises the task; the summary is not the rules.
+> and 0.6, then `docs/INSPIRATION.md` §§ 2.9, 2.14, 2.26 and 2.30. Do not skip them because this
+> prompt summarises the task; the summary is not the rules.
 >
-> **VERIFY FIRST.** `FUTURE.md` Phase 2 shipped. Check whether Phase 12 has already added this
-> mode, and check whether replays exist yet, because the ghost depends on them.
+> **VERIFY FIRST.** Check whether `FUTURE.md` Phase 12's custom-game rule toggles exist, because
+> the twist is one of those toggles selected by the date rather than a new system. Check whether
+> replays exist, because the ghosts depend on them.
 >
-> **Build the daily seed:** one deterministic match a day, identical for every player, same map,
-> same taya order, same bots, one attempt, a leaderboard and a short shareable result string.
-> **Derive the seed from the date** so every client agrees without asking a server.
+> ⚠️ **Read § 2.9's opening warning before designing anything.** An earlier version of this was a
+> solo match against bots and it was rejected for a good reason: the marquee retention feature of a
+> multiplayer game must not be the one you play alone.
 >
-> **Then the two things that make it stick.**
-> - **Medals**, in the Trackmania sense: bronze, silver, gold and author thresholds published with
->   the seed, so the player is chasing a bar rather than a population. A solo target is the only
->   progression that works when nobody else is online.
-> - **A modifier field**, one per day: one tsinelas only, half stamina, double taya reach. A new
->   twist a week out of a single field.
-> - If replays exist, the **ghost** of the player's own best run.
+> **Build in this order, and stop after the second unless there is a population for the third.**
 >
-> **Constraints.** It must need no matchmaking and no other human player. Submit through the Cloud
-> Code endpoint from `FUTURE.md` Phase 2, **and** write to the local machine leaderboard from I10 if
-> that exists, so the mode still has a scoreboard with no internet.
+> **1. DAILY TWIST.** One rule change a day applied to the LIVE quick-match queue: one tsinelas
+> only, half stamina, double taya reach. Derive the choice from the date so every client agrees
+> without asking a server. It is multiplayer by construction because it IS the multiplayer queue,
+> it costs one field on top of the existing rule toggles, and it makes the whole game feel different
+> every day rather than adding a lonely corner. Announce it on the main menu.
+> ⚠️ **Never in ranked.** Ranked runs the shipped rules, always.
 >
-> **Done when** two machines on the same date get an identical match, the result submits, medals
-> award, and `FUTURE.md` § 0.5 rule 9 is satisfied.
+> **2. DAILY RUN.** A solo time trial, and **name and frame it as a time trial rather than as a
+> match**: you are the attacker, the seed fixes the map, the can and the taya bot, and you are
+> scored on how fast you knock the can down and retrieve your tsinelas. Award **medals** rather than
+> a ranking, per § 2.14, so it cannot feel empty when nobody is online. One attempt a day, a short
+> shareable result, and write it to the local machine leaderboard from § 2.26 as well as to the
+> service, so it still has a scoreboard with no internet.
+>
+> ⚠️⚠️ **GHOSTS ARE THE PART THAT FIXES THE SOLITUDE, SO DO NOT CUT THEM TO SAVE TIME.** Race the
+> replays of other people who ran today's seed, friends first, then medal-holders. A ghost is an
+> input stream and this simulation is deterministic from it, so it is a few hundred kilobytes, not a
+> video. If replays do not exist yet, build the run without ghosts, ship nothing to players until
+> they do, and say so in the handoff.
+>
+> **3. DAILY SQUAD, only if the population supports it.** The same seed played by a full lobby of
+> four humans with a combined result on a board against other lobbies. ⚠️ **Do not build this
+> early**: it needs four humans to be worth opening, which is the one thing a daily is supposed to
+> work without.
+>
+> **Done when** the twist changes the live queue on a date boundary with no server call, the run
+> awards medals and races at least one ghost, both write to the local board, and `FUTURE.md` § 0.5
+> rule 9 is satisfied.
 
 ---
 
@@ -1138,7 +1205,8 @@ nothing.**
 > 2. **LAST TSINELAS STANDING.** Three tsinelas per attacker; lose them all and you are out; the
 >    last attacker takes the round. A completely different game from the same parts, and the best
 >    candidate here for a rotating featured mode.
-> 3. **DAILY MODIFIERS.** One field on the daily seed from I6 applying a single rule twist.
+> 3. **DAILY MODIFIERS.** Already covered by DAILY TWIST in § 2.9.1: build it there, on the live
+>    queue, rather than as an arcade variant here.
 >
 > **Constraints.** ⚠️⚠️ **Touch nothing in Classic's own ruleset.** A new mode is a new mode.
 > `docs/Design.md` governs Classic and `VISION.md` § 1 governs why. Every variant's rules go in
