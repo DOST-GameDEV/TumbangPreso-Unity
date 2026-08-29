@@ -3004,6 +3004,40 @@ so they cannot quietly stop being true:**
 asked about the role would be a second place to keep in step and a second place for the host and a
 client to disagree. The test parses the product and counts.
 
+### 83.25 THE VERDICT ON THE BUILD THIS BATCH SHIPPED, AND THE TWO PLAYMODE ROWS THAT ARE RED
+
+Run after the build on 2026-08-29, on the branch tip `552a07f3`.
+
+| gate | result |
+|---|---|
+| `audit_presentation_reach.py` | **93 / 93 reachable by every peer, 0 host-only** |
+| Core (`dotnet test`) | **112 / 112** |
+| EditMode | **230 / 230** |
+| PlayMode, `!WallClock` | **90 / 92**, 8 m 23 s |
+
+**Neither of the two is a regression from this batch, and both were checked rather than assumed.**
+
+⚠️ **`HeroPickerLayoutProbe.TheHeroPickerHasNoDeadBandAboveTheAbilityRows` IS RED BY DESIGN AND
+THIS FILE ALREADY SAYS SO.** § 79.6's own entry records the assertion being added earlier the same
+day and going red immediately, with the measurement: `AbilityRow_2` is **14 px below
+`ConfigPanel`**, and the `Rows` column wants 524 px in the 460 it is given — **a 64 px deficit**.
+The ultimate's plate hangs out of the wood. It is an open UI fault with its numbers already
+written down, not something this batch broke.
+
+⚠️ **`PreviewDragProbe.DraggingTheSubjectMovesItWithThePointer` IS AN ORDER-DEPENDENT FLAKE, AND
+IT WAS RE-RUN ALONE TO PROVE IT: 1/1 GREEN.** In the suite it fails on an unhandled log message —
+*"Some objects were not cleaned up when closing the scene ... LobbyCastStage"* — which is
+`LobbyCast`'s stage, parented into the additively loaded arena and destroyed BY NAME in
+`ConvertedMatchSetup.OnDestroy`. `Destroy` is deferred to the end of the frame and this probe has
+**no `[TearDown]`**, so whether the teardown lands before the scene closes depends on which test
+ran before it.
+
+**Done looks like** a `[TearDown]` on `PreviewDragProbe` that unloads the scene and yields a frame,
+the way `TrainingStreetProbe.Quiesce` and `SoloPracticeTests` already do — both carry a note about
+a live state outliving its scene poisoning the NEXT suite, which is this from the other side.
+⚠️ Do **not** silence it with `LogAssert.Expect`: the message is true, and the object it names is
+real.
+
 ---
 
 ## 0 · Hero Strike is being reworked, and the plan is its own file
