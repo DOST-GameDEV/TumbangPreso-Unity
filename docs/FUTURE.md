@@ -197,6 +197,105 @@ anyway and do not silently skip it.** Do the part that still makes sense, write 
 `docs/TODO.md`, correct the prompt in the plan file, and put the disagreement at the top of your
 handoff.
 
+**12. ⚠️⚠️ EVERY PHASE DESIGNS ITS OWN SURFACE. A FEATURE WITHOUT A SCREEN IS NOT SHIPPED.**
+🧑, 2026-08-30: *"can u get other phases to think abt how hud and ui should look on their
+respective phases as well annd they can use visual hierarchy and visual journney meethods that
+other games currenntly employ"*. **§ 0.5b is the method and it is not optional.** Do not write the
+rules, the endpoint and the tests and leave "where the player sees it" to whoever comes next.
+Phase 4 did exactly that and § 91.7 is the one-line entry that resulted; the screens then had to be
+rebuilt twice (`docs/TODO.md` §§ 92 and 94.7).
+
+### 0.5b How a phase designs its screen, because every phase has one
+
+⚠️⚠️ **THIS SECTION IS RULE 12 AND IT EXISTS BECAUSE THE ALTERNATIVE HAS BEEN TRIED TWICE.**
+Phases 1 to 4 each built rules, an endpoint and tests, and each left the screen until last. What
+shipped was a panel doing six jobs, which 🧑 photographed and rejected (*"theres liek 20 shits at
+once"*, `docs/TODO.md` § 92), and then a rebuilt screen whose values sat 1600 px from their labels,
+which he rejected again (*"its so messy and ugly"*, § 94.7). **Both were designed the same way: by
+the last person to touch the feature, at the end, without a method.** Here is the method.
+
+**Answer these five, in the prompt's own words, before writing the screen.**
+
+1. **What is the ONE thing on this screen?** Every screen has exactly one primary action or one
+   headline fact, and everything else is smaller, quieter or further down. ⚠️ **If you cannot name
+   it in four words, the screen is doing two jobs and is two screens.** The account panel offered
+   SAVE PROFILE, LINK USERNAME, SIGN IN, DELETE ACCOUNT, PLAY AS GUEST and CLOSE at identical
+   size, so nothing led.
+2. **Where does the player arrive from, and where do they go next?** That is the visual journey,
+   and it decides placement more than taste does. A thing reached from the menu belongs where the
+   eye already is when it leaves the menu. ⚠️ **`docs/TODO.md` § 96 is this question unanswered**:
+   the hub has exactly one door and the person who commissioned it never found it.
+3. **What does it look like with NOTHING in it?** The empty state is the state most players see
+   first and it is the one that gets designed last. A fresh career opened with fifteen rows of
+   `0/0 (needs 10 throws)`. ⚠️ **`FUTURE.md` § 2.2: do not show a stat you will not defend.**
+   Withhold the ROW, not just the number.
+4. **What is the destructive thing, and is it a peer of the safe ones?** DELETE ACCOUNT sat
+   between PLAY AS GUEST and CLOSE at the same size, one misclick from a lost career.
+5. **How many things are on screen at once, and can any of them be shut?** ⚠️⚠️ **GROUPING
+   WITHOUT COLLAPSING DOES NOT FIX A WALL OF NUMBERS**, it aligns it. § 92.3b.
+
+**Four ordering tools, and they are the whole of visual hierarchy.** Use them in this order and
+stop when the screen reads: **position** (top and left lead), **size** (the type scale, three
+steps, never more), **weight and colour** (one accent, used for the one thing), **space** (a gap
+groups more strongly than a line does). ⚠️ **COLOUR IS THE LAST RESORT AND NOT THE FIRST.**
+`VISION.md` § 2 is a readability budget and this repository has a measured colourblind problem
+(§ 16.1); a hierarchy carried by hue alone is a hierarchy some players do not have.
+
+**What to copy from other games, which is a METHOD and not a screenshot.**
+
+| Pattern | Who does it | What actually transfers |
+|---|---|---|
+| Settings as full-width rows, label left, control in a fixed column | Valorant, PUBG | **The column, not the alignment.** § 94.7 fault 1 is what copying the alignment without the column looks like. |
+| One persistent action in a corner, per screen | PUBG | A screen with one button has an obvious thing to do; a screen with six has none. |
+| Identity as a thing to LOOK at, then press | most live games | It states something before it offers something, which no button labelled ACCOUNT can. |
+| A narrow form column beside art | Riot sign-in | Two questions, one primary, small footer links. |
+| Progress shown where the player already looks | most live games | The level goes on the identity chip and the end-of-match board, not on a stats tab nobody opens. |
+| Groups that collapse | every settings screen since 2015 | A group only helps if it can be shut. |
+
+⚠️ **AND THE POINT OF THE TABLE IS THE RIGHT-HAND COLUMN.** Every one of those left-hand entries
+was already "the reference" when the screens in § 92 were built, and they were still wrong,
+because what was copied was the look. **Name the mechanism, then check whether this game's content
+has the shape the mechanism assumes.** A wide dropdown fills a column; a two-character number does
+not.
+
+**What a phase owes before it may call its screen done.**
+
+- **Built out of `UiRows`, never out of hand-written offsets.** That file exists because absolute Y
+  offsets are a layout correct at exactly one panel height and one aspect ratio.
+- **A layout probe at the nine resolutions** the other four UI probes use, asserting every label
+  fits its box and clears `MenuKit.MinReadableUnits` (18). `PhaseSurfaceLayoutProbe` and
+  `PlayerHubLayoutProbe` are the templates.
+- **A render, looked at by a person.** ⚠️⚠️ **A GREEN LAYOUT PROBE IS NOT A GOOD SCREEN AND THIS
+  IS THE MOST IMPORTANT LINE IN THIS SECTION.** § 4.5.3 says it and § 94.7 proves it: every one of
+  seven readability faults was true while every label fitted its box and cleared the floor. **The
+  probe asks whether the screen is a screen. The picture asks whether it can be read. Neither
+  replaces the other.**
+- **An entry in `docs/TODO.md` saying where every surface the phase produced went**, in the shape
+  of § 92.4's table. It is what caught a shipped feature being deleted by a rebuild that had no
+  reader left for it.
+
+**The surface every remaining phase owes, and the ONE thing on it.** ⚠️ **These are the ANSWER TO
+QUESTION 1 ONLY**, written here so no phase starts from a blank page. Questions 2 to 5 are still
+that phase's work, and where a phase disagrees with this row it should say so and correct it, per
+§ 0.5 rule 11.
+
+| Phase | The surface it owes | The one thing on it | The trap it walks into |
+|---|---|---|---|
+| **5 · Cosmetics** | A locker, reached from the hub, not a sixth tab | **The character, wearing it.** A cosmetic screen with no preview is a list of nouns | Phase 4's rewards are computed and worn by nothing (§ 91.8). ⚠️ **Wire the EXISTING rewards before authoring one new one**, or the first thing this phase ships is a second unworn set |
+| **6 · Social** | A friends rail on the hub, and an invite on the lobby | **Who is online now.** Everything else is a submenu | A friends list is a live list, so it has three empty states (no friends, none online, service down) and § 0.5b question 3 says all three get designed |
+| **7 · Matchmaking** | A queue state on the mode screen, not a screen of its own | **Whether you are in the queue, readable from across the room** | A spinner is not a state. Say the mode, the time elapsed, and how to cancel, and never block the menu behind it |
+| **8 · Integrity** | Almost nothing, deliberately | **A result that is disputed says so, once** | ⚠️ Resist building a moderation console. This phase's success is invisible |
+| **9 · Ranked** | A badge on the nameplate and a rating line on the end-of-match board | **Which way the number moved, and by how much** | The rank badge is absent on purpose today (§ 92.8) and level and rank must never be confusable. ⚠️ A bot-filled ranked match must SAY so on that board (§ 11) |
+| **10 · Loadouts** | A loadout on the character screen; achievements as a CAREER group | **The three things you have chosen**, not the hundred you have not | Achievements are a wall of rows by nature. They collapse, and the sample-size rule (§ 2.2) applies to their progress numbers too |
+| **11 · Bots** | A label in the lobby, on the scoreboard and in the match history | **That this seat is not a person** | It has to survive a screenshot. A grey name is not a label |
+| **12 · Modes and maps** | The existing mode and map select, extended | **What is different about this mode, in one line** | Two modes fit as buttons; five need the collapse pattern before the fifth arrives, not after |
+| **13 · Seasons** | One line on the menu, dismissible | **What is new, once** | ⚠️ This is the phase most likely to grow a popup on boot. It must not |
+| **14 · Controller** | No new screen: glyphs everywhere there is a key prompt | **The button you are actually holding** | Every prompt in the game is a hard-coded key string today. Find them all before designing anything |
+| **15 · Mobile** | Every screen again, at a thumb's reach | **The two things a thumb can hit** | ⚠️ `UiRows` assumes a pointer and a wide row. It is the file this phase renegotiates first |
+| **16 · Accessibility** | A settings group, and a change to every other screen | **That the game is still readable with the colour turned off** | § 16.1 is a measured problem in THIS game. Hierarchy carried by hue is what this phase has to undo |
+| **17 · Tournaments** | A bracket, and a spectator HUD that is not the player HUD | **Who is playing and what the score is** | A spectator has no body and no seat (`CLAUDE.md` § 4). Their HUD is a different screen, not the same one with pieces hidden |
+| **18 · Getting it seen** | A screenshot that is not the game | **One frame that reads at thumbnail size** | Everything above optimises for a player two feet away. This optimises for a stranger scrolling |
+
 ### 0.6 How these documents go stale, and what to re-verify
 
 ⚠️⚠️ **THESE ARE PLANS WRITTEN AHEAD OF THE WORK. THE FURTHER YOU ARE FROM 2026-08-31 THE LESS OF

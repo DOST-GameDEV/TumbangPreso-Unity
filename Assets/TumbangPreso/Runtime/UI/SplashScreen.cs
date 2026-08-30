@@ -39,6 +39,9 @@ namespace TumbangPreso.UI
 
         private VideoPlayer _video;
         private RawImage _surface;
+
+        /// <summary>The key art behind the sting. See <see cref="BuildSplashArt"/>.</summary>
+        private RawImage _art;
         private RenderTexture _target;
         private Image _fade;
         private Text _loadingLabel;
@@ -155,6 +158,15 @@ namespace TumbangPreso.UI
                     ? _elapsed >= 0.5f
                     : (_video.isPrepared && !_video.isPlaying && _elapsed > 0.5f);
 
+                // ⚠️⚠️ THE VIDEO SURFACE IS SWITCHED OFF THE FRAME THE STING ENDS, AND WITHOUT
+                // THIS THE ART IS NEVER SEEN. A `VideoPlayer` that has finished leaves its LAST
+                // FRAME in the render texture, so the `RawImage` above the art keeps drawing a
+                // frozen frame of the studio logo for the whole remainder of the preload. That
+                // is the part that runs past six seconds, and it is the entire window this art
+                // exists to fill. `_surface` rather than the texture, so nothing is reallocated.
+                if (presentationComplete && _art != null && _surface != null && _surface.enabled)
+                    _surface.enabled = false;
+
                 bool accountReady = accountBarrier == null || accountBarrier.IsCompleted;
                 if (presentationComplete && PreloadComplete && accountReady) break;
 
@@ -186,6 +198,20 @@ namespace TumbangPreso.UI
                 SetFade(t / 0.22f);
                 yield return null;
             }
+
+            // ⚠️⚠️ THIS IS THE ONE PLACE THAT CAN SAY "THE GAME JUST BOOTED", AND
+            // `PlayerNameplate.OfferTheAccountChoiceOnce` NEEDS IT TO BE A NARROW CLAIM. The
+            // account question was first gated on nothing but a nameplate being installed, and a
+            // nameplate is installed by every scene that shows the menu: `UiClickProbe` reported
+            // **every settings control on the title screen blocked by `SignInCanvas`**, because
+            // the boot screen opened over a menu the probe had loaded directly and nothing was
+            // ever going to answer it. That is the same class § 92.7 records, and the same probe
+            // caught it again.
+            //
+            // ⚠️ A SCENE LOAD IS NOT A BOOT. The menu is reached from here, from
+            // `LeaveMatchToMainMenu`, and from any test that loads it by name; only the first is
+            // a launch, and only a launch has a first-time player behind it.
+            SceneFlow.BootedThroughSplash = true;
 
             SetFade(1.0f);
             Leave();
@@ -544,6 +570,8 @@ namespace TumbangPreso.UI
             bgImg.color = Color.black;
             Stretch(bgImg.rectTransform);
 
+            BuildSplashArt(canvasGo.transform);
+
             var surfaceGo = new GameObject("Video");
             surfaceGo.transform.SetParent(canvasGo.transform, false);
             _surface = surfaceGo.AddComponent<RawImage>();
@@ -573,6 +601,53 @@ namespace TumbangPreso.UI
             // to fitting inside; the black Backdrop above is what covers the difference on a
             // window that is not.
             _video.aspectRatio = VideoAspectRatio.Stretch;
+        }
+
+        /// <summary>
+        /// The key art the player looks at while the game finishes loading.
+        ///
+        /// ⚠️⚠️ IT SITS UNDER THE VIDEO AND IS REVEALED WHEN THE VIDEO ENDS, which is the whole
+        /// point of putting it here rather than on the menu. The studio sting is about half a
+        /// second; the preload behind it routinely runs past six seconds and logs when it does.
+        /// **Everything after the sting used to be a black screen with three dots on it**, which
+        /// is the longest single stretch of the game a first-time player sees and the least of it.
+        ///
+        /// ⚠️ `RawImage` AND `Resources.Load<Texture2D>`, NOT A SPRITE. A sprite needs the
+        /// importer's texture type set on the `.meta`, which is a file nobody edits by hand and
+        /// which a re-import can reset; a `RawImage` draws a plain `Texture2D` with whatever
+        /// import settings the file arrived with. One less thing that can silently come back as a
+        /// magenta rectangle.
+        ///
+        /// ⚠️⚠️ AND IT COVERS RATHER THAN STRETCHES. The art is 1267x697, about 1.82:1, and the
+        /// game ships at nine shapes from 4:3 to 21:9. `Stretch` would distort the cast on every
+        /// one of them that is not 1.82; `AspectRatioFitter.EnvelopeParent` fills the window and
+        /// crops the overflow instead, which is what the black `Backdrop` above already assumes.
+        ///
+        /// ⚠️ A MISSING FILE IS SILENT AND LEAVES THE BLACK BACKDROP. `Resources.Load` answers
+        /// null rather than throwing, and a boot screen is the worst possible place to take an
+        /// exception, so the art is treated as decoration the boot can proceed without.
+        /// </summary>
+        private void BuildSplashArt(Transform parent)
+        {
+            var art = Resources.Load<Texture2D>("UI/splash_art");
+            if (art == null)
+            {
+                Debug.LogWarning("[Splash] no splash art at Resources/UI/splash_art; " +
+                                 "the loading screen falls back to the black backdrop.");
+                return;
+            }
+
+            var go = new GameObject("SplashArt");
+            go.transform.SetParent(parent, false);
+
+            _art = go.AddComponent<RawImage>();
+            _art.texture = art;
+            _art.raycastTarget = false;
+            Stretch(_art.rectTransform);
+
+            var fitter = go.AddComponent<UnityEngine.UI.AspectRatioFitter>();
+            fitter.aspectMode = UnityEngine.UI.AspectRatioFitter.AspectMode.EnvelopeParent;
+            fitter.aspectRatio = art.width / (float)art.height;
         }
 
         private void BuildLoadingIndicator(Transform parent)

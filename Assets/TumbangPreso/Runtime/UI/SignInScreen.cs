@@ -35,6 +35,13 @@ namespace TumbangPreso.UI
         private InputField _username, _password;
         private Text _heading, _error, _primaryLabel;
         private Button _signInTab, _createTab;
+        private Button _guest, _back;
+
+        /// <summary>
+        /// True while this screen is the first thing the game showed, rather than something the
+        /// player pressed. See <see cref="OpenAtBoot"/>.
+        /// </summary>
+        private bool _atBoot;
         private bool _creating;
 
         /// <summary>Raised when the player leaves, whether they signed in or not, so the hub can
@@ -130,10 +137,17 @@ namespace TumbangPreso.UI
 
             BuildPrimary(col);
 
-            MenuKit.WoodButton(col, "PLAY AS GUEST", new Vector2(0.5f, 0.0f),
-                new Vector2(0.0f, 132.0f), new Vector2(300.0f, 48.0f), Guest);
+            // ⚠️⚠️ THE GUEST BUTTON DOES TWO DIFFERENT THINGS AND THE LABEL SAYS WHICH.
+            // Reached from the ACCOUNT tab it is the TOURNAMENT guest, which parks the owner's
+            // profile and hands the machine to somebody else for one session. Reached at BOOT it
+            // means "keep the anonymous account this machine already has and let me play", which
+            // is the opposite: nothing is parked and nothing is temporary. **Two behaviours
+            // behind one word is exactly the confusion this file was rebuilt to remove**, so the
+            // caption changes with the mode and `BootGuest` and `Guest` are separate methods.
+            _guest = MenuKit.WoodButton(col, "PLAY AS GUEST", new Vector2(0.5f, 0.0f),
+                new Vector2(0.0f, 132.0f), new Vector2(300.0f, 48.0f), GuestPressed);
 
-            MenuKit.WoodButton(col, "BACK", new Vector2(0.5f, 0.0f),
+            _back = MenuKit.WoodButton(col, "BACK", new Vector2(0.5f, 0.0f),
                 new Vector2(0.0f, 74.0f), new Vector2(300.0f, 48.0f), Close);
         }
 
@@ -225,8 +239,69 @@ namespace TumbangPreso.UI
             _error.text = "";
 
             SetMode(GameServices.Account != null && !GameServices.Account.HasPassword);
+            SetBootMode(false);
             _root.SetActive(true);
             Opened?.Invoke(true);
+        }
+
+        /// <summary>
+        /// The same screen, as the first thing the game shows, once per machine.
+        ///
+        /// ⚠️⚠️ THIS REVERSES `docs/TODO.md` § 92.3, WHICH CALLED THE BOOT BEHAVIOUR "THE ONE
+        /// THING THAT MUST NOT MOVE". 🧑, 2026-08-31: *"i want this like pubg but they have ann
+        /// option to continue right as a guest"*. `GameSettings.AccountChoiceMade` carries the
+        /// full argument for why both the old rule and this can be true: the rule was about a
+        /// FORM appearing unasked, and this is a CHOICE with a one-press escape.
+        ///
+        /// ⚠️⚠️ THE ESCAPE IS THE ENTIRE DESIGN AND IT MUST NEVER NEED THE NETWORK.
+        /// `FUTURE.md` § 0.5 rule 7 and the nationals in General Santos City: the game has to
+        /// reach a match with the cable out. CONTINUE AS GUEST does not call a service, does not
+        /// await anything and cannot fail; the anonymous account is already signed in behind the
+        /// loading screen, or has already fallen back to the local profile, before this screen is
+        /// ever built. **If this button ever grows an `await`, this screen has become the thing
+        /// § 92.3 refused.**
+        ///
+        /// ⚠️ BACK IS HIDDEN, because at boot there is nothing behind it. A button that dismisses
+        /// a screen to reveal nothing is how a player gets stuck on a black frame.
+        /// </summary>
+        public void OpenAtBoot()
+        {
+            _username.text = "";
+            _password.text = "";
+            _error.text = "";
+
+            // ⚠️ CREATE RATHER THAN SIGN IN, because a first-time player has no account to sign
+            // in to and the CREATE copy is the line that says what happens to what they have
+            // already played. A returning player who wants SIGN IN presses one segment.
+            SetMode(true);
+            SetBootMode(true);
+            _root.SetActive(true);
+            Opened?.Invoke(true);
+        }
+
+        private void SetBootMode(bool atBoot)
+        {
+            _atBoot = atBoot;
+
+            if (_back != null) _back.gameObject.SetActive(!atBoot);
+
+            var caption = _guest != null ? _guest.GetComponentInChildren<Text>(true) : null;
+            if (caption != null) caption.text = atBoot ? "CONTINUE AS GUEST" : "PLAY AS GUEST";
+        }
+
+        /// <summary>
+        /// ⚠️ THE CHOICE IS RECORDED WHICHEVER WAY IT WENT, so the screen is shown once per
+        /// machine and never again. Creating an account, signing in and continuing as a guest are
+        /// all answers to the question; only closing the screen without answering is not, and at
+        /// boot there is no way to do that.
+        /// </summary>
+        private static void RememberTheChoiceWasMade()
+        {
+            var settings = Settings.SettingsStore.Current;
+            if (settings == null || settings.AccountChoiceMade) return;
+
+            settings.AccountChoiceMade = true;
+            Settings.SettingsStore.Save();
         }
 
         private void Close()
@@ -295,6 +370,7 @@ namespace TumbangPreso.UI
                 if (_creating) await account.UpgradeAsync(username, password);
                 else await account.SignInAsync(username, password);
 
+                RememberTheChoiceWasMade();
                 Close();
             }
             catch (Exception e)
@@ -303,11 +379,40 @@ namespace TumbangPreso.UI
             }
         }
 
+        private void GuestPressed()
+        {
+            if (_atBoot) BootGuest();
+            else Guest();
+        }
+
+        /// <summary>
+        /// CONTINUE AS GUEST at boot: record the answer and get out of the way.
+        ///
+        /// ⚠️⚠️ IT DELIBERATELY DOES NOT CALL `SignInAsGuest`, AND CALLING IT WOULD HAVE BEEN
+        /// THE OBVIOUS MISTAKE. That method is the TOURNAMENT guest: it parks the owner's profile
+        /// in `_primaryProfile` and hands the machine to somebody else for a session, and
+        /// `LeaveGuest` throws away what the guest earned. Running it here would make every
+        /// first-time player a temporary user of their own game and quietly bin their first
+        /// evening's progress.
+        ///
+        /// ⚠️ THERE IS NOTHING TO DO BECAUSE IT HAS ALREADY HAPPENED. `PlayerAccount` signs in
+        /// anonymously behind the loading screen, or settles to the local profile if there is no
+        /// service, before this screen exists. "Continue as guest" is the player accepting the
+        /// account they were already given, so the only state that changes is that we stop
+        /// asking.
+        /// </summary>
+        private void BootGuest()
+        {
+            RememberTheChoiceWasMade();
+            Close();
+        }
+
         private void Guest()
         {
             try
             {
                 GameServices.Account?.SignInAsGuest(GameServices.Account.DisplayName);
+                RememberTheChoiceWasMade();
                 Close();
             }
             catch (Exception e) { Fail(e.Message); }

@@ -6,6 +6,7 @@ using NUnit.Framework;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
 
@@ -73,9 +74,41 @@ namespace TumbangPreso.PlayTests
         private RenderTexture _target;
         private readonly List<Canvas> _canvases = new List<Canvas>();
 
+        /// <summary>
+        /// ⚠️⚠️ THE REAL `settings.json` IS RESTORED, BECAUSE THIS PROBE WRITES TO IT. The editor
+        /// and the built player share `Application.persistentDataPath`, so
+        /// `SettingsStore.Current` here IS the player's saved settings, and the boot-screen case
+        /// below both clears and sets `AccountChoiceMade` and `SignInScreen` saves when it is
+        /// answered. Leaving it set would mean the player never sees the screen they have not
+        /// answered; leaving it clear would mean they see it again after answering.
+        /// </summary>
+        [SetUp]
+        public void RememberTheAccountChoice()
+        {
+            var settings = Settings.SettingsStore.Current;
+            _savedChoiceMade = settings != null && settings.AccountChoiceMade;
+            _savedBooted = SceneFlow.BootedThroughSplash;
+        }
+
+        private bool _savedChoiceMade;
+        private bool _savedBooted;
+
         [UnityTearDown]
         public IEnumerator TearDown()
         {
+            var settings = Settings.SettingsStore.Current;
+            if (settings != null) settings.AccountChoiceMade = _savedChoiceMade;
+
+            // ⚠️⚠️ RESTORED IN TEARDOWN AND NOT AT THE END OF THE CASE, BECAUSE A FAILING CASE
+            // NEVER REACHES ITS OWN LAST LINE. The boot case sets `BootedThroughSplash` to claim
+            // a launch; the first version put it back afterwards, that case failed on an
+            // unrelated assertion, and the flag stayed true for the remainder of the run.
+            // `UiClickProbe` and `SettingsWheelProbe` then went red with the boot screen over the
+            // settings panel, **three suites away from the actual fault, blaming shipped code
+            // that was fine**. `docs/TODO.md` § 91.5 is the same lesson about a static and its
+            // own suite; a teardown is the only place a restore is guaranteed to run.
+            SceneFlow.BootedThroughSplash = _savedBooted;
+
             foreach (var c in _canvases)
                 if (c != null) c.renderMode = RenderMode.ScreenSpaceOverlay;
             _canvases.Clear();
@@ -195,6 +228,113 @@ namespace TumbangPreso.PlayTests
         }
 
         /// <summary>
+        /// The boot account screen: it appears once, one press leaves it, and it never returns.
+        ///
+        /// ⚠️⚠️ THIS IS THE TEST THAT MAKES THE BOOT GATE ACCEPTABLE, AND WITHOUT IT THE FEATURE
+        /// SHOULD NOT SHIP. `FUTURE.md` PHASE 1's rule is *"never block a first-time player on a
+        /// form"* and `docs/TODO.md` § 92.3 called the boot behaviour the one thing that must not
+        /// move. 🧑 moved it, and the only reason both positions can be true is that **CONTINUE
+        /// AS GUEST is one press and needs no network.** That is a property, so it gets an
+        /// assertion rather than a paragraph.
+        ///
+        /// ⚠️⚠️ AND `GameServices.Account` IS NULL IN THIS PROBE, WHICH IS THE POINT RATHER THAN
+        /// A LIMITATION. It is the state of a machine that has never reached the service: no
+        /// account, no session, nothing to await. **If CONTINUE AS GUEST ever needs an account to
+        /// work, this case goes red**, which is exactly the regression worth catching, because
+        /// the venue at the nationals has no internet and this screen is now in front of the game.
+        ///
+        /// ⚠️ IT ASSERTS THE SECOND INSTALL TOO. A gate that reopens every launch is a nag, and
+        /// the difference between "once" and "every time" is one setting nobody would notice was
+        /// wrong until a player complained.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator TheBootAccountScreenIsOfferedOnceAndOnePressLeavesIt()
+        {
+            var report = new StringBuilder();
+            var settings = Settings.SettingsStore.Current;
+            Assert.IsNotNull(settings, "there are no settings to record the choice in");
+
+            settings.AccountChoiceMade = false;
+
+            // ⚠️ THE PROBE HAS TO CLAIM A BOOT, because the gate is `SceneFlow.BootedThroughSplash`
+            // and this case did not come through the splash. Setting it here is the difference
+            // between testing the feature and testing the guard that stops it firing everywhere
+            // else; `Boot` below leaves it alone and relies on the flag instead.
+            SceneFlow.BootedThroughSplash = true;
+
+            _host = new GameObject("BootProbeHost");
+            var nameplate = _host.AddComponent<PlayerNameplate>();
+            nameplate.Install();
+            yield return null;
+            yield return null;
+
+            var signIn = _host.GetComponent<SignInScreen>();
+            Assert.IsNotNull(signIn, "the nameplate did not install a sign-in screen");
+
+            // ⚠️ `SignInRoot`, NOT `SignInCanvas`. `Close` deactivates the ROOT and leaves the
+            // canvas alone, so asserting on the canvas asks whether the screen exists rather than
+            // whether it is showing, and it answers yes for ever. The first version of this case
+            // reported "one press did not leave the screen" against a press that worked.
+            var canvas = Root("SignInRoot");
+            Assert.IsNotNull(canvas, "the sign-in screen built no root");
+            Assert.IsTrue(canvas.gameObject.activeInHierarchy,
+                "a machine that has never answered the account question reached the menu without " +
+                "being asked. GameSettings.AccountChoiceMade is what gates this.");
+
+            // ⚠️ THE CAPTION IS ASSERTED, NOT JUST THE BUTTON. At boot the same control means
+            // "keep the account you already have"; from the ACCOUNT tab it means the TOURNAMENT
+            // guest, which parks the owner's profile. Two behaviours behind one word is the
+            // confusion this screen was rebuilt to remove.
+            var guest = ButtonReading(canvas, "CONTINUE AS GUEST");
+            Assert.IsNotNull(guest,
+                "there is no CONTINUE AS GUEST on the boot screen. It is the one press that " +
+                "makes a boot gate acceptable rather than a wall.");
+
+            // ⚠️ HIDDEN, NOT ABSENT. The button is built once and its caption and visibility
+            // change with the mode, so `GetComponentsInChildren<Button>(true)` finds it either
+            // way. The first version of this assertion looked for absence and failed against
+            // code that was correct, which is a test reporting its own wrong question.
+            var back = ButtonReading(canvas, "BACK");
+            Assert.IsFalse(back != null && back.gameObject.activeInHierarchy,
+                "the boot screen shows BACK, which at boot dismisses to nothing at all");
+
+            guest.onClick.Invoke();
+            yield return null;
+
+            Assert.IsFalse(canvas.gameObject.activeInHierarchy,
+                "one press of CONTINUE AS GUEST did not leave the screen");
+            Assert.IsTrue(settings.AccountChoiceMade,
+                "the answer was not recorded, so the screen would ask again on the next launch");
+
+            // The second boot: a fresh nameplate on a machine that has now answered.
+            Object.DestroyImmediate(_host);
+            _host = new GameObject("BootProbeHostAgain");
+            _host.AddComponent<PlayerNameplate>().Install();
+            yield return null;
+            yield return null;
+
+            var second = Root("SignInRoot");
+            Assert.IsFalse(second != null && second.gameObject.activeInHierarchy,
+                "the account screen opened again after it had been answered, which is a nag " +
+                "rather than a choice");
+
+            report.AppendLine("boot screen offered once, one press left it, second boot silent");
+            Write("boot-account", report);
+        }
+
+        /// <summary>The first button under `root` whose label reads exactly `label`, or null.</summary>
+        private static Button ButtonReading(Transform root, string label)
+        {
+            foreach (var button in root.GetComponentsInChildren<Button>(true))
+            {
+                var text = button.GetComponentInChildren<Text>(true);
+                if (text != null && text.text == label) return button;
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Photographs every screen at 1920x1080 and writes them to `Logs/ui/`.
         ///
         /// ⚠️⚠️ `CLAUDE.md` § 6.1: SHOW, DO NOT DESCRIBE. A UI change with no render attached
@@ -216,6 +356,21 @@ namespace TumbangPreso.PlayTests
         public IEnumerator PhotographEveryScreen()
         {
             var report = new StringBuilder();
+
+            // ⚠️⚠️ THE PICTURE IS TAKEN OVER THE MENU, BECAUSE THE HUB IS A 93 PER CENT SCRIM
+            // AND A SCRIM IS ONLY AS HONEST AS WHAT IS BEHIND IT. These shots used to be taken
+            // in whatever scene the previous suite happened to leave loaded, and once the other
+            // probes started blanking the scene after themselves they were taken over an EMPTY
+            // one, which renders Unity's default blue-grey clear colour. 🧑, on the result:
+            // *"i lowk liked the light brown bg earlier fuck that blue shti"*. **Nothing about
+            // the screen had changed and the evidence said otherwise**, which is the worst thing
+            // a piece of evidence can do.
+            //
+            // ⚠️⚠️ AND IT IS NOT ONLY ABOUT THE COLOUR. `UiRows.Band` is 3.5 per cent white,
+            // measured against the live street specifically, and its own note says a number
+            // tuned against one background is not a number. Photographing the zebra over a flat
+            // clear colour measures it against a background the game never has.
+            yield return LoadTheMenu(report);
             yield return Boot(report);
 
             // ⚠️⚠️ EVERY OTHER CANVAS IS SWITCHED OFF BEFORE A SINGLE SHOT IS TAKEN. PlayMode
@@ -271,6 +426,32 @@ namespace TumbangPreso.PlayTests
             yield return Shoot("07-signin");
 
             Write("shots", report);
+
+            // ⚠️⚠️ THIS CASE IS THE ONLY ONE IN THE CLASS THAT LOADS A SCENE, SO IT IS THE ONLY
+            // ONE THAT HAS TO PUT ONE BACK. Cases run in name order, so `TheNameplate...` and
+            // `TheSignIn...` come after this one and would otherwise boot inside a MainMenu whose
+            // nameplate this case deleted and whose canvases it switched off. **The suite that
+            // changed the world is the one that has to restore it**, which is the same rule
+            // `MatchRecordIdentityProbe` and `PhaseSurfaceLayoutProbe` already follow.
+            yield return Blank();
+        }
+
+        /// <summary>Replaces every loaded scene with one empty one.</summary>
+        private static IEnumerator Blank()
+        {
+            var blank = SceneManager.CreateScene($"HubProbeBlank{Time.frameCount}");
+            SceneManager.SetActiveScene(blank);
+
+            for (int i = SceneManager.sceneCount - 1; i >= 0; i--)
+            {
+                var scene = SceneManager.GetSceneAt(i);
+                if (scene == blank || !scene.isLoaded) continue;
+
+                var unload = SceneManager.UnloadSceneAsync(scene);
+                while (unload != null && !unload.isDone) yield return null;
+            }
+
+            yield return null;
         }
 
         /// <summary>
@@ -385,16 +566,85 @@ namespace TumbangPreso.PlayTests
         // § THE HARNESS
         // -------------------------------------------------------------------
 
+        /// <summary>
+        /// Loads the title screen and removes its own nameplate, so `Boot` can build exactly one.
+        ///
+        /// ⚠️⚠️ THE MENU HAS A `PlayerNameplate` OF ITS OWN AND TWO OF THEM IS A BROKEN PROBE,
+        /// NOT A COSMETIC PROBLEM. `Find("Nameplate")` and `Root("PlayerHubCanvas")` both answer
+        /// by NAME, so with two live instances they can answer with the menu's, whose hub is
+        /// closed, and the probe then measures a screen nobody opened. That failure has already
+        /// happened once in this file's history and it reported "the PROFILE tab drew no labels
+        /// at all" about a tab that was fine.
+        ///
+        /// ⚠️ THE MENU'S OWN CANVASES ARE LEFT ALONE HERE and switched off by
+        /// `PhotographEveryScreen`'s existing filter, so what survives behind the scrim is the
+        /// lit street and not PLAY / SETTINGS / TUTORIAL / QUIT. That is what a player sees with
+        /// the hub open, because the hub covers the menu.
+        /// </summary>
+        private static IEnumerator LoadTheMenu(StringBuilder report)
+        {
+            var load = SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Single);
+            while (load != null && !load.isDone) yield return null;
+            for (int i = 0; i < 30; i++) yield return null;
+
+            int removed = 0;
+            foreach (var plate in Object.FindObjectsByType<PlayerNameplate>(
+                         FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                Object.DestroyImmediate(plate.gameObject);
+                removed++;
+            }
+
+            yield return null;
+            report.AppendLine($"loaded MainMenu, removed {removed} pre-existing nameplate(s)");
+        }
+
         private IEnumerator Boot(StringBuilder report)
         {
             _host = new GameObject("HubProbeHost");
+
+            // ⚠️⚠️ THE BOOT ACCOUNT SCREEN IS SWITCHED OFF FOR EVERY CASE EXCEPT ITS OWN, AND
+            // WITHOUT THIS EVERY OTHER CASE IN THIS FILE FAILS. `PlayerNameplate.Install` now
+            // opens `SignInScreen` when `AccountChoiceMade` is false, and `SignInScreen.Opened`
+            // hides the hub root, so a probe that measures hub tabs would be measuring a hidden
+            // screen and reporting "drew no labels". ⚠️ The flag is FALSE on this machine because
+            // it is absent from the real `settings.json`, which is exactly the state a first-time
+            // player is in, so this is not a hypothetical.
+            var settings = Settings.SettingsStore.Current;
+            if (settings != null) settings.AccountChoiceMade = true;
 
             var nameplate = _host.AddComponent<PlayerNameplate>();
             nameplate.Install();
             yield return null;
 
-            _camera = new GameObject("ProbeCamera", typeof(Camera)).GetComponent<Camera>();
-            _camera.transform.SetParent(_host.transform, false);
+            // ⚠️ THE SCENE'S OWN CAMERA IF THERE IS ONE, so a shot taken over the menu renders
+            // the street the menu is looking at. A bare probe camera at the origin renders the
+            // clear colour and nothing else, which is correct for the three assertion cases
+            // below (they run in an empty scene and only measure rects) and is exactly wrong for
+            // a picture.
+            // ⚠️ `Camera.main` NEEDS THE `MainCamera` TAG AND THE MENU'S IS NOT NECESSARILY
+            // TAGGED. The first version used `Camera.main` alone, found null in `MainMenu`, built
+            // a bare camera at the origin, and photographed the hub over an empty clear colour
+            // again: the fix for the blue background produced a black one. Falling back to any
+            // camera in the scene before building one is what actually renders the street.
+            _camera = Camera.main;
+
+            if (_camera == null)
+                foreach (var cam in Object.FindObjectsByType<Camera>(FindObjectsInactive.Exclude,
+                                                                     FindObjectsSortMode.None))
+                {
+                    if (cam == null || cam.targetTexture != null) continue;
+                    _camera = cam;
+                    break;
+                }
+
+            if (_camera == null)
+            {
+                _camera = new GameObject("ProbeCamera", typeof(Camera)).GetComponent<Camera>();
+                _camera.transform.SetParent(_host.transform, false);
+            }
+
+            report.AppendLine($"camera: {_camera.name}");
 
             // ⚠️ THE SAME TRICK `AspectRatioProbes` USES, AND IT IS THE ONLY ONE THAT WORKS IN
             // BATCH MODE: `Screen.SetResolution` does nothing to an offscreen run, so the canvas

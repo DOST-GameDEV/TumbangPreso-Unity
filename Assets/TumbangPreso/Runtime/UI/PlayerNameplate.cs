@@ -100,6 +100,8 @@ namespace TumbangPreso.UI
             _overlays = UnityEngine.Object.FindObjectsByType<ConvertedOverlay>(
                 FindObjectsInactive.Include, FindObjectsSortMode.None);
 
+            OfferTheAccountChoiceOnce();
+
             // ⚠️ TOP LEFT, WHICH IS WHERE THE MENU HAS ROOM. The title art and the pennant column
             // own the left-centre and the bottom, and the version stamp owns the bottom right.
             // This is measured against the shipped menu rather than picked: the two buttons it
@@ -201,6 +203,42 @@ namespace TumbangPreso.UI
         /// retire it the first frame the menu drew, whether or not anybody looked. It is spent
         /// when the player acts on it.
         /// </summary>
+        /// <summary>
+        /// Shows the account screen the first time this machine reaches the menu, and never again.
+        ///
+        /// ⚠️⚠️ IT LIVES HERE BECAUSE THIS IS ALREADY THE ONE ENTRY POINT. `ConvertedMainMenu`
+        /// installs the nameplate, the nameplate installs the hub and the hub installs the
+        /// sign-in screen, and § 92.4's whole argument is that a screen must never again grow a
+        /// door nothing knows about. Opening it from the menu instead would be a second opener
+        /// for a screen that already has an owner.
+        ///
+        /// ⚠️⚠️ AND IT IS GATED ON A SETTING RATHER THAN ON "HAS NO PASSWORD", WHICH IS THE TRAP
+        /// IN THIS FEATURE. Keying it off the account state would show the screen on every launch
+        /// to every player who chose to stay a guest, which is the same nag PUBG's is not, and it
+        /// would make CONTINUE AS GUEST a button that does nothing lasting.
+        /// `GameSettings.AccountChoiceMade` records the ANSWER, not the outcome.
+        ///
+        /// ⚠️ IT IS SILENT IF THE SCREEN IS NOT THERE. A boot path that throws because a screen
+        /// failed to build is worse than a boot path that skips a question.
+        /// </summary>
+        private void OfferTheAccountChoiceOnce()
+        {
+            // ⚠️⚠️ A SCENE LOAD IS NOT A BOOT, AND GATING ON THE NAMEPLATE ALONE BLOCKED THE
+            // WHOLE SETTINGS PANEL. `SceneFlow.BootedThroughSplash` carries the full note: the
+            // menu is reached from the splash, from `LeaveMatchToMainMenu` and from any probe
+            // that loads it by name, and only the first has a first-time player behind it.
+            if (!SceneFlow.BootedThroughSplash) return;
+
+            var settings = Settings.SettingsStore.Current;
+            if (settings == null || settings.AccountChoiceMade) return;
+            if (_hub == null) return;
+
+            var signIn = _hub.GetComponent<SignInScreen>();
+            if (signIn == null) return;
+
+            signIn.OpenAtBoot();
+        }
+
         private void Press()
         {
             var account = GameServices.Account;

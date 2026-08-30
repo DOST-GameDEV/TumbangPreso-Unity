@@ -191,6 +191,27 @@ namespace TumbangPreso.UI
         /// <summary>True when the next match is networked rather than against bots.</summary>
         public static bool Networked;
 
+        /// <summary>
+        /// True once the splash screen has handed over to the menu in this process.
+        ///
+        /// ⚠️⚠️ IT EXISTS SO THE BOOT ACCOUNT SCREEN CAN TELL A LAUNCH FROM A SCENE LOAD, AND
+        /// THE DIFFERENCE COST A RED PROBE TO LEARN. `PlayerNameplate.OfferTheAccountChoiceOnce`
+        /// was gated on nothing but a nameplate being installed, and a nameplate is installed by
+        /// every path that shows the menu: `UiClickProbe.EveryButtonIsReachable` came back with
+        /// **every settings control blocked by `SignInCanvas`**, because the question opened over
+        /// a menu a probe had loaded directly and nothing was ever going to answer it.
+        ///
+        /// ⚠️ THE MENU IS REACHED THREE WAYS and only one of them is a launch: from the splash,
+        /// from `LeaveMatchToMainMenu`, and from a test loading it by name. A first-time player is
+        /// only behind the first.
+        ///
+        /// ⚠️ IT IS NOT SAVED AND MUST NOT BE. It answers "did THIS process boot", which is a
+        /// fact about the session; whether the player has ANSWERED is
+        /// `GameSettings.AccountChoiceMade`, which is a fact about the machine. Two different
+        /// questions, and collapsing them would either nag every launch or ask nobody.
+        /// </summary>
+        public static bool BootedThroughSplash;
+
         public static void Go(string scene)
         {
             if (string.IsNullOrEmpty(scene))

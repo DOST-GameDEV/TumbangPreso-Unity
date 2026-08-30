@@ -1560,9 +1560,14 @@ picture asks whether the screen is a screen, and it found a blank one the probe 
   tab. A dismissible nameplate badge would be better and is not built.
 - **No avatar.** `FUTURE.md` 1.4 is still an open argument nobody has answered, so the nameplate
   portrait is an empty slot rather than a guess.
-- **The per-match detail scoreboard is not in the MATCHES tab yet.** `ProfileOverlay` had a popup
-  showing the four-player breakdown of one record and the rows here are not yet clickable. The
-  data is all in `CareerStore.History`.
+- ✅ ~~**The per-match detail scoreboard is not in the MATCHES tab yet.**~~ **CORRECTED
+  2026-08-30: IT SHIPPED IN THE SAME COMMIT THIS ENTRY IS PART OF, AND THIS BULLET WAS STALE THE
+  DAY IT WAS WRITTEN.** `PlayerHub.BuildMatchesTab` wires every row through
+  `UiRows.RowButton(..., () => OpenDetail(captured))`, `BuildDetail` builds the panel and
+  `OpenDetail` fills it with the four-player breakdown as one monospaced block. ⚠️ **Found by
+  walking the deferred list against the code rather than by reading the list**, which is
+  `FUTURE.md` § 0.5 rule 2 doing its job on this file's own "not done" section. A deferred list
+  nobody re-checks becomes a list of things that get rebuilt.
 
 ---
 
@@ -1598,6 +1603,11 @@ rather than of a rounding error, so the shape fits that cause exactly.
 2. **Whether it is timing-sensitive.** `CLAUDE.md` § 7 records `AiDiagnosticProbe` failing at
    21.6 s, 29.9 s and 37.6 s against one bound on an unchanged build. Run it three times before
    believing one number, per § 16's arithmetic.
+   ⚠️ **UPDATE 2026-08-30, AND IT ARGUES AGAINST TIMING:** a second full sweep measured
+   **0.092 m** where the first measured **0.084 m**, both against 0.05 m. Two samples 1.7x and
+   1.8x over the bound is not the shape of a flake, and both sit close to one frame of arm swing,
+   which is the cause the test's own message names. **Question 2 is close to answered; question 1
+   is not, and is still the one to spend a bisect on.**
 
 ⚠️ **DO NOT WIDEN THE BOUND TO MAKE IT PASS.** 0.05 m is a fifth of a hand and the whole point
 of the test; `BotBehaviourProbe`'s header has the standing rule about this and it applies here.
@@ -1748,6 +1758,9 @@ profile back through `load`, and asserts the XP moved by exactly `ProgressionRul
 - ⚠️⚠️ **THE MATCH ID IS UNIQUE PER RUN.** `applyRecord` refuses an id it has already counted and
   answers `applied:false` with a **200**, which is a success. A fixed id would pass this test on
   its second run by counting nothing, and the delta would be zero against an expectation of zero.
+  ✅ **Demonstrated across two runs on one profile: `0 -> 215`, then `215 -> 430`.** The second run
+  paid again rather than being swallowed, which is what proves the unique id is doing its job and
+  that the idempotency guard is not quietly eating a real submission.
 - ⚠️⚠️ **`applied:true` IS ASSERTED BEFORE THE DELTA**, because they are different failures:
   `applied:false` means refused or replayed, a wrong delta on `applied:true` means
   `ProgressionRules.cs` and the `matchXp` copy in `match-record.js` have drifted. Reading only the
@@ -1804,8 +1817,15 @@ lesson is written down and is exactly this shape one layer up: *"`ugs cloud-code
 you what is deployed, and a green probe against `load` cannot either**, because `load` is the one
 branch the old copy still served correctly.
 
-**Fixed by `ugs deploy ugs/cloud-code`**, which republished all three scripts.
-`datePublished` is now `2026-08-30T11:18:03` and the same probe reads:
+**Fixed by `ugs deploy ugs/cloud-code`.** ⚠️ **It reported all three files as "Updated" and only
+`match-record` actually got a new version**, which is worth knowing before reading that output as
+proof of anything: `player-account` still reads `datePublished 2026-08-30T01:15:52` and
+`telemetry` `02:20:01`, because their deployed copies were already byte-identical to the
+repository's. **The CLI's summary lists what it considered, not what it changed.** The thing that
+tells you what the service holds is `ugs cloud-code scripts get <name>`, and the thing that tells
+you whether it WORKS is the Ugs probe category.
+
+`match-record`'s `datePublished` is now `2026-08-30T11:18:03` and the same probe reads:
 
 ```
 [CloudEndpointActionProbe] match-record submit paid 215 XP, 0 -> 215,
@@ -1963,7 +1983,7 @@ cable physically out, and none can be automated from a process that shares this 
 | **Rename cooldown and profanity filter** | `FUTURE.md` § 1.3 specifies both and neither is built. A name can be changed as often as the player likes and is checked only against `AccountRules`' character class. |
 | **Email recovery** | § 1.2. Email is stored as an optional field and does nothing. ⚠️ Its § 1.5 age note is the reason to leave it that way rather than to finish it casually. |
 | **Username and password sign-in, tested** | The provider is added on the project and `SignInScreen` drives it, and **no automated test touches it**, because exercising it creates a real credentialed account on the live project. It is on the by-hand list. |
-| **The per-match detail scoreboard in MATCHES** | § 92.8. The rows are not clickable yet and the data is all in `CareerStore.History`. |
+| ~~The per-match detail scoreboard in MATCHES~~ | ✅ **NOT DEFERRED. It shipped and § 92.8 was stale.** The rows go through `UiRows.RowButton` into `OpenDetail`. Corrected 2026-08-30. |
 | **The upgrade offer as a toast** | § 92.8. It is a row on ACCOUNT; a dismissible nameplate badge would be better. |
 | **A career authored offline before a first sign-in** | ⚠️ **This is a decision, not an omission.** The local career already resets when the account id changes (`[Career] the cached career belongs to another account`), so re-stamping such records onto the new id would contradict that. § 94.1's drop path names each abandoned match in the log. |
 
@@ -2070,23 +2090,111 @@ one.**
   `SettingsWheelProbe.TheWheelScrollsTheSettingsListFromEveryPartOfIt` catching a new always-on
   chrome element covering the corner of every panel on a screen it had nothing to do with. This
   change edits the same shared row kit, so they are the regression that matters.
-- ⚠️⚠️ **THE FULL `-testCategory "!WallClock"` SWEEP HUNG AND WAS KILLED, AND IT IS NOT KNOWN
-  WHETHER THIS BRANCH CAUSED IT.** It stopped at `Begin MonoManager ReloadAssembly` with **no
-  further log output and no `.xml` for eighteen minutes**, against a suite that takes about 442 s
-  of test time. `CLAUDE.md` § 7 records this exact signature happening before. **It is the one
-  gate in § 0.5 rule 9 this entry cannot claim**, and the honest position is that the targeted set
-  above covers everything this branch touches while the full sweep covers things it does not.
-  ⚠️ **Re-run it before trusting the branch further**, and if it hangs again, bisect by running
-  the suites in halves rather than assuming the batchmode flake:
-
-  ```bash
-  "/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -projectPath . -testPlatform PlayMode -testCategory "!WallClock" -testResults Logs/play.xml -logFile Logs/play.log
-  ```
-
+- **Full PlayMode, `-testCategory "!WallClock"`: 117 cases, 116 passed, 556 s.** The one red is
+  § 93's `CarryTests`, at 0.092 m against a 0.05 m bound. 117 is 108 plus this entry's nine new
+  cases.
+- ⚠️⚠️ **AND THE HONEST PART: THAT SWEEP WAS KILLED TWICE BEFORE IT WAS ALLOWED TO FINISH, AND
+  BOTH TIMES THE DIAGNOSIS WAS WRONG.** It was called a hang because the log stopped growing for
+  eighteen minutes and no `.xml` appeared, and `CLAUDE.md` § 7 records a real batchmode hang with
+  that exact signature. **It was not hanging. It was inside `BotBehaviourProbe`**, which runs
+  three whole matches at a fixed step, logs almost nothing while it does, and accounts for 263 of
+  the 556 seconds on its own. A silent log is this suite's normal state for four minutes at a
+  stretch.
+  ⚠️ **THE CHECK THAT SETTLES IT COSTS ONE COMMAND AND WAS NOT RUN EITHER TIME:**
+  `grep -oE "TumbangPreso\.PlayTests\.[A-Za-z]+" Logs/play.log | sort -u | tail` names the suite
+  it is actually in. **Look at where it IS before concluding it is nowhere.** An entry claiming an
+  unproven gate was written and then had to be deleted, which is worse than waiting nine minutes.
 - ⚠️ **§ 93's `CarryTests` red is still red and is still not this work.** A held tsinelas drifting
-  0.084 m against a 0.05 m bound; nothing in this branch touches `Carrier`, the animator or
-  `LateUpdate`. Do not let it be absorbed into this entry.
+  **0.092 m** this run against a 0.05 m bound, up from the 0.084 m § 93 recorded; nothing in this
+  branch touches `Carrier`, the animator or `LateUpdate`. ⚠️ **Two samples, 0.084 and 0.092, are
+  now on record and both are well outside the bound**, which weakens § 93's open question 2 about
+  timing sensitivity: this does not look like a flake. Do not let it be absorbed into this entry,
+  and do not widen the bound.
 - **A clean Windows player is on the Desktop**, built after every gate above.
+
+---
+
+## 97 · The boot account screen, PUBG-shaped, with the guest escape ⚠️⚠️ 2026-08-31
+
+🧑: *"does sign up page show up first thing when someonne opens thhe game or what"*, then
+*"i want this like pubg but they have ann option to continue right as a guest"*.
+
+⚠️⚠️ **THIS REVERSES § 92.3, WHICH CALLED THE BOOT BEHAVIOUR "THE ONE THING THAT MUST NOT
+MOVE".** It is reversed by the person whose game it is, and the reversal is narrower than it
+looks, which is why both positions can be true.
+
+**What § 92.3 refused and what this is are not the same object.** What it refused was
+`AccountOverlay.Install` ending with `if (account.ShouldOfferUpgrade) OpenOffer()`: **a panel with
+six fields and a password box, appearing unasked, over the menu, to a player who had just earned
+something.** What PUBG Mobile actually does, and what this is, is one screen asking one question
+with a one-press escape sitting on it. **The escape is the entire argument.**
+
+⚠️⚠️ **AND THE ESCAPE IS THE THING THAT MUST NEVER DEGRADE, SO IT HAS AN ASSERTION RATHER THAN A
+PARAGRAPH.** `PlayerHubLayoutProbe.TheBootAccountScreenIsOfferedOnceAndOnePressLeavesIt` runs with
+`GameServices.Account` **null**, which is a machine that has never reached the service, and
+asserts that CONTINUE AS GUEST is present, that one press closes the screen, and that the answer
+is recorded. **If that button ever grows an `await` or needs an account, the case goes red.** The
+nationals are in General Santos City and the venue internet cannot be assumed; this screen is now
+in front of the game, so "works with the cable out" stopped being a nice property and became a
+release gate.
+
+**What shipped.**
+
+| Piece | What it does |
+|---|---|
+| `GameSettings.AccountChoiceMade` | Records the ANSWER, not the outcome. ⚠️ **Gating on "has no password" instead would show the screen on every launch to every player who chose to stay a guest**, which is the nag PUBG's screen is not, and would make CONTINUE AS GUEST a button that does nothing lasting. |
+| `SignInScreen.OpenAtBoot` | The same screen, opened on CREATE, with BACK hidden. ⚠️ **BACK at boot dismisses to nothing**, which is how a player gets stuck on a black frame. |
+| `SignInScreen.BootGuest` | Records the answer and closes. **It deliberately does NOT call `SignInAsGuest`.** |
+| `PlayerNameplate.OfferTheAccountChoiceOnce` | The opener, in the one place that already owns this chain. |
+
+⚠️⚠️ **THE OBVIOUS MISTAKE HERE WOULD HAVE BEEN REUSING `SignInAsGuest`, AND IT IS ALREADY ON
+THE SCREEN UNDER A SIMILAR NAME.** That method is the TOURNAMENT guest: it parks the owner's
+profile in `_primaryProfile` and `LeaveGuest` throws away what the guest earned. Running it at
+boot would have made every first-time player a temporary user of their own game and binned their
+first evening. **Two behaviours behind one word is what this screen was rebuilt to remove**, so
+the caption changes with the mode: PLAY AS GUEST from the ACCOUNT tab, **CONTINUE AS GUEST** at
+boot, and they are separate methods.
+
+⚠️ **THERE IS NOTHING FOR THE BOOT GUEST PATH TO DO, WHICH IS THE POINT.** `PlayerAccount` has
+already signed in anonymously behind the loading screen, or already fallen back to the local
+profile. "Continue as guest" is the player accepting the account they were given, so the only
+state that changes is that the game stops asking.
+
+⚠️ **EVERY EXISTING PLAYER SEES IT ONCE.** A `bool` absent from a saved `settings.json`
+deserialises to false, so the flag needs no migration and everybody who already has the game is
+asked on their next launch. That is correct: nobody has been asked yet.
+
+### 97.1 · ⚠️⚠️ A SCENE LOAD IS NOT A BOOT, AND GATING ON THE NAMEPLATE ALONE BLOCKED THE WHOLE SETTINGS PANEL
+
+**The first version opened the screen from `PlayerNameplate.Install` and nothing else.** A
+nameplate is installed by every path that shows the menu, so
+`UiClickProbe.EveryButtonIsReachable` came back with **every settings control on the title screen
+"blocked by MainMenuCanvas/SignInCanvas/SignInRoot/Column/Label"**: the boot question had opened
+over a menu a probe loaded directly, and nothing in that probe was ever going to answer it.
+
+⚠️⚠️ **THIS IS THE THIRD TIME THAT PROBE HAS CAUGHT NEW MENU CHROME COVERING SOMETHING, AND THE
+SECOND TIME IN TWO DAYS.** § 92.7 records it finding the nameplate itself blocking eight settings
+controls and swallowing the mouse wheel. **A full-screen thing added to the title screen is the
+single most reliable way to break a screen it has nothing to do with**, and the only reason it
+keeps getting caught is that the probe asserts reachability rather than existence.
+
+**The fix is `SceneFlow.BootedThroughSplash`**, set by `SplashScreen` the moment it hands over.
+The menu is reached three ways and only one of them is a launch: from the splash, from
+`LeaveMatchToMainMenu`, and from a test loading it by name.
+
+⚠️ **IT IS A SESSION FACT AND `AccountChoiceMade` IS A MACHINE FACT, AND THEY MUST NOT BE
+COLLAPSED INTO ONE.** "Did this process boot" is not "has this player answered". One flag doing
+both would either ask on every scene load or ask nobody.
+
+⚠️ **AND THE PROBE THAT TESTS THE FEATURE HAS TO CLAIM A BOOT**, which is the honest shape: the
+boot case sets `BootedThroughSplash` and restores it, and every other case relies on the guard.
+A test that could not tell the two apart would be testing neither.
+
+**Not done:** the screen is the existing `SignInScreen` layout, a narrow column beside the scrim.
+PUBG's has the key art behind it, and now that `splash_art.png` is in `Resources` (§ 95c) putting
+it behind this column is cheap and would make the first screen of the game the art rather than a
+form. **Left out on purpose** because it is a look change and this entry is a flow change; do it
+against a render, per `FUTURE.md` § 0.5b.
 
 ---
 
@@ -2129,41 +2237,101 @@ press, or watch one launch.
 
 ---
 
-## 95 · OPEN: a label on the settings panel overflows its box at 720p ⚠️
+## 95 · ✅ CLOSED: the four title-screen buttons overflowed their own artwork at 720p
 
-**Found 2026-08-30 by `PhaseSurfaceLayoutProbe` while it was still measuring the whole settings
-canvas, before it was scoped to its own surface.** Recorded rather than fixed, per `CLAUDE.md`
-§ 2.3, because it is not a Phase 1 to 4 surface and § 94 is a quality-control pass with a stated
-boundary.
+⚠️⚠️ **THIS ENTRY WAS FILED AGAINST THE WRONG SCREEN AND THE CORRECTION IS THE INTERESTING
+PART.** It read "a label on the settings panel", because the probe reached the panel with
+`panel.GetComponentInParent<Canvas>(true)` and that resolves to **`MainMenuCanvas`**: the settings
+panel is a child of the menu's canvas, so "the settings canvas" was the whole title screen.
+**A scope described in prose is not a scope.** The permanent overflow dump added to
+`PhaseSurfaceLayoutProbe` names the full transform path, and the answer was not the settings panel
+at all:
 
 ```
-16:9 720p settings/telemetry: 'Caption' needs 330 px and was given 320.
+[PhaseSurfaceLayoutProbe] 1280x720 settings panel: 4 label(s) overflow
+  needs 330 in 320 at 141u  MainMenuCanvas/StartButton/Caption     "PLAY"
+  needs 414 in 401 at  99u  MainMenuCanvas/SettingsButton/Caption  "SETTINGS"
+  needs 455 in 374 at  99u  MainMenuCanvas/TutorialButton/Caption  "TUTORIAL"
+  needs 228 in 215 at  99u  MainMenuCanvas/QuitButton/Caption      "QUIT"
 ```
 
-**What is known.** At **1280x720**, in the `MainMenu` scene's settings panel, a legacy `Text`
-named `Caption` reports `preferredWidth` **330** inside a **320 px** rect with
-`horizontalOverflow = Overflow`. That is the silent class `MenuKit.Label` produces and that
-`PlayerHubLayoutProbe`'s header describes: **it does not wrap and does not shrink, it draws
-straight over whatever is beside it**, and nothing errors. Ten pixels is one or two characters, so
-the visible symptom is a word touching or overlapping the control to its right on the smallest
-shipped resolution only.
+**All four pennants on the first screen of the game, at the most common laptop resolution.**
+TUTORIAL is **22 per cent** over its box.
 
-**What is NOT known, and how to find it in one run.** Which row it belongs to. The probe now names
-the full transform path and the string on failure (`Where(label.transform)`), so pointing
-`Measure` at the whole settings canvas for one run prints it:
+**The cause.** `TscnUiImporter.ConfigureArrowButton` writes the `label_size` the `.tscn` authored,
+a fixed 99 to 141 units, and the caption's rect is anchor-stretched inside the pennant, so **the
+box shrinks with the canvas and the font does not.** A font size authored against one canvas width
+is not a font size. ⚠️ **And it is silent**: `MakeText` leaves `horizontalOverflow = Overflow`, so
+the word does not wrap and does not clip, it draws off the end of the pennant and over the tip of
+the artwork. Nothing errors. Same class as `MenuKit.Label`'s note, `GameVersion.ApplyTo` and
+`ConvertedScreen.SetHeadline`, on the screen every player sees first.
 
-```bash
-"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -projectPath . -testPlatform PlayMode -testFilter PhaseSurfaceLayoutProbe -testResults Logs/play-ui.xml -logFile Logs/play-ui.log
-```
+**The fix is in `ArrowButtonView.FitCaption`**, beside the pivot logic that already re-applies
+itself until the rect has a width. It restores the authored size and re-runs `MenuKit.Fit`
+whenever the box changes width, so a player who starts windowed and then maximises gets the big
+type back. ⚠️ **The restore is the half that is easy to leave out**, because `MenuKit.Fit` only
+ever shrinks, and without it the first small window a player opens costs them the type scale for
+the rest of the session.
 
-⚠️ **IT IS NOT THE DROPDOWN'S OWN CAPTION.** `SwatchDropdown` names that one `CaptionLabel`;
-this is `Caption`, which is a node the `.tscn` importer owns. **Check whether it is authored or
-imported before editing anything**, because a hand edit to an imported node disappears the next
-time `TscnImporter` rebakes it, which is the reason `BuildTelemetryRow` exists in code at all.
+⚠️ **WHY NO EXISTING PROBE SAW IT.** `AspectRatioProbes` drives this screen at all nine
+resolutions and asserts the font FLOOR and that things are on screen; it does not compare
+`preferredWidth` against the box. **A 141-unit label is a long way from the 18-unit floor and
+still does not fit.** The dump is permanent now and prints on every run of
+`PhaseSurfaceLayoutProbe`.
 
-**Done looks like:** the row is named, the caption is either widened or run through `MenuKit.Fit`
-like `LobbyChrome`'s toggle caption is, and `AspectRatioProbes` covers the settings panel at all
-nine resolutions so this class cannot come back.
+---
+
+## 95b · OPEN: nothing asserts that a menu label fits, only that it is legible ⚠️
+
+**Split out of § 95 rather than fixed with it, because the fix and the gate are different jobs.**
+`AspectRatioProbes.EveryShippedResolutionKeepsTheWholeAuthoredLayoutOnScreen` checks
+`fontSize >= MenuKit.MinReadableUnits` and that rects are inside the canvas. It does **not** check
+`preferredWidth <= rect.width`, which is the check that would have caught § 95 the day the
+pennants were imported.
+
+⚠️ **IT IS NOT A ONE-LINE ADDITION AND THAT IS WHY IT IS OPEN.** Turning the dump into an
+assertion across the whole title screen will surface every other authored label in the converted
+`.tscn` set at once, and some of those may be deliberate. **Run the dump first and read the list**,
+then decide per label, then assert. `PhaseSurfaceLayoutProbe.DumpOverflowing` is the tool and it
+already prints path, string, box, need and font size.
+
+**Done looks like:** `AspectRatioProbes` fails on an overflowing menu label, and every exception
+is named in code with a reason rather than being absent from the check.
+
+---
+
+## 95c · CLOSED: the loading screen was a black rectangle for most of the boot
+
+🧑 sent the key art on 2026-08-31: *"add this photo in loading screen"*, *"its the splash art for
+loading screenn"*. It lives at `Assets/TumbangPreso/Resources/UI/splash_art.png`, 1267x697.
+
+⚠️⚠️ **THE WINDOW IT FILLS IS THE LONGEST SINGLE STRETCH OF THE GAME A FIRST-TIME PLAYER SEES.**
+The studio sting is about half a second. The preload behind it **routinely runs past six seconds**
+and logs when it does (`[Splash] preload exceeded six seconds`). Everything after the sting was a
+black rectangle with three tansan dots on it.
+
+**What shipped.** `SplashScreen.BuildSplashArt` puts the art under the video, and the boot loop
+switches the video surface off the frame the sting ends so the art is revealed.
+
+- ⚠️⚠️ **SWITCHING THE SURFACE OFF IS THE HALF THAT IS EASY TO MISS.** A `VideoPlayer` that has
+  finished leaves its LAST FRAME in the render texture, so without it the `RawImage` above the art
+  keeps drawing a frozen studio logo for the entire remainder of the preload and the art is never
+  seen once. The bug would have been "I added the art and nothing changed".
+- ⚠️ **`RawImage` AND `Resources.Load<Texture2D>`, NOT A SPRITE.** A sprite needs the texture type
+  set on a `.meta` nobody edits by hand and that a re-import can reset; a `RawImage` draws a plain
+  `Texture2D` with whatever import settings the file arrived with. One less thing that can come
+  back as a magenta rectangle.
+- ⚠️ **IT COVERS, IT DOES NOT STRETCH.** The art is about 1.82:1 and the game ships at nine shapes
+  from 4:3 to 21:9. `AspectRatioFitter.EnvelopeParent` fills the window and crops the overflow;
+  `Stretch` would distort the whole cast on every shape that is not 1.82, which is eight of the
+  nine. The black `Backdrop` underneath already assumed a cover.
+- ⚠️ **A MISSING FILE IS SILENT.** `Resources.Load` answers null rather than throwing and the black
+  backdrop stands, with one warning. A boot screen is the worst place in the game to take an
+  exception.
+
+**Not done, deliberately.** The art is one file rather than a versioned series, because
+`CLAUDE.md` § 6.1's version-the-filename rule exists for model ITERATIONS being reviewed in chat
+and this is authored key art. If it is replaced, replace it in place and say so in the commit.
 
 ---
 

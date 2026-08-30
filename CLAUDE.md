@@ -291,6 +291,31 @@ describing a mesh in prose is the slowest possible way to be told it is wrong.
   Python changes the file on disk while Unity keeps the old one in memory; the render then
   shows geometry that is no longer there.
 
+### 6.2 Every screen gets designed, and the method is written down
+
+⚠️⚠️ **A FEATURE WITHOUT A SCREEN IS NOT SHIPPED, AND "I ADDED A ROW FOR IT" IS NOT A DESIGN.**
+🧑 has rejected the same screen twice for the same reason: *"theres liek 20 shits at once"*
+(`docs/TODO.md` § 92) and then *"its so messy and ugly"*, *"I js wannted u to imrpove hwo u put
+the text annd readability and visual hierarachy"* (§ 94.7). Both were built by the last person to
+touch the feature, at the end, without a method.
+
+**The method is [`docs/FUTURE.md`](docs/FUTURE.md) § 0.5b and it applies to ANY screen in this
+repository**, not only to the phases in that file. Five questions before you write it, four
+ordering tools in order (position, size, weight and colour, space), a table of what actually
+transfers from the games it copies, and the four things a screen owes before it is done.
+⚠️ **§ 0.5b's per-phase table answers "what is the one thing on this screen" for every remaining
+phase**, so no screen starts from a blank page.
+
+⚠️⚠️ **AND THE LINE WORTH REPEATING HERE: A GREEN LAYOUT PROBE IS NOT A GOOD SCREEN.**
+`PlayerHubLayoutProbe` and `PhaseSurfaceLayoutProbe` assert every label fits its box and clears
+the 18-unit floor. **Seven readability faults were true at once while both were green**, including
+a value drawn 1600 px from its label and an XP bar drawn underneath a button. **The probe asks
+whether the screen is a screen; the picture asks whether it can be read.** Take the picture.
+
+⚠️ **`UiRows` OR IT IS NOT A SETTINGS-SHAPED SCREEN.** Nothing in that file takes an offset,
+which is fault 3 of § 92.1 made impossible rather than fixed. A hand-written Y offset is a layout
+correct at exactly one panel height and one aspect ratio, and `AspectRatioProbes` drives nine.
+
 `docs/CANONICAL_RENDERING_PIPELINE.md` has the exact commands and five recorded pitfalls.
 ⚠️ **That document is written for Antigravity and its "MANDATE FOR ALL AGENTS" heading is that
 tool's, not this one's.** Its render pipeline is correct and worth following; where anything

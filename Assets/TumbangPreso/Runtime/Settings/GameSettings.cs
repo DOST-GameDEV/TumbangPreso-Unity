@@ -58,6 +58,29 @@ namespace TumbangPreso.Settings
         public bool AccountUpgradeOfferPending = false;
         public bool AccountUpgradeOfferShown = false;
 
+        /// <summary>
+        /// Whether this machine has ever answered the boot account screen.
+        ///
+        /// ⚠️⚠️ IT IS WHY THE SCREEN IS SHOWN ONCE AND NEVER AGAIN, AND IT REVERSES A RULE THAT
+        /// WAS WRITTEN DOWN TWICE. `FUTURE.md` PHASE 1 says *"never block a first-time player on
+        /// a form"* and `docs/TODO.md` § 92.3 calls the boot behaviour *"the one thing that must
+        /// not move"*. 🧑 moved it, 2026-08-31: *"i want this like pubg but they have ann option
+        /// to continue right as a guest"*.
+        ///
+        /// ⚠️ THE OLD RULE WAS ABOUT A FORM AND THIS IS A CHOICE, WHICH IS THE DISTINCTION THAT
+        /// MAKES BOTH TRUE. What § 92.3 refused was a panel with six fields and a password box
+        /// appearing unasked; what PUBG Mobile actually does, and what this is, is one screen
+        /// asking one question with a one-press escape on it. **The escape is the whole
+        /// argument**: if CONTINUE AS GUEST is ever not one press, or ever needs the network,
+        /// this has become the thing the old rule was protecting against.
+        ///
+        /// ⚠️⚠️ AND IT MUST DEFAULT TO FALSE FOR EVERY EXISTING PLAYER, WHICH IS FREE HERE AND
+        /// WOULD NOT BE IF IT WERE INVERTED. A `bool` absent from a saved `settings.json`
+        /// deserialises to false, so everybody who already has the game sees the screen once on
+        /// the next launch. That is correct: they have never been asked.
+        /// </summary>
+        public bool AccountChoiceMade = false;
+
         // -------------------------------------------------------------------
         // TELEMETRY. `docs/TODO.md` § 90.3.
         // -------------------------------------------------------------------

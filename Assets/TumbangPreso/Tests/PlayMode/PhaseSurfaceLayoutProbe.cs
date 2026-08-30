@@ -300,6 +300,20 @@ namespace TumbangPreso.PlayTests
             _camera = new GameObject("ProbeCamera", typeof(Camera)).GetComponent<Camera>();
             yield return Drive(canvas.transform);
 
+            // ⚠️⚠️ THE WHOLE PANEL IS DUMPED AT THE NARROWEST SHAPE AND NOTHING IS ASSERTED ON
+            // IT. `docs/TODO.md` § 95 is a label named `Caption` needing 330 px in a 320 px box at
+            // 1280x720, found while this probe was briefly measuring the whole settings canvas and
+            // then lost when it was correctly scoped to its own surface. **A finding with no
+            // repro is a finding somebody has to re-find**, so the repro is now permanent: every
+            // overflowing label on this panel is written to the log with its full path and its
+            // string, on every run, and none of it can fail this test.
+            //
+            // ⚠️ IT MUST NOT BECOME AN ASSERTION HERE. The rest of the settings panel belongs to
+            // `AspectRatioProbes`, and a probe that fails naming another screen's fault sends the
+            // next reader to the wrong file, which § 92.6 already paid for once.
+            yield return Resize(1280, 720);
+            DumpOverflowing(canvas.transform, "1280x720 settings panel");
+
             // ⚠️⚠️ "IS IT ON SCREEN" IS THE WRONG QUESTION FOR THIS ROW AND THE FIRST RUN ASKED
             // IT ANYWAY. The settings panel is a SCROLL LIST, and the telemetry row sits well
             // down it: at 1280x720 it is 237 px below the fold, which is not a fault, it is what
@@ -447,6 +461,35 @@ namespace TumbangPreso.PlayTests
                                                                    FindObjectsSortMode.None))
                 if (t.name == name) return t;
             return null;
+        }
+
+        /// <summary>
+        /// Logs every label under `root` that does not fit, without asserting on any of them.
+        /// See the call site for why this is evidence rather than a gate.
+        /// </summary>
+        private static void DumpOverflowing(Transform root, string what)
+        {
+            var report = new StringBuilder();
+            int overflowing = 0;
+
+            foreach (var label in root.GetComponentsInChildren<Text>(false))
+            {
+                if (label == null || string.IsNullOrWhiteSpace(label.text)) continue;
+                if (label.horizontalOverflow != HorizontalWrapMode.Overflow) continue;
+
+                float box = label.rectTransform.rect.width;
+                if (box <= 1.0f || label.preferredWidth <= box + 1.0f) continue;
+
+                overflowing++;
+                report.AppendLine(
+                    $"  needs {label.preferredWidth:0} in {box:0} at {label.fontSize}u  " +
+                    $"{Where(label.transform)}  \"{label.text}\"");
+            }
+
+            Debug.Log(overflowing == 0
+                ? $"[PhaseSurfaceLayoutProbe] {what}: no label overflows its box"
+                : $"[PhaseSurfaceLayoutProbe] {what}: {overflowing} label(s) overflow, " +
+                  $"docs/TODO.md § 95\n{report}");
         }
 
         /// <summary>A readable path for a label, so a failure names the row rather than a
