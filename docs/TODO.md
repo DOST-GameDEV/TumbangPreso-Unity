@@ -23,6 +23,12 @@ Read § 89.3 before changing who submits a match record, and § 89.6 before chan
 corrects the fix § 88.1c prescribed) and telemetry (§ 90.3, whose event names are a contract that
 must not be renamed). ⚠️ `NetSession.ProtocolVersion` is **16**; both machines rebuild.
 Written 2026-08-31 on 🧑's brief.
+⚠⚠ **`profile-stats` IS THE ONLY LIVE BRANCH. BRANCH OFF IT.** Its parent `accounts` was
+fully merged into it (`f8b47d01`, contained in `profile-stats`) and was **deleted local and
+remote on 2026-08-30**, together with the stale local ref for a plans branch that had been gone
+on the remote for longer. 🧑 asked for both by name. Every commit either held is reachable
+from `profile-stats`; **neither is to be named again in a handoff, a document or a prompt.**
+`main` is 10 commits behind and is not the work.
 ✅ **§ 90.7 closes Phase 3's own last open item, the FPS distribution, so PHASES 1, 2 AND 3 HAVE
 NOTHING OPEN.** It also answers the half of § 17 that nothing in this repository could: a probe can
 force a machine to 50 fps, and only telemetry can say whether a real player is down there.
@@ -1091,8 +1097,10 @@ of everything else here.
   were checked, because § 90.5's whole lesson is that a deploy can drop the block silently and go
   on answering normally. The live copy contains `match_frame_rate`.
 
-⚠️⚠️ **WHAT IS NOT VERIFIED, AND IT IS ONE THING.** The session that wrote this ran out of usage
-before it could reach the live `Ugs` category, so:
+✅ **§ 90.9 CLOSES BOTH OF THE TWO THINGS THIS ENTRY LEFT UNMEASURED.** The paragraph below is
+kept as the record of what was outstanding and why it mattered; read § 90.9 for the numbers.
+
+**What was outstanding, as first written:**
 
 1. **`UgsServicesProbe.TheTelemetryEndpointAcceptsEveryColumnOfAFrameRateEvent` HAS NOT RUN**, so
    the `Ugs` category is 7/7 as § 90.6 left it rather than the 8/8 it should now be. It asserts
@@ -1109,6 +1117,30 @@ Unity.exe -batchmode -runTests -projectPath . -testPlatform PlayMode -testCatego
 ⚠️ **And there is no Windows player for this work on the Desktop.** The one sitting there is from
 § 90.6. `Checks.RunAll` has not been re-run either; nothing in this branch touches a scene, an
 audio cue or a map, so it is expected to be OK, but expected is not measured.
+
+---
+
+### 90.9 · ✅ The live endpoint proof § 90.8 was missing, measured 2026-08-30
+
+- **`Ugs` category 7/7 -> 8/8 against the live project**, read from `Logs/ugs.xml`
+  (`total="8" passed="8" failed="0"`, 20.9 s). The eighth is
+  `TheTelemetryEndpointAcceptsEveryColumnOfAFrameRateEvent` and the service answered
+  **`{"accepted":1,"funnel":{},"refused":0,"rolled":true}`**.
+  ⚠⚠ **`"refused":0` IS THE WHOLE POINT AND `"accepted":1` IS NOT.** A service running the
+  pre-`match_frame_rate` script would still have answered `accepted` for the batch and dropped the
+  event, because § 90.5's fault mode is a well-formed answer from the wrong shape rather than an
+  error. Refusing zero of eight columns is the statement that the deployed script knows the event
+  the core now sends, which no amount of reading either half of this repository can establish.
+  ⚠️ `"funnel":{}` again asserts the probe did not record a funnel step, per § 90.6: a funnel
+  step cannot be un-recorded, so a probe must never send one.
+- **Core 237/237** re-run at 290 ms, unchanged.
+- **All three `tools/` audits exit 0**, unchanged: 44 effect call sites with 0 ungated on another
+  body, 52 wire entry points with 0 unreachable, 55 named messages with 0 mismatched.
+- **`Checks.RunAll`** and **a clean Windows player on the Desktop**: see the handoff for this
+  session's run.
+
+⚠️ **Still not verified and still cannot be from this machine:** the unplugged four-player LAN
+run of § 90.4, which needs four rebuilt machines because `ProtocolVersion` is 16.
 
 ---
 

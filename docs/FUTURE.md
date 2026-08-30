@@ -1337,8 +1337,10 @@ one short session and it is cheaper than building a phase against a stale brief.
 > with clutch rate derived at read time exactly as check 4 says.
 >
 > **VERIFY FIRST. ⚠️ PHASE 1 IS NOT FULLY SHIPPED AND THIS PROMPT USED TO ASSUME IT WAS.**
-> The client half landed on branch `accounts` on 2026-08-31; the SERVICE half did not, and one of
-> the build steps below depends on it. Check all four before planning:
+> The client half landed at `f8b47d01` on 2026-08-31; the SERVICE half did not, and one of
+> the build steps below depends on it. Check all four before planning. ⚠️ **That commit was on a
+> branch that is now DELETED and folded into `profile-stats`**, which is the only live branch;
+> read it out of `profile-stats`, and do not go looking for a branch by name here.
 >
 > 1. `grep -rn "PlayerAccount" Assets` finds the service, and `AccountRules` is in
 >    `Packages/com.tumbangpreso.core/`. If not, Phase 1 has moved; read `docs/TODO.md` § 88 first.
