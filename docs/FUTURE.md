@@ -437,9 +437,15 @@ silently skipped, per § 0.5 rule 11:
 - **Queue times by rating band are not built**, because there is no queue and no rating; Phases 7
   and 9 own both. `first_queue` is the honest substitute for the funnel step: the first time
   somebody opens the MULTIPLAYER screen. ⚠️ Do not later read that step as a queue time.
-- **The FPS distribution is the one part still open.** The hardware key ships; the frame rate does
-  not, because a percentile over a whole session including menus and a loading screen describes
-  nothing. It wants a per-match sampler beside `HudPerformanceProbe`.
+- **The FPS distribution is ✅ SHIPPED 2026-08-30**, and `docs/TODO.md` § 90.7 is the entry. It is
+  the per-match sampler this bullet asked for: the window is `RoundActive`, so the splash, the
+  menu, character select, the gaps between rounds and the results board are all outside it, and it
+  is sampled on every peer rather than on the host, because a host-only frame rate is one machine's
+  number reported four times. It sends an average, a median, a 5 per cent low and a 1 per cent low,
+  and a band whose edges are `docs/TODO.md` § 17's cliff at 50 fps rather than round numbers.
+  ⚠️ **THE LOWS ARE THE POINT.** 990 frames at 60 fps and 10 at 10 averages 57.1: a match that
+  visibly stalls ten times in sixteen seconds, three frames off a perfect run. **Phase 3 has
+  nothing open.**
 
 **Do this alongside Phase 2, not at the end.** Every argument in phases 4 through 17 is settled
 faster with a week of real numbers than a week of opinions, and this codebase already believes

@@ -45,6 +45,14 @@ namespace TumbangPreso.Core
         public const string SettingsSnapshot = "settings_snapshot";
         public const string Disconnect = "disconnect";
 
+        // ⚠️ ADDED 2026-08-30, AT THE END, WHICH IS THE ONLY SAFE PLACE. `All` is compared
+        // against `telemetry.js` by content rather than order, but `Funnel` is compared by both
+        // and the two lists are read side by side; appending is the habit that keeps them
+        // readable together. This one is not a funnel step and must never become one: it is
+        // raised once per FINISHED match, and a funnel position is a thing an install passes
+        // exactly once, ever. `docs/TODO.md` § 90.3.
+        public const string MatchFrameRate = "match_frame_rate";
+
         public static readonly string[] Funnel =
         {
             FirstLaunch,
@@ -59,7 +67,7 @@ namespace TumbangPreso.Core
         {
             FirstLaunch, FirstSignIn, FirstMenu, FirstQueue, FirstMatchStarted, FirstMatchFinished,
             SessionStart, SessionEnd, MatchStarted, MatchFinished, MatchLeft,
-            Pick, SettingsSnapshot, Disconnect,
+            Pick, SettingsSnapshot, Disconnect, MatchFrameRate,
         };
     }
 

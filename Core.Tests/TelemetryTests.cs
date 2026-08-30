@@ -128,6 +128,11 @@ namespace TumbangPreso.Core.Tests
                 "mode", "map", "seats", "bots", "rounds", "seconds", "placement",
                 "character", "slipper", "round", "reason", "online",
                 "gpu", "cores", "ram_gb", "screen_w", "screen_h",
+
+                // ⚠️ `frames` PASSES BY ONE LETTER: the refused-fragment list holds `name`, which
+                // it does not contain. `frame_name` or `named_frames` would be stripped in
+                // silence, costing the column that says how big the frame-rate sample was.
+                "band", "fps_avg", "fps_p50", "fps_p5", "fps_p1", "frames",
             };
 
             foreach (string column in columns)

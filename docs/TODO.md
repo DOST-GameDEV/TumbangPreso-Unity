@@ -23,6 +23,12 @@ Read § 89.3 before changing who submits a match record, and § 89.6 before chan
 corrects the fix § 88.1c prescribed) and telemetry (§ 90.3, whose event names are a contract that
 must not be renamed). ⚠️ `NetSession.ProtocolVersion` is **16**; both machines rebuild.
 Written 2026-08-31 on 🧑's brief.
+✅ **§ 90.7 closes Phase 3's own last open item, the FPS distribution, so PHASES 1, 2 AND 3 HAVE
+NOTHING OPEN.** It also answers the half of § 17 that nothing in this repository could: a probe can
+force a machine to 50 fps, and only telemetry can say whether a real player is down there.
+⚠️ **`FUTURE.md` § 0.4's advice at this point is to stop and play it for a week** rather than start
+Phase 4, because every argument in phases 4 through 17 is settled faster with real numbers than
+with opinions, and as of today there are numbers to point at.
 
 ✅ **The unplugged LAN run is DONE, confirmed by 🧑 on 2026-08-31.** This entry read "what has
 never been tested is every screen between the menu and the match with UGS unreachable", and it was
@@ -710,6 +716,7 @@ the two lists ever differ, in content **or in order**.
 | `pick` | record adopted, this seat only, humans only | `mode`, `character`, `slipper` |
 | `settings_snapshot` | boot, and when sign-in settles | `gpu`, `cores`, `ram_gb`, `screen_w`, `screen_h`, `online` |
 | `disconnect` | `NetSession.OnClientDisconnected` | `reason` as one of `local`, `dropped`, `version`, `full`, `replaced`, `identity`, `other` |
+| `match_frame_rate` | record adopted, every peer | `mode`, `map`, `band`, `fps_avg`, `fps_p50`, `fps_p5`, `fps_p1`, `frames`. § 90.7 |
 
 ⚠️⚠️ **THE FUNNEL LIST IS ORDERED AND APPEND-ONLY, AND THE ORDER IS THE MEANING.** "How far did
 this player get" is an index comparison, so inserting a step in the middle silently rewrites what
@@ -774,10 +781,10 @@ erroring, and `report` says so. Read it with the `Ugs` probe, or by calling the 
   own both. `first_queue` is the honest substitute for the funnel step: the first time somebody
   opens the MULTIPLAYER screen, which is the first time they try to play with other people at all.
   ⚠️ **Do not later read that step as a queue time.**
-- **FPS distribution.** The hardware key (`gpu`, `cores`, `ram_gb`, screen size) ships; the frame
-  rate itself does not, because a percentile sampled over a whole session including menus and a
-  loading screen would describe nothing. It wants a per-match sampler, which is a small piece of
-  work and belongs beside `HudPerformanceProbe`. **Open, and the only part of Phase 3 that is.**
+- **FPS distribution.** ✅ **CLOSED 2026-08-30 by § 90.7**, which is the per-match sampler this
+  bullet asked for. The hardware key (`gpu`, `cores`, `ram_gb`, screen size) shipped with the rest
+  of Phase 3; the frame rate itself did not, because a percentile sampled over a whole session
+  including menus and a loading screen would describe nothing. **Phase 3 has nothing open.**
 
 ### 90.4 · The unplugged LAN run, per § 89.7
 
@@ -920,6 +927,188 @@ only the intended branch can produce.
 run. § 90.4 lists what is automated in its place and what to check when the four machines are on
 the table. **The protocol is 16, so every machine has to be rebuilt off this branch before that
 run means anything at all.**
+
+---
+
+### 90.7 · ✅ The FPS distribution, which was the last open part of Phase 3
+
+§ 90.3's final bullet asked for *"a per-match sampler, which is a small piece of work and belongs
+beside `HudPerformanceProbe`"*. That is what this is. **Phase 3 now has nothing open.**
+
+**⚠️⚠️ IT IS PER MATCH BECAUSE A PER-SESSION PERCENTILE DESCRIBES NOTHING, AND THAT IS WHY THIS
+WAS LEFT OUT RATHER THAN RUSHED.** A session is the splash, the menu, character select, a loading
+screen and then a match. On a short session those are most of the frames and none of the ones
+anybody cares about, and a menu renders at whatever it likes. A number that describes a menu is
+worse than no number, because somebody will quote it.
+
+**The window is `RoundDirector.RoundActive` and nothing else.** It is false through the scene
+load, the countdown, every gap between rounds and the whole results board, so none of those
+frames reach the sample. `MatchFrameRateProbe.ALiveRoundFillsTheSampleAndTheGapsBetweenRoundsDoNot`
+is that sentence as a test, and it is the assertion the probe exists for: everything else about
+this is arithmetic that `Core.Tests` settles in a millisecond.
+
+**⚠️⚠️ IT IS SAMPLED ON EVERY PEER, ABOVE `MatchStatsCollector`'S HOST GATE.** Every other number
+in that class is host-only for the reason `MatchDirector` gives about points, that a number in the
+match may only be created in one place. **A frame rate is not a number in the match.** It is a
+property of the machine reading it, `FUTURE.md` § 3 asks for the distribution ACROSS machines, and
+collected behind the gate it would be the host's frame rate reported once per peer: a
+plausible-looking answer to a question nobody asked. The telemetry match-started count already
+sits above that gate for the same reason.
+
+**⚠️ IT IS A HISTOGRAM, NOT A LIST OF FRAMES.** An eight-round Hero Strike set is about 43,000
+frames at 60 fps, which as a growing list is 170 KB reallocated through a dozen doublings while
+somebody is playing. `FrameRateHistogram` is 256 fixed buckets of 0.5 ms, so a frame costs one
+index and one increment and allocates nothing, forever. `HudPerformanceProbe` exists because a
+single HUD string rebuilt per frame already cost the 6x probe an eighth of its frames.
+⚠️ **The percentiles are therefore bucket-accurate rather than exact.** Half a bucket is 0.25 ms,
+so the worst error is **0.8 per cent at 30 fps, 1.5 at 60 and 3.6 at 144**: it grows with the
+frame rate because a fixed slice of TIME is a widening slice of RATE, and the resolution is spent
+where the band edges are rather than where the headline number is. The AVERAGE is exact anyway,
+because `Seconds` is a running sum of what was added rather than a walk over the buckets.
+
+**⚠️⚠️ THE LOWS ARE THE POINT AND THE AVERAGE IS NEARLY USELESS ON ITS OWN, WITH A NUMBER RATHER
+THAN AN OPINION.** 990 frames at 60 fps and 10 at 10 fps is a match that visibly stalls ten times
+over seventeen and a half seconds. **Its average is 57.1 fps**, under three frames a second off a
+perfect run, and its median is exactly 60.
+Only the 1 per cent low says 10. "The game feels bad on my laptop" is a stutter far more often
+than it is a low average, so `fps_p5` and `fps_p1` travel beside `fps_avg` and `fps_p50`.
+⚠️ `fps_p5` and `fps_p1` are the "5 per cent low" and the "1 per cent low", so they are the fifth
+and first percentiles of the RATE and the ninety-fifth and ninety-ninth of the FRAME TIME. Read
+from the wrong end every number still looks plausible and the stutter column reports the good
+frames, which is why the ordering between them is asserted in both the unit tests and the probe.
+
+**⚠️⚠️ THE BAND EDGES ARE § 17 AND THIS IS THE HALF OF § 17 NOTHING COULD ANSWER FROM HERE.**
+That entry measured the bots falling off a cliff when the frame step reaches the physics step: at
+1/60 s they throw 40 to 90 times a match and cast 27 to 38 skills, and at 0.02 s, which is
+**50 fps**, the same build threw 18 times and cast **nothing**. The shipped physics rate is 50 Hz,
+so a 50 Hz panel, vsync on a heavy scene or a laptop under load puts a real player in the row with
+zero casting in it, and § 17's step 1 is *"reproduce it in the player"*. `FrameCapProbe` can force
+the band; only telemetry can say whether anybody is actually IN it. So a band edge sits at 50
+rather than at a tidier 45, and 50 to 60 is its own narrow band because "just above the step" has
+never been measured in either direction. The five are `fps_under_30`, `fps_30_50`, `fps_50_60`,
+`fps_60_90`, `fps_90_up`.
+⚠️ **A band name is a stored label and therefore a contract, exactly like an event name.**
+Renaming `fps_30_50` restarts a counter at zero beside a history it can never be joined to again.
+SPLIT a band at a new edge and name both halves anew; never re-point an existing name at a
+different range.
+
+**⚠️⚠️ THE EVENT SITS EXACTLY ON `TelemetryRules.MaxParametersPerEvent`, WHICH IS 8.** Three
+labels and five numbers. A ninth column does not error: `Accept` trims the numbers by ordinal key
+order and `columnsFrom` in `telemetry.js` trims by insertion order, so adding one silently deletes
+a different one on each side. `FrameRateTests.TheFrameRateEventKeepsEveryColumnItSends` fails
+instead.
+⚠️ **No hardware key travels with it.** `settings_snapshot` already carries the gpu, core count,
+memory and screen size, and the endpoint keys both events on the same authenticated player id, so
+the join happens server-side on a field a client cannot set. Repeating the gpu here would spend
+two of the eight columns saying something already stored.
+⚠️ **`frames` survives `TelemetryRules.IsSafeParameterName` by one letter**, because the refused
+fragment is `name` and `frames` does not contain it. `frame_name` and `named_frames` would both be
+stripped in silence, costing the column that says how big the sample was.
+
+**⚠️ TURNING THE OPT-OUT OFF STOPS THE COUNTING, NOT ONLY THE SENDING**, which § 90.3 already
+promised for the rest of telemetry. The histogram is 256 integers rather than a growing list, so
+the gate buys nothing in memory; it is the promise being kept where it would be easiest to quietly
+not keep it. `ATelemetryOptOutStopsTheCountingAndNotOnlyTheSending` asserts it.
+
+**⚠️ THE SAMPLE IS CLEARED AT ROUND 1, NOT AFTER IT IS SENT.** A match that is abandoned,
+disconnected from or never adopted never reaches `Adopt`, so a sampler cleared on send would carry
+the abandoned match's frames into the next one and report a number describing two matches on two
+different maps. The first round is the one moment every peer reaches, whatever happened before it.
+
+**⚠️⚠️ `Time.unscaledDeltaTime` DOES NOT FOLLOW `Time.captureDeltaTime`, AND THIS ENTRY SAID IT
+DID UNTIL A TEST WAS WRITTEN TO PROVE IT.** The sampler reads `unscaledDeltaTime` rather than
+`deltaTime`, because `deltaTime` is scaled and a match at half time scale on a machine holding 60
+fps would report 30. The comment beside it then claimed that under a captured step both clocks
+read the captured value, so a probe run would fill the histogram with a tidy 60. That was read out
+of documentation. **Measured: under a captured step of 16.67 ms the sample read 2.13 to 2.30 ms per
+frame**, 435 to 469 fps across two runs, which is the batchmode editor's real wall clock. Every probe in this
+repository drives its match with a captured step, so every one of them fills this histogram with a
+number that has nothing to do with a player's machine.
+
+⚠️ **It is harmless for exactly one reason, and the test now asserts that reason as well as the
+number.** `TelemetrySink.Flush` returns immediately when no account is signed in, and a probe never
+signs in, so nothing a probe measures has ever left the machine.
+`UnderACapturedStepTheSampleReadsWallClockAndNothingSendsIt` checks `BatchesSent` is 0 beside it.
+⚠️⚠️ **DO NOT "FIX" THE SAMPLER TO READ THE CAPTURED STEP.** A fabricated 60 fps in the sample of
+some future run that DOES sign in is a worse failure than an obviously silly one: 435 fps is
+visibly not a player, and a clean 60 is indistinguishable from one.
+
+**⚠️ A MATCH WITH FEWER THAN 60 SAMPLED FRAMES IS NOT REPORTED AT ALL.** The server folds numbers
+into a running mean, so a 12-frame match would weigh exactly as much as a full eight-round set.
+Sixty is two seconds at 30 fps: low enough that a match somebody left early still counts, high
+enough that a round flicking active for three frames during a scene load does not.
+
+**What this does NOT answer, and saying so is the point.** The rollup stores numbers as a sum and
+a count, so what comes back is the **mean of per-match percentiles** rather than a global
+percentile. That is the right reading of "is anybody playing at 40 fps" and the wrong reading of
+"what is the worst frame anybody has ever seen". The per-player documents are exact per event
+shape and are what any number that has to be defended is recomputed from, exactly as § 90.3 says
+of everything else here.
+
+**Where it lives:**
+
+| Piece | Where |
+|---|---|
+| `FrameRateHistogram`, `FrameRateBands` | `Packages/com.tumbangpreso.core/Runtime/FrameRate.cs` |
+| `TelemetryEvents.MatchFrameRate` | `Packages/com.tumbangpreso.core/Runtime/Telemetry.cs` |
+| `SampleFrameRate`, the per-match clear, the report call | `Assets/TumbangPreso/Runtime/MatchStatsCollector.cs` |
+| `NoteFrameRate` | `Assets/TumbangPreso/Runtime/Net/TelemetrySink.cs` |
+| The name the server will accept | `ugs/cloud-code/telemetry.js` |
+| The arithmetic | `Core.Tests/FrameRateTests.cs` |
+| The window, in a real arena | `Assets/TumbangPreso/Tests/PlayMode/MatchFrameRateProbe.cs` |
+
+### 90.8 · Verified for § 90.7, and the one thing that is NOT
+
+- **Core 214/214 -> 237/237** (`dotnet test`, 367 ms). The new ones are the histogram (a dropped
+  zero-length frame, the open-ended last bucket read at its floor, a share smaller than one frame
+  naming the worst frame), the stutter case that measures the 57.1 fps average, the band edges as
+  a `[Theory]` pinned either side of 30, 50, 60 and 90, and the eight-column event surviving
+  `Accept` intact.
+- **EditMode 250/250**, read from `Logs/tests.xml`. No new cases; the signal is that
+  `TheTelemetryScriptKnowsExactlyTheEventsTheCoreCanSend` went green with `match_frame_rate` added
+  to `TelemetryEvents.All` and to `telemetry.js`, which is the two halves of the contract agreeing.
+- **`MatchFrameRateProbe` 4/4**: the live round filled the sample,
+  `EndRound` stopped it dead (the assertion the probe exists for), and the opt-out stopped the
+  counting. `Logs/match-frame-rate.txt` reads 310 frames, **752.9 fps average, band
+  `fps_90_up`**, which is a batchmode editor with nothing to draw and is exactly why the probe's
+  header says not to read that file as a machine's frame rate.
+  ⚠️⚠️ **THE FOURTH CASE WENT RED ON ITS FIRST RUN AND IT WAS RIGHT TO.** It was written to assert
+  that `Time.unscaledDeltaTime` follows `Time.captureDeltaTime`, which is what the sampler's
+  comment claimed; it read **2.13 ms against a captured 16.67 ms**, and 2.30 ms on the re-run.
+  The code is unchanged and
+  correct, the comment was wrong, and the test now pins the measured behaviour and the reason it
+  is harmless. This is the entry's own rule about porting from the code rather than the prose,
+  applied to a comment.
+- **`BotBehaviourProbe` 3/3** on the default set, whole matches in both modes on both maps. That is
+  the regression gate for putting anything in `MatchStatsCollector.Update`, which is now called
+  on every frame of every match on every peer.
+- **All three `tools/` audits exit 0**: 44 effect call sites with 0 ungated on another body, 52
+  wire entry points with 0 unreachable, and 55 named messages with 0 mismatched. ⚠️ The last of
+  those was exiting **1** before this branch touched it, for a reason that was nothing to do with
+  the wire; § 38.6 now carries it.
+- **`telemetry.js` redeployed, and its parameter block read back off the SERVICE** with
+  `ugs cloud-code scripts get telemetry`: `action` and `events`, both `STRING`. All three scripts
+  were checked, because § 90.5's whole lesson is that a deploy can drop the block silently and go
+  on answering normally. The live copy contains `match_frame_rate`.
+
+⚠️⚠️ **WHAT IS NOT VERIFIED, AND IT IS ONE THING.** The session that wrote this ran out of usage
+before it could reach the live `Ugs` category, so:
+
+1. **`UgsServicesProbe.TheTelemetryEndpointAcceptsEveryColumnOfAFrameRateEvent` HAS NOT RUN**, so
+   the `Ugs` category is 7/7 as § 90.6 left it rather than the 8/8 it should now be. It asserts
+   `"refused":0` against the LIVE endpoint, which is the only thing that can tell a repository
+   whose two halves agree from a service running an older script. The redeploy and the
+   `scripts get` above are the evidence that exists in its place.
+
+**Run it before the next build**, and it needs nothing set up:
+
+```
+Unity.exe -batchmode -runTests -projectPath . -testPlatform PlayMode -testCategory "Ugs"
+```
+
+⚠️ **And there is no Windows player for this work on the Desktop.** The one sitting there is from
+§ 90.6. `Checks.RunAll` has not been re-run either; nothing in this branch touches a scene, an
+audio cue or a map, so it is expected to be OK, but expected is not measured.
 
 ---
 
@@ -6125,6 +6314,16 @@ shipped pair is the only combination that has been measured working.
    arm for anything worth 20 per cent), and compare skill uses first. The batch-mode row that
    started this entry read **zero** at 0.02 s, so a player row with any casting at all in it
    already answers the question.
+
+   ✅ **AND THE OTHER HALF OF THIS QUESTION IS NOW BEING MEASURED FROM REAL PLAYERS, § 90.7.**
+   `FrameCapProbe` can force a machine into the band; only telemetry can say whether anybody is
+   actually IN it, and that was the part nothing here could answer. The per-match frame-rate event
+   reports a band whose edges are this entry's numbers rather than round ones: `fps_30_50` is
+   below the 0.02 s physics step, `fps_50_60` is the boundary case nobody has measured in either
+   direction, and `fps_60_90` is the rate every probe number in this repository was taken at.
+   ⚠️ **A band edge that drifts off 50 answers a different question while looking like the same
+   one**, which is why `FrameRateBands.PhysicsStepFps` is pinned to the physics rate and
+   `FrameRateTests.TheStepEdgeIsThePhysicsRateRatherThanACoincidence` fails if it moves.
 2. **Find the quantised thing.** The first suspect is the `InputIntent` edge protocol.
    `CharacterMotor.FixedUpdate` reads `JustPressed` and calls `CommitFrame` at the END of the
    physics step while the producers write in `Update`, so how many `Update`s fall between two
@@ -8680,7 +8879,7 @@ the method works, not that the game reaches it, and both dead charge relays woul
 
 ### 38.6 ⚠️⚠️ EVERY PAYLOAD IS NOW CHECKED FIELD BY FIELD, AND NOTHING CHECKED THEM BEFORE ✅
 
-`MatchRpc` speaks 41 named messages and every one is a hand-written pair: a run of
+`MatchRpc` speaks 55 named messages and every one is a hand-written pair: a run of
 `WriteValueSafe` and a run of `ReadValueSafe`. **Netcode does not check that the two agree.** A
 field added to one half does not fail; the reader consumes the same bytes in the wrong order and
 hands the game plausible garbage. `SyncWorld` grew a tournament-clock block during this very
@@ -8693,7 +8892,29 @@ mismatch. ⚠️ **It is a COUNT and TYPE check, not a NAME check**: two floats 
 halves are invisible to it and are a real bug. What it closes is the class that has actually
 happened. Three deliberate asymmetries are listed with their reasons rather than silenced.
 
-Current state: **41 named messages, 0 mismatched.**
+Current state: **55 named messages, 0 mismatched.**
+
+⚠️⚠️ **AND IT WAS EXITING 1 ON A CORRECT MESSAGE, FOUND 2026-08-30 WHILE VERIFYING § 90.7.** The
+count above had also stood at 41 since this entry was written, so nothing had re-read it in
+fourteen messages' worth of growth. `Flair` reported *"writer emits 0 fields, reader takes 5"*
+against a writer and a reader that agree exactly, field for field and type for type
+(`BroadcastFlair` and `OnFlairMsg`, five fields each: `byte`, `int`, `int`, `Vector3`, `float`).
+
+**The cause is one line of the parser and it is worth knowing about.** The tool resets its pending
+run at every method boundary, deliberately, because accumulating across one once made a writer
+whose send sits inside an `if` donate its fields to the next message in the file. `Flair` is the
+only message in `MatchRpc` whose writer and whose SEND live in two different methods:
+`BroadcastFlair` writes the five fields and hands the writer to `HostRelayFlair`, which loops the
+peers and sends. The reset fired at the second declaration and the run was gone.
+
+**⚠️⚠️ A FALSE RED IS WORSE THAN A MISSING CHECK, WHICH IS WHY THIS WAS FIXED RATHER THAN NOTED.**
+This audit gates a verification pass (`CLAUDE.md` § 7.1). A gate that is red for a reason nobody
+can act on is a gate everybody learns to walk past, and the next time it goes red for the real
+reason, on a message that genuinely grew a field on one side, it will be walked past too.
+⚠️ **The fix locates the run rather than suppressing the check.** A method that RECEIVES a
+`FastBufferWriter` is continuing somebody else's run, so the reset does not fire on it; `Flair` is
+now counted and type-checked as 5 against 5 rather than excused. It is not in `ACCEPTED` and must
+not be put there.
 
 ### 38.7 ⚠️ A CLIENT'S LUNGE RESOLVED ITS OWN TAG ✅
 

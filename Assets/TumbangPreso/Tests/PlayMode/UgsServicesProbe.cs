@@ -218,6 +218,55 @@ namespace TumbangPreso.PlayTests
         }
 
         /// <summary>
+        /// ⚠️⚠️ A NEW EVENT NAME IS PROBED AGAINST THE SERVICE, NOT AGAINST THE FILE ON DISK.
+        /// `CareerAndCloudCodeTests` compares `TelemetryEvents.All` with the TEXT of
+        /// `telemetry.js`, which proves the two lists agree in the REPOSITORY and says nothing
+        /// about what the service is running. `docs/TODO.md` § 90.5 is an entry about a script
+        /// that deployed, read correctly on disk, and behaved like a different file for two
+        /// phases. A name the deployed script does not know is not an error: it is counted,
+        /// sent, and thrown away into `refused`, which is why `refused` is asserted here rather
+        /// than only `accepted`.
+        ///
+        /// ⚠️ IT SENDS ALL EIGHT COLUMNS ON PURPOSE. `match_frame_rate` sits exactly on
+        /// `MAX_PARAMETERS_PER_EVENT`, and `columnsFrom` drops a ninth by insertion order, so the
+        /// widest event in the game is the one worth proving arrives whole. `docs/TODO.md` § 90.7.
+        ///
+        /// ⚠️ AND `"funnel":{}` AGAIN, for the reason the test above it gives: a funnel step is
+        /// impossible to un-record by construction, so no probe may ever send one. A frame-rate
+        /// event is not a funnel step and this asserts that it did not become one.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator TheTelemetryEndpointAcceptsEveryColumnOfAFrameRateEvent()
+        {
+            yield return SignedIn();
+
+            string batch =
+                "[{\"Name\":\"match_frame_rate\",\"Count\":1,\"Params\":{" +
+                "\"mode\":\"Classic\",\"map\":\"Eskinita\",\"band\":\"fps_60_90\"," +
+                "\"fps_avg\":58.4,\"fps_p50\":59.7,\"fps_p5\":41.2,\"fps_p1\":22.9," +
+                "\"frames\":21600}}]";
+
+            var call = Net.CloudCode.CallAsync(
+                "telemetry", new { action = "submit", events = batch });
+            yield return Await(call);
+
+            Assert.IsNotNull(call.Result,
+                "telemetry returned no output. Run `ugs deploy ugs/cloud-code`.");
+
+            string flat = call.Result.Replace(" ", "");
+            StringAssert.Contains("\"refused\":0", flat,
+                "the deployed telemetry.js does not know `match_frame_rate`. The repository's " +
+                "copy and the service's copy have split: redeploy and check the result with " +
+                "`ugs cloud-code scripts get telemetry`. docs/TODO.md § 90.5.");
+            StringAssert.Contains("\"accepted\":1", flat,
+                "the frame-rate event was not accepted.");
+            StringAssert.Contains("\"funnel\":{}", flat,
+                "a frame-rate submission recorded a funnel step, which it must never do.");
+
+            Debug.Log($"[UgsServicesProbe] telemetry accepted a frame-rate event: {call.Result}");
+        }
+
+        /// <summary>
         /// The impersonation guard, end to end, against the live endpoint. `docs/TODO.md` § 88.1c.
         ///
         /// ⚠️⚠️ THIS IS THE ONLY TEST IN THE PROJECT THAT CAN PROVE THE GUARD REFUSES ANYTHING.

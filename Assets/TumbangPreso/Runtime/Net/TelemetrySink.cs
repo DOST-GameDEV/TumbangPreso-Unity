@@ -255,6 +255,76 @@ namespace TumbangPreso.Net
         }
 
         /// <summary>
+        /// Reports what this machine's frame rate did over one match.
+        ///
+        /// ⚠️⚠️ IT IS PER MATCH AND NOT PER SESSION, AND THAT IS THE WHOLE REASON THIS EXISTS AT
+        /// ALL. `docs/TODO.md` § 90.3 shipped the hardware key and left the frame rate open with
+        /// the reason written down: a percentile taken over a whole session includes the splash,
+        /// the menu, character select and a loading screen, and those are most of the frames on a
+        /// short session and none of the frames anybody cares about. A number that describes a
+        /// menu is worse than no number, because somebody will quote it.
+        ///
+        /// ⚠️⚠️ AND IT IS RAISED ON EVERY PEER, WHICH IS THE POINT OF MEASURING IT HERE RATHER
+        /// THAN ON THE HOST. `FUTURE.md` § 3 asks for "FPS distribution by hardware", and a
+        /// host-only sample is one machine's frame rate reported four times over. The four
+        /// players in a match are four different machines and the spread between them is the
+        /// answer.
+        ///
+        /// ⚠️ NO HARDWARE KEY TRAVELS WITH IT. `settings_snapshot` already carries the gpu, core
+        /// count, memory and screen size, and the endpoint keys both events on the same
+        /// authenticated player id, so the join happens server-side on a field a client cannot
+        /// set. Repeating the gpu here would spend two of the eight columns saying something
+        /// already stored.
+        ///
+        /// ⚠️⚠️ THE EVENT SITS EXACTLY ON `TelemetryRules.MaxParametersPerEvent`, WHICH IS 8.
+        /// Three labels and five numbers. A ninth column does not error: `TelemetryRules.Accept`
+        /// trims the numbers by ordinal key order and `columnsFrom` in `telemetry.js` trims by
+        /// insertion order, so adding one silently deletes a different one on each side.
+        /// `TelemetryTests.TheFrameRateEventKeepsEveryColumnItSends` is what fails instead.
+        /// </summary>
+        public void NoteFrameRate(string mode, string map, FrameRateHistogram frames)
+        {
+            // ⚠️ A MATCH WITH ALMOST NO SAMPLED FRAMES IS NOT REPORTED AT ALL. A percentile over
+            // a handful of frames is noise wearing the clothes of a measurement, and the server
+            // folds numbers into a running mean, so one 12-frame match would weigh exactly as
+            // much as a full eight-round set. `MinimumSampledFrames` is two seconds at 30 fps:
+            // low enough that a match somebody left early still counts, high enough that a
+            // scene load with a round flicking active for three frames does not.
+            if (frames == null || frames.Frames < MinimumSampledFrames) return;
+
+            double median = frames.LowFps(50.0);
+
+            Note(TelemetryEvents.MatchFrameRate,
+                labels: new Dictionary<string, string>
+                {
+                    ["mode"] = TelemetryRules.Label(mode),
+                    ["map"] = TelemetryRules.Label(map),
+                    ["band"] = FrameRateBands.Band(median),
+                },
+                // ⚠️ `fps_p5` AND `fps_p1` ARE THE "5 PER CENT LOW" AND THE "1 PER CENT LOW", so
+                // they are the FIFTH percentile of the rate and the NINETY-FIFTH of the frame
+                // time. `FrameRateHistogram.LowFps` carries the argument. An average alone cannot
+                // see a stutter, and a stutter is what a player reports.
+                //
+                // ⚠️ `frames` SURVIVES `TelemetryRules.IsSafeParameterName` BY ONE LETTER, and it
+                // is worth knowing that it does. The refused-fragment list holds `name`, which
+                // `frames` does not contain; `frame_name` and `named_frames` would both be
+                // stripped silently, costing the column that says how big the sample was.
+                numbers: new Dictionary<string, double>
+                {
+                    ["fps_avg"] = Math.Round(frames.AverageFps, 1),
+                    ["fps_p50"] = Math.Round(median, 1),
+                    ["fps_p5"] = Math.Round(frames.LowFps(5.0), 1),
+                    ["fps_p1"] = Math.Round(frames.LowFps(1.0), 1),
+                    ["frames"] = frames.Frames,
+                });
+        }
+
+        /// <summary>Two seconds at 30 fps. See <see cref="NoteFrameRate"/> for why there is a
+        /// floor at all.</summary>
+        private const int MinimumSampledFrames = 60;
+
+        /// <summary>
         /// ⚠️⚠️ LEAVE RATE BY ROUND IS THE ONE MATCH NUMBER THAT CANNOT BE RECONSTRUCTED LATER.
         /// `FUTURE.md` § 3 asks for it by name. A finished match is in the career history and
         /// could be recounted from there; a match somebody walked out of round two of leaves no

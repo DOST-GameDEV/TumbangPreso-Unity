@@ -43,6 +43,11 @@ const EVENTS = FUNNEL.concat([
     "pick",
     "settings_snapshot",
     "disconnect",
+    // ⚠️ `match_frame_rate` IS THE WIDEST EVENT IN THE GAME AND SITS EXACTLY ON
+    // MAX_PARAMETERS_PER_EVENT: mode, map and band as labels, and fps_avg, fps_p50, fps_p5,
+    // fps_p1 and frames as numbers. `columnsFrom` DROPS the ninth silently and by key order, so
+    // a column added to it here is a column quietly removed from it. `docs/TODO.md` § 90.3.
+    "match_frame_rate",
 ]);
 
 function text(value, max) {

@@ -33,6 +33,27 @@ namespace TumbangPreso
         private readonly bool[] _taggedThisRound = new bool[Balance.PlayerCount];
         private readonly int[] _defenderByRound = new int[64];
 
+        /// <summary>
+        /// This machine's own frame times over the live rounds of the current match.
+        ///
+        /// ⚠️⚠️ IT IS FILLED ON EVERY PEER, ABOVE THIS CLASS'S HOST GATE, AND THAT IS THE ONE
+        /// THING ABOUT IT THAT MATTERS. Everything else here is host-only because a NUMBER IN THE
+        /// MATCH may only be created in one place; a frame rate is not a number in the match, it
+        /// is a property of the machine reading it, and `FUTURE.md` § 3 asks for the distribution
+        /// ACROSS machines. Collected behind the gate it would be the host's frame rate reported
+        /// once per peer, which is a plausible-looking answer to a question nobody asked. The
+        /// telemetry match-started count in `OnRoundStarted` already sits above the gate for the
+        /// same reason, and its comment carries the other half of the argument.
+        ///
+        /// ⚠️ NOTHING IN THE MATCH READS IT. `MatchRecord` does not carry it, it never crosses the
+        /// wire, and it is not in the career: it goes to `TelemetrySink` and nowhere else. This
+        /// class's header rule stands, that a stat which changes what it measures is not a stat.
+        /// </summary>
+        private readonly FrameRateHistogram _frameRate = new FrameRateHistogram();
+
+        /// <summary>The current match's frame sample, so a probe can assert it filled.</summary>
+        public FrameRateHistogram FrameRate => _frameRate;
+
         private string _matchId = "";
         private string _mode = "";
         private string _mapId = "";
@@ -94,6 +115,8 @@ namespace TumbangPreso
                 _roundSubscribed = true;
             }
 
+            SampleFrameRate(round);
+
             if (!_running || !NetAuthority.ShouldResolve()) return;
             if (!round.RoundActive) return;
 
@@ -131,6 +154,14 @@ namespace TumbangPreso
             // `first_match_started` step would never fire for anybody who has only ever joined.
             // `docs/TODO.md` § 90.3.
             if (round <= 1) NoteMatchStartedToTelemetry();
+
+            // ⚠️ THE FRAME SAMPLE IS CLEARED PER MATCH, HERE, RATHER THAN AFTER IT IS SENT. A
+            // match that is abandoned, disconnected from, or never adopted never reaches
+            // `Adopt`, so a sampler cleared on send would carry the abandoned match's frames
+            // into the next one and report a number describing two matches on two different
+            // maps. The first round of a match is the one moment every peer reaches, whatever
+            // happened to the match before it.
+            if (round <= 1) _frameRate.Clear();
 
             if (!NetAuthority.ShouldResolve()) return;
 
@@ -344,6 +375,49 @@ namespace TumbangPreso
         // is here anyway.
         // -------------------------------------------------------------------
 
+        /// <summary>
+        /// Counts one frame, if a round is actually being played.
+        ///
+        /// ⚠️⚠️ `RoundActive` IS THE WINDOW, AND IT IS THE WINDOW BECAUSE OF WHAT IT EXCLUDES.
+        /// It is false through the scene load, the countdown, every gap between rounds and the
+        /// whole results board, so none of those frames reach the sample. `docs/TODO.md` § 90.3
+        /// left the frame rate open on exactly this point: a percentile over everything includes
+        /// a loading screen, and a loading screen renders at whatever it likes.
+        ///
+        /// ⚠️⚠️ IT IS `unscaledDeltaTime`, NEVER `deltaTime`, AND THE DIFFERENCE IS THE WHOLE
+        /// MEASUREMENT. `Time.deltaTime` is scaled: at a `timeScale` of 0.5 a machine holding a
+        /// steady 60 fps would report 30, and at 0 every frame is zero-length and the histogram
+        /// drops it, so a paused stretch would silently leave the sample rather than be measured
+        /// as the slow frames a pause menu actually renders. A frame rate is wall clock per
+        /// rendered frame by definition, and `unscaledDeltaTime` is that.
+        /// ⚠️⚠️ `Time.captureDeltaTime` DOES NOT REACH `unscaledDeltaTime`, AND THIS COMMENT SAID
+        /// THE OPPOSITE UNTIL IT WAS MEASURED. Under a captured step of 16.67 ms the sample read
+        /// **2.13 ms per frame**, which is the batchmode editor's real wall clock, so a probe run
+        /// fills this histogram with several hundred frames per second rather than a tidy 60.
+        /// `MatchFrameRateProbe.UnderACapturedStepTheSampleReadsWallClockAndNothingSendsIt` is
+        /// that number, and it exists so nobody restores the comfortable version of this sentence.
+        ///
+        /// ⚠️⚠️ IT IS HARMLESS, AND THE REASON IS THE ONLY THING KEEPING IT HARMLESS.
+        /// `TelemetrySink.Flush` returns immediately when no account is signed in, and a probe
+        /// never signs in, so nothing a probe measures has ever left the machine. **Do not make
+        /// this method read the captured step to tidy the number up.** That would put a
+        /// fabricated 60 fps into the sample of any future run that DOES sign in, which is a
+        /// worse failure than an obviously silly one: 469 fps is visibly not a player, and a
+        /// clean 60 is indistinguishable from one.
+        ///
+        /// ⚠️⚠️ AND IT DOES NOT COUNT WHEN TELEMETRY IS OFF, WHICH IS NOT THE SAME AS NOT
+        /// SENDING. `docs/TODO.md` § 90.3: *"turning it off stops the counting, not only the
+        /// sending"*, because a buffer that fills anyway is a buffer a later version can decide
+        /// to flush, and that is the same thing as having no opt-out. The histogram is 256
+        /// integers rather than a growing list, so this gate buys nothing in memory; it is the
+        /// rule being kept where it would be easiest to quietly not keep it.
+        /// </summary>
+        private void SampleFrameRate(RoundDirector round)
+        {
+            if (!round.RoundActive || !Net.TelemetrySink.Enabled) return;
+            _frameRate.Add(Time.unscaledDeltaTime);
+        }
+
         private void NoteMatchStartedToTelemetry()
         {
             var telemetry = GameServices.Telemetry;
@@ -384,6 +458,15 @@ namespace TumbangPreso
             // would count each bot's assigned character as somebody's choice.
             if (line != null && !line.IsBot)
                 telemetry.NotePick(record.Mode, line.CharacterId, line.SlipperId);
+
+            // ⚠️⚠️ THE FRAME RATE IS THIS MACHINE'S AND IS REPORTED WHATEVER SEAT IT SAT IN, so
+            // it is outside the human-seat guard above. A spectator, a player whose line is
+            // missing from the record and a machine running four bots all rendered the same
+            // match at whatever rate they managed, and `FUTURE.md` § 3's question is about the
+            // machine rather than about the player. The mode and map come from the RECORD rather
+            // than from `SceneFlow`, so a match that ended on a map this peer switched away from
+            // is still labelled with the map it was played on.
+            telemetry.NoteFrameRate(record.Mode, record.MapId, _frameRate);
 
             // ⚠️ THE FINISH GOES LAST BECAUSE IT IS WHAT FLUSHES. `NoteMatchFinished` sends the
             // session's buffer, so anything noted after it would sit until quit, which is the
