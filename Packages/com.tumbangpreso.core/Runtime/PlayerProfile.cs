@@ -105,6 +105,23 @@ namespace TumbangPreso.Core
         public int Level = 1;
         public int Xp;
 
+        /// <summary>
+        /// One entry per hero this account has played, and none for the other twelve characters.
+        ///
+        /// ⚠️ THE PLAYED COUNT FOR EVERY CHARACTER IS ALREADY IN <see cref="Characters"/>, which
+        /// is what `FUTURE.md` PHASE 4 means by the other twelve keeping a count and no path. This
+        /// list is the PATH, and it exists only for the six in `Roster.HeroPeople`.
+        /// <see cref="ProgressionRules.HasMasteryPath"/> is the one gate.
+        /// </summary>
+        public List<MasteryRecord> Mastery = new List<MasteryRecord>();
+
+        /// <summary>Consecutive AFK matches. Cleared by any match that pays.</summary>
+        public int AfkStrikes;
+
+        /// <summary>Matches still owed nothing after an earned suspension. Counts down on
+        /// matches that would otherwise have paid, never on further AFK ones.</summary>
+        public int XpPenaltyMatches;
+
         /// <summary>⚠️ PHASE 9 OWNS THESE. Carried for the same reason as level: the header card
         /// is designed around a rank badge and a peak, and a document without the fields cannot
         /// hold one. Empty means unranked, which is what every profile reads today.</summary>
@@ -199,7 +216,24 @@ namespace TumbangPreso.Core
             profile.Slippers ??= new List<PickRecord>();
             profile.AppliedMatchIds ??= new List<string>();
             profile.Inventory ??= Array.Empty<string>();
+            profile.Mastery ??= new List<MasteryRecord>();
             if (profile.Level < 1) profile.Level = 1;
+            if (profile.Xp < 0) profile.Xp = 0;
+            if (profile.AfkStrikes < 0) profile.AfkStrikes = 0;
+            if (profile.XpPenaltyMatches < 0) profile.XpPenaltyMatches = 0;
+
+            // ⚠️ THE LEVEL IS RE-DERIVED FROM THE XP RATHER THAN TRUSTED. Level is a pure
+            // function of Xp (`ProgressionRules.LevelForXp`), so a stored level that disagrees is
+            // a document written by an older curve or by hand, and the XP is the thing that was
+            // actually earned. Same argument as `MatchRecord`'s "counts only, no stored rates".
+            profile.Level = ProgressionRules.LevelForXp(profile.Xp);
+
+            foreach (var m in profile.Mastery)
+            {
+                if (m == null) continue;
+                if (m.Xp < 0) m.Xp = 0;
+                m.Level = ProgressionRules.MasteryLevelForXp(m.Xp);
+            }
 
             foreach (var mode in profile.Modes)
             {
@@ -241,7 +275,28 @@ namespace TumbangPreso.Core
         /// first field is written.
         /// </summary>
         public static bool Apply(PlayerProfile profile, MatchRecord record, string playerId)
+            => Apply(profile, record, playerId, out _);
+
+        /// <summary>
+        /// The same call, handing back what the match paid.
+        ///
+        /// ⚠️⚠️ IT IS AN `out` RATHER THAN A `LastAward` PROPERTY, AND A TEST IS WHY. The
+        /// first version of this parked the award on a static so the results board could read it
+        /// afterwards. xUnit runs test CLASSES in parallel, two of them applied a match at the
+        /// same moment, and one read the other one. **That is not a test artefact.** The same
+        /// global would be read by the results board while the offline queue flushed a second
+        /// record on a background task, and the symptom in the game would be a player seeing
+        /// somebody else XP about once in a hundred matches, which nobody would ever reproduce.
+        /// A return value cannot race.
+        ///
+        /// ⚠️ `award` IS NULL WHENEVER THIS RETURNS FALSE. A refused record paid nothing, and
+        /// handing back a zeroed award would let a caller draw an empty XP bar for a match that
+        /// simply was not counted.
+        /// </summary>
+        public static bool Apply(PlayerProfile profile, MatchRecord record, string playerId,
+                                 out XpAward award)
         {
+            award = null;
             if (profile == null || record == null) return false;
             if (string.IsNullOrEmpty(playerId)) return false;
             if (string.IsNullOrWhiteSpace(record.MatchId)) return false;
@@ -343,8 +398,17 @@ namespace TumbangPreso.Core
 
             profile.UpdatedUtc = record.PlayedUtc;
             if (string.IsNullOrEmpty(profile.CreatedUtc)) profile.CreatedUtc = record.PlayedUtc;
+
+            // ⚠️⚠️ PROGRESSION IS PAID HERE, INSIDE THE IDEMPOTENCY GUARD, AND NOWHERE ELSE.
+            // Every early return above has already refused a duplicate, a missing line and a
+            // bot-only match, so reaching this point IS the definition of "this match counted".
+            // Awarding XP from a second call site beside `Apply` would work perfectly until the
+            // offline queue resubmitted a record, which is the one thing it exists to do, and
+            // then it would pay the same match twice with nothing reporting an error.
+            award = ProgressionRules.Award(profile, record, line);
             return true;
         }
+
 
         /// <summary>
         /// Whether this line went into the final round tied-last or worse. The denominator of

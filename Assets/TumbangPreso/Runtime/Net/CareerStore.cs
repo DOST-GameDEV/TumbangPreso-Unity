@@ -79,6 +79,22 @@ namespace TumbangPreso.Net
         public IReadOnlyList<MatchRecord> History => _cache.History;
         public int QueuedCount => _cache.Queue.Count;
 
+        /// <summary>
+        /// What the last counted match paid, for the results board. Null until one has been.
+        ///
+        /// ⚠️⚠️ THE CLIENT COMPUTES THIS AND THE SERVER DECIDES IT. `ugs/cloud-code/match-record.js`
+        /// runs the same `Award` against the stored career, per `FUTURE.md` 0.5 rule 6, and what
+        /// it writes is what the profile ends up holding. This exists so the end-of-match bar can
+        /// move in the second before the endpoint answers, and because an unplugged LAN match
+        /// still has to show a player what they earned (rule 7). If the two ever disagree, the
+        /// server is right and the disagreement is the bug.
+        ///
+        /// ⚠️ IT IS NULL FOR A MATCH THAT DID NOT COUNT. `ProfileRules.Apply` returns false
+        /// for a replayed record and for a spectated one, and a board that kept the previous
+        /// award would animate the last match XP onto this one.
+        /// </summary>
+        public XpAward LastAward { get; private set; }
+
         /// <summary>What the last remote call had to say, for the profile screen's status line.</summary>
         public string Status { get; private set; } = "Local career";
 
@@ -209,7 +225,8 @@ namespace TumbangPreso.Net
             // nothing to submit.
             if (line == null) return;
 
-            bool applied = ProfileRules.Apply(_cache.Profile, record, me);
+            bool applied = ProfileRules.Apply(_cache.Profile, record, me, out XpAward award);
+            LastAward = award;
             _cache.History = ProfileRules.Remember(_cache.History, record);
 
             // ⚠️ THE QUEUE IS WRITTEN BEFORE THE CALL IS TRIED, NOT AFTER IT FAILS. A process

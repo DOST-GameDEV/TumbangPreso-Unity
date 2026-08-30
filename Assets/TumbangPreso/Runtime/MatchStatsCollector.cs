@@ -34,6 +34,29 @@ namespace TumbangPreso
         private readonly int[] _defenderByRound = new int[64];
 
         /// <summary>
+        /// Whether each seat has done anything at all this round, and how far it has walked.
+        ///
+        /// ⚠️⚠️ THESE ARE THE AFK SIGNAL AND MOVEMENT IS HALF OF IT ON PURPOSE. `FUTURE.md`
+        /// PHASE 4 asks for a seat that has not acted for a whole round to be paid nothing, and
+        /// the obvious implementation, reading `InputIntent`, does not work: the host never
+        /// receives a remote player intent, only their transform through
+        /// `MatchRpc.SubmitMoveServerRpc`. It would have caught the local seat and the bots and
+        /// nobody else, which is exactly the wrong three. Position arrives for every seat, this
+        /// class already samples it for `DistanceTravelled`, and
+        /// `ProgressionRules.AfkRoundMetres` is the bar.
+        ///
+        /// ⚠️ THE VERB HALF IS NOT REDUNDANT WITH THE DISTANCE HALF. A taya who plants
+        /// themselves by the lata and punches everything that comes near has barely moved and is
+        /// playing the game hard, and the anti-camp clock already owns whether that is legal.
+        /// </summary>
+        private readonly bool[] _actedThisRound = new bool[Balance.PlayerCount];
+        private readonly float[] _roundDistance = new float[Balance.PlayerCount];
+
+        /// <summary>Rounds whose activity has been committed to the lines. See
+        /// <see cref="CommitRoundActivity"/> and the padding in <see cref="OnMatchEnded"/>.</summary>
+        private int _roundsCommitted;
+
+        /// <summary>
         /// This machine's own frame times over the live rounds of the current match.
         ///
         /// ⚠️⚠️ IT IS FILLED ON EVERY PEER, ABOVE THIS CLASS'S HOST GATE, AND THAT IS THE ONE
@@ -168,6 +191,12 @@ namespace TumbangPreso
             if (round <= 1) BeginMatch();
             if (!_running) return;
 
+            // ⚠️ THE ROUND THAT JUST ENDED IS COMMITTED HERE, AT THE START OF THE NEXT ONE.
+            // There is no round-ended event on `MatchDirector` that fires for the last round and
+            // for every round before it, so the two boundaries this class already sees are the
+            // start of a round and the end of the match, and between them they cover all of them.
+            if (round > 1) CommitRoundActivity();
+
             _roundsSeen = Mathf.Max(_roundsSeen, round);
             if (round - 1 >= 0 && round - 1 < _defenderByRound.Length)
                 _defenderByRound[round - 1] = defenderSlot;
@@ -195,6 +224,7 @@ namespace TumbangPreso
             _mapId = UI.SceneFlow.SelectedMap ?? "";
             _matchClock = 0.0f;
             _roundsSeen = 0;
+            _roundsCommitted = 0;
             _running = true;
             Array.Clear(_defenderByRound, 0, _defenderByRound.Length);
 
@@ -202,6 +232,8 @@ namespace TumbangPreso
             {
                 _lines[slot] = new PlayerMatchStats { Slot = slot, TimeToFirstThrow = -1.0f };
                 _hasPosition[slot] = false;
+                _actedThisRound[slot] = false;
+                _roundDistance[slot] = 0.0f;
             }
 
             IdentifySeats();
@@ -315,6 +347,7 @@ namespace TumbangPreso
             if (!_running || !NetAuthority.ShouldResolve()) return;
             _running = false;
             CloseLastAttackerStretch();
+            CommitRoundActivity();
 
             var match = GameServices.Match;
             var record = new MatchRecord
@@ -341,6 +374,7 @@ namespace TumbangPreso
                 record.Players[slot] = line;
             }
 
+            PadUnplayedRounds(record);
             MatchRecordRules.Normalise(record);
             Adopt(record);
             Net.MatchRpc.Instance?.BroadcastMatchRecord(record);
@@ -489,6 +523,12 @@ namespace TumbangPreso
             var line = LineFor(slot);
             if (line == null) return;
 
+            // ⚠️ A PENALTY IS AN ACTION TOO. A seat collecting a taya-camp penalty is standing
+            // in the wrong place on purpose, which is a decision; the anti-camp clock is what
+            // punishes it, and paying it nothing for the whole match as well would punish the
+            // same thing twice through two systems that were designed separately.
+            NoteActed(slot);
+
             switch (e)
             {
                 case ScoreEvent.LataKnocked: line.Knockdowns++; break;
@@ -509,6 +549,7 @@ namespace TumbangPreso
             if (line == null) return;
 
             line.Throws++;
+            NoteActed(slot);
 
             // ⚠️ FIRST OF THE MATCH, NOT FIRST OF THE ROUND. `FUTURE.md` § 2.2 wants a number
             // that separates two players on the same score by how early they commit, and a
@@ -533,6 +574,7 @@ namespace TumbangPreso
             if (line == null) return;
 
             line.Retrievals++;
+            NoteActed(slot);
             if (distanceToTaya >= 0.0f && distanceToTaya <= MatchRecordRules.PressureRadius)
                 line.RetrievalsUnderPressure++;
         }
@@ -547,6 +589,7 @@ namespace TumbangPreso
             if (line == null) return;
 
             line.ShoveAttempts++;
+            NoteActed(slot);
             if (hit) line.ShoveHits++;
         }
 
@@ -557,7 +600,10 @@ namespace TumbangPreso
             if (!_running || !NetAuthority.ShouldResolve()) return;
 
             var line = LineFor(slot);
-            if (line != null) line.LungeAttempts++;
+            if (line == null) return;
+
+            line.LungeAttempts++;
+            NoteActed(slot);
         }
 
         public void NoteLungeHit(int slot)
@@ -584,13 +630,74 @@ namespace TumbangPreso
 
                 if (_hasPosition[slot])
                 {
+                    float step = Vector3.Distance(_lastPosition[slot], here);
                     var line = _lines[slot];
-                    if (line != null) line.DistanceTravelled += Vector3.Distance(_lastPosition[slot], here);
+                    if (line != null) line.DistanceTravelled += step;
+                    _roundDistance[slot] += step;
                 }
 
                 _lastPosition[slot] = here;
                 _hasPosition[slot] = true;
             }
+        }
+
+        /// <summary>
+        /// Marks a seat as having played this round. Called from every verb the host resolves.
+        ///
+        /// ⚠️ IT IS NOT GATED AND DOES NOT NEED TO BE: every caller is already behind the same
+        /// `_running` and `NetAuthority.ShouldResolve()` pair, and adding a third copy of the gate
+        /// here is the kind of duplication that makes the next reader wonder which one is load
+        /// bearing.
+        /// </summary>
+        private void NoteActed(int slot)
+        {
+            if (slot >= 0 && slot < _actedThisRound.Length) _actedThisRound[slot] = true;
+        }
+
+        /// <summary>
+        /// Closes one round of activity into the lines and starts the next one clean.
+        ///
+        /// ⚠️⚠️ THE FIRST COMMIT IS WHAT TURNS -1 INTO A MEASUREMENT. `ActiveRounds` starts at
+        /// -1 meaning "nobody measured this", which is what every record from before this phase
+        /// carries and what `ProgressionRules.WasAfk` refuses to read as AFK. A host that reaches
+        /// this method has measured the seat, so the sentinel is replaced before anything is
+        /// counted into it.
+        /// </summary>
+        private void CommitRoundActivity()
+        {
+            _roundsCommitted++;
+
+            for (int slot = 0; slot < Balance.PlayerCount; slot++)
+            {
+                var line = _lines[slot];
+                if (line != null)
+                {
+                    if (line.ActiveRounds < 0) line.ActiveRounds = 0;
+                    if (_actedThisRound[slot] || _roundDistance[slot] >= ProgressionRules.AfkRoundMetres)
+                        line.ActiveRounds++;
+                }
+
+                _actedThisRound[slot] = false;
+                _roundDistance[slot] = 0.0f;
+            }
+        }
+
+        /// <summary>
+        /// Credits every seat with the rounds that never happened.
+        ///
+        /// ⚠️⚠️ WITHOUT THIS, EVERY PLAYER IN A MATCH THAT ENDED EARLY IS FLAGGED AFK. The
+        /// record `Rounds` is the SCHEDULED total (`Mathf.Max(_roundsSeen, TotalRounds)`), so a
+        /// Hero Strike match that ended after three rounds still says 8, and a seat that played
+        /// all three of them would read 3 active out of 8 and be paid nothing for a game it
+        /// played properly. A round nobody played is not a round somebody sat out.
+        /// </summary>
+        private void PadUnplayedRounds(MatchRecord record)
+        {
+            int unplayed = record.Rounds - _roundsCommitted;
+            if (unplayed <= 0) return;
+
+            foreach (var line in record.Players)
+                if (line != null && line.ActiveRounds >= 0) line.ActiveRounds += unplayed;
         }
 
         /// <summary>

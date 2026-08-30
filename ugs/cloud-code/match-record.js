@@ -74,6 +74,12 @@ function normaliseRecord(raw) {
         const rawFirst = Number(p.TimeToFirstThrow);
         const firstThrow = isFinite(rawFirst) && rawFirst >= 0 ? clampFloat(rawFirst, 0, duration) : -1;
 
+        // Same sentinel, same reason: -1 is "nobody measured this round count", which every
+        // record written before Phase 4 and every peer on an older build sends. Reading it as
+        // zero would mark those matches AFK. `PlayerMatchStats.ActiveRounds` has the argument.
+        const rawActive = Number(p.ActiveRounds);
+        const activeRounds = isFinite(rawActive) && rawActive >= 0 ? clampInt(rawActive, 0, rounds) : -1;
+
         return {
             Slot: clampInt(p.Slot, 0, PLAYER_COUNT - 1),
             PlayerId: text(p.PlayerId, 128),
@@ -101,6 +107,7 @@ function normaliseRecord(raw) {
             LungeAttempts: clampInt(p.LungeAttempts, lungeHits, Number.MAX_SAFE_INTEGER),
             DistanceTravelled: clampFloat(p.DistanceTravelled, 0, 1000000),
             ScoreAtFinalRound: clampInt(p.ScoreAtFinalRound, 0, score),
+            ActiveRounds: activeRounds,
         };
     });
 
@@ -125,6 +132,128 @@ function normaliseRecord(raw) {
     };
 }
 
+// ---------------------------------------------------------------------------
+// PROGRESSION. Mirrors `ProgressionRules.cs`; see this file header for the rule that the C#
+// is the specification and a disagreement here is the bug.
+//
+// ⚠️⚠️ XP IS COMPUTED HERE AND NEVER SENT BY A CLIENT, which is `FUTURE.md` 0.5 rule 6.
+// The client runs the same arithmetic so the end-of-match bar can animate before this endpoint
+// answers, and `ProfileRules.LastAward` says in its own comment that the client copy is never the
+// authority. If a player ever sees a bar that disagrees with their profile, THIS is the number
+// that is right.
+//
+// ⚠️ THE HERO IDS ARE WRITTEN TWICE AND THERE IS NO WAY AROUND IT. `Roster.HeroPeople` is the
+// C# original and Cloud Code cannot import it, the same trade `player-account.js` records about
+// `DisplayNameMax`. `ProgressionTests.TheServerScriptsCopyOfTheHeroListMatchesTheRoster` pins
+// them, so adding a hero without touching this line fails a test rather than silently shipping a
+// hero with no mastery path.
+// ---------------------------------------------------------------------------
+
+const MASTERY_HEROES = ["dante", "cheska", "sean", "zack", "nemu", "phaister"];
+
+const COMPLETION_XP = 100;
+const PLACEMENT_XP = [40, 25, 15, 10];
+const OBJECTIVE_KNOCKDOWN_XP = 15;
+const OBJECTIVE_PRESSURE_RETRIEVAL_XP = 20;
+const OBJECTIVE_TAG_XP = 15;
+const OBJECTIVE_SABOTAGE_XP = 10;
+const OBJECTIVE_CLEAN_XP = 15;
+
+const XP_PER_LEVEL = 1000;
+const MASTERY_XP_PER_LEVEL = 2000;
+
+const AFK_STRIKES_BEFORE_PENALTY = 3;
+const AFK_PENALTY_MATCHES = 3;
+
+/** Mirrors `ProgressionRules.WasAfk`. -1 active rounds is unmeasured, never AFK. */
+function wasAfk(record, line) {
+    if (!line || line.IsBot) return false;
+    if (record.Rounds <= 0) return false;
+    if (line.ActiveRounds < 0) return false;
+    return line.ActiveRounds < record.Rounds;
+}
+
+/** Mirrors `ProgressionRules.MatchXp`, which is the sum of `Breakdown`. */
+function matchXp(record, line) {
+    if (!line || line.IsBot) return 0;
+    if (wasAfk(record, line)) return 0;
+
+    let total = COMPLETION_XP;
+    if (line.Placement >= 1 && line.Placement <= PLACEMENT_XP.length)
+        total += PLACEMENT_XP[line.Placement - 1];
+
+    if (line.Knockdowns > 0) total += OBJECTIVE_KNOCKDOWN_XP;
+    if (line.RetrievalsUnderPressure > 0) total += OBJECTIVE_PRESSURE_RETRIEVAL_XP;
+    if (line.Tags > 0) total += OBJECTIVE_TAG_XP;
+    if (line.Sabotages > 0) total += OBJECTIVE_SABOTAGE_XP;
+    if (line.TayaCampPenalties === 0 && line.UnretrievedSlipperPenalties === 0)
+        total += OBJECTIVE_CLEAN_XP;
+
+    return total;
+}
+
+/** Mirrors `ProgressionRules.LevelForXp`. Flat cost per level, uncapped, never below 1. */
+function levelForXp(xp) {
+    return xp <= 0 ? 1 : 1 + Math.floor(xp / XP_PER_LEVEL);
+}
+
+/** Mirrors `ProgressionRules.MasteryLevelForXp`. */
+function masteryLevelForXp(xp) {
+    return xp <= 0 ? 1 : 1 + Math.floor(xp / MASTERY_XP_PER_LEVEL);
+}
+
+/** Mirrors `ProgressionRules.MasteryFor`. */
+function masteryFor(profile, id) {
+    let found = profile.Mastery.find(m => m && m.Id === id);
+    if (!found) {
+        found = { Id: id, Xp: 0, Level: 1 };
+        profile.Mastery.push(found);
+    }
+    return found;
+}
+
+/**
+ * Mirrors `ProgressionRules.Award`, and is called from the same place: inside `applyRecord`,
+ * after every refusal has already happened.
+ *
+ * ⚠️⚠️ THAT PLACEMENT IS THE ONLY THING MAKING IT IDEMPOTENT. The offline queue resubmits,
+ * `applyRecord` refuses a `MatchId` it has already counted, and paying XP from a second call site
+ * would double a career the first time somebody Wi-Fi dropped at the wrong moment.
+ */
+function award(profile, record, line) {
+    if (profile.Level < 1) profile.Level = 1;
+
+    if (wasAfk(record, line)) {
+        profile.AfkStrikes += 1;
+        if (profile.AfkStrikes >= AFK_STRIKES_BEFORE_PENALTY) {
+            profile.AfkStrikes = 0;
+            profile.XpPenaltyMatches = AFK_PENALTY_MATCHES;
+        }
+        return;
+    }
+
+    // A clean match clears the strikes rather than decrementing them: three in a row is somebody
+    // who walked away, three across a month is somebody whose connection dropped.
+    profile.AfkStrikes = 0;
+
+    // The suspension is spent by a match that would otherwise have paid, never by another AFK
+    // one, or the fastest way out of it would be to keep standing still.
+    if (profile.XpPenaltyMatches > 0) {
+        profile.XpPenaltyMatches -= 1;
+        return;
+    }
+
+    const paid = matchXp(record, line);
+    profile.Xp += paid;
+    profile.Level = levelForXp(profile.Xp);
+
+    if (line.CharacterId && MASTERY_HEROES.indexOf(line.CharacterId) >= 0) {
+        const mastery = masteryFor(profile, line.CharacterId);
+        mastery.Xp += paid;
+        mastery.Level = masteryLevelForXp(mastery.Xp);
+    }
+}
+
 function emptyTotals() {
     return {
         Matches: 0, Wins: 0, Draws: 0,
@@ -147,6 +276,9 @@ function emptyProfile(playerId) {
         PlayerId: playerId,
         Level: 1,
         Xp: 0,
+        Mastery: [],
+        AfkStrikes: 0,
+        XpPenaltyMatches: 0,
         RankTier: "",
         RankPoints: 0,
         PeakRankTier: "",
@@ -279,6 +411,9 @@ function applyRecord(profile, record, playerId) {
 
     profile.UpdatedUtc = record.PlayedUtc;
     if (!profile.CreatedUtc) profile.CreatedUtc = record.PlayedUtc;
+
+    // Inside the guard, per `award`'s own note and `ProfileRules.Apply`'s.
+    award(profile, record, line);
     return true;
 }
 
@@ -343,6 +478,15 @@ module.exports = async ({ params, context, logger }) => {
         profile.Characters = Array.isArray(profile.Characters) ? profile.Characters : [];
         profile.Slippers = Array.isArray(profile.Slippers) ? profile.Slippers : [];
         profile.AppliedMatchIds = Array.isArray(profile.AppliedMatchIds) ? profile.AppliedMatchIds : [];
+
+        // Every career stored before Phase 4 has none of these. They default rather than throw,
+        // and a level is re-derived from the XP for the same reason `ProfileRules.Normalise`
+        // re-derives it: the XP is what was earned and the level is a view of it.
+        profile.Mastery = Array.isArray(profile.Mastery) ? profile.Mastery : [];
+        profile.Xp = Math.max(0, Math.trunc(Number(profile.Xp) || 0));
+        profile.AfkStrikes = Math.max(0, Math.trunc(Number(profile.AfkStrikes) || 0));
+        profile.XpPenaltyMatches = Math.max(0, Math.trunc(Number(profile.XpPenaltyMatches) || 0));
+        profile.Level = levelForXp(profile.Xp);
 
         const applied = applyRecord(profile, record, playerId);
 

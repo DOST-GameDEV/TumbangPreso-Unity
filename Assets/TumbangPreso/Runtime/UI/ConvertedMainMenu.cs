@@ -17,6 +17,10 @@ namespace TumbangPreso.UI
     ///
     /// ⚠️⚠️ THERE ARE TWO OVERLAYS NOW, NOT THREE. The tutorial one was deleted; see
     /// <see cref="Wire"/>.
+    ///
+    /// ⚠️⚠️ AND THE ACCOUNT AND CAREER OVERLAYS ARE GONE, replaced by one `PlayerNameplate`
+    /// in the corner that opens `PlayerHub`. See the note in <see cref="Wire"/> for why two
+    /// buttons on this screen was the bug rather than the layout of them.
     /// </summary>
     public sealed class ConvertedMainMenu : ConvertedScreen
     {
@@ -75,19 +79,41 @@ namespace TumbangPreso.UI
 
             GameServices.Music?.Play("menu", GameServices.MenuTrack);
 
-            var account = gameObject.GetComponent<AccountOverlay>();
-            if (account == null) account = gameObject.AddComponent<AccountOverlay>();
-            account.Install();
-
-            // ⚠️ ITS OWN BUTTON, NOT A TAB INSIDE THE ACCOUNT PANEL. The account panel is where
-            // you change WHO you are, and the career page is where you look at WHAT you did.
-            // Putting a career behind a form full of password fields is how a stat page stops
-            // being the thing anybody opens.
-            var profile = gameObject.GetComponent<ProfileOverlay>();
-            if (profile == null) profile = gameObject.AddComponent<ProfileOverlay>();
-            profile.Install();
+            // ⚠️⚠️ ONE NAMEPLATE, NOT TWO BUTTONS, AND THE TWO BUTTONS ARE DELETED. 🧑,
+            // 2026-08-30, over a screenshot of CAREER and ACCOUNT floating in the middle of the
+            // street: *"look wtf why are these buttons here"*. They were there because
+            // `AccountOverlay` and `ProfileOverlay` each built their own canvas and parked their
+            // own wood button at their own hard-coded offset from the top right, so this screen
+            // had no idea either existed and could not have laid them out if it wanted to.
+            //
+            // ⚠️⚠️ THE PARAGRAPH THIS REPLACES ARGUED FOR KEEPING THEM SEPARATE, and it was
+            // arguing about the right thing for the wrong reason. It said a career page must not
+            // live behind a form full of password fields, which is true and is why `PlayerHub`
+            // has FOUR tabs with the password fields on a different screen entirely
+            // (`SignInScreen`). What it got wrong is that the fix for "do not bury the stats" is
+            // not "add a second button to the title screen".
+            //
+            // ⚠️ THE NAMEPLATE INSTALLS THE HUB, AND THE HUB INSTALLS THE SIGN-IN SCREEN. One
+            // entry point, so a screen can never again grow a button nothing here knows about.
+            var nameplate = gameObject.GetComponent<PlayerNameplate>();
+            if (nameplate == null) nameplate = gameObject.AddComponent<PlayerNameplate>();
+            nameplate.Install();
+            _nameplate = nameplate;
         }
 
+        private PlayerNameplate _nameplate;
+
+        /// <summary>
+        /// ⚠️⚠️ THE NAMEPLATE IS HIDDEN WHILE AN OVERLAY IS OPEN, AND TWO TESTS ARE WHY.
+        /// `EveryButtonIsReachable` found eight settings controls blocked by it and
+        /// `TheWheelScrollsTheSettingsListFromEveryPartOfIt` found the wheel swallowed over it.
+        /// The plate lives on its own canvas above the converted screens, so it covered the top
+        /// left of every panel this method opens. See `PlayerNameplate.SetVisible` for why a
+        /// lower sorting order is not the answer.
+        ///
+        /// ⚠️ IT COMES BACK ON THE SAME EVENT THE PENNANTS RE-UNFURL ON, so there is one
+        /// definition of "the overlay closed" rather than two that can drift apart.
+        /// </summary>
         private void Overlay(string button, string panel)
         {
             var node = Node(panel);
@@ -101,7 +127,15 @@ namespace TumbangPreso.UI
                 overlay.BackPressed += Unfurl;
             }
 
-            OnClick(button, () => node.gameObject.SetActive(true));
+            // ⚠️ THE HIDE IS IMMEDIATE HERE AND PERMANENT IN `PlayerNameplate.Update`. This
+            // line only removes the one frame of flicker between the panel opening and the plate
+            // noticing; the plate is what actually decides, because a probe that activates the
+            // panel directly never reaches this handler and both settings probes do exactly that.
+            OnClick(button, () =>
+            {
+                node.gameObject.SetActive(true);
+                _nameplate?.SetVisible(false);
+            });
         }
 
         private void Unfurl()

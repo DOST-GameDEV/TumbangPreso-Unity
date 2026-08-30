@@ -99,6 +99,23 @@ namespace TumbangPreso.Core
         public float DistanceTravelled;
 
         /// <summary>
+        /// How many rounds this seat actually played, out of <see cref="MatchRecord.Rounds"/>.
+        ///
+        /// ⚠️⚠️ -1 MEANS NOBODY MEASURED IT AND IS NOT THE SAME AS 0, exactly as
+        /// <see cref="TimeToFirstThrow"/>'s -1 is not the same as zero seconds. Every record
+        /// written before Phase 4 carries -1, the offline queue resubmits records that can be
+        /// weeks old, and a peer on an older build sends -1 forever. Reading it as "played no
+        /// rounds" would mark every one of those matches AFK and strike out accounts for games
+        /// they played properly. <see cref="ProgressionRules.WasAfk"/> is the only reader and it
+        /// refuses -1 outright.
+        ///
+        /// ⚠️ A ROUND COUNTS AS PLAYED ON MOVEMENT OR ON ANY HOST-RESOLVED VERB, per
+        /// <see cref="ProgressionRules.AfkRoundMetres"/>. It is not an input count: the host
+        /// never receives a remote player's `InputIntent`, only their transform.
+        /// </summary>
+        public int ActiveRounds = -1;
+
+        /// <summary>
         /// This seat's score at the moment the FINAL round began.
         ///
         /// ⚠️ IT IS HERE SO CLUTCH RATE CAN BE DERIVED RATHER THAN RAISED, which `FUTURE.md`
@@ -342,6 +359,10 @@ namespace TumbangPreso.Core
                 p.DistanceTravelled = Clamp(p.DistanceTravelled, 0.0f, 1_000_000.0f);
                 p.LongestLastAttacker = Clamp(p.LongestLastAttacker, 0.0f, record.DurationSeconds);
                 p.ScoreAtFinalRound = Clamp(p.ScoreAtFinalRound, 0, p.Score);
+
+                // -1 is the honest "never measured"; anything else is clamped into the match.
+                // See the field's own note: reading -1 as zero would flag historical records AFK.
+                p.ActiveRounds = p.ActiveRounds < 0 ? -1 : Clamp(p.ActiveRounds, 0, record.Rounds);
 
                 // -1 is the honest "never threw"; anything else is clamped into the match.
                 if (p.TimeToFirstThrow >= 0.0f)

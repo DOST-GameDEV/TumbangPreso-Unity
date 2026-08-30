@@ -46,6 +46,26 @@ namespace TumbangPreso.UI
         /// rather than the board waiting on a network message before it can be drawn at all.
         /// </summary>
         private Text _yourMatchLine;
+
+        /// <summary>
+        /// The progression block: the level line, the bar, and what the match paid for.
+        ///
+        /// ⚠️⚠️ THE BAR IS DRAWN FROM `CareerStore.LastAward` AND NEVER FROM A NUMBER THIS
+        /// SCREEN ADDS UP. `FUTURE.md` 0.5 rule 6 puts the award on the server, and
+        /// `ProfileRules.Apply` runs the identical core rules against the local cache so the bar
+        /// can move before the endpoint answers. A results screen that did its own arithmetic
+        /// would be a second implementation of the curve, and the first balance change would
+        /// leave it quietly disagreeing with the career page one screen away.
+        ///
+        /// ⚠️ AN EMPTY BLOCK IS A LEGITIMATE STATE AND IS HIDDEN RATHER THAN ZEROED. A
+        /// spectator, a Practice match against bots and a match this peer has no line in all pay
+        /// nothing, and a bar reading 0 per cent teaches a player that they lost progress.
+        /// </summary>
+        private Text _xpHeadline;
+
+        private Image _xpBarFill;
+        private RectTransform _xpBarTrack;
+        private Text _xpDetail;
         private readonly List<Text[]> _rows = new List<Text[]>();
         private Button _rematch;
         private Button _menu;
@@ -157,6 +177,7 @@ namespace TumbangPreso.UI
             // when the broadcast lands. Clearing it first stops the PREVIOUS match's summary
             // sitting under a rematch's standings.
             if (_yourMatchLine != null) _yourMatchLine.text = "";
+            ShowProgression(null, null);
             if (GameServices.Stats?.Last != null) OnRecordReady(GameServices.Stats.Last);
 
             _rematchVotes.Clear();
@@ -286,12 +307,116 @@ namespace TumbangPreso.UI
                 ? "  ·  SAVED ON THIS MACHINE, WILL UPLOAD"
                 : "";
 
+            ShowProgression(career?.LastAward, career?.Profile);
+
             string clutch = Core.MatchRecordRules.IsClutch(record, line.Slot) ? "  ·  CLUTCH" : "";
 
             _yourMatchLine.text =
-                $"YOUR MATCH   {line.Knockdowns} KNOCKDOWNS  ·  {line.Retrievals} RETRIEVALS  ·  " +
-                $"{line.Tags} TAGS  ·  {Core.MatchRecordRules.PassiveDefenceSeconds(line):0} s DEFENDING" +
+                $"YOUR MATCH   {line.Knockdowns} KNOCKDOWNS  \u00b7  {line.Retrievals} RETRIEVALS  \u00b7  " +
+                $"{line.Tags} TAGS  \u00b7  {Core.MatchRecordRules.PassiveDefenceSeconds(line):0} s DEFENDING" +
                 clutch + queued;
+
+            _lastLine = line;
+            _lastRecord = record;
+        }
+
+        private Core.PlayerMatchStats _lastLine;
+        private Core.MatchRecord _lastRecord;
+
+        /// <summary>
+        /// Draws what the match paid, `FUTURE.md` PHASE 4 step 7.
+        ///
+        /// ⚠️⚠️ THE THREE ZERO-PAY CASES READ DIFFERENTLY AND THAT IS THE POINT OF THE
+        /// BLOCK. "Nothing to show" (no line, no career) hides it entirely; "away for a round"
+        /// and "no XP for 2 more matches" are the two the player has to be TOLD about, because a
+        /// bar that silently does not move is how a progression system gets reported as broken.
+        /// The AFK rule is one sentence and this is where the player reads it.
+        ///
+        /// ⚠️ THE BAR IS THE ACCOUNT LEVEL AND NOT THE MASTERY. Two bars on a results board is
+        /// two things to read in the four seconds before somebody presses rematch; the mastery
+        /// number goes on the profile, where there is room for it. The headline names the hero
+        /// level when it moved, which is the only part of mastery worth interrupting for.
+        /// </summary>
+        private void ShowProgression(Core.XpAward award, Core.PlayerProfile profile)
+        {
+            if (_xpHeadline == null) return;
+
+            bool show = award != null && profile != null;
+            _xpHeadline.gameObject.SetActive(show);
+            if (_xpBarTrack != null) _xpBarTrack.gameObject.SetActive(show);
+            if (_xpDetail != null) _xpDetail.gameObject.SetActive(show);
+            if (!show) return;
+
+            int level = Core.ProgressionRules.LevelForXp(profile.Xp);
+            float into = Core.ProgressionRules.XpIntoLevel(profile.Xp)
+                         / (float)Core.ProgressionRules.XpPerLevel;
+
+            if (award.Afk)
+            {
+                _xpHeadline.text = $"LEVEL {level}   \u00b7   NO XP: AWAY FOR A WHOLE ROUND";
+                _xpHeadline.color = UiTheme.Danger;
+            }
+            else if (award.Suspended)
+            {
+                _xpHeadline.text = $"LEVEL {level}   \u00b7   NO XP WHILE THE AFK PENALTY LASTS";
+                _xpHeadline.color = UiTheme.Danger;
+            }
+            else if (award.LevelAfter > award.LevelBefore)
+            {
+                _xpHeadline.text = $"LEVEL {award.LevelAfter}   \u00b7   LEVEL UP   \u00b7   +{award.MatchXp} XP";
+                _xpHeadline.color = UiTheme.Highlight;
+            }
+            else
+            {
+                _xpHeadline.text = $"LEVEL {level}   \u00b7   +{award.MatchXp} XP";
+                _xpHeadline.color = UiTheme.Amber;
+            }
+
+            if (_xpBarFill != null)
+            {
+                var rt = _xpBarFill.rectTransform;
+                rt.anchorMin = Vector2.zero;
+                rt.anchorMax = new Vector2(Mathf.Clamp01(into), 1.0f);
+                rt.offsetMin = Vector2.zero;
+                rt.offsetMax = Vector2.zero;
+            }
+
+            _xpDetail.text = DetailFor(award);
+        }
+
+        /// <summary>
+        /// The breakdown, and the unlocks under it.
+        ///
+        /// ⚠️ THE LINES COME FROM `ProgressionRules.Breakdown` RATHER THAN BEING LISTED HERE.
+        /// The core owns which objectives exist and what each pays, and a screen with its own
+        /// copy of that list is a screen that stops mentioning an objective the day somebody adds
+        /// one.
+        /// </summary>
+        private string DetailFor(Core.XpAward award)
+        {
+            if (award.Afk)
+                return "MOVE OR PLAY AT LEAST ONCE A ROUND. THREE OF THESE AND THE NEXT THREE MATCHES PAY NOTHING.";
+
+            if (award.Suspended) return "";
+
+            var parts = new List<string>();
+            foreach (var part in Core.ProgressionRules.Breakdown(_lastRecord, _lastLine))
+                parts.Add($"{part.Label} +{part.Xp}");
+
+            string detail = string.Join("   \u00b7   ", parts);
+
+            if (award.MasteryXp > 0 && !string.IsNullOrEmpty(award.MasteryId))
+            {
+                string hero = award.MasteryId.ToUpperInvariant();
+                detail += award.MasteryLevelAfter > award.MasteryLevelBefore
+                    ? $"\n{hero} MASTERY {award.MasteryLevelAfter}   \u00b7   MASTERY UP"
+                    : $"\n{hero} MASTERY {award.MasteryLevelAfter}   \u00b7   +{award.MasteryXp}";
+            }
+
+            foreach (var reward in award.Unlocked)
+                detail += $"\nUNLOCKED   {reward.Kind.ToString().ToUpperInvariant()}   {reward.Label}";
+
+            return detail;
         }
 
         private static string NameFor(int slot)
@@ -360,8 +485,18 @@ namespace TumbangPreso.UI
                                        TextAnchor.MiddleCenter);
             _broadcastLine.text = "FINAL STANDINGS";
 
-            _yourMatchLine = CardLabel(card, "YourMatchLine", 17, UiTheme.CreamMuted, 28,
-                                       TextAnchor.MiddleCenter);
+            // ⚠️ RAISED FROM 17 TO THE 18-UNIT FLOOR ON 2026-08-30. It shipped under it, and
+            // `PlayerHubLayoutProbe` is what made that visible: nothing had ever measured this
+            // board's type against `MenuKit.MinReadableUnits`.
+            _yourMatchLine = CardLabel(card, "YourMatchLine", MenuKit.MinReadableUnits,
+                                       UiTheme.CreamMuted, 30, TextAnchor.MiddleCenter);
+
+            _xpHeadline = CardLabel(card, "XpHeadline", 19, UiTheme.Amber, 26,
+                                    TextAnchor.MiddleCenter);
+            BuildXpBar(card);
+            _xpDetail = CardLabel(card, "XpDetail", MenuKit.MinReadableUnits,
+                                  UiTheme.CreamMuted, 52, TextAnchor.MiddleCenter);
+            ShowProgression(null, null);
 
             Spacer(card, 10.0f);
 
@@ -529,6 +664,43 @@ namespace TumbangPreso.UI
             element.preferredHeight = height;
 
             return label;
+        }
+
+        /// <summary>
+        /// A track and a fill, in the two colours the wood card already uses.
+        ///
+        /// ⚠️ THE FILL IS ANCHORED RATHER THAN SIZED, so it is correct at every card width
+        /// without anybody reading a pixel number back. `AspectRatioProbes` drives real layout
+        /// through nine resolutions and a width computed in code is exactly what it catches.
+        ///
+        /// ⚠️ AND IT IS NOT A `Slider`. A Slider is interactive, focusable and tab-reachable,
+        /// and this is a readout: a player who presses tab on the results board should reach the
+        /// rematch button, not a bar they cannot move.
+        /// </summary>
+        private void BuildXpBar(VerticalLayoutGroup card)
+        {
+            var trackGo = new GameObject("XpBar", typeof(RectTransform));
+            trackGo.transform.SetParent(card.transform, false);
+
+            _xpBarTrack = trackGo.GetComponent<RectTransform>();
+            var track = trackGo.AddComponent<Image>();
+            track.color = UiTheme.WoodDark;
+
+            var element = trackGo.AddComponent<LayoutElement>();
+            element.minHeight = 10.0f;
+            element.preferredHeight = 10.0f;
+
+            var fillGo = new GameObject("Fill", typeof(RectTransform));
+            fillGo.transform.SetParent(trackGo.transform, false);
+
+            _xpBarFill = fillGo.AddComponent<Image>();
+            _xpBarFill.color = UiTheme.Amber;
+
+            var fill = _xpBarFill.rectTransform;
+            fill.anchorMin = Vector2.zero;
+            fill.anchorMax = new Vector2(0.0f, 1.0f);
+            fill.offsetMin = Vector2.zero;
+            fill.offsetMax = Vector2.zero;
         }
 
         private static void Spacer(VerticalLayoutGroup card, float height)

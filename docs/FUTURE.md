@@ -99,6 +99,8 @@ without rewriting anything else.
 
 ```
 1  ACCOUNTS ────> 2  PROFILE + STATS ──> 3  TELEMETRY
+                       │                      │
+                       │          4.5 QUALITY CONTROL (1 to 4)
                        │
                        ├──> 4  PROGRESSION ──> 5  COSMETICS ──> 10 HERO MASTERY
                        ├──> 6  SOCIAL
@@ -115,6 +117,12 @@ without rewriting anything else.
 
 **Do 1, then 2, then 3, then stop and play it for a week.** Everything after that is worth more
 when there is real data to point at.
+
+⚠️⚠️ **THAT ADVICE WAS OVERRIDDEN ON 2026-08-30 AND PHASE 4 SHIPPED THE SAME DAY.** 🧑:
+*"the testing goes in the ennd and its finne to go ahead of schedule"*. **The half of it that
+still stands is the balance half**: every number in Phase 4 is a starting point, `docs/TODO.md`
+§ 91 says so of each one, and the telemetry from § 90.3 is what should move them. Going ahead of
+schedule is a decision about ORDER; it is not permission to call an unmeasured number balanced.
 
 ### 0.5 The standing preamble, which every prompt in both files inherits
 
@@ -207,6 +215,8 @@ THIS IS TRUE.** The prose about design intent ages well. The claims about the co
 | The input map has no gamepad or touch bindings | `grep -c Gamepad Assets/TumbangPreso/Resources/TumbangPreso.inputactions` | Phases 14 and 15 shrink a lot. |
 | Build targets are Windows, WebGL, Linux server only | `ls "/c/Program Files/Unity/Hub/Editor/*/Editor/Data/PlaybackEngines/"` | Phase 15 step 1 may already be done. |
 | There is no colourblind support and no UI scale | `grep -rn "colourblind|colorblind|UiScale" --include=*.cs Assets` | Phase 16 shrinks. |
+| Progression exists, and XP is awarded server-side | `grep -rn ProgressionRules Packages/com.tumbangpreso.core`, then `grep -n award ugs/cloud-code/match-record.js` | Phase 4 has shipped. Read `docs/TODO.md` § 91 before touching a rate, and § 91.5 before moving the award to a second call site. |
+| The account and career screens are `PlayerHub` | `grep -rn "class PlayerHub" Assets` | `AccountOverlay` and `ProfileOverlay` are DELETED, not deactivated. `docs/TODO.md` § 92. Build new settings-shaped screens out of `UiRows`, never out of hand-written Y offsets. |
 | The roster is 18 characters, 6 lata, 10 tsinelas, 3 maps | `Packages/com.tumbangpreso.core/Runtime/Roster.cs` | Every content count in these files is wrong. Fix them. |
 | Scoring is one host-side writer | `grep -n AddScore Assets/TumbangPreso/Runtime/MatchDirector.cs` | § 8's corroboration design may no longer be the right shape. |
 | `NetSession.ProtocolVersion` is a gate between builds | `grep -n ProtocolVersion Assets/TumbangPreso/Runtime/Net/NetSession.cs` | Read the current number rather than quoting one from here. |
@@ -344,7 +354,11 @@ in the game and they make every later balance argument answerable.
 
 ### 2.1 The profile screen, laid out
 
-✅ **SHIPPED 2026-08-30 AS `ProfileOverlay`, WITH FOUR ITEMS DELIBERATELY LEFT OUT.** The header
+✅ **SHIPPED 2026-08-30, WITH FOUR ITEMS DELIBERATELY LEFT OUT.**
+⚠️ **IT SHIPPED AS `ProfileOverlay` AND THAT CLASS NO LONGER EXISTS.** The career page is the
+CAREER and MATCHES tabs of `PlayerHub` since 2026-08-30; `docs/TODO.md` § 92 has the five faults
+🧑 photographed and what replaced them. The four items below are still absent for the same
+reasons. The header
 card, the career strip, the mode tabs, the stat blocks, the paged match history and the match
 detail are on screen. The **avatar** waits on § 1.4, which is still an open argument nobody has
 answered; the **rank badge and peak** wait on Phase 9; the **achievement shelf** waits on Phase
@@ -465,7 +479,20 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
-## PHASE 4 · PROGRESSION: XP, LEVELS AND MASTERY
+## PHASE 4 · PROGRESSION: XP, LEVELS AND MASTERY ✅ SHIPPED 2026-08-30
+
+⚠️⚠️ **`docs/TODO.md` § 91 IS THE AS-BUILT RECORD AND IT DEPARTS FROM THE TEXT BELOW IN
+ONE PLACE THAT MATTERS.** This section and § 19.4 both say to detect an AFK seat using *"the
+input telemetry the bots already produce"*, which reads as `InputIntent`. **The host never
+receives a remote player's `InputIntent`**: `MatchRpc.SubmitMoveServerRpc` carries a transform,
+not a key, so an intent-based check catches the local seat and the bots and nobody else. What
+shipped reads MOVEMENT, which arrives for every seat and which `MatchStatsCollector` already
+samples. § 91.1 has the derivation of the 5.06 m bar.
+
+⚠️ **AND THE FLAT RATE IS FLAT IN BOTH DIRECTIONS NOW.** This section cuts diminishing returns,
+rested XP and the daily cap by name. § 91.3 extends it to the LEVEL COST for the same reason: a
+rising cost per level is diminishing returns wearing a different hat, felt identically by the
+player and impossible for them to see the source of.
 
 **The point:** give a player who just lost a reason to queue again. Rank goes down when you lose.
 **Progress must never go down.** That asymmetry is the engine of every live game that works.
@@ -539,6 +566,96 @@ higher level buys nothing but a border.
 **The prompt for this phase is [§ 19.4](#194-prompt-for-phase-4).** Every prompt in
 this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
 one inherits and § 0.6 is what to re-verify before trusting any of them.
+
+---
+
+## PHASE 4.5 · QUALITY CONTROL FOR PHASES 1 TO 4 ⚠⚠ NOT STARTED
+
+🧑 commissioned this on 2026-08-30, straight after the account UI rebuild: *"afterwards
+continue on with phase 4 work then add a phase 4.5 quality control for phase 1-4"*.
+
+**Why it earns a number of its own rather than being "tidy up as you go".** Phases 1 to 4 shipped
+in two days and each one was verified against ITS OWN acceptance list. Nothing has ever been
+verified across all four at once, and every fault found in them so far was found the same way: by
+🧑 playing or looking, not by a test.
+
+**The four that got through, and what each one proves about the gaps:**
+
+| Found | How it was found | What that says |
+|---|---|---|
+| Cloud Code stripped every parameter, so `save`, `delete` and `submit` had **never once run** (§ 90.5) | A new probe called a DIFFERENT branch | Every probe tested the default branch. Coverage was one action out of four. |
+| The account and career screens overlapped themselves and ran off the bottom of the screen (§ 92.1) | 🧑 photographed them | No UI probe covered any screen phases 1 and 2 built. |
+| `ARewardCannotCarryAGameplayNumber`'s subject raced its own test suite (§ 91.5) | xUnit parallelism | A global that would have misreported XP in play about once in a hundred matches. |
+| The AFK check as SPECIFIED could not work (§ 91.1) | Reading `MatchRpc` | A prompt written before the code it describes, followed literally, would have shipped a check that watched three seats out of four. |
+
+⚠⚠ **NONE OF THOSE ARE BUGS IN A FEATURE. They are gaps in what was being asked.** That is what
+this phase is: ask the questions nobody asked the first time.
+
+### 4.5.1 Re-verify every acceptance bullet against the CODE
+
+§§ 1, 2, 3 and 4 each end with a "done looks like" list. **Read each bullet, then prove it from
+the running game rather than from `docs/TODO.md`.** § 0.5 rule 2: where a document and the code
+disagree, the code is right. Fix the document in the same commit.
+
+The ones most likely to have rotted, because nothing exercises them:
+
+- **A fresh install reaches the menu signed in with no prompt** (§ 1). Nothing tests a FIRST
+  launch. Delete the local profile and the UGS cache and boot.
+- **An account can be deleted** (§ 1). `player-account`'s `delete` branch had never run before
+  § 90.5 and has still never been run by a probe.
+- **Career totals survive a reinstall on the same account** (§ 2). Never tested end to end.
+- **A match awards XP computed server-side** (§ 4). `UgsServicesProbe` proves the endpoint
+  ACCEPTS a record; nothing yet reads the profile back and asserts the XP moved by the amount
+  `ProgressionRules.MatchXp` says it should. **That is the single most valuable check in this
+  phase**, because it is the one that would catch the C# and the JS drifting apart in the only
+  place a player would notice.
+
+### 4.5.2 Cover every branch of every endpoint, not the default one
+
+⚠⚠ **§ 90.5 IS THE TEMPLATE FOR THIS WHOLE PHASE.** Three scripts, four actions each, and a
+missing parameter produced a well-formed answer from the wrong branch with nothing logged. Write
+a probe case per ACTION, and make each assertion a string only that branch can produce.
+
+`player-account`: `load`, `save`, `delete`, `verify`. `match-record`: `load`, `history`, `submit`.
+`telemetry`: `report`, and the funnel. **Count them: nine, and the `Ugs` category is 8/8.**
+
+### 4.5.3 A UI probe for every screen phases 1 to 4 built
+
+`PlayerHubLayoutProbe` covers the hub, the sign-in screen and the nameplate as of § 92.5. Not
+covered: **the end-of-match XP block** (`MatchResult`), and the telemetry row in the settings
+panel. Both are phase surfaces and neither is measured.
+
+⚠️ **AND THE PROBE ONLY ASSERTS FIT AND LEGIBILITY.** It cannot see a screen that is ugly, and
+it cannot see a control nobody can find. It caught a type scale below the readable floor on its
+first run, which is exactly the class it is for; do not read a green run as "the UI is good".
+
+### 4.5.4 Offline and LAN, per § 0.5 rule 7, for all four phases at once
+
+Each phase degrades correctly on its own. **Nobody has pulled the cable and walked the whole
+thing:** boot, menu, hub, career, a LAN match, the end-of-match XP bar, and the queue flushing on
+the next sign-in. § 90.4 lists what is automated in place of the four-machine run and that list
+now needs the Phase 4 rows added to it.
+
+### 4.5.5 The deferred list, written down once
+
+Things known to be absent, so nobody rediscovers them as bugs: the avatar (§ 1.4, an open
+argument), the rank badge (§ 9), achievements (§ 10), compare with a friend (§ 6), the rename
+cooldown and profanity filter (§ 1.3, written and never built), email recovery (§ 1.2), and
+**every Phase 4 reward, which is computed and worn by nothing** (`docs/TODO.md` § 91.8).
+
+### 4.5.6 What this phase must NOT turn into
+
+⚠⚠ **IT IS NOT A REDESIGN AND IT IS NOT A BALANCE PASS.** Every number in Phase 4 is an
+unmeasured starting point and § 91 says so of each one; moving them belongs to whoever has a week
+of telemetry, not to a QC pass. **Find what is broken or unproven, prove it or fix it, write down
+what is deliberately absent, and stop.**
+
+**Done when** every acceptance bullet in §§ 1 to 4 has a named test or a named reason it cannot
+have one, every endpoint action has a probe case asserting a string only that branch produces, the
+XP a real submission awards is asserted against `ProgressionRules.MatchXp`, and § 0.5 rule 9 is
+satisfied.
+
+**The prompt for this phase is [§ 19.4b](#194b-prompt-for-phase-45).**
 
 ---
 
@@ -1419,7 +1536,12 @@ one short session and it is cheaper than building a phase against a stale brief.
 
 ---
 
-### 19.4 Prompt for Phase 4
+### 19.4 Prompt for Phase 4 ✅ SHIPPED 2026-08-30
+
+⚠️ **KEPT AS THE RECORD OF WHY THE PHASE IS SHAPED THIS WAY, per § 0.6's maintenance rule.**
+What actually landed is `docs/TODO.md` § 91, and step 1 below is the one that departs from it:
+the AFK check reads MOVEMENT rather than `InputIntent`, because the host never receives a remote
+player's intent. Do not re-run this prompt against the shipped code.
 
 **XP, levels and per-character mastery. This is the phase that makes a player come back
 tomorrow, and it needs no matchmaking and no ranked to be worth having.**
@@ -1462,6 +1584,49 @@ tomorrow, and it needs no matchmaking and no ranked to be worth having.**
 
 ---
 
+### 19.4b Prompt for Phase 4.5
+
+**Quality control across phases 1 to 4. Not new features: proof that the four that shipped
+actually do what their acceptance lists claim.**
+
+> Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md`, then `docs/FUTURE.md`
+> §§ 0.5 and 0.6, then `docs/FUTURE.md` § 4.5. Do not skip them because this prompt summarises
+> the task; the summary is not the rules.
+>
+> **VERIFY FIRST.** Phases 1, 2, 3 and 4 have all shipped. `docs/TODO.md` §§ 88 to 92 are the
+> as-built records and they are the thing you are checking, not the thing you are trusting.
+>
+> **Build, in this order.**
+> 1. **The server-side XP assertion first**, because it is the one check that catches the two
+>    halves of `ProgressionRules` drifting apart in the place a player would notice. Submit a real
+>    `MatchRecord` through `match-record`, read the profile back, and assert the XP moved by
+>    exactly `ProgressionRules.MatchXp`. ⚠️ Use a record whose `MatchId` is unique per run or the
+>    idempotency guard will refuse the second one and the test will pass by not counting anything.
+> 2. **A probe case per endpoint ACTION**, nine of them. ⚠⚠ Per `docs/TODO.md` § 90.5, each
+>    assertion must be a string only the intended branch can produce. "It answered" is what let
+>    three broken actions ship green.
+> 3. **Walk every acceptance bullet in §§ 1 to 4** and give each one a named test or a named
+>    reason it cannot have one. Correct the plan file where it disagrees with the code, same
+>    commit, per § 0.5 rule 2.
+> 4. **A layout probe for `MatchResult`'s XP block** and for the settings telemetry row, the two
+>    phase surfaces `PlayerHubLayoutProbe` does not reach.
+> 5. **The offline walk**, per § 0.5 rule 7: boot, menu, hub, career, LAN match, end-of-match bar,
+>    and the queue flushing on the next sign-in, with the cable out. Automate what can be
+>    automated and add the rest to `docs/TODO.md` § 90.4's list of what to check by hand.
+> 6. **Write the deferred list** into `docs/TODO.md` so nothing absent-by-design gets refiled as a
+>    bug in three weeks.
+>
+> **Constraints.** ⚠⚠ **This is not a redesign and not a balance pass.** Every progression
+> number is an unmeasured starting point and § 91 says so of each; moving them belongs to whoever
+> has a week of telemetry. Do not add a feature to make a test easier. New rules still go in
+> `Packages/com.tumbangpreso.core/` with tests, per § 0.5 rule 3.
+>
+> **Done when** every acceptance bullet has a named test or a named reason, every endpoint action
+> has a branch-specific assertion, a real submission's XP is asserted against the core's own
+> arithmetic, and § 0.5 rule 9 is satisfied.
+
+---
+
 ### 19.5 Prompt for Phase 5
 
 **Cosmetics, the inventory and character customisation.**
@@ -1470,7 +1635,11 @@ tomorrow, and it needs no matchmaking and no ranked to be worth having.**
 > and 0.6, then `docs/FUTURE.md` § 5 and `docs/wearables_catalog.md`. Do not skip them because this
 > prompt summarises the task; the summary is not the rules.
 >
-> **VERIFY FIRST.** Phases 1, 2 and 4 shipped. Confirm `RosterBook` and `RosterEntryAsset` still
+> **VERIFY FIRST.** Phases 1, 2, 3 and 4 have all shipped as of 2026-08-30, so this is the next
+> unstarted phase. ⚠️ **Phase 4 computes the titles, badges, palettes and borders and NOTHING
+> WEARS THEM** (`docs/TODO.md` § 91.8): `ProgressionRules.AccountRewards(level)` answers what a
+> player owns and no screen equips any of it. That is this phase's first job and it is why the
+> reward tables are already populated. Confirm `RosterBook` and `RosterEntryAsset` still
 > resolve id to model, palette and tint, and that `ToonSkin`'s 16-slot palette remap still works
 > the way § 5 assumes, because a colour variant of any character being nearly free is the reason
 > this phase is affordable.

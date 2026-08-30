@@ -267,17 +267,31 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(100.0f, ProfileRules.DistancePerRound(t, Balance.Rounds));
         }
 
-        /// <summary>⚠️ Phase 2 carries the progression FIELDS and awards nothing. Phase 4 owns
-        /// the curve; a profile written today must read as unranked and level 1.</summary>
+        /// <summary>
+        /// ⚠️⚠️ THIS TEST READ `PlayingAMatchAwardsNoXpAndNoRank` UNTIL PHASE 4 SHIPPED, AND
+        /// IT WENT RED ON THE FIRST RUN OF IT, WHICH IS THE TRIPWIRE WORKING. Phase 2 carried the
+        /// progression FIELDS so no profile would need migrating and deliberately awarded nothing
+        /// into them, and this asserted that. `ProgressionRules.Award` now pays XP from inside
+        /// `ProfileRules.Apply`, so the half of the assertion about XP is inverted here rather
+        /// than deleted: the half about the RANK is still Phase 9 and is still true, and deleting
+        /// the case would have thrown that away with it.
+        ///
+        /// ⚠️ `Inventory` IS STILL EMPTY AND THAT IS NOT AN OVERSIGHT. Track rewards are a pure
+        /// function of level (`ProgressionRules.AccountRewards`) and are never stored;
+        /// `Inventory` belongs to Phase 5.
+        /// </summary>
         [Fact]
-        public void PlayingAMatchAwardsNoXpAndNoRank()
+        public void PlayingAMatchAwardsXpButStillNoRankAndNoInventory()
         {
             var profile = new PlayerProfile();
             ProfileRules.Apply(profile, Match("m1", 0, 400, 300, 200, 100), "player-0");
 
-            Assert.Equal(1, profile.Level);
-            Assert.Equal(0, profile.Xp);
+            Assert.True(profile.Xp > 0);
+            Assert.Equal(ProgressionRules.LevelForXp(profile.Xp), profile.Level);
+
             Assert.Equal("", profile.RankTier);
+            Assert.Equal(0, profile.RankPoints);
+            Assert.Equal("", profile.PeakRankTier);
             Assert.Empty(profile.Inventory);
         }
     }

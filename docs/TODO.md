@@ -1151,6 +1151,446 @@ run of § 90.4, which needs four rebuilt machines because `ProtocolVersion` is 1
 
 ---
 
+## 91 · Phase 4: XP, levels and hero mastery ⚠️⚠️ 2026-08-30
+
+`FUTURE.md` PHASE 4 and its prompt 19.4, commissioned after 🧑 confirmed phases 1 to 3 were
+done: *"is phase 1-3 fully donne? if yes then u can work on phase 4"*.
+
+⚠️ **`FUTURE.md` 0.4 SAYS TO PLAY IT FOR A WEEK BEFORE STARTING THIS, AND 🧑 OVERRODE THAT IN
+THE SAME BREATH:** *"the testing goes in the ennd and its finne to go ahead of schedule"*. The
+advice still stands for the BALANCE half: every number below is a starting point and the
+telemetry from 90.3 is what should move it, not an opinion. Nothing here is claimed as measured.
+
+### 91.1 The AFK check, which had to exist before XP did
+
+⚠️⚠️ **19.4 ORDERS IT FIRST AND THE REASON IS ARITHMETIC: COMPLETION IS THE BIGGEST TERM.**
+A match pays 100 for finishing against a maximum of 40 for winning, so the moment XP exists, a
+seat that loads in and walks away collects the largest single reward in the system four times an
+hour. Built first, exactly as the prompt orders it.
+
+⚠️⚠️ **THE SIGNAL IS MOVEMENT, NOT INPUT, AND THE OBVIOUS IMPLEMENTATION IS THE WRONG ONE.**
+19.4 says to use *"the input telemetry the bots already produce"*, which reads as
+`InputIntent`. **The host never receives a remote player's `InputIntent`.**
+`MatchRpc.SubmitMoveServerRpc` carries a transform, not a key, so an intent-based check would
+have caught the local seat and the bots and nobody else, which is precisely the three seats that
+cannot be a remote AFK player. Position arrives for every seat and `MatchStatsCollector` already
+samples it for `DistanceTravelled`.
+
+- **`ProgressionRules.AfkRoundMetres` is 5.06 m and is DERIVED**: two seconds of walking at the
+  attacker's speed (`Balance.Speed * Balance.AttackerSpeedScale`) out of a 90 second round.
+  `BotBehaviourProbe` measures live seats at roughly **130 m a round**, so the bar is about 4 per
+  cent of what playing looks like. It separates "did nothing whatsoever" from "played badly", and
+  only the first is what PHASE 4 means.
+- A round also counts as played on any host-resolved verb, so a taya who plants themselves by the
+  lata and punches everything is not AFK. The anti-camp clock already owns whether that is legal.
+- **`PlayerMatchStats.ActiveRounds` is -1 for "nobody measured this"**, the same sentinel and the
+  same reason as `TimeToFirstThrow`. Every record written before this phase, every record in an
+  offline queue and every record from a peer on an older build carries -1.
+  ⚠️⚠️ **READING -1 AS ZERO WOULD MARK EVERY HISTORICAL MATCH AFK** and strike out accounts
+  for games they played properly. `AnUnmeasuredRecordIsNeverAfk` is that test.
+- **`MatchStatsCollector.PadUnplayedRounds` credits every seat with rounds that never happened.**
+  `record.Rounds` is the SCHEDULED total, so a Hero Strike match that ended after three rounds
+  still says 8; without the padding every player in it reads 3 active out of 8 and is paid
+  nothing for a game they played to the end.
+- Escalation is one sentence long, which is its budget under 0.5 rule 11b: go AFK and the match
+  pays nothing, do it three times and the next three matches pay nothing. An AFK match does NOT
+  serve the suspension, or the fastest way out of one would be to keep standing still.
+
+### 91.2 What a match pays, and why the loser still gets most of it
+
+| Term | XP | Why |
+|---|---|---|
+| Finished the match | 100 | The biggest single term. 19.4: weight completion heavily. |
+| Placement | 40 / 25 / 15 / 10 | Light on purpose. First beats last by 30. |
+| Knocked the lata | 15 | |
+| Retrieved under pressure | 20 | The biggest objective. `VISION.md` 0: the retrieval IS the game. |
+| Tagged as taya | 15 | |
+| Sabotage | 10 | |
+| No penalties | 15 | Pays for NOT doing something, so it reaches the taya and the attackers with one rule. |
+
+**A player who finishes last with nothing earns 110 against 140 for a clean win: 79 per cent.**
+`FinishingLastStillPaysMostOfWhatWinningPays` bounds that at 70 per cent so the tables can move
+without the test becoming a copy of them.
+
+⚠️ **LEAVING PAYS ZERO WITHOUT A RULE FOR IT.** A `MatchRecord` is authored at the whistle, so
+a leaver is never paid rather than being penalised. That is the whole asymmetry PHASE 4 asks for
+and it cost no code.
+
+⚠️ **EVERY OBJECTIVE PAYS ONCE, NOT PER EVENT.** A per-event rate is a second scoring system
+running beside `MatchDirector.AddScore` and the player would have to hold both in their head.
+
+### 91.3 The curve is flat in both directions
+
+⚠️⚠️ **NO DIMINISHING RETURNS, NO RESTED BONUS, NO DAILY CAP, AND ALSO NO RISING LEVEL
+COST.** PHASE 4 cuts the first three by name and 🧑 cut two rate curves personally. The fourth is
+the same argument one step further on: **a rising cost per level is diminishing returns wearing a
+different hat**, felt identically by the player and impossible for them to see the source of.
+Every level costs `XpPerLevel` forever.
+
+- **1000 XP a level**, which is 5 matches at best and 9 at worst. That range is the number
+  telemetry should move.
+- Uncapped, never below 1, **a new border every 50 levels** and border 0 is the one everybody
+  starts with, so the first EARNED border is at level 50.
+- **Mastery costs 2000, twice the account**, because it is per hero and there are six of them. A
+  mastery number that moved as fast as the account level would say nothing about the hero.
+- Mastery is paid **the same XP the account got**, not a second calculation. One number earned,
+  spent on two tracks that divide it differently.
+
+### 91.4 Rewards are titles, badges, palettes and borders, and they are not stored
+
+⚠️⚠️ **`Reward` HAS NO NUMERIC FIELD AND THAT IS RULE 4 ENFORCED BY THE SHAPE OF THE TYPE.**
+0.5 rule 4 says nothing on a progression track may change a gameplay number and to write the test
+that proves it. A test that walked today's reward table would pass forever and prove nothing
+about the row somebody adds next year, so `ARewardCannotCarryAGameplayNumber` walks the CLASS by
+reflection instead: a reward that cannot hold a number cannot change one.
+
+⚠️ **WHAT A PLAYER OWNS IS A PURE FUNCTION OF THEIR LEVEL.** `ProgressionRules.AccountRewards`
+computes it, nothing is written to the document, there is no inventory to migrate when a row is
+added, and a title added at level 30 is granted retroactively to everybody past 30 for free.
+`PlayerProfile.Inventory` stays Phase 5's and must not start carrying track rewards.
+
+### 91.5 ⚠️⚠️ A STATIC `LastAward` RACED ITS OWN TEST SUITE, AND THAT WAS NOT A TEST ARTEFACT
+
+The first version parked the award on `ProfileRules.LastAward` so the results board could read it
+after the fact. **xUnit runs test CLASSES in parallel**, `ProgressionTests` and
+`PlayerProfileTests` applied a match at the same moment, and one read the other one. The fix is
+an `out` parameter, and the reason it matters in the GAME rather than only in the tests: the same
+global would be read by the results board while the offline queue flushed a second record on a
+background task, and the symptom would be a player seeing somebody else XP about once in a
+hundred matches. **Nobody would ever have reproduced that.** A return value cannot race.
+
+⚠️ **AND `Award` IS CALLED FROM INSIDE `ProfileRules.Apply`, NEVER BESIDE IT.** `Apply` refuses
+a `MatchId` it has already counted and the offline queue exists precisely to resubmit records, so
+a second call site would pay the same match twice with nothing reporting an error. Both halves,
+C# and `match-record.js`, do it inside the guard. `ResubmittingAMatchPaysItOnce`.
+
+### 91.6 The server runs the same arithmetic and the constants are written twice
+
+0.5 rule 6 puts the award on the server. `ugs/cloud-code/match-record.js` carries a second copy of
+every XP constant and of the six hero ids, the same unavoidable trade this file already records
+about `ProfileRules` as a whole and `player-account.js` records about `DisplayNameMax`.
+**`TheServerScriptAgreesWithTheCoreAboutHeroesAndRates` reads the script as text** and fails if
+they drift, which is the only signal that exists: per 90.5, a disagreement produces a
+well-formed answer with the wrong numbers in it.
+
+⚠️ **The client computes the award too, and is never the authority.** `CareerStore.LastAward`
+exists so the end-of-match bar can move before the endpoint answers and so an unplugged LAN match
+can still show a player what they earned (rule 7). If the two disagree, the server is right.
+
+### 91.7 Where the player sees it
+
+- **The end-of-match board** grows a level line, a bar and the breakdown, drawn from
+  `ProgressionRules.Breakdown` rather than from a list the screen keeps.
+  ⚠️ **The three zero-pay cases read differently on purpose**: nothing to show hides the block,
+  while "away for a whole round" and "no XP while the penalty lasts" are stated, because a bar
+  that silently does not move is how a progression system gets reported as broken.
+- **The nameplate and the hub header** carry the level and the bar, per 92.
+- **The hub career tab** carries the six hero mastery rows.
+
+### 91.8 Not done in this phase
+
+- **Titles, badges, palettes and borders are computed and are not yet WORN.** The tables exist,
+  `AccountRewards(level)` answers what a player owns, and nothing draws a title next to a name in
+  a lobby or applies a palette to a character. That is Phase 5, which owns cosmetics and the
+  equip surface, and doing half of it here would put a second cosmetic system beside the one
+  Phase 5 is going to build.
+- **`ARewardEarnedOnTheWayUpIsReportedOnce` covers a single level-up.** A match that crosses two
+  reward levels at once is impossible at the current rate (215 XP maximum against 1000 a level)
+  and is handled, but is not measured against a real record.
+
+---
+
+## 92 · The account and career screens, rebuilt ⚠️⚠️ 2026-08-30
+
+🧑 sent four screenshots and five sentences in a row, and they are the specification:
+*"ui for player account is so ugly"*, *"theres liek 20 shits at once"*, *"everything is js shit
+on one block and is overwhelming"*, *"THINK ABT conncepts like visual hierarchy annd user
+experiennce bcz this ui is so bad"*, *"look wtf why are these buttons here"*.
+
+### 92.1 What was actually wrong, in five faults rather than one
+
+1. **One panel doing six unrelated jobs.** `AccountOverlay` asked for display name, bio, country,
+   pronouns, username and password at once, then offered SAVE PROFILE, LINK USERNAME, SIGN IN,
+   DELETE ACCOUNT, PLAY AS GUEST and CLOSE **in two rows of three at identical size**. Nothing on
+   it was primary, so nothing led.
+2. ⚠️⚠️ **DELETE ACCOUNT WAS A PEER OF PLAY AS GUEST AND CLOSE**, same row, same size. One
+   misclick from a lost career.
+3. **Absolute Y offsets instead of layout.** Six captions and six fields at hand-written offsets
+   (-196, -286, -376, -466, -566, -656) inside an 870 px panel, and the career page the same in a
+   940 px one. **A hand-written offset is a layout that is correct at exactly one panel height
+   and one aspect ratio**, and `AspectRatioProbes` drives nine. 🧑's career screenshot shows the
+   result: the buttons run off the bottom of the screen and a stray CLASSIC label is drawn
+   straight through the HERO STRIKE tab.
+4. **Fifteen identical stat rows with no hierarchy**, opening with `0/0 (needs 10 throws)` eight
+   times on a fresh account. ⚠️ That half-obeyed `FUTURE.md` 2.2: it withheld the NUMBER and
+   still drew the ROW. Withholding the row is what the rule meant.
+5. **Two floating buttons the menu did not know about.** `AccountOverlay` and `ProfileOverlay`
+   each built their own canvas and parked a wood button at its own offset from the top right, in
+   a different visual language from the arrow buttons beside them. That is 🧑's *"why are these
+   buttons here"*, and the answer is that nothing was laying them out.
+
+### 92.2 The references, which 🧑 chose
+
+Valorant settings, PUBG settings, the Riot sign-in client and the PUBG Mobile login, sent with
+*"look at how valorant settings look like"* and *"look at their signup screens"*. Two patterns
+come out of them and both are now built:
+
+- **A settings screen is rows, not a form.** Full width, label hard left, control hard right,
+  a section header with one grey line of explanation above each group, and alternating row bands
+  so the eye can cross half a screen. One persistent action in a corner.
+- **A sign-in is a narrow column beside art, asking two things.** Micro-labels above the fields,
+  one primary, two tiny footer links. Valorant asks for two things and offers three links.
+
+### 92.3 What shipped
+
+| File | What it is |
+|---|---|
+| `UiRows.cs` | The row kit. `Section`, `Row`, `ValueRow`, `FieldRow`, `ButtonRow`, `ScrollList`. **Nothing in it takes an offset**, which is fault 3 made impossible rather than fixed. |
+| `PlayerHub.cs` | Four tabs, PROFILE / CAREER / MATCHES / ACCOUNT, one persistent header carrying the handle, level and XP bar, one footer action per tab. Replaces `AccountOverlay` and `ProfileOverlay`. |
+| `SignInScreen.cs` | The Riot layout. Its own screen, a segmented SIGN IN / CREATE, two fields, one primary, errors under the fields. |
+| `PlayerNameplate.cs` | The corner chip that replaces both floating buttons and is the only way in. |
+
+- **`AccountOverlay.cs` and `ProfileOverlay.cs` are DELETED**, not deactivated. 68.3's
+  keep-the-old-chrome rule protects a replacement that might turn out worse; this is a deletion
+  🧑 asked for four times with pictures.
+- **The career tab opens with the matches, wins, win rate and hours**, then Attack, Retrieval,
+  Defence, Melee, Standout and Hero mastery as named groups. **A rate whose sample cannot carry
+  it is now absent rather than printed as `0/0`.**
+- **An empty career is one card, one sentence and a PLAY button**, replacing three different
+  "no matches" sentences drawn at once above fifteen rows of zeroes.
+- **Signing in never opens by itself.** `PlayerAccount` still signs in anonymously at boot and the
+  player still reaches the menu playable, which is Phase 1's rule and is not negotiable:
+  *"never block a first-time player on a form"*. 🧑's *"usually u dont open up login in the actual
+  game screen yet"* is about the PANEL, not about the boot behaviour.
+
+### 92.3b Collapsing, and the one dropdown
+
+🧑, after the first pass: *"usually to make shit easier to navigate games use dropdownns and
+shit annd separate shit"*, *"u figure out which parts need this annd apply this logic"*.
+
+⚠️⚠️ **GROUPING WITHOUT COLLAPSING DOES NOT ACTUALLY FIX THE COMPLAINT.** The first pass split
+the career tab into six named groups, which is better organised and is still thirty rows on one
+screen: the same wall of numbers, aligned. **A group only helps if it can be shut.**
+
+**What collapses, and why each default is what it is.** The rule is: open what somebody arriving
+at that tab came for, closed what is detail or danger.
+
+| Tab | Open | Closed |
+|---|---|---|
+| PROFILE | Identity: one field and the tag | Optional details, which is three fields nobody fills in on a first visit and was three of the six things the old panel asked at once |
+| CAREER | Overview: mode, matches, wins, win rate, hours, finishes | Attack, Retrieval, Defence, Melee, Standout, Hero mastery |
+| ACCOUNT | This account, and whichever of "keep your progress" or "another machine" applies | Tournament guest, unless one is already playing; Danger, unless the delete is armed |
+
+⚠️ **A CLOSED GROUP IS NOT BUILT, NOT HIDDEN.** `PlayerHub.Show` rebuilds the whole tab on every
+change, so honouring a closed group costs nothing, there is no hidden subtree recomputing layout,
+and the scroll height is honest about what is on screen.
+
+⚠️⚠️ **AND `SaveProfile` HAD TO LEARN ABOUT IT, WHICH IS THE TRAP IN THIS PATTERN.**
+`SetProfileAsync` takes all four fields at once and a closed group has no `InputField` to read.
+Reading a destroyed one throws; defaulting it to an empty string would **silently wipe a bio the
+player had written** because they happened to have the group shut. `ForgetFields` nulls the
+handles on every rebuild and the save falls back to the account's current value for anything not
+on screen.
+
+⚠️ **THE MARKS ARE ASCII PLUS AND MINUS, NOT CHEVRONS.** The font is Darumadrop One and it has
+no multiplication glyph; assuming it has arrows is the same bet one step further on, and a missing
+glyph draws as an empty box on the one row whose whole job is to say whether the group is open.
+
+**One dropdown, and it replaces the pair of buttons that overlapped.** The career mode picker was
+two wood buttons side by side, which is what drew CLASSIC through HERO STRIKE in the screenshot.
+`UiRows.DropdownRow` is one control. ⚠️ **Its template is built by hand**, because
+`AddComponent<Dropdown>` produces a control with a null template that draws its caption correctly
+and does nothing when pressed, which is the same silent class `MenuKit.EnsureHitArea` records
+about four sliders that shipped dead.
+
+### 92.4 Where every phase 1 to 3 surface went
+
+🧑 asked for this by name: *"focus on fixing ui first of phase 1-3"*, *"figure out where
+everything should go"*. Phases 1, 2 and 3 produced sixteen things a player can see or press.
+**Every one of them now has exactly one home**, which is the property the old arrangement did not
+have: the handle was drawn on two panels, the status line reported six unrelated actions, and the
+upgrade offer had no home at all because it hijacked the whole screen.
+
+| What | Where it was | Where it is |
+|---|---|---|
+| Display name, bio, country, pronouns | Four fields on the account form | Hub, PROFILE, two sections |
+| Your handle `name#1234` | The account panel header AND the career panel header | The hub header, once, plus the nameplate |
+| Your tag is not editable | Nowhere. Nothing said it | A PROFILE row that says who gives it and why |
+| Sign in | A button in a row of three | `SignInScreen`, its own screen |
+| Link a username | A button in a row of three | The same screen, on the CREATE segment |
+| Play as guest | A button beside DELETE ACCOUNT | Hub, ACCOUNT, "Tournament guest" |
+| Delete account | Between PLAY AS GUEST and CLOSE, same size | Hub, ACCOUNT, last section, own heading, two presses |
+| Signed-in state, player id | One status line shared by six actions | Two ACCOUNT rows that only ever say one thing |
+| **The upgrade offer** | **Force-opened the whole panel over the menu** | A line on the nameplate, and pressing it lands on ACCOUNT |
+| Career totals | Career panel, top | Hub, CAREER, first four rows |
+| Per-mode stats | Fifteen identical rows | Hub, CAREER, six named groups |
+| Mode switch | Two wood buttons that overlapped a label | One CAREER row |
+| Match history | Career panel, right column | Hub, MATCHES |
+| Match detail | A popup off the career panel | Hub, MATCHES, click the row |
+| Per-character mastery | A CHARACTERS panel behind a button | Hub, CAREER, "Hero mastery" |
+| Level and XP | Nowhere. Phase 4 had no surface | Nameplate, hub header, and the end-of-match board |
+| Telemetry opt-out | Settings panel | **Unchanged.** It is a setting and it was already in the right place |
+| Sign-in at boot | The splash awaits the account barrier | **Unchanged, and deliberately so.** See below |
+
+⚠⚠ **THE BOOT BEHAVIOUR IS THE ONE THING THAT MUST NOT MOVE.** 🧑's *"usually u dont open
+up login in the actual game screen yet"* is about the PANEL, and it would be easy to read as "put
+a login screen at boot". **Do not.** `PlayerAccount` signs in anonymously before the menu is
+interactive and Phase 1's rule is *"never block a first-time player on a form"*, which is the
+single most valuable thing about this flow and the reason a first launch reaches PLAY in one
+press. `SignInScreen` is only ever reached by pressing something.
+
+⚠️ **AND THE OFFER NEARLY DIED IN THE REBUILD.** `ShouldOfferUpgrade` had exactly one reader,
+`AccountOverlay.Install`, and deleting that file deleted the feature with it. It was caught by
+walking this table rather than by anything failing. **A screen removed is a set of behaviours
+removed**, and the only way to see it is to list them.
+
+### 92.5 Measured
+
+⚠⚠ **`PlayerHubLayoutProbe` IS THE PART THAT MAKES THIS MORE THAN A REDESIGN.** Three of
+§ 92.1's five faults were layout faults a measurement would have caught the day they were
+written, and none did, because the UI probes covered the HUD, the character screen and the hero
+picker and nothing covered these two screens. The probe drives the REAL hub through
+`PlayerNameplate.Install`, walks all four tabs and the sign-in screen at the same nine
+resolutions `AspectRatioProbes` and `HudOverflowProbe` use, and asserts:
+
+- **Every visible label fits the box it was given**, measured through `preferredWidth` rather than
+  a font metric. That is the exact fault in the career screenshot: `MenuKit.Label` sets
+  `horizontalOverflow = Overflow`, so a string that does not fit draws straight over its
+  neighbour and nothing errors.
+- **Every label is above `MenuKit.MinReadableUnits`.**
+- **The nameplate is on screen at all nine**, which is the assertion the whole redesign turns on
+  given that it replaced two buttons that were in the wrong place.
+
+⚠️ **`GameServices.Account` AND `.Career` ARE NULL IN THE PROBE AND THAT IS COVERAGE, NOT A
+GAP.** It is what a player sees booting with no connection, and every empty state on these screens
+is therefore measured, which is the state the old career page got most wrong.
+
+⚠️⚠️ **AND IT FAILED THE NEW SCREENS ON ITS FIRST RUN, WHICH IS THE ENTIRE POINT.** Every
+one of them was written at the reference screenshots’ type scale, a 17-unit row label over a
+13-unit hint, and **this project has a measured floor of 18** (`MenuKit.MinReadableUnits`).
+`ui_theme.gd` records three separate attempts at small text in this game, each answered with
+*"text still small"*, and `AspectRatioProbes` fails anything under it.
+
+⚠️ **RAISING THE HINT ALONE WOULD HAVE INVERTED THE HIERARCHY**, putting an 18-unit hint above
+a 17-unit label and telling the reader the hint mattered more. The floor moved the whole scale
+instead: **heading 26, label and value 22, subtitle and hint 18**, three steps in the same order,
+with `UiRows.RowHeight` going 56 to 64 because a row that does not grow with its type is a row
+whose two lines touch. ⚠️ It also caught `MatchResult`’s `_yourMatchLine`, which **shipped at 17
+units** and had never been measured by anything.
+
+### 92.6 What the first render found, and what that says about the probe
+
+⚠️⚠️ **`CLAUDE.md` § 6.1 IS WRITTEN ABOUT MODELS AND IT IS THE SAME RULE HERE: SHOW, DO NOT
+DESCRIBE.** `PlayerHubLayoutProbe.PhotographEveryScreen` writes a PNG of every screen to
+`Logs/ui/`. The layout probe was green before the first picture was taken, and the picture found
+five things, **two of which the probe could never have seen and one of which it should have.**
+
+1. ⚠️⚠️ **THE ENTIRE ROW LIST WAS INVISIBLE, AND THE LAYOUT PROBE PASSED.**
+   `UiRows.ScrollList` put its `Mask` on an Image at **alpha 0**. A Mask writes its stencil from
+   the graphic it sits on, so alpha 0 masks EVERYTHING OUT: the viewport existed, the rows
+   existed, every rect was correct, and nothing drew. The screenshot is the header, the four
+   tabs, the level bar and the SAVE button over an empty field.
+   ⚠️ **The probe passed it because it asserted that SOME labels were measured**, and the
+   chrome is labels. It now counts `Row_` and `Section_` objects in the list. **A test that
+   cannot fail on an empty screen is not a test of that screen**, and this one shipped green
+   over a completely blank one.
+2. **The nameplate and the hub header drew the same handle in the same corner, overlapping.**
+   `PlayerHub.VisibleChanged` now hides the plate while the hub is up. Two canvases with
+   different sorting orders is not a defence: the plate is the thing the player just pressed.
+3. **The zebra band was solid grey.** It was written at 6 per cent white, measured against the
+   wood panel `UiRows` was designed for; the hub is a 93 per cent scrim over the live street,
+   which is far darker, so the same alpha read as blocks. It is 3.5 per cent now.
+   ⚠️ **A number tuned against one background is not a number.** The render is how it gets
+   measured, and there was no render until there was.
+4. **The sign-in screen wiped its own explanation.** `Open` called `SetMode`, which writes the
+   one line saying what CREATE actually does (it keeps this machine's progress), and then set
+   `_error.text = ""` immediately after. The gap in the screenshot is where that sentence should
+   have been. The clear happens before the mode is set now.
+5. **The hub showed through beside the sign-in column.** The reference is a form column beside
+   ART; a 72 per cent scrim over a live four-tab panel put a half-covered ACCOUNT tab there
+   instead, with its rows sliced by the column edge. `SignInScreen.Opened` hides the hub root.
+
+⚠️⚠️ **THE LESSON IS NOT "ADD MORE ASSERTIONS", IT IS THAT A LAYOUT PROBE AND A PICTURE ANSWER
+DIFFERENT QUESTIONS.** The probe asks whether every string fits its box and is legible, and it
+found a type scale below the readable floor that no screenshot would have made obvious. The
+picture asks whether the screen is a screen, and it found a blank one the probe called fine.
+**Neither replaces the other, and this entry exists so nobody deletes one of them.**
+
+### 92.7 Verified
+
+- **Core 266/266**, **EditMode 250/250**, **PlayMode 107/108**, **Checks.RunAll OK for all five
+  in one launch**, and all three `tools/` audits exit 0.
+  ⚠️⚠️ **THE ONE RED IS § 93 AND IT IS NOT THIS WORK.** `CarryTests` measures a held tsinelas
+  drifting 0.084 m against a 0.05 m bound; nothing in this branch touches `Carrier`, the animator
+  or `LateUpdate`.
+- **`PlayerHubLayoutProbe` 4/4**: every tab and the sign-in screen at nine resolutions, the
+  nameplate on screen at all nine, and seven PNGs in `Logs/ui/`.
+- ⚠️⚠️ **THE FULL PLAYMODE SWEEP FOUND TWO REAL BUGS IN THIS WORK THAT NOTHING ELSE WOULD
+  HAVE.** `EveryButtonIsReachable` reported eight settings controls *"blocked by
+  MainMenuCanvas/NameplateCanvas/Nameplate"*, and
+  `TheWheelScrollsTheSettingsListFromEveryPartOfIt` found the wheel swallowed at one of its
+  forty-five sample points over the same object. **A new always-on chrome element covered the
+  corner of every panel on the title screen**, and neither the layout probe nor a screenshot of
+  the hub could ever have seen it, because the fault is on a different screen.
+  `PlayerNameplate.Update` is the fix: it hides the plate whenever any `ConvertedOverlay` is
+  active rather than waiting to be told, because the first attempt hooked the menu's click
+  handler and both probes open the panel directly.
+- ⚠️ **AND A RENDER FOUND A THIRD.** At sorting order 85 the hub had the MULTIPLAYER setup
+  screen drawn through it, join-code field and all. 85 was picked against the two overlays this
+  replaced and says nothing about the converted screens, several of which carry their own orders
+  authored in a `.tscn`. The hub is 500 now and the sign-in screen 510.
+
+### 92.8 Not done
+
+- **The upgrade offer still opens the sign-in path rather than a toast.** `ShouldOfferUpgrade`
+  used to force the whole account panel open on the menu; it now surfaces as a row on the ACCOUNT
+  tab. A dismissible nameplate badge would be better and is not built.
+- **No avatar.** `FUTURE.md` 1.4 is still an open argument nobody has answered, so the nameplate
+  portrait is an empty slot rather than a guess.
+- **The per-match detail scoreboard is not in the MATCHES tab yet.** `ProfileOverlay` had a popup
+  showing the four-player breakdown of one record and the rows here are not yet clickable. The
+  data is all in `CareerStore.History`.
+
+---
+
+## 93 · OPEN: a held tsinelas drifts 0.084 m from the hand, and it is not this branch ⚠️⚠️
+
+**Found 2026-08-30 by the first full `-testCategory "!WallClock"` run this branch has had.**
+
+```
+CarryTests.AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor
+a held slipper drifted 0.084 m from the hand while its carrier walked
+  Expected: less than 0.05
+  But was:  0.0837778747
+```
+
+⚠️⚠️ **IT IS NOT THE UI WORK AND IT IS NOT PHASE 4.** Nothing in either touches `Carrier`,
+`CharacterMotor`, the animator, or anything in `LateUpdate`. The only gameplay file this branch
+edited is `MatchStatsCollector`, which added one float accumulation to `SampleDistance` and
+cannot move a mesh. `git log` on `CarryTests.cs` and `Carrier.cs` ends at § 78's carry-lift work
+and at Phase 2's record commit; neither is from this session.
+
+⚠️ **THE TEST'S OWN MESSAGE NAMES THE CAUSE IT WAS WRITTEN FOR:** *"The carry has to run in
+LateUpdate: Unity evaluates the Animator between Update and LateUpdate, so a bone read in Update
+is the PREVIOUS frame's pose and the slipper trails the hand by one frame of animation."* The
+measured 0.084 m is **1.7 times** the 0.05 m bound, which is the size of one frame of arm swing
+rather than of a rounding error, so the shape fits that cause exactly.
+
+**What is not known and has to be measured before anything is changed:**
+
+1. **Whether it is a regression or has been red for a while.** Nobody has run a full PlayMode
+   sweep on `profile-stats`; every run before this one was `-testFilter`ed to the suite being
+   worked on, which is what § 90.8 and § 90.6 record doing. **Bisect it before fixing it**, or the
+   fix will be aimed at whichever commit is convenient.
+2. **Whether it is timing-sensitive.** `CLAUDE.md` § 7 records `AiDiagnosticProbe` failing at
+   21.6 s, 29.9 s and 37.6 s against one bound on an unchanged build. Run it three times before
+   believing one number, per § 16's arithmetic.
+
+⚠️ **DO NOT WIDEN THE BOUND TO MAKE IT PASS.** 0.05 m is a fifth of a hand and the whole point
+of the test; `BotBehaviourProbe`'s header has the standing rule about this and it applies here.
+
+---
+
 ## 71 · The 2026-08-29 report, and the two faults only a non-host could see
 
 Reported in one batch. This entry carries the ones that are closed; § 72 carries the one that
