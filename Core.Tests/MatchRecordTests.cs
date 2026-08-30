@@ -211,5 +211,65 @@ namespace TumbangPreso.Core.Tests
             Assert.Null(MatchRecordRules.LineFor(record, "player-1"));
             Assert.NotNull(MatchRecordRules.LineFor(record, "player-0"));
         }
+
+        /// <summary>
+        /// ⚠️⚠️ THE CASE THAT SHIPPED. `ugs/cloud-code/match-record.js` finds the submitter with
+        /// `p.PlayerId === context.playerId` and throws when it cannot, and Cloud Code answers a
+        /// throw as 422. `MatchStatsCollector` was stamping `PlayerAccount.ConnectionToken`, which
+        /// is the machine's local settings token whenever UGS is not signed in at the whistle, so
+        /// every record it wrote was refused for ever. `docs/TODO.md` § 94.1.
+        /// </summary>
+        [Fact]
+        public void ARecordWithNoLineForThisPlayerIsRefusedWithoutCallingTheEndpoint()
+        {
+            var record = Match(100, 200, 300, 400);
+
+            Assert.Equal(MatchRecordRules.SubmitVerdict.Ok,
+                MatchRecordRules.Submittable(record, "player-2"));
+
+            Assert.Equal(MatchRecordRules.SubmitVerdict.NoLineForThisPlayer,
+                MatchRecordRules.Submittable(record, "c5bcd766f9d4422ea52595b4ccfb8fd6"));
+
+            Assert.NotEqual("", MatchRecordRules.SubmitRefusal(
+                MatchRecordRules.SubmitVerdict.NoLineForThisPlayer));
+        }
+
+        /// <summary>
+        /// The other throw in the same branch: no match id means the endpoint cannot deduplicate,
+        /// so it refuses rather than counting a record it could never refuse a second time.
+        /// </summary>
+        [Fact]
+        public void ARecordWithNoMatchIdIsRefusedWithoutCallingTheEndpoint()
+        {
+            var record = Match(100, 200, 300, 400);
+            record.MatchId = "   ";
+
+            Assert.Equal(MatchRecordRules.SubmitVerdict.NoMatchId,
+                MatchRecordRules.Submittable(record, "player-0"));
+
+            Assert.Equal(MatchRecordRules.SubmitVerdict.NoMatchId,
+                MatchRecordRules.Submittable(null, "player-0"));
+        }
+
+        /// <summary>
+        /// ⚠️ A BOT LINE CANNOT MAKE A RECORD SUBMITTABLE, which is the second half of the same
+        /// fault: the records this was written for had all four lines carrying one id AND
+        /// `IsBot` false, so the endpoint would have credited the submitter with whichever seat
+        /// happened to be first. `LineFor` already refuses a bot; this pins that `Submittable`
+        /// inherits it rather than asking a looser question.
+        /// </summary>
+        [Fact]
+        public void ABotLineCarryingMyIdDoesNotMakeARecordSubmittable()
+        {
+            var record = Match(100, 200, 300, 400);
+            foreach (var p in record.Players)
+            {
+                p.IsBot = true;
+                p.PlayerId = "player-0";
+            }
+
+            Assert.Equal(MatchRecordRules.SubmitVerdict.NoLineForThisPlayer,
+                MatchRecordRules.Submittable(record, "player-0"));
+        }
     }
 }

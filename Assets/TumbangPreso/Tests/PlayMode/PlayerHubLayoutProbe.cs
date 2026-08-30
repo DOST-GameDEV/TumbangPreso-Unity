@@ -285,7 +285,7 @@ namespace TumbangPreso.PlayTests
             var career = GameServices.Career;
             if (career?.Profile == null) { report.AppendLine("no career to seed"); return; }
 
-            string me = GameServices.Account?.ConnectionToken ?? TumbangPreso.Net.NetIdentity.Token;
+            string me = TumbangPreso.Net.CareerStore.LocalPlayerId;
             string[] heroes = { "zack", "sean", "zack", "cheska" };
 
             for (int m = 0; m < 12; m++)

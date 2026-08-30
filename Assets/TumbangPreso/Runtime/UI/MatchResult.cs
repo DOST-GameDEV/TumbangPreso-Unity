@@ -293,7 +293,7 @@ namespace TumbangPreso.UI
         {
             if (_yourMatchLine == null || record == null) return;
 
-            string me = GameServices.Account?.ConnectionToken ?? Net.NetIdentity.Token;
+            string me = Net.CareerStore.LocalPlayerId;
             var line = Core.MatchRecordRules.LineFor(record, me);
             if (line == null)
             {

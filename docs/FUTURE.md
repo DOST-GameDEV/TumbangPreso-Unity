@@ -569,7 +569,16 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
-## PHASE 4.5 · QUALITY CONTROL FOR PHASES 1 TO 4 ⚠⚠ NOT STARTED
+## PHASE 4.5 · QUALITY CONTROL FOR PHASES 1 TO 4 ✅ SHIPPED 2026-08-30
+
+⚠️⚠️ **`docs/TODO.md` § 94 IS THE AS-BUILT RECORD AND THE HEADLINE IS NOT IN THIS SECTION AT
+ALL: NO CAREER HAD EVER REACHED THE SERVER.** Every match record this game has written since
+Phase 2 was refused **422** and the upload queue had been permanently wedged behind the first one.
+It was found the way § 4.5.1 asks for, by reading the running game's own log rather than this
+plan, and it is exactly the fault the XP assertion below was commissioned to catch.
+`ProfileRules` and `ProgressionRules` were correct throughout; the client stamped
+`PlayerAccount.ConnectionToken` into a field the endpoint compares against `context.playerId`.
+**§ 94.1.**
 
 🧑 commissioned this on 2026-08-30, straight after the account UI rebuild: *"afterwards
 continue on with phase 4 work then add a phase 4.5 quality control for phase 1-4"*.
@@ -597,6 +606,10 @@ this phase is: ask the questions nobody asked the first time.
 the running game rather than from `docs/TODO.md`.** § 0.5 rule 2: where a document and the code
 disagree, the code is right. Fix the document in the same commit.
 
+⚠️ **CORRECTED 2026-08-30: ONLY §§ 1 AND 2 HAVE ONE.** Phases 3 and 4 end in bullets and no
+"done looks like" sentence was ever written for either, so the bullets are the acceptance list.
+`docs/TODO.md` § 94.3 walks all four that way.
+
 The ones most likely to have rotted, because nothing exercises them:
 
 - **A fresh install reaches the menu signed in with no prompt** (§ 1). Nothing tests a FIRST
@@ -616,8 +629,17 @@ The ones most likely to have rotted, because nothing exercises them:
 missing parameter produced a well-formed answer from the wrong branch with nothing logged. Write
 a probe case per ACTION, and make each assertion a string only that branch can produce.
 
-`player-account`: `load`, `save`, `delete`, `verify`. `match-record`: `load`, `history`, `submit`.
-`telemetry`: `report`, and the funnel. **Count them: nine, and the `Ugs` category is 8/8.**
+`player-account`: `load`, `save`, `delete`, **`attest`**, `verify`. `match-record`: `load`,
+`history`, `submit`. `telemetry`: `submit`, `report`. **Count them: TEN.**
+
+⚠️⚠️ **CORRECTED 2026-08-30: THIS PARAGRAPH SAID NINE AND OMITTED `attest`, WHICH WAS THE ONLY
+BRANCH IN ANY OF THE THREE SCRIPTS WITH NO COVERAGE IN EITHER DIRECTION.** It is the half of the
+impersonation guard that MINTS a proof.
+`UgsServicesProbe.TheAccountEndpointRefusesAHandleProofItNeverMinted` covers the refusal and says
+in its own header that it can only ever cover the refusal, because a probe player has never saved
+a profile and so attest has no handle to vouch for. **A phase written to find the branch nobody
+tested listed the branches from memory and missed one.** `docs/TODO.md` § 94.2 is the as-built
+table; `CloudEndpointActionProbe` is the file.
 
 ### 4.5.3 A UI probe for every screen phases 1 to 4 built
 
@@ -933,11 +955,31 @@ ranked polish fixes, and the fastest way to make a competitive game feel dead is
 
 - **Difficulty tiers for bots**, exposed in Practice and in custom games. `AIController` exists and
   the bots already press the same buttons a human does, so this is tuning, not architecture.
-- **Bot backfill of an abandoned seat**, so a 4-player match that loses somebody continues rather
-  than collapsing. Mark the match unranked the moment a bot enters it.
+- ❌ **Bot backfill of an abandoned seat. CUT 2026-08-30, on 🧑's instruction:** *"we dont want
+  bot backfill"*. A seat that empties mid-match stays empty. ⚠️ **This is a narrower cut than it
+  looks and the code already does the narrow half**: `MatchRpc.HostPeerLeft` installs an
+  `AIController` on a chair whose player dropped, gated on `AIController.BotsEnabled`, and
+  `HostTakeSeatBackFromBot` hands it back on reconnect. That is a body nobody is driving being
+  driven rather than a queue being padded, it keeps a 1-vs-3 from becoming a 0-vs-3, and it is
+  not what was cut. **What is cut is backfill as a MATCHMAKING feature**: no bot is ever sent to
+  a match to make up numbers, and no seat is filled by anything that was not in the lobby.
+- ⚠️⚠️ **BOTS IN RANKED ARE ALLOWED WHEN THERE IS NOBODY TO PLAY, AND THIS REVERSES THE LINE
+  THIS PHASE USED TO DRAW.** 🧑, 2026-08-30: *"im okay with bot showing up in rank if theres no
+  ppl bcz no one plays this game yet anyways"*. The bullet that stood here read **"Never bots in
+  ranked. Not once, not 'just to fill', not disclosed. That is the line."** It is overruled, by
+  the person whose game it is, with the reason stated: a ranked queue that never fills is not a
+  stricter ranked mode, it is no ranked mode.
+  **Three things follow and they are not optional:**
+  1. **The rating system has to know.** A result with a bot in it cannot move a rating the same
+     amount as one without, or the fastest climb in the game is queueing at 4 a.m. Phase 9 owns
+     the number; what it may not do is pretend the two are the same match.
+  2. **The bot is labelled, in the lobby, on the scoreboard and in the match history.** That was
+     already this phase's rule and it matters more here than anywhere else.
+  3. ⏳ **THIS DECISION HAS AN EXPIRY AND THE REASON GIVEN IS THE EXPIRY.** *"no one plays this
+     game yet"* is a statement about the population, so it stops being true the day the queue can
+     fill itself. Re-ask then rather than treating this as settled for ever.
 - **Bot fill in casual queue after a wait threshold**, disclosed clearly in the UI. A 45-second
   queue that ends in a playable match beats a 4-minute queue that ends in nothing.
-- **Never bots in ranked.** Not once, not "just to fill", not disclosed. That is the line.
 - ❌ **No named practice ladder. CUT 2026-08-31.** A separate progression track against bots is a
   fourth bot feature and a fifth progression system, and Practice plus `GuidedTraining` already
   give a new player somewhere to learn.

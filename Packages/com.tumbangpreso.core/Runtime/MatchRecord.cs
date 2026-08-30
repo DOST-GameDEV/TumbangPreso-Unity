@@ -384,6 +384,59 @@ namespace TumbangPreso.Core
             return null;
         }
 
+        /// <summary>Why a record can or cannot ever be submitted by a given player.</summary>
+        public enum SubmitVerdict
+        {
+            /// <summary>The endpoint will accept it, or refuse it as a duplicate, which is a success.</summary>
+            Ok,
+
+            /// <summary>No match id, so it cannot be deduplicated and the endpoint throws.</summary>
+            NoMatchId,
+
+            /// <summary>No non-bot line carries this player's id, so the endpoint throws.</summary>
+            NoLineForThisPlayer,
+        }
+
+        /// <summary>
+        /// Whether `ugs/cloud-code/match-record.js`'s `submit` branch can ever accept this record
+        /// from this player, WITHOUT calling it.
+        ///
+        /// ⚠️⚠️ THIS MIRRORS THE TWO `throw`s IN THAT BRANCH AND IT EXISTS BECAUSE A REFUSAL
+        /// THERE IS PERMANENT. Both of them are decided entirely by the bytes in the record and by
+        /// who is asking, so a record that fails one fails it on every retry, forever. Cloud Code
+        /// answers a thrown error as **422**, `CareerStore.FlushAsync` treats any failure as "the
+        /// network is gone", stops, and leaves the record at the head of the queue: every match
+        /// played afterwards then queues up behind a record that can never leave.
+        ///
+        /// ⚠️⚠️ THAT IS NOT HYPOTHETICAL. Measured on the player's own machine 2026-08-30:
+        /// `Player.log` reads `[Career] submission deferred; 3 queued: Cloud Code 'match-record'
+        /// failed (422)` on a session that had signed in successfully, and `career.json` held
+        /// three records whose four lines all carried the machine's local token instead of the
+        /// account id. No career had ever reached the server and no further one could have.
+        /// `docs/TODO.md` § 94.1.
+        ///
+        /// ⚠️ A DUPLICATE IS DELIBERATELY `Ok`. The endpoint answers an already-counted match id
+        /// with `applied: false` and a 200, which is a success and is what makes the offline queue
+        /// safe to resubmit. Only the two throwing cases are named here.
+        /// </summary>
+        public static SubmitVerdict Submittable(MatchRecord record, string playerId)
+        {
+            if (record == null || string.IsNullOrWhiteSpace(record.MatchId)) return SubmitVerdict.NoMatchId;
+            if (LineFor(record, playerId) == null) return SubmitVerdict.NoLineForThisPlayer;
+            return SubmitVerdict.Ok;
+        }
+
+        /// <summary>The sentence to log when <see cref="Submittable"/> refuses. Never null.</summary>
+        public static string SubmitRefusal(SubmitVerdict verdict) => verdict switch
+        {
+            SubmitVerdict.NoMatchId => "it carries no match id, so the endpoint cannot deduplicate it",
+            SubmitVerdict.NoLineForThisPlayer =>
+                "no non-bot line in it carries this player's account id, so the endpoint will " +
+                "always answer 422. The usual cause is a record written before the account " +
+                "finished signing in.",
+            _ => "",
+        };
+
         private static int Clamp(int v, int lo, int hi) => v < lo ? lo : (v > hi ? hi : v);
         private static float Clamp(float v, float lo, float hi) => v < lo ? lo : (v > hi ? hi : v);
     }

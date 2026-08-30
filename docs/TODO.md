@@ -29,6 +29,14 @@ remote on 2026-08-30**, together with the stale local ref for a plans branch tha
 on the remote for longer. 🧑 asked for both by name. Every commit either held is reachable
 from `profile-stats`; **neither is to be named again in a handoff, a document or a prompt.**
 `main` is 10 commits behind and is not the work.
+⚠️⚠️ **§ 94 IS PHASE 4.5 AND IT FOUND THAT NO CAREER HAD EVER REACHED THE SERVER.** Every match
+record written since Phase 2 was refused **422** and the upload queue had been wedged behind the
+first one since. Read **§ 94.1** before touching `MatchStatsCollector`, `CareerStore` or anything
+that decides which line in a `MatchRecord` belongs to the local player: there is now exactly one
+answer to that, `CareerStore.LocalPlayerId`, and it used to have four hand-written copies that all
+agreed on the wrong value. § 94.7 is the readability pass on the hub that 🧑 asked for in the same
+session.
+
 ✅ **§ 90.7 closes Phase 3's own last open item, the FPS distribution, so PHASES 1, 2 AND 3 HAVE
 NOTHING OPEN.** It also answers the half of § 17 that nothing in this repository could: a probe can
 force a machine to 50 fps, and only telemetry can say whether a real player is down there.
@@ -814,6 +822,11 @@ every machine must be rebuilt off this branch, because `ProtocolVersion` is 16 a
 at approval by design; and all four names in the lobby must read as four different people, which
 is the thing the guard could plausibly have broken.
 
+⚠️⚠️ **§ 94.5 EXTENDS BOTH LISTS WITH PHASE 4'S ROWS AND ADDS SIX MORE BY-HAND STEPS, AND ONE OF
+THEM IS THE ONE THAT HAS NEVER WORKED.** Step 4 is *reconnect, sign in, and watch the queue
+flush*: that is § 94.1, it had been broken since Phase 2, and this list is where it should have
+been caught. **Read § 94.5 with this section, not instead of it.**
+
 ---
 
 ### 90.5 · ⚠️⚠️ CLOUD CODE WAS STRIPPING EVERY PARAMETER, SO PHASE 1 AND PHASE 2 HAD ENDPOINTS THAT ONLY LOOKED DEPLOYED
@@ -1588,6 +1601,530 @@ rather than of a rounding error, so the shape fits that cause exactly.
 
 ⚠️ **DO NOT WIDEN THE BOUND TO MAKE IT PASS.** 0.05 m is a fifth of a hand and the whole point
 of the test; `BotBehaviourProbe`'s header has the standing rule about this and it applies here.
+
+---
+
+## 94 · Phase 4.5: quality control across phases 1 to 4 ⚠️⚠️ 2026-08-30
+
+`FUTURE.md` § 4.5, commissioned by 🧑 by name. Phases 1 to 4 shipped in two days and each was
+verified against ITS OWN acceptance list; nothing had ever been verified across all four at once.
+The phase asks four questions nobody asked the first time, and **the first one it asked found that
+no career had ever reached the server.**
+
+### 94.1 · ⚠️⚠️ EVERY MATCH RECORD THIS GAME HAS EVER WRITTEN WAS REFUSED 422, AND THE QUEUE HAD BEEN BLOCKED SINCE PHASE 2
+
+**Found by reading the player's own `Player.log` before writing a line of code**, which is the
+whole argument for `FUTURE.md` § 4.5.1: *"prove it from the running game rather than from
+`docs/TODO.md`"*.
+
+```
+[NetIdentity] Signed in to UGS as mNThUUFyQXAsXLXJPT4sVOFThDTY on profile default.
+[Career] submission deferred; 3 queued: Cloud Code 'match-record' failed (422)
+```
+
+A successful sign-in and a 422 in the same session. `career.json` said the rest:
+
+```
+OwnerId: mNThUUFyQXAsXLXJPT4sVOFThDTY          <- the UGS account
+Queue[0].Players[0..3].PlayerId:
+  c5bcd766f9d4422ea52595b4ccfb8fd6              <- GameSettings.PlayerToken, x4
+Queue[0].Players[0..3].IsBot: false, false, false, false
+```
+
+**Three faults, stacked, each of which alone would have been enough.**
+
+1. ⚠️⚠️ **THE RECORD CARRIED A CONNECTION TOKEN WHERE THE SERVER COMPARES AN ACCOUNT ID.**
+   `ugs/cloud-code/match-record.js`'s `submit` finds the submitter with
+   `p.PlayerId === context.playerId`, and `context.playerId` is the UGS Authentication player id
+   and nothing else. `MatchStatsCollector.IdentifySeats` stamped
+   `PlayerAccount.ConnectionToken`, which reads `IsGuest ? PlayerId : NetIdentity.Token`.
+   ⚠️ **`IsGuest` IS THE TOURNAMENT-GUEST FLAG, NOT "SIGNED IN ANONYMOUSLY", AND THAT IS THE
+   WHOLE MISREADING.** For every ordinary player it is false, so the expression returns
+   `NetIdentity.Token`, which falls back to the machine's local settings token the moment UGS is
+   not signed in *at the whistle*. Sign-in completing thirty seconds later does not go back and
+   fix a record that has already been written. The endpoint then throws
+   `"this player has no line in that match record"`, Cloud Code answers **422**, and it will
+   answer 422 on every retry for ever, because both of its refusals are pure functions of the
+   record and the caller.
+
+2. ⚠️⚠️ **A PERMANENTLY REFUSABLE RECORD SAT AT THE HEAD OF THE QUEUE AND BLOCKED EVERY MATCH
+   BEHIND IT.** `CareerStore.FlushAsync` stops at the first failure, correctly, because the usual
+   reason a submission fails is that the network is gone. It had no way to tell that apart from a
+   record the service will never take. **So one bad record is not one lost match, it is every
+   match from then on**, and the player's screen said `3 match(es) waiting to upload` while the
+   real number was "all of them, permanently".
+
+3. **All four lines were marked `IsBot: false` and carried one id**, so even a correct id would
+   have credited this player with `LineFor`'s FIRST match, which is seat 0. The local career
+   proves it: `Mastery: [{ Id: "dante", Xp: 425 }]` on a machine whose player had been sitting in
+   a different chair. ⚠️ **The local half of the same bug is invisible by construction**, because
+   the local screens looked the player up with the same wrong id as the local record, so they
+   agreed with each other perfectly.
+
+**What that means for what shipped.** Phase 2's career, Phase 4's XP and every hero mastery
+number were **local-only from the day they were written**. `UgsServicesProbe` was green
+throughout, because it probes `match-record` with `load`, and `load` is the branch that reads.
+
+**The fix, in four places.**
+
+| Where | What changed |
+|---|---|
+| `MatchStatsCollector.IdentifySeats` | The local seat stamps `account.PlayerId`; a remote seat stamps `PeerRecord.AccountPlayerId`, which is what protocol 16 already puts in the approval hello for the impersonation guard. `PeerRecord.Token` was the same wrong answer one machine further away. |
+| `CareerStore.LocalPlayerId` | ⚠️ **ONE OWNER FOR "WHICH LINE IS MINE", WHICH HAD FOUR.** `MatchStatsCollector`, `CareerStore.Record`, `MatchResult` and `PlayerHub` each wrote `Account?.ConnectionToken ?? NetIdentity.Token` out by hand. Four consistent copies of a wrong id is the shape that hides for two phases. |
+| `MatchRecordRules.Submittable` | The two throws in the endpoint's `submit`, mirrored in the core, decided without a call. Cloud Code answers a throw and an unwell service both as one failure, so the client cannot learn the difference from the outside; it can compute it exactly. |
+| `CareerStore.DropUnsubmittable` | Runs before every flush and abandons what can never be accepted, loudly and counted, so the queue head can never be permanently wedged again. The local career keeps the match: `ProfileRules.Apply` counted it when it was played and dropping the upload does not undo that. |
+
+⚠️⚠️ **THE THREE RECORDS ON THE PLAYER'S MACHINE ARE NOT RECOVERABLE AND ARE DROPPED ON THE NEXT
+BOOT.** All four of their lines carry one id, so there is no way to tell which was his; a repair
+that guessed would write a stranger's seat into his career. The warning names each match id.
+
+**Two probes now stand where nothing did.**
+
+- **`MatchRecordIdentityProbe`** runs a real solo match on **seat 1** through
+  `MatchDirector.AdvanceRound`, and asserts that exactly one line is a person, that it is the seat
+  that played, that its id is `CareerStore.LocalPlayerId` and is *not* `GameSettings.PlayerToken`,
+  that every bot carries an empty id, and that `Submittable` says the endpoint would take it.
+  ⚠️ **Seat 1, not seat 0**, because seat 0 is the answer a great many wrong implementations give
+  by accident. ⚠️ **It destroys `CareerStore` for the duration**: the editor and the built player
+  share `Application.persistentDataPath`, so a probe that ends a match writes into the real
+  `career.json`.
+- **`CloudEndpointActionProbe.ARealSubmissionPaysExactlyWhatProgressionRulesSays`** is § 94.2.
+
+### 94.2 · A probe case per endpoint ACTION, and there are ten of them rather than nine
+
+`FUTURE.md` § 4.5.2 is the template and § 90.5 is why it exists: three scripts, a stripped
+parameter, and a well-formed answer from the wrong branch with nothing logged. **Every assertion
+below is a string only the intended branch can produce.**
+
+⚠️ **THE PLAN FILE SAID NINE AND MISSED `attest`.** `player-account` has five branches, not four:
+`load`, `save`, `delete`, **`attest`** and `verify`. `attest` is the half of the impersonation
+guard that MINTS a proof and it had no coverage in either direction.
+`UgsServicesProbe.TheAccountEndpointRefusesAHandleProofItNeverMinted` says so in its own header:
+a probe player has never saved a profile, so attest has nothing to vouch for and mints nothing,
+which means that test passes against an endpoint whose attest branch does not work at all.
+`FUTURE.md` § 4.5.2 is corrected in this commit, per § 0.5 rule 2.
+
+| Script | Action | The string only that branch can produce |
+|---|---|---|
+| `player-account` | `save` | the `handle` key, which no other branch returns, carrying the name just sent |
+| `player-account` | `load` | that same name, read back through a different branch |
+| `player-account` | `delete` | proven by the `load` AFTER it no longer returning the name |
+| `player-account` | `attest` | `"proof":"` and `"expires":"`, for a player that has a saved handle |
+| `player-account` | `verify` | `"owned":true` for the proof `attest` just minted |
+| `match-record` | `load` | `"applied":false` |
+| `match-record` | `history` | `"total":`, the only key `load` does not also return |
+| `match-record` | `submit` | `"applied":true`, plus the XP delta below |
+| `telemetry` | `submit` | `"refused":1` for a name that is in no list anywhere |
+| `telemetry` | `report` | `"rollup"`, and a funnel ARRAY rather than the submit branch's object |
+
+⚠️⚠️ **`save`, `delete` AND `submit` WRITE, SO THE WHOLE PROBE RUNS ON A THROWAWAY UGS PROFILE**
+(`qa45`, via `AuthenticationService.SwitchProfile`). One of them deletes an account and one pays
+XP into a career; neither may land on an identity anything else uses. ⚠️ **The sign-out on the way
+past is `SignOut(false)`.** `SignOut(true)` clears the cached anonymous session and mints a new
+player id next boot, which throws away whatever career that identity had.
+
+⚠️⚠️ **AND THE FIRST VERSION OF THIS PARAGRAPH WAS WRONG IN A WAY WORTH RECORDING, BECAUSE THE
+RUN DISPROVED IT.** It said the editor and the built player share the UGS credential cache, so the
+editor's `default` player IS the account somebody is playing on. **They do not.** Authentication
+caches into `PlayerPrefs`, and on Windows the editor's live in
+`HKCU\Software\Unity\UnityEditor\<Company>\<Product>` while a player's live in
+`HKCU\Software\<Company>\<Product>`. The measurement: the editor's `default` profile signed in as
+`qmSg3PKwe...` while the built player on this machine is `mNThUUFy...`.
+⚠️ **WHAT THEY DO SHARE IS `Application.persistentDataPath`**, so `settings.json` and `career.json`
+ARE the player's own files. That hazard is real and belongs to `MatchRecordIdentityProbe`, which
+destroys `CareerStore` for its duration; it is a different hazard from this one and conflating the
+two is how the wrong reason got written down.
+
+⚠️ **`telemetry`'s `refused:1` CASE IS NEW AND IS THE ONE THAT CAN FAIL WHEN THE SERVICE IS RIGHT
+AND THE REPOSITORY IS WRONG.** § 90.9 asserts `refused:0` for events the game sends. Nothing
+asserted the count ever MOVES, so a deployed script that accepted everything, typos included,
+satisfied every check while turning a renamed event into a silently lost one. § 90.3's whole point
+is that a renamed event is a broken history and nothing errors.
+
+**And the XP assertion, which § 4.5.1 calls the single most valuable check in the phase.**
+`ARealSubmissionPaysExactlyWhatProgressionRulesSays` submits a real `MatchRecord`, reads the
+profile back through `load`, and asserts the XP moved by exactly `ProgressionRules.MatchXp`.
+
+- ⚠️⚠️ **THE MATCH ID IS UNIQUE PER RUN.** `applyRecord` refuses an id it has already counted and
+  answers `applied:false` with a **200**, which is a success. A fixed id would pass this test on
+  its second run by counting nothing, and the delta would be zero against an expectation of zero.
+- ⚠️⚠️ **`applied:true` IS ASSERTED BEFORE THE DELTA**, because they are different failures:
+  `applied:false` means refused or replayed, a wrong delta on `applied:true` means
+  `ProgressionRules.cs` and the `matchXp` copy in `match-record.js` have drifted. Reading only the
+  delta reports the first as the second.
+- The record wins, and carries a knockdown, a pressured retrieval, a tag, a sabotage and no
+  penalties, so **all five objectives and the placement bonus are live**. A record that scored
+  nothing would assert completion XP alone and leave five of six terms untested.
+- It also asserts the server's `Level` agrees with its own `Xp` through
+  `ProgressionRules.LevelForXp`, which is the second half of § 91.6's written-twice problem.
+
+⚠️ **AND A 40 ms EDITMODE TEST NOW STANDS BESIDE IT.**
+`CareerAndCloudCodeTests.TheCareerScriptStillAgreesWithTheCoreAboutEveryXpNumber` compares all
+eleven progression constants, including `PLACEMENT_XP` element by element, as source text. **The
+live probe asks whether the DEPLOYED script agrees; this asks whether the REPOSITORY does**, and
+it is the one that fails before anything is pushed. § 90.9 makes the same argument for telemetry.
+The placement table is compared per element rather than by length because a four-entry array that
+agrees on its first and last value is exactly the edit somebody makes tuning second place.
+
+### 94.2b · ⚠️⚠️ AND THE XP ASSERTION FOUND A SECOND, INDEPENDENT REASON: PHASE 4'S SERVER SCRIPT HAD NEVER BEEN DEPLOYED
+
+**The first live run of `ARealSubmissionPaysExactlyWhatProgressionRulesSays` failed like this:**
+
+```
+the server paid 0 XP for a match ProgressionRules.MatchXp values at 215.
+  Expected: 215
+  But was:  0
+```
+
+⚠️ **AND `applied:true` HAD ALREADY PASSED**, which is why the assertion order in that test is
+what it is. The record was accepted, counted into the career, and paid nothing.
+
+**The service was running a pre-Phase-4 copy of `match-record.js`.**
+
+```
+ugs cloud-code scripts get match-record | grep -c "COMPLETION_XP"   ->  0
+                                          datePublished             ->  2026-08-30T01:15:52
+```
+
+Zero occurrences of `COMPLETION_XP`, of `function award`, of `MASTERY_HEROES`. The active version
+was published at **01:15 UTC**, which is **six hours before the commit that wrote Phase 4's
+progression**. The file was written, tested, committed and never pushed to the service.
+
+⚠️⚠️ **SO THERE WERE TWO INDEPENDENT REASONS NO XP HAD EVER MOVED SERVER-SIDE, AND FIXING EITHER
+ONE ALONE WOULD HAVE LEFT IT BROKEN.** § 94.1's identity fault meant no record ever reached the
+endpoint; this meant the endpoint would not have paid for one if it had. **They hid each other**:
+with the queue wedged, nothing ever exercised the deployed script's submit branch, so its missing
+half could not surface.
+
+⚠️⚠️ **NOTHING IN THE REPOSITORY COULD SEE THIS AND ONE THING NEARLY COULD.**
+`CareerAndCloudCodeTests.TheCareerScriptStillAgreesWithTheCoreAboutEveryXpNumber`, written earlier
+in this same session, compares the C# to **the file on disk** and passed the whole time. § 90.5's
+lesson is written down and is exactly this shape one layer up: *"`ugs cloud-code scripts get
+<name>` is the only way to see what the service actually holds."* **A repository test cannot tell
+you what is deployed, and a green probe against `load` cannot either**, because `load` is the one
+branch the old copy still served correctly.
+
+**Fixed by `ugs deploy ugs/cloud-code`**, which republished all three scripts.
+`datePublished` is now `2026-08-30T11:18:03` and the same probe reads:
+
+```
+[CloudEndpointActionProbe] match-record submit paid 215 XP, 0 -> 215,
+                           exactly what ProgressionRules.MatchXp says
+```
+
+⚠️ **THE STANDING RULE THIS ADDS.** `CLAUDE.md` § 2.2 says finished means pushed. **For anything
+under `ugs/`, finished means DEPLOYED**, and a commit is not a deployment. The cheapest guard is
+the one that just caught it: run `-testCategory "Ugs"` before calling a phase shipped, because it
+is the only thing in this project that asks the service rather than the repository.
+
+### 94.3 · Every acceptance bullet, with a named test or a named reason
+
+⚠️ **CORRECTION TO `FUTURE.md` § 4.5.1, PER § 0.5 RULE 2: PHASES 3 AND 4 HAVE NO "DONE LOOKS
+LIKE" LIST.** § 4.5.1 says *"§§ 1, 2, 3 and 4 each end with a 'done looks like' list"* and only
+§§ 1 and 2 do. Phases 3 and 4 end in bullets, so the bullets are walked as the acceptance list.
+The plan file is corrected in this commit.
+
+**PHASE 1 · ACCOUNTS AND IDENTITY**
+
+| Bullet | Named test, or named reason |
+|---|---|
+| A fresh install reaches the menu signed in with no prompt | ⚠️ **NO TEST, AND THE REASON IS THAT IT CANNOT HAVE ONE HERE.** "Fresh" means no `settings.json` and no UGS credential cache, and both live in `Application.persistentDataPath`, which the editor SHARES with the built player on this machine. A test that made itself a fresh install would delete the player's real account. **On § 90.4's by-hand list.** What IS covered: `OnlineSignInProbe` asserts the boot attempt happens and settles, `PlayerHubLayoutProbe` drives every hub tab with `GameServices.Account` null, which is the unresolved-account boot state, and `AccountRulesTests.ArrivalFallsBackToPlayerOnlyWhenTheNameCannotBeShown` covers the name a first launch gets. |
+| The id survives a restart | `AccountRulesTests.ArrivalIsStableForTheSameTokenAcrossRestarts`, plus `GameSettings.AccountPlayerId` being written by `PlayerAccount` and read by `ReadLocal`. |
+| A username can be attached later without losing anything | `AccountRulesTests.ValidRemoteValuesWinAndMissingRemoteValuesKeepLocalData` and `UnreachableServiceNeverErasesTheLocalProfile` cover the merge; `CloudEndpointActionProbe.TheAccountEndpointSavesLoadsAndDeletesAProfile` covers the round trip through the real `save` branch. ⚠️ **The Username & Password provider itself is still untested by anything**, because exercising it creates a real credentialed account on the live project. Named on the deferred list, § 94.6. |
+| **An account can be deleted** | ✅ **CLOSED. `CloudEndpointActionProbe.TheAccountEndpointSavesLoadsAndDeletesAProfile`.** § 4.5.1 named this as never having been run by a probe and it was right: the `delete` branch had run zero times in its life. It is proven by the `load` AFTER it, not by its own empty answer, because a `load` with nothing saved returns the same thing. |
+| An offline tournament guest can enter without replacing the owner's account | `PlayerAccount._primaryProfile` is parked on `EnterGuest` and restored by `LeaveGuest`. ⚠️ **No test, and the reason is that the guest path switches the live UGS session**, which is the same hazard as the fresh-install bullet. **On § 90.4's by-hand list.** ⚠️ This bullet is also the one that made `ConnectionToken` look reasonable, and § 94.1 is what that cost. |
+| Pulling the network cable still lets a LAN match start | ✅ Confirmed by 🧑 on 2026-08-31 and **not to be re-raised**. The software half is § 90.4's automated list, now with § 94.5's Phase 4 rows added. |
+
+**PHASE 2 · THE PROFILE, THE STATS AND THE MATCH HISTORY**
+
+| Bullet | Named test, or named reason |
+|---|---|
+| Finishing a match writes exactly one record | `MatchRecordIdentityProbe.AFinishedMatchNamesExactlyOneSeatAsThisPlayer` runs a real match to its end and reads `MatchStatsCollector.Last`. ⚠️ **"Exactly one" across four machines is not testable from one process**; the mechanism is the `NetAuthority.ShouldResolve()` gate at the top of `OnMatchEnded` and the record being broadcast rather than re-counted, and `MatchRecordRules` refusing a duplicate `MatchId` on both sides is the belt to that brace. |
+| The profile updates without a reload | `CareerStore.Changed` -> `PlayerHub.OnDataChanged` -> `Show(_tab)`, wired in `PlayerHub.Install`. Covered indirectly: `PlayerHubLayoutProbe` rebuilds every tab through the same `Show`. |
+| **Career totals survive a reinstall on the same account** | ✅ **CLOSED, AND THIS IS WHAT § 4.5.1 MEANT BY "never tested end to end".** `CloudEndpointActionProbe.ARealSubmissionPaysExactlyWhatProgressionRulesSays` submits a record and then reads the profile back through `load` **without touching any local cache at all**. A server-side career read by a client that has none is a reinstall in every way that matters. ⚠️ **Until § 94.1 it would have failed**, because nothing had ever been stored to survive anything. |
+| One Cloud Code invocation per player per match, not one per event | `CareerAndCloudCodeTests.EveryCloudCodeRequestGoesThroughTheOneHelper` proves there is a single request site; `CareerStore.Record` calls `FlushAsync` once and `FlushAsync` sends one call per queued record. ⚠️ **§ 94.1 is the reason this bullet was true and worthless**: one call per match, every one of them refused. |
+
+**PHASE 3 · TELEMETRY**
+
+| Bullet | Named test, or named reason |
+|---|---|
+| Events reach the service and unknown names do not | `UgsServicesProbe.TheTelemetryEndpointAcceptsEveryColumnOfAFrameRateEvent` (`refused:0`) and the new `CloudEndpointActionProbe.TheTelemetryEndpointRefusesAnEventNameItDoesNotKnow` (`refused:1`). ⚠️ **The pair is the test; neither half alone is.** |
+| The event names in the game and in the script are the same list | `CareerAndCloudCodeTests.TheTelemetryScriptKnowsExactlyTheEventsTheCoreCanSend`, as text, on every run. |
+| The funnel records a step once, ever | Server-side by construction (`if (!profile.Funnel[name])`). ⚠️ **Deliberately not tested against the live service and never will be**: the only way to test it is to record a first-launch that can never be undone, which would put a fake into the number `FUTURE.md` § 3 calls the most valuable in the plan. Every probe asserts `"funnel":{}` instead, which is the promise that no probe ever wrote one. |
+| The opt-out stops the counting, not only the sending | `MatchFrameRateProbe.ATelemetryOptOutStopsTheCountingAndNotOnlyTheSending`. |
+| The FPS window is the match, not the session | `MatchFrameRateProbe.ALiveRoundFillsTheSampleAndTheGapsBetweenRoundsDoNot`. |
+| **The opt-out is on a screen a player can read** | ✅ **CLOSED, AND IT WAS FALSE AT 720p.** `PhaseSurfaceLayoutProbe.TheTelemetryRowFitsItsBoxAtEveryShippedResolution` found the disclosure running 107 px off the side of the panel on the smallest shipped resolution. § 94.4. |
+
+**PHASE 4 · PROGRESSION**
+
+| Bullet | Named test, or named reason |
+|---|---|
+| XP from completion, placement and objectives, weighted so leaving is what costs | `ProgressionTests` in `Core.Tests`, and now `CloudEndpointActionProbe.ARealSubmissionPaysExactlyWhatProgressionRulesSays` against the deployed script. |
+| Uncapped level, a border every 50 | `ProgressionRules.LevelForXp` / `BorderForLevel`, `ProgressionTests`. |
+| Per-hero mastery, the six heroes only | `ProgressionTests.TheServerScriptsCopyOfTheHeroListMatchesTheRoster`. |
+| Every reward is cosmetic and touches no gameplay number | `ARewardCannotCarryAGameplayNumber`. ⚠️ § 91.5: its subject used to be a static and raced its own suite. |
+| An AFK seat is paid nothing | `ProgressionRules.WasAfk` and its tests. ⚠️ **§ 91.1: it reads MOVEMENT, and the prompt said `InputIntent`.** |
+| The rate is flat in both directions | Two constants and no curve; `TheCareerScriptStillAgreesWithTheCoreAboutEveryXpNumber` pins both copies. |
+| **A match awards XP computed server-side** | ✅ **CLOSED, AND IT WAS FALSE UNTIL TODAY.** `ARealSubmissionPaysExactlyWhatProgressionRulesSays`. § 94.1 is why: no submission had ever been accepted, so every XP a player had ever seen was the local optimistic copy and nothing else. |
+| **The player can see it** | ✅ `PhaseSurfaceLayoutProbe.TheEndOfMatchXpBlockFitsItsBoxAtEveryShippedResolution` for the results board, `PlayerHubLayoutProbe` for the hub header. |
+
+### 94.4 · The two phase surfaces no layout probe reached
+
+`FUTURE.md` § 4.5.3 named both and was right: `PlayerHubLayoutProbe` is scoped to its own canvases
+on purpose, so **the end-of-match XP block and the settings telemetry row had never been measured
+at any resolution.** Between them they are everything a player can see of Phases 3 and 4.
+
+`PhaseSurfaceLayoutProbe` covers both at the same nine resolutions the other three UI probes use.
+
+- ⚠️⚠️ **THE XP BLOCK IS DRIVEN THROUGH REFLECTION AND THE TWO ALTERNATIVES ARE BOTH WORSE.**
+  Making `ShowProgression` public would be adding a seam to shipping code for a test, which
+  `FUTURE.md` § 4.5.6 rules out by name. Taking the real path is worse than that: the block is
+  filled from `CareerStore.LastAward`, which only `CareerStore.Record` writes, which saves
+  `career.json` **and** calls `FlushAsync`, and `PlayerAccount` signs in anonymously at boot, so
+  the probe would write a fabricated match into the player's real career and submit it to their
+  live account. **The test supplies the inputs and the shipping code produces the strings**: the
+  award comes from `ProgressionRules.Award`, so a probe cannot pass by agreeing with itself.
+- **The fixture levels up on purpose**, because `LEVEL 12 · LEVEL UP · +215 XP` is the longest of
+  the four headlines the block can draw and the short one proves nothing about it.
+- **The bar is asserted separately from the labels.** It is an `Image`, so no amount of text
+  measurement can see it running off the card, and it is the part a player actually looks at.
+- ⚠️⚠️ **IT FOUND A REAL PHASE 3 BUG ON ITS FIRST GREEN RUN, WHICH IS WHY THIS PHASE EXISTS.**
+  The telemetry disclosure on the settings panel **ran off the side of the panel at 1280x720**:
+  795 px of sentence in a 688 px box, 107 px past the edge, silently.
+
+  `BuildTelemetryNote` set `verticalOverflow = Overflow` with a comment saying the sentence is
+  *"two lines wide by design"*. **It was never two lines.** `MenuKit.Styled` leaves
+  `horizontalOverflow = Overflow`, so the text does not wrap, so it never needs a second line, so
+  allowing one changes nothing. **Setting one axis and not the other is a no-op that reads like a
+  fix**, and it survived because Overflow is silent by construction: nothing wraps, nothing clips,
+  nothing errors, and the label is still "there".
+
+  ⚠️⚠️ **AND THE HALF THAT FELL OFF IS THE HALF THAT MATTERS.** The sentence is *"Counts only:
+  matches played, modes, maps, picks and frame rate. No names, no chat, nothing you type."* What
+  survives at 720p is the list of what IS collected; the promise about what is not is past the
+  edge. `FUTURE.md` § 19.3 asks for *"a plain statement of what is collected"*, and **a privacy
+  disclosure that is silently truncated is worse than one that is absent**, because the reader has
+  no way to know they are seeing half of it. Fixed: `Wrap` plus `Overflow`, which is the pair, and
+  the row reserves 56 px rather than 48 so two 18-unit lines do not draw through the row below.
+
+  ⚠️ **THE PROBE NOW ASSERTS BOTH AXES.** Asserting the vertical mode alone, which is what the
+  first version did, passes the broken version.
+- ⚠️ **`LobbyChrome.SettingsSummary` AT 16 UNITS IS NOT A BUG AND § 92.6 LEFT IT UNOWNED.** It is
+  on the LOBBY rather than on the settings panel, it is an authored exception with 🧑's own
+  instruction beside it (*"make font size here smaller"*), and `LobbyChrome`'s constant carries
+  the argument: three words that the drawer directly beneath restates at 26 units. **Recorded in
+  the probe itself so the next reader stops looking rather than "fixing" a decision.**
+
+### 94.5 · Offline and LAN, for all four phases at once
+
+Per `FUTURE.md` § 0.5 rule 7 and § 4.5.4. **Added to § 90.4's automated list:**
+
+- **§ 94.1's queue fix is the biggest offline result in this section and it was not on the plan's
+  list.** A record authored before the account finished signing in used to wedge the upload queue
+  for ever. That is *the* offline case: play at a venue with no internet, sign in later, and every
+  match ever played afterwards is stuck behind the first one.
+  `MatchRecordTests.ARecordWithNoLineForThisPlayerIsRefusedWithoutCallingTheEndpoint` is the rule
+  and `CareerStore.DropUnsubmittable` is the glue.
+- `PlayerHubLayoutProbe` drives all four hub tabs and the sign-in screen with
+  `GameServices.Account` and `.Career` **null**, which is exactly a boot with no connection. Every
+  empty state on those screens is therefore measured.
+- `PhaseSurfaceLayoutProbe` draws the end-of-match XP block from a local `XpAward` with no service
+  call at all, which is what an unplugged LAN match shows.
+- `ProfileRules.Apply` awards XP into the local profile with no network
+  (`PlayerProfileTests.PlayingAMatchAwardsXpButStillNoRankAndNoInventory`), so an offline match
+  still pays and still animates.
+- `CareerStore.FlushAsync` and `RefreshAsync` both return immediately when there is no signed-in
+  account, so an unplugged session costs no timeouts.
+
+**⚠️ WHAT STILL HAS TO BE WALKED BY HAND, added to § 90.4's list.** Every one of these needs the
+cable physically out, and none can be automated from a process that shares this machine's account:
+
+1. Boot with no connection: the menu is interactive and the nameplate reads the local handle.
+2. Open the hub on all four tabs offline. CAREER and MATCHES must show their empty states rather
+   than a spinner or a zero.
+3. Play a LAN match to the end. The XP bar on the results board must move.
+4. Reconnect and sign in. **The queue must flush and the level must jump to the server's number**,
+   which is the step that has never once worked and is § 94.1.
+5. A fresh install: delete `settings.json` and the UGS cache, boot offline, and reach PLAY in one
+   press.
+6. Tournament guest in and out, checking the owner's account is still there afterwards.
+
+### 94.6 · Deferred by design, so nobody refiles it as a bug
+
+`FUTURE.md` § 4.5.5 asks for this list once, in one place.
+
+| Absent | Why, and who owns it |
+|---|---|
+| **The avatar** | `FUTURE.md` § 1.4 is an open ARGUMENT nobody has answered: an in-game builder rather than a photo upload, because a photo upload is moderation and storage. The nameplate portrait is an empty slot rather than a guess. |
+| **Every Phase 4 reward** | ⚠️⚠️ **Titles, badges, palettes and borders are COMPUTED AND WORN BY NOTHING.** `ProgressionRules.AccountRewards` returns them and no screen equips one. § 91.8. **Phase 5 owns it.** |
+| **The rank badge** | Phase 9. There is no rating, so there is nothing to show. |
+| **Achievements** | Phase 10. |
+| **Compare with a friend** | Phase 6. There is no friend list. |
+| **Rename cooldown and profanity filter** | `FUTURE.md` § 1.3 specifies both and neither is built. A name can be changed as often as the player likes and is checked only against `AccountRules`' character class. |
+| **Email recovery** | § 1.2. Email is stored as an optional field and does nothing. ⚠️ Its § 1.5 age note is the reason to leave it that way rather than to finish it casually. |
+| **Username and password sign-in, tested** | The provider is added on the project and `SignInScreen` drives it, and **no automated test touches it**, because exercising it creates a real credentialed account on the live project. It is on the by-hand list. |
+| **The per-match detail scoreboard in MATCHES** | § 92.8. The rows are not clickable yet and the data is all in `CareerStore.History`. |
+| **The upgrade offer as a toast** | § 92.8. It is a row on ACCOUNT; a dismissible nameplate badge would be better. |
+| **A career authored offline before a first sign-in** | ⚠️ **This is a decision, not an omission.** The local career already resets when the account id changes (`[Career] the cached career belongs to another account`), so re-stamping such records onto the new id would contradict that. § 94.1's drop path names each abandoned match in the log. |
+
+### 94.7 · The hub, made readable, because it shipped hard to read
+
+🧑 sent the CAREER tab back on 2026-08-30: *"thoroughly plan how to make this shit prettier as well
+as easier to process as well because its so messy and ugly"*.
+
+⚠️⚠️ **§ 92 FIXED THE STRUCTURE AND DID NOT FIX THE READING, AND THOSE ARE DIFFERENT PROBLEMS.**
+Everything § 92 claims is true: nothing is at a hand-written offset any more, the six groups
+collapse, no rate prints over a sample that cannot carry it. **And the screen was still hard to
+read**, because the faults below are not structural, and `PlayerHubLayoutProbe` cannot see any of
+them: every label fitted its box, every label cleared the readable floor, and every one of these
+was true at the same time. **`FUTURE.md` § 4.5.3 says so in advance** and it is worth quoting
+because it was written before this happened: *"it cannot see a screen that is ugly, and it cannot
+see a control nobody can find. Do not read a green run as 'the UI is good'."*
+
+**Five faults, measured off 🧑's own screenshot at 1920x1080.**
+
+1. ⚠️⚠️ **THE VALUE WAS 1600 px FROM ITS LABEL.** `Matches played` sat at x = 145 and its `12` at
+   x = 1770, because rows are full width and the value was pinned hard right. **A label and its
+   value at opposite edges of the screen are not a row**, and there were thirty of them.
+   ⚠️ **The reference was misread and this is the interesting part.** Valorant and PUBG put a
+   WIDE CONTROL, a dropdown or a slider, in the right-hand column, so it fills the space and reads
+   as one object with its label. A two-character number fills nothing. **What survives the copy is
+   the COLUMN, not the alignment.** `UiRows.ValueColumn` is 0.56 of the row, a fraction rather
+   than an offset so it holds at all nine resolutions, and values are left-aligned inside it, so
+   they line up with each other AND sit a short fixed distance from their labels.
+2. **The zebra ran straight through the section headers.** It counted every `Row_` in the list, so
+   whether a group's first row was banded depended on how many rows the groups ABOVE it had, which
+   on the career tab **changes with the player's own history**: a group opens shaded on one account
+   and clear on another. Banding is meant to say "these rows belong together". It restarts at every
+   `Section_` now.
+3. **A shut group cost three lines to say nothing.** The subtitle sat under the heading whether the
+   group was open or shut, so six shut groups spent about **680 px**, most of a screen, on
+   headings. The sentence moves onto the heading's own line, in the value column, muted: a shut
+   group is one row and six of them fit where two did. ⚠️ **The subtitle is still there**, for the
+   reason `UiRows.Section` already recorded: it is the one line saying what is inside.
+4. **`Finishes` was four facts in one string.** `1st 3   2nd 3   3rd 3   4th 3`, right-aligned, so
+   the spacing between four separate numbers was whatever the font did with three spaces.
+   `UiRows.DistributionRow` gives each a captioned cell. ⚠️ **It is not a chart and must not become
+   one**: four bars need a scale, a scale needs a maximum, and a maximum over a dozen matches is
+   noise drawn at full height.
+5. ⚠️⚠️ **THE XP BAR WAS DRAWN UNDER THE CLOSE BUTTON.** The track was centred at -300 with a
+   half-width of 220, so it ran to x = -80; CLOSE starts at -208. **128 px of the bar, the end a
+   player reads to see how close they are, was behind a wood button.** It is in the screenshot.
+   The block now ends at -238 and its three parts are laid out from that one number, with the XP
+   count beside the level. ⚠️ **This is § 92.1 fault 3 exactly, one level up**: two absolute
+   offsets authored separately, each correct alone, never checked against each other. § 92 made it
+   impossible inside a row and left it possible in the chrome around them.
+
+**And two more the FIRST RENDER of the fix found, which is the pattern § 92.6 named.**
+
+6. ⚠️⚠️ **MOVING THE COLUMN MADE EVERY CONTROL FILL IT, AND THE WIDEST CONTROL BECAME THE
+   LOUDEST THING ON THE SCREEN.** `Row`'s slot spans `ValueColumn` to the right margin, about
+   715 px at 1920, and `FieldRow` and `DropdownRow` both called `MenuKit.Stretch` on it. So the
+   display-name field, **a box for fourteen characters**, became a 715 px white rectangle, and the
+   CLASSIC picker became another one. That is the hierarchy fault 🧑 reported in the first place
+   arriving by a different route: nothing led, because the largest object on the page was the one
+   that mattered least. `UiRows.Cap` pins a control at the column's left edge and gives it its
+   authored width; field 360, dropdown 340, button 260. ⚠️ **All three are under 368**, which is
+   the column's width at 4:3, the narrowest shape the probe drives. Widen one past that and it
+   overhangs its row.
+7. **`ButtonRow` centred its button in the column** rather than starting it at the column, so on
+   the ACCOUNT tab SET ONE UP sat 225 px right of where every number and every dropdown on the
+   same screen begins. **One column or none.** The footer note had the same shape of error against
+   the other axis: `ListArea` starts at 6 per cent of the width and the note was pinned at 60 px,
+   so the one sentence explaining a tab hung outside the column of every row above it.
+8. ⚠️ **THE MATCHES TAB SPELLED THE MODE `HEROSTRIKE`.** It uppercased
+   `GameMode.HeroStrike.ToString()`, which is a **wire value**, not a name: `docs/VISION.md` § 1
+   calls it HERO STRIKE and every other screen writes it that way, so one screen out of five
+   spelled a mode differently from the rest of the game. `MenuKit.ModeLabel` is the one owner now
+   and it takes the STRING rather than the enum, because a `MatchRecord` stores its mode as text
+   and may hold one this build does not know: **an unrecognised mode is uppercased and shown
+   rather than blanked**, so a record from a newer build reads as its own name instead of nothing.
+
+⚠️ **THE HONEST LIMIT OF ALL OF THIS.** Six of the seven are measurable and none of them were
+measured, because a probe that asks "does it fit" cannot ask "can it be read". **The picture is
+what asks the second question**, which is `PlayerHubLayoutProbe.PhotographEveryScreen`'s whole job
+and § 92.6's lesson repeating: faults 6 and 7 exist because the fix for fault 1 was rendered and
+looked at, and they would have shipped otherwise. **There is no assertion in this repository that
+would have caught a value 1600 px from its label, and this entry does not claim to have added
+one.**
+
+### 94.8 · Verified
+
+- **Core 269/269** (`dotnet test`, about 300 ms), **EditMode 251/251**, **`Checks.RunAll` OK, all
+  five in one launch**, and all three `tools/` audits exit 0 (44 effect call sites with 0 ungated
+  on another body, 52 wire entry points with 0 unreachable, 55 named messages with 0 mismatched).
+- ⚠️⚠️ **UGS 14/14 AGAINST THE LIVE PROJECT, UP FROM 8/8**, and the line the whole phase was
+  commissioned for:
+
+  ```
+  [CloudEndpointActionProbe] match-record submit paid 215 XP, 0 -> 215,
+                             exactly what ProgressionRules.MatchXp says
+  ```
+
+  It was **0 -> 0 on the first run**, which is § 94.2b.
+- **PlayMode, targeted: 15/15** across `PlayerHubLayoutProbe`, `PhaseSurfaceLayoutProbe`,
+  `MatchRecordIdentityProbe`, `AspectRatioProbes`, `HudOverflowProbe`, `UiClickProbe`,
+  `UiRuntimeShots`, `LobbyStyleProbe` and `HeroPickerLayoutProbe`, then **11/11** on a second pass
+  that added `SettingsWheelProbe`. ⚠️ **Those two suites are in the set on purpose**: § 92.7
+  records `UiClickProbe.EveryButtonIsReachable` and
+  `SettingsWheelProbe.TheWheelScrollsTheSettingsListFromEveryPartOfIt` catching a new always-on
+  chrome element covering the corner of every panel on a screen it had nothing to do with. This
+  change edits the same shared row kit, so they are the regression that matters.
+- ⚠️⚠️ **THE FULL `-testCategory "!WallClock"` SWEEP HUNG AND WAS KILLED, AND IT IS NOT KNOWN
+  WHETHER THIS BRANCH CAUSED IT.** It stopped at `Begin MonoManager ReloadAssembly` with **no
+  further log output and no `.xml` for eighteen minutes**, against a suite that takes about 442 s
+  of test time. `CLAUDE.md` § 7 records this exact signature happening before. **It is the one
+  gate in § 0.5 rule 9 this entry cannot claim**, and the honest position is that the targeted set
+  above covers everything this branch touches while the full sweep covers things it does not.
+  ⚠️ **Re-run it before trusting the branch further**, and if it hangs again, bisect by running
+  the suites in halves rather than assuming the batchmode flake:
+
+  ```bash
+  "/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -projectPath . -testPlatform PlayMode -testCategory "!WallClock" -testResults Logs/play.xml -logFile Logs/play.log
+  ```
+
+- ⚠️ **§ 93's `CarryTests` red is still red and is still not this work.** A held tsinelas drifting
+  0.084 m against a 0.05 m bound; nothing in this branch touches `Carrier`, the animator or
+  `LateUpdate`. Do not let it be absorbed into this entry.
+- **A clean Windows player is on the Desktop**, built after every gate above.
+
+---
+
+## 95 · OPEN: a label on the settings panel overflows its box at 720p ⚠️
+
+**Found 2026-08-30 by `PhaseSurfaceLayoutProbe` while it was still measuring the whole settings
+canvas, before it was scoped to its own surface.** Recorded rather than fixed, per `CLAUDE.md`
+§ 2.3, because it is not a Phase 1 to 4 surface and § 94 is a quality-control pass with a stated
+boundary.
+
+```
+16:9 720p settings/telemetry: 'Caption' needs 330 px and was given 320.
+```
+
+**What is known.** At **1280x720**, in the `MainMenu` scene's settings panel, a legacy `Text`
+named `Caption` reports `preferredWidth` **330** inside a **320 px** rect with
+`horizontalOverflow = Overflow`. That is the silent class `MenuKit.Label` produces and that
+`PlayerHubLayoutProbe`'s header describes: **it does not wrap and does not shrink, it draws
+straight over whatever is beside it**, and nothing errors. Ten pixels is one or two characters, so
+the visible symptom is a word touching or overlapping the control to its right on the smallest
+shipped resolution only.
+
+**What is NOT known, and how to find it in one run.** Which row it belongs to. The probe now names
+the full transform path and the string on failure (`Where(label.transform)`), so pointing
+`Measure` at the whole settings canvas for one run prints it:
+
+```bash
+"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -projectPath . -testPlatform PlayMode -testFilter PhaseSurfaceLayoutProbe -testResults Logs/play-ui.xml -logFile Logs/play-ui.log
+```
+
+⚠️ **IT IS NOT THE DROPDOWN'S OWN CAPTION.** `SwatchDropdown` names that one `CaptionLabel`;
+this is `Caption`, which is a node the `.tscn` importer owns. **Check whether it is authored or
+imported before editing anything**, because a hand edit to an imported node disappears the next
+time `TscnImporter` rebakes it, which is the reason `BuildTelemetryRow` exists in code at all.
+
+**Done looks like:** the row is named, the caption is either widened or run through `MenuKit.Fit`
+like `LobbyChrome`'s toggle caption is, and `AspectRatioProbes` covers the settings panel at all
+nine resolutions so this class cannot come back.
 
 ---
 

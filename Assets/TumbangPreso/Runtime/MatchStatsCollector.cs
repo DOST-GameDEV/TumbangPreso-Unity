@@ -281,15 +281,32 @@ namespace TumbangPreso
                     continue;
                 }
 
+                // ⚠️⚠️ THE ACCOUNT ID, NEVER `ConnectionToken`, AND THE DIFFERENCE MEANT NO
+                // CAREER HAD EVER REACHED THE SERVER. `ugs/cloud-code/match-record.js` finds the
+                // submitter's line with `p.PlayerId === context.playerId`, and `context.playerId`
+                // is the UGS Authentication player id and nothing else. `ConnectionToken` reads
+                // `IsGuest ? PlayerId : NetIdentity.Token`, and `IsGuest` is the TOURNAMENT guest
+                // flag rather than "signed in anonymously", so for an ordinary player it returns
+                // `NetIdentity.Token`, which falls back to the machine's local settings token the
+                // moment UGS is not signed in at the whistle. A record stamped that way is refused
+                // 422 on every retry for ever. Measured 2026-08-30: three records queued behind
+                // each other on the player's own machine, all four lines carrying
+                // `GameSettings.PlayerToken`. `docs/TODO.md` § 94.1.
+                //
+                // ⚠️ AND THE REMOTE HALF HAS TO MOVE WITH IT, because every peer submits the SAME
+                // record from its own session and looks itself up by its own account id.
+                // `PeerRecord.AccountPlayerId` is what protocol 16 put in the approval hello for
+                // the impersonation guard; `PeerRecord.Token` is the connection token and is the
+                // same wrong answer one machine further away.
                 if (!networked || slot == localSeat)
                 {
-                    line.PlayerId = account != null ? account.ConnectionToken : Net.NetIdentity.Token;
+                    line.PlayerId = account != null ? account.PlayerId : Net.NetIdentity.Token;
                     if (account != null) line.Handle = account.LobbyName;
                     continue;
                 }
 
                 var peer = net.Lobby?.PeerInSeat(slot);
-                line.PlayerId = peer?.Token ?? "";
+                line.PlayerId = peer?.AccountPlayerId ?? "";
                 if (peer != null && !string.IsNullOrWhiteSpace(peer.Name)) line.Handle = peer.Name;
             }
         }

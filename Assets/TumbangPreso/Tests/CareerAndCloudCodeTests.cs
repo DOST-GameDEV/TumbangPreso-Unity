@@ -1,4 +1,5 @@
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 using TumbangPreso.Core;
@@ -328,6 +329,78 @@ namespace TumbangPreso.Tests
                 values.Add(entry.Groups[1].Value);
 
             return values.ToArray();
+        }
+
+        /// <summary>
+        /// Every number `ProgressionRules` and `match-record.js` both hold, compared as text.
+        ///
+        /// ⚠️⚠️ THE LIVE PROBE AND THIS TEST ASK DIFFERENT QUESTIONS AND NEITHER REPLACES THE
+        /// OTHER. `CloudEndpointActionProbe.ARealSubmissionPaysExactlyWhatProgressionRulesSays`
+        /// submits a real record and asserts the XP the DEPLOYED script paid, which is the only
+        /// thing that can catch a service running an older file. It is `[Category("Ugs")]`, so it
+        /// needs a network, spends free-tier quota and does not run in a default sweep. **This
+        /// asks whether the two copies in the REPOSITORY agree, in about a millisecond, on every
+        /// run**, and it is the one that fails in the pull request rather than in production.
+        /// `docs/TODO.md` § 90.9 makes the identical argument for telemetry.
+        ///
+        /// ⚠️ THE PLACEMENT TABLE IS COMPARED ELEMENT BY ELEMENT, NOT AS A LENGTH. A four-entry
+        /// array that agrees on its first and last value and not its middle two is exactly the
+        /// edit somebody makes tuning second place, and a count would wave it through.
+        ///
+        /// ⚠️ AND THE AFK CONSTANTS ARE IN HERE FOR THE REASON § 91.1 GIVES. They decide whether
+        /// a match pays at all, so a drift there is not a small XP difference: it is the whole
+        /// award, on one side only, with the server winning.
+        /// </summary>
+        [Test]
+        public void TheCareerScriptStillAgreesWithTheCoreAboutEveryXpNumber()
+        {
+            string js = File.ReadAllText(Path.Combine(CloudCodeRoot, "match-record.js"));
+
+            Assert.AreEqual(ProgressionRules.CompletionXp, ConstantIn(js, "COMPLETION_XP"),
+                "COMPLETION_XP drifted. It is the largest single term, so this is the one that " +
+                "makes a player's level disagree with the bar they just watched fill.");
+            Assert.AreEqual(ProgressionRules.ObjectiveKnockdownXp,
+                ConstantIn(js, "OBJECTIVE_KNOCKDOWN_XP"), "OBJECTIVE_KNOCKDOWN_XP drifted");
+            Assert.AreEqual(ProgressionRules.ObjectivePressureRetrievalXp,
+                ConstantIn(js, "OBJECTIVE_PRESSURE_RETRIEVAL_XP"),
+                "OBJECTIVE_PRESSURE_RETRIEVAL_XP drifted");
+            Assert.AreEqual(ProgressionRules.ObjectiveTagXp,
+                ConstantIn(js, "OBJECTIVE_TAG_XP"), "OBJECTIVE_TAG_XP drifted");
+            Assert.AreEqual(ProgressionRules.ObjectiveSabotageXp,
+                ConstantIn(js, "OBJECTIVE_SABOTAGE_XP"), "OBJECTIVE_SABOTAGE_XP drifted");
+            Assert.AreEqual(ProgressionRules.ObjectiveCleanXp,
+                ConstantIn(js, "OBJECTIVE_CLEAN_XP"), "OBJECTIVE_CLEAN_XP drifted");
+
+            Assert.AreEqual(ProgressionRules.XpPerLevel, ConstantIn(js, "XP_PER_LEVEL"),
+                "XP_PER_LEVEL drifted, so the server's level and the client's are different " +
+                "views of the same XP");
+            Assert.AreEqual(ProgressionRules.MasteryXpPerLevel,
+                ConstantIn(js, "MASTERY_XP_PER_LEVEL"), "MASTERY_XP_PER_LEVEL drifted");
+
+            Assert.AreEqual(ProgressionRules.AfkStrikesBeforePenalty,
+                ConstantIn(js, "AFK_STRIKES_BEFORE_PENALTY"),
+                "AFK_STRIKES_BEFORE_PENALTY drifted. docs/TODO.md § 91.1.");
+            Assert.AreEqual(ProgressionRules.AfkPenaltyMatches,
+                ConstantIn(js, "AFK_PENALTY_MATCHES"), "AFK_PENALTY_MATCHES drifted");
+
+            var placement = Regex.Match(js, @"const\s+PLACEMENT_XP\s*=\s*\[([^\]]*)\]\s*;");
+            Assert.IsTrue(placement.Success, "no `const PLACEMENT_XP = [...];` in match-record.js");
+
+            var written = placement.Groups[1].Value
+                .Split(',')
+                .Select(s => s.Trim())
+                .Where(s => s.Length > 0)
+                .Select(int.Parse)
+                .ToArray();
+
+            Assert.AreEqual(ProgressionRules.PlacementXp.Length, written.Length,
+                "PLACEMENT_XP has a different number of places than ProgressionRules.PlacementXp");
+
+            for (int i = 0; i < written.Length; i++)
+                Assert.AreEqual(ProgressionRules.PlacementXp[i], written[i],
+                    $"PLACEMENT_XP[{i}] is {written[i]} in match-record.js and " +
+                    $"{ProgressionRules.PlacementXp[i]} in ProgressionRules. The C# is the " +
+                    "specification, so the script is the bug.");
         }
 
         private static int ConstantIn(string js, string name)

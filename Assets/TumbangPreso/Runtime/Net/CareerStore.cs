@@ -43,6 +43,32 @@ namespace TumbangPreso.Net
 
         public static CareerStore Instance { get; private set; }
 
+        /// <summary>
+        /// The id this machine's player carries in a <see cref="MatchRecord"/>, and the only
+        /// answer to "which line in this record is mine".
+        ///
+        /// ⚠️⚠️ ONE OWNER PER FACT, AND THIS ONE HAD FOUR OWNERS THAT ALL AGREED ON THE WRONG
+        /// VALUE. `MatchStatsCollector.IdentifySeats`, `CareerStore.Record`, `MatchResult` and
+        /// `PlayerHub` each wrote `Account?.ConnectionToken ?? NetIdentity.Token` out by hand, so
+        /// the local screens agreed with the local record and every one of them disagreed with
+        /// the server, which compares against `context.playerId`. Four consistent copies of a
+        /// wrong id is exactly the shape that hides for two phases: nothing on this machine can
+        /// see it, and the only symptom is a 422 in a log nobody reads.
+        /// `MatchStatsCollector.IdentifySeats` carries the full note; `docs/TODO.md` § 94.1.
+        ///
+        /// ⚠️ THE FALLBACK IS `NetIdentity.Token` AND IT IS FOR THE OFFLINE CASE ONLY. It is not
+        /// an account id and the endpoint will refuse a record stamped with it; `FlushAsync` drops
+        /// such a record rather than retrying it, and says so.
+        /// </summary>
+        public static string LocalPlayerId
+        {
+            get
+            {
+                string id = GameServices.Account?.PlayerId;
+                return string.IsNullOrWhiteSpace(id) ? NetIdentity.Token : id;
+            }
+        }
+
         [Serializable]
         private sealed class Cache
         {
@@ -217,7 +243,7 @@ namespace TumbangPreso.Net
         {
             if (record == null || string.IsNullOrWhiteSpace(record.MatchId)) return;
 
-            string me = GameServices.Account?.ConnectionToken ?? NetIdentity.Token;
+            string me = LocalPlayerId;
             var line = MatchRecordRules.LineFor(record, me);
 
             // ⚠️ A SPECTATED MATCH IS REMEMBERED BY NOBODY, AND THAT IS CORRECT. A seatless
@@ -263,6 +289,19 @@ namespace TumbangPreso.Net
         /// ⚠️ IT STOPS RATHER THAN CARRYING ON. The usual reason a submission fails is that the
         /// network is gone, and firing the rest of the queue at a service that is not there
         /// spends the boot budget on nineteen more timeouts for no gain.
+        ///
+        /// ⚠️⚠️ AND THAT "STOP AT THE FIRST FAILURE" RULE IS WHY A PERMANENTLY REFUSABLE RECORD
+        /// HAS TO BE DROPPED BEFORE IT IS SENT. `match-record.js`'s `submit` throws for two
+        /// reasons that are decided by the bytes in the record, so retrying changes nothing and
+        /// the record sits at the head of the queue for ever with every later match stacked
+        /// behind it. Measured on the player's machine 2026-08-30: three such records, a
+        /// successful sign-in, `failed (422)` on every boot, and a career that had never once
+        /// reached the server. `MatchRecordRules.Submittable` names both cases and
+        /// `docs/TODO.md` § 94.1 is the entry.
+        ///
+        /// ⚠️ THE DROP IS LOUD AND IT IS COUNTED. `Status` says how many were abandoned, because
+        /// a match silently deleted from a career is worse than one that never uploads: the
+        /// player at least knows to say something about the second.
         /// </summary>
         public async Task FlushAsync()
         {
@@ -272,6 +311,8 @@ namespace TumbangPreso.Net
             _flushing = true;
             try
             {
+                int abandoned = DropUnsubmittable();
+
                 while (_cache.Queue.Count > 0)
                 {
                     var record = _cache.Queue[0];
@@ -289,7 +330,9 @@ namespace TumbangPreso.Net
                     Changed?.Invoke();
                 }
 
-                Status = "Career saved";
+                Status = abandoned > 0
+                    ? $"Career saved; {abandoned} match(es) could not be uploaded"
+                    : "Career saved";
             }
             catch (Exception e)
             {
@@ -300,6 +343,49 @@ namespace TumbangPreso.Net
             {
                 _flushing = false;
             }
+        }
+
+        /// <summary>
+        /// Removes every queued record the endpoint can never accept from this player, and
+        /// returns how many went.
+        ///
+        /// ⚠️⚠️ IT IS DECIDED WITHOUT A CALL, BY `MatchRecordRules.Submittable`, AND THAT IS THE
+        /// POINT. Asking the service would cost one 422 per bad record per boot and would still
+        /// have to decide what a 422 means, which is unanswerable from the outside: a thrown
+        /// Cloud Code error and a service that is unwell both arrive as one. The two refusals in
+        /// `match-record.js`'s `submit` are pure functions of the record and the caller, so this
+        /// side can answer them exactly, and everything that survives is a record whose failure
+        /// really is worth retrying.
+        ///
+        /// ⚠️ THE LOCAL CAREER KEEPS THE MATCH. `ProfileRules.Apply` already counted it into the
+        /// local profile and history when it was played, and dropping the upload does not undo
+        /// that. What is lost is the match ever reaching the server, which had already happened.
+        /// </summary>
+        private int DropUnsubmittable()
+        {
+            string me = LocalPlayerId;
+            int dropped = 0;
+
+            for (int i = _cache.Queue.Count - 1; i >= 0; i--)
+            {
+                var verdict = MatchRecordRules.Submittable(_cache.Queue[i], me);
+                if (verdict == MatchRecordRules.SubmitVerdict.Ok) continue;
+
+                Debug.LogWarning(
+                    $"[Career] abandoning queued match '{_cache.Queue[i]?.MatchId}': " +
+                    MatchRecordRules.SubmitRefusal(verdict));
+
+                _cache.Queue.RemoveAt(i);
+                dropped++;
+            }
+
+            if (dropped > 0)
+            {
+                Save();
+                Changed?.Invoke();
+            }
+
+            return dropped;
         }
 
         /// <summary>Replaces the local profile with the server's.</summary>

@@ -43,7 +43,7 @@ namespace TumbangPreso.UI
         private RectTransform _list;
         private ScrollRect _scroll;
 
-        private Text _handle, _levelChip, _state;
+        private Text _handle, _levelChip, _state, _xpCount;
         private Image _xpFill;
         private Text _footerNote;
         private Button _footerAction;
@@ -200,9 +200,33 @@ namespace TumbangPreso.UI
                 UiTheme.CreamMuted, new Vector2(0.0f, 1.0f), new Vector2(420.0f, -122.0f),
                 new Vector2(720.0f, 28.0f), TextAnchor.MiddleLeft);
 
+            // ⚠️⚠️ THE WHOLE XP BLOCK MOVED LEFT ON 2026-08-30 BECAUSE THE BAR WAS DRAWN UNDER
+            // THE CLOSE BUTTON. The track was centred at -300 with a half-width of 220, so it ran
+            // to x = -80; CLOSE is centred at -118 with a half-width of 90, so it starts at -208.
+            // **128 px of the bar, which is the end a player reads to see how close they are to
+            // the next level, was behind a wood button.** It is in 🧑's own screenshot and it is
+            // the same class of fault as everything in § 92: two absolute offsets authored
+            // separately, each correct on its own, never checked against each other.
+            //
+            // The block now ends at -238, which clears CLOSE's left edge by 30 px, and the three
+            // parts are laid out from that one number: level at the bar's left end, the XP count
+            // at its right end, the bar under both.
+            const float XpRight = -238.0f;
+            const float XpWidth = 440.0f;
+            const float XpCentre = XpRight - XpWidth * 0.5f;
+
             _levelChip = MenuKit.Label(_root.transform, "", 22, UiTheme.Amber,
-                new Vector2(1.0f, 1.0f), new Vector2(-420.0f, -74.0f), new Vector2(200.0f, 32.0f),
-                TextAnchor.MiddleRight);
+                new Vector2(1.0f, 1.0f), new Vector2(XpRight - XpWidth + 100.0f, -80.0f),
+                new Vector2(200.0f, 32.0f), TextAnchor.MiddleLeft);
+
+            // ⚠️ THE NUMBER IS NEW AND THE BAR NEEDED IT. A bar with no scale says "somewhere
+            // between two levels", which is the one thing the player can already see. `FUTURE.md`
+            // PHASE 4 asks for the level and the progress to be legible at a glance and a bare
+            // 8 px sliver is not; `ProgressionRules.XpPerLevel` is flat, so the denominator is a
+            // constant and the fraction is honest without any further arithmetic.
+            _xpCount = MenuKit.Label(_root.transform, "", MenuKit.MinReadableUnits,
+                UiTheme.CreamMuted, new Vector2(1.0f, 1.0f), new Vector2(XpRight - 120.0f, -80.0f),
+                new Vector2(240.0f, 28.0f), TextAnchor.MiddleRight);
 
             // ⚠️ THE XP BAR IS HERE RATHER THAN ON THE CAREER TAB because it is identity, not a
             // statistic: `FUTURE.md` PHASE 4 puts level and border on the header card, and a bar
@@ -210,7 +234,7 @@ namespace TumbangPreso.UI
             var track = new GameObject("XpTrack", typeof(RectTransform), typeof(Image));
             track.transform.SetParent(_root.transform, false);
             MenuKit.Place((RectTransform)track.transform, new Vector2(1.0f, 1.0f),
-                new Vector2(-300.0f, -112.0f), new Vector2(440.0f, 8.0f));
+                new Vector2(XpCentre, -114.0f), new Vector2(XpWidth, 10.0f));
             track.GetComponent<Image>().color = UiTheme.WoodDark;
 
             var fillGo = new GameObject("Fill", typeof(RectTransform), typeof(Image));
@@ -250,8 +274,12 @@ namespace TumbangPreso.UI
 
         private void BuildFooter()
         {
+            // ⚠️ ALIGNED WITH THE LIST, NOT WITH THE SCREEN. `ListArea` starts at 6 per cent of
+            // the width, which is x = 115 at 1920, and this note started at x = 60, so the one
+            // sentence explaining the whole tab hung 55 px outside the column every row above it
+            // shares. It reads as something that fell off rather than as the footer of anything.
             _footerNote = MenuKit.Label(_root.transform, "", MenuKit.MinReadableUnits,
-                UiTheme.CreamMuted, new Vector2(0.0f, 0.0f), new Vector2(480.0f, 50.0f),
+                UiTheme.CreamMuted, new Vector2(0.06f, 0.0f), new Vector2(420.0f, 50.0f),
                 new Vector2(840.0f, 28.0f), TextAnchor.MiddleLeft);
 
             // ⚠️⚠️ ONE ACTION, BOTTOM RIGHT, AND IT CHANGES WITH THE TAB. PUBG parks a single
@@ -305,7 +333,7 @@ namespace TumbangPreso.UI
         {
             if (record?.Players == null) return;
 
-            _detailTitle.text = $"{record.Mode.ToUpperInvariant()}   ·   " +
+            _detailTitle.text = $"{MenuKit.ModeLabel(record.Mode)}   ·   " +
                                 $"{record.MapId.ToUpperInvariant()}   ·   {Short(record.PlayedUtc)}";
 
             var lines = new List<string>
@@ -474,12 +502,15 @@ namespace TumbangPreso.UI
             {
                 int level = ProgressionRules.LevelForXp(xp);
                 _levelChip.text = $"LEVEL {level}";
-                float into = ProgressionRules.XpIntoLevel(xp) / (float)ProgressionRules.XpPerLevel;
-                _xpFill.rectTransform.anchorMax = new Vector2(Mathf.Clamp01(into), 1.0f);
+                int into = ProgressionRules.XpIntoLevel(xp);
+                _xpCount.text = $"{into} / {ProgressionRules.XpPerLevel} XP";
+                _xpFill.rectTransform.anchorMax = new Vector2(
+                    Mathf.Clamp01(into / (float)ProgressionRules.XpPerLevel), 1.0f);
             }
             else
             {
                 _levelChip.text = "";
+                _xpCount.text = "";
                 _xpFill.rectTransform.anchorMax = new Vector2(0.0f, 1.0f);
             }
         }
@@ -622,9 +653,19 @@ namespace TumbangPreso.UI
 
                 UiRows.ValueRow(_list, "Hours played", $"{ProfileRules.HoursPlayed(totals):0.0}");
 
-                UiRows.ValueRow(_list, "Finishes",
-                    $"1st {totals.Placements[0]}   2nd {totals.Placements[1]}   " +
-                    $"3rd {totals.Placements[2]}   4th {totals.Placements[3]}",
+                // ⚠️ FOUR CELLS, NOT ONE STRING. This row used to be
+                // `1st 3   2nd 3   3rd 3   4th 3` as a single right-aligned value, so four
+                // separate facts arrived as one long word whose internal spacing was whatever
+                // the font did with three spaces. See `UiRows.DistributionRow`.
+                UiRows.DistributionRow(_list, "Finishes",
+                    new[] { "1ST", "2ND", "3RD", "4TH" },
+                    new[]
+                    {
+                        totals.Placements[0].ToString(),
+                        totals.Placements[1].ToString(),
+                        totals.Placements[2].ToString(),
+                        totals.Placements[3].ToString(),
+                    },
                     "A four-player game has four outcomes, so all four are shown.");
             }
 
@@ -777,7 +818,7 @@ namespace TumbangPreso.UI
                 return;
             }
 
-            string me = GameServices.Account?.ConnectionToken ?? Net.NetIdentity.Token;
+            string me = Net.CareerStore.LocalPlayerId;
 
             foreach (var record in _shown)
             {
@@ -786,7 +827,7 @@ namespace TumbangPreso.UI
                 string when = Short(record.PlayedUtc);
 
                 var value = UiRows.ValueRow(_list,
-                    $"{place}   {record.Mode.ToUpperInvariant()}",
+                    $"{place}   {MenuKit.ModeLabel(record.Mode)}",
                     line != null ? $"{line.Score} PTS" : "",
                     $"{record.MapId}  ·  {record.Rounds} rounds  ·  " +
                     $"{record.DurationSeconds / 60.0f:0} min  ·  {when}",

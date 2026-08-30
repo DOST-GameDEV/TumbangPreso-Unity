@@ -53,6 +53,31 @@ namespace TumbangPreso.UI
         public const float SidePadding = 28.0f;
 
         /// <summary>
+        /// Where the value and control column begins, as a fraction of the row's width.
+        ///
+        /// ⚠️⚠️ THIS IS THE FIX FOR THE ONE THING THAT MADE THE CAREER TAB UNREADABLE, AND IT IS
+        /// NOT A TASTE CALL. 🧑, on the shipped screen: *"its so messy and ugly"*, *"easier to
+        /// process"*. Rows are full width, and the value was pinned HARD RIGHT, so on a 1920 px
+        /// screen `Matches played` sat at x = 145 and its `12` sat at x = 1770. **A label and its
+        /// value 1600 px apart are not a row, they are two separate things on the same line**, and
+        /// the eye has to traverse the whole screen and come back for every one of thirty of them.
+        /// The zebra band was carrying that entire journey on its own.
+        ///
+        /// ⚠️ THE REFERENCES DO NOT ACTUALLY PUT THE VALUE HARD RIGHT AND THAT IS WHAT WAS
+        /// MISREAD. Valorant's and PUBG's settings rows put a WIDE CONTROL, a dropdown or a
+        /// slider, in a fixed right-hand column, so it fills the space and reads as one object
+        /// with its label. A bare two-character number does not fill anything. **What survives
+        /// the copy is the COLUMN, not the alignment**: everything on the right starts at the
+        /// same x, whatever it is, and the values form a readable second column instead of a
+        /// ragged right margin.
+        ///
+        /// ⚠️ IT IS A FRACTION RATHER THAN A PIXEL OFFSET so it holds at all nine resolutions
+        /// `PlayerHubLayoutProbe` drives. A hand-written offset here would be the same fault this
+        /// whole file was written to make impossible, one level up.
+        /// </summary>
+        public const float ValueColumn = 0.56f;
+
+        /// <summary>
         /// ⚠️⚠️ 3.5 PER CENT, MEASURED OFF THE FIRST RENDER RATHER THAN PICKED. It was written
         /// at 6 per cent against the wood panel this kit was designed for, and the hub does not
         /// have one: it is a 93 per cent scrim over the live street, which is much darker, so the
@@ -162,7 +187,19 @@ namespace TumbangPreso.UI
             // ⚠️ A CLOSED GROUP KEEPS ITS SUBTITLE. It is the one line telling the player
             // what is inside, so hiding it with the rows would leave a list of bare headings and
             // make the closed state harder to read than the open one.
-            float height = string.IsNullOrEmpty(subtitle) ? 68.0f : 96.0f;
+            //
+            // ⚠️⚠️ BUT A CLOSED GROUP IS ONE LINE NOW RATHER THAN THREE, AND THAT IS THE WHOLE
+            // POINT OF CLOSING IT. The subtitle sat UNDER the heading whether the group was open
+            // or shut, so a shut group cost 96 px plus 18 of gap plus a rule to say nothing: the
+            // career tab's six shut groups spent about 680 px, most of a screen, on headings. The
+            // sentence moves onto the heading's own line, muted, in the value column, so a shut
+            // group is a row like every other row and six of them fit where two did.
+            // 🧑: *"theres liek 20 shits at once"*, and a wall of headings is the same complaint
+            // with the numbers taken out.
+            bool shut = open == false;
+            bool stacked = !string.IsNullOrEmpty(subtitle) && !shut;
+
+            float height = stacked ? 96.0f : 68.0f;
             var element = go.AddComponent<LayoutElement>();
             element.minHeight = first ? height : height + 18.0f;
             element.preferredHeight = element.minHeight;
@@ -184,10 +221,35 @@ namespace TumbangPreso.UI
 
             if (!string.IsNullOrEmpty(subtitle))
             {
-                var note = MenuKit.Label(go.transform, subtitle, HintUnits, UiTheme.CreamMuted,
-                    new Vector2(0.0f, 1.0f), new Vector2(SidePadding + 420.0f, top - 54.0f),
-                    new Vector2(840.0f, 28.0f), TextAnchor.MiddleLeft);
-                note.raycastTarget = false;
+                if (stacked)
+                {
+                    var note = MenuKit.Label(go.transform, subtitle, HintUnits, UiTheme.CreamMuted,
+                        new Vector2(0.0f, 1.0f), new Vector2(SidePadding + 420.0f, top - 54.0f),
+                        new Vector2(840.0f, 28.0f), TextAnchor.MiddleLeft);
+                    note.raycastTarget = false;
+                }
+                else
+                {
+                    // ⚠️ IT LANDS IN `ValueColumn`, THE SAME COLUMN EVERY ROW'S VALUE USES, so a
+                    // shut group's sentence lines up with the numbers above and below it rather
+                    // than starting at some third x nothing else shares.
+                    var noteGo = new GameObject("Summary", typeof(RectTransform));
+                    noteGo.transform.SetParent(go.transform, false);
+
+                    var rt = (RectTransform)noteGo.transform;
+                    rt.anchorMin = new Vector2(ValueColumn, 1.0f);
+                    rt.anchorMax = new Vector2(1.0f, 1.0f);
+                    rt.pivot = new Vector2(0.5f, 1.0f);
+                    rt.offsetMin = new Vector2(0.0f, top - 44.0f);
+                    rt.offsetMax = new Vector2(-SidePadding, top - 8.0f);
+
+                    var note = MenuKit.Label(noteGo.transform, subtitle, HintUnits,
+                        UiTheme.CreamMuted, new Vector2(0.5f, 0.5f), Vector2.zero,
+                        new Vector2(600.0f, 28.0f), TextAnchor.MiddleLeft);
+                    MenuKit.Stretch(note.rectTransform);
+                    note.alignment = TextAnchor.MiddleLeft;
+                    note.raycastTarget = false;
+                }
             }
 
             Rule(go.transform);
@@ -221,15 +283,24 @@ namespace TumbangPreso.UI
         public static RectTransform Row(RectTransform list, string label, string hint = "",
                                         float controlWidth = 420.0f)
         {
+            // ⚠️⚠️ THE STRIPE RESTARTS AT EVERY SECTION HEADER, AND IT USED TO RUN THROUGH THEM.
+            // It counted every `Row_` in the whole list, so whether a group's first row was
+            // banded depended on how many rows the groups ABOVE it happened to have, and on the
+            // career tab that changes with the player's own history: a group opens shaded on one
+            // account and clear on another. **Banding is meant to say "these rows belong
+            // together"**, and a stripe that ignores the boundary says the opposite. Counting
+            // back to the last section makes every group start the same way.
             int index = 0;
-            for (int i = 0; i < list.childCount; i++)
-                if (list.GetChild(i).name.StartsWith("Row_")) index++;
+            for (int i = list.childCount - 1; i >= 0; i--)
+            {
+                string name = list.GetChild(i).name;
+                if (name.StartsWith("Section_")) break;
+                if (name.StartsWith("Row_")) index++;
+            }
 
             var go = new GameObject($"Row_{label}", typeof(RectTransform), typeof(Image));
             go.transform.SetParent(list, false);
 
-            // ⚠️ THE BAND ALTERNATES ON THE ROW INDEX, NOT THE CHILD INDEX, so a section header
-            // in the middle of a list does not flip the stripe and restart the pattern.
             go.GetComponent<Image>().color = index % 2 == 0 ? Band : new Color(0, 0, 0, 0);
 
             var element = go.AddComponent<LayoutElement>();
@@ -257,27 +328,130 @@ namespace TumbangPreso.UI
             var slotGo = new GameObject("Control", typeof(RectTransform));
             slotGo.transform.SetParent(go.transform, false);
 
+            // ⚠️⚠️ THE SLOT IS A COLUMN NOW, NOT A BOX ON THE RIGHT MARGIN. It used to be
+            // `controlWidth` wide, pinned to the row's right edge, which put every value at a
+            // different distance from its label depending on how wide the caller asked for. See
+            // `ValueColumn` for the measurement that produced this. `controlWidth` is kept in the
+            // signature because `ButtonRow` still wants a button that is button-sized rather than
+            // one that fills 44 per cent of the screen; everything else stretches into the column.
             var slot = (RectTransform)slotGo.transform;
-            slot.anchorMin = new Vector2(1.0f, 0.5f);
+            slot.anchorMin = new Vector2(ValueColumn, 0.5f);
             slot.anchorMax = new Vector2(1.0f, 0.5f);
-            slot.pivot = new Vector2(1.0f, 0.5f);
-            slot.anchoredPosition = new Vector2(-SidePadding, 0.0f);
-            slot.sizeDelta = new Vector2(controlWidth, RowHeight - 14.0f);
+            slot.pivot = new Vector2(0.5f, 0.5f);
+            slot.offsetMin = new Vector2(0.0f, -(RowHeight - 14.0f) * 0.5f);
+            slot.offsetMax = new Vector2(-SidePadding, (RowHeight - 14.0f) * 0.5f);
             return slot;
+        }
+
+        /// <summary>
+        /// Pins a control to the LEFT of its value column and caps how wide it may grow.
+        ///
+        /// ⚠️⚠️ WITHOUT THIS, EVERY CONTROL FILLED THE WHOLE COLUMN, AND THE FIRST RENDER OF THE
+        /// COLUMN SHOWED WHY THAT IS WRONG. `Row`'s slot spans `ValueColumn` to the right margin,
+        /// which is about 715 px at 1920, so `MenuKit.Stretch` gave the display-name field, a box
+        /// for **fourteen characters**, a 715 px white rectangle, and gave the CLASSIC / HERO
+        /// STRIKE picker the same. **The loudest thing on the screen was the widest control
+        /// rather than the most important one**, which is the hierarchy fault 🧑 named in the
+        /// first place, arriving by a different route.
+        ///
+        /// ⚠️ THE CAP IS A CAP AND NOT A SIZE. A control is anchored at the column's left edge
+        /// and given its authored width, so at 4:3 the column is about 368 px and every width
+        /// this file hands out still fits inside it. Widen one past that and it overhangs the
+        /// row, which is why they are all under 368.
+        /// </summary>
+        private static void Cap(RectTransform rt, float width)
+        {
+            rt.anchorMin = new Vector2(0.0f, 0.0f);
+            rt.anchorMax = new Vector2(0.0f, 1.0f);
+            rt.pivot = new Vector2(0.0f, 0.5f);
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = new Vector2(width, 0.0f);
         }
 
         /// <summary>A row whose right-hand side is a read-only value. The career page is made of
         /// these.</summary>
+        /// <remarks>
+        /// ⚠️⚠️ THE VALUE IS LEFT-ALIGNED IN ITS COLUMN, WHICH IS THE OPPOSITE OF WHAT SHIPPED.
+        /// Right-aligning it against the screen edge is what put `12` 1600 px from
+        /// `Matches played`. Aligning every value to the LEFT of one column means they line up
+        /// with each other AND sit a fixed, short distance from their labels, which is both of
+        /// the things the reader needs. ⚠️ It costs the one thing right-alignment buys, digits
+        /// lining up by place value, and that trade is deliberate: these are counts of matches
+        /// and percentages, two to four characters, never a column of currency.
+        /// </remarks>
         public static Text ValueRow(RectTransform list, string label, string value,
                                     string hint = "", Color? colour = null)
         {
             var slot = Row(list, label, hint, 520.0f);
             var text = MenuKit.Label(slot, value, LabelUnits, colour ?? UiTheme.Cream,
                 new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(520.0f, 30.0f),
-                TextAnchor.MiddleRight);
+                TextAnchor.MiddleLeft);
             MenuKit.Stretch(text.rectTransform);
-            text.alignment = TextAnchor.MiddleRight;
+            text.alignment = TextAnchor.MiddleLeft;
             return text;
+        }
+
+        /// <summary>
+        /// A row whose value is several small labelled cells across the column, evenly spaced.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE ONE ROW ON THE CAREER TAB WAS CARRYING FOUR NUMBERS IN A
+        /// SINGLE STRING. `Finishes` read `1st 3   2nd 3   3rd 3   4th 3` as one right-aligned
+        /// value, so four separate facts arrived as one long word with no structure, and the
+        /// spacing between them was whatever the font did with the spaces. A distribution is
+        /// four values, so it gets four cells; each cell is its own caption over its own number,
+        /// and they line up whatever the numbers are.
+        ///
+        /// ⚠️ IT IS NOT A CHART AND MUST NOT BECOME ONE. Four bars would need a scale, and a
+        /// scale needs a maximum, and a maximum on a four-outcome distribution of a dozen matches
+        /// is noise drawn at full height. `VISION.md` § 2's rule about spending the budget on
+        /// detail rather than area is the same argument one screen over.
+        /// </summary>
+        public static void DistributionRow(RectTransform list, string label, string[] captions,
+                                           string[] values, string hint = "")
+        {
+            var slot = Row(list, label, hint);
+            int cells = Mathf.Min(captions.Length, values.Length);
+            if (cells <= 0) return;
+
+            // ⚠️ THE CELLS SHARE ONE CAPPED STRIP RATHER THAN THE WHOLE COLUMN. Spread across
+            // 715 px at 1920 the four outcomes read as four unrelated numbers scattered along a
+            // line; in 340 they read as one distribution, which is what they are.
+            var stripGo = new GameObject("Cells", typeof(RectTransform));
+            stripGo.transform.SetParent(slot, false);
+
+            var strip = (RectTransform)stripGo.transform;
+            Cap(strip, 340.0f);
+
+            for (int i = 0; i < cells; i++)
+            {
+                var cellGo = new GameObject($"Cell{i}", typeof(RectTransform));
+                cellGo.transform.SetParent(strip, false);
+
+                var cell = (RectTransform)cellGo.transform;
+                cell.anchorMin = new Vector2(i / (float)cells, 0.0f);
+                cell.anchorMax = new Vector2((i + 1) / (float)cells, 1.0f);
+                cell.offsetMin = Vector2.zero;
+                cell.offsetMax = new Vector2(-12.0f, 0.0f);
+
+                var caption = MenuKit.Label(cell, captions[i], HintUnits, UiTheme.CreamMuted,
+                    new Vector2(0.0f, 0.5f), new Vector2(0.0f, 13.0f), new Vector2(120.0f, 22.0f),
+                    TextAnchor.MiddleLeft);
+                MenuKit.Stretch(caption.rectTransform);
+                caption.rectTransform.anchorMin = new Vector2(0.0f, 0.5f);
+                caption.rectTransform.anchorMax = new Vector2(1.0f, 1.0f);
+                caption.rectTransform.offsetMin = Vector2.zero;
+                caption.rectTransform.offsetMax = Vector2.zero;
+                caption.alignment = TextAnchor.LowerLeft;
+
+                var number = MenuKit.Label(cell, values[i], LabelUnits, UiTheme.Cream,
+                    new Vector2(0.0f, 0.5f), Vector2.zero, new Vector2(120.0f, 26.0f),
+                    TextAnchor.MiddleLeft);
+                number.rectTransform.anchorMin = Vector2.zero;
+                number.rectTransform.anchorMax = new Vector2(1.0f, 0.5f);
+                number.rectTransform.offsetMin = Vector2.zero;
+                number.rectTransform.offsetMax = Vector2.zero;
+                number.alignment = TextAnchor.UpperLeft;
+            }
         }
 
         /// <summary>
@@ -292,11 +466,11 @@ namespace TumbangPreso.UI
         public static InputField FieldRow(RectTransform list, string label, string placeholder,
                                           int limit, string hint = "", bool password = false)
         {
-            var slot = Row(list, label, hint, 460.0f);
+            var slot = Row(list, label, hint, 360.0f);
 
             var go = new GameObject("Field", typeof(RectTransform), typeof(Image));
             go.transform.SetParent(slot, false);
-            MenuKit.Stretch((RectTransform)go.transform);
+            Cap((RectTransform)go.transform, 360.0f);
 
             var image = go.GetComponent<Image>();
             image.color = UiTheme.Card;
@@ -334,7 +508,13 @@ namespace TumbangPreso.UI
                                        string variation = "WoodButton")
         {
             var slot = Row(list, label, hint, 260.0f);
-            var btn = MenuKit.WoodButton(slot, button, new Vector2(0.5f, 0.5f), Vector2.zero,
+
+            // ⚠️ THE BUTTON STARTS AT THE COLUMN LIKE EVERY OTHER VALUE, NOT CENTRED IN IT. It
+            // was anchored at the slot's midpoint, so on the ACCOUNT tab SET ONE UP sat 225 px
+            // right of the column every number and every dropdown on the same screen starts at.
+            // One column or none.
+            var btn = MenuKit.WoodButton(slot, button, new Vector2(0.0f, 0.5f),
+                                         new Vector2(130.0f, 0.0f),
                                          new Vector2(260.0f, RowHeight - 16.0f), onClick, variation);
             return btn;
         }
@@ -387,7 +567,7 @@ namespace TumbangPreso.UI
 
             var go = new GameObject("Dropdown", typeof(RectTransform), typeof(Image));
             go.transform.SetParent(slot, false);
-            MenuKit.Stretch((RectTransform)go.transform);
+            Cap((RectTransform)go.transform, 340.0f);
 
             var face = go.GetComponent<Image>();
             face.color = UiTheme.Card;

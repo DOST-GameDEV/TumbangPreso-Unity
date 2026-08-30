@@ -249,6 +249,33 @@ namespace TumbangPreso.UI
         /// </summary>
         public const int MinReadableUnits = 18;
 
+        /// <summary>
+        /// How a game mode is written for a player to read.
+        ///
+        /// ⚠️⚠️ `GameMode.HeroStrike.ToString()` IS A WIRE VALUE AND UPPERCASING IT PRINTS
+        /// `HEROSTRIKE`, WHICH IS NOT THE NAME OF ANYTHING. `docs/VISION.md` § 1 calls the mode
+        /// **HERO STRIKE** and every other screen in the game writes it that way; the hub's match
+        /// history and match detail were uppercasing the enum, so one screen out of five spelled
+        /// the mode differently from the rest. Found in the first render of the MATCHES tab.
+        ///
+        /// ⚠️ IT TAKES THE STRING, NOT THE ENUM, ON PURPOSE. A `MatchRecord` carries `Mode` as
+        /// text because it is stored and replayed and may hold a mode this build does not know;
+        /// `FUTURE.md` § 0.5 rule 5 is the same argument about wire-facing identity. **An
+        /// unknown mode is uppercased and shown rather than blanked**, so a record from a newer
+        /// build reads as its own name instead of as nothing.
+        /// </summary>
+        public static string ModeLabel(string mode)
+        {
+            if (string.IsNullOrWhiteSpace(mode)) return "";
+            return string.Equals(mode.Trim(), Core.GameMode.HeroStrike.ToString(),
+                                 System.StringComparison.OrdinalIgnoreCase)
+                ? "HERO STRIKE"
+                : mode.Trim().ToUpperInvariant();
+        }
+
+        /// <summary>The same, from the enum the menus hold.</summary>
+        public static string ModeLabel(Core.GameMode mode) => ModeLabel(mode.ToString());
+
         public static Text Label(Transform parent, string text, int size, Color color,
                                  Vector2 anchor, Vector2 offset, Vector2 boxSize,
                                  TextAnchor align = TextAnchor.MiddleCenter)

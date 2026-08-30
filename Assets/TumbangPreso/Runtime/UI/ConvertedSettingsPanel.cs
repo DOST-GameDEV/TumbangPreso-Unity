@@ -587,15 +587,36 @@ namespace TumbangPreso.UI
             text.raycastTarget = false;
             text.fontSize = 18;
 
-            // ⚠️ OVERFLOW RATHER THAN WRAP-AND-CLIP, WHICH IS THE THIRD TIME THIS FILE'S FAMILY
-            // HAS HIT IT. `GameVersion.ApplyTo` and `ConvertedScreen.SetHeadline` both record it:
-            // legacy `Text` defaults to WRAP, so a sentence longer than its box is silently cut
-            // in half rather than reported. This one is two lines wide by design.
+            // ⚠️⚠️ BOTH AXES, AND SETTING ONLY THE VERTICAL ONE DID NOTHING AT ALL. This block
+            // used to set `verticalOverflow = Overflow` and stop, with a note saying the sentence
+            // is *"two lines wide by design"*. **It was never two lines.** `MenuKit.Styled`
+            // leaves `horizontalOverflow = Overflow`, so the text does not wrap, so it never
+            // needs a second line, so allowing a second line changes nothing: the sentence simply
+            // ran off the side of the panel. Measured 2026-08-30 by
+            // `PhaseSurfaceLayoutProbe.TheTelemetryRowFitsItsBoxAtEveryShippedResolution` at
+            // 1280x720: **795 px of text in a 688 px box, 107 px past the edge**, and nothing
+            // errors, because Overflow is silent by construction.
+            //
+            // ⚠️⚠️ AND THE HALF THAT WENT IS THE HALF THAT MATTERS. The sentence is
+            // *"Counts only: ... No names, no chat, nothing you type."* The clause that survives
+            // at 720p is the list of what IS collected; the promise about what is not is the part
+            // off the edge. `FUTURE.md` § 19.3 asks for *"a plain statement of what is
+            // collected"*, and **a privacy disclosure that is silently truncated is worse than
+            // one that is absent**, because the reader has no way to know they are seeing half.
+            //
+            // ⚠️ `Wrap` PLUS `Overflow` IS THE PAIR. Wrap alone would clip the second line to the
+            // 48 px box, which is the wrap-and-clip trap `GameVersion.ApplyTo` and
+            // `ConvertedScreen.SetHeadline` both record. Wrapping makes the lines; vertical
+            // overflow lets them be drawn.
+            text.horizontalOverflow = HorizontalWrapMode.Wrap;
             text.verticalOverflow = VerticalWrapMode.Overflow;
 
+            // ⚠️ 56 RATHER THAN 48, because two 18-unit lines plus their leading do not fit in
+            // 48 and the row below would be drawn through. The label may still overflow this box
+            // downward by design; the height is what the LIST reserves for it.
             var element = noteGo.AddComponent<LayoutElement>();
-            element.minHeight = 48.0f;
-            element.preferredHeight = 48.0f;
+            element.minHeight = 56.0f;
+            element.preferredHeight = 56.0f;
         }
 
         private void BuildAntiAliasRow()
