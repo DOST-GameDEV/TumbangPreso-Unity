@@ -161,7 +161,21 @@ namespace TumbangPreso.Tests
             // agree. The quiet half is worse than the loud one even so: a peer on 15 carries no
             // proof, so every account handle it claims is demoted to a host-allocated tag and
             // everybody on the older build is silently renamed in a lobby that looks fine.
-            Assert.AreEqual(16, NetSession.ProtocolVersion,
+            //
+            // ⚠⚠ 17 SINCE 2026-08-31: cosmetics (docs/TODO.md § 101). One field on `Identify`,
+            // one on `SelectLobbyPick`, and **two per seat inside `SyncLobbyPicks`' loop**. That
+            // last one is the worst wire change this number has ever gated: the loop and its
+            // reader are kept in step by hand, so a peer on 16 goes out of phase on SEAT 0 and
+            // then reads the name, the picks and the ready flag of every seat after it from the
+            // wrong offset. A lobby in which everybody is wearing somebody else's face, ready
+            // state and character is not a cosmetic bug.
+            //
+            // ⚠️ AND THE TOLERANT TRICK DOES NOT APPLY HERE. `OnSyncLobbyPicksMsg` reads the
+            // trailing spectator count behind a `reader.Length > reader.Position` guard, which
+            // works for one value at the END of a payload. These two sit inside the per-seat
+            // loop with more fields after them, so there is no position at which "is there more"
+            // answers the right question.
+            Assert.AreEqual(17, NetSession.ProtocolVersion,
                 "a message or a replicated roster index has been added or removed. Bump this " +
                 "number and `NetSession.ProtocolVersion` together, in the same commit.");
         }

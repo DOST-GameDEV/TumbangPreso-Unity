@@ -743,19 +743,27 @@ namespace TumbangPreso
 
             if (art != null && art.Model != null)
             {
-                // ⚠️⚠️ THE EQUIPPED PALETTE, AND ONLY FOR THE SEAT THIS MACHINE IS PLAYING.
-                // A remote peer's choice has to arrive over the wire before it can be drawn, and
-                // it does not yet (`docs/TODO.md` § 98.2 step 2), so every other seat wears its
-                // authored colours. **Guessing a remote peer's palette from this machine's
-                // settings would dress a stranger in the local player's choice**, which is worse
-                // than not drawing it at all.
+                // ⚠️⚠️ THE EQUIPPED PALETTE, LOCAL SEAT FROM SETTINGS AND EVERY OTHER SEAT FROM
+                // THE WIRE. This block used to end at the local seat with a note saying a remote
+                // peer's choice *"has to arrive over the wire before it can be drawn, and it does
+                // not yet"*. It does now: the host authorises each peer's claim and publishes the
+                // answer in the seat table (`docs/TODO.md` § 101).
+                //
+                // ⚠️⚠️ THE REMOTE VALUE IS READ FROM THE REPLICATED TABLE AND NEVER GUESSED. The
+                // old note's warning stands and is the reason this reads `GetSeatInfo` rather
+                // than falling back to anything local: **guessing a remote peer's palette from
+                // this machine's settings would dress a stranger in the local player's choice.**
+                // An absent or empty id is the authored colours, which is the right answer for a
+                // bot, an empty seat and a peer on an older build alike.
                 //
                 // ⚠️ `PaletteVariants.For` IS THE ONE OWNER and answers the authored array
                 // unchanged for an empty or unknown id, so this is safe on every seat.
                 string characterId = Roster.PersonIdAt(motor.Mode, motor.CharacterIndex);
-                var palette = PaletteVariants.For(
-                    art.Palette,
-                    slot == humanSeat ? Settings.SettingsStore.PaletteFor(characterId) : "");
+                string paletteId = slot == humanSeat
+                    ? Settings.SettingsStore.PaletteFor(characterId)
+                    : Net.MatchRpc.Instance?.GetSeatInfo(slot)?.PaletteId ?? "";
+
+                var palette = PaletteVariants.For(art.Palette, paletteId);
 
                 visual.ApplyModel(art.Model, art.Tint, art.Clips, palette, art.PetModel);
 

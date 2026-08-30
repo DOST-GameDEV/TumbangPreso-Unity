@@ -1,4 +1,5 @@
 using System;
+using TumbangPreso.Core;
 
 namespace TumbangPreso.Net
 {
@@ -41,5 +42,34 @@ namespace TumbangPreso.Net
         /// and the seat, and § 54 records what trusting a peer-supplied field cost.
         /// </summary>
         public bool Ready;
+
+        /// <summary>
+        /// The banner this seat is wearing, **already authorised by the host**.
+        ///
+        /// ⚠️⚠️ IT IS THE RESULT, NOT THE CLAIM, AND THAT IS THE WHOLE ARRANGEMENT. A peer sends
+        /// what it wants to wear plus the XP and mastery that would authorise it; the host runs
+        /// `BannerRules.Authorise` once and puts the answer here. **Every screen in the room then
+        /// draws the same banner, because one machine decided it**, and nothing downstream has to
+        /// know the difference between a claim and a right.
+        ///
+        /// ⚠️ SAME RULE AS <see cref="Ready"/> one field up: a peer never writes its own row in
+        /// this table. `docs/TODO.md` § 54 records what trusting a peer-supplied field cost, and
+        /// § 101 is the entry for this one.
+        ///
+        /// ⚠️ NEVER NULL. A seat with nothing equipped carries an empty selection, which is the
+        /// state every account starts in and has to draw as "no decoration" rather than as a hole.
+        /// </summary>
+        public BannerSelection Banner = new BannerSelection();
+
+        /// <summary>
+        /// The character palette this seat is drawn in, authorised the same way.
+        ///
+        /// ⚠️⚠️ WITHOUT THIS EVERY REMOTE SEAT WORE ITS AUTHORED COLOURS AND `MatchInstaller`
+        /// SAID SO IN A COMMENT: *"a remote peer's choice has to arrive over the wire before it
+        /// can be drawn, and it does not yet"*. This is that field. ⚠️ **Guessing a remote peer's
+        /// palette from this machine's settings would dress a stranger in the local player's
+        /// choice**, which is why it was left blank rather than defaulted.
+        /// </summary>
+        public string PaletteId = "";
     }
 }

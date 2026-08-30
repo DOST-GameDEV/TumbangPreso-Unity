@@ -43,6 +43,23 @@ namespace TumbangPreso.Net
         public string ClaimedName = "";
         public string AccountPlayerId = "";
         public AccountRules.HandleCheck HandleTrust = AccountRules.HandleCheck.NotAsked;
+
+        /// <summary>
+        /// What this peer is allowed to wear, decided by the host when the claim arrived.
+        ///
+        /// ⚠️⚠️ THE CLAIM IS NOT KEPT AND THAT IS DELIBERATE. `BannerRules.Authorise` is a pure
+        /// function, so storing the answer rather than the question means nothing downstream can
+        /// accidentally read an unauthorised id: **there is no unauthorised id on this record to
+        /// read.** The same reasoning `docs/TODO.md` § 94.1 arrived at the hard way, where four
+        /// copies of "which line is mine" all agreed on the wrong value because each was free to
+        /// derive it again.
+        ///
+        /// ⚠️ NEVER NULL, so no drawing code has to null-check a cosmetic.
+        /// </summary>
+        public BannerSelection Banner = new BannerSelection();
+
+        /// <summary>The character palette this peer may wear, authorised with the banner.</summary>
+        public string PaletteId = "";
     }
 
     /// <summary>

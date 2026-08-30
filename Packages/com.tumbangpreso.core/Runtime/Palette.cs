@@ -57,12 +57,45 @@ namespace TumbangPreso.Core
         /// </summary>
         public static float HueShiftFor(string paletteId)
         {
-            switch (paletteId)
-            {
-                case "palette.alt1": return 150.0f;
-                case "palette.alt2": return 285.0f;
-                default: return 0.0f;
-            }
+            if (Names(paletteId, "palette.alt1")) return 150.0f;
+            if (Names(paletteId, "palette.alt2")) return 285.0f;
+            return 0.0f;
+        }
+
+        /// <summary>
+        /// Whether this reward id names a given variant, however it was earned.
+        ///
+        /// ⚠️⚠️ THIS FUNCTION IS THE FIX FOR A PALETTE THAT COULD NEVER BE EQUIPPED, AND THE
+        /// WHOLE FEATURE WAS DEAD WITHOUT IT. `docs/TODO.md` § 101. Every palette in the game is
+        /// earned on a mastery track, and `ProgressionRules.MasteryRewardsAt` names those rewards
+        /// **`mastery.&lt;hero&gt;.palette.alt1`**, because a mastery reward has to say which hero
+        /// paid for it. This switch matched the bare `palette.alt1` and nothing else, so:
+        /// - equipping `palette.alt1` failed `BannerRules.Owns`, because the id the player owns
+        ///   carries the hero prefix; and
+        /// - equipping `mastery.zack.palette.alt1` failed `IsKnownVariant`, because the switch had
+        ///   never heard of it.
+        ///
+        /// **Both arms of `LoadoutRules.PaletteFor` returned the default, so it returned the
+        /// default for every input there is.** Nothing failed, nothing logged, and every character
+        /// simply wore its authored colours: the exact shape of § 91.8's *"computed and worn by
+        /// nothing"*, one layer further down.
+        ///
+        /// ⚠️ SO A VARIANT IS NAMED BY THE TAIL OF AN ID AND THE PREFIX SAYS WHERE IT CAME FROM.
+        /// That keeps the wire id whole (`Roster.Slippers`' rule: ids, never indices, and never
+        /// re-derived), keeps one hero's reward distinguishable from another's, and still lets two
+        /// machines agree on the colours from the id alone.
+        ///
+        /// ⚠️ THE MATCH IS ON A DOT BOUNDARY, NOT A BARE `EndsWith`. Otherwise a future
+        /// `palette.alt10` would answer to `palette.alt1` and two variants would be one colour.
+        /// </summary>
+        private static bool Names(string paletteId, string variant)
+        {
+            if (string.IsNullOrEmpty(paletteId)) return false;
+            if (paletteId == variant) return true;
+
+            return paletteId.Length > variant.Length + 1
+                   && paletteId.EndsWith(variant, StringComparison.Ordinal)
+                   && paletteId[paletteId.Length - variant.Length - 1] == '.';
         }
 
         /// <summary>

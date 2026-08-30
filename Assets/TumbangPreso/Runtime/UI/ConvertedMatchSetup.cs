@@ -995,7 +995,18 @@ namespace TumbangPreso.UI
                     ? (!mine && !occupiedByOther && !matchRunning)
                     : (!GameLaunch.Spectator && !mine);
 
-                _nameplates.SetSeat(seat, who,
+                // ⚠️⚠️ THE TITLE COMES OFF THE REPLICATED SEAT FOR EVERY SEAT INCLUDING THIS
+                // ONE, AND READING THE LOCAL SETTINGS FOR THE LOCAL SEAT WOULD BE WRONG EVEN
+                // THOUGH IT WOULD USUALLY AGREE. The host authorises every banner, so the table
+                // is the answer to "what is this player allowed to wear"; the local settings are
+                // the answer to "what did they ask for". **If those two ever differ, the player
+                // needs to see the one everybody else sees**, or they are the only person in the
+                // room looking at a title that is not there. `docs/TODO.md` § 101.
+                string title = info != null
+                    ? ProgressionRules.LabelForRewardId(info.Banner?.TitleId)
+                    : "";
+
+                _nameplates.SetSeat(seat, who, title,
                                     ready: ready,
                                     taya: seat == defender,
                                     you: mine,

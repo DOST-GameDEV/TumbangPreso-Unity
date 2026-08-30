@@ -2114,6 +2114,188 @@ one.**
 
 ---
 
+## 101 · Phase 5 continued: the banner on the wire, palettes on remote seats, and the colour picker ⚠️⚠️ 2026-08-31
+
+🧑: *"pls thoroughly check ur phase 1-4 and if its good work onn phase 5"*, and *"make sure ui
+looks great annd is intuitive for all"*.
+
+**Phases 1 to 4 were re-verified first and all of it is green**: Core 277/277 before this work,
+EditMode 251/251, **UGS 14/14 against the live project**, `Checks.RunAll` all five in one launch,
+and the three `tools/` audits exit 0. ⚠️ **The UGS run is the one that counts**, per § 94.2b's
+standing rule: it is the only gate in the project that asks the service rather than the repository.
+
+### 101.1 · ⚠️⚠️ A PALETTE COULD NEVER BE EQUIPPED, BY ANYBODY, AND THE FEATURE HAD SHIPPED
+
+**Found while writing the wire, not by playing.** `LoadoutRules.PaletteFor` returned the default
+for **every input there is**, so every character in the game wore its authored colours and nothing
+anywhere said why.
+
+**The two halves disagreed about what a palette is called.**
+`ProgressionRules.MasteryRewardsAt` names every mastery reward
+**`mastery.<hero>.<suffix>`**, so the palette a player actually owns is
+`mastery.zack.palette.alt1`. `PaletteRules.HueShiftFor` was a `switch` on the bare
+`palette.alt1`. So:
+
+- equipping `palette.alt1` failed `BannerRules.Owns`, because that is not an id anybody owns; and
+- equipping `mastery.zack.palette.alt1` failed `PaletteRules.IsKnownVariant`, because the switch
+  had never heard of it.
+
+**Both arms returned `DefaultId`.** ⚠️⚠️ **This is § 91.8's "computed and worn by nothing" one
+layer further down, and § 98 was written believing that layer was done.** Every palette in the
+game is a mastery reward — the account table pays none — so there was no input at all for which
+the feature worked.
+
+**The fix is `PaletteRules.Names`:** a variant is named by the TAIL of an id and the prefix says
+where it was earned. ⚠️ **The match is on a dot boundary rather than a bare `EndsWith`**, or a
+future `palette.alt10` would answer to `palette.alt1` and two variants would be one colour.
+
+⚠️⚠️ **AND THE TEST THAT SHOULD HAVE CAUGHT IT HAD AN ASSERTION INSIDE AN `if`.** The first
+version of `APaletteIsAuthorisedFromTheClaimAndAnUnearnedOneIsRefused` read the earned palette off
+the fixture and skipped the check when there was not one; the fixture was an account-level profile
+with no mastery, so there never was one, and **it passed against a completely dead feature**. It
+is now `APaletteEarnedThroughMasteryCanActuallyBeWorn`, which asserts the list is not empty first.
+**An assertion inside an `if` is an assertion that can decide not to run.**
+
+### 101.2 · The wire, and why the host decides rather than each peer
+
+`NetSession.ProtocolVersion` is **17**. One field on `Identify`, one on `SelectLobbyPick`, and two
+per seat inside `SyncLobbyPicks`.
+
+| Piece | What it is |
+|---|---|
+| `BannerClaim` | What a peer wants to wear **plus the two facts that authorise it**: claimed XP and claimed mastery levels. ⚠️ Deliberately not a `PlayerProfile`: that document is thirty fields and a match history, and **a type that carries a career is a type somebody eventually reads a career out of.** |
+| `BannerCodec` | The claim and the worn selection as ONE wire field each. ⚠️ Not JSON, because the core may not see `UnityEngine` and `JsonUtility` is on the wrong side of that line. |
+| `BannerRules.Authorise` | `Normalise` against the claim's own numbers. |
+| `LocalCosmetics` | The one builder for "what am I wearing", for the reason `CareerStore.LocalPlayerId` is one owner (§ 94.1). |
+
+⚠️⚠️ **§ 98.2 SAID `Normalise` WOULD RUN "ON THE RECEIVING SIDE AGAINST THE SENDER'S PROFILE" AND
+THE HOST IS THAT SIDE.** It takes the claim, authorises it once, and broadcasts the RESULT in the
+seat table. That correction is worth more than the wording it replaces:
+
+- **Everybody in the room draws the same banner, because one machine decided it.** Four peers each
+  normalising their own copy is four answers to one question, which is exactly the shape § 94.1
+  records four hand-written copies of.
+- **It is the rule the rest of the lobby already follows.** `LobbySeatInfo.Ready` carries the same
+  note: a peer never writes its own row in the table, and § 54 records what trusting one cost.
+- **The authorising numbers stop at the host.** Only ids leave it, so nobody can read a stranger's
+  XP off the wire.
+
+⚠️⚠️ **THE HONEST LIMIT, WRITTEN DOWN RATHER THAN IMPLIED: A MODIFIED CLIENT CAN CLAIM A LEVEL IT
+HAS NOT REACHED AND WEAR A TITLE EARLY.** There is no server in a LAN match, the host is a player
+(`FUTURE.md` § 8.1), and asking the account endpoint per peer per cosmetic would put a round trip
+in front of a lobby that must work with the cable out (§ 97). **The claim is checked for
+consistency, not for truth**, and `FUTURE.md` § 0.5 rule 4 is what makes that acceptable: a
+cosmetic cannot move a gameplay number, so the worst case is somebody lying about their reading
+age.
+
+⚠️ **THE CLAIM RIDES `SelectLobbyPick` AS WELL AS `Identify`, AND THAT IS NOT REDUNDANT.** The
+palette is remembered per CHARACTER, so it is a fact about the player *and* the character; a claim
+sent only at join would leave everybody dressed in whatever they were holding when they walked in.
+
+⚠️⚠️ **AND THE HOST AUTHORISES ITS OWN CLAIM TOO.** It never sends itself an `Identify`, so
+`NetSession` calls the same method on the host's own peer id. Without it the host is the one seat
+in the room wearing nothing, on every screen including its own — and it would be the one copy
+nobody checked, which § 94.1 says is the copy that is wrong.
+
+### 101.3 · Remote seats wear it, which was step 3
+
+`MatchInstaller.BuildSeat` carried a note saying a remote peer's palette *"has to arrive over the
+wire before it can be drawn, and it does not yet"*. It does now, and **three paths dress a body,
+so all three read the same field**: `BuildSeat` at spawn, `SyncPicksClientRpc` when a client is
+corrected about which character a seat is, and `ApplyRosterToLiveSeats` when the roster changes.
+
+⚠️⚠️ **`SyncPicksClientRpc` WOULD HAVE UNDONE THE PALETTE ON EVERY PICK CHANGE.** It passed
+`person.Palette` straight through, so it repainted every seat in its authored colours after
+`MatchInstaller` had dressed it correctly. That is a fifth fault of exactly the kind the four
+already recorded in that method's header are, **and invisible on the host for the same reason:**
+the host never runs the client half.
+
+⚠️ **THE LOCAL SEAT READS ITS OWN SETTINGS AND EVERY OTHER SEAT READS THE WIRE.** The old note's
+warning stands: guessing a remote peer's palette from this machine's settings would dress a
+stranger in the local player's choice.
+
+### 101.4 · Where a banner is seen, and the one place it deliberately is not
+
+| Surface | What it draws |
+|---|---|
+| The lobby plate | The title, on its own strip under the name, with TAYA FIRST stacked below it when both are showing. ⚠️ **Two strips, never one control with two meanings** — that is what `SignInScreen`'s guest button was rebuilt to remove (§ 97). |
+| The end-of-match board | The title, in its own column, smaller and quieter than the name. ⚠️ **On a cell rather than appended to the name**, because a title concatenated into a name measures and truncates differently from the row above it. |
+| **The in-match nameplate** | ⚠️⚠️ **NOTHING, ON PURPOSE.** `docs/VISION.md` § 2 is a readability budget for a 14 by 14 m box holding four players, one lata, four tsinelas and up to twelve live abilities, and § 3's rule is one line: *"the in-match HUD carries no sentences."* **A banner belongs where people look at each other, which is before the match and after it.** |
+
+⚠️ **THE LABEL IS RESOLVED FROM THE ID, NEVER SENT.** `ProgressionRules.LabelForRewardId` exists
+because the peer drawing somebody else's banner has no access to their career and cannot read the
+label off the reward. An id this build has never heard of resolves to **empty**, so a peer on a
+newer build wearing a newer title draws a plate with a name on it rather than one reading
+`mastery.zack.title.katuwang`.
+
+### 101.5 · ⚠️⚠️ THE LOCKER IS THE CHARACTER SELECT SCREEN, AND THAT CORRECTS `FUTURE.md` § 0.5b
+
+That table asks Phase 5 for *"a locker, reached from the hub"*, with **the character, wearing it**
+as the one thing on it. **This screen is already that**: the model, the real toon shader, the ink
+outline and the equipped palette are all on it, and `RefreshPreview` has applied the palette since
+§ 98. **A locker on the hub would be a second screen showing the same character worse**, which is
+§ 92's fault with a new name.
+
+**The journey settles it** (`CLAUDE.md` § 6.3): PLAY, pick, recolour, done is three presses on a
+screen you are already looking at, against five that begin by hunting a corner chip **nobody has
+found yet (§ 96)**. § 0.5 rule 11 says a phase that disagrees with that table corrects it, so
+`FUTURE.md` PHASE 5's row now says so.
+
+**What shipped:** a COLOURS row at the top of the character column, DEFAULT plus one swatch per
+owned palette.
+
+- ⚠️⚠️ **IT IS NOT DRAWN AT ALL WHEN NOTHING IS EARNED**, which is § 0.5b question 3 answered
+  rather than skipped. A row reading COLOURS with one dead swatch is the fifteen rows of
+  `0/0 (needs 10 throws)` that taught a new player the game was broken (§ 92.1 fault 4).
+  **A control whose only option is the one you already have is not a control.**
+- ⚠️⚠️ **THE SWATCH IS PAINTED THROUGH THE SAME `PaletteVariants.For` THE MODEL GOES THROUGH**, so
+  it cannot disagree with the character standing beside it. `ToonSkin.ApplySlipper`'s header
+  records what a second source of colour cost: a shoe that changed colour depending on the screen.
+- ⚠️ **THE SLOT IT SAMPLES IS CHOSEN BY SATURATION × VALUE, NOT BY INDEX.** The sixteen slots are
+  an atlas, not a ranking: on several of the cast slot 0 is an off-white, so three variants would
+  have been three shades of the same grey and the control would have looked broken rather than
+  subtle. The face slot is excluded, because it is the one slot no variant rotates.
+- ⚠️ **DEFAULT IS A SWATCH.** Without it there is no way back from a variant, and § 6.3 calls a
+  dead end a bug.
+- ⚠️ **BOTH MODES, ABOVE THE HERO STRIKE EARLY RETURN**, or the one cosmetic control in the game
+  would change meaning with the mode.
+
+### 101.6 · ⚠️⚠️ THE NEW PROBE WROTE A PALETTE INTO HIS REAL `settings.json`, AND IT TOOK A RENDER TO NOTICE
+
+`CosmeticSurfaceProbe` presses a swatch to photograph the selected state.
+`SettingsStore.SetPaletteFor` **saves**, deliberately — a cosmetic choice lost on quit is worse
+than one you cannot make — and the editor shares `Application.persistentDataPath` with the built
+player, **so the file it wrote is the file he plays with.** The teardown restored `dante` and the
+picker had recoloured `berto`, so a palette he never chose survived the run and was still in
+`settings.json` afterwards. It is cleared, and the teardown now snapshots and restores the whole
+`CharacterLoadouts` list.
+
+⚠️ **A PROBE THAT PRESSES A BUTTON THAT PERSISTS HAS TO PUT THE WHOLE STORE BACK**, not the row it
+expected to be touched. `CloudEndpointActionProbe`'s throwaway UGS profile is the same lesson one
+service further out, and this is the second time the shared `persistentDataPath` has cost
+something.
+
+### 101.7 · ⚠️ AND THE FIRST RENDER WAS OF A SCREEN THAT DOES NOT EXIST
+
+The probe opened the picker with `panel.SetActive(true)`. `ConvertedMatchSetup.OpenCharacterSelect`
+also calls `SetAsLastSibling`, and its own note says why: the lobby's runtime chrome is built after
+the authored panel, so hierarchy order alone draws the left rail and the tabs over the picker's
+backdrop. **The shot came out with MATCH SETTINGS drawn straight through the CHOOSE button**, which
+read as a real layout fault on a screen he uses every match.
+
+⚠️⚠️ **THAT IS `CLAUDE.md` § 6.2b COMMITTED BY THE PROBE RATHER THAN BY THE GAME**, and it cost a
+diagnosis. The probe presses `CharacterButton` now, which is the door the player uses.
+⚠️ **`UiClickProbe` said `ConfirmButton: ok` throughout**, because the raycast at its centre landed
+five pixels clear of the pill: **reachable is not readable**, one more time.
+
+**Verified:** Core **292/292** (+15), EditMode **255/255** (+4, `CosmeticsWireTests`),
+`CosmeticSurfaceProbe` **3/3** with renders `10`, `11` and `12` in `Logs/ui/`, and
+`audit_wire_payloads.py` reads `Identify 8/8`, `SelectLobbyPick 5/5`, `SyncLobbyPicks 13/13` with
+**0 mismatched of 55**, which is the check that the three writers and their readers still agree
+field for field.
+
+---
+
 ## 100 · ⚠️⚠️ THE BOOT SCREEN'S ART WAS FITTED TO A FRAME NOBODY CAN SEE, AND THE COLUMN WAS SIZED AGAINST THE WINDOW INSTEAD OF AGAINST THE FORM
 
 **Reported 2026-08-31 by 🧑, with a screenshot of the shipped boot screen**: *"This shhit is

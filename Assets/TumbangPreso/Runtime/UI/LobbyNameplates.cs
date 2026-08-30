@@ -78,6 +78,10 @@ namespace TumbangPreso.UI
         private readonly RectTransform[] _tags = new RectTransform[Balance.PlayerCount];
         private readonly Text[] _tagLabels = new Text[Balance.PlayerCount];
 
+        /// <summary>The banner title strip, between the plate and the taya tag. See `SetSeat`.</summary>
+        private readonly RectTransform[] _titles = new RectTransform[Balance.PlayerCount];
+        private readonly Text[] _titleLabels = new Text[Balance.PlayerCount];
+
         /// <summary>
         /// The ready tick, which is its own mark ABOVE the plate rather than part of the name.
         ///
@@ -182,6 +186,36 @@ namespace TumbangPreso.UI
                 tagLabel.raycastTarget = false;
                 MenuKit.Stretch(tagLabel.rectTransform, 0.0f);
 
+                // ⚠️ THE TITLE STRIP IS BUILT LIKE THE TAG AND COLOURED UNLIKE IT. Same shape,
+                // because they stack and a stack of two different shapes reads as a mistake;
+                // cream on dark wood rather than amber, because amber is this screen's accent and
+                // spending it on both would leave TAYA FIRST competing with a cosmetic.
+                var title = new GameObject($"Title{seat}");
+                title.transform.SetParent(plate.transform, false);
+
+                var titleFill = title.AddComponent<Image>();
+                titleFill.sprite = GodotTheme.WoodBox(UiTheme.WoodDark, UiTheme.WoodEdge);
+                titleFill.type = Image.Type.Sliced;
+                titleFill.color = Color.white;
+                titleFill.raycastTarget = false;
+
+                var titleRect = titleFill.rectTransform;
+                titleRect.anchorMin = new Vector2(0.5f, 0.0f);
+                titleRect.anchorMax = new Vector2(0.5f, 0.0f);
+                titleRect.pivot = new Vector2(0.5f, 1.0f);
+                titleRect.anchoredPosition = new Vector2(0.0f, -4.0f);
+                titleRect.sizeDelta = new Vector2(PlateMinWidth, TagHeight);
+
+                var titleLabel = MenuKit.Label(title.transform, "", TagSize, UiTheme.Cream,
+                                               Vector2.zero, Vector2.zero, Vector2.zero,
+                                               TextAnchor.MiddleCenter);
+                titleLabel.raycastTarget = false;
+                MenuKit.Stretch(titleLabel.rectTransform, 0.0f);
+
+                _titles[seat] = titleRect;
+                _titleLabels[seat] = titleLabel;
+                title.SetActive(false);
+
                 // ⚠️ A CHILD OF THE PLATE, ANCHORED TO ITS TOP EDGE, so it follows the plate
                 // without the projection having to place two things per seat. Pivot at the bottom
                 // means it grows upward off the plate rather than into it.
@@ -226,6 +260,28 @@ namespace TumbangPreso.UI
         /// </summary>
         public void SetSeat(int seat, string displayName, bool ready, bool taya, bool you,
                             bool canTake = false)
+            => SetSeat(seat, displayName, "", ready, taya, you, canTake);
+
+        /// <summary>
+        /// ⚠️⚠️ THE TITLE IS THE BANNER, AND THE LOBBY IS ONE OF THE TWO PLACES IT IS DRAWN.
+        /// `docs/TODO.md` § 101. A banner exists to say who you are next to your name, so it is
+        /// worthless until somebody else can see it, and this is the screen where four people
+        /// look at each other before a match.
+        ///
+        /// ⚠️⚠️ AND IT IS DELIBERATELY **NOT** ON THE IN-MATCH NAMEPLATE. `docs/VISION.md` § 2 is
+        /// a readability budget for a 14 by 14 metre box holding four players, one lata, four
+        /// tsinelas and up to twelve live abilities, and § 3's rule is blunt: *"the in-match HUD
+        /// carries no sentences."* A title over every head during a round spends the budget on
+        /// something nobody reads while they are being chased. **The banner belongs where people
+        /// look at each other, which is the lobby and the end-of-match board.**
+        ///
+        /// ⚠️ IT IS THE LABEL, RESOLVED FROM THE ID BY `ProgressionRules.LabelForRewardId`, and
+        /// an id this build has never heard of resolves to nothing and draws nothing. A peer on a
+        /// newer build wearing a newer title is a plate with a name on it, not a plate with
+        /// `mastery.zack.title.katuwang` on it.
+        /// </summary>
+        public void SetSeat(int seat, string displayName, string title, bool ready, bool taya,
+                            bool you, bool canTake = false)
         {
             if (seat < 0 || seat >= _plates.Length) return;
 
@@ -266,9 +322,39 @@ namespace TumbangPreso.UI
 
             _plateFills[seat].color = ready ? Color.white : new Color(1.0f, 1.0f, 1.0f, 0.82f);
 
+            // ⚠️⚠️ TWO STRIPS, STACKED, AND NEITHER MAY BORROW THE OTHER'S. The title strip and
+            // the TAYA FIRST strip mean completely different things — one is who you are, one is
+            // what you are about to do — and putting a title into the tag strip when there is no
+            // taya would be two behaviours behind one control, which is exactly what
+            // `SignInScreen`'s guest button was rebuilt to stop (`docs/TODO.md` § 97).
+            //
+            // ⚠️ THE TITLE SITS DIRECTLY UNDER THE PLATE AND TAYA GOES UNDER IT. A title is a
+            // property of the name above it, so it belongs against the name; the round's role is
+            // the outer fact and can afford the extra step away.
+            bool hasTitle = !string.IsNullOrEmpty(title);
+
+            _titles[seat].gameObject.SetActive(hasTitle);
+
+            if (hasTitle)
+            {
+                _titles[seat].sizeDelta = new Vector2(wanted, TagHeight);
+                _titles[seat].anchoredPosition = new Vector2(0.0f, -4.0f);
+
+                var titleText = _titleLabels[seat];
+                titleText.text = title;
+                titleText.fontSize = TagSize;
+                MenuKit.Fit(titleText, wanted - (PlatePadding * 2.0f));
+            }
+
             _tags[seat].gameObject.SetActive(taya);
 
             if (!taya) return;
+
+            // ⚠️ THE OFFSET IS COMPUTED FROM WHETHER THE TITLE IS THERE, not from a second
+            // constant. Two literals for one stack is how a layout ends up correct at exactly one
+            // combination of states, which is fault 3 of § 92.1 in miniature.
+            _tags[seat].anchoredPosition = new Vector2(
+                0.0f, hasTitle ? -(4.0f + TagHeight + 2.0f) : -4.0f);
 
             var tagText = _tagLabels[seat];
             tagText.text = "TAYA FIRST";

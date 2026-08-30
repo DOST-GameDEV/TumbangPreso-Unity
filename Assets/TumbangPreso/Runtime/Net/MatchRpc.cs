@@ -537,16 +537,35 @@ namespace TumbangPreso.Net
         /// </summary>
         public void IdentifyServerRpc(string token, string name, string accountPlayerId,
                                       string handleProof, int charPick, int canPick, int slipperPick)
+            => IdentifyServerRpc(token, name, accountPlayerId, handleProof, charPick, canPick,
+                                 slipperPick, LocalCosmetics.Encoded(charPick));
+
+        /// <summary>
+        /// ⚠️⚠️ THE COSMETICS CLAIM IS ONE FIELD AND IT IS WHY THE PROTOCOL IS 17. It carries the
+        /// banner, the palette and the two facts that authorise them, encoded by `BannerCodec`.
+        /// **One field rather than eighteen**, for the reason the paragraph above gives about
+        /// reading this message in order: a banner is four ids, three trackers, a palette, an XP
+        /// figure and up to six mastery pairs, and every one of those would be another chance to
+        /// write the halves out of step. `audit_wire_payloads.py` compares a writer to its reader
+        /// field by field, so one field is one thing for it to check.
+        ///
+        /// ⚠️ NOTHING HERE IS TRUSTED. `HandleIdentify` runs `BannerRules.Authorise` and stores
+        /// the ANSWER; the claim itself is never kept and never rebroadcast.
+        /// </summary>
+        public void IdentifyServerRpc(string token, string name, string accountPlayerId,
+                                      string handleProof, int charPick, int canPick, int slipperPick,
+                                      string cosmetics)
         {
             if (_nm == null || _nm.CustomMessagingManager == null) return;
 
             if (NetAuthority.IsHost)
             {
-                HandleIdentify(0, token, name, accountPlayerId, handleProof, charPick, canPick, slipperPick);
+                HandleIdentify(0, token, name, accountPlayerId, handleProof, charPick, canPick,
+                               slipperPick, cosmetics);
                 return;
             }
 
-            using var writer = new FastBufferWriter(512, Allocator.Temp);
+            using var writer = new FastBufferWriter(1024, Allocator.Temp);
             writer.WriteValueSafe(token ?? "");
             writer.WriteValueSafe(name ?? "");
             writer.WriteValueSafe(accountPlayerId ?? "");
@@ -554,6 +573,7 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(charPick);
             writer.WriteValueSafe(canPick);
             writer.WriteValueSafe(slipperPick);
+            writer.WriteValueSafe(cosmetics ?? "");
             _nm.CustomMessagingManager.SendNamedMessage("Identify", NetworkManager.ServerClientId, writer);
         }
 
@@ -568,13 +588,16 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out int charPick);
             reader.ReadValueSafe(out int canPick);
             reader.ReadValueSafe(out int slipperPick);
+            reader.ReadValueSafe(out string cosmetics);
 
-            HandleIdentify(senderClientId, token, name, accountPlayerId, handleProof, charPick, canPick, slipperPick);
+            HandleIdentify(senderClientId, token, name, accountPlayerId, handleProof, charPick,
+                           canPick, slipperPick, cosmetics);
         }
 
         private void HandleIdentify(ulong senderClientId, string token, string name,
                                     string accountPlayerId, string handleProof,
-                                    int charPick, int canPick, int slipperPick)
+                                    int charPick, int canPick, int slipperPick,
+                                    string cosmetics)
         {
             int peerId = (int)senderClientId;
             var lobby = NetSession.Instance?.Lobby;
@@ -591,6 +614,7 @@ namespace TumbangPreso.Net
             int resolvedCanPick = canPick >= 0 ? canPick : 0;
             int resolvedSlipperPick = slipperPick >= 0 ? slipperPick : 0;
             lobby.SetPicks(peerId, resolvedCharPick, resolvedCanPick, resolvedSlipperPick);
+            HostAuthoriseCosmetics(peerId, cosmetics, resolvedCharPick);
 
             // ⚠️ THE MODE IS THE FIRST THING A JOINER IS TOLD, for the reason `HostStartMatch`
             // gives: everything below it is interpreted through the mode, and a late joiner may
@@ -629,6 +653,44 @@ namespace TumbangPreso.Net
             BroadcastLobbyPicks();
             BroadcastPicks();
             BroadcastWorldSnapshot();
+        }
+
+        /// <summary>
+        /// Decide what one peer is allowed to wear, and write only the answer onto its record.
+        ///
+        /// ⚠️⚠️ EVERY DECISION IS HOST-SIDE, WHICH IS `LobbySession`'S OWN RULE APPLIED TO
+        /// COSMETICS: *"a client asks; this answers. Nothing here may be driven from a client
+        /// message without the host re-checking it."* A peer sends what it wants to wear and the
+        /// XP and mastery that would authorise it; `BannerRules.Authorise` runs here, once, and
+        /// the room is told the RESULT. **Four peers each normalising their own copy would be
+        /// four answers to one question**, which is the shape `docs/TODO.md` § 94.1 records four
+        /// hand-written copies of.
+        ///
+        /// ⚠️ THE CLAIM IS NOT STORED. `PeerRecord.Banner` holds the authorised selection and
+        /// nothing on the record can be read back as an unchecked id, because there is no
+        /// unchecked id on it.
+        ///
+        /// ⚠️⚠️ AND IT RUNS ON EVERY PICK CHANGE, NOT ONLY ON ARRIVAL. The palette is a fact
+        /// about the player AND the character (`FUTURE.md` PHASE 5's favourite loadout per
+        /// character), so a claim authorised once at join would dress a peer who switched
+        /// character in the palette of the one they walked in with.
+        /// </summary>
+        public void HostAuthoriseCosmetics(int peerId, string cosmetics, int charPick)
+        {
+            if (!NetAuthority.IsHost) return;
+
+            var record = NetSession.Instance?.Lobby?.PeerById(peerId);
+            if (record == null) return;
+
+            // ⚠️ AN EMPTY FRAME IS A PEER ON AN OLDER BUILD OR A PLAYER WEARING NOTHING, AND
+            // BOTH WANT THE SAME ANSWER. `BannerCodec.DecodeClaim` never throws and answers an
+            // empty claim, which authorises to an empty banner: no decoration, drawn deliberately.
+            var claim = BannerCodec.DecodeClaim(cosmetics);
+
+            record.Banner = BannerRules.Authorise(claim);
+
+            string characterId = Core.Roster.PersonIdAt(UI.SceneFlow.SelectedMode, charPick);
+            record.PaletteId = BannerRules.AuthorisePalette(claim, characterId);
         }
 
         /// <summary>
@@ -2834,8 +2896,17 @@ namespace TumbangPreso.Net
             OnDifficultyChanged?.Invoke(diff);
         }
 
+        /// <summary>
+        /// ⚠️⚠️ THE COSMETICS CLAIM RIDES THIS MESSAGE AS WELL AS `Identify`, AND THAT IS NOT
+        /// REDUNDANT. The palette is remembered PER CHARACTER (`FUTURE.md` PHASE 5's favourite
+        /// loadout), so changing character changes what this peer is wearing. A claim sent only
+        /// at join would leave everybody dressed in the palette of whoever they were holding when
+        /// they walked into the lobby, which is the one thing a per-character loadout must not do.
+        /// </summary>
         public void SelectLobbyPickServerRpc(int character, int can, int slipper)
         {
+            string cosmetics = LocalCosmetics.Encoded(character);
+
             if (NetAuthority.IsHost)
             {
                 var lobby = NetSession.Instance?.Lobby;
@@ -2845,17 +2916,24 @@ namespace TumbangPreso.Net
                     // LocalSlot is 0-3 (a seat) while _peers is keyed by transport client ID.
                     int hostPeerId = _nm != null ? (int)_nm.LocalClientId : 0;
                     lobby.SetPicks(hostPeerId, character, can, slipper);
+
+                    // ⚠️ THE HOST AUTHORISES ITS OWN CLAIM TOO, RATHER THAN TRUSTING ITSELF.
+                    // A host wearing a title it has not earned would be the one seat in the room
+                    // nobody checked, and `docs/TODO.md` § 94.1's lesson is that the copy nobody
+                    // checks is the copy that is wrong.
+                    HostAuthoriseCosmetics(hostPeerId, cosmetics, character);
                     BroadcastLobbyPicks();
                 }
                 return;
             }
 
             if (_nm == null || _nm.CustomMessagingManager == null) return;
-            using var writer = new FastBufferWriter(32, Allocator.Temp);
+            using var writer = new FastBufferWriter(1024, Allocator.Temp);
             writer.WriteValueSafe(0);
             writer.WriteValueSafe(character);
             writer.WriteValueSafe(can);
             writer.WriteValueSafe(slipper);
+            writer.WriteValueSafe(cosmetics ?? "");
             _nm.CustomMessagingManager.SendNamedMessage("SelectLobbyPick", NetworkManager.ServerClientId, writer);
         }
 
@@ -2869,11 +2947,13 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out int character);
             reader.ReadValueSafe(out int can);
             reader.ReadValueSafe(out int slipper);
+            reader.ReadValueSafe(out string cosmetics);
 
             var lobby = NetSession.Instance?.Lobby;
             if (lobby != null)
             {
                 lobby.SetPicks((int)senderClientId, character, can, slipper);
+                HostAuthoriseCosmetics((int)senderClientId, cosmetics, character);
                 BroadcastLobbyPicks();
             }
         }
@@ -2901,6 +2981,13 @@ namespace TumbangPreso.Net
                         CanPick = peer.CanPick,
                         SlipperPick = peer.SlipperPick,
                         Ready = _lobbyReady.Contains(peer.PeerId),
+
+                        // ⚠️⚠️ THE AUTHORISED BANNER, NEVER THE CLAIM. `HostAuthoriseCosmetics`
+                        // has already run `BannerRules.Authorise` on whatever this peer sent, so
+                        // what goes out to the room is a decision rather than a request. See
+                        // `LobbySeatInfo.Banner`.
+                        Banner = peer.Banner ?? new BannerSelection(),
+                        PaletteId = peer.PaletteId ?? "",
                     };
                 }
                 else
@@ -2916,6 +3003,8 @@ namespace TumbangPreso.Net
                         CanPick = -1,
                         SlipperPick = -1,
                         Ready = false,
+                        Banner = new BannerSelection(),
+                        PaletteId = "",
                     };
                 }
                 _replicatedSeats[slot] = seats[slot];
@@ -2937,6 +3026,14 @@ namespace TumbangPreso.Net
                     writer.WriteValueSafe(s.CanPick);
                     writer.WriteValueSafe(s.SlipperPick);
                     writer.WriteValueSafe(s.Ready);
+
+                    // ⚠️⚠️ ONE FIELD PER SEAT, AND IT IS WHY THE PROTOCOL IS 17. `BannerCodec`
+                    // encodes the four ids and the trackers into one string, for the reason
+                    // `IdentifyServerRpc` gives: this loop and its reader are kept in step by
+                    // hand, and five more fields per seat is twenty more chances to write them
+                    // out of order. `audit_wire_payloads.py` checks one against the other.
+                    writer.WriteValueSafe(BannerCodec.EncodeSelection(s.Banner));
+                    writer.WriteValueSafe(s.PaletteId ?? "");
                 }
 
                 // ⚠️⚠️ THE GALLERY RIDES THE ROSTER, BECAUSE A SPECTATOR HAS NO SEAT AND SO NO
@@ -3008,6 +3105,8 @@ namespace TumbangPreso.Net
                 reader.ReadValueSafe(out int canPick);
                 reader.ReadValueSafe(out int slipperPick);
                 reader.ReadValueSafe(out bool ready);
+                reader.ReadValueSafe(out string banner);
+                reader.ReadValueSafe(out string paletteId);
 
                 var info = new LobbySeatInfo
                 {
@@ -3020,6 +3119,13 @@ namespace TumbangPreso.Net
                     CanPick = canPick,
                     SlipperPick = slipperPick,
                     Ready = ready,
+
+                    // ⚠️ NOT RE-AUTHORISED HERE, AND THAT IS THE ARRANGEMENT RATHER THAN AN
+                    // OMISSION. The host has already decided; a client that checked again would
+                    // need every peer's XP to do it, which is exactly the thing `BannerClaim`'s
+                    // header says must stop at the host.
+                    Banner = BannerCodec.DecodeSelection(banner),
+                    PaletteId = paletteId ?? "",
                 };
                 if (seat >= 0 && seat < _replicatedSeats.Length)
                 {
@@ -3094,6 +3200,33 @@ namespace TumbangPreso.Net
             }
         }
 
+        /// <summary>
+        /// The colours a seat is actually painted in: the authored palette, recoloured by
+        /// whatever the host said this seat is allowed to wear.
+        ///
+        /// ⚠️⚠️ THE LOCAL SEAT READS ITS OWN SETTINGS AND EVERY OTHER SEAT READS THE WIRE, AND
+        /// THE ASYMMETRY IS THE POINT. `MatchInstaller.BuildSeat` carries the long-standing
+        /// version of this note: **guessing a remote peer's palette from this machine's settings
+        /// would dress a stranger in the local player's choice.** The local seat is the one case
+        /// where the local answer is the true one, and it is also the only seat whose choice can
+        /// change without a packet.
+        ///
+        /// ⚠️ AN UNKNOWN OR EMPTY ID IS THE AUTHORED PALETTE, because `PaletteVariants.For` says
+        /// so: nothing equipped, a variant this build has never heard of, and a malformed id all
+        /// want the character to look normal rather than to look broken.
+        /// </summary>
+        private static UnityEngine.Color[] PaletteForSeat(int slot, UnityEngine.Color[] authored,
+                                                          GameMode mode, int charIndex)
+        {
+            string characterId = Core.Roster.PersonIdAt(mode, charIndex);
+
+            string paletteId = slot == NetAuthority.LocalSlot
+                ? Settings.SettingsStore.PaletteFor(characterId)
+                : Instance?.GetSeatInfo(slot)?.PaletteId ?? "";
+
+            return Visual.PaletteVariants.For(authored, paletteId);
+        }
+
         // -------------------------------------------------------------------
         // PICKS SYNCHRONIZATION
         // -------------------------------------------------------------------
@@ -3160,8 +3293,16 @@ namespace TumbangPreso.Net
                     if (person != null && person.Model != null)
                     {
                         var vis = who.GetComponent<Visual.CharacterVisual>();
+
+                        // ⚠️⚠️ 5. AND IT REPAINTED EVERY SEAT IN ITS AUTHORED COLOURS, WHICH
+                        // WOULD HAVE UNDONE THE PALETTE THE MOMENT A PICK CHANGED. This method is
+                        // the client's only correction for WHICH character a seat is, so it runs
+                        // after `MatchInstaller` has already dressed the seat correctly; passing
+                        // `person.Palette` here would have been a fifth fault of exactly the kind
+                        // the four above are, and invisible on the host for the same reason.
                         vis?.ApplyModel(person.Model, person.Tint, person.Clips,
-                                        person.Palette, person.PetModel);
+                                        PaletteForSeat(slot, person.Palette, mode, charIndex),
+                                        person.PetModel);
                     }
 
                     // ⚠️⚠️ 4. AND IT FIXED THE ART WITHOUT FIXING THE POWERS, WHICH IS

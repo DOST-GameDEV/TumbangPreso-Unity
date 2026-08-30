@@ -309,6 +309,23 @@ namespace TumbangPreso.UI
             // look like a stat-select screen while hiding the information that actually changes
             // how a hero plays. The prop tabs keep their measured meters because cans and
             // slippers use those values in both modes.
+            // ⚠️⚠️ THE COLOURS ROW GOES FIRST AND IT IS THE ONLY COSMETIC CONTROL IN THE GAME.
+            // `FUTURE.md` § 0.5b's per-phase table asks Phase 5 for *"a locker, reached from the
+            // hub"*, with *"the character, wearing it"* as the one thing on it, and this screen
+            // is that already: the model, the real toon shader, the ink outline and the palette
+            // are all here (`RefreshPreview`). **A locker built on the hub would be a second
+            // screen showing the same character worse**, which is § 92's fault with a new name,
+            // and the journey is what settles it (`CLAUDE.md` § 6.3): PLAY, pick, recolour, done
+            // is three presses on the screen you are already looking at, against five that start
+            // by hunting a corner chip nobody has found yet (`docs/TODO.md` § 96).
+            // **§ 0.5 rule 11 says a phase that disagrees with that table corrects it**, so
+            // `FUTURE.md` PHASE 5's row now says so.
+            //
+            // ⚠️ BOTH MODES, ABOVE THE EARLY RETURN. Hero Strike's column returns before the
+            // trait meters, and a cosmetic that only existed in Classic would be the one thing on
+            // this screen that changes meaning with the mode.
+            float paletteHeight = RefreshPaletteRow(rows, entry);
+
             if (_tab == 0 && SceneFlow.SelectedMode == GameMode.HeroStrike)
             {
                 // ⚠️⚠️ MEASURED, NOT 289. That constant was three 86 px rows added up, and it
@@ -316,7 +333,7 @@ namespace TumbangPreso.UI
                 // that were actually built is what keeps the ultimate's plate inside the wood.
                 RefreshHeroLoadout(rows, entry.Id);
 
-                float column = _heroLoadoutHeight;
+                float column = _heroLoadoutHeight + paletteHeight;
 
                 // ⚠️ THE SPACING COMES OFF THE GROUP, NOT OUT OF A CONSTANT, so a restyle of the
                 // picker cannot silently under-size the block.
@@ -332,7 +349,7 @@ namespace TumbangPreso.UI
             }
 
             if (rows.TryGetComponent<LayoutElement>(out var classicRowsLayout))
-                classicRowsLayout.preferredHeight = 104.0f;
+                classicRowsLayout.preferredHeight = 104.0f + paletteHeight;
 
             var labels = MeterLabels[_tab];
             int[] points = { entry.Bilis, entry.Lakas, entry.Tatag };
@@ -360,6 +377,163 @@ namespace TumbangPreso.UI
         /// column a constant 289.
         /// </summary>
         private float _heroLoadoutHeight;
+
+        /// <summary>How tall a swatch is, and the row with it.</summary>
+        private const float SwatchSize = 44.0f;
+        private const float PaletteRowHeight = SwatchSize + 12.0f;
+
+        /// <summary>
+        /// The colours this character may be worn in, as swatches of the actual colour.
+        ///
+        /// ⚠️⚠️ IT IS NOT DRAWN AT ALL WHEN NOTHING IS EARNED, WHICH IS § 0.5b QUESTION 3
+        /// ANSWERED RATHER THAN SKIPPED. A fresh account owns no palette, and a row reading
+        /// "COLOURS: DEFAULT" with one dead swatch is the fifteen rows of `0/0 (needs 10 throws)`
+        /// that taught a new player the game was broken (`docs/TODO.md` § 92.1 fault 4).
+        /// **A control whose only option is the one you already have is not a control.**
+        ///
+        /// ⚠️⚠️ THE SWATCH IS THE COLOUR THE CHARACTER ACTUALLY BECOMES, DERIVED THROUGH THE
+        /// SAME `PaletteVariants.For` THE MODEL GOES THROUGH. `FUTURE.md` PHASE 5: *"preview
+        /// through `ModelPreview` with the real shader, never a flat icon"*, and the same
+        /// argument one size down — a swatch painted from an authored constant is a swatch that
+        /// can disagree with the model beside it, which is exactly what `ToonSkin.ApplySlipper`'s
+        /// header records costing a shoe that changed colour per screen.
+        ///
+        /// ⚠️ AND THE MODEL IS THE PREVIEW, NOT THE SWATCH. The swatches are small and quiet on
+        /// purpose: the one thing on this screen is the character, three feet tall, wearing the
+        /// choice. `RefreshPreview` redraws it the moment one is pressed.
+        ///
+        /// Returns the height it took, so the column can size itself. See `RefreshTraits`.
+        /// </summary>
+        private float RefreshPaletteRow(Transform rows, RosterEntry entry)
+        {
+            // ⚠️ PEOPLE ONLY. A lata and a tsinelas have their own skins and their own tabs;
+            // `RefreshPreview` makes the same call for the same reason.
+            if (_tab != 0 || entry == null) return 0.0f;
+
+            var owned = new List<Reward>();
+
+            foreach (var reward in BannerRules.Earned(GameServices.Career?.Profile))
+                if (reward != null && reward.Kind == RewardKind.Palette &&
+                    PaletteRules.IsKnownVariant(reward.Id))
+                    owned.Add(reward);
+
+            if (owned.Count == 0) return 0.0f;
+
+            var book = RosterBook.Load();
+            var art = book != null ? book.PersonArt(_pick[0], SceneFlow.SelectedMode) : null;
+            if (art == null || art.Palette == null || art.Palette.Length == 0) return 0.0f;
+
+            string characterId = Roster.PersonIdAt(SceneFlow.SelectedMode, _pick[0]);
+            string equipped = Settings.SettingsStore.PaletteFor(characterId);
+
+            var row = new GameObject("PaletteRow", typeof(RectTransform));
+            row.transform.SetParent(rows, false);
+
+            var group = row.AddComponent<HorizontalLayoutGroup>();
+            group.childAlignment = TextAnchor.MiddleLeft;
+            group.spacing = 8.0f;
+            group.childForceExpandWidth = false;
+            group.childForceExpandHeight = false;
+
+            row.AddComponent<LayoutElement>().preferredHeight = PaletteRowHeight;
+
+            var caption = MenuKit.Label(row.transform, "COLOURS", MenuKit.MinReadableUnits,
+                                        new Color(0.961f, 0.902f, 0.784f, 0.65f),
+                                        Vector2.zero, Vector2.zero, Vector2.zero,
+                                        TextAnchor.MiddleLeft);
+            caption.raycastTarget = false;
+            caption.gameObject.AddComponent<LayoutElement>().preferredWidth = 92.0f;
+
+            // ⚠️ THE AUTHORED COLOURS ARE A CHOICE AND SO THEY ARE A SWATCH. Without a DEFAULT
+            // there is no way back from a variant, which is a dead end and `CLAUDE.md` § 6.3
+            // calls a dead end a bug.
+            BuildSwatch(row.transform, art.Palette, PaletteRules.DefaultId, characterId, equipped);
+
+            foreach (var reward in owned)
+                BuildSwatch(row.transform, art.Palette, reward.Id, characterId, equipped);
+
+            return PaletteRowHeight + 6.0f;
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE SLOT IS CHOSEN BY SATURATION RATHER THAN BY INDEX, AND SLOT 0 IS WHY. A
+        /// character's sixteen slots are an atlas, not a ranking: on several of the cast slot 0
+        /// is an off-white or a near-black, so a swatch reading it would paint three variants
+        /// three shades of the same grey and the control would look broken rather than subtle.
+        /// The most saturated slot is the one a player would call "their colour".
+        ///
+        /// ⚠️ THE FACE IS EXCLUDED, for the reason `PaletteRules.FaceSlot` gives: it is never
+        /// rotated, so it is the one slot guaranteed to be identical on every variant.
+        /// </summary>
+        private static int RepresentativeSlot(Color[] authored)
+        {
+            int best = 0;
+            float bestScore = -1.0f;
+
+            for (int i = 0; i < authored.Length; i++)
+            {
+                if (i == PaletteRules.FaceSlot) continue;
+
+                Color.RGBToHSV(authored[i], out _, out float sat, out float val);
+
+                // ⚠️ SATURATION TIMES VALUE, NOT SATURATION. A fully saturated colour at 2 per
+                // cent brightness is black, and it scores 1.0 on saturation alone.
+                float score = sat * val;
+                if (score <= bestScore) continue;
+
+                bestScore = score;
+                best = i;
+            }
+
+            return best;
+        }
+
+        private void BuildSwatch(Transform row, Color[] authored, string paletteId,
+                                 string characterId, string equipped)
+        {
+            var go = new GameObject($"Swatch_{(paletteId.Length == 0 ? "default" : paletteId)}",
+                                    typeof(RectTransform), typeof(Image));
+            go.transform.SetParent(row, false);
+
+            bool active = paletteId == equipped;
+
+            var face = go.GetComponent<Image>();
+            face.color = PaletteVariants.For(authored, paletteId)[RepresentativeSlot(authored)];
+
+            var element = go.AddComponent<LayoutElement>();
+            element.preferredWidth = SwatchSize;
+            element.preferredHeight = SwatchSize;
+
+            // ⚠️ THE BORDER IS THE SELECTED STATE AND IT IS A SEPARATE OBJECT, because tinting
+            // the swatch itself to show selection would change the one thing the swatch is for.
+            var ring = new GameObject("Ring", typeof(RectTransform), typeof(Image));
+            ring.transform.SetParent(go.transform, false);
+            MenuKit.Stretch((RectTransform)ring.transform, -3.0f);
+
+            var ringImage = ring.GetComponent<Image>();
+            ringImage.sprite = GodotTheme.Box(new Color(0, 0, 0, 0),
+                                              active ? UiTheme.Cream : UiTheme.WoodEdge,
+                                              active ? 3 : 2, 4);
+            ringImage.type = Image.Type.Sliced;
+            ringImage.raycastTarget = false;
+
+            var button = go.AddComponent<Button>();
+            button.targetGraphic = face;
+            button.onClick.AddListener(() =>
+            {
+                Settings.SettingsStore.SetPaletteFor(characterId, paletteId);
+                MenuSfx.Click();
+
+                // ⚠️ THE WHOLE REFRESH, NOT JUST THE RINGS. `RefreshPreview` is what repaints
+                // the model, and the model is the point of the control; redrawing only the
+                // swatches would move a border and change nothing the player came here to see.
+                Refresh();
+            });
+
+            // ⚠️ IT REACTS TO THE POINTER, because `CLAUDE.md` § 6.3 says a control that does
+            // something must, and the plate that did not is exactly what § 96 is open about.
+            go.AddComponent<TextureButtonFeedback>();
+        }
 
         private void RefreshHeroLoadout(Transform rows, string heroId)
         {

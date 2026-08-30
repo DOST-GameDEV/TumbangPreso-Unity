@@ -274,6 +274,18 @@ namespace TumbangPreso.UI
                 cells[1].text = NameFor(slot);
                 cells[2].text = $"{points} PTS";
 
+                // ⚠️⚠️ THE BANNER TITLE, ON THE SECOND OF THE TWO SCREENS THAT DRAW IT.
+                // `docs/TODO.md` § 101 and `LobbyNameplates.SetSeat`: a banner says who you are
+                // next to your name, so it appears where people look at each other — the lobby
+                // before, and this board after. **Not in the match**, which `docs/VISION.md` § 3
+                // rules out in one line: *"the in-match HUD carries no sentences."*
+                //
+                // ⚠️ ON ITS OWN CELL RATHER THAN APPENDED TO THE NAME. A title concatenated into
+                // the name string is a name that sorts, measures and truncates differently from
+                // the one above it, and `PlaceCell` sizes every column from a fixed width.
+                cells[3].text = TitleFor(slot);
+                cells[3].enabled = !string.IsNullOrEmpty(cells[3].text);
+
                 foreach (var c in cells) c.color = colour;
             }
         }
@@ -423,6 +435,25 @@ namespace TumbangPreso.UI
         {
             var who = GameServices.Round?.PlayerAt(slot);
             return who != null ? who.DisplayName() : $"P{slot + 1}";
+        }
+
+        /// <summary>
+        /// The banner title this seat is wearing, as a label anybody can read.
+        ///
+        /// ⚠️ IT COMES OFF THE REPLICATED SEAT, WHICH IS THE HOST'S AUTHORISED ANSWER, and it
+        /// resolves the id to a label locally. `ProgressionRules.LabelForRewardId` answers empty
+        /// for an id this build has never heard of, so a peer on a newer build wearing a newer
+        /// title contributes an empty cell rather than a row of raw id.
+        ///
+        /// ⚠️ AN OFFLINE MATCH HAS NO REPLICATED SEATS AND ANSWERS EMPTY, which is correct: there
+        /// is nobody to show a banner to.
+        /// </summary>
+        private static string TitleFor(int slot)
+        {
+            var info = Net.MatchRpc.Instance?.GetSeatInfo(slot);
+            if (info == null || !info.Occupied) return "";
+
+            return Core.ProgressionRules.LabelForRewardId(info.Banner?.TitleId);
         }
 
         /// <summary>Everyone level at the top of a draw, joined for the headline.</summary>
@@ -745,9 +776,18 @@ namespace TumbangPreso.UI
 
             var place = PlaceCell(rowGo.transform, "Place", TextAnchor.MiddleLeft, 48.0f, 0.0f);
             var name = PlaceCell(rowGo.transform, "Name", TextAnchor.MiddleLeft, 260.0f, 1.0f);
+
+            // ⚠️ THE TITLE IS SMALLER AND QUIETER THAN THE NAME, WHICH IS THE HIERARCHY RATHER
+            // THAN A SPACE SAVING. `FUTURE.md` § 0.5b: the one thing on this board is who won and
+            // by how much. A cosmetic drawn at the same weight as the placement would compete
+            // with the result, which is the fault § 92.1 records six controls of.
+            var title = PlaceCell(rowGo.transform, "Title", TextAnchor.MiddleLeft, 180.0f, 0.0f);
+            title.fontSize = MenuKit.MinReadableUnits;
+            title.color = UiTheme.CreamMuted;
+
             var points = PlaceCell(rowGo.transform, "Points", TextAnchor.MiddleRight, 120.0f, 0.0f);
 
-            return new[] { place, name, points };
+            return new[] { place, name, title, points };
         }
 
         private static Text PlaceCell(Transform parent, string name, TextAnchor align,

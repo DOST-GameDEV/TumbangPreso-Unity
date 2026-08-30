@@ -553,6 +553,46 @@ namespace TumbangPreso.Core
             return levels;
         }
 
+        /// <summary>
+        /// The human label for a reward id, without needing the profile that earned it.
+        ///
+        /// ⚠️⚠️ THIS EXISTS FOR THE PEER ON THE OTHER SIDE OF THE ROOM. A banner crosses the wire
+        /// as ids (`BannerCodec`), and the machine drawing it has no access to the sender's
+        /// career: it cannot call `BannerRules.Earned` and read the label off the reward. Without
+        /// this, every title in a lobby would draw as `mastery.zack.title.katuwang`.
+        ///
+        /// ⚠️ IT LOOKS UP THE TABLES RATHER THAN SENDING THE LABEL. A label is prose somebody may
+        /// reword and it is not what the wire agrees on; `docs/TODO.md` § 98.1b: **the dropdown
+        /// shows `Label` and stores `Id`**, and that separation is only worth anything if the
+        /// label is never the thing that travels.
+        ///
+        /// ⚠️ AN UNKNOWN ID ANSWERS EMPTY, NEVER THE ID ITSELF. A peer on a newer build can wear
+        /// a title this one has never heard of, and the two acceptable answers are "draw the
+        /// title" and "draw no title". Drawing a raw id is the third one nobody wants.
+        /// </summary>
+        public static string LabelForRewardId(string id)
+        {
+            if (string.IsNullOrEmpty(id)) return "";
+
+            foreach (var row in AccountTable)
+                if (row.Id == id) return row.Label;
+
+            // ⚠️ THE MASTERY IDS CARRY THE HERO (`mastery.zack.title.katuwang`), so the match is
+            // on the SUFFIX, on a dot boundary. `PaletteRules.Names` records the same rule and
+            // the same reason: a bare `EndsWith` would let a future `title.katuwang2` answer here.
+            foreach (var row in MasteryTable)
+            {
+                if (id == row.Suffix) return row.Label;
+
+                if (id.Length > row.Suffix.Length + 1 &&
+                    id.EndsWith(row.Suffix, StringComparison.Ordinal) &&
+                    id[id.Length - row.Suffix.Length - 1] == '.')
+                    return row.Label;
+            }
+
+            return "";
+        }
+
         /// <summary>Every level at which a hero's mastery pays something, ascending.</summary>
         public static List<int> MasteryRewardLevels()
         {

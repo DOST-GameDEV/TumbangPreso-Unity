@@ -168,5 +168,251 @@ namespace TumbangPreso.Core.Tests
                     "refactor away from being read. FUTURE.md 0.5 rule 4.");
             }
         }
+
+        // -------------------------------------------------------------------
+        // THE WIRE. `docs/TODO.md` § 101.
+        // -------------------------------------------------------------------
+
+        private static BannerClaim ClaimAtLevel(int level)
+        {
+            var profile = ProfileAtLevel(level);
+
+            return new BannerClaim
+            {
+                Xp = profile.Xp,
+                Banner = new BannerSelection
+                {
+                    TitleId = FirstOfKind(profile, RewardKind.Title)?.Id ?? "",
+                    BadgeId = FirstOfKind(profile, RewardKind.Badge)?.Id ?? "",
+                    Trackers = new[] { "wins", "knockdowns" },
+                },
+            };
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE ONE THAT MATTERS FOR THE WIRE. Everything a peer wears has to survive being
+        /// written to a string and read back by a different machine, and the failure mode of a
+        /// hand-rolled format is silent: a frame that half-parses draws a banner nobody chose.
+        /// </summary>
+        [Fact]
+        public void AClaimSurvivesTheRoundTripFieldForField()
+        {
+            var claim = ClaimAtLevel(60);
+            claim.PaletteId = "palette.alt1";
+            claim.Mastery = new[]
+            {
+                new MasteryRecord { Id = "zack", Level = 7 },
+                new MasteryRecord { Id = "sean", Level = 2 },
+            };
+
+            var back = BannerCodec.DecodeClaim(BannerCodec.EncodeClaim(claim));
+
+            Assert.Equal(claim.Banner.TitleId, back.Banner.TitleId);
+            Assert.Equal(claim.Banner.BadgeId, back.Banner.BadgeId);
+            Assert.Equal(claim.Banner.Trackers, back.Banner.Trackers);
+            Assert.Equal(claim.PaletteId, back.PaletteId);
+            Assert.Equal(claim.Xp, back.Xp);
+            Assert.Equal(2, back.Mastery.Length);
+            Assert.Equal("zack", back.Mastery[0].Id);
+            Assert.Equal(7, back.Mastery[0].Level);
+        }
+
+        [Fact]
+        public void ASelectionSurvivesTheRoundTripFieldForField()
+        {
+            var selection = new BannerSelection
+            {
+                TitleId = "title.one",
+                BadgeId = "badge.two",
+                BorderId = "border.three",
+                PaletteId = "palette.alt2",
+                Trackers = new[] { "wins", "tags", "hours" },
+            };
+
+            var back = BannerCodec.DecodeSelection(BannerCodec.EncodeSelection(selection));
+
+            Assert.Equal(selection.TitleId, back.TitleId);
+            Assert.Equal(selection.BadgeId, back.BadgeId);
+            Assert.Equal(selection.BorderId, back.BorderId);
+            Assert.Equal(selection.PaletteId, back.PaletteId);
+            Assert.Equal(selection.Trackers, back.Trackers);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ A MALFORMED FRAME IS A PEER WITH NO BANNER, NEVER AN EXCEPTION. `MatchRpc`'s
+        /// named-message handlers say why in as many words: a handler that throws drops
+        /// everything queued behind it, so one junk frame from one peer would take the whole
+        /// lobby's messaging with it.
+        /// </summary>
+        [Theory]
+        [InlineData("")]
+        [InlineData("|||")]
+        [InlineData("a|b")]
+        [InlineData("a|b|c|d|e|f|not-a-number|zack:")]
+        [InlineData("a|b|c|d|e|f|12|:5")]
+        [InlineData("|||||||^^^")]
+        public void AMalformedFrameDecodesToAnEmptyBannerRatherThanThrowing(string frame)
+        {
+            var claim = BannerCodec.DecodeClaim(frame);
+
+            Assert.NotNull(claim);
+            Assert.NotNull(claim.Banner);
+            Assert.NotNull(claim.Mastery);
+            Assert.NotNull(BannerCodec.DecodeSelection(frame));
+        }
+
+        /// <summary>
+        /// ⚠️ THE FORMAT'S ONE TRADE, ASSERTED RATHER THAN DESCRIBED. `BannerCodec`'s header
+        /// argues that no authored id in this game can contain a separator, so a field that does
+        /// is dropped rather than escaped. **If that is ever wrong, this is the test that says
+        /// what the cost is**: the offending field goes and the honest ones still draw, which is
+        /// the same degrade `Normalise` already does.
+        /// </summary>
+        [Fact]
+        public void AnIdCarryingASeparatorIsDroppedRatherThanCorruptingTheRest()
+        {
+            var back = BannerCodec.DecodeSelection(BannerCodec.EncodeSelection(new BannerSelection
+            {
+                TitleId = "title|broken",
+                BadgeId = "badge.intact",
+            }));
+
+            Assert.Equal("", back.TitleId);
+            Assert.Equal("badge.intact", back.BadgeId);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE POINT OF THE WHOLE CLAIM. A peer sends a level-60 title with a level-1 XP
+        /// figure and the host draws nothing, because the numbers that authorise a banner travel
+        /// with it and are checked. Without this, four ids from a stranger are four ids.
+        /// </summary>
+        [Fact]
+        public void AClaimWearingATitleItsOwnXpDoesNotReachLosesIt()
+        {
+            var honest = ClaimAtLevel(60);
+            Assert.NotEqual("", BannerRules.Authorise(honest).TitleId);
+
+            var liar = ClaimAtLevel(60);
+            liar.Xp = 0;
+
+            var worn = BannerRules.Authorise(liar);
+
+            Assert.Equal("", worn.TitleId);
+            Assert.Equal("", worn.BadgeId);
+
+            // ⚠️ THE TRACKERS SURVIVE, AND THAT IS CORRECT RATHER THAN A HOLE. A tracker is a
+            // number off this player's own career, not a reward: there is nothing to earn and so
+            // nothing to check. `BannerRules.TrackerIds` is the whole of what may be chosen.
+            Assert.Equal(new[] { "wins", "knockdowns" }, worn.Trackers);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THIS IS THE TEST THAT WOULD HAVE CAUGHT A PALETTE SYSTEM THAT COULD NEVER EQUIP
+        /// ANYTHING, AND IT DID NOT EXIST. `docs/TODO.md` § 101: every palette in the game is
+        /// earned on a mastery track and is therefore called `mastery.&lt;hero&gt;.palette.alt1`,
+        /// while `PaletteRules` knew only the bare `palette.alt1`. **`LoadoutRules.PaletteFor`
+        /// returned the default for every input there is** — the owned id was not a known variant
+        /// and the known variant was not owned — so every character in the game wore its authored
+        /// colours and nothing anywhere said why.
+        ///
+        /// **The mistake this test corrects is asserting against a value the fixture produced.**
+        /// The first version of it read the earned palette off the profile and skipped the
+        /// assertion when there was not one; at account level 60 with no mastery there is not
+        /// one, so it passed against a feature that was completely dead. **An assertion inside an
+        /// `if` is an assertion that can decide not to run**, which is exactly what happened.
+        /// </summary>
+        [Fact]
+        public void APaletteEarnedThroughMasteryCanActuallyBeWorn()
+        {
+            var claim = ClaimAtLevel(60);
+            claim.Mastery = new[] { new MasteryRecord { Id = "zack", Level = 15 } };
+
+            var earned = BannerRules.Earned(claim.AsProfile())
+                                    .Where(r => r.Kind == RewardKind.Palette)
+                                    .ToList();
+
+            Assert.NotEmpty(earned);
+
+            foreach (var reward in earned)
+            {
+                Assert.True(PaletteRules.IsKnownVariant(reward.Id),
+                    $"'{reward.Id}' is a palette this account owns and PaletteRules cannot draw " +
+                    "it. Every palette is earned on a mastery track and carries the hero in its " +
+                    "id; a variant table that only knows the bare suffix knows none of them.");
+
+                claim.PaletteId = reward.Id;
+
+                Assert.Equal(reward.Id, BannerRules.AuthorisePalette(claim, "dante"));
+                Assert.True(PaletteRules.HueShiftFor(reward.Id) > 0.0f);
+            }
+        }
+
+        /// <summary>
+        /// ⚠️ THE DOT BOUNDARY, ASSERTED. `PaletteRules.Names` matches the tail of an id so a
+        /// mastery-scoped palette resolves, and it matches on a dot so a future `palette.alt10`
+        /// cannot answer to `palette.alt1` and make two variants one colour.
+        /// </summary>
+        [Fact]
+        public void AVariantIsNamedByTheTailOfAnIdAndOnlyOnADotBoundary()
+        {
+            Assert.True(PaletteRules.IsKnownVariant("palette.alt1"));
+            Assert.True(PaletteRules.IsKnownVariant("mastery.zack.palette.alt1"));
+
+            Assert.False(PaletteRules.IsKnownVariant("palette.alt10"));
+            Assert.False(PaletteRules.IsKnownVariant("notapalette.alt1"));
+            Assert.False(PaletteRules.IsKnownVariant(""));
+
+            Assert.NotEqual(PaletteRules.HueShiftFor("mastery.zack.palette.alt1"),
+                            PaletteRules.HueShiftFor("mastery.zack.palette.alt2"));
+        }
+
+        [Fact]
+        public void APaletteNobodyEarnedIsRefused()
+        {
+            var unearned = new BannerClaim { Xp = 0, PaletteId = "mastery.zack.palette.alt2" };
+            Assert.Equal(PaletteRules.DefaultId, BannerRules.AuthorisePalette(unearned, "dante"));
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ A PEER DRAWING SOMEBODY ELSE'S BANNER HAS THE ID AND NOT THE CAREER, so the
+        /// label has to be resolvable from the id alone or every title in the lobby draws as
+        /// `mastery.zack.title.katuwang`. `ProgressionRules.LabelForRewardId`.
+        /// </summary>
+        [Fact]
+        public void EveryEarnableRewardIdResolvesToALabelWithoutAProfile()
+        {
+            var profile = ProfileAtLevel(200);
+            profile.Mastery.Add(new MasteryRecord { Id = "zack", Level = 25 });
+
+            var earned = BannerRules.Earned(profile);
+            Assert.NotEmpty(earned);
+
+            foreach (var reward in earned)
+                Assert.False(string.IsNullOrEmpty(ProgressionRules.LabelForRewardId(reward.Id)),
+                    $"'{reward.Id}' can be earned and worn and has no label anybody else can " +
+                    "resolve. The wire carries ids and the label is looked up, never sent.");
+
+            Assert.Equal("", ProgressionRules.LabelForRewardId("title.from.a.newer.build"));
+            Assert.Equal("", ProgressionRules.LabelForRewardId(""));
+        }
+
+        /// <summary>
+        /// ⚠️ THE CLAIM CARRIES NO CAREER, AND THIS IS THE TEST THAT KEEPS IT THAT WAY.
+        /// `BannerClaim`'s header argues that a type carrying a career is a type somebody
+        /// eventually reads a career out of, and the wire cost of a `PlayerProfile` is a match
+        /// history in every lobby packet. Same shape as `ABannerCannotCarryAGameplayNumber`.
+        /// </summary>
+        [Fact]
+        public void AClaimCarriesOnlyWhatAuthorisesIt()
+        {
+            var allowed = new[] { "Banner", "PaletteId", "Xp", "Mastery" };
+
+            foreach (var field in typeof(BannerClaim).GetFields(
+                         BindingFlags.Public | BindingFlags.Instance))
+                Assert.True(Array.IndexOf(allowed, field.Name) >= 0,
+                    $"BannerClaim.{field.Name} is new. This type crosses the wire in every " +
+                    "lobby packet and carries exactly what BannerRules.Earned reads. If the " +
+                    "rule now needs another fact, say so here and in the codec together.");
+        }
     }
 }

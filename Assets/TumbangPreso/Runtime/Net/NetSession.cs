@@ -225,8 +225,23 @@ namespace TumbangPreso.Net
         /// tolerant, a 15 peer carries no proof, so on a 16 host it arrives unverified and any
         /// account handle it claims is demoted to a host-allocated tag. Everybody on the older
         /// build would silently be renamed in a lobby that looked like it was working.
+        ///
+        /// ⚠️⚠️ **17 SINCE 2026-08-31**, for cosmetics: one field on `Identify`, one on
+        /// `SelectLobbyPick`, and two per seat on `SyncLobbyPicks` (`docs/TODO.md` § 101).
+        /// **All three are `FastBufferWriter` messages read field by field in order**, which is
+        /// the same trap 16 and § 89.5 record: a peer on 16 writes seven values where a host on 17
+        /// reads eight, and every field after that is read from the wrong offset. `SyncLobbyPicks`
+        /// is the worst of the three, because its per-seat loop would go out of phase on seat 0
+        /// and mis-read the name, the picks and the ready flag of every seat after it. **A lobby
+        /// where everybody is wearing the wrong face is not a cosmetic bug.**
+        ///
+        /// ⚠️ THE SPECTATOR COUNT AT THE END OF `SyncLobbyPicks` IS WHY IT CANNOT BE MADE
+        /// TOLERANT THE WAY THAT FIELD WAS. `OnSyncLobbyPicksMsg` reads the count with a
+        /// `reader.Length > reader.Position` guard, which works for ONE trailing value. These two
+        /// are inside the per-seat loop, ahead of everything the loop reads next, so there is no
+        /// position at which "is there more" answers the right question.
         /// </summary>
-        public const int ProtocolVersion = 16;
+        public const int ProtocolVersion = 17;
 
         private const string SeatAssignmentMessage = "tp.seat.assignment.v1";
         private readonly Dictionary<ulong, ConnectionHello> _helloByClient =
@@ -1392,6 +1407,15 @@ namespace TumbangPreso.Net
                 int canPick = settings.CanPick >= 0 ? settings.CanPick : 0;
                 int slipperPick = settings.SlipperPick >= 0 ? settings.SlipperPick : 0;
                 Lobby.SetPicks((int)clientId, charPick, canPick, slipperPick);
+
+                // ⚠️⚠️ AND ITS OWN COSMETICS, FOR THE SAME REASON AND IN THE SAME PLACE. The
+                // host never sends itself an `Identify`, so this is the only path on which its
+                // banner and palette are ever authorised; without it the host is the one seat in
+                // the room wearing nothing, on every screen including its own. `docs/TODO.md`
+                // § 101. **It still goes through `BannerRules.Authorise`** rather than being
+                // trusted: the copy nobody checks is the copy that is wrong (§ 94.1).
+                MatchRpc.Instance?.HostAuthoriseCosmetics(
+                    (int)clientId, LocalCosmetics.Encoded(charPick), charPick);
             }
 
             PublishLobbyCounts();

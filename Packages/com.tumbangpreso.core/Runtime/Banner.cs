@@ -198,5 +198,282 @@ namespace TumbangPreso.Core
 
             return kept.ToArray();
         }
+
+        /// <summary>
+        /// What a peer is actually allowed to wear, given only what it told the room.
+        ///
+        /// ⚠️⚠️ THIS IS THE RECEIVING HALF OF COSMETICS AND IT RUNS ON THE HOST, ONCE, RATHER
+        /// THAN ON EVERY PEER. `docs/TODO.md` § 98.2 step 2 said `Normalise` would run *"on the
+        /// RECEIVING side against the sender's profile"*, and the host IS the receiving side:
+        /// it takes the claim, authorises it here, and broadcasts the RESULT in the seat table.
+        /// **That correction is worth more than the wording it replaces**, for three reasons this
+        /// repository has already paid for:
+        /// - Everybody in the room draws the same banner, because one machine decided it. Four
+        ///   peers each normalising their own copy is four answers to one question, which is the
+        ///   shape `docs/TODO.md` § 94.1 records four hand-written copies of.
+        /// - It is the rule the rest of the lobby already follows. `LobbySeatInfo.Ready` carries
+        ///   the same note: *"a peer never writes its own readiness into a table; it presses and
+        ///   the host decides what the table says"*, and § 54 records what trusting a peer-written
+        ///   field cost.
+        /// - The claim's authorising numbers stop at the host. Only four ids and a palette go out
+        ///   to the room, so a peer cannot read anybody else's XP off the wire.
+        ///
+        /// ⚠️⚠️ AND THE HONEST LIMIT, WRITTEN DOWN RATHER THAN IMPLIED: A MODIFIED CLIENT CAN
+        /// CLAIM A LEVEL IT HAS NOT REACHED AND WEAR A TITLE EARLY. There is no server in a LAN
+        /// match, the host is a player (`FUTURE.md` § 8.1), and asking the account endpoint per
+        /// peer per cosmetic would put a network round trip in front of a lobby that must work
+        /// with the cable out (`docs/TODO.md` § 97). **The claim is checked for CONSISTENCY, not
+        /// for truth**: a peer cannot wear something that no level would ever grant, and nothing
+        /// a banner carries can change a match. `FUTURE.md` § 0.5 rule 4 is what makes that
+        /// acceptable: a cosmetic cannot move a gameplay number, so the worst case is somebody
+        /// lying about their reading age.
+        /// </summary>
+        public static BannerSelection Authorise(BannerClaim claim)
+        {
+            if (claim == null) return new BannerSelection();
+            return Normalise(claim.AsProfile(), claim.Banner);
+        }
+
+        /// <summary>
+        /// The character palette this peer may actually be drawn in.
+        ///
+        /// ⚠️ IT GOES THROUGH `LoadoutRules` FOR THE REASON THAT FILE GIVES: the same ownership
+        /// question, asked once. A palette worn on a character and a palette worn on a banner are
+        /// the same earned object, and two checks that could disagree is the fault this phase is
+        /// deliberately not repeating.
+        /// </summary>
+        public static string AuthorisePalette(BannerClaim claim, string characterId)
+        {
+            if (claim == null) return PaletteRules.DefaultId;
+            return LoadoutRules.PaletteFor(claim.AsProfile(), characterId, claim.PaletteId);
+        }
+    }
+
+    /// <summary>
+    /// What one peer tells the room about how it wants to be drawn, plus exactly the facts that
+    /// authorise it.
+    ///
+    /// ⚠️⚠️ THE AUTHORISING FACTS TRAVEL WITH THE CLAIM BECAUSE NOTHING ELSE ON THE WIRE CARRIES
+    /// THEM. `BannerRules.Earned` is a pure function of a profile's XP and its mastery levels, so
+    /// a receiver holding neither cannot tell an earned title from an invented one, and the peer
+    /// it would have to ask is the peer making the claim. **Sending the two numbers is what turns
+    /// "trust the ids" into "check the ids against something".**
+    ///
+    /// ⚠️ IT IS DELIBERATELY NOT A `PlayerProfile`. That document is 30 fields, a match history
+    /// and a replay window, and none of it has any business crossing a lobby: a type that carries
+    /// a career is a type somebody eventually reads a career out of. This carries the two things
+    /// `Earned` reads and nothing else, which is also why <see cref="AsProfile"/> can be a shell.
+    ///
+    /// ⚠️ THE PALETTE RIDES WITH IT RATHER THAN SEPARATELY, because it is authorised by the same
+    /// ownership question and would otherwise be a second wire field checked by a second rule.
+    /// </summary>
+    [Serializable]
+    public sealed class BannerClaim
+    {
+        public BannerSelection Banner = new BannerSelection();
+
+        /// <summary>The palette this peer is wearing on the character it picked.</summary>
+        public string PaletteId = "";
+
+        /// <summary>Claimed account XP. `ProgressionRules.LevelForXp` turns it into the level the
+        /// account rewards are derived from.</summary>
+        public int Xp;
+
+        /// <summary>Claimed mastery levels, one per hero this peer has played.</summary>
+        public MasteryRecord[] Mastery = Array.Empty<MasteryRecord>();
+
+        /// <summary>
+        /// The claim as the shape `BannerRules.Earned` reads.
+        ///
+        /// ⚠️ A FRESH SHELL EVERY CALL AND NEVER A CACHED ONE. It is two field copies and a list,
+        /// and a cached profile is a profile somebody hands to something that writes to it.
+        /// </summary>
+        public PlayerProfile AsProfile()
+        {
+            var profile = new PlayerProfile { Xp = Math.Max(0, Xp) };
+
+            if (Mastery == null) return profile;
+
+            foreach (var record in Mastery)
+                if (record != null && !string.IsNullOrEmpty(record.Id))
+                    profile.Mastery.Add(record);
+
+            return profile;
+        }
+    }
+
+    /// <summary>
+    /// The banner as a string, because the wire carries one field rather than twelve.
+    ///
+    /// ⚠️⚠️ ONE FIELD, AND THE ALTERNATIVE IS WHY. `MatchRpc.IdentifyServerRpc` already takes
+    /// seven parameters that are read back in order, and its own header records what that costs:
+    /// *"a peer writing five where the host reads seven misreads every field after the third"*.
+    /// A banner is four ids, three trackers, a palette, an XP figure and up to six mastery pairs,
+    /// which is **eighteen more chances to write the halves out of step**. `audit_wire_payloads.py`
+    /// compares a writer to its reader field by field, so one field is one thing for it to check.
+    ///
+    /// ⚠️⚠️ AND IT IS NOT JSON, BECAUSE THE CORE MAY NOT SEE `UnityEngine`. `CLAUDE.md` § 4:
+    /// `Packages/com.tumbangpreso.core/` is engine-free, so `JsonUtility` is not available to the
+    /// half of this that both machines must agree on. Hand-rolled and tested beats a serialiser
+    /// that only one side of the line can call.
+    ///
+    /// ⚠️⚠️ A FIELD CONTAINING A SEPARATOR IS DROPPED, NOT ESCAPED, AND THAT IS A DELIBERATE
+    /// TRADE. Every id in this game is authored: reward ids are lowercase dotted
+    /// (`title.rising`, `palette.alt1`), tracker ids are a fixed list in `TrackerIds`, and hero
+    /// ids come from `Roster`. **None of them can contain `|` or `^` without somebody typing one
+    /// on purpose**, so escaping would be machinery for a case that cannot arise, and dropping
+    /// degrades exactly the way `Normalise` already does: the honest fields still draw.
+    /// `BannerTests.AnIdCarryingASeparatorIsDroppedRatherThanCorruptingTheRest`.
+    /// </summary>
+    public static class BannerCodec
+    {
+        private const char Field = '|';
+        private const char Item = '^';
+
+        /// <summary>Whether this id may be written without breaking the frame. See the header.</summary>
+        public static bool IsWritable(string id)
+            => id == null || (id.IndexOf(Field) < 0 && id.IndexOf(Item) < 0);
+
+        private static string Safe(string id)
+            => IsWritable(id) ? (id ?? "") : "";
+
+        /// <summary>What a peer WEARS: four ids and the trackers. No claim, no numbers.</summary>
+        public static string EncodeSelection(BannerSelection selection)
+        {
+            if (selection == null) return "";
+
+            string trackers = "";
+            if (selection.Trackers != null)
+                foreach (var id in selection.Trackers)
+                {
+                    if (!IsWritable(id) || string.IsNullOrEmpty(id)) continue;
+                    if (trackers.Length > 0) trackers += Item;
+                    trackers += id;
+                }
+
+            return string.Join(Field.ToString(), new[]
+            {
+                Safe(selection.TitleId),
+                Safe(selection.BadgeId),
+                Safe(selection.BorderId),
+                Safe(selection.PaletteId),
+                trackers,
+            });
+        }
+
+        /// <summary>
+        /// ⚠️ IT NEVER THROWS AND NEVER RETURNS NULL. A short, empty or malformed frame is a peer
+        /// with no banner, which is a legal state every account starts in. `Roster.Slippers`
+        /// records the rule for wire-facing ids: an id that does not resolve degrades rather than
+        /// blanking, and a frame that does not parse is the same question one level up.
+        /// </summary>
+        public static BannerSelection DecodeSelection(string encoded)
+        {
+            var selection = new BannerSelection();
+            if (string.IsNullOrEmpty(encoded)) return selection;
+
+            var parts = encoded.Split(Field);
+
+            if (parts.Length > 0) selection.TitleId = parts[0];
+            if (parts.Length > 1) selection.BadgeId = parts[1];
+            if (parts.Length > 2) selection.BorderId = parts[2];
+            if (parts.Length > 3) selection.PaletteId = parts[3];
+
+            if (parts.Length > 4 && parts[4].Length > 0)
+                selection.Trackers = parts[4].Split(Item);
+
+            return selection;
+        }
+
+        /// <summary>What a peer CLAIMS: the selection, the palette, and the two facts that
+        /// authorise them.</summary>
+        public static string EncodeClaim(BannerClaim claim)
+        {
+            if (claim == null) return "";
+
+            string mastery = "";
+            if (claim.Mastery != null)
+                foreach (var record in claim.Mastery)
+                {
+                    if (record == null || string.IsNullOrEmpty(record.Id)) continue;
+                    if (!IsWritable(record.Id)) continue;
+                    if (mastery.Length > 0) mastery += Item;
+                    mastery += record.Id + ":" + record.Level.ToString(
+                        System.Globalization.CultureInfo.InvariantCulture);
+                }
+
+            // ⚠️ THE SELECTION IS ENCODED WITH `Item` AS ITS SEPARATOR SO IT CAN NEST. Reusing
+            // `EncodeSelection` here would put `Field` characters inside a `Field`-delimited
+            // frame, which is the classic way a hand-rolled format eats itself.
+            var selection = claim.Banner ?? new BannerSelection();
+            string trackers = "";
+            if (selection.Trackers != null)
+                foreach (var id in selection.Trackers)
+                {
+                    if (!IsWritable(id) || string.IsNullOrEmpty(id)) continue;
+                    if (trackers.Length > 0) trackers += ",";
+                    trackers += id;
+                }
+
+            return string.Join(Field.ToString(), new[]
+            {
+                Safe(selection.TitleId),
+                Safe(selection.BadgeId),
+                Safe(selection.BorderId),
+                Safe(selection.PaletteId),
+                trackers,
+                Safe(claim.PaletteId),
+                Math.Max(0, claim.Xp).ToString(System.Globalization.CultureInfo.InvariantCulture),
+                mastery,
+            });
+        }
+
+        /// <summary>⚠️ NEVER THROWS. See <see cref="DecodeSelection"/>.</summary>
+        public static BannerClaim DecodeClaim(string encoded)
+        {
+            var claim = new BannerClaim();
+            if (string.IsNullOrEmpty(encoded)) return claim;
+
+            var parts = encoded.Split(Field);
+
+            if (parts.Length > 0) claim.Banner.TitleId = parts[0];
+            if (parts.Length > 1) claim.Banner.BadgeId = parts[1];
+            if (parts.Length > 2) claim.Banner.BorderId = parts[2];
+            if (parts.Length > 3) claim.Banner.PaletteId = parts[3];
+            if (parts.Length > 4 && parts[4].Length > 0) claim.Banner.Trackers = parts[4].Split(',');
+            if (parts.Length > 5) claim.PaletteId = parts[5];
+
+            if (parts.Length > 6 && int.TryParse(parts[6],
+                    System.Globalization.NumberStyles.Integer,
+                    System.Globalization.CultureInfo.InvariantCulture, out int xp))
+                claim.Xp = Math.Max(0, xp);
+
+            if (parts.Length > 7 && parts[7].Length > 0)
+            {
+                var rows = parts[7].Split(Item);
+                var records = new List<MasteryRecord>(rows.Length);
+
+                foreach (var row in rows)
+                {
+                    int split = row.LastIndexOf(':');
+                    if (split <= 0 || split >= row.Length - 1) continue;
+
+                    if (!int.TryParse(row.Substring(split + 1),
+                            System.Globalization.NumberStyles.Integer,
+                            System.Globalization.CultureInfo.InvariantCulture, out int level))
+                        continue;
+
+                    records.Add(new MasteryRecord
+                    {
+                        Id = row.Substring(0, split),
+                        Level = Math.Max(1, level),
+                    });
+                }
+
+                claim.Mastery = records.ToArray();
+            }
+
+            return claim;
+        }
     }
 }
