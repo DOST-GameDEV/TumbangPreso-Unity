@@ -2114,6 +2114,72 @@ one.**
 
 ---
 
+## 98 · Phase 5 begins: the banner, and wiring the rewards nothing wore ⚠️⚠️ 2026-08-31
+
+🧑: *"when ur donne wiht that start with phase 5"*. `FUTURE.md` PHASE 5 is cosmetics and
+character customisation.
+
+⚠️⚠️ **IT STARTS BY WIRING WHAT PHASE 4 ALREADY EARNS, NOT BY AUTHORING ANYTHING NEW**, which is
+what this file's own § 0.5b row for Phase 5 says to do: *"Wire the EXISTING rewards before
+authoring one new one, or the first thing this phase ships is a second unworn set."* § 91.8 is the
+entry: titles, badges, palettes and borders are computed by `ProgressionRules.AccountRewards` and
+`MasteryRewards` and **worn by nothing**. A progression track whose rewards are invisible is a
+number going up.
+
+### 98.1 · The banner is one object, and it absorbed six slots before it was written
+
+`FUTURE.md` PHASE 5 cut them by name. An earlier version of that phase listed a nameplate, a
+title, a badge, an emblem, a frame, a border, a mastery number and an avatar as **separate**
+cosmetic slots, each with its own inventory category, its own UI row and its own wire field.
+**They all do the same job: they say who you are next to your name.**
+
+⚠️ **AND `RewardKind` ALREADY HAS EXACTLY THE RIGHT SHAPE FOR IT**, which is worth noticing
+before designing anything: `Title`, `Badge`, `Palette`, `Border`. Those are the banner's four
+fields. Phase 4 built the vocabulary without having anywhere to put it.
+
+**`Packages/com.tumbangpreso.core/Runtime/Banner.cs`:**
+
+| Piece | What it is |
+|---|---|
+| `BannerSelection` | Four string ids and up to three tracker ids. Nothing else. |
+| `BannerRules.Earned` | The account track plus every hero's mastery track, derived from the profile. ⚠️ **No inventory document**, so there is nothing to migrate when the table grows and no way for a stored list and the table to disagree. |
+| `BannerRules.Normalise` | **The whole security model of cosmetics.** |
+| `BannerRules.TrackerIds` | Eight trackers, every one already derivable from `CareerTotals`. |
+
+⚠️⚠️ **`Normalise` DROPS AN UNEARNED FIELD RATHER THAN REFUSING THE BANNER, AND THAT IS A
+GRIEFING FIX RATHER THAN A STYLE CHOICE.** A banner arrives from a peer as four strings. If one
+unearned id threw the whole selection away, **anybody could blank a stranger's banner by sending
+one junk id alongside their real ones.** Dropping the field is the smallest correct answer: the
+honest parts still draw. `BannerTests.OneUnearnedFieldDoesNotTakeTheEarnedOnesWithIt`.
+
+⚠️ **STRING IDS, NEVER INDICES.** `FUTURE.md` PHASE 5 is explicit and `Roster.Slippers` records
+what inserting a row into a wire-facing list costs. Every peer resolves these ids, so an index
+that shifts dresses somebody else's character.
+
+⚠️ **THREE TRACKER SLOTS, AND THE NUMBER IS THE POINT RATHER THAN A LIMIT TO RAISE.** A banner
+showing everything says nothing; choosing WHICH three is the expression. Raising it turns a
+statement into a dump, which is § 92.1 fault 4 one screen over.
+
+⚠️⚠️ **AND `ABannerCannotCarryAGameplayNumber` IS THE SAME REFLECTION GUARD `Reward` HAS**, for
+the same rule (§ 0.5 rule 4) and for the same reason: a type that cannot hold a number cannot
+change one, and that is only worth anything if adding a field in a hurry fails a test.
+
+### 98.2 · Not done yet, and in this order
+
+1. **The surface.** A BANNER group on the hub's PROFILE tab, built from `UiRows`, showing what is
+   worn and what is earned. ⚠️ Per `FUTURE.md` § 0.5b, design it before writing it and render it
+   before calling it done.
+2. **The wire.** A banner is only worth wearing if other people see it: the lobby, the scoreboard
+   and the end-of-match board. ⚠️⚠️ **That is a protocol change and `NetSession.ProtocolVersion`
+   goes up, so both machines rebuild.** `Normalise` runs on the RECEIVING side against the
+   sender's profile, which is the reason it is in the core.
+3. **Palettes actually applied.** `ToonSkin`'s palette remap already recolours a whole character
+   from 16 slots per renderer, so a colour variant is nearly free; nothing wires a `RewardKind.
+   Palette` id to it yet.
+4. **The favourite loadout per character** that Phase 5 calls *"worth more than it costs"*.
+
+---
+
 ## 97 · The boot account screen, PUBG-shaped, with the guest escape ⚠️⚠️ 2026-08-31
 
 🧑: *"does sign up page show up first thing when someonne opens thhe game or what"*, then
