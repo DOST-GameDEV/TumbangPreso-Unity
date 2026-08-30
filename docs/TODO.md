@@ -2164,11 +2164,35 @@ statement into a dump, which is § 92.1 fault 4 one screen over.
 the same rule (§ 0.5 rule 4) and for the same reason: a type that cannot hold a number cannot
 change one, and that is only worth anything if adding a field in a hurry fails a test.
 
+### 98.1b · The surface, on PROFILE, and where it is stored
+
+**A BANNER group on the hub's PROFILE tab**, which is where identity already lives: the display
+name and the tag are on that tab and a banner is the same kind of fact.
+
+⚠️⚠️ **IT APPEARS ONLY ONCE THERE IS SOMETHING TO WEAR, WHICH IS § 0.5b QUESTION 3 ANSWERED
+RATHER THAN SKIPPED.** A fresh account has earned nothing, and four dropdowns each reading NONE
+is **§ 92.1 fault 4 in a new costume**: the fifteen rows of `0/0 (needs 10 throws)` that taught a
+new player the game was broken. Closed with one sentence it says where the rewards come from; open
+with real choices in it, it is worth looking at. A kind with nothing earned in it is not drawn at
+all, because a dropdown whose only entry is NONE is a control that cannot do anything.
+
+⚠️ **THE DROPDOWN SHOWS `Label` AND STORES `Id`.** A reward's label is prose somebody may reword;
+its id crosses the wire and never changes. Phase 5's string-id rule is about keeping that pair
+apart.
+
+⚠️⚠️ **IT IS STORED IN `GameSettings`, NOT ON `PlayerProfile`, AND PUTTING IT ON THE PROFILE
+WOULD HAVE DELETED IT ON EVERY MATCH.** That document round-trips through
+`ugs/cloud-code/match-record.js`, and `CareerStore.AdoptRemoteProfile` **replaces** the local copy
+with whatever the endpoint answers. The deployed script does not know these fields, so it would
+answer without them and **every submitted match would silently strip the player's banner.**
+§ 94.2b is the entry about a deployed script running behind the repository; this is what that
+costs if a field is added before the endpoint knows it. **The order is fixed: endpoint first, then
+the profile carries it, then the storage moves.**
+
 ### 98.2 · Not done yet, and in this order
 
-1. **The surface.** A BANNER group on the hub's PROFILE tab, built from `UiRows`, showing what is
-   worn and what is earned. ⚠️ Per `FUTURE.md` § 0.5b, design it before writing it and render it
-   before calling it done.
+1. ✅ **The surface.** Done, § 98.1b. ⚠️ **Rendered but not yet reviewed by 🧑**, and § 0.5b is
+   explicit that a green layout probe is not a good screen.
 2. **The wire.** A banner is only worth wearing if other people see it: the lobby, the scoreboard
    and the end-of-match board. ⚠️⚠️ **That is a protocol change and `NetSession.ProtocolVersion`
    goes up, so both machines rebuild.** `Normalise` runs on the RECEIVING side against the

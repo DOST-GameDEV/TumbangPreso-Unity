@@ -82,6 +82,32 @@ namespace TumbangPreso.Settings
         public bool AccountChoiceMade = false;
 
         // -------------------------------------------------------------------
+        // THE BANNER. `docs/TODO.md` § 98, `FUTURE.md` PHASE 5.
+        //
+        // ⚠️⚠️ IT IS STORED LOCALLY ON PURPOSE, AND PUTTING IT ON `PlayerProfile` INSTEAD WOULD
+        // HAVE DELETED IT ON EVERY MATCH. That document is round-tripped through
+        // `ugs/cloud-code/match-record.js`, and `CareerStore.AdoptRemoteProfile` REPLACES the
+        // local copy with whatever the endpoint answers. The deployed script does not know these
+        // fields, so it would answer without them and every submitted match would silently strip
+        // the player's banner. **§ 94.2b is the entry about a deployed script being behind the
+        // repository; this is what that costs if you add a field before the endpoint knows it.**
+        //
+        // ⚠️ SO THE ORDER IS FIXED: the endpoint learns the fields FIRST, then the profile
+        // carries them, then this moves. Until then a banner is visible to the player who chose
+        // it and to nobody else, which is worth having on its own and is honest about its limits.
+        // § 98.2 step 2.
+        //
+        // ⚠️ FOUR STRINGS AND A LIST, MIRRORING `BannerSelection`. The core owns the rules and
+        // this is only the drawer; anything that has to be argued about goes there, per
+        // `FUTURE.md` § 0.5 rule 3.
+        // -------------------------------------------------------------------
+        public string BannerTitleId = "";
+        public string BannerBadgeId = "";
+        public string BannerBorderId = "";
+        public string BannerPaletteId = "";
+        public string[] BannerTrackers = new string[0];
+
+        // -------------------------------------------------------------------
         // TELEMETRY. `docs/TODO.md` § 90.3.
         // -------------------------------------------------------------------
 

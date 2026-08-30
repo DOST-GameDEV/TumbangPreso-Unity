@@ -560,9 +560,109 @@ namespace TumbangPreso.UI
                 _bio.text = account?.Bio ?? "";
             }
 
+            BuildBannerGroup();
+
             UiRows.Gap(_list, 40.0f);
 
             SetFooter("SAVE", _notice);
+        }
+
+        /// <summary>
+        /// The banner: what a player wears beside their name, and the first surface Phase 4's
+        /// rewards have ever had.
+        ///
+        /// ⚠️⚠️ PHASE 4 EARNS TITLES, BADGES, PALETTES AND BORDERS AND NOTHING WORE ANY OF THEM,
+        /// which `docs/TODO.md` § 91.8 records and § 98 is the entry for. **A progression track
+        /// whose rewards are invisible is a number going up.** `FUTURE.md` § 0.5b's row for
+        /// Phase 5 says to wire what already exists before authoring anything new, or the first
+        /// thing that phase ships is a second unworn set.
+        ///
+        /// ⚠️⚠️ IT OPENS ONLY ONCE THERE IS SOMETHING TO WEAR, WHICH IS THE ANSWER TO
+        /// § 0.5b QUESTION 3. A fresh account has earned nothing, and four dropdowns each
+        /// reading "None" is the fifteen-rows-of-zeroes fault (§ 92.1 fault 4) in a new costume:
+        /// it teaches a new player that the feature is empty rather than that it is coming.
+        /// Closed with one sentence, it says where the things come from; open with choices in it,
+        /// it is worth looking at. **The group appears when it becomes relevant.**
+        ///
+        /// ⚠️ EVERY DROPDOWN OFFERS "None" FIRST AND IT IS NEVER A MISSING VALUE. Wearing
+        /// nothing is a legal banner and the state every account starts in;
+        /// `BannerRules.Normalise` answers an empty selection rather than null for the same
+        /// reason.
+        /// </summary>
+        private void BuildBannerGroup()
+        {
+            var profile = GameServices.Career?.Profile;
+            var earned = BannerRules.Earned(profile);
+
+            if (earned.Count == 0)
+            {
+                // ⚠️ THE EMPTY STATE IS A SENTENCE, NOT A DISABLED CONTROL. It says where the
+                // rewards come from, which is the one thing a player who has none needs to know.
+                if (Group("Banner", "What people see beside your name.", false))
+                {
+                    UiRows.ValueRow(_list, "Nothing earned yet", "",
+                        "Titles, badges, borders and palettes come from your account level and " +
+                        "from hero mastery. Play a match and they start arriving.");
+                }
+
+                return;
+            }
+
+            if (!Group("Banner", "What people see beside your name.", false)) return;
+
+            var settings = Settings.SettingsStore.Current;
+
+            BannerSlot("Title", RewardKind.Title, earned, settings.BannerTitleId,
+                id => settings.BannerTitleId = id);
+            BannerSlot("Badge", RewardKind.Badge, earned, settings.BannerBadgeId,
+                id => settings.BannerBadgeId = id);
+            BannerSlot("Border", RewardKind.Border, earned, settings.BannerBorderId,
+                id => settings.BannerBorderId = id);
+            BannerSlot("Palette", RewardKind.Palette, earned, settings.BannerPaletteId,
+                id => settings.BannerPaletteId = id);
+        }
+
+        /// <summary>
+        /// One dropdown of everything of this kind the player has earned, plus "None".
+        ///
+        /// ⚠️⚠️ THE LIST IS BUILT FROM `BannerRules.Earned` AND NEVER FROM THE WHOLE TABLE, so a
+        /// player cannot select something they have not earned in the first place. That is
+        /// belt-and-braces rather than the actual guard: `BannerRules.Normalise` is the guard,
+        /// it runs on the receiving side, and it is the only thing that can be trusted about a
+        /// banner that arrived from somebody else's machine.
+        ///
+        /// ⚠️ THE DROPDOWN SHOWS `Label` AND STORES `Id`. A reward's label is prose that may be
+        /// reworded; its id crosses the wire and never changes. `FUTURE.md` PHASE 5's string-id
+        /// rule is about exactly this pair being kept apart.
+        /// </summary>
+        private void BannerSlot(string label, RewardKind kind, List<Reward> earned,
+                                string current, Action<string> choose)
+        {
+            var options = new List<string> { "NONE" };
+            var ids = new List<string> { "" };
+
+            foreach (var reward in earned)
+            {
+                if (reward == null || reward.Kind != kind) continue;
+                if (ids.Contains(reward.Id)) continue;
+
+                ids.Add(reward.Id);
+                options.Add((reward.Label ?? reward.Id).ToUpperInvariant());
+            }
+
+            // ⚠️ A KIND WITH NOTHING EARNED IN IT IS NOT DRAWN. A dropdown whose only entry is
+            // NONE is a control that cannot do anything, and four of them is the empty state this
+            // group already refuses to show.
+            if (ids.Count <= 1) return;
+
+            int index = Mathf.Max(0, ids.IndexOf(current ?? ""));
+
+            UiRows.DropdownRow(_list, label, options.ToArray(), index, picked =>
+            {
+                choose(picked >= 0 && picked < ids.Count ? ids[picked] : "");
+                Settings.SettingsStore.Save();
+                Show(Tab.Profile);
+            });
         }
 
         /// <summary>
