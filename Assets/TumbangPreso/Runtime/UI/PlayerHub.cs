@@ -486,8 +486,23 @@ namespace TumbangPreso.UI
         /// </summary>
         private void Show(Tab tab)
         {
+            bool arriving = _tab != tab;
+
             _tab = tab;
             _deleteArmed = _deleteArmed && tab == Tab.Account;
+
+            // ⚠️⚠️ FRIENDS ASKS THE SERVICE THE MOMENT IT IS OPENED, AND WITHOUT THIS THE TAB
+            // ONLY EVER SHOWS THE CACHE. Every other tab in this hub draws state this machine
+            // already owns — a profile, a career, a match history — so opening one needs no call.
+            // **This is the only screen in the game whose whole content is a fact about other
+            // people**, and a friends list that says OFFLINE because nobody asked is worse than
+            // one that says nothing.
+            //
+            // ⚠️ ON ARRIVAL, NOT ON EVERY `Show`. `SocialStore.Changed` calls `Show(_tab)` to
+            // redraw, so refreshing unconditionally would be a call per answer for ever.
+            // `SocialStore.Refresh` also refuses a second request while one is in flight, which
+            // is the belt to this braces.
+            if (arriving && tab == Tab.Friends) GameServices.Social?.Refresh();
 
             foreach (var pair in _tabs) Highlight(pair.Value, pair.Key == tab);
 
