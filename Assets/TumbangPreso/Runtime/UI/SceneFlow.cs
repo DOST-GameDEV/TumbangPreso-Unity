@@ -188,6 +188,26 @@ namespace TumbangPreso.UI
         /// <summary>Which game mode the next match loads. Default is Hero Strike.</summary>
         public static GameMode SelectedMode = GameMode.HeroStrike;
 
+        /// <summary>
+        /// A join code the next `MatchSetup` should act on, set by a screen that is not the lobby.
+        ///
+        /// ⚠️⚠️ IT EXISTS SO THERE IS ONE JOIN PATH RATHER THAN TWO. `docs/TODO.md` § 102: the
+        /// friends rail lives on the hub, which is on the title screen, and joining a friend means
+        /// loading the lobby scene first. Wiring the hub straight into `NetSession` would be a
+        /// second copy of the reconnection, seat-reclamation and relay-versus-LAN decisions
+        /// `LobbyJoinPanel` already owns, and § 38.5 records what that costs: three dead protocols
+        /// and the maintained one being the one nothing called.
+        ///
+        /// ⚠️ IT IS CONSUMED, NOT READ. `ConvertedMatchSetup` clears it the moment it takes it, so
+        /// a player who leaves a lobby and comes back is not silently rejoined to the room they
+        /// just left. A one-shot fact that is not cleared is a fact that fires for ever.
+        ///
+        /// ⚠️ AND IT IS A SESSION FACT, NOT A SETTING. Same rule as `SceneFlow.BootedThroughSplash`
+        /// in § 97.1: "somebody pressed JOIN a second ago" and "this machine has a friend" are not
+        /// the same kind of thing and must not be collapsed into one flag.
+        /// </summary>
+        public static string PendingJoinCode = "";
+
         /// <summary>True when the next match is networked rather than against bots.</summary>
         public static bool Networked;
 

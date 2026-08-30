@@ -1191,7 +1191,26 @@ namespace TumbangPreso.Net
                                Math.Max(_nm.ConnectedClientsIds.Count, _helloByClient.Count)
                                < LobbySession.MaxConnections;
 
-            response.Approved = protocolMatches && hasCapacity;
+            // ⚠️⚠️ THE BLOCK LIST IS ENFORCED HERE, AND THIS IS THE ONLY PLACE IN THE GAME IT
+            // CAN DO ANYTHING TODAY. `FUTURE.md` § 6 asks for *"blocking, which must survive
+            // matchmaking: a blocked player is never queued into your match"*, and there is no
+            // matchmaker until Phase 7. **In this build that requirement is "a blocked player
+            // cannot join the lobby you host"**, which is the same guarantee for the only way
+            // two players can currently end up in one room. `docs/TODO.md` § 102.
+            //
+            // ⚠️ IT IS THE ACCOUNT ID, NOT THE CLAIMED NAME. A block keyed on a handle is a block
+            // somebody escapes by renaming themselves, and § 88.1c spent a whole entry on the
+            // difference between a claim and an identity. The id in the hello is unverified at
+            // this instant — `VerifyArrivalAsync` runs after seating — but a liar's only gain is
+            // sending an id that is NOT on the list, which is the same as not being blocked.
+            // **A block cannot be defeated by lying about who you are, only by not being you.**
+            //
+            // ⚠️ AND IT IS THE HOST'S OWN LIST. A client's block list is nobody else's business
+            // and does not travel; the person who owns the room decides who is in it.
+            bool blocked = hello != null &&
+                           Core.SocialRules.IsBlocked(GameServices.Social?.List, hello.AccountPlayerId);
+
+            response.Approved = protocolMatches && hasCapacity && !blocked;
             response.CreatePlayerObject = false;
             response.Pending = false;
             // ⚠️ THE REFUSAL SAYS WHAT THE ROOM HOLDS. "Lobby is full" is true of a room with
@@ -1199,12 +1218,18 @@ namespace TumbangPreso.Net
             // one of those two is a thing the person reading it can do anything about — namely
             // wait for somebody to leave rather than for a match to end. See
             // `LobbySession.MaxSpectators`.
+            // ⚠️ THE BLOCK'S REASON DOES NOT SAY IT IS A BLOCK. `SocialRules.WhyCannotRequest`
+            // carries the same rule for friend requests: telling somebody they have been blocked
+            // is how a block becomes an argument, and the host is a player in the same room.
+            // "Could not join" is what every shipping game says.
             response.Reason = !protocolMatches
                 ? $"Game version mismatch (network protocol {ProtocolVersion})"
-                : hasCapacity
-                    ? string.Empty
-                    : $"This game is full: {LobbySession.MaxPlayers} players and "
-                      + $"{LobbySession.MaxSpectators} spectators.";
+                : blocked
+                    ? "Could not join this game."
+                    : hasCapacity
+                        ? string.Empty
+                        : $"This game is full: {LobbySession.MaxPlayers} players and "
+                          + $"{LobbySession.MaxSpectators} spectators.";
 
             if (response.Approved) _helloByClient[request.ClientNetworkId] = hello;
         }

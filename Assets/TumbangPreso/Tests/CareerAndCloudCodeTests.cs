@@ -403,6 +403,82 @@ namespace TumbangPreso.Tests
                     "specification, so the script is the bug.");
         }
 
+        /// <summary>
+        /// ⚠️⚠️ `ugs/cloud-code/social.js` IS `SocialRules` WRITTEN AGAIN, AND THE SERVER IS THE
+        /// AUTHORITY OVER A DOCUMENT THAT LIVES IN SOMEBODY ELSE'S ACCOUNT. `docs/TODO.md` § 102.
+        /// A cap that drifts is not a cosmetic difference: the client refuses a 21st pending
+        /// request and the server accepts it, so the row exists, is stored, and is silently
+        /// trimmed by `SocialRules.Normalise` the moment anybody loads it. **A friend request that
+        /// arrives and then disappears is the worst failure this feature has**, because both
+        /// people believe the other one ignored them.
+        /// </summary>
+        [Test]
+        public void TheSocialScriptStillAgreesWithTheCoreAboutItsCaps()
+        {
+            string js = File.ReadAllText(Path.Combine(CloudCodeRoot, "social.js"));
+
+            Assert.AreEqual(SocialRules.MaxFriends, ConstantIn(js, "MAX_FRIENDS"),
+                "MAX_FRIENDS in social.js no longer matches SocialRules.MaxFriends");
+            Assert.AreEqual(SocialRules.MaxBlocked, ConstantIn(js, "MAX_BLOCKED"),
+                "MAX_BLOCKED in social.js no longer matches SocialRules.MaxBlocked");
+            Assert.AreEqual(SocialRules.MaxPending, ConstantIn(js, "MAX_PENDING"),
+                "MAX_PENDING in social.js no longer matches SocialRules.MaxPending. This is the " +
+                "anti-spam cap on a list a stranger can write into, and the server is the only " +
+                "side that can enforce it.");
+            Assert.AreEqual(SocialRules.PresenceStaleSeconds,
+                            ConstantIn(js, "PRESENCE_STALE_SECONDS"),
+                "PRESENCE_STALE_SECONDS in social.js no longer matches " +
+                "SocialRules.PresenceStaleSeconds. Both ends apply the staleness rule, and a " +
+                "server that believes a longer one hands out lit rows for players who have quit.");
+
+            Assert.AreEqual(AccountRules.HandleMax, ConstantIn(js, "HANDLE_MAX"),
+                "HANDLE_MAX in social.js no longer matches AccountRules.HandleMax, so a handle " +
+                "stored in somebody else's friends list would be clipped differently from the " +
+                "one on the scoreboard.");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ EVERY PARAMETER A CLOUD CODE SCRIPT READS MUST BE DECLARED OR THE SERVICE STRIPS
+        /// IT, AND THE FAILURE IS SILENT AND LOOKS LIKE A WORKING ENDPOINT. `docs/TODO.md` § 90.5:
+        /// three scripts declared none, so every call fell through to the default branch, answered
+        /// normally, and **no career had ever reached the server**. Every probe was green
+        /// throughout, because they all probed with the default branch.
+        ///
+        /// ⚠️ THIS IS THE CHEAP HALF AND IT READS THE FILE. The expensive half is
+        /// `UgsServicesProbe`, which asks the deployed service, and § 94.2b records what happens
+        /// when a script is committed and not deployed: the endpoint runs the old one and pays 0.
+        /// </summary>
+        [Test]
+        public void TheSocialScriptDeclaresEveryParameterItReads()
+        {
+            string js = File.ReadAllText(Path.Combine(CloudCodeRoot, "social.js"));
+
+            int split = js.IndexOf("module.exports.params");
+            Assert.Greater(split, 0, "social.js declares no params block at all, so Cloud Code " +
+                                     "strips every parameter and every call runs the load branch.");
+
+            string body = js.Substring(0, split);
+            string declared = js.Substring(split);
+
+            foreach (string name in new[] { "action", "playerId", "handle", "theirHandle",
+                                            "state", "joinCode" })
+            {
+                StringAssert.Contains("params." + name, body,
+                    $"social.js declares `{name}` and never reads it.");
+                StringAssert.Contains(name + ":", declared,
+                    $"social.js reads `params.{name}` and does not declare it. Cloud Code will " +
+                    "strip it and the branch will run with it undefined. docs/TODO.md § 90.5.");
+            }
+
+            // ⚠️ A TOP-LEVEL `function parameters()` SILENTLY DROPS THE WHOLE DECLARATION AND
+            // PRINTS `params: []`. It cost a bisect against the live service once; renaming it
+            // was the entire fix.
+            Assert.IsFalse(Regex.IsMatch(js, @"^\s*function\s+parameters\s*\("
+                                             , RegexOptions.Multiline),
+                "social.js has a top-level `function parameters()`, which makes Cloud Code drop " +
+                "the whole params declaration without saying so.");
+        }
+
         private static int ConstantIn(string js, string name)
         {
             var match = Regex.Match(js, @"const\s+" + Regex.Escape(name) + @"\s*=\s*(\d+)\s*;");

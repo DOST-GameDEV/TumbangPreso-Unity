@@ -142,7 +142,10 @@ namespace TumbangPreso.PlayTests
                 // ⚠️ EVERY TAB, NOT THE ONE THAT HAPPENS TO BE OPEN. The tabs are rebuilt on
                 // switch rather than kept alive, so a fault on ACCOUNT is invisible while PROFILE
                 // is showing, which is how a screen ships broken on one tab.
-                foreach (var tab in new[] { "PROFILE", "CAREER", "MATCHES", "ACCOUNT" })
+                // ⚠️ FRIENDS IS IN THE LOOP FROM THE DAY IT SHIPPED. `docs/TODO.md` § 92 records
+                // three of five faults being layout faults a measurement would have caught the
+                // day they were written, and the reason none did is that the screens had no probe.
+                foreach (var tab in new[] { "PROFILE", "FRIENDS", "CAREER", "MATCHES", "ACCOUNT" })
                 {
                     Press(tab);
                     yield return null;
@@ -397,6 +400,16 @@ namespace TumbangPreso.PlayTests
             hub.Open();
             yield return null;
             yield return Shoot("02-hub-profile");
+
+            // ⚠️⚠️ THE FRIENDS TAB IS PHOTOGRAPHED IN ITS EMPTY STATE, WHICH IS THE STATE EVERY
+            // PLAYER MEETS IT IN AND THE ONE `FUTURE.md` § 0.5b QUESTION 3 SAYS GETS DESIGNED
+            // LAST AND SEEN FIRST. This probe has no second account and no service session, so
+            // what it can photograph is exactly what a new player sees: nobody yet, and a
+            // sentence saying where friends come from.
+            Press("FRIENDS");
+            yield return null;
+            yield return null;
+            yield return Shoot("13-hub-friends-empty");
 
             Press("CAREER");
             yield return null;
@@ -768,7 +781,31 @@ namespace TumbangPreso.PlayTests
                     $"{resolution} {screen}: '{label.name}' is authored at {label.fontSize} " +
                     $"units, below the {MenuKit.MinReadableUnits}-unit floor.");
 
-                if (label.horizontalOverflow == HorizontalWrapMode.Wrap) continue;
+                // ⚠️⚠️ A WRAPPING LABEL IS CHECKED VERTICALLY, AND UNTIL 2026-08-31 IT WAS NOT
+                // CHECKED AT ALL. `continue` was the whole treatment: a wrapped label's preferred
+                // WIDTH is inside its box by definition — that is what wrapping means — so the
+                // check below says nothing about it, and it was skipped instead of being asked
+                // the question that does apply. **`UiRows.Row` then drew every two-line hint
+                // below its own zebra band and over the row underneath**, on every screen built
+                // from that file, with this probe green. `docs/TODO.md` § 102.
+                //
+                // ⚠️ IT IS THE SAME FAULT AS § 95 ROTATED NINETY DEGREES: a label a long way from
+                // the readable floor that still does not fit the box it was given, silently,
+                // because nothing compared the one dimension that mattered.
+                if (label.horizontalOverflow == HorizontalWrapMode.Wrap)
+                {
+                    float tall = label.rectTransform.rect.height;
+                    if (tall <= 1.0f) continue;
+
+                    Assert.LessOrEqual(label.preferredHeight, tall + 1.0f,
+                        $"{resolution} {screen}: '{label.name}' wraps to " +
+                        $"{label.preferredHeight:F0} units in a {tall:F0}-unit box for " +
+                        $"\"{label.text}\". It draws below its own row and over the next one. " +
+                        "Either the sentence is shorter or the row grows: UiRows.Row does the " +
+                        "second, so a failure here means the growth did not reach this label.");
+
+                    continue;
+                }
 
                 float needed = label.preferredWidth;
                 int over = Mathf.RoundToInt(needed - room);

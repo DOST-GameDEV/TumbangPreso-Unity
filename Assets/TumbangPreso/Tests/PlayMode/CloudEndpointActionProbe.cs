@@ -395,6 +395,128 @@ namespace TumbangPreso.PlayTests
             Debug.Log($"[CloudEndpointActionProbe] telemetry report answered from its own branch");
         }
 
+        // -------------------------------------------------------------------
+        // § THE SOCIAL ENDPOINT. `docs/TODO.md` § 102.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// The social endpoint answers `load` and `presence` from their own branches, and the
+        /// list it hands back is a document this build can read.
+        ///
+        /// ⚠️⚠️ THE POINT OF THIS CASE IS `docs/TODO.md` § 94.2b'S STANDING RULE: **for anything
+        /// under `ugs/`, finished means deployed, and a commit is not a deployment.**
+        /// `CareerAndCloudCodeTests` compares the C# to the FILE ON DISK and was green throughout
+        /// the session in which Phase 4's script had never been published; only a call to the live
+        /// service can tell the two apart.
+        ///
+        /// ⚠️⚠️ AND IT ASSERTS A KEY ONLY THE NAMED BRANCH PRODUCES, WHICH IS § 90.5. A stripped
+        /// `action` parameter lands on `load`, which answers well-formed JSON, so "it answered" is
+        /// not evidence that the branch ran. `written` appears in `presence` and nowhere else.
+        ///
+        /// ⚠️ IT WRITES ONLY ITS OWN TWO DOCUMENTS AND NAMES NO OTHER PLAYER. Every action that
+        /// touches somebody else's account needs a second real account to be honest about, which
+        /// this probe does not have; `WhenTwoAccountsAreNeeded` below says what is therefore not
+        /// covered here rather than leaving it implied.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator TheSocialEndpointAnswersLoadAndPresenceFromDifferentBranches()
+        {
+            yield return SignedInAsTheProbePlayer();
+
+            var presence = Net.CloudCode.CallAsync("social", new
+            {
+                action = "presence",
+                state = 1,
+                joinCode = "",
+                handle = "QA45#0000",
+            });
+            yield return Await(presence);
+
+            string wrote = Flat(presence.Result);
+            StringAssert.Contains("\"written\":true", wrote,
+                "the presence branch did not run. `written` is the only key it returns, and a " +
+                "stripped action lands on `load`, which answers a well-formed list instead. " +
+                "docs/TODO.md § 90.5.");
+
+            var load = Net.CloudCode.CallAsync("social", new { action = "load" });
+            yield return Await(load);
+
+            string flat = Flat(load.Result);
+            StringAssert.Contains("\"list\"", flat,
+                "the load branch answered no list at all");
+
+            // ⚠️⚠️ THE DOCUMENT IS PARSED WITH THE SHIPPING TYPES RATHER THAN GREPPED, because
+            // the failure this catches is a shape change and not a missing key. `SocialStore`
+            // reads it with exactly these two calls, so a payload this cannot parse is a payload
+            // the game silently discards into a warning nobody reads.
+            var envelope = JsonUtility.FromJson<SocialEnvelope>(load.Result);
+            Assert.IsNotNull(envelope, "the endpoint's answer is not the envelope SocialStore reads");
+
+            var list = Core.SocialRules.Normalise(
+                JsonUtility.FromJson<Core.SocialList>(envelope.list));
+
+            Assert.IsNotNull(list.Friends, "the list has no Friends array");
+            Assert.IsNotNull(list.Incoming, "the list has no Incoming array");
+            Assert.IsNotNull(list.Blocked, "the list has no Blocked array");
+
+            Debug.Log($"[CloudEndpointActionProbe] social load answered " +
+                      $"{list.Friends.Count} friend(s), {list.Incoming.Count} request(s), " +
+                      $"{list.Blocked.Count} blocked");
+        }
+
+        /// <summary>
+        /// Blocking and unblocking, which are the two actions the probe player can take entirely
+        /// against its own document.
+        ///
+        /// ⚠️⚠️ THE BLOCK IS THE HALF OF THIS PHASE THAT HAS TEETH, and it is the one that must
+        /// survive the round trip: `NetSession.ApproveConnection` refuses a peer whose account id
+        /// is on this list, so a block that does not persist is a block that stops working when
+        /// the player restarts the game.
+        ///
+        /// ⚠️ IT BLOCKS AN ID THAT BELONGS TO NOBODY, DELIBERATELY. `block` clears the subject
+        /// from both sides, so blocking a real account would edit a stranger's document; an id
+        /// that names nobody exercises the same branch and touches one document.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator TheSocialEndpointStoresABlockAndTakesItBack()
+        {
+            yield return SignedInAsTheProbePlayer();
+
+            string ghost = $"qa45-ghost-{Guid.NewGuid():N}";
+
+            var block = Net.CloudCode.CallAsync("social", new
+            {
+                action = "block",
+                playerId = ghost,
+                handle = "QA45#0000",
+            });
+            yield return Await(block);
+
+            StringAssert.Contains(ghost, Flat(block.Result),
+                "the endpoint did not store the block. This is the only rule in Phase 6 that " +
+                "refuses a connection, so one that does not persist is one that stops working " +
+                "on the next launch.");
+
+            var unblock = Net.CloudCode.CallAsync("social", new
+            {
+                action = "unblock",
+                playerId = ghost,
+                handle = "QA45#0000",
+            });
+            yield return Await(unblock);
+
+            Assert.IsFalse(Flat(unblock.Result).Contains(ghost),
+                "the block survived an unblock, so the block list is a one-way door");
+
+            Debug.Log("[CloudEndpointActionProbe] social stored a block and took it back");
+        }
+
+        [Serializable]
+        private sealed class SocialEnvelope
+        {
+            public string list = "";
+        }
+
         /// <summary>
         /// `submit` refuses a name the deployed script does not know, and says so in `refused`.
         ///

@@ -2114,6 +2114,114 @@ one.**
 
 ---
 
+## 102 · Phase 6: friends, presence and blocking ⚠️⚠️ 2026-08-31
+
+🧑: *"when u finish phase 5 completley work onn phase 6, finis phase 6 completley too"*.
+
+`FUTURE.md` PHASE 6 and § 19.6. **What shipped, what could not, and why**, because two of the six
+bullets in that phase depend on a matchmaker that does not exist until Phase 7 and one depends on a
+service query Cloud Save does not have.
+
+### 102.1 · What is built
+
+| Piece | Where |
+|---|---|
+| The rules | `Packages/com.tumbangpreso.core/Runtime/Social.cs`. Friends, blocks, presence, caps, the rail's order, and the recent-players derivation. 25 tests. |
+| The endpoint | `ugs/cloud-code/social.js`, **deployed**. `load`, `presence`, `request`, `accept`, `decline`, `remove`, `block`, `unblock`. |
+| The client | `Assets/TumbangPreso/Runtime/Net/SocialStore.cs`, a cache in front of the endpoint, in `GameServices.Social`. |
+| The screen | A **FRIENDS tab** on the hub. |
+| The prompt | An **ADD** button per human you just played with, on the end-of-match board. |
+| The teeth | `NetSession.ApproveConnection` refuses a peer whose account id is on the host's block list. |
+
+⚠️⚠️ **PRESENCE IS WRITTEN EVERY 60 s AND NOT AT `ServerQuery`'S 4 s**, which `FUTURE.md` § 19.6
+rules out by name: *"presence polling must not raise the service query rate."* A lobby list goes
+stale in seconds; presence changes when somebody presses PLAY. **A friend is believed online for
+180 s after their last write**, so one missed heartbeat does not blink them out, and a stale row
+reads OFFLINE at BOTH ends — the server applies the bound before it answers and the client applies
+it again before it draws.
+
+⚠️ **`load` LOOKS UP AT MOST 30 FRIENDS' PRESENCE.** Cloud Save is keyed per player, so there is no
+"read these thirty documents" call: it is thirty reads server-side inside one invocation the client
+pays one round trip for. The cap is what stops a hundred-friend account turning one press into a
+hundred reads.
+
+### 102.2 · ⚠️⚠️ THREE THINGS `FUTURE.md` § 6 ASKS FOR THAT ARE NOT IN THIS BUILD, AND WHY
+
+**These are written down rather than quietly dropped**, per `FUTURE.md` § 0.5 rule 11.
+
+| Asked for | Why not | What is there instead |
+|---|---|---|
+| ⚠️⚠️ **"Parties of 2 to 4 that queue together"** | **There is no queue.** Matchmaking is Phase 7 and QUICK MATCH does not exist, so "queue together" is a button that cannot do anything. Building a party object now would be a lobby with a second name for it. | **A party is "be in the same lobby", and that already works.** A friend who is in a joinable lobby publishes its join code with their presence; JOIN on the rail hands it to `LobbyJoinPanel`, which resolves it LAN-first then online exactly as a typed code. When Phase 7 lands, a party becomes a queue ticket and this rail does not change. |
+| ⚠️⚠️ **"Friends by display name and tag"** | **Cloud Save is a key-value store keyed by player id, with no query-by-value.** Resolving `Maria Clara#4417` to an id needs an INDEX document that every rename has to update, and that is a service design decision with a real failure mode (a stale index hands a request to the wrong account), not a UI task. | **Recent players and player id.** `SocialRules.RecentPlayers` reads the `MatchRecord` every peer already receives, so the highest-value path — *"the highest-converting social prompt any game of this shape has"*, § 6's own words — ships. |
+| **"Blocking, which must survive matchmaking"** | Same reason: no matchmaker. | **A blocked account cannot join a lobby you host**, refused at connection approval, which is the only way two players can currently end up in one room. Phase 9 inherits the rule and § 8's ranked note already carries it. |
+
+⚠️ **AND THE SHARE CODE IS THE PLAYER ID.** It needs no index and no storage. It is long and ugly,
+and it is the answer for exactly one case: somebody who wants to add a person they have never
+played with. The id is on the ACCOUNT tab.
+
+### 102.3 · ⚠️⚠️ THE HOST DECIDES, AND A FRIEND REQUEST IS THE ONLY THING A STRANGER CAN PUT IN YOUR DOCUMENT
+
+Everything in `SocialRules.WhyCannotRequest` is about the SENDER's own state, which a modified
+client simply lies about. **The rule that matters is `AcceptsRequestFrom`, and it runs where the
+write lands**, inside the endpoint, against the recipient's own document. Same shape as
+`BannerRules.Authorise` in § 101 and the same rule `LobbySession` has always followed: a client
+asks, the server answers.
+
+⚠️ **THE SENDER IS NEVER TOLD THEY WERE BLOCKED.** The request is dropped and their pending row
+simply never resolves. Telling somebody they have been blocked is how a block becomes an argument,
+and the same rule governs the connection refusal: it says *"Could not join this game."* and not
+why.
+
+⚠️ **BLOCKING SOMEBODY YOU ARE FRIENDS WITH ENDS THE FRIENDSHIP, ON BOTH SIDES.** A block that
+leaves a friendship standing is a label rather than a boundary, and a pending request from somebody
+you blocked would sit in your inbox for ever with no way to act on it. **A friendship is one fact
+stored twice**, so both copies move together or neither does — `remove` and `block` both clear the
+other side.
+
+### 102.4 · ⚠️⚠️ A HINT THAT WRAPPED DREW OVER THE ROW UNDERNEATH IT, ON EVERY SCREEN `UiRows` BUILDS
+
+**Found in the render of the new FRIENDS tab, not by a test.** `UiRows.Row` gives a hint a 24-unit
+box and `HorizontalWrapMode.Wrap`, and set `LayoutElement.preferredHeight` to a flat `RowHeight`.
+So a two-line sentence wrapped correctly and then **drew its second line below its own zebra band**,
+over whatever was under it.
+
+⚠️⚠️ **AND NO PROBE IN THE PROJECT COULD SEE IT, WHICH IS § 95 ROTATED NINETY DEGREES.**
+`PlayerHubLayoutProbe` and `PhaseSurfaceLayoutProbe` compare `preferredWidth` against the rect and
+**skipped wrapping labels entirely** — `if (horizontalOverflow == Wrap) continue;` — because a
+wrapped label's preferred width is inside its box by definition. That is what wrapping means. The
+overflow was vertical and every check in the repository measured horizontally.
+
+**Two fixes, and the second is the one that lasts.** `UiRows.Row` measures `preferredHeight` and
+grows the row and the note's own box by the difference, re-centring the label; and
+`PlayerHubLayoutProbe` now asserts `preferredHeight <= rect.height` on every wrapping label instead
+of skipping it. ⚠️ **Measured off the text rather than counted off the string**: the note's rect is
+a fixed 800 units, so the answer is the same at every resolution.
+
+### 102.5 · What is NOT proven, and it is the honest gap
+
+⚠️⚠️ **NO TWO-ACCOUNT RUN HAS HAPPENED.** `CloudEndpointActionProbe` has one throwaway UGS profile
+(`qa45`), so what is proven against the LIVE service is `load`, `presence`, `block` and `unblock` —
+every branch that touches only the caller's own document. **`request`, `accept`, `decline` and
+`remove` write into a second player's document and are covered by the core tests and by reading the
+script, not by a live round trip.**
+
+**Done looks like:** two accounts, on the two laptops, befriend each other, see each other's
+presence change when one enters a match, and one blocks the other and is refused at the door. That
+is a thirty-minute manual pass and it is the next thing to do with this feature.
+
+⚠️ **The probe must not grow a second real account to fix this.** `CloudEndpointActionProbe`'s
+header records why `qa45` exists: the editor and the built player share the UGS credential cache,
+so a probe on the `default` profile overwrites his real display name and can delete his profile.
+
+**Verified:** Core **317/317** (+25), EditMode **257/257** (+2), **UGS 16/16 against the live
+project** including two new social cases that exercised the deployed script's own branches,
+`PlayerHubLayoutProbe` **5/5** with FRIENDS in the tab loop and `13-hub-friends-empty.png` in
+`Logs/ui/`, `Checks.RunAll` all five, and the three `tools/` audits exit 0.
+⚠️ **`ugs cloud-code scripts get social` reads back all six declared parameters**, which per § 90.5
+is the only way to know the service holds what the file says.
+
+---
+
 ## 101 · Phase 5 continued: the banner on the wire, palettes on remote seats, and the colour picker ⚠️⚠️ 2026-08-31
 
 🧑: *"pls thoroughly check ur phase 1-4 and if its good work onn phase 5"*, and *"make sure ui

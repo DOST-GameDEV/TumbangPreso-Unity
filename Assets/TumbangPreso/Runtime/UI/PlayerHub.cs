@@ -34,7 +34,7 @@ namespace TumbangPreso.UI
     /// </summary>
     public sealed class PlayerHub : MonoBehaviour
     {
-        private enum Tab { Profile, Career, Matches, Account }
+        private enum Tab { Profile, Friends, Career, Matches, Account }
 
         private const int HistoryPageSize = 20;
 
@@ -213,12 +213,19 @@ namespace TumbangPreso.UI
 
             if (GameServices.Account != null) GameServices.Account.Changed += OnDataChanged;
             if (GameServices.Career != null) GameServices.Career.Changed += OnDataChanged;
+
+            // ⚠️ THE ONE SCREEN IN THE GAME WHOSE CONTENT CHANGES WITHOUT THE PLAYER TOUCHING
+            // ANYTHING. A friend comes online, a request arrives, a lobby opens; `SocialStore`
+            // raises `Changed` and this redraws. Polling the list from `Update` would be the same
+            // per-frame rebuild `Hud` cost a probe an eighth of its frames with.
+            if (GameServices.Social != null) GameServices.Social.Changed += OnDataChanged;
         }
 
         private void OnDestroy()
         {
             if (GameServices.Account != null) GameServices.Account.Changed -= OnDataChanged;
             if (GameServices.Career != null) GameServices.Career.Changed -= OnDataChanged;
+            if (GameServices.Social != null) GameServices.Social.Changed -= OnDataChanged;
             if (_signIn != null) _signIn.Closed -= OnSignInClosed;
         }
 
@@ -293,17 +300,41 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>
-        /// ⚠️ FOUR TABS ACROSS THE TOP, WHICH IS THE REFERENCE'S ARRANGEMENT. Valorant runs
+        /// ⚠️ TABS ACROSS THE TOP, WHICH IS THE REFERENCE'S ARRANGEMENT. Valorant runs
         /// GENERAL / GRAPHICS QUALITY / STATS across the top of its settings and PUBG runs its
         /// sections down a rail; either works, and across the top is the one that survives a
         /// 16:10 window without a second scroll region.
+        ///
+        /// ⚠️⚠️ FRIENDS IS THE FIFTH AND IT IS A TAB RATHER THAN A GROUP ON `PROFILE`, WHICH IS
+        /// A DECISION AND NOT AN OVERSIGHT. `FUTURE.md` § 0.5b's row for Phase 6 asks for *"a
+        /// friends rail on the hub"* with **who is online now** as the one thing on it, and a
+        /// group buried inside a tab about YOU fails that twice over: it is collapsed by default
+        /// like every other group, and PROFILE is the screen about the local player while this is
+        /// the only screen in the game about anybody else.
+        ///
+        /// ⚠️ AND A TAB IS NOT A SECOND DOOR. `CLAUDE.md` § 6.3's rule is about the MENU growing
+        /// a button per feature (§ 92's six-button panel); the hub still has exactly one entrance
+        /// and everything inside it is one press from the others. `docs/TODO.md` § 102.
+        ///
+        /// ⚠️ THE SPACING IS DERIVED RATHER THAN TYPED. Five tabs at the four-tab offsets would
+        /// have run the last one off the panel, and the next tab added would do it again.
         /// </summary>
         private void BuildTabBar()
         {
-            AddTab(Tab.Profile, "PROFILE", -300.0f);
-            AddTab(Tab.Career, "CAREER", -100.0f);
-            AddTab(Tab.Matches, "MATCHES", 100.0f);
-            AddTab(Tab.Account, "ACCOUNT", 300.0f);
+            var order = new[]
+            {
+                (Tab.Profile, "PROFILE"),
+                (Tab.Friends, "FRIENDS"),
+                (Tab.Career, "CAREER"),
+                (Tab.Matches, "MATCHES"),
+                (Tab.Account, "ACCOUNT"),
+            };
+
+            const float Pitch = 200.0f;
+            float first = -Pitch * (order.Length - 1) * 0.5f;
+
+            for (int i = 0; i < order.Length; i++)
+                AddTab(order[i].Item1, order[i].Item2, first + Pitch * i);
         }
 
         private void AddTab(Tab tab, string label, float x)
@@ -482,6 +513,7 @@ namespace TumbangPreso.UI
             switch (tab)
             {
                 case Tab.Profile: BuildProfileTab(); break;
+                case Tab.Friends: BuildFriendsTab(); break;
                 case Tab.Career: BuildCareerTab(); break;
                 case Tab.Matches: BuildMatchesTab(); break;
                 case Tab.Account: BuildAccountTab(); break;
@@ -932,6 +964,206 @@ namespace TumbangPreso.UI
         }
 
         // -------------------------------------------------------------------
+        // § FRIENDS. `docs/TODO.md` § 102.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// Who is online now, who wants to be your friend, and who you have shut out.
+        ///
+        /// ⚠️⚠️ THE ORDER OF THE THREE GROUPS IS THE WHOLE DESIGN. `FUTURE.md` § 0.5b: the one
+        /// thing on a friends surface is **who is online now**, and the four ordering tools are
+        /// position first. So requests come first and only when there ARE any — they are the one
+        /// thing on this screen waiting for an answer from you — then the list, sorted by
+        /// `SocialRules.Sorted` so joinable and online rise on their own, then blocked at the
+        /// bottom, closed.
+        ///
+        /// ⚠️⚠️ AND ALL THREE EMPTY STATES ARE DESIGNED, WHICH IS § 0.5b QUESTION 3 AND WHICH
+        /// THAT SECTION SINGLES THIS PHASE OUT FOR: *"a friends list is a live list, so it has
+        /// three empty states (no friends, none online, service down) and § 0.5b question 3 says
+        /// all three get designed."* They say different things: **no friends** points at the
+        /// end-of-match screen, **none online** is not an error and does not read as one, and
+        /// **not signed in** is the guest's state and the only one with an action attached.
+        /// </summary>
+        private void BuildFriendsTab()
+        {
+            var social = GameServices.Social;
+            var list = social?.List;
+            var now = DateTime.UtcNow;
+
+            // ⚠️⚠️ THE GUEST'S STATE COMES FIRST AND IT IS NOT AN ERROR. `docs/TODO.md` § 97:
+            // CONTINUE AS GUEST is one press and must keep working with the cable out, so a guest
+            // reaching this tab is an expected player rather than a broken one. **It says what to
+            // do rather than what is wrong.**
+            if (!SocialRules.IsAddressable(GameServices.Account?.PlayerId))
+            {
+                UiRows.Section(_list, "Friends", "Who is online, and who you can join.");
+                UiRows.ValueRow(_list, "Not signed in", "",
+                    "Friends are attached to an account. Make one on the ACCOUNT tab and this " +
+                    "list follows you to any machine you sign in on.");
+
+                UiRows.Gap(_list, 40.0f);
+                SetFooter("", "");
+                return;
+            }
+
+            BuildRequestRows(social, list);
+            BuildFriendRows(social, list, now);
+            BuildBlockedRows(social, list);
+
+            UiRows.Gap(_list, 40.0f);
+
+            // ⚠️ THE FOOTER ACTION IS A REFRESH RATHER THAN A SAVE, BECAUSE NOTHING ON THIS TAB IS
+            // EDITED LOCALLY. Every press here is a call the endpoint answers with the whole list,
+            // so there is nothing to commit; what a player wants from this screen is "is that
+            // still true", which is one call.
+            SetFooter("REFRESH", "Presence updates about once a minute while the game is open.");
+        }
+
+        private void BuildRequestRows(Net.SocialStore social, SocialList list)
+        {
+            int pending = list?.Incoming?.Count ?? 0;
+            if (pending == 0) return;
+
+            // ⚠️ OPEN AND FIRST, WHICH NO OTHER GROUP IN THIS HUB IS. Every other group is a
+            // thing you went looking for; this is the only one waiting on an answer from you, and
+            // a collapsed group is a group nobody opens.
+            UiRows.Section(_list, "Friend requests",
+                           pending == 1 ? "One person wants to play with you."
+                                        : $"{pending} people want to play with you.");
+
+            foreach (var row in list.Incoming)
+            {
+                string who = string.IsNullOrEmpty(row.Handle) ? Shorten(row.PlayerId) : row.Handle;
+                string id = row.PlayerId;
+
+                // ⚠️⚠️ ACCEPT IS THE BUTTON AND DECLINE IS ITS OWN ROW, WHICH IS § 0.5b QUESTION
+                // 4 ANSWERED. `UiRows.ButtonRow`'s own note is blunt: never more than one button
+                // in a row, because a row with three is the six-button panel again. The safe
+                // action leads and the quiet one sits under it.
+                UiRows.ButtonRow(_list, who, "ACCEPT", () =>
+                {
+                    social?.Accept(id);
+                    MenuSfx.Click();
+                }, "Adds them to your list. They see you as online.", "WoodPrimaryButton");
+
+                UiRows.ButtonRow(_list, "", "DECLINE", () =>
+                {
+                    social?.Decline(id);
+                    MenuSfx.Back();
+                }, "Removes the request. They are not told.");
+            }
+        }
+
+        private void BuildFriendRows(Net.SocialStore social, SocialList list, DateTime now)
+        {
+            var friends = SocialRules.Sorted(list?.Friends, now);
+
+            if (friends.Count == 0)
+            {
+                UiRows.Section(_list, "Friends", "Who is online, and who you can join.");
+
+                // ⚠️ THE EMPTY STATE POINTS AT WHERE FRIENDS ACTUALLY COME FROM. `FUTURE.md` § 6
+                // calls the end-of-match screen *"the highest-converting social prompt any game
+                // of this shape has"*. A player with an empty list needs to be told where the
+                // button is, not that the list is empty — they can see that.
+                UiRows.ValueRow(_list, "Nobody yet", "",
+                    "After a match, the scoreboard offers to add everybody you just played " +
+                    "with. That is the quickest way to fill this in.");
+                return;
+            }
+
+            int online = 0;
+            foreach (var friend in friends)
+                if (SocialRules.EffectivePresence(friend, now) != PresenceState.Offline) online++;
+
+            // ⚠️ THE SUBTITLE IS THE ONE THING ON THE SCREEN, AS A SENTENCE, readable before any
+            // row is. **None online is not an error and does not say it is**: it is Tuesday
+            // morning.
+            UiRows.Section(_list, "Friends",
+                online == 0 ? $"None of your {friends.Count} friends are online right now."
+                            : $"{online} of {friends.Count} online.");
+
+            foreach (var friend in friends)
+            {
+                var state = SocialRules.EffectivePresence(friend, now);
+                string who = string.IsNullOrEmpty(friend.Handle) ? Shorten(friend.PlayerId)
+                                                                 : friend.Handle;
+                string id = friend.PlayerId;
+                string code = friend.JoinCode;
+
+                if (SocialRules.IsJoinable(friend, now))
+                {
+                    // ⚠️⚠️ JOIN IS OFFERED ONLY WHEN IT CAN DO SOMETHING, and
+                    // `SocialRules.IsJoinable` decides. A JOIN beside somebody whose lobby closed
+                    // an hour ago sends a player to a room that is not there, which reads as the
+                    // game being broken rather than as the friend having left. `CLAUDE.md` § 6.3.
+                    UiRows.ButtonRow(_list, who, "JOIN", () => JoinFriend(code),
+                        SocialRules.PresenceLabel(state) + "  \u00b7  in a game you can join",
+                        "WoodPrimaryButton");
+                }
+                else
+                {
+                    UiRows.ValueRow(_list, who, SocialRules.PresenceLabel(state), "",
+                        state == PresenceState.Offline ? UiTheme.CreamMuted : UiTheme.Amber);
+                }
+
+                UiRows.ButtonRow(_list, "", "REMOVE", () =>
+                {
+                    social?.Remove(id);
+                    MenuSfx.Back();
+                }, "Takes them off both lists. Neither of you is told.");
+            }
+        }
+
+        private void BuildBlockedRows(Net.SocialStore social, SocialList list)
+        {
+            int blocked = list?.Blocked?.Count ?? 0;
+            if (blocked == 0) return;
+
+            // ⚠️⚠️ CLOSED BY DEFAULT AND LAST, WHICH IS THE POINT OF HAVING IT AT ALL. A block
+            // list you cannot see is a list you cannot undo; a block list you see every time you
+            // open the tab is a screen that keeps showing you the people you asked not to see.
+            if (!Group("Blocked", $"{blocked} blocked. They cannot join a game you host.", false))
+                return;
+
+            foreach (string id in list.Blocked)
+            {
+                string subject = id;
+
+                // ⚠️ THE ID AND NOT A NAME, DELIBERATELY. `SocialList.Blocked` stores ids on
+                // purpose: a list holding handles keeps drawing the name of somebody you blocked,
+                // and it has to survive them renaming themselves.
+                UiRows.ButtonRow(_list, Shorten(subject), "UNBLOCK", () =>
+                {
+                    social?.Unblock(subject);
+                    MenuSfx.Click();
+                }, "They can join your games again. They are not added back as a friend.");
+            }
+        }
+
+        /// <summary>⚠️ A PLAYER ID IS ABOUT THIRTY CHARACTERS AND A ROW LABEL IS NOT. It is shown
+        /// at all only because a blocked row has nothing else to identify it by.</summary>
+        private static string Shorten(string id)
+            => string.IsNullOrEmpty(id) || id.Length <= 12 ? id ?? "" : id.Substring(0, 12) + "\u2026";
+
+        /// <summary>
+        /// ⚠️⚠️ JOINING GOES THROUGH THE PATH THE JOIN PANEL ALREADY USES, AND `ServerQuery`
+        /// RESOLVES A CODE LAN-FIRST THEN ONLINE. A second join path would be a second copy of
+        /// the reconnection, seat-reclamation and relay-versus-LAN decisions `LobbySession`
+        /// already owns, which `docs/TODO.md` § 38.5 records the cost of: three dead protocols,
+        /// and the maintained one being the one nothing called.
+        /// </summary>
+        private void JoinFriend(string joinCode)
+        {
+            if (string.IsNullOrEmpty(joinCode)) return;
+
+            MenuSfx.Click();
+            Close();
+            SceneFlow.PendingJoinCode = joinCode;
+            SceneFlow.Go(SceneFlow.MatchSetup);
+        }
+
+        // -------------------------------------------------------------------
         // § MATCHES
         // -------------------------------------------------------------------
 
@@ -1159,11 +1391,23 @@ namespace TumbangPreso.UI
             if (visible && _footerLabel != null) _footerLabel.text = action;
         }
 
+        /// <summary>
+        /// ⚠️ THE REFRESH IS THE WHOLE OF WHAT THIS TAB'S ONE ACTION DOES, and the redraw is on
+        /// `SocialStore.Changed` rather than here. A screen that redraws itself after asking
+        /// would be drawing the old list, because the call is asynchronous and the press is not.
+        /// </summary>
+        private void RefreshFriends()
+        {
+            GameServices.Social?.Refresh();
+            MenuSfx.Click();
+        }
+
         private void FooterPressed()
         {
             switch (_tab)
             {
                 case Tab.Profile: SaveProfile(); break;
+                case Tab.Friends: RefreshFriends(); break;
                 case Tab.Matches: RefreshMatches(); break;
             }
         }

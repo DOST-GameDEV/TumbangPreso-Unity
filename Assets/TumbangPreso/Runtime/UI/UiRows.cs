@@ -323,6 +323,48 @@ namespace TumbangPreso.UI
                     new Vector2(0.0f, 0.5f), new Vector2(SidePadding + 400.0f, -15.0f),
                     new Vector2(800.0f, 24.0f), TextAnchor.MiddleLeft);
                 note.horizontalOverflow = HorizontalWrapMode.Wrap;
+
+                // ⚠️⚠️ AND THE ROW GROWS WITH IT, WHICH IT DID NOT UNTIL 2026-08-31 AND WHICH IS
+                // A FAULT EVERY SCREEN BUILT FROM THIS FILE COULD HAVE HAD. The hint wrapped and
+                // the row did not: `LayoutElement.preferredHeight` was a flat `RowHeight`, so a
+                // two-line sentence drew its second line **below the zebra band and over the row
+                // underneath it**. `docs/TODO.md` § 102 has the render it was found in.
+                //
+                // ⚠️⚠️ AND NO PROBE IN THIS REPOSITORY COULD SEE IT, WHICH IS THE SAME SHAPE AS
+                // § 95 ONE AXIS OVER. `PlayerHubLayoutProbe` and `PhaseSurfaceLayoutProbe` both
+                // compare `preferredWidth` against the rect, and a WRAPPED label's preferred
+                // width is inside its box by definition — that is what wrapping means. **The
+                // overflow was vertical and every check in the project measured horizontally.**
+                //
+                // ⚠️ MEASURED OFF THE TEXT RATHER THAN COUNTED OFF THE STRING. The rect is a
+                // fixed 800 units wide, so `preferredHeight` is the same on every resolution and
+                // is the number `MenuKit.Fit` and `HudOverflowProbe` already ask for; a character
+                // count is an estimate of the thing that broke.
+                float wrapped = note.preferredHeight;
+                float singleLine = note.rectTransform.sizeDelta.y;
+
+                if (wrapped > singleLine + 1.0f)
+                {
+                    float extra = wrapped - singleLine;
+
+                    element.minHeight = RowHeight + extra;
+                    element.preferredHeight = RowHeight + extra;
+
+                    // ⚠️ THE NOTE'S OWN BOX GROWS TOO, or the text wraps inside a 24-unit rect and
+                    // the second line draws outside it however tall the row is. The row and the
+                    // label are two rects and both have to be told.
+                    note.rectTransform.sizeDelta = new Vector2(800.0f, wrapped);
+
+                    // ⚠️⚠️ ONLY THE LABEL MOVES, AND THE ARITHMETIC IS WHY. Both children are
+                    // anchored to the row's CENTRE, the row grew by `extra`, and the note is
+                    // top-anchored in effect because it grew downward from its own top edge: its
+                    // centre therefore stays exactly where it was. The label has to rise by half
+                    // the growth to keep the same gap from the row's top edge. **Moving both
+                    // would open a band of nothing under the sentence**, which is the gap
+                    // `HeroPickerLayoutProbe` exists because of.
+                    caption.rectTransform.anchoredPosition =
+                        new Vector2(SidePadding + 210.0f, 14.0f + extra * 0.5f);
+                }
             }
 
             var slotGo = new GameObject("Control", typeof(RectTransform));

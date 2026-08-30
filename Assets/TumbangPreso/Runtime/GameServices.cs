@@ -53,6 +53,9 @@ namespace TumbangPreso
         /// </summary>
         public static Net.TelemetrySink Telemetry { get; private set; }
 
+        /// <summary>Friends, blocks and presence. `docs/TODO.md` § 102.</summary>
+        public static Net.SocialStore Social { get; private set; }
+
         /// <summary>The announcer. Godot had it inside AudioManager; it is its own director
         /// here because its take pooling, per-line cooldowns and music ducking are a system,
         /// not three fields on the SFX player.</summary>
@@ -146,6 +149,12 @@ namespace TumbangPreso
             // the boot that happened. Nothing else in this list reads it, so it can never be the
             // reason another service is missing.
             Telemetry = _root.AddComponent<Net.TelemetrySink>();
+
+            // ⚠️ SOCIAL AFTER THE CAREER, because `SocialStore.Load` keys its cache on
+            // `CareerStore.LocalPlayerId` and a cache with no owner is one player's friends list
+            // drawn under another player's name. Same hazard and same answer as the two lines
+            // above: order the construction rather than hoping for one.
+            Social = _root.AddComponent<Net.SocialStore>();
         }
 
         /// <summary>
@@ -165,6 +174,7 @@ namespace TumbangPreso
             Career = null;
             Stats = null;
             Telemetry = null;
+            Social = null;
 
             _menuTrack = null;
             _matchTrack = null;

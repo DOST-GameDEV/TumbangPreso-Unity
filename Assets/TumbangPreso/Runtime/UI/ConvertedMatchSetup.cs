@@ -396,6 +396,42 @@ namespace TumbangPreso.UI
             Refresh();
 
             DriveAutomation();
+            DriveFriendJoin();
+        }
+
+        /// <summary>
+        /// Acts on a join code the friends rail handed over. `docs/TODO.md` § 102.
+        ///
+        /// ⚠️⚠️ IT PRESSES THE REAL CONTROL, WHICH IS THE SAME RULE `DriveAutomation` FOLLOWS
+        /// AND FOR THE SAME REASON. `LobbyJoinPanel.AutomationJoin` goes through `Connect` and
+        /// raises `Joined` exactly as a finger does, so a friend join and a typed join are one
+        /// code path. Reaching past the panel into `NetSession` would prove the transport works
+        /// and say nothing about whether the flow does.
+        ///
+        /// ⚠️ THE CODE IS CONSUMED BEFORE THE AWAIT, not after. Anything else and a slow
+        /// handshake leaves the field set while the player backs out, and the next visit to this
+        /// scene rejoins a lobby nobody asked for.
+        /// </summary>
+        private async void DriveFriendJoin()
+        {
+            string code = SceneFlow.PendingJoinCode;
+            if (string.IsNullOrEmpty(code)) return;
+
+            SceneFlow.PendingJoinCode = "";
+
+            if (_joinPanel == null) return;
+
+            _joinPanel.Open();
+            bool joined = await _joinPanel.AutomationJoin(code);
+
+            if (this == null) return;
+
+            // ⚠️ A FAILED JOIN LEAVES THE PANEL OPEN WITH ITS OWN MESSAGE IN IT, WHICH IS THE
+            // POINT. The friend's lobby may have filled or closed between the rail drawing it and
+            // the press landing, and `LobbyJoinPanel.Report` already says which; closing the panel
+            // on failure would dismiss the only explanation the player gets. `CLAUDE.md` § 6.3: a
+            // dead end is a bug.
+            if (!joined) Debug.Log($"[Social] could not join {code} from the friends rail.");
         }
 
         /// <summary>

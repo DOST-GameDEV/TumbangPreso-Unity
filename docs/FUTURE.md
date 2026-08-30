@@ -322,7 +322,7 @@ that phase's work, and where a phase disagrees with this row it should say so an
 | Phase | The surface it owes | The one thing on it | The trap it walks into |
 |---|---|---|---|
 | **5 · Cosmetics** | ⚠️ **CORRECTED 2026-08-31: the character SELECT screen, not a locker on the hub.** `docs/TODO.md` § 101.5 | **The character, wearing it.** A cosmetic screen with no preview is a list of nouns — and character select already IS that screen: the model, the real toon shader, the ink outline and the equipped palette are all on it. A locker on the hub would be a second screen showing the same character worse (§ 92), and the journey settles it: pick, recolour, done is three presses where you already are, against five that start by hunting a corner chip nobody has found (§ 96) | Phase 4's rewards are computed and worn by nothing (§ 91.8). ⚠️ **Wire the EXISTING rewards before authoring one new one**, or the first thing this phase ships is a second unworn set. ⚠️⚠️ **And check that they CAN be worn**: § 101.1 found `LoadoutRules.PaletteFor` refusing every input there is, because a mastery reward's id carries the hero and the variant table only knew the bare suffix |
-| **6 · Social** | A friends rail on the hub, and an invite on the lobby | **Who is online now.** Everything else is a submenu | A friends list is a live list, so it has three empty states (no friends, none online, service down) and § 0.5b question 3 says all three get designed |
+| **6 · Social** | ✅ **SHIPPED**: a FRIENDS tab on the hub, and an ADD per human on the end-of-match board. ⚠️ **A TAB, NOT A GROUP ON `PROFILE`**, corrected 2026-08-31: a group is collapsed by default like every other one, and PROFILE is the screen about YOU while this is the only screen in the game about anybody else (`docs/TODO.md` § 102) | **Who is online now.** Everything else is a submenu — so the tab's subtitle is the answer as a sentence (`3 of 12 online`) and `SocialRules.Sorted` floats joinable and online to the top on their own | A friends list is a live list, so it has three empty states (no friends, none online, service down) and § 0.5b question 3 says all three get designed. ⚠️ **All three are built**, and they say different things: no friends points at the end-of-match board, none online is not an error and does not read as one, and not signed in is the guest's state and the only one with an action attached |
 | **7 · Matchmaking** | A queue state on the mode screen, not a screen of its own | **Whether you are in the queue, readable from across the room** | A spinner is not a state. Say the mode, the time elapsed, and how to cancel, and never block the menu behind it |
 | **8 · Integrity** | Almost nothing, deliberately | **A result that is disputed says so, once** | ⚠️ Resist building a moderation console. This phase's success is invisible |
 | **9 · Ranked** | A badge on the nameplate and a rating line on the end-of-match board | **Which way the number moved, and by how much** | The rank badge is absent on purpose today (§ 92.8) and level and rank must never be confusable. ⚠️ A bot-filled ranked match must SAY so on that board (§ 11) |
@@ -870,6 +870,31 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 ---
 
 ## PHASE 6 · SOCIAL
+
+✅ **SHIPPED 2026-08-31, WITH THREE EXCEPTIONS NAMED BELOW. `docs/TODO.md` § 102 is the as-built
+record.** The rules are `Core/Social.cs`, the endpoint is `ugs/cloud-code/social.js` and it is
+deployed, the screen is a FRIENDS tab on the hub, and the invite is an ADD button per human on the
+end-of-match board.
+
+⚠️⚠️ **TWO OF THE BULLETS BELOW DEPEND ON A MATCHMAKER THAT DOES NOT EXIST UNTIL PHASE 7, AND ONE
+DEPENDS ON A SERVICE QUERY CLOUD SAVE DOES NOT HAVE.** They are marked, and § 102.2 has the
+reasoning in full rather than a shrug:
+
+- ⚠️ **Parties that "queue together" cannot be built before there is a queue.** What ships is the
+  thing that queue would replace: a friend in a joinable lobby publishes its join code with their
+  presence, and JOIN on the rail hands it to `LobbyJoinPanel`. When Phase 7 lands, a party becomes
+  a queue ticket and the rail does not change.
+- ⚠️ **"By display name and tag" needs an index document.** Cloud Save is keyed by player id with
+  no query-by-value, so resolving `Maria Clara#4417` means a second document every rename has to
+  update, with a real failure mode (a stale index hands a request to the wrong account). **Recent
+  players ships instead**, which this section itself calls the highest-converting path.
+- ⚠️ **Blocking survives the only matchmaking there is**: a blocked account is refused at
+  connection approval, so it cannot join a lobby you host. Phase 9 inherits the rule.
+
+⚠️ **AND NO TWO-ACCOUNT RUN HAS HAPPENED.** § 102.5: the probe has one throwaway UGS profile, so
+`request`, `accept`, `decline` and `remove` are proven by the core tests and by reading the
+deployed script, not by a live round trip between two players. That is a thirty-minute manual pass
+on the two laptops and it is the next thing to do with this feature.
 
 - Friends by id, by display name and tag, and by a share code.
 - Presence: online, in menu, in queue, in a match, spectating.

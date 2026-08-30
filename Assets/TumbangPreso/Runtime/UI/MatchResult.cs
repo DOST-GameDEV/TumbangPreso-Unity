@@ -537,6 +537,9 @@ namespace TumbangPreso.UI
 
             Spacer(card, 16.0f);
 
+            _addStack = SubStack(card, "AddFriends", 8.0f);
+            RefreshAddFriends();
+
             // ⚠️ STACKED, NOT SIDE BY SIDE, AND THE SECOND ONE SAYS "MAIN MENU". Both come
             // straight off the .tscn, which puts `RematchButton` above `MenuButton` in the same
             // VBox. Two 280-wide buttons in a row do not fit a 600-wide card at all, which is
@@ -552,6 +555,76 @@ namespace TumbangPreso.UI
             _rematchTally.text = "";
 
             _menu = StackedButton(card, "MAIN MENU", OnMenuPressed);
+        }
+
+        private VerticalLayoutGroup _addStack;
+
+        /// <summary>
+        /// One ADD button per human you just played with who is not already on your list.
+        ///
+        /// ⚠️⚠️ `FUTURE.md` § 6 CALLS THIS *"THE HIGHEST-CONVERTING SOCIAL PROMPT ANY GAME OF
+        /// THIS SHAPE HAS"*, and it is the only way to add somebody that does not require them to
+        /// hand you anything first. Everything the row needs is already in the `MatchRecord` every
+        /// peer receives (`SocialRules.RecentPlayers`), so this costs no wire and no service call
+        /// until somebody presses it.
+        ///
+        /// ⚠️⚠️ AND NOTHING IS DRAWN WHEN THERE IS NOTHING TO OFFER, WHICH IS MOST MATCHES. A
+        /// solo game against bots, a lobby of people you are already friends with, and a machine
+        /// that never signed in all produce an empty list, and `SocialRules.RecentPlayers` refuses
+        /// each of them for its own reason. **A permanent ADD FRIENDS header over nothing would be
+        /// on the one screen a player sees after every single match**, which is exactly how a
+        /// board that already carries a result, an XP bar and a rematch vote becomes § 92's *"20
+        /// shits at once"*.
+        ///
+        /// ⚠️ IT IS BELOW THE STANDINGS AND ABOVE REMATCH, which is the order of what the player
+        /// came for: the result, then who they played, then what to do next. REMATCH stays the
+        /// last thing on the card because it is still the primary action.
+        /// </summary>
+        private void RefreshAddFriends()
+        {
+            if (_addStack == null) return;
+
+            for (int i = _addStack.transform.childCount - 1; i >= 0; i--)
+                Destroy(_addStack.transform.GetChild(i).gameObject);
+
+            var social = GameServices.Social;
+            var record = GameServices.Stats != null ? GameServices.Stats.Last : null;
+
+            var offer = Core.SocialRules.RecentPlayers(record, social?.List,
+                                                       Net.CareerStore.LocalPlayerId);
+
+            if (social == null || offer.Count == 0) return;
+
+            var heading = CardLabel(_addStack, "AddHeading", MenuKit.MinReadableUnits,
+                                    UiTheme.CreamMuted, 24, TextAnchor.MiddleCenter);
+            heading.text = offer.Count == 1 ? "PLAYED WITH YOU" : "PLAYED WITH YOU";
+
+            foreach (var person in offer)
+            {
+                string id = person.PlayerId;
+                string handle = person.Handle;
+                string label = string.IsNullOrEmpty(handle) ? "ADD PLAYER" : "ADD  " + handle;
+
+                Button button = null;
+
+                button = StackedButton(_addStack, label, () =>
+                {
+                    social.Request(id, handle);
+                    MenuSfx.Click();
+
+                    // ⚠️⚠️ THE BUTTON REPORTS ITSELF RATHER THAN DISAPPEARING, and it is disabled
+                    // rather than removed. The call is asynchronous and the list does not come
+                    // back for a moment; a row that vanishes on press leaves the player unsure
+                    // whether it worked, and a row that stays pressable invites a second request.
+                    // **`CLAUDE.md` § 6.3: a control that does something must react.**
+                    if (button == null) return;
+
+                    button.interactable = false;
+
+                    var caption = button.GetComponentInChildren<Text>();
+                    if (caption != null) caption.text = "REQUEST SENT";
+                });
+            }
         }
 
         /// <summary>The wood card: a centred column that grows to fit what is put in it.</summary>
