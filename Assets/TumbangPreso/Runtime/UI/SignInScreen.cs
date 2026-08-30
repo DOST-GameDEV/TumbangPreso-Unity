@@ -26,9 +26,28 @@ namespace TumbangPreso.UI
     /// </summary>
     public sealed class SignInScreen : MonoBehaviour
     {
-        /// <summary>⚠️ 38 per cent, measured off the reference. Narrower and the fields squeeze;
-        /// wider and the art stops being the thing you notice first.</summary>
-        private const float ColumnFraction = 0.38f;
+        /// <summary>
+        /// The column's width in canvas UNITS, not as a fraction of the screen.
+        ///
+        /// ⚠️⚠️ IT WAS 38 PER CENT AND THAT IS WHY THE BOX LOOKED ENORMOUS AND THE ART LOOKED
+        /// CHOPPED. 🧑, opening the build: *"the art is cut off... can u properly cut it at the
+        /// appropriate amt and maybe make the box smaller"*. A fraction sizes the column against
+        /// the WINDOW, and `AspectSafeCanvas` scales the canvas on the SHORT axis, so on the
+        /// short wide window he actually plays in the canvas is about 2250 units across and 38
+        /// per cent of it is **860 units of wood around a 420-unit form**. The form never got
+        /// bigger; the empty wood either side of it did, and it took the art's space with it.
+        ///
+        /// ⚠️ 580 UNITS IS THE FORM PLUS ONE MARGIN EITHER SIDE (420 + 80 + 80), which is what
+        /// the Riot reference's column actually is: a form-width column, not a percentage.
+        ///
+        /// ⚠️⚠️ AND A FIXED WIDTH CANNOT SWALLOW A NARROW SCREEN, WHICH IS THE ONE THING A
+        /// FRACTION BUYS. `AspectSafeCanvas` uses `Expand`, so the scale is
+        /// `min(w/1920, h/1080)` and the canvas is therefore **never narrower than 1920 units**
+        /// at any resolution the game ships at. 580 of 1920 is 30 per cent in the worst case
+        /// (4:3) and about 26 on his window. There is no shape where this column squeezes the
+        /// form or eats the picture.
+        /// </summary>
+        private const float ColumnUnits = 580.0f;
 
         private Canvas _canvas;
         private GameObject _root;
@@ -107,26 +126,30 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>
-        /// ⚠️⚠️ THE ART SIDE IS THE LIVE SCENE, NOT A TEXTURE, AND THAT IS DELIBERATE RATHER THAN
-        /// LAZY. PUBG's login sits on a full-bleed key-art frame and Valorant's on a splash
-        /// render; this game already has the street, the cast and the lighting running behind the
-        /// menu, and a scrim over it is the same picture without shipping a 4 MB PNG that goes
-        /// stale the first time the art changes. The scrim is heavy enough that white text on it
-        /// is legible at every point of the animated backdrop.
+        /// What sits behind the form, which is the key art when there is one and a heavy black
+        /// backdrop over the live scene when there is not.
+        ///
+        /// ⚠️⚠️ THE SCRIM IS GONE WHEN THE ART IS THERE, AND 🧑 ASKED FOR THAT IN ONE LINE:
+        /// *"also nno nneed to darkenn it"*. It was 72 per cent over the live street, then 55 per
+        /// cent over the art. **Both numbers were paying for legibility this screen does not
+        /// need**: every word on it sits on an opaque wood column, and the art side carries no
+        /// text at all, so the scrim was knocking back the one thing the player is meant to look
+        /// at in order to protect text that is not on it. `UiRows.Band`'s note is the same rule
+        /// read the other way: a number tuned against one background is not a number, and this
+        /// one had already been retuned once without asking what it was still for.
+        ///
+        /// ⚠️ THE FALLBACK KEEPS ITS 72 PER CENT, AND IT IS NOT THE SAME SITUATION. With no key
+        /// art the art side IS the live, moving, fully lit street with the menu's own buttons on
+        /// it, and that has to be knocked back or this stops being a separate screen and goes
+        /// back to being a password field over the menu, which is what the whole rebuild removed.
         /// </summary>
         private void BuildScrim()
         {
             BuildKeyArt();
 
-            // ⚠️⚠️ 55 PER CENT NOW, NOT 72, BECAUSE THERE IS SOMETHING BEHIND IT WORTH SEEING.
-            // The old number was measured against the LIVE STREET, which is a lit 3D scene that
-            // has to be knocked back hard before white text is legible over it. The key art is a
-            // still, it is already dark at the edges, and the only text on this screen sits on an
-            // opaque column, so the scrim's job here is separation rather than legibility.
-            // ⚠️ **A number tuned against one background is not a number**, which `UiRows.Band`
-            // records paying for once already.
-            var scrim = MenuKit.Backdrop(_root.transform,
-                new Color(0.0f, 0.0f, 0.0f, HasKeyArt ? 0.55f : 0.72f));
+            if (HasKeyArt) return;
+
+            var scrim = MenuKit.Backdrop(_root.transform, new Color(0.0f, 0.0f, 0.0f, 0.72f));
             scrim.gameObject.name = "Scrim";
         }
 
@@ -150,6 +173,40 @@ namespace TumbangPreso.UI
         ///
         /// ⚠️ IT ENVELOPES, like the loading screen, because it is a background and cropping it
         /// is correct. The logo above the form uses `FitInParent` for the opposite reason.
+        ///
+        /// ⚠️⚠️ AND IT ENVELOPES THE ART SIDE, NOT THE SCREEN, WHICH IS THE WHOLE OF THE BUG 🧑
+        /// OPENED THE BUILD AND FOUND: *"This shhit is horrible bro the art is cut off"*. The
+        /// picture was fitted to the FULL canvas and then a third of it was covered by the
+        /// column, so the crop was computed for a frame nobody could see and what was left was
+        /// an off-centre window into it. Two things went wrong at once and they compounded:
+        ///
+        /// - **Horizontally**, the cast is composed around the middle of the frame, and the
+        ///   column sat on the left third of that frame. The character on the far left was
+        ///   behind the wood and the whole group was pushed off-centre in what remained.
+        /// - **Vertically**, his window is wider than 16:9 and the art is 16:9, so enveloping it
+        ///   to the full canvas matched WIDTH and cut the top and bottom off. That is where the
+        ///   chopped heads came from.
+        ///
+        /// **Enveloping the region the art is actually seen in fixes both at once, and it is
+        /// arithmetic rather than taste.** The art side is `canvasWidth - 580` by
+        /// `canvasHeight`; on his short wide window that is about 1670x1080, which is 1.55, and
+        /// the picture is 1.78. A region NARROWER than the picture matches HEIGHT, so the full
+        /// height of the art is on screen, nothing is cut off the top or the bottom, and the
+        /// only crop is a symmetric slice off each end. At 1920x1080 that slice is the widest it
+        /// gets and still leaves the middle 70 per cent, which holds every character: the cast
+        /// spans 13 to 87 per cent of the frame.
+        ///
+        /// ⚠️ THE CROP IS CENTRED AND IS NOT BIASED UPWARD, WHICH WAS TRIED ON PAPER FIRST. A
+        /// pivot above centre would keep the sky and lose the road, but the lata and the tsinelas
+        /// ARE the bottom of this picture and they are the game's two objects. There is no crop
+        /// worth taking that cuts them.
+        ///
+        /// ⚠️⚠️ AND THE OVERFLOW IS MASKED RATHER THAN COVERED. Enveloping means the picture is
+        /// bigger than its region by construction, and the old arrangement relied on the column
+        /// being opaque and later in the hierarchy to hide the part that spilled under it. That
+        /// is the same class of assumption as § 99: it is true until somebody reorders two lines
+        /// or gives the column a translucent skin. A `RectMask2D` makes the region's edge the
+        /// picture's edge whatever is drawn beside it.
         /// </summary>
         private void BuildKeyArt()
         {
@@ -157,13 +214,39 @@ namespace TumbangPreso.UI
             HasKeyArt = art != null;
             if (art == null) return;
 
+            var side = new GameObject("ArtSide", typeof(RectTransform));
+            side.transform.SetParent(_root.transform, false);
+
+            var sideRt = (RectTransform)side.transform;
+            sideRt.anchorMin = Vector2.zero;
+            sideRt.anchorMax = Vector2.one;
+            sideRt.offsetMin = new Vector2(ColumnUnits, 0.0f);
+            sideRt.offsetMax = Vector2.zero;
+            side.AddComponent<RectMask2D>();
+
             var go = new GameObject("KeyArt", typeof(RectTransform), typeof(RawImage));
-            go.transform.SetParent(_root.transform, false);
-            MenuKit.Stretch((RectTransform)go.transform);
+            go.transform.SetParent(side.transform, false);
+
+            // ⚠️ CENTRED ANCHORS, NOT STRETCHED, BECAUSE THE FITTER IS WHAT SIZES THIS RECT.
+            // `AspectRatioFitter` drives `sizeDelta`, and on a stretched rect `sizeDelta` is an
+            // inset from the parent's edges rather than a size, so the two disagree about what
+            // the number means and the result depends on which ran last.
+            var rt = (RectTransform)go.transform;
+            rt.anchorMin = Centre;
+            rt.anchorMax = Centre;
+            rt.pivot = Centre;
+            rt.anchoredPosition = Vector2.zero;
 
             var image = go.GetComponent<RawImage>();
             image.texture = art;
-            image.raycastTarget = false;
+
+            // ⚠️⚠️ THE ART IS THE BLOCKER NOW, AND WITHOUT THIS THE MENU UNDERNEATH IS STILL
+            // CLICKABLE THROUGH IT. The scrim used to be what stopped a press on the art side
+            // reaching the title screen behind, and deleting it takes that with it: at boot the
+            // player would have been able to press PLAY through the picture, on a screen that
+            // exists to ask a question first. `RectMask2D` is an `ICanvasRaycastFilter`, so the
+            // block stops exactly where the picture does, and the opaque column takes the rest.
+            image.raycastTarget = true;
 
             var fitter = go.AddComponent<AspectRatioFitter>();
             fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
@@ -175,11 +258,14 @@ namespace TumbangPreso.UI
             var columnGo = new GameObject("Column", typeof(RectTransform), typeof(Image));
             columnGo.transform.SetParent(_root.transform, false);
 
+            // ⚠️ ANCHORED TO THE LEFT EDGE AND SIZED IN UNITS, NOT TO A FRACTION OF THE WIDTH.
+            // See `ColumnUnits`: the fraction is what made the box enormous on his window and
+            // took the picture's space with it. Full height either way, which is the reference.
             var rt = (RectTransform)columnGo.transform;
             rt.anchorMin = Vector2.zero;
-            rt.anchorMax = new Vector2(ColumnFraction, 1.0f);
+            rt.anchorMax = new Vector2(0.0f, 1.0f);
             rt.offsetMin = Vector2.zero;
-            rt.offsetMax = Vector2.zero;
+            rt.offsetMax = new Vector2(ColumnUnits, 0.0f);
 
             columnGo.GetComponent<Image>().color = UiTheme.WoodDeep;
 
