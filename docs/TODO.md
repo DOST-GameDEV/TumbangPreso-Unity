@@ -23,7 +23,7 @@ Read § 89.3 before changing who submits a match record, and § 89.6 before chan
 corrects the fix § 88.1c prescribed) and telemetry (§ 90.3, whose event names are a contract that
 must not be renamed). ⚠️ `NetSession.ProtocolVersion` is **16**; both machines rebuild.
 Written 2026-08-31 on 🧑's brief.
-⚠⚠ **`profile-stats` IS THE ONLY LIVE BRANCH. BRANCH OFF IT.** Its parent `accounts` was
+⚠️⚠️ **`profile-stats` IS THE ONLY LIVE BRANCH. BRANCH OFF IT.** Its parent `accounts` was
 fully merged into it (`f8b47d01`, contained in `profile-stats`) and was **deleted local and
 remote on 2026-08-30**, together with the stale local ref for a plans branch that had been gone
 on the remote for longer. 🧑 asked for both by name. Every commit either held is reachable
@@ -1126,7 +1126,7 @@ audio cue or a map, so it is expected to be OK, but expected is not measured.
   (`total="8" passed="8" failed="0"`, 20.9 s). The eighth is
   `TheTelemetryEndpointAcceptsEveryColumnOfAFrameRateEvent` and the service answered
   **`{"accepted":1,"funnel":{},"refused":0,"rolled":true}`**.
-  ⚠⚠ **`"refused":0` IS THE WHOLE POINT AND `"accepted":1` IS NOT.** A service running the
+  ⚠️⚠️ **`"refused":0` IS THE WHOLE POINT AND `"accepted":1` IS NOT.** A service running the
   pre-`match_frame_rate` script would still have answered `accepted` for the batch and dropped the
   event, because § 90.5's fault mode is a well-formed answer from the wrong shape rather than an
   error. Refusing zero of eight columns is the statement that the deployed script knows the event
@@ -1136,8 +1136,15 @@ audio cue or a map, so it is expected to be OK, but expected is not measured.
 - **Core 237/237** re-run at 290 ms, unchanged.
 - **All three `tools/` audits exit 0**, unchanged: 44 effect call sites with 0 ungated on another
   body, 52 wire entry points with 0 unreachable, 55 named messages with 0 mismatched.
-- **`Checks.RunAll`** and **a clean Windows player on the Desktop**: see the handoff for this
-  session's run.
+- **EditMode 250/250**, read from `Logs/tests.xml` (`total="250" passed="250" failed="0"`, 4.6 s).
+  No code changed in this entry, so the signal is only that nothing drifted.
+- **`Checks.RunAll` OK, all five in one launch**: `RESULT: OK. All 5 checks passed in one launch.`
+  ⚠️ `MapGeometryCheck` still prints the per-prop `FAIL` lines for Eskinita dressing that it
+  does not gate on, exactly as § 89.8 and § 90.6 record. Its own verdict is `RESULT: OK`, and
+  the run's verdict is the `RESULT:` line rather than the loudest line.
+- **A clean Windows player on the Desktop**: `[Build] SUCCEEDED. 764 MB, 65s ->
+  C:\Users\matth\Desktop\TumbangPreso-Unity\TumbangPreso.exe`, with `TumbangPreso.exe` and
+  `TumbangPreso_Data` both carrying timestamps from this run rather than from § 90.6's.
 
 ⚠️ **Still not verified and still cannot be from this machine:** the unplugged four-player LAN
 run of § 90.4, which needs four rebuilt machines because `ProtocolVersion` is 16.
