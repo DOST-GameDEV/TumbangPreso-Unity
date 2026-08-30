@@ -105,6 +105,46 @@ namespace TumbangPreso.UI
         /// </summary>
         public event Action<bool> VisibleChanged;
 
+        /// <summary>
+        /// Escape backs out of the hub, innermost thing first.
+        ///
+        /// ⚠️⚠️ IT WAS DEAD ON THIS SCREEN AND ON THIS SCREEN ONLY, WHICH IS THE WORST PLACE FOR
+        /// AN INCONSISTENCY. `ConvertedScreen.Update` gives every converted screen an Escape that
+        /// goes somewhere, and its own header records what it cost when three screens were left
+        /// with `CancelTarget = null`: *"Escape was therefore dead on exactly the screens..."*.
+        /// The hub and the sign-in screen are built in code rather than converted from a `.tscn`,
+        /// so they inherited none of it. **A player who learns that Escape backs out everywhere
+        /// and then meets one screen where it does not has learned that it is unreliable**, which
+        /// is worse than it never working.
+        ///
+        /// ⚠️⚠️ INNERMOST FIRST, AND THE ORDER IS THE WHOLE BEHAVIOUR. The match-detail popup
+        /// sits over the MATCHES tab, so Escape closes the popup and leaves the hub open. One
+        /// press, one layer. Closing both would throw away the list the player was reading; doing
+        /// nothing would trap them in a popup whose only exit is a BACK button they have to find.
+        ///
+        /// ⚠️ THE SIGN-IN SCREEN OWNS ITS OWN ESCAPE, because at boot it must NOT be dismissable:
+        /// there is nothing behind it. See `SignInScreen.Update`.
+        ///
+        /// ⚠️ AND THE SOUND FOLLOWS THE DECISION, copying `ConvertedScreen.Update` exactly: a
+        /// click on a press that then does nothing reads as a press that was swallowed.
+        /// </summary>
+        private void Update()
+        {
+            if (_root == null || !_root.activeSelf) return;
+            if (_signIn != null && _signIn.IsOpen) return;
+            if (!Input.GetKeyDown(KeyCode.Escape)) return;
+
+            if (_detail != null && _detail.activeSelf)
+            {
+                _detail.SetActive(false);
+                MenuSfx.Back();
+                return;
+            }
+
+            Close();
+            MenuSfx.Back();
+        }
+
         // -------------------------------------------------------------------
         // § CHROME
         // -------------------------------------------------------------------

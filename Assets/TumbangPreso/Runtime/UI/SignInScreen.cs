@@ -42,6 +42,32 @@ namespace TumbangPreso.UI
         /// player pressed. See <see cref="OpenAtBoot"/>.
         /// </summary>
         private bool _atBoot;
+
+        /// <summary>Whether this screen is showing. Read by `PlayerHub.Update` so the two do not
+        /// both answer one Escape.</summary>
+        public bool IsOpen => _root != null && _root.activeSelf;
+
+        /// <summary>
+        /// Escape leaves this screen, unless it is the first thing the game showed.
+        ///
+        /// ⚠️⚠️ AT BOOT IT IS INERT ON PURPOSE AND THAT IS NOT AN OVERSIGHT. `OpenAtBoot` hides
+        /// BACK for the same reason: there is nothing behind this screen, so a dismissal would
+        /// drop the player onto a menu the game has not decided they may use yet, with the
+        /// account question unanswered and no way back to it. **The escape from the boot screen
+        /// is CONTINUE AS GUEST**, which is one press and is the whole reason the gate is
+        /// acceptable at all (`docs/TODO.md` § 97).
+        ///
+        /// ⚠️ OPENED BY A PRESS, IT BEHAVES LIKE EVERY OTHER SCREEN, because a player who
+        /// pressed something to get here has somewhere to go back to.
+        /// </summary>
+        private void Update()
+        {
+            if (!IsOpen || _atBoot) return;
+            if (!Input.GetKeyDown(KeyCode.Escape)) return;
+
+            Close();
+            MenuSfx.Back();
+        }
         private bool _creating;
 
         /// <summary>Raised when the player leaves, whether they signed in or not, so the hub can
@@ -90,8 +116,58 @@ namespace TumbangPreso.UI
         /// </summary>
         private void BuildScrim()
         {
-            var scrim = MenuKit.Backdrop(_root.transform, new Color(0.0f, 0.0f, 0.0f, 0.72f));
+            BuildKeyArt();
+
+            // ⚠️⚠️ 55 PER CENT NOW, NOT 72, BECAUSE THERE IS SOMETHING BEHIND IT WORTH SEEING.
+            // The old number was measured against the LIVE STREET, which is a lit 3D scene that
+            // has to be knocked back hard before white text is legible over it. The key art is a
+            // still, it is already dark at the edges, and the only text on this screen sits on an
+            // opaque column, so the scrim's job here is separation rather than legibility.
+            // ⚠️ **A number tuned against one background is not a number**, which `UiRows.Band`
+            // records paying for once already.
+            var scrim = MenuKit.Backdrop(_root.transform,
+                new Color(0.0f, 0.0f, 0.0f, HasKeyArt ? 0.55f : 0.72f));
             scrim.gameObject.name = "Scrim";
+        }
+
+        private bool HasKeyArt;
+
+        /// <summary>
+        /// The cast, behind the form, which is what the reference actually does.
+        ///
+        /// ⚠️⚠️ 🧑: *"also can u put the frigging splash art there now ? i already gave u it
+        /// right"*. `docs/TODO.md` § 97 listed this as the one thing left out of the boot screen
+        /// and said why it was left: it is a look change and that entry was a flow change. The
+        /// art is already in `Resources` for the loading screen (§ 95c), so this costs one load.
+        ///
+        /// ⚠️⚠️ AND IT REPLACES A CLAIM THIS FILE MADE THAT IS NO LONGER TRUE. `BuildScrim`'s old
+        /// note argued the art side should be the LIVE SCENE rather than a texture, *"without
+        /// shipping a 4 MB PNG that goes stale the first time the art changes"*. That was a good
+        /// argument when there was no key art; there is one now, it ships anyway for the loading
+        /// screen, and **the live scene is not visible here at all when this screen opens at
+        /// boot** because the menu behind it is a different canvas. The old note is corrected
+        /// rather than deleted, per `CLAUDE.md` § 3.
+        ///
+        /// ⚠️ IT ENVELOPES, like the loading screen, because it is a background and cropping it
+        /// is correct. The logo above the form uses `FitInParent` for the opposite reason.
+        /// </summary>
+        private void BuildKeyArt()
+        {
+            var art = Resources.Load<Texture2D>("UI/splash_art");
+            HasKeyArt = art != null;
+            if (art == null) return;
+
+            var go = new GameObject("KeyArt", typeof(RectTransform), typeof(RawImage));
+            go.transform.SetParent(_root.transform, false);
+            MenuKit.Stretch((RectTransform)go.transform);
+
+            var image = go.GetComponent<RawImage>();
+            image.texture = art;
+            image.raycastTarget = false;
+
+            var fitter = go.AddComponent<AspectRatioFitter>();
+            fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+            fitter.aspectRatio = art.width / (float)art.height;
         }
 
         private void BuildColumn()
@@ -116,26 +192,48 @@ namespace TumbangPreso.UI
 
             var col = columnGo.transform;
 
-            MenuKit.Label(col, "TUMP", 30, UiTheme.Amber, new Vector2(0.5f, 1.0f),
-                new Vector2(0.0f, -70.0f), new Vector2(360.0f, 44.0f));
+            // ⚠️⚠️ EVERY ROW IS PLACED FROM THE COLUMN'S CENTRE, NOT FROM ITS TOP AND BOTTOM,
+            // AND THE OLD ARRANGEMENT IS WHAT 🧑 CALLED *"ugly big ass space i hate this ui its
+            // so ugly"*. The form was pinned to the top of a full-height column and the two
+            // footer buttons to the bottom of it, so the taller the window the bigger the void
+            // between them: at 1080 it is most of the screen of nothing.
+            //
+            // ⚠️ THE COLUMN STAYS FULL HEIGHT, WHICH IS THE REFERENCE, AND ONLY THE CONTENT
+            // MOVES. `FUTURE.md` PHASE 1 and § 92.2: *"a sign-in is a narrow column beside art"*.
+            // Shrinking the column to fit the form would make it a floating card, which is a
+            // different screen and not the one that was asked for.
+            //
+            // ⚠️ ONE ANCHOR MEANS THE BLOCK CANNOT SPLIT. Two anchors is a layout that is correct
+            // at one window height, which is fault 3 of § 92.1 and the reason `UiRows` exists.
+            // The block is about 780 units tall and the canvas matches HEIGHT at a 1080
+            // reference, so it fits every shape the game ships at by construction.
+            const float Logo = 300.0f;
+            const float Heading = 210.0f;
+            const float Tabs = 140.0f;
+            const float UserField = 20.0f;
+            const float PassField = -100.0f;
+            const float Hint = -170.0f;
+            const float Primary = -240.0f;
 
-            _heading = MenuKit.Label(col, "SIGN IN", 40, UiTheme.Cream, new Vector2(0.5f, 1.0f),
-                new Vector2(0.0f, -150.0f), new Vector2(420.0f, 54.0f));
+            BuildLogo(col, Logo);
 
-            BuildTabs(col);
+            _heading = MenuKit.Label(col, "SIGN IN", 40, UiTheme.Cream, Centre,
+                new Vector2(0.0f, Heading), new Vector2(420.0f, 54.0f));
 
-            _username = Field(col, "USERNAME", -350.0f, "your username", 64, false);
-            _password = Field(col, "PASSWORD", -470.0f, "your password", 128, true);
+            BuildTabs(col, Tabs);
+
+            _username = Field(col, "USERNAME", UserField, "your username", 64, false);
+            _password = Field(col, "PASSWORD", PassField, "your password", 128, true);
 
             // ⚠️ THE ERROR SITS UNDER THE FIELDS RATHER THAN IN A SHARED STATUS LINE AT THE TOP.
             // The old panel had one `_status` label that reported saving a profile, linking a
             // username, signing in and arming a delete, so the sentence on screen was whichever
             // of six unrelated actions ran last.
             _error = MenuKit.Label(col, "", MenuKit.MinReadableUnits, UiTheme.Danger,
-                new Vector2(0.5f, 1.0f), new Vector2(0.0f, -546.0f), new Vector2(420.0f, 56.0f));
+                Centre, new Vector2(0.0f, Hint), new Vector2(420.0f, 56.0f));
             _error.horizontalOverflow = HorizontalWrapMode.Wrap;
 
-            BuildPrimary(col);
+            BuildPrimary(col, Primary);
 
             // ⚠️⚠️ THE GUEST BUTTON DOES TWO DIFFERENT THINGS AND THE LABEL SAYS WHICH.
             // Reached from the ACCOUNT tab it is the TOURNAMENT guest, which parks the owner's
@@ -144,11 +242,15 @@ namespace TumbangPreso.UI
             // is the opposite: nothing is parked and nothing is temporary. **Two behaviours
             // behind one word is exactly the confusion this file was rebuilt to remove**, so the
             // caption changes with the mode and `BootGuest` and `Guest` are separate methods.
-            _guest = MenuKit.WoodButton(col, "PLAY AS GUEST", new Vector2(0.5f, 0.0f),
-                new Vector2(0.0f, 132.0f), new Vector2(300.0f, 48.0f), GuestPressed);
+            // ⚠️ THE ESCAPE SITS DIRECTLY UNDER THE PRIMARY, NOT AT THE BOTTOM OF THE COLUMN.
+            // It is the second thing a player might do here, so it belongs beside the first;
+            // parked at the bottom it was separated from the form by a screen of nothing and
+            // read as unrelated chrome. **A choice and its alternative are one group.**
+            _guest = MenuKit.WoodButton(col, "PLAY AS GUEST", Centre,
+                new Vector2(0.0f, -320.0f), new Vector2(300.0f, 48.0f), GuestPressed);
 
-            _back = MenuKit.WoodButton(col, "BACK", new Vector2(0.5f, 0.0f),
-                new Vector2(0.0f, 74.0f), new Vector2(300.0f, 48.0f), Close);
+            _back = MenuKit.WoodButton(col, "BACK", Centre,
+                new Vector2(0.0f, -382.0f), new Vector2(300.0f, 48.0f), Close);
         }
 
         /// <summary>
@@ -158,20 +260,90 @@ namespace TumbangPreso.UI
         /// know the difference before they have typed anything. A segment says "one of these two
         /// modes is on" and the primary underneath does whichever it is.
         /// </summary>
-        private void BuildTabs(Transform col)
-        {
-            _signInTab = MenuKit.WoodButton(col, "SIGN IN", new Vector2(0.5f, 1.0f),
-                new Vector2(-108.0f, -230.0f), new Vector2(206.0f, 48.0f), () => SetMode(false),
-                "WoodAmberButton");
+        /// <summary>Everything in the column is placed from its centre. See `BuildColumn`.</summary>
+        private static readonly Vector2 Centre = new Vector2(0.5f, 0.5f);
 
-            _createTab = MenuKit.WoodButton(col, "CREATE", new Vector2(0.5f, 1.0f),
-                new Vector2(108.0f, -230.0f), new Vector2(206.0f, 48.0f), () => SetMode(true));
+        /// <summary>
+        /// The real wordmark from the title screen, not the word typed out.
+        ///
+        /// ⚠️⚠️ 🧑 ASKED FOR IT BY NAME: *"can u use the real TUMP text logo taht we have on
+        /// title screen too"*. It was a 30-unit amber `Label` reading "TUMP", which is the game's
+        /// name in the menu font rather than the game's LOGO, and this is the first screen a
+        /// player ever sees. `Resources/UI/main-menu/TUMP.png` is the same asset the title screen
+        /// draws, so the two cannot drift.
+        ///
+        /// ⚠️ `preserveAspect`, BECAUSE THE SOURCE IS 1835x527 AND THE BOX IS NOT. Without it the
+        /// wordmark is squashed to whatever rect it was given, which is the one thing a logo may
+        /// never be.
+        ///
+        /// ⚠️ AND A MISSING FILE FALLS BACK TO THE WORD. `Resources.Load` answers null rather
+        /// than throwing, and a boot screen with a hole where the name should be is worse than
+        /// one with the name set in the menu font.
+        /// </summary>
+        private void BuildLogo(Transform col, float y)
+        {
+            // ⚠️⚠️ `Texture2D` AND A `RawImage`, NOT `Sprite` AND AN `Image`, AND THE FIRST
+            // VERSION SILENTLY FELL BACK TO THE WORD BECAUSE OF IT. `TUMP.png.meta` carries
+            // `textureType: 0` and `spriteMode: 0`, so the asset is a plain texture and
+            // `Resources.Load<Sprite>` answers **null** for a file that is right there. The
+            // render showed the fallback label and nothing said why. The splash art
+            // (`SplashScreen.BuildSplashArt`) already made this choice for the same reason: a
+            // `RawImage` draws whatever import settings the file arrived with, and a `.meta` is
+            // a file nobody edits by hand and a re-import can reset.
+            var logo = Resources.Load<Texture2D>("UI/main-menu/TUMP");
+
+            if (logo == null)
+            {
+                MenuKit.Label(col, "TUMP", 30, UiTheme.Amber, Centre,
+                    new Vector2(0.0f, y), new Vector2(360.0f, 44.0f));
+                return;
+            }
+
+            // ⚠️⚠️ THE FITTER NEEDS A BOX OF ITS OWN, AND WITHOUT ONE THE WORDMARK ATE THE
+            // SCREEN. `AspectRatioFitter.FitInParent` sizes the rect against its PARENT, not
+            // against whatever size the rect was given, so putting it straight on a child of the
+            // full-height column made the logo as wide as the column and drew it straight through
+            // the username field. The first render of this showed TUMP three hundred pixels tall
+            // behind the form.
+            //
+            // ⚠️ SO: a plain rect that owns the 360x104 slot, and the image fitted inside THAT.
+            // One extra object, and the fitter's rule now applies to the space the layout meant.
+            var box = new GameObject("LogoBox", typeof(RectTransform));
+            box.transform.SetParent(col, false);
+            MenuKit.Place((RectTransform)box.transform, Centre,
+                new Vector2(0.0f, y), new Vector2(360.0f, 104.0f));
+
+            var go = new GameObject("Logo", typeof(RectTransform), typeof(RawImage));
+            go.transform.SetParent(box.transform, false);
+            MenuKit.Stretch((RectTransform)go.transform);
+
+            var image = go.GetComponent<RawImage>();
+            image.texture = logo;
+            image.raycastTarget = false;
+
+            // ⚠️ FIT INSIDE, NOT ENVELOPE. The wordmark is 1835x527 and the slot is not that
+            // shape; enveloping would crop the letters off both ends, which is the one thing a
+            // logo may never be. The splash art envelopes because it is a background and cropping
+            // it is correct.
+            var fitter = go.AddComponent<AspectRatioFitter>();
+            fitter.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
+            fitter.aspectRatio = logo.width / (float)logo.height;
         }
 
-        private void BuildPrimary(Transform col)
+        private void BuildTabs(Transform col, float y)
         {
-            var button = MenuKit.WoodButton(col, "SIGN IN", new Vector2(0.5f, 1.0f),
-                new Vector2(0.0f, -600.0f), new Vector2(420.0f, 62.0f), Submit,
+            _signInTab = MenuKit.WoodButton(col, "SIGN IN", Centre,
+                new Vector2(-108.0f, y), new Vector2(206.0f, 48.0f), () => SetMode(false),
+                "WoodAmberButton");
+
+            _createTab = MenuKit.WoodButton(col, "CREATE", Centre,
+                new Vector2(108.0f, y), new Vector2(206.0f, 48.0f), () => SetMode(true));
+        }
+
+        private void BuildPrimary(Transform col, float y)
+        {
+            var button = MenuKit.WoodButton(col, "SIGN IN", Centre,
+                new Vector2(0.0f, y), new Vector2(420.0f, 62.0f), Submit,
                 "WoodPrimaryButton");
 
             _primaryLabel = button.GetComponentInChildren<Text>();
@@ -184,13 +356,26 @@ namespace TumbangPreso.UI
             // not a style choice: a caption to the LEFT of a field, which is what the old panel
             // did, forces every field to be narrow enough to leave room for the widest caption,
             // and "COUNTRY CODE (OPTIONAL)" was the widest.
+            // ⚠️⚠️ CENTRED, ON REQUEST, AND IT OVERRIDES THE REFERENCE ON PURPOSE. 🧑, looking
+            // at the render: *"put USER NAME and PASSWORD Text in the middle bcz everything is
+            // cetnnered excepot for them"*. He is right about this screen: the logo, the heading,
+            // the segmented pair, both fields, the primary and the guest button are all centred
+            // on one axis, so two left-aligned micro-labels were the only things off it, and one
+            // exception in a column of eight reads as a mistake rather than as a hierarchy.
+            //
+            // ⚠️ THE RIOT LAYOUT PUTS THEM LEFT AND THAT IS STILL TRUE, but its column is a
+            // left-aligned form: the fields, the button and the links all share a left edge, so
+            // the caption is aligned to something. Ours is centred, so copying the caption's
+            // alignment without copying the column's would be copying the look and not the rule.
+            // `FUTURE.md` § 0.5b: **name the mechanism, then check whether this game's content
+            // has the shape the mechanism assumes.**
             MenuKit.Label(col, caption, MenuKit.MinReadableUnits, UiTheme.CreamMuted,
-                new Vector2(0.5f, 1.0f), new Vector2(-146.0f, y + 46.0f), new Vector2(320.0f, 26.0f),
-                TextAnchor.MiddleLeft);
+                Centre, new Vector2(0.0f, y + 46.0f), new Vector2(420.0f, 26.0f),
+                TextAnchor.MiddleCenter);
 
             var go = new GameObject($"Field_{caption}", typeof(RectTransform), typeof(Image));
             go.transform.SetParent(col, false);
-            MenuKit.Place((RectTransform)go.transform, new Vector2(0.5f, 1.0f),
+            MenuKit.Place((RectTransform)go.transform, Centre,
                 new Vector2(0.0f, y), new Vector2(420.0f, 58.0f));
 
             var image = go.GetComponent<Image>();

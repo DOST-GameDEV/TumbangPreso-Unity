@@ -313,10 +313,11 @@ namespace TumbangPreso
 
         private static string CharacterIdFor(CharacterMotor motor)
         {
-            if (motor == null) return "";
-            var list = motor.Mode == GameMode.HeroStrike ? Roster.HeroPeople : Roster.ClassicPeople;
-            int index = motor.CharacterIndex;
-            return index >= 0 && index < list.Count ? list[index].Id : "";
+            // ⚠️ ONE OWNER. This was five lines of roster lookup here and was about to become a
+            // second copy in `MatchInstaller`, which needs the same id to look a palette loadout
+            // up. `docs/TODO.md` § 94.1 records what four hand-written copies of one identity
+            // lookup cost, and the answer was one accessor rather than four careful edits.
+            return motor == null ? "" : Roster.PersonIdAt(motor.Mode, motor.CharacterIndex);
         }
 
         /// <summary>

@@ -312,6 +312,61 @@ the 18-unit floor. **Seven readability faults were true at once while both were 
 a value drawn 1600 px from its label and an XP bar drawn underneath a button. **The probe asks
 whether the screen is a screen; the picture asks whether it can be read.** Take the picture.
 
+### 6.2b ⚠️⚠️ THE FOUR WAYS A SCREEN SHIPS BROKEN AFTER BEING "RENDERED", AND THE CHECK FOR EACH
+
+🧑, after opening a build whose new boot screen drew as a floating form over a fully lit menu with
+the nameplate across it: *"i opened the game what the fuclk is this"*, then *"theres problems like
+this that i want to be checked nnext time UI is made"*, *"I want the user version to actually be a
+great experience"*.
+
+**That screen HAD a render. Four of them, green, at nine resolutions.** Every one was of a
+different screen than the one he opened. **Take the picture is not enough; this is what to take a
+picture OF.**
+
+| Ask | Why it is not optional | What it cost |
+|---|---|---|
+| ⚠️⚠️ **EVERY STATE, not the one you built first.** | A screen with a mode has two layouts and you have looked at one. | The sign-in screen was shot only as `Open()`. It ships as `OpenAtBoot()` too, which hides BACK, renames a button and has no hub behind it. **The state a player meets first was the state nobody had seen.** |
+| ⚠️⚠️ **OVER THE REAL BACKGROUND, never an empty scene.** | Every scrim, every panel alpha and every band is a number tuned against what is behind it. | `UiRows.Band` is 3.5 per cent measured against the lit street. Shots taken over a blank scene are shots of a different screen, and 🧑 spotted the swap instantly: *"i lowk liked the light brown bg earlier fuck that blue shti"*. |
+| ⚠️⚠️ **AT THE SHAPE HE ACTUALLY PLAYS AT.** | `Fullscreen` is **false** in his `settings.json`. He plays in a short wide window, and all nine probe resolutions are taller than it. | A column of hard-coded Y offsets collapsed into a heap in the middle of the screen. **A screen that only exists at 16:9 is a screen nobody in this room has seen.** |
+| ⚠️⚠️ **WITH EVERY ALWAYS-ON PIECE OF CHROME STILL LIVE.** | Chrome does not know about a screen added after it. | `PlayerNameplate` hides for the hub and for every `ConvertedOverlay` and knew nothing about a third code-built canvas, so it drew straight across the account form. **This is the third time that method has had to be taught about a new screen**, which is the argument for asking "is anything on top of me" rather than keeping a list. |
+
+⚠️ **AND IF IT CANNOT BE RENDERED, IT DOES NOT SHIP OPEN.** A screen that appears unasked at boot
+is the one screen where "I could not get a picture of it" is not an acceptable answer, because
+every player meets it before anything else.
+
+### 6.3 ⚠️⚠️ MOVING AROUND THE GAME IS ITS OWN DESIGN PROBLEM, AND THE UNIT IS THE JOURNEY
+
+🧑, 2026-08-31: *"i want the user experience of movinng around the game to feel intuitive"*, and
+*"lets say im a player and i want to do something or find something, make sure that entire
+experience feels great"*.
+
+**Walk the journey out loud before building any of it**: *"I want to X"* to *"X is done"*, naming
+every press. If it takes more than three, or if one of them is a control the player has to
+discover rather than read, **the flow is the bug and no amount of layout fixes it.**
+
+- ⚠️⚠️ **EVERY DESTINATION HAS A VISIBLE DOOR, AND A DOOR IS A THING THAT LOOKS PRESSABLE.**
+  `docs/TODO.md` § 96: the player hub had exactly one door, a corner chip stating a name and a
+  level, and **the person who commissioned the hub never found it.** Four tabs, a career, a match
+  history and the whole account system sat behind something that read as a status readout.
+- ⚠️⚠️ **NEVER ADD A SECOND DOOR TO FIX A FINDABILITY PROBLEM.** That is exactly how § 92's
+  six-button panel happened: a button per feature, each in its own visual language, each at its
+  own hard-coded offset, and 🧑 asking *"look wtf why are these buttons here"*. **Fix the door or
+  move it.**
+- **Escape backs out on every screen, always, innermost layer first.** `ConvertedScreen.CancelTarget`
+  exists because three screens shipped with a dead Escape; the hub and the sign-in screen are
+  built in code rather than converted and inherited none of it until 2026-08-31. **A player who
+  learns Escape is reliable and then meets one screen where it is not has learned that it is
+  unreliable.**
+- **A control that does something must react to the pointer; one that does nothing must not look
+  pressable.** The pennants scale and light up and the plate beside them did not move at all.
+- **A dead end is a bug.** A button that dismisses to nothing is worse than no button.
+- ⚠️ **The escape from any gate is ONE press and never needs the network.** § 97, and the
+  nationals in General Santos City are why.
+
+⚠️⚠️ **`UiClickProbe` CAN PROVE NOTHING IS COVERED AND HAS CAUGHT NEW CHROME BLOCKING A SCREEN
+THREE TIMES. IT CANNOT TELL YOU A DOOR NOBODY LOOKS AT IS A DOOR NOBODY FINDS.** That one needs a
+person. Watch a launch, or ask what they expected to press.
+
 ⚠️ **`UiRows` OR IT IS NOT A SETTINGS-SHAPED SCREEN.** Nothing in that file takes an offset,
 which is fault 3 of § 92.1 made impossible rather than fixed. A hand-written Y offset is a layout
 correct at exactly one panel height and one aspect ratio, and `AspectRatioProbes` drives nine.

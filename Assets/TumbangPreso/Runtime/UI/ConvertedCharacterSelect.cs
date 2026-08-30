@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TumbangPreso.Abilities;
 using TumbangPreso.Core;
+using TumbangPreso.Visual;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -901,8 +902,24 @@ namespace TumbangPreso.UI
             // `Show` is what dresses the model. See `ModelPreview.ShowingSlipper`.
             preview.ShowingSlipper = _tab == 2;
 
+            // ⚠️⚠️ THE PREVIEW WEARS THE EQUIPPED PALETTE, AND THAT IS WHERE COSMETICS BELONG.
+            // `FUTURE.md` PHASE 5: *"Preview through `ModelPreview` with the real shader, never a
+            // flat icon."* A colour choice made anywhere else is a choice made blind, and this
+            // screen already has the model, the real toon shader and the ink outline on it.
+            // **You customise a character where you choose a character**, which is the journey
+            // `CLAUDE.md` § 6.3 asks to be walked out loud: pick, see, done.
+            //
+            // ⚠️ PEOPLE ONLY. A lata and a tsinelas have their own skins and their own
+            // categories; `PaletteVariants.For` would answer their authored colours anyway, but
+            // asking the loadout for a slipper's palette would be a question with no meaning.
+            var palette = art == null ? null : art.Palette;
+
+            if (_tab == 0 && art != null)
+                palette = PaletteVariants.For(art.Palette, Settings.SettingsStore.PaletteFor(
+                    Roster.PersonIdAt(SceneFlow.SelectedMode, _pick[0])));
+
             preview.Show(art == null ? null : art.Model, art == null ? null : art.Clips,
-                         art == null ? null : art.Palette, art == null ? null : art.PetModel);
+                         palette, art == null ? null : art.PetModel);
         }
 
         /// <summary>

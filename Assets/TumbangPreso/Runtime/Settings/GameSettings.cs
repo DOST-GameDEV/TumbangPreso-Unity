@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using TumbangPreso.Core;
 using UnityEngine;
@@ -106,6 +107,20 @@ namespace TumbangPreso.Settings
         public string BannerBorderId = "";
         public string BannerPaletteId = "";
         public string[] BannerTrackers = new string[0];
+
+        /// <summary>
+        /// The palette each character is wearing, remembered per character.
+        ///
+        /// ⚠️⚠️ `FUTURE.md` PHASE 5 CALLS THIS *"one extra that is worth more than it costs"* and
+        /// it is the difference between a cosmetic somebody sets once and one they set every
+        /// match until they stop bothering. Switching character must not mean re-dressing.
+        ///
+        /// ⚠️ A LIST OF PAIRS RATHER THAN A DICTIONARY, because `JsonUtility` cannot serialise a
+        /// `Dictionary` and answers an empty one with no error. Every settings field in this file
+        /// has to survive a round trip through that serialiser; a type it silently drops is a
+        /// setting that silently resets. `Loadouts` is the accessor so no caller walks the list.
+        /// </summary>
+        public List<CharacterLoadout> CharacterLoadouts = new List<CharacterLoadout>();
 
         // -------------------------------------------------------------------
         // TELEMETRY. `docs/TODO.md` § 90.3.
@@ -514,6 +529,57 @@ namespace TumbangPreso.Settings
             // ⚠️ VALIDATE THEN APPLY, IN THAT ORDER. Applying an unclamped value read off disk
             // would push a nonsense difficulty index straight into the AI.
             _current.Apply();
+        }
+
+        /// <summary>
+        /// The palette this character is wearing, and the one place that answers it.
+        ///
+        /// ⚠️⚠️ IT ASKS `LoadoutRules` RATHER THAN TRUSTING THE FILE, so a palette that was
+        /// legitimately equipped and is no longer owned stops being worn. That is not
+        /// hypothetical: `settings.json` is a plain text file on the player's disk, and the whole
+        /// ownership model is that a cosmetic id means nothing without a profile that earned it.
+        /// **The same call runs on the receiving side for a peer's palette**, which is why the
+        /// rule is in the core and not here.
+        ///
+        /// ⚠️ AN UNKNOWN CHARACTER ID ANSWERS THE DEFAULT rather than throwing. The roster gains
+        /// characters and a settings file outlives a build.
+        /// </summary>
+        public static string PaletteFor(string characterId)
+        {
+            var settings = Current;
+            if (settings?.CharacterLoadouts == null) return PaletteRules.DefaultId;
+
+            string wanted = "";
+            foreach (var row in settings.CharacterLoadouts)
+                if (row != null && row.CharacterId == characterId) { wanted = row.PaletteId; break; }
+
+            return LoadoutRules.PaletteFor(GameServices.Career?.Profile, characterId, wanted);
+        }
+
+        /// <summary>Remembers a character's palette. Saves, because a cosmetic choice a player
+        /// makes and then loses on quit is worse than one they cannot make.</summary>
+        public static void SetPaletteFor(string characterId, string paletteId)
+        {
+            var settings = Current;
+            if (settings == null || string.IsNullOrEmpty(characterId)) return;
+
+            settings.CharacterLoadouts ??= new List<CharacterLoadout>();
+
+            foreach (var row in settings.CharacterLoadouts)
+                if (row != null && row.CharacterId == characterId)
+                {
+                    row.PaletteId = paletteId ?? "";
+                    Save();
+                    return;
+                }
+
+            settings.CharacterLoadouts.Add(new CharacterLoadout
+            {
+                CharacterId = characterId,
+                PaletteId = paletteId ?? "",
+            });
+
+            Save();
         }
 
         public static void Save()

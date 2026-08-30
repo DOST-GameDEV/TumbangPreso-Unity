@@ -33,6 +33,7 @@ namespace TumbangPreso.UI
         private Image _xpFill;
         private RectTransform _bar;
         private PlayerHub _hub;
+        private SignInScreen _signIn;
 
         /// <summary>
         /// The one line that appears when this machine's progress is not attached to anything.
@@ -90,7 +91,12 @@ namespace TumbangPreso.UI
 
             _hub = gameObject.GetComponent<PlayerHub>();
             if (_hub == null) _hub = gameObject.AddComponent<PlayerHub>();
+
+            // ⚠️ HELD RATHER THAN LOOKED UP EACH TIME, because `Update` asks whether it is
+            // showing on every frame. The hub installs it, so it exists by the time `Install`
+            // returns; asking before that answers null and the plate would never hide.
             _hub.Install();
+            _signIn = _hub.GetComponent<SignInScreen>();
 
             // ⚠️ THE PLATE HIDES WHILE THE HUB IS UP. See `PlayerHub.VisibleChanged`: the hub
             // header draws the same handle in the same corner at twice the size, and the first
@@ -122,6 +128,18 @@ namespace TumbangPreso.UI
             var button = go.AddComponent<Button>();
             button.targetGraphic = go.GetComponent<Image>();
             button.onClick.AddListener(Press);
+
+            // ⚠️⚠️ IT LIFTS AND BRIGHTENS UNDER THE MOUSE, BECAUSE A THING THAT DOES NOT REACT
+            // IS NOT A CONTROL. Every other pressable object on this screen moves: the four
+            // pennants scale and light up (`ArrowButtonView`), and the wood buttons have their
+            // own states. This plate had a bare `Button` with the default tint on a very dark
+            // brown image, which is a change nobody can see, so the one door to the hub was the
+            // only thing on the title screen that looked inert. `docs/TODO.md` § 96.
+            //
+            // ⚠️ `TextureButtonFeedback` RATHER THAN A NEW BEHAVIOUR, because it already exists
+            // for exactly this and already handles the four pointer events. A second feedback
+            // component would be a second thing to keep in step with the menu's feel.
+            go.AddComponent<TextureButtonFeedback>();
 
             var portrait = new GameObject("Portrait", typeof(RectTransform), typeof(Image));
             portrait.transform.SetParent(go.transform, false);
@@ -189,7 +207,18 @@ namespace TumbangPreso.UI
         {
             if (_canvas == null) return;
 
-            bool covered = _hubOpen;
+            // ⚠️⚠️ THE SIGN-IN SCREEN COUNTS AS COVERING, AND MISSING IT PUT THE PLATE ON TOP OF
+            // THE BOOT SCREEN IN A SHIPPED BUILD. 🧑, opening the 2026-08-31 00:24 player:
+            // *"i opened the game what the fuclk is this"*, with the nameplate drawn straight
+            // across the account form. The plate hides for the hub (`_hubOpen`) and for every
+            // `ConvertedOverlay`, and the sign-in screen is neither: it is a third code-built
+            // canvas that nothing here knew about.
+            //
+            // ⚠️ THIS IS THE THIRD TIME A NEW FULL-SCREEN THING HAS HAD TO BE TAUGHT TO THIS
+            // METHOD, which is the argument for asking "what is on top of me" rather than keeping
+            // a list. § 92.7 records the first two. **A list of screens to hide for is a list
+            // somebody will add a screen without.**
+            bool covered = _hubOpen || (_signIn != null && _signIn.IsOpen);
 
             for (int i = 0; !covered && i < _overlays.Length; i++)
                 if (_overlays[i] != null && _overlays[i].gameObject.activeInHierarchy) covered = true;
@@ -233,10 +262,9 @@ namespace TumbangPreso.UI
             if (settings == null || settings.AccountChoiceMade) return;
             if (_hub == null) return;
 
-            var signIn = _hub.GetComponent<SignInScreen>();
-            if (signIn == null) return;
+            if (_signIn == null) return;
 
-            signIn.OpenAtBoot();
+            _signIn.OpenAtBoot();
         }
 
         private void Press()
@@ -298,7 +326,30 @@ namespace TumbangPreso.UI
             // be true for long: the offer only fires once a player has earned something, and the
             // whole point of the line is that it is the more urgent of the two facts. Stacking
             // them would need a taller plate on a menu that has no room for one.
-            _offer.text = offering ? "SECURE YOUR PROGRESS" : "";
+            // ⚠️⚠️ THE THIRD STATE IS "SAY WHAT PRESSING THIS DOES", AND ITS ABSENCE IS THE ONE
+            // FAULT 🧑 REPORTED ABOUT THIS SCREEN. Sent the hub and the sign-in screen, he
+            // answered *"i didnnt see that at all bruhh"*: he had been playing the build and had
+            // never opened either, because **this plate is the only door to four tabs, a career,
+            // a match history and the whole account system, and it read as a status readout.**
+            // A name, a level and a bar are things to LOOK at; nothing on it was an offer.
+            //
+            // ⚠️ IT IS THE LOWEST-COST HALF OF `docs/TODO.md` § 96 AND NOT THE WHOLE ANSWER. The
+            // other candidates in that entry, that the plate is too small or in a corner the eye
+            // never leaves the pennant rail to reach, are answered by moving or resizing it, and
+            // **that needs a render over the real menu and his eyes on it**, not a guess. This
+            // one is safe because it adds information rather than moving anything.
+            //
+            // ⚠️ THE ORDER IS URGENCY. The upgrade offer wins the row when it is live because it
+            // is the only one of the three that can expire into lost progress; the level wins it
+            // over the hint because a player who has earned something already knows the plate is
+            // theirs. The hint is for the player who has not pressed it yet, which is exactly the
+            // state he was in.
+            _offer.text = offering
+                ? "SECURE YOUR PROGRESS"
+                : earned ? "" : "PROFILE  ·  CAREER  ·  MATCHES";
+
+            _offer.color = offering ? UiTheme.Amber : UiTheme.CreamMuted;
+
             _level.text = earned && !offering ? $"LV {ProgressionRules.LevelForXp(xp)}" : "";
             if (_bar != null) _bar.gameObject.SetActive(earned && !offering);
 

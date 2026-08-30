@@ -425,6 +425,44 @@ namespace TumbangPreso.PlayTests
             yield return null;
             yield return Shoot("07-signin");
 
+            // ⚠️⚠️ THE BOOT SCREEN GETS ITS OWN PICTURE, AND NOT HAVING ONE IS EXACTLY HOW IT
+            // SHIPPED BROKEN. § 97 opened this screen at boot over the LIVE MENU, and every shot
+            // taken of it before that was `Open()` over an empty scene at 1920x1080. 🧑 launched
+            // the 00:24 player and got the form floating over a fully lit title screen with the
+            // nameplate drawn across it: *"i opened the game what the fuclk is this"*.
+            // **The two states are different screens and only one of them had ever been looked
+            // at.**
+            //
+            // ⚠️ AND IT IS SHOT AT HIS WINDOW SHAPE AS WELL AS AT 1080. `Fullscreen` is false in
+            // his `settings.json`, so the game he actually plays is a short wide window, and the
+            // nine probe resolutions are all taller than it. A screen that only exists at 16:9 is
+            // a screen nobody in this room has seen.
+            // ⚠️⚠️ THE MENU CANVAS GOES BACK ON FOR THESE TWO SHOTS, AND SWITCHING IT OFF IS
+            // WHY THE PROBE COULD NOT SEE THE BUG. Every other shot in this method disables the
+            // other canvases so the screen under test is not photographed through somebody
+            // else's, which is right for a screen the player reaches by pressing something.
+            // **The boot screen is DEFINED by appearing over the menu**, so a clean shot of it is
+            // a shot of a situation that never happens. In the shipped 00:24 player it drew as a
+            // floating form over a fully lit title screen, and this probe was green.
+            //
+            // ⚠️ IT IS `CLAUDE.md` § 6.2b's SECOND ROW AS CODE: over the real background, never
+            // an empty scene. The first version of this render obeyed the letter of "take a
+            // picture" and photographed a screen that does not exist.
+            foreach (var c in _canvases)
+                if (c != null && c.name.StartsWith("MainMenu")) c.enabled = true;
+
+            signIn.OpenAtBoot();
+            yield return null;
+            yield return null;
+            yield return Shoot("08-signin-at-boot-over-the-menu");
+
+            // ⚠️ AND AT THE SHAPE HE ACTUALLY PLAYS AT. `Fullscreen` is false in his settings, so
+            // the game he opens is a short wide window and every one of the nine probe
+            // resolutions is taller than it. § 6.2b's third row.
+            yield return Resize(1502, 721);
+            yield return Shoot("09-signin-at-boot-windowed");
+            yield return Resize(1920, 1080);
+
             Write("shots", report);
 
             // ⚠️⚠️ THIS CASE IS THE ONLY ONE IN THE CLASS THAT LOADS A SCENE, SO IT IS THE ONLY

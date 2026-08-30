@@ -258,6 +258,38 @@ because what was copied was the look. **Name the mechanism, then check whether t
 has the shape the mechanism assumes.** A wide dropdown fills a column; a two-character number does
 not.
 
+⚠️⚠️ **AND "IT WAS RENDERED" IS NOT THE SAME CLAIM AS "IT WAS RENDERED IN THE STATE A PLAYER
+MEETS IT."** `CLAUDE.md` § 6.2b is the checklist and it exists because a screen with four green
+renders at nine resolutions still shipped as a floating form over a lit menu with the nameplate
+drawn across it. **Every state, over the real background, at the shape he actually plays at, with
+every always-on piece of chrome still live.** A screen that appears unasked at boot is the one
+place where "I could not get a picture of it" is not an acceptable answer.
+
+**Moving around has to feel intuitive, and that is a separate test from any single screen.**
+🧑, 2026-08-31: *"i want the user experience of movinng around the game to feel intuitive"*, and
+the sharper version of the same brief: *"lets say im a player and i want to do something or find
+something, make sure that entire experience feels great"*. **So the unit of design is the JOURNEY,
+not the screen.** A screen that is beautiful and unreachable has failed.
+
+**Walk the journey out loud before building any of it.** *"I want to X"* to *"X is done"*, naming
+every press. If it takes more than three, or if one of them is a control the player has to
+discover rather than read, the flow is the bug and no amount of layout fixes it.
+
+| Rule | What it costs when it is broken |
+|---|---|
+| ⚠️⚠️ **Every destination has a visible door, and a door is a thing that LOOKS pressable.** | § 96: the hub had exactly one door, a corner chip that stated a name and a level and offered nothing, and **the person who commissioned the hub never found it.** |
+| **Escape backs out, on every screen, always.** | `ConvertedScreen.CancelTarget` exists because three screens shipped with a dead Escape. **A player who learns Escape is reliable and then meets one screen where it is not has learned that it is unreliable**, which is worse than it never working. |
+| **Escape closes the innermost thing first.** | One press, one layer. Closing everything throws away what they were reading; doing nothing traps them in a popup whose only exit is a button they have to find. |
+| **A control that does nothing when pressed must not look pressable**, and one that does must react. | Four pennants scale and light up; the plate beside them did not move at all, so the only inert-looking thing on the title screen was the one door. |
+| ⚠️ **Never add a second door to fix a findability problem.** | That is how the six-button panel in § 92 happened: a button per feature, in a different visual language, wherever its own offset put it. **Fix the door, or move it.** |
+| **A dead end is a bug.** | A screen with no way back, or a button that dismisses to nothing, is `SignInScreen.OpenAtBoot` hiding BACK rather than shipping a dismissal to a black frame. |
+| ⚠️ **The escape from a gate is one press and never needs the network.** | § 97. A boot gate is only acceptable because CONTINUE AS GUEST is one press and works with the cable out; that property has an assertion, not a paragraph. |
+
+⚠️⚠️ **AND THE TEST FOR ALL OF IT IS A PERSON, NOT A PROBE.** `UiClickProbe.EveryButtonIsReachable`
+can prove nothing is COVERED, and it has caught new chrome blocking a screen three times. **It
+cannot tell you that a door nobody looks at is a door nobody finds.** Watch one launch, or ask
+what they expected to press.
+
 **What a phase owes before it may call its screen done.**
 
 - **Built out of `UiRows`, never out of hand-written offsets.** That file exists because absolute Y

@@ -49,6 +49,29 @@ namespace TumbangPreso.UI
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.pixelPerfect = true;
 
+            // ⚠️⚠️ WITHOUT THIS, EVERY `sortingOrder` A CODE-BUILT SCREEN SETS IS SILENTLY
+            // IGNORED, AND THAT SHIPPED. A `Canvas` nested inside another `Canvas` renders as
+            // part of its PARENT's batch, in hierarchy order, and only honours its own
+            // `sortingOrder` when `overrideSorting` is true. `PlayerNameplate`, `PlayerHub` and
+            // `SignInScreen` all live on `ConvertedMainMenu`'s GameObject, which is inside
+            // `MainMenuCanvas`, so **480, 500 and 510 were three numbers that did nothing.**
+            //
+            // ⚠️⚠️ 🧑 OPENED THE 2026-08-31 00:24 PLAYER AND GOT THE ACCOUNT FORM FLOATING OVER
+            // A FULLY LIT TITLE SCREEN: *"i opened the game what the fuclk is this"*. The
+            // sign-in screen's own 72 per cent scrim and its opaque wood column were both drawn
+            // UNDER the menu's pennants and street, leaving only the labels that happened to land
+            // later in the hierarchy. Nothing was wrong with that screen's layout: the same
+            // screen renders correctly in `Logs/ui/09-signin-at-boot-windowed.png`, because a
+            // probe builds it with no menu around it.
+            //
+            // ⚠️ AND `docs/TODO.md` § 92.7 ALREADY RECORDED THE SYMPTOM WITHOUT THE CAUSE. It
+            // reads *"At sorting order 85 the hub had the MULTIPLAYER setup screen drawn through
+            // it... The hub is 500 now and the sign-in screen 510."* Raising the numbers appeared
+            // to fix it and cannot have: the numbers were inert. What actually changed that day
+            // was which screen was loaded. **A fix that works for a reason nobody checked is a
+            // fix that comes back**, and it came back here.
+            canvas.overrideSorting = true;
+
             var scaler = go.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920, 1080);

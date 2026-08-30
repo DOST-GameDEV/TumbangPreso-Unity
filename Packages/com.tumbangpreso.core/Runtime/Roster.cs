@@ -272,6 +272,29 @@ namespace TumbangPreso.Core
         /// literal index in a caller silently becomes a different character or a different shoe
         /// the next time somebody inserts an entry, and nothing errors.
         /// </summary>
+        /// <summary>
+        /// The string id of the character at this pick index, in this mode, or empty.
+        ///
+        /// ⚠️⚠️ THE INDEX IS A PICK AND THE ID IS THE IDENTITY, AND EVERYTHING THAT LEAVES THIS
+        /// MACHINE USES THE ID. `Roster.Slippers` records at length why a wire-facing list can
+        /// never be reordered; this is the conversion that keeps an index from becoming one.
+        /// `MatchStatsCollector` stamps a record with it, `SettingsStore.PaletteFor` looks a
+        /// loadout up by it, and `FUTURE.md` PHASE 5 requires every cosmetic to key off it.
+        ///
+        /// ⚠️ IT EXISTS BECAUSE THE SAME FIVE LINES WERE ABOUT TO BE WRITTEN A SECOND TIME.
+        /// `MatchStatsCollector.CharacterIdFor` was the first copy and `MatchInstaller` needed
+        /// the second; `docs/TODO.md` § 94.1 is what four hand-written copies of one lookup cost
+        /// the last time, so the second one goes here instead.
+        ///
+        /// ⚠️ THE TWO MODES HAVE DIFFERENT LISTS. An index means nothing without the mode it was
+        /// picked in, which is `GetPeople`'s whole reason for existing.
+        /// </summary>
+        public static string PersonIdAt(GameMode mode, int index)
+        {
+            var people = GetPeople(mode);
+            return index >= 0 && index < people.Count ? people[index].Id : "";
+        }
+
         public static int IndexIn(IReadOnlyList<RosterEntry> entries, string id)
         {
             if (entries == null || id == null) return -1;

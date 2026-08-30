@@ -2114,6 +2114,42 @@ one.**
 
 ---
 
+## 99 · ⚠️⚠️ EVERY `sortingOrder` A CODE-BUILT SCREEN SET WAS SILENTLY IGNORED, AND § 92.7'S FIX NEVER WORKED
+
+**Found 2026-08-31 when 🧑 opened the 00:24 player**: *"i opened the game what the fuclk is
+this"*, with the boot account form floating over a fully lit title screen, no scrim, no wood
+column, and the nameplate drawn across it.
+
+**A `Canvas` nested inside another `Canvas` renders as part of its parent's batch, in hierarchy
+order, and honours its own `sortingOrder` only when `overrideSorting` is true.**
+`MenuKit.BuildCanvas` never set it. `PlayerNameplate`, `PlayerHub` and `SignInScreen` all live on
+`ConvertedMainMenu`'s GameObject, which is inside `MainMenuCanvas`, so **480, 500 and 510 were
+three numbers that did nothing at all.**
+
+⚠️⚠️ **THE SCREEN'S LAYOUT WAS NEVER WRONG, WHICH IS WHY FOUR GREEN RENDERS MISSED IT.**
+`Logs/ui/09-signin-at-boot-windowed.png` shows the same screen at his exact window shape, correct:
+opaque column on the left, everything in its place, CONTINUE AS GUEST at the bottom. **A probe
+builds these screens with no menu around them**, so the nesting that breaks them does not exist in
+the test. The bug is not in the screen, it is in the relationship between the screen and what it
+was parented to.
+
+⚠️⚠️ **AND § 92.7 RECORDED THIS SYMPTOM WITH THE WRONG CAUSE.** It reads: *"At sorting order 85
+the hub had the MULTIPLAYER setup screen drawn through it, join-code field and all... The hub is
+500 now and the sign-in screen 510."* **Raising the numbers cannot have fixed anything, because
+the numbers were inert.** Whatever changed that day was which screen happened to be loaded. **A
+fix that works for a reason nobody checked is a fix that comes back**, and it came back six days
+later on the one screen every player meets first.
+
+**The fix is one line in `MenuKit.BuildCanvas`:** `canvas.overrideSorting = true`. Every authored
+order now means what its comment already claimed.
+
+⚠️ **WHAT TO WATCH.** Three canvases changed layer at once, so the regression to look for is
+something covering something else. `UiClickProbe.EveryButtonIsReachable` and
+`SettingsWheelProbe` are the two that can see it and both are in the gate for this change; § 92.7
+records them catching exactly that class twice before.
+
+---
+
 ## 98 · Phase 5 begins: the banner, and wiring the rewards nothing wore ⚠️⚠️ 2026-08-31
 
 🧑: *"when ur donne wiht that start with phase 5"*. `FUTURE.md` PHASE 5 is cosmetics and
@@ -2280,11 +2316,26 @@ both would either ask on every scene load or ask nobody.
 boot case sets `BootedThroughSplash` and restores it, and every other case relies on the guard.
 A test that could not tell the two apart would be testing neither.
 
-**Not done:** the screen is the existing `SignInScreen` layout, a narrow column beside the scrim.
-PUBG's has the key art behind it, and now that `splash_art.png` is in `Resources` (§ 95c) putting
-it behind this column is cheap and would make the first screen of the game the art rather than a
-form. **Left out on purpose** because it is a look change and this entry is a flow change; do it
-against a render, per `FUTURE.md` § 0.5b.
+### 97.2 · What the screen actually looks like, after four rounds of him looking at it
+
+⚠️⚠️ **EVERY ONE OF THESE CAME FROM A RENDER OR FROM HIM OPENING THE BUILD, AND NONE OF THEM
+FROM A TEST.** The layout probe was green through all of it. `FUTURE.md` § 0.5b's line about a
+green probe not being a good screen has now been paid for four times on one screen.
+
+| What was wrong | The fix |
+|---|---|
+| ⚠️⚠️ **The form floated over a lit menu with the nameplate across it**, no scrim, no column. | § 99: nested canvases ignore `sortingOrder`. **The layout was never wrong.** |
+| ⚠️ **The nameplate drew on top of it.** | It hides for the hub and for `ConvertedOverlay` and knew nothing about a third code-built canvas. |
+| ⚠️⚠️ *"ugly big ass space i hate this ui its so ugly"* | The form was pinned to the column's TOP and the two footer buttons to its BOTTOM, so **the taller the window the bigger the void.** Every row is placed from the column's CENTRE now, so the block cannot split, and CONTINUE AS GUEST sits directly under the primary: **a choice and its alternative are one group.** |
+| *"can u use the real TUMP text logo taht we have on title screen"* | It was the word "TUMP" set in the menu font, not the wordmark. `Resources/UI/main-menu/TUMP.png`, the same asset the title screen draws. ⚠️ **Loaded as `Texture2D` into a `RawImage`**, because that file is imported as a plain texture and `Resources.Load<Sprite>` answers **null** for it: the first version fell back to the label silently. |
+| *"put USER NAME and PASSWORD Text in the middle bcz everything is cetnnered excepot for them"* | Centred. ⚠️ **This overrides the Riot reference deliberately**: its column is left-aligned so its captions align to something; ours is centred, so copying the caption's alignment without the column's is copying the look and not the rule. |
+| *"can u put the frigging splash art there now"* | The key art is behind the form now, enveloped, with the scrim dropped from 72 per cent to 55 because there is something behind it worth seeing. |
+
+⚠️ **AND ONE CLAIM IN `SignInScreen` WAS CORRECTED RATHER THAN DELETED.** `BuildScrim` argued the
+art side should be the LIVE SCENE rather than a texture, *"without shipping a 4 MB PNG that goes
+stale"*. That was right when there was no key art. There is one now, it ships anyway for the
+loading screen, and **the live scene is not visible behind this screen at boot at all**, because
+the menu is a different canvas. `CLAUDE.md` § 3: record the reasoning, not just the change.
 
 ---
 

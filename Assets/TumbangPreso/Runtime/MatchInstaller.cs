@@ -1,5 +1,6 @@
 using TumbangPreso.Core;
 using TumbangPreso.UI;
+using TumbangPreso.Visual;
 using UnityEngine;
 
 namespace TumbangPreso
@@ -742,7 +743,21 @@ namespace TumbangPreso
 
             if (art != null && art.Model != null)
             {
-                visual.ApplyModel(art.Model, art.Tint, art.Clips, art.Palette, art.PetModel);
+                // ⚠️⚠️ THE EQUIPPED PALETTE, AND ONLY FOR THE SEAT THIS MACHINE IS PLAYING.
+                // A remote peer's choice has to arrive over the wire before it can be drawn, and
+                // it does not yet (`docs/TODO.md` § 98.2 step 2), so every other seat wears its
+                // authored colours. **Guessing a remote peer's palette from this machine's
+                // settings would dress a stranger in the local player's choice**, which is worse
+                // than not drawing it at all.
+                //
+                // ⚠️ `PaletteVariants.For` IS THE ONE OWNER and answers the authored array
+                // unchanged for an empty or unknown id, so this is safe on every seat.
+                string characterId = Roster.PersonIdAt(motor.Mode, motor.CharacterIndex);
+                var palette = PaletteVariants.For(
+                    art.Palette,
+                    slot == humanSeat ? Settings.SettingsStore.PaletteFor(characterId) : "");
+
+                visual.ApplyModel(art.Model, art.Tint, art.Clips, palette, art.PetModel);
 
                 // Strip from the whole seat, because the visual parents the model under the
                 // seat root rather than under visualRoot. The CharacterController survives by
