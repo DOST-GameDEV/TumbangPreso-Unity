@@ -2090,6 +2090,45 @@ one.**
 
 ---
 
+## 96 · OPEN: he has never found the way into the hub ⚠️⚠️
+
+**Reported 2026-08-30, by 🧑, about the shipped screens themselves.** Sent the hub's PROFILE tab
+and the sign-in screen: *"i didnnt see that at all bruhh"*, *"didnt see this too"*.
+
+⚠️⚠️ **THE SCREENS ARE FINE AND THAT IS WHY THIS IS WORTH AN ENTRY.** Both are built, both are
+reachable, both are measured at nine resolutions by `PlayerHubLayoutProbe`, and both have been
+green since § 92. **He has been playing the build and has never opened either of them.**
+
+**The sign-in screen is expected and is not a bug.** § 92.3: *"Signing in never opens by itself."*
+It is reached only by pressing something, deliberately, because Phase 1's rule is never to block a
+first-time player on a form. A player who has not gone looking for it has not missed anything.
+
+⚠️⚠️ **THE HUB IS THE PROBLEM, AND `PlayerNameplate` IS THE ONLY DOOR.** § 92.4 records that the
+plate *"replaces both floating buttons and is the only way in"*, and that was the right call: the
+two buttons it replaced were what he complained about (*"look wtf why are these buttons here"*).
+**But one small chip in the corner of the title screen is now the sole entrance to four tabs, a
+career, a match history and the whole account system**, and the person who commissioned it did not
+find it.
+
+⚠️ **`FUTURE.md` § 4.5.3 PREDICTED EXACTLY THIS AND NAMED IT AS THE THING A PROBE CANNOT SEE:**
+*"it cannot see a screen that is ugly, and it cannot see a control nobody can find."* The probe
+asserts the plate is on screen at all nine resolutions. It is. That is not the same claim as
+"somebody looks at it".
+
+**What is NOT known, and must not be guessed at.** Whether the plate is too small, too quiet, in a
+corner nobody looks at, or simply does not read as pressable. **Do not fix this by adding a second
+door**, which is how the six-button panel happened in the first place. Ask him what he expected to
+press, or watch one launch.
+
+**Candidates, cheapest first, none of them chosen:**
+1. The plate does not look like a control. It has no press affordance and no hover state.
+2. It says the handle and the level and never says what pressing it does.
+3. `PLAY / SETTINGS / TUTORIAL / QUIT` is a strong vertical rail and the eye may never leave it.
+
+**Done looks like:** he opens the hub without being told where it is.
+
+---
+
 ## 95 · OPEN: a label on the settings panel overflows its box at 720p ⚠️
 
 **Found 2026-08-30 by `PhaseSurfaceLayoutProbe` while it was still measuring the whole settings
