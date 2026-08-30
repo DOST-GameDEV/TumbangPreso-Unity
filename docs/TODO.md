@@ -2114,6 +2114,65 @@ one.**
 
 ---
 
+## 100 · ⚠️⚠️ THE BOOT SCREEN'S ART WAS FITTED TO A FRAME NOBODY CAN SEE, AND THE COLUMN WAS SIZED AGAINST THE WINDOW INSTEAD OF AGAINST THE FORM
+
+**Reported 2026-08-31 by 🧑, with a screenshot of the shipped boot screen**: *"This shhit is
+horrible bro the art is cut off can u properly cut it at the appropriate amt and maybe make the
+box smaller, the create account box, u properly thinnk abt how to make the characters look good,
+also nno nneed to darkenn it"*.
+
+⚠️⚠️ **THIS IS THE FIRST FAULT ON THIS SCREEN THAT WAS NOT A FLOW BUG OR A SORTING BUG. § 97.2's
+table has six rows and § 99 has the seventh, and every one of them was about WHERE the screen
+drew. This one is about what it looks like when it draws correctly**, which is the half no probe
+in this repository has ever had an opinion about.
+
+**Three faults, and the first two are the same mistake in two places: a size measured against the
+wrong rectangle.**
+
+| Fault | What it actually was | What he saw |
+|---|---|---|
+| ⚠️⚠️ **The picture was enveloped to the WHOLE CANVAS and then a third of it was covered by the column.** | `BuildKeyArt` stretched `KeyArt` across `_root` and let `AspectRatioFitter.EnvelopeParent` crop it against the full screen. **The crop was therefore computed for a frame that does not exist**, and what the player got was an off-centre window into it. | The cast pushed off-centre, the character on the far left behind the wood, and, because his window is wider than 16:9 while the art is 16:9, enveloping to the full canvas matched WIDTH and **cut the top and the bottom off**. That is where the chopped heads came from. |
+| ⚠️⚠️ **The column was 38 PER CENT OF THE WINDOW around a 420-unit form.** | `AspectSafeCanvas` scales on the SHORT axis, so on the short wide window he plays in the canvas is about **2250 units across** and 38 per cent of it is **860 units of wood**. The form never grew. The empty wood either side of it did, and it took the picture's space with it. | *"maybe make the box smaller"*. It is 580 units now: the form plus one margin either side, which is what the Riot reference's column actually is. |
+| ⚠️ **The scrim was still knocking the art back 55 per cent.** | It was 72 over the live street, retuned to 55 when the art landed, and never asked what it was still FOR. **Every word on this screen sits on an opaque column and the art side carries no text at all**, so it was dimming the one thing the player is meant to look at in order to protect text that is not on it. | *"nno nneed to darkenn it"*. Gone when there is art. |
+
+**The fix, and it is arithmetic rather than taste.** The art side is now its own rect, `canvas
+width - 580` by `canvas height`, with a `RectMask2D`, and the picture envelopes THAT.
+
+- On his window that region is about **1670x1080, which is 1.55**, and the picture is **1.82**.
+  A region NARROWER than the picture matches HEIGHT, so **the full height of the art is on screen
+  and nothing is cut off the top or the bottom**. The only crop is a symmetric slice off each end,
+  about 7.5 per cent, and every character survives it.
+- At 1920x1080 the region is 1340x1080 and the slice is the widest it ever gets, leaving the
+  middle **68 per cent**. ⚠️ **The cast spans 13 to 90 per cent of the frame, so at 16:9 the
+  outermost character is clipped at the frame edge and that is not a bug that can be fixed by
+  moving the crop**: 68 per cent of a frame cannot hold 77 per cent of a cast, and biasing the
+  window left or right only chooses which of the two outer characters gets cut. Centred is the
+  answer that cuts least and cuts symmetrically. **Renders at both shapes are in `Logs/ui/`.**
+
+⚠️ **THE CROP IS NOT BIASED UPWARD, AND IT WAS TRIED ON PAPER FIRST.** A pivot above centre would
+keep the sky and lose the road on very wide windows, but the lata and the tsinelas ARE the bottom
+of this picture and they are the game's two objects. There is no crop worth taking that cuts them.
+
+⚠️⚠️ **AND THE OVERFLOW IS MASKED RATHER THAN COVERED, WHICH IS § 99'S LESSON APPLIED BEFORE IT
+COSTS ANYTHING.** Enveloping means the picture is bigger than its region by construction, and the
+old arrangement relied on the column being opaque and later in the hierarchy to hide the part that
+spilled under it. That is true until somebody reorders two lines or gives the column a translucent
+skin. `RectMask2D` makes the region's edge the picture's edge whatever is drawn beside it.
+
+⚠️⚠️ **DELETING THE SCRIM ALSO DELETED THE THING THAT WAS BLOCKING CLICKS, AND THAT WOULD HAVE
+SHIPPED.** The scrim was a full-screen raycast target, so it was silently what stopped a press on
+the art side reaching the title screen underneath. With it gone, at boot the player could have
+pressed PLAY **through** the picture, on the one screen that exists to ask a question first. The
+key art is the blocker now (`raycastTarget = true`); `RectMask2D` is an `ICanvasRaycastFilter`, so
+the block stops exactly where the picture does and the opaque column takes the rest.
+
+**Verified:** `PlayerHubLayoutProbe` 5/5, including `PhotographEveryScreen`, whose
+`08-signin-at-boot-over-the-menu.png` and `09-signin-at-boot-windowed.png` are the two renders
+this entry is written from. ⚠️ **The probe was green before this change too**, which is § 6.2b's
+whole point one more time: it asserts the labels fit their boxes, and every label always did.
+
+---
+
 ## 99 · ⚠️⚠️ EVERY `sortingOrder` A CODE-BUILT SCREEN SET WAS SILENTLY IGNORED, AND § 92.7'S FIX NEVER WORKED
 
 **Found 2026-08-31 when 🧑 opened the 00:24 player**: *"i opened the game what the fuclk is

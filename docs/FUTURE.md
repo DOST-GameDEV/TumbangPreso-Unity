@@ -297,6 +297,14 @@ what they expected to press.
 - **A layout probe at the nine resolutions** the other four UI probes use, asserting every label
   fits its box and clears `MenuKit.MinReadableUnits` (18). `PhaseSurfaceLayoutProbe` and
   `PlayerHubLayoutProbe` are the templates.
+- ⚠️⚠️ **EVERY RECT ON IT ANSWERS `CLAUDE.md` § 6.2c's FOUR QUESTIONS**, which is the section
+  written after 🧑 looked back at this whole run of work and said *"phase 1-4 had horrible ui
+  integraitons"*. What is this size measured against; is this image fitted to the region it is
+  seen in or to the whole screen; what is this dimming layer for and is that still true; and if I
+  delete this, what else was it doing. **All four are faults that shipped here**, and not one of
+  them is visible to a layout probe. `docs/TODO.md` § 100 is the entry: a 420-unit form inside a
+  column sized at 38 per cent of the window, and key art cropped against a frame the column was
+  covering a third of.
 - **A render, looked at by a person.** ⚠️⚠️ **A GREEN LAYOUT PROBE IS NOT A GOOD SCREEN AND THIS
   IS THE MOST IMPORTANT LINE IN THIS SECTION.** § 4.5.3 says it and § 94.7 proves it: every one of
   seven readability faults was true while every label fitted its box and cleared the floor. **The

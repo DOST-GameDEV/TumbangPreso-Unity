@@ -334,6 +334,29 @@ picture OF.**
 is the one screen where "I could not get a picture of it" is not an acceptable answer, because
 every player meets it before anything else.
 
+### 6.2c ⚠️⚠️ FOUR QUESTIONS ABOUT EVERY RECTANGLE ON A SCREEN, BECAUSE PHASES 1 TO 4 GOT THEM WRONG SEVEN TIMES
+
+🧑, after four phases of account and career UI: *"phase 1-4 had horrible ui integraitons"*, and, on
+the boot screen specifically: *"This shhit is horrible bro the art is cut off... u properly thinnk
+abt how to make the characters look good"*.
+
+**§ 6.2b is about photographing the right screen. This is about the screen itself, and every row
+below is a fault that shipped in this repository rather than a principle.** `docs/TODO.md` § 92
+(the six-button panel), § 94.7 (seven readability faults at once, all green) and § 100 (the art
+fitted to a frame nobody can see) are the receipts.
+
+| Ask, of every rect you write | The rule | What it cost |
+|---|---|---|
+| ⚠️⚠️ **What is this size measured AGAINST?** | **A size is only correct against the rectangle the player actually sees.** A percentage of the window is not a size: `AspectSafeCanvas` scales on the SHORT axis, so the canvas is about 1920 units wide at 4:3 and about 2250 on his window, and one fraction is two very different widths. **Size a panel against its CONTENT and state the arithmetic.** | § 100: the sign-in column was 38 per cent of the window around a 420-unit form, so on the window he plays in it was **860 units of wood around a form that never grew**. It is 580 units now, which is the form plus one margin either side, and it cannot swallow a narrow screen because `Expand` guarantees the canvas is never under 1920 units wide. Same family as § 92.1 fault 3, which is why `UiRows` takes no offsets. |
+| ⚠️⚠️ **Is this image fitted to the region it is SEEN in, or to the whole screen?** | **Every image gets an explicit fit decision and an explicit parent.** Envelope a background, fit a logo, and in both cases the parent must be the visible region, not `_root`. If something opaque covers part of the screen, the picture's frame ends where that thing starts. | § 100: the key art enveloped the full canvas and the column then covered a third of it, so the crop was computed for a frame that does not exist and the cast came out off-centre with its heads cut off. `SignInScreen.BuildLogo` records the same fault one size down: `FitInParent` sizes against the PARENT, so a fitter with no box of its own drew the wordmark three hundred pixels tall through the form. |
+| ⚠️⚠️ **What is this dimming layer FOR, and is that still true?** | **A scrim buys legibility over a live 3D scene, or separation from one. It is not decoration and it is not free.** If every word on the screen sits on an opaque panel, a scrim over the art side is dimming the one thing the player is meant to look at in exchange for nothing. **Ask what it protects before retuning it.** | § 100: 72 per cent over the live street, retuned to 55 when the key art landed, and never asked what it was still for. 🧑: *"nno nneed to darkenn it"*. `UiRows.Band` is the same rule the other way round: a number tuned against one background is not a number. |
+| ⚠️⚠️ **If I delete this, what else was it doing?** | **Anything covering the screen is also eating clicks, and the block is usually nobody's stated job.** When a full-screen graphic goes, name its replacement blocker in the same commit. | § 100: the scrim was silently what stopped a press on the art side reaching the title screen underneath. Deleting it would have let a player press PLAY **through** the boot screen, on the one screen that exists to ask a question first. The key art is the blocker now, and it says so. |
+
+⚠️⚠️ **AND NONE OF THE FOUR IS VISIBLE TO ANY PROBE IN THIS REPOSITORY, WHICH IS THE POINT OF
+PUTTING THEM HERE.** `PlayerHubLayoutProbe` was green through every one of them, because a label
+that fits its box fits its box whether the picture behind it is beautiful or butchered. **The probe
+asks whether the screen is a screen. This section is what to look at in the picture.**
+
 ### 6.3 ⚠️⚠️ MOVING AROUND THE GAME IS ITS OWN DESIGN PROBLEM, AND THE UNIT IS THE JOURNEY
 
 🧑, 2026-08-31: *"i want the user experience of movinng around the game to feel intuitive"*, and
