@@ -171,6 +171,88 @@ namespace TumbangPreso.PlayTests
             Debug.Log($"[UgsServicesProbe] {Net.CareerStore.ScriptName} answered: {call.Result}");
         }
 
+        /// <summary>
+        /// The `telemetry` endpoint answers a report for the signed-in player.
+        ///
+        /// ⚠️⚠️ "report" IS THIS SCRIPT'S SAFE VERB, THE WAY "load" IS THE OTHER TWO'S. A submit
+        /// would write real counters and a real funnel step for the probe's throwaway anonymous
+        /// player, and the funnel is the one thing in the whole design that is deliberately
+        /// impossible to un-record: the first timestamp wins, forever, by construction. A probe
+        /// that dirtied it would put a fake first-launch into the number `FUTURE.md` § 3 calls
+        /// the most valuable in the plan.
+        ///
+        /// ⚠️ IT IS ALSO THE ONLY THING THAT CATCHES A TELEMETRY SCRIPT THAT WAS WRITTEN AND
+        /// NEVER DEPLOYED, for the same reason the career test is: `TelemetrySink` swallows a
+        /// failed batch on purpose, so a game sending into nothing looks exactly like a game
+        /// nobody has played.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator TheTelemetryEndpointAcceptsABatchWithoutTouchingTheFunnel()
+        {
+            yield return SignedIn();
+
+            // ⚠️⚠️ ONE NON-FUNNEL EVENT, AND THE `accepted` COUNT IS THE ASSERTION. Anything that
+            // only checks "it answered" would have passed throughout the whole of § 90.5, when
+            // the action was being stripped and every call landed on the default branch. This
+            // asserts a number only the intended branch can produce.
+            string batch = "[{\"Name\":\"session_start\",\"Count\":1,\"Params\":{}}]";
+            var call = Net.CloudCode.CallAsync(
+                "telemetry", new { action = "submit", events = batch });
+            yield return Await(call);
+
+            Assert.IsNotNull(call.Result,
+                "telemetry returned no output. Run `ugs deploy ugs/cloud-code` and check " +
+                "`ugs cloud-code scripts list`.");
+
+            string flat = call.Result.Replace(" ", "");
+            StringAssert.Contains("\"accepted\":1", flat,
+                "the telemetry endpoint did not accept a known event. If `refused` is 1 instead, " +
+                "the event lists in TelemetryEvents and telemetry.js have split; if the whole " +
+                "shape is wrong, the parameters are being stripped again. docs/TODO.md § 90.5.");
+            StringAssert.Contains("\"funnel\":{}", flat,
+                "a probe submission recorded a funnel step. The funnel is deliberately impossible " +
+                "to un-record, so a probe must never send one: this batch carries `session_start` " +
+                "for exactly that reason. docs/TODO.md § 90.3.");
+
+            Debug.Log($"[UgsServicesProbe] telemetry accepted a batch: {call.Result}");
+        }
+
+        /// <summary>
+        /// The impersonation guard, end to end, against the live endpoint. `docs/TODO.md` § 88.1c.
+        ///
+        /// ⚠️⚠️ THIS IS THE ONLY TEST IN THE PROJECT THAT CAN PROVE THE GUARD REFUSES ANYTHING.
+        /// The core tests assert what the rule DOES with each answer; only a live call proves the
+        /// endpoint gives the right answer, because the whole mechanism is a value minted by one
+        /// authenticated session and checked from another.
+        ///
+        /// ⚠️ IT ONLY EVER ASSERTS THE REFUSAL, AND THAT IS DELIBERATE. A probe player has never
+        /// saved a profile, so `attest` correctly has no handle to vouch for and mints nothing;
+        /// making it mint one would mean writing a real account profile for a throwaway player,
+        /// which is exactly what `TheAccountEndpointAnswersALoad` refuses to do. A made-up proof
+        /// being rejected is the half that fails open if the endpoint is wrong, so it is the half
+        /// worth gating on: an endpoint that answered `owned` here would be waving every impostor
+        /// through, which is the fault § 88.1c exists for.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator TheAccountEndpointRefusesAHandleProofItNeverMinted()
+        {
+            yield return SignedIn();
+
+            var call = Net.CloudCode.CallAsync("player-account", new
+            {
+                action = "verify",
+                playerId = AuthenticationService.Instance.PlayerId,
+                proof = "this-proof-was-never-minted",
+            });
+            yield return Await(call);
+
+            Assert.IsNotNull(call.Result, "player-account did not answer a verify");
+            StringAssert.Contains("\"owned\":false", call.Result.Replace(" ", ""),
+                "the account endpoint vouched for a proof it never minted, which is the " +
+                "impersonation guard failing open. docs/TODO.md § 88.1c.");
+            Debug.Log($"[UgsServicesProbe] player-account verify refused a forged proof: {call.Result}");
+        }
+
         [UnityTest]
         public IEnumerator LobbyCreatesAndIsCleanedUp()
         {

@@ -104,6 +104,18 @@ namespace TumbangPreso.Net
             public int Protocol;
             public string Token;
             public string Name;
+
+            // ⚠️⚠️ THESE TWO ARE THE IMPERSONATION GUARD ON THE WIRE, `docs/TODO.md` § 88.1c.
+            // `AccountPlayerId` is what the peer says its account is, and `HandleProof` is a
+            // short-lived value the account endpoint minted for THAT account and nobody else.
+            // Neither is trusted here: the pair only lets the host ask the endpoint one question.
+            //
+            // ⚠️ THE PROOF IS NOT A CREDENTIAL AND MUST NEVER BE REPLACED BY ONE. The obvious
+            // shortcut is to put the peer's own UGS access token in this payload and let the host
+            // check it, which hands whoever is hosting the ability to act as that player against
+            // every service in the project. A peer-hosted game means the host is a stranger.
+            public string AccountPlayerId;
+            public string HandleProof;
         }
 
         /// <summary>
@@ -201,8 +213,20 @@ namespace TumbangPreso.Net
         /// the handler still plays the match correctly and then silently gets no end-of-match
         /// summary and no career entry for a game it played, which is the quiet kind of wrong
         /// this number exists to turn into a refusal. `docs/TODO.md` § 89.
+        ///
+        /// ⚠️⚠️ **16 SINCE 2026-08-30**, for the two fields the impersonation guard puts in the
+        /// approval hello and in `Identify` (`docs/TODO.md` § 88.1c and § 90.1). `Identify` is a
+        /// `FastBufferWriter` message read field by field in order, so a peer on 15 writes five
+        /// values where a host on 16 reads seven and every field after the third is read from the
+        /// wrong offset. That is the case `audit_wire_payloads.py` cannot see, because both ends
+        /// of THIS build agree; § 89.5 records the same trap one message earlier.
+        ///
+        /// ⚠️ AND THE QUIET HALF WOULD BE WORSE THAN THE LOUD ONE. Even if the payload were
+        /// tolerant, a 15 peer carries no proof, so on a 16 host it arrives unverified and any
+        /// account handle it claims is demoted to a host-allocated tag. Everybody on the older
+        /// build would silently be renamed in a lobby that looked like it was working.
         /// </summary>
-        public const int ProtocolVersion = 15;
+        public const int ProtocolVersion = 16;
 
         private const string SeatAssignmentMessage = "tp.seat.assignment.v1";
         private readonly Dictionary<ulong, ConnectionHello> _helloByClient =
@@ -628,6 +652,9 @@ namespace TumbangPreso.Net
 
                 Lobby.IsDedicated = false;
                 Lobby.OpenLobby(new System.Random(Environment.TickCount));
+                // ⚠️ THE RELAY PATHS ARE THE ONLY ONES ALLOWED TO SPEND A SERVICE CALL ON THE WAY
+                // TO A MATCH. See PrimeHandleProofAsync: LAN and direct-address joins may never.
+                await PrimeHandleProofAsync();
                 ConfigureClientHello();
 
                 bool ok = _nm.StartHost();
@@ -718,6 +745,9 @@ namespace TumbangPreso.Net
                 IsRelay = true;
                 RelayJoinCode = relayJoinCode.Trim();
 
+                // ⚠️ THE RELAY PATHS ARE THE ONLY ONES ALLOWED TO SPEND A SERVICE CALL ON THE WAY
+                // TO A MATCH. See PrimeHandleProofAsync: LAN and direct-address joins may never.
+                await PrimeHandleProofAsync();
                 ConfigureClientHello();
                 bool ok = _nm.StartClient();
                 if (ok) RegisterSeatHandler();
@@ -1012,14 +1042,129 @@ namespace TumbangPreso.Net
         private void ConfigureClientHello()
         {
             var settings = Settings.SettingsStore.Current;
+            var account = GameServices.Account;
             var hello = new ConnectionHello
             {
                 Protocol = ProtocolVersion,
-                Token = GameServices.Account?.ConnectionToken ?? NetIdentity.Token,
-                Name = LocalLobbyName()
+                Token = account?.ConnectionToken ?? NetIdentity.Token,
+                Name = LocalLobbyName(),
+
+                // ⚠️ WHATEVER IS CACHED, AND NEVER A NETWORK CALL FROM HERE. This runs inside
+                // every start path including the two LAN ones, and `FUTURE.md` § 0.5 rule 7 says
+                // a LAN match may never sit behind a login. `PrimeHandleProofAsync` fetches one
+                // on the relay paths, before this; empty here is a normal, playable state.
+                AccountPlayerId = account != null && account.IsSignedIn ? account.PlayerId : "",
+                HandleProof = account?.HandleProof ?? "",
             };
 
             _nm.NetworkConfig.ConnectionData = Encoding.UTF8.GetBytes(JsonUtility.ToJson(hello));
+        }
+
+        /// <summary>
+        /// Fetches a handle proof before an ONLINE start path builds its hello.
+        ///
+        /// ⚠️⚠️ IT IS CALLED ON THE RELAY PATHS ONLY, AND THAT IS THE RULE RATHER THAN AN
+        /// OPTIMISATION. `FUTURE.md` § 0.5 rule 7: LAN, direct-address joins, Practice and
+        /// Training may never sit behind a login, so none of them may spend a service call on the
+        /// way to a match. A LAN peer arrives with no proof and keeps the name it claims, exactly
+        /// as it did before the guard existed.
+        /// </summary>
+        private static async Task PrimeHandleProofAsync()
+        {
+            var account = GameServices.Account;
+            if (account == null) return;
+            await account.EnsureHandleProofAsync();
+        }
+
+        /// <summary>
+        /// One answer per (player id, proof) pair, so a reconnect inside the fast-reconnect
+        /// window and a second `Identify` from a live peer cost nothing.
+        ///
+        /// ⚠️ AN `Unreachable` ANSWER IS DELIBERATELY NOT CACHED. It describes the network for a
+        /// moment rather than the player, and caching it would hold a whole lobby unverified for
+        /// the rest of the session because the Wi-Fi dropped one packet while the first peer was
+        /// arriving.
+        /// </summary>
+        private readonly Dictionary<string, (Core.AccountRules.HandleCheck Check, string Handle)>
+            _handleChecks = new Dictionary<string, (Core.AccountRules.HandleCheck, string)>();
+
+        /// <summary>
+        /// The host side of `docs/TODO.md` § 88.1c: asks the account endpoint whether an arriving
+        /// peer owns the handle it claimed, then re-resolves the lobby name from the answer.
+        ///
+        /// ⚠️⚠️ IT IS FIRE AND FORGET AND NOTHING WAITS ON IT. The seat, the picks and the whole
+        /// lobby are already resolved by the time this starts. If it never answers, the lobby is
+        /// the lobby that shipped before the guard, which is the only acceptable failure mode for
+        /// a game that has to run in a hall with the internet unplugged.
+        /// </summary>
+        /// <summary>
+        /// A disconnect reason as one of a handful of groupable buckets.
+        ///
+        /// ⚠️ THE BUCKETS ARE MATCHED AGAINST WHAT THIS FILE ITSELF WRITES. `ApproveConnection`
+        /// composes the version and capacity sentences a few hundred lines above, and `Admit`
+        /// composes the replacement one, so these substrings are not guesses about a vendor
+        /// string. If one of those sentences is reworded, this reads `other` rather than lying,
+        /// which is the right way round for a number nobody is watching.
+        /// </summary>
+        private static string ClassifyDisconnect(string reason, bool wasLocal)
+        {
+            if (wasLocal) return "local";
+            if (string.IsNullOrWhiteSpace(reason)) return "dropped";
+            if (reason.Contains("protocol") || reason.Contains("version")) return "version";
+            if (reason.Contains("full")) return "full";
+            if (reason.Contains("Replaced")) return "replaced";
+            if (reason.Contains("identity")) return "identity";
+            return "other";
+        }
+
+        /// <summary>
+        /// The entry point for the other arrival path. `MatchRpc.HandleIdentify` admits a peer
+        /// too, so the guard has to hang off both or it has a documented way around it.
+        /// </summary>
+        public void VerifyArrival(int peerId, string accountPlayerId, string proof)
+            => VerifyArrivalAsync(peerId, accountPlayerId, proof);
+
+        private async void VerifyArrivalAsync(int peerId, string accountPlayerId, string proof)
+        {
+            if (!IsHost || string.IsNullOrEmpty(accountPlayerId) || string.IsNullOrEmpty(proof))
+                return;
+
+            // ⚠️ ONLY ONLINE. On LAN there is no endpoint to ask and no login to sit behind, and
+            // asking anyway would put a several-second service timeout in the path of a hall full
+            // of machines joining off the beacon.
+            if (!IsRelay) return;
+
+            // ⚠️⚠️ THE WHOLE BODY IS GUARDED BECAUSE THIS IS `async void`. Nothing awaits it, so
+            // an exception escaping here has no caller to land in and takes the process with it.
+            // A guard that fails must cost a name, never a match.
+            try
+            {
+                string key = accountPlayerId + "|" + proof;
+                if (!_handleChecks.TryGetValue(key, out var answer))
+                {
+                    answer = await PlayerAccount.VerifyHandleAsync(accountPlayerId, proof);
+                    if (answer.Check != Core.AccountRules.HandleCheck.Unreachable)
+                        _handleChecks[key] = answer;
+                }
+
+                if (Lobby == null) return;
+                if (!Lobby.ApplyHandleCheck(peerId, accountPlayerId, answer.Check, answer.Handle)) return;
+
+                if (answer.Check == Core.AccountRules.HandleCheck.NotOwned)
+                {
+                    var record = Lobby.PeerById(peerId);
+                    Debug.LogWarning(
+                        $"[Net] peer {peerId} claimed a handle it cannot prove; seated as " +
+                        $"{record?.Name}. docs/TODO.md § 88.1c.");
+                }
+
+                MatchRpc.Instance?.BroadcastLobbyPicks();
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[Net] handle verification for peer {peerId} failed; " +
+                                 $"the claimed name stands: {e.Message}");
+            }
         }
 
         private void ApproveConnection(NetworkManager.ConnectionApprovalRequest request,
@@ -1186,9 +1331,13 @@ namespace TumbangPreso.Net
                     int charPick = s.CharacterPick >= 0 ? s.CharacterPick : 0;
                     int canPick = s.CanPick >= 0 ? s.CanPick : 0;
                     int slipperPick = s.SlipperPick >= 0 ? s.SlipperPick : 0;
+                    var identity = GameServices.Account;
                     MatchRpc.Instance?.IdentifyServerRpc(
-                        GameServices.Account?.ConnectionToken ?? NetIdentity.Token,
-                        LocalLobbyName(), charPick, canPick, slipperPick);
+                        identity?.ConnectionToken ?? NetIdentity.Token,
+                        LocalLobbyName(),
+                        identity != null && identity.IsSignedIn ? identity.PlayerId : "",
+                        identity?.HandleProof ?? "",
+                        charPick, canPick, slipperPick);
                 }
                 return;
             }
@@ -1218,6 +1367,10 @@ namespace TumbangPreso.Net
             var record = Lobby.Admit((int)clientId, hello.Token, hello.Name,
                                      out int replacedPeerId);
             SendSeatAssignment(clientId, record.Seat);
+
+            // ⚠️ AFTER THE SEAT, NOT BEFORE IT. The peer is playing by the end of this method;
+            // the guard only decides what it is CALLED. `docs/TODO.md` § 88.1c.
+            VerifyArrivalAsync((int)clientId, hello.AccountPlayerId, hello.HandleProof);
 
             // A relaunch can establish the new socket before the generous 30 second timeout
             // retires the old one. The durable token has already moved the seat above, so the
@@ -1265,6 +1418,14 @@ namespace TumbangPreso.Net
             // to act on, and a version mismatch in particular is a thing they CAN fix.
             string reason = _nm != null ? _nm.DisconnectReason : null;
             SetStatus(string.IsNullOrWhiteSpace(reason) ? "disconnected" : $"disconnected: {reason}");
+
+            // ⚠️⚠️ THE REASON IS REDUCED TO A CLASS BEFORE IT IS COUNTED, AND THE SENTENCE IS
+            // NEVER SENT. `FUTURE.md` § 3 asks for a disconnect rate, which needs four or five
+            // buckets; the string itself is host-authored free text that a modified peer could
+            // put anything at all into, and `TelemetryRules.Label` would refuse it for having a
+            // space in it anyway. A bucket is groupable, a sentence is a hundred distinct values
+            // for one cause. `docs/TODO.md` § 90.3.
+            GameServices.Telemetry?.NoteDisconnect(ClassifyDisconnect(reason, _localShutdown));
 
             // ⚠️ A DISCONNECT WE ASKED FOR IS NOT AN EVENT ANYBODY NEEDS TELLING ABOUT. The
             // player is already navigating; announcing it and dragging them to the join screen

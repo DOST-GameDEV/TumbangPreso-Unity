@@ -360,3 +360,17 @@ module.exports = async ({ params, context, logger }) => {
 
     throw new Error("unknown match record action");
 };
+
+// ⚠️⚠️ EVERY PARAMETER A SCRIPT USES MUST BE DECLARED HERE OR CLOUD CODE STRIPS IT, AND THE
+// FAILURE IS SILENT AND LOOKS LIKE A WORKING ENDPOINT. Measured on 2026-08-30: this endpoint
+// answered a call carrying an action with the payload of the branch an ABSENT action falls
+// through to. Nothing errors, nothing logs, and the answer is well-formed, so a probe that
+// only asserts "it answered" passes. `docs/TODO.md` § 90.5 is the entry.
+//
+// ⚠️ IF A NEW ACTION NEEDS A NEW PARAMETER, IT GOES IN THIS BLOCK IN THE SAME EDIT.
+module.exports.params = {
+    action: "String",
+    record: "String",
+    offset: "Numeric",
+    limit: "Numeric",
+};

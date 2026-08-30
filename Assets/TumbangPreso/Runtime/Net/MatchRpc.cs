@@ -528,19 +528,29 @@ namespace TumbangPreso.Net
         // IDENTITY AND SEATING
         // -------------------------------------------------------------------
 
-        public void IdentifyServerRpc(string token, string name, int charPick, int canPick, int slipperPick)
+        /// <summary>
+        /// ⚠️ THE ACCOUNT ID AND THE HANDLE PROOF TRAVEL WITH THE NAME, AND THEY ARE WHY THE
+        /// PROTOCOL IS 16. `docs/TODO.md` § 88.1c. This message is read field by field in order,
+        /// so the two new values are a wire change even though nothing else moved: a peer writing
+        /// five where the host reads seven misreads every field after the third. Neither value is
+        /// trusted here; together they let the host ask the account endpoint one question.
+        /// </summary>
+        public void IdentifyServerRpc(string token, string name, string accountPlayerId,
+                                      string handleProof, int charPick, int canPick, int slipperPick)
         {
             if (_nm == null || _nm.CustomMessagingManager == null) return;
 
             if (NetAuthority.IsHost)
             {
-                HandleIdentify(0, token, name, charPick, canPick, slipperPick);
+                HandleIdentify(0, token, name, accountPlayerId, handleProof, charPick, canPick, slipperPick);
                 return;
             }
 
-            using var writer = new FastBufferWriter(256, Allocator.Temp);
+            using var writer = new FastBufferWriter(512, Allocator.Temp);
             writer.WriteValueSafe(token ?? "");
             writer.WriteValueSafe(name ?? "");
+            writer.WriteValueSafe(accountPlayerId ?? "");
+            writer.WriteValueSafe(handleProof ?? "");
             writer.WriteValueSafe(charPick);
             writer.WriteValueSafe(canPick);
             writer.WriteValueSafe(slipperPick);
@@ -553,20 +563,30 @@ namespace TumbangPreso.Net
 
             reader.ReadValueSafe(out string token);
             reader.ReadValueSafe(out string name);
+            reader.ReadValueSafe(out string accountPlayerId);
+            reader.ReadValueSafe(out string handleProof);
             reader.ReadValueSafe(out int charPick);
             reader.ReadValueSafe(out int canPick);
             reader.ReadValueSafe(out int slipperPick);
 
-            HandleIdentify(senderClientId, token, name, charPick, canPick, slipperPick);
+            HandleIdentify(senderClientId, token, name, accountPlayerId, handleProof, charPick, canPick, slipperPick);
         }
 
-        private void HandleIdentify(ulong senderClientId, string token, string name, int charPick, int canPick, int slipperPick)
+        private void HandleIdentify(ulong senderClientId, string token, string name,
+                                    string accountPlayerId, string handleProof,
+                                    int charPick, int canPick, int slipperPick)
         {
             int peerId = (int)senderClientId;
             var lobby = NetSession.Instance?.Lobby;
             if (lobby == null) return;
 
             var record = lobby.Admit(peerId, token, name);
+
+            // ⚠️ THE SECOND ARRIVAL PATH, AND IT NEEDS THE GUARD AS MUCH AS THE FIRST. A peer
+            // reaches `Admit` through the approval hello and again through this message, and a
+            // check wired into only one of them is a check with a documented way around it.
+            NetSession.Instance?.VerifyArrival(peerId, accountPlayerId, handleProof);
+
             int resolvedCharPick = charPick >= 0 ? charPick : 0;
             int resolvedCanPick = canPick >= 0 ? canPick : 0;
             int resolvedSlipperPick = slipperPick >= 0 ? slipperPick : 0;

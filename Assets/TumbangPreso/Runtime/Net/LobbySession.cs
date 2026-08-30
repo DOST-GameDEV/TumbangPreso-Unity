@@ -33,6 +33,16 @@ namespace TumbangPreso.Net
         public int CharacterPick = -1;
         public int CanPick = -1;
         public int SlipperPick = -1;
+
+        // ⚠️ THE RAW CLAIM IS KEPT BESIDE THE RESOLVED NAME BECAUSE THE ANSWER ARRIVES LATER.
+        // `docs/TODO.md` § 88.1c: the account endpoint is asked whether this peer owns the handle
+        // it claimed, and that is a network round trip the lobby must not wait for. So arrival
+        // resolves a usable name immediately from the claim, and `ApplyHandleCheck` recomputes it
+        // from these three fields when the answer lands. Without the claim stored, the second
+        // pass would have nothing to re-derive from but its own first guess.
+        public string ClaimedName = "";
+        public string AccountPlayerId = "";
+        public AccountRules.HandleCheck HandleTrust = AccountRules.HandleCheck.NotAsked;
     }
 
     /// <summary>
@@ -236,7 +246,14 @@ namespace TumbangPreso.Net
                 // ⚠️ ACCOUNT HANDLE VALIDATED ONCE, HERE, ON ARRIVAL. The display name and
                 // discriminator travel together, so a clipped suffix cannot impersonate a real
                 // account handle on the scoreboard.
+                //
+                // ⚠️⚠️ AND THE NAME RESOLVES NOW RATHER THAN AFTER THE ACCOUNT ENDPOINT ANSWERS,
+                // WHICH IS `FUTURE.md` § 0.5 RULE 7 IN ONE LINE. Verification is a network round
+                // trip; a lobby that waited for it would be a LAN match sitting behind a login,
+                // and the nationals are in a hall whose Wi-Fi may not exist. `ApplyHandleCheck`
+                // upgrades or demotes this the moment there is an answer, and never before.
                 Name = AccountRules.ArrivalHandle(name, token),
+                ClaimedName = name ?? "",
             };
 
             // A replacement connection can arrive before the transport's generous 30 second
@@ -320,6 +337,39 @@ namespace TumbangPreso.Net
 
             ClaimLeaderIfVacant(peerId);
             return record;
+        }
+
+        /// <summary>
+        /// Records the account endpoint's answer about an arriving peer and re-resolves its name.
+        /// `docs/TODO.md` § 88.1c. Answers true when the visible name changed.
+        ///
+        /// ⚠️⚠️ THE RESULT IS RE-DERIVED FROM THE ORIGINAL CLAIM, NOT PATCHED ONTO THE CURRENT
+        /// NAME. Arrival already turned the claim into something showable, so a second pass that
+        /// edited `Name` would be resolving a resolved value: a demotion would re-tag a tag, and
+        /// a late second answer for the same peer would compound rather than replace. One rule,
+        /// one input, run again.
+        ///
+        /// ⚠️ AND IT REFUSES AN ANSWER FOR A PEER THAT HAS SINCE BEEN REPLACED. Verification is
+        /// async and a reconnect inside the fast-reconnect window mints a new proof for the same
+        /// token, so the old answer can land after the new transport has taken the record. The
+        /// player id is the guard: an answer about somebody else is dropped.
+        /// </summary>
+        public bool ApplyHandleCheck(int peerId, string accountPlayerId,
+                                     AccountRules.HandleCheck check, string ownedHandle)
+        {
+            if (!_peers.TryGetValue(peerId, out var record)) return false;
+            if (!string.IsNullOrEmpty(record.AccountPlayerId) &&
+                record.AccountPlayerId != accountPlayerId) return false;
+
+            record.AccountPlayerId = accountPlayerId ?? "";
+            record.HandleTrust = check;
+
+            string resolved = AccountRules.VerifiedArrivalHandle(
+                record.ClaimedName, record.Token, check, ownedHandle);
+
+            if (resolved == record.Name) return false;
+            record.Name = resolved;
+            return true;
         }
 
         /// <summary>

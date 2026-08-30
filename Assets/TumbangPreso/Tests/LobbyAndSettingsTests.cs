@@ -1739,12 +1739,12 @@ namespace TumbangPreso.Tests
         /// the sender owns that handle. So the old rule punished the honest case and waved the
         /// forgery through.
         ///
-        /// ⚠️ WHAT IS TRUE TODAY, AND IT IS NOT IMPERSONATION-PROOF: a peer-hosted lobby cannot
-        /// verify a claimed handle by itself. Doing that needs the host to ask the `player-account`
-        /// endpoint whether this player id owns this handle, which needs the endpoint deployed and
-        /// must never gate a LAN match. `docs/TODO.md` § 88 carries it as the open item. Until
-        /// then this asserts the honest half: a usable name survives, and the tag is always
-        /// well-formed and per-peer.
+        /// ⚠️⚠️ WHAT THIS STILL ASSERTS, AND WHY IT IS RIGHT EVEN NOW THE GUARD EXISTS: arrival
+        /// resolves a name with NO service call at all. The check is a network round trip and the
+        /// lobby must never wait for one (`FUTURE.md` § 0.5 rule 7), so a claimed handle is
+        /// admitted on arrival and re-resolved later by `ApplyHandleCheck`. This is the LAN and
+        /// offline path in full, and the four-machines-in-a-hall case § 88.1b was written for.
+        /// `LobbyDemotesAClaimTheAccountEndpointRefuses` is the other half.
         /// </summary>
         [Test]
         public void LobbyKeepsAUsableNameAndAlwaysTagsIt()
@@ -1765,6 +1765,103 @@ namespace TumbangPreso.Tests
             StringAssert.StartsWith("Player#", unusable.Name);
 
             Assert.AreEqual(AccountRules.HandleMax, AccountRules.DisplayNameMax + 5);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE IMPERSONATION GUARD AS THE LOBBY SEES IT, `docs/TODO.md` § 88.1c. The core
+        /// tests assert what the rule does with each answer; this asserts that the lobby applies
+        /// it to the ORIGINAL CLAIM rather than to the name it already resolved, which is the
+        /// thing a second pass gets wrong: a demotion that re-tagged a tag, or a second answer
+        /// for one peer that compounded instead of replacing.
+        /// </summary>
+        [Test]
+        public void LobbyDemotesAClaimTheAccountEndpointRefuses()
+        {
+            var lobby = new LobbySession();
+            lobby.Admit(1, "impostor-token", "Maria Clara#4417", out _);
+
+            Assert.IsTrue(lobby.ApplyHandleCheck(1, "impostor-id",
+                AccountRules.HandleCheck.NotOwned, ""));
+
+            var record = lobby.PeerById(1);
+            StringAssert.StartsWith("Maria Clara#", record.Name,
+                "the display name must survive a refusal: a hall of four beacons that all read " +
+                "`Player#tag` is docs/TODO.md § 88.1b all over again");
+            Assert.AreNotEqual("Maria Clara#4417", record.Name, "the claimed tag must be gone");
+
+            // ⚠️ RUNNING THE SAME ANSWER TWICE CHANGES NOTHING. A reconnect, a re-identify and a
+            // late duplicate answer all reach this, and a rule applied to its own output would
+            // walk the tag every time.
+            string once = record.Name;
+            Assert.IsFalse(lobby.ApplyHandleCheck(1, "impostor-id",
+                AccountRules.HandleCheck.NotOwned, ""));
+            Assert.AreEqual(once, record.Name);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ `FUTURE.md` § 0.5 RULE 7 AT THE LOBBY BOUNDARY. A LAN match may never sit behind
+        /// a login, and venue Wi-Fi at the nationals may not exist at all, so "we did not ask"
+        /// and "it did not answer" must both leave four peers named exactly as they claimed.
+        /// </summary>
+        [Test]
+        public void LanArrivalNeedsNoServiceAndNamesFourPeersApart()
+        {
+            var lobby = new LobbySession();
+            var names = new System.Collections.Generic.HashSet<string>();
+
+            for (int i = 0; i < LobbySession.MaxPlayers; i++)
+            {
+                var peer = lobby.Admit(10 + i, $"lan-token-{i}", $"Kalye Kid {i}", out _);
+
+                // Nothing is asked and nothing answers: this is the unplugged hall.
+                Assert.IsFalse(lobby.ApplyHandleCheck(10 + i, "",
+                    AccountRules.HandleCheck.Unreachable, ""));
+
+                Assert.IsTrue(AccountRules.TrySplitHandle(peer.Name, out string shown, out string tag));
+                Assert.AreEqual($"Kalye Kid {i}", shown);
+                StringAssert.IsMatch("^[0-9]{4}$", tag);
+                Assert.IsTrue(names.Add(peer.Name), "two LAN peers rendered as the same row");
+            }
+
+            Assert.AreEqual(LobbySession.MaxPlayers, names.Count);
+        }
+
+        /// <summary>
+        /// A verified peer is called what the SERVICE says, not what it claimed, so a host does
+        /// not have to trust a single character of the claim once there is an answer.
+        /// </summary>
+        [Test]
+        public void LobbyTakesTheVerifiedHandleOverTheClaimedOne()
+        {
+            var lobby = new LobbySession();
+            lobby.Admit(1, "token-a", "Somebody Else#1234", out _);
+
+            Assert.IsTrue(lobby.ApplyHandleCheck(1, "player-a",
+                AccountRules.HandleCheck.Owned, "Maria Clara#4417"));
+            Assert.AreEqual("Maria Clara#4417", lobby.PeerById(1).Name);
+        }
+
+        /// <summary>
+        /// ⚠️ AN ANSWER ABOUT SOMEBODY ELSE IS DROPPED. Verification is async and a reconnect
+        /// inside the fast-reconnect window mints a new proof for the same token, so a stale
+        /// answer can land after the new transport has taken the record.
+        /// </summary>
+        [Test]
+        public void ALateAnswerAboutADifferentAccountIsIgnored()
+        {
+            var lobby = new LobbySession();
+
+            // ⚠️ THE CLAIM IS DELIBERATELY NOT THE VERIFIED HANDLE. `ApplyHandleCheck` answers
+            // "did the visible name change", so a peer whose claim was already correct answers
+            // false on a successful check, which is right and is not what this test is about.
+            lobby.Admit(1, "token-a", "Somebody Else#1234", out _);
+
+            Assert.IsTrue(lobby.ApplyHandleCheck(1, "player-a",
+                AccountRules.HandleCheck.Owned, "Maria Clara#4417"));
+
+            Assert.IsFalse(lobby.ApplyHandleCheck(1, "somebody-else",
+                AccountRules.HandleCheck.Owned, "Impostor#0001"));
+            Assert.AreEqual("Maria Clara#4417", lobby.PeerById(1).Name);
         }
 
         [Test]

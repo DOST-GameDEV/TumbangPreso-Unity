@@ -59,6 +59,45 @@ namespace TumbangPreso.Settings
         public bool AccountUpgradeOfferShown = false;
 
         // -------------------------------------------------------------------
+        // TELEMETRY. `docs/TODO.md` § 90.3.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// The opt-out, which the Settings screen shows and which stops ALL sending.
+        ///
+        /// ⚠️⚠️ IT DEFAULTS TO ON AND THE SETTINGS SCREEN SAYS WHAT IS COLLECTED, which is the
+        /// whole of `FUTURE.md` § 19.3's fourth build item. Turning it off must not merely stop
+        /// the upload: `TelemetrySink` stops COUNTING, so an opted-out player accumulates nothing
+        /// to send later and nothing that a future version could decide to flush. An opt-out that
+        /// only gates the transmit is one refactor away from being no opt-out at all.
+        /// </summary>
+        public bool TelemetryEnabled = true;
+
+        /// <summary>
+        /// How far through the first-launch funnel this install has got. -1 is "not launched yet",
+        /// which is what makes the first boot a measurable event rather than an assumption.
+        ///
+        /// ⚠️ IT ONLY GOES FORWARD, per `TelemetryRules.FurthestFunnelStep`, and it is an INDEX
+        /// into an append-only list. Reordering `TelemetryEvents.Funnel` silently rewrites what
+        /// every stored value here means.
+        /// </summary>
+        public int TelemetryFunnelStep = -1;
+
+        /// <summary>
+        /// The furthest funnel step a batch carrying it has actually been delivered.
+        ///
+        /// ⚠️⚠️ IT IS A SEPARATE NUMBER FROM `TelemetryFunnelStep` BECAUSE THIS GAME'S FIRST
+        /// SESSION IS OFTEN OFFLINE, AND WITHOUT IT THE FUNNEL WOULD UNDERCOUNT EXACTLY THE
+        /// PLAYERS IT MATTERS MOST FOR. A first launch in a hall with no internet records the
+        /// step locally, sends nothing, and with one number would never send it again: the server
+        /// would report an install that reached the menu offline as an install that never
+        /// launched. `TelemetrySink` re-notes everything between this and `TelemetryFunnelStep`
+        /// on the first signed-in session, and the endpoint is idempotent about funnel steps (the
+        /// first timestamp wins), so a step delivered twice costs nothing.
+        /// </summary>
+        public int TelemetryFunnelSent = -1;
+
+        // -------------------------------------------------------------------
         // AUDIO
         // -------------------------------------------------------------------
 

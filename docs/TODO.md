@@ -19,6 +19,9 @@ somebody might decide to do. **Phase 1 was explicitly started on 2026-08-31 and 
 **Phase 2 followed on 2026-08-30 and is § 89**: the profile, the stats and the match history.
 Read § 89.3 before changing who submits a match record, and § 89.6 before changing any rule in
 `ProfileRules`, which is written twice on purpose.
+**§ 90 closes Phase 1's last open item and adds Phase 3**: the impersonation guard (§ 90.1, which
+corrects the fix § 88.1c prescribed) and telemetry (§ 90.3, whose event names are a contract that
+must not be renamed). ⚠️ `NetSession.ProtocolVersion` is **16**; both machines rebuild.
 Written 2026-08-31 on 🧑's brief.
 
 ✅ **The unplugged LAN run is DONE, confirmed by 🧑 on 2026-08-31.** This entry read "what has
@@ -91,7 +94,15 @@ most. `AccountRules.ArrivalHandle` now keeps a usable claimed name and allocates
 durable token, and falls back to `Player` only for a name that cannot be shown at all. It sits in
 the core rather than in `LobbySession` because it is a rule, per `FUTURE.md` § 0.5 rule 3.
 
-**88.1c · ⚠️⚠️ THE IMPERSONATION GUARD DOES NOT EXIST YET, AND THE TEST SAID IT DID.** The
+**88.1c · ✅ CLOSED 2026-08-30 BY § 90.1, WHICH ALSO CORRECTS THE FIX THIS ENTRY PRESCRIBES.**
+⚠️ The last paragraph below says to have the host ask the endpoint whether a player id owns a
+handle. **That does not work on its own**: the player id arrives in the same message as the
+handle, from the same peer, so an impostor claims both and the endpoint truthfully says yes. The
+missing half is proof that the peer IS the account it names. § 90.1 has what shipped. The
+statement of the problem below is still exactly right and is kept for it.
+
+**The problem, as first written:** ⚠️⚠️ **THE IMPERSONATION GUARD DOES NOT EXIST YET, AND THE
+TEST SAID IT DID.** The
 brief's reason for routing the lobby name through the account was that *"the first thing anybody
 does with a new account system is impersonate somebody"*. The rule written for it was backwards.
 It rewrote a bare `Maria Clara` on the theory that it was forging `Maria Clara#4417`, while
@@ -264,8 +275,9 @@ Prefer deleting the test over letting it rot. It probes with `load` rather than 
 `delete` so it never writes a real profile or exercises the destructive path against a live
 project.
 
-**Phase 1 is now done except for one thing that was never part of it:** the impersonation gap in
-§ 88.1c.
+✅ **PHASE 1 IS COMPLETE AS OF 2026-08-30.** The one thing that was never part of it, the
+impersonation gap in § 88.1c, is built and is § 90.1. ⚠️ Read § 90.1 rather than § 88.1c for
+how it works: the fix § 88.1c prescribed is not sufficient on its own and that entry now says so.
 
 ⚠️ **AND THE UNPLUGGED LAN RUN IS NOT OUTSTANDING.** 🧑 confirmed on 2026-08-31 that it has been
 done. Several documents said otherwise and they are corrected in the same commit as this line.
@@ -495,14 +507,21 @@ offline.
   makes § 88.1a a gate rather than a paragraph** asking somebody to remember.
 - **`Ugs` category 5/5.** `player-account` answered `{"profile":""}` and `match-record`
   answered `{"applied":false,"profile":""}`, which is the correct answer for a player who has
-  never finished a match. Both went through `Net.CloudCode`, so the probe now proves the
+  never finished a match.
+  ⚠️⚠️ **AND THAT PAIR OF ANSWERS TURNED OUT TO PROVE LESS THAN IT READS AS PROVING. § 90.5.**
+  Both probe with `load`, which is the branch an ABSENT action falls through to, and Cloud Code
+  was stripping the action because the scripts declared no parameters. `submit` had therefore
+  never run and no career had ever reached the server, with every probe green throughout. Fixed
+  and redeployed 2026-08-30; a parser now fails if a script reads a parameter it does not declare. Both went through `Net.CloudCode`, so the probe now proves the
   transport the game uses.
 - **`BotBehaviourProbe` 3/3**, whole matches in both modes on both maps, which is what exercises
   the throw, retrieval, shove and lunge hooks in `Carrier` and `CombatVerbs`.
 
 ⚠️ **STILL TO DO ON THIS PHASE, AND IT IS NOT CODE:** the unplugged four-player LAN run, per
 § 89.7. It is a regression to protect, not an open task, and this is the phase most able to
-break it.
+break it. **§ 90.4 is what is automated in its place, and what to check when the four machines
+are on the table.** It applies to § 90 as well as to this phase: the protocol is 16 now, so every
+machine has to be rebuilt before the run means anything.
 
 ---
 
@@ -528,6 +547,379 @@ probe's frames with.
 fact (average time to first throw, distance per round) fell off the end silently, which is
 exactly the pair nobody would notice missing. They are in the list proper now and a
 `Debug.Assert` fails if the block is ever smaller than what it is asked to write.
+
+---
+
+## 90 · The impersonation guard, and telemetry ⚠️ 2026-08-30
+
+Two things in one branch because they share a wire bump and a Cloud Code deploy: § 88.1c, which
+was the last open item on Phase 1, and Phase 3 of `FUTURE.md`, which § 3 says to do alongside
+Phase 2 rather than after it.
+
+⚠️ **`NetSession.ProtocolVersion` is 16.** Both machines rebuild off this branch or they refuse
+each other at approval, by design. § 90.1 is why.
+
+⚠️⚠️ **READ § 90.5 FIRST IF YOU TOUCH ANY CLOUD CODE SCRIPT.** Deploying this phase's third
+script found that Cloud Code had been stripping every parameter the scripts did not declare, so
+`player-account`'s save and delete and `match-record`'s submit had **never once run** against the
+live project, with every probe green throughout. Fixed and redeployed in this branch.
+
+---
+
+### 90.1 · ✅ The impersonation guard is built. § 88.1c is closed.
+
+§ 88.1c stated the problem and the reason it was blocked: *"A peer-hosted lobby cannot close this
+on its own. The tag of a real account is allocated by UGS Player Names, so the host cannot
+recompute it from the token and cannot tell a genuine `Maria Clara#4417` from a claimed one."*
+
+**⚠️⚠️ THE FIX § 88.1c PRESCRIBED DOES NOT WORK ON ITS OWN, AND THIS IS THE CORRECTION.** That
+entry says to have *"the host ask the `player-account` endpoint whether this player id owns this
+handle"*. The player id in that sentence arrives in the same message as the handle, from the same
+peer, and a peer that lies about one lies about both. An impostor claiming `Maria Clara#4417`
+simply also claims Maria's player id, the endpoint truthfully answers *yes, that handle belongs to
+that id*, and the guard waves the attack through exactly as the test in § 88.1c did. The missing
+half is not a lookup, it is **proof that the peer is the account it names**.
+
+**What shipped, in three parts.**
+
+**1. The tag is derived, not allocated.** `AccountRules.DerivedTag(playerId)` is FNV-1a of the
+stable player id, and `player-account.js` computes the same digits server-side and **ignores
+whatever discriminator a client sends on a save**. That removes the blocker § 88.1c named: there
+is now one tag source in the game, the server can recompute it without storing anything, and a
+tag stops being a value a client can assert about itself.
+⚠️ **UGS Player Names is still written, for the display name only**, so the dashboard shows a
+person rather than a uuid. Its allocated tag is discarded, deliberately.
+⚠️ **A client that could write its own tag could write somebody else's and then attest to it**,
+which is why the server-side derivation is load-bearing rather than tidy.
+
+**2. A proof, minted by the owner and checked by the host.** The peer calls
+`player-account` with `attest` from its own authenticated session; the endpoint stores a random
+short-lived value beside that account and answers with it plus the handle it will vouch for. The
+peer puts the value in its connection hello. The host calls `verify` with the claimed player id
+and that value, and the endpoint reads the OTHER player's stored proof with a service token and
+answers one boolean and one handle.
+⚠️ **The obvious alternative is to put the peer's own UGS access token in the hello and let the
+host check it.** That hands whoever is hosting the ability to act as that player against every
+service in the project, and in a peer-hosted game the host is a stranger. A proof writes nothing,
+names no other player, and expires in `AccountRules.HandleProofMinutes` (10).
+⚠️ **There is no signature and no hashing primitive involved.** Cloud Code's runtime does not
+offer one this script can rely on, so the proof is checked by reading it back out of Cloud Save.
+That is enough for what it has to do and it needs nothing but the API already in use.
+
+**3. A refused claim keeps its name and loses its tag.** `AccountRules.VerifiedArrivalHandle` is
+the rule. `Maria Clara#4417` that cannot be proved arrives as `Maria Clara#8812`, tagged from the
+durable token.
+⚠️⚠️ **DELETING THE NAME OUTRIGHT WOULD BE § 88.1b ALL OVER AGAIN**: four machines joining off
+the beacon in a hall rendering as four identical rows, in the one venue where telling the seats
+apart matters most. The display name is not the identity and never was; the tag is.
+
+**⚠️⚠️ AND NONE OF IT GATES A LAN MATCH, WHICH IS `FUTURE.md` § 0.5 RULE 7 AND IS NOT
+NEGOTIABLE.** Arrival resolves a usable name immediately with no service call; the check is fired
+afterwards and only on the relay paths, and `ApplyHandleCheck` upgrades or demotes the name when
+an answer lands. `HandleCheck` has **four** values and two of them resolve identically today:
+`NotAsked` is LAN and `Unreachable` is a venue behind a captive portal. They are separate on
+purpose, because one of them is a case somebody might one day want to refuse and collapsing them
+would take the unplugged hall down with it.
+
+**⚠️ AN UNREACHABLE ANSWER IS NEVER CACHED.** It describes the network for a moment rather than
+the player, and caching it would hold a whole lobby unverified for the rest of the session
+because one packet dropped while the first peer was arriving. `Owned` and `NotOwned` are cached
+per (player id, proof), so a reconnect and a re-identify cost nothing.
+
+**⚠️ THE ANSWER CACHE OUTLIVES THE SESSION IT WAS FILLED IN, AND THAT IS FINE ON PURPOSE.**
+`NetSession._handleChecks` is not cleared when a session stops, unlike `_helloByClient` beside it.
+An entry is keyed on (player id, proof) and a proof expires in ten minutes, so a stale entry can
+only ever be re-read by a peer presenting the same proof inside its own lifetime, and what it says
+was true when it was minted. It is a handful of short strings for the life of the process. If it
+is ever cleared for tidiness, clear it where `_helloByClient` is cleared and nowhere else: doing it
+per arrival would spend a service call on every reconnect inside the fast-reconnect window, which
+is the cost the cache exists to avoid.
+
+**⚠️ THE GUARD HANGS OFF BOTH ARRIVAL PATHS.** A peer reaches `LobbySession.Admit` through the
+approval hello **and** again through `MatchRpc.HandleIdentify`, and a check wired into only one of
+them is a check with a documented way around it.
+
+**What this does NOT fix, and saying so is the point.** The host still authors every number in a
+match record (`§ 89.3`), and a modified host can still lie about all of them. This is about who
+you are, not about what you scored. Phase 8 is the other one.
+
+**Where it lives:**
+
+| Piece | Where |
+|---|---|
+| `DerivedTag`, `OwnedHandle`, `OwnsHandle`, `HandleCheck`, `VerifiedArrivalHandle` | `Packages/com.tumbangpreso.core/Runtime/AccountRules.cs` |
+| `attest`, `verify`, server-side tag derivation | `ugs/cloud-code/player-account.js` |
+| `EnsureHandleProofAsync`, `VerifyHandleAsync` | `Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs` |
+| `PeerRecord.ClaimedName`, `ApplyHandleCheck` | `Assets/TumbangPreso/Runtime/Net/LobbySession.cs` |
+| The hello fields, `VerifyArrival`, the cache | `Assets/TumbangPreso/Runtime/Net/NetSession.cs` |
+| The two new `Identify` fields | `Assets/TumbangPreso/Runtime/Net/MatchRpc.cs` |
+
+### 90.2 · One thing the guard needed that Phase 1 had not built
+
+**⚠️ A SIGNED-IN PLAYER HAD NO STORED PROFILE, SO THERE WAS NOTHING TO ATTEST TO.**
+`player-account.js`'s `attest` derives the handle it vouches for from the STORED profile, because
+a handle accepted from the caller is a handle anybody can claim. Until this branch a profile was
+only written when somebody opened the account screen or attached a password, so an ordinary
+signed-in player had no stored profile, could mint no proof, and **every online lobby would have
+fallen through to the unverified path forever**, which looks exactly like a guard that works.
+`RefreshFromAuthenticationAsync` now writes the profile once, on the first boot that finds the
+cloud empty.
+
+⚠️ **A FAILED LOAD COUNTS AS "THE CLOUD HAS ONE".** An unreachable endpoint answers the same way
+an empty profile does, and writing on that branch would overwrite a real stored profile with
+whatever this machine had on disk the moment the network wobbled. Missing a first write costs one
+boot; the other way round costs an account.
+
+### 90.3 · Phase 3: telemetry, and the event-name contract
+
+`FUTURE.md` § 3 and its § 19.3 prompt. The prompt's VERIFY FIRST asks whether an analytics package
+is already present: **`com.unity.services.analytics` is not in the manifest and is not used
+anywhere.** `com.unity.modules.unityanalytics` in `Packages/manifest.json` is the legacy built-in
+module, not the UGS SDK, and nothing references `AnalyticsService`.
+
+**⚠️⚠️ IT DOES NOT USE UGS ANALYTICS, AND THAT IS A DECISION RATHER THAN AN OVERSIGHT.**
+`Net/CloudCode.cs`'s header already records why: *"this repository's generated PackageManager
+state cannot currently resolve an added package"*, which is the same reason the Cloud Code REST
+shape is written out by hand rather than taken from its SDK. On top of that, UGS Analytics custom
+events have to be declared in the dashboard before they are processed, which would make every new
+event in this contract a manual step somebody has to remember, on an account only 🧑 can open.
+Telemetry therefore goes through the transport that is already deployed, already proven by a
+probe, and already free: one more Cloud Code script.
+⚠️ **`FUTURE.md` § 0.3 lists UGS Analytics as the telemetry line and that row is now stale.**
+Corrected there in the same commit, per § 0.5 rule 2.
+
+**The contract. ⚠️⚠️ A RENAMED EVENT IS A BROKEN HISTORY.** Nothing errors when a name changes;
+a counter silently restarts at zero beside a year of data it can never be joined to again. These
+names are chosen once. `TelemetryEvents` holds them, `telemetry.js` refuses a name it does not
+know, and `CareerAndCloudCodeTests.TheTelemetryScriptKnowsExactlyTheEventsTheCoreCanSend` fails if
+the two lists ever differ, in content **or in order**.
+
+| Event | Raised | Carries |
+|---|---|---|
+| `first_launch` | `TelemetrySink.Awake`, once per install | nothing |
+| `first_sign_in` | the splash, when the account barrier settles | nothing |
+| `first_menu` | the splash, when the menu is handed over | nothing |
+| `first_queue` | the MULTIPLAYER screen | nothing |
+| `first_match_started` | round 1, on every peer | nothing |
+| `first_match_finished` | a record adopted, on every peer | nothing |
+| `session_start` | every launch | nothing |
+| `session_end` | quit | `seconds` |
+| `match_started` | round 1, every peer | `mode`, `map`, `seats`, `bots` |
+| `match_finished` | record adopted, every peer | `mode`, `map`, `rounds`, `seconds`, `placement` |
+| `match_left` | `SceneFlow.LeaveMatchToMainMenu` | `mode`, `round` (0 means not in a match) |
+| `pick` | record adopted, this seat only, humans only | `mode`, `character`, `slipper` |
+| `settings_snapshot` | boot, and when sign-in settles | `gpu`, `cores`, `ram_gb`, `screen_w`, `screen_h`, `online` |
+| `disconnect` | `NetSession.OnClientDisconnected` | `reason` as one of `local`, `dropped`, `version`, `full`, `replaced`, `identity`, `other` |
+
+⚠️⚠️ **THE FUNNEL LIST IS ORDERED AND APPEND-ONLY, AND THE ORDER IS THE MEANING.** "How far did
+this player get" is an index comparison, so inserting a step in the middle silently rewrites what
+every already-stored funnel position is claiming: a player recorded at index 3 becomes a player
+who reached a step that did not exist when they played. Add to the END, or add a second funnel.
+This is `FUTURE.md` § 0.5 rule 5, which `Roster.Slippers` records for the wire, applied to a list
+that crosses time instead of a network.
+
+**⚠️ ONE BATCH PER SESSION, NEVER ONE CALL PER EVENT.** `FUTURE.md` § 0.3's only hard rule about
+Cloud Code, and telemetry is the feature most able to break it: a Hero Strike match carries nine
+hundred passive-defence ticks. `TelemetryRules.Fold` collapses identical events into a count in
+memory and the buffer is capped at 64 distinct shapes, past which counts on rows already in the
+buffer keep rising and only new shapes are dropped.
+⚠️ **There are three flush points and each SENDS AND CLEARS**, so nothing is counted twice: quit
+(the primary one), a finished match (so a crash afterwards does not cost the match numbers), and a
+new funnel step (bounded by construction, six per install, ever).
+⚠️ **The quit flush usually loses the race and that is accepted.** Unity tears the process down
+without waiting for a `Task`. Blocking quit on a network call would hang the game for seconds on
+bad venue Wi-Fi in exchange for a number; the match flush is what makes the trade survivable.
+⚠️ **A crash is measured as the ABSENCE of `session_end`**, which is why it is sent at all and
+why it is not worth more effort than that: `session_start` minus `session_end` is the crash rate
+§ 3 asks for, and neither half has to be perfect to be useful.
+
+**⚠️⚠️ NO PERSONALLY IDENTIFYING FIELD, EVER, ENFORCED TWICE.** `TelemetryRules` refuses a
+parameter whose NAME means a person (`name`, `email`, `player`, `account`, `handle`, `id`,
+`token`, `ip`, `device`, and nine more), and refuses any value that is not a short bucket label:
+free text is rejected outright rather than truncated, because a clipped label is a new value that
+will never join to the one it came from. `telemetry.js` applies the same rules again, because the
+client is the half somebody can edit.
+⚠️ **AND NO IDENTIFIER IS SENT AT ALL.** The endpoint keys everything on `context.playerId` from
+the authenticated session, which a client cannot set, so there is nothing in the payload to leak,
+to get wrong, or to have to strip later.
+
+**The opt-out.** `Settings > Share Anonymous Stats`, defaulting to ON, with the sentence
+*"Counts only: matches played, modes, maps, picks and frame rate. No names, no chat, nothing you
+type."* underneath it.
+⚠️⚠️ **TURNING IT OFF STOPS THE COUNTING, NOT ONLY THE SENDING.** An opt-out that gates the
+upload alone leaves a buffer a later version could decide to flush, which is the same thing as no
+opt-out. `TelemetrySink.Note` returns immediately when it is off, so nothing accumulates.
+⚠️ **It is a dropdown rather than a tick box**, and that is reuse rather than design: every tick
+box on that panel is a node `TscnImporter` owns and rebakes, so a row added to the scene by hand
+disappears. `BuildDropdownRow` is the built-in-code path three other rows already use.
+
+**Storage, and what is approximate.** Each player's counters and funnel timestamps go in that
+player's own protected Cloud Save document, which is **exact**. A project-wide rollup is kept in
+Cloud Save custom data so the funnel can be read at all.
+⚠️⚠️ **THE ROLLUP IS APPROXIMATE AND SAYING SO IS THE POINT.** Cloud Save has no atomic
+increment, so two sessions submitting in the same instant can lose one update. At four to eight
+concurrent players that is a rounding error against numbers whose job is to say "most people stop
+here"; at a size where it would matter, this is the wrong storage and the answer is a real
+analytics sink rather than a lock. **Any number that has to be defended is recomputed from the
+per-player documents.**
+⚠️ **A failed rollup never fails the submit.** The per-player write has already landed and is the
+exact copy; failing would make the client retry a batch it already delivered.
+⚠️ **A rollup this Cloud Save module cannot reach degrades to per-player only** rather than
+erroring, and `report` says so. Read it with the `Ugs` probe, or by calling the endpoint with
+`{"action":"report"}`.
+
+**Two things `FUTURE.md` § 3 asks for that are not here, per § 0.5 rule 11:**
+
+- **Queue times by rating band.** There is no matchmaking queue and no rating; Phase 7 and Phase 9
+  own both. `first_queue` is the honest substitute for the funnel step: the first time somebody
+  opens the MULTIPLAYER screen, which is the first time they try to play with other people at all.
+  ⚠️ **Do not later read that step as a queue time.**
+- **FPS distribution.** The hardware key (`gpu`, `cores`, `ram_gb`, screen size) ships; the frame
+  rate itself does not, because a percentile sampled over a whole session including menus and a
+  loading screen would describe nothing. It wants a per-match sampler, which is a small piece of
+  work and belongs beside `HudPerformanceProbe`. **Open, and the only part of Phase 3 that is.**
+
+### 90.4 · The unplugged LAN run, per § 89.7
+
+⚠️⚠️ **THE FOUR-MACHINE PHYSICAL RUN IS 🧑'S AND CANNOT BE DONE FROM HERE.** It needs four
+machines, four people and a cable pulled out of a router. § 89.7 asks for it to be re-run after
+Phase 2, and this branch touches the boot path again (§ 90.2 adds one first-boot profile write,
+and the guard adds a service call to the two RELAY start paths only).
+
+**What is automated instead, so the software half is a gate rather than a memory:**
+
+- `LanArrivalNeedsNoServiceAndNamesFourPeersApart` seats four peers with no service call at all
+  and asserts four distinct readable rows. That is § 88.1b's hall, as a test.
+- `AnUncheckedPeerKeepsTheNameItClaimed` covers both `NotAsked` and `Unreachable`.
+- `PrimeHandleProofAsync` is called from the two relay start paths and from nowhere else, so the
+  LAN, direct-address, Practice and Training paths spend no service call on the way to a match.
+- `TelemetrySink.Flush` returns immediately when there is no signed-in account, so an unplugged
+  session buffers and never calls.
+
+**⚠️ WHAT TO ACTUALLY CHECK WHEN THE FOUR MACHINES ARE ON THE TABLE**, beyond "does it play":
+every machine must be rebuilt off this branch, because `ProtocolVersion` is 16 and 15 refuses it
+at approval by design; and all four names in the lobby must read as four different people, which
+is the thing the guard could plausibly have broken.
+
+---
+
+### 90.5 · ⚠️⚠️ CLOUD CODE WAS STRIPPING EVERY PARAMETER, SO PHASE 1 AND PHASE 2 HAD ENDPOINTS THAT ONLY LOOKED DEPLOYED
+
+**Found by the live probe on 2026-08-30, not by reasoning.** The new telemetry test called the
+endpoint with `{"action":"report"}` and got back `{"accepted":0,"funnel":{},"refused":0,
+"rolled":false}`, which is the **submit** branch's payload. The script had never seen an action.
+
+**⚠️ CLOUD CODE DELIVERS ONLY THE PARAMETERS A SCRIPT DECLARES IN `module.exports.params`.**
+Everything else arrives as `undefined`. None of the three scripts declared any.
+
+**⚠️⚠️ WHAT THAT HAD ALREADY COST, AND IT IS NOT SMALL.** Every script dispatches on
+`params.action || "<default>"`, so a stripped action does not throw, does not log, and returns a
+well-formed answer from the wrong branch:
+
+| Call | What it did instead | Since |
+|---|---|---|
+| `player-account` `save` | fell to `load` and returned the stored profile. **No profile was ever written.** | Phase 1 |
+| `player-account` `delete` | fell to `load`. **Account deletion never cleared Cloud Save.** | Phase 1 |
+| `match-record` `submit` | fell to `load`, and the `record` parameter was stripped too. **No career has ever reached the server.** | Phase 2 |
+| `match-record` `history` | fell to `load`, so a paged history answered a profile. | Phase 2 |
+
+**⚠️⚠️ AND EVERY PROBE PASSED THROUGHOUT**, which is the part worth keeping. § 88.4 and § 89.8
+both record their endpoint tests as proof the deploy landed, and both are worded as *"it
+answered"*: `TheAccountEndpointAnswersALoad` probes with `load`, which IS the default branch, and
+`TheCareerEndpointAnswersALoad` does the same. A test that exercises the default branch cannot
+tell a delivered parameter from a stripped one. **The probes were not wrong about what they
+claimed; they claimed less than everyone read them as claiming.**
+
+**⚠️ THE PER-PLAYER CAREER ON DISK WAS NEVER AFFECTED.** `CareerStore` is an optimistic local
+cache by design (§ 89.6) and keeps a full local profile and history when the service is
+unreachable, so nothing a player has played is lost. What was lost is the server copy, which is
+what makes a career survive a reinstall or a second machine. Nobody would have noticed until
+somebody signed in somewhere else and found an empty career.
+
+**Fixed by declaring the parameters in all three scripts, redeployed 2026-08-30.**
+`CareerAndCloudCodeTests.EveryParameterACloudCodeScriptReadsIsDeclaredSoItIsNotStripped` parses
+each script and fails if it reads a `params.x` it does not declare, so the next action added with
+a new parameter cannot repeat this.
+
+⚠️ **`events` IS DECLARED AS `JSON` AND NOT AS `String`.** The telemetry batch is an array of
+objects and the client sends it as one; declared as a string it would arrive as text, and the
+script's first act is `Array.isArray`, which would answer false and accept nothing. Same silent
+shape, one type further on.
+
+**⚠️⚠️ AND THE FIX TOOK TWO MORE DEPLOYS, BECAUSE TWO OTHER THINGS SILENTLY DROP THE WHOLE
+DECLARATION.** Both were found by deploying and then reading `ugs cloud-code scripts get <name>`,
+which prints the parameters the SERVICE holds rather than the ones the file contains. **That
+command is the only way to see any of this.**
+
+1. **`events: "JSON"` dropped the entire block, not the one entry.** `params: []`, so `action`
+   went with it and every call fell back to the default branch again. `String` and `Numeric` are
+   the only two types these three scripts have proven against this project. The batch is
+   serialised by the client and read by `parseBatch`, exactly as `match-record` has always
+   carried its record.
+2. **⚠️⚠️ A TOP-LEVEL `function parameters(...)` IN THE FILE DROPPED IT TOO, AND THAT WAS THE
+   REAL ONE.** The script deployed, the code was complete and correct in the service, and the
+   parameter list came back empty. It was bisected against the live service one top-level
+   declaration at a time (the constants fine, `text` fine, `parameters` not), and **renaming it
+   to `columnsFrom` was the entire fix.** Do not name anything at the top level of a Cloud Code
+   script `parameters`. `CareerAndCloudCodeTests` fails on one now.
+
+⚠️ **THE COMMENT ABOVE THE BLOCK IS FINE, AND SO ARE THE ⚠️ GLYPHS IN IT.** Both were suspected
+and both were cleared by deploying without them. Worth knowing before somebody strips a comment
+looking for this again.
+
+⚠️ **WHEN ADDING AN ACTION, PROBE THE NEW BRANCH RATHER THAN THE DEFAULT ONE.** That is the
+lesson this cost, and it is why `TheAccountEndpointRefusesAHandleProofItNeverMinted` asserts a
+specific `"owned":false` rather than that something came back: the assertion has to be a string
+only the intended branch can produce.
+
+### 90.6 · Verified
+
+- **Core 214/214** (`dotnet test`), from 164 before this phase. The new ones are the impersonation
+  rules (tag derivation, ownership, the four `HandleCheck` outcomes) and the telemetry contract
+  (funnel order, monotonicity, parameter refusal, folding and the buffer bound).
+  ⚠️ **`TheDerivedTagMatchesTheServerScriptsCopyOfTheSameHash` pins four vectors produced by
+  RUNNING the JavaScript**, because nothing on this machine compiles it and the two copies of
+  FNV-1a can only be compared through values one of them produced. If it goes red the client and
+  the server have stopped agreeing about who owns which tag.
+- **EditMode 241/241 -> 250/250**, read from `Logs/tests.xml` rather than from the exit code.
+  ⚠️ The first run was 240/241: `TheProtocolCarriesEveryRosterBump` caught the bump to 16, which
+  is the tripwire working for the second phase running. Re-armed at 16.
+- **`Ugs` category 5/5 -> 7/7, against the live project**, and two of them are new proofs rather
+  than new coverage:
+  - `TheAccountEndpointRefusesAHandleProofItNeverMinted` answered
+    `{"handle":"","owned":false}`. That is the guard failing CLOSED, which is the half worth
+    gating on: an endpoint that answered `owned` here would wave every impostor through.
+  - `TheTelemetryEndpointAcceptsABatchWithoutTouchingTheFunnel` answered
+    `{"accepted":1,"funnel":{},"refused":0,"rolled":true}`.
+    ⚠️ **`"rolled":true` is the one thing about the storage design that could not be settled by
+    reading anything.** It says Cloud Save custom data is reachable from Cloud Code on this
+    project, so the project-wide rollup exists rather than degrading to per-player documents.
+    ⚠️ And it probes with `session_start` on purpose: a funnel step is impossible to un-record by
+    construction, so a probe must never send one. `"funnel":{}` asserts it did not.
+- **All five editor checks OK in one launch** (`Checks.RunAll`): `RESULT: OK. All 5 checks passed
+  in one launch.` ⚠️ `MapGeometryCheck` still prints per-prop FAIL lines for Eskinita dressing
+  that it does not gate on, exactly as § 89.8 records; the run's own verdict is OK and nothing in
+  this branch touches a scene.
+- **`BotBehaviourProbe` 3/3 on the default set**: `ClassicBotsPlayAWholeMatch`,
+  `HeroStrikeBotsPlayAWholeMatchAndUseTheirKits` and `HeroStrikeBotsPlayAWholeMatchUnderTheBridge`,
+  whole matches in both modes on both maps. That is what exercises everything Phase 2 hooked into
+  `Carrier` and `CombatVerbs`, plus the two telemetry calls this branch added to
+  `MatchStatsCollector`.
+  ⚠️ **`TwoIdenticalMatchesLandInsideTheNoiseFloor` ALSO PASSED**, which is the test `CLAUDE.md`
+  § 7.1 names as how you ask whether the probe is still honest after touching anything the bots
+  read.
+  ⚠️⚠️ **`TheOverclockWindowSweep` IS RED AND IT IS NOT THIS BRANCH.** It is `[Category
+  ("WallClock")]`, excluded from every standard run on purpose, and it is red for exactly the
+  reason § 16 was written: two runs of one build at one rate still do not produce the same match.
+  It was only run here because `-testFilter BotBehaviourProbe` does not exclude the category the
+  way `-testCategory "!WallClock"` does. Do not read it as a regression, and do not chase it
+  without reading § 16 first.
+- **A clean Windows player on the Desktop.**
+
+⚠️ **WHAT IS NOT VERIFIED HERE, AND CANNOT BE FROM THIS MACHINE:** the unplugged four-player LAN
+run. § 90.4 lists what is automated in its place and what to check when the four machines are on
+the table. **The protocol is 16, so every machine has to be rebuilt off this branch before that
+run means anything at all.**
 
 ---
 

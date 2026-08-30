@@ -96,6 +96,73 @@ namespace TumbangPreso.Tests
                 "which is Balance.PlayerNameMax. docs/TODO.md § 88.1a is what that cost last time.");
             Assert.AreEqual(AccountRules.DisplayNameMin, ConstantIn(js, "DISPLAY_NAME_MIN"),
                 "DISPLAY_NAME_MIN in player-account.js no longer matches AccountRules.DisplayNameMin");
+
+            Assert.AreEqual(AccountRules.HandleProofMinutes, ConstantIn(js, "PROOF_MINUTES"),
+                "PROOF_MINUTES in player-account.js no longer matches AccountRules.HandleProofMinutes. " +
+                "The client re-mints with a minute to spare against this number; if the server's " +
+                "is shorter, every honest peer arrives with an expired proof and is demoted.");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE IMPERSONATION GUARD RESTS ENTIRELY ON THE TWO COPIES OF FNV-1a AGREEING, AND
+        /// NOTHING ELSE HERE CAN SEE THAT THEY DO. `docs/TODO.md` § 88.1c and § 90.1: the tag is
+        /// derived from the player id in `AccountRules.DerivedTag` and again in the script's
+        /// `derivedTag`, and the server is the authority. If they split, the endpoint vouches for
+        /// a handle no client will ever compute and every online lobby demotes everybody.
+        ///
+        /// ⚠️ THE NUMERIC AGREEMENT IS ASSERTED IN `Core.Tests`
+        /// (`TheDerivedTagMatchesTheServerScriptsCopyOfTheSameHash`), against vectors produced by
+        /// running the JavaScript. This checks the cheaper half: that the script still contains
+        /// the hash at all rather than having quietly gone back to trusting the caller.
+        /// </summary>
+        [Test]
+        public void TheAccountScriptStillDerivesTheTagRatherThanTrustingTheClaim()
+        {
+            string js = File.ReadAllText(Path.Combine(CloudCodeRoot, "player-account.js"));
+
+            StringAssert.Contains("2166136261", js, "the FNV-1a offset basis is gone from player-account.js");
+            StringAssert.Contains("16777619", js, "the FNV-1a prime is gone from player-account.js");
+            StringAssert.Contains("Discriminator: derivedTag(playerId)", js,
+                "player-account.js is storing a discriminator that did not come from the player " +
+                "id. A client that can write its own tag can write somebody else's, attest to " +
+                "it, and the whole guard proves a lie for them. docs/TODO.md § 88.1c.");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ A RENAMED EVENT IS A BROKEN HISTORY, `FUTURE.md` § 19.3, AND THIS IS THE ONLY
+        /// THING THAT CAN CATCH ONE. The server refuses a name it does not know, so a name added
+        /// on one side and not the other is not an error anywhere: it is an event the client
+        /// counts, sends, and has silently discarded, forever, with a `refused` number nobody is
+        /// reading. `docs/TODO.md` § 90.3 is the contract in prose.
+        /// </summary>
+        [Test]
+        public void TheTelemetryScriptKnowsExactlyTheEventsTheCoreCanSend()
+        {
+            string js = File.ReadAllText(Path.Combine(CloudCodeRoot, "telemetry.js"));
+
+            var funnel = StringArrayIn(js, "FUNNEL");
+            CollectionAssert.AreEqual(TelemetryEvents.Funnel, funnel,
+                "FUNNEL in telemetry.js no longer matches TelemetryEvents.Funnel, in content or " +
+                "in ORDER. The order is the meaning: a funnel position is an index, so reordering " +
+                "rewrites what every stored profile is claiming.");
+
+            var known = new System.Collections.Generic.List<string>(funnel);
+            known.AddRange(StringArrayIn(js, "EVENTS", concatenated: true));
+
+            CollectionAssert.AreEquivalent(TelemetryEvents.All, known,
+                "telemetry.js and TelemetryEvents.All disagree about which events exist. The " +
+                "server refuses a name it does not know, so the client would count and send an " +
+                "event that is thrown away with no error on either side.");
+        }
+
+        [Test]
+        public void TheTelemetryScriptStillAgreesWithTheCoreAboutItsLimits()
+        {
+            string js = File.ReadAllText(Path.Combine(CloudCodeRoot, "telemetry.js"));
+
+            Assert.AreEqual(TelemetryRules.MaxEventsPerBatch, ConstantIn(js, "MAX_EVENTS_PER_BATCH"));
+            Assert.AreEqual(TelemetryRules.MaxParametersPerEvent, ConstantIn(js, "MAX_PARAMETERS_PER_EVENT"));
+            Assert.AreEqual(TelemetryRules.MaxParameterLength, ConstantIn(js, "MAX_PARAMETER_LENGTH"));
         }
 
         /// <summary>
@@ -106,10 +173,11 @@ namespace TumbangPreso.Tests
         /// this is what proves there is something for it to deploy.
         /// </summary>
         [Test]
-        public void BothCloudCodeScriptsSitInTheFolderTheCliDeploys()
+        public void EveryCloudCodeScriptSitsInTheFolderTheCliDeploys()
         {
             Assert.IsTrue(File.Exists(Path.Combine(CloudCodeRoot, "player-account.js")));
             Assert.IsTrue(File.Exists(Path.Combine(CloudCodeRoot, "match-record.js")));
+            Assert.IsTrue(File.Exists(Path.Combine(CloudCodeRoot, "telemetry.js")));
         }
 
         /// <summary>
@@ -162,6 +230,104 @@ namespace TumbangPreso.Tests
             StringAssert.Contains("NetworkDelivery.ReliableFragmentedSequenced", rpc,
                 "the match record is larger than one packet and must not go out on a delivery " +
                 "that cannot split it. docs/TODO.md § 89.5.");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ CLOUD CODE STRIPS EVERY PARAMETER A SCRIPT DOES NOT DECLARE, AND THE FAILURE IS
+        /// SILENT AND LOOKS EXACTLY LIKE A WORKING ENDPOINT. Measured live on 2026-08-30: the
+        /// telemetry endpoint was called with `{"action":"report"}` and answered with the SUBMIT
+        /// branch's payload, which is what an ABSENT action falls through to. Every script here
+        /// dispatches on `params.action || "<default>"`, so a stripped action does not throw, does
+        /// not log, and returns a well-formed answer from the wrong branch.
+        ///
+        /// **`docs/TODO.md` § 90.5 is what that had already cost**: `player-account`'s save and
+        /// delete and `match-record`'s submit had never once run against the live project, and the
+        /// probes passed the whole time because they only ask whether the endpoint answered.
+        ///
+        /// ⚠️ THIS READS THE SOURCE AS TEXT for the same reason the tests above it do: nothing on
+        /// this machine compiles the JavaScript, and the live symptom is an answer rather than an
+        /// error.
+        /// </summary>
+        [Test]
+        public void EveryParameterACloudCodeScriptReadsIsDeclaredSoItIsNotStripped()
+        {
+            foreach (string script in new[] { "player-account.js", "match-record.js", "telemetry.js" })
+            {
+                string js = File.ReadAllText(Path.Combine(CloudCodeRoot, script));
+
+                var block = Regex.Match(js, @"module\.exports\.params\s*=\s*\{(.*?)\n\};",
+                                        RegexOptions.Singleline);
+                Assert.IsTrue(block.Success,
+                    $"{script} declares no `module.exports.params`, so Cloud Code strips every " +
+                    "parameter it is sent and every call lands on the default branch.");
+
+                var declared = new System.Collections.Generic.HashSet<string>();
+                foreach (Match entry in Regex.Matches(block.Groups[1].Value, @"^\s*(\w+)\s*:", RegexOptions.Multiline))
+                    declared.Add(entry.Groups[1].Value);
+
+                var used = new System.Collections.Generic.HashSet<string>();
+                foreach (Match entry in Regex.Matches(js, @"params\.(\w+)"))
+                    used.Add(entry.Groups[1].Value);
+
+                used.ExceptWith(declared);
+                Assert.IsEmpty(used,
+                    $"{script} reads parameters it does not declare, so Cloud Code delivers them " +
+                    $"as undefined: {string.Join(", ", used)}");
+
+                // ⚠️⚠️ AND THE DECLARATION IS DROPPED BY A TOP-LEVEL FUNCTION CALLED
+                // `parameters`, WHICH COST AN AFTERNOON TO FIND. `docs/TODO.md` § 90.5: with one
+                // in the file, `ugs deploy` uploaded the code and then reported `params: []` for
+                // the WHOLE script, so `action` went missing and every request landed on the
+                // default branch. Nothing failed and nothing warned. It was bisected one function
+                // at a time against the live service; renaming it was the entire fix.
+                Assert.IsFalse(Regex.IsMatch(js, @"^\s*(async\s+)?function\s+parameters\s*\(",
+                                             RegexOptions.Multiline),
+                    $"{script} declares a top-level `function parameters`, which makes the deploy " +
+                    "silently drop every declared parameter. docs/TODO.md § 90.5.");
+            }
+        }
+
+        /// <summary>
+        /// ⚠️ THE TELEMETRY BATCH TRAVELS AS A `String`, NOT AS `JSON`. Declaring it `JSON` made
+        /// the service drop the whole parameter block, and `TelemetrySink` serialises it to match.
+        /// `docs/TODO.md` § 90.5. Two halves of one wire shape, in two languages, so this pins them.
+        /// </summary>
+        [Test]
+        public void TheTelemetryBatchIsSentAndDeclaredAsAString()
+        {
+            string js = File.ReadAllText(Path.Combine(CloudCodeRoot, "telemetry.js"));
+            StringAssert.Contains("events: \"String\"", js,
+                "telemetry.js no longer declares `events` as a String. docs/TODO.md § 90.5.");
+
+            string sink = File.ReadAllText(
+                Path.Combine(AssetsRoot, "Runtime", "Net", "TelemetrySink.cs"));
+            StringAssert.Contains("JsonConvert.SerializeObject(events)", sink,
+                "TelemetrySink is no longer serialising the batch before sending it, so the " +
+                "endpoint receives something its `parseBatch` cannot read. docs/TODO.md § 90.5.");
+        }
+
+        /// <summary>
+        /// Reads a `const NAME = [ "a", "b" ];` list out of a script, and optionally the
+        /// `const NAME = OTHER.concat([ ... ]);` form the event list uses.
+        ///
+        /// ⚠️ IT PARSES RATHER THAN SEARCHING FOR SUBSTRINGS, because a `Contains` check passes
+        /// on a script that has the right names AND an extra one, which is exactly the drift that
+        /// makes a client event silently disappear.
+        /// </summary>
+        private static string[] StringArrayIn(string js, string name, bool concatenated = false)
+        {
+            string pattern = concatenated
+                ? @"const\s+" + Regex.Escape(name) + @"\s*=\s*\w+\.concat\(\[(.*?)\]\)"
+                : @"const\s+" + Regex.Escape(name) + @"\s*=\s*\[(.*?)\]";
+
+            var match = Regex.Match(js, pattern, RegexOptions.Singleline);
+            Assert.IsTrue(match.Success, $"no `const {name} = [...]` in the script");
+
+            var values = new System.Collections.Generic.List<string>();
+            foreach (Match entry in Regex.Matches(match.Groups[1].Value, "\"([^\"]+)\""))
+                values.Add(entry.Groups[1].Value);
+
+            return values.ToArray();
         }
 
         private static int ConstantIn(string js, string name)

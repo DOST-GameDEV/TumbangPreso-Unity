@@ -124,6 +124,14 @@ namespace TumbangPreso
             // Every peer runs `StartMatch` on its own arena load, so every peer reaches this.
             if (round <= 1) Last = null;
 
+            // ⚠️⚠️ TELEMETRY COUNTS THE MATCH ON EVERY PEER, ABOVE THE HOST GATE, FOR THE SAME
+            // REASON THE LINE ABOVE IT IS THERE. `BeginMatch` is host-only because the RECORD is
+            // authored once; a started-match count that only the host raised would report a
+            // four-player online match as one match started and four finished, and the funnel's
+            // `first_match_started` step would never fire for anybody who has only ever joined.
+            // `docs/TODO.md` § 90.3.
+            if (round <= 1) NoteMatchStartedToTelemetry();
+
             if (!NetAuthority.ShouldResolve()) return;
 
             if (round <= 1) BeginMatch();
@@ -322,7 +330,66 @@ namespace TumbangPreso
 
             Last = record;
             Net.CareerStore.Instance?.Record(record);
+            NoteMatchFinishedToTelemetry(record);
             RecordReady?.Invoke(record);
+        }
+
+        // -------------------------------------------------------------------
+        // § TELEMETRY. `docs/TODO.md` § 90.3.
+        //
+        // ⚠️ IT HANGS OFF THE TWO POINTS THAT ALREADY EXIST RATHER THAN ADDING EVENTS. A match
+        // start and a finished record are already the two moments this class is built around, so
+        // telemetry costs two calls and no new bookkeeping. `FUTURE.md` § 3 asks for mode and map
+        // split, match length distribution and pick rates, and all four are read off state that
+        // is here anyway.
+        // -------------------------------------------------------------------
+
+        private void NoteMatchStartedToTelemetry()
+        {
+            var telemetry = GameServices.Telemetry;
+            if (telemetry == null) return;
+
+            var round = GameServices.Round;
+            int humans = 0;
+            int bots = 0;
+            for (int slot = 0; slot < Balance.PlayerCount; slot++)
+            {
+                var motor = round?.PlayerAt(slot);
+                if (motor == null) continue;
+                if (motor.IsBot) bots++; else humans++;
+            }
+
+            telemetry.NoteMatchStarted(UI.SceneFlow.SelectedMode.ToString(),
+                                       UI.SceneFlow.SelectedMap ?? "", humans, bots);
+        }
+
+        private void NoteMatchFinishedToTelemetry(MatchRecord record)
+        {
+            var telemetry = GameServices.Telemetry;
+            if (telemetry == null || record?.Players == null) return;
+
+            var net = Net.NetSession.Instance;
+            int seat = net != null && net.IsNetworked ? net.LocalSlot : 0;
+            var line = seat >= 0 && seat < record.Players.Length ? record.Players[seat] : null;
+
+            // ⚠️⚠️ THE PICK IS RECORDED AT THE END, FROM THE RECORD, AND NOT AT CHARACTER SELECT.
+            // `FUTURE.md` § 3 asks for "character and tsinelas pick and win rates", and both
+            // halves of that sentence want the same row: a pick counted at selection time would
+            // count a player who cycles the roster twelve times as twelve picks, would count a
+            // match somebody backed out of, and would sit in a different event from the placement
+            // that says whether the pick won. One event, at the one moment both facts exist.
+            //
+            // ⚠️ AND IT IS THIS MACHINE'S OWN SEAT ONLY. Every peer adopts the same record and
+            // reports its own line, so four players produce four rows; a host reporting all four
+            // would count each bot's assigned character as somebody's choice.
+            if (line != null && !line.IsBot)
+                telemetry.NotePick(record.Mode, line.CharacterId, line.SlipperId);
+
+            // ⚠️ THE FINISH GOES LAST BECAUSE IT IS WHAT FLUSHES. `NoteMatchFinished` sends the
+            // session's buffer, so anything noted after it would sit until quit, which is the
+            // flush most likely to lose its race with the process shutting down.
+            telemetry.NoteMatchFinished(record.Mode, record.MapId, record.Rounds,
+                                        record.DurationSeconds, line?.Placement ?? 0);
         }
 
         // -------------------------------------------------------------------

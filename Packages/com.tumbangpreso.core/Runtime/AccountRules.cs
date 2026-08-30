@@ -150,6 +150,123 @@ namespace TumbangPreso.Core
             return Handle("Player", Discriminator("", token));
         }
 
+        // -------------------------------------------------------------------
+        // THE IMPERSONATION GUARD. `docs/TODO.md` § 88.1c is the entry.
+        // -------------------------------------------------------------------
+
+        /// <summary>How long a handle proof minted by the account endpoint stays usable.</summary>
+        ///
+        /// ⚠️ IT IS SHORT BECAUSE A PROOF IS A BEARER SECRET AND THE HOST IS A STRANGER. The peer
+        /// hands it to whoever is hosting, and the only thing it buys the holder is the right to
+        /// ask the endpoint one read-only question about the player who minted it. Ten minutes
+        /// covers a lobby, a match and a reconnect inside the fast-reconnect window without
+        /// leaving a usable token lying in a log for the rest of the day.
+        /// ⚠️ MIRRORED IN `ugs/cloud-code/player-account.js` AS `PROOF_MINUTES`, and
+        /// `CareerAndCloudCodeTests` fails if the two are split.
+        public const int HandleProofMinutes = 10;
+
+        /// <summary>
+        /// What the account endpoint said when the host asked whether an arriving peer owns the
+        /// handle it claimed.
+        ///
+        /// ⚠️⚠️ `NotAsked` AND `Unreachable` ARE SEPARATE VALUES THAT RESOLVE THE SAME WAY, AND
+        /// COLLAPSING THEM IS HOW THIS RULE GETS BROKEN LATER. `NotAsked` is a LAN match, which
+        /// `FUTURE.md` § 0.5 rule 7 says may never sit behind a login; `Unreachable` is a venue
+        /// whose Wi-Fi is behind a captive portal. Both fall through to the claim today, but only
+        /// one of them is a case somebody might one day want to refuse, and a single value would
+        /// take the LAN match down with it.
+        /// </summary>
+        public enum HandleCheck
+        {
+            /// <summary>No verification was attempted. LAN, or a peer that sent no proof.</summary>
+            NotAsked = 0,
+
+            /// <summary>The endpoint was asked and did not answer.</summary>
+            Unreachable = 1,
+
+            /// <summary>The endpoint confirmed the account, and said what it is called.</summary>
+            Owned = 2,
+
+            /// <summary>The endpoint answered, and this peer does not own what it claimed.</summary>
+            NotOwned = 3,
+        }
+
+        /// <summary>
+        /// The tag half of a handle, derived from the stable player id rather than allocated.
+        ///
+        /// ⚠️⚠️ THIS IS WHAT MAKES A HANDLE CHECKABLE AT ALL, AND IT IS A DELIBERATE MOVE AWAY
+        /// FROM UGS PLAYER NAMES. § 88.1c wrote the blocker down as *"the tag of a real account is
+        /// allocated by UGS Player Names, so the host cannot recompute it from the token and
+        /// cannot tell a genuine `Maria Clara#4417` from a claimed one"*. With the tag derived
+        /// from the player id there is only one tag source in the game, the server can recompute
+        /// it without storing anything, and a stolen tag stops being a thing a client can assert.
+        /// Player Names is still updated so the UGS dashboard shows a person rather than a uuid;
+        /// it is no longer consulted for the number after the hash.
+        /// </summary>
+        public static string DerivedTag(string playerId) => Discriminator("", playerId);
+
+        /// <summary>The handle an account with this id is entitled to, and no other.</summary>
+        public static string OwnedHandle(string displayName, string playerId)
+        {
+            if (!TryDisplayName(displayName, out string clean)) clean = "Player";
+            return Handle(clean, DerivedTag(playerId));
+        }
+
+        /// <summary>
+        /// Whether <paramref name="claimed"/> is the handle belonging to <paramref name="playerId"/>.
+        ///
+        /// ⚠️ THE DISPLAY NAME IS NOT PART OF THE ANSWER, ONLY THE TAG. Two people are allowed to
+        /// both be called Maria Clara; that is the entire reason a game has discriminators. What
+        /// nobody else may be is Maria Clara **#4417**.
+        /// </summary>
+        public static bool OwnsHandle(string claimed, string playerId)
+        {
+            if (string.IsNullOrEmpty(playerId)) return false;
+            return TrySplitHandle(claimed, out _, out string tag) && tag == DerivedTag(playerId);
+        }
+
+        /// <summary>
+        /// Whether a claimed name asserts a specific account rather than just asking to be called
+        /// something. A bare `Maria Clara` is the second; `Maria Clara#4417` is the first.
+        /// </summary>
+        public static bool ClaimsASpecificAccount(string claimed)
+            => TrySplitHandle(claimed, out _, out _);
+
+        /// <summary>
+        /// What an arriving peer is called once the account endpoint has answered.
+        ///
+        /// ⚠️⚠️ A REFUSED CLAIM KEEPS ITS NAME AND LOSES ITS TAG, AND THAT IS THE WHOLE DESIGN.
+        /// Deleting the peer's name outright is § 88.1b again: four machines joining off the
+        /// beacon in a hall render as four identical rows, in the one venue where telling the
+        /// seats apart matters most. The display name is not the identity and never was. So a
+        /// peer claiming `Maria Clara#4417` it cannot prove arrives as `Maria Clara#8812`, which
+        /// is readable, is obviously a different person to anybody who knows the real one, and is
+        /// allocated from the durable token so it is at least stable for that peer.
+        ///
+        /// ⚠️⚠️ AND AN UNANSWERED CHECK KEEPS THE CLAIM, WHICH IS `FUTURE.md` § 0.5 RULE 7 AND IS
+        /// NOT NEGOTIABLE. A LAN match may never sit behind a login. The guard is a thing the
+        /// online path buys; it is not permission to make an unplugged hall unplayable, and the
+        /// nationals are in General Santos City on venue Wi-Fi that may not exist.
+        /// </summary>
+        public static string VerifiedArrivalHandle(
+            string claimed, string token, HandleCheck check, string ownedHandle)
+        {
+            if (check == HandleCheck.Owned &&
+                TrySplitHandle(ownedHandle, out string ownedName, out string ownedTag))
+                return Handle(ownedName, ownedTag);
+
+            if (check != HandleCheck.NotOwned)
+                return ArrivalHandle(claimed, token);
+
+            // ⚠️ A CLAIM WITH NO TAG WAS NEVER A CLAIM TO AN ACCOUNT, so there is nothing to take
+            // away and `ArrivalHandle` has already allocated from the token. Demoting it a second
+            // time would only rename a LAN peer that did nothing wrong.
+            if (TrySplitHandle(claimed, out string display, out _))
+                return Handle(display, Discriminator("", token));
+
+            return ArrivalHandle(claimed, token);
+        }
+
         /// <summary>
         /// Remote wins only when it contains a valid value. An unreachable service therefore
         /// cannot erase a usable local profile, while a real remote account always wins over a

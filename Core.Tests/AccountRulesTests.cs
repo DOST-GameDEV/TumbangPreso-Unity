@@ -182,5 +182,141 @@ namespace TumbangPreso.Core.Tests
         {
             Assert.Equal(Balance.PlayerNameMax, AccountRules.DisplayNameMax);
         }
+
+        // -------------------------------------------------------------------
+        // THE IMPERSONATION GUARD. `docs/TODO.md` § 88.1c and § 90.1.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// ⚠️ THE WHOLE GUARD RESTS ON THE TAG BEING A FUNCTION OF THE ID. While UGS Player Names
+        /// allocated it, neither the host nor the server could recompute it, which is exactly the
+        /// sentence § 88.1c wrote the blocker down as.
+        /// </summary>
+        [Fact]
+        public void ATagIsDerivedFromThePlayerIdAndOnlyFromThePlayerId()
+        {
+            Assert.Equal(AccountRules.DerivedTag("player-a"), AccountRules.DerivedTag("player-a"));
+            Assert.NotEqual(AccountRules.DerivedTag("player-a"), AccountRules.DerivedTag("player-b"));
+            Assert.Equal(AccountRules.DiscriminatorDigits, AccountRules.DerivedTag("player-a").Length);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THESE FOUR VECTORS WERE PRODUCED BY RUNNING `derivedTag` IN
+        /// `ugs/cloud-code/player-account.js`, AND THAT IS THE ENTIRE POINT OF WRITING THEM OUT.
+        /// Nothing on this machine compiles the JavaScript, so the two copies of FNV-1a can only
+        /// be compared through values one of them produced. The server is the authority: if this
+        /// goes red, the C# and the script have stopped agreeing about who owns which tag, and
+        /// every online handle check starts refusing honest players.
+        ///
+        /// ⚠️ THE JS WALKS UTF-16 CODE UNITS BY INDEX for the same reason: `for...of` walks code
+        /// POINTS and would disagree with C#'s `foreach (char c in ...)` on an astral character.
+        /// </summary>
+        [Theory]
+        [InlineData("player-a", "8930")]
+        [InlineData("player-b", "1311")]
+        [InlineData("qmSg3PKweGRSWqRcd9g0Bo80UKH4", "3831")]
+        [InlineData("guest-abc123", "9434")]
+        public void TheDerivedTagMatchesTheServerScriptsCopyOfTheSameHash(string playerId, string expected)
+            => Assert.Equal(expected, AccountRules.DerivedTag(playerId));
+
+        [Fact]
+        public void AHandleIsOwnedOnlyByTheAccountWhoseIdProducesItsTag()
+        {
+            string handle = AccountRules.OwnedHandle("Maria Clara", "player-a");
+
+            Assert.True(AccountRules.OwnsHandle(handle, "player-a"));
+            Assert.False(AccountRules.OwnsHandle(handle, "player-b"));
+            Assert.False(AccountRules.OwnsHandle(handle, ""));
+        }
+
+        /// <summary>
+        /// ⚠️ THE NAME IS NOT PART OF OWNERSHIP AND MUST NOT BECOME PART OF IT. Two people being
+        /// called Maria Clara is the reason discriminators exist at all; refusing the second one
+        /// would be a first-come-first-served global name registry nobody asked for.
+        /// </summary>
+        [Fact]
+        public void TwoAccountsMayShareADisplayNameButNotATag()
+        {
+            string mine = AccountRules.OwnedHandle("Maria Clara", "player-a");
+            string theirs = AccountRules.OwnedHandle("Maria Clara", "player-b");
+
+            Assert.NotEqual(mine, theirs);
+            Assert.True(AccountRules.OwnsHandle(mine, "player-a"));
+            Assert.True(AccountRules.OwnsHandle(theirs, "player-b"));
+        }
+
+        [Fact]
+        public void AVerifiedPeerIsCalledWhatTheServiceSaysRatherThanWhatItClaimed()
+        {
+            string resolved = AccountRules.VerifiedArrivalHandle(
+                claimed: "Somebody Else#1234",
+                token: "token-a",
+                check: AccountRules.HandleCheck.Owned,
+                ownedHandle: "Maria Clara#4417");
+
+            Assert.Equal("Maria Clara#4417", resolved);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THIS IS THE ATTACK § 88.1c NAMES, AND THE ASSERTION THAT USED TO BE BACKWARDS.
+        /// `LobbyAcceptsOnlyCanonicalAccountHandles` admitted a claimed `Maria Clara#4417`
+        /// verbatim while rewriting the honest bare name beside it.
+        /// </summary>
+        [Fact]
+        public void AnUnprovableClaimKeepsItsNameAndLosesTheTagItClaimed()
+        {
+            string resolved = AccountRules.VerifiedArrivalHandle(
+                claimed: "Maria Clara#4417",
+                token: "impostor-token",
+                check: AccountRules.HandleCheck.NotOwned,
+                ownedHandle: "");
+
+            Assert.StartsWith("Maria Clara#", resolved);
+            Assert.NotEqual("Maria Clara#4417", resolved);
+            Assert.Equal(AccountRules.Handle("Maria Clara", AccountRules.Discriminator("", "impostor-token")),
+                         resolved);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ `FUTURE.md` § 0.5 RULE 7 AS A TEST. A LAN match may never sit behind a login, and
+        /// venue Wi-Fi at the nationals may not exist at all, so neither "we did not ask" nor "it
+        /// did not answer" may cost a player their name.
+        /// </summary>
+        [Theory]
+        [InlineData(AccountRules.HandleCheck.NotAsked)]
+        [InlineData(AccountRules.HandleCheck.Unreachable)]
+        public void AnUncheckedPeerKeepsTheNameItClaimed(AccountRules.HandleCheck check)
+        {
+            Assert.Equal(
+                AccountRules.ArrivalHandle("Maria Clara#4417", "token-a"),
+                AccountRules.VerifiedArrivalHandle("Maria Clara#4417", "token-a", check, ""));
+
+            Assert.Equal(
+                AccountRules.ArrivalHandle("Maria Clara", "token-a"),
+                AccountRules.VerifiedArrivalHandle("Maria Clara", "token-a", check, ""));
+        }
+
+        /// <summary>
+        /// ⚠️ A BARE NAME IS NOT A CLAIM TO AN ACCOUNT, so a refusal has nothing to take away and
+        /// must not re-tag a peer that never asserted a tag. This is § 88.1b one layer on: the
+        /// four-machines-in-a-hall case is what a blanket demotion would break.
+        /// </summary>
+        [Fact]
+        public void ARefusalDoesNotPunishAPeerThatNeverClaimedATag()
+        {
+            Assert.Equal(
+                AccountRules.ArrivalHandle("Maria Clara", "token-a"),
+                AccountRules.VerifiedArrivalHandle(
+                    "Maria Clara", "token-a", AccountRules.HandleCheck.NotOwned, ""));
+        }
+
+        [Fact]
+        public void AClaimWithATagIsWhatCountsAsClaimingAnAccount()
+        {
+            Assert.True(AccountRules.ClaimsASpecificAccount("Maria Clara#4417"));
+            Assert.False(AccountRules.ClaimsASpecificAccount("Maria Clara"));
+            Assert.False(AccountRules.ClaimsASpecificAccount(""));
+            Assert.False(AccountRules.ClaimsASpecificAccount("Maria Clara#44"));
+        }
     }
 }

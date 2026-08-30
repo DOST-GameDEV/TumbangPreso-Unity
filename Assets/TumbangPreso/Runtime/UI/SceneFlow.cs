@@ -316,6 +316,22 @@ namespace TumbangPreso.UI
         /// </summary>
         public static void LeaveMatchToMainMenu()
         {
+            // ⚠️⚠️ LEAVE RATE BY ROUND IS THE ONE NUMBER IN `FUTURE.md` § 3 THAT NOTHING ELSE IN
+            // THIS PROJECT CAN RECONSTRUCT. A finished match is in the career history and could
+            // be recounted from it; a match somebody walked out of in round two leaves no trace
+            // anywhere, and it is the number that says whether the eight-round Hero Strike set is
+            // too long. It is recorded HERE because this is the single exit: the pause panel, the
+            // results board and both result screens all come through this method, which is the
+            // property that paragraph below was written to protect.
+            //
+            // ⚠️ A ROUND OF 0 MEANS "NOT IN A MATCH", which is the results board and is most of
+            // the traffic through here. The server keeps it as its own bucket rather than as a
+            // leave: the difference between finishing and walking out is the entire question.
+            var match = GameServices.Match;
+            GameServices.Telemetry?.NoteMatchLeft(
+                SelectedMode.ToString(),
+                match != null && match.MatchInProgress ? match.RoundNumber : 0);
+
             Time.timeScale = 1.0f;
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;

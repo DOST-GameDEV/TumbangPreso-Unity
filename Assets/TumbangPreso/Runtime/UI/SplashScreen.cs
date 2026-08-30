@@ -167,6 +167,19 @@ namespace TumbangPreso.UI
                 yield return null;
             }
 
+            // ⚠️ THE TWO MIDDLE FUNNEL STEPS ARE RECORDED HERE BECAUSE THIS IS THE ONE PLACE THAT
+            // KNOWS BOTH ANSWERS. `FUTURE.md` § 3 wants launch, sign-in and menu as separate
+            // steps, and the difference between "the account settled" and "the menu appeared" is
+            // exactly the wait this loop just finished. Recording them from the menu instead
+            // would collapse the two and hide a slow boot, which is the thing worth finding.
+            // `docs/TODO.md` § 90.3.
+            var telemetry = GameServices.Telemetry;
+            if (telemetry != null)
+            {
+                telemetry.NoteSignInSettled(GameServices.Account != null && GameServices.Account.IsSignedIn);
+                telemetry.NoteMenuReached();
+            }
+
             // Out on black, then hand over.
             for (float t = 0.0f; t < 0.22f; t += Time.unscaledDeltaTime)
             {

@@ -55,10 +55,10 @@ mind we dont have budget for paying for anything"*.
 | Netcode | `com.unity.netcode.gameobjects` 2.13.1 over `UnityTransport`. `NetSession` owns it. |
 | Online discovery | **UGS Lobby**, live. `ServerQuery` browses, heartbeats at 15 s, resolves 4-character join codes LAN-first then online. |
 | Relay | **UGS Relay**, live, through `com.unity.services.multiplayer` 2.3.0. |
-| Auth package | **`com.unity.services.authentication` 3.7.4 is already installed and unused.** Phase 1 is smaller than it looks. |
+| Auth package | **`com.unity.services.authentication` 3.7.4, installed and IN USE.** ⚠️ This row read "unused" and was already wrong when Phase 1 started: `NetIdentity` had always signed in anonymously at boot. Phase 1 shipped on top of it, `docs/TODO.md` § 88. |
 | LAN | `LanBeacon`, with persistent peer identity so a reconnecting player gets their seat back. |
 | Reconnect | `LobbySession` already implements seat reclamation, a fast-reconnect window and leader election. **Do not rebuild this.** |
-| Protocol gate | `NetSession.ProtocolVersion`, 13. Peers on different versions refuse each other at approval, by design. |
+| Protocol gate | `NetSession.ProtocolVersion`, **16** as of 2026-08-30. Peers on different versions refuse each other at approval, by design. ⚠️ **Read the constant rather than this row**, per § 0.6: it has moved three times since this file was written (14 spectator pause, 15 match record, 16 the impersonation guard). |
 | Bots | `AIController` plus `GameLaunch.AllBots`. A bot presses the same buttons a human does, one physics step serves both. |
 | Spectating | `SpectatorCamera` with free, follow and POV modes, plus a spectator pause that crosses the wire. |
 | Chat | `LobbyChat`, lobby and in-match, with hard-won layout notes. Extend it; never write a second one. |
@@ -87,7 +87,7 @@ resurrect the UDP query loop.
 | UGS Lobby | Discovery, parties, the matchmaking queue | Queries per second. `ServerQuery.QueryInterval` is 4 s for exactly this reason. |
 | UGS Relay | The connection itself | Concurrent users and GB. **This is the first thing that will actually bite.** |
 | UGS Matchmaker | Skill-based queueing | Match requests per month. Phase 7 gives a zero-cost fallback. |
-| UGS Analytics | Telemetry | Events per month. Batch per session, never per event. |
+| UGS Analytics | ❌ **NOT USED.** Telemetry goes through Cloud Code instead | ⚠️ `docs/TODO.md` § 90.3 has the reasoning: the package cannot be added to this project's resolver state (`Net/CloudCode.cs`'s header records the same limit), and its custom events must be declared in the dashboard before they are processed, which would make every new event a manual step on an account only 🧑 can open. The Cloud Code path was already deployed, already probe-proven and already free. |
 | GitHub | Repo, CI, releases | Nothing at this size. |
 | itch.io | Distribution | Nothing. |
 
@@ -200,6 +200,8 @@ THIS IS TRUE.** The prose about design intent ages well. The claims about the co
 |---|---|---|
 | Authentication and the account layer are present | `grep authentication Packages/manifest.json`, then `grep -r AuthenticationService Assets`, then `grep -r PlayerAccount Assets` | Phase 1 may have moved. Read `docs/TODO.md` § 88 before changing it. |
 | The career layer is present, and `match-record` is deployed | `grep -r CareerStore Assets`, then `ugs cloud-code scripts list` | Phase 2 may have moved. Read `docs/TODO.md` § 89 first, and § 89.6 before touching `ProfileRules`, which is written in C# and again in JS. |
+| Telemetry is present, and `telemetry` is deployed | `grep -r TelemetrySink Assets`, then `ugs cloud-code scripts list` | Phase 3 has shipped. Read `docs/TODO.md` § 90.3 before touching an event NAME: renaming one is a broken history and nothing errors. |
+| A claimed lobby handle is verified | `grep -n VerifiedArrivalHandle Packages/com.tumbangpreso.core/Runtime/AccountRules.cs` | The impersonation guard is built, `docs/TODO.md` § 90.1. ⚠️ § 88.1c's prescribed fix is NOT what shipped and that entry says so; read § 90.1. |
 | Every Cloud Code call goes through one helper | `grep -rn "cloud-code.services.api.unity.com" Assets` returns exactly `Net/CloudCode.cs` | A second hand-written request has appeared. `docs/TODO.md` § 89.5 records why that is the shape where the probe passes and the game fails. |
 | Discovery is UGS Lobby, connection is UGS Relay | Read the header of `Assets/TumbangPreso/Runtime/Net/ServerQuery.cs` | The whole of §§ 0.3, 7 and 8 assumes UGS. Re-cost them. |
 | The input map has no gamepad or touch bindings | `grep -c Gamepad Assets/TumbangPreso/Resources/TumbangPreso.inputactions` | Phases 14 and 15 shrink a lot. |
@@ -224,7 +226,7 @@ part that stays valuable.
 
 ---
 
-## PHASE 1 · ACCOUNTS AND IDENTITY ⚠️ IN PROGRESS 2026-08-31
+## PHASE 1 · ACCOUNTS AND IDENTITY ✅ SHIPPED 2026-08-30
 
 **The first part of the overhaul, in his words.** Everything else keys off a stable player id.
 
@@ -423,7 +425,21 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
-## PHASE 3 · TELEMETRY, EARLY ON PURPOSE
+## PHASE 3 · TELEMETRY, EARLY ON PURPOSE ✅ SHIPPED 2026-08-30
+
+⚠️⚠️ **`docs/TODO.md` § 90.3 IS THE ENTRY AND IT CARRIES THE EVENT-NAME CONTRACT. READ IT BEFORE
+TOUCHING A NAME.** Two things below turned out differently and are recorded there rather than
+silently skipped, per § 0.5 rule 11:
+
+- **It does not use UGS Analytics.** § 0.3's row is corrected. The package cannot be added to this
+  project's resolver state, and its custom events need declaring in the dashboard before they are
+  processed. Telemetry goes through a third Cloud Code script instead.
+- **Queue times by rating band are not built**, because there is no queue and no rating; Phases 7
+  and 9 own both. `first_queue` is the honest substitute for the funnel step: the first time
+  somebody opens the MULTIPLAYER screen. ⚠️ Do not later read that step as a queue time.
+- **The FPS distribution is the one part still open.** The hardware key ships; the frame rate does
+  not, because a percentile over a whole session including menus and a loading screen describes
+  nothing. It wants a per-match sampler beside `HudPerformanceProbe`.
 
 **Do this alongside Phase 2, not at the end.** Every argument in phases 4 through 17 is settled
 faster with a week of real numbers than a week of opinions, and this codebase already believes

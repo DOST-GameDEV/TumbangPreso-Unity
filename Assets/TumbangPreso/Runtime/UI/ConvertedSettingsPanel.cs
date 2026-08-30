@@ -57,6 +57,12 @@ namespace TumbangPreso.UI
             Snapshot();
 
             BuildRebindRows();
+
+            // ⚠️ BUILT FIRST SO IT SITS FURTHEST FROM THE FULLSCREEN BOX, which is the bottom of
+            // the picker stack. Every row here inserts directly under that box, so build order is
+            // display order reversed (see the note below). This is not a display setting and must
+            // not read as one; it is the last row on the panel, under its own sentence.
+            BuildTelemetryRow();
             BuildSlipperHighlightRow();
 
             // ⚠️ THE BUILD ORDER IS THE DISPLAY ORDER, REVERSED. All three picker rows insert
@@ -502,6 +508,96 @@ namespace TumbangPreso.UI
         /// needs to see is which one is on and what else there is. A null swatch on every row
         /// hides the chip, which is the same path "Off" already takes.
         /// </summary>
+        /// <summary>
+        /// The telemetry opt-out, and the sentence that says what it is opting out of.
+        ///
+        /// ⚠️⚠️ THE SENTENCE IS NOT DECORATION, IT IS HALF THE FEATURE. `FUTURE.md` § 19.3 asks
+        /// for *"a visible opt-out in Settings that is honoured completely, and a plain statement
+        /// of what is collected"*. A switch with no explanation asks a player to make a decision
+        /// with no information, and the honest answer here is short enough to fit on one line:
+        /// counts, no names, nothing typed.
+        ///
+        /// ⚠️ AND "HONOURED COMPLETELY" MEANS `TelemetrySink` STOPS COUNTING, not just stops
+        /// sending. An opt-out that only gates the upload leaves a buffer somebody could later
+        /// decide to flush, which is the same thing as no opt-out.
+        ///
+        /// ⚠️ A DROPDOWN RATHER THAN A TICK BOX, and that is a reuse decision rather than a
+        /// design one: every tick box on this panel is a node the importer owns, and a row added
+        /// to `SettingsPanel.unity` by hand disappears the next time `TscnImporter` rebakes it.
+        /// `BuildDropdownRow` is the built-in-code path three rows already use.
+        /// </summary>
+        private void BuildTelemetryRow()
+        {
+            var options = new List<SwatchDropdown.Option>
+            {
+                new SwatchDropdown.Option("OFF", null),
+                new SwatchDropdown.Option("ON", null),
+            };
+
+            BuildDropdownRow("TelemetryRow", "Share Anonymous Stats", options,
+                             SettingsStore.Current.TelemetryEnabled ? 1 : 0,
+                             index =>
+                             {
+                                 // ⚠️ IT GOES THROUGH THE PANEL'S APPLY/BACK TRANSACTION LIKE
+                                 // EVERY OTHER ROW, RATHER THAN SAVING ON THE PICK. `Snapshot`
+                                 // captures the whole settings object as JSON and Back restores
+                                 // it, so a row that wrote to disk immediately would be a row
+                                 // Back cannot undo, on the one screen where every other control
+                                 // can be.
+                                 SettingsStore.Current.TelemetryEnabled = index == 1;
+                                 RefreshApplyState();
+                             });
+
+            BuildTelemetryNote();
+        }
+
+        /// <summary>
+        /// ⚠️ THE NOTE GOES IN AFTER THE ROW, SO IT LANDS ABOVE IT ON SCREEN. Rows insert under
+        /// `FullscreenCheck` and the last one inserted is nearest the box, which puts this line
+        /// directly under the picker it explains once the whole stack is reversed. Sizing it as
+        /// its own row rather than as a second label inside the picker keeps the label column
+        /// aligned with every other row on the panel, which is the alignment fault this file's
+        /// `BuildDropdownRow` header already records being reported once.
+        /// </summary>
+        private void BuildTelemetryNote()
+        {
+            var anchor = Node("FullscreenCheck");
+            if (anchor == null || anchor.parent == null) return;
+
+            var noteGo = new GameObject("TelemetryNote");
+            noteGo.AddComponent<RectTransform>();
+            noteGo.transform.SetParent(anchor.parent, false);
+            noteGo.transform.SetSiblingIndex(anchor.GetSiblingIndex() + 1);
+
+            // ⚠️ THE ROW NEEDS ITS OWN LAYOUT GROUP, exactly as `BuildDropdownRow` gives its row
+            // one. `MenuKit.Styled` parents the label to this object, and a child of a plain
+            // RectTransform inside a vertical list is laid out by nothing at all: it collapses to
+            // its default rect and the sentence is invisible while the row still takes its height,
+            // which reads as a gap somebody left rather than as text that failed to draw.
+            var layout = noteGo.AddComponent<HorizontalLayoutGroup>();
+            layout.childControlHeight = true;
+            layout.childControlWidth = true;
+            layout.childForceExpandHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childAlignment = TextAnchor.MiddleLeft;
+
+            var text = MenuKit.Styled(noteGo.transform, "MenuBody",
+                "Counts only: matches played, modes, maps, picks and frame rate. " +
+                "No names, no chat, nothing you type.", TextAnchor.MiddleLeft);
+            text.raycastTarget = false;
+            text.fontSize = 18;
+
+            // ⚠️ OVERFLOW RATHER THAN WRAP-AND-CLIP, WHICH IS THE THIRD TIME THIS FILE'S FAMILY
+            // HAS HIT IT. `GameVersion.ApplyTo` and `ConvertedScreen.SetHeadline` both record it:
+            // legacy `Text` defaults to WRAP, so a sentence longer than its box is silently cut
+            // in half rather than reported. This one is two lines wide by design.
+            text.verticalOverflow = VerticalWrapMode.Overflow;
+
+            var element = noteGo.AddComponent<LayoutElement>();
+            element.minHeight = 48.0f;
+            element.preferredHeight = 48.0f;
+        }
+
         private void BuildAntiAliasRow()
         {
             var options = new List<SwatchDropdown.Option>();

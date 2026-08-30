@@ -147,10 +147,9 @@ namespace TumbangPreso.Net
             try
             {
                 string fullName = await auth.GetPlayerNameAsync(autoGenerate: false);
-                if (AccountRules.TrySplitHandle(fullName, out string name, out string tag))
+                if (AccountRules.TrySplitHandle(fullName, out string name, out _))
                 {
                     remote.DisplayName = name;
-                    remote.Discriminator = tag;
                 }
                 else
                 {
@@ -158,12 +157,20 @@ namespace TumbangPreso.Net
                         ? clean
                         : $"Player{ShortId(auth.PlayerId)}";
                     fullName = await auth.UpdatePlayerNameAsync(seed.Replace(" ", "_"));
-                    if (AccountRules.TrySplitHandle(fullName, out name, out tag))
-                    {
+                    if (AccountRules.TrySplitHandle(fullName, out name, out _))
                         remote.DisplayName = name.Replace('_', ' ');
-                        remote.Discriminator = tag;
-                    }
                 }
+
+                // ⚠️⚠️ THE TAG PLAYER NAMES ALLOCATED IS DELIBERATELY DISCARDED, AND THAT IS THE
+                // CHANGE THAT MADE THE IMPERSONATION GUARD POSSIBLE. `docs/TODO.md` § 88.1c wrote
+                // the blocker down as *"the tag of a real account is allocated by UGS Player
+                // Names, so the host cannot recompute it from the token and cannot tell a genuine
+                // `Maria Clara#4417` from a claimed one"*. Deriving it from the stable player id
+                // instead leaves ONE tag source in the game: the server recomputes it without
+                // storing anything, the core computes the same digits from the same id, and a tag
+                // stops being a value a client can assert about itself.
+                // ⚠️ PLAYER NAMES IS STILL WRITTEN, for the display name only, so the UGS
+                // dashboard shows a person rather than a uuid.
             }
             catch (Exception e)
             {
@@ -172,10 +179,17 @@ namespace TumbangPreso.Net
                 Debug.LogWarning($"[PlayerAccount] player-name refresh failed: {e.Message}");
             }
 
+            // ⚠️ OUTSIDE THE `try` ON PURPOSE. The tag is a pure function of the player id and
+            // needs no service at all, so a Player Names outage must not leave the account
+            // carrying whatever tag happened to be on disk. That is the one case where the
+            // client and the server would compute different handles for the same account.
+            remote.Discriminator = AccountRules.DerivedTag(auth.PlayerId);
+
             remote.Bio = local.Bio;
             remote.Country = local.Country;
             remote.Pronouns = local.Pronouns;
             remote.Email = local.Email;
+            bool cloudHoldsAProfile = false;
             try
             {
                 var response = await CallCloudAsync("load");
@@ -184,6 +198,7 @@ namespace TumbangPreso.Net
                     var cloud = JsonUtility.FromJson<AccountProfile>(response.profile);
                     if (cloud != null)
                     {
+                        cloudHoldsAProfile = true;
                         cloud.PlayerId = auth.PlayerId;
                         cloud.Username = remote.Username;
                         remote = AccountRules.Resolve(remote, cloud, remoteAvailable: true);
@@ -193,6 +208,7 @@ namespace TumbangPreso.Net
             catch (Exception e)
             {
                 Debug.LogWarning($"[PlayerAccount] Cloud Save profile load failed; local profile kept: {e.Message}");
+                cloudHoldsAProfile = true;
             }
             AccountProfile resolved = AccountRules.Resolve(local, remote, remoteAvailable: true);
 
@@ -208,6 +224,124 @@ namespace TumbangPreso.Net
             }
 
             Apply(resolved, signedIn: true, "Signed in");
+
+            // ⚠️⚠️ AN ACCOUNT WITH NOTHING STORED IS WRITTEN ONCE, HERE, AND THE IMPERSONATION
+            // GUARD IS WHY. `player-account.js`'s `attest` derives the handle it will vouch for
+            // from the STORED profile, because a handle it accepted from the caller would be a
+            // handle anybody can claim. Until this line, a profile was only written when the
+            // player opened the account screen or attached a password, so an ordinary signed-in
+            // player had no stored profile, could mint no proof, and every online lobby fell
+            // through to the unverified path forever. One call, once per account.
+            //
+            // ⚠️ A FAILED LOAD COUNTS AS "THE CLOUD HAS ONE". An unreachable endpoint answers the
+            // same way an empty profile does, and writing on that branch would overwrite a real
+            // stored profile with whatever this machine had on disk the moment the network
+            // wobbled. Missing a first write costs one boot; the other way round costs an account.
+            if (!cloudHoldsAProfile) await SaveCloudProfileAsync();
+        }
+
+        // -------------------------------------------------------------------
+        // HANDLE PROOFS. `docs/TODO.md` § 88.1c and § 90.
+        // -------------------------------------------------------------------
+
+        [Serializable]
+        private sealed class HandleProofResponse
+        {
+            public string handle;
+            public string proof;
+            public string expires;
+            public bool owned;
+        }
+
+        private string _proof = "";
+        private DateTime _proofExpiresUtc = DateTime.MinValue;
+
+        /// <summary>
+        /// The short-lived proof this player hands to a host so the host can ask the account
+        /// endpoint whether the handle it is claiming is really its own. Empty means "no proof",
+        /// which is a normal state: offline, LAN, a guest, or an account with nothing stored yet.
+        /// </summary>
+        public string HandleProof => _proof;
+
+        /// <summary>
+        /// Mints a handle proof if there is not already a live one, and answers with it.
+        ///
+        /// ⚠️⚠️ IT NEVER THROWS AND IT NEVER BLOCKS A CONNECTION. Every caller is on the path to
+        /// hosting or joining a game, and `FUTURE.md` § 0.5 rule 7 says a LAN match may never sit
+        /// behind a login. A failure here is a lobby that falls back to the claimed name, which is
+        /// exactly the behaviour that shipped before the guard existed.
+        ///
+        /// ⚠️ THE PROOF IS RE-MINTED WITH A MINUTE TO SPARE rather than at the instant it dies,
+        /// because the host verifies it a few seconds after the client sends it and a proof that
+        /// expires in that gap reads as an impersonation attempt rather than as a stale token.
+        /// </summary>
+        public async Task<string> EnsureHandleProofAsync()
+        {
+            if (IsGuest || !IsSignedIn) return "";
+            if (!string.IsNullOrEmpty(_proof) && DateTime.UtcNow < _proofExpiresUtc.AddMinutes(-1))
+                return _proof;
+
+            try
+            {
+                string output = await CloudCode.CallAsync("player-account", new { action = "attest" });
+                var response = string.IsNullOrWhiteSpace(output)
+                    ? null
+                    : JsonUtility.FromJson<HandleProofResponse>(output);
+
+                _proof = response?.proof ?? "";
+                _proofExpiresUtc = DateTime.TryParse(
+                    response?.expires, null,
+                    System.Globalization.DateTimeStyles.AdjustToUniversal |
+                    System.Globalization.DateTimeStyles.AssumeUniversal,
+                    out DateTime expires)
+                    ? expires
+                    : DateTime.UtcNow.AddMinutes(AccountRules.HandleProofMinutes);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[PlayerAccount] handle proof unavailable; arriving unverified: {e.Message}");
+                _proof = "";
+                _proofExpiresUtc = DateTime.MinValue;
+            }
+
+            return _proof;
+        }
+
+        /// <summary>
+        /// The host half: asks the endpoint whether <paramref name="playerId"/> minted
+        /// <paramref name="proof"/>, and what that account is entitled to be called.
+        ///
+        /// ⚠️⚠️ AN UNREACHABLE ENDPOINT ANSWERS `Unreachable`, NEVER `NotOwned`, AND THE
+        /// DIFFERENCE IS THE WHOLE SAFETY ARGUMENT. `NotOwned` takes a player's tag off them.
+        /// Reading a timeout, a captive portal or a 500 as "this person is an impostor" would
+        /// rename every honest player in the room the moment the venue Wi-Fi hiccups, which is
+        /// the network the nationals will be played on.
+        /// </summary>
+        public static async Task<(AccountRules.HandleCheck Check, string Handle)> VerifyHandleAsync(
+            string playerId, string proof)
+        {
+            if (string.IsNullOrEmpty(playerId) || string.IsNullOrEmpty(proof))
+                return (AccountRules.HandleCheck.NotAsked, "");
+
+            try
+            {
+                string output = await CloudCode.CallAsync(
+                    "player-account", new { action = "verify", playerId, proof });
+
+                var response = string.IsNullOrWhiteSpace(output)
+                    ? null
+                    : JsonUtility.FromJson<HandleProofResponse>(output);
+
+                if (response != null && response.owned && !string.IsNullOrWhiteSpace(response.handle))
+                    return (AccountRules.HandleCheck.Owned, response.handle);
+
+                return (AccountRules.HandleCheck.NotOwned, "");
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[PlayerAccount] handle verification unavailable, keeping the claim: {e.Message}");
+                return (AccountRules.HandleCheck.Unreachable, "");
+            }
         }
 
         public async Task UpgradeAsync(string username, string password)
@@ -236,6 +370,11 @@ namespace TumbangPreso.Net
             AuthenticationService.Instance.SignOut(clearCredentials: true);
             await AuthenticationService.Instance.SignInWithUsernamePasswordAsync(username?.Trim(), password);
             NetIdentity.AdoptCurrentSession();
+
+            // A proof is minted for one account. Carrying it across a sign-in or a deletion
+            // would hand the host a token naming a player id this session no longer is.
+            _proof = "";
+            _proofExpiresUtc = DateTime.MinValue;
 
             var emptyLocal = new AccountProfile { Username = username?.Trim() ?? "" };
             await RefreshFromAuthenticationAsync(emptyLocal);
@@ -286,6 +425,11 @@ namespace TumbangPreso.Net
             SettingsStore.Save();
 
             NetIdentity.ForgetCurrentSession();
+
+            // A proof is minted for one account. Carrying it across a sign-in or a deletion
+            // would hand the host a token naming a player id this session no longer is.
+            _proof = "";
+            _proofExpiresUtc = DateTime.MinValue;
             _profile = ReadLocal();
             _initialiseTask = InitialiseInternalAsync();
             await _initialiseTask;
@@ -342,11 +486,15 @@ namespace TumbangPreso.Net
             if (IsSignedIn)
             {
                 string full = await AuthenticationService.Instance.UpdatePlayerNameAsync(clean.Replace(" ", "_"));
-                if (AccountRules.TrySplitHandle(full, out string remoteName, out string tag))
-                {
+                if (AccountRules.TrySplitHandle(full, out string remoteName, out _))
                     Profile.DisplayName = remoteName.Replace('_', ' ');
-                    Profile.Discriminator = tag;
-                }
+
+                // ⚠️ THE TAG IS NOT PLAYER NAMES' TO DECIDE ANY MORE, for the reason
+                // `RefreshFromAuthenticationAsync` sets out at length: one tag source, derived
+                // from the player id, or the impersonation guard has nothing to check against.
+                // A rename must not move somebody's discriminator either; that is the number
+                // their friends recognise them by.
+                Profile.Discriminator = AccountRules.DerivedTag(Profile.PlayerId);
             }
 
             Apply(Profile, IsSignedIn, IsSignedIn ? "Profile saved" : "Profile saved locally");

@@ -1124,12 +1124,19 @@ namespace TumbangPreso.UI
 
             var s = Settings.SettingsStore.Current;
 
+            // ⚠️ THE ACCOUNT ID AND THE PROOF GO WITH EVERY IDENTIFY, NOT ONLY THE FIRST. This
+            // re-identify is how a pick change reaches the host, and a message that carried the
+            // handle without the proof would arrive as an unprovable claim and demote a player
+            // who did nothing but change their slipper. `docs/TODO.md` § 88.1c.
+            var account = GameServices.Account;
             MatchRpc.Instance?.IdentifyServerRpc(
-                GameServices.Account?.ConnectionToken ?? NetIdentity.Token,
-                GameServices.Account?.LobbyName ?? s.PlayerName,
-                                                 Mathf.Max(0, s.CharacterPick),
-                                                 Mathf.Max(0, s.CanPick),
-                                                 Mathf.Max(0, s.SlipperPick));
+                account?.ConnectionToken ?? NetIdentity.Token,
+                account?.LobbyName ?? s.PlayerName,
+                account != null && account.IsSignedIn ? account.PlayerId : "",
+                account?.HandleProof ?? "",
+                Mathf.Max(0, s.CharacterPick),
+                Mathf.Max(0, s.CanPick),
+                Mathf.Max(0, s.SlipperPick));
         }
 
         private void OpenJoinPanel()

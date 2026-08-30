@@ -152,7 +152,16 @@ namespace TumbangPreso.Tests
             // career entry for a game it just played, which is the same quiet kind of wrong the
             // two entries above describe: nothing errors, and a player is simply missing what
             // everybody else got.
-            Assert.AreEqual(15, NetSession.ProtocolVersion,
+            //
+            // ⚠⚠ 16 SINCE 2026-08-30: the account id and the handle proof in the approval hello
+            // and in `Identify`, which is the impersonation guard (docs/TODO.md § 88.1c and
+            // § 90.1). `Identify` is read field by field in order, so a peer writing five values
+            // where the host reads seven misreads everything after the third, and that is the
+            // class of fault `audit_wire_payloads.py` cannot see because both ends of THIS build
+            // agree. The quiet half is worse than the loud one even so: a peer on 15 carries no
+            // proof, so every account handle it claims is demoted to a host-allocated tag and
+            // everybody on the older build is silently renamed in a lobby that looks fine.
+            Assert.AreEqual(16, NetSession.ProtocolVersion,
                 "a message or a replicated roster index has been added or removed. Bump this " +
                 "number and `NetSession.ProtocolVersion` together, in the same commit.");
         }
