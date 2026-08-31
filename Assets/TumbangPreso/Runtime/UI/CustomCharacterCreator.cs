@@ -7,6 +7,7 @@ namespace TumbangPreso.UI
 {
     /// <summary>
     /// UI Controller for the 3-Slot "Create Your Own Character" Custom Character Creator.
+    /// Deep Stardew Valley-tier customization system tailored to the Filipino street aesthetic.
     ///
     /// ⚠️ ROSTER INTEGRITY: Canonical heroes (Berto, Sean, Dante, Cheska, Zack, Nemu, Phaister)
     /// maintain locked canonical skin tones and identities. This customizer operates exclusively on
@@ -45,6 +46,22 @@ namespace TumbangPreso.UI
             ActiveSlotChanged?.Invoke(Profile.ActiveSlot);
         }
 
+        public void RandomizeCharacter()
+        {
+            var c = CurrentEditingCharacter;
+            CustomCharacterRules.Randomize(c);
+            Profile.SetSlot(_selectedEditingSlot, c);
+            CharacterChanged?.Invoke(c);
+        }
+
+        public void ApplyPreset(int presetIndex)
+        {
+            var c = CurrentEditingCharacter;
+            CustomCharacterRules.ApplyPreset(c, presetIndex);
+            Profile.SetSlot(_selectedEditingSlot, c);
+            CharacterChanged?.Invoke(c);
+        }
+
         public void SetSkinTone(int index)
         {
             var c = CurrentEditingCharacter;
@@ -57,6 +74,14 @@ namespace TumbangPreso.UI
         {
             var c = CurrentEditingCharacter;
             c.FaceExpressionIndex = Math.Clamp(index, 0, CustomCharacterRules.FaceExpressionNames.Length - 1);
+            Profile.SetSlot(_selectedEditingSlot, c);
+            CharacterChanged?.Invoke(c);
+        }
+
+        public void SetFaceMarking(int index)
+        {
+            var c = CurrentEditingCharacter;
+            c.FaceMarkingIndex = Math.Clamp(index, 0, CustomCharacterRules.FaceMarkingNames.Length - 1);
             Profile.SetSlot(_selectedEditingSlot, c);
             CharacterChanged?.Invoke(c);
         }
@@ -129,6 +154,30 @@ namespace TumbangPreso.UI
         {
             var c = CurrentEditingCharacter;
             c.WristAccessoryIndex = Math.Clamp(index, 0, CustomCharacterRules.WristAccessoryNames.Length - 1);
+            Profile.SetSlot(_selectedEditingSlot, c);
+            CharacterChanged?.Invoke(c);
+        }
+
+        public void SetNeckAccessory(int index)
+        {
+            var c = CurrentEditingCharacter;
+            c.NeckAccessoryIndex = Math.Clamp(index, 0, CustomCharacterRules.NeckAccessoryNames.Length - 1);
+            Profile.SetSlot(_selectedEditingSlot, c);
+            CharacterChanged?.Invoke(c);
+        }
+
+        public void SetFootwear(int index)
+        {
+            var c = CurrentEditingCharacter;
+            c.FootwearIndex = Math.Clamp(index, 0, CustomCharacterRules.FootwearNames.Length - 1);
+            Profile.SetSlot(_selectedEditingSlot, c);
+            CharacterChanged?.Invoke(c);
+        }
+
+        public void SetLataSkin(int index)
+        {
+            var c = CurrentEditingCharacter;
+            c.LataSkinIndex = Math.Clamp(index, 0, CustomCharacterRules.LataSkinNames.Length - 1);
             Profile.SetSlot(_selectedEditingSlot, c);
             CharacterChanged?.Invoke(c);
         }

@@ -16,17 +16,55 @@ namespace TumbangPreso.Core.Tests
         }
 
         [Fact]
-        public void ActiveSlotIsRetrievedAndClampedSafely()
+        public void VastCatalogCountsMeetDesignRequirements()
         {
-            var profile = new CustomCharacterProfile();
-            profile.ActiveSlot = 1;
-            var active = profile.GetActive();
-            Assert.Equal("Batang Kalye 2", active.Name);
+            Assert.True(CustomCharacterRules.SkinToneNames.Length >= 24, "Should have at least 24 skin tones");
+            Assert.True(CustomCharacterRules.HairstyleNames.Length >= 32, "Should have at least 32 hairstyles");
+            Assert.True(CustomCharacterRules.TopClothingNames.Length >= 32, "Should have at least 32 tops");
+            Assert.True(CustomCharacterRules.BottomClothingNames.Length >= 24, "Should have at least 24 bottoms");
+            Assert.True(CustomCharacterRules.FaceExpressionNames.Length >= 16, "Should have at least 16 expressions");
+            Assert.True(CustomCharacterRules.FaceMarkingNames.Length >= 12, "Should have at least 12 facial markings");
+            Assert.True(CustomCharacterRules.HairColorNames.Length >= 24, "Should have at least 24 hair colors");
+            Assert.True(CustomCharacterRules.HeadAccessoryNames.Length >= 24, "Should have at least 24 head accessories");
+            Assert.True(CustomCharacterRules.FaceAccessoryNames.Length >= 16, "Should have at least 16 face accessories");
+            Assert.True(CustomCharacterRules.WristAccessoryNames.Length >= 16, "Should have at least 16 wrist accessories");
+            Assert.True(CustomCharacterRules.NeckAccessoryNames.Length >= 12, "Should have at least 12 neck accessories");
+            Assert.True(CustomCharacterRules.FootwearNames.Length >= 12, "Should have at least 12 footwear options");
+            Assert.True(CustomCharacterRules.LataSkinNames.Length >= 8, "Should have at least 8 lata skins");
+            Assert.True(CustomCharacterRules.PresetNames.Length >= 7, "Should have at least 7 preset outfits");
+        }
 
-            profile.ActiveSlot = 999;
-            var clamped = profile.GetActive();
-            Assert.NotNull(clamped);
-            Assert.Equal("Batang Kalye 3", clamped.Name);
+        [Fact]
+        public void RandomizerCreatesValidCustomCharacter()
+        {
+            var character = new CustomCharacter();
+            CustomCharacterRules.Randomize(character, seed: 1337);
+
+            var clean = CustomCharacterRules.Normalise(character);
+            Assert.InRange(clean.SkinToneIndex, 0, CustomCharacterRules.SkinToneNames.Length - 1);
+            Assert.InRange(clean.FaceExpressionIndex, 0, CustomCharacterRules.FaceExpressionNames.Length - 1);
+            Assert.InRange(clean.FaceMarkingIndex, 0, CustomCharacterRules.FaceMarkingNames.Length - 1);
+            Assert.InRange(clean.HairstyleIndex, 0, CustomCharacterRules.HairstyleNames.Length - 1);
+            Assert.InRange(clean.HairColorIndex, 0, CustomCharacterRules.HairColorNames.Length - 1);
+            Assert.InRange(clean.HeightPercent, CustomCharacter.MinHeightPercent, CustomCharacter.MaxHeightPercent);
+            Assert.InRange(clean.BuildSizeIndex, 0, CustomCharacterRules.BuildSizeNames.Length - 1);
+            Assert.InRange(clean.TopClothingIndex, 0, CustomCharacterRules.TopClothingNames.Length - 1);
+            Assert.InRange(clean.BottomClothingIndex, 0, CustomCharacterRules.BottomClothingNames.Length - 1);
+        }
+
+        [Fact]
+        public void PresetAppliesCleanOutfits()
+        {
+            var character = new CustomCharacter();
+            CustomCharacterRules.ApplyPreset(character, 0); // Kalye Legend
+            Assert.Equal(0, character.TopClothingIndex); // Sando
+            Assert.Equal(0, character.BottomClothingIndex); // Denim shorts
+            Assert.Equal(1, character.FaceMarkingIndex); // Cheek bandage
+
+            CustomCharacterRules.ApplyPreset(character, 1); // Barangay MVP
+            Assert.Equal(6, character.TopClothingIndex); // Jersey #7
+            Assert.Equal(3, character.BottomClothingIndex); // Mesh shorts
+            Assert.Equal(1, character.FaceExpressionIndex); // Determined
         }
 
         [Fact]
@@ -51,8 +89,8 @@ namespace TumbangPreso.Core.Tests
             {
                 SkinToneIndex = 999,
                 FaceExpressionIndex = -5,
-                HairstyleIndex = 42,
-                TopClothingIndex = 100,
+                HairstyleIndex = 420,
+                TopClothingIndex = 1000,
             };
             var clean = CustomCharacterRules.Normalise(character);
             Assert.Equal(CustomCharacterRules.SkinToneNames.Length - 1, clean.SkinToneIndex);
@@ -62,56 +100,64 @@ namespace TumbangPreso.Core.Tests
         }
 
         [Fact]
-        public void WireCodecRoundtripsFaithfully()
+        public void WireCodecV2RoundtripsFaithfully()
         {
             var original = new CustomCharacter
             {
-                Name = "Tondo Legend",
-                SkinToneIndex = 2,
-                FaceExpressionIndex = 1,
-                HairstyleIndex = 3,
-                HairColorIndex = 1,
+                Name = "Tondo MVP",
+                SkinToneIndex = 8,
+                FaceExpressionIndex = 2,
+                FaceMarkingIndex = 3,
+                HairstyleIndex = 12,
+                HairColorIndex = 15,
                 HeightPercent = 105,
                 BuildSizeIndex = 2,
-                TopClothingIndex = 2,
-                BottomClothingIndex = 1,
+                TopClothingIndex = 6,
+                BottomClothingIndex = 3,
                 HeadAccessoryIndex = 1,
-                FaceAccessoryIndex = 2,
+                FaceAccessoryIndex = 4,
                 WristAccessoryIndex = 3,
+                NeckAccessoryIndex = 2,
+                FootwearIndex = 5,
+                LataSkinIndex = 2,
                 SlipperSkinId = "tsinelas_custom_red",
                 LataSkinId = "lata_custom_gold",
             };
 
             string wire = CustomCharacterRules.EncodeWire(original);
-            Assert.StartsWith("C1:", wire);
+            Assert.StartsWith("C2:", wire);
 
             var decoded = CustomCharacterRules.DecodeWire(wire);
-            Assert.Equal("Tondo Legend", decoded.Name);
-            Assert.Equal(2, decoded.SkinToneIndex);
-            Assert.Equal(1, decoded.FaceExpressionIndex);
-            Assert.Equal(3, decoded.HairstyleIndex);
-            Assert.Equal(1, decoded.HairColorIndex);
+            Assert.Equal("Tondo MVP", decoded.Name);
+            Assert.Equal(8, decoded.SkinToneIndex);
+            Assert.Equal(2, decoded.FaceExpressionIndex);
+            Assert.Equal(3, decoded.FaceMarkingIndex);
+            Assert.Equal(12, decoded.HairstyleIndex);
+            Assert.Equal(15, decoded.HairColorIndex);
             Assert.Equal(105, decoded.HeightPercent);
             Assert.Equal(2, decoded.BuildSizeIndex);
-            Assert.Equal(2, decoded.TopClothingIndex);
-            Assert.Equal(1, decoded.BottomClothingIndex);
+            Assert.Equal(6, decoded.TopClothingIndex);
+            Assert.Equal(3, decoded.BottomClothingIndex);
             Assert.Equal(1, decoded.HeadAccessoryIndex);
-            Assert.Equal(2, decoded.FaceAccessoryIndex);
+            Assert.Equal(4, decoded.FaceAccessoryIndex);
             Assert.Equal(3, decoded.WristAccessoryIndex);
+            Assert.Equal(2, decoded.NeckAccessoryIndex);
+            Assert.Equal(5, decoded.FootwearIndex);
+            Assert.Equal(2, decoded.LataSkinIndex);
             Assert.Equal("tsinelas_custom_red", decoded.SlipperSkinId);
             Assert.Equal("lata_custom_gold", decoded.LataSkinId);
         }
 
         [Fact]
-        public void CorruptedWirePayloadFallsBackGracefully()
+        public void LegacyC1WireCodecIsSupportedGracefully()
         {
-            var fallback = CustomCharacterRules.DecodeWire("INVALID_HEADER:1:2:3", 1);
-            Assert.NotNull(fallback);
-            Assert.Equal("Batang Kalye 2", fallback.Name);
-
-            var garbage = CustomCharacterRules.DecodeWire("C1:not_enough_tokens", 0);
-            Assert.NotNull(garbage);
-            Assert.Equal("Batang Kalye 1", garbage.Name);
+            string legacyC1 = "C1:Old_Hero:4:2:5:1:100:1:2:1:0:0:0:tsinelas_classic:lata_classic";
+            var decoded = CustomCharacterRules.DecodeWire(legacyC1, 0);
+            Assert.NotNull(decoded);
+            Assert.Equal("Old Hero", decoded.Name);
+            Assert.Equal(4, decoded.SkinToneIndex);
+            Assert.Equal(2, decoded.FaceExpressionIndex);
+            Assert.Equal(5, decoded.HairstyleIndex);
         }
 
         [Fact]

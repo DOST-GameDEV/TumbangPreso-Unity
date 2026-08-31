@@ -459,8 +459,38 @@ namespace TumbangPreso.UI
             // ⚠️ ROSTER INTEGRITY (FUTURE.md § 5, TODO.md § 107):
             // Canonical heroes and classic characters (Berto, Sean, Dante, Cheska, Zack, Nemu, Phaister, etc.)
             // have fixed canonical skin tones, faces, and palettes. They must never be subjected to global
-            // whole-body hue rotation / alien tinting. Full customization belongs to the dedicated
-            // "Create Your Own Character" system (3 save slots, 1 active).
+            // whole-body hue rotation / alien tinting.
+            // The dedicated 3-Slot Custom Character Creator allows players to design and equip their custom street kids.
+            var btnRow = StripRow(rows, "CUSTOM CHARACTER");
+            if (btnRow != null)
+            {
+                var customBtnGo = new GameObject("OpenCustomizerBtn", typeof(RectTransform), typeof(Image), typeof(Button));
+                customBtnGo.transform.SetParent(btnRow, false);
+                var btnImg = customBtnGo.GetComponent<Image>();
+                btnImg.color = UiTheme.Amber;
+                var btn = customBtnGo.GetComponent<Button>();
+                btn.onClick.AddListener(() =>
+                {
+                    var creator = Object.FindFirstObjectByType<CustomCharacterCreator>();
+                    if (creator != null) creator.gameObject.SetActive(true);
+                });
+
+                var labelGo = new GameObject("BtnLabel", typeof(RectTransform), typeof(Text));
+                labelGo.transform.SetParent(customBtnGo.transform, false);
+                var txt = labelGo.GetComponent<Text>();
+                txt.font = UiTheme.Font;
+                txt.fontSize = 14;
+                txt.alignment = TextAnchor.MiddleCenter;
+                txt.color = UiTheme.Ink;
+                var activeChar = CustomCharacterCreator.Profile.GetActive();
+                txt.text = $"CUSTOM HERO: {activeChar.Name.ToUpperInvariant()} (SLOT {CustomCharacterCreator.Profile.ActiveSlot + 1})";
+                
+                var le = customBtnGo.AddComponent<LayoutElement>();
+                le.preferredWidth = 320.0f;
+                le.preferredHeight = 36.0f;
+                
+                return PaletteRowHeight;
+            }
             return 0.0f;
         }
 
