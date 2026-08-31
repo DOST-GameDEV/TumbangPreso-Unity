@@ -921,10 +921,35 @@ namespace TumbangPreso.UI
             }
 
             BuildMasteryRows(profile);
+            UiRows.ButtonRow(_list, "Hero Ability Sidegrades", "CUSTOMIZE LOADOUT", OpenHeroLoadouts, "", "WoodPrimaryButton");
+
             BuildAchievementsRows(profile);
+            UiRows.ButtonRow(_list, "Street Milestone Shelf", "VIEW ALL ACHIEVEMENTS", OpenAchievements, "", "WoodPrimaryButton");
 
             UiRows.Gap(_list, 40.0f);
             SetFooter("", "Rates appear once there are enough attempts to mean anything.");
+        }
+
+        private void OpenHeroLoadouts()
+        {
+            var screen = UnityEngine.Object.FindFirstObjectByType<HeroLoadoutScreen>();
+            if (screen == null)
+            {
+                var go = new GameObject("HeroLoadoutScreen");
+                screen = go.AddComponent<HeroLoadoutScreen>();
+            }
+            screen.Open();
+        }
+
+        private void OpenAchievements()
+        {
+            var screen = UnityEngine.Object.FindFirstObjectByType<AchievementsScreen>();
+            if (screen == null)
+            {
+                var go = new GameObject("AchievementsScreen");
+                screen = go.AddComponent<AchievementsScreen>();
+            }
+            screen.Open();
         }
 
         /// <summary>A rate row, or nothing at all when the sample cannot carry it.</summary>
