@@ -44,6 +44,13 @@ force a machine to 50 fps, and only telemetry can say whether a real player is d
 Phase 4, because every argument in phases 4 through 17 is settled faster with real numbers than
 with opinions, and as of today there are numbers to point at.
 
+⚠️⚠️ **§ 113 IS THE CURRENT STATE OF THE CHARACTER MAKER AND § 112 IS HOW IT GOT ITS
+RIG.** § 113 is the pass 🧑 asked for on 2026-09-01: the clothes now hang off the ARM and LEG
+bones rather than off the torso, the screen is opaque, and the door to it is the fourth cell of
+the loadout tab bar instead of a chip on a colour strip. ⚠️ **§ 113.1 before authoring any
+garment**: a bottom is two tables now, a waistband and a leg, and a leg piece must be symmetric
+in `U` or it draws between the knees on one side.
+
 ⚠️⚠️ **§ 112 IS THE ONE TO READ BEFORE TOUCHING THE CHARACTER MAKER. § 112.8 IS THE ONE TO READ
 BEFORE TRUSTING ANY RENDER OF IT, AND § 112.12 IS THE ONE TO READ BEFORE BELIEVING A DIAGNOSIS OF
 ONE**: every wearable was sampling the whole palette atlas because a primitive cube's UVs span 0
@@ -2121,6 +2128,324 @@ one.**
   timing sensitivity: this does not look like a flake. Do not let it be absorbed into this entry,
   and do not widen the bound.
 - **A clean Windows player is on the Desktop**, built after every gate above.
+
+---
+
+## 113 · The clothes were not clothes, the screen was see-through, and the door was a chip ⚠️⚠️ 2026-09-01
+
+🧑, opening the build, in one stretch: *"make proper ui for this shit"*, *"also currently the
+clothes they wear are ugly and dont look like clothes so make that better"*, *"look this ugly ass
+ui its overwhelming"*, *"and how do u even get to this"*, *"why can i see the main menu"*, *"give
+it a solid brown background too or creme coz this looks ugly"*, *"make sure ui is intuitive and id
+like it if i can get to make ur own from when i click play"*, *"give many ooptions"*, and *"dont
+stop until the model builder works"*.
+
+**Five separate faults, and only one of them is a matter of taste.** Every one of the other four
+is a measurement that disagrees with what shipped.
+
+| The complaint | What was actually wrong | Where |
+|---|---|---|
+| *"dont look like clothes"* | **Every bottom in the game was a plank at crotch height over two bare legs**, because a bottom was authored on the TORSO frame and one unit of that frame's `V` is 168 mm against a 176 mm leg | § 113.1 |
+| the same | **Every sleeve was a box on the chest that happened to reach the arm in bind pose**, and stayed on the chest the moment the arm moved | § 113.2 |
+| *"why can i see the main menu"* | The scrim was **0.94 and 0.94 is not opaque**, over a lit street with saturated menu signage in it | § 113.3 |
+| *"its overwhelming"* | Three greens, two tab bars, a duplicated section heading and a three-sentence footer, on one screen | § 113.4 |
+| *"how do u even get to this"* | The only door was a **200-unit chip on the end of a colour-strength strip** | § 113.5 |
+
+### 113.1 · ⚠️⚠️ EVERY PAIR OF SHORTS IN THIS GAME WAS A BAND AT THE HIP, AND THE CONTACT SHEET HAD SAID SO FOR A DAY
+
+`Logs/ui/wardrobe-bottoms-*_v2.png` is twelve cells and twelve near-identical blue slabs sticking
+out in front of a belly, over a pair of completely bare legs. **The sheet was green, the entries
+were all distinct in the source, and nobody read the picture.** `CLAUDE.md` § 6.1: *show, do not
+describe* is only half of it; the other half is looking at what came back.
+
+**The cause is the frame, not the numbers.** `VoxelDresser.MeasureAnchor`'s torso case runs from
+the `torso` bone, y 0.1745, to the `head` bone, y 0.3432, so:
+
+- **one unit of torso `V` is 168 mm and the whole leg is 176 mm.** § 110's own remark records the
+  arithmetic and then draws the wrong conclusion from it: it says *"mid-thigh is -0.20, the knee is
+  -0.36"*, and `V` -0.20 is **34 mm below the hip**, which is the top of the thigh on a rig whose
+  legs are 24 per cent of its height.
+- **the deepest hem anybody dared author was `Track pants` at -0.92**, because the entry above that
+  had gone through the street. So the LONGEST trousers in the wardrobe stopped at the ankle by
+  accident of the frame and every other garment stopped at the hip.
+- **and it could not be fixed by making the boxes longer.** A box parented to the torso bone does
+  not move when a leg does. Correct trousers on that frame are trousers that stand still while the
+  character runs.
+
+⚠️⚠️ **SO A BOTTOM IS TWO PIECES NOW: A WAISTBAND ON THE TORSO AND A LEG ON EACH LEG BONE.**
+`VoxelWardrobe.BottomLegs` is the new table, parallel to `Bottoms`, dressed once per leg exactly as
+`Footwear` already was. The leg frame is the one the shoes have used since § 112 and it is the
+right shape for this: **`V` 0 is the floor and `V` 1 is the hip**, so a hem is a fraction of the leg
+the player can actually see, and it stays mid-thigh at 85 per cent height and at 115.
+
+⚠️ **THE HEMS ARE NOW NAMEABLE**: mid-thigh 0.52, knee 0.36, calf 0.20, ankle 0.06. Sixteen bottoms
+spread across that range instead of twelve bunched inside 34 mm of hip.
+
+⚠️⚠️ **AND THE WAISTBANDS LOST THEIR FORWARD LEDGE.** `W` went up to **1.36** on the old entries,
+which is what put a light-blue plank out in front of the stomach in all twelve renders; nothing is
+past 1.16 now and the accents sit on the seat and the sides rather than on the front plane.
+
+⚠️ **A LEG GARMENT MUST BE SYMMETRIC IN `U`**, and there is a test for it now.
+`MeasureAnchor` centres a leg on its own bone with a positive x extent, so `U +1` is the outside of
+the left leg and the **inside** of the right one: an asymmetric leg comes out mirrored on one side
+and a cargo pocket appears between the knees.
+`CustomCharacterWardrobeTests.EveryLegGarmentIsSymmetricAcrossTheLeg` fails on it.
+
+### 113.2 · ⚠️⚠️ AND EVERY SLEEVE WAS WELDED TO THE CHEST, WHICH IS WHY BIND POSE LOOKED FINE
+
+`VoxelWardrobe.Tops` authored its sleeves as torso boxes at `U` 1.60 to 2.80. **The arms of this rig
+point sideways** (`arm-left` runs x 0.0999 to 0.3836 at a near-constant height), so in bind pose a
+box that wide lands exactly on the arm and every render ever taken of it was correct. It is only
+wrong while the game is being played, which is the one place no probe in this repository looks.
+
+⚠️⚠️ **THE FIX IS A SECOND FRAME ON THE SAME BONE, NOT A CHANGE TO THE EXISTING ONE.**
+`VoxelAnchor.ArmLeft` is the **wrist**: it centres on `shoulder + reach * 0.80` with `reach * 0.20`
+of half width, which is the outer fifth of the limb and exactly what a band wraps. Re-pointing it at
+the whole arm would silently rescale all six `Wristwear` entries, and § 112.10 is the entry about
+those six being wrong in two axes at once with every test green. **A new frame cannot break an old
+one.** `VoxelAnchor.SleeveLeft` and `SleeveRight` span shoulder joint to fingertip.
+
+⚠️⚠️ **`U -1` IS THE SHOULDER ON BOTH ARMS, AND THAT COSTS A SIGNED EXTENT.** The arm bones sit at
+mirrored x, so a frame with a positive extent makes `U +1` the hand on the left and the shoulder on
+the right: one authored sleeve would come out back to front on one side. `MeasureAnchor` returns a
+signed `extents.x` for the sleeve frames, and the placement loop now takes `Mathf.Abs` when it sizes
+the box. ⚠️ **The sign must not reach the scale.** A cube at negative scale is inside out: its
+normals point in, and `ToonSkin`'s inverted-hull outline inverts with it and floods the sleeve with
+ink. That is the same failure `CustomCharacterWardrobeTests.NoBoxIsInsideOut` exists for, arriving
+from the frame instead of from the authoring.
+
+⚠️ **EVERY SLEEVE KEEPS THE LENGTH IT SHIPPED WITH.** The torso frame is 0.1279 of half width and
+the arm runs 0.0999 to 0.3836, so torso `U` 1.72 is sleeve `U` -0.15 and torso `U` 2.80 is +0.82.
+The lengths are converted, not re-chosen; what changed is the bone.
+
+### 113.3 · ⚠️⚠️ 0.94 IS NOT OPAQUE, AND THE ARITHMETIC SAYS IT SHOULD HAVE BEEN
+
+`CustomCharacterScreen` drew `Color(0.03, 0.02, 0.01, 0.94)` over character select. Six per cent of
+a lit street is supposed to be nothing. Measured off `Logs/ui/20-creator-face-laptop_v1.png`, the
+brick behind the heading reads **(58, 52, 48)** where the arithmetic promises about (16, 13, 12),
+because the surface under it is not mid grey: it is a facade in direct light, with the TUMP wordmark
+a metre high on it and the menu's PLAY, SETTINGS, TUTORIAL and QUIT signs in saturated green and
+amber beside it. **Six per cent of a saturated plate is still a legible plate**, and 🧑 read all
+four words through the form.
+
+⚠️⚠️ **AND THE ANSWER IS NOT 0.99, IT IS TO ASK WHAT THE SCRIM IS FOR.** `CLAUDE.md` § 6.2c
+question 3: *a scrim buys legibility over a live 3D scene, or separation from one; ask what it
+protects before retuning it.* The one thing on this screen is a character you are dressing. A street
+behind him is a second character competing for the same eye and there is nothing for a scrim to
+protect, **so this is a surface rather than a scrim**: `UiTheme.WoodDeep`, alpha 1.0. 🧑 asked for
+exactly that: *"give it a solid brown background too or creme"*.
+
+⚠️ **IT IS ALSO THE BLOCKER** (§ 6.2c question 4). Everything a player can act on is inside this
+screen while it is up, and the opaque `Image` is what stops a press reaching the loadout screen
+underneath.
+
+⚠️ **THE MODEL SITS ON A CARD NOW.** The backdrop is what removed the street; the card is what stops
+the figure reading as a cut-out standing in front of a menu. It is a shade DARKER than the field,
+not lighter: the character is a bright voxel figure wearing an 8 mm ink outline, and a cream card
+would put the loudest surface on the screen behind the thing it exists to show.
+
+### 113.4 · ⚠️⚠️ THREE GREENS ON ONE SCREEN, AND `GodotTheme` HAD ALREADY WRITTEN DOWN WHY THAT IS WRONG
+
+The live slot tab, the live section tab and KEEP AND USE were all `WoodPrimaryButton`, which is
+`UiTheme.MenuGreen`. `GodotTheme.ForButton`'s own comment, added when the same mistake was made on
+the lobby: *"AMBER IS THE SELECTED-TAB COLOUR AND IT IS NOT A SECOND 'GO' BUTTON... painting it
+green put two 'press me' buttons on one screen with the more important one further from the hand."*
+**Green is the ACT colour and exactly one control on this screen acts.** Both tab bars are
+`WoodAmberButton` now.
+
+What else came off, each against `CLAUDE.md` § 6.2's third question, *what is on screen that the
+player does not need right now*:
+
+- ⚠️⚠️ **THE SECTION HEADING WAS THE TAB SAID TWICE.** `UiRows.Section` draws its title as an amber
+  heading, and the tab that opened it is lit amber forty units above. The screen said **FACE**
+  twice and spent 96 units of list on the second one. The blurb is one line of chrome under the tab
+  bar now. ⚠️ It also removes a width trap: `Section`'s stacked subtitle is laid at a fixed
+  `SidePadding + 420` in an 840-unit box, which needs a list about 1300 units wide, and this
+  screen's column is 1000.
+- **THE NAME FIELD MOVED INTO THE HEADER.** A name is not a facial feature, and it was the first row
+  of the `FACE` section: a player looking for it under any other tab could not find it, because
+  switching tabs rebuilt the list and the field went with it. It was also the only row carrying a
+  `hint`, which is what forced the whole column to stay wide enough for `UiRows.Row`'s 800-unit hint
+  box. ⚠️ `UiRows.Field` is `FieldRow`'s widget extracted rather than a second `InputField` built by
+  hand, which is § 94.1's four copies of one lookup.
+- **THE FOOTER WAS THREE SENTENCES** and two of them described buttons eighty units to their right
+  saying the same thing in bigger type. It is *"Drag to turn, wheel to zoom."* now, under the model,
+  because that is the only part of it that was not already written on a button.
+- **SURPRISE ME AND PRESETS LEFT THE ACTION ROW.** Four same-sized buttons along one edge is four
+  equal choices, and two of them were BACK, which discards, and KEEP AND USE, which is the only
+  reason the screen exists (`FUTURE.md` § 0.5b question 4). These two act on the character, so they
+  sit under the character.
+
+⚠️⚠️ **AND THE COLUMN IS A FIXED 1000 UNITS ANCHORED TO THE RIGHT EDGE, NOT A FRACTION.**
+`AspectSafeCanvas` is `Expand`, so the canvas is **never narrower than 1920 units**: at 4:3 it is
+1920 by 1440 and gets taller rather than thinner. A fixed width therefore cannot be squeezed off a
+narrow screen, and 🧑 plays in a short WIDE window where a fraction is 1300 units of nothing.
+**1000 is arithmetic**: `UiRows.Row` puts its label in a 420-unit box starting at `SidePadding` 24,
+so the label ends at 444, and `UiRows.ValueColumn` 0.56 of 1000 is 560, which is 116 units after it.
+The tab bar used to run on two different fractions from the rows it switched.
+
+⚠️ **THE MODEL CARD TAKES THE SLACK AND THE COLUMN DOES NOT**, which is why the card is anchored to
+both edges. Two fixed columns would put 640 units of empty brown down the middle of an ultrawide.
+§ 6.2c question 1 says size a panel against its content: the column's content is a row, the card's
+content is a character, and a character is happy to be bigger.
+
+### 113.5 · ⚠️⚠️ THE DOOR WAS A CHIP ON THE END OF A COLOUR-STRENGTH STRIP, WHICH IS § 96 A SECOND TIME
+
+*"and how do u even get to this"*, asked about a screen he had already opened. The only door to the
+character maker was a 200-unit `MAKE YOUR OWN · <NAME>` button appended to the `STRENGTH` row of the
+loadout panel, after `SOFT`, `AS DRAWN` and `BOLD`. **That is the one visual slot on the screen that
+says "another option for the control to my left."**
+
+**§ 96 is the same fault with different furniture**: the player hub had exactly one door, a corner
+chip stating a name and a level, and the person who commissioned the hub never found it. Both were
+placed where there happened to be room rather than where the player is looking.
+
+⚠️⚠️ **IT IS THE FOURTH CELL OF THE TAB BAR NOW, AND IT IS THE SAME DOOR MOVED RATHER THAN A
+SECOND ONE.** `CLAUDE.md` § 6.3: *"NEVER ADD A SECOND DOOR TO FIX A FINDABILITY PROBLEM. Fix the
+door or move it."* `RefreshCustomDoor` is deleted in the same commit.
+
+⚠️⚠️ **THE BAR IS WHERE IT GOES BECAUSE IT COSTS NO VERTICAL BUDGET, AND THAT CONSTRAINT IS REAL.**
+The previous note recorded why a third strip row was refused and it was right:
+`HeroPickerLayoutProbe` dumps `Rows h=460 pref=644`, so the vertical group is already compressing
+every child, and a new row reopens the 27 px dead band above the ability rows that § 94 records
+being "fixed" three times without moving. **A `HorizontalLayoutGroup` that already exists costs
+width the row has and no height at all.**
+
+⚠️ **AND THE MOVE MEASURABLY RELIEVED THE COLUMN RATHER THAN ADDING TO IT.** The probe's dump read
+`Rows h=460 pref=644` with the chip on the strength row and reads **`Rows h=460 pref=582`** without
+it: 62 units of over-subscription gone. The dead band itself is **unchanged at 27 px**, which is
+what § 111.4 measured on a reverted `78d9aebb` base, so it is still the same pre-existing red and
+still not this work.
+
+⚠️ **AMBER, NOT GREEN.** The chip was `WoodPrimaryButton` sitting forty units above a
+`WoodPrimaryButton` CHOOSE. ⚠️ **And 1.7 of flexible width, not 1.0**: `MAKE YOUR OWN` is thirteen
+characters against `LATA`'s four, and `childForceExpandWidth` gives both the same cell, so
+`MenuKit.Fit` would grind the long one toward the 18-unit floor while LATA sat in a box three times
+the size of its word.
+
+**The journey, named out loud, which is what § 6.3 asks for:** PLAY, which lands on the lobby; the
+character card, which is the biggest thing on it and already says who you are; MAKE YOUR OWN, at the
+top of the screen that opens. **Three presses, no control that has to be discovered rather than
+read.**
+
+### 113.6 · More to choose from, because that was asked for too
+
+*"give many ooptions"*. Four tops and four bottoms appended, so the wardrobe is **144 entries**
+across ten categories rather than 136.
+
+- **Tops:** Basketball warm-up, Kamiseta, Bomber jacket, Crop hoodie.
+- **Bottoms:** Jogger pants, Denim overalls, School slacks, Tapered joggers.
+
+⚠️ **APPENDED, NEVER INSERTED**, and the names go in `CustomCharacterRules` in the same edit.
+`TopClothingIndex` and `BottomClothingIndex` cross the wire and are written into every saved slot: a
+row added in the middle re-dresses everybody's character, and a name added to one of the two lists
+and not the other is what `CustomCharacterWardrobeTests.AssertSameList` fails on.
+
+⚠️⚠️ **AND THE HEMS ARE THE REASON SIXTEEN TOPS ARE NOW SIXTEEN TOPS.** The old bodies all started
+at `V` 0.00, so the contact sheet is a row of identical red rectangles differing only in a detail
+too small to see. `V` 0 is the hip, so a hem below it reads as worn over the waistband and above it
+as cropped; the spread is deliberate and it is the second read after the sleeve.
+
+### 113.7 · ⚠️⚠️ A TOP WITH NO SLEEVE ROW RENDERS PERFECTLY, WHICH IS WHY THE SPLIT NEEDED A TEST
+
+Splitting a garment across two tables has a silent failure mode: append a top to `Tops`, forget
+`TopSleeves`, and the shirt draws, the layout is fine, every probe is green, and the character walks
+into a match in a long-sleeved hoodie with two bare arms. Worse, an entry appended to one table and
+**inserted** into the other pairs every garment after it with the wrong sleeve, and both indices
+cross the wire.
+
+`CustomCharacterWardrobeTests.EveryTopHasASleeveAndEveryBottomHasALeg` compares the two tables by
+NAME rather than by count, for the reason `AssertSameList` already gives: a count check passes
+through a rename, and the rename is the worse half of the bug.
+
+⚠️ **THE TWO LIMB TABLES ARE IN `EverySlotIsInsideThePalette` AND `NoBoxIsInsideOut` BUT NOT IN
+`OnlyNoneIsAllowedToBeEmpty`.** A slot and a winding are wrong wherever they appear; an EMPTY sleeve
+is the correct geometry for a sando.
+
+### 113.9 · Verified
+
+- `dotnet test Core.Tests` **407/407**.
+- EditMode **283/283**, which is 281 plus this entry's two:
+  `EveryTopHasASleeveAndEveryBottomHasALeg` and `EveryLegGarmentIsSymmetricAcrossTheLeg`.
+- **Full PlayMode, `-testCategory "!WallClock"`: 134 cases, 132 passed.** ⚠️ **Both reds are the
+  two this branch already carried and both were re-measured rather than assumed:**
+  - `CarryTests.AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor` at **0.0838 m** against
+    the 0.050 m bound. § 93 recorded 0.084 and § 112.13 recorded 0.092. **Three samples now and all
+    three are outside the bound**, which continues to argue against a flake. Nothing here touches
+    `Carrier`, the animator or `LateUpdate`. **Do not widen the bound.**
+  - `HeroPickerLayoutProbe.TheHeroPickerHasNoDeadBandAboveTheAbilityRows` at **27 px**, which is
+    byte for byte the number § 111.4 measured on a reverted `78d9aebb` base. ⚠️ **This is the probe
+    for the screen this entry changed, so identical was the thing to check for**, and the dump also
+    shows `Rows pref` DOWN from 644 to 582 because the door chip left the strength row.
+- `WardrobeSheetProbe` green, **150 renders** in `Logs/ui/wardrobe-*_v3.png` across ten categories,
+  up from 142 at `_v2`. ⚠️ **`_v3`, because `_v2` is on disk and in the scrollback** and it is the
+  BEFORE for this entry: `CLAUDE.md` § 6.1.
+- `CustomCharacterScreenProbe` green: six sections at nine resolutions, plus eight pictures at
+  `20-creator-face-*_v2` and `21-creator-clothes-*_v2`.
+- `UiClickProbe` green, which is what says the new opaque backdrop and the new tab are not covering
+  anything.
+- `Checks.RunAll`: **all five OK in one launch.** ⚠️ `MapGeometryCheck` prints FAIL lines for
+  Eskinita dressing props and still reports OK: those are ungated maps and that is its normal
+  output, not a regression from this work.
+- `node tools/check_digest_contract.js` green, `7b135cbb69492fa5`.
+- The three `tools/` audits: **44 ability sites, 0 ungated on another body; 53 wire entry points,
+  0 unreachable; 55 named messages, 0 mismatched.**
+- ⚠️ **`git status` was checked for collateral.** Ten source files and `docs/TODO.md`, and nothing
+  else. **No `.glb`, no `.tres`, no `.asset` and no scene is in the diff at all**, which is the
+  promise 🧑 asked for: *"dont toucht heh existing onnes, i will be very mad if u break or fuck up
+  any of the existing ones"*.
+- ⚠️⚠️ **AND THE FIRST BUILD DID NOT RUN, WITH EXIT CODE 1 AND A 21-LINE LOG.** That is
+  `CLAUDE.md` § 7's lock signature exactly, and § 112.13 records the same thing after
+  `Checks.RunAll`: **a batchmode `-runTests` launch stays alive holding `Temp/UnityLockfile` after
+  it has already written its `.xml` and reported green.** The one command that settles it is the
+  one § 112.13 names, and it named the culprit in a line:
+  `Get-CimInstance Win32_Process -Filter "Name='Unity.exe'"` printed the previous PlayMode filter
+  run's own command line, twenty minutes after that run had been reported complete. Killing it and
+  its `AssetImportWorkerHW0` child, then deleting the lockfile, made the build run. **Check what is
+  holding the lock before believing the build is broken**, and check it whether or not the last run
+  said it finished.
+- ⚠️ **`NetSession.ProtocolVersion` is UNCHANGED at 19.** No wire field changed shape; two lists
+  grew, and a grown list is a wider range of an existing integer. § 113.8 records what a mixed pair
+  does with the four new indices.
+
+### 113.8 · STILL OPEN
+
+- ⚠️⚠️ **§ 102.5 AND § 104.7, THE TWO-ACCOUNT RUN, ARE UNCHANGED AND STILL NEED TWO MACHINES.**
+  Nothing here touches them. § 109.5 has the steps.
+- **The height and build dials are still not on the contact sheet.** § 112.14's last bullet stands:
+  they are the two controls that change the rig rather than adding to it, and a row shooting one
+  outfit at 85, 100 and 115 per cent would answer whether the wardrobe still fits at the ends of its
+  own range. **It matters more now than it did**, because a trouser leg is a fraction of a leg that
+  the build dial scales.
+- **`WardrobeSheetProbe` reframes per cell.** `ModelPreview.LookAt` aims at a fraction of the
+  subject's own bounds, so an afro moves the camera. It does not stop the sheet answering its
+  question; it makes two cells harder to compare than they should be.
+- ⚠️⚠️ **EVERY HAT AND EVERY CUT DRAWS ABOUT 1.35 TIMES THE WIDTH OF THE SKULL, AND THE CAUSE IS
+  THE EAR NUBS.** Measured off `Logs/ui/wardrobe-hats-*_v3.png`: the bare head in cell 0 is about
+  170 px across and the hat in cell 1 is about 230 px, on the same rig at the same framing.
+  `VoxelDresser.MeasureAnchor`'s head case uses `head-mesh`'s own bounds, x ±0.2268, and **those
+  bounds include the ears**, which stick out roughly 59 mm past the skull on each side. So the
+  skull is about x ±0.168, which is `U` ±0.74, and a hat body authored at `U` ±1.00 is 35 per cent
+  too wide. It reads as a box sitting on a head rather than a hat on a head, and it is why the
+  default preset's `Ice-drop towel` is the loudest thing in
+  `Logs/ui/20-creator-face-laptop_v2.png`.
+  ⚠️⚠️ **THE FRAME ITSELF IS NOT THE BUG AND MUST NOT BE NARROWED.** § 112.3's face table is
+  measured against exactly this frame and lands correctly: the eyes are `U` 0.19 to 0.44, which is
+  x 0.0439 to 0.1003, which is where the donor's own face art is. **Narrowing the head frame moves
+  every eye, brow, mouth and mark inward with it**, which is § 110.9's three shipped-wrong passes
+  arriving again. The correction belongs on the `Headwear` and `Hairstyles` tables, as one named
+  constant with this measurement beside it, applied through `Scalp`, `Loaf` and `Band` so a future
+  entry cannot miss it.
+  ⚠️ **AND IT IS WIDTH ONLY.** `FaceW` 0.94 puts the face plane at z 0.1576 against a frame that
+  runs to 0.1676, so the depth is 6 per cent proud rather than 35, and scaling `W` would push every
+  brim back into the forehead.
+- ⚠️ **The four appended tops and four appended bottoms have never been worn in a MATCH**, only on
+  the contact sheet and in the creator. They cross the wire as indices 16 to 19 and 12 to 15, and
+  `NetSession.ProtocolVersion` is unchanged at **19** because no field changed shape: a peer on an
+  older build sends an index this build understands and receives one it clamps. That clamp is
+  `CustomCharacterRules.Normalise`, and it means an old peer draws a DIFFERENT garment rather than
+  no garment. **Two machines on this branch agree; a mixed pair does not**, which is the same
+  property every appended list in this project has and the reason they are appended.
 
 ---
 

@@ -72,22 +72,44 @@ namespace TumbangPreso.UI
         /// world-space aim would frame one character's forehead and another's chin.
         ///
         /// ⚠️ THE ZOOMS ARE INSIDE `ModelPreview.ZoomMin` 0.55 AND `ZoomMax` 2.2 by construction,
-        /// and 0.62 is deliberately not the floor: at the floor a head fills the frame edge to
-        /// edge and a hat's silhouette, which is the thing being chosen, runs off the top.
+        /// and none of them is the floor: at the floor a head fills the frame edge to edge and a
+        /// hat's silhouette, which is the thing being chosen, runs off the top.
+        ///
+        /// ⚠️⚠️ THEY CAME DOWN 15 PER CENT ON 2026-09-01 BECAUSE THE CARD GREW, AND THE MEASUREMENT
+        /// IS OFF A PICTURE. `Logs/ui/21-creator-clothes-laptop_v2.png`: the figure was 290 px tall
+        /// inside a 527 px card, **55 per cent**, and at 4:3 it was 175 px across a 358 px card.
+        /// A character with half a card of nothing under him is the same fault as the band of brown
+        /// `ActionRowTop` removed, one rect further in. ⚠️ **They are not lower than that**, because
+        /// the section aims are 0.34 to 0.80 of the subject's own height and a zoom tight enough to
+        /// fill a tall card at aim 0.80 crops the feet off at aim 0.34.
         /// </summary>
+        /// <remarks>
+        /// ⚠️⚠️ THE BLURB IS ONE LINE OF CHROME UNDER THE TAB BAR NOW, NOT A `UiRows.Section`
+        /// INSIDE THE LIST, AND THE DUPLICATION IS WHY. A `Section` draws its title as an amber
+        /// heading; the tab that opened it is already lit amber two rows above, so the screen said
+        /// **FACE** twice, 40 units apart, and spent 96 units of list on the second one. 🧑, of the
+        /// build he opened: *"look this ugly ass ui its overwhelming"*. `CLAUDE.md` § 6.2
+        /// question 3 is the test: what is on screen that the player does not need right now.
+        ///
+        /// ⚠️ IT ALSO REMOVES A WIDTH TRAP. `UiRows.Section` lays its stacked subtitle at a fixed
+        /// `SidePadding + 420` in an 840-unit box, which needs a list about 1300 units wide; this
+        /// screen's list is 1000, so the sentence ran off the end of every section header on it.
+        /// As chrome the line owns the full column and cannot.
+        /// </remarks>
         private static readonly (string Title, string Blurb, float Aim, float Zoom)[] Sections =
         {
-            // ⚠️ EVERY BLURB IS UNDER 90 CHARACTERS, AND THE FIRST RUN OF THE PROBE IS WHY.
-            // `UiRows.Section` gives its subtitle an 840-unit box and `MenuKit.Label` OVERFLOWS
-            // rather than wrapping, so a 116-character sentence measured 870 units and drew over
-            // the row under it.
-            ("Face",    "Skin, expression and marks. A roster character's skin is locked; yours is not.",
-                                                                                          0.80f, 0.84f),
-            ("Hair",    "Cut and colour. Both free from level one, neither earned.",       0.82f, 0.84f),
-            ("Body",    "Height and build, 85 to 115 per cent. Reach decides a tag.",      0.54f, 1.00f),
-            ("Clothes", "What you wear and what colour it is. Two choices, not one.",      0.60f, 0.92f),
-            ("Gear",    "Headwear, eyewear, wrists and neck.",                             0.74f, 0.88f),
-            ("Kit",     "The tsinelas, the lata, and whose skills you bring.",             0.30f, 0.96f),
+            ("Face",    "Skin, expression and marks. Yours is the one skin the game lets you pick.",
+                                                                                          0.76f, 0.80f),
+            ("Hair",    "Cut and colour. Both free from level one, neither earned.",       0.80f, 0.76f),
+            ("Body",    "Height and build, 85 to 115 per cent. It changes nothing but the look.",
+                                                                                          0.52f, 0.87f),
+            // ⚠️ CLOTHES FRAMES THE WHOLE FIGURE NOW, AND `docs/TODO.md` § 113 IS WHY. A pair of
+            // track pants used to be a band at the hip, so a waist-high aim showed all of it;
+            // the legs are real garments now and a hem is the thing being chosen.
+            ("Clothes", "Top and bottom, and the colour of each. Two choices per garment.",
+                                                                                          0.46f, 0.92f),
+            ("Gear",    "Headwear, eyewear, wrists and neck.",                             0.72f, 0.78f),
+            ("Kit",     "Your tsinelas, your lata, and whose skills you borrow.",          0.34f, 0.85f),
         };
 
         private Canvas _canvas;
@@ -97,6 +119,8 @@ namespace TumbangPreso.UI
         private ModelPreview _preview;
         private RectTransform _stage;
         private Text _footer;
+        private Text _blurb;
+        private InputField _nameField;
         private readonly List<Button> _slotTabs = new List<Button>();
         private readonly List<Button> _sectionTabs = new List<Button>();
 
@@ -108,6 +132,44 @@ namespace TumbangPreso.UI
         /// <summary>⚠️ THE MARGIN IS THE SAME 96 THE HUB USES, so two full-screen takeovers
         /// do not start their text at two different distances from the same edge.</summary>
         private const float Margin = 96.0f;
+
+        /// <summary>
+        /// How wide the control column is, in authored units, measured against its CONTENT.
+        ///
+        /// ⚠️⚠️ A FIXED WIDTH AND NOT A FRACTION, AND `AspectSafeCanvas` IS WHAT MAKES THAT
+        /// SAFE. `screenMatchMode` is `Expand`, so the canvas is **never narrower than 1920
+        /// units**: at 4:3 it is 1920 by 1440 and it gets taller rather than thinner. A fixed
+        /// width therefore cannot be squeezed off a narrow screen, and 🧑 plays in a short WIDE
+        /// window (`CLAUDE.md` § 6.2b row 3), where a fraction would have made this column 1300
+        /// units of nothing.
+        ///
+        /// ⚠️⚠️ AND 1000 IS ARITHMETIC. `UiRows.Row` puts its label in a 420-unit box starting at
+        /// `SidePadding` 24, so the label ends at 444, and the control column starts at
+        /// `UiRows.ValueColumn` 0.56 of the row. At 1000 units that is 560: **116 units after the
+        /// label ends.** The screen he photographed ran this column at about 1100 units inside a
+        /// full-width list and the value sat visibly adrift of its label, which is `docs/TODO.md`
+        /// § 94.7 fault 1 in a smaller font. It is also six 157-unit section tabs across the same
+        /// column, and the longest of them, CLOTHES, measures about 104.
+        /// </summary>
+        private const float ColumnWidth = 1000.0f;
+
+        /// <summary>Where the content starts under the header rule, and where it stops above the
+        /// action row. Both are measured from the canvas edges, so they hold at 1080 and at the
+        /// 1440-unit height a 4:3 panel gets.</summary>
+        private const float ContentTop = -186.0f;
+
+        private const float ContentBottom = 176.0f;
+
+        /// <summary>
+        /// The top of the bottom action row, which is where the two columns stop.
+        ///
+        /// ⚠️⚠️ THE CARD USED TO STOP 84 UNITS ABOVE THIS AND THE GAP WAS VISIBLE AS A BAND OF
+        /// BROWN ACROSS THE WHOLE SCREEN. `Logs/ui/20-creator-face-laptop_v2.png`: the model card
+        /// ends at 583 px of 768 and the buttons start at 675, so 92 px of the shortest window this
+        /// game supports is empty. The buttons are 62 tall centred on 88, so they occupy 57 to 119,
+        /// and 150 clears the top of that by 31.
+        /// </summary>
+        private const float ActionRowTop = 150.0f;
 
         /// <summary>
         /// The `anchoredPosition.x` that puts a box of `width` with its LEFT edge at `left`.
@@ -188,6 +250,11 @@ namespace TumbangPreso.UI
             _editing = CustomCharacterStore.Profile.Slots[_slot].Clone();
             _section = 0;
 
+            // ⚠️ THE NAME FIELD IS BUILT ONCE AND RELOADED HERE, because it lives in the header
+            // rather than in the list `Refresh` rebuilds. A screen reopened on a different slot
+            // would otherwise show the previous character's name over the new character.
+            if (_nameField != null) _nameField.text = _editing.Name ?? "";
+
             _root.SetActive(true);
 
             // ⚠️ THE POINTER IS RELEASED, LIKE EVERY OTHER MENU. `CursorMode`'s own header:
@@ -218,12 +285,31 @@ namespace TumbangPreso.UI
             _root.transform.SetParent(_canvas.transform, false);
             MenuKit.Stretch((RectTransform)_root.transform);
 
-            // ⚠️ THE SCRIM IS OPAQUE ENOUGH TO KILL THE SCREEN BEHIND IT, copying `PlayerHub`.
-            // Character select is a lit street with a cast standing on it; a translucent panel
-            // over that is two characters competing for the same eye. **Everything a player can
-            // act on is inside this screen while it is up**, and the block is this graphic's job
-            // as much as the look is (`CLAUDE.md` § 6.2c, question 4).
-            MenuKit.Backdrop(_root.transform, new Color(0.03f, 0.02f, 0.01f, 0.94f));
+            // ⚠️⚠️ OPAQUE. ALPHA 1.0. 🧑, LOOKING AT THIS SCREEN IN THE BUILD: *"why can i see
+            // the main menu"*, and *"give it a solid brown background too or creme coz this looks
+            // ugly"*.
+            //
+            // **It was 0.94 and 0.94 is not opaque enough on this background**, which is the whole
+            // finding. Six per cent of a lit street is still a street: the menu's PLAY, SETTINGS,
+            // TUTORIAL and QUIT signs are saturated green and amber plates, the wall behind them
+            // carries the TUMP wordmark at a metre high, and a scrim that leaves 6 per cent of
+            // that through leaves every one of those shapes legible under the form. Measured off
+            // `Logs/ui/20-creator-face-laptop_v1.png`, the brick behind the heading reads
+            // (58, 52, 48) rather than the (16, 13, 12) the arithmetic promises, because the
+            // wall under it is not mid grey, it is a lit facade.
+            //
+            // ⚠️⚠️ AND THE LESSON IS NOT "USE 0.99". A scrim buys legibility over a live scene
+            // (`CLAUDE.md` § 6.2c question 3: *ask what it protects before retuning it*), and this
+            // screen does not want the scene at all: the ONE thing on it is a character you are
+            // dressing, and a street behind him is a second character competing for the same eye.
+            // **There is nothing for a scrim to protect here, so this is a surface rather than a
+            // scrim.** `PlayerHub` is the same argument and 🧑 has never complained about it,
+            // because the hub happens to open over nothing.
+            //
+            // ⚠️ IT IS ALSO THE BLOCKER (§ 6.2c question 4). Everything a player can act on is
+            // inside this screen while it is up, and an opaque `Image` with `raycastTarget` on is
+            // what stops a press reaching the character select underneath.
+            MenuKit.Backdrop(_root.transform, UiTheme.WoodDeep);
 
             BuildHeader();
             BuildStage();
@@ -255,37 +341,92 @@ namespace TumbangPreso.UI
             // and the layout probe was green because every label fitted its own box. `LeftAt` does
             // the arithmetic once so it cannot be got wrong per call.
             var head = MenuKit.Label(_root.transform, "MAKE YOUR OWN", UiRows.HeadingUnits + 8,
-                UiTheme.Amber, new Vector2(0.0f, 1.0f), new Vector2(LeftAt(Margin, 760.0f), -74.0f),
+                UiTheme.Amber, new Vector2(0.0f, 1.0f), new Vector2(LeftAt(Margin, 760.0f), -68.0f),
                 new Vector2(760.0f, 52.0f), TextAnchor.MiddleLeft);
             head.raycastTarget = false;
 
             var sub = MenuKit.Label(_root.transform,
                 "Three you can keep. One walks into the match.", UiRows.HintUnits,
                 UiTheme.CreamMuted, new Vector2(0.0f, 1.0f),
-                new Vector2(LeftAt(Margin, 760.0f), -118.0f),
+                new Vector2(LeftAt(Margin, 760.0f), -110.0f),
                 new Vector2(760.0f, 28.0f), TextAnchor.MiddleLeft);
             sub.raycastTarget = false;
+
+            // ⚠️⚠️ THE NAME LIVES IN THE HEADER NOW AND IT USED TO BE THE FIRST ROW OF THE `FACE`
+            // SECTION, WHICH IS THE WRONG SCREEN FOR IT TWICE OVER. A name is not a facial
+            // feature, so a player looking for it under FACE found it by accident and a player
+            // looking for it under any other tab could not find it at all: switching to HAIR
+            // rebuilt the list and the field vanished. It also carried the only `hint` on the
+            // screen, which is what forced the whole list to stay wide enough for
+            // `UiRows.Row`'s 800-unit hint box.
+            //
+            // ⚠️ IT IS BUILT ONCE AND NEVER REBUILT, which `Refresh` could not promise: a
+            // `Refresh` on `onValueChanged` destroys the `InputField` the player is typing into
+            // and takes the caret with it, and that reads as the screen eating every second
+            // character. Out here nothing rebuilds it but a slot switch, which is a deliberate
+            // change of subject.
+            var nameCap = MenuKit.Label(_root.transform, "NAME", UiRows.HintUnits, UiTheme.Amber,
+                new Vector2(1.0f, 1.0f), new Vector2(RightAt(Margin + 460.0f, 90.0f), -140.0f),
+                new Vector2(90.0f, 26.0f), TextAnchor.MiddleRight);
+            nameCap.raycastTarget = false;
+
+            _nameField = UiRows.Field(_root.transform, "Batang Kalye", NameLimit);
+
+            MenuKit.Place(_nameField.GetComponent<RectTransform>(), new Vector2(1.0f, 1.0f),
+                new Vector2(RightAt(Margin, 440.0f), -140.0f), new Vector2(440.0f, 46.0f));
+
+            _nameField.onValueChanged.AddListener(text =>
+            {
+                if (_editing != null) _editing.Name = text;
+            });
 
             _slotTabs.Clear();
             for (int i = 0; i < CustomCharacterRules.MaxSlots; i++)
             {
                 int index = i;
+
+                // ⚠️⚠️ `WoodAmberButton`, NOT `WoodPrimaryButton`, AND `GodotTheme` HAD ALREADY
+                // WRITTEN DOWN WHY: *"AMBER IS THE SELECTED-TAB COLOUR AND IT IS NOT A SECOND 'GO'
+                // BUTTON... painting it green put two 'press me' buttons on one screen with the
+                // more important one further from the hand."* This screen had THREE greens at
+                // once, and 🧑 photographed it: the live slot tab, the live section tab and KEEP
+                // AND USE, all in `MenuGreen`, so nothing on the screen led. Green is the ACT
+                // colour and exactly one control here acts.
                 var tab = MenuKit.WoodButton(_root.transform, $"SLOT {i + 1}",
                     new Vector2(1.0f, 1.0f),
-                    new Vector2(RightAt(Margin + ((2 - i) * 236.0f), 224.0f), -96.0f),
-                    new Vector2(224.0f, 60.0f),
+                    new Vector2(RightAt(Margin + ((2 - i) * 212.0f), 200.0f), -80.0f),
+                    new Vector2(200.0f, 56.0f),
                     () =>
                     {
                         if (_slot == index) return;
                         MenuSfx.Click();
                         _slot = index;
                         _editing = CustomCharacterStore.Profile.Slots[_slot].Clone();
+                        if (_nameField != null) _nameField.text = _editing.Name ?? "";
                         Refresh();
                         ShowModel();
                     });
 
                 _slotTabs.Add(tab);
             }
+
+            // ⚠️ A HAIRLINE UNDER THE HEADER, because a gap alone was not separating the title
+            // from the controls: `FUTURE.md` § 0.5b's fourth ordering tool is space, and it is
+            // used up here by the name field sitting in the same band.
+            var rule = new GameObject("HeaderRule", typeof(RectTransform), typeof(Image));
+            rule.transform.SetParent(_root.transform, false);
+
+            var ruleRt = (RectTransform)rule.transform;
+            ruleRt.anchorMin = new Vector2(0.0f, 1.0f);
+            ruleRt.anchorMax = new Vector2(1.0f, 1.0f);
+            ruleRt.pivot = new Vector2(0.5f, 1.0f);
+            ruleRt.offsetMin = new Vector2(Margin, -174.0f);
+            ruleRt.offsetMax = new Vector2(-Margin, -172.0f);
+
+            var ruleImage = rule.GetComponent<Image>();
+            ruleImage.color = new Color(UiTheme.WoodEdge.r, UiTheme.WoodEdge.g,
+                                        UiTheme.WoodEdge.b, 0.55f);
+            ruleImage.raycastTarget = false;
         }
 
         /// <summary>
@@ -305,6 +446,43 @@ namespace TumbangPreso.UI
         /// </summary>
         private void BuildStage()
         {
+            // ⚠️⚠️ THE MODEL SITS ON A CARD NOW AND IT USED TO SIT ON THE STREET. That is the
+            // difference between a preview and a character standing in front of the main menu:
+            // 🧑, of the screen he opened, *"why can i see the main menu"*. The backdrop above is
+            // what removed the street; this is what gives the figure a frame, so the ONE thing on
+            // the screen reads as the subject of the screen rather than as a cut-out.
+            //
+            // ⚠️ IT IS A SHADE DARKER THAN THE FIELD, NOT LIGHTER. The character is a bright
+            // voxel figure wearing an 8 mm ink outline (`ToonSkin.PersonOutlineWidth`); a cream
+            // card would put the loudest surface on the screen behind the thing it is meant to
+            // show off, and the outline that separates him from it would be drawn against the one
+            // background it cannot contrast with.
+            var card = new GameObject("StageCard", typeof(RectTransform), typeof(Image));
+            card.transform.SetParent(_root.transform, false);
+
+            var cardRt = (RectTransform)card.transform;
+            cardRt.anchorMin = new Vector2(0.0f, 0.0f);
+            cardRt.anchorMax = new Vector2(1.0f, 1.0f);
+
+            // ⚠️⚠️ THE CARD TAKES THE SLACK AND THE COLUMN DOES NOT, WHICH IS THE WHOLE REASON
+            // THIS RECT IS ANCHORED TO BOTH EDGES. `AspectSafeCanvas` is `Expand`, so the canvas
+            // is 1920 units wide at 16:9 and about 2560 on an ultrawide. Two fixed columns would
+            // put 640 units of empty brown down the middle of the screen at that shape.
+            // `CLAUDE.md` § 6.2c question 1: size a panel against its CONTENT. The column's
+            // content is a 1000-unit row; the card's content is a character, and a character is
+            // happy to be bigger.
+            cardRt.offsetMin = new Vector2(Margin, ActionRowTop);
+            cardRt.offsetMax = new Vector2(-(ColumnWidth + Margin + 56.0f), ContentTop);
+
+            var face = card.GetComponent<Image>();
+            face.color = UiTheme.WoodDark;
+            face.raycastTarget = false;
+
+            var skin = card.AddComponent<GodotPanel>();
+            skin.Variation = "WoodSlot";
+            skin.ApplyContentMargins = false;
+            skin.Apply();
+
             var go = new GameObject("Stage", typeof(RectTransform));
             go.transform.SetParent(_root.transform, false);
 
@@ -323,26 +501,36 @@ namespace TumbangPreso.UI
             // why the creator's rows carry no hints and the explanation lives on the section header
             // instead. That is a design consequence of the split and it is written here so the next
             // person does not re-add hints and re-create the overlap.
+            // ⚠️ INSET INSIDE THE CARD BY 14 SO THE CARD'S OWN BEVEL IS NOT DRAWN OVER. The
+            // preview is a live camera rendering a subject parked five hundred metres under the
+            // world (`ModelPreview.Stage`), so it has no idea the card is there.
             _stage = (RectTransform)go.transform;
-            _stage.anchorMin = new Vector2(0.025f, 0.0f);
-            _stage.anchorMax = new Vector2(0.375f, 1.0f);
-            _stage.offsetMin = new Vector2(0.0f, 128.0f);
-            _stage.offsetMax = new Vector2(0.0f, -196.0f);
+            _stage.anchorMin = new Vector2(0.0f, 0.0f);
+            _stage.anchorMax = new Vector2(1.0f, 1.0f);
+            _stage.offsetMin = new Vector2(Margin + 14.0f, ActionRowTop + 14.0f);
+            _stage.offsetMax = new Vector2(-(ColumnWidth + Margin + 70.0f), ContentTop - 14.0f);
 
             _preview = go.AddComponent<ModelPreview>();
             _preview.Attach(_stage);
         }
 
+        /// <summary>
+        /// The control column: six tabs, one sentence, and the rows of the section you are on.
+        ///
+        /// ⚠️⚠️ 1000 UNITS WIDE AND ANCHORED TO THE RIGHT EDGE, NOT A FRACTION OF THE WINDOW.
+        /// See `ColumnWidth` for the arithmetic; it is `CLAUDE.md` § 6.2c question 1 answered with
+        /// a number rather than with a percentage.
+        /// </summary>
         private void BuildList()
         {
             var listGo = new GameObject("ListArea", typeof(RectTransform));
             listGo.transform.SetParent(_root.transform, false);
 
             var listRt = (RectTransform)listGo.transform;
-            listRt.anchorMin = new Vector2(0.400f, 0.0f);
-            listRt.anchorMax = new Vector2(0.975f, 1.0f);
-            listRt.offsetMin = new Vector2(0.0f, 128.0f);
-            listRt.offsetMax = new Vector2(0.0f, -260.0f);
+            listRt.anchorMin = new Vector2(1.0f, 0.0f);
+            listRt.anchorMax = new Vector2(1.0f, 1.0f);
+            listRt.offsetMin = new Vector2(-(ColumnWidth + Margin), ActionRowTop);
+            listRt.offsetMax = new Vector2(-Margin, ContentTop - 122.0f);
 
             _list = UiRows.ScrollList(listGo.transform, "Rows", out _scroll);
             MenuKit.Stretch((RectTransform)_scroll.transform);
@@ -364,38 +552,51 @@ namespace TumbangPreso.UI
         /// </summary>
         private void BuildFooter()
         {
-            _footer = MenuKit.Label(_root.transform, "", UiRows.HintUnits, UiTheme.CreamMuted,
-                new Vector2(0.0f, 0.0f), new Vector2(LeftAt(Margin, 1400.0f), 104.0f),
-                new Vector2(1400.0f, 26.0f), TextAnchor.MiddleLeft);
-            _footer.raycastTarget = false;
-
+            // ⚠️⚠️ SURPRISE ME AND PRESETS MOVED UNDER THE MODEL AND OUT OF THE ACTION ROW, AND
+            // THAT IS `FUTURE.md` § 0.5b QUESTION 4 RATHER THAN TIDINESS. Four buttons of the same
+            // size along one edge is four equal choices, and two of them were BACK, which throws
+            // the edit away, and KEEP AND USE, which is the only reason the screen exists. **These
+            // two act on the character**, so they belong under the character; the two that leave
+            // the screen stay together on the right, where every screen in this game puts them.
             MenuKit.WoodButton(_root.transform, "SURPRISE ME", new Vector2(0.0f, 0.0f),
-                new Vector2(LeftAt(Margin, 280.0f), 48.0f), new Vector2(280.0f, 62.0f),
+                new Vector2(LeftAt(Margin, 300.0f), 88.0f), new Vector2(300.0f, 62.0f),
                 () =>
                 {
                     MenuSfx.Click();
                     CustomCharacterRules.Randomize(_editing);
+                    if (_nameField != null) _nameField.text = _editing.Name ?? "";
                     Refresh();
                     ShowModel();
                 });
 
             MenuKit.WoodButton(_root.transform, "PRESETS", new Vector2(0.0f, 0.0f),
-                new Vector2(LeftAt(Margin + 296.0f, 240.0f), 48.0f), new Vector2(240.0f, 62.0f),
+                new Vector2(LeftAt(Margin + 316.0f, 260.0f), 88.0f), new Vector2(260.0f, 62.0f),
                 () =>
                 {
                     MenuSfx.Click();
                     _presetIndex = (_presetIndex + 1) % CustomCharacterRules.PresetNames.Length;
                     CustomCharacterRules.ApplyPreset(_editing, _presetIndex);
+                    if (_nameField != null) _nameField.text = _editing.Name ?? "";
                     Refresh();
                     ShowModel();
                 });
 
+            // ⚠️⚠️ ONE SHORT LINE, NOT THREE SENTENCES. It read *"Drag the model to turn it,
+            // wheel to zoom. KEEP AND USE saves this slot and plays as it. BACK discards."* at
+            // `HintUnits` across 1400 units, under a screen 🧑 had just called overwhelming. Two
+            // of those three sentences describe buttons that are eighty units to the right saying
+            // the same thing in bigger type, which is `CLAUDE.md` § 6.2 question 3.
+            _footer = MenuKit.Label(_root.transform, "", UiRows.HintUnits, UiTheme.CreamMuted,
+                new Vector2(0.0f, 0.0f), new Vector2(LeftAt(Margin + 14.0f, 620.0f), ActionRowTop + 28.0f),
+                new Vector2(620.0f, 26.0f), TextAnchor.MiddleLeft);
+            _footer.raycastTarget = false;
+
             MenuKit.WoodButton(_root.transform, "BACK", new Vector2(1.0f, 0.0f),
-                new Vector2(RightAt(Margin + 320.0f, 240.0f), 48.0f), new Vector2(240.0f, 62.0f),
+                new Vector2(RightAt(Margin + 320.0f, 240.0f), 88.0f), new Vector2(240.0f, 62.0f),
                 () => { MenuSfx.Back(); Close(); });
 
             MenuKit.WoodButton(_root.transform, "KEEP AND USE", new Vector2(1.0f, 0.0f),
-                new Vector2(RightAt(Margin, 304.0f), 48.0f), new Vector2(304.0f, 62.0f),
+                new Vector2(RightAt(Margin, 304.0f), 88.0f), new Vector2(304.0f, 62.0f),
                 () =>
                 {
                     MenuSfx.Click();
@@ -438,26 +639,11 @@ namespace TumbangPreso.UI
             {
                 var skin = _slotTabs[i].GetComponent<GodotButton>();
                 if (skin == null) continue;
-                skin.Variation = i == _slot ? "WoodPrimaryButton" : "WoodButton";
+                skin.Variation = i == _slot ? "WoodAmberButton" : "WoodButton";
                 skin.Apply();
                 skin.Refresh();
             }
 
-            // ⚠️ THE FIELD WRITES INTO THE WORKING COPY ON EVERY KEYSTROKE AND THE ROW IS NOT
-            // REBUILT WHILE IT IS FOCUSED. A `Refresh` on `onValueChanged` would destroy the
-            // `InputField` the player is typing into and take the caret with it, which reads as
-            // the screen eating every second character.
-            //
-            // ⚠️ AND IT IS THE ONLY ROW ON THIS SCREEN THAT CARRIES A HINT, because it is
-            // the only one whose control is narrow enough to leave room for one. See the note on
-            // the stage rect: `UiRows.Row`'s hint box ends 828 units in and the control column
-            // starts at 0.56 of a list this screen keeps under 1100 units wide.
-            var nameField = UiRows.FieldRow(_list, "Name", "Batang Kalye", NameLimit,
-                "Up to " + NameLimit + " characters.");
-            nameField.text = _editing.Name ?? "";
-            nameField.onValueChanged.AddListener(text => _editing.Name = text);
-
-            BuildSectionHeader();
             BuildSectionTabs();
 
             switch (_section)
@@ -472,23 +658,32 @@ namespace TumbangPreso.UI
 
             UiRows.Gap(_list, 40.0f);
 
+            if (_blurb != null) _blurb.text = Blurb();
+
+            // ⚠️ ONE SHORT LINE, AND IT IS ABOUT THE MODEL because it lives under the model. What
+            // KEEP AND USE and BACK do is written on KEEP AND USE and BACK.
             bool active = CustomCharacterStore.InUse
                           && CustomCharacterStore.Profile.ActiveSlot == _slot;
 
             _footer.text = active
-                ? "Drag the model to turn it, wheel to zoom. This slot is the one you play as. BACK discards this edit."
-                : "Drag the model to turn it, wheel to zoom. KEEP AND USE saves this slot and plays as it. BACK discards.";
+                ? "Drag to turn, wheel to zoom.  ·  This is the slot you play as."
+                : "Drag to turn, wheel to zoom.";
         }
 
         /// <summary>
-        /// ⚠️ SIX SECTIONS RATHER THAN ONE LONG LIST, AND THE COUNT IS THE REASON. Fifteen
-        /// steppers in one scroll is `docs/TODO.md` § 92's *"theres liek 20 shits at once"* with
-        /// different nouns. Each section is three or four rows, which is one screen with no
-        /// scrolling on the window he plays in, and the camera moves to what the section is about.
+        /// The one sentence under the tab bar, which is the SECTION's, except on KIT where it is
+        /// the borrowed hero's three abilities.
+        ///
+        /// ⚠️⚠️ THE KIT LINE WAS A SECOND `UiRows.Section` INSIDE THE LIST AND ITS OWN COMMENT
+        /// RECORDS WHY IT COULD NOT BE A ROW: `SEISMIC STOMP · DEMONIC CARAPACE · TITAN FISSURE`
+        /// measures 527 units and the value column is 458. It is chrome now, on the full width of
+        /// the column, which is 1000 units, so the longest of the six fits with room over.
         /// </summary>
-        private void BuildSectionHeader()
+        private string Blurb()
         {
-            UiRows.Section(_list, Sections[_section].Title, Sections[_section].Blurb);
+            if (_section != 5) return Sections[_section].Blurb;
+
+            return HeroKitBlurb(CustomCharacterRules.KitFor(_editing.HeroKitId));
         }
 
         /// <summary>
@@ -508,17 +703,38 @@ namespace TumbangPreso.UI
         /// </summary>
         private void BuildSectionTabs()
         {
-            if (_tabBar != null) Destroy(_tabBar);
+            // ⚠️⚠️ DETACHED IN THE SAME BREATH AS BEING DESTROYED, for the reason `Refresh` gives
+            // about the list: `Destroy` is deferred to the end of the frame, so the old bar and
+            // the new one are both children of `_root` for one frame and the old blurb draws
+            // straight through the new one. The blurb is destroyed WITH the bar because it belongs
+            // to it; leaving it out is how a label accumulates one copy per section press.
+            if (_tabBar != null)
+            {
+                _tabBar.transform.SetParent(null, false);
+                Destroy(_tabBar);
+            }
+
+            if (_blurb != null)
+            {
+                _blurb.transform.SetParent(null, false);
+                Destroy(_blurb.gameObject);
+                _blurb = null;
+            }
 
             _tabBar = new GameObject("SectionTabs", typeof(RectTransform));
             _tabBar.transform.SetParent(_root.transform, false);
 
+            // ⚠️ THE SAME 1000-UNIT COLUMN THE ROWS UNDER IT USE, anchored to the same edge. It
+            // was a pair of fractions, 0.400 to 0.975, which is 1104 units at 16:9 and 1472 on the
+            // window he plays in: **the tab bar and the rows it switches were two different
+            // widths on the same screen** and neither of them was the one the arithmetic in
+            // `ColumnWidth` is about.
             var bar = (RectTransform)_tabBar.transform;
-            bar.anchorMin = new Vector2(0.400f, 1.0f);
-            bar.anchorMax = new Vector2(0.975f, 1.0f);
+            bar.anchorMin = new Vector2(1.0f, 1.0f);
+            bar.anchorMax = new Vector2(1.0f, 1.0f);
             bar.pivot = new Vector2(0.5f, 1.0f);
-            bar.offsetMin = new Vector2(0.0f, -256.0f);
-            bar.offsetMax = new Vector2(0.0f, -188.0f);
+            bar.offsetMin = new Vector2(-(ColumnWidth + Margin), ContentTop - 60.0f);
+            bar.offsetMax = new Vector2(-Margin, ContentTop);
 
             var group = _tabBar.AddComponent<HorizontalLayoutGroup>();
             group.spacing = 8.0f;
@@ -542,7 +758,7 @@ namespace TumbangPreso.UI
                         Refresh();
                         AimCamera();
                     },
-                    i == _section ? "WoodPrimaryButton" : "WoodButton");
+                    i == _section ? "WoodAmberButton" : "WoodButton");
 
                 // ⚠️ THE LAYOUT GROUP OWNS THE RECT, so the button's own `Place` call is
                 // overridden a frame later. `MenuKit.WoodButton` sizes its LABEL from the size it
@@ -560,6 +776,18 @@ namespace TumbangPreso.UI
 
                 _sectionTabs.Add(tab);
             }
+
+            // ⚠️ THE BLURB IS REBUILT WITH THE BAR because it belongs to the bar rather than to
+            // the list: it is the one line saying what the lit tab is FOR. It is built here rather
+            // than in `Build` so it cannot outlive the bar it explains.
+            var line = MenuKit.Label(_root.transform, "", UiRows.HintUnits, UiTheme.CreamMuted,
+                new Vector2(1.0f, 1.0f),
+                new Vector2(RightAt(Margin, ColumnWidth), ContentTop - 84.0f),
+                new Vector2(ColumnWidth, 26.0f), TextAnchor.MiddleLeft);
+
+            line.raycastTarget = false;
+            line.text = Blurb();
+            _blurb = line;
         }
 
         private void BuildFace()
@@ -690,14 +918,13 @@ namespace TumbangPreso.UI
 
             Stepper("Lata", canNames, _editing.CanIndex, v => _editing.CanIndex = v);
 
-            // ⚠️ THE ABILITY NAMES GO ON THE SECTION HEADER, WHICH IS FULL WIDTH.
-            // They were a `ValueRow` and `SEISMIC STOMP · DEMONIC CARAPACE · TITAN FISSURE`
-            // measured 527 units in the 458-unit value column, so it drew over the row beside it.
-            // A section subtitle has 840 units and `CLAUDE.md` § 6.2c's width question is the rule:
-            // size a control against the NARROWEST box it will ever live in.
-            UiRows.Section(_list, "Hero Strike kit", HeroKitBlurb(
-                CustomCharacterRules.KitFor(_editing.HeroKitId)));
-
+            // ⚠️ THE ABILITY NAMES ARE THE SECTION'S BLURB LINE ON THIS TAB. See `Blurb()`: they
+            // were a `ValueRow` first, and `SEISMIC STOMP · DEMONIC CARAPACE · TITAN FISSURE`
+            // measures 527 units against a 458-unit value column, so it drew over the row beside
+            // it; then a second `UiRows.Section` inside the list, which put a second amber heading
+            // on a screen that already had one. `CLAUDE.md` § 6.2c's width question is the rule:
+            // size a control against the NARROWEST box it will ever live in, and the widest box on
+            // this screen is the blurb line.
             var heroes = Roster.HeroPeople;
             string kit = CustomCharacterRules.KitFor(_editing.HeroKitId);
 

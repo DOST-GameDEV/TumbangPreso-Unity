@@ -243,6 +243,81 @@ namespace TumbangPreso.UI
 
                 _tabButtons.Add(button);
             }
+
+            BuildCustomDoor(bar);
+        }
+
+        /// <summary>
+        /// The one door to the character creator, as the fourth control in the bar you land on.
+        ///
+        /// ⚠️⚠️ IT WAS A 200-UNIT CHIP ON THE END OF THE `STRENGTH` STRIP AND 🧑 COULD NOT FIND
+        /// IT: *"and how do u even get to this"*, of a screen he had opened by other means. That
+        /// is `docs/TODO.md` § 96 happening a second time, in the same shape: **a door placed
+        /// wherever there happened to be room, rather than where the player is looking.** The hub
+        /// put its only door in a corner chip that read as a status readout and the person who
+        /// commissioned the hub never found it; this put its only door at the end of a row of
+        /// colour-strength chips, in the one visual slot that says "another option for the control
+        /// to my left".
+        ///
+        /// ⚠️⚠️ AND IT IS THE SAME DOOR MOVED, NOT A SECOND ONE. `CLAUDE.md` § 6.3: *"NEVER ADD A
+        /// SECOND DOOR TO FIX A FINDABILITY PROBLEM. Fix the door or move it."* The chip is gone
+        /// in the same commit. `RefreshCustomDoor` no longer exists.
+        ///
+        /// ⚠️⚠️ THE TAB BAR IS WHERE IT GOES BECAUSE IT COSTS NO VERTICAL BUDGET, AND THAT
+        /// CONSTRAINT IS REAL RATHER THAN INHERITED. The previous note here recorded why a third
+        /// strip row was refused: `HeroPickerLayoutProbe` dumps `Rows h=460 pref=644`, so the
+        /// vertical group is already compressing every child to fit, and a new row reopens the
+        /// 27 px dead band above the ability rows that § 94 records being "fixed" three times.
+        /// **The bar is a `HorizontalLayoutGroup` that already exists**, so a fourth cell costs
+        /// width the row has and height it does not have to find.
+        ///
+        /// ⚠️ IT IS AMBER RATHER THAN GREEN. `GodotTheme.ForButton`: green is ACT and it is
+        /// CHOOSE, which is forty units below this. Two greens on one screen is two "press me"
+        /// buttons with the more important one further from the hand, and the chip this replaces
+        /// was `WoodPrimaryButton` sitting directly above a `WoodPrimaryButton` CHOOSE.
+        ///
+        /// ⚠️ AND 1.7 OF FLEXIBLE WIDTH, NOT 1.0. `MAKE YOUR OWN` is thirteen characters against
+        /// `LATA`'s four, and `childForceExpandWidth` would give both the same cell: the label
+        /// would then be ground down by `MenuKit.Fit` toward the 18-unit floor while LATA sat in
+        /// a box three times the size of its word.
+        /// </summary>
+        private void BuildCustomDoor(Transform bar)
+        {
+            var door = MenuKit.WoodButton(bar, "MAKE YOUR OWN", Vector2.zero, Vector2.zero,
+                                          new Vector2(300.0f, 56.0f),
+                                          () =>
+                                          {
+                                              MenuSfx.Click();
+                                              CustomCharacterScreen.Ensure().Open();
+                                          },
+                                          "WoodAmberButton");
+
+            var element = door.gameObject.AddComponent<LayoutElement>();
+            element.preferredHeight = 56.0f;
+            element.flexibleWidth = 1.5f;
+
+            // ⚠️⚠️ THE LABEL IS RE-FITTED AGAINST THE CELL THE LAYOUT GROUP GIVES IT, AND THE
+            // FIRST RENDER OF THIS TAB IS WHY. `Logs/ui/10-picker-colours.png`, 2026-09-01: the
+            // words `MAKE YOUR OWN` ran past the button's own rounded frame and out to the panel's
+            // inner edge. **`MenuKit.WoodButton` sizes its label from the size it is HANDED**, and
+            // the 300 x 56 passed above is discarded by the `HorizontalLayoutGroup` a frame later,
+            // so the label was fitted to a box three times the cell it ended up in. This is the
+            // same two-step `CustomCharacterScreen.BuildSectionTabs` already does for the same
+            // reason; the difference there is that its cells are handed a zero size, so nobody
+            // could forget.
+            //
+            // ⚠️ `MinReadableUnits` 18, WHICH IS THE FLOOR AND NOT A CHOICE. Thirteen characters at
+            // 18 units measure about 120, and the cell is 560 by 1.5 over 4.5 of flex, about 187
+            // before spacing. It fits with room; a longer caption here would not, which is the
+            // argument for the verb and the noun and nothing else.
+            var label = door.GetComponentInChildren<Text>(true);
+            if (label != null)
+            {
+                label.fontSize = MenuKit.MinReadableUnits;
+                MenuKit.Stretch(label.rectTransform, -8.0f);
+                label.alignment = TextAnchor.MiddleCenter;
+                label.horizontalOverflow = HorizontalWrapMode.Overflow;
+            }
         }
 
         private readonly List<Button> _tabButtons = new List<Button>();
@@ -505,60 +580,9 @@ namespace TumbangPreso.UI
             foreach (var (label, percent) in TintStrengths)
                 BuildStrengthChip(strength, characterId, look, label, percent);
 
-            // ⚠️⚠️ THE DOOR RIDES THE STRENGTH ROW RATHER THAN TAKING A THIRD ONE, AND
-            // `HeroPickerLayoutProbe` IS WHY. This column is already over-subscribed: the probe's
-            // dump reads `Rows h=460 pref=644`, so the vertical group is compressing every child
-            // to fit, and **a third strip row went straight into that budget and reopened the
-            // 29 px dead band above the ability rows** that `docs/TODO.md` § 94 records being
-            // "fixed" three times without moving. The button is 200 units wide beside three
-            // 44-unit chips, which the row has room for at every one of the nine resolutions
-            // `AspectRatioProbes` drives.
-            RefreshCustomDoor(strength);
-
             return (PaletteRowHeight + 6.0f) * 2.0f;
         }
 
-        /// <summary>
-        /// The one door to the character creator, on the screen where you choose a character.
-        ///
-        /// ⚠️⚠️ IT IS A ROW ON THIS SCREEN RATHER THAN A SIXTH BUTTON SOMEWHERE, WHICH IS
-        /// `CLAUDE.md` § 6.3 FOLLOWED RATHER THAN QUOTED. *"EVERY DESTINATION HAS A VISIBLE DOOR,
-        /// AND A DOOR IS A THING THAT LOOKS PRESSABLE"*, and immediately after it, *"NEVER ADD A
-        /// SECOND DOOR TO FIX A FINDABILITY PROBLEM"*. The journey is: press CHARACTER, see the
-        /// cast, see MAKE YOUR OWN at the bottom of the same list, press it. Three presses from
-        /// the main menu to a face you drew, and no control the player has to discover.
-        ///
-        /// ⚠️ IT NAMES THE ACTIVE SLOT ON THE BUTTON, so the row is a status readout and a door
-        /// at once and the player never has to open it to find out which of the three is in play.
-        /// § 96 is the entry about a corner chip that stated a name and a level and read as a
-        /// status readout rather than a door; this one says MAKE YOUR OWN in the verb position.
-        ///
-        /// ⚠️ `MenuKit.WoodButton` RATHER THAN A BARE `Image` + `Button`. The version this
-        /// replaced built an amber rectangle with a `Text` child at a zero-sized `RectTransform`,
-        /// in a visual language nothing else on the screen speaks. `docs/VISION.md` § 6: *"His UI
-        /// art is the design system... anything drawn in a different visual language is the thing
-        /// that looks broken."*
-        /// </summary>
-        private void RefreshCustomDoor(Transform row)
-        {
-            var profile = CustomCharacterStore.Profile;
-            var active = profile.GetActive();
-
-            string caption = $"MAKE YOUR OWN  ·  {active.Name.ToUpperInvariant()}";
-
-            var button = MenuKit.WoodButton(row, caption, new Vector2(0.0f, 0.5f),
-                                            Vector2.zero, new Vector2(200.0f, SwatchSize),
-                                            () =>
-                                            {
-                                                MenuSfx.Click();
-                                                CustomCharacterScreen.Ensure().Open();
-                                            },
-                                            "WoodPrimaryButton");
-
-            var element = button.gameObject.AddComponent<LayoutElement>();
-            element.preferredWidth = 200.0f;
-            element.preferredHeight = SwatchSize;
-        }
 
         /// <summary>One captioned strip, built the same way the COLOURS row is.</summary>
         private Transform StripRow(Transform rows, string caption)

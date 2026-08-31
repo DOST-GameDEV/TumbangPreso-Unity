@@ -1036,254 +1036,524 @@ namespace TumbangPreso.Visual
         // -------------------------------------------------------------------
 
         /// <summary>
-        /// Ten tops, each one a silhouette rather than a colour.
+        /// Twenty tops. Each one is a BODY here and a SLEEVE in <see cref="TopSleeves"/>.
         ///
-        /// ⚠️⚠️ THE SLEEVE IS THE READ, NOT THE SHIRT. `docs/VISION.md` § 2: a screenshot taken
-        /// mid-fight must still show every player, and at arena distance a torso is a rectangle on
-        /// every character in the game. **What differs between a sando and a hoodie at that
-        /// distance is the shoulder line and how far down the arm the cloth goes**, so every entry
-        /// below differs there first and in its body second.
+        /// ⚠️⚠️ THE SLEEVES MOVED OFF THIS TABLE AND ONTO THE ARM BONES, AND THAT IS THE WHOLE
+        /// OF `docs/TODO.md` § 113. Every sleeve above used to be a box on the TORSO frame at
+        /// `U` 1.60 to 2.80: the arms of this rig point sideways, so in bind pose the box landed
+        /// on the arm and every render looked right. **The moment the arm moved, the sleeve stayed
+        /// welded to the chest**, because a box parented to the torso follows the torso. 🧑, of
+        /// the whole wardrobe: the clothes *"dont look like clothes"*. A sleeve that does not
+        /// follow the arm is the largest single reason why, and no retuning of a torso box fixes
+        /// it. The lengths are CONVERTED rather than re-invented; see `TopSleeves`.
+        ///
+        /// ⚠️⚠️ AND THE HEM IS THE SECOND READ, AFTER THE SLEEVE. `docs/VISION.md` § 2: a
+        /// screenshot taken mid-fight must still show every player, and at arena distance a torso
+        /// is a rectangle on every character in the game. Sixteen bodies all starting at `V` 0.00
+        /// were sixteen rectangles: the contact sheet of 2026-09-01 is a row of near-identical red
+        /// blobs. **`V` 0 is the hip**, so a hem below it reads as a shirt worn over the waistband
+        /// and a hem above it reads as cropped, and the spread below is deliberate.
         /// </summary>
         public static readonly (string Name, VoxelPart[] Parts)[] Tops =
         {
             ("Sando", new[]
             {
-                P(-1.02f, 0.02f, -1.04f, 1.02f, 0.94f, 1.04f, Top),
-                P(-0.44f, 0.90f, -1.00f, 0.44f, 1.06f, 1.16f, TopLit),
+                P(-1.00f, 0.02f, -1.02f, 1.00f, 0.92f, 1.02f, Top),
+                P(-0.44f, 0.88f, -1.00f, 0.44f, 1.04f, 1.14f, TopLit),
             }),
 
             ("Graphic tee", new[]
             {
-                P(-1.04f, 0.00f, -1.06f, 1.04f, 0.98f, 1.06f, Top),
-                P(-1.72f, 0.52f, -0.75f, -0.98f, 0.98f, 0.45f, Top),
-                P(0.98f, 0.52f, -0.75f, 1.72f, 0.98f, 0.45f, Top),
-                P(-0.36f, 0.34f, 1.02f, 0.36f, 0.74f, 1.18f, TopLit),
+                P(-1.04f, -0.08f, -1.06f, 1.04f, 0.98f, 1.06f, Top),
+                P(-0.36f, 0.34f, 1.02f, 0.36f, 0.74f, 1.16f, TopLit),
             }),
 
             ("Jersey", new[]
             {
-                P(-1.02f, -0.02f, -1.06f, 1.02f, 0.94f, 1.06f, Top),
-                P(-1.02f, 0.30f, 1.02f, -0.62f, 0.94f, 1.18f, TopLit),
-                P(0.62f, 0.30f, 1.02f, 1.02f, 0.94f, 1.18f, TopLit),
-                P(-0.34f, 0.32f, 1.02f, 0.34f, 0.74f, 1.18f, TopDark),
+                P(-1.02f, -0.04f, -1.06f, 1.02f, 0.94f, 1.06f, Top),
+                P(-1.02f, 0.30f, 1.02f, -0.62f, 0.94f, 1.16f, TopLit),
+                P(0.62f, 0.30f, 1.02f, 1.02f, 0.94f, 1.16f, TopLit),
+                P(-0.34f, 0.32f, 1.02f, 0.34f, 0.74f, 1.16f, TopDark),
             }),
 
             ("Hoodie", new[]
             {
-                P(-1.10f, -0.10f, -1.12f, 1.10f, 0.96f, 1.12f, Top),
-                P(-2.40f, 0.36f, -0.75f, -1.02f, 0.98f, 0.45f, Top),
-                P(1.02f, 0.36f, -0.75f, 2.40f, 0.98f, 0.45f, Top),
+                P(-1.10f, -0.18f, -1.12f, 1.10f, 0.96f, 1.12f, Top),
                 P(-0.90f, 0.90f, -1.34f, 0.90f, 1.24f, -0.60f, TopDark),
-                P(-0.08f, 0.36f, 1.06f, 0.08f, 0.94f, 1.24f, TopLit),
+                P(-0.08f, 0.36f, 1.06f, 0.08f, 0.94f, 1.22f, TopLit),
+                P(-0.62f, -0.16f, 1.04f, 0.62f, 0.16f, 1.20f, TopDark),
             }),
 
             ("Track jacket", new[]
             {
-                P(-1.06f, -0.04f, -1.08f, 1.06f, 0.98f, 1.08f, Top),
-                P(-2.30f, 0.34f, -0.75f, -1.00f, 0.98f, 0.45f, Top),
-                P(1.00f, 0.34f, -0.75f, 2.30f, 0.98f, 0.45f, Top),
-                P(-2.30f, 0.72f, -0.75f, 2.30f, 0.80f, 0.45f, TopLit),
-                P(-0.06f, -0.02f, 1.04f, 0.06f, 0.96f, 1.20f, TopDark),
+                P(-1.06f, -0.06f, -1.08f, 1.06f, 0.98f, 1.08f, Top),
+                P(-1.08f, 0.70f, -1.06f, 1.08f, 0.80f, 1.12f, TopLit),
+                P(-0.06f, -0.04f, 1.04f, 0.06f, 0.96f, 1.18f, TopDark),
             }),
 
             ("Polo", new[]
             {
-                P(-1.02f, 0.02f, -1.06f, 1.02f, 0.96f, 1.06f, Top),
-                P(-1.60f, 0.60f, -0.75f, -0.98f, 0.96f, 0.45f, Top),
-                P(0.98f, 0.60f, -0.75f, 1.60f, 0.96f, 0.45f, Top),
-                P(-0.48f, 0.92f, 0.60f, 0.48f, 1.08f, 1.18f, TopLit),
+                P(-1.02f, 0.00f, -1.06f, 1.02f, 0.96f, 1.06f, Top),
+                P(-0.48f, 0.90f, 0.60f, 0.48f, 1.06f, 1.16f, TopLit),
+                P(-0.08f, 0.56f, 1.02f, 0.08f, 0.94f, 1.16f, TopDark),
             }),
 
             ("Utility vest", new[]
             {
                 P(-1.00f, 0.04f, -1.06f, 1.00f, 0.94f, 1.06f, TopDark),
-                P(-0.80f, 0.28f, 1.02f, -0.28f, 0.60f, 1.18f, TopLit),
-                P(0.28f, 0.28f, 1.02f, 0.80f, 0.60f, 1.18f, TopLit),
-                P(-1.02f, 0.70f, -1.04f, 1.02f, 0.82f, 1.18f, GearC),
+                P(-0.80f, 0.28f, 1.02f, -0.28f, 0.60f, 1.16f, TopLit),
+                P(0.28f, 0.28f, 1.02f, 0.80f, 0.60f, 1.16f, TopLit),
+                P(-1.02f, 0.70f, -1.04f, 1.02f, 0.82f, 1.16f, GearC),
             }),
 
             ("Longsleeve", new[]
             {
-                P(-1.04f, -0.02f, -1.06f, 1.04f, 0.96f, 1.06f, Top),
-                P(-2.80f, 0.30f, -0.75f, -1.00f, 0.98f, 0.45f, Top),
-                P(1.00f, 0.30f, -0.75f, 2.80f, 0.98f, 0.45f, Top),
-                P(-2.80f, 0.30f, -0.75f, -2.40f, 0.98f, 0.45f, TopDark),
-                P(2.40f, 0.30f, -0.75f, 2.80f, 0.98f, 0.45f, TopDark),
+                P(-1.04f, -0.04f, -1.06f, 1.04f, 0.96f, 1.06f, Top),
+                P(-0.52f, 0.88f, -1.02f, 0.52f, 1.02f, 1.12f, TopDark),
             }),
 
             ("Barong", new[]
             {
-                P(-1.06f, -0.18f, -1.08f, 1.06f, 0.96f, 1.08f, TopLit),
-                P(-2.10f, 0.30f, -0.75f, -1.00f, 0.98f, 0.45f, TopLit),
-                P(1.00f, 0.30f, -0.75f, 2.10f, 0.98f, 0.45f, TopLit),
-                P(-0.12f, 0.02f, 1.04f, 0.12f, 0.96f, 1.20f, Top),
-                P(-0.52f, 0.90f, 0.62f, 0.52f, 1.06f, 1.20f, Top),
+                P(-1.06f, -0.26f, -1.08f, 1.06f, 0.96f, 1.08f, TopLit),
+                P(-0.12f, -0.24f, 1.04f, 0.12f, 0.96f, 1.18f, Top),
+                P(-0.52f, 0.88f, 0.62f, 0.52f, 1.04f, 1.18f, Top),
+                P(-0.86f, 0.26f, 1.02f, -0.20f, 0.72f, 1.14f, Top),
+                P(0.20f, 0.26f, 1.02f, 0.86f, 0.72f, 1.14f, Top),
             }),
 
             ("Rashguard", new[]
             {
-                P(-0.98f, -0.02f, -1.02f, 0.98f, 0.96f, 1.02f, TopDark),
-                P(-2.60f, 0.26f, -0.75f, -0.96f, 0.96f, 0.45f, TopDark),
-                P(0.96f, 0.26f, -0.75f, 2.60f, 0.96f, 0.45f, TopDark),
-                P(-0.98f, 0.42f, 1.00f, 0.98f, 0.54f, 1.14f, TopLit),
+                P(-0.96f, -0.02f, -1.00f, 0.96f, 0.96f, 1.00f, TopDark),
+                P(-0.96f, 0.42f, 0.98f, 0.96f, 0.54f, 1.10f, TopLit),
             }),
 
             // ⚠️ APPENDED, NEVER INSERTED. `TopClothingIndex` crosses the wire and is written
             // into every saved slot; a row added in the middle re-dresses everybody's character.
             ("Basketball tank", new[]
             {
-                P(-1.02f, -0.04f, -1.04f, 1.02f, 0.92f, 1.04f, Top),
-                P(-1.02f, 0.86f, -1.00f, -0.52f, 1.08f, 1.16f, TopLit),
-                P(0.52f, 0.86f, -1.00f, 1.02f, 1.08f, 1.16f, TopLit),
-                P(-0.30f, 0.30f, 1.02f, 0.30f, 0.66f, 1.16f, TopDark),
+                P(-1.02f, -0.06f, -1.04f, 1.02f, 0.92f, 1.04f, Top),
+                P(-1.02f, 0.86f, -1.00f, -0.52f, 1.06f, 1.14f, TopLit),
+                P(0.52f, 0.86f, -1.00f, 1.02f, 1.06f, 1.14f, TopLit),
+                P(-0.30f, 0.30f, 1.02f, 0.30f, 0.66f, 1.14f, TopDark),
             }),
 
             ("Denim jacket", new[]
             {
-                P(-1.10f, -0.08f, -1.10f, 1.10f, 0.98f, 1.10f, Top),
-                P(-2.70f, 0.26f, -0.75f, -1.02f, 0.98f, 0.45f, Top),
-                P(1.02f, 0.26f, -0.75f, 2.70f, 0.98f, 0.45f, Top),
-                P(-0.08f, -0.06f, 1.06f, 0.08f, 0.96f, 1.22f, TopLit),
-                P(-1.02f, 0.88f, 0.40f, 1.02f, 1.06f, 1.22f, TopDark),
+                P(-1.10f, -0.12f, -1.10f, 1.10f, 0.98f, 1.10f, Top),
+                P(-0.08f, -0.10f, 1.06f, 0.08f, 0.96f, 1.20f, TopLit),
+                P(-1.02f, 0.86f, 0.40f, 1.02f, 1.04f, 1.20f, TopDark),
+                P(-1.10f, -0.14f, -1.06f, 1.10f, -0.02f, 1.16f, TopDark),
             }),
 
             ("Sweater vest", new[]
             {
                 P(-1.02f, 0.00f, -1.06f, 1.02f, 0.94f, 1.06f, TopDark),
-                P(-1.04f, -0.04f, -1.08f, 1.04f, 0.08f, 1.18f, TopLit),
-                P(-0.44f, 0.74f, 1.02f, 0.44f, 0.96f, 1.18f, GearC),
-                P(-1.04f, 0.50f, -1.02f, 1.04f, 0.60f, 1.18f, TopLit),
+                P(-1.04f, -0.04f, -1.08f, 1.04f, 0.08f, 1.16f, TopLit),
+                P(-0.44f, 0.74f, 1.02f, 0.44f, 0.96f, 1.16f, GearC),
+                P(-1.04f, 0.50f, -1.02f, 1.04f, 0.60f, 1.16f, TopLit),
             }),
 
             ("Camisa chino", new[]
             {
-                P(-1.04f, -0.06f, -1.06f, 1.04f, 0.96f, 1.06f, TopLit),
-                P(-1.66f, 0.56f, -0.75f, -1.00f, 0.96f, 0.45f, TopLit),
-                P(1.00f, 0.56f, -0.75f, 1.66f, 0.96f, 0.45f, TopLit),
-                P(-0.10f, 0.00f, 1.04f, 0.10f, 0.94f, 1.18f, TopDark),
-                P(-0.50f, 0.90f, 0.60f, 0.50f, 1.06f, 1.18f, Top),
+                P(-1.04f, -0.10f, -1.06f, 1.04f, 0.96f, 1.06f, TopLit),
+                P(-0.10f, -0.08f, 1.04f, 0.10f, 0.94f, 1.16f, TopDark),
+                P(-0.50f, 0.88f, 0.60f, 0.50f, 1.04f, 1.16f, Top),
             }),
 
             ("Windbreaker", new[]
             {
-                P(-1.12f, -0.06f, -1.12f, 1.12f, 0.98f, 1.12f, Top),
-                P(-2.75f, 0.26f, -0.75f, -1.04f, 0.98f, 0.45f, TopLit),
-                P(1.04f, 0.26f, -0.75f, 2.75f, 0.98f, 0.45f, TopLit),
-                P(-1.12f, 0.44f, -1.06f, 1.12f, 0.58f, 1.24f, TopDark),
+                P(-1.12f, -0.08f, -1.12f, 1.12f, 0.98f, 1.12f, Top),
+                P(-1.12f, 0.44f, -1.06f, 1.12f, 0.58f, 1.20f, TopDark),
                 P(-0.86f, 0.92f, -1.30f, 0.86f, 1.22f, -0.62f, Top),
             }),
 
             ("Ilalim hoodie", new[]
             {
-                P(-1.10f, -0.14f, -1.12f, 1.10f, 0.96f, 1.12f, TopDark),
-                P(-2.45f, 0.26f, -0.75f, -1.02f, 0.98f, 0.45f, TopDark),
-                P(1.02f, 0.26f, -0.75f, 2.45f, 0.98f, 0.45f, TopDark),
+                P(-1.10f, -0.22f, -1.12f, 1.10f, 0.96f, 1.12f, TopDark),
                 P(-0.92f, 0.88f, -1.36f, 0.92f, 1.26f, -0.56f, Top),
-                P(-0.66f, 0.20f, 1.04f, 0.66f, 0.44f, 1.24f, TopLit),
+                P(-0.66f, -0.06f, 1.04f, 0.66f, 0.26f, 1.22f, TopLit),
+            }),
+
+            // ⚠️ FOUR MORE, APPENDED 2026-09-01. 🧑: *"give many ooptions"*.
+            ("Basketball warm-up", new[]
+            {
+                P(-1.08f, -0.10f, -1.08f, 1.08f, 0.96f, 1.08f, TopDark),
+                P(-0.10f, -0.08f, 1.04f, 0.10f, 0.94f, 1.18f, TopLit),
+                P(-1.08f, 0.62f, -1.04f, 1.08f, 0.74f, 1.14f, TopLit),
+                P(-0.52f, 0.88f, -1.02f, 0.52f, 1.04f, 1.14f, TopLit),
+            }),
+
+            ("Kamiseta", new[]
+            {
+                P(-1.02f, 0.06f, -1.04f, 1.02f, 0.96f, 1.04f, TopLit),
+                P(-1.02f, 0.30f, -1.02f, 1.02f, 0.42f, 1.12f, Top),
+                P(-1.02f, 0.58f, -1.02f, 1.02f, 0.70f, 1.12f, Top),
+            }),
+
+            ("Bomber jacket", new[]
+            {
+                P(-1.10f, -0.04f, -1.10f, 1.10f, 0.96f, 1.10f, Top),
+                P(-1.12f, -0.08f, -1.12f, 1.12f, 0.06f, 1.14f, GearC),
+                P(-0.08f, -0.02f, 1.06f, 0.08f, 0.94f, 1.20f, GearC),
+                P(-0.56f, 0.86f, -1.04f, 0.56f, 1.02f, 1.14f, GearC),
+            }),
+
+            ("Crop hoodie", new[]
+            {
+                P(-1.08f, 0.28f, -1.10f, 1.08f, 0.96f, 1.10f, Top),
+                P(-0.90f, 0.90f, -1.34f, 0.90f, 1.24f, -0.60f, TopDark),
+                P(-1.08f, 0.26f, -1.06f, 1.08f, 0.38f, 1.16f, TopDark),
             }),
         };
 
+        // -------------------------------------------------------------------
+        // § SLEEVES. The arm frame: U -1 is the shoulder, U +1 the fingertip.
+        // -------------------------------------------------------------------
+
+        /// <summary>⚠️ THE ARM'S OWN THICKNESS, WRAPPED. `V` 0 to 1 spans the limb's cross
+        /// section (`VoxelDresser.MeasureAnchor`), so a sleeve is authored a little outside both
+        /// ends to clear the 8 mm ink outline rather than sharing a face with the skin.</summary>
+        private const float SleeveV0 = -0.06f;
+
+        private const float SleeveV1 = 1.06f;
+        private const float SleeveW = 1.06f;
+
+        /// <summary>Just over the shoulder, the way a tank's binding sits.</summary>
+        private static VoxelPart[] CapSleeve(int slot)
+            => new[] { P(-1.06f, SleeveV0, -SleeveW, -0.56f, SleeveV1, SleeveW, slot) };
+
+        /// <summary>A t-shirt sleeve, a third of the way down the arm.</summary>
+        private static VoxelPart[] ShortSleeve(int slot)
+            => new[] { P(-1.06f, SleeveV0, -SleeveW, -0.16f, SleeveV1, SleeveW, slot) };
+
+        /// <summary>To the elbow.</summary>
+        private static VoxelPart[] ElbowSleeve(int slot)
+            => new[] { P(-1.06f, SleeveV0, -SleeveW, 0.24f, SleeveV1, SleeveW, slot) };
+
         /// <summary>
-        /// Eight bottoms. ⚠️ **THE HEM HEIGHT IS THE READ**, the same argument as the sleeve one
-        /// list up: shorts, jorts and trousers differ at distance by where the cloth stops.
+        /// To the wrist, with a cuff at the end.
+        ///
+        /// ⚠️ THE LONGEST CUFF STOPS AT `U` 0.82 AND THE WRIST FRAME RUNS 0.20 TO 1.00, so a
+        /// sweatband worn with a long sleeve sits ON the cuff instead of inside it. Both numbers
+        /// are the same two bones measured the same way, which is why they can be compared at all.
+        /// </summary>
+        private static VoxelPart[] LongSleeve(int slot, int cuff, float reach)
+            => new[]
+            {
+                P(-1.06f, SleeveV0, -SleeveW, reach, SleeveV1, SleeveW, slot),
+                P(reach - 0.18f, SleeveV0 - 0.05f, -SleeveW - 0.05f,
+                  reach + 0.02f, SleeveV1 + 0.05f, SleeveW + 0.05f, cuff),
+            };
+
+        private static readonly VoxelPart[] NoSleeve = new VoxelPart[0];
+
+        /// <summary>
+        /// The sleeve of every top, in the same order as <see cref="Tops"/>.
+        ///
+        /// ⚠️⚠️ PARALLEL TO `Tops`, AND ASSERTED TO STAY THAT WAY.
+        /// `CustomCharacterWardrobeTests.EveryTopHasASleeveAndEveryBottomHasALeg` fails if the two
+        /// tables ever differ in length or in name. It is the only thing stopping a top appended
+        /// here without its sleeve from shipping as a shirt with two bare arms, which is a fault
+        /// no probe would see because the shirt itself renders perfectly.
+        ///
+        /// ⚠️ THE LENGTHS ARE THE OLD TORSO NUMBERS CONVERTED, NOT RE-CHOSEN. The torso frame is
+        /// 0.1279 of half width, the arm runs x 0.0999 to 0.3836, so torso `U` 1.72 is sleeve
+        /// `U` -0.15 and torso `U` 2.80 is sleeve `U` +0.82. **Every top keeps the sleeve it
+        /// shipped with**; what changed is the bone it hangs off.
+        /// </summary>
+        public static readonly (string Name, VoxelPart[] Parts)[] TopSleeves =
+        {
+            ("Sando", NoSleeve),
+            ("Graphic tee", ShortSleeve(Top)),
+            ("Jersey", CapSleeve(TopLit)),
+            ("Hoodie", LongSleeve(Top, TopDark, 0.46f)),
+            ("Track jacket", LongSleeve(Top, TopLit, 0.37f)),
+            ("Polo", ShortSleeve(Top)),
+            ("Utility vest", NoSleeve),
+            ("Longsleeve", LongSleeve(Top, TopDark, 0.82f)),
+            ("Barong", ElbowSleeve(TopLit)),
+            ("Rashguard", LongSleeve(TopDark, Top, 0.64f)),
+            ("Basketball tank", NoSleeve),
+            ("Denim jacket", LongSleeve(Top, TopLit, 0.73f)),
+            ("Sweater vest", NoSleeve),
+            ("Camisa chino", ShortSleeve(TopLit)),
+            ("Windbreaker", LongSleeve(TopLit, Top, 0.78f)),
+            ("Ilalim hoodie", LongSleeve(TopDark, Top, 0.50f)),
+            ("Basketball warm-up", LongSleeve(TopDark, TopLit, 0.68f)),
+            ("Kamiseta", ShortSleeve(TopLit)),
+            ("Bomber jacket", LongSleeve(Top, GearC, 0.70f)),
+            ("Crop hoodie", LongSleeve(Top, TopDark, 0.44f)),
+        };
+
+        /// <summary>
+        /// Sixteen bottoms, and this table is only the WAIST. The legs are
+        /// <see cref="BottomLegs"/>, on the leg bones.
         /// </summary>
         /// <remarks>
-        /// ⚠️⚠️ THE HEMS WERE ALL ONE LEG TOO LONG AND TWO OF THEM WENT THROUGH THE STREET.
-        /// The torso frame is `V` 0 at the torso bone (y 0.176, the hip) and `V` 1 at the head
-        /// bone (y 0.343, the neck), so **one unit of `V` is 167 mm and the whole leg is only
-        /// 176 mm**. Authored at `V` -0.72 a pair of shorts reached y 0.056, which is the ankle,
-        /// and `Track pants` at -1.62 came out at y -0.095, below the floor. The hems below are
-        /// arithmetic rather than taste: mid-thigh is -0.20, the knee is -0.36, the calf is -0.62
-        /// and the ankle is -0.92.
+        /// ⚠️⚠️ EVERY BOTTOM IN THIS GAME WAS A PLANK, AND THE CONTACT SHEET IS THE RECEIPT.
+        /// `Logs/ui/wardrobe-bottoms-*_v2.png`, twelve cells, twelve identical blue slabs sticking
+        /// out in front of a bare pair of legs. `docs/TODO.md` § 113 and 🧑's own words: the
+        /// clothes *"dont look like clothes"*. **The cause is that a bottom was authored on the
+        /// TORSO frame**, whose `V` 0 is the hip and whose `V` 1 is the neck. One unit of that
+        /// `V` is 168 mm and the whole leg is 176 mm, so the deepest pair of shorts anybody dared
+        /// author, `V` -0.20, reached 34 mm below the hip: a band at crotch height, wider than the
+        /// hips, as deep as the belly, and covering **none** of the leg. It could not be fixed by
+        /// making it longer, either, because a box on the torso bone does not move when a leg does.
         ///
-        /// ⚠️ AND THE WIDTH IS `U` 1.20, NOT 1.06. A garment is sized against the TORSO frame
-        /// (half width 0.1279) and the thigh belongs to the LEG bone, which reaches x 0.144; at
-        /// 1.06 a pair of shorts stopped 18 mm short of the outside of the leg and left a bare
-        /// notch down it. 1.20 is 0.1535, which clears the leg by the 8 mm the ink outline needs.
+        /// ⚠️⚠️ SO A BOTTOM IS TWO PIECES NOW: a WAISTBAND here, on the torso, and a LEG in
+        /// `BottomLegs`, dressed once per leg bone. The leg frame is the one `Footwear` already
+        /// uses and it is the right shape for this: **`V` 0 is the floor and `V` 1 is the hip**, so
+        /// a hem is a fraction of the leg the player can see, and the garment bends with the leg
+        /// it is on.
+        ///
+        /// ⚠️ THE WAISTBAND STAYS INSIDE THE TORSO'S OWN DEPTH. `W` was up to 1.36 here, which is
+        /// what put a light-blue ledge out in front of the stomach in every one of those twelve
+        /// renders. Nothing below passes 1.16, and the accents sit on the SIDES and the SEAT
+        /// rather than on the front plane.
         /// </remarks>
         public static readonly (string Name, VoxelPart[] Parts)[] Bottoms =
         {
             ("Denim shorts", new[]
             {
-                P(-1.20f, -0.20f, -1.06f, 1.20f, 0.14f, 1.06f, Bottom),
-                P(-1.20f, 0.04f, -1.02f, 1.20f, 0.16f, 1.18f, BottomLit),
+                P(-1.16f, -0.06f, -1.04f, 1.16f, 0.16f, 1.04f, Bottom),
+                P(-1.18f, 0.10f, -1.06f, 1.18f, 0.18f, 1.06f, BottomLit),
             }),
 
             ("Distressed jorts", new[]
             {
-                P(-1.22f, -0.34f, -1.08f, 1.22f, 0.14f, 1.08f, Bottom),
-                P(-1.22f, -0.38f, -1.04f, 1.22f, -0.30f, 1.20f, BottomLit),
-                P(-0.52f, -0.20f, 1.04f, -0.16f, -0.10f, 1.20f, BottomDark),
+                P(-1.18f, -0.06f, -1.06f, 1.18f, 0.18f, 1.06f, Bottom),
+                P(-1.20f, 0.12f, -1.08f, 1.20f, 0.20f, 1.08f, BottomLit),
             }),
 
             ("Cargo shorts", new[]
             {
-                P(-1.24f, -0.28f, -1.08f, 1.24f, 0.14f, 1.08f, Bottom),
-                P(-1.40f, -0.22f, -0.60f, -1.20f, -0.04f, 0.62f, BottomDark),
-                P(1.20f, -0.22f, -0.60f, 1.40f, -0.04f, 0.62f, BottomDark),
+                P(-1.18f, -0.06f, -1.06f, 1.18f, 0.18f, 1.06f, Bottom),
+                P(-1.22f, 0.10f, -1.10f, 1.22f, 0.22f, 1.10f, BottomDark),
             }),
 
             ("Mesh shorts", new[]
             {
-                P(-1.22f, -0.24f, -1.06f, 1.22f, 0.14f, 1.06f, Bottom),
-                P(-0.08f, -0.24f, -1.02f, 0.08f, 0.12f, 1.18f, BottomLit),
-                P(-1.22f, -0.02f, -1.02f, 1.22f, 0.10f, 1.18f, BottomLit),
+                P(-1.16f, -0.06f, -1.04f, 1.16f, 0.14f, 1.04f, Bottom),
+                P(-1.18f, 0.08f, -1.06f, 1.18f, 0.20f, 1.06f, BottomLit),
             }),
 
             ("Track pants", new[]
             {
-                P(-1.20f, -0.92f, -1.06f, 1.20f, 0.14f, 1.06f, Bottom),
-                P(-1.18f, -0.92f, 1.00f, -0.90f, 0.12f, 1.18f, BottomLit),
-                P(0.90f, -0.92f, 1.00f, 1.18f, 0.12f, 1.18f, BottomLit),
+                P(-1.16f, -0.06f, -1.04f, 1.16f, 0.16f, 1.04f, Bottom),
+                P(-1.18f, 0.10f, -1.06f, 1.18f, 0.20f, 1.06f, BottomLit),
             }),
 
             ("Rolled jeans", new[]
             {
-                P(-1.22f, -0.78f, -1.08f, 1.22f, 0.14f, 1.08f, Bottom),
-                P(-1.26f, -0.90f, -1.10f, 1.26f, -0.74f, 1.20f, BottomLit),
+                P(-1.18f, -0.06f, -1.06f, 1.18f, 0.18f, 1.06f, Bottom),
+                P(-1.20f, 0.12f, -1.08f, 1.20f, 0.22f, 1.08f, BottomDark),
             }),
 
             ("Pleated skirt", new[]
             {
-                P(-1.42f, -0.30f, -1.24f, 1.42f, 0.14f, 1.24f, Bottom),
-                P(-1.48f, -0.36f, -1.28f, 1.48f, -0.26f, 1.36f, BottomDark),
-                P(-0.44f, -0.30f, 1.18f, -0.20f, 0.06f, 1.36f, BottomLit),
-                P(0.20f, -0.30f, 1.18f, 0.44f, 0.06f, 1.36f, BottomLit),
+                P(-1.22f, -0.06f, -1.10f, 1.22f, 0.16f, 1.10f, Bottom),
+                P(-1.26f, 0.10f, -1.14f, 1.26f, 0.20f, 1.14f, BottomDark),
             }),
 
             ("Boardshorts", new[]
             {
-                P(-1.24f, -0.46f, -1.08f, 1.24f, 0.14f, 1.08f, Bottom),
-                P(-1.24f, -0.20f, -1.04f, 1.24f, -0.12f, 1.20f, BottomLit),
-                P(-1.24f, -0.36f, -1.04f, 1.24f, -0.28f, 1.20f, BottomLit),
+                P(-1.18f, -0.06f, -1.06f, 1.18f, 0.16f, 1.06f, Bottom),
+                P(-1.20f, 0.10f, -1.08f, 1.20f, 0.18f, 1.08f, BottomLit),
             }),
 
             // ⚠️ APPENDED, NEVER INSERTED. `BottomClothingIndex` crosses the wire.
             ("Basketball shorts", new[]
             {
-                P(-1.26f, -0.42f, -1.08f, 1.26f, 0.14f, 1.08f, Bottom),
-                P(-1.26f, -0.44f, -1.04f, 1.26f, -0.34f, 1.20f, BottomDark),
-                P(-0.10f, -0.42f, 1.04f, 0.10f, 0.10f, 1.20f, BottomLit),
+                P(-1.20f, -0.06f, -1.08f, 1.20f, 0.16f, 1.08f, Bottom),
+                P(-1.22f, 0.08f, -1.10f, 1.22f, 0.20f, 1.10f, BottomDark),
             }),
 
             ("Chinos", new[]
             {
-                P(-1.20f, -0.86f, -1.06f, 1.20f, 0.14f, 1.06f, BottomLit),
-                P(-1.22f, 0.02f, -1.04f, 1.22f, 0.14f, 1.18f, BottomDark),
-                P(-1.18f, -0.60f, 1.00f, -0.60f, -0.44f, 1.18f, Bottom),
+                P(-1.16f, -0.06f, -1.04f, 1.16f, 0.18f, 1.04f, BottomLit),
+                P(-1.18f, 0.10f, -1.06f, 1.18f, 0.22f, 1.06f, BottomDark),
             }),
 
             ("Cutoffs", new[]
             {
-                P(-1.22f, -0.12f, -1.08f, 1.22f, 0.14f, 1.08f, Bottom),
-                P(-1.24f, -0.16f, -1.06f, 1.24f, -0.08f, 1.20f, BottomLit),
+                P(-1.16f, -0.06f, -1.04f, 1.16f, 0.14f, 1.04f, Bottom),
+                P(-1.18f, 0.08f, -1.06f, 1.18f, 0.16f, 1.06f, BottomLit),
             }),
 
             ("Malong wrap", new[]
             {
-                P(-1.36f, -0.64f, -1.20f, 1.36f, 0.16f, 1.20f, Bottom),
-                P(-1.38f, -0.28f, -1.22f, 1.38f, -0.18f, 1.32f, BottomLit),
-                P(-1.38f, -0.56f, -1.22f, 1.38f, -0.46f, 1.32f, BottomDark),
+                P(-1.24f, -0.06f, -1.12f, 1.24f, 0.20f, 1.12f, Bottom),
+                P(-1.28f, 0.12f, -1.16f, 1.28f, 0.24f, 1.16f, BottomLit),
+            }),
+
+            // ⚠️ FOUR MORE, APPENDED 2026-09-01. 🧑: *"give many ooptions"*.
+            ("Jogger pants", new[]
+            {
+                P(-1.16f, -0.06f, -1.04f, 1.16f, 0.18f, 1.04f, Bottom),
+                P(-1.18f, 0.12f, -1.06f, 1.18f, 0.24f, 1.06f, BottomDark),
+            }),
+
+            ("Denim overalls", new[]
+            {
+                P(-1.16f, -0.06f, -1.04f, 1.16f, 0.16f, 1.04f, Bottom),
+                P(-0.86f, 0.14f, 0.98f, 0.86f, 0.62f, 1.10f, Bottom),
+                P(-0.78f, 0.60f, -1.06f, -0.42f, 1.02f, 1.10f, Bottom),
+                P(0.42f, 0.60f, -1.06f, 0.78f, 1.02f, 1.10f, Bottom),
+            }),
+
+            ("School slacks", new[]
+            {
+                P(-1.16f, -0.06f, -1.04f, 1.16f, 0.16f, 1.04f, BottomDark),
+                P(-1.18f, 0.10f, -1.06f, 1.18f, 0.22f, 1.06f, Ink),
+            }),
+
+            ("Tapered joggers", new[]
+            {
+                P(-1.16f, -0.06f, -1.04f, 1.16f, 0.20f, 1.04f, BottomLit),
+                P(-1.18f, 0.14f, -1.06f, 1.18f, 0.26f, 1.06f, Bottom),
+            }),
+        };
+
+        // -------------------------------------------------------------------
+        // § TROUSER LEGS. The leg frame: V 0 is the floor, V 1 is the hip.
+        // -------------------------------------------------------------------
+
+        /// <summary>⚠️ 1.08 AND NOT 1.00, so a leg garment clears the limb by the 8 mm the ink
+        /// outline needs rather than sharing a face with it. `docs/VISION.md` § 2 rule 3 records
+        /// what two surfaces at one depth cost: one trail drew a different colour per drop.</summary>
+        private const float LegSpread = 1.08f;
+
+        /// <summary>⚠️ 1.04 PASSES THE HIP, so the leg meets the waistband above it and there is
+        /// no bare ring at the top of the thigh. The waistband's own `V` 0 is the same hip.</summary>
+        private const float LegTop = 1.04f;
+
+        /// <summary>One trouser leg from the hip down to `hem`, where 1 is the hip and 0 the
+        /// floor. Mid-thigh is 0.52, the knee is 0.36, the calf is 0.20 and the ankle is 0.06.</summary>
+        private static VoxelPart Leg(float hem, int slot, float spread = LegSpread)
+            => P(-spread, hem, -spread, spread, LegTop, spread, slot);
+
+        /// <summary>A band across a leg at `v`, for a cuff, a hem or a roll.</summary>
+        private static VoxelPart LegBand(float v0, float v1, int slot, float spread = LegSpread + 0.04f)
+            => P(-spread, v0, -spread, spread, v1, spread, slot);
+
+        /// <summary>
+        /// The leg of every bottom, in the same order as <see cref="Bottoms"/>, dressed once on
+        /// each leg bone.
+        ///
+        /// ⚠️⚠️ AUTHORED SYMMETRIC IN `U` ON PURPOSE, AND THAT IS NOT A STYLE CHOICE. The leg
+        /// frame centres on its own bone with a POSITIVE extent, so `U +1` is the outside of the
+        /// left leg and the INSIDE of the right one: an asymmetric leg would come out mirrored on
+        /// one side, and a cargo pocket would appear between the knees. `VoxelAnchor.SleeveLeft`
+        /// carries the signed frame that solves this for arms; the legs do not need it while
+        /// nothing here is one-sided, and `Footwear` has relied on the same property since § 112.
+        ///
+        /// ⚠️ THE HEMS ARE FRACTIONS OF A LEG THE PLAYER CAN SEE, which is the whole gain over
+        /// the torso frame. A hem of 0.52 is mid-thigh on an 85 per cent character and on a 115
+        /// per cent one, because `MeasureAnchor` measures the rig it is given.
+        /// </summary>
+        public static readonly (string Name, VoxelPart[] Parts)[] BottomLegs =
+        {
+            ("Denim shorts", new[]
+            {
+                Leg(0.54f, Bottom),
+                LegBand(0.52f, 0.60f, BottomDark),
+            }),
+
+            ("Distressed jorts", new[]
+            {
+                Leg(0.40f, Bottom),
+                LegBand(0.38f, 0.47f, BottomLit),
+            }),
+
+            ("Cargo shorts", new[]
+            {
+                Leg(0.46f, Bottom),
+                P(-LegSpread - 0.14f, 0.52f, -0.55f, -LegSpread + 0.04f, 0.78f, 0.60f, BottomDark),
+                P(LegSpread - 0.04f, 0.52f, -0.55f, LegSpread + 0.14f, 0.78f, 0.60f, BottomDark),
+            }),
+
+            ("Mesh shorts", new[]
+            {
+                Leg(0.48f, Bottom),
+                LegBand(0.46f, 0.54f, BottomLit),
+            }),
+
+            ("Track pants", new[]
+            {
+                Leg(0.06f, Bottom),
+                P(-LegSpread - 0.04f, 0.06f, 0.86f, -LegSpread + 0.30f, LegTop, 1.10f, BottomLit),
+                P(LegSpread - 0.30f, 0.06f, 0.86f, LegSpread + 0.04f, LegTop, 1.10f, BottomLit),
+            }),
+
+            ("Rolled jeans", new[]
+            {
+                Leg(0.16f, Bottom),
+                LegBand(0.14f, 0.28f, BottomLit),
+            }),
+
+            // ⚠️ A SKIRT IS THE ONE BOTTOM THAT IS NOT A PAIR OF LEGS, so its "leg" is a panel
+            // that stops well above the knee and spreads instead of tapering. Two of them, one per
+            // bone, read as one skirt because they meet in the middle at `U` 1.34.
+            ("Pleated skirt", new[]
+            {
+                Leg(0.56f, Bottom, 1.34f),
+                LegBand(0.54f, 0.62f, BottomDark, 1.40f),
+            }),
+
+            ("Boardshorts", new[]
+            {
+                Leg(0.34f, Bottom),
+                LegBand(0.44f, 0.52f, BottomLit),
+                LegBand(0.32f, 0.40f, BottomLit),
+            }),
+
+            ("Basketball shorts", new[]
+            {
+                Leg(0.30f, Bottom),
+                LegBand(0.28f, 0.38f, BottomDark),
+            }),
+
+            ("Chinos", new[]
+            {
+                Leg(0.10f, BottomLit),
+                LegBand(0.08f, 0.18f, Bottom),
+            }),
+
+            ("Cutoffs", new[]
+            {
+                Leg(0.66f, Bottom),
+                LegBand(0.64f, 0.72f, BottomLit),
+            }),
+
+            ("Malong wrap", new[]
+            {
+                Leg(0.24f, Bottom, 1.24f),
+                LegBand(0.42f, 0.52f, BottomLit, 1.30f),
+                LegBand(0.22f, 0.32f, BottomDark, 1.30f),
+            }),
+
+            ("Jogger pants", new[]
+            {
+                Leg(0.14f, Bottom),
+                LegBand(0.12f, 0.26f, BottomDark),
+            }),
+
+            ("Denim overalls", new[]
+            {
+                Leg(0.12f, Bottom),
+                LegBand(0.10f, 0.20f, BottomLit),
+            }),
+
+            ("School slacks", new[]
+            {
+                Leg(0.08f, BottomDark),
+                LegBand(0.06f, 0.16f, Bottom),
+            }),
+
+            ("Tapered joggers", new[]
+            {
+                Leg(0.18f, BottomLit),
+                LegBand(0.16f, 0.30f, Bottom),
             }),
         };
 

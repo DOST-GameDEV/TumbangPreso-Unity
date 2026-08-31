@@ -220,11 +220,31 @@ namespace TumbangPreso.Visual
             VoxelDresser.Dress(subject, VoxelAnchor.Head,
                 VoxelWardrobe.At(VoxelWardrobe.Headwear, c.HeadAccessoryIndex), palette, ink);
 
+            // ⚠️⚠️ A TOP IS A BODY AND TWO SLEEVES, AND A BOTTOM IS A WAISTBAND AND TWO LEGS.
+            // `docs/TODO.md` § 113. Until 2026-09-01 both were ONE box list on the torso bone, and
+            // the two things that cost are the two things 🧑 named: a sleeve authored on the torso
+            // frame is welded to the chest the moment the arm swings, and a bottom on the torso
+            // frame cannot reach a leg at all, because one unit of that frame's `V` is 168 mm and
+            // the whole leg is 176 mm. **Every pair of shorts in the game was a band at crotch
+            // height over two bare legs**, which is what `Logs/ui/wardrobe-bottoms-*_v2.png` shows
+            // twelve times over.
+            //
+            // ⚠️ THE SAME LEG SET GOES ON BOTH BONES, exactly as `Footwear` below does, and the
+            // entries are authored symmetric in `U` so neither side needs a mirror.
+            // `VoxelWardrobe.BottomLegs` carries the reasoning.
             VoxelDresser.Dress(subject, VoxelAnchor.Torso,
                 VoxelWardrobe.At(VoxelWardrobe.Tops, c.TopClothingIndex), palette, ink);
 
+            var sleeves = VoxelWardrobe.At(VoxelWardrobe.TopSleeves, c.TopClothingIndex);
+            VoxelDresser.Dress(subject, VoxelAnchor.SleeveLeft, sleeves, palette, ink);
+            VoxelDresser.Dress(subject, VoxelAnchor.SleeveRight, sleeves, palette, ink);
+
             VoxelDresser.Dress(subject, VoxelAnchor.Torso,
                 VoxelWardrobe.At(VoxelWardrobe.Bottoms, c.BottomClothingIndex), palette, ink);
+
+            var legs = VoxelWardrobe.At(VoxelWardrobe.BottomLegs, c.BottomClothingIndex);
+            VoxelDresser.Dress(subject, VoxelAnchor.LegLeft, legs, palette, ink);
+            VoxelDresser.Dress(subject, VoxelAnchor.LegRight, legs, palette, ink);
 
             VoxelDresser.Dress(subject, VoxelAnchor.Torso,
                 VoxelWardrobe.At(VoxelWardrobe.Neckwear, c.NeckAccessoryIndex), palette, ink);

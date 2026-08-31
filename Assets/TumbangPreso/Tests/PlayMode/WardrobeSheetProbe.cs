@@ -98,8 +98,21 @@ namespace TumbangPreso.PlayTests
             yield return Row("marks", VoxelWardrobe.Marks, VoxelAnchor.Head, 0.82f, 0.66f);
             yield return Row("hats", VoxelWardrobe.Headwear, VoxelAnchor.Head, 0.86f, 0.86f);
             yield return Row("eyes", VoxelWardrobe.Eyewear, VoxelAnchor.Head, 0.82f, 0.66f);
-            yield return Row("tops", VoxelWardrobe.Tops, VoxelAnchor.Torso, 0.58f, 1.00f);
-            yield return Row("bottoms", VoxelWardrobe.Bottoms, VoxelAnchor.Torso, 0.40f, 1.00f);
+            // ⚠️⚠️ A TOP AND A BOTTOM ARE EACH TWO TABLES NOW, AND SHOOTING ONLY THE TORSO HALF
+            // WOULD BE A PICTURE OF HALF A GARMENT. `docs/TODO.md` § 113 hung the sleeves on the
+            // arm bones and the trouser legs on the leg bones, which is what makes them follow the
+            // limb they cover; a sheet that dressed the torso alone would show every long-sleeved
+            // top with bare arms and read as a regression.
+            //
+            // ⚠️ THE BOTTOMS ROW PULLS BACK TO 1.28, because a pair of track pants now reaches the
+            // ankle and the old 1.00 framed a hip. A cell that crops the hem cannot answer the one
+            // question this row exists to ask, which is where the cloth stops.
+            yield return Row("tops", VoxelWardrobe.Tops, VoxelAnchor.Torso, 0.58f, 1.00f,
+                             VoxelWardrobe.TopSleeves, VoxelAnchor.SleeveLeft,
+                             VoxelAnchor.SleeveRight);
+
+            yield return Row("bottoms", VoxelWardrobe.Bottoms, VoxelAnchor.Torso, 0.34f, 1.28f,
+                             VoxelWardrobe.BottomLegs, VoxelAnchor.LegLeft, VoxelAnchor.LegRight);
             yield return Row("neck", VoxelWardrobe.Neckwear, VoxelAnchor.Torso, 0.70f, 0.86f);
 
             // ⚠️⚠️ THE TENTH ROW, AND ITS ABSENCE IS WHAT LET SIX WEARABLES SHIP AGAINST A FRAME
@@ -125,7 +138,10 @@ namespace TumbangPreso.PlayTests
         /// this is the other half, which is not having to count along a row to identify a cell.
         /// </summary>
         private IEnumerator Row(string category, (string Name, VoxelPart[] Parts)[] table,
-                                VoxelAnchor anchor, float aim, float zoom)
+                                VoxelAnchor anchor, float aim, float zoom,
+                                (string Name, VoxelPart[] Parts)[] limbs = null,
+                                VoxelAnchor limbLeft = VoxelAnchor.SleeveLeft,
+                                VoxelAnchor limbRight = VoxelAnchor.SleeveRight)
         {
             var book = RosterBook.Load();
             Assert.IsNotNull(book, "no RosterBook, so there is no model to dress");
@@ -157,6 +173,18 @@ namespace TumbangPreso.PlayTests
                     VoxelDresser.Dress(subject, VoxelAnchor.LegRight, table[i].Parts, palette,
                                        ToonSkin.PersonOutlineWidth);
 
+                // ⚠️ THE SAME SET ON BOTH LIMBS, which is what the game does
+                // (`CustomCharacterOutfit.Dress`). Shooting one arm would make a mirrored sleeve
+                // invisible, and `VoxelAnchor.SleeveLeft` exists precisely because an unsigned
+                // frame draws one of the pair back to front.
+                if (limbs != null && i < limbs.Length)
+                {
+                    VoxelDresser.Dress(subject, limbLeft, limbs[i].Parts, palette,
+                                       ToonSkin.PersonOutlineWidth);
+                    VoxelDresser.Dress(subject, limbRight, limbs[i].Parts, palette,
+                                       ToonSkin.PersonOutlineWidth);
+                }
+
                 _preview.LookAt(aim, zoom);
 
                 // ⚠️ THREE FRAMES: the dress lands, the framing recomputes in `LateUpdate`, and
@@ -171,7 +199,7 @@ namespace TumbangPreso.PlayTests
                 // chat clients cache images by filename, so overwriting a render leaves the
                 // previous one on screen and the whole review is conducted against an image that
                 // no longer exists. The `_v1` sheet is of the DRESSED rig and is the before.
-                yield return Shoot($"wardrobe-{category}-{i:00}-{safe}_v2");
+                yield return Shoot($"wardrobe-{category}-{i:00}-{safe}_v3");
             }
         }
 

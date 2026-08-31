@@ -352,14 +352,16 @@ namespace TumbangPreso.Core
             "Sando", "Graphic tee", "Jersey", "Hoodie", "Track jacket",
             "Polo", "Utility vest", "Longsleeve", "Barong", "Rashguard",
             "Basketball tank", "Denim jacket", "Sweater vest", "Camisa chino",
-            "Windbreaker", "Ilalim hoodie"
+            "Windbreaker", "Ilalim hoodie",
+            "Basketball warm-up", "Kamiseta", "Bomber jacket", "Crop hoodie"
         };
 
         public static readonly string[] BottomClothingNames =
         {
             "Denim shorts", "Distressed jorts", "Cargo shorts", "Mesh shorts",
             "Track pants", "Rolled jeans", "Pleated skirt", "Boardshorts",
-            "Basketball shorts", "Chinos", "Cutoffs", "Malong wrap"
+            "Basketball shorts", "Chinos", "Cutoffs", "Malong wrap",
+            "Jogger pants", "Denim overalls", "School slacks", "Tapered joggers"
         };
 
         public static readonly string[] HeadwearNames =

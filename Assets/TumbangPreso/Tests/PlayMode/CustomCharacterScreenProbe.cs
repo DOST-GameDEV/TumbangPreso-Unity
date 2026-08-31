@@ -190,12 +190,18 @@ namespace TumbangPreso.PlayTests
                 PressSection(0);
                 yield return null;
                 yield return null;
-                yield return Shoot($"20-creator-face-{tag}_v1");
+                yield return Shoot($"20-creator-face-{tag}_v2");
 
-                PressSection(4);
+                // ⚠️⚠️ CLOTHES IS THE SECTION THAT GETS PHOTOGRAPHED NOW, NOT GEAR, BECAUSE IT IS
+                // THE ONE 🧑 NAMED: *"the clothes they wear are ugly and dont look like clothes"*.
+                // `docs/TODO.md` § 113 hung every sleeve on an arm bone and every trouser leg on a leg
+                // bone, and this is the only shot in the repository that shows that change on the
+                // real screen rather than on a contact-sheet cell. GEAR is still covered at nine
+                // resolutions by `EverySectionFitsItsBoxAndDrawsItsRows`, which drives all six.
+                PressSection(3);
                 yield return null;
                 yield return null;
-                yield return Shoot($"21-creator-gear-{tag}_v1");
+                yield return Shoot($"21-creator-clothes-{tag}_v2");
             }
 
             Write("custom-character-shots", report);

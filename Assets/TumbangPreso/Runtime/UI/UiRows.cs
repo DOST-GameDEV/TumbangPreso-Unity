@@ -510,9 +510,33 @@ namespace TumbangPreso.UI
         {
             var slot = Row(list, label, hint, 360.0f);
 
+            var input = Field(slot, placeholder, limit, password);
+            Cap(input.GetComponent<RectTransform>(), 360.0f);
+
+            return input;
+        }
+
+        /// <summary>
+        /// The text field on its own, without a row around it.
+        ///
+        /// ⚠️⚠️ EXTRACTED FROM `FieldRow` RATHER THAN COPIED BESIDE IT, AND THE CARET IS WHY.
+        /// `CustomCharacterScreen` moved its NAME field out of the scrolling list and into the
+        /// header (`docs/TODO.md` § 113), because a field inside a list that rebuilds on every
+        /// stepper press is a field that loses its caret. **The obvious way to do that is to
+        /// hand-build a second `InputField` beside this one**, which is `docs/TODO.md` § 94.1's
+        /// four copies of one lookup all agreeing on the wrong value. One builder, two callers:
+        /// this one places it, `FieldRow` caps it into a row's control column.
+        ///
+        /// ⚠️ THE CALLER OWNS THE RECT. It is returned stretched into its parent, so a caller
+        /// that wants a size calls `MenuKit.Place` or `Cap` on it and one that wants the whole
+        /// parent does nothing.
+        /// </summary>
+        public static InputField Field(Transform parent, string placeholder, int limit,
+                                       bool password = false)
+        {
             var go = new GameObject("Field", typeof(RectTransform), typeof(Image));
-            go.transform.SetParent(slot, false);
-            Cap((RectTransform)go.transform, 360.0f);
+            go.transform.SetParent(parent, false);
+            MenuKit.Stretch((RectTransform)go.transform);
 
             var image = go.GetComponent<Image>();
             image.color = UiTheme.Card;

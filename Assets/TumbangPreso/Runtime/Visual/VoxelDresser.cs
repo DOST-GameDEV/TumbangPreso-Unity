@@ -61,6 +61,30 @@ namespace TumbangPreso.Visual
         ArmRight,
         LegLeft,
         LegRight,
+
+        /// <summary>
+        /// The WHOLE arm, shoulder joint to fingertip, for a sleeve.
+        ///
+        /// ⚠️⚠️ IT IS A SECOND FRAME ON THE SAME BONE AND THAT IS DELIBERATE, BECAUSE
+        /// `ArmLeft` IS THE WRIST AND A SLEEVE IS NOT A WRISTBAND. `ArmLeft` centres on
+        /// `shoulder + reach * 0.80` with `reach * 0.20` of half width, which is the outer fifth
+        /// of the limb: exactly the frame a band wraps and useless for a garment that starts at
+        /// the shoulder. Re-pointing `ArmLeft` at the whole arm instead would silently rescale
+        /// all six `Wristwear` entries, which `docs/TODO.md` § 112.10 had already got wrong in
+        /// two axes at once with every test green. **A new frame cannot break an old one.**
+        ///
+        /// ⚠️⚠️ `U` RUNS ALONG THE LIMB AND -1 IS ALWAYS THE SHOULDER, ON BOTH ARMS. The arm
+        /// bones sit at mirrored x, so a frame with positive extents makes `U +1` the hand on the
+        /// left and the shoulder on the right, and one authored sleeve would come out inside-out
+        /// on one side. `MeasureAnchor` returns a SIGNED `extents.x` here for that reason and the
+        /// placement loop takes `Mathf.Abs` when it sizes the box, so the sign mirrors the
+        /// POSITION and never the geometry. A negative scale would invert the cube's normals and
+        /// with them `ToonSkin`'s inverted-hull outline, which reads as the sleeve turning black.
+        /// </summary>
+        SleeveLeft,
+
+        /// <summary>The same frame on `arm-right`. See <see cref="SleeveLeft"/>.</summary>
+        SleeveRight,
     }
 
     /// <summary>
@@ -102,6 +126,8 @@ namespace TumbangPreso.Visual
                 { VoxelAnchor.ArmRight, "arm-right" },
                 { VoxelAnchor.LegLeft, "leg-left" },
                 { VoxelAnchor.LegRight, "leg-right" },
+                { VoxelAnchor.SleeveLeft, "arm-left" },
+                { VoxelAnchor.SleeveRight, "arm-right" },
             };
 
         /// <summary>
@@ -192,10 +218,16 @@ namespace TumbangPreso.Visual
                                   - localExtents.y,
                     localCentre.z + (Mid(part.W0, part.W1) * localExtents.z));
 
+                // ⚠️⚠️ `Mathf.Abs` ON THE EXTENT, NOT ONLY ON THE SPAN, AND `SleeveRight` IS
+                // WHY. A limb frame returns a SIGNED x extent so that `U -1` means the shoulder on
+                // both arms (see `VoxelAnchor.SleeveLeft`); the sign belongs to the POSITION line
+                // above and must not reach the scale. A cube at negative scale is inside out: its
+                // normals point in, it lights as a hole, and `ToonSkin`'s inverted-hull outline
+                // inverts with it and floods the sleeve with ink.
                 box.transform.localScale = new Vector3(
-                    Mathf.Abs(part.U1 - part.U0) * localExtents.x,
-                    Mathf.Abs(part.V1 - part.V0) * localExtents.y * 2.0f,
-                    Mathf.Abs(part.W1 - part.W0) * localExtents.z);
+                    Mathf.Abs(part.U1 - part.U0) * Mathf.Abs(localExtents.x),
+                    Mathf.Abs(part.V1 - part.V0) * Mathf.Abs(localExtents.y) * 2.0f,
+                    Mathf.Abs(part.W1 - part.W0) * Mathf.Abs(localExtents.z));
 
                 PinToPaletteCell(box, part.Slot);
                 Paint(box, part.Slot, palette);
@@ -290,6 +322,42 @@ namespace TumbangPreso.Visual
 
                     centre = new Vector3(meshCentre.x, bottom + half, meshCentre.z);
                     extents = new Vector3(Mathf.Max(0.001f, wide), half, meshExtents.z);
+                    return true;
+                }
+
+                // ⚠️⚠️ THE WHOLE ARM, SHOULDER JOINT TO FINGERTIP, AND IT IS A SLEEVE'S FRAME
+                // RATHER THAN A BAND'S. `U -1` is the shoulder and `U +1` is the hand ON BOTH
+                // ARMS, which is what the signed extent below buys: `arm-right` sits at mirrored
+                // x, so an unsigned frame would make `U +1` the hand on one side and the shoulder
+                // on the other, and one authored sleeve would come out back to front on the right.
+                //
+                // ⚠️⚠️ AND THE SLEEVE HANGS OFF THE ARM BONE, WHICH IS THE WHOLE POINT.
+                // Every sleeve in `VoxelWardrobe.Tops` used to be a box on the TORSO frame at
+                // `U` 1.6 to 2.8: correct in bind pose, and welded to the chest the moment the
+                // arm moved. `docs/TODO.md` § 113. A garment that does not follow the limb it
+                // covers is the thing 🧑 was naming when he said the clothes *"dont look like
+                // clothes"*, and no amount of retuning a torso box fixes it.
+                case VoxelAnchor.SleeveLeft:
+                case VoxelAnchor.SleeveRight:
+                {
+                    float shoulderX = arm != null
+                        ? Mathf.Abs(arm.position.x - rig.transform.position.x)
+                        : meshExtents.x * 0.26f;
+
+                    float tip = Mathf.Max(shoulderX + 0.001f, meshExtents.x);
+                    float sign = Mathf.Sign(bone.position.x - rig.transform.position.x);
+                    if (Mathf.Approximately(sign, 0.0f)) sign = 1.0f;
+
+                    // ⚠️ THE SAME 0.40 AND 0.55 THE WRIST FRAME USES, because it is the same
+                    // limb measured the same way. § 112.10 records what 0.20 cost: a band
+                    // authored to wrap ended up buried inside a solid arm.
+                    centre = new Vector3(
+                        rig.transform.position.x + (sign * (shoulderX + tip) * 0.5f),
+                        bone.position.y,
+                        rig.transform.position.z);
+
+                    extents = new Vector3(sign * (tip - shoulderX) * 0.5f,
+                                          meshExtents.y * 0.40f, meshExtents.z * 0.55f);
                     return true;
                 }
 

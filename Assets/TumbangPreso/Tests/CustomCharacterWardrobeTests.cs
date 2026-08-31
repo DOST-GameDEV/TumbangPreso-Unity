@@ -194,6 +194,64 @@ namespace TumbangPreso.Tests
         }
 
         /// <summary>
+        /// ⚠️⚠️ A TOP WITH NO SLEEVE ROW AND A BOTTOM WITH NO LEG ROW BOTH RENDER PERFECTLY,
+        /// WHICH IS WHY THIS IS A TEST AND NOT A CONVENTION. `docs/TODO.md` § 113 split each
+        /// garment across two tables so a sleeve could hang off the arm bone and a trouser leg off
+        /// the leg bone. **The failure mode of the split is silent**: append a top to `Tops` and
+        /// forget `TopSleeves`, and the shirt draws, the probe is green, the layout is fine, and
+        /// the character walks into a match in a long-sleeved hoodie with two bare arms. Worse, an
+        /// entry appended to one table and INSERTED into the other pairs every garment after it
+        /// with the wrong sleeve, and both indices cross the wire.
+        ///
+        /// ⚠️ IT COMPARES NAMES RATHER THAN COUNTS, for the reason `AssertSameList` gives: a
+        /// count check passes through a rename, and the rename is the worse half of the bug.
+        /// </summary>
+        [Test]
+        public void EveryTopHasASleeveAndEveryBottomHasALeg()
+        {
+            AssertSameList("TopSleeves", VoxelWardrobe.NamesOf(VoxelWardrobe.Tops),
+                           VoxelWardrobe.TopSleeves);
+
+            AssertSameList("BottomLegs", VoxelWardrobe.NamesOf(VoxelWardrobe.Bottoms),
+                           VoxelWardrobe.BottomLegs);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ A LEG GARMENT MUST BE SYMMETRIC IN `U`, AND THE LEG FRAME IS WHY.
+        /// `VoxelDresser.MeasureAnchor` centres a leg on its own bone with a POSITIVE x extent, so
+        /// `U +1` is the outside of the left leg and the INSIDE of the right one. An asymmetric
+        /// leg piece therefore comes out mirrored on one side: a cargo pocket authored on the
+        /// outside of the thigh appears between the knees on the other leg.
+        ///
+        /// ⚠️ `VoxelAnchor.SleeveLeft` SOLVES THIS FOR ARMS WITH A SIGNED FRAME AND THE LEGS DO
+        /// NOT USE IT, deliberately: `Footwear` has relied on the unsigned frame since § 112 and
+        /// re-pointing it would rescale every shoe. This test is the other half of that decision,
+        /// so the constraint is enforced rather than remembered.
+        /// </summary>
+        [Test]
+        public void EveryLegGarmentIsSymmetricAcrossTheLeg()
+        {
+            foreach (var (name, parts) in VoxelWardrobe.BottomLegs)
+            {
+                foreach (var p in parts)
+                {
+                    bool mirrored = false;
+
+                    foreach (var q in parts)
+                        if (Mathf.Approximately(q.U0, -p.U1) && Mathf.Approximately(q.U1, -p.U0)
+                            && Mathf.Approximately(q.V0, p.V0) && Mathf.Approximately(q.V1, p.V1)
+                            && q.Slot == p.Slot)
+                        { mirrored = true; break; }
+
+                    Assert.IsTrue(mirrored,
+                        $"BottomLegs '{name}' has a box at U {p.U0} to {p.U1} with no mirror. The "
+                        + "leg frame flips U between the two legs, so this draws on the outside of "
+                        + "one thigh and between the knees on the other. docs/TODO.md 113.");
+                }
+            }
+        }
+
+        /// <summary>
         /// ⚠️⚠️ NO BOX MAY PAINT ITSELF WITH A SLOT THAT DOES NOT EXIST, and 16 is the whole
         /// palette (`PaletteRules.SlotCount`). A slot of 16 or more reads off the end of the array
         /// `ToonSkin` uploads, which is a shader reading uninitialised memory rather than an error.
@@ -207,6 +265,13 @@ namespace TumbangPreso.Tests
                 VoxelWardrobe.Headwear, VoxelWardrobe.Eyewear, VoxelWardrobe.Tops,
                 VoxelWardrobe.Bottoms, VoxelWardrobe.Neckwear, VoxelWardrobe.Wristwear,
                 VoxelWardrobe.Footwear,
+
+                // ⚠️ THE TWO LIMB TABLES ARE CHECKED HERE AND DELIBERATELY NOT IN
+                // `OnlyNoneIsAllowedToBeEmpty`. A slot and a winding are wrong wherever they
+                // appear, but an EMPTY sleeve is the correct geometry for a sando and an empty
+                // leg would be the correct geometry for a garment that has none. `docs/TODO.md`
+                // § 113.
+                VoxelWardrobe.TopSleeves, VoxelWardrobe.BottomLegs,
             };
 
             foreach (var table in tables)
@@ -232,6 +297,13 @@ namespace TumbangPreso.Tests
                 VoxelWardrobe.Headwear, VoxelWardrobe.Eyewear, VoxelWardrobe.Tops,
                 VoxelWardrobe.Bottoms, VoxelWardrobe.Neckwear, VoxelWardrobe.Wristwear,
                 VoxelWardrobe.Footwear,
+
+                // ⚠️ THE TWO LIMB TABLES ARE CHECKED HERE AND DELIBERATELY NOT IN
+                // `OnlyNoneIsAllowedToBeEmpty`. A slot and a winding are wrong wherever they
+                // appear, but an EMPTY sleeve is the correct geometry for a sando and an empty
+                // leg would be the correct geometry for a garment that has none. `docs/TODO.md`
+                // § 113.
+                VoxelWardrobe.TopSleeves, VoxelWardrobe.BottomLegs,
             };
 
             foreach (var table in tables)
