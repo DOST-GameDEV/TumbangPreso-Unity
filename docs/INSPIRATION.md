@@ -506,6 +506,32 @@ Half stamina. Double the taya reach. A rule toggle belongs in custom games, not 
 
 ---
 
+### 2.31 Character creators, and the one control every one of them uses
+
+🧑, 2026-08-31: *"I WANT U TO USE EXISTING GAMES AS REFERENCE FOR HOW THEY DID THEIR UI SO THAT
+OUR GAME WOULD FEEL INTUITIVE"*. This is that reading, for the MAKE YOUR OWN screen
+(`docs/TODO.md` § 108).
+
+**What every creator worth copying agrees on, and what it costs to ignore:**
+
+| The convention | Who does it | Why it is not a style choice |
+|---|---|---|
+| ⚠️⚠️ **`< NAME  n/total >`, one press per step, never a dropdown** | Elden Ring, Animal Crossing, NBA 2K, Monster Hunter, Stardew Valley | **A creator is BROWSING, not choosing.** `CustomCharacterRules` has 48 hairstyles and 48 tops; a 48-row dropdown is taller than the window, costs two presses per change, and asks the player to read forty-eight names to find one. The count on the control is what says the list is long, which way round it goes, and whether the end has been seen. |
+| **The subject is large, static, and never waits** | Stardew Valley, Animal Crossing, Elden Ring | The whole activity is *change one thing, look at it*. A preview that is small, or that rebuilds on a delay, breaks the only loop the screen has. `docs/FUTURE.md` PHASE 5 already says preview through `ModelPreview` with the real shader, never a flat icon. |
+| **The camera moves to the part being edited** | Elden Ring, Cyberpunk, Baldur's Gate 3 | Choosing a hat while looking at the knees is choosing blind. ⚠️ **And the AIM has to move with the distance**: zooming toward `ModelPreview.AimHeightRatio` 0.54, the waist, pushes the head out of frame, which is what the version this replaced would have done. |
+| **Categories, three or four rows each, never one long list** | All of them | `docs/TODO.md` § 92: *"theres liek 20 shits at once"*. Fifteen steppers in one scroll is the same fault with different nouns. Six sections of three or four is one screen with no scrolling on the window he plays in. |
+| **Randomise is a first-class button** | The Sims, Elden Ring, NBA 2K | It is how somebody who does not want to spend an evening gets a character in one press, and it is how somebody who does discovers combinations they would not have stepped to. SURPRISE ME sits beside PRESETS for that reason. |
+| ⚠️⚠️ **Cancel means cancel** | All of them | A creator writes to a working copy and commits on one button. **A slot you cannot leave without overwriting is not a save slot**, and § 107's brief is *"3 characters u can save at once"*. |
+
+⚠️ **WHAT DOES NOT TRANSFER, AND IT IS THE LOUDEST HALF OF THOSE SCREENS.** Elden Ring's
+sliders and Cyberpunk's continuous dials belong to games where nobody has to read a silhouette at
+distance. `docs/VISION.md` § 2 is a measured readability budget, and `Roster.HeroPeople`'s header
+records that a bigger body is genuinely better at the taya's job. **Height is seven named steps
+inside 85 to 115 per cent, not a slider**, and that is the same argument `TintStrengths` makes on
+character select: names rather than numbers, three steps, never more.
+
+---
+
 ## 3 · The queue and mode structure, which is his ranked-versus-classic question
 
 🧑: *"maybe a separate ranked / classic mode"*. There are two readings and the answer to both is
