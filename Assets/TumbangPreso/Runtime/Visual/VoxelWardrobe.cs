@@ -547,9 +547,9 @@ namespace TumbangPreso.Visual
             // it and a box over that only replaced one straight cut with another.
             ("Curtains", Cut(
                 Scalp(ScalpV, CrownV, 1.00f, Hair),
-                P(-0.62f, 0.44f, 0.84f, -0.08f, 0.72f, 1.16f, Hair),
-                P(0.08f, 0.44f, 0.84f, 0.62f, 0.72f, 1.16f, Hair),
-                P(-0.08f, 0.60f, 0.90f, 0.08f, 0.88f, 1.12f, HairDark))),
+                P(-0.62f, 0.58f, 0.84f, -0.08f, 0.82f, 1.16f, Hair),
+                P(0.08f, 0.58f, 0.84f, 0.62f, 0.82f, 1.16f, Hair),
+                P(-0.08f, 0.66f, 0.90f, 0.08f, 0.94f, 1.12f, HairDark))),
 
             ("Spiky", Cut(
                 Scalp(ScalpV, CrownV, 0.98f, Hair),
@@ -571,7 +571,7 @@ namespace TumbangPreso.Visual
                 P(-1.00f, 0.12f, -1.25f, -0.68f, 0.62f, -0.27f, HairDark),
                 P(0.68f, 0.12f, -1.25f, 1.00f, 0.62f, -0.27f, HairDark),
                 P(-0.74f, 0.02f, -1.28f, 0.74f, 0.44f, -0.75f, Hair),
-                P(-0.30f, 0.46f, 1.01f, 0.30f, 0.62f, 1.31f, HairLit))),
+                P(-0.30f, 0.58f, 1.01f, 0.30f, 0.74f, 1.31f, HairLit))),
 
             ("Topknot", Cut(
                 Scalp(ScalpV, CrownV - 0.05f, 0.92f, Hair),
@@ -615,9 +615,9 @@ namespace TumbangPreso.Visual
 
             ("Side part", Cut(
                 Scalp(ScalpV, CrownV, 0.98f, Hair),
-                P(-0.90f, 0.52f, 0.86f, -0.10f, 0.74f, 1.18f, Hair),
-                P(-0.16f, 0.62f, 0.92f, -0.02f, 0.96f, 1.14f, HairDark),
-                P(0.10f, 0.66f, 0.90f, 0.86f, 0.82f, 1.12f, HairLit))),
+                P(-0.90f, 0.60f, 0.86f, -0.10f, 0.82f, 1.18f, Hair),
+                P(-0.16f, 0.66f, 0.92f, -0.02f, 1.00f, 1.14f, HairDark),
+                P(0.10f, 0.70f, 0.90f, 0.86f, 0.86f, 1.12f, HairLit))),
 
             ("Braids", Cut(
                 Scalp(ScalpV, CrownV, 1.00f, Hair),
@@ -628,8 +628,8 @@ namespace TumbangPreso.Visual
 
             ("Bowl cut", Cut(
                 Scalp(ScalpV - 0.04f, CrownV, 1.06f, Hair),
-                P(-1.06f, 0.46f, -1.24f, 1.06f, 0.62f, 1.24f, HairDark),
-                P(-0.94f, 0.44f, 0.98f, 0.94f, 0.60f, 1.26f, Hair))),
+                P(-1.06f, 0.58f, -1.24f, 1.06f, 0.74f, 1.24f, HairDark),
+                P(-0.94f, 0.58f, 0.98f, 0.94f, 0.74f, 1.26f, Hair))),
 
             ("Ponytail", Cut(
                 Scalp(ScalpV, CrownV, 0.98f, Hair),

@@ -2475,6 +2475,14 @@ real cause.
 - `WardrobeSheetProbe` green, **142 renders** in `Logs/ui/wardrobe-*_v2.png`, ten categories.
 - `CustomCharacterScreenProbe` green.
 - `Checks.RunAll` all five in one launch.
+  ⚠️⚠️ **AND IT DOES NOT EXIT THE EDITOR AFTER IT PRINTS `RESULT: OK`.** The batchmode process
+  stayed alive holding `Temp/UnityLockfile`, so the NEXT launch sat blocked with a 25-line log and
+  no error, which is exactly the shape `CLAUDE.md` § 7 records for a stale lockfile with no Unity
+  process alive: *"no log, no error, no exit code."* This is the same symptom from the other side,
+  a live process rather than a dead file, and the check is the same one:
+  `Get-CimInstance Win32_Process -Filter "Name='Unity.exe'"` prints the COMMAND LINE, which says
+  which launch is holding it. **Look at what is holding the lock before believing the run that is
+  waiting on it has failed.**
 - `node tools/check_digest_contract.js` green, `7b135cbb69492fa5`.
 - The three `tools/` audits: **44 ability sites, 0 ungated on another body; 53 wire entry points,
   0 unreachable; 55 named messages, 0 mismatched.** ⚠️ The third is the one that matters here: it
