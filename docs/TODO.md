@@ -2473,6 +2473,17 @@ real cause.
   had its dance baked, because the book never listed it, so a custom character in a match would
   have stood still through every emote. `GeneratedAnimationAuthor.Run` bakes 20 rigs now.
 - `WardrobeSheetProbe` green, **142 renders** in `Logs/ui/wardrobe-*_v2.png`, ten categories.
+- PlayMode **7/7** on `WardrobeSheetProbe`, `CustomCharacterScreenProbe`, `ScoreWitnessProbe`,
+  `MatchRecordIdentityProbe` and `UiClickProbe`, which are the suites this branch can reach.
+  ⚠️⚠️ **THE FULL `-testCategory "!WallClock"` SWEEP WAS NOT COMPLETED AND THE REASON IS THE
+  MACHINE, NOT THE BRANCH.** Two sweeps were queued at once, they fought for the project lock, and
+  the survivor crashed at `Begin MonoManager ReloadAssembly` inside mono's `wakeup_pipes_init`.
+  Clearing `Temp/` and every Unity child fixed it and the targeted pass then ran clean.
+  ⚠️ **AND `Logs/play.xml` FROM A KILLED RUN IS NOT OVERWRITTEN, IT IS LEFT.** A stale one dated
+  `2026-08-31 03:08` was read twice as a fresh result, reporting `ScoreWitnessProbe` red;
+  `ScoreWitnessProbe` passes. **Delete the results file before a run and check its `start-time`
+  before believing it**, which is `CLAUDE.md` § 7's "assert on the xml, never the exit code" with
+  the missing half attached: assert on a FRESH xml.
 - `CustomCharacterScreenProbe` green.
 - `Checks.RunAll` all five in one launch.
   ⚠️⚠️ **AND IT DOES NOT EXIT THE EDITOR AFTER IT PRINTS `RESULT: OK`.** The batchmode process
