@@ -134,10 +134,17 @@ namespace TumbangPreso.EditorTools
 
                 if (importer != null)
                 {
-                    // ⚠️ A TEXTURE IMPORTED AS `Default` HAS NO SPRITE IN IT AT ALL, which is a
-                    // different failure from the one above and needs a reimport rather than a
-                    // different lookup.
+                    // ⚠️⚠️ `spriteImportMode = Single` IS THE REPAIR AND `Multiple` WAS THE BUG.
+                    // The `.meta` carried `spriteMode: 2` from `2385c4c5`, and **`Multiple` with no
+                    // sprite rects defined produces ZERO sprites**: not a sprite in the wrong
+                    // place, none at all. `LoadAllAssetsAtPath` therefore found nothing either,
+                    // which is why the second build still shipped without the mark. The committed
+                    // `.meta` is `Single` now; this line is what heals a checkout that is not.
+                    //
+                    // ⚠️ NOTHING ELSE IN THE PROJECT LOADS A SPRITE FROM THIS FILE, checked before
+                    // changing a shared importer setting. `GameBuilder` is its only reader.
                     importer.textureType = TextureImporterType.Sprite;
+                    importer.spriteImportMode = SpriteImportMode.Single;
                     importer.SaveAndReimport();
 
                     foreach (var asset in AssetDatabase.LoadAllAssetsAtPath(LogoPath))
