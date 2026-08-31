@@ -35,9 +35,13 @@ caught. `VISION.md` § 0 states it as the sentence every rule protects.
 | Players | 4, free for all | 4, free for all |
 | Rounds | **4**, one full rotation | **8**, two full rotations |
 | Round length | 90 s | 90 s |
-| Roster | the twelve street characters | the six heroes |
+| Roster | the twelve street characters + 3 custom player slots | the six heroes |
 | Powers | **none, and that is the feature** | two skills and an ultimate each |
 | Governed by | `Design.md` | `Design.md` § 13 points at the files |
+
+### 2.1 Roster Integrity & The Custom Character Creator
+- **Canonical Heroes & Classic Street Characters**: Berto, Sean, Dante, Cheska, Zack, Nemu, Phaister, etc. keep their canonical skin tones, facial features, and visual identity intact. No global hue-shifting or alien tint sliders are applied to named characters.
+- **Dedicated "Create Your Own Character" Slot**: Features **3 save slots** (Custom 1, 2, 3) where players can fully customize their own street kid avatar (facial expressions, natural Filipino skin tone palette, height, body size, hair style/color, streetwear, accessories, custom tsinelas, and custom lata). One active custom character is chosen for play.
 
 Four seats. One is the **taya** (defender); the other three are **attackers**. The taya rotates
 clockwise every round, derived as `(round - 1) % 4`, so everyone defends the same number of times

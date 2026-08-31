@@ -456,29 +456,12 @@ namespace TumbangPreso.UI
         /// </summary>
         private float RefreshTintRows(Transform rows, RosterEntry entry)
         {
-            if (_tab != 0 || entry == null) return 0.0f;
-
-            var book = RosterBook.Load();
-            var art = book != null ? book.PersonArt(_pick[0], SceneFlow.SelectedMode) : null;
-            if (art == null || art.Palette == null || art.Palette.Length == 0) return 0.0f;
-
-            string characterId = Roster.PersonIdAt(SceneFlow.SelectedMode, _pick[0]);
-            var look = Settings.SettingsStore.LookFor(characterId);
-
-            var tint = StripRow(rows, "TINT");
-
-            for (int step = 0; step < TintSteps; step++)
-            {
-                int hue = step * (360 / TintSteps);
-                BuildTintSwatch(tint, art.Palette, characterId, look, hue);
-            }
-
-            var strength = StripRow(rows, "STRENGTH");
-
-            foreach (var (label, percent) in TintStrengths)
-                BuildStrengthChip(strength, characterId, look, label, percent);
-
-            return (PaletteRowHeight + 6.0f) * 2.0f;
+            // ⚠️ ROSTER INTEGRITY (FUTURE.md § 5, TODO.md § 107):
+            // Canonical heroes and classic characters (Berto, Sean, Dante, Cheska, Zack, Nemu, Phaister, etc.)
+            // have fixed canonical skin tones, faces, and palettes. They must never be subjected to global
+            // whole-body hue rotation / alien tinting. Full customization belongs to the dedicated
+            // "Create Your Own Character" system (3 save slots, 1 active).
+            return 0.0f;
         }
 
         /// <summary>One captioned strip, built the same way the COLOURS row is.</summary>

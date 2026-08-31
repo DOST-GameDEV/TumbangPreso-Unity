@@ -524,6 +524,16 @@ what separated this from 5.7, which was still there underneath it.
 - **Slots 9, 10 and 11 are spare.** They keep the stock Kenney values, so the shader
   has something sane to read if a future box uses them.
 
+### 6.1 The 3-Slot Modular Custom Character Architecture
+`docs/FUTURE.md` § 5 and `docs/TODO.md` § 107 define the dedicated 3-Slot Custom Character Creator.
+Unlike canonical heroes (whose meshes and skin tones are static), custom avatars assemble modular voxel parts:
+1. **Head & Face**: Base head box with interchangeable facial expression decals (eyes/mouth), facial hair, and ear geometry.
+2. **Skin Tone Remap**: Remaps slots 13, 14, 15 to one of 5 natural Filipino skin tone palettes (`SKIN_GOLDEN`, `SKIN_KAYUMANGGI`, `SKIN_TAN`, `SKIN_DEEP`, `SKIN_FAIR`).
+3. **Hair Volumetrics**: Modular hair box assemblies (fade, undercut, buzz, long waves, curly top, spiky, twin pigtails) attached to head bone.
+4. **Body & Proportions**: Scaled voxel torso, arms, and legs matching the chosen height ($0.90\times$ to $1.10\times$) and build presets (lean, athletic, stocky).
+5. **Streetwear Layers**: Sandos, graphic t-shirts, basketball jerseys, shorts, rolled denim, and track jackets.
+6. **Wearables & Attachments**: Registered accessory bounding volumes from `docs/wearables_catalog.md` (caps, beanies, neck towels, shades, wristbands).
+
 ---
 
 ## 7 · The other tools

@@ -820,23 +820,32 @@ satisfied.
 
 ---
 
-## PHASE 5 · COSMETICS AND CHARACTER CUSTOMISATION ✅ SHIPPED 2026-08-31
+## PHASE 5 · COSMETICS AND CHARACTER CUSTOMISATION ⚠️ REWORKED 2026-08-31
 
-⚠️⚠️ **AND FINISHED ON 2026-08-31 WITH THE PART THAT WAS ACTUALLY THE POINT.**
-`docs/TODO.md` § 106.1. Everything in §§ 98 and 101 shipped a REWARD: a player owns no palette
-until hero mastery 5, so the answer to *"can I make my own character"* on a fresh account was no.
-🧑: *"the main purpose of the customizationn shit is so that ppl coudl spend their time making their
-own character"*. **What is new is a free colour dial, TINT and STRENGTH on character select, not
-gated on anything.** The earned palettes stay earned and are the named presets; the dial is
-expression rather than progress, which is § 0.5 rule 4 satisfied exactly.
-⚠️  **There is no brightness dial and there must never be one**: the toon shader bands on VALUE,
-so a player who could drag their own value could dress as a silhouette (`VISION.md` § 2 rule 5).
+⚠️⚠️ **ROSTER INTEGRITY VS. THE DEDICATED "CREATE YOUR OWN CHARACTER" SYSTEM.**
+`docs/TODO.md` § 107. A previous pass misunderstood 🧑's vision and applied a whole-body hue/tint slider across the entire roster, resulting in classic characters like **Berto** turning alien cyan and magenta with illegible skin tones. 🧑 corrected this immediately:
+> *"i didnnt want all characters to be customizable. I just wanted tehre to be a create ur own charcter slot and u can fully customize it (facial expression, clothes, skinn tone, height, size, accessories, everythinngs ), theres like 3 characters u can save at once but only onne is used. i didnt want it to be appliable to all characters wth. maybe the heroes we can change their clothes and shit but donnt touch the skin and shit of classic wtf"*
 
-🧑: *"we also wanna have customizable characters in the future"*. This is the cosmetic half; Phase
-10 is the skills half, and they are separated on purpose.
+### 5.1 The Two Distinct Character Categories
 
-**Slots:** body palette, headwear, tsinelas skin, can skin, emote wheel, victory pose, and **the
-banner**.
+1. **CANONICAL ROSTER HEROES & CLASSIC CHARACTERS (Berto, Sean, Dante, Cheska, Zack, Nemu, Phaister, etc.)**:
+   - **Visual Integrity is Locked**: Canonical skin tones, facial features, eyes, hair, body proportions, and silhouettes are fixed and non-negotiable.
+   - **No Alien Tint Sliders**: Global hue-shifting/tint dials on named heroes are strictly prohibited.
+   - **Cosmetics (Outfits Only)**: Future cosmetic support for heroes is strictly limited to thematic clothes, jackets, and costumes (skins) that preserve character recognition across the court.
+
+2. **DEDICATED "CREATE YOUR OWN CHARACTER" (CUSTOM CHARACTER CREATOR)**:
+   - **Dedicated Slot**: A dedicated "Custom Character" slot on the character select/loadout screen.
+   - **3 Save Slots**: Players can create, name, and store up to **3 custom characters** simultaneously (e.g. *Slot 1*, *Slot 2*, *Slot 3*), selecting exactly **one active custom avatar** to enter matches.
+   - **Full Modular Customization Suite**:
+     - **Facial Expressions & Features**: Eyes (determined, chill, fierce, happy, focused), eyebrows, mouth/smirk, face paint/chalk marks.
+     - **Authentic Filipino Skin Tones**: Natural sun-kissed palette (warm golden-bronze, kayumanggi, deep warm brown, tan, fair peach) — authentic street hues, no synthetic alien tints.
+     - **Body Proportions & Height**: Height (kid, teen, tall) and build/size sliders (lean, athletic, stocky) calibrated within competitive read bounds.
+     - **Hair & Head Styling**: Fade, undercut, buzz, long waves, curly top, spiky, twin pigtails, plus natural hair color palette.
+     - **Clothing & Streetwear**: Sandos, graphic t-shirts, basketball jerseys, denim shorts, cargo shorts, rolled jeans, track jackets.
+     - **Accessories**: Caps (forward/backward), beanies, *gulaman* towels over neck/shoulder, shades, goggles, wristbands, chain necklaces (`docs/wearables_catalog.md`).
+     - **Tsinelas & Lata**: Custom flip-flop straps/soles and personalized tin can designs.
+
+**Slots:** Custom character creator (3 save slots), hero outfits/clothes, headwear, tsinelas skin, can skin, emote wheel, victory pose, and **the banner**.
 
 ⚠️⚠️ **THE BANNER IS ONE OBJECT AND IT ABSORBS EVERY OTHER IDENTITY SURFACE. CUT 2026-08-31.** An
 earlier version of this list had a nameplate, a title, a badge, an emblem, a frame, a border, a
@@ -849,14 +858,12 @@ trackers (`INSPIRATION.md` § 2.5), and it is what appears in the lobby, on the 
 profile and at the end of a match. One object to author, one to replicate, one to earn things for.
 **Everything that used to be its own slot is now a field on the banner.**
 
-
 **Sources, all free:** account level, hero mastery, ranked season rewards, achievements.
 ⚠️ **Weekly challenges were a source here and are cut**, § 13. ❌ **No currency and no shop**, cut on 2026-08-31: § 4. No lootboxes, no gacha, no real money.
 
-**What makes it cheap here:** `RosterBook` and `RosterEntryAsset` already resolve id to model,
-palette, tint and clips, `ToonSkin`'s palette remap already recolours a whole character from 16
-slots per renderer, and `docs/wearables_catalog.md` already defines the wearable contract. **A
-colour variant of any character is nearly free today.**
+**What makes it cheap here:** `RosterBook` and `RosterEntryAsset` resolve id to model,
+palette, and clips, `ToonSkin`'s palette remap recolours modular voxel attachments from 16
+slots per renderer, and `docs/wearables_catalog.md` defines the wearable contract.
 
 ⚠️⚠️ **GIVE COSMETICS STRING IDS, NOT WIRE INDICES.** Every cosmetic id is something another peer
 resolves. `Roster.Slippers` records at length what inserting a row into a wire-facing list does.
@@ -869,9 +876,6 @@ competitive change wearing a cosmetic label. Bound the volume and write the boun
 
 ⚠️ **Preview through `ModelPreview` with the real shader, never a flat icon.** This project already
 learned that a render from one camera is not evidence about another.
-
-**One extra that is worth more than it costs:** a **favourite loadout per character**, so switching
-character does not mean re-dressing.
 
 **The prompt for this phase is [§ 19.5](#195-prompt-for-phase-5).** Every prompt in
 this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
@@ -1894,40 +1898,35 @@ actually do what their acceptance lists claim.**
 
 ### 19.5 Prompt for Phase 5
 
-**Cosmetics, the inventory and character customisation.**
+**Cosmetics, the inventory, 3-slot Custom Character Creator, and hero outfits.**
 
-> Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md`, then `docs/FUTURE.md` §§ 0.5
+> Read `CLAUDE.md` first, then `docs/VISION.md`, then `docs/TODO.md` § 107, then `docs/FUTURE.md` §§ 0.5
 > and 0.6, then `docs/FUTURE.md` § 5 and `docs/wearables_catalog.md`. Do not skip them because this
 > prompt summarises the task; the summary is not the rules.
 >
-> **VERIFY FIRST.** Phases 1, 2, 3 and 4 have all shipped as of 2026-08-30, so this is the next
-> unstarted phase. ⚠️ **Phase 4 computes the titles, badges, palettes and borders and NOTHING
-> WEARS THEM** (`docs/TODO.md` § 91.8): `ProgressionRules.AccountRewards(level)` answers what a
-> player owns and no screen equips any of it. That is this phase's first job and it is why the
-> reward tables are already populated. Confirm `RosterBook` and `RosterEntryAsset` still
-> resolve id to model, palette and tint, and that `ToonSkin`'s 16-slot palette remap still works
-> the way § 5 assumes, because a colour variant of any character being nearly free is the reason
-> this phase is affordable.
+> **VERIFY FIRST.**
+> ⚠️ **ROSTER INTEGRITY IS THE HARD RULE.** Classic characters and named heroes (Berto, Sean, Dante,
+> Cheska, Zack, Nemu, Phaister) have canonical skin tones, face geometries, and identities that must
+> **never** be altered by global tint dials or whole-body hue sliders. Hero cosmetics are strictly
+> clothes/outfits/costumes.
 >
-> **Build.** The inventory on the profile, a per-character loadout of cosmetic slots, the
-> customisation screen. ❌ No currency and no shop, cut on 2026-08-31: rewards come off the track and mastery directly. Slots: body
-> palette, headwear, face, back item, tsinelas skin, can skin, avatar frame, nameplate, banner,
-> title, emote wheel, victory pose, throw trail, knockdown effect.
+> **Build.**
+> 1. **The 3-Slot Custom Character Creator**: A dedicated "Create Your Own Character" slot allowing
+>    players to build and save up to 3 custom avatars (storing facial expressions, natural Filipino
+>    skin tone, height/build, hairstyle/color, streetwear, accessories, tsinelas, and lata), selecting
+>    one active custom character to bring into matches.
+> 2. **The Hero Outfits & Thematic Skins**: Optional cosmetic clothing swaps for roster heroes.
+> 3. **The Unified Banner**: Frame, pose, badge, title, and 3 stat trackers.
+> 4. **No Currency, No Shop**: Free unlocks via account level, hero mastery, achievements, and ranked tiers.
 >
-> **Constraints, and the first one is the expensive-to-fix one.**
-> - ⚠️⚠️ **STRING IDS FOR EVERY COSMETIC, NOT WIRE INDICES.** `Roster.Slippers` records what
->   inserting a row into a wire-facing list does. Pay the few extra bytes; it removes the whole
->   class of bug permanently and this is the last cheap moment to decide it.
-> - ⚠️ **A cosmetic must never change a silhouette enough to change a read.** This is a game about
->   seeing which of three attackers is committing. Bound the wearable volume, write the bound into
->   `docs/Art_Direction.md`, and test it.
+> **Constraints:**
+> - ⚠️⚠️ **STRING IDS FOR EVERY COSMETIC, NOT WIRE INDICES.**
+> - ⚠️ **A cosmetic must never change a silhouette enough to change a read.** Bound the wearable volume.
+> - ⚠️ **Natural Filipino Skin Tones Only for Custom Avatars**: Warm golden-bronze, kayumanggi, deep warm brown, tan, fair peach. No alien cyan/magenta.
 > - Extend `RosterEntryAsset` and `RosterBook`; do not build a parallel content system.
-> - Replicate the loadout through the seat info that already crosses at match start. No new
->   protocol.
 > - Preview through `ModelPreview` with the real shader, never a flat icon.
 >
-> **Done when** a cosmetic can be earned, equipped, seen by every peer and previewed correctly, a
-> test asserts no cosmetic changes any value read by the rules core, and § 0.5 rule 9 is satisfied.
+> **Done when** a custom character can be built in one of 3 slots, equipped into a match, seen by all peers, and § 0.5 rule 9 is satisfied.
 
 ---
 

@@ -2114,6 +2114,34 @@ one.**
 
 ---
 
+## 107 · Roster Integrity and the 3-Slot Custom Character Creator ⚠️⚠️ 2026-08-31
+
+🧑, reviewing the 2026-08-31 build and the screenshot of a green/cyan Berto with magenta clothes:
+> *"clarificatiopn: i didnnt want all characters to be customizable. I just wanted tehre to be a create ur own charcter slot and u can fully customize it (facial expression, clothes, skinn tone, height, size, accessories, everythinngs ), theres like 3 characters u can save at once but only onne is used. i didnt want it to be appliable to all characters wth. maybe the heroes we can change their clothes and shit but donnt touch the skin and shit of classic wtf"*
+
+### 107.1 · ⚠️⚠️ THE ROOT FAULT: APPLYING WHOLE-BODY HUE ROTATION TO CANONICAL HEROES
+§ 106.1 shipped a "TINT and STRENGTH dial" straight onto the character select screen that shifted the entire 16-slot palette of whatever character was selected, including skin, face, and hair. Applied to Berto, it produced an alien green figure that destroyed the character's Filipino identity and readability.
+
+### 107.2 · THE ARCHITECTURAL SPECIFICATION: TWO DISTINCT SYSTEMS
+1. **Canonical Roster Heroes (Berto, Sean, Dante, Cheska, Zack, Nemu, Phaister, etc.)**:
+   - **Locked Base Identity**: Canonical skin tones, facial geometry, eye shapes, hair colors, and base silhouettes are fixed.
+   - **No Alien Tint Sliders**: Global hue-shifting/tint dials on named heroes are removed.
+   - **Cosmetics = Thematic Outfits/Skins Only**: Future cosmetics for heroes are strictly clothing swaps and jackets that respect character recognition.
+
+2. **The "Create Your Own Character" System (Custom Character Creator)**:
+   - **Dedicated Slot**: A dedicated "Custom Character" slot on the character select/loadout screen.
+   - **3 Save Slots**: Players can create and store up to **3 custom characters** (e.g. *Slot 1*, *Slot 2*, *Slot 3*), selecting **1 active custom character** for matches.
+   - **Deep Customization Dimensions**:
+     1. **Facial Expressions & Features**: Eyes (determined, chill, fierce, happy, focused), eyebrows, mouth/smirk, face paint/chalk marks.
+     2. **Natural Filipino Skin Tones**: Warm golden-bronze, kayumanggi, deep warm brown, tan, fair peach (`docs/Art_Direction.md`).
+     3. **Body Proportions**: Height presets (kid, teen, tall) and build presets (lean, athletic, stocky) bounded within competitive gameplay read volumes.
+     4. **Hairstyle & Hair Color**: Fade, undercut, buzz, long waves, curly top, spiky, twin pigtails, with natural street hair colors.
+     5. **Streetwear & Outfits**: Sandos, graphic tees, oversized basketball jerseys, track jackets, denim shorts, cargo shorts, rolled jeans.
+     6. **Modular Accessories**: Caps (forward/backward), beanies, *gulaman* towels over neck/shoulder, shades, goggles, wristbands, chain necklaces (`docs/wearables_catalog.md`).
+     7. **Footwear & Lata**: Custom *tsinelas* (strap and sole colorways, crosshatch patterns) + custom *lata* (classic milk can, rusted, soda, painted street designs).
+
+---
+
 ## 106 · Phases 5 and 6 finished: the free colour dial, and parties as queue tickets ⚠️⚠️ 2026-08-31
 
 🧑, mid-session: *"also finish building phase 5-6"*, and the sentence that decides what "finished"

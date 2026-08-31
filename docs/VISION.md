@@ -250,6 +250,10 @@ penalties on consecutive runs. **None of the three were visible by playing it.**
   queue is `docs/Port_Plan.md` § 8; the authoring guide is `docs/Voxel_Person_Guide.md`.
 - **His UI art is the design system.** Wood, amber, cream, ink. Anything drawn in a different
   visual language is the thing that looks broken, not the thing that looks new.
+- **Roster Integrity vs. The 3-Slot Custom Character Creator.** Canonical heroes (Berto, Sean, Dante,
+  Cheska, Zack, Nemu, Phaister) keep their iconic, authentic skin tones, faces, and base geometry intact.
+  No alien whole-body tint sliders on named heroes. Full deep customization belongs to the dedicated
+  "Create Your Own Character" system with 3 save slots (1 active in match).
 
 ---
 

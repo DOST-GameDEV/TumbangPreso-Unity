@@ -248,3 +248,25 @@ did.
 | Magenta slipper / can accents | `PROP_FOAM` brown and Sarsi livery | superseded by the human's own second prop moodboard: *"the magenta stuff is just placeholder"* |
 | 1024² PBR on both props | Flat colour | the pipeline emits no UVs and the stated reference is flat colour |
 | Props at hero scale | Real scale, then the 1.6× slipper for drama | the board had no environment to be out of proportion with |
+
+---
+
+## 8 · Character Customization, Roster Integrity & Skin Tones
+
+### 8.1 Canonical Roster Heroes: Fixed Identity Law
+Canonical roster characters and heroes (Berto, Sean, Dante, Cheska, Zack, Nemu, Phaister, etc.) have fixed, non-negotiable character art:
+- **Skin tones, facial features, hair geometry, and eye shapes are canonical and locked.**
+- **No global tint dials or alien hue sliders on classic heroes.** Berto must never be tinted green, cyan, or magenta.
+- **Hero Cosmetics are Outfits Only**: Thematic jackets, alternate streetwear, or tournament jerseys that preserve the hero's identifiable silhouette.
+
+### 8.2 Custom Character Creator: 3-Slot Modular System
+The dedicated "Create Your Own Character" feature (3 save slots, 1 active) allows deep personalization within the authentic Filipino street universe:
+- **Authentic Skin Tone Palette**:
+  - `SKIN_GOLDEN`: `#ECAA6C` (Warm golden-bronze midtone)
+  - `SKIN_KAYUMANGGI`: `#C88A52` (Classic sun-baked Filipino tone)
+  - `SKIN_TAN`: `#DC9E64` (Warm street tan)
+  - `SKIN_DEEP`: `#8D5B34` (Deep warm brown)
+  - `SKIN_FAIR`: `#F4C29E` (Warm fair peach)
+- **Facial Expressions**: Expressive voxel eyes and mouth decals (chill, determined, fierce, happy, focused).
+- **Body & Height Scaling**: Bound within $[0.90\times, 1.10\times]$ of canonical person height ($1.60\text{ m}$) so hitbox alignment and jump clearances remain competitive.
+- **Wearable Accessories**: Bound strictly to headwear/eyewear/jewelry envelopes defined in `docs/wearables_catalog.md` without extending into role-indicating color spaces (`#f87020` offense orange or `#0080e8` defense blue).

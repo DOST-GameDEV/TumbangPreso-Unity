@@ -32,6 +32,7 @@ namespace TumbangPreso.UI
         private Text _level;
         private Image _xpFill;
         private RectTransform _bar;
+        private Image _rankBadge;
         private PlayerHub _hub;
         private SignInScreen _signIn;
 
@@ -152,6 +153,13 @@ namespace TumbangPreso.UI
             slot.Variation = "WoodSlot";
             slot.ApplyContentMargins = false;
             slot.Apply();
+
+            var badgeGo = new GameObject("RankBadge", typeof(RectTransform), typeof(Image));
+            badgeGo.transform.SetParent(portrait.transform, false);
+            MenuKit.Place((RectTransform)badgeGo.transform, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(44.0f, 44.0f));
+            _rankBadge = badgeGo.GetComponent<Image>();
+            _rankBadge.raycastTarget = false;
+            _rankBadge.enabled = false;
 
             _name = MenuKit.Label(go.transform, "", 22, UiTheme.Cream, new Vector2(0.0f, 0.5f),
                 new Vector2(238.0f, 16.0f), new Vector2(272.0f, 30.0f), TextAnchor.MiddleLeft);
@@ -366,12 +374,31 @@ namespace TumbangPreso.UI
 
             if (rank != null && rank.MatchesThisSeason > 0)
             {
-                tier = RatingRules.TierName(RatingRules.TierFor(rank.Rating));
+                var tierEnum = RatingRules.TierFor(rank.Rating);
+                tier = RatingRules.TierName(tierEnum);
 
                 // ⚠️ A TIER THAT IS STILL MOVING FAST SAYS SO. `RatingRules.SettledDeviation`:
                 // a first-week tier is a guess, and letting a player quote it as settled is how a
                 // ladder gets a reputation for being random.
                 if (rank.Deviation > RatingRules.SettledDeviation) tier += " ?";
+
+                if (_rankBadge != null)
+                {
+                    var sprite = RankIcons.ForTier(tierEnum);
+                    if (sprite != null)
+                    {
+                        _rankBadge.sprite = sprite;
+                        _rankBadge.enabled = true;
+                    }
+                    else
+                    {
+                        _rankBadge.enabled = false;
+                    }
+                }
+            }
+            else
+            {
+                if (_rankBadge != null) _rankBadge.enabled = false;
             }
 
             string level = earned && !offering ? $"LV {ProgressionRules.LevelForXp(xp)}" : "";
