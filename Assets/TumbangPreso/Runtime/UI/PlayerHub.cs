@@ -921,6 +921,7 @@ namespace TumbangPreso.UI
             }
 
             BuildMasteryRows(profile);
+            BuildAchievementsRows(profile);
 
             UiRows.Gap(_list, 40.0f);
             SetFooter("", "Rates appear once there are enough attempts to mean anything.");
@@ -968,6 +969,32 @@ namespace TumbangPreso.UI
                     xp > 0 ? $"MASTERY {level}" : "not played",
                     xp > 0 ? $"{games} games  ·  {remaining} XP to mastery {level + 1}" : "",
                     xp > 0 ? UiTheme.Amber : UiTheme.CreamMuted);
+            }
+        }
+
+        private void BuildAchievementsRows(PlayerProfile profile)
+        {
+            if (!Group("Achievements",
+                       "Milestones unlocked across street matches, modes, and ranks.",
+                       false))
+                return;
+
+            foreach (var tier in new[] { AchievementTier.Bronze, AchievementTier.Silver, AchievementTier.Gold })
+            {
+                var list = AchievementRules.Tier(tier);
+                foreach (var ach in list)
+                {
+                    int progress = AchievementRules.ProgressFor(ach, profile);
+                    bool unlocked = progress >= ach.TargetCount;
+
+                    string status = unlocked ? $"COMPLETED  ·  {ach.RewardLabel}" : $"{progress} / {ach.TargetCount}  ·  {ach.RewardLabel}";
+                    Color color = unlocked ? (tier == AchievementTier.Gold ? UiTheme.Amber : UiTheme.Highlight) : UiTheme.CreamMuted;
+
+                    UiRows.ValueRow(_list, $"[{tier.ToString().ToUpperInvariant()}] {ach.Title}",
+                        unlocked ? "UNLOCKED" : $"{progress}/{ach.TargetCount}",
+                        $"{ach.Description}  ({status})",
+                        color);
+                }
             }
         }
 
