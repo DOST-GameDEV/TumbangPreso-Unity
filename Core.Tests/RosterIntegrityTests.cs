@@ -84,13 +84,13 @@ namespace TumbangPreso.Core.Tests
         [InlineData("under_score and space")]
         public void ACustomCharacterNameSurvivesTheCodec(string name)
         {
-            var made = new CustomCharacter { Name = name, SkinToneIndex = 7, HairstyleIndex = 21 };
+            var made = new CustomCharacter { Name = name, SkinToneIndex = 7, HairstyleIndex = 9 };
 
             var back = CustomCharacterRules.DecodeWire(CustomCharacterRules.EncodeWire(made));
 
             Assert.Equal(name, back.Name);
             Assert.Equal(7, back.SkinToneIndex);
-            Assert.Equal(21, back.HairstyleIndex);
+            Assert.Equal(9, back.HairstyleIndex);
         }
 
         /// <summary>
@@ -101,8 +101,8 @@ namespace TumbangPreso.Core.Tests
         [Fact]
         public void AnOutOfRangeWireIsClampedRatherThanTrusted()
         {
-            string hostile = "C2:Cheater:9999:9999:9999:9999:9999:9999:9999:9999:9999:9999:"
-                             + "9999:9999:9999:9999:9999:tsinelas_classic:lata_boyben";
+            string hostile = "C3:Cheater:9999:9999:9999:9999:9999:9999:9999:9999:9999:9999:"
+                             + "9999:9999:9999:9999:9999:9999:9999:9999:zack";
 
             var decoded = CustomCharacterRules.DecodeWire(hostile);
 

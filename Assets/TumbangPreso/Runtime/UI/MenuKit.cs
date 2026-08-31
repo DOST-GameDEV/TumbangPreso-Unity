@@ -43,7 +43,43 @@ namespace TumbangPreso.UI
         public static Canvas BuildCanvas(Transform parent, string name)
         {
             var go = new GameObject(name);
-            go.transform.SetParent(parent, false);
+
+            // ⚠️⚠️ A TAKEOVER CANVAS IS BUILT AT THE SCENE ROOT WHEN ITS ASKED-FOR PARENT IS
+            // INSIDE ANOTHER CANVAS, AND THE BOOT SCREEN 🧑 PHOTOGRAPHED IS WHY.
+            // *"wtf is thhis shhit"*, 2026-08-31, with the account form floating over a fully lit
+            // menu, no wood column and no key art. `docs/TODO.md` § 111.2 and
+            // `NestedCanvasProbe` reproduce it in one picture.
+            //
+            // **A NESTED CANVAS IGNORES ITS OWN `CanvasScaler`.** Unity resolves scale on the ROOT
+            // canvas only, so a nested one inherits the root's `scaleFactor` whatever its own
+            // scaler says. Everything below in this method (the 1920x1080 reference, the match on
+            // height, `AspectSafeCanvas.Apply`) is INERT on a nested canvas, and every offset,
+            // column width and image fit the screen computes is then in the wrong unit space. The
+            // probe measured `SignInCanvas` at `scaleFactor 0.711` with `isRootCanvas false`.
+            //
+            // ⚠️⚠️ AND § 99 IS THE SAME TRAP ONE PROPERTY OVER, HALF FIXED. That entry records
+            // `sortingOrder` being silently ignored on a nested canvas and answers it with
+            // `overrideSorting = true` below. **Nobody asked what else a nested canvas ignores**,
+            // and the answer is the scaler. Detaching answers both at once and makes
+            // `overrideSorting` redundant rather than load-bearing; it is kept because a caller
+            // may still pass a root parent.
+            //
+            // ⚠️ THE OWNER IS NOT ABANDONED. `CanvasLifetime` destroys the detached canvas when
+            // the object that asked for it goes, because `Destroy(owner)` no longer takes it.
+            bool nested = parent != null && parent.GetComponentInParent<Canvas>() != null;
+
+            if (nested)
+            {
+                var scene = parent.gameObject.scene;
+                if (scene.IsValid())
+                    UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(go, scene);
+
+                go.AddComponent<CanvasLifetime>().Bind(parent.gameObject);
+            }
+            else
+            {
+                go.transform.SetParent(parent, false);
+            }
 
             var canvas = go.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;

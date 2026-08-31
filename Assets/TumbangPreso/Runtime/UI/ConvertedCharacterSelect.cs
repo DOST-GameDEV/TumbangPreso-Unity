@@ -505,7 +505,17 @@ namespace TumbangPreso.UI
             foreach (var (label, percent) in TintStrengths)
                 BuildStrengthChip(strength, characterId, look, label, percent);
 
-            return (PaletteRowHeight + 6.0f) * 2.0f + RefreshCustomDoor(rows);
+            // ⚠️⚠️ THE DOOR RIDES THE STRENGTH ROW RATHER THAN TAKING A THIRD ONE, AND
+            // `HeroPickerLayoutProbe` IS WHY. This column is already over-subscribed: the probe's
+            // dump reads `Rows h=460 pref=644`, so the vertical group is compressing every child
+            // to fit, and **a third strip row went straight into that budget and reopened the
+            // 29 px dead band above the ability rows** that `docs/TODO.md` § 94 records being
+            // "fixed" three times without moving. The button is 200 units wide beside three
+            // 44-unit chips, which the row has room for at every one of the nine resolutions
+            // `AspectRatioProbes` drives.
+            RefreshCustomDoor(strength);
+
+            return (PaletteRowHeight + 6.0f) * 2.0f;
         }
 
         /// <summary>
@@ -529,17 +539,15 @@ namespace TumbangPreso.UI
         /// art is the design system... anything drawn in a different visual language is the thing
         /// that looks broken."*
         /// </summary>
-        private float RefreshCustomDoor(Transform rows)
+        private void RefreshCustomDoor(Transform row)
         {
-            var row = StripRow(rows, "YOUR OWN");
-
             var profile = CustomCharacterStore.Profile;
             var active = profile.GetActive();
 
-            string caption = $"MAKE YOUR OWN  ·  SLOT {profile.ActiveSlot + 1}: {active.Name.ToUpperInvariant()}";
+            string caption = $"MAKE YOUR OWN  ·  {active.Name.ToUpperInvariant()}";
 
             var button = MenuKit.WoodButton(row, caption, new Vector2(0.0f, 0.5f),
-                                            Vector2.zero, new Vector2(520.0f, SwatchSize),
+                                            Vector2.zero, new Vector2(200.0f, SwatchSize),
                                             () =>
                                             {
                                                 MenuSfx.Click();
@@ -548,10 +556,8 @@ namespace TumbangPreso.UI
                                             "WoodPrimaryButton");
 
             var element = button.gameObject.AddComponent<LayoutElement>();
-            element.preferredWidth = 520.0f;
+            element.preferredWidth = 200.0f;
             element.preferredHeight = SwatchSize;
-
-            return PaletteRowHeight + 6.0f;
         }
 
         /// <summary>One captioned strip, built the same way the COLOURS row is.</summary>

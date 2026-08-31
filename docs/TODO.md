@@ -2114,6 +2114,335 @@ one.**
 
 ---
 
+## 111 · The build he opened: no studio mark, and the boot screen in the wrong unit space ⚠️⚠️ 2026-08-31
+
+🧑, opening the player: *"i also checked out the build and the ui is brokeN. 1. doesnt start with
+BH STUDIOS anymroe in loading screeN. 2. wtf is thhis shhit"*, with a screenshot of the account
+form floating over a fully lit main menu, no wood column and no key art.
+
+**Two separate faults, both in the build and neither visible to any probe in the repository.**
+
+### 111.1 · ⚠️⚠️ THE STUDIO LOGO: `LoadAssetAtPath<Sprite>` RETURNS NULL FOR A SPRITE SHEET
+
+`GameBuilder.ConfigureSplash` loads `Art/ui/brand/bh_studios_logo.png` and hands it to
+`PlayerSettings.SplashScreen.logos`. It came back null and the build logged **one `LogWarning` in an
+eight-thousand-line log** and shipped without the mark.
+
+**The cause is in the `.meta` and it has been there since `2385c4c5`, the commit that stood the
+project up: `spriteMode: 2`.** That is `SpriteImportMode.Multiple`, which makes the sprites
+SUB-ASSETS and leaves the file's MAIN asset a `Texture2D`. `LoadAssetAtPath<Sprite>` only ever
+returns the main asset. **The file is present, correct and imported as a Sprite, and the loader
+could never see it.**
+
+⚠️ **A NULL HERE IS INDISTINGUISHABLE FROM A MISSING FILE AND IT WAS REPORTED AS ONE.** The
+retry path underneath it could not help either: it needs `AssetImporter.GetAtPath` to answer, and in
+a cold batchmode session that is null too until the asset has been through the import queue.
+`Logs/gr_build.log` line 512 shows Unity importing the file **four lines after** the method had
+already given up on it.
+
+**Three changes, and the middle one is the fix:**
+
+1. `AssetDatabase.ImportAsset(..., ForceUpdate | ForceSynchronousImport)` first, so a cold session
+   has the asset before it is asked for. Same trap `CLAUDE.md` § 6.1 records for `.glb` sub-assets,
+   in the other direction.
+2. **`LoadAllAssetsAtPath` and take the first `Sprite`**, which works for `Single` and `Multiple`
+   alike. ⚠️ **The `.meta` is NOT rewritten to `Single` to fix this.** Changing a shared
+   importer setting to satisfy one reader is how the next reader breaks.
+3. `Resources.Load` as a last resort, because the same picture ships at
+   `Resources/UI/brand/bh_studios_logo.png` for the in-game sting.
+
+⚠️ **AND THE FAILURE IS A `LogError` NOW.** A warning about branding is a warning nobody
+sees. The message names the path.
+
+### 111.2 · ⚠️⚠️ A NESTED CANVAS IGNORES ITS OWN `CanvasScaler`, AND § 99 ONLY FIXED HALF OF THIS
+
+**The boot screen he photographed and the boot screen every probe photographs are the same method
+with different parents, and that is the entire difference.**
+
+- `Logs/ui/09-signin-at-boot-windowed.png`, taken minutes before he opened the build: **correct.**
+  Wood column on the left, cast filling the right.
+- His build: the form floating on the right, no column, no key art, the menu fully lit behind it.
+
+`PlayerHubLayoutProbe.Boot` does `_host = new GameObject("HubProbeHost")` and adds the nameplate to
+it, so `MenuKit.BuildCanvas` produces a **root** canvas. In the game, `ConvertedMainMenu` installs
+the nameplate **on its own GameObject**, which lives inside `MainMenuCanvas`, so every canvas built
+under it is **nested**.
+
+⚠️⚠️ **UNITY RESOLVES SCALE ON THE ROOT CANVAS ONLY. A NESTED CANVAS INHERITS THE ROOT'S
+`scaleFactor` WHATEVER ITS OWN SCALER SAYS.** `MenuKit.BuildCanvas` adds a `CanvasScaler`, sets the
+1920x1080 reference, matches on height and calls `AspectSafeCanvas.Apply`, and **all four are inert
+on a nested canvas**. Every offset, every column width and every image fit `SignInScreen` computes
+is then in the wrong unit space.
+
+**Measured:** `NestedCanvasProbe` reports `SignInCanvas scaleFactor 0.711, isRootCanvas False`.
+
+⚠️⚠️ **AND § 99 IS THE SAME TRAP ONE PROPERTY OVER, HALF FIXED.** That entry records
+`sortingOrder` being silently ignored on a nested canvas and answers it with
+`overrideSorting = true`. **Nobody asked what else a nested canvas ignores.** It is the scaler, and
+it has been wrong ever since.
+
+**The fix: `MenuKit.BuildCanvas` builds at the SCENE ROOT when the parent it is handed is inside
+another canvas.** One condition, one method, and it corrects the nameplate (480), the hub (500), the
+sign-in screen (510) and the character creator (520) at once. `overrideSorting` stays but is now
+redundant rather than load-bearing, because a root canvas sorts on its own order anyway.
+
+⚠️ **THE OWNER IS NOT ABANDONED.** A detached canvas outlives `Destroy(owner)`, and a
+full-screen canvas nothing can close is a worse bug than the one being fixed. `CanvasLifetime`
+watches its owner and destroys the canvas when it goes, the same way `PlayerNameplate.Update`
+watches the overlays rather than trusting whoever opened one to say so.
+
+### 111.3 · ⚠️⚠️ THE REASON NEITHER FAULT COULD BE CAUGHT, AND IT IS THE SAME REASON TWICE
+
+**Both probes built their subject in a way the game never does.** A splash logo loaded through a
+path the editor resolves differently from a cold batch session; a screen built on a bare GameObject
+where the game builds it inside a canvas. `CLAUDE.md` § 6.2b's four rows are about photographing
+the right STATE; this is a fifth row about photographing the right PARENT.
+
+⚠️ **`NestedCanvasProbe` IS THE GUARD AND IT IS WRITTEN THE OTHER WAY ROUND FROM HOW IT
+STARTED.** Its first version asserted the canvas WAS nested, because it was written to reproduce the
+bug, and it did, in one picture. It asserts `isRootCanvas` now, for the sign-in screen and for the
+hub, so the fault cannot come back quietly.
+
+### 111.4 · Two PlayMode reds that are NOT this work, checked rather than assumed
+
+The full PlayMode run is **132/134**. Both failures were tested against the base commit before
+being written off, because *"it was already broken"* is the easiest thing in the world to say and
+the hardest to trust.
+
+| Red | Verdict |
+|---|---|
+| `CarryTests.AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor`, **0.084 m** against a 0.050 m bound | § 93, open since 2026-08-30, and § 106 already records it at 0.084 and 0.092 on two separate runs. Nothing in this branch touches `Carrier`, the animator or `LateUpdate`. ⚠️ **Do not widen the bound.** |
+| `HeroPickerLayoutProbe.TheHeroPickerHasNoDeadBandAboveTheAbilityRows`, **27 px** against a 10 px spacing | **Measured on the base.** `ConvertedCharacterSelect.cs` was reverted to its `78d9aebb` contents, the probe was re-run, and it failed with **the identical 27 px**. The dead band is `Label h=56 pref=27` in the tagline box and predates every change here. § 94 records it being "fixed" three times without moving. |
+
+⚠️⚠️ **AND THE DOOR MOVED BECAUSE OF THAT SECOND ONE ANYWAY.** MAKE YOUR OWN was a third
+strip row on a column the probe's own dump shows over-subscribed (`Rows h=460 pref=644`), so it went
+into a budget that was already short. It rides the STRENGTH row now as a 200-unit button beside the
+three chips, `pref` is back to 582, and the column has 62 units more room than it did before this
+branch. **The pre-existing red is a smaller red than it was.**
+
+### 111.5 · ⚠️⚠️ THE CUSTOM WARDROBE IS SEALED OFF FROM EVERY EXISTING CHARACTER, AND A TEST HOLDS IT
+
+🧑: *"i want u to make sure all the shit ur doing is slef contained and doesnt fuck up anyones
+shit"*, and *"dont toucht heh existing onnes, i will be very mad if u break or fuck up any of the
+existing ones"*.
+
+**`VoxelDresser` is reachable from exactly one runtime file.** `CustomCharacterScreen` calls it; the
+two probes that photograph the wardrobe call it; nothing else in the project mentions it.
+`CustomCharacterWardrobeTests.NothingButTheCustomCharacterScreenTouchesTheWardrobe` reads every
+`.cs` under `Assets/TumbangPreso` as text and fails on any other file that names it, which is the
+same technique the three `tools/` audits use and for the same reason: **a reference that exists is a
+reference a behaviour test cannot see until somebody exercises it.**
+
+⚠️ **AND NOTHING TOUCHES A ROSTER `.glb`, A ROSTER `.tres` OR A ROSTER PALETTE.** The
+wardrobe hangs runtime boxes on the `custom` rig alone, `person_custom.asset` is its own
+`RosterEntryAsset`, and `custom` is deliberately not a row in `Roster.AllPeople`. The one change
+that reaches a canonical character is `PaletteRules.IsProtectedSlot`, which **takes** reach away
+from a dial rather than adding any (§ 107).
+
+---
+
+## 110 · The character maker gets a wardrobe, and the custom hero borrows a kit ⚠️⚠️ 2026-08-31
+
+🧑, opening the screen § 108 built: *"does character maker or whatver its called work? like if i
+change size or eyes or mouth or add an accessory i can actually see it. can i change the color of
+thhose clothes too?? IF ur character maker isnt expansive enough like stardew valley or monster
+hunter world then keep going"*, and then *"make ur own assets or clothes or expressions or voxel or
+wtv u need to make it more expansive"*.
+
+### 110.1 · ⚠️⚠️ THE HONEST ANSWER WAS NO, AND THE COUNT WAS TWO OUT OF FIFTEEN
+
+§ 108 gave the maker a screen, three save slots, persistence, a live preview and a working door.
+**What it did not give it was content.** Of fifteen controls, exactly two moved anything on the
+model:
+
+| Control | Did it show? | Why not |
+|---|---|---|
+| Skin tone | **yes** | written into palette slots 13, 14, 15 |
+| Hair colour | **yes** | written into slots 10, 11, 12 |
+| Top, bottom | half | the COLOUR changed, derived from the garment index; the CUT never did |
+| Height, build | **no** | the number was stored and nothing scaled the rig |
+| Expression, marks | **no** | no geometry, and the rig's own face is painted into `head-mesh`'s UVs |
+| Hairstyle | **no** | 48 names, no meshes |
+| Headwear, eyewear, wrist, neck | **no** | 32, 24, 24 and 20 names, no meshes |
+| Footwear, lata | **no** | names invented rather than pointing at `Roster.Slippers` and `Roster.Cans` |
+
+**That is a data model with a screen in front of it, which is one step further along than
+§ 108.1's data model with nothing in front of it and still not a character maker.**
+
+### 110.2 · ⚠️⚠️ THE FIX IS A RUNTIME VOXEL WARDROBE, AND THE KEY IS THAT NOTHING IS AUTHORED IN MILLIMETRES
+
+`tools/wearables_registry.py` already had thirteen wearables in it, written by the Python pipeline
+as absolute box coordinates in ONE rig's model space: a goggle lens at `y 0.635 to 0.690` is a
+measurement of `team-inday` and of nothing else. `docs/Voxel_Person_Guide.md` § 5.7 records what
+that costs: **the cast spans 132 mm from the shortest rig to the tallest**, so a hat authored
+against one head sits on another's forehead.
+
+**`VoxelPart` is normalised instead.** `U` is across, `V` is up, `W` is forward, each `-1` to `1`
+of the MEASURED part it hangs off, and a value past `1` is deliberately proud of the surface.
+`VoxelDresser` measures `head-mesh` and `body-mesh` off their own renderers every time it dresses,
+so **one authored hat fits every character in the cast** and a rig that changes shape tomorrow
+still wears it.
+
+⚠️ **THE BONE NAMES ARE REAL AND WERE CHECKED RATHER THAN ASSUMED.** The `.glb` carries
+`root, leg-left, leg-right, torso, arm-left, arm-right, head` as node names, which is
+`tools/build_person_voxel.py`'s own `BONE` table, and `DanceClip` and `HeroAbilityClips` already
+key animation curves on the same strings. Boxes are parented to the BONE, so a hat follows the head
+when it turns.
+
+⚠️ **AND EVERY BOX GOES THROUGH `ToonSkin.Apply`.** `docs/CANONICAL_RENDERING_PIPELINE.md`
+§ 1: the toon shader, the ink outline and Unity's linear conversion ARE the look. A cube that
+skipped them would read as a sticker stuck to the character.
+
+### 110.3 · ⚠️⚠️ COVER, DO NOT REPLACE, AND THE FACE IS WHERE THAT NEEDED CARE
+
+The base rig is one baked mesh with hair, a sando and shorts already in it. Removing a region of it
+at runtime means re-authoring the `.glb` per combination, which is twelve hairstyles times ten tops
+of offline builds for one character. **A voxel character is a stack of boxes, so a box that fully
+encloses the region under it IS the replacement**, and it costs one draw call rather than a build.
+Every hairstyle below therefore encloses the scalp rather than sitting on it, and `Bald` is a
+skin-coloured shell, which is the proof the rule holds.
+
+⚠️⚠️ **THE FACE IS THE EXCEPTION AND IT NEEDED A PLATE.** The rig's own eyes and mouth are
+painted into `head-mesh`'s UVs at slot 8, so a new pair of eyes in front of them leaves the old pair
+visible around the edges. Every expression lays a skin-coloured plate over the front of the head
+first and draws on that.
+
+⚠️ **AND EVERY FEATURE CLEARS THE INK OUTLINE BY CONSTRUCTION.**
+`docs/CANONICAL_RENDERING_PIPELINE.md` pitfall 5: `ToonSkin.Apply` extrudes the inverted hull by
+`PersonOutlineWidth`, about 8 to 12 mm, so **a decal 2 to 4 mm proud is swallowed whole.** The face
+layers are plate, then features, then marks, then eyewear, each one step further out.
+
+### 110.4 · What the wardrobe actually holds
+
+Every one of these is authored voxel geometry in `VoxelWardrobe`, and
+`CustomCharacterWardrobeTests` fails if a name in `CustomCharacterRules` has no boxes behind it.
+
+| Slot | Count | Notes |
+|---|---|---|
+| Skin tone | 32 | warm only, hex carried in the name |
+| Expression | 12 | eyes, brows and mouth. ⚠️ **the expression is in the BROW**: at arena distance a voxel eye is two pixels |
+| Face marks | 10 | bandage, freckles, scar, war paint, eye patch |
+| Hairstyle | 12 | including `Bald`, which is the shell that proves the covering rule |
+| Hair colour | 24 | fourteen natural then ten dyes |
+| Top | 10 | ⚠️ **the SLEEVE is the read**, not the shirt |
+| Bottom | 8 | ⚠️ **the HEM HEIGHT is the read** |
+| Clothing colour | 16 | applied to top and bottom SEPARATELY |
+| Headwear | 12 | cap forward and backwards, bucket, salakot, beanie, bandana, headband, towel, durag, visor, horns |
+| Eyewear | 9 | glasses, shades, matrix, goggles, aviators, visor, dust mask, chalk mark |
+| Neck | 8 | chains, dogtag, rosary, good morning towel, lanyard, neckerchief |
+| Wrist | 6 | ⚠️ on `arm-right`, which is the throwing arm and the one on screen in FPP |
+| Footwear | 6 | tsinelas through court kicks |
+| Height | 7 steps | 85 to 115 per cent, five at a time |
+| Build | 3 | lean, regular, stocky |
+| Tsinelas, lata | 6 + 6 | ⚠️ **the real `Roster.Slippers` and `Roster.Cans`**, not invented names |
+
+**That is over four billion looks before wrists, neck, footwear, height and build are counted**, and
+`ThereIsEnoughToMakeSomethingWithAndTheCountIsWrittenDown` asserts the floor so a future deletion is
+red rather than quiet.
+
+⚠️⚠️ **THE LISTS GOT SHORTER AND THAT IS THE POINT.** 48 hairstyles became 12, 48 tops became
+10, 32 hats became 12. **Twelve hats that exist beat thirty-two names that do not**, and the count
+that matters to a player is the combination count, not the list length.
+
+### 110.5 · ⚠️⚠️ THE CUSTOM CHARACTER BORROWS ONE HERO'S KIT, WHOLE
+
+🧑, 2026-08-31: *"they can only use onne chharacter at a time with custom everything annd im
+thinnking that it can js borrow the skills of any of the characters for its skills and ult"*, then
+*"it can only follow onne skill tree tho and cant mix diff shits"*.
+
+**The second sentence is the rule and it is the one that protects the game.** A custom character
+that could take Zack's Bolt Sprint with Cheska's Ice Barricade and Sean's Supernova would be a
+seventh hero built out of the best third of six, and `docs/VISION.md` § 4's whole competitive
+argument is that reading which ultimate an opponent has banked is a skill. **Borrowing a whole kit
+keeps every tell in the game true: a custom character telegraphs exactly like the hero whose kit it
+carries.**
+
+⚠️⚠️ **THE SHAPE OF THE DATA IS THE ENFORCEMENT.** `CustomCharacter.HeroKitId` is ONE string,
+so a mixture is not something a modified client can send: there is no field for skill one and skill
+two separately. `CustomCharacterKitTests.ThereIsExactlyOneKitFieldSoAMixtureCannotBeExpressed` walks
+the type by reflection and fails if a second one is ever added, and its failure message is the rule.
+
+⚠️ **A CLASSIC CHARACTER'S ID IS NOT A KIT.** `KitFor` resolves `bayan` (BERTO),
+`lola_pacing`, an empty string and anything unknown to the first hero, because a Hero Strike seat
+with no kit has no skills and no ultimate, which is a broken match rather than a missing cosmetic.
+§ 108.3 is the entry about a loadout table that thought Berto was a hero.
+
+⚠️ **AND THE ROW NAMES THE ABILITIES UNDER IT**, transcribed from the `base(...)` calls in
+`Assets/TumbangPreso/Runtime/Abilities/*HeroKit.cs`, so the choice is made on what the kit DOES.
+`docs/VISION.md` § 3: character select is the LEARN layer.
+
+### 110.6 · The wire format is `C3` and `C1` and `C2` are refused
+
+Two more fields (`TopColorIndex`, `BottomColorIndex`), two changed (`CanIndex`, `SlipperIndex` now
+index the real roster lists), one added (`HeroKitId`), and every other index now means something
+different because the lists it points into are a quarter of the length.
+
+⚠️⚠️ **A `C2` FRAME DECODED AGAINST THE NEW LISTS IS NOT AN OLD CHARACTER, IT IS A DIFFERENT
+CHARACTER WEARING SOMEBODY ELSE'S CLOTHES.** Neither `C1` nor `C2` ever shipped in a build, so
+`DecodeWire` refuses both and answers a default rather than guessing. That is the same degradation
+`PaletteRules.IsKnownVariant` guarantees for an unknown palette id: **an id that does not resolve
+degrades, it does not blank, and it never silently means something else.**
+
+### 110.7 · Height and build scale the RIG and nothing else
+
+⚠️⚠️ **THE CAPSULE, THE REACH AND EVERY DISTANCE IN `Combat` ARE UNTOUCHED**, which is what
+keeps this inside `docs/FUTURE.md` § 0.5 rule 4. `CLAUDE.md` § 4 resolves contact by DISTANCE, and
+`Roster.HeroPeople`'s header is the receipt for what a size difference is worth here: Sean sits at
+the speed floor entirely because he is the big one. A scale that reached the collider would be a
+cosmetic deciding who gets tagged.
+
+⚠️ **HEIGHT IS Y AND BUILD IS X AND Z**, which is why they are two controls. A single uniform
+scale makes a short character a SMALL character, and short-and-wide is the silhouette most of this
+cast actually is. The bound on build is 8 per cent either side: the visual scale is expression
+rather than a stat, and the bound is there because a silhouette twice everyone else's width is a
+readability problem (`docs/VISION.md` § 2) whether or not it is a balance one.
+
+### 110.9 · ⚠️⚠️ THE FRAMES WERE GUESSED TWICE AND BOTH GUESSES SHIPPED VISIBLY WRONG
+
+**Written down because it is `docs/Voxel_Person_Guide.md` § 5.8 happening again in a new file.**
+That section's rule is *"A transcribed constant is a measurement of one thing presented as a law"*,
+and the first two passes at `VoxelDresser.MeasureAnchor` broke it by estimating instead:
+
+| Guess | What it drew | What the measurement said |
+|---|---|---|
+| ⚠️⚠️ **The torso frame is `body-mesh` narrowed a bit** | **Every shirt painted the character's forearms.** | `body-mesh`'s half width is **0.3836, which is the whole ARM SPAN**. The torso is **0.128**, measured by walking the skin weights. A sleeve at U 1.1 was reaching to the fingertips. |
+| ⚠️⚠️ **The face is at the front of the head box** | The hair drew as a **helmet jutting over the forehead**, and the face plate floated in front of the nose. | The head box runs to z **0.26** and **the face is at z 0.20**; the last 60 mm is the hair fringe. `FaceW` is 0.77, not 0.85. |
+| ⚠️ **The eye line is halfway up the head** | Eyes on the forehead. | The head box is y 0.340 to 0.778 and **includes the hair mass above the skull**, so the eye line is at **0.57** of it. |
+| ⚠️ **An arm hangs downward** | A wristband wrapping thin air beside the elbow. | `arm-left` runs x **0.0999 to 0.3836 at a near-constant height**: it is a horizontal bar. U runs ALONG the limb and a band is narrow in U and wraps in V and W. |
+
+**The measurement is one script and it took two minutes**: read the `.glb`, group the vertices by
+their heaviest `JOINTS_0` weight, print the extents per bone. The table it produced is now in
+`MeasureAnchor`'s own header, and the frames are derived from the BONES at runtime rather than from
+those numbers, so a rig that changes shape tomorrow still wears the wardrobe.
+
+⚠️⚠️ **AND NONE OF THE FOUR WAS VISIBLE TO A TEST.** `CustomCharacterWardrobeTests` was green
+through all of them: every name had boxes, every box was inside the palette, no box was inside out.
+**A box that exists is not a box in the right place**, and the only thing that can tell the
+difference is the picture. `WardrobeSheetProbe` is that picture now: one PNG per entry, every
+category, on the real rig through the real shader, named for what it is so a cell can be identified
+three weeks later without counting along a row.
+
+⚠️ **`CLAUDE.md` § 6.1 ASKED FOR THIS AND ONE SHOT OF ONE COMBINATION IS NOT IT.** The creator
+screen's own probe photographs whatever slot 1 happens to be wearing, which is one hat out of twelve
+and one cut out of twelve. **A wardrobe is judged as a set**: the question is not whether the beanie
+works, it is whether the beanie reads differently from the bucket hat at the size a player sees
+them.
+
+### 110.8 · STILL OPEN
+
+- ⚠️⚠️ **THE CUSTOM CHARACTER STILL DOES NOT WALK INTO A MATCH.** § 108.5 is unchanged:
+  `CustomCharacterStore.ActiveWire()` produces the string and nothing sends it, and
+  `MatchInstaller` still spawns a `Roster` entry. **The wardrobe makes that job easier rather than
+  harder**: `VoxelDresser.Dress` takes a rig and a palette and knows nothing about the preview, so
+  the match path is the same four calls against `CharacterVisual`'s model.
+- **The borrowed kit is stored and not yet honoured.** `HeroAbilitySystem.CreateKitFor` maps a
+  character id to a kit; it needs one more arm that reads `HeroKitId` when the id is `custom`.
+- **The lata and the tsinelas are chosen and not yet equipped.** They are indices into
+  `Roster.Cans` and `Roster.Slippers`, which `CharacterLoadout.CanPick` and `SlipperPick` already
+  carry, so this is a write rather than a protocol.
+
+---
+
 ## 109 · Phase 6's last mile: the three-hour hang, and the presence state nothing had ever lit ⚠️⚠️ 2026-08-31
 
 Handed over as *"finish Phase 6"*, with four jobs. Three are closed here and the fourth cannot be

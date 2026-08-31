@@ -46,6 +46,11 @@ caught. `VISION.md` § 0 states it as the sentence every rule protects.
   so the clothes stay customisable and the skin never moves. `docs/TODO.md` § 107.
   ⚠️ **BERTO IS A CLASSIC CHARACTER AND NOT A HERO.** This line listed him among the heroes;
   `Roster.HeroPeople` is the list and `bayan` (BERTO) is not in it.
+- **The custom character borrows one hero's kit, whole.** In Hero Strike it brings the skills and
+  ultimate of one of the six, chosen on the creator's KIT page, and it can never mix two.
+  ⚠️ **That is what keeps every ability tell in the game true**: a custom character telegraphs
+  exactly like the hero whose kit it carries, so reading which ultimate an opponent has banked stays
+  a skill rather than a guess (`docs/VISION.md` § 4, `docs/TODO.md` § 110.5).
 - **Dedicated "Create Your Own Character" Slot**: Features **3 save slots** (Custom 1, 2, 3) where players can fully customize their own street kid avatar (facial expressions, natural Filipino skin tone palette, height, body size, hair style/color, streetwear, accessories, custom tsinelas, and custom lata). One active custom character is chosen for play.
 
 Four seats. One is the **taya** (defender); the other three are **attackers**. The taya rotates

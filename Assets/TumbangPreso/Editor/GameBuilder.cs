@@ -85,24 +85,73 @@ namespace TumbangPreso.EditorTools
         /// menu's navy makes the two read as one sequence rather than as an interruption. The
         /// boot sting starts before this screen (see <c>BootSting</c>), so it has sound too.
         /// </summary>
+        /// ⚠️⚠️ THE LOGO IS FORCE-IMPORTED BEFORE IT IS LOOKED UP, AND A BUILD SHIPPED
+        /// WITHOUT IT BECAUSE IT WAS NOT. 🧑, opening the 2026-08-31 player: *"doesnt start with
+        /// BH STUDIOS anymroe in loading screeN"*. `Logs/gr_build.log` line 512 shows Unity
+        /// IMPORTING `bh_studios_logo.png` **four lines after** this method had already given up on
+        /// it: in a cold batchmode session the asset had not been through the import queue yet, so
+        /// `LoadAssetAtPath` answered null AND `AssetImporter.GetAtPath` answered null, and the
+        /// retry below it could not run either. The whole thing degraded to one `LogWarning` in an
+        /// eight-thousand-line log and the build succeeded without the studio's mark on it.
+        ///
+        /// ⚠️⚠️ IT IS THE SAME TRAP `CLAUDE.md` § 6.1 ALREADY RECORDS ONE SYSTEM OVER:
+        /// *"Force-reimport sub-assets before rendering. Rebuilding a pet or accessory `.glb` from
+        /// Python changes the file on disk while Unity keeps the old one in memory."* Here it is
+        /// the other direction, a file on disk Unity has not read yet, and the answer is the same
+        /// call.
+        ///
+        /// ⚠️ AND THE FAILURE IS AN ERROR NOW, NOT A WARNING. A warning about branding is a
+        /// warning nobody sees. `Debug.LogError` is what a batch run's caller can grep for, and it
+        /// names the path so the next person does not have to find it.
         private static void ConfigureSplash()
         {
-            var logo = AssetDatabase.LoadAssetAtPath<Sprite>(
-                "Assets/TumbangPreso/Art/ui/brand/bh_studios_logo.png");
+            const string LogoPath = "Assets/TumbangPreso/Art/ui/brand/bh_studios_logo.png";
+
+            AssetDatabase.ImportAsset(LogoPath,
+                ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
+
+            // ⚠️⚠️ `LoadAllAssetsAtPath` RATHER THAN `LoadAssetAtPath<Sprite>`, AND THIS IS THE
+            // ACTUAL CAUSE OF THE MISSING MARK. `bh_studios_logo.png.meta` has carried
+            // **`spriteMode: 2`** since the project was stood up in `2385c4c5`, which is
+            // `SpriteImportMode.Multiple`: the sprites are SUB-ASSETS and the MAIN asset of the
+            // file is a `Texture2D`. `LoadAssetAtPath<Sprite>` only ever returns the main asset,
+            // so it answered null for a file that is present, correct and imported as a Sprite.
+            // **A null here is indistinguishable from a missing file and it was reported as one.**
+            //
+            // ⚠️ THE META IS NOT REWRITTEN TO `Single` TO FIX IT. Changing a shared importer
+            // setting to satisfy one reader is how the next reader breaks; taking the first sprite
+            // out of the file works for `Single` and `Multiple` alike and touches nothing.
+            Sprite logo = null;
+
+            foreach (var asset in AssetDatabase.LoadAllAssetsAtPath(LogoPath))
+            {
+                if (asset is Sprite sprite) { logo = sprite; break; }
+            }
 
             if (logo == null)
             {
-                var importer = AssetImporter.GetAtPath(
-                    "Assets/TumbangPreso/Art/ui/brand/bh_studios_logo.png") as TextureImporter;
+                var importer = AssetImporter.GetAtPath(LogoPath) as TextureImporter;
 
                 if (importer != null)
                 {
+                    // ⚠️ A TEXTURE IMPORTED AS `Default` HAS NO SPRITE IN IT AT ALL, which is a
+                    // different failure from the one above and needs a reimport rather than a
+                    // different lookup.
                     importer.textureType = TextureImporterType.Sprite;
                     importer.SaveAndReimport();
 
-                    logo = AssetDatabase.LoadAssetAtPath<Sprite>(
-                        "Assets/TumbangPreso/Art/ui/brand/bh_studios_logo.png");
+                    foreach (var asset in AssetDatabase.LoadAllAssetsAtPath(LogoPath))
+                        if (asset is Sprite sprite) { logo = sprite; break; }
                 }
+            }
+
+            // ⚠️ AND `Resources` IS THE LAST RESORT, because the same picture is shipped at
+            // `Resources/UI/brand/bh_studios_logo.png` for the in-game boot sting and a build that
+            // has one copy has both.
+            if (logo == null)
+            {
+                var fallback = Resources.Load<Sprite>("UI/brand/bh_studios_logo");
+                if (fallback != null) logo = fallback;
             }
 
             PlayerSettings.SplashScreen.show = true;
@@ -116,8 +165,10 @@ namespace TumbangPreso.EditorTools
 
             if (logo == null)
             {
-                Debug.LogWarning("[Build] no BH Studios logo for the splash; " +
-                                 "the engine logo will show on its own.");
+                Debug.LogError("[Build] NO BH STUDIOS LOGO FOR THE SPLASH. Expected a Sprite at "
+                               + LogoPath + " or Resources/UI/brand/bh_studios_logo. The player "
+                               + "will boot on the engine logo alone, which is the fault reported "
+                               + "on 2026-08-31. docs/TODO.md 111.1.");
                 return;
             }
 

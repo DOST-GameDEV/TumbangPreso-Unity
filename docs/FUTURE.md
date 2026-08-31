@@ -875,19 +875,26 @@ everything would be indistinguishable from having no dial at all.
 
      | Section | Rows | Count |
      |---|---|---|
-     | Face | skin tone, expression, marks | 32, 24, 20 |
-     | Hair | cut, colour | 48, 32 |
-     | Body | height, build | 85 to 115 per cent in 5s, 3 |
-     | Clothes | top, bottom | 48, 36 |
-     | Gear | headwear, face, wrists, neck | 32, 24, 24, 20 |
-     | Kit | tsinelas, lata | 20, 12 |
+     | Face | skin tone, expression, marks | 32, 12, 10 |
+     | Hair | cut, colour | 12, 24 |
+     | Body | height, build | 7 steps of 5 per cent, 3 |
+     | Clothes | top, top colour, bottom, bottom colour | 10, 16, 8, 16 |
+     | Gear | headwear, eyewear, wrists, neck | 12, 9, 6, 8 |
+     | Kit | footwear, tsinelas, lata, borrowed hero kit | 6, 6, 6, 6 |
 
-   - ⚠️⚠️ **AND WHAT IS A NAME RATHER THAN A MESH, STATED HERE BECAUSE IT IS THE GAP.**
-     The skin tone, the hair colour and the two garment colours reach the model as palette writes and
-     are real. **The 48 tops, 36 bottoms, 48 hairstyles, 24 expressions and the accessory lists are
-     NAMES with no geometry behind them yet**, so stepping through them changes a colour and not a
-     cut. `docs/TODO.md` § 108.4 is the entry; `tools/wearables_registry.py` and
-     `tools/compile_modular_hero.py` are the pipeline that has to feed them.
+   - ⚠️⚠️ **EVERY ENTRY IS GEOMETRY, AND `CustomCharacterWardrobeTests` FAILS IF ONE IS NOT.**
+     `docs/TODO.md` § 110. `VoxelWardrobe` authors the boxes and `VoxelDresser` hangs them on the
+     MEASURED head, torso, arm and legs, so one authored hat fits a cast that spans 132 mm. The
+     lists got SHORTER doing it: 48 hairstyles became 12, 48 tops became 10, 32 hats became 12.
+     **Twelve hats that exist beat thirty-two names that do not**, and the number a player feels is
+     the combination count, which is over four billion looks before wrists, neck, footwear, height
+     and build are counted.
+   - ⚠️⚠️ **THE CUSTOM CHARACTER BORROWS ONE HERO'S KIT, WHOLE, AND CANNOT MIX.** 🧑,
+     2026-08-31: *"it can js borrow the skills of any of the characters for its skills and ult"*,
+     then *"it can only follow onne skill tree tho and cant mix diff shits"*. `HeroKitId` is ONE
+     string, so a mixture is not something a modified client can send; a custom character telegraphs
+     exactly like the hero whose kit it carries, which is what keeps `docs/VISION.md` § 4's
+     ability tells true. § 110.5.
 
 **Slots:** Custom character creator (3 save slots), hero outfits/clothes, headwear, tsinelas skin, can skin, emote wheel, victory pose, and **the banner**.
 
@@ -1988,10 +1995,11 @@ actually do what their acceptance lists claim.**
 > all peers, and § 0.5 rule 9 is satisfied.
 >
 > ⚠️⚠️ **WHAT IS DONE AND WHAT IS NOT, AS OF 2026-08-31.** The screen, the three slots, the
-> persistence, the live preview and the roster lock are built (`docs/TODO.md` § 108). **The custom
-> character does not yet cross the wire and does not yet walk into a match**: `CustomCharacterStore.ActiveWire`
-> produces the string and nothing sends it, and `MatchInstaller` still spawns a roster entry. That
-> is the remaining half of this phase and it is § 108.5.
+> persistence, the live preview, the roster lock, the whole voxel wardrobe and the borrowed hero kit
+> are built (`docs/TODO.md` § 108 and § 110). **The custom character does not yet cross the wire and
+> does not yet walk into a match**: `CustomCharacterStore.ActiveWire` produces the string and
+> nothing sends it, `MatchInstaller` still spawns a roster entry, and `HeroAbilitySystem.CreateKitFor`
+> does not yet read `HeroKitId`. That is the remaining half of this phase and it is § 110.8.
 
 ---
 
