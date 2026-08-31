@@ -255,6 +255,80 @@ WEARABLE_EARMUFFS = [
     ("muff-star-r",         "head", (-0.244, 0.445, -0.015), (-0.235, 0.475, 0.035), FROST_ACCENT),
 ]
 
+# --- 5. TRADITIONAL FILIPINO CONICAL SALAKOT ---
+WEARABLE_SALAKOT = [
+    ("salakot-rim-base",   "head", (-0.260, 0.580, -0.260), (0.260, 0.605, 0.260), WOOD_GOLD),
+    ("salakot-rim-inner",  "head", (-0.245, 0.595, -0.245), (0.245, 0.620, 0.245), OVERALLS),
+    ("salakot-mid-cone",   "head", (-0.200, 0.610, -0.200), (0.200, 0.655, 0.200), WOOD_GOLD),
+    ("salakot-mid-weave",  "head", (-0.175, 0.645, -0.175), (0.175, 0.690, 0.175), OVERALLS),
+    ("salakot-apex-cone",  "head", (-0.120, 0.680, -0.120), (0.120, 0.730, 0.120), WOOD_GOLD),
+    ("salakot-apex-cap",   "head", (-0.070, 0.720, -0.070), (0.070, 0.755, 0.070), OVERALLS),
+    ("salakot-finial-pin", "head", (-0.020, 0.750, -0.020), (0.020, 0.778, 0.020), SILVER),
+    # Woven Chin Ties
+    ("salakot-tie-l",      "head", (0.160, 0.350, -0.010), (0.175, 0.585, 0.010), WOOD_GOLD),
+    ("salakot-tie-r",      "head", (-0.175, 0.350, -0.010), (-0.160, 0.585, 0.010), WOOD_GOLD),
+    ("salakot-tie-chin",   "head", (-0.050, 0.340, 0.030), (0.050, 0.355, 0.050), WOOD_GOLD),
+]
+
+# --- 6. ARCANE WITCH HAT WITH POTION VIALS ---
+WEARABLE_WITCH_HAT = [
+    # Wide Rim Brim (y=0.580 to 0.605)
+    ("witch-brim-base",    "head", (-0.265, 0.580, -0.265), (0.265, 0.605, 0.265), INK),
+    ("witch-brim-edge",    "head", (-0.275, 0.585, -0.275), (0.275, 0.600, 0.275), INK),
+    # Purple Ribbon Band & Gold Buckle
+    ("witch-band",         "head", (-0.205, 0.605, -0.205), (0.205, 0.640, 0.205), OVERALLS),
+    ("witch-buckle",       "head", (-0.045, 0.610, 0.208), (0.045, 0.638, 0.218), WOOD_GOLD),
+    # Stepped Pointy Cone
+    ("witch-cone-1",       "head", (-0.175, 0.635, -0.175), (0.175, 0.680, 0.175), INK),
+    ("witch-cone-2",       "head", (-0.135, 0.675, -0.135), (0.135, 0.720, 0.135), INK),
+    ("witch-cone-3",       "head", (-0.090, 0.715, -0.090), (0.090, 0.755, 0.090), INK),
+    ("witch-cone-tip",     "head", (-0.045, 0.750, -0.060), (0.045, 0.778, 0.030), INK),
+    # Side Potion Test Tubes (+X side)
+    ("witch-vial-1-glass", "head", (0.210, 0.615, 0.050), (0.235, 0.720, 0.080), SILVER),
+    ("witch-vial-1-cork",  "head", (0.212, 0.718, 0.052), (0.233, 0.740, 0.078), WOOD_GOLD),
+    ("witch-vial-2-glass", "head", (0.210, 0.615, -0.030), (0.235, 0.700, -0.000), SILVER),
+    ("witch-vial-2-cork",  "head", (0.212, 0.698, -0.028), (0.233, 0.720, -0.002), WOOD_GOLD),
+]
+
+# --- 7. OBSIDIAN DEMON HORNS ---
+WEARABLE_DEMON_HORNS = [
+    # Left Horn Root & Curve (+X)
+    ("horn-root-l",        "head", (0.135, 0.570, 0.020), (0.190, 0.640, 0.090), INK),
+    ("horn-mid-l",         "head", (0.165, 0.630, 0.000), (0.220, 0.705, 0.070), INK),
+    ("horn-tip-l",         "head", (0.190, 0.695, -0.030), (0.235, 0.760, 0.040), INK),
+    ("horn-vein-l",        "head", (0.170, 0.645, 0.015), (0.215, 0.690, 0.065), FROST_ACCENT),
+    # Right Horn Root & Curve (-X)
+    ("horn-root-r",        "head", (-0.190, 0.570, 0.020), (-0.135, 0.640, 0.090), INK),
+    ("horn-mid-r",         "head", (-0.220, 0.630, 0.000), (-0.165, 0.705, 0.070), INK),
+    ("horn-tip-r",         "head", (-0.235, 0.695, -0.030), (-0.190, 0.760, 0.040), INK),
+    ("horn-vein-r",        "head", (-0.215, 0.645, 0.015), (-0.170, 0.690, 0.065), FROST_ACCENT),
+]
+
+# --- 8. RETRO 90S MATRIX BLACK SHADES ---
+WEARABLE_RETRO_SHADES = [
+    ("shades-lens-l",      "head", (0.025, 0.490, 0.170), (0.145, 0.535, 0.195), INK),
+    ("shades-lens-r",      "head", (-0.145, 0.490, 0.170), (-0.025, 0.535, 0.195), INK),
+    ("shades-bridge",      "head", (-0.030, 0.505, 0.172), (0.030, 0.525, 0.192), SILVER),
+    ("shades-temple-l",    "head", (0.140, 0.495, 0.020), (0.195, 0.525, 0.180), SILVER),
+    ("shades-temple-r",    "head", (-0.195, 0.495, 0.020), (-0.140, 0.525, 0.180), SILVER),
+]
+
+# --- 9. SILVER CUBAN LINK CHAIN & PENDANT ---
+WEARABLE_CUBAN_CHAIN = [
+    ("chain-neck-l",       "torso", (0.035, 0.280, -0.090), (0.080, 0.335, -0.078), SILVER),
+    ("chain-neck-r",       "torso", (-0.080, 0.280, -0.090), (-0.035, 0.335, -0.078), SILVER),
+    ("chain-pendant-gem",  "torso", (-0.020, 0.250, -0.094), (0.020, 0.282, -0.080), CYAN_TRIM),
+]
+
+# --- 10. GOOD MORNING TOWEL ---
+WEARABLE_GOOD_MORNING_TOWEL = [
+    ("towel-collar-back",  "torso", (-0.130, 0.290, 0.070), (0.130, 0.345, 0.095), WHITE),
+    ("towel-drape-l",      "torso", (0.060, 0.160, -0.092), (0.115, 0.330, -0.072), WHITE),
+    ("towel-drape-r",      "torso", (-0.115, 0.160, -0.092), (-0.060, 0.330, -0.072), WHITE),
+    ("towel-stripe-l",     "torso", (0.062, 0.170, -0.094), (0.113, 0.190, -0.070), CYAN_TRIM),
+    ("towel-stripe-r",     "torso", (-0.113, 0.170, -0.094), (-0.062, 0.190, -0.070), CYAN_TRIM),
+]
+
 # =============================================================================
 # 📦 REGISTRY CATALOG DICTIONARY
 # =============================================================================
@@ -283,11 +357,35 @@ WEARABLES_CATALOG = {
         "description": "Giant plush snow-white fur ear warmers with cyan crystal snowflake cores and a padded overhead arch band.",
         "boxes": WEARABLE_EARMUFFS,
     },
+    "headwear/salakot_woven": {
+        "name": "Traditional Woven Salakot",
+        "slot": "headwear",
+        "description": "Filipino conical sun hat with double-layered rattan weave, wooden apex finial, and chin cords.",
+        "boxes": WEARABLE_SALAKOT,
+    },
+    "headwear/witch_hat_arcane": {
+        "name": "Arcane Witch Hat with Potion Vials",
+        "slot": "headwear",
+        "description": "Pointed stepped witch hat with gold buckle, purple hatband, and twin side potion test tubes.",
+        "boxes": WEARABLE_WITCH_HAT,
+    },
+    "headwear/demon_horns_obsidian": {
+        "name": "Obsidian Demon Horns",
+        "slot": "headwear",
+        "description": "Curving volcanic demon horns with glowing magma vein accents.",
+        "boxes": WEARABLE_DEMON_HORNS,
+    },
     "eyewear/ski_goggles_pro": {
         "name": "Pro High-Tech Ski Goggles",
         "slot": "eyewear",
         "description": "Perched metallic silver chassis with dual cyan crystal lenses, specular glints, and wraparound strap.",
         "boxes": PRO_SKI_GOGGLES,
+    },
+    "eyewear/retro_shades_matrix": {
+        "name": "Retro 90s Street Shades",
+        "slot": "eyewear",
+        "description": "Slim rectangular black sunglasses with silver temple frames.",
+        "boxes": WEARABLE_RETRO_SHADES,
     },
     "hair_accessory/star_ribbons": {
         "name": "Frosted Star Clasp & Fluttering Twin Ribbons",
@@ -301,6 +399,18 @@ WEARABLES_CATALOG = {
         "description": "Silver stud with dangling frost cyan droplet on right ear, silver stud with frost gem on left ear.",
         "boxes": ASYMMETRIC_EARRINGS,
     },
+    "jewelry/cuban_chain_silver": {
+        "name": "Silver Cuban Link Chain & Pendant",
+        "slot": "jewelry",
+        "description": "Chunky silver link street necklace with a radiant crystal gemstone pendant.",
+        "boxes": WEARABLE_CUBAN_CHAIN,
+    },
+    "accessory/good_morning_towel": {
+        "name": "Classic Good Morning Towel",
+        "slot": "accessory",
+        "description": "White cotton shoulder towel with traditional red and blue border stripes.",
+        "boxes": WEARABLE_GOOD_MORNING_TOWEL,
+    },
 }
 
 def get_wearable(id_str):
@@ -312,3 +422,4 @@ def get_wearable(id_str):
 def list_wearables():
     """Return all available wearable IDs."""
     return list(WEARABLES_CATALOG.keys())
+

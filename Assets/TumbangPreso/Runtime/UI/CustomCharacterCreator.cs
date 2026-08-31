@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using TumbangPreso.Core;
 using TumbangPreso.Visual;
@@ -326,15 +326,63 @@ namespace TumbangPreso.UI
             _livePalette[9] = botBase * 1.2f;
         }
 
-        private static Color GetSkinColor(int index)
+        public static Color GetSkinColor(int index)
         {
-            // Default to Kayumanggi
+            if (index < 0 || index >= CustomCharacterRules.SkinToneNames.Length)
+                return new Color(0.78f, 0.54f, 0.32f); // Kayumanggi default
+
+            string name = CustomCharacterRules.SkinToneNames[index];
+            int hashIdx = name.IndexOf('#');
+            if (hashIdx >= 0 && name.Length >= hashIdx + 7)
+            {
+                string hex = name.Substring(hashIdx, 7);
+                if (ColorUtility.TryParseHtmlString(hex, out var c))
+                    return c;
+            }
             return new Color(0.78f, 0.54f, 0.32f);
         }
 
-        private static Color GetHairColor(int index)
+        private static readonly Color[] HairColors = new Color[]
         {
-            return new Color(0.08f, 0.08f, 0.09f);
+            new Color(0.08f, 0.08f, 0.09f), // Jet Black
+            new Color(0.20f, 0.14f, 0.10f), // Raven Dark Brown
+            new Color(0.28f, 0.18f, 0.12f), // Espresso Roast
+            new Color(0.40f, 0.25f, 0.16f), // Chestnut
+            new Color(0.52f, 0.35f, 0.22f), // Milk Chocolate
+            new Color(0.55f, 0.18f, 0.15f), // Mahogany Red
+            new Color(0.70f, 0.28f, 0.16f), // Auburn Sunrise
+            new Color(0.82f, 0.44f, 0.20f), // Copper Glow
+            new Color(0.90f, 0.72f, 0.42f), // Honey Blonde
+            new Color(0.95f, 0.78f, 0.28f), // Amber Blonde
+            new Color(0.75f, 0.55f, 0.30f), // Caramel Highlights
+            new Color(0.90f, 0.92f, 0.95f), // Platinum Silver
+            new Color(0.50f, 0.55f, 0.60f), // Slate Gray
+            new Color(0.70f, 0.70f, 0.72f), // Salt & Pepper
+            new Color(0.90f, 0.12f, 0.18f), // Jeepney Crimson
+            new Color(0.95f, 0.45f, 0.10f), // Manila Sunset Orange
+            new Color(0.98f, 0.75f, 0.10f), // Sari-Sari Gold
+            new Color(0.45f, 0.85f, 0.20f), // Boracay Lime
+            new Color(0.20f, 0.65f, 0.95f), // Tricycle Sky Blue
+            new Color(0.10f, 0.30f, 0.85f), // Cobalt Blue
+            new Color(0.55f, 0.20f, 0.85f), // Ube Purple
+            new Color(0.75f, 0.15f, 0.95f), // Electric Violet
+            new Color(0.95f, 0.45f, 0.70f), // Bubblegum Pink
+            new Color(0.90f, 0.60f, 0.65f), // Rose Gold
+            new Color(0.20f, 0.95f, 0.75f), // Neon Mint
+            new Color(0.10f, 0.75f, 0.35f), // Emerald Green
+            new Color(0.85f, 0.60f, 0.15f), // Golden Ochre
+            new Color(0.15f, 0.15f, 0.18f), // Charcoal Black
+            new Color(0.78f, 0.70f, 0.90f), // Lavender Mist
+            new Color(0.40f, 0.88f, 0.95f), // Pastel Cyan
+            new Color(0.75f, 0.10f, 0.25f), // Ruby Velvet
+            new Color(0.25f, 0.35f, 0.85f)  // Galaxy Blue
+        };
+
+        public static Color GetHairColor(int index)
+        {
+            if (index >= 0 && index < HairColors.Length)
+                return HairColors[index];
+            return HairColors[0];
         }
     }
 }
