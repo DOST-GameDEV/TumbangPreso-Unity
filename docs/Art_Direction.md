@@ -270,3 +270,13 @@ The dedicated "Create Your Own Character" feature (3 save slots, 1 active) allow
 - **Facial Expressions**: Expressive voxel eyes and mouth decals (chill, determined, fierce, happy, focused).
 - **Body & Height Scaling**: Bound within $[0.90\times, 1.10\times]$ of canonical person height ($1.60\text{ m}$) so hitbox alignment and jump clearances remain competitive.
 - **Wearable Accessories**: Bound strictly to headwear/eyewear/jewelry envelopes defined in `docs/wearables_catalog.md` without extending into role-indicating color spaces (`#f87020` offense orange or `#0080e8` defense blue).
+
+---
+
+## 9 · UI Icon Suite & Borderless Carved Wood Palette
+
+### 9.1 The Law of No Blue Outlines
+UI icons, badges, rank emblems, and state glyphs must **never** carry dark blue, navy, or cold ink outlines:
+- **No Cold Outlines**: Dark blue strokes (`#040838`) on brown wood panels read as harsh blue rings and clash with the game's warm, sunlit street style.
+- **Warm Wood & Amber Definition**: All shapes, shields, wings, slippers, and cans are defined by tone-on-tone carved wood geometry (`#31190B` deep wood, `#5A2F14` mid wood, `#8B5227` edge wood), cream parchment inlays (`#F5E6C8`), and glowing amber gold (`#FFBA00`).
+- **Escalation**: Ranks escalate in physical frame weight and amber presence from rookie wooden plaque (Bata) to radiant 8-ray sunburst (Alamat).

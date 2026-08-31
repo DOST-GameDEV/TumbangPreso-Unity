@@ -359,6 +359,13 @@ asks whether the screen is a screen. This section is what to look at in the pict
 
 ### 6.3 ⚠️⚠️ MOVING AROUND THE GAME IS ITS OWN DESIGN PROBLEM, AND THE UNIT IS THE JOURNEY
 
+### 6.4 ⚠️⚠️ NEVER USE BLUE / NAVY OUTLINES OR COLD STROKES FOR UI ICONS OR ASSETS
+
+🧑 2026-08-31: *"i dont like blue outlines its out of theme"*, *"can u put in claude md to never use blue outlines and shit for ui"*.
+
+- **The rule:** UI icons, rank emblems, state badges, glyphs, and panels must **NEVER** carry dark blue, navy, or cold ink outlines. Outlines on brown wooden panels read as blue rings and clash violently with the Filipino street warm aesthetic.
+- **The palette:** Hand-painted carved wood (`#31190B` deep wood, `#5A2F14` mid wood, `#8B5227` wood edge), warm cream paper/chalk inlays (`#F5E6C8`), and glowing amber gold (`#FFBA00`). Geometry is defined by warm tone-on-tone wooden bevels and borderless shapes, **NEVER** blue/navy outlines.
+
 🧑, 2026-08-31: *"i want the user experience of movinng around the game to feel intuitive"*, and
 *"lets say im a player and i want to do something or find something, make sure that entire
 experience feels great"*.
