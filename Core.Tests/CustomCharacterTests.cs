@@ -154,7 +154,15 @@ namespace TumbangPreso.Core.Tests
             string legacyC1 = "C1:Old_Hero:4:2:5:1:100:1:2:1:0:0:0:tsinelas_classic:lata_classic";
             var decoded = CustomCharacterRules.DecodeWire(legacyC1, 0);
             Assert.NotNull(decoded);
-            Assert.Equal("Old Hero", decoded.Name);
+
+            // ⚠️⚠️ THIS LINE ASSERTED `"Old Hero"` AND IT WAS ASSERTING A DATA-LOSS BUG.
+            // The codec encoded with `Replace(":", "_")` and decoded with `Replace("_", " ")`, so
+            // a colon became an underscore became a space **and so did every underscore the player
+            // actually typed**. No round trip could recover it, and the test locked that in by
+            // expecting the mangled form. The escape is `%3A` now and a name comes back exactly as
+            // it went in. Nothing has ever shipped in the `C1` format, so there is no saved data
+            // this changes the reading of.
+            Assert.Equal("Old_Hero", decoded.Name);
             Assert.Equal(4, decoded.SkinToneIndex);
             Assert.Equal(2, decoded.FaceExpressionIndex);
             Assert.Equal(5, decoded.HairstyleIndex);

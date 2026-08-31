@@ -921,35 +921,11 @@ namespace TumbangPreso.UI
             }
 
             BuildMasteryRows(profile);
-            UiRows.ButtonRow(_list, "Hero Ability Sidegrades", "CUSTOMIZE LOADOUT", OpenHeroLoadouts, "", "WoodPrimaryButton");
-
+            BuildAbilityBuildRows(profile);
             BuildAchievementsRows(profile);
-            UiRows.ButtonRow(_list, "Street Milestone Shelf", "VIEW ALL ACHIEVEMENTS", OpenAchievements, "", "WoodPrimaryButton");
 
             UiRows.Gap(_list, 40.0f);
             SetFooter("", "Rates appear once there are enough attempts to mean anything.");
-        }
-
-        private void OpenHeroLoadouts()
-        {
-            var screen = UnityEngine.Object.FindFirstObjectByType<HeroLoadoutScreen>();
-            if (screen == null)
-            {
-                var go = new GameObject("HeroLoadoutScreen");
-                screen = go.AddComponent<HeroLoadoutScreen>();
-            }
-            screen.Open();
-        }
-
-        private void OpenAchievements()
-        {
-            var screen = UnityEngine.Object.FindFirstObjectByType<AchievementsScreen>();
-            if (screen == null)
-            {
-                var go = new GameObject("AchievementsScreen");
-                screen = go.AddComponent<AchievementsScreen>();
-            }
-            screen.Open();
         }
 
         /// <summary>A rate row, or nothing at all when the sample cannot carry it.</summary>
@@ -997,28 +973,128 @@ namespace TumbangPreso.UI
             }
         }
 
-        private void BuildAchievementsRows(PlayerProfile profile)
+        /// <summary>
+        /// The ability builds, one collapsible group, one row per hero and slot.
+        ///
+        /// ⚠️⚠️ IT IS HERE RATHER THAN BEHIND A BUTTON BECAUSE THE BUTTON OPENED A
+        /// SCREEN NOBODY COULD SEE. `docs/TODO.md` 108.2: `HeroLoadoutScreen` built a `Canvas` at
+        /// `sortingOrder` 95, and the hub that opens it is a 93 per cent scrim at 500. **The screen
+        /// was constructed correctly, laid out correctly, and drawn underneath the thing that
+        /// opened it**, so CUSTOMIZE LOADOUT read as a dead button. It also used
+        /// `AddComponent&lt;Canvas&gt;()` rather than `MenuKit.BuildCanvas`, so it had no
+        /// `overrideSorting`, no `AspectSafeCanvas` and no guaranteed `EventSystem`.
+        ///
+        /// ⚠️⚠️ AND ITS EQUIP BUTTON HAD NO LISTENER AT ALL. Every row built a `Button`,
+        /// wrote SELECT or EQUIPPED on it, and never called `onClick.AddListener`, because there
+        /// was nowhere for a choice to go. `HeroBuildRules` is that store now and these rows write
+        /// through it.
+        ///
+        /// ⚠️ A STEPPER PER SLOT RATHER THAN A CARD PER VARIANT. Six heroes times two slots
+        /// times two options is 24 cards, which is `docs/TODO.md` 92's *"theres liek 20 shits at
+        /// once"*. Twelve rows, each naming the ability it changes and what the trade costs, is the
+        /// same information in the shape the rest of this screen is already in.
+        ///
+        /// ⚠️ HERO STRIKE ONLY. `docs/VISION.md` 1.1: Classic has no kit and never gets one,
+        /// so a build row on the Classic career tab would be a control for a thing that mode does
+        /// not have.
+        /// </summary>
+        private void BuildAbilityBuildRows(PlayerProfile profile)
         {
-            if (!Group("Achievements",
-                       "Milestones unlocked across street matches, modes, and ranks.",
-                       false))
+            if (_mode != GameMode.HeroStrike) return;
+
+            if (!Group("Ability builds",
+                       "Two readings of each skill. Every option trades one thing for another, "
+                       + "so a build is a shape and never a level.", false))
                 return;
 
-            foreach (var tier in new[] { AchievementTier.Bronze, AchievementTier.Silver, AchievementTier.Gold })
+            var settings = Settings.SettingsStore.Current;
+            if (settings == null) return;
+
+            foreach (var hero in Roster.HeroPeople)
             {
-                var list = AchievementRules.Tier(tier);
-                foreach (var ach in list)
+                var build = HeroBuildRules.RowFor(settings.HeroBuilds, hero.Id);
+
+                for (int slot = 1; slot <= 2; slot++)
                 {
-                    int progress = AchievementRules.ProgressFor(ach, profile);
-                    bool unlocked = progress >= ach.TargetCount;
+                    var options = HeroLoadoutRules.VariantsFor(hero.Id, slot);
+                    if (options.Count == 0) continue;
 
-                    string status = unlocked ? $"COMPLETED  ·  {ach.RewardLabel}" : $"{progress} / {ach.TargetCount}  ·  {ach.RewardLabel}";
-                    Color color = unlocked ? (tier == AchievementTier.Gold ? UiTheme.Amber : UiTheme.Highlight) : UiTheme.CreamMuted;
+                    var equipped = HeroBuildRules.Equipped(profile, build, hero.Id, slot);
 
-                    UiRows.ValueRow(_list, $"[{tier.ToString().ToUpperInvariant()}] {ach.Title}",
-                        unlocked ? "UNLOCKED" : $"{progress}/{ach.TargetCount}",
-                        $"{ach.Description}  ({status})",
-                        color);
+                    int index = 0;
+                    for (int i = 0; i < options.Count; i++)
+                        if (options[i].Id == equipped.Id) index = i;
+
+                    int chosenSlot = slot;
+
+                    string hint = equipped.IsDefault
+                        ? equipped.BaseAbility + " as tuned."
+                        : equipped.BaseAbility + ": " + equipped.GainLabel + ", "
+                          + equipped.CostLabel + ".";
+
+                    UiRows.StepperRow(_list, hero.Name + "  ·  SKILL " + slot,
+                        equipped.Name, index, options.Count,
+                        v =>
+                        {
+                            var picked = options[v];
+                            if (chosenSlot == 1) build.Slot1VariantId = picked.Id;
+                            else build.Slot2VariantId = picked.Id;
+
+                            Settings.SettingsStore.Save();
+                            MenuSfx.Click();
+                            Show(_tab);
+                        },
+                        hint);
+                }
+            }
+        }
+
+        /// <summary>
+        /// The achievement shelf.
+        ///
+        /// ⚠️⚠️ ONE FACT PER COLUMN. The version this replaces printed the progress in
+        /// the VALUE column and then again inside the hint with the reward appended in brackets:
+        /// `12/30` on the right and `Win a match  (12 / 30 - Kalye title)` underneath. `UiRows`'
+        /// whole design is a label, a value and one grey line of explanation; a row that says the
+        /// same number twice is the *"its so messy and ugly"* screen (`docs/TODO.md` 94.7)
+        /// reassembling itself one row at a time.
+        ///
+        /// ⚠️ THE SUMMARY IS ON THE SECTION HEADER, so a player who never opens the group
+        /// still learns how many they have. A collapsed group that says nothing is a group nobody
+        /// opens.
+        ///
+        /// ⚠️ THE TIER IS A COLOUR, NOT A PREFIX. `[BRONZE] ` in front of every title pushes
+        /// the actual name nine characters right and makes thirty rows start with the same word.
+        /// Gold is amber, silver is the highlight, bronze is plain cream, which is the escalation
+        /// `docs/Art_Direction.md` 9.1 already describes for the badge art.
+        /// </summary>
+        private void BuildAchievementsRows(PlayerProfile profile)
+        {
+            int earned = 0;
+            foreach (var entry in AchievementRules.Catalog)
+                if (AchievementRules.IsUnlocked(entry, profile)) earned++;
+
+            if (!Group("Achievements",
+                       earned + " of " + AchievementRules.Catalog.Count + " earned. Every one is "
+                       + "a thing you did, and none of them change a number.", false))
+                return;
+
+            foreach (var tier in new[] { AchievementTier.Bronze, AchievementTier.Silver,
+                                         AchievementTier.Gold })
+            {
+                foreach (var entry in AchievementRules.Tier(tier))
+                {
+                    int progress = AchievementRules.ProgressFor(entry, profile);
+                    bool unlocked = AchievementRules.IsUnlocked(entry, profile);
+
+                    Color colour = !unlocked ? UiTheme.CreamMuted
+                                 : tier == AchievementTier.Gold ? UiTheme.Amber
+                                 : tier == AchievementTier.Silver ? UiTheme.Highlight
+                                 : UiTheme.Cream;
+
+                    UiRows.ValueRow(_list, entry.Title,
+                        unlocked ? "EARNED" : progress + " / " + entry.TargetCount,
+                        entry.Description, colour);
                 }
             }
         }

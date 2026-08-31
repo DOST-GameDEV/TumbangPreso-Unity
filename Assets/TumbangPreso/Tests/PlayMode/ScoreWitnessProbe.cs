@@ -69,7 +69,7 @@ namespace TumbangPreso.PlayTests
                 if (scene == blank || !scene.isLoaded) continue;
 
                 var unload = SceneManager.UnloadSceneAsync(scene);
-                while (unload != null && !unload.isDone) yield return null;
+                yield return ProbeWait.Done(unload, "scene unload");
             }
 
             yield return null;
@@ -83,7 +83,7 @@ namespace TumbangPreso.PlayTests
             GameLaunch.SoloSeat = ProbeSeat;
 
             var load = SceneManager.LoadSceneAsync("Eskinita", LoadSceneMode.Single);
-            while (load != null && !load.isDone) yield return null;
+            yield return ProbeWait.Done(load, "scene load");
             for (int i = 0; i < 30; i++) yield return null;
 
             var career = Net.CareerStore.Instance;

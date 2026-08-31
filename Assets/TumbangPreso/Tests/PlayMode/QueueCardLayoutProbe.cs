@@ -68,7 +68,7 @@ namespace TumbangPreso.PlayTests
                 if (scene == blank || !scene.isLoaded) continue;
 
                 var unload = SceneManager.UnloadSceneAsync(scene);
-                while (unload != null && !unload.isDone) yield return null;
+                yield return ProbeWait.Done(unload, "scene unload");
             }
 
             yield return null;

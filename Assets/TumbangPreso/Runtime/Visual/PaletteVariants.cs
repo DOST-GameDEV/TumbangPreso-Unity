@@ -62,11 +62,18 @@ namespace TumbangPreso.Visual
 
             for (int i = 0; i < authored.Length; i++)
             {
-                // ⚠️⚠️ THE FACE IS COPIED THROUGH UNTOUCHED. `RosterEntryAsset.Palette` says slot
-                // 8 carries it and must stay dark, and `Shaders/Toon.shader` has the atlas
-                // layout. A rotation that caught it would give the entire cast coloured eyes and
-                // a coloured mouth, on every variant, at once.
-                if (i == PaletteRules.FaceSlot)
+                // ⚠️⚠️ THE FACE AND THE SKIN ARE COPIED THROUGH UNTOUCHED.
+                // `RosterEntryAsset.Palette` says slot 8 carries the face and must stay dark, and
+                // `Shaders/Toon.shader` has the atlas layout. A rotation that caught it would
+                // give the entire cast coloured eyes and a coloured mouth, on every variant, at
+                // once.
+                //
+                // ⚠️⚠️ AND SLOTS 13, 14 AND 15 JOINED IT ON 2026-08-31, WHICH IS `docs/TODO.md`
+                // § 107. 🧑 opened a build and found Berto green: *"donnt touch the skin and shit
+                // of classic wtf"*. **The clothes are still free and the skin never moves**, so
+                // the half of the dial he asked to keep survives and the half he rejected cannot
+                // happen. `PaletteRules.IsProtectedSlot` owns the list.
+                if (PaletteRules.IsProtectedSlot(i))
                 {
                     shifted[i] = authored[i];
                     continue;

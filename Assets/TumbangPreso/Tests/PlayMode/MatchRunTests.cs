@@ -143,7 +143,7 @@ namespace TumbangPreso.PlayTests
                 if (scene.name.Contains("InitTestScene")) continue;
 
                 var unload = SceneManager.UnloadSceneAsync(scene);
-                while (unload != null && !unload.isDone) yield return null;
+                yield return ProbeWait.Done(unload, "scene unload");
             }
 
             _clean = clean;
@@ -165,7 +165,7 @@ namespace TumbangPreso.PlayTests
             if (_clean.IsValid() && _clean.isLoaded && SceneManager.sceneCount > 1)
             {
                 var unload = SceneManager.UnloadSceneAsync(_clean);
-                while (unload != null && !unload.isDone) yield return null;
+                yield return ProbeWait.Done(unload, "scene unload");
             }
 
             yield return null;

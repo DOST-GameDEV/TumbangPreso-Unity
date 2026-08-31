@@ -291,7 +291,44 @@ describing a mesh in prose is the slowest possible way to be told it is wrong.
   Python changes the file on disk while Unity keeps the old one in memory; the render then
   shows geometry that is no longer there.
 
-### 6.2 Every screen gets designed, and the method is written down
+### 6.2 ⚠️⚠️ THE STANDING BRIEF FOR EVERY SCREEN: INTUITIVE, EASY TO GET AROUND, NEVER OVERWHELMING
+
+🧑, twice, unprompted: *"i want the user experience of movinng around the game to feel
+intuitive"*, and *"i wwant the user experience for the UI of this app to feel intuitive and easy to
+navigate and not overwhelming"*.
+
+**This is the acceptance test for every screen in the game, and it is three separate claims. All
+three have already failed here, each with its own receipt.**
+
+| The claim | What failing it looks like | The receipt |
+|---|---|---|
+| ⚠️⚠️ **INTUITIVE** | The player cannot predict what a control does before pressing it, or presses something and nothing happens. | `docs/TODO.md` § 108: an EQUIP button with no `onClick` listener, and a CUSTOMIZE LOADOUT button opening a screen drawn underneath the screen that opened it. Both looked fine. Both did nothing. |
+| ⚠️⚠️ **EASY TO NAVIGATE** | The player cannot FIND the thing, or cannot get back out. | § 96: the hub had exactly one door, a corner chip reading a name and a level, and **the person who commissioned the hub never found it.** § 6.3 is the method. |
+| ⚠️⚠️ **NEVER OVERWHELMING** | Everything the feature can do is on screen at once, in one flat list, with nothing saying what matters. | § 92: *"theres liek 20 shits at once"*, six buttons in six visual languages. § 94.7: *"its so messy and ugly"*, seven readability faults with every probe green. |
+
+**So, before writing a screen and again before calling it done, answer these in one sentence each:**
+
+1. **What is the ONE thing on this screen?** Everything else is sized, placed and coloured against
+   it. If two things are competing, one of them is decoration.
+2. **What is the first press, and can the player guess it?** Name it out loud. A control that has
+   to be discovered rather than read is the bug.
+3. **What is on screen that the player does not need RIGHT NOW?** Collapse it, move it behind a
+   section header, or cut it. ⚠️ **A group closed by default with a one-line summary on its
+   header beats the same rows always open**, and the summary is what makes it worth opening.
+4. **How do they get out, and is it one press?** Escape, always, innermost layer first.
+
+⚠️ **AND THE TEST FOR ADDING ANYTHING IS WHAT THE PLAYER HAS TO HOLD IN THEIR HEAD, NOT WHAT IT
+COSTS TO BUILD.** 🧑, asked which features to drop: *"i have ai dont think abt 5 students shit"*,
+and *"the cutting shit i want should be focused onn things that overcomplicate game for ppl"*.
+A cheap addition that adds a bar, a screen, a number or a new word is still a candidate for
+cutting. `docs/FUTURE.md` § 0.5 rule 11b.
+
+⚠️ **THE THREE SECTIONS BELOW ARE HOW THIS BRIEF IS MET, NOT SEPARATE RULES.** § 6.2b is what to
+take a picture OF, § 6.2c is the four questions about every rectangle, and § 6.3 is the journey
+between screens. **None of the three is visible to any probe in this repository**, which is why
+they are here rather than in a test.
+
+### 6.2a Every screen gets designed, and the method is written down
 
 ⚠️⚠️ **A FEATURE WITHOUT A SCREEN IS NOT SHIPPED, AND "I ADDED A ROW FOR IT" IS NOT A DESIGN.**
 🧑 has rejected the same screen twice for the same reason: *"theres liek 20 shits at once"*
@@ -350,6 +387,7 @@ fitted to a frame nobody can see) are the receipts.
 | ⚠️⚠️ **What is this size measured AGAINST?** | **A size is only correct against the rectangle the player actually sees.** A percentage of the window is not a size: `AspectSafeCanvas` scales on the SHORT axis, so the canvas is about 1920 units wide at 4:3 and about 2250 on his window, and one fraction is two very different widths. **Size a panel against its CONTENT and state the arithmetic.** | § 100: the sign-in column was 38 per cent of the window around a 420-unit form, so on the window he plays in it was **860 units of wood around a form that never grew**. It is 580 units now, which is the form plus one margin either side, and it cannot swallow a narrow screen because `Expand` guarantees the canvas is never under 1920 units wide. Same family as § 92.1 fault 3, which is why `UiRows` takes no offsets. |
 | ⚠️⚠️ **Is this image fitted to the region it is SEEN in, or to the whole screen?** | **Every image gets an explicit fit decision and an explicit parent.** Envelope a background, fit a logo, and in both cases the parent must be the visible region, not `_root`. If something opaque covers part of the screen, the picture's frame ends where that thing starts. | § 100: the key art enveloped the full canvas and the column then covered a third of it, so the crop was computed for a frame that does not exist and the cast came out off-centre with its heads cut off. `SignInScreen.BuildLogo` records the same fault one size down: `FitInParent` sizes against the PARENT, so a fitter with no box of its own drew the wordmark three hundred pixels tall through the form. |
 | ⚠️⚠️ **What is this dimming layer FOR, and is that still true?** | **A scrim buys legibility over a live 3D scene, or separation from one. It is not decoration and it is not free.** If every word on the screen sits on an opaque panel, a scrim over the art side is dimming the one thing the player is meant to look at in exchange for nothing. **Ask what it protects before retuning it.** | § 100: 72 per cent over the live street, retuned to 55 when the key art landed, and never asked what it was still for. 🧑: *"nno nneed to darkenn it"*. `UiRows.Band` is the same rule the other way round: a number tuned against one background is not a number. |
+| ⚠️⚠️ **Is this width measured against the NARROWEST box it will ever live in?** | **A control is sized against 4:3, never against 1920.** `UiRows.Cap` records the number: the value column is about **368 units at 4:3** and every control in that file fits inside it. A width chosen at the reference resolution is a width that only exists at the reference resolution, and the failure is silent because `MenuKit.Label` OVERFLOWS rather than wrapping: the control does not shrink, it draws over its neighbour or off the edge. | `docs/TODO.md` § 108: the first `StepperRow` laid out to 476 units, so at 1366x768 **the right-hand arrow was simply not on screen**, and the row's own hint drew straight through the value beside it. The layout probe was green: every label fitted its own box, and the boxes overlapped each other. |
 | ⚠️⚠️ **If I delete this, what else was it doing?** | **Anything covering the screen is also eating clicks, and the block is usually nobody's stated job.** When a full-screen graphic goes, name its replacement blocker in the same commit. | § 100: the scrim was silently what stopped a press on the art side reaching the title screen underneath. Deleting it would have let a player press PLAY **through** the boot screen, on the one screen that exists to ask a question first. The key art is the blocker now, and it says so. |
 
 ⚠️⚠️ **AND NONE OF THE FOUR IS VISIBLE TO ANY PROBE IN THIS REPOSITORY, WHICH IS THE POINT OF
@@ -358,13 +396,6 @@ that fits its box fits its box whether the picture behind it is beautiful or but
 asks whether the screen is a screen. This section is what to look at in the picture.**
 
 ### 6.3 ⚠️⚠️ MOVING AROUND THE GAME IS ITS OWN DESIGN PROBLEM, AND THE UNIT IS THE JOURNEY
-
-### 6.4 ⚠️⚠️ NEVER USE BLUE / NAVY OUTLINES OR COLD STROKES FOR UI ICONS OR ASSETS
-
-🧑 2026-08-31: *"i dont like blue outlines its out of theme"*, *"can u put in claude md to never use blue outlines and shit for ui"*.
-
-- **The rule:** UI icons, rank emblems, state badges, glyphs, and panels must **NEVER** carry dark blue, navy, or cold ink outlines. Outlines on brown wooden panels read as blue rings and clash violently with the Filipino street warm aesthetic.
-- **The palette:** Hand-painted carved wood (`#31190B` deep wood, `#5A2F14` mid wood, `#8B5227` wood edge), warm cream paper/chalk inlays (`#F5E6C8`), and glowing amber gold (`#FFBA00`). Geometry is defined by warm tone-on-tone wooden bevels and borderless shapes, **NEVER** blue/navy outlines.
 
 🧑, 2026-08-31: *"i want the user experience of movinng around the game to feel intuitive"*, and
 *"lets say im a player and i want to do something or find something, make sure that entire
@@ -400,6 +431,28 @@ person. Watch a launch, or ask what they expected to press.
 ⚠️ **`UiRows` OR IT IS NOT A SETTINGS-SHAPED SCREEN.** Nothing in that file takes an offset,
 which is fault 3 of § 92.1 made impossible rather than fixed. A hand-written Y offset is a layout
 correct at exactly one panel height and one aspect ratio, and `AspectRatioProbes` drives nine.
+
+### 6.4 ⚠️⚠️ NEVER USE BLUE OR NAVY OUTLINES ON ANY UI ICON OR ASSET
+
+🧑 2026-08-31: *"i dont like blue outlines its out of theme"*, *"can u put in claude md to
+never use blue outlines and shit for ui"*.
+
+⚠️⚠️ **THIS SECTION WAS INSERTED BETWEEN § 6.3'S HEADING AND § 6.3'S BODY, so for one commit
+§ 6.3 was an empty heading and every word of the journey rule read as if it belonged to a rule
+about outline colour.** It is here, after § 6.3 finishes, for that reason. A heading with no body
+is not a formatting slip in this file: § 6.3 is the section `docs/TODO.md` § 96 and § 92 both point
+at, and a reader who followed either pointer landed on nothing.
+
+- **The rule:** UI icons, rank emblems, state badges, glyphs and panels must **never** carry dark
+  blue, navy or cold ink outlines. On brown wood they read as blue rings and clash with everything
+  around them.
+- **The palette:** carved wood (`#31190B` deep, `#5A2F14` mid, `#8B5227` edge), cream paper and
+  chalk (`#F5E6C8`), amber gold (`#FFBA00`). Geometry comes from warm tone-on-tone bevels and
+  borderless shapes.
+- ⚠️ **THIS IS `docs/VISION.md` § 6 NARROWED TO ONE MISTAKE, NOT A NEW RULE.** *"His UI art is
+  the design system. Wood, amber, cream, ink. Anything drawn in a different visual language is the
+  thing that looks broken, not the thing that looks new."* The blue outline is the specific way that
+  went wrong on the rank emblems, written down so it does not have to be found again.
 
 `docs/CANONICAL_RENDERING_PIPELINE.md` has the exact commands and five recorded pitfalls.
 ⚠️ **That document is written for Antigravity and its "MANDATE FOR ALL AGENTS" heading is that

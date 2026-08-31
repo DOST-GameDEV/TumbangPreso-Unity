@@ -435,10 +435,39 @@ namespace TumbangPreso.Core
             };
         }
 
+        /// <summary>
+        /// The one id this whole system wears on the roster, on the wire and in the settings file.
+        ///
+        /// ⚠️ IT MATCHES `Assets/TumbangPreso/Resources/Roster/person_custom.asset` AND
+        /// `RosterBookBuilder`'s `"custom"` KEY, and it is a constant here so the three cannot
+        /// drift. `Roster.Slippers`' rule one level up: ids, never indices, and never re-derived.
+        /// </summary>
+        public const string CustomCharacterId = "custom";
+
+        /// <summary>
+        /// ⚠️⚠️ THE NAME IS ESCAPED, NOT MANGLED, AND THE FIRST VERSION OF THIS LOST DATA.
+        /// It encoded with `Replace(":", "_")` and decoded with `Replace("_", " ")`, so a colon
+        /// became an underscore became a space, **and so did every underscore the player actually
+        /// typed**: `BATANG_KALYE` came back as `BATANG KALYE` and no round trip could ever
+        /// recover it. The delimiter is the only character that needs protecting and `%3A` is a
+        /// sequence a name cannot otherwise contain once `%` is escaped first.
+        /// </summary>
+        private static string EscapeName(string raw)
+        {
+            if (string.IsNullOrEmpty(raw)) return "";
+            return raw.Replace("%", "%25").Replace(":", "%3A");
+        }
+
+        private static string UnescapeName(string raw)
+        {
+            if (string.IsNullOrEmpty(raw)) return "";
+            return raw.Replace("%3A", ":").Replace("%25", "%");
+        }
+
         public static string EncodeWire(CustomCharacter c)
         {
             var clean = Normalise(c);
-            string safeName = (clean.Name ?? "Hero").Replace(":", "_");
+            string safeName = EscapeName(clean.Name ?? "Hero");
             return $"C2:{safeName}:{clean.SkinToneIndex}:{clean.FaceExpressionIndex}:{clean.FaceMarkingIndex}:" +
                    $"{clean.HairstyleIndex}:{clean.HairColorIndex}:{clean.HeightPercent}:{clean.BuildSizeIndex}:" +
                    $"{clean.TopClothingIndex}:{clean.BottomClothingIndex}:{clean.HeadAccessoryIndex}:" +
@@ -454,7 +483,7 @@ namespace TumbangPreso.Core
             if (tokens.Length >= 18 && tokens[0] == "C2")
             {
                 var c = new CustomCharacter();
-                c.Name = tokens[1].Replace("_", " ");
+                c.Name = UnescapeName(tokens[1]);
                 int.TryParse(tokens[2], out int skin); c.SkinToneIndex = skin;
                 int.TryParse(tokens[3], out int exp); c.FaceExpressionIndex = exp;
                 int.TryParse(tokens[4], out int mark); c.FaceMarkingIndex = mark;
@@ -478,7 +507,7 @@ namespace TumbangPreso.Core
             if (tokens.Length >= 12 && tokens[0] == "C1")
             {
                 var c = new CustomCharacter();
-                c.Name = tokens[1].Replace("_", " ");
+                c.Name = UnescapeName(tokens[1]);
                 int.TryParse(tokens[2], out int skin); c.SkinToneIndex = skin;
                 int.TryParse(tokens[3], out int exp); c.FaceExpressionIndex = exp;
                 int.TryParse(tokens[4], out int hair); c.HairstyleIndex = hair;

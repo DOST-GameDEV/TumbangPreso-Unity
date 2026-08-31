@@ -74,7 +74,7 @@ namespace TumbangPreso.PlayTests
                 MatchInstaller.PreviewOnly = true;
 
                 var load = SceneManager.LoadSceneAsync(arena, LoadSceneMode.Single);
-                while (load != null && !load.isDone) yield return null;
+                yield return ProbeWait.Done(load, "scene load");
 
                 for (int i = 0; i < 10; i++) yield return null;
 

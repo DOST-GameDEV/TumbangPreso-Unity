@@ -313,6 +313,42 @@ namespace TumbangPreso.UI
         /// ⚠️ AND IT MUST BE CALLED AFTER <see cref="Show"/>, because `uniformExtent` changes
         /// what the framing COMPUTES and the subject was already measured on the way in.
         /// </summary>
+        /// <summary>
+        /// Where up the subject the camera aims, as a fraction of its own height.
+        ///
+        /// ⚠️ IT DEFAULTS TO <see cref="AimHeightRatio"/> AND EVERY EXISTING CALLER LEAVES IT
+        /// THERE, so the CHARACTER screen, the tutorial tiles and all seven probes are framed
+        /// exactly as they were measured. Only <see cref="LookAt"/> moves it.
+        /// </summary>
+        private float _aimHeightRatio = AimHeightRatio;
+
+        /// <summary>
+        /// Points the camera at one part of the body and pulls in on it.
+        ///
+        /// ⚠️⚠️ THIS IS THE "MULTI-STAGE CAMERA ZOOM" A CREATOR SCREEN NEEDS, AND ZOOM ALONE IS
+        /// NOT IT. A previous pass shipped a `CameraZoomFocus` enum with four values and an event,
+        /// and nothing anywhere moved a camera; the obvious repair, calling
+        /// <see cref="SetTileFraming"/> with a smaller factor, would have pulled in on
+        /// `AimHeightRatio` 0.54, **which is the waist**. Zooming toward the waist to look at a
+        /// hat is worse than not zooming: the head leaves the frame. **The aim has to move with
+        /// the distance or neither is worth doing.**
+        ///
+        /// ⚠️ THE RATIO IS OF THE SUBJECT'S OWN MEASURED BOUNDS, not of a world height, because
+        /// the cast spans 132 mm from the shortest rig to the tallest
+        /// (`docs/Voxel_Person_Guide.md` § 5.7) and a fixed world aim would frame a bald rig's
+        /// forehead and a mop-haired one's chin.
+        ///
+        /// ⚠️ IT DOES NOT TOUCH `_userTookOver`, so a player who has dragged the model round keeps
+        /// their angle when the section changes. Losing a rotation you set on purpose because you
+        /// moved to the next row is the kind of thing that reads as the screen fighting you.
+        /// </summary>
+        public void LookAt(float heightRatio, float zoom)
+        {
+            _aimHeightRatio = Mathf.Clamp01(heightRatio);
+            _userZoom = Mathf.Clamp(zoom, ZoomMin, ZoomMax);
+            _needsFrame = true;
+        }
+
         public void SetTileFraming(float factor, bool uniformExtent = false)
         {
             _centreSubject = true;
@@ -856,7 +892,7 @@ namespace TumbangPreso.UI
             float width = Mathf.Max(Mathf.Max(bounds.size.x, bounds.size.z), 0.001f);
 
             _frameAim = new Vector3(bounds.center.x,
-                                    bounds.min.y + height * AimHeightRatio,
+                                    bounds.min.y + height * _aimHeightRatio,
                                     bounds.center.z);
 
             float halfFov = Mathf.Tan(_camera.fieldOfView * 0.5f * Mathf.Deg2Rad);
@@ -1096,6 +1132,12 @@ namespace TumbangPreso.UI
             _userZoom = 1.0f;
             _userTookOver = false;
             _turnPhase = InitialTurnPhase;
+
+            // ⚠️ THE AIM COMES BACK TOO. `LookAt` moves it and RESET means the measured shot,
+            // which is the whole subject at `AimHeightRatio`. A reset that left the camera
+            // pointing at the shoes would be a reset button that does not reset.
+            _aimHeightRatio = AimHeightRatio;
+            _needsFrame = true;
 
             if (_model != null)
                 _model.transform.localRotation = Quaternion.Euler(0.0f, FacingYaw, 0.0f);

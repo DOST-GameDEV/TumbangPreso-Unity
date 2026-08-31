@@ -38,6 +38,51 @@ namespace TumbangPreso.Core
         /// </summary>
         public const int FaceSlot = 8;
 
+        /// <summary>
+        /// The three slots carrying SKIN, excluded from every recolour for the same reason the
+        /// face is.
+        ///
+        /// ⚠️⚠️ THIS IS `docs/TODO.md` § 107 AS ARITHMETIC RATHER THAN AS A PARAGRAPH, AND IT IS
+        /// THE ONE THING § 107 ASKED FOR. 🧑, on a screenshot of a green Berto: *"i didnnt want
+        /// all characters to be customizable... maybe the heroes we can change their clothes and
+        /// shit but donnt touch the skin and shit of classic wtf"*. That sentence has two halves
+        /// and they pull in opposite directions: clothes stay customisable, skin never moves.
+        /// **Excluding the skin slots satisfies both at once**, where deleting the dial satisfied
+        /// neither: it took the clothes away as well and left every hue already stored on disk
+        /// still being applied with no screen left to reset it from.
+        ///
+        /// ⚠️⚠️ 13, 14 AND 15 ARE MEASURED OFF THE SHIPPED `.tres` FILES, NOT GUESSED.
+        /// `docs/Voxel_Person_Guide.md` § 5.8 records what a guessed slot number costs: *"slot 13
+        /// is his hair" was one session's guess*, written down as a fact, and it cost a build.
+        /// `MapSource/materials_persons/person_team-zack.tres` carries slot 13 at
+        /// (0.780, 0.478, 0.271), slot 14 at (0.573, 0.314, 0.153) and slot 15 back at
+        /// (0.780, 0.478, 0.271): a lit tone, its shadow, and the lit tone again, which is a skin
+        /// ramp and is the same shape on every person palette in that folder.
+        ///
+        /// ⚠️ THE CUSTOM CHARACTER IS THE EXCEPTION AND IT DOES NOT NEED ONE. Its skin is
+        /// chosen from <see cref="CustomCharacterRules.SkinToneNames"/> and WRITTEN into these
+        /// slots rather than rotated out of them, so it never travels this path at all.
+        /// </summary>
+        public static readonly int[] SkinSlots = { 13, 14, 15 };
+
+        /// <summary>
+        /// Whether a palette slot is carried through a recolour untouched.
+        ///
+        /// ⚠️ ONE QUESTION, ASKED FROM ONE PLACE. `PaletteVariants.For` had the face exclusion
+        /// written inline as `i == FaceSlot`, so adding the skin exclusion there would have been a
+        /// second list in a second file that nothing compares. A slot is protected or it is not,
+        /// and this is where that is decided.
+        /// </summary>
+        public static bool IsProtectedSlot(int slot)
+        {
+            if (slot == FaceSlot) return true;
+
+            for (int i = 0; i < SkinSlots.Length; i++)
+                if (SkinSlots[i] == slot) return true;
+
+            return false;
+        }
+
         /// <summary>The palette every character wears when nothing is equipped.</summary>
         public const string DefaultId = "";
 

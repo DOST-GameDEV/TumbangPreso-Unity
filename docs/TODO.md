@@ -2114,16 +2114,361 @@ one.**
 
 ---
 
+## 109 · Phase 6's last mile: the three-hour hang, and the presence state nothing had ever lit ⚠️⚠️ 2026-08-31
+
+Handed over as *"finish Phase 6"*, with four jobs. Three are closed here and the fourth cannot be
+done by one machine.
+
+### 109.1 · ⚠️⚠️ A PLAYMODE RUN HUNG FOR 3 h 24 m AND NAMED NOTHING, AND THE HANDOFF BLAMED THE WRONG FUNCTION
+
+The run was `-testFilter "ScoreWitnessProbe|QueueCardLayoutProbe"`, started 11:37, still going at
+15:01 with 5.6 hours of CPU across `Unity.exe`'s threads. `Logs/witness.log` was 257 KB and its last
+useful line was `[QueueCardLayoutProbe] wrote ... queue_card_v1.png`: **the test after it started
+and logged nothing at all.** A separate `-testCategory "Ugs"` run had been killed the same way at
+11:25.
+
+⚠️⚠️ **THE HANDOFF SAID `CloudEndpointActionProbe.Await` *"spins
+`while (!task.IsCompleted) yield return null` with no timeout"*. IT DOES NOT AND HAS NOT SINCE
+`816af8b3`.** That method takes `float timeoutSeconds = 30.0f`, compares against
+`Time.realtimeSinceStartup`, and throws a `TimeoutException` naming the bound. **Reading the file
+was one minute and it would have redirected the whole investigation.** `FUTURE.md` § 0.5 rule 2:
+where a document and the code disagree, the code is right.
+
+**What was actually unbounded: seventy `while (load != null && !load.isDone) yield return null;`
+loops across forty-nine PlayMode probes.** Nobody had looked at them because a scene load
+"obviously" finishes. `ProbeWait.Done` is the bound now, on all seventy sites, at **6000 frames or
+180 seconds**, and it throws with the operation's name and its progress.
+
+⚠️ **THE FRAME HALF OF THE BOUND IS THE ONE THAT WORKS HERE, AND THE LOG PROVES IT.**
+`SocialStore`'s 60-second presence heartbeat fired about 230 times into `witness.log` while the test
+sat there, so **frames were being pumped throughout**: the editor loop was alive and one coroutine
+was not progressing. A frame counter fires in that state. Both bounds are checked because a wall
+clock also catches a genuinely frozen editor and the pair costs one comparison.
+
+⚠️ **THIS DOES NOT SAY WHY THE SCENE LOAD STALLED, AND IT IS NOT MEANT TO.** It converts a
+hang with no name into a failure with one, which is the difference between an afternoon and three
+minutes. The handoff's own sentence is the argument: *a probe that can hang for ever cannot be a
+gate.*
+
+⚠️ **THE STALE `Temp/UnityLockfile` WAS REAL AND WAS CLEARED.** `CLAUDE.md` § 7. There were
+also two live `Unity.exe` processes still holding the project from the killed runs; the lockfile
+alone would not have been enough.
+
+### 109.2 · The presence log was 230 copies of one warning
+
+`SocialStore.SendPresence` logged `[Social] presence not written: Singleton is not initialized` with
+a full stack trace every heartbeat, and `NetIdentity` disables UGS sign-in in batch mode **on
+purpose**, so that message is EXPECTED there. 257 KB of identical stack trace is what a reader has
+to wade through to find a real failure. It logs once per distinct cause now.
+
+### 109.3 · ⚠️⚠️ `PresenceState.Queued` COULD BARELY EVER HAVE BEEN SEEN, AND THAT IS ARITHMETIC RATHER THAN A BUG REPORT
+
+Phase 6 reserved the value, Phase 7 made `SocialStore.CurrentState` produce it, and § 106.3 left it
+open as *"derived rather than pushed and nothing has ever seen it lit"*.
+
+**It is derived at WRITE time and the write is every `SocialRules.PresenceWriteSeconds` = 60 s.** A
+player who presses QUICK MATCH and is placed forty seconds later passes through `Queued` entirely
+between two heartbeats, and **no friend ever sees it.** `FUTURE.md` § 6 calls that state *"the single
+highest-converting moment a friends list has"*, because it is the one state where the answer to
+"can I join them" is yes and they are not busy.
+
+**Fixed by writing on a CHANGE as well as on the timer**, floored at
+`SocialRules.PresenceChangeMinSeconds` = 10 s so a flickering state cannot become a write per
+flicker.
+
+⚠️ **AND `FUTURE.md` § 19.6'S RULE IS UNTOUCHED**: *"presence polling must not raise the
+service query rate."* Polling is still 60 s. This is EVENT driven and the events are menu to queue,
+queue to match, match to menu: **three extra writes in an hour, against sixty heartbeats.**
+
+### 109.4 · Friends by display name and tag: the design, written down, still not built
+
+§ 102.2 declined this and § 106.3 kept it declined. The reason still holds: Cloud Save is keyed by
+player id with no query-by-value, so a lookup needs an index document, and **a stale index hands a
+friend request to the wrong account.**
+
+⚠️⚠️ **THERE IS A DESIGN THAT REMOVES THE FAILURE MODE ENTIRELY AND IT IS TWO READS.**
+
+1. The index maps `handle -> playerId` and is written **only by `player-account.js`, on a rename**,
+   so it is server-authoritative and no client can write into it.
+2. A lookup reads the index, then **loads the candidate account and returns it only if that
+   account's CURRENT handle still matches what was searched for.**
+
+**A stale index can then produce a MISS and can never produce the wrong person**, which is the whole
+bug class gone for the cost of one extra read. A miss is a retry; a wrong person is a friend request
+delivered to a stranger.
+
+⚠️ **STILL NOT BUILT, DELIBERATELY.** It is a service design change under `ugs/`, and under
+`ugs/` finished means DEPLOYED. It is written down here so the next session builds this version
+rather than the naive one, which is the thing § 102.2 was actually protecting against.
+
+### 109.5 · ⚠️⚠️ OPEN, AND IT NEEDS TWO MACHINES: THE TWO-ACCOUNT RUN
+
+§ 102.5 and § 104.7 are **still open** and nothing in this session could close them.
+`request`, `accept`, `decline` and `remove` write into a SECOND player's document and have never
+been exercised between two real accounts; since 2026-08-31 the identical cross-player write carries
+Phase 8's corroboration through `serviceStore(context)` (§ 104.4b), so **if the service token cannot
+read and write another player's document, Phase 8 silently never corroborates anything and no rating
+ever moves. Nothing errors.** Same shape as § 90.5.
+
+**This is a thirty-minute manual pass and it is the highest-value open item in the whole social and
+ranked stack.** It needs two laptops, two accounts, and one person. It is not something a session on
+one machine can fake, and § 102.5's own note forbids the obvious shortcut: the probe must not grow a
+second real account, because the editor and the built player share the UGS credential cache and a
+probe on the `default` profile overwrites his real display name.
+
+**Done looks like:** both machines on this branch and on UGS project
+`dcf0831e-a5f4-43b4-832e-b687f13a3569`; A adds B and B accepts; B declines a second request; A
+removes B; B blocks A and A can neither join B's lobby nor be offered it by QUICK MATCH; then one
+ranked Hero Strike match played to the end with both accounts and each `Player.log` read for the
+submit answer. ⚠️⚠️ **Look for `"verdict":"witnessed"`. `"pending"` after BOTH have submitted
+means the cross-player write does not work, and that is the finding.** ⚠️ **Read the REFUSED
+count, never the accepted count.**
+
+---
+
+## 108 · The custom character had no screen, and two screens were drawn under the screen that opened them ⚠️⚠️ 2026-08-31
+
+🧑: *"MAKE SURE WTV GEMINI MADE LOOKS GOOD ANND CAN ACTUALLY BE USED"*, *"MAKE SURE UI WORKS ENND
+TO END ANND WORKS GOOD ANND RENDERS RIGHT"*.
+
+An audit of the `gemini-rework` branch against `matchmaking-ranked`. **It compiles, all five checks
+pass and 382 core tests are green, and four of its five new features could not be reached by a
+player at all.** Every fault below is a thing that is true of the code rather than a preference.
+
+### 108.1 · ⚠️⚠️ THE CUSTOM CHARACTER CREATOR HAD NO SCREEN, AND ITS ONE DOOR WENT NOWHERE
+
+`CustomCharacterCreator` was a 388-line `MonoBehaviour` with 22 setter methods, four C# events, a
+`CreatorStage` enum and a `CameraZoomFocus` enum. **It drew nothing: no canvas, no row, no label, no
+button.** Nothing in the project ever created one, so its only door,
+`FindFirstObjectByType<CustomCharacterCreator>()` on character select, returned null on every press.
+`CLAUDE.md` § 6.2: *"A FEATURE WITHOUT A SCREEN IS NOT SHIPPED, AND 'I ADDED A ROW FOR IT' IS NOT A
+DESIGN."*
+
+Four more things were true inside it:
+
+- `ApplyLiveCharacterToPreview` computed a 16-colour array into a private field **and never touched
+  the preview**. `_preview` was assigned once in `BindPreview` and never read again.
+- The array it computed wrote the bottom-half clothing colour into **slots 7, 8 and 9, and slot 8 is
+  the FACE** (`PaletteRules.FaceSlot`; `docs/Voxel_Person_Guide.md`: *"A light slot 8 does not give a
+  light-haired character, it gives one with no face"*). It never shipped as denim eyes only because
+  the method was dead.
+- The top and bottom colours were **hard-coded constants**, so 48 tops and 36 bottoms were 84 names
+  attached to one red and one denim blue.
+- `CameraFocusChanged` fired a four-value enum that **nothing subscribed to**, and the obvious
+  repair, zooming, would have pulled in on `ModelPreview.AimHeightRatio` 0.54, **which is the
+  waist**: zooming toward the waist to look at a hat pushes the head out of frame.
+
+Nothing persisted, either. `CustomCharacterCreator.Profile` was a `static` field on a
+`MonoBehaviour`, so every character anybody made was gone when the game closed. `docs/TODO.md`
+§ 107 asks for *"3 characters u can save at once"* and **a character you cannot save is not a save
+slot.**
+
+**Built instead:** `CustomCharacterScreen`, a real full-screen takeover on `MenuKit.BuildCanvas` at
+sorting order 520, with the model at full size on the left through `ModelPreview` with the real toon
+shader, six sections on the right, a `< NAME  n/total >` stepper per choice, Escape, a working BACK
+that discards and a KEEP AND USE that writes. `CustomCharacterStore` persists the three slots into
+`GameSettings.CustomCharacterWires` as three wire strings. `ModelPreview.LookAt` is the camera focus
+that was claimed, and it moves the AIM as well as the distance.
+
+⚠️ **THE DOOR IS A ROW ON CHARACTER SELECT** reading `MAKE YOUR OWN  ·  SLOT n: <name>`, at
+the bottom of the list you already pick a character from. `CLAUDE.md` § 6.3: one door, where you
+already are, never a second one to fix findability.
+
+### 108.2 · ⚠️⚠️ TWO SCREENS WERE BUILT CORRECTLY AND DRAWN UNDERNEATH THE SCREEN THAT OPENED THEM
+
+`HeroLoadoutScreen` and `AchievementsScreen` were both opened by a button on the hub's CAREER tab,
+and both set `_canvas.sortingOrder = 95`. **The hub is a 93 per cent scrim at 500.** Both screens
+constructed themselves, laid themselves out and rendered, entirely behind the thing that opened
+them, so CUSTOMIZE LOADOUT and VIEW ALL ACHIEVEMENTS read as dead buttons.
+
+Both also used `gameObject.AddComponent<Canvas>()` rather than `MenuKit.BuildCanvas`, so neither got
+`overrideSorting`, `AspectSafeCanvas` or the guaranteed `EventSystem`, and neither had an `Update`
+reading Escape. `docs/TODO.md` § 99 is the entry recording that a nested canvas ignores
+`sortingOrder` outright, and § 92.7 is the entry recording that raising a sorting number appeared to
+fix something and cannot have.
+
+**Both screens are deleted.** Achievements and ability builds are collapsible groups on the CAREER
+tab now, built from `UiRows`, which is one door instead of three and no new canvas at all.
+
+### 108.3 · ⚠️⚠️ THE ABILITY SIDEGRADE TABLE DESCRIBED A GAME THAT DOES NOT EXIST
+
+`HeroLoadoutRules` listed the heroes as `berto, sean, dante, cheska, zack, nemu` and gave them
+`Barricade Shield`, `Ground Slam`, `Sprint Burst`, `Quick Toss`, `Sniper Aim`, `Ricochet Bank`,
+`Decoy Slipper`, `Grapple Tether`, `Heavy Smash`, `Brace Guard`, `Chalk Trap` and `Smoke Screen`.
+**Not one of those abilities is in this repository.** The real kits are:
+
+| Hero | Skill 1 | Skill 2 | Ultimate |
+|---|---|---|---|
+| DANTE | SEISMIC STOMP | DEMONIC CARAPACE | TITAN FISSURE |
+| CHESKA | PERMAFROST SHEET | ICE BARRICADE | GLACIAL NOVA |
+| SEAN | FLAME RUSH | IGNITION CANNON | SUPERNOVA |
+| ZACK | BOLT SPRINT | STATIC CHARGE | THUNDERSTRIKE |
+| NEMU | PHANTOM VEIL | ASTRAL HIJACK | DEVOURING SEANCE |
+| PHAISTER | HEX | SHADOW BLINK | GRAND COVEN |
+
+⚠️⚠️ **AND `berto` IS NOT A HERO.** `Roster.HeroPeople` is DANTE, CHESKA, SEAN, ZACK, NEMU and
+**PHAISTER**; `bayan`, display name BERTO, is the first of the twelve CLASSIC street characters and
+has no kit. **The table offered ability sidegrades to a character with no abilities and silently
+dropped one of the six who has them.** The same wrong list is in five documents and all five are
+corrected.
+
+Three more:
+
+- **Every row drew `AbilityGlyph.Zone`**, whatever the ability. `docs/VISION.md` § 3: *"The glyph
+  lives on the ability, not in a lookup table, so a new hero cannot ship with three blank tiles."*
+  Fifteen bespoke hero glyphs exist and none were used.
+- **The EQUIP button had no `onClick` listener at all.** It was created with a `Button` component
+  and a label reading SELECT or EQUIPPED and nothing else, because there was no store for a choice
+  to go into. `HeroBuild` and `GameSettings.HeroBuilds` are that store now.
+- **`Phase10Tests` could not fail.** It asserted that six hard-coded strings were present in a
+  hard-coded array in the file beside it. It was green through every fault above.
+
+`HeroLoadoutTests` reads `Roster.HeroPeople` directly, asserts `Gain + Cost == 0` on all 24 rows
+(`FUTURE.md` PHASE 10: *"a test asserts it"*), and asserts an illegal build falls back to the
+default rather than being honoured.
+
+⚠️ **`HeroLoadoutRules.ChallengesEnforced` IS FALSE ON PURPOSE.** Phase 10's per-hero
+challenge counters are not built, and with the flag true every alternate would read LOCKED on every
+account, which is § 92.1 fault 4: *fifteen rows of `0/0 (needs 10 throws)` that taught a new player
+the game was broken.* **Handing them all out early costs nothing and that is proved rather than
+hoped**: budget neutrality is asserted on every row, so an account with everything unlocked is
+differently shaped and never stronger. The flag flips when the counters land.
+
+### 108.4 · The colour dial was deleted instead of narrowed, and the damage it was written for survived
+
+Covered in `FUTURE.md` § 5.1. Short version: the TINT and STRENGTH rows were removed outright,
+`ShowModel` still applied `SettingsStore.LookFor`, so **every hue already saved to disk was still
+being painted with the only screen that could reset it now gone.** `PaletteRules.IsProtectedSlot`
+carries the skin ramp (13, 14, 15) beside the face (8) now, on both sides of the wire, and the rows
+are back captioned CLOTHES because that is what they do.
+
+⚠️ **AND THE GARMENTS ARE STILL NAMES.** 48 tops, 36 bottoms, 48 hairstyles, 24
+expressions, 20 face markings and the four accessory lists have **no geometry behind them**. What
+changes on screen when you step through them is the palette colour, not the cut.
+`tools/wearables_registry.py` and `tools/compile_modular_hero.py` are the pipeline that has to feed
+them and `docs/wearables_catalog.md` is the contract. **This is the honest state of the feature and
+it is written here rather than left to be rediscovered.**
+
+### 108.5 · OPEN: the custom character does not cross the wire and does not enter a match
+
+`CustomCharacterStore.ActiveWire()` produces the string and **nothing sends it**; `MatchInstaller`
+still spawns a `Roster` entry. So the character can be made, saved, previewed and set active, and
+the match still shows whoever was picked off the roster.
+
+**Done looks like:** `LobbySeatInfo` carries the wire string beside `Look`, `MatchRpc` and
+`MatchInstaller` resolve `RosterBook.FindPersonArt("custom")` and apply the palette, and a peer sees
+it. ⚠️ **`custom` is deliberately NOT a row in `Roster.AllPeople`** and must not become one:
+that list's header is explicit that its order is a network contract and entries are appended, never
+inserted, so a nineteenth row meaning "custom" would change what index 18 resolves to on every build
+that has not shipped yet. It travels as its own field with its own id.
+
+### 108.6 · Smaller things found in the same pass
+
+- **`PlayerNameplate`'s rank badge was drawn dead over the portrait's face**, anchor (0.5, 0.5) with
+  a zero offset at 44 px inside the picture of the player's own character. It is 30 px in the
+  bottom-right corner now. `CLAUDE.md` § 6.2c question 2.
+- **`PlayerNameplate` asked for a takeover register in a comment and did not get one.** Its own note
+  reads *"THIS IS THE THIRD TIME A NEW FULL-SCREEN THING HAS HAD TO BE TAUGHT TO THIS METHOD... A
+  list of screens to hide for is a list somebody will add a screen without."* Two more code-built
+  canvases were then added and neither was in the list. `ScreenTakeover` is the register; screens
+  add themselves on `Awake` and the plate asks.
+- **`CustomCharacterRules` lost every underscore in a name.** It encoded `:` as `_` and decoded every
+  `_` as a space, so `BATANG_KALYE` came back as `BATANG KALYE` and no round trip could recover it.
+  `CustomCharacterTests` asserted the mangled form, so the test locked the bug in. The escape is
+  `%3A` and `RosterIntegrityTests.ACustomCharacterNameSurvivesTheCodec` runs five names through it.
+- **`CustomCharacter` is written entirely in auto-properties, and `JsonUtility` serialises FIELDS
+  ONLY**, so a `List<CustomCharacter>` in `GameSettings` would have written three empty objects and
+  read three empty objects back with no error. The slots persist as wire strings instead, which
+  reuses the codec and cannot drift from the network format because it IS the network format.
+- **`Matchmaker.Start` was renamed to `StartQueue`** with no note. It is a correct rename (`Start` is
+  a Unity lifecycle message name on a `MonoBehaviour`) and it is recorded here because a rename with
+  no reason attached is a rename the next person undoes.
+- **`PersonSwapProbe`'s `NewModel` and `RosterId` were switched from `phaister` to `custom`**, so the
+  canonical turnaround probe now photographs the custom rig. Left as-is because the custom hero is
+  what is being iterated on, and noted because `CLAUDE.md` § 6.1 calls that probe the canonical
+  output and a reader will expect it to point at the last character authored.
+- **`Assets/TumbangPreso/Runtime/Settings/GameSettings.cs` carries four leaked Python
+  template fragments in
+  its doc comments**, left behind by a Python template in an earlier session. Pre-existing on
+  `matchmaking-ranked`, comments only, cosmetic. Not fixed here; noted so it is not rediscovered.
+
+### 108.6b · ⚠️⚠️ THE FIRST RENDER OF THE NEW SCREEN HAD SIX FAULTS AND THE PROBE WAS GREEN THROUGH ALL OF THEM
+
+**Written down because it is `CLAUDE.md` § 6.2's own argument happening again, on the screen
+built to answer it.** `CustomCharacterScreenProbe` passed 2/2: every section drew rows, every label
+was above the 18-unit floor, every label fitted its own box at all nine resolutions. Then the
+picture was opened.
+
+| Fault | Cause | Why no probe could see it |
+|---|---|---|
+| ⚠️⚠️ **The heading, the footer sentence and two of the four buttons were off the left edge of the canvas** | `MenuKit.Place` pivots at (0.5, 0.5), so **every offset it takes is a CENTRE**. A 760-unit heading at `offset.x = 96` spans -284 to 476. | The label fitted its box perfectly. The box was in the wrong place, and no check in the repository asks whether a rect is inside the canvas. |
+| ⚠️⚠️ **The right-hand `>` of every stepper was not on screen at 1366x768** | The control laid out to 476 units against a value column that is about 368 at 4:3. `UiRows.Cap` already records that number. | Same: each piece fitted its own rect. |
+| ⚠️⚠️ **CLOTHES, GEAR and KIT were off the right edge, so half the screen was unreachable** | Six 144-unit tabs at 150 spacing is 900 units, placed inside a `UiRows.Row` control slot of about 460. | The three tabs that fitted, fitted. **A probe that presses a tab it can find cannot report a tab it cannot.** |
+| ⚠️⚠️ **Every row's hint drew straight through its own value** | `UiRows.Row`'s hint box ends 828 units in and the control column starts at `ValueColumn` 0.56. The hub's list is about 1690 units wide so they never meet; this screen's was 1056. | `PlayerHubLayoutProbe`'s wrap check is vertical and this overlap is horizontal, between two rects that each fit. |
+| ⚠️ **The model was a head cropped at the chin** | `LookAt(0.88, 0.66)` on a tall narrow stage. | Nothing measures framing. |
+| ⚠️ **The stage was a fixed 860 units, which is 45 per cent of the canvas at 16:9 and 60 per cent at 4:3** | `AspectSafeCanvas` scales on the SHORT axis, so the canvas is about 1920 units wide at 16:9 and 1440 at 4:3. `CLAUDE.md` § 6.2c question 1, exactly. | A fraction of a variable width is not a width, and no probe asks what a number was measured against. |
+
+⚠️⚠️ **THE FIRST FOUR ARE ONE FAULT WITH FOUR FACES: A RECT THAT FITS ITS OWN CONTENTS AND
+OVERLAPS ITS NEIGHBOUR.** Every layout check in this repository measures a label against the box it
+was given. **Nothing measures a box against the boxes beside it, or against the canvas.** That is
+the next probe worth writing and it is not written yet.
+
+⚠️ `CLAUDE.md` § 6.2c has a fifth row now, about sizing a control against the narrowest column
+it will ever live in rather than against 1920, because that one is a rule rather than an incident.
+
+### 108.6c · The scrim reads weaker in a capture than it does in the game, and that is the capture
+
+The shots in `Logs/ui/2*-creator-*_v1.png` show PLAY, SETTINGS, TUTORIAL and QUIT legible behind a
+94 per cent backdrop, which looks like the fault `CLAUDE.md` § 6.2b records as *"a floating form
+over a fully lit menu"*. **It is not.** `UiRuntimeShots`' own header states the rule: a real frame
+composites an overlay canvas AFTER post, so the UI a player sees is ungraded, while a capture has to
+flip the canvas to `ScreenSpaceCamera` and that puts it THROUGH `ColourGrade`'s ACES curve, which
+lifts exactly these dark values. **Do not retune a scrim off one of these PNGs.**
+
+⚠️ **AND THE BACKGROUND IN THE SHOT IS THE WRONG ONE ANYWAY**, which is § 6.2b row 2 in
+reverse. The probe opens the creator over `MainMenu` because that is the scene it can load cheaply;
+a player reaches it from CHARACTER SELECT. The scrim is 0.94 to match `PlayerHub`'s 0.93 rather than
+tuned against either, deliberately: one visual language (`docs/VISION.md` § 6), and a number tuned
+against one background is not a number.
+
+### 108.7 · Verified
+
+- `dotnet test Core.Tests` **394/394** (+12: `RosterIntegrityTests` 8, `HeroLoadoutTests` rewritten
+  from a suite that compared a constant to itself).
+- EditMode **265/265**.
+- `CustomCharacterScreenProbe` **2/2**: six sections at nine resolutions, rows counted rather than
+  labels, and eight PNGs in `Logs/ui/`.
+- `Checks.RunAll` all five OK in one launch.
+- `node tools/check_digest_contract.js` green.
+- ⚠️⚠️ **AND THE SIX FAULTS IN § 108.6b WERE FOUND BY OPENING THE PICTURE, NOT BY ANY OF
+  THE ABOVE.** `CLAUDE.md` § 6.2: *"A GREEN LAYOUT PROBE IS NOT A GOOD SCREEN... The probe asks
+  whether the screen is a screen; the picture asks whether it can be read."* This entry is the fifth
+  time that sentence has been paid for.
+
+---
+
 ## 107 · Roster Integrity and the 3-Slot Custom Character Creator ⚠️⚠️ 2026-08-31
 
 🧑, reviewing the 2026-08-31 build and the screenshot of a green/cyan Berto with magenta clothes:
 > *"clarificatiopn: i didnnt want all characters to be customizable. I just wanted tehre to be a create ur own charcter slot and u can fully customize it (facial expression, clothes, skinn tone, height, size, accessories, everythinngs ), theres like 3 characters u can save at once but only onne is used. i didnt want it to be appliable to all characters wth. maybe the heroes we can change their clothes and shit but donnt touch the skin and shit of classic wtf"*
 
+⚠️⚠️ **STATUS: THE DIAGNOSIS BELOW IS RIGHT AND THE FIX THAT FOLLOWED IT WAS NOT.
+§ 108 IS WHAT ACTUALLY SHIPPED.** The pass that read this entry deleted the dial instead of
+narrowing it, which threw away the clothes half 🧑 asked to keep, left every hue already saved to
+disk still being painted with no screen to reset it, and replaced the row with a button that called
+`FindFirstObjectByType<CustomCharacterCreator>()` against an object nothing ever creates.
+`PaletteRules.IsProtectedSlot` is the fix: the three skin slots joined the face slot, on both sides
+of the wire, and the clothes stayed free.
+
 ### 107.1 · ⚠️⚠️ THE ROOT FAULT: APPLYING WHOLE-BODY HUE ROTATION TO CANONICAL HEROES
 § 106.1 shipped a "TINT and STRENGTH dial" straight onto the character select screen that shifted the entire 16-slot palette of whatever character was selected, including skin, face, and hair. Applied to Berto, it produced an alien green figure that destroyed the character's Filipino identity and readability.
 
 ### 107.2 · THE ARCHITECTURAL SPECIFICATION: TWO DISTINCT SYSTEMS
-1. **Canonical Roster Heroes (Berto, Sean, Dante, Cheska, Zack, Nemu, Phaister, etc.)**:
+1. **Every named character: the twelve Classic street kids and the six heroes (DANTE, CHESKA,
+   SEAN, ZACK, NEMU, PHAISTER)**:
+   - ⚠️ **`Berto` IS A CLASSIC CHARACTER, NOT A HERO**, and this line called him one.
+     `Roster.HeroPeople` is the six above; `bayan`, display name BERTO, is the first of the twelve
+     Classic street characters and has no ability kit. § 108.3 is what that mistake cost.
    - **Locked Base Identity**: Canonical skin tones, facial geometry, eye shapes, hair colors, and base silhouettes are fixed.
    - **No Alien Tint Sliders**: Global hue-shifting/tint dials on named heroes are removed.
    - **Cosmetics = Thematic Outfits/Skins Only**: Future cosmetics for heroes are strictly clothing swaps and jackets that respect character recognition.

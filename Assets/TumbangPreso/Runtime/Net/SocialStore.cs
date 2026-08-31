@@ -49,6 +49,12 @@ namespace TumbangPreso.Net
 
         private Cache _cache = new Cache();
         private float _nextPresence;
+
+        /// <summary>The state the last write carried, so a CHANGE can be noticed. See `Update`.</summary>
+        private PresenceState _lastPresence = PresenceState.Menu;
+
+        /// <summary>The floor under change-driven writes. `SocialRules.PresenceChangeMinSeconds`.</summary>
+        private float _nextPresenceChange;
         private bool _loading;
         private bool _writing;
 
@@ -266,31 +272,68 @@ namespace TumbangPreso.Net
         /// </summary>
         private void Update()
         {
-            if (Time.unscaledTime < _nextPresence) return;
+            var state = CurrentState;
+
+            // ⚠️⚠️ A CHANGE IS SENT WITHOUT WAITING FOR THE HEARTBEAT, AND `PresenceState.Queued`
+            // IS WHY. `docs/TODO.md` § 109.3: the heartbeat is 60 s and a queue is often shorter
+            // than that, so a player who pressed QUICK MATCH and was placed forty seconds later
+            // passed through `Queued` entirely between two writes and no friend ever saw it. The
+            // value was reserved in Phase 6, produced in Phase 7, and had never been lit.
+            //
+            // ⚠️ THE FLOOR IS `SocialRules.PresenceChangeMinSeconds`, so a state that flickers
+            // cannot become a write per flicker. `FUTURE.md` § 19.6 is untouched: polling is still
+            // 60 s and this is event driven, and the events are menu to queue, queue to match,
+            // match to menu.
+            bool changed = state != _lastPresence
+                           && Time.unscaledTime >= _nextPresenceChange;
+
+            if (Time.unscaledTime < _nextPresence && !changed) return;
+
             _nextPresence = Time.unscaledTime + SocialRules.PresenceWriteSeconds;
+            if (changed) _nextPresenceChange = Time.unscaledTime + SocialRules.PresenceChangeMinSeconds;
+
+            _lastPresence = state;
 
             if (!SocialRules.IsAddressable(GameServices.Account?.PlayerId)) return;
 
-            SendPresence();
+            SendPresence(state);
         }
 
-        private async void SendPresence()
+        /// <summary>
+        /// ⚠️ THE STATE IS PASSED IN RATHER THAN RE-READ. `Update` has already decided that this
+        /// write is happening BECAUSE of a particular state; reading `CurrentState` a second time
+        /// here would let the two disagree, and the disagreement would be exactly the transition
+        /// this write exists to publish.
+        /// </summary>
+        private async void SendPresence(PresenceState state)
         {
             try
             {
                 await CloudCode.CallAsync(ScriptName, new
                 {
                     action = "presence",
-                    state = (int)CurrentState,
+                    state = (int)state,
                     joinCode = CurrentJoinCode,
                     handle = MyHandle,
                 });
             }
             catch (Exception e)
             {
-                Debug.LogWarning($"[Social] presence not written: {e.Message}");
+                // ⚠️⚠️ ONCE PER CAUSE, NOT ONCE PER ATTEMPT. A batchmode probe run on 2026-08-31
+                // sat for three hours writing `Singleton is not initialized` into
+                // `Logs/witness.log` every sixty seconds, 230 times, and the 257 KB of stack trace
+                // that produced is what a reader has to wade through to find the real failure.
+                // `NetIdentity` disables UGS sign-in in batch mode on purpose, so this exact
+                // message is EXPECTED there and repeating it says nothing new.
+                if (e.Message != _lastPresenceFault)
+                {
+                    _lastPresenceFault = e.Message;
+                    Debug.LogWarning($"[Social] presence not written: {e.Message}");
+                }
             }
         }
+
+        private string _lastPresenceFault;
 
         /// <summary>
         /// ⚠️⚠️ `Queued` IS PRODUCED HERE NOW, AND THE NOTE THIS REPLACES SAID IT NEVER

@@ -28,7 +28,7 @@ namespace TumbangPreso.PlayTests
         private static IEnumerator LoadArena()
         {
             var load = SceneManager.LoadSceneAsync("Eskinita", LoadSceneMode.Single);
-            while (load != null && !load.isDone) yield return null;
+            yield return ProbeWait.Done(load, "scene load");
 
             for (int i = 0; i < 20; i++) yield return null;
         }

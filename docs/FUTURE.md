@@ -820,30 +820,74 @@ satisfied.
 
 ---
 
-## PHASE 5 · COSMETICS AND CHARACTER CUSTOMISATION ⚠️ REWORKED 2026-08-31
+## PHASE 5 · COSMETICS AND CHARACTER CUSTOMISATION ⚠️ REWORKED TWICE, 2026-08-31
 
 ⚠️⚠️ **ROSTER INTEGRITY VS. THE DEDICATED "CREATE YOUR OWN CHARACTER" SYSTEM.**
 `docs/TODO.md` § 107. A previous pass misunderstood 🧑's vision and applied a whole-body hue/tint slider across the entire roster, resulting in classic characters like **Berto** turning alien cyan and magenta with illegible skin tones. 🧑 corrected this immediately:
 > *"i didnnt want all characters to be customizable. I just wanted tehre to be a create ur own charcter slot and u can fully customize it (facial expression, clothes, skinn tone, height, size, accessories, everythinngs ), theres like 3 characters u can save at once but only onne is used. i didnt want it to be appliable to all characters wth. maybe the heroes we can change their clothes and shit but donnt touch the skin and shit of classic wtf"*
 
-### 5.1 The Two Distinct Character Categories
+### 5.1 ⚠️⚠️ THE SECOND REWORK, AND WHY THE FIRST ONE ANSWERED THE WRONG HALF
 
-1. **CANONICAL ROSTER HEROES & CLASSIC CHARACTERS (Berto, Sean, Dante, Cheska, Zack, Nemu, Phaister, etc.)**:
-   - **Visual Integrity is Locked**: Canonical skin tones, facial features, eyes, hair, body proportions, and silhouettes are fixed and non-negotiable.
-   - **No Alien Tint Sliders**: Global hue-shifting/tint dials on named heroes are strictly prohibited.
-   - **Cosmetics (Outfits Only)**: Future cosmetic support for heroes is strictly limited to thematic clothes, jackets, and costumes (skins) that preserve character recognition across the court.
+**`docs/TODO.md` § 108.** The pass that read the quote above deleted the TINT and STRENGTH rows from
+character select outright and replaced them with a button. That got three things wrong at once, and
+the third is the one worth remembering:
 
-2. **DEDICATED "CREATE YOUR OWN CHARACTER" (CUSTOM CHARACTER CREATOR)**:
-   - **Dedicated Slot**: A dedicated "Custom Character" slot on the character select/loadout screen.
-   - **3 Save Slots**: Players can create, name, and store up to **3 custom characters** simultaneously (e.g. *Slot 1*, *Slot 2*, *Slot 3*), selecting exactly **one active custom avatar** to enter matches.
-   - **Full Modular Customization Suite**:
-     - **Facial Expressions & Features**: Eyes (determined, chill, fierce, happy, focused), eyebrows, mouth/smirk, face paint/chalk marks.
-     - **Authentic Filipino Skin Tones**: Natural sun-kissed palette (warm golden-bronze, kayumanggi, deep warm brown, tan, fair peach) — authentic street hues, no synthetic alien tints.
-     - **Body Proportions & Height**: Height (kid, teen, tall) and build/size sliders (lean, athletic, stocky) calibrated within competitive read bounds.
-     - **Hair & Head Styling**: Fade, undercut, buzz, long waves, curly top, spiky, twin pigtails, plus natural hair color palette.
-     - **Clothing & Streetwear**: Sandos, graphic t-shirts, basketball jerseys, denim shorts, cargo shorts, rolled jeans, track jackets.
-     - **Accessories**: Caps (forward/backward), beanies, *gulaman* towels over neck/shoulder, shades, goggles, wristbands, chain necklaces (`docs/wearables_catalog.md`).
-     - **Tsinelas & Lata**: Custom flip-flop straps/soles and personalized tin can designs.
+1. **It threw away the half he asked to keep.** The same sentence says *"maybe the heroes we can
+   change their clothes and shit"*. Clothes are what the dial mostly turns; skin was the only part
+   he objected to.
+2. **It could not undo the damage it was written for.** `ConvertedCharacterSelect.ShowModel`,
+   `MatchInstaller` and `MatchRpc` all still applied `SettingsStore.LookFor`, so **every hue already
+   saved to disk was still being painted with the only screen that could reset it now deleted.** A
+   player whose Berto was green stayed green.
+3. **The button it left behind went nowhere.** It called
+   `FindFirstObjectByType<CustomCharacterCreator>()` and nothing in the project ever created one.
+
+**The fix is one slot list, not one screen.** `PaletteRules.IsProtectedSlot` now holds the three
+SKIN slots (13, 14, 15) beside the FACE slot (8) it already held, so a recolour physically cannot
+reach anybody's skin, on either side of the wire, and the clothes stay free. Twelve of the sixteen
+slots remain reachable and `RosterIntegrityTests` asserts that number, because a rule that protected
+everything would be indistinguishable from having no dial at all.
+
+### 5.2 The two distinct character categories
+
+1. **EVERY NAMED CHARACTER: the twelve Classic street kids and the six heroes (DANTE, CHESKA, SEAN,
+   ZACK, NEMU, PHAISTER)**
+   - **Skin and face are locked**, by `PaletteRules.IsProtectedSlot` rather than by a convention.
+   - **Clothes are free from level one.** The CLOTHES and STRENGTH rows on character select, twelve
+     hue swatches and three saturation steps, not gated on anything.
+   - **Earned palettes stay earned** and are the named presets in the COLOURS row above them.
+   - ⚠️ **`Berto` IS NOT A HERO.** This list read *"heroes (Berto, Sean, Dante, Cheska,
+     Zack, Nemu, Phaister)"* in five documents at once, and `HeroLoadoutRules` then shipped ability
+     sidegrades for him while omitting Phaister. `Roster.HeroPeople` is the list; `bayan`, display
+     name BERTO, is the first of the twelve Classic characters and has no kit.
+
+2. **MAKE YOUR OWN: the one character whose everything is a dial**
+   - **The door is a row on character select**, at the bottom of the same list you pick a character
+     from, reading `MAKE YOUR OWN  ·  SLOT n: <name>`. ⚠️ **One door, and it is where you
+     already are.** `CLAUDE.md` § 6.3: every destination has a visible door, and never add a second
+     door to fix a findability problem.
+   - **Three save slots, one active.** `CustomCharacterRules.MaxSlots`, persisted as three wire
+     strings in `GameSettings.CustomCharacterWires`.
+   - **The screen is `CustomCharacterScreen`**: the model on the left at full size, six sections on
+     the right, and a `< NAME  n/total >` stepper per choice. The camera moves to the section
+     (`ModelPreview.LookAt`), and BACK discards while KEEP AND USE writes.
+   - **What is actually customisable today**
+
+     | Section | Rows | Count |
+     |---|---|---|
+     | Face | skin tone, expression, marks | 32, 24, 20 |
+     | Hair | cut, colour | 48, 32 |
+     | Body | height, build | 85 to 115 per cent in 5s, 3 |
+     | Clothes | top, bottom | 48, 36 |
+     | Gear | headwear, face, wrists, neck | 32, 24, 24, 20 |
+     | Kit | tsinelas, lata | 20, 12 |
+
+   - ⚠️⚠️ **AND WHAT IS A NAME RATHER THAN A MESH, STATED HERE BECAUSE IT IS THE GAP.**
+     The skin tone, the hair colour and the two garment colours reach the model as palette writes and
+     are real. **The 48 tops, 36 bottoms, 48 hairstyles, 24 expressions and the accessory lists are
+     NAMES with no geometry behind them yet**, so stepping through them changes a colour and not a
+     cut. `docs/TODO.md` § 108.4 is the entry; `tools/wearables_registry.py` and
+     `tools/compile_modular_hero.py` are the pipeline that has to feed them.
 
 **Slots:** Custom character creator (3 save slots), hero outfits/clothes, headwear, tsinelas skin, can skin, emote wheel, victory pose, and **the banner**.
 
@@ -862,8 +906,19 @@ profile and at the end of a match. One object to author, one to replicate, one t
 ⚠️ **Weekly challenges were a source here and are cut**, § 13. ❌ **No currency and no shop**, cut on 2026-08-31: § 4. No lootboxes, no gacha, no real money.
 
 **What makes it cheap here:** `RosterBook` and `RosterEntryAsset` resolve id to model,
-palette, and clips, `ToonSkin`'s palette remap recolours modular voxel attachments from 16
-slots per renderer, and `docs/wearables_catalog.md` defines the wearable contract.
+palette and clips, `ToonSkin`'s palette remap recolours a whole character from 16 slots per
+renderer, and `docs/wearables_catalog.md` defines the wearable contract.
+
+⚠️ **THIS PARAGRAPH USED TO END *"a colour variant of any character is nearly free
+today"* AND THAT WAS DELETED WITHOUT A REASON.** It is still true and it is still why this phase is
+affordable; what changed is that four of the sixteen slots are now out of reach
+(`PaletteRules.IsProtectedSlot`), so a variant recolours the clothes and never the person.
+`CLAUDE.md` § 3: record the deletion and the reasoning, not just the change.
+
+**One extra that is worth more than it costs, and it is BUILT:** a **favourite loadout per
+character**, so switching character does not mean re-dressing. `CharacterLoadout` is that row and
+`GameSettings.CharacterLoadouts` is the list. ⚠️ **This bullet was deleted on 2026-08-31 as
+though it were unbuilt work being cut**, and it had shipped in § 101.
 
 ⚠️⚠️ **GIVE COSMETICS STRING IDS, NOT WIRE INDICES.** Every cosmetic id is something another peer
 resolves. `Roster.Slippers` records at length what inserting a row into a wire-facing list does.
@@ -1905,10 +1960,11 @@ actually do what their acceptance lists claim.**
 > prompt summarises the task; the summary is not the rules.
 >
 > **VERIFY FIRST.**
-> ⚠️ **ROSTER INTEGRITY IS THE HARD RULE.** Classic characters and named heroes (Berto, Sean, Dante,
-> Cheska, Zack, Nemu, Phaister) have canonical skin tones, face geometries, and identities that must
-> **never** be altered by global tint dials or whole-body hue sliders. Hero cosmetics are strictly
-> clothes/outfits/costumes.
+> ⚠️ **ROSTER INTEGRITY IS THE HARD RULE AND IT IS ENFORCED IN ONE FUNCTION.** The twelve
+> Classic characters and the six heroes (DANTE, CHESKA, SEAN, ZACK, NEMU, PHAISTER - **not
+> Berto, who is Classic**) have canonical skin and faces. `PaletteRules.IsProtectedSlot` holds the
+> face slot and the three skin slots out of every recolour, on both sides of the wire. Cosmetics for
+> a named character are clothes and colour, never skin.
 >
 > **Build.**
 > 1. **The 3-Slot Custom Character Creator**: A dedicated "Create Your Own Character" slot allowing
@@ -1922,11 +1978,20 @@ actually do what their acceptance lists claim.**
 > **Constraints:**
 > - ⚠️⚠️ **STRING IDS FOR EVERY COSMETIC, NOT WIRE INDICES.**
 > - ⚠️ **A cosmetic must never change a silhouette enough to change a read.** Bound the wearable volume.
-> - ⚠️ **Natural Filipino Skin Tones Only for Custom Avatars**: Warm golden-bronze, kayumanggi, deep warm brown, tan, fair peach. No alien cyan/magenta.
+> - ⚠️ **Warm skin tones only for the custom character**: 32 of them in
+>   `CustomCharacterRules.SkinToneNames`, every one warm, with the hex carried in the name so there
+>   is one list rather than a list and a colour table that can disagree.
 > - Extend `RosterEntryAsset` and `RosterBook`; do not build a parallel content system.
 > - Preview through `ModelPreview` with the real shader, never a flat icon.
 >
-> **Done when** a custom character can be built in one of 3 slots, equipped into a match, seen by all peers, and § 0.5 rule 9 is satisfied.
+> **Done when** a custom character can be built in one of 3 slots, equipped into a match, seen by
+> all peers, and § 0.5 rule 9 is satisfied.
+>
+> ⚠️⚠️ **WHAT IS DONE AND WHAT IS NOT, AS OF 2026-08-31.** The screen, the three slots, the
+> persistence, the live preview and the roster lock are built (`docs/TODO.md` § 108). **The custom
+> character does not yet cross the wire and does not yet walk into a match**: `CustomCharacterStore.ActiveWire`
+> produces the string and nothing sends it, and `MatchInstaller` still spawns a roster entry. That
+> is the remaining half of this phase and it is § 108.5.
 
 ---
 

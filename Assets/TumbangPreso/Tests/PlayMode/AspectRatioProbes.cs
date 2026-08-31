@@ -80,7 +80,7 @@ namespace TumbangPreso.PlayTests
             SceneFlow.SelectedMode = Core.GameMode.Classic;
 
             var load = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
-            while (load != null && !load.isDone) yield return null;
+            yield return ProbeWait.Done(load, "scene load");
             for (int i = 0; i < 30; i++) yield return null;
 
             var panel = Find("CharacterSelectPanel");

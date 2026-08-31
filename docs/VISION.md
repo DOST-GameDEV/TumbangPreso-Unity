@@ -250,10 +250,14 @@ penalties on consecutive runs. **None of the three were visible by playing it.**
   queue is `docs/Port_Plan.md` § 8; the authoring guide is `docs/Voxel_Person_Guide.md`.
 - **His UI art is the design system.** Wood, amber, cream, ink. Anything drawn in a different
   visual language is the thing that looks broken, not the thing that looks new.
-- **Roster Integrity vs. The 3-Slot Custom Character Creator.** Canonical heroes (Berto, Sean, Dante,
-  Cheska, Zack, Nemu, Phaister) keep their iconic, authentic skin tones, faces, and base geometry intact.
-  No alien whole-body tint sliders on named heroes. Full deep customization belongs to the dedicated
-  "Create Your Own Character" system with 3 save slots (1 active in match).
+- **Nobody's skin is a dial, and everybody's clothes are.** Every named character, the twelve
+  Classic street kids and the six heroes (DANTE, CHESKA, SEAN, ZACK, NEMU, PHAISTER), keeps their
+  own skin tone and face. `PaletteRules.IsProtectedSlot` holds the face slot and the three skin
+  slots out of every recolour, on both sides of the wire, so the colour dial reaches the clothes
+  and cannot reach the person. Deep customisation is the **MAKE YOUR OWN** screen: three saved
+  characters, one of them active. `docs/TODO.md` § 107.
+  ⚠️ **BERTO IS NOT A HERO** and this line listed him as one. `Roster.HeroPeople` is
+  the six above; `bayan`, display name BERTO, is the first of the twelve Classic characters.
 
 ---
 

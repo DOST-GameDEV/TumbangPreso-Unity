@@ -34,7 +34,7 @@ namespace TumbangPreso.PlayTests
             Directory.CreateDirectory(OutDir);
 
             var load = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
-            while (load != null && !load.isDone) yield return null;
+            yield return ProbeWait.Done(load, "scene load");
 
             for (int i = 0; i < 30; i++) yield return null;
 
@@ -156,7 +156,7 @@ namespace TumbangPreso.PlayTests
         public IEnumerator TheCastAnimatesInAMatch()
         {
             var load = SceneManager.LoadSceneAsync("Eskinita", LoadSceneMode.Single);
-            while (load != null && !load.isDone) yield return null;
+            yield return ProbeWait.Done(load, "scene load");
 
             for (int i = 0; i < 20; i++) yield return null;
 
@@ -210,7 +210,7 @@ namespace TumbangPreso.PlayTests
         public IEnumerator TheReplacedCharacterShowsOnTheSelectScreen()
         {
             var load = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
-            while (load != null && !load.isDone) yield return null;
+            yield return ProbeWait.Done(load, "scene load");
 
             for (int i = 0; i < 30; i++) yield return null;
 
@@ -318,7 +318,7 @@ namespace TumbangPreso.PlayTests
             UI.SceneFlow.SelectedMode = Core.GameMode.Classic;
 
             var load = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
-            while (load != null && !load.isDone) yield return null;
+            yield return ProbeWait.Done(load, "scene load");
             for (int i = 0; i < 30; i++) yield return null;
 
             var panel = Find("CharacterSelectPanel");
@@ -352,7 +352,7 @@ namespace TumbangPreso.PlayTests
             UI.SceneFlow.SelectedMode = Core.GameMode.HeroStrike;
 
             var load = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
-            while (load != null && !load.isDone) yield return null;
+            yield return ProbeWait.Done(load, "scene load");
             for (int i = 0; i < 30; i++) yield return null;
 
             var panel = Find("CharacterSelectPanel");

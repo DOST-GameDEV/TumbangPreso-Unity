@@ -29,7 +29,7 @@ namespace TumbangPreso.PlayTests
         public IEnumerator TheHandAnchorLandsOnTheHandAndRidesIt()
         {
             var load = SceneManager.LoadSceneAsync("Eskinita", LoadSceneMode.Single);
-            while (load != null && !load.isDone) yield return null;
+            yield return ProbeWait.Done(load, "scene load");
 
             for (int i = 0; i < 20; i++) yield return null;
 
@@ -98,7 +98,7 @@ namespace TumbangPreso.PlayTests
         public IEnumerator AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor()
         {
             var load = SceneManager.LoadSceneAsync("Eskinita", LoadSceneMode.Single);
-            while (load != null && !load.isDone) yield return null;
+            yield return ProbeWait.Done(load, "scene load");
 
             for (int i = 0; i < 20; i++) yield return null;
 
@@ -205,7 +205,7 @@ namespace TumbangPreso.PlayTests
         public IEnumerator TheViewmodelCarriesItsOwnSlipperInFirstPerson()
         {
             var load = SceneManager.LoadSceneAsync("Eskinita", LoadSceneMode.Single);
-            while (load != null && !load.isDone) yield return null;
+            yield return ProbeWait.Done(load, "scene load");
 
             for (int i = 0; i < 20; i++) yield return null;
 
@@ -282,7 +282,7 @@ namespace TumbangPreso.PlayTests
         public IEnumerator RemoteSmoothingLagsTheMeshAndThenCatchesUp()
         {
             var load = SceneManager.LoadSceneAsync("Eskinita", LoadSceneMode.Single);
-            while (load != null && !load.isDone) yield return null;
+            yield return ProbeWait.Done(load, "scene load");
 
             for (int i = 0; i < 20; i++) yield return null;
 
@@ -381,7 +381,7 @@ namespace TumbangPreso.PlayTests
         public IEnumerator AHeldSlipperSitsOnTheHandNotFloatingAboveIt()
         {
             var load = SceneManager.LoadSceneAsync("Eskinita", LoadSceneMode.Single);
-            while (load != null && !load.isDone) yield return null;
+            yield return ProbeWait.Done(load, "scene load");
 
             for (int i = 0; i < 20; i++) yield return null;
 

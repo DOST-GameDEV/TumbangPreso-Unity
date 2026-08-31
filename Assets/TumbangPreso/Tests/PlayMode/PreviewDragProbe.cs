@@ -87,7 +87,7 @@ namespace TumbangPreso.PlayTests
                 if (scene == parking) continue;
 
                 var unload = SceneManager.UnloadSceneAsync(scene);
-                while (unload != null && !unload.isDone) yield return null;
+                yield return ProbeWait.Done(unload, "scene unload");
             }
 
             // ⚠️ THE FRAME IS THE POINT OF THE WHOLE METHOD. `Object.Destroy` runs at the end of
@@ -100,7 +100,7 @@ namespace TumbangPreso.PlayTests
         public IEnumerator DraggingTheSubjectMovesItWithThePointer()
         {
             var load = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
-            while (load != null && !load.isDone) yield return null;
+            yield return ProbeWait.Done(load, "scene load");
 
             for (int i = 0; i < 30; i++) yield return null;
 

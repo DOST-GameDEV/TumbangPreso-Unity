@@ -137,6 +137,31 @@ namespace TumbangPreso.Core
         public const int PresenceWriteSeconds = 60;
 
         /// <summary>
+        /// The shortest gap between two presence writes when the STATE ITSELF changed.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE A SIXTY-SECOND HEARTBEAT CANNOT PUBLISH A STATE THAT LASTS
+        /// TWENTY SECONDS, AND `PresenceState.Queued` IS EXACTLY THAT.
+        /// `docs/TODO.md` § 109.3. Phase 6 reserved the value, Phase 7 made
+        /// `SocialStore.CurrentState` produce it, and it is derived at WRITE time rather than
+        /// pushed: a player who presses QUICK MATCH and is placed forty seconds later passes
+        /// through `Queued` entirely between two heartbeats and **their friends never see it at
+        /// all.** `FUTURE.md` § 6 calls that state *"the single highest-converting moment a friends
+        /// list has"*, because it is the one state where the answer to "can I join them" is yes.
+        ///
+        /// ⚠️⚠️ AND IT DOES NOT RAISE THE QUERY RATE, WHICH IS THE RULE IT HAD TO NOT BREAK.
+        /// `FUTURE.md` § 19.6: *"presence polling must not raise the service query rate."* Polling
+        /// is unchanged at 60 s. This is EVENT driven, and the events are menu to queue, queue to
+        /// match, and match to menu: **three extra writes in a session that lasts an hour**,
+        /// against sixty heartbeats. The floor is here so a state that flickers cannot turn into a
+        /// write per flicker.
+        ///
+        /// ⚠️ 10 s IS SIX TIMES UNDER THE HEARTBEAT AND FIFTEEN TIMES OVER `ServerQuery`'S 4 s,
+        /// so the worst case is still slower than the lobby browser this rule was written to keep
+        /// presence away from.
+        /// </summary>
+        public const int PresenceChangeMinSeconds = 10;
+
+        /// <summary>
         /// Whether a player id is a plausible target for anything here.
         ///
         /// ⚠️ IT REFUSES THE EMPTY STRING, WHICH IS THE ONE THAT MATTERS. `PlayerAccount.PlayerId`

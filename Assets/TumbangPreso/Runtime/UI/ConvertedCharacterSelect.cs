@@ -454,44 +454,104 @@ namespace TumbangPreso.UI
         ///
         /// Returns the height it took, so the column can size itself.
         /// </summary>
+        /// <summary>
+        /// ⚠️⚠️ THIS ROW WAS DELETED ON 2026-08-31 AND IS BACK, NARROWED, AND THE NARROWING IS THE
+        /// WHOLE POINT. `docs/TODO.md` § 107. 🧑 opened a build, saw a cyan Berto with magenta
+        /// clothes and said *"i didnnt want all characters to be customizable"*. The pass that
+        /// answered him removed the dial outright and replaced it with a button, which got three
+        /// things wrong at once:
+        ///
+        /// 1. **It threw away the half he asked to keep.** The same sentence says *"maybe the
+        ///    heroes we can change their clothes and shit"*. Clothes are half of what this dial
+        ///    turns; skin was the other half and the only one he objected to.
+        /// 2. **It could not undo the damage it was written for.** `ShowModel` still applies
+        ///    `SettingsStore.LookFor`, so every hue already saved to disk was still being painted,
+        ///    with the only screen that could reset it now deleted. **A player whose Berto was
+        ///    green stayed green forever.**
+        /// 3. **The button it left behind went nowhere.** It called
+        ///    `FindFirstObjectByType&lt;CustomCharacterCreator&gt;()` and nothing in the project
+        ///    ever creates one, so the press was silently swallowed. `CLAUDE.md` § 6.3: *"A dead
+        ///    end is a bug. A button that dismisses to nothing is worse than no button."*
+        ///
+        /// **The fix is one slot list, not one screen.** `PaletteRules.IsProtectedSlot` now
+        /// carries the skin ramp (13, 14, 15) beside the face (8), so the dial physically cannot
+        /// reach a character's skin on any path, on either side of the wire, and the clothes stay
+        /// free. The caption says CLOTHES because that is now what it does, and a control whose
+        /// label overstates it is how the last version of this got reported as a bug.
+        ///
+        /// Returns the height it took, so the column can size itself.
+        /// </summary>
         private float RefreshTintRows(Transform rows, RosterEntry entry)
         {
-            // ⚠️ ROSTER INTEGRITY (FUTURE.md § 5, TODO.md § 107):
-            // Canonical heroes and classic characters (Berto, Sean, Dante, Cheska, Zack, Nemu, Phaister, etc.)
-            // have fixed canonical skin tones, faces, and palettes. They must never be subjected to global
-            // whole-body hue rotation / alien tinting.
-            // The dedicated 3-Slot Custom Character Creator allows players to design and equip their custom street kids.
-            var btnRow = StripRow(rows, "CUSTOM CHARACTER");
-            if (btnRow != null)
-            {
-                var customBtnGo = new GameObject("OpenCustomizerBtn", typeof(RectTransform), typeof(Image), typeof(Button));
-                customBtnGo.transform.SetParent(btnRow, false);
-                var btnImg = customBtnGo.GetComponent<Image>();
-                btnImg.color = UiTheme.Amber;
-                var btn = customBtnGo.GetComponent<Button>();
-                btn.onClick.AddListener(() =>
-                {
-                    var creator = Object.FindFirstObjectByType<CustomCharacterCreator>();
-                    if (creator != null) creator.gameObject.SetActive(true);
-                });
+            if (_tab != 0 || entry == null) return 0.0f;
 
-                var labelGo = new GameObject("BtnLabel", typeof(RectTransform), typeof(Text));
-                labelGo.transform.SetParent(customBtnGo.transform, false);
-                var txt = labelGo.GetComponent<Text>();
-                txt.font = UiTheme.Font;
-                txt.fontSize = 14;
-                txt.alignment = TextAnchor.MiddleCenter;
-                txt.color = UiTheme.Ink;
-                var activeChar = CustomCharacterCreator.Profile.GetActive();
-                txt.text = $"CUSTOM HERO: {activeChar.Name.ToUpperInvariant()} (SLOT {CustomCharacterCreator.Profile.ActiveSlot + 1})";
-                
-                var le = customBtnGo.AddComponent<LayoutElement>();
-                le.preferredWidth = 320.0f;
-                le.preferredHeight = 36.0f;
-                
-                return PaletteRowHeight;
+            var book = RosterBook.Load();
+            var art = book != null ? book.PersonArt(_pick[0], SceneFlow.SelectedMode) : null;
+            if (art == null || art.Palette == null || art.Palette.Length == 0) return 0.0f;
+
+            string characterId = Roster.PersonIdAt(SceneFlow.SelectedMode, _pick[0]);
+            var look = Settings.SettingsStore.LookFor(characterId);
+
+            var tint = StripRow(rows, "CLOTHES");
+
+            for (int step = 0; step < TintSteps; step++)
+            {
+                int hue = step * (360 / TintSteps);
+                BuildTintSwatch(tint, art.Palette, characterId, look, hue);
             }
-            return 0.0f;
+
+            var strength = StripRow(rows, "STRENGTH");
+
+            foreach (var (label, percent) in TintStrengths)
+                BuildStrengthChip(strength, characterId, look, label, percent);
+
+            return (PaletteRowHeight + 6.0f) * 2.0f + RefreshCustomDoor(rows);
+        }
+
+        /// <summary>
+        /// The one door to the character creator, on the screen where you choose a character.
+        ///
+        /// ⚠️⚠️ IT IS A ROW ON THIS SCREEN RATHER THAN A SIXTH BUTTON SOMEWHERE, WHICH IS
+        /// `CLAUDE.md` § 6.3 FOLLOWED RATHER THAN QUOTED. *"EVERY DESTINATION HAS A VISIBLE DOOR,
+        /// AND A DOOR IS A THING THAT LOOKS PRESSABLE"*, and immediately after it, *"NEVER ADD A
+        /// SECOND DOOR TO FIX A FINDABILITY PROBLEM"*. The journey is: press CHARACTER, see the
+        /// cast, see MAKE YOUR OWN at the bottom of the same list, press it. Three presses from
+        /// the main menu to a face you drew, and no control the player has to discover.
+        ///
+        /// ⚠️ IT NAMES THE ACTIVE SLOT ON THE BUTTON, so the row is a status readout and a door
+        /// at once and the player never has to open it to find out which of the three is in play.
+        /// § 96 is the entry about a corner chip that stated a name and a level and read as a
+        /// status readout rather than a door; this one says MAKE YOUR OWN in the verb position.
+        ///
+        /// ⚠️ `MenuKit.WoodButton` RATHER THAN A BARE `Image` + `Button`. The version this
+        /// replaced built an amber rectangle with a `Text` child at a zero-sized `RectTransform`,
+        /// in a visual language nothing else on the screen speaks. `docs/VISION.md` § 6: *"His UI
+        /// art is the design system... anything drawn in a different visual language is the thing
+        /// that looks broken."*
+        /// </summary>
+        private float RefreshCustomDoor(Transform rows)
+        {
+            var row = StripRow(rows, "YOUR OWN");
+
+            var profile = CustomCharacterStore.Profile;
+            var active = profile.GetActive();
+
+            string caption = $"MAKE YOUR OWN  ·  SLOT {profile.ActiveSlot + 1}: {active.Name.ToUpperInvariant()}";
+
+            var button = MenuKit.WoodButton(row, caption, new Vector2(0.0f, 0.5f),
+                                            Vector2.zero, new Vector2(520.0f, SwatchSize),
+                                            () =>
+                                            {
+                                                MenuSfx.Click();
+                                                CustomCharacterScreen.Ensure().Open();
+                                            },
+                                            "WoodPrimaryButton");
+
+            var element = button.gameObject.AddComponent<LayoutElement>();
+            element.preferredWidth = 520.0f;
+            element.preferredHeight = SwatchSize;
+
+            return PaletteRowHeight + 6.0f;
         }
 
         /// <summary>One captioned strip, built the same way the COLOURS row is.</summary>

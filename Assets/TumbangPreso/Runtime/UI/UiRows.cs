@@ -562,6 +562,92 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>
+        /// A row whose control is `&lt;  NAME  n/total  &gt;`: one choice out of a long ordered list.
+        ///
+        /// ⚠️⚠️ IT IS HERE RATHER THAN A `DropdownRow` BECAUSE THE CREATOR'S LISTS ARE 48 LONG.
+        /// A dropdown is the right control for four options and the wrong one for forty-eight: it
+        /// opens a list taller than the screen, it makes the player read every name to find the
+        /// one they want, and it costs two presses per change when the whole activity is trying
+        /// things one after another. **A character creator is browsing, not choosing**, and every
+        /// console creator that ships (`docs/INSPIRATION.md`) uses exactly this control for
+        /// exactly this reason: one press is one step, and the shoulder buttons map onto it
+        /// without a menu opening.
+        ///
+        /// ⚠️⚠️ THE COUNT IS PART OF THE CONTROL, NOT DECORATION. `12 / 48` is the only thing
+        /// telling the player the list is long, which way round it goes and whether they have
+        /// seen the end of it. A stepper without it is a control that could be showing the last
+        /// option or the first and gives no way to tell.
+        ///
+        /// ⚠️ IT WRAPS AT BOTH ENDS. A creator is a loop the player runs round; stopping dead at
+        /// option 48 with a dead arrow is the same dead end `CLAUDE.md` § 6.3 names, one control
+        /// down. Wrapping also means one arrow reaches every option, which is what makes it work
+        /// with a stick.
+        ///
+        /// ⚠️ THE ARROWS ARE `ArrowButtonView`, THE SAME ONES THE LOBBY USES. `docs/VISION.md`
+        /// § 6: his UI art is the design system, and a screen that draws its own arrow is the
+        /// thing that looks broken rather than the thing that looks new.
+        /// </summary>
+        /// <summary>How wide the whole `&lt; name &gt;` control is. ⚠️ **336 IS THE 4:3 COLUMN
+        /// WITH MARGIN, NOT A NUMBER PICKED AT 1920.** See `Cap`: the value column is about 368
+        /// units at 4:3 and every control in this file has to fit inside it.</summary>
+        public const float StepperWidth = 336.0f;
+
+        /// <summary>⚠️ 44 UNITS, WHICH IS THE ROW HEIGHT MINUS ITS PADDING. An arrow smaller
+        /// than that is a target you have to aim at twice.</summary>
+        private const float ArrowWidth = 44.0f;
+
+        public static Text StepperRow(RectTransform list, string label, string value,
+                                      int index, int count, Action<int> onChange,
+                                      string hint = "")
+        {
+            var slot = Row(list, label, hint, StepperWidth);
+
+            // ⚠️⚠️ THE WHOLE CONTROL IS 336 UNITS AND THAT NUMBER IS THE COLUMN AT 4:3,
+            // NOT A TASTE CALL. `Cap`'s note: *"at 4:3 the column is about 368 px and every width
+            // this file hands out still fits inside it. Widen one past that and it overhangs the
+            // row."* The first version of this control laid out to 476 and the right-hand arrow
+            // was simply not on screen at 1366x768. **A control sized against the reference
+            // resolution is a control that only exists at the reference resolution.**
+            //
+            // 44 + 6 + 236 + 6 + 44 = 336. The arrows are aimed at once and then held, so they are
+            // small; the name is read on every press, so it takes the rest.
+            var back = MenuKit.WoodButton(slot, "<", new Vector2(0.0f, 0.5f),
+                                          new Vector2(ArrowWidth * 0.5f, 0.0f),
+                                          new Vector2(ArrowWidth, RowHeight - 22.0f), null);
+
+            var forward = MenuKit.WoodButton(slot, ">", new Vector2(0.0f, 0.5f),
+                                             new Vector2(StepperWidth - (ArrowWidth * 0.5f), 0.0f),
+                                             new Vector2(ArrowWidth, RowHeight - 22.0f), null);
+
+            float nameCentre = StepperWidth * 0.5f;
+            float nameWidth = StepperWidth - (ArrowWidth * 2.0f) - 12.0f;
+
+            var text = MenuKit.Label(slot, value, LabelUnits, UiTheme.Cream,
+                new Vector2(0.0f, 0.5f), new Vector2(nameCentre, 10.0f),
+                new Vector2(nameWidth, 28.0f), TextAnchor.MiddleCenter);
+
+            // ⚠️ FITTED RATHER THAN OVERFLOWING. `MenuKit.Label` sets
+            // `horizontalOverflow = Overflow`, so `Traditional Woven Salakot` in a 236-unit box
+            // draws straight over both arrows rather than being cut. `Fit` stops at
+            // `MinReadableUnits`, which is the floor this whole file is scaled from.
+            MenuKit.Fit(text, nameWidth - 8.0f);
+
+            var counter = MenuKit.Label(slot, count > 0 ? $"{index + 1} / {count}" : "",
+                HintUnits, UiTheme.CreamMuted,
+                new Vector2(0.0f, 0.5f), new Vector2(nameCentre, -14.0f),
+                new Vector2(nameWidth, 22.0f), TextAnchor.MiddleCenter);
+            counter.raycastTarget = false;
+
+            if (count > 0 && onChange != null)
+            {
+                back.onClick.AddListener(() => onChange(((index - 1) % count + count) % count));
+                forward.onClick.AddListener(() => onChange((index + 1) % count));
+            }
+
+            return text;
+        }
+
+        /// <summary>
         /// Makes a whole row clickable, for a list whose rows open something.
         ///
         /// ⚠️ THE ROW IS THE TARGET, NOT A BUTTON INSIDE IT. A 1400 px row with a small OPEN

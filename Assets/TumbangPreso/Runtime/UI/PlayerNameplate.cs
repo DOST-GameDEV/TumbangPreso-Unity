@@ -154,11 +154,24 @@ namespace TumbangPreso.UI
             slot.ApplyContentMargins = false;
             slot.Apply();
 
+            // ⚠️⚠️ THE CORNER, NOT THE CENTRE, AND THE FIRST VERSION OF THIS PUT A 44 px EMBLEM
+            // DEAD OVER THE FACE. It was placed at anchor (0.5, 0.5) with a zero offset inside the
+            // portrait, which is the exact middle of the picture of the player's character. **A
+            // badge that covers the thing it is a badge FOR is not a badge**, and this is
+            // `CLAUDE.md` § 6.2c question 2 one control down: every image gets an explicit fit
+            // decision and an explicit parent, and the parent here is the portrait's bottom-right
+            // corner rather than the portrait.
+            //
+            // ⚠️ 30 px RATHER THAN 44, MEASURED AGAINST THE PLATE. The portrait is the widest
+            // thing on a 272-unit nameplate; an emblem larger than a third of it competes with the
+            // character for the same glance, and the tier is already written in words beside it.
             var badgeGo = new GameObject("RankBadge", typeof(RectTransform), typeof(Image));
             badgeGo.transform.SetParent(portrait.transform, false);
-            MenuKit.Place((RectTransform)badgeGo.transform, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(44.0f, 44.0f));
+            MenuKit.Place((RectTransform)badgeGo.transform, new Vector2(1.0f, 0.0f),
+                          new Vector2(-2.0f, 2.0f), new Vector2(30.0f, 30.0f));
             _rankBadge = badgeGo.GetComponent<Image>();
             _rankBadge.raycastTarget = false;
+            _rankBadge.preserveAspect = true;
             _rankBadge.enabled = false;
 
             _name = MenuKit.Label(go.transform, "", 22, UiTheme.Cream, new Vector2(0.0f, 0.5f),
@@ -226,7 +239,15 @@ namespace TumbangPreso.UI
             // METHOD, which is the argument for asking "what is on top of me" rather than keeping
             // a list. § 92.7 records the first two. **A list of screens to hide for is a list
             // somebody will add a screen without.**
-            bool covered = _hubOpen || (_signIn != null && _signIn.IsOpen);
+            //
+            // ✅ AND IT IS NOW ASKED RATHER THAN LISTED, WHICH IS WHAT THAT NOTE ASKED FOR.
+            // `ScreenTakeover.AnyOpen` is the register every code-built full-screen screen adds
+            // itself to on `Install`, so a screen added next month hides this plate without
+            // anybody editing this method. The hub and the sign-in screen are still named
+            // explicitly on purpose: they are installed by this file and their state is already
+            // in hand, and a second path to the same answer costs nothing.
+            bool covered = _hubOpen || (_signIn != null && _signIn.IsOpen)
+                           || ScreenTakeover.AnyOpen;
 
             for (int i = 0; !covered && i < _overlays.Length; i++)
                 if (_overlays[i] != null && _overlays[i].gameObject.activeInHierarchy) covered = true;

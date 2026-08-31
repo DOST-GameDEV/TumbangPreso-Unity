@@ -477,7 +477,15 @@ namespace TumbangPreso.Core.Tests
                 RewardKind.Title, RewardKind.Badge, RewardKind.Palette, RewardKind.Border,
             };
 
-            Assert.Equal(allowed.Count, Enum.GetValues(typeof(RewardKind)).Length);
+            // ⚠️⚠️ `RewardKind.AbilityVariant` IS THE ONE KIND THE LEVEL AND MASTERY TRACKS MAY
+            // NEVER EMIT, WHICH IS THE POINT OF LISTING IT SEPARATELY RATHER THAN ADDING IT TO
+            // `allowed`. It is the only reward that reaches a gameplay number, and § 0.5 rule 4 is
+            // that nothing on a progression track may change one. `docs/FUTURE.md` PHASE 10 gates
+            // it behind a CHALLENGE instead, deliberately: *"Not a level wall."* **If this
+            // assertion ever fails because somebody granted a variant at level 40, that is the
+            // rule being broken and not the test being stale.**
+            var known = new HashSet<RewardKind>(allowed) { RewardKind.AbilityVariant };
+            Assert.Equal(known.Count, Enum.GetValues(typeof(RewardKind)).Length);
 
             foreach (var reward in ProgressionRules.AccountRewards(1000))
                 Assert.Contains(reward.Kind, allowed);

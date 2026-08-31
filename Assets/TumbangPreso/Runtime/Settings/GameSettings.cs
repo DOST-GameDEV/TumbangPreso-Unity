@@ -122,6 +122,58 @@ namespace TumbangPreso.Settings
         /// </summary>
         public List<CharacterLoadout> CharacterLoadouts = new List<CharacterLoadout>();
 
+        /// <summary>
+        /// The three custom characters, each as ONE wire string.
+        ///
+        /// ⚠️⚠️ STRINGS RATHER THAN A `List&lt;CustomCharacterProfile&gt;`, AND `JsonUtility` IS
+        /// WHY. `CustomCharacter` is written entirely in auto-properties, and `JsonUtility`
+        /// serialises FIELDS ONLY: it would have written three empty objects, read three empty
+        /// objects back, and reported no error at all. That is the same silent-reset failure the
+        /// paragraph above records for `Dictionary`, and it is why every field in this file has to
+        /// be checked against that serialiser rather than against the C# type system.
+        ///
+        /// ⚠️⚠️ AND THE CODEC IS THE SAME ONE THE WIRE USES, WHICH IS THE POINT. `LookCodec` and
+        /// `BannerCodec` are both "one string with a version letter" for the same reason:
+        /// `CustomCharacterRules.DecodeWire` refuses a version it does not recognise and answers a
+        /// default character rather than guessing at fields it cannot name. **A save file written
+        /// by a newer build therefore degrades to a default rather than to a corrupt hero**, and
+        /// the disk format and the network format cannot drift apart because there is only one.
+        ///
+        /// ⚠️ EMPTY OR SHORT IS "NEVER MADE ONE" AND IS FILLED IN BY
+        /// `CustomCharacterProfile.EnsureSlots`, never by throwing. A settings file is a plain
+        /// text file on the player's disk and every read of it has to survive being edited.
+        /// </summary>
+        public List<string> CustomCharacterWires = new List<string>();
+
+        /// <summary>Which of the three is the one that walks into a match. Clamped on read.</summary>
+        public int ActiveCustomSlot = 0;
+
+        /// <summary>
+        /// Whether the player is bringing their own character rather than a roster one.
+        ///
+        /// ⚠️ IT IS A SEPARATE FLAG RATHER THAN A SENTINEL IN `CharacterPick`, because
+        /// `CharacterPick` is an INDEX INTO A WIRE-FACING LIST (`Roster`'s header: append, never
+        /// reorder) and adding a nineteenth entry to that list to mean "custom" would change what
+        /// index 18 resolves to on every build that has not shipped yet. The custom character
+        /// travels as its own field with its own id.
+        /// </summary>
+        public bool UseCustomCharacter = false;
+
+        /// <summary>
+        /// Which ability variant each hero has equipped in each slot.
+        ///
+        /// ⚠️⚠️ THIS IS THE THING THE LOADOUT SCREEN DID NOT HAVE, WHICH IS WHY ITS EQUIP BUTTON
+        /// HAD NO LISTENER. `docs/TODO.md` § 108.3. A screen for choosing something with no store
+        /// behind it cannot choose, and the missing store is the reason rather than an oversight
+        /// beside it.
+        ///
+        /// ⚠️ WHAT IS WRITTEN HERE IS A WISH AND NOT A FACT. `HeroBuildRules.Equipped` checks
+        /// every id against the hero, the slot, the budget rule and the ledger before honouring
+        /// it, and it runs on the RECEIVING side for a peer's build too. `settings.json` is a
+        /// plain text file on the player's disk and this one decides a gameplay number.
+        /// </summary>
+        public List<HeroBuild> HeroBuilds = new List<HeroBuild>();
+
         // -------------------------------------------------------------------
         // TELEMETRY. `docs/TODO.md` § 90.3.
         // -------------------------------------------------------------------

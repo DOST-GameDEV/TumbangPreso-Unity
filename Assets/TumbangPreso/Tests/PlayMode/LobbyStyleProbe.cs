@@ -75,7 +75,7 @@ namespace TumbangPreso.PlayTests
                     SceneFlow.Networked = lobby;
 
                     var load = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
-                    while (load != null && !load.isDone) yield return null;
+                    yield return ProbeWait.Done(load, "scene load");
 
                     for (int i = 0; i < SettleFrames; i++) yield return null;
 

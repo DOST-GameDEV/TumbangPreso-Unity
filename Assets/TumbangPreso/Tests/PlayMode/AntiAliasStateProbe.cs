@@ -37,7 +37,7 @@ namespace TumbangPreso.PlayTests
         public IEnumerator ReportWhetherAntiAliasingReachesTheFrame()
         {
             var load = SceneManager.LoadSceneAsync("Eskinita", LoadSceneMode.Single);
-            while (load != null && !load.isDone) yield return null;
+            yield return ProbeWait.Done(load, "scene load");
 
             for (int i = 0; i < 40; i++) yield return null;
 

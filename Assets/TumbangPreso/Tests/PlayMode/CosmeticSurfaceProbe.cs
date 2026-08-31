@@ -334,7 +334,7 @@ namespace TumbangPreso.PlayTests
         private IEnumerator OpenThePicker(StringBuilder report)
         {
             var load = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
-            while (load != null && !load.isDone) yield return null;
+            yield return ProbeWait.Done(load, "scene load");
 
             yield return new WaitForSecondsRealtime(1.0f);
 

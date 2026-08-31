@@ -143,7 +143,7 @@ namespace TumbangPreso.PlayTests
         private static IEnumerator Arena(string map)
         {
             var load = SceneManager.LoadSceneAsync(map, LoadSceneMode.Single);
-            while (load != null && !load.isDone) yield return null;
+            yield return ProbeWait.Done(load, "scene load");
 
             // The installer builds the whole match in Start, and the characters need a frame to
             // land on the ground before they are worth photographing.
@@ -292,7 +292,7 @@ namespace TumbangPreso.PlayTests
             SceneFlow.Networked = true;
 
             var load = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
-            while (load != null && !load.isDone) yield return null;
+            yield return ProbeWait.Done(load, "scene load");
 
             // ⚠️ LONGER THAN `Shoot`'S 1.6 s, AND THE EXTRA IS NOT PADDING. Three things have to
             // finish that no other screen waits on: the transport handshake the auto-host starts,
@@ -367,7 +367,7 @@ namespace TumbangPreso.PlayTests
         private static IEnumerator Shoot(string scene)
         {
             var load = SceneManager.LoadSceneAsync(scene, LoadSceneMode.Single);
-            while (load != null && !load.isDone) yield return null;
+            yield return ProbeWait.Done(load, "scene load");
 
             // ⚠️ LONG ENOUGH FOR THE PENNANTS TO FINISH UNFURLING. `arrow_button.gd::animate_in`
             // runs for 0.45 s with a per-button stagger on top, and a capture three frames after

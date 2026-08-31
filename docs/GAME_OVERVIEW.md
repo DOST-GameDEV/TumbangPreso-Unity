@@ -35,12 +35,17 @@ caught. `VISION.md` § 0 states it as the sentence every rule protects.
 | Players | 4, free for all | 4, free for all |
 | Rounds | **4**, one full rotation | **8**, two full rotations |
 | Round length | 90 s | 90 s |
-| Roster | the twelve street characters + 3 custom player slots | the six heroes |
+| Roster | the twelve street characters, plus your own | the six heroes, plus your own |
 | Powers | **none, and that is the feature** | two skills and an ultimate each |
 | Governed by | `Design.md` | `Design.md` § 13 points at the files |
 
 ### 2.1 Roster Integrity & The Custom Character Creator
-- **Canonical Heroes & Classic Street Characters**: Berto, Sean, Dante, Cheska, Zack, Nemu, Phaister, etc. keep their canonical skin tones, facial features, and visual identity intact. No global hue-shifting or alien tint sliders are applied to named characters.
+- **Every named character keeps their own skin.** The twelve Classic street characters and the six
+  heroes (DANTE, CHESKA, SEAN, ZACK, NEMU, PHAISTER) have canonical skin tones and faces that no
+  colour control can reach. `PaletteRules.IsProtectedSlot` carries the skin ramp beside the face,
+  so the clothes stay customisable and the skin never moves. `docs/TODO.md` § 107.
+  ⚠️ **BERTO IS A CLASSIC CHARACTER AND NOT A HERO.** This line listed him among the heroes;
+  `Roster.HeroPeople` is the list and `bayan` (BERTO) is not in it.
 - **Dedicated "Create Your Own Character" Slot**: Features **3 save slots** (Custom 1, 2, 3) where players can fully customize their own street kid avatar (facial expressions, natural Filipino skin tone palette, height, body size, hair style/color, streetwear, accessories, custom tsinelas, and custom lata). One active custom character is chosen for play.
 
 Four seats. One is the **taya** (defender); the other three are **attackers**. The taya rotates

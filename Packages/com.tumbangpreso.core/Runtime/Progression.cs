@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace TumbangPreso.Core
@@ -20,6 +20,24 @@ namespace TumbangPreso.Core
         Badge,
         Palette,
         Border,
+
+        /// <summary>
+        /// One ability sidegrade from `HeroLoadoutRules`.
+        ///
+        /// ⚠️ IT IS THE ONLY REWARD KIND THAT REACHES A GAMEPLAY NUMBER, AND IT DOES NOT
+        /// BREAK § 0.5 RULE 4 FOR ONE REASON: `HeroLoadoutRules.IsBudgetNeutral` is asserted on
+        /// every row, so a variant raises one parameter and lowers another by the same fraction.
+        /// **The rule is "nothing on a progression track may change a gameplay number", and a
+        /// sidegrade changes which numbers rather than how many.** `docs/FUTURE.md` PHASE 10 is
+        /// explicit that this is the trade being made and that a test has to hold it.
+        ///
+        /// ⚠️⚠️ NOTHING GRANTS ONE YET. Phase 10's challenge counters are not built, so
+        /// `HeroLoadoutRules.ChallengesEnforced` is false and every variant is available to every
+        /// account. This member exists so that the day they are built, they grant through the one
+        /// ledger every other unlock already uses rather than through a second one.
+        /// `docs/TODO.md` § 108.3.
+        /// </summary>
+        AbilityVariant,
     }
 
     /// <summary>
