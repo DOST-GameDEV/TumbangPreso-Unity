@@ -2114,6 +2114,493 @@ one.**
 
 ---
 
+## 106 · Phases 5 and 6 finished: the free colour dial, and parties as queue tickets ⚠️⚠️ 2026-08-31
+
+🧑, mid-session: *"also finish building phase 5-6"*, and the sentence that decides what "finished"
+means here: *"the main purpose of the customizationn shit is so that ppl coudl spend their time
+making their own character"*.
+
+### 106.1 · ⚠️⚠️ PHASE 5 SHIPPED A REWARD AND NOT A PLACE TO SPEND AN EVENING, AND THAT IS WHAT WAS MISSING
+
+§§ 98 and 101 are the as-built record for Phase 5 and everything in them still stands: the banner
+is one object, palettes are derived by hue rotation rather than authored, the banner and the
+palette cross the wire, remote seats wear the palette, and the colour picker is a COLOURS row on
+character select. **Every one of those is a REWARD.** A player owns zero palettes until they reach
+hero mastery 5, `RefreshPaletteRow` correctly draws nothing at all until then (§ 0.5b question 3),
+and so the answer to *"can I make my own character"* on a fresh account was no.
+
+**What is new is a free colour dial, and it is not gated on anything.**
+
+| Row on character select | What it is | Earned? |
+|---|---|---|
+| **COLOURS** | The palettes hero mastery pays out. Unchanged from § 101. | Yes |
+| **TINT** | Twelve hue swatches, 30 degrees apart, composed on top of whatever palette is equipped | **No, from level 1** |
+| **STRENGTH** | SOFT, AS DRAWN, BOLD | **No, from level 1** |
+
+⚠️ **`FUTURE.md` § 0.5 rule 4 is the rule this had to satisfy and it satisfies it exactly**:
+nothing on a progression track may change a gameplay number, and a colour changes none. The earned
+palettes stay earned and are the named presets; the dial is expression rather than progress, the
+same way a display name is. **The row above is what you unlocked and the two rows below are what
+you make.**
+
+⚠️⚠️ **THERE IS NO BRIGHTNESS DIAL AND THERE MUST NEVER BE ONE.** `PaletteVariants.Rotate` already
+recorded why the earned variants rotate hue and nothing else: **the toon shader bands on VALUE**,
+so the two-band read that tells three attackers apart at distance is a function of lightness. A
+player who could drag their own value could dress as a silhouette, and `VISION.md` § 2 rule 5 is a
+measured readability budget rather than a preference. Saturation does not touch the banding and is
+still bounded at `PaletteRules.SaturationMin` 55 and `SaturationMax` 145: at zero a character reads
+as a shadow on the Eskinita road, far above 100 the ramp's two bands collapse and the character
+flattens into a sticker.
+
+⚠️ **The dial is clamped on the RECEIVING side, not only on the sending one.**
+`LoadoutRules.LookFor` runs on both, so a modified client that sends a saturation of zero is drawn
+at the floor. The earned half is checked against ownership; the free half is only clamped, which is
+the whole ownership model in one line.
+
+### 106.2 · ⚠️⚠️ `LobbySeatInfo.PaletteId` IS NOW `LobbySeatInfo.Look` AND THAT IS WHY THE PROTOCOL IS 18
+
+A palette id could only say which of two earned presets a player had equipped. "What this character
+looks like" is three values now, and `Roster.Slippers`' rule says the way to put three values on a
+wire two builds have to agree about is **one versioned string**, not three fields a hand-maintained
+writer and reader can get out of order. `LookCodec` is that string, `L1:<paletteId>:<hue>:<sat>`,
+and a build that does not recognise `L1` draws the authored colours, which is the same degradation
+`PaletteRules.IsKnownVariant` already guarantees for an unknown id.
+
+⚠️ **The name changed with the contents on purpose.** A field called `PaletteId` holding a look
+frame is the shape § 94.1 is about.
+
+⚠️ `BannerClaim` gained `HueDegrees` and `SaturationPercent`, appended at the END of the codec
+frame and never inserted, so an older frame reads its seven fields and stops.
+`BannerTests.AClaimCarriesOnlyWhatAuthorisesIt` was updated deliberately rather than incidentally:
+those two are **not** authorising facts and the comment there says so.
+
+### 106.3 · Phase 6's three exceptions, and which of them Phase 7 closed
+
+§ 102.2 named three bullets of Phase 6 that could not be built as written. Phase 7 closes one of
+them exactly as `FUTURE.md` § 6 predicted it would.
+
+| § 102.2's exception | Status now |
+|---|---|
+| **Parties that "queue together" need a queue** | ✅ **CLOSED.** `PartyRules` is the rule set and `QueueCard` presses it: QUICK MATCH in a room of three looks for a lobby with three chairs (`PartyRules.SeatsNeeded`, `MatchmakingRules.Evaluate`'s `seatsNeeded`). ⚠️ **The rail did not change**, which is what § 6 said would happen: a friend's JOIN button still hands a join code to `LobbyJoinPanel` |
+| **Friends by display name and tag need an index document** | ❌ **STILL OPEN AND STILL DECLINED.** Cloud Save is keyed by player id with no query-by-value and a stale index hands a friend request to the wrong account. Recent players remains the shipped path. Nothing in Phase 7 changed the storage this needs |
+| **Blocking must survive matchmaking** | ✅ **CLOSED, AT TWO GATES.** `MatchmakingRules.Evaluate` refuses a blocked host **before** the rating is even considered, and connection approval still refuses one that gets through. Two gates for one rule on purpose: approval alone would let the queue find a blocked host, connect, and bounce the player straight back out, which reads as the queue being broken rather than as a block working. `MatchmakingTests.ABlockedHostIsNeverJoinedAtAnyBandWidth` asserts it at the widest band too, because a block that expires after seventy-five seconds of queuing is not a block |
+
+⚠️⚠️ **AND § 102.5 IS STILL OPEN AND IS STILL THE NEXT THING TO DO WITH THE SOCIAL LAYER.** No
+two-account run has happened. `request`, `accept`, `decline` and `remove` are proven by the core
+tests and by reading the deployed script, not by a live round trip between two players. That is a
+thirty-minute manual pass on the two laptops and nothing in this session touched it.
+
+⚠️ **A party of four cannot queue RANKED and a party of two or three can.** § 105.4 has the
+decision and the reasoning; `FUTURE.md` § 6 raised the question and deferred it to Phase 9, and
+§ 19.9 step 9 is the instruction to decide it and assert it in a test.
+
+---
+
+## 105 · Phase 9: one ladder, five tiers, Glicko-2 ⚠️⚠️ 2026-08-31
+
+`FUTURE.md` PHASE 9 and § 19.9. **Three questions in that prompt say "ask before building" and all
+three were asked and answered on 2026-08-31.**
+
+### 105.1 · The three decisions, and who made them
+
+| Question | `FUTURE.md`'s note | 🧑's answer |
+|---|---|---|
+| Which mode carries the one ladder | *"Hero Strike is the obvious candidate, but 🧑 has not said so. Ask before building"* | **Hero Strike.** `VISION.md` § 1 says it exists to raise the competitive ceiling. Classic stays the street game and the tournament ruleset, unranked |
+| Sixteen rungs or five | *"⚠️⚠️ ASKED AND NOT ANSWERED 2026-08-31... do not assume the sixteen-rung version"* | **Five tiers, no divisions.** `FUTURE.md` § 0.5 rule 11b is the test that decides it: the cost of a feature is what the PLAYER has to hold in their head, and sixteen rungs is fifteen more words than five |
+| The tier names | *"🧑 names them"* | **BATA, KANTO, BARANGAY, KAMPEON, ALAMAT**, the set already suggested in § 9. `RatingRules.TierNames` is the one place they are written |
+
+### 105.2 · What is built
+
+- **`Core/Rating.cs`**: Glicko-2 with the volatility iteration (Illinois), the six-pairwise
+  expansion, the tiers, the floors and the season. `Core.Tests/RatingTests.cs` is 13 tests.
+- **The three `FUTURE.md` § 19.9 done-when measurements are the three named tests**, not prose:
+  `ASimulatedSeasonSortsFourPlayersIntoTheirTrueOrder` (120 matches, four true strengths, correct
+  order and everybody settled), `ANewPlayerSettlesInsideTenMatchesFromAMidLadderStart`, and
+  `AClearlyStrongerNewAccountClimbsOutOfALowBandQuickly` (eight straight wins over a 1100 field
+  moves a new account past 1700 and into KAMPEON).
+- **The second copy in `ugs/cloud-code/match-record.js`**, because the endpoint is the only writer
+  of a rating (`FUTURE.md` § 0.5 rule 6).
+- **Everyone starts at 1500 with a 350 deviation**, which is mid-ladder and BARANGAY, so a tier is
+  shown from match one. ❌ **No placement matches**, cut in § 9 and not re-added.
+- **Season boundary is arithmetic on a fixed epoch** (`RatingRules.SeasonOneStartUtc`, ten weeks),
+  because a season that has to be rolled over by hand is a season that stays open for eight months.
+- **A soft reset pulls 40 per cent toward the mean and never wipes.** The peak survives; the FLOOR
+  does not, and § 105.3 is why.
+- ❌ **No decay, no demotion buffer, no margin multiplier.** All three stayed cut.
+
+### 105.3 · ⚠️ THE RANK FLOOR SURVIVES A LOSS AND DOES NOT SURVIVE A SEASON
+
+`INSPIRATION.md` § 2.19: once a tier is reached the season cannot fall below it, which costs one
+comparison and removes the most common reason people stop queueing. `RatingRules.ApplyFloors`
+**raises the floor before it enforces it**, so reaching a tier and immediately losing cannot drop
+out of the tier that was just reached. That ordering IS the promise.
+
+Carrying the floor into the next season would make the ladder only ever ratchet upward, which is a
+leaderboard of who has played longest. So `BeginSeason` clears it and keeps the peak.
+
+### 105.4 · ⚠️⚠️ A FOUR-STACK CANNOT QUEUE RANKED. PARTIES OF TWO AND THREE CAN
+
+`FUTURE.md` § 6 raised it and deferred the choice to Phase 9; § 19.9 step 9 is the instruction to
+decide and assert it. **The decision is the second option**, and the reasoning is § 0.5 rule 11b
+again: "you cannot queue ranked as a full four" is one sentence and it appears on the button at the
+moment it matters. Excluding **every** party from ranked would be a shorter rule and a worse game,
+because two friends cannot arrange a four-player result between themselves: the other two seats are
+strangers who are trying to win. `PartyTests.AFourStackCannotQueueRankedAndATwoOrThreeStackCan`.
+
+⚠️ **Ranked also needs an account and quick match does not.** `FUTURE.md` § 0.5 rule 7 is respected
+rather than bent: practice, training, LAN and joining by code stay outside a login, and a ladder is
+the one thing that genuinely cannot work for an identity that only exists on one machine.
+
+### 105.5 · ⚠️⚠️ THE ONE PLACE THE ENDPOINT KNOWINGLY APPROXIMATES ITS OWN SPECIFICATION
+
+`RatingRules.UpdateAll` takes all four real rank states, because Glicko-2 is a batch system.
+**`match-record.js` cannot**: it is called once per player, by that player, and reading three other
+players' rank documents on every submission would be twelve extra Cloud Save reads per match on a
+free tier (`FUTURE.md` § 0.5 rule 8). So the endpoint treats every opponent as sitting at the start
+rating with the start deviation.
+
+**What that costs:** beating a stronger player pays the same as beating an average one.
+**What it does not cost:** the ORDER of the ladder, because every player is measured against the
+same reference.
+
+⚠️ **The fix for the day there is a budget is one line of design, written down now so it is not
+re-derived**: the FIRST submitter of a match writes a snapshot of all four rank states into the
+same shared verdict row § 104 already creates, and later submitters read it. One extra read, no
+extra writes.
+
+### 105.6 · What the player actually sees, and the trap § 0.5b named for it
+
+`FUTURE.md` § 0.5b's phase 9 row: the surface is "a badge on the nameplate and a rating line on the
+end-of-match board", the one thing on it is "which way the number moved, and by how much", and the
+trap is **"level and rank must never be confusable"**.
+
+- **The nameplate draws `LV 14 · KAMPEON`.** Level keeps its `LV` prefix and its bar; the tier is a
+  WORD with no number on it at all. `14 · 3` could be misread as one quantity and this cannot.
+- **An unranked account draws no tier**, rather than the word UNRANKED. `FUTURE.md` § 2.2: withhold
+  the ROW, not just the number.
+- **A tier that is still moving fast says so**, with a `?` on the plate and STILL PLACING YOU on the
+  board, because a first-week tier is a guess and letting a player quote it as settled is how a
+  ladder gets a reputation for being random.
+- ⚠️ **No rating is drawn anywhere.** `FUTURE.md` § 9: "the player never sees the number, only the
+  tier". A number on the board would also be the end of ever retuning the thresholds.
+
+---
+
+## 104 · Phase 8: the witnessed result, and the finding that the plan's design would have been theatre ⚠️⚠️ 2026-08-31
+
+`FUTURE.md` PHASE 8 and § 19.8. ⚠️⚠️ **THE FIRST THING THIS PHASE FOUND IS THAT ITS OWN
+SPECIFICATION RESTS ON SOMETHING THIS CODEBASE DOES NOT DO**, and `FUTURE.md` § 0.5 rule 11 is the
+instruction for that case: do the part that still makes sense, write what changed here, correct the
+plan, and put the disagreement at the top of the handoff.
+
+### 104.1 · ⚠️⚠️ EVERY PEER ALREADY SUBMITS THE HOST'S OWN JSON, SO COMPARING SUBMISSIONS WOULD HAVE PROVED THAT JSON ROUND-TRIPS
+
+`FUTURE.md` § 8.1 says: *"The clients already have everything needed. Every peer derives the
+scoreboard from the scoring events it already receives, because that is how the HUD stays in
+sync."* **They receive the events and they derive nothing from them.**
+
+What actually happens at the whistle is `MatchRpc.BroadcastMatchRecord`: the host serialises its
+finished `MatchRecord` and every peer calls `GameServices.Stats.Adopt` on it (protocol 15 added
+that broadcast). Every peer then submits its own line **out of the host's record**. So four
+"independent" submissions were four byte-identical copies of one machine's opinion.
+
+**A corroboration scheme built on that would have been theatre**, and theatre is worse than nothing
+here, because § 9's own opening line is that a rank a host can award itself is worse than no rank.
+
+⚠️⚠️ **AND THE SAME FINDING REMOVES THE HARDEST QUESTION § 8.1 LEFT OPEN: WHO CHOOSES THE
+WITNESS.** A witness chosen by the host is a witness chosen by the suspect; a witness derived from
+the match id is derived from a value the host minted. With every peer already submitting, nobody
+chooses.
+
+### 104.2 · What shipped instead: the comparison is against the EVENT STREAM
+
+`Runtime/Net/ScoreWitness.cs`. Every peer keeps its own running tally of `MatchDirector.Scored`,
+which is the announcement `AddScore` already makes for every point in the game, reliably, to
+everybody, because the toast, the sting and the scoreboard pulse all hang off it. At the whistle the
+peer substitutes its OWN scores into the host's record, re-derives the placements, and hashes that.
+
+- **`IntegrityRules.Digest` is FNV-1a 64 over a canonical string of the outcome-bearing fields
+  only.** Score, placement, bot flag, character, round count, winner, and the ranked flag.
+- ⚠️⚠️ **THE PER-MACHINE MEASUREMENTS ARE DELIBERATELY OUTSIDE THE DIGEST.** Distance travelled,
+  time to first throw and the defence tick counter are sampled off each peer's own frame timing, so
+  two honest clients disagree about them in the third decimal place every match. Putting them in
+  would dispute every match in the game and the mechanism would be switched off inside a week.
+- ⚠️ **64 bits and not 32.** This is compared across a trust boundary, and a 32-bit digest can be
+  collided by brute force on a laptop.
+- ⚠️⚠️ **A PEER THAT DID NOT SEE THE WHOLE MATCH SUBMITS NOTHING, AND SILENCE IS NOT A DISPUTE.**
+  Backfill puts people into a running match on purpose and a reconnect does the same; both miss the
+  events that went out before they arrived, so both would tally short and accuse an honest host.
+  `ScoreWitness.Complete` is the gate.
+
+### 104.3 · ⚠️⚠️ WHAT THIS DOES AND DOES NOT STOP, WHICH § 19.8'S DONE-WHEN ASKS FOR BY NAME
+
+- ✅ **A host that plays an honest match and then submits a better scoreboard.** This is the cheap
+  attack and the one a script kiddie actually runs.
+- ✅ **Two colluding players.** Two agreeing submissions out of four leaves two disagreeing ones,
+  and a disagreement beats a majority: three agreeing and one dissenting is DISPUTED, not
+  witnessed. A vote would let three colluding players ratify anything.
+- ❌ **A modified host that awards itself points DURING the match.** `MatchDirector.AddScore` is the
+  single host-side writer and every peer's tally is built from the events that function broadcast,
+  so a host that lies in play sends every peer the same fabricated total and all four agree. **This
+  is the honest limit and `FUTURE.md` § 8.2's dedicated servers are the answer to it.** It is also
+  a strictly stronger claim than § 8.1's own limit ("two colluding players"), and § 8.1 has been
+  corrected to say so.
+- ❌ **Four colluding players.** A room where every human is in on it is not a matchmaking problem.
+- ❌ **A player who never submits.** A phone losing signal at the whistle is indistinguishable from
+  a client refusing to corroborate.
+
+### 104.4 · ⚠️ THE ARBITER, WHICH IS WHERE A SHARED VERDICT CAN LIVE AT ALL
+
+Cloud Save is keyed by player id and there is no game-scoped document this endpoint can rely on, so
+corroboration needs one agreed place to write. **The arbiter is the lexicographically smallest
+human player id in the record**, computed identically by all four peers from the record they each
+hold, and the verdict row lives in that player's protected data under `matchVerdicts` (a rolling 60).
+
+⚠️ **A host that forges player ids to move the arbiter fails safe**: its submission lands in a
+document nobody else writes to, stays PENDING for ever, and never pays a rating.
+
+⚠️⚠️ **AND THE RATING IS PARKED RATHER THAN APPLIED OPTIMISTICALLY.** The endpoint cannot write
+into the first submitter's profile when the SECOND submitter corroborates them, because the two are
+different documents. So the first submitter's computed state is parked on their own profile
+(`PlayerProfile.PendingRankedMatchIds`, and the endpoint's `PendingRanked`) and collected on their
+next `load`, which every client already calls at boot and after every match. **No polling and no
+extra request anywhere.** A disputed match drops off the list and pays nothing.
+
+### 104.4b · ⚠️⚠️ AND CORROBORATION MUST NEVER BE ABLE TO COST A PLAYER THEIR CAREER
+
+Measured on 2026-08-31 and this is why the guard exists rather than being a precaution: a
+`-testCategory "Ugs"` run **went silent for three minutes inside `CloudEndpointActionProbe` and
+had to be killed**, on the first run after the verdict machinery was added. `serviceStore`
+constructs happily from an undefined `context.serviceToken` and then every request it makes is
+refused and retried, so the submission a player is waiting on sits there rather than failing.
+
+Three things changed, and all three are the same rule: **Phase 8 is an ADDITION to a submission
+path that has worked since Phase 2, and an addition may degrade but must never subtract.**
+
+1. **The service token is checked before the call is attempted**, so a missing one is a branch not
+   taken rather than a stall.
+2. **The whole corroboration block is inside a `try`**, and a failure means `pending`, which pays
+   no rating. Conservative in the direction that matters, and logged rather than swallowed.
+3. **`collectPendingRanked` degrades the same way on `load`.** A `load` that threw would leave a
+   player unable to open the career screen because a rating they cannot see is unreadable.
+
+⚠️⚠️ **AND THE FIVE-SECOND WRITE FLOOR TURNED OUT TO BREAK THE ONE THING THIS ENDPOINT EXISTS
+FOR, WHICH IS THE OFFLINE QUEUE.** `CareerStore.FlushAsync` sends queued records **in a tight
+loop**, oldest first: that is the entire design of playing on a bad connection and catching up
+later. A floor between writes refuses the second record, and the loop stops at the first failure
+by design, so catching up would take five seconds a match and every one would arrive as an error.
+**The floor applies to `abandon` and `report` only**, which are the two actions a client can call
+in a loop without playing anything. The hourly cap still applies to everything and is what
+actually stops a runaway client.
+
+⚠️ **WHETHER THE SERVICE TOKEN CAN ACTUALLY READ AND WRITE ANOTHER PLAYER'S DOCUMENT IS STILL
+UNPROVEN AGAINST THE LIVE SERVICE.** `social.js` has used `serviceStore` since Phase 6 and § 102.5
+records that its cross-player paths have never had a two-account run either. **If the token turns
+out to be unusable, corroboration degrades to every match reading `pending` and no rating ever
+moving**, silently and by design rather than by accident. That is the first thing to check on the
+two-laptop pass, and it is why § 104.7 exists.
+
+---
+
+### 104.5 · ⚠️⚠️ THE DIGEST IS WRITTEN TWICE AND `tools/check_digest_contract.js` IS WHAT KEEPS THE TWO HONEST
+
+A silent disagreement between the C# and the JavaScript would dispute every match in the game, no
+rating would ever move, and **nothing anywhere would log an error**. That is the same failure shape
+as § 90.5, where no career had ever reached the server and every probe was green throughout.
+
+So the contract is a frozen string rather than a property: `DigestContractTests.ReferenceDigest` is
+`7b135cbb69492fa5`, a person typed it, and the node check runs the DEPLOYED script's own functions
+against the same fixture and compares. It exits non-zero, so it gates a verification pass beside the
+three python audits.
+
+```bash
+node tools/check_digest_contract.js
+```
+
+⚠️ **If `Canonical` changes deliberately, change both sides and then the literal, in one commit,
+and say so in the handoff.** Changing only the literal makes the test green and the ladder dead.
+
+### 104.6 · The rest of § 19.8
+
+- **Sanity checks** (`IntegrityRules.Check`): more knockdowns than throws, more hits than attempts,
+  defence longer than the match, a placement that disagrees with the scores, an impossible duration
+  or travel distance. ⚠️ **Every one is a statement about arithmetic rather than about play.** The
+  score ceiling is deliberately unreachable, because refusing a real result is far worse than
+  accepting a modest lie: the lie is caught by the digest, and the refusal is a player being told
+  their best game never happened.
+- **Leaver penalties that distinguish a leave from a disconnect.** ⚠️⚠️ **THE MECHANISM IS A FLAG
+  ON DISK, NOT A BUTTON.** Reporting an abandon when the player presses QUIT penalises only the
+  people polite enough to press it: alt-F4 would be free. `CareerStore.InMatchSinceUtc` is written
+  at round 1 of a networked match with another human in it and cleared when a record is adopted, so
+  **the next launch finds a match that was started and never finished** and reports it once. A
+  reconnect that plays to the whistle clears it, which is why coming back is not punished.
+- **Escalating cooldowns**: 0, 2 min, 10 min, 30 min, 60 min, over a rolling seven days. ⚠️ **The
+  first one is free on purpose.** One abandoned match is a doorbell or a brownout, and this
+  audience is students on home connections in Metro Manila. The escalation is aimed at a habit.
+- **Rate limits**: five seconds between career writes, sixty an hour, ten reports a day. Invisible
+  to anybody actually playing, and a cap on a client stuck in a retry loop.
+- **Reporting** from the end-of-match board, six reasons, no free-text box. ⚠️ **It writes a count
+  and there is no console to read it**, which is § 0.5b's phase 8 row followed rather than argued
+  with: "resist building a moderation console. This phase's success is invisible." A report with
+  nobody to read it is still worth taking, because the player needs somewhere to put the feeling.
+  Pretending to act on it would be worse than saying nothing.
+
+### 104.7 · What this phase owes and has not got
+
+⚠️⚠️ **NO FOUR-MACHINE RUN HAS HAPPENED, AND THE ONE ASSUMPTION THAT NEEDS ONE IS WHETHER THE EVENT
+STREAM REPRODUCES THE FINAL SCORE EXACTLY.** If any point in the game is ever awarded without a
+`Scored` announcement, every honest match would read as disputed. `ScoreWitnessProbe` runs a real
+solo match and asserts the host's own tally equals its own record line for line, which tests the
+risky half locally; what it cannot test is a second machine's copy of the same stream. **That is a
+two-laptop pass and it belongs with § 102.5's, which is also outstanding.**
+
+### 104.8 · ⚠️⚠️ FOUND ON THE WAY: `MatchRecordIdentityProbe` HAD AN ASSERTION THAT COULD NEVER PASS IN BATCH MODE
+
+It failed on this branch and it is **not** a regression from this work. `NetIdentity.AttemptSignInAsync`
+returns false immediately when `Application.isBatchMode`, **by design and with a comment saying
+so**, so `PlayerAccount.PlayerId` is empty in every headless run and `CareerStore.LocalPlayerId`
+correctly falls back to `NetIdentity.Token`, which IS `GameSettings.PlayerToken`.
+
+The probe's last assertion was `AreNotEqual(PlayerToken, mine.PlayerId)`. **Offline, the record
+carrying the machine token is the right answer rather than the fault**, so that line was asserting
+that the machine was online. `UgsServicesProbe` reaches past the same gate by calling
+`AuthenticationService.SignInAnonymouslyAsync` itself, which is why it is green in the same run.
+
+⚠️ **THE CLAIM MOVED RATHER THAN BEING WEAKENED.**
+`TheRecordNeverCarriesTheMachineTokenWhileSignedIn` is `[Category("Ugs")]`, signs in the way
+`UgsServicesProbe` does, and asserts it where it can be evaluated. ⚠️⚠️ **Making it conditional
+with an `if` was the obvious fix and is the one § 101.1 forbids**: an assertion inside an `if` is
+an assertion that can decide not to run, and that is exactly how a palette that could never be
+equipped by anybody shipped green.
+
+⚠️ **The rest of the probe was passing throughout**, including the seat, the id via
+`MatchRecordRules.LineFor`, the three blank bot ids and `Submittable`.
+
+---
+
+## 103 · Phase 7: QUICK MATCH as a rating-banded queue ⚠️⚠️ 2026-08-31
+
+`FUTURE.md` PHASE 7 and § 19.7, on the brief *"build phase7-9"*.
+
+### 103.1 · ⚠️⚠️ THE MATCH-QUALITY METRIC IS THE SPREAD OF FOUR RATINGS AND THE TEST FOR IT IS THE FIRST THING IN THE FILE
+
+`FUTURE.md` § 7: *"A 4-player free for all matches differently from a team game. There is no team
+to balance. The job is not make two sides equal, it is put four players of similar skill in one
+room."* A lobby holding one 1400 and three 900s is a bad match for all four people in it, and
+**every team-based fairness formula calls it balanced**: 1400+900 against 900+900 is a 250-point
+gap and there are team games shipping today that would take it.
+
+`MatchmakingRules.Spread` is the metric. ⚠️ **`MatchmakingRules.BestTeamSplitGap` is the WRONG
+metric, is in the core on purpose, and is called by nothing in the game.**
+`MatchmakingTests.ALobbyOfOne1400AndThreeNineHundredsIsBadBySpreadAndBalancedByTeamFairness`
+asserts both halves of that sentence, because asserting only the spread would leave the next person
+free to "simplify" the check into the team formula and still see green. **Deleting that function
+deletes the proof, not dead code.**
+
+### 103.2 · ⚠️⚠️ IT ADDS ZERO SERVICE REQUESTS, WHICH IS THE CONSTRAINT § 19.7 NAMES
+
+*"This must not raise the query rate against the free tier."* `ServerQuery` already queries UGS
+Lobby every 4 seconds while browsing and heartbeats a hosted lobby every 15. `Matchmaker`
+**subscribes to `ServersChanged` and decides against records that loop already fetched.** Six extra
+strings on a record that is already being fetched cost nothing.
+
+⚠️ **The widening is LOCAL, which is the second half of the same argument.** A queue that
+republished its band every 15 seconds would be one lobby write per queuing player per step.
+`MatchmakingRules.Evaluate` checks the band from **both** sides, so a searcher whose own band has
+widened finds a patient host without the patient host saying anything.
+
+⚠️ **Only `Pool` is indexed.** UGS gives a lobby a fixed handful of index slots and S1 is the join
+code and S2 the in-progress flag already; the band and the seat extremes are read client-side off
+records the browse loop has, so indexing them would spend a scarce slot to save nothing.
+
+### 103.3 · The schedule, and what the player sees while it runs
+
+Start at plus or minus 100, widen by 100 every 15 s, stop at plus or minus 500 and take anybody.
+That is § 7's schedule unchanged, and `MatchmakingRules.WidenSteps` and `SecondsToWidest` are
+DERIVED from those three constants rather than written, because a fourth constant is a number that
+can disagree with the other three (§ 88.1a is the entry about exactly that).
+
+⚠️⚠️ **A WIDENING STEP RE-EVALUATES IMMEDIATELY RATHER THAN WAITING FOR THE LIST TO CHANGE.** The
+whole point of widening is that lobbies which were outside the band are inside it now, and none of
+them had to move for that to become true. Without it, a stable list of near-misses would never be
+reconsidered and the bar would fill while nothing happened behind it.
+
+**`QueueCard` is the surface**, and § 0.5b's phase 7 row is unusually specific about it: "a queue
+state on the mode screen, not a screen of its own", and the trap is **"a spinner is not a state.
+Say the mode, the time elapsed, and how to cancel, and never block the menu behind it."** All four
+are on the card and all four are asserted.
+
+- ⚠️⚠️ **NO SCRIM, AND `CLAUDE.md` § 6.2c QUESTION 3 IS WHY.** `LobbyJoinPanel` has a 68 per cent
+  scrim because it is a modal asking a question. This is the opposite: the player is queueing so
+  they can carry on doing something else, and every word on the card sits on an opaque wood plate.
+  A scrim would dim the lobby, the cast and the chat for no legibility at all and would eat every
+  click on the screen underneath. **The plate blocks exactly its own rectangle, and it says so.**
+- ⚠️ **The width is measured against its content** (§ 6.2c question 1): 560 units is the taya
+  sentence at 18 units over two lines plus one margin either side. It is not a fraction of the
+  window, because `AspectSafeCanvas` scales on the short axis and a percentage is two very different
+  widths at 4:3 and on the short wide window he plays in (§ 100).
+- ⚠️ **The door and the card are never both on screen.** They are two states of one control.
+
+### 103.4 · ⚠️⚠️ THE GAME NOW SAYS THE TAYA ROTATES, AND IT NEVER HAS BEFORE
+
+`FUTURE.md` § 7: *"THE TAYA ROTATION IS WHAT MAKES THIS FAIR AT ALL, and it is worth saying in the
+queue UI: everyone defends once, so a bad first round is not a lost match."* `INSPIRATION.md` § 4.5
+is titled "the taya rotation is a gift and nobody knows it".
+
+The sentence is `MatchmakingRules.TayaRotationPromise`, in the core, **with a test**, because it is
+a claim about the rules: the taya role is derived `(round - 1) % 4` (`CLAUDE.md` § 4), so "everyone
+defends exactly once" is true by construction rather than by bookkeeping. A queue is the one screen
+in the game where a player is doing nothing but waiting, which is the only moment where a sentence
+is not in the way.
+
+### 103.5 · Backfill, and why almost all of it already existed
+
+`FUTURE.md` § 7 asks for one behaviour: *"a match that loses a player advertises the seat rather
+than dying."* Everything underneath it was already built for the reconnect window:
+`LobbySession.Depart` holds the chair against the leaver's durable token and `RuleOnArrival` hands
+a free seat to a newcomer mid-match. **What was missing was that nothing told the outside world the
+chair existed**, because a lobby record with `InProgress` set is refused by
+`MatchmakingRules.Evaluate` unless it is also backfilling. `Matchmaker.OfferBackfillSeat` is the
+flag and `MatchRpc`'s departure handler is the one caller.
+
+⚠️ **A backfill searches at the widest band from the first second.** Three people are standing in a
+live match playing three-on-one against a bot while it waits, so the cost of a wide band is a
+slightly uneven round and the cost of a narrow one is the rest of the match.
+
+⚠️ **A room that never queued still backfills, and advertises into its own pool to do it.** What a
+private room does not want is to have been findable before the match started, which is what
+`ServerQuery.HostedAdvert.None` gives it: **every lobby in this game auto-hosts on arrival, so a
+default of "in the pool" would silently offer the player's room to the internet.**
+
+### 103.6 · Pools, and the queue structure question § 19.7 says to verify first
+
+§ 19.7: *"`docs/INSPIRATION.md` § 3's queue structure has been built or at least decided, because
+it determines what queues exist."* **It had not been built.** PROMPT I5 has never been run and
+nothing navigates to `ConvertedModeSelect` at all: PLAY lands straight on the lobby (§ 68.5). So
+this phase DECIDED it, minimally, rather than building a menu nobody asked for:
+
+- **One casual queue, which is exactly what `INSPIRATION.md` § 3.4 tells a population of this size
+  to start with.** *"Four queues at thirty concurrent players is zero queues."*
+- **`MatchmakingRules.PoolKey` is `v<protocol>.<mode>.<stake>.<device>.<platform>`**, so the
+  structure for splitting is in place and unused. Adding RANKED to the menu is a `QueueStake` and
+  no new machinery.
+- ⚠️ **The protocol version is in the key.** Two builds that would refuse each other at connection
+  approval must not be offered each other by the queue first: the player would watch a queue find a
+  match and then bounce off it with a version message.
+- ⚠️ **Input device and platform are MEASURED, not configured.** § 7 asks for pools separated by
+  both, "which is free and removes the entire aim-assist argument before it starts", and a setting
+  the player can change is a setting somebody sets to get into a softer pool. There are **zero**
+  gamepad bindings in the input map today, so every real lobby advertises `KeyboardMouse` and Phase
+  14 turns the second value on without a wire change.
+
+⚠️⚠️ **WHAT IS STILL OPEN FROM I5: the population GATE is not built.** § 3.4 asks for real logic
+that opens a queue when its median wait sits under 60 s for a week and merges it back when the 90th
+percentile exceeds 180 s. **With one queue there is nothing to gate**, and the telemetry that would
+measure it is Phase 3's. It becomes real the day RANKED is added to the menu, and that is the
+moment to run PROMPT I5 properly.
+
+---
+
 ## 102 · Phase 6: friends, presence and blocking ⚠️⚠️ 2026-08-31
 
 🧑: *"when u finish phase 5 completley work onn phase 6, finis phase 6 completley too"*.

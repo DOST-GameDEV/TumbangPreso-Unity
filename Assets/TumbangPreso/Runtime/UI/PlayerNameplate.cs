@@ -350,7 +350,35 @@ namespace TumbangPreso.UI
 
             _offer.color = offering ? UiTheme.Amber : UiTheme.CreamMuted;
 
-            _level.text = earned && !offering ? $"LV {ProgressionRules.LevelForXp(xp)}" : "";
+            // ⚠️⚠️ THE TIER SITS BESIDE THE LEVEL AND THEY MUST NEVER BE CONFUSABLE.
+            // `FUTURE.md` § 0.5b, phase 9 row, names that as the trap for this surface: "level and
+            // rank must never be confusable". They are two entirely different claims. **LEVEL is
+            // how long you have played and only goes up; a TIER is how good you are and moves both
+            // ways.** So the level keeps its `LV` prefix and its bar, and the tier is a WORD from
+            // the game's own vocabulary with no number on it at all: `LV 14  ·  KAMPEON` cannot be
+            // misread as one quantity, and `14  ·  3` could.
+            //
+            // ⚠️ AN UNRANKED ACCOUNT DRAWS NO TIER RATHER THAN THE WORD "UNRANKED".
+            // `FUTURE.md` § 2.2: withhold the ROW, not just the number. Somebody who has never
+            // queued ranked does not have a rank to be missing.
+            string tier = "";
+            var rank = GameServices.Career?.Profile?.Rank;
+
+            if (rank != null && rank.MatchesThisSeason > 0)
+            {
+                tier = RatingRules.TierName(RatingRules.TierFor(rank.Rating));
+
+                // ⚠️ A TIER THAT IS STILL MOVING FAST SAYS SO. `RatingRules.SettledDeviation`:
+                // a first-week tier is a guess, and letting a player quote it as settled is how a
+                // ladder gets a reputation for being random.
+                if (rank.Deviation > RatingRules.SettledDeviation) tier += " ?";
+            }
+
+            string level = earned && !offering ? $"LV {ProgressionRules.LevelForXp(xp)}" : "";
+
+            _level.text = string.IsNullOrEmpty(tier) || string.IsNullOrEmpty(level)
+                ? level + tier
+                : $"{level}   ·   {tier}";
             if (_bar != null) _bar.gameObject.SetActive(earned && !offering);
 
             if (!earned) return;

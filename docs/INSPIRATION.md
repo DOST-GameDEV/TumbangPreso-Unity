@@ -562,6 +562,13 @@ before deciding, and it is the only ruleset difference this document is willing 
 
 ### 3.4 ⚠️⚠️ The population trap, and the rule that avoids it
 
+⚠️  **PHASE 7 SHIPPED ON 2026-08-31 AND TOOK THIS SECTION'S ADVICE LITERALLY: ONE CASUAL
+QUEUE.** `docs/TODO.md` § 103.6. `MatchmakingRules.PoolKey` carries the mode, the stake, the input
+device and the platform, so the structure for splitting is in place and unused, and adding RANKED to
+the menu is a `QueueStake` rather than new machinery. **The measured GATE below is not built**,
+because with one queue there is nothing to gate; it becomes real the day a second queue is added,
+and that is the moment to run PROMPT I5 properly.
+
 **Four queues at thirty concurrent players is zero queues.** Splitting a small population is how a
 game with a healthy Discord ends up with a five-minute wait and no players.
 

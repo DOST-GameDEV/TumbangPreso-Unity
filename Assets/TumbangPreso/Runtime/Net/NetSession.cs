@@ -241,7 +241,31 @@ namespace TumbangPreso.Net
         /// are inside the per-seat loop, ahead of everything the loop reads next, so there is no
         /// position at which "is there more" answers the right question.
         /// </summary>
-        public const int ProtocolVersion = 17;
+        /// ⚠️⚠️ 18 IS THE LOOK FRAME AND THE QUEUE. `LobbySeatInfo.PaletteId` became
+        /// `LobbySeatInfo.Look` and carries a `LookCodec` frame rather than a bare palette id, so
+        /// a 17 build and an 18 build would read one another's seat table and dress every remote
+        /// player from a string neither recognises. That is the exact fault the paragraph above
+        /// is about, one field along.
+        public const int ProtocolVersion = 18;
+
+        /// <summary>
+        /// What this machine's hosted lobby publishes to QUICK MATCH, or
+        /// <see cref="ServerQuery.HostedAdvert.None"/> when it is not offering itself to
+        /// strangers.
+        ///
+        /// ⚠️⚠️ A ROOM IS NOT IN THE QUEUE UNTIL SOMEBODY PUTS IT THERE, AND THE DEFAULT IS
+        /// OUT. Every lobby in this game auto-hosts on arrival (`ConvertedMatchSetup.AutoHost`),
+        /// so if the default were "in the pool" then pressing PLAY would silently offer the
+        /// player's room to the internet, and somebody waiting for one friend would find three
+        /// strangers in their chairs. `Matchmaker` sets this when the player presses QUICK MATCH
+        /// and clears it when they cancel.
+        ///
+        /// ⚠️ IT LIVES HERE RATHER THAN ON `Matchmaker` BECAUSE THIS CLASS OWNS BOTH WRITERS.
+        /// The advert is written by `StartRelayHost` and again by every `PublishLobbyCounts`, and
+        /// a value the matchmaker held would have to be fetched by a class that must keep working
+        /// when no matchmaker exists at all (LAN, practice, the whole of the nationals venue).
+        /// </summary>
+        public ServerQuery.HostedAdvert Advert { get; set; } = ServerQuery.HostedAdvert.None;
 
         private const string SeatAssignmentMessage = "tp.seat.assignment.v1";
         private readonly Dictionary<ulong, ConnectionHello> _helloByClient =
@@ -701,7 +725,8 @@ namespace TumbangPreso.Net
                             Lobby.JoinCode,
                             relayCode,
                             Lobby.SeatedPeerCount(),
-                            Lobby.OccupiedSeatCount());
+                            Lobby.OccupiedSeatCount(),
+                            Advert);
                     }
                 }
 
@@ -1034,6 +1059,18 @@ namespace TumbangPreso.Net
             _beacon.InProgress = Lobby.MatchInProgress;
         }
 
+        /// <summary>
+        /// Push the current counts and the current <see cref="Advert"/> to the lobby record.
+        ///
+        /// ⚠️⚠️ IT IS THE SAME WRITE `PublishLobbyCounts` ALREADY MAKES ON EVERY SEAT
+        /// CHANGE, NOT A SECOND ONE. `Matchmaker` changes the advert at three moments and all
+        /// three are moments the outside world has to be told about anyway: entering the queue,
+        /// cancelling it, and opening a backfill seat. Giving the matchmaker its own writer would
+        /// be a second place that decides what a lobby record says, which is the shape
+        /// `docs/TODO.md` § 38.5 found three dead protocols in.
+        /// </summary>
+        public void RepublishLobbyAdvert() => PublishLobbyCounts();
+
         private void PublishLobbyCounts()
         {
             if (_beacon == null) return;
@@ -1044,7 +1081,8 @@ namespace TumbangPreso.Net
             {
                 _ = Query.UpdateHostedLobbyAsync(Lobby.SeatedPeerCount(),
                                                  Lobby.OccupiedSeatCount(),
-                                                 Lobby.MatchInProgress);
+                                                 Lobby.MatchInProgress,
+                                                 Advert);
             }
         }
 

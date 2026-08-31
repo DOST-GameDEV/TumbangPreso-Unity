@@ -175,7 +175,16 @@ namespace TumbangPreso.Tests
             // works for one value at the END of a payload. These two sit inside the per-seat
             // loop with more fields after them, so there is no position at which "is there more"
             // answers the right question.
-            Assert.AreEqual(17, NetSession.ProtocolVersion,
+            // ⚠⚠ 18 SINCE 2026-08-31: the look frame (docs/TODO.md § 106.2). The per-seat
+            // `PaletteId` string became `Look` and carries a `LookCodec` frame rather than a bare
+            // palette id, so a 17 build and an 18 build read one another's seat table and dress
+            // every remote player from a string neither recognises.
+            //
+            // ⚠️ THE FIELD COUNT DID NOT CHANGE AND THE MEANING DID, WHICH IS WHY THIS BUMP IS
+            // EASY TO TALK YOURSELF OUT OF. `audit_wire_payloads.py` compares a writer to a
+            // reader inside ONE build and would stay green through a change that only breaks two
+            // builds against each other, which is the whole reason this constant exists.
+            Assert.AreEqual(18, NetSession.ProtocolVersion,
                 "a message or a replicated roster index has been added or removed. Bump this " +
                 "number and `NetSession.ProtocolVersion` together, in the same commit.");
         }

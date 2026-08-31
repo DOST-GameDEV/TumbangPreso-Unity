@@ -59,7 +59,7 @@ namespace TumbangPreso.Net
         public BannerSelection Banner = new BannerSelection();
 
         /// <summary>The character palette this peer may wear, authorised with the banner.</summary>
-        public string PaletteId = "";
+        public string Look = "";
     }
 
     /// <summary>

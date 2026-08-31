@@ -324,7 +324,7 @@ namespace TumbangPreso.UI
             // ⚠️ BOTH MODES, ABOVE THE EARLY RETURN. Hero Strike's column returns before the
             // trait meters, and a cosmetic that only existed in Classic would be the one thing on
             // this screen that changes meaning with the mode.
-            float paletteHeight = RefreshPaletteRow(rows, entry);
+            float paletteHeight = RefreshPaletteRow(rows, entry) + RefreshTintRows(rows, entry);
 
             if (_tab == 0 && SceneFlow.SelectedMode == GameMode.HeroStrike)
             {
@@ -404,6 +404,172 @@ namespace TumbangPreso.UI
         ///
         /// Returns the height it took, so the column can size itself. See `RefreshTraits`.
         /// </summary>
+        /// <summary>How many hue swatches the TINT strip draws.</summary>
+        private const int TintSteps = 12;
+
+        /// <summary>
+        /// The three saturation steps, and the labels a player reads rather than a percentage.
+        ///
+        /// ⚠️ NAMES RATHER THAN NUMBERS, AND THREE RATHER THAN A SLIDER. `FUTURE.md`
+        /// § 0.5b: "the type scale, three steps, never more", and the same discipline applies to
+        /// a choice. 55, 100 and 145 are `PaletteRules.SaturationMin`, the authored value and
+        /// `SaturationMax`, so the strip cannot offer a setting the rule would clamp.
+        /// </summary>
+        private static readonly (string Label, int Percent)[] TintStrengths =
+        {
+            ("SOFT", PaletteRules.SaturationMin),
+            ("AS DRAWN", 100),
+            ("BOLD", PaletteRules.SaturationMax),
+        };
+
+        /// <summary>
+        /// TINT and STRENGTH: the free colour dial, which is the part of Phase 5 that is the point
+        /// of Phase 5.
+        ///
+        /// ⚠️⚠️ IT IS NOT GATED ON ANYTHING AND EVERY ACCOUNT SEES IT ON ITS FIRST LAUNCH.
+        /// The brief, 2026-08-31: *"the main purpose of the customizationn shit is so that ppl
+        /// coudl spend their time making their own character"*. Two earned presets are a reward
+        /// and a reward is not somewhere to spend an evening; **the row above this one is what
+        /// you unlocked and this row is what you make.** `FUTURE.md` § 0.5 rule 4 is the rule
+        /// that has to hold and it holds exactly: nothing on a progression track may change a
+        /// gameplay number, and a colour changes none.
+        ///
+        /// ⚠️⚠️ AND IT IS THE ONE PLACE § 0.5b QUESTION 3 ANSWERS DIFFERENTLY FROM THE ROW
+        /// ABOVE IT. `RefreshPaletteRow` draws NOTHING when nothing is earned, because a control
+        /// whose only option is the one you already have is not a control. This one always has
+        /// twelve options, so its empty state IS its full state, and hiding it for a new account
+        /// would hide the only customisation a new account has.
+        ///
+        /// ⚠️ TWELVE SWATCHES AT 30 DEGREES, AND THE CORE TAKES ANY INTEGER. The strip is a
+        /// UI choice: a wheel is more precise and much harder to press exactly, and every swatch
+        /// here is the colour the character actually becomes. `CharacterLoadout.HueDegrees` is
+        /// clamped to 0..359, so a finer control later is a change to this method and to nothing
+        /// else.
+        ///
+        /// ⚠️ THERE IS NO BRIGHTNESS CONTROL AND THERE MUST NOT BE.
+        /// `CharacterLoadout.SaturationPercent` and `PaletteVariants.Rotate` both record why: the
+        /// toon shader bands on VALUE, so a player who could drag their own value could dress as a
+        /// silhouette, and `VISION.md` § 2 rule 5 is a readability budget rather than a
+        /// preference.
+        ///
+        /// Returns the height it took, so the column can size itself.
+        /// </summary>
+        private float RefreshTintRows(Transform rows, RosterEntry entry)
+        {
+            if (_tab != 0 || entry == null) return 0.0f;
+
+            var book = RosterBook.Load();
+            var art = book != null ? book.PersonArt(_pick[0], SceneFlow.SelectedMode) : null;
+            if (art == null || art.Palette == null || art.Palette.Length == 0) return 0.0f;
+
+            string characterId = Roster.PersonIdAt(SceneFlow.SelectedMode, _pick[0]);
+            var look = Settings.SettingsStore.LookFor(characterId);
+
+            var tint = StripRow(rows, "TINT");
+
+            for (int step = 0; step < TintSteps; step++)
+            {
+                int hue = step * (360 / TintSteps);
+                BuildTintSwatch(tint, art.Palette, characterId, look, hue);
+            }
+
+            var strength = StripRow(rows, "STRENGTH");
+
+            foreach (var (label, percent) in TintStrengths)
+                BuildStrengthChip(strength, characterId, look, label, percent);
+
+            return (PaletteRowHeight + 6.0f) * 2.0f;
+        }
+
+        /// <summary>One captioned strip, built the same way the COLOURS row is.</summary>
+        private Transform StripRow(Transform rows, string caption)
+        {
+            var row = new GameObject($"{caption}Row", typeof(RectTransform));
+            row.transform.SetParent(rows, false);
+
+            var group = row.AddComponent<HorizontalLayoutGroup>();
+            group.childAlignment = TextAnchor.MiddleLeft;
+            group.spacing = 6.0f;
+            group.childForceExpandWidth = false;
+            group.childForceExpandHeight = false;
+
+            row.AddComponent<LayoutElement>().preferredHeight = PaletteRowHeight;
+
+            var label = MenuKit.Label(row.transform, caption, MenuKit.MinReadableUnits,
+                                      new Color(0.961f, 0.902f, 0.784f, 0.65f),
+                                      Vector2.zero, Vector2.zero, Vector2.zero,
+                                      TextAnchor.MiddleLeft);
+            label.raycastTarget = false;
+            label.gameObject.AddComponent<LayoutElement>().preferredWidth = 92.0f;
+
+            return row.transform;
+        }
+
+        private void BuildTintSwatch(Transform row, Color[] authored, string characterId,
+                                     CharacterLook current, int hue)
+        {
+            var go = new GameObject($"Tint_{hue}", typeof(RectTransform), typeof(Image));
+            go.transform.SetParent(row, false);
+
+            bool active = current.HueDegrees == hue;
+
+            // ⚠️ DRAWN THROUGH `PaletteVariants.For`, LIKE EVERY OTHER SWATCH ON THIS SCREEN.
+            // A swatch painted from an HSV constant is a swatch that can disagree with the model
+            // standing beside it, which is the fault `ToonSkin.ApplySlipper`'s header records.
+            var shown = new CharacterLook(current.PaletteId, hue, current.SaturationPercent);
+
+            var face = go.GetComponent<Image>();
+            face.color = PaletteVariants.For(authored, shown)[RepresentativeSlot(authored)];
+
+            var element = go.AddComponent<LayoutElement>();
+            element.preferredWidth = SwatchSize;
+            element.preferredHeight = SwatchSize;
+
+            var ring = new GameObject("Ring", typeof(RectTransform), typeof(Image));
+            ring.transform.SetParent(go.transform, false);
+            MenuKit.Stretch((RectTransform)ring.transform, -3.0f);
+
+            var ringImage = ring.GetComponent<Image>();
+            ringImage.sprite = GodotTheme.Box(new Color(0, 0, 0, 0),
+                                              active ? UiTheme.Cream : UiTheme.WoodEdge,
+                                              active ? 3 : 2, 4);
+            ringImage.type = Image.Type.Sliced;
+            ringImage.raycastTarget = false;
+
+            var button = go.AddComponent<Button>();
+            button.targetGraphic = face;
+            button.onClick.AddListener(() =>
+            {
+                Settings.SettingsStore.SetLookFor(characterId, hue, current.SaturationPercent);
+                MenuSfx.Click();
+                Refresh();
+            });
+
+            go.AddComponent<TextureButtonFeedback>();
+        }
+
+        private void BuildStrengthChip(Transform row, string characterId, CharacterLook current,
+                                       string label, int percent)
+        {
+            bool active = current.SaturationPercent == percent;
+
+            var button = MenuKit.WoodButton(row, label, Vector2.zero, Vector2.zero,
+                                            new Vector2(132.0f, PaletteRowHeight - 8.0f),
+                                            () =>
+                                            {
+                                                Settings.SettingsStore.SetLookFor(
+                                                    characterId, current.HueDegrees, percent);
+                                                Refresh();
+                                            },
+                                            active ? "WoodAmberButton" : "WoodButton");
+
+            button.name = $"Strength_{label}";
+
+            var element = button.gameObject.AddComponent<LayoutElement>();
+            element.preferredWidth = 132.0f;
+            element.preferredHeight = PaletteRowHeight - 8.0f;
+        }
+
         private float RefreshPaletteRow(Transform rows, RosterEntry entry)
         {
             // ⚠️ PEOPLE ONLY. A lata and a tsinelas have their own skins and their own tabs;
@@ -497,8 +663,14 @@ namespace TumbangPreso.UI
 
             bool active = paletteId == equipped;
 
+            // ⚠️ THE SWATCH SHOWS THE EARNED PRESET ON TOP OF THE DIAL THE PLAYER HAS
+            // ALREADY TURNED, so pressing it produces the colour it was showing. A swatch drawn
+            // at the preset alone would be a promise the model then breaks.
+            var dial = Settings.SettingsStore.LookFor(characterId);
+            var shown = new CharacterLook(paletteId, dial.HueDegrees, dial.SaturationPercent);
+
             var face = go.GetComponent<Image>();
-            face.color = PaletteVariants.For(authored, paletteId)[RepresentativeSlot(authored)];
+            face.color = PaletteVariants.For(authored, shown)[RepresentativeSlot(authored)];
 
             var element = go.AddComponent<LayoutElement>();
             element.preferredWidth = SwatchSize;
@@ -1089,7 +1261,7 @@ namespace TumbangPreso.UI
             var palette = art == null ? null : art.Palette;
 
             if (_tab == 0 && art != null)
-                palette = PaletteVariants.For(art.Palette, Settings.SettingsStore.PaletteFor(
+                palette = PaletteVariants.For(art.Palette, Settings.SettingsStore.LookFor(
                     Roster.PersonIdAt(SceneFlow.SelectedMode, _pick[0])));
 
             preview.Show(art == null ? null : art.Model, art == null ? null : art.Clips,

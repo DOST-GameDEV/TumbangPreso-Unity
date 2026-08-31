@@ -122,12 +122,67 @@ namespace TumbangPreso.Core
         /// matches that would otherwise have paid, never on further AFK ones.</summary>
         public int XpPenaltyMatches;
 
-        /// <summary>⚠️ PHASE 9 OWNS THESE. Carried for the same reason as level: the header card
-        /// is designed around a rank badge and a peak, and a document without the fields cannot
-        /// hold one. Empty means unranked, which is what every profile reads today.</summary>
+        /// <summary>
+        /// ⚠️⚠️ PHASE 9 OWNS THESE AND THEY ARE NOW A VIEW OF <see cref="Rank"/>, NOT A
+        /// SECOND COPY OF IT. They were reserved in Phase 2 so the header card would have fields
+        /// to draw before there was a ladder, and every document written since carries them. They
+        /// are rewritten from `Rank` by <see cref="ProfileRules.Normalise"/> for the same reason
+        /// the level is re-derived from the XP one field up: **the arithmetic is what was earned
+        /// and the label is a view of it**, so a stored tier that disagrees is a document written
+        /// by an older build rather than a fact.
+        ///
+        /// ⚠️ NOTHING SHOULD READ THESE TO DECIDE ANYTHING. `RatingRules.TierFor(profile.Rank.Rating)`
+        /// is the question; these are here so an older screen and an older endpoint keep working.
+        /// </summary>
         public string RankTier = "";
         public int RankPoints;
         public string PeakRankTier = "";
+
+        /// <summary>
+        /// The ladder state: the rating, how sure the system is of it, and the season.
+        ///
+        /// ⚠️⚠️ THE PLAYER NEVER SEES ANY NUMBER IN HERE. `FUTURE.md` § 9: "the player never
+        /// sees the number, only the tier". `RatingRules` has the whole model and this document
+        /// only stores it.
+        ///
+        /// ⚠️ WRITTEN ONLY BY THE ENDPOINT, AND ONLY FOR A WITNESSED RESULT. `FUTURE.md`
+        /// § 0.5 rule 6 and § 19.9's constraint: ratings go through the Phase 8 corroboration and
+        /// nowhere else. A client that writes this into its local cache is writing a preview.
+        /// </summary>
+        public RankState Rank = new RankState();
+
+        /// <summary>
+        /// Matches abandoned in the last <see cref="IntegrityRules.AbandonMemoryDays"/> days, as
+        /// UTC stamps, and the queue cooldown they bought.
+        ///
+        /// ⚠️⚠️ STAMPS RATHER THAN A COUNTER, BECAUSE A COUNTER CANNOT FORGET. The whole
+        /// design of the escalation is that a bad week does not follow somebody into next month
+        /// (`IntegrityRules.AbandonMemoryDays`), and a counter that only goes up would need a
+        /// scheduled job to decay it. A short list of stamps expires by being read.
+        ///
+        /// ⚠️ IT IS CAPPED BY THE SAME WINDOW THAT EXPIRES IT, so it cannot grow: the endpoint
+        /// drops anything older than the window every time it writes one.
+        /// </summary>
+        public List<string> AbandonsUtc = new List<string>();
+
+        /// <summary>When quick match opens again. Empty means now.</summary>
+        public string CooldownUntilUtc = "";
+
+        /// <summary>
+        /// Ranked matches this player has submitted that nobody has corroborated yet.
+        ///
+        /// ⚠️⚠️ THIS LIST IS WHAT MAKES A WITNESSED RATING POSSIBLE AT ALL WITH PER-PLAYER
+        /// DOCUMENTS. Cloud Save is keyed by player id, so the endpoint cannot write into the
+        /// first submitter's profile when the SECOND submitter turns up and agrees with them.
+        /// So the first submitter's rating is computed, parked in the match's own shared verdict
+        /// record, and this list is the note that says to go and collect it. The next `load` does,
+        /// which every client already calls at boot and after every match. **No extra request and
+        /// no polling.**
+        ///
+        /// ⚠️ A DISPUTED MATCH DROPS OFF THIS LIST WITHOUT PAYING, which is the whole point of
+        /// parking the rating rather than applying it optimistically.
+        /// </summary>
+        public List<string> PendingRankedMatchIds = new List<string>();
 
         /// <summary>⚠️ PHASE 5 OWNS THIS. Stable roster ids, append-only, same contract as
         /// `Roster`'s lists.</summary>
@@ -217,6 +272,9 @@ namespace TumbangPreso.Core
             profile.AppliedMatchIds ??= new List<string>();
             profile.Inventory ??= Array.Empty<string>();
             profile.Mastery ??= new List<MasteryRecord>();
+            profile.AbandonsUtc ??= new List<string>();
+            profile.PendingRankedMatchIds ??= new List<string>();
+            profile.Rank ??= new RankState();
             if (profile.Level < 1) profile.Level = 1;
             if (profile.Xp < 0) profile.Xp = 0;
             if (profile.AfkStrikes < 0) profile.AfkStrikes = 0;
@@ -227,6 +285,16 @@ namespace TumbangPreso.Core
             // a document written by an older curve or by hand, and the XP is the thing that was
             // actually earned. Same argument as `MatchRecord`'s "counts only, no stored rates".
             profile.Level = ProgressionRules.LevelForXp(profile.Xp);
+
+            // ⚠️⚠️ THE TIER LABELS ARE REWRITTEN FROM THE RATING, SAME RULE AS THE LEVEL ONE
+            // LINE UP. A stored `RankTier` that disagrees with `Rank.Rating` is a document written
+            // before the thresholds moved, and the rating is the thing that was actually earned.
+            if (profile.Rank.MatchesThisSeason > 0 || profile.Rank.PeakTier > 0)
+            {
+                profile.RankTier = RatingRules.TierName(RatingRules.TierFor(profile.Rank.Rating));
+                profile.RankPoints = (int)System.Math.Round(profile.Rank.Rating);
+                profile.PeakRankTier = RatingRules.TierName((RankTier)profile.Rank.PeakTier);
+            }
 
             foreach (var m in profile.Mastery)
             {

@@ -186,6 +186,33 @@ namespace TumbangPreso
             // happened to the match before it.
             if (round <= 1) _frameRate.Clear();
 
+            // ⚠️⚠️ THE WITNESS STARTS ON EVERY PEER AT ROUND 1, ABOVE THE HOST GATE, FOR THE
+            // SAME REASON TELEMETRY DOES. `ScoreWitness` is the peer's independent tally of what
+            // the host announced during play, and a tally only the host kept would be the host
+            // agreeing with itself. `docs/TODO.md` § 103.
+            //
+            // ⚠️ ROUND 1 IS THE TEST FOR "SAW THE START", and it is exact rather than
+            // approximate: a peer that arrives by backfill or by reconnect during round 3 reaches
+            // `OnRoundStarted` with `round == 3`, never with 1, so it never calls `Begin` and its
+            // `Complete` stays false from construction. `ScoreWitness`' header is why that has to
+            // be silence rather than a dispute.
+            if (round <= 1)
+                Net.ScoreWitness.Ensure(gameObject).Begin(GameServices.Match, sawTheStart: true);
+
+            // ⚠️⚠️ AND THE MACHINE WRITES DOWN THAT IT IS IN A MATCH, WHICH IS THE LEAVER
+            // PENALTY. `CareerStore.InMatchSinceUtc` has the reasoning: a penalty that only fires
+            // when somebody presses QUIT is a penalty on the polite. **Only a networked match with
+            // another human in it counts**, because leaving a practice match against bots costs
+            // nobody anything.
+            if (round <= 1 && NetAuthority.IsNetworked)
+            {
+                int humans = 0;
+                var lobby = Net.NetSession.Instance?.Lobby;
+                if (lobby != null) humans = lobby.SeatedPeerCount();
+
+                Net.CareerStore.Instance?.NoteMatchStarted(humans > 1);
+            }
+
             if (!NetAuthority.ShouldResolve()) return;
 
             if (round <= 1) BeginMatch();
@@ -378,6 +405,16 @@ namespace TumbangPreso
                 PlayedUtc = DateTime.UtcNow.ToString("O"),
                 WinningSlot = winningSlot,
                 Online = NetAuthority.IsNetworked,
+
+                // ⚠️⚠️ THE STAKES COME OFF THE QUEUE THAT PRODUCED THE ROOM, NOT OFF A
+                // TOGGLE. `INSPIRATION.md` § 3.1: the mode is the ruleset and the queue is the
+                // stakes, so a match is ranked because a ranked queue put these four people in
+                // one room, and there is nothing in `Design.md` that a ranked match plays
+                // differently. A room hosted by hand or joined by code is never ranked, which is
+                // the same rule read from the other side: four friends in a private lobby cannot
+                // arrange a rating between themselves.
+                Ranked = Net.Matchmaker.Current != null &&
+                         Net.Matchmaker.Current.Stake == Core.QueueStake.Ranked,
                 Players = new PlayerMatchStats[Balance.PlayerCount],
             };
 
@@ -412,7 +449,15 @@ namespace TumbangPreso
             if (record == null) return;
 
             Last = record;
-            Net.CareerStore.Instance?.Record(record);
+
+            // ⚠️⚠️ THE PEER'S OWN DIGEST TRAVELS WITH THE RECORD, AND IT IS COMPUTED FROM
+            // THE TALLY RATHER THAN FROM THE RECORD BEING ADOPTED. Hashing the record here would
+            // hash the host's own JSON on all four machines and prove nothing at all;
+            // `ScoreWitness.Digest` substitutes this peer's counted scores first. That distinction
+            // is the entire value of Phase 8 and it is one line, so it is worth being loud about.
+            string witness = GetComponent<Net.ScoreWitness>()?.Digest(record) ?? "";
+
+            Net.CareerStore.Instance?.Record(record, witness);
             NoteMatchFinishedToTelemetry(record);
             RecordReady?.Invoke(record);
         }

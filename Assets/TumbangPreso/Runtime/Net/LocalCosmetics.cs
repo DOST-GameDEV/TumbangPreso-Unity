@@ -52,7 +52,12 @@ namespace TumbangPreso.Net
 
             string characterId = Roster.PersonIdAt(mode, characterIndex);
             if (!string.IsNullOrEmpty(characterId))
-                claim.PaletteId = SettingsStore.PaletteFor(characterId);
+            {
+                var look = SettingsStore.LookFor(characterId);
+                claim.PaletteId = look.PaletteId;
+                claim.HueDegrees = look.HueDegrees;
+                claim.SaturationPercent = look.SaturationPercent;
+            }
 
             var profile = GameServices.Career?.Profile;
             if (profile == null) return claim;

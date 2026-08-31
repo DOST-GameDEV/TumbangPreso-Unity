@@ -247,6 +247,22 @@ namespace TumbangPreso.Core
             if (claim == null) return PaletteRules.DefaultId;
             return LoadoutRules.PaletteFor(claim.AsProfile(), characterId, claim.PaletteId);
         }
+
+        /// <summary>
+        /// The whole look a peer may wear, authorised once by the host and broadcast as a result.
+        ///
+        /// ⚠️⚠️ THE HOST DECIDES AND EVERY RECEIVER DRAWS THE ANSWER, which is
+        /// `docs/TODO.md` § 101's correction to § 98.2 applied to the second half of the same
+        /// object. One machine runs the ownership check; the authorising XP and mastery never
+        /// leave it; everybody in the room draws the same character.
+        /// </summary>
+        public static CharacterLook AuthoriseLook(BannerClaim claim, string characterId)
+        {
+            if (claim == null) return CharacterLook.Default;
+
+            var wanted = new CharacterLook(claim.PaletteId, claim.HueDegrees, claim.SaturationPercent);
+            return LoadoutRules.LookFor(claim.AsProfile(), characterId, wanted);
+        }
     }
 
     /// <summary>
@@ -274,6 +290,22 @@ namespace TumbangPreso.Core
 
         /// <summary>The palette this peer is wearing on the character it picked.</summary>
         public string PaletteId = "";
+
+        /// <summary>
+        /// The free colour dial this peer has turned on that character.
+        ///
+        /// ⚠️⚠️ THEY ARE CLAIMED AND CLAMPED RATHER THAN CLAIMED AND CHECKED, AND THAT IS
+        /// THE WHOLE DIFFERENCE BETWEEN AN EARNED COSMETIC AND AN EXPRESSIVE ONE. A palette id is
+        /// a reward, so the receiver asks whether it was earned; a hue is a preference, so the
+        /// only thing that can be wrong with it is that it is out of range.
+        /// `CharacterLoadout.HueDegrees` has the reasoning and
+        /// <see cref="PaletteRules.SaturationMin"/> has the bound the receiver applies.
+        ///
+        /// ⚠️ A MODIFIED CLIENT CANNOT PLAY AS A SHADOW. `LoadoutRules.LookFor` runs on the
+        /// RECEIVING side too, so a saturation of zero on the wire is drawn at the floor.
+        /// </summary>
+        public int HueDegrees;
+        public int SaturationPercent = 100;
 
         /// <summary>Claimed account XP. `ProgressionRules.LevelForXp` turns it into the level the
         /// account rewards are derived from.</summary>
@@ -425,6 +457,17 @@ namespace TumbangPreso.Core
                 Safe(claim.PaletteId),
                 Math.Max(0, claim.Xp).ToString(System.Globalization.CultureInfo.InvariantCulture),
                 mastery,
+
+                // ⚠️⚠️ THE TWO DIAL FIELDS ARE APPENDED AT THE END AND NEVER INSERTED,
+                // WHICH IS `Roster.Slippers`' RULE APPLIED TO A FRAME RATHER THAN TO A LIST. A
+                // build that has never heard of them reads the seven fields it knows and stops,
+                // and `DecodeClaim` answers the default for anything past the end of what it was
+                // sent. Inserting a field in the middle would silently shift the mastery list one
+                // place and dress the whole room from the wrong data with nothing logged.
+                PaletteRules.ClampHue(claim.HueDegrees).ToString(
+                    System.Globalization.CultureInfo.InvariantCulture),
+                PaletteRules.ClampSaturation(claim.SaturationPercent).ToString(
+                    System.Globalization.CultureInfo.InvariantCulture),
             });
         }
 
@@ -472,6 +515,18 @@ namespace TumbangPreso.Core
 
                 claim.Mastery = records.ToArray();
             }
+
+            // ⚠️ AN OLDER FRAME STOPS HERE AND ANSWERS THE AUTHORED COLOURS, which is the
+            // same degradation an unknown palette id already gets.
+            if (parts.Length > 8 && int.TryParse(parts[8],
+                    System.Globalization.NumberStyles.Integer,
+                    System.Globalization.CultureInfo.InvariantCulture, out int hue))
+                claim.HueDegrees = PaletteRules.ClampHue(hue);
+
+            if (parts.Length > 9 && int.TryParse(parts[9],
+                    System.Globalization.NumberStyles.Integer,
+                    System.Globalization.CultureInfo.InvariantCulture, out int saturation))
+                claim.SaturationPercent = PaletteRules.ClampSaturation(saturation);
 
             return claim;
         }

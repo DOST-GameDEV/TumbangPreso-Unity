@@ -80,6 +80,9 @@ namespace TumbangPreso.UI
         /// <see cref="LobbyJoinPanel"/> and `docs/TODO.md` § 68.11.</summary>
         private LobbyJoinPanel _joinPanel;
 
+        /// <summary>QUICK MATCH and the queue state it turns into. See <see cref="QueueCard"/>.</summary>
+        private QueueCard _queueCard;
+
         private GameObject _lobbyEntryRow;
         private Button _joinButton;
         private Button _onlineButton;
@@ -296,6 +299,12 @@ namespace TumbangPreso.UI
             if (_chrome != null) _chrome.NameCommitted = PublishName;
 
             BuildChat();
+
+            // ⚠️ THE QUEUE DOOR IS SHOWN OR HIDDEN ON THE WAY IN AS WELL AS ON A TAB SWITCH.
+            // `SelectTab` only runs when the player CHANGES tab, so a screen entered as practice
+            // would keep a QUICK MATCH button nobody on that tab can use, which is exactly the
+            // fault `BuildLobbyEntryControls` records for the join controls one method up.
+            RefreshQueueVisibility(IsLobby);
 
             // ⚠️ MEASURED, NOT ASSUMED. See `LobbyChrome.ReportColumns`: three renders in a row
             // disagreed with the arithmetic and a screenshot could not say which of the three
@@ -730,6 +739,19 @@ namespace TumbangPreso.UI
             net.BrowseLan();
             net.Query?.StartBrowsing();
 
+            // ⚠️⚠️ THE QUEUE'S DOOR SITS ABOVE THE JOIN CARD AND BELOW NOTHING. `CLAUDE.md`
+            // § 6.3: every destination has a visible door, and a door is a thing that looks
+            // pressable. It is on the same canvas as the join card rather than in the right
+            // column's row list, because the queue STATE has to be readable from across the room
+            // (`FUTURE.md` § 0.5b, phase 7 row) and a 34-unit row in a settings column is not.
+            //
+            // ⚠️ AND IT NEVER BLOCKS THE LOBBY. `QueueCard`'s header is why it has no scrim:
+            // a player in a queue is queueing so they can carry on doing something else, so chat,
+            // the join code and the seat rows all stay live behind it.
+            _queueCard = QueueCard.Build(canvas.transform);
+            _queueCard.Status += SetStatus;
+            _queueCard.Joined += HandleJoinedInPlace;
+
             _joinPanel = LobbyJoinPanel.Build(canvas.transform, net);
             _joinPanel.Status += SetStatus;
             _joinPanel.Joined += HandleJoinedInPlace;
@@ -938,9 +960,21 @@ namespace TumbangPreso.UI
             _chrome?.SetActive(lobby);
 
             Refresh();
+            RefreshQueueVisibility(lobby);
 
             if (lobby) AutoHost();
         }
+
+        /// <summary>
+        /// ⚠️ THE QUEUE IS A LOBBY CONTROL AND IS HIDDEN ON PRACTICE. Practice is a solo
+        /// match against bots; a QUICK MATCH button on it would be a door to a place that tab is
+        /// not about, which is the "second door" § 0.5b bans in the row above it.
+        /// </summary>
+        private void RefreshQueueVisibility(bool lobby)
+        {
+            if (_queueCard != null) _queueCard.gameObject.SetActive(lobby);
+        }
+
 
         /// <summary>
         /// Puts each seat's PICKED character in its chair and writes its plate.

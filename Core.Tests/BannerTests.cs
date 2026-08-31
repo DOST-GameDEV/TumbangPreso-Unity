@@ -405,7 +405,12 @@ namespace TumbangPreso.Core.Tests
         [Fact]
         public void AClaimCarriesOnlyWhatAuthorisesIt()
         {
-            var allowed = new[] { "Banner", "PaletteId", "Xp", "Mastery" };
+            // ⚠️ THE TWO DIAL FIELDS ARE ON THIS LIST ON PURPOSE AND THEY ARE NOT
+            // AUTHORISING FACTS. `BannerClaim.HueDegrees` says why: a palette id is a reward and
+            // is checked against `Earned`, a hue is a preference and is only clamped. They cross
+            // the wire in the same frame because they describe the same object, and adding them
+            // here is the deliberate act this test exists to force.
+            var allowed = new[] { "Banner", "PaletteId", "HueDegrees", "SaturationPercent", "Xp", "Mastery" };
 
             foreach (var field in typeof(BannerClaim).GetFields(
                          BindingFlags.Public | BindingFlags.Instance))

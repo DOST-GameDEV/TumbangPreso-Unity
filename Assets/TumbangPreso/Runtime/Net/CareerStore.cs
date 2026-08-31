@@ -76,8 +76,46 @@ namespace TumbangPreso.Net
             public List<MatchRecord> History = new List<MatchRecord>();
             public List<MatchRecord> Queue = new List<MatchRecord>();
 
+            /// <summary>
+            /// One witness digest per queued record, same index.
+            ///
+            /// ⚠️⚠️ A PARALLEL LIST RATHER THAN A WRAPPER TYPE, AND THE REASON IS THE FILE
+            /// ON DISK. `career.json` is written with `JsonUtility` and every player already has
+            /// one; turning `Queue` into a list of a new type would fail to deserialise the old
+            /// shape and silently drop whatever was waiting to upload, which is exactly the loss
+            /// `docs/TODO.md` § 94.1 spent an entry on. An added list is absent in an old file and
+            /// pads to empty, which reads as "this record has no witness", which is true.
+            ///
+            /// ⚠️ `PadWitnesses` KEEPS THE TWO IN STEP AND IS CALLED BEFORE EVERY READ. Two
+            /// lists that can disagree about their own length is the price of the paragraph above,
+            /// and one function that fixes it is the mitigation.
+            /// </summary>
+            public List<string> QueueWitness = new List<string>();
+
             /// <summary>Which account this cache belongs to. See <see cref="Load"/>.</summary>
             public string OwnerId = "";
+
+            /// <summary>
+            /// Set while a MULTIPLAYER match is running and cleared when its record is adopted.
+            ///
+            /// ⚠️⚠️ THIS ONE FIELD IS THE WHOLE LEAVER PENALTY, AND IT WORKS BECAUSE IT IS
+            /// WRITTEN TO DISK. `FUTURE.md` § 19.8 step 3 asks for leaver penalties that
+            /// distinguish a leave from a disconnect, and the obvious implementation, reporting an
+            /// abandon when the player presses QUIT, penalises only the people polite enough to
+            /// press it: alt-F4 would be free, so the penalty would fall entirely on honest
+            /// players. **A flag on disk survives alt-F4, a crash and a power cut alike**, so the
+            /// next launch finds a match that was started and never finished, and reports it.
+            ///
+            /// ⚠️ AND IT IS WHY A RECONNECT IS NOT PUNISHED. Coming back and playing to the
+            /// whistle reaches `Record`, which clears this, so the only thing that survives to the
+            /// next boot is a match this machine genuinely walked out of.
+            /// `IntegrityRules.ReconnectWindowSeconds` is the same promise on the host's side.
+            ///
+            /// ⚠️ PRACTICE AND SOLO NEVER SET IT. Leaving a match against three bots costs
+            /// nobody anything, and a cooldown for closing a practice game would be the single
+            /// most infuriating thing in the build.
+            /// </summary>
+            public string InMatchSinceUtc = "";
         }
 
         [Serializable]
@@ -85,6 +123,9 @@ namespace TumbangPreso.Net
         {
             public string profile;
             public bool applied;
+
+            /// <summary>`witnessed`, `pending`, `disputed` or `impossible`. Absent on a `load`.</summary>
+            public string verdict;
         }
 
         [Serializable]
@@ -123,6 +164,18 @@ namespace TumbangPreso.Net
 
         /// <summary>What the last remote call had to say, for the profile screen's status line.</summary>
         public string Status { get; private set; } = "Local career";
+
+        /// <summary>
+        /// What the endpoint said about the last match submitted: `witnessed`, `pending`,
+        /// `disputed` or `impossible`.
+        ///
+        /// ⚠️ THE END-OF-MATCH BOARD IS THE ONLY THING THAT READS IT, AND ONLY TO SAY ONE
+        /// SENTENCE ONCE. `FUTURE.md` § 0.5b, phase 8 row: the surface this phase owes is "almost
+        /// nothing, deliberately" and the one thing on it is "a result that is disputed says so,
+        /// once". A pending result says nothing, because pending is the normal state of a match
+        /// whose other players have not closed their game yet.
+        /// </summary>
+        public string LastVerdict { get; private set; } = "";
 
         public static string Path =>
             System.IO.Path.Combine(Application.persistentDataPath, "career.json");
@@ -239,9 +292,97 @@ namespace TumbangPreso.Net
         /// § 0.3 and § 19.2 step 3 are actually protecting: a four-player Hero Strike match with
         /// nine hundred passive-defence ticks in it costs four calls.
         /// </summary>
-        public void Record(MatchRecord record)
+        /// <summary>
+        /// File a report against another player.
+        ///
+        /// ⚠️ IT IS FIRE AND FORGET AND IT SAYS SO. The player has already been told REPORTED
+        /// by the button that called this; an error toast for a report that failed to upload would
+        /// be a second sentence about somebody else's behaviour on a screen that should be about
+        /// the match that just finished. The endpoint rate-limits at ten a day.
+        /// </summary>
+        public async void Report(string playerId, ReportReason reason)
+        {
+            if (string.IsNullOrWhiteSpace(playerId)) return;
+            if (!(GameServices.Account?.IsSignedIn ?? false)) return;
+
+            try
+            {
+                await CloudCode.CallAsync(ScriptName,
+                    new { action = "report", playerId = playerId, reason = (int)reason });
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[Career] report not delivered: {e.Message}");
+            }
+        }
+
+        public void Record(MatchRecord record) => Record(record, "");
+
+        /// <summary>
+        /// Take a finished record into the career and queue it, with this peer's own witness
+        /// digest of the same match.
+        ///
+        /// ⚠️⚠️ THE DIGEST IS THIS PEER'S TALLY AND NOT A HASH OF THE RECORD. See
+        /// `ScoreWitness`: hashing the record would hash the host's JSON on all four machines.
+        /// An empty string is the honest answer for a peer that did not see the whole match, and
+        /// the endpoint treats it as silence rather than as a disagreement.
+        /// </summary>
+        /// <summary>
+        /// Remember that a multiplayer match is running, so walking out of it is noticed.
+        ///
+        /// ⚠️ IT SAVES IMMEDIATELY. The entire value of the flag is that it is on disk before
+        /// the thing it is protecting against happens.
+        /// </summary>
+        public void NoteMatchStarted(bool multiplayerWithOtherHumans)
+        {
+            if (!multiplayerWithOtherHumans) return;
+
+            _cache.InMatchSinceUtc = DateTime.UtcNow.ToString("o");
+            Save();
+        }
+
+        /// <summary>
+        /// Report a match this machine started and never finished, once, on the next launch.
+        ///
+        /// ⚠️⚠️ THE FLAG IS CLEARED BEFORE THE CALL IS TRIED, WHICH IS THE OPPOSITE OF WHAT
+        /// THE UPLOAD QUEUE DOES AND IS DELIBERATE. A queued match record must survive a failed
+        /// send, because losing it loses a match somebody played. An abandon that fails to send is
+        /// a penalty nobody received, and retrying it for ever would mean one offline evening
+        /// becoming a cooldown that arrives days later attached to nothing the player remembers.
+        /// **A missed penalty is the right failure.**
+        /// </summary>
+        public async Task ReportAbandonIfAnyAsync()
+        {
+            if (string.IsNullOrEmpty(_cache.InMatchSinceUtc)) return;
+            if (!(GameServices.Account?.IsSignedIn ?? false)) return;
+
+            _cache.InMatchSinceUtc = "";
+            Save();
+
+            try
+            {
+                string output = await CloudCode.CallAsync(ScriptName, new { action = "abandon" });
+                var answer = JsonUtility.FromJson<SubmitResponse>(output);
+
+                if (answer != null && !string.IsNullOrWhiteSpace(answer.profile))
+                    AdoptRemoteProfile(answer.profile);
+
+                Debug.Log("[Career] reported a match left early");
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[Career] could not report an abandoned match: {e.Message}");
+            }
+        }
+
+        public void Record(MatchRecord record, string witnessDigest)
         {
             if (record == null || string.IsNullOrWhiteSpace(record.MatchId)) return;
+
+            // ⚠️ PLAYING TO THE WHISTLE IS WHAT CLEARS THE FLAG, and it is cleared here
+            // rather than in `Adopt` so that a spectator, who has no line and returns early below,
+            // does not clear a flag it never set.
+            _cache.InMatchSinceUtc = "";
 
             string me = LocalPlayerId;
             var line = MatchRecordRules.LineFor(record, me);
@@ -262,8 +403,15 @@ namespace TumbangPreso.Net
             // as well as here.
             if (applied)
             {
+                PadWitnesses();
                 _cache.Queue.Add(record);
-                while (_cache.Queue.Count > QueueLimit) _cache.Queue.RemoveAt(0);
+                _cache.QueueWitness.Add(witnessDigest ?? "");
+
+                while (_cache.Queue.Count > QueueLimit)
+                {
+                    _cache.Queue.RemoveAt(0);
+                    if (_cache.QueueWitness.Count > 0) _cache.QueueWitness.RemoveAt(0);
+                }
             }
 
             Save();
@@ -275,6 +423,20 @@ namespace TumbangPreso.Net
         // -------------------------------------------------------------------
         // § THE SERVER
         // -------------------------------------------------------------------
+
+        /// <summary>
+        /// Makes the witness list the same length as the queue.
+        ///
+        /// ⚠️ OLD RECORDS PAD AT THE FRONT, WHICH IS WHERE THEY ARE. A career file written
+        /// before this field existed has records queued and no digests; padding at the end would
+        /// pair the oldest record with a digest belonging to nothing.
+        /// </summary>
+        private void PadWitnesses()
+        {
+            _cache.QueueWitness ??= new List<string>();
+            while (_cache.QueueWitness.Count < _cache.Queue.Count) _cache.QueueWitness.Insert(0, "");
+            while (_cache.QueueWitness.Count > _cache.Queue.Count) _cache.QueueWitness.RemoveAt(0);
+        }
 
         /// <summary>Sends everything queued, then refreshes the profile from the server.</summary>
         public async Task SyncAsync()
@@ -318,14 +480,25 @@ namespace TumbangPreso.Net
                     var record = _cache.Queue[0];
                     string json = JsonUtility.ToJson(record);
 
+                    PadWitnesses();
+                    string witness = _cache.QueueWitness[0] ?? "";
+
                     string output = await CloudCode.CallAsync(
-                        ScriptName, new { action = "submit", record = json });
+                        ScriptName, new { action = "submit", record = json, witness = witness });
 
                     var answer = JsonUtility.FromJson<SubmitResponse>(output);
                     if (answer != null && !string.IsNullOrWhiteSpace(answer.profile))
                         AdoptRemoteProfile(answer.profile);
 
+                    // ⚠️⚠️ THE VERDICT IS REPORTED AND NEVER RETRIED. A disputed match is
+                    // a finished piece of business: the career stats still applied, the ranked
+                    // rating did not, and submitting it again would produce the same answer. The
+                    // one thing that must not happen is the wedge `docs/TODO.md` § 94.1 records,
+                    // where one record that can never be accepted holds up every match behind it.
+                    LastVerdict = answer?.verdict ?? "";
+
                     _cache.Queue.RemoveAt(0);
+                    if (_cache.QueueWitness.Count > 0) _cache.QueueWitness.RemoveAt(0);
                     Save();
                     Changed?.Invoke();
                 }
@@ -407,6 +580,12 @@ namespace TumbangPreso.Net
             _refreshing = true;
             try
             {
+                // ⚠️ BEFORE THE LOAD, so the profile this refresh adopts already carries the
+                // cooldown the abandon just bought. Doing it afterwards would show the player a
+                // clean profile and then a queue that refuses them, with nothing on screen having
+                // changed in between.
+                await ReportAbandonIfAnyAsync();
+
                 string output = await CloudCode.CallAsync(ScriptName, new { action = "load" });
                 var answer = JsonUtility.FromJson<SubmitResponse>(output);
 

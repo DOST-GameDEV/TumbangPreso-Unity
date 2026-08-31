@@ -759,11 +759,11 @@ namespace TumbangPreso
                 // ⚠️ `PaletteVariants.For` IS THE ONE OWNER and answers the authored array
                 // unchanged for an empty or unknown id, so this is safe on every seat.
                 string characterId = Roster.PersonIdAt(motor.Mode, motor.CharacterIndex);
-                string paletteId = slot == humanSeat
-                    ? Settings.SettingsStore.PaletteFor(characterId)
-                    : Net.MatchRpc.Instance?.GetSeatInfo(slot)?.PaletteId ?? "";
+                var look = slot == humanSeat
+                    ? Settings.SettingsStore.LookFor(characterId)
+                    : LookCodec.Decode(Net.MatchRpc.Instance?.GetSeatInfo(slot)?.Look ?? "");
 
-                var palette = PaletteVariants.For(art.Palette, paletteId);
+                var palette = PaletteVariants.For(art.Palette, look);
 
                 visual.ApplyModel(art.Model, art.Tint, art.Clips, palette, art.PetModel);
 

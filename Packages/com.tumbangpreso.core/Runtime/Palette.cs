@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace TumbangPreso.Core
 {
@@ -109,6 +110,37 @@ namespace TumbangPreso.Core
         /// </summary>
         public static bool IsKnownVariant(string paletteId)
             => !string.IsNullOrEmpty(paletteId) && HueShiftFor(paletteId) > 0.0f;
+
+        /// <summary>
+        /// The bounds on the free saturation dial.
+        ///
+        /// ⚠️ 55 IS NOT ZERO AND 145 IS NOT 200, AND BOTH ENDS PROTECT THE SAME THING.
+        /// `VISION.md` 2 rule 5: a screenshot taken mid-fight must still show every player. At
+        /// zero saturation a character is a grey silhouette that reads as a shadow on the
+        /// Eskinita road; far above 100 the toon ramp's two bands collapse toward one another and
+        /// the character flattens into a sticker. The window is wide enough that two players who
+        /// both picked orange still look different and narrow enough that neither of them
+        /// disappears.
+        ///
+        /// ⚠️ THE HUE HAS NO BOUNDS AND DOES NOT NEED ANY. Every hue is as readable as every
+        /// other hue at the same saturation and value, which is the entire reason the earned
+        /// variants rotate hue and nothing else.
+        /// </summary>
+        public const int SaturationMin = 55;
+        public const int SaturationMax = 145;
+
+        public static int ClampHue(int degrees)
+        {
+            int h = degrees % 360;
+            return h < 0 ? h + 360 : h;
+        }
+
+        public static int ClampSaturation(int percent)
+        {
+            if (percent < SaturationMin) return SaturationMin;
+            if (percent > SaturationMax) return SaturationMax;
+            return percent;
+        }
     }
 
     /// <summary>
@@ -124,6 +156,130 @@ namespace TumbangPreso.Core
     {
         public string CharacterId = "";
         public string PaletteId = "";
+
+        /// <summary>
+        /// A free hue rotation, 0 to 359, on top of whatever palette is equipped.
+        ///
+        /// ⚠️ THIS IS THE PART OF PHASE 5 THAT IS ACTUALLY THE POINT OF PHASE 5, AND IT IS
+        /// FREE FROM LEVEL ONE ON PURPOSE. The brief, 2026-08-31: *"the main purpose of the
+        /// customizationn shit is so that ppl coudl spend their time making their own
+        /// character"*. Two earned hue presets at 150 and 285 degrees are a REWARD; they are not
+        /// somewhere to spend an evening. A dial is. `FUTURE.md` 0.5 rule 4 is the rule this has
+        /// to satisfy and it satisfies it exactly: nothing on a progression track may change a
+        /// gameplay number, and a colour changes none. **The earned palettes stay earned** and
+        /// are the named presets on the screen; the dial is expression rather than progress, the
+        /// same way a display name is.
+        ///
+        /// ⚠️ IT COMPOSES WITH THE EARNED PALETTE RATHER THAN REPLACING IT, so equipping
+        /// `mastery.zack.palette.alt1` and then turning the dial is 150 plus the dial, and a
+        /// player who earned something can still see that they earned it.
+        /// </summary>
+        public int HueDegrees;
+
+        /// <summary>
+        /// Saturation, as a percentage of the authored colours, bounded by
+        /// <see cref="PaletteRules.SaturationMin"/> and <see cref="PaletteRules.SaturationMax"/>.
+        ///
+        /// ⚠️ AND THERE IS NO BRIGHTNESS DIAL, WHICH IS `VISION.md` 2 ENFORCED RATHER THAN
+        /// QUOTED. `PaletteVariants.Rotate` already records why the earned variants rotate hue
+        /// only: **the toon shader bands on VALUE**, so the two-band read that tells three
+        /// attackers apart at distance is a function of lightness, and a player who could drag
+        /// their own value would be able to dress as a silhouette. Saturation does not touch the
+        /// banding, and it is still bounded so nobody can go fully grey and read as a shadow.
+        /// </summary>
+        public int SaturationPercent = 100;
+
+        /// <summary>
+        /// The slipper and lata this character carries, remembered per character.
+        ///
+        /// ⚠️ THESE ARE ALREADY WIRE-REPLICATED PICKS (`LobbySeatInfo.SlipperPick`,
+        /// `CanPick`), so remembering them here changes no protocol: the customiser writes the
+        /// pick the lobby was already sending. `FUTURE.md` 5 lists "tsinelas skin" and "can
+        /// skin" as cosmetic slots and they have been in the game since the port; what was
+        /// missing was that changing character forgot them.
+        ///
+        /// ⚠️ -1 MEANS "NOT CHOSEN FOR THIS CHARACTER YET" AND FALLS BACK TO THE GLOBAL PICK,
+        /// rather than 0, which is a real entry and would silently re-dress everybody the first
+        /// time this field shipped.
+        /// </summary>
+        public int SlipperPick = -1;
+        public int CanPick = -1;
+    }
+
+    /// <summary>
+    /// The whole of what one character looks like, in the one value that crosses the wire.
+    ///
+    /// ⚠️ ONE FIELD, NOT FOUR, AND `Roster.Slippers`' RULE IS WHY. Every field a peer sends
+    /// is a field a build of a different age can misread, and three of these four are numbers.
+    /// One string with a version letter degrades to "wear the base palette" on a build that has
+    /// never heard of it, which is the same degradation `PaletteRules.IsKnownVariant` already
+    /// guarantees for an unknown palette id.
+    /// </summary>
+    public readonly struct CharacterLook
+    {
+        public readonly string PaletteId;
+        public readonly int HueDegrees;
+        public readonly int SaturationPercent;
+
+        public CharacterLook(string paletteId, int hueDegrees, int saturationPercent)
+        {
+            PaletteId = paletteId ?? "";
+            HueDegrees = PaletteRules.ClampHue(hueDegrees);
+            SaturationPercent = PaletteRules.ClampSaturation(saturationPercent);
+        }
+
+        /// <summary>Nothing chosen: the character as the artist drew it.</summary>
+        public static CharacterLook Default => new CharacterLook("", 0, 100);
+
+        /// <summary>True when this look asks for nothing the authored palette does not already
+        /// give, which is what lets a receiver skip the whole recolour.</summary>
+        public bool IsAuthored => !PaletteRules.IsKnownVariant(PaletteId)
+                                  && HueDegrees == 0 && SaturationPercent == 100;
+
+        /// <summary>The total hue rotation, earned preset plus dial, wrapped into 0 to 359.</summary>
+        public float TotalHueDegrees
+        {
+            get
+            {
+                float total = PaletteRules.HueShiftFor(PaletteId) + HueDegrees;
+                total %= 360.0f;
+                return total < 0.0f ? total + 360.0f : total;
+            }
+        }
+    }
+
+    /// <summary>
+    /// The look as one wire string, and back.
+    ///
+    /// ⚠️ THE FORMAT IS `L1:paletteId:hue:sat` AND THE LEADING `L1` IS THE VERSION.
+    /// `BannerCodec` has the same shape for the same reason: a receiver that does not recognise
+    /// the version draws the default instead of guessing at fields it cannot name.
+    ///
+    /// ⚠️ A PALETTE ID CONTAINING A COLON WOULD BREAK THIS AND CANNOT EXIST.
+    /// <see cref="BannerCodec.IsWritable"/> is the rule every cosmetic id already passes.
+    /// </summary>
+    public static class LookCodec
+    {
+        public const string Version = "L1";
+
+        public static string Encode(CharacterLook look)
+        {
+            string id = BannerCodec.IsWritable(look.PaletteId) ? look.PaletteId : "";
+            return $"{Version}:{id}:{look.HueDegrees}:{look.SaturationPercent}";
+        }
+
+        public static CharacterLook Decode(string encoded)
+        {
+            if (string.IsNullOrEmpty(encoded)) return CharacterLook.Default;
+
+            var parts = encoded.Split(':');
+            if (parts.Length < 4 || parts[0] != Version) return CharacterLook.Default;
+
+            int.TryParse(parts[2], out int hue);
+            if (!int.TryParse(parts[3], out int saturation)) saturation = 100;
+
+            return new CharacterLook(parts[1], hue, saturation);
+        }
     }
 
     /// <summary>
@@ -155,6 +311,43 @@ namespace TumbangPreso.Core
                 return PaletteRules.DefaultId;
 
             return wantedPaletteId;
+        }
+
+        /// <summary>
+        /// The whole look this player may wear on this character right now.
+        ///
+        /// ⚠️ THE EARNED HALF IS CHECKED AND THE FREE HALF IS ONLY CLAMPED, which is the
+        /// ownership model stated in one line. A palette id is a reward and is refused when it is
+        /// not owned; a hue is a preference and the only thing that can be wrong with it is that
+        /// it is out of range. **The same call runs on the receiving side for a peer's look**, so
+        /// a modified client cannot send a saturation of zero and play as a shadow: the receiver
+        /// clamps what it draws rather than trusting what it was sent.
+        /// </summary>
+        public static CharacterLook LookFor(PlayerProfile profile, string characterId,
+                                            CharacterLook wanted)
+        {
+            string palette = PaletteFor(profile, characterId, wanted.PaletteId);
+            return new CharacterLook(palette, wanted.HueDegrees, wanted.SaturationPercent);
+        }
+
+        /// <summary>
+        /// The loadout row for a character, created on demand.
+        ///
+        /// ⚠️ IT IS HERE RATHER THAN IN `SettingsStore` BECAUSE IT IS A RULE ABOUT A LIST,
+        /// and the list is read on both sides of the wire: the local settings file has one and a
+        /// peer's arriving claim is one row of the same shape. `docs/TODO.md` 94.1 is the entry
+        /// about "which line is mine" having four hand-written copies.
+        /// </summary>
+        public static CharacterLoadout RowFor(List<CharacterLoadout> loadouts, string characterId)
+        {
+            if (loadouts == null || string.IsNullOrEmpty(characterId)) return null;
+
+            foreach (var row in loadouts)
+                if (row != null && row.CharacterId == characterId) return row;
+
+            var added = new CharacterLoadout { CharacterId = characterId };
+            loadouts.Add(added);
+            return added;
         }
     }
 }

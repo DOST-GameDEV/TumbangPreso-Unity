@@ -62,7 +62,16 @@ namespace TumbangPreso.Net
         public BannerSelection Banner = new BannerSelection();
 
         /// <summary>
-        /// The character palette this seat is drawn in, authorised the same way.
+        /// The whole look this seat is drawn in, encoded, and authorised the same way.
+        ///
+        /// ⚠️⚠️ IT WAS `PaletteId` AND IT CARRIES A `LookCodec` FRAME NOW, WHICH IS WHY
+        /// `NetSession.ProtocolVersion` IS 18. A palette id alone could only say which of two
+        /// earned presets a player had equipped. Phase 5's free colour dial means "what this
+        /// character looks like" is three values, and `Roster.Slippers`' rule says the way to put
+        /// three values on a wire that two builds have to agree about is one versioned string, not
+        /// three fields a hand-maintained writer and reader can get out of order. The name changed
+        /// with the contents deliberately: a field called `PaletteId` holding a look frame is the
+        /// shape `docs/TODO.md` § 94.1 is about.
         ///
         /// ⚠️⚠️ WITHOUT THIS EVERY REMOTE SEAT WORE ITS AUTHORED COLOURS AND `MatchInstaller`
         /// SAID SO IN A COMMENT: *"a remote peer's choice has to arrive over the wire before it
@@ -70,6 +79,6 @@ namespace TumbangPreso.Net
         /// palette from this machine's settings would dress a stranger in the local player's
         /// choice**, which is why it was left blank rather than defaulted.
         /// </summary>
-        public string PaletteId = "";
+        public string Look = "";
     }
 }

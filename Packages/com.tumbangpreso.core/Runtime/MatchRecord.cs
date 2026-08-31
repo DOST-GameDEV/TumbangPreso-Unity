@@ -164,6 +164,21 @@ namespace TumbangPreso.Core
         public bool Online;
 
         /// <summary>
+        /// Whether this match was played for rank.
+        ///
+        /// ⚠️⚠️ IT IS IN THE DIGEST (`IntegrityRules.Canonical`), WHICH IS THE ONLY REASON
+        /// IT IS SAFE TO PUT ON A RECORD A HOST AUTHORS. A flag that says "pay me rating for this"
+        /// and that only the host writes is a flag a modified host sets on every match it wins.
+        /// Because it is hashed, three other machines have to agree that the match they just
+        /// played was ranked, and they know because they queued for it.
+        ///
+        /// ⚠️ CASUAL IS THE DEFAULT AND AN OLDER RECORD IS CASUAL. `INSPIRATION.md` § 3.1:
+        /// the mode is the ruleset and the queue is the stakes, so this field changes nothing at
+        /// all about how the match was played.
+        /// </summary>
+        public bool Ranked;
+
+        /// <summary>
         /// Which slot was the taya in each round, index 0 being round 1.
         ///
         /// ⚠️ STORED RATHER THAN RE-DERIVED, EVEN THOUGH `MatchRules.DefenderSlotFor` IS PURE.

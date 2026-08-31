@@ -690,7 +690,11 @@ namespace TumbangPreso.Net
             record.Banner = BannerRules.Authorise(claim);
 
             string characterId = Core.Roster.PersonIdAt(UI.SceneFlow.SelectedMode, charPick);
-            record.PaletteId = BannerRules.AuthorisePalette(claim, characterId);
+
+            // ⚠️ THE WHOLE LOOK, NOT ONLY THE EARNED PALETTE. `BannerRules.AuthoriseLook`
+            // checks the reward half and clamps the free half, so what lands in the seat table is
+            // a decision about both. See `LobbySeatInfo.Look`.
+            record.Look = LookCodec.Encode(BannerRules.AuthoriseLook(claim, characterId));
         }
 
         /// <summary>
@@ -2987,7 +2991,7 @@ namespace TumbangPreso.Net
                         // what goes out to the room is a decision rather than a request. See
                         // `LobbySeatInfo.Banner`.
                         Banner = peer.Banner ?? new BannerSelection(),
-                        PaletteId = peer.PaletteId ?? "",
+                        Look = peer.Look ?? "",
                     };
                 }
                 else
@@ -3004,7 +3008,7 @@ namespace TumbangPreso.Net
                         SlipperPick = -1,
                         Ready = false,
                         Banner = new BannerSelection(),
-                        PaletteId = "",
+                        Look = "",
                     };
                 }
                 _replicatedSeats[slot] = seats[slot];
@@ -3033,7 +3037,7 @@ namespace TumbangPreso.Net
                     // hand, and five more fields per seat is twenty more chances to write them
                     // out of order. `audit_wire_payloads.py` checks one against the other.
                     writer.WriteValueSafe(BannerCodec.EncodeSelection(s.Banner));
-                    writer.WriteValueSafe(s.PaletteId ?? "");
+                    writer.WriteValueSafe(s.Look ?? "");
                 }
 
                 // ⚠️⚠️ THE GALLERY RIDES THE ROSTER, BECAUSE A SPECTATOR HAS NO SEAT AND SO NO
@@ -3106,7 +3110,7 @@ namespace TumbangPreso.Net
                 reader.ReadValueSafe(out int slipperPick);
                 reader.ReadValueSafe(out bool ready);
                 reader.ReadValueSafe(out string banner);
-                reader.ReadValueSafe(out string paletteId);
+                reader.ReadValueSafe(out string look);
 
                 var info = new LobbySeatInfo
                 {
@@ -3125,7 +3129,7 @@ namespace TumbangPreso.Net
                     // need every peer's XP to do it, which is exactly the thing `BannerClaim`'s
                     // header says must stop at the host.
                     Banner = BannerCodec.DecodeSelection(banner),
-                    PaletteId = paletteId ?? "",
+                    Look = look ?? "",
                 };
                 if (seat >= 0 && seat < _replicatedSeats.Length)
                 {
@@ -3220,11 +3224,16 @@ namespace TumbangPreso.Net
         {
             string characterId = Core.Roster.PersonIdAt(mode, charIndex);
 
-            string paletteId = slot == NetAuthority.LocalSlot
-                ? Settings.SettingsStore.PaletteFor(characterId)
-                : Instance?.GetSeatInfo(slot)?.PaletteId ?? "";
+            // ⚠️⚠️ THE LOCAL SEAT READS ITS OWN SETTINGS AND EVERY OTHER SEAT READS THE
+            // WIRE, AND THE ASYMMETRY IS DELIBERATE. The local player's dial has to answer
+            // instantly while they are dragging it, before any round trip; a remote peer's look
+            // is whatever the host authorised, and guessing it from this machine's settings would
+            // dress a stranger in the local player's choice.
+            var look = slot == NetAuthority.LocalSlot
+                ? Settings.SettingsStore.LookFor(characterId)
+                : LookCodec.Decode(Instance?.GetSeatInfo(slot)?.Look ?? "");
 
-            return Visual.PaletteVariants.For(authored, paletteId);
+            return Visual.PaletteVariants.For(authored, look);
         }
 
         // -------------------------------------------------------------------
@@ -4467,6 +4476,21 @@ namespace TumbangPreso.Net
                         // statue on every client's screen. See `StepNetworkTransform`.
                         unit.ForgetInputSource();
                     }
+
+                    // ⚠️⚠️ AND THE ROOM SAYS THE SEAT IS OPEN, WHICH IS THE WHOLE OF
+                    // BACKFILL. `FUTURE.md` § 7 asks for exactly one behaviour, "a match that
+                    // loses a player advertises the seat rather than dying", and everything under
+                    // it was already built for the reconnect window: `LobbySession.Depart` holds
+                    // the chair against the durable token and `RuleOnArrival` hands a free seat to
+                    // a newcomer mid-match. **What was missing was that nothing told the outside
+                    // world the chair existed**, because a lobby record with `InProgress` set is
+                    // refused by `MatchmakingRules.Evaluate` unless it is also backfilling.
+                    //
+                    // ⚠️ ONLY WHILE A MATCH IS RUNNING. A seat opening in the LOBBY is
+                    // already advertised by the seat count, and flagging a backfill there would
+                    // put a room that never queued into the pool.
+                    if (lobby.MatchInProgress)
+                        FindFirstObjectByType<Matchmaker>()?.OfferBackfillSeat(true);
                 }
             }
 

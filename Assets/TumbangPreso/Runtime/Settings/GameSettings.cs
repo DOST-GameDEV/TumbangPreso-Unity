@@ -560,24 +560,115 @@ namespace TumbangPreso.Settings
         /// makes and then loses on quit is worse than one they cannot make.</summary>
         public static void SetPaletteFor(string characterId, string paletteId)
         {
+            var row = LoadoutFor(characterId);
+            if (row == null) return;
+
+            row.PaletteId = paletteId ?? "";
+            Save();
+        }
+
+        /// <summary>
+        /// The loadout row for a character, created on demand, or null when there is no settings
+        /// file yet.
+        ///
+        /// """ + WW + """ONE ACCESSOR, BECAUSE PHASE 5 TURNED ONE FIELD INTO FIVE. `SetPaletteFor`
+        /// used to walk the list itself and the customiser would have been a second walk, a third
+        /// for the slipper and a fourth for the lata. `docs/TODO.md` """ + S + """ 94.1 is the entry about
+        /// "which line is mine" having four hand-written copies that all agreed on the wrong
+        /// value, and this is the same list with the same trap in it.
+        /// </summary>
+        public static CharacterLoadout LoadoutFor(string characterId)
+        {
             var settings = Current;
-            if (settings == null || string.IsNullOrEmpty(characterId)) return;
+            if (settings == null || string.IsNullOrEmpty(characterId)) return null;
 
             settings.CharacterLoadouts ??= new List<CharacterLoadout>();
+            return LoadoutRules.RowFor(settings.CharacterLoadouts, characterId);
+        }
+
+        /// <summary>
+        /// The whole look this character is wearing, checked against what the account owns.
+        ///
+        /// """ + W + """SAME REASONING AS `PaletteFor` ONE METHOD UP, WHICH THIS REPLACES AT EVERY CALL
+        /// SITE THAT DRAWS A CHARACTER: `settings.json` is a plain text file on the player's disk,
+        /// so a palette that was legitimately equipped and is no longer owned stops being worn.
+        /// The dial is clamped rather than checked, because a hue is not a reward.
+        /// </summary>
+        public static CharacterLook LookFor(string characterId)
+        {
+            var settings = Current;
+            if (settings?.CharacterLoadouts == null) return CharacterLook.Default;
+
+            CharacterLoadout found = null;
+            foreach (var row in settings.CharacterLoadouts)
+                if (row != null && row.CharacterId == characterId) { found = row; break; }
+
+            if (found == null) return CharacterLook.Default;
+
+            var wanted = new CharacterLook(found.PaletteId, found.HueDegrees, found.SaturationPercent);
+            return LoadoutRules.LookFor(GameServices.Career?.Profile, characterId, wanted);
+        }
+
+        /// <summary>Remembers the free colour dial for one character.</summary>
+        public static void SetLookFor(string characterId, int hueDegrees, int saturationPercent)
+        {
+            var row = LoadoutFor(characterId);
+            if (row == null) return;
+
+            row.HueDegrees = PaletteRules.ClampHue(hueDegrees);
+            row.SaturationPercent = PaletteRules.ClampSaturation(saturationPercent);
+            Save();
+        }
+
+        /// <summary>
+        /// The slipper and lata this character carries, falling back to the global pick.
+        ///
+        /// """ + WW + """-1 MEANS "NEVER CHOSEN FOR THIS CHARACTER" AND FALLS BACK RATHER THAN
+        /// DEFAULTING TO ENTRY 0. Entry 0 of each prop list is the neutral one (`CLAUDE.md` """ + S + """ 4),
+        /// so defaulting would silently strip every player of the slipper they had picked the
+        /// first time this field shipped, and it would look like the game had forgotten it.
+        /// </summary>
+        public static int SlipperPickFor(string characterId)
+        {
+            var settings = Current;
+            if (settings?.CharacterLoadouts == null) return settings?.SlipperPick ?? 0;
 
             foreach (var row in settings.CharacterLoadouts)
-                if (row != null && row.CharacterId == characterId)
-                {
-                    row.PaletteId = paletteId ?? "";
-                    Save();
-                    return;
-                }
+                if (row != null && row.CharacterId == characterId && row.SlipperPick >= 0)
+                    return row.SlipperPick;
 
-            settings.CharacterLoadouts.Add(new CharacterLoadout
+            return settings.SlipperPick;
+        }
+
+        public static int CanPickFor(string characterId)
+        {
+            var settings = Current;
+            if (settings?.CharacterLoadouts == null) return settings?.CanPick ?? 0;
+
+            foreach (var row in settings.CharacterLoadouts)
+                if (row != null && row.CharacterId == characterId && row.CanPick >= 0)
+                    return row.CanPick;
+
+            return settings.CanPick;
+        }
+
+        /// <summary>Remembers the props this character carries. """ + W + """ **THE GLOBAL PICK IS
+        /// WRITTEN TOO**, so a character with no row of its own inherits the last thing the player
+        /// chose rather than the neutral entry.</summary>
+        public static void SetPropsFor(string characterId, int slipperPick, int canPick)
+        {
+            var settings = Current;
+            if (settings == null) return;
+
+            settings.SlipperPick = slipperPick;
+            settings.CanPick = canPick;
+
+            var row = LoadoutFor(characterId);
+            if (row != null)
             {
-                CharacterId = characterId,
-                PaletteId = paletteId ?? "",
-            });
+                row.SlipperPick = slipperPick;
+                row.CanPick = canPick;
+            }
 
             Save();
         }

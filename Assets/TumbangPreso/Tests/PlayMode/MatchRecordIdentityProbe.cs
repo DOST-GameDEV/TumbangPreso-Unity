@@ -167,12 +167,23 @@ namespace TumbangPreso.PlayTests
                 "CareerStore.LocalPlayerId, which is what every screen and every submission " +
                 "looks the player up by");
 
-            Assert.AreNotEqual(SettingsStore.Current.PlayerToken, mine.PlayerId,
-                "the record carries GameSettings.PlayerToken, which is the machine's local " +
-                "connection token and is never a UGS account id. `match-record.js` finds the " +
-                "submitter with `p.PlayerId === context.playerId` and will answer 422 for ever. " +
-                "This is the exact value found in the player's own career.json on 2026-08-30. " +
-                "docs/TODO.md § 94.1.");
+            // ⚠️⚠️ THE "NOT THE MACHINE TOKEN" ASSERTION USED TO BE HERE AND IT COULD NEVER
+            // PASS IN BATCH MODE. `NetIdentity.AttemptSignInAsync` returns false immediately when
+            // `Application.isBatchMode`, by design, so `PlayerAccount.PlayerId` is empty in every
+            // headless run and `CareerStore.LocalPlayerId` correctly falls back to
+            // `NetIdentity.Token`, which IS `GameSettings.PlayerToken`. **The record carrying the
+            // machine token offline is the right answer, not the fault**, so asserting against it
+            // here was asserting that the machine was online.
+            //
+            // ⚠️⚠️ SO THE CLAIM MOVED RATHER THAN BEING WEAKENED, AND IT MOVED SOMEWHERE IT
+            // CAN BE EVALUATED. `TheRecordNeverCarriesTheMachineTokenWhileSignedIn` is
+            // `[Category("Ugs")]` and signs in the way `UgsServicesProbe` does, so it runs against
+            // the live service where "this player has an account" is true. **An assertion that
+            // cannot pass is worse than no assertion**, and one made conditional with an `if`
+            // would be the trap `docs/TODO.md` § 101.1 records: an assertion inside an `if` is an
+            // assertion that can decide not to run. § 104.8.
+            Assert.AreEqual(Net.CareerStore.LocalPlayerId, mine.PlayerId,
+                "the record stamped an id this machine does not recognise as its own");
 
             Assert.AreEqual(mine, MatchRecordRules.LineFor(record, me),
                 $"LineFor found a different line than seat {ProbeSeat} for this player");
@@ -201,6 +212,52 @@ namespace TumbangPreso.PlayTests
 
             Debug.Log($"[MatchRecordIdentityProbe] seat {ProbeSeat} is '{mine.Handle}' " +
                       $"id '{mine.PlayerId}', three bots carry no id, record is submittable");
+        }
+
+        /// <summary>
+        /// The half of the claim above that only means anything against a real account.
+        ///
+        /// ⚠️⚠️ IT IS `[Category("Ugs")]` AND IT SIGNS IN ITSELF, WHICH IS THE ONLY WAY A
+        /// HEADLESS RUN CAN HAVE AN ACCOUNT AT ALL. `NetIdentity.AttemptSignInAsync` refuses in
+        /// batch mode by design, so `PlayerAccount` never gets a PlayerId there and every record
+        /// a probe writes is correctly stamped with the offline token. `UgsServicesProbe` reaches
+        /// past the same gate the same way, for the same reason.
+        ///
+        /// ⚠️ IT ASSERTS THE RULE WITHOUT RUNNING A MATCH. What is being claimed is a property of
+        /// `CareerStore.LocalPlayerId`, not of the match loop, and the match loop is already
+        /// covered above. Loading an arena to re-derive one string would be four minutes for
+        /// nothing.
+        /// </summary>
+        [UnityTest]
+        [Category("Ugs")]
+        public IEnumerator TheRecordNeverCarriesTheMachineTokenWhileSignedIn()
+        {
+            if (!Unity.Services.Core.UnityServices.State.Equals(
+                    Unity.Services.Core.ServicesInitializationState.Initialized))
+            {
+                var init = Unity.Services.Core.UnityServices.InitializeAsync();
+                while (!init.IsCompleted) yield return null;
+            }
+
+            if (!Unity.Services.Authentication.AuthenticationService.Instance.IsSignedIn)
+            {
+                var signIn = Unity.Services.Authentication.AuthenticationService.Instance
+                    .SignInAnonymouslyAsync();
+                while (!signIn.IsCompleted) yield return null;
+            }
+
+            Assert.IsTrue(Unity.Services.Authentication.AuthenticationService.Instance.IsSignedIn,
+                "could not sign in, so this test cannot say anything about a signed-in machine");
+
+            string account = Unity.Services.Authentication.AuthenticationService.Instance.PlayerId;
+            Assert.IsNotEmpty(account, "signed in with no player id");
+
+            Assert.AreNotEqual(SettingsStore.Current.PlayerToken, account,
+                "the UGS account id and GameSettings.PlayerToken are the same string. " +
+                "`match-record.js` finds the submitter with `p.PlayerId === context.playerId`, " +
+                "so a record stamped with the machine token is answered 422 for ever. This is " +
+                "the exact value found in the player's own career.json on 2026-08-30. " +
+                "docs/TODO.md § 94.1.");
         }
     }
 }

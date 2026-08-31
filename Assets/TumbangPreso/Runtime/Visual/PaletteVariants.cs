@@ -34,12 +34,29 @@ namespace TumbangPreso.Visual
         /// rather than to look broken, and `PaletteRules.IsKnownVariant` is the single question.
         /// </summary>
         public static Color[] For(Color[] authored, string paletteId)
+            => For(authored, new CharacterLook(paletteId, 0, 100));
+
+        /// <summary>
+        /// The palette to paint with, given a character's authored colours and the whole look its
+        /// owner chose: an earned preset plus the free dial Phase 5 added.
+        ///
+        /// ⚠️⚠️ THE EARNED ROTATION AND THE FREE ONE ARE ADDED AND APPLIED ONCE, NOT
+        /// APPLIED TWICE. `CharacterLook.TotalHueDegrees` does the sum and wraps it, so a player
+        /// wearing `palette.alt1` at 150 degrees with the dial at 40 is drawn at 190 rather than
+        /// rotated through HSV conversion two separate times. Two conversions is two lots of
+        /// floating point error on colours that two machines have to agree about exactly.
+        ///
+        /// ⚠️ AND A LOOK THAT ASKS FOR NOTHING RETURNS THE AUTHORED ARRAY ITSELF, unallocated.
+        /// This runs once per seat per build of a character and four times a lobby refresh; the
+        /// common case is a player who has never opened the customiser.
+        /// </summary>
+        public static Color[] For(Color[] authored, CharacterLook look)
         {
             if (authored == null || authored.Length == 0) return authored;
-            if (!PaletteRules.IsKnownVariant(paletteId)) return authored;
+            if (look.IsAuthored) return authored;
 
-            float degrees = PaletteRules.HueShiftFor(paletteId);
-            if (degrees <= 0.0f) return authored;
+            float degrees = look.TotalHueDegrees;
+            float saturation = PaletteRules.ClampSaturation(look.SaturationPercent) / 100.0f;
 
             var shifted = new Color[authored.Length];
 
@@ -55,7 +72,7 @@ namespace TumbangPreso.Visual
                     continue;
                 }
 
-                shifted[i] = Rotate(authored[i], degrees);
+                shifted[i] = Rotate(authored[i], degrees, saturation);
             }
 
             return shifted;
@@ -75,12 +92,19 @@ namespace TumbangPreso.Visual
         /// ⚠️ ALPHA IS PRESERVED. Some slots are transparent and a variant that flattened them
         /// would fill in holes the model is meant to have.
         /// </summary>
-        private static Color Rotate(Color colour, float degrees)
+        private static Color Rotate(Color colour, float degrees, float saturationScale)
         {
             Color.RGBToHSV(colour, out float h, out float s, out float v);
 
             h += degrees / 360.0f;
             h -= Mathf.Floor(h);
+
+            // ⚠️⚠️ SATURATION IS SCALED AND VALUE IS NOT TOUCHED, WHICH IS THE PARAGRAPH
+            // ABOVE MADE ARITHMETIC. The dial multiplies rather than sets, so a colour the artist
+            // drew as a near-grey stays a near-grey at every setting and only the colours that
+            // were saturated to begin with move. Setting saturation absolutely would flatten
+            // eighteen characters' worth of deliberate colour choices into one look.
+            s = Mathf.Clamp01(s * saturationScale);
 
             var rotated = Color.HSVToRGB(h, s, v, hdr: true);
             rotated.a = colour.a;

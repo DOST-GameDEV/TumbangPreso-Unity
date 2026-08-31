@@ -323,9 +323,9 @@ that phase's work, and where a phase disagrees with this row it should say so an
 |---|---|---|---|
 | **5 · Cosmetics** | ⚠️ **CORRECTED 2026-08-31: the character SELECT screen, not a locker on the hub.** `docs/TODO.md` § 101.5 | **The character, wearing it.** A cosmetic screen with no preview is a list of nouns — and character select already IS that screen: the model, the real toon shader, the ink outline and the equipped palette are all on it. A locker on the hub would be a second screen showing the same character worse (§ 92), and the journey settles it: pick, recolour, done is three presses where you already are, against five that start by hunting a corner chip nobody has found (§ 96) | Phase 4's rewards are computed and worn by nothing (§ 91.8). ⚠️ **Wire the EXISTING rewards before authoring one new one**, or the first thing this phase ships is a second unworn set. ⚠️⚠️ **And check that they CAN be worn**: § 101.1 found `LoadoutRules.PaletteFor` refusing every input there is, because a mastery reward's id carries the hero and the variant table only knew the bare suffix |
 | **6 · Social** | ✅ **SHIPPED**: a FRIENDS tab on the hub, and an ADD per human on the end-of-match board. ⚠️ **A TAB, NOT A GROUP ON `PROFILE`**, corrected 2026-08-31: a group is collapsed by default like every other one, and PROFILE is the screen about YOU while this is the only screen in the game about anybody else (`docs/TODO.md` § 102) | **Who is online now.** Everything else is a submenu — so the tab's subtitle is the answer as a sentence (`3 of 12 online`) and `SocialRules.Sorted` floats joinable and online to the top on their own | A friends list is a live list, so it has three empty states (no friends, none online, service down) and § 0.5b question 3 says all three get designed. ⚠️ **All three are built**, and they say different things: no friends points at the end-of-match board, none online is not an error and does not read as one, and not signed in is the guest's state and the only one with an action attached |
-| **7 · Matchmaking** | A queue state on the mode screen, not a screen of its own | **Whether you are in the queue, readable from across the room** | A spinner is not a state. Say the mode, the time elapsed, and how to cancel, and never block the menu behind it |
-| **8 · Integrity** | Almost nothing, deliberately | **A result that is disputed says so, once** | ⚠️ Resist building a moderation console. This phase's success is invisible |
-| **9 · Ranked** | A badge on the nameplate and a rating line on the end-of-match board | **Which way the number moved, and by how much** | The rank badge is absent on purpose today (§ 92.8) and level and rank must never be confusable. ⚠️ A bot-filled ranked match must SAY so on that board (§ 11) |
+| **7 · Matchmaking** ✅ **SHIPPED** | A queue state on the LOBBY, not on a mode screen: nothing has navigated to `ConvertedModeSelect` since § 68.5 and PLAY lands straight on the lobby. `UI/QueueCard.cs`, `docs/TODO.md` § 103.3 | **Whether you are in the queue, readable from across the room** | A spinner is not a state. Say the mode, the time elapsed, and how to cancel, and never block the menu behind it |
+| **8 · Integrity** ✅ **SHIPPED** | Almost nothing, deliberately: one line on the end-of-match board and no moderation console. `docs/TODO.md` § 104.6 | **A result that is disputed says so, once** | ⚠️ Resist building a moderation console. This phase's success is invisible |
+| **9 · Ranked** ✅ **SHIPPED** | A tier WORD beside the level on the nameplate and a tier line on the end-of-match board. ⚠️  **No rating is drawn anywhere**, and the level keeps its `LV` prefix so the two can never be read as one quantity. `docs/TODO.md` § 105.6 | **Which way the number moved, and by how much** | The rank badge is absent on purpose today (§ 92.8) and level and rank must never be confusable. ⚠️ A bot-filled ranked match must SAY so on that board (§ 11) |
 | **10 · Loadouts** | A loadout on the character screen; achievements as a CAREER group | **The three things you have chosen**, not the hundred you have not | Achievements are a wall of rows by nature. They collapse, and the sample-size rule (§ 2.2) applies to their progress numbers too |
 | **11 · Bots** | A label in the lobby, on the scoreboard and in the match history | **That this seat is not a person** | It has to survive a screenshot. A grey name is not a label |
 | **12 · Modes and maps** | The existing mode and map select, extended | **What is different about this mode, in one line** | Two modes fit as buttons; five need the collapse pattern before the fifth arrives, not after |
@@ -820,7 +820,17 @@ satisfied.
 
 ---
 
-## PHASE 5 · COSMETICS AND CHARACTER CUSTOMISATION
+## PHASE 5 · COSMETICS AND CHARACTER CUSTOMISATION ✅ SHIPPED 2026-08-31
+
+⚠️⚠️ **AND FINISHED ON 2026-08-31 WITH THE PART THAT WAS ACTUALLY THE POINT.**
+`docs/TODO.md` § 106.1. Everything in §§ 98 and 101 shipped a REWARD: a player owns no palette
+until hero mastery 5, so the answer to *"can I make my own character"* on a fresh account was no.
+🧑: *"the main purpose of the customizationn shit is so that ppl coudl spend their time making their
+own character"*. **What is new is a free colour dial, TINT and STRENGTH on character select, not
+gated on anything.** The earned palettes stay earned and are the named presets; the dial is
+expression rather than progress, which is § 0.5 rule 4 satisfied exactly.
+⚠️  **There is no brightness dial and there must never be one**: the toon shader bands on VALUE,
+so a player who could drag their own value could dress as a silhouette (`VISION.md` § 2 rule 5).
 
 🧑: *"we also wanna have customizable characters in the future"*. This is the cosmetic half; Phase
 10 is the skills half, and they are separated on purpose.
@@ -880,6 +890,9 @@ end-of-match board.
 DEPENDS ON A SERVICE QUERY CLOUD SAVE DOES NOT HAVE.** They are marked, and § 102.2 has the
 reasoning in full rather than a shrug:
 
+- ✅ **CLOSED 2026-08-31 BY PHASE 7, EXACTLY AS THE NEXT SENTENCE PREDICTED.** `PartyRules` is the
+  rule set and `QueueCard` presses it: QUICK MATCH in a room of three looks for a lobby with three
+  chairs. **The rail did not change.** `docs/TODO.md` § 106.3.
 - ⚠️ **Parties that "queue together" cannot be built before there is a queue.** What ships is the
   thing that queue would replace: a friend in a joinable lobby publishes its join code with their
   presence, and JOIN on the rail hands it to `LobbyJoinPanel`. When Phase 7 lands, a party becomes
@@ -888,6 +901,11 @@ reasoning in full rather than a shrug:
   no query-by-value, so resolving `Maria Clara#4417` means a second document every rename has to
   update, with a real failure mode (a stale index hands a request to the wrong account). **Recent
   players ships instead**, which this section itself calls the highest-converting path.
+- ✅ **AND BLOCKING NOW SURVIVES A REAL QUEUE, AT TWO GATES.** `MatchmakingRules.Evaluate` refuses
+  a blocked host BEFORE the rating is even considered, and connection approval still refuses one
+  that gets through. Approval alone would let the queue find a blocked host, connect, and bounce
+  the player straight back out, which reads as the queue being broken rather than as a block
+  working.
 - ⚠️ **Blocking survives the only matchmaking there is**: a blocked account is refused at
   connection approval, so it cannot join a lobby you host. Phase 9 inherits the rule.
 
@@ -910,6 +928,12 @@ on the two laptops and it is the next thing to do with this feature.
 results between themselves. Either exclude full parties from ranked or accept only partial ones.
 Decide it in Phase 9 and assert it in a test.
 
+✅ **DECIDED 2026-08-31: A FOUR-STACK CANNOT QUEUE RANKED AND PARTIES OF TWO OR THREE CAN.**
+`PartyRules.MaxRankedSize`, and `PartyTests.AFourStackCannotQueueRankedAndATwoOrThreeStackCan` is
+the test § 19.9 step 9 asked for. `docs/TODO.md` § 105.4 has the reasoning: excluding EVERY party
+would be a shorter rule and a worse game, because two friends cannot arrange a four-player result
+between themselves. The other two seats are strangers who are trying to win.
+
 ⚠️ **Extend `LobbyChat`.** It carries hard-won layout notes and there must never be a second one.
 
 **The prompt for this phase is [§ 19.6](#196-prompt-for-phase-6).** Every prompt in
@@ -918,7 +942,13 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
-## PHASE 7 · MATCHMAKING
+## PHASE 7 · MATCHMAKING ✅ SHIPPED 2026-08-31
+
+**`docs/TODO.md` § 103 is the as-built record.** `Core/Matchmaking.cs` is the arithmetic,
+`Net/Matchmaker.cs` is the driver, `UI/QueueCard.cs` is the surface, and it adds **zero** service
+requests: it subscribes to the browse loop `ServerQuery` already runs every 4 seconds.
+⚠️  **What is still open from `INSPIRATION.md` PROMPT I5 is the population GATE**, and it is open
+because with one queue there is nothing to gate. § 103.6.
 
 - **Tier 1, free and available today: a Lobby-backed queue.** The game already browses UGS Lobby
   every 4 s and resolves join codes. QUICK MATCH queries for a joinable lobby whose advertised
@@ -949,11 +979,32 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
-## PHASE 8 · COMPETITIVE INTEGRITY
+## PHASE 8 · COMPETITIVE INTEGRITY ✅ SHIPPED 2026-08-31
+
+**`docs/TODO.md` § 104 is the as-built record, and § 104.1 is a correction to § 8.1 below that
+changes the whole mechanism.**
 
 ⚠️⚠️ **PHASE 9 DEPENDS ON THIS. IT IS THE PHASE THAT DECIDES WHETHER ANY RANK MEANS ANYTHING.**
 
 ### 8.1 A witnessed result, because the host is a player
+
+⚠️⚠️ **THE PARAGRAPH BELOW THAT SAYS "THE CLIENTS ALREADY HAVE EVERYTHING NEEDED" WAS WRONG,
+AND IT WAS THE LOAD-BEARING CLAIM.** Corrected 2026-08-31, `docs/TODO.md` § 104.1. Peers receive
+every scoring event and **derived nothing from them**: at the whistle `MatchRpc.BroadcastMatchRecord`
+sends the host's finished `MatchRecord` and every peer calls `GameServices.Stats.Adopt` on it, so
+four "independent" submissions were four byte-identical copies of one machine's opinion. Comparing
+them would have proved that JSON round-trips. **What shipped instead compares against the EVENT
+STREAM**: `Net/ScoreWitness.cs` tallies `MatchDirector.Scored` on every peer and hashes its OWN
+scores into the host's record.
+
+⚠️  **That also removes the hardest question this section left open, which is who chooses the
+witness.** A witness chosen by the host is a witness chosen by the suspect. With every peer already
+submitting, nobody chooses.
+
+⚠️  **And the honest limit is stronger than the one this section states.** It is not only two
+colluding players: **a modified host that awards itself points DURING the match is not caught at
+all**, because every peer tallies the same fabricated events. § 8.2's dedicated servers are the
+answer to that one. `docs/TODO.md` § 104.3 has the full list of what this does and does not stop.
 
 `MatchDirector.AddScore` runs host-side and the host is one of the four. A modified client that
 hosts can award itself anything.
@@ -1004,7 +1055,15 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
-## PHASE 9 · RANKED, RATING AND SEASONS
+## PHASE 9 · RANKED, RATING AND SEASONS ✅ SHIPPED 2026-08-31
+
+**`docs/TODO.md` § 105 is the as-built record.** The three questions this section says to ask
+were asked on 2026-08-31 and answered: **the ladder is on HERO STRIKE**, there are **five tiers with
+no divisions**, and the names are **BATA, KANTO, BARANGAY, KAMPEON, ALAMAT**.
+⚠️  **`match-record.js` knowingly approximates `RatingRules.UpdateAll` in one way and § 105.5
+says exactly how and what it costs**: the endpoint is called once per player and cannot read three
+other rank documents on a free tier, so it treats every opponent as sitting at the start rating.
+The ORDER of the ladder is unaffected. The fix for the day there is a budget is written down.
 
 ⚠️⚠️ **DO NOT BUILD THIS BEFORE PHASE 8.1.** A rank a host can award themselves is worse than no
 rank, because it turns every good player's win into an accusation.

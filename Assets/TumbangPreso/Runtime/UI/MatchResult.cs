@@ -393,7 +393,48 @@ namespace TumbangPreso.UI
                 rt.offsetMax = Vector2.zero;
             }
 
-            _xpDetail.text = DetailFor(award);
+            _xpDetail.text = DetailFor(award) + RankLine(profile);
+        }
+
+        /// <summary>
+        /// What the ladder did, and whether the result was believed, in at most two short lines.
+        ///
+        /// ⚠️⚠️ THE ONE THING ON THIS PART OF THE BOARD IS WHICH WAY THE NUMBER MOVED AND BY
+        /// HOW MUCH, AND "THE NUMBER" IS THE TIER RATHER THAN THE RATING. `FUTURE.md` § 0.5b's
+        /// phase 9 row, and § 9's own rule: "the player never sees the number, only the tier". A
+        /// rating printed here would be a spreadsheet in a street game, and it would also be the
+        /// end of ever retuning the thresholds.
+        ///
+        /// ⚠️⚠️ AND THE DISPUTE LINE IS SAID ONCE, HERE, AND NOWHERE ELSE. § 0.5b's phase 8
+        /// row: the surface that phase owes is "almost nothing, deliberately" and the one thing on
+        /// it is "a result that is disputed says so, once". **A PENDING result says nothing at
+        /// all**, because pending is the ordinary state of a match whose other players have not
+        /// closed their game yet, and a board that announced it would teach every player in the
+        /// game to distrust a normal Tuesday.
+        ///
+        /// ⚠️ IT RIDES THE XP DETAIL LABEL RATHER THAN ADDING A ROW. `PhaseSurfaceLayoutProbe`
+        /// already measures that block, and a fourth element on a board people read for four
+        /// seconds before pressing REMATCH is the § 92 fault starting again.
+        /// </summary>
+        private string RankLine(Core.PlayerProfile profile)
+        {
+            string line = "";
+
+            var rank = profile?.Rank;
+            if (rank != null && rank.MatchesThisSeason > 0)
+            {
+                var tier = Core.RatingRules.TierFor(rank.Rating);
+                line += $"\n{Core.RatingRules.TierName(tier)}";
+
+                if (rank.Deviation > Core.RatingRules.SettledDeviation)
+                    line += "   ·   STILL PLACING YOU";
+            }
+
+            string verdict = Net.CareerStore.Instance?.LastVerdict ?? "";
+            if (verdict == "disputed")
+                line += "\nTHIS RESULT DID NOT MATCH WHAT THE OTHER PLAYERS SAW. NO RANK CHANGE.";
+
+            return line;
         }
 
         /// <summary>
@@ -624,6 +665,58 @@ namespace TumbangPreso.UI
                     var caption = button.GetComponentInChildren<Text>();
                     if (caption != null) caption.text = "REQUEST SENT";
                 });
+
+                BuildReport(id, handle);
+            }
+        }
+
+        /// <summary>
+        /// One REPORT control per human, under the ADD for the same person.
+        ///
+        /// ⚠️⚠️ IT IS SMALLER AND QUIETER THAN THE ADD BESIDE IT, AND THAT IS THE WHOLE
+        /// DESIGN OF IT. `FUTURE.md` § 0.5b, phase 8 row: the surface this phase owes is "almost
+        /// nothing, deliberately". The overwhelmingly common thing to want to do to somebody you
+        /// just played with is add them; reporting is rare and must not be a peer of adding, or
+        /// the end-of-match board becomes a screen about grievance. § 0.5b question 4 is the same
+        /// rule for destructive actions: DELETE ACCOUNT sat between PLAY AS GUEST and CLOSE at the
+        /// same size and one misclick cost a career.
+        ///
+        /// ⚠️⚠️ AND THERE IS NO FREE-TEXT BOX AND NO CONSOLE TO READ IT. Six reasons, a
+        /// count on the reported account, and nothing else. A free-text box is a moderation queue
+        /// and this project has nobody to staff one (§ 0.5 rule 11b names content moderation as a
+        /// real obligation rather than a cost to wave away). **A report with nobody reading it is
+        /// still worth taking, because the player needs somewhere to put the feeling and the count
+        /// is what a future moderation pass would sort by. Pretending to act on it would be worse
+        /// than saying nothing**, which is why the button says SENT and never says "we will look
+        /// into it".
+        /// </summary>
+        private void BuildReport(string playerId, string handle)
+        {
+            Button report = null;
+
+            report = StackedButton(_addStack, "REPORT", () =>
+            {
+                // ⚠️ ONE PRESS, ONE REASON, AND THE REASON IS THE HONEST DEFAULT. A menu of
+                // six on a board people read for four seconds is a menu nobody reads. `Other` is
+                // what a count can still be sorted by, and the reasons enum exists so the profile
+                // can offer the full list where there is room for it.
+                GameServices.Career?.Report(playerId, Core.ReportReason.Other);
+                MenuSfx.Click();
+
+                if (report == null) return;
+
+                report.interactable = false;
+
+                var caption = report.GetComponentInChildren<Text>();
+                if (caption != null) caption.text = "REPORTED";
+            });
+
+            var label = report.GetComponentInChildren<Text>();
+            if (label != null)
+            {
+                label.fontSize = MenuKit.MinReadableUnits;
+                label.color = UiTheme.CreamMuted;
+                if (!string.IsNullOrEmpty(handle)) label.text = "REPORT  " + handle;
             }
         }
 

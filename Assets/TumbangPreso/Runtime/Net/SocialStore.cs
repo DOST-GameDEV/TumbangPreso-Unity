@@ -293,9 +293,20 @@ namespace TumbangPreso.Net
         }
 
         /// <summary>
-        /// ⚠️ `Queued` IS NEVER PRODUCED HERE AND THAT IS CORRECT. Phase 7 owns the queue; the
-        /// value exists in `PresenceState` so the vocabulary does not have to change on the wire
-        /// later, and `Social.cs` says so.
+        /// ⚠️⚠️ `Queued` IS PRODUCED HERE NOW, AND THE NOTE THIS REPLACES SAID IT NEVER
+        /// WOULD BE. It read *"Phase 7 owns the queue; the value exists in `PresenceState` so the
+        /// vocabulary does not have to change on the wire later"*. Phase 7 landed on 2026-08-31
+        /// and this is the line that was being reserved for it. **A friend seeing "in queue" is
+        /// the single highest-converting moment a friends list has**, because it is the one state
+        /// where the answer to "can I join them" is yes and they are not busy.
+        ///
+        /// ⚠️ IT IS DERIVED RATHER THAN PUSHED, LIKE EVERY OTHER STATE HERE, so it costs no
+        /// call at all. `FUTURE.md` § 19.6: presence polling must not raise the service query rate,
+        /// and this rides the write that already happens every 60 seconds.
+        ///
+        /// ⚠️ THE ORDER IS URGENCY AND A MATCH BEATS A QUEUE. A backfill queue runs while a
+        /// match is live (`Matchmaker.OfferBackfillSeat`), and a friend who is playing is not
+        /// somebody to invite.
         /// </summary>
         private static PresenceState CurrentState
         {
@@ -303,6 +314,9 @@ namespace TumbangPreso.Net
             {
                 if (GameServices.Round != null)
                     return GameLaunch.Spectator ? PresenceState.Spectating : PresenceState.InMatch;
+
+                var queue = Matchmaker.Current;
+                if (queue != null && queue.IsQueueing) return PresenceState.Queued;
 
                 return PresenceState.Menu;
             }
