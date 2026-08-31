@@ -67,6 +67,7 @@ namespace TumbangPreso.EditorTools
             { "zack",        "characters/persons/team-zack.glb" },
             { "nemu",        "characters/persons/team-nemu.glb" },
             { "phaister",    "characters/persons/team-phaister.glb" },
+            { "custom",      "characters/persons/team-custom.glb" },
         };
 
         private static readonly Dictionary<string, string> PersonPalettes = new Dictionary<string, string>
@@ -92,6 +93,7 @@ namespace TumbangPreso.EditorTools
             { "zack",        "person_team-zack.tres" },
             { "nemu",        "person_team-nemu.tres" },
             { "phaister",    "person_team-phaister.tres" },
+            { "custom",      "person_team-custom.tres" },
         };
 
         private static readonly Dictionary<string, string> PersonPets = new Dictionary<string, string>

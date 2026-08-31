@@ -192,15 +192,15 @@ WEARABLE_USHANKA = [
 
 # --- 2. VOLUMETRIC SLOUCHY KNIT BEANIE ---
 WEARABLE_BEANIE = [
-    # Big Puffy Slouchy Beanie Crown (drapes naturally back over skull y=0.615 to 0.772)
-    ("bean-body-base",      "head", (-0.195, 0.615, -0.215), (0.195, 0.725, 0.165), OVERALLS),
-    ("bean-body-mid",       "head", (-0.198, 0.670, -0.224), (0.198, 0.750, 0.145), OVERALLS),
-    ("bean-body-slouch",    "head", (-0.165, 0.705, -0.230), (0.165, 0.765, -0.010), OVERALLS),
-    ("bean-rib-dark",       "head", (-0.200, 0.650, -0.035), (0.200, 0.735, 0.035), OVERALLS_DARK),
+    # Big Puffy Slouchy Beanie Crown (drapes naturally back over skull y=0.615 to 0.745)
+    ("bean-body-base",      "head", (-0.195, 0.615, -0.215), (0.195, 0.710, 0.165), OVERALLS),
+    ("bean-body-mid",       "head", (-0.198, 0.660, -0.224), (0.198, 0.730, 0.145), OVERALLS),
+    ("bean-body-slouch",    "head", (-0.165, 0.685, -0.230), (0.165, 0.745, -0.010), OVERALLS),
+    ("bean-rib-dark",       "head", (-0.200, 0.640, -0.035), (0.200, 0.720, 0.035), OVERALLS_DARK),
     
-    # Giant Fluffy Snowball Bobble Pom-Pom (y=0.745 to 0.790, z=-0.180 to -0.060)
-    ("bean-pompom",         "head", (-0.065, 0.745, -0.180), (0.065, 0.790, -0.060), WHITE),
-    ("bean-pompom-star",    "head", (-0.028, 0.752, -0.150), (0.028, 0.782, -0.090), CYAN_TRIM),
+    # Giant Fluffy Snowball Bobble Pom-Pom (y=0.720 to 0.765, z=-0.180 to -0.060)
+    ("bean-pompom",         "head", (-0.060, 0.720, -0.180), (0.060, 0.765, -0.060), WHITE),
+    ("bean-pompom-star",    "head", (-0.025, 0.728, -0.150), (0.025, 0.758, -0.090), CYAN_TRIM),
     
     # Thick 360° Folded Knit Rim Cuff (Encircling the entire head y=0.590 to 0.660)
     ("bean-cuff-front",     "head", (-0.198, 0.590, 0.140), (0.198, 0.660, 0.198), WHITE),
