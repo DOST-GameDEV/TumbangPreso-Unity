@@ -44,6 +44,16 @@ force a machine to 50 fps, and only telemetry can say whether a real player is d
 Phase 4, because every argument in phases 4 through 17 is settled faster with real numbers than
 with opinions, and as of today there are numbers to point at.
 
+⚠️⚠️ **§ 112 IS THE ONE TO READ BEFORE TOUCHING THE CHARACTER MAKER. § 112.8 IS THE ONE TO READ
+BEFORE TRUSTING ANY RENDER OF IT, AND § 112.12 IS THE ONE TO READ BEFORE BELIEVING A DIAGNOSIS OF
+ONE**: every wearable was sampling the whole palette atlas because a primitive cube's UVs span 0
+to 1, and it looked so exactly like z-fighting that two passes of geometry work went into it before
+anybody asked where the blue in a wood-amber-cream beanie was coming from. The base rig is a new, naked, bald, faceless `.glb`
+(`tools/build_base_voxel.py`), the custom character now enters a match, and
+`NetSession.ProtocolVersion` is **19**. ⚠️ **And `RosterBook.FindPersonArt("custom")` had answered
+null since the day it was written**, so the creator, its probe and all 87 cells of the wardrobe
+sheet were dressing `bayan` while every one of them looked green.
+
 ✅ **The unplugged LAN run is DONE, confirmed by 🧑 on 2026-08-31.** This entry read "what has
 never been tested is every screen between the menu and the match with UGS unreachable", and it was
 carried forward as the one urgent item in the plan. **It has been tested. Stop reporting it as
@@ -2114,6 +2124,388 @@ one.**
 
 ---
 
+## 112 · The base rig is naked now, and the custom character walks into a match ⚠️⚠️ 2026-08-31
+
+🧑, on the character maker: *"maybe generate a completely new voxel that will be customizable...
+like everything in it is movable and shit, dont toucht heh existing onnes, i will be very mad if u
+break or fuck up any of the existing ones"*, and *"using the simplest character taht we have as
+base and they will start out as naked"*. Then, asked how other games do it: *"idk what method games
+like monster hunter or shit does do get this working mayeb copy a version that works for us"*.
+
+**They all do the same three things, and this repo had two of them.**
+
+| The piece | Before | Now |
+|---|---|---|
+| a **naked base mesh** | ❌ `team-custom.glb` is a copy of a fully dressed hero | ✅ `team-custom-base.glb`: bald, bare, faceless |
+| **per-slot equipment geometry** | ✅ `VoxelWardrobe`, 87 entries, since § 110 | ✅ re-authored against the new rig |
+| a **colour remap** | ✅ the sixteen-slot palette, since the port | ✅ unchanged |
+
+### 112.1 · ⚠️⚠️ THE MISSING FIRST PIECE IS WHY EVERY WEARABLE HAD TO **COVER** RATHER THAN **BE**
+
+`VoxelWardrobe`'s own header stated the trade and § 110.3 argued for it: the base rig is one baked
+mesh with hair, a sando and shorts in it, so *"a box that fully encloses the region under it IS the
+replacement"*. That was the right call **given that rig**, and it cost three things that no amount
+of tuning could fix:
+
+- **every hairstyle was a lid.** `Scalp` was ONE box, the head's full width, from the hairline to
+  past the crown, because it had to enclose a baked mop. `Bald` was that same lid painted in skin.
+  🧑 asked for hair and what shipped was a hat.
+- **a sando was a box over another box.** The silhouette a player reads at arena distance was the
+  outer of two garments, and the inner one was still there.
+- **every expression needed a face plate.** The rig's eyes and mouth are painted into `head-mesh`'s
+  UVs at slot 8, so twelve expressions each laid a skin-coloured rectangle over them first.
+  ⚠️ **And it did not even cover them**: the plate started at `V` 0.32 of the old head box, which
+  is y 0.480, and the baked eyes start at y 0.4621. Nobody had measured it.
+
+**All three stop existing against a bare rig.** They are not three bugs, they were one decision.
+
+### 112.2 · The new rig, and the rig it came from
+
+`tools/build_base_voxel.py`. It **imports** `build_person_voxel.py` and points that module's
+globals at its own tables, rather than copying the pipeline: the retarget, the inverse bind
+matrices, the family remap, the chamfer, the normal smoothing, the glTF repack and all four
+build-time constraint checks are the shipped ones. A copy would drift, and the thing it would drift
+on is the animation retarget, which does not fail loudly — it tears the mesh apart on the first
+clip that plays.
+
+⚠️⚠️ **THE SIMPLEST RIG IN THE SET IS `character-male-d` AND IT IS ALREADY IN THAT FILE.**
+1239 verts, 711 triangles, five palette slots, and **it is the only one of the twelve that is
+bald**. `build_person_voxel.py` already lifts its skull as `DONOR_SKULL` and **throws slot 13
+away**, on the grounds that the pate *"is the HAIR volume worn in skin"* and keeping it leaves an
+authored mop nowhere to sit. **For a base rig that sentence is the requirement rather than the
+problem.** So this build keeps 15 AND 13, and drops slot 8, which is the painted-on eyes and mouth.
+
+The body is fourteen skin boxes: a foot, an ankle and a shin per leg, four for the torso, and an
+upper arm and a hand per arm. Nothing else.
+
+⚠️ **IT IS AUTHORED TO MEASURE THE SAME AS THE RIG IT REPLACES, TO WITHIN A FEW MILLIMETRES**,
+because `VoxelDresser.MeasureAnchor` derives every wearable frame from the live rig:
+
+| | `team-custom.glb` | `team-custom-base.glb` |
+|---|---|---|
+| `body-mesh` | x ±0.3836, y 0 to 0.366, z -0.104 to 0.134 | x ±0.3836, y 0 to 0.358, z -0.098 to 0.134 |
+| `torso` bone | \|x\| 0.128, y 0.1745 to 0.3499 | \|x\| 0.128, y 0.1745 to 0.3526 |
+| `arm-left` | x 0.0999 to 0.3836 | x 0.0999 to 0.3836 |
+| `head-mesh` | x ±0.26, y 0.340 to **0.778**, z ±0.26 | x ±0.2268, y 0.3432 to **0.7218**, z -0.1724 to 0.1676 |
+
+**So the torso, the arms and the legs kept their authoring and only the head was re-measured.**
+That is the whole reason tops, bottoms, neckwear, wristwear and footwear are untouched below.
+
+Height 0.7218, legs 24 per cent, torso 23, head 52, which is the family band `_family` puts every
+character on. It passes the height check unchanged: the cast spans 0.6613 to 0.7928.
+
+### 112.3 · ⚠️⚠️ THE HEAD FRAME MOVED AND EVERY `V` ON IT MOVED WITH IT
+
+This is § 110.9 happening for a fourth time and being answered the same way: **measure, do not
+estimate.** One command, two minutes:
+
+```
+python tools/glb_bone_bounds.py Assets/TumbangPreso/Art/characters/persons/team-custom-base.glb
+```
+
+The old head box ran to y 0.778 because it contained a mop that stood 60 mm above the skull. The
+new one stops at the crown of a bald head. **A `V` is a fraction of whatever is in the box**, so
+the same feature is at a different number:
+
+| | old | new | why |
+|---|---|---|---|
+| eye line | `V` 0.50 to 0.57 | **0.31 to 0.44** | measured off the donor's own eyes, y 0.4621 to 0.5113 |
+| mouth | 0.38 to 0.43 | **0.15 to 0.24** | the donor's mouth, y 0.4016 to 0.4349 |
+| hairline | 0.64 | **0.55** | above the brow, where the skull has narrowed to `U` 0.75 |
+| face plane | `W` 0.77 | **0.94** | the front of a bald skull, z 0.1576, with no fringe in front of it |
+| proud clearance | 18 mm | **10 mm** | twice what the ink outline needs and no more |
+
+⚠️⚠️ **AND THE FRAME IS ANISOTROPIC, WHICH NOTHING HAD NOTICED.** `U 1.0` is 0.2268 of model
+space and `W 1.0` is 0.170, so **the head box is a third deeper per unit than it is wide per unit**.
+From `V` 0.50 to 0.69 the skull's cross-section is a CIRCLE of radius 0.17, which reads as `U` 0.75
+and `W` 1.00 at the same time. A hair shell authored at U 0.84 and W 0.84 is therefore 20 mm proud
+at the ears and **24 mm inside the head at the forehead**: a fringe that vanishes and a nape that
+does not. `VoxelWardrobe.WPerU` is 1.334 and `Band` is the helper that applies it, so anything
+round on the head is authored in U once.
+
+### 112.4 · What changed in the wardrobe, and what deliberately did not
+
+| Table | Change |
+|---|---|
+| **Hairstyles** | rebuilt. `Scalp` is **four stacked bands following the skull's taper** instead of one box: the head is `U` 1.00 at eye level, 0.75 by `V` 0.50, 0.57 by 0.81 and 0.40 by 0.94, and a single box at the widest of those is a mortarboard. `spread` is the style control: 0.86 shaved, 0.94 buzz, 1.00 ordinary, 1.22 afro. |
+| **`Bald`** | **draws nothing at all.** It is the one entry in the project allowed to be empty under a name other than `None`, and `CustomCharacterWardrobeTests` names it explicitly rather than widening its rule. ⚠️ **If it ever has to grow geometry again, the base rig has stopped being bald and everything else in that file is wrong too.** |
+| **Expressions** | the face plate is **deleted**. There is nothing painted on the head to cover, so an expression draws straight onto skin. U and V re-measured. |
+| **Marks** | every hand-typed `V` remapped onto the new face band. A 0.36 was a cheek on the old head and is the bridge of the nose on this one. |
+| **Headwear** | re-tuned. On the old rig `V 1.0` was the top of a mop, so a cap band at 0.96 sat on hair; on the bald rig `V 1.0` IS the crown and the same number puts the band on top of the skull. |
+| **Eyewear** | lenses sized against the measured eye (`U` 0.19 to 0.44) instead of running to 0.58. Temple arms reach `U` ±1.02, which is the side of the head by measurement. |
+| **Tops, Bottoms, Neckwear, Wristwear, Footwear** | ⚠️ **UNCHANGED, AND THAT IS A RESULT RATHER THAN AN OMISSION.** The torso, arm and leg frames measure the same on both rigs (§ 112.2), so re-authoring them would have been churn with a rendering risk and no gain. |
+
+⚠️ **Every list is the same length and every name is in the same position**, so no saved character
+and no wire index means anything different. `CustomCharacterWardrobeTests` compares names, not
+counts, and would have failed on a rename.
+
+### 112.5 · ⚠️⚠️ NOTHING EXISTING WAS TOUCHED, AND THE LIST IS SHORT ENOUGH TO CHECK
+
+🧑: *"dont toucht heh existing onnes, i will be very mad if u break or fuck up any of the existing
+ones"*.
+
+- `team-custom.glb`, `person_team-custom.tres` and `person_custom.asset` are **byte for byte what
+  they were**. So is every other `team-*.glb` and every `character-*.glb`.
+- `RosterBookBuilder` gained a **row**, `custom_base`, beside the `custom` one. Repointing `custom`
+  would have changed what an existing asset resolves to; adding an id costs nothing.
+- `tools/build_person_voxel.py` is **not edited**. `build_base_voxel.py` imports it and assigns its
+  globals, the same way `build_custom_hero_voxel.py` already did.
+- `CustomCharacterRules.BaseRigId` is a second constant. `CustomCharacterId` still says `custom`
+  and still crosses the wire, because it is an identity and the other one is a mesh.
+
+### 112.6 · The custom character walks into a match ✅ CLOSES § 108.5 AND § 110.8
+
+`CustomCharacterStore.ActiveWire()` produced the string and nothing sent it. It travels now.
+
+- **`LobbySeatInfo.Custom`** carries the `C3` frame beside `Look`. ⚠️ **`custom` is still not a row
+  in `Roster.AllPeople` and must not become one**: that list's order is a network contract and
+  entries are appended, never inserted, so a nineteenth row meaning "custom" would change what
+  index 18 resolves to on every build that has not shipped yet.
+- **One field on `Identify`, one on `SelectLobbyPick`, one per seat on `SyncLobbyPicks`.**
+  ⚠️ `NetSession.ProtocolVersion` is **19**. Both machines rebuild off the same branch.
+- **The host normalises and re-encodes**, exactly as it does for the banner:
+  `MatchRpc.HostAuthoriseCosmetics` runs the frame through `CustomCharacterRules.Normalise`, so
+  every index is clamped into its own list and `HeroKitId` is resolved by `KitFor` before it reaches
+  anybody. **A modified client cannot send an out-of-range hat or a kit built out of three heroes.**
+  ⚠️ **A frame that does not start `C3:` is refused, not decoded.** `DecodeWire` answers a DEFAULT
+  character for a version it does not know, which is right when reading your own save file and
+  wrong here: it would seat a stranger for a peer playing a roster hero.
+- **`MatchInstaller.CustomFor(slot)`** asks the seat table first and falls back to the local store
+  **for the local seat only**. That file's own palette block already carries the rule: *guessing a
+  remote peer's choice from this machine's settings would dress a stranger in the local player's
+  character.* The fallback covers offline matches, which have no seat table at all.
+- **The kit is honoured.** `HeroAbilitySystem.BindHero` is given `KitFor(custom.HeroKitId)`, so a
+  custom character telegraphs exactly like the hero whose kit it carries (§ 110.5).
+- **The lata and the tsinelas are equipped**, from `CanIndex` and `SlipperIndex`, which were already
+  indices into the real `Roster.Cans` and `Roster.Slippers`.
+- **Height and build reach the match seat.** ⚠️ **Scale, re-align, then dress, and the order is not
+  interchangeable**: `ApplyModel` has already dropped the model onto the capsule floor against the
+  UNSCALED bounds, so a height scale applied after it leaves the feet in the air. `AlignToCapsuleFloor`
+  is public for exactly this. ⚠️ **The capsule and every reach number are untouched**
+  (`FUTURE.md` § 0.5 rule 4).
+
+### 112.7 · ⚠️⚠️ THE WARDROBE IS STILL SEALED OFF FROM THE ROSTER, AND THE TEST MOVED TO KEEP IT
+
+`CustomCharacterWardrobeTests.NothingButTheCustomCharacterScreenTouchesTheWardrobe` reads every
+`.cs` in the project as text and fails if anything outside a short allowlist names `VoxelDresser`
+or `VoxelWardrobe`. That is the promise that no wearable can ever land on Berto (§ 111.5), and
+`MatchInstaller` is not the creator screen.
+
+**The honest way to let a match seat be dressed without opening the wardrobe to the roster is a
+single owner that cannot be handed a roster hero.** `CustomCharacterOutfit` takes a
+`CustomCharacter` and a rig, and there is no overload that dresses anything else. The ten
+`VoxelDresser.Dress` calls, the palette build and the body scale were private methods of
+`CustomCharacterScreen`, so a match seat could only ever have had a **second implementation** of
+what a custom character looks like — which is exactly § 94.1's four hand-written copies of "which
+line in this record is mine", all agreeing on the wrong value.
+
+The test is `NothingButTheCustomCharactersOwnFilesTouchTheWardrobe` now and the allowlist gained
+one file. ⚠️ **`MatchInstaller` still does not name `VoxelDresser` and the test still fails if it
+ever does.** `WardrobeSheetProbe` also stopped reimplementing the palette ramp beside the screen's
+copy, so the contact sheet can no longer agree with a screen that is wrong.
+
+### 112.8 · ⚠️⚠️ AND THE WARDROBE HAD NEVER BEEN RENDERED ON THE CUSTOM RIG AT ALL. IT WAS ON BERTO.
+
+**Found by opening the first `_v2` render**, which came back as a Kenney boy with a black mop, a
+painted-on angry face and blue overalls. That is `bayan`, `character-male-f.glb`, roster entry 0.
+
+`RosterBook.FindPersonArt` searches `RosterBook.People` and nothing else.
+`RosterBookBuilder.BuildSingleEntry` wrote `person_custom.asset` **to disk** and never added it to
+that list, so **`FindPersonArt("custom")` has answered null since the first time anything called
+it.** Every caller has a "degrade to roster entry 0" fallback, correctly, and every one of them
+fired:
+
+| Caller | What it was actually drawing |
+|---|---|
+| `CustomCharacterScreen.ShowModel` | `bayan` |
+| `CustomCharacterScreenProbe` (2/2 green) | `bayan` |
+| `WardrobeSheetProbe`, all 87 cells | `bayan` |
+
+⚠️⚠️ **SO § 110.9'S FRAME TABLE IS A CORRECT MEASUREMENT OF A FILE THAT WAS NEVER ON SCREEN.**
+That entry records the head frame being *"guessed twice and both guesses shipped visibly wrong"*
+and closes with the right rule — read the `.glb`, group vertices by their heaviest `JOINTS_0`
+weight, print the extents per bone. **The measurement was of `team-custom.glb` and the render was
+of `character-male-f.glb`**, whose head box, hairline and face plane are all somewhere else. Three
+successive passes at those numbers each looked wrong in the picture and nobody could say why,
+because the two halves of the comparison were different characters.
+
+**This is `docs/TODO.md` § 101.1 one asset over**, and its sentence is the one to keep: a palette
+could never be equipped by anybody and the feature had already shipped, because *"both arms of
+`LoadoutRules.PaletteFor` returned the default, for every input there is"*. **A fallback that
+always fires is indistinguishable from a feature that works.**
+
+**The fix is three lines and a guard.**
+
+- `RosterBookBuilder` **appends** the off-roster entries to `book.People`. ⚠️ It cannot move an
+  index: `RosterBook.Resolve` asks `Roster` for the id at an index and then searches for THAT id,
+  which is this class's own opening rule — *"resolving by id rather than by position is what makes
+  that safe"*. A row past the eighteenth is reachable by name and by nothing else.
+- `BuildSingleEntry` **returns the asset** instead of a bool nobody read, so forgetting to file it
+  is hard rather than silent.
+- `RosterBook.IsOffRoster` names the two ids allowed to carry art without being roster rows, and
+  `ValidateList` checks against it. ⚠️ **The guard it exempts is not widened**: *"art cannot
+  introduce a roster entry; the list order is a network contract"* is still enforced for everything
+  else, and a third id cannot arrive by accident.
+- `CustomCharacterWardrobeTests.TheWardrobesOwnBaseRigIsReachableByName` is the red-not-puzzle
+  assertion. It checks the row, the model AND the palette, because an entry that resolves with a
+  null model draws nothing and `RosterBook.Validate` only checks that for ids that ARE roster rows.
+
+### 112.10 · ⚠️⚠️ `V` IS 0 TO 1 AND `MeasureAnchor`'S OWN COMMENT SAID IT WAS -1 TO 1
+
+**Third fault found by opening a picture, and the biggest of the three.** The first contact sheet
+of the bare rig shows both tsinelas lying flat on the street **a body length below the feet**.
+
+`VoxelPart`'s header has always been right: *"U is across, -1 at the left edge, +1 at the right.
+V is up, **0 at the bottom** of the measured box, 1 at the top."* The placement loop agrees with
+it. But `MeasureAnchor`'s leg case carried a ⚠️⚠️ note reading *"A LEG'S V = -1 IS THE FLOOR,
+BY CONSTRUCTION RATHER THAN BY A NUMBER"*, and **three whole tables were authored from that
+sentence instead of from the code**:
+
+| Table | Authored | What it actually asked for |
+|---|---|---|
+| **Footwear**, 6 entries | `V` -1.02 to -0.56 | a sole 170 mm **under the street**, which is 400 mm of world |
+| **Wristwear**, 6 entries | `V` -1.08 to 1.08 | a box 310 mm tall hung off the bottom of a 143 mm frame |
+| **Bottoms**, 8 entries | `V` -1.62 to 0.14 | a hem at y -0.095, below the floor, on a leg only 176 mm long |
+
+⚠️⚠️ **AND NONE OF THE THREE WAS VISIBLE TO ANY TEST.** `CustomCharacterWardrobeTests` was
+green through all of it: every name had boxes, every box was inside the palette, no box was inside
+out. **A box that exists is not a box in the right place**, which is § 110.9's own closing
+sentence arriving for the fourth time.
+
+⚠️ **THE WRIST ROW IS THE ONE THE CONTACT SHEET DOES NOT PHOTOGRAPH.** `WardrobeSheetProbe`
+shoots nine categories and wrist is not one of them, so six wearables had shipped with **nothing
+having ever looked at them**. That is the gap that let the wrist numbers be wrong for as long as
+the shoe numbers were, and it is the one thing in this section still open (§ 112.14).
+
+**What changed, and every number is measured rather than picked:**
+
+- the comment is corrected and says what it cost.
+- **Footwear** is re-authored against `V` 0 = floor, 1 = hip: a sole occupies `V` -0.01 to about
+  0.10 and a strap crosses the instep at 0.10 to 0.20. ⚠️ **The base rig's foot came down from
+  46 mm to 30 mm** to make room for that (`tools/build_base_voxel.py`): a sole cannot be authored
+  UNDER a foot whose bottom is already on the ground.
+- **Wristwear** wraps at `V` -0.04 to 1.04, and **the arm frame's depth is centred on the model
+  axis rather than on the bone**. `arm-left` sits at z -0.01725 while the arm's geometry is centred
+  on z 0.001, because the shoulder JOINT is behind the middle of the limb: measured against the
+  bone the arm ran `W` -0.67 to +1.24, so a band at ±1.0 was 60 mm short at the front. Against the
+  model axis it runs -0.94 to +0.97.
+- **The arm frame is 0.40 of the mesh half height, not 0.20.** The arm measures 140 mm thick and
+  the old factor gave it a frame 72 mm deep, so a band that wrapped in the numbers was buried in
+  the middle of a solid box.
+- **Bottoms** get real hems. One unit of `V` on the torso frame is 167 mm and **the whole leg is
+  176 mm**, so mid-thigh is -0.20, the knee is -0.36, the calf is -0.62 and the ankle is -0.92.
+- **Bottoms are `U` 1.20 rather than 1.06.** A garment is sized against the TORSO frame while the
+  thigh belongs to the LEG bone; at 1.06 every pair of shorts left a bare notch down the outside of
+  the leg. The base rig's shin came in to x 0.144 in the same pass, so the two now overlap by the
+  8 mm the ink outline needs.
+
+### 112.11 · More to choose from, because the ask was expansiveness
+
+🧑: *"pls create more clothes and thinngs u can customize tho in caharacter select, like eyes,
+mouth , hats, accessories etc"*, and earlier, *"IF ur character maker isnt expansive enough like
+stardew valley or monster hunter world then keep going"*.
+
+| Slot | Was | Now | Added |
+|---|---|---|---|
+| Expression | 12 | **18** | Grumpy, Beaming, Nervous, Deadpan, Hyped, Sly |
+| Face marks | 10 | **14** | Nose plaster, Brow scar, Tribal stripes, Dirt smudge |
+| Hairstyle | 12 | **18** | Undercut, Side part, Braids, Bowl cut, Ponytail, Dreadlocks |
+| Top | 10 | **16** | Basketball tank, Denim jacket, Sweater vest, Camisa chino, Windbreaker, Ilalim hoodie |
+| Bottom | 8 | **12** | Basketball shorts, Chinos, Cutoffs, Malong wrap |
+| Headwear | 12 | **18** | Straw hat, Beret, Cowboy hat, Party hat, Flat cap, Bike helmet |
+| Eyewear | 9 | **14** | Reading glasses, Eye black, Half-rim, Swim goggles, Welding shades |
+| Neck | 8 | **12** | Winter scarf, Coach whistle, Camera strap, Puka shells |
+| Wrist | 6 | **10** | Bangles, Taped wrist, Fitness band, Friendship threads |
+| Footwear | 6 | **10** | Basketball highs, Trekking sandals, Rain boots, School shoes |
+
+**87 entries became 136**, and the combination count before wrists, neck, footwear, height and
+build is now over **250 billion**. ⚠️ Every one is geometry;
+`CustomCharacterWardrobeTests` still fails on a name with no boxes behind it.
+
+⚠️⚠️ **EVERY ADDITION IS APPENDED AND NONE IS INSERTED, AND THAT IS NOT A STYLE CHOICE.** Each
+index is written into `GameSettings.CustomCharacterWires` and crosses the wire inside a `C3` frame.
+A row added in the middle silently re-dresses every character anybody has already made and makes
+two peers draw different people from the same number, which is exactly what § 110.6 refuses `C2`
+frames for. The lists are duplicated in `CustomCharacterRules` on purpose and
+`CustomCharacterWardrobeTests` compares them **by name and position**, so a mismatch is red rather
+than quiet.
+
+### 112.12 · ⚠️⚠️ AND THE SPECKLE WAS NEVER Z-FIGHTING. EVERY WEARABLE WAS SAMPLING THE WHOLE PALETTE ATLAS.
+
+**Two passes of geometry separation were spent chasing this before anybody asked where the blue
+was coming from.** A beanie whose only three allowed tones are wood, amber and cream came back
+striped **red, white and blue**, and a hat cannot z-fight into a colour that is not in it.
+
+`Toon.shader` picks a Person's colour from **which 32x32 cell of the 512x512 atlas a vertex
+lands in**. That is the whole palette mechanism, and `tools/build_person_voxel.py`'s `cell_uv` is
+its authoring half: a box declares a slot by putting its UVs at the centre of that slot's cell.
+**`GameObject.CreatePrimitive(PrimitiveType.Cube)` arrives with UVs spanning 0 to 1 across every
+face**, so every wardrobe box sampled all 256 cells and the shader handed back a different palette
+slot per texel. On a large flat garment one cell dominates and it reads as a solid colour with
+"z-fighting" round the edges; on anything small it reads as confetti.
+
+⚠️ **`VoxelDresser.PinToPaletteCell` is the fix and it is six lines.** It copies the mesh, writes
+`cell_uv`'s coordinate into every UV, and assigns it. ⚠️ **The mesh is COPIED**: `CreatePrimitive`
+hands out Unity's shared built-in cube, so writing UVs onto it would repaint every primitive cube
+in the process, including the fallback capsule `MatchInstaller` builds when a model is missing.
+
+**This is `docs/TODO.md` § 87's rule arriving again**, and its sentence is the one to keep: *when a
+surface reads as one flat colour across skins that share no material, ask which renderer carries a
+property block, not how the light is hitting it.* Here it is the other half of the same question:
+**ask which channel decides a surface's colour before deciding the geometry is at fault.**
+
+⚠️⚠️ **AND THE GEOMETRY SEPARATION WORK IS KEPT, NOT REVERTED.** The 8 mm ink outline really does
+bridge two surfaces closer than 0.10 of W, the beanie cuff really did share a face with its crown,
+and both are corrected. What changed is that they were never the thing making the renders look
+broken. **A fix that lands on top of a misdiagnosis is still a fix; it is the CONFIDENCE that was
+wrong**, and this entry exists so the next reader does not undo the separations looking for the
+real cause.
+
+### 112.13 · Verified
+
+- `dotnet test Core.Tests` **407/407**.
+- EditMode **281/281** (+1: `TheWardrobesOwnBaseRigIsReachableByName`).
+  ⚠️ Six of these were RED on the first run after the work and all six were this work, not
+  regressions: the protocol pin at 18, an inside-out face box, `MatchInstaller` naming the dresser
+  in a COMMENT (the text test doing exactly its job), and three `GeneratedAnimationTests` that go
+  red because `custom` and `custom_base` are in `RosterBook.People` now and had no baked dance.
+  ⚠️⚠️ **THAT LAST ONE IS A FEATURE ARRIVING, NOT A BREAKAGE**: the custom character had never
+  had its dance baked, because the book never listed it, so a custom character in a match would
+  have stood still through every emote. `GeneratedAnimationAuthor.Run` bakes 20 rigs now.
+- `WardrobeSheetProbe` green, **142 renders** in `Logs/ui/wardrobe-*_v2.png`, ten categories.
+- `CustomCharacterScreenProbe` green.
+- `Checks.RunAll` all five in one launch.
+- `node tools/check_digest_contract.js` green, `7b135cbb69492fa5`.
+- The three `tools/` audits: **44 ability sites, 0 ungated on another body; 53 wire entry points,
+  0 unreachable; 55 named messages, 0 mismatched.** ⚠️ The third is the one that matters here: it
+  compares each message's writer to its reader field by field, and this branch added a field to
+  three of them.
+- ⚠️ **`git status` was checked for collateral.** `person_custom.asset` and all twenty
+  `GeneratedAnimations/*.asset` came back as modified with an EMPTY diff, which is a line-ending
+  rewrite rather than a change, and were reverted. **No `team-*.glb` and no existing `.tres` is in
+  the diff at all.**
+
+### 112.14 · STILL OPEN
+
+- ⚠️⚠️ **§ 102.5 AND § 104.7, THE TWO-ACCOUNT RUN, ARE UNCHANGED AND STILL NEED TWO MACHINES.**
+  Nothing in this section touches them and nothing on one machine can. § 109.5 has the steps.
+- **The contact sheet is the acceptance test for the wardrobe and it is a picture.**
+  `WardrobeSheetProbe` writes `Logs/ui/wardrobe-*_v2.png`, one per entry, named for what it is.
+  ⚠️ **`_v2`, because `_v1` is on disk and in the scrollback**: `CLAUDE.md` § 6.1, chat clients
+  cache by filename. The `_v1` sheet is of the DRESSED rig, on `bayan`, and is the before.
+- ⚠️⚠️ **THE SHEET HAS NO WRIST ROW AND THAT IS THE NEXT THING TO ADD TO IT.** It shoots hair,
+  face, marks, hats, eyes, tops, bottoms, neck and shoes: nine categories out of ten. Wristwear is
+  the one nothing has ever photographed, and § 112.10 is what that cost — six wearables authored
+  against a frame that was wrong in two axes at once, for as long as the shoes were, with every
+  test green. **One more `Row(...)` call is the whole change**, plus the two-argument aim and zoom
+  that frames a forearm.
+- ⚠️ **The height and build dials are not on the sheet either**, and they are the two controls
+  that change the rig rather than adding to it. A row that shot the same outfit at 85, 100 and
+  115 per cent would be three cells and would answer whether the wardrobe still fits at the ends
+  of its own range.
+
+---
+
 ## 111 · The build he opened: no studio mark, and the boot screen in the wrong unit space ⚠️⚠️ 2026-08-31
 
 🧑, opening the player: *"i also checked out the build and the ui is brokeN. 1. doesnt start with
@@ -2428,7 +2820,12 @@ and one cut out of twelve. **A wardrobe is judged as a set**: the question is no
 works, it is whether the beanie reads differently from the bucket hat at the size a player sees
 them.
 
-### 110.8 · STILL OPEN
+### 110.8 · STILL OPEN ✅ ALL THREE CLOSED 2026-08-31 BY § 112.6
+
+⚠️ **Every bullet below is now done and the entry is kept rather than deleted**, because the
+sentence *"the wardrobe makes that job easier rather than harder"* turned out to be exactly right
+and is worth having on record: the match path really was the same calls the preview already made,
+once they had one owner (`CustomCharacterOutfit`). `NetSession.ProtocolVersion` is **19**.
 
 - ⚠️⚠️ **THE CUSTOM CHARACTER STILL DOES NOT WALK INTO A MATCH.** § 108.5 is unchanged:
   `CustomCharacterStore.ActiveWire()` produces the string and nothing sends it, and
@@ -2678,7 +3075,12 @@ changes on screen when you step through them is the palette colour, not the cut.
 them and `docs/wearables_catalog.md` is the contract. **This is the honest state of the feature and
 it is written here rather than left to be rediscovered.**
 
-### 108.5 · OPEN: the custom character does not cross the wire and does not enter a match
+### 108.5 · ✅ CLOSED 2026-08-31 BY § 112.6: it crosses the wire and enters a match
+
+⚠️ **The "done looks like" below is what shipped, almost to the letter**, and the warning under it
+was obeyed: `custom` is still not a row in `Roster.AllPeople`. **The one difference is which id the
+art comes from** — `CustomCharacterRules.BaseRigId` (`custom_base`) rather than `custom`, because
+the rig the wardrobe dresses is a new naked one and `team-custom.glb` was left untouched. § 112.
 
 `CustomCharacterStore.ActiveWire()` produces the string and **nothing sends it**; `MatchInstaller`
 still spawns a `Roster` entry. So the character can be made, saved, previewed and set active, and

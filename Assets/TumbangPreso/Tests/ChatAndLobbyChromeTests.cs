@@ -184,7 +184,19 @@ namespace TumbangPreso.Tests
             // EASY TO TALK YOURSELF OUT OF. `audit_wire_payloads.py` compares a writer to a
             // reader inside ONE build and would stay green through a change that only breaks two
             // builds against each other, which is the whole reason this constant exists.
-            Assert.AreEqual(18, NetSession.ProtocolVersion,
+            // ⚠⚠ 19 SINCE 2026-09-01: the custom character (docs/TODO.md § 112.6). One field on
+            // `Identify`, one on `SelectLobbyPick`, and **one per seat inside `SyncLobbyPicks`'
+            // loop**, carrying a `CustomCharacterRules` `C3` frame.
+            //
+            // ⚠️⚠️ AND IT IS THE FIRST ENTRY IN THIS LIST THAT DECIDES A GAMEPLAY THING RATHER
+            // THAN A COSMETIC ONE. Inside that frame is `HeroKitId`: which hero's skills and
+            // ultimate the seat brings into Hero Strike. A peer that could not read the field
+            // would draw a stranger AND read the wrong ability tells off them, and
+            // `docs/VISION.md` § 4's whole competitive argument is that reading which ultimate an
+            // opponent has banked is a skill. The two peer-to-host messages read it behind a
+            // `reader.Length > reader.Position` guard; the per-seat one cannot, for the reason
+            // written four paragraphs up.
+            Assert.AreEqual(19, NetSession.ProtocolVersion,
                 "a message or a replicated roster index has been added or removed. Bump this " +
                 "number and `NetSession.ProtocolVersion` together, in the same commit.");
         }

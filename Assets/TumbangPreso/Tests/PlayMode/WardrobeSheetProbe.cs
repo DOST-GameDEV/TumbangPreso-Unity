@@ -101,6 +101,19 @@ namespace TumbangPreso.PlayTests
             yield return Row("tops", VoxelWardrobe.Tops, VoxelAnchor.Torso, 0.58f, 1.00f);
             yield return Row("bottoms", VoxelWardrobe.Bottoms, VoxelAnchor.Torso, 0.40f, 1.00f);
             yield return Row("neck", VoxelWardrobe.Neckwear, VoxelAnchor.Torso, 0.70f, 0.86f);
+
+            // ⚠️⚠️ THE TENTH ROW, AND ITS ABSENCE IS WHAT LET SIX WEARABLES SHIP AGAINST A FRAME
+            // THAT WAS WRONG IN TWO AXES. `docs/TODO.md` § 112.10: every wristband was authored
+            // `V` -1.08 to 1.08 against a frame that runs 0 to 1, so each one was a 310 mm slab
+            // hung off the bottom of the arm, and the arm frame's depth was measured from the
+            // shoulder JOINT rather than from the limb. **Nine categories were photographed and
+            // this was the one that was not**, which is exactly how long it stayed wrong.
+            //
+            // ⚠️ IT IS `ArmRight` BECAUSE THAT IS WHERE THE WARDROBE HANGS IT: the throwing arm,
+            // and the one on screen in first person. Photographing the left would be a picture of
+            // a bone nothing is parented to.
+            yield return Row("wrist", VoxelWardrobe.Wristwear, VoxelAnchor.ArmRight, 0.52f, 0.62f);
+
             yield return Row("shoes", VoxelWardrobe.Footwear, VoxelAnchor.LegLeft, 0.16f, 0.90f);
         }
 
@@ -117,9 +130,15 @@ namespace TumbangPreso.PlayTests
             var book = RosterBook.Load();
             Assert.IsNotNull(book, "no RosterBook, so there is no model to dress");
 
-            var art = book.FindPersonArt(CustomCharacterRules.CustomCharacterId);
+            // ⚠️⚠️ `BaseRigId`, NOT `CustomCharacterId`, AND PHOTOGRAPHING THE WRONG ONE WOULD BE
+            // A SHEET OF THE RIG THIS WARDROBE IS NO LONGER AUTHORED AGAINST. `custom` resolves
+            // `team-custom.glb`, a dressed hero with hair and a sando baked in; `custom_base`
+            // resolves the bald, bare rig every V in `VoxelWardrobe` is now measured from.
+            // `docs/TODO.md` § 112.
+            var art = book.FindPersonArt(CustomCharacterRules.BaseRigId);
             if (art == null) art = book.PersonArt(0, GameMode.Classic);
-            Assert.IsNotNull(art, "no art for the custom character or for roster entry 0");
+            Assert.IsNotNull(art, "no art for custom_base or for roster entry 0. Run "
+                + "tools/build_base_voxel.py and then RosterBookBuilder.Build.");
 
             var palette = Palette(art.Palette);
 
@@ -148,36 +167,38 @@ namespace TumbangPreso.PlayTests
                 string safe = table[i].Name.ToLowerInvariant()
                     .Replace(' ', '-').Replace(',', ' ').Replace("/", "-").Trim();
 
-                yield return Shoot($"wardrobe-{category}-{i:00}-{safe}_v1");
+                // ⚠️ `_v2` BECAUSE `_v1` IS ON DISK AND IN THE CHAT SCROLLBACK. `CLAUDE.md` § 6.1:
+                // chat clients cache images by filename, so overwriting a render leaves the
+                // previous one on screen and the whole review is conducted against an image that
+                // no longer exists. The `_v1` sheet is of the DRESSED rig and is the before.
+                yield return Shoot($"wardrobe-{category}-{i:00}-{safe}_v2");
             }
         }
 
-        /// <summary>⚠️ THE SAME PALETTE THE CREATOR BUILDS, so the sheet is a picture of what a
-        /// player sees rather than of the authored `.tres`.</summary>
+        /// <summary>
+        /// ⚠️⚠️ THE SAME PALETTE THE CREATOR BUILDS, THROUGH THE SAME METHOD, WHICH IS THE
+        /// WHOLE VALUE OF THE SHEET. It used to reimplement the ramp beside the screen's copy, so
+        /// this probe was free to agree with a screen that was wrong. `CustomCharacterOutfit` is
+        /// the one owner now (`docs/TODO.md` § 112) and both call it. Same argument
+        /// `ModelPreview.StepForCapture`'s header makes about the camera: *"IT IS THE REAL
+        /// COMPONENT OR IT IS WORTHLESS."*
+        /// </summary>
         private static Color[] Palette(Color[] authored)
         {
             if (authored == null || authored.Length < PaletteRules.SlotCount) return authored;
 
-            var palette = new Color[authored.Length];
-            System.Array.Copy(authored, palette, authored.Length);
+            // ⚠️ ONE FIXED SUBJECT SO EVERY CELL IS COMPARABLE. A sheet whose skin tone changes
+            // per row is a sheet you cannot read a silhouette off. Mid kayumanggi, raven hair,
+            // kalye red top, denim bottom.
+            var subject = new CustomCharacter
+            {
+                SkinToneIndex = 8,
+                HairColorIndex = 1,
+                TopColorIndex = 0,
+                BottomColorIndex = 11,
+            };
 
-            Ramp(palette, PaletteRules.SkinSlots, CustomCharacterScreen.SkinColour(8));
-            Ramp(palette, new[] { 10, 11, 12 }, CustomCharacterScreen.HairColour(1));
-            Ramp(palette, new[] { 4, 5, 6 }, CustomCharacterScreen.ClothColour(0));
-            Ramp(palette, new[] { 0, 1, 2 }, CustomCharacterScreen.ClothColour(11));
-
-            palette[3] = UiTheme.WoodEdge;
-            palette[7] = UiTheme.Amber;
-            palette[9] = UiTheme.Cream;
-
-            return palette;
-        }
-
-        private static void Ramp(Color[] palette, int[] slots, Color basis)
-        {
-            palette[slots[0]] = basis * 1.14f;
-            palette[slots[1]] = basis * 0.78f;
-            palette[slots[2]] = basis * 1.14f;
+            return CustomCharacterOutfit.PaletteFor(authored, subject);
         }
 
         private IEnumerator Shoot(string name)

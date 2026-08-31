@@ -197,6 +197,7 @@ namespace TumbangPreso.Visual
                     Mathf.Abs(part.V1 - part.V0) * localExtents.y * 2.0f,
                     Mathf.Abs(part.W1 - part.W0) * localExtents.z);
 
+                PinToPaletteCell(box, part.Slot);
                 Paint(box, part.Slot, palette);
             }
 
@@ -306,19 +307,45 @@ namespace TumbangPreso.Visual
                     float sign = Mathf.Sign(bone.position.x - rig.transform.position.x);
                     if (Mathf.Approximately(sign, 0.0f)) sign = 1.0f;
 
+                    // ⚠️⚠️ THE DEPTH IS CENTRED ON THE MODEL'S OWN AXIS, NOT ON THE BONE, AND
+                    // THAT MOVED A WRISTBAND 25 MM BACKWARDS. `arm-left` sits at z -0.01725 while
+                    // the arm's geometry is centred on z 0.001, because the shoulder JOINT is
+                    // behind the middle of the limb it drives. Measured against the bone, the arm
+                    // ran `W` -0.67 to +1.24 and a band authored to wrap at ±1.0 was 60 mm short
+                    // at the front and 20 mm proud at the back. Against the model axis it runs
+                    // -0.94 to +0.97, so ±1 wraps it.
                     centre = new Vector3(
                         rig.transform.position.x + (sign * (shoulder + (reach * 0.80f))),
                         bone.position.y,
-                        bone.position.z);
+                        rig.transform.position.z);
 
-                    extents = new Vector3(reach * 0.20f, meshExtents.y * 0.20f,
+                    // ⚠️⚠️ THE 0.40 IS THE ARM'S OWN THICKNESS AND IT WAS 0.20, WHICH PUT EVERY
+                    // WRISTBAND INSIDE THE ARM. `body-mesh` is 0.358 tall so half of it is 0.179,
+                    // and 0.20 of that is a frame 0.072 deep against an arm measured **0.140**
+                    // thick (`arm-left` y 0.218 to 0.358, walked out of the skin weights). A band
+                    // authored at `V` ±1.08, which is what "wraps the limb" means, therefore
+                    // spanned 0.249 to 0.327 and was buried in the middle of a solid box.
+                    //
+                    // ⚠️ IT WAS NEVER SEEN BECAUSE THE CONTACT SHEET HAS NO WRIST ROW.
+                    // `WardrobeSheetProbe` photographs nine categories and wrist is the one it
+                    // leaves out, so six wearables have shipped with nothing having looked at
+                    // them. `docs/TODO.md` § 112.10.
+                    extents = new Vector3(reach * 0.20f, meshExtents.y * 0.40f,
                                           meshExtents.z * 0.55f);
                     return true;
                 }
 
-                // ⚠️⚠️ A LEG'S V = -1 IS THE FLOOR, BY CONSTRUCTION RATHER THAN BY A NUMBER.
+                // ⚠️⚠️ A LEG'S V = **0** IS THE FLOOR AND V = 1 IS THE HIP, AND THIS COMMENT
+                // SAID -1 UNTIL 2026-09-01. `VoxelPart`'s own header has always been right —
+                // *"V is up, 0 at the bottom of the measured box, 1 at the top"* — and the loop
+                // that places a box agrees with it: `V` runs 0 to 1 while `U` and `W` run -1 to
+                // +1. **Every entry in `VoxelWardrobe.Footwear` was authored from this sentence
+                // instead**, at `V` -1.02 to -0.56, which puts a tsinelas 170 mm under the street:
+                // the first contact sheet of the bare rig shows both slippers lying on the ground
+                // a body length below the feet. `docs/TODO.md` § 112.10.
+                //
                 // The hip bone sits at y 0.176 and the mesh bottoms out at 0, so a half height of
-                // half the hip height puts V -1 exactly on the ground on every rig in the cast
+                // half the hip height puts V 0 exactly on the ground on every rig in the cast
                 // whatever its proportions. `docs/Voxel_Person_Guide.md` records the cast's legs
                 // moving between 24 and 32 per cent of height across passes; a shoe pinned to a
                 // fraction of the whole figure would have floated or sunk on every one of them.
@@ -381,6 +408,54 @@ namespace TumbangPreso.Visual
                 Mathf.Abs(toWorld.MultiplyVector(new Vector3(0, 0, local.extents.z)).z));
 
             return extents.x > 0.0001f && extents.y > 0.0001f;
+        }
+
+        /// <summary>
+        /// Collapses a box's UVs onto the one atlas cell its palette slot lives in.
+        /// </summary>
+        /// <remarks>
+        /// ⚠️⚠️ WITHOUT THIS EVERY WEARABLE IN THE GAME IS A CHECKERBOARD OF THE WHOLE PALETTE,
+        /// AND IT LOOKS EXACTLY LIKE Z-FIGHTING, WHICH IS HOW IT SURVIVED A WHOLE SESSION OF BEING
+        /// CHASED AS ONE. `Toon.shader` picks a Person's colour from WHICH 32x32 cell of the
+        /// 512x512 atlas a vertex lands in: that is the entire palette mechanism, and
+        /// `tools/build_person_voxel.py`'s `cell_uv` is the authoring half of it. A
+        /// `GameObject.CreatePrimitive(PrimitiveType.Cube)` arrives with its UVs spanning 0 to 1
+        /// across every face, so it samples **all 256 cells**, and the shader hands back a
+        /// different palette slot per texel. The renders showed shirts with denim-blue speckle,
+        /// caps in four colours at once and a beanie cuff striped red, white and blue, none of
+        /// which is in the three tones a hat is allowed.
+        ///
+        /// **Two passes of geometry separation were spent on that pattern before anybody asked
+        /// where the blue was coming from**, which is `docs/TODO.md` § 87's rule arriving again:
+        /// when a surface reads as the wrong colour, ask which channel decides its colour before
+        /// asking how the light is hitting it.
+        ///
+        /// ⚠️ THE MESH IS COPIED, NOT EDITED IN PLACE. `CreatePrimitive` hands out Unity's shared
+        /// built-in cube; writing UVs onto it would repaint every primitive cube in the process,
+        /// including anything a probe or a fallback capsule built.
+        ///
+        /// ⚠️ AND THE FORMULA IS `cell_uv`'s, TRANSCRIBED ONCE, WITH THE ODD COLUMN IT PICKS.
+        /// An even column is a flat swatch and the odd one beside it is that swatch's shading
+        /// ramp; the odd one is used because that is where every cell the shipped rigs sample
+        /// lands, so a wearable still reads correctly if the palette is ever switched off and the
+        /// raw atlas shows through.
+        /// </remarks>
+        private static void PinToPaletteCell(GameObject box, int slot)
+        {
+            if (!box.TryGetComponent(out MeshFilter filter) || filter.sharedMesh == null) return;
+
+            int column = (2 * (Mathf.Clamp(slot, 0, 15) % 8)) + 1;
+            int row = slot < 8 ? 9 : 13;
+            var cell = new Vector2((column + 0.5f) / 16.0f, (row + 0.5f) / 16.0f);
+
+            var mesh = Object.Instantiate(filter.sharedMesh);
+            mesh.name = $"voxel_slot_{slot}";
+
+            var uv = new Vector2[mesh.vertexCount];
+            for (int i = 0; i < uv.Length; i++) uv[i] = cell;
+
+            mesh.uv = uv;
+            filter.sharedMesh = mesh;
         }
 
         /// <summary>

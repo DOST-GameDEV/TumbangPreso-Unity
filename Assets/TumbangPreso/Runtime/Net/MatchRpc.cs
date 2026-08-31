@@ -91,6 +91,17 @@ namespace TumbangPreso.Net
                         // draws the same tick on the host's screen that the broadcast puts on
                         // everybody else's. See `LobbySeatInfo.Ready`.
                         Ready = _lobbyReady.Contains(peer.PeerId),
+
+                        // ⚠️⚠️ THE BANNER, THE LOOK AND THE CUSTOM CHARACTER ARE ANSWERED HERE
+                        // TOO, AND THE FIRST TWO WERE NOT. `MatchInstaller.BuildSeat` calls
+                        // `GetSeatInfo`, and on the HOST that is this branch rather than the
+                        // replicated table, so anything missing from this object is a field the
+                        // host draws blank on its own screen while every client draws it
+                        // correctly. That is the hardest kind of cosmetic bug to see, because the
+                        // machine reporting it is the only one it is wrong on.
+                        Banner = peer.Banner ?? new BannerSelection(),
+                        Look = peer.Look ?? "",
+                        Custom = peer.Custom ?? "",
                     };
                 }
                 return new LobbySeatInfo { Seat = slot, Occupied = false };
@@ -538,7 +549,8 @@ namespace TumbangPreso.Net
         public void IdentifyServerRpc(string token, string name, string accountPlayerId,
                                       string handleProof, int charPick, int canPick, int slipperPick)
             => IdentifyServerRpc(token, name, accountPlayerId, handleProof, charPick, canPick,
-                                 slipperPick, LocalCosmetics.Encoded(charPick));
+                                 slipperPick, LocalCosmetics.Encoded(charPick),
+                                 LocalCosmetics.CustomCharacter());
 
         /// <summary>
         /// ⚠️⚠️ THE COSMETICS CLAIM IS ONE FIELD AND IT IS WHY THE PROTOCOL IS 17. It carries the
@@ -552,16 +564,24 @@ namespace TumbangPreso.Net
         /// ⚠️ NOTHING HERE IS TRUSTED. `HandleIdentify` runs `BannerRules.Authorise` and stores
         /// the ANSWER; the claim itself is never kept and never rebroadcast.
         /// </summary>
+        /// <param name="custom">
+        /// ⚠️⚠️ THE CUSTOM CHARACTER, AND IT IS WHY THE PROTOCOL IS 19. Same argument as the
+        /// cosmetics claim above: it is ONE versioned string (`CustomCharacterRules.EncodeWire`,
+        /// a `C3` frame) carrying twenty fields, rather than twenty fields a writer and a reader
+        /// have to be kept in step by hand. Empty means "playing as a roster character", which is
+        /// also what every build before this one sends, so a mixed-build room degrades to the
+        /// roster rather than to a broken hero.
+        /// </param>
         public void IdentifyServerRpc(string token, string name, string accountPlayerId,
                                       string handleProof, int charPick, int canPick, int slipperPick,
-                                      string cosmetics)
+                                      string cosmetics, string custom = "")
         {
             if (_nm == null || _nm.CustomMessagingManager == null) return;
 
             if (NetAuthority.IsHost)
             {
                 HandleIdentify(0, token, name, accountPlayerId, handleProof, charPick, canPick,
-                               slipperPick, cosmetics);
+                               slipperPick, cosmetics, custom);
                 return;
             }
 
@@ -574,6 +594,7 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(canPick);
             writer.WriteValueSafe(slipperPick);
             writer.WriteValueSafe(cosmetics ?? "");
+            writer.WriteValueSafe(custom ?? "");
             _nm.CustomMessagingManager.SendNamedMessage("Identify", NetworkManager.ServerClientId, writer);
         }
 
@@ -590,14 +611,23 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out int slipperPick);
             reader.ReadValueSafe(out string cosmetics);
 
+            // ⚠️ READ ONLY IF IT IS THERE, WHICH IS THE SAME GUARD `OnSyncLobbyPicksMsg` PUTS ON
+            // THE SPECTATOR COUNT AND FOR THE SAME REASON: `FastBufferReader` THROWS past the end
+            // of a payload, and a message handler that throws drops everything queued behind it.
+            // `NetSession.ProtocolVersion` 19 refuses a mixed room at approval, so this can only
+            // fire in a build where the two halves of this method have drifted, which is exactly
+            // when a dead handler is hardest to diagnose.
+            string custom = "";
+            if (reader.Length > reader.Position) reader.ReadValueSafe(out custom);
+
             HandleIdentify(senderClientId, token, name, accountPlayerId, handleProof, charPick,
-                           canPick, slipperPick, cosmetics);
+                           canPick, slipperPick, cosmetics, custom);
         }
 
         private void HandleIdentify(ulong senderClientId, string token, string name,
                                     string accountPlayerId, string handleProof,
                                     int charPick, int canPick, int slipperPick,
-                                    string cosmetics)
+                                    string cosmetics, string custom)
         {
             int peerId = (int)senderClientId;
             var lobby = NetSession.Instance?.Lobby;
@@ -614,7 +644,7 @@ namespace TumbangPreso.Net
             int resolvedCanPick = canPick >= 0 ? canPick : 0;
             int resolvedSlipperPick = slipperPick >= 0 ? slipperPick : 0;
             lobby.SetPicks(peerId, resolvedCharPick, resolvedCanPick, resolvedSlipperPick);
-            HostAuthoriseCosmetics(peerId, cosmetics, resolvedCharPick);
+            HostAuthoriseCosmetics(peerId, cosmetics, resolvedCharPick, custom);
 
             // ⚠️ THE MODE IS THE FIRST THING A JOINER IS TOLD, for the reason `HostStartMatch`
             // gives: everything below it is interpreted through the mode, and a late joiner may
@@ -675,12 +705,31 @@ namespace TumbangPreso.Net
         /// character), so a claim authorised once at join would dress a peer who switched
         /// character in the palette of the one they walked in with.
         /// </summary>
-        public void HostAuthoriseCosmetics(int peerId, string cosmetics, int charPick)
+        /// <param name="custom">
+        /// ⚠️⚠️ THE PEER'S CUSTOM CHARACTER, AND THE HOST RE-ENCODES IT RATHER THAN STORING WHAT
+        /// ARRIVED. `CustomCharacterRules.Normalise` clamps every index into its own list and
+        /// resolves `HeroKitId` through `KitFor`, so a modified client cannot claim a hat that
+        /// does not exist or a kit built out of three heroes: what the room receives is what this
+        /// machine wrote. Same arrangement as the banner one line up, and `docs/TODO.md` § 110.5
+        /// is why the kit half of it matters more than the hat half.
+        /// </param>
+        public void HostAuthoriseCosmetics(int peerId, string cosmetics, int charPick,
+                                           string custom = "")
         {
             if (!NetAuthority.IsHost) return;
 
             var record = NetSession.Instance?.Lobby?.PeerById(peerId);
             if (record == null) return;
+
+            // ⚠️⚠️ AN UNRECOGNISED FRAME IS REFUSED, NOT DECODED, AND THE DIFFERENCE MATTERS.
+            // `CustomCharacterRules.DecodeWire` answers a DEFAULT character for a version it does
+            // not know, which is the right answer when you are reading your own save file and the
+            // wrong one here: it would put a stranger in the seat of a peer who is playing as a
+            // roster hero. An empty frame means "roster character" and so does a frame this build
+            // cannot read, so both land on empty.
+            record.Custom = !string.IsNullOrEmpty(custom) && custom.StartsWith("C3:")
+                ? CustomCharacterRules.EncodeWire(CustomCharacterRules.DecodeWire(custom))
+                : "";
 
             // ⚠️ AN EMPTY FRAME IS A PEER ON AN OLDER BUILD OR A PLAYER WEARING NOTHING, AND
             // BOTH WANT THE SAME ANSWER. `BannerCodec.DecodeClaim` never throws and answers an
@@ -2911,6 +2960,13 @@ namespace TumbangPreso.Net
         {
             string cosmetics = LocalCosmetics.Encoded(character);
 
+            // ⚠️⚠️ THE CUSTOM CHARACTER RIDES THIS TOO, AND NOT ONLY `Identify`, FOR THE SAME
+            // REASON THE CLAIM DOES. The creator's KEEP AND USE button and the MAKE YOUR OWN row
+            // on character select both change what this player is bringing while they are already
+            // in a lobby. A frame sent only at join would leave every peer wearing whoever they
+            // walked in as, which is the one thing a per-character choice must not do.
+            string custom = LocalCosmetics.CustomCharacter();
+
             if (NetAuthority.IsHost)
             {
                 var lobby = NetSession.Instance?.Lobby;
@@ -2925,7 +2981,7 @@ namespace TumbangPreso.Net
                     // A host wearing a title it has not earned would be the one seat in the room
                     // nobody checked, and `docs/TODO.md` § 94.1's lesson is that the copy nobody
                     // checks is the copy that is wrong.
-                    HostAuthoriseCosmetics(hostPeerId, cosmetics, character);
+                    HostAuthoriseCosmetics(hostPeerId, cosmetics, character, custom);
                     BroadcastLobbyPicks();
                 }
                 return;
@@ -2938,6 +2994,7 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(can);
             writer.WriteValueSafe(slipper);
             writer.WriteValueSafe(cosmetics ?? "");
+            writer.WriteValueSafe(custom ?? "");
             _nm.CustomMessagingManager.SendNamedMessage("SelectLobbyPick", NetworkManager.ServerClientId, writer);
         }
 
@@ -2953,11 +3010,16 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out int slipper);
             reader.ReadValueSafe(out string cosmetics);
 
+            // ⚠️ SAME LENGTH GUARD AS `OnIdentifyMsg`, AND FOR THE SAME REASON: a handler that
+            // throws past the end of a payload drops every message queued behind it.
+            string custom = "";
+            if (reader.Length > reader.Position) reader.ReadValueSafe(out custom);
+
             var lobby = NetSession.Instance?.Lobby;
             if (lobby != null)
             {
                 lobby.SetPicks((int)senderClientId, character, can, slipper);
-                HostAuthoriseCosmetics((int)senderClientId, cosmetics, character);
+                HostAuthoriseCosmetics((int)senderClientId, cosmetics, character, custom);
                 BroadcastLobbyPicks();
             }
         }
@@ -2992,6 +3054,7 @@ namespace TumbangPreso.Net
                         // `LobbySeatInfo.Banner`.
                         Banner = peer.Banner ?? new BannerSelection(),
                         Look = peer.Look ?? "",
+                        Custom = peer.Custom ?? "",
                     };
                 }
                 else
@@ -3009,6 +3072,7 @@ namespace TumbangPreso.Net
                         Ready = false,
                         Banner = new BannerSelection(),
                         Look = "",
+                        Custom = "",
                     };
                 }
                 _replicatedSeats[slot] = seats[slot];
@@ -3038,6 +3102,12 @@ namespace TumbangPreso.Net
                     // out of order. `audit_wire_payloads.py` checks one against the other.
                     writer.WriteValueSafe(BannerCodec.EncodeSelection(s.Banner));
                     writer.WriteValueSafe(s.Look ?? "");
+
+                    // ⚠️ ONE MORE STRING PER SEAT AND IT IS WHY THE PROTOCOL IS 19. It is a
+                    // whole custom character in a `C3` frame, already normalised by the host, so
+                    // a client that receives it can build the seat without asking anything else.
+                    // Empty is the roster case and is what three of the four seats usually carry.
+                    writer.WriteValueSafe(s.Custom ?? "");
                 }
 
                 // ⚠️⚠️ THE GALLERY RIDES THE ROSTER, BECAUSE A SPECTATOR HAS NO SEAT AND SO NO
@@ -3111,6 +3181,7 @@ namespace TumbangPreso.Net
                 reader.ReadValueSafe(out bool ready);
                 reader.ReadValueSafe(out string banner);
                 reader.ReadValueSafe(out string look);
+                reader.ReadValueSafe(out string custom);
 
                 var info = new LobbySeatInfo
                 {
@@ -3130,6 +3201,11 @@ namespace TumbangPreso.Net
                     // header says must stop at the host.
                     Banner = BannerCodec.DecodeSelection(banner),
                     Look = look ?? "",
+
+                    // ⚠️ NOT RE-NORMALISED HERE EITHER. The host already ran the frame through
+                    // `CustomCharacterRules.Normalise` and re-encoded it, so what arrives is a
+                    // decision. `MatchInstaller` decodes it once when it builds the seat.
+                    Custom = custom ?? "",
                 };
                 if (seat >= 0 && seat < _replicatedSeats.Length)
                 {

@@ -539,6 +539,18 @@ namespace TumbangPreso
             int pick = (isNetworked && defenderSeatInfo != null && defenderSeatInfo.CanPick >= 0)
                 ? defenderSeatInfo.CanPick
                 : Settings.SettingsStore.Current.CanPick;
+
+            // ⚠️⚠️ A CUSTOM CHARACTER BRINGS ITS OWN LATA, AND IT OVERRIDES THE SEAT'S PICK
+            // RATHER THAN SITTING BESIDE IT. `docs/TODO.md` § 110.8's third open bullet: the
+            // indices are already the real `Roster.Cans` and `Roster.Slippers` rows, so this is a
+            // write and not a protocol. Two answers to "which can" would be two answers, and
+            // `CanIndex` is the one the player chose on the screen that shows them the can.
+            //
+            // ⚠️ SEAT 0 IS THE ONE THAT DECIDES, which is this method's existing rule and not a
+            // new one: the lata belongs to the match, and the taya of round one owns its skin.
+            var defenderCustom = CustomFor(0);
+            if (defenderCustom != null) pick = defenderCustom.CanIndex;
+
             var art = _book != null ? _book.CanArt(pick) : null;
 
             if (art != null && art.Model != null)
@@ -585,6 +597,13 @@ namespace TumbangPreso
             int pick = isLocalHuman
                 ? Settings.SettingsStore.Current.SlipperPick
                 : (seatInfo != null && seatInfo.SlipperPick >= 0 ? seatInfo.SlipperPick : slot);
+
+            // ⚠️ AND ITS OWN TSINELAS. Same rule as the lata one method up, per seat rather than
+            // per match, because the slipper is the thing the player throws and gets caught
+            // retrieving. `docs/VISION.md`: *"the tension is the retrieval"*, so this is the prop
+            // a player looks at most.
+            var custom = CustomFor(slot);
+            if (custom != null) pick = custom.SlipperIndex;
 
             var art = _book != null ? _book.SlipperArt(pick) : null;
 
@@ -655,6 +674,56 @@ namespace TumbangPreso
         }
 
         /// <summary>
+        /// The custom character sitting in a seat, or null for a roster one.
+        ///
+        /// ⚠️⚠️ THIS METHOD IS WHAT CLOSED `docs/TODO.md` § 108.5 AND § 110.8, WHICH SAID
+        /// *"`CustomCharacterStore.ActiveWire()` produces the string and nothing sends it;
+        /// `MatchInstaller` still spawns a `Roster` entry"*. A player could make a character,
+        /// save it, preview it and set it active, and the match still showed whoever they had
+        /// picked off the roster. It travels in `LobbySeatInfo.Custom` now, § 112.
+        ///
+        /// ⚠️⚠️ THE SEAT TABLE IS ASKED FIRST AND THE LOCAL STORE IS ONLY A FALLBACK FOR THE
+        /// LOCAL SEAT, AND THAT ORDER IS THE WHOLE SAFETY PROPERTY. `MatchInstaller`'s palette
+        /// block already carries the warning this obeys: **guessing a remote peer's choice from
+        /// this machine's settings would dress a stranger in the local player's character.** A
+        /// remote seat gets what the host published or nothing at all.
+        ///
+        /// ⚠️ THE LOCAL FALLBACK IS NOT REDUNDANT AND IT COVERS TWO REAL CASES: an offline match
+        /// (Practice, Training, a probe), where there is no seat table at all, and the window
+        /// between pressing PLAY and the host having authorised this machine's own frame.
+        ///
+        /// ⚠️ AND THE FRAME MUST SAY `C3`. `CustomCharacterRules.DecodeWire` answers a DEFAULT
+        /// character for a version it does not know, which is right when reading your own save
+        /// file and wrong here: it would seat a stranger for a peer playing a roster hero.
+        /// The result is cached per seat because three separate builders ask for it.
+        /// </summary>
+        private CustomCharacter CustomFor(int slot)
+        {
+            if (slot < 0 || slot >= Balance.PlayerCount) return null;
+            if (_customChecked[slot]) return _custom[slot];
+
+            _customChecked[slot] = true;
+
+            var net = Net.NetSession.Instance;
+            bool isNetworked = net != null && net.IsNetworked;
+
+            var seatInfo = isNetworked ? Net.MatchRpc.Instance?.GetSeatInfo(slot) : null;
+            string wire = seatInfo != null && seatInfo.Occupied ? seatInfo.Custom ?? "" : "";
+
+            if (string.IsNullOrEmpty(wire) && slot == HumanSeat)
+                wire = Net.LocalCosmetics.CustomCharacter();
+
+            _custom[slot] = !string.IsNullOrEmpty(wire) && wire.StartsWith("C3:")
+                ? CustomCharacterRules.DecodeWire(wire)
+                : null;
+
+            return _custom[slot];
+        }
+
+        private readonly CustomCharacter[] _custom = new CustomCharacter[Balance.PlayerCount];
+        private readonly bool[] _customChecked = new bool[Balance.PlayerCount];
+
+        /// <summary>
         /// ⚠️ 1.6 CAPSULE, 1.25 EYE. Those belong to the Person ROLE, not to any model, and
         /// everything ever tuned against a Person assumes them. A default 2.0 capsule would
         /// quietly invalidate every distance in the game.
@@ -713,6 +782,8 @@ namespace TumbangPreso
             go.AddComponent<CombatVerbs>();
             go.AddComponent<Social.EmotePlayer>();
 
+            var custom = CustomFor(slot);
+
             if (SceneFlow.SelectedMode == GameMode.HeroStrike)
             {
                 var abilities = go.AddComponent<Abilities.HeroAbilitySystem>();
@@ -720,6 +791,21 @@ namespace TumbangPreso
                 string heroId = (motor.CharacterIndex >= 0 && motor.CharacterIndex < heroPeople.Count)
                     ? heroPeople[motor.CharacterIndex].Id
                     : "dante";
+
+                // ⚠️⚠️ A CUSTOM CHARACTER BORROWS ONE HERO'S KIT, WHOLE, AND NEVER A MIXTURE.
+                // 🧑, 2026-08-31: *"it can js borrow the skills of any of the characters for its
+                // skills and ult"*, and immediately after, *"it can only follow onne skill tree
+                // tho and cant mix diff shits"*. `HeroKitId` is ONE string, so a mixture is not
+                // something a modified client can express, and `KitFor` resolves an empty or
+                // unknown id to the first hero rather than to nothing: a Hero Strike seat with no
+                // kit has no skills and no ultimate, which is a broken match rather than a missing
+                // cosmetic. `docs/TODO.md` § 110.5.
+                //
+                // ⚠️ THE ID IS ALREADY NORMALISED. The host ran the frame through
+                // `CustomCharacterRules.Normalise` before publishing it, so this is resolving a
+                // decision rather than trusting a claim.
+                if (custom != null) heroId = CustomCharacterRules.KitFor(custom.HeroKitId);
+
                 abilities.BindHero(heroId);
             }
 
@@ -739,7 +825,18 @@ namespace TumbangPreso
             // moved the CharacterController along with the mesh. See SetModelRoot.
             visual.SetModelRoot(visualRoot.transform);
 
-            var art = _book != null ? _book.PersonArt(motor.CharacterIndex, SceneFlow.SelectedMode) : null;
+            // ⚠️⚠️ A CUSTOM SEAT WEARS THE BASE RIG AND NEVER A ROSTER ONE. `custom_base` is the
+            // bald, bare `.glb` the wardrobe is authored against (`tools/build_base_voxel.py`);
+            // dressing a roster hero would put a hat on Berto, which is the one thing § 111.5's
+            // test exists to make impossible. It falls back to the roster pick when the asset is
+            // missing, which is what a fresh clone before `RosterBookBuilder.Build` looks like:
+            // a player in the wrong body beats a player with no body.
+            var art = _book == null
+                ? null
+                : custom != null
+                    ? _book.FindPersonArt(CustomCharacterRules.BaseRigId)
+                      ?? _book.PersonArt(motor.CharacterIndex, SceneFlow.SelectedMode)
+                    : _book.PersonArt(motor.CharacterIndex, SceneFlow.SelectedMode);
 
             if (art != null && art.Model != null)
             {
@@ -763,9 +860,43 @@ namespace TumbangPreso
                     ? Settings.SettingsStore.LookFor(characterId)
                     : LookCodec.Decode(Net.MatchRpc.Instance?.GetSeatInfo(slot)?.Look ?? "");
 
-                var palette = PaletteVariants.For(art.Palette, look);
+                // ⚠️⚠️ A CUSTOM SEAT DOES NOT GO THROUGH `PaletteVariants` AT ALL, AND THAT IS
+                // THE POINT RATHER THAN AN OMISSION. `PaletteVariants` rotates an AUTHORED
+                // palette and `PaletteRules.IsProtectedSlot` holds the skin and the face out of
+                // that rotation, so a hue dial can never reach a canonical character's skin
+                // (`docs/TODO.md` § 107). This character's skin is not rotated, it is CHOSEN, so
+                // it is written straight in by `CustomCharacterOutfit.PaletteFor` and never
+                // travels that path. `docs/FUTURE.md` § 5.2: two categories, two rules.
+                var palette = custom != null
+                    ? CustomCharacterOutfit.PaletteFor(art.Palette, custom)
+                    : PaletteVariants.For(art.Palette, look);
 
                 visual.ApplyModel(art.Model, art.Tint, art.Clips, palette, art.PetModel);
+
+                // ⚠️⚠️ SCALE, RE-ALIGN, THEN DRESS, AND THE ORDER IS NOT INTERCHANGEABLE.
+                // ⚠️ THE DRESSER IS NOT NAMED IN THIS FILE, EVEN IN A COMMENT, AND THAT IS THE
+                // TEST DOING ITS JOB RATHER THAN A STYLE RULE.
+                // `CustomCharacterWardrobeTests.NothingButTheCustomCharactersOwnFilesTouchThe`
+                // `Wardrobe` reads every `.cs` as TEXT, so a comment mentioning the type is a hit,
+                // and it caught this line on the first run. `CustomCharacterOutfit` is the only
+                // door and this file goes through it.
+                //
+                // Dressing MEASURES the head, torso, arms and legs off the live rig, so
+                // anything that changes what those measure has to happen first; and
+                // `ApplyModel` has already dropped the model onto the capsule floor against the
+                // UNSCALED bounds, so a height scale applied after it leaves the feet in the air
+                // or the shins in the ground. `AlignToCapsuleFloor` is public for exactly this.
+                //
+                // ⚠️ THE SCALE IS ON THE MODEL AND NEVER ON THE CAPSULE. `CLAUDE.md` § 4
+                // resolves contact by DISTANCE, so a height dial that reached the collider would
+                // be a cosmetic deciding who gets tagged. `CustomCharacterOutfit.ApplyBodyScale`
+                // carries the argument in full.
+                if (custom != null && visual.Model != null)
+                {
+                    CustomCharacterOutfit.ApplyBodyScale(visual.Model, custom);
+                    visual.AlignToCapsuleFloor();
+                    CustomCharacterOutfit.Dress(visual.Model, custom, palette);
+                }
 
                 // Strip from the whole seat, because the visual parents the model under the
                 // seat root rather than under visualRoot. The CharacterController survives by

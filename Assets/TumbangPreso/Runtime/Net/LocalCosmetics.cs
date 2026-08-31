@@ -94,5 +94,20 @@ namespace TumbangPreso.Net
         /// </summary>
         public static string Encoded(int characterIndex)
             => Encoded(UI.SceneFlow.SelectedMode, characterIndex);
+
+        /// <summary>
+        /// The custom character this machine is bringing, as a `C3` frame, or empty.
+        ///
+        /// ⚠️⚠️ IT IS ON THIS CLASS RATHER THAN CALLED STRAIGHT OFF THE STORE, AND THE HEADER
+        /// ABOVE IS THE REASON. "What am I wearing" is asked from three places — the approval
+        /// hello's `Identify`, a pick change in the lobby, and the local preview — and this file
+        /// exists so all three ask it the same way. A fourth question with its own call site is
+        /// how `docs/TODO.md` § 94.1's four copies of "which line in this record is mine" started.
+        ///
+        /// ⚠️ `CustomCharacterStore.ActiveWire()` ALREADY ANSWERS EMPTY WHEN THE PLAYER IS NOT
+        /// USING ONE, so the `UseCustomCharacter` flag is read in exactly one place and this is
+        /// not it.
+        /// </summary>
+        public static string CustomCharacter() => UI.CustomCharacterStore.ActiveWire();
     }
 }

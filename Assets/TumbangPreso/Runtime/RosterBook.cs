@@ -59,6 +59,25 @@ namespace TumbangPreso
         public RosterEntryAsset CanArt(int index) => Resolve(Cans, Roster.Cans, index);
         public RosterEntryAsset SlipperArt(int index) => Resolve(Slippers, Roster.Slippers, index);
 
+        /// <summary>
+        /// Art by id, including the ids that are deliberately NOT roster rows.
+        ///
+        /// ⚠️⚠️ THIS ANSWERED NULL FOR `custom` FROM THE DAY IT WAS FIRST CALLED, AND NOTHING
+        /// ANYWHERE SAID SO. `RosterBookBuilder` created `person_custom.asset` on disk through
+        /// `BuildSingleEntry` and **never added it to `People`**, which is the only list this
+        /// searches. Every caller has a "degrade to roster entry 0" fallback, correctly, so the
+        /// character creator, its probe and the 87-cell wardrobe contact sheet were all silently
+        /// dressing **`bayan`** — `character-male-f.glb`, a Kenney rig with its own hair and its
+        /// own painted face — while `docs/TODO.md` § 110.9's frame table describes measurements
+        /// taken off `team-custom.glb`, a file that was never on screen. That is why three
+        /// successive passes at those frames each looked wrong in the render.
+        ///
+        /// ⚠️ APPENDING AN OFF-ROSTER ENTRY TO `People` IS SAFE **BECAUSE `Resolve` MATCHES BY
+        /// ID AND NEVER BY POSITION**, which is this class's own opening rule. An index is
+        /// resolved by asking `Roster` for the id at that index and then searching for it, so an
+        /// extra row at the end cannot change what any index means on any peer.
+        /// `docs/TODO.md` § 112.
+        /// </summary>
         public RosterEntryAsset FindPersonArt(string id)
         {
             if (People == null) return null;
@@ -66,6 +85,21 @@ namespace TumbangPreso
                 if (People[i] != null && People[i].Id == id) return People[i];
             return null;
         }
+
+        /// <summary>
+        /// The ids allowed to carry art without being a row in <see cref="Roster"/>.
+        ///
+        /// ⚠️⚠️ `ValidateList` REFUSES ART FOR AN UNKNOWN ID ON PURPOSE — *"art cannot introduce
+        /// a roster entry; the list order is a network contract"* — AND THESE TWO ARE THE EXACT
+        /// CASE THAT RULE WAS NOT WRITTEN FOR. `custom` is the player's own character and
+        /// `custom_base` is the naked rig the wardrobe dresses; **both are deliberately not rows
+        /// in `Roster.AllPeople`** for the same reason the guard exists, and neither is reachable
+        /// by index. They are named here rather than the guard being widened, so a third id
+        /// cannot arrive by accident.
+        /// </summary>
+        private static bool IsOffRoster(string id)
+            => id == CustomCharacterRules.CustomCharacterId
+               || id == CustomCharacterRules.BaseRigId;
 
         private static RosterEntryAsset Resolve(List<RosterEntryAsset> art,
                                                 IReadOnlyList<RosterEntry> truth,
@@ -135,7 +169,7 @@ namespace TumbangPreso
             {
                 if (a == null) continue;
 
-                bool known = false;
+                bool known = IsOffRoster(a.Id);
                 foreach (var entry in truth)
                     if (entry.Id == a.Id) { known = true; break; }
 

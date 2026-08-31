@@ -80,5 +80,33 @@ namespace TumbangPreso.Net
         /// choice**, which is why it was left blank rather than defaulted.
         /// </summary>
         public string Look = "";
+
+        /// <summary>
+        /// The custom character this seat is bringing, as a `C3` frame, or empty for a roster one.
+        ///
+        /// ⚠️⚠️ THIS FIELD IS THE WHOLE OF `docs/TODO.md` § 108.5 AND § 110.8, WHICH WERE OPEN
+        /// FOR A DAY WITH THE FEATURE OTHERWISE FINISHED. *"`CustomCharacterStore.ActiveWire()`
+        /// produces the string and nothing sends it"*: a player could make a character, save it,
+        /// preview it and set it active, and the match still spawned whoever was picked off the
+        /// roster. There was no field on this table for it to arrive in.
+        ///
+        /// ⚠️⚠️ IT IS ITS OWN FIELD AND `custom` IS NOT A ROW IN `Roster.AllPeople`, WHICH IS
+        /// THE SAME DECISION `GameSettings.UseCustomCharacter` RECORDS. `CharacterPick` is an
+        /// index into a wire-facing list whose header is explicit that entries are appended and
+        /// never inserted, so a nineteenth row meaning "custom" would change what index 18
+        /// resolves to on every build that has not shipped yet. **The custom character travels
+        /// beside the pick, never as one.**
+        ///
+        /// ⚠️ HOST-AUTHORED, LIKE EVERY OTHER FIELD IN THIS TABLE. `HostAuthoriseCosmetics` runs
+        /// the peer's frame through `CustomCharacterRules.Normalise` and puts the RESULT here, so
+        /// every index is clamped into its list and `HeroKitId` is resolved by `KitFor` before it
+        /// reaches anybody. A modified client cannot send an out-of-range hat or a mixed kit,
+        /// because what the room receives is what the host re-encoded.
+        ///
+        /// ⚠️ AND AN EMPTY STRING IS "PLAYING AS A ROSTER CHARACTER", which is also what a peer
+        /// on an older build produces. `CustomCharacterRules.DecodeWire` answers a default rather
+        /// than throwing, so both degrade to the same harmless place.
+        /// </summary>
+        public string Custom = "";
     }
 }

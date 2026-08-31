@@ -60,6 +60,16 @@ namespace TumbangPreso.Net
 
         /// <summary>The character palette this peer may wear, authorised with the banner.</summary>
         public string Look = "";
+
+        /// <summary>
+        /// The custom character this peer is bringing, as a `C3` frame, or empty for a roster one.
+        ///
+        /// ⚠️ NORMALISED ON ARRIVAL, NOT AS SENT, which is the same rule as `Banner` two fields
+        /// up: what is stored is the host's answer and not the peer's question, so nothing
+        /// downstream can read an out-of-range index or a mixed hero kit. It is re-encoded through
+        /// `CustomCharacterRules.Normalise` in `MatchRpc.HostAuthoriseCosmetics`.
+        /// </summary>
+        public string Custom = "";
     }
 
     /// <summary>

@@ -875,12 +875,12 @@ everything would be indistinguishable from having no dial at all.
 
      | Section | Rows | Count |
      |---|---|---|
-     | Face | skin tone, expression, marks | 32, 12, 10 |
-     | Hair | cut, colour | 12, 24 |
+     | Face | skin tone, expression, marks | 32, 18, 14 |
+     | Hair | cut, colour | 18, 24 |
      | Body | height, build | 7 steps of 5 per cent, 3 |
-     | Clothes | top, top colour, bottom, bottom colour | 10, 16, 8, 16 |
-     | Gear | headwear, eyewear, wrists, neck | 12, 9, 6, 8 |
-     | Kit | footwear, tsinelas, lata, borrowed hero kit | 6, 6, 6, 6 |
+     | Clothes | top, top colour, bottom, bottom colour | 16, 16, 12, 16 |
+     | Gear | headwear, eyewear, wrists, neck | 18, 14, 10, 12 |
+     | Kit | footwear, tsinelas, lata, borrowed hero kit | 10, 6, 6, 6 |
 
    - ⚠️⚠️ **EVERY ENTRY IS GEOMETRY, AND `CustomCharacterWardrobeTests` FAILS IF ONE IS NOT.**
      `docs/TODO.md` § 110. `VoxelWardrobe` authors the boxes and `VoxelDresser` hangs them on the
@@ -889,6 +889,20 @@ everything would be indistinguishable from having no dial at all.
      **Twelve hats that exist beat thirty-two names that do not**, and the number a player feels is
      the combination count, which is over four billion looks before wrists, neck, footwear, height
      and build are counted.
+   - ⚠️⚠️ **AND THE RIG UNDER IT IS NAKED, WHICH IS THE PIECE THIS PHASE WAS MISSING.**
+     `docs/TODO.md` § 112. `CustomCharacterRules.BaseRigId` resolves `team-custom-base.glb`
+     (`tools/build_base_voxel.py`): bald, bare, no face. Against the dressed rig it replaced,
+     **every wearable had to COVER what was under it rather than BE the thing** — a hairstyle was
+     a lid over a baked mop, a sando was a box over another box, and each of the twelve expressions
+     laid a skin-coloured plate over the rig's own painted eyes first. That is the same three
+     pieces every game with a character creator is built from: **a naked base mesh, per-slot
+     equipment geometry, and a colour remap**, and this phase had the second and the third.
+     ⚠️ **Nothing existing was repointed**: `custom` and `team-custom.glb` are untouched and
+     `custom_base` is a new row.
+   - ✅ **AND IT ENTERS A MATCH.** `LobbySeatInfo.Custom` carries the `C3` frame,
+     `MatchInstaller` spawns the base rig and dresses it, and `HeroAbilitySystem` is given
+     `KitFor(HeroKitId)`. ⚠️ `NetSession.ProtocolVersion` is **19**; both machines rebuild.
+     ⚠️ **`custom` is still not a row in `Roster.AllPeople`** and must not become one.
    - ⚠️⚠️ **THE CUSTOM CHARACTER BORROWS ONE HERO'S KIT, WHOLE, AND CANNOT MIX.** 🧑,
      2026-08-31: *"it can js borrow the skills of any of the characters for its skills and ult"*,
      then *"it can only follow onne skill tree tho and cant mix diff shits"*. `HeroKitId` is ONE

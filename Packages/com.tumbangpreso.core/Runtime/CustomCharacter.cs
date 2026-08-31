@@ -223,6 +223,32 @@ namespace TumbangPreso.Core
         public const string CustomCharacterId = "custom";
 
         /// <summary>
+        /// Which rig the character maker actually dresses.
+        ///
+        /// ⚠️⚠️ IT IS A SECOND ID BECAUSE THE FIRST ONE IS AN IDENTITY AND THIS ONE IS A MESH.
+        /// `CustomCharacterId` is what the wire, the settings file and the seat table call this
+        /// player's character, and it must never move. This is the `.glb` the wardrobe hangs off,
+        /// and it moved once already: `custom` resolves `team-custom.glb`, which is a copy of a
+        /// fully dressed hero with hair, a sando and shorts baked into its two meshes.
+        ///
+        /// ⚠️⚠️ THAT COST THE WHOLE WARDROBE ITS SHAPE AND `docs/TODO.md` § 110.3 IS THE RECEIPT.
+        /// Against a dressed base every wearable has to COVER what is under it rather than BE the
+        /// thing: a hairstyle became a shell that had to enclose a baked mop, a sando became a box
+        /// drawn over another box, and every expression had to lay a skin-coloured plate over the
+        /// rig's own painted-on eyes before it could draw its own. `custom_base` is bald, bare and
+        /// faceless (`tools/build_base_voxel.py`), which is what a character creator's base mesh is
+        /// in every game that has one, and all three of those problems stop existing.
+        ///
+        /// ⚠️ THE OLD ROW IS STILL THERE AND IS NOT USED BY THIS SYSTEM. 🧑: *"dont toucht heh
+        /// existing onnes, i will be very mad if u break or fuck up any of the existing ones"*.
+        /// `RosterBookBuilder` carries both; nothing writes over `team-custom.glb`.
+        ///
+        /// ⚠️ AND IT IS NOT A ROW IN `Roster.AllPeople` EITHER, for the same reason
+        /// `CustomCharacterId` is not: that list's order is a network contract.
+        /// </summary>
+        public const string BaseRigId = "custom_base";
+
+        /// <summary>
         /// 32 warm skin tones, with the hex carried in the name.
         ///
         /// ⚠️⚠️ ONE LIST RATHER THAN A LIST AND A COLOUR TABLE. `CustomCharacterScreen.SkinColour`
@@ -292,63 +318,82 @@ namespace TumbangPreso.Core
         /// `UnityEngine` reference (`CLAUDE.md` § 4) and the wire contract belongs in the core.
         /// **The duplication is the price of the asmdef line and the test is what makes it safe.**
         /// </summary>
+        /// <remarks>
+        /// ⚠️⚠️ EVERY LIST BELOW IS APPEND-ONLY AND THE ENTRIES ADDED ON 2026-09-01 ARE AT THE
+        /// END OF EACH ONE. Each index is written into `GameSettings.CustomCharacterWires` and
+        /// crosses the wire in a `C3` frame, so a name inserted in the middle silently re-dresses
+        /// every character anybody has already made and makes two peers draw different people from
+        /// the same number. `Roster.Slippers`' header is the long version of this rule and
+        /// `docs/TODO.md` § 110.6 is what a decoded-against-the-wrong-list frame looks like.
+        /// </remarks>
         public static readonly string[] FaceExpressionNames =
         {
             "Chill", "Determined", "Street grin", "Fierce", "Focused", "Sleepy",
-            "Wink", "Scowl", "Cheeky", "Wide eyed", "Stoic", "Smug"
+            "Wink", "Scowl", "Cheeky", "Wide eyed", "Stoic", "Smug",
+            "Grumpy", "Beaming", "Nervous", "Deadpan", "Hyped", "Sly"
         };
 
         public static readonly string[] FaceMarkingNames =
         {
             "None", "Cheek bandage", "Nose strip", "Freckles", "Beauty mark",
-            "Chin scar", "Brow slit", "Chalk whiskers", "War paint", "Eye patch"
+            "Chin scar", "Brow slit", "Chalk whiskers", "War paint", "Eye patch",
+            "Nose plaster", "Brow scar", "Tribal stripes", "Dirt smudge"
         };
 
         public static readonly string[] HairstyleNames =
         {
             "Buzz cut", "Bald", "Low fade", "Curtains", "Spiky", "Curly mop",
-            "Wolf cut", "Topknot", "Twin pigtails", "Afro crown", "Mohawk", "Long waves"
+            "Wolf cut", "Topknot", "Twin pigtails", "Afro crown", "Mohawk", "Long waves",
+            "Undercut", "Side part", "Braids", "Bowl cut", "Ponytail", "Dreadlocks"
         };
 
         public static readonly string[] TopClothingNames =
         {
             "Sando", "Graphic tee", "Jersey", "Hoodie", "Track jacket",
-            "Polo", "Utility vest", "Longsleeve", "Barong", "Rashguard"
+            "Polo", "Utility vest", "Longsleeve", "Barong", "Rashguard",
+            "Basketball tank", "Denim jacket", "Sweater vest", "Camisa chino",
+            "Windbreaker", "Ilalim hoodie"
         };
 
         public static readonly string[] BottomClothingNames =
         {
             "Denim shorts", "Distressed jorts", "Cargo shorts", "Mesh shorts",
-            "Track pants", "Rolled jeans", "Pleated skirt", "Boardshorts"
+            "Track pants", "Rolled jeans", "Pleated skirt", "Boardshorts",
+            "Basketball shorts", "Chinos", "Cutoffs", "Malong wrap"
         };
 
         public static readonly string[] HeadwearNames =
         {
             "None", "Cap, forward", "Cap, backwards", "Bucket hat", "Salakot", "Beanie",
-            "Bandana", "Headband", "Ice-drop towel", "Durag", "Sun visor", "Demon horns"
+            "Bandana", "Headband", "Ice-drop towel", "Durag", "Sun visor", "Demon horns",
+            "Straw hat", "Beret", "Cowboy hat", "Party hat", "Flat cap", "Bike helmet"
         };
 
         public static readonly string[] FaceAccessoryNames =
         {
             "None", "Round glasses", "Street shades", "Matrix shades",
-            "Ski goggles", "Aviators", "Cyber visor", "Dust mask", "Chalk mark"
+            "Ski goggles", "Aviators", "Cyber visor", "Dust mask", "Chalk mark",
+            "Reading glasses", "Eye black", "Half-rim", "Swim goggles", "Welding shades"
         };
 
         public static readonly string[] WristAccessoryNames =
         {
-            "None", "Sweatband", "Watch", "Beads", "Leather cuff", "Hand wraps"
+            "None", "Sweatband", "Watch", "Beads", "Leather cuff", "Hand wraps",
+            "Bangles", "Taped wrist", "Fitness band", "Friendship threads"
         };
 
         public static readonly string[] NeckAccessoryNames =
         {
             "None", "Cuban chain", "Gold rope", "Dogtag", "Rosary",
-            "Good morning towel", "ID lanyard", "Neckerchief"
+            "Good morning towel", "ID lanyard", "Neckerchief",
+            "Winter scarf", "Coach whistle", "Camera strap", "Puka shells"
         };
 
         public static readonly string[] FootwearNames =
         {
             "Tsinelas", "Foam flip-flop", "Canvas slip-ons", "Skater kicks",
-            "Court kicks", "Bakya clogs"
+            "Court kicks", "Bakya clogs",
+            "Basketball highs", "Trekking sandals", "Rain boots", "School shoes"
         };
 
         /// <summary>⚠️ THREE, AND THEY SCALE THE MODEL'S WIDTH ONLY. See `BuildWidthScale`.</summary>

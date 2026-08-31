@@ -47,6 +47,48 @@ namespace TumbangPreso.Tests
                     + "draw different characters from the same number.");
         }
 
+        /// <summary>
+        /// ⚠️⚠️ THE RIG THE WHOLE WARDROBE IS MEASURED AGAINST HAS TO BE REACHABLE BY NAME, AND
+        /// FOR ITS FIRST DAY IT WAS NOT. `RosterBookBuilder` wrote `person_custom.asset` to disk
+        /// and never added it to `RosterBook.People`, which is the only list `FindPersonArt`
+        /// searches. Every caller degrades to roster entry 0 when it answers null — correctly, and
+        /// **silently** — so the character creator, `CustomCharacterScreenProbe` and all 87 cells
+        /// of `WardrobeSheetProbe` were dressing **`bayan`**, a Kenney rig with its own hair and
+        /// its own painted face, while `docs/TODO.md` § 110.9's frame table describes measurements
+        /// taken off a file that was never on screen. Three passes at those frames each looked
+        /// wrong in the render and nobody could say why.
+        ///
+        /// **This is the assertion that turns that into a red test rather than a puzzle.** It is
+        /// the same shape as `docs/TODO.md` § 101.1's lesson one asset over: a fallback that
+        /// always fires is indistinguishable from a feature that works.
+        ///
+        /// ⚠️ IT ASSERTS THE MODEL AND THE PALETTE, NOT ONLY THE ROW. An entry with a null
+        /// `Model` resolves and then draws nothing, and `RosterBook.Validate` only checks that for
+        /// ids that ARE roster rows.
+        /// </summary>
+        [Test]
+        public void TheWardrobesOwnBaseRigIsReachableByName()
+        {
+            var book = RosterBook.Load();
+            Assert.IsNotNull(book, "no RosterBook. Run Tumbang Preso > Build Roster Book.");
+
+            var art = book.FindPersonArt(CustomCharacterRules.BaseRigId);
+
+            Assert.IsNotNull(art,
+                $"RosterBook has no entry for '{CustomCharacterRules.BaseRigId}'. Every caller "
+                + "degrades to roster entry 0 when this is null, so the creator and the wardrobe "
+                + "sheet would draw bayan and look like they were working. Run "
+                + "tools/build_base_voxel.py, then RosterBookBuilder.Build. docs/TODO.md 112.");
+
+            Assert.IsNotNull(art.Model,
+                $"'{CustomCharacterRules.BaseRigId}' resolves but carries no Model, so the "
+                + "creator would show an empty stage.");
+
+            Assert.IsNotNull(art.Palette,
+                $"'{CustomCharacterRules.BaseRigId}' has no palette, so every wardrobe box would "
+                + "be painted grey by VoxelDresser.Paint.");
+        }
+
         [Test]
         public void EveryExpressionHasAFace() =>
             AssertSameList("Expressions", CustomCharacterRules.FaceExpressionNames,
@@ -125,6 +167,26 @@ namespace TumbangPreso.Tests
                         continue;
                     }
 
+                    // ⚠️⚠️ `Bald` IS THE ONE ENTRY IN THIS PROJECT ALLOWED TO BE EMPTY UNDER A
+                    // NAME OTHER THAN `None`, AND IT IS NAMED HERE RATHER THAN THE RULE BEING
+                    // WIDENED. The base rig is bald (`tools/build_base_voxel.py`), so drawing
+                    // nothing IS the correct geometry for it: the head under the wardrobe already
+                    // is what this entry is asking for. Against the old dressed rig it had to be a
+                    // skin-coloured shell hiding a baked mop, which is exactly the "cover, do not
+                    // replace" compromise `docs/TODO.md` § 112 removed.
+                    //
+                    // ⚠️ IF THIS EXEMPTION EVER HAS TO GROW A SECOND NAME, ASK WHY FIRST. An empty
+                    // entry is a control that does nothing, and that is the whole failure § 108.4
+                    // recorded across 208 named wearables.
+                    if (label == "Hairstyles" && name == "Bald")
+                    {
+                        Assert.AreEqual(0, parts.Length,
+                            "'Bald' should draw nothing at all: the base rig has no hair on it. "
+                            + "Boxes here mean team-custom-base.glb has stopped being bald, and "
+                            + "every V in VoxelWardrobe is measured off it. docs/TODO.md 112.");
+                        continue;
+                    }
+
                     Assert.Greater(parts.Length, 0,
                         $"{label}: '{name}' has no boxes, so choosing it changes a number and "
                         + "nothing the player can see. docs/TODO.md 110.");
@@ -188,23 +250,35 @@ namespace TumbangPreso.Tests
         /// anyones shit"*, and *"dont toucht heh existing onnes, i will be very mad if u break or
         /// fuck up any of the existing ones"*.
         ///
-        /// **`VoxelDresser` is reachable from exactly one runtime file**, the custom character
-        /// screen, and from the two probes that photograph it. Nothing on the roster path, the
-        /// match path, the lobby cast or any converted screen can call it, so **no wearable can
-        /// ever appear on Berto, Zack or anybody else**. That is a property of the call graph
-        /// rather than of a convention, and this test is what keeps it one.
+        /// **`VoxelDresser` is reachable from exactly one runtime file**, and it is not the
+        /// screen any more: it is `CustomCharacterOutfit`, which takes a `CustomCharacter` and a
+        /// rig and nothing else. Nothing on the roster path, the lobby cast or any converted
+        /// screen can call it, so **no wearable can ever appear on Berto, Zack or anybody else**.
+        /// That is a property of the call graph rather than of a convention, and this test is what
+        /// keeps it one.
+        ///
+        /// ⚠️⚠️ THE TEST WAS `NothingButTheCustomCharacterScreenTouchesTheWardrobe` AND THE
+        /// RENAME IS LOAD-BEARING, NOT COSMETIC. `docs/TODO.md` § 110.8 and § 108.5 asked for the
+        /// custom character to walk into a MATCH, and `MatchInstaller` is not the creator screen.
+        /// The honest way to allow that without opening the wardrobe to the roster is a single
+        /// owner that cannot be handed a roster hero — `CustomCharacterOutfit.Dress` takes a
+        /// `CustomCharacter`, and there is no overload that dresses anything else — and to keep
+        /// this list at six files. **`MatchInstaller` still does not name `VoxelDresser` and
+        /// this test still fails if it ever does.** `CLAUDE.md` § 3: record the rename and the
+        /// reason, because a rename with no reason attached is a rename the next person undoes.
         ///
         /// ⚠️ IT READS THE SOURCE AS TEXT, which is the same technique the three `tools/` audits
         /// use and for the same reason: a reference that exists is a reference a test of behaviour
         /// cannot see until somebody exercises it. `CLAUDE.md` § 7.1.
         /// </summary>
         [Test]
-        public void NothingButTheCustomCharacterScreenTouchesTheWardrobe()
+        public void NothingButTheCustomCharactersOwnFilesTouchTheWardrobe()
         {
             string root = Path.Combine(Application.dataPath, "TumbangPreso");
 
             var allowed = new HashSet<string>
             {
+                "CustomCharacterOutfit.cs",
                 "CustomCharacterScreen.cs",
                 "VoxelDresser.cs",
                 "VoxelWardrobe.cs",

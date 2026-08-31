@@ -246,7 +246,21 @@ namespace TumbangPreso.Net
         /// a 17 build and an 18 build would read one another's seat table and dress every remote
         /// player from a string neither recognises. That is the exact fault the paragraph above
         /// is about, one field along.
-        public const int ProtocolVersion = 18;
+        ///
+        /// ⚠️⚠️ 19 IS THE CUSTOM CHARACTER, SINCE 2026-08-31, AND IT IS THE FIRST FIELD IN THIS
+        /// LIST THAT DECIDES A GAMEPLAY THING RATHER THAN A COSMETIC ONE. `LobbySeatInfo.Custom`
+        /// carries a `CustomCharacterRules` `C3` frame, and inside it is `HeroKitId`: which hero's
+        /// skills and ultimate that seat brings into Hero Strike (`docs/TODO.md` § 110.5). A peer
+        /// that could not read the field would draw a stranger AND read the wrong ability tells
+        /// off them, which `docs/VISION.md` § 4 says is a skill the whole competitive mode rests
+        /// on. One field on `Identify`, one on `SelectLobbyPick`, one per seat on
+        /// `SyncLobbyPicks`, § 112.
+        ///
+        /// ⚠️ THE TWO PEER-TO-HOST MESSAGES READ IT UNDER A LENGTH GUARD AND `SyncLobbyPicks`
+        /// CANNOT, which is the split the paragraph above already records: a trailing field can be
+        /// made tolerant and a field inside a per-seat loop cannot. This constant is what stops
+        /// the second case from ever arising.
+        public const int ProtocolVersion = 19;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
@@ -1477,8 +1491,13 @@ namespace TumbangPreso.Net
                 // the room wearing nothing, on every screen including its own. `docs/TODO.md`
                 // § 101. **It still goes through `BannerRules.Authorise`** rather than being
                 // trusted: the copy nobody checks is the copy that is wrong (§ 94.1).
+                // ⚠️ AND ITS CUSTOM CHARACTER RIDES THE SAME CALL, for the same reason: this is
+                // the only path on which the HOST's own seat is ever told what it is bringing.
+                // Without it the one seat that cannot fail to be there is the one seat that never
+                // brings a custom character, on its own screen and on everybody else's.
                 MatchRpc.Instance?.HostAuthoriseCosmetics(
-                    (int)clientId, LocalCosmetics.Encoded(charPick), charPick);
+                    (int)clientId, LocalCosmetics.Encoded(charPick), charPick,
+                    LocalCosmetics.CustomCharacter());
             }
 
             PublishLobbyCounts();

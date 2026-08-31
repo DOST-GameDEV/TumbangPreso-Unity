@@ -788,13 +788,17 @@ namespace TumbangPreso.UI
         /// the scale that changes what those measure. Dressing first and scaling after would leave
         /// a hat sized for a body that no longer exists.
         ///
-        /// ⚠️ THE `custom` ROSTER ENTRY IS LOOKED UP BY ID, NOT BY INDEX.
-        /// `RosterBook.FindPersonArt("custom")` resolves `Resources/Roster/person_custom.asset`,
-        /// and `custom` is deliberately NOT a row in `Roster.AllPeople`: that list's header is
-        /// explicit that its order is a network contract and entries are appended, never inserted.
+        /// ⚠️⚠️ THE RIG IS `BaseRigId`, NOT `CustomCharacterId`, AND THE TWO ARE DIFFERENT
+        /// THINGS. `custom` is who this player IS, on the wire and in `settings.json`;
+        /// `custom_base` is the `.glb` the wardrobe hangs off, and until 2026-08-31 they were the
+        /// same row and it pointed at a copy of a fully dressed hero. `docs/TODO.md` § 112:
+        /// against a rig with hair, a sando and shorts baked in, every wearable had to COVER what
+        /// was under it, so a hairstyle was a lid and an expression needed a plate over the rig's
+        /// own painted eyes. `team-custom-base.glb` is bald, bare and faceless.
         ///
-        /// ⚠️ IT DEGRADES TO THE ROSTER ART RATHER THAN TO NOTHING when the custom `.glb` is
-        /// missing, which is what a fresh clone before `RosterBookBuilder.Build` looks like.
+        /// ⚠️ IT DEGRADES THROUGH `custom` AND THEN TO THE ROSTER RATHER THAN TO NOTHING. A
+        /// fresh clone before `RosterBookBuilder.Build` has neither asset, and a screen that
+        /// answers a blank stage is indistinguishable from one that is broken.
         /// </summary>
         private void ShowModel()
         {
@@ -803,229 +807,40 @@ namespace TumbangPreso.UI
             var book = RosterBook.Load();
             if (book == null) return;
 
-            var art = book.FindPersonArt(CustomCharacterRules.CustomCharacterId);
-            if (art == null) art = book.PersonArt(0, SceneFlow.SelectedMode);
+            var art = book.FindPersonArt(CustomCharacterRules.BaseRigId)
+                      ?? book.FindPersonArt(CustomCharacterRules.CustomCharacterId)
+                      ?? book.PersonArt(0, SceneFlow.SelectedMode);
             if (art == null) return;
 
-            var palette = PaletteFor(art.Palette);
+            var palette = CustomCharacterOutfit.PaletteFor(art.Palette, _editing);
 
             _preview.Show(art.Model, art.Clips, palette, art.PetModel);
 
             var subject = _preview.Subject;
             if (subject != null)
             {
-                ApplyBodyScale(subject);
-                Dress(subject, palette);
+                CustomCharacterOutfit.ApplyBodyScale(subject, _editing);
+                CustomCharacterOutfit.Dress(subject, _editing, palette);
             }
 
             AimCamera();
         }
-
         /// <summary>
-        /// Height and build, as a scale on the visual rig and on nothing else.
+        /// ⚠️⚠️ THE SCALE, THE PALETTE AND THE TEN DRESS CALLS MOVED TO
+        /// `CustomCharacterOutfit` AND THIS SCREEN IS NOT THE OWNER ANY MORE.
+        /// `docs/TODO.md` § 112. They were private methods here, so a match seat could only
+        /// ever have had a SECOND implementation of what a custom character looks like, which
+        /// is exactly the shape of § 94.1's four hand-written copies of "which line in this
+        /// record is mine", all agreeing on the wrong value. One owner, and the preview, the
+        /// wardrobe contact sheet and a live match seat all call it.
         ///
-        /// ⚠️⚠️ THE CAPSULE, THE REACH AND EVERY DISTANCE IN `Combat` ARE UNTOUCHED, AND THAT
-        /// IS WHAT KEEPS THIS INSIDE `docs/FUTURE.md` § 0.5 RULE 4. Nothing on a progression track
-        /// may change a gameplay number; `CLAUDE.md` § 4 resolves contact by DISTANCE, so a scale
-        /// that reached the collider would be a cosmetic deciding who gets tagged.
-        /// `Roster.HeroPeople`'s header is the receipt for how much a size difference is worth in
-        /// this game: Sean is at the speed floor entirely because he is the big one.
-        ///
-        /// ⚠️ THE HEIGHT IS Y AND THE BUILD IS X AND Z, which is why they are two controls
-        /// rather than one. A single uniform scale makes a short character a small character, and
-        /// short-and-wide is the silhouette most of this cast actually is.
-        ///
-        /// ⚠️ AND THE FEET STAY ON THE FLOOR. The rig's origin is between them
-        /// (`tools/build_person_voxel.py`'s `SKELETON`: `root` is at y 0), so scaling about the
-        /// origin grows a character upward rather than sinking it into the ground.
+        /// ⚠️ `SkinColour`, `HairColour` AND `ClothColour` MOVED WITH THEM and are public on
+        /// `CustomCharacterOutfit` now, because `WardrobeSheetProbe` reads them.
         /// </summary>
-        private void ApplyBodyScale(GameObject subject)
-        {
-            float height = _editing.HeightPercent / 100.0f;
-            float width = CustomCharacterRules.BuildWidthScale(_editing.BuildSizeIndex);
-
-            var scale = subject.transform.localScale;
-
-            // ⚠️ RELATIVE TO WHATEVER `ModelPreview` SET, never assigned absolutely.
-            // `ModelPreview.PreviewScale` is 2.38 and `LobbyCast` relies on it; overwriting the
-            // scale here would make the preview a different size from every other screen.
-            subject.transform.localScale = new Vector3(
-                Mathf.Abs(scale.x) * width,
-                Mathf.Abs(scale.y) * height,
-                Mathf.Abs(scale.z) * width);
-        }
-
-        /// <summary>
-        /// Hangs every chosen piece on the rig.
-        ///
-        /// ⚠️ THE ORDER IS SCALP, THEN FACE, THEN MARKS, THEN GEAR, and it is depth order
-        /// rather than list order. Each layer is authored proud of the one under it
-        /// (`VoxelWardrobe`'s `FaceW` block), so building them in this sequence means a hat is
-        /// never trying to sort against a hairstyle at the same depth. `docs/VISION.md` § 2 rule 3
-        /// records what coplanar translucent surfaces cost: one trail drew a different colour per
-        /// drop.
-        ///
-        /// ⚠️ `ToonSkin.PersonOutlineWidth` IS ALREADY A WORLD WIDTH AND CARRIES THE 2.38.
-        /// `docs/Voxel_Person_Guide.md` § 5.8 records the character screen drawing a 45 mm border
-        /// against 19 mm everywhere else because somebody multiplied it by the preview scale again.
-        /// </summary>
-        private void Dress(GameObject subject, Color[] palette)
-        {
-            VoxelDresser.Undress(subject);
-
-            float ink = ToonSkin.PersonOutlineWidth;
-
-            VoxelDresser.Dress(subject, VoxelAnchor.Head,
-                VoxelWardrobe.At(VoxelWardrobe.Hairstyles, _editing.HairstyleIndex), palette, ink);
-
-            VoxelDresser.Dress(subject, VoxelAnchor.Head,
-                VoxelWardrobe.At(VoxelWardrobe.Expressions, _editing.FaceExpressionIndex),
-                palette, ink);
-
-            VoxelDresser.Dress(subject, VoxelAnchor.Head,
-                VoxelWardrobe.At(VoxelWardrobe.Marks, _editing.FaceMarkingIndex), palette, ink);
-
-            VoxelDresser.Dress(subject, VoxelAnchor.Head,
-                VoxelWardrobe.At(VoxelWardrobe.Eyewear, _editing.FaceAccessoryIndex), palette, ink);
-
-            VoxelDresser.Dress(subject, VoxelAnchor.Head,
-                VoxelWardrobe.At(VoxelWardrobe.Headwear, _editing.HeadAccessoryIndex), palette, ink);
-
-            VoxelDresser.Dress(subject, VoxelAnchor.Torso,
-                VoxelWardrobe.At(VoxelWardrobe.Tops, _editing.TopClothingIndex), palette, ink);
-
-            VoxelDresser.Dress(subject, VoxelAnchor.Torso,
-                VoxelWardrobe.At(VoxelWardrobe.Bottoms, _editing.BottomClothingIndex), palette, ink);
-
-            VoxelDresser.Dress(subject, VoxelAnchor.Torso,
-                VoxelWardrobe.At(VoxelWardrobe.Neckwear, _editing.NeckAccessoryIndex), palette, ink);
-
-            VoxelDresser.Dress(subject, VoxelAnchor.ArmRight,
-                VoxelWardrobe.At(VoxelWardrobe.Wristwear, _editing.WristAccessoryIndex),
-                palette, ink);
-
-            var shoes = VoxelWardrobe.At(VoxelWardrobe.Footwear, _editing.FootwearIndex);
-            VoxelDresser.Dress(subject, VoxelAnchor.LegLeft, shoes, palette, ink);
-            VoxelDresser.Dress(subject, VoxelAnchor.LegRight, shoes, palette, ink);
-        }
-
         private void AimCamera()
         {
             if (_preview == null) return;
             _preview.LookAt(Sections[_section].Aim, Sections[_section].Zoom);
         }
-
-        /// <summary>
-        /// The sixteen colours the edited character is painted with.
-        ///
-        /// ⚠️⚠️ THE FACE SLOT IS COPIED THROUGH AND THE SKIN SLOTS ARE WRITTEN, WHICH IS THE
-        /// OPPOSITE WAY ROUND FROM EVERY ROSTER CHARACTER AND IS THE WHOLE POINT OF THIS FEATURE.
-        /// `PaletteRules.IsProtectedSlot` stops a hue dial reaching a canonical character's skin
-        /// (`docs/TODO.md` § 107); this character's skin is not rotated out of the authored colours,
-        /// it is CHOSEN, so it is written straight in and never travels that path.
-        ///
-        /// ⚠️⚠️ SLOT 8 IS THE FACE AND IS LEFT ALONE. The version this replaces wrote the
-        /// bottom-half clothing colour into slots 7, 8 and 9. `docs/Voxel_Person_Guide.md`: *"A
-        /// light slot 8 does not give a light-haired character, it gives one with no face."*
-        ///
-        /// ⚠️⚠️ AND THE CLOTHING COLOUR IS THE PLAYER'S CHOICE NOW, NOT A FUNCTION OF THE
-        /// GARMENT. 🧑: *"can i change the color of thhose clothes too??"*. The version this
-        /// replaces derived it from the garment INDEX, so every jersey was one colour and there was
-        /// no way to have a red one and a blue one.
-        ///
-        /// ⚠️ THE THREE-STEP RAMPS ARE SHADE, BASE, LIT, MEASURED OFF THE SHIPPED `.tres`
-        /// FILES RATHER THAN INVENTED. `person_team-zack.tres` carries slot 13 and slot 15 at the
-        /// same lit tone with slot 14 a clear step darker, which is a two-band toon ramp with its
-        /// lit value repeated.
-        ///
-        /// ⚠️ AND SLOTS 3, 7 AND 9 ARE THE GEAR TONES. `VoxelWardrobe`'s header names them:
-        /// with 0-2 taken by the bottom, 4-6 by the top, 10-12 by hair and 13-15 by skin, three
-        /// slots are left for every hat, lens, chain and shoe in the game, so they are wood, metal
-        /// and cream rather than per-item colours. That is `docs/VISION.md` § 6 as a constraint:
-        /// wood, amber, cream, ink.
-        /// </summary>
-        private Color[] PaletteFor(Color[] authored)
-        {
-            if (authored == null || authored.Length < PaletteRules.SlotCount) return authored;
-
-            var palette = new Color[authored.Length];
-            Array.Copy(authored, palette, authored.Length);
-
-            Ramp(palette, PaletteRules.SkinSlots, SkinColour(_editing.SkinToneIndex));
-            Ramp(palette, HairSlots, HairColour(_editing.HairColorIndex));
-            Ramp(palette, TopSlots, ClothColour(_editing.TopColorIndex));
-            Ramp(palette, BottomSlots, ClothColour(_editing.BottomColorIndex));
-
-            palette[GearASlot] = UiTheme.WoodEdge;
-            palette[GearBSlot] = UiTheme.Amber;
-            palette[GearCSlot] = UiTheme.Cream;
-
-            return palette;
-        }
-
-        /// <summary>
-        /// ⚠️ 10, 11 AND 12, AND `docs/Voxel_Person_Guide.md` § 5.8 IS WHY THIS IS WRITTEN DOWN
-        /// RATHER THAN ASSUMED. That section records *"slot 13 is his hair" was one session's
-        /// guess*, written as a fact, and it cost a build. 13 to 15 are skin, measured off the
-        /// `.tres` files.
-        /// </summary>
-        private static readonly int[] HairSlots = { 10, 11, 12 };
-
-        /// <summary>⚠️ 4, 5 AND 6. NOT 7, 8, 9: SLOT 8 IS THE FACE.</summary>
-        private static readonly int[] TopSlots = { 4, 5, 6 };
-
-        /// <summary>⚠️ 0, 1 AND 2, STEPPING AROUND THE FACE AT 8 rather than through it.</summary>
-        private static readonly int[] BottomSlots = { 0, 1, 2 };
-
-        /// <summary>⚠️ THE THREE SLOTS NOTHING ELSE CLAIMS. See `VoxelWardrobe`'s header.</summary>
-        private const int GearASlot = 3;
-        private const int GearBSlot = 7;
-        private const int GearCSlot = 9;
-
-        private static void Ramp(Color[] palette, int[] slots, Color basis)
-        {
-            if (slots.Length < 3) return;
-
-            palette[slots[0]] = Scale(basis, 1.14f);
-            palette[slots[1]] = Scale(basis, 0.78f);
-            palette[slots[2]] = Scale(basis, 1.14f);
-        }
-
-        /// <summary>⚠️ CLAMPED, BECAUSE A COLOUR ABOVE 1.0 IS NOT A BRIGHTER COLOUR IN A TOON
-        /// SHADER THAT BANDS ON VALUE, it is a slot that has quietly left the ramp.</summary>
-        private static Color Scale(Color c, float factor)
-            => new Color(Mathf.Clamp01(c.r * factor), Mathf.Clamp01(c.g * factor),
-                         Mathf.Clamp01(c.b * factor), c.a);
-
-        /// <summary>
-        /// ⚠️ EVERY COLOUR ON THIS SCREEN IS PARSED OUT OF ITS OWN NAME, which is one list
-        /// rather than a list plus a colour table that can disagree with it.
-        /// `CustomCharacterTests.EverySkinAndHairNameCarriesItsColour` fails if a name ever loses
-        /// its hex, which is the failure mode a second table would have made silent.
-        /// </summary>
-        private static Color Hex(string[] names, int index, Color fallback)
-        {
-            if (names == null || names.Length == 0) return fallback;
-            if (index < 0 || index >= names.Length) index = 0;
-
-            string name = names[index];
-            int hash = name.IndexOf('#');
-
-            if (hash >= 0 && name.Length >= hash + 7
-                && ColorUtility.TryParseHtmlString(name.Substring(hash, 7), out var parsed))
-                return parsed;
-
-            return fallback;
-        }
-
-        public static Color SkinColour(int index)
-            => Hex(CustomCharacterRules.SkinToneNames, index, new Color(0.78f, 0.54f, 0.32f));
-
-        public static Color HairColour(int index)
-            => Hex(CustomCharacterRules.HairColorNames, index, new Color(0.08f, 0.08f, 0.09f));
-
-        public static Color ClothColour(int index)
-            => Hex(CustomCharacterRules.ClothingColourNames, index, new Color(0.77f, 0.22f, 0.17f));
-
     }
 }
