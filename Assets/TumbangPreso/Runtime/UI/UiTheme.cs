@@ -69,6 +69,8 @@ namespace TumbangPreso.UI
         public static readonly Color Cream = Hex("f5e6c8");
         public static readonly Color Amber = Hex("ffba00");
 
+        public static Font Font => MenuKit.Font;
+
         public static Color CreamMuted => new Color(Cream.r, Cream.g, Cream.b, 0.68f);
 
         public static readonly Color MenuGreen = Hex("21a131");

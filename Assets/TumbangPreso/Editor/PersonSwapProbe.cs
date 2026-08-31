@@ -45,10 +45,10 @@ namespace TumbangPreso.EditorTools
     {
         /// <summary>The rig under test, and the one it replaces. ⚠️ BOTH, because "the new one
         /// is 0.6790 tall" means nothing without the range it has to sit inside.</summary>
-        private const string NewModel = "Assets/TumbangPreso/Art/characters/persons/team-phaister.glb";
+        private const string NewModel = "Assets/TumbangPreso/Art/characters/persons/team-custom.glb";
         private const string OldModel = "Assets/TumbangPreso/Art/characters/persons/character-female-a.glb";
 
-        private const string RosterId = "phaister";
+        private const string RosterId = "custom";
         private const string ReportPath = "Logs/person-swap-probe.txt";
         private const string ShotPath = "Logs/person-swap-probe.png";
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using TumbangPreso.Core;
 using UnityEngine;
@@ -209,8 +209,8 @@ namespace TumbangPreso.UI
 
             // 1. Mastery Status Card
             var masteryCard = CreateCard(_contentList, $"{heroName} — {heroRole}");
-            var mDesc = AddText(masteryCard, "Hero Mastery Track (Levels 1 to 25)", 14, UiTheme.Amber);
-            var mRewards = AddText(masteryCard, "• Level 3: Title KATUWANG\n• Level 5: Alternate Colors (ALT 1)\n• Level 10: Mastery Crest Badge\n• Level 15: Second Colors (ALT 2)\n• Level 25: Title DALUBHASA", 13, UiTheme.Cream);
+            var mDesc = AddText(masteryCard.transform, "Hero Mastery Track (Levels 1 to 25)", 14, UiTheme.Amber);
+            var mRewards = AddText(masteryCard.transform, "• Level 3: Title KATUWANG\n• Level 5: Alternate Colors (ALT 1)\n• Level 10: Mastery Crest Badge\n• Level 15: Second Colors (ALT 2)\n• Level 25: Title DALUBHASA", 13, UiTheme.Cream);
 
             // 2. Ability 1 Loadout Selector
             var a1Card = CreateCard(_contentList, "ABILITY 1: SKILL VARIANT");
@@ -262,7 +262,7 @@ namespace TumbangPreso.UI
             var iconGo = new GameObject("Icon", typeof(RectTransform), typeof(Image));
             iconGo.transform.SetParent(rowGo.transform, false);
             var iImg = iconGo.GetComponent<Image>();
-            iImg.sprite = AbilityIcons.For(AbilityGlyph.Zone, 64);
+            iImg.sprite = AbilityIcons.For(AbilityGlyph.Zone);
             iImg.color = UiTheme.Amber;
             var iLe = iconGo.AddComponent<LayoutElement>();
             iLe.preferredWidth = 48;

@@ -636,7 +636,6 @@ namespace TumbangPreso.UI
             _menu = StackedButton(card, "MAIN MENU", OnMenuPressed);
         }
 
-        private Text _xpDetail;
         private Image _rankEmblem;
         private VerticalLayoutGroup _addStack;
 

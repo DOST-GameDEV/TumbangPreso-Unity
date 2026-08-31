@@ -258,8 +258,8 @@ namespace TumbangPreso.UI
             // ⚠️ THE MODE COMES FROM THE LOBBY THE PLAYER IS STANDING IN, not from a picker on
             // this card. `INSPIRATION.md` § 3.1: the mode is the ruleset and the queue is the
             // stakes, and they already chose the ruleset one row up.
-            bool started = _queue.Start(SceneFlow.SelectedMode, QueueStake.Casual,
-                                        HumanSeatCount());
+            bool started = _queue.StartQueue(SceneFlow.SelectedMode, QueueStake.Casual,
+                                             HumanSeatCount());
 
             if (!started) Status?.Invoke(_queue.Refusal);
             Refresh();

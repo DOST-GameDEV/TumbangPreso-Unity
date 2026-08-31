@@ -177,7 +177,7 @@ namespace TumbangPreso.Net
         /// and a dead end is a bug. A queue cooldown, a full four-stack in ranked and a guest in
         /// ranked are the three real ones, and all three are things the player can act on.
         /// </summary>
-        public bool Start(GameMode mode, QueueStake stake, int partySize = 1)
+        public bool StartQueue(GameMode mode, QueueStake stake, int partySize = 1)
         {
             Mode = mode;
             Stake = stake;
