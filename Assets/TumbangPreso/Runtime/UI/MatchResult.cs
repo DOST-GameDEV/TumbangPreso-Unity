@@ -393,6 +393,32 @@ namespace TumbangPreso.UI
                 rt.offsetMax = Vector2.zero;
             }
 
+            if (_rankEmblem != null)
+            {
+                var rank = profile?.Rank;
+                if (rank != null && rank.MatchesThisSeason > 0)
+                {
+                    var tier = Core.RatingRules.TierFor(rank.Rating);
+                    var sprite = RankIcons.ForTier(tier);
+                    if (sprite != null)
+                    {
+                        _rankEmblem.sprite = sprite;
+                        _rankEmblem.enabled = true;
+                        _rankEmblem.gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        _rankEmblem.enabled = false;
+                        _rankEmblem.gameObject.SetActive(false);
+                    }
+                }
+                else
+                {
+                    _rankEmblem.enabled = false;
+                    _rankEmblem.gameObject.SetActive(false);
+                }
+            }
+
             _xpDetail.text = DetailFor(award) + RankLine(profile);
         }
 
@@ -566,6 +592,18 @@ namespace TumbangPreso.UI
             _xpHeadline = CardLabel(card, "XpHeadline", 19, UiTheme.Amber, 26,
                                     TextAnchor.MiddleCenter);
             BuildXpBar(card);
+
+            var rankGo = new GameObject("RankEmblem", typeof(RectTransform), typeof(Image));
+            rankGo.transform.SetParent(card.transform, false);
+            _rankEmblem = rankGo.GetComponent<Image>();
+            _rankEmblem.raycastTarget = false;
+            _rankEmblem.enabled = false;
+            var layout = rankGo.AddComponent<LayoutElement>();
+            layout.preferredWidth = 56.0f;
+            layout.preferredHeight = 56.0f;
+            layout.flexibleWidth = 0.0f;
+            layout.flexibleHeight = 0.0f;
+
             _xpDetail = CardLabel(card, "XpDetail", MenuKit.MinReadableUnits,
                                   UiTheme.CreamMuted, 52, TextAnchor.MiddleCenter);
             ShowProgression(null, null);
@@ -598,6 +636,8 @@ namespace TumbangPreso.UI
             _menu = StackedButton(card, "MAIN MENU", OnMenuPressed);
         }
 
+        private Text _xpDetail;
+        private Image _rankEmblem;
         private VerticalLayoutGroup _addStack;
 
         /// <summary>

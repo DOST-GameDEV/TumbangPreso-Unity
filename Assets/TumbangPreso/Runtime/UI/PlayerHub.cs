@@ -818,6 +818,20 @@ namespace TumbangPreso.UI
             var totals = ProfileRules.ModeFor(profile, _mode.ToString()).Totals;
             if (totals.Matches == 0) { EmptyCareer(); return; }
 
+            var rank = profile.Rank;
+            if (rank != null && rank.MatchesThisSeason > 0 && Group("Competitive Rank", "Your standing on the seasonal ranked ladder."))
+            {
+                var tier = RatingRules.TierFor(rank.Rating);
+                string tierName = RatingRules.TierName(tier);
+                bool placing = rank.Deviation > RatingRules.SettledDeviation;
+
+                UiRows.ValueRow(_list, "Current Tier", placing ? $"{tierName} (Placing)" : tierName,
+                    placing ? "Play more ranked matches to settle your rank rating." : "Your official competitive ladder tier.",
+                    UiTheme.Amber);
+
+                UiRows.ValueRow(_list, "Season Matches", rank.MatchesThisSeason.ToString());
+            }
+
             if (Group("Overview",
                       "Classic and Hero Strike are separate games and their numbers never merge."))
             {
