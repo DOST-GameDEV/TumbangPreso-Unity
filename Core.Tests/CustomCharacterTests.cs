@@ -16,22 +16,22 @@ namespace TumbangPreso.Core.Tests
         }
 
         [Fact]
-        public void VastCatalogCountsMeetDesignRequirements()
+        public void ExpansiveStardewCatalogCountsMeetDesignRequirements()
         {
-            Assert.True(CustomCharacterRules.SkinToneNames.Length >= 24, "Should have at least 24 skin tones");
-            Assert.True(CustomCharacterRules.HairstyleNames.Length >= 32, "Should have at least 32 hairstyles");
-            Assert.True(CustomCharacterRules.TopClothingNames.Length >= 32, "Should have at least 32 tops");
-            Assert.True(CustomCharacterRules.BottomClothingNames.Length >= 24, "Should have at least 24 bottoms");
-            Assert.True(CustomCharacterRules.FaceExpressionNames.Length >= 16, "Should have at least 16 expressions");
-            Assert.True(CustomCharacterRules.FaceMarkingNames.Length >= 12, "Should have at least 12 facial markings");
-            Assert.True(CustomCharacterRules.HairColorNames.Length >= 24, "Should have at least 24 hair colors");
-            Assert.True(CustomCharacterRules.HeadAccessoryNames.Length >= 24, "Should have at least 24 head accessories");
-            Assert.True(CustomCharacterRules.FaceAccessoryNames.Length >= 16, "Should have at least 16 face accessories");
-            Assert.True(CustomCharacterRules.WristAccessoryNames.Length >= 16, "Should have at least 16 wrist accessories");
-            Assert.True(CustomCharacterRules.NeckAccessoryNames.Length >= 12, "Should have at least 12 neck accessories");
-            Assert.True(CustomCharacterRules.FootwearNames.Length >= 12, "Should have at least 12 footwear options");
-            Assert.True(CustomCharacterRules.LataSkinNames.Length >= 8, "Should have at least 8 lata skins");
-            Assert.True(CustomCharacterRules.PresetNames.Length >= 7, "Should have at least 7 preset outfits");
+            Assert.True(CustomCharacterRules.SkinToneNames.Length >= 32, "Should have at least 32 skin tones");
+            Assert.True(CustomCharacterRules.FaceExpressionNames.Length >= 24, "Should have at least 24 expressions");
+            Assert.True(CustomCharacterRules.FaceMarkingNames.Length >= 20, "Should have at least 20 facial markings");
+            Assert.True(CustomCharacterRules.HairstyleNames.Length >= 48, "Should have at least 48 hairstyles");
+            Assert.True(CustomCharacterRules.HairColorNames.Length >= 32, "Should have at least 32 hair colors");
+            Assert.True(CustomCharacterRules.TopClothingNames.Length >= 48, "Should have at least 48 tops");
+            Assert.True(CustomCharacterRules.BottomClothingNames.Length >= 36, "Should have at least 36 bottoms");
+            Assert.True(CustomCharacterRules.HeadwearNames.Length >= 32, "Should have at least 32 head accessories");
+            Assert.True(CustomCharacterRules.FaceAccessoryNames.Length >= 24, "Should have at least 24 face accessories");
+            Assert.True(CustomCharacterRules.WristAccessoryNames.Length >= 24, "Should have at least 24 wrist accessories");
+            Assert.True(CustomCharacterRules.NeckAccessoryNames.Length >= 20, "Should have at least 20 neck accessories");
+            Assert.True(CustomCharacterRules.FootwearNames.Length >= 20, "Should have at least 20 footwear options");
+            Assert.True(CustomCharacterRules.LataSkinNames.Length >= 12, "Should have at least 12 lata skins");
+            Assert.True(CustomCharacterRules.PresetNames.Length >= 12, "Should have at least 12 preset outfits");
         }
 
         [Fact]
