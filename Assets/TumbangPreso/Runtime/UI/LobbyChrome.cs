@@ -483,14 +483,28 @@ namespace TumbangPreso.UI
             var label = back.GetComponentInChildren<Text>(true);
             if (label != null)
             {
-                label.text = "‹  BACK";
+                // ⚠️⚠️ ONE SPACE, NOT TWO, AND THE CHEVRON IS WHY IT LOOKED LEFT-HEAVY. 🧑, with
+                // a crop of the top rail: **"back still isnt centered as well"**. `Text` centres
+                // on the string's own ink, so `"‹  BACK"` centres the chevron AND the word
+                // together and the word itself therefore sits right of the pill's middle by half
+                // the chevron plus half the gap. Two spaces at 20 units is about 11 units of that
+                // error on a 120-unit chip, which is where "not centred" comes from on a control
+                // whose box genuinely is centred.
+                label.text = "‹ BACK";
                 label.name = "Label";
                 label.fontSize = PaperKit.Body;
                 label.color = UiTheme.PaperInk;
                 label.fontStyle = FontStyle.Bold;
                 label.alignment = TextAnchor.MiddleCenter;
+
+                // ⚠️⚠️ AND IT WAS SIX UNITS LOW ON TOP OF THAT, IN THE OTHER DIRECTION FROM EVERY
+                // OTHER CHIP IN THE GAME. This line read `offsetMax = (0, -Drop)`, which pulls the
+                // box's TOP edge DOWN; `PaperKit.Chip` raises the BOTTOM edge instead. Both are
+                // six units and they move the lettering opposite ways, so BACK sat twelve units
+                // below its neighbours. `PaperKit.CentreOnFace` is now the only place either
+                // correction is written.
                 MenuKit.Stretch(label.rectTransform, 0.0f);
-                label.rectTransform.offsetMax = new Vector2(0.0f, -PaperCraft.Drop);
+                PaperKit.CentreOnFace(label);
                 MenuKit.Fit(label, BackWidth - 20.0f);
             }
 
