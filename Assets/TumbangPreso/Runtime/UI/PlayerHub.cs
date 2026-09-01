@@ -652,7 +652,7 @@ namespace TumbangPreso.UI
             // spends the screen's accent on a statement about where you already are.
             // `GodotTheme.WoodTabIdleButton` carries the argument: the idle tab is drawn through
             // `WoodCraft.Surface.Field`, lit from BELOW, so the two tabs sit at two depths.
-            skin.Variation = on ? "WoodHeaderButton" : "WoodTabIdleButton";
+            skin.Variation = on ? "WoodTabLiveButton" : "WoodTabIdleButton";
             skin.Apply();
             skin.Refresh();
         }

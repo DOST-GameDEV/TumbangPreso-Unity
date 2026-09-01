@@ -116,6 +116,25 @@ namespace TumbangPreso.UI
             Header,
 
             /// <summary>
+            /// A tab: cut at the TOP two corners and square along the bottom, so it stands on the
+            /// row rather than floating in it.
+            ///
+            /// ⚠️⚠️ IT EXISTS BECAUSE THE LIVE TAB WAS BORROWING <see cref="Header"/> AND THAT
+            /// SHAPE IS UPSIDE DOWN FOR THIS JOB. 🧑 2026-09-01, with a crop of the sign-in row:
+            /// **"its also weird that create is just a rectanhle"**. He is describing the top
+            /// edge: `Header` is SQUARE along the top and rounded below, which is exactly right
+            /// for a sign nailed across the top of the drawer under it and exactly wrong for a
+            /// tab, where the square end is the one that should be sitting on the row.
+            ///
+            /// ⚠️ SO IT IS THE CHAMFER, FLIPPED. The cut is the same 45 degrees at the same 0.22
+            /// of the height that every button in this front end uses, applied to the top two
+            /// corners only. A tab is then visibly a member of the same family as the buttons
+            /// without being mistakable for one, which is the whole reason `Surface` is a list of
+            /// roles rather than a list of fills.
+            /// </summary>
+            Tab,
+
+            /// <summary>
             /// A dark wooden slot you type into. Chamfered like a button, because you touch it,
             /// and near-black because it is cut in rather than standing out.
             ///
@@ -247,8 +266,10 @@ namespace TumbangPreso.UI
             bool chamfer = surface == Surface.Button || surface == Surface.Action
                            || surface == Surface.Field;
             bool sign = surface == Surface.Header;
+            bool tab = surface == Surface.Tab;
 
-            float corner = chamfer ? h * ChamferFraction : Mathf.Max(6.0f, h * RoundFraction);
+            float corner = chamfer || tab ? h * ChamferFraction
+                                          : Mathf.Max(6.0f, h * RoundFraction);
             int cap = Mathf.CeilToInt(corner) + 2;
             int width = (cap * 2) + 4;
 
@@ -264,7 +285,17 @@ namespace TumbangPreso.UI
                 {
                     float dx = halfW - Mathf.Abs(x - midX);
                     float dy = halfH - Mathf.Abs(y - midY);
-                    float depth = Depth(dx, dy, corner, chamfer, sign && y > midY);
+
+                    // ⚠️ THE SHADOW READS THE SAME SHAPE RULES AS THE FACE, which is the whole
+                    // point of this method: 🧑 caught a rounded shadow under a chamfered button
+                    // (*"the shadows dont follow the actual ckickables as well"*) and a tab would
+                    // have been the same fault one shape later.
+                    bool upper = y > midY;
+                    bool square = (sign && upper) || (tab && !upper);
+
+                    float depth = square
+                        ? Mathf.Min(dx, dy)
+                        : Depth(dx, dy, corner, chamfer || (tab && upper), false);
 
                     pixels[(y * width) + x] =
                         new Color(1.0f, 1.0f, 1.0f, Mathf.Clamp01(depth));
@@ -328,6 +359,7 @@ namespace TumbangPreso.UI
                 case Surface.Action: return UiTheme.Amber;
                 case Surface.Button: return UiTheme.WoodFace;
                 case Surface.Header: return UiTheme.WoodFace;
+                case Surface.Tab: return UiTheme.WoodFace;
                 case Surface.Panel: return UiTheme.WoodPanelFace;
                 case Surface.Field: return UiTheme.WoodFieldFace;
                 case Surface.Paper: return UiTheme.Card;
@@ -347,6 +379,7 @@ namespace TumbangPreso.UI
             bool chamfer = surface == Surface.Button || surface == Surface.Action
                            || surface == Surface.Field;
             bool sign = surface == Surface.Header;
+            bool tab = surface == Surface.Tab;
 
             // ⚠️ A FIELD IS LIT FROM BELOW, WHICH IS WHAT MAKES IT READ AS CUT IN. The light is
             // above the screen, so a raised board carries its varnish band near the top and the
@@ -377,7 +410,8 @@ namespace TumbangPreso.UI
             int keyline = Mathf.Max(2, Mathf.RoundToInt(h * KeylineFraction * keylineScale));
             int rim = Mathf.Max(2, Mathf.RoundToInt(h * RimFraction));
 
-            float corner = chamfer ? h * ChamferFraction : Mathf.Max(6.0f, h * RoundFraction);
+            float corner = chamfer || tab ? h * ChamferFraction
+                                          : Mathf.Max(6.0f, h * RoundFraction);
 
             int cap = Mathf.CeilToInt(corner) + keyline + rim + 2;
             int width = (cap * 2) + 4;
@@ -416,9 +450,16 @@ namespace TumbangPreso.UI
                     // The two corners it keeps are the only difference between it and `Panel`,
                     // and it is enough: a shape difference survives a photograph and a
                     // colourblind player, which a fill difference does not.
-                    bool squareTop = sign && y > midY;
+                    //
+                    // ⚠️ A TAB IS THE OPPOSITE WAY UP: cut at the top, square along the bottom,
+                    // so it stands ON the row. Texture rows run bottom-up, so `y > midY` is the
+                    // TOP of the image and the two roles read as mirror images here.
+                    bool upper = y > midY;
+                    bool square = (sign && upper) || (tab && !upper);
 
-                    float depth = Depth(dx, dy, corner, chamfer, squareTop);
+                    float depth = square
+                        ? Mathf.Min(dx, dy)
+                        : Depth(dx, dy, corner, chamfer || (tab && upper), false);
 
                     Color c;
 

@@ -213,6 +213,15 @@ namespace TumbangPreso.UI
                 // carry the same varnish ramp and the eye compares the BRIGHT band rather than
                 // the average. Dropping the idle face to `36180c` moves its bright band below the
                 // live face's dark end, so the two no longer overlap anywhere.
+                // ⚠️ THE LIVE TAB IS ITS OWN VARIATION NOW RATHER THAN BORROWING
+                // `WoodHeaderButton`. Both are `WoodFace` on a raised face, so the paint is
+                // unchanged; what changed is the SILHOUETTE the variation resolves to.
+                // `WoodCraft.Surface.Tab` is cut at the top and square along the bottom, and
+                // `Header` is the other way up, which is what 🧑 was looking at when he said the
+                // live tab reads as *"just a rectanhle"*.
+                case "WoodTabLiveButton":
+                    return Wood(UiTheme.WoodFace, UiTheme.WoodEdge, UiTheme.Cream, UiTheme.Amber);
+
                 case "WoodTabIdleButton":
                     return Wood(UiTheme.WoodSlot, UiTheme.WoodEdge, UiTheme.CreamMuted,
                                 UiTheme.Cream);
@@ -280,6 +289,7 @@ namespace TumbangPreso.UI
             variation == "WoodButton" || variation == "WoodPrimaryButton" ||
             variation == "WoodDangerButton" || variation == "WoodAmberButton" ||
             variation == "WoodHeaderButton" || variation == "WoodTabIdleButton" ||
+            variation == "WoodTabLiveButton" ||
             variation == "PrimaryButton" ||
             variation == "DangerButton";
 
@@ -499,7 +509,8 @@ namespace TumbangPreso.UI
             // Buttons: four states each.
             foreach (var variation in new[]
                      { "WoodButton", "WoodPrimaryButton", "WoodDangerButton", "WoodAmberButton",
-                       "WoodHeaderButton", "WoodTabIdleButton", "Button", "PrimaryButton" })
+                       "WoodHeaderButton", "WoodTabIdleButton", "WoodTabLiveButton",
+                       "Button", "PrimaryButton" })
             {
                 var style = ForButton(variation);
 

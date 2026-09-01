@@ -188,7 +188,9 @@ namespace TumbangPreso.UI
                 ? WoodCraft.Surface.Action
                 : Variation == "WoodHeaderButton"
                     ? WoodCraft.Surface.Header
-                    : WoodCraft.Surface.Button;
+                    : Variation == "WoodTabLiveButton" || Variation == "WoodTabIdleButton"
+                        ? WoodCraft.Surface.Tab
+                        : WoodCraft.Surface.Button;
 
             _normal = WoodCraft.Slab(surface, height, WoodCraft.Pose.Rest, _style.Fill);
             _hover = WoodCraft.Slab(surface, height, WoodCraft.Pose.Hover, _style.Fill);

@@ -2138,6 +2138,88 @@ one.**
 
 ---
 
+## 118 · The lobby is coherent now and it is not finished ⚠️⚠️ OPEN, 2026-09-01, branch `ui-redesign`
+
+🧑, after § 117 landed and he had looked at every render: *"create handoff to improve lobby ui even
+furthre bcz it looks kinda ugly in some parts"*, *"ask that thing to critique it as well"*, and
+*"tell it to use other games as referenc"*.
+
+⚠️⚠️ **§ 117 FIXED THE LANGUAGE. THIS IS ABOUT THE COMPOSITION, AND THEY ARE DIFFERENT JOBS.**
+Every surface on the lobby is now drawn in the geometry his own art is drawn in (`WoodCraft`), the
+accent is spent once, and no control is distinguished by hue alone. **None of that is the same as
+the screen being well composed**, and the eight rows below are what is left when the material
+question is answered. Measured off `Logs/shots-runtime/Lobby-v51.png` and its three sibling states.
+
+### 118.1 The eight things that still read badly, ranked by how much they cost
+
+| # | What | Why it reads badly | The measurement |
+|---|---|---|---|
+| 1 | ⚠️⚠️ **The chat is a placeholder.** | An empty asphalt well with one muted line at its bottom-left, under a header, with nothing else on that side of the screen. It is the only surface on the lobby that looks unfinished rather than quiet. | The well is about 70 units tall to hold one 18-unit line, and the line sits at its BOTTOM because lines fill upward, so two thirds of it is empty by construction. |
+| 2 | ⚠️⚠️ **The screen is four corners and a hole.** | The cast is the picture and the chrome frames it, which is the intended arrangement (§ 116.4), but there is no middle ground at all: nothing lives between the top band and the bottom rails on either side. | Left side: the tab row ends at y≈100 and MATCH SETTINGS starts at y≈780. **680 units of nothing.** Right side: the player card ends at y≈370 and LOBBY & CHAT starts at y≈845. **475 units of nothing.** |
+| 3 | **The three seats that are not you say nothing.** | Three identical `BOT` plates and no statement anywhere that three bots will fill in, or that a friend could take one of those seats. The room code is on the card and the empty seats are in the middle, and nothing connects them. | `LobbyNameplates`. A player who has never played this game cannot tell whether BOT means "a bot is here" or "this seat is empty". |
+| 4 | **The player card's two wooden rows are still near-twins.** | The character row (62 units, two lines) and the build row (38, one line) share a fill, a chevron and an inset. The footer link and the paper tag both read as their own thing; these two do not. | `LobbyChrome.BuildCharacterButton` and `BuildLoadoutButton`. |
+| 5 | **BACK competes with the tab row.** | Same band, same height family, same material, and it is the one control on the screen that leaves. | `LobbyChrome.LiftBack`. |
+| 6 | **Nothing moves.** | The main menu's pennants unfurl on every entry (`ArrowButtonView`, and 🧑 asked for that animation by name), and the lobby has no entrance at all: it cuts in fully drawn. | The drawers open and close with no transition either. |
+| 7 | **`tap to copy` is 15 units and low contrast** on the one control the screen exists to produce. | `CreamMuted` at 15 on wood, beside a 30-unit amber code. | `LobbyChrome.BuildRoomSign`. |
+| 8 | **The version stamp sits on nothing** in the bottom-right corner, over the road. | Every other word on the screen is on a surface. | `VersionStamp`. |
+
+### 118.2 ⚠️⚠️ THE METHOD, AND IT IS NOT "MAKE IT PRETTIER"
+
+**Run `game-ui-design` (installed at `~/.agents/skills/game-ui-design`) as a CRITIC first**, before
+writing anything. 🧑 asked for that in as many words. Its `references/patterns.md`,
+`sharp_edges.md` and `validations.md` are the three files; `CLAUDE.md` § 6.2, § 6.2b and § 6.2c
+and `FUTURE.md` § 0.5b are this repository's own versions of the same questions and they win where
+they disagree.
+
+⚠️ **Answer § 6.2's four questions about the lobby out loud before touching it**, and note that
+the answer to the first one has changed: START MATCH is unambiguously the one thing now, which it
+was not when § 116 was written.
+
+### 118.3 Other games, which 🧑 asked for by name, and what actually transfers
+
+⚠️⚠️ **`FUTURE.md` § 0.5b's warning applies to every row here: COPY THE MECHANISM, NOT THE LOOK.**
+The table in that section exists because the screens in § 92 were built by copying screenshots and
+were still wrong. **Name what the mechanism assumes about the content, then check whether this
+game's content has that shape.**
+
+| Game | The mechanism worth stealing | What it assumes |
+|---|---|---|
+| **Among Us** | The room code IS the lobby's headline, drawn enormous, and the empty seats are visibly seats. | That the primary job of the lobby is getting three other people INTO it. That is true here and § 118.1 row 3 is the gap. |
+| **Fall Guys / Stumble Guys** | The cast stands in a lit room and the chrome hugs the edges; the middle is never chrome. | That there is something worth looking at in the middle. There is: `LobbyCast`. This is what the lobby already does. |
+| **Brawl Stars** | One enormous primary in the bottom-left corner the thumb rests in, and everything else is a small chip. | A touch device. The hierarchy transfers; the sizes do not. |
+| **Rocket League** | A wide bottom bar that owns every action, so the play area above it is never interrupted. | That the actions fit on one row. Four here (start, quick, join, settings) probably do. |
+| **Overwatch 2 / Valorant** | A persistent top rail for identity and a persistent bottom rail for actions, with the middle reserved. | Both have far more chrome than this game does; taking the rails without the content is how § 118.1 row 2 stays true. |
+| **Party Animals** | Seats are physical objects in the room, and joining is walking into one. | A 3D lobby with room to move. This game's cast already stands in the street; the seats are `LobbyNameplates`. |
+
+### 118.4 What NOT to do, because it has already been decided
+
+- ⚠️⚠️ **Do not repaint his authored art.** `VISION.md` § 6, `CLAUDE.md` § 6.4 and § 6.5. START
+  MATCH is `BUTTON LONG.png` through `ArrowButtonView`, the pennants are his, `TUMP.png` is his.
+  The wordmark's CARVE is a tint treatment he asked for by name and the file is untouched.
+- ⚠️⚠️ **Do not add a fifth hue, and do not add blue or navy in any layer.** § 6.4, which he has
+  now had to state seven times.
+- ⚠️ **Do not put the accent back on a drawer toggle or a tab.** § 117.3. Amber is the marker (the
+  room code), green is the action (`JOIN BUTTON.png` is authored green), wood is everything else.
+- ⚠️ **Do not draw a new surface with `GodotTheme.Box` or `UiMaterials.Plank`.** § 6.5: pick a
+  `WoodCraft.Surface` role. Those two are the old language and are kept only for callers that
+  cannot know their own height.
+- ⚠️ **Do not touch the main menu or the in-match HUD.** Scoped out twice: *"dont touch main menu
+  and inngame ui"*.
+- ⚠️ **Do not re-baseline `CarryTests`.** § 117.8.
+
+### 118.5 Acceptance
+
+- Every state photographed, over the real background, at 1920x1080 **and at his window shape**
+  (`CLAUDE.md` § 6.2b: `Fullscreen` is false in his `settings.json`). `UiRuntimeShots.TheLobbyDraws`
+  takes four of the states; **bump `ShotVersion` every iteration** or the review is conducted
+  against a cached image.
+- `LobbyStyleProbe`, `QueueCardLayoutProbe`, `PlayerHubLayoutProbe`, `UiClickProbe` and
+  `AspectRatioProbes` green, plus the full PlayMode suite.
+- ⚠️ **A person looks at the picture.** A green layout probe is not a good screen, and § 117.7 is
+  seven faults that every probe in this repository was green through.
+
+---
+
 ## 117 · The front end was two design systems stacked, and the code-drawn one was the wrong one ⚠️⚠️ 2026-09-01, branch `ui-redesign`
 
 🧑 opened the build off § 116 and rejected it: **"ui still looks unnatural and ugly"**, *"its a
@@ -2344,6 +2426,51 @@ DRAWN AGAINST THE OLD SHAPE IS NOW WRONG AND NONE OF THEM WILL FAIL A TEST.** Th
 corner radius, the tab marker and the strip rule were each correct on the day they were written
 and each became a leftover the moment the face under them stopped being a rounded rectangle.
 **Grep for the layers, do not wait for the render.**
+
+### 117.10 The second round of his notes, and the two that needed the ASSET read rather than the code
+
+⚠️⚠️ **A TAB IS ITS OWN SILHOUETTE NOW, BECAUSE IT WAS BORROWING ONE THAT IS UPSIDE DOWN.**
+🧑, with a crop of the sign-in row: **"its also weird that create is just a rectanhle"**. The live
+tab was drawn as `WoodCraft.Surface.Header`, which is SQUARE along the top and rounded below:
+exactly right for a sign nailed across the top of the drawer under it, exactly wrong for a tab,
+where the square end is the one that should be sitting on the row. `Surface.Tab` is the chamfer
+flipped, cut at the top two corners only, so a tab is visibly a member of the button family
+without being mistakable for one. Every tab strip in the game uses it: the lobby, the sign-in
+screen, the hub and the character maker.
+
+⚠️⚠️ **THE WORDMARK NEEDED THE ASSET LOOKED AT, NOT THE CODE.** 🧑: *"it would look better if tump
+looked engraved into the wood like color as opposed to just floating"*, then on the first attempt:
+*"make this look stamped/engraved/ better, it doesnt look great right now"*.
+
+**`TUMP.png` is not a silhouette.** It is cream painted letters that already carry a dark ink
+outline AND a grey drop shadow baked into the file, so a uniform tint colours all three at once.
+The first attempt drew a dark copy, a light copy and a face copy of a texture that is itself three
+things: nine layers of edge inside a 90-unit-tall word, which composites to a brown blob with a
+halo. **It is two copies now** — an ink groove three units up, and a face in a pale warm wood that
+keeps the plank's hue.
+
+⚠️ **AND THE FACE IS LIGHTER THAN THE PLANK, WHICH DEPARTS FROM A TEXTBOOK ENGRAVE ON PURPOSE.**
+A groove cut in wood and left bare is darker than the board, and at this size that is an
+unreadable game name on the first screen a player ever sees. **A groove cut and then PAINTED is
+what every sari-sari sign actually is**, and it is lighter.
+
+**The rest of the round, all measured off `Logs/ui/07-signin.png`:**
+
+- ⚠️ *"this part looks too tight"*: the live tab's bottom edge was at 124 and the USERNAME
+  caption's box topped out at 119. **Five units of air between a control and the next control's
+  label**, in a column whose block pitch is 120. The form dropped 30 and then, on request
+  (*"raise tump and sign in and create to create space for username and password"*), the wordmark
+  and the tabs went up 40 as well. Both gaps are about 45 units now and the caption clears the tab
+  row by 85.
+- ⚠️ **The last two amber ACTIONS went green.** `START WITH 3 BOTS` on the queue card and JOIN in
+  the lobby drawer were still amber, which was correct while amber was the action colour and is
+  not now that § 117.3 made it the marker. Measured off `LobbyServers-v50.png`: an amber
+  `START WITH 3 BOTS` sat directly under START MATCH and **read as the more important of the
+  two**, which is § 117.3's inversion again, one surface down, hidden behind a state nobody
+  photographs at rest.
+- ⚠️ `MAKE YOUR OWN` on character select is plain wood. It is a DOOR to another screen, not the
+  action of that one, and a door painted in the accent competes with the choice the player came
+  there to make.
 
 ### 117.6 What is NOT done, named rather than left implied
 

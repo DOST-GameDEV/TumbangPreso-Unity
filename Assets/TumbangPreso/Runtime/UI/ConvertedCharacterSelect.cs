@@ -301,7 +301,12 @@ namespace TumbangPreso.UI
                                               MenuSfx.Click();
                                               CustomCharacterScreen.Ensure().Open();
                                           },
-                                          "WoodAmberButton");
+                                          // ⚠️ PLAIN WOOD. This is a DOOR to another screen, not
+                                          // the action of this one, and § 117.3 reserved amber
+                                          // for the "look here" marker and green for "go". A door
+                                          // painted in the accent competes with the choice the
+                                          // player came to this screen to make.
+                                          "WoodButton");
 
             var element = door.gameObject.AddComponent<LayoutElement>();
             element.preferredHeight = 56.0f;

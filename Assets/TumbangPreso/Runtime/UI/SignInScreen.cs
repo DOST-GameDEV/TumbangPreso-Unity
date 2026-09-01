@@ -431,12 +431,37 @@ namespace TumbangPreso.UI
             // this ui its so ugly"*): the three blocks are IDENTITY, FORM and ACTIONS, 80 units
             // inside a block and 120 between them, and the whole column is 90 units shorter than
             // it was.
-            const float Logo = 290.0f;
-            const float Tabs = 150.0f;
-            const float UserField = 60.0f;
-            const float PassField = -52.0f;
-            const float Hint = -118.0f;
-            const float Primary = -196.0f;
+            //
+            // ⚠️⚠️ THE FORM DROPPED 30 UNITS BECAUSE THE TAB ROW HAD NOWHERE TO BREATHE.
+            // 🧑 2026-09-01, with a crop of the tabs and the two fields: *"everything below this
+            // looks good"*, *"this part looks too tight"*. Measured off `Logs/ui/07-signin.png`:
+            // the live tab's bottom edge sat at 124 and the USERNAME caption's box topped out at
+            // 119, **five units of air between a control and the label of the next one**, while
+            // the pitch between the two field blocks below it is 24 and the pitch between blocks
+            // is 120. One gap in the column was an order of magnitude tighter than its neighbours,
+            // which is what "too tight" always means.
+            //
+            // ⚠️⚠️ AND THEN THE TOP BLOCK WENT UP AS WELL, ON REQUEST: 🧑, looking at the
+            // result, *"raise tump and sign in and create to create space for username and
+            // password"*. Dropping the form alone had already opened the gap, and he wanted the
+            // air on the other side of it too. `Logo` 290 to 330 and `Tabs` 158 to 200.
+            //
+            // The arithmetic, so the next person does not have to re-derive it: the wordmark's
+            // box is 104 tall and centred on `Logo`, so its underside is at 278. A tab hangs from
+            // `Tabs - IdleTabHeight / 2` = 174 and the live one stands `LiveTabHeight` 60 above
+            // that, so its top is 234: **44 units under the wordmark.** The USERNAME caption's box
+            // tops out at 89, which is **85 units under the tab row**, against the 5 it had when
+            // he called it *"too tight"*.
+            //
+            // ⚠️ AND NOTHING BELOW `Primary` MOVED BY MORE THAN THE SAME 30, because he said
+            // everything below the tabs already looks good and the actions block is measured
+            // against itself.
+            const float Logo = 330.0f;
+            const float Tabs = 200.0f;
+            const float UserField = 30.0f;
+            const float PassField = -82.0f;
+            const float Hint = -152.0f;
+            const float Primary = -226.0f;
 
             BuildLogo(col, Logo);
 
@@ -493,13 +518,13 @@ namespace TumbangPreso.UI
             // SIGN IN it moves to whichever account owns that Google identity. `SetMode`'s note is
             // the long version and `PlayerAccount.LinkGoogleAsync` is the other half.
             bool google = GoogleSignIn.IsAvailable;
-            float guestY = google ? -334.0f : -268.0f;
-            float backY = google ? -398.0f : -332.0f;
+            float guestY = google ? -364.0f : -298.0f;
+            float backY = google ? -428.0f : -362.0f;
 
             if (google)
             {
                 _googleButton = MenuKit.WoodButton(col, "CONTINUE WITH GOOGLE", Centre,
-                    new Vector2(0.0f, -268.0f), new Vector2(420.0f, 54.0f), GooglePressed);
+                    new Vector2(0.0f, -298.0f), new Vector2(420.0f, 54.0f), GooglePressed);
                 _googleButton.name = "GoogleButton";
             }
 
@@ -691,28 +716,37 @@ namespace TumbangPreso.UI
             // object on the screen and belonged to no surface. A carved sign is also what the
             // rest of this front end now claims to be made of.
             //
-            // **Three copies of the same texture, and that is the whole technique.** A letter cut
-            // into a board lit from above has a dark line along its TOP edge (the near wall of the
-            // groove, in shadow), a light line along its BOTTOM edge (the far wall, catching the
-            // light) and a face a shade darker than the board. So:
+            // ⚠️⚠️⚠️ TWO COPIES, NOT THREE, AND THE THIRD ONE IS WHY THE FIRST ATTEMPT WAS MUD.
+            // 🧑, on that attempt: *"make this look stamped/engraved/ better, it doesnt look
+            // great right now"*. **The asset is not a silhouette.** `TUMP.png` is cream painted
+            // letters that already carry a dark ink outline AND a grey drop shadow baked into the
+            // file, so a uniform tint colours all three at once: the first version drew a dark
+            // copy, a light copy and a face copy of a texture that is itself three things, which
+            // is nine layers of edge in a 90-unit-tall word. It read as a brown blob with a halo.
             //
-            //   1. a copy tinted INK, two units UP    -> the shadowed top wall
-            //   2. a copy tinted a lit wood, two down -> the lit bottom lip
-            //   3. the face, tinted one value under the plank, dead centre, drawn last
+            // **So: one groove and one face.**
             //
-            // ⚠️ THE OFFSETS ARE TWO UNITS AND NOT MORE. The wordmark draws about 90 units tall in
-            // a 104 unit slot, and a groove deeper than about two per cent of a letter's height
-            // stops reading as carving and starts reading as a drop shadow, which is the thing
-            // this replaces rather than a bigger version of it.
+            //   1. a copy tinted INK, three units UP -> the shadowed near wall of the cut. The
+            //      asset's own baked outline is doing the right job here for once: tinted to ink
+            //      it IS the wall.
+            //   2. the face, dead centre, in a PALE WARM WOOD rather than a dark one.
+            //
+            // ⚠️⚠️ THE FACE IS LIGHTER THAN THE PLANK AND NOT DARKER, WHICH IS THE ONE PLACE THIS
+            // DEPARTS FROM A TEXTBOOK ENGRAVE. A groove cut in wood and left bare is darker than
+            // the board, and at this size that is an unreadable game name on the first screen a
+            // player ever sees. A groove cut and then PAINTED is what every sari-sari sign in the
+            // country actually is, and it is lighter. `VISION.md` opens on a street game; the sign
+            // is the thing that survives the rain.
+            //
+            // ⚠️ THREE UNITS AND NOT TWO. The wordmark draws about 90 units tall, and at two the
+            // groove was inside the asset's own baked outline and invisible.
             //
             // ⚠️⚠️ AND THIS IS A TREATMENT, NOT A REPAINT OF HIS ART. `CLAUDE.md` § 6.4 forbids
             // repainting authored art and 🧑 asked for this one directly, which is what that rule
             // defers to. The FILE is untouched and the title screen still draws it white; only
             // this screen tints its own three copies.
-            Engraved(box.transform, logo, "LogoShadow", 2.0f,
-                     new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.85f));
-            Engraved(box.transform, logo, "LogoLip", -2.0f,
-                     new Color(UiTheme.WoodEdge.r, UiTheme.WoodEdge.g, UiTheme.WoodEdge.b, 0.9f));
+            Engraved(box.transform, logo, "LogoGroove", 3.0f,
+                     new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.9f));
 
             var image = Engraved(box.transform, logo, "Logo", 0.0f, EngravedFace);
             image.raycastTarget = false;
@@ -751,19 +785,24 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>
-        /// The carved face: the plank's own colour, one value down.
+        /// The carved face: the plank's own hue, lifted and desaturated into painted wood.
         ///
-        /// ⚠️ IT IS NOT `WoodDark` OR INK. A groove cut in wood shows more wood, not a hole, and
-        /// the letters have to stay readable at a glance as the game's name. `WoodPanelFace` at
-        /// 0.72 of its value sits between the plank behind it and the ink line above it, which is
-        /// exactly where a cut surface sits.
+        /// ⚠️⚠️ IT WAS `WoodPanelFace` AT 0.72 OF ITS VALUE AND THAT IS WHAT 🧑 CALLED NOT GREAT.
+        /// A face darker than the board is a bare groove, and a bare groove in a mid-brown plank
+        /// is a dark brown word on a brown rectangle: correct as physics, unreadable as a logo,
+        /// and muddy once the asset's own baked ink outline is tinted on top of it.
+        ///
+        /// ⚠️ 1.55 OF VALUE AT 0.42 OF SATURATION IS A PALE WARM WOOD, not cream and not white.
+        /// It keeps the plank's hue, so the word belongs to the board it is cut into rather than
+        /// sitting on it the way the untinted white asset did, and it is light enough that the ink
+        /// groove above it reads as depth instead of as an outline.
         /// </summary>
         private static Color EngravedFace
         {
             get
             {
                 Color.RGBToHSV(UiTheme.WoodPanelFace, out float h, out float s, out float v);
-                return Color.HSVToRGB(h, Mathf.Clamp01(s * 1.05f), Mathf.Clamp01(v * 0.72f));
+                return Color.HSVToRGB(h, Mathf.Clamp01(s * 0.42f), Mathf.Clamp01(v * 1.55f));
             }
         }
 
@@ -822,7 +861,7 @@ namespace TumbangPreso.UI
             // and the four units of extra height are the other two signals.
             _signInTab = MenuKit.WoodButton(col, "SIGN IN", Centre,
                 new Vector2(-105.0f, y), new Vector2(198.0f, LiveTabHeight), () => SetMode(false),
-                "WoodHeaderButton");
+                "WoodTabLiveButton");
 
             _createTab = MenuKit.WoodButton(col, "CREATE", Centre,
                 new Vector2(105.0f, y), new Vector2(198.0f, IdleTabHeight), () => SetMode(true),
@@ -1279,7 +1318,7 @@ namespace TumbangPreso.UI
             var skin = button.GetComponent<GodotButton>();
             if (skin == null) return;
 
-            skin.Variation = on ? "WoodHeaderButton" : "WoodTabIdleButton";
+            skin.Variation = on ? "WoodTabLiveButton" : "WoodTabIdleButton";
             skin.Apply();
             skin.Refresh();
         }

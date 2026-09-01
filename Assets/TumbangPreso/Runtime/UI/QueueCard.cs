@@ -395,10 +395,23 @@ namespace TumbangPreso.UI
 
             // ---- PHASE 11: the offer, and the disclosure under it ----------------------
             //
-            // ⚠⚠ IT IS THE ONLY OTHER PRESSABLE THING ON THE CARD AND IT IS AMBER, WHICH TAKES
-            // THE ACCENT OFF NOTHING: the door that WAS amber is hidden while the card is up (see
-            // `Refresh`), so at any moment exactly one control on this surface is the accent.
-            // `FUTURE.md` § 0.5b: one accent, used for the one thing.
+            // ⚠⚠⚠ GREEN, NOT AMBER, AND THAT IS A CORRECTION TO THE NOTE THAT USED TO BE
+            // HERE. It read *"it is the only other pressable thing on the card and it is AMBER,
+            // which takes the accent off nothing"*, and that was sound while amber was this front
+            // end's ACTION colour. § 117.3 moved it: amber is the "look here" marker now (the
+            // room code, and nothing else on the lobby), and GREEN is the action, because
+            // `Art/ui/host-game/JOIN BUTTON.png` and the `PLAY` pennant are both authored green
+            // and green is therefore what 🧑's own art means by "go".
+            //
+            // ⚠️ MEASURED OFF `Logs/shots-runtime/LobbyServers-v50.png`: with the queue card up,
+            // an amber `START WITH 3 BOTS` sat directly under START MATCH, which is his brown
+            // authored `BUTTON LONG` art, and **the amber one read as the more important of the
+            // two**. That is the same hierarchy inversion § 117.3 fixed on the drawer toggles,
+            // one surface down and hidden behind a state nobody photographs at rest.
+            //
+            // ⚠️ TWO GREENS ARE NOT ON SCREEN AT ONCE. The door that WAS this control is hidden
+            // while the card is up (see `Refresh`), and START MATCH is authored art rather than a
+            // `WoodPrimaryButton`, so the green here is the only one of its kind on the surface.
             //
             // ⚠⚠ AND THE DISCLOSURE IS A ROW, NOT A TOOLTIP. `FUTURE.md` § 11 makes it a
             // constraint: *"a player who thinks they beat a person and did not will be angrier
@@ -407,7 +420,7 @@ namespace TumbangPreso.UI
             // will not move their rating.
             _fill = MenuKit.WoodButton(column.transform, "START WITH 3 BOTS", Vector2.zero,
                                        Vector2.zero, new Vector2(0.0f, 48.0f), OnFillPressed,
-                                       "WoodAmberButton");
+                                       "WoodPrimaryButton");
             _fill.name = "StartWithBotsButton";
             _fillLabel = _fill.GetComponentInChildren<Text>();
 

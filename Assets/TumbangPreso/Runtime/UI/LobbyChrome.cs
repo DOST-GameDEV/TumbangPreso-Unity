@@ -1520,7 +1520,7 @@ namespace TumbangPreso.UI
                 // so the pair said "this one" in hue alone, on a screen where amber was also the
                 // two drawer toggles and the room code. `GodotTheme`'s `WoodTabIdleButton` note
                 // carries the argument; the height swap below is the other half of it.
-                skin.Variation = active ? "WoodHeaderButton" : "WoodTabIdleButton";
+                skin.Variation = active ? "WoodTabLiveButton" : "WoodTabIdleButton";
                 skin.Apply();
                 skin.Refresh();
 
@@ -2778,7 +2778,7 @@ namespace TumbangPreso.UI
             // wrong colour a frame later.
             var button = MenuKit.WoodButton(parent, text, Vector2.zero, Vector2.zero,
                                             new Vector2(TabWidth, HeaderHeight), onClick,
-                                            active ? "WoodHeaderButton" : "WoodTabIdleButton");
+                                            active ? "WoodTabLiveButton" : "WoodTabIdleButton");
             button.name = name;
 
             var element = button.gameObject.AddComponent<LayoutElement>();
