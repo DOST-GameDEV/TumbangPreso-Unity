@@ -2273,6 +2273,50 @@ for the single thing a host needs from a multiplayer lobby.**
 - ⚠️ **Practice has no room and therefore no code**, and the whole row leaves rather than
   showing an empty plate under an amber heading.
 
+### 116.7 ⚠⚠⚠ THE BUTTONS WERE THE BIGGEST PROBLEM, AND EVERY BUTTON IN THE GAME WAS ONE FUNCTION CALL
+
+🧑 2026-09-01, with two crops: *"buttons are the same"*, *"wtf is this"*, then
+**"buttons were the biggest problem btw"**, *"thoroughly try to overhaul the enntire ui bcz the
+overhaul u did still looks ugly"*, and *"u can use dropdowns and shit to make some shit work or
+look good"*.
+
+**He is right, and it is `GodotTheme.Box(fill, border, 5, 12)`.** A flat fill, a flat five-pixel
+border and a twelve-pixel corner, and that is the entire button vocabulary of this game: the green
+primary, the amber tab, the wood secondary and the red danger button are **the same rectangle four
+times with the fill swapped**. `game-ui-design`'s ordering tools are position, size, weight and
+colour, in that order, and this front end was communicating every hierarchy it has with the LAST
+one.
+
+`UiMaterials.CarvedButton` replaces it for every wood variation. Four things happen that did not:
+
+1. ⚠️⚠️ **AN INK OUTLINE, WHICH IS THE GAME'S OWN LOOK.** Every character wears an 8 mm ink
+   outline (`ToonSkin.PersonOutlineWidth`) and the menus wore none, so the UI and the cast looked
+   like they came from two different games. **This is the single biggest reason the new buttons
+   read as belonging to Tumbang Preso** rather than to a template.
+2. **A lit top edge and a shaded bottom one**, which is `Plank`'s rule applied to a control.
+3. **An inner bevel line**, which is the difference between a plastic slab and painted wood.
+4. ⚠️ **`chunky` MAKES THE PRIMARY A DIFFERENT OBJECT RATHER THAN A DIFFERENT COLOUR**: a thicker
+   outline and a deeper bevel, so it reads as heavier at a glance and in a photograph.
+
+⚠️ **The pressed state swaps the lighting rather than darkening the fill**, which is what lets a
+press read as a press without moving the label.
+
+⚠️⚠️ **AND THE FACE IS FLAT IN THE MIDDLE BECAUSE THE NINE-SLICE FORCES IT, NOT BY CHOICE.** A
+sliced sprite stretches its centre row, so a gradient across the whole height smears; the top and
+bottom slices keep their pixels, which is exactly where the bevel lives. **A full-height gradient
+is the trap that looks right at the authored size and streaked at every other one.**
+
+**Every button label gets a shadow**, which `game-ui-design` lists as the sharp edge
+`No Text Outline Or Shadow`. Cream on wood is legible in a still and soft over a live street with a
+sunset in it, which is what is behind every button in this game.
+
+⚠️⚠️ **AND THE SEGMENTED CONTROL HE POINTED AT IS GONE RATHER THAN RETUNED.** *"wtf is this"* was
+two buttons inside a dark box, which is not a segmented control: **it added a third rectangle to a
+screen whose whole complaint was too many identical rectangles**, and a recessed plank at that size
+is mostly its own shadow. A tab strip is a LINE with the live tab standing on it, which is the
+metaphor every player already knows and costs one chalk rule instead of a plate. The live tab is
+also four units TALLER, because size survives a colourblind player and a photograph.
+
 ### 116.5 What is NOT done, named rather than left implied
 
 - **The lobby has no keyboard chain yet.** The login screen has one (`SignInScreen.Chain`); the
@@ -2281,6 +2325,11 @@ for the single thing a host needs from a multiplayer lobby.**
 - **The hub, the maker and the character select were not touched.** 🧑 scoped this pass:
   *"overhaul lobby UI and login ui, focus only on that for now"*, and *"dont touch main menu and
   inngame ui"*. They still use `GodotTheme.WoodBox` everywhere and they still have no focus state.
+- ⚠️ **The dropdown idea is not taken up yet.** 🧑: *"u can use dropdowns and shit to make some
+  shit work or look good"*. The lobby's four selector rows (MAP, MODE, BOTS, RULES) are steppers
+  with authored arrow art, and `UiRows.DropdownRow` already exists and is used on the hub; turning
+  the rail's rows into dropdowns is the obvious next pass and it is **not** a repaint, because a
+  dropdown shows every option at once and a stepper hides all but one.
 - **No probe looks at any of this.** `game-ui-design`'s rules are mostly about what a person sees;
   the two that a test COULD hold are the touch-target floor and "no control is only distinguished
   by colour", and neither is asserted anywhere.

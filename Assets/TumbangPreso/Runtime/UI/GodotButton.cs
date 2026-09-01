@@ -51,10 +51,44 @@ namespace TumbangPreso.UI
             int width = _style.Wood ? GodotTheme.WoodBorderWidth : GodotTheme.BorderWidth;
             int radius = _style.Wood ? GodotTheme.WoodCornerRadius : GodotTheme.CornerRadius;
 
-            _normal = GodotTheme.Box(_style.Fill, _style.Border, width, radius);
-            _hover = GodotTheme.Box(_style.Lit, _style.LitBorder, width, radius);
-            _pressed = GodotTheme.Box(_style.Sunk, _style.LitBorder, width, radius);
-            _disabled = GodotTheme.Box(UiTheme.WoodDark, _style.Border, width, radius);
+            // ⚠⚠⚠ EVERY WOOD BUTTON IS CARVED NOW, AND IT WAS A FLAT FILL WITH A FLAT BORDER.
+            // 🧑 2026-09-01, with two crops of this exact control: *"buttons are the same"*,
+            // *"wtf is this"*, *"buttons were the biggest problem btw"*. He is right and the cause
+            // is one line: `GodotTheme.Box(fill, border, 5, 12)` painted the green primary, the
+            // amber tab, the wood secondary and the red danger button as the SAME rectangle with
+            // the fill swapped. `UiMaterials.CarvedButton` gives them an ink outline (the one the
+            // whole cast wears), a lit top edge, a shaded bottom one and an inner bevel, and it
+            // makes the primary a physically heavier object rather than a differently coloured
+            // one. **A colour is not a shape.**
+            //
+            // ⚠️ THE PRESSED STATE SWAPS THE LIGHTING RATHER THAN DARKENING THE FILL, which is
+            // what makes a press read as a press without moving the label. `_style.Sunk` is still
+            // consulted for the FACE colour, so the theme's own table stays in charge of paint.
+            //
+            // ⚠️ THE NON-WOOD VARIATIONS ARE UNTOUCHED. `PrimaryButton` and the plain card Button
+            // are the authored `.tscn` theme's own controls, drawn on cream inside converted
+            // screens; giving them a wooden bevel would be this pass reaching into surfaces 🧑
+            // scoped it out of.
+            if (_style.Wood)
+            {
+                bool chunky = Variation == "WoodPrimaryButton" || Variation == "WoodDangerButton";
+
+                _normal = UiMaterials.CarvedButton(_style.Fill, _style.Border,
+                                                   UiMaterials.ButtonPose.Raised, chunky);
+                _hover = UiMaterials.CarvedButton(_style.Lit, _style.LitBorder,
+                                                  UiMaterials.ButtonPose.Hover, chunky);
+                _pressed = UiMaterials.CarvedButton(_style.Sunk, _style.Border,
+                                                    UiMaterials.ButtonPose.Sunk, chunky);
+                _disabled = UiMaterials.CarvedButton(UiTheme.WoodDark, _style.Border,
+                                                     UiMaterials.ButtonPose.Disabled, chunky);
+            }
+            else
+            {
+                _normal = GodotTheme.Box(_style.Fill, _style.Border, width, radius);
+                _hover = GodotTheme.Box(_style.Lit, _style.LitBorder, width, radius);
+                _pressed = GodotTheme.Box(_style.Sunk, _style.LitBorder, width, radius);
+                _disabled = GodotTheme.Box(UiTheme.WoodDark, _style.Border, width, radius);
+            }
 
             // See SkinLayers: the shadow has to be a sibling of the face, both under a control
             // whose own Image is nothing but a hit area.
@@ -78,6 +112,22 @@ namespace TumbangPreso.UI
             {
                 _labelHome = _label.rectTransform.anchoredPosition;
                 _labelHomeKnown = true;
+            }
+
+            // ⚠⚠ A BUTTON LABEL GETS A SHADOW, AND `game-ui-design` LISTS ITS ABSENCE AS A SHARP
+            // EDGE BY NAME (`No Text Outline Or Shadow`). Cream on wood is a legible pair on a
+            // still screenshot and a soft one over a live 3D street with a sunset in it, which is
+            // what is behind every button in this game. One unit of ink under the type is the
+            // cheapest legibility there is and it also gives the letters the same painted-on
+            // weight the rest of the art has.
+            //
+            // ⚠️ ONE COMPONENT, ADDED ONCE. `Apply` runs on every skin change, and a second
+            // `Shadow` on the same label doubles the offset instead of replacing it.
+            if (_label != null && _style.Wood && _label.GetComponent<Shadow>() == null)
+            {
+                var shadow = _label.gameObject.AddComponent<Shadow>();
+                shadow.effectColor = new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.55f);
+                shadow.effectDistance = new Vector2(0.0f, -2.0f);
             }
         }
 

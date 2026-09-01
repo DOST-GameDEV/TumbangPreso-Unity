@@ -219,6 +219,139 @@ namespace TumbangPreso.UI
             return Finish(texture, pixels, new Vector4(1, 0, 1, 0), key);
         }
 
+
+        /// <summary>How a carved button is lit. See <see cref="CarvedButton"/>.</summary>
+        public enum ButtonPose
+        {
+            Raised,
+            Hover,
+            Sunk,
+            Disabled,
+        }
+
+        /// <summary>
+        /// A button with an edge you can see: ink outline, lit top, shaded bottom, carved face.
+        ///
+        /// ⚠⚠⚠ EVERY BUTTON IN THIS GAME WAS `GodotTheme.Box(fill, border, 5, 12)`: A FLAT
+        /// FILL, A FLAT FIVE-PIXEL BORDER AND ROUNDED CORNERS, AND NOTHING ELSE. 🧑 2026-09-01,
+        /// with two crops: *"buttons are the same"*, *"wtf is this"*, *"buttons were the biggest
+        /// problem btw"*. He is right, and it is one function: the green primary, the amber tab,
+        /// the wood secondary and the red danger button are the same rectangle four times with
+        /// the fill swapped. **A colour is not a shape**, and `game-ui-design`'s ordering puts
+        /// weight and colour LAST, after position and size, precisely so that a screen is not
+        /// asked to communicate hierarchy with paint alone.
+        ///
+        /// **Four things happen here that did not happen there**, and each is a line of pixels:
+        ///
+        /// 1. ⚠️ **AN INK OUTLINE, WHICH IS THE GAME'S OWN LOOK.** Every character in this game
+        ///    wears an 8 mm ink outline (`ToonSkin.PersonOutlineWidth`) and the menus wore none,
+        ///    so the UI and the cast looked like they came from different games. This is that
+        ///    outline at UI scale, and it is the single biggest reason the new buttons read as
+        ///    belonging to Tumbang Preso rather than to a template.
+        /// 2. ⚠️ **A LIT TOP EDGE AND A SHADED BOTTOM ONE**, which is `Plank`'s rule applied to a
+        ///    control: the light is above the screen, so a RAISED thing is bright along its top.
+        ///    It is what makes a pressed button read as pressed without moving.
+        /// 3. ⚠️ **THE FACE IS CARVED INTO, NOT FILLED.** A one-pixel dark line inside the lit
+        ///    edge is the bevel's inner shadow, and it is the difference between a plastic slab
+        ///    and a piece of painted wood.
+        /// 4. ⚠️ **`chunky` MAKES THE PRIMARY A DIFFERENT OBJECT RATHER THAN A DIFFERENT COLOUR.**
+        ///    A thicker outline and a deeper bevel read as heavier at a glance and in a
+        ///    photograph, which is what a primary action has to do.
+        ///
+        /// ⚠⚠ THE FACE IS FLAT IN THE MIDDLE AND THAT IS FORCED BY THE NINE-SLICE, NOT A
+        /// CHOICE. A sliced sprite stretches its centre row, so any gradient painted across the
+        /// whole height smears; the top and bottom slices keep their pixels, which is exactly
+        /// where the bevel lives. Attempting a full-height gradient here is the trap that makes a
+        /// button look fine at its authored size and streaked at every other one.
+        /// </summary>
+        public static Sprite CarvedButton(Color face, Color edge, ButtonPose pose, bool chunky)
+        {
+            int ink = chunky ? 4 : 3;
+            int bevel = chunky ? 6 : 5;
+            const int radius = 13;
+
+            string key = $"btn_{ColorUtility.ToHtmlStringRGB(face)}_{ColorUtility.ToHtmlStringRGB(edge)}_{pose}_{chunky}";
+            if (Cache.TryGetValue(key, out var cached) && cached != null) return cached;
+
+            int corner = radius + ink + bevel;
+            int size = (corner * 2) + 2;
+
+            var texture = NewTexture(size, size, key);
+            var pixels = new Color[size * size];
+
+            bool sunk = pose == ButtonPose.Sunk;
+            bool dim = pose == ButtonPose.Disabled;
+
+            Color body = pose == ButtonPose.Hover ? Lift(face, 0.06f)
+                       : sunk ? Lift(face, -0.10f)
+                       : dim ? Desaturate(face, 0.55f)
+                       : face;
+
+            // ⚠️ THE TWO EDGES SWAP WHEN THE BUTTON IS PRESSED. That is the whole reason a
+            // pressed state does not need to move the label: the light has moved to the other
+            // side of the object, which is what happens when you push something in.
+            Color top = sunk ? Lift(body, -0.22f) : Lift(body, chunky ? 0.30f : 0.24f);
+            Color bottom = sunk ? Lift(body, 0.16f) : Lift(body, -0.24f);
+            Color rim = dim ? Lift(edge, -0.18f) : edge;
+
+            float mid = (size - 1) * 0.5f;
+
+            for (int y = 0; y < size; y++)
+                for (int x = 0; x < size; x++)
+                {
+                    // Distance from the rounded-rect boundary, positive inside.
+                    float dx = Mathf.Abs(x - mid) - (mid - corner);
+                    float dy = Mathf.Abs(y - mid) - (mid - corner);
+                    float outside = Mathf.Sqrt(Mathf.Max(dx, 0.0f) * Mathf.Max(dx, 0.0f)
+                                               + Mathf.Max(dy, 0.0f) * Mathf.Max(dy, 0.0f));
+                    float depth = corner - Mathf.Max(outside, Mathf.Max(dx, dy));
+
+                    Color c;
+
+                    if (depth <= 0.0f)
+                    {
+                        c = Color.clear;
+                    }
+                    else if (depth <= ink)
+                    {
+                        // ⚠️ THE OUTLINE IS ANTI-ALIASED ON ITS OUTER FACE ONLY. A hard edge on a
+                        // 13-radius corner draws visible stairs at the sizes this game uses.
+                        c = UiTheme.Ink;
+                        c.a = Mathf.Clamp01(depth);
+                    }
+                    else if (depth <= ink + bevel)
+                    {
+                        bool upper = y > mid;
+                        c = upper ? top : bottom;
+
+                        // The rim colour bleeds into the sides so the bevel reads as one band
+                        // rather than as two lit halves meeting at a seam.
+                        float sideness = Mathf.Clamp01(Mathf.Abs(x - mid) / mid);
+                        c = Color.Lerp(c, rim, sideness * 0.55f);
+                    }
+                    else if (depth <= ink + bevel + 1.5f)
+                    {
+                        // ⚠️ The inner shadow: one line of the bevel's opposite, which is what
+                        // makes the face read as carved INTO the plate.
+                        c = y > mid ? Lift(body, -0.14f) : Lift(body, 0.08f);
+                    }
+                    else
+                    {
+                        c = body;
+                    }
+
+                    pixels[y * size + x] = c;
+                }
+
+            return Finish(texture, pixels, new Vector4(corner, corner, corner, corner), key);
+        }
+
+        private static Color Desaturate(Color c, float amount)
+        {
+            float grey = (c.r * 0.299f) + (c.g * 0.587f) + (c.b * 0.114f);
+            return Color.Lerp(c, new Color(grey, grey, grey, c.a), amount);
+        }
+
         private static float Smooth(float t) => t * t * (3.0f - 2.0f * t);
 
         private static Color Lift(Color c, float amount) => new Color(

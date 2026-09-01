@@ -367,6 +367,14 @@ namespace TumbangPreso.UI
             // ⚠️ AFTER THE CHROME, ON PURPOSE. See `InstallQueueCard`.
             InstallQueueCard();
 
+            // ⚠⚠ THE KEYBOARD CAN DRIVE THIS SCREEN NOW, AND IT NEVER COULD. `KeyboardCursor`
+            // carries the reasoning, including why the selection is NOT pre-armed: the chat field
+            // is always open in this lobby and ENTER is what a player presses to talk, so a
+            // pre-selected START MATCH would turn a stray Enter into a launched match.
+            var primary = Node("StartButton")?.GetComponent<Selectable>()
+                          ?? Node("PrimaryButton")?.GetComponent<Selectable>();
+            if (primary != null) KeyboardCursor.Install(gameObject, primary);
+
             // ⚠️⚠️ A NAME TYPED IN THE LOBBY HAS TO REACH THE OTHER THREE MACHINES, AND NOTHING
             // CARRIED IT. `NetSession.ConfigureClientHello` sends `Settings.PlayerName` at
             // CONNECTION time and never again, so editing the card after joining changed the name

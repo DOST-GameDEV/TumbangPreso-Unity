@@ -696,21 +696,18 @@ namespace TumbangPreso.UI
         /// </summary>
         private void BuildTabs(Transform col, float y)
         {
-            var well = new GameObject("ModeWell", typeof(RectTransform), typeof(Image));
-            well.transform.SetParent(col, false);
-
-            var wellImage = well.GetComponent<Image>();
-            // ⚠️ `WoodDeep` RECESSED, NOT `WoodDark`. Measured off the first render: `WoodDark` is
-            // `1d0e06`, which is near black, and a recessed plank of it drew as a hard black
-            // rectangle around the two tabs. The well has to read as a groove in the same board,
-            // not as a hole cut through it.
-            wellImage.sprite = UiMaterials.Plank(UiTheme.WoodDeep, raised: false);
-            wellImage.type = Image.Type.Sliced;
-            wellImage.color = Color.white;
-            wellImage.raycastTarget = false;
-
-            MenuKit.Place(wellImage.rectTransform, Centre, new Vector2(0.0f, y),
-                          new Vector2(436.0f, 68.0f));
+            // ⚠⚠⚠ THE WELL IS GONE. 🧑 2026-09-01, with a crop of exactly this control:
+            // *"wtf is this"*. Two buttons inside a dark box is not a segmented control, it is two
+            // buttons inside a dark box: the box added a third rectangle to a screen whose whole
+            // complaint was too many identical rectangles, and it read as a black bar because a
+            // recessed plank at this size is mostly its own shadow.
+            //
+            // **A tab strip is a LINE and the live tab sits ON it.** That is the metaphor every
+            // player already knows, it costs one chalk rule instead of a plate, and it is the same
+            // rule the heading two rows up already follows. The inactive tab is a sunken plate and
+            // the live one is a raised amber one, so the pair differ in RELIEF as well as in
+            // colour, which is what `UiMaterials.CarvedButton` was written for.
+            UiMaterials.Underline(col, 436.0f, y - 34.0f, UiTheme.WoodEdge);
 
             _signInTab = MenuKit.WoodButton(col, "SIGN IN", Centre,
                 new Vector2(-105.0f, y), new Vector2(198.0f, 52.0f), () => SetMode(false),
@@ -722,11 +719,10 @@ namespace TumbangPreso.UI
             // ⚠️ THE MARKER IS A SIBLING OF THE TABS AND NOT A CHILD OF EITHER, so switching
             // modes moves one object instead of showing one and hiding another. Two markers is
             // two things to keep in step and one of them is always the one somebody forgets.
-            // ⚠️ 44 BELOW THE ROW, MEASURED OFF THE RENDER. The well is 68 tall centred on the
-            // tabs, so its bottom edge is 34 down; a marker at 34 sits exactly ON that edge and
-            // the first render shows it half swallowed by it.
-            _tabMarker = UiMaterials.Underline(col, 150.0f, y - 44.0f, UiTheme.Amber);
-            _tabMarker.rectTransform.anchoredPosition = new Vector2(-105.0f, y - 44.0f);
+            // ⚠️ THE AMBER BAR SITS ON THE STRIP LINE, NOT BELOW IT, so the live tab reads as
+            // standing on the rule while the other one hangs off it. Same y as the rule above.
+            _tabMarker = UiMaterials.Underline(col, 198.0f, y - 34.0f, UiTheme.Amber);
+            _tabMarker.rectTransform.anchoredPosition = new Vector2(-105.0f, y - 34.0f);
 
             FocusRing.Attach(_signInTab.gameObject, 4.0f);
             FocusRing.Attach(_createTab.gameObject, 4.0f);
@@ -1092,9 +1088,18 @@ namespace TumbangPreso.UI
                                 : "TAB to move  ·  ENTER to sign in  ·  ESC to go back");
         }
 
+        /// <summary>
+        /// ⚠⚠ THE LIVE TAB IS TALLER AS WELL AS AMBER, AND THE SIZE IS THE HALF THAT SURVIVES A
+        /// COLOURBLIND PLAYER OR A PHOTOGRAPH. `game-ui-design`'s ordering tools are position,
+        /// size, weight and colour; this pair was using the last one alone. Four units is small
+        /// enough not to move the row and large enough to read as "this one is in front".
+        /// </summary>
         private static void SetTab(Button button, bool on)
         {
             if (button == null) return;
+
+            var rect = (RectTransform)button.transform;
+            rect.sizeDelta = new Vector2(rect.sizeDelta.x, on ? 56.0f : 48.0f);
 
             var skin = button.GetComponent<GodotButton>();
             if (skin == null) return;
