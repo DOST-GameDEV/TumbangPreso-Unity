@@ -2317,6 +2317,38 @@ is mostly its own shadow. A tab strip is a LINE with the live tab standing on it
 metaphor every player already knows and costs one chalk rule instead of a plate. The live tab is
 also four units TALLER, because size survives a colourblind player and a photograph.
 
+### 116.8 The match settings are four dropdowns, which is his own suggestion taken literally
+
+🧑: *"u can use dropdowns and shit to make some shit work or look good"*.
+
+**MAP, MODE, BOTS and RULES were four identical `< VALUE >` rows: twelve controls to express four
+choices**, and not one of them says what the other options are or how many there are. Pressing an
+arrow four times to find the fourth map is a guessing game with a button on it.
+`game-ui-design`'s Progressive Information Disclosure is the pattern: layer one is the current
+value, layer two is the whole list on demand.
+
+- ⚠️⚠️ **`UiRows.DropdownRow` COULD NOT BE REUSED AND THAT IS A MEASUREMENT.** It is built for the
+  hub's list: `UiRows.Row` puts its label in a 420-unit box and starts the value column at 0.56 of
+  the row, so it needs a list about **1480 units wide** before the hint stops drawing through the
+  control. **The lobby rail is 460.** § 108's `StepperRow` shipped 476 units wide into a
+  1366-pixel window with its right-hand arrow off the screen; a rail control has to be built
+  against the rail. `WoodDropdown` is that control.
+- ⚠️⚠️ **THE OPEN LIST OVERLAYS AND DOES NOT PUSH**, via `LayoutElement.ignoreLayout`, for the
+  reason § 115.7 records: a `VerticalLayoutGroup` owns every active child, so a list that took
+  part in the layout would shove every row under it down the rail and walk START MATCH off the
+  bottom of the screen. **That exact fault shipped in the chat the same day.**
+- ⚠️ **It has its own sorting canvas.** Sibling order decides draw order, and this object is the
+  last child of its own ROW rather than of the rail, so every row underneath is painted after it.
+  § 99 is the same trap one property over, which is why `overrideSorting` is set as well.
+- ⚠️ **Every handler is the one the stepper already used.** They take a DELTA, so the dropdown
+  passes `chosen - current` rather than opening a second path into the same state: each of those
+  four carries a host check, a settings write and an RPC, and a second path is § 38.5's three dead
+  protocols.
+- ⚠️ **The authored stepper rows are switched off, not destroyed.** `LobbyStyle.Classic` uses them
+  and `ConvertedScreen` indexed every one of their buttons by name in `Start`.
+- **The drawer is 306 units tall now, down from 364**: four 56-unit rows, three 6-unit gaps, the
+  detail box and the padding, added up.
+
 ### 116.5 What is NOT done, named rather than left implied
 
 - **The lobby has no keyboard chain yet.** The login screen has one (`SignInScreen.Chain`); the
@@ -2325,7 +2357,9 @@ also four units TALLER, because size survives a colourblind player and a photogr
 - **The hub, the maker and the character select were not touched.** 🧑 scoped this pass:
   *"overhaul lobby UI and login ui, focus only on that for now"*, and *"dont touch main menu and
   inngame ui"*. They still use `GodotTheme.WoodBox` everywhere and they still have no focus state.
-- ⚠️ **The dropdown idea is not taken up yet.** 🧑: *"u can use dropdowns and shit to make some
+- ⚠️ **The dropdown idea is taken up for the lobby rail only** (§ 116.8). The hub's own rows
+  still use `UiRows.DropdownRow`, which is correct there, and the character maker's steppers are
+  untouched. **The old note, kept because it names what was decided:** 🧑: *"u can use dropdowns and shit to make some
   shit work or look good"*. The lobby's four selector rows (MAP, MODE, BOTS, RULES) are steppers
   with authored arrow art, and `UiRows.DropdownRow` already exists and is used on the hub; turning
   the rail's rows into dropdowns is the obvious next pass and it is **not** a repaint, because a

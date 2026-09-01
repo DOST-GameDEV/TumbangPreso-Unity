@@ -366,6 +366,7 @@ namespace TumbangPreso.UI
 
             // ⚠️ AFTER THE CHROME, ON PURPOSE. See `InstallQueueCard`.
             InstallQueueCard();
+            BuildSettingsDropdowns();
 
             // ⚠⚠ THE KEYBOARD CAN DRIVE THIS SCREEN NOW, AND IT NEVER COULD. `KeyboardCursor`
             // carries the reasoning, including why the selection is NOT pre-armed: the chat field
@@ -798,6 +799,77 @@ namespace TumbangPreso.UI
         /// the floating plate this pass removed. The queue is the one lobby control that has to be
         /// built after the rail rather than before it.
         /// </summary>
+        /// <summary>
+        /// The match settings, as four dropdowns instead of four steppers.
+        ///
+        /// ⚠⚠⚠ 🧑 ASKED FOR THIS BY NAME: *"u can use dropdowns and shit to make some shit
+        /// work or look good"*, in the same message as *"buttons were the biggest problem"*. Four
+        /// `&lt; VALUE &gt;` rows is **twelve controls to express four choices**, and not one of
+        /// them says what the other options are. `WoodDropdown` carries the rest of the argument.
+        ///
+        /// ⚠⚠ THE OPTION TABLES LIVE HERE AND THE BOX LIVES IN THE CHROME, which is why this
+        /// method is on this class. `GameLaunch.Maps`, `MenuKit.ModeLabel`, `Difficulties` and the
+        /// formats are all this screen's, together with the index, the wire call and the rule
+        /// about who is allowed to change each one.
+        ///
+        /// ⚠⚠ AND EVERY HANDLER IS THE ONE THE STEPPER ALREADY USED. `OnMapCycle` and its
+        /// siblings take a DELTA, because a stepper is all they have ever been asked to serve;
+        /// a dropdown hands back an absolute index, so each call is `chosen - current` rather than
+        /// a second path into the same state. **A second path is `docs/TODO.md` § 38.5's three
+        /// dead protocols**, and these four each carry a host check, a settings write and an RPC.
+        /// </summary>
+        private void BuildSettingsDropdowns()
+        {
+            var rows = _chrome?.SettingsRows;
+            if (rows == null) return;
+
+            const float Caption = 96.0f;
+
+            var mapNames = new string[SceneFlow.Maps.Length];
+            for (int i = 0; i < mapNames.Length; i++)
+                mapNames[i] = SceneFlow.PreviewFor(SceneFlow.Maps[i]).Name;
+
+            _mapDrop = WoodDropdown.Build(rows, "MAP", Caption, mapNames, _map,
+                                          v => OnMapCycle(v - _map));
+
+            _modeDrop = WoodDropdown.Build(rows, "MODE", Caption,
+                                           new[] { "CLASSIC", "HERO STRIKE" },
+                                           SceneFlow.SelectedMode == GameMode.HeroStrike ? 1 : 0,
+                                           v => OnModeCycle(v - (SceneFlow.SelectedMode == GameMode.HeroStrike ? 1 : 0)));
+
+            _botsDrop = WoodDropdown.Build(rows, "BOTS", Caption, Difficulties, _difficulty,
+                                           v => OnDifficultyCycle(v - _difficulty));
+
+            var formats = new string[FormatOptionCount];
+            for (int i = 0; i < formats.Length; i++) formats[i] = FormatLabel(i);
+
+            _rulesDrop = WoodDropdown.Build(rows, "RULES", Caption, formats, _format,
+                                            v => OnFormatCycle(v - _format));
+        }
+
+        private WoodDropdown _mapDrop, _modeDrop, _botsDrop, _rulesDrop;
+
+        /// <summary>
+        /// ⚠️ THE DROPDOWNS FOLLOW THE STATE RATHER THAN OWNING IT. In a networked lobby the host
+        /// picks and every peer is told over the wire (`HandleMapSynced` and its siblings), so a
+        /// control that remembered its own index would drift from the match it is describing the
+        /// first time somebody else changed the map.
+        /// </summary>
+        private void RefreshSettingsDropdowns()
+        {
+            bool mayEdit = !SceneFlow.Networked || NetAuthority.IsHost;
+
+            if (_mapDrop != null) { _mapDrop.SetIndex(_map); _mapDrop.SetInteractable(mayEdit); }
+            if (_botsDrop != null) { _botsDrop.SetIndex(_difficulty); _botsDrop.SetInteractable(mayEdit); }
+            if (_rulesDrop != null) { _rulesDrop.SetIndex(_format); _rulesDrop.SetInteractable(mayEdit); }
+
+            if (_modeDrop != null)
+            {
+                _modeDrop.SetIndex(SceneFlow.SelectedMode == GameMode.HeroStrike ? 1 : 0);
+                _modeDrop.SetInteractable(mayEdit);
+            }
+        }
+
         private void InstallQueueCard()
         {
             if (!IsLobby || _queueCard != null) return;
@@ -2369,6 +2441,7 @@ namespace TumbangPreso.UI
 
             SetText("ModeValueLabel", SceneFlow.SelectedMode == GameMode.HeroStrike ? "HERO STRIKE" : "CLASSIC");
             SetText("DifficultyValueLabel", Difficulties[_difficulty]);
+            RefreshSettingsDropdowns();
 
             if (_chrome?.FormatValue != null)
             {

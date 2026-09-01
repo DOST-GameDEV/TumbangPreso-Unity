@@ -260,7 +260,11 @@ namespace TumbangPreso.UI
         /// and 64 is `SettingsRowHeight`. It is the rows plus the detail box plus the padding,
         /// added up, rather than a number that looked right: a drawer sized by eye is a drawer
         /// whose last row is outside it the first time anybody adds one.
-        private const float SettingsBodyHeight = 364.0f;
+        /// ⚠️ 306 SINCE THE DROPDOWNS: four 56-unit rows, three 6-unit gaps, the detail box and
+        /// the body's own 16 of padding either side. It was 364 when the rows were 64-unit
+        /// steppers. The number is the content added up rather than a size that looked right,
+        /// which is `CLAUDE.md` § 6.2c question 1.
+        private const float SettingsBodyHeight = 306.0f;
 
         /// <summary>
         /// One selector row: caption on the left, stepper on the right.
@@ -1160,6 +1164,10 @@ namespace TumbangPreso.UI
                 MenuSfx.Click();
             }
 
+            /// <summary>Where the match settings dropdowns are built, by the screen that owns the
+            /// option tables. See <see cref="BuildDropdownRows"/>.</summary>
+            public Transform SettingsRows;
+
             /// <summary>The chalk bar under whichever top tab is live, and half the distance
             /// between the two tabs' centres. See <see cref="BuildTabs"/>.</summary>
             public Image TabMarker;
@@ -1744,9 +1752,30 @@ namespace TumbangPreso.UI
             bodyLayout.childForceExpandWidth = true;
             bodyLayout.childForceExpandHeight = false;
 
-            // Use the authored rows and their wired buttons, but not ConfigPanel's oversized
-            // 634x540 face. The face is what made a few controls read as a giant opaque card.
-            var rows = Descend(config, "Rows");
+            // ⚠⚠⚠ THE FOUR STEPPER ROWS ARE DROPDOWNS NOW. 🧑 2026-09-01: *"u can use dropdowns
+            // and shit to make some shit work or look good"*, in the same breath as *"buttons were
+            // the biggest problem"*. Both halves are one complaint: MAP, MODE, BOTS and RULES were
+            // four identical `< VALUE >` rows, **twelve controls to express four choices**, and
+            // not one of them says what the other options are or how many there are. Pressing an
+            // arrow four times to find the fourth map is a guessing game with a button on it.
+            //
+            // ⚠️ THE AUTHORED ROWS STAY IN THE HIERARCHY, SWITCHED OFF, NOT DESTROYED.
+            // `LobbyStyle.Classic` is a working screen at every commit (§ 68.3) and it uses them;
+            // `ConvertedScreen` also indexed every one of their buttons by name in `Start`, and a
+            // destroyed node turns each of those lookups into a logged error on a screen that is
+            // otherwise fine.
+            var authored = Descend(config, "Rows");
+            if (authored != null)
+            {
+                authored.SetParent(body.transform, false);
+                authored.gameObject.SetActive(false);
+            }
+
+            BuildDropdownRows(body.transform, parts);
+
+            // Kept for `LobbyStyle.Classic`: the authored rows and their wired buttons, but not
+            // ConfigPanel's oversized 634x540 face.
+            var rows = LobbyChrome.Style == LobbyStyle.Street ? null : Descend(config, "Rows");
             if (rows != null)
             {
                 rows.SetParent(body.transform, false);
@@ -1968,6 +1997,35 @@ namespace TumbangPreso.UI
         /// says MAP, MODE and BOTS is better served by the plainest word for it. The value says
         /// which one.
         /// </summary>
+        /// <summary>
+        /// The column the match settings live in, empty.
+        ///
+        /// ⚠⚠ THE CHROME OWNS THE BOX AND THE SCREEN OWNS THE CHOICES, and that split is the
+        /// reason this method builds nothing but a layout group. The option TABLES are the map
+        /// registry, the mode names, the bot tiers and the formats: every one of them belongs to
+        /// `ConvertedMatchSetup`, which already holds the index, the wire call and the rule about
+        /// who may change it. Copying four tables in here to draw them would be `docs/TODO.md`
+        /// § 5's drift trap with a UI file as the second copy.
+        /// </summary>
+        private static void BuildDropdownRows(Transform body, Parts parts)
+        {
+            var holder = new GameObject("SettingsRows", typeof(RectTransform));
+            holder.transform.SetParent(body, false);
+
+            var layout = holder.AddComponent<VerticalLayoutGroup>();
+            layout.spacing = 6.0f;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = false;
+
+            var fitter = holder.AddComponent<ContentSizeFitter>();
+            fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            parts.SettingsRows = holder.transform;
+        }
+
         private static void BuildFormatRow(Transform rows, Parts parts)
         {
             var source = Descend(rows, "DifficultyRow");
