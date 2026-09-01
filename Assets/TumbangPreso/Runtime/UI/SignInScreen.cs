@@ -50,8 +50,24 @@ namespace TumbangPreso.UI
         /// </summary>
         private const float ColumnUnits = 560.0f;
 
-        /// <summary>The card's height, and it is the form added up. See `BuildColumn`.</summary>
+        /// <summary>
+        /// The card's height BEFORE it is measured, and it is only ever a starting value.
+        ///
+        /// ⚠️ `FitCardToContent` overwrites this at the end of `BuildColumn`. It is left here
+        /// because the card is built and skinned before its content exists, and a `PaperSkin`
+        /// baked against a zero-height rect pins the sprite to the 20-unit floor.
+        /// </summary>
         private const float CardHeight = 900.0f;
+
+        /// <summary>
+        /// The air between the outermost thing on the card and the card's own edge.
+        ///
+        /// ⚠️ 56, WHICH IS THE FIELD PITCH LESS ONE GAP RATHER THAN A ROUND NUMBER. The column's
+        /// tightest pitch is 64 units (caption to box) and its loosest is 120 (between blocks);
+        /// a margin inside that range reads as part of the same rhythm, and one outside it reads
+        /// as the card being a different object from the form on it.
+        /// </summary>
+        private const float CardMarginY = 56.0f;
 
         /// <summary>How far in from the left edge the card sits. ⚠️ Wide enough that the cast in
         /// the key art is never behind it at 16:9 and never off screen at 4:3, where
@@ -615,6 +631,79 @@ namespace TumbangPreso.UI
                 _formPieces[i - formStart] = col.GetChild(i).gameObject;
 
             BuildWelcome(col);
+
+            FitCardToContent(rt, col);
+        }
+
+        /// <summary>
+        /// Sets the card's height from what is actually on it.
+        ///
+        /// ⚠️⚠️ IT WAS A CONSTANT AND THE CONSTANT WAS WRONG IN BOTH DIRECTIONS AT ONCE, WHICH IS
+        /// WHY THIS IS ARITHMETIC AND NOT A BETTER NUMBER. `docs/TODO.md` § 119.11: *"the login
+        /// card is 900 units tall around about 700 of content"*, and 🧑, of the screen:
+        /// *"LOGIN can be improved"*.
+        ///
+        /// **Measured off the offsets this file actually uses.** Without a Google button the
+        /// content runs from the wordmark's box top at +382 down to the key hint's bottom at
+        /// -427: 809 units in a 900-unit card, which is 68 units of margin above and **23 below**.
+        /// A card whose top margin is three times its bottom one does not read as badly spaced, it
+        /// reads as slipping off its own frame.
+        ///
+        /// ⚠️⚠️ AND WITH `GoogleSignIn.IsAvailable` TRUE IT OVERFLOWED. That branch pushes GUEST
+        /// to -364, BACK to -428 and the hint to -480, so the last line of the column sits **43
+        /// units below the card's own bottom edge** and draws on the key art. Nobody has seen it,
+        /// because no build in this repository has a client id in it yet (§ 115.8 is the
+        /// credential): the layout is correct today and breaks on the day somebody pastes a
+        /// string into a text file. **A card sized against its content cannot have that bug.**
+        ///
+        /// ⚠️ THE MARGIN IS ONE NUMBER AND IT IS `CardMarginY`, applied symmetrically, so the
+        /// arithmetic above cannot come back however the column is rearranged. `CLAUDE.md` § 6.2c
+        /// question 1: size a panel against its CONTENT and state the arithmetic.
+        ///
+        /// ⚠️ THE WELCOME STATE IS INCLUDED IN THE UNION AND IS SMALLER THAN THE FORM, so the card
+        /// is the form's size in both states. A card that resized when the state changed would be
+        /// a second layout nobody has photographed, which is § 6.2b's first row.
+        /// </summary>
+        private static void FitCardToContent(RectTransform card, Transform col)
+        {
+            float top = 0.0f;
+            float bottom = 0.0f;
+            bool any = false;
+
+            for (int i = 0; i < col.childCount; i++)
+            {
+                var child = col.GetChild(i) as RectTransform;
+                if (child == null) continue;
+
+                // ⚠️ THE PIVOT IS READ RATHER THAN ASSUMED, because the tab pair hangs from a
+                // bottom pivot (see `Hang`) and everything else is centred. Getting this wrong
+                // would size the card against a rect nothing occupies.
+                float height = child.sizeDelta.y;
+                float centre = child.anchoredPosition.y + ((0.5f - child.pivot.y) * height);
+
+                float childTop = centre + (height * 0.5f);
+                float childBottom = centre - (height * 0.5f);
+
+                if (!any)
+                {
+                    top = childTop;
+                    bottom = childBottom;
+                    any = true;
+                    continue;
+                }
+
+                if (childTop > top) top = childTop;
+                if (childBottom < bottom) bottom = childBottom;
+            }
+
+            if (!any) return;
+
+            // ⚠️ THE CARD IS CENTRED ON THE SCREEN AND ITS CONTENT IS NOT CENTRED ON THE CARD, so
+            // the height has to cover the FURTHER of the two extents in both directions rather
+            // than their span. Sizing to `top - bottom` and leaving the content where it is would
+            // put the same overflow back on whichever side reaches further.
+            float reach = Mathf.Max(Mathf.Abs(top), Mathf.Abs(bottom));
+            card.sizeDelta = new Vector2(card.sizeDelta.x, (reach + CardMarginY) * 2.0f);
         }
 
         /// <summary>
@@ -744,10 +833,48 @@ namespace TumbangPreso.UI
             //
             // ⚠️ SO: a plain rect that owns the 360x104 slot, and the image fitted inside THAT.
             // One extra object, and the fitter's rule now applies to the space the layout meant.
+            // ⚠️⚠️ THE WORDMARK IS NAILED TO A WOOD PLAQUE NOW, AND IT IS DRAWN UNTINTED.
+            // 🧑 2026-09-01: **"LOGIN can be improved, especially TUMP logo in login"**.
+            //
+            // **The tint was the problem and no amount of choosing a better one fixes it.**
+            // Sampling `Resources/UI/main-menu/TUMP.png` (1835x527): it is about 60 per cent warm
+            // off-white in the `e0d0c0` family, which is the letter FACES, and about 40 per cent
+            // `303030` to `404040`, which is a dark outline and a drop shadow baked into the file.
+            // A `RawImage` colour MULTIPLIES, so tinting the whole asset `PaperInk` `3b2415` takes
+            // the faces to about `201206` and the outline to about `0b0704`: **two things that
+            // were four values apart end up one value apart, and the mark collapses into a brown
+            // blob with a slightly darker rim.** That is what the last two passes were looking at.
+            // Multiply can only darken, so there is no tint that lightens the faces back out.
+            //
+            // ⚠️⚠️ SO GIVE IT A DARK GROUND AND STOP TINTING IT. On `PaperCraft.Surface.Sign` the
+            // asset draws in its authored colours: off-white letters with their own dark outline,
+            // which is **exactly the picture the title screen shows** and the one composition this
+            // mark was actually drawn for. It also puts the identity block on the same side of the
+            // inversion as everything else in this pass: on a cream field the marker is the one
+            // DARK thing (see `PaperCraft.Surface.Sign`, and § 119.10 for who decided it).
+            //
+            // ⚠️ AND IT IS THE MOST FAITHFUL USE OF HIS ART IN THE PROJECT, not a treatment of it.
+            // `docs/VISION.md` § 6 and `CLAUDE.md` § 6.4: do not repaint his art. Every previous
+            // version of this method tinted the file two or three times; this one draws it at
+            // `Color.white`, which is the file.
+            var plaque = new GameObject("LogoPlaque", typeof(RectTransform), typeof(Image));
+            plaque.transform.SetParent(col, false);
+            MenuKit.Place((RectTransform)plaque.transform, Centre,
+                new Vector2(0.0f, y), new Vector2(LogoPlaqueWidth, LogoPlaqueHeight));
+
+            PaperSkin.Apply(plaque, PaperCraft.Surface.Sign);
+            plaque.GetComponent<Image>().raycastTarget = false;
+
+            // ⚠️ THE FITTER'S BOX IS INSET FROM THE PLAQUE AND RAISED BY `PaperCraft.Drop`, which
+            // is the same correction `PaperKit.CentreOnFace` makes for lettering and for the same
+            // reason: the plaque draws its cast shadow inside its own bottom six units, so a mark
+            // centred on the RECT is three units low on the FACE. `FitInParent` measures against
+            // the parent, so the inset has to be a real rect and not an offset on the image.
             var box = new GameObject("LogoBox", typeof(RectTransform));
-            box.transform.SetParent(col, false);
-            MenuKit.Place((RectTransform)box.transform, Centre,
-                new Vector2(0.0f, y), new Vector2(360.0f, 104.0f));
+            box.transform.SetParent(plaque.transform, false);
+            MenuKit.Stretch((RectTransform)box.transform, -LogoInset);
+            ((RectTransform)box.transform).offsetMin =
+                new Vector2(LogoInset, LogoInset + PaperCraft.Drop);
 
             // ⚠️⚠️⚠️ THE WORDMARK IS CARVED INTO THE PLANK RATHER THAN LAID ON IT, ON REQUEST.
             // 🧑 2026-09-01: *"it would look better if tump looked engraved into the wood like
@@ -795,13 +922,29 @@ namespace TumbangPreso.UI
             //
             // ⚠️ THE PNG IS UNTOUCHED. `VISION.md` § 6: his art is the design system. This tints
             // a `RawImage`, which is a treatment applied to the file, not an edit of it.
-            Engraved(box.transform, logo, "LogoShadow", -3.0f,
-                     new Color(UiTheme.PaperSunk.r, UiTheme.PaperSunk.g, UiTheme.PaperSunk.b,
-                               0.85f));
-
-            var image = Engraved(box.transform, logo, "Logo", 0.0f, UiTheme.PaperInk);
+            // ⚠️⚠️ ONE LAYER, AT `Color.white`. The shadow copy went with the tint: it existed to
+            // make a flat ink silhouette sit ON the cream rather than float over it, and the
+            // plaque's own cast shadow does that job for the whole block now. Two marks three
+            // units apart, both dark, on a dark ground, would be a blur.
+            var image = Engraved(box.transform, logo, "Logo", 0.0f, Color.white);
             image.raycastTarget = false;
         }
+
+        /// <summary>
+        /// The plaque the wordmark is nailed to.
+        ///
+        /// ⚠️ SIZED AGAINST THE MARK'S OWN ASPECT, NOT AGAINST THE COLUMN. `TUMP.png` is
+        /// 1835x527, so 3.48:1; at 420 wide less 2 x 26 of inset the mark is 368 wide and about
+        /// **106 tall**, and 120 units of plaque less the inset and the six-unit shadow leaves it
+        /// 62. So the fit is decided by HEIGHT and the mark draws about 216 x 62 in the middle of
+        /// the plaque, which is a signboard with margins rather than a mark with a frame drawn
+        /// round it. ⚠️ It must stay taller than `IdleTabHeight` + the tab row's air, or the
+        /// identity block and the FORM block below it stop being two blocks: at `Logo` 330 the
+        /// plaque's underside is at 270 and the live tab's top is at 234.
+        /// </summary>
+        private const float LogoPlaqueWidth = 420.0f;
+        private const float LogoPlaqueHeight = 120.0f;
+        private const float LogoInset = 26.0f;
 
         /// <summary>
         /// One layer of the carved wordmark: the texture, fitted, tinted and nudged.
@@ -1356,20 +1499,35 @@ namespace TumbangPreso.UI
             var rect = (RectTransform)button.transform;
             rect.sizeDelta = new Vector2(rect.sizeDelta.x, on ? LiveTabHeight : IdleTabHeight);
 
+            // ⚠️⚠️ `Live` AGAINST `Ghost`, WHICH THE LOBBY MOVED TO AND THIS SCREEN DID NOT.
+            // `docs/TODO.md` § 119.11 named this as the first thing that pass left undone, and it
+            // was an omission rather than a decision: the lobby's pair was changed after
+            // `Logs/shots-runtime/Lobby-v52.png` measured `Token` against `Ghost` at **4 per cent
+            // apart in value**, and the login screen was not re-shot between those two changes.
+            // Two screens with two tab conventions is worse than either, which is the argument
+            // `LiveTabHeight` already makes about the heights.
+            //
+            // ⚠️ AND THAT IS A VALUE INVERSION OF ABOUT 10:1 rather than a hue: a wood-dark pill
+            // with cream lettering, which spends no colour and puts a little of 🧑's own wood back
+            // on a card that is otherwise entirely paper.
             var skin = button.GetComponent<PaperSkin>();
             if (skin != null)
             {
-                skin.Surface = on ? PaperCraft.Surface.Token : PaperCraft.Surface.Ghost;
+                skin.Surface = on ? PaperCraft.Surface.Live : PaperCraft.Surface.Ghost;
                 skin.Rebuild();
             }
 
             var label = button.transform.Find("Label")?.GetComponent<Text>();
             if (label == null) return;
 
-            // ⚠️ INK EITHER WAY. Both chips sit on the same cream card, so a pale label on the
-            // idle one would be a word drawn on top of its own background.
+            // ⚠️ CREAM ON THE LIVE ONE NOW, BECAUSE IT IS WOOD-DARK. `PaperButton` reads the
+            // surface and does exactly this on its own, but it only does it when something makes
+            // it look; this method is the something on the frame the mode changes.
             label.fontStyle = on ? FontStyle.Bold : FontStyle.Normal;
-            label.color = on ? UiTheme.PaperInk : UiTheme.PaperInkSoft;
+            label.color = on ? UiTheme.Cream : UiTheme.PaperInkSoft;
+
+            var chip = button.GetComponent<PaperButton>();
+            if (chip != null) chip.Restyle();
         }
 
         /// <summary>
