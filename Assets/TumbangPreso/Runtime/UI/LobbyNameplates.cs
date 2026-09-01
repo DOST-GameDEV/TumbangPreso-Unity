@@ -34,6 +34,29 @@ namespace TumbangPreso.UI
     /// </summary>
     public sealed class LobbyNameplates : MonoBehaviour
     {
+        /// <summary>
+        /// What is sitting in a seat, which decides what the plate is MADE of.
+        ///
+        /// ⚠️⚠️ IT IS A SURFACE DECISION AND NOT A LABEL ONE, WHICH IS THE WHOLE OF `docs/TODO.md`
+        /// § 118.1 ROW 3. The lobby used to draw three identical filled plates reading `BOT`, and a
+        /// player who has never played this game cannot tell whether that means "a bot is here" or
+        /// "this seat is free". Both readings are reasonable and only one is true, so the screen was
+        /// silently teaching half its players the wrong thing about the only question the lobby
+        /// exists to answer.
+        /// </summary>
+        public enum SeatKind
+        {
+            /// <summary>A person. A full cream `Sheet`: the heaviest object in the row.</summary>
+            Person,
+
+            /// <summary>A bot. A `Tray`, so it reads as filled but recessed: something is there and
+            /// it is not somebody.</summary>
+            Bot,
+
+            /// <summary>Nobody. A `Ghost`: an outline with almost nothing inside it.</summary>
+            Open,
+        }
+
         /// <summary>Plate geometry, in the authored 1920x1080 space.</summary>
         private const float PlateHeight = 40.0f;
         private const float PlatePadding = 22.0f;
@@ -124,9 +147,15 @@ namespace TumbangPreso.UI
                 plate.transform.SetParent(transform, false);
 
                 var fill = plate.AddComponent<Image>();
-                fill.sprite = GodotTheme.WoodBox(UiTheme.WoodDeep, UiTheme.WoodEdge);
-                fill.type = Image.Type.Sliced;
-                fill.color = Color.white;
+
+                // ⚠️⚠️ THE PLATE'S SURFACE IS THE SEAT'S STATE, WHICH IS `docs/TODO.md` § 118.1
+                // ROW 3 ANSWERED. Three identical wooden plates reading `BOT` could not tell a
+                // player whether a bot was sitting there or whether the seat was free, and no
+                // colour fixes that: an empty seat cannot be drawn with a filled surface however
+                // it is painted. `SetSeat` swaps between `Sheet` (a person), `Tray` (a bot) and
+                // `Ghost` (nobody), and a `Ghost` is two hairlines with almost nothing inside
+                // them. Among Us is where the mechanism comes from, § 118.3.
+                PaperSkin.Apply(plate, PaperCraft.Surface.Sheet);
 
                 // ⚠️⚠️ THE PLATE ITSELF TAKES CLICKS AND NOTHING ELSE THIS COMPONENT DRAWS DOES.
                 // It is the seat button (see `_onSeatPressed`), so it has to be hit-testable; the
@@ -158,7 +187,7 @@ namespace TumbangPreso.UI
                 plateRect.pivot = new Vector2(0.5f, 0.0f);
                 plateRect.sizeDelta = new Vector2(PlateMinWidth, PlateHeight);
 
-                var name = MenuKit.Label(plate.transform, "", NameSize, UiTheme.Cream,
+                var name = MenuKit.Label(plate.transform, "", NameSize, UiTheme.PaperInk,
                                          Vector2.zero, Vector2.zero, Vector2.zero,
                                          TextAnchor.MiddleCenter);
                 name.raycastTarget = false;
@@ -168,9 +197,11 @@ namespace TumbangPreso.UI
                 tag.transform.SetParent(plate.transform, false);
 
                 var tagFill = tag.AddComponent<Image>();
-                tagFill.sprite = GodotTheme.WoodBox(UiTheme.WoodDark, UiTheme.Amber);
-                tagFill.type = Image.Type.Sliced;
-                tagFill.color = Color.white;
+
+                // ⚠️ THE TAYA TAG IS THE ONE `Sign` OUT HERE, and it is the same accent rule the
+                // room code follows: amber is a BAND under ink, never the colour of the lettering.
+                // `ffba00` on `f4ecdd` measures 1.7:1 and is unreadable.
+                PaperSkin.Apply(tag, PaperCraft.Surface.Sign);
                 tagFill.raycastTarget = false;
 
                 var tagRect = tagFill.rectTransform;
@@ -178,11 +209,18 @@ namespace TumbangPreso.UI
                 tagRect.anchorMax = new Vector2(0.5f, 0.0f);
                 tagRect.pivot = new Vector2(0.5f, 1.0f);
                 tagRect.anchoredPosition = new Vector2(0.0f, -4.0f);
-                tagRect.sizeDelta = new Vector2(PlateMinWidth, TagHeight);
+                tagRect.sizeDelta = new Vector2(PlateMinWidth, TagHeight + PaperCraft.Drop);
 
-                var tagLabel = MenuKit.Label(tag.transform, "", TagSize, UiTheme.Amber,
+                // ⚠️⚠️ CREAM, BECAUSE THE TAG IS A WOOD PLAQUE. `PaperCraft.Surface.Sign` stopped
+                // being a cream plate with an amber band on 2026-09-01 (🧑: *"this yellow dont look
+                // good withh creme too btw"*) and became a dark wood plaque, so ink lettering on it
+                // measures 1.2:1 and is invisible. `Logs/shots-runtime/Lobby-v54.png` shows exactly
+                // that: a dark bar under the player name with nothing legible in it. **A colour
+                // that was correct against one surface is not a colour.**
+                var tagLabel = MenuKit.Label(tag.transform, "", TagSize, UiTheme.Cream,
                                              Vector2.zero, Vector2.zero, Vector2.zero,
                                              TextAnchor.MiddleCenter);
+                tagLabel.fontStyle = FontStyle.Bold;
                 tagLabel.raycastTarget = false;
                 MenuKit.Stretch(tagLabel.rectTransform, 0.0f);
 
@@ -194,9 +232,7 @@ namespace TumbangPreso.UI
                 title.transform.SetParent(plate.transform, false);
 
                 var titleFill = title.AddComponent<Image>();
-                titleFill.sprite = GodotTheme.WoodBox(UiTheme.WoodDark, UiTheme.WoodEdge);
-                titleFill.type = Image.Type.Sliced;
-                titleFill.color = Color.white;
+                PaperSkin.Apply(title, PaperCraft.Surface.Tray);
                 titleFill.raycastTarget = false;
 
                 var titleRect = titleFill.rectTransform;
@@ -206,7 +242,8 @@ namespace TumbangPreso.UI
                 titleRect.anchoredPosition = new Vector2(0.0f, -4.0f);
                 titleRect.sizeDelta = new Vector2(PlateMinWidth, TagHeight);
 
-                var titleLabel = MenuKit.Label(title.transform, "", TagSize, UiTheme.Cream,
+                var titleLabel = MenuKit.Label(title.transform, "", TagSize,
+                                               UiTheme.PaperInkSoft,
                                                Vector2.zero, Vector2.zero, Vector2.zero,
                                                TextAnchor.MiddleCenter);
                 titleLabel.raycastTarget = false;
@@ -223,9 +260,7 @@ namespace TumbangPreso.UI
                 tick.transform.SetParent(plate.transform, false);
 
                 var tickFill = tick.AddComponent<Image>();
-                tickFill.sprite = GodotTheme.WoodBox(UiTheme.WoodDark, UiTheme.Amber);
-                tickFill.type = Image.Type.Sliced;
-                tickFill.color = Color.white;
+                PaperSkin.Apply(tick, PaperCraft.Surface.Token);
                 tickFill.raycastTarget = false;
 
                 var tickRect = tickFill.rectTransform;
@@ -248,7 +283,9 @@ namespace TumbangPreso.UI
 
                 var tickImage = tickMark.GetComponent<Image>();
                 tickImage.sprite = UiMaterials.ChalkTick();
-                tickImage.color = UiTheme.Amber;
+                // ⚠️ THE MARK IS INK ON A PAPER TOKEN. Amber chalk on a cream chip is the same
+                // 1.7:1 that the room code's lettering could not be drawn at.
+                tickImage.color = UiTheme.PaperInk;
                 tickImage.raycastTarget = false;
                 tickImage.preserveAspect = true;
                 MenuKit.Stretch(tickImage.rectTransform, -5.0f);
@@ -293,9 +330,24 @@ namespace TumbangPreso.UI
         /// `mastery.zack.title.katuwang` on it.
         /// </summary>
         public void SetSeat(int seat, string displayName, string title, bool ready, bool taya,
-                            bool you, bool canTake = false)
+                            bool you, bool canTake = false, SeatKind kind = SeatKind.Person)
         {
             if (seat < 0 || seat >= _plates.Length) return;
+
+            // ⚠️ THE SURFACE IS SET BEFORE ANYTHING IS MEASURED. `PaperSkin.Rebuild` reads the
+            // rect, and the width below is written from `preferredWidth`, so a swap made after
+            // the measurement would be a frame late on the one control this screen is about.
+            var skin = _plates[seat].GetComponent<PaperSkin>();
+            if (skin != null)
+            {
+                skin.Surface = kind switch
+                {
+                    SeatKind.Open => PaperCraft.Surface.Ghost,
+                    SeatKind.Bot => PaperCraft.Surface.Tray,
+                    _ => PaperCraft.Surface.Sheet,
+                };
+                skin.Rebuild();
+            }
 
             // ⚠️ THE SAME RULE THE SEAT ROWS FOLLOW, NOT A NEW ONE. Nobody may press a chair
             // somebody else is in, or their own, which would be a request that changes nothing.
@@ -335,14 +387,18 @@ namespace TumbangPreso.UI
             // in the same pass, on a plate whose width depends on the string the sibling is part
             // of. Unity measures rich text with the tags stripped, so one label stays one
             // measurement.
+            // ⚠️ THE `YOU` MARK IS DRAWN IN THE WOOD INK RATHER THAN IN AMBER, for the reason
+            // every other accent on this screen moved: on cream, amber is a 1.7:1 word. The mark
+            // is legible because it is BOLD and because your own plate is the only `Sheet` in the
+            // row, which is two signals and neither of them is hue.
             string label = you
-                ? $"{displayName}   <color=#{ColorUtility.ToHtmlStringRGB(UiTheme.Amber)}>YOU</color>"
+                ? $"{displayName}   <b>YOU</b>"
                 : displayName;
 
             var text = _names[seat];
             text.text = label;
             text.fontSize = NameSize;
-            text.color = ready ? UiTheme.Cream : UiTheme.CreamMuted;
+            text.color = ready ? UiTheme.PaperInk : UiTheme.PaperInkSoft;
 
             // ⚠️⚠️ THE PLATE IS SIZED FROM THE MEASURED STRING, AND THEN THE STRING IS FITTED TO
             // WHAT THE PLATE ENDED UP BEING. Doing only the first lets a pasted 40-character name
@@ -374,11 +430,17 @@ namespace TumbangPreso.UI
                 PlateMinWidth, PlateMaxWidth);
 
             _plates[seat].sizeDelta = new Vector2(wanted, PlateHeight);
-            _tags[seat].sizeDelta = new Vector2(wanted, TagHeight);
+            _tags[seat].sizeDelta = new Vector2(wanted, TagHeight + PaperCraft.Drop);
 
             MenuKit.Fit(text, wanted - (PlatePadding * 2.0f));
 
-            _plateFills[seat].color = ready ? Color.white : new Color(1.0f, 1.0f, 1.0f, 0.82f);
+            // ⚠️⚠️ THE PLATE NO LONGER FADES WITH READINESS, AND THE TICK IS WHY. A cream sheet
+            // at 0.82 alpha over a lit street picks up the street's colour, so an un-readied
+            // player's plate came out a different HUE from a readied one rather than a different
+            // strength: `CLAUDE.md` § 6.4's whole point about a colour tuned against one
+            // background. Readiness is said by the tick above the plate and by the weight of the
+            // name, both of which are opaque.
+            _plateFills[seat].color = Color.white;
 
             // ⚠️⚠️ TWO STRIPS, STACKED, AND NEITHER MAY BORROW THE OTHER'S. The title strip and
             // the TAYA FIRST strip mean completely different things — one is who you are, one is

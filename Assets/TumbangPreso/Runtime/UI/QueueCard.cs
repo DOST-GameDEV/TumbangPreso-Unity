@@ -140,6 +140,19 @@ namespace TumbangPreso.UI
         /// second place that reports network failures. Same contract as `LobbyJoinPanel.Status`.</summary>
         public event Action<string> Status;
 
+        /// <summary>Whether the player is in the queue right now, so the screen can relabel the
+        /// one primary rather than drawing a second one.</summary>
+        public bool IsQueueing => _queue != null && _queue.IsQueueing;
+
+        /// <summary>
+        /// Joins the ladder queue.
+        ///
+        /// ⚠️ IT IS THE SAME METHOD THE OLD CHIP CALLED, EXPOSED. `ConvertedMatchSetup` owns the
+        /// one primary on the screen and dispatches to it by mode, which is what removed the second
+        /// "start a game" button 🧑 found. See `LobbyMode`.
+        /// </summary>
+        public void StartRanked() => OnQuickMatchPressed();
+
         /// <summary>
         /// Build the door and the card under <paramref name="parent"/>.
         ///
@@ -175,16 +188,49 @@ namespace TumbangPreso.UI
         /// bottom of the screen with CANCEL in them. A child of a `VerticalLayoutGroup` cannot be
         /// off the screen: the rail grows upward from its own bottom margin.
         /// </summary>
-        public static QueueCard Dock(Transform rail)
+        /// <summary>
+        /// Which pool this card queues into.
+        ///
+        /// ⚠️⚠️ IT WAS HARD-CODED TO `QueueStake.Casual` AND THAT MEANT THE LADDER HAD NEVER BEEN
+        /// REACHABLE BY ANY PLAYER. `QueueStake.Ranked` exists in the core, `PartyRules.CanQueue`
+        /// refuses a full stack and an unsigned member for it, `BotFillRules` has a separate
+        /// timing for it, `RatingRules` owns five tiers and `MatchStatsCollector` reads
+        /// `Matchmaker.Current.Stake == QueueStake.Ranked` to decide whether a result counts.
+        /// **All of Phase 9 shipped behind a constant that no screen could change.**
+        /// `docs/TODO.md` § 119.8, and 🧑 found it by asking why two buttons did the same thing.
+        /// </summary>
+        public QueueStake Stake = QueueStake.Casual;
+
+        public static QueueCard Dock(Transform column, Button door)
         {
             var go = new GameObject("QueueCard", typeof(RectTransform));
-            go.transform.SetParent(rail, false);
+            go.transform.SetParent(column, false);
+
+            var rect = (RectTransform)go.transform;
+            rect.anchorMin = new Vector2(0.5f, 1.0f);
+            rect.anchorMax = new Vector2(0.5f, 1.0f);
+            rect.pivot = new Vector2(0.5f, 0.0f);
+            rect.anchoredPosition = new Vector2(0.0f, PaperKit.Gap);
+            rect.sizeDelta = new Vector2(DockedWidth, CardHeight);
+
+            go.AddComponent<LayoutElement>().ignoreLayout = true;
 
             var card = go.AddComponent<QueueCard>();
             card._docked = true;
+            card._open = door;
             card.Construct();
             return card;
         }
+
+        /// <summary>
+        /// How wide the drawer is: the room column it hangs off.
+        ///
+        /// ⚠️ IT MATCHES `LobbyChrome.RoomColumnWidth` BY VALUE RATHER THAN BY REFERENCE, because
+        /// that constant is private to the layout that owns it and a public one would invite a
+        /// second caller to size itself against the lobby. If the column moves, this number is the
+        /// one line to change and `QueueCardLayoutProbe` is what says so.
+        /// </summary>
+        private const float DockedWidth = 460.0f;
 
         /// <summary>True when this lives inside the lobby's rail rather than on the canvas.</summary>
         private bool _docked;
@@ -227,20 +273,19 @@ namespace TumbangPreso.UI
             // height and nothing else. See `Dock`.
             if (_docked)
             {
-                var group = gameObject.AddComponent<VerticalLayoutGroup>();
-                group.spacing = 10.0f;
-                group.childControlWidth = true;
-                group.childControlHeight = true;
-                group.childForceExpandWidth = true;
-                group.childForceExpandHeight = false;
+                // ⚠️⚠️ THE DOOR IS THE RAIL'S OWN CHIP NOW AND THIS CLASS NO LONGER DRAWS ONE.
+                // `LobbyChrome.BuildChipRow` builds QUICK MATCH beside JOIN and CHAT, because all
+                // three are the same KIND of control (open something above this column) and three
+                // controls that do the same kind of thing must look the same. The previous version
+                // built its own 64-unit wooden bar inside the action rail, so the lobby had two
+                // controls that opened drawers drawn in two different languages, which is
+                // `docs/TODO.md` § 117's whole complaint one screen later.
+                //
+                // ⚠️ IT IS PASSED IN RATHER THAN LOOKED UP. A `Find("QueueChip")` here would make
+                // this class depend on a name in another file, which is exactly the coupling
+                // `ConvertedScreen`'s name index already costs this project once.
+                if (_open != null) _open.onClick.AddListener(OnQuickMatchPressed);
 
-                var fitter = gameObject.AddComponent<ContentSizeFitter>();
-                fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
-                fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-
-                gameObject.AddComponent<LayoutElement>().flexibleHeight = 0.0f;
-
-                BuildDockedDoor();
                 BuildCard();
                 Refresh();
                 return;
@@ -261,72 +306,17 @@ namespace TumbangPreso.UI
             Refresh();
         }
 
-        /// <summary>
-        /// QUICK MATCH as a rail row: the same words, one step down in weight from the primary.
-        ///
-        /// ⚠⚠ PLAIN WOOD, NOT AMBER. The old note on this control said *"amber, which is the
-        /// one accent on this screen and is spent on the one action"*, and that was written when
-        /// the card was alone in the middle of the screen. In the rail it sits directly under
-        /// START MATCH, which IS the one action, so two accents would be two primaries eight
-        /// units apart.
-        ///
-        /// ⚠️ AND NOTHING ELSE MARKS IT, WHICH IS A CORRECTION TO § 116.4. That entry added a
-        /// chalk rule under this button to say *"a way in"* without claiming to be THE way in.
-        /// The rule is deleted; see the note in the body for the two renders that argued it out.
-        /// **Size and position already carry the distinction** and they are the two ordering
-        /// tools `game-ui-design` puts above weight and colour.
-        /// </summary>
-        private void BuildDockedDoor()
-        {
-            var holder = new GameObject("QuickMatchRow", typeof(RectTransform));
-            holder.transform.SetParent(transform, false);
-
-            var element = holder.AddComponent<LayoutElement>();
-            element.minHeight = DoorHeight;
-            element.preferredHeight = DoorHeight;
-            element.flexibleHeight = 0.0f;
-
-            _open = MenuKit.WoodButton(holder.transform, "QUICK MATCH", new Vector2(0.5f, 1.0f),
-                                       new Vector2(0.0f, -(DoorHeight * 0.5f)),
-                                       new Vector2(CardWidth, DoorHeight),
-                                       OnQuickMatchPressed);
-            _open.name = "QuickMatchButton";
-
-            // ⚠️ THE BUTTON STRETCHES TO THE RAIL AND THE RULE FOLLOWS IT. `MenuKit.WoodButton`
-            // takes a size, and a fixed 560 in a 460 rail would hang 50 units off each end; the
-            // rail controls width, so the rect is re-anchored to fill it.
-            var buttonRect = (RectTransform)_open.transform;
-            buttonRect.anchorMin = new Vector2(0.0f, 1.0f);
-            buttonRect.anchorMax = new Vector2(1.0f, 1.0f);
-            buttonRect.offsetMin = new Vector2(0.0f, -DoorHeight);
-            buttonRect.offsetMax = Vector2.zero;
-
-            // ⚠⚠⚠ THE CHALK RULE UNDER THIS BUTTON IS DELETED, AND TWO RENDERS TRYING TO
-            // PLACE IT ARE THE ARGUMENT. § 116.4 added it so QUICK MATCH would say *"a way in"*
-            // without claiming to be THE way in, and that was correct when this control was a
-            // 560-unit amber bar across the middle of the screen. It is not any more: it is a
-            // plain wooden row directly under START MATCH, which is 104 units tall, his own
-            // authored art, and the only uncontested object in the corner. **Position and size
-            // already say which of the two leads**, and `game-ui-design` orders those above both
-            // weight and colour.
-            //
-            // What the rule actually did on screen was draw a bright line across the very bottom
-            // of the frame: amber and eight units off the edge in `Lobby-v44.png`, cream and
-            // still outside the button in `Lobby-v45.png`, because it is a child of the ROW and
-            // the row reserved 14 units under the button purely to hold it. A separator between a
-            // control and the edge of the screen is not a separator. **The 14 units go with it**,
-            // so the rail is 14 shorter and QUICK MATCH sits on `BottomMargin` like everything
-            // else.
-            FocusRing.Attach(_open.gameObject, 4.0f);
-        }
-
         private void BuildCard()
         {
             _card = new GameObject("QueueState");
             _card.transform.SetParent(transform, false);
 
             var plate = _card.AddComponent<Image>();
-            WoodSkin.Apply(_card, WoodCraft.Surface.Panel);
+
+            // ⚠️ A PAPER SHEET, NOT A WOODEN PANEL. `PaperCraft`'s header carries the measurement:
+            // the lobby's wood and Eskinita's street are the same hue at a similar saturation, so
+            // a wooden card over the road is found by its keyline rather than seen as a shape.
+            PaperSkin.Apply(_card, PaperCraft.Surface.Sheet);
 
             // ⚠️ IT BLOCKS ITS OWN RECTANGLE AND NOTHING ELSE. `CLAUDE.md` § 6.2c question 4:
             // anything covering the screen is also eating clicks, and naming the blocker is part
@@ -337,12 +327,11 @@ namespace TumbangPreso.UI
 
             if (_docked)
             {
-                // ⚠️ THE RAIL DECIDES THE WIDTH AND THIS DECIDES THE HEIGHT. A docked card cannot
+                // ⚠️ THE DRAWER FILLS ITS OWN ROOT, which `Dock` has already anchored above the
+                // room column. It is not a row in a stack any more, so it takes no
+                // `LayoutElement` of its own: see the note in `Dock`. A docked card still cannot
                 // be placed off the screen, which is what § 115.2 was.
-                var docked = _card.AddComponent<LayoutElement>();
-                docked.minHeight = CardHeight;
-                docked.preferredHeight = CardHeight;
-                docked.flexibleHeight = 0.0f;
+                MenuKit.Stretch(plate.rectTransform, 0.0f);
             }
             else
             {
@@ -367,14 +356,16 @@ namespace TumbangPreso.UI
             MenuKit.Stretch(column.GetComponent<RectTransform>(), 0);
 
             // ---- the headline: the ONE thing, and it is the biggest text on the card ----
-            _headline = Row(column.transform, "SEARCHING FOR A MATCH", 30, UiTheme.Amber, 38);
+            _headline = Row(column.transform, "SEARCHING FOR A MATCH", PaperKit.Title,
+                            UiTheme.PaperInk, 34);
+            _headline.fontStyle = FontStyle.Bold;
 
             // ---- the band, which is the widening made into words ------------------------
-            _band = Row(column.transform, "", 20, UiTheme.Cream, 26);
+            _band = Row(column.transform, "", PaperKit.Body, UiTheme.PaperInk, 26);
 
             BuildBar(column.transform);
 
-            _elapsed = Row(column.transform, "", 18, UiTheme.CreamMuted, 24);
+            _elapsed = Row(column.transform, "", PaperKit.Caption, UiTheme.PaperInkSoft, 22);
 
             // ---- the thing this game has never said out loud ----------------------------
             //
@@ -388,8 +379,8 @@ namespace TumbangPreso.UI
             // ⚠️ THE STRING IS `MatchmakingRules.TayaRotationPromise` AND IS NOT TYPED HERE.
             // It is a claim about the rules (`(round - 1) % 4`, derived and never accumulated) and
             // it has a test, so it lives beside the rule it describes.
-            _promise = Row(column.transform, MatchmakingRules.TayaRotationPromise, 18,
-                           UiTheme.CreamMuted, 52);
+            _promise = Row(column.transform, MatchmakingRules.TayaRotationPromise,
+                           PaperKit.Caption, UiTheme.PaperInkSoft, 50);
             _promise.horizontalOverflow = HorizontalWrapMode.Wrap;
             _promise.alignment = TextAnchor.UpperLeft;
 
@@ -429,8 +420,8 @@ namespace TumbangPreso.UI
             fillElement.preferredHeight = 48.0f;
             fillElement.flexibleHeight = 0.0f;
 
-            _fillCaveat = Row(column.transform, "", MenuKit.MinReadableUnits,
-                              UiTheme.CreamMuted, 20.0f);
+            _fillCaveat = Row(column.transform, "", PaperKit.Caption,
+                              UiTheme.PaperInkSoft, 20.0f);
             _fillCaveat.horizontalOverflow = HorizontalWrapMode.Wrap;
             _fillCaveat.alignment = TextAnchor.UpperLeft;
 
@@ -438,9 +429,12 @@ namespace TumbangPreso.UI
             spacer.transform.SetParent(column.transform, false);
             spacer.AddComponent<LayoutElement>().flexibleHeight = 1.0f;
 
-            _cancel = MenuKit.WoodButton(column.transform, "CANCEL", Vector2.zero, Vector2.zero,
-                                         new Vector2(0.0f, 48.0f), OnCancelPressed);
-            _cancel.name = "CancelQueueButton";
+            // ⚠️ CANCEL IS PAPER AND START WITH BOTS IS 🧑'S GREEN WOOD, WHICH IS THE HIERARCHY.
+            // One of the two ends the waiting and starts a match; the other undoes a decision.
+            // Drawing both as the same slab is what made every previous version of this card read
+            // as two equally weighted choices.
+            _cancel = PaperKit.Chip(column.transform, "CancelQueueButton", "CANCEL");
+            _cancel.onClick.AddListener(OnCancelPressed);
             var cancelElement = _cancel.gameObject.AddComponent<LayoutElement>();
             cancelElement.minHeight = 48.0f;
             cancelElement.preferredHeight = 48.0f;
@@ -473,7 +467,10 @@ namespace TumbangPreso.UI
             element.flexibleHeight = 0.0f;
 
             var track = holder.AddComponent<Image>();
-            track.color = new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.45f);
+            // ⚠️ THE TRACK IS SAND, NOT INK. A near-black groove cut into a cream sheet is the
+            // highest-contrast object on the card, and the card's subject is the amber FILL
+            // travelling along it rather than the empty part behind it.
+            track.color = UiTheme.PaperSunk;
             track.raycastTarget = false;
 
             var fillGo = new GameObject("Fill");
@@ -518,8 +515,7 @@ namespace TumbangPreso.UI
             // ⚠️ THE MODE COMES FROM THE LOBBY THE PLAYER IS STANDING IN, not from a picker on
             // this card. `INSPIRATION.md` § 3.1: the mode is the ruleset and the queue is the
             // stakes, and they already chose the ruleset one row up.
-            bool started = _queue.StartQueue(SceneFlow.SelectedMode, QueueStake.Casual,
-                                             HumanSeatCount());
+            bool started = _queue.StartQueue(SceneFlow.SelectedMode, Stake, HumanSeatCount());
 
             if (!started) Status?.Invoke(_queue.Refusal);
             Refresh();
@@ -584,7 +580,15 @@ namespace TumbangPreso.UI
 
             bool queueing = _queue.IsQueueing;
 
-            if (_open != null) _open.gameObject.SetActive(!queueing);
+            // ⚠️⚠️ THE DOOR IS DIMMED, NOT HIDDEN, AND THAT IS A LAYOUT FIX RATHER THAN A STYLE
+            // ONE. QUICK MATCH shares a `HorizontalLayoutGroup` with JOIN and CHAT, so taking it
+            // off the row makes the other two grow into its space the instant it is pressed: the
+            // player presses a button and two unrelated controls jump sideways under their hand.
+            // A chip that stays put and stops responding says the same thing and moves nothing.
+            // ⚠️ THE DOOR MAY BE NULL, because on the lobby the ladder's door is the screen's
+            // own primary and `ConvertedMatchSetup.RefreshActionButtons` relabels and disables it.
+            // `QueueCard.Build`, which is the un-docked path, still makes its own.
+            if (_open != null) _open.interactable = !queueing;
             if (_card != null) _card.SetActive(queueing);
 
             if (!queueing)

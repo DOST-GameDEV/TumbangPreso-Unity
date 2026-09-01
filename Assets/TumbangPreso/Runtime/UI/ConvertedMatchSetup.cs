@@ -365,7 +365,7 @@ namespace TumbangPreso.UI
             // the entry row goes into the right column's list and the tabs are measured against a
             // banner that has to exist. Applying the chrome first would move an empty column and
             // then have rows added back into it at the authored anchors.
-            _chrome = LobbyChrome.Apply(transform, Node, IsLobby, SelectTab);
+            _chrome = LobbyChrome.Apply(transform, Node, IsLobby, SelectMode);
 
             // ⚠️ AFTER THE CHROME, ON PURPOSE. See `InstallQueueCard`.
             InstallQueueCard();
@@ -391,11 +391,12 @@ namespace TumbangPreso.UI
 
             BuildChat();
 
-            // ⚠️ THE QUEUE DOOR IS SHOWN OR HIDDEN ON THE WAY IN AS WELL AS ON A TAB SWITCH.
-            // `SelectTab` only runs when the player CHANGES tab, so a screen entered as practice
-            // would keep a QUICK MATCH button nobody on that tab can use, which is exactly the
-            // fault `BuildLobbyEntryControls` records for the join controls one method up.
-            RefreshQueueVisibility(IsLobby);
+            // ⚠️ THE QUEUE CARD IS SHOWN OR HIDDEN ON THE WAY IN AS WELL AS ON A MODE SWITCH.
+            // `SelectMode` only runs when the player CHANGES mode, so a screen entered as custom
+            // would keep the ladder queue alive on a tab nobody is on, which is exactly the fault
+            // `BuildLobbyEntryControls` records for the join controls one method up.
+            RefreshQueueVisibility(_chrome != null ? _chrome.Mode
+                                   : (IsLobby ? LobbyMode.Custom : LobbyMode.Practice));
 
             // ⚠️ MEASURED, NOT ASSUMED. See `LobbyChrome.ReportColumns`: three renders in a row
             // disagreed with the arithmetic and a screenshot could not say which of the three
@@ -894,9 +895,18 @@ namespace TumbangPreso.UI
             // ⚠️ THE CANVAS IS THE FALLBACK. `LobbyStyle.Classic` does not build the rail (it is
             // the authored screen, kept working at every commit, § 68.3), so on that style the
             // queue goes back to being a floating plate rather than disappearing.
-            _queueCard = _chrome?.LeftRail != null
-                ? QueueCard.Dock(_chrome.LeftRail)
+            // ⚠️⚠️ THE QUEUE'S DOOR IS THE RANKED PRIMARY NOW, NOT A CHIP. 🧑: **"dont quick
+            // match and start match do the same thing? kinda confusing no?"** They did, and the fix
+            // was structural: matchmaking is its own MODE with its own primary button, so the
+            // screen has exactly one control that starts a game at any moment. See `LobbyMode`.
+            _queueCard = _chrome?.QueueDock != null
+                ? QueueCard.Dock(_chrome.QueueDock, null)
                 : QueueCard.Build(canvas.transform);
+
+            // ⚠️ THE LADDER IS THE ONLY THING THIS CARD QUEUES FOR NOW. `QueueCard.Stake` records
+            // what the old constant cost: Phase 9 shipped a whole rating system nothing could
+            // reach.
+            _queueCard.Stake = Core.QueueStake.Ranked;
             _queueCard.Status += SetStatus;
             _queueCard.Joined += HandleJoinedInPlace;
 
@@ -1025,6 +1035,23 @@ namespace TumbangPreso.UI
 
             _hub.Install();
 
+            if (_chrome?.JoinChip != null)
+            {
+                // ⚠️ IT TOGGLES THE AUTHORED RIGHT COLUMN, which holds the seat list, the LAN
+                // address, the room code row and the two entry buttons (`JOIN A GAME` and
+                // `START SERVER`). One press opens everything about getting in and out of a room;
+                // nothing about it is on screen while you are not asking.
+                _chrome.JoinChip.onClick.AddListener(() =>
+                {
+                    var drawer = _chrome.LobbyDrawer;
+                    if (drawer == null) return;
+
+                    bool open = !drawer.activeSelf;
+                    drawer.SetActive(open && IsLobby);
+                    if (open && _chat != null) _chat.gameObject.SetActive(false);
+                });
+            }
+
             if (_chrome?.ProfileButton != null)
                 _chrome.ProfileButton.onClick.AddListener(OpenPlayerHub);
 
@@ -1035,6 +1062,7 @@ namespace TumbangPreso.UI
                 _chrome.LoadoutButton.onClick.AddListener(OpenLoadout);
 
             RefreshProfileDoor();
+            RefreshTier();
         }
 
         /// <summary>
@@ -1049,6 +1077,61 @@ namespace TumbangPreso.UI
         /// ⚠️ AND A CLASSIC CHARACTER NEVER REACHES THIS. `SetSkills` hides the whole row in
         /// Classic (`docs/VISION.md` § 1.1), so this is only ever asked about a hero.
         /// </summary>
+        /// <summary>
+        /// Writes the ladder plate: where you stand, and what the ladder will refuse.
+        ///
+        /// ⚠️⚠️ THE PARTY RULE IS STATED BEFORE THE PRESS, WHICH IS THE HALF THAT WAS MISSING.
+        /// 🧑: *"make it as well na u cant queue with a friend in ranked ladder or smth"*.
+        /// `PartyRules.CanQueue` has refused a full stack in ranked since Phase 7
+        /// (`MaxRankedSize` is `Balance.PlayerCount - 1`) and has refused an unsigned member for
+        /// just as long, and `PartyRules.RefusalLabel` writes a good sentence about it. **But the
+        /// player only ever saw that sentence AFTER pressing the button**, which `CLAUDE.md` § 6.2
+        /// calls the INTUITIVE failure: a control whose refusal is the only way to learn its rule.
+        ///
+        /// ⚠️ AN UNPLACED PLAYER IS TOLD SO RATHER THAN SHOWN A TIER THEY HAVE NOT EARNED.
+        /// `RatingRules.TierFor` answers `BATA` for the starting rating, so reading it before any
+        /// ranked match is played would advertise a rank nobody has been given.
+        ///
+        /// ⚠️ AND A GUEST IS TOLD THE ONE THING THAT BLOCKS THEM. `PartyRules.CanQueue` refuses a
+        /// member who is not signed in, and `FUTURE.md` § 0.5 rule 7 is why that is the ONLY gate
+        /// in this game behind a login: a ladder has nowhere to keep a rating for an anonymous
+        /// machine-local identity. Practice, custom, LAN and joining by code never ask.
+        /// </summary>
+        private void RefreshTier()
+        {
+            if (_chrome == null || _chrome.Mode != LobbyMode.Ranked) return;
+
+            var account = GameServices.Account;
+            bool signedIn = account != null && !account.IsGuest;
+
+            if (!signedIn)
+            {
+                _chrome.SetTier("SIGN IN",
+                    "The ladder keeps a rating, so it needs an account. "
+                    + "Practice and custom rooms never ask.");
+                return;
+            }
+
+            var rank = GameServices.Career?.Profile?.Rank;
+
+            if (rank == null || rank.MatchesThisSeason == 0)
+            {
+                _chrome.SetTier("UNRANKED",
+                    "Play one ladder match to be placed. Solo, or a party of up to three.");
+                return;
+            }
+
+            var tier = Core.RatingRules.TierFor(rank.Rating);
+            bool placing = rank.Deviation > Core.RatingRules.SettledDeviation;
+
+            _chrome.SetTier(Core.RatingRules.TierName(tier),
+                placing
+                    ? $"{rank.MatchesThisSeason} this season, still placing. "
+                      + "Solo, or a party of up to three."
+                    : $"{rank.Rating:0} rating, {rank.MatchesThisSeason} this season. "
+                      + "Solo, or a party of up to three.");
+        }
+
         private static string EquippedBuildSummary()
         {
             var people = Roster.GetPeople(GameMode.HeroStrike);
@@ -1080,11 +1163,21 @@ namespace TumbangPreso.UI
         {
             MenuSfx.Click();
 
-            // ⚠️ THE OFFER LANDS ON THE TAB THAT ANSWERS IT, which is the same contract
-            // `PlayerNameplate.Press` had: a player told to secure their progress and then shown
-            // a stats page has been sent to the wrong room.
-            var account = GameServices.Account;
-            _hub?.Open(account != null && account.ShouldOfferUpgrade);
+            // ⚠️⚠️ IT OPENS ON **PROFILE** NOW, NOT ON ACCOUNT, AND THE DOOR'S NEW NAME IS WHY.
+            // 🧑 2026-09-01: *"can u replace secure progress to Account and allow to put thhe name
+            // there if not logged in, bcz offlinne mode is for torunnaments and shit"*. A guest
+            // used to be dropped straight onto the ACCOUNT tab, and the note this replaces was
+            // right about the reason: the door said `SECURE YOUR PROGRESS` and that tab is where
+            // signing in happens, so landing anywhere else was answering a different question.
+            // **The door says `ACCOUNT` now and the thing a player wants behind it is their own
+            // name**, which is the first row of PROFILE; the sign-in offer is one tab away and the
+            // whole tab row is visible the moment the screen opens.
+            //
+            // ⚠️ AND ON A MACHINE WITH NO NETWORK THIS IS THE ONLY WAY TO SET A NAME AT ALL. See
+            // `PlayerHub.BuildProfileTab`: the field falls back to `Settings.SettingsStore`, which
+            // is what `NetSession.ConfigureClientHello` puts on the wire. `docs/TODO.md` § 97 and
+            // the nationals in General Santos City are the reason that path has to exist.
+            _hub?.Open();
         }
 
         /// <summary>
@@ -1108,10 +1201,16 @@ namespace TumbangPreso.UI
 
             var account = GameServices.Account;
 
+            // ⚠️⚠️ INK, NEVER AMBER, AND SHORT ENOUGH FOR THE CHIP. 🧑, with a crop of this exact
+            // control: **"this yellow shit uglyu"**. `ffba00` on `f4ecdd` measures **1.7:1**, so on
+            // a cream rail this was simultaneously the loudest and the least legible thing on the
+            // screen, and it was directly competing with the primary action for the eye
+            // (`docs/TODO.md` § 117.3 is the same fault one control over). `SECURE YOUR PROGRESS`
+            // is also 20 characters against a 200-unit chip, which is why it overflowed its own
+            // pill in `Logs/shots-runtime/Lobby-v53.png`.
             if (account != null && account.ShouldOfferUpgrade)
             {
-                label.text = "SECURE YOUR PROGRESS";
-                label.color = UiTheme.Amber;
+                Door(label, "SECURE PROGRESS");
                 return;
             }
 
@@ -1120,8 +1219,10 @@ namespace TumbangPreso.UI
 
             if (xp <= 0)
             {
-                label.text = "PROFILE · CAREER · MATCHES";
-                label.color = UiTheme.Cream;
+                // ⚠️ ONE WORD, NOT THREE. `PROFILE · CAREER · MATCHES` was a list of the tabs
+                // behind the door written on the door, which is 190 units of lettering in a chip
+                // sized for a label. The hub's own tab row says what is in it.
+                Door(label, "PROFILE");
                 return;
             }
 
@@ -1138,8 +1239,18 @@ namespace TumbangPreso.UI
                 line += $"   ·   {tier}";
             }
 
-            label.text = line;
-            label.color = UiTheme.Cream;
+            Door(label, line);
+        }
+
+        /// <summary>⚠️ ONE PLACE WRITES THIS LABEL, so the colour and the fit cannot be got right
+        /// in three branches and wrong in a fourth. `LobbyChrome.ProfileWidth` is sized against the
+        /// longest string this ever carries.</summary>
+        private static void Door(Text label, string text)
+        {
+            label.text = text;
+            label.color = UiTheme.PaperInk;
+            label.fontSize = PaperKit.Body;
+            MenuKit.Fit(label, 200.0f - 24.0f, 13);
         }
 
         private static Transform MiniSection(Transform parent, string text)
@@ -1271,10 +1382,54 @@ namespace TumbangPreso.UI
         /// appearing in other people's browsers as a joinable game that nobody is in. That is the
         /// same leak `Cancel` closes for Escape.
         /// </summary>
-        private void SelectTab(bool lobby)
+        /// <summary>
+        /// Switches the screen between PRACTICE, RANKED and CUSTOM.
+        ///
+        /// ⚠️⚠️ IT REPLACED `SelectTab(bool)` AND THE EXTRA STATE IS THE WHOLE POINT. `LobbyMode`
+        /// carries 🧑's diagnosis in full; the short version is that START MATCH and QUICK MATCH
+        /// were two primaries with the same verb, and the fix is that matchmaking is a MODE rather
+        /// than a second button.
+        ///
+        /// ⚠️ RANKED AND CUSTOM ARE BOTH NETWORKED, so the transport question and the mode question
+        /// are no longer the same question. `SceneFlow.Networked` is still the one bit the rest of
+        /// the game reads, and it is derived here rather than passed in.
+        ///
+        /// ⚠️⚠️ AND RANKED FORCES HERO STRIKE, BECAUSE THE LADDER IS HERO STRIKE. `docs/TODO.md`
+        /// § 105: one ladder, five tiers, on that mode only. Letting a player select the ladder and
+        /// then quietly queue them into Classic would be a rating that means two different games.
+        /// </summary>
+        private void SelectMode(LobbyMode mode)
         {
-            if (lobby == IsLobby) return;
+            if (_chrome != null && _chrome.Mode == mode) return;
 
+            bool lobby = mode != LobbyMode.Practice;
+
+            if (mode == LobbyMode.Ranked)
+            {
+                SceneFlow.SelectedMode = GameMode.HeroStrike;
+                _format = 0;
+            }
+
+            // ⚠️ THE TRANSPORT ONLY CHANGES WHEN THE NETWORKED-NESS DOES. Switching between RANKED
+            // and CUSTOM is a change of what the screen is FOR, not of whether it is online, so
+            // tearing the session down between them would drop a player out of a room they are
+            // standing in to show them a ladder.
+            if (lobby == IsLobby)
+            {
+                MenuSfx.Click();
+                _chrome?.SetMode(mode);
+                Refresh();
+                RefreshQueueVisibility(mode);
+
+                if (mode == LobbyMode.Custom && !IsLive) AutoHost();
+                return;
+            }
+
+            SelectTab(lobby, mode);
+        }
+
+        private void SelectTab(bool lobby, LobbyMode mode)
+        {
             MenuSfx.Click();
 
             var net = NetSession.Instance;
@@ -1297,22 +1452,28 @@ namespace TumbangPreso.UI
             _difficulty = Mathf.Clamp(_difficulty, 0, DifficultyOptionCount - 1);
 
             ApplyCastVisibility();
-            _chrome?.SetActive(lobby);
+            _chrome?.SetMode(mode);
 
             Refresh();
-            RefreshQueueVisibility(lobby);
+            RefreshQueueVisibility(mode);
 
-            if (lobby) AutoHost();
+            // ⚠️ ONLY CUSTOM OPENS A ROOM. A ranked player is put into a room BY the matchmaker, so
+            // hosting one first would advertise a lobby nobody should join by code and would put
+            // the ladder queue behind a listen server it does not need.
+            if (mode == LobbyMode.Custom) AutoHost();
         }
 
         /// <summary>
-        /// ⚠️ THE QUEUE IS A LOBBY CONTROL AND IS HIDDEN ON PRACTICE. Practice is a solo
-        /// match against bots; a QUICK MATCH button on it would be a door to a place that tab is
-        /// not about, which is the "second door" § 0.5b bans in the row above it.
+        /// ⚠️⚠️ THE QUEUE CARD ONLY EXISTS IN RANKED. It is the drawer that grows out of the ranked
+        /// primary, so in the other two modes it is not a hidden control, it is a control that has
+        /// nothing to do. The note this replaces said the queue was a LOBBY control hidden on
+        /// practice, which was true when there were two tabs and one of them held both ways of
+        /// starting a game.
         /// </summary>
-        private void RefreshQueueVisibility(bool lobby)
+        private void RefreshQueueVisibility(LobbyMode mode)
         {
-            if (_queueCard != null) _queueCard.gameObject.SetActive(lobby);
+            if (_queueCard != null)
+                _queueCard.gameObject.SetActive(mode == LobbyMode.Ranked);
         }
 
 
@@ -1348,6 +1509,9 @@ namespace TumbangPreso.UI
             var people = Roster.GetPeople(SceneFlow.SelectedMode);
 
             int defender = MatchRules.DefenderSlotFor(1);
+
+            // ⚠️ SET BY THE FIRST SEAT THAT IS NOT A PERSON. See the note where it is read.
+            bool explained = false;
 
             for (int seat = 0; seat < _castPicks.Length; seat++)
             {
@@ -1385,7 +1549,19 @@ namespace TumbangPreso.UI
                 // records. Somebody who has not set a name is still unambiguously themselves.
                 string who = mine ? LocalName()
                     : occupied ? PlayerLabel(info, seat)
-                    : AIController.BotsEnabled ? "BOT" : "OPEN";
+                    : AIController.BotsEnabled ? "BOT" : "OPEN SEAT";
+
+                // ⚠️⚠️ THE SEAT SAYS WHAT KIND OF SEAT IT IS, AND `docs/TODO.md` § 118.1 ROW 3 IS
+                // WHY. Three identical plates reading `BOT` could not tell a new player whether a
+                // bot was sitting there or whether the seat was free; both readings are
+                // reasonable and only one is true. `LobbyNameplates.SeatKind` turns that into a
+                // SURFACE difference (a person is a cream sheet, a bot is a recessed tray, an
+                // empty seat is an outline), which is what Among Us does and what § 118.3 says
+                // transfers, because *"the primary job of the lobby is getting three other people
+                // INTO it"*.
+                var kind = mine || occupied ? LobbyNameplates.SeatKind.Person
+                    : AIController.BotsEnabled ? LobbyNameplates.SeatKind.Bot
+                    : LobbyNameplates.SeatKind.Open;
 
                 // ⚠️ THE TICK IS THE HOST'S ANSWER FOR EVERY SEAT NOW, AND THE LOCAL SEAT IS
                 // STILL ALLOWED TO BE AHEAD OF IT. `LobbySeatInfo.Ready` travels with the roster,
@@ -1415,6 +1591,27 @@ namespace TumbangPreso.UI
                 string title = info != null
                     ? ProgressionRules.LabelForRewardId(info.Banner?.TitleId)
                     : "";
+
+                // ⚠️ AN UNOCCUPIED SEAT EXPLAINS ITSELF, IN PLACE, RATHER THAN IN A HINT
+                // ELSEWHERE ON THE SCREEN. The authored `SeatHint` used to carry this sentence
+                // from the bottom of a panel on the far side of the frame, which is § 94.7's
+                // *"a value drawn 1600 px from its label"*: the words were about the seats and
+                // were nowhere near them.
+                // ⚠️⚠️ ONE BOT EXPLAINS ITSELF AND THE OTHER TWO DO NOT. On
+                // `Logs/shots-runtime/Lobby-v55.png` the sentence *fills in if nobody joins* is on
+                // screen three times, in three plates, at three heights, which is three quarters
+                // of the words in the middle of the frame saying one thing. **A rule stated once
+                // is information and a rule stated three times is texture**, and 🧑's brief for
+                // this whole pass is *"I DONT WANT it to be overwhelming for htem"*.
+                //
+                // ⚠️ IT IS THE FIRST BOT SEAT RATHER THAN A FIXED INDEX, because which seats hold
+                // bots depends on who has joined: seat 0 can be a person and seat 3 a bot.
+                if (kind == LobbyNameplates.SeatKind.Bot)
+                    title = explained ? "" : "fills in if nobody joins";
+                else if (kind == LobbyNameplates.SeatKind.Open)
+                    title = explained ? "" : (canTake ? "tap to sit here" : "waiting for a player");
+
+                if (kind != LobbyNameplates.SeatKind.Person) explained = true;
 
                 // ⚠️⚠️ THE BUILD IS PUBLIC WITHOUT ADDING ANOTHER PLATE. Phase 10 requires
                 // opponents to be able to read a sidegrade before the fight, while § 92 is the
@@ -1453,7 +1650,8 @@ namespace TumbangPreso.UI
                                     ready: ready,
                                     taya: seat == defender,
                                     you: mine,
-                                    canTake: canTake);
+                                    canTake: canTake,
+                                    kind: kind);
             }
 
             // ⚠️ THE LINE IS CENTRED ON THIS MACHINE'S OWN SEAT. See `LobbyCast.SetLocalSeat`.
@@ -1488,11 +1686,27 @@ namespace TumbangPreso.UI
             // ⚠️ THE SAME MARGIN AND WIDTH THE REST OF THE RIGHT-HAND SIDE USES. See
             // `LobbyChrome`'s harmony block: the player card, the lobby drawer and this share one
             // edge and one width, which is the difference between a column and three boxes.
-            _chat.PlaceBottomRight(48.0f, 40.0f, 460.0f);
-            _chat.gameObject.SetActive(IsLobby);
+            // ⚠️⚠️ THE CHAT IS A DRAWER NOW AND IT IS SHUT BY DEFAULT, WHICH IS `docs/TODO.md`
+            // § 118.1 ROW 1 CLOSED. It used to be a permanently open asphalt well about 70 units
+            // tall holding one 18-unit line, and because lines fill upward that line sat at the
+            // BOTTOM of it: two thirds of the surface was empty by construction, on the one part
+            // of the screen that had nothing else on it. **An empty log is not a screen element,
+            // it is a promise that something will appear**, and a promise does not need to be on
+            // screen while it is unkept.
+            //
+            // ⚠️ IT IS PLACED ABOVE THE BOTTOM RAIL RATHER THAN AT THE BOTTOM MARGIN. 40 + 192 is
+            // the rail, plus one `PaperKit.Gap`; the width is the room column's.
+            _chat.PlaceBottomRight(40.0f, 40.0f + 192.0f + PaperKit.Gap, 460.0f);
+            _chat.gameObject.SetActive(false);
 
-            // The drawer above it has to know how tall this ended up. See `LateUpdate`.
-            _chrome?.StackRight(_chat.PanelHeight);
+            if (_chrome?.ChatChip != null)
+            {
+                _chrome.ChatChip.onClick.AddListener(() =>
+                {
+                    bool open = !_chat.gameObject.activeSelf;
+                    _chat.gameObject.SetActive(open && IsLobby);
+                });
+            }
         }
 
         /// <summary>
@@ -1922,6 +2136,18 @@ namespace TumbangPreso.UI
 
         private void OnStartPressed()
         {
+            // ⚠️⚠️ ONE BUTTON, TWO VERBS, DECIDED HERE. `LobbyMode` carries 🧑's diagnosis:
+            // **"dont quick match and start match do the same thing? kinda confusing no?"** The
+            // answer is that they are the same CONTROL in two modes rather than two controls in
+            // one, and this is the branch that makes that true. A ranked press must never reach
+            // `HostStartMatch`, which would load an arena with three bots and submit it to the
+            // ladder.
+            if (_chrome != null && _chrome.Mode == LobbyMode.Ranked)
+            {
+                _queueCard?.StartRanked();
+                return;
+            }
+
             var net = NetSession.Instance;
             if (net != null && net.IsNetworked && NetAuthority.IsHost)
             {
@@ -2701,13 +2927,13 @@ namespace TumbangPreso.UI
         /// </summary>
         private void LateUpdate()
         {
-            // ⚠️⚠️ THE RIGHT-HAND RAIL IS RE-STACKED EVERY FRAME AND IT IS FREE. The chat panel
-            // collapses onto its content and GROWS AS LINES ARRIVE, so the LOBBY & SERVERS pill
-            // above it cannot be placed once: `LobbyChat.PanelHeight`'s note records what
-            // positioning it off the capacity instead of the panel produced, which is a pill
-            // floating in the middle of the frame with 160 px of road under it. `StackRight`
-            // returns immediately when the height has not moved.
-            if (_chrome != null && _chat != null) _chrome.StackRight(_chat.PanelHeight);
+            // ⚠️⚠️ NOTHING IS RE-STACKED HERE ANY MORE AND THAT IS THE POINT OF THE 2026-09-01
+            // REBUILD. The chat, the queue card and the settings body used to be three plates
+            // anchored to canvas corners, so each had to be positioned against the MEASURED height
+            // of the others every frame and `Logs/shots-runtime/Lobby-v36.png` still shipped a
+            // pill floating over the fourth character with 160 px of road under it. Each is a
+            // child of the rail column that opens it now, so the anchor does the arithmetic and
+            // there is none left to run. See `LobbyChrome.Drawer`.
 
             // ⚠️ THE ACTION BUTTON RE-FITS ON THE FRAME AFTER A MEASURE THAT HAD NO RECT. See
             // `SetFittedButtonLabel`: `rect.width` is 0 until the first layout pass, which is
@@ -3011,6 +3237,36 @@ namespace TumbangPreso.UI
 
             bool live = IsLive;
             bool host = NetAuthority.IsHost;
+
+            // ⚠️⚠️ THE LADDER OWNS THE SLOT WHILE IT IS SELECTED, AND THE OTHER TWO GO. `LobbyMode`
+            // and `LobbyChrome.BuildActionSlot`: one primary, always in the same place, and its
+            // LABEL is what changes with the mode. A ranked player must not be able to reach
+            // `OnPrimaryPressed`, which readies or starts a local match.
+            bool ranked = _chrome != null && _chrome.Mode == LobbyMode.Ranked;
+
+            if (ranked)
+            {
+                // ⚠️⚠️ THE LADDER BORROWS `StartButton` RATHER THAN OWNING A BUTTON. See
+                // `LobbyChrome.BuildActionSlot`: a third control drawn by `MenuKit.WoodButton`
+                // came out a rounded green rectangle where every other mode has 🧑's authored
+                // chamfered slab, so "one primary, always in the same place" was true of the
+                // position and false of the object. `OnStartPressed` dispatches on the mode.
+                if (primNode != null) primNode.gameObject.SetActive(false);
+                if (startNode == null) return;
+
+                startNode.gameObject.SetActive(true);
+
+                bool queueing = _queueCard != null && _queueCard.IsQueueing;
+                bool signedIn = GameServices.Account != null && !GameServices.Account.IsGuest;
+
+                SetFittedButtonLabel("StartButton",
+                    queueing ? "SEARCHING..." : "FIND A RANKED MATCH", MaxButtonFontSize);
+
+                var rankedButton = startNode.GetComponent<Button>();
+                if (rankedButton != null) rankedButton.interactable = signedIn && !queueing;
+
+                return;
+            }
 
             // ⚠️⚠️ NO READY TALLY ON EITHER BUTTON SINCE 2026-08-29. 🧑: *"si host lang nakakapag
             // start ng game, yung other players hindi na need mag ready"*. Nothing counts those

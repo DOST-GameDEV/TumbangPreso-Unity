@@ -639,6 +639,18 @@ namespace TumbangPreso.UI
             }
 
             if (_scroll != null) _scroll.verticalNormalizedPosition = 1.0f;
+
+            // ⚠️⚠️ THE DRESS RUNS AFTER EVERY TAB BUILD AND NOT ONCE AT INSTALL, BECAUSE THE
+            // ROWS ARE DESTROYED AND REBUILT ON EVERY TAB PRESS (see the loop at the top of this
+            // method). A single pass at install time would paint the PROFILE tab and leave the
+            // other five wooden, which is exactly the kind of leftover 🧑 asked twice to be sure
+            // of: *"MAKE SURE U COMPLETELY REPLACE UI BCZ I DOTN WANT LEFTOVER SHIT FROM OLD UI TO
+            // STILL BE FRIGGING WITH US"*.
+            //
+            // ⚠️ IT IS IDEMPOTENT. `PaperSkin.Apply` destroys any `WoodSkin` it finds and
+            // `PaperDress` disables rather than destroys, so re-running it on already-dressed
+            // chrome costs a walk and changes nothing.
+            PaperDress.Screen(_root.transform);
         }
 
         private static void Highlight(Button button, bool on)
@@ -726,7 +738,26 @@ namespace TumbangPreso.UI
                 _displayName = UiRows.FieldRow(_list, "Display name", "Maria Clara",
                     AccountRules.DisplayNameMax,
                     $"Up to {AccountRules.DisplayNameMax} characters. It does not have to be unique.");
-                _displayName.text = account?.DisplayName ?? "";
+
+                // ⚠️⚠️ THIS IS THE LOBBY'S NAME FIELD NOW, AND THE NODE NAME IS THE CONTRACT.
+                // 🧑 2026-09-01: **"why does insert player name still live here shouldnt tat be in
+                // the account button?"**, of a second field on the lobby's top rail. He is right:
+                // this row has existed since Phase 1 and the rail's was a duplicate writing the
+                // same string through a different path. `UiClickProbe`, `UiRuntimeShots` and
+                // `PaperPurityProbe` all reach for `PlayerNameEdit` by name, so renaming the
+                // GameObject here is what keeps three tests pointed at the control that survived
+                // rather than at the one that was deleted.
+                _displayName.gameObject.name = "PlayerNameEdit";
+
+                // ⚠️⚠️ AND IT WORKS WITH NO ACCOUNT AT ALL, WHICH IS THE HALF THAT WAS MISSING.
+                // 🧑: *"bcz offlinne mode is for torunnaments and shit"*. `FUTURE.md` § 0.5 rule 7
+                // and `docs/TODO.md` § 97: practice, LAN and joining by code must never sit behind
+                // a login, and the nationals in General Santos City are why. A machine with no
+                // network still has to be able to set the name the other three laptops will see,
+                // and `Settings.SettingsStore.PlayerName` is what `NetSession.ConfigureClientHello`
+                // actually puts on the wire.
+                _displayName.text = account?.DisplayName
+                    ?? Settings.SettingsStore.Current.PlayerName ?? "";
 
                 // ⚠️ THE TAG IS SHOWN AND CANNOT BE EDITED, which is the fact the old panel
                 // never stated anywhere. `AccountRules` derives it from the player id (FNV-1a,
@@ -887,7 +918,24 @@ namespace TumbangPreso.UI
                 // destroyed `InputField` would throw, and defaulting one to "" would silently
                 // WIPE a bio the player had written just because they had the group shut.
                 var a = GameServices.Account;
-                string name = _displayName != null ? _displayName.text : a.DisplayName;
+                string name = _displayName != null ? _displayName.text : a?.DisplayName ?? "";
+
+                // ⚠️⚠️ SIGNED OUT, THE NAME STILL SAVES. Without this the whole method threw a
+                // null reference on `a.Bio` and the one control a tournament machine needs was
+                // dead. See the note on the field itself; `GameSettings.SanitiseName` is the same
+                // function `LobbySession.Admit` runs on arrival, so the name this writes is the
+                // name every other machine sees.
+                if (a == null)
+                {
+                    Settings.SettingsStore.Current.PlayerName =
+                        Settings.GameSettings.SanitiseName(name);
+                    Settings.SettingsStore.Save();
+
+                    _notice = "Saved on this machine.";
+                    Show(Tab.Profile);
+                    return;
+                }
+
                 string bio = _bio != null ? _bio.text : a.Bio;
                 string country = _country != null ? _country.text : a.Country;
                 string pronouns = _pronouns != null ? _pronouns.text : a.Pronouns;

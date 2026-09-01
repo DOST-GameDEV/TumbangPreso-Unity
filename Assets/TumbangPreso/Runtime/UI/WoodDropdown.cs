@@ -89,7 +89,14 @@ namespace TumbangPreso.UI
             _index = Mathf.Clamp(index, 0, Mathf.Max(0, _options.Length - 1));
             _picked = picked;
 
-            var label = MenuKit.Label(transform, caption, MenuKit.MinReadableUnits, UiTheme.Amber,
+            // ⚠️⚠️ THE WHOLE CONTROL IS PAPER NOW AND THE CLASS NAME IS A LIE THAT IS KEPT ON
+            // PURPOSE. `WoodDropdown` is reached by name from `ConvertedMatchSetup`,
+            // `PhaseSurfaceLayoutProbe` and two documents; renaming it is a rename commit and this
+            // is a material commit, and mixing the two is how a diff stops being reviewable. What
+            // it draws is what changed: on `Logs/shots-runtime/LobbySettings-v52.png` these four
+            // rows were the only dark-brown objects on a cream drawer, which is exactly the
+            // leftover 🧑 asked twice to be sure of.
+            var label = MenuKit.Label(transform, caption, PaperKit.Caption, UiTheme.PaperInkSoft,
                                       Vector2.zero, Vector2.zero, Vector2.zero,
                                       TextAnchor.MiddleLeft);
             label.raycastTarget = false;
@@ -106,8 +113,11 @@ namespace TumbangPreso.UI
             faceGo.transform.SetParent(transform, false);
 
             var face = faceGo.GetComponent<Image>();
-            face.sprite = UiMaterials.CarvedButton(UiTheme.WoodDeep, UiTheme.WoodEdge,
-                                                   UiMaterials.ButtonPose.Raised, chunky: false);
+            // ⚠️ A `Tray` AND NOT A `Token`: a dropdown's closed face is a VALUE you read, and
+            // `PaperCraft`'s distinction is that a tray is cut into the sheet and a token stands on
+            // it. The caret is what says it opens, which is the same rule the settings chip
+            // follows one control up.
+            PaperSkin.Apply(faceGo, PaperCraft.Surface.Tray);
             face.type = Image.Type.Sliced;
             face.color = Color.white;
 
@@ -123,7 +133,7 @@ namespace TumbangPreso.UI
             button.onClick.AddListener(Toggle);
             FocusRing.Attach(faceGo, 3.0f);
 
-            _value = MenuKit.Label(faceGo.transform, Current, 22, UiTheme.Cream,
+            _value = MenuKit.Label(faceGo.transform, Current, PaperKit.Body, UiTheme.PaperInk,
                                    Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleLeft);
             _value.raycastTarget = false;
             MenuKit.Stretch(_value.rectTransform, 0.0f);
@@ -132,7 +142,7 @@ namespace TumbangPreso.UI
 
             // ⚠️ THE CARET IS THE AFFORDANCE. `CLAUDE.md` § 6.3: a door is a thing that looks
             // pressable, and a value in a box with no mark on it is a readout.
-            _caret = MenuKit.Label(faceGo.transform, "▾", 22, UiTheme.Amber,
+            _caret = MenuKit.Label(faceGo.transform, "▾", PaperKit.Body, UiTheme.PaperInkSoft,
                                    Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleRight);
             _caret.raycastTarget = false;
             MenuKit.Stretch(_caret.rectTransform, 0.0f);
@@ -155,8 +165,10 @@ namespace TumbangPreso.UI
             _list.AddComponent<LayoutElement>().ignoreLayout = true;
 
             var plate = _list.GetComponent<Image>();
-            plate.sprite = UiMaterials.CarvedButton(UiTheme.WoodDark, UiTheme.WoodEdge,
-                                                    UiMaterials.ButtonPose.Sunk, chunky: false);
+            // ⚠️ THE OPEN LIST IS A `Sheet`, so it reads as a piece of card laid OVER the drawer
+            // rather than as a hole in it. It is the same surface the drawer itself is, one layer
+            // up, and its own cast shadow is what separates the two.
+            PaperSkin.Apply(_list, PaperCraft.Surface.Sheet);
             plate.type = Image.Type.Sliced;
             plate.color = Color.white;
 
@@ -206,8 +218,7 @@ namespace TumbangPreso.UI
                 optionElement.flexibleHeight = 0.0f;
 
                 var optionFace = optionGo.GetComponent<Image>();
-                optionFace.sprite = UiMaterials.CarvedButton(UiTheme.WoodMid, UiTheme.WoodEdge,
-                                                             UiMaterials.ButtonPose.Raised, false);
+                PaperSkin.Apply(optionGo, PaperCraft.Surface.Tray);
                 optionFace.type = Image.Type.Sliced;
 
                 var optionButton = optionGo.AddComponent<Button>();
@@ -216,7 +227,8 @@ namespace TumbangPreso.UI
                 optionButton.onClick.AddListener(() => Choose(choice));
                 FocusRing.Attach(optionGo, 2.0f);
 
-                var text = MenuKit.Label(optionGo.transform, _options[i], 20, UiTheme.Cream,
+                var text = MenuKit.Label(optionGo.transform, _options[i], PaperKit.Body,
+                                         UiTheme.PaperInk,
                                          Vector2.zero, Vector2.zero, Vector2.zero,
                                          TextAnchor.MiddleLeft);
                 text.raycastTarget = false;
@@ -302,7 +314,15 @@ namespace TumbangPreso.UI
             for (int i = 0; i < _optionButtons.Count; i++)
             {
                 var text = _optionButtons[i].GetComponentInChildren<Text>();
-                if (text != null) text.color = i == _index ? UiTheme.Amber : UiTheme.Cream;
+                // ⚠️ THE CHOSEN OPTION IS BOLD INK AND THE REST ARE SOFT, WHICH IS WEIGHT
+                // RATHER THAN HUE. Amber on cream is 1.7:1 (`PaperCraft.Surface.Sign` carries the
+                // measurement and 🧑's rejection of it), so the accent that used to mark this row
+                // would now be the least legible thing in the list.
+                if (text != null)
+                {
+                    text.color = i == _index ? UiTheme.PaperInk : UiTheme.PaperInkSoft;
+                    text.fontStyle = i == _index ? FontStyle.Bold : FontStyle.Normal;
+                }
             }
         }
 

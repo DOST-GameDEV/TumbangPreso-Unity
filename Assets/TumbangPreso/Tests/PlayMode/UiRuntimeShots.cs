@@ -279,7 +279,55 @@ namespace TumbangPreso.PlayTests
         /// overwriting a shot leaves the previous one on screen and the whole review is conducted
         /// against an image that is no longer on disk. Bump `ShotVersion` on every iteration.
         /// </summary>
-        private const string ShotVersion = "v51";
+        private const string ShotVersion = "v56";
+
+        /// <summary>
+        /// The login screen, in every state a player can meet it in.
+        ///
+        /// ⚠️⚠️ IT HAD NO RENDER AT ALL UNTIL THIS PASS, AND `CLAUDE.md` § 6.2b IS WRITTEN ABOUT
+        /// EXACTLY THAT FAILURE ON EXACTLY THIS SCREEN: *"The sign-in screen was shot only as
+        /// `Open()`. It ships as `OpenAtBoot()` too, which hides BACK, renames a button and has no
+        /// hub behind it. **The state a player meets first was the state nobody had seen.**"* Since
+        /// 2026-09-01 login runs on EVERY launch (`docs/TODO.md` § 114.5), so the boot state is now
+        /// the single most-seen screen in the game.
+        ///
+        /// ⚠️ THE WELCOME-BACK STATE CANNOT BE PHOTOGRAPHED HERE AND THAT IS STATED RATHER THAN
+        /// SKIPPED. It only appears when `GameServices.Account` has a password attached, which a
+        /// probe has no way to create without a real UGS sign-in; `OpenAtBoot` on a fresh profile
+        /// draws the form. That is the one state on this screen a person still has to look at in a
+        /// build.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator TheSignInScreenDraws()
+        {
+            Directory.CreateDirectory(OutDir);
+
+            var load = SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Single);
+            yield return ProbeWait.Done(load, "scene load");
+
+            yield return new WaitForSecondsRealtime(2.0f);
+
+            var owner = Object.FindFirstObjectByType<ConvertedMainMenu>();
+            Assert.IsNotNull(owner, "the main menu is where the login screen is installed.");
+
+            var signIn = owner.GetComponent<SignInScreen>();
+            if (signIn == null) signIn = owner.gameObject.AddComponent<SignInScreen>();
+            signIn.Install();
+
+            // ⚠️ OVER THE REAL BACKGROUND, which is `CLAUDE.md` § 6.2b's second row. This screen
+            // draws over the lit main menu, and every alpha on it was tuned against that.
+            signIn.Open();
+            yield return new WaitForSecondsRealtime(0.6f);
+            yield return Capture($"SignIn-{ShotVersion}");
+
+            signIn.OpenForUpgrade();
+            yield return new WaitForSecondsRealtime(0.4f);
+            yield return Capture($"SignInCreate-{ShotVersion}");
+
+            signIn.OpenAtBoot();
+            yield return new WaitForSecondsRealtime(0.4f);
+            yield return Capture($"SignInBoot-{ShotVersion}");
+        }
 
         [UnityTest]
         public IEnumerator TheLobbyDraws()
@@ -302,12 +350,35 @@ namespace TumbangPreso.PlayTests
             // being broken.
             yield return new WaitForSecondsRealtime(4.0f);
 
-            var nameField = Find("PlayerNameEdit")?.GetComponent<InputField>();
-            Assert.IsNotNull(nameField, "the lobby must expose its editable player name.");
-            Assert.AreEqual(Core.Balance.PlayerNameMax, nameField.characterLimit,
-                "the lobby name field must enforce the same hard cap as Settings and the wire.");
-
             yield return Capture($"Lobby-{ShotVersion}");
+
+            // ⚠️⚠️ THE NAME FIELD IS BEHIND THE ACCOUNT DOOR NOW AND THAT IS WHY THIS MOVED.
+            // 🧑 2026-09-01: **"why does insert player name still live here shouldnt tat be in the
+            // account button?"** The lobby carried a second field writing the same string that
+            // `PlayerHub.BuildProfileTab` has written since Phase 1, so the rail's copy is deleted
+            // and the hub's row is named `PlayerNameEdit`. **The assertion follows the control
+            // rather than the node**, which is the whole reason it is worth asserting: a name a
+            // tournament machine cannot set is the one thing on this screen that must never break,
+            // and offline is exactly the case `docs/TODO.md` § 97 protects.
+            var door = Find("ProfileButton")?.GetComponent<Button>();
+            Assert.IsNotNull(door, "the lobby must have a door to the account screen.");
+
+            door.onClick.Invoke();
+            yield return new WaitForSecondsRealtime(0.8f);
+
+            var nameField = Find("PlayerNameEdit")?.GetComponent<InputField>();
+            Assert.IsNotNull(nameField,
+                "the account screen must expose an editable player name. It is the one control a "
+                + "machine with no network still has to be able to use.");
+            Assert.AreEqual(Core.Balance.PlayerNameMax, nameField.characterLimit,
+                "the name field must enforce the same hard cap as Settings and the wire.");
+
+            yield return Capture($"LobbyAccount-{ShotVersion}");
+
+            var close = Find("HubRoot") != null
+                ? Find("HubRoot").GetComponentInChildren<Button>() : null;
+            if (close != null) close.onClick.Invoke();
+            yield return new WaitForSecondsRealtime(0.4f);
 
             // Both drawers are part of the requested composition checkpoint. Photographing only
             // the clean collapsed state previously let clipped rows and merged network actions
@@ -320,7 +391,7 @@ namespace TumbangPreso.PlayTests
             var settingsToggle = Find("SettingsDrawerToggle")?.GetComponent<Button>();
             Assert.IsNotNull(settingsToggle,
                 "the match-settings drawer has no toggle to open, so the open state cannot be "
-                + "photographed. See LobbyChrome.BuildLeftRail.");
+                + "photographed. See LobbyChrome.BuildSettingsChip.");
 
             if (settingsToggle != null)
             {
@@ -330,13 +401,72 @@ namespace TumbangPreso.PlayTests
                 settingsToggle.onClick.Invoke();
             }
 
-            var lobbyToggle = Find("LobbyDrawerToggle")?.GetComponent<Button>();
-            if (lobbyToggle != null)
+            // ⚠️⚠️ THE THREE DRAWERS ARE THREE CHIPS ON THE BOTTOM RAIL NOW, AND EVERY ONE OF
+            // THEM IS A STATE `CLAUDE.md` § 6.2b SAYS MUST BE PHOTOGRAPHED. The old screen had two
+            // drawer toggles in two corners; this one has QUICK MATCH, JOIN and CHAT in one row,
+            // each opening a sheet directly above the column it belongs to. A shot of the shut
+            // lobby is a shot of one of four states.
+            var joinChip = Find("JoinChip")?.GetComponent<Button>();
+            if (joinChip != null)
             {
-                lobbyToggle.onClick.Invoke();
+                joinChip.onClick.Invoke();
                 yield return new WaitForSecondsRealtime(0.25f);
                 yield return Capture($"LobbyServers-{ShotVersion}");
-                lobbyToggle.onClick.Invoke();
+                joinChip.onClick.Invoke();
+            }
+
+            var chatChip = Find("ChatChip")?.GetComponent<Button>();
+            if (chatChip != null)
+            {
+                chatChip.onClick.Invoke();
+                yield return new WaitForSecondsRealtime(0.25f);
+                yield return Capture($"LobbyChat-{ShotVersion}");
+                chatChip.onClick.Invoke();
+            }
+
+            // ⚠️⚠️ THE THREE MODES ARE THREE SCREENS AND EVERY ONE OF THEM GETS PHOTOGRAPHED.
+            // `CLAUDE.md` § 6.2b's first row: *"EVERY STATE, not the one you built first. A screen
+            // with a mode has two layouts and you have looked at one."* This screen has three now
+            // (`LobbyMode`), and each owns a different right-hand column, a different control above
+            // the primary and a different primary label. A pass that only shot CUSTOM would be
+            // shooting one third of what ships.
+            // ⚠️⚠️ A FULL SECOND AND A HALF, BECAUSE THE PRIMARY HAS AN ENTRANCE ANIMATION.
+            // `ArrowButtonView` unfurls from `localScale` (0, 0.7) on every `OnEnable`, which is
+            // the animation 🧑 asked for in 2026-08 and which `docs/TODO.md` § 118.1 row 6 asks for
+            // more of. `Logs/shots-runtime/LobbyPractice-v54.png` caught it about a fifth of the
+            // way through and reads as a broken 110-unit button with its label clipped across it;
+            // 🧑 saw that frame and said *"this start match button ugly"*. **A shot taken during an
+            // animation is a shot of a state no player looks at.**
+            var rankedTab = Find("RankedTab")?.GetComponent<Button>();
+            if (rankedTab != null)
+            {
+                rankedTab.onClick.Invoke();
+                yield return new WaitForSecondsRealtime(1.5f);
+                yield return Capture($"LobbyRanked-{ShotVersion}");
+
+                var rankedButton = Find("RankedButton")?.GetComponent<Button>();
+                if (rankedButton != null)
+                {
+                    rankedButton.onClick.Invoke();
+                    yield return new WaitForSecondsRealtime(0.6f);
+                    yield return Capture($"LobbyQueue-{ShotVersion}");
+
+                    var cancel = Find("CancelQueueButton")?.GetComponent<Button>();
+                    if (cancel != null) cancel.onClick.Invoke();
+                    yield return new WaitForSecondsRealtime(0.2f);
+                }
+            }
+
+            var practiceTab = Find("PracticeTab")?.GetComponent<Button>();
+            if (practiceTab != null)
+            {
+                practiceTab.onClick.Invoke();
+                yield return new WaitForSecondsRealtime(1.5f);
+                yield return Capture($"LobbyPractice-{ShotVersion}");
+
+                var customTab = Find("CustomTab")?.GetComponent<Button>();
+                if (customTab != null) customTab.onClick.Invoke();
+                yield return new WaitForSecondsRealtime(0.4f);
             }
 
             // The join card over the top of it, which is the other half of this screen.
@@ -345,12 +475,22 @@ namespace TumbangPreso.PlayTests
 
             if (open != null && panel != null)
             {
-                panel.SetActive(true);
+                // ⚠️⚠️ IT IS OPENED THROUGH ITS OWN `Open()` RATHER THAN BY SWITCHING THE OBJECT
+                // ON. `LobbyJoinPanel.Refresh` is what fills the browser rows and what hides the
+                // three that have nothing in them, and it runs from `Open`, not from `OnEnable`.
+                // `Logs/shots-runtime/LobbyJoin-v52.png` is the receipt: four rows, three of them
+                // reading `AVAILABLE GAMES APPEAR HERE`, because the shot pass photographed a panel
+                // that had never been refreshed. **A render of a state the game cannot reach is
+                // worse than no render**, which is `CLAUDE.md` § 6.2b's whole subject.
+                var join = panel.GetComponent<LobbyJoinPanel>();
+                if (join != null) join.Open();
+                else panel.SetActive(true);
 
-                yield return new WaitForSecondsRealtime(0.6f);
+                yield return new WaitForSecondsRealtime(0.8f);
                 yield return Capture($"LobbyJoin-{ShotVersion}");
 
-                panel.SetActive(false);
+                if (join != null) join.Close();
+                else panel.SetActive(false);
             }
             else
             {

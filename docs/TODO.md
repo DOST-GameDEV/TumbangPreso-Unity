@@ -2138,6 +2138,196 @@ one.**
 
 ---
 
+## 119 · The whole front end is repainted in PAPER, and the lobby is rebuilt around the room ⚠️⚠️ OPEN, 2026-09-01, branch `ui-redesign`
+
+🧑, with a crop of the lobby, a crop of the join panel, `Art/ui/TUMP.png` and a two-swatch card:
+*"game reads as too brown bcz the game itself is brown already (the map and shit)"*, *"Look at the
+logo, pic 3"*, *"can we remodel the color of all UI for lobby and login to look like this?"*, *"i
+want us to play around the 2 colors i attached"*, and then, widening it three times in a row:
+*"not just color overaul u can genuinnely overaul the whole thing bcz its ugly"*, *"u can overhaul
+the wole lobby and login bcz its ugly as fuck ... it feels overwhelming and not nice to look at as
+a user"*, **"redesign teh whole ass UI (dont touch the camera and shit tho) ... ur goal is to make
+it inntuitive and easy for user to traverse and calming. I DONT WANT it to be overwhelming for
+htem"**.
+
+⚠️⚠️ **HE ALSO GAVE THE PERMISSION § 118.4 SAYS THIS NEEDS, IN ADVANCE AND BY NAME:** *"i think
+handoff says u cant recolor and shit but i give u permission to overhaul"*, and
+*"OVERHAUL UI FOR EVERYTHING IN LOBBBY INCLUDING AS WELL EVERYTHING U CAN CLICK IN LOBBY LIKE
+CHARACTER SELECT, CHARACTER MAKING, SETTINGS, ETC EVERYTHING (except for main menu and actual game
+for now)"*. **The main menu and the in-match HUD are still out of scope and so is the lobby
+camera.**
+
+### 119.1 ⚠️⚠️ THE DIAGNOSIS IS HIS AND IT IS MEASURABLE: THE UI AND THE WORLD ARE THE SAME COLOUR
+
+*"game reads as too brown bcz the game itself is brown already"*. Sampling
+`Logs/shots-runtime/Lobby-v51.png`: Eskinita's road, houses, poles and fences sit at **hue 18 to
+40, saturation 30 to 60 per cent**. `UiTheme.WoodFace` `793e1f`, which is every panel, rail, card
+and toggle on that screen, is **hue 22 at 74 per cent**. Every surface in the front end is
+therefore a slightly darker version of the picture behind it, and the only thing separating the
+two is the keyline. **No amount of bevel, grain, varnish or composition fixes that**, which is why
+§ 116, § 117 and § 118 each improved the screen and each left him saying it still looked wrong.
+
+⚠️ **`f4ecdd` AND `efdabe` ARE NOT A FIFTH HUE.** Both are hue 34 to 38 at 6 to 20 per cent
+saturation, one step off `UiTheme.Cream` `f5e6c8`, which has been in the palette since
+`ui_theme.gd`. `CLAUDE.md` § 6.4 is intact: no blue, no navy, no cold grey, and the wood, amber,
+green and ink are all unchanged. **What changes is which member of the palette is the FIELD.**
+Paper is the surface now; wood is the ink, the frame and his own authored buttons standing on it.
+
+⚠️ **AND THE SWATCHES ARE ALREADY IN HIS OWN MARK.** `Art/ui/TUMP.png` is white lettering with a
+sand halo on a linen field; the linen samples `f2ead9`, within a point of `f4ecdd` on every
+channel. The palette was on screen in the game logo before he sent the card.
+
+### 119.2 The two new files, and why they are new files rather than an edit
+
+| File | What it is |
+|---|---|
+| `Runtime/UI/PaperCraft.cs` | Five CONSTRUCTIONS in cut paper: `Sheet`, `Token`, `Tray`, `Ghost`, `Sign`. Each differs in silhouette and relief, not only in fill. Plus `PaperSkin`, the rect watcher, which **destroys any `WoodSkin` on the same node**. |
+| `Runtime/UI/PaperKit.cs` | The atoms and the four-step type scale (44 / 26 / 20 / 16), one `Gap` of 12, and `PaperButton`, the pose driver. **Deliberately a kit of parts and not a screen builder**, because a shared `BuildPanel(title, rows)` is exactly how five screens become one screen five times. |
+
+⚠️ **`WoodCraft` IS NOT DELETED AND MUST NOT BE.** It draws every wooden control in the main menu
+and in the match, neither of which this pass may touch, and it is the transcription of his
+authored art. The two materials share `WoodCraft.Depth` and `WoodCraft.Finish` (made `internal`)
+so the two cannot pick up different corner anti-aliasing.
+
+### 119.3 ⚠️⚠️ THE CONTROL INVENTORY. NOTHING ON THIS LIST MAY DISAPPEAR
+
+🧑, twice: *"MAKE SURE EVERYTHING U REPLACED IS ACCOUNTED FOR AND WE DONT LOSE BUTTONS"*, and
+*"Im so worried ull leave old UI int he shhit and itll be a mess ... as well as forget UI"*. This
+is the answer to the second half, and `PaperPurityProbe` (§ 119.6) is the answer to the first.
+
+**LOBBY** — the converted node names `ConvertedMatchSetup` resolves by name. Renaming or dropping
+any of these breaks the wiring silently, which is what the `LobbyChrome` header warns about:
+
+`BackButton` · `StartButton` · `PrimaryButton` · `SeatButton0..3` · `SeatHeading` · `SeatHint` ·
+`CharacterButton` · `CharacterSelectPanel` · `MapPreview` · `MapValueLabel` · `ModeValueLabel` ·
+`DifficultyValueLabel` · `DetailLabel` · `MapPrevButton` · `MapNextButton` · `ModePrevButton` ·
+`ModeNextButton` · `ModeRow` · `DifficultyPrevButton` · `DifficultyNextButton` · `FormatPrevButton`
+· `StatusLabel`
+
+**LOBBY** — the controls built in code:
+
+| Control | Lives in | Where it goes now |
+|---|---|---|
+| BACK | `LobbyChrome.LiftBack` | top rail, far left |
+| PRACTICE / MULTIPLAYER tabs | `LobbyChrome.BuildTabs` | top rail, centre |
+| YOUR PROFILE door | `LobbyChrome.BuildProfileButton` | **top rail, far right** (🧑: *"i tink te profile screen should be more up instead of being below character select"*) |
+| player name field | `LobbyChrome.BuildNameField` | the hub PROFILE tab behind that door |
+| CHARACTER door | `LobbyChrome.BuildCharacterButton` | bottom rail, left column, row 1 |
+| LOADOUT door | `LobbyChrome.BuildLoadoutButton` | bottom rail, left column, row 2 |
+| ROOM CODE + tap to copy | `LobbyChrome.BuildRoomSign` | bottom rail, right column, on the `Sign` surface |
+| MATCH SETTINGS toggle + summary | `LobbyChrome.BuildLeftRail` | bottom rail, centre column, above the primary |
+| MAP / MODE / BOTS / RULES dropdowns | `ConvertedMatchSetup.BuildSettingsDropdowns`, `WoodDropdown` | the settings drawer, which opens UPWARD out of the rail |
+| START MATCH / READY / CONNECTING | `StartButton`, `PrimaryButton` | bottom rail, centre column: the one thing on the screen |
+| QUICK MATCH + queue card | `QueueCard` | a drawer above the right column, never a floating corner card |
+| JOIN / SERVERS | `LobbyJoinPanel`, `_joinButton`, `_onlineButton` | one chip in the right column, opening the rebuilt takeover |
+| CHAT | `LobbyChat` | one chip in the right column, opening a drawer |
+| SPECTATE | `_spectate` | the seat plates: a free seat is pressable and says so |
+| SECURE YOUR PROGRESS | `LobbyChrome` footer link | a chip only while the account is a guest |
+| version stamp | `VersionStamp` | on the top rail, not floating over the road (§ 118.1 row 8) |
+
+**LOGIN** (`SignInScreen`): SIGN IN tab · CREATE tab · username · password · primary
+(SIGN IN / CREATE ACCOUNT) · CONTINUE WITH GOOGLE · PLAY AS GUEST · BACK · the WELCOME BACK state
+CONTINUE and SIGN IN AS SOMEBODY ELSE · the footer key hints. **Eleven controls across three
+states, and § 6.2b first row is why all three get photographed.**
+
+**JOIN A GAME** (`LobbyJoinPanel`): code/IP field · JOIN · six browser rows · BACK TO LOBBY ·
+LEAVE GAME.
+
+**CHARACTER SELECT** (`ConvertedCharacterSelect`): `CharPrevButton` · `CharNextButton` ·
+`CharValueLabel` · `CharacterPreview` · `TabBar` · `TraitRows` · `NameRow` · `NameCaption` ·
+`TaglineLabel` · `ConfirmButton` · `BackButton` · `BackdropGlow`.
+
+**CHARACTER MAKER** (`CustomCharacterScreen`): SLOT 1..3 tabs · SURPRISE ME · PRESETS · BACK ·
+KEEP AND USE · the ten wardrobe categories · the colour dial.
+
+**SETTINGS** (`ConvertedSettingsPanel`): `ApplyButton` · `BackButton` · `ResetAllButton` ·
+`FullscreenCheck` · `PlayerNameField` · `BindingsList`.
+
+**HUB** (`PlayerHub`): CLOSE · six tabs (PROFILE, FRIENDS, LOADOUT, CAREER, MATCHES, ACCOUNT) ·
+the footer action (SAVE / REFRESH) · the detail view BACK · every `UiRows` row inside them.
+
+### 119.4 The lobby new composition: one room, two rails
+
+⚠️⚠️ **THIS IS § 118.1 ROW 2 ANSWERED STRUCTURALLY RATHER THAN BY FILLING THE HOLE.** That row
+measures 680 units of empty screen on the left and 475 on the right, between a top band and a
+bottom rail, with four corners and nothing between them. The answer is not more furniture in the
+middle; it is **two full-width rails and a middle that is only the room**, which is the mechanism
+§ 118.3 credits to Rocket League and Overwatch and which Fall Guys uses for exactly this screen.
+
+```
++----------------------------------------------------------------------+
+|  < BACK        PRACTICE  .  MULTIPLAYER            [ YOU  > ]   v1.00 |  top rail, 88
++----------------------------------------------------------------------+
+|                                                                      |
+|      BOT        [ YOU ]        OPEN SEAT        BOT                   |  seat plates
+|       o            o               - -            o                   |  the cast
+|                                                                      |
++----------------------------------------------------------------------+
+|  YOUR FIGHTER >  |  MATCH SETTINGS v |  ROOM   VQ7A     tap to copy   |  bottom rail, 180
+|  DANTE . PASIP   |  +--------------+ |  +-----+ +-----+ +-----+       |
+|  YOUR BUILD   >  |  |  START MATCH | |  |QUICK| |JOIN | |CHAT |       |
++----------------------------------------------------------------------+
+```
+
+- **The middle is never chrome.** Only the cast and the four seat plates.
+- **Every drawer opens UPWARD out of the bottom rail and is attached to the column that opened
+  it.** Nothing on this screen floats in a corner any more, which is what made the queue card and
+  the chat read as unrelated boxes.
+- **A free seat is a `Ghost` and says `OPEN SEAT`**, which is § 118.1 row 3 and the Among Us
+  mechanism: an empty seat cannot be drawn with a filled surface however it is coloured.
+- **The two player-card rows stop being near-twins** (§ 118.1 row 4): FIGHTER is a two-line row
+  and BUILD is a one-line row, in a left column that is the only stack of rows on the screen.
+- **BACK stops competing with the tabs** (§ 118.1 row 5): it is a small pill at the far edge of
+  the rail and the tabs are the only thing in its centre.
+- **`tap to copy` sits on the amber band of a `Sign`** (§ 118.1 row 7), the one accent on the
+  screen, instead of being 15-unit muted cream on wood.
+- **The version stamp sits on the top rail** (§ 118.1 row 8).
+
+### 119.5 Each screen gets its own device, because the repetition complaint is about method
+
+🧑: *"DONT USE THE SAME METHODS IN MAKING DIFF PAGES AND PANELS unless u have to bcz the comment
+last time by everyone is that our ui looked bland and repetitive"*.
+
+| Screen | Its device | Why that one |
+|---|---|---|
+| LOBBY | two full-width rails, empty middle | the room is the picture |
+| LOGIN | ONE sticker card over full-bleed key art | it is the logo own construction, and the screen has one job |
+| JOIN A GAME | one sheet, one field, and a SEGMENTED list (NEARBY / ONLINE) rather than two always-open sections | pic 2: *"COULD USE ON SOME WORKING ON BCZ IT FEELS OVERWHELMING"*. Two headed sections plus a field plus a footer is four groups; one field and one switchable list is two |
+| QUEUE | a drawer that grows out of the rail | it is a state of the lobby, not a separate screen |
+| CHARACTER SELECT | a filmstrip: the model large, the roster as a strip under it | it is a picker, and picker content is pictures |
+| CHARACTER MAKER | a workbench: the model left, one category open at a time on the right | ten categories cannot all be on screen |
+| SETTINGS | a folder: groups closed by default with a one-line summary on each header | `CLAUDE.md` § 6.2 question 3 |
+| HUB | an ID card with a tab COLUMN rather than a tab row | six tabs across a header is the row that made § 92 unreadable |
+
+### 119.6 ⚠️⚠️ `PaperPurityProbe` IS THE GATE ON "NO LEFTOVER OLD UI", AND IT IS THE POINT
+
+🧑: *"MAKE SURE U COMPLETELY REPLACE UI BCZ I DOTN WANT LEFTOVER SHIT FROM OLD UI TO STILL BE
+FRIGGING WITH US"*.
+
+**Every previous pass in this file was verified by looking at a picture, and a picture cannot see a
+surface that is behind another surface or off the edge of a drawer that is currently shut.** The
+probe builds the lobby and the login screen, walks every `Image` under them, and fails on any node
+that still carries `WoodSkin`, `GodotPanel`, a `GodotTheme.Box` sprite or a `UiMaterials.Plank`
+sprite, unless it is:
+
+- one of the authored textures (anything whose sprite comes from `Art/ui/`), or
+- inside the match HUD or the main menu, which are out of scope.
+
+⚠️ **IT ALSO ASSERTS THE INVENTORY IN § 119.3**: every named control resolves, is active in at
+least one state, and has at least one `onClick` listener. That is the half § 118.5 acceptance
+could not cover, and it is *"we dont lose buttons"* written as a test rather than as care.
+
+### 119.7 Acceptance
+
+- Every state photographed over the real background at 1920x1080 **and at his window shape**, with
+  `UiRuntimeShots.ShotVersion` bumped every iteration.
+- `PaperPurityProbe`, `LobbyStyleProbe`, `QueueCardLayoutProbe`, `PlayerHubLayoutProbe`,
+  `UiClickProbe`, `AspectRatioProbes` green, plus Core, EditMode and the full PlayMode suite.
+- `Checks.RunAll` five of five and the three `tools/` audits.
+- ⚠️ **A person looks at the picture.**
+
+---
+
 ## 118 · The lobby is coherent now and it is not finished ⚠️⚠️ OPEN, 2026-09-01, branch `ui-redesign`
 
 🧑, after § 117 landed and he had looked at every render: *"create handoff to improve lobby ui even

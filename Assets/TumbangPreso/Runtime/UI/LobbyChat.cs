@@ -220,7 +220,8 @@ namespace TumbangPreso.UI
 
             for (int i = 0; i < MaxLines; i++)
             {
-                var line = MenuKit.Label(transform, "", LineSize, UiTheme.Cream,
+                var line = MenuKit.Label(transform, "", LineSize,
+                                         _inMatch ? UiTheme.Cream : UiTheme.PaperInk,
                                          Vector2.zero, Vector2.zero, Vector2.zero,
                                          TextAnchor.LowerLeft);
 
@@ -268,8 +269,17 @@ namespace TumbangPreso.UI
                 // matte, no keyline, one lit lip along the top edge where the rail above it
                 // catches the light. **It costs no new colour** and it is the only thing on the
                 // right-hand side that is not a board.
+                // ⚠️⚠️ IT IS A PAPER SHEET NOW, AND THE ASPHALT NOTE ABOVE IS KEPT BECAUSE ITS
+                // REASONING IS STILL RIGHT ABOUT THE PROBLEM AND WAS WRONG ABOUT THE ANSWER. The
+                // complaint it was written against was *"everyone just being brown"*, and slate
+                // did fix that for one panel; what it could not fix is that the whole front end
+                // and the whole street are the same hue. Now that every rail is cream, a matte
+                // near-black well is the ONE dark object on the screen and reads as a hole cut in
+                // it, which is the exact failure `WoodCraft.PaintSlate` records at 0.22 alpha and
+                // corrects to 0.12. A log is a list of lines; on a paper front end it is written
+                // on paper.
                 plate.raycastTarget = true;
-                WoodSkin.Apply(gameObject, WoodCraft.Surface.Slate);
+                PaperSkin.Apply(gameObject, PaperCraft.Surface.Sheet);
 
                 // ⚠️ IT DOES EAT CLICKS, unlike everything else this component draws. A chat panel
                 // you can click THROUGH into the seat rows behind it is a panel that steals half
@@ -299,7 +309,12 @@ namespace TumbangPreso.UI
             // (`BUTTON LONG`, `TEXT FIELD`) and a ROUND means furniture (`MAP MODE DISPLAY`), so
             // the silhouette is already carrying that distinction everywhere else on the screen.
             // `WoodCraft`'s header has the sampled evidence.
-            WoodSkin.Apply(_fieldRow, WoodCraft.Surface.Field);
+            // ⚠️ THE FIELD IS A `Tray` AND THE LOG BEHIND IT IS A `Sheet`, which is the same
+            // distinction the note above draws, one material later: a `Tray` is cut INTO the
+            // sheet and carries a shadow along its top edge, a `Sheet` stands on the road and
+            // carries a halo. One is a thing you type in, the other is a thing you read.
+            if (_inMatch) WoodSkin.Apply(_fieldRow, WoodCraft.Surface.Field);
+            else PaperSkin.Apply(_fieldRow, PaperCraft.Surface.Tray);
 
             var element = _fieldRow.AddComponent<LayoutElement>();
             element.minHeight = FieldHeight;
@@ -307,13 +322,16 @@ namespace TumbangPreso.UI
 
             var placeholder = MenuKit.Label(_fieldRow.transform,
                                             _inMatch ? "ENTER to talk" : "Say something",
-                                            LineSize, UiTheme.CreamMuted,
+                                            LineSize,
+                                            _inMatch ? UiTheme.CreamMuted
+                                                     : UiTheme.PaperInkSoft,
                                             Vector2.zero, Vector2.zero, Vector2.zero,
                                             TextAnchor.MiddleLeft);
             placeholder.raycastTarget = false;
             Inset(placeholder.rectTransform);
 
-            var typed = MenuKit.Label(_fieldRow.transform, "", LineSize, UiTheme.Cream,
+            var typed = MenuKit.Label(_fieldRow.transform, "", LineSize,
+                                      _inMatch ? UiTheme.Cream : UiTheme.PaperInk,
                                       Vector2.zero, Vector2.zero, Vector2.zero,
                                       TextAnchor.MiddleLeft);
             typed.raycastTarget = false;
@@ -622,7 +640,9 @@ namespace TumbangPreso.UI
 
                 // ⚠️ THE EMPTY LINE IS MUTED, so it reads as the absence of messages rather than
                 // as a message somebody sent.
-                line.color = line.text == EmptyLog ? UiTheme.CreamMuted : UiTheme.Cream;
+                line.color = _inMatch
+                    ? (line.text == EmptyLog ? UiTheme.CreamMuted : UiTheme.Cream)
+                    : (line.text == EmptyLog ? UiTheme.PaperInkSoft : UiTheme.PaperInk);
 
                 if (element != null)
                 {
@@ -840,7 +860,7 @@ namespace TumbangPreso.UI
 
             // The opened log is a wooden card holding an asphalt well, which is the same pairing
             // the collapsed chat uses one size down. See the `Slate` note in `Install`.
-            WoodSkin.Apply(box, WoodCraft.Surface.Panel);
+            PaperSkin.Apply(box, PaperCraft.Surface.Sheet);
 
             // ⚠ IT EATS CLICKS. The panel is opaque wood over a lobby full of controls, and a
             // press that fell through to a seat row underneath it would seat the player from a
@@ -851,7 +871,8 @@ namespace TumbangPreso.UI
             var panelRect = plate.rectTransform;
             MenuKit.Stretch(panelRect, 0.0f);
 
-            var title = MenuKit.Label(box.transform, "LOBBY CHAT", 30, UiTheme.Cream,
+            var title = MenuKit.Label(box.transform, "LOBBY CHAT", PaperKit.Title,
+                                      UiTheme.PaperInk,
                                       Vector2.zero, Vector2.zero, Vector2.zero,
                                       TextAnchor.MiddleLeft);
             var titleRect = title.rectTransform;
@@ -872,7 +893,7 @@ namespace TumbangPreso.UI
             var viewportGo = new GameObject("Viewport");
             viewportGo.transform.SetParent(box.transform, false);
             var viewportImage = viewportGo.AddComponent<Image>();
-            WoodSkin.Apply(viewportGo, WoodCraft.Surface.Slate);
+            PaperSkin.Apply(viewportGo, PaperCraft.Surface.Tray);
             var viewportRect = viewportImage.rectTransform;
             viewportRect.anchorMin = Vector2.zero;
             viewportRect.anchorMax = Vector2.one;
@@ -894,7 +915,7 @@ namespace TumbangPreso.UI
             _historyText = contentGo.AddComponent<Text>();
             _historyText.font = MenuKit.Font;
             _historyText.fontSize = 22;
-            _historyText.color = UiTheme.Cream;
+            _historyText.color = UiTheme.PaperInk;
             _historyText.alignment = TextAnchor.UpperLeft;
             _historyText.alignByGeometry = true;
             _historyText.horizontalOverflow = HorizontalWrapMode.Wrap;

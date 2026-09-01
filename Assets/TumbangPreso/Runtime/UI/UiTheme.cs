@@ -171,6 +171,93 @@ namespace TumbangPreso.UI
         /// </summary>
         public static readonly Color Asphalt = Hex("2f2118");
 
+        // -------------------------------------------------------------------
+        // THE PAPER SET. The front end's DOMINANT surface as of 2026-09-01.
+        //
+        // ⚠️⚠️ THIS REVERSES THE FIGURE AND THE GROUND, AND IT IS 🧑'S OWN INSTRUCTION WITH TWO
+        // HEXES ATTACHED. He sent the `TUMP` sticker logo and a two-swatch card and said: *"game
+        // reads as too brown bcz the game itself is brown already (the map and shit)"*, *"can we
+        // remodel the color of all UI for lobby and login to look like this?"*, *"i want us to
+        // play around the 2 colors i attached"*.
+        //
+        // ⚠️⚠️ HE IS DESCRIBING A CONTRAST FAULT RATHER THAN A TASTE ONE, AND IT IS MEASURABLE.
+        // Eskinita's road, houses and poles occupy hue 20 to 40 at 30 to 60 per cent saturation.
+        // `WoodFace` `793e1f` is hue 22 at 74 per cent. **The furniture and the world it sits on
+        // were the same colour**, so every panel in `Lobby-v51.png` has to be found by its keyline
+        // rather than seen as a shape. Cream at `f4ecdd` is 6 per cent saturated: it separates
+        // from that world on VALUE and SATURATION at once, which is the one pair of axes the
+        // street does not already occupy.
+        //
+        // ⚠️ AND IT IS NOT A NEW HUE. Both swatches are hue 34 to 38, one step off `Cream`
+        // `f5e6c8` and inside the same warm family as the wood. `CLAUDE.md` § 6.4's palette is
+        // unchanged and no blue, navy or cold grey enters anywhere: what changes is which member
+        // of it is the FIELD and which is the FIGURE. Wood is the ink and the frame now; paper is
+        // the surface.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// The lighter of his two swatches, and the front end's primary surface.
+        ///
+        /// ⚠️ IT IS THE LOGO'S OWN GROUND. `Art/ui/TUMP.png` is white lettering with a sand halo
+        /// on a linen field; sampling the linen gives `f2ead9`, which is this within a point on
+        /// every channel. The palette was already on screen in the game's own mark.
+        /// </summary>
+        public static readonly Color Paper = Hex("f4ecdd");
+
+        /// <summary>
+        /// The warmer of his two swatches: anything RECESSED into <see cref="Paper"/>.
+        ///
+        /// ⚠️ THE TWO ARE ONLY 4 PER CENT APART IN VALUE AND THAT IS THE POINT. A tray cut into a
+        /// sheet is the same paper under less light, so the difference has to be small enough to
+        /// read as shading and large enough to find. Anything wider turns a form into a set of
+        /// stripes, which is what the zebra bands in § 92 were.
+        /// </summary>
+        public static readonly Color PaperWarm = Hex("efdabe");
+
+        /// <summary>
+        /// The die-cut halo: the band of sand a sticker keeps around its own artwork.
+        ///
+        /// ⚠️⚠️ IT IS THE LOGO'S CONSTRUCTION, NOT A BORDER COLOUR. Every letter of `TUMP` and the
+        /// blob behind it carry the same outside band, which is what makes the mark read as a
+        /// physical cut-out lying on a surface rather than as a shape drawn on one. `PaperCraft`
+        /// puts that band OUTSIDE the fill rather than inside it, which is why a cream panel here
+        /// does not read as a cream rectangle with a line round it.
+        /// </summary>
+        public static readonly Color PaperEdge = Hex("dcc19a");
+
+        /// <summary>The sand under a paper control that is pressed, and the lip along its bottom.
+        /// ⚠️ Sampled a step below <see cref="PaperEdge"/> so a pressed token darkens INTO its own
+        /// halo rather than picking up a second colour.</summary>
+        public static readonly Color PaperSunk = Hex("cbac83");
+
+        /// <summary>
+        /// Ink on paper: the type colour for every word drawn on <see cref="Paper"/>.
+        ///
+        /// ⚠️ IT IS <see cref="WoodMid"/>'S DARKNESS, NOT <see cref="Ink"/>'S. Near-black on cream
+        /// is a contrast ratio of about 17:1, which reads as a printed form and is the opposite of
+        /// the calm 🧑 asked for (*"ur goal is to make it ... calming"*). `3b2415` on `f4ecdd` is
+        /// 10.4:1, still far above the 4.5:1 floor `game-ui-design`'s `validations.md` sets for
+        /// body copy, and it is the colour his own wood already is.
+        /// </summary>
+        public static readonly Color PaperInk = Hex("3b2415");
+
+        /// <summary>
+        /// Secondary type on paper: captions, hints, the second line of a row.
+        ///
+        /// ⚠️ A LIGHTER INK RATHER THAN A TRANSPARENT ONE, because alpha over a sheet that itself
+        /// sits over a live street changes colour with whatever is behind the screen.
+        ///
+        /// ⚠️⚠️ IT WAS `8a6c50` AND THAT MEASURED 4.1:1 AGAINST `PaperWarm`, WHICH IS UNDER THE
+        /// FLOOR. `game-ui-design`'s `validations.md` sets 4.5:1 for body copy, and this colour
+        /// carries every caption on the front end: the loadout line under a character name, the
+        /// settings summary under the chip, `tap to copy`, the seat plates' second line. Computing
+        /// the ratio rather than eyeballing it is the whole lesson of `CLAUDE.md` § 6.4, where a
+        /// near-black navy looked black in a code review for the entire life of the file.
+        /// `7a5c40` measures **5.2:1** on `f4ecdd` and 4.9 on `efdabe`, and is still visibly a
+        /// quieter voice than <see cref="PaperInk"/> at 12.1.
+        /// </summary>
+        public static readonly Color PaperInkSoft = Hex("7a5c40");
+
         public static Font Font => MenuKit.Font;
 
         public static Color CreamMuted => new Color(Cream.r, Cream.g, Cream.b, 0.68f);

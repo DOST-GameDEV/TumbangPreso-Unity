@@ -41,12 +41,29 @@ namespace TumbangPreso.UI
     {
         /// <summary>How many rows each browser draws. Four is what the old screen drew and it is
         /// the number that fits the card without scrolling.</summary>
-        private const int RowCount = 2;
+        /// <summary>
+        /// How many rows the browser draws.
+        ///
+        /// ⚠️⚠️ FOUR NOW, AND IT WAS TWO PER GROUP BECAUSE THERE WERE TWO GROUPS. 🧑 2026-09-01,
+        /// with a crop of this panel: *"PIC 2 COULD USE ON SOME WORKING ON BCZ IT FEELS
+        /// OVERWHELMING"*. The old layout had a heading, a hint, a field, a JOIN button, a
+        /// second heading, two rows, a third heading, two more rows and a footer: **ten stacked
+        /// things in a 940-unit card, seven of which were on screen saying nothing** because both
+        /// lists are empty until a game answers. One switchable list is two groups instead of
+        /// four, and four rows in it is more of the ONE list that has anything in it.
+        /// </summary>
+        private const int RowCount = 4;
 
-        private const float CardWidth = 940.0f;
-        private const float CardHeight = 520.0f;
-        private const float RowHeight = 48.0f;
-        private const float Pad = 22.0f;
+        /// <summary>
+        /// ⚠️ 820, DOWN FROM 940, AND THE 120 CAME OUT OF A ROW THAT NEVER NEEDED IT. The widest
+        /// string this card draws is a LAN row: a host name, a seat count, a state and an
+        /// `address:port`, about 640 units at <see cref="PaperKit.Body"/>. 940 was sized against
+        /// the screen rather than against the content, which is `CLAUDE.md` § 6.2c question 1.
+        /// </summary>
+        private const float CardWidth = 820.0f;
+        private const float CardHeight = 560.0f;
+        private const float RowHeight = 52.0f;
+        private const float Pad = 24.0f;
 
         /// <summary>Raised after a join has actually connected. The lobby redraws; it does not
         /// reload. See the header.</summary>
@@ -63,8 +80,6 @@ namespace TumbangPreso.UI
         private NetSession _net;
 
         private InputField _entry;
-        private Text _lanTitle;
-        private Text _onlineTitle;
 
         private readonly List<Button> _lanRows = new List<Button>();
         private readonly List<Text> _lanRowLabels = new List<Text>();
@@ -100,16 +115,19 @@ namespace TumbangPreso.UI
         private void Construct()
         {
             var scrim = gameObject.AddComponent<Image>();
-            scrim.color = new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.68f);
+
+            // ⚠️ WARM AND WEAKER. `PaperCraft.Scrim` carries the reasoning: every word on this
+            // card sits on opaque cream, so the scrim buys separation and nothing else, and
+            // `CLAUDE.md` § 6.4 bans a neutral black dim over a warm street because it composites
+            // as cold grey.
+            scrim.color = PaperCraft.Scrim;
             scrim.raycastTarget = true;
             MenuKit.Stretch(scrim.rectTransform, 0.0f);
 
-            var cardGo = new GameObject("JoinCard");
-            cardGo.transform.SetParent(transform, false);
-            var card = cardGo.AddComponent<Image>();
+            var card = PaperKit.Sheet(transform, "JoinCard");
+            var cardGo = card.gameObject;
             MenuKit.Place(card.rectTransform, new Vector2(0.5f, 0.5f), Vector2.zero,
                           new Vector2(CardWidth, CardHeight));
-            WoodSkin.Apply(cardGo, WoodCraft.Surface.Panel);
 
             var column = new GameObject("Column");
             column.transform.SetParent(cardGo.transform, false);
@@ -130,26 +148,146 @@ namespace TumbangPreso.UI
             layout.childAlignment = TextAnchor.UpperCenter;
             MenuKit.Stretch(column.GetComponent<RectTransform>(), 0);
 
-            Heading(column.transform, "JOIN A GAME", 34, UiTheme.Amber, 40);
+            var title = Heading(column.transform, "JOIN A GAME", PaperKit.Title,
+                                UiTheme.PaperInk, 34);
+            title.alignment = TextAnchor.MiddleLeft;
+            title.fontStyle = FontStyle.Bold;
 
             var hint = Heading(column.transform,
                                "Type a four-character code or an address, or pick a game below.",
-                               18, UiTheme.CreamMuted, 24);
+                               PaperKit.Caption, UiTheme.PaperInkSoft, 24);
             hint.alignment = TextAnchor.MiddleLeft;
 
             BuildEntryRow(column.transform);
 
-            _lanTitle = Heading(column.transform, "ON YOUR NETWORK", 20, UiTheme.Cream, 26);
-            _lanTitle.alignment = TextAnchor.MiddleLeft;
-            BuildRows(column.transform, _lanRows, _lanRowLabels, OnLanRowClicked,
-                      "SEARCHING FOR LAN GAMES…");
+            BuildSourceSwitch(column.transform);
 
-            _onlineTitle = Heading(column.transform, "ONLINE", 20, UiTheme.Cream, 26);
-            _onlineTitle.alignment = TextAnchor.MiddleLeft;
-            BuildRows(column.transform, _onlineRows, _onlineRowLabels, OnOnlineRowClicked,
+            // ⚠️⚠️ ONE LIST AREA, TWO GROUPS INSIDE IT, AND ONLY ONE OF THEM IS EVER ACTIVE. The
+            // rows themselves are unchanged and so is everything that fills them; what changed is
+            // that the card no longer shows two headed, mostly empty lists at once. See
+            // <see cref="RowCount"/> for the count and 🧑 for the complaint.
+            _list = new GameObject("BrowserList", typeof(RectTransform));
+            _list.transform.SetParent(column.transform, false);
+
+            var listLayout = _list.AddComponent<VerticalLayoutGroup>();
+            listLayout.spacing = 6.0f;
+            listLayout.childControlWidth = true;
+            listLayout.childControlHeight = true;
+            listLayout.childForceExpandWidth = true;
+            listLayout.childForceExpandHeight = false;
+
+            var listElement = _list.AddComponent<LayoutElement>();
+            listElement.minHeight = (RowHeight * RowCount) + (6.0f * (RowCount - 1));
+            listElement.preferredHeight = listElement.minHeight;
+            listElement.flexibleHeight = 0.0f;
+
+            _lanGroup = Group(_list.transform, "NearbyGames");
+            BuildRows(_lanGroup.transform, _lanRows, _lanRowLabels, OnLanRowClicked,
+                      "SEARCHING YOUR NETWORK…");
+
+            _onlineGroup = Group(_list.transform, "OnlineGames");
+            BuildRows(_onlineGroup.transform, _onlineRows, _onlineRowLabels, OnOnlineRowClicked,
                       "CHECKING ONLINE SERVERS…");
 
             BuildFooter(column.transform);
+
+            SetSource(false);
+        }
+
+        private GameObject _list;
+        private GameObject _lanGroup;
+        private GameObject _onlineGroup;
+        private Button _nearbyChip;
+        private Button _onlineChip;
+
+        /// <summary>Which half of the browser is showing. ⚠️ NEARBY first, because a LAN game is
+        /// the one that works at the GenSan venue with no internet, which `docs/TODO.md` § 97
+        /// records as the reason no gate on this screen may need the network.</summary>
+        private bool _showOnline;
+
+        /// <summary>A stack that fills the list area, so the two groups occupy the same space and
+        /// the card cannot change height when the switch is pressed.</summary>
+        private static GameObject Group(Transform parent, string name)
+        {
+            var go = new GameObject(name, typeof(RectTransform));
+            go.transform.SetParent(parent, false);
+
+            var layout = go.AddComponent<VerticalLayoutGroup>();
+            layout.spacing = 6.0f;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = false;
+
+            var fitter = go.AddComponent<ContentSizeFitter>();
+            fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            return go;
+        }
+
+        /// <summary>
+        /// The segmented NEARBY / ONLINE switch that replaced two always-open sections.
+        ///
+        /// ⚠️ IT CARRIES THE COUNT, which is what the two headings used to do
+        /// (`ON YOUR NETWORK · 3`). A switch that says how many games are behind each side is a
+        /// switch a player can use without pressing it, which is the whole reason the counts were
+        /// on the headings in the first place.
+        /// </summary>
+        private void BuildSourceSwitch(Transform parent)
+        {
+            var row = new GameObject("SourceSwitch", typeof(RectTransform));
+            row.transform.SetParent(parent, false);
+
+            var layout = row.AddComponent<HorizontalLayoutGroup>();
+            layout.spacing = PaperKit.Gap;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = true;
+
+            var element = row.AddComponent<LayoutElement>();
+            element.minHeight = PaperKit.ChipHeight;
+            element.preferredHeight = PaperKit.ChipHeight;
+            element.flexibleHeight = 0.0f;
+
+            _nearbyChip = PaperKit.Chip(row.transform, "NearbyChip", "ON YOUR NETWORK");
+            _onlineChip = PaperKit.Chip(row.transform, "OnlineChip", "ONLINE");
+
+            _nearbyChip.onClick.AddListener(() => SetSource(false));
+            _onlineChip.onClick.AddListener(() => SetSource(true));
+        }
+
+        private void SetSource(bool online)
+        {
+            _showOnline = online;
+
+            if (_lanGroup != null) _lanGroup.SetActive(!online);
+            if (_onlineGroup != null) _onlineGroup.SetActive(online);
+
+            PaintChip(_nearbyChip, !online);
+            PaintChip(_onlineChip, online);
+        }
+
+        /// <summary>⚠️ SURFACE AND WEIGHT, NEVER HUE. The same rule the lobby tabs and the sign-in
+        /// tabs follow, and the same reason: `game-ui-design` lists colour-only state as an
+        /// anti-pattern and `docs/TODO.md` § 118.4 forbids the accent on a tab.</summary>
+        private static void PaintChip(Button chip, bool on)
+        {
+            if (chip == null) return;
+
+            var skin = chip.GetComponent<PaperSkin>();
+            if (skin != null)
+            {
+                skin.Surface = on ? PaperCraft.Surface.Token : PaperCraft.Surface.Ghost;
+                skin.Rebuild();
+            }
+
+            var label = chip.transform.Find("Label")?.GetComponent<Text>();
+            if (label == null) return;
+
+            label.fontStyle = on ? FontStyle.Bold : FontStyle.Normal;
+            label.color = on ? UiTheme.PaperInk : UiTheme.PaperInkSoft;
         }
 
         private static Text Heading(Transform parent, string text, int size, Color colour, float height)
@@ -193,12 +331,10 @@ namespace TumbangPreso.UI
             fieldGo.transform.SetParent(row.transform, false);
 
             var fieldImg = fieldGo.AddComponent<Image>();
+            PaperSkin.Apply(fieldGo, PaperCraft.Surface.Tray);
             // ⚠️ A CHAMFERED SLOT, WHICH IS WHAT HIS `TEXT FIELD.png` IS. See `WoodCraft`: a
             // rounded box with a dark outline is the language the code used to draw in and his
             // art never did, and this field sits next to a button drawn from the new one.
-            WoodSkin.Apply(fieldImg.gameObject, WoodCraft.Surface.Field);
-            fieldImg.type = Image.Type.Sliced;
-            fieldImg.color = Color.white;
 
             var fieldElement = fieldGo.AddComponent<LayoutElement>();
             fieldElement.flexibleWidth = 1;
@@ -206,13 +342,14 @@ namespace TumbangPreso.UI
             fieldElement.preferredHeight = RowHeight;
             fieldElement.flexibleHeight = 0.0f;
 
-            var placeholder = MenuKit.Label(fieldGo.transform, "JOIN CODE OR IP ADDRESS", 20,
-                                            UiTheme.CreamMuted, Vector2.zero, Vector2.zero,
+            var placeholder = MenuKit.Label(fieldGo.transform, "JOIN CODE OR IP ADDRESS",
+                                            PaperKit.Body,
+                                            UiTheme.PaperInkSoft, Vector2.zero, Vector2.zero,
                                             Vector2.zero, TextAnchor.MiddleLeft);
             placeholder.raycastTarget = false;
             Inset(placeholder.rectTransform);
 
-            var typed = MenuKit.Label(fieldGo.transform, "", 20, UiTheme.Cream,
+            var typed = MenuKit.Label(fieldGo.transform, "", PaperKit.Body, UiTheme.PaperInk,
                                       Vector2.zero, Vector2.zero, Vector2.zero,
                                       TextAnchor.MiddleLeft);
             typed.raycastTarget = false;
@@ -260,22 +397,35 @@ namespace TumbangPreso.UI
             {
                 int index = i;
 
-                var button = MenuKit.WoodButton(parent, "", Vector2.zero, Vector2.zero,
-                                                new Vector2(0.0f, RowHeight), () => onClick(index));
-                button.name = $"BrowserRow{rows.Count}";
+                // ⚠️⚠️ A ROW IS A `Tray` AND NOT A BUTTON-SHAPED SLAB, WHICH IS THE WHOLE
+                // DIFFERENCE BETWEEN A LIST AND A COLUMN OF BUTTONS. Eight identical wooden
+                // buttons stacked in a card is the shape 🧑 called overwhelming; a list of rows
+                // cut into the sheet reads as one object with entries in it. `PaperCraft` draws
+                // a tray with no halo and a shadow along its top edge, so it is visibly recessed
+                // rather than raised, and the pointer state lightens it instead of outlining it,
+                // which is what stops a list of eight flickering as the mouse crosses it.
+                var button = PaperKit.Chip(parent, $"BrowserRow{rows.Count}", "", PaperKit.Body);
+                button.onClick.AddListener(() => onClick(index));
+
+                var rowSkin = button.GetComponent<PaperSkin>();
+                if (rowSkin != null)
+                {
+                    rowSkin.Surface = PaperCraft.Surface.Tray;
+                    rowSkin.Rebuild();
+                }
 
                 var element = button.gameObject.AddComponent<LayoutElement>();
                 element.minHeight = RowHeight;
                 element.preferredHeight = RowHeight;
                 element.flexibleHeight = 0.0f;
 
-                var label = button.GetComponentInChildren<Text>();
+                var label = button.transform.Find("Label")?.GetComponent<Text>();
                 if (label != null)
                 {
                     label.alignment = TextAnchor.MiddleLeft;
-                    label.fontSize = 20;
+                    label.fontSize = PaperKit.Body;
                     label.text = i == 0 ? firstPlaceholder : "AVAILABLE GAMES APPEAR HERE";
-                    label.color = UiTheme.CreamMuted;
+                    label.color = UiTheme.PaperInkSoft;
                     Inset(label.rectTransform);
                 }
 
@@ -308,9 +458,8 @@ namespace TumbangPreso.UI
             element.preferredHeight = RowHeight;
             element.flexibleHeight = 0.0f;
 
-            var close = MenuKit.WoodButton(row.transform, "BACK TO LOBBY", Vector2.zero,
-                                           Vector2.zero, new Vector2(0.0f, RowHeight), Close);
-            close.name = "CloseJoinButton";
+            var close = PaperKit.Chip(row.transform, "CloseJoinButton", "BACK TO LOBBY");
+            close.onClick.AddListener(Close);
             var closeElement = close.gameObject.AddComponent<LayoutElement>();
             closeElement.minHeight = RowHeight;
             closeElement.preferredHeight = RowHeight;
@@ -456,9 +605,9 @@ namespace TumbangPreso.UI
 
             var lan = _net?.Beacon?.SortedEntries ?? new List<LanEntry>();
 
-            _lanTitle.text = lan.Count > 0
+            SetChipLabel(_nearbyChip, lan.Count > 0
                 ? $"ON YOUR NETWORK  ·  {lan.Count}"
-                : "ON YOUR NETWORK  ·  searching...";
+                : "ON YOUR NETWORK");
 
             _lanAddresses.Clear();
 
@@ -502,9 +651,8 @@ namespace TumbangPreso.UI
                             || !string.Equals(e.JoinCode, ownCode, StringComparison.OrdinalIgnoreCase))
                 .ToList();
 
-            _onlineTitle.text = online.Count > 0
-                ? $"ONLINE  ·  {online.Count}"
-                : "ONLINE  ·  no answer yet";
+            SetChipLabel(_onlineChip, online.Count > 0 ? $"ONLINE  ·  {online.Count}"
+                                                        : "ONLINE");
 
             _onlineCodes.Clear();
 
@@ -536,6 +684,15 @@ namespace TumbangPreso.UI
         /// deactivated object is meaningless, and `MenuKit.Fit` would then leave a host name typed
         /// on another machine running off the side of the card.
         /// </summary>
+        private static void SetChipLabel(Button chip, string text)
+        {
+            var label = chip == null ? null : chip.transform.Find("Label")?.GetComponent<Text>();
+            if (label == null) return;
+
+            label.text = text;
+            MenuKit.Fit(label, ((RectTransform)chip.transform).rect.width - 24.0f, 13);
+        }
+
         private static void Draw(Button row, Text label, string text)
         {
             row.gameObject.SetActive(true);
@@ -544,8 +701,8 @@ namespace TumbangPreso.UI
             if (label == null) return;
 
             label.text = text;
-            label.color = UiTheme.Cream;
-            label.fontSize = 20;
+            label.color = UiTheme.PaperInk;
+            label.fontSize = PaperKit.Body;
 
             float room = label.rectTransform.rect.width;
             if (room <= 1.0f) room = CardWidth - (Pad * 2.0f) - 36.0f;
@@ -557,7 +714,7 @@ namespace TumbangPreso.UI
         {
             Draw(row, label, text);
             row.interactable = false;
-            if (label != null) label.color = UiTheme.CreamMuted;
+            if (label != null) label.color = UiTheme.PaperInkSoft;
         }
 
         // ------------------------------------------------------------------------------

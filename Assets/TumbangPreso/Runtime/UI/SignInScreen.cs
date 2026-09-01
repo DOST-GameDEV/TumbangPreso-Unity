@@ -48,7 +48,16 @@ namespace TumbangPreso.UI
         /// (4:3) and about 26 on his window. There is no shape where this column squeezes the
         /// form or eats the picture.
         /// </summary>
-        private const float ColumnUnits = 580.0f;
+        private const float ColumnUnits = 560.0f;
+
+        /// <summary>The card's height, and it is the form added up. See `BuildColumn`.</summary>
+        private const float CardHeight = 900.0f;
+
+        /// <summary>How far in from the left edge the card sits. ⚠️ Wide enough that the cast in
+        /// the key art is never behind it at 16:9 and never off screen at 4:3, where
+        /// `AspectSafeCanvas` gives the canvas about 1920 units against about 2250 on his
+        /// window.</summary>
+        private const float CardMargin = 96.0f;
 
         private Canvas _canvas;
         private GameObject _root;
@@ -285,13 +294,23 @@ namespace TumbangPreso.UI
             HasKeyArt = art != null;
             if (art == null) return;
 
+            // ⚠️⚠️ THE ART IS FULL BLEED NOW AND THE FORM FLOATS ON TOP OF IT. It used to be
+            // masked to the strip right of a 580-unit wooden column, which is what `docs/TODO.md`
+            // § 100 fixed and is still a compromise: the cast was cropped by a rectangle whose
+            // only reason to exist was that a panel was standing next to it. 🧑 2026-09-01, on
+            // this screen: *"u can overhaul the wole lobby and login bcz its ugly as fuck"*.
+            //
+            // ⚠️ § 6.2c QUESTION 2 STILL HOLDS AND IS THE REASON THIS IS SAFE: the image is now
+            // fitted to the region it is SEEN in, because that region is the whole canvas. The
+            // card is a floating object over it rather than a wall beside it, which is the
+            // construction the game's own sticker logo is drawn in.
             var side = new GameObject("ArtSide", typeof(RectTransform));
             side.transform.SetParent(_root.transform, false);
 
             var sideRt = (RectTransform)side.transform;
             sideRt.anchorMin = Vector2.zero;
             sideRt.anchorMax = Vector2.one;
-            sideRt.offsetMin = new Vector2(ColumnUnits, 0.0f);
+            sideRt.offsetMin = Vector2.zero;
             sideRt.offsetMax = Vector2.zero;
             side.AddComponent<RectMask2D>();
 
@@ -345,13 +364,24 @@ namespace TumbangPreso.UI
             // so the curve is always outside the visible frame. **The RIGHT edge is not bled**,
             // because that edge is the one the player actually sees and `ColumnEdge` draws the lit
             // line down it.
-            const float Bleed = 28.0f;
-
+            // ⚠️⚠️ ONE CARD, CENTRED IN THE LEFT THIRD, INSTEAD OF A WALL DOWN THE WHOLE EDGE.
+            // The old column ran the full height of the screen with 28 units of bleed off three
+            // sides, so the screen was half wood and half picture with a hard seam between them.
+            // A card is `Art/ui/TUMP.png`'s own construction (a cut-out lying on a surface) and it
+            // is what makes the key art read as ONE image with something on it rather than as two
+            // panels sharing a window.
+            //
+            // ⚠️ THE HEIGHT IS THE FORM ADDED UP, NOT A FRACTION OF THE SCREEN. The wordmark sits
+            // at +330 with a 104-unit box and the key hint at about -480, which is 862 of content;
+            // `CardHeight` is that plus one margin either side. `CLAUDE.md` § 6.2c question 1: a
+            // percentage of the window is not a size, and `AspectSafeCanvas` scales on the SHORT
+            // axis, so one fraction is two different widths at two aspect ratios.
             var rt = (RectTransform)columnGo.transform;
-            rt.anchorMin = Vector2.zero;
-            rt.anchorMax = new Vector2(0.0f, 1.0f);
-            rt.offsetMin = new Vector2(-Bleed, -Bleed);
-            rt.offsetMax = new Vector2(ColumnUnits, Bleed);
+            rt.anchorMin = new Vector2(0.0f, 0.5f);
+            rt.anchorMax = new Vector2(0.0f, 0.5f);
+            rt.pivot = new Vector2(0.0f, 0.5f);
+            rt.anchoredPosition = new Vector2(CardMargin, 0.0f);
+            rt.sizeDelta = new Vector2(ColumnUnits, CardHeight);
 
             // ⚠⚠ THE COLUMN IS A PLANK NOW AND IT WAS A FLAT FILL WITH A NINE-PATCH ON IT.
             // 🧑 2026-09-01: *"our UI is ugly and repetitive and unimaginative"*. `UiMaterials`
@@ -372,24 +402,17 @@ namespace TumbangPreso.UI
             // screen puts the two next to each other on the same pixels, because the primary
             // button below is drawn from `GodotTheme` and the column behind it was not.
             var face = columnGo.GetComponent<Image>();
-            WoodSkin.Apply(columnGo, WoodCraft.Surface.Panel);
+            PaperSkin.Apply(columnGo, PaperCraft.Surface.Sheet);
+            face.raycastTarget = true;
 
             var col = columnGo.transform;
 
             // ⚠⚠ THE COLUMN'S RIGHT EDGE IS A LIT LINE, AND IT IS THE ONE THING THAT MAKES THIS
             // READ AS A PHYSICAL BOARD IN FRONT OF THE ART RATHER THAN AS A CROP OF IT. Two units
             // of `WoodEdge` down the full height, on the side the light is not coming from.
-            var edge = new GameObject("ColumnEdge", typeof(RectTransform), typeof(Image));
-            edge.transform.SetParent(col, false);
-            edge.GetComponent<Image>().color = UiTheme.WoodEdge;
-            edge.GetComponent<Image>().raycastTarget = false;
-
-            var edgeRt = (RectTransform)edge.transform;
-            edgeRt.anchorMin = new Vector2(1.0f, 0.0f);
-            edgeRt.anchorMax = new Vector2(1.0f, 1.0f);
-            edgeRt.pivot = new Vector2(1.0f, 0.5f);
-            edgeRt.offsetMin = new Vector2(-3.0f, Bleed);
-            edgeRt.offsetMax = new Vector2(0.0f, -Bleed);
+// ⚠️ THE LIT WOODEN EDGE STRIP IS GONE WITH THE COLUMN. It existed to stop a
+            // full-height brown wall dissolving into a brown photograph; a cream card carries its
+            // own die-cut halo on all four sides and needs no seam.
 
             // ⚠️⚠️ EVERY ROW IS PLACED FROM THE COLUMN'S CENTRE, NOT FROM ITS TOP AND BOTTOM,
             // AND THE OLD ARRANGEMENT IS WHAT 🧑 CALLED *"ugly big ass space i hate this ui its
@@ -481,7 +504,7 @@ namespace TumbangPreso.UI
             // The old panel had one `_status` label that reported saving a profile, linking a
             // username, signing in and arming a delete, so the sentence on screen was whichever
             // of six unrelated actions ran last.
-            _error = MenuKit.Label(col, "", MenuKit.MinReadableUnits, UiTheme.Danger,
+            _error = MenuKit.Label(col, "", PaperKit.Caption, UiTheme.MenuRed,
                 Centre, new Vector2(0.0f, Hint), new Vector2(420.0f, 56.0f));
             _error.horizontalOverflow = HorizontalWrapMode.Wrap;
 
@@ -523,24 +546,39 @@ namespace TumbangPreso.UI
 
             if (google)
             {
-                _googleButton = MenuKit.WoodButton(col, "CONTINUE WITH GOOGLE", Centre,
-                    new Vector2(0.0f, -298.0f), new Vector2(420.0f, 54.0f), GooglePressed);
-                _googleButton.name = "GoogleButton";
+                _googleButton = PaperKit.Chip(col, "GoogleButton", "CONTINUE WITH GOOGLE");
+                _googleButton.onClick.AddListener(GooglePressed);
+                MenuKit.Place((RectTransform)_googleButton.transform, Centre,
+                              new Vector2(0.0f, -298.0f), new Vector2(420.0f, 54.0f));
             }
 
-            _guest = MenuKit.WoodButton(col, "PLAY AS GUEST", Centre,
-                new Vector2(0.0f, guestY), new Vector2(300.0f, 48.0f), GuestPressed);
+            _guest = PaperKit.Chip(col, "GuestButton", "PLAY AS GUEST");
+            _guest.onClick.AddListener(GuestPressed);
+            MenuKit.Place((RectTransform)_guest.transform, Centre,
+                          new Vector2(0.0f, guestY), new Vector2(300.0f, 48.0f));
 
             // ⚠⚠ BACK IS THE THIRD THING ON THIS SCREEN AND IT WAS DRAWN AS THE SECOND. It was
             // the same 300x48 wood plate as PLAY AS GUEST, so the column ended with two identical
             // buttons and the player had to READ them to tell an escape hatch from a way to play.
             // `game-ui-design`'s ordering is position, size, weight, colour: this is one step down
             // in size and one in weight, and it is still a 44-unit target.
-            _back = MenuKit.WoodButton(col, "BACK", Centre,
-                new Vector2(0.0f, backY), new Vector2(220.0f, 44.0f), Close);
+            // ⚠️⚠️ BACK IS THE ONLY CONTROL ON THIS SCREEN WITH NO SURFACE AT ALL, WHICH IS
+            // THE HIERARCHY STATED IN SHAPE. Below the green primary there are three ways to leave
+            // without an account, and drawing all three as identical slabs is what made the old
+            // column read as a list of equals. Google and GUEST are paper chips; BACK is a word.
+            _back = PaperKit.Chip(col, "BackButton", "BACK");
+            _back.onClick.AddListener(Close);
+            MenuKit.Place((RectTransform)_back.transform, Centre,
+                          new Vector2(0.0f, backY), new Vector2(220.0f, 44.0f));
 
-            var backLabel = _back.GetComponentInChildren<Text>();
-            if (backLabel != null) backLabel.color = UiTheme.CreamMuted;
+            var backSkin = _back.GetComponent<PaperSkin>();
+            if (backSkin != null) backSkin.enabled = false;
+
+            var backPlate = _back.GetComponent<Image>();
+            if (backPlate != null) backPlate.color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+
+            var backLabel = _back.transform.Find("Label")?.GetComponent<Text>();
+            if (backLabel != null) backLabel.color = UiTheme.PaperInkSoft;
 
             // ⚠⚠ THE KEYS ARE ON THE SCREEN, AND `game-ui-design` LISTS THEIR ABSENCE AS A SHARP
             // EDGE BY NAME (`No Keyboard Shortcut Display`). This form has always taken TAB and
@@ -552,7 +590,7 @@ namespace TumbangPreso.UI
             // ⚠️ AND IT IS THE LAST THING IN THE COLUMN, under everything it describes, at the
             // muted weight. A hint that competes with the action it explains is a second heading.
             _keyHint = MenuKit.Label(col, "TAB to move  ·  ENTER to sign in  ·  ESC to go back",
-                MenuKit.MinReadableUnits, UiTheme.CreamMuted, Centre,
+                PaperKit.Caption, UiTheme.PaperInkSoft, Centre,
                 new Vector2(0.0f, backY - 52.0f), new Vector2(460.0f, 26.0f));
             _keyHint.raycastTarget = false;
 
@@ -604,24 +642,26 @@ namespace TumbangPreso.UI
 
             var root = _welcome.transform;
 
-            MenuKit.Label(root, "WELCOME BACK", 40, UiTheme.Cream, Centre,
+            MenuKit.Label(root, "WELCOME BACK", 34, UiTheme.PaperInkSoft, Centre,
                 new Vector2(0.0f, 120.0f), new Vector2(460.0f, 54.0f));
 
             // ⚠️ THE HANDLE IS THE ONE THING ON THIS STATE, so it is the biggest thing on it and
             // the only amber one. § 6.2 question 1: everything else is sized against it.
-            _welcomeName = MenuKit.Label(root, "", 48, UiTheme.Amber, Centre,
+            _welcomeName = MenuKit.Label(root, "", PaperKit.Display, UiTheme.PaperInk, Centre,
                 new Vector2(0.0f, 46.0f), new Vector2(460.0f, 64.0f));
 
             _welcomeHint = MenuKit.Label(root, "press anything to stay here",
-                MenuKit.MinReadableUnits, UiTheme.CreamMuted, Centre,
+                PaperKit.Caption, UiTheme.PaperInkSoft, Centre,
                 new Vector2(0.0f, -6.0f), new Vector2(460.0f, 30.0f));
 
             MenuKit.WoodButton(root, "CONTINUE", Centre,
                 new Vector2(0.0f, -80.0f), new Vector2(420.0f, 62.0f), BootGuest,
                 "WoodPrimaryButton");
 
-            MenuKit.WoodButton(root, "SIGN IN AS SOMEBODY ELSE", Centre,
-                new Vector2(0.0f, -156.0f), new Vector2(420.0f, 48.0f), LeaveWelcomeForTheForm);
+            var other = PaperKit.Chip(root, "OtherAccountButton", "SIGN IN AS SOMEBODY ELSE");
+            other.onClick.AddListener(LeaveWelcomeForTheForm);
+            MenuKit.Place((RectTransform)other.transform, Centre,
+                          new Vector2(0.0f, -156.0f), new Vector2(420.0f, 48.0f));
 
             _welcome.SetActive(false);
         }
@@ -690,7 +730,7 @@ namespace TumbangPreso.UI
 
             if (logo == null)
             {
-                MenuKit.Label(col, "TUMP", 30, UiTheme.Amber, Centre,
+                MenuKit.Label(col, "TUMP", 34, UiTheme.PaperInk, Centre,
                     new Vector2(0.0f, y), new Vector2(360.0f, 44.0f));
                 return;
             }
@@ -745,10 +785,21 @@ namespace TumbangPreso.UI
             // repainting authored art and 🧑 asked for this one directly, which is what that rule
             // defers to. The FILE is untouched and the title screen still draws it white; only
             // this screen tints its own three copies.
-            Engraved(box.transform, logo, "LogoGroove", 3.0f,
-                     new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.9f));
+            // ⚠️⚠️ THE WORDMARK IS PRINTED ON THE CARD NOW, NOT CARVED INTO WOOD. The carve
+            // was two copies of the mark, a dark groove offset three units up under a pale face,
+            // and it was tuned against `UiTheme.WoodPanelFace`: on cream the pale face is lighter
+            // than the card it sits on and the whole word disappears. 🧑 asked for the carve by
+            // name on the wooden column (`docs/TODO.md` § 117.10) and that column is gone; what
+            // survives the material change is the SHADOW, which is what makes a printed mark sit
+            // on paper rather than float over it.
+            //
+            // ⚠️ THE PNG IS UNTOUCHED. `VISION.md` § 6: his art is the design system. This tints
+            // a `RawImage`, which is a treatment applied to the file, not an edit of it.
+            Engraved(box.transform, logo, "LogoShadow", -3.0f,
+                     new Color(UiTheme.PaperSunk.r, UiTheme.PaperSunk.g, UiTheme.PaperSunk.b,
+                               0.85f));
 
-            var image = Engraved(box.transform, logo, "Logo", 0.0f, EngravedFace);
+            var image = Engraved(box.transform, logo, "Logo", 0.0f, UiTheme.PaperInk);
             image.raycastTarget = false;
         }
 
@@ -782,28 +833,6 @@ namespace TumbangPreso.UI
             fitter.aspectRatio = logo.width / (float)logo.height;
 
             return image;
-        }
-
-        /// <summary>
-        /// The carved face: the plank's own hue, lifted and desaturated into painted wood.
-        ///
-        /// ⚠️⚠️ IT WAS `WoodPanelFace` AT 0.72 OF ITS VALUE AND THAT IS WHAT 🧑 CALLED NOT GREAT.
-        /// A face darker than the board is a bare groove, and a bare groove in a mid-brown plank
-        /// is a dark brown word on a brown rectangle: correct as physics, unreadable as a logo,
-        /// and muddy once the asset's own baked ink outline is tinted on top of it.
-        ///
-        /// ⚠️ 1.55 OF VALUE AT 0.42 OF SATURATION IS A PALE WARM WOOD, not cream and not white.
-        /// It keeps the plank's hue, so the word belongs to the board it is cut into rather than
-        /// sitting on it the way the untinted white asset did, and it is light enough that the ink
-        /// groove above it reads as depth instead of as an outline.
-        /// </summary>
-        private static Color EngravedFace
-        {
-            get
-            {
-                Color.RGBToHSV(UiTheme.WoodPanelFace, out float h, out float s, out float v);
-                return Color.HSVToRGB(h, Mathf.Clamp01(s * 0.42f), Mathf.Clamp01(v * 1.55f));
-            }
         }
 
         /// <summary>
@@ -859,13 +888,22 @@ namespace TumbangPreso.UI
             // states where you already are rather than on the button that does the thing.
             // `GodotTheme`'s `WoodTabIdleButton` note has the argument; the amber chalk bar below
             // and the four units of extra height are the other two signals.
-            _signInTab = MenuKit.WoodButton(col, "SIGN IN", Centre,
-                new Vector2(-105.0f, y), new Vector2(198.0f, LiveTabHeight), () => SetMode(false),
-                "WoodTabLiveButton");
+            // ⚠️⚠️ TWO PAPER CHIPS, TOLD APART BY SURFACE AND WEIGHT AND NEVER BY HUE.
+            // 🧑 2026-09-01, of the wooden pair: **"its also weird that create is just a
+            // rectanhle"**. `PaperCraft` answers that at the level the complaint was made: the
+            // live one is a filled `Token`, a pill with a physical lip, and the idle one is a
+            // `Ghost`, two hairlines with almost nothing inside them. One is an object and the
+            // other is an outline, and the difference survives a photograph.
+            _signInTab = PaperKit.Chip(col, "SignInTab", "SIGN IN");
+            _createTab = PaperKit.Chip(col, "CreateTab", "CREATE");
 
-            _createTab = MenuKit.WoodButton(col, "CREATE", Centre,
-                new Vector2(105.0f, y), new Vector2(198.0f, IdleTabHeight), () => SetMode(true),
-                "WoodTabIdleButton");
+            _signInTab.onClick.AddListener(() => SetMode(false));
+            _createTab.onClick.AddListener(() => SetMode(true));
+
+            MenuKit.Place((RectTransform)_signInTab.transform, Centre,
+                          new Vector2(-105.0f, y), new Vector2(198.0f, LiveTabHeight));
+            MenuKit.Place((RectTransform)_createTab.transform, Centre,
+                          new Vector2(105.0f, y), new Vector2(198.0f, IdleTabHeight));
 
             // ⚠️⚠️ BOTH TABS HANG FROM ONE BOTTOM EDGE, so the live one grows UPWARD out of the
             // row instead of swelling around its own centre. A pair that grows from the middle
@@ -962,9 +1000,11 @@ namespace TumbangPreso.UI
             // alignment without copying the column's would be copying the look and not the rule.
             // `FUTURE.md` § 0.5b: **name the mechanism, then check whether this game's content
             // has the shape the mechanism assumes.**
-            MenuKit.Label(col, caption, MenuKit.MinReadableUnits, UiTheme.CreamMuted,
-                Centre, new Vector2(0.0f, y + 46.0f), new Vector2(420.0f, 26.0f),
-                TextAnchor.MiddleCenter);
+            var captionLabel = MenuKit.Label(col, caption, PaperKit.Caption,
+                UiTheme.PaperInkSoft,
+                Centre, new Vector2(0.0f, y + 44.0f), new Vector2(420.0f, 24.0f),
+                TextAnchor.MiddleLeft);
+            captionLabel.raycastTarget = false;
 
             var go = new GameObject($"Field_{caption}", typeof(RectTransform), typeof(Image));
             go.transform.SetParent(col, false);
@@ -986,7 +1026,7 @@ namespace TumbangPreso.UI
             // the near wall of anything cut into a surface lit from above. Two surfaces that
             // share a palette and nothing else cannot read as the same object.
             var image = go.GetComponent<Image>();
-            WoodSkin.Apply(go, WoodCraft.Surface.PaperField);
+            PaperSkin.Apply(go, PaperCraft.Surface.Tray);
 
             var input = go.AddComponent<InputField>();
             input.targetGraphic = image;
@@ -994,14 +1034,15 @@ namespace TumbangPreso.UI
             input.lineType = InputField.LineType.SingleLine;
             if (password) input.contentType = InputField.ContentType.Password;
 
-            var text = MenuKit.Label(go.transform, "", 20, UiTheme.Ink, new Vector2(0.5f, 0.5f),
+            var text = MenuKit.Label(go.transform, "", PaperKit.Body, UiTheme.PaperInk,
+                new Vector2(0.5f, 0.5f),
                 Vector2.zero, Vector2.zero, TextAnchor.MiddleLeft);
             MenuKit.Stretch(text.rectTransform, -16.0f);
             text.alignment = TextAnchor.MiddleLeft;
             input.textComponent = text;
 
-            var ghost = MenuKit.Label(go.transform, placeholder, MenuKit.MinReadableUnits,
-                UiTheme.InkMuted,
+            var ghost = MenuKit.Label(go.transform, placeholder, PaperKit.Caption,
+                UiTheme.PaperInkSoft,
                 new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero, TextAnchor.MiddleLeft);
             MenuKit.Stretch(ghost.rectTransform, -16.0f);
             ghost.alignment = TextAnchor.MiddleLeft;
@@ -1269,7 +1310,7 @@ namespace TumbangPreso.UI
             _error.text = creating
                 ? "Keeps everything you have played on this machine."
                 : "";
-            _error.color = creating ? UiTheme.CreamMuted : UiTheme.Danger;
+            _error.color = creating ? UiTheme.PaperInkSoft : UiTheme.MenuRed;
 
             // ⚠️ THE GOOGLE VERB FOLLOWS THE TAB TOO, so the two ways of doing the same thing
             // agree about which thing it is. CONNECT keeps this machine's progress; SIGN IN moves
@@ -1313,14 +1354,22 @@ namespace TumbangPreso.UI
             if (button == null) return;
 
             var rect = (RectTransform)button.transform;
-            rect.sizeDelta = new Vector2(rect.sizeDelta.x, on ? 56.0f : 48.0f);
+            rect.sizeDelta = new Vector2(rect.sizeDelta.x, on ? LiveTabHeight : IdleTabHeight);
 
-            var skin = button.GetComponent<GodotButton>();
-            if (skin == null) return;
+            var skin = button.GetComponent<PaperSkin>();
+            if (skin != null)
+            {
+                skin.Surface = on ? PaperCraft.Surface.Token : PaperCraft.Surface.Ghost;
+                skin.Rebuild();
+            }
 
-            skin.Variation = on ? "WoodTabLiveButton" : "WoodTabIdleButton";
-            skin.Apply();
-            skin.Refresh();
+            var label = button.transform.Find("Label")?.GetComponent<Text>();
+            if (label == null) return;
+
+            // ⚠️ INK EITHER WAY. Both chips sit on the same cream card, so a pale label on the
+            // idle one would be a word drawn on top of its own background.
+            label.fontStyle = on ? FontStyle.Bold : FontStyle.Normal;
+            label.color = on ? UiTheme.PaperInk : UiTheme.PaperInkSoft;
         }
 
         /// <summary>
@@ -1342,7 +1391,7 @@ namespace TumbangPreso.UI
 
             try
             {
-                _error.color = UiTheme.CreamMuted;
+                _error.color = UiTheme.PaperInkSoft;
                 _error.text = _creating ? "Creating your account..." : "Signing in...";
 
                 if (_creating) await account.UpgradeAsync(username, password);
@@ -1378,7 +1427,7 @@ namespace TumbangPreso.UI
 
             try
             {
-                _error.color = UiTheme.CreamMuted;
+                _error.color = UiTheme.PaperInkSoft;
                 _error.text = "Finish signing in on the browser window.";
 
                 if (_creating) await account.LinkGoogleAsync();
@@ -1438,7 +1487,10 @@ namespace TumbangPreso.UI
 
         private void Fail(string message)
         {
-            _error.color = UiTheme.Danger;
+            // ⚠️ `MenuRed`, NOT `Danger`. `f80000` MEANS downed or out of bounds in the match,
+            // and the sibling of `CLAUDE.md` § 6.4 is that a colour with a meaning is not a paint.
+            // It is also unreadably hot on cream.
+            _error.color = UiTheme.MenuRed;
             _error.text = message ?? "";
         }
     }

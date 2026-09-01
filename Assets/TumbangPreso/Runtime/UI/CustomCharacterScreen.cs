@@ -333,6 +333,13 @@ namespace TumbangPreso.UI
             BuildFooter();
 
             _root.SetActive(false);
+        
+            // ⚠️⚠️ ONE CALL DRESSES THIS WHOLE SCREEN IN PAPER, AND IT IS SCOPED TO THIS SUBTREE
+            // ON PURPOSE. `GodotPanel` and `GodotButton` are the choke points every converted
+            // screen is skinned through, so editing either of them would have repainted the main
+            // menu and the in-match HUD, which 🧑 scoped out twice. `PaperKit.PaperDress.Screen`
+            // walks a given root instead. See `docs/TODO.md` § 119.2 and § 119.5.
+            PaperDress.Screen(_root.transform);
         }
 
         /// <summary>

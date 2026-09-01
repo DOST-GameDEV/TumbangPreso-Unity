@@ -237,7 +237,7 @@ namespace TumbangPreso.UI
         /// nothing else, because a highlight a third of the way down a 1080-unit board is not a
         /// highlight, it is a horizon.
         /// </summary>
-        private const int TallSurface = 400;
+        internal const int TallSurface = 400;
 
         /// <summary>
         /// The same shape, painted solid, for the drop shadow under a control.
@@ -684,7 +684,7 @@ namespace TumbangPreso.UI
         /// having three copies of a rounded-rect distance field is how two of them end up with
         /// different corner anti-aliasing and the screen picks up a seam nobody can name.
         /// </summary>
-        private static float Depth(float dx, float dy, float corner, bool chamfer, bool squareTop)
+        internal static float Depth(float dx, float dy, float corner, bool chamfer, bool squareTop)
         {
             if (squareTop) return Mathf.Min(dx, dy);
 
@@ -731,7 +731,7 @@ namespace TumbangPreso.UI
         /// a pale gold keyline over an amber face, which is what a lighter yellow actually looks
         /// like. Found by drawing it: the amber slab came out as a flat rectangle.
         /// </summary>
-        private static Color Shift(Color c, float value, float saturation)
+        internal static Color Shift(Color c, float value, float saturation)
         {
             Color.RGBToHSV(c, out float hue, out float sat, out float val);
 
@@ -758,14 +758,14 @@ namespace TumbangPreso.UI
             return Color.Lerp(c, new Color(grey, grey, grey, c.a), amount);
         }
 
-        private static Color Lift(Color c, float amount) => new Color(
+        internal static Color Lift(Color c, float amount) => new Color(
             Mathf.Clamp01(c.r + amount),
             Mathf.Clamp01(c.g + (amount * 0.94f)),
             Mathf.Clamp01(c.b + (amount * 0.86f)),
             c.a);
 
-        private static Sprite Finish(Color[] pixels, int width, int height, int cap, bool tall,
-                                     string key)
+        internal static Sprite Finish(Color[] pixels, int width, int height, int cap, bool tall,
+                                      string key)
         {
             var texture = new Texture2D(width, height, TextureFormat.RGBA32, false)
             {
