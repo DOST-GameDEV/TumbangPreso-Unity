@@ -546,7 +546,10 @@ namespace TumbangPreso.UI
             card.transform.SetParent(parent, false);
 
             var image = card.AddComponent<Image>();
-            image.sprite = GodotTheme.WoodBox(UiTheme.WoodDeep, UiTheme.WoodEdge);
+
+            // ⚠️ THE CARD IS A RAISED PLANK AND THE FIELD INSIDE IT IS A RECESSED ONE, so the
+            // thing you type in reads as cut INTO the thing it is on. See `UiMaterials`.
+            image.sprite = UiMaterials.Plank(UiTheme.WoodDeep);
             image.type = Image.Type.Sliced;
             image.color = Color.white;
             image.raycastTarget = false;
@@ -596,11 +599,85 @@ namespace TumbangPreso.UI
             // Classic has no kit and never gets one, so a greyed SKILLS row on a Classic lobby
             // would be advertising a feature that mode does not have. `ConvertedMatchSetup`
             // switches it with the mode.
+            // ⚠⚠⚠ THE ROOM CODE IS THE FIRST THING A HUMAN NEEDS IN A MULTIPLAYER LOBBY AND IT
+            // WAS INSIDE A CLOSED DRAWER. 🧑 2026-09-01: *"make the ui genuinely good and easy to go
+            // thru as a human"*. Walk the journey out loud, which is `CLAUDE.md` § 6.3's method:
+            // *"I want my friend to join me"* was **open LOBBY & SERVERS, find the code row, read
+            // it out** — three presses and a hunt, for the single fact the screen exists to
+            // produce. It is on the card now, in the corner the player is already reading, and it
+            // is only there when there IS one.
+            //
+            // ⚠️ AND IT COPIES ITSELF. A four-character code read off a screen and typed into
+            // Discord is four chances to get it wrong; `GUIUtility.systemCopyBuffer` is one line
+            // and it turns the answer into one press. The label says COPIED for a moment, because
+            // a press that silently succeeds is `docs/TODO.md` § 53.5's dead button from the other
+            // side.
+            CardCaption(card.transform, "ROOM CODE");
+            BuildCodeButton(card.transform, parts);
+
             CardCaption(card.transform, "YOUR SKILLS");
             BuildLoadoutButton(card.transform, parts);
 
             CardCaption(card.transform, "YOUR PROFILE");
             BuildProfileButton(card.transform, parts);
+        }
+
+        /// <summary>
+        /// The room code, on the card, one press from the clipboard.
+        ///
+        /// ⚠️ IT IS THE ONLY CONTROL ON THIS CARD WHOSE VALUE IS THE POINT, so the code is drawn
+        /// at 30 units in amber rather than at the card's 18-unit body size: it is read across a
+        /// room and into a phone. `MenuKit.Fit` still bounds it, because a Relay join code is four
+        /// characters and a LAN one may not be.
+        /// </summary>
+        private static void BuildCodeButton(Transform parent, Parts parts)
+        {
+            var go = new GameObject("RoomCodeButton", typeof(RectTransform), typeof(Image));
+            go.transform.SetParent(parent, false);
+
+            var image = go.GetComponent<Image>();
+            image.sprite = UiMaterials.Plank(UiTheme.WoodDeep, raised: false);
+            image.type = Image.Type.Sliced;
+            image.color = Color.white;
+
+            var element = go.AddComponent<LayoutElement>();
+            element.minHeight = CardFieldHeight;
+            element.preferredHeight = CardFieldHeight;
+            element.flexibleHeight = 0.0f;
+
+            var button = go.AddComponent<Button>();
+            button.targetGraphic = image;
+            go.AddComponent<TextureButtonFeedback>();
+            FocusRing.Attach(go, 3.0f);
+
+            var label = MenuKit.Label(go.transform, "", 30, UiTheme.Amber,
+                                      Vector2.zero, Vector2.zero, Vector2.zero,
+                                      TextAnchor.MiddleCenter);
+            label.name = "RoomCodeValue";
+            label.raycastTarget = false;
+
+            // ⚠️ THE VALUE STOPS WHERE THE HINT STARTS. Both were stretched across the whole
+            // row, so a centred code and a right-aligned "tap to copy" were sharing one box: at
+            // four characters they clear each other by luck, and a LAN code is not four
+            // characters. `CLAUDE.md` § 6.2c question 4, in miniature.
+            MenuKit.Stretch(label.rectTransform, 0.0f);
+            label.rectTransform.offsetMin = new Vector2(14.0f, 0.0f);
+            label.rectTransform.offsetMax = new Vector2(-118.0f, 0.0f);
+
+            var hint = MenuKit.Label(go.transform, "tap to copy", MenuKit.MinReadableUnits,
+                                     UiTheme.CreamMuted, Vector2.zero, Vector2.zero,
+                                     Vector2.zero, TextAnchor.MiddleRight);
+            hint.name = "RoomCodeHint";
+            hint.raycastTarget = false;
+            MenuKit.Stretch(hint.rectTransform, 0.0f);
+            hint.rectTransform.offsetMax = new Vector2(-14.0f, 0.0f);
+
+            parts.CodeButton = button;
+            parts.CodeValue = label;
+            parts.CodeHint = hint;
+            parts.CodeCaption = parent.GetChild(parent.childCount - 2).gameObject;
+
+            button.onClick.AddListener(() => parts.CopyCode());
         }
 
         /// <summary>
@@ -646,6 +723,12 @@ namespace TumbangPreso.UI
             chevron.raycastTarget = false;
             MenuKit.Stretch(chevron.rectTransform, 0.0f);
             chevron.rectTransform.offsetMax = new Vector2(-18.0f, 0.0f);
+
+            // ⚠️ EVERY PRESSABLE THING IN THE LOBBY WEARS A RING WHEN IT HAS THE POINTER OR THE
+            // KEYBOARD, and until this pass none of them said anything at all: `TextureButtonFeedback`
+            // tints a very dark brown by a few per cent, which is a change nobody can see.
+            // `game-ui-design` calls a focus state that is only a colour a `colorblind-failure`.
+            FocusRing.Attach(go, 3.0f);
 
             parts.LoadoutButton = button;
             parts.LoadoutValue = label;
@@ -716,6 +799,8 @@ namespace TumbangPreso.UI
             // cannot fit at 18 is still a defect and still visible.
             MenuKit.Fit(label, CardWidth - (CardPadding * 2.0f) - 28.0f);
 
+            FocusRing.Attach(go, 3.0f);
+
             parts.ProfileButton = button;
             parts.ProfileValue = label;
         }
@@ -743,7 +828,10 @@ namespace TumbangPreso.UI
             fieldGo.transform.SetParent(parent, false);
 
             var fieldImage = fieldGo.AddComponent<Image>();
-            fieldImage.sprite = GodotTheme.WoodBox(UiTheme.WoodDark, UiTheme.WoodEdge);
+            // ⚠️ `WoodDeep` RECESSED AND NOT `WoodDark`, measured off the lobby render: `WoodDark`
+            // is `1d0e06`, near black, and a recessed plank of it drew as a black slot in the
+            // middle of the card. Same finding as the sign-in screen's mode well, same day.
+            fieldImage.sprite = UiMaterials.Plank(UiTheme.WoodDeep, raised: false);
             fieldImage.type = Image.Type.Sliced;
             fieldImage.color = Color.white;
 
@@ -1021,6 +1109,79 @@ namespace TumbangPreso.UI
             /// <summary>PHASE 12's RULES stepper. ⚠️ Handed back by reference rather than found by
             /// name: the row is a clone made after `ConvertedScreen` built its name index. See
             /// <see cref="BuildFormatRow"/>.</summary>
+            /// <summary>The room code row: the plate, the code, its hint and the caption above it,
+            /// so all four can be hidden together when there is no code. See
+            /// <see cref="BuildCodeButton"/>.</summary>
+            public Button CodeButton;
+            public Text CodeValue;
+            public Text CodeHint;
+            public GameObject CodeCaption;
+
+            private string _code = "";
+            private float _copiedUntil;
+
+            /// <summary>
+            /// Writes the code, or takes the whole row off the card.
+            ///
+            /// ⚠️ THE CAPTION GOES WITH IT, for the same reason `SetSkills` says: hiding the
+            /// value alone leaves an amber ROOM CODE heading over whatever is underneath.
+            /// </summary>
+            public void SetCode(string code)
+            {
+                _code = code ?? "";
+                bool has = !string.IsNullOrWhiteSpace(_code);
+
+                if (CodeButton != null) CodeButton.gameObject.SetActive(has);
+                if (CodeCaption != null) CodeCaption.SetActive(has);
+                if (!has || CodeValue == null) return;
+
+                if (Time.unscaledTime < _copiedUntil) return;
+
+                CodeValue.text = _code;
+                CodeValue.color = UiTheme.Amber;
+                MenuKit.Fit(CodeValue, CardWidth - (CardPadding * 2.0f) - 132.0f);
+
+                if (CodeHint != null) CodeHint.text = "tap to copy";
+            }
+
+            /// <summary>
+            /// ⚠️ THE RECEIPT IS ON THE CONTROL ITSELF AND LASTS A MOMENT. A copy that reports
+            /// nothing is indistinguishable from a copy that failed, and the status line at the
+            /// bottom of this screen is for network faults (`SetAlert`), not for confirmations.
+            /// </summary>
+            public void CopyCode()
+            {
+                if (string.IsNullOrWhiteSpace(_code)) return;
+
+                GUIUtility.systemCopyBuffer = _code;
+                _copiedUntil = Time.unscaledTime + 1.6f;
+
+                if (CodeHint != null) CodeHint.text = "copied";
+                MenuSfx.Click();
+            }
+
+            /// <summary>The chalk bar under whichever top tab is live, and half the distance
+            /// between the two tabs' centres. See <see cref="BuildTabs"/>.</summary>
+            public Image TabMarker;
+            public float TabMarkerPitch;
+            private float _tabMarkerY;
+
+            /// <summary>Moves the bar under the live tab. ⚠️ The Y is passed once and remembered,
+            /// so a caller switching tabs does not have to know the header's geometry.</summary>
+            public void SetTabMarker(bool multiplayer, float y = 0.0f)
+            {
+                if (TabMarker == null) return;
+
+                if (y > 0.0f) _tabMarkerY = y;
+
+                TabMarker.rectTransform.anchoredPosition =
+                    new Vector2(multiplayer ? TabMarkerPitch : -TabMarkerPitch, -_tabMarkerY);
+            }
+
+            /// <summary>The bottom-left action rail: the settings drawer, the primary action and,
+            /// since the UI pass, the queue. See <see cref="QueueCard.Dock"/>.</summary>
+            public Transform LeftRail;
+
             public Button FormatPrev;
             public Button FormatNext;
             public Text FormatValue;
@@ -1146,6 +1307,12 @@ namespace TumbangPreso.UI
             {
                 Paint(Practice, !lobby);
                 Paint(Multiplayer, lobby);
+
+                // ⚠️ THE BAR MOVES WITH THE PAINT. `SelectTab` switches these two IN PLACE rather
+                // than rebuilding the screen, so a marker positioned only at build time would sit
+                // under PRACTICE for the rest of the session.
+                SetTabMarker(lobby);
+
                 if (LobbyDrawer != null) LobbyDrawer.SetActive(lobby);
             }
 
@@ -1385,6 +1552,7 @@ namespace TumbangPreso.UI
                                             new Vector2(RightRailWidth, ToggleHeight),
                                             null, "WoodAmberButton");
             toggle.name = "LobbyDrawerToggle";
+            FocusRing.Attach(toggle.gameObject, 3.0f);
 
             var toggleCaption = toggle.GetComponentInChildren<Text>();
             if (toggleCaption != null)
@@ -1514,6 +1682,7 @@ namespace TumbangPreso.UI
                                             new Vector2(LeftWidth, ToggleHeight), null,
                                             "WoodAmberButton");
             toggle.name = "SettingsDrawerToggle";
+            FocusRing.Attach(toggle.gameObject, 3.0f);
 
             // ⚠️ THE CAPTION IS SIZED AGAINST THE RAIL RATHER THAN LEFT AT THE VARIATION'S
             // AUTHORED SIZE. `WoodAmberButton` is drawn for short words like BACK, so
@@ -1550,7 +1719,15 @@ namespace TumbangPreso.UI
             body.transform.SetParent(host.transform, false);
             var bodyImage = body.AddComponent<Image>();
             bodyImage.rectTransform.sizeDelta = new Vector2(LeftWidth, SettingsBodyHeight);
-            bodyImage.sprite = GodotTheme.WoodBox(UiTheme.WoodDeep, UiTheme.WoodEdge);
+
+            // ⚠⚠ THE DRAWER'S BODY IS RECESSED AND ITS TOGGLE IS RAISED, WHICH IS THE WHOLE
+            // POINT OF `UiMaterials`. Both were `GodotTheme.WoodBox`: the same nine-slice with the
+            // same bevel on all four sides, so a drawer and the button that opens it were the same
+            // object at two sizes and the screen read as a stack of identical planks. 🧑
+            // 2026-09-01: *"our UI is ugly and repetitive and unimaginative"*. A groove is dark
+            // along its top edge because the light is above it; a plank is bright along its top
+            // edge for the same reason. Nothing here is a new colour.
+            bodyImage.sprite = UiMaterials.Plank(UiTheme.WoodDeep, raised: false);
             bodyImage.type = Image.Type.Sliced;
             bodyImage.color = Color.white;
 
@@ -1689,12 +1866,26 @@ namespace TumbangPreso.UI
                 if (node == null) continue;
 
                 node.SetParent(host.transform, false);
+
+                // ⚠️ THE PRIMARY WEARS A RING LIKE EVERYTHING ELSE. It is the one control on this
+                // screen a player looks for without reading, so it is also the one where a
+                // missing focus state is most obviously a keyboard dead end.
+                if (node.GetComponent<Button>() != null) FocusRing.Attach(node.gameObject, 4.0f);
             }
 
             // ⚠️ THE AUTHORED COLUMN IS EMPTIED AND SWITCHED OFF, NOT DESTROYED. `Classic` is a
             // working screen at every commit (`docs/TODO.md` § 68.3) and `LobbyChrome.Style` is the
             // one line that chooses; destroying the column would make the revert a repair.
             leftColumn.gameObject.SetActive(false);
+
+            // ⚠⚠ THE RAIL IS HANDED BACK SO THE QUEUE CAN LIVE IN IT. 🧑 2026-09-01: *"our UI is
+            // ugly and repetitive and unimaginative"*, and the loudest single thing on the lobby
+            // was QUICK MATCH, a 560-unit amber bar floating in the middle of the screen over the
+            // cast, while the actual primary action sat in the corner. **Two primaries is not a
+            // hierarchy**, and `game-ui-design`'s ordering is position first: this rail is the
+            // PLAY column, so both ways of starting a game belong in it, one under the other,
+            // with the accent spent on one of them. See `QueueCard.Dock`.
+            parts.LeftRail = host.transform;
 
             var status = Descend(host.transform, "StatusLabel");
             if (status != null)
@@ -2214,6 +2405,25 @@ namespace TumbangPreso.UI
                                  () => onTab?.Invoke(false));
             parts.Multiplayer = Tab(bar.transform, "MultiplayerTab", "MULTIPLAYER", isLobby,
                                     () => onTab?.Invoke(true));
+
+            // ⚠⚠ A CHALK BAR UNDER THE LIVE TAB, FOR THE SAME REASON THE SIGN-IN SCREEN'S PAIR
+            // HAS ONE: turning amber is a COLOUR, and `game-ui-design` lists a state told only by
+            // colour as `colorblind-failure`. Amber is also this front end's accent, so the live
+            // tab and START MATCH were saying different things in the same paint. The bar is a
+            // shape and it survives a photograph, a bad monitor and a player who cannot separate
+            // amber from wood.
+            //
+            // ⚠️ IT IS A SIBLING OF THE BAR, not a child of either tab, so switching tabs moves
+            // one object. Two markers is two things to keep in step and one is always the one
+            // somebody forgets.
+            parts.TabMarker = UiMaterials.Underline(parent, TabWidth - 40.0f, 0.0f, UiTheme.Amber);
+
+            var markerRect = parts.TabMarker.rectTransform;
+            markerRect.anchorMin = new Vector2(0.5f, 1.0f);
+            markerRect.anchorMax = new Vector2(0.5f, 1.0f);
+            markerRect.pivot = new Vector2(0.5f, 1.0f);
+            parts.TabMarkerPitch = (TabWidth + RailSpacing) * 0.5f;
+            parts.SetTabMarker(isLobby, TopMargin + HeaderHeight + 6.0f);
         }
 
         private static Button Tab(Transform parent, string name, string text, bool active,

@@ -364,6 +364,9 @@ namespace TumbangPreso.UI
             // then have rows added back into it at the authored anchors.
             _chrome = LobbyChrome.Apply(transform, Node, IsLobby, SelectTab);
 
+            // ⚠️ AFTER THE CHROME, ON PURPOSE. See `InstallQueueCard`.
+            InstallQueueCard();
+
             // ⚠️⚠️ A NAME TYPED IN THE LOBBY HAS TO REACH THE OTHER THREE MACHINES, AND NOTHING
             // CARRIED IT. `NetSession.ConfigureClientHello` sends `Settings.PlayerName` at
             // CONNECTION time and never again, so editing the card after joining changed the name
@@ -777,6 +780,50 @@ namespace TumbangPreso.UI
             codeCopyElement.preferredHeight = 40;
             _codeCopyBtnText = _codeCopyBtn.GetComponentInChildren<Text>();
         }
+        /// <summary>
+        /// The queue, built after the chrome so it can live in the chrome's rail.
+        ///
+        /// ⚠⚠ ORDER, AND IT IS THE SAME ORDER TRAP `LobbyChrome.Apply`'S OWN CALL SITE RECORDS
+        /// ONE METHOD UP: *"last of the build steps, because it REARRANGES what the steps above
+        /// created"*. `BuildLobbyEntryControls` runs BEFORE the chrome, so a queue built there
+        /// asks for a rail that does not exist yet and silently falls back to the canvas, which is
+        /// the floating plate this pass removed. The queue is the one lobby control that has to be
+        /// built after the rail rather than before it.
+        /// </summary>
+        private void InstallQueueCard()
+        {
+            if (!IsLobby || _queueCard != null) return;
+
+            var canvas = GetComponentInParent<Canvas>();
+            if (canvas == null) return;
+
+            // ⚠⚠ THE QUEUE LIVES IN THE ACTION RAIL NOW, UNDER START MATCH, AND IT USED TO FLOAT
+            // IN THE MIDDLE OF THE SCREEN. 🧑 2026-09-01: *"our UI is ugly and repetitive and
+            // unimaginative"*. `QueueCard.Dock` carries the argument: the rail is the PLAY column,
+            // both ways of starting a game belong in it, and two accented controls competing for
+            // the same job is not a hierarchy. It also deletes § 115.2's whole class of fault: a
+            // child of a layout group cannot be placed off the bottom of the screen.
+            //
+            // ⚠️ AND IT STILL NEVER BLOCKS THE LOBBY. `QueueCard`'s header is why it has no
+            // scrim: a player in a queue is queueing so they can carry on doing something else,
+            // so chat, the join code and the seat rows all stay live beside it.
+            //
+            // ⚠️ THE CANVAS IS THE FALLBACK. `LobbyStyle.Classic` does not build the rail (it is
+            // the authored screen, kept working at every commit, § 68.3), so on that style the
+            // queue goes back to being a floating plate rather than disappearing.
+            _queueCard = _chrome?.LeftRail != null
+                ? QueueCard.Dock(_chrome.LeftRail)
+                : QueueCard.Build(canvas.transform);
+            _queueCard.Status += SetStatus;
+            _queueCard.Joined += HandleJoinedInPlace;
+
+            // ⚠️ PHASE 11'S OFFER LANDS ON THE SAME START PATH THE BUTTON USES, and the card
+            // deliberately does not know how to start a match. See `QueueCard.StartWithBots`:
+            // every decision a start needs (the map, the seats, whether the room is networked)
+            // lives here, and a second path through them is `docs/TODO.md` § 38.5's dead protocol.
+            _queueCard.StartWithBots += StartAgainstBots;
+        }
+
 
         /// <summary>
         /// The row that gets you OUT of your own lobby and into somebody else's, plus the switch
@@ -816,24 +863,7 @@ namespace TumbangPreso.UI
             net.BrowseLan();
             net.Query?.StartBrowsing();
 
-            // ⚠️⚠️ THE QUEUE'S DOOR SITS ABOVE THE JOIN CARD AND BELOW NOTHING. `CLAUDE.md`
-            // § 6.3: every destination has a visible door, and a door is a thing that looks
-            // pressable. It is on the same canvas as the join card rather than in the right
-            // column's row list, because the queue STATE has to be readable from across the room
-            // (`FUTURE.md` § 0.5b, phase 7 row) and a 34-unit row in a settings column is not.
-            //
-            // ⚠️ AND IT NEVER BLOCKS THE LOBBY. `QueueCard`'s header is why it has no scrim:
-            // a player in a queue is queueing so they can carry on doing something else, so chat,
-            // the join code and the seat rows all stay live behind it.
-            _queueCard = QueueCard.Build(canvas.transform);
-            _queueCard.Status += SetStatus;
-            _queueCard.Joined += HandleJoinedInPlace;
 
-            // ⚠️ PHASE 11'S OFFER LANDS ON THE SAME START PATH THE BUTTON USES, and the card
-            // deliberately does not know how to start a match. See `QueueCard.StartWithBots`:
-            // every decision a start needs (the map, the seats, whether the room is networked)
-            // lives here, and a second path through them is `docs/TODO.md` § 38.5's dead protocol.
-            _queueCard.StartWithBots += StartAgainstBots;
 
             _joinPanel = LobbyJoinPanel.Build(canvas.transform, net);
             _joinPanel.Status += SetStatus;
@@ -2424,6 +2454,13 @@ namespace TumbangPreso.UI
                     _codeRow.SetActive(!string.IsNullOrEmpty(code));
                     if (_codeText != null) _codeText.text = code;
                 }
+
+                // ⚠⚠ THE CODE IS ON THE CARD AS WELL AS IN THE DRAWER, AND THAT IS NOT TWO
+                // PLACES SAYING ONE THING TWICE. The drawer's row is part of the JOIN surface,
+                // where you TYPE somebody else's code; the card's is the answer to *"how does my
+                // friend get in"*, which is the question a host has and which used to need three
+                // presses to answer. `LobbyChrome.BuildCodeButton` carries the journey.
+                _chrome?.SetCode(net?.Lobby?.JoinCode ?? "");
             }
             else if (IsLobby)
             {
@@ -2436,6 +2473,10 @@ namespace TumbangPreso.UI
 
                 if (_addressRow != null) _addressRow.SetActive(false);
                 if (_codeRow != null) _codeRow.SetActive(false);
+
+                // ⚠️ NO TRANSPORT MEANS NO CODE, and the row goes rather than showing an empty
+                // plate under an amber heading.
+                _chrome?.SetCode("");
             }
             else
             {
@@ -2446,6 +2487,10 @@ namespace TumbangPreso.UI
 
                 if (_addressRow != null) _addressRow.SetActive(false);
                 if (_codeRow != null) _codeRow.SetActive(false);
+
+                // ⚠️ PRACTICE HAS NO ROOM AND THEREFORE NO CODE. Leaving the row up on this tab
+                // would advertise a way in to a match nobody else can join.
+                _chrome?.SetCode("");
             }
 
             RefreshActionButtons();

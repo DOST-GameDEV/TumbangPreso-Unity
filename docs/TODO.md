@@ -2138,6 +2138,155 @@ one.**
 
 ---
 
+## 116 · The front end had one material and no focus state ⚠️⚠️ 2026-09-01, branch `ui-redesign`
+
+🧑, after eight fixes had landed and every one of them was correct: **"our UI is ugly and
+repetitive and unimaginative"**, then *"make the ui genuinely good and easy to go thru as a
+human"*, then the scope: **"overhaul lobby UI and login ui, focus only on that for now"** and
+*"dont touch main menu and inngame ui"*.
+
+He also installed a skill for it and named it twice, replacing an earlier one:
+`npx skills add https://github.com/omer-metin/skills-for-antigravity --skill game-ui-design`.
+⚠️ **The one he retracted, `nextlevelbuilder/ui-ux-pro-max-skill`, was never installed**, so there
+was nothing to remove.
+
+### 116.1 ⚠️⚠️ "REPETITIVE" IS ACCURATE AND IT IS ONE SPRITE
+
+**Every plate in this game is `GodotTheme.WoodBox`**: one nine-slice, one bevel, drawn at four
+sizes. The lobby's MATCH SETTINGS pill, its LOBBY & SERVERS pill, the player card, the chat plate,
+the queue card, the sign-in column, every hub row and every button are the same rectangle. Nothing
+is wrong with any one of them, and a screen made of twelve reads as a form.
+
+**The answer is not more colour.** `CLAUDE.md` § 6.4 and `VISION.md` § 6 fix the palette at wood,
+cream, amber and ink, and a fifth hue would be the thing that looks broken. So the variety comes
+from **surface and edge**, in `UiMaterials`:
+
+- ⚠️⚠️ **THE LIGHT COMES FROM ABOVE AND EVERY SURFACE AGREES ABOUT IT.** A raised thing is bright
+  along its top edge, a recessed thing is dark along it, and the player reads which is which
+  without being told. `WoodBox` draws the same bevel on all four sides, so **a button and the well
+  it sits in were the same object at two sizes.** This one decision is most of what stops eight
+  rectangles reading as eight rectangles.
+- **A plank has grain**, three per cent, running down it. At eight it is noise on a screen that
+  already has a live street behind it; at three it only stops a fill from looking like a fill.
+  `VISION.md` § 2 rule 3 is the same argument about abilities: detail, not area.
+- ⚠️⚠️ **AND THE CHALK IS THE ONE PIECE THAT IS ABOUT THE GAME.** The arena's box is chalk on
+  asphalt, `MapGeometryCheck` gates it, and `VISION.md` § 2 rule 5 names it as one of the three
+  things a screenshot must show. **The front end had no chalk in it anywhere.** A straight cream
+  line under a heading is a divider from a settings dialog; the same line with a wobble and dust
+  on it is this game's own mark and costs one 64x8 texture.
+
+⚠️ **Nothing in `UiMaterials` repaints his authored art.** The pennants, the arrow textures, the
+nine-patch buttons and the key art are untouched; every CONTROL is still drawn with them. This is
+the surface behind them, which was never art: it was `Image.color = WoodDeep`.
+
+### 116.2 ⚠️⚠️ THERE WAS NO FOCUS INDICATOR IN THE ENTIRE FRONT END, AND THE SKILL NAMES IT TWICE
+
+`game-ui-design` lists it as a pattern (*"clear visual focus indicator (not just colour change)
+... works on all backgrounds, visible for colourblind users"*) and again as the sharp edge
+`colorblind-failure`. **Every selected control in this game says so by turning amber**, which is
+invisible to a player who cannot separate amber from wood and ambiguous to everybody else, because
+amber is also this front end's ACCENT: the lit tab and the primary action were saying the same
+thing in the same colour eight rows apart.
+
+`FocusRing` is a ring drawn OUTSIDE the control, so it never eats a pixel of a label, and it
+**listens rather than being told**: it watches `EventSystem.currentSelectedGameObject` and its own
+pointer state, so a screen cannot forget to clear it. ⚠️ It is not a raycast target, because a
+focus indicator that ate the click on the control it is indicating would be the worst possible
+version of this feature.
+
+⚠️ **An `InputField` is "focused" when it is focused, which is not the same as being selected.**
+Unity keeps a field selected after it is deactivated, so asking the EventSystem alone leaves a ring
+on a field the player has finished typing in.
+
+### 116.3 The login screen ✅ REBUILT
+
+- **The column is a plank** with a lit top edge and a three-unit `WoodEdge` line down its right
+  side, which is what makes it read as a board in front of the art rather than as a crop of it.
+- **A chalk rule under the heading.**
+- ⚠️⚠️ **THE TWO MODES ARE ONE SEGMENTED CONTROL, NOT TWO PILLS.** They sit in a recessed well so
+  they read as two halves of one thing, the live half is lit, and **a chalk bar sits under it**.
+  The bar is the part that survives a colourblind player, a bad monitor and a photograph.
+- ⚠️⚠️ **ENTER SUBMITS AND IT USED TO SUBMIT FROM NEITHER FIELD.** `onSubmit` was on nothing: a
+  player who typed a password and pressed Enter, which is what everybody does, got nothing and had
+  to reach for the mouse.
+- ⚠️⚠️ **TAB WALKS THE FORM.** `Selectable.navigation` is off by default on everything built in
+  code, and `game-ui-design` calls a menu you cannot leave without a pointer a **Controller
+  Navigation Deadend**: an anti-pattern AND a sharp edge, because it is the failure that makes a
+  screen unusable rather than ugly. ⚠️ The chain is EXPLICIT and not `Automatic`, because from the
+  password field "up" is ambiguous between two tabs at the same height and the answer changes with
+  the window's aspect.
+- **The keys are written on the screen.** `No Keyboard Shortcut Display` is a named sharp edge and
+  this form has always taken TAB and ENTER without saying so. ⚠️ It names the keys rather than
+  drawing controller glyphs, because this build has **zero gamepad bindings** and a glyph on a
+  keyboard-only build is the `Input Prompt Mismatch` edge one page over.
+- **The caret starts in the field you have to fill in.** A returning player's username is already
+  filled from the account, so the focus goes to the password instead of making them tab past their
+  own name.
+- **The rhythm is three blocks, not nine rows**: identity, form, actions. 80 units inside a block,
+  120 between them, and the pitch is the field height plus its caption rather than a new number.
+
+### 116.4 The lobby ✅ REBUILT
+
+⚠️⚠️ **THE LOUDEST CONTROL ON THE SCREEN WAS NOT THE PRIMARY ONE.** QUICK MATCH was a 560-unit
+amber bar across the bottom centre, over the cast, and START MATCH is the primary. `game-ui-design`
+puts POSITION first among the ordering tools and names the result of getting it wrong (`UI Blocking
+Action`); two accented controls competing for the same job is not a hierarchy, it is a coin toss
+the player makes every time they look at the screen.
+
+- **The queue moved into the action rail**, under START MATCH. The rail is the PLAY column and both
+  ways of starting a game belong in it: START MATCH is *"these seats, now"* and QUICK MATCH is
+  *"find me people"*. One accent, spent on the primary; the queue gets plain wood and a chalk rule,
+  which says "a way in" without claiming to be THE way in.
+- ⚠️⚠️ **AND THAT DELETES § 115.2's WHOLE CLASS OF FAULT RATHER THAN FIXING IT AGAIN.** A plate
+  placed by hand has to be positioned against an edge, and `MenuKit.Place` pivots at the CENTRE, so
+  44 units of the searching card were under the bottom of the screen with CANCEL in them. **A child
+  of a `VerticalLayoutGroup` cannot be off the screen.**
+- ⚠️ **The order trap that came with it**: `BuildLobbyEntryControls` runs BEFORE
+  `LobbyChrome.Apply`, so a queue built there asks for a rail that does not exist and falls back to
+  the canvas silently. `InstallQueueCard` runs after the chrome and says why.
+- **The centre of the screen goes back to the cast.**
+
+**Materials, in the rail and on the player card:** the drawer's BODY is a recessed plank and its
+TOGGLE is a raised one; the player card is raised and the name field inside it is recessed, so the
+thing you type in reads as cut into the thing it is on. Both were `GodotTheme.WoodBox` with the
+same bevel on all four sides, which is why the screen read as a stack of identical planks.
+
+**Every pressable thing in the lobby wears a ring** when it has the pointer or the keyboard. Until
+this pass none of them said anything at all: `TextureButtonFeedback` tints a very dark brown by a
+few per cent, which is a change nobody can see.
+
+### 116.6 ⚠⚠ THE ROOM CODE WAS INSIDE A CLOSED DRAWER, AND IT IS THE ONE FACT THE SCREEN EXISTS TO PRODUCE
+
+🧑: *"make the ui genuinely good and easy to go thru as a human"*. `CLAUDE.md` § 6.3's method is
+to walk the journey out loud and count the presses, so: **"I want my friend to join me"** was open
+LOBBY & SERVERS, find the code row among the network rows, read it out. **Three presses and a hunt,
+for the single thing a host needs from a multiplayer lobby.**
+
+- It is a row on the player card now, in the corner the player is already reading, at 30 units in
+  amber because it is read across a room and typed into a phone.
+- **It copies itself.** A four-character code read off a screen and retyped into Discord is four
+  chances to get it wrong; `GUIUtility.systemCopyBuffer` is one line. ⚠️ The label says `copied`
+  for a moment, because a press that silently succeeds is § 53.5's dead button from the other side.
+- ⚠️ **It is not two places saying one thing twice.** The drawer's row is part of the JOIN
+  surface, where you type somebody ELSE's code; the card's is the answer to *"how do they get in"*.
+  Different questions, different owners.
+- ⚠️ **Practice has no room and therefore no code**, and the whole row leaves rather than
+  showing an empty plate under an amber heading.
+
+### 116.5 What is NOT done, named rather than left implied
+
+- **The lobby has no keyboard chain yet.** The login screen has one (`SignInScreen.Chain`); the
+  lobby's controls are still pointer-only, which is `game-ui-design`'s `Controller Navigation
+  Deadend` on the screen a player spends the most time in.
+- **The hub, the maker and the character select were not touched.** 🧑 scoped this pass:
+  *"overhaul lobby UI and login ui, focus only on that for now"*, and *"dont touch main menu and
+  inngame ui"*. They still use `GodotTheme.WoodBox` everywhere and they still have no focus state.
+- **No probe looks at any of this.** `game-ui-design`'s rules are mostly about what a person sees;
+  the two that a test COULD hold are the touch-target floor and "no control is only distinguished
+  by colour", and neither is asserted anywhere.
+
+---
+
 ## 115 · Eight faults in one build, phases 11 and 12, and the door he could not find ⚠️⚠️ 2026-09-01
 
 🧑 opened the build off `gemini-rework` and sent eight reports in twenty minutes, most with a

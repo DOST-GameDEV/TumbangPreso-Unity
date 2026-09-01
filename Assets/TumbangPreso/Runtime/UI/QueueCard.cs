@@ -80,6 +80,31 @@ namespace TumbangPreso.UI
 
         private const float CardCentreY = DoorCentreY - (DoorHeight * 0.5f) + (CardHeight * 0.5f);
 
+        /// <summary>
+        /// How wide a line inside the card actually is.
+        ///
+        /// ⚠⚠ IT IS READ FROM THE RECT WHEN THE CARD IS DOCKED AND FROM THE CONSTANT WHEN IT IS
+        /// NOT, because in the rail the WIDTH IS THE RAIL'S and `CardWidth` is a number this class
+        /// no longer decides. Fitting a headline to 560 inside a 460 rail is
+        /// `CLAUDE.md` § 6.2c question 4 exactly: a width measured against a box the control does
+        /// not live in, failing silently because `MenuKit.Label` overflows rather than wrapping.
+        /// </summary>
+        private float InnerWidth
+        {
+            get
+            {
+                float width = CardWidth;
+
+                if (_docked && _card != null)
+                {
+                    float measured = ((RectTransform)_card.transform).rect.width;
+                    if (measured > 1.0f) width = measured;
+                }
+
+                return width - (Pad * 2.0f);
+            }
+        }
+
         private Matchmaker _queue;
 
         private GameObject _card;
@@ -129,6 +154,41 @@ namespace TumbangPreso.UI
         /// The rule § 0.5b bans is adding a door to fix a FINDABILITY problem; this is a
         /// destination that did not exist before.
         /// </summary>
+        /// <summary>
+        /// Put the queue in the lobby's action rail, under the primary.
+        ///
+        /// ⚠⚠⚠ IT USED TO FLOAT IN THE MIDDLE OF THE SCREEN AND THAT WAS THE BIGGEST SINGLE
+        /// THING WRONG WITH THE LOBBY. 🧑 2026-09-01: *"our UI is ugly and repetitive and
+        /// unimaginative"*. QUICK MATCH was a 560-unit amber bar across the bottom centre, over
+        /// the cast, and it was **the loudest control on the screen while not being the primary
+        /// one**: START MATCH is. `game-ui-design` puts position first among the ordering tools
+        /// and calls the result of getting it wrong `UI Blocking Action`; two accented controls
+        /// competing is not a hierarchy, it is a coin toss the player has to make every time.
+        ///
+        /// **The rail is the PLAY column** and both ways of starting a game belong in it: START
+        /// MATCH is "these seats, now" and QUICK MATCH is "find me people". One under the other,
+        /// one accent, and the centre of the screen goes back to the cast.
+        ///
+        /// ⚠⚠ THE CARD IS A RAIL CHILD TOO, NOT A FLOATING PLATE, and that is what deletes
+        /// § 115.2 rather than fixing it again. A plate placed by hand had to be positioned against
+        /// an edge, and `MenuKit.Place` pivots at the centre, so 44 units of it were under the
+        /// bottom of the screen with CANCEL in them. A child of a `VerticalLayoutGroup` cannot be
+        /// off the screen: the rail grows upward from its own bottom margin.
+        /// </summary>
+        public static QueueCard Dock(Transform rail)
+        {
+            var go = new GameObject("QueueCard", typeof(RectTransform));
+            go.transform.SetParent(rail, false);
+
+            var card = go.AddComponent<QueueCard>();
+            card._docked = true;
+            card.Construct();
+            return card;
+        }
+
+        /// <summary>True when this lives inside the lobby's rail rather than on the canvas.</summary>
+        private bool _docked;
+
         public static QueueCard Build(Transform parent)
         {
             // ⚠️⚠️ A STRETCHED `RectTransform`, AND WITHOUT IT QUICK MATCH DREW IN THE MIDDLE OF
@@ -162,6 +222,30 @@ namespace TumbangPreso.UI
             _queue.Changed += Refresh;
             _queue.Joined += OnQueueJoined;
 
+            // ⚠️ A DOCKED QUEUE IS A ROW IN A COLUMN AND OWNS NO POSITION OF ITS OWN. The rail's
+            // `VerticalLayoutGroup` controls width and height, so this object contributes a
+            // height and nothing else. See `Dock`.
+            if (_docked)
+            {
+                var group = gameObject.AddComponent<VerticalLayoutGroup>();
+                group.spacing = 10.0f;
+                group.childControlWidth = true;
+                group.childControlHeight = true;
+                group.childForceExpandWidth = true;
+                group.childForceExpandHeight = false;
+
+                var fitter = gameObject.AddComponent<ContentSizeFitter>();
+                fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+                fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+                gameObject.AddComponent<LayoutElement>().flexibleHeight = 0.0f;
+
+                BuildDockedDoor();
+                BuildCard();
+                Refresh();
+                return;
+            }
+
             // ---- the door -------------------------------------------------------------
             //
             // ⚠️ AMBER, WHICH IS THE ONE ACCENT ON THIS SCREEN AND IS SPENT ON THE ONE ACTION.
@@ -175,6 +259,52 @@ namespace TumbangPreso.UI
 
             BuildCard();
             Refresh();
+        }
+
+        /// <summary>
+        /// QUICK MATCH as a rail row: the same words, one step down in weight from the primary.
+        ///
+        /// ⚠⚠ PLAIN WOOD WITH A CHALK RULE UNDER IT, NOT AMBER. The old note on this control
+        /// said *"amber, which is the one accent on this screen and is spent on the one action"*,
+        /// and that was written when the card was alone in the middle of the screen. In the rail
+        /// it sits directly under START MATCH, which IS the one action, so two accents would be
+        /// two primaries eight units apart. The chalk rule is what keeps it from reading as a
+        /// disabled control: it says "this is a way in" without claiming to be THE way in.
+        /// </summary>
+        private void BuildDockedDoor()
+        {
+            var holder = new GameObject("QuickMatchRow", typeof(RectTransform));
+            holder.transform.SetParent(transform, false);
+
+            var element = holder.AddComponent<LayoutElement>();
+            element.minHeight = DoorHeight + 14.0f;
+            element.preferredHeight = DoorHeight + 14.0f;
+            element.flexibleHeight = 0.0f;
+
+            _open = MenuKit.WoodButton(holder.transform, "QUICK MATCH", new Vector2(0.5f, 1.0f),
+                                       new Vector2(0.0f, -(DoorHeight * 0.5f)),
+                                       new Vector2(CardWidth, DoorHeight),
+                                       OnQuickMatchPressed);
+            _open.name = "QuickMatchButton";
+
+            // ⚠️ THE BUTTON STRETCHES TO THE RAIL AND THE RULE FOLLOWS IT. `MenuKit.WoodButton`
+            // takes a size, and a fixed 560 in a 460 rail would hang 50 units off each end; the
+            // rail controls width, so the rect is re-anchored to fill it.
+            var buttonRect = (RectTransform)_open.transform;
+            buttonRect.anchorMin = new Vector2(0.0f, 1.0f);
+            buttonRect.anchorMax = new Vector2(1.0f, 1.0f);
+            buttonRect.offsetMin = new Vector2(0.0f, -DoorHeight);
+            buttonRect.offsetMax = Vector2.zero;
+
+            var rule = UiMaterials.Underline(holder.transform, 0.0f, 0.0f, UiTheme.Amber);
+            var ruleRect = rule.rectTransform;
+            ruleRect.anchorMin = new Vector2(0.0f, 0.0f);
+            ruleRect.anchorMax = new Vector2(1.0f, 0.0f);
+            ruleRect.pivot = new Vector2(0.5f, 0.0f);
+            ruleRect.offsetMin = new Vector2(18.0f, 2.0f);
+            ruleRect.offsetMax = new Vector2(-18.0f, 10.0f);
+
+            FocusRing.Attach(_open.gameObject, 4.0f);
         }
 
         private void BuildCard()
@@ -194,8 +324,20 @@ namespace TumbangPreso.UI
             // a queue is meant to be able to keep talking in chat and keep reading the code.
             plate.raycastTarget = true;
 
-            MenuKit.Place(plate.rectTransform, new Vector2(0.5f, 0.0f),
-                          new Vector2(0.0f, CardCentreY), new Vector2(CardWidth, CardHeight));
+            if (_docked)
+            {
+                // ⚠️ THE RAIL DECIDES THE WIDTH AND THIS DECIDES THE HEIGHT. A docked card cannot
+                // be placed off the screen, which is what § 115.2 was.
+                var docked = _card.AddComponent<LayoutElement>();
+                docked.minHeight = CardHeight;
+                docked.preferredHeight = CardHeight;
+                docked.flexibleHeight = 0.0f;
+            }
+            else
+            {
+                MenuKit.Place(plate.rectTransform, new Vector2(0.5f, 0.0f),
+                              new Vector2(0.0f, CardCentreY), new Vector2(CardWidth, CardHeight));
+            }
 
             var column = new GameObject("Column");
             column.transform.SetParent(_card.transform, false);
@@ -440,7 +582,7 @@ namespace TumbangPreso.UI
                         : "SEARCHING FOR A MATCH",
                 };
 
-                MenuKit.Fit(_headline, CardWidth - (Pad * 2.0f));
+                MenuKit.Fit(_headline, InnerWidth);
             }
 
             if (_band != null)
@@ -449,7 +591,7 @@ namespace TumbangPreso.UI
                 // the mode, the time elapsed, and how to cancel". A player who queued from the
                 // wrong tab finds out here rather than at the character select.
                 _band.text = $"{MenuKit.ModeLabel(_queue.Mode)}  ·  {_queue.SearchLabel}";
-                MenuKit.Fit(_band, CardWidth - (Pad * 2.0f));
+                MenuKit.Fit(_band, InnerWidth);
             }
 
             if (_barFill != null)
@@ -473,7 +615,7 @@ namespace TumbangPreso.UI
                 if (_fillLabel != null)
                 {
                     _fillLabel.text = BotFillRules.FillOffer(bots);
-                    MenuKit.Fit(_fillLabel, CardWidth - (Pad * 2.0f) - 32.0f);
+                    MenuKit.Fit(_fillLabel, InnerWidth - 32.0f);
                 }
 
                 if (_fillCaveat != null)

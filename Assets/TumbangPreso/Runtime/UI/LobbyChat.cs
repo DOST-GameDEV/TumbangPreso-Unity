@@ -253,7 +253,10 @@ namespace TumbangPreso.UI
             if (!_inMatch)
             {
                 var plate = gameObject.AddComponent<Image>();
-                plate.sprite = GodotTheme.WoodBox(UiTheme.WoodDeep, UiTheme.WoodEdge);
+
+                // ⚠️ A RECESSED PLANK, so the chat reads as a groove in the rail rather than as
+                // another plate on top of it. See `UiMaterials`.
+                plate.sprite = UiMaterials.Plank(UiTheme.WoodDeep, raised: false);
                 plate.type = Image.Type.Sliced;
                 plate.color = Color.white;
 
@@ -559,6 +562,19 @@ namespace TumbangPreso.UI
                 {
                     _lines[i].text = i < target ? "" : _history[first + i - target];
                 }
+
+                // ⚠⚠ AN EMPTY CHAT SAYS SO INSTEAD OF BEING A HOLE. The lobby panel is a FIXED
+                // two-line box by design (🧑: *"i want u to not make the chat extend anymore"*), so
+                // before anybody speaks it is a dark rectangle with an input under it and nothing
+                // explaining the gap. Measured off `Logs/shots-runtime/Lobby-v43.png`, where it is
+                // the one thing on the right rail that reads as broken. **One muted line costs
+                // nothing and turns reserved space into an invitation**, which is the same
+                // argument `LobbyChat.FieldHeight` makes for the field filling the plate.
+                //
+                // ⚠️ IT IS NOT PUSHED INTO `_history`. A placeholder in the log would be a line
+                // the scrollable view then shows for ever, and `RefreshHistoryPanel` already has
+                // its own `EmptyLog` for that surface.
+                if (_history.Count == 0) _lines[_lines.Count - 1].text = EmptyLog;
             }
 
             foreach (var line in _lines)
@@ -587,7 +603,9 @@ namespace TumbangPreso.UI
 
                 if (!has) continue;
 
-                line.color = UiTheme.Cream;
+                // ⚠️ THE EMPTY LINE IS MUTED, so it reads as the absence of messages rather than
+                // as a message somebody sent.
+                line.color = line.text == EmptyLog ? UiTheme.CreamMuted : UiTheme.Cream;
 
                 if (element != null)
                 {
@@ -617,6 +635,19 @@ namespace TumbangPreso.UI
                 // the log by intent, and the whole message is in the scrollable history behind the
                 // click, on `Overflow`, inside a viewport. What changed is that it now clips to
                 // ONE READABLE LINE instead of to nothing.
+                // ⚠️ THE EMPTY-STATE LINE IS NOT FITTED OR CUT. It is sixteen characters this file
+                // wrote itself, so the machinery for arbitrary 120-character strings typed by a
+                // stranger has nothing to do here — and it was DOING something: measured off
+                // `Logs/shots-runtime/Lobby-v43.png` the panel read **"No message⋯"**, because
+                // `Ellipsise` measures `preferredHeight` against a rect the layout has not sized
+                // yet on the frame the panel is built. A hint that gets cut is worse than no hint.
+                if (line.text == EmptyLog)
+                {
+                    line.fontSize = LineSize;
+                    line.verticalOverflow = VerticalWrapMode.Overflow;
+                    continue;
+                }
+
                 MenuKit.FitBlock(line, LineHeight);
 
                 // ⚠️⚠️ AND IT IS CLIPPED TO WHAT IT WAS JUST FITTED TO. 🧑 2026-08-29: *"nag

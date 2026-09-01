@@ -149,6 +149,12 @@ namespace TumbangPreso.UI
         /// <summary>CONTINUE WITH GOOGLE, or null in a build with no client id. See `BuildForm`.</summary>
         private Button _googleButton;
 
+        /// <summary>The keys this form takes, written down. See `BuildForm`.</summary>
+        private Text _keyHint;
+
+        /// <summary>The chalk bar under whichever tab is live. See <see cref="BuildTabs"/>.</summary>
+        private Image _tabMarker;
+
         /// <summary>Raised when the player leaves, whether they signed in or not, so the hub can
         /// come back up where it was.</summary>
         public event Action Closed;
@@ -333,16 +339,39 @@ namespace TumbangPreso.UI
             rt.offsetMin = Vector2.zero;
             rt.offsetMax = new Vector2(ColumnUnits, 0.0f);
 
-            columnGo.GetComponent<Image>().color = UiTheme.WoodDeep;
-
-            // ⚠️ THE COLUMN IS OPAQUE AND THE REST IS NOT. That contrast is what makes the form
-            // read as the only thing you can act on, which is the whole point of the reference.
-            var skin = columnGo.AddComponent<GodotPanel>();
-            skin.Variation = "WoodPanel";
-            skin.ApplyContentMargins = false;
-            skin.Apply();
+            // ⚠⚠ THE COLUMN IS A PLANK NOW AND IT WAS A FLAT FILL WITH A NINE-PATCH ON IT.
+            // 🧑 2026-09-01: *"our UI is ugly and repetitive and unimaginative"*. `UiMaterials`
+            // carries the whole argument; the short version is that the light in this front end
+            // comes from above now, so a raised surface is bright along its top edge and a
+            // recessed one is dark along it, and the player reads which is which without being
+            // told. A flat `WoodDeep` rectangle with the same bevel on all four sides said
+            // nothing about anything.
+            //
+            // ⚠️ HIS AUTHORED NINE-PATCH STAYS ON THE BUTTONS AND LEAVES THE BACKGROUND.
+            // `docs/VISION.md` § 6: his UI art IS the design system, and every CONTROL on this
+            // screen is still drawn with it. This is the surface behind them, which was never
+            // authored art: it was `Image.color = WoodDeep`.
+            var face = columnGo.GetComponent<Image>();
+            face.sprite = UiMaterials.Plank(UiTheme.WoodDeep);
+            face.type = Image.Type.Sliced;
+            face.color = Color.white;
 
             var col = columnGo.transform;
+
+            // ⚠⚠ THE COLUMN'S RIGHT EDGE IS A LIT LINE, AND IT IS THE ONE THING THAT MAKES THIS
+            // READ AS A PHYSICAL BOARD IN FRONT OF THE ART RATHER THAN AS A CROP OF IT. Two units
+            // of `WoodEdge` down the full height, on the side the light is not coming from.
+            var edge = new GameObject("ColumnEdge", typeof(RectTransform), typeof(Image));
+            edge.transform.SetParent(col, false);
+            edge.GetComponent<Image>().color = UiTheme.WoodEdge;
+            edge.GetComponent<Image>().raycastTarget = false;
+
+            var edgeRt = (RectTransform)edge.transform;
+            edgeRt.anchorMin = new Vector2(1.0f, 0.0f);
+            edgeRt.anchorMax = new Vector2(1.0f, 1.0f);
+            edgeRt.pivot = new Vector2(1.0f, 0.5f);
+            edgeRt.offsetMin = new Vector2(-3.0f, 0.0f);
+            edgeRt.offsetMax = Vector2.zero;
 
             // ⚠️⚠️ EVERY ROW IS PLACED FROM THE COLUMN'S CENTRE, NOT FROM ITS TOP AND BOTTOM,
             // AND THE OLD ARRANGEMENT IS WHAT 🧑 CALLED *"ugly big ass space i hate this ui its
@@ -359,13 +388,19 @@ namespace TumbangPreso.UI
             // at one window height, which is fault 3 of § 92.1 and the reason `UiRows` exists.
             // The block is about 780 units tall and the canvas matches HEIGHT at a 1080
             // reference, so it fits every shape the game ships at by construction.
-            const float Logo = 300.0f;
-            const float Heading = 210.0f;
-            const float Tabs = 140.0f;
-            const float UserField = 20.0f;
-            const float PassField = -100.0f;
-            const float Hint = -170.0f;
-            const float Primary = -240.0f;
+            // ⚠⚠ THREE BLOCKS, NOT NINE ROWS, AND THE GAPS BETWEEN THEM ARE WHAT SAY SO.
+            // `game-ui-design`'s ordering tools are position, size, weight and colour in that
+            // order, and this column was using only the last two. The blocks are IDENTITY (the
+            // wordmark and the heading), FORM (which mode, and the two fields) and ACTIONS. Inside
+            // a block the pitch is 80 units; between blocks it is 120. Nothing here is a new
+            // number for its own sake: the pitch is the field height plus its caption.
+            const float Logo = 306.0f;
+            const float Heading = 208.0f;
+            const float Tabs = 128.0f;
+            const float UserField = 24.0f;
+            const float PassField = -88.0f;
+            const float Hint = -156.0f;
+            const float Primary = -230.0f;
 
             BuildLogo(col, Logo);
 
@@ -376,6 +411,14 @@ namespace TumbangPreso.UI
 
             _heading = MenuKit.Label(col, "SIGN IN", 40, UiTheme.Cream, Centre,
                 new Vector2(0.0f, Heading), new Vector2(420.0f, 54.0f));
+
+            // ⚠⚠ A CHALK RULE, AND IT IS THE GAME'S OWN MARK RATHER THAN A DIVIDER.
+            // `UiMaterials.ChalkRule` carries the reasoning: the arena's box is chalk on asphalt,
+            // `VISION.md` § 2 rule 5 names the chalk as one of the three things a screenshot has to
+            // show, and **the front end had no chalk in it anywhere**. A straight cream line is a
+            // divider from a settings dialog; the same line with a wobble and dust on it belongs
+            // to this game and to nothing else.
+            UiMaterials.Underline(col, 300.0f, Heading - 40.0f, UiTheme.CreamMuted);
 
             BuildTabs(col, Tabs);
 
@@ -436,8 +479,46 @@ namespace TumbangPreso.UI
             _guest = MenuKit.WoodButton(col, "PLAY AS GUEST", Centre,
                 new Vector2(0.0f, guestY), new Vector2(300.0f, 48.0f), GuestPressed);
 
+            // ⚠⚠ BACK IS THE THIRD THING ON THIS SCREEN AND IT WAS DRAWN AS THE SECOND. It was
+            // the same 300x48 wood plate as PLAY AS GUEST, so the column ended with two identical
+            // buttons and the player had to READ them to tell an escape hatch from a way to play.
+            // `game-ui-design`'s ordering is position, size, weight, colour: this is one step down
+            // in size and one in weight, and it is still a 44-unit target.
             _back = MenuKit.WoodButton(col, "BACK", Centre,
-                new Vector2(0.0f, backY), new Vector2(300.0f, 48.0f), Close);
+                new Vector2(0.0f, backY), new Vector2(220.0f, 44.0f), Close);
+
+            var backLabel = _back.GetComponentInChildren<Text>();
+            if (backLabel != null) backLabel.color = UiTheme.CreamMuted;
+
+            // ⚠⚠ THE KEYS ARE ON THE SCREEN, AND `game-ui-design` LISTS THEIR ABSENCE AS A SHARP
+            // EDGE BY NAME (`No Keyboard Shortcut Display`). This form has always taken TAB and
+            // ENTER and has never said so, so every player has moused between two fields and
+            // hunted for a button. ⚠️ It names the keys rather than drawing glyphs, because this
+            // build has **zero gamepad bindings** (`FUTURE.md` § 0.6 checked it) and a controller
+            // glyph on a keyboard-only build is the `Input Prompt Mismatch` edge one page over.
+            //
+            // ⚠️ AND IT IS THE LAST THING IN THE COLUMN, under everything it describes, at the
+            // muted weight. A hint that competes with the action it explains is a second heading.
+            _keyHint = MenuKit.Label(col, "TAB to move  ·  ENTER to sign in  ·  ESC to go back",
+                MenuKit.MinReadableUnits, UiTheme.CreamMuted, Centre,
+                new Vector2(0.0f, backY - 52.0f), new Vector2(460.0f, 26.0f));
+            _keyHint.raycastTarget = false;
+
+            // ⚠️ THE CHAIN IS BUILT AFTER EVERY CONTROL EXISTS, in the order a person reads them.
+            // See `Chain`: the tabs are the first stop because the first question this screen
+            // asks is which of the two things you are doing.
+            Chain(_signInTab, _createTab, _username, _password,
+                  _primaryLabel != null ? _primaryLabel.GetComponentInParent<Button>() : null,
+                  _googleButton, _guest, _back);
+
+            FocusRing.Attach(_guest.gameObject, 4.0f);
+            FocusRing.Attach(_back.gameObject, 4.0f);
+            if (_googleButton != null) FocusRing.Attach(_googleButton.gameObject, 4.0f);
+            if (_primaryLabel != null)
+            {
+                var primary = _primaryLabel.GetComponentInParent<Button>();
+                if (primary != null) FocusRing.Attach(primary.gameObject, 4.0f);
+            }
 
             _formPieces = new GameObject[col.childCount - formStart];
             for (int i = formStart; i < col.childCount; i++)
@@ -593,14 +674,62 @@ namespace TumbangPreso.UI
             fitter.aspectRatio = logo.width / (float)logo.height;
         }
 
+        /// <summary>
+        /// The two modes, as one segmented control rather than as two buttons.
+        ///
+        /// ⚠⚠ THEY WERE TWO IDENTICAL PILLS AND THE ONLY THING SAYING WHICH ONE YOU WERE ON WAS
+        /// THEIR COLOUR. `game-ui-design` names that twice: as a pattern (*"clear visual focus
+        /// indicator, NOT just colour change ... visible for colourblind users"*) and as the
+        /// `colorblind-failure` sharp edge. Amber against wood is also the ACCENT of this whole
+        /// front end, so the lit tab and the primary action were saying the same thing in the same
+        /// colour eight rows apart.
+        ///
+        /// **Three things say it now and only one of them is colour:** the pair sits in one
+        /// RECESSED well, so they read as two halves of one control rather than as two choices;
+        /// the live half is lit; and a chalk bar sits under it. The bar is the part that survives
+        /// a colourblind player, a bad monitor and a photograph.
+        ///
+        /// ⚠️ 52 UNITS TALL, UP FROM 48, WHICH IS A TOUCH-TARGET FLOOR AND NOT A LOOK.
+        /// `game-ui-design`'s `small-touch-target` rule is 44 minimum and 48 for a comfortable
+        /// controller target; these are authored in canvas units that scale on the short axis, so
+        /// 52 at the 1080 reference is never under 44 on a shipped window.
+        /// </summary>
         private void BuildTabs(Transform col, float y)
         {
+            var well = new GameObject("ModeWell", typeof(RectTransform), typeof(Image));
+            well.transform.SetParent(col, false);
+
+            var wellImage = well.GetComponent<Image>();
+            // ⚠️ `WoodDeep` RECESSED, NOT `WoodDark`. Measured off the first render: `WoodDark` is
+            // `1d0e06`, which is near black, and a recessed plank of it drew as a hard black
+            // rectangle around the two tabs. The well has to read as a groove in the same board,
+            // not as a hole cut through it.
+            wellImage.sprite = UiMaterials.Plank(UiTheme.WoodDeep, raised: false);
+            wellImage.type = Image.Type.Sliced;
+            wellImage.color = Color.white;
+            wellImage.raycastTarget = false;
+
+            MenuKit.Place(wellImage.rectTransform, Centre, new Vector2(0.0f, y),
+                          new Vector2(436.0f, 68.0f));
+
             _signInTab = MenuKit.WoodButton(col, "SIGN IN", Centre,
-                new Vector2(-108.0f, y), new Vector2(206.0f, 48.0f), () => SetMode(false),
+                new Vector2(-105.0f, y), new Vector2(198.0f, 52.0f), () => SetMode(false),
                 "WoodAmberButton");
 
             _createTab = MenuKit.WoodButton(col, "CREATE", Centre,
-                new Vector2(108.0f, y), new Vector2(206.0f, 48.0f), () => SetMode(true));
+                new Vector2(105.0f, y), new Vector2(198.0f, 52.0f), () => SetMode(true));
+
+            // ⚠️ THE MARKER IS A SIBLING OF THE TABS AND NOT A CHILD OF EITHER, so switching
+            // modes moves one object instead of showing one and hiding another. Two markers is
+            // two things to keep in step and one of them is always the one somebody forgets.
+            // ⚠️ 44 BELOW THE ROW, MEASURED OFF THE RENDER. The well is 68 tall centred on the
+            // tabs, so its bottom edge is 34 down; a marker at 34 sits exactly ON that edge and
+            // the first render shows it half swallowed by it.
+            _tabMarker = UiMaterials.Underline(col, 150.0f, y - 44.0f, UiTheme.Amber);
+            _tabMarker.rectTransform.anchoredPosition = new Vector2(-105.0f, y - 44.0f);
+
+            FocusRing.Attach(_signInTab.gameObject, 4.0f);
+            FocusRing.Attach(_createTab.gameObject, 4.0f);
         }
 
         private void BuildPrimary(Transform col, float y)
@@ -668,7 +797,52 @@ namespace TumbangPreso.UI
             ghost.alignment = TextAnchor.MiddleLeft;
             input.placeholder = ghost;
 
+            // ⚠⚠ A FIELD WITH THE KEYBOARD LOOKS DIFFERENT FROM ONE WITHOUT, AND UNTIL NOW IT
+            // DID NOT. Unity's default is a barely-visible tint on the target graphic, over a
+            // cream card, which is `game-ui-design`'s `colorblind-failure` on the one control on
+            // the screen where knowing where you are typing IS the interaction. See `FocusRing`.
+            FocusRing.Attach(go, 4.0f);
+
+            // ⚠⚠ ENTER SUBMITS FROM EITHER FIELD, AND IT USED TO SUBMIT FROM NEITHER. The form
+            // had `onSubmit` on nothing: a player who typed a password and pressed Enter, which is
+            // what everybody does, got nothing at all and had to reach for the mouse. `onSubmit`
+            // fires for both fields, so the reflex works from wherever the caret is.
+            input.onSubmit.AddListener(_ => Submit());
+
             return input;
+        }
+
+        /// <summary>
+        /// TAB walks the form, and SHIFT+TAB walks it backwards.
+        ///
+        /// ⚠⚠ UNITY'S BUILT-IN TAB NAVIGATION IS `Selectable.navigation`, WHICH IS OFF BY
+        /// DEFAULT ON EVERYTHING BUILT IN CODE. `game-ui-design` calls a menu you cannot leave
+        /// without a pointer a `Controller Navigation Deadend`, and it lists it as an anti-pattern
+        /// AND a sharp edge because it is the failure that makes a screen unusable rather than
+        /// ugly. This is the keyboard half; the same explicit chain is what a gamepad would walk
+        /// when Phase 14 gives this build its first stick binding.
+        ///
+        /// ⚠️ IT IS AN EXPLICIT CHAIN AND NOT `Automatic`. Unity's automatic mode picks the
+        /// nearest selectable by DIRECTION on screen, and this column has a two-up segmented
+        /// control at the top of it: from the password field, "up" is ambiguous between two tabs
+        /// that sit at the same height, and the answer changes with the window's aspect.
+        /// </summary>
+        private static void Chain(params Selectable[] order)
+        {
+            for (int i = 0; i < order.Length; i++)
+            {
+                if (order[i] == null) continue;
+
+                var nav = new Navigation { mode = Navigation.Mode.Explicit };
+
+                for (int back = i - 1; back >= 0; back--)
+                    if (order[back] != null) { nav.selectOnUp = order[back]; nav.selectOnLeft = order[back]; break; }
+
+                for (int forward = i + 1; forward < order.Length; forward++)
+                    if (order[forward] != null) { nav.selectOnDown = order[forward]; nav.selectOnRight = order[forward]; break; }
+
+                order[i].navigation = nav;
+            }
         }
 
         // -------------------------------------------------------------------
@@ -703,6 +877,27 @@ namespace TumbangPreso.UI
 
             _root.SetActive(true);
             Opened?.Invoke(true);
+            FocusFirstField();
+        }
+
+        /// <summary>
+        /// Puts the caret in the first field the player would type in.
+        ///
+        /// ⚠⚠ A FORM THAT OPENS WITH NOTHING FOCUSED COSTS A CLICK BEFORE IT COSTS A KEYSTROKE,
+        /// and on the boot screen that click is the first thing anybody does in this game.
+        /// `game-ui-design`: *"remember last position when returning to menu"*, and the position
+        /// on arriving is the first thing you have to fill in.
+        ///
+        /// ⚠️ IT PICKS THE EMPTY ONE. A returning player's username is already filled in from
+        /// the account, so focusing it would make them tab past their own name to reach the
+        /// password. This is one line and it is the difference between the form knowing what you
+        /// came to do and not.
+        /// </summary>
+        private void FocusFirstField()
+        {
+            var target = string.IsNullOrEmpty(_username.text) ? _username : _password;
+            target.Select();
+            target.ActivateInputField();
         }
 
         /// <summary>
@@ -800,6 +995,27 @@ namespace TumbangPreso.UI
 
             var caption = _guest != null ? _guest.GetComponentInChildren<Text>(true) : null;
             if (caption != null) caption.text = atBoot ? "CONTINUE AS GUEST" : "PLAY AS GUEST";
+
+            // ⚠⚠ THE KEY HINT FOLLOWS THE LAST VISIBLE BUTTON, NOT THE LAST BUTTON. BACK is
+            // hidden at boot, so a hint anchored under it floated 60 units below nothing on the
+            // one screen every player meets first. `CLAUDE.md` § 6.2b row 1: a screen with a mode
+            // has two layouts and you have looked at one.
+            if (_keyHint != null)
+            {
+                float anchor = atBoot ? _guest.transform.localPosition.y
+                                      : _back.transform.localPosition.y;
+                var rect = (RectTransform)_keyHint.transform;
+                rect.anchoredPosition = new Vector2(0.0f, anchor - 46.0f);
+
+                // ⚠️ ESC IS NOT OFFERED AT BOOT, because it does nothing there: the screen is not
+                // dismissable when there is nothing behind it (see `Update`). A hint naming a key
+                // that is inert is worse than no hint, and `game-ui-design`'s `Inconsistent Button
+                // Behavior` is the same rule for a control.
+                _keyHint.text = atBoot
+                    ? (_creating ? "TAB to move  ·  ENTER to create" : "TAB to move  ·  ENTER to sign in")
+                    : (_creating ? "TAB to move  ·  ENTER to create  ·  ESC to go back"
+                                 : "TAB to move  ·  ENTER to sign in  ·  ESC to go back");
+            }
         }
 
         /// <summary>
@@ -857,6 +1073,23 @@ namespace TumbangPreso.UI
 
             SetTab(_signInTab, !creating);
             SetTab(_createTab, creating);
+
+            // ⚠️ THE CHALK BAR IS THE HALF OF THIS THAT IS NOT A COLOUR. See `BuildTabs`.
+            if (_tabMarker != null)
+            {
+                var markerRect = _tabMarker.rectTransform;
+                markerRect.anchoredPosition = new Vector2(creating ? 105.0f : -105.0f,
+                                                          markerRect.anchoredPosition.y);
+            }
+
+            // ⚠️ THE VERB FOLLOWS THE TAB AND THE KEY LIST FOLLOWS THE MODE, so this defers to
+            // `SetBootMode` rather than writing a string that names ESC on a screen where ESC
+            // does nothing. Both run on open; this one runs first.
+            if (_keyHint != null)
+                _keyHint.text = _atBoot
+                    ? (creating ? "TAB to move  ·  ENTER to create" : "TAB to move  ·  ENTER to sign in")
+                    : (creating ? "TAB to move  ·  ENTER to create  ·  ESC to go back"
+                                : "TAB to move  ·  ENTER to sign in  ·  ESC to go back");
         }
 
         private static void SetTab(Button button, bool on)
