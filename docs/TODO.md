@@ -2333,10 +2333,61 @@ flag a bare `Image` carrying a `box_`, `wc_`, `wcsil_`, `plank_` or `btn_` sprit
   whichever copy the chat client had already cached (`CLAUDE.md` § 6.1).
 - ✅ Core 430/430, the three `tools/` audits green (48 sites / 0 ungated on another body, 54 wire
   entry points / 0 unreachable, 57 messages / 0 mismatched).
-- ✅ EditMode, the full PlayMode suite, `Checks.RunAll` five of five.
+- ✅ EditMode 284/284 and `Checks.RunAll` five of five.
+- ⚠️⚠️ **THE PLAYMODE SUITE IS NOT ALL GREEN AND FOUR OF THE FAILURES ARRIVED WITH THIS BRANCH.**
+  § 120.9 names each one, with the `git show 9c85c2f` that proves the construct it fails on is
+  byte-identical at the commit this pass started from. **Do not absorb them into this entry and do
+  not re-baseline them.**
 - ⚠️ **A person looks at the picture.**
 
 ---
+
+### 120.9 ⚠️⚠️ FIVE PLAYMODE FAILURES THAT ARE NOT THIS WORK
+
+The handoff for § 119 says `PaperPurityProbe`, `LobbyStyleProbe`, `QueueCardLayoutProbe`,
+`PlayerHubLayoutProbe`, `UiClickProbe` and `AspectRatioProbes` were green at `9c85c2f`. **Three of
+them are not**, plus two failures outside that list. The evidence that each predates this pass is
+`git show 9c85c2f` on the exact construct the failure names. ⚠️ **Do not let them be absorbed into
+§ 120 and do not re-baseline them**, which is the rule § 93's `CarryTests` red already established
+in this file.
+
+**The run: 146 PlayMode cases, 140 passed, 5 of the 6 failures are the rows below**, and the sixth
+is `PaperPurityProbe`, which is this pass's own widened gate and is green once it stops reporting
+deactivated `SkinLayers` children (see that file's `WoodenSprite`).
+
+| Test | The message | Why it is not this pass |
+|---|---|---|
+| `PlayerHubLayoutProbe.TheSignInScreenFitsItsBoxAtEveryShippedResolution` | `16:9 720p signin: 'Label' is authored at 16 units, below the 18-unit floor.` | `SignInScreen._keyHint`, the two field captions, the error line and the placeholder are all `MenuKit.Label(..., PaperKit.Caption, ...)`, and `MenuKit.Label` names every label it makes `Label`. Identical at `9c85c2f` (line 592 there, 608 now). |
+| `QueueCardLayoutProbe.TheQueueCardFitsItsBoxAtEveryShippedResolution` | `16:9 720p queue: 'Label' is 16 units, under the 18-unit floor.` | `QueueCard.Row(..., PaperKit.Caption, ...)`, three call sites, byte-identical at `9c85c2f`. `QueueCard.cs` has no commit in this pass. |
+| `QueueCardLayoutProbe.TheDoorAndTheCardAreNeverBothOnScreen` | `in state Searching the card and its own door are both on screen` | `QueueCard` builds `QuickMatchButton` at `9c85c2f` exactly as it does now, and neither that file nor this probe is touched by any commit here. |
+| `PhaseSurfaceLayoutProbe.EveryRectOnTheBootSplashHasARectToResolveAgainst` | `Unhandled log message: '[Assert] State comes from an incompatible keyword space` | It is a shader keyword assert raised during the splash, not a layout measurement, and **the two shaders it names are different on two consecutive runs** (`Particles/Simple Lit` against `Particles/Lit` on one, `Unlit` against `Baked Lit` on the next), which is what a warm-up race looks like rather than a fault. Nothing in this pass touches a shader, a particle system or a material. ⚠️ **NOT confirmed against `9c85c2f` by a run**, only by inspection; that confirmation is the first thing to do. |
+| `CarryTests.AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor` | `a held slipper drifted 0.084 m ... Expected: less than 0.05` | ⚠️ **ALREADY RECORDED, TWICE.** § 93 has it at 0.084 m and § 118 has it at 0.092 m, and the § 119 handoff says in as many words *"Do not re-baseline CarryTests (§ 117.8)"*. Nothing in this pass touches `Carrier`, the animator or `LateUpdate`. **This run reproduces § 93's exact 0.0837 m**, which is a third sample outside the bound and further weakens the "it is a timing flake" reading. |
+
+⚠️⚠️ **THE FIRST TWO ARE ONE FAULT AND IT IS A DESIGN CONFLICT RATHER THAN A BUG.**
+`PaperKit.Caption` is **16** and `MenuKit.MinReadableUnits` is **18**, and `PaperKit`'s own header
+states the conflict as a decision: *"`Caption` is under it, and it is allowed for the same reason
+`LobbyChrome.SummarySize` is: it is only ever a restatement of something already on the screen at
+`Title` or larger."* Two probes encode the floor as an assertion and cannot see that argument. So
+the two files disagree in writing and one of them has to give.
+
+**What done looks like, and it is a judgement rather than a fix:**
+
+- **Raise `PaperKit.Caption` to 18.** One constant. It is `docs/VISION.md`'s own readability floor,
+  and 🧑 has complained about small type in this front end before by name
+  (*"shit down there is small and cant be seent"*, recorded in `ConvertedCharacterSelect`). ⚠️ It
+  grows every caption in the paper front end by an eighth, so it needs a render pass: labels sized
+  against 16 can overflow, and `MenuKit.Fit` cannot rescue them because it will not go below the
+  same 18.
+- **Or teach the two probes what a restatement is**, which means a name convention
+  (`PaperKit.Ink` already renames its labels to `Ink` and `InkSoft`; `MenuKit.Label` does not) and
+  weakens a gate that has caught real faults.
+
+**The third is a screen that no longer exists.** § 119.8 deleted the QUICK MATCH chip from the
+lobby: matchmaking is the RANKED tab now and it drives the one primary, so `QueueCard`'s own door
+and card are no longer two controls on one rail. The probe's invariant is about a composition that
+was replaced, and somebody has to decide whether it still means anything before it is either fixed
+or deleted.
+
 ## 119 · The whole front end is repainted in PAPER, and the lobby is rebuilt around the room ⚠️⚠️ OPEN, 2026-09-01, branch `ui-redesign`
 
 🧑, with a crop of the lobby, a crop of the join panel, `Art/ui/TUMP.png` and a two-swatch card:

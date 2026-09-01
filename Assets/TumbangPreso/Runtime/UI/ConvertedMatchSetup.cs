@@ -2789,6 +2789,21 @@ namespace TumbangPreso.UI
             // placeholder for a whole session because `Apply` runs before the first `Refresh`.
             RefreshProfileDoor();
 
+            // ⚠️⚠️ AND THE TIER PLATE IS THE SAME FAULT, WHICH IS WHY IT IS THE LINE BELOW.
+            // `RefreshTier` was called from exactly one place, the end of `InstallPlayerHub`, and
+            // its first statement is `if (_chrome.Mode != LobbyMode.Ranked) return;` — install
+            // happens in CUSTOM. **So the ladder plate was never written by anything**, ever, and
+            // `LobbyRanked-v58.png` and `-v59` both show the authored `UNRANKED` placeholder with
+            // an empty sentence under it. `docs/TODO.md` § 119.9 row 4 fixed the overlap that was
+            // hiding the note and nobody noticed the note was also never set.
+            //
+            // ⚠️ THE PARTY RULE IS THE POINT OF THAT PLATE. § 119.8: *"make it as well na u cant
+            // queue with a friend in ranked ladder or smth"*, and `PartyRules.RefusalLabel` writes
+            // a good sentence the player only ever saw AFTER pressing, which `CLAUDE.md` § 6.2
+            // calls the INTUITIVE failure. A plate that states it and is never filled in is the
+            // same failure with more code behind it.
+            RefreshTier();
+
             SceneFlow.SelectedMap = SceneFlow.Maps[Mathf.Clamp(_map, 0, SceneFlow.Maps.Length - 1)];
 
             // ⚠️ THE NAME AND TAGLINE COME FROM THE MAP REGISTRY, NOT FROM STRING SURGERY ON THE

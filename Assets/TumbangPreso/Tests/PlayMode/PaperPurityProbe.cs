@@ -303,9 +303,10 @@ namespace TumbangPreso.PlayTests
         /// was ink on near-black at about 1.3:1 rather than an honestly old-looking control.
         ///
         /// ⚠️ THE PREFIXES ARE THE CACHE KEYS THOSE FILES BUILD THEMSELVES, so this asks the only
-        /// question that survives a re-import: `GodotTheme.KeyFor` writes `box_`, `WoodCraft`
-        /// writes `wc_` and `wcsil_`, `UiMaterials` writes `plank_` and `btn_`. `PaperCraft`'s own
-        /// are `pc_` and are what is supposed to be there.
+        /// question that survives a re-import: `WoodCraft` writes `wc_` and `wcsil_`,
+        /// `UiMaterials` writes `plank_` and `btn_`. `PaperCraft`'s own are `pc_` and are what is
+        /// supposed to be there. ⚠️ `GodotTheme.KeyFor` writes `box_` and is NOT in this list,
+        /// because that generator is used by both materials; see <see cref="WoodFills"/>.
         ///
         /// ⚠️ `ring_`, `chalk_` AND `down_shadow` ARE NOT LISTED AND THAT IS DELIBERATE. They are
         /// marks rather than surfaces (a focus ring, a chalk rule, a contact shadow) and the paper
@@ -317,12 +318,81 @@ namespace TumbangPreso.PlayTests
         /// `BUTTON LONG`, `JOIN BUTTON`, `TUMP`, `Arrow Left 64`, `GAME BANNER`: none of them
         /// begins with a generated key, so the prefix test IS the exemption.
         /// </summary>
-        private static readonly string[] WoodKeys = { "box_", "wc_", "wcsil_", "plank_", "btn_" };
+        private static readonly string[] WoodKeys = { "wc_", "wcsil_", "plank_", "btn_" };
+
+        /// <summary>
+        /// The fills that make a `GodotTheme.Box` a WOODEN box.
+        ///
+        /// ⚠️⚠️ `box_` ON ITS OWN IS NOT A WOOD KEY AND THE FIRST RUN OF THIS CHECK PROVED IT.
+        /// `GodotTheme.Box` is a generic rounded-rect generator with the fill and the border in
+        /// its cache key, and the paper front end calls it: the picker's ability plates come back
+        /// as `box_EFDABEFF_DCC19AFF_1_6`, which is `PaperWarm` in a `PaperEdge` cut, and the key
+        /// chips as `box_CBAC83FF_00000000_0_4`, which is `PaperSunk`. Flagging the prefix
+        /// reported six controls this pass had just repainted **in paper** as wooden leftovers.
+        /// A gate that fails for the thing that is meant to be true is worse than no gate.
+        ///
+        /// ⚠️ SO THE FILL IS READ OUT OF THE KEY. It is the eight hex digits after `box_`, and
+        /// these nine are `UiTheme`'s wood set plus `040838`, the navy the old shadow layer used
+        /// (`CLAUDE.md` § 6.4 records that constant). `wc_`, `wcsil_`, `plank_` and `btn_` need no
+        /// such test: `WoodCraft` and `UiMaterials` only ever draw wood.
+        /// </summary>
+        private static readonly string[] WoodFills =
+        {
+            "31190B", "5A2F14", "1D0E06", "8B5227", "793E1F", "783E1F", "4E2211", "36180C",
+            "040838",
+        };
 
         private static void WoodenSprite(Transform t, List<string> offenders)
         {
+            // ⚠️⚠️ `Face` AND `Shadow` ARE GOVERNED BY THE COMPONENT RULE ABOVE AND MUST NOT BE
+            // CHECKED HERE. `SkinLayers` gives every wooden control those two children and
+            // `PaperDress.Strip` DEACTIVATES them rather than repainting them, so a correctly
+            // converted control still has a stale wooden sprite sitting on two switched-off
+            // children forever. The rule that matters is the one above: a layer left switched ON
+            // under a disabled skin. Checking the sprite as well reported 33 correctly converted
+            // controls, which is the entire front end.
+            if (t.name == "Face" || t.name == "Shadow") return;
+
+            // ⚠️ AND THE GREEN PRIMARY IS EXEMPT HERE FOR THE REASON IT IS EXEMPT ABOVE: it is
+            // 🧑's own `JOIN BUTTON.png` colour and `CLAUDE.md` § 6.5 names green as his primary.
+            var skin = t.GetComponent<GodotButton>();
+            if (skin != null && (skin.Variation == "WoodPrimaryButton"
+                                 || skin.Variation == "PrimaryButton")) return;
+
             var image = t.GetComponent<Image>();
-            if (image == null || image.sprite == null) return;
+            if (image == null) return;
+
+            // ⚠️⚠️ A BACKDROP HAS NO SPRITE AT ALL, AND TWO OF THE FIVE FAULTS IN
+            // `docs/TODO.md` § 120.4 WERE EXACTLY THAT. `MenuKit.Backdrop` makes a bare `Image`
+            // and writes a colour on it, so the one node that decides what colour a whole screen
+            // IS carries no component and no sprite for anything to find. The hub and the
+            // character maker both shipped a `WoodDeep` backdrop under lettering that
+            // `PaperDress.Type` had already remapped to ink.
+            //
+            // ⚠️ IT IS SCOPED TO THE NODE NAME AND THAT IS WHAT MAKES IT PRECISE RATHER THAN
+            // NOISY. A flat wood colour is not wrong in general: `UiTheme.WoodMid` is the hub's XP
+            // fill and the settings scrollbar's handle, and both are deliberately the one dark
+            // mark on a cream surface. `MenuKit.Backdrop` is the only thing in the project that
+            // makes a node called `Backdrop`, and a backdrop is the one place a wood colour can
+            // never be right on a paper screen.
+            if (image.sprite == null)
+            {
+                if (t.name != "Backdrop" || image.color.a < 0.5f) return;
+
+                foreach (string fill in WoodFills)
+                {
+                    if (!ColorUtility.TryParseHtmlString("#" + fill, out var wood)) continue;
+                    if (Vector3.Distance(new Vector3(wood.r, wood.g, wood.b),
+                                         new Vector3(image.color.r, image.color.g,
+                                                     image.color.b)) > 0.02f) continue;
+
+                    offenders.Add($"{Path(t)} is a wooden backdrop (#{fill}). On a paper screen "
+                                  + "the field is UiTheme.Paper; see docs/TODO.md § 120.4.");
+                    return;
+                }
+
+                return;
+            }
 
             string name = image.sprite.name;
 
@@ -331,6 +401,18 @@ namespace TumbangPreso.PlayTests
                 if (!name.StartsWith(key, System.StringComparison.Ordinal)) continue;
 
                 offenders.Add($"{Path(t)} draws a wooden sprite ({name}) on a bare Image. "
+                              + "PaperDress cannot see it: give it a PaperSkin explicitly.");
+                return;
+            }
+
+            if (!name.StartsWith("box_", System.StringComparison.Ordinal)) return;
+
+            foreach (string fill in WoodFills)
+            {
+                if (!name.StartsWith("box_" + fill, System.StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                offenders.Add($"{Path(t)} draws a wooden box ({name}) on a bare Image. "
                               + "PaperDress cannot see it: give it a PaperSkin explicitly.");
                 return;
             }
