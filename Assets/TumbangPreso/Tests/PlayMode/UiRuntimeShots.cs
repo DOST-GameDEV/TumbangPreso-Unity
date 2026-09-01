@@ -279,7 +279,123 @@ namespace TumbangPreso.PlayTests
         /// overwriting a shot leaves the previous one on screen and the whole review is conducted
         /// against an image that is no longer on disk. Bump `ShotVersion` on every iteration.
         /// </summary>
-        private const string ShotVersion = "v56";
+        private const string ShotVersion = "v58";
+
+        /// <summary>
+        /// The three screens the lobby opens: the fighter picker, the maker behind it, and the
+        /// settings panel.
+        ///
+        /// ⚠️⚠️ `docs/TODO.md` § 119.11 NAMED THESE AS CONVERTED AND NEVER LOOKED AT, AND THAT IS
+        /// EXACTLY WHAT SHIPPED: *"the character select, the character maker and the settings panel
+        /// are dressed by `PaperKit.PaperDress.Screen` and have not been photographed"*. 🧑 then
+        /// asked for the same thing in his own words: **"MAKE SURE AS WELL CHARACTER SELECT AS
+        /// WELL AS EVERYTHING WIRED TO LOBBY HAS THE NEW THEME"**.
+        ///
+        /// ⚠️⚠️ AND THEY WERE NOT ENTIRELY UNPHOTOGRAPHED, WHICH IS WORSE AND IS THE REASON THIS
+        /// TEST EXISTS RATHER THAN AN EXTRA LINE IN `EveryScreenBootsAndDraws`. That test does
+        /// call `Overlay("CharacterSelectPanel")` and `Overlay("SettingsPanel")` — **and it writes
+        /// them to `CharacterSelectPanel.png` and `SettingsPanel.png`, with no version in the
+        /// name.** `CLAUDE.md` § 6.1: chat clients cache by filename, so every review of those two
+        /// screens for the last month has been conducted against whichever copy the client had
+        /// already downloaded. A picture that cannot be re-sent is not a picture.
+        ///
+        /// ⚠️ IT OPENS THEM THE WAY A PLAYER DOES, THROUGH THE LOBBY'S OWN DOORS, rather than by
+        /// switching the objects on. `ConvertedCharacterSelect.RefreshTabs` and every colour on
+        /// that screen run off a selection change; a panel switched on without one is a panel
+        /// nobody has selected anything in, which is `LobbyJoin-v52.png`'s fault
+        /// (§ 119.9) on a different screen.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator TheLobbyDoorsDraw()
+        {
+            Directory.CreateDirectory(OutDir);
+
+            bool previousNetworked = SceneFlow.Networked;
+            var previousMode = SceneFlow.SelectedMode;
+
+            // ⚠️ HERO STRIKE, BECAUSE IT IS THE DENSER OF THE TWO LAYOUTS. Classic draws the same
+            // shell with simpler trait meters; the hero picker adds three ability rows, and those
+            // are the part of this screen this pass repainted.
+            SceneFlow.Networked = true;
+            SceneFlow.SelectedMode = Core.GameMode.HeroStrike;
+
+            var load = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
+            yield return ProbeWait.Done(load, "scene load");
+
+            yield return new WaitForSecondsRealtime(4.0f);
+
+            var fighter = Find("CharacterButton")?.GetComponent<Button>();
+            Assert.IsNotNull(fighter,
+                "the lobby must have a door to the fighter picker. It is the FIGHTER row on the "
+                + "bottom rail's left column; see LobbyChrome.BuildCharacterRow.");
+
+            fighter.onClick.Invoke();
+            yield return new WaitForSecondsRealtime(1.0f);
+            yield return Capture($"CharacterSelect-{ShotVersion}");
+
+            // ⚠️ THE MAKER'S DOOR IS FOUND BY ITS LETTERING, BECAUSE IT HAS NO NAME.
+            // `ConvertedCharacterSelect.BuildCustomDoor` builds it through `MenuKit.WoodButton`,
+            // which leaves the default GameObject name, and this is the only door the character
+            // maker has. Naming it would be the better fix and it is a node the lobby's control
+            // inventory (§ 119.3) does not list, so it is left alone here rather than renamed in
+            // a shot pass: a rename is exactly the class of change that breaks wiring silently.
+            Button maker = null;
+            var picker = Find("CharacterSelectPanel");
+
+            if (picker != null)
+                foreach (var button in picker.GetComponentsInChildren<Button>(true))
+                {
+                    var text = button.GetComponentInChildren<Text>(true);
+                    if (text == null || !text.text.Contains("MAKE")) continue;
+                    maker = button;
+                    break;
+                }
+
+            Assert.IsNotNull(maker,
+                "the picker must carry the MAKE YOUR OWN door. It is the character maker's only "
+                + "entrance; see ConvertedCharacterSelect.BuildCustomDoor.");
+
+            maker.onClick.Invoke();
+            yield return new WaitForSecondsRealtime(1.0f);
+            yield return Capture($"CharacterMaker-{ShotVersion}");
+
+            var made = Object.FindFirstObjectByType<CustomCharacterScreen>();
+            if (made != null) made.Close();
+            yield return new WaitForSecondsRealtime(0.4f);
+
+            SceneFlow.Networked = previousNetworked;
+            SceneFlow.SelectedMode = previousMode;
+
+            var session = Net.NetSession.Instance;
+            if (session != null) session.Stop();
+        }
+
+        /// <summary>
+        /// The settings panel, versioned, over the menu it actually opens on.
+        ///
+        /// ⚠️ IT IS A SEPARATE SCENE LOAD BECAUSE `SettingsPanel` LIVES IN `MainMenu` AND NOT IN
+        /// THE LOBBY. The lobby's SETTINGS chip opens the match-settings drawer, which is a
+        /// different screen with a different job; this is the one with the bindings list in it.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator TheSettingsPanelDraws()
+        {
+            Directory.CreateDirectory(OutDir);
+
+            var load = SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Single);
+            yield return ProbeWait.Done(load, "scene load");
+
+            yield return new WaitForSecondsRealtime(2.0f);
+
+            var panel = Find("SettingsPanel");
+            Assert.IsNotNull(panel, "MainMenu must carry the settings panel.");
+
+            panel.SetActive(true);
+            yield return new WaitForSecondsRealtime(0.8f);
+            yield return Capture($"Settings-{ShotVersion}");
+
+            panel.SetActive(false);
+        }
 
         /// <summary>
         /// The login screen, in every state a player can meet it in.
