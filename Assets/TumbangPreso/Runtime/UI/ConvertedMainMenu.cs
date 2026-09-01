@@ -131,6 +131,13 @@ namespace TumbangPreso.UI
         {
             if (!SceneFlow.BootedThroughSplash) return;
 
+            // ⚠️⚠️ ONCE PER LAUNCH, NOT ONCE PER VISIT TO THIS SCENE. See
+            // `SceneFlow.LoginStepOffered`: the flag above is never cleared, so every return to
+            // the main menu in one process re-asked a question the player had already answered,
+            // and 🧑 met it coming back out of the character maker.
+            if (SceneFlow.LoginStepOffered) return;
+            SceneFlow.LoginStepOffered = true;
+
             var signIn = gameObject.GetComponent<SignInScreen>();
             if (signIn == null) signIn = gameObject.AddComponent<SignInScreen>();
 

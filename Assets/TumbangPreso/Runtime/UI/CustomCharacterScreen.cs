@@ -75,13 +75,25 @@ namespace TumbangPreso.UI
         /// and none of them is the floor: at the floor a head fills the frame edge to edge and a
         /// hat's silhouette, which is the thing being chosen, runs off the top.
         ///
+        /// ⚠️⚠️ AND THE AIMS CAME IN TOWARD THE SUBJECT'S OWN CENTRE ON 2026-09-01, BECAUSE AN AIM
+        /// IS ALSO A COMPOSITION AND NOBODY HAD LOOKED AT IT AS ONE. 🧑, of this screen: *"this
+        /// shhit is off center"*. The camera puts the AIM POINT in the middle of the frame, so an
+        /// aim of 0.76 puts three quarters of the body BELOW the centre line and leaves the top
+        /// of the card empty: the figure reads as having sunk rather than as having been framed.
+        /// The range is 0.44 to 0.68 now, which still moves the camera visibly between sections
+        /// (the head is a quarter of a frame higher on FACE than on KIT) while the body's own
+        /// centre stays within about a tenth of a frame of the card's. **The horizontal half of
+        /// the same fault was one call, `ModelPreview.CentreSubject`, in `BuildStage`.**
+        ///
         /// ⚠️⚠️ THEY CAME DOWN 15 PER CENT ON 2026-09-01 BECAUSE THE CARD GREW, AND THE MEASUREMENT
         /// IS OFF A PICTURE. `Logs/ui/21-creator-clothes-laptop_v2.png`: the figure was 290 px tall
         /// inside a 527 px card, **55 per cent**, and at 4:3 it was 175 px across a 358 px card.
         /// A character with half a card of nothing under him is the same fault as the band of brown
         /// `ActionRowTop` removed, one rect further in. ⚠️ **They are not lower than that**, because
-        /// the section aims are 0.34 to 0.80 of the subject's own height and a zoom tight enough to
-        /// fill a tall card at aim 0.80 crops the feet off at aim 0.34.
+        /// the section aims are fractions of the subject's own height and a zoom tight enough to
+        /// fill a tall card at the highest aim crops the feet off at the lowest one. ⚠️ The
+        /// numbers in that sentence were 0.34 to 0.80 and are 0.44 to 0.68 now; see the note
+        /// above for why they moved.
         /// </summary>
         /// <remarks>
         /// ⚠️⚠️ THE BLURB IS ONE LINE OF CHROME UNDER THE TAB BAR NOW, NOT A `UiRows.Section`
@@ -99,17 +111,17 @@ namespace TumbangPreso.UI
         private static readonly (string Title, string Blurb, float Aim, float Zoom)[] Sections =
         {
             ("Face",    "Skin, expression and marks. Yours is the one skin the game lets you pick.",
-                                                                                          0.76f, 0.80f),
-            ("Hair",    "Cut and colour. Both free from level one, neither earned.",       0.80f, 0.76f),
+                                                                                          0.66f, 0.80f),
+            ("Hair",    "Cut and colour. Both free from level one, neither earned.",       0.68f, 0.76f),
             ("Body",    "Height and build, 85 to 115 per cent. It changes nothing but the look.",
-                                                                                          0.52f, 0.87f),
+                                                                                          0.54f, 0.87f),
             // ⚠️ CLOTHES FRAMES THE WHOLE FIGURE NOW, AND `docs/TODO.md` § 113 IS WHY. A pair of
             // track pants used to be a band at the hip, so a waist-high aim showed all of it;
             // the legs are real garments now and a hem is the thing being chosen.
             ("Clothes", "Top and bottom, and the colour of each. Two choices per garment.",
-                                                                                          0.46f, 0.92f),
-            ("Gear",    "Headwear, eyewear, wrists and neck.",                             0.72f, 0.78f),
-            ("Kit",     "Your tsinelas, your lata, and whose skills you borrow.",          0.34f, 0.85f),
+                                                                                          0.50f, 0.92f),
+            ("Gear",    "Headwear, eyewear, wrists and neck.",                             0.62f, 0.78f),
+            ("Kit",     "Your tsinelas, your lata, and whose skills you borrow.",          0.44f, 0.85f),
         };
 
         private Canvas _canvas;
@@ -238,6 +250,10 @@ namespace TumbangPreso.UI
             if (!IsOpen) return;
             if (!Input.GetKeyDown(KeyCode.Escape)) return;
 
+            // ⚠️ THE PRESS IS SPENT HERE, so the converted screen underneath cannot also back out
+            // on it. See `ScreenTakeover.ConsumeEscape`: that is exactly what happened, and it
+            // landed 🧑 on the boot login screen from the character maker.
+            ScreenTakeover.ConsumeEscape();
             MenuSfx.Back();
             Close();
         }
@@ -512,6 +528,14 @@ namespace TumbangPreso.UI
 
             _preview = go.AddComponent<ModelPreview>();
             _preview.Attach(_stage);
+
+            // ⚠️⚠️ CENTRED, AND WITHOUT THIS THE MODEL STANDS 17 PER CENT OF THE CARD RIGHT OF
+            // THE MIDDLE OF IT. 🧑 2026-09-01: *"this shhit is off center"*. `ModelPreview` carries
+            // the character select screen's `FrameHorizontalOffsetRatio` by default, which shoves
+            // the subject sideways to clear a control column **on the left**; this screen's column
+            // is on the RIGHT, so the same offset pushed the figure toward the panel rather than
+            // away from it. See `ModelPreview.CentreSubject`.
+            _preview.CentreSubject();
         }
 
         /// <summary>

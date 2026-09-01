@@ -260,7 +260,21 @@ namespace TumbangPreso.Net
         /// CANNOT, which is the split the paragraph above already records: a trailing field can be
         /// made tolerant and a field inside a per-seat loop cannot. This constant is what stops
         /// the second case from ever arising.
-        public const int ProtocolVersion = 20;
+        ///
+        /// ⚠⚠ 21 IS THE MATCH FORMAT, SINCE 2026-09-01, AND IT IS THE FIRST ENTRY IN THIS LIST
+        /// THAT CHANGES THE RULES OF THE MATCH RATHER THAN WHAT IS IN IT. PHASE 12's
+        /// `MatchFormat` rides beside `GameMode` on a new `SelectFormat` / `SyncFormat` pair
+        /// (`MatchRpc`), so a host running LAST TSINELAS STANDING and a peer that has never heard
+        /// of it would be **two different games sharing one scoreboard**: the peer would see
+        /// attackers stop throwing for no reason and a round awarded to nobody it can account for.
+        /// A cosmetic mismatch draws a stranger; this one disputes the result.
+        ///
+        /// ⚠️ THE MESSAGE IS NEW RATHER THAN A FIELD ON `SelectMode`, which is the tolerance
+        /// argument above applied on purpose: a build that does not know `SyncFormat` ignores an
+        /// unregistered message name, where a widened `SelectMode` would read a format out of the
+        /// bytes it expects a mode in. **The version still moves**, because tolerating the message
+        /// is not the same as playing the same game.
+        public const int ProtocolVersion = 21;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

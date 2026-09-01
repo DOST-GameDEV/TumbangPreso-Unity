@@ -1,3 +1,4 @@
+using System;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
 using TumbangPreso.Visual;
@@ -776,6 +777,23 @@ namespace TumbangPreso
             {
                 motor.PlayerName = "";
                 motor.CharacterIndex = AiCharacterIndex(slot);
+            }
+
+            // ⚠⚠ PHASE 12, MIRROR: EVERY SEAT PLAYS THE SAME CHARACTER, DECIDED BY THE WEEK.
+            // `docs/Formats.md` § 2. It is applied HERE, after every other rule has decided what
+            // each seat brought, because that is what makes it *"one line of lobby logic"*
+            // (`FUTURE.md` § 12): the pick still crosses the wire, still shows in the lobby, and
+            // is overridden at the door. Applying it in the lobby instead would mean writing over
+            // three other people's saved picks, which is a format changing a preference.
+            //
+            // ⚠️ IT IS DERIVED FROM THE UTC WEEK ON EVERY MACHINE INDEPENDENTLY and never sent,
+            // so a LAN room with no internet mirrors the same character as an online one. The
+            // custom character is left alone deliberately: `CustomFor` is somebody's own creation
+            // and a mirror of it would be four copies of a character three of them cannot see.
+            if (SceneFlow.SelectedFormat == MatchFormat.Mirror)
+            {
+                var mirrorPeople = Roster.GetPeople(SceneFlow.SelectedMode);
+                motor.CharacterIndex = CustomGameRules.MirrorIndex(mirrorPeople.Count, DateTime.UtcNow);
             }
 
             go.AddComponent<Carrier>();

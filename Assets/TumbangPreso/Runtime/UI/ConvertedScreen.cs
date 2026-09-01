@@ -111,6 +111,14 @@ namespace TumbangPreso.UI
         {
             if (!Input.GetKeyDown(KeyCode.Escape)) return;
 
+            // ⚠️⚠️ A SCREEN COVERED BY A TAKEOVER DOES NOT GET THE KEY, AND UNTIL 2026-09-01 IT
+            // TOOK IT ANYWAY. `ScreenTakeover.EscapeIsSpoken` carries the receipt in full: one
+            // press closed the character maker AND backed the screen underneath it out to the
+            // main menu, where the boot login step then opened over the top. Escape means the
+            // INNERMOST open thing (`CLAUDE.md` § 6.3), and this is the line that makes the word
+            // "innermost" true across two canvases that cannot see each other.
+            if (ScreenTakeover.EscapeIsSpoken) return;
+
             // ⚠️ THE SOUND FOLLOWS THE DECISION. Playing it before asking would click on a
             // screen that then does nothing, which reads as a press that was swallowed.
             if (Cancel()) MenuSfx.Back();

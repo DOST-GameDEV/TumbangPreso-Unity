@@ -349,6 +349,31 @@ namespace TumbangPreso.UI
             _needsFrame = true;
         }
 
+        /// <summary>
+        /// Puts the subject in the MIDDLE of its frame, for a caller whose controls are not in
+        /// the way.
+        ///
+        /// ⚠️⚠️ `FrameHorizontalOffsetRatio` IS THE CHARACTER SELECT SCREEN'S NUMBER AND IT IS
+        /// WRONG EVERYWHERE ELSE. Its own note says why it exists: *"every control on this screen
+        /// sits in the left third, so a centred subject would stand behind them"*. **The character
+        /// maker's controls are on the RIGHT**, so the same offset shoved the model 19 per cent of
+        /// the frame width TOWARD the panel and out of the middle of its own card. 🧑 2026-09-01,
+        /// over the MAKE YOUR OWN screen: *"this shhit is off center"*, and measured off that
+        /// shot the figure's centre sat 17 per cent of the card's width right of the card's.
+        ///
+        /// ⚠️ IT IS NOT <see cref="SetTileFraming"/>, WHICH IS THE OTHER HALF OF THAT METHOD AND
+        /// THE HALF THIS CALLER MUST NOT HAVE. That one also overwrites `_userZoom` and turns on
+        /// `_uniformExtent`, which is for a small tile showing one prop; the maker sets its own
+        /// zoom per section through <see cref="LookAt"/> and would have it silently replaced.
+        /// **Two behaviours behind one method is why this needed a second door and not a second
+        /// argument.**
+        /// </summary>
+        public void CentreSubject()
+        {
+            _centreSubject = true;
+            _needsFrame = true;
+        }
+
         public void SetTileFraming(float factor, bool uniformExtent = false)
         {
             _centreSubject = true;

@@ -34,7 +34,7 @@ namespace TumbangPreso.UI
     /// </summary>
     public sealed class PlayerHub : MonoBehaviour
     {
-        private enum Tab { Profile, Friends, Career, Matches, Account }
+        private enum Tab { Profile, Friends, Loadout, Career, Matches, Account }
 
         private const int HistoryPageSize = 20;
 
@@ -147,6 +147,11 @@ namespace TumbangPreso.UI
             if (_signIn != null && _signIn.IsOpen) return;
             if (!Input.GetKeyDown(KeyCode.Escape)) return;
 
+            // ⚠️ THE PRESS IS SPENT BEFORE ANYTHING UNDER THIS SCREEN CAN READ IT. See
+            // `ScreenTakeover.ConsumeEscape`: `Input.GetKeyDown` is a fact about the frame, so
+            // without this the lobby underneath backs out on the same press that closed the hub.
+            ScreenTakeover.ConsumeEscape();
+
             if (_detail != null && _detail.activeSelf)
             {
                 _detail.SetActive(false);
@@ -165,6 +170,14 @@ namespace TumbangPreso.UI
         public void Install()
         {
             if (_canvas != null) return;
+
+            // ⚠️⚠️ REGISTERED, AND IT NEVER WAS. `ScreenTakeover`'s own header is about chrome
+            // asking *"is anything on top of me"* rather than keeping a list, and the register
+            // had exactly one member: the character maker. **The hub is a full-screen takeover at
+            // sorting order 500 and nothing in the game knew it existed**, so the lobby
+            // underneath read Escape on the same press that closed it. Same fault as the maker's,
+            // one screen over. `ScreenTakeover.EscapeIsSpoken`.
+            ScreenTakeover.Register(this, () => _root != null && _root.activeSelf);
 
             _canvas = MenuKit.BuildCanvas(transform, "PlayerHubCanvas");
 
@@ -185,11 +198,26 @@ namespace TumbangPreso.UI
             _root.transform.SetParent(_canvas.transform, false);
             MenuKit.Stretch((RectTransform)_root.transform);
 
-            // ⚠️ THE SCRIM IS OPAQUE ENOUGH TO KILL THE MENU BEHIND IT. The old panels floated a
-            // brown rectangle over a lit street with the PLAY button still readable beside it, so
-            // the eye never settled. Everything a player can act on is inside this screen while
-            // it is up.
-            MenuKit.Backdrop(_root.transform, new Color(0.03f, 0.02f, 0.01f, 0.93f));
+            // ⚠️⚠️ OPAQUE. ALPHA 1.0. IT WAS 0.93 AND 0.93 IS NOT OPAQUE, WHICH IS THE SAME
+            // FINDING `CustomCharacterScreen.Build` RECORDS ONE SCREEN OVER AND ONE DAY EARLIER.
+            // 🧑 2026-09-01, with a shot of the ACCOUNT tab drawn over a lit lobby: *"profile ui
+            // ugly"*, *"cannt read"*, *"maybe but smth on Background dont make it transparent"*.
+            //
+            // **Seven per cent of a lit street is still a street.** What is under this screen is
+            // not mid grey: it is four voxel characters at full saturation, the amber MATCH
+            // SETTINGS and LOBBY & SERVERS plates, a green START MATCH and a row of houses, and
+            // every one of those shapes stayed legible through the scrim and competed with the
+            // rows drawn on top of them. The arithmetic promises (16, 13, 12) behind a heading
+            // and the render measures nothing like it, for the reason that entry sets out: the
+            // surface underneath is lit and saturated rather than neutral.
+            //
+            // ⚠️ AND THE ANSWER IS NOT 0.99. There is nothing here for a scrim to protect. The
+            // one thing on this screen is the player's own account, the lobby behind it is a
+            // second screen competing for the same eye, and a takeover that shows the screen it
+            // took over has not taken it over. Solid wood, which is also what makes this read as
+            // furniture in 🧑's own visual language (`docs/VISION.md` § 6) rather than as a
+            // window someone left open.
+            MenuKit.Backdrop(_root.transform, UiTheme.WoodDeep);
 
             BuildHeader();
             BuildTabBar();
@@ -236,6 +264,7 @@ namespace TumbangPreso.UI
 
         private void OnDestroy()
         {
+            ScreenTakeover.Unregister(this);
             if (GameServices.Account != null) GameServices.Account.Changed -= OnDataChanged;
             if (GameServices.Career != null) GameServices.Career.Changed -= OnDataChanged;
             if (GameServices.Social != null) GameServices.Social.Changed -= OnDataChanged;
@@ -334,16 +363,44 @@ namespace TumbangPreso.UI
         /// </summary>
         private void BuildTabBar()
         {
+            // ⚠️⚠️ LOADOUT IS A TAB BECAUSE NOBODY COULD FIND IT AS A GROUP, AND 🧑 IS THE
+            // "NOBODY". 2026-09-01: *"i also dont know hhow to navigate to loadouts section"*, and
+            // then, before anybody could answer: *"that isnt my fault thats ur fault"*, *"that
+            // means if i cnat ifnd it, no one owuld"*. He commissioned the feature, he read the
+            // entry that shipped it, and he still could not reach it.
+            //
+            // **It was four presses deep and two of them were invisible.** The rows lived in a
+            // group called *Ability builds*, CLOSED BY DEFAULT, at the bottom of the CAREER tab,
+            // and on a fresh account the career tab returned before building it at all
+            // (`EmptyCareer`, § 114.12). A collapsed group is a good answer to *"never
+            // overwhelming"* and a bad one to *"where is the thing"*: `CLAUDE.md` § 6.2 is three
+            // separate claims and this feature passed the third by failing the second.
+            //
+            // ⚠️ THE DOOR MOVED, IT DID NOT MULTIPLY, WHICH IS § 6.3's RULE BY NAME. The group is
+            // GONE from the career tab and from `EmptyCareer`; there is exactly one place in the
+            // game that equips an ability build and it is named on the tab bar you land on. A
+            // second entrance beside the collapsed one would have been § 92's six-button panel
+            // reassembling itself.
+            //
+            // ⚠️ AND IT IS SPELLED THE WAY HE ASKED FOR IT. The code calls these hero BUILDS
+            // (`HeroBuildRules`) and the word he reaches for is LOADOUT. The tab is the player's
+            // word; the type names are the code's.
             var order = new[]
             {
                 (Tab.Profile, "PROFILE"),
                 (Tab.Friends, "FRIENDS"),
+                (Tab.Loadout, "LOADOUT"),
                 (Tab.Career, "CAREER"),
                 (Tab.Matches, "MATCHES"),
                 (Tab.Account, "ACCOUNT"),
             };
 
-            const float Pitch = 200.0f;
+            // ⚠️ 176 AT SIX TABS, AND THE TAB IS 168 WIDE. Six 192-unit tabs at a 200 pitch is
+            // 1200 units of bar with 8 units between them, which reads as one continuous plank
+            // rather than as six controls. The pitch and the width come down together so the
+            // gap stays the 8 units five tabs had, and the bar is 1056 wide, inside the
+            // 1920-unit floor `AspectSafeCanvas` guarantees at every aspect.
+            const float Pitch = 176.0f;
             float first = -Pitch * (order.Length - 1) * 0.5f;
 
             for (int i = 0; i < order.Length; i++)
@@ -353,7 +410,7 @@ namespace TumbangPreso.UI
         private void AddTab(Tab tab, string label, float x)
         {
             _tabs[tab] = MenuKit.WoodButton(_root.transform, label, new Vector2(0.5f, 1.0f),
-                new Vector2(x, -182.0f), new Vector2(192.0f, 54.0f), () => Show(tab));
+                new Vector2(x, -182.0f), new Vector2(168.0f, 54.0f), () => Show(tab));
         }
 
         private void BuildFooter()
@@ -481,6 +538,29 @@ namespace TumbangPreso.UI
             Show(onAccount ? Tab.Account : Tab.Profile);
         }
 
+        /// <summary>
+        /// Opens the hub on LOADOUT, for the lobby card's YOUR SKILLS row.
+        ///
+        /// ⚠⚠ IT IS A DEEP LINK INTO THIS SCREEN AND NOT A SECOND SCREEN, WHICH IS THE
+        /// DISTINCTION `CLAUDE.md` § 6.3 ACTUALLY DRAWS. The rule bans a second DOOR to a
+        /// destination that is hard to find; the loadout has exactly one destination, this tab,
+        /// and the lobby row lands on it rather than beside it. 🧑 2026-09-01, twice: *"i also dont
+        /// know hhow to navigae to loadouts section"*, then *"btw fix ui for loadouts I oculdnt
+        /// find it, place button for it whereveer it should belonng"*. It belongs under the
+        /// character it changes.
+        ///
+        /// ⚠️ AND THE MODE IS TAKEN FROM THE LOBBY, not from whatever the career tab was last
+        /// left on. A player pressing this from a Hero Strike lobby means the kit they are about
+        /// to take into a match.
+        /// </summary>
+        public void OpenLoadout()
+        {
+            _mode = SceneFlow.SelectedMode;
+            _root.SetActive(true);
+            VisibleChanged?.Invoke(true);
+            Show(Tab.Loadout);
+        }
+
         private void Close()
         {
             _deleteArmed = false;
@@ -552,6 +632,7 @@ namespace TumbangPreso.UI
             {
                 case Tab.Profile: BuildProfileTab(); break;
                 case Tab.Friends: BuildFriendsTab(); break;
+                case Tab.Loadout: BuildLoadoutTab(); break;
                 case Tab.Career: BuildCareerTab(); break;
                 case Tab.Matches: BuildMatchesTab(); break;
                 case Tab.Account: BuildAccountTab(); break;
@@ -1021,6 +1102,52 @@ namespace TumbangPreso.UI
         /// so a build row on the Classic career tab would be a control for a thing that mode does
         /// not have.
         /// </summary>
+        /// <summary>
+        /// LOADOUT: the whole tab, and the only place in the game an ability build is equipped.
+        ///
+        /// ⚠️⚠️ THE ONE THING ON THIS TAB IS **WHICH READING OF THIS HERO'S TWO SKILLS AM I
+        /// TAKING INTO THE MATCH**, and the tab exists because that question used to be asked
+        /// four presses down inside a collapsed group nobody opened. `BuildTabBar` carries
+        /// 🧑's report in full. Everything on it is one hero: pick the hero on the first row,
+        /// read the two skills under it, and every other hero is one press of the same stepper
+        /// away. Six heroes times two slots times two readings is 24 cards if they are all drawn
+        /// at once, which is `docs/TODO.md` § 92's *"theres liek 20 shits at once"*.
+        ///
+        /// ⚠️ IT IS NOT GATED ON HAVING PLAYED. A build is a choice you make while LEARNING a
+        /// hero, and the challenge that unlocks the second reading is counted in Practice
+        /// (§ 114.16), so a fresh account is exactly who this screen is for.
+        /// </summary>
+        private void BuildLoadoutTab()
+        {
+            var profile = GameServices.Career?.Profile;
+
+            // ⚠⚠ CLASSIC GETS A SENTENCE AND NOT A MISSING TAB. `docs/VISION.md` § 1.1: Classic
+            // has no kit and never gets one, so there is genuinely nothing to equip here. A tab
+            // that VANISHES in one mode is worse than one that explains itself, though: the
+            // player who saw it yesterday now believes the game lost a feature, and § 6.3's *"a
+            // dead end is a bug"* applies to a screen that says nothing just as much as to a
+            // button that does nothing. So it says which mode owns the feature and hands over the
+            // one control that changes modes.
+            if (_mode != GameMode.HeroStrike)
+            {
+                UiRows.Section(_list, "Hero Strike only",
+                               "Classic is the street game and has no powers to build. That is the mode, not a gap.");
+                UiRows.Gap(_list, 24.0f);
+                UiRows.DropdownRow(_list, "Mode", new[] { "CLASSIC", "HERO STRIKE" }, 0,
+                    v =>
+                    {
+                        _mode = v == 1 ? GameMode.HeroStrike : GameMode.Classic;
+                        Show(Tab.Loadout);
+                    }, "Switch to Hero Strike to build a kit.");
+
+                SetFooter("Classic keeps it simple. Hero Strike is where the ceiling goes up.", "");
+                return;
+            }
+
+            BuildAbilityBuildRows(profile);
+            SetFooter("The equipped build is public in a lobby, so nobody is surprised by it.", "");
+        }
+
         private void BuildAbilityBuildRows(PlayerProfile profile)
         {
             if (_mode != GameMode.HeroStrike) return;
@@ -1032,10 +1159,13 @@ namespace TumbangPreso.UI
             // because this group was unreachable** (§ 114.12): the career tab bailed out at zero
             // matches before ever building it, and the probe's fixture has no finished matches
             // in the mode it opens on. A string nothing draws is a string nothing measures.
-            if (!Group("Ability builds",
-                       "Two readings of each skill, and every option trades one for another.",
-                       false))
-                return;
+            // ⚠⚠ A SECTION HEADER AND NOT A COLLAPSED `Group`, AND THAT IS THE WHOLE MOVE.
+            // These rows ARE the tab now, so a group that hides them by default would be a tab
+            // whose contents are behind a second press, which is the fault this move exists to
+            // fix. `Group` earns its keep on the CAREER tab, where six groups of five rows would
+            // be thirty rows at once; here there are three.
+            UiRows.Section(_list, "Ability builds",
+                           "Two readings of each skill, and every option trades one for another.");
 
             var settings = Settings.SettingsStore.Current;
             if (settings == null) return;
@@ -1168,11 +1298,15 @@ namespace TumbangPreso.UI
         /// <summary>
         /// The career tab with nothing in it yet.
         ///
-        /// ⚠️⚠️ IT STILL DRAWS THE ABILITY BUILDS AND THE ACHIEVEMENT SHELF, AND IT USED TO
-        /// `return` BEFORE BOTH. 🧑 2026-09-01: *"make sure phase 1-10 already exist in the game
-        /// and can be accessed thru ui and hud"*. They did exist, and on a fresh account **neither
-        /// was reachable by any route at all**: `BuildCareerTab` bailed to this method the moment
-        /// `totals.Matches == 0`, and these two groups are built after that line.
+        /// ⚠️⚠️ IT STILL DRAWS THE ACHIEVEMENT SHELF, AND IT USED TO `return` BEFORE IT.
+        /// 🧑 2026-09-01: *"make sure phase 1-10 already exist in the game and can be accessed
+        /// thru ui and hud"*. It did exist, and on a fresh account it **was not reachable by any
+        /// route at all**: `BuildCareerTab` bailed to this method the moment `totals.Matches == 0`,
+        /// and the group is built after that line.
+        ///
+        /// ⚠️ THE ABILITY BUILDS LEFT THIS METHOD AND THIS TAB ENTIRELY on the same day, for a
+        /// harder version of the same complaint: reachable is not findable. They are the LOADOUT
+        /// tab now. See `BuildTabBar`.
         ///
         /// **Both are things you do BEFORE your first match, not after it.** An ability build is a
         /// choice a player makes while learning a hero, and the achievement shelf is the one
@@ -1209,7 +1343,6 @@ namespace TumbangPreso.UI
                         Show(Tab.Career);
                     });
 
-                BuildAbilityBuildRows(profile);
                 BuildAchievementsRows(profile);
             }
 
@@ -1575,6 +1708,27 @@ namespace TumbangPreso.UI
                     OpenSignIn, "Leaves whatever is on this machine behind.");
             }
 
+            // ⚠⚠ THE GOOGLE ROW IS DRAWN ONLY IN A BUILD THAT HAS A CLIENT ID, AND IT IS ONE
+            // ROW RATHER THAN A GROUP. 🧑 2026-09-01: *"can we add some sort of authentication too?
+            // like an option to sign inn with google acct or connect google acct"*. It sits with
+            // the username row because they answer the same question, *"how do I get this career
+            // onto another machine"*, and a player only has to do ONE of them. A separate
+            // collapsed group would have implied a second, unrelated chore.
+            //
+            // ⚠️ THE CONNECTED STATE IS NOT A BUTTON. There is nothing useful to press: the game
+            // has no reason to unlink and offering it would be a destructive control with no
+            // recovery, on a screen whose own DANGER group is closed and two presses deep.
+            if (account.GoogleAvailable)
+            {
+                if (account.HasGoogle)
+                    UiRows.ValueRow(_list, "Google", "CONNECTED",
+                        "Sign in with it on another machine to bring this career with you.",
+                        UiTheme.MenuGreen);
+                else
+                    UiRows.ButtonRow(_list, "Google account", "CONNECT", OpenSignInForGoogle,
+                        "One press, in your browser. Keeps everything you have already played.");
+            }
+
             // ⚠️ CLOSED UNLESS A GUEST IS ALREADY PLAYING. Handing the machine over is a
             // once-a-tournament action, and a row offering it on every visit is the same noise
             // PLAY AS GUEST made sitting beside DELETE ACCOUNT. When a guest IS on, the state is
@@ -1611,6 +1765,20 @@ namespace TumbangPreso.UI
         {
             _notice = "";
             _signIn.Open();
+        }
+
+        /// <summary>
+        /// ⚠️ IT OPENS THE SIGN-IN SCREEN ON ITS CREATE TAB RATHER THAN STARTING THE BROWSER
+        /// FLOW FROM HERE. The two verbs (connect this account, or move to another) live on that
+        /// screen with a heading that says which one is about to happen, and a second entry point
+        /// that silently picked one of them would be the same word meaning two things, which is
+        /// the confusion `SignInScreen.SetMode` was written to remove. `CLAUDE.md` § 6.3: fix the
+        /// door or move it, never grow a second one.
+        /// </summary>
+        private void OpenSignInForGoogle()
+        {
+            _notice = "";
+            _signIn.OpenForUpgrade();
         }
 
         private void ToggleGuest()

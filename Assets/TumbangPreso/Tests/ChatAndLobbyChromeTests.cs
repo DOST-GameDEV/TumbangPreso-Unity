@@ -208,7 +208,14 @@ namespace TumbangPreso.Tests
             // hazards at sizes the host never spawned, so the two machines would disagree about
             // where the floor is dangerous. That is worse than a cosmetic misread and it is why
             // this is a refusal at approval rather than a tolerated trailing field.
-            Assert.AreEqual(20, NetSession.ProtocolVersion,
+            // ⚠⚠ 21 SINCE 2026-09-01: PHASE 12's MATCH FORMAT (`docs/TODO.md` § 115, and
+            // `docs/Formats.md`). A new `SelectFormat` / `SyncFormat` pair, and it is the THIRD
+            // entry that decides a gameplay thing and the first that decides the WIN CONDITION.
+            // A host running LAST TSINELAS STANDING and a peer that has never heard of it are two
+            // different games sharing one scoreboard: the peer sees attackers stop throwing for
+            // no reason and a round awarded to somebody it cannot account for. Cosmetic mismatch
+            // draws a stranger; this one disputes the result, so it is a refusal at approval.
+            Assert.AreEqual(21, NetSession.ProtocolVersion,
                 "a message or a replicated roster index has been added or removed. Bump this " +
                 "number and `NetSession.ProtocolVersion` together, in the same commit.");
         }

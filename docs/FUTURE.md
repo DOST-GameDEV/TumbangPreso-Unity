@@ -1422,6 +1422,79 @@ player to ignore the can, which is the one thing the game is about. Write challe
 outcomes the game wants: retrievals under pressure, rounds survived as last attacker, matches
 completed, tags as taya.
 
+### 13.1 ⚠⚠ WHAT THIS PHASE IS ACTUALLY FOR, THOUGHT THROUGH ON 2026-09-01
+
+🧑 asked for this section to be reasoned out rather than inherited: *"thoroughly think on ur own
+what should go on phase 13"*. **The cut list above is right and none of it is reopened.** What
+follows is what is LEFT once the cuts are taken seriously, and it is four things rather than a
+calendar.
+
+**The starting position, measured rather than assumed:** Phase 9 shipped a ten-week season with a
+soft reset (`RatingRules.SeasonAt`, `BeginSeason`, `SeasonOneStartUtc` = 2026-09-01, so **season 1
+ends 2026-11-10**), and **nothing in the game says a season exists.** There is no season row, no
+countdown, no end-of-season anything, and the reset happens inside `match-record.js` on the next
+submission. That is the whole gap.
+
+#### 1. A season has to be visible before it can be a reason to play
+
+- **One row on the hub**, in the rank group: season number and days left. Not a screen.
+- ⚠️⚠️ **THE SUMMARY CARD IS COMPUTED AT LOAD, NOT AT SUBMIT, AND THIS IS THE TRAP.**
+  `beginSeason` runs inside `match-record.js` when a record is submitted, so **a player who does
+  not play never crosses the boundary** and a player who does crosses it silently, mid-submission,
+  with their old season already overwritten. The summary has to be built from the STORED profile
+  the first time the game loads after the boundary, and the previous season's numbers have to be
+  kept somewhere before the reset writes over them. **One field on the profile
+  (`LastSeasonSummary`), written by the same code that resets.**
+- **It shows once, and it is dismissible in one press.** A card that reappears is a nag.
+
+#### 2. ⚠⚠ A SOFT RESET WITH SIX PLAYERS IS WORSE THAN NO SEASON, AND THIS IS THE ONE THAT WOULD ACTUALLY HURT
+
+Glicko-2's soft reset pulls every rating 40 per cent toward the mean and widens every deviation.
+That is correct for a ladder with a population. **This game's population today is the people in
+one room**, and `FUTURE.md` § 11 already reversed a rule for exactly that reason (*"no one plays
+this game yet"*). Resetting the only ladder anybody has, for six people, deletes the only record
+of who is good and gives nothing back.
+
+- **So the season ROLLS OVER rather than resetting when fewer than a threshold of accounts
+  finished it ranked.** The number is a decision for 🧑; the shape is: count settled ranked
+  accounts, and if it is under the threshold, extend the season and say so on the hub row.
+- ⚠️ **It is the same expiry the bot rule has.** Both are population arguments and both stop being
+  true on the same day, so they should be re-asked together.
+
+#### 3. The calendar is data, and it must work with the cable out
+
+**LIGA NG BARANGAY and the weekly hour are the whole event list**, and they are two recurring UTC
+slots. The trap is building them as a service.
+
+- ⚠️⚠️ **A CALENDAR THAT NEEDS A SERVER IS A CALENDAR THAT IS BLANK AT THE NATIONALS.** General
+  Santos City is the reason `FUTURE.md` § 0.5 rule 7 exists and why CONTINUE AS GUEST may never
+  touch the network. A table of recurring slots in `Packages/com.tumbangpreso.core/` answers *"what
+  is on now, what is next, how long"* with no service, on every machine, identically. Cloud Code
+  can override it later; it must never be required for it.
+- **The event is only worth having if it is a QUEUE.** *"Liga ng Barangay, Saturday 8pm"* on a
+  screen is an advert. The same line on the lobby with a countdown, and a QUICK MATCH that says
+  *"the hour starts in 20 minutes"*, is a reason to be there. **Turning the calendar into a queue
+  is the feature; the calendar is the data behind it.**
+
+#### 4. Live ops without measurement is guessing, and the measurement already exists
+
+Phase 3's telemetry is deployed and § 90.3's event names are a contract. Two events answer whether
+any of this worked and neither is new machinery: **queue entries by hour of the week**, and
+**matches completed per day**. Without them the weekly hour is a slot somebody chose and nobody
+can say whether anyone came.
+
+#### 5. What this phase must NOT grow
+
+- ❌ **No battle pass, no season track, no theme.** Already cut, § 4.1 has the costing.
+- ❌ **No challenge cadence.** Already cut, and the paragraph above is the standing rule for the
+  day somebody reopens it.
+- ❌ **No second currency.** Nothing in this game has a currency and a season is the usual place
+  one gets introduced by accident.
+- ⚠️ **And the summary card is a marketing asset, not only a player one.** Sponsors keep asking
+  for material and this team keeps screenshotting the game by hand. A card built at 1920x1080 with
+  the wordmark on it is the one artefact this phase produces that somebody outside the game will
+  see.
+
 **The prompt for this phase is [§ 19.13](#1913-prompt-for-phase-13).** Every prompt in
 this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
 one inherits and § 0.6 is what to re-verify before trusting any of them.
@@ -2334,8 +2407,15 @@ exist.**
 >   tags as taya, matches completed. **This is kept as the rule for a future decision, not as a
 >   task.**
 >
-> **Done when** a season boundary rolls correctly in a test, the summary card renders, the weekly
-> hour and Liga ng Barangay run off the calendar, and § 0.5 rule 9 is satisfied.
+> **Read § 13.1 before anything else in this prompt.** It is the phase reasoned out rather than
+> inherited, and it changes what "done" means: the four things that are left, the trap in the
+> summary card, the population argument against a soft reset, and the rule that the calendar must
+> work with the cable out.
+>
+> **Done when** a season boundary rolls correctly in a test, the summary card is built from the
+> STORED profile at load rather than at submit (§ 13.1 item 1), a season with too few ranked
+> accounts rolls over instead of resetting (§ 13.1 item 2), the weekly hour and Liga ng Barangay
+> run off a core table with no service (§ 13.1 item 3), and § 0.5 rule 9 is satisfied.
 
 ---
 

@@ -49,6 +49,37 @@ namespace TumbangPreso.UI
         private const float RowHeight = 34.0f;
         private const float BarHeight = 12.0f;
 
+        /// <summary>
+        /// Where the door sits: the centre of a <see cref="DoorHeight"/> button, that far up from
+        /// the bottom edge.
+        /// </summary>
+        private const float DoorCentreY = 96.0f;
+        private const float DoorHeight = 64.0f;
+
+        /// <summary>
+        /// ⚠️⚠️ 280 UNITS OF CARD HUNG OFF A CENTRE AT 96, SO ITS BOTTOM 44 UNITS WERE UNDER THE
+        /// BOTTOM OF THE SCREEN AND THE CANCEL BUTTON WAS THE THING IN THEM. 🧑 2026-09-01, over a
+        /// shot of the lobby mid-queue: *"bug with quick mat ui"*. `MenuKit.Place` PIVOTS AT
+        /// (0.5, 0.5), so the offset it takes is a CENTRE and not an edge: a 280-tall card placed
+        /// at y 96 spans -44 to 236. **The one control on the card that the player needs, the way
+        /// out of the queue, was the one control off the screen.**
+        ///
+        /// ⚠️ THE CARD IS PLACED FROM THE DOOR'S BOTTOM EDGE NOW, ARITHMETICALLY, because the two
+        /// are the two states of one control (see `Refresh`) and a state change that moves the
+        /// furniture reads as the screen jumping. `CustomCharacterScreen.LeftAt` records the same
+        /// pivot trap one screen over: *"passing a left margin straight in is the mistake, and it
+        /// is silent"*.
+        ///
+        /// ⚠️ 348 AND IT WAS 280: PHASE 11'S OFFER IS TWO MORE ROWS (a 48-unit button and a
+        /// 20-unit line of disclosure) PLUS THE COLUMN'S 8-UNIT SPACING TWICE. The number is the
+        /// content added up, which is `CLAUDE.md` § 6.2c question 1, and the two rows are
+        /// deactivated rather than absent so the card does not change size when the offer lands
+        /// under the player's cursor.
+        /// </summary>
+        private const float CardHeight = 348.0f;
+
+        private const float CardCentreY = DoorCentreY - (DoorHeight * 0.5f) + (CardHeight * 0.5f);
+
         private Matchmaker _queue;
 
         private GameObject _card;
@@ -60,8 +91,25 @@ namespace TumbangPreso.UI
         private Button _cancel;
         private Button _open;
 
+        /// <summary>PHASE 11's offer: the button, its one line of disclosure, and the label so the
+        /// count can be rewritten as people arrive. See <see cref="BotFillRules"/>.</summary>
+        private Button _fill;
+        private Text _fillLabel;
+        private Text _fillCaveat;
+
         /// <summary>Raised when the queue lands the player in a match, so the lobby redraws.</summary>
         public event Action Joined;
+
+        /// <summary>
+        /// Raised when the player accepts PHASE 11's bot offer.
+        ///
+        /// ⚠⚠ THIS CARD DOES NOT START THE MATCH AND MUST NOT LEARN HOW. The lobby owns every
+        /// decision a match start needs (the map, the seats, the mode, whether the room is
+        /// networked) and `ConvertedMatchSetup.StartMatch` is the one path through them.
+        /// A second start path here would be `docs/TODO.md` § 38.5's three dead protocols
+        /// arriving one convenience at a time: the maintained one is the one nothing calls.
+        /// </summary>
+        public event Action StartWithBots;
 
         /// <summary>Raised with a line for the lobby's own status label, so this never becomes a
         /// second place that reports network failures. Same contract as `LobbyJoinPanel.Status`.</summary>
@@ -120,7 +168,8 @@ namespace TumbangPreso.UI
             // `FUTURE.md` § 0.5b: "one accent, used for the one thing", and colour is the LAST
             // ordering tool rather than the first. The lobby's other controls are plain wood.
             _open = MenuKit.WoodButton(transform, "QUICK MATCH", new Vector2(0.5f, 0.0f),
-                                       new Vector2(0.0f, 96.0f), new Vector2(CardWidth, 64.0f),
+                                       new Vector2(0.0f, DoorCentreY),
+                                       new Vector2(CardWidth, DoorHeight),
                                        OnQuickMatchPressed, "WoodAmberButton");
             _open.name = "QuickMatchButton";
 
@@ -146,7 +195,7 @@ namespace TumbangPreso.UI
             plate.raycastTarget = true;
 
             MenuKit.Place(plate.rectTransform, new Vector2(0.5f, 0.0f),
-                          new Vector2(0.0f, 96.0f), new Vector2(CardWidth, 280.0f));
+                          new Vector2(0.0f, CardCentreY), new Vector2(CardWidth, CardHeight));
 
             var column = new GameObject("Column");
             column.transform.SetParent(_card.transform, false);
@@ -190,6 +239,34 @@ namespace TumbangPreso.UI
                            UiTheme.CreamMuted, 52);
             _promise.horizontalOverflow = HorizontalWrapMode.Wrap;
             _promise.alignment = TextAnchor.UpperLeft;
+
+            // ---- PHASE 11: the offer, and the disclosure under it ----------------------
+            //
+            // ⚠⚠ IT IS THE ONLY OTHER PRESSABLE THING ON THE CARD AND IT IS AMBER, WHICH TAKES
+            // THE ACCENT OFF NOTHING: the door that WAS amber is hidden while the card is up (see
+            // `Refresh`), so at any moment exactly one control on this surface is the accent.
+            // `FUTURE.md` § 0.5b: one accent, used for the one thing.
+            //
+            // ⚠⚠ AND THE DISCLOSURE IS A ROW, NOT A TOOLTIP. `FUTURE.md` § 11 makes it a
+            // constraint: *"a player who thinks they beat a person and did not will be angrier
+            // when they find out than they would have been to know"*. For a RANKED queue it also
+            // says the thing the player would otherwise have to work out, which is that the result
+            // will not move their rating.
+            _fill = MenuKit.WoodButton(column.transform, "START WITH 3 BOTS", Vector2.zero,
+                                       Vector2.zero, new Vector2(0.0f, 48.0f), OnFillPressed,
+                                       "WoodAmberButton");
+            _fill.name = "StartWithBotsButton";
+            _fillLabel = _fill.GetComponentInChildren<Text>();
+
+            var fillElement = _fill.gameObject.AddComponent<LayoutElement>();
+            fillElement.minHeight = 48.0f;
+            fillElement.preferredHeight = 48.0f;
+            fillElement.flexibleHeight = 0.0f;
+
+            _fillCaveat = Row(column.transform, "", MenuKit.MinReadableUnits,
+                              UiTheme.CreamMuted, 20.0f);
+            _fillCaveat.horizontalOverflow = HorizontalWrapMode.Wrap;
+            _fillCaveat.alignment = TextAnchor.UpperLeft;
 
             var spacer = new GameObject("Spacer");
             spacer.transform.SetParent(column.transform, false);
@@ -299,6 +376,21 @@ namespace TumbangPreso.UI
             return seated < 1 ? 1 : seated;
         }
 
+        /// <summary>
+        /// PHASE 11: the player accepted bots.
+        ///
+        /// ⚠️ THE QUEUE IS CANCELLED FIRST, so the room stops advertising itself before it
+        /// loads a match. A lobby that starts a match while still in the pool is a lobby somebody
+        /// else joins on the way out, which is `Cancel`'s own note read forwards.
+        /// </summary>
+        private void OnFillPressed()
+        {
+            MenuSfx.Click();
+            _queue.Cancel();
+            Refresh();
+            StartWithBots?.Invoke();
+        }
+
         private void OnCancelPressed()
         {
             MenuSfx.Click();
@@ -364,6 +456,29 @@ namespace TumbangPreso.UI
             {
                 var rt = _barFill.rectTransform;
                 rt.anchorMax = new Vector2(Mathf.Clamp01(_queue.WideningProgress), 1.0f);
+            }
+
+            // ⚠⚠ THE OFFER APPEARS RATHER THAN THE CARD GROWING, and the two rows exist from the
+            // start for that reason: the card is a fixed 348 and the button lands INSIDE it. A
+            // card that grew at 45 seconds would move CANCEL out from under a cursor that had
+            // been resting on it for the whole wait.
+            bool offering = _queue.OffersBotFill;
+            int bots = _queue.BotsToFill;
+
+            if (_fill != null) _fill.gameObject.SetActive(offering);
+            if (_fillCaveat != null) _fillCaveat.gameObject.SetActive(offering);
+
+            if (offering)
+            {
+                if (_fillLabel != null)
+                {
+                    _fillLabel.text = BotFillRules.FillOffer(bots);
+                    MenuKit.Fit(_fillLabel, CardWidth - (Pad * 2.0f) - 32.0f);
+                }
+
+                if (_fillCaveat != null)
+                    _fillCaveat.text = BotFillRules.FillCaveat(
+                        _queue.Stake, _queue.PartySize, Balance.PlayerCount);
             }
 
             if (_elapsed != null)

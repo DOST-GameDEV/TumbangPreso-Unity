@@ -44,6 +44,13 @@ force a machine to 50 fps, and only telemetry can say whether a real player is d
 Phase 4, because every argument in phases 4 through 17 is settled faster with real numbers than
 with opinions, and as of today there are numbers to point at.
 
+⚠️⚠️ **§ 115 IS THE MOST RECENT SESSION AND IT IS EIGHT FAULTS HE FOUND IN ONE BUILD PLUS
+PHASES 11 AND 12.** Read § 115.6 before touching any door in the front end: he commissioned the
+loadout feature, read the entry that shipped it, and could not find it. `NetSession.ProtocolVersion`
+is **21** (the match FORMAT, § 115.10), so both machines rebuild off the same branch.
+⚠️ **§ 115.10 also says what is NOT built**: LAST TSINELAS STANDING has rules, tests and a document
+and no match half, and it is deliberately absent from the lobby's RULES row until it has one.
+
 ⚠️⚠️ **§ 113 IS THE CURRENT STATE OF THE CHARACTER MAKER AND § 112 IS HOW IT GOT ITS
 RIG.** § 113 is the pass 🧑 asked for on 2026-09-01: the clothes now hang off the ARM and LEG
 bones rather than off the torso, the screen is opaque, and the door to it is the fourth cell of
@@ -2128,6 +2135,244 @@ one.**
   timing sensitivity: this does not look like a flake. Do not let it be absorbed into this entry,
   and do not widen the bound.
 - **A clean Windows player is on the Desktop**, built after every gate above.
+
+---
+
+## 115 · Eight faults in one build, phases 11 and 12, and the door he could not find ⚠️⚠️ 2026-09-01
+
+🧑 opened the build off `gemini-rework` and sent eight reports in twenty minutes, most with a
+screenshot. **Not one needed a repro step and not one was found by a probe.** Then phases 11 and
+12, then Google sign-in, on the same day.
+
+| # | What he said | What it was | Where |
+|---|---|---|---|
+| 1 | *"create acct doesnt work"* | A failed SIGN IN left the UGS session signed out and this game's `IsSignedIn` `true`, so CREATE called `AddUsernamePasswordAsync` against a signed-out service. | § 115.1 |
+| 2 | *"bug with quick mat ui"* | The queue card is placed by its CENTRE, so 44 of its 280 units, and CANCEL inside them, were under the bottom of the screen. | § 115.2 |
+| 3 | *"profile ui ugly"*, *"cannt read"*, *"dont make it transparent"* | The hub's scrim is 0.93 and 0.93 is not opaque over a lit street. § 113 found the same thing one screen over, one day earlier. | § 115.3 |
+| 4 | *"this shhit is off center"* | The maker inherits the character SELECT screen's horizontal camera offset, which exists to clear a control column on the LEFT. The maker's column is on the right. | § 115.4 |
+| 5 | *"clicking escape from make your own put me here"* | `Input.GetKeyDown` is a fact about the frame, so one press closed the maker AND backed the screen under it out to the main menu, where the boot login step re-opened because its gate is never cleared. | § 115.5 |
+| 6 | *"i also dont know hhow to navigae to loadouts section"* | Four presses deep and two of them invisible. | § 115.6 |
+| 7 | *"lobby chat goes past screen"*, *"lobby chat doesnnt work at all"* | The scrollback is a child of the chat's own `VerticalLayoutGroup`, which owns every active child, so it was laid out as the next chat ROW and grew downward off the screen. | § 115.7 |
+| 8 | *"can we add some sort of authentication too? ... google acct"* | New work. | § 115.8 |
+
+⚠️⚠️ **AND THE SENTENCE TO CARRY OUT OF THIS ENTRY IS HIS, ABOUT NUMBER 6:** *"that isnt my
+fault thats ur fault"*, *"everything should be easy to navigate to and intuitive"*, **"that means
+if i cnat ifnd it, no one owuld"**. He commissioned the loadout feature, he read the entry that
+shipped it, and he could not reach it. That is the highest-authority findability signal this
+project can get.
+
+### 115.1 CREATE ACCOUNT was calling a signed-in-only endpoint on a signed-out service ✅ FIXED
+
+The red line under the password read **"Invalid state for this operation. The player is signed
+out."**, which is UGS's own message and not one this game writes.
+
+**The path there is two presses.** `SignInAsync` signs the anonymous session OUT before it can
+sign a username in, because `SignInWithUsernamePasswordAsync` refuses to run while a session is
+live. When that sign-in FAILS, which is what happens the first time anybody tries a username
+before creating it, **nothing put the anonymous session back**: the service was signed out and
+`PlayerAccount.IsSignedIn` was still `true`, because only `Apply` writes it and no `Apply` runs on
+that path. Switching to CREATE then passed the guard and called `AddUsernamePasswordAsync`.
+
+Three changes, and the second is the one that mattered:
+
+- **The guard asks the service, not the flag.** `EnsureLiveSessionAsync` runs before every
+  operation that needs a session and repairs it rather than refusing.
+- ⚠️⚠️ **`SignOut(clearCredentials: false)`, AND `true` IS WHAT MADE IT UNRECOVERABLE.** `true`
+  wipes the cached anonymous SESSION TOKEN, which is the only thing that can bring this machine's
+  existing player back; without it a repair sign-in mints a new player id and silently abandons
+  every match, level and mastery on the machine. `false` keeps it, so the repair restores the same
+  player.
+- **A failed sign-in restores the session before it reports the error.** One wrong password used to
+  poison every account operation for the rest of the launch.
+
+### 115.2 The queue card's CANCEL button was under the bottom of the screen ✅ FIXED
+
+`MenuKit.Place` PIVOTS AT (0.5, 0.5), so the offset it takes is a CENTRE and not an edge: a
+280-tall card placed at y 96 spans **-44 to 236**. The one control on the card the player needs,
+the way out of the queue, was the one control off the screen. It is placed from the door's bottom
+edge now, arithmetically, so the two states of the control sit on the same line.
+
+### 115.3 The hub's scrim was 0.93 and 0.93 is not opaque ✅ FIXED
+
+**Seven per cent of a lit street is still a street.** Under this screen are four voxel characters
+at full saturation, the amber MATCH SETTINGS and LOBBY & SERVERS plates, a green START MATCH and a
+row of houses, and every one stayed legible through the scrim. § 113 records the identical finding
+on the character maker one day earlier, including that the answer is not 0.99: **there is nothing
+here for a scrim to protect.** Solid wood, alpha 1.0.
+
+### 115.4 The maker's model stood 17 per cent right of the card it was in ✅ FIXED
+
+`ModelPreview` carries `FrameHorizontalOffsetRatio` -0.19, whose own note says why it exists:
+*"every control on this screen sits in the left third, so a centred subject would stand behind
+them"*. **That is the character SELECT screen. The maker's column is on the RIGHT**, so the same
+offset shoved the model toward the panel. `ModelPreview.CentreSubject` is the fix and it is
+deliberately not `SetTileFraming`, which also overwrites the zoom.
+
+⚠️ **The vertical half was the section aims.** The camera puts the AIM POINT at the centre of the
+frame, so an aim of 0.76 puts three quarters of the body below the centre line and leaves the top
+of the card empty. The range is 0.44 to 0.68 now: the camera still moves visibly between sections
+and the body's centre stays within about a tenth of a frame of the card's.
+
+### 115.5 One press of Escape left two screens ✅ FIXED
+
+`Input.GetKeyDown` is a fact about the frame and every `Update` in the process reads the same
+answer. `CustomCharacterScreen` closed itself and `ConvertedScreen.Update` under it backed the
+character select out to the main menu on the same press.
+
+- **`ScreenTakeover.EscapeIsSpoken`** is the arbiter: a converted screen stands down when a
+  takeover is open OR when one has already spent this frame's press. ⚠️ **Both halves are needed
+  because script order is undefined**: one covers the takeover updating first, the other covers it
+  updating second.
+- ⚠️⚠️ **AND THE HUB AND THE SIGN-IN SCREEN WERE NEVER IN THE REGISTER AT ALL.** `ScreenTakeover`
+  had exactly one member, the maker. Both are full-screen takeovers and nothing in the game knew
+  they existed.
+- **The second half of the bug is that the login step re-opens.** `SceneFlow.BootedThroughSplash`
+  is never cleared, so it means "every time this process shows the main menu", not "once per
+  launch". `SceneFlow.LoginStepOffered` is the one-shot.
+
+### 115.6 LOADOUT is a tab now, and the lobby card has a door to it ✅ FIXED
+
+**It was four presses deep and two of them were invisible**: a group called *Ability builds*,
+CLOSED BY DEFAULT, at the bottom of the CAREER tab, and on a fresh account the career tab returned
+before building it at all (§ 114.12). A collapsed group is a good answer to *"never overwhelming"*
+and a bad one to *"where is the thing"*: `CLAUDE.md` § 6.2 is three separate claims and this
+feature passed the third by failing the second.
+
+- **The rows are a LOADOUT tab on the hub**, uncollapsed, and they are gone from the career tab
+  and from `EmptyCareer`. **The door moved, it did not multiply** (§ 6.3).
+- **The lobby player card has a YOUR SKILLS row** directly under PLAYING AS, showing the equipped
+  build and opening the hub on that tab. A loadout is a fact about the character on the row above
+  it. ⚠️ **Hidden in Classic rather than greyed**: `VISION.md` § 1.1, Classic has no kit.
+- ⚠️ **The tab is spelled the way he asked for it.** The code calls these hero BUILDS; the word he
+  reaches for is LOADOUT.
+
+### 115.7 The lobby chat log was laid out as a chat row ✅ FIXED
+
+**The scrollback panel is a child of the chat, and the chat's `VerticalLayoutGroup` owns the
+position and size of every ACTIVE child it has.** The moment `OpenHistory` switched it on, the
+group took the 460-unit box, ignored its top-edge anchors, and placed it as the next row in the
+column: under the "Say something" field, growing DOWNWARD off the screen, with `SetAsLastSibling`
+guaranteeing it went last.
+
+The group also added its height to the chat's own preferred height, which is the second half of
+what he asked for: **"without making lobby annd servers move"**. `LobbyChrome.StackRight`
+positions that pill off `PanelHeight` every frame, so opening the log walked the whole right-hand
+rail up the screen. `LayoutElement.ignoreLayout` is the whole fix, and every anchor below it was
+already correct and had never once been used.
+
+### 115.8 Google sign-in, without a platform SDK ✅ BUILT, DARK UNTIL A CLIENT ID EXISTS
+
+UGS ships `SignInWithGoogleAsync(idToken)` and `LinkWithGoogleAsync`, and **has no way of getting
+an id token on Windows**: every sample takes it from Google Play Games or Firebase. So
+`Net/GoogleSignIn.cs` is Google's own "OAuth 2.0 for installed applications" flow — system
+browser, loopback listener, PKCE — and the UGS call is one line at the end of it.
+
+- ⚠️⚠️ **PKCE is not optional for a desktop client.** Anything compiled into this .exe is readable
+  by anybody who has the .exe. The verifier is 64 random bytes and the challenge its SHA-256.
+- ⚠️⚠️ **The listener binds before the browser opens.** An already-signed-in Chrome profile
+  redirects in about a second, and a redirect to a port nothing is listening on is a browser error
+  instead of a signed-in game.
+- ⚠️ **A favicon request is not the redirect.** The listener waits until a request actually carries
+  `code` or `error`.
+- ⚠️⚠️ **IT SHIPS DARK.** `GoogleSignIn.IsAvailable` is false until `Resources/google_oauth.txt`
+  exists, and the button is NOT BUILT rather than hidden, so the column closes up. A visible button
+  that explains why it cannot work is § 108's dead EQUIP button with an apology on it.
+- **CONNECT and SIGN IN are two verbs**, exactly like the username pair: linking keeps this
+  machine's progress, signing in moves to another account. The verb follows the tab.
+
+**🧑 has two things to do that no amount of code can:** create an OAuth **Desktop app** client in
+the Google Cloud console and put its client id on line 1 of
+`Assets/TumbangPreso/Resources/google_oauth.txt` (line 2 for the secret if the console issues one),
+and switch **Google** on in the UGS dashboard's Identity Providers page with the same client id.
+⚠️ Anonymous sign-in is not an identity provider, so an otherwise empty page is still the healthy
+state (`tump.md`).
+
+### 115.9 PHASE 11: the queue offers bots rather than nothing ⚠️ CORE AND QUEUE SHIPPED
+
+`Core/BotFill.cs`, `Core.Tests/Phase11And12Tests.cs`, `Matchmaker.OffersBotFill`, the card's
+second button, and the rating weight in **both** copies of the rating maths.
+
+- **45 seconds casual, 150 ranked.** The casual offer lands while the search is still widening
+  (`MatchmakingRules.SecondsToWidest` is 60); the ranked one lands long after it has stopped.
+- ⚠️⚠️ **BOTS IN RANKED ARE ALLOWED AND `FUTURE.md` § 19.11'S PROMPT SAYS THE OPPOSITE.** The
+  prompt asks for a test asserting *"never bots in ranked"*; § 11's body reverses it in 🧑's own
+  words with the reason and an expiry. **The body is newer and the body is the decision**, and
+  `BotFillRules.RankedAcceptsBots` is the one constant that flips it back.
+- ⚠️⚠️ **EVERY HUMAN SEAT PAST THE FIRST IS A QUARTER OF THE RESULT.** Four humans is a full
+  rating change, three is 0.667, two is 0.333 and one is **zero**. `FUTURE.md` § 11 states the
+  requirement and not the number: *"a result with a bot in it cannot move a rating the same amount
+  as one without, or the fastest climb in the game is queueing at 4 a.m."*
+- ⚠️⚠️ **THE BLEND SCALES THE DEVIATION TOO, AND SCALING ONLY THE RATING WOULD BE THE SUBTLE
+  VERSION OF THE SAME EXPLOIT.** Deviation is confidence and it shrinks with every match played;
+  farming bots at a third of the gain while collecting a full match of confidence would let
+  somebody lock in a soft rating and defend it. A zero-weight match is not a season match either.
+- ⚠️ **It is written twice**, `RatingRules.Blend` and `blendRank` in `match-record.js`, for the
+  reason `IntegrityRules.Digest` is: **the server computes the rating and the game has to be able
+  to say what it will be.**
+
+**Still open in Phase 11:** bot difficulty tiers are already exposed (the lobby's BOTS row, and
+they cross the wire), so what is left is the LABEL audit — `FUTURE.md` § 11 names three surfaces
+(the lobby, the scoreboard, the match history) and only the lobby is verified.
+
+### 115.10 PHASE 12: a format is not a mode ⚠️ MIRROR SHIPS, LAST TSINELAS IS HALF BUILT
+
+`Core/CustomGame.cs` and **`docs/Formats.md`**, which is the sibling document `FUTURE.md` § 19.12
+requires: *"write each mode's rules and win condition into `docs/Design.md` or a sibling document
+in the same commit as the code"*.
+
+⚠️⚠️ **`FUTURE.md` § 12 CALLS THESE "MODES" AND THEY MUST NOT BE `GameMode` VALUES.** That enum is
+a ruleset identity, not a label: `VISION.md` § 1 says Classic and Hero Strike are two games,
+`MatchRules.RoundCountFor` branches on it, `ProfileRules` keeps a separate career per value and
+says so on screen, and `MatchRecord.Mode` is a stored string older builds read back. **Both formats
+are playable in either mode**, which is the tell that they are not modes.
+
+- ✅ **MIRROR IS COMPLETE.** `CustomGameRules.MirrorIndex` is derived from the UTC week and never
+  stored, so a LAN room with no internet mirrors the same character as an online one.
+  `MatchInstaller` overrides every seat at the door rather than writing over three people's saved
+  picks. ⚠️ The modulo is made positive by hand: C#'s `%` keeps the sign of the left operand and a
+  venue machine with a clock set before the epoch would index off the front of the roster.
+- ⚠️⚠️ **LAST TSINELAS STANDING IS NOT IN THE RULES ROW AND THAT IS DELIBERATE.** Its rules are
+  written, tested and documented; **its match half is not built.** Offering it today would be a
+  control that changes a caption and nothing else, which is § 108's EQUIP button with no listener,
+  and this project has shipped that fault twice.
+  **What it needs, and it is contained:** `RoundDirector` holds a per-attacker stock reset at round
+  start; `ResolveTag` spends one; a spent attacker is out for the round; the round ends when one
+  attacker is left (`CustomGameRules.LastAttackerStanding` already answers that and deliberately
+  answers -1 for a tie rather than inventing a winner). ⚠️ **The loss event is the TAG**, not the
+  throw: `docs/Formats.md` § 1 carries why charging the throw would delete the game.
+- **`NetSession.ProtocolVersion` is 21.** A new `SelectFormat`/`SyncFormat` pair, and it is the
+  first entry in that list that changes the WIN CONDITION rather than what is in the match.
+- **The RULES row is a CLONE of the authored BOTS row**, not a row built in code: the three
+  selector rows carry authored arrow textures, an authored plate and an authored inner layout, and
+  a fourth built from scratch would be a fourth visual language on the rail whose whole redesign
+  was about the first three not lining up. ⚠️ **`Instantiate` copies `onClick` too**, so the cloned
+  arrows are cleared or they cycle the bot difficulty they came from, on a row labelled RULES.
+- ⚠️ **Its buttons come back on `Parts` rather than by name.** `ConvertedScreen` builds its name
+  index in `Start`, before the chrome runs, so a clone made afterwards is not in it and
+  `OnClick("FormatPrevButton", ...)` would find nothing.
+
+**Still open in Phase 12:** the rest of custom games (rounds, round seconds, score target, private
++ password) — the rules and the wire form are written, tested and clamped in
+`CustomGameRules`; nothing draws them yet. And map rotation with a vote, which § 12 says to build
+before a fourth map.
+
+### 115.11 PHASE 13 was thought through rather than started, and it is `FUTURE.md` § 13.1
+
+🧑: *"thoroughly think on ur own what should go on phase 13"*, then, before any of it was built,
+*"no need to work on phase 13, we have a bigger problem"*. **The thinking is written down and the
+code is not started**, which is the right place for it to have stopped. Four findings worth
+keeping:
+
+- **Nothing in the game says a season exists.** Season 1 ends **2026-11-10** and there is no row,
+  no countdown and no summary.
+- ⚠️⚠️ **THE SUMMARY CARD MUST BE BUILT AT LOAD, NOT AT SUBMIT.** `beginSeason` runs inside
+  `match-record.js` on submission, so a player who does not play never crosses the boundary and one
+  who does crosses it silently with their old season already overwritten.
+- ⚠️⚠️ **A SOFT RESET WITH SIX PLAYERS IS WORSE THAN NO SEASON.** Glicko-2's reset pulls every
+  rating toward the mean, which is right for a ladder with a population; this game's population is
+  the people in one room. **The season should roll over rather than reset below a threshold**, and
+  it is the same population argument, with the same expiry, as the bots-in-ranked reversal.
+- ⚠️ **A calendar that needs a server is a calendar that is blank at the nationals.**
 
 ---
 

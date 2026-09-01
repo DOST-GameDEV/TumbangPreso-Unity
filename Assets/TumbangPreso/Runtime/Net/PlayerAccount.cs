@@ -344,9 +344,194 @@ namespace TumbangPreso.Net
             }
         }
 
+        // -------------------------------------------------------------------
+        // GOOGLE. 🧑 2026-09-01: *"can we add some sort of authentication too? like an option
+        // to sign inn with google acct or connect google acct"*. `GoogleSignIn` is the browser
+        // half; this is the account half, and the split is deliberate: one class knows about
+        // OAuth and nothing else, this one knows about identity and nothing about OAuth.
+        // -------------------------------------------------------------------
+
+        /// <summary>True when this build was given a Google client id. See `GoogleSignIn`.</summary>
+        public bool GoogleAvailable => GoogleSignIn.IsAvailable;
+
+        /// <summary>
+        /// True when the signed-in account already has a Google identity attached.
+        ///
+        /// ⚠️ IT ASKS THE SERVICE RATHER THAN A SAVED FLAG, unlike `HasPassword`. A Google link
+        /// is made and broken on the account, which any of this player's machines can do, so a
+        /// bool in this machine's `settings.json` would be a second opinion that goes stale the
+        /// first time they use their laptop.
+        /// </summary>
+        public bool HasGoogle
+        {
+            get
+            {
+                try
+                {
+                    if (UnityServices.State != ServicesInitializationState.Initialized) return false;
+                    if (!AuthenticationService.Instance.IsSignedIn) return false;
+
+                    return !string.IsNullOrEmpty(AuthenticationService.Instance.PlayerInfo?.GetGoogleId());
+                }
+                catch { return false; }
+            }
+        }
+
+        /// <summary>
+        /// CONNECT: attaches Google to the account this machine is already playing on.
+        ///
+        /// ⚠⚠ THIS IS THE `UpgradeAsync` OF THE PAIR AND THE DISTINCTION IS THE PLAYER'S
+        /// PROGRESS, exactly as `SignInScreen.SetMode` sets out for the username pair. Linking
+        /// keeps the anonymous player id, so every match, level, mastery and friend this machine
+        /// has earned stays on the account; signing in moves to a different account and leaves
+        /// them behind. Two verbs, two buttons, and the heading says which one is about to happen.
+        ///
+        /// ⚠️ `AccountAlreadyLinked` IS THE ONE ERROR THAT NEEDS TRANSLATING. UGS answers
+        /// 10003 when that Google account is already on ANOTHER player, which reads to the player
+        /// as "I have an account here already", and the right next press is SIGN IN rather than
+        /// CONNECT. Telling them that is the difference between a dead end and a door.
+        /// </summary>
+        public async Task LinkGoogleAsync()
+        {
+            await InitializeAsync();
+            await EnsureLiveSessionAsync();
+            if (!IsSignedIn) throw new InvalidOperationException("Connecting an account needs UGS to be reachable.");
+
+            string idToken = await GoogleSignIn.AcquireIdTokenAsync();
+            string before = AuthenticationService.Instance.PlayerId;
+
+            try
+            {
+                await AuthenticationService.Instance.LinkWithGoogleAsync(idToken);
+            }
+            catch (AuthenticationException e) when (e.ErrorCode == AuthenticationErrorCodes.AccountAlreadyLinked)
+            {
+                throw new InvalidOperationException(
+                    "That Google account already belongs to a player here. Use SIGN IN instead.");
+            }
+
+            if (AuthenticationService.Instance.PlayerId != before)
+                throw new InvalidOperationException("Linking changed the player id; refusing to lose this machine's progress.");
+
+            Apply(Profile, signedIn: true, "Google account connected");
+            await SaveCloudProfileAsync();
+        }
+
+        /// <summary>
+        /// SIGN IN: moves to whichever account that Google identity owns.
+        ///
+        /// ⚠⚠ IT SIGNS OUT WITH `clearCredentials: false` AND PUTS THE SESSION BACK ON FAILURE,
+        /// for the reason `SignInAsync` records at length: `true` wipes the cached anonymous token
+        /// that is the only way back to this machine's existing player, and a failed sign-in that
+        /// leaves the service signed out poisons every account operation for the rest of the
+        /// launch. That fault shipped, and 🧑 met it as *"create acct doesnt work"*.
+        /// </summary>
+        public async Task SignInWithGoogleAsync()
+        {
+            await InitializeAsync();
+            if (UnityServices.State != ServicesInitializationState.Initialized)
+                throw new InvalidOperationException("UGS is unreachable. The local profile is still available.");
+
+            // ⚠️ THE BROWSER RUNS BEFORE THE SIGN-OUT, so a player who closes the tab still has
+            // the session they started with. Signing out first would make "I changed my mind" cost
+            // them their session for nothing.
+            string idToken = await GoogleSignIn.AcquireIdTokenAsync();
+
+            AuthenticationService.Instance.SignOut(clearCredentials: false);
+
+            try
+            {
+                await AuthenticationService.Instance.SignInWithGoogleAsync(idToken);
+            }
+            catch
+            {
+                await RestoreAnonymousSessionAsync();
+                throw;
+            }
+
+            NetIdentity.AdoptCurrentSession();
+
+            _proof = "";
+            _proofExpiresUtc = DateTime.MinValue;
+
+            await RefreshFromAuthenticationAsync(new AccountProfile());
+            Persist();
+        }
+
+        /// <summary>
+        /// Makes this class's `IsSignedIn` describe the service rather than the last thing that
+        /// happened to it, repairing the session if it can.
+        ///
+        /// ⚠️⚠️ IT IS CALLED BEFORE EVERY OPERATION THAT NEEDS A LIVE SESSION, because the
+        /// service can be signed out by something this class did (see `SignInAsync`) or by a
+        /// token expiring, and neither of those runs `Apply`. A flag that is only written on the
+        /// happy path is a flag that is wrong on exactly the path a player needs it.
+        /// </summary>
+        private async Task EnsureLiveSessionAsync()
+        {
+            if (UnityServices.State != ServicesInitializationState.Initialized) return;
+            if (AuthenticationService.Instance.IsSignedIn) return;
+
+            await RestoreAnonymousSessionAsync();
+        }
+
+        /// <summary>
+        /// Signs the anonymous session back in and tells the rest of the game about it.
+        ///
+        /// ⚠️ IT NEVER THROWS. Every caller is already reporting something else to the player,
+        /// and a repair that fails must not replace the real message with its own.
+        /// </summary>
+        private async Task RestoreAnonymousSessionAsync()
+        {
+            try
+            {
+                NetIdentity.ForgetCurrentSession();
+                bool online = await NetIdentity.EnsureSignedInAsync();
+                if (!online)
+                {
+                    Apply(Profile, signedIn: false, NetIdentity.StateReason);
+                    return;
+                }
+
+                NetIdentity.AdoptCurrentSession();
+                IsSignedIn = true;
+                IsLocalOnly = false;
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[PlayerAccount] could not restore the session: {e.Message}");
+                Apply(Profile, signedIn: false, "Signed out. Restart the game to sign back in.");
+            }
+        }
+
+        /// <summary>
+        /// Attaches a username and password to the account this machine is already playing on.
+        ///
+        /// ⚠️⚠️ `IsSignedIn` IS THIS CLASS'S OPINION AND `AuthenticationService.IsSignedIn`
+        /// IS THE FACT, AND CREATE ACCOUNT SHIPPED BROKEN ON THE DIFFERENCE. 🧑 2026-09-01, over the
+        /// boot CREATE tab with both fields filled: *"create acct doesnt work"*, and the red line
+        /// under the password read **"Invalid state for this operation. The player is signed
+        /// out."**, which is UGS's own message and not one this game writes.
+        ///
+        /// The path there is two presses. `SignInAsync` signs the anonymous session OUT before it
+        /// can sign a username in, because `SignInWithUsernamePasswordAsync` refuses to run while
+        /// a session is live. When that sign-in then FAILS, which is what happens the first time
+        /// anybody tries their new username before they have created it, nothing puts the
+        /// anonymous session back: the service is signed out and this class's `IsSignedIn` is
+        /// still `true`, because only `Apply` writes it and no `Apply` runs on that path. The
+        /// player switches to the CREATE tab, the guard above sees `true`, and
+        /// `AddUsernamePasswordAsync` is called against a signed-out service.
+        ///
+        /// ⚠️ SO THE GUARD ASKS THE SERVICE, AND THEN REPAIRS THE SESSION RATHER THAN REFUSING.
+        /// `NetIdentity.EnsureSignedInAsync` signs back in anonymously, and after
+        /// `SignInAsync`'s `SignOut(clearCredentials: false)` (see there) the cached session token
+        /// is still on disk, so it comes back as the SAME player id and the anonymous progress
+        /// this method exists to preserve is preserved.
+        /// </summary>
         public async Task UpgradeAsync(string username, string password)
         {
             await InitializeAsync();
+            await EnsureLiveSessionAsync();
             if (!IsSignedIn) throw new InvalidOperationException("Account linking needs UGS to be reachable.");
 
             string before = AuthenticationService.Instance.PlayerId;
@@ -367,8 +552,35 @@ namespace TumbangPreso.Net
             if (UnityServices.State != ServicesInitializationState.Initialized)
                 throw new InvalidOperationException("UGS is unreachable. The local profile is still available.");
 
-            AuthenticationService.Instance.SignOut(clearCredentials: true);
-            await AuthenticationService.Instance.SignInWithUsernamePasswordAsync(username?.Trim(), password);
+            // ⚠️⚠️ `clearCredentials: false`, AND `true` IS WHAT MADE A WRONG PASSWORD
+            // UNRECOVERABLE. Signing out is not optional here: `SignInWithUsernamePasswordAsync`
+            // refuses to run while a session is live. But `true` also wipes the cached anonymous
+            // SESSION TOKEN, and that token is the only thing that can bring the machine's
+            // existing anonymous player back; without it a repair sign-in mints a brand new
+            // player id and silently abandons every match, level and mastery this machine has
+            // earned. `false` keeps the token, so `EnsureLiveSessionAsync` below restores the
+            // same player.
+            //
+            // ⚠️ A SUCCESSFUL USERNAME SIGN-IN REPLACES THE CACHE ANYWAY, so keeping it costs
+            // nothing on the path that works and is the whole recovery on the path that does not.
+            AuthenticationService.Instance.SignOut(clearCredentials: false);
+
+            try
+            {
+                await AuthenticationService.Instance.SignInWithUsernamePasswordAsync(username?.Trim(), password);
+            }
+            catch
+            {
+                // ⚠️⚠️ THE SESSION IS PUT BACK BEFORE THE ERROR IS SHOWN, AND NOT DOING THIS IS
+                // 🧑's *"create acct doesnt work"*. A failed sign-in used to leave the service
+                // signed out for the rest of the launch while every screen in the game still read
+                // `IsSignedIn` as true, so the NEXT press, on any account operation, failed with
+                // UGS's own "the player is signed out" against a form that had nothing wrong
+                // with it. One wrong password poisoned the whole session.
+                await RestoreAnonymousSessionAsync();
+                throw;
+            }
+
             NetIdentity.AdoptCurrentSession();
 
             // A proof is minted for one account. Carrying it across a sign-in or a deletion

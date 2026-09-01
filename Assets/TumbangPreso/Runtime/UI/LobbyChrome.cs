@@ -256,7 +256,11 @@ namespace TumbangPreso.UI
         /// 3 rows x <see cref="SettingsRowHeight"/> + 2 gaps x 8 + the detail box + 36 of padding
         /// is 3 x 64 + 16 + 56 + 36 = 300.
         /// </summary>
-        private const float SettingsBodyHeight = 300.0f;
+        /// ⚠️ 364 SINCE PHASE 12: three selector rows became four (RULES, see `BuildFormatRow`)
+        /// and 64 is `SettingsRowHeight`. It is the rows plus the detail box plus the padding,
+        /// added up, rather than a number that looked right: a drawer sized by eye is a drawer
+        /// whose last row is outside it the first time anybody adds one.
+        private const float SettingsBodyHeight = 364.0f;
 
         /// <summary>
         /// One selector row: caption on the left, stepper on the right.
@@ -277,6 +281,18 @@ namespace TumbangPreso.UI
         /// </summary>
         private const float SettingsRowHeight = 64.0f;
         private const float SettingsCaptionWidth = 96.0f;
+
+        /// <summary>
+        /// How wide the value in a selector well actually is, for a caller that has to fit a
+        /// string into one.
+        ///
+        /// ⚠️ IT IS ARITHMETIC OFF THE RAIL AND NOT A GUESS: the rail is `LeftWidth`, the body
+        /// takes 16 either side, the row takes the caption column and a 14-unit gap, and the well
+        /// holds two `SettingsArrowSize` arrows with 6 units of spacing each side of the value.
+        /// `LAST TSINELAS STANDING` is what needs it (`ConvertedMatchSetup`'s RULES row).
+        /// </summary>
+        public const float FormatValueWidth =
+            LeftWidth - 32.0f - SettingsCaptionWidth - 14.0f - (SettingsArrowSize * 2.0f) - 32.0f;
         private const float SettingsArrowSize = 42.0f;
         private const int CaptionSize = 22;
         internal const int ValueSize = 26;
@@ -564,8 +580,76 @@ namespace TumbangPreso.UI
             CardCaption(card.transform, "PLAYING AS");
             BuildCharacterButton(card.transform, find, parts);
 
+            // ⚠⚠ YOUR SKILLS SITS DIRECTLY UNDER PLAYING AS, BECAUSE A LOADOUT IS A FACT ABOUT
+            // THE CHARACTER ON THE ROW ABOVE IT. 🧑 2026-09-01, twice, after the feature had
+            // already shipped: *"i also dont know hhow to navigae to loadouts section"*, and then
+            // *"btw fix ui for loadouts I oculdnt find it, place button for it whereveer it
+            // should belonng"*. **He commissioned the feature and could not reach it**, which is
+            // the strongest findability signal this project can get.
+            //
+            // ⚠️ IT IS A DEEP LINK INTO THE HUB'S LOADOUT TAB, NOT A SECOND SCREEN. § 6.3 bans a
+            // second DOOR to a hard-to-find destination and the answer it prescribes is to move
+            // the door; the destination moved (out of a collapsed group on the career tab, into a
+            // tab of its own) and this row is the lobby's way in. `PlayerHub.OpenLoadout`.
+            //
+            // ⚠⚠ AND IT IS HIDDEN IN CLASSIC RATHER THAN DISABLED. `docs/VISION.md` § 1.1:
+            // Classic has no kit and never gets one, so a greyed SKILLS row on a Classic lobby
+            // would be advertising a feature that mode does not have. `ConvertedMatchSetup`
+            // switches it with the mode.
+            CardCaption(card.transform, "YOUR SKILLS");
+            BuildLoadoutButton(card.transform, parts);
+
             CardCaption(card.transform, "YOUR PROFILE");
             BuildProfileButton(card.transform, parts);
+        }
+
+        /// <summary>
+        /// The lobby's way into the loadout, and the summary of what is equipped.
+        ///
+        /// ⚠️ IT IS BUILT LIKE THE CHARACTER ROW AND NOT LIKE THE PROFILE ROW, because it is the
+        /// same kind of thing: a current value with a chevron saying it can be changed. The
+        /// profile row is a destination with no value of its own, so it reads as a list of places.
+        /// </summary>
+        private static void BuildLoadoutButton(Transform parent, Parts parts)
+        {
+            var go = new GameObject("LoadoutButton", typeof(RectTransform), typeof(Image));
+            go.transform.SetParent(parent, false);
+
+            var image = go.GetComponent<Image>();
+            image.sprite = GodotTheme.WoodBox(UiTheme.WoodMid, UiTheme.WoodEdge);
+            image.type = Image.Type.Sliced;
+            image.color = Color.white;
+
+            var element = go.AddComponent<LayoutElement>();
+            element.minHeight = CardFieldHeight;
+            element.preferredHeight = CardFieldHeight;
+            element.flexibleHeight = 0.0f;
+
+            var button = go.AddComponent<Button>();
+            button.targetGraphic = image;
+            go.AddComponent<TextureButtonFeedback>();
+
+            var label = MenuKit.Label(go.transform, "", MenuKit.MinReadableUnits, UiTheme.Cream,
+                                      Vector2.zero, Vector2.zero, Vector2.zero,
+                                      TextAnchor.MiddleLeft);
+            label.name = "LoadoutValue";
+            label.raycastTarget = false;
+            label.horizontalOverflow = HorizontalWrapMode.Overflow;
+            MenuKit.Stretch(label.rectTransform, 0.0f);
+            label.rectTransform.offsetMin = new Vector2(18.0f, 0.0f);
+            label.rectTransform.offsetMax = new Vector2(-CardChevronGutter, 0.0f);
+
+            var chevron = MenuKit.Label(go.transform, "›", 30, UiTheme.Amber,
+                                        Vector2.zero, Vector2.zero, Vector2.zero,
+                                        TextAnchor.MiddleRight);
+            chevron.name = "LoadoutChevron";
+            chevron.raycastTarget = false;
+            MenuKit.Stretch(chevron.rectTransform, 0.0f);
+            chevron.rectTransform.offsetMax = new Vector2(-18.0f, 0.0f);
+
+            parts.LoadoutButton = button;
+            parts.LoadoutValue = label;
+            parts.LoadoutCaption = parent.GetChild(parent.childCount - 2).gameObject;
         }
 
         /// <summary>
@@ -927,6 +1011,20 @@ namespace TumbangPreso.UI
             /// <summary>The small line under it: the can and the slipper.</summary>
             public Text CharacterLoadout;
 
+            /// <summary>YOUR SKILLS: the row that opens `PlayerHub` on its LOADOUT tab, its
+            /// summary label, and the amber caption above it so both can be hidden together in
+            /// Classic. See <see cref="BuildLoadoutButton"/>.</summary>
+            public Button LoadoutButton;
+            public Text LoadoutValue;
+            public GameObject LoadoutCaption;
+
+            /// <summary>PHASE 12's RULES stepper. ⚠️ Handed back by reference rather than found by
+            /// name: the row is a clone made after `ConvertedScreen` built its name index. See
+            /// <see cref="BuildFormatRow"/>.</summary>
+            public Button FormatPrev;
+            public Button FormatNext;
+            public Text FormatValue;
+
             /// <summary>The door to `PlayerHub`, and the line on it. See
             /// <see cref="BuildProfileButton"/>.</summary>
             public Button ProfileButton;
@@ -1001,6 +1099,25 @@ namespace TumbangPreso.UI
             /// is three arbitrary roster strings: `ConvertedScreen.SetHeadline` records this
             /// project shipping that overflow four separate times.
             /// </summary>
+            /// <summary>
+            /// Writes the YOUR SKILLS row, or takes it off the card.
+            ///
+            /// ⚠️ THE CAPTION GOES WITH IT. Hiding the button alone leaves an amber YOUR SKILLS
+            /// heading over the profile row, which is a label naming the wrong control: the exact
+            /// shape of § 94.7's *"a value drawn 1600 px from its label"* in miniature.
+            /// </summary>
+            public void SetSkills(bool shown, string summary)
+            {
+                if (LoadoutButton != null) LoadoutButton.gameObject.SetActive(shown);
+                if (LoadoutCaption != null) LoadoutCaption.SetActive(shown);
+
+                if (!shown || LoadoutValue == null) return;
+
+                LoadoutValue.text = summary ?? "";
+                LoadoutValue.fontSize = MenuKit.MinReadableUnits;
+                MenuKit.Fit(LoadoutValue, CardWidth - (CardPadding * 2.0f) - CardChevronGutter);
+            }
+
             public void SetLoadout(string character, string loadout)
             {
                 if (CharacterName != null)
@@ -1457,7 +1574,11 @@ namespace TumbangPreso.UI
             {
                 rows.SetParent(body.transform, false);
 
-                float rowsHeight = (SettingsRowHeight * 3.0f) + 16.0f;
+                // ⚠️ FOUR ROWS SINCE PHASE 12, NOT THREE. `BuildFormatRow` adds RULES under BOTS,
+                // and this height is what the rows container claims: left at three, the fourth row
+                // drew outside the wood and over the cast's legs. `SettingsBodyHeight` carries the
+                // same arithmetic one rect out.
+                float rowsHeight = (SettingsRowHeight * 4.0f) + 16.0f;
 
                 var rowsElement = rows.GetComponent<LayoutElement>();
                 if (rowsElement == null) rowsElement = rows.gameObject.AddComponent<LayoutElement>();
@@ -1477,6 +1598,8 @@ namespace TumbangPreso.UI
                 DressSelectorRow(rows, "DifficultyRow", "DifficultyCaption", "BOTS",
                                  "DifficultySelector", "DifficultyPrevButton",
                                  "DifficultyValueLabel", "DifficultyNextButton");
+
+                BuildFormatRow(rows, parts);
             }
 
             var detail = find("DetailBox");
@@ -1630,6 +1753,69 @@ namespace TumbangPreso.UI
         /// caption and keeps its stepper rather than throwing halfway and leaving the panel in
         /// neither layout.
         /// </summary>
+        /// <summary>
+        /// PHASE 12's RULES row: STANDARD, LAST TSINELAS STANDING or MIRROR.
+        ///
+        /// ⚠⚠ IT IS A CLONE OF THE AUTHORED BOTS ROW RATHER THAN A ROW BUILT FROM SCRATCH, AND
+        /// THAT IS THE POINT. The three selector rows are `.tscn` nodes with authored arrow
+        /// TEXTURES on them (`Arrow`: *"the arrows are textures, not type, so the font's missing
+        /// glyph cannot reach them"*), an authored recessed plate and an authored inner layout.
+        /// A fourth row written in code would be a fourth visual language on a rail whose whole
+        /// redesign was about the first three not lining up, and `docs/VISION.md` § 6 is the
+        /// standing rule: **his UI art IS the design system**. `Instantiate` gets all of it free
+        /// and cannot drift from the other three.
+        ///
+        /// ⚠⚠ AND THE BUTTONS COME BACK ON `Parts` RATHER THAN BEING FOUND BY NAME. Every other
+        /// control on this screen is wired with `OnClick("SomeButton", ...)`, which reads
+        /// `ConvertedScreen`'s name index, and **that index is built in `Start` before this method
+        /// runs**. A clone made afterwards is not in it, so a name lookup would answer null and
+        /// the row would be a stepper whose arrows do nothing: `docs/TODO.md` § 108's EQUIP button
+        /// exactly, in a place nobody would think to look for it.
+        ///
+        /// ⚠️ THE WORD IS "RULES" AND NOT "FORMAT". `docs/Formats.md` calls the concept a format
+        /// because it needed a name that was not "mode"; the player reading a rail that already
+        /// says MAP, MODE and BOTS is better served by the plainest word for it. The value says
+        /// which one.
+        /// </summary>
+        private static void BuildFormatRow(Transform rows, Parts parts)
+        {
+            var source = Descend(rows, "DifficultyRow");
+            if (source == null) return;
+
+            var clone = UnityEngine.Object.Instantiate(source.gameObject, rows);
+            clone.name = "FormatRow";
+            clone.transform.SetAsLastSibling();
+
+            Rename(clone.transform, "DifficultyCaption", "FormatCaption");
+            Rename(clone.transform, "DifficultySelector", "FormatSelector");
+            Rename(clone.transform, "DifficultyPrevButton", "FormatPrevButton");
+            Rename(clone.transform, "DifficultyValueLabel", "FormatValueLabel");
+            Rename(clone.transform, "DifficultyNextButton", "FormatNextButton");
+
+            DressSelectorRow(rows, "FormatRow", "FormatCaption", "RULES",
+                             "FormatSelector", "FormatPrevButton",
+                             "FormatValueLabel", "FormatNextButton");
+
+            // ⚠️ THE CLONED LISTENERS GO. `Instantiate` copies a `Button`'s persistent
+            // `onClick` entries with it, so without this both arrows would still be cycling the
+            // BOT DIFFICULTY they were cloned from, on a row labelled RULES. Nothing would log.
+            var prev = Descend(clone.transform, "FormatPrevButton")?.GetComponent<Button>();
+            var next = Descend(clone.transform, "FormatNextButton")?.GetComponent<Button>();
+
+            if (prev != null) prev.onClick.RemoveAllListeners();
+            if (next != null) next.onClick.RemoveAllListeners();
+
+            parts.FormatPrev = prev;
+            parts.FormatNext = next;
+            parts.FormatValue = Descend(clone.transform, "FormatValueLabel")?.GetComponent<Text>();
+        }
+
+        private static void Rename(Transform root, string from, string to)
+        {
+            var node = Descend(root, from);
+            if (node != null) node.name = to;
+        }
+
         private static void DressSelectorRow(Transform rows, string row, string caption,
                                              string word, string selector, string prev,
                                              string value, string next)

@@ -165,6 +165,45 @@ namespace TumbangPreso.UI
         private static int DifficultyOptionCount => Difficulties.Length;
 
         /// <summary>
+        /// PHASE 12's RULES row, and its one line of detail each.
+        ///
+        /// ⚠⚠ THE NAMES AND THE SENTENCES COME OUT OF THE CORE, NOT OUT OF THIS FILE.
+        /// `CustomGameRules.FormatName` and `FormatBlurb` are the same strings `docs/Formats.md`
+        /// documents and the same ones a lobby advert will eventually carry; a second copy typed
+        /// here is the shape § 5's Design.md drift rule warns about, where the prose and the code
+        /// disagree and nobody can say which is the bug.
+        ///
+        /// ⚠️ THE DETAIL LINE IS PREFIXED WITH THE NAME to match `DifficultyDetails`, whose
+        /// entries read `EASY Slower reactions...`. The detail box draws one string and the first
+        /// word is what tells the player which option it is describing.
+        /// </summary>
+        private static string FormatLabel(int index)
+            => CustomGameRules.FormatName(FormatAt(index));
+
+        private static string FormatDetail(int index)
+            => CustomGameRules.FormatName(FormatAt(index)) + " " + CustomGameRules.FormatBlurb(FormatAt(index));
+
+        private static MatchFormat FormatAt(int index)
+            => index <= 0 ? MatchFormat.Standard : MatchFormat.Mirror;
+
+        /// <summary>
+        /// ⚠⚠ TWO, NOT THREE, AND LAST TSINELAS STANDING IS THE ONE MISSING. Its RULES are
+        /// written, tested and documented (`CustomGameRules`, `Phase11And12Tests`,
+        /// `docs/Formats.md` § 1) and **its match half is not built**: a tag has to cost a
+        /// tsinelas, a spent attacker has to be out for the round, and the round has to end when
+        /// one is left. Offering it on this row today would be a control that changes the caption
+        /// and nothing else, which is `docs/TODO.md` § 108's EQUIP button with no listener, and
+        /// this project has shipped that fault twice. **It goes in the row the day the match
+        /// obeys it**; `docs/TODO.md` § 115 carries the design and the remaining work.
+        ///
+        /// ⚠️ MIRROR IS COMPLETE AND SHIPS: `MatchInstaller` overrides every seat's character
+        /// from `CustomGameRules.MirrorIndex`, so picking it changes the four people who walk out.
+        /// </summary>
+        private const int FormatOptionCount = 2;
+
+        private int _format;
+
+        /// <summary>
         /// ⚠️⚠️ "THIS IS THE MULTIPLAYER LOBBY" AND "A TRANSPORT IS UP" ARE TWO DIFFERENT
         /// QUESTIONS, AND UNTIL 2026-08-28 THIS SCREEN ONLY HAD ONE OF THEM. Every branch here
         /// asked `NetSession.IsNetworked` and read a false as "practice mode", which was correct
@@ -261,6 +300,9 @@ namespace TumbangPreso.UI
             _difficulty = Mathf.Clamp(Settings.SettingsStore.Current.AiDifficulty, 0, DifficultyOptionCount - 1);
             AIController.ApplyDifficulty(_difficulty);
 
+            _format = Mathf.Clamp(Settings.SettingsStore.Current.MatchFormat, 0, FormatOptionCount - 1);
+            SceneFlow.SelectedFormat = FormatAt(_format);
+
             var previewNode = Node("MapPreview");
             if (previewNode != null) _preview = previewNode.GetComponent<MapPreviewSurface>();
 
@@ -277,6 +319,15 @@ namespace TumbangPreso.UI
 
             OnClick("DifficultyPrevButton", () => OnDifficultyCycle(-1));
             OnClick("DifficultyNextButton", () => OnDifficultyCycle(1));
+
+            // ⚠⚠ WIRED BY REFERENCE, NOT BY NAME, AND `LobbyChrome.BuildFormatRow` IS WHY: the
+            // RULES row is a clone made after `ConvertedScreen` built its name index, so
+            // `OnClick("FormatPrevButton", ...)` would find nothing and the arrows would be dead.
+            if (_chrome?.FormatPrev != null)
+                _chrome.FormatPrev.onClick.AddListener(() => OnFormatCycle(-1));
+
+            if (_chrome?.FormatNext != null)
+                _chrome.FormatNext.onClick.AddListener(() => OnFormatCycle(1));
 
             OnClick("CharacterButton", OpenCharacterSelect);
             OnClick("PrimaryButton", OnPrimaryPressed);
@@ -338,6 +389,7 @@ namespace TumbangPreso.UI
 
             MatchRpc.OnMapChanged += HandleMapSynced;
             MatchRpc.OnDifficultyChanged += HandleDifficultySynced;
+            MatchRpc.OnFormatChanged += HandleFormatSynced;
             MatchRpc.OnLobbyPicksSynced += HandleLobbyPicksSynced;
             MatchRpc.OnLobbyRosterSynced += HandleLobbyRosterSynced;
             MatchRpc.OnLobbyReadyChanged += HandleLobbyReadyChanged;
@@ -777,6 +829,12 @@ namespace TumbangPreso.UI
             _queueCard.Status += SetStatus;
             _queueCard.Joined += HandleJoinedInPlace;
 
+            // ⚠️ PHASE 11'S OFFER LANDS ON THE SAME START PATH THE BUTTON USES, and the card
+            // deliberately does not know how to start a match. See `QueueCard.StartWithBots`:
+            // every decision a start needs (the map, the seats, whether the room is networked)
+            // lives here, and a second path through them is `docs/TODO.md` § 38.5's dead protocol.
+            _queueCard.StartWithBots += StartAgainstBots;
+
             _joinPanel = LobbyJoinPanel.Build(canvas.transform, net);
             _joinPanel.Status += SetStatus;
             _joinPanel.Joined += HandleJoinedInPlace;
@@ -849,7 +907,52 @@ namespace TumbangPreso.UI
             if (_chrome?.ProfileButton != null)
                 _chrome.ProfileButton.onClick.AddListener(OpenPlayerHub);
 
+            // ⚠️ YOUR SKILLS LANDS ON THE LOADOUT TAB DIRECTLY. See `PlayerHub.OpenLoadout` and
+            // `LobbyChrome.BuildLoadoutButton`: 🧑 could not find the loadout twice, and the answer
+            // is the row under the character it belongs to rather than a fifth place to look.
+            if (_chrome?.LoadoutButton != null)
+                _chrome.LoadoutButton.onClick.AddListener(OpenLoadout);
+
             RefreshProfileDoor();
+        }
+
+        /// <summary>
+        /// The two words on the YOUR SKILLS row: the hero, and how many of its skills are on a
+        /// non-default reading.
+        ///
+        /// ⚠⚠ IT NAMES THE HERO BECAUSE A BUILD BELONGS TO ONE. Six heroes have their own
+        /// builds and only one of them is the character on the row above; a summary that said
+        /// *"2 of 2 changed"* with no name would be a fact about somebody the player is not
+        /// playing. `HeroBuildRules.RowFor` is per hero for the same reason.
+        ///
+        /// ⚠️ AND A CLASSIC CHARACTER NEVER REACHES THIS. `SetSkills` hides the whole row in
+        /// Classic (`docs/VISION.md` § 1.1), so this is only ever asked about a hero.
+        /// </summary>
+        private static string EquippedBuildSummary()
+        {
+            var people = Roster.GetPeople(GameMode.HeroStrike);
+            var hero = Roster.At(people, Settings.SettingsStore.Current.CharacterPick);
+            if (hero == null) return "Pick a build";
+
+            var settings = Settings.SettingsStore.Current;
+            var build = HeroBuildRules.RowFor(settings.HeroBuilds, hero.Id);
+
+            int changed = 0;
+            for (int slot = 1; slot <= 2; slot++)
+            {
+                var equipped = HeroBuildRules.Equipped(build, hero.Id, slot, settings.AbilityChallenges);
+                if (equipped != null && !equipped.IsDefault) changed++;
+            }
+
+            return changed == 0
+                ? hero.Name + "  ·  standard build"
+                : hero.Name + $"  ·  {changed} of 2 changed";
+        }
+
+        private void OpenLoadout()
+        {
+            MenuSfx.Click();
+            _hub?.OpenLoadout();
         }
 
         private void OpenPlayerHub()
@@ -1664,6 +1767,38 @@ namespace TumbangPreso.UI
             Refresh();
         }
 
+        /// <summary>
+        /// PHASE 11: the player waited, nobody came, and they pressed START WITH BOTS.
+        ///
+        /// ⚠⚠ IT TURNS THE BOTS ON RATHER THAN ASSUMING THEY ARE. `AIController.BotsEnabled` is
+        /// false whenever the practice lobby is set to NONE, and it is a STATIC that survives the
+        /// scene: a player who turned bots off to practise alone, then queued, then accepted three
+        /// bots would otherwise be refused by `OnStartPressed`'s own guard, on a press whose whole
+        /// text is the word BOTS. The tier is left exactly where they set it.
+        ///
+        /// ⚠⚠ AND IT PRESSES THE LOBBY'S OWN PRIMARY BUTTON RATHER THAN REIMPLEMENTING IT.
+        /// `OnPrimaryPressed` already answers the only question that matters here, *"is this room
+        /// networked"*: a solo practice lobby loads the arena, and a networked one goes through
+        /// the ready gate and the host. Writing that branch a second time is exactly the shape
+        /// `docs/TODO.md` § 38.5 records costing three dead protocols, and the branch it would
+        /// have duplicated is the one that decides whether a match happens at all.
+        /// </summary>
+        private void StartAgainstBots()
+        {
+            if (_difficulty == AIController.NoBotsIndex)
+            {
+                _difficulty = (int)Core.Difficulty.Normal;
+                Settings.SettingsStore.Current.AiDifficulty = _difficulty;
+                Settings.SettingsStore.Save();
+            }
+
+            AIController.ApplyDifficulty(_difficulty);
+            AIController.BotsEnabled = true;
+
+            Refresh();
+            OnPrimaryPressed();
+        }
+
         private void OnStartPressed()
         {
             var net = NetSession.Instance;
@@ -1755,6 +1890,49 @@ namespace TumbangPreso.UI
         {
             _map = Mathf.Clamp(mapIndex, 0, SceneFlow.Maps.Length - 1);
             Refresh();
+        }
+
+        /// <summary>
+        /// PHASE 12: cycle the RULES row.
+        ///
+        /// ⚠️ ONLY THE HOST MAY CHANGE IT IN A NETWORKED ROOM, exactly like the map and the
+        /// mode. A format decides the win condition, so a peer that could set it could hand three
+        /// other people a different game between the lobby and the whistle.
+        /// </summary>
+        private void OnFormatCycle(int delta)
+        {
+            if (!NetAuthority.IsHost && SceneFlow.Networked) return;
+
+            Cycle(ref _format, FormatOptionCount, delta);
+            ApplyFormat();
+
+            if (SceneFlow.Networked && NetAuthority.IsHost)
+                MatchRpc.Instance?.SelectFormatServerRpc(_format);
+
+            MenuSfx.Click();
+            Refresh();
+        }
+
+        private void HandleFormatSynced(int format)
+        {
+            _format = Mathf.Clamp(format, 0, FormatOptionCount - 1);
+            ApplyFormat();
+            Refresh();
+        }
+
+        /// <summary>
+        /// ⚠️ THE SETTING IS WRITTEN HERE AND NOT IN `Refresh`, because `Refresh` runs on every
+        /// redraw including one caused by a REMOTE change. A peer that saved the host's choice
+        /// would open its own next practice lobby on somebody else's rules.
+        /// </summary>
+        private void ApplyFormat()
+        {
+            SceneFlow.SelectedFormat = FormatAt(_format);
+
+            if (SceneFlow.Networked && !NetAuthority.IsHost) return;
+
+            Settings.SettingsStore.Current.MatchFormat = _format;
+            Settings.SettingsStore.Save();
         }
 
         private void HandleDifficultySynced(int difficulty)
@@ -2153,6 +2331,17 @@ namespace TumbangPreso.UI
 
             SetText("ModeValueLabel", SceneFlow.SelectedMode == GameMode.HeroStrike ? "HERO STRIKE" : "CLASSIC");
             SetText("DifficultyValueLabel", Difficulties[_difficulty]);
+
+            if (_chrome?.FormatValue != null)
+            {
+                _chrome.FormatValue.text = FormatLabel(_format);
+
+                // ⚠️ FITTED, BECAUSE `LAST TSINELAS STANDING` IS 21 CHARACTERS IN A WELL SIZED
+                // FOR `ILALIM NG TULAY`. `MenuKit.Label` OVERFLOWS by default and the failure is
+                // silent: the value does not shrink, it draws over the arrow beside it.
+                // `CLAUDE.md` § 6.2c question 4.
+                MenuKit.Fit(_chrome.FormatValue, LobbyChrome.FormatValueWidth);
+            }
             SetText("DetailLabel", $"{mapName}   {tagline}");
 
             if (_preview != null)
@@ -2177,6 +2366,13 @@ namespace TumbangPreso.UI
             // `LobbyChrome.BuildCharacterButton` for why the split is the point of the redesign
             // rather than a formatting preference.
             if (_chrome != null) _chrome.SetLoadout(person, $"{can}  ·  {slipper}");
+
+            // ⚠⚠ THE SKILLS ROW SAYS WHAT IS EQUIPPED RATHER THAN THE WORD "LOADOUT" TWICE. The
+            // caption above it already says YOUR SKILLS; a row that then reads LOADOUT is
+            // § 94.7's *"the same number twice"* one control over. What a player wants to know
+            // before pressing it is which build they are about to take into the match.
+            if (_chrome != null)
+                _chrome.SetSkills(SceneFlow.SelectedMode == GameMode.HeroStrike, EquippedBuildSummary());
             else SetText("CharacterButton", $"{person} · {can} · {slipper}  ›");
 
             // Heading & hints
@@ -2877,6 +3073,7 @@ namespace TumbangPreso.UI
 
             MatchRpc.OnMapChanged -= HandleMapSynced;
             MatchRpc.OnDifficultyChanged -= HandleDifficultySynced;
+            MatchRpc.OnFormatChanged -= HandleFormatSynced;
             MatchRpc.OnLobbyPicksSynced -= HandleLobbyPicksSynced;
             MatchRpc.OnLobbyRosterSynced -= HandleLobbyRosterSynced;
             MatchRpc.OnLobbyReadyChanged -= HandleLobbyReadyChanged;

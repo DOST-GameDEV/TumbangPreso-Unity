@@ -468,6 +468,52 @@ namespace TumbangPreso.Core
         /// ⚠️ THE FLOOR IS RAISED BEFORE IT IS ENFORCED, so reaching a tier and immediately losing
         /// cannot drop out of the tier that was just reached. That ordering IS the promise.
         /// </summary>
+        /// <summary>
+        /// Scales a whole outcome toward "this did not happen", for a match that had bots in it.
+        ///
+        /// ⚠⚠ THE DEVIATION AND THE VOLATILITY ARE SCALED TOO, AND TAKING ONLY THE RATING
+        /// WOULD BE THE SUBTLE VERSION OF THE EXPLOIT THIS EXISTS TO CLOSE. Deviation is
+        /// CONFIDENCE: it shrinks with every match played, and a shrunk deviation is what makes
+        /// later results move a rating less. Farming bots at a third of the rating gain while
+        /// collecting a full match of confidence would let somebody lock in a soft rating and
+        /// then defend it against people.
+        ///
+        /// ⚠⚠ AND A ZERO-WEIGHT MATCH IS NOT A SEASON MATCH. `MatchesThisSeason` is what the
+        /// profile calls "Season Matches"; a result that moved nothing must not look like a game
+        /// played on the ladder. `BotFillRules.RatingCounts` is the same statement one file over.
+        ///
+        /// ⚠⚠ THIS IS WRITTEN TWICE, HERE AND IN `ugs/cloud-code/match-record.js` (`blendRank`),
+        /// FOR THE REASON `IntegrityRules.Digest` IS: the server computes the rating and the game
+        /// has to be able to say what it will be. `Phase11Tests` asserts the pair against one
+        /// table, which is the cheap half of what `tools/check_digest_contract.js` does for the
+        /// digest.
+        /// </summary>
+        public static RankState Blend(RankState before, RankState after, double weight)
+        {
+            if (weight >= 1.0) return after;
+            if (weight <= 0.0) return before;
+
+            // ⚠️ A COPY, BECAUSE `RankState` IS A CLASS. Writing through `after` would edit the
+            // caller's own object, and the caller is the endpoint holding the unblended result it
+            // may still need if the match is disputed.
+            var blended = new RankState
+            {
+                Rating = after.Rating,
+                Deviation = after.Deviation,
+                Volatility = after.Volatility,
+                MatchesThisSeason = after.MatchesThisSeason,
+                Season = after.Season,
+                FloorTier = after.FloorTier,
+                PeakTier = after.PeakTier,
+            };
+
+            blended.Rating = before.Rating + (after.Rating - before.Rating) * weight;
+            blended.Deviation = before.Deviation + (after.Deviation - before.Deviation) * weight;
+            blended.Volatility = before.Volatility + (after.Volatility - before.Volatility) * weight;
+
+            return ApplyFloors(blended);
+        }
+
         public static RankState ApplyFloors(RankState state)
         {
             if (state == null) return null;

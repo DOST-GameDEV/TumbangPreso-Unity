@@ -374,6 +374,20 @@ namespace TumbangPreso.Settings
         /// re-read every saved setting one tier out.</summary>
         public int AiDifficulty = 1;
 
+        /// <summary>
+        /// PHASE 12: the match FORMAT the lobby was last left on. 0 standard, 1 last tsinelas,
+        /// 2 mirror.
+        ///
+        /// ⚠️ STORED AS AN INT for the reason <see cref="AiDifficulty"/> records: this file is
+        /// read back by builds whose list may have grown a row, and an int with a clamp survives
+        /// that where an enum name does not. `CustomGameRules.Parse` clamps it on the way in.
+        ///
+        /// ⚠️ AND IT IS A PREFERENCE, NOT THE MATCH'S ANSWER. `SceneFlow.SelectedFormat` is what
+        /// a running match reads and `MatchRpc.SelectFormatServerRpc` is what a room agrees on;
+        /// this is only what the lobby opens showing.
+        /// </summary>
+        public int MatchFormat;
+
         // -------------------------------------------------------------------
         // PICKS. Carried into a match by GameLaunch.
         // -------------------------------------------------------------------
@@ -499,6 +513,7 @@ namespace TumbangPreso.Settings
             MusicVolume = Mathf.Clamp01(MusicVolume);
             MouseSensitivity = Mathf.Clamp(MouseSensitivity, 0.1f, 5.0f);
             AiDifficulty = Mathf.Clamp(AiDifficulty, 0, AIController.NoBotsIndex);
+            MatchFormat = Mathf.Clamp(MatchFormat, 0, (int)Core.MatchFormat.Mirror);
             SlipperHighlight = Mathf.Clamp(SlipperHighlight, 0, SlipperHighlights.All.Length - 1);
             AntiAliasMode = Mathf.Clamp(AntiAliasMode, 0, AntiAliasModes.All.Length - 1);
             VSyncMode = Mathf.Clamp(VSyncMode, 0, VSyncModes.All.Length - 1);

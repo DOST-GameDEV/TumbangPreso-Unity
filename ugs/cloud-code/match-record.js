@@ -844,6 +844,50 @@ function ratingUpdate(before, opponents, scores) {
  * limitation with the exact fix for the day there is a budget: one read of a shared per-match
  * rank snapshot written by the first submitter.
  */
+/**
+ * Mirrors `BotFillRules.Weight`: every human seat past the first is a quarter of the result.
+ * Four humans is 1.0, three is 0.667, two is 0.333, one is 0.0.
+ *
+ * ⚠⚠  THE C# AND THIS MUST AGREE, and `RatingRules.BotWeight` is the other copy.
+ * `IntegrityRules.Digest` is written twice for the same reason and `tools/check_digest_contract.js`
+ * is the gate on that pair; this pair is asserted by `Phase11Tests` against the same table.
+ */
+function botWeight(humans, seats) {
+    if (!seats || seats <= 1) return 0.0;
+
+    const capped = Math.max(0, Math.min(seats, humans || 0));
+    const w = (capped - 1) / (seats - 1);
+
+    return Math.max(0.0, Math.min(1.0, w));
+}
+
+/**
+ * Scales a whole Glicko-2 outcome toward "this did not happen".
+ *
+ * ⚠⚠  IT LERPS THE DEVIATION AND THE VOLATILITY TOO, NOT JUST THE RATING, and taking only
+ * the rating would have been the subtle version of the same exploit. Deviation is CONFIDENCE:
+ * it shrinks with every match played, and a shrinking deviation is what makes later results
+ * move a rating less. Farming bots at a third of the rating gain while collecting a full match's
+ * worth of confidence would let somebody lock in a soft rating and then defend it.
+ *
+ * ⚠⚠  AND A ZERO-WEIGHT MATCH DOES NOT COUNT AS A SEASON MATCH EITHER. `MatchesThisSeason`
+ * is what the profile screen calls "Season Matches" and what a placement count would read; a
+ * match that moved nothing must not appear to have been played on the ladder. Mirrors
+ * `BotFillRules.RatingCounts`.
+ */
+function blendRank(before, after, weight) {
+    if (weight >= 1.0) return after;
+    if (weight <= 0.0) return Object.assign({}, before);
+
+    const blended = Object.assign({}, after);
+
+    blended.Rating = before.Rating + (after.Rating - before.Rating) * weight;
+    blended.Deviation = before.Deviation + (after.Deviation - before.Deviation) * weight;
+    blended.Volatility = before.Volatility + (after.Volatility - before.Volatility) * weight;
+
+    return applyFloors(blended);
+}
+
 function rankedResult(rank, myPlacement, allPlacements) {
     const opponents = [];
     const scores = [];
@@ -1111,9 +1155,25 @@ module.exports = async ({ params, context, logger }) => {
             const index = record.Players.indexOf(line);
             const allPlacements = record.Players.map(p => (p && !p.IsBot) ? p.Placement : null);
 
-            const after = rankedResult(Object.assign({}, profile.Rank),
-                                       { index: index, place: line.Placement },
-                                       allPlacements);
+            // ⚠⚠⚠  PHASE 11: A RESULT WITH BOTS IN IT DOES NOT MOVE A RATING THE SAME AMOUNT
+            // AS ONE WITHOUT, AND THIS IS THE SERVER HALF OF `BotFillRules.Weight`. The queue is
+            // allowed to fill a ranked match with bots (`FUTURE.md` § 11, reversing its own
+            // earlier rule on 🧑's instruction, with the reason and the expiry recorded), and the
+            // condition attached to that reversal is this one: *"a result with a bot in it cannot
+            // move a rating the same amount as one without, or the fastest climb in the game is
+            // queueing at 4 a.m."*
+            //
+            // ⚠⚠  IT IS COMPUTED FROM THE RECORD RATHER THAN SENT, so a client cannot claim a
+            // full-weight result by asserting one. `IsBot` is already in the digest every peer
+            // hashes (see `digestOf`), so a host that lies about it fails corroboration.
+            const humans = record.Players.filter(p => p && !p.IsBot).length;
+            const weight = botWeight(humans, record.Players.length);
+
+            const after = blendRank(profile.Rank,
+                                    rankedResult(Object.assign({}, profile.Rank),
+                                                 { index: index, place: line.Placement },
+                                                 allPlacements),
+                                    weight);
 
             if (verdict === "witnessed") {
                 profile.Rank = after;

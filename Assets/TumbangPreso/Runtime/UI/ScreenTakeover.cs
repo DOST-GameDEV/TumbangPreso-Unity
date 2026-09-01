@@ -55,6 +55,34 @@ namespace TumbangPreso.UI
                 if (ReferenceEquals(Registered[i].Owner, owner)) Registered.RemoveAt(i);
         }
 
+        /// <summary>
+        /// The frame a takeover screen last acted on Escape.
+        ///
+        /// ⚠️⚠️ ONE PRESS OF ESCAPE IS READ BY EVERY `Update` IN THE PROCESS, AND THAT IS HOW
+        /// BACKING OUT OF THE CHARACTER MAKER PUT 🧑 ON THE LOGIN SCREEN. 2026-09-01: *"clicking
+        /// escape from make your own put me here"*, with a shot of the boot CREATE ACCOUNT screen.
+        /// `Input.GetKeyDown` is a fact about the frame, not a queue: `CustomCharacterScreen`
+        /// closed itself, and in the same frame `ConvertedScreen.Update` under it read the same
+        /// key and backed the character select out to the main menu, which is where the boot
+        /// login step lives. **Two screens left on one press, and the player pressed once.**
+        ///
+        /// ⚠️ IT IS A FRAME STAMP AND NOT A `Handled` BOOL, BECAUSE SCRIPT ORDER IS UNDEFINED.
+        /// Asking `AnyOpen` alone covers the case where the screen underneath updates FIRST (the
+        /// takeover is still open, so it stands down) and this covers the other order (the
+        /// takeover has already closed, so nothing is open any more and only the stamp remembers
+        /// that the key was spent). Neither half is sufficient on its own and both are cheap.
+        /// </summary>
+        private static int _escapeFrame = -1;
+
+        /// <summary>Called by a takeover screen that has just acted on Escape.</summary>
+        public static void ConsumeEscape() => _escapeFrame = Time.frameCount;
+
+        /// <summary>
+        /// True when Escape must not be acted on: a takeover is covering the game, or one has
+        /// already spent this press.
+        /// </summary>
+        public static bool EscapeIsSpoken => AnyOpen || _escapeFrame == Time.frameCount;
+
         /// <summary>True while any registered screen is covering the game.</summary>
         public static bool AnyOpen
         {

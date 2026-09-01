@@ -189,6 +189,21 @@ namespace TumbangPreso.UI
         public static GameMode SelectedMode = GameMode.HeroStrike;
 
         /// <summary>
+        /// PHASE 12: which FORMAT the next match plays. Standard is the game as it ships.
+        ///
+        /// ⚠⚠ IT SITS BESIDE THE MODE AND NEVER REPLACES IT, which is the distinction
+        /// `docs/Formats.md` § 0 exists to hold: Classic and Hero Strike are two games, and a
+        /// format is a rule change played inside either one. A Classic Last Tsinelas match is
+        /// still a Classic match in the career.
+        ///
+        /// ⚠️ IT IS A SESSION FACT LIKE `SelectedMode`, WRITTEN BY THE LOBBY AND READ BY THE
+        /// MATCH, and it is mirrored into `settings.json` by the lobby so a player who picked
+        /// MIRROR last night finds it still picked. `MatchRpc.SelectFormatServerRpc` is what makes
+        /// every machine in a room agree about it.
+        /// </summary>
+        public static MatchFormat SelectedFormat = MatchFormat.Standard;
+
+        /// <summary>
         /// A join code the next `MatchSetup` should act on, set by a screen that is not the lobby.
         ///
         /// ⚠️⚠️ IT EXISTS SO THERE IS ONE JOIN PATH RATHER THAN TWO. `docs/TODO.md` § 102: the
@@ -231,6 +246,29 @@ namespace TumbangPreso.UI
         /// questions, and collapsing them would either nag every launch or ask nobody.
         /// </summary>
         public static bool BootedThroughSplash;
+
+        /// <summary>
+        /// True once THIS launch has already shown the login step.
+        ///
+        /// ⚠️⚠️ `BootedThroughSplash` IS NEVER CLEARED, SO ON ITS OWN IT SAYS "EVERY TIME THIS
+        /// PROCESS SHOWS THE MAIN MENU", NOT "ONCE PER LAUNCH". 🧑 2026-09-01, after pressing
+        /// Escape in the character maker: *"clicking escape from make your own put me here"*,
+        /// with a shot of the boot CREATE ACCOUNT screen. Escape backed the screen underneath out
+        /// to the main menu (which `ScreenTakeover.EscapeIsSpoken` now prevents), the menu's
+        /// `Start` ran again, and `OfferTheLoginStep` asked the same question a second time
+        /// because nothing had recorded that it had already been answered.
+        ///
+        /// ⚠️ TWO FLAGS AND NOT ONE, for the same reason § 97.1 gives for keeping
+        /// `BootedThroughSplash` and `GameSettings.AccountChoiceMade` apart: *"did this process
+        /// boot"* and *"has this launch already asked"* are different questions, and collapsing
+        /// them either nags on every scene load or asks nobody. The menu is reached three ways
+        /// (the splash, `LeaveMatchToMainMenu`, and a test loading it by name) and only the first
+        /// is a launch; this is what makes the other two silent.
+        ///
+        /// ⚠️ AND IT IS NOT SAVED, exactly like the flag above it. It is a fact about the
+        /// process, and 🧑 asked for the login step on EVERY launch (`docs/TODO.md` § 114.5).
+        /// </summary>
+        public static bool LoginStepOffered;
 
         public static void Go(string scene)
         {
@@ -322,6 +360,11 @@ namespace TumbangPreso.UI
             Networked = false;
             SelectedMap = Eskinita;
             SelectedMode = GameMode.HeroStrike;
+
+            // ⚠️ THE TUTORIAL IS ALWAYS STANDARD. It teaches the game's own rules, and a player
+            // who left MIRROR selected last night would otherwise be taught tumbang preso by four
+            // copies of one character.
+            SelectedFormat = MatchFormat.Standard;
 
             Go(Eskinita);
         }

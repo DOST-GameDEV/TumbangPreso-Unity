@@ -309,6 +309,8 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("SelectMode", OnSelectModeMsg);
             cm.RegisterNamedMessageHandler("SyncDiff", OnSyncDiffMsg);
             cm.RegisterNamedMessageHandler("SelectDiff", OnSelectDiffMsg);
+            cm.RegisterNamedMessageHandler("SyncFormat", OnSyncFormatMsg);
+            cm.RegisterNamedMessageHandler("SelectFormat", OnSelectFormatMsg);
             cm.RegisterNamedMessageHandler("SyncLobbyPicks", OnSyncLobbyPicksMsg);
             cm.RegisterNamedMessageHandler("SelectLobbyPick", OnSelectLobbyPickMsg);
             cm.RegisterNamedMessageHandler("SyncPicks", OnSyncPicksMsg);
@@ -2947,6 +2949,66 @@ namespace TumbangPreso.Net
                 _nm.CustomMessagingManager.SendNamedMessageToAll("SyncDiff", writer);
             }
             OnDifficultyChanged?.Invoke(difficulty);
+        }
+
+        /// <summary>
+        /// PHASE 12: the match FORMAT, which rides beside the mode rather than replacing it.
+        ///
+        /// ⚠⚠ IT IS ITS OWN MESSAGE AND NOT A FIELD ON `SelectMode`, and the reason is
+        /// `LobbySeatInfo`'s: **a field added to one half of a named message is not an error, it
+        /// is silently misread bytes** (`docs/TODO.md` § 38.6, and `tools/audit_wire_payloads.py`
+        /// exists because of it). Widening an existing message costs a protocol break either way,
+        /// and a new name makes a build that does not know the format ignore it rather than read
+        /// a mode out of the wrong four bytes.
+        ///
+        /// ⚠️ AND `ProtocolVersion` STILL MOVES, 20 -> 21, because a host on 21 running LAST
+        /// TSINELAS STANDING and a client on 20 playing standard rules would be two different
+        /// games sharing a scoreboard. `NetSession.ProtocolVersion`: both machines rebuild off
+        /// the same branch or they refuse each other at approval, by design.
+        /// </summary>
+        public static event Action<int> OnFormatChanged;
+
+        public void SelectFormatServerRpc(int format)
+        {
+            if (NetAuthority.IsHost)
+            {
+                SyncFormatClientRpc(format);
+                return;
+            }
+
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+            using var writer = new FastBufferWriter(16, Allocator.Temp);
+            writer.WriteValueSafe(format);
+            _nm.CustomMessagingManager.SendNamedMessage("SelectFormat", NetworkManager.ServerClientId, writer);
+        }
+
+        private void OnSelectFormatMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
+            if (!SenderMayConfigureLobby(senderClientId)) return;
+            reader.ReadValueSafe(out int format);
+            SyncFormatClientRpc(format);
+        }
+
+        private void SyncFormatClientRpc(int format)
+        {
+            if (!NetAuthority.IsHost) return;
+            if (_nm != null && _nm.CustomMessagingManager != null)
+            {
+                using var writer = new FastBufferWriter(16, Allocator.Temp);
+                writer.WriteValueSafe(format);
+                _nm.CustomMessagingManager.SendNamedMessageToAll("SyncFormat", writer);
+            }
+            OnFormatChanged?.Invoke(format);
+        }
+
+        private void OnSyncFormatMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            // ⚠️ See `OnSyncDiffMsg`: the host is its own client and a broadcast loops back.
+            if (NetAuthority.IsHost) return;
+
+            reader.ReadValueSafe(out int format);
+            OnFormatChanged?.Invoke(format);
         }
 
         private void OnSyncDiffMsg(ulong senderClientId, FastBufferReader reader)

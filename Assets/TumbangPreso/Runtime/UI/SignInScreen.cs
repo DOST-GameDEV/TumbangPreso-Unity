@@ -1,4 +1,5 @@
 using System;
+using TumbangPreso.Net;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -137,10 +138,16 @@ namespace TumbangPreso.UI
             if (_atBoot) return;
             if (!Input.GetKeyDown(KeyCode.Escape)) return;
 
+            // ⚠️ SPENT, so the screen underneath does not back out on the same press. See
+            // `ScreenTakeover.ConsumeEscape`.
+            ScreenTakeover.ConsumeEscape();
             Close();
             MenuSfx.Back();
         }
         private bool _creating;
+
+        /// <summary>CONTINUE WITH GOOGLE, or null in a build with no client id. See `BuildForm`.</summary>
+        private Button _googleButton;
 
         /// <summary>Raised when the player leaves, whether they signed in or not, so the hub can
         /// come back up where it was.</summary>
@@ -157,9 +164,15 @@ namespace TumbangPreso.UI
         /// </summary>
         public event Action<bool> Opened;
 
+        private void OnDestroy() => ScreenTakeover.Unregister(this);
+
         public void Install()
         {
             if (_canvas != null) return;
+
+            // ⚠️ REGISTERED AS A TAKEOVER. It covers everything, including the hub, and the
+            // register is how a screen underneath finds out. See `ScreenTakeover.EscapeIsSpoken`.
+            ScreenTakeover.Register(this, () => IsOpen);
 
             _canvas = MenuKit.BuildCanvas(transform, "SignInCanvas");
 
@@ -390,11 +403,41 @@ namespace TumbangPreso.UI
             // It is the second thing a player might do here, so it belongs beside the first;
             // parked at the bottom it was separated from the form by a screen of nothing and
             // read as unrelated chrome. **A choice and its alternative are one group.**
+            // ⚠⚠ THE GOOGLE BUTTON IS BUILT ONLY IF THIS BUILD HAS A CLIENT ID, AND THE TWO
+            // BUTTONS UNDER IT MOVE UP WHEN IT IS NOT. 🧑 2026-09-01: *"can we add some sort of
+            // authentication too? like an option to sign inn with google acct or connect google
+            // acct"*. `GoogleSignIn.IsAvailable` is false until somebody puts a client id in
+            // `Resources/google_oauth.txt`, and the two ways of handling that are both wrong:
+            // a visible button that explains why it cannot work is `docs/TODO.md` § 108's dead
+            // EQUIP button with an apology on it, and a HIDDEN button that leaves its 62 units of
+            // hole behind is the *"ugly big ass space"* this column was rebuilt to remove. So the
+            // row does not exist and the column closes up.
+            //
+            // ⚠️ IT IS PLAIN WOOD, NOT GREEN. `GodotTheme`'s rule is that green means ACT and
+            // there is one action per screen; the primary button IS the action here and a second
+            // green control beside it would make the player choose between two equals. This is the
+            // other way to do the same thing, so it reads as the alternative it is.
+            //
+            // ⚠️ AND THE VERB FOLLOWS THE TAB, exactly like the primary. On CREATE it CONNECTS
+            // Google to the account this machine already has, keeping every match played on it; on
+            // SIGN IN it moves to whichever account owns that Google identity. `SetMode`'s note is
+            // the long version and `PlayerAccount.LinkGoogleAsync` is the other half.
+            bool google = GoogleSignIn.IsAvailable;
+            float guestY = google ? -382.0f : -320.0f;
+            float backY = google ? -444.0f : -382.0f;
+
+            if (google)
+            {
+                _googleButton = MenuKit.WoodButton(col, "CONTINUE WITH GOOGLE", Centre,
+                    new Vector2(0.0f, -316.0f), new Vector2(420.0f, 54.0f), GooglePressed);
+                _googleButton.name = "GoogleButton";
+            }
+
             _guest = MenuKit.WoodButton(col, "PLAY AS GUEST", Centre,
-                new Vector2(0.0f, -320.0f), new Vector2(300.0f, 48.0f), GuestPressed);
+                new Vector2(0.0f, guestY), new Vector2(300.0f, 48.0f), GuestPressed);
 
             _back = MenuKit.WoodButton(col, "BACK", Centre,
-                new Vector2(0.0f, -382.0f), new Vector2(300.0f, 48.0f), Close);
+                new Vector2(0.0f, backY), new Vector2(300.0f, 48.0f), Close);
 
             _formPieces = new GameObject[col.childCount - formStart];
             for (int i = formStart; i < col.childCount; i++)
@@ -663,6 +706,21 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>
+        /// The same screen, opened on CREATE, for a caller who already knows the player wants to
+        /// attach a credential rather than switch accounts.
+        ///
+        /// ⚠️ IT IS <see cref="Open"/> WITH THE MODE FORCED, NOT A THIRD ENTRY POINT. The hub's
+        /// CONNECT row knows which of the two verbs it means; `Open` guesses from
+        /// `HasPassword`, and for a player who HAS a password but no Google account that guess is
+        /// the wrong one.
+        /// </summary>
+        public void OpenForUpgrade()
+        {
+            Open();
+            SetMode(true);
+        }
+
+        /// <summary>
         /// The same screen, as the LOGIN step of the boot sequence, on every launch.
         ///
         /// ⚠️⚠️ "ONCE PER MACHINE" IS GONE AND THAT WAS 🧑'S CALL ON 2026-09-01, WITH THE FLOW
@@ -784,6 +842,19 @@ namespace TumbangPreso.UI
                 : "";
             _error.color = creating ? UiTheme.CreamMuted : UiTheme.Danger;
 
+            // ⚠️ THE GOOGLE VERB FOLLOWS THE TAB TOO, so the two ways of doing the same thing
+            // agree about which thing it is. CONNECT keeps this machine's progress; SIGN IN moves
+            // to another account. See `PlayerAccount.LinkGoogleAsync`.
+            if (_googleButton != null)
+            {
+                var googleLabel = _googleButton.GetComponentInChildren<Text>();
+                if (googleLabel != null)
+                {
+                    googleLabel.text = creating ? "CONNECT A GOOGLE ACCOUNT" : "SIGN IN WITH GOOGLE";
+                    MenuKit.Fit(googleLabel, 420.0f - 32.0f);
+                }
+            }
+
             SetTab(_signInTab, !creating);
             SetTab(_createTab, creating);
         }
@@ -831,6 +902,46 @@ namespace TumbangPreso.UI
             catch (Exception e)
             {
                 Fail(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// The Google half of <see cref="Submit"/>, and it is deliberately the same shape.
+        ///
+        /// ⚠⚠ THE PLAYER IS TOLD TO LOOK AT THEIR BROWSER, BECAUSE THE NEXT THING THAT HAPPENS
+        /// IS OUTSIDE THIS GAME. `Application.OpenURL` hands a tab to whatever browser is default,
+        /// and on this machine that window can open BEHIND a full-screen game; a player watching
+        /// a frozen-looking button with no message would reasonably press it again and start a
+        /// second flow. One sentence, on the screen, before the browser opens.
+        ///
+        /// ⚠️ AND THE BUTTON IS DISABLED FOR THE DURATION for the same reason: two listeners on
+        /// two loopback ports, one consent screen, and only one of them can ever be answered.
+        /// </summary>
+        private async void GooglePressed()
+        {
+            var account = GameServices.Account;
+            if (account == null) { Fail("Accounts are not available right now."); return; }
+
+            if (_googleButton != null) _googleButton.interactable = false;
+
+            try
+            {
+                _error.color = UiTheme.CreamMuted;
+                _error.text = "Finish signing in on the browser window.";
+
+                if (_creating) await account.LinkGoogleAsync();
+                else await account.SignInWithGoogleAsync();
+
+                RememberTheChoiceWasMade();
+                Close();
+            }
+            catch (Exception e)
+            {
+                Fail(e.Message);
+            }
+            finally
+            {
+                if (_googleButton != null) _googleButton.interactable = true;
             }
         }
 

@@ -229,6 +229,25 @@ namespace TumbangPreso.Net
         /// with a join code they may want to read out. `NetSession.Advert` going back to `None` is
         /// the whole of "no longer offering myself to strangers".
         /// </summary>
+        /// <summary>
+        /// PHASE 11: true once the queue has waited long enough to offer bots instead of nothing.
+        ///
+        /// ⚠⚠ IT IS AN OFFER THE PLAYER PRESSES AND NEVER SOMETHING THAT HAPPENS TO THEM.
+        /// `BotFillRules` carries the whole argument, including the reversal that lets ranked take
+        /// bots at all and the expiry on it. The one thing to keep true HERE is that this property
+        /// only ever makes a BUTTON appear: nothing in this class starts a match.
+        ///
+        /// ⚠️ THE HUMAN COUNT IS `PartySize`, WHICH IS THE HUMANS ALREADY SEATED IN THIS LOBBY.
+        /// `QueueCard.HumanSeatCount` is where it comes from and `PartyRules` is what a party
+        /// means here: being in the same room. A solo player is 1 and is offered three bots.
+        /// </summary>
+        public bool OffersBotFill => IsQueueing
+                                     && State == QueueState.Searching
+                                     && BotFillRules.OffersFill(Stake, Elapsed, PartySize, Balance.PlayerCount);
+
+        /// <summary>How many bots it would take to start right now.</summary>
+        public int BotsToFill => BotFillRules.BotsToFill(PartySize, Balance.PlayerCount);
+
         public void Cancel()
         {
             if (!IsQueueing && State != QueueState.Refused) return;
@@ -259,6 +278,11 @@ namespace TumbangPreso.Net
             // whole seconds and a bar; sixty redraws a second of the same two values is the shape
             // `docs/TODO.md` § 52.3 measured costing the HUD an eighth of its frames.
             if ((int)before != (int)Elapsed) Raise();
+
+            // ⚠️ THE BOT OFFER CROSSING ITS THRESHOLD IS A REDRAW, and the second-tick above is
+            // not enough on its own only because it is: both land on the same frame. This is here
+            // as the statement of intent rather than as a second `Raise`, because the card reads
+            // `OffersBotFill` every time it refreshes and the clock refreshes it every second.
 
             // ⚠️⚠️ AND A WIDENING STEP RE-EVALUATES IMMEDIATELY RATHER THAN WAITING FOR THE LIST
             // TO CHANGE. The whole point of widening is that lobbies which were outside the band

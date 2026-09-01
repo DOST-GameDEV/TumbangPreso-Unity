@@ -741,6 +741,29 @@ namespace TumbangPreso.UI
 
             var layer = _historyPanel.AddComponent<RectTransform>();
 
+            // ⚠️⚠️ `ignoreLayout`, AND WITHOUT IT THE LOG IS LAID OUT AS A CHAT ROW AND EVERY
+            // ANCHOR BELOW IS OVERWRITTEN. 🧑 2026-09-01: *"lobby chat goes past screen"* with the
+            // LOBBY CHAT heading and the CLOSE button hanging off the bottom edge of the window,
+            // then *"lobby chat doesnnt work at all"*, then the design restated: *"lobby chat is
+            // supposed to extend the box when u openn it without making lobby annd servers move
+            // ... it just goes over it and u can chat and see chat history and scroll chats"*.
+            //
+            // **This panel is a child of the chat, and the chat's own `VerticalLayoutGroup` owns
+            // the position and size of every ACTIVE child it has.** So the moment `OpenHistory`
+            // switched it on, the group took the 460-unit box, ignored the top-edge anchors set
+            // below, and placed it as the next row in the column: under the "Say something"
+            // field, growing DOWNWARD off the bottom of the screen, with `SetAsLastSibling`
+            // guaranteeing it went last. The group also added the panel's height to the chat's
+            // own preferred height, which is the second half of the ask: `LobbyChrome.StackRight`
+            // positions the LOBBY & SERVERS pill off `PanelHeight` every frame, so opening the
+            // log walked the whole right-hand rail up the screen.
+            //
+            // ⚠️ ONE LINE, AND IT IS THE LINE THAT MAKES "OVERLAP" DIFFERENT FROM "BE A ROW".
+            // An ignored child keeps its own anchors, contributes nothing to the parent's
+            // preferred size, and is skipped by the spacing too. Everything below this line was
+            // already correct and had never once been used.
+            _historyPanel.AddComponent<LayoutElement>().ignoreLayout = true;
+
             // ⚠⚠ IT SITS ON THE CHAT'S TOP EDGE, NOT ON ITS BOTTOM ONE, AND THAT IS THE WHOLE
             // DIFFERENCE BETWEEN EXTENDING AND COVERING. Anchored to the bottom it would have
             // grown up THROUGH the two visible lines and the "Say something" field, so opening the
