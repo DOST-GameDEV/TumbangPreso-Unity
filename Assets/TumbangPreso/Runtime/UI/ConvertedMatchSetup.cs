@@ -651,16 +651,29 @@ namespace TumbangPreso.UI
             headerRow.transform.SetParent(rows, false);
             headerRow.transform.SetSiblingIndex(headingIndex);
 
-            var hLayout = headerRow.AddComponent<HorizontalLayoutGroup>();
-            hLayout.spacing = 16;
+            // ⚠️⚠️ STACKED, NOT SIDE BY SIDE, AND THE ARITHMETIC IS WHY. 🧑, with a crop of this
+            // drawer: *"improve ui there cant see fonnt"*, and `LobbyServers-v57.png` and `-v58`
+            // both show SPECTATE drawn across the last letters of the heading. **Fitting cannot
+            // fix it, which is what the second render proved.** `LobbyChrome` narrows this column
+            // to `RoomColumnWidth` 380; SPECTATE takes 140 and the spacing 16, so the heading's
+            // cell is about 200 units, and `LOBBY · YOU ARE HOSTING` needs about 253 even at
+            // `MenuKit.MinReadableUnits` 18, which is the floor `MenuKit.Fit` refuses to go below.
+            // A control that cannot fit at the floor is a LAYOUT problem, and `Fit` says so by
+            // returning false, which nothing was reading.
+            //
+            // One above the other, each on the full 380, and the heading loses the word LOBBY as
+            // well: this drawer is the lobby, so naming it in its own heading is the redundancy
+            // 🧑 objects to by name (*"I donnt want redundannt UI"*).
+            var hLayout = headerRow.AddComponent<VerticalLayoutGroup>();
+            hLayout.spacing = 8;
             hLayout.childControlWidth = true;
             hLayout.childControlHeight = true;
-            hLayout.childForceExpandWidth = false;
-            hLayout.childForceExpandHeight = true;
+            hLayout.childForceExpandWidth = true;
+            hLayout.childForceExpandHeight = false;
 
             var hElement = headerRow.AddComponent<LayoutElement>();
-            hElement.minHeight = 46;
-            hElement.preferredHeight = 46;
+            hElement.minHeight = 46 + 8 + 40;
+            hElement.preferredHeight = hElement.minHeight;
             hElement.flexibleWidth = 1;
 
             heading.SetParent(headerRow.transform, false);
@@ -679,9 +692,7 @@ namespace TumbangPreso.UI
             _spectate = MenuKit.WoodButton(headerRow.transform, "SPECTATE", Vector2.zero, Vector2.zero,
                                            new Vector2(140.0f, 40.0f), ToggleSpectate);
             _spectate.name = "SpectateButton";
-            var specElement = _spectate.gameObject.AddComponent<LayoutElement>();
-            specElement.preferredWidth = 140.0f;
-            specElement.preferredHeight = 40.0f;
+            Fixed(_spectate, 40.0f);
 
             var label = _spectate.GetComponentInChildren<Text>();
             if (label != null) label.fontSize = 18;
@@ -2834,7 +2845,10 @@ namespace TumbangPreso.UI
                 // ⚠️ AND IT IS OMITTED AT ZERO RATHER THAN DRAWN AS `0 WATCHING`. A count of
                 // nothing is a row that teaches the player a number to ignore.
                 int watching = MatchRpc.SpectatorsWatching;
-                string room = NetAuthority.IsHost ? "LOBBY  ·  YOU ARE HOSTING" : "LOBBY  ·  CONNECTED";
+                // ⚠️ THE WORD `LOBBY` IS GONE. It named the drawer inside the drawer, which is
+                // 🧑's *"I donnt want redundannt UI"*, and it was eight of the characters that
+                // would not fit. See the header row above for the arithmetic.
+                string room = NetAuthority.IsHost ? "YOU ARE HOSTING" : "CONNECTED";
                 if (watching > 0)
                     room += watching == 1 ? "  ·  1 WATCHING" : $"  ·  {watching} WATCHING";
 
