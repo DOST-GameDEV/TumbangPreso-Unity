@@ -217,7 +217,26 @@ namespace TumbangPreso.UI
             // took over has not taken it over. Solid wood, which is also what makes this read as
             // furniture in 🧑's own visual language (`docs/VISION.md` § 6) rather than as a
             // window someone left open.
-            MenuKit.Backdrop(_root.transform, UiTheme.WoodDeep);
+            // ⚠️⚠️ CREAM, NOT `WoodDeep`, AND THIS ONE LINE IS 🧑'S WHOLE REPORT ON THIS SCREEN.
+            // 2026-09-01, with a crop of the account screen off the paper build: **"PLAYER CARD IS
+            // STILL BROWN AND HARD TO READ COULD BE IMPROVED"**. He is right, and the reason it
+            // survived a pass that repainted every other surface in the front end is instructive:
+            // `PaperDress.Screen` walks `GodotPanel`, `GodotButton` and `WoodSkin`, and **the
+            // backdrop is none of the three.** It is a bare `Image` with a colour on it, so the
+            // one node on this screen that decides what colour the screen IS was invisible to the
+            // machinery that repaints screens.
+            //
+            // ⚠️ AND EVERY LABEL ON TOP OF IT WAS ALREADY BEING CONVERTED, which is what made it
+            // unreadable rather than merely old. `PaperDress.Type` remaps `Cream` and `CreamMuted`
+            // to `PaperInk` and `PaperInkSoft`, because those are correct on paper; against a
+            // `WoodDeep` backdrop they are dark brown words on a dark brown board. **The dress
+            // half-ran, and a half-converted screen is worse than an unconverted one.**
+            //
+            // ⚠️ IT IS `Paper` AND NOT A `Sheet` SURFACE, because this is the field the sheets sit
+            // on rather than a sheet itself, and it covers the whole screen: a cut-out silhouette
+            // with a halo and a cast shadow at 1920 units is a rounded corner nobody sees and a
+            // shadow falling on nothing.
+            MenuKit.Backdrop(_root.transform, UiTheme.Paper);
 
             BuildHeader();
             BuildTabBar();
@@ -324,12 +343,21 @@ namespace TumbangPreso.UI
             track.transform.SetParent(_root.transform, false);
             MenuKit.Place((RectTransform)track.transform, new Vector2(1.0f, 1.0f),
                 new Vector2(XpCentre, -114.0f), new Vector2(XpWidth, 10.0f));
-            track.GetComponent<Image>().color = UiTheme.WoodDark;
+            // ⚠️⚠️ THE BAR INVERTS WITH THE FIELD, WHICH IS THE SAME MOVE `PaperCraft.Surface.Sign`
+            // RECORDS. It was an amber fill on a near-black track, which is correct on a wooden
+            // screen where amber is the one light thing; on cream `UiTheme.Amber` `ffba00` against
+            // `Paper` `f4ecdd` is **1.7:1** and the filled part of the bar is the part that
+            // disappears. 🧑 rejected that ratio by eye twice on other controls
+            // (`docs/TODO.md` § 119.10), so this is applying his answer rather than re-testing it.
+            //
+            // **On paper the marker is the one DARK thing**: a `PaperSunk` groove with wood in it
+            // is 8:1 and introduces no colour at all.
+            track.GetComponent<Image>().color = UiTheme.PaperSunk;
 
             var fillGo = new GameObject("Fill", typeof(RectTransform), typeof(Image));
             fillGo.transform.SetParent(track.transform, false);
             _xpFill = fillGo.GetComponent<Image>();
-            _xpFill.color = UiTheme.Amber;
+            _xpFill.color = UiTheme.WoodMid;
 
             var fill = _xpFill.rectTransform;
             fill.anchorMin = Vector2.zero;
@@ -665,6 +693,31 @@ namespace TumbangPreso.UI
             // `GodotTheme.WoodTabIdleButton` carries the argument: the idle tab is drawn through
             // `WoodCraft.Surface.Field`, lit from BELOW, so the two tabs sit at two depths.
             skin.Variation = on ? "WoodTabLiveButton" : "WoodTabIdleButton";
+
+            // ⚠️⚠️ AND THE PAPER SKIN IS SET DIRECTLY, BECAUSE BY THE SECOND TAB PRESS THE
+            // `GodotButton` ABOVE IS DISABLED AND `Apply` IS SHOUTING INTO A COMPONENT NOBODY
+            // READS. `Show` dresses the whole screen at the end of every rebuild, and
+            // `PaperDress.ButtonSkin` turns `GodotButton` off on the way past (it writes its own
+            // sprite on hover, so leaving it on flips the control back to wood under the pointer).
+            // The variation above is still written because that is what the dress reads on the
+            // NEXT pass; this line is what makes the current frame correct.
+            //
+            // ⚠️ `Live` AGAINST `Ghost`, WHICH IS A VALUE INVERSION OF ABOUT 10:1. The pair used
+            // to arrive as `Token` against `Ghost`, measured 4 per cent apart on
+            // `Logs/shots-runtime/Lobby-v52.png` and rejected there; the lobby moved and this
+            // screen did not, which is 🧑's *"hard to read"* on six tabs he has to choose between.
+            // `PaperButton` inverts the lettering to cream on its own, by watching the surface.
+            var paper = button.GetComponent<PaperSkin>();
+            if (paper != null)
+            {
+                paper.Surface = on ? PaperCraft.Surface.Live : PaperCraft.Surface.Ghost;
+                paper.Rebuild();
+
+                var chip = button.GetComponent<PaperButton>();
+                if (chip != null) chip.Restyle();
+                return;
+            }
+
             skin.Apply();
             skin.Refresh();
         }

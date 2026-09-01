@@ -87,8 +87,20 @@ namespace TumbangPreso.UI
         ///
         /// ⚠️ A NUMBER TUNED AGAINST ONE BACKGROUND IS NOT A NUMBER. If this kit is ever put on
         /// a light surface it needs measuring again, and the render is how you measure it.
+        ///
+        /// ⚠️⚠️ AND IT WAS, ON 2026-09-02, WHICH IS THE PARAGRAPH ABOVE COMING TRUE. Every screen
+        /// that builds `UiRows` (the hub, the character maker, the sign-in screen) is cream now,
+        /// and **white at 3.5 per cent on `UiTheme.Paper` `f4ecdd` is a change of about one value
+        /// step in the last channel: it is not a band, it is nothing.** Every other row therefore
+        /// had no banding at all, on the one screen 🧑 said he could not read
+        /// (*"PLAYER CARD IS STILL BROWN AND HARD TO READ"*).
+        ///
+        /// **On a light field a band DARKENS.** `PaperSunk` `cbac83` at 14 per cent over `Paper`
+        /// composites to about `eee3d1`, which is four value steps down: the same visual weight
+        /// the white 3.5 had over a dark scrim, arrived at the same way.
         /// </summary>
-        private static readonly Color Band = new Color(1.0f, 1.0f, 1.0f, 0.035f);
+        private static readonly Color Band = new Color(UiTheme.PaperSunk.r, UiTheme.PaperSunk.g,
+                                                       UiTheme.PaperSunk.b, 0.14f);
 
         /// <summary>
         /// A vertical list that grows with its content and scrolls when it outgrows the panel.
@@ -268,8 +280,13 @@ namespace TumbangPreso.UI
             rt.offsetMin = new Vector2(SidePadding, 0.0f);
             rt.offsetMax = new Vector2(-SidePadding, 2.0f);
 
-            go.GetComponent<Image>().color = new Color(UiTheme.WoodEdge.r, UiTheme.WoodEdge.g,
-                                                       UiTheme.WoodEdge.b, 0.5f);
+            // ⚠️ THE SAME HAIRLINE `PaperKit.Rule` DRAWS, AND ON PURPOSE THE SAME NUMBERS. Two
+            // separators at two weights on one screen is the *"repetitive and unimaginative"*
+            // complaint arriving from the other direction: not one device used everywhere, but
+            // two devices doing one job slightly differently. `WoodEdge` at half alpha was a
+            // brown line for brown screens.
+            go.GetComponent<Image>().color = new Color(UiTheme.PaperEdge.r, UiTheme.PaperEdge.g,
+                                                       UiTheme.PaperEdge.b, 0.85f);
         }
 
         /// <summary>
@@ -775,7 +792,18 @@ namespace TumbangPreso.UI
             template.pivot = new Vector2(0.5f, 1.0f);
             template.anchoredPosition = Vector2.zero;
             template.sizeDelta = new Vector2(0.0f, 180.0f);
-            templateGo.GetComponent<Image>().color = UiTheme.WoodDeep;
+            // ⚠️⚠️ THE OPEN LIST IS PAPER NOW AND IT WAS A NEAR-BLACK PLANK. It is drawn OVER the
+            // screen that opened it, so it is the one part of a dropdown `PaperDress` can never
+            // reach: the template is inactive at dress time and carries no `GodotPanel`, so it
+            // stayed the colour it was authored while the row above it turned cream. Pressing a
+            // settings row therefore dropped a black box out of a paper sheet, which is 🧑's
+            // *"match settings ui look ugly"* on the four rows in the lobby drawer.
+            //
+            // ⚠️ A `Sheet` SURFACE RATHER THAN A FLAT FILL, so the list that appears is the same
+            // construction as every other floating thing in this front end: cut paper with a halo
+            // and a shadow, lying on whatever is behind it.
+            templateGo.GetComponent<Image>().color = Color.white;
+            PaperSkin.Apply(templateGo, PaperCraft.Surface.Sheet);
 
             var scroll = templateGo.AddComponent<ScrollRect>();
             scroll.horizontal = false;
@@ -806,9 +834,14 @@ namespace TumbangPreso.UI
             var itemBg = new GameObject("ItemBackground", typeof(RectTransform), typeof(Image));
             itemBg.transform.SetParent(itemGo.transform, false);
             MenuKit.Stretch((RectTransform)itemBg.transform);
-            itemBg.GetComponent<Image>().color = UiTheme.WoodMid;
+            // ⚠️ THE HIGHLIGHT IS THE TOGGLE'S OWN `colors` RAMP AND THE PLATE UNDER IT IS CLEAR,
+            // which is what makes the hovered option read as a warm wash across one row rather
+            // than as a second dark rectangle inside a dark rectangle. `Toggle` multiplies its
+            // target graphic's colour by the state tint, so a `PaperWarm` plate is the base and
+            // the ramp below does the rest.
+            itemBg.GetComponent<Image>().color = UiTheme.PaperWarm;
 
-            var itemLabel = MenuKit.Label(itemGo.transform, "", LabelUnits, UiTheme.Cream,
+            var itemLabel = MenuKit.Label(itemGo.transform, "", LabelUnits, UiTheme.PaperInk,
                 new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero, TextAnchor.MiddleLeft);
             MenuKit.Stretch(itemLabel.rectTransform, -16.0f);
             itemLabel.alignment = TextAnchor.MiddleLeft;
