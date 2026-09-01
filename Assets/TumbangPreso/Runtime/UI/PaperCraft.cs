@@ -372,11 +372,20 @@ namespace TumbangPreso.UI
             // ⚠️ A PRESSED CONTROL LOSES ITS SHADOW ENTIRELY: it is lying on the surface, so there
             // is no gap for a shadow to fall into. That single change is most of what makes the
             // press read without the footprint moving.
-            int drop = pressed ? 0 : Drop;
+            //
+            // ⚠️⚠️ AND A HOVERED ONE STANDS TWO UNITS HIGHER, WHICH IS THE ONE STATE CHANGE THAT
+            // HAPPENS TO THE OBJECT RATHER THAN TO ITS COLOUR. 🧑 2026-09-01, on the pass before
+            // this one: *"the butons look 2d too and blank"*, *"REWORK THE BUTTONS so that it
+            // feels great to click and isnt flat"*. Hover used to be a lighter fill and nothing
+            // else, so a pointer crossing the rail changed the picture's colour and not its
+            // geometry. **The top edge of the face does not move** (it is pinned at `h` in every
+            // pose), so the lift is bought entirely out of the gap underneath, which is where a
+            // real object's lift is visible.
+            int drop = pressed ? 0 : pose == Pose.Hover ? Drop + 2 : Drop;
             int face = h - drop;
 
             float corner = face * 0.5f;
-            int cap = Mathf.CeilToInt(corner) + Drop + 2;
+            int cap = Mathf.CeilToInt(corner) + Drop + 4;
             int width = (cap * 2) + 4;
             var pixels = new Color[width * h];
 
@@ -393,7 +402,24 @@ namespace TumbangPreso.UI
 
             Color lipColour = live ? UiTheme.WoodDeep : UiTheme.PaperSunk;
 
-            int lip = Mathf.Max(2, Mathf.RoundToInt(face * 0.07f));
+            // ⚠️⚠️ THE WALL IS 14 PER CENT OF THE FACE AND IT WAS 7, AND THIS IS THE HALF OF
+            // *"the butons look 2d"* THAT IS IN THE SPRITE. At seven per cent a 40-unit chip's
+            // wall was two units under a four-unit halo, so the only thing below the face was
+            // ring: the control had a cast shadow but no THICKNESS, which is a sticker rather
+            // than a token. Fourteen puts five units of card edge on the same chip, which is
+            // still under a tenth of the height and is the first thing the eye reads as depth.
+            //
+            // ⚠️ AND IT IS A RAMP, NOT A BAND. A flat dark stripe along the bottom is the same
+            // gradient-instead-of-a-hole fault `PaintTray` records one construction over: a cut
+            // paper edge catches a little light at the top of the cut and none at the bottom.
+            int wall = Mathf.Max(3, Mathf.RoundToInt(face * 0.14f));
+
+            // ⚠️⚠️ A LIT TOP EDGE, WHICH `PaintPlate` HAS ALWAYS HAD AND THIS CONSTRUCTION NEVER
+            // DID. That asymmetry is most of why the rails read as card and the chips standing on
+            // them read as fill: a raised object under a light that is above the screen is bright
+            // along its top and dark along its bottom, and this one only ever had the bottom half
+            // of that. Two units on a 40-unit chip, at 0.55, which is `PaintPlate`'s own number.
+            int crest = Mathf.Max(2, Mathf.RoundToInt(face * 0.05f));
 
             for (int y = 0; y < h; y++)
                 for (int x = 0; x < width; x++)
@@ -414,24 +440,52 @@ namespace TumbangPreso.UI
                         }
                         else
                         {
-                            c = Fibre(fill, x, y);
+                            // ⚠️⚠️ THE FACE IS A GRADIENT AND IT WAS A FLAT FILL. 🧑: *"the butons
+                            // look 2d too and blank"*. `WoodCraft` has expressed every one of 🧑's
+                            // authored surfaces as a full-height ramp since it was written, and
+                            // this file drew the same object as one colour with a rim round it.
+                            // Four per cent from top to bottom: enough that the surface has a
+                            // direction, little enough that a row of eight chips still reads as
+                            // one material.
+                            float alongFace = face <= 1 ? 0.0f : upFromFace / (float)(face - 1);
+                            c = Fibre(WoodCraft.Lift(fill, (alongFace - 0.5f) * -0.04f), x, y);
 
                             if (pressed)
                             {
                                 // The near wall of a recess is the top one: the light in this
                                 // front end is above the screen.
-                                if (downFromTop < Halo + lip)
+                                if (downFromTop < Halo + wall)
                                     c = Color.Lerp(c, UiTheme.PaperInk, 0.16f);
                             }
-                            else if (upFromFace < Halo + lip)
+                            else
                             {
-                                c = Color.Lerp(c, lipColour, 0.9f);
+                                if (upFromFace < Halo + wall)
+                                {
+                                    float into = 1.0f - ((upFromFace - Halo)
+                                                         / (float)Mathf.Max(1, wall));
+                                    c = Color.Lerp(c, lipColour, Mathf.Clamp01(into) * 0.92f);
+                                }
+
+                                if (!off && downFromTop < crest)
+                                    c = Color.Lerp(c, live ? UiTheme.WoodEdge : Color.white,
+                                                   live ? 0.5f : 0.55f);
                             }
                         }
                     }
                     else if (shadowDepth > 0.0f && !tall && !off)
                     {
+                        // ⚠️⚠️ THE CAST SHADOW FADES DOWNWARD NOW AND IT USED TO BE A FLAT COPY OF
+                        // THE SILHOUETTE AT ONE ALPHA. A hard-edged block of 34 per cent brown
+                        // under every chip is what a sticker printed with its own shadow looks
+                        // like; a real contact shadow is darkest where the two surfaces nearly
+                        // touch and gone by the time it has travelled the object's own height.
+                        // The falloff is squared, which is the cheapest approximation of that
+                        // and the one `PaintTray`'s inner shadow already uses.
+                        int below = drop - y;
+                        float reach = below <= 0 ? 1.0f
+                            : 1.0f - (below / (float)(drop + 1));
                         c = Fade(Shade, shadowDepth);
+                        c.a *= Mathf.Clamp01(reach) * Mathf.Clamp01(reach);
                     }
                     else
                     {

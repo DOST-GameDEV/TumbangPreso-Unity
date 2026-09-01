@@ -167,8 +167,7 @@ namespace TumbangPreso.UI
             // Three units is not a lot and it is exactly the amount that makes a button look
             // slightly wrong without anybody being able to say why; `GodotTheme.BaselineNudge`
             // records the same class of correction for the font's own line box.
-            label.rectTransform.offsetMin =
-                new Vector2(label.rectTransform.offsetMin.x, Pad + PaperCraft.Drop);
+            CentreOnFace(label);
 
             go.AddComponent<PaperButton>();
             FocusRing.Attach(go, 4.0f);
@@ -334,6 +333,31 @@ namespace TumbangPreso.UI
             return image;
         }
 
+        /// <summary>
+        /// Raises a label's box off the bottom of its control by <see cref="PaperCraft.Drop"/>, so
+        /// the lettering is centred on the FACE rather than on the rect.
+        ///
+        /// ⚠️⚠️ IT IS ONE FUNCTION BECAUSE THE CORRECTION HAD ALREADY BEEN WRITTEN TWICE AND ONE
+        /// OF THE TWO HAD THE SIGN BACKWARDS. 🧑 2026-09-01, with a crop of the top rail: **"back
+        /// still isnt centered as well"**. `PaperKit.Chip` raises `offsetMin.y`, which lifts the
+        /// box's BOTTOM edge off the shadow; `LobbyChrome.LiftBack` lowered `offsetMax.y`, which
+        /// pulls the box's TOP edge down instead. Both move the box by six units and they move it
+        /// in opposite directions, so BACK sat **twelve units below** every other chip in the game
+        /// and the two lines of code looked equally reasonable in review.
+        ///
+        /// ⚠️ IT ADDS TO WHATEVER INSET THE CALLER ALREADY SET rather than assigning, so a chip
+        /// that has been inset by `Pad` keeps its padding and a rail control that has not stays
+        /// full width. Every raised paper surface draws its cast shadow inside its own bottom
+        /// `Drop` units, so this is the whole of the difference between the rect and the face.
+        /// </summary>
+        public static void CentreOnFace(Text label)
+        {
+            if (label == null) return;
+
+            var rt = label.rectTransform;
+            rt.offsetMin = new Vector2(rt.offsetMin.x, rt.offsetMin.y + PaperCraft.Drop);
+        }
+
         /// <summary>Vertical stack with the kit's own spacing and padding.</summary>
         public static VerticalLayoutGroup Stack(Transform host, float spacing = Gap,
                                                 float pad = Pad)
@@ -412,13 +436,30 @@ namespace TumbangPreso.UI
 
             foreach (var text in root.GetComponentsInChildren<Text>(true))
                 Type(text);
+
+            // ⚠️⚠️ LAST, AND THE ORDER IS THE POINT. `Type` remaps `UiTheme.Cream` to ink because
+            // on a paper sheet cream lettering is invisible, and the lettering on a `Live` pill is
+            // the one place in this front end where cream is CORRECT: the pill is wood-dark and
+            // the word on it has to invert with it. Running the tint before `Type` means the type
+            // pass immediately undoes it, which is a live tab with ink words on a dark plate, and
+            // is 🧑's *"hard to read"* on the hub's tab bar exactly.
+            foreach (var chip in root.GetComponentsInChildren<PaperButton>(true))
+                chip.Restyle();
         }
 
         private static void Panel(GodotPanel panel)
         {
             if (panel == null) return;
 
-            var surface = panel.Variation == "WoodSlot"
+            // ⚠️⚠️ `Card` IS A FIELD AND IT WAS ARRIVING AS FURNITURE. The two nodes in the game
+            // carrying that variation are `UiRows.FieldRow`'s text box and `UiRows.DropdownRow`'s
+            // face: both are things you read a value out of or type into, which is `Tray` by the
+            // enum's own definition. Falling through to `Sheet` drew them as RAISED cut paper with
+            // a halo and a cast shadow, so on the hub and in the settings drawer **the input
+            // fields stood proud of the sheet they were cut into** and looked identical to the
+            // rows around them. It is half of *"match settings ui look ugly"* and all of why the
+            // account screen's own name field was hard to find.
+            var surface = panel.Variation == "WoodSlot" || panel.Variation == "Card"
                 ? PaperCraft.Surface.Tray
                 : PaperCraft.Surface.Sheet;
 
@@ -434,8 +475,22 @@ namespace TumbangPreso.UI
             // ⚠️ THE PRIMARY KEEPS ITS WOOD. See the class note.
             if (skin.Variation == "WoodPrimaryButton" || skin.Variation == "PrimaryButton") return;
 
+            // ⚠️⚠️ THE LIVE TAB IS `Live` AND NOT `Token`, AND THAT ONE ROW IS WHY THE HUB'S TAB
+            // BAR WAS UNREADABLE. 🧑 2026-09-01, with a crop of the account screen: **"PLAYER CARD
+            // IS STILL BROWN AND HARD TO READ COULD BE IMPROVED"**. `PlayerHub.Highlight` and
+            // `ConvertedCharacterSelect` both say which tab you are on by writing
+            // `WoodTabLiveButton` on a `GodotButton`, and this switch mapped everything that was
+            // not the IDLE variation onto one paper pill: six tabs, all `Token`, one of them
+            // claiming to be selected in a language the paper front end does not speak.
+            //
+            // ⚠️ IT IS THE SAME FINDING `PaperCraft.Surface.Live`'S OWN NOTE RECORDS, arrived at
+            // from the other end. `Token` against `Ghost` measured 4 per cent apart on
+            // `Lobby-v52.png` and the lobby moved to a value inversion; every converted screen
+            // kept the pair that had already been rejected, because the mapping lived here.
             var surface = skin.Variation == "WoodTabIdleButton"
                 ? PaperCraft.Surface.Ghost
+                : skin.Variation == "WoodTabLiveButton"
+                ? PaperCraft.Surface.Live
                 : PaperCraft.Surface.Token;
 
             Strip(skin.gameObject);
@@ -550,6 +605,36 @@ namespace TumbangPreso.UI
         private Text _label;
         private bool _hovered, _held;
         private bool _wasInteractable = true;
+        private PaperCraft.Surface _wasSurface;
+
+        /// <summary>
+        /// How far through the hover and the press this control currently is, 0 to 1, eased every
+        /// frame rather than snapped.
+        ///
+        /// ⚠️⚠️ THE EASE IS THE WHOLE OF *"feels great to click"* AND IT IS NOT IN THE SPRITE.
+        /// 🧑 2026-09-01: **"REWORK THE BUTTONS so that it feels great to click and isnt flat"**,
+        /// after a pass that had already given every control a shadow. A sprite swap is a single
+        /// frame: the surface is one thing and then it is another, which is exactly as much motion
+        /// as a checkbox has. What a physical button gives you is the twentieth of a second in
+        /// BETWEEN, and that has to be interpolated by something that runs every frame.
+        ///
+        /// ⚠️ THE PRESS IS FASTER THAN THE RELEASE, 26 AGAINST 15. A control that goes down slowly
+        /// feels unresponsive however quickly it acts, and one that comes back instantly feels
+        /// like it bounced. This is the same asymmetry every good physical key has.
+        /// </summary>
+        private float _lift, _sink;
+
+        /// <summary>
+        /// Whether this control may write its own `localScale`.
+        ///
+        /// ⚠️⚠️ FALSE WHENEVER `ArrowButtonView` IS STILL LIVE ON THE SAME NODE, BECAUSE THAT
+        /// COMPONENT ALSO WRITES `localScale` AND `docs/TODO.md` § 119.9 ROW 1 IS WHAT HAPPENS
+        /// WHEN TWO THINGS OWN ONE TRANSFORM PROPERTY. `PaperKit.Paperise` disables it for every
+        /// node the lobby reparents, but `PaperDress.Screen` converts whole authored screens that
+        /// keep their own unfurl, and on those the pennant animation is 🧑's and wins. Reading it
+        /// once here is cheaper than a rule somebody has to remember.
+        /// </summary>
+        private bool _mayScale;
 
         /// <summary>Where the label sits at rest, so the press can put it back. ⚠️ Captured on the
         /// first refresh rather than in `Awake`, because a label inside a layout group has no
@@ -568,15 +653,128 @@ namespace TumbangPreso.UI
             _label = transform.Find("Label") != null
                 ? transform.Find("Label").GetComponent<Text>()
                 : GetComponentInChildren<Text>();
+
+            var pennant = GetComponent<ArrowButtonView>();
+            _mayScale = pennant == null || !pennant.enabled;
+
+            if (_skin != null) _wasSurface = _skin.Surface;
+
+            // ⚠️⚠️ THE TINT RUNS AT `Awake` AND THE POSITION DOES NOT, AND THE SPLIT IS THE WHOLE
+            // REASON THIS IS TWO METHODS. `PaperDress.ButtonSkin` sets the surface to `Live` and
+            // then adds this component, so a live tab whose lettering waits for the first pointer
+            // event is a wood-dark pill with ink words on it for as long as nobody touches it,
+            // which is every screenshot ever taken of it. `_home`, on the other hand, cannot be
+            // read yet: a label inside a layout group has no position until the first layout pass
+            // and capturing zero here would pin every press animation to the wrong origin.
+            TintLabel();
         }
 
         private void Update()
         {
             bool on = _button == null || _button.interactable;
-            if (on == _wasInteractable) return;
 
-            _wasInteractable = on;
-            Refresh();
+            if (on != _wasInteractable)
+            {
+                _wasInteractable = on;
+                Refresh();
+            }
+
+            // ⚠️⚠️ THE SURFACE IS WATCHED RATHER THAN PUSHED, AND THAT IS WHAT MAKES A TAB ROW
+            // LEGIBLE WITHOUT EVERY CALLER REMEMBERING TWO LINES. `PlayerHub.Highlight` and
+            // `SignInScreen.SetTab` both swap a `PaperSkin.Surface` between `Live` and `Ghost`;
+            // the lettering has to invert with it (cream on the wood-dark pill, ink on the
+            // outline) or the live tab is a dark plate with dark words on it. Every screen that
+            // forgot the second line shipped an unreadable tab, which is 🧑's *"tab row is barely
+            // legible"* on the hub.
+            if (_skin != null && _skin.Surface != _wasSurface)
+            {
+                _wasSurface = _skin.Surface;
+                Refresh();
+            }
+
+            Animate();
+        }
+
+        /// <summary>
+        /// Eases the control towards its pose, every frame, in UNSCALED time.
+        ///
+        /// ⚠️⚠️ UNSCALED, BECAUSE THIS FRONT END IS DRAWN OVER A PAUSED GAME. `PausePanel` and
+        /// every `ScreenTakeover` in the project set `Time.timeScale` to zero, and a button eased
+        /// on `Time.deltaTime` would then never move at all: the press would land, the sprite
+        /// would swap and the lettering would stay exactly where it was. Every other timed thing
+        /// in the front end (`SignInScreen.WelcomeHold`, the drawer unfurls) is unscaled for the
+        /// same reason.
+        ///
+        /// ⚠️ IT EARLY-OUTS WHEN THERE IS NOTHING TO MOVE. A settled control costs two float
+        /// compares a frame, which matters because a lobby has about thirty of these on it and
+        /// `Hud`'s per-frame rebuild once cost the 6x probe an eighth of its frames.
+        /// </summary>
+        private void Animate()
+        {
+            float wantLift = _hovered && !_held && _wasInteractable ? 1.0f : 0.0f;
+            float wantSink = _held ? 1.0f : 0.0f;
+
+            if (Mathf.Abs(_lift - wantLift) < 0.002f && Mathf.Abs(_sink - wantSink) < 0.002f)
+            {
+                _lift = wantLift;
+                _sink = wantSink;
+                return;
+            }
+
+            float dt = Time.unscaledDeltaTime;
+            _lift = Mathf.MoveTowards(_lift, wantLift, dt * (wantLift > _lift ? 15.0f : 11.0f));
+            _sink = Mathf.MoveTowards(_sink, wantSink, dt * (wantSink > _sink ? 26.0f : 15.0f));
+
+            Pose();
+        }
+
+        /// <summary>
+        /// Writes the eased pose onto the transform and the label.
+        ///
+        /// ⚠️⚠️ THE SCALE IS 2.5 PER CENT AND THE PRESS TAKES 3 OFF IT, WHICH ARE SMALL ON PURPOSE
+        /// AND MEASURED AGAINST THE ROW RATHER THAN AGAINST THE BUTTON. A lobby chip is 40 units
+        /// in a rail with a 10-unit gap; at five per cent a hovered chip grows two units and
+        /// closes a fifth of the gap to its neighbour, which reads as the row shuffling. At 2.5 it
+        /// is one unit, which the eye reads as the object coming forward and not as the layout
+        /// moving.
+        ///
+        /// ⚠️ `localScale` DOES NOT REFLOW A LAYOUT GROUP. Unity's layout works off `rect`, so
+        /// scaling is purely visual and cannot make a rail twitch. Shrinking the RECT instead is
+        /// the fault `GodotButton`'s header opens with.
+        /// </summary>
+        private void Pose()
+        {
+            if (_mayScale)
+                transform.localScale =
+                    Vector3.one * (1.0f + (0.025f * _lift) - (0.03f * _sink));
+
+            if (_label == null || !_home.HasValue) return;
+
+            // ⚠️ THE LABEL RIDES THE SAME TWO NUMBERS THE SURFACE DOES: two units up on a hover
+            // (`PaperCraft.PaintRaised` raises the face by the same two) and the full `Drop` down
+            // on a press (it takes the whole cast shadow away). Anything else and the lettering
+            // and the object it is printed on are moving independently.
+            _label.rectTransform.anchoredPosition = _home.Value
+                + new Vector2(0.0f, (2.0f * _lift) - (PaperCraft.Drop * _sink));
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ A CONTROL THAT IS SWITCHED OFF MID-HOVER NEVER GETS ITS `OnPointerExit`, so
+        /// without this a drawer closed by the button inside it comes back next time still
+        /// scaled up and still lit. Every chip on the bottom rail opens a drawer that hides the
+        /// rail, which is the exact shape of that bug and the reason this is here rather than
+        /// left to the pointer.
+        /// </summary>
+        private void OnDisable()
+        {
+            _hovered = false;
+            _held = false;
+            _lift = 0.0f;
+            _sink = 0.0f;
+
+            if (_mayScale) transform.localScale = Vector3.one;
+            if (_label != null && _home.HasValue)
+                _label.rectTransform.anchoredPosition = _home.Value;
         }
 
         public void OnPointerEnter(PointerEventData e)
@@ -608,6 +806,38 @@ namespace TumbangPreso.UI
             Refresh();
         }
 
+        /// <summary>
+        /// Ink on a paper chip, cream on a `Live` one, soft ink when it is off.
+        ///
+        /// ⚠️ IT READS THE SURFACE RATHER THAN BEING TOLD, so a caller that swaps `Live` for
+        /// `Ghost` cannot forget to swap the type with it. That is the failure `PaperDress`'s tab
+        /// mapping note records from the other side.
+        /// </summary>
+        /// <summary>Re-reads the surface and re-tints the label. ⚠️ Called by `PaperDress.Screen`
+        /// after its type pass; see the note there for why the order matters.</summary>
+        public void Restyle()
+        {
+            if (_skin == null) _skin = GetComponent<PaperSkin>();
+            if (_label == null)
+                _label = transform.Find("Label") != null
+                    ? transform.Find("Label").GetComponent<Text>()
+                    : GetComponentInChildren<Text>();
+
+            if (_skin != null) _wasSurface = _skin.Surface;
+            TintLabel();
+        }
+
+        private void TintLabel()
+        {
+            if (_label == null) return;
+
+            bool on = _button == null || _button.interactable;
+
+            _label.color = !on ? UiTheme.PaperInkSoft
+                : _live ? UiTheme.Cream
+                : UiTheme.PaperInk;
+        }
+
         private void Refresh()
         {
             if (_skin == null) _skin = GetComponent<PaperSkin>();
@@ -635,13 +865,13 @@ namespace TumbangPreso.UI
             // the note `GodotButton`'s header opens with.
             if (!_home.HasValue) _home = _label.rectTransform.anchoredPosition;
 
-            _label.color = !on ? UiTheme.PaperInkSoft
-                : _live ? UiTheme.Cream
-                : UiTheme.PaperInk;
+            TintLabel();
 
-            _label.rectTransform.anchoredPosition = _held
-                ? _home.Value + new Vector2(0.0f, -PaperCraft.Drop)
-                : _home.Value;
+            // ⚠️ THE POSITION IS THE ANIMATOR'S NOW, NOT THIS METHOD'S. It used to snap the label
+            // to one of two places on every pointer event, which is what made the press read as a
+            // colour change with a jump in it; `Animate` owns both offsets so there is exactly one
+            // writer of this property. See `Pose`.
+            Pose();
         }
     }
 }
