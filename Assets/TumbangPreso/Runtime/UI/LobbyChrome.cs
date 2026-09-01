@@ -1389,8 +1389,22 @@ namespace TumbangPreso.UI
             var go = PaperKit.Sheet(column, "TierPlate");
             go.raycastTarget = false;
 
+            // ⚠️⚠️ THE PLATE IS 40 UNITS TALLER THAN THE COLUMN IT MIRRORS, AND THE ARITHMETIC IS
+            // THE SENTENCE. `LobbyRanked-v58.png` shows YOUR TIER, UNRANKED, and **nothing where
+            // the note should be** — which is § 119.9 row 4 back in a different form. That row was
+            // an overlap; this is a height. The plate was `RoomSignHeight` 62 + `ChipHeight` 40 +
+            // `Gap` 10 = 112, matching the room column's plaque-plus-chips; the note owns the
+            // bottom 34 per cent of it, which is 38 units, less its 14-unit inset, which is
+            // **24 units of room for a caption that wraps to two lines of 16** (about 40). With
+            // `verticalOverflow = Truncate` the whole thing disappears rather than spilling.
+            //
+            // ⚠️ AND THE FIX IS HEIGHT RATHER THAN A SHORTER STRING, because the string is the
+            // party rule and § 119.8 exists to state it BEFORE the press: *"make it as well na u
+            // cant queue with a friend in ranked ladder or smth"*. A rule the player only meets
+            // after being refused is `CLAUDE.md` § 6.2's INTUITIVE failure, which is what this
+            // plate was built to answer.
             var element = go.gameObject.AddComponent<LayoutElement>();
-            element.minHeight = RoomSignHeight + PaperKit.ChipHeight + PaperKit.Gap;
+            element.minHeight = RoomSignHeight + PaperKit.ChipHeight + PaperKit.Gap + 40.0f;
             element.preferredHeight = element.minHeight;
             element.flexibleHeight = 0.0f;
 
@@ -1411,7 +1425,9 @@ namespace TumbangPreso.UI
                                        TextAnchor.MiddleLeft);
             tier.name = "TierValue";
             tier.raycastTarget = false;
-            tier.rectTransform.anchorMin = new Vector2(0.0f, 0.34f);
+            // ⚠️ 0.42, WHICH IS 64 UNITS OF NOTE ON A 152-UNIT PLATE: two 20-unit lines plus the
+            // 14-unit inset plus four spare. The value keeps 88, which is twice its own 44.
+            tier.rectTransform.anchorMin = new Vector2(0.0f, 0.42f);
             tier.rectTransform.anchorMax = new Vector2(1.0f, 1.0f);
             tier.rectTransform.offsetMin = new Vector2(PaperKit.Pad, 0.0f);
             tier.rectTransform.offsetMax = new Vector2(-PaperKit.Pad, -(PaperKit.Pad + 16.0f));
@@ -1423,7 +1439,7 @@ namespace TumbangPreso.UI
             note.horizontalOverflow = HorizontalWrapMode.Wrap;
             note.verticalOverflow = VerticalWrapMode.Truncate;
             note.rectTransform.anchorMin = new Vector2(0.0f, 0.0f);
-            note.rectTransform.anchorMax = new Vector2(1.0f, 0.34f);
+            note.rectTransform.anchorMax = new Vector2(1.0f, 0.42f);
             note.rectTransform.offsetMin = new Vector2(PaperKit.Pad, PaperCraft.Drop + 8.0f);
             note.rectTransform.offsetMax = new Vector2(-PaperKit.Pad, 0.0f);
 

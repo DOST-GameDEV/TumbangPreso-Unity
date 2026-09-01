@@ -279,7 +279,7 @@ namespace TumbangPreso.PlayTests
         /// overwriting a shot leaves the previous one on screen and the whole review is conducted
         /// against an image that is no longer on disk. Bump `ShotVersion` on every iteration.
         /// </summary>
-        private const string ShotVersion = "v58";
+        private const string ShotVersion = "v59";
 
         /// <summary>
         /// The three screens the lobby opens: the fighter picker, the maker behind it, and the

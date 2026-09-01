@@ -200,6 +200,27 @@ namespace TumbangPreso.PlayTests
             }
 
             for (int i = 0; i < 20; i++) yield return null;
+            // ⚠️⚠️ AND THE FOUR SCREENS THE LOBBY OPENS ARE OPENED, WHICH THEY WERE NOT, AND THAT
+            // OMISSION IS THE WHOLE OF `docs/TODO.md` § 120.4 AND § 120.5. This probe has only
+            // ever built the lobby and the login screen, so the fighter picker, the character
+            // maker, the player hub and the settings panel were outside every gate in the
+            // repository: every fault on them had to be found by a person looking at a photograph.
+            // 🧑 asked for exactly this scope by name: **"MAKE SURE AS WELL CHARACTER SELECT AS
+            // WELL AS EVERYTHING WIRED TO LOBBY HAS THE NEW THEME"**.
+            //
+            // ⚠️ THEY ARE OPENED THROUGH THEIR OWN DOORS rather than switched on, for the reason
+            // `UiRuntimeShots.TheLobbyDoorsDraw` records: everything on them is drawn off a
+            // selection change, and a panel switched on without one is a panel nobody has selected
+            // anything in.
+            foreach (string door in new[] { "CharacterButton", "ProfileButton" })
+            {
+                var open = Find(door)?.GetComponent<Button>();
+                if (open == null) continue;
+
+                open.onClick.Invoke();
+                for (int i = 0; i < 30; i++) yield return null;
+            }
+
             Canvas.ForceUpdateCanvases();
 
             var offenders = new List<string>();
@@ -245,6 +266,8 @@ namespace TumbangPreso.PlayTests
                 && button.Variation != "PrimaryButton")
                 offenders.Add($"{Path(t)} still carries GodotButton ({button.Variation})");
 
+            WoodenSprite(t, offenders);
+
             // ⚠️⚠️ A DISABLED SKIN IS NOT ENOUGH ON ITS OWN, WHICH IS THE SUBTLEST HALF OF THIS.
             // `SkinLayers` gives every wooden control a `Face` child and a `Shadow` child, and
             // those keep drawing whatever sprite was last written to them after the component that
@@ -265,6 +288,52 @@ namespace TumbangPreso.PlayTests
             }
 
             for (int i = 0; i < t.childCount; i++) Walk(t.GetChild(i), offenders);
+        }
+
+        /// <summary>
+        /// The generated sprite keys that mean "this is a wooden surface".
+        ///
+        /// ⚠️⚠️ EVERY ONE OF THE FIVE FAULTS `docs/TODO.md` § 120.4 RECORDS WAS INVISIBLE TO THIS
+        /// PROBE, BECAUSE IT WALKED COMPONENTS AND THEY WERE SPRITES. `PaperDress.Screen` converts
+        /// a node by finding a `GodotPanel`, a `GodotButton` or a `WoodSkin` on it; the hub's
+        /// backdrop, the maker's backdrop, the lobby drawer's address and code boxes and the
+        /// settings panel's name field are all a bare `Image` with a colour or a baked sprite
+        /// written straight onto it. **The conversion could not see them and neither could this.**
+        /// Meanwhile `PaperDress.Type` had already remapped their lettering to ink, so what shipped
+        /// was ink on near-black at about 1.3:1 rather than an honestly old-looking control.
+        ///
+        /// ⚠️ THE PREFIXES ARE THE CACHE KEYS THOSE FILES BUILD THEMSELVES, so this asks the only
+        /// question that survives a re-import: `GodotTheme.KeyFor` writes `box_`, `WoodCraft`
+        /// writes `wc_` and `wcsil_`, `UiMaterials` writes `plank_` and `btn_`. `PaperCraft`'s own
+        /// are `pc_` and are what is supposed to be there.
+        ///
+        /// ⚠️ `ring_`, `chalk_` AND `down_shadow` ARE NOT LISTED AND THAT IS DELIBERATE. They are
+        /// marks rather than surfaces (a focus ring, a chalk rule, a contact shadow) and the paper
+        /// front end still draws all three; flagging them would fail the test for the thing that
+        /// is meant to be true, which is the mistake this file's own header warns about.
+        ///
+        /// ⚠️ AND AN AUTHORED TEXTURE IS EXEMPT BY NAME LENGTH RATHER THAN BY PATH, because
+        /// `AssetDatabase` does not exist in a player and this test runs in one. 🧑's files are
+        /// `BUTTON LONG`, `JOIN BUTTON`, `TUMP`, `Arrow Left 64`, `GAME BANNER`: none of them
+        /// begins with a generated key, so the prefix test IS the exemption.
+        /// </summary>
+        private static readonly string[] WoodKeys = { "box_", "wc_", "wcsil_", "plank_", "btn_" };
+
+        private static void WoodenSprite(Transform t, List<string> offenders)
+        {
+            var image = t.GetComponent<Image>();
+            if (image == null || image.sprite == null) return;
+
+            string name = image.sprite.name;
+
+            foreach (string key in WoodKeys)
+            {
+                if (!name.StartsWith(key, System.StringComparison.Ordinal)) continue;
+
+                offenders.Add($"{Path(t)} draws a wooden sprite ({name}) on a bare Image. "
+                              + "PaperDress cannot see it: give it a PaperSkin explicitly.");
+                return;
+            }
         }
 
         private static string Path(Transform t)
