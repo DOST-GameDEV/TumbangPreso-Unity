@@ -371,6 +371,8 @@ namespace TumbangPreso.UI
             InstallQueueCard();
             BuildSettingsDropdowns();
 
+            PaperiseWhatTheChromeLeaves();
+
             // ⚠⚠ THE KEYBOARD CAN DRIVE THIS SCREEN NOW, AND IT NEVER COULD. `KeyboardCursor`
             // carries the reasoning, including why the selection is NOT pre-armed: the chat field
             // is always open in this lobby and ENTER is what a player presses to talk, so a
@@ -1312,6 +1314,40 @@ namespace TumbangPreso.UI
         /// from code has none. A `minHeight` alone was enough while these rows were laid out
         /// horizontally and is not once they stack.
         /// </summary>
+        /// <summary>
+        /// Dresses the two authored subtrees the lobby chrome takes things OUT of and leaves.
+        ///
+        /// ⚠️⚠️ BOTH WERE REPORTED BY THE WIDENED `PaperPurityProbe` AND NEITHER IS REACHABLE BY
+        /// ANY OTHER ROUTE. `LobbyChrome.BuildSettingsDrawer` moves the authored `Rows` out of
+        /// `LeftColumn/ConfigPanel` into a paper drawer and leaves the board itself behind, still
+        /// carrying its `GodotPanel`; and `CharacterSelectPanel` dresses itself in
+        /// `ConvertedCharacterSelect.Wire`, which is `Start` and therefore **does not run until
+        /// the panel is first switched on**. So the picker's BACK button was wooden from scene
+        /// load until the first time anybody opened the picker.
+        ///
+        /// ⚠️ IT IS IDEMPOTENT, which is what makes the overlap with `Wire` harmless.
+        /// `PaperSkin.Apply` destroys any `WoodSkin` it finds and `PaperDress` disables rather
+        /// than destroys, so the picker being dressed twice costs one walk of a subtree.
+        ///
+        /// ⚠️ AND IT DOES NOT TOUCH THE PICKER'S AUTHORED BOARD. That is
+        /// `ConvertedCharacterSelect.PaperiseAuthoredBoard`'s decision to make and it carries the
+        /// argument for making it; `PaperDress` cannot see a bare `Image` with an authored sprite
+        /// on it, which is the whole subject of `docs/TODO.md` § 120.4.
+        /// </summary>
+        private void PaperiseWhatTheChromeLeaves()
+        {
+            foreach (var board in Nodes("ConfigPanel"))
+            {
+                var panel = board.GetComponent<GodotPanel>();
+                if (panel == null) continue;
+
+                PaperKit.Paperise(board.gameObject, PaperCraft.Surface.Sheet);
+            }
+
+            var picker = Node("CharacterSelectPanel");
+            if (picker != null) PaperDress.Screen(picker);
+        }
+
         private static void Fixed(Component child, float height)
         {
             var element = child.gameObject.GetComponent<LayoutElement>();

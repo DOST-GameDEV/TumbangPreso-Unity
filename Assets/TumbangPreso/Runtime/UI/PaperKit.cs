@@ -892,9 +892,25 @@ namespace TumbangPreso.UI
             TintLabel();
         }
 
+        /// <summary>
+        /// Leaves the lettering the colour the caller set.
+        ///
+        /// ⚠️⚠️ ONE CONTROL IN THE GAME USES IT AND IT IS `LEAVE GAME`. Every other paper chip
+        /// wants its type decided by its surface, which is the whole reason `TintLabel` reads the
+        /// surface rather than being told; a DESTRUCTIVE action is the one case where the word
+        /// itself carries a meaning the plate does not. `GodotTheme.WoodDangerButton` said it with
+        /// a red slab, and on cream a red slab beside a green primary is two saturated rectangles
+        /// arguing. One red WORD on a plain token is the same statement at a tenth of the area.
+        ///
+        /// ⚠️ IT IS A FLAG RATHER THAN A COLOUR FIELD ON PURPOSE. A colour here would be a second
+        /// place that decides what a paper control's type looks like, which is exactly the
+        /// five-copies problem `PaperKit.MarkLive` was written to end.
+        /// </summary>
+        public bool KeepLabelColour;
+
         private void TintLabel()
         {
-            if (_label == null) return;
+            if (_label == null || KeepLabelColour) return;
 
             bool on = Available;
 

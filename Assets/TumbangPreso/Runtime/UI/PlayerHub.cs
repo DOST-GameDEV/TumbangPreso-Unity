@@ -269,6 +269,19 @@ namespace TumbangPreso.UI
                 if (_root != null) _root.SetActive(!visible);
             };
 
+            // ⚠️⚠️ THE SHELL IS DRESSED AT INSTALL AND NOT ONLY IN `Show`, AND THE WIDENED
+            // `PaperPurityProbe` IS WHAT SAID SO. It reported all six tabs, CLOSE, `MatchDetail`
+            // and its BACK as `still carries GodotButton (WoodButton)`: `Show` dresses `_root`,
+            // and `Show` does not run until the player opens this screen and picks a tab. So the
+            // whole shell sat wooden from scene load until the first press, which is invisible in
+            // a render (nobody photographs a screen that is switched off) and is exactly the case
+            // `docs/TODO.md` § 119.6 wanted a probe for.
+            //
+            // ⚠️ IT IS NOT A REPLACEMENT FOR THE CALL IN `Show`. That one exists because the ROWS
+            // are destroyed and rebuilt on every tab press; this one is for the furniture around
+            // them, which is built exactly once, here.
+            PaperDress.Screen(_root.transform);
+
             _root.SetActive(false);
 
             if (GameServices.Account != null) GameServices.Account.Changed += OnDataChanged;

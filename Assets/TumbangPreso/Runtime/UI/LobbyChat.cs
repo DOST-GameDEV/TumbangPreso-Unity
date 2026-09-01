@@ -883,9 +883,20 @@ namespace TumbangPreso.UI
             titleRect.offsetMax = new Vector2(-170.0f, -14.0f);
             title.raycastTarget = false;
 
+            // ⚠️⚠️ THE ONE WOODEN CONTROL LEFT ON A PAPER PANEL, AND IT TOOK A WIDENED PROBE TO
+            // FIND IT. `PaperPurityProbe` reported `LobbyChatLog/Panel/Button_CLOSE still carries
+            // GodotButton (WoodButton)` once it started opening the screens the lobby opens: this
+            // panel builds its own surfaces through `PaperSkin` and never calls `PaperDress`, so
+            // the one control built through `MenuKit.WoodButton` stayed wood inside a cream box.
+            // It is inside a drawer that is shut most of the time, which is exactly the case
+            // `docs/TODO.md` § 119.6 says a render cannot check.
             var close = MenuKit.WoodButton(box.transform, "CLOSE", Vector2.one,
                                            Vector2.zero, new Vector2(132.0f, 46.0f),
                                            CloseHistory);
+            PaperKit.Paperise(close.gameObject, PaperCraft.Surface.Token);
+            if (close.GetComponent<PaperButton>() == null)
+                close.gameObject.AddComponent<PaperButton>();
+
             var closeRect = close.transform as RectTransform;
             closeRect.pivot = Vector2.one;
             closeRect.anchoredPosition = new Vector2(-18.0f, -14.0f);

@@ -486,6 +486,37 @@ namespace TumbangPreso.UI
                                         Vector2.zero, new Vector2(0.0f, RowHeight), Leave,
                                         "WoodDangerButton");
             _leave.name = "LeaveGameButton";
+
+            // ⚠️⚠️ IT IS PAPER LIKE EVERYTHING ELSE ON THIS CARD, AND IT WAS THE ONE THING ON IT
+            // THAT WAS NOT. `PaperPurityProbe` found it once the probe started walking the
+            // screens the lobby opens: this whole panel is built out of `PaperKit` atoms and this
+            // single control came through `MenuKit.WoodButton`, so it drew as a wooden danger
+            // plate on a cream sheet. ⚠️ **It is hidden until there is a session to end**, which
+            // is exactly the state a render cannot photograph and the reason § 119.6 wanted a
+            // probe rather than a picture.
+            //
+            // ⚠️ THE RED STAYS IN THE LETTERING RATHER THAN IN THE PLATE. `WoodDangerButton` said
+            // "this one is destructive" with a red slab; on cream the same statement is made by
+            // `UiTheme.MenuRed` type on a plain token, which is one saturated word instead of a
+            // saturated rectangle and does not compete with the green primary two controls away.
+            PaperKit.Paperise(_leave.gameObject, PaperCraft.Surface.Token);
+
+            var leaveLabel = _leave.GetComponentInChildren<Text>(true);
+            if (leaveLabel != null)
+            {
+                leaveLabel.name = "Label";
+                leaveLabel.color = UiTheme.MenuRed;
+                leaveLabel.fontStyle = FontStyle.Bold;
+            }
+
+            // ⚠️ AFTER THE LABEL, AND WITH `KeepLabelColour` SET. `PaperButton.Awake` captures the
+            // child it will move and tint the moment the component is added, and it would tint
+            // this one back to ink: the flag is what says the red is the caller's decision. See
+            // that field's own note for why exactly one control in the game sets it.
+            var leaveChip = _leave.GetComponent<PaperButton>();
+            if (leaveChip == null) leaveChip = _leave.gameObject.AddComponent<PaperButton>();
+            leaveChip.KeepLabelColour = true;
+
             var leaveElement = _leave.gameObject.AddComponent<LayoutElement>();
             leaveElement.minHeight = RowHeight;
             leaveElement.preferredHeight = RowHeight;
