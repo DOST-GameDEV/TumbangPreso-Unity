@@ -325,7 +325,15 @@ namespace TumbangPreso.UI
             // ⚠️ IT IS ALSO THE BLOCKER (§ 6.2c question 4). Everything a player can act on is
             // inside this screen while it is up, and an opaque `Image` with `raycastTarget` on is
             // what stops a press reaching the character select underneath.
-            MenuKit.Backdrop(_root.transform, UiTheme.WoodDeep);
+            // ⚠️⚠️ CREAM, NOT `WoodDeep`, AND IT IS THE SAME ONE-LINE FAULT `PlayerHub` CARRIED.
+            // `PaperDress.Screen` walks `GodotPanel`, `GodotButton` and `WoodSkin`; a backdrop is
+            // a bare `Image` with a colour on it, so the node that decides what colour the SCREEN
+            // is was invisible to the machinery that repaints screens. Everything drawn on top of
+            // it was converted normally, and `PaperDress.Type` remaps `Amber` and `CreamMuted` to
+            // ink, so `Logs/shots-runtime/CharacterMaker-v57.png` shows **MAKE YOUR OWN written in
+            // dark brown on a dark brown board**, with a cream model card and cream buttons around
+            // it. A half-converted screen is worse than an unconverted one.
+            MenuKit.Backdrop(_root.transform, UiTheme.Paper);
 
             BuildHeader();
             BuildStage();
@@ -673,6 +681,13 @@ namespace TumbangPreso.UI
                 // ⚠️ RELIEF RATHER THAN HUE, as on every other tab strip in the front end. See
                 // `GodotTheme.WoodTabIdleButton`.
                 skin.Variation = i == _slot ? "WoodTabLiveButton" : "WoodTabIdleButton";
+
+                // ⚠️⚠️ AND THE PAPER SKIN IS WRITTEN DIRECTLY, because by the time anybody presses
+                // a slot tab the `GodotButton` above is disabled: `PaperDress` turns it off on the
+                // way past, since it rewrites its own sprite on hover. Three screens had this same
+                // fault at once and `PaperKit.MarkLive` is where the answer lives now.
+                if (PaperKit.MarkLive(_slotTabs[i], i == _slot)) continue;
+
                 skin.Apply();
                 skin.Refresh();
             }
@@ -701,6 +716,26 @@ namespace TumbangPreso.UI
             _footer.text = active
                 ? "Drag to turn, wheel to zoom.  ·  This is the slot you play as."
                 : "Drag to turn, wheel to zoom.";
+
+            // ⚠️⚠️ THE DRESS RUNS AT THE END OF EVERY REBUILD AND NOT ONCE AT BUILD TIME, WHICH IS
+            // WHAT `PlayerHub.Show` ALREADY DOES AND THIS SCREEN DID NOT. Everything above this
+            // line is destroyed and rebuilt on every slot press, every section press and every
+            // value change: the six section tabs, every `UiRows` row and every stepper in them.
+            // A single pass at build time therefore painted the FACE section and left the other
+            // five wooden, which is what `Logs/shots-runtime/CharacterMaker-v57.png` shows.
+            //
+            // ⚠️ IT IS IDEMPOTENT AND CHEAP. `PaperSkin.Apply` destroys any `WoodSkin` it finds
+            // and `PaperDress` disables rather than destroys, so re-running it on already-dressed
+            // chrome costs one walk of a subtree that was just built anyway.
+            PaperDress.Screen(_root.transform);
+
+            // ⚠️ AFTER THE DRESS, BECAUSE THE DRESS FLATTENS EVERY TAB ONTO ONE SURFACE. Same
+            // ordering fault `ConvertedCharacterSelect.Wire` records; here the fix is a second
+            // call rather than a reorder, because the slot tabs are written above in the same
+            // loop that sets the variation the dress reads.
+            for (int i = 0; i < _slotTabs.Count; i++) PaperKit.MarkLive(_slotTabs[i], i == _slot);
+            for (int i = 0; i < _sectionTabs.Count; i++)
+                PaperKit.MarkLive(_sectionTabs[i], i == _section);
         }
 
         /// <summary>
