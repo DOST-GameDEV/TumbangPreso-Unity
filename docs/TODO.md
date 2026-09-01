@@ -2328,6 +2328,95 @@ could not cover, and it is *"we dont lose buttons"* written as a test rather tha
 
 ---
 
+### 119.8 ⚠️⚠️ THE REDUNDANCY 🧑 FOUND, AND THE LADDER THAT HAD NO DOOR
+
+🧑, looking at the first paper build: **"dont quick match and start match do the same thing? kinda
+confusing no?"**, then the fix in his own words: *"maybe for lobby separate it into ranked and
+custom or other shit"*, *"maybe if ull join other server or use lan thats custom"*, *"you know use
+other games as referenc"*, and **"make custom and ranked ladder shit diff dont jsut copy paste, bcz
+ranked laddder dont need join code"**, *"make it as well na u cant queue with a friend in ranked
+ladder or smth"*.
+
+**He is right and the screen had two primaries.** START MATCH loaded an arena with whoever was in
+the four seats; QUICK MATCH joined a queue that would find a room and load an arena. Both said "a
+match starts now", they sat 400 units apart in one rail, and no position fixes two controls with
+the same verb.
+
+⚠️ **THE MECHANISM IS THE ONE EVERY GAME IN § 118.3 USES: one primary verb, and the MODE chosen
+beside it.** Rocket League's home screen is PLAY over Casual / Competitive / Private; Overwatch 2
+has one button whose LABEL follows the mode selector above it; Valorant puts a mode dropdown next
+to one START. None of them ships two buttons that both start a game.
+
+| Mode | The one thing | The primary | The right column | Settings |
+|---|---|---|---|---|
+| `Practice` | play now, alone | START MATCH | **nothing, and the rail shrinks** | open |
+| `Ranked` | climb | FIND A RANKED MATCH | your TIER and the party rule | **locked plate, not a greyed chip** |
+| `Custom` | get friends in | START MATCH / READY | the room code plaque, JOIN, CHAT | open |
+
+⚠️⚠️ **AND THE LADDER HAD NEVER BEEN REACHABLE BY ANY PLAYER.** `QueueCard.OnQuickMatchPressed`
+passed `QueueStake.Casual` as a literal. `QueueStake.Ranked` exists in the core, `PartyRules.CanQueue`
+refuses a full stack and an unsigned member for it, `BotFillRules` has separate timing for it,
+`RatingRules` owns five tiers and `MatchStatsCollector` reads
+`Matchmaker.Current.Stake == QueueStake.Ranked` to decide whether a result counts. **All of Phase 9
+shipped behind a constant no screen could change**, and nothing logged, because casual is a
+perfectly valid queue. `QueueCard.Stake` is a field now and the RANKED tab sets it.
+
+⚠️ **THE PARTY RULE IS STATED BEFORE THE PRESS.** `PartyRules.RefusalLabel` writes a good sentence
+and the player only ever saw it AFTER pressing, which `CLAUDE.md` § 6.2 calls the INTUITIVE
+failure. The tier plate carries *"Solo, or a party of up to three"* and, for a guest, *"The ladder
+keeps a rating, so it needs an account. Practice and custom rooms never ask."*
+
+⚠️ **ONE SLOT, THREE OCCUPANTS, EXACTLY ONE VISIBLE.** A separate `RankedButton` was built first and
+`Logs/shots-runtime/LobbyRanked-v53.png` killed it: a rounded green rectangle where every other mode
+has 🧑's authored chamfered slab. **The one primary has to be one OBJECT** or "always in the same
+place" is true of the position and false of everything else. `OnStartPressed` dispatches on the
+mode.
+
+### 119.9 ⚠️⚠️ FIVE FAULTS THE RENDERS FOUND AND NO PROBE COULD, AND ONE OF THEM TOOK THREE PASSES
+
+| # | What the picture showed | The cause |
+|---|---|---|
+| 1 | START MATCH drawn 110 units wide with its label clipped, on PRACTICE, and still wrong after a 1.5 s wait | ⚠️⚠️ **`ArrowButtonView.SetPivot` RE-APPLIES `_offMin` AND `_offMax` EVERY FRAME UNTIL ITS PIVOT LANDS**, and those are the offsets captured when the component last ran: the AUTHORED rect, not the one `LobbyChrome` just gave it. Correct on the main menu, where the pennant keeps its own rect; fatal on any control this pass reparents. `PaperKit.Paperise` switches it off for every node it touches. **Two of 🧑's reports, *"back is brokenn"* and *"te back button still broken"*, were the same bug on a different control**, and the second one is what proved the inset was never the cause. |
+| 2 | `SKILLS` drawn through `Standard Build` | Two labels whose boxes overlapped by 46 units. **An overlap between two labels is silent in every direction**; § 102.4 is the same fault measured horizontally. Two boxes that share an edge cannot overlap by construction. |
+| 3 | `ROOM CODE` drawn through the code | Same shape, on the plaque: a caption inset 24 from the bottom and a 44-unit value inset 26 from the top overlap by 12 on a 62-unit plate. |
+| 4 | The tier plate showed `UNRANKED` and no sentence | The value's rect stretched to the plate's bottom edge and drew over the note. A `Text` draws nothing where it has no glyphs, so the covering label is invisible. |
+| 5 | `v1.0.0` drawn through the word BACK | The rail's bottom-left corner and a 44-unit chip's vertical centre are the same 14 units of padding apart. |
+
+⚠️ **AND THE SHOT PASS ITSELF WAS WRONG TWICE.** It opened `LobbyJoinPanel` with `SetActive(true)`
+rather than `Open()`, so `Refresh` never ran and `LobbyJoin-v52.png` is four rows reading
+`AVAILABLE GAMES APPEAR HERE`; and it photographed the lobby 0.6 s after a tab switch, inside a
+0.45 s unfurl with a stagger. **A render of a state the game cannot reach is worse than no render.**
+
+### 119.10 What 🧑 rejected by eye, with the number that agreed with him each time
+
+| His words | The measurement |
+|---|---|
+| *"this yellow dont look good withh creme too btw"* | `UiTheme.Amber` `ffba00` on `UiTheme.Paper` `f4ecdd` is **1.7:1**. Amber leaves the front end; the marker role moves from HUE to VALUE and the room code is a wood plaque with cream lettering, 10:1. § 118.4's *"amber is the marker"* was written for a WOODEN front end, where amber was the one light thing on a dark screen. **Invert the field and the rule inverts with it.** |
+| *"this yellow shit uglyu"*, of `SECURE YOUR PROGRESS` | Same 1.7:1, and 20 characters in a 200-unit chip. It is `ACCOUNT` in ink now. |
+| *"maybe bcz u just recolored them all"* | Every control was a flat pill with a halo and a 2-unit lip: nothing had a below, so nothing had a height. Every raised surface casts a shadow inside its own bounds now, and a press collapses it. |
+| *"this 2nd pic ugly too its still 2d"* | A `Tray` was one dark band along its top edge, which is a gradient rather than a hole. It is four things now: a hard inner shadow, a wrap down the side walls, a lit floor and a cut edge. |
+| *"big ass empty sopace"* | The fighter column was 400 units around a 154-unit name, so the name sat at one edge and its chevron at the other. Sized to content, and every row centres its own strings. |
+| *"why is entire right side empty"* | The bottom rail reserved 420 units for a mode column PRACTICE has nothing to put in. The rail has a `ContentSizeFitter` now and the column comes off, so the island re-centres. |
+| *"its still so big too"* then *"make taht start match bigger"* | Not contradictory. **The CHROME got tighter and the ACTION got bigger**: `PaperKit.Pad` 18 to 14 and `Gap` 12 to 10, against a primary that went 88 to 104. The ratio that decides whether the button reads as the biggest thing is its height against the 44-unit chip above it: **2.4 to 1, from 1.6 to 1.** |
+| *"why does insert player name still live here"* | `PlayerHub.BuildProfileTab` has had a `Display name` row since Phase 1. The rail's field was a second control writing the same string. |
+
+### 119.11 What is NOT done, named rather than left implied
+
+- ⚠️ **The sign-in screen's tab pair still uses `Token` against `Ghost`.** The lobby's uses
+  `Live` against `Ghost` after the render showed 4 per cent was not enough; the login screen was
+  not re-shot between those two changes and is inconsistent by omission, not by decision.
+- ⚠️ **The login card is 900 units tall around about 700 of content.** The Y offsets inside it are
+  the ones `SignInScreen` has always used and they were spaced for a full-height column.
+- **The character select, the character maker and the settings panel are dressed by
+  `PaperKit.PaperDress.Screen` and have not been photographed.** The pass converts them; nobody has
+  looked at whether the compositions still work in the new material.
+- **`LobbyChat`'s in-match instance is deliberately untouched** and still wooden, because the
+  in-match HUD is out of scope.
+- **`UiRuntimeShots` does not photograph the WELCOME BACK state**, which needs an account with a
+  password attached and cannot be made in a probe. It is stated in that method rather than skipped.
+
+---
+
 ## 118 · The lobby is coherent now and it is not finished ⚠️⚠️ OPEN, 2026-09-01, branch `ui-redesign`
 
 🧑, after § 117 landed and he had looked at every render: *"create handoff to improve lobby ui even
