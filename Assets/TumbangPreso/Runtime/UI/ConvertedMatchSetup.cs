@@ -1073,6 +1073,21 @@ namespace TumbangPreso.UI
                     bool open = !drawer.activeSelf;
                     drawer.SetActive(open && IsLobby);
                     if (open && _chat != null) _chat.gameObject.SetActive(false);
+
+                    // ⚠️⚠️ THE HEADING IS RE-FITTED ON THE OPEN, AND WITHOUT THIS IT IS NEVER
+                    // FITTED AT ALL. `Logs/shots-runtime/LobbyServers-v57.png` shows
+                    // `LOBBY · YOU ARE HOST` with SPECTATE drawn across the last letters, which
+                    // is the exact string `LobbyHeadingSize`'s note says was fixed. It was, once:
+                    // `ConvertedScreen.SetHeadline` measures the rect and gives up when the rect
+                    // reports zero, and **`LayoutRebuilder` cannot rebuild a canvas that is
+                    // inactive on that frame**, which this drawer always is when `Refresh` runs.
+                    // So the measurement silently returned every time and the label kept its
+                    // authored 28 units.
+                    //
+                    // ⚠️ `Refresh` RATHER THAN A DIRECT RE-FIT, because the room string is built
+                    // from three live facts (host or client, the spectator count, the seat rows)
+                    // and duplicating that here is how the two copies drift.
+                    if (open) Refresh();
                 });
             }
 

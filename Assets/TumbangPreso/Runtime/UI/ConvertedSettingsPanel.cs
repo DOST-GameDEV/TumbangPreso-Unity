@@ -95,6 +95,38 @@ namespace TumbangPreso.UI
             // menu and the in-match HUD, which 🧑 scoped out twice. `PaperKit.PaperDress.Screen`
             // walks a given root instead. See `docs/TODO.md` § 119.2 and § 119.5.
             PaperDress.Screen(transform);
+
+            FitFooterLabels();
+        }
+
+        /// <summary>
+        /// Shrinks the three footer labels until they fit the plates they are drawn on.
+        ///
+        /// ⚠️⚠️ `APPLY CHANGES` DRAWS PAST BOTH ENDS OF ITS BUTTON, which is visible in
+        /// `Logs/shots-runtime/Settings-v57.png` and is the same silent overflow `CLAUDE.md`
+        /// § 6.2c's fourth question is about: `MenuKit.Label` is set to Overflow, so a label that
+        /// does not fit is not clipped and does not wrap, it simply draws outside its box. These
+        /// three are authored in the `.tscn` at one size for one string, and `RESET ALL` and
+        /// `◀ BACK` fit while the thirteen characters of the third one do not.
+        ///
+        /// ⚠️ THE CANVAS IS UPDATED FIRST, because `MenuKit.Fit` measures against a rect and a
+        /// rect that has not been laid out reports zero, at which point the call returns without
+        /// doing anything. That silent no-op is why fitting from a build method usually fails.
+        /// </summary>
+        private void FitFooterLabels()
+        {
+            Canvas.ForceUpdateCanvases();
+
+            foreach (string name in new[] { "ApplyButton", "ResetAllButton", "BackButton" })
+            {
+                var node = Node(name) as RectTransform;
+                if (node == null) continue;
+
+                var label = node.GetComponentInChildren<Text>(true);
+                if (label == null) continue;
+
+                MenuKit.Fit(label, node.rect.width - 28.0f);
+            }
         }
 
         /// <summary>
@@ -247,8 +279,19 @@ namespace TumbangPreso.UI
             barRt.offsetMin = new Vector2(-Width, 0.0f);
             barRt.offsetMax = Vector2.zero;
 
+            // ⚠️⚠️ THE BAR INVERTS WITH THE FIELD. It was a near-black track with an AMBER handle,
+            // which is correct on a wooden panel and is the pair `docs/TODO.md` § 119.10 records
+            // 🧑 rejecting by eye on three other controls: `UiTheme.Amber` `ffba00` on
+            // `UiTheme.Paper` `f4ecdd` is **1.7:1**, so on a cream panel the moving part of the
+            // scrollbar is the part that disappears. `Logs/shots-runtime/Settings-v57.png` shows
+            // it as a yellow smear down the edge of an otherwise cream sheet.
+            //
+            // **On paper the marker is the one DARK thing**: a `PaperSunk` groove with a `WoodMid`
+            // handle in it, which is about 8:1 and introduces no colour at all. Same move as the
+            // hub's XP bar and the picker's trait pips.
             var track = barGo.GetComponent<Image>();
-            track.color = new Color(UiTheme.WoodDark.r, UiTheme.WoodDark.g, UiTheme.WoodDark.b, 0.85f);
+            track.color = new Color(UiTheme.PaperSunk.r, UiTheme.PaperSunk.g,
+                                    UiTheme.PaperSunk.b, 0.85f);
 
             var handleAreaGo = new GameObject("SlidingArea", typeof(RectTransform));
             handleAreaGo.transform.SetParent(barGo.transform, false);
@@ -263,7 +306,7 @@ namespace TumbangPreso.UI
             var handleRt = handleGo.GetComponent<RectTransform>();
             handleRt.offsetMin = Vector2.zero;
             handleRt.offsetMax = Vector2.zero;
-            handleGo.GetComponent<Image>().color = UiTheme.Amber;
+            handleGo.GetComponent<Image>().color = UiTheme.WoodMid;
 
             var bar = barGo.AddComponent<Scrollbar>();
             bar.direction = Scrollbar.Direction.BottomToTop;
@@ -1071,6 +1114,23 @@ namespace TumbangPreso.UI
 
             var field = t.GetComponent<InputField>();
             if (field == null) return;
+
+            // ⚠️⚠️ A PAPER TRAY, BECAUSE THE AUTHORED FIELD IS A BARE `Image` WITH A BAKED WOOD
+            // SPRITE AND `PaperDress` CANNOT SEE IT. `Logs/shots-runtime/Settings-v57.png`: the
+            // one text box on this panel is a near-black well with a grey placeholder in it,
+            // sitting in a cream sheet, and every keycap beside it is cream. It is the same fault
+            // as the hub's backdrop and the lobby drawer's address box, which is now three
+            // separate nodes in three files: **a surface set outside `GodotPanel`, `GodotButton`
+            // and `WoodSkin` is a surface the conversion is blind to.**
+            //
+            // ⚠️ AND THE LETTERING GOES WITH IT. `PaperDress.Type` had already remapped the text
+            // and the placeholder to ink, which is what made this unreadable rather than merely
+            // old: dark ink on `WoodDark` is about 1.3:1. Setting them here keeps the two halves
+            // in one place.
+            PaperKit.Paperise(t.gameObject, PaperCraft.Surface.Tray);
+
+            if (field.textComponent != null) field.textComponent.color = UiTheme.PaperInk;
+            if (field.placeholder is Text ghost) ghost.color = UiTheme.PaperInkSoft;
 
             field.characterLimit = Balance.PlayerNameMax;
             field.text = SettingsStore.Current.PlayerName;

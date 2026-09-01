@@ -707,16 +707,7 @@ namespace TumbangPreso.UI
             // `Logs/shots-runtime/Lobby-v52.png` and rejected there; the lobby moved and this
             // screen did not, which is 🧑's *"hard to read"* on six tabs he has to choose between.
             // `PaperButton` inverts the lettering to cream on its own, by watching the surface.
-            var paper = button.GetComponent<PaperSkin>();
-            if (paper != null)
-            {
-                paper.Surface = on ? PaperCraft.Surface.Live : PaperCraft.Surface.Ghost;
-                paper.Rebuild();
-
-                var chip = button.GetComponent<PaperButton>();
-                if (chip != null) chip.Restyle();
-                return;
-            }
+            if (PaperKit.MarkLive(button, on)) return;
 
             skin.Apply();
             skin.Refresh();
@@ -775,6 +766,21 @@ namespace TumbangPreso.UI
                 _xpCount.text = "";
                 _xpFill.rectTransform.anchorMax = new Vector2(0.0f, 1.0f);
             }
+
+            // ⚠️⚠️ THE TRACK HIDES WITH THE NUMBERS, AND ONLY A CREAM SCREEN MADE THAT VISIBLE.
+            // The branch above has always emptied the two labels when there is no XP, and it has
+            // always left the 440-unit track drawn: on a `WoodDeep` backdrop an empty `WoodDark`
+            // groove was invisible, so nobody saw it. On paper the same track is a `PaperSunk` bar
+            // four value steps darker than the sheet, and
+            // `Logs/shots-runtime/LobbyAccount-v57.png` shows it as **a stray tan rule floating
+            // under CLOSE with no label anywhere near it** — a mark that means nothing, on the
+            // screen 🧑 said he could not read. A bar with nothing in it and no caption is not a
+            // quiet zero, it is a line.
+            //
+            // ⚠️ IT IS THE SAME ARGUMENT THE `xp > 0` GUARD ABOVE ALREADY MAKES about the level
+            // number, applied to the one part of that block that was not covered by it.
+            if (_xpFill != null && _xpFill.transform.parent != null)
+                _xpFill.transform.parent.gameObject.SetActive(xp > 0);
         }
 
         // -------------------------------------------------------------------
