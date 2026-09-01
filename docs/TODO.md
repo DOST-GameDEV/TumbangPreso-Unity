@@ -2517,6 +2517,32 @@ the picture asks whether it can be read. **He read it in one glance and no test 
   says so. **The door a player presses is covered by the new `LobbyStyleProbe` case**, and if the
   nameplate is not restored within a few sessions the case and the class should go together.
 
+### 114.15 ⚠️⚠️ WHAT IS STILL OPEN IN PHASES 1 TO 10, AND IT IS SIX THINGS
+
+🧑 2026-09-01: *"it will contain leftover work for phase 1-10 to make sure phase 1 to 10 is done
+when done ask handoff to start of phase 11"*. **This is that list, and it is the definition of
+done for the first ten phases.** § 114.12 is the reachability audit; this is what is not finished
+behind the surfaces it found.
+
+**Two of the six need the second laptop and cannot be closed on this machine.**
+
+| # | Phase | What is open | Where |
+|---|---|---|---|
+| 1 | **6 · Social** | ⚠️⚠️ **`request`, `accept`, `decline` and `remove` HAVE NEVER RUN BETWEEN TWO REAL ACCOUNTS.** `CloudEndpointActionProbe` has one throwaway UGS profile, so `load`, `presence`, `block` and `unblock` are green against the live service and the four that need a second party are not. **Thirty minutes, two laptops.** | § 102.5 |
+| 2 | **8 · Integrity** | ⚠️⚠️ **WHETHER A SECOND MACHINE'S COPY OF THE SCORE EVENT STREAM REPRODUCES THE SAME DIGEST.** `ScoreWitnessProbe` tests the risky half on one machine and cannot test the other. Same trip as row 1. | § 104.7 |
+| 3 | **10 · Loadouts** | ⚠️⚠️ **`HeroLoadoutRules.ChallengesEnforced` IS `false`, SO EVERY VARIANT IS HANDED OUT AND NO CHALLENGE IS COUNTED.** The 24 rows are budget-neutral and asserted, so this costs nothing competitively and it is deliberate: the flag exists because the counters do not. **Either build the counters and flip it, or delete `AbilityVariant.Challenge` and stop implying an unlock that is not there.** A challenge string a player can never see is worse than no challenge. | `Core/HeroLoadout.cs` |
+| 4 | **10 · Achievements** | **Nothing tells a player they unlocked one, and none of them awards anything.** They are derived from career totals, so they are correct and readable on the CAREER tab, and that is the whole of it: no line on the result board, no banner reward. `FUTURE.md` PHASE 10 wants the title on the shelf to be wearable. | `Core/Achievements.cs`, `MatchResult` |
+| 5 | **5 · Cosmetics** | ⚠️ **A MASTERY PALETTE IS AWARDED AND CANNOT BE EQUIPPED**, which § 114.6 created on purpose by deleting the picker. **Decide one of two things**: stop awarding `mastery.<hero>.palette.alt1` and give the slot to a title, or put an equip control on MAKE YOUR OWN where 🧑 said customisation belongs. **Do not put it back on the hero picker.** | § 114.6 |
+| 6 | **6 · Social** | **Friends by name and tag is still declined** and still needs an index document. It is the one bullet of that phase that could not be built as written. | § 102.2 |
+
+⚠️ **AND ONE THAT IS THIS SESSION'S OWN**: § 114.14's parentage check, which is one assertion and
+would have caught § 114.13 and two faults before it.
+
+**When all six are closed, phases 1 to 10 are done and the next thing is `FUTURE.md` PHASE 11,
+bots, backfill and the population problem.** ⚠️ Read § 0.5 and § 0.5b before starting it, and
+§ 19.0 first: that prompt exists to refresh the plan before it is used, and this entry has already
+found two things `FUTURE.md` was stale about (Phase 10's status, and Phase 5's colour dial).
+
 ### 114.14 The gap this session leaves open, named rather than left implied
 
 ⚠️⚠️ **NOTHING IN THIS PROJECT CAN SEE THAT A CARD IS IN THE WRONG PART OF THE SCREEN.** § 114.13
