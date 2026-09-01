@@ -260,7 +260,7 @@ namespace TumbangPreso.Net
         /// CANNOT, which is the split the paragraph above already records: a trailing field can be
         /// made tolerant and a field inside a per-seat loop cannot. This constant is what stops
         /// the second case from ever arising.
-        public const int ProtocolVersion = 19;
+        public const int ProtocolVersion = 20;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

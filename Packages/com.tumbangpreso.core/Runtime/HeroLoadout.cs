@@ -64,6 +64,16 @@ namespace TumbangPreso.Core
         /// <summary>The Risk of Rain 2 style challenge that unlocks it. Empty on a default.</summary>
         public string Challenge { get; }
 
+        /// <summary>
+        /// Successful casts of this slot needed to unlock the variant.
+        ///
+        /// ⚠️⚠️ THE COUNTER IS CASTS, NOT WINS, XP OR ONLINE MATCHES. Phase 10 promises that
+        /// every unlock can be earned in Practice against bots, so the event has to exist before
+        /// a career record and without a service. A successful cast is also the one event all
+        /// twelve skills share and the one that actually teaches the player the button.
+        /// </summary>
+        public int ChallengeTarget { get; }
+
         /// <summary>Whether that challenge can be finished in Practice against bots. Must be true.</summary>
         public bool PracticeSafe { get; }
 
@@ -72,7 +82,8 @@ namespace TumbangPreso.Core
         public AbilityVariant(string id, string heroId, int slot, string baseAbility,
                               string glyphName, string name, string description,
                               float gain, float cost, string gainLabel, string costLabel,
-                              string challenge = "", bool practiceSafe = true)
+                              string challenge = "", bool practiceSafe = true,
+                              int challengeTarget = 0)
         {
             Id = id;
             HeroId = heroId;
@@ -87,6 +98,7 @@ namespace TumbangPreso.Core
             CostLabel = costLabel;
             Challenge = challenge;
             PracticeSafe = practiceSafe;
+            ChallengeTarget = string.IsNullOrEmpty(challenge) ? 0 : Math.Max(1, challengeTarget);
         }
     }
 
@@ -137,10 +149,16 @@ namespace TumbangPreso.Core
                 "Seismic Stomp", "The stomp as it is tuned. One heavy shock at the measured radius.",
                 0.0f, 0.0f, "As tuned", "As tuned"),
 
+            // ⚠️⚠️ 25 PER CENT IS THE SMALLEST NUMBER IN THIS TABLE ON PURPOSE. DO NOT RAISE IT.
+            // The gain is a RADIUS, so it is already the largest change in the table by the thing
+            // the player actually sees: 2.2 m to 2.75 m is 56 per cent more floor. It is also
+            // the only row that grows a footprint, and `docs/VISION.md` § 2 rule 1 asks a skill
+            // for 1.8 to 2.5 m; 2.75 is over that already and a "bigger" number here would be
+            // bought straight out of the readability budget the whole mode is balanced against.
             new AbilityVariant("dante.1.tremor", "dante", 1, "SEISMIC STOMP", "DanteStomp",
-                "Long Tremor", "The shock travels further and arrives softer.",
+                "Long Tremor", "The break reaches half again as much street and lands softer.",
                 0.25f, -0.25f, "+25% radius", "-25% knockback",
-                "Stomp three attackers at once, twice", true),
+                "Use Seismic Stomp eight times", true, 8),
 
             new AbilityVariant("dante.2.carapace", "dante", 2, "DEMONIC CARAPACE", "DanteShield",
                 "Demonic Carapace", "The carapace as it is tuned.",
@@ -149,7 +167,7 @@ namespace TumbangPreso.Core
             new AbilityVariant("dante.2.plating", "dante", 2, "DEMONIC CARAPACE", "DanteShield",
                 "Heavy Plating", "Holds longer and slows you while it is up.",
                 0.30f, -0.30f, "+30% duration", "-30% move speed while up",
-                "Take twenty slipper hits with the carapace up", true),
+                "Use Demonic Carapace six times", true, 6),
 
             // ---------------------------------------------------------------
             // CHESKA. PERMAFROST SHEET / ICE BARRICADE. `CheskaHeroKit`.
@@ -161,7 +179,7 @@ namespace TumbangPreso.Core
             new AbilityVariant("cheska.1.blackice", "cheska", 1, "PERMAFROST SHEET", "CheskaFrostSheet",
                 "Black Ice", "A smaller sheet that is much harder to stand on.",
                 0.35f, -0.35f, "+35% slip", "-35% floor area",
-                "Make three attackers slip on one sheet", true),
+                "Use Permafrost Sheet eight times", true, 8),
 
             new AbilityVariant("cheska.2.barricade", "cheska", 2, "ICE BARRICADE", "CheskaBarricade",
                 "Ice Barricade", "The barricade as it is tuned.",
@@ -170,7 +188,7 @@ namespace TumbangPreso.Core
             new AbilityVariant("cheska.2.spires", "cheska", 2, "ICE BARRICADE", "CheskaBarricade",
                 "Split Spires", "Two narrow pillars instead of one wall. Wider cover, easier to run between.",
                 0.40f, -0.40f, "+40% span", "-40% wall thickness",
-                "Block ten throws with a barricade", true),
+                "Use Ice Barricade six times", true, 6),
 
             // ---------------------------------------------------------------
             // SEAN. FLAME RUSH / IGNITION CANNON. `SeanHeroKit`.
@@ -182,16 +200,16 @@ namespace TumbangPreso.Core
             new AbilityVariant("sean.1.afterburn", "sean", 1, "FLAME RUSH", "SeanRush",
                 "Afterburn", "A shorter run that leaves a trail living longer behind it.",
                 0.30f, -0.30f, "+30% trail life", "-30% dash distance",
-                "Knock down two attackers in one rush", true),
+                "Use Flame Rush eight times", true, 8),
 
             new AbilityVariant("sean.2.cannon", "sean", 2, "IGNITION CANNON", "SeanIgnite",
                 "Ignition Cannon", "The cannon as it is tuned.",
                 0.0f, 0.0f, "As tuned", "As tuned"),
 
             new AbilityVariant("sean.2.flare", "sean", 2, "IGNITION CANNON", "SeanIgnite",
-                "Flare Shot", "Faster in the air, and it stops burning sooner where it lands.",
-                0.25f, -0.25f, "+25% flight speed", "-25% burn time",
-                "Hit the lata with an ignited tsinelas five times", true),
+                "Flare Shot", "Flies flat and fast, and cracks in a tighter circle.",
+                0.25f, -0.25f, "+25% flight speed", "-25% blast radius",
+                "Use Ignition Cannon eight times", true, 8),
 
             // ---------------------------------------------------------------
             // ZACK. BOLT SPRINT / STATIC CHARGE. `ZackHeroKit`.
@@ -200,19 +218,28 @@ namespace TumbangPreso.Core
                 "Bolt Sprint", "The sprint as it is tuned.",
                 0.0f, 0.0f, "As tuned", "As tuned"),
 
+            // ⚠️⚠️ 45 PER CENT, UP FROM 30, AND THE GAIN REACHES TWO NUMBERS RATHER THAN ONE.
+            // At 30 per cent this row was the one alternate in the twelve a player could not
+            // feel: it bought 0.075 s of extra stagger on a 0.25 s stumble, which is four
+            // frames. It now scales the stagger AND divides the 1.1 s re-shock interval, so a
+            // runner caught in the lane is shocked half again as often and for half again as
+            // long, which is a decision (take the long way round) rather than a statistic.
+            // ⚠️ THE COST IS THE ONE THAT MATTERS MOST TO THE ROOM. `docs/VISION.md` § 2 records
+            // Zack's corridor at 27.2 per cent of the box off a 6.0 s cooldown, more floor than
+            // any ultimate; a 0.45 width cut takes one dash's lane to about 8 per cent.
             new AbilityVariant("zack.1.arcline", "zack", 1, "BOLT SPRINT", "ZackSprint",
-                "Arc Line", "A narrower lane that shocks harder.",
-                0.30f, -0.30f, "+30% stun", "-30% trail width",
-                "Grind past three attackers in one sprint", true),
+                "Arc Line", "One thin lane that shocks harder and shocks again sooner.",
+                0.45f, -0.45f, "+45% shock", "-45% trail width",
+                "Use Bolt Sprint eight times", true, 8),
 
             new AbilityVariant("zack.2.charge", "zack", 2, "STATIC CHARGE", "ZackOvercharge",
                 "Static Charge", "The charge as it is tuned.",
                 0.0f, 0.0f, "As tuned", "As tuned"),
 
             new AbilityVariant("zack.2.discharge", "zack", 2, "STATIC CHARGE", "ZackOvercharge",
-                "Snap Discharge", "Charges twice as fast and holds half as long.",
-                0.50f, -0.50f, "+50% charge rate", "-50% hold time",
-                "Land ten overcharged throws", true),
+                "Snap Discharge", "The throw launches much faster, but the charge expires sooner.",
+                0.50f, -0.50f, "+50% throw speed", "-50% hold time",
+                "Use Static Charge eight times", true, 8),
 
             // ---------------------------------------------------------------
             // NEMU. PHANTOM VEIL / ASTRAL HIJACK. `NemuHeroKit`.
@@ -224,16 +251,21 @@ namespace TumbangPreso.Core
             new AbilityVariant("nemu.1.fade", "nemu", 1, "PHANTOM VEIL", "NemuPhase",
                 "Long Fade", "Stay unseen longer, and move slower while you are.",
                 0.35f, -0.35f, "+35% duration", "-35% move speed while veiled",
-                "Retrieve a tsinelas from inside the box while veiled, five times", true),
+                "Use Phantom Veil eight times", true, 8),
 
             new AbilityVariant("nemu.2.hijack", "nemu", 2, "ASTRAL HIJACK", "NemuAstralPet",
                 "Astral Hijack", "The hijack as it is tuned.",
                 0.0f, 0.0f, "As tuned", "As tuned"),
 
+            // ⚠️ THERE IS NO LEASH RADIUS TO SELL, AND THE ROW USED TO PROMISE ONE. Kuro flies
+            // free while possessed and the ability ends on its own duration
+            // (`GhostPetCompanion`), so "+30% reach" named a parameter that does not exist. What
+            // does exist is his speed, and 40 per cent of it is the difference between arriving
+            // while somebody is still bent over their tsinelas and arriving after.
             new AbilityVariant("nemu.2.leash", "nemu", 2, "ASTRAL HIJACK", "NemuAstralPet",
-                "Short Leash", "Reaches further and lets go sooner.",
-                0.30f, -0.30f, "+30% reach", "-30% hold",
-                "Hijack the taya three times in one match", true),
+                "Short Leash", "Kuro darts. He gets there first and lets go much sooner.",
+                0.40f, -0.40f, "+40% flight speed", "-40% hold",
+                "Use Astral Hijack six times", true, 6),
 
             // ---------------------------------------------------------------
             // PHAISTER. HEX / SHADOW BLINK. `PhaisterHeroKit`.
@@ -243,10 +275,15 @@ namespace TumbangPreso.Core
                 "Hex Sigil", "The sigil as it is tuned.",
                 0.0f, 0.0f, "As tuned", "As tuned"),
 
+            // ⚠️ THE GAIN REACHES THREE NUMBERS, for the reason Arc Line's note above gives: a
+            // 40 per cent gain on a 0.35 s stagger alone is a tenth of a second and reads as
+            // nothing. It scales the drag, the stagger and the rate the ward re-bites, so a
+            // 1.44 m brand is a place one attacker genuinely cannot cross rather than a smaller
+            // version of the same puddle.
             new AbilityVariant("phaister.1.brand", "phaister", 1, "HEX", "PhaisterHexSigil",
-                "Slow Brand", "Bites harder on one target and covers less ground.",
-                0.40f, -0.40f, "+40% effect", "-40% sigil radius",
-                "Hex the same attacker in three separate rounds", true),
+                "Slow Brand", "A small ward that holds much harder and re-bites much sooner.",
+                0.40f, -0.40f, "+40% hold", "-40% sigil radius",
+                "Use Hex eight times", true, 8),
 
             new AbilityVariant("phaister.2.blink", "phaister", 2, "SHADOW BLINK", "PhaisterShadowBlink",
                 "Shadow Blink", "The blink as it is tuned.",
@@ -255,7 +292,7 @@ namespace TumbangPreso.Core
             new AbilityVariant("phaister.2.stride", "phaister", 2, "SHADOW BLINK", "PhaisterShadowBlink",
                 "Long Stride", "Further, with a longer wind-up you can be read on.",
                 0.30f, -0.30f, "+30% distance", "-30% cast speed",
-                "Blink out of the box carrying a tsinelas, five times", true),
+                "Use Shadow Blink eight times", true, 8),
         };
 
         /// <summary>
@@ -274,14 +311,16 @@ namespace TumbangPreso.Core
         /// `FUTURE.md` PHASE 10 is explicit that this is what the sidegrade rule buys.
         ///
         /// ⚠️ IT IS A FLAG RATHER THAN A DELETION so the ledger path stays live and tested. The
-        /// day the counters land this becomes `true` and nothing else moves.
+        /// counters landed on 2026-09-01 (`AbilityChallengeProgress`, counted by
+        /// `GameSettings.NoteAbilityCast` off a successful local cast), so this is `true` now and
+        /// the flag stays as the one switch that opens every alternate for a tournament build.
         ///
         /// ⚠️ `static readonly` RATHER THAN `const`, AND THE COMPILER IS WHY. A `const false`
         /// lets the compiler fold the branch and report the ledger lookup below it as unreachable,
         /// which this project builds as an error. The point of the flag is that the path stays
         /// compiled and reachable; a `const` would delete it.
         /// </summary>
-        public static readonly bool ChallengesEnforced = false;
+        public static readonly bool ChallengesEnforced = true;
 
         public static IReadOnlyList<AbilityVariant> AllVariants => Variants;
 
@@ -358,8 +397,73 @@ namespace TumbangPreso.Core
         public string Slot2VariantId = "";
     }
 
+    /// <summary>
+    /// One locally earned challenge, persisted in settings and incremented by successful casts.
+    ///
+    /// ⚠️⚠️ THIS IS LOCAL RATHER THAN A CAREER TOTAL ON PURPOSE. Practice matches are excluded
+    /// from <see cref="PlayerProfile"/> by design, while Phase 10 explicitly requires every
+    /// variant to be earnable in Practice against bots. Putting this on the career would make the
+    /// promise false; sending one Cloud Code write per cast would break the free-tier rule.
+    /// Sidegrades remain budget-neutral, so a tampered local counter cannot buy power.
+    /// </summary>
+    [Serializable]
+    public sealed class AbilityChallengeProgress
+    {
+        public string VariantId = "";
+        public int Count;
+    }
+
     public static class HeroBuildRules
     {
+        public static int ChallengeCount(List<AbilityChallengeProgress> counters, string variantId)
+        {
+            if (counters == null || string.IsNullOrEmpty(variantId)) return 0;
+            foreach (var row in counters)
+                if (row != null && string.Equals(row.VariantId, variantId,
+                                                  StringComparison.OrdinalIgnoreCase))
+                    return Math.Max(0, row.Count);
+            return 0;
+        }
+
+        /// <summary>
+        /// Counts one successful skill cast toward the alternate in that hero and slot.
+        /// Defaults have no challenge and are deliberately skipped. The count caps at the target
+        /// so a long-running profile cannot overflow and a completed row stops changing disk.
+        /// </summary>
+        public static bool NoteSuccessfulCast(List<AbilityChallengeProgress> counters,
+                                              string heroId, int slot)
+        {
+            if (counters == null || string.IsNullOrEmpty(heroId) || slot < 1 || slot > 2)
+                return false;
+
+            bool changed = false;
+            foreach (var variant in HeroLoadoutRules.VariantsFor(heroId, slot))
+            {
+                if (variant.IsDefault || variant.ChallengeTarget <= 0) continue;
+
+                AbilityChallengeProgress row = null;
+                foreach (var candidate in counters)
+                    if (candidate != null && string.Equals(candidate.VariantId, variant.Id,
+                                                           StringComparison.OrdinalIgnoreCase))
+                    {
+                        row = candidate;
+                        break;
+                    }
+
+                if (row == null)
+                {
+                    row = new AbilityChallengeProgress { VariantId = variant.Id };
+                    counters.Add(row);
+                }
+
+                int next = Math.Min(variant.ChallengeTarget, Math.Max(0, row.Count) + 1);
+                if (next == row.Count) continue;
+                row.Count = next;
+                changed = true;
+            }
+            return changed;
+        }
+
         /// <summary>
         /// The variant this player has equipped in this slot, checked rather than trusted.
         ///
@@ -370,9 +474,20 @@ namespace TumbangPreso.Core
         /// is unfinished all resolve to the default. **The check runs on the receiving side for a
         /// peer's build as well**, so a modified client cannot equip something it did not earn:
         /// the receiver decides what it draws and what it simulates, not the sender.
+        ///
+        /// ⚠️⚠️ THE `PlayerProfile` OVERLOAD THIS REPLACED IS DELETED RATHER THAN LEFT BESIDE IT.
+        /// The ledger moved to `AbilityChallengeProgress`, which is local and Practice-safe, so
+        /// the profile has nothing to say about an unlock any more: `RewardKind.AbilityVariant`
+        /// is awarded by no track in the game (`ProgressionTests` asserts that both tables stay
+        /// off it), so the old overload would have answered "locked" for all twelve alternates
+        /// forever, silently, exactly the way `LoadoutRules.PaletteFor` did in § 101.1. An
+        /// overload that can only ever return the fallback is worse than no overload.
+        ///
+        /// A null ledger is the receiving/network path: the host still validates hero, slot and
+        /// budget, but cannot prove an offline Practice counter and therefore does not pretend to.
         /// </summary>
-        public static AbilityVariant Equipped(PlayerProfile profile, HeroBuild build,
-                                              string heroId, int slot)
+        public static AbilityVariant Equipped(HeroBuild build, string heroId, int slot,
+                                              List<AbilityChallengeProgress> counters)
         {
             var fallback = HeroLoadoutRules.DefaultFor(heroId, slot);
             if (build == null) return fallback;
@@ -384,29 +499,31 @@ namespace TumbangPreso.Core
             if (!string.Equals(variant.HeroId, heroId, StringComparison.OrdinalIgnoreCase)) return fallback;
             if (variant.Slot != slot) return fallback;
             if (!HeroLoadoutRules.IsBudgetNeutral(variant)) return fallback;
-            if (!IsUnlocked(profile, variant)) return fallback;
+            if (counters != null && !IsUnlocked(counters, variant)) return fallback;
 
             return variant;
         }
 
         /// <summary>
-        /// Whether the account has finished the challenge behind a variant.
+        /// Whether this install has finished the challenge behind a variant.
         ///
-        /// ⚠️⚠️ IT READS THE SAME REWARD LEDGER EVERY OTHER UNLOCK READS, `BannerRules.Owns`,
-        /// rather than growing a second one. `docs/TODO.md` § 101 is the entry about a palette
-        /// that could never be equipped because two halves of the code named the same reward
-        /// differently; one ledger is how that stops being possible.
+        /// ⚠️⚠️ THE LEDGER IS THE LOCAL CAST COUNTER, NOT `BannerRules.Owns`. The first draft of
+        /// this read the reward ledger every cosmetic unlock reads, which is the right instinct
+        /// and the wrong ledger here: a reward is written by `match-record.js` off a submitted
+        /// career, and Phase 10 promises every alternate can be earned in Practice against bots,
+        /// where no record is ever submitted and the service may not be reachable at all. Reading
+        /// the reward ledger made the promise false and nothing logged it.
         ///
         /// ⚠️ A DEFAULT IS ALWAYS UNLOCKED, so a fresh account has a complete, legal build for
         /// every hero on its first launch and the screen is never empty.
         /// </summary>
-        public static bool IsUnlocked(PlayerProfile profile, AbilityVariant variant)
+        public static bool IsUnlocked(List<AbilityChallengeProgress> counters,
+                                      AbilityVariant variant)
         {
             if (variant == null) return false;
             if (variant.IsDefault) return true;
             if (!HeroLoadoutRules.ChallengesEnforced) return true;
-
-            return BannerRules.Owns(profile, RewardKind.AbilityVariant, variant.Id);
+            return ChallengeCount(counters, variant.Id) >= variant.ChallengeTarget;
         }
 
         /// <summary>The build row for a hero, created on demand. Mirrors `LoadoutRules.RowFor`.</summary>
@@ -420,6 +537,46 @@ namespace TumbangPreso.Core
             var added = new HeroBuild { HeroId = heroId };
             builds.Add(added);
             return added;
+        }
+
+        /// <summary>
+        /// Host-side validation for a build received over the wire. Unlock counters are local and
+        /// Practice-safe, so the host cannot verify them; it can and does reject unknown ids,
+        /// another hero's option, the wrong slot and anything outside the budget rule.
+        /// </summary>
+        public static HeroBuild NormaliseForWire(HeroBuild build, string heroId)
+        {
+            var one = Equipped(build, heroId, 1, null);
+            var two = Equipped(build, heroId, 2, null);
+            return new HeroBuild
+            {
+                HeroId = heroId ?? "",
+                Slot1VariantId = one?.Id ?? "",
+                Slot2VariantId = two?.Id ?? "",
+            };
+        }
+
+        public static string Encode(HeroBuild build, string heroId)
+        {
+            var clean = NormaliseForWire(build, heroId);
+            return "B1:" + clean.HeroId + "|" + clean.Slot1VariantId + "|" + clean.Slot2VariantId;
+        }
+
+        public static HeroBuild Decode(string wire, string heroId)
+        {
+            if (string.IsNullOrEmpty(wire) || !wire.StartsWith("B1:", StringComparison.Ordinal))
+                return NormaliseForWire(null, heroId);
+
+            string[] parts = wire.Substring(3).Split('|');
+            var read = new HeroBuild
+            {
+                HeroId = parts.Length > 0 ? parts[0] : "",
+                Slot1VariantId = parts.Length > 1 ? parts[1] : "",
+                Slot2VariantId = parts.Length > 2 ? parts[2] : "",
+            };
+            if (!string.Equals(read.HeroId, heroId, StringComparison.OrdinalIgnoreCase))
+                return NormaliseForWire(null, heroId);
+            return NormaliseForWire(read, heroId);
         }
     }
 }

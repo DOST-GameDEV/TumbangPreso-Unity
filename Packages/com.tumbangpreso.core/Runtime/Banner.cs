@@ -119,13 +119,15 @@ namespace TumbangPreso.Core
             found.AddRange(ProgressionRules.AccountRewards(
                 ProgressionRules.LevelForXp(profile.Xp)));
 
-            if (profile.Mastery == null) return found;
-
-            foreach (var mastery in profile.Mastery)
+            foreach (var mastery in profile.Mastery ?? new List<MasteryRecord>())
             {
                 if (mastery == null || string.IsNullOrEmpty(mastery.Id)) continue;
                 found.AddRange(ProgressionRules.MasteryRewards(mastery.Id, mastery.Level));
             }
+
+            // Achievement rewards are derived from the same career totals as the shelf. There
+            // is no inventory row to drift from the visible EARNED state.
+            found.AddRange(AchievementRules.EarnedRewards(profile));
 
             return found;
         }

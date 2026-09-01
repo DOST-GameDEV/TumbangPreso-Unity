@@ -14,6 +14,26 @@ namespace TumbangPreso.Abilities
         public RoundDirector Round => GameServices.Round;
         public MatchDirector Match => GameServices.Match;
 
+        public bool HasVariant(string variantId)
+            => Motor != null && Motor.AbilitySystem != null
+               && Motor.AbilitySystem.HasVariant(variantId);
+
+        /// <summary>1 plus the authored gain for this body when the named variant is equipped.</summary>
+        public float GainScale(string variantId)
+        {
+            if (!HasVariant(variantId)) return 1.0f;
+            var variant = HeroLoadoutRules.VariantById(variantId);
+            return variant == null ? 1.0f : 1.0f + variant.Gain;
+        }
+
+        /// <summary>1 plus the authored negative cost for this body.</summary>
+        public float CostScale(string variantId)
+        {
+            if (!HasVariant(variantId)) return 1.0f;
+            var variant = HeroLoadoutRules.VariantById(variantId);
+            return variant == null ? 1.0f : 1.0f + variant.Cost;
+        }
+
         public Transform Transform => Motor != null ? Motor.transform : null;
         public Vector3 Position => _hasPose ? _position
             : Motor != null ? Motor.transform.position : Vector3.zero;

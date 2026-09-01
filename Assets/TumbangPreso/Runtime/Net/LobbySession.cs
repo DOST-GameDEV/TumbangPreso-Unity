@@ -70,6 +70,9 @@ namespace TumbangPreso.Net
         /// `CustomCharacterRules.Normalise` in `MatchRpc.HostAuthoriseCosmetics`.
         /// </summary>
         public string Custom = "";
+
+        /// <summary>The checked Hero Strike build, never the peer's raw claim.</summary>
+        public string Build = "";
     }
 
     /// <summary>

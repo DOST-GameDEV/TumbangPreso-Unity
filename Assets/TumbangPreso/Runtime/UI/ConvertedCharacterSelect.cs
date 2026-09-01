@@ -470,11 +470,16 @@ namespace TumbangPreso.UI
         // ⚠️⚠️ AND THE CAPABILITY IS KEPT WHILE THE CONTROL IS DELETED. `PaletteRules`,
         // `PaletteVariants`, `LoadoutRules.PaletteFor` and `Settings.SettingsStore.LookFor` are
         // untouched: a palette still crosses the wire, remote seats still wear one, and § 101.1's
-        // variant-naming fix is still asserted by `CosmeticsWireTests`. **The honest consequence,
-        // written down rather than discovered later: a `mastery.<hero>.palette.alt1` reward is
-        // still awarded and still owned, and there is no longer any surface that equips it.**
-        // That is the deletion he asked for. Customisation is MAKE YOUR OWN
-        // (`CustomCharacterScreen`) and nothing else.
+        // variant-naming fix is still asserted by `CosmeticsWireTests`. That is the deletion he
+        // asked for. Customisation is MAKE YOUR OWN (`CustomCharacterScreen`) and nothing else.
+        //
+        // ⚠️⚠️ THE CONSEQUENCE THIS NOTE USED TO RECORD IS CLOSED AND THE FIX WAS THE OTHER END.
+        // It read: *"a `mastery.<hero>.palette.alt1` reward is still awarded and still owned, and
+        // there is no longer any surface that equips it"*, which is `docs/TODO.md` § 114.15 row 5.
+        // **Nothing awards a palette any more.** Mastery 5 and 15 pay wearable hero titles
+        // (`ProgressionRules.MasteryTable`), so the shelf no longer hands out an item the game
+        // cannot spend, and `CosmeticsWireTests` asserts that no track pays one. The transport
+        // above stays for the day an authored skin or MAKE YOUR OWN wants it.
 
         private void RefreshHeroLoadout(Transform rows, string heroId)
         {

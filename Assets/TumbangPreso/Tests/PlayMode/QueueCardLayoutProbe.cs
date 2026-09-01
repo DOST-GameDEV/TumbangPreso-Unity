@@ -127,6 +127,12 @@ namespace TumbangPreso.PlayTests
             var canvas = Root("QueueProbeCanvas");
             Assert.IsNotNull(canvas, "the probe built no canvas");
 
+            // ⚠️⚠️ § 114.14, AND THIS FILE IS WHERE IT BELONGS BECAUSE THIS IS THE SCREEN THAT
+            // SHIPPED BROKEN. Everything below measures rows against the card; this asks whether
+            // the card has anything to be measured against at all, which is the one question that
+            // was green through the whole life of § 114.13's fault.
+            RectParentage.AssertEveryRectHasARectParent(canvas, "the queue card");
+
             yield return Drive();
 
             foreach (var (w, h, name) in Resolutions)

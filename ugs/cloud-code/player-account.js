@@ -71,6 +71,66 @@ function handleOf(profile) {
     return profile.DisplayName + "#" + derivedTag(profile.PlayerId);
 }
 
+function normalHandle(value) {
+    return oneLine(value, DISPLAY_NAME_MAX + 5).toLocaleLowerCase("en-US");
+}
+
+function indexKey(handle) {
+    let hash = 2166136261 >>> 0;
+    const text = normalHandle(handle);
+    for (let i = 0; i < text.length; i++) {
+        hash = (hash ^ text.charCodeAt(i)) >>> 0;
+        hash = Math.imul(hash, 16777619) >>> 0;
+    }
+    return "h" + hash.toString(16).padStart(8, "0");
+}
+
+function indexId(handle) {
+    const split = String(handle || "").lastIndexOf("#");
+    const tag = split >= 0 ? String(handle).slice(split + 1) : "00";
+    return "handle-index-" + (/^\d{4}$/.test(tag) ? tag.slice(0, 2) : "00");
+}
+
+function serviceStore(context) {
+    if (!context.serviceToken) throw new Error("handle index unavailable");
+    return new DataApi({ accessToken: context.serviceToken });
+}
+
+// ⚠️⚠️ THE INDEX IS BEST-EFFORT ON A WRITE AND MUST NEVER FAIL A `save` OR A `delete`.
+// § 94.1 is the receipt for why this matters more than it looks: a `save` that throws is a
+// profile that does not reach the server, and `CareerStore.FlushAsync` stops at the first
+// failure, so ONE refused write wedges the queue behind it permanently. Losing an index row
+// costs one player one failed search until their next save rewrites it; losing a save costs
+// them their account. `resolve` re-reads the target's protected profile anyway, so a missing
+// row and a stale row both degrade to NOT FOUND rather than to a wrong answer.
+async function tryIndex(logger, work) {
+    try {
+        await work();
+    } catch (e) {
+        if (logger) logger.warning("handle index write skipped: " + (e && e.message));
+    }
+}
+
+async function putHandleIndex(store, projectId, profile) {
+    const handle = handleOf(profile);
+    if (!handle) return;
+    await store.setCustomItem(projectId, indexId(handle), {
+        key: indexKey(handle),
+        value: JSON.stringify({ PlayerId: profile.PlayerId, Handle: handle }),
+    });
+}
+
+async function deleteHandleIndex(store, projectId, profile) {
+    const handle = handleOf(profile);
+    if (!handle) return;
+    try {
+        await store.deleteCustomItem(indexKey(handle), projectId, indexId(handle));
+    } catch (e) {
+        // Deleting a missing stale row is idempotent. A later resolve validates the target's
+        // live profile as well, so an undeleted row can never address the wrong player.
+    }
+}
+
 function readProfile(item) {
     if (!item || !item.value) return null;
     try {
@@ -104,18 +164,51 @@ module.exports = async ({ params, context, logger }) => {
     }
 
     if (action === "save") {
+        const previousResponse = await api.getProtectedItems(projectId, playerId, [KEY]);
+        const previous = readProfile(previousResponse.data.results.find(x => x.key === KEY));
         const parsed = JSON.parse(String(params.profile || "{}"));
         const profile = profileFrom(parsed, playerId);
         await api.setProtectedItem(projectId, playerId, { key: KEY, value: JSON.stringify(profile) });
+        await tryIndex(logger, async () => {
+            const store = serviceStore(context);
+            await putHandleIndex(store, projectId, profile);
+            if (previous && normalHandle(handleOf(previous)) !== normalHandle(handleOf(profile)))
+                await deleteHandleIndex(store, projectId, previous);
+        });
         return { profile: JSON.stringify(profile), handle: handleOf(profile) };
     }
 
     if (action === "delete") {
+        const previousResponse = await api.getProtectedItems(projectId, playerId, [KEY]);
+        const previous = readProfile(previousResponse.data.results.find(x => x.key === KEY));
+        if (previous)
+            await tryIndex(logger, () =>
+                deleteHandleIndex(serviceStore(context), projectId, previous));
         // Authentication deletion is the account-level deletion. Clearing the protected value
         // first makes this endpoint idempotent even when the auth request is retried later.
         await api.setProtectedItem(projectId, playerId, { key: KEY, value: "" });
         await api.setProtectedItem(projectId, playerId, { key: PROOF_KEY, value: "" });
         return { profile: "" };
+    }
+
+    if (action === "resolve") {
+        const wanted = oneLine(params.handle, DISPLAY_NAME_MAX + 5);
+        if (!/^.{3,14}#\d{4}$/u.test(wanted)) return { playerId: "", handle: "" };
+
+        const store = serviceStore(context);
+        const response = await store.getCustomItems(projectId, indexId(wanted), [indexKey(wanted)]);
+        const row = readProfile(response.data.results.find(x => x.key === indexKey(wanted)));
+        if (!row || !row.PlayerId) return { playerId: "", handle: "" };
+
+        // ⚠️⚠️ THE INDEX IS A ROUTE, NEVER THE AUTHORITY. A rename can crash after writing the
+        // new row and before deleting the old one. Re-read the target's protected profile and
+        // require the exact current handle, so stale data answers NOT FOUND rather than sending a
+        // friend request to the wrong account.
+        const subject = await store.getProtectedItems(projectId, String(row.PlayerId), [KEY]);
+        const profile = readProfile(subject.data.results.find(x => x.key === KEY));
+        const current = handleOf(profile);
+        if (normalHandle(current) !== normalHandle(wanted)) return { playerId: "", handle: "" };
+        return { playerId: String(row.PlayerId), handle: current };
     }
 
     // ⚠️⚠️ `attest` AND `verify` ARE THE TWO HALVES OF THE IMPERSONATION GUARD, § 88.1c.
@@ -200,4 +293,5 @@ module.exports.params = {
     // that is safe: without a live proof minted by that player, it answers false.
     playerId: "String",
     proof: "String",
+    handle: "String",
 };

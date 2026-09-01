@@ -109,5 +109,19 @@ namespace TumbangPreso.Net
         /// not it.
         /// </summary>
         public static string CustomCharacter() => UI.CustomCharacterStore.ActiveWire();
+
+        /// <summary>The checked Hero Strike build as one `B1` field.</summary>
+        public static string HeroBuild(int characterIndex, string custom = null)
+        {
+            if (UI.SceneFlow.SelectedMode != GameMode.HeroStrike) return "";
+
+            string heroId = Roster.PersonIdAt(GameMode.HeroStrike, characterIndex);
+            string frame = custom ?? CustomCharacter();
+            if (!string.IsNullOrEmpty(frame) && frame.StartsWith("C3:"))
+                heroId = CustomCharacterRules.KitFor(CustomCharacterRules.DecodeWire(frame).HeroKitId);
+
+            var build = SettingsStore.CheckedHeroBuildFor(heroId);
+            return HeroBuildRules.Encode(build, heroId);
+        }
     }
 }

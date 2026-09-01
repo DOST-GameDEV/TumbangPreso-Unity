@@ -25,7 +25,10 @@ namespace TumbangPreso.Abilities
         // -------------------------------------------------------------------
         // ICE WALL BARRICADE (Cheska Skill 2)
         // -------------------------------------------------------------------
-        public static GameObject SpawnIceBarricade(Vector3 position, Vector3 forward, float duration = 6.0f)
+        public static GameObject SpawnIceBarricade(Vector3 position, Vector3 forward,
+                                                   float duration = 6.0f,
+                                                   float spanScale = 1.0f,
+                                                   float thicknessScale = 1.0f)
         {
             var go = new GameObject("IceBarricade");
             go.transform.position = position;
@@ -43,8 +46,9 @@ namespace TumbangPreso.Abilities
                 float rotY = i * 8.0f + Random.Range(-4.0f, 4.0f);
                 float rotZ = i * -4.0f;
 
-                pillar.transform.localScale = new Vector3(width, height, 0.55f);
-                pillar.transform.localPosition = new Vector3(i * 0.75f, height * 0.5f, -Mathf.Abs(i) * 0.12f);
+                pillar.transform.localScale = new Vector3(width, height, 0.55f * thicknessScale);
+                pillar.transform.localPosition = new Vector3(i * 0.75f * spanScale,
+                    height * 0.5f, -Mathf.Abs(i) * 0.12f);
                 pillar.transform.localRotation = Quaternion.Euler(Random.Range(-4.0f, 4.0f), rotY, rotZ);
 
                 // ⚠️ THE ONE EFFECT THAT IS BOTH SEE-THROUGH AND SOLID. Everything else that
@@ -106,7 +110,7 @@ namespace TumbangPreso.Abilities
             var comp = go.AddComponent<IceBarricadeComponent>();
             comp.Duration = duration;
 
-            HazardVolume.Attach(go, 1.6f, -1);
+            HazardVolume.Attach(go, 1.6f * spanScale, -1);
 
             return go;
         }
@@ -170,7 +174,9 @@ namespace TumbangPreso.Abilities
         // -------------------------------------------------------------------
         // ICE SHEET ZONE (Cheska Skill 1)
         // -------------------------------------------------------------------
-        public static GameObject SpawnIceSheet(Vector3 position, float radius = 2.3f, float duration = 5.0f, int ownerSlot = -1)
+        public static GameObject SpawnIceSheet(Vector3 position, float radius = 2.3f,
+                                                float duration = 5.0f, int ownerSlot = -1,
+                                                float effectScale = 1.0f)
         {
             var go = new GameObject("IceSheetZone");
             go.transform.position = position;
@@ -357,6 +363,9 @@ namespace TumbangPreso.Abilities
             comp.Radius = radius;
             comp.Duration = duration;
             comp.OwnerSlot = ownerSlot;
+            comp.ChillMultiplier = Mathf.Clamp(1.0f - ((1.0f - 0.55f) * effectScale),
+                                                 0.25f, 0.95f);
+            comp.SlipScale = Mathf.Max(0.25f, effectScale);
 
             // ⚠️ REGISTERED WITH `HazardMap` SO THE BOTS PATH AROUND IT. Without this an
             // attacker walks straight through on its way to a tsinelas, gets caught, and the
@@ -382,6 +391,7 @@ namespace TumbangPreso.Abilities
             /// most of a second on the run back in, which IS the tension the whole game is about.
             /// </summary>
             public float ChillMultiplier = 0.55f;
+            public float SlipScale = 1.0f;
 
             private float _left;
             private float _whoaCooldown;
@@ -529,7 +539,7 @@ namespace TumbangPreso.Abilities
                         // costs you, the slide is what tells you why.
                         if (p.Velocity.sqrMagnitude > 0.1f)
                         {
-                            Vector3 slip = p.Velocity.normalized * 5.5f * Time.deltaTime;
+                            Vector3 slip = p.Velocity.normalized * 5.5f * SlipScale * Time.deltaTime;
 
                             if (NetAuthority.ShouldResolve() ||
                                 p.PlayerSlot == NetAuthority.LocalSlot)
@@ -564,7 +574,9 @@ namespace TumbangPreso.Abilities
         // -------------------------------------------------------------------
         // SHOCK TRAIL ZONE (Zack Skill 1)
         // -------------------------------------------------------------------
-        public static GameObject SpawnShockTrail(Vector3 position, float radius = 2.0f, float duration = 3.0f, int ownerSlot = -1)
+        public static GameObject SpawnShockTrail(Vector3 position, float radius = 2.0f,
+                                                 float duration = 3.0f, int ownerSlot = -1,
+                                                 float effectScale = 1.0f)
         {
             var go = new GameObject("ShockTrailZone");
             go.transform.position = position;
@@ -665,6 +677,7 @@ namespace TumbangPreso.Abilities
             comp.Radius = radius;
             comp.Duration = duration;
             comp.OwnerSlot = ownerSlot;
+            comp.EffectScale = effectScale;
 
             return go;
         }
@@ -704,6 +717,7 @@ namespace TumbangPreso.Abilities
             public float Radius = 2.0f;
             public float Duration = 3.0f;
             public int OwnerSlot = -1;
+            public float EffectScale = 1.0f;
             private float _left;
             private readonly Dictionary<int, float> _nextStaggerBySlot = new Dictionary<int, float>();
 
@@ -793,10 +807,17 @@ namespace TumbangPreso.Abilities
                             // literal `ShouldResolve()` and a local bool is invisible to it. That
                             // is the audit doing its job, and the fix is to say the invariant
                             // rather than to widen the audit.
+                            // ⚠️⚠️ ARC LINE MOVES THE INTERVAL AS WELL AS THE STAGGER, AND THAT IS
+                            // THE WHOLE REASON THE ROW IS WORTH EQUIPPING. `EffectScale` on the
+                            // 0.25 s stumble alone bought four frames at 30 per cent, which is
+                            // the definition of an alternate that reads as the same ability.
+                            // Dividing the 1.1 s re-shock window by the same fraction is what
+                            // turns a thin lane into a place you do not walk through twice.
                             if (NetAuthority.ShouldResolve() &&
-                                CanPulse(_nextStaggerBySlot, p.PlayerSlot, 1.1f))
+                                CanPulse(_nextStaggerBySlot, p.PlayerSlot,
+                                         1.1f / Mathf.Max(0.25f, EffectScale)))
                             {
-                                p.ApplyStagger(0.25f);
+                                p.ApplyStagger(0.25f * EffectScale);
 
                                 // ⚠️ RELAYED, and the sound beside it already was. See
                                 // `Visual.MatchFlair`; the zap ring is culled past 15 m by
@@ -2869,7 +2890,8 @@ namespace TumbangPreso.Abilities
         /// HEX. A ward chalked on the road: rings, a written band, nested squares.
         /// </summary>
         public static GameObject SpawnHexSigil(Vector3 position, float radius = 2.4f,
-                                                    float duration = 6.0f, int ownerSlot = -1)
+                                               float duration = 6.0f, int ownerSlot = -1,
+                                               float effectScale = 1.0f)
         {
             var go = new GameObject("HexWardZone");
             go.transform.position = position;
@@ -2958,6 +2980,7 @@ namespace TumbangPreso.Abilities
             comp.Radius = radius;
             comp.Duration = duration;
             comp.OwnerSlot = ownerSlot;
+            comp.EffectScale = effectScale;
 
             HazardVolume.Attach(go, radius, ownerSlot);
             return go;
@@ -4104,6 +4127,7 @@ namespace TumbangPreso.Abilities
             public float Radius = 2.4f;
             public float Duration = 6.0f;
             public int OwnerSlot = -1;
+            public float EffectScale = 1.0f;
             private float _left;
             private readonly Dictionary<int, float> _nextHexBySlot = new Dictionary<int, float>();
 
@@ -4134,11 +4158,17 @@ namespace TumbangPreso.Abilities
                     if (diff.magnitude <= Radius)
                     {
                         // Apply hex curse: reduce speed and stagger on intervals
-                        p.ApplyImpulse(-p.Velocity.normalized * 3.5f * Time.deltaTime);
+                        p.ApplyImpulse(-p.Velocity.normalized * 3.5f * EffectScale * Time.deltaTime);
 
-                        if (CanPulse(_nextHexBySlot, p.PlayerSlot, 1.10f))
+                        // ⚠️ SLOW BRAND RE-BITES SOONER, for the reason Arc Line's note above
+                        // gives: a 40 per cent gain spent only on a 0.35 s stagger is a tenth of
+                        // a second and nobody can feel it. The 1.44 m ward is small enough to
+                        // walk around, so what it does to somebody who did not is allowed to be
+                        // severe.
+                        if (CanPulse(_nextHexBySlot, p.PlayerSlot,
+                                     1.10f / Mathf.Max(0.25f, EffectScale)))
                         {
-                            p.ApplyStagger(0.35f);
+                            p.ApplyStagger(0.35f * EffectScale);
                             Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.HeroHexed,
                                                        OwnerSlot, p.PlayerSlot,
                                                        p.transform.position, 0.35f);

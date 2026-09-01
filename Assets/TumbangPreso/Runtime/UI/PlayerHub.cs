@@ -87,6 +87,8 @@ namespace TumbangPreso.UI
         private GameMode _mode = SceneFlow.SelectedMode;
         private int _page;
         private List<MatchRecord> _shown = new List<MatchRecord>();
+        private int _loadoutHeroIndex;
+        private readonly Dictionary<string, int> _loadoutViews = new Dictionary<string, int>();
         private bool _deleteArmed;
         private string _notice = "";
 
@@ -1038,42 +1040,69 @@ namespace TumbangPreso.UI
             var settings = Settings.SettingsStore.Current;
             if (settings == null) return;
 
-            foreach (var hero in Roster.HeroPeople)
-            {
-                var build = HeroBuildRules.RowFor(settings.HeroBuilds, hero.Id);
+            _loadoutHeroIndex = Mathf.Clamp(_loadoutHeroIndex, 0, Roster.HeroPeople.Count - 1);
+            var hero = Roster.HeroPeople[_loadoutHeroIndex];
 
-                for (int slot = 1; slot <= 2; slot++)
+            UiRows.StepperRow(_list, "Hero build", hero.Name, _loadoutHeroIndex,
+                Roster.HeroPeople.Count, v =>
                 {
-                    var options = HeroLoadoutRules.VariantsFor(hero.Id, slot);
-                    if (options.Count == 0) continue;
+                    _loadoutHeroIndex = v;
+                    MenuSfx.Click();
+                    Show(_tab);
+                }, "Two skills, two readings each. The equipped build is public in a lobby.");
 
-                    var equipped = HeroBuildRules.Equipped(profile, build, hero.Id, slot);
+            var build = HeroBuildRules.RowFor(settings.HeroBuilds, hero.Id);
 
-                    int index = 0;
+            for (int slot = 1; slot <= 2; slot++)
+            {
+                var options = HeroLoadoutRules.VariantsFor(hero.Id, slot);
+                if (options.Count == 0) continue;
+
+                var equipped = HeroBuildRules.Equipped(build, hero.Id, slot,
+                                                       settings.AbilityChallenges);
+                string key = hero.Id + "." + slot;
+                if (!_loadoutViews.TryGetValue(key, out int index))
+                {
+                    index = 0;
                     for (int i = 0; i < options.Count; i++)
                         if (options[i].Id == equipped.Id) index = i;
+                }
+                index = Mathf.Clamp(index, 0, options.Count - 1);
 
-                    int chosenSlot = slot;
+                var shown = options[index];
+                bool unlocked = HeroBuildRules.IsUnlocked(settings.AbilityChallenges, shown);
+                int progress = HeroBuildRules.ChallengeCount(settings.AbilityChallenges, shown.Id);
+                string hint = shown.IsDefault
+                    ? shown.Description
+                    : !unlocked
+                        ? shown.Challenge + $"  ({progress} / {shown.ChallengeTarget})"
+                        : shown.Description + "  " + shown.GainLabel + "; " + shown.CostLabel + ".";
 
-                    string hint = equipped.IsDefault
-                        ? equipped.BaseAbility + " as tuned."
-                        : equipped.BaseAbility + ": " + equipped.GainLabel + ", "
-                          + equipped.CostLabel + ".";
+                AbilityGlyph glyph = Enum.TryParse(shown.GlyphName, out AbilityGlyph parsed)
+                    ? parsed : AbilityGlyph.Burst;
+                int chosenSlot = slot;
 
-                    UiRows.StepperRow(_list, hero.Name + "  ·  SKILL " + slot,
-                        equipped.Name, index, options.Count,
-                        v =>
+                UiRows.StepperRow(_list, "SKILL " + slot + "  ·  " + shown.BaseAbility,
+                    unlocked ? shown.Name : "LOCKED  ·  " + shown.Name,
+                    index, options.Count,
+                    v =>
+                    {
+                        _loadoutViews[key] = v;
+                        var picked = options[v];
+                        if (HeroBuildRules.IsUnlocked(settings.AbilityChallenges, picked))
                         {
-                            var picked = options[v];
                             if (chosenSlot == 1) build.Slot1VariantId = picked.Id;
                             else build.Slot2VariantId = picked.Id;
-
                             Settings.SettingsStore.Save();
                             MenuSfx.Click();
-                            Show(_tab);
-                        },
-                        hint);
-                }
+                        }
+                        else
+                        {
+                            MenuSfx.Error();
+                        }
+                        Show(_tab);
+                    },
+                    hint, AbilityIcons.For(glyph), UiTheme.ColorForHero(hero.Id));
             }
         }
 
@@ -1231,6 +1260,7 @@ namespace TumbangPreso.UI
             }
 
             BuildRequestRows(social, list);
+            BuildFindFriendRows(social);
             BuildFriendRows(social, list, now);
             BuildBlockedRows(social, list);
 
@@ -1276,6 +1306,24 @@ namespace TumbangPreso.UI
                     MenuSfx.Back();
                 }, "Removes the request. They are not told.");
             }
+        }
+
+        private void BuildFindFriendRows(Net.SocialStore social)
+        {
+            if (!Group("Find a friend", "Add somebody by their exact NAME#TAG.", false)) return;
+
+            var handle = UiRows.FieldRow(_list, "Name and tag", "Maria#4417",
+                                         AccountRules.HandleMax,
+                                         "The four digits are on their profile and account card.");
+            UiRows.ButtonRow(_list, "", "SEND REQUEST", () =>
+            {
+                social?.RequestHandle(handle != null ? handle.text : "");
+                MenuSfx.Click();
+            }, "They receive a request. Nothing is added until they accept.",
+               "WoodPrimaryButton");
+
+            if (!string.IsNullOrEmpty(social?.SearchStatus))
+                UiRows.ValueRow(_list, "Search", social.SearchStatus, "");
         }
 
         private void BuildFriendRows(Net.SocialStore social, SocialList list, DateTime now)

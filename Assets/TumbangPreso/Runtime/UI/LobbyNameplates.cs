@@ -312,8 +312,29 @@ namespace TumbangPreso.UI
             // stretch a plate wider than the screen; doing only the second shrinks a short name's
             // type for no reason. Together: grow to fit up to a cap, then shrink the type if the
             // cap was reached. See `MenuKit.Fit`.
-            float wanted = Mathf.Clamp(text.preferredWidth + (PlatePadding * 2.0f),
-                                       PlateMinWidth, PlateMaxWidth);
+            // ⚠️⚠️ THE TITLE STRIP IS MEASURED TOO, AND IT WAS NOT UNTIL 2026-09-01. The plate
+            // was sized from the NAME alone and the title strip was then given that same width,
+            // so a title longer than the name overflowed silently. It never showed while a title
+            // was one earned word (`TAGA-KANTO`); the moment the strip started carrying the
+            // Hero Strike build as well (`docs/TODO.md` § 114.16), `Seismic Stomp / Demonic
+            // Carapace` wanted **273 px in a 209 px box** on every plate in the lobby.
+            // `LobbyStyleProbe.EveryLabelFitsItsBoxInBothStyles` is what found it.
+            //
+            // ⚠️ A PLATE IS SIZED FROM ITS CONTENT, AND THE TITLE IS CONTENT. Measuring it means
+            // the strip below the name can push the plate wider, which is correct: the two strips
+            // share an edge and a plate narrower than the thing hanging off it reads as broken.
+            float titleWidth = 0.0f;
+            if (!string.IsNullOrEmpty(title))
+            {
+                var probe = _titleLabels[seat];
+                probe.text = title;
+                probe.fontSize = TagSize;
+                titleWidth = probe.preferredWidth;
+            }
+
+            float wanted = Mathf.Clamp(
+                Mathf.Max(text.preferredWidth, titleWidth) + (PlatePadding * 2.0f),
+                PlateMinWidth, PlateMaxWidth);
 
             _plates[seat].sizeDelta = new Vector2(wanted, PlateHeight);
             _tags[seat].sizeDelta = new Vector2(wanted, TagHeight);
@@ -340,10 +361,36 @@ namespace TumbangPreso.UI
                 _titles[seat].sizeDelta = new Vector2(wanted, TagHeight);
                 _titles[seat].anchoredPosition = new Vector2(0.0f, -4.0f);
 
+                float room = wanted - (PlatePadding * 2.0f);
+
                 var titleText = _titleLabels[seat];
                 titleText.text = title;
                 titleText.fontSize = TagSize;
-                MenuKit.Fit(titleText, wanted - (PlatePadding * 2.0f));
+                MenuKit.Fit(titleText, room);
+
+                // ⚠️⚠️ AND IT IS TRUNCATED WHEN EVEN THE WIDEST PLATE CANNOT HOLD IT, BECAUSE
+                // `MenuKit.Fit` STOPS AT THE READABLE FLOOR AND THEN OVERFLOWS SILENTLY. That is
+                // the shape of `ConvertedScreen.SetHeadline`'s note and of `GameVersion.ApplyTo`'s:
+                // legacy `Text` does not shrink past what it is told and does not wrap here, so it
+                // simply draws over the plate beside it. A player carrying a long earned title AND
+                // two alternates can exceed `PlateMaxWidth`, and this is the one screen where the
+                // overflow would land on somebody else's head.
+                //
+                // ⚠️ THE TAIL IS WHAT IS CUT, so the title the player earned survives and the
+                // build is the half that fades. The build is printed in full on the result board,
+                // which has a whole column for it.
+                //
+                // ⚠️ TWO ASCII DOTS, NOT AN ELLIPSIS CHARACTER. Darumadrop One has no `×` and
+                // assuming it has `…` is the same bet one glyph further on; a missing glyph draws
+                // as an empty box on the one label whose job is to say it has been shortened.
+                if (titleText.preferredWidth > room)
+                {
+                    string full = titleText.text;
+                    for (int keep = full.Length - 2;
+                         keep > 1 && titleText.preferredWidth > room;
+                         keep -= 2)
+                        titleText.text = full.Substring(0, keep).TrimEnd() + "..";
+                }
             }
 
             _tags[seat].gameObject.SetActive(taya);

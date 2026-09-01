@@ -520,7 +520,24 @@ namespace TumbangPreso.UI
             var info = Net.MatchRpc.Instance?.GetSeatInfo(slot);
             if (info == null || !info.Occupied) return "";
 
-            return Core.ProgressionRules.LabelForRewardId(info.Banner?.TitleId);
+            string line = Core.ProgressionRules.LabelForRewardId(info.Banner?.TitleId);
+            if (SceneFlow.SelectedMode != Core.GameMode.HeroStrike) return line;
+
+            string heroId = Core.Roster.PersonIdAt(Core.GameMode.HeroStrike, info.CharacterPick);
+            if (!string.IsNullOrEmpty(info.Custom))
+                heroId = Core.CustomCharacterRules.KitFor(
+                    Core.CustomCharacterRules.DecodeWire(info.Custom).HeroKitId);
+
+            // ⚠️⚠️ THE WHOLE BUILD HERE, AND ONLY THE ALTERNATES ON THE LOBBY PLATE. The two
+            // surfaces are asked different questions and the difference is deliberate. Before the
+            // fight the reader wants to know what is UNUSUAL about an opponent, on a strip 120 px
+            // wide over their head; after it they are studying what beat them, on a board with a
+            // column for it. `ConvertedMatchSetup` carries the other half of this note.
+            var build = Core.HeroBuildRules.Decode(info.Build, heroId);
+            var one = Core.HeroBuildRules.Equipped(build, heroId, 1, null);
+            var two = Core.HeroBuildRules.Equipped(build, heroId, 2, null);
+            string publicBuild = (one?.Name ?? "") + " / " + (two?.Name ?? "");
+            return string.IsNullOrEmpty(line) ? publicBuild : line + "  ·  " + publicBuild;
         }
 
         /// <summary>Everyone level at the top of a draw, joined for the headline.</summary>

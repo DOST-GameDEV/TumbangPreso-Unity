@@ -135,6 +135,11 @@ namespace TumbangPreso.PlayTests
             hub.Open();
             yield return null;
 
+            // ⚠️⚠️ § 114.14. Everything below measures a label against its own box; this asks
+            // whether the boxes have boxes. `SignInScreen.BuildLogo` is one of the three recorded
+            // instances of the fault, and the hub is the largest code-built surface in the game.
+            RectParentage.AssertEveryRectHasARectParent(Root("PlayerHubCanvas"), "the player hub");
+
             foreach (var (w, h, name) in Resolutions)
             {
                 yield return Resize(w, h);
@@ -187,6 +192,11 @@ namespace TumbangPreso.PlayTests
             Assert.IsNotNull(signIn, "the hub did not install a sign-in screen");
             signIn.Open();
             yield return null;
+
+            // ⚠️ § 114.14, on the screen `BuildLogo` drew a three-hundred-pixel wordmark through
+            // the form on. `FitInParent` sizes against the PARENT, so a fitter whose parent has
+            // no rect fits against nothing.
+            RectParentage.AssertEveryRectHasARectParent(Root("SignInCanvas"), "the sign-in screen");
 
             foreach (var (w, h, name) in Resolutions)
             {

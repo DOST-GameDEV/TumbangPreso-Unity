@@ -77,12 +77,15 @@ namespace TumbangPreso.Abilities
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
                 if (squash != null) squash.DashStretch(ctx.Forward, 0.25f);
 
+                float areaScale = ctx.CostScale("cheska.1.blackice");
+                float effectScale = ctx.GainScale("cheska.1.blackice");
                 Vector3 target = ctx.Position + ctx.Forward * 2.8f;
                 // ⚠️⚠️ ONE CALLOUT PER EVENT. This fired "SLIP ZONE!" and `SpawnIceSheet`
                 // fired "SLIP & SLIDE!" at the same point on the same frame, saying the same
                 // thing twice in two different phrasings. The hazard keeps its line because the
                 // hazard is the thing that persists.
-                HeroHazards.SpawnIceSheet(target, 2.3f, 5.0f, ctx.Motor.PlayerSlot);
+                HeroHazards.SpawnIceSheet(target, 2.3f * areaScale, 5.0f,
+                                          ctx.Motor.PlayerSlot, effectScale);
             }
         }
 
@@ -142,7 +145,9 @@ namespace TumbangPreso.Abilities
                 // enough to cross the box. 6.0 s is what the signature always defaulted to and
                 // what the ability was written against before the parameter mix-up on
                 // 2026-08-23. `docs/Hero_Strike_Balance.md` § 3.2.
-                HeroHazards.SpawnIceBarricade(wallPos, ctx.Forward, duration: 6.0f);
+                HeroHazards.SpawnIceBarricade(wallPos, ctx.Forward, duration: 6.0f,
+                    spanScale: ctx.GainScale("cheska.2.spires"),
+                    thicknessScale: ctx.CostScale("cheska.2.spires"));
             }
         }
 

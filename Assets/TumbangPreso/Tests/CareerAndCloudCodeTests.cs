@@ -479,6 +479,91 @@ namespace TumbangPreso.Tests
                 "the whole params declaration without saying so.");
         }
 
+        /// <summary>
+        /// ⚠️⚠️ THE HANDLE INDEX IS A ROUTE AND MUST NEVER BE THE AUTHORITY, AND THAT IS THE
+        /// ONLY REASON `docs/TODO.md` § 102.2 COULD BE CLOSED. Friends by NAME#TAG was declined
+        /// for a whole phase because there is no way to search Cloud Save: a player id is the
+        /// only address the social endpoint takes, and nothing maps a readable handle onto one.
+        /// What the index adds is a sharded custom document (`handle-index-XX`, keyed by a
+        /// stable FNV-1a hash of the normalised handle) that answers "which player id last
+        /// claimed this handle".
+        ///
+        /// ⚠️⚠️ AND THE ANSWER IS NOT TRUSTED. Two writes cannot be made atomic here: a rename
+        /// writes the new row and then deletes the old one, and a crash between them leaves a
+        /// row pointing at a player who no longer answers to that handle. If `resolve` returned
+        /// that id, a friend request would silently go to the WRONG ACCOUNT, which is worse than
+        /// the feature not existing. So `resolve` re-reads the target's own protected profile
+        /// with the service token and requires the exact current handle before answering.
+        ///
+        /// ⚠️ THE WRITE HALF IS BEST-EFFORT ON PURPOSE and this asserts that too. § 94.1: a
+        /// `save` that throws is a career document that never lands, and `CareerStore.FlushAsync`
+        /// wedges its whole queue behind the first refusal. A missing index row costs one failed
+        /// search; a failed save costs the account.
+        ///
+        /// ⚠️ THIS READS THE FILE, WHICH IS THE CHEAP HALF. The expensive half is deploying it
+        /// and asking the service; `docs/TODO.md` § 94.2b is the receipt for why a green run of
+        /// this test is not a shipped feature.
+        /// </summary>
+        [Test]
+        public void TheHandleIndexIsShardedHashedAndRevalidatedAgainstTheLiveProfile()
+        {
+            string js = File.ReadAllText(Path.Combine(CloudCodeRoot, "player-account.js"));
+
+            StringAssert.Contains("handle-index-", js,
+                "player-account.js no longer shards the handle index. One document for every " +
+                "account in the game is a single row every rename rewrites.");
+
+            StringAssert.Contains("params.handle", js,
+                "player-account.js does not read a handle, so `resolve` has nothing to look up.");
+
+            var declared = Regex.Match(js, @"module\.exports\.params\s*=\s*\{(.*?)\n\};",
+                                       RegexOptions.Singleline);
+            Assert.IsTrue(declared.Success && declared.Groups[1].Value.Contains("handle:"),
+                "player-account.js reads `params.handle` and does not declare it, so Cloud Code " +
+                "strips it and every search resolves an empty string. docs/TODO.md § 90.5.");
+
+            // The route is a hash of the handle, using the same FNV-1a constants the tag is
+            // derived with, so an index key is reproducible from the handle alone.
+            var index = Regex.Match(js, @"function\s+indexKey\s*\((.*?)\n\}", RegexOptions.Singleline);
+            Assert.IsTrue(index.Success, "player-account.js has no `indexKey`, so the index is " +
+                                         "keyed by something else and this test is stale.");
+            StringAssert.Contains("2166136261", index.Groups[1].Value,
+                "indexKey no longer hashes with FNV-1a, so a key written by one build cannot be " +
+                "found by another.");
+            StringAssert.Contains("normalHandle", index.Groups[1].Value,
+                "indexKey hashes the raw handle rather than the normalised one, so MARIA#4417 " +
+                "and Maria#4417 land in two different rows and only one of them is findable.");
+
+            // ⚠️ THE ASSERTION THAT MATTERS: the resolve branch re-reads the SUBJECT's profile
+            // and compares handles before it hands back an id.
+            var resolve = Regex.Match(js, @"if \(action === ""resolve""\)(.*?)\n    \}",
+                                      RegexOptions.Singleline);
+            Assert.IsTrue(resolve.Success, "player-account.js has no `resolve` branch, so " +
+                                           "SocialStore.RequestHandle calls an action that " +
+                                           "falls through to `load`.");
+
+            string body = resolve.Groups[1].Value;
+            StringAssert.Contains("getProtectedItems", body,
+                "`resolve` answers straight out of the index without re-reading the target's " +
+                "profile. A row left behind by a rename would then address the wrong account, " +
+                "and the request would go to a stranger with no error anywhere.");
+            StringAssert.Contains("normalHandle(current) !== normalHandle(wanted)", body,
+                "`resolve` does not compare the target's CURRENT handle against the one asked " +
+                "for, so a stale index row is believed.");
+
+            // ⚠️ AND THE WRITE HALF NEVER FAILS THE SAVE.
+            foreach (string branch in new[] { "\"save\"", "\"delete\"" })
+            {
+                var arm = Regex.Match(js, @"if \(action === " + Regex.Escape(branch) + @"\)(.*?)\n    \}",
+                                      RegexOptions.Singleline);
+                Assert.IsTrue(arm.Success, $"player-account.js has no {branch} branch.");
+                StringAssert.Contains("tryIndex", arm.Groups[1].Value,
+                    $"the {branch} branch maintains the handle index outside `tryIndex`, so a " +
+                    "service-token failure throws out of an account write. docs/TODO.md § 94.1: " +
+                    "one refused record wedged every match a player had ever finished.");
+            }
+        }
+
         private static int ConstantIn(string js, string name)
         {
             var match = Regex.Match(js, @"const\s+" + Regex.Escape(name) + @"\s*=\s*(\d+)\s*;");

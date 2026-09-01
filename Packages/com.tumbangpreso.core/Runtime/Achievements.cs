@@ -54,8 +54,17 @@ namespace TumbangPreso.Core
             new Achievement("ach.unang_panalo", "Unang Tagumpay", "Win your first match in Tumbang Preso.",
                 AchievementTier.Bronze, 1, RewardKind.Badge, "badge.unang_panalo", "FIRST BLOOD"),
 
-            new Achievement("ach.tulong_tropa", "Tropa sa Kanto", "Add your first friend to your social list.",
-                AchievementTier.Bronze, 1, RewardKind.Title, "title.tropa", "TROPA"),
+            // ⚠️⚠️ THIS ROW USED TO READ "Add your first friend to your social list" AND NOTHING
+            // COULD EVER TICK IT. `ProgressFor` is a pure function of `PlayerProfile`, and the
+            // friend list is not on the profile and must not be: that document round-trips
+            // through `match-record.js` and `AdoptRemoteProfile` strips any field the deployed
+            // script does not know (§ 98.1b). So the shelf drew a bronze achievement, at 0 of 1,
+            // for a thing the player had already done. The ID and the reward are unchanged
+            // because both are owned by accounts already; the NAME moved with the requirement,
+            // because a row whose title and its condition disagree is the § 6.2 complaint about
+            // a control you cannot predict, on a shelf.
+            new Achievement("ach.tulong_tropa", "Isa sa Tropa", "Finish a match as two different characters.",
+                AchievementTier.Bronze, 2, RewardKind.Title, "title.tropa", "TROPA"),
 
             // -------------------------------------------------------------
             // SILVER TIER (District Competitor & Seasoned Slipper Fighter)
@@ -133,6 +142,41 @@ namespace TumbangPreso.Core
                 case "ach.sampu_panalo":
                     return heroStrike.Wins;
 
+                case "ach.salisi_master":
+                    return classic.Retrievals + heroStrike.Retrievals;
+
+                case "ach.tulong_tropa":
+                    int different = 0;
+                    if (profile.Characters != null)
+                        foreach (var pick in profile.Characters)
+                            if (pick != null && pick.Games > 0) different++;
+                    return different;
+
+                case "ach.hero_squad":
+                    int masteredCast = 0;
+                    foreach (var hero in Roster.HeroPeople)
+                    {
+                        if (profile.Characters == null) continue;
+                        foreach (var pick in profile.Characters)
+                            if (pick != null && pick.Id == hero.Id && pick.Games >= 3)
+                            {
+                                masteredCast++;
+                                break;
+                            }
+                    }
+                    return masteredCast;
+
+                case "ach.walang_mintis":
+                    return Math.Max(classic.LongestWinStreak, heroStrike.LongestWinStreak);
+
+                case "ach.dalubhasa_hero":
+                    int bestMastery = 0;
+                    if (profile.Mastery != null)
+                        foreach (var mastery in profile.Mastery)
+                            if (mastery != null && mastery.Level > bestMastery)
+                                bestMastery = mastery.Level;
+                    return bestMastery;
+
                 case "ach.level_sampo":
                     return ProgressionRules.LevelForXp(profile.Xp);
 
@@ -152,6 +196,24 @@ namespace TumbangPreso.Core
         public static bool IsUnlocked(Achievement achievement, PlayerProfile profile)
         {
             return ProgressFor(achievement, profile) >= achievement.TargetCount;
+        }
+
+        public static HashSet<string> UnlockedIds(PlayerProfile profile)
+        {
+            var ids = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var achievement in Catalog)
+                if (IsUnlocked(achievement, profile)) ids.Add(achievement.Id);
+            return ids;
+        }
+
+        public static List<Reward> EarnedRewards(PlayerProfile profile)
+        {
+            var rewards = new List<Reward>();
+            foreach (var achievement in Catalog)
+                if (IsUnlocked(achievement, profile))
+                    rewards.Add(new Reward(achievement.RewardKind, achievement.RewardId,
+                                           achievement.RewardLabel));
+            return rewards;
         }
     }
 }

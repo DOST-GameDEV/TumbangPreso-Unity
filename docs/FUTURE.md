@@ -1209,6 +1209,32 @@ these two groups are built after that line, and `PlayerHub._mode` defaulted to C
 game defaults to Hero Strike, so the builds group was hidden behind a mode the player had not
 chosen. `docs/TODO.md` § 114.12.
 
+⚠️⚠️ **AND "SHIPPED" HAD A THIRD MEANING THIS PAGE WAS NOT ASKING FOR, WHICH IS WHETHER ANY OF IT
+CHANGED A MATCH. IT DID NOT UNTIL 2026-09-01.** Until then the system stored a selection, printed
+a percentage beside it and was read by nothing: `HeroLoadoutRules.ChallengesEnforced` was `false`,
+so all twelve alternates were handed out and every challenge string described something the
+player already had, and no kit consulted the equipped variant at any point. **`docs/TODO.md`
+§ 114.16 is the as-built record of making it real** and the four bullets below now describe
+shipped behaviour rather than intent:
+
+- **The challenge is a local, Practice-safe count of successful casts** (`AbilityChallengeProgress`
+  in `settings.json`, incremented on the local owner only). ⚠️ It is deliberately NOT the reward
+  ledger every cosmetic unlock reads: a reward is written by `match-record.js` off a submitted
+  career, and Practice submits nothing, so reading it would have made the Practice promise below
+  false with nothing logging it.
+- **All twelve alternates change the match**, through `AbilityContext.GainScale`/`CostScale` and
+  `HeroAbilitySystem.VariantGain`/`VariantCost`. ⚠️ **Every telegraph and reticle number is read
+  off the same table row the effect uses**, so the ring the player aims with cannot drift from the
+  blast it promises.
+- **The build is public and it is on the wire**: `LobbySeatInfo.Build` carries a `B1` frame, the
+  host re-encodes what it decodes, and it is drawn on the lobby identity strip and the result
+  board. ⚠️ `NetSession.ProtocolVersion` is **20** for it.
+- **Sidegrade, still asserted**, and two rows were rewritten in the same session for failing the
+  other half of that bar: 🧑, *"dont watn them to read as useless or the exact same"*. Arc Line was
+  buying four frames of extra stagger and Short Leash was selling a leash radius that does not
+  exist. **Budget neutrality is what stops an alternate being stronger; it does nothing to stop
+  one being pointless, and only a person can tell you which.**
+
 🧑: *"you know how overwatch or drg has unlockable skill paths or some shit?"*, then, clarifying
 what he actually meant: *"like skill / ability / passive variations, for example in drg theres
 diff guns"*, and how they are earned: *"u get them like in cod u finish quests or like ror2"*.

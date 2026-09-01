@@ -374,6 +374,21 @@ namespace TumbangPreso.Abilities
             RechargedBy = rechargedBy;
         }
 
+        /// <summary>
+        /// Applies the checked loadout to the numbers the deck and reticle expose. The effect
+        /// call site still uses the same scale, so the promise and the result move together.
+        /// </summary>
+        internal void ScaleLoadout(float duration = 1.0f, float telegraphRadius = 1.0f,
+                                   float telegraphRange = 1.0f, float aimMax = 1.0f,
+                                   float aimRamp = 1.0f)
+        {
+            Duration *= Mathf.Max(0.05f, duration);
+            TelegraphRadius *= Mathf.Max(0.05f, telegraphRadius);
+            TelegraphRange *= Mathf.Max(0.05f, telegraphRange);
+            AimMaxRange *= Mathf.Max(0.05f, aimMax);
+            AimRampSeconds *= Mathf.Max(0.05f, aimRamp);
+        }
+
         // -------------------------------------------------------------------
         // § WHAT A REJOINING PLAYER GETS BACK
         //

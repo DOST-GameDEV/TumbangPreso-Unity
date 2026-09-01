@@ -375,6 +375,11 @@ namespace TumbangPreso.Core
             var line = MatchRecordRules.LineFor(record, playerId);
             if (line == null) return false;
 
+            // Snapshot the derived shelf before this match changes its source totals. The result
+            // board receives only the difference, so an achievement interrupts once and never
+            // re-announces on every later match.
+            var achievementsBefore = AchievementRules.UnlockedIds(profile);
+
             profile.PlayerId = string.IsNullOrEmpty(profile.PlayerId) ? playerId : profile.PlayerId;
             profile.Characters ??= new List<PickRecord>();
             profile.Slippers ??= new List<PickRecord>();
@@ -474,6 +479,13 @@ namespace TumbangPreso.Core
             // offline queue resubmitted a record, which is the one thing it exists to do, and
             // then it would pay the same match twice with nothing reporting an error.
             award = ProgressionRules.Award(profile, record, line);
+            foreach (var achievement in AchievementRules.Catalog)
+            {
+                if (achievementsBefore.Contains(achievement.Id)) continue;
+                if (!AchievementRules.IsUnlocked(achievement, profile)) continue;
+                award.Unlocked.Add(new Reward(achievement.RewardKind, achievement.RewardId,
+                                              achievement.RewardLabel));
+            }
             return true;
         }
 

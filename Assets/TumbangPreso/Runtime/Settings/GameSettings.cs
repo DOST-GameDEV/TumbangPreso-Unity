@@ -174,6 +174,14 @@ namespace TumbangPreso.Settings
         /// </summary>
         public List<HeroBuild> HeroBuilds = new List<HeroBuild>();
 
+        /// <summary>
+        /// Successful casts toward the twelve Practice-safe ability challenges.
+        /// ⚠️ A LIST, NOT A DICTIONARY: `JsonUtility` silently drops dictionaries. The same
+        /// constraint shapes `HeroBuilds` immediately above it.
+        /// </summary>
+        public List<AbilityChallengeProgress> AbilityChallenges =
+            new List<AbilityChallengeProgress>();
+
         // -------------------------------------------------------------------
         // TELEMETRY. `docs/TODO.md` § 90.3.
         // -------------------------------------------------------------------
@@ -496,6 +504,10 @@ namespace TumbangPreso.Settings
             VSyncMode = Mathf.Clamp(VSyncMode, 0, VSyncModes.All.Length - 1);
             RenderStyle = Mathf.Clamp(RenderStyle, 0, RenderStyles.All.Length - 1);
 
+            CharacterLoadouts ??= new List<CharacterLoadout>();
+            HeroBuilds ??= new List<HeroBuild>();
+            AbilityChallenges ??= new List<AbilityChallengeProgress>();
+
             if (string.IsNullOrEmpty(PlayerToken)) PlayerToken = MintToken();
         }
 
@@ -636,6 +648,47 @@ namespace TumbangPreso.Settings
 
             settings.CharacterLoadouts ??= new List<CharacterLoadout>();
             return LoadoutRules.RowFor(settings.CharacterLoadouts, characterId);
+        }
+
+        /// <summary>The checked build this install may bring for one hero.</summary>
+        public static HeroBuild HeroBuildFor(string heroId)
+        {
+            var settings = Current;
+            if (settings == null || string.IsNullOrEmpty(heroId)) return null;
+            settings.HeroBuilds ??= new List<HeroBuild>();
+            return HeroBuildRules.RowFor(settings.HeroBuilds, heroId);
+        }
+
+        /// <summary>
+        /// A build safe to enter play: each requested id has passed the local Practice challenge.
+        /// The returned object is a copy so resolving a stale or edited setting does not rewrite
+        /// disk merely because a match started.
+        /// </summary>
+        public static HeroBuild CheckedHeroBuildFor(string heroId)
+        {
+            var settings = Current;
+            var wanted = HeroBuildFor(heroId);
+            var counters = settings?.AbilityChallenges;
+            var one = HeroBuildRules.Equipped(wanted, heroId, 1, counters);
+            var two = HeroBuildRules.Equipped(wanted, heroId, 2, counters);
+            return new HeroBuild
+            {
+                HeroId = heroId ?? "",
+                Slot1VariantId = one?.Id ?? "",
+                Slot2VariantId = two?.Id ?? "",
+            };
+        }
+
+        /// <summary>
+        /// Records a successful local cast. Saves only when the capped counter actually changes,
+        /// so a completed challenge does not turn every cast into a disk write.
+        /// </summary>
+        public static void NoteAbilityCast(string heroId, int slot)
+        {
+            var settings = Current;
+            if (settings == null) return;
+            settings.AbilityChallenges ??= new List<AbilityChallengeProgress>();
+            if (HeroBuildRules.NoteSuccessfulCast(settings.AbilityChallenges, heroId, slot)) Save();
         }
 
         /// <summary>

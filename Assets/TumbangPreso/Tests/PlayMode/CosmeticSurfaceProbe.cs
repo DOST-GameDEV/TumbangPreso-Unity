@@ -85,13 +85,27 @@ namespace TumbangPreso.PlayTests
         }
 
         /// <summary>
-        /// ⚠️⚠️ MASTERY 15 ON ZACK, WHICH IS BOTH PALETTES. Seeding one would draw DEFAULT plus
-        /// one swatch, and a row of two proves nothing about the spacing of a row of three.
+        /// The richest cosmetic state a hero account can be in, which is what the deleted colour
+        /// row would have drawn against.
+        ///
+        /// ⚠️⚠️ THIS USED TO SEED TWO OWNED PALETTES AND IT CANNOT ANY MORE, BECAUSE NOTHING IN
+        /// THE GAME AWARDS ONE. § 114.15 row 5: the mastery track went on paying
+        /// `mastery.&lt;hero&gt;.palette.alt1` and `.alt2` for a whole session after § 114.6
+        /// deleted the only control that could equip them, so the two slots pay wearable titles
+        /// now and `CosmeticsWireTests` asserts that they stay that way.
+        ///
+        /// ⚠️⚠️ SO THE SEED MOVED TO THE OTHER INPUT THE DELETED ROW READ, AND IT HAD TO. A seed
+        /// of "nothing is owned" would make this file's assertion pass against code that still
+        /// builds the row, because the row hid itself when the account owned nothing: **the test
+        /// would be green for the wrong reason, which is § 101.1's own lesson.** The row also
+        /// read `settings.CharacterLoadouts`, which is a plain text file the player owns and
+        /// which is not gated on any reward, so writing a palette id straight into it is a state
+        /// a real machine can be in and one the deleted row WOULD have drawn from.
         /// </summary>
-        private void SeedTwoPalettes()
+        private void SeedTheRichestCosmeticState()
         {
             var profile = GameServices.Career?.Profile;
-            Assert.IsNotNull(profile, "no career profile, so nothing owns a palette to draw");
+            Assert.IsNotNull(profile, "no career profile, so there is no cosmetic state to seed");
 
             _mastery = profile.Mastery;
             SnapshotLoadouts();
@@ -102,13 +116,19 @@ namespace TumbangPreso.PlayTests
             };
 
             var owned = BannerRules.Earned(profile);
-            int palettes = 0;
-            foreach (var reward in owned)
-                if (reward.Kind == RewardKind.Palette) palettes++;
+            Assert.Greater(owned.Count, 2,
+                "zack mastery 15 pays almost nothing, so this probe is seeding against a table " +
+                "that has moved. ProgressionRules.MasteryTable is the list.");
 
-            Assert.AreEqual(2, palettes,
-                "zack mastery 15 no longer pays two palettes, so this probe is seeding against " +
-                "a table that has moved. ProgressionRules.MasteryTable is the list.");
+            foreach (var reward in owned)
+                Assert.AreNotEqual(RewardKind.Palette, reward.Kind,
+                    $"'{reward.Id}' is a palette on a track again, and § 114.6 deleted the only " +
+                    "control that could equip one. CosmeticsWireTests is the gate on this; if it " +
+                    "is being put back, put the equip control back in the same commit.");
+
+            // ⚠️ AND THE SETTING THE ROW ACTUALLY READ. `SetPaletteFor` SAVES, which is why the
+            // whole loadout list is snapshotted above and restored in teardown.
+            Settings.SettingsStore.SetPaletteFor("bayan", "mastery.zack.palette.alt1");
         }
 
         /// <summary>⚠️ A COPY, NOT THE LIVE LIST. Handing the same `List` back in teardown would
@@ -155,10 +175,11 @@ namespace TumbangPreso.PlayTests
         {
             var report = new StringBuilder();
 
-            // ⚠️ SEEDED WITH TWO OWNED PALETTES, WHICH IS THE STATE THE DELETED ROW WOULD HAVE
-            // DRAWN IN. Asserting absence on a fresh account would pass against code that still
-            // builds the row, because the row hid itself when nothing was owned.
-            SeedTwoPalettes();
+            // ⚠️ SEEDED INTO THE STATE THE DELETED ROW WOULD HAVE DRAWN IN. Asserting absence on
+            // a fresh account would pass against code that still builds the row, because the row
+            // hid itself when nothing was owned. See `SeedTheRichestCosmeticState` for what that
+            // state is now that no track pays a palette.
+            SeedTheRichestCosmeticState();
             yield return OpenThePicker(report);
 
             foreach (string node in new[] { "PaletteRow", "CLOTHESRow", "STRENGTHRow" })

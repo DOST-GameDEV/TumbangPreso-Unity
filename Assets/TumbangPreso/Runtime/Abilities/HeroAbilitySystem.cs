@@ -13,6 +13,9 @@ namespace TumbangPreso.Abilities
     public sealed class HeroAbilitySystem : MonoBehaviour
     {
         public HeroKit Kit { get; private set; }
+        public string HeroId { get; private set; } = "dante";
+        private AbilityVariant _skill1Variant;
+        private AbilityVariant _skill2Variant;
         private CharacterMotor _motor;
         private Carrier _carrier;
         private CombatVerbs _verbs;
@@ -101,10 +104,125 @@ namespace TumbangPreso.Abilities
             _reticle = GroundReticle.Create(transform);
         }
 
-        public void BindHero(string heroId)
+        public void BindHero(string heroId, HeroBuild build = null)
         {
-            Kit = CreateKitFor(heroId);
+            HeroId = string.IsNullOrEmpty(heroId) ? "dante" : heroId.ToLowerInvariant();
+            Kit = CreateKitFor(HeroId);
+            _skill1Variant = HeroBuildRules.Equipped(build, HeroId, 1, null)
+                             ?? HeroLoadoutRules.DefaultFor(HeroId, 1);
+            _skill2Variant = HeroBuildRules.Equipped(build, HeroId, 2, null)
+                             ?? HeroLoadoutRules.DefaultFor(HeroId, 2);
+            ApplyLoadoutToPresentation();
         }
+
+        /// <summary>
+        /// The telegraph, the reticle and the aim beacon, moved by the same fraction the effect
+        /// itself is moved by.
+        ///
+        /// ⚠️⚠️ EVERY NUMBER HERE IS READ OFF THE VARIANT, NEVER WRITTEN AS A LITERAL. The first
+        /// draft of this method hard-coded `1.25f` beside `dante.1.tremor` while the blast at the
+        /// call site used `ctx.GainScale`, which is the same fraction from the table. They agreed
+        /// on the day they were typed and nothing kept them agreeing: raising Arc Line from 30 to
+        /// 45 per cent would have moved the shock and left the ring the player aims with at 30,
+        /// so the telegraph would draw a lie. `docs/Design.md`'s opening rule as code: a number
+        /// in one place or it is two numbers.
+        /// </summary>
+        private void ApplyLoadoutToPresentation()
+        {
+            if (Kit == null) return;
+
+            switch (_skill1Variant?.Id)
+            {
+                // The break grows, so the ring the player stomps inside grows with it.
+                case "dante.1.tremor":
+                    Kit.Skill1?.ScaleLoadout(telegraphRadius: Gain("dante.1.tremor")); break;
+
+                // A smaller sheet: the ring is the sheet, so it shrinks by the cost.
+                case "cheska.1.blackice":
+                    Kit.Skill1?.ScaleLoadout(telegraphRadius: Cost("cheska.1.blackice")); break;
+
+                // A longer veil is a longer ability, and the deck's cooldown ring reads it.
+                case "nemu.1.fade":
+                    Kit.Skill1?.ScaleLoadout(duration: Gain("nemu.1.fade")); break;
+
+                case "phaister.1.brand":
+                    Kit.Skill1?.ScaleLoadout(telegraphRadius: Cost("phaister.1.brand")); break;
+            }
+
+            switch (_skill2Variant?.Id)
+            {
+                case "dante.2.plating":
+                    Kit.Skill2?.ScaleLoadout(duration: Gain("dante.2.plating")); break;
+
+                case "cheska.2.spires":
+                    Kit.Skill2?.ScaleLoadout(telegraphRadius: Gain("cheska.2.spires")); break;
+
+                // ⚠️ THE ARMED WINDOW IS THE COST ON BOTH OF THESE. Flare Shot and Snap Discharge
+                // both buy speed with how long the shoe stays armed after the cast, and that
+                // window IS `HeroAbility.Duration`: the deck bar draining faster is the whole
+                // warning a player gets that they have to throw now.
+                case "sean.2.flare":
+                    Kit.Skill2?.ScaleLoadout(duration: Cost("sean.2.flare")); break;
+
+                case "zack.2.discharge":
+                    Kit.Skill2?.ScaleLoadout(duration: Cost("zack.2.discharge")); break;
+
+                case "nemu.2.leash":
+                    Kit.Skill2?.ScaleLoadout(duration: Cost("nemu.2.leash")); break;
+
+                // ⚠️ LONG STRIDE IS THE ONE ROW WHOSE COST IS A DIVISION. It goes further (the
+                // gain scales the reach) and takes proportionally LONGER to ramp to the far mark,
+                // so the ramp is divided by the cost rather than multiplied by it. The player
+                // sees both in the live aim beacon before releasing, which is what makes it a
+                // read for the taya rather than a free upgrade.
+                case "phaister.2.stride":
+                    Kit.Skill2?.ScaleLoadout(telegraphRange: Gain("phaister.2.stride"),
+                                             aimMax: Gain("phaister.2.stride"),
+                                             aimRamp: 1.0f / Cost("phaister.2.stride"));
+                    break;
+            }
+        }
+
+        /// <summary>Whether this body is running one named alternate.</summary>
+        public bool HasVariant(string variantId)
+            => (!string.IsNullOrEmpty(variantId))
+               && ((_skill1Variant != null && _skill1Variant.Id == variantId)
+                   || (_skill2Variant != null && _skill2Variant.Id == variantId));
+
+        /// <summary>
+        /// 1 plus the authored gain of a variant, whether or not this body is wearing it.
+        ///
+        /// ⚠️ THESE TWO ARE THE TABLE'S OWN ARITHMETIC AND ARE DELIBERATELY UNCONDITIONAL. They
+        /// are only ever called from inside a `case` that has already matched the equipped id, so
+        /// an ownership test here would be a second, weaker copy of the switch above.
+        /// </summary>
+        private static float Gain(string variantId)
+        {
+            var variant = HeroLoadoutRules.VariantById(variantId);
+            return variant == null ? 1.0f : 1.0f + variant.Gain;
+        }
+
+        /// <summary>1 plus the authored (negative) cost of a variant. See <see cref="Gain"/>.</summary>
+        private static float Cost(string variantId)
+        {
+            var variant = HeroLoadoutRules.VariantById(variantId);
+            return variant == null ? 1.0f : 1.0f + variant.Cost;
+        }
+
+        /// <summary>
+        /// The gain fraction for a variant if this body is wearing it, otherwise 1. For effect
+        /// code that holds the system rather than an <see cref="AbilityContext"/>: `Carrier`
+        /// scales a throw, `Slipper` scales the crater it makes on landing.
+        /// </summary>
+        public float VariantGain(string variantId)
+            => HasVariant(variantId) ? Gain(variantId) : 1.0f;
+
+        /// <summary>The cost fraction for a variant if this body is wearing it, otherwise 1.</summary>
+        public float VariantCost(string variantId)
+            => HasVariant(variantId) ? Cost(variantId) : 1.0f;
+
+        /// <summary>The checked variant in one skill slot, defaults included.</summary>
+        public AbilityVariant VariantFor(int slot) => slot == 1 ? _skill1Variant : _skill2Variant;
 
         public static HeroKit CreateKitFor(string heroId)
         {
@@ -439,6 +557,16 @@ namespace TumbangPreso.Abilities
         {
             var animator = GetComponentInChildren<Visual.CharacterAnimator>();
             var ability = AbilityFor(slot);
+
+            // ⚠️⚠️ COUNT THE CAST ONLY ON THE OWNER. `ApplyNetworkCast` also calls this method on
+            // observers, so counting every presentation would award one step per connected peer.
+            // Practice has no transport and uses `GameLaunch.SoloSeat`; a bot never earns a
+            // player's local unlock even when all-bots diagnostics are running.
+            bool localOwner = !NetAuthority.IsNetworked
+                ? _motor != null && !_motor.IsBot && _motor.PlayerSlot == GameLaunch.SoloSeat
+                : _motor != null && !_motor.IsBot && _motor.PlayerSlot == NetAuthority.LocalSlot;
+            if (localOwner && (slot == Slot.Skill1 || slot == Slot.Skill2))
+                Settings.SettingsStore.NoteAbilityCast(HeroId, slot == Slot.Skill1 ? 1 : 2);
 
             string castClip = ability?.CastAction;
             string vmClip = ability?.ViewmodelAction;

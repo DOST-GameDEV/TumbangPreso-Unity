@@ -122,7 +122,9 @@ namespace TumbangPreso.Abilities
 
                 _wake.Clear();
                 _wake.Enqueue(ctx.Position);
-                HeroHazards.SpawnShockTrail(ctx.Position, TrailRadius, 3.0f, ctx.Motor.PlayerSlot);
+                HeroHazards.SpawnShockTrail(ctx.Position,
+                    TrailRadius * ctx.CostScale("zack.1.arcline"), 3.0f,
+                    ctx.Motor.PlayerSlot, ctx.GainScale("zack.1.arcline"));
                 _trailDropTimer = 0.25f;
 
                 // ⚠️ THE SPARKS GO ON ZACK, NOT ON THE TRAIL DISCS. One dash drops up to thirty
@@ -151,7 +153,9 @@ namespace TumbangPreso.Abilities
                 if (_wake.Count > lagSamples) drop = _wake.Dequeue();
                 else return;   // still inside the first half second: nothing behind him yet
 
-                var disc = HeroHazards.SpawnShockTrail(drop, TrailRadius, 3.0f, ctx.Motor.PlayerSlot);
+                var disc = HeroHazards.SpawnShockTrail(drop,
+                    TrailRadius * ctx.CostScale("zack.1.arcline"), 3.0f,
+                    ctx.Motor.PlayerSlot, ctx.GainScale("zack.1.arcline"));
                 if (disc == null) return;
 
                 _live.Enqueue(disc);

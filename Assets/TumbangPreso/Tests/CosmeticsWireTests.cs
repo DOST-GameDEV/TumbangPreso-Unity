@@ -83,40 +83,56 @@ namespace TumbangPreso.Tests
         }
 
         /// <summary>
-        /// ⚠️⚠️ THE PALETTE THE PLAYER PICKS ON CHARACTER SELECT IS THE PALETTE THAT CROSSES,
-        /// AND UNTIL § 101 IT COULD NOT BE PICKED AT ALL. Every palette is earned on a mastery
-        /// track and is called `mastery.&lt;hero&gt;.palette.alt1`; `PaletteRules` knew only the
-        /// bare suffix, so `LoadoutRules.PaletteFor` refused every input and every character in
-        /// the game wore its authored colours. **This test fails on that bug.**
+        /// ⚠️⚠️ NOTHING IN THIS GAME AWARDS A PALETTE ANY MORE, AND THAT IS THE ASSERTION.
+        /// `docs/TODO.md` § 114.15 row 5 asked for a decision, not a workaround: § 114.6 deleted
+        /// the hero colour picker at 🧑's request, and the mastery track went on paying
+        /// `mastery.&lt;hero&gt;.palette.alt1` at level 5 and `.alt2` at 15 into a game with no
+        /// control that could equip either. **An item on a shelf that nothing can wear is the
+        /// § 101.1 fault with the two halves swapped**: there the reward existed and the equip
+        /// path refused it, here the equip path is gone and the reward is still paid. The
+        /// decision taken is the first of the two the entry offered: the two slots pay wearable
+        /// hero titles instead, and this case is what stops a later edit quietly putting a
+        /// palette back on a track before a screen exists to spend it on.
+        ///
+        /// ⚠️ THE TRANSPORT IS DELIBERATELY NOT DELETED AND THE SECOND HALF PROVES IT STILL
+        /// WORKS. `PaletteVariants`, `PaletteRules` and `LoadoutRules.PaletteFor` are untouched
+        /// and correct, including § 101.1's fix of naming a variant by the TAIL of an id on a dot
+        /// boundary; the day MAKE YOUR OWN or an authored skin wants one, it is a table row
+        /// rather than a feature. What must stay true meanwhile is that an id nobody owns
+        /// authorises to the DEFAULT rather than to itself.
         /// </summary>
         [Test]
-        public void APaletteChosenOnCharacterSelectIsWhatTheWireCarries()
+        public void NoTrackAwardsAPaletteAndAnUnownedOneStillFallsBackToTheDefault()
         {
-            var profile = ProfileAtLevel(1);
-            profile.Mastery.Add(new MasteryRecord { Id = "zack", Level = 5 });
+            var everything = ProfileAtLevel(200);
+            everything.Mastery.Add(new MasteryRecord { Id = "zack", Level = 25 });
 
-            var palette = BannerRules.Earned(profile).Find(r => r.Kind == RewardKind.Palette);
-            Assert.IsNotNull(palette, "zack mastery 5 pays no palette any more.");
+            foreach (var reward in BannerRules.Earned(everything))
+                Assert.AreNotEqual(RewardKind.Palette, reward.Kind,
+                    $"'{reward.Id}' is a palette paid to a maxed account, and § 114.6 deleted " +
+                    "the only control that could equip one. Either put an equip control back " +
+                    "(MAKE YOUR OWN, never the hero picker) or do not award it.");
 
-            SettingsStore.SetPaletteFor("dante", palette.Id);
+            // § 101.1's shape, kept: this id IS a drawable variant, so the refusal below is an
+            // ownership decision rather than the codec quietly failing to recognise it.
+            const string Unowned = "mastery.zack.palette.alt1";
+            Assert.IsTrue(PaletteRules.IsKnownVariant(Unowned),
+                "the palette transport stopped recognising a hero-scoped variant id, so the " +
+                "fallback below would pass for the wrong reason.");
 
             var claim = new BannerClaim
             {
-                Xp = profile.Xp,
-                PaletteId = palette.Id,
-                Mastery = new[] { new MasteryRecord { Id = "zack", Level = 5 } },
+                Xp = everything.Xp,
+                PaletteId = Unowned,
+                Mastery = new[] { new MasteryRecord { Id = "zack", Level = 25 } },
             };
 
             string authorised = BannerRules.AuthorisePalette(
                 BannerCodec.DecodeClaim(BannerCodec.EncodeClaim(claim)), "dante");
 
-            Assert.AreEqual(palette.Id, authorised,
-                "an owned palette did not survive the wire. Every palette in this game is a " +
-                "mastery reward, so its id carries the hero that paid for it.");
-
-            Assert.IsTrue(PaletteRules.IsKnownVariant(authorised),
-                "the authorised id is not a variant PaletteVariants can draw, so the character " +
-                "would silently wear its authored colours.");
+            Assert.AreEqual(PaletteRules.DefaultId, authorised,
+                "a palette nobody can earn was authorised onto a character. The host decides " +
+                "what every machine in the room draws, so this is the one place it is checked.");
         }
 
         /// <summary>

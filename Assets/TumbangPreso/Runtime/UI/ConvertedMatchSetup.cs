@@ -1192,6 +1192,39 @@ namespace TumbangPreso.UI
                     ? ProgressionRules.LabelForRewardId(info.Banner?.TitleId)
                     : "";
 
+                // ⚠️⚠️ THE BUILD IS PUBLIC WITHOUT ADDING ANOTHER PLATE. Phase 10 requires
+                // opponents to be able to read a sidegrade before the fight, while § 92 is the
+                // receipt for solving every new fact with another box. The existing identity
+                // strip carries the optional title and the two selected skill names in one line.
+                if (SceneFlow.SelectedMode == GameMode.HeroStrike && info != null)
+                {
+                    string heroId = people[pick].Id;
+                    if (!string.IsNullOrEmpty(info.Custom))
+                        heroId = CustomCharacterRules.KitFor(
+                            CustomCharacterRules.DecodeWire(info.Custom).HeroKitId);
+                    // ⚠️⚠️ ONLY WHAT IS DIFFERENT ABOUT THIS OPPONENT, NEVER THE WHOLE BUILD.
+                    // Naming both slots meant every plate in the lobby carried
+                    // `Seismic Stomp / Demonic Carapace` before anybody had unlocked anything:
+                    // 273 px of the reader's attention spent saying "this player is normal", on a
+                    // strip 120 px wide. `LobbyStyleProbe` measured it. **A default is the
+                    // assumption, so printing it is noise**, and what Phase 10 owes the room is
+                    // the fact that somebody's ice sheet is going to be small and vicious rather
+                    // than wide and slow. A plate with no build line means a stock kit.
+                    var publicBuild = HeroBuildRules.Decode(info.Build, heroId);
+                    var first = HeroBuildRules.Equipped(publicBuild, heroId, 1, null);
+                    var second = HeroBuildRules.Equipped(publicBuild, heroId, 2, null);
+
+                    string buildLabel = "";
+                    if (first != null && !first.IsDefault) buildLabel = first.Name;
+                    if (second != null && !second.IsDefault)
+                        buildLabel = string.IsNullOrEmpty(buildLabel)
+                            ? second.Name : buildLabel + " / " + second.Name;
+
+                    if (!string.IsNullOrEmpty(buildLabel))
+                        title = string.IsNullOrEmpty(title)
+                            ? buildLabel : title + "  ·  " + buildLabel;
+                }
+
                 _nameplates.SetSeat(seat, who, title,
                                     ready: ready,
                                     taya: seat == defender,

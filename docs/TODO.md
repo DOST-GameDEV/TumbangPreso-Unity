@@ -2530,13 +2530,21 @@ behind the surfaces it found.
 |---|---|---|---|
 | 1 | **6 · Social** | ⚠️⚠️ **`request`, `accept`, `decline` and `remove` HAVE NEVER RUN BETWEEN TWO REAL ACCOUNTS.** `CloudEndpointActionProbe` has one throwaway UGS profile, so `load`, `presence`, `block` and `unblock` are green against the live service and the four that need a second party are not. **Thirty minutes, two laptops.** | § 102.5 |
 | 2 | **8 · Integrity** | ⚠️⚠️ **WHETHER A SECOND MACHINE'S COPY OF THE SCORE EVENT STREAM REPRODUCES THE SAME DIGEST.** `ScoreWitnessProbe` tests the risky half on one machine and cannot test the other. Same trip as row 1. | § 104.7 |
-| 3 | **10 · Loadouts** | ⚠️⚠️ **`HeroLoadoutRules.ChallengesEnforced` IS `false`, SO EVERY VARIANT IS HANDED OUT AND NO CHALLENGE IS COUNTED.** The 24 rows are budget-neutral and asserted, so this costs nothing competitively and it is deliberate: the flag exists because the counters do not. **Either build the counters and flip it, or delete `AbilityVariant.Challenge` and stop implying an unlock that is not there.** A challenge string a player can never see is worse than no challenge. | `Core/HeroLoadout.cs` |
-| 4 | **10 · Achievements** | **Nothing tells a player they unlocked one, and none of them awards anything.** They are derived from career totals, so they are correct and readable on the CAREER tab, and that is the whole of it: no line on the result board, no banner reward. `FUTURE.md` PHASE 10 wants the title on the shelf to be wearable. | `Core/Achievements.cs`, `MatchResult` |
-| 5 | **5 · Cosmetics** | ⚠️ **A MASTERY PALETTE IS AWARDED AND CANNOT BE EQUIPPED**, which § 114.6 created on purpose by deleting the picker. **Decide one of two things**: stop awarding `mastery.<hero>.palette.alt1` and give the slot to a title, or put an equip control on MAKE YOUR OWN where 🧑 said customisation belongs. **Do not put it back on the hero picker.** | § 114.6 |
-| 6 | **6 · Social** | **Friends by name and tag is still declined** and still needs an index document. It is the one bullet of that phase that could not be built as written. | § 102.2 |
+| 3 | **10 · Loadouts** | ✅ **CLOSED 2026-09-01, § 114.16.** `ChallengesEnforced` is `true`, `AbilityChallengeProgress` counts successful local casts in Practice, and **all twelve alternates now change the match** rather than only the label. ⚠️ Two rows were rewritten in the same pass for being budget-neutral AND pointless, which is a bar the sidegrade test cannot see. | `Core/HeroLoadout.cs`, § 114.16 |
+| 4 | **10 · Achievements** | ✅ **CLOSED 2026-09-01, § 114.16.** Rewards are in `BannerRules.Earned`, newly crossed ones ride `XpAward.Unlocked` onto the result board. ⚠️ **Five of the fifteen had no `ProgressFor` case at all** and read 0 on a career that had done the thing hundreds of times. | `Core/Achievements.cs`, `MatchResult` |
+| 5 | **5 · Cosmetics** | ✅ **CLOSED 2026-09-01, § 114.16.** Decided the first of the two ways: mastery 5 and 15 pay wearable hero titles and **no track awards a palette any more**. The transport is untouched and `CosmeticsWireTests` now asserts both halves. | § 114.6, § 114.16 |
+| 6 | **6 · Social** | ✅ **BUILT AND DEPLOYED 2026-09-01, § 114.16.** Sharded `handle-index-XX` documents, `SocialStore.RequestHandle`, a FIND A FRIEND group on FRIENDS. ⚠️ **The index is a route and never the authority**: `resolve` re-reads the target's protected profile and requires the exact current handle. ⚠️ **Two real accounts finding each other is row 1's trip, not this row's.** | § 102.2, § 114.16 |
 
 ⚠️ **AND ONE THAT IS THIS SESSION'S OWN**: § 114.14's parentage check, which is one assertion and
-would have caught § 114.13 and two faults before it.
+would have caught § 114.13 and two faults before it. ✅ **BUILT 2026-09-01**, see § 114.14.
+
+✅ **FOUR OF THE SIX ARE CLOSED AS OF 2026-09-01 AND THE TWO THAT ARE LEFT ARE THE SAME TRIP.**
+Rows 1 and 2 both need a SECOND MACHINE and neither can be closed here, which is why they were
+written as one thirty-minute pass rather than two tasks: two real accounts exercising request,
+accept, decline, remove, presence and a block that the host's lobby then refuses, and a second
+machine reproducing the host's score-witness digest off the same event stream. ⚠️ **Both machines
+must be on protocol 20 and the same `gemini-rework` commit**, or they refuse each other at
+approval by design and neither half of the pass can start.
 
 **When all six are closed, phases 1 to 10 are done and the next thing is `FUTURE.md` PHASE 11,
 bots, backfill and the population problem.** ⚠️ Read § 0.5 and § 0.5b before starting it, and
@@ -2556,6 +2564,136 @@ times now (`SplashScreen.BuildSurface`'s postage-stamp logo, `SignInScreen.Build
 `FitInParent` with no box of its own, and this), and unlike "is this in the right place" it is a
 question a test can actually answer. **Do not turn it into a general layout probe**; it is one
 assertion about parentage.
+
+✅ **BUILT 2026-09-01, AS `Tests/PlayMode/RectParentage.cs` AND THREE CALL SITES.** It is one
+static method, `AssertEveryRectHasARectParent`, and it asks exactly the question above and
+nothing else: **every `RectTransform` below a canvas has a `RectTransform` parent.** It reports
+the offending node's full path, because "a rect has no rect parent" is not actionable and
+`QueueCard/Door under QueueCard` is a one-line fix.
+
+⚠️ **IT ASKS ABOUT RECTS, NOT ABOUT EVERY CHILD OF A CANVAS, AND THE NARROWING IS DELIBERATE.**
+A plain `Transform` under a canvas is legitimate on its own: a holder for a previewed model, a
+pooled effect, an audio source. What is never legitimate is a `RectTransform` hanging off one,
+because that is the object whose anchors resolve against a zero-sized point at the canvas centre.
+Asserting "every child of a canvas is a rect" would be the general layout probe this entry rules
+out, and it would fail on things that are fine.
+
+**The three call sites are the three surfaces the fault has actually shipped on**, each in the
+probe that already builds that screen rather than in a new one:
+`QueueCardLayoutProbe.TheQueueCardFitsItsBox...` (§ 114.13),
+`PlayerHubLayoutProbe.EveryTabFitsItsBox...` and `.TheSignInScreenFitsItsBox...`
+(`SignInScreen.BuildLogo`), and a new
+`PhaseSurfaceLayoutProbe.EveryRectOnTheBootSplashHasARectToResolveAgainst`
+(`SplashScreen.BuildSurface`). ⚠️ **The splash is driven by reflection on `BuildSurface` and
+`Run` is never called**, for the reason that file's XP case gives about `ShowProgression`: `Run`
+preloads every asset in the project, starts a video, signs the account in and then loads the next
+scene, so calling it would end the suite rather than measure a screen.
+
+### 114.16 Phase 10 made real: the counters, the twelve effects, one hero at a time, and the build on the wire ✅ 2026-09-01
+
+🧑, redirecting mid-session: *"the new loadouts have to substantially be different from old
+abilities, dont watn them to read as useless or the exact same"*. **§ 114.15 row 3 asked for the
+counters; that sentence is what the rest of this entry is answering.** The previous system stored
+a selection, printed a percentage beside it, and changed nothing in a match.
+
+**The unlock is a local, Practice-safe cast counter, and it is deliberately NOT the reward
+ledger.** `AbilityChallengeProgress` lives in `settings.json`, `HeroBuildRules.NoteSuccessfulCast`
+increments it, `GameSettings.NoteAbilityCast` saves only when the capped counter actually moves,
+and `HeroAbilitySystem.PlayCastConfirm` calls it **only on the local owner** — the same
+method runs on observers through `ApplyNetworkCast`, so counting every presentation would award
+one step per connected peer. `HeroLoadoutRules.ChallengesEnforced` is `true`.
+⚠️⚠️ **THE FIRST DRAFT READ `BannerRules.Owns` AND THAT WOULD HAVE MADE THE PHASE'S CENTRAL
+PROMISE FALSE.** A reward is written by `match-record.js` off a submitted career; Phase 10
+promises every alternate is earnable in Practice against bots, where no record is ever submitted
+and the service may not be reachable at all. **Nothing would have logged it**: the challenge
+string would simply never tick. `RewardKind.AbilityVariant` is awarded by no track in the game
+either, so `HeroBuildRules.IsUnlocked(PlayerProfile, ...)` could only ever answer "locked" for all
+twelve. That overload and its `Equipped` sibling are **deleted** rather than left beside the real
+one, which is § 101.1's lesson: an overload that can only return the fallback is worse than none.
+
+**All twelve alternates now change the match**, wired through `AbilityContext.GainScale` and
+`CostScale`, plus `HeroAbilitySystem.VariantGain`/`VariantCost` for effect code that holds the
+system rather than a context (`Carrier` scales a throw, `Slipper` scales the crater).
+
+⚠️⚠️ **AND EVERY PRESENTATION NUMBER IS READ OFF THE TABLE RATHER THAN TYPED BESIDE IT.**
+`ApplyLoadoutToPresentation` hard-coded `1.25f` next to `dante.1.tremor` while the blast used
+`ctx.GainScale`, which is the same fraction from `HeroLoadout.cs`. They agreed on the day they
+were typed and nothing kept them agreeing: raising Arc Line from 30 to 45 per cent, which this
+session did, would have moved the shock and left the aiming ring at 30, **so the telegraph would
+have drawn a lie.** `docs/Design.md`'s opening rule as code: a number in one place, or it is two
+numbers. Same fix in `Carrier`, where Snap Discharge's throw was written `2.4f` (`1.6 x 1.5`).
+
+**Two rows were rewritten because they read as useless**, which is the acceptance bar 🧑 named:
+
+- **Arc Line, 30 → 45 per cent, and the gain now reaches two numbers.** At 30 it bought **0.075 s
+  of extra stagger on a 0.25 s stumble, which is four frames**: the one alternate in the twelve a
+  player could not feel. It scales the stagger AND divides the 1.1 s re-shock interval, so the
+  lane shocks harder and sooner. ⚠️ Its cost is the one that matters most to the room: `VISION.md`
+  § 2 measures Zack's corridor at **27.2 per cent of the box off a 6.0 s cooldown**, more floor
+  than any ultimate, and a 45 per cent width cut takes one dash's lane to about 8 per cent.
+- **Slow Brand** scales the drag, the stagger and the re-bite rate rather than the stagger alone,
+  for the same arithmetic: 40 per cent of 0.35 s is a tenth of a second.
+- **Short Leash promised a parameter that does not exist.** It read "+30% reach", and Kuro flies
+  free while possessed: the ability ends on its own duration (`GhostPetCompanion`), there is no
+  leash radius. It is flight speed at 40 per cent now, which is the difference between arriving
+  while somebody is still bent over their tsinelas and arriving after.
+- ⚠️ **Long Tremor stays at 25 per cent and the row now says not to raise it.** Its gain is a
+  RADIUS, so it is already the largest change in the table by what the player sees (2.2 m to
+  2.75 m is 56 per cent more floor), and it is the only row that GROWS a footprint against
+  `VISION.md` § 2 rule 1's 1.8 to 2.5 m. A bigger number there is bought out of the readability
+  budget the whole mode is balanced against.
+
+**One hero at a time on CAREER.** Six heroes times two slots is twelve steppers on one screen,
+which is § 92's *"theres liek 20 shits at once"* rebuilt. There is a hero stepper, then that
+hero's two skills, each carrying **the ability's own bespoke glyph** (`AbilityIcons.For`) inside
+the existing 336-unit control rather than beside it: `UiRows.Cap` is 368 units at 4:3 and § 108 is
+the receipt for what a wider control costs. A locked row reads `LOCKED · <name>` with the
+challenge and an `n / target` counter, and pressing it plays `MenuSfx.Error` and writes nothing.
+
+**The build crosses the wire and is public, which is `FUTURE.md` PHASE 10's own bullet.**
+`LobbySeatInfo.Build` carries a `B1` frame beside `Look` and `Custom`; the host re-encodes what it
+decodes (`HeroBuildRules.NormaliseForWire`), so another hero's option, the wrong slot and an
+unknown id are all refused by the receiver rather than trusted. It is drawn on the lobby identity
+strip and the result board **without adding another plate**, which is § 92 again.
+⚠️⚠️ **`NetSession.ProtocolVersion` IS 20 AND BOTH MACHINES MUST REBUILD OFF THE SAME COMMIT.**
+The per-seat field inside `SyncLobbyPicks`' loop cannot be made tolerant, and a peer that misread
+it would bind every remote body to the DEFAULT build and then simulate hazards at sizes the host
+never spawned: **the two machines would disagree about where the floor is dangerous**, which is
+worse than a cosmetic misread. `ChatAndLobbyChromeTests.TheProtocolCarriesEveryRosterBump` is the
+gate.
+
+**Achievements now pay out and say so.** `BannerRules.Earned` includes achievement rewards,
+newly crossed ones are appended to `XpAward.Unlocked`, and the result board already prints those
+lines. ⚠️⚠️ **AND FIVE OF THE FIFTEEN HAD NO `ProgressFor` CASE AT ALL**, so they read 0 of 25 on
+a career that had done it two hundred times: `ProgressFor` ends in `default: return 0`, which is
+not a compiler error, not a log line and not a blank tile. `ach.salisi_master`, `ach.hero_squad`,
+`ach.walang_mintis`, `ach.dalubhasa_hero` and `ach.tulong_tropa` were all in that state.
+`Phase10Tests.AProfileThatHasDoneEverythingUnlocksEveryAchievementInTheCatalog` maxes every input
+and demands the whole shelf, because a missing case and an unearned achievement both answer 0 and
+the function cannot be asked which one it meant.
+⚠️ **`ach.tulong_tropa` also had a requirement nothing could ever satisfy**: "add your first
+friend", on a shelf derived purely from `PlayerProfile`, which does not carry the friend list and
+must not (§ 98.1b: `AdoptRemoteProfile` strips any field the deployed script does not know). It is
+"Isa sa Tropa", two different characters finished, and the NAME moved with the requirement.
+
+✅ **§ 114.15 ROW 5 IS DECIDED: THE MASTERY PALETTES BECOME TITLES.** Level 5 and 15 pay
+`title.specialist` and `title.veteran` rather than `palette.alt1` and `.alt2`, because § 114.6
+deleted the only control that could equip a palette. The transport is untouched and stays for an
+authored skin or MAKE YOUR OWN: `CosmeticsWireTests` asserts both halves now, that **no track
+pays a palette** and that an unowned one still authorises to the default.
+
+⚠️⚠️ **AND FRIENDS BY NAME#TAG IS AN INDEX THAT IS A ROUTE AND NEVER THE AUTHORITY.**
+`ugs/cloud-code/player-account.js` keeps sharded `handle-index-XX` custom documents keyed by an
+FNV-1a hash of the normalised handle, and `resolve` **re-reads the target's own protected profile
+and requires the exact current handle** before answering. Two writes cannot be made atomic here: a
+rename writes the new row and then deletes the old one, and a crash between them leaves a row
+pointing at somebody who no longer answers to that handle. Returning that id would send a friend
+request **to the wrong account**, which is worse than the feature not existing.
+⚠️⚠️ **THE WRITE HALF IS BEST-EFFORT AND THAT IS § 94.1'S LESSON, NOT TIMIDITY.** The index is
+maintained inside `tryIndex`, so a missing service token can never throw out of a `save`: a save
+that throws is a career document that never lands, and `CareerStore.FlushAsync` wedges its whole
+queue behind the first refusal. **A lost index row costs one failed search until the next save;
+a lost save costs the account.**
 
 ---
 

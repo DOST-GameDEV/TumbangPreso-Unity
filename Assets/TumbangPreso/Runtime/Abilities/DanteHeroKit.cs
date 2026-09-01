@@ -56,6 +56,8 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
+                float radius = 2.2f * ctx.GainScale("dante.1.tremor");
+                float knockback = 10.0f * ctx.CostScale("dante.1.tremor");
                 // Play heavy titan grunt and bass thud
                 NetCue.Play("hero_dante_grunt", ctx.Position);
                 NetCue.Play("sfx_explosion_heavy", ctx.Position);
@@ -68,12 +70,12 @@ namespace TumbangPreso.Abilities
                 ctx.Motor.ApplyImpulse(Vector3.up * 4.0f);
 
                 // Cracked lava decal and volcanic debris, calibrated to the 2.2 m telegraph.
-                HeroHazards.SpawnCrackedLavaDecal(ctx.Position, 2.2f, 4.0f);
+                HeroHazards.SpawnCrackedLavaDecal(ctx.Position, radius, 4.0f);
                 // ⚠️ THE RADIUS IS THE TELEGRAPH'S. The rocks are thrown off the RIM of the break
                 // rather than out of a point at the centre, so this has to be the same 2.2 m the
                 // decal and the blast use or eight rocks would leave ground that showed nothing.
-                HeroHazards.SpawnVolcanicRockDebris(ctx.Position, 8, 2.2f);
-                Visual.AbilityVfx.SpawnMagmaEruption(ctx.Position, 2.2f);
+                HeroHazards.SpawnVolcanicRockDebris(ctx.Position, 8, radius);
+                Visual.AbilityVfx.SpawnMagmaEruption(ctx.Position, radius);
 
                 // Explosion shockwave & comic floatie
                 // ⚠️ THE EXPLOSION ALREADY SAYS "THUD!" AT THIS EXACT POINT. A "BONK!" on top
@@ -81,7 +83,7 @@ namespace TumbangPreso.Abilities
                 // ⚠️ QUAKE, NOT FIRE. Dante breaks the ground; he does not set it alight. The
                 // style drops the fireball entirely, throws rock instead of embers and plays
                 // `sfx_quake_slam` rather than the leftover bomb every kit used to share.
-                HeroHazards.CreateExplosion(ctx.Position, 2.2f, 10.0f, 1.2f, ctx.Motor.PlayerSlot, "THUD!",
+                HeroHazards.CreateExplosion(ctx.Position, radius, knockback, 1.2f, ctx.Motor.PlayerSlot, "THUD!",
                     style: HeroHazards.ExplosionStyle.Quake, facing: ctx.Forward);
 
                 var round = ctx.Round;
@@ -114,6 +116,7 @@ namespace TumbangPreso.Abilities
         {
             private GameObject _auraGo;
             private readonly GameObject[] _shieldPlates = new GameObject[3];
+            private bool _heavySlow;
 
             // ⚠️ NO TELEGRAPH, AND A ZERO HERE IS A STATEMENT RATHER THAN AN OMISSION. This puts
             // nothing on the ground; drawing a ring under a self-buff would tell the player
@@ -141,6 +144,8 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
+                _heavySlow = ctx.HasVariant("dante.2.plating");
+                if (_heavySlow) ctx.Motor.EnterSpeedZone(0.70f);
                 NetCue.Play("guard_block", ctx.Position);
 
                 // Clear any existing stuns immediately
@@ -215,9 +220,14 @@ namespace TumbangPreso.Abilities
                     }
                 }
             }
-
             protected override void OnEnd(AbilityContext ctx)
             {
+                if (_heavySlow)
+                {
+                    ctx.Motor.ExitSpeedZone(0.70f);
+                    _heavySlow = false;
+                }
+
                 if (_auraGo != null)
                 {
                     UnityEngine.Object.Destroy(_auraGo);

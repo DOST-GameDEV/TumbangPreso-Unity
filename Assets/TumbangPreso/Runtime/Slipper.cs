@@ -816,7 +816,20 @@ namespace TumbangPreso
                 // ⚠️ THE SLIPPER STYLE, because a tsinelas going off is the game's joke and not
                 // an ultimate. It shared the supernova's fireball, flash, shake and sound, which
                 // told the player the two were the same size of event.
-                Abilities.HeroHazards.CreateExplosion(transform.position, 2.6f, 13.0f, 1.4f, _throwerSlot, "BOOM!",
+                //
+                // ⚠️⚠️ FLARE SHOT TIGHTENS THE CRATER, AND IT IS READ HERE RATHER THAN AT THE
+                // THROW. `AdoptState` can hand a peer a shoe that is already in flight with no
+                // record of how it left the hand, so a flag latched in `HostThrow` would be
+                // false on exactly the machines that did not watch the throw and they would
+                // draw a 2.6 m fireball over a 1.95 m blast. Every peer binds the seat's
+                // checked build in `MatchInstaller`, so asking the thrower at impact gives the
+                // same answer everywhere. The fraction is read off the row rather than written
+                // here, for the reason `Carrier`'s throw note gives.
+                var caster = GameServices.Round?.PlayerAt(_throwerSlot);
+                float blastRadius = 2.6f * (caster != null && caster.AbilitySystem != null
+                    ? caster.AbilitySystem.VariantCost("sean.2.flare")
+                    : 1.0f);
+                Abilities.HeroHazards.CreateExplosion(transform.position, blastRadius, 13.0f, 1.4f, _throwerSlot, "BOOM!",
                     style: Abilities.HeroHazards.ExplosionStyle.Slipper);
             }
             else if (Affinity == SlipperAffinity.ElectricZap)

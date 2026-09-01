@@ -120,6 +120,57 @@ namespace TumbangPreso.PlayTests
         }
 
         // -------------------------------------------------------------------
+        // § 114.14: the parentage assertion, on the third of the three surfaces
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// `docs/TODO.md` § 114.14 on `SplashScreen.BuildSurface`, which is the first of the
+        /// three recorded instances of the fault and the only one no probe reaches.
+        ///
+        /// ⚠️⚠️ THE BOOT SCREEN IS THE ONE SCREEN WHERE "I COULD NOT GET A PICTURE OF IT" IS NOT
+        /// AN ANSWER, because every player meets it before anything else (`CLAUDE.md` § 6.2b).
+        /// Its own header records what the fault cost here: the video came out about a hundred
+        /// pixels square in the middle of a black screen and the skip hint landed beside it,
+        /// because a nested canvas inherited a converted Control's leftover rect. It builds a
+        /// ROOT canvas now, and this asserts that nothing under it hangs off a plain
+        /// `Transform` again.
+        ///
+        /// ⚠️ `BuildSurface` IS DRIVEN BY REFLECTION AND `Run` IS NOT CALLED, for the reason the
+        /// XP case below gives at length. `Run` preloads every asset in the project, starts a
+        /// video, signs the account in and then LOADS THE NEXT SCENE, so calling it would end
+        /// the suite rather than measure a screen. `BuildSurface` touches nothing outside its
+        /// own canvas.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator EveryRectOnTheBootSplashHasARectToResolveAgainst()
+        {
+            _host = new GameObject("SplashProbeHost");
+            var splash = _host.AddComponent<SplashScreen>();
+            yield return null;
+
+            var build = typeof(SplashScreen).GetMethod("BuildSurface",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.IsNotNull(build,
+                "SplashScreen.BuildSurface is gone or renamed. It is the method § 114.14 names, " +
+                "and reaching it any other way runs the whole boot sequence.");
+
+            build.Invoke(splash, null);
+            yield return null;
+
+            var canvas = Root("SplashCanvas");
+            Assert.IsNotNull(canvas, "SplashScreen built no SplashCanvas");
+
+            RectParentage.AssertEveryRectHasARectParent(canvas, "the boot splash");
+
+            // ⚠️ THE CANVAS IS DESTROYED BY NAME. `BuildSurface` makes it a ROOT object rather
+            // than a child of the component, deliberately, so destroying `_host` leaves it in
+            // whichever scene the previous suite loaded. That is the same leak this file's
+            // teardown note records about `ResultCanvas`.
+            Object.Destroy(canvas.gameObject);
+            yield return null;
+        }
+
+        // -------------------------------------------------------------------
         // § PHASE 4: the end-of-match XP block
         // -------------------------------------------------------------------
 

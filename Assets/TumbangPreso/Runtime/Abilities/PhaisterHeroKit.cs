@@ -69,7 +69,9 @@ namespace TumbangPreso.Abilities
                 Vector3 targetPos = ctx.Position + forwardAim * 4.5f;
                 int slot = ctx.Motor != null ? ctx.Motor.PlayerSlot : -1;
 
-                HeroHazards.SpawnHexSigil(targetPos, HexRadius, SigilLifetime, slot);
+                HeroHazards.SpawnHexSigil(targetPos,
+                    HexRadius * ctx.CostScale("phaister.1.brand"), SigilLifetime, slot,
+                    ctx.GainScale("phaister.1.brand"));
                 AbilityVfx.AttachAura(ctx.Motor.transform, AbilityVfx.Aura.WitchSigil, 1.5f);
             }
         }

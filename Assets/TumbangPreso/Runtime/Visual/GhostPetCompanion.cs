@@ -1045,10 +1045,13 @@ namespace TumbangPreso.Visual
             }
         }
 
-        public void BeginPossession(CharacterMotor nemuMotor)
+        private float _possessionSpeedScale = 1.0f;
+
+        public void BeginPossession(CharacterMotor nemuMotor, float speedScale = 1.0f)
         {
             _nemuMotor = nemuMotor;
             IsPossessed = true;
+            _possessionSpeedScale = Mathf.Clamp(speedScale, 0.5f, 1.5f);
             _playerInput = Vector2.zero;
 
             if (_possessLightGo == null)
@@ -1508,7 +1511,7 @@ namespace TumbangPreso.Visual
             // fixed. He is still the fastest thing on the court, which is the point of riding
             // him, and `Balance.Speed` is named here rather than copied so the two cannot drift.
             const float FlySpeedScale = 1.7f;
-            float flySpeed = Core.Balance.Speed * FlySpeedScale;
+            float flySpeed = Core.Balance.Speed * FlySpeedScale * _possessionSpeedScale;
 
             if (moveDir.sqrMagnitude > 0.01f)
             {

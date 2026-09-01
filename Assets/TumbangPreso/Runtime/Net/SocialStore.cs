@@ -63,6 +63,14 @@ namespace TumbangPreso.Net
 
         /// <summary>The list as it was last known. Never null.</summary>
         public SocialList List => _cache.List ?? (_cache.List = new SocialList());
+        public string SearchStatus { get; private set; } = "";
+
+        [Serializable]
+        private sealed class HandleResolution
+        {
+            public string playerId = "";
+            public string handle = "";
+        }
 
         private static string Path =>
             System.IO.Path.Combine(Application.persistentDataPath, "social.json");
@@ -206,6 +214,47 @@ namespace TumbangPreso.Net
                 handle = MyHandle,
                 theirHandle = theirHandle ?? "",
             });
+        }
+
+        /// <summary>
+        /// Resolve an exact display name and four-digit tag through the server-maintained custom
+        /// index, then use the ordinary request path. The index is never trusted as friendship
+        /// state; it only turns a readable handle into the player id the social endpoint uses.
+        /// </summary>
+        public async void RequestHandle(string handle)
+        {
+            if (!AccountRules.TrySplitHandle(handle, out _, out _))
+            {
+                SearchStatus = "ENTER A NAME AND FOUR-DIGIT TAG, LIKE MARIA#4417.";
+                Changed?.Invoke();
+                return;
+            }
+
+            SearchStatus = "LOOKING FOR " + handle.ToUpperInvariant() + "...";
+            Changed?.Invoke();
+            try
+            {
+                string output = await CloudCode.CallAsync("player-account",
+                    new { action = "resolve", handle });
+                var found = string.IsNullOrWhiteSpace(output)
+                    ? null : JsonUtility.FromJson<HandleResolution>(output);
+                if (found == null || string.IsNullOrEmpty(found.playerId))
+                {
+                    SearchStatus = "NO ACCOUNT HAS THAT EXACT NAME AND TAG.";
+                    Changed?.Invoke();
+                    return;
+                }
+
+                SearchStatus = "REQUEST SENT TO " + found.handle.ToUpperInvariant() + ".";
+                Changed?.Invoke();
+                Request(found.playerId, found.handle);
+            }
+            catch (Exception e)
+            {
+                SearchStatus = "SEARCH IS UNAVAILABLE. TRY AGAIN WHEN ONLINE.";
+                Debug.LogWarning($"[Social] handle lookup failed: {e.Message}");
+                Changed?.Invoke();
+            }
         }
 
         public async void Accept(string playerId)

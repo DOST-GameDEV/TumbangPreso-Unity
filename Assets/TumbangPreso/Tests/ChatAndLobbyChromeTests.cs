@@ -196,7 +196,19 @@ namespace TumbangPreso.Tests
             // opponent has banked is a skill. The two peer-to-host messages read it behind a
             // `reader.Length > reader.Position` guard; the per-seat one cannot, for the reason
             // written four paragraphs up.
-            Assert.AreEqual(19, NetSession.ProtocolVersion,
+            // ⚠⚠ 20 SINCE 2026-09-01: the Hero Strike BUILD (docs/TODO.md § 114.15 row 3). One
+            // field on `Identify`, one on `SelectLobbyPick`, and **one per seat inside
+            // `SyncLobbyPicks`' loop**, carrying a `HeroBuildRules` `B1` frame.
+            //
+            // ⚠️⚠️ IT IS THE SECOND ENTRY IN THIS LIST THAT DECIDES A GAMEPLAY THING, AND UNLIKE
+            // 19 IT DECIDES ONE ON EVERY SEAT IN EVERY HERO STRIKE MATCH. Inside the frame are
+            // the two ability readings that seat brought: whether Cheska's sheet is a wide slow
+            // one or a small vicious one, whether Zack's lane is wide or thin. A peer that could
+            // not read it would bind every remote body to the DEFAULT build and then simulate
+            // hazards at sizes the host never spawned, so the two machines would disagree about
+            // where the floor is dangerous. That is worse than a cosmetic misread and it is why
+            // this is a refusal at approval rather than a tolerated trailing field.
+            Assert.AreEqual(20, NetSession.ProtocolVersion,
                 "a message or a replicated roster index has been added or removed. Bump this " +
                 "number and `NetSession.ProtocolVersion` together, in the same commit.");
         }

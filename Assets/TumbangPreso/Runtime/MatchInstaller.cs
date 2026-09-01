@@ -806,7 +806,12 @@ namespace TumbangPreso
                 // decision rather than trusting a claim.
                 if (custom != null) heroId = CustomCharacterRules.KitFor(custom.HeroKitId);
 
-                abilities.BindHero(heroId);
+                HeroBuild heroBuild = isLocalHuman
+                    ? Settings.SettingsStore.CheckedHeroBuildFor(heroId)
+                    : seatInfo != null && seatInfo.Occupied
+                        ? HeroBuildRules.Decode(seatInfo.Build, heroId)
+                        : null;
+                abilities.BindHero(heroId, heroBuild);
             }
 
             // The role ring and floating tag. Parented under the seat so it inherits position

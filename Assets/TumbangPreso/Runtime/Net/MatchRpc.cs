@@ -102,6 +102,7 @@ namespace TumbangPreso.Net
                         Banner = peer.Banner ?? new BannerSelection(),
                         Look = peer.Look ?? "",
                         Custom = peer.Custom ?? "",
+                        Build = peer.Build ?? "",
                     };
                 }
                 return new LobbySeatInfo { Seat = slot, Occupied = false };
@@ -550,7 +551,8 @@ namespace TumbangPreso.Net
                                       string handleProof, int charPick, int canPick, int slipperPick)
             => IdentifyServerRpc(token, name, accountPlayerId, handleProof, charPick, canPick,
                                  slipperPick, LocalCosmetics.Encoded(charPick),
-                                 LocalCosmetics.CustomCharacter());
+                                 LocalCosmetics.CustomCharacter(),
+                                 LocalCosmetics.HeroBuild(charPick));
 
         /// <summary>
         /// ⚠️⚠️ THE COSMETICS CLAIM IS ONE FIELD AND IT IS WHY THE PROTOCOL IS 17. It carries the
@@ -574,14 +576,14 @@ namespace TumbangPreso.Net
         /// </param>
         public void IdentifyServerRpc(string token, string name, string accountPlayerId,
                                       string handleProof, int charPick, int canPick, int slipperPick,
-                                      string cosmetics, string custom = "")
+                                      string cosmetics, string custom = "", string build = "")
         {
             if (_nm == null || _nm.CustomMessagingManager == null) return;
 
             if (NetAuthority.IsHost)
             {
                 HandleIdentify(0, token, name, accountPlayerId, handleProof, charPick, canPick,
-                               slipperPick, cosmetics, custom);
+                               slipperPick, cosmetics, custom, build);
                 return;
             }
 
@@ -595,6 +597,7 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(slipperPick);
             writer.WriteValueSafe(cosmetics ?? "");
             writer.WriteValueSafe(custom ?? "");
+            writer.WriteValueSafe(build ?? "");
             _nm.CustomMessagingManager.SendNamedMessage("Identify", NetworkManager.ServerClientId, writer);
         }
 
@@ -619,15 +622,17 @@ namespace TumbangPreso.Net
             // when a dead handler is hardest to diagnose.
             string custom = "";
             if (reader.Length > reader.Position) reader.ReadValueSafe(out custom);
+            string build = "";
+            if (reader.Length > reader.Position) reader.ReadValueSafe(out build);
 
             HandleIdentify(senderClientId, token, name, accountPlayerId, handleProof, charPick,
-                           canPick, slipperPick, cosmetics, custom);
+                           canPick, slipperPick, cosmetics, custom, build);
         }
 
         private void HandleIdentify(ulong senderClientId, string token, string name,
                                     string accountPlayerId, string handleProof,
                                     int charPick, int canPick, int slipperPick,
-                                    string cosmetics, string custom)
+                                    string cosmetics, string custom, string build)
         {
             int peerId = (int)senderClientId;
             var lobby = NetSession.Instance?.Lobby;
@@ -644,7 +649,7 @@ namespace TumbangPreso.Net
             int resolvedCanPick = canPick >= 0 ? canPick : 0;
             int resolvedSlipperPick = slipperPick >= 0 ? slipperPick : 0;
             lobby.SetPicks(peerId, resolvedCharPick, resolvedCanPick, resolvedSlipperPick);
-            HostAuthoriseCosmetics(peerId, cosmetics, resolvedCharPick, custom);
+            HostAuthoriseCosmetics(peerId, cosmetics, resolvedCharPick, custom, build);
 
             // ⚠️ THE MODE IS THE FIRST THING A JOINER IS TOLD, for the reason `HostStartMatch`
             // gives: everything below it is interpreted through the mode, and a late joiner may
@@ -714,7 +719,7 @@ namespace TumbangPreso.Net
         /// is why the kit half of it matters more than the hat half.
         /// </param>
         public void HostAuthoriseCosmetics(int peerId, string cosmetics, int charPick,
-                                           string custom = "")
+                                           string custom = "", string build = "")
         {
             if (!NetAuthority.IsHost) return;
 
@@ -739,6 +744,13 @@ namespace TumbangPreso.Net
             record.Banner = BannerRules.Authorise(claim);
 
             string characterId = Core.Roster.PersonIdAt(UI.SceneFlow.SelectedMode, charPick);
+            if (!string.IsNullOrEmpty(record.Custom))
+                characterId = CustomCharacterRules.KitFor(
+                    CustomCharacterRules.DecodeWire(record.Custom).HeroKitId);
+
+            record.Build = UI.SceneFlow.SelectedMode == GameMode.HeroStrike
+                ? HeroBuildRules.Encode(HeroBuildRules.Decode(build, characterId), characterId)
+                : "";
 
             // ⚠️ THE WHOLE LOOK, NOT ONLY THE EARNED PALETTE. `BannerRules.AuthoriseLook`
             // checks the reward half and clamps the free half, so what lands in the seat table is
@@ -2966,6 +2978,7 @@ namespace TumbangPreso.Net
             // in a lobby. A frame sent only at join would leave every peer wearing whoever they
             // walked in as, which is the one thing a per-character choice must not do.
             string custom = LocalCosmetics.CustomCharacter();
+            string build = LocalCosmetics.HeroBuild(character, custom);
 
             if (NetAuthority.IsHost)
             {
@@ -2981,7 +2994,7 @@ namespace TumbangPreso.Net
                     // A host wearing a title it has not earned would be the one seat in the room
                     // nobody checked, and `docs/TODO.md` § 94.1's lesson is that the copy nobody
                     // checks is the copy that is wrong.
-                    HostAuthoriseCosmetics(hostPeerId, cosmetics, character, custom);
+                    HostAuthoriseCosmetics(hostPeerId, cosmetics, character, custom, build);
                     BroadcastLobbyPicks();
                 }
                 return;
@@ -2995,6 +3008,7 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(slipper);
             writer.WriteValueSafe(cosmetics ?? "");
             writer.WriteValueSafe(custom ?? "");
+            writer.WriteValueSafe(build ?? "");
             _nm.CustomMessagingManager.SendNamedMessage("SelectLobbyPick", NetworkManager.ServerClientId, writer);
         }
 
@@ -3014,12 +3028,14 @@ namespace TumbangPreso.Net
             // throws past the end of a payload drops every message queued behind it.
             string custom = "";
             if (reader.Length > reader.Position) reader.ReadValueSafe(out custom);
+            string build = "";
+            if (reader.Length > reader.Position) reader.ReadValueSafe(out build);
 
             var lobby = NetSession.Instance?.Lobby;
             if (lobby != null)
             {
                 lobby.SetPicks((int)senderClientId, character, can, slipper);
-                HostAuthoriseCosmetics((int)senderClientId, cosmetics, character, custom);
+                HostAuthoriseCosmetics((int)senderClientId, cosmetics, character, custom, build);
                 BroadcastLobbyPicks();
             }
         }
@@ -3055,6 +3071,7 @@ namespace TumbangPreso.Net
                         Banner = peer.Banner ?? new BannerSelection(),
                         Look = peer.Look ?? "",
                         Custom = peer.Custom ?? "",
+                        Build = peer.Build ?? "",
                     };
                 }
                 else
@@ -3073,6 +3090,7 @@ namespace TumbangPreso.Net
                         Banner = new BannerSelection(),
                         Look = "",
                         Custom = "",
+                        Build = "",
                     };
                 }
                 _replicatedSeats[slot] = seats[slot];
@@ -3108,6 +3126,7 @@ namespace TumbangPreso.Net
                     // a client that receives it can build the seat without asking anything else.
                     // Empty is the roster case and is what three of the four seats usually carry.
                     writer.WriteValueSafe(s.Custom ?? "");
+                    writer.WriteValueSafe(s.Build ?? "");
                 }
 
                 // ⚠️⚠️ THE GALLERY RIDES THE ROSTER, BECAUSE A SPECTATOR HAS NO SEAT AND SO NO
@@ -3182,6 +3201,7 @@ namespace TumbangPreso.Net
                 reader.ReadValueSafe(out string banner);
                 reader.ReadValueSafe(out string look);
                 reader.ReadValueSafe(out string custom);
+                reader.ReadValueSafe(out string build);
 
                 var info = new LobbySeatInfo
                 {
@@ -3206,6 +3226,7 @@ namespace TumbangPreso.Net
                     // `CustomCharacterRules.Normalise` and re-encoded it, so what arrives is a
                     // decision. `MatchInstaller` decodes it once when it builds the seat.
                     Custom = custom ?? "",
+                    Build = build ?? "",
                 };
                 if (seat >= 0 && seat < _replicatedSeats.Length)
                 {
@@ -3447,7 +3468,10 @@ namespace TumbangPreso.Net
             if (wanted == null) return;
             if (abilities.Kit != null && abilities.Kit.GetType() == wanted.GetType()) return;
 
-            abilities.BindHero(heroId);
+            HeroBuild build = who.PlayerSlot == NetAuthority.LocalSlot
+                ? Settings.SettingsStore.CheckedHeroBuildFor(heroId)
+                : HeroBuildRules.Decode(Instance?.GetSeatInfo(who.PlayerSlot)?.Build, heroId);
+            abilities.BindHero(heroId, build);
         }
 
         public void BroadcastPicks()

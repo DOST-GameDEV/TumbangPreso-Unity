@@ -80,7 +80,9 @@ namespace TumbangPreso.Abilities
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
                 if (squash != null) squash.DashStretch(forward, 0.35f);
 
-                ctx.Motor.ApplyImpulse(forward.normalized * 17.0f + Vector3.up * 1.5f);
+                ctx.Motor.ApplyImpulse(forward.normalized * 17.0f
+                                       * ctx.CostScale("sean.1.afterburn")
+                                       + Vector3.up * 1.5f);
                 _live.Clear();
                 DropScorch(ctx);
 
@@ -166,7 +168,8 @@ namespace TumbangPreso.Abilities
                 // rather than a disc now, and a streak with no direction is just a disc that
                 // took more triangles to draw. A player who finds one has to be able to tell
                 // which way Sean went, which is most of what surviving Sean is.
-                var disc = HeroHazards.SpawnFireTrail(ctx.Position, TrailRadius, 3.0f,
+                var disc = HeroHazards.SpawnFireTrail(ctx.Position, TrailRadius,
+                                                      3.0f * ctx.GainScale("sean.1.afterburn"),
                                                       ctx.Motor.PlayerSlot, ctx.Forward);
                 if (disc == null) return;
 

@@ -115,37 +115,157 @@ namespace TumbangPreso.Core.Tests
         [Fact]
         public void AnIllegalBuildFallsBackToTheDefaultRatherThanBeingHonoured()
         {
-            var profile = new PlayerProfile();
-
             string fallback = HeroLoadoutRules.DefaultFor("zack", 1).Id;
 
+            // ⚠️ A NULL LEDGER IS THE RECEIVING PATH, and every assertion below is about SHAPE
+            // rather than about an unlock, so it is the right overload to ask: it proves the four
+            // refusals a host makes about a build that arrived over the wire, where there is no
+            // counter to consult and the peer's claim is all there is.
             var otherHero = new HeroBuild { HeroId = "zack", Slot1VariantId = "sean.1.afterburn" };
-            Assert.True(fallback == HeroBuildRules.Equipped(profile, otherHero, "zack", 1).Id,
+            Assert.True(fallback == HeroBuildRules.Equipped(otherHero, "zack", 1, null).Id,
                 "A build naming another hero's variant was honoured.");
 
             var wrongSlot = new HeroBuild { HeroId = "zack", Slot1VariantId = "zack.2.discharge" };
-            Assert.True(fallback == HeroBuildRules.Equipped(profile, wrongSlot, "zack", 1).Id,
+            Assert.True(fallback == HeroBuildRules.Equipped(wrongSlot, "zack", 1, null).Id,
                 "A slot-two variant was honoured in slot one.");
 
             var nonsense = new HeroBuild { HeroId = "zack", Slot1VariantId = "zack.1.doesnotexist" };
-            Assert.True(fallback == HeroBuildRules.Equipped(profile, nonsense, "zack", 1).Id,
+            Assert.True(fallback == HeroBuildRules.Equipped(nonsense, "zack", 1, null).Id,
                 "An unknown variant id was honoured.");
 
-            Assert.True(fallback == HeroBuildRules.Equipped(profile, null, "zack", 1).Id,
+            Assert.True(fallback == HeroBuildRules.Equipped(null, "zack", 1, null).Id,
                 "A missing build did not resolve to the default.");
         }
 
         /// <summary>⚠️ A FRESH ACCOUNT HAS A COMPLETE LEGAL BUILD ON EVERY HERO, so the screen is
-        /// never empty and no round is ever played with an unresolved slot.</summary>
+        /// never empty and no round is ever played with an unresolved slot. The ledger asked here
+        /// is an EMPTY one rather than a null one: null is the network path and skips the unlock
+        /// check entirely, which would make this pass without proving anything.</summary>
         [Fact]
-        public void AFreshAccountHasEveryDefaultUnlocked()
+        public void AFreshAccountHasEveryDefaultUnlockedAndNoAlternate()
         {
-            var profile = new PlayerProfile();
+            var fresh = new List<AbilityChallengeProgress>();
 
             foreach (var variant in HeroLoadoutRules.AllVariants)
                 if (variant.IsDefault)
-                    Assert.True(HeroBuildRules.IsUnlocked(profile, variant),
+                    Assert.True(HeroBuildRules.IsUnlocked(fresh, variant),
                         $"The default '{variant.Id}' is locked on a fresh account.");
+                else
+                    Assert.False(HeroBuildRules.IsUnlocked(fresh, variant),
+                        $"The alternate '{variant.Id}' is unlocked on a fresh account, so its "
+                        + "challenge string promises the player something they already have.");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ EVERY ALTERNATE IS REACHABLE BY PRESSING ITS OWN SKILL AND NOTHING ELSE. A
+        /// challenge target with no counter behind it is the § 114.15 row 3 fault back again:
+        /// a string a player can read and can never satisfy.
+        /// </summary>
+        [Fact]
+        public void CastingASkillCountsTowardsEveryAlternateInThatSlotAndNoOther()
+        {
+            foreach (var entry in Roster.HeroPeople)
+            {
+                for (int slot = 1; slot <= 2; slot++)
+                {
+                    var counters = new List<AbilityChallengeProgress>();
+                    for (int i = 0; i < 64; i++)
+                        HeroBuildRules.NoteSuccessfulCast(counters, entry.Id, slot);
+
+                    foreach (var variant in HeroLoadoutRules.AllVariants)
+                    {
+                        bool mine = variant.HeroId == entry.Id && variant.Slot == slot
+                                    && !variant.IsDefault;
+
+                        Assert.True(variant.IsDefault || variant.ChallengeTarget > 0,
+                            $"'{variant.Id}' is locked behind a challenge with no target, so no "
+                            + "number of casts can ever open it.");
+
+                        Assert.Equal(mine, HeroBuildRules.IsUnlocked(counters, variant)
+                                           && !variant.IsDefault);
+                    }
+                }
+            }
+        }
+
+        [Fact]
+        public void PracticeCastsUnlockTheAlternateAndStopAtItsTarget()
+        {
+            Assert.True(HeroLoadoutRules.ChallengesEnforced);
+            var counters = new List<AbilityChallengeProgress>();
+            var alternate = HeroLoadoutRules.VariantById("dante.1.tremor");
+
+            Assert.False(HeroBuildRules.IsUnlocked(counters, alternate));
+            for (int i = 0; i < alternate.ChallengeTarget + 3; i++)
+                HeroBuildRules.NoteSuccessfulCast(counters, "dante", 1);
+
+            Assert.True(HeroBuildRules.IsUnlocked(counters, alternate));
+            Assert.Equal(alternate.ChallengeTarget,
+                         HeroBuildRules.ChallengeCount(counters, alternate.Id));
+        }
+
+        [Fact]
+        public void ABuildWireKeepsTwoLegalSidegradesAndDropsAnotherHeros()
+        {
+            var wanted = new HeroBuild
+            {
+                HeroId = "dante",
+                Slot1VariantId = "dante.1.tremor",
+                Slot2VariantId = "sean.2.flare",
+            };
+
+            var back = HeroBuildRules.Decode(HeroBuildRules.Encode(wanted, "dante"), "dante");
+            Assert.Equal("dante.1.tremor", back.Slot1VariantId);
+            Assert.Equal("dante.2.carapace", back.Slot2VariantId);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ EVERY ACHIEVEMENT IN THE CATALOG HAS A REAL CASE IN `ProgressFor`, AND UNTIL
+        /// 2026-09-01 FIVE OF THE FIFTEEN DID NOT. `ProgressFor` ends in `default: return 0`,
+        /// so an achievement nobody wrote a case for is not a compiler error, not a log line and
+        /// not a blank tile: it is a row on the shelf reading 0 of 25 for a player who has done
+        /// it two hundred times. `ach.salisi_master`, `ach.hero_squad`, `ach.walang_mintis`,
+        /// `ach.dalubhasa_hero` and `ach.tulong_tropa` were all in that state.
+        ///
+        /// ⚠️ THE ONLY WAY TO SEE A MISSING CASE IS TO MAX EVERY INPUT AND DEMAND THE WHOLE
+        /// SHELF, because a missing case and an unearned achievement both answer 0 and the
+        /// function cannot be asked which one it meant.
+        /// </summary>
+        [Fact]
+        public void AProfileThatHasDoneEverythingUnlocksEveryAchievementInTheCatalog()
+        {
+            var profile = new PlayerProfile { Xp = ProgressionRules.XpPerLevel * 199 };
+
+            foreach (string mode in new[] { "Classic", "HeroStrike" })
+            {
+                var totals = ProfileRules.ModeFor(profile, mode).Totals;
+                totals.Matches = 500;
+                totals.Wins = 400;
+                totals.Knockdowns = 500;
+                totals.Retrievals = 500;
+                totals.LongestWinStreak = 25;
+            }
+
+            foreach (var entry in Roster.HeroPeople)
+            {
+                profile.Characters.Add(new PickRecord { Id = entry.Id, Games = 50, Wins = 25 });
+                profile.Mastery.Add(new MasteryRecord { Id = entry.Id, Level = 25 });
+            }
+
+            profile.Rank = new RankState
+            {
+                Rating = RatingRules.TierFloors[(int)RankTier.Alamat] + 50.0,
+                MatchesThisSeason = 40,
+            };
+
+            foreach (var achievement in AchievementRules.Catalog)
+                Assert.True(AchievementRules.IsUnlocked(achievement, profile),
+                    $"'{achievement.Id}' reads "
+                    + $"{AchievementRules.ProgressFor(achievement, profile)} of "
+                    + $"{achievement.TargetCount} on a career that has done everything the game "
+                    + "offers. Either AchievementRules.ProgressFor has no case for it and it is "
+                    + "falling through to `default: return 0`, or its case reads a total this "
+                    + "profile does not set.");
         }
     }
 }

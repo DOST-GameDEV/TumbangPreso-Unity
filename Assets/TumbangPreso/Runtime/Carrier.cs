@@ -255,13 +255,17 @@ namespace TumbangPreso
             if (ability != null && ability.Kit is ZackHeroKit zack &&
                 (zack.IsOverchargeThrowActive || zack.IsThunderstrikeActive))
             {
-                velocity *= 1.6f;
+                // ⚠️ THE ALTERNATE'S FRACTION COMES OFF THE TABLE, NOT OUT OF THIS LINE. `2.4f`
+                // was written here as `1.6 x 1.5` at a moment when Snap Discharge happened to be
+                // +50 per cent; the row is the only place that number may live, or the label the
+                // player reads and the shoe they throw are two different numbers.
+                velocity *= 1.6f * ability.VariantGain("zack.2.discharge");
                 affinity = SlipperAffinity.ElectricZap;
                 zack.IsOverchargeThrowActive = false;
             }
             else if (ability != null && ability.Kit is SeanHeroKit sean && sean.IsIgnitionCannonActive)
             {
-                velocity *= 1.3f;
+                velocity *= 1.3f * ability.VariantGain("sean.2.flare");
                 affinity = SlipperAffinity.FireExplosive;
                 sean.IsIgnitionCannonActive = false;
             }

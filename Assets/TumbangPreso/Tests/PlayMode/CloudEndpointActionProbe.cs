@@ -253,6 +253,78 @@ namespace TumbangPreso.PlayTests
             Debug.Log($"[CloudEndpointActionProbe] player-account attest minted and verify vouched for {minted.handle}");
         }
 
+        /// <summary>
+        /// `resolve` turns an exact NAME#TAG into a player id, against the LIVE index.
+        ///
+        /// ⚠️⚠️ THIS IS THE ONLY THING THAT CAN SAY THE HANDLE INDEX IS REAL.
+        /// `CareerAndCloudCodeTests` compares the C# to the FILE ON DISK and was green through
+        /// § 94.2b, where the service was running a copy of `match-record.js` published six hours
+        /// before the code that was being tested. `docs/TODO.md` § 90.5 is the other half: an
+        /// undeclared parameter is stripped silently, so a `resolve` whose `handle` never arrived
+        /// would compare `""` against a real handle, answer `{"playerId":"","handle":""}`, and
+        /// look exactly like "no account has that name".
+        ///
+        /// ⚠️⚠️ SO THE SEQUENCE IS THE ASSERTION AND A SINGLE CALL WOULD PROVE NOTHING. It saves
+        /// a profile, resolves its own handle back to its own player id — a string no other
+        /// branch of this script can produce for this input — then deletes the profile and
+        /// resolves again, which must come back EMPTY. That second half is the safety argument in
+        /// § 102.2: the index is a route and never the authority, so a row that outlives the
+        /// account it pointed at has to answer NOT FOUND rather than sending a friend request to
+        /// a stranger.
+        ///
+        /// ⚠️ IT RUNS ON THE THROWAWAY `qa45` PROFILE like everything else in this file. `save`
+        /// and `delete` here would overwrite and then wipe his real account on the `default` one.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator TheAccountEndpointResolvesAnExactHandleAndForgetsADeletedOne()
+        {
+            yield return SignedInAsTheProbePlayer();
+            string id = AuthenticationService.Instance.PlayerId;
+            string handle = ProbeDisplayName + "#" + AccountRules.DerivedTag(id);
+
+            string profileJson = JsonUtility.ToJson(new AccountProfile
+            {
+                PlayerId = id,
+                DisplayName = ProbeDisplayName,
+                Discriminator = AccountRules.DerivedTag(id),
+            });
+
+            var save = Net.CloudCode.CallAsync(
+                "player-account", new { action = "save", profile = profileJson });
+            yield return Await(save);
+
+            StringAssert.Contains(handle.Replace(" ", ""), Flat(save.Result).Replace("\\u0020", ""),
+                "the save branch answered a different handle from the one the core derives, so "
+                + "the search below would be looking for a name this account is not called. "
+                + "AccountRules.DerivedTag and player-account.js's derivedTag are the two halves.");
+
+            var found = Net.CloudCode.CallAsync(
+                "player-account", new { action = "resolve", handle });
+            yield return Await(found);
+
+            StringAssert.Contains(id, Flat(found.Result),
+                $"`resolve` did not find '{handle}', which was saved one call ago. Either the "
+                + "index was not written, or `handle` was stripped because it is not declared in "
+                + "module.exports.params, or the resolve branch is not deployed and `load` "
+                + "answered instead. docs/TODO.md § 90.5 and § 102.2.");
+
+            var cleanup = Net.CloudCode.CallAsync("player-account", new { action = "delete" });
+            yield return Await(cleanup);
+
+            var gone = Net.CloudCode.CallAsync(
+                "player-account", new { action = "resolve", handle });
+            yield return Await(gone);
+
+            StringAssert.DoesNotContain(id, Flat(gone.Result),
+                "`resolve` still hands out a player id for a handle whose account has been "
+                + "deleted. The index is a route and never the authority: the branch re-reads "
+                + "the target's own protected profile and must refuse when the handle no longer "
+                + "matches, or a rename would send a friend request to the wrong account.");
+
+            Debug.Log($"[CloudEndpointActionProbe] player-account resolved {handle} to {id} "
+                      + "and forgot it after delete");
+        }
+
         // -------------------------------------------------------------------
         // § match-record: load, history, submit
         // -------------------------------------------------------------------

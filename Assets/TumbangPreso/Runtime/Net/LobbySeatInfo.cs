@@ -108,5 +108,8 @@ namespace TumbangPreso.Net
         /// than throwing, so both degrade to the same harmless place.
         /// </summary>
         public string Custom = "";
+
+        /// <summary>The host-validated `B1` Hero Strike build for this seat.</summary>
+        public string Build = "";
     }
 }

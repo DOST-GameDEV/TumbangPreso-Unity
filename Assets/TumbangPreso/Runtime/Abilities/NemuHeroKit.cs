@@ -35,6 +35,7 @@ namespace TumbangPreso.Abilities
         private sealed class PhantomPhaseAbility : HeroAbility
         {
             private GameObject _phantomLightGo;
+            private bool _longFadeSlow;
 
             public PhantomPhaseAbility()
                 // ⚠️⚠️ 36 s, UP FROM 8.0, AND IT SITS BETWEEN SEAN'S 34 AND DANTE'S 45. Tag
@@ -60,6 +61,8 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
+                _longFadeSlow = ctx.HasVariant("nemu.1.fade");
+                if (_longFadeSlow) ctx.Motor.EnterSpeedZone(0.65f);
                 NetCue.Play("hero_nemu_grunt", ctx.Position);
                 NetCue.Play("sfx_ghost_teleport", ctx.Position);
 
@@ -108,6 +111,12 @@ namespace TumbangPreso.Abilities
 
             protected override void OnEnd(AbilityContext ctx)
             {
+                if (_longFadeSlow)
+                {
+                    ctx.Motor.ExitSpeedZone(0.65f);
+                    _longFadeSlow = false;
+                }
+
                 if (_phantomLightGo != null)
                 {
                     UnityEngine.Object.Destroy(_phantomLightGo);
@@ -168,7 +177,8 @@ namespace TumbangPreso.Abilities
                 var visual = ctx.Motor.GetComponent<Visual.CharacterVisual>();
                 if (visual != null && visual.Companion != null)
                 {
-                    visual.Companion.BeginPossession(ctx.Motor);
+                    visual.Companion.BeginPossession(ctx.Motor,
+                        ctx.GainScale("nemu.2.leash"));
                 }
                 else
                 {

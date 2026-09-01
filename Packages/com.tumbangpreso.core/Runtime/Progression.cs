@@ -515,9 +515,14 @@ namespace TumbangPreso.Core
         private static readonly (int Level, RewardKind Kind, string Suffix, string Label)[] MasteryTable =
         {
             (3,  RewardKind.Title,   "title.katuwang",  "KATUWANG"),
-            (5,  RewardKind.Palette, "palette.alt1",    "ALTERNATE COLOURS"),
+            // ⚠️⚠️ TITLES, NOT PALETTES. The hero colour picker was deleted at the player's
+            // request (`docs/TODO.md` § 114.6), so continuing to award a palette would hand out
+            // an item no screen can equip. MAKE YOUR OWN already owns clothing colour directly;
+            // a hero palette there would recolour the wrong character. The two slots become
+            // wearable titles and the palette transport stays intact for authored future use.
+            (5,  RewardKind.Title,   "title.specialist", "SPECIALIST"),
             (10, RewardKind.Badge,   "badge.mastery",   "MASTERY"),
-            (15, RewardKind.Palette, "palette.alt2",    "SECOND COLOURS"),
+            (15, RewardKind.Title,   "title.veteran",    "VETERAN"),
             (25, RewardKind.Title,   "title.dalubhasa", "DALUBHASA"),
         };
 
@@ -607,6 +612,9 @@ namespace TumbangPreso.Core
                     id[id.Length - row.Suffix.Length - 1] == '.')
                     return row.Label;
             }
+
+            foreach (var achievement in AchievementRules.Catalog)
+                if (achievement.RewardId == id) return achievement.RewardLabel;
 
             return "";
         }

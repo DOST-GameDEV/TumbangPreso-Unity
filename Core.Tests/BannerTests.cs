@@ -322,29 +322,19 @@ namespace TumbangPreso.Core.Tests
         /// `if` is an assertion that can decide not to run**, which is exactly what happened.
         /// </summary>
         [Fact]
-        public void APaletteEarnedThroughMasteryCanActuallyBeWorn()
+        public void MasteryStopsAwardingPalettesAfterThePickerWasDeleted()
         {
             var claim = ClaimAtLevel(60);
             claim.Mastery = new[] { new MasteryRecord { Id = "zack", Level = 15 } };
 
-            var earned = BannerRules.Earned(claim.AsProfile())
-                                    .Where(r => r.Kind == RewardKind.Palette)
-                                    .ToList();
-
-            Assert.NotEmpty(earned);
-
-            foreach (var reward in earned)
-            {
-                Assert.True(PaletteRules.IsKnownVariant(reward.Id),
-                    $"'{reward.Id}' is a palette this account owns and PaletteRules cannot draw " +
-                    "it. Every palette is earned on a mastery track and carries the hero in its " +
-                    "id; a variant table that only knows the bare suffix knows none of them.");
-
-                claim.PaletteId = reward.Id;
-
-                Assert.Equal(reward.Id, BannerRules.AuthorisePalette(claim, "dante"));
-                Assert.True(PaletteRules.HueShiftFor(reward.Id) > 0.0f);
-            }
+            var earned = BannerRules.Earned(claim.AsProfile());
+            Assert.DoesNotContain(earned, r => r.Kind == RewardKind.Palette);
+            Assert.Contains(earned, r => r.Id == "mastery.zack.title.specialist"
+                                         && r.Kind == RewardKind.Title);
+            Assert.Contains(earned, r => r.Id == "mastery.zack.title.veteran"
+                                         && r.Kind == RewardKind.Title);
+            Assert.Equal("SPECIALIST",
+                         ProgressionRules.LabelForRewardId("mastery.zack.title.specialist"));
         }
 
         /// <summary>

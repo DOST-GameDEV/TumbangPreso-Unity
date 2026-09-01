@@ -541,7 +541,11 @@ namespace TumbangPreso.Core.Tests
             ProfileRules.Apply(profile, record, "player-0", out XpAward award);
 
             Assert.Equal(target, award.LevelAfter);
-            Assert.Single(award.Unlocked);
+            // ⚠️ THE LEVEL REWARD IS ASSERTED BY ID RATHER THAN BY THE LIST BEING A SINGLETON.
+            // `XpAward.Unlocked` carries newly crossed ACHIEVEMENTS too since 2026-09-01, and the
+            // fixture that reaches level 5 also finishes its first match, so a `Single` here
+            // failed on a correct award.
+            Assert.Single(award.Unlocked.FindAll(r => r.Id == "title.taga_kanto"));
         }
 
         // -------------------------------------------------------------------

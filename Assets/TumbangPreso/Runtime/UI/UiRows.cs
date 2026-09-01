@@ -622,7 +622,8 @@ namespace TumbangPreso.UI
 
         public static Text StepperRow(RectTransform list, string label, string value,
                                       int index, int count, Action<int> onChange,
-                                      string hint = "")
+                                      string hint = "", Sprite icon = null,
+                                      Color? iconColour = null)
         {
             var slot = Row(list, label, hint, StepperWidth);
 
@@ -645,6 +646,28 @@ namespace TumbangPreso.UI
 
             float nameCentre = StepperWidth * 0.5f;
             float nameWidth = StepperWidth - (ArrowWidth * 2.0f) - 12.0f;
+
+            // ⚠️ THE LOADOUT USES THE SAME BESPOKE GLYPH AS THE DECK AND THE INSPECT PANEL.
+            // An icon shown only during the match cannot teach a build chosen in the lobby. It
+            // occupies part of the existing 336-unit control rather than widening it past the
+            // 4:3 value column, which was the fault this method was built to prevent.
+            if (icon != null)
+            {
+                const float iconSize = 34.0f;
+                var iconGo = new GameObject("AbilityIcon", typeof(RectTransform), typeof(Image));
+                iconGo.transform.SetParent(slot, false);
+                var iconRect = (RectTransform)iconGo.transform;
+                MenuKit.Place(iconRect, new Vector2(0.0f, 0.5f),
+                              new Vector2(ArrowWidth + 24.0f, 0.0f),
+                              new Vector2(iconSize, iconSize));
+                var image = iconGo.GetComponent<Image>();
+                image.sprite = icon;
+                image.color = iconColour ?? UiTheme.Amber;
+                image.raycastTarget = false;
+
+                nameCentre += 20.0f;
+                nameWidth -= 44.0f;
+            }
 
             var text = MenuKit.Label(slot, value, LabelUnits, UiTheme.Cream,
                 new Vector2(0.0f, 0.5f), new Vector2(nameCentre, 10.0f),
