@@ -2131,6 +2131,408 @@ one.**
 
 ---
 
+## 114 · The boot is four screens, the lobby is the home, and the colour dial is deleted ⚠️⚠️ 2026-09-01
+
+🧑, over four screenshots of the shipped build: *"fucked up UI"*, *"I think the player shit should
+live in lobby screen, not play"*, *"the ui rn is so confusing i dont know where anything that was
+developed phase 1-10 onwards live"*, *"remove bh studios here and use white screen for unity too"*,
+*"also i dont like that loading screen keeps showing the pic of our game"*, *"i want it to strictly
+be this: UNITY -> BH STUDIOS ANIMATION -> LOGIN -> MAIN MENU -> LOBBY. AND LOBBY IS WHERE ALL UI
+SHOULD LIVE"*, *"make this loading screen properly work"*, and, on the hero picker, *"this shit
+shiuld be gone the clothes color and soft bold and shit"*, *"I asked for this shhit to be removed
+before, the color shit for the chracters bcz i wanted customization to eb for the make your own
+only"*.
+
+**Six faults and one deletion. The through-line is that nine phases of features each found their
+own corner of the front end, and nothing ever said where the front end's rooms are.** § 96 is the
+same fault one feature wide (the hub had one door and its commissioner never found it); this is
+that fault at the scale of the whole game.
+
+### 114.1 The boot sequence is named, and every screen in it has one job
+
+⚠️⚠️ **THE ORDER IS A CONTRACT NOW, NOT AN EMERGENT PROPERTY OF WHICHEVER SCREEN HAPPENED TO OPEN
+ITSELF.** It was emergent until today, which is why the account screen appeared over a lit menu
+(§ 111) and why the game's key art appeared in the middle of a studio sting.
+
+| Step | Screen | Its one job | Owner |
+|---|---|---|---|
+| 1 | **UNITY** | The engine credit the licence requires. White, no studio mark on it. | `ProjectSettings.asset` |
+| 2 | **BH STUDIOS** | The studio sting, and the loading hold behind it. White throughout. | `SplashScreen.cs` |
+| 3 | **LOGIN** | Who is playing. One press out, every launch, never needs the network. | `SignInScreen.cs` |
+| 4 | **MAIN MENU** | Four doors: PLAY, TUTORIAL, SETTINGS, QUIT. Nothing else. | `ConvertedMainMenu.cs` |
+| 5 | **LOBBY** | Everything else in the game. | `ConvertedMatchSetup.cs` + `LobbyChrome.cs` |
+
+⚠️ **STEPS 1 AND 2 ARE ONE WHITE FRAME AS FAR AS THE PLAYER IS CONCERNED.** That is the whole
+reason the Unity screen goes white: two brand screens in two background colours read as a glitch
+between them, and the engine splash is the one screen in the game whose timing cannot be edited.
+
+### 114.2 The Unity splash carried the studio mark, so the studio appeared twice
+
+**What was wrong.** `m_SplashScreenLogos` held `bh_studios_logo.png` on a navy
+`m_SplashScreenBackgroundColor` (0.0157, 0.0314, 0.2196). So the boot was: BH mark on navy for two
+seconds, then a cut to the BH animation on white. The same mark, twice, in two colours, with a
+colour cut between them.
+
+**What shipped.** The logo list is empty, the background is white, and
+`m_SplashScreenLogoStyle` goes to Dark on Light so Unity's own mark is legible on it.
+⚠️ **`m_ShowUnitySplashScreen` STAYS 1 AND MUST.** It is not removable on this licence, which is
+the fact `BootSting`'s header already records, and the sting is timed to play across it.
+
+### 114.3 The game's key art was the loading hold, and it is deleted from the boot
+
+**What was wrong.** `SplashScreen.BuildSplashArt` loaded `Resources/UI/splash_art.png`, the
+1267x697 cast-and-lata key art, and revealed it the frame the video finished. The preload
+routinely runs past six seconds and says so in its own warning, so **the longest single screen a
+first-time player meets was a piece of marketing art with a progress bar over it**, before they had
+seen the menu, the street or a single character in motion.
+
+🧑: *"i dont like that loading screen keeps showing the pic of our game"*, then, pointing at the
+white BH frame: *"dude the loading screen is in the white bh mark"*.
+
+**What shipped.** `BuildSplashArt` and the `_art` field are **deleted**. The video's last frame is
+held instead of being switched off, so the hold is the white BH mark the sting ends on, and the
+backdrop under it is white rather than black so a window that is not 16:9 letterboxes into white
+rather than into a black bar. The clip is fitted rather than stretched, for the same reason: a
+studio mark is a logo and gets `FitInside`, which is `CLAUDE.md` § 6.2c question 2.
+
+⚠️ **AND THE FADE-IN IS FROM WHITE NOW, NOT FROM BLACK.** The Unity screen ends white and this one
+starts white; a 0.35 s fade up from black between them is a black flash in the middle of one
+continuous white beat. The fade OUT stays black, because what follows it is a lit street.
+
+⚠️ **WHAT THE ART WAS ALSO DOING, PER § 6.2c QUESTION 5: NOTHING.** It was `raycastTarget = false`
+on a scene with no other interactive content, so unlike § 100's scrim there is no blocker to
+replace. `splash_art.png` stays in `Resources` because `SignInScreen` draws it as the login
+screen's art side, which is where a piece of key art belongs.
+
+### 114.4 ⚠️⚠️ THE LOADING ANIMATION FROZE INSIDE THE TWO STAGES THAT BLOCK, AND THAT IS WHAT "DOESN'T WORK" MEANT
+
+🧑: *"it js doesnt work properly, the loading animation, make it work"*.
+
+**Four separate faults, and only the last is cosmetic.**
+
+1. ⚠️⚠️ **THE COROUTINE BLOCKS THE FRAME, SO THE DOTS AND THE BAR STOP DEAD.**
+   `Shader.WarmupAllShaders()` and `Resources.LoadAll<AudioClip>("")` are single synchronous calls
+   that own the main thread for seconds at a time, and `UpdateLoadingAnimation` runs on the main
+   thread. **A loading animation that stops during loading is worse than no animation**, because
+   the one thing it exists to say is that the program is alive. The audio sweep is chunked into
+   batches with a `yield` between them now, and the roster walk yields every few entries.
+   ⚠️ `Shader.WarmupAllShaders` cannot be chunked and is the one stage that still blocks; it is
+   moved to the FRONT, where it is covered by the fade-in, and the stage is labelled before it
+   runs rather than after.
+2. ⚠️⚠️ **THE ACCOUNT BARRIER WAS NOT IN THE PROGRESS MODEL AT ALL.** `PreloadComplete` is
+   `_assetsPreloaded && _menu.progress >= 0.9f`, and the loop ALSO waits on
+   `accountBarrier.IsCompleted`. So the bar reached its last stage, read `opening main menu`, and
+   then the screen sat there for however long the service took, **with a full bar and a label that
+   had already claimed the menu was opening.** That is the exact frame 🧑 photographed. Sign-in now
+   owns the 0.92 to 0.99 span with its own label, and **the bar only reaches 1.0 on the frame the
+   screen leaves.**
+3. ⚠️ **PROGRESS SNAPPED BETWEEN STAGES.** `SetLoadingStage` wrote `fillAmount` directly, so the
+   bar jumped 0.14 to 0.27 in one frame and then sat still for three seconds. There is a target
+   and a shown value now, and the shown value eases toward the target every frame, so the bar is
+   always moving in the direction of the truth without ever claiming to be further along than it
+   is.
+4. ⚠️ **IT WAS DRAWN IN `LegacyRuntime.ttf` AT 18 UNITS OVER A 4-UNIT TRACK.** The game's own font
+   is `Darumadrop One` and every other screen uses it. The bar is 6 units, the track is 420, and
+   the label clears `MenuKit.MinReadableUnits`.
+
+### 114.5 LOGIN is its own step, on every launch, and it leaves on its own
+
+**What was wrong.** The account screen was shown by `PlayerNameplate.OfferTheAccountChoiceOnce`,
+gated on `GameSettings.AccountChoiceMade`, which means **once per machine, for ever**. So the step
+🧑 drew in his flow existed for exactly one launch of one install and then vanished, and it was
+drawn over the main menu rather than before it (§ 111).
+
+**What shipped**, and it is his choice of the three offered: *"Every launch, auto-skip after a
+beat"*.
+
+- `SignInScreen.OpenAtBoot()` runs on every launch behind `SceneFlow.BootedThroughSplash`, which is
+  a boot rather than a scene load. § 97's note on that flag is unchanged and still load-bearing.
+- **When no account is attached** it is the form: two fields, CREATE, and CONTINUE AS GUEST.
+- **When one is attached** it draws `SIGNED IN AS <name>` and passes through on its own after
+  **1.2 s**, or immediately on any press. It is a beat, not a gate.
+- ⚠️⚠️ **CONTINUE AS GUEST IS STILL ONE PRESS AND STILL NEEDS NO NETWORK.** § 97, and the nationals
+  in General Santos City are the reason. `PlayerHubLayoutProbe.TheBootAccountScreenIsOfferedOnceAnd
+  OnePressLeavesIt` is renamed to match the new rule and still runs with a null account.
+- ⚠️ **THE AUTO-PASS IS ON UNSCALED TIME AND IS CANCELLED BY ANY INPUT**, so a player who wants to
+  switch accounts is never carried past the screen by a timer.
+
+### 114.6 The colour dial is deleted, and customization is MAKE YOUR OWN only
+
+🧑, twice: *"this shit shiuld be gone the clothes color and soft bold and shit"*, and *"I asked for
+this shhit to be removed before, the color shit for the chracters bcz i wanted customization to eb
+for the make your own only"*.
+
+**And his screenshot shows a second, independent fault: the three rows drew on top of each other.**
+`COLOURS`, `CLOTHES` and `STRENGTH` overlap the ability list, so `SEISMIC STOMP`'s row has
+`AS DRAWN` and `BOLD` printed through it. `RefreshTintRows` returns a height that
+`RefreshPaletteRow`'s caller adds to a column height computed before either ran. **That is § 102.4
+again**: a vertical overflow, invisible to every probe in the project, because they all measure
+horizontally.
+
+**It is deleted rather than fixed**, which makes the layout fault moot as well.
+
+- **Gone from `ConvertedCharacterSelect`:** `RefreshTintRows`, `BuildTintSwatch`,
+  `BuildStrengthChip`, `RefreshPaletteRow`, `TintSteps`, `TintStrengths`, `SwatchSize`,
+  `PaletteRowHeight`, and the `paletteHeight` term in both column-height sums.
+- ⚠️⚠️ **THE CORE KEEPS `PaletteRules`, `PaletteVariants` AND `LoadoutRules.PaletteFor`, AND THAT
+  IS DELIBERATE.** A palette still crosses the wire, remote seats still wear one, and § 101.1's
+  variant-naming fix is still asserted by `CosmeticsWireTests`. **Deleting the picker deletes the
+  control, not the capability**, so bringing an earned palette back later is one method on one
+  screen rather than a re-derivation of the authorisation path.
+- ⚠️ **THE CONSEQUENCE, STATED PLAINLY: A MASTERY PALETTE IS CURRENTLY UNEQUIPPABLE.**
+  `mastery.<hero>.palette.alt1` is still awarded and still owned; there is no longer a surface that
+  equips it. That is the deletion he asked for, not an oversight, and it is written here so nobody
+  re-discovers it as a bug in three weeks.
+- `CosmeticSurfaceProbe`'s two COLOURS cases are replaced by one that asserts **no hero tab draws a
+  colour control at all**, which is the new rule stated as a test rather than a comment.
+
+### 114.7 ⚠️⚠️ THE LOBBY IS THE HOME, THE MAIN MENU IS A DOOR, AND THIS IS THE ANSWER TO "I DONT KNOW WHERE ANYTHING LIVES"
+
+🧑: *"the ui rn is so confusing i dont know where anything that was developed phase 1-10 onwards
+live"*, and *"AND LOBBY IS WHERE ALL UI SHOULD LIVE"*.
+
+**He is describing a real property of the build rather than a feeling.** Nine phases shipped nine
+surfaces and they landed in three different places:
+
+| Where it was | What was there |
+|---|---|
+| **Main menu** | The nameplate, and behind it the whole hub: PROFILE, FRIENDS, CAREER, MATCHES, ACCOUNT. Plus the boot account screen. |
+| **Lobby** | QUICK MATCH and the queue card, the join card, the cast, the chat, the map, mode and bots. |
+| **Character select, from the lobby** | The locker, the palette picker, MAKE YOUR OWN. |
+
+**Two of the three are one press from PLAY and the third is one press from the title screen, which
+means the player has to know which of two screens a feature lives behind before they can look for
+it.** That is the findability failure § 6.3 names, and the rule it also names is why the fix is not
+a second door: *"NEVER ADD A SECOND DOOR TO FIX A FINDABILITY PROBLEM. Fix the door or move it."*
+
+**So the door moves.**
+
+- ⚠️⚠️ **`PlayerNameplate` IS NO LONGER INSTALLED BY `ConvertedMainMenu`.** The title screen is the
+  four pennants and the credits link, and nothing else. It is a door, not a screen.
+- ⚠️⚠️ **THE LOBBY'S EXISTING IDENTITY CARD BECOMES THE DOOR, RATHER THAN A NAMEPLATE BEING ADDED
+  BESIDE IT.** `LobbyChrome.BuildIdentity` already draws PLAYER NAME and PLAYING AS in the top
+  right corner, which is where a player already looks to find themselves. It gains a third block,
+  `YOUR PROFILE`, carrying the level and the rank and opening `PlayerHub`. **Adding a nameplate to
+  the lobby would have put two identity plates on one screen**, which is § 92's six-button panel
+  arriving one control at a time.
+- `PlayerHub` is installed by `ConvertedMatchSetup` directly rather than by the nameplate, and it
+  still installs `SignInScreen`. One chain, one owner, unchanged shape.
+- ⚠️ **THE HUB HIDES THE LOBBY CHROME WHILE IT IS OPEN**, by the same mechanism the nameplate used
+  to hide for overlays: the hub watches, rather than every opener remembering to tell it.
+  `PlayerNameplate`'s own header records why that direction is the right one.
+
+**The journey, walked out loud, which is what § 6.3 asks for before any of this is built:**
+
+| I want to | Presses, before | Presses, after |
+|---|---|---|
+| see my rank | PLAY is wrong; back out, find the chip on the title screen, PROFILE | PLAY, YOUR PROFILE |
+| add a friend | back out to the title, chip, FRIENDS | PLAY, YOUR PROFILE, FRIENDS |
+| queue ranked | PLAY, QUICK MATCH | unchanged |
+| make my own character | PLAY, PLAYING AS, MAKE YOUR OWN | unchanged |
+| change my password | back out to the title, chip, ACCOUNT, SIGN IN | PLAY, YOUR PROFILE, ACCOUNT |
+
+**Nothing gets longer and three things get shorter, and every one of them now starts with the same
+press.** That is the property worth having: **PLAY is the way into the game, not the way into a
+match.**
+
+### 114.8 What is deliberately NOT moving
+
+⚠️ **Written down because the instruction was "all UI", and three things are outside what that can
+sensibly mean.**
+
+- **SETTINGS and CREDITS stay on the main menu.** They are not player state, they are application
+  state, and a player who wants to change their resolution before pressing PLAY must not have to
+  enter a lobby to do it. His answer to the question named PLAY, TUTORIAL, SETTINGS and QUIT as
+  what remains.
+- **The pause panel keeps its own settings route.** Same argument, from inside a match.
+- **The end-of-match board keeps its ADD FRIEND per human.** § 102: the moment you want to add
+  somebody is the moment you just played them, and routing that through the lobby's hub would be
+  four presses for a thing that is currently one.
+
+### 114.9 ⚠️⚠️ THE BLUE HE KEPT ASKING ABOUT WAS ONE CONSTANT, AND `CLAUDE.md` § 6.4 COULD NOT SEE IT
+
+🧑, five times in one session, with § 6.4 already written into `CLAUDE.md` from the last time:
+*"i dont want to see blue shit"*, *"thats not in theme"*, *"hey i said i dont want blue or
+navy"*, *"thats off theme"*, *"put in claude md to not use blue hshit"*.
+
+**He was right and the rule was too narrow.** § 6.4 said "never use blue or navy OUTLINES on any
+UI icon or asset", which was written after the rank emblems and describes the one surface the
+fault had been seen on. Four things were blue and none of them was an icon outline:
+
+| Where | What | Why the narrow rule missed it |
+|---|---|---|
+| ⚠️⚠️ **`UiTheme.Ink`** | **`040838`, a near-black NAVY**, and the outline colour of every menu type style in `GodotTheme`: `MenuDisplay`, `MenuHeading`, `MenuBody`, `MenuCaption`, `MenuValue`. | **One constant put navy on every word in the front end**, at four to six pixels of outline on a heading. It is called "ink", so it reads as black in a diff and as a cold ring on screen. `1c0f06` now, which is the ink § 6.4's own palette line already named. |
+| **`ConvertedCharacterSelect.VerticalBackdrop`** | Three stops of slate to midnight, behind the hero picker, with a comment calling it *"the game's Bayan navy identity"*. | It is a background, not an icon, and the comment asserted it was the identity. Nothing else in the front end used that colour. Wood now: `WoodEdge` lifted, `WoodMid`, `WoodDeep`. |
+| **`HorizontalScrim`, `MatchResult`, `RoleSwapCard`** | The same navy as a scrim at 72, 82 and 85 per cent. | Same. `UiTheme.WoodDark` now. |
+| **`UiTheme.Panel` and `Card`, `SwatchDropdown.RingGrey`** | `e1e5e8`, `f5f7fa` and (0.62, 0.64, 0.68): greys with a blue cast. | "Grey" is not "blue" until it sits next to `8b5227` wood. Warm paper and warm grey now. |
+
+⚠️⚠️ **AND A FIFTH, WHICH IS THE ONE THAT WOULD HAVE MADE THE OTHER FOUR POINTLESS:
+`GameBuilder.ConfigureSplash` REWRITES `backgroundColor`, `logos` AND `unityLogoStyle` ON EVERY
+BUILD.** So the three fields changed in `ProjectSettings.asset` for § 114.2 would have survived
+exactly until the next build and then silently reverted to navy with the BH logo back on it.
+**Both places or neither**, and the method now writes white, `DarkOnLight` and an empty logo
+array. ⚠️ It also reverses § 111.1 by name, which is what 🧑 asked for: the studio mark moved to
+its own beat rather than being deleted.
+
+⚠️ **The sweep that found it is worth keeping**: a script over `Assets/TumbangPreso/Runtime` and
+`Editor` for any `new Color(r,g,b)` or `Hex("rrggbb")` whose blue channel clears red by a margin.
+It also turned up the picker's `bayanBlue` backdrop glow (which is what tints the arrow buttons)
+and `MatchResult`'s card-fold shadow, both now warm. **The hero accents, `UiTheme.Defense` and the
+ability VFX are the expected hits and are exempt.**
+
+⚠️⚠️ **THE RULE IS WIDENED IN `CLAUDE.md` § 6.4 RATHER THAN RESTATED HERE**, with the table above
+as its receipt and one line that is the actual check: **if a hex has more blue in it than red, it
+does not belong in a menu**, and grep the third channel rather than trusting a colour name.
+
+⚠️ **TWO THINGS ARE EXEMPT AND BOTH ARE WRITTEN INTO THAT SECTION.** `UiTheme.Defense`
+(`0080e8`) MEANS the taya and is a gameplay fact, not a style, and may never appear as menu
+chrome (`ChatAndLobbyChromeTests` asserts that for the lobby plates). And **the authored pennant
+art is his own**: PLAY green, SETTINGS yellow, TUTORIAL blue, QUIT red are the design system per
+`VISION.md` § 6, and repainting them to satisfy a rule about code-chosen colours would be the
+rule eating the thing it exists to protect.
+
+### 114.10 Acceptance
+
+- Boot reads UNITY (white) to BH STUDIOS (white) to LOGIN to MAIN MENU to LOBBY, with no colour cut
+  between the first two and no game art anywhere before the menu.
+- The loading bar and dots keep moving through every stage except the shader warm-up, and the bar
+  never reads full while the screen is still up.
+- The hero picker draws no COLOURS, CLOTHES or STRENGTH row on any tab, and nothing overlaps the
+  ability list.
+- The title screen has no nameplate on it. The lobby's identity card opens the hub.
+- `UiClickProbe.EveryButtonIsReachable` is green on both the menu and the lobby, which is the check
+  that catches new chrome covering something (§ 92.7, three times now).
+- `PlayerHubLayoutProbe` photographs the login screen in **both** states, per § 6.2b's first row.
+- Nothing in `Assets/TumbangPreso/Runtime/UI` chooses a colour whose blue channel exceeds its
+  red channel, except `UiTheme.Defense` and the hero accents.
+
+### 114.12 ⚠️⚠️ EVERY PHASE 1 TO 10 AUDITED FOR A ROUTE, AND TWO OF THEM HAD NONE ON A FRESH ACCOUNT
+
+🧑: *"make sure phase 1-10 already exist in the game and can be accessed thru ui and hud"*.
+
+**Every one of them exists. Phase 10 is shipped too, which corrects a claim `FUTURE.md` still
+carries**: § 108 landed the ability variants (`Core/HeroLoadout.cs`) and the achievement shelf
+(`Core/Achievements.cs`), so "10 onward are not scheduled" is stale.
+
+**But "it exists" and "a player can reach it" are two different questions, and this is the entry
+that asks the second one.** The route below is the whole route, from the title screen, after
+§ 114.7 moved the door.
+
+| Phase | The surface | The route, in presses | Verified |
+|---|---|---|---|
+| **1 · Accounts** | `SignInScreen` | Boot LOGIN, **every launch**. Also PLAY, YOUR PROFILE, ACCOUNT, SIGN IN. | ✅ |
+| **2 · Profile, stats, history** | `PlayerHub` PROFILE / CAREER / MATCHES | PLAY, YOUR PROFILE. | ✅ |
+| **3 · Telemetry** | **none, by design** | `FUTURE.md` § 3: it is a backend phase. A telemetry screen would be a screen about us, not about the player. | n/a |
+| **4 · Progression** | XP bar and level on the hub header, mastery rows on CAREER, the XP card on the end-of-match board | PLAY, YOUR PROFILE. Or finish a match. | ✅ |
+| **5 · Cosmetics** | Banner slots on PROFILE; the banner drawn on the lobby plate and the result board; MAKE YOUR OWN | PLAY, YOUR PROFILE, Banner. Or PLAY, PLAYING AS, MAKE YOUR OWN. | ✅ ⚠️ the hero colour dial is deleted, § 114.6 |
+| **6 · Social** | FRIENDS tab; ADD per human on the result board | PLAY, YOUR PROFILE, FRIENDS. | ✅ |
+| **7 · Matchmaking** | `QueueCard`, QUICK MATCH | PLAY. It is on the lobby, in the middle. | ✅ |
+| **8 · Integrity** | **none, by design** | § 104: `ScoreWitness` tallies the score event stream. There is nothing for a player to press, and a screen would advertise a guard. | n/a |
+| **9 · Ranked** | Tier on the profile door and the hub header, Competitive Rank group on CAREER, `RankIcons` badge | PLAY, then read the card. | ✅ |
+| **10 · Loadouts, variants, achievements** | Ability builds and Achievements groups on CAREER | PLAY, YOUR PROFILE, CAREER. | ⚠️⚠️ **was unreachable, fixed below** |
+
+⚠️⚠️ **TWO FAULTS, AND BOTH HID PHASE 10 FROM THE PLAYER IT WAS BUILT FOR.**
+
+1. **`BuildCareerTab` bailed to `EmptyCareer` on `totals.Matches == 0` and both groups are built
+   after that line.** So **a fresh account could not reach the ability builds or the achievement
+   shelf by any route at all.** Both are things you do BEFORE your first match: a build is a
+   choice made while learning a hero, and the shelf is the one surface that says what there is to
+   do. `EmptyCareer` draws both now, plus the mode dropdown they need.
+2. ⚠️⚠️ **`PlayerHub._mode` WAS HARD-CODED TO `GameMode.Classic` AND THE GAME DEFAULTS TO HERO
+   STRIKE.** `SceneFlow.SelectedMode` is Hero Strike, the lobby lands in it, and the ranked ladder
+   is on it (§ 105). So the career tab opened on the OTHER game's numbers, and **Ability builds is
+   Hero Strike only**, so the group was invisible until the player found a dropdown inside a group
+   called Overview and changed a mode they had not chosen. It follows `SceneFlow.SelectedMode`
+   now. **A tab that opens on the wrong mode is a tab whose contents look missing**, which is the
+   same class as § 96: the feature is there, nobody can find it.
+
+⚠️⚠️ **AND THE MOMENT THOSE TWO GROUPS BECAME REACHABLE, THE PROBE FOUND A THIRD FAULT IN THEM
+THAT HAD BEEN TRUE SINCE THE DAY THEY WERE WRITTEN.** `PlayerHubLayoutProbe` came back red at
+720p: **Ability builds' section subtitle wanted 849 units in a 715 unit box**, and a
+`UiRows.Section` subtitle neither wraps nor shrinks, so it drew over whatever was beside it.
+Achievements' was the same shape one line shorter. **Both are now cut to about 68 characters.**
+
+**The lesson is worth more than the fix: unreachable code is unmeasured code.** Two probes and
+nine resolutions were green across this screen for as long as these groups have existed, because
+a group the tab never builds is a group no probe ever draws. **The fixture was in the wrong mode
+for the same reason** (it seeded Classic while the hub opens on Hero Strike), which means it had
+never photographed Ability builds either. That is the same family as § 101.1's assertion inside
+an `if`: **a check that can decide not to run is a check that is not running.**
+
+⚠️ **AND THE ONE THAT IS NOT A FAULT, WRITTEN DOWN SO IT IS NOT "FIXED" LATER:** phases 3 and 8
+have no player surface **on purpose**, and adding one would be `FUTURE.md` § 0.5 rule 11b
+("a cheap addition that adds a bar, a screen, a number or a new word is still a candidate for
+cutting") broken in the other direction.
+
+### 114.13 ⚠️⚠️ QUICK MATCH WAS DRAWN ACROSS THE CAST'S HEADS, AND ITS ROOT HAD NO RECT AT ALL
+
+🧑's first words this session were *"fucked up UI"*, over the lobby screenshot. **The single most
+visible thing wrong with that picture is that QUICK MATCH, a 560-unit amber bar, is sitting in the
+middle of the window across all four characters' faces.** It is anchored to the BOTTOM edge, 96
+units up, and it is nowhere near the bottom.
+
+**The cause is one missing component.** `QueueCard.Build` does `new GameObject("QueueCard")`,
+which comes with a plain `Transform`, and nothing in `Construct` adds a `Graphic` to that object
+itself, so it never acquired a `RectTransform`. `LobbyJoinPanel` is built the same way and is fine
+purely by accident: it puts its scrim `Image` on its own root, and `Image` requires a
+`RectTransform`, so Unity adds one.
+
+⚠️⚠️ **A `RectTransform` WHOSE PARENT IS A PLAIN `Transform` HAS NO PARENT RECT TO RESOLVE
+AGAINST**, so every anchor under it resolved against a zero-sized point at the canvas centre. Both
+the door and the queue state landed 96 units above the middle of the window. Measured off his
+screenshot: the button's centre is about 112 px above the centre of a 1104 px tall frame, and 96
+canvas units is about 98 px at that height.
+
+**This is `SplashScreen.BuildSurface`'s "the logo is a postage stamp" note for the third time**,
+and `CLAUDE.md` § 6.2c question 1: a size and a position are only correct against the rectangle
+they are actually measured against, and when that rectangle does not exist the failure is silent.
+
+⚠️⚠️ **AND `QueueCardLayoutProbe` WAS GREEN THROUGH ALL OF IT**, because every row inside the card
+fits the card. **The card was in the wrong place on the screen, and nothing in this repository
+looks at where a card is.** § 6.2a's line, again: the probe asks whether the screen is a screen,
+the picture asks whether it can be read. **He read it in one glance and no test could.**
+
+### 114.11 What the probes had to change, and the one that is honestly weaker now
+
+- **`CosmeticSurfaceProbe`**: `TheColoursRowDrawsOneSwatchPerOwnedPaletteAndOneForDefault` and
+  `AFreshAccountGetsNoColoursRowAtAll` are replaced by `NoHeroTabDrawsAnyColourControlAtAll`,
+  which seeds two owned palettes (the state the deleted row WOULD have drawn in, so absence
+  actually proves something) and then asserts the three node names are gone **and** that the
+  column's rows fit inside the column. The second half is the overlap in his screenshot, and
+  § 102.4 is why it is measured vertically.
+- **`LobbyStyleProbe.TheProfileDoorOpensTheHub`** is new: it presses the door on both tabs and
+  asserts the hub opens. § 108's receipt is why it presses rather than measuring: an EQUIP button
+  with no `onClick` and a screen drawn under the screen that opened it both looked fine.
+- **`PlayerHubLayoutProbe.TheBootAccountScreenIsOfferedOnceAndOnePressLeavesIt`** is
+  `TheLoginStepAppearsEveryLaunchAndOnePressLeavesIt`, and its second half now asserts the
+  OPPOSITE of what it did: the screen comes back on the second launch. It drives `SignInScreen`
+  directly rather than through the nameplate.
+- **`PlayerHubLayoutProbe.SeedCareer` seeds HERO STRIKE, not Classic**, because the hub follows
+  `SceneFlow.SelectedMode` now and that is Hero Strike. The fixture had been in the other mode all
+  along, which is why the Ability builds group had never been photographed and its subtitle had
+  never been measured. `Boot` states the mode out loud rather than inheriting process state.
+- ⚠️⚠️ **AND THE ONE THAT IS WEAKER: `TheNameplateStaysOnScreenAtEveryShippedResolution` NOW
+  TESTS CHROME NOTHING INSTALLS.** `PlayerNameplate` is kept under § 68.3 and the probe keeps it
+  compiling and laying out, but it is no longer coverage of a shipped screen and the class header
+  says so. **The door a player presses is covered by the new `LobbyStyleProbe` case**, and if the
+  nameplate is not restored within a few sessions the case and the class should go together.
+
+### 114.14 The gap this session leaves open, named rather than left implied
+
+⚠️⚠️ **NOTHING IN THIS PROJECT CAN SEE THAT A CARD IS IN THE WRONG PART OF THE SCREEN.** § 114.13
+is the receipt: a 560-unit amber bar sat across four characters' faces for as long as QUICK MATCH
+has existed, `QueueCardLayoutProbe` was green, `LobbyStyleProbe` was green, and 🧑 named it in one
+glance. Every layout check here asks whether a label fits its own box.
+
+**What would catch the next one is cheap and is not built:** a check that every code-built panel's
+root is a `RectTransform` whose parent is also a `RectTransform`. That is the exact fault three
+times now (`SplashScreen.BuildSurface`'s postage-stamp logo, `SignInScreen.BuildLogo`'s
+`FitInParent` with no box of its own, and this), and unlike "is this in the right place" it is a
+question a test can actually answer. **Do not turn it into a general layout probe**; it is one
+assertion about parentage.
+
+---
+
 ## 113 · The clothes were not clothes, the screen was see-through, and the door was a chip ⚠️⚠️ 2026-09-01
 
 🧑, opening the build, in one stretch: *"make proper ui for this shit"*, *"also currently the

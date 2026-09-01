@@ -109,13 +109,21 @@ namespace TumbangPreso.UI
             var texture = NewTexture(8, height, "CharacterSelect_Backdrop");
             var pixels = new Color[texture.width * texture.height];
 
-            // The Godot layout is the baseline, but its neutral grey top made the select screen
-            // feel detached from the game's Bayan navy identity. Keep the same three-stop shape
-            // and deepen only the hue/chroma so the yellow banner, wood panel and ink outlines
-            // remain the visual anchors.
-            var top = new Color(0.400f, 0.455f, 0.610f, 1.0f);
-            var middle = new Color(0.165f, 0.205f, 0.365f, 1.0f);
-            var bottom = new Color(0.015686f, 0.031373f, 0.219608f, 1.0f);
+            // ⚠️⚠️ THIS WAS THREE STOPS OF NAVY AND IT IS THE BLUE 🧑 PHOTOGRAPHED ON 2026-09-01.
+            // *"i dont want to see blue shit, thats not in theme"*, over a shot of the hero
+            // picker sitting on a slate-to-midnight sheet. The paragraph this replaces called
+            // that "the game's Bayan navy identity", which was a claim about a colour nothing
+            // else in the front end uses: `CLAUDE.md` § 6.4 and `VISION.md` § 6 both name the
+            // palette as wood, cream, amber and ink, and say outright that anything in a
+            // different visual language is the thing that looks broken.
+            //
+            // ⚠️ THE THREE-STOP SHAPE IS KEPT AND ONLY THE HUE MOVES, which is what the note it
+            // replaces was right about: the gradient's job is to sit the wood panel and the amber
+            // banner on something with depth, and a flat fill loses the stage. Top is
+            // `UiTheme.WoodEdge` lifted, middle is `WoodMid`, bottom is `WoodDeep`.
+            var top = new Color(0.612f, 0.373f, 0.184f, 1.0f);
+            var middle = UiTheme.WoodMid;
+            var bottom = UiTheme.WoodDeep;
 
             for (int y = 0; y < height; y++)
             {
@@ -162,7 +170,10 @@ namespace TumbangPreso.UI
             const int width = 256;
             var texture = NewTexture(width, 8, "CharacterSelect_Scrim");
             var pixels = new Color[texture.width * texture.height];
-            var ink = new Color(0.015686f, 0.031373f, 0.219608f, 1.0f);
+            // ⚠️ THE SAME REPAINT AS `VerticalBackdrop`. This scrim was the same navy, and it is
+            // the layer the wood panel actually sits on, so leaving it would have kept a cold
+            // edge down the middle of a screen whose background had just gone warm.
+            var ink = UiTheme.WoodDark;
 
             for (int x = 0; x < width; x++)
             {
@@ -384,22 +395,9 @@ namespace TumbangPreso.UI
             // look like a stat-select screen while hiding the information that actually changes
             // how a hero plays. The prop tabs keep their measured meters because cans and
             // slippers use those values in both modes.
-            // ⚠️⚠️ THE COLOURS ROW GOES FIRST AND IT IS THE ONLY COSMETIC CONTROL IN THE GAME.
-            // `FUTURE.md` § 0.5b's per-phase table asks Phase 5 for *"a locker, reached from the
-            // hub"*, with *"the character, wearing it"* as the one thing on it, and this screen
-            // is that already: the model, the real toon shader, the ink outline and the palette
-            // are all here (`RefreshPreview`). **A locker built on the hub would be a second
-            // screen showing the same character worse**, which is § 92's fault with a new name,
-            // and the journey is what settles it (`CLAUDE.md` § 6.3): PLAY, pick, recolour, done
-            // is three presses on the screen you are already looking at, against five that start
-            // by hunting a corner chip nobody has found yet (`docs/TODO.md` § 96).
-            // **§ 0.5 rule 11 says a phase that disagrees with that table corrects it**, so
-            // `FUTURE.md` PHASE 5's row now says so.
-            //
-            // ⚠️ BOTH MODES, ABOVE THE EARLY RETURN. Hero Strike's column returns before the
-            // trait meters, and a cosmetic that only existed in Classic would be the one thing on
-            // this screen that changes meaning with the mode.
-            float paletteHeight = RefreshPaletteRow(rows, entry) + RefreshTintRows(rows, entry);
+            // ⚠️⚠️ THERE IS NO COSMETIC CONTROL ON THIS SCREEN ANY MORE. The COLOURS, CLOTHES
+            // and STRENGTH rows were built here and are deleted; see the note below
+            // `_heroLoadoutHeight` for what went and why the capability behind it stayed.
 
             if (_tab == 0 && SceneFlow.SelectedMode == GameMode.HeroStrike)
             {
@@ -408,7 +406,7 @@ namespace TumbangPreso.UI
                 // that were actually built is what keeps the ultimate's plate inside the wood.
                 RefreshHeroLoadout(rows, entry.Id);
 
-                float column = _heroLoadoutHeight + paletteHeight;
+                float column = _heroLoadoutHeight;
 
                 // ⚠️ THE SPACING COMES OFF THE GROUP, NOT OUT OF A CONSTANT, so a restyle of the
                 // picker cannot silently under-size the block.
@@ -424,7 +422,7 @@ namespace TumbangPreso.UI
             }
 
             if (rows.TryGetComponent<LayoutElement>(out var classicRowsLayout))
-                classicRowsLayout.preferredHeight = 104.0f + paletteHeight;
+                classicRowsLayout.preferredHeight = 104.0f;
 
             var labels = MeterLabels[_tab];
             int[] points = { entry.Bilis, entry.Lakas, entry.Tatag };
@@ -453,362 +451,30 @@ namespace TumbangPreso.UI
         /// </summary>
         private float _heroLoadoutHeight;
 
-        /// <summary>How tall a swatch is, and the row with it.</summary>
-        private const float SwatchSize = 44.0f;
-        private const float PaletteRowHeight = SwatchSize + 12.0f;
-
-        /// <summary>
-        /// The colours this character may be worn in, as swatches of the actual colour.
-        ///
-        /// ⚠️⚠️ IT IS NOT DRAWN AT ALL WHEN NOTHING IS EARNED, WHICH IS § 0.5b QUESTION 3
-        /// ANSWERED RATHER THAN SKIPPED. A fresh account owns no palette, and a row reading
-        /// "COLOURS: DEFAULT" with one dead swatch is the fifteen rows of `0/0 (needs 10 throws)`
-        /// that taught a new player the game was broken (`docs/TODO.md` § 92.1 fault 4).
-        /// **A control whose only option is the one you already have is not a control.**
-        ///
-        /// ⚠️⚠️ THE SWATCH IS THE COLOUR THE CHARACTER ACTUALLY BECOMES, DERIVED THROUGH THE
-        /// SAME `PaletteVariants.For` THE MODEL GOES THROUGH. `FUTURE.md` PHASE 5: *"preview
-        /// through `ModelPreview` with the real shader, never a flat icon"*, and the same
-        /// argument one size down — a swatch painted from an authored constant is a swatch that
-        /// can disagree with the model beside it, which is exactly what `ToonSkin.ApplySlipper`'s
-        /// header records costing a shoe that changed colour per screen.
-        ///
-        /// ⚠️ AND THE MODEL IS THE PREVIEW, NOT THE SWATCH. The swatches are small and quiet on
-        /// purpose: the one thing on this screen is the character, three feet tall, wearing the
-        /// choice. `RefreshPreview` redraws it the moment one is pressed.
-        ///
-        /// Returns the height it took, so the column can size itself. See `RefreshTraits`.
-        /// </summary>
-        /// <summary>How many hue swatches the TINT strip draws.</summary>
-        private const int TintSteps = 12;
-
-        /// <summary>
-        /// The three saturation steps, and the labels a player reads rather than a percentage.
-        ///
-        /// ⚠️ NAMES RATHER THAN NUMBERS, AND THREE RATHER THAN A SLIDER. `FUTURE.md`
-        /// § 0.5b: "the type scale, three steps, never more", and the same discipline applies to
-        /// a choice. 55, 100 and 145 are `PaletteRules.SaturationMin`, the authored value and
-        /// `SaturationMax`, so the strip cannot offer a setting the rule would clamp.
-        /// </summary>
-        private static readonly (string Label, int Percent)[] TintStrengths =
-        {
-            ("SOFT", PaletteRules.SaturationMin),
-            ("AS DRAWN", 100),
-            ("BOLD", PaletteRules.SaturationMax),
-        };
-
-        /// <summary>
-        /// TINT and STRENGTH: the free colour dial, which is the part of Phase 5 that is the point
-        /// of Phase 5.
-        ///
-        /// ⚠️⚠️ IT IS NOT GATED ON ANYTHING AND EVERY ACCOUNT SEES IT ON ITS FIRST LAUNCH.
-        /// The brief, 2026-08-31: *"the main purpose of the customizationn shit is so that ppl
-        /// coudl spend their time making their own character"*. Two earned presets are a reward
-        /// and a reward is not somewhere to spend an evening; **the row above this one is what
-        /// you unlocked and this row is what you make.** `FUTURE.md` § 0.5 rule 4 is the rule
-        /// that has to hold and it holds exactly: nothing on a progression track may change a
-        /// gameplay number, and a colour changes none.
-        ///
-        /// ⚠️⚠️ AND IT IS THE ONE PLACE § 0.5b QUESTION 3 ANSWERS DIFFERENTLY FROM THE ROW
-        /// ABOVE IT. `RefreshPaletteRow` draws NOTHING when nothing is earned, because a control
-        /// whose only option is the one you already have is not a control. This one always has
-        /// twelve options, so its empty state IS its full state, and hiding it for a new account
-        /// would hide the only customisation a new account has.
-        ///
-        /// ⚠️ TWELVE SWATCHES AT 30 DEGREES, AND THE CORE TAKES ANY INTEGER. The strip is a
-        /// UI choice: a wheel is more precise and much harder to press exactly, and every swatch
-        /// here is the colour the character actually becomes. `CharacterLoadout.HueDegrees` is
-        /// clamped to 0..359, so a finer control later is a change to this method and to nothing
-        /// else.
-        ///
-        /// ⚠️ THERE IS NO BRIGHTNESS CONTROL AND THERE MUST NOT BE.
-        /// `CharacterLoadout.SaturationPercent` and `PaletteVariants.Rotate` both record why: the
-        /// toon shader bands on VALUE, so a player who could drag their own value could dress as a
-        /// silhouette, and `VISION.md` § 2 rule 5 is a readability budget rather than a
-        /// preference.
-        ///
-        /// Returns the height it took, so the column can size itself.
-        /// </summary>
-        /// <summary>
-        /// ⚠️⚠️ THIS ROW WAS DELETED ON 2026-08-31 AND IS BACK, NARROWED, AND THE NARROWING IS THE
-        /// WHOLE POINT. `docs/TODO.md` § 107. 🧑 opened a build, saw a cyan Berto with magenta
-        /// clothes and said *"i didnnt want all characters to be customizable"*. The pass that
-        /// answered him removed the dial outright and replaced it with a button, which got three
-        /// things wrong at once:
-        ///
-        /// 1. **It threw away the half he asked to keep.** The same sentence says *"maybe the
-        ///    heroes we can change their clothes and shit"*. Clothes are half of what this dial
-        ///    turns; skin was the other half and the only one he objected to.
-        /// 2. **It could not undo the damage it was written for.** `ShowModel` still applies
-        ///    `SettingsStore.LookFor`, so every hue already saved to disk was still being painted,
-        ///    with the only screen that could reset it now deleted. **A player whose Berto was
-        ///    green stayed green forever.**
-        /// 3. **The button it left behind went nowhere.** It called
-        ///    `FindFirstObjectByType&lt;CustomCharacterCreator&gt;()` and nothing in the project
-        ///    ever creates one, so the press was silently swallowed. `CLAUDE.md` § 6.3: *"A dead
-        ///    end is a bug. A button that dismisses to nothing is worse than no button."*
-        ///
-        /// **The fix is one slot list, not one screen.** `PaletteRules.IsProtectedSlot` now
-        /// carries the skin ramp (13, 14, 15) beside the face (8), so the dial physically cannot
-        /// reach a character's skin on any path, on either side of the wire, and the clothes stay
-        /// free. The caption says CLOTHES because that is now what it does, and a control whose
-        /// label overstates it is how the last version of this got reported as a bug.
-        ///
-        /// Returns the height it took, so the column can size itself.
-        /// </summary>
-        private float RefreshTintRows(Transform rows, RosterEntry entry)
-        {
-            if (_tab != 0 || entry == null) return 0.0f;
-
-            var book = RosterBook.Load();
-            var art = book != null ? book.PersonArt(_pick[0], SceneFlow.SelectedMode) : null;
-            if (art == null || art.Palette == null || art.Palette.Length == 0) return 0.0f;
-
-            string characterId = Roster.PersonIdAt(SceneFlow.SelectedMode, _pick[0]);
-            var look = Settings.SettingsStore.LookFor(characterId);
-
-            var tint = StripRow(rows, "CLOTHES");
-
-            for (int step = 0; step < TintSteps; step++)
-            {
-                int hue = step * (360 / TintSteps);
-                BuildTintSwatch(tint, art.Palette, characterId, look, hue);
-            }
-
-            var strength = StripRow(rows, "STRENGTH");
-
-            foreach (var (label, percent) in TintStrengths)
-                BuildStrengthChip(strength, characterId, look, label, percent);
-
-            return (PaletteRowHeight + 6.0f) * 2.0f;
-        }
-
-
-        /// <summary>One captioned strip, built the same way the COLOURS row is.</summary>
-        private Transform StripRow(Transform rows, string caption)
-        {
-            var row = new GameObject($"{caption}Row", typeof(RectTransform));
-            row.transform.SetParent(rows, false);
-
-            var group = row.AddComponent<HorizontalLayoutGroup>();
-            group.childAlignment = TextAnchor.MiddleLeft;
-            group.spacing = 6.0f;
-            group.childForceExpandWidth = false;
-            group.childForceExpandHeight = false;
-
-            row.AddComponent<LayoutElement>().preferredHeight = PaletteRowHeight;
-
-            var label = MenuKit.Label(row.transform, caption, MenuKit.MinReadableUnits,
-                                      new Color(0.961f, 0.902f, 0.784f, 0.65f),
-                                      Vector2.zero, Vector2.zero, Vector2.zero,
-                                      TextAnchor.MiddleLeft);
-            label.raycastTarget = false;
-            label.gameObject.AddComponent<LayoutElement>().preferredWidth = 92.0f;
-
-            return row.transform;
-        }
-
-        private void BuildTintSwatch(Transform row, Color[] authored, string characterId,
-                                     CharacterLook current, int hue)
-        {
-            var go = new GameObject($"Tint_{hue}", typeof(RectTransform), typeof(Image));
-            go.transform.SetParent(row, false);
-
-            bool active = current.HueDegrees == hue;
-
-            // ⚠️ DRAWN THROUGH `PaletteVariants.For`, LIKE EVERY OTHER SWATCH ON THIS SCREEN.
-            // A swatch painted from an HSV constant is a swatch that can disagree with the model
-            // standing beside it, which is the fault `ToonSkin.ApplySlipper`'s header records.
-            var shown = new CharacterLook(current.PaletteId, hue, current.SaturationPercent);
-
-            var face = go.GetComponent<Image>();
-            face.color = PaletteVariants.For(authored, shown)[RepresentativeSlot(authored)];
-
-            var element = go.AddComponent<LayoutElement>();
-            element.preferredWidth = SwatchSize;
-            element.preferredHeight = SwatchSize;
-
-            var ring = new GameObject("Ring", typeof(RectTransform), typeof(Image));
-            ring.transform.SetParent(go.transform, false);
-            MenuKit.Stretch((RectTransform)ring.transform, -3.0f);
-
-            var ringImage = ring.GetComponent<Image>();
-            ringImage.sprite = GodotTheme.Box(new Color(0, 0, 0, 0),
-                                              active ? UiTheme.Cream : UiTheme.WoodEdge,
-                                              active ? 3 : 2, 4);
-            ringImage.type = Image.Type.Sliced;
-            ringImage.raycastTarget = false;
-
-            var button = go.AddComponent<Button>();
-            button.targetGraphic = face;
-            button.onClick.AddListener(() =>
-            {
-                Settings.SettingsStore.SetLookFor(characterId, hue, current.SaturationPercent);
-                MenuSfx.Click();
-                Refresh();
-            });
-
-            go.AddComponent<TextureButtonFeedback>();
-        }
-
-        private void BuildStrengthChip(Transform row, string characterId, CharacterLook current,
-                                       string label, int percent)
-        {
-            bool active = current.SaturationPercent == percent;
-
-            var button = MenuKit.WoodButton(row, label, Vector2.zero, Vector2.zero,
-                                            new Vector2(132.0f, PaletteRowHeight - 8.0f),
-                                            () =>
-                                            {
-                                                Settings.SettingsStore.SetLookFor(
-                                                    characterId, current.HueDegrees, percent);
-                                                Refresh();
-                                            },
-                                            active ? "WoodAmberButton" : "WoodButton");
-
-            button.name = $"Strength_{label}";
-
-            var element = button.gameObject.AddComponent<LayoutElement>();
-            element.preferredWidth = 132.0f;
-            element.preferredHeight = PaletteRowHeight - 8.0f;
-        }
-
-        private float RefreshPaletteRow(Transform rows, RosterEntry entry)
-        {
-            // ⚠️ PEOPLE ONLY. A lata and a tsinelas have their own skins and their own tabs;
-            // `RefreshPreview` makes the same call for the same reason.
-            if (_tab != 0 || entry == null) return 0.0f;
-
-            var owned = new List<Reward>();
-
-            foreach (var reward in BannerRules.Earned(GameServices.Career?.Profile))
-                if (reward != null && reward.Kind == RewardKind.Palette &&
-                    PaletteRules.IsKnownVariant(reward.Id))
-                    owned.Add(reward);
-
-            if (owned.Count == 0) return 0.0f;
-
-            var book = RosterBook.Load();
-            var art = book != null ? book.PersonArt(_pick[0], SceneFlow.SelectedMode) : null;
-            if (art == null || art.Palette == null || art.Palette.Length == 0) return 0.0f;
-
-            string characterId = Roster.PersonIdAt(SceneFlow.SelectedMode, _pick[0]);
-            string equipped = Settings.SettingsStore.PaletteFor(characterId);
-
-            var row = new GameObject("PaletteRow", typeof(RectTransform));
-            row.transform.SetParent(rows, false);
-
-            var group = row.AddComponent<HorizontalLayoutGroup>();
-            group.childAlignment = TextAnchor.MiddleLeft;
-            group.spacing = 8.0f;
-            group.childForceExpandWidth = false;
-            group.childForceExpandHeight = false;
-
-            row.AddComponent<LayoutElement>().preferredHeight = PaletteRowHeight;
-
-            var caption = MenuKit.Label(row.transform, "COLOURS", MenuKit.MinReadableUnits,
-                                        new Color(0.961f, 0.902f, 0.784f, 0.65f),
-                                        Vector2.zero, Vector2.zero, Vector2.zero,
-                                        TextAnchor.MiddleLeft);
-            caption.raycastTarget = false;
-            caption.gameObject.AddComponent<LayoutElement>().preferredWidth = 92.0f;
-
-            // ⚠️ THE AUTHORED COLOURS ARE A CHOICE AND SO THEY ARE A SWATCH. Without a DEFAULT
-            // there is no way back from a variant, which is a dead end and `CLAUDE.md` § 6.3
-            // calls a dead end a bug.
-            BuildSwatch(row.transform, art.Palette, PaletteRules.DefaultId, characterId, equipped);
-
-            foreach (var reward in owned)
-                BuildSwatch(row.transform, art.Palette, reward.Id, characterId, equipped);
-
-            return PaletteRowHeight + 6.0f;
-        }
-
-        /// <summary>
-        /// ⚠️⚠️ THE SLOT IS CHOSEN BY SATURATION RATHER THAN BY INDEX, AND SLOT 0 IS WHY. A
-        /// character's sixteen slots are an atlas, not a ranking: on several of the cast slot 0
-        /// is an off-white or a near-black, so a swatch reading it would paint three variants
-        /// three shades of the same grey and the control would look broken rather than subtle.
-        /// The most saturated slot is the one a player would call "their colour".
-        ///
-        /// ⚠️ THE FACE IS EXCLUDED, for the reason `PaletteRules.FaceSlot` gives: it is never
-        /// rotated, so it is the one slot guaranteed to be identical on every variant.
-        /// </summary>
-        private static int RepresentativeSlot(Color[] authored)
-        {
-            int best = 0;
-            float bestScore = -1.0f;
-
-            for (int i = 0; i < authored.Length; i++)
-            {
-                if (i == PaletteRules.FaceSlot) continue;
-
-                Color.RGBToHSV(authored[i], out _, out float sat, out float val);
-
-                // ⚠️ SATURATION TIMES VALUE, NOT SATURATION. A fully saturated colour at 2 per
-                // cent brightness is black, and it scores 1.0 on saturation alone.
-                float score = sat * val;
-                if (score <= bestScore) continue;
-
-                bestScore = score;
-                best = i;
-            }
-
-            return best;
-        }
-
-        private void BuildSwatch(Transform row, Color[] authored, string paletteId,
-                                 string characterId, string equipped)
-        {
-            var go = new GameObject($"Swatch_{(paletteId.Length == 0 ? "default" : paletteId)}",
-                                    typeof(RectTransform), typeof(Image));
-            go.transform.SetParent(row, false);
-
-            bool active = paletteId == equipped;
-
-            // ⚠️ THE SWATCH SHOWS THE EARNED PRESET ON TOP OF THE DIAL THE PLAYER HAS
-            // ALREADY TURNED, so pressing it produces the colour it was showing. A swatch drawn
-            // at the preset alone would be a promise the model then breaks.
-            var dial = Settings.SettingsStore.LookFor(characterId);
-            var shown = new CharacterLook(paletteId, dial.HueDegrees, dial.SaturationPercent);
-
-            var face = go.GetComponent<Image>();
-            face.color = PaletteVariants.For(authored, shown)[RepresentativeSlot(authored)];
-
-            var element = go.AddComponent<LayoutElement>();
-            element.preferredWidth = SwatchSize;
-            element.preferredHeight = SwatchSize;
-
-            // ⚠️ THE BORDER IS THE SELECTED STATE AND IT IS A SEPARATE OBJECT, because tinting
-            // the swatch itself to show selection would change the one thing the swatch is for.
-            var ring = new GameObject("Ring", typeof(RectTransform), typeof(Image));
-            ring.transform.SetParent(go.transform, false);
-            MenuKit.Stretch((RectTransform)ring.transform, -3.0f);
-
-            var ringImage = ring.GetComponent<Image>();
-            ringImage.sprite = GodotTheme.Box(new Color(0, 0, 0, 0),
-                                              active ? UiTheme.Cream : UiTheme.WoodEdge,
-                                              active ? 3 : 2, 4);
-            ringImage.type = Image.Type.Sliced;
-            ringImage.raycastTarget = false;
-
-            var button = go.AddComponent<Button>();
-            button.targetGraphic = face;
-            button.onClick.AddListener(() =>
-            {
-                Settings.SettingsStore.SetPaletteFor(characterId, paletteId);
-                MenuSfx.Click();
-
-                // ⚠️ THE WHOLE REFRESH, NOT JUST THE RINGS. `RefreshPreview` is what repaints
-                // the model, and the model is the point of the control; redrawing only the
-                // swatches would move a border and change nothing the player came here to see.
-                Refresh();
-            });
-
-            // ⚠️ IT REACTS TO THE POINTER, because `CLAUDE.md` § 6.3 says a control that does
-            // something must, and the plate that did not is exactly what § 96 is open about.
-            go.AddComponent<TextureButtonFeedback>();
-        }
+        // ⚠️⚠️ THE THREE COLOUR ROWS THAT LIVED HERE ARE DELETED, ON REQUEST, TWICE.
+        // 🧑 2026-09-01: *"this shit shiuld be gone the clothes color and soft bold and shit"*,
+        // and *"I asked for this shhit to be removed before, the color shit for the chracters bcz
+        // i wanted customization to eb for the make your own only"*. `COLOURS` (the earned
+        // palettes), `CLOTHES` (twelve hue swatches) and `STRENGTH` (SOFT / AS DRAWN / BOLD) are
+        // gone with `RefreshPaletteRow`, `RefreshTintRows`, `StripRow`, `BuildTintSwatch`,
+        // `BuildStrengthChip`, `BuildSwatch` and `RepresentativeSlot`. `docs/TODO.md` § 114.6.
+        //
+        // ⚠️⚠️ HIS SCREENSHOT ALSO SHOWS A SECOND, INDEPENDENT FAULT THAT THE DELETION MAKES
+        // MOOT: the three rows drew ON TOP OF the ability list, so SEISMIC STOMP's row had
+        // `AS DRAWN` and `BOLD` printed through it. The heights those two methods returned were
+        // added to a column height that had already been computed, which is § 102.4's shape
+        // exactly: **a vertical overflow, invisible to every probe in the project, because they
+        // all measure horizontally.** Anything put back in this space has to be measured before
+        // the column is sized, not after.
+        //
+        // ⚠️⚠️ AND THE CAPABILITY IS KEPT WHILE THE CONTROL IS DELETED. `PaletteRules`,
+        // `PaletteVariants`, `LoadoutRules.PaletteFor` and `Settings.SettingsStore.LookFor` are
+        // untouched: a palette still crosses the wire, remote seats still wear one, and § 101.1's
+        // variant-naming fix is still asserted by `CosmeticsWireTests`. **The honest consequence,
+        // written down rather than discovered later: a `mastery.<hero>.palette.alt1` reward is
+        // still awarded and still owned, and there is no longer any surface that equips it.**
+        // That is the deletion he asked for. Customisation is MAKE YOUR OWN
+        // (`CustomCharacterScreen`) and nothing else.
 
         private void RefreshHeroLoadout(Transform rows, string heroId)
         {
@@ -1306,11 +972,21 @@ namespace TumbangPreso.UI
         {
             if (_glowImage == null) return;
 
-            var bayanBlue = new Color(0.64f, 0.75f, 1.0f, 1.0f);
+            // ⚠️⚠️ THIS WAS `bayanBlue`, (0.64, 0.75, 1.0), AND IT IS THE PALE BLUE 🧑 CAN SEE ON
+            // THE PICKER'S ARROWS AND ROUND THE FIGURE. `CLAUDE.md` § 6.4: the rule is the whole
+            // palette, not just outlines, and this glow lit the arrow buttons and the panel edge
+            // in a colour nothing else in the front end uses. **The neutral is cream now**, which
+            // is the same job (a warm lift behind the model) in the game's own ink.
+            //
+            // ⚠️ THE HERO LERP IS UNCHANGED AND IS NOT THIS. `UiTheme.ColorForHero` is the hero
+            // accent, which is a gameplay tell (`VISION.md` § 1.1: reading which kit an opponent
+            // has is a skill), and Cheska's is deliberately cold. A hero accent is exempt for the
+            // same reason `UiTheme.Defense` is; a decorative wash is not.
+            var neutralGlow = new Color(UiTheme.Cream.r, UiTheme.Cream.g, UiTheme.Cream.b, 1.0f);
             if (entry != null && _tab == 0)
-                _glowImage.color = Color.Lerp(bayanBlue, UiTheme.ColorForHero(entry.Id), 0.65f);
+                _glowImage.color = Color.Lerp(neutralGlow, UiTheme.ColorForHero(entry.Id), 0.65f);
             else
-                _glowImage.color = bayanBlue;
+                _glowImage.color = neutralGlow;
         }
 
         /// <summary>

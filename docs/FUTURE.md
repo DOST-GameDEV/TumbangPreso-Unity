@@ -1196,7 +1196,18 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
-## PHASE 10 · LOADOUTS, SKILL VARIANTS AND ACHIEVEMENTS
+## PHASE 10 · LOADOUTS, SKILL VARIANTS AND ACHIEVEMENTS ✅ SHIPPED 2026-08-31
+
+⚠️⚠️ **THIS PHASE IS BUILT AND ANYTHING IN THIS FILE CALLING IT UNSCHEDULED IS STALE.**
+`Core/HeroLoadout.cs` holds the ability variants (budget neutral, asserted by
+`HeroLoadoutTests`), `Core/Achievements.cs` holds the shelf, and both have rows on `PlayerHub`'s
+CAREER tab. `docs/TODO.md` § 108 is the as-built record.
+
+⚠️⚠️ **AND BOTH WERE UNREACHABLE ON A FRESH ACCOUNT UNTIL 2026-09-01, WHICH IS WHY "SHIPPED" AND
+"REACHABLE" GET ASKED SEPARATELY.** `BuildCareerTab` bailed to `EmptyCareer` at zero matches and
+these two groups are built after that line, and `PlayerHub._mode` defaulted to Classic while the
+game defaults to Hero Strike, so the builds group was hidden behind a mode the player had not
+chosen. `docs/TODO.md` § 114.12.
 
 🧑: *"you know how overwatch or drg has unlockable skill paths or some shit?"*, then, clarifying
 what he actually meant: *"like skill / ability / passive variations, for example in drg theres

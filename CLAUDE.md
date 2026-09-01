@@ -432,10 +432,45 @@ person. Watch a launch, or ask what they expected to press.
 which is fault 3 of § 92.1 made impossible rather than fixed. A hand-written Y offset is a layout
 correct at exactly one panel height and one aspect ratio, and `AspectRatioProbes` drives nine.
 
-### 6.4 ⚠️⚠️ NEVER USE BLUE OR NAVY OUTLINES ON ANY UI ICON OR ASSET
+### 6.4 ⚠️⚠️ NEVER USE BLUE OR NAVY ANYWHERE IN THE UI. NOT OUTLINES, NOT FILLS, NOT BACKGROUNDS, NOT GREYS WITH A BLUE CAST
 
 🧑 2026-08-31: *"i dont like blue outlines its out of theme"*, *"can u put in claude md to
-never use blue outlines and shit for ui"*.
+never use blue outlines and shit for ui"*. Then 2026-09-01, having opened a build with § 6.4
+already in this file: *"i dont want to see blue shit"*, *"thats not in theme"*, *"hey i said i
+dont want blue or navy"*, *"thats off theme"*, *"put in claude md to not use blue hshit"*.
+
+⚠️⚠️ **HE HAD TO SAY IT FIVE MORE TIMES BECAUSE THE FIRST VERSION OF THIS SECTION SAID
+"OUTLINES", AND THE BLUE HE WAS LOOKING AT WAS NOT AN OUTLINE.** It was four things, and every
+one of them passed a reading of the narrow rule:
+
+| Where | What it was | Why it was invisible to the narrow rule |
+|---|---|---|
+| ⚠️⚠️ **`UiTheme.Ink`** | `040838`, a near-black **navy**, and the outline colour of **every** menu type style in `GodotTheme` (`MenuDisplay`, `MenuHeading`, `MenuBody`, `MenuCaption`, `MenuValue`). | It was called "ink", so it read as black at a glance and as a cold ring at four to six pixels on a heading. **One constant put navy on every word in the front end.** It is `1c0f06` now. |
+| **The character select backdrop** | Three stops of slate-to-midnight, with a comment calling it *"the game's Bayan navy identity"*. | It is a background, not an icon. Nothing else in the front end uses that colour, so the "identity" was one screen's. Wood now. |
+| **`MatchResult` and `RoleSwapCard` scrims** | The same navy at 72 and 82 per cent. | Same. |
+| **`UiTheme.Panel` and `Card`** | `e1e5e8` and `f5f7fa`: greys with a blue cast, used as the fill under form fields. | "Grey" is not "blue" until it is sitting next to `8b5227` wood, where it reads cold. Warm paper now. |
+| ⚠️⚠️ **`GameBuilder.ConfigureSplash`** | Wrote the navy splash background and the studio logo **on every build**. | **A colour set in `ProjectSettings.asset` is not set.** This method overwrites `backgroundColor`, `logos` and `unityLogoStyle` every time, so an inspector change survives until the next build and then reverts with no error. **Both places or neither.** |
+
+- **The rule, stated wide:** no blue, no navy, no cold grey, in any UI colour, in any layer.
+  Outlines, fills, panel backgrounds, scrims, rings, gradients, glyph tints, disabled states.
+  **If a hex has more blue in it than red, it does not belong in a menu.**
+- **The palette:** carved wood (`#31190B` deep, `#5A2F14` mid, `#8B5227` edge, `#1D0E06` dark),
+  cream paper and chalk (`#F5E6C8`), amber gold (`#FFBA00`), warm ink (`#1C0F06`). Geometry comes
+  from warm tone-on-tone bevels and borderless shapes.
+- ⚠️⚠️ **THE ONE EXEMPTION, AND IT IS A GAMEPLAY FACT RATHER THAN A STYLE: `UiTheme.Defense`
+  (`0080e8`) MEANS "THE TAYA".** It is the defending side's colour in the match, opposite
+  `Offense` orange, and it is the only blue in the project that may be drawn. **It may never
+  appear as menu chrome**, which is what `ChatAndLobbyChromeTests` asserts for the lobby
+  nameplates: a decorative blue that happens to be the role colour teaches the player a role that
+  is not there.
+- ⚠️ **THE AUTHORED PENNANT ART IS NOT THIS EITHER.** PLAY green, SETTINGS yellow, TUTORIAL blue
+  and QUIT red are 🧑's own nine-patch art and `docs/VISION.md` § 6 says his UI art IS the design
+  system. **Do not repaint his art to satisfy this rule.** This section is about colours chosen
+  in code.
+- ⚠️ **CHECK IT BY GREPPING, NOT BY LOOKING.** `UiTheme.Ink` was navy for the entire life of this
+  file and nobody saw it, because a near-black navy looks black in a code review and blue on a
+  1440p screen at six pixels of outline. `grep -rnE 'Hex\("[0-9a-f]{6}"\)' Assets/TumbangPreso/Runtime/UI/UiTheme.cs`
+  and read the third channel.
 
 ⚠️⚠️ **THIS SECTION WAS INSERTED BETWEEN § 6.3'S HEADING AND § 6.3'S BODY, so for one commit
 § 6.3 was an empty heading and every word of the journey rule read as if it belonged to a rule
@@ -443,16 +478,14 @@ about outline colour.** It is here, after § 6.3 finishes, for that reason. A he
 is not a formatting slip in this file: § 6.3 is the section `docs/TODO.md` § 96 and § 92 both point
 at, and a reader who followed either pointer landed on nothing.
 
-- **The rule:** UI icons, rank emblems, state badges, glyphs and panels must **never** carry dark
-  blue, navy or cold ink outlines. On brown wood they read as blue rings and clash with everything
-  around them.
-- **The palette:** carved wood (`#31190B` deep, `#5A2F14` mid, `#8B5227` edge), cream paper and
-  chalk (`#F5E6C8`), amber gold (`#FFBA00`). Geometry comes from warm tone-on-tone bevels and
-  borderless shapes.
-- ⚠️ **THIS IS `docs/VISION.md` § 6 NARROWED TO ONE MISTAKE, NOT A NEW RULE.** *"His UI art is
-  the design system. Wood, amber, cream, ink. Anything drawn in a different visual language is the
-  thing that looks broken, not the thing that looks new."* The blue outline is the specific way that
-  went wrong on the rank emblems, written down so it does not have to be found again.
+- ⚠️ **THE ORIGINAL, NARROW VERSION OF THIS RULE READ: "UI icons, rank emblems, state badges,
+  glyphs and panels must never carry dark blue, navy or cold ink OUTLINES."** It is kept here
+  because it names the surface the fault was first found on (the rank emblems), and because the
+  gap between it and the table above is the whole lesson: **a rule written against the one place
+  a fault was seen does not cover the constant that caused it.**
+- ⚠️ **THIS IS `docs/VISION.md` § 6 APPLIED, NOT A NEW RULE.** *"His UI art is the design system.
+  Wood, amber, cream, ink. Anything drawn in a different visual language is the thing that looks
+  broken, not the thing that looks new."*
 
 `docs/CANONICAL_RENDERING_PIPELINE.md` has the exact commands and five recorded pitfalls.
 ⚠️ **That document is written for Antigravity and its "MANDATE FOR ALL AGENTS" heading is that

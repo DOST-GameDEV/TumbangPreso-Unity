@@ -5,7 +5,21 @@ using UnityEngine.UI;
 namespace TumbangPreso.UI
 {
     /// <summary>
-    /// Who you are, in the corner of the title screen. One chip, and it is the way in.
+    /// Who you are, in the corner of the title screen. One chip, and it was the way in.
+    ///
+    /// ⚠️⚠️ NOTHING IN THE GAME INSTALLS THIS ANY MORE, AS OF 2026-09-01, AND IT IS KEPT ON
+    /// PURPOSE. 🧑: *"I think the player shit should live in lobby screen, not play"*, and *"AND
+    /// LOBBY IS WHERE ALL UI SHOULD LIVE"*. The door to `PlayerHub` is
+    /// `LobbyChrome.BuildProfileButton` now, on the lobby's own player card;
+    /// `docs/TODO.md` § 114.7 has the journey table and the reason moving it beats adding a
+    /// second one. **This class is kept under § 68.3's rule** (🧑, of the lobby redesign: *"dont
+    /// delete old huds and ui tho keep them incase ur shit turns ugly"*), and putting it back is
+    /// one `Install()` call in `ConvertedMainMenu.Wire`.
+    ///
+    /// ⚠️ `PlayerHubLayoutProbe` STILL DRIVES IT, and that is the honest state rather than a
+    /// green probe pretending to cover a shipped screen: the probe uses this as the fixture that
+    /// builds a hub and a sign-in screen, and `LobbyStyleProbe.TheProfileDoorOpensTheHub` is what
+    /// covers the door a player actually presses.
     ///
     /// ⚠️⚠️ IT REPLACES TWO FLOATING WOOD BUTTONS AND 🧑 ASKED WHY THEY WERE THERE BY NAME:
     /// *"look wtf why are these buttons here"*, over a screenshot of CAREER and ACCOUNT sitting
@@ -107,7 +121,11 @@ namespace TumbangPreso.UI
             _overlays = UnityEngine.Object.FindObjectsByType<ConvertedOverlay>(
                 FindObjectsInactive.Include, FindObjectsSortMode.None);
 
-            OfferTheAccountChoiceOnce();
+            // ⚠️⚠️ THE BOOT ACCOUNT SCREEN IS NO LONGER OPENED FROM HERE, AND `docs/TODO.md`
+            // § 114.5 IS WHY. LOGIN is a named step of the boot sequence now
+            // (`ConvertedMainMenu.OfferTheLoginStep`), on every launch rather than once per
+            // machine, and this plate is no longer installed by any screen in the game.
+            // `OfferTheAccountChoiceOnce` moved with the step rather than being deleted twice.
 
             // ⚠️ TOP LEFT, WHICH IS WHERE THE MENU HAS ROOM. The title art and the pennant column
             // own the left-centre and the bottom, and the version stamp owns the bottom right.
@@ -261,40 +279,19 @@ namespace TumbangPreso.UI
         /// retire it the first frame the menu drew, whether or not anybody looked. It is spent
         /// when the player acts on it.
         /// </summary>
-        /// <summary>
-        /// Shows the account screen the first time this machine reaches the menu, and never again.
-        ///
-        /// ⚠️⚠️ IT LIVES HERE BECAUSE THIS IS ALREADY THE ONE ENTRY POINT. `ConvertedMainMenu`
-        /// installs the nameplate, the nameplate installs the hub and the hub installs the
-        /// sign-in screen, and § 92.4's whole argument is that a screen must never again grow a
-        /// door nothing knows about. Opening it from the menu instead would be a second opener
-        /// for a screen that already has an owner.
-        ///
-        /// ⚠️⚠️ AND IT IS GATED ON A SETTING RATHER THAN ON "HAS NO PASSWORD", WHICH IS THE TRAP
-        /// IN THIS FEATURE. Keying it off the account state would show the screen on every launch
-        /// to every player who chose to stay a guest, which is the same nag PUBG's is not, and it
-        /// would make CONTINUE AS GUEST a button that does nothing lasting.
-        /// `GameSettings.AccountChoiceMade` records the ANSWER, not the outcome.
-        ///
-        /// ⚠️ IT IS SILENT IF THE SCREEN IS NOT THERE. A boot path that throws because a screen
-        /// failed to build is worse than a boot path that skips a question.
-        /// </summary>
-        private void OfferTheAccountChoiceOnce()
-        {
-            // ⚠️⚠️ A SCENE LOAD IS NOT A BOOT, AND GATING ON THE NAMEPLATE ALONE BLOCKED THE
-            // WHOLE SETTINGS PANEL. `SceneFlow.BootedThroughSplash` carries the full note: the
-            // menu is reached from the splash, from `LeaveMatchToMainMenu` and from any probe
-            // that loads it by name, and only the first has a first-time player behind it.
-            if (!SceneFlow.BootedThroughSplash) return;
-
-            var settings = Settings.SettingsStore.Current;
-            if (settings == null || settings.AccountChoiceMade) return;
-            if (_hub == null) return;
-
-            if (_signIn == null) return;
-
-            _signIn.OpenAtBoot();
-        }
+        // ⚠️⚠️ `OfferTheAccountChoiceOnce` USED TO LIVE HERE AND IT MOVED TO
+        // `ConvertedMainMenu.OfferTheLoginStep` ON 2026-09-01, WITH ITS GATE CHANGED.
+        // `docs/TODO.md` § 114.5 and § 114.7. Two of the three reasons it lived here are dead and
+        // one is now an argument for the move:
+        //
+        // - It was here because this plate was the one entry point on the title screen, and the
+        //   plate is no longer installed on any screen. See this class's own header.
+        // - It was gated on `GameSettings.AccountChoiceMade`, so LOGIN happened on the first
+        //   launch of an install and never again. He asked for it on every launch.
+        // - ⚠️ THE PART THAT SURVIVES UNCHANGED IS THE `SceneFlow.BootedThroughSplash` GATE, and
+        //   that flag's own note carries why: a scene load is not a boot, and
+        //   `UiClickProbe.EveryButtonIsReachable` once reported every settings control blocked by
+        //   `SignInCanvas` because this question opened over a menu a probe had loaded directly.
 
         private void Press()
         {

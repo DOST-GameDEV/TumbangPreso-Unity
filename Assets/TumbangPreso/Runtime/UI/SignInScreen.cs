@@ -62,6 +62,36 @@ namespace TumbangPreso.UI
         /// </summary>
         private bool _atBoot;
 
+        /// <summary>
+        /// Every control in the column below the wordmark, so the welcome-back state can hide the
+        /// whole form in one line.
+        ///
+        /// ⚠️⚠️ RECORDED BY INDEX AT BUILD TIME RATHER THAN AS A LIST OF NAMES, AND THAT IS THE
+        /// SAME ARGUMENT `PlayerNameplate`'s header makes about chrome. A named list is a list
+        /// somebody has to remember to extend, and the row added next year is the row that draws
+        /// through the welcome message. Everything built after the logo is the form, by
+        /// construction.
+        /// </summary>
+        private GameObject[] _formPieces = System.Array.Empty<GameObject>();
+
+        private GameObject _welcome;
+        private Text _welcomeName;
+        private Text _welcomeHint;
+
+        /// <summary>
+        /// How long the welcome-back state holds before it lets itself out, in unscaled seconds.
+        ///
+        /// ⚠️⚠️ IT IS A BEAT, NOT A GATE. 🧑 2026-09-01 chose "every launch, auto-skip after a
+        /// beat" from three options, over "only when not attached" and over a hard press on every
+        /// launch. **A returning player must not have to press anything to reach their own game**,
+        /// and a player who wants to switch accounts must not be carried past the screen by a
+        /// timer, so any key or button press cancels the hold outright. `docs/TODO.md` § 114.5.
+        /// </summary>
+        public const float WelcomeHold = 1.2f;
+
+        /// <summary>Unscaled time the welcome state lets go, or -1 when nothing is pending.</summary>
+        private float _autoPassAt = -1.0f;
+
         /// <summary>Whether this screen is showing. Read by `PlayerHub.Update` so the two do not
         /// both answer one Escape.</summary>
         public bool IsOpen => _root != null && _root.activeSelf;
@@ -81,7 +111,30 @@ namespace TumbangPreso.UI
         /// </summary>
         private void Update()
         {
-            if (!IsOpen || _atBoot) return;
+            if (!IsOpen) return;
+
+            // ⚠️⚠️ THE HOLD IS ON UNSCALED TIME AND CANCELS ON ANY PRESS. `Time.time` would stop
+            // with the clock, and this screen is the one place in the game where the clock's
+            // state is decided by whatever the last scene did. `Input.anyKeyDown` covers the
+            // mouse as well as the keyboard, which is the point: a player reaching for CONTINUE
+            // has already said they are here, and being dropped through the screen mid-reach is
+            // exactly the thing that makes a boot feel out of control.
+            if (_autoPassAt > 0.0f)
+            {
+                if (Input.anyKeyDown)
+                {
+                    _autoPassAt = -1.0f;
+                    if (_welcomeHint != null) _welcomeHint.text = "";
+                }
+                else if (Time.unscaledTime >= _autoPassAt)
+                {
+                    _autoPassAt = -1.0f;
+                    BootGuest();
+                    return;
+                }
+            }
+
+            if (_atBoot) return;
             if (!Input.GetKeyDown(KeyCode.Escape)) return;
 
             Close();
@@ -303,6 +356,11 @@ namespace TumbangPreso.UI
 
             BuildLogo(col, Logo);
 
+            // ⚠️ EVERYTHING FROM HERE DOWN IS THE FORM. See `_formPieces`: the welcome-back state
+            // hides this whole range and leaves the wordmark, so the two states are the same
+            // column with the same logo in the same place rather than two screens.
+            int formStart = col.childCount;
+
             _heading = MenuKit.Label(col, "SIGN IN", 40, UiTheme.Cream, Centre,
                 new Vector2(0.0f, Heading), new Vector2(420.0f, 54.0f));
 
@@ -337,6 +395,80 @@ namespace TumbangPreso.UI
 
             _back = MenuKit.WoodButton(col, "BACK", Centre,
                 new Vector2(0.0f, -382.0f), new Vector2(300.0f, 48.0f), Close);
+
+            _formPieces = new GameObject[col.childCount - formStart];
+            for (int i = formStart; i < col.childCount; i++)
+                _formPieces[i - formStart] = col.GetChild(i).gameObject;
+
+            BuildWelcome(col);
+        }
+
+        /// <summary>
+        /// The state a returning player meets: their own handle, and the screen letting itself
+        /// out.
+        ///
+        /// ⚠️⚠️ IT IS A STATE OF THIS SCREEN RATHER THAN A SCREEN OF ITS OWN, WHICH IS
+        /// `CLAUDE.md` § 6.2b's FIRST ROW APPLIED BEFORE THE FAULT RATHER THAN AFTER IT. That row
+        /// is the receipt for shipping the sign-in screen photographed only as `Open()` while
+        /// players met `OpenAtBoot()`. A third screen would be a third layout nobody had looked
+        /// at; the same column with the form swapped for two lines is one screen with two states,
+        /// and `PlayerHubLayoutProbe` photographs both.
+        ///
+        /// ⚠️ THE TWO BUTTONS ARE THE TWO ANSWERS AND BOTH ARE VISIBLE. § 6.3: a door is a thing
+        /// that looks pressable, and a screen that only leaves on a timer is a screen with no
+        /// door at all. CONTINUE is the one the timer would have taken; SIGN IN AS SOMEBODY ELSE
+        /// puts the form back and cancels the hold, which is the whole reason the hold cancels on
+        /// any press.
+        /// </summary>
+        private void BuildWelcome(Transform col)
+        {
+            _welcome = new GameObject("Welcome", typeof(RectTransform));
+            _welcome.transform.SetParent(col, false);
+            MenuKit.Stretch((RectTransform)_welcome.transform);
+
+            var root = _welcome.transform;
+
+            MenuKit.Label(root, "WELCOME BACK", 40, UiTheme.Cream, Centre,
+                new Vector2(0.0f, 120.0f), new Vector2(460.0f, 54.0f));
+
+            // ⚠️ THE HANDLE IS THE ONE THING ON THIS STATE, so it is the biggest thing on it and
+            // the only amber one. § 6.2 question 1: everything else is sized against it.
+            _welcomeName = MenuKit.Label(root, "", 48, UiTheme.Amber, Centre,
+                new Vector2(0.0f, 46.0f), new Vector2(460.0f, 64.0f));
+
+            _welcomeHint = MenuKit.Label(root, "press anything to stay here",
+                MenuKit.MinReadableUnits, UiTheme.CreamMuted, Centre,
+                new Vector2(0.0f, -6.0f), new Vector2(460.0f, 30.0f));
+
+            MenuKit.WoodButton(root, "CONTINUE", Centre,
+                new Vector2(0.0f, -80.0f), new Vector2(420.0f, 62.0f), BootGuest,
+                "WoodPrimaryButton");
+
+            MenuKit.WoodButton(root, "SIGN IN AS SOMEBODY ELSE", Centre,
+                new Vector2(0.0f, -156.0f), new Vector2(420.0f, 48.0f), LeaveWelcomeForTheForm);
+
+            _welcome.SetActive(false);
+        }
+
+        /// <summary>Swaps the two states. ⚠️ The wordmark belongs to neither and never moves.</summary>
+        private void ShowWelcome(bool welcome)
+        {
+            foreach (var piece in _formPieces)
+                if (piece != null) piece.SetActive(!welcome);
+
+            if (_welcome != null) _welcome.SetActive(welcome);
+        }
+
+        /// <summary>
+        /// ⚠️ CANCELS THE HOLD AS WELL AS SWITCHING, because a player who pressed this and was
+        /// then dropped into the menu a fraction of a second later would have pressed a button
+        /// that did the opposite of what it says.
+        /// </summary>
+        private void LeaveWelcomeForTheForm()
+        {
+            _autoPassAt = -1.0f;
+            ShowWelcome(false);
+            SetMode(false);
         }
 
         /// <summary>
@@ -372,10 +504,12 @@ namespace TumbangPreso.UI
             // VERSION SILENTLY FELL BACK TO THE WORD BECAUSE OF IT. `TUMP.png.meta` carries
             // `textureType: 0` and `spriteMode: 0`, so the asset is a plain texture and
             // `Resources.Load<Sprite>` answers **null** for a file that is right there. The
-            // render showed the fallback label and nothing said why. The splash art
-            // (`SplashScreen.BuildSplashArt`) already made this choice for the same reason: a
-            // `RawImage` draws whatever import settings the file arrived with, and a `.meta` is
-            // a file nobody edits by hand and a re-import can reset.
+            // render showed the fallback label and nothing said why. `BuildArt` below makes the
+            // same choice for the same reason: a `RawImage` draws whatever import settings the
+            // file arrived with, and a `.meta` is a file nobody edits by hand and a re-import can
+            // reset. ⚠️ The boot screen used to make it a third time in
+            // `SplashScreen.BuildSplashArt`, which is deleted (`docs/TODO.md` § 114.3); this
+            // screen is the only place `UI/splash_art` is drawn now.
             var logo = Resources.Load<Texture2D>("UI/main-menu/TUMP");
 
             if (logo == null)
@@ -510,13 +644,39 @@ namespace TumbangPreso.UI
             _error.text = "";
 
             SetMode(GameServices.Account != null && !GameServices.Account.HasPassword);
+
+            // ⚠️ REACHED BY A PRESS IT IS ALWAYS THE FORM. The welcome-back state answers "is this
+            // still you" at boot; a player who pressed SIGN IN has already said it is not.
+            //
+            // ⚠️⚠️ AND IT RUNS BEFORE `SetBootMode`, WHICH IS AN ORDER DEPENDENCY A PROBE FOUND
+            // RATHER THAN A PREFERENCE. `ShowWelcome` reactivates every form piece, and `_back`
+            // is one of them, so calling it AFTER `SetBootMode` undid the one thing `SetBootMode`
+            // does: `TheLoginStepAppearsEveryLaunchAndOnePressLeavesIt` came back red with **BACK
+            // visible on the boot screen**, which dismisses to nothing at all. `SetBootMode` is
+            // the narrower statement and it goes last.
+            ShowWelcome(false);
             SetBootMode(false);
+            _autoPassAt = -1.0f;
+
             _root.SetActive(true);
             Opened?.Invoke(true);
         }
 
         /// <summary>
-        /// The same screen, as the first thing the game shows, once per machine.
+        /// The same screen, as the LOGIN step of the boot sequence, on every launch.
+        ///
+        /// ⚠️⚠️ "ONCE PER MACHINE" IS GONE AND THAT WAS 🧑'S CALL ON 2026-09-01, WITH THE FLOW
+        /// WRITTEN OUT: *"i want it to strictly be this: UNITY -> BH STUDIOS ANIMATION -> LOGIN ->
+        /// MAIN MENU -> LOBBY"*. `GameSettings.AccountChoiceMade` gated this on the FIRST launch
+        /// of an install, so the step he drew existed for one boot and then vanished for ever.
+        /// The flag is still written and still read by `ShouldOfferUpgrade`; it no longer decides
+        /// whether this screen appears. `docs/TODO.md` § 114.5.
+        ///
+        /// ⚠️⚠️ AND A RETURNING PLAYER IS NOT ASKED A QUESTION THEY HAVE ALREADY ANSWERED. With a
+        /// username attached this opens on the welcome-back state, which names them and lets go
+        /// after <see cref="WelcomeHold"/>. **A login step that costs a press on every launch is
+        /// a tax**, and the reason it is worth having at all is that a player who wants to switch
+        /// accounts currently has to find the ACCOUNT tab to do it.
         ///
         /// ⚠️⚠️ THIS REVERSES `docs/TODO.md` § 92.3, WHICH CALLED THE BOOT BEHAVIOUR "THE ONE
         /// THING THAT MUST NOT MOVE". 🧑, 2026-08-31: *"i want this like pubg but they have ann
@@ -545,7 +705,31 @@ namespace TumbangPreso.UI
             // in to and the CREATE copy is the line that says what happens to what they have
             // already played. A returning player who wants SIGN IN presses one segment.
             SetMode(true);
+
+            // ⚠️ BOTH HALVES ARE REQUIRED. `HasPassword` is a settings flag and `Username` is the
+            // profile's, and an install that has one without the other is a half-attached account
+            // that must be shown the form rather than greeted by name.
+            var account = GameServices.Account;
+            bool attached = account != null && account.HasPassword &&
+                            !string.IsNullOrWhiteSpace(account.Username);
+
+            // ⚠️⚠️ `ShowWelcome` BEFORE `SetBootMode`, AND THE ORDER IS LOAD-BEARING. See the
+            // note in `Open`: `ShowWelcome(false)` reactivates every form piece including `_back`,
+            // so running it second put BACK back on a screen with nothing behind it.
+            ShowWelcome(attached);
             SetBootMode(true);
+
+            if (attached)
+            {
+                if (_welcomeName != null) _welcomeName.text = account.LobbyName;
+                if (_welcomeHint != null) _welcomeHint.text = "press anything to stay here";
+                _autoPassAt = Time.unscaledTime + WelcomeHold;
+            }
+            else
+            {
+                _autoPassAt = -1.0f;
+            }
+
             _root.SetActive(true);
             Opened?.Invoke(true);
         }

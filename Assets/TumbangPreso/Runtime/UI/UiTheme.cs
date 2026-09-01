@@ -30,14 +30,39 @@ namespace TumbangPreso.UI
         // CORE. Text, surfaces, and the two that mean something.
         // -------------------------------------------------------------------
 
-        /// <summary>Near-black navy: text, borders, pressed fills.</summary>
-        public static readonly Color Ink = Hex("040838");
+        /// <summary>
+        /// Near-black WARM ink: text, borders, pressed fills, and the outline on every menu type
+        /// style in <see cref="GodotTheme"/>.
+        ///
+        /// ⚠️⚠️ IT WAS `040838`, A NEAR-BLACK NAVY, AND THAT IS THE BLUE `CLAUDE.md` § 6.4 IS
+        /// ABOUT. 🧑 2026-08-31: *"i dont like blue outlines its out of theme"*, and again on
+        /// 2026-09-01: *"i dont want to see blue shit, thats not in theme"*. § 6.4 was written
+        /// after the first and fixed the rank emblems; it could not fix this, because **every
+        /// `MenuDisplay`, `MenuHeading`, `MenuBody`, `MenuCaption` and `MenuValue` outline in the
+        /// game read this constant**, so the whole menu was outlined in navy on brown wood. At
+        /// four to six pixels on a heading that is a visible cold ring.
+        ///
+        /// `1c0f06` is the ink named in § 6.4's palette and in `VISION.md` § 6 (wood `31190B`,
+        /// `5A2F14`, `8B5227`, cream `F5E6C8`, amber `FFBA00`, ink `1C0F06`). It is the same
+        /// darkness and none of the hue.
+        ///
+        /// ⚠️ IT IS ALSO THE TEXT COLOUR ON CREAM AND WHITE FIELDS (the sign-in inputs, the
+        /// tab labels), where warm near-black is strictly more correct than navy against paper.
+        /// </summary>
+        public static readonly Color Ink = Hex("1c0f06");
 
-        /// <summary>Light neutral: screen background.</summary>
-        public static readonly Color Panel = Hex("e1e5e8");
+        /// <summary>
+        /// Light neutral: screen background.
+        ///
+        /// ⚠️ IT WAS `e1e5e8`, A COOL BLUE-GREY, AND IT IS WARM PAPER NOW. See <see cref="Ink"/>
+        /// and `CLAUDE.md` § 6.4: the rule is the whole palette, not only outlines, and a grey
+        /// with a blue cast next to `8b5227` wood reads as blue rather than as neutral.
+        /// </summary>
+        public static readonly Color Panel = Hex("e9e1d4");
 
-        /// <summary>Slightly lighter: raised card and control fill.</summary>
-        public static readonly Color Card = Hex("f5f7fa");
+        /// <summary>Slightly lighter: raised card and control fill. ⚠️ Was `f5f7fa`, same
+        /// reason as <see cref="Panel"/>.</summary>
+        public static readonly Color Card = Hex("f7f1e4");
 
         /// <summary>⚠️ MEANS "ATTACKING SIDE". Never reuse it decoratively.</summary>
         public static readonly Color Offense = Hex("f87020");

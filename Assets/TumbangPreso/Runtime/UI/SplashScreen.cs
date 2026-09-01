@@ -40,8 +40,6 @@ namespace TumbangPreso.UI
         private VideoPlayer _video;
         private RawImage _surface;
 
-        /// <summary>The key art behind the sting. See <see cref="BuildSplashArt"/>.</summary>
-        private RawImage _art;
         private RenderTexture _target;
         private Image _fade;
         private Text _loadingLabel;
@@ -53,7 +51,32 @@ namespace TumbangPreso.UI
         private bool _leaving;
         private bool _assetsPreloaded;
         private bool _slowLoadReported;
-        private float _loadingProgress;
+
+        /// <summary>
+        /// Where the load actually is, and where the bar has got to drawing it.
+        ///
+        /// ⚠️⚠️ TWO VALUES, BECAUSE ONE SNAPPED. `SetLoadingStage` used to write `fillAmount`
+        /// directly, so the bar jumped 0.14 to 0.27 in a single frame and then held still for
+        /// three seconds while the stage it had already announced actually ran. A bar that is
+        /// stationary for three quarters of a boot is not reporting progress, it is reporting
+        /// that four numbers were written. `_shown` eases toward `_target` every frame, so the
+        /// bar is always moving toward the truth and never ahead of it.
+        ///
+        /// ⚠️ AND IT NEVER REACHES 1.0 BEFORE THE SCREEN LEAVES. See <see cref="SignInSpan"/>.
+        /// </summary>
+        private float _targetProgress;
+        private float _shownProgress;
+
+        /// <summary>
+        /// ⚠️⚠️ THE ACCOUNT BARRIER OWNS THE LAST EIGHT PER CENT, BECAUSE IT WAS NOT IN THE BAR AT
+        /// ALL AND IT IS THE PART THAT TAKES THE LONGEST ON A BAD CONNECTION. The loop waits on
+        /// `accountBarrier.IsCompleted` as well as on the preload, and `PreloadComplete` knows
+        /// nothing about it, so the bar reached its last stage, wrote `opening main menu`, and the
+        /// screen then sat there with a full bar and a label that had already claimed the menu was
+        /// open. That is the frame 🧑 photographed on 2026-09-01 and called broken, and he was
+        /// reading it correctly: the screen was telling him it had finished.
+        /// </summary>
+        private const float SignInSpan = 0.92f;
 
         /// <summary>
         /// Unity performs an unused-asset sweep when the held MainMenu load activates. Merely
@@ -142,13 +165,25 @@ namespace TumbangPreso.UI
                 Debug.LogWarning("[Splash] no video clip bound; run Tumbang Preso > Import Godot UI.");
             }
 
-            // Start opaque and fade the black out, so a slow first decode reads as a deliberate
-            // fade-in rather than as a frozen black screen.
+            // ⚠️⚠️ THE FADE-IN IS FROM WHITE, NOT FROM BLACK, AND THAT IS THE JOIN BETWEEN TWO
+            // SCREENS RATHER THAN A TASTE. The Unity splash is white now (`docs/TODO.md` § 114.2)
+            // and this screen is white, so a 0.35 s fade up from black between them is a black
+            // flash in the middle of one continuous white beat. `_fade` is built white and is
+            // repainted black only for the exit, where what follows IS dark.
             float fade = 0.0f;
 
             while (!_leaving)
             {
                 _elapsed += Time.unscaledDeltaTime;
+
+                bool accountReady = accountBarrier == null || accountBarrier.IsCompleted;
+
+                // ⚠️⚠️ SIGN-IN IS A STAGE WITH A LABEL, NOT AN INVISIBLE EXTRA WAIT. See
+                // `SignInSpan`: the bar used to reach its last stage and then stall at full while
+                // this barrier ran, which told the player the boot had finished when it had not.
+                if (_assetsPreloaded && !accountReady)
+                    SetLoadingStage("signing in", SignInSpan + 0.04f);
+
                 UpdateLoadingAnimation();
 
                 fade = Mathf.Clamp01(_elapsed / 0.35f);
@@ -158,16 +193,17 @@ namespace TumbangPreso.UI
                     ? _elapsed >= 0.5f
                     : (_video.isPrepared && !_video.isPlaying && _elapsed > 0.5f);
 
-                // ⚠️⚠️ THE VIDEO SURFACE IS SWITCHED OFF THE FRAME THE STING ENDS, AND WITHOUT
-                // THIS THE ART IS NEVER SEEN. A `VideoPlayer` that has finished leaves its LAST
-                // FRAME in the render texture, so the `RawImage` above the art keeps drawing a
-                // frozen frame of the studio logo for the whole remainder of the preload. That
-                // is the part that runs past six seconds, and it is the entire window this art
-                // exists to fill. `_surface` rather than the texture, so nothing is reallocated.
-                if (presentationComplete && _art != null && _surface != null && _surface.enabled)
-                    _surface.enabled = false;
-
-                bool accountReady = accountBarrier == null || accountBarrier.IsCompleted;
+                // ⚠️⚠️ THE VIDEO'S LAST FRAME IS HELD ON PURPOSE NOW, AND THIS BLOCK USED TO DO
+                // THE OPPOSITE. It switched `_surface` off the frame the sting ended so that the
+                // GAME'S KEY ART underneath was revealed for the rest of the preload, which is
+                // six seconds and more of marketing art before a first-time player has seen a
+                // menu. 🧑 2026-09-01: *"i dont like that loading screen keeps showing the pic of
+                // our game"*, and, of the white studio frame, *"dude the loading screen is in the
+                // white bh mark"*. A finished `VideoPlayer` leaves its last frame in the render
+                // texture, so holding the surface IS holding that frame, at no cost.
+                //
+                // ⚠️ `BuildSplashArt` AND ITS FIELD ARE DELETED, so there is nothing under here to
+                // reveal by accident. `docs/TODO.md` § 114.3.
                 if (presentationComplete && PreloadComplete && accountReady) break;
 
                 if (!_slowLoadReported && _elapsed >= MaxWait)
@@ -178,6 +214,12 @@ namespace TumbangPreso.UI
 
                 yield return null;
             }
+
+            // ⚠️ FULL ONLY ON THE WAY OUT. Everything above is bounded under 1.0 so that a full
+            // bar is never a thing the player can sit and look at.
+            SetLoadingStage("ready", 1.0f);
+            _shownProgress = 1.0f;
+            if (_loadingFill != null) _loadingFill.fillAmount = 1.0f;
 
             // ⚠️ THE TWO MIDDLE FUNNEL STEPS ARE RECORDED HERE BECAUSE THIS IS THE ONE PLACE THAT
             // KNOWS BOTH ANSWERS. `FUTURE.md` § 3 wants launch, sign-in and menu as separate
@@ -192,7 +234,11 @@ namespace TumbangPreso.UI
                 telemetry.NoteMenuReached();
             }
 
-            // Out on black, then hand over.
+            // Out on black, then hand over. ⚠️ THE PLATE IS REPAINTED HERE: it is white for the
+            // fade IN, because the Unity splash it follows is white, and black for the fade OUT,
+            // because the login screen and the lit street it precedes are not.
+            SetFadeColour(Color.black);
+
             for (float t = 0.0f; t < 0.22f; t += Time.unscaledDeltaTime)
             {
                 SetFade(t / 0.22f);
@@ -265,14 +311,26 @@ namespace TumbangPreso.UI
             yield return null;
 
             // 2. Pre-load RosterBook (models, rigs, materials, clips, pets)
-            SetLoadingStage("loading characters", 0.14f);
+            //
+            // ⚠️⚠️ IT YIELDS PER CHARACTER, AND IT USED TO WALK THE WHOLE BOOK IN ONE FRAME.
+            // `docs/TODO.md` § 114.4: every one of these property reads pulls a mesh, a clip set,
+            // a palette and a pet off disk, and doing all of them between two `yield`s hands the
+            // main thread away for as long as that takes. The dots and the bar are driven from
+            // `Update`-time code on that same thread, so the loading animation froze for the whole
+            // stage. **An animation that stops during loading is reporting the opposite of what it
+            // exists to report.**
+            //
+            // ⚠️ THE PROGRESS MOVES INSIDE THE STAGE TOO, rather than only at its boundaries, so
+            // the longest stage is not also the flattest part of the bar.
+            SetLoadingStage("loading characters", 0.10f);
             var book = RosterBook.Load();
             if (book != null)
             {
                 if (book.People != null)
                 {
-                    foreach (var p in book.People)
+                    for (int i = 0; i < book.People.Count; i++)
                     {
+                        var p = book.People[i];
                         if (p != null)
                         {
                             _ = p.Model;
@@ -280,6 +338,10 @@ namespace TumbangPreso.UI
                             _ = p.Palette;
                             _ = p.PetModel;
                         }
+
+                        SetLoadingStage("loading characters",
+                            Mathf.Lerp(0.10f, 0.22f, (i + 1) / (float)Mathf.Max(1, book.People.Count)));
+                        yield return null;
                     }
                 }
 
@@ -290,6 +352,7 @@ namespace TumbangPreso.UI
                         if (c != null) _ = c.Model;
                     }
                 }
+                yield return null;
 
                 if (book.Slippers != null)
                 {
@@ -299,14 +362,32 @@ namespace TumbangPreso.UI
                     }
                 }
             }
+            SetLoadingStage("loading characters", 0.24f);
             yield return null;
 
             // 3. Pre-load Audio clips and sound resources
-            SetLoadingStage("loading audio", 0.27f);
+            //
+            // ⚠️⚠️ THREE FOLDERS WITH A `yield` BETWEEN THEM, NOT ONE `LoadAll("")`. That single
+            // call decodes 100 clips (2 music, 87 sfx, 11 vo, counted 2026-09-01) on one frame and
+            // is the second of the two stages that used to freeze the animation solid. The final
+            // sweep is kept as the safety net for anything outside these three folders and is
+            // nearly free once they are warm, because `Resources.LoadAll` answers from the cache.
+            string[] audioFolders = { "Sfx", "Vo", "Music" };
+            for (int i = 0; i < audioFolders.Length; i++)
+            {
+                SetLoadingStage("loading audio",
+                    Mathf.Lerp(0.24f, 0.34f, (i + 1) / (float)audioFolders.Length));
+                try
+                {
+                    _ = Resources.LoadAll<AudioClip>(audioFolders[i]);
+                }
+                catch (System.Exception) { }
+                yield return null;
+            }
+
             try
             {
-                var allAudio = Resources.LoadAll<AudioClip>("");
-                _ = allAudio;
+                _ = Resources.LoadAll<AudioClip>("");
             }
             catch (System.Exception) { }
             yield return null;
@@ -381,7 +462,10 @@ namespace TumbangPreso.UI
 
             // This must remain the final scene operation in the preload chain. Once activation is
             // held, Unity will not complete an additive load or unload queued behind this one.
-            SetLoadingStage("opening main menu", 0.92f);
+            // ⚠️ 0.88 RATHER THAN 0.92, BECAUSE SIGN-IN NOW OWNS THE TAIL. `SignInSpan` is 0.92
+            // and the account barrier is announced above it, so the scene load has to finish
+            // below that or the two stages would fight over the same eight per cent.
+            SetLoadingStage("opening main menu", 0.88f);
             BeginMenuPreload();
             _assetsPreloaded = true;
         }
@@ -487,21 +571,46 @@ namespace TumbangPreso.UI
         private bool PreloadComplete =>
             _assetsPreloaded && (_menu == null || _menu.progress >= 0.9f);
 
+        /// <summary>
+        /// ⚠️ THE CEILING WHILE THE SCREEN IS STILL UP. A bar drawn full over a screen that has
+        /// not gone anywhere is the specific thing 🧑 photographed, so nothing inside the loop is
+        /// allowed to write 1.0; only the line after the loop breaks does.
+        /// </summary>
+        private const float ProgressCeiling = 0.985f;
+
+        /// <summary>
+        /// Names the stage and moves the TARGET. ⚠️ It never writes `fillAmount`: the drawn value
+        /// is eased toward this by <see cref="UpdateLoadingAnimation"/>, which is what stops the
+        /// bar teleporting between stages and then standing still inside one.
+        ///
+        /// ⚠️ AND IT ONLY EVER GOES FORWARD. Two stages that settle out of order would otherwise
+        /// drag the bar backwards, which reads as the load having failed and restarted.
+        /// </summary>
         private void SetLoadingStage(string label, float progress)
         {
-            _loadingProgress = Mathf.Clamp01(progress);
+            _targetProgress = Mathf.Max(_targetProgress, Mathf.Clamp01(progress));
             if (_loadingLabel != null) _loadingLabel.text = label;
-            if (_loadingFill != null) _loadingFill.fillAmount = _loadingProgress;
         }
 
         private void UpdateLoadingAnimation()
         {
+            // ⚠️ THE MENU LOAD IS A CONTINUOUS SOURCE, so it is read every frame rather than being
+            // announced once. `LoadSceneAsync` held at 0.9 is "done"; the divide normalises that.
             if (_assetsPreloaded && _menu != null)
             {
-                _loadingProgress = Mathf.Max(_loadingProgress,
-                    0.92f + Mathf.Clamp01(_menu.progress / 0.9f) * 0.08f);
-                if (_loadingFill != null) _loadingFill.fillAmount = _loadingProgress;
+                _targetProgress = Mathf.Max(_targetProgress,
+                    0.88f + Mathf.Clamp01(_menu.progress / 0.9f) * 0.04f);
             }
+
+            // ⚠️⚠️ EASED, AND AT A RATE RATHER THAN OVER A DURATION. `Lerp` toward the target at
+            // 4 per second covers the whole bar in well under the six seconds a cold boot takes,
+            // and it cannot overshoot a target that stops moving.
+            float ceiling = _leaving ? 1.0f : ProgressCeiling;
+            _shownProgress = Mathf.Min(ceiling,
+                Mathf.Lerp(_shownProgress, Mathf.Min(_targetProgress, ceiling),
+                           1.0f - Mathf.Exp(-4.0f * Time.unscaledDeltaTime)));
+
+            if (_loadingFill != null) _loadingFill.fillAmount = _shownProgress;
 
             if (_loadingDots == null) return;
 
@@ -524,6 +633,15 @@ namespace TumbangPreso.UI
             var c = _fade.color;
             c.a = Mathf.Clamp01(alpha);
             _fade.color = c;
+        }
+
+        /// <summary>Repaints the fade plate without touching how opaque it currently is.</summary>
+        private void SetFadeColour(Color colour)
+        {
+            if (_fade == null) return;
+
+            colour.a = _fade.color.a;
+            _fade.color = colour;
         }
 
         private void BuildSurface()
@@ -561,16 +679,17 @@ namespace TumbangPreso.UI
             // the report's two overlapping hints actually were.
             HideConvertedContent();
 
-            // ⚠️ A BLACK BACKDROP UNDER THE VIDEO. The clip is 16:9 and the window may not be,
-            // so without this the player sees whatever the camera happened to be rendering
-            // through the letterbox bars on the very first frame of the game.
+            // ⚠️⚠️ A WHITE BACKDROP UNDER THE VIDEO, AND IT WAS BLACK. The clip is 16:9, the
+            // window may not be, and the sting itself is a black mark on white, so black bars
+            // put a hard frame round a white picture on every shape that is not 16:9 (including
+            // the short wide window 🧑 actually plays in, `CLAUDE.md` § 6.2b row 3). White makes
+            // the letterbox invisible and makes the Unity splash, this screen and the hold after
+            // it read as ONE frame rather than three. `docs/TODO.md` § 114.2.
             var bg = new GameObject("Backdrop");
             bg.transform.SetParent(canvasGo.transform, false);
             var bgImg = bg.AddComponent<Image>();
-            bgImg.color = Color.black;
+            bgImg.color = Color.white;
             Stretch(bgImg.rectTransform);
-
-            BuildSplashArt(canvasGo.transform);
 
             var surfaceGo = new GameObject("Video");
             surfaceGo.transform.SetParent(canvasGo.transform, false);
@@ -580,7 +699,10 @@ namespace TumbangPreso.UI
             var fadeGo = new GameObject("Fade");
             fadeGo.transform.SetParent(canvasGo.transform, false);
             _fade = fadeGo.AddComponent<Image>();
-            _fade.color = Color.black;
+
+            // ⚠️ WHITE, BECAUSE THE SCREEN BEFORE THIS ONE IS WHITE. `SetFadeColour` repaints it
+            // black for the exit. See the fade note in `Run`.
+            _fade.color = Color.white;
             _fade.raycastTarget = false;
             Stretch(_fade.rectTransform);
 
@@ -596,58 +718,13 @@ namespace TumbangPreso.UI
             _video.targetTexture = _target;
             _video.audioOutputMode = VideoAudioOutputMode.None; // the sting is its own cue
 
-            // ⚠️ STRETCH, MATCHING `expand = true` ON THE .tscn's VideoStreamPlayer. The clip and
-            // the reference resolution are both 16:9, so on any ordinary window this is identical
-            // to fitting inside; the black Backdrop above is what covers the difference on a
-            // window that is not.
-            _video.aspectRatio = VideoAspectRatio.Stretch;
-        }
-
-        /// <summary>
-        /// The key art the player looks at while the game finishes loading.
-        ///
-        /// ⚠️⚠️ IT SITS UNDER THE VIDEO AND IS REVEALED WHEN THE VIDEO ENDS, which is the whole
-        /// point of putting it here rather than on the menu. The studio sting is about half a
-        /// second; the preload behind it routinely runs past six seconds and logs when it does.
-        /// **Everything after the sting used to be a black screen with three dots on it**, which
-        /// is the longest single stretch of the game a first-time player sees and the least of it.
-        ///
-        /// ⚠️ `RawImage` AND `Resources.Load<Texture2D>`, NOT A SPRITE. A sprite needs the
-        /// importer's texture type set on the `.meta`, which is a file nobody edits by hand and
-        /// which a re-import can reset; a `RawImage` draws a plain `Texture2D` with whatever
-        /// import settings the file arrived with. One less thing that can silently come back as a
-        /// magenta rectangle.
-        ///
-        /// ⚠️⚠️ AND IT COVERS RATHER THAN STRETCHES. The art is 1267x697, about 1.82:1, and the
-        /// game ships at nine shapes from 4:3 to 21:9. `Stretch` would distort the cast on every
-        /// one of them that is not 1.82; `AspectRatioFitter.EnvelopeParent` fills the window and
-        /// crops the overflow instead, which is what the black `Backdrop` above already assumes.
-        ///
-        /// ⚠️ A MISSING FILE IS SILENT AND LEAVES THE BLACK BACKDROP. `Resources.Load` answers
-        /// null rather than throwing, and a boot screen is the worst possible place to take an
-        /// exception, so the art is treated as decoration the boot can proceed without.
-        /// </summary>
-        private void BuildSplashArt(Transform parent)
-        {
-            var art = Resources.Load<Texture2D>("UI/splash_art");
-            if (art == null)
-            {
-                Debug.LogWarning("[Splash] no splash art at Resources/UI/splash_art; " +
-                                 "the loading screen falls back to the black backdrop.");
-                return;
-            }
-
-            var go = new GameObject("SplashArt");
-            go.transform.SetParent(parent, false);
-
-            _art = go.AddComponent<RawImage>();
-            _art.texture = art;
-            _art.raycastTarget = false;
-            Stretch(_art.rectTransform);
-
-            var fitter = go.AddComponent<UnityEngine.UI.AspectRatioFitter>();
-            fitter.aspectMode = UnityEngine.UI.AspectRatioFitter.AspectMode.EnvelopeParent;
-            fitter.aspectRatio = art.width / (float)art.height;
+            // ⚠️⚠️ FIT INSIDE, NOT STRETCH, AND IT WAS STRETCH TO MATCH `expand = true` ON THE
+            // .tscn. That was defensible while the letterbox was black and the difference was
+            // invisible; it is not defensible for a LOGO. `CLAUDE.md` § 6.2c question 2 is
+            // explicit: envelope a background, FIT a logo. A stretched studio mark is a distorted
+            // studio mark on every window that is not 16:9, which is the one 🧑 plays in. The
+            // white Backdrop above is what the fit leaves showing, and it is the same white.
+            _video.aspectRatio = VideoAspectRatio.FitInside;
         }
 
         private void BuildLoadingIndicator(Transform parent)
@@ -662,7 +739,10 @@ namespace TumbangPreso.UI
             var dotsRt = dotsGo.AddComponent<RectTransform>();
             dotsRt.anchorMin = new Vector2(0.5f, 0.0f);
             dotsRt.anchorMax = new Vector2(0.5f, 0.0f);
-            dotsRt.anchoredPosition = new Vector2(0.0f, 152.0f);
+            // ⚠️ THE STACK IS TRACK 110, LABEL 132, DOTS 190, MEASURED OFF EACH OTHER RATHER THAN
+            // TYPED SEPARATELY. The track moved up and the two above it have to move with it or
+            // the label draws through the bar.
+            dotsRt.anchoredPosition = new Vector2(0.0f, 190.0f);
             dotsRt.sizeDelta = new Vector2(80.0f, 24.0f);
 
             _loadingDots = new RectTransform[3];
@@ -684,9 +764,14 @@ namespace TumbangPreso.UI
             var labelGo = new GameObject("Status");
             labelGo.transform.SetParent(panelGo.transform, false);
             _loadingLabel = labelGo.AddComponent<Text>();
-            _loadingLabel.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+
+            // ⚠️⚠️ THE GAME'S OWN FONT, AND IT WAS `LegacyRuntime.ttf`. Every other word in the
+            // build is Darumadrop One, so the one line a player reads before anything else was
+            // the one line in a different typeface. `MenuKit.Font` falls back to the legacy font
+            // itself if the asset is missing, so this is strictly the better of the two paths.
+            _loadingLabel.font = MenuKit.Font;
             _loadingLabel.text = "preparing game";
-            _loadingLabel.fontSize = 18;
+            _loadingLabel.fontSize = MenuKit.MinReadableUnits;
             _loadingLabel.color = new Color(0.03f, 0.03f, 0.03f, 0.72f);
             _loadingLabel.alignment = TextAnchor.MiddleCenter;
             _loadingLabel.raycastTarget = false;
@@ -695,8 +780,8 @@ namespace TumbangPreso.UI
             labelRt.anchorMin = new Vector2(0.5f, 0.0f);
             labelRt.anchorMax = new Vector2(0.5f, 0.0f);
             labelRt.pivot = new Vector2(0.5f, 0.0f);
-            labelRt.anchoredPosition = new Vector2(0.0f, 108.0f);
-            labelRt.sizeDelta = new Vector2(420.0f, 30.0f);
+            labelRt.anchoredPosition = new Vector2(0.0f, 132.0f);
+            labelRt.sizeDelta = new Vector2(560.0f, 34.0f);
 
             var trackGo = new GameObject("ProgressTrack");
             trackGo.transform.SetParent(panelGo.transform, false);
@@ -708,8 +793,13 @@ namespace TumbangPreso.UI
             trackRt.anchorMin = new Vector2(0.5f, 0.0f);
             trackRt.anchorMax = new Vector2(0.5f, 0.0f);
             trackRt.pivot = new Vector2(0.5f, 0.0f);
-            trackRt.anchoredPosition = new Vector2(0.0f, 90.0f);
-            trackRt.sizeDelta = new Vector2(360.0f, 4.0f);
+            // ⚠️ 420 x 6 AT 110 UNITS UP, AND IT WAS 360 x 4 AT 90. A 4-unit rule on white reads
+            // as a hairline rather than as a bar, and 90 units off the bottom of a 1080 canvas
+            // puts it inside the bottom eight per cent, which on the short wide window 🧑 plays in
+            // is the part of the frame closest to the taskbar. The track is the widest thing in
+            // this group and everything else is centred on it.
+            trackRt.anchoredPosition = new Vector2(0.0f, 110.0f);
+            trackRt.sizeDelta = new Vector2(420.0f, 6.0f);
 
             var fillGo = new GameObject("ProgressFill");
             fillGo.transform.SetParent(trackGo.transform, false);

@@ -83,8 +83,25 @@ namespace TumbangPreso.UI
         /// </summary>
         public static QueueCard Build(Transform parent)
         {
-            var go = new GameObject("QueueCard");
+            // ⚠️⚠️ A STRETCHED `RectTransform`, AND WITHOUT IT QUICK MATCH DREW IN THE MIDDLE OF
+            // THE SCREEN, ACROSS THE CAST'S HEADS. 🧑 2026-09-01, over a screenshot of the lobby:
+            // *"fucked up UI"*. `new GameObject("QueueCard")` comes with a plain `Transform`, and
+            // nothing here adds a `Graphic` to this object itself, so it never acquired a
+            // `RectTransform` the way `LobbyJoinPanel` does by putting its scrim on its own root.
+            // **A `RectTransform` whose parent is a plain `Transform` has no parent rect to
+            // resolve against**, so every anchor below it resolved against a zero-sized point at
+            // the canvas centre: the door is anchored to the BOTTOM edge, 96 units up, and it
+            // landed 96 units above the middle of the window instead.
+            //
+            // ⚠️⚠️ THIS IS `SplashScreen.BuildSurface`'S "THE LOGO IS A POSTAGE STAMP" NOTE AND
+            // `CLAUDE.md` § 6.2c QUESTION 1, FOR THE THIRD TIME: **a size and a position are only
+            // correct against the rectangle they are actually measured against**, and when that
+            // rectangle does not exist the failure is silent. `QueueCardLayoutProbe` was green
+            // throughout, because every row inside the card fits the card: the card was in the
+            // wrong place on the screen, and no probe in this repository looks at that.
+            var go = new GameObject("QueueCard", typeof(RectTransform));
             go.transform.SetParent(parent, false);
+            MenuKit.Stretch((RectTransform)go.transform, 0.0f);
 
             var card = go.AddComponent<QueueCard>();
             card.Construct();

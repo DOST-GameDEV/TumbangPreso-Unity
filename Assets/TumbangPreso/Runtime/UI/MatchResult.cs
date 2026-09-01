@@ -563,7 +563,7 @@ namespace TumbangPreso.UI
             // intermission card dims with. Black at half strength leaves the lit arena reading
             // through the standings, which is a large part of why this screen photographed as
             // muddy rather than as a board.
-            MenuKit.Backdrop(canvasGo.transform, new Color(0.015686f, 0.031373f, 0.219608f, 0.72f));
+            MenuKit.Backdrop(canvasGo.transform, new Color(UiTheme.WoodDark.r, UiTheme.WoodDark.g, UiTheme.WoodDark.b, 0.72f));
 
             // ⚠️⚠️ 600 x 340 IS THE .tscn's CARD AND THE PORT DREW 860 x 660. Nearly double the
             // area, with everything inside it placed by hand at a size chosen to fill that area
@@ -853,13 +853,16 @@ namespace TumbangPreso.UI
                 name = "CardFold",
 
                 // ⚠️ CLAMP, NOT REPEAT. A bilinear tap at the edge of a repeating texture wraps
-                // to the opposite side and draws a stray line of navy along the top of the fold.
+                // to the opposite side and draws a stray dark line along the top of the fold.
                 wrapMode = TextureWrapMode.Clamp,
                 filterMode = FilterMode.Bilinear,
             };
 
-            var fill = new Color(0.016f, 0.031f, 0.220f, 1.0f);
-            var clear = new Color(0.016f, 0.031f, 0.220f, 0.0f);
+            // ⚠️ THE FOLD IS WARM INK, NOT NAVY. It was (0.016, 0.031, 0.220), the same colour
+            // this file's scrim used, and it is the corner shadow on every result card.
+            // `CLAUDE.md` § 6.4.
+            var fill = new Color(UiTheme.WoodDark.r, UiTheme.WoodDark.g, UiTheme.WoodDark.b, 1.0f);
+            var clear = new Color(UiTheme.WoodDark.r, UiTheme.WoodDark.g, UiTheme.WoodDark.b, 0.0f);
 
             for (int y = 0; y < FoldSize; y++)
             {

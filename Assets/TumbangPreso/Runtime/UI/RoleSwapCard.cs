@@ -286,7 +286,7 @@ namespace TumbangPreso.UI
             // authors `Color(0.015686, 0.031373, 0.219608, 0.82)` — the same ink the outlines
             // use, near-opaque. At 0.45 black the lit street reads straight through every line
             // of loose text on this card, which is most of why it photographed as mud.
-            MenuKit.Backdrop(canvasGo.transform, new Color(0.015686f, 0.031373f, 0.219608f, 0.82f));
+            MenuKit.Backdrop(canvasGo.transform, new Color(UiTheme.WoodDark.r, UiTheme.WoodDark.g, UiTheme.WoodDark.b, 0.82f));
 
             // ⚠️⚠️ ONE CENTRED COLUMN OF CONTAINERS, NOT A SET OF HAND-PICKED OFFSETS, AND THE
             // PORT REPRODUCED THE VERSION THE ORIGINAL THREW AWAY. `RoleSwapCard.tscn`'s own

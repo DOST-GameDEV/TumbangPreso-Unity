@@ -563,6 +563,77 @@ namespace TumbangPreso.UI
 
             CardCaption(card.transform, "PLAYING AS");
             BuildCharacterButton(card.transform, find, parts);
+
+            CardCaption(card.transform, "YOUR PROFILE");
+            BuildProfileButton(card.transform, parts);
+        }
+
+        /// <summary>
+        /// The door to `PlayerHub`, and it is the ONLY one in the game as of 2026-09-01.
+        ///
+        /// ⚠️⚠️ IT IS A THIRD BLOCK ON A CARD THE PLAYER ALREADY READS, NOT A NEW PLATE BESIDE
+        /// IT. 🧑: *"I think the player shit should live in lobby screen, not play"*, and *"AND
+        /// LOBBY IS WHERE ALL UI SHOULD LIVE"*. The obvious build would have been to install
+        /// `PlayerNameplate` on this screen too, and that is exactly `docs/TODO.md` § 92's fault
+        /// arriving one control at a time: **two identity plates on one screen, in two visual
+        /// languages, each sized against its own corner.** This card already answers "who am I
+        /// and what am I playing"; "and how am I doing" is the same question.
+        ///
+        /// ⚠️⚠️ THE LABEL IS TWO LINES BECAUSE LEVEL AND TIER MUST NEVER BE CONFUSABLE.
+        /// `PlayerNameplate.Refresh` carries the argument in full and it is not repeated here:
+        /// **LEVEL is how long you have played and only goes up; a TIER is how good you are and
+        /// moves both ways.** The value line keeps `LV` on the number and spells the tier as a
+        /// word, so `LV 14 · KAMPEON` cannot be read as one quantity.
+        ///
+        /// ⚠️ AND A FRESH ACCOUNT READS `PROFILE · CAREER · MATCHES` RATHER THAN `LV 1`. § 96:
+        /// the plate that read as a status readout was never pressed by the person who
+        /// commissioned it. A door says what is behind it until there is something of the
+        /// player's own to say instead.
+        /// </summary>
+        private static void BuildProfileButton(Transform parent, Parts parts)
+        {
+            var go = new GameObject("ProfileButton", typeof(RectTransform), typeof(Image));
+            go.transform.SetParent(parent, false);
+
+            var image = go.GetComponent<Image>();
+            image.sprite = GodotTheme.WoodBox(UiTheme.WoodMid, UiTheme.WoodEdge);
+            image.type = Image.Type.Sliced;
+            image.color = Color.white;
+
+            var element = go.AddComponent<LayoutElement>();
+            element.minHeight = CardFieldHeight;
+            element.preferredHeight = CardFieldHeight;
+            element.flexibleHeight = 0.0f;
+
+            var button = go.AddComponent<Button>();
+            button.targetGraphic = image;
+
+            // ⚠️ IT REACTS TO THE POINTER, BECAUSE A CONTROL THAT DOES NOT MOVE IS NOT A CONTROL.
+            // § 6.3, and § 96's receipt one control down: the plate this replaces had a bare
+            // `Button` tint on very dark brown, which is a change nobody can see.
+            go.AddComponent<TextureButtonFeedback>();
+
+            // ⚠️⚠️ THE HINT IS MEASURED AGAINST THE CARD, WHICH IS `CLAUDE.md` § 6.2c QUESTION 4.
+            // `CardWidth` is 330 and `CardPadding` is 14 each side, so the label's box is 302
+            // less this row's own 14 of inset either side: **274 units**. `PROFILE · CAREER ·
+            // MATCHES` at 18 units is about 250, and the version with double spaces around each
+            // dot was about 300 and would have drawn straight off the wood. Nothing on this card
+            // is sized against 1920, for the reason `UiRows.Cap` records.
+            var label = MenuKit.Label(go.transform, "PROFILE · CAREER · MATCHES",
+                MenuKit.MinReadableUnits, UiTheme.Cream, new Vector2(0.5f, 0.5f),
+                Vector2.zero, Vector2.zero, TextAnchor.MiddleCenter);
+            MenuKit.Stretch(label.rectTransform, -14.0f);
+            label.alignment = TextAnchor.MiddleCenter;
+            label.raycastTarget = false;
+
+            // ⚠️ AND IT SHRINKS RATHER THAN OVERFLOWING, because `MenuKit.Label` OVERFLOWS by
+            // default and the failure is silent: the control does not shrink, it draws over its
+            // neighbour or off the edge. `Fit` stops at `MinReadableUnits`, so a string that
+            // cannot fit at 18 is still a defect and still visible.
+            MenuKit.Fit(label, CardWidth - (CardPadding * 2.0f) - 28.0f);
+
+            parts.ProfileButton = button;
+            parts.ProfileValue = label;
         }
 
         /// <summary>One amber caption line inside the player card. ⚠️ AT
@@ -855,6 +926,11 @@ namespace TumbangPreso.UI
 
             /// <summary>The small line under it: the can and the slipper.</summary>
             public Text CharacterLoadout;
+
+            /// <summary>The door to `PlayerHub`, and the line on it. See
+            /// <see cref="BuildProfileButton"/>.</summary>
+            public Button ProfileButton;
+            public Text ProfileValue;
 
             /// <summary>Raised when the player finishes editing their name in the card, so the
             /// screen can push it to the lobby rather than waiting for the next redraw.</summary>

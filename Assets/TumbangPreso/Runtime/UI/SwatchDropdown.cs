@@ -54,7 +54,9 @@ namespace TumbangPreso.UI
 
         /// <summary>The unselected ring. Mid grey so it reads as "not chosen" without competing
         /// with the swatch beside it.</summary>
-        private static readonly Color RingGrey = new Color(0.62f, 0.64f, 0.68f, 1.0f);
+        // ⚠️ WARM, NOT COOL. It was (0.62, 0.64, 0.68), a blue-grey, which is `CLAUDE.md` § 6.4's
+        // rule broken by a ring rather than by an outline. Same value, no blue in it.
+        private static readonly Color RingGrey = new Color(0.66f, 0.62f, 0.56f, 1.0f);
 
         public static Dropdown Build(Transform parent, IList<Option> options, int initial,
                                      Vector2 size, Action<int> onChanged)

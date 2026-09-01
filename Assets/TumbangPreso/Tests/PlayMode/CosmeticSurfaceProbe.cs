@@ -13,8 +13,9 @@ using UnityEngine.UI;
 namespace TumbangPreso.PlayTests
 {
     /// <summary>
-    /// The two surfaces Phase 5 produced that a player can press or read: the COLOURS row on the
-    /// character picker, and the banner title on a lobby plate. `docs/TODO.md` § 101.
+    /// What Phase 5 left on screen after the colour controls were deleted: the hero picker's
+    /// column, asserted to carry NO colour control at all, and the banner title on a lobby plate.
+    /// `docs/TODO.md` § 101 and § 114.6.
     ///
     /// ⚠️⚠️ IT EXISTS BECAUSE `FUTURE.md` § 0.5b SAYS A PHASE MAY NOT CALL A SCREEN DONE WITHOUT
     /// ONE, AND BECAUSE THE SAME SECTION SAYS A GREEN PROBE IS NOT A GOOD SCREEN. So this does
@@ -129,126 +130,68 @@ namespace TumbangPreso.PlayTests
         }
 
         /// <summary>
-        /// ⚠️⚠️ THE ASSERTION THAT WOULD HAVE CAUGHT § 101.1 FROM THE UI SIDE. Before the fix,
-        /// `BannerRules.Earned` answered two palettes and `PaletteRules.IsKnownVariant` refused
-        /// both, so `RefreshPaletteRow` filtered the list to nothing and drew no row at all — on
-        /// an account that owns two. **The feature would have looked unbuilt rather than broken**,
-        /// which is the failure mode § 91.8 is about.
+        /// ⚠️⚠️ THE COLOUR CONTROLS ARE DELETED AND THIS IS THE RULE STATED AS A TEST RATHER THAN
+        /// AS A COMMENT. 🧑 2026-09-01, twice: *"this shit shiuld be gone the clothes color and
+        /// soft bold and shit"*, and *"I asked for this shhit to be removed before, the color
+        /// shit for the chracters bcz i wanted customization to eb for the make your own only"*.
+        /// `docs/TODO.md` § 114.6.
+        ///
+        /// ⚠️⚠️ IT REPLACES TWO CASES THAT ASSERTED THE OPPOSITE, AND WHAT THEY WERE PROTECTING
+        /// IS WORTH RECORDING BECAUSE IT IS STILL TRUE OF THE CORE. § 101.1: `BannerRules.Earned`
+        /// answered two palettes while `PaletteRules.IsKnownVariant` refused both, so the row
+        /// filtered its list to nothing and drew nothing at all on an account that owned two.
+        /// **The feature looked unbuilt rather than broken.** That fault lives in the CORE and is
+        /// still covered, by `CosmeticsWireTests`, which is why deleting the picker did not
+        /// delete the assertion: the rule about naming a variant by the tail of its id has not
+        /// changed and a palette still crosses the wire.
+        ///
+        /// ⚠️ THE THING THIS CASE EXISTS TO CATCH IS SOMEBODY PUTTING A COLOUR CONTROL BACK ON
+        /// THE HERO TABS. It asserts absence by NODE NAME across all three of the names the
+        /// deleted builders used, because a re-added row would almost certainly be built from the
+        /// same code and carry the same names.
         /// </summary>
         [UnityTest]
-        public IEnumerator TheColoursRowDrawsOneSwatchPerOwnedPaletteAndOneForDefault()
+        public IEnumerator NoHeroTabDrawsAnyColourControlAtAll()
         {
             var report = new StringBuilder();
 
+            // ⚠️ SEEDED WITH TWO OWNED PALETTES, WHICH IS THE STATE THE DELETED ROW WOULD HAVE
+            // DRAWN IN. Asserting absence on a fresh account would pass against code that still
+            // builds the row, because the row hid itself when nothing was owned.
             SeedTwoPalettes();
             yield return OpenThePicker(report);
 
-            var row = Find("PaletteRow");
-            Assert.IsNotNull(row,
-                "the picker drew no COLOURS row for an account that owns two palettes. Either " +
-                "the ownership check refused an id it should know (docs/TODO.md § 101.1) or the " +
-                "row is no longer built in RefreshTraits.");
+            foreach (string node in new[] { "PaletteRow", "CLOTHESRow", "STRENGTHRow" })
+                Assert.IsNull(Find(node),
+                    $"the hero picker drew `{node}`. Colour customisation for the preset cast is " +
+                    "deleted: it is MAKE YOUR OWN only (docs/TODO.md § 114.6). If this is being " +
+                    "put back, it has to be measured BEFORE the column is sized, because the " +
+                    "version that shipped drew straight through the ability list.");
 
-            int swatches = 0;
-            foreach (Transform child in row.transform)
-                if (child.name.StartsWith("Swatch_")) swatches++;
+            // ⚠️⚠️ AND THE ABILITY LIST IS CLEAR, WHICH IS THE HALF THE NODE NAMES CANNOT SAY.
+            // The fault in his screenshot was an OVERLAP: `AS DRAWN` and `BOLD` printed through
+            // SEISMIC STOMP's row. § 102.4 is the same shape and its lesson is that the overflow
+            // was vertical while every check in the project measured horizontally. So this asks
+            // the column whether its rows fit inside it.
+            var rows = Find("StatRows") ?? Find("Rows");
 
-            Assert.AreEqual(3, swatches,
-                $"the COLOURS row drew {swatches} swatches. Two owned palettes plus DEFAULT is " +
-                "three, and DEFAULT is not optional: without it there is no way back from a " +
-                "variant, which CLAUDE.md 6.3 calls a dead end.");
-
-            // ⚠️ THE CAPTION CLEARS THE FLOOR LIKE EVERY OTHER LABEL IN THE GAME.
-            // `MenuKit.MinReadableUnits` is 18 and `PlayerHubLayoutProbe` records what failing it
-            // cost the first build of the hub screens.
-            var caption = row.GetComponentInChildren<Text>(true);
-            Assert.IsNotNull(caption, "the COLOURS row has no caption");
-            Assert.GreaterOrEqual(caption.fontSize, MenuKit.MinReadableUnits,
-                $"the COLOURS caption is {caption.fontSize} units, under the {MenuKit.MinReadableUnits} floor.");
-
-            report.AppendLine($"colours row: {swatches} swatches, caption {caption.fontSize}u");
-
-            // ⚠️⚠️ THE SWATCHES ARE NOT ALL THE SAME COLOUR, WHICH IS THE ASSERTION THE WHOLE
-            // CONTROL TURNS ON. `RepresentativeSlot` picks by saturation precisely because slot 0
-            // is an off-white on several of the cast, and three identical grey squares is a
-            // control that looks broken rather than subtle. **A row of swatches that cannot be
-            // told apart is worse than no row.**
-            var colours = new List<Color>();
-            foreach (Transform child in row.transform)
+            if (rows != null && rows.TryGetComponent<RectTransform>(out var rect))
             {
-                if (!child.name.StartsWith("Swatch_")) continue;
-                var image = child.GetComponent<Image>();
-                if (image != null) colours.Add(image.color);
+                float used = 0.0f;
+                foreach (RectTransform child in rect)
+                    if (child.gameObject.activeSelf) used += LayoutUtility.GetPreferredHeight(child);
+
+                report.AppendLine($"picker column: {used:F0} used of {rect.rect.height:F0}");
+
+                Assert.LessOrEqual(used, rect.rect.height + 2.0f,
+                    $"the picker's rows want {used:F0} units in a {rect.rect.height:F0} unit " +
+                    "column, so something is drawing on top of something else. That is exactly " +
+                    "what the deleted colour rows did.");
             }
 
-            for (int i = 0; i < colours.Count; i++)
-                for (int j = i + 1; j < colours.Count; j++)
-                {
-                    float apart = Mathf.Abs(colours[i].r - colours[j].r)
-                                + Mathf.Abs(colours[i].g - colours[j].g)
-                                + Mathf.Abs(colours[i].b - colours[j].b);
-
-                    Assert.Greater(apart, 0.05f,
-                        $"swatch {i} and swatch {j} are the same colour ({colours[i]}). The " +
-                        "variants are hue rotations of one slot, so this means the slot the " +
-                        "swatch samples carries no hue: see ConvertedCharacterSelect." +
-                        "RepresentativeSlot.");
-                }
-
-            yield return Shoot("10-picker-colours");
-
-            // ⚠️ AND THE PRESSED STATE, because a control with no visible selection is a control
-            // a player presses twice. The ring is a separate object precisely so this can be
-            // asserted without measuring the swatch's own colour.
-            foreach (Transform child in row.transform)
-            {
-                if (!child.name.StartsWith("Swatch_") || child.name.EndsWith("default")) continue;
-
-                var button = child.GetComponent<Button>();
-                Assert.IsNotNull(button, $"{child.name} is not pressable");
-                button.onClick.Invoke();
-                break;
-            }
-
-            for (int i = 0; i < 4; i++) yield return null;
-
-            yield return Shoot("11-picker-colours-picked");
+            yield return Shoot("10-picker-no-colour-controls");
 
             Debug.Log($"[Cosmetics]\n{report}");
-        }
-
-        /// <summary>
-        /// ⚠️⚠️ THE EMPTY STATE, WHICH `FUTURE.md` § 0.5b QUESTION 3 SAYS GETS DESIGNED RATHER
-        /// THAN LEFT OVER, AND WHICH IS THE STATE EVERY NEW PLAYER IS IN. A fresh account owns no
-        /// palette, so there must be no COLOURS row at all: a caption with one dead swatch beside
-        /// it is the fifteen rows of `0/0 (needs 10 throws)` that taught a new player the game was
-        /// broken (`docs/TODO.md` § 92.1 fault 4).
-        ///
-        /// ⚠️ AND IT PHOTOGRAPHS THE COLUMN WITHOUT THE ROW, so the two shots in `Logs/ui/` are a
-        /// before and after of the same screen. `CLAUDE.md` § 6.2b's first row: every state, not
-        /// the one you built first.
-        /// </summary>
-        [UnityTest]
-        public IEnumerator AFreshAccountGetsNoColoursRowAtAll()
-        {
-            var report = new StringBuilder();
-
-            var profile = GameServices.Career?.Profile;
-            Assert.IsNotNull(profile, "no career profile to empty");
-
-            _mastery = profile.Mastery;
-            SnapshotLoadouts();
-            profile.Mastery = new List<MasteryRecord>();
-
-            yield return OpenThePicker(report);
-
-            Assert.IsNull(Find("PaletteRow"),
-                "an account that owns no palette was still shown a COLOURS row. A control whose " +
-                "only option is the one you already have is not a control.");
-
-            yield return Shoot("12-picker-no-colours");
-
-            Debug.Log($"[Cosmetics] empty state {report}");
         }
 
         /// <summary>

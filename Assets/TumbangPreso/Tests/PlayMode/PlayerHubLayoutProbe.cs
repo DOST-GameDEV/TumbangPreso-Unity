@@ -231,14 +231,15 @@ namespace TumbangPreso.PlayTests
         }
 
         /// <summary>
-        /// The boot account screen: it appears once, one press leaves it, and it never returns.
+        /// LOGIN, step 3 of the boot sequence: it appears on EVERY launch, one press leaves it,
+        /// and a returning player is not asked anything at all.
         ///
         /// ⚠️⚠️ THIS IS THE TEST THAT MAKES THE BOOT GATE ACCEPTABLE, AND WITHOUT IT THE FEATURE
         /// SHOULD NOT SHIP. `FUTURE.md` PHASE 1's rule is *"never block a first-time player on a
         /// form"* and `docs/TODO.md` § 92.3 called the boot behaviour the one thing that must not
-        /// move. 🧑 moved it, and the only reason both positions can be true is that **CONTINUE
-        /// AS GUEST is one press and needs no network.** That is a property, so it gets an
-        /// assertion rather than a paragraph.
+        /// move. 🧑 moved it twice, and the only reason all three positions can be true is that
+        /// **CONTINUE AS GUEST is one press and needs no network.** That is a property, so it
+        /// gets an assertion rather than a paragraph.
         ///
         /// ⚠️⚠️ AND `GameServices.Account` IS NULL IN THIS PROBE, WHICH IS THE POINT RATHER THAN
         /// A LIMITATION. It is the state of a machine that has never reached the service: no
@@ -246,12 +247,17 @@ namespace TumbangPreso.PlayTests
         /// work, this case goes red**, which is exactly the regression worth catching, because
         /// the venue at the nationals has no internet and this screen is now in front of the game.
         ///
-        /// ⚠️ IT ASSERTS THE SECOND INSTALL TOO. A gate that reopens every launch is a nag, and
-        /// the difference between "once" and "every time" is one setting nobody would notice was
-        /// wrong until a player complained.
+        /// ⚠️⚠️ THE "ONCE PER MACHINE" HALF OF THIS CASE IS GONE AND IT WAS DELETED ON PURPOSE,
+        /// NOT LOST. `docs/TODO.md` § 114.5: 🧑 asked for LOGIN on every launch, with a player who
+        /// already has an account passed through on its own. So the second install now asserts
+        /// the OPPOSITE of what it used to: the screen is there again, and it leaves by itself.
+        ///
+        /// ⚠️ IT DRIVES `SignInScreen` DIRECTLY RATHER THAN THROUGH `PlayerNameplate`, because
+        /// the plate no longer owns this step and a fixture that goes through a component the
+        /// game does not install is a fixture that can pass while the real path is broken.
         /// </summary>
         [UnityTest]
-        public IEnumerator TheBootAccountScreenIsOfferedOnceAndOnePressLeavesIt()
+        public IEnumerator TheLoginStepAppearsEveryLaunchAndOnePressLeavesIt()
         {
             var report = new StringBuilder();
             var settings = Settings.SettingsStore.Current;
@@ -259,36 +265,27 @@ namespace TumbangPreso.PlayTests
 
             settings.AccountChoiceMade = false;
 
-            // ⚠️ THE PROBE HAS TO CLAIM A BOOT, because the gate is `SceneFlow.BootedThroughSplash`
-            // and this case did not come through the splash. Setting it here is the difference
-            // between testing the feature and testing the guard that stops it firing everywhere
-            // else; `Boot` below leaves it alone and relies on the flag instead.
-            SceneFlow.BootedThroughSplash = true;
-
             _host = new GameObject("BootProbeHost");
-            var nameplate = _host.AddComponent<PlayerNameplate>();
-            nameplate.Install();
+            var signIn = _host.AddComponent<SignInScreen>();
+            signIn.Install();
+            signIn.OpenAtBoot();
             yield return null;
             yield return null;
-
-            var signIn = _host.GetComponent<SignInScreen>();
-            Assert.IsNotNull(signIn, "the nameplate did not install a sign-in screen");
 
             // ⚠️ `SignInRoot`, NOT `SignInCanvas`. `Close` deactivates the ROOT and leaves the
             // canvas alone, so asserting on the canvas asks whether the screen exists rather than
             // whether it is showing, and it answers yes for ever. The first version of this case
             // reported "one press did not leave the screen" against a press that worked.
-            var canvas = Root("SignInRoot");
-            Assert.IsNotNull(canvas, "the sign-in screen built no root");
-            Assert.IsTrue(canvas.gameObject.activeInHierarchy,
-                "a machine that has never answered the account question reached the menu without " +
-                "being asked. GameSettings.AccountChoiceMade is what gates this.");
+            var root = Root("SignInRoot");
+            Assert.IsNotNull(root, "the sign-in screen built no root");
+            Assert.IsTrue(root.gameObject.activeInHierarchy,
+                "the LOGIN step did not appear. It is step 3 of five and every launch gets it.");
 
             // ⚠️ THE CAPTION IS ASSERTED, NOT JUST THE BUTTON. At boot the same control means
             // "keep the account you already have"; from the ACCOUNT tab it means the TOURNAMENT
             // guest, which parks the owner's profile. Two behaviours behind one word is the
             // confusion this screen was rebuilt to remove.
-            var guest = ButtonReading(canvas, "CONTINUE AS GUEST");
+            var guest = ButtonReading(root, "CONTINUE AS GUEST");
             Assert.IsNotNull(guest,
                 "there is no CONTINUE AS GUEST on the boot screen. It is the one press that " +
                 "makes a boot gate acceptable rather than a wall.");
@@ -297,31 +294,42 @@ namespace TumbangPreso.PlayTests
             // change with the mode, so `GetComponentsInChildren<Button>(true)` finds it either
             // way. The first version of this assertion looked for absence and failed against
             // code that was correct, which is a test reporting its own wrong question.
-            var back = ButtonReading(canvas, "BACK");
+            var back = ButtonReading(root, "BACK");
             Assert.IsFalse(back != null && back.gameObject.activeInHierarchy,
                 "the boot screen shows BACK, which at boot dismisses to nothing at all");
+
+            // ⚠️ AND WITH NO ACCOUNT ATTACHED THERE IS NO WELCOME-BACK STATE. A machine that has
+            // never signed in must meet the form, not a greeting addressed to nobody.
+            var greeting = ButtonReading(root, "CONTINUE");
+            Assert.IsFalse(greeting != null && greeting.gameObject.activeInHierarchy,
+                "an unattached machine was greeted by name rather than shown the form");
 
             guest.onClick.Invoke();
             yield return null;
 
-            Assert.IsFalse(canvas.gameObject.activeInHierarchy,
+            Assert.IsFalse(root.gameObject.activeInHierarchy,
                 "one press of CONTINUE AS GUEST did not leave the screen");
             Assert.IsTrue(settings.AccountChoiceMade,
-                "the answer was not recorded, so the screen would ask again on the next launch");
+                "the answer was not recorded, and `ShouldOfferUpgrade` reads that flag");
 
-            // The second boot: a fresh nameplate on a machine that has now answered.
+            // ⚠️⚠️ THE SECOND LAUNCH ASSERTS THE NEW RULE, WHICH IS THE OPPOSITE OF THE OLD ONE.
+            // The screen comes back. What must NOT come back is a question: with an account
+            // attached it is the welcome-back state, and it lets go on its own.
             Object.DestroyImmediate(_host);
             _host = new GameObject("BootProbeHostAgain");
-            _host.AddComponent<PlayerNameplate>().Install();
+            var second = _host.AddComponent<SignInScreen>();
+            second.Install();
+            second.OpenAtBoot();
             yield return null;
             yield return null;
 
-            var second = Root("SignInRoot");
-            Assert.IsFalse(second != null && second.gameObject.activeInHierarchy,
-                "the account screen opened again after it had been answered, which is a nag " +
-                "rather than a choice");
+            var secondRoot = Root("SignInRoot");
+            Assert.IsNotNull(secondRoot, "the second launch built no sign-in root");
+            Assert.IsTrue(secondRoot.gameObject.activeInHierarchy,
+                "LOGIN did not appear on the second launch. It is every launch now, not once " +
+                "per machine (docs/TODO.md § 114.5).");
 
-            report.AppendLine("boot screen offered once, one press left it, second boot silent");
+            report.AppendLine("login step shown on both launches, one press left the first");
             Write("boot-account", report);
         }
 
@@ -386,6 +394,12 @@ namespace TumbangPreso.PlayTests
                 if (c != null && !c.name.StartsWith("PlayerHub") && !c.name.StartsWith("SignIn")
                     && !c.name.StartsWith("Nameplate"))
                     c.enabled = false;
+
+            // ⚠️ THE MODE IS STATED RATHER THAN INHERITED. `PlayerHub._mode` reads
+            // `SceneFlow.SelectedMode`, which is process state any earlier case could have left
+            // anywhere, and a fixture that seeds one mode while the hub opens on another draws
+            // the empty career. Say it out loud so the two cannot drift.
+            SceneFlow.SelectedMode = GameMode.HeroStrike;
 
             SeedCareer(report);
 
@@ -555,7 +569,16 @@ namespace TumbangPreso.PlayTests
                 var record = new MatchRecord
                 {
                     MatchId = $"shot-{m}",
-                    Mode = GameMode.Classic.ToString(),
+
+                    // ⚠️⚠️ HERO STRIKE, AND IT WAS CLASSIC. `PlayerHub._mode` follows
+                    // `SceneFlow.SelectedMode` now (`docs/TODO.md` § 114.12), which defaults to
+                    // Hero Strike: it is the mode the lobby lands in and the mode the ranked
+                    // ladder is on. A fixture seeded in the OTHER mode makes the career tab draw
+                    // its empty state, and this case then reported that a group header was
+                    // missing from a tab that had correctly decided it had nothing to show.
+                    // ⚠️ IT ALSO MEANS THE ABILITY BUILDS GROUP IS PHOTOGRAPHED AT LAST, which is
+                    // Hero Strike only and is how § 114.12's overflowing subtitle was found.
+                    Mode = GameMode.HeroStrike.ToString(),
                     MapId = m % 2 == 0 ? "eskinita" : "ilalim_ng_tulay",
                     Rounds = Balance.Rounds,
                     DurationSeconds = 372.0f,
@@ -646,8 +669,30 @@ namespace TumbangPreso.PlayTests
                 removed++;
             }
 
+            // ⚠️⚠️ AND THE MENU'S OWN LOGIN STEP, WHICH IS NEW ON 2026-09-01 AND IS THE SAME
+            // CLASS OF HAZARD ONE SCREEN ALONG. `ConvertedMainMenu.OfferTheLoginStep` installs a
+            // `SignInScreen` at boot, `Root("SignInRoot")` answers by NAME, and this probe builds
+            // its own; with two live instances a case can measure the menu's, which is closed,
+            // and report "the sign-in screen drew no labels" about a screen that is fine. That is
+            // the exact failure the nameplate paragraph above records, and it moved with the door.
+            int logins = 0;
+            foreach (var screen in Object.FindObjectsByType<SignInScreen>(
+                         FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                Object.DestroyImmediate(screen);
+                logins++;
+            }
+
+            foreach (var canvas in Object.FindObjectsByType<Canvas>(
+                         FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                if (canvas != null && canvas.name == "SignInCanvas")
+                    Object.DestroyImmediate(canvas.gameObject);
+            }
+
             yield return null;
-            report.AppendLine($"loaded MainMenu, removed {removed} pre-existing nameplate(s)");
+            report.AppendLine(
+                $"loaded MainMenu, removed {removed} nameplate(s) and {logins} login screen(s)");
         }
 
         private IEnumerator Boot(StringBuilder report)

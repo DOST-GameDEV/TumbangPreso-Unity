@@ -77,112 +77,49 @@ namespace TumbangPreso.EditorTools
         }
 
         /// <summary>
-        /// Puts the studio's mark on the one screen the engine insists on drawing.
+        /// The engine splash: white, Unity's mark alone, and nothing of ours on it.
         ///
-        /// ⚠️⚠️ UNITY'S SPLASH CANNOT BE TURNED OFF ON THIS LICENCE, so the alternative is not
-        /// "no engine logo", it is an unbranded engine logo in front of the game's own opening
-        /// animation. Adding the BH Studios mark beside it and matching the background to the
-        /// menu's navy makes the two read as one sequence rather than as an interruption. The
-        /// boot sting starts before this screen (see <c>BootSting</c>), so it has sound too.
+        /// ⚠️⚠️ THIS REVERSES `docs/TODO.md` § 111.1, WHICH PUT THE BH STUDIOS MARK ON THIS
+        /// SCREEN, AND THE REVERSAL WAS ASKED FOR BY NAME. 🧑 2026-09-01, over a screenshot of
+        /// exactly what that entry built: *"remove bh studios here and use white screen for unity
+        /// too"*. **The studio mark is not lost, it moved to its own beat**: the boot sequence is
+        /// UNITY (white) then BH STUDIOS (the video in `SplashScreen.unity`, also white) then
+        /// LOGIN. § 114.1 and § 114.2.
+        ///
+        /// ⚠️⚠️ THE SAME MARK ON NAVY AND THEN ON WHITE IS WHY. § 111.1 matched this screen to
+        /// "the menu's own navy" so the two would read as one sequence; the sting itself is a
+        /// black mark on white, so what actually shipped was the studio's logo twice, in two
+        /// background colours, with a hard colour cut between them. White here and white there is
+        /// one continuous frame, which is what that entry was trying to buy.
+        ///
+        /// ⚠️⚠️ AND THIS METHOD IS WHY THE `ProjectSettings.asset` FIELDS ARE NOT ENOUGH ON THEIR
+        /// OWN. It runs on EVERY build and writes `backgroundColor`, `logos` and `unityLogoStyle`
+        /// over whatever the asset holds, so a change made only in the inspector survives exactly
+        /// until the next build and then silently reverts. **Both places or neither.**
+        ///
+        /// ⚠️ `showUnityLogo` STAYS TRUE AND MUST. Unity's splash is not removable on this
+        /// licence, which is the fact `BootSting`'s header records and the reason the sting is
+        /// timed to play across it. `DarkOnLight` is what makes the engine mark legible now that
+        /// the background is white.
+        ///
+        /// ⚠️ THE LOGO LOOKUP IS DELETED WITH THE LOGO. It was force-import, `LoadAllAssetsAtPath`
+        /// for the sub-asset, a `spriteImportMode` repair and a `Resources` fallback, and every
+        /// one of those lines existed to get `bh_studios_logo.png` onto THIS screen. Nothing else
+        /// in the project reads a Sprite from that file. **The file itself is kept**: it is still
+        /// the source of the in-game sting's own artwork.
         /// </summary>
-        /// ⚠️⚠️ THE LOGO IS FORCE-IMPORTED BEFORE IT IS LOOKED UP, AND A BUILD SHIPPED
-        /// WITHOUT IT BECAUSE IT WAS NOT. 🧑, opening the 2026-08-31 player: *"doesnt start with
-        /// BH STUDIOS anymroe in loading screeN"*. `Logs/gr_build.log` line 512 shows Unity
-        /// IMPORTING `bh_studios_logo.png` **four lines after** this method had already given up on
-        /// it: in a cold batchmode session the asset had not been through the import queue yet, so
-        /// `LoadAssetAtPath` answered null AND `AssetImporter.GetAtPath` answered null, and the
-        /// retry below it could not run either. The whole thing degraded to one `LogWarning` in an
-        /// eight-thousand-line log and the build succeeded without the studio's mark on it.
-        ///
-        /// ⚠️⚠️ IT IS THE SAME TRAP `CLAUDE.md` § 6.1 ALREADY RECORDS ONE SYSTEM OVER:
-        /// *"Force-reimport sub-assets before rendering. Rebuilding a pet or accessory `.glb` from
-        /// Python changes the file on disk while Unity keeps the old one in memory."* Here it is
-        /// the other direction, a file on disk Unity has not read yet, and the answer is the same
-        /// call.
-        ///
-        /// ⚠️ AND THE FAILURE IS AN ERROR NOW, NOT A WARNING. A warning about branding is a
-        /// warning nobody sees. `Debug.LogError` is what a batch run's caller can grep for, and it
-        /// names the path so the next person does not have to find it.
         private static void ConfigureSplash()
         {
-            const string LogoPath = "Assets/TumbangPreso/Art/ui/brand/bh_studios_logo.png";
-
-            AssetDatabase.ImportAsset(LogoPath,
-                ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
-
-            // ⚠️⚠️ `LoadAllAssetsAtPath` RATHER THAN `LoadAssetAtPath<Sprite>`, AND THIS IS THE
-            // ACTUAL CAUSE OF THE MISSING MARK. `bh_studios_logo.png.meta` has carried
-            // **`spriteMode: 2`** since the project was stood up in `2385c4c5`, which is
-            // `SpriteImportMode.Multiple`: the sprites are SUB-ASSETS and the MAIN asset of the
-            // file is a `Texture2D`. `LoadAssetAtPath<Sprite>` only ever returns the main asset,
-            // so it answered null for a file that is present, correct and imported as a Sprite.
-            // **A null here is indistinguishable from a missing file and it was reported as one.**
-            //
-            // ⚠️ THE META IS NOT REWRITTEN TO `Single` TO FIX IT. Changing a shared importer
-            // setting to satisfy one reader is how the next reader breaks; taking the first sprite
-            // out of the file works for `Single` and `Multiple` alike and touches nothing.
-            Sprite logo = null;
-
-            foreach (var asset in AssetDatabase.LoadAllAssetsAtPath(LogoPath))
-            {
-                if (asset is Sprite sprite) { logo = sprite; break; }
-            }
-
-            if (logo == null)
-            {
-                var importer = AssetImporter.GetAtPath(LogoPath) as TextureImporter;
-
-                if (importer != null)
-                {
-                    // ⚠️⚠️ `spriteImportMode = Single` IS THE REPAIR AND `Multiple` WAS THE BUG.
-                    // The `.meta` carried `spriteMode: 2` from `2385c4c5`, and **`Multiple` with no
-                    // sprite rects defined produces ZERO sprites**: not a sprite in the wrong
-                    // place, none at all. `LoadAllAssetsAtPath` therefore found nothing either,
-                    // which is why the second build still shipped without the mark. The committed
-                    // `.meta` is `Single` now; this line is what heals a checkout that is not.
-                    //
-                    // ⚠️ NOTHING ELSE IN THE PROJECT LOADS A SPRITE FROM THIS FILE, checked before
-                    // changing a shared importer setting. `GameBuilder` is its only reader.
-                    importer.textureType = TextureImporterType.Sprite;
-                    importer.spriteImportMode = SpriteImportMode.Single;
-                    importer.SaveAndReimport();
-
-                    foreach (var asset in AssetDatabase.LoadAllAssetsAtPath(LogoPath))
-                        if (asset is Sprite sprite) { logo = sprite; break; }
-                }
-            }
-
-            // ⚠️ AND `Resources` IS THE LAST RESORT, because the same picture is shipped at
-            // `Resources/UI/brand/bh_studios_logo.png` for the in-game boot sting and a build that
-            // has one copy has both.
-            if (logo == null)
-            {
-                var fallback = Resources.Load<Sprite>("UI/brand/bh_studios_logo");
-                if (fallback != null) logo = fallback;
-            }
-
             PlayerSettings.SplashScreen.show = true;
             PlayerSettings.SplashScreen.showUnityLogo = true;
             PlayerSettings.SplashScreen.animationMode = PlayerSettings.SplashScreen.AnimationMode.Dolly;
-            PlayerSettings.SplashScreen.unityLogoStyle = PlayerSettings.SplashScreen.UnityLogoStyle.LightOnDark;
+            PlayerSettings.SplashScreen.unityLogoStyle = PlayerSettings.SplashScreen.UnityLogoStyle.DarkOnLight;
             PlayerSettings.SplashScreen.drawMode = PlayerSettings.SplashScreen.DrawMode.UnityLogoBelow;
 
-            // The menu's own navy, so the engine logo hands over to the sting without a flash.
-            PlayerSettings.SplashScreen.backgroundColor = new Color(0.0157f, 0.0314f, 0.2196f, 1.0f);
+            PlayerSettings.SplashScreen.backgroundColor = Color.white;
 
-            if (logo == null)
-            {
-                Debug.LogError("[Build] NO BH STUDIOS LOGO FOR THE SPLASH. Expected a Sprite at "
-                               + LogoPath + " or Resources/UI/brand/bh_studios_logo. The player "
-                               + "will boot on the engine logo alone, which is the fault reported "
-                               + "on 2026-08-31. docs/TODO.md 111.1.");
-                return;
-            }
-
-            PlayerSettings.SplashScreen.logos = new[]
-            {
-                PlayerSettings.SplashScreenLogo.Create(2.0f, logo),
-            };
+            // ⚠️ EMPTY, NOT UNSET. An unassigned array leaves whatever the last build wrote.
+            PlayerSettings.SplashScreen.logos = new PlayerSettings.SplashScreenLogo[0];
         }
 
         /// <summary>

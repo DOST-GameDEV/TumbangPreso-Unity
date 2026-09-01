@@ -77,12 +77,16 @@ namespace TumbangPreso.PlayTests
             if (leaked != null) Object.Destroy(leaked.gameObject);
 
             // ⚠️⚠️ AND IT LEAVES AN EMPTY SCENE, FOR THE REASON `MatchRecordIdentityProbe`'s
-            // teardown records at length. This one loads `MainMenu`, which has a
-            // `PlayerNameplate` and a `PlayerHub` of its own, and `PlayerHubLayoutProbe` looks
-            // its hub up by object name: handing it a menu means `GameObject.Find` can answer
-            // with the MENU's hub, which is closed, and the probe measures a screen nobody
-            // opened. It reported "the PROFILE tab drew no labels at all" about a tab that was
-            // fine, on a hub it had never touched.
+            // teardown records at length. This one loads `MainMenu`, and `PlayerHubLayoutProbe`
+            // looks its hub up by object name: handing it a scene carrying a second hub means
+            // `GameObject.Find` can answer with that one, which is closed, and the probe measures
+            // a screen nobody opened. It reported "the PROFILE tab drew no labels at all" about a
+            // tab that was fine, on a hub it had never touched.
+            //
+            // ⚠️ THE MENU'S OWN HUB IS GONE SINCE 2026-09-01 (`docs/TODO.md` § 114.7: the door
+            // moved to the lobby), so the specific collision above cannot happen from THIS scene
+            // any more. **Blanking stays**, because the menu now installs a `SignInScreen` at
+            // boot instead and `Root("SignInRoot")` is looked up the same way.
             yield return Blank();
         }
 

@@ -44,6 +44,14 @@ namespace TumbangPreso.UI
         /// </summary>
         protected override bool Cancel()
         {
+            // ⚠️⚠️ THE HUB ANSWERS ITS OWN ESCAPE AND THIS SCREEN MUST NOT ANSWER THE SAME ONE.
+            // `ConvertedScreen.Update` and `PlayerHub.Update` both read `GetKeyDown` on the frame
+            // the key goes down, so without this line one press closes the hub AND stops the
+            // transport and drops the player on the title screen. Returning true consumes the
+            // press here without doing anything, which is `CLAUDE.md` § 6.3's innermost-layer
+            // rule: the hub is the inner layer and it has already handled it.
+            if (_hub != null && _hub.IsOpen) return true;
+
             if (_joinPanel != null && _joinPanel.IsOpen)
             {
                 _joinPanel.Close();
@@ -102,6 +110,21 @@ namespace TumbangPreso.UI
 
         /// <summary>The lobby's chat log and entry field. See <see cref="LobbyChat"/>.</summary>
         private LobbyChat _chat;
+
+        /// <summary>
+        /// PROFILE, FRIENDS, CAREER, MATCHES and ACCOUNT, opened from the player card.
+        ///
+        /// ⚠️⚠️ IT LIVES ON THIS SCREEN SINCE 2026-09-01 AND IT USED TO LIVE ON THE TITLE SCREEN.
+        /// 🧑: *"I think the player shit should live in lobby screen, not play"*, and *"the ui rn
+        /// is so confusing i dont know where anything that was developed phase 1-10 onwards
+        /// live"*. `docs/TODO.md` § 114.7 has the journey table; the short version is that nine
+        /// phases of features landed in two different places and the player had to know which
+        /// before they could look. **Everything about the player is one press from PLAY now.**
+        ///
+        /// ⚠️ `ConvertedMainMenu` NO LONGER INSTALLS `PlayerNameplate`, so this is the only hub
+        /// in the game and there is no window where two exist.
+        /// </summary>
+        private PlayerHub _hub;
 
         /// <summary>
         /// What each seat is wearing, rebuilt on every refresh and handed to the cast.
@@ -297,6 +320,8 @@ namespace TumbangPreso.UI
             // lobby still read `PLAYER 3`. `PublishName` is the push, and it hangs off the field's
             // own commit rather than off a redraw, because a redraw is not what changed the name.
             if (_chrome != null) _chrome.NameCommitted = PublishName;
+
+            InstallPlayerHub();
 
             BuildChat();
 
@@ -800,6 +825,97 @@ namespace TumbangPreso.UI
             _onlineButton.gameObject.AddComponent<LayoutElement>().minHeight = 44;
 
             _lobbyEntryRow = row;
+        }
+
+        /// <summary>
+        /// Installs the hub and hangs it off the player card's YOUR PROFILE row.
+        ///
+        /// ⚠️ THE HUB INSTALLS `SignInScreen` ITSELF, exactly as it did under the nameplate, so
+        /// the chain is one owner deep rather than two screens both reaching for it. See
+        /// `PlayerHub.Install`.
+        ///
+        /// ⚠️ AND IT IS INSTALLED ON BOTH TABS, not only on the lobby. PRACTICE is the same
+        /// screen with the network off; a career and a match history are not networked facts, and
+        /// a door that exists on one tab and not the other is the kind of thing a player learns
+        /// as "sometimes it is there".
+        /// </summary>
+        private void InstallPlayerHub()
+        {
+            _hub = gameObject.GetComponent<PlayerHub>();
+            if (_hub == null) _hub = gameObject.AddComponent<PlayerHub>();
+
+            _hub.Install();
+
+            if (_chrome?.ProfileButton != null)
+                _chrome.ProfileButton.onClick.AddListener(OpenPlayerHub);
+
+            RefreshProfileDoor();
+        }
+
+        private void OpenPlayerHub()
+        {
+            MenuSfx.Click();
+
+            // ⚠️ THE OFFER LANDS ON THE TAB THAT ANSWERS IT, which is the same contract
+            // `PlayerNameplate.Press` had: a player told to secure their progress and then shown
+            // a stats page has been sent to the wrong room.
+            var account = GameServices.Account;
+            _hub?.Open(account != null && account.ShouldOfferUpgrade);
+        }
+
+        /// <summary>
+        /// The one line on the door, and what it says depends on whether there is anything of the
+        /// player's own to say yet.
+        ///
+        /// ⚠️⚠️ THE THREE STATES ARE ORDERED BY URGENCY AND THAT ORDER IS COPIED RATHER THAN
+        /// REINVENTED. `PlayerNameplate.Refresh` carries the full argument: the upgrade offer wins
+        /// because it is the only one of the three that can expire into lost progress; the level
+        /// wins over the hint because a player who has earned something already knows the card is
+        /// theirs; the hint is for the player who has not pressed it yet, which is the state 🧑
+        /// was in when he said *"i didnnt see that at all bruhh"* (§ 96).
+        ///
+        /// ⚠️ AN UNRANKED ACCOUNT DRAWS NO TIER RATHER THAN THE WORD `UNRANKED`. `FUTURE.md`
+        /// § 2.2: withhold the row, not just the number.
+        /// </summary>
+        private void RefreshProfileDoor()
+        {
+            var label = _chrome?.ProfileValue;
+            if (label == null) return;
+
+            var account = GameServices.Account;
+
+            if (account != null && account.ShouldOfferUpgrade)
+            {
+                label.text = "SECURE YOUR PROGRESS";
+                label.color = UiTheme.Amber;
+                return;
+            }
+
+            var profile = GameServices.Career?.Profile;
+            int xp = profile?.Xp ?? 0;
+
+            if (xp <= 0)
+            {
+                label.text = "PROFILE · CAREER · MATCHES";
+                label.color = UiTheme.Cream;
+                return;
+            }
+
+            string line = $"LV {ProgressionRules.LevelForXp(xp)}";
+
+            var rank = profile.Rank;
+            if (rank != null && rank.MatchesThisSeason > 0)
+            {
+                string tier = RatingRules.TierName(RatingRules.TierFor(rank.Rating));
+
+                // ⚠️ A TIER STILL MOVING FAST SAYS SO. `RatingRules.SettledDeviation`: a
+                // first-week tier is a guess and must not be quotable as settled.
+                if (rank.Deviation > RatingRules.SettledDeviation) tier += " ?";
+                line += $"   ·   {tier}";
+            }
+
+            label.text = line;
+            label.color = UiTheme.Cream;
         }
 
         private static Transform MiniSection(Transform parent, string text)
@@ -1968,6 +2084,12 @@ namespace TumbangPreso.UI
         {
             var net = NetSession.Instance;
             bool isNetworked = net != null && net.IsNetworked;
+
+            // ⚠️ THE DOOR'S LINE IS A VIEW OF THE CAREER, so it is redrawn wherever the screen is
+            // redrawn rather than once at build time. `LobbyChrome.Parts.RefreshSummary` records
+            // what the other answer costs: a label composed inside `Apply` shipped the authored
+            // placeholder for a whole session because `Apply` runs before the first `Refresh`.
+            RefreshProfileDoor();
 
             SceneFlow.SelectedMap = SceneFlow.Maps[Mathf.Clamp(_map, 0, SceneFlow.Maps.Length - 1)];
 

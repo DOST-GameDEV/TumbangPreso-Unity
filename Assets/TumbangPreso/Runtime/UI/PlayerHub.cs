@@ -73,7 +73,18 @@ namespace TumbangPreso.UI
         private readonly Dictionary<string, bool> _groups = new Dictionary<string, bool>();
 
         private InputField _displayName, _country, _pronouns, _bio;
-        private GameMode _mode = GameMode.Classic;
+        /// <summary>
+        /// Which mode's career this tab is showing.
+        ///
+        /// ⚠️⚠️ IT FOLLOWS `SceneFlow.SelectedMode` NOW AND IT USED TO BE HARD-CODED TO CLASSIC.
+        /// `SceneFlow.SelectedMode` defaults to **Hero Strike**, which is the mode the ranked
+        /// ladder is on (`docs/TODO.md` § 105) and the mode the lobby lands in, so the career tab
+        /// opened on the numbers for the OTHER game and the Ability builds group, which is Hero
+        /// Strike only, was invisible until the player found a dropdown and changed it.
+        /// **A tab that opens on the wrong mode is a tab whose contents look missing.**
+        /// § 114.12.
+        /// </summary>
+        private GameMode _mode = SceneFlow.SelectedMode;
         private int _page;
         private List<MatchRecord> _shown = new List<MatchRecord>();
         private bool _deleteArmed;
@@ -451,6 +462,16 @@ namespace TumbangPreso.UI
         /// it, per `PlayerNameplate.Press`; every other route opens on PROFILE, which is the tab
         /// somebody who pressed their own name was most likely looking for.
         /// </summary>
+        /// <summary>
+        /// Whether the hub is showing.
+        ///
+        /// ⚠️ IT EXISTS SO THE SCREEN UNDERNEATH CAN DECLINE ONE ESCAPE. `ConvertedScreen.Update`
+        /// and this class's `Update` both read `GetKeyDown(KeyCode.Escape)` on the same frame, so
+        /// without this the hub closes AND the lobby backs out to the title in one press. The hub
+        /// owns the press, and `ConvertedMatchSetup.Cancel` asks this before doing anything.
+        /// </summary>
+        public bool IsOpen => _root != null && _root.activeSelf;
+
         public void Open(bool onAccount = false)
         {
             _root.SetActive(true);
@@ -816,7 +837,7 @@ namespace TumbangPreso.UI
             if (profile == null) { EmptyCareer(); return; }
 
             var totals = ProfileRules.ModeFor(profile, _mode.ToString()).Totals;
-            if (totals.Matches == 0) { EmptyCareer(); return; }
+            if (totals.Matches == 0) { EmptyCareer(profile); return; }
 
             var rank = profile.Rank;
             if (rank != null && rank.MatchesThisSeason > 0 && Group("Competitive Rank", "Your standing on the seasonal ranked ladder."))
@@ -1002,9 +1023,16 @@ namespace TumbangPreso.UI
         {
             if (_mode != GameMode.HeroStrike) return;
 
+            // ⚠️⚠️ THE SUBTITLE IS 68 CHARACTERS AND IT WAS 113, WHICH `PlayerHubLayoutProbe`
+            // CAUGHT THE FIRST TIME THIS GROUP WAS EVER DRAWN AT 720p. A `UiRows.Section`
+            // subtitle does not wrap and does not shrink, so it drew 849 units into a 715 unit
+            // box, over whatever was beside it. **It went unmeasured for as long as it did
+            // because this group was unreachable** (§ 114.12): the career tab bailed out at zero
+            // matches before ever building it, and the probe's fixture has no finished matches
+            // in the mode it opens on. A string nothing draws is a string nothing measures.
             if (!Group("Ability builds",
-                       "Two readings of each skill. Every option trades one thing for another, "
-                       + "so a build is a shape and never a level.", false))
+                       "Two readings of each skill, and every option trades one for another.",
+                       false))
                 return;
 
             var settings = Settings.SettingsStore.Current;
@@ -1075,8 +1103,11 @@ namespace TumbangPreso.UI
                 if (AchievementRules.IsUnlocked(entry, profile)) earned++;
 
             if (!Group("Achievements",
-                       earned + " of " + AchievementRules.Catalog.Count + " earned. Every one is "
-                       + "a thing you did, and none of them change a number.", false))
+                       // ⚠️ SHORT FOR THE SAME REASON THE BUILDS SUBTITLE IS. This group was
+                       // unreachable on a fresh account too, so its header had never been
+                       // measured at 720p either. A `Section` subtitle overflows silently.
+                       earned + " of " + AchievementRules.Catalog.Count
+                       + " earned. None of them change a number.", false))
                 return;
 
             foreach (var tier in new[] { AchievementTier.Bronze, AchievementTier.Silver,
@@ -1105,7 +1136,27 @@ namespace TumbangPreso.UI
         /// this account yet", "No matches played yet. Finish one and it lands here.") and then
         /// drew fifteen rows of zeroes underneath them. An empty state is an invitation.
         /// </summary>
-        private void EmptyCareer()
+        /// <summary>
+        /// The career tab with nothing in it yet.
+        ///
+        /// ⚠️⚠️ IT STILL DRAWS THE ABILITY BUILDS AND THE ACHIEVEMENT SHELF, AND IT USED TO
+        /// `return` BEFORE BOTH. 🧑 2026-09-01: *"make sure phase 1-10 already exist in the game
+        /// and can be accessed thru ui and hud"*. They did exist, and on a fresh account **neither
+        /// was reachable by any route at all**: `BuildCareerTab` bailed to this method the moment
+        /// `totals.Matches == 0`, and these two groups are built after that line.
+        ///
+        /// **Both are things you do BEFORE your first match, not after it.** An ability build is a
+        /// choice a player makes while learning a hero, and the achievement shelf is the one
+        /// surface that says what there is to do. Hiding them until a match has been finished
+        /// hides them from exactly the player they are for. § 114.12.
+        ///
+        /// ⚠️ THE MODE DROPDOWN COMES WITH THEM, because Ability builds is Hero Strike only
+        /// (`VISION.md` § 1.1: Classic has no kit) and the dropdown otherwise only exists inside
+        /// the Overview group, which is not built here. Without it a Classic-mode career tab would
+        /// show an achievement shelf and silently no builds, which reads as a missing feature
+        /// rather than as a mode that does not have one.
+        /// </summary>
+        private void EmptyCareer(PlayerProfile profile = null)
         {
             UiRows.Section(_list, "No matches yet",
                 "Finish a match and everything you did in it lands here.");
@@ -1116,6 +1167,22 @@ namespace TumbangPreso.UI
                 SceneFlow.Networked = true;
                 SceneFlow.Go(SceneFlow.MatchSetup);
             }, "", "WoodPrimaryButton");
+
+            if (profile != null)
+            {
+                UiRows.Gap(_list, 32.0f);
+
+                UiRows.DropdownRow(_list, "Mode", new[] { "CLASSIC", "HERO STRIKE" },
+                    _mode == GameMode.HeroStrike ? 1 : 0,
+                    v =>
+                    {
+                        _mode = v == 1 ? GameMode.HeroStrike : GameMode.Classic;
+                        Show(Tab.Career);
+                    });
+
+                BuildAbilityBuildRows(profile);
+                BuildAchievementsRows(profile);
+            }
 
             SetFooter("", "");
         }
