@@ -646,6 +646,19 @@ namespace TumbangPreso.UI
         /// caller that swaps the surface cannot forget to swap the type with it.</summary>
         private bool _live => _skin != null && _skin.Surface == PaperCraft.Surface.Live;
 
+        /// <summary>
+        /// Whether this control should draw as available.
+        ///
+        /// ⚠️⚠️ A `Live` CONTROL IS NEVER "OFF", EVEN WHEN `Button.interactable` IS FALSE, AND
+        /// THAT EXCEPTION IS LOAD-BEARING RATHER THAN TIDY. `ConvertedCharacterSelect.RefreshTabs`
+        /// sets `interactable = !active` on purpose, so the tab you are already on cannot be
+        /// pressed again; every other tab row in the game leaves `interactable` alone. Without
+        /// this, the one tab that IS selected is also the one tab drawn greyed out, with soft ink
+        /// on a wood-dark pill: **the selected state and the unavailable state would be the same
+        /// picture, which is the one pair `PaperCraft.Pose`'s own note says must never collide.**
+        /// </summary>
+        private bool Available => _live || _button == null || _button.interactable;
+
         private void Awake()
         {
             _skin = GetComponent<PaperSkin>();
@@ -671,7 +684,7 @@ namespace TumbangPreso.UI
 
         private void Update()
         {
-            bool on = _button == null || _button.interactable;
+            bool on = Available;
 
             if (on != _wasInteractable)
             {
@@ -831,7 +844,7 @@ namespace TumbangPreso.UI
         {
             if (_label == null) return;
 
-            bool on = _button == null || _button.interactable;
+            bool on = Available;
 
             _label.color = !on ? UiTheme.PaperInkSoft
                 : _live ? UiTheme.Cream
@@ -843,7 +856,7 @@ namespace TumbangPreso.UI
             if (_skin == null) _skin = GetComponent<PaperSkin>();
             if (_skin == null) return;
 
-            bool on = _button == null || _button.interactable;
+            bool on = Available;
 
             _skin.SetPose(!on ? PaperCraft.Pose.Off
                           : _held ? PaperCraft.Pose.Press

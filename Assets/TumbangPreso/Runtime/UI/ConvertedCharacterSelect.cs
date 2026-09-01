@@ -128,9 +128,23 @@ namespace TumbangPreso.UI
             // replaces was right about: the gradient's job is to sit the wood panel and the amber
             // banner on something with depth, and a flat fill loses the stage. Top is
             // `UiTheme.WoodEdge` lifted, middle is `WoodMid`, bottom is `WoodDeep`.
-            var top = new Color(0.612f, 0.373f, 0.184f, 1.0f);
-            var middle = UiTheme.WoodMid;
-            var bottom = UiTheme.WoodDeep;
+            //
+            // ⚠️⚠️ AND ON 2026-09-02 IT IS PAPER, BECAUSE THIS SCREEN IS WIRED TO THE LOBBY AND
+            // THE LOBBY IS CREAM. 🧑: **"MAKE SURE AS WELL CHARACTER SELECT AS WELL AS EVERYTHING
+            // WIRED TO LOBBY HAS THE NEW THEME"**. `PaperDress.Screen` at the top of this file has
+            // been converting the PANELS on this screen since the paper pass, so what shipped was
+            // cream furniture standing on a dark wooden stage: **half of one language and half of
+            // another, on the screen a player reaches from the lobby's FIGHTER row.**
+            //
+            // ⚠️ THE SHAPE IS UNCHANGED FOR THE REASON ABOVE. It is still three stops with the
+            // light at the top, so the panel and the model still sit on something rather than on
+            // a flat fill; the values are 4 per cent apart rather than 40, which is what a sheet
+            // of paper under a raking light actually is. `Paper` at the top, `Paper` through the
+            // middle and `PaperWarm` at the floor, which is the same pair every `Tray` in the
+            // front end is cut out of.
+            var top = WoodCraft.Lift(UiTheme.Paper, 0.02f);
+            var middle = UiTheme.Paper;
+            var bottom = UiTheme.PaperWarm;
 
             for (int y = 0; y < height; y++)
             {
@@ -180,15 +194,28 @@ namespace TumbangPreso.UI
             // ⚠️ THE SAME REPAINT AS `VerticalBackdrop`. This scrim was the same navy, and it is
             // the layer the wood panel actually sits on, so leaving it would have kept a cold
             // edge down the middle of a screen whose background had just gone warm.
-            var ink = UiTheme.WoodDark;
+            // ⚠️⚠️ AND ON A PAPER FIELD IT IS A SHADE RATHER THAN A DIM, WHICH IS `CLAUDE.md`
+            // § 6.2c QUESTION 3 ASKED AGAIN AFTER THE BACKGROUND CHANGED. This ran at 85 per cent
+            // `WoodDark` down the left edge, and its whole job was to buy the wood panel some
+            // separation from a wood backdrop of nearly the same value. The backdrop is cream
+            // now, the panel is cut paper with its own halo and its own cast shadow, and 85 per
+            // cent of a near-black over that would be a black bar down a third of the screen
+            // protecting nothing. **A scrim is not decoration and it is not free**; when the thing
+            // it protected against goes, the number goes with it.
+            //
+            // ⚠️ IT IS NOT DELETED, BECAUSE THE LEFT THIRD IS WHERE THE MODEL STANDS and a warm
+            // shade under it is what stops a voxel character floating on a flat sheet. 14 per cent
+            // of `PaperSunk` composites about three value steps down, which is the same weight
+            // `UiRows.Band` arrived at from the other direction.
+            var ink = UiTheme.PaperSunk;
 
             for (int x = 0; x < width; x++)
             {
                 float t = x / (float)(width - 1);
                 float alpha;
-                if (t <= 0.36f) alpha = Mathf.Lerp(0.85f, 0.70f, t / 0.36f);
-                else if (t <= 0.62f) alpha = Mathf.Lerp(0.70f, 0.12f, (t - 0.36f) / 0.26f);
-                else alpha = Mathf.Lerp(0.12f, 0.0f, (t - 0.62f) / 0.38f);
+                if (t <= 0.36f) alpha = Mathf.Lerp(0.14f, 0.11f, t / 0.36f);
+                else if (t <= 0.62f) alpha = Mathf.Lerp(0.11f, 0.03f, (t - 0.36f) / 0.26f);
+                else alpha = Mathf.Lerp(0.03f, 0.0f, (t - 0.62f) / 0.38f);
 
                 for (int y = 0; y < texture.height; y++)
                     pixels[y * texture.width + x] = new Color(ink.r, ink.g, ink.b, alpha);
@@ -356,7 +383,25 @@ namespace TumbangPreso.UI
                 button.transition = Selectable.Transition.None;
                 button.interactable = !active;
 
-                if (button.targetGraphic is Image face)
+                // ⚠️⚠️ THIS METHOD USED TO WRITE A `GodotTheme.Box` STRAIGHT ONTO THE IMAGE, AND
+                // THAT IS A LEFTOVER OF THE OLD FRONT END THAT NO PROBE COULD SEE. `Install` runs
+                // `PaperDress.Screen` once; this runs on every selection change and every tab
+                // press, AFTER it, and `PaperSkin.Rebuild` early-outs when the height and the
+                // surface have not changed, so **it never puts the paper sprite back.** The tab
+                // bar on this screen has therefore been an amber-and-near-black nine-patch since
+                // the paper pass, on a screen whose panels were all cream.
+                //
+                // ⚠️ `PaperPurityProbe` WOULD HAVE CAUGHT THIS AND DOES NOT REACH HERE: it builds
+                // the lobby and the login screen only (§ 119.6). That is the argument for the
+                // shot this pass adds rather than for widening the probe, because the fault is
+                // "a sprite written after the dress" and the probe walks a tree at rest.
+                var paper = button.GetComponent<PaperSkin>();
+                if (paper != null)
+                {
+                    paper.Surface = active ? PaperCraft.Surface.Live : PaperCraft.Surface.Ghost;
+                    paper.Rebuild();
+                }
+                else if (button.targetGraphic is Image face)
                 {
                     face.sprite = GodotTheme.Box(
                         active ? UiTheme.Highlight : UiTheme.WoodDark,
@@ -368,9 +413,19 @@ namespace TumbangPreso.UI
                 var label = button.GetComponentInChildren<Text>();
                 if (label != null)
                 {
-                    label.color = active ? UiTheme.Ink : UiTheme.Cream;
+                    // ⚠️ CREAM ON THE LIVE PILL AND INK ON THE OUTLINE, which is the pair every
+                    // other tab row in the game now uses. It was ink on amber against cream on
+                    // wood, which is two inversions in one row.
+                    //
+                    // ⚠️ ON THE PAPER PATH `PaperButton.Restyle` BELOW OWNS THE COLOUR, because it
+                    // reads it off the surface and is therefore the one writer. Setting it here as
+                    // well is how a live tab ends up with the right plate and the wrong word.
+                    if (paper == null) label.color = active ? UiTheme.Ink : UiTheme.Cream;
                     label.fontStyle = FontStyle.Bold;
                 }
+
+                var chip = button.GetComponent<PaperButton>();
+                if (chip != null) chip.Restyle();
             }
         }
 
@@ -549,14 +604,27 @@ namespace TumbangPreso.UI
                 // ⚠️ 0.14, AND DELIBERATELY UNDER THE TEXT'S CONTRAST FLOOR. The summary line
                 // sits on this plate at full Cream; a heavier tint would start eating the
                 // legibility that was just fixed a few lines below.
+                //
+                // ⚠️⚠️ AND THE PLATE IS CUT PAPER NOW, WHICH IS THE SAME ARGUMENT ONE MATERIAL
+                // OVER. These three rows sit INSIDE a panel `PaperDress` turned cream at
+                // `Install`, so a near-black `HeroPlate` with cream lettering on it was the old
+                // front end drawn inside the new one: 🧑, on the overhaul,
+                // *"MAKE SURE U COMPLETELY REPLACE UI BCZ I DOTN WANT LEFTOVER SHIT FROM OLD UI"*.
+                // They are `Tray` colours (`PaperWarm` in a `PaperEdge` cut) because an ability
+                // row is a thing you READ, which is what that surface means.
+                //
+                // ⚠️ THE ULTIMATE KEEPS ITS ACCENT WASH AND ITS THICKER RIM, which is the whole
+                // point of the note above: the thing a round is spent earning must not look like
+                // the third item in a list. 0.14 of the hero colour reads on cream at least as
+                // well as it did on near-black, and the rim is the accent at full strength.
                 Color plate = item.ult
-                    ? Color.Lerp(UiTheme.HeroPlate, accent, 0.14f)
-                    : UiTheme.HeroPlate;
+                    ? Color.Lerp(UiTheme.PaperWarm, accent, 0.14f)
+                    : UiTheme.PaperWarm;
 
                 var rowBg = rowGo.AddComponent<Image>();
                 rowBg.sprite = GodotTheme.Box(
                     plate,
-                    item.ult ? accent : UiTheme.HeroRim,
+                    item.ult ? accent : UiTheme.PaperEdge,
                     item.ult ? 2 : 1, 6);
                 rowBg.type = Image.Type.Sliced;
                 rowBg.raycastTarget = false;
@@ -609,7 +677,11 @@ namespace TumbangPreso.UI
                 glyphGo.transform.SetParent(header.transform, false);
                 var glyph = glyphGo.AddComponent<Image>();
                 glyph.sprite = AbilityIcons.For(item.ability.Glyph);
-                glyph.color = UiTheme.HeroGlyphOn;
+                // ⚠️ `HeroGlyphOn` IS CREAM AND THESE ROWS ARE CREAM NOW. That constant is
+                // correct where it was written, which is the in-match deck over a dark plate; here
+                // it would draw the ability icon in the colour of the plate behind it. Ink, which
+                // is what every other mark on a paper surface is.
+                glyph.color = UiTheme.PaperInk;
                 glyph.preserveAspect = true;
                 glyph.raycastTarget = false;
 
@@ -622,7 +694,7 @@ namespace TumbangPreso.UI
                 var chipGo = new GameObject("KeyChip");
                 chipGo.transform.SetParent(header.transform, false);
                 var chip = chipGo.AddComponent<Image>();
-                chip.sprite = GodotTheme.Box(UiTheme.WoodDark, new Color(0, 0, 0, 0), 0, 4);
+                chip.sprite = GodotTheme.Box(UiTheme.PaperSunk, new Color(0, 0, 0, 0), 0, 4);
                 chip.type = Image.Type.Sliced;
                 chip.raycastTarget = false;
 
@@ -685,7 +757,7 @@ namespace TumbangPreso.UI
                 // seent"*. This sat at 13 pt and three quarters opacity on a dark plate, which
                 // is the least readable thing on the screen carrying the only NUMBERS on it.
                 var timingLbl = MenuKit.Label(header.transform, timing, 14,
-                    UiTheme.Cream,
+                    UiTheme.PaperInk,
                     Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleRight);
                 timingLbl.fontStyle = FontStyle.Bold;
                 timingLbl.raycastTarget = false;
@@ -718,7 +790,7 @@ namespace TumbangPreso.UI
                 // move would push the description into the plate's bottom border, which is the
                 // fault this was supposed to fix wearing a different hat.
                 var descLbl = MenuKit.Label(rowGo.transform, item.ability.Summary, MenuKit.MinReadableUnits,
-                    UiTheme.Cream, Vector2.zero, Vector2.zero, Vector2.zero,
+                    UiTheme.PaperInk, Vector2.zero, Vector2.zero, Vector2.zero,
                     TextAnchor.UpperLeft);
                 descLbl.raycastTarget = false;
                 descLbl.horizontalOverflow = HorizontalWrapMode.Wrap;
@@ -766,8 +838,14 @@ namespace TumbangPreso.UI
             // the cards duplicated that information and clipped against the wood panel.
         }
 
-        private static readonly Color PipFilled = new Color(0.98f, 0.78f, 0.12f, 1.0f);
-        private static readonly Color PipEmpty = new Color(0.35f, 0.24f, 0.18f, 0.55f);
+        // ⚠️⚠️ THE FILLED PIP IS WOOD AND IT WAS AMBER, WHICH IS `docs/TODO.md` § 119.10'S
+        // MEASUREMENT ARRIVING ON A THIRD CONTROL. `(0.98, 0.78, 0.12)` is `UiTheme.Amber` written
+        // out, and amber on the cream panel these pips now sit in is **1.7:1**: the filled half of
+        // a trait bar is the half that disappears. On paper the marker is the one DARK thing, so a
+        // filled pip is wood sitting in an empty pip's groove and the pair are about 6:1 apart.
+        private static readonly Color PipFilled = UiTheme.WoodMid;
+        private static readonly Color PipEmpty = new Color(UiTheme.PaperSunk.r, UiTheme.PaperSunk.g,
+                                                           UiTheme.PaperSunk.b, 0.75f);
 
         /// <summary>
         /// ⚠️⚠️ AS MANY SEGMENTS AS A TRAIT HAS POINTS, WHICH IS FIVE. This was eight, and the
@@ -918,7 +996,10 @@ namespace TumbangPreso.UI
             {
                 value.fontSize = choosingHero ? 32 : 30;
                 value.fontStyle = FontStyle.Bold;
-                value.color = choosingHero ? UiTheme.ColorForHero(entry.Id) : UiTheme.Cream;
+                // ⚠️ INK ON THE CLASSIC TAB, because the panel behind this label is cream now.
+                // The hero accent stays: it is a gameplay tell rather than decoration.
+                value.color = choosingHero
+                    ? UiTheme.ColorForHero(entry.Id) : UiTheme.PaperInk;
             }
 
             var tagline = Node("TaglineLabel")?.GetComponent<Text>();
@@ -999,7 +1080,17 @@ namespace TumbangPreso.UI
             // accent, which is a gameplay tell (`VISION.md` § 1.1: reading which kit an opponent
             // has is a skill), and Cheska's is deliberately cold. A hero accent is exempt for the
             // same reason `UiTheme.Defense` is; a decorative wash is not.
-            var neutralGlow = new Color(UiTheme.Cream.r, UiTheme.Cream.g, UiTheme.Cream.b, 1.0f);
+            // ⚠️⚠️ AND THE NEUTRAL IS A WARM SHADE NOW RATHER THAN CREAM, BECAUSE THE FIELD MOVED
+            // UNDER IT. The glow texture is white with a soft radial alpha, so its colour is a
+            // multiply: cream on a wooden backdrop was a visible lift and cream on a CREAM
+            // backdrop is nothing at all. **A vignette on a light field is darker than the field,
+            // not lighter.** `PaperEdge` is one step down, which keeps the halo behind the model
+            // readable without turning it into a spotlight.
+            //
+            // ⚠️ THE HERO LERP STILL WINS ON THE HERO TAB, and that is the point of the lerp: it
+            // is the one place on this screen the kit's own colour is allowed to wash the stage.
+            var neutralGlow = new Color(UiTheme.PaperEdge.r, UiTheme.PaperEdge.g,
+                                        UiTheme.PaperEdge.b, 1.0f);
             if (entry != null && _tab == 0)
                 _glowImage.color = Color.Lerp(neutralGlow, UiTheme.ColorForHero(entry.Id), 0.65f);
             else
