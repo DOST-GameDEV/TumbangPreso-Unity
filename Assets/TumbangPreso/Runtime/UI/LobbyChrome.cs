@@ -1303,10 +1303,24 @@ namespace TumbangPreso.UI
             hint.rectTransform.offsetMin = new Vector2(PaperKit.Pad, 0.0f);
             hint.rectTransform.offsetMax = new Vector2(-PaperKit.Pad, -8.0f);
 
+            // ⚠️⚠️ CENTRED, BECAUSE THE CODE IS THE ONE FACT ON THIS PLATE AND IT WAS SITTING IN
+            // THE CORNER OF IT. 🧑, with a crop of exactly this plaque: **"pic 1 can be improve"**.
+            // A four-character code drawn `LowerLeft` on a 380-unit plaque leaves about 240 units
+            // of empty wood to its right, with `tap to copy` marooned in the far corner above it:
+            // three strings, three corners, and the middle of the object empty. The caption and
+            // the hint keep the top band's two ends, which is what makes them read as labels ON
+            // the sign rather than as competitors with it.
             var label = MenuKit.Label(go.transform, "", PaperKit.Display, UiTheme.Cream,
                                       Vector2.zero, Vector2.zero, Vector2.zero,
-                                      TextAnchor.LowerLeft);
-            label.name = "RoomCodeValue";
+                                      TextAnchor.LowerCenter);
+            // ⚠️⚠️ IT IS CALLED `Label`, AND THE NAME IS WIRING RATHER THAN A DESCRIPTION.
+            // `PaperButton` looks for a child called `Label` and falls back to the FIRST `Text`
+            // under the control; on this plate that fallback is `RoomCodeCaption`, so the
+            // component tinted the word ROOM CODE instead of the code, and it sank the caption on
+            // a press instead of the value. Naming the code makes the plaque's one important
+            // string the one the component acts on. Nothing looks any of these three up by name,
+            // so this is safe: `parts` holds the references.
+            label.name = "Label";
             label.fontStyle = FontStyle.Bold;
             label.raycastTarget = false;
             label.rectTransform.anchorMin = new Vector2(0.0f, 0.0f);

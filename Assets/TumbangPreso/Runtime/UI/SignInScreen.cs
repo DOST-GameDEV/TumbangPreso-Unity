@@ -698,12 +698,21 @@ namespace TumbangPreso.UI
 
             if (!any) return;
 
-            // ⚠️ THE CARD IS CENTRED ON THE SCREEN AND ITS CONTENT IS NOT CENTRED ON THE CARD, so
-            // the height has to cover the FURTHER of the two extents in both directions rather
-            // than their span. Sizing to `top - bottom` and leaving the content where it is would
-            // put the same overflow back on whichever side reaches further.
-            float reach = Mathf.Max(Mathf.Abs(top), Mathf.Abs(bottom));
-            card.sizeDelta = new Vector2(card.sizeDelta.x, (reach + CardMarginY) * 2.0f);
+            // ⚠️⚠️ THE CARD MOVES TO THE CONTENT RATHER THAN THE CONTENT TO THE CARD, AND THE
+            // FIRST VERSION OF THIS METHOD GOT IT WRONG IN A WAY THE RENDER SHOWED. Sizing to
+            // `max(|top|, |bottom|) * 2` keeps the card centred on the SCREEN, which is only
+            // correct when the content is centred on the card, and it is not: the block runs from
+            // +390 to -427, so the height was driven by the deeper half and
+            // `Logs/shots-runtime/SignInBoot-v57.png` came back with 93 units of air above the
+            // wordmark and 56 under the key hint.
+            //
+            // **So take the span, and put the card's centre where the content's centre is.** The
+            // two margins are then equal by construction, at any content, in every state, which is
+            // the whole reason this is arithmetic rather than a tuned number.
+            float centreY = (top + bottom) * 0.5f;
+
+            card.sizeDelta = new Vector2(card.sizeDelta.x, (top - bottom) + (CardMarginY * 2.0f));
+            card.anchoredPosition = new Vector2(card.anchoredPosition.x, centreY);
         }
 
         /// <summary>
@@ -1510,12 +1519,7 @@ namespace TumbangPreso.UI
             // ⚠️ AND THAT IS A VALUE INVERSION OF ABOUT 10:1 rather than a hue: a wood-dark pill
             // with cream lettering, which spends no colour and puts a little of 🧑's own wood back
             // on a card that is otherwise entirely paper.
-            var skin = button.GetComponent<PaperSkin>();
-            if (skin != null)
-            {
-                skin.Surface = on ? PaperCraft.Surface.Live : PaperCraft.Surface.Ghost;
-                skin.Rebuild();
-            }
+            PaperKit.MarkLive(button, on);
 
             var label = button.transform.Find("Label")?.GetComponent<Text>();
             if (label == null) return;
@@ -1525,9 +1529,6 @@ namespace TumbangPreso.UI
             // it look; this method is the something on the frame the mode changes.
             label.fontStyle = on ? FontStyle.Bold : FontStyle.Normal;
             label.color = on ? UiTheme.Cream : UiTheme.PaperInkSoft;
-
-            var chip = button.GetComponent<PaperButton>();
-            if (chip != null) chip.Restyle();
         }
 
         /// <summary>

@@ -133,6 +133,19 @@ namespace TumbangPreso.UI
             button.onClick.AddListener(Toggle);
             FocusRing.Attach(faceGo, 3.0f);
 
+            // ⚠️⚠️ IT HOVERS AND IT PRESSES, WHICH IT DID NOT. 🧑 2026-09-01, of the four rows in
+            // this drawer: **"match settings ui look ugly"**, and separately
+            // **"REWORK THE BUTTONS so that it feels great to click"**. This control had a caret
+            // saying it opened and nothing at all under the pointer: no hover, no press, no sound.
+            // `CLAUDE.md` § 6.3 states the rule as *a control that does something must react to
+            // the pointer*, and a row that does not is indistinguishable from a readout however
+            // clearly it is drawn.
+            //
+            // ⚠️ ADDED AFTER THE VALUE AND THE CARET EXIST, at the end of this method.
+            // `PaperButton.Awake` captures the child it is going to move and tint, and it runs the
+            // instant `AddComponent` is called: adding it here would give it a control with no
+            // `Text` under it yet, and the press would then move nothing.
+
             _value = MenuKit.Label(faceGo.transform, Current, PaperKit.Body, UiTheme.PaperInk,
                                    Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleLeft);
             _value.raycastTarget = false;
@@ -147,6 +160,14 @@ namespace TumbangPreso.UI
             _caret.raycastTarget = false;
             MenuKit.Stretch(_caret.rectTransform, 0.0f);
             _caret.rectTransform.offsetMax = new Vector2(-14.0f, 0.0f);
+
+            // ⚠️ THE VALUE IS THE THING THAT MOVES ON A PRESS, so it is named `Label`.
+            // `PaperButton` looks for that child first and otherwise takes the first `Text` under
+            // the control, which here would be whichever of the value and the caret was built
+            // first. See `LobbyChrome.BuildRoomSign`, where the same fallback tinted the caption
+            // instead of the code.
+            _value.name = "Label";
+            faceGo.AddComponent<PaperButton>();
 
             BuildList(captionWidth);
             Refresh();
@@ -231,10 +252,17 @@ namespace TumbangPreso.UI
                                          UiTheme.PaperInk,
                                          Vector2.zero, Vector2.zero, Vector2.zero,
                                          TextAnchor.MiddleLeft);
+                text.name = "Label";
                 text.raycastTarget = false;
                 MenuKit.Stretch(text.rectTransform, 0.0f);
                 text.rectTransform.offsetMin = new Vector2(14.0f, 0.0f);
                 text.rectTransform.offsetMax = new Vector2(-12.0f, 0.0f);
+
+                // ⚠️ EVERY OPTION REACTS TO THE POINTER. A list of four identical trays where
+                // nothing lights up under the cursor is a list a player has to aim at twice, and
+                // `MenuSfx` rides on this component, so without it choosing a map was the one
+                // silent press in the front end.
+                optionGo.AddComponent<PaperButton>();
 
                 _optionButtons.Add(optionButton);
             }
@@ -313,16 +341,28 @@ namespace TumbangPreso.UI
             // as well as "what else is there".
             for (int i = 0; i < _optionButtons.Count; i++)
             {
-                var text = _optionButtons[i].GetComponentInChildren<Text>();
-                // ⚠️ THE CHOSEN OPTION IS BOLD INK AND THE REST ARE SOFT, WHICH IS WEIGHT
-                // RATHER THAN HUE. Amber on cream is 1.7:1 (`PaperCraft.Surface.Sign` carries the
-                // measurement and 🧑's rejection of it), so the accent that used to mark this row
-                // would now be the least legible thing in the list.
-                if (text != null)
+                bool chosen = i == _index;
+
+                // ⚠️⚠️ THE CHOSEN OPTION IS A `Live` PILL AND IT WAS A BOLD WORD. Weight alone is
+                // the weakest of `game-ui-design`'s four ordering tools and it is the only one
+                // this list was spending: four identical recessed trays, one of whose labels was
+                // a little heavier than the others. 🧑, of this drawer: **"match settings ui look
+                // ugly"**. `PaperKit.MarkLive` gives it the wood-dark plate with cream lettering
+                // that every other "this is the one you are on" in the game now uses, which is a
+                // value inversion of about 10:1 and costs no colour.
+                //
+                // ⚠️ THE FALLBACK IS THE OLD WEIGHT RULE rather than nothing, because `MarkLive`
+                // answers false on a control with no paper skin and this list is also built by
+                // callers that predate it.
+                if (!PaperKit.MarkLive(_optionButtons[i], chosen, PaperCraft.Surface.Tray))
                 {
-                    text.color = i == _index ? UiTheme.PaperInk : UiTheme.PaperInkSoft;
-                    text.fontStyle = i == _index ? FontStyle.Bold : FontStyle.Normal;
+                    var plain = _optionButtons[i].GetComponentInChildren<Text>();
+                    if (plain != null)
+                        plain.color = chosen ? UiTheme.PaperInk : UiTheme.PaperInkSoft;
                 }
+
+                var text = _optionButtons[i].GetComponentInChildren<Text>();
+                if (text != null) text.fontStyle = chosen ? FontStyle.Bold : FontStyle.Normal;
             }
         }
 
