@@ -2138,6 +2138,205 @@ one.**
 
 ---
 
+## 120 · The buttons get a thickness, and the four screens § 119.11 left get finished ⚠️⚠️ 2026-09-02, branch `ui-redesign`
+
+🧑, on the v56 build: **"REWORK THE BUTTONS so that it feels great to click and isnt flat"**,
+**"MAKE SURE AS WELL CHARACTER SELECT AS WELL AS EVERYTHING WIRED TO LOBBY HAS THE NEW THEME"**,
+and **"PLS FINSH THE STUFF LEFT UNDONE"**, which is § 119.11 by name. Plus seven notes off the
+same build, every one of which is a row below.
+
+⚠️⚠️ **THE ONE FINDING WORTH CARRYING OUT OF THIS ENTRY: `PaperDress` WALKS `GodotPanel`,
+`GodotButton` AND `WoodSkin`, AND A SURFACE SET OUTSIDE THOSE THREE IS A SURFACE THE CONVERSION
+CANNOT SEE.** This pass found **five** of them, in five files, and every one had the same shape: a
+bare `Image` with a colour or a baked sprite written straight onto it, converted by nothing, with
+its own lettering remapped to ink by `PaperDress.Type` on the way past. **A half-converted screen
+is worse than an unconverted one**, because the type is now the wrong colour for the surface
+rather than merely old. § 120.4 lists all five.
+
+---
+
+### 120.1 The material: what "2d and blank" actually was
+
+🧑, three times: *"these buttons can be improved and look better"*, *"the butons look 2d too and
+blank"*, then the instruction above. Every raised paper surface already had a halo, a bottom lip
+and a cast shadow, and it still read as a sticker. Four reasons, all in `PaperCraft.PaintRaised`:
+
+| What was wrong | The number |
+|---|---|
+| The face was a **flat fill**. `WoodCraft` has expressed every one of 🧑's authored surfaces as a full-height ramp since it was written; this file drew the same object as one colour with a rim. | 4 per cent top to bottom now. Enough for a direction, little enough that eight chips in a row stay one material. |
+| **No lit top edge**, which `PaintPlate` has always had. Under a light above the screen a raised object is bright along its top, and this construction only drew the bottom half of that. | 2 units at 0.55, which is `PaintPlate`'s own number. |
+| The bottom **wall** was 7 per cent of the face: two units on a 40-unit chip, under a four-unit halo. The control had a shadow but no THICKNESS. | 14 per cent, ramped rather than banded, because a cut paper edge catches light at the top of the cut and none at the bottom. |
+| The cast shadow was a **flat copy of the silhouette at one alpha**. | Squared falloff: darkest where the surfaces nearly touch, gone by the time it has travelled the object's own height. |
+
+⚠️⚠️ **AND HALF THE FEEL IS NOT IN THE SPRITE AT ALL.** `PaperButton` eased nothing: a sprite
+swap is one frame, so hover and press were as much motion as a checkbox has. Hover now lifts the
+face two units and the object 2.5 per cent; a press takes the whole cast shadow, sinks the
+lettering by `Drop` and takes 3 per cent off the scale. Both eased in **unscaled** time (this
+front end draws over a paused game), **faster down than up** (26 against 15), which is the
+asymmetry a physical key has.
+
+- ⚠️ **2.5 PER CENT IS MEASURED AGAINST THE ROW, NOT THE BUTTON.** A lobby chip is 40 units in a
+  rail with a 10-unit gap; at five per cent a hovered chip grows two units and closes a fifth of
+  the gap, which reads as the row shuffling. At 2.5 it is one unit.
+- ⚠️ **`localScale` CANNOT REFLOW A LAYOUT GROUP** (Unity lays out on `rect`), and it is not
+  written at all on a node whose `ArrowButtonView` is still live, which is § 119.9 row 1 made
+  impossible rather than remembered.
+
+### 120.2 BACK was six units low and half a chevron left, and both were in one method
+
+*"back still isnt centered as well"*. Two faults on one control, neither where the previous two
+passes looked.
+
+- **Vertically:** `LobbyChrome.LiftBack` wrote `offsetMax = (0, -PaperCraft.Drop)`, which pulls the
+  label box's TOP edge DOWN. `PaperKit.Chip` raises the BOTTOM edge instead. Both move the
+  lettering six units and they move it **in opposite directions**, so BACK sat **twelve units**
+  below every other chip in the game and both lines looked equally reasonable in review.
+  `PaperKit.CentreOnFace` is the only place either is written now.
+- **Horizontally:** the label read `"‹  BACK"` with two spaces. `Text` centres on the string's own
+  ink, so the chevron and the word are centred TOGETHER and the word therefore sits right of the
+  pill's middle by half the chevron plus half the gap: about **eleven units on a 120-unit chip**.
+  One space.
+
+### 120.3 ⚠️⚠️ FIVE SCREENS SAID "THIS IS THE ONE YOU ARE ON" IN FIVE WAYS AND THREE OF THEM WERE BROKEN
+
+`PlayerHub.Highlight`, `ConvertedCharacterSelect.RefreshTabs`, `CustomCharacterScreen`'s slot
+tabs, `SignInScreen.SetTab` and `LobbyJoinPanel.PaintChip`.
+
+| The copy | What was wrong |
+|---|---|
+| the hub, the picker, the maker | wrote a `GodotButton` variation that `PaperDress` had already disabled (it rewrites its own sprite on hover, so the dress turns it off). **The live tab was invisible.** |
+| the login screen, the join panel | `Token` against `Ghost`, which `Lobby-v52.png` measured at **4 per cent apart in value** and which the lobby abandoned for exactly that reason. Written before that measurement. |
+| all five | had to remember to re-tint the lettering as a second step, and each did it differently. |
+
+`PaperKit.MarkLive` writes the surface, re-tints through `PaperButton` (which reads the colour off
+the surface rather than being told), and **answers false when there is no paper skin** so a caller
+with a wooden fallback can take it. ⚠️ **The idle surface is a parameter**: a tab you are not on is
+an alternative (`Ghost`), a dropdown option you have not chosen is still a value you are reading
+(`Tray`).
+
+Two rules fell out of it:
+
+- ⚠️⚠️ **A `Live` CONTROL IS NEVER DRAWN "OFF", EVEN WHEN `Button.interactable` IS FALSE.**
+  `RefreshTabs` sets `interactable = !active` on purpose so the tab you are on cannot be pressed
+  again. Without the exception **the selected tab is also the greyed-out one**, which is the one
+  pair `PaperCraft.Pose`'s own note says must never collide. It is visible in
+  `CharacterSelect-v57.png`.
+- ⚠️ **`Sign` COUNTS AS WOOD-DARK FOR LETTERING, NOT JUST `Live`.** The ROOM CODE plaque is a
+  `Sign`, carries a `PaperButton` because it is pressable, and came back with a `PaperInk` caption
+  on `WoodMid`: **1.3:1**, measured off `Lobby-v57.png`, and 🧑's *"pic 1 can be improve"* on that
+  exact plate.
+
+### 120.4 ⚠️⚠️ THE FIVE SURFACES THE CONVERSION COULD NOT SEE
+
+| Where | What it was | What it looked like |
+|---|---|---|
+| `PlayerHub` backdrop | `MenuKit.Backdrop(_root, WoodDeep)` | Dark brown board under labels `PaperDress.Type` had already remapped to ink. **"PLAYER CARD IS STILL BROWN AND HARD TO READ"** |
+| `CustomCharacterScreen` backdrop | the same line | MAKE YOUR OWN written in dark brown on a dark brown board, with a cream model card and cream buttons around it |
+| `ConvertedMatchSetup` address + code boxes | `GodotTheme.WoodBox` sprite on a bare `Image` | ink on `WoodDark`, about **1.3:1**. *"cant see fonnt"* |
+| `ConvertedSettingsPanel` `PlayerNameField` | authored `.tscn` node, baked wood sprite | the one text box on a cream panel is a near-black well with a grey placeholder |
+| `ConvertedCharacterSelect` `ConfigPanel` + `CharSelector` | 🧑's own `SETTINGS CONFIG PANEL.png` and `MAP MODE DISPLAY.png` | cream furniture standing on a dark wooden board |
+
+⚠️⚠️ **THE LAST ROW IS THE ONE PLACE THIS PASS STOPS DRAWING ONE OF HIS PNGs, AND IT NEEDS SAYING
+OUT LOUD.** `CLAUDE.md` § 6.4 forbids repainting his art and this does not repaint it: the files
+are untouched, the main menu still draws them, and it is **the same decision the lobby already
+made** when `LobbyChrome.BuildSettingsDrawer` took `Rows` out of the authored `ConfigPanel` and
+left the board behind. His art that is a CONTROL stays: `GAME BANNER.png` is still the headline,
+the two arrows are still the arrows, `BUTTON LONG.png` is still CHOOSE. § 119.1 states the rule
+the board was failing: **wood is the ink, the frame and his own authored buttons standing on
+paper**; the board was the field.
+
+⚠️ **`PaperPurityProbe` CANNOT SEE ANY OF THE FIVE**, because it walks COMPONENTS. Widening it to
+flag a bare `Image` carrying a `box_`, `wc_`, `wcsil_`, `plank_` or `btn_` sprite is § 120.7.
+
+### 120.5 Six ordering faults, which are the ones a picture finds and a reading does not
+
+| # | The render | The cause |
+|---|---|---|
+| 1 | `CharacterSelect-v57.png`: the tab you are on is greyed out | `Wire` ran `Refresh()` **before** `PaperDress.Screen`, so `RefreshTabs` always took its wooden fallback and the dress then flattened all three tabs onto one `Token` |
+| 2 | `CharacterMaker-v57.png`: FACE is paper, the other five sections are wood | the dress ran once at `Build`, and everything in the right-hand column is destroyed and rebuilt on every slot press, section press and value change. It runs at the end of `Refresh` now, which is what `PlayerHub.Show` already did |
+| 3 | `LobbyServers-v57.png`: `JOIN A GAME` drawn through `START SERVER` | neither label is ever fitted: `MenuKit.WoodButton` only calls `Fit` when handed a width, and both are built at `(0, 44)`. In a 380-unit column two expanded halves are **185 units** and `JOIN A GAME` needs about 210. They stack now, full width, which is also the hierarchy the comment above them already claimed |
+| 4 | `Settings-v57.png`: `APPLY CHANGES` draws past both ends of its button | same silent overflow. The three footer labels are fitted after a forced canvas update, because `Fit` measures a rect and an un-laid-out rect reports zero and the call does nothing |
+| 5 | `LobbyServers-v57` **and** `-v58`: SPECTATE across the heading | ⚠️⚠️ **TWO CAUSES, AND THE FIRST FIX DID NOT SHOW UNTIL THE SECOND RENDER.** `SetHeadline` gives up when the rect reports zero and `LayoutRebuilder` cannot rebuild an inactive canvas, which this drawer always is when `Refresh` runs — so the heading was never fitted at all. And it could not have fitted: the cell is about 200 units and `LOBBY · YOU ARE HOSTING` needs about **253 at the 18-unit floor**. Stacked, and the word LOBBY is gone |
+| 6 | `LobbyAccount-v57.png`: a stray tan rule under CLOSE | the XP track. The branch that empties the level and the count when a profile has no XP has always left the 440-unit track drawn; on `WoodDeep` an empty `WoodDark` groove was invisible and on paper it is four value steps darker than the sheet |
+
+### 120.6 The rest of his notes
+
+- **"LOGIN can be improved, especially TUMP logo in login"**. ⚠️⚠️ **THE TINT WAS THE PROBLEM AND
+  NO BETTER TINT FIXES IT.** Sampling `Resources/UI/main-menu/TUMP.png` (1835x527): about **60 per
+  cent** warm off-white in the `e0d0c0` family, which is the letter faces, and about **40 per
+  cent** `303030` to `404040`, which is an outline and a drop shadow **baked into the file**. A
+  `RawImage` colour MULTIPLIES, so `PaperInk` `3b2415` takes the faces to about `201206` and the
+  outline to about `0b0704`: two things four values apart end up one value apart and the mark
+  collapses into a brown blob with a slightly darker rim. **Multiply can only darken**, so no tint
+  lightens the faces back out. It is nailed to a wood `Sign` plaque and drawn at `Color.white`,
+  which is the picture the title screen shows and the composition the mark was drawn for.
+- **The login card** was 900 units around 809 of content: 68 units of margin above and **23**
+  below. With `GoogleSignIn.IsAvailable` true it **overflowed by 43** — nobody has seen that,
+  because no build here has a client id in it yet (§ 115.8), so the layout is correct today and
+  breaks the day somebody pastes a string into a text file. `FitCardToContent` takes the span and
+  puts the card's centre on the content's centre, so both margins are equal by construction.
+  ⚠️ The first version sized to `max(|top|, |bottom|) * 2`, which keeps the card centred on the
+  SCREEN and is only correct when the content is centred on the card. It is not.
+- **The sign-in tab pair** is `Live` against `Ghost`, which § 119.11 named as the first thing left
+  undone and which was an omission rather than a decision.
+- **"match settings ui look ugly"**. The closed dropdown face had a caret saying it opened and
+  nothing at all under the pointer: no hover, no press, no sound, which made choosing a map the one
+  silent press in the front end. The face and every option carry `PaperButton` now. And the chosen
+  option was **a bold word among four identical trays** — weight is the weakest of the four
+  ordering tools and it was the only one this list spent. It is a `Live` pill.
+- **"pic 1 can be improve"**. Besides the caption contrast above: a four-character code drawn
+  `LowerLeft` on a 380-unit plaque leaves about **240 units of empty wood** with `tap to copy`
+  marooned in the far corner. Three strings, three corners, nothing in the middle. The code is
+  centred.
+- **`UiRows.Band` was white at 3.5 per cent**, and that constant's own comment already said *a
+  number tuned against one background is not a number* and would need re-measuring on a light one.
+  On `Paper` it is about one value step in the last channel: **there was no banding at all** on any
+  of the three screens that build rows. `PaperSunk` at 14 per cent, four value steps down, which is
+  the weight the white 3.5 had over the old scrim.
+- **Four more amber-on-cream controls**, all at the **1.7:1** § 119.10 records 🧑 rejecting by eye:
+  the hub's XP fill, the picker's trait pips, the settings scrollbar handle, and the dropdown's
+  chosen-option mark. All are wood in a `PaperSunk` groove now, about 8:1, and none introduces a
+  colour.
+
+### 120.7 What is NOT done, named rather than left implied
+
+- ⚠️ **`PaperPurityProbe` STILL WALKS COMPONENTS ONLY, AND § 120.4 IS FIVE THINGS IT CANNOT SEE.**
+  It should also flag a bare `Image` whose sprite name starts with `box_`, `wc_`, `wcsil_`,
+  `plank_` or `btn_` (the generated wood keys; paper's are `pc_`), exempting anything whose sprite
+  comes from `Art/ui/`. **And it only builds the lobby and the login screen**: the picker, the hub,
+  the maker and the settings panel are out of its reach, which is why every fault in § 120.4 and
+  § 120.5 had to be found in a photograph.
+- ⚠️ **THE HUB IS STILL A TAB ROW AND § 119.5 SAYS IT SHOULD BE A TAB COLUMN.** *"an ID card with a
+  tab COLUMN rather than a tab row ... six tabs across a header is the row that made § 92
+  unreadable"*. It is legible now and it is not the composition that was planned, and
+  `LobbyAccount-v58.png` shows the cost: on the PROFILE tab of a fresh account **the bottom 45 per
+  cent of the screen is empty cream**, which is § 6.2's *"big ass empty sopace"* on a new screen.
+  A column would fill the left edge and narrow the rows at the same time.
+- ⚠️ **`Art/ui/host-game/Arrow Left 64.png` AND `Arrow Right 64.png` CARRY BLUE, AND THAT IS A
+  DECISION FOR 🧑 RATHER THAN A FIX.** Sampled: **77.5 per cent `f0f0f0`** and **about 20 per cent
+  `80b0d0`**, which is a cold blue shadow baked into the file. `CLAUDE.md` § 6.4 says *do not
+  repaint his art* and names the pennants as the exemption; these are his art too. He has also said
+  *"i dont want to see blue shit"* five times. **Both rules are his, they disagree on this file,
+  and only he can settle it.** The arrows are untouched.
+- **The `WELCOME BACK` state still has no render**, for the reason `UiRuntimeShots` states in that
+  method: it needs an account with a password attached, which a probe cannot create.
+- **`LobbyChat`'s in-match instance is still wooden**, deliberately, because the in-match HUD is
+  out of scope.
+
+### 120.8 Acceptance
+
+- ✅ Twelve versioned states photographed at `v58`, up from nine: the three lobby modes, the three
+  drawers, the join panel, the account screen, the three login states, **and the character select,
+  the character maker and the settings panel**, which § 119.11 named as converted and never looked
+  at. ⚠️ Those last two were being written to `CharacterSelectPanel.png` and `SettingsPanel.png`
+  with **no version in the name**, so every review of them for a month was conducted against
+  whichever copy the chat client had already cached (`CLAUDE.md` § 6.1).
+- ✅ Core 430/430, the three `tools/` audits green (48 sites / 0 ungated on another body, 54 wire
+  entry points / 0 unreachable, 57 messages / 0 mismatched).
+- ✅ EditMode, the full PlayMode suite, `Checks.RunAll` five of five.
+- ⚠️ **A person looks at the picture.**
+
+---
 ## 119 · The whole front end is repainted in PAPER, and the lobby is rebuilt around the room ⚠️⚠️ OPEN, 2026-09-01, branch `ui-redesign`
 
 🧑, with a crop of the lobby, a crop of the join panel, `Art/ui/TUMP.png` and a two-swatch card:
@@ -2400,20 +2599,33 @@ rather than `Open()`, so `Refresh` never ran and `LobbyJoin-v52.png` is four row
 | *"its still so big too"* then *"make taht start match bigger"* | Not contradictory. **The CHROME got tighter and the ACTION got bigger**: `PaperKit.Pad` 18 to 14 and `Gap` 12 to 10, against a primary that went 88 to 104. The ratio that decides whether the button reads as the biggest thing is its height against the 44-unit chip above it: **2.4 to 1, from 1.6 to 1.** |
 | *"why does insert player name still live here"* | `PlayerHub.BuildProfileTab` has had a `Display name` row since Phase 1. The rail's field was a second control writing the same string. |
 
-### 119.11 What is NOT done, named rather than left implied
+### 119.11 What is NOT done, named rather than left implied ✅ CLOSED BY § 120, 2026-09-02
 
-- ⚠️ **The sign-in screen's tab pair still uses `Token` against `Ghost`.** The lobby's uses
+⚠️ **THE FIRST THREE ARE DONE AND § 120 IS WHERE THEY ARE WRITTEN UP.** 🧑 asked for exactly this
+list back: **"PLS FINSH THE STUFF LEFT UNDONE"**. The last two are still open and are still open
+for the reasons stated below rather than by oversight; they are repeated in § 120.7 so the next
+reader finds them in the newest entry.
+
+- ✅ ⚠️ **The sign-in screen's tab pair still uses `Token` against `Ghost`.** The lobby's uses
   `Live` against `Ghost` after the render showed 4 per cent was not enough; the login screen was
   not re-shot between those two changes and is inconsistent by omission, not by decision.
-- ⚠️ **The login card is 900 units tall around about 700 of content.** The Y offsets inside it are
-  the ones `SignInScreen` has always used and they were spaced for a full-height column.
-- **The character select, the character maker and the settings panel are dressed by
+  **`SignInScreen.SetTab` goes through `PaperKit.MarkLive` now, with four other tab rows that had
+  the same fault in three different forms (§ 120.3).**
+- ✅ ⚠️ **The login card is 900 units tall around about 700 of content.** The Y offsets inside it
+  are the ones `SignInScreen` has always used and they were spaced for a full-height column.
+  **Measured: 809 of content, 68 units of margin above and 23 below, and it OVERFLOWED by 43 on
+  the Google branch nobody has a client id for. `FitCardToContent` sizes and centres it on its own
+  content now (§ 120.6).**
+- ✅ **The character select, the character maker and the settings panel are dressed by
   `PaperKit.PaperDress.Screen` and have not been photographed.** The pass converts them; nobody has
-  looked at whether the compositions still work in the new material.
+  looked at whether the compositions still work in the new material. **Photographed at `v58` by
+  `UiRuntimeShots.TheLobbyDoorsDraw` and `TheSettingsPanelDraws`, and all three were broken:
+  § 120.4 rows 2, 4 and 5, and § 120.5 rows 1, 2 and 4.**
 - **`LobbyChat`'s in-match instance is deliberately untouched** and still wooden, because the
-  in-match HUD is out of scope.
+  in-match HUD is out of scope. ⚠️ **Still true and still deliberate.**
 - **`UiRuntimeShots` does not photograph the WELCOME BACK state**, which needs an account with a
   password attached and cannot be made in a probe. It is stated in that method rather than skipped.
+  ⚠️ **Still true.**
 
 ---
 
