@@ -2138,6 +2138,236 @@ one.**
 
 ---
 
+## 117 · The front end was two design systems stacked, and the code-drawn one was the wrong one ⚠️⚠️ 2026-09-01, branch `ui-redesign`
+
+🧑 opened the build off § 116 and rejected it: **"ui still looks unnatural and ugly"**, *"its a
+step in right direction but could be better"*. Then the cause, in his own words, twice:
+
+> *"the issue with old UI is everything feels repetitive bcz i think u use the same code to
+> generate them all, i want u to try to avoid that again"*
+
+> **"make sure all ui isnt generated in the same way but follows a central theme bcz old issue
+> was it read as repetitive with everyone just being brown and boring"**
+
+And the scope, widened from § 116's *"lobby and login only"*: *"u can overhaul phase 1 to phase 12
+ui and make it in a new style that looks great"*, *"idk if i said this yet but rebuiuld phase 1 to
+phase 12 ui"*, *"u have permission to overhaul everything btw, even the color and shit and
+design, as long as it looks good"*, with the standing brief restated: *"as long as u thoroughhly
+plan it and as well as make sure to make it intuitive to navigate and not overwhelming for ppl"*.
+⚠️ **He kept the two exclusions from § 116**: the main menu and the in-match HUD are still out.
+
+### 117.1 ⚠️⚠️ THE FINDING, AND IT IS NOT A COLOUR PROBLEM: HIS ART AND THE CODE DRAW OPPOSITE OBJECTS
+
+§ 116 answered *"repetitive"* with more variety inside one construction: grain, a lit top edge, a
+chalk rule. It did not move, because the construction itself was the fault. **Sampling
+`Assets/TumbangPreso/Art/ui/host-game/*.png` pixel by pixel settles it:**
+
+| Piece | Silhouette | Keyline | Rim | Face peak | Face floor |
+|---|---|---|---|---|---|
+| `BUTTON LONG` | chamfer, 30 px cut at 135 tall | `99572b`, 7 px | `612e15`, 6 px | `793e1f` | `421806` |
+| `TEXT FIELD` | chamfer, same cut | `99572b`, 7 px | `3f1a0c`, 6 px | `4e2211` | `2a0d03` |
+| `MAP MODE DISPLAY` | round, ~10 px radius | `99572b`, 6 px | `612e15` | `793e1f` | `421807` |
+| `SETTINGS CONFIG PANEL` | round, hand-wobbled | `99572b`, 5 px | `612d15` | `783e1f` | `4a1b07` |
+| `JOIN BUTTON` | chamfer, same cut | `90ea40`, 7 px | `3caf2d` | `51dd38` | `188427` |
+
+- **Every surface he authored is a chamfered or rounded slab with a BRIGHT keyline outside a DARK
+  rim, over a full-height gradient with a varnish band a quarter of the way down.**
+- **Every surface drawn in code was a rounded rectangle with a DARK outline over a FLAT face**,
+  because `GodotTheme.Box(fill, border, 5, 12)` is what every plate and every button resolved to,
+  and `UiMaterials.CarvedButton` kept the face flat on purpose (a four-sided nine-slice smears any
+  gradient across its centre row; its own header records this).
+- **The lobby draws both at once.** `StartButton` carries `ArrowButtonView` and is his own art, so
+  his chamfered bright-keylined button and a code-drawn dark-outlined rounded rect sat in the same
+  460-unit rail. That is what *"unnatural"* names, and no amount of bevel on the second one fixes
+  it.
+
+⚠️⚠️ **AND THE LAST ROW OF THAT TABLE IS THE WHOLE SYSTEM.** `JOIN BUTTON` is `BUTTON LONG` with
+one colour swapped: keyline, rim and every stop of the face are the SAME COLOUR at different
+values. **One base colour generates a complete control.** `WoodCraft` is that transcription, and
+the ratios are stored as multipliers on HSV value rather than as hexes precisely so a second
+colour does not need a second table, which is how `GodotTheme` ended up with four rectangles that
+differed only by fill.
+
+### 117.2 ⚠️⚠️ "EVERYONE JUST BEING BROWN" IS A SEPARATE COMPLAINT AND IT NEEDED A SEPARATE ANSWER
+
+Counted off `Logs/shots-runtime/Lobby-v43.png`: **eleven brown plates**, and `CLAUDE.md` § 6.4
+fixes the palette at wood, cream, amber and ink and forbids a fifth hue. Every pass so far read
+that as *"use wood"* and left cream as a text colour only.
+
+**Cream is a SURFACE in his own art** (the login screen's input boxes are cream plates on a wood
+column) and so is asphalt (`VISION.md` opens on a street game; § 2 rule 5 names the chalk and the
+road). So the front end is **three materials built three different ways**, not one generator with
+a fill parameter:
+
+| Material | How it is built | What it carries |
+|---|---|---|
+| **WOOD** | keyline, dark rim, varnish band, vertical ramp | buttons, headers, cards, rails |
+| **PAPER** | flat, fibre speckle, NO bevel and NO ramp, one ink hairline, ink type | anything read or typed on a light ground |
+| **SLATE** | matte near-black, no keyline, one lit lip along the top | logs, wells, anything chalk is drawn on |
+
+Seven roles across them (`Button`, `Action`, `Panel`, `Header`, `Field`, `Paper`/`PaperField`,
+`Slate`), and ⚠️ **the enum is closed on purpose**: the caller picks a ROLE and the material,
+silhouette, relief and colour all follow, so two surfaces with different jobs cannot come out
+identical and a new one has to be argued for in the enum rather than invented at a call site.
+
+⚠️ **`UiTheme.Asphalt` is `241a14` and NOT `EnvAsphalt` `4a4e57`**, which has more blue in it than
+red. § 6.4 states the test in exactly those terms. The arena constant is correct where it lives,
+under a graded 3D light, and would read as the cold slate this file has been told five times to
+stop drawing.
+
+### 117.3 ⚠️⚠️ THE HIERARCHY WAS INVERTED: THE ACCENT WAS ON TWO DRAWER TOGGLES AND NOT ON THE PRIMARY
+
+On the shipped lobby the three loudest controls were solid amber: the live tab, `MATCH SETTINGS`
+and `LOBBY & SERVERS`. **START MATCH, the one control the screen exists to reach, was plain
+brown.** § 116.4 states the rule (*"one accent, spent on the primary"*) and applied it only to the
+queue card; the two toggles kept the amber they were given on 2026-08-28 under *"align the yellow
+thing with match settings"*, which was a request about ALIGNMENT that nobody re-read as a request
+about colour. `CLAUDE.md` § 6.2c question 3, one control over.
+
+- **Both toggles are `WoodHeaderButton` now**: a wooden sign, square along its top edge and
+  rounded below, so it reads as hung ON the drawer under it. ⚠️ **A different shape, not a dimmer
+  colour**, because a colourblind player and a photograph both survive a silhouette.
+- **The live tab is RAISED and the idle tab is RECESSED** (`WoodTabIdleButton`, drawn through
+  `Surface.Field`, lit from below). Three signals: relief, the amber chalk bar that moves under
+  the live one, and height. None of them is hue.
+- **START MATCH is untouched authored art** and is now the largest uncontested object on the
+  screen, which is position and size carrying the hierarchy instead of paint. ⚠️ `VISION.md` § 6
+  and § 6.4's own exemption: **do not repaint his art.**
+
+### 117.4 ⚠️⚠️ THREE STRINGS IN THE LOBBY WERE DRAWN BY A FONT THAT IS NOT THIS GAME'S
+
+Darumadrop One's cmap carries **525 glyphs** and `◀` (U+25C0), `✓` (U+2713) and `✎` (U+270E) are
+not among them. `LobbyChrome.BuildIdentity` already recorded this for the pencil in August and
+fixed that one; **two more shipped and both are in the middle of the screen**:
+
+| Where | What | Fix |
+|---|---|---|
+| `LobbyNameplates:303` | `{name}   ◀`, the marker saying which body is YOU | the word `YOU` |
+| `LobbyNameplates:238` | `✓`, the ready tick on four plates over the cast | `UiMaterials.ChalkTick`, a drawn chalk mark |
+| `ConvertedMatchSetup:140` | `YouMark = "◀ YOU"` on every seat row | `"YOU"` |
+
+⚠️ **`▼` U+25BC and `▲` U+25B2 ARE in the font and were checked**, which is why the drawer carets
+are still characters. Verify with the cmap, not by looking: a fallback glyph renders, it just
+renders in a different typeface at a different baseline, which is invisible in a code review and
+obvious on screen.
+
+### 117.5 The player card was five amber captions, and four of them restated their own control
+
+🧑: *"I donnt want redundannt UI"*. The card read PLAYER NAME / PLAYING AS / ROOM CODE / YOUR
+SKILLS / YOUR PROFILE: five all-caps amber headings at one size in one colour, each over a
+44-unit plate at 3 units of spacing. **Nothing led, because five things shouting equally is
+silence**, and the card ran 390 units, over a third of the screen's height.
+
+Four captions went, and each was restating the control under it:
+
+- **PLAYER NAME** over a field holding the player's name, on the player's own card, whose
+  placeholder already reads TAP TO SET YOUR NAME.
+- **PLAYING AS** over the character's name and a chevron, with the model on screen behind it.
+- **YOUR SKILLS** over `PHAISTER · standard build`, directly under the row that already reads
+  PHAISTER. `SetSkills` writes the build alone now and the row above supplies the subject.
+- **YOUR PROFILE** over a button reading SECURE YOUR PROGRESS: the caption and the label were two
+  different sentences about two different things.
+
+⚠️⚠️ **AND THE ROOM CODE BECAME THE CARD'S HEADER.** § 116.6 moved it out of a closed drawer and
+was right to; it then made it the third of five equal rows, which is the same burial one layer up.
+It is the first thing on the card, the only amber on it, and it answers *"how does my friend get
+in"* with no press at all. ⚠️ Practice has no room, so `SetCode` takes the whole sign off and the
+card closes up.
+
+**What replaced the captions is space.** `FUTURE.md` § 0.5b's fourth ordering tool: spacing went 3
+to 8 between siblings and to a 14-unit chalk rule between groups, which is the only way space
+orders anything (there has to be more than one size of it). Three type steps replaced one: 52 for
+the sign, 62 for the character row, 38 for the two footer rows.
+
+### 117.7 ⚠️⚠️ WHAT THE RENDERS CHANGED, BECAUSE FOUR OF THESE WERE INVISIBLE IN THE SOURCE
+
+🧑: *"take pics too and juge how to improve it"*, and `CLAUDE.md` § 6.2a: **a green layout probe
+is not a good screen.** Four passes were shot at `Logs/shots-runtime/Lobby-v43..v46.png`, and
+every row below is a fault that a code review had already read past.
+
+| Seen in | The fault | Why the source hid it |
+|---|---|---|
+| `v44` | **PRACTICE and MULTIPLAYER were still hard to tell apart** after the idle tab dropped from `WoodFace` `793e1f` to `WoodFieldFace` `4e2211`. | A palette diff says those are far apart. Every `WoodCraft` face carries a varnish band and the eye compares the two BRIGHT bands, and `4e2211`'s peak sits inside `793e1f`'s ramp. `WoodSlot` `36180c` puts the idle tab's brightest pixel below the live tab's darkest. |
+| `v45` | **They were STILL hard to tell apart.** | Both carry the same bright keyline, which is the loudest feature of a 56-unit control, so the fill difference is not what a reader is comparing. **The size difference is what fixed it** — and see the next row, because there was not one. |
+| `v45` | ⚠️⚠️ **THE LIVE TAB WAS NEVER TALLER, IN ANY BUILD.** Three separate comments in this repository state it is *"four units taller"* as the half of the distinction that survives a colourblind player. | `BuildTabs` set `childForceExpandHeight = true`, and a `HorizontalLayoutGroup` with that on gives every child the bar's height and **silently overrides every `LayoutElement` under it**. A claim in a comment is not a measurement. |
+| `v44`, `v45` | **The card's chalk rules were invisible at 0.30 and still invisible at 0.55.** | The tint MULTIPLIES the sprite's own alpha, and `UiMaterials.ChalkRule` paints a dusty stroke already averaging about half opacity. 0.55 of that is a quarter-strength mark on brown. 0.85 now. |
+| `v44`, `v45` | **The queue's chalk rule drew a bright line across the bottom edge of the frame**, amber then cream, outside the button both times. | It is a child of the ROW, and the row reserved 14 units under the button purely to hold it, so "under the button" and "off the bottom of the screen" were the same place. **Deleted, with its 14 units.** |
+| `v44` | **The chat's log read as a hole rather than a surface.** | `Asphalt` plus 22 per cent of black at the top is darker than the night road behind it, and a well darker than everything around it stops being a well. 12 per cent, and the base lifted to `2f2118`. |
+| `v45` | **The card was a paper tag and then three brown plates**, the bottom two identical 38-unit rows with identical chevrons. | The loadout and the whole player hub were being offered as equals. The profile row is a transparent footer link now: same 302 x 38 hit area, one fewer rectangle. |
+
+⚠️ **AND THE ONE THAT DID NOT NEED A RENDER, BECAUSE IT NEEDED A FONT DUMP:** § 117.4's three
+missing glyphs. A fallback glyph renders. It just renders in a different typeface at a different
+baseline, which is invisible in a code review and obvious on screen, and `grep` cannot see it
+either. Read the cmap.
+
+### 117.8 Two red PlayMode cases this pass did not cause, and what they actually were
+
+⚠️⚠️ **`LoadoutSurfaceProbe` HAD BEEN RED SINCE § 115.6 AND ITS OWN FAILURE MESSAGE POINTED AT
+THE WRONG SECTION.** All five of its cases reported *"the CAREER tab has no Ability builds
+group"* and cited § 114.12, which is a real fault about the career tab bailing out at zero
+matches. It was not that. **§ 115.6 moved the loadout out of a collapsed group on CAREER into a
+tab of its own**, because 🧑 commissioned the feature and then could not find it twice; the group
+is built by `PlayerHub.BuildLoadoutTab` and the probe was still pressing `CAREER`. One word.
+
+⚠️ **A STALE TEST THAT NAMES A CAUSE IS WORSE THAN ONE THAT SAYS NOTHING.** The message read as a
+regression in the code under test and cost a pass to disprove. When a surface moves, the probe
+that points at it moves in the same commit.
+
+⚠️⚠️ **`CarryTests.AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor` IS INTERMITTENT
+AND THAT IS NOW MEASURED RATHER THAN GUESSED.** It failed twice reporting a held slipper drifting
+**0.0918578357 m** against a 0.050 bound, at the identical figure both times, then passed alone,
+then **passed in a full 141/141 PlayMode run with nothing about it changed**. Nothing in this pass
+touches carry, the animator or `LateUpdate`.
+
+⚠️ **SO IT IS THE SECOND WALL-CLOCK-SHAPED TEST IN THIS SUITE AND IT IS NOT TAGGED AS ONE.**
+`CLAUDE.md` § 7 and § 6 record the same shape for `AiDiagnosticProbe`: a bound that holds or does
+not depending on how busy the machine is, failing at 21.6, 29.9 and 37.6 seconds against 20.0 and
+passing on immediate re-runs. **An identical failure figure across runs points at a frame the
+carry missed rather than at noise in the measurement**, which is worth one look before anybody
+tags it `WallClock` and stops seeing it. Do not re-baseline the bound: the bound is the assertion.
+
+### 117.9 ⚠️⚠️ FOUR MORE HE CAUGHT BY LOOKING, AND EVERY ONE WAS A PIECE OF THE OLD LANGUAGE LEFT BEHIND
+
+🧑 sent four crops in a row off the `v48` and `v49` renders. **None of them is a layout fault and
+none is visible to any probe**; all four are what happens when the SHAPE of the front end changes
+and something drawn for the old shape is not revisited.
+
+| His words | What it was | What it is now |
+|---|---|---|
+| *"the shadows dont follow the actual ckickables as well"* | `SkinLayers.Shadow` paints `GodotTheme.ShadowBox()`, a ROUNDED rectangle, six units grown and five down. Correct when every face was rounded; the faces are chamfered now, so the shadow stuck out of all four cut corners. | `WoodCraft.Silhouette` paints the face's own outline, solid and white, tinted by the caller. `GodotButton` and `GodotPanel` both feed it. |
+| *"whats that empty space bcz of roudned age"* | The sign-in column is edge-anchored and full height, and a `WoodCraft` panel is rounded on all four corners, so the screen's own corner showed background through the radius. | The column bleeds 28 units off the left, top and bottom, so the curve is outside the frame. ⚠️ **Not the right edge**: that one is seen, and `ColumnEdge` draws the lit line down it. |
+| *"this line looks weird"*, then *"this stray light brown adn yellow line dont make sense i think its leftover stuff from old ui"* | A 436-unit `WoodEdge` strip rule under BOTH tabs and an amber chalk bar under the live one. Both were written when the two tabs differed by a FILL and nothing else, and the bar was the answer to `colorblind-failure`. | Both deleted, on **both** screens. The tabs are four different things now: raised against recessed, `793e1f` against `36180c`, cream against muted, and 8 to 14 units taller. Three of the four survive a greyscale photograph, so the rule is met without a loose mark. |
+| *"it would look better if tump looked engraved into the wood like color as opposed to just floating"* | The wordmark is a white texture on a wood column, so the game's name was the brightest object on the screen and belonged to no surface. | Three tinted copies of the same texture: ink two units up (the shadowed top wall of the groove), lit wood two down (the far wall), and a face one value under the plank. ⚠️ **A treatment, not a repaint**: the PNG is untouched and the title screen still draws it white. |
+
+⚠️⚠️ **THE PATTERN ACROSS ALL FOUR IS THE ONE WORTH KEEPING: WHEN A SHAPE CHANGES, EVERY LAYER
+DRAWN AGAINST THE OLD SHAPE IS NOW WRONG AND NONE OF THEM WILL FAIL A TEST.** The shadow, the
+corner radius, the tab marker and the strip rule were each correct on the day they were written
+and each became a leftover the moment the face under them stopped being a rounded rectangle.
+**Grep for the layers, do not wait for the render.**
+
+### 117.6 What is NOT done, named rather than left implied
+
+- ⚠️ **THE "LOBBY HAS NO KEYBOARD CHAIN" ITEM IN § 116.5 IS HALF STALE AND IS CORRECTED HERE.**
+  The lobby is navigable without a mouse: `KeyboardCursor` is installed on it, Tab and the arrows
+  wake a selection on START MATCH, and every `Selectable` on the screen already carries Unity's
+  `Automatic` spatial navigation. What it does not have is an EXPLICIT chain like
+  `SignInScreen.Chain`. **That is probably correct here and should not be "fixed" without a
+  reason**: `Chain` exists on the sign-in screen because two tabs sit at the same height there and
+  "up" from the password field is genuinely ambiguous, and the lobby's controls are in four
+  separated corners where spatial navigation answers what a hand-written order would only
+  duplicate. ⚠️ The real open question is whether the reading order Automatic produces matches the
+  JOURNEY order, and nobody has watched somebody Tab through it.
+- **No probe looks at any of this.** The two rules a test COULD hold are the touch-target floor
+  and "no control is distinguished by colour alone", and neither is asserted anywhere. ⚠️ The
+  second one is now nearly checkable, because every pair this pass touched differs in silhouette
+  or relief and a probe could read the `WoodCraft.Surface` off the component.
+- **`UiMaterials.CarvedButton` and `Plank` are still live** and still correct for a caller that
+  cannot know its own height (`WoodDropdown`'s list rows). ⚠️ They are the OLD language; anything
+  that can know its height should be on `WoodSkin` instead, and the two should not be mixed inside
+  one card.
+
+---
+
 ## 116 · The front end had one material and no focus state ⚠️⚠️ 2026-09-01, branch `ui-redesign`
 
 🧑, after eight fixes had landed and every one of them was correct: **"our UI is ugly and

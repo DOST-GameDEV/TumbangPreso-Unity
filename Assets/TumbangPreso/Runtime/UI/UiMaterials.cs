@@ -194,6 +194,73 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>
+        /// A chalk tick, drawn rather than typed.
+        ///
+        /// ⚠️⚠️ THE READY TICK WAS THE CHARACTER `✓` AND DARUMADROP ONE DOES NOT HAVE IT. The
+        /// font's cmap carries 525 glyphs and U+2713 is not among them, so Unity's dynamic-font
+        /// fallback drew it out of whatever system face it picked: a different weight, a different
+        /// baseline and a different colour response from every other mark on the screen, **on the
+        /// four plates floating over the cast in the middle of the lobby**. `LobbyChrome`'s player
+        /// card already records this exact fault for `✎` and fixed it by using a word instead;
+        /// this one has no word, so it gets a shape.
+        ///
+        /// ⚠️ AND A CHALK TICK IS THE RIGHT SHAPE FOR THIS GAME RATHER THAN A NEUTRAL ONE. The
+        /// arena's box is chalk on asphalt and `VISION.md` § 2 rule 5 names it as one of three
+        /// things a frame must show. A tick scrawled in chalk over a wooden plate says READY in
+        /// this game's own hand; a font glyph says it in Arial's.
+        ///
+        /// ⚠️ IT IS NOT NINE-SLICED. A tick is a drawing, not a plate: stretching one turns the
+        /// short stroke into a smear. Callers draw it at a fixed square size.
+        /// </summary>
+        public static Sprite ChalkTick()
+        {
+            const string key = "chalk_tick";
+            if (Cache.TryGetValue(key, out var cached) && cached != null) return cached;
+
+            const int size = 32;
+            var texture = NewTexture(size, size, key);
+            var pixels = new Color[size * size];
+
+            // Two strokes in the texture's own bottom-up space: a short one down into the elbow
+            // and a long one up to the right. Thickness tapers along each, which is what a stick
+            // of chalk held at an angle actually leaves.
+            var a0 = new Vector2(6.5f, 17.0f);
+            var a1 = new Vector2(12.5f, 9.0f);
+            var b1 = new Vector2(25.0f, 24.0f);
+
+            for (int y = 0; y < size; y++)
+                for (int x = 0; x < size; x++)
+                {
+                    var p = new Vector2(x + 0.5f, y + 0.5f);
+
+                    float d = Mathf.Min(Segment(p, a0, a1, out float t0),
+                                        Segment(p, a1, b1, out float t1));
+
+                    // The short stroke is heavier at its start and the long one at its end, so
+                    // the mark has a direction the way a written one does.
+                    float weight = 2.5f;
+                    float alpha = Mathf.Clamp01((weight - d) / 1.7f);
+
+                    // ⚠️ THE DUST IS WHAT MAKES IT CHALK, exactly as in `ChalkRule`. A clean
+                    // falloff is an anti-aliased vector tick and reads as an icon set.
+                    alpha *= 0.70f + (Mathf.PerlinNoise(x * 0.85f, y * 0.85f) * 0.30f);
+
+                    pixels[(y * size) + x] = new Color(1.0f, 1.0f, 1.0f, Mathf.Clamp01(alpha));
+                }
+
+            return Finish(texture, pixels, Vector4.zero, key);
+        }
+
+        /// <summary>Distance from a point to a segment, with the parameter along it.</summary>
+        private static float Segment(Vector2 p, Vector2 a, Vector2 b, out float t)
+        {
+            var ab = b - a;
+            float len = ab.sqrMagnitude;
+            t = len <= 0.0001f ? 0.0f : Mathf.Clamp01(Vector2.Dot(p - a, ab) / len);
+            return Vector2.Distance(p, a + (ab * t));
+        }
+
+        /// <summary>
         /// A soft vertical shadow, for putting one surface in front of another.
         ///
         /// ⚠️ DEPTH IS THE OTHER HALF OF WHAT MAKES A STACK OF PLATES READ AS A STACK. It is 22

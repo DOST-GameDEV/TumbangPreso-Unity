@@ -254,11 +254,22 @@ namespace TumbangPreso.UI
             {
                 var plate = gameObject.AddComponent<Image>();
 
-                // ⚠️ A RECESSED PLANK, so the chat reads as a groove in the rail rather than as
-                // another plate on top of it. See `UiMaterials`.
-                plate.sprite = UiMaterials.Plank(UiTheme.WoodDeep, raised: false);
-                plate.type = Image.Type.Sliced;
-                plate.color = Color.white;
+                // ⚠⚠⚠ IT IS ASPHALT, NOT WOOD, AND THAT IS THE POINT. 🧑 2026-09-01:
+                // *"make sure all ui isnt generated in the same way but follows a central theme
+                // bcz old issue was it read as repetitive with everyone just being brown and
+                // boring"*. Counted off `Logs/shots-runtime/Lobby-v43.png` the lobby was eleven
+                // brown plates, and this was one of them: a recessed brown plank inside a brown
+                // rail under a brown drawer toggle.
+                //
+                // A chat log is a LIST OF LINES, and this game already has a surface lines are
+                // written on. `VISION.md` opens on a street game, § 2 rule 5 names the chalk and
+                // the road as two of the three things a frame must show, and `MapGeometryCheck`
+                // gates the chalk box in every arena. `WoodCraft.Surface.Slate` is that road:
+                // matte, no keyline, one lit lip along the top edge where the rail above it
+                // catches the light. **It costs no new colour** and it is the only thing on the
+                // right-hand side that is not a board.
+                plate.raycastTarget = true;
+                WoodSkin.Apply(gameObject, WoodCraft.Surface.Slate);
 
                 // ⚠️ IT DOES EAT CLICKS, unlike everything else this component draws. A chat panel
                 // you can click THROUGH into the seat rows behind it is a panel that steals half
@@ -280,9 +291,15 @@ namespace TumbangPreso.UI
             _fieldRow.transform.SetParent(transform, false);
 
             var image = _fieldRow.AddComponent<Image>();
-            image.sprite = GodotTheme.WoodBox(UiTheme.WoodDark, UiTheme.WoodEdge);
-            image.type = Image.Type.Sliced;
-            image.color = Color.white;
+
+            // ⚠️⚠️ THE FIELD IS CHAMFERED AND THE LOG BEHIND IT IS NOT, WHICH IS HOW A
+            // PLAYER TELLS THEM APART. Both are dark, and before this pass both were the same
+            // `GodotTheme.WoodBox` rounded rectangle at two fills, so the chat read as one tall
+            // dark box with a line across it. In 🧑's own art a CHAMFER means a thing you touch
+            // (`BUTTON LONG`, `TEXT FIELD`) and a ROUND means furniture (`MAP MODE DISPLAY`), so
+            // the silhouette is already carrying that distinction everywhere else on the screen.
+            // `WoodCraft`'s header has the sampled evidence.
+            WoodSkin.Apply(_fieldRow, WoodCraft.Surface.Field);
 
             var element = _fieldRow.AddComponent<LayoutElement>();
             element.minHeight = FieldHeight;
@@ -820,9 +837,10 @@ namespace TumbangPreso.UI
             var box = new GameObject("Panel");
             box.transform.SetParent(_historyPanel.transform, false);
             var plate = box.AddComponent<Image>();
-            plate.sprite = GodotTheme.WoodBox(UiTheme.WoodDeep, UiTheme.WoodEdge);
-            plate.type = Image.Type.Sliced;
-            plate.color = Color.white;
+
+            // The opened log is a wooden card holding an asphalt well, which is the same pairing
+            // the collapsed chat uses one size down. See the `Slate` note in `Install`.
+            WoodSkin.Apply(box, WoodCraft.Surface.Panel);
 
             // ⚠ IT EATS CLICKS. The panel is opaque wood over a lobby full of controls, and a
             // press that fell through to a seat row underneath it would seat the player from a
@@ -854,9 +872,7 @@ namespace TumbangPreso.UI
             var viewportGo = new GameObject("Viewport");
             viewportGo.transform.SetParent(box.transform, false);
             var viewportImage = viewportGo.AddComponent<Image>();
-            viewportImage.sprite = GodotTheme.WoodBox(UiTheme.WoodDark, UiTheme.WoodEdge);
-            viewportImage.type = Image.Type.Sliced;
-            viewportImage.color = Color.white;
+            WoodSkin.Apply(viewportGo, WoodCraft.Surface.Slate);
             var viewportRect = viewportImage.rectTransform;
             viewportRect.anchorMin = Vector2.zero;
             viewportRect.anchorMax = Vector2.one;

@@ -94,12 +94,111 @@ namespace TumbangPreso.UI
         public static readonly Color Cream = Hex("f5e6c8");
         public static readonly Color Amber = Hex("ffba00");
 
+        /// <summary>
+        /// The face of a wooden CONTROL, measured off 🧑's own `BUTTON LONG.png`.
+        ///
+        /// ⚠️⚠️ IT IS SAMPLED FROM THE AUTHORED ART RATHER THAN PICKED FROM THE SET ABOVE, AND
+        /// THAT IS THE WHOLE REASON IT EXISTS. `WoodCraft` generates a control as seven values of
+        /// ONE colour, so the base it starts from decides whether a code-drawn button sits beside
+        /// his `BUTTON LONG` as a sibling or as a near miss. `793e1f` is the varnish band at 25
+        /// per cent down the centre of that texture, which is the brightest point of the face and
+        /// therefore the anchor the rest of the ramp is expressed against.
+        ///
+        /// ⚠️ IT SITS BETWEEN <see cref="WoodMid"/> `5a2f14` AND <see cref="WoodEdge"/> `8b5227`
+        /// AND IS NEITHER. Both of those were already being used as button fills, and both are
+        /// wrong by enough to see: `WoodMid` is a fifth darker than his face and `WoodEdge` is his
+        /// KEYLINE colour, so a button filled with it came out the colour of its own outline.
+        /// </summary>
+        public static readonly Color WoodFace = Hex("793e1f");
+
+        /// <summary>
+        /// The face of a wooden PANEL, off `SETTINGS CONFIG PANEL.png` and `MAP MODE DISPLAY.png`.
+        ///
+        /// ⚠️ ONE VALUE DARKER THAN <see cref="WoodFace"/> AND THAT ONE VALUE IS DELIBERATE IN
+        /// HIS ART. Both panel textures peak at `783e1f` and both button textures at `793e1f`:
+        /// furniture sits a shade back from the controls standing on it, which is what keeps a
+        /// row of buttons legible against the card they are in. Keeping the two constants apart
+        /// means a future palette change cannot accidentally flatten them together.
+        /// </summary>
+        public static readonly Color WoodPanelFace = Hex("783e1f");
+
+        /// <summary>
+        /// The face of a wooden SLOT you type into, off `TEXT FIELD.png`.
+        ///
+        /// ⚠️⚠️ IT IS THE SAME CONSTRUCTION AS THE BUTTON AT A LOWER VALUE, WHICH IS THE PART
+        /// WORTH KNOWING. `TEXT FIELD.png` and `BUTTON LONG.png` are the same 818x135 chamfered
+        /// slab with the same `99572b` keyline; only the face differs, `4e2211` against `793e1f`,
+        /// which is 0.64 of the value. **His field is his button, darker.** Two controls a player
+        /// can tell apart at a glance, out of one drawing, and that relationship is what
+        /// `WoodCraft` reproduces rather than a second hand-tuned texture.
+        ///
+        /// ⚠️ AND THE RAMP IS INVERTED ON IT: `461e0f` at 10 per cent down against `4e2211` at
+        /// 25, so the TOP is the dark end. The light is above the screen and the near wall of a
+        /// recess is the one in shadow, so a slot is lit from below and a board is lit from above.
+        /// `WoodCraft.PaintWood` flips it on this surface and on no other.
+        /// </summary>
+        public static readonly Color WoodFieldFace = Hex("4e2211");
+
+        /// <summary>
+        /// The darkest wooden face: an unselected tab, and anything that has to sit clearly
+        /// BEHIND a control of the same shape beside it.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE <see cref="WoodFieldFace"/> WAS NOT DARK ENOUGH TO SEPARATE
+        /// TWO TABS AND THAT WAS MEASURED BY LOOKING. `793e1f` against `4e2211` is an obvious
+        /// difference in a colour picker, and on `Logs/shots-runtime/Lobby-v44.png` PRACTICE and
+        /// MULTIPLAYER still read as the same control: every `WoodCraft` face carries a varnish
+        /// band, the eye compares the BRIGHT band of one against the bright band of the other,
+        /// and `4e2211`'s peak sits inside `793e1f`'s ramp. At `36180c` the idle tab's brightest
+        /// pixel is darker than the live tab's darkest, so the two cannot be confused at any size.
+        ///
+        /// ⚠️ THIS IS THE ARGUMENT FOR CHECKING CONTRAST AGAINST THE RENDER RATHER THAN AGAINST
+        /// THE CONSTANTS. A palette diff says these two are far apart; the picture said they were
+        /// not, because what a gradient actually shows a reader is its highlight.
+        /// </summary>
+        public static readonly Color WoodSlot = Hex("36180c");
+
+        /// <summary>
+        /// The road, for a UI well: a log, a list, anything chalk is drawn on.
+        ///
+        /// ⚠️⚠️ IT IS NOT <see cref="EnvAsphalt"/> AND IT MUST NOT BECOME IT. That constant is
+        /// `4a4e57`, which has **more blue in it than red**, and `CLAUDE.md` § 6.4 states the test
+        /// in exactly those terms: a hex with more blue than red does not belong in a menu. It is
+        /// correct where it lives, on an arena floor under a graded 3D light, and it would read as
+        /// the cold slate this front end has already been told five times to stop drawing.
+        ///
+        /// ⚠️ IT IS A WARM NEAR-BLACK ONE STEP OFF <see cref="WoodDark"/>, so a slate well inside
+        /// a wooden card reads as a hole in the wood rather than as a foreign panel laid on it.
+        /// </summary>
+        public static readonly Color Asphalt = Hex("2f2118");
+
         public static Font Font => MenuKit.Font;
 
         public static Color CreamMuted => new Color(Cream.r, Cream.g, Cream.b, 0.68f);
 
         public static readonly Color MenuGreen = Hex("21a131");
         public static readonly Color MenuGreenLit = Hex("69e548");
+
+        /// <summary>
+        /// The face of the PRIMARY action, measured off 🧑's own `JOIN BUTTON.png`.
+        ///
+        /// ⚠️⚠️ GREEN IS HIS PRIMARY COLOUR AND THAT IS EVIDENCE RATHER THAN TASTE. `JOIN
+        /// BUTTON.png` and the `PLAY` pennant are both authored green, and `JOIN BUTTON` is
+        /// pixel-for-pixel the same construction as `BUTTON LONG` with one colour swapped:
+        /// keyline `90ea40` against `99572b`, rim `3caf2d` against `612e15`, face peak `51dd38`
+        /// against `793e1f`, floor `188427` against `421806`. **The same seven values of a
+        /// different hue**, which is the whole system `WoodCraft` transcribes.
+        ///
+        /// ⚠️ THIS IS THE PEAK, NOT <see cref="MenuGreen"/> `21a131`, WHICH IS A THIRD DARKER
+        /// THAN ANY PIXEL IN HIS BUTTON. A primary drawn at the old constant came out as a
+        /// muddy bottle green beside his art; `WoodCraft` expresses its whole ramp against the
+        /// peak, so handing it the floor of the ramp as the base darkened every stop again.
+        ///
+        /// ⚠️ AND IT IS NOWHERE NEAR `Offense` or `Defense`. Hue 110, against 22 and 207: green
+        /// is 88 degrees off the attacker's orange and 97 off the taya's blue, so a green button
+        /// cannot be read as a role. That constraint is `Art_Direction.md` § 1 and it is the only
+        /// thing that limits which hues a control may take.
+        /// </summary>
+        public static readonly Color MenuGreenFace = Hex("51dd38");
         public static readonly Color MenuRed = Hex("ed2136");
         public static readonly Color MenuRedLit = Hex("fa7653");
 

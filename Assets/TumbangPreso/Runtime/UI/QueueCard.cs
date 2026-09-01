@@ -264,12 +264,17 @@ namespace TumbangPreso.UI
         /// <summary>
         /// QUICK MATCH as a rail row: the same words, one step down in weight from the primary.
         ///
-        /// ⚠⚠ PLAIN WOOD WITH A CHALK RULE UNDER IT, NOT AMBER. The old note on this control
-        /// said *"amber, which is the one accent on this screen and is spent on the one action"*,
-        /// and that was written when the card was alone in the middle of the screen. In the rail
-        /// it sits directly under START MATCH, which IS the one action, so two accents would be
-        /// two primaries eight units apart. The chalk rule is what keeps it from reading as a
-        /// disabled control: it says "this is a way in" without claiming to be THE way in.
+        /// ⚠⚠ PLAIN WOOD, NOT AMBER. The old note on this control said *"amber, which is the
+        /// one accent on this screen and is spent on the one action"*, and that was written when
+        /// the card was alone in the middle of the screen. In the rail it sits directly under
+        /// START MATCH, which IS the one action, so two accents would be two primaries eight
+        /// units apart.
+        ///
+        /// ⚠️ AND NOTHING ELSE MARKS IT, WHICH IS A CORRECTION TO § 116.4. That entry added a
+        /// chalk rule under this button to say *"a way in"* without claiming to be THE way in.
+        /// The rule is deleted; see the note in the body for the two renders that argued it out.
+        /// **Size and position already carry the distinction** and they are the two ordering
+        /// tools `game-ui-design` puts above weight and colour.
         /// </summary>
         private void BuildDockedDoor()
         {
@@ -277,8 +282,8 @@ namespace TumbangPreso.UI
             holder.transform.SetParent(transform, false);
 
             var element = holder.AddComponent<LayoutElement>();
-            element.minHeight = DoorHeight + 14.0f;
-            element.preferredHeight = DoorHeight + 14.0f;
+            element.minHeight = DoorHeight;
+            element.preferredHeight = DoorHeight;
             element.flexibleHeight = 0.0f;
 
             _open = MenuKit.WoodButton(holder.transform, "QUICK MATCH", new Vector2(0.5f, 1.0f),
@@ -296,14 +301,22 @@ namespace TumbangPreso.UI
             buttonRect.offsetMin = new Vector2(0.0f, -DoorHeight);
             buttonRect.offsetMax = Vector2.zero;
 
-            var rule = UiMaterials.Underline(holder.transform, 0.0f, 0.0f, UiTheme.Amber);
-            var ruleRect = rule.rectTransform;
-            ruleRect.anchorMin = new Vector2(0.0f, 0.0f);
-            ruleRect.anchorMax = new Vector2(1.0f, 0.0f);
-            ruleRect.pivot = new Vector2(0.5f, 0.0f);
-            ruleRect.offsetMin = new Vector2(18.0f, 2.0f);
-            ruleRect.offsetMax = new Vector2(-18.0f, 10.0f);
-
+            // ⚠⚠⚠ THE CHALK RULE UNDER THIS BUTTON IS DELETED, AND TWO RENDERS TRYING TO
+            // PLACE IT ARE THE ARGUMENT. § 116.4 added it so QUICK MATCH would say *"a way in"*
+            // without claiming to be THE way in, and that was correct when this control was a
+            // 560-unit amber bar across the middle of the screen. It is not any more: it is a
+            // plain wooden row directly under START MATCH, which is 104 units tall, his own
+            // authored art, and the only uncontested object in the corner. **Position and size
+            // already say which of the two leads**, and `game-ui-design` orders those above both
+            // weight and colour.
+            //
+            // What the rule actually did on screen was draw a bright line across the very bottom
+            // of the frame: amber and eight units off the edge in `Lobby-v44.png`, cream and
+            // still outside the button in `Lobby-v45.png`, because it is a child of the ROW and
+            // the row reserved 14 units under the button purely to hold it. A separator between a
+            // control and the edge of the screen is not a separator. **The 14 units go with it**,
+            // so the rail is 14 shorter and QUICK MATCH sits on `BottomMargin` like everything
+            // else.
             FocusRing.Attach(_open.gameObject, 4.0f);
         }
 
@@ -313,9 +326,7 @@ namespace TumbangPreso.UI
             _card.transform.SetParent(transform, false);
 
             var plate = _card.AddComponent<Image>();
-            plate.sprite = GodotTheme.WoodBox(UiTheme.WoodDeep, UiTheme.WoodEdge);
-            plate.type = Image.Type.Sliced;
-            plate.color = Color.white;
+            WoodSkin.Apply(_card, WoodCraft.Surface.Panel);
 
             // ⚠️ IT BLOCKS ITS OWN RECTANGLE AND NOTHING ELSE. `CLAUDE.md` § 6.2c question 4:
             // anything covering the screen is also eating clicks, and naming the blocker is part

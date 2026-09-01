@@ -646,7 +646,13 @@ namespace TumbangPreso.UI
             var skin = button?.GetComponent<GodotButton>();
             if (skin == null) return;
 
-            skin.Variation = on ? "WoodAmberButton" : "WoodButton";
+            // ⚠️⚠️ RELIEF, NOT HUE, AND IT IS THE SAME PAIR THE LOBBY AND THE SIGN-IN
+            // SCREEN NOW USE. A live tab painted solid amber against plain wood distinguishes
+            // itself by colour alone, which `game-ui-design` lists as `colorblind-failure`, and it
+            // spends the screen's accent on a statement about where you already are.
+            // `GodotTheme.WoodTabIdleButton` carries the argument: the idle tab is drawn through
+            // `WoodCraft.Surface.Field`, lit from BELOW, so the two tabs sit at two depths.
+            skin.Variation = on ? "WoodHeaderButton" : "WoodTabIdleButton";
             skin.Apply();
             skin.Refresh();
         }

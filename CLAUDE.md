@@ -487,6 +487,53 @@ at, and a reader who followed either pointer landed on nothing.
   Wood, amber, cream, ink. Anything drawn in a different visual language is the thing that looks
   broken, not the thing that looks new."*
 
+### 6.5 ⚠️⚠️ THE FRONT END IS DRAWN IN HIS ART'S OWN GEOMETRY, AND `WoodCraft` IS WHERE THAT LIVES
+
+🧑 2026-09-01, after a whole pass that had already replaced every button and every plate:
+*"ui still looks unnatural and ugly"*, then the cause in his own words: *"the issue with old UI is
+everything feels repetitive bcz i think u use the same code to generate them all"*, and
+**"make sure all ui isnt generated in the same way but follows a central theme bcz old issue was
+it read as repetitive with everyone just being brown and boring"**.
+
+⚠️⚠️ **§ 6.4 FIXES THE PALETTE AND THAT WAS NEVER THE PROBLEM. THE PROBLEM WAS THE SHAPE.**
+Sampling `Assets/TumbangPreso/Art/ui/host-game/*.png` pixel by pixel: **every surface he authored
+is a chamfered or rounded slab with a BRIGHT keyline outside a DARK rim, over a full-height
+gradient with a varnish band a quarter of the way down.** Every surface drawn in code was a
+rounded rectangle with a DARK outline over a FLAT face. **The lobby draws both at once**, because
+`StartButton` is his own `BUTTON LONG` texture, so his art and the code sat in one 460-unit rail
+in two opposite visual languages and the code-drawn half was the one that looked wrong.
+
+- **`Runtime/UI/WoodCraft.cs` is the transcription and its header carries the measurements.** Read
+  it before drawing any new surface. `JOIN BUTTON.png` is `BUTTON LONG.png` with one colour
+  swapped, keyline to floor, so **one base colour generates a whole control** and the ratios are
+  stored as multipliers on HSV value rather than as hexes.
+- ⚠️ **PICK A ROLE, NOT A FILL.** `WoodCraft.Surface` is a closed list (`Button`, `Action`,
+  `Panel`, `Header`, `Field`, `Paper`, `PaperField`, `Slate`) and the material, silhouette, relief
+  and colour all follow from it. The failure this replaced is a screen of twelve plates that were
+  all one call with a different fill, and the way that happened is that the fill was a parameter.
+- ⚠️ **A CHAMFER MEANS PRESSABLE AND A ROUND MEANS FURNITURE**, in his art with no exception. A
+  shape difference survives a photograph and a colourblind player; a fill difference does not.
+- ⚠️⚠️ **AND "BROWN AND BORING" NEEDED A SECOND ANSWER: cream and asphalt are SURFACES, not just
+  text colours.** His login fields are cream plates and `VISION.md` § 2 rule 5 names the chalk and
+  the road. Paper and Slate are built by different rules from wood (no keyline, no ramp, no
+  bevel), so they cannot read as another plank.
+- ⚠️ **`WoodSkin` OR THE SPRITE IS WRONG.** A slab is sliced horizontally only, so it is correct
+  at exactly the height it was built for; every rect in this front end is driven by a layout group
+  or an aspect-scaled canvas, so no caller can know its own height when it builds itself. The
+  component watches the rect. `GodotButton` and `GodotPanel` carry the same watch for the
+  converted screens, which is how one edit reached every button and every panel in phases 1 to 12.
+- ⚠️ **NOTHING IN IT REPAINTS HIS ART.** The pennants, `BUTTON LONG`, `JOIN BUTTON`, the arrows
+  and the key art are still drawn from the PNGs. This is the surface AROUND them.
+- ⚠️⚠️ **GREEN IS HIS PRIMARY COLOUR AND IT IS EVIDENCE, NOT TASTE.** `JOIN BUTTON.png` and the
+  `PLAY` pennant are both authored green. `UiTheme.MenuGreenFace` is the measured peak; `MenuGreen`
+  `21a131` is a third darker than any pixel in his button and produced a bottle-green slab.
+
+⚠️⚠️ **AND EVERY ONE OF THE SIX FIXES IN `docs/TODO.md` § 117.7 WAS INVISIBLE IN THE SOURCE AND
+OBVIOUS IN A RENDER.** A live tab that three comments in this repository call *"four units
+taller"* was never taller in any build, because `childForceExpandHeight` silently overrides every
+`LayoutElement` under it. A chalk rule at 0.55 alpha is a quarter-strength mark, because the tint
+multiplies the sprite's own. **Take the picture, then take it again.**
+
 `docs/CANONICAL_RENDERING_PIPELINE.md` has the exact commands and five recorded pitfalls.
 ⚠️ **That document is written for Antigravity and its "MANDATE FOR ALL AGENTS" heading is that
 tool's, not this one's.** Its render pipeline is correct and worth following; where anything

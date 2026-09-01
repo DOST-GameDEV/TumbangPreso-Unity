@@ -107,11 +107,9 @@ namespace TumbangPreso.UI
             var cardGo = new GameObject("JoinCard");
             cardGo.transform.SetParent(transform, false);
             var card = cardGo.AddComponent<Image>();
-            card.sprite = GodotTheme.WoodBox(UiTheme.WoodDeep, UiTheme.WoodEdge);
-            card.type = Image.Type.Sliced;
-            card.color = Color.white;
             MenuKit.Place(card.rectTransform, new Vector2(0.5f, 0.5f), Vector2.zero,
                           new Vector2(CardWidth, CardHeight));
+            WoodSkin.Apply(cardGo, WoodCraft.Surface.Panel);
 
             var column = new GameObject("Column");
             column.transform.SetParent(cardGo.transform, false);
@@ -195,7 +193,10 @@ namespace TumbangPreso.UI
             fieldGo.transform.SetParent(row.transform, false);
 
             var fieldImg = fieldGo.AddComponent<Image>();
-            fieldImg.sprite = GodotTheme.WoodBox(UiTheme.WoodDark, UiTheme.WoodEdge);
+            // ⚠️ A CHAMFERED SLOT, WHICH IS WHAT HIS `TEXT FIELD.png` IS. See `WoodCraft`: a
+            // rounded box with a dark outline is the language the code used to draw in and his
+            // art never did, and this field sits next to a button drawn from the new one.
+            WoodSkin.Apply(fieldImg.gameObject, WoodCraft.Surface.Field);
             fieldImg.type = Image.Type.Sliced;
             fieldImg.color = Color.white;
 
@@ -233,9 +234,15 @@ namespace TumbangPreso.UI
             _entry.onSubmit.AddListener(_ => Join());
 
             // ---- the button -----------------------------------------------------------
+            // ⚠️⚠️ GREEN, WHICH IS 🧑'S OWN PRIMARY COLOUR, AND IT WAS THE LAST BIG AMBER SLAB
+            // IN THE FRONT END. `Art/ui/host-game/JOIN BUTTON.png` is authored green and is
+            // pixel-for-pixel `BUTTON LONG.png` with one colour swapped, so **his art already
+            // says that the thing called JOIN is green**. Amber is this front end's "look here"
+            // marker (the room code, the live tab's chalk bar) and spending it on an action put
+            // the marker colour and the action colour in the same paint.
             var join = MenuKit.WoodButton(row.transform, "JOIN", Vector2.zero, Vector2.zero,
                                           new Vector2(140.0f, RowHeight), Join,
-                                          "WoodAmberButton");
+                                          "WoodPrimaryButton");
             join.name = "JoinButton";
 
             var joinElement = join.gameObject.AddComponent<LayoutElement>();

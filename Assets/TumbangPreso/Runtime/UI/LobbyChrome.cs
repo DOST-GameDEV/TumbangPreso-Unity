@@ -146,6 +146,30 @@ namespace TumbangPreso.UI
         /// </summary>
         private const float HeaderHeight = 56.0f;
 
+        /// <summary>
+        /// How tall the live tab is, and how tall the other one is.
+        ///
+        /// ⚠️⚠️ THE SIZE DIFFERENCE IS REAL NOW AND IT WAS A COMMENT BEFORE. Two notes in this
+        /// file and one in `SignInScreen` claimed the live tab was *"four units taller"* as the
+        /// half of the distinction that survives a colourblind player and a photograph. It was
+        /// not: `BuildTabs` set `childForceExpandHeight = true`, which makes a
+        /// `HorizontalLayoutGroup` give every child the bar's height and silently overrides any
+        /// `LayoutElement` under it, so both tabs have always been exactly `HeaderHeight`.
+        ///
+        /// ⚠️ MEASURED OFF `Logs/shots-runtime/Lobby-v45.png`, WHICH IS WHY IT MATTERS. After the
+        /// idle tab was dropped to `WoodSlot` `36180c` against the live tab's `793e1f`, PRACTICE
+        /// and MULTIPLAYER were STILL hard to separate at a glance, because both carry the same
+        /// bright keyline and the keyline is the loudest thing on a 56-unit control. **A shape
+        /// difference beats a fill difference at small sizes**, which is `game-ui-design`'s
+        /// ordering (size before colour) stated as a measurement.
+        ///
+        /// ⚠️ THEY SHARE A BOTTOM EDGE, NOT A CENTRE. The chalk bar sits under the pair, so the
+        /// live tab has to grow UPWARD off that line; growing from the centre would lift it away
+        /// from the rule it is meant to be standing on.
+        /// </summary>
+        private const float LiveTabHeight = 62.0f;
+        private const float IdleTabHeight = 48.0f;
+
         /// <summary>One height for both drawer toggles: MATCH SETTINGS and LOBBY & SERVERS.
         /// </summary>
         private const float ToggleHeight = 52.0f;
@@ -406,6 +430,34 @@ namespace TumbangPreso.UI
         /// </summary>
         private const float CardPadding = 14.0f;
         private const float CardCaptionHeight = 20.0f;
+
+        /// <summary>
+        /// The room sign across the top of the card, and the two quiet rows at the bottom of it.
+        ///
+        /// ⚠️⚠️ THE CARD IS THREE TYPE SIZES NOW AND IT WAS ONE. Off `Lobby-v43.png` every plate
+        /// on it was <see cref="CardFieldHeight"/> 44 with 18-unit type on it and an 18-unit amber
+        /// caption above, so a stack of five said *"these five things are equally important"*,
+        /// which is the definition of no hierarchy. `game-ui-design` orders position, size, weight
+        /// and colour, and this card was communicating with the fourth tool only.
+        ///
+        /// The three steps, and each is measured against what it holds rather than picked:
+        /// **52** for the room sign, because the code is drawn at 30 units and needs 11 either
+        /// side; **62** for the character row, which carries a 24-unit name over an 18-unit
+        /// loadout line; **38** for the two footer rows, which carry one 18-unit line and are the
+        /// least important things on the card. 44 survives only on the name field, which is a
+        /// control a human types into and wants a real target.
+        ///
+        /// ⚠️ 38 IS STILL ABOVE THE 32-UNIT POINTER TARGET `game-ui-design` CALLS THE FLOOR for a
+        /// non-touch build, and the full width of the card is pressable, so the actual target is
+        /// 302 x 38. `Touch Target Too Small` is about the hit area, not the paint.
+        /// </summary>
+        private const float CardSignHeight = 52.0f;
+        private const float CardSubRowHeight = 38.0f;
+
+        /// <summary>The chalk rule between two groups of card rows, plus the air it needs to read
+        /// as a separator rather than as an underline on the row above it.</summary>
+        private const float CardRuleHeight = 14.0f;
+
         private const float CardFieldHeight = 44.0f;
         private const float CardCharacterHeight = 66.0f;
         private const float CardEditGutter = 52.0f;
@@ -551,12 +603,17 @@ namespace TumbangPreso.UI
 
             var image = card.AddComponent<Image>();
 
-            // ⚠️ THE CARD IS A RAISED PLANK AND THE FIELD INSIDE IT IS A RECESSED ONE, so the
-            // thing you type in reads as cut INTO the thing it is on. See `UiMaterials`.
-            image.sprite = UiMaterials.Plank(UiTheme.WoodDeep);
-            image.type = Image.Type.Sliced;
-            image.color = Color.white;
+            // ⚠️⚠️ THE CARD IS A `WoodCraft` PANEL NOW AND IT WAS A `UiMaterials` PLANK.
+            // Both are "a raised wooden surface"; the difference is that this one is drawn in the
+            // language 🧑's own art is drawn in, and the plank was drawn in a generic one.
+            // `WoodCraft`'s header carries the sampled evidence: every piece he authored has a
+            // BRIGHT keyline outside a DARK rim, a varnish band a quarter of the way down and a
+            // full-height ramp to near black, and every surface drawn in code had a dark outline
+            // round a flat face. **The lobby puts his `BUTTON LONG` texture and this card on
+            // screen at the same time**, so the two languages were side by side and the
+            // code-drawn one was the half that read as foreign.
             image.raycastTarget = false;
+            WoodSkin.Apply(card, WoodCraft.Surface.Panel);
 
             var rect = image.rectTransform;
             rect.anchorMin = Vector2.one;
@@ -567,7 +624,14 @@ namespace TumbangPreso.UI
 
             var column = card.AddComponent<VerticalLayoutGroup>();
             column.padding = new RectOffset((int)CardPadding, (int)CardPadding, 12, 14);
-            column.spacing = 3;
+
+            // ⚠️⚠️ 3 UNITS BETWEEN ROWS IS WHY FIVE PLATES READ AS ONE BLOCK. At that pitch the
+            // gap inside a group and the gap between groups were the same gap, so the card had no
+            // structure a reader could see and had to state it in five amber headings instead.
+            // `FUTURE.md` § 0.5b's fourth ordering tool is SPACE, and it only orders anything when
+            // there is more than one size of it: 8 between siblings, and `CardRuleHeight` 14 with
+            // a chalk line in it between groups, which is nearly twice as much.
+            column.spacing = 8;
             column.childControlWidth = true;
             column.childControlHeight = true;
             column.childForceExpandWidth = true;
@@ -581,10 +645,44 @@ namespace TumbangPreso.UI
             fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
             fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
-            CardCaption(card.transform, "PLAYER NAME");
+            // ⚠⚠⚠ FIVE AMBER CAPTIONS OVER FIVE IDENTICAL PLATES IS A FORM, AND THAT IS
+            // WHAT THIS CARD WAS. 🧑 2026-09-01: *"ui still looks unnatural and ugly"*, and
+            // *"I donnt want redundannt UI"*. Counted off `Logs/shots-runtime/Lobby-v43.png`, the
+            // card read PLAYER NAME / PLAYING AS / ROOM CODE / YOUR SKILLS / YOUR PROFILE: **five
+            // all-caps amber headings, at one size, in one colour, 20 units apart**, each with a
+            // plate under it. Nothing led, because five things shouting equally is silence, and
+            // amber was simultaneously the accent on the live tab and on two drawer toggles
+            // elsewhere on the same screen.
+            //
+            // **Three things went and one arrived**, and every removal is a caption that was
+            // restating its own control:
+            //
+            //   · PLAYER NAME sat over a field containing the player's name, on the player's
+            //     own card, whose placeholder already reads TAP TO SET YOUR NAME.
+            //   · PLAYING AS sat over the character's name and a chevron. A big name with a
+            //     chevron under YOUR NAME is not ambiguous, and the model is on screen behind it.
+            //   · YOUR SKILLS sat over `PHAISTER · standard build`, directly under the row that
+            //     already says PHAISTER. `SetSkills` had to hide the caption and the control
+            //     together precisely because the caption was meaningless without the row.
+            //   · YOUR PROFILE sat over SECURE YOUR PROGRESS, which is a different sentence
+            //     about a different thing: the caption and the label disagreed.
+            //
+            // ⚠⚠ WHAT ARRIVED IS THE ROOM SIGN, AND IT IS THE ONE FACT THIS SCREEN EXISTS TO
+            // PRODUCE. § 116.6 already moved the code out of a closed drawer and onto the card and
+            // was right to; it then made it the THIRD of five equal rows, which is the same
+            // burial one layer up. It is the card's header now: the first thing read, the only
+            // amber on the card, and the answer to *"how does my friend get in"* without a press.
+            //
+            // ⚠️ AND THE GROUPS ARE SEPARATED BY CHALK RATHER THAN BY CAPTIONS.
+            // `game-ui-design`'s ordering tools end with SPACE, and `FUTURE.md` § 0.5b states the
+            // same rule as *"a gap groups more strongly than a line does"*. Two chalk rules and
+            // the pitch between blocks do what five headings were doing, and they cost no words.
+            BuildRoomSign(card.transform, parts);
+
             BuildNameField(card.transform, playerName, parts);
 
-            CardCaption(card.transform, "PLAYING AS");
+            CardRule(card.transform);
+
             BuildCharacterButton(card.transform, find, parts);
 
             // ⚠⚠ YOUR SKILLS SITS DIRECTLY UNDER PLAYING AS, BECAUSE A LOADOUT IS A FACT ABOUT
@@ -616,59 +714,90 @@ namespace TumbangPreso.UI
             // and it turns the answer into one press. The label says COPIED for a moment, because
             // a press that silently succeeds is `docs/TODO.md` § 53.5's dead button from the other
             // side.
-            CardCaption(card.transform, "ROOM CODE");
-            BuildCodeButton(card.transform, parts);
-
-            CardCaption(card.transform, "YOUR SKILLS");
             BuildLoadoutButton(card.transform, parts);
 
-            CardCaption(card.transform, "YOUR PROFILE");
+            CardRule(card.transform);
+
             BuildProfileButton(card.transform, parts);
         }
 
         /// <summary>
-        /// The room code, on the card, one press from the clipboard.
+        /// The card's header: which room you are in, and the four characters a friend types.
         ///
-        /// ⚠️ IT IS THE ONLY CONTROL ON THIS CARD WHOSE VALUE IS THE POINT, so the code is drawn
-        /// at 30 units in amber rather than at the card's 18-unit body size: it is read across a
-        /// room and into a phone. `MenuKit.Fit` still bounds it, because a Relay join code is four
-        /// characters and a LAN one may not be.
+        /// ⚠⚠⚠ IT IS THE ONE FACT THE SCREEN EXISTS TO PRODUCE, SO IT IS THE FIRST THING ON
+        /// THE CARD AND THE ONLY AMBER ON IT. § 116.6 moved this out of a closed drawer and was
+        /// right to: *"I want my friend to join me"* used to be three presses and a hunt. What it
+        /// then did was make the code the THIRD of five identical caption-and-plate rows, which is
+        /// the same burial one layer up, and 🧑 opened that build and said the UI *"still looks
+        /// unnatural and ugly"*.
+        ///
+        /// ⚠⚠ A HEADER IS A DIFFERENT SHAPE FROM A ROW, NOT A LOUDER ONE.
+        /// `WoodCraft.Surface.Header` is square along its top edge and rounded below, so it reads
+        /// as a sign nailed across the top of the card. That is the same treatment the two drawer
+        /// toggles take, which is deliberate: **one silhouette means "this names the thing under
+        /// it"**, everywhere in this front end, and a player learns it once.
+        ///
+        /// ⚠️ THE CODE IS 30 UNITS AND THE WORD ROOM IS 18. It is read across a room and typed
+        /// into a phone, and the caption is only there to say what the four characters ARE. That
+        /// is the one caption on this card that survived, because it is the only one whose control
+        /// cannot state its own meaning: `ZRNB` alone is not a word.
+        ///
+        /// ⚠️ IT COPIES ITSELF, and the label says `copied` for a moment. A four-character code
+        /// read off a screen and retyped into Discord is four chances to get it wrong, and a press
+        /// that silently succeeds is § 53.5's dead button from the other side.
+        ///
+        /// ⚠️ PRACTICE HAS NO ROOM AND THEREFORE NO SIGN. `Parts.SetCode` takes the whole
+        /// header off rather than showing an empty plate under a heading, and the card closes up
+        /// because every child of it is in a `VerticalLayoutGroup`.
         /// </summary>
-        private static void BuildCodeButton(Transform parent, Parts parts)
+        private static void BuildRoomSign(Transform parent, Parts parts)
         {
             var go = new GameObject("RoomCodeButton", typeof(RectTransform), typeof(Image));
             go.transform.SetParent(parent, false);
 
-            var image = go.GetComponent<Image>();
-            image.sprite = UiMaterials.Plank(UiTheme.WoodDeep, raised: false);
-            image.type = Image.Type.Sliced;
-            image.color = Color.white;
-
             var element = go.AddComponent<LayoutElement>();
-            element.minHeight = CardFieldHeight;
-            element.preferredHeight = CardFieldHeight;
+            element.minHeight = CardSignHeight;
+            element.preferredHeight = CardSignHeight;
             element.flexibleHeight = 0.0f;
 
             var button = go.AddComponent<Button>();
-            button.targetGraphic = image;
-            go.AddComponent<TextureButtonFeedback>();
+            button.targetGraphic = go.GetComponent<Image>();
+            WoodSkin.Apply(go, WoodCraft.Surface.Header);
             FocusRing.Attach(go, 3.0f);
 
-            var label = MenuKit.Label(go.transform, "", 30, UiTheme.Amber,
-                                      Vector2.zero, Vector2.zero, Vector2.zero,
-                                      TextAnchor.MiddleCenter);
-            label.name = "RoomCodeValue";
-            label.raycastTarget = false;
+            var caption = MenuKit.Label(go.transform, "ROOM", MenuKit.MinReadableUnits,
+                                        UiTheme.CreamMuted, Vector2.zero, Vector2.zero,
+                                        Vector2.zero, TextAnchor.MiddleLeft);
+            caption.name = "RoomCodeCaption";
+            caption.raycastTarget = false;
+            MenuKit.Stretch(caption.rectTransform, 0.0f);
+            // ⚠️⚠️ 80 UNITS AND NOT 48, CAUGHT BY `LobbyStyleProbe.EveryLabelFitsItsBoxInBothStyles`
+            // ON THE FIRST RUN AFTER THIS SIGN WAS BUILT: *"ROOM needs 51 px in a 48 px box at 18
+            // units"*. The first arithmetic reserved the room the CODE wanted and gave the caption
+            // whatever was left, which is backwards: a four-character join code is the thing that
+            // varies (a LAN code is not four characters) and the word ROOM never changes. **Size
+            // the fixed string first.**
+            //
+            // The arithmetic, inside `CardWidth` 330 less `CardPadding` 14 a side, so 302: 16 of
+            // inset, 80 for ROOM, 8 of gap, then the code's box to 96 off the right edge, which
+            // leaves it 102 units against about 76 for four characters at 30 units.
+            caption.rectTransform.offsetMin = new Vector2(16.0f, 0.0f);
+            caption.rectTransform.offsetMax = new Vector2(-CardWidth + 124.0f, 0.0f);
 
-            // ⚠️ THE VALUE STOPS WHERE THE HINT STARTS. Both were stretched across the whole
-            // row, so a centred code and a right-aligned "tap to copy" were sharing one box: at
+            // ⚠️ THE VALUE STOPS WHERE THE HINT STARTS. Both used to be stretched across the
+            // whole row, so a centred code and a right-aligned "tap to copy" shared one box: at
             // four characters they clear each other by luck, and a LAN code is not four
             // characters. `CLAUDE.md` § 6.2c question 4, in miniature.
+            var label = MenuKit.Label(go.transform, "", 30, UiTheme.Amber,
+                                      Vector2.zero, Vector2.zero, Vector2.zero,
+                                      TextAnchor.MiddleLeft);
+            label.name = "RoomCodeValue";
+            label.raycastTarget = false;
             MenuKit.Stretch(label.rectTransform, 0.0f);
-            label.rectTransform.offsetMin = new Vector2(14.0f, 0.0f);
-            label.rectTransform.offsetMax = new Vector2(-118.0f, 0.0f);
+            label.rectTransform.offsetMin = new Vector2(104.0f, 0.0f);
+            label.rectTransform.offsetMax = new Vector2(-96.0f, 0.0f);
 
-            var hint = MenuKit.Label(go.transform, "tap to copy", MenuKit.MinReadableUnits,
+            var hint = MenuKit.Label(go.transform, "tap to copy", 15,
                                      UiTheme.CreamMuted, Vector2.zero, Vector2.zero,
                                      Vector2.zero, TextAnchor.MiddleRight);
             hint.name = "RoomCodeHint";
@@ -679,39 +808,76 @@ namespace TumbangPreso.UI
             parts.CodeButton = button;
             parts.CodeValue = label;
             parts.CodeHint = hint;
-            parts.CodeCaption = parent.GetChild(parent.childCount - 2).gameObject;
+            parts.CodeCaption = caption.gameObject;
 
             button.onClick.AddListener(() => parts.CopyCode());
         }
 
         /// <summary>
+        /// A chalk rule across the player card, between two groups of rows.
+        ///
+        /// ⚠⚠ IT REPLACES A CAPTION RATHER THAN DECORATING ONE. The card used to separate its
+        /// groups with an amber all-caps heading each, which is five statements the player has to
+        /// read to find the two boundaries they actually needed. `FUTURE.md` § 0.5b: *"a gap
+        /// groups more strongly than a line does"*, and this is a gap WITH a line in it, at a
+        /// total cost of zero words.
+        ///
+        /// ⚠️ IT IS A LAYOUT CHILD, NOT AN OVERLAY, so the group owns its height and the card's
+        /// `ContentSizeFitter` counts it. `UiMaterials.Underline` is the other kind, positioned
+        /// against a thing it hangs under; a rule that separates two siblings is a sibling.
+        /// </summary>
+        private static void CardRule(Transform parent)
+        {
+            var go = new GameObject("CardRule", typeof(RectTransform), typeof(Image));
+            go.transform.SetParent(parent, false);
+
+            var image = go.GetComponent<Image>();
+            image.sprite = UiMaterials.ChalkRule();
+            image.type = Image.Type.Sliced;
+            // ⚠️⚠️ 0.85, AFTER 0.30 AND 0.55 BOTH FAILED THE SAME TEST: LOOKING AT THE RENDER.
+            // The rule was invisible in `Lobby-v44.png` at 0.30 and still invisible in
+            // `Lobby-v45.png` at 0.55, and the reason is that the alpha MULTIPLIES the texture's
+            // own: `UiMaterials.ChalkRule` paints a dusty stroke that already averages about half
+            // opacity across its 8 rows, so 0.55 of that is a mark at roughly a quarter strength
+            // over brown wood. **A tint on a textured sprite is not the opacity it looks like in
+            // the source.** The card's two group boundaries do nothing if nobody can see them.
+            image.color = new Color(UiTheme.Cream.r, UiTheme.Cream.g, UiTheme.Cream.b, 0.85f);
+            image.raycastTarget = false;
+
+            var element = go.AddComponent<LayoutElement>();
+            element.minHeight = CardRuleHeight;
+            element.preferredHeight = CardRuleHeight;
+            element.flexibleHeight = 0.0f;
+        }
+
+        /// <summary>
         /// The lobby's way into the loadout, and the summary of what is equipped.
         ///
-        /// ⚠️ IT IS BUILT LIKE THE CHARACTER ROW AND NOT LIKE THE PROFILE ROW, because it is the
-        /// same kind of thing: a current value with a chevron saying it can be changed. The
-        /// profile row is a destination with no value of its own, so it reads as a list of places.
+        /// ⚠⚠ IT HAS NO CAPTION NOW AND IT SITS DIRECTLY UNDER THE CHARACTER ROW, which is the
+        /// only place it makes sense: a build belongs to a hero, and `PHAISTER · standard build`
+        /// under a row that already reads PHAISTER said the hero's name twice inside 40 units of
+        /// screen. 🧑: *"I donnt want redundannt UI"*. `Parts.SetSkills` writes the build alone
+        /// now and the row above supplies the subject.
+        ///
+        /// ⚠️ IT IS ONE STEP QUIETER THAN THE CHARACTER ROW: shorter, muted type, same chevron.
+        /// They are a pair and the character is the senior of the two, which is what size is for.
         /// </summary>
         private static void BuildLoadoutButton(Transform parent, Parts parts)
         {
             var go = new GameObject("LoadoutButton", typeof(RectTransform), typeof(Image));
             go.transform.SetParent(parent, false);
 
-            var image = go.GetComponent<Image>();
-            image.sprite = GodotTheme.WoodBox(UiTheme.WoodMid, UiTheme.WoodEdge);
-            image.type = Image.Type.Sliced;
-            image.color = Color.white;
-
             var element = go.AddComponent<LayoutElement>();
-            element.minHeight = CardFieldHeight;
-            element.preferredHeight = CardFieldHeight;
+            element.minHeight = CardSubRowHeight;
+            element.preferredHeight = CardSubRowHeight;
             element.flexibleHeight = 0.0f;
 
             var button = go.AddComponent<Button>();
-            button.targetGraphic = image;
-            go.AddComponent<TextureButtonFeedback>();
+            button.targetGraphic = go.GetComponent<Image>();
+            WoodSkin.Apply(go, WoodCraft.Surface.Button);
 
-            var label = MenuKit.Label(go.transform, "", MenuKit.MinReadableUnits, UiTheme.Cream,
-                                      Vector2.zero, Vector2.zero, Vector2.zero,
+            var label = MenuKit.Label(go.transform, "", MenuKit.MinReadableUnits,
+                                      UiTheme.Cream, Vector2.zero, Vector2.zero, Vector2.zero,
                                       TextAnchor.MiddleLeft);
             label.name = "LoadoutValue";
             label.raycastTarget = false;
@@ -720,7 +886,7 @@ namespace TumbangPreso.UI
             label.rectTransform.offsetMin = new Vector2(18.0f, 0.0f);
             label.rectTransform.offsetMax = new Vector2(-CardChevronGutter, 0.0f);
 
-            var chevron = MenuKit.Label(go.transform, "›", 30, UiTheme.Amber,
+            var chevron = MenuKit.Label(go.transform, "›", 26, UiTheme.Amber,
                                         Vector2.zero, Vector2.zero, Vector2.zero,
                                         TextAnchor.MiddleRight);
             chevron.name = "LoadoutChevron";
@@ -729,79 +895,108 @@ namespace TumbangPreso.UI
             chevron.rectTransform.offsetMax = new Vector2(-18.0f, 0.0f);
 
             // ⚠️ EVERY PRESSABLE THING IN THE LOBBY WEARS A RING WHEN IT HAS THE POINTER OR THE
-            // KEYBOARD, and until this pass none of them said anything at all: `TextureButtonFeedback`
-            // tints a very dark brown by a few per cent, which is a change nobody can see.
-            // `game-ui-design` calls a focus state that is only a colour a `colorblind-failure`.
+            // KEYBOARD, and until the 2026-09-01 pass none of them said anything at all:
+            // `TextureButtonFeedback` tints a very dark brown by a few per cent, which is a change
+            // nobody can see. `game-ui-design` calls a focus state that is only a colour a
+            // `colorblind-failure`.
             FocusRing.Attach(go, 3.0f);
 
             parts.LoadoutButton = button;
             parts.LoadoutValue = label;
-            parts.LoadoutCaption = parent.GetChild(parent.childCount - 2).gameObject;
+            parts.LoadoutCaption = null;
         }
 
         /// <summary>
         /// The door to `PlayerHub`, and it is the ONLY one in the game as of 2026-09-01.
         ///
-        /// ⚠️⚠️ IT IS A THIRD BLOCK ON A CARD THE PLAYER ALREADY READS, NOT A NEW PLATE BESIDE
-        /// IT. 🧑: *"I think the player shit should live in lobby screen, not play"*, and *"AND
+        /// ⚠⚠ IT IS A FOOTER ON A CARD THE PLAYER ALREADY READS, NOT A NEW PLATE BESIDE IT.
+        /// 🧑: *"I think the player shit should live in lobby screen, not play"*, and *"AND
         /// LOBBY IS WHERE ALL UI SHOULD LIVE"*. The obvious build would have been to install
         /// `PlayerNameplate` on this screen too, and that is exactly `docs/TODO.md` § 92's fault
         /// arriving one control at a time: **two identity plates on one screen, in two visual
-        /// languages, each sized against its own corner.** This card already answers "who am I
-        /// and what am I playing"; "and how am I doing" is the same question.
+        /// languages, each sized against its own corner.**
         ///
-        /// ⚠️⚠️ THE LABEL IS TWO LINES BECAUSE LEVEL AND TIER MUST NEVER BE CONFUSABLE.
-        /// `PlayerNameplate.Refresh` carries the argument in full and it is not repeated here:
-        /// **LEVEL is how long you have played and only goes up; a TIER is how good you are and
-        /// moves both ways.** The value line keeps `LV` on the number and spells the tier as a
-        /// word, so `LV 14 · KAMPEON` cannot be read as one quantity.
+        /// ⚠⚠ THE CAPTION ABOVE IT IS GONE AND THAT FIXED A DISAGREEMENT RATHER THAN SAVING A
+        /// LINE. It read YOUR PROFILE over a button reading SECURE YOUR PROGRESS: two different
+        /// sentences about two different things, stacked, in the state a signed-out player meets
+        /// first. The button already says what it does in both states.
         ///
-        /// ⚠️ AND A FRESH ACCOUNT READS `PROFILE · CAREER · MATCHES` RATHER THAN `LV 1`. § 96:
-        /// the plate that read as a status readout was never pressed by the person who
-        /// commissioned it. A door says what is behind it until there is something of the
-        /// player's own to say instead.
+        /// ⚠⚠ THE LABEL IS TWO CLAIMS AND LEVEL AND TIER MUST NEVER BE CONFUSABLE.
+        /// `PlayerNameplate.Refresh` carries the argument in full: **LEVEL is how long you have
+        /// played and only goes up; a TIER is how good you are and moves both ways.** The value
+        /// line keeps `LV` on the number and spells the tier as a word, so `LV 14 · KAMPEON`
+        /// cannot be read as one quantity.
+        ///
+        /// ⚠️ AND A FRESH ACCOUNT READS `PROFILE · CAREER · MATCHES` RATHER THAN `LV 1`.
+        /// § 96: the plate that read as a status readout was never pressed by the person who
+        /// commissioned it. A door says what is behind it until there is something of the player's
+        /// own to say instead.
         /// </summary>
         private static void BuildProfileButton(Transform parent, Parts parts)
         {
             var go = new GameObject("ProfileButton", typeof(RectTransform), typeof(Image));
             go.transform.SetParent(parent, false);
 
-            var image = go.GetComponent<Image>();
-            image.sprite = GodotTheme.WoodBox(UiTheme.WoodMid, UiTheme.WoodEdge);
-            image.type = Image.Type.Sliced;
-            image.color = Color.white;
-
             var element = go.AddComponent<LayoutElement>();
-            element.minHeight = CardFieldHeight;
-            element.preferredHeight = CardFieldHeight;
+            element.minHeight = CardSubRowHeight;
+            element.preferredHeight = CardSubRowHeight;
             element.flexibleHeight = 0.0f;
 
-            var button = go.AddComponent<Button>();
-            button.targetGraphic = image;
+            // ⚠️⚠️ NO PLATE. IT IS A FOOTER LINK, AND IT IS THE FOURTH RECTANGLE THIS CARD DOES
+            // NOT NEED. Measured off `Logs/shots-runtime/Lobby-v45.png`: the card read as a paper
+            // tag followed by three brown plates, and the bottom two of those were the same
+            // 38-unit row with the same chevron, so the loadout and the whole player hub were
+            // being offered as equals. They are not: one changes what you are taking into THIS
+            // match and the other leaves the lobby entirely.
+            //
+            // A transparent row under a chalk rule reads as a footer, which is what it is, and it
+            // takes a rectangle off a card whose entire complaint was too many rectangles.
+            // ⚠️ THE HIT AREA IS UNCHANGED AND IS THE FULL 302 x 38: `Image` with alpha 0 still
+            // takes a raycast (`alphaHitTestMinimumThreshold` is 0 by default), which is the same
+            // mechanism `MenuKit.EnsureHitArea` relies on for every slider in the game. It is not
+            // a smaller target, only a quieter one.
+            var plate = go.GetComponent<Image>();
+            plate.color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+            plate.raycastTarget = true;
 
-            // ⚠️ IT REACTS TO THE POINTER, BECAUSE A CONTROL THAT DOES NOT MOVE IS NOT A CONTROL.
-            // § 6.3, and § 96's receipt one control down: the plate this replaces had a bare
-            // `Button` tint on very dark brown, which is a change nobody can see.
+            var button = go.AddComponent<Button>();
+            button.targetGraphic = plate;
+
+            // ⚠️ IT REACTS TO THE POINTER, BECAUSE A CONTROL THAT DOES NOT MOVE IS NOT A
+            // CONTROL. § 6.3, and § 96's receipt one control down: the plate this replaces had a
+            // bare `Button` tint on very dark brown, which is a change nobody can see. With no
+            // plate to tint, the FOCUS RING below is what answers the pointer.
             go.AddComponent<TextureButtonFeedback>();
 
-            // ⚠️⚠️ THE HINT IS MEASURED AGAINST THE CARD, WHICH IS `CLAUDE.md` § 6.2c QUESTION 4.
-            // `CardWidth` is 330 and `CardPadding` is 14 each side, so the label's box is 302
-            // less this row's own 14 of inset either side: **274 units**. `PROFILE · CAREER ·
-            // MATCHES` at 18 units is about 250, and the version with double spaces around each
-            // dot was about 300 and would have drawn straight off the wood. Nothing on this card
-            // is sized against 1920, for the reason `UiRows.Cap` records.
+            // ⚠⚠ THE LINE IS MEASURED AGAINST THE CARD, WHICH IS `CLAUDE.md` § 6.2c QUESTION 4.
+            // `CardWidth` is 330 and `CardPadding` is 14 each side, so the label's box is 302 less
+            // this row's own 18 of inset and its chevron gutter. `PROFILE · CAREER · MATCHES` at
+            // 18 units is about 250, and the version with double spaces around each dot was about
+            // 300 and would have drawn straight off the wood. Nothing on this card is sized
+            // against 1920, for the reason `UiRows.Cap` records.
             var label = MenuKit.Label(go.transform, "PROFILE · CAREER · MATCHES",
-                MenuKit.MinReadableUnits, UiTheme.Cream, new Vector2(0.5f, 0.5f),
-                Vector2.zero, Vector2.zero, TextAnchor.MiddleCenter);
-            MenuKit.Stretch(label.rectTransform, -14.0f);
-            label.alignment = TextAnchor.MiddleCenter;
+                MenuKit.MinReadableUnits, UiTheme.CreamMuted, Vector2.zero,
+                Vector2.zero, Vector2.zero, TextAnchor.MiddleLeft);
+            label.name = "ProfileValue";
             label.raycastTarget = false;
+            label.horizontalOverflow = HorizontalWrapMode.Overflow;
+            MenuKit.Stretch(label.rectTransform, 0.0f);
+            label.rectTransform.offsetMin = new Vector2(18.0f, 0.0f);
+            label.rectTransform.offsetMax = new Vector2(-CardChevronGutter, 0.0f);
 
             // ⚠️ AND IT SHRINKS RATHER THAN OVERFLOWING, because `MenuKit.Label` OVERFLOWS by
             // default and the failure is silent: the control does not shrink, it draws over its
             // neighbour or off the edge. `Fit` stops at `MinReadableUnits`, so a string that
             // cannot fit at 18 is still a defect and still visible.
-            MenuKit.Fit(label, CardWidth - (CardPadding * 2.0f) - 28.0f);
+            MenuKit.Fit(label, CardWidth - (CardPadding * 2.0f) - CardChevronGutter - 18.0f);
+
+            var chevron = MenuKit.Label(go.transform, "›", 26, UiTheme.Amber,
+                                        Vector2.zero, Vector2.zero, Vector2.zero,
+                                        TextAnchor.MiddleRight);
+            chevron.name = "ProfileChevron";
+            chevron.raycastTarget = false;
+            MenuKit.Stretch(chevron.rectTransform, 0.0f);
+            chevron.rectTransform.offsetMax = new Vector2(-18.0f, 0.0f);
 
             FocusRing.Attach(go, 3.0f);
 
@@ -809,22 +1004,6 @@ namespace TumbangPreso.UI
             parts.ProfileValue = label;
         }
 
-        /// <summary>One amber caption line inside the player card. ⚠️ AT
-        /// <see cref="CaptionSize"/> AND NOT BELOW: `MenuKit.MinReadableUnits` is 18 and the chip
-        /// this replaced ran its caption at 14.</summary>
-        private static void CardCaption(Transform parent, string words)
-        {
-            var label = MenuKit.Label(parent, words, MenuKit.MinReadableUnits, UiTheme.Amber,
-                                      Vector2.zero, Vector2.zero, Vector2.zero,
-                                      TextAnchor.LowerLeft);
-            label.name = $"Caption_{words}";
-            label.raycastTarget = false;
-
-            var element = label.gameObject.AddComponent<LayoutElement>();
-            element.minHeight = CardCaptionHeight;
-            element.preferredHeight = CardCaptionHeight;
-            element.flexibleHeight = 0.0f;
-        }
 
         private static void BuildNameField(Transform parent, string playerName, Parts parts)
         {
@@ -832,12 +1011,31 @@ namespace TumbangPreso.UI
             fieldGo.transform.SetParent(parent, false);
 
             var fieldImage = fieldGo.AddComponent<Image>();
-            // ⚠️ `WoodDeep` RECESSED AND NOT `WoodDark`, measured off the lobby render: `WoodDark`
-            // is `1d0e06`, near black, and a recessed plank of it drew as a black slot in the
-            // middle of the card. Same finding as the sign-in screen's mode well, same day.
-            fieldImage.sprite = UiMaterials.Plank(UiTheme.WoodDeep, raised: false);
-            fieldImage.type = Image.Type.Sliced;
-            fieldImage.color = Color.white;
+
+            // ⚠️⚠️⚠️ IT IS A PAPER NAME TAG, AND IT IS THE ONLY THING ON THIS CARD THAT IS NOT
+            // BROWN. 🧑 2026-09-01: **"make sure all ui isnt generated in the same way but follows
+            // a central theme bcz old issue was it read as repetitive with everyone just being
+            // brown and boring"**. Counted off `Logs/shots-runtime/Lobby-v44.png` after the first
+            // pass of § 117: the card was still five brown plates on a brown card inside a brown
+            // rail, and every one of them had been redrawn in the right LANGUAGE without any of
+            // them changing MATERIAL. Being right about the construction did not fix being brown.
+            //
+            // **Cream is a surface in his own art**, not only a text colour: the sign-in screen's
+            // two input boxes are cream plates on a wood column and they are the only things on
+            // that screen that are not brown. `WoodCraft.Surface.PaperField` is built by a
+            // different set of rules from every wooden surface (flat, fibre speckle, one ink
+            // hairline, a constant corner radius, a shadow along the top edge only), so it cannot
+            // read as another plank however it is coloured.
+            //
+            // ⚠️⚠️ AND IT IS THE RIGHT OBJECT AND NOT ONLY THE RIGHT COLOUR. This is the field
+            // that holds YOUR NAME on YOUR card, in a game about four kids in a street: a paper
+            // tag is what a name is written on. That is one step of the diegetic argument
+            // `game-ui-design` opens with, made for the price of a material that already existed.
+            //
+            // ⚠️ THE TYPE ON IT IS INK. Paper is the only surface in this front end that inverts
+            // the text colour, and a caller that forgets writes cream on cream. See the two
+            // labels below.
+            WoodSkin.Apply(fieldGo, WoodCraft.Surface.PaperField);
 
             var element = fieldGo.AddComponent<LayoutElement>();
             element.minHeight = CardFieldHeight;
@@ -860,7 +1058,7 @@ namespace TumbangPreso.UI
             // the field itself). Removing a `raycastTarget = false` label cannot alter that.
 
             var placeholder = MenuKit.Label(fieldGo.transform, "TAP TO SET YOUR NAME", MenuKit.MinReadableUnits,
-                                            UiTheme.CreamMuted, Vector2.zero, Vector2.zero,
+                                            UiTheme.InkMuted, Vector2.zero, Vector2.zero,
                                             Vector2.zero, TextAnchor.MiddleLeft);
             placeholder.raycastTarget = false;
             MenuKit.Stretch(placeholder.rectTransform, 0.0f);
@@ -868,7 +1066,7 @@ namespace TumbangPreso.UI
             placeholder.rectTransform.offsetMax = new Vector2(-CardEditGutter, 0.0f);
             MenuKit.Fit(placeholder, CardWidth - (CardPadding * 2.0f) - CardEditGutter);
 
-            var typed = MenuKit.Label(fieldGo.transform, playerName, CardNameSize, UiTheme.Cream,
+            var typed = MenuKit.Label(fieldGo.transform, playerName, CardNameSize, UiTheme.Ink,
                                       Vector2.zero, Vector2.zero, Vector2.zero,
                                       TextAnchor.MiddleLeft);
             typed.raycastTarget = false;
@@ -1135,15 +1333,23 @@ namespace TumbangPreso.UI
                 _code = code ?? "";
                 bool has = !string.IsNullOrWhiteSpace(_code);
 
+                // ⚠️ THE CAPTION IS A CHILD OF THE SIGN NOW, so one `SetActive` takes the whole
+                // header off. It used to be a sibling on the card, which is why this method had
+                // to hide two objects and why forgetting one left an amber ROOM CODE heading
+                // sitting over the next row down.
                 if (CodeButton != null) CodeButton.gameObject.SetActive(has);
-                if (CodeCaption != null) CodeCaption.SetActive(has);
                 if (!has || CodeValue == null) return;
 
                 if (Time.unscaledTime < _copiedUntil) return;
 
                 CodeValue.text = _code;
                 CodeValue.color = UiTheme.Amber;
-                MenuKit.Fit(CodeValue, CardWidth - (CardPadding * 2.0f) - 132.0f);
+
+                // The value's box on the sign runs from 92 units in to 96 off the right edge, so
+                // inside `CardWidth` 330 less `CardPadding` 14 a side it has 114 units. A Relay
+                // join code is four characters at 30 units, about 76; a LAN code may be longer,
+                // and `Fit` is what stops the longer one running under the hint.
+                MenuKit.Fit(CodeValue, CardWidth - (CardPadding * 2.0f) - 200.0f);
 
                 if (CodeHint != null) CodeHint.text = "tap to copy";
             }
@@ -1168,23 +1374,6 @@ namespace TumbangPreso.UI
             /// option tables. See <see cref="BuildDropdownRows"/>.</summary>
             public Transform SettingsRows;
 
-            /// <summary>The chalk bar under whichever top tab is live, and half the distance
-            /// between the two tabs' centres. See <see cref="BuildTabs"/>.</summary>
-            public Image TabMarker;
-            public float TabMarkerPitch;
-            private float _tabMarkerY;
-
-            /// <summary>Moves the bar under the live tab. ⚠️ The Y is passed once and remembered,
-            /// so a caller switching tabs does not have to know the header's geometry.</summary>
-            public void SetTabMarker(bool multiplayer, float y = 0.0f)
-            {
-                if (TabMarker == null) return;
-
-                if (y > 0.0f) _tabMarkerY = y;
-
-                TabMarker.rectTransform.anchoredPosition =
-                    new Vector2(multiplayer ? TabMarkerPitch : -TabMarkerPitch, -_tabMarkerY);
-            }
 
             /// <summary>The bottom-left action rail: the settings drawer, the primary action and,
             /// since the UI pass, the queue. See <see cref="QueueCard.Dock"/>.</summary>
@@ -1316,11 +1505,6 @@ namespace TumbangPreso.UI
                 Paint(Practice, !lobby);
                 Paint(Multiplayer, lobby);
 
-                // ⚠️ THE BAR MOVES WITH THE PAINT. `SelectTab` switches these two IN PLACE rather
-                // than rebuilding the screen, so a marker positioned only at build time would sit
-                // under PRACTICE for the rest of the session.
-                SetTabMarker(lobby);
-
                 if (LobbyDrawer != null) LobbyDrawer.SetActive(lobby);
             }
 
@@ -1331,9 +1515,24 @@ namespace TumbangPreso.UI
                 var skin = button.GetComponent<GodotButton>();
                 if (skin == null) return;
 
-                skin.Variation = active ? "WoodAmberButton" : "WoodButton";
+                // ⚠️⚠️ THE LIVE TAB IS RAISED AND THE IDLE ONE IS RECESSED, WHICH IS THREE
+                // SIGNALS INSTEAD OF ONE. It used to be a solid amber plate against plain wood,
+                // so the pair said "this one" in hue alone, on a screen where amber was also the
+                // two drawer toggles and the room code. `GodotTheme`'s `WoodTabIdleButton` note
+                // carries the argument; the height swap below is the other half of it.
+                skin.Variation = active ? "WoodHeaderButton" : "WoodTabIdleButton";
                 skin.Apply();
                 skin.Refresh();
+
+                // ⚠️ THE HEIGHT MOVES WITH THE PAINT. `SelectTab` switches these two IN PLACE
+                // rather than rebuilding the bar, so a height written only at build time would
+                // leave PRACTICE standing tall for the rest of the session after one press.
+                var element = button.GetComponent<LayoutElement>();
+                if (element != null)
+                {
+                    element.minHeight = active ? LiveTabHeight : IdleTabHeight;
+                    element.preferredHeight = element.minHeight;
+                }
             }
         }
 
@@ -1555,18 +1754,33 @@ namespace TumbangPreso.UI
             // sitting 63 px lower. Two controls that do the same thing looked like two different
             // controls. The card behind it keeps its scale, because its contents are authored; the
             // pill has nothing in it but a word.
-            var toggle = MenuKit.WoodButton(canvasRoot, "LOBBY & SERVERS  ▼", Vector2.zero,
+            // ⚠️ THE SAME SIGN AS `MATCH SETTINGS`, FOR THE SAME REASON AND BY THE SAME RULE.
+            // See `BuildLeftRail`: these two are the same KIND of control and were the two
+            // loudest things on the screen, in amber, either side of a primary action drawn in
+            // plain wood.
+            var toggle = MenuKit.WoodButton(canvasRoot, "LOBBY & CHAT", Vector2.zero,
                                             Vector2.zero,
                                             new Vector2(RightRailWidth, ToggleHeight),
-                                            null, "WoodAmberButton");
+                                            null, "WoodHeaderButton");
             toggle.name = "LobbyDrawerToggle";
             FocusRing.Attach(toggle.gameObject, 3.0f);
+
+            // ⚠️⚠️ IT SAYS `LOBBY & CHAT` AND IT SAID `LOBBY & SERVERS`, BECAUSE "SERVERS" IS
+            // NOT A WORD THIS SCREEN OWES A PLAYER. What is behind it is the seat list, the join
+            // controls and the chat log, and the chat is the only part of it a player opens more
+            // than once. `FUTURE.md` § 0.5b: name the thing by what the player came for, not by
+            // what the subsystem is called. A LAN browser is one row inside it, not its title.
+            var lobbyChevron = Chevron(toggle.transform, false);
 
             var toggleCaption = toggle.GetComponentInChildren<Text>();
             if (toggleCaption != null)
             {
                 toggleCaption.fontSize = 26;
-                MenuKit.Fit(toggleCaption, RightRailWidth - 48.0f);
+                // ⚠️ THE CHEVRON'S GUTTER COMES OUT OF THE LABEL'S ROOM. `Chevron` pins a
+                // caret 18 units from the right edge, and a caption fitted against the
+                // whole width would centre itself straight through it. 72 is the caret,
+                // its inset and one gap.
+                MenuKit.Fit(toggleCaption, RightRailWidth - 120.0f);
             }
 
             var toggleRect = toggle.transform as RectTransform;
@@ -1581,7 +1795,6 @@ namespace TumbangPreso.UI
             parts.LobbyToggleRect = toggleRect;
             parts.LobbyDetailsRect = details;
 
-            var label = toggle.GetComponentInChildren<Text>();
             details.gameObject.SetActive(false);
             bool open = false;
 
@@ -1589,11 +1802,44 @@ namespace TumbangPreso.UI
             {
                 open = !open;
                 details.gameObject.SetActive(open);
-                if (label != null)
-                    label.text = open ? "CLOSE LOBBY DETAILS  ▲" : "LOBBY & SERVERS  ▼";
+                SetChevron(lobbyChevron, open);
             });
 
             return toggle.gameObject;
+        }
+
+        /// <summary>
+        /// The caret on a drawer header, pinned to its right edge.
+        ///
+        /// ⚠️⚠️ IT IS A SEPARATE CHILD RATHER THAN TWO CHARACTERS ON THE END OF THE LABEL, AND
+        /// THE LABEL IS WHY. `MenuKit.WoodButton` centres its caption and then `MenuKit.Fit`
+        /// shrinks it against the button's width, so a caret glued to the string moved every time
+        /// the words changed length and was counted as part of what had to fit. Pinned to the
+        /// edge it sits in the same place on both drawers and on both states, which is the only
+        /// way two headers on opposite sides of a screen can look like one control.
+        ///
+        /// ⚠️ `▼` AND `▲` ARE IN THE GAME'S OWN FONT AND WERE CHECKED. Darumadrop One carries
+        /// U+25BC and U+25B2 (verified against the font's cmap: 525 glyphs). `◀` U+25C0, `✓`
+        /// U+2713 and `✎` U+270E are NOT in it, which is the fault `LobbyChrome.BuildIdentity`
+        /// already records for the pencil and `LobbyNameplates` still shipped twice.
+        /// </summary>
+        private static Text Chevron(Transform parent, bool open)
+        {
+            var caret = MenuKit.Label(parent, open ? "▲" : "▼", 22, UiTheme.Amber,
+                                      Vector2.zero, Vector2.zero, Vector2.zero,
+                                      TextAnchor.MiddleRight);
+            caret.name = "DrawerChevron";
+            caret.raycastTarget = false;
+
+            MenuKit.Stretch(caret.rectTransform, 0.0f);
+            caret.rectTransform.offsetMax = new Vector2(-18.0f, 0.0f);
+
+            return caret;
+        }
+
+        private static void SetChevron(Text caret, bool open)
+        {
+            if (caret != null) caret.text = open ? "▲" : "▼";
         }
 
         /// <summary>
@@ -1685,12 +1931,41 @@ namespace TumbangPreso.UI
             // The drawer header is the only furniture visible until the player asks to edit the
             // match. This follows the lobby hierarchy in the reference: cast first, settings on
             // demand, primary action always available.
-            var toggle = MenuKit.WoodButton(header.transform, "MATCH SETTINGS  ▼", Vector2.zero,
+            // ⚠️⚠️⚠️ IT IS A WOODEN SIGN NOW AND IT WAS A SOLID AMBER SLAB, AND THAT SWAP IS
+            // MOST OF WHY THIS SCREEN READ AS WRONG. 🧑 2026-09-01: *"ui still looks unnatural
+            // and ugly"*. Count the amber on the shipped lobby: the live tab, MATCH SETTINGS and
+            // LOBBY & SERVERS are three solid amber plates in three different corners, while
+            // START MATCH, **the one control the screen exists to reach**, is plain brown wood.
+            // The accent was spent on two drawer toggles and withheld from the primary, which is
+            // a hierarchy inversion and not a colour problem: the eye goes to the two things that
+            // only open a drawer.
+            //
+            // ⚠️ § 116.4 ALREADY STATED THE RULE AND APPLIED IT TO THE WRONG CONTROL. *"One
+            // accent, spent on the primary"* was written about QUICK MATCH and the queue card;
+            // these two kept the amber they were given on 2026-08-28 under *"align the yellow
+            // thing with match settings"*, which was a request about ALIGNMENT. Nobody re-asked
+            // what the colour was for, which is `CLAUDE.md` § 6.2c's third question one control
+            // over.
+            //
+            // ⚠️ AND THE REPLACEMENT IS A SHAPE, NOT A DIMMER COLOUR. `WoodHeaderButton` draws
+            // through `WoodCraft.Surface.Header`, which is square along its top edge and rounded
+            // below, so it reads as a sign hung ON the drawer rather than as another card beside
+            // it. A colourblind player and a photograph both survive that; neither survives
+            // "slightly less yellow".
+            var toggle = MenuKit.WoodButton(header.transform, "MATCH SETTINGS", Vector2.zero,
                                             Vector2.zero,
                                             new Vector2(LeftWidth, ToggleHeight), null,
-                                            "WoodAmberButton");
+                                            "WoodHeaderButton");
             toggle.name = "SettingsDrawerToggle";
             FocusRing.Attach(toggle.gameObject, 3.0f);
+
+            // ⚠️⚠️ THE LABEL NO LONGER CHANGES ITS WORDS AND THE CHEVRON DOES THE WHOLE JOB.
+            // It used to read `MATCH SETTINGS  ▼` and become `CLOSE MATCH SETTINGS  ▲`, so the
+            // control was a different width and a different sentence depending on state, and the
+            // player had to RE-READ it to find out what pressing it would do. `game-ui-design`
+            // names this one: `Inconsistent Button Behavior`, a control whose meaning moves under
+            // the same press. A caret that flips is the convention every player already has.
+            var settingsChevron = Chevron(toggle.transform, false);
 
             // ⚠️ THE CAPTION IS SIZED AGAINST THE RAIL RATHER THAN LEFT AT THE VARIATION'S
             // AUTHORED SIZE. `WoodAmberButton` is drawn for short words like BACK, so
@@ -1700,7 +1975,11 @@ namespace TumbangPreso.UI
             if (toggleCaption != null)
             {
                 toggleCaption.fontSize = 26;
-                MenuKit.Fit(toggleCaption, LeftWidth - 48.0f);
+                // ⚠️ THE CHEVRON'S GUTTER COMES OUT OF THE LABEL'S ROOM. `Chevron` pins a
+                // caret 18 units from the right edge, and a caption fitted against the
+                // whole width would centre itself straight through it. 72 is the caret,
+                // its inset and one gap.
+                MenuKit.Fit(toggleCaption, LeftWidth - 120.0f);
             }
 
             var toggleElement = toggle.gameObject.AddComponent<LayoutElement>();
@@ -1735,9 +2014,8 @@ namespace TumbangPreso.UI
             // 2026-09-01: *"our UI is ugly and repetitive and unimaginative"*. A groove is dark
             // along its top edge because the light is above it; a plank is bright along its top
             // edge for the same reason. Nothing here is a new colour.
-            bodyImage.sprite = UiMaterials.Plank(UiTheme.WoodDeep, raised: false);
-            bodyImage.type = Image.Type.Sliced;
-            bodyImage.color = Color.white;
+            bodyImage.raycastTarget = true;
+            WoodSkin.Apply(body, WoodCraft.Surface.Panel);
 
             var bodyElement = body.AddComponent<LayoutElement>();
             bodyElement.minHeight = SettingsBodyHeight;
@@ -1860,7 +2138,6 @@ namespace TumbangPreso.UI
             // what actually changes the three values this line is a view of.
             parts.RefreshSummary = refreshSummary;
 
-            var toggleLabel = toggle.GetComponentInChildren<Text>();
             bool open = false;
             body.SetActive(false);
             refreshSummary();
@@ -1870,8 +2147,7 @@ namespace TumbangPreso.UI
                 open = !open;
                 body.SetActive(open);
                 summary.gameObject.SetActive(!open);
-                if (toggleLabel != null)
-                    toggleLabel.text = open ? "CLOSE MATCH SETTINGS  ▲" : "MATCH SETTINGS  ▼";
+                SetChevron(settingsChevron, open);
                 if (!open) refreshSummary();
 
                 // Activating the wider drawer rebuilds the converted Columns layout. On some
@@ -2450,38 +2726,47 @@ namespace TumbangPreso.UI
             barRect.anchorMax = new Vector2(0.5f, 1.0f);
             barRect.pivot = new Vector2(0.5f, 1.0f);
             barRect.anchoredPosition = new Vector2(0.0f, -TopMargin);
-            barRect.sizeDelta = new Vector2((TabWidth * 2.0f) + RailSpacing, HeaderHeight);
+            barRect.sizeDelta = new Vector2((TabWidth * 2.0f) + RailSpacing, LiveTabHeight);
 
             var layout = bar.AddComponent<HorizontalLayoutGroup>();
             layout.spacing = RailSpacing;
             layout.childControlWidth = true;
             layout.childControlHeight = true;
             layout.childForceExpandWidth = true;
-            layout.childForceExpandHeight = true;
+
+            // ⚠️⚠️ OFF, BECAUSE ON IS WHAT MADE THE TWO TABS THE SAME HEIGHT NO MATTER WHAT
+            // EITHER OF THEM ASKED FOR. `childForceExpandHeight` overrides every child's
+            // `LayoutElement`, so the "the live tab is four units taller" claim in three separate
+            // comments in this repository has never once been true on screen. See
+            // `LiveTabHeight`.
+            layout.childForceExpandHeight = false;
+
+            // ⚠️ BOTTOM-ALIGNED, so the live tab grows upward off the chalk bar the pair stands
+            // on rather than away from it.
+            layout.childAlignment = TextAnchor.LowerCenter;
 
             parts.Practice = Tab(bar.transform, "PracticeTab", "PRACTICE", !isLobby,
                                  () => onTab?.Invoke(false));
             parts.Multiplayer = Tab(bar.transform, "MultiplayerTab", "MULTIPLAYER", isLobby,
                                     () => onTab?.Invoke(true));
 
-            // ⚠⚠ A CHALK BAR UNDER THE LIVE TAB, FOR THE SAME REASON THE SIGN-IN SCREEN'S PAIR
-            // HAS ONE: turning amber is a COLOUR, and `game-ui-design` lists a state told only by
-            // colour as `colorblind-failure`. Amber is also this front end's accent, so the live
-            // tab and START MATCH were saying different things in the same paint. The bar is a
-            // shape and it survives a photograph, a bad monitor and a player who cannot separate
-            // amber from wood.
+            // ⚠️⚠️⚠️ THE AMBER BAR UNDER THE LIVE TAB IS DELETED, AND THE SIGN-IN SCREEN'S TWIN
+            // WENT WITH IT. 🧑 2026-09-01, with a crop of that row: *"this stray light brown adn
+            // yellow line dont make sense i think its leftover stuff from old ui, adapt it into
+            // our current"*.
             //
-            // ⚠️ IT IS A SIBLING OF THE BAR, not a child of either tab, so switching tabs moves
-            // one object. Two markers is two things to keep in step and one is always the one
-            // somebody forgets.
-            parts.TabMarker = UiMaterials.Underline(parent, TabWidth - 40.0f, 0.0f, UiTheme.Amber);
-
-            var markerRect = parts.TabMarker.rectTransform;
-            markerRect.anchorMin = new Vector2(0.5f, 1.0f);
-            markerRect.anchorMax = new Vector2(0.5f, 1.0f);
-            markerRect.pivot = new Vector2(0.5f, 1.0f);
-            parts.TabMarkerPitch = (TabWidth + RailSpacing) * 0.5f;
-            parts.SetTabMarker(isLobby, TopMargin + HeaderHeight + 6.0f);
+            // **He is right about where it came from.** The bar was written when the two tabs
+            // differed by a FILL and nothing else, and the note it replaces argued, correctly for
+            // that build, that a state told only by colour is `game-ui-design`'s
+            // `colorblind-failure`. The tabs are four different things now: the live one is
+            // RAISED and the idle one RECESSED, its face is `793e1f` against `36180c`, its label
+            // is full cream against muted, and it stands `LiveTabHeight - IdleTabHeight` = 14
+            // units taller. Three of those four survive a greyscale photograph.
+            //
+            // ⚠️ SO THE RULE IS MET WITHOUT IT, AND WHAT IT ADDED WAS A LOOSE MARK. A chalk bar
+            // floating under one of two opaque plates belongs to no control, and it was the last
+            // thing on either screen still drawn in the old language. **A rule that says "not
+            // colour alone" does not ask for a mark per state.**
         }
 
         private static Button Tab(Transform parent, string name, string text, bool active,
@@ -2493,12 +2778,13 @@ namespace TumbangPreso.UI
             // wrong colour a frame later.
             var button = MenuKit.WoodButton(parent, text, Vector2.zero, Vector2.zero,
                                             new Vector2(TabWidth, HeaderHeight), onClick,
-                                            active ? "WoodAmberButton" : "WoodButton");
+                                            active ? "WoodHeaderButton" : "WoodTabIdleButton");
             button.name = name;
 
             var element = button.gameObject.AddComponent<LayoutElement>();
-            element.minHeight = HeaderHeight;
-            element.preferredHeight = HeaderHeight;
+            element.minHeight = active ? LiveTabHeight : IdleTabHeight;
+            element.preferredHeight = element.minHeight;
+            element.flexibleHeight = 0.0f;
 
             var label = button.GetComponentInChildren<Text>();
 

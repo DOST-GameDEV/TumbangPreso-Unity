@@ -53,7 +53,7 @@ namespace TumbangPreso.UI
         private Canvas _canvas;
         private GameObject _root;
         private InputField _username, _password;
-        private Text _heading, _error, _primaryLabel;
+        private Text _error, _primaryLabel;
         private Button _signInTab, _createTab;
         private Button _guest, _back;
 
@@ -153,7 +153,6 @@ namespace TumbangPreso.UI
         private Text _keyHint;
 
         /// <summary>The chalk bar under whichever tab is live. See <see cref="BuildTabs"/>.</summary>
-        private Image _tabMarker;
 
         /// <summary>Raised when the player leaves, whether they signed in or not, so the hub can
         /// come back up where it was.</summary>
@@ -333,11 +332,26 @@ namespace TumbangPreso.UI
             // ⚠️ ANCHORED TO THE LEFT EDGE AND SIZED IN UNITS, NOT TO A FRACTION OF THE WIDTH.
             // See `ColumnUnits`: the fraction is what made the box enormous on his window and
             // took the picture's space with it. Full height either way, which is the reference.
+            // ⚠️⚠️ THE COLUMN BLEEDS OFF THREE EDGES OF THE SCREEN, AND THAT IS WHAT KILLS THE
+            // DARK NOTCH IN THE CORNER. 🧑 2026-09-01, with a crop of the top-left corner:
+            // *"whats that empty space bcz of roudned age"*. A `WoodCraft` panel is rounded on
+            // all four corners, which is correct for a card floating in the middle of a screen
+            // and wrong for a board that runs off the edge of one: at the screen's own corner you
+            // saw the background through the radius.
+            //
+            // ⚠️ IT BLEEDS RATHER THAN SQUARING ITS CORNERS, so there is still exactly one panel
+            // shape in the front end. `Bleed` is one unit more than the largest radius the slab
+            // can draw (`RoundFraction` 0.09 of a 96-unit tall surface, plus its keyline and rim),
+            // so the curve is always outside the visible frame. **The RIGHT edge is not bled**,
+            // because that edge is the one the player actually sees and `ColumnEdge` draws the lit
+            // line down it.
+            const float Bleed = 28.0f;
+
             var rt = (RectTransform)columnGo.transform;
             rt.anchorMin = Vector2.zero;
             rt.anchorMax = new Vector2(0.0f, 1.0f);
-            rt.offsetMin = Vector2.zero;
-            rt.offsetMax = new Vector2(ColumnUnits, 0.0f);
+            rt.offsetMin = new Vector2(-Bleed, -Bleed);
+            rt.offsetMax = new Vector2(ColumnUnits, Bleed);
 
             // ⚠⚠ THE COLUMN IS A PLANK NOW AND IT WAS A FLAT FILL WITH A NINE-PATCH ON IT.
             // 🧑 2026-09-01: *"our UI is ugly and repetitive and unimaginative"*. `UiMaterials`
@@ -351,10 +365,14 @@ namespace TumbangPreso.UI
             // `docs/VISION.md` § 6: his UI art IS the design system, and every CONTROL on this
             // screen is still drawn with it. This is the surface behind them, which was never
             // authored art: it was `Image.color = WoodDeep`.
+            // ⚠⚠ THE COLUMN IS DRAWN IN HIS OWN LANGUAGE NOW. `WoodCraft`'s header carries the
+            // sampling; the short version is that a `UiMaterials` plank is a rounded rect with a
+            // dark outline over a flat face, and every board 🧑 authored has a BRIGHT keyline
+            // outside a dark rim over a full-height ramp with a varnish band near the top. This
+            // screen puts the two next to each other on the same pixels, because the primary
+            // button below is drawn from `GodotTheme` and the column behind it was not.
             var face = columnGo.GetComponent<Image>();
-            face.sprite = UiMaterials.Plank(UiTheme.WoodDeep);
-            face.type = Image.Type.Sliced;
-            face.color = Color.white;
+            WoodSkin.Apply(columnGo, WoodCraft.Surface.Panel);
 
             var col = columnGo.transform;
 
@@ -370,8 +388,8 @@ namespace TumbangPreso.UI
             edgeRt.anchorMin = new Vector2(1.0f, 0.0f);
             edgeRt.anchorMax = new Vector2(1.0f, 1.0f);
             edgeRt.pivot = new Vector2(1.0f, 0.5f);
-            edgeRt.offsetMin = new Vector2(-3.0f, 0.0f);
-            edgeRt.offsetMax = Vector2.zero;
+            edgeRt.offsetMin = new Vector2(-3.0f, Bleed);
+            edgeRt.offsetMax = new Vector2(0.0f, -Bleed);
 
             // ⚠️⚠️ EVERY ROW IS PLACED FROM THE COLUMN'S CENTRE, NOT FROM ITS TOP AND BOTTOM,
             // AND THE OLD ARRANGEMENT IS WHAT 🧑 CALLED *"ugly big ass space i hate this ui its
@@ -394,13 +412,31 @@ namespace TumbangPreso.UI
             // wordmark and the heading), FORM (which mode, and the two fields) and ACTIONS. Inside
             // a block the pitch is 80 units; between blocks it is 120. Nothing here is a new
             // number for its own sake: the pitch is the field height plus its caption.
-            const float Logo = 306.0f;
-            const float Heading = 208.0f;
-            const float Tabs = 128.0f;
-            const float UserField = 24.0f;
-            const float PassField = -88.0f;
-            const float Hint = -156.0f;
-            const float Primary = -230.0f;
+            //
+            // ⚠⚠⚠ THE HEADING IS GONE AND IT WAS SAYING THE SAME WORD AS THE TAB ABOVE IT AND
+            // THE BUTTON BELOW IT. 🧑 2026-09-01: *"I donnt want redundannt UI"*. On the CREATE
+            // tab this column read **CREATE / CREATE ACCOUNT / CREATE ACCOUNT** inside 340 units
+            // of screen: the live tab, a 40-unit heading and the primary button, three statements
+            // of one fact. `SetMode` was writing the same string into two labels on purpose.
+            //
+            // **The tab strip IS the heading.** It states which of the two things you are doing,
+            // it is the control that changes it, and it carries an amber chalk bar under the live
+            // half; a separate line restating it is a heading that cannot be acted on. The
+            // wordmark above says which game this is, the strip says which door, the button says
+            // what happens. Three statements, three different facts.
+            //
+            // ⚠️ AND THE 100 UNITS IT FREED WENT INTO THE GAPS RATHER THAN INTO THE COLUMN'S
+            // LENGTH. The block pitch is what `game-ui-design` calls the last ordering tool and
+            // 🧑 has complained about this column's spacing twice (*"ugly big ass space i hate
+            // this ui its so ugly"*): the three blocks are IDENTITY, FORM and ACTIONS, 80 units
+            // inside a block and 120 between them, and the whole column is 90 units shorter than
+            // it was.
+            const float Logo = 290.0f;
+            const float Tabs = 150.0f;
+            const float UserField = 60.0f;
+            const float PassField = -52.0f;
+            const float Hint = -118.0f;
+            const float Primary = -196.0f;
 
             BuildLogo(col, Logo);
 
@@ -409,16 +445,7 @@ namespace TumbangPreso.UI
             // column with the same logo in the same place rather than two screens.
             int formStart = col.childCount;
 
-            _heading = MenuKit.Label(col, "SIGN IN", 40, UiTheme.Cream, Centre,
-                new Vector2(0.0f, Heading), new Vector2(420.0f, 54.0f));
 
-            // ⚠⚠ A CHALK RULE, AND IT IS THE GAME'S OWN MARK RATHER THAN A DIVIDER.
-            // `UiMaterials.ChalkRule` carries the reasoning: the arena's box is chalk on asphalt,
-            // `VISION.md` § 2 rule 5 names the chalk as one of the three things a screenshot has to
-            // show, and **the front end had no chalk in it anywhere**. A straight cream line is a
-            // divider from a settings dialog; the same line with a wobble and dust on it belongs
-            // to this game and to nothing else.
-            UiMaterials.Underline(col, 300.0f, Heading - 40.0f, UiTheme.CreamMuted);
 
             BuildTabs(col, Tabs);
 
@@ -466,13 +493,13 @@ namespace TumbangPreso.UI
             // SIGN IN it moves to whichever account owns that Google identity. `SetMode`'s note is
             // the long version and `PlayerAccount.LinkGoogleAsync` is the other half.
             bool google = GoogleSignIn.IsAvailable;
-            float guestY = google ? -382.0f : -320.0f;
-            float backY = google ? -444.0f : -382.0f;
+            float guestY = google ? -334.0f : -268.0f;
+            float backY = google ? -398.0f : -332.0f;
 
             if (google)
             {
                 _googleButton = MenuKit.WoodButton(col, "CONTINUE WITH GOOGLE", Centre,
-                    new Vector2(0.0f, -316.0f), new Vector2(420.0f, 54.0f), GooglePressed);
+                    new Vector2(0.0f, -268.0f), new Vector2(420.0f, 54.0f), GooglePressed);
                 _googleButton.name = "GoogleButton";
             }
 
@@ -657,12 +684,59 @@ namespace TumbangPreso.UI
             MenuKit.Place((RectTransform)box.transform, Centre,
                 new Vector2(0.0f, y), new Vector2(360.0f, 104.0f));
 
-            var go = new GameObject("Logo", typeof(RectTransform), typeof(RawImage));
-            go.transform.SetParent(box.transform, false);
+            // ⚠️⚠️⚠️ THE WORDMARK IS CARVED INTO THE PLANK RATHER THAN LAID ON IT, ON REQUEST.
+            // 🧑 2026-09-01: *"it would look better if tump looked engraved into the wood like
+            // color as opposed to just floating"*. He is right about the read: the asset is white
+            // letters and the column is `WoodCraft` wood, so the game's name was the brightest
+            // object on the screen and belonged to no surface. A carved sign is also what the
+            // rest of this front end now claims to be made of.
+            //
+            // **Three copies of the same texture, and that is the whole technique.** A letter cut
+            // into a board lit from above has a dark line along its TOP edge (the near wall of the
+            // groove, in shadow), a light line along its BOTTOM edge (the far wall, catching the
+            // light) and a face a shade darker than the board. So:
+            //
+            //   1. a copy tinted INK, two units UP    -> the shadowed top wall
+            //   2. a copy tinted a lit wood, two down -> the lit bottom lip
+            //   3. the face, tinted one value under the plank, dead centre, drawn last
+            //
+            // ⚠️ THE OFFSETS ARE TWO UNITS AND NOT MORE. The wordmark draws about 90 units tall in
+            // a 104 unit slot, and a groove deeper than about two per cent of a letter's height
+            // stops reading as carving and starts reading as a drop shadow, which is the thing
+            // this replaces rather than a bigger version of it.
+            //
+            // ⚠️⚠️ AND THIS IS A TREATMENT, NOT A REPAINT OF HIS ART. `CLAUDE.md` § 6.4 forbids
+            // repainting authored art and 🧑 asked for this one directly, which is what that rule
+            // defers to. The FILE is untouched and the title screen still draws it white; only
+            // this screen tints its own three copies.
+            Engraved(box.transform, logo, "LogoShadow", 2.0f,
+                     new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.85f));
+            Engraved(box.transform, logo, "LogoLip", -2.0f,
+                     new Color(UiTheme.WoodEdge.r, UiTheme.WoodEdge.g, UiTheme.WoodEdge.b, 0.9f));
+
+            var image = Engraved(box.transform, logo, "Logo", 0.0f, EngravedFace);
+            image.raycastTarget = false;
+        }
+
+        /// <summary>
+        /// One layer of the carved wordmark: the texture, fitted, tinted and nudged.
+        ///
+        /// ⚠️ `FitInParent` SIZES AGAINST THE PARENT, so all three layers share `LogoBox` and
+        /// therefore arrive at exactly the same size. Giving each its own box would be three
+        /// fitters measuring three rects and the layers would drift apart by a pixel at some
+        /// aspect ratios, which on a carve reads as a blurry logo rather than as a misalignment.
+        /// </summary>
+        private static RawImage Engraved(Transform box, Texture2D logo, string name, float lift,
+                                         Color tint)
+        {
+            var go = new GameObject(name, typeof(RectTransform), typeof(RawImage));
+            go.transform.SetParent(box, false);
             MenuKit.Stretch((RectTransform)go.transform);
+            ((RectTransform)go.transform).anchoredPosition = new Vector2(0.0f, lift);
 
             var image = go.GetComponent<RawImage>();
             image.texture = logo;
+            image.color = tint;
             image.raycastTarget = false;
 
             // ⚠️ FIT INSIDE, NOT ENVELOPE. The wordmark is 1835x527 and the slot is not that
@@ -672,6 +746,25 @@ namespace TumbangPreso.UI
             var fitter = go.AddComponent<AspectRatioFitter>();
             fitter.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
             fitter.aspectRatio = logo.width / (float)logo.height;
+
+            return image;
+        }
+
+        /// <summary>
+        /// The carved face: the plank's own colour, one value down.
+        ///
+        /// ⚠️ IT IS NOT `WoodDark` OR INK. A groove cut in wood shows more wood, not a hole, and
+        /// the letters have to stay readable at a glance as the game's name. `WoodPanelFace` at
+        /// 0.72 of its value sits between the plank behind it and the ink line above it, which is
+        /// exactly where a cut surface sits.
+        /// </summary>
+        private static Color EngravedFace
+        {
+            get
+            {
+                Color.RGBToHSV(UiTheme.WoodPanelFace, out float h, out float s, out float v);
+                return Color.HSVToRGB(h, Mathf.Clamp01(s * 1.05f), Mathf.Clamp01(v * 0.72f));
+            }
         }
 
         /// <summary>
@@ -707,25 +800,98 @@ namespace TumbangPreso.UI
             // rule the heading two rows up already follows. The inactive tab is a sunken plate and
             // the live one is a raised amber one, so the pair differ in RELIEF as well as in
             // colour, which is what `UiMaterials.CarvedButton` was written for.
-            UiMaterials.Underline(col, 436.0f, y - 34.0f, UiTheme.WoodEdge);
+            // ⚠️⚠️ THE 436-UNIT STRIP RULE IS DELETED. 🧑 2026-09-01, with a crop of exactly
+            // this: **"this line looks weird"**. It ran under BOTH tabs and 20 units past each of
+            // them, so what a reader saw was a line sticking out either side of a pair of buttons
+            // with a brighter amber line on top of half of it. The metaphor it was reaching for
+            // (*"a tab strip is a LINE with the live tab standing on it"*) needs the line to be
+            // read as the FLOOR the tabs stand on, and it cannot be when the tabs are opaque
+            // plates that already have their own bright keylines.
+            //
+            // ⚠️ THE AMBER MARKER STAYS AND DOES THE WHOLE JOB. It is the half of the live-tab
+            // signal that is not colour-plus-relief, it is the piece that survives a photograph,
+            // and one bar under one tab is unambiguous in a way that two overlapping rules are
+            // not.
 
+            // ⚠⚠ THE LIVE TAB IS RAISED AND THE IDLE ONE IS RECESSED, WHICH IS THE SAME FIX
+            // THE LOBBY'S TAB PAIR TOOK ON THE SAME DAY. A solid amber plate beside a plain wood
+            // one says "this one" in hue alone, which `game-ui-design` lists as
+            // `colorblind-failure`, and it also spent this screen's accent on a control that
+            // states where you already are rather than on the button that does the thing.
+            // `GodotTheme`'s `WoodTabIdleButton` note has the argument; the amber chalk bar below
+            // and the four units of extra height are the other two signals.
             _signInTab = MenuKit.WoodButton(col, "SIGN IN", Centre,
-                new Vector2(-105.0f, y), new Vector2(198.0f, 52.0f), () => SetMode(false),
-                "WoodAmberButton");
+                new Vector2(-105.0f, y), new Vector2(198.0f, LiveTabHeight), () => SetMode(false),
+                "WoodHeaderButton");
 
             _createTab = MenuKit.WoodButton(col, "CREATE", Centre,
-                new Vector2(105.0f, y), new Vector2(198.0f, 52.0f), () => SetMode(true));
+                new Vector2(105.0f, y), new Vector2(198.0f, IdleTabHeight), () => SetMode(true),
+                "WoodTabIdleButton");
+
+            // ⚠️⚠️ BOTH TABS HANG FROM ONE BOTTOM EDGE, so the live one grows UPWARD out of the
+            // row instead of swelling around its own centre. A pair that grows from the middle
+            // reads as two boxes at two sizes; a pair that shares a floor reads as one standing
+            // forward, which is the whole metaphor.
+            Hang(_signInTab, -105.0f, y);
+            Hang(_createTab, 105.0f, y);
 
             // ⚠️ THE MARKER IS A SIBLING OF THE TABS AND NOT A CHILD OF EITHER, so switching
             // modes moves one object instead of showing one and hiding another. Two markers is
             // two things to keep in step and one of them is always the one somebody forgets.
             // ⚠️ THE AMBER BAR SITS ON THE STRIP LINE, NOT BELOW IT, so the live tab reads as
             // standing on the rule while the other one hangs off it. Same y as the rule above.
-            _tabMarker = UiMaterials.Underline(col, 198.0f, y - 34.0f, UiTheme.Amber);
-            _tabMarker.rectTransform.anchoredPosition = new Vector2(-105.0f, y - 34.0f);
+            // ⚠️⚠️⚠️ THE AMBER MARKER BAR IS DELETED. 🧑 2026-09-01, with a crop of this row:
+            // *"this stray light brown adn yellow line dont make sense i think its leftover stuff
+            // from old ui, adapt it into our current"*. He is right about where it came from: the
+            // bar and the 436-unit strip rule under it were both written for the pass BEFORE the
+            // tabs had two shapes, when the only difference between them was a fill and a
+            // colourblind player had nothing to read. **That is no longer true.** The live tab is
+            // raised, its face is `793e1f` against `36180c`, its label is full cream against
+            // muted, and it now stands eight units taller than its neighbour: four signals, three
+            // of which survive a photograph in greyscale.
+            //
+            // A fifth one drawn as a loose chalk bar floating under one of two plates is not
+            // reinforcement, it is a leftover, and it is the last mark on this screen that does
+            // not belong to a control. `game-ui-design`'s rule is that a state must not be told by
+            // COLOUR ALONE; it does not ask for a mark per state.
 
             FocusRing.Attach(_signInTab.gameObject, 4.0f);
             FocusRing.Attach(_createTab.gameObject, 4.0f);
+        }
+
+        /// <summary>
+        /// How tall the live tab is, and how tall the other one is.
+        ///
+        /// ⚠️ THE SAME PAIR THE LOBBY USES, ON PURPOSE. `LobbyChrome.LiveTabHeight` carries the
+        /// argument: a shape difference beats a fill difference at small sizes, and it is the one
+        /// signal a colourblind player and a greyscale screenshot both keep. Two screens with two
+        /// different tab conventions would be worse than either.
+        /// </summary>
+        private const float LiveTabHeight = 60.0f;
+        private const float IdleTabHeight = 52.0f;
+
+        /// <summary>The row both tabs hang from, remembered so <see cref="SetMode"/> can move
+        /// them without knowing the column's geometry.</summary>
+        private float TabsY;
+
+        /// <summary>
+        /// Hangs a tab from the row's shared bottom edge, at the height its state calls for.
+        ///
+        /// ⚠️ THE PIVOT IS THE BOTTOM, so growing the live tab moves its TOP edge and leaves the
+        /// floor alone. With a centred pivot the taller tab would also drop four units below its
+        /// neighbour, and a row whose baseline moves when you press it is worse than a row with no
+        /// difference at all.
+        /// </summary>
+        private void Hang(Button tab, float x, float y, bool live = false)
+        {
+            if (tab == null) return;
+
+            TabsY = y;
+
+            var rt = (RectTransform)tab.transform;
+            rt.pivot = new Vector2(0.5f, 0.0f);
+            rt.anchoredPosition = new Vector2(x, y - (IdleTabHeight * 0.5f));
+            rt.sizeDelta = new Vector2(198.0f, live ? LiveTabHeight : IdleTabHeight);
         }
 
         private void BuildPrimary(Transform col, float y)
@@ -766,13 +932,22 @@ namespace TumbangPreso.UI
             MenuKit.Place((RectTransform)go.transform, Centre,
                 new Vector2(0.0f, y), new Vector2(420.0f, 58.0f));
 
+            // ⚠⚠ THE FIELD IS PAPER NOW RATHER THAN A FLAT CREAM RECTANGLE WITH AN INK
+            // BORDER. 🧑 2026-09-01: *"make sure all ui isnt generated in the same way but
+            // follows a central theme bcz old issue was it read as repetitive with everyone just
+            // being brown and boring"*. **Cream is already a SURFACE in his art and not only a
+            // text colour**: these two boxes are the only thing on this screen that is not brown,
+            // and they were drawn by the same `GodotTheme.Box` that draws every wooden plate in
+            // the game, at a different fill.
+            //
+            // `WoodCraft.Surface.PaperField` is built by different rules from any wooden surface:
+            // no keyline, no rim, no varnish band, no ramp, a small CONSTANT corner radius rather
+            // than a fraction of the height, a two-dimensional fibre speckle because paper has no
+            // grain direction, one ink hairline, and a shadow along the TOP edge only, which is
+            // the near wall of anything cut into a surface lit from above. Two surfaces that
+            // share a palette and nothing else cannot read as the same object.
             var image = go.GetComponent<Image>();
-            image.color = UiTheme.Card;
-
-            var skin = go.AddComponent<GodotPanel>();
-            skin.Variation = "Card";
-            skin.ApplyContentMargins = false;
-            skin.Apply();
+            WoodSkin.Apply(go, WoodCraft.Surface.PaperField);
 
             var input = go.AddComponent<InputField>();
             input.targetGraphic = image;
@@ -1047,7 +1222,10 @@ namespace TumbangPreso.UI
         private void SetMode(bool creating)
         {
             _creating = creating;
-            _heading.text = creating ? "CREATE ACCOUNT" : "SIGN IN";
+
+            // ⚠️ THE PRIMARY IS THE ONLY LABEL THAT CHANGES WITH THE MODE NOW. This used to write
+            // the identical string into a heading as well; see `BuildColumn`'s note on the three
+            // CREATEs.
             if (_primaryLabel != null) _primaryLabel.text = creating ? "CREATE ACCOUNT" : "SIGN IN";
             _error.text = creating
                 ? "Keeps everything you have played on this machine."
@@ -1070,13 +1248,10 @@ namespace TumbangPreso.UI
             SetTab(_signInTab, !creating);
             SetTab(_createTab, creating);
 
-            // ⚠️ THE CHALK BAR IS THE HALF OF THIS THAT IS NOT A COLOUR. See `BuildTabs`.
-            if (_tabMarker != null)
-            {
-                var markerRect = _tabMarker.rectTransform;
-                markerRect.anchoredPosition = new Vector2(creating ? 105.0f : -105.0f,
-                                                          markerRect.anchoredPosition.y);
-            }
+            // ⚠️ THE HEIGHT MOVES WITH THE PAINT, which is the half of this that is not a
+            // colour. See `BuildTabs`: the marker bar that used to do this job is deleted.
+            Hang(_signInTab, -105.0f, TabsY, !creating);
+            Hang(_createTab, 105.0f, TabsY, creating);
 
             // ⚠️ THE VERB FOLLOWS THE TAB AND THE KEY LIST FOLLOWS THE MODE, so this defers to
             // `SetBootMode` rather than writing a string that names ESC on a screen where ESC
@@ -1104,7 +1279,7 @@ namespace TumbangPreso.UI
             var skin = button.GetComponent<GodotButton>();
             if (skin == null) return;
 
-            skin.Variation = on ? "WoodAmberButton" : "WoodButton";
+            skin.Variation = on ? "WoodHeaderButton" : "WoodTabIdleButton";
             skin.Apply();
             skin.Refresh();
         }

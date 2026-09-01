@@ -400,7 +400,15 @@ namespace TumbangPreso.PlayTests
             _hub.Open();
             yield return null;
 
-            Press("CAREER");
+            // ⚠️⚠️ `LOADOUT`, NOT `CAREER`, AND THIS PROBE HAD BEEN RED SINCE § 115.6 MOVED THE
+            // SURFACE. 🧑 could not find the loadout twice (*"i also dont know hhow to navigae to
+            // loadouts section"*), and the answer was to lift it out of a collapsed group on the
+            // CAREER tab into a tab of its own; `PlayerHub.BuildLoadoutTab` builds
+            // `Section_Ability builds` and nothing on CAREER does. Five of this file's cases then
+            // failed reporting a missing group, which reads exactly like the § 114.12 fault the
+            // message below describes and is a different thing: **the group is built, the probe
+            // was knocking on the old door.**
+            Press("LOADOUT");
             yield return null;
             yield return null;
 
@@ -409,26 +417,30 @@ namespace TumbangPreso.PlayTests
             // the title string would break the day the mark changes.
             var header = Under(Root(), Group);
             Assert.IsNotNull(header,
-                "the CAREER tab has no Ability builds group. § 114.12: it bailed out at zero "
+                "the LOADOUT tab has no Ability builds group. § 114.12: it bailed out at zero "
                 + "matches before building it, which made Phase 10 unreachable on a fresh "
                 + "account, and `EmptyCareer` builds it now.");
 
-            var toggle = header.GetComponent<Button>();
-            Assert.IsNotNull(toggle, "the Ability builds header is not pressable, so a group "
-                                     + "shut by default can never be opened.");
-
-            // ⚠️⚠️ PRESSED ONLY WHEN IT IS SHUT, BECAUSE IT IS A TOGGLE AND `PlayerHub._groups`
-            // OUTLIVES A TAB SWITCH. The first version pressed unconditionally, so the second
-            // call in `AnUnlockedAlternate...` CLOSED the group it had just opened and the case
-            // failed reporting zero steppers on a screen that was working.
+            // ⚠️⚠️ THE HEADER IS NOT PRESSABLE ANY MORE AND THAT IS THE SHIPPING DESIGN RATHER
+            // THAN A REGRESSION. This probe was written when the loadout was a collapsed
+            // `UiRows.Group` on the CAREER tab, so it pressed the heading to open it and asserted
+            // that a `Button` was there to press. § 115.6 made LOADOUT a tab of its own and
+            // `PlayerHub.BuildLoadoutTab` says why in full: **these rows ARE the tab now**, so a
+            // group that hid them by default would be a tab whose contents are behind a second
+            // press, which is the exact findability fault the move exists to fix (🧑, twice:
+            // *"i also dont know hhow to navigae to loadouts section"*).
             //
-            // ⚠️ THE STATE IS READ OFF THE HEADING'S OWN MARK, which `UiRows.Section` writes as
-            // `"+  "` when shut and `"-  "` when open, deliberately in ASCII because Darumadrop
-            // One has no chevron. Reading the shipping code's own state beats keeping a second
-            // copy of it in here.
-            if (HeadingMark(header) == '+')
+            // ⚠️ SO THE PRESS IS GONE RATHER THAN MADE CONDITIONAL. A probe that tolerates both
+            // shapes is a probe that stops saying which one shipped, and the old assertion is
+            // kept below inverted: a `UiRows.Section` heading must NOT be a button, because one
+            // that is would mean the rows had been put back behind a toggle without anybody
+            // saying so.
+            Assert.IsNull(header.GetComponent<Button>(),
+                "the Ability builds heading is pressable again. § 115.6 made LOADOUT its own tab "
+                + "precisely so these rows are not behind a second press; if a collapse is wanted "
+                + "back, change PlayerHub.BuildLoadoutTab and this assertion together.");
+
             {
-                toggle.onClick.Invoke();
                 yield return null;
                 yield return null;
             }
@@ -437,20 +449,11 @@ namespace TumbangPreso.PlayTests
                 "opening the Ability builds group produced no skill steppers.");
         }
 
-        /// <summary>
-        /// The `+` or `-` a section header draws to say whether it is shut, or `?` if the
-        /// heading is gone.
-        /// </summary>
-        private static char HeadingMark(Transform header)
-        {
-            foreach (var label in header.GetComponentsInChildren<Text>(true))
-            {
-                string text = label.text ?? "";
-                if (text.StartsWith("+") || text.StartsWith("-")) return text[0];
-            }
-
-            return '?';
-        }
+        // ⚠️ `HeadingMark` IS DELETED WITH THE PRESS IT SERVED. It read the `+` or `-` a
+        // collapsed `UiRows.Group` writes in front of its title, so this probe could avoid
+        // pressing a header that was already open. `Section` headings do not collapse and do not
+        // draw a mark, so the helper answered `?` for every heading on the LOADOUT tab and the
+        // only thing keeping it alive was the branch above it.
 
         /// <summary>The two `Row_SKILL n · ABILITY` rows, in list order.</summary>
         private List<Transform> SkillRows()

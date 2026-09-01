@@ -34,6 +34,14 @@ namespace TumbangPreso.UI
 
         private Sprite _normal, _hover, _pressed, _disabled;
         private bool _hovered, _held;
+
+        /// <summary>Whether this variation draws through <see cref="WoodCraft"/>, which needs the
+        /// control's height and therefore cannot be resolved in <see cref="Apply"/>.</summary>
+        private bool _wood;
+
+        /// <summary>The height the four wood sprites were last built for, so a resize rebuilds
+        /// and a settled layout costs one float compare.</summary>
+        private float _woodHeight = -1.0f;
         private Vector2 _labelHome;
         private bool _labelHomeKnown;
 
@@ -71,16 +79,23 @@ namespace TumbangPreso.UI
             // scoped it out of.
             if (_style.Wood)
             {
-                bool chunky = Variation == "WoodPrimaryButton" || Variation == "WoodDangerButton";
-
-                _normal = UiMaterials.CarvedButton(_style.Fill, _style.Border,
-                                                   UiMaterials.ButtonPose.Raised, chunky);
-                _hover = UiMaterials.CarvedButton(_style.Lit, _style.LitBorder,
-                                                  UiMaterials.ButtonPose.Hover, chunky);
-                _pressed = UiMaterials.CarvedButton(_style.Sunk, _style.Border,
-                                                    UiMaterials.ButtonPose.Sunk, chunky);
-                _disabled = UiMaterials.CarvedButton(UiTheme.WoodDark, _style.Border,
-                                                     UiMaterials.ButtonPose.Disabled, chunky);
+                // ⚠️⚠️⚠️ THE FOUR STATES ARE BUILT AT THE CONTROL'S REAL HEIGHT NOW, AND THAT IS
+                // WHAT LETS THEM BE HIS ART RATHER THAN AN APPROXIMATION OF IT. 🧑 2026-09-01, on
+                // the pass that had already replaced every button: *"ui still looks unnatural and
+                // ugly"*. `WoodCraft`'s header carries the measurement; the short version is that
+                // every button he AUTHORED is a chamfered slab with a BRIGHT keyline and a
+                // full-height varnish gradient, and every button drawn in code was a rounded rect
+                // with a DARK outline and a flat face. The lobby draws both at once, because
+                // `StartButton` is his `BUTTON LONG` texture, so the screen was two design systems
+                // stacked and the code-drawn half was the one that looked wrong.
+                //
+                // ⚠️ A FULL-HEIGHT GRADIENT NEEDS THE HEIGHT, which is why this moved out of
+                // `Apply` and into `Rebuild` below. `UiMaterials.CarvedButton` is still correct
+                // for anything that cannot know its own height and is still what `WoodDropdown`
+                // uses for its list rows; it keeps its face flat for exactly this reason and says
+                // so in its own note.
+                _wood = true;
+                _woodHeight = -1.0f;
             }
             else
             {
@@ -147,9 +162,63 @@ namespace TumbangPreso.UI
 
         private bool Interactable => _button == null || _button.interactable;
 
+        /// <summary>
+        /// Rebuilds the four wood states when the control's height moves.
+        ///
+        /// ⚠️ IT IS A NO-OP ONCE THE LAYOUT SETTLES. `WoodCraft.Slab` quantises height to four
+        /// units and caches by key, so a screen that has finished laying out pays one float
+        /// compare per button per frame and generates nothing. A height that has never been seen
+        /// before costs one small texture, once, for the life of the process.
+        ///
+        /// ⚠️ AND IT WAITS FOR A REAL RECT. A button measured before its layout group has run
+        /// reports zero, and baking against that would pin every control in a freshly opened
+        /// screen to the 20-unit floor. One frame unskinned is the cost.
+        /// </summary>
+        private void RebuildWood()
+        {
+            if (!_wood || _face == null) return;
+
+            float height = _face.rectTransform.rect.height;
+            if (height <= 1.0f) return;
+            if (_woodHeight > 0.0f && Mathf.Abs(height - _woodHeight) < 2.0f) return;
+
+            _woodHeight = height;
+
+            var surface = Variation == "WoodActionButton" || Variation == "WoodPrimaryButton"
+                ? WoodCraft.Surface.Action
+                : Variation == "WoodHeaderButton"
+                    ? WoodCraft.Surface.Header
+                    : WoodCraft.Surface.Button;
+
+            _normal = WoodCraft.Slab(surface, height, WoodCraft.Pose.Rest, _style.Fill);
+            _hover = WoodCraft.Slab(surface, height, WoodCraft.Pose.Hover, _style.Fill);
+            _pressed = WoodCraft.Slab(surface, height, WoodCraft.Pose.Press, _style.Fill);
+            _disabled = WoodCraft.Slab(surface, height, WoodCraft.Pose.Off, _style.Fill);
+
+            _face.pixelsPerUnitMultiplier = 1.0f;
+
+            // ⚠️⚠️ THE SHADOW TAKES THE FACE'S OWN SILHOUETTE, AND UNTIL NOW IT DID NOT.
+            // 🧑 2026-09-01, with a crop of the sign-in column's three buttons: *"the shadows dont
+            // follow the actual ckickables as well"*. `SkinLayers.Shadow` paints
+            // `GodotTheme.ShadowBox()`, a ROUNDED rectangle, six units grown and five down. That
+            // was correct when every face was a rounded rectangle too; the faces are chamfered
+            // now, so the shadow stuck out of all four cut corners and the button read as one
+            // shape sitting on a different one.
+            if (_shadow != null)
+            {
+                _shadow.sprite = WoodCraft.Silhouette(surface, height + 12.0f);
+                _shadow.type = Image.Type.Sliced;
+                _shadow.color = new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.55f);
+                _shadow.pixelsPerUnitMultiplier = 1.0f;
+            }
+        }
+
         public void Refresh()
         {
             if (_face == null) return;
+
+            RebuildWood();
+            if (_normal == null) return;
 
             bool on = Interactable;
             bool sunk = on && _held;

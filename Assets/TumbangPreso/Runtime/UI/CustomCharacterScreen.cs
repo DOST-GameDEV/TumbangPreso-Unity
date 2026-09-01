@@ -663,7 +663,9 @@ namespace TumbangPreso.UI
             {
                 var skin = _slotTabs[i].GetComponent<GodotButton>();
                 if (skin == null) continue;
-                skin.Variation = i == _slot ? "WoodAmberButton" : "WoodButton";
+                // ⚠️ RELIEF RATHER THAN HUE, as on every other tab strip in the front end. See
+                // `GodotTheme.WoodTabIdleButton`.
+                skin.Variation = i == _slot ? "WoodHeaderButton" : "WoodTabIdleButton";
                 skin.Apply();
                 skin.Refresh();
             }
@@ -782,7 +784,7 @@ namespace TumbangPreso.UI
                         Refresh();
                         AimCamera();
                     },
-                    i == _section ? "WoodAmberButton" : "WoodButton");
+                    i == _section ? "WoodHeaderButton" : "WoodTabIdleButton");
 
                 // ⚠️ THE LAYOUT GROUP OWNS THE RECT, so the button's own `Place` call is
                 // overridden a frame later. `MenuKit.WoodButton` sizes its LABEL from the size it

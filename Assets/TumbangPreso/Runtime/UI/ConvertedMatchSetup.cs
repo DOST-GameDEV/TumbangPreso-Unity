@@ -137,7 +137,10 @@ namespace TumbangPreso.UI
 
         private readonly int[] _replicatedPicks = new int[Balance.PlayerCount * 4];
 
-        private const string YouMark = "◀ YOU";
+        // ⚠⚠ THE ARROW IS GONE FOR THE SAME REASON `LobbyNameplates` RECORDS: `◀` (U+25C0)
+        // is not in Darumadrop One, so every seat row carrying this string drew one glyph out of
+        // a fallback system font beside eleven drawn out of the game's own.
+        private const string YouMark = "YOU";
 
         /// <summary>
         /// ⚠️⚠️ NONE IS LAST, AND IT IS AN ABSENCE RATHER THAN A TIER. 🧑, 2026-08-26: *"add
@@ -980,9 +983,17 @@ namespace TumbangPreso.UI
             element.preferredHeight = 44;
             element.flexibleWidth = 1;
 
+            // ⚠️⚠️ JOIN IS GREEN, WHICH IS 🧑'S OWN PRIMARY COLOUR AND NOT A NEW ONE.
+            // `Art/ui/host-game/JOIN BUTTON.png` is authored green, and sampling it shows it is
+            // `BUTTON LONG.png` with one colour swapped: same chamfer, same 7 px keyline, the
+            // same seven values of a different hue (`UiTheme.MenuGreenFace` carries the numbers).
+            // **His art already says green means go**, and this row is the one action in this
+            // drawer a player came here to take; START SERVER beside it is the alternative.
+            // Drawn at the same weight they were a coin toss, which is `game-ui-design`'s
+            // `UI Blocking Action` read one control down.
             _joinButton = MenuKit.WoodButton(row.transform, "JOIN A GAME", Vector2.zero,
                                              Vector2.zero, new Vector2(0.0f, 44.0f),
-                                             OpenJoinPanel);
+                                             OpenJoinPanel, "WoodPrimaryButton");
             _joinButton.name = "OpenJoinButton";
             _joinButton.gameObject.AddComponent<LayoutElement>().minHeight = 44;
 

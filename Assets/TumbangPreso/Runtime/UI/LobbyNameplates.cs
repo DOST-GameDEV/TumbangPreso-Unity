@@ -235,11 +235,23 @@ namespace TumbangPreso.UI
                 tickRect.anchoredPosition = new Vector2(0.0f, 6.0f);
                 tickRect.sizeDelta = new Vector2(TickSize, TickSize);
 
-                var tickMark = MenuKit.Label(tick.transform, "✓", TickFont, UiTheme.Amber,
-                                             Vector2.zero, Vector2.zero, Vector2.zero,
-                                             TextAnchor.MiddleCenter);
-                tickMark.raycastTarget = false;
-                MenuKit.Stretch(tickMark.rectTransform, 0.0f);
+                // ⚠⚠⚠ THE TICK IS A DRAWN CHALK MARK AND IT WAS THE CHARACTER `✓`, WHICH
+                // THE GAME'S OWN FONT DOES NOT HAVE. Darumadrop One's cmap carries 525 glyphs and
+                // U+2713 is not one of them, so Unity's dynamic-font fallback drew it from
+                // whatever system face it found: a different typeface, weight and baseline from
+                // every other mark in the game, **on the four plates that float over the cast in
+                // the middle of the lobby**. `LobbyChrome.BuildIdentity` records the identical
+                // fault for the pencil `✎` and fixed it by using a word; a tick has no word, so
+                // it gets a shape. `UiMaterials.ChalkTick` carries the rest.
+                var tickMark = new GameObject("ReadyTick", typeof(RectTransform), typeof(Image));
+                tickMark.transform.SetParent(tick.transform, false);
+
+                var tickImage = tickMark.GetComponent<Image>();
+                tickImage.sprite = UiMaterials.ChalkTick();
+                tickImage.color = UiTheme.Amber;
+                tickImage.raycastTarget = false;
+                tickImage.preserveAspect = true;
+                MenuKit.Stretch(tickImage.rectTransform, -5.0f);
 
                 _ticks[seat] = tick;
                 tick.SetActive(false);
@@ -300,7 +312,32 @@ namespace TumbangPreso.UI
             // plate resize itself every time somebody readied.
             if (_ticks[seat] != null) _ticks[seat].SetActive(ready);
 
-            string label = you ? $"{displayName}   ◀" : displayName;
+            // ⚠⚠⚠ `◀` IS NOT IN THE GAME'S FONT EITHER, AND THIS ONE SHIPPED ON THE
+            // PLAYER'S OWN NAMEPLATE. U+25C0 is absent from Darumadrop One's 525-glyph cmap
+            // (U+25BC and U+25B2, the two carets the drawer headers use, ARE present and were
+            // checked), so the marker identifying which of the four bodies is YOU was drawn by a
+            // fallback system face at a foreign weight and baseline, three units from a name
+            // drawn in the game's own.
+            //
+            // ⚠⚠ AND A WORD IS BETTER THAN A SHAPE HERE ANYWAY. An arrow pointing left from
+            // the end of a name is a symbol the player has to be taught; `YOU` is not. This is the
+            // same conclusion `LobbyChrome` reached for the pencil: **the game's font has letters
+            // and it is missing exactly the symbols somebody reached for instead.**
+            // ⚠️⚠️ THE MARKER IS AMBER AND THE NAME IS NOT, BECAUSE THEY ARE TWO DIFFERENT
+            // THINGS IN ONE STRING. Measured off `Logs/shots-runtime/Lobby-v44.png`: drawn in the
+            // name's own colour it read as `Player#1296 YOU`, one five-character-longer name,
+            // rather than as a name with a marker on it. Amber is this screen's "look here"
+            // colour and this is the only place on the cast it is spent.
+            //
+            // ⚠️ RICH TEXT RATHER THAN A SECOND LABEL, and that is a deliberate limit. The plate
+            // sizes itself from `preferredWidth` and then fits the type back into what it got
+            // (see `SetSeat`'s note below); a sibling label would have to be measured and placed
+            // in the same pass, on a plate whose width depends on the string the sibling is part
+            // of. Unity measures rich text with the tags stripped, so one label stays one
+            // measurement.
+            string label = you
+                ? $"{displayName}   <color=#{ColorUtility.ToHtmlStringRGB(UiTheme.Amber)}>YOU</color>"
+                : displayName;
 
             var text = _names[seat];
             text.text = label;
