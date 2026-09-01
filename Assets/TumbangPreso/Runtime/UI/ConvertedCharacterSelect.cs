@@ -64,14 +64,61 @@ namespace TumbangPreso.UI
             OnClick("BackButton", Dismiss);
 
             WireTabs();
-            Refresh();
-        
+
             // ⚠️⚠️ ONE CALL DRESSES THIS WHOLE SCREEN IN PAPER, AND IT IS SCOPED TO THIS SUBTREE
             // ON PURPOSE. `GodotPanel` and `GodotButton` are the choke points every converted
             // screen is skinned through, so editing either of them would have repainted the main
             // menu and the in-match HUD, which 🧑 scoped out twice. `PaperKit.PaperDress.Screen`
             // walks a given root instead. See `docs/TODO.md` § 119.2 and § 119.5.
+            //
+            // ⚠️⚠️ AND IT RUNS BEFORE `Refresh`, WHICH IT DID NOT, AND THAT ORDER IS A BUG YOU CAN
+            // SEE IN `Logs/shots-runtime/CharacterSelect-v57.png`: the HERO tab, the one you are
+            // on, drew as a pale greyed pill. `RefreshTabs` asks for a `PaperSkin` and takes a
+            // wooden fallback when there is none, so running it first meant it always took the
+            // fallback, and the dress then flattened all three tabs onto one `Token`. With
+            // `interactable = false` on the live tab (which is deliberate: you cannot press the
+            // tab you are on) a plain `Token` draws as `Pose.Off`. **The selected tab was the
+            // greyed-out one.**
             PaperDress.Screen(transform);
+
+            PaperiseAuthoredBoard();
+
+            Refresh();
+        }
+
+        /// <summary>
+        /// Turns the picker's two authored wooden surfaces into paper.
+        ///
+        /// ⚠️⚠️ THIS IS THE ONE PLACE IN THE PASS THAT STOPS DRAWING ONE OF 🧑'S OWN PNGs, AND IT
+        /// NEEDS SAYING OUT LOUD. `CharacterSelectPanel/ConfigPanel` draws
+        /// `Art/ui/host-game/SETTINGS CONFIG PANEL.png` and `NameRow/CharSelector` draws
+        /// `MAP MODE DISPLAY.png`; both are his art, `CLAUDE.md` § 6.4 forbids repainting it, and
+        /// `PaperDress` cannot see either of them because a bare `Image` with an authored sprite
+        /// carries no `GodotPanel` and no `WoodSkin`. **That is why they survived the paper pass
+        /// and why the picker shipped as cream furniture standing on a dark wooden board.**
+        ///
+        /// ⚠️ WHAT MAKES THIS ALLOWED IS THAT IT IS A COMPOSITION CHANGE AND NOT A REPAINT. The
+        /// files are untouched, the main menu still draws them, and it is the same decision the
+        /// lobby already made: `LobbyChrome.BuildSettingsDrawer` takes `Rows` out of the authored
+        /// `ConfigPanel` and leaves the board behind, because on a cream front end the biggest
+        /// object in the frame cannot be the wooden one. 🧑 asked for this screen by name:
+        /// **"MAKE SURE AS WELL CHARACTER SELECT ... HAS THE NEW THEME"**, and gave the permission
+        /// in advance (§ 119, *"i give u permission to overhaul"*).
+        ///
+        /// ⚠️ HIS ART THAT IS A CONTROL STAYS. `GAME BANNER.png` is still the headline, the two
+        /// arrows are still the arrows, and `BUTTON LONG.png` is still CHOOSE. § 119.1: wood is
+        /// the ink, the frame and his own authored buttons standing on paper. The board was none
+        /// of the three; it was the field.
+        /// </summary>
+        private void PaperiseAuthoredBoard()
+        {
+            var board = Node("ConfigPanel");
+            if (board != null) PaperKit.Paperise(board.gameObject, PaperCraft.Surface.Sheet);
+
+            // ⚠️ A `Tray`, because the selector is a VALUE with an arrow either side rather than
+            // a thing you press: the arrows are the controls and they keep their own art.
+            var selector = Node("CharSelector");
+            if (selector != null) PaperKit.Paperise(selector.gameObject, PaperCraft.Surface.Tray);
         }
 
         /// <summary>
@@ -395,13 +442,9 @@ namespace TumbangPreso.UI
                 // the lobby and the login screen only (§ 119.6). That is the argument for the
                 // shot this pass adds rather than for widening the probe, because the fault is
                 // "a sprite written after the dress" and the probe walks a tree at rest.
-                var paper = button.GetComponent<PaperSkin>();
-                if (paper != null)
-                {
-                    paper.Surface = active ? PaperCraft.Surface.Live : PaperCraft.Surface.Ghost;
-                    paper.Rebuild();
-                }
-                else if (button.targetGraphic is Image face)
+                bool paper = PaperKit.MarkLive(button, active);
+
+                if (!paper && button.targetGraphic is Image face)
                 {
                     face.sprite = GodotTheme.Box(
                         active ? UiTheme.Highlight : UiTheme.WoodDark,
@@ -420,12 +463,9 @@ namespace TumbangPreso.UI
                     // ⚠️ ON THE PAPER PATH `PaperButton.Restyle` BELOW OWNS THE COLOUR, because it
                     // reads it off the surface and is therefore the one writer. Setting it here as
                     // well is how a live tab ends up with the right plate and the wrong word.
-                    if (paper == null) label.color = active ? UiTheme.Ink : UiTheme.Cream;
+                    if (!paper) label.color = active ? UiTheme.Ink : UiTheme.Cream;
                     label.fontStyle = FontStyle.Bold;
                 }
-
-                var chip = button.GetComponent<PaperButton>();
-                if (chip != null) chip.Restyle();
             }
         }
 
