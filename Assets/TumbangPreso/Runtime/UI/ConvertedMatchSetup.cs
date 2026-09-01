@@ -711,10 +711,16 @@ namespace TumbangPreso.UI
             // Address display box
             var addrBox = new GameObject("AddressBox");
             addrBox.transform.SetParent(_addressRow.transform, false);
-            var addrBoxImg = addrBox.AddComponent<Image>();
-            addrBoxImg.sprite = GodotTheme.WoodBox(UiTheme.WoodDark, UiTheme.WoodEdge);
-            addrBoxImg.type = Image.Type.Sliced;
-            addrBoxImg.color = Color.white;
+            // ⚠️⚠️ A PAPER TRAY, BECAUSE A RAW SPRITE ON A BARE `Image` IS INVISIBLE TO
+            // `PaperDress`. 🧑, with a crop of this drawer: **"improve ui there cant see fonnt"**,
+            // and this box is the worst of it. The dress walks `GodotPanel`, `GodotButton` and
+            // `WoodSkin`; this node carried none of the three, so it stayed a near-black
+            // `WoodBox` while the lettering inside it was converted normally (`PaperDress.Type`
+            // remaps `UiTheme.Cream` to ink, because on paper cream is invisible). **Ink on
+            // WoodDark measures about 1.3:1.** It is the same fault as the hub's backdrop and it
+            // is the third time this pass has found it: a colour set outside the two skin
+            // components is a colour the conversion cannot see.
+            PaperSkin.Apply(addrBox, PaperCraft.Surface.Tray);
             var addrBoxElement = addrBox.AddComponent<LayoutElement>();
             addrBoxElement.flexibleWidth = 1;
             addrBoxElement.minHeight = 44;
@@ -768,10 +774,8 @@ namespace TumbangPreso.UI
             // Code display box
             var codeBox = new GameObject("CodeBox");
             codeBox.transform.SetParent(_codeRow.transform, false);
-            var codeBoxImg = codeBox.AddComponent<Image>();
-            codeBoxImg.sprite = GodotTheme.WoodBox(UiTheme.WoodDark, UiTheme.WoodEdge);
-            codeBoxImg.type = Image.Type.Sliced;
-            codeBoxImg.color = Color.white;
+            // ⚠️ THE SAME TRAY AS THE ADDRESS BOX ABOVE, for the same reason. See that note.
+            PaperSkin.Apply(codeBox, PaperCraft.Surface.Tray);
             var codeBoxElement = codeBox.AddComponent<LayoutElement>();
             codeBoxElement.flexibleWidth = 1;
             codeBoxElement.minHeight = 44;
@@ -981,16 +985,36 @@ namespace TumbangPreso.UI
             row.transform.SetParent(_codeRow.transform.parent, false);
             row.transform.SetSiblingIndex(actionHeading.GetSiblingIndex() + 1);
 
-            var layout = row.AddComponent<HorizontalLayoutGroup>();
-            layout.spacing = 10;
+            // ⚠️⚠️ STACKED, NOT SIDE BY SIDE, AND 🧑 PHOTOGRAPHED WHY. With a crop of this drawer:
+            // **"improve ui there cant see fonnt and shit overflows"**, and
+            // `Logs/shots-runtime/LobbyServers-v56.png` shows `JOIN A GAME` drawn straight through
+            // `START SERVER`.
+            //
+            // **The cause is that neither label is ever fitted.** `MenuKit.WoodButton` only calls
+            // `MenuKit.Fit` when it is given a width, and these two are built at `(0, 44)` so the
+            // layout group decides the width later and the fit never runs. `LobbyChrome` then
+            // narrows this whole column to `RoomColumnWidth` 380, so two expanded halves are
+            // **185 units each** and `JOIN A GAME` at 20 units needs about 210. A legacy `Text`
+            // set to Overflow draws past its box in silence, which is `CLAUDE.md` § 6.2c's fourth
+            // question exactly: a width chosen at the reference resolution is a width that only
+            // exists there, and the failure is invisible to every probe because each label fits
+            // its own rect.
+            //
+            // ⚠️ AND STACKING IS THE RIGHT ANSWER RATHER THAN A SMALLER FONT, because the note
+            // below already says these two are not equals: JOIN is the action a player opened this
+            // drawer to take and START SERVER is the alternative. Side by side at one weight they
+            // were a coin toss; one above the other they are a choice with an order. Full width
+            // also means the fit can never come back, whatever the column is narrowed to.
+            var layout = row.AddComponent<VerticalLayoutGroup>();
+            layout.spacing = 8;
             layout.childControlWidth = true;
             layout.childControlHeight = true;
             layout.childForceExpandWidth = true;
-            layout.childForceExpandHeight = true;
+            layout.childForceExpandHeight = false;
 
             var element = row.AddComponent<LayoutElement>();
-            element.minHeight = 44;
-            element.preferredHeight = 44;
+            element.minHeight = (44 * 2) + 8;
+            element.preferredHeight = element.minHeight;
             element.flexibleWidth = 1;
 
             // ⚠️⚠️ JOIN IS GREEN, WHICH IS 🧑'S OWN PRIMARY COLOUR AND NOT A NEW ONE.
@@ -1005,13 +1029,13 @@ namespace TumbangPreso.UI
                                              Vector2.zero, new Vector2(0.0f, 44.0f),
                                              OpenJoinPanel, "WoodPrimaryButton");
             _joinButton.name = "OpenJoinButton";
-            _joinButton.gameObject.AddComponent<LayoutElement>().minHeight = 44;
+            Fixed(_joinButton, 44);
 
             _onlineButton = MenuKit.WoodButton(row.transform, "START SERVER", Vector2.zero,
                                                Vector2.zero, new Vector2(0.0f, 44.0f),
                                                ToggleOnline);
             _onlineButton.name = "GoOnlineButton";
-            _onlineButton.gameObject.AddComponent<LayoutElement>().minHeight = 44;
+            Fixed(_onlineButton, 44);
 
             _lobbyEntryRow = row;
         }
@@ -1251,6 +1275,25 @@ namespace TumbangPreso.UI
             label.color = UiTheme.PaperInk;
             label.fontSize = PaperKit.Body;
             MenuKit.Fit(label, 200.0f - 24.0f, 13);
+        }
+
+        /// <summary>
+        /// Pins a child of a vertical group to one height and stops it flexing.
+        ///
+        /// ⚠️ `childForceExpandHeight` IS OFF ON EVERY GROUP IN THIS FRONT END (`PaperKit.Stack`
+        /// carries the reason: it silently overrides every `LayoutElement` under it), so a child
+        /// that does not state its own height gets its PREFERRED one, and a `GameObject` built
+        /// from code has none. A `minHeight` alone was enough while these rows were laid out
+        /// horizontally and is not once they stack.
+        /// </summary>
+        private static void Fixed(Component child, float height)
+        {
+            var element = child.gameObject.GetComponent<LayoutElement>();
+            if (element == null) element = child.gameObject.AddComponent<LayoutElement>();
+
+            element.minHeight = height;
+            element.preferredHeight = height;
+            element.flexibleHeight = 0.0f;
         }
 
         private static Transform MiniSection(Transform parent, string text)
@@ -2557,14 +2600,49 @@ namespace TumbangPreso.UI
             if (skin != null)
             {
                 skin.Variation = GameLaunch.Spectator ? "WoodPrimaryButton" : "WoodButton";
-                skin.Apply();
-                skin.Refresh();
+
+                // ⚠️⚠️ AND THE PAPER SKIN IS WRITTEN TOO, BECAUSE THE `GodotButton` IS DISABLED BY
+                // THE TIME ANYBODY PRESSES THIS. `LobbyChrome.BuildRoomDrawer` runs
+                // `PaperDress.Screen` over this whole column, and the dress turns `GodotButton`
+                // off on the way past (it rewrites its own sprite on hover, so leaving it on
+                // flips the control back to wood under the pointer). So the two lines below were
+                // shouting into a component nobody reads: **SPECTATE and SPECTATING were the same
+                // picture**, and 🧑 said so with a crop of this drawer (*"SPECTATE"* among the
+                // things he could not read on it). It is `PlayerHub.Highlight`'s fault, on a
+                // second control, found by looking for the shape of it.
+                var paper = _spectate.GetComponent<PaperSkin>();
+                if (paper != null)
+                {
+                    paper.Surface = GameLaunch.Spectator
+                        ? PaperCraft.Surface.Live : PaperCraft.Surface.Token;
+                    paper.Rebuild();
+
+                    var chip = _spectate.GetComponent<PaperButton>();
+                    if (chip != null) chip.Restyle();
+                }
+                else
+                {
+                    skin.Apply();
+                    skin.Refresh();
+                }
             }
 
             var label = _spectate.GetComponentInChildren<Text>();
             if (label != null)
             {
                 label.text = GameLaunch.Spectator ? "SPECTATING" : "SPECTATE";
+
+                // ⚠️ AND THE LONGER WORD IS FITTED. `SPECTATING` is ten characters in a 140-unit
+                // chip that `SPECTATE`'s eight were sized for, and `MenuKit.Label` overflows
+                // rather than wrapping, so the extra two draw over the seat heading beside it.
+                // This file already carries the same fault one plate over
+                // (`SetHeadline`, *"reads LOBBY · YOU ARE HOSTIN"*).
+                //
+                // ⚠️ THE SIZE IS RESET FIRST. `MenuKit.Fit` only ever steps DOWN, so without this
+                // the one press that shows the longer word would shrink the shorter one for the
+                // rest of the launch. `SetHeadline` records the same reset one plate over.
+                label.fontSize = 18;
+                MenuKit.Fit(label, 140.0f - 20.0f);
             }
         }
 
