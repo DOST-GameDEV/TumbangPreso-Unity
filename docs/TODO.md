@@ -2325,7 +2325,7 @@ flag a bare `Image` carrying a `box_`, `wc_`, `wcsil_`, `plank_` or `btn_` sprit
 
 ### 120.8 Acceptance
 
-- ✅ Twelve versioned states photographed at `v58`, up from nine: the three lobby modes, the three
+- ✅ Twelve versioned states photographed at `v60`, up from nine: the three lobby modes, the three
   drawers, the join panel, the account screen, the three login states, **and the character select,
   the character maker and the settings panel**, which § 119.11 named as converted and never looked
   at. ⚠️ Those last two were being written to `CharacterSelectPanel.png` and `SettingsPanel.png`
@@ -2334,6 +2334,10 @@ flag a bare `Image` carrying a `box_`, `wc_`, `wcsil_`, `plank_` or `btn_` sprit
 - ✅ Core 430/430, the three `tools/` audits green (48 sites / 0 ungated on another body, 54 wire
   entry points / 0 unreachable, 57 messages / 0 mismatched).
 - ✅ EditMode 284/284 and `Checks.RunAll` five of five.
+- ✅ **`PaperPurityProbe` GREEN**, and it is a wider gate than it was: it walks sprites as
+  well as components, it knows a wooden backdrop from a paper one, and it opens the fighter
+  picker and the player hub before it looks. `LobbyStyleProbe`, `UiClickProbe`,
+  `AspectRatioProbes` and `PlayerHubLayoutProbe`'s hub cases are green with it.
 - ⚠️⚠️ **THE PLAYMODE SUITE IS NOT ALL GREEN AND FOUR OF THE FAILURES ARRIVED WITH THIS BRANCH.**
   § 120.9 names each one, with the `git show 9c85c2f` that proves the construct it fails on is
   byte-identical at the commit this pass started from. **Do not absorb them into this entry and do
