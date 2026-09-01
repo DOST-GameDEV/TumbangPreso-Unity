@@ -276,18 +276,19 @@ namespace TumbangPreso.UI
         {
             if (chip == null) return;
 
-            var skin = chip.GetComponent<PaperSkin>();
-            if (skin != null)
-            {
-                skin.Surface = on ? PaperCraft.Surface.Token : PaperCraft.Surface.Ghost;
-                skin.Rebuild();
-            }
+            // ⚠️⚠️ `Live` AGAINST `Ghost`, WHICH IS THE PAIR EVERY SWITCH IN THE GAME NOW USES.
+            // This one was written as `Token` against `Ghost`, which
+            // `Logs/shots-runtime/Lobby-v52.png` measured at **4 per cent apart in value** and
+            // which the lobby's own tabs abandoned for exactly that reason. It was built before
+            // that measurement and kept the pair that had been rejected; `PaperKit.MarkLive` is
+            // the one place either is written now, and it re-tints the lettering as well, which is
+            // the line every hand-written copy of this forgot.
+            PaperKit.MarkLive(chip, on);
 
             var label = chip.transform.Find("Label")?.GetComponent<Text>();
             if (label == null) return;
 
             label.fontStyle = on ? FontStyle.Bold : FontStyle.Normal;
-            label.color = on ? UiTheme.PaperInk : UiTheme.PaperInkSoft;
         }
 
         private static Text Heading(Transform parent, string text, int size, Color colour, float height)

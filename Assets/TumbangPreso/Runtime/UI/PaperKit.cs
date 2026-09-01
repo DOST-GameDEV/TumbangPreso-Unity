@@ -334,6 +334,46 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>
+        /// Says "this is the one you are on", on any paper control, in one call.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE FIVE SCREENS HAD WRITTEN THIS BY HAND AND THREE OF THEM WERE
+        /// WRONG IN THREE DIFFERENT WAYS. `PlayerHub.Highlight` and
+        /// `ConvertedCharacterSelect.RefreshTabs` were writing a `GodotButton` variation that
+        /// `PaperDress` had already disabled, so their live tab was invisible;
+        /// `LobbyJoinPanel.PaintChip` and `SignInScreen.SetTab` used `Token` against `Ghost`, which
+        /// `Logs/shots-runtime/Lobby-v52.png` measured at **4 per cent apart in value** and which
+        /// the lobby abandoned for that reason. The one place they all agreed was that the caller
+        /// has to remember to re-tint the lettering too, and every one of them did it differently.
+        ///
+        /// ⚠️ IT RETURNS FALSE WHEN THERE IS NO PAPER SKIN, so a caller that still has a wooden
+        /// fallback can take it. That is not hypothetical: `RefreshTabs` runs on this screen
+        /// before the dress on the very first pass.
+        /// </summary>
+        /// <param name="idle">
+        /// What the control is when it is NOT the one you are on.
+        /// ⚠️ `Ghost` FOR A TAB AND `Tray` FOR A LIST ROW, and the difference is not decoration.
+        /// A tab you are not on is an alternative you could move to, which is an outline; an
+        /// option in an open dropdown is a value you are reading, which is a slot. Drawing the
+        /// unselected options of a list as ghosts turns four readable rows into four empty ones.
+        /// </param>
+        public static bool MarkLive(Component control, bool live,
+                                    PaperCraft.Surface idle = PaperCraft.Surface.Ghost)
+        {
+            if (control == null) return false;
+
+            var skin = control.GetComponent<PaperSkin>();
+            if (skin == null) return false;
+
+            skin.Surface = live ? PaperCraft.Surface.Live : idle;
+            skin.Rebuild();
+
+            var chip = control.GetComponent<PaperButton>();
+            if (chip != null) chip.Restyle();
+
+            return true;
+        }
+
+        /// <summary>
         /// Raises a label's box off the bottom of its control by <see cref="PaperCraft.Drop"/>, so
         /// the lettering is centred on the FACE rather than on the rect.
         ///
@@ -644,7 +684,19 @@ namespace TumbangPreso.UI
         /// <summary>Whether this control is currently the selected one of a set, and therefore
         /// wants cream lettering rather than ink. ⚠️ Read from the skin rather than told, so a
         /// caller that swaps the surface cannot forget to swap the type with it.</summary>
-        private bool _live => _skin != null && _skin.Surface == PaperCraft.Surface.Live;
+        /// <summary>
+        /// Whether this control's face is wood-dark, and therefore wants CREAM lettering.
+        ///
+        /// ⚠️⚠️ `Sign` COUNTS AND LEAVING IT OUT PUT INK ON A DARK PLAQUE. The lobby's ROOM CODE
+        /// plate is a `Sign`, it carries a `PaperButton` because it is pressable (tap to copy),
+        /// and this predicate used to name `Live` alone: the caption came back `PaperInk` on
+        /// `WoodMid`, which measured **1.3:1** on `Logs/shots-runtime/Lobby-v57.png` and is 🧑's
+        /// *"pic 1 can be improve"* on that exact plate. Both surfaces are the same idea (a dark
+        /// object on a cream field) and the type has to invert on both.
+        /// </summary>
+        private bool _live => _skin != null
+                              && (_skin.Surface == PaperCraft.Surface.Live
+                                  || _skin.Surface == PaperCraft.Surface.Sign);
 
         /// <summary>
         /// Whether this control should draw as available.
