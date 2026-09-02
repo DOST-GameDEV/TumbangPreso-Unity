@@ -2507,6 +2507,40 @@ default and the probe drives it at twelve shapes.
   moves and will do it silently. **Done looks like:** it discovers its screens the way
   `InputSurfaceProbe` does, or it is deleted in favour of it.
 
+### 125.14 The uncommitted `QualitySettings` diff was not dirt, it was Ultra drifting to 0
+
+A `ProjectSettings/QualitySettings.asset` change was sitting uncommitted in the working copy when
+this session started: `antiAliasing: 0` to `4`. It was left alone at first as somebody else's
+stray edit and then actually read, which is the whole entry.
+
+⚠️⚠️ **IT IS ON THE `Ultra` LEVEL, AND `AntiAliasModes.cs` SAYS ULTRA MUST BE 4.** That file's
+header carries the intended table (Very Low 0, Low 2, Medium 2, High 4, Very High 4, **Ultra 4**)
+and the reason Ultra is 4 rather than 8: *"In the editor, writing `QualitySettings.antiAliasing`
+during play WRITES THROUGH to the asset, so a level whose stored count differs from the mode this
+class applies at boot leaves `ProjectSettings/QualitySettings.asset` dirty after every play
+session. Standalone defaults to level 5 (`m_PerPlatformDefaultQuality`), which is Ultra, so
+matching the two means the ordinary case touches nothing."*
+
+**So HEAD was wrong and the working copy was right.** Ultra had been committed as 0 at some point,
+which broke the match the note exists to protect, and **every play session since has re-dirtied
+the file** by writing the boot mode straight back through. The change is committed, so the
+ordinary case touches nothing again.
+
+⚠️⚠️ **AND NOTHING ASSERTS THAT TABLE, WHICH IS WHY IT DRIFTED IN SILENCE.**
+`AntiAliasStateProbe` measures the sample count on the live render TARGET, deliberately (its own
+note: the driver may decline a request, so the effect is what matters, not the field). That is the
+right thing for it to check and it means **no test reads the six stored numbers at all.** A value
+in `ProjectSettings` with a documented intent and no check is the same shape as
+`GameBuilder.ConfigureSplash` in `CLAUDE.md` § 6.4: *"a colour set in `ProjectSettings.asset` is
+not set."*
+
+**Done looks like:** a cheap EditMode test asserting the six levels against
+`AntiAliasModes`, so a write-through cannot quietly change one again. It is EditMode-cheap, it
+needs no play session, and it is the kind of bound § 124.11 says belongs in the forty-millisecond
+test rather than in a twelve-minute one.
+
+---
+
 ### 125.13 OPEN: what this batch did NOT do
 
 - ⚠️ **The settings panel still lists the keyboard binding only.** `Rebinding` can now answer per
