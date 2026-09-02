@@ -1401,7 +1401,24 @@ namespace TumbangPreso
                 {
                     hud.SetDownedFlash(!up);
 
-                    if (up) { hud.ShowToast("LATA IS BACK UP", 1.2f); return; }
+                    // ⚠️⚠️ THE CAN-RESET RUMBLE IS HERE RATHER THAN IN THE HUD, BECAUSE THIS
+                    // LAMBDA IS THE ONE OWNER OF THIS EDGE AND THE FILE SAYS SO. `Hud`'s
+                    // `TrySubscribeRound` carries the receipt: it used to subscribe to the same
+                    // event and toast the same string, so *"one event, two subscriptions, two
+                    // identical calls, and a toast timer restarted mid-fade"*. A second
+                    // subscription for the haptic would be that fault rebuilt, and it would be
+                    // invisible from here, which is exactly how the first one survived.
+                    //
+                    // ⚠️ IT IS THE SOFTEST OF THE FOUR CUES AND THE ONLY ONE EVERY SEAT FEELS.
+                    // `Rumble`'s other three are the local player's own events; a reset changes
+                    // what everybody on the court may do next, so it is a note rather than a
+                    // thump. `docs/FUTURE.md` § 14 lists it beside the other two.
+                    if (up)
+                    {
+                        InputLayer.Rumble.CanReset();
+                        hud.ShowToast("LATA IS BACK UP", 1.2f);
+                        return;
+                    }
 
                     // ⚠️⚠️ THE KNOCKDOWN GETS NO TOAST, AND IT IS THE ONLY EVENT HERE THAT DOES
                     // NOT. 🧑, 2026-08-27: *"repetitive lata down"*. Every other toast on this

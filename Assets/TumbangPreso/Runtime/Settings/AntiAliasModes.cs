@@ -101,6 +101,40 @@ namespace TumbangPreso.Settings
             new Entry("MSAA 8x + FXAA",  8, true),
         };
 
+        /// <summary>
+        /// What each of Unity's six quality levels stores in its own <c>antiAliasing</c> field,
+        /// in the order they appear in <c>ProjectSettings/QualitySettings.asset</c>:
+        /// Very Low, Low, Medium, High, Very High, Ultra.
+        ///
+        /// ⚠️⚠️ THIS TABLE EXISTED ONLY AS PROSE IN THIS FILE'S HEADER AND THAT IS EXACTLY HOW IT
+        /// DRIFTED. `docs/TODO.md` § 125.14: Ultra had been committed as 0 while the header said
+        /// 4, and the disagreement sat in the repository as an uncommitted diff that read like
+        /// somebody's stray edit. A number with a documented intent and no check is the same shape
+        /// as `GameBuilder.ConfigureSplash` in `CLAUDE.md` § 6.4: *a colour set in
+        /// `ProjectSettings.asset` is not set.* `QualitySettingsAssetTests` reads these six.
+        ///
+        /// ⚠️⚠️ AND THE HEADER'S ARGUMENT FOR ULTRA BEING 4 IS NOW STALE, WHICH IS WORTH KNOWING
+        /// BEFORE ANYBODY "FIXES" THIS AGAIN. It reads *"Ultra is 4 so that it matches
+        /// <see cref="Default"/> ... so matching the two means the ordinary case touches
+        /// nothing"*, and it was true when `Default` was index 3, MSAA 4x + FXAA. **`Default` is
+        /// 1 now, FXAA alone, whose `Samples` is 0**, for the measured reason further up this
+        /// file (MSAA puts a white keyline round every distant silhouette through the tonemap).
+        /// So the two no longer match and the protection that sentence describes is not the one
+        /// in force. The table below is kept at the RENDERING intent rather than bent to suit the
+        /// default, because <see cref="Apply"/> overwrites the active level at boot from the
+        /// player's own setting: **the stored number is never what the game renders with.**
+        ///
+        /// ⚠️ MEASURED RATHER THAN ASSUMED, 2026-09-03: a full batchmode PlayMode suite, 155
+        /// tests and eighteen minutes of play, left `ProjectSettings/QualitySettings.asset`
+        /// completely clean. The write-through the header warns about is an INTERACTIVE editor
+        /// behaviour, so it is real and it is not something a test run reproduces. If this test
+        /// ever goes red on a machine where nobody edited the asset, that is the write-through,
+        /// and the level it changed names which platform the editor was targeting:
+        /// `m_PerPlatformDefaultQuality` puts Standalone on 5 (Ultra) and **Android on 2
+        /// (Medium)**, so switching the build target to build an .apk moves which row is at risk.
+        /// </summary>
+        public static readonly int[] QualityLevelSamples = { 0, 2, 2, 4, 4, 4 };
+
         public const int Off = 0;
 
         /// <summary>

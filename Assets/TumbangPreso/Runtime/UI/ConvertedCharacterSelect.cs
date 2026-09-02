@@ -1994,7 +1994,16 @@ namespace TumbangPreso.UI
                 // ⚠️ CREAM AT FULL ALPHA, NOT 0.75. 🧑: *"shit down there is small and cant be
                 // seent"*. This sat at 13 pt and three quarters opacity on a dark plate, which
                 // is the least readable thing on the screen carrying the only NUMBERS on it.
-                var timingLbl = MenuKit.Label(header.transform, timing, 14,
+                //
+                // ⚠️⚠️ AND 18 RATHER THAN 14, BECAUSE THE FIX FOR THAT COMPLAINT DID NOT GO FAR
+                // ENOUGH AND A PROBE HAS BEEN SAYING SO EVER SINCE. `MenuKit.MinReadableUnits` is
+                // 18 and `AspectRatioProbes.TheCharacterScreenSurvivesEveryAspectRatio` fails
+                // anything under it: *"'Label' is authored at 14 units, below the 18-unit floor.
+                // At 16:9 720p (1280x720) that is 9.3 physical pixels."* **13 to 14 answered
+                // "make it bigger" with one unit**, on the one label on this screen carrying
+                // numbers, and `UiRows`'s own header records the Godot original getting the same
+                // answer three times in a row (*"text still small"*). One unit is not an answer.
+                var timingLbl = MenuKit.Label(header.transform, timing, MenuKit.MinReadableUnits,
                     BoardInk,
                     Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleRight);
                 timingLbl.fontStyle = FontStyle.Bold;
@@ -2005,7 +2014,15 @@ namespace TumbangPreso.UI
                 // `MenuKit.Label` does not wrap, so the extra characters would have pushed the
                 // ability NAME along instead of overflowing visibly, which is worse: it looks
                 // like a layout choice rather than a bug.
-                timingLbl.gameObject.AddComponent<LayoutElement>().minWidth = 116.0f;
+                //
+                // ⚠️⚠️ AND IT GREW WITH THE TYPE, WHICH IS THE HALF THAT IS EASY TO FORGET.
+                // 116 was measured against 14-unit type; the label is `MenuKit.MinReadableUnits`
+                // now, so the same string needs 18/14 of the room: 116 x 1.286 = 149, rounded up
+                // to 150. **A box sized for one font size is a box that overflows silently at the
+                // next one**, and `MenuKit.Label` is set to Overflow, so nothing would have
+                // reported it: it would simply have drawn through the ability's name. That is the
+                // exact trap `ConvertedScreen.SetHeadline` and `GameVersion.ApplyTo` both record.
+                timingLbl.gameObject.AddComponent<LayoutElement>().minWidth = 150.0f;
 
                 // ⚠️⚠️ THE BUILD MARKER THAT LIVED HERE IS GONE WITH THE PRESSABLE ROW. It read
                 // `1/2 ›` and was the affordance for a control this row no longer has. What stays

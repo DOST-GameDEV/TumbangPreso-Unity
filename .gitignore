@@ -107,3 +107,6 @@ Assets/Resources/PerformanceTestRunInfo.json
 Assets/Resources/PerformanceTestRunInfo.json.meta
 Assets/Resources/PerformanceTestRunSettings.json
 Assets/Resources/PerformanceTestRunSettings.json.meta
+
+# Unity build scratch, written by the Android player build.
+.utmp/

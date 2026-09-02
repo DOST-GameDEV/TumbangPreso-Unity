@@ -296,6 +296,23 @@ namespace TumbangPreso.Settings
         public bool Fullscreen = true;
 
         /// <summary>
+        /// Whether the pad rumbles on a knockdown, a tag, being tagged, and the can going back up.
+        ///
+        /// ⚠️⚠️ A `bool` WHOSE INITIALISER IS `true`, WHICH IS THE SAFE SHAPE HERE AND IS WORTH
+        /// SAYING OUT LOUD. <see cref="RenderStyle"/> carries the rule this obeys: `JsonUtility`
+        /// constructs the object before it overwrites the fields the file carries, so a
+        /// `settings.json` written by an older build inherits the field initialiser. For an INDEX
+        /// that means a default of row 0 silently turns a feature off for everybody upgrading; for
+        /// a bool it means the initialiser IS the upgrade behaviour, and `true` is the one that
+        /// matches what a player would expect the first time they plug a pad in.
+        ///
+        /// ⚠️ IT IS A SETTING RATHER THAN ALWAYS-ON BECAUSE `docs/FUTURE.md` § 16.2 IS AN
+        /// ACCESSIBILITY LIST AND A HAPTIC NOBODY CAN TURN OFF IS ON IT. See
+        /// <see cref="InputLayer.Rumble"/> for the four cues and why they are four rather than one.
+        /// </summary>
+        public bool Rumble = true;
+
+        /// <summary>
         /// Which anti-aliasing mode to render at, as an index into
         /// <see cref="AntiAliasModes.All"/>. 0 is Off.
         ///
@@ -462,6 +479,11 @@ namespace TumbangPreso.Settings
             VSyncModes.Apply(VSyncMode);
             RenderStyles.Apply(RenderStyle);
             AIController.ApplyDifficulty(AiDifficulty);
+
+            // ⚠️ PUSHED RATHER THAN POLLED, exactly as `AntiAliasModes.FxaaActive` is. The rumble
+            // calls sit in the middle of a scoring event, and the first read of
+            // `SettingsStore.Current` loads and validates this whole file off disk.
+            InputLayer.Rumble.Enabled = Rumble;
         }
 
         /// <summary>

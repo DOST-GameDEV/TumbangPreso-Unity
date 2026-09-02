@@ -45,9 +45,46 @@ namespace TumbangPreso.InputLayer
     /// Image works at all (`MenuKit.EnsureHitArea`'s note: *"alpha plays no part in a graphic
     /// raycast"*); this simply removes the drawing half entirely.
     /// </summary>
+    /// ⚠️⚠️ AND THE `RequireComponent` BELOW IS NOT DECORATION: WITHOUT IT THIS COMPONENT THREW
+    /// ON EVERY SCREEN, ON THE ONE PLATFORM WHERE IT IS ALWAYS ON. `Graphic` carries its own
+    /// `[RequireComponent(typeof(CanvasRenderer))]`, and `AddComponent` did not apply it to this
+    /// subclass, so the pad object came up with a `TouchHitArea` and no `CanvasRenderer` and the
+    /// base class threw `MissingComponentException` the moment it tried to draw. **On a phone
+    /// `TouchHud.ShouldShow` is true, so this runs on every control of every screen**, which
+    /// makes it a front end that throws rather than a probe that fails.
+    ///
+    /// ⚠️ IT WAS INVISIBLE ON THE DESKTOP FOR THE REASON THAT MAKES IT DANGEROUS. A Windows
+    /// machine with no touchscreen never calls `ApplyTouchTargets`, so no pad is ever built and
+    /// nothing throws. It surfaced in a full PlayMode suite only because `InputSurfaceProbe`
+    /// forces the layer on, and then only because that probe threw before it could put
+    /// `TouchHud.ForceVisible` back: **one probe's leaked static turned 2 red tests into 42.**
+    /// `docs/TODO.md` § 126.1 has the run.
+    [RequireComponent(typeof(CanvasRenderer))]
     public sealed class TouchHitArea : MaskableGraphic
     {
         protected override void OnPopulateMesh(VertexHelper vh) => vh.Clear();
+    }
+
+    /// <summary>
+    /// Marks a row that <see cref="ScreenFocus.MakeRoomForThumbs"/> grew, and remembers what its
+    /// own layout asked for first.
+    ///
+    /// ⚠️⚠️ IT EXISTS BECAUSE `TouchHud.ShouldShow` IS NOT A CONSTANT, WHICH IS EASY TO FORGET ON
+    /// A MACHINE WHERE IT IS ALWAYS FALSE. Two things force the thumb layer on from a desktop:
+    /// `TouchLayoutScreen.Open`, so the customiser can be used with a mouse, and
+    /// `InputSurfaceProbe`, so the layout can be measured at all on a machine with no touchscreen.
+    /// A pass that only ever raised a row would turn the settings panel into a phone layout the
+    /// first time somebody opened the touch customiser and leave it that way for the session.
+    ///
+    /// ⚠️ THE PREVIOUS VALUES ARE STORED RATHER THAN RECOMPUTED, because "what this row would ask
+    /// for on a desktop" is not a function of anything visible here: it is whatever the screen
+    /// that built it decided, and on a converted screen that decision came out of a `.tscn`.
+    /// </summary>
+    [DisallowMultipleComponent]
+    public sealed class ThumbRoom : MonoBehaviour
+    {
+        public float PreviousMin;
+        public float PreviousPreferred;
     }
 
     [DisallowMultipleComponent]
@@ -80,14 +117,113 @@ namespace TumbangPreso.InputLayer
 
         private void Update()
         {
+            FollowSelectionIntoView();
+
+            // ⚠️⚠️ THE THUMB LAYER GOING ON OR OFF IS THE SECOND REASON TO REBUILD, AND THE COUNT
+            // CANNOT SEE IT. `TouchHud.ShouldShow` is not a constant: `TouchLayoutScreen` forces
+            // it true while the customiser is open, so the customiser is usable with a mouse, and
+            // false again when it closes. A screen behind it that grew its rows for a thumb would
+            // otherwise keep them until something else added or removed a control, which on the
+            // settings panel is never. `MakeRoomForThumbs` is what puts them back, and `Rebuild`
+            // is its only caller.
+            bool touch = TouchHud.ShouldShow;
+
             // ⚠️ A COUNT, NOT A DEEP COMPARE. Rebuilding a focus path costs a hierarchy walk and
             // a sort; doing it every frame on a settings list of forty rows is real. The count
             // changes whenever a screen adds, removes, enables or disables a control, which is
             // every case that can invalidate the path.
             int count = CountSelectables();
-            if (count == _lastCount) return;
+            if (count == _lastCount && touch == _lastTouch) return;
 
             Rebuild();
+        }
+
+        /// <summary>Whether the thumb layer was on the last time this screen was rebuilt.</summary>
+        private bool _lastTouch;
+
+        /// <summary>The control this screen last scrolled to, so the work is done once per move.</summary>
+        private GameObject _followed;
+
+        /// <summary>
+        /// Scrolls the focused control into its own viewport.
+        ///
+        /// ⚠️⚠️ WITHOUT THIS A PAD WALKS OFF THE BOTTOM OF THE SETTINGS LIST AND KEEPS GOING,
+        /// SELECTING ROWS NOBODY CAN SEE. Unity's input module moves the selection and does
+        /// nothing about scrolling; the settings panel is about forty rows in a viewport that
+        /// shows around ten, so pressing DOWN eleven times left the highlight on a row below the
+        /// fold with the list still at the top. **"A controller can reach every control" was
+        /// being asserted about a path a controller could not actually see**, which is `CLAUDE.md`
+        /// § 4a's § 96 in a new costume: the probe proved the plate was there, not that somebody
+        /// could get to it. `InputSurfaceProbe.InsideOwnViewport` exists to skip exactly these
+        /// rows and its note is the other half of this bug written down.
+        ///
+        /// ⚠️ IT ALSO MAKES THE SCROLLBAR AN AFFORDANCE RATHER THAN THE ONLY WAY DOWN. Before
+        /// this, the bar was the single mechanism a pad had for reaching row thirty, which is why
+        /// it was on the focus path at 14 units wide in the first place. A pad scrolls by moving
+        /// the selection now, a thumb scrolls by dragging the list, and the bar is left to say
+        /// where you are.
+        ///
+        /// ⚠️ ONCE PER SELECTION CHANGE, NOT PER FRAME. Writing `normalizedPosition` every frame
+        /// fights the player's own drag and the scroll wheel, and `SettingsWheelProbe` is the
+        /// test that would find that the hard way.
+        /// </summary>
+        private void FollowSelectionIntoView()
+        {
+            var system = EventSystem.current;
+            if (system == null) return;
+
+            var selected = system.currentSelectedGameObject;
+
+            if (selected == _followed) return;
+            _followed = selected;
+
+            if (selected == null || !selected.transform.IsChildOf(transform)) return;
+
+            var scroll = selected.GetComponentInParent<ScrollRect>();
+            if (scroll == null || scroll.content == null || scroll.viewport == null) return;
+
+            var target = selected.transform as RectTransform;
+            if (target == null) return;
+
+            // ⚠️ IN THE CONTENT'S OWN SPACE. The viewport scrolls the CONTENT, so "how far down
+            // this row is" is only meaningful measured against the content's height; screen
+            // pixels and world units are both the wrong unit here for `AspectRatioProbes`'
+            // reason, which is that the canvas is scaled and may be rendering to a texture.
+            float contentHeight = scroll.content.rect.height;
+            float viewHeight = scroll.viewport.rect.height;
+
+            // Nothing to scroll: the list fits.
+            if (contentHeight <= viewHeight + 1.0f) return;
+
+            Vector3 local = scroll.content.InverseTransformPoint(target.TransformPoint(target.rect.center));
+
+            // Distance from the TOP of the content down to the row's centre, in content units.
+            float fromTop = scroll.content.rect.yMax - local.y;
+
+            float half = target.rect.height * 0.5f + TouchMetrics.MinGapUnits;
+            float travel = contentHeight - viewHeight;
+
+            // The window of scroll offsets that keep this row fully visible, as a fraction of the
+            // travel. `rowAtViewTop` is the most-scrolled end of it and `rowAtViewBottom` the
+            // least, because scrolling DOWN moves the content UP past the row.
+            float rowAtViewTop = Mathf.Clamp((fromTop - half) / travel, 0.0f, 1.0f);
+            float rowAtViewBottom = Mathf.Clamp((fromTop + half - viewHeight) / travel, 0.0f, 1.0f);
+
+            // ⚠️ A ROW TALLER THAN ITS OWN VIEWPORT INVERTS THAT WINDOW, and `Mathf.Clamp` with
+            // min above max returns the min, which would align such a row's BOTTOM edge and hide
+            // its label. Showing the top of it is the useful answer.
+            if (rowAtViewBottom > rowAtViewTop) rowAtViewBottom = rowAtViewTop;
+
+            // `verticalNormalizedPosition` is 1 at the top of the content and 0 at the bottom.
+            float current = 1.0f - scroll.verticalNormalizedPosition;
+
+            // ⚠️ IT ONLY MOVES WHEN THE ROW IS ACTUALLY OUT OF VIEW. Snapping every selection to
+            // the middle of the viewport makes the whole list lurch on every press, which reads
+            // as the screen fighting the player rather than following them.
+            float wanted = Mathf.Clamp(current, rowAtViewBottom, rowAtViewTop);
+            if (Mathf.Abs(wanted - current) < 0.0005f) return;
+
+            scroll.verticalNormalizedPosition = 1.0f - wanted;
         }
 
         private int CountSelectables()
@@ -155,13 +291,192 @@ namespace TumbangPreso.InputLayer
             }
 
             _lastCount = _order.Count;
+            _lastTouch = TouchHud.ShouldShow;
 
             _order.Sort(Reading);
 
             for (int i = 0; i < _order.Count; i++) Link(i);
 
+            // ⚠️⚠️ THE LAYOUT IS REBUILT BETWEEN THE TWO PASSES, AND WITHOUT IT THE SECOND ONE
+            // MEASURES THE FIRST ONE'S OLD SCREEN. Writing `LayoutElement.minHeight` only marks
+            // the group dirty; the rects it changes do not move until Unity's next layout pass.
+            // `ApplyTouchTargets` reads every control's rect to work out what room it has, so
+            // running it in the same frame would compute the clamps against the rows this pass
+            // just replaced and pad to the OLD gaps. It is forced only when something actually
+            // moved, because a full layout rebuild of a 49-control screen is not free.
+            // ⚠️ THE `as` CAN RETURN NULL AND `ForceRebuildLayoutImmediate(null)` THROWS. This
+            // component is installed on whatever `MenuKit.BuildCanvas` or `ConvertedScreen.Start`
+            // hands it, and a converted screen's script does not have to sit on a UI node. The
+            // throw would only ever happen where the thumb layer is on, which is a phone, which
+            // is the one place there is nobody to read the exception.
+            var root = transform as RectTransform;
+
+            if (MakeRoomForThumbs() && root != null)
+                LayoutRebuilder.ForceRebuildLayoutImmediate(root);
+
             ApplyTouchTargets();
             AdoptSelection();
+        }
+
+        /// <summary>
+        /// On a touch screen, makes ROOM for a thumb before <see cref="ApplyTouchTargets"/> tries
+        /// to pad one in.
+        ///
+        /// ⚠️⚠️ THIS IS THE HALF THAT WAS MISSING, AND WITHOUT IT THE THUMB FLOOR WAS UNREACHABLE
+        /// BY CONSTRUCTION. `ApplyTouchTargets` grows a hit area only as far as the nearest
+        /// neighbour allows, and this front end was authored for a mouse: the settings rows are
+        /// stacked with no gap at all, so the clamp came out at zero and **1519 measurements
+        /// across twelve shapes sat at exactly their artwork size** with the pad unable to add a
+        /// single unit. `docs/TODO.md` § 125.13 called that a layout pass on the converted
+        /// screens, and this is that pass done once, here, rather than 79 times in 79 places.
+        ///
+        /// ⚠️⚠️ IT GROWS THE BOX A LAYOUT GROUP OWNS, AND WHAT THAT IS DEPENDS ON THE SCREEN.
+        /// Where the control sits inside a row (the converted settings panel's
+        /// `MasterVolumeSlider` lives in `MasterVolumeRow`, and the group is `Content` above
+        /// that) the ROW grows, the neighbours move apart, and the existing transparent pad
+        /// reaches the floor with the slider's own picture untouched. Where the control IS the
+        /// row (a rebind keycap is a direct child of its `HorizontalLayoutGroup`) the control
+        /// itself grows, which on a phone is a bigger key and is the right answer;
+        /// `MenuKit.BalancedButtonUnits` caps its type at 28 units so it cannot turn into a
+        /// headline. **Both cases are the layout making room, which is the thing padding could
+        /// not do.**
+        ///
+        /// ⚠️ WHAT IT NEVER DOES IS STRETCH A CONTROL THAT NO GROUP OWNS. `CLAUDE.md` § 6.2c:
+        /// the artwork is sized against its content and is correct; the hit area is sized against
+        /// a thumb and is not. Writing a `sizeDelta` here would be resizing a picture somebody
+        /// composed, with nothing to push its neighbours out of the way, which is how "make it
+        /// bigger for mobile" usually wrecks a layout.
+        ///
+        /// ⚠️⚠️ AND IT GROWS THE NEAREST ANCESTOR THAT A LAYOUT GROUP ACTUALLY CONTROLS, WHICH IS
+        /// RARELY THE CONTROL ITSELF. On the converted settings panel the slider's parent is
+        /// `MasterVolumeRow`, an anchored container, and the row's parent `Content` is the
+        /// vertical group; setting `minHeight` on the slider would have reached nothing at all.
+        /// Walking up to the child OF the group is what makes one rule cover the code-built rows,
+        /// the converted rows, the lobby rails and the character-select tab bar together.
+        ///
+        /// ⚠️ AN ABSOLUTELY PLACED CONTROL IS LEFT ALONE ON PURPOSE. Nothing here can move the
+        /// main menu's pennants apart without knowing what the screen means, so those keep
+        /// whatever room they already have and the probe reports the shortfall. **A pass that
+        /// silently overlapped two hard-placed controls would be trading a small target for a
+        /// stolen press**, which is the fault this file already carries a whole probe check for.
+        /// </summary>
+        private bool MakeRoomForThumbs()
+        {
+            if (!TouchHud.ShouldShow) return ReleaseThumbRoom();
+
+            bool moved = false;
+
+            foreach (var control in _order)
+            {
+                if (control == null) continue;
+
+                var rt = control.transform as RectTransform;
+                if (rt == null) continue;
+
+                // Already a thumb target. Nothing to make room for.
+                if (rt.rect.height >= TouchMetrics.MinTargetUnits - 0.5f) continue;
+
+                var row = LayoutRowFor(rt);
+                if (row == null) continue;
+
+                var element = row.GetComponent<LayoutElement>();
+                if (element == null) element = row.gameObject.AddComponent<LayoutElement>();
+
+                // ⚠️ RAISED, NEVER LOWERED. A row that already asks for more than the floor asked
+                // for it against its own content, and shrinking it here would undo a decision
+                // this pass knows nothing about.
+                if (element.minHeight >= TouchRowUnits
+                    && element.preferredHeight >= TouchRowUnits) continue;
+
+                // ⚠️⚠️ WHAT THE ROW ASKED FOR IS RECORDED BEFORE IT IS RAISED, AND WITHOUT THAT
+                // THIS PASS IS A ONE-WAY DOOR ONTO THE DESKTOP. `TouchHud.ShouldShow` is not a
+                // constant: `TouchLayoutScreen.Open` FORCES the thumb layer on so the customiser
+                // is usable with a mouse (its own note: *"a row that appears only on Android is a
+                // row nobody can test on the machine this game is built on"*), and
+                // `InputSurfaceProbe` forces it on for a sweep. Any `Rebuild` while it is forced
+                // would grow every row on a desktop screen, and with nothing recorded there would
+                // be no way back: the settings panel would keep 168-unit rows for the rest of the
+                // session and the next screenshot would be of a phone layout on a monitor.
+                var room = row.GetComponent<ThumbRoom>();
+
+                if (room == null)
+                {
+                    room = row.gameObject.AddComponent<ThumbRoom>();
+                    room.PreviousMin = element.minHeight;
+                    room.PreviousPreferred = element.preferredHeight;
+                }
+
+                element.minHeight = Mathf.Max(element.minHeight, TouchRowUnits);
+                element.preferredHeight = Mathf.Max(element.preferredHeight, TouchRowUnits);
+                moved = true;
+            }
+
+            return moved;
+        }
+
+        /// <summary>
+        /// Puts every row this screen grew back to what its own layout asked for.
+        ///
+        /// ⚠️ IT WALKS THE CHILDREN RATHER THAN `_order`, because the rows it grew are ANCESTORS
+        /// of the controls in `_order` and, on a screen whose control list has changed since, may
+        /// no longer be above any of them at all. The marker component is the record; the focus
+        /// path is not.
+        /// </summary>
+        private bool ReleaseThumbRoom()
+        {
+            var rooms = GetComponentsInChildren<ThumbRoom>(includeInactive: true);
+            if (rooms.Length == 0) return false;
+
+            foreach (var room in rooms)
+            {
+                var element = room.GetComponent<LayoutElement>();
+
+                if (element != null)
+                {
+                    element.minHeight = room.PreviousMin;
+                    element.preferredHeight = room.PreviousPreferred;
+                }
+
+                Destroy(room);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// The row height that lets two stacked thumb targets both reach the floor with the
+        /// required gap between them: <see cref="TouchMetrics.MinTargetUnits"/> plus
+        /// <see cref="TouchMetrics.MinGapUnits"/>.
+        ///
+        /// ⚠️ IT IS THE SAME SUM `UiRows.TouchRowHeight` USES, deliberately, so a code-built row
+        /// and a converted one come out the same height on a phone. Two numbers here would be two
+        /// row heights on one screen.
+        /// </summary>
+        private const float TouchRowUnits = TouchMetrics.MinTargetUnits + TouchMetrics.MinGapUnits;
+
+        /// <summary>
+        /// The ancestor of <paramref name="rt"/> whose height a layout group actually decides, or
+        /// null when nothing in the chain is under one.
+        ///
+        /// ⚠️ IT STOPS AT THIS SCREEN. Walking past the `ScreenFocus` would let one screen's
+        /// thumb pass resize the panel, the canvas or the scene root above it.
+        /// </summary>
+        private RectTransform LayoutRowFor(RectTransform rt)
+        {
+            for (var node = rt; node != null && node != transform; node = node.parent as RectTransform)
+            {
+                var parent = node.parent as RectTransform;
+                if (parent == null) return null;
+
+                var group = parent.GetComponent<HorizontalOrVerticalLayoutGroup>();
+
+                // ⚠️ `childControlHeight` IS THE QUESTION, NOT "IS THERE A GROUP". A group that
+                // does not control its children's height ignores `minHeight` entirely, so
+                // writing one would be a silent no-op and this pass would report itself as done.
+                if (group != null && group.childControlHeight) return node;
+            }
+
+            return null;
         }
 
         private static int Reading(Selectable a, Selectable b)
@@ -365,9 +680,16 @@ namespace TumbangPreso.InputLayer
                 return;
             }
 
+            // ⚠️⚠️ THE `CanvasRenderer` IS LISTED HERE AS WELL AS ON `TouchHitArea`, AND BOTH
+            // HALVES EARN THEIR PLACE. `new GameObject(name, params Type[])` adds exactly the
+            // types it is given and resolves no dependencies at all, so naming it here is what
+            // guarantees a pad born with one; the `[RequireComponent]` on the component covers a
+            // pad that some earlier layout built without it and that this pass is reusing. A pad
+            // is created for every control on every screen whenever the thumb layer is on, which
+            // is always on a phone, so a graphic that throws here is the whole front end.
             var go = existing != null
                 ? existing.gameObject
-                : new GameObject(PadName, typeof(RectTransform));
+                : new GameObject(PadName, typeof(RectTransform), typeof(CanvasRenderer));
 
             if (existing == null)
             {
@@ -396,6 +718,10 @@ namespace TumbangPreso.InputLayer
             // re-skinner to colour and nothing for the renderer to draw, while `Graphic.Raycast`
             // still hits its rect. It cannot be made visible by any later pass.
             if (go.GetComponent<Image>() is Image stale && stale != null) DestroyImmediate(stale);
+
+            // ⚠️ AND ONCE MORE ON THE REUSE PATH, because the line above can leave a pad that a
+            // previous version of this method built as a bare `RectTransform`. See `TouchHitArea`.
+            if (go.GetComponent<CanvasRenderer>() == null) go.AddComponent<CanvasRenderer>();
 
             var area = go.GetComponent<TouchHitArea>();
             if (area == null) area = go.AddComponent<TouchHitArea>();

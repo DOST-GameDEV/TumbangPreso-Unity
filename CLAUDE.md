@@ -130,8 +130,26 @@ is how work survives being handed between sessions and tools. Specifically:
 
 - **Check it before inventing a task.** The thing you are about to do may already be written
   up with its cause and its acceptance test.
-- **Tick items off as you finish them.** Move them to **Closed** with one line on how it was
-  verified, not just "done".
+- ⚠️⚠️ **TICK IT OFF BY MOVING IT TO [`docs/TODO_Archive.md`](docs/TODO_Archive.md), IN THE SAME
+  COMMIT, KEEPING ITS NUMBER.** `docs/TODO.md` is the OPEN worklist and nothing else. **It reached
+  22,930 lines and 134 sections on 2026-09-03 and had stopped doing the one job it has**, which is
+  to be read: 🧑, *"todo md so long can u clean that shit up"*, *"its not supposed to be that
+  long"*. It is about 3,000 lines now and the archive holds the rest, whole.
+  - **A section lives in `TODO.md` while its HEADING says `OPEN`, `IN PROGRESS` or `NOT DONE`.**
+    Status goes in the heading, never buried in the prose. Prose status is exactly what made 134
+    sections impossible to sort, and it is why the split had to be done by hand.
+  - ⚠️⚠️ **A SESSION REPORT IS NOT AN OPEN ITEM. WRITE IT, THEN ARCHIVE IT IN THE SAME COMMIT.**
+    *"The 2026-08-29 evening batch"* was 525 lines and *"the 2026-08-29 balance-and-controls
+    batch"* was 973, and neither was ever open work. **Twelve of the twenty biggest sections in
+    that file were dated batch reports** that nobody archived because nobody had told them to.
+  - ⚠️ **NEVER DELETE ONE AND NEVER SUMMARISE IT AWAY.** The reasoning is the part that stays
+    valuable and every ⚠️ in this repository was written because something went wrong once. The
+    archive keeps whole bodies and unchanged numbers, and `TODO.md` keeps a one-line index row for
+    each, **so every `docs/TODO.md` § N pointer in this file, in `VISION.md`, in `FUTURE.md` and in
+    the code comments still lands on something that says where to look.**
+  - ⚠️ **The section numbers are not unique** (§ 53, § 63, § 64 and § 65 each appear more than
+    once) and that is not being fixed: renumbering would break every pointer in the repository.
+    **Search by title as well as by number.**
 - **Add anything you find and do not fix.** A bug noticed and not written down is a bug
   rediscovered from scratch by somebody else in three weeks. Give it the same shape as the
   other entries: what is wrong, where it lives, what done looks like.

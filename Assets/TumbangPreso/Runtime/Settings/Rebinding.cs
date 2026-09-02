@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TumbangPreso.InputLayer;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -440,6 +441,159 @@ namespace TumbangPreso.Settings
         /// <summary>The device prefix a gamepad binding carries. One place, so a typo cannot hide.</summary>
         public const string GamepadDevice = "<Gamepad>";
 
+        /// <summary>The device prefix a touchscreen binding carries. See <see cref="PathIsFor"/>.</summary>
+        public const string TouchDevice = "<Touchscreen>";
+
+        /// <summary>
+        /// Whether <paramref name="path"/> is a control on <paramref name="device"/>.
+        ///
+        /// ⚠️⚠️ KEYBOARD AND MOUSE IS ONE DEVICE HERE, AND THE `string`-KEYED OVERLOAD CANNOT SAY
+        /// THAT. `DisplayNameFor(asset, action, "&lt;Keyboard&gt;")` matches a single prefix, so it
+        /// answers "-" for SPECIAL ABILITY and LUNGE, which are `&lt;Mouse&gt;/leftButton` and
+        /// `&lt;Mouse&gt;/rightButton`: **two of the most-used controls in the game would read as
+        /// unbound on the page that exists to show them.** A player has a pad or they have a
+        /// keyboard and a mouse; they do not have a keyboard and, separately, a mouse. The rebind
+        /// page is per DEVICE KIND for that reason and this is the predicate it is built on.
+        ///
+        /// ⚠️ TOUCH IS EXCLUDED FROM THE DESKTOP SIDE RATHER THAN FOLDED INTO IT, because the
+        /// thumb layer is not rebound here at all: it has its own screen, `TouchLayoutScreen`,
+        /// reached from a row in this very list, where a control is dragged and resized rather
+        /// than given a different path.
+        /// </summary>
+        public static bool PathIsFor(string path, InputDeviceKind device)
+        {
+            string prefix = DeviceOf(path);
+
+            if (device == InputDeviceKind.Gamepad) return prefix == GamepadDevice;
+            if (device == InputDeviceKind.Touch) return prefix == TouchDevice;
+
+            return prefix != GamepadDevice && prefix != TouchDevice;
+        }
+
+        /// <summary>
+        /// What <paramref name="action"/> is bound to on <paramref name="device"/>, or "-" when it
+        /// is bound on none. The overload the settings panel's device pages are built on.
+        /// </summary>
+        public static string DisplayNameFor(InputActionAsset asset, string action,
+                                            InputDeviceKind device)
+        {
+            var indices = ResolveBindingIndices(asset, action, out var a);
+            if (a == null) return "-";
+
+            foreach (int index in indices)
+            {
+                string path = a.bindings[index].effectivePath;
+                if (!PathIsFor(path, device)) continue;
+
+                return InputControlPath.ToHumanReadableString(
+                    path, InputControlPath.HumanReadableStringOptions.OmitDevice);
+            }
+
+            return "-";
+        }
+
+        /// <summary>The four rows that are parts of the WASD composite rather than actions.</summary>
+        public static bool IsMovePart(string action) =>
+            action == "MoveForward" || action == "MoveBackward"
+            || action == "MoveLeft" || action == "MoveRight";
+
+        /// <summary>
+        /// What actually produces <paramref name="actionName"/> on <paramref name="device"/> when
+        /// the row has no binding of its own there, but something else does the job.
+        ///
+        /// ⚠️⚠️ THIS EXISTS BECAUSE THE GAMEPAD PAGE WOULD OTHERWISE SHOW FOUR DEAD ROWS, AND
+        /// THEY ARE THE FOUR MOST IMPORTANT ROWS IN THE LIST. `Move` carries a WASD composite for
+        /// the keyboard and a single plain `&lt;Gamepad&gt;/leftStick` binding for a pad, and
+        /// `ResolveBindingIndices` deliberately refuses to hand the stick to any one direction:
+        /// its own note says *"the stick is a plain binding on `Move` that no discrete direction
+        /// owns, so it is correctly nobody's and correctly never clashes."* **That is right for
+        /// the clash check and wrong for the reader**, because it makes MOVE FORWARD, MOVE
+        /// BACKWARD, MOVE LEFT and MOVE RIGHT all answer "-" on a pad, which reads as four broken
+        /// rows rather than as one stick doing all four jobs.
+        ///
+        /// ⚠️ IT IS A DISPLAY ANSWER AND NEVER A REBIND TARGET. `HasBindingFor` still says false
+        /// for these rows on a pad, so the panel shows the stick and refuses to rebind it from
+        /// here: rebinding one direction of a stick is not a thing, and writing an override
+        /// through this path would put one direction's control onto all four. `CLAUDE.md` § 6.3:
+        /// a control that does nothing must not look pressable, and the panel greys it.
+        /// </summary>
+        public static string SharedDisplayNameFor(InputActionAsset asset, string actionName,
+                                                  InputDeviceKind device)
+        {
+            if (asset == null || !IsMovePart(actionName)) return "";
+
+            var move = Find(asset, "Move");
+            if (move == null) return "";
+
+            for (int i = 0; i < move.bindings.Count; i++)
+            {
+                var b = move.bindings[i];
+
+                // The composite header and its four parts are the keyboard's answer; the plain
+                // binding beside them is the one control that does the whole job.
+                if (b.isComposite || b.isPartOfComposite) continue;
+                if (!PathIsFor(b.effectivePath, device)) continue;
+
+                return InputControlPath.ToHumanReadableString(
+                    b.effectivePath, InputControlPath.HumanReadableStringOptions.OmitDevice);
+            }
+
+            return "";
+        }
+
+        /// <summary>
+        /// Whether <paramref name="action"/> has anything bound on <paramref name="device"/>.
+        ///
+        /// ⚠️⚠️ THE REBIND SCREEN HAS TO ASK THIS BEFORE IT STARTS LISTENING, AND § 125.6 IS WHY.
+        /// `ScreenInputCatalogue` records a `null` pad path as a written-down answer rather than
+        /// an omission (`ToggleFullscreen` has none, because a phone has no window and a pad
+        /// player is not the player who alt-tabs). A row for such an action on the GAMEPAD page
+        /// has nothing to rebind, and starting a rebind on it would hand `TryRebind` a pad
+        /// control for an action with no pad binding. That is exactly the shape of the fault
+        /// § 125.6 records: *"targeting index 0 wrote the pad's path over the KEY, and Reset All
+        /// was the only way back."* <see cref="TryRebind"/> refuses that now as well, so this is
+        /// the polite half and that is the safe half.
+        /// </summary>
+        public static bool HasBindingFor(InputActionAsset asset, string action,
+                                         InputDeviceKind device)
+        {
+            var indices = ResolveBindingIndices(asset, action, out var a);
+            if (a == null) return false;
+
+            foreach (int index in indices)
+                if (PathIsFor(a.bindings[index].effectivePath, device)) return true;
+
+            return false;
+        }
+
+        /// <summary>
+        /// The action and the ONE binding index that <paramref name="device"/> owns, for a rebind
+        /// operation's <c>WithTargetBinding</c>.
+        ///
+        /// ⚠️ `ResolveActionAndBindingIndex` ANSWERS THE KEYBOARD ONE, ALWAYS. It calls
+        /// `FirstKeyboardBinding`, which was the whole binding when an action had one; a rebind
+        /// started from the gamepad page has to target the pad's index or the operation writes
+        /// its override onto the key.
+        /// </summary>
+        public static bool ResolveBindingIndexFor(InputActionAsset asset, string actionName,
+                                                  InputDeviceKind device,
+                                                  out InputAction action, out int bindingIndex)
+        {
+            bindingIndex = -1;
+            var indices = ResolveBindingIndices(asset, actionName, out action);
+            if (action == null) return false;
+
+            foreach (int index in indices)
+            {
+                if (!PathIsFor(action.bindings[index].effectivePath, device)) continue;
+
+                bindingIndex = index;
+                return true;
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// Rebind <paramref name="action"/> to <paramref name="control"/>.
         /// </summary>
@@ -509,7 +663,7 @@ namespace TumbangPreso.Settings
             // SPRINT with a pad wrote the pad's path over binding 0, which is the KEY: the row
             // then read "Button South", the key stopped working, and there was no way back to it
             // except Reset All. One row, two devices, two bindings, and each is rebound on its own.
-            int index = indices[0];
+            int index = -1;
 
             foreach (int candidate in indices)
             {
@@ -518,6 +672,16 @@ namespace TumbangPreso.Settings
                 index = candidate;
                 break;
             }
+
+            // ⚠️⚠️ AND WHEN THIS ACTION HAS NO BINDING ON THAT DEVICE AT ALL, IT REFUSES RATHER
+            // THAN FALLING BACK TO `indices[0]`. The fallback was the paragraph above waiting to
+            // happen a second time: `ToggleFullscreen` has a deliberately `null` pad path
+            // (`ScreenInputCatalogue`: a phone has no window), so a pad press aimed at it would
+            // have written `<Gamepad>/...` straight over the KEY binding, which is the one fault
+            // this method already carries a warning about. Refusing reads on screen as "that
+            // control cannot be bound here", which is true. `HasBindingFor` is the check a screen
+            // should make first so the player never gets this far.
+            if (index < 0) return LabelFor(action);
 
             target.ApplyBindingOverride(index, path);
             Invalidate();

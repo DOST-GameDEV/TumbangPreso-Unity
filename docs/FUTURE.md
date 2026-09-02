@@ -360,6 +360,8 @@ THIS IS TRUE.** The prose about design intent ages well. The claims about the co
 | Scoring is one host-side writer | `grep -n AddScore Assets/TumbangPreso/Runtime/MatchDirector.cs` | § 8's corroboration design may no longer be the right shape. |
 | `NetSession.ProtocolVersion` is a gate between builds | `grep -n ProtocolVersion Assets/TumbangPreso/Runtime/Net/NetSession.cs` | Read the current number rather than quoting one from here. |
 | The free tiers named in § 0.3 still exist at those shapes | Check the service's own pricing page | ⚠️ **Vendor free tiers change without notice. Never quote a specific quota from this file to anybody.** |
+| ⚠️⚠️ **A GREEN FULL PLAYMODE RUN IS A GATE** | Run it twice and diff the failure sets | **It is not, as of 2026-09-03.** `docs/TODO.md` § 126.8: two runs of nearly the same code came back 42 red and 41 red **with eleven suites swapping sides**. Nine suites gave ~20 failures in the full run and **2** on their own. Verify with `-testFilter` over what you touched, which is what § 0.5 rule 9 already says, and treat the full run as a survey until § 126.8 is closed. |
+| ⚠️ **The .apk has never been built and nothing has run on a device** | `ls ~/Desktop/TumbangPreso-Android/`, then `Logs/shots-android/` | **Done 2026-09-03**, `docs/TODO.md` § 126.10. ⚠️ The .apk is **arm64-only**: Unity 6 ignores the x86_64 request, and the emulator runs it by translation. Performance on that emulator is not a measurement (1 core, GPU off, translating). |
 | Passive defence pays 900 a round against 100 for a knockdown | `docs/Design.md` and `Balance.cs` | Arguments in `INSPIRATION.md` §§ 2.15 and 4.2 rest on this. |
 
 ⚠️ **AND THE NUMBERS IN THESE FILES ARE ILLUSTRATIONS, NOT BALANCE.** Every rating step, XP curve,
@@ -1517,7 +1519,7 @@ per action, no gamepad paths, no control schemes.
 | ⚠️ *"`E` is contextual and that is the hard part"* | ✅ Still ONE control (`buttonWest`), still resolved downstream. The prompt was the real work and it reads the live binding per device now |
 | Glyph swapping driven by the last device used, not a setting | ✅ `InputLayer.LastInputDevice` drives `Hud.KeyLabel`. ⚠️ The labels are WORDS ("BUTTON WEST"), not console face-button glyphs; that needs authored art and is § 125.13 |
 | **Full menu navigation on a stick**, *"the thing that always gets skipped"* | ✅ **Not skipped.** `ScreenFocus` is installed by `MenuKit.BuildCanvas` and `ConvertedScreen.Start`, so every screen gets an explicit, wrapping focus path by construction, and `InputSurfaceProbe` walks it at twelve shapes |
-| Rumble on knockdown, tag and can reset | ❌ **Not done.** § 125.13 |
+| Rumble on knockdown, tag and can reset | ✅ **Done 2026-09-03**, `docs/TODO.md` § 126.7. Four cues, not three: BEING TAGGED is the strongest and is not on this list, because it is the one event that pays the player nothing and therefore the one the score system says nothing about. Two motors, `Max()` never sum, an off switch in the CONTROLS list, and `Rumble.Stop` on every exit path because a motor left running outlives the process |
 | **No aim assist. Separate the pools instead** | ✅ Unchanged. `Matchmaker` already carried `InputDevice` in the pool key and still does |
 
 ⚠️⚠️ **AND THE THING THIS PHASE ACTUALLY TURNED ON WAS NOT A BINDING.** `StandaloneInputModule`
@@ -1539,6 +1541,20 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 UNTOUCHED.** `docs/TODO.md` § 125 is the as-built record. **This section's own opening line was
 right and stays**: it is a port, not a feature, and calling it shipped because an .apk exists would
 be the kind of claim `CLAUDE.md` § 2.2 exists to stop.
+
+⚠️⚠️ **AND THAT SENTENCE WAS WRITTEN BEFORE IT WAS TRUE, WHICH IS EXACTLY WHAT § 0.6 IS ABOUT.**
+On 2026-09-02 this section said the port *"builds, installs and runs"* and ticked item 1, while
+`docs/TODO.md` § 125.13 said, in the same commit, **"THE .apk WAS NEVER BUILT OR INSTALLED, AND
+NOTHING HAS RUN ON A DEVICE."** Two documents in one repository, one commit apart, flatly
+contradicting each other about whether the headline deliverable existed. The TODO was the correct
+one, which is § 0.5 rule 2's ordering (*"where this document and the code disagree, the code is
+right"*) coming out exactly as written.
+
+✅ **It is true as of 2026-09-03**, and `docs/TODO.md` § 126.10 is the receipt: the build line, the
+install, the logcat, and two screencaps in `Logs/shots-android/`. ⚠️ **Reading that log found two
+settings in `GameBuilder.ConfigureAndroid` that the engine had been silently refusing all along**,
+one of which is the very claim item 1 makes below about x86_64. **A tick in this file is a plan,
+not a measurement. Only `docs/TODO.md` records what was actually run.**
 
 **Missing before a line was written**, and all of it now resolved: the Android module was not
 installed **on either laptop** (a handoff said it was missing on the other machine; it was missing

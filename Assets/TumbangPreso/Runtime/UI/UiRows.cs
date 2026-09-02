@@ -1,4 +1,5 @@
 using System;
+using TumbangPreso.InputLayer;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -49,7 +50,52 @@ namespace TumbangPreso.UI
         /// <summary>⚠️ 64 RATHER THAN 56, BECAUSE THE SCALE GREW. A 22-unit label stacked over
         /// an 18-unit hint needs 24 units of stacked half-height plus air, and a row that does not
         /// grow with its type is a row whose two lines touch.</summary>
-        public const float RowHeight = 64.0f;
+        public const float DeskRowHeight = 64.0f;
+
+        /// <summary>
+        /// The row height on a touch screen, and every number in this file is derived from it.
+        ///
+        /// ⚠️⚠️ 168 IS ARITHMETIC, NOT A ROUND NUMBER, AND TWO SEPARATE BOUNDS AGREE ON IT.
+        /// The controls in this file are inset from their row by up to 22 units
+        /// (<see cref="StepperRow"/>'s arrows are <c>RowHeight - 22</c>, the button row is
+        /// <c>- 16</c>, the value slot is <c>- 14</c>), so the row must be at least the floor
+        /// plus the deepest inset, 144 + 22 = 166. And two adjacent thumb targets have to clear
+        /// <see cref="TouchMetrics.MinGapUnits"/> so a thumb cannot bridge both, which is
+        /// 144 + 24 = 168. **168 satisfies both, so it is written as the second sum**: the gap
+        /// rule is the one a reader is likely to change, and the inset rule is satisfied by
+        /// anything that satisfies it. Sizing the row AT 144 would have left the tallest control
+        /// in it at 122 and made the whole pass a near miss on every row, which is the most
+        /// expensive kind of wrong.
+        ///
+        /// ⚠️⚠️ AND IT IS THE ROW THAT GROWS RATHER THAN THE HIT AREA, BECAUSE THE HIT AREA
+        /// COULD NOT. `ScreenFocus.ApplyTouchTargets` pads a control up to the floor only as far
+        /// as its neighbours allow, and these rows are stacked with no gap at all, so the clamp
+        /// came out at zero and **1519 measurements sat at exactly their artwork size**
+        /// (`docs/TODO.md` § 125.13, § 126.2). Padding cannot make room that the layout does not
+        /// have. Making the row taller gives the pad somewhere to go and, for most rows, means no
+        /// pad is needed at all.
+        /// </summary>
+        public const float TouchRowHeight = TouchMetrics.MinTargetUnits + TouchMetrics.MinGapUnits;
+
+        /// <summary>
+        /// The row height in force. Taller on a thumb, unchanged on a mouse.
+        ///
+        /// ⚠️⚠️ IT IS A PROPERTY RATHER THAN A CONSTANT SO THAT ONE EDIT REACHES EVERY SCREEN
+        /// BUILT FROM THIS FILE, which is `CLAUDE.md` § 4a's "construction, not discipline"
+        /// applied to a number. The hub, the character maker, the sign-in screen and every
+        /// settings-shaped panel derive their heights from this; a per-screen touch height would
+        /// be the offset-per-screen fault this whole file exists to make impossible.
+        ///
+        /// ⚠️ THE DESKTOP IS BYTE-FOR-BYTE UNCHANGED. `TouchHud.ShouldShow` is false on a machine
+        /// with no touchscreen, so every layout probe that photographs this front end at nine
+        /// desktop shapes measures exactly what it measured before.
+        ///
+        /// ⚠️ IT IS READ AT BUILD TIME, so a screen already on screen when a touchscreen appears
+        /// keeps the height it was built with. That is the honest limit of doing this in layout
+        /// rather than in the hit area, and it is why `ScreenFocus`'s pad stays as the backstop.
+        /// </summary>
+        public static float RowHeight => TouchHud.ShouldShow ? TouchRowHeight : DeskRowHeight;
+
         public const float SidePadding = 28.0f;
 
         /// <summary>

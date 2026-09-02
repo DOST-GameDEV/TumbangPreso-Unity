@@ -749,8 +749,17 @@ namespace TumbangPreso.UI
             // their screen that explains why they are suddenly somewhere else and cannot move.
             // The `TAGGED!` callout spawns at their own position, which in first person is inside
             // their own head.
-            if (_local.PlayerSlot == victimSlot)
-                ShowToast("TAGGED  ·  BACK TO THE SAFE ZONE", 2.0f);
+            if (_local.PlayerSlot != victimSlot) return;
+
+            // ⚠️⚠️ THE STRONGEST OF THE FOUR CUES, ON THE ONE EVENT THAT PAYS THE PLAYER NOTHING.
+            // The paragraph above is why: being tagged awards the victim no points, so
+            // `OnScored` says nothing to them at all and this toast is *"the only thing on their
+            // screen that explains why they are suddenly somewhere else and cannot move"* -- and
+            // in first person it spawns inside their own head. **The moment a player most needs
+            // telling is the moment the score system has nothing to say to them.** See `Rumble`.
+            InputLayer.Rumble.WasTagged();
+
+            ShowToast("TAGGED  ·  BACK TO THE SAFE ZONE", 2.0f);
         }
 
         /// <summary>
@@ -800,6 +809,20 @@ namespace TumbangPreso.UI
                                              points < 0 ? 0.65f : 0.9f);
 
             if (_local == null || _local.PlayerSlot != slot) return;
+
+            // ⚠️⚠️ THE PAD FEELS EXACTLY WHAT THIS METHOD DECIDED TO SAY, AND IT IS BELOW THE
+            // LOCAL CHECK ON PURPOSE. The rule is already written two paragraphs up for the
+            // sound: *"the TOAST is only for the local player's own award, because a floater
+            // about somebody else's points is noise on your screen. The SOUND is the match
+            // reacting."* A haptic is not the match reacting, it is something happening in the
+            // player's hands, so it belongs on the toast's side of that line. In a four-player
+            // match a pad that buzzed on every award would never stop.
+            //
+            // ⚠️ SABOTAGE RIDES THE TAG CUE because it is the same gesture from the taya's side:
+            // a shove that lands on somebody already tagged. `Rumble` has four cues rather than
+            // one per `ScoreEvent`, for the reason its own note gives about the two motors.
+            if (e == ScoreEvent.LataKnocked) InputLayer.Rumble.LataKnocked();
+            else if (e == ScoreEvent.Tag || e == ScoreEvent.Sabotage) InputLayer.Rumble.Tagged();
 
             ShowToast($"{(points > 0 ? "+" : "")}{points}  {LabelOf(e)}", 1.2f);
         }

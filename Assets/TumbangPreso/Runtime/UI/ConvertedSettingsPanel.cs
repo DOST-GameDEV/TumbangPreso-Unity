@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using TumbangPreso.Core;
+using TumbangPreso.InputLayer;
 using TumbangPreso.Settings;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -95,6 +96,18 @@ namespace TumbangPreso.UI
             // menu and the in-match HUD, which 🧑 scoped out twice. `PaperKit.PaperDress.Screen`
             // walks a given root instead. See `docs/TODO.md` § 119.2 and § 119.5.
             PaperDress.Screen(transform);
+
+            // ⚠️ AFTER THE DRESS, WHICH FLATTENS EVERY TAB ONTO ONE SURFACE. Same ordering the
+            // character maker records against its own slot tabs: the live-tab relief has to be
+            // written back on once the paper skin has been applied, or the page a player is
+            // looking at is the one tab that does not look selected.
+            RefreshDeviceTabs();
+
+            // ⚠️ AND THE ROWS ARE RE-READ FOR THE PAGE, because `BuildRebindRow` labels each
+            // keycap from `Rebinding.DisplayNameFor(asset, action)` as it builds it, which is
+            // binding 0, which is the keyboard. On a pad the panel would otherwise open on the
+            // GAMEPAD tab showing a list of keys.
+            RefreshBindingLabels();
 
             FitFooterLabels();
         }
@@ -267,7 +280,16 @@ namespace TumbangPreso.UI
             var viewport = scroll.viewport;
             if (viewport == null) return;
 
-            const float Width = 14.0f;
+            // ⚠️⚠️ WIDER ON A THUMB, AND IT IS A DRAG TARGET RATHER THAN A PRESS TARGET, WHICH IS
+            // WHY IT IS 44 AND NOT `TouchMetrics.MinTargetUnits`. 14 units is about 14 physical
+            // pixels on a 1080-tall phone, roughly a millimetre: nobody can catch that handle.
+            // 44 is the width `UiRows.ArrowWidth` already uses for a control a thumb has to hit
+            // and is about 3 mm of track. **The 144-unit floor is the smallest a PRESS may be**
+            // (`TouchMetrics.MinTargetUnits`), and a 144-wide bar would eat a fifth of the panel
+            // to say where you are; `InputSurfaceProbe` exempts scrollbars for that reason and
+            // says so where it does it. The list is dragged directly on a phone and the focus
+            // follow scrolls it on a pad, so this bar is the readout, not the mechanism.
+            float Width = TouchHud.ShouldShow ? 44.0f : 14.0f;
 
             var barGo = new GameObject("VerticalScrollbar", typeof(RectTransform), typeof(Image));
             barGo.transform.SetParent(scroll.transform, false);
@@ -415,6 +437,8 @@ namespace TumbangPreso.UI
                 Destroy(child.gameObject);
             }
 
+            BuildDeviceTabs(list);
+
             foreach (var group in Rebinding.Groups)
             {
                 BuildGroupHeading(list, group.Title);
@@ -423,6 +447,146 @@ namespace TumbangPreso.UI
             }
 
             BuildTouchLayoutRows(list);
+            BuildRumbleRow(list);
+        }
+
+        /// <summary>
+        /// Which device's bindings the rebind list is showing and editing.
+        ///
+        /// ⚠️⚠️ THE PANEL LISTED THE KEYBOARD BINDING AND ONLY THE KEYBOARD BINDING, SO A PAD
+        /// PLAYER COULD NOT SEE THEIR OWN CONTROLS. `docs/TODO.md` § 125.13's first open item:
+        /// *"`Rebinding` can now answer per device and rebind per device without disturbing the
+        /// other, so the data is all there; what is missing is a device toggle on the panel."*
+        /// `RefreshBindingLabels`, `BeginRebind` and every row's own label all went through
+        /// `DisplayNameFor(asset, action)`, which resolves binding 0, which is always the key.
+        ///
+        /// ⚠️⚠️ IT OPENS ON THE DEVICE THE PLAYER IS ACTUALLY HOLDING, which is
+        /// `LastInputDevice`'s own argument reused rather than a second one: *"a player who picks
+        /// up a pad mid-match has told you which glyph they want by picking it up."* A pad player
+        /// opening CONTROLS to check their bindings should not have to find a toggle first.
+        ///
+        /// ⚠️ TOUCH FALLS BACK TO KEYBOARD AND MOUSE RATHER THAN GETTING A THIRD PAGE. The thumb
+        /// layer is not rebound by path at all: it has its own screen, reached from a row further
+        /// down this very list, where a control is dragged and resized instead. A third tab
+        /// reading GAMEPAD / KEYBOARD / TOUCH where one of the three leads somewhere else
+        /// entirely is what `CLAUDE.md` § 6.2 calls overwhelming.
+        /// </summary>
+        private InputDeviceKind _bindingDevice =
+            LastInputDevice.Current == InputDeviceKind.Gamepad
+                ? InputDeviceKind.Gamepad
+                : InputDeviceKind.KeyboardMouse;
+
+        private readonly Dictionary<InputDeviceKind, Button> _deviceTabs =
+            new Dictionary<InputDeviceKind, Button>();
+
+        /// <summary>
+        /// The two-page header at the top of the controls list.
+        ///
+        /// ⚠️ ONE CONTROL, AT THE TOP, WHICH IS THE SHAPE § 125.13 ASKED FOR: *"one control at the
+        /// top of the rebind list switching every row between keyboard and pad."* It is at the top
+        /// because it changes the meaning of every row under it, and a control that reinterprets a
+        /// list belongs above the list rather than beside one of its rows.
+        /// </summary>
+        private void BuildDeviceTabs(Transform list)
+        {
+            // ⚠️ THE DEVICE IS READ HERE RATHER THAN LEFT TO THE FIELD INITIALISER, AND THE
+            // DIFFERENCE IS REAL. A field initialiser runs when the COMPONENT is constructed,
+            // which for a panel parked inactive in a converted scene is at scene load, possibly
+            // minutes before anybody opens it. Reading it as the rows are built is what makes the
+            // sentence on `_bindingDevice` true: the page opens on the device the player is
+            // holding, not on the one they were holding when the scene came up.
+            _bindingDevice = LastInputDevice.Current == InputDeviceKind.Gamepad
+                ? InputDeviceKind.Gamepad
+                : InputDeviceKind.KeyboardMouse;
+
+            _deviceTabs.Clear();
+
+            var rowGo = new GameObject("BindingDeviceRow");
+            rowGo.AddComponent<RectTransform>();
+            rowGo.transform.SetParent(list, false);
+
+            var row = rowGo.AddComponent<HorizontalLayoutGroup>();
+            row.childControlHeight = true;
+            row.childControlWidth = true;
+            row.childForceExpandHeight = false;
+            row.childForceExpandWidth = false;
+            row.childAlignment = TextAnchor.MiddleLeft;
+            row.spacing = 10.0f;
+
+            var label = MenuKit.Styled(rowGo.transform, "MenuBody", "Showing",
+                                       TextAnchor.MiddleLeft);
+            label.raycastTarget = false;
+
+            var labelElement = label.gameObject.AddComponent<LayoutElement>();
+            labelElement.preferredWidth = ActionLabelWidth;
+            labelElement.minHeight = BindingControlSize.y;
+
+            AddDeviceTab(rowGo.transform, InputDeviceKind.KeyboardMouse, "KEYBOARD");
+            AddDeviceTab(rowGo.transform, InputDeviceKind.Gamepad, "GAMEPAD");
+        }
+
+        private void AddDeviceTab(Transform parent, InputDeviceKind device, string text)
+        {
+            var button = MenuKit.WoodButton(parent, text, Vector2.zero, Vector2.zero,
+                                            BindingControlSize, () => ShowDevice(device), "Button");
+
+            var element = button.gameObject.AddComponent<LayoutElement>();
+            element.preferredWidth = BindingControlSize.x;
+            element.preferredHeight = BindingControlSize.y;
+
+            _deviceTabs[device] = button;
+        }
+
+        private void ShowDevice(InputDeviceKind device)
+        {
+            if (_bindingDevice == device) return;
+
+            // ⚠️ A REBIND IN FLIGHT IS ABANDONED, because it was started against the OTHER page's
+            // binding index and completing it would write that device's path onto this page's row.
+            if (_rebindOp != null) CancelRebind();
+
+            _bindingDevice = device;
+            MenuSfx.Click();
+
+            RefreshDeviceTabs();
+            RefreshBindingLabels();
+
+            SetText("SettingsStatusLabel",
+                    device == InputDeviceKind.Gamepad
+                        ? "Showing gamepad controls. Pick a row, then press a button on your pad."
+                        : "Showing keyboard and mouse controls. Pick a row, then press a key.");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ RELIEF RATHER THAN HUE, WHICH IS WHAT EVERY OTHER TAB STRIP IN THIS FRONT END
+        /// DOES. `CustomCharacterScreen`'s slot tabs carry the argument and `GodotTheme` carries
+        /// the reason: a live tab is a statement about where you already are rather than a second
+        /// "press me", so it is a raised surface and not a different colour. It also survives a
+        /// colourblind player and a bad projector, which `FUTURE.md` § 16.1 is about.
+        ///
+        /// ⚠️ THE PAPER SKIN IS WRITTEN FIRST AND THE WOOD ONE ONLY IF THERE IS NO PAPER, for the
+        /// reason `PaperKit.MarkLive` records: by the time anybody presses one of these the
+        /// `GodotButton` is disabled, because `PaperDress` turns it off on the way past. Three
+        /// screens had that same fault at once. `Build` calls this AFTER `PaperDress.Screen`.
+        /// </summary>
+        private void RefreshDeviceTabs()
+        {
+            foreach (var pair in _deviceTabs)
+            {
+                var button = pair.Value;
+                if (button == null) continue;
+
+                bool live = pair.Key == _bindingDevice;
+
+                if (PaperKit.MarkLive(button, live)) continue;
+
+                var skin = button.GetComponent<GodotButton>();
+                if (skin == null) continue;
+
+                skin.Variation = live ? "WoodTabLiveButton" : "WoodTabIdleButton";
+                skin.Apply();
+                skin.Refresh();
+            }
         }
 
         /// <summary>
@@ -463,8 +627,8 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>A label and one button, in the same shape as a rebind row.</summary>
-        private void BuildActionRow(Transform list, string name, string label, string button,
-                                    System.Action onClick)
+        private Button BuildActionRow(Transform list, string name, string label, string button,
+                                      System.Action onClick)
         {
             var rowGo = new GameObject(name);
             rowGo.AddComponent<RectTransform>();
@@ -492,7 +656,60 @@ namespace TumbangPreso.UI
             buttonElement.preferredWidth = BindingControlSize.x;
             buttonElement.preferredHeight = BindingControlSize.y;
             buttonElement.flexibleWidth = 1.0f;
+
+            return control;
         }
+
+        private Button _rumbleButton;
+
+        /// <summary>
+        /// The rumble switch, in the controls list rather than in the display group.
+        ///
+        /// ⚠️⚠️ IT LIVES BESIDE THE BINDINGS BECAUSE THAT IS WHERE A PLAYER LOOKING FOR IT WILL
+        /// LOOK. `CLAUDE.md` § 6.3: *"every destination has a visible door"*, and the door to a
+        /// controller setting is the CONTROLS list, not the display pickers at the bottom of the
+        /// panel. The two touch-layout rows are already here for the same reason.
+        ///
+        /// ⚠️ A BUTTON THAT READS ITS OWN STATE, NOT A DROPDOWN, WHICH IS THE OPPOSITE OF THE
+        /// CALL `BuildSlipperHighlightRow` MAKES AND FOR ITS OWN STATED REASON. That one is a
+        /// list with swatches because *"the player is picking a COLOUR, and a button reading
+        /// 'Purple' in ink on wood shows them everything except the purple."* There is nothing to
+        /// show here: ON and OFF are the whole range, the row is one press either way, and it
+        /// matches the shape of every other row in this list.
+        ///
+        /// ⚠️ AND IT GOES THROUGH THE PANEL'S APPLY/BACK TRANSACTION like every other row.
+        /// `Snapshot` captures the settings object as JSON and BACK restores it, so a row that
+        /// wrote to disk on the press would be the one row BACK cannot undo. `RefreshApplyState`
+        /// is what arms APPLY.
+        /// </summary>
+        private void BuildRumbleRow(Transform list)
+        {
+            _rumbleButton = BuildActionRow(list, "RumbleRow", "Rumble", RumbleLabel(), () =>
+            {
+                SettingsStore.Current.Rumble = !SettingsStore.Current.Rumble;
+
+                // ⚠️ APPLIED IMMEDIATELY AS WELL AS STORED, because the point of this switch is
+                // that the next cue is different, and BACK re-applies the snapshot through
+                // `GameSettings.Apply` so a discarded change puts the old value back on the way
+                // out. Same shape as the fullscreen box, which was saved and displayed and never
+                // actually set for the whole port.
+                InputLayer.Rumble.Enabled = SettingsStore.Current.Rumble;
+
+                if (_rumbleButton != null)
+                {
+                    var text = _rumbleButton.GetComponentInChildren<Text>();
+                    if (text != null) text.text = RumbleLabel();
+                }
+
+                // A press on this row should be felt, when the answer to the press is "on".
+                InputLayer.Rumble.Tagged();
+
+                MenuSfx.Click();
+                RefreshApplyState();
+            });
+        }
+
+        private static string RumbleLabel() => SettingsStore.Current.Rumble ? "ON" : "OFF";
 
         /// <summary>
         /// A group heading, and the one line of explanation under it where there is one.
@@ -926,13 +1143,47 @@ namespace TumbangPreso.UI
         {
             if (_rebindOp != null) return;   // one at a time
 
+            bool pad = _bindingDevice == InputDeviceKind.Gamepad;
+
+            // ⚠️⚠️ REFUSED BEFORE IT STARTS WHEN THIS ACTION HAS NOTHING ON THIS DEVICE, AND
+            // § 125.6 IS WHY THAT MATTERS RATHER THAN BEING TIDY. `ScreenInputCatalogue` records a
+            // `null` pad path as a written-down answer (`ToggleFullscreen`: a phone has no window
+            // and a pad player is not the player who alt-tabs). Listening on such a row would hand
+            // `TryRebind` a pad control for an action with no pad binding, and the fallback that
+            // used to sit there wrote it over the KEYBOARD binding: *"the row then read Button
+            // South, the key stopped working, and Reset All was the only way back."* `TryRebind`
+            // refuses that now too; this is the half that explains it to the player instead of
+            // making them press a button to find out.
+            if (!Rebinding.HasBindingFor(_actions, action, _bindingDevice))
+            {
+                // ⚠️ THE MOVEMENT ROWS GET THEIR OWN SENTENCE, because the generic one would
+                // contradict what the row is showing. On a pad they read "Left Stick", which is
+                // true, and "has no gamepad control" beside it is not the explanation a player
+                // needs: the stick does all four and no direction of it is separately bindable.
+                SetText("SettingsStatusLabel",
+                        pad && Rebinding.IsMovePart(action)
+                            ? "Movement is one control on a pad. The stick does all four."
+                            : $"\"{Rebinding.LabelFor(action)}\" has no " +
+                              $"{(pad ? "gamepad" : "keyboard or mouse")} control to rebind.");
+                MenuSfx.Error();
+                return;
+            }
+
             _listening = action;
+
             SetText("SettingsStatusLabel",
-                    $"Press any key for \"{Rebinding.LabelFor(action)}\"…  (Esc to cancel)");
+                    pad
+                        ? $"Press a button for \"{Rebinding.LabelFor(action)}\"…  (B or Esc to cancel)"
+                        : $"Press any key for \"{Rebinding.LabelFor(action)}\"…  (Esc to cancel)");
 
             SetButtonText(action, "…");
 
-            if (!Rebinding.ResolveActionAndBindingIndex(_actions, action, out var target, out int targetIndex))
+            // ⚠️⚠️ THE TARGET IS THIS PAGE'S BINDING INDEX, NOT `ResolveActionAndBindingIndex`'S.
+            // That one calls `FirstKeyboardBinding` and always answers the key, which was correct
+            // when an action had one binding. A rebind started from the gamepad page has to write
+            // its override onto the PAD's index or the operation quietly edits the keyboard.
+            if (!Rebinding.ResolveBindingIndexFor(_actions, action, _bindingDevice,
+                                                  out var target, out int targetIndex))
             {
                 CancelRebind();
                 return;
@@ -942,11 +1193,30 @@ namespace TumbangPreso.UI
             // also fires the verb it is bound to.
             target.Disable();
 
+            // ⚠️⚠️ THE CANDIDATES ARE RESTRICTED TO THE PAGE'S OWN DEVICE, AND WITHOUT THAT THE
+            // PAGE IS A LIE. On the gamepad page a keyboard press would otherwise be accepted,
+            // and `TryRebind` writes the override onto the binding for the device that was
+            // PRESSED: the player would be looking at a pad row, press a key, and have their
+            // KEYBOARD binding silently changed while the row in front of them did not move.
+            //
+            // ⚠️ TWO `WithControlsHavingToMatchPath` CALLS, BECAUSE "KEYBOARD AND MOUSE" IS TWO
+            // DEVICES AND ONE PAGE. The call is additive and a control matching ANY listed path
+            // is accepted, so the desktop page takes a key or a mouse button; the pad page names
+            // `<Gamepad>` twice, which costs nothing and keeps this a single chain.
+            // `Rebinding.PathIsFor` carries the same grouping on the reading side.
+            //
+            // ⚠️ THE CANCEL IS THE PAD'S OWN B ON THE PAD PAGE, because a pad player must be able
+            // to abort without reaching for a keyboard (`CLAUDE.md` § 4a: *how is this reached on
+            // a pad?*). Escape still works there as well: `Update`'s guard hands it to
+            // `CancelRebind` on this page rather than returning, so § 6.3's rule holds and Escape
+            // backs out the innermost layer on every screen.
             _rebindOp = target.PerformInteractiveRebinding()
                 .WithTargetBinding(targetIndex)
                 .WithControlsExcluding("<Mouse>/position")
                 .WithControlsExcluding("<Mouse>/delta")
-                .WithCancelingThrough("<Keyboard>/escape")
+                .WithControlsHavingToMatchPath(pad ? "<Gamepad>" : "<Keyboard>")
+                .WithControlsHavingToMatchPath(pad ? "<Gamepad>" : "<Mouse>")
+                .WithCancelingThrough(pad ? "<Gamepad>/buttonEast" : "<Keyboard>/escape")
                 .OnCancel(op =>
                 {
                     target.Enable();
@@ -1009,10 +1279,51 @@ namespace TumbangPreso.UI
             if (text != null) text.text = value;
         }
 
+        /// <summary>
+        /// ⚠️⚠️ EVERY ROW READS THE BINDING FOR THE PAGE THE PLAYER IS ON, NOT BINDING 0. The
+        /// old line called `DisplayNameFor(asset, action)`, which resolves the first binding,
+        /// which is always the keyboard one: on a pad this panel showed a list of keys.
+        ///
+        /// ⚠️ A ROW WITH NOTHING BOUND ON THIS DEVICE READS "-" AND SAYS SO RATHER THAN LOOKING
+        /// BROKEN. `ScreenInputCatalogue` records a `null` pad path as a written-down answer
+        /// (`ToggleFullscreen`: a phone has no window, and a pad player is not the player who
+        /// alt-tabs), so "-" here is the truth about that control on that device.
+        /// `Rebinding.DisplayNameFor`'s own note is the same argument from the prompt side:
+        /// falling back to the keyboard would print SPACE on a pad row and **teach a control that
+        /// does not exist**, which `docs/VISION.md` § 3 calls worse than teaching none.
+        /// </summary>
         private void RefreshBindingLabels()
         {
             foreach (var pair in _rebindButtons)
-                SetButtonText(pair.Key, Rebinding.DisplayNameFor(_actions, pair.Key));
+            {
+                string label = Rebinding.DisplayNameFor(_actions, pair.Key, _bindingDevice);
+
+                // ⚠️⚠️ A ROW WITH NOTHING OF ITS OWN ON THIS DEVICE IS NOT AUTOMATICALLY A DEAD
+                // ROW, AND THE FOUR MOVEMENT ROWS ARE WHY. On a pad they have no binding of their
+                // own (the stick is one control that does all four jobs and belongs to none of
+                // them), so a plain read would print "-" four times at the top of the list and
+                // the page would look broken on the most important rows in it.
+                // `Rebinding.SharedDisplayNameFor` answers what actually moves you, and the
+                // button is greyed rather than removed: `CLAUDE.md` § 6.3 wants a control that
+                // does nothing to not look pressable, and a row that VANISHES on one page is a
+                // list that jumps under the reader's eye every time they switch.
+                bool ownBinding = Rebinding.HasBindingFor(_actions, pair.Key, _bindingDevice);
+
+                if (!ownBinding)
+                {
+                    string shared = Rebinding.SharedDisplayNameFor(_actions, pair.Key,
+                                                                   _bindingDevice);
+                    if (shared.Length > 0) label = shared;
+                }
+
+                SetButtonText(pair.Key, label);
+
+                // ⚠️ `interactable` RATHER THAN HIDING IT, and it also takes the row off the
+                // controller focus path for free: `ScreenFocus.Rebuild` skips a `Selectable` that
+                // is not interactable, so a pad walking this list steps over the rows it cannot
+                // change instead of stopping on each of them to be told no.
+                if (pair.Value != null) pair.Value.interactable = ownBinding;
+            }
         }
 
         // --- Sliders and checks ------------------------------------------------------
@@ -1246,7 +1557,7 @@ namespace TumbangPreso.UI
 
             // ⚠️ RESET IS A STAGED EDIT LIKE ANY OTHER and the wording has to say so, or the
             // button promises something that has not happened until APPLY is pressed.
-            SetText("SettingsStatusLabel", "All controls reset — press APPLY CHANGES to keep it.");
+            SetText("SettingsStatusLabel", "All controls reset. Press APPLY CHANGES to keep it.");
             RefreshApplyState();
         }
 
@@ -1346,7 +1657,24 @@ namespace TumbangPreso.UI
             // ⚠️ ESC IS THE REBIND'S CANCEL WHILE ONE IS LISTENING, not the panel's exit. The
             // rebinding operation already owns that key; letting the base class also act on it
             // closes the whole panel on a cancelled rebind.
-            if (_rebindOp != null || _listening != "") return;
+            //
+            // ⚠️⚠️ EXCEPT ON THE GAMEPAD PAGE, WHERE THE OPERATION CANCELS THROUGH THE PAD'S B
+            // BUTTON AND NOBODY OWNS ESCAPE. Leaving the plain `return` there would have made
+            // Escape do NOTHING during a pad rebind, which is a dead end on the one screen
+            // `CLAUDE.md` § 6.3 names twice: *"Escape backs out on every screen, always, innermost
+            // layer first"*, and *"a player who learns Escape is reliable and then meets one
+            // screen where it is not has learned that it is unreliable."* So the panel cancels the
+            // rebind itself here and consumes the key, which is the innermost layer, and the next
+            // press closes the panel.
+            if (_rebindOp != null || _listening != "")
+            {
+                if (_bindingDevice != InputDeviceKind.Gamepad) return;
+                if (!Input.GetKeyDown(KeyCode.Escape)) return;
+
+                MenuSfx.Back();
+                CancelRebind();
+                return;
+            }
 
             if (!Input.GetKeyDown(KeyCode.Escape)) return;
 

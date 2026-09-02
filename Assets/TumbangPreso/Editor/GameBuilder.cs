@@ -102,12 +102,33 @@ namespace TumbangPreso.EditorTools
         /// <summary>
         /// The Android player settings, all of them argued rather than defaulted.
         ///
-        /// ⚠️⚠️ `ARM64 | X86_64`, AND DROPPING THE SECOND IS WHAT MAKES A BUILD UNTESTABLE ON
-        /// THIS MACHINE. Every Android emulator worth running is x86_64; a phone is ARM64. An
-        /// ARM64-only .apk installs on neither emulator and can only be verified by somebody with
-        /// a handset, and there is not one on this team (🧑, 2026-09-02: *"i dont have any
-        /// nadroid at all"*). Building both is a few minutes of IL2CPP and is the difference
-        /// between a verified build and a hopeful one.
+        /// ⚠️⚠️ THIS ASKS FOR `ARM64 | X86_64` AND THE .apk COMES OUT ARM64-ONLY. MEASURED, NOT
+        /// GUESSED, ON THE FIRST BUILD THIS PROJECT EVER MADE (2026-09-03): unzipping the shipped
+        /// file lists **`lib/arm64-v8a` and nothing else**, 7 files and 119.9 MB. Unity 6 does not
+        /// emit an x86_64 Android slice, and it does not error about being asked to; the flag is
+        /// simply ignored. **A setting the engine declines is not a setting**, which is
+        /// `CLAUDE.md` § 6.4's `ConfigureSplash` lesson arriving from the other direction, and
+        /// `minSdkVersion` below is the third instance in this one method.
+        ///
+        /// ⚠️⚠️ AND THE PARAGRAPH THIS REPLACES WAS WRONG IN BOTH DIRECTIONS AT ONCE, WHICH IS WHY
+        /// NOBODY CAUGHT IT. It read: *"An ARM64-only .apk installs on neither emulator and can
+        /// only be verified by somebody with a handset, and there is not one on this team."*
+        /// **The .apk IS ARM64-only and it installed and ran on the emulator anyway.** The Android
+        /// 14 x86_64 system image translates arm64, so `adb install` succeeded and the player
+        /// logged `Scripting Backend 'il2cpp', CPU 'arm64-v8a'` on a device whose
+        /// `ro.product.cpu.abi` is `x86_64`. A false premise and a false conclusion cancelled out
+        /// and the file read as correct for a day.
+        ///
+        /// ⚠️ THE REQUEST IS KEPT RATHER THAN DELETED, and that is a decision. Writing
+        /// `ARM64` alone would be tidier and would also delete the record of what was asked for;
+        /// if a future editor emits the slice, this picks it up. **What must not survive is the
+        /// COMMENT claiming the slice is there.** `docs/TODO.md` § 126.10 has the measurement.
+        ///
+        /// ⚠️ AND THE TESTABILITY ARGUMENT STILL HOLDS, THROUGH A DIFFERENT MECHANISM. 🧑 has no
+        /// handset (2026-09-02: *"i dont have any nadroid at all"*), so the emulator is the only
+        /// device this game can be checked on, and it works because of TRANSLATION rather than
+        /// because of a second slice. That is slower than native and it is not a performance
+        /// measurement (§ 126.10), but it is a real run on a real Android.
         ///
         /// ⚠️ X86_64 FORCES IL2CPP. Mono only emits ARMv7 and x86 on Android, so the scripting
         /// backend is not a free choice here; it follows from wanting to run the thing.
@@ -126,10 +147,25 @@ namespace TumbangPreso.EditorTools
             PlayerSettings.Android.targetArchitectures =
                 AndroidArchitecture.ARM64 | AndroidArchitecture.X86_64;
 
-            // API 24 is Android 7.0: it is what the Input System's touch stack and Netcode's
-            // transport both assume, and it is old enough to cover the phones this game is
-            // actually aimed at in Metro Manila.
-            PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel24;
+            // ⚠️⚠️ 26, AND IT WAS 24 UNTIL THE FIRST BUILD ACTUALLY RAN. Unity 6 REFUSES the older
+            // value: the very first `BuildAndroid` printed
+            //
+            //     Minimum supported Android API level is 26 (Android 8.0 Oreo).
+            //     Please use AndroidApiLevel26 or higher.
+            //
+            // as a `Debug.LogError` out of this exact line, and then carried on and built a player
+            // whose manifest said something this file did not. **A setting the engine declines is
+            // not a setting**, which is `CLAUDE.md` § 6.4's `ConfigureSplash` lesson (*"a colour
+            // set in `ProjectSettings.asset` is not set"*) arriving from the other direction: the
+            // write is here, in code, on every build, and it still did not take.
+            //
+            // ⚠️ THE ORIGINAL REASONING IS KEPT BECAUSE IT WAS SOUND AND ONLY THE NUMBER WAS
+            // WRONG: *"API 24 is Android 7.0: it is what the Input System's touch stack and
+            // Netcode's transport both assume, and it is old enough to cover the phones this game
+            // is actually aimed at in Metro Manila."* Android 8.0 is 2017 hardware, so the floor
+            // moved by one year of phones and the argument survives it. **If this ever needs to go
+            // lower, the blocker is the editor and not this file.**
+            PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel26;
             PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevelAuto;
 
             PlayerSettings.defaultInterfaceOrientation = UIOrientation.LandscapeLeft;

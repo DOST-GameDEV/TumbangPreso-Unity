@@ -97,9 +97,9 @@ namespace TumbangPreso.InputLayer
                     float r = Mathf.Sqrt(dx * dx + dy * dy);
 
                     float feather = 1.0f / Size;
-                    float alpha = 1.0f - Mathf.SmoothStep(outer - feather, outer, r);
+                    float alpha = 1.0f - Edge(outer - feather, outer, r);
 
-                    if (!filled) alpha *= Mathf.SmoothStep(inner - feather, inner, r);
+                    if (!filled) alpha *= Edge(inner - feather, inner, r);
 
                     pixels[y * Size + x] = new Color32(255, 255, 255, (byte)(alpha * 255.0f));
                 }
@@ -117,6 +117,40 @@ namespace TumbangPreso.InputLayer
             sprite.name = texture.name;
 
             return sprite;
+        }
+
+        /// <summary>
+        /// A GLSL-style edge ramp: 0 at or below <paramref name="from"/>, 1 at or above
+        /// <paramref name="to"/>, smoothed in between.
+        ///
+        /// ⚠️⚠️ `Mathf.SmoothStep` IS NOT THIS, AND READING IT AS THOUGH IT WERE DREW THE
+        /// THUMBSTICK AS A SQUARE FOR A WHOLE ROUND OF RENDERS. Unity's
+        /// `Mathf.SmoothStep(a, b, t)` returns a value BETWEEN a and b and smooths t; GLSL's
+        /// `smoothstep(edge0, edge1, x)` returns a value between 0 and 1 and smooths where x
+        /// falls across the edges. The two read identically at a call site and mean opposite
+        /// things. Handed this circle's own radii, Unity's returned about 0.5 for EVERY pixel,
+        /// so both generated textures came out as **uniform translucent squares with no hole**:
+        /// the disc at alpha 0.50 and the ring at 0.21.
+        ///
+        /// ⚠️ `docs/TODO.md` § 125.13 RECORDED THE SYMPTOM AND GUESSED THE WRONG CAUSE, which is
+        /// worth keeping because the guess was reasonable. It read *"suspect the sprite, not the
+        /// layout: a null `Image.sprite` draws as a white rectangle"*, which is a real failure
+        /// mode of this class (see <see cref="Alive"/>) and was not this one. **The sprite was
+        /// there the whole time and its alpha channel was flat.** What settled it was measuring
+        /// the render rather than re-reading the code: on
+        /// `Logs/shots-touch/touch-Classic-20-9-phone-v3.png` the base composited at alpha 0.111
+        /// and the knob added about 0.27 on top of it, with hard corners at exactly x = 140 and
+        /// x = 235, which are `StickCentreX` minus the base and knob half-widths. A null sprite
+        /// would have drawn at full alpha, and a ring would have had a hole.
+        ///
+        /// ⚠️ THE OTHER FOUR `Mathf.SmoothStep` CALLS IN THE PROJECT ARE CORRECT and were checked
+        /// before this was written: `SkyEvent`, `VolcanicCooling` and `GhostPetCompanion` all pass
+        /// an already-normalised 0..1 as t, which is the signature Unity actually has.
+        /// </summary>
+        private static float Edge(float from, float to, float x)
+        {
+            float t = Mathf.Clamp01((x - from) / Mathf.Max(1e-6f, to - from));
+            return t * t * (3.0f - 2.0f * t);
         }
     }
 

@@ -60,69 +60,94 @@ namespace TumbangPreso.PlayTests
             var report = new StringBuilder();
             var faults = new List<string>();
 
+            // ⚠️ CLEARED, BECAUSE IT IS STATIC AND A HALF-FILLED LIST IS WORSE THAN AN EMPTY ONE.
+            // `TheFrontEndMeetsTheThumbFloor` only re-runs this sweep when the list is EMPTY, so a
+            // sweep that threw part way through used to leave a partial list that the second test
+            // then accepted as the whole measurement and reported as the worklist.
+            ThumbFloorShortfalls.Clear();
+
             // ⚠️ THE THUMB LAYER IS FORCED ON. This editor has no touchscreen, so
             // `TouchHud.ShouldShow` is false and the controls would not exist to be measured.
             // Forcing it is the only way this layout is ever checked on this machine.
             bool previousForce = TouchHud.ForceVisible;
             TouchHud.ForceVisible = true;
 
-            foreach (var scene in DiscoverScenes())
+            // ⚠️⚠️ THE RESTORE IS IN A `finally` AND THAT IS NOT TIDINESS: WITHOUT IT THIS
+            // PROBE'S OWN CRASH TURNED 2 RED TESTS INTO 42. `TouchHud.ForceVisible` is a global
+            // static, and the restore used to sit after the sweep, so **any** throw inside it
+            // left the thumb layer switched on for every test that ran afterwards. On
+            // 2026-09-03 a `MissingReferenceException` on a destroyed `Camera` did exactly that:
+            // every later suite then built touch pads it would never build on this machine, hit
+            // a second bug in the pad itself, and reported failures in steering, stun, tutorial,
+            // volcanic and lobby code that had nothing wrong with them. Twenty of the twenty-two
+            // red suites were downstream of this one line's placement.
+            //
+            // ⚠️ `yield return` INSIDE A `try` WITH A `finally` IS LEGAL in a C# iterator, and
+            // the `finally` also runs when NUnit disposes an abandoned enumerator, which is the
+            // case that matters here. A `try`/`catch` around a `yield` is what is illegal.
+            try
             {
-                var load = SceneManager.LoadSceneAsync(scene, LoadSceneMode.Single);
-                yield return ProbeWait.Done(load, "scene load");
-
-                for (int i = 0; i < SettleFrames; i++) yield return null;
-
-                report.AppendLine($"=== scene {scene} ===");
-
-                // ⚠️⚠️ THE BASE SCREEN IS MEASURED WITH EVERY OVERLAY CLOSED, AND EACH OVERLAY
-                // IS THEN OPENED ON ITS OWN. Opening them all at once and measuring everything
-                // reported the main menu's five buttons as unreachable at every resolution,
-                // **and they were: the settings panel was open on top of them.** That is the
-                // screen working. `UiClickProbe` learned the same lesson in its own words:
-                // *"the screen underneath is SUPPOSED to be covered: an open character panel
-                // that let you press the map arrows behind it would be the bug. Probing
-                // everything reported a dozen correct behaviours as failures and buried the one
-                // real one."*
-                var overlays = DiscoverOverlays();
-
-                yield return Measure(scene, null, report, faults);
-
-                // ⚠️ OVERLAYS ARE DISCOVERED, NOT LISTED. `UiClickProbe` names four by hand and
-                // is one screen move away from probing nothing. Anything parked inactive with a
-                // pile of controls under it is a screen somebody opens.
-                foreach (var overlay in overlays)
+                foreach (var scene in DiscoverScenes())
                 {
-                    if (overlay == null) continue;
+                    var load = SceneManager.LoadSceneAsync(scene, LoadSceneMode.Single);
+                    yield return ProbeWait.Done(load, "scene load");
 
-                    // ⚠️⚠️ THE NAME IS TAKEN BEFORE THE SETTLE AND NULL IS RE-CHECKED AFTER IT,
-                    // BECAUSE OPENING A SCREEN CAN DESTROY IT. `ConvertedSettingsPanel.Build`
-                    // rebuilds its own rebind list and destroys the children it found, and other
-                    // screens replace a parked placeholder with a freshly built one. Reading
-                    // `overlay.name` after the wait threw `MissingReferenceException` and took
-                    // the whole probe down with it, which is a probe reporting a crash instead of
-                    // a result.
-                    string overlayName = overlay.name;
-
-                    overlay.SetActive(true);
                     for (int i = 0; i < SettleFrames; i++) yield return null;
 
-                    if (overlay == null)
+                    report.AppendLine($"=== scene {scene} ===");
+
+                    // ⚠️⚠️ THE BASE SCREEN IS MEASURED WITH EVERY OVERLAY CLOSED, AND EACH OVERLAY
+                    // IS THEN OPENED ON ITS OWN. Opening them all at once and measuring everything
+                    // reported the main menu's five buttons as unreachable at every resolution,
+                    // **and they were: the settings panel was open on top of them.** That is the
+                    // screen working. `UiClickProbe` learned the same lesson in its own words:
+                    // *"the screen underneath is SUPPOSED to be covered: an open character panel
+                    // that let you press the map arrows behind it would be the bug. Probing
+                    // everything reported a dozen correct behaviours as failures and buried the one
+                    // real one."*
+                    var overlays = DiscoverOverlays();
+
+                    yield return Measure(scene, null, report, faults);
+
+                    // ⚠️ OVERLAYS ARE DISCOVERED, NOT LISTED. `UiClickProbe` names four by hand and
+                    // is one screen move away from probing nothing. Anything parked inactive with a
+                    // pile of controls under it is a screen somebody opens.
+                    foreach (var overlay in overlays)
                     {
-                        report.AppendLine($"--- overlay {overlayName} --- destroyed itself on open");
-                        continue;
+                        if (overlay == null) continue;
+
+                        // ⚠️⚠️ THE NAME IS TAKEN BEFORE THE SETTLE AND NULL IS RE-CHECKED AFTER IT,
+                        // BECAUSE OPENING A SCREEN CAN DESTROY IT. `ConvertedSettingsPanel.Build`
+                        // rebuilds its own rebind list and destroys the children it found, and other
+                        // screens replace a parked placeholder with a freshly built one. Reading
+                        // `overlay.name` after the wait threw `MissingReferenceException` and took
+                        // the whole probe down with it, which is a probe reporting a crash instead of
+                        // a result.
+                        string overlayName = overlay.name;
+
+                        overlay.SetActive(true);
+                        for (int i = 0; i < SettleFrames; i++) yield return null;
+
+                        if (overlay == null)
+                        {
+                            report.AppendLine($"--- overlay {overlayName} --- destroyed itself on open");
+                            continue;
+                        }
+
+                        report.AppendLine($"--- overlay {overlayName} ---");
+                        yield return Measure(scene, overlay.transform, report, faults);
+
+                        if (overlay != null) overlay.SetActive(false);
+                        yield return null;
                     }
-
-                    report.AppendLine($"--- overlay {overlayName} ---");
-                    yield return Measure(scene, overlay.transform, report, faults);
-
-                    if (overlay != null) overlay.SetActive(false);
-                    yield return null;
                 }
             }
+            finally
+            {
+                TouchHud.ForceVisible = previousForce;
+                TouchInput.ReleaseAll();
+            }
 
-            TouchHud.ForceVisible = previousForce;
-            TouchInput.ReleaseAll();
 
             report.AppendLine();
             report.AppendLine($"=== {ThumbFloorShortfalls.Count} controls under the " +
@@ -259,6 +284,52 @@ namespace TumbangPreso.PlayTests
 
             foreach (var (w, h, name) in ProbeResolutions.All())
             {
+                // ⚠️⚠️ THE CAMERA IS RE-ACQUIRED EVERY SHAPE, AND NOT HOLDING IT COST A WHOLE
+                // SUITE. `Camera.main` is read once at the top of this method, and the settle
+                // frames below let a screen's own `Start` run: a screen that routes onward calls
+                // `SceneFlow.Go`, the scene unloads, and the camera this method is holding is
+                // destroyed while the loop still has shapes to drive. Writing `targetTexture` on
+                // it then throws `MissingReferenceException`, which took this probe down and,
+                // through the `TouchHud.ForceVisible` this test used to leak on a throw, twenty
+                // suites after it.
+                //
+                // ⚠️⚠️ AND IT LOOKS THE CAMERA UP AGAIN RATHER THAN GIVING UP, WHICH THE FIRST
+                // VERSION OF THIS GUARD DID NOT. Bailing out turned the crash into a TRUNCATION:
+                // three scenes stopped being measured part way through their shape list and the
+                // shortfall count that came back read as an improvement when it was a shorter
+                // sweep. **A probe that measures less and says less is the failure mode this
+                // whole file exists to prevent** (`CLAUDE.md` § 4a: a green probe for a screen
+                // nobody reaches). The new scene has its own camera; picking it up continues the
+                // sweep honestly, and the report says the swap happened.
+                if (camera == null)
+                {
+                    camera = Camera.main;
+
+                    if (camera == null)
+                    {
+                        report.AppendLine($"  {scene}: the camera was destroyed part way through " +
+                                          "the sweep and the scene has no other, so the shapes " +
+                                          "after this one were not measured.");
+                        yield break;
+                    }
+
+                    report.AppendLine($"  {scene}: the camera was replaced part way through the " +
+                                      "sweep, which means a screen on this scene changes scene " +
+                                      "from its own Start. The shapes after this one are measured " +
+                                      "against the new one.");
+
+                    previousTarget = camera.targetTexture;
+
+                    // The canvases collected above point at the camera that has gone.
+                    foreach (var c in canvases)
+                    {
+                        if (c == null) continue;
+
+                        c.worldCamera = camera;
+                        c.planeDistance = camera.nearClipPlane + 0.01f;
+                    }
+                }
+
                 var next = new RenderTexture(w, h, 24, RenderTextureFormat.ARGB32);
                 camera.targetTexture = next;
 
@@ -281,7 +352,7 @@ namespace TumbangPreso.PlayTests
                 }
             }
 
-            camera.targetTexture = previousTarget;
+            if (camera != null) camera.targetTexture = previousTarget;
             if (target != null) target.Release();
 
             foreach (var c in canvases)
@@ -391,8 +462,28 @@ namespace TumbangPreso.PlayTests
                 // ⚠️ WHAT IS ASSERTED UNCONDITIONALLY IS THE ONE THAT MATTERS TODAY: a press at a
                 // control's centre must land on that control. That is check 3 below, and it is
                 // the check that caught the padding bug.
-                if (size.x + 0.5f < TouchMetrics.MinTargetUnits
-                    || size.y + 0.5f < TouchMetrics.MinTargetUnits)
+                // ⚠️⚠️ A SCROLLBAR IS EXEMPT, AND THIS IS A DISTINCTION RATHER THAN AN EXCUSE.
+                // `TouchMetrics.MinTargetUnits`'s own words are *"the smallest a touch target may
+                // be"*, and the number comes from how accurately a thumb can PRESS a discrete
+                // control. A scrollbar is dragged, not pressed, it is the one control on the
+                // screen whose position already tells you where it is, and on a phone the list
+                // itself is what the thumb actually drags. Held to the floor it would have to be
+                // 144 units wide, which is a fifth of the settings panel spent on a readout.
+                // `ConvertedSettingsPanel.BuildScrollbar` widens it to 44 on touch instead, which
+                // is a catchable handle, and `ScreenFocus.FollowSelectionIntoView` is what makes
+                // it optional rather than the only way a pad can reach row thirty.
+                //
+                // ⚠️ IT IS EXEMPTED HERE, WHERE THE NUMBER IS ASSERTED, RATHER THAN BY LEAVING IT
+                // OFF THE FOCUS PATH. Taking it out of `ScreenFocus._order` would also take it
+                // out of check 1 and check 3, and a scrollbar covering somebody else's control is
+                // still a bug this probe should catch.
+                if (control is Scrollbar)
+                {
+                    report.AppendLine($"  {where}: '{NamePath(control)}' is a scrollbar at " +
+                                      $"{size.x:F0}x{size.y:F0}, exempt from the thumb floor.");
+                }
+                else if (size.x + 0.5f < TouchMetrics.MinTargetUnits
+                         || size.y + 0.5f < TouchMetrics.MinTargetUnits)
                 {
                     ThumbFloorShortfalls.Add(
                         $"{where}: '{NamePath(control)}' offers a " +

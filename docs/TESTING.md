@@ -27,7 +27,7 @@ dotnet test Core.Tests/TumbangPreso.Core.Tests.csproj --nologo
 **FULL GATE. Anything touching gameplay, and before every build.** The fast gate plus:
 
 ```bash
-"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -projectPath . -testPlatform PlayMode -testCategory "!WallClock" -testResults Logs/play.xml -logFile Logs/play.log
+"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -projectPath . -testPlatform PlayMode -testCategory "!WallClock;!ThumbFloor" -testResults Logs/play.xml -logFile Logs/play.log
 ```
 
 ⚠️⚠️ **PlayMode has NO `-nographics` and adding it CRASHES the editor**, not the tests. Unity
@@ -36,6 +36,19 @@ and still exits 0. This page carried the flag on that line for months.
 
 ⚠️⚠️ **ALWAYS ASSERT ON THE `.xml`, NEVER ON THE EXIT CODE.** Both that crash and a genuine
 failure come back as 0.
+
+⚠️⚠️ **AND AS OF 2026-09-03 THE FULL PLAYMODE RUN IS NOT A RELIABLE GATE ON ITS OWN. READ
+`docs/TODO.md` § 126.8 BEFORE QUOTING A NUMBER FROM IT.** Two runs of nearly the same code, an hour
+apart, came back 42 red and then 41 red **with eleven suites going green and eleven different ones
+going red between them.** The stack traces are `MissingReferenceException` inside the tests and
+"the arena built no SliceRunner" style assertions: objects and scenes outliving the test that made
+them. The same nine suites that produced about twenty failures in the full run produced **two** when
+run together on their own, in 105 seconds. **A gate whose red set moves is not measuring the code.**
+
+⚠️ **Until § 126.8 is closed, verify a change with a `-testFilter` over the suites it touches**, and
+treat the full run as a survey rather than as a pass or a fail. Every green PlayMode number in the
+handoffs (§ 94.8's *"targeted: 15/15"*, § 125's *"`InputSurfaceProbe` 5/5"*) is a targeted run and
+every one of them is honest; the suite only comes apart when it is run as one process.
 
 ---
 
@@ -65,15 +78,23 @@ in a second instead of behind a two-minute editor launch.
 "/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -nographics -projectPath . -testPlatform EditMode -testResults Logs/edit.xml -logFile Logs/edit.log
 ```
 
-**Expect 121 passed** (2026-08-26). Wiring, the arena bounds, reconnection, seat reclaim, leader
+**Expect 295 passed** (2026-09-03, in about 6 seconds). ⚠️ It read *"expect 121"* dated 2026-08-26
+until then, which is a number nobody could have used: a reader running it today would have seen 295
+and had no way to tell whether that was healthy growth or a duplicated fixture. **A stale expected
+count is worse than none**, because it invites the reader to go looking for the difference. Wiring,
+the arena bounds, reconnection, seat reclaim, leader
 election, join codes, names, emotes, the map grades, the dead-feature audit and the HUD's
 measured layout.
 
 ```bash
-"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -projectPath . -testPlatform PlayMode -testCategory "!WallClock" -testResults Logs/play.xml -logFile Logs/play.log
+"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -projectPath . -testPlatform PlayMode -testCategory "!WallClock;!ThumbFloor" -testResults Logs/play.xml -logFile Logs/play.log
 ```
 
-**Expect 62 passed** (2026-08-26). This one actually **runs the game**: three whole matches
+**155 cases are collected** (2026-09-03; the line here read *"expect 62 passed"* dated 2026-08-26).
+⚠️⚠️ **THERE IS NO HONEST PASS COUNT FOR THIS SUITE TODAY AND `docs/TODO.md` § 126.8 IS WHY.** Two
+runs an hour apart came back 113 and 114 passed with a different red set each time, so a number
+written here would be a number the next reader could not reproduce. **Fix § 126.8 before putting a
+count back.** This one actually **runs the game**: three whole matches
 (Classic and Hero Strike on Eskinita, Hero Strike on Ilalim ng Tulay), the taya rotating through
 every seat, bodies staying on the ground, the box holding the taya, and sprinting draining to
 fatigue in the time the arithmetic says it should.
@@ -126,6 +147,32 @@ Read the counts out of the XML:
 ```bash
 powershell -c "$x=[xml](gc Logs/play.xml); $x.'test-run'.passed + '/' + $x.'test-run'.total"
 ```
+
+### The ThumbFloor category
+
+⚠️⚠️ **THE SECOND EXCLUSION, AND IT IS A KNOWN GAP RATHER THAN A FLAKE.**
+`InputSurfaceProbe.TheFrontEndMeetsTheThumbFloor` measures every menu control against the 144-unit
+touch target floor (`TouchMetrics.MinTargetUnits`). The front end was authored for a mouse, so when
+the category was added on 2026-09-02 it reported **1519 measurements under the floor across twelve
+shapes**: rebind keycaps at 428x46, sliders at 344x34, the main menu's pennants at 228x60.
+
+⚠️ **IT IS EXCLUDED RATHER THAN DELETED, AND EXCLUDED RATHER THAN LEFT FAILING**, for the two
+reasons `CLAUDE.md` § 7 gives: a known gap with no test is a gap that gets forgotten, and a
+permanently red test teaches people to skim results exactly as a falsely green one does.
+
+```bash
+"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -projectPath . -testPlatform PlayMode -testCategory "ThumbFloor" -testResults Logs/thumb.xml -logFile Logs/thumb.log
+```
+
+**The failure message is the worklist**, and the full report is written to
+`Logs/input-surface.txt` whichever way the test goes. ⚠️ **Read that file rather than only the
+count**: it names each shortfall's screen, control and resolution, and it also prints the scrollbars
+it EXEMPTED, which is a decision (a scrollbar is dragged, not pressed) recorded where it is made
+rather than in a comment somewhere else.
+
+⚠️ `docs/TODO.md` § 126.2 is the layout pass that answers it. **A run whose report says *"the camera
+was replaced part way through the sweep"* measured fewer shapes than usual on that scene**, so
+compare reports by what they covered and not only by the count at the bottom.
 
 ⚠️ **If a run produces no log at all, Unity never started.** It leaves child processes holding
 the project lock after it exits. Kill `Unity`, `Unity.ILPP.Runner` and `UnityPackageManager`,
