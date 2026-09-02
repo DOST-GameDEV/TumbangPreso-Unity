@@ -23,7 +23,14 @@ Read § 89.3 before changing who submits a match record, and § 89.6 before chan
 corrects the fix § 88.1c prescribed) and telemetry (§ 90.3, whose event names are a contract that
 must not be renamed). ⚠️ `NetSession.ProtocolVersion` is **16**; both machines rebuild.
 Written 2026-08-31 on 🧑's brief.
-⚠️⚠️ **`profile-stats` IS THE ONLY LIVE BRANCH. BRANCH OFF IT.** Its parent `accounts` was
+⚠️⚠️ **STALE SINCE 2026-09-01: THE LIVE BRANCH IS `ui-redesign`, NOT `profile-stats`.** § 119
+through § 123 are all on it and every one of them is front-end work. The paragraph below is kept
+because its second half is still true and still load-bearing (`accounts` and the plans branch are
+deleted and must not be named again), but **the first sentence has been pointing new sessions at a
+branch six sections behind for two days.** A pointer to "the live branch" is exactly the kind of
+line that goes stale silently, which is why it now says the date it was last true.
+
+⚠️ **The superseded original:** *`profile-stats` IS THE ONLY LIVE BRANCH. BRANCH OFF IT.* Its parent `accounts` was
 fully merged into it (`f8b47d01`, contained in `profile-stats`) and was **deleted local and
 remote on 2026-08-30**, together with the stale local ref for a plans branch that had been gone
 on the remote for longer. 🧑 asked for both by name. Every commit either held is reachable
@@ -2135,6 +2142,215 @@ one.**
   timing sensitivity: this does not look like a flake. Do not let it be absorbed into this entry,
   and do not widen the bound.
 - **A clean Windows player is on the Desktop**, built after every gate above.
+
+---
+
+## 123 · The match settings go back to steppers, the shadow was retuned on the wrong axis, and a tab pair sat at half its neighbour's contrast ⚠️⚠️ 2026-09-02, branch `ui-redesign`
+
+🧑 opened the `ui-redesign` player and sent five notes with crops, four of them about two objects:
+the paper cast shadow and the login screen's tab pair. **Scope was set in his own words, *"edits
+are limited to lobby and login screen for now"*.**
+
+### 123.1 ⚠️⚠️ THE SHADOW: § 122.13 FIXED THE COLOUR AND LEFT THE QUANTITY, AND THE QUANTITY WAS THE COMPLAINT
+
+🧑, in order, with crops of the login's CREATE ACCOUNT and the maker's KEEP AND USE:
+**"can we lessen or fix shadows here"**, **"shadow here js looks so bad"**, and the one that says
+it is not a tuning note, **"rlly dont get that shadow"**.
+
+⚠️⚠️ **§ 122.13 WROTE THE CORRECT SENTENCE AND THEN ACTED ON HALF OF IT.** Its own words: *"A
+shadow's saturation does not depend on the width of the object casting it; what the extra width
+changed was how much of it there was to see."* It then changed the SATURATION and left HOW MUCH
+THERE IS TO SEE at ten units. Ten units under a 96-unit control is a tenth of the object spent on
+its own shadow, at which size it stops reading as lift and starts reading as a second object.
+
+⚠️⚠️ **AND THE OLD VALUE NEVER MET THE BOUND ITS OWN NOTE SET.** § 121.1 asked for a shadow *"at
+or above the 30 per cent saturation every other paper edge on the screen carries"*. Measured over
+`Paper` `f4ecdd`:
+
+| | Composite | Hue | Saturation | Value |
+|---|---|---|---|---|
+| `WoodMid` at 0.50 (was, written up as 28) | `a78e79` | 27 | **27.8 %** | **65.5 %** |
+| `WoodEdge` at 0.48 (is) | `c2a286` | 28 | **31.0 %** | **75.9 %** |
+| `PaperEdge` `dcc19a`, the target | | 35 | 30.0 % | 86.3 % |
+
+**So the control he kept photographing was carrying the exact fault the previous pass believed it
+had fixed**, and the note had rounded 27.8 up to 28 in its own favour.
+
+⚠️ **A DEEPER BROWN CANNOT REACH 30 BY GETTING DARKER.** Past about half alpha the composite runs
+toward the ink: saturation climbs a point at a time while value falls away, which is the heavy band
+he photographed. **The chroma has to come from the colour, not from the alpha.** `WoodEdge`
+`8b5227` is the palette's own edge brown and, being lighter to begin with, clears 30 per cent while
+sitting ten value steps higher than what it replaces.
+
+- `PaperCraft.Shade` and `ActionShade`: `WoodMid` 0.50 to **`WoodEdge` 0.48**.
+- `PaperCraft.ActionDrop`: **10 to 6**, which is the half § 122.13 skipped.
+- ⚠️ **IT IS CUT, NOT FADED, AND THAT IS THE WHOLE DESIGN.** Washing the shadow out with alpha is
+  what put a 17-per-cent neutral under every control and earned *"the shadows suck too"* in the
+  first place. **A weak shadow and a grey shadow are the same pixel.** The shadow got warmer, more
+  colourful and weaker to the eye at once, which is the only combination that answers both notes.
+
+### 123.2 ⚠️⚠️ THE TAB PAIR: THE FAULT IS THE RATIO BETWEEN TWO LABELS, NOT EITHER LABEL
+
+🧑, with a crop of the login screen's SIGN IN and CREATE: **"kinda hard to read this text"**.
+
+`SignInScreen.SetTab`'s own note ends *"Type has to invert when its ground does"*, which is true and
+is half the rule: **it has to invert to the SAME legibility, and this pair did not.**
+
+| Tab | Type on ground | Ratio |
+|---|---|---|
+| Live | `Cream` `f5e6c8` on `WoodMid` `5a2f14` | **9.20:1** |
+| Idle, was | `PaperInkSoft` `7a5c40` on `PaperWarm` `efdabe` | **4.50:1** |
+| Idle, is | `PaperInk` `3b2415` on `PaperWarm` `efdabe` | **10.66:1** |
+
+⚠️⚠️ **4.50 IS NOT A FAILING NUMBER AND THAT IS THE POINT.** It clears the bound for large text and
+would be unremarkable anywhere else on the screen. It is unreadable HERE because it sits eight units
+from a label at 9.20 and the eye reads the PAIR rather than the label. This is the same finding
+`SetTab` already records about the synthetic bold (*"the buttons are too dif"*), arriving on the one
+axis that pass did not check.
+
+⚠️ **AND IT IS NOT A FIFTH DIFFERENCE, IT IS THE FOURTH ONE DONE PROPERLY.** Soft ink was chosen to
+make the idle tab recede; the pair already says which one is live twice over and structurally, by
+eight units of height and a 10:1 plate inversion. A third signal buys nothing a render can see and
+costs the only thing a player does with a tab, which is read it.
+
+⚠️⚠️ **`LobbyChrome.Paint` CARRIED THE SAME FAULT AND IS FIXED IN THE SAME COMMIT**, because it is
+built to the same rule on a lighter ground: `PaperInkSoft` on `Paper` `f4ecdd` is **5.21:1** against
+the same 9.20 live, now **12.34:1**. `Ghost` has no fill, which is why one swatch lands on two
+numbers across the two screens.
+
+### 123.3 The create hint is deleted, and the field it lived in is not
+
+🧑: **"remove pic 3 text"**, of *"Keeps everything you have played on this machine."*
+
+⚠️⚠️ **THE STRING IS CLEARED RATHER THAN THE LABEL REMOVED, AND THE DIFFERENCE IS EVERY ERROR ON
+THIS SCREEN.** `_error` is the sign-in screen's one message line and five writers share it: `Fail`
+in red, the two progress lines in `Submit` and the Google flow in soft ink, and the two resets in
+`Open`. **Deleting the label to remove one sentence would take every error with it, silently**, and
+a form that refuses a password without saying why is worse than one carrying a line he did not want.
+
+⚠️ `_error.color` goes back to `MenuRed` unconditionally in `SetMode`. It was only soft ink because
+THAT string was a hint rather than a fault; with the hint gone, a mode switch would have painted the
+next genuine error in the hint's colour.
+
+### 123.4 ⚠️⚠️⚠️ THE MATCH SETTINGS GO BACK TO STEPPERS, AND THIS REVERSES `18f6d81` AND § 116.8
+
+🧑: **"drop down ui broken af"**, **"i cant even change map"**, and then the question that matters
+more than the bug, **"whyd we even change the old design of it wherein it was clickable from left to
+right"**, with the flow he wants spelled out: *"to change between maps i click match settings and i
+js clcik left and rigth to swtich between diff maps and bots and stuff"*. Asked which shape to bring
+back, he chose **the authored rows exactly**.
+
+⚠️⚠️ **THE COMMIT THAT REPLACED THEM RECORDS ITS OWN MANDATE AS *"His suggestion, taken literally"*,
+AND THE SUGGESTION WAS "u can use dropdowns and shit to make some shit work or look good".** That is
+permission to use a dropdown somewhere. It was read as an instruction to replace a working control
+everywhere. § 116.8's argument is a real one (twelve controls for four choices, and no row says what
+the other options are) and **it is not the argument he was making**. A rationale nobody asked for is
+how a screen he liked became a screen he could not use.
+
+- **`LobbyChrome`: the authored `Rows` are active again**, `DressSelectorRow`, `BuildFormatRow`,
+  `Rename` and `Arrow` are restored, and `BuildDropdownRows` is gone. `SettingsRowHeight` is back to
+  **64** from 56, and `SettingsBodyHeight` is derived from it, so the drawer resizes itself.
+- ⚠️⚠️ **THE INTERACTION COMES BACK AND THE MATERIAL DOES NOT.** Restoring the pre-`18f6d81`
+  version verbatim would put a `GodotTheme.WoodBox` well and amber type inside a drawer § 119
+  repainted in paper: § 117's *"two design systems stacked"* rebuilt deliberately, with the
+  code-drawn half being the wrong one again. The well is `PaperCraft.Surface.Tray`, the caption is
+  `PaperInkSoft` at `PaperKit.Caption` and the value is `PaperInk` at `PaperKit.Body`, which are the
+  dropdown rows' own values, so a restored row and a paper row are the same object.
+- ⚠️ **`WoodDropdown` IS NOT DELETED**, and § 123.5 is why it still had to be fixed first.
+  `parts.SettingsRows` is simply never assigned; `BuildSettingsDropdowns` already returns early on
+  null and `RefreshSettingsDropdowns` is null-guarded on all four. Deleting a control he may ask for
+  again is this section's own mistake run backwards.
+
+### 123.5 ⚠️⚠️ THE DROPDOWN WAS ALSO GENUINELY BROKEN, AND IT IS § 99'S PREDICTED REGRESSION ARRIVING
+
+**Fixed rather than left to rot with the feature**, because the type survives and because the cause
+is one every popup in this project can hit.
+
+`WoodDropdown`'s open list set `overrideSorting = true` with **`sortingOrder = 60`**. `Panel` and
+`ConvertedScreen` build their canvas through `MenuKit.BuildCanvas` at **100**. An overriding child at
+60 inside a host at 100 sorts **under the whole host**, so the open list drew beneath the MODE, BOTS
+and RULES rows, with ILALIM NG TULAY showing as a sliver between two of them. The rows are opaque and
+they are raycast targets, **so they took the presses as well**, which is the half that turned a
+drawing fault into *"i cant even change map"*.
+
+⚠️⚠️ **§ 99 PREDICTED THIS IN WRITING AND NOBODY WENT LOOKING.** It set `overrideSorting = true` in
+`MenuKit.BuildCanvas` and closed with *"the regression to look for is something covering something
+else"*. Before that change every nested `sortingOrder` was inert and this list drew in hierarchy
+order, which happened to be right. **The day those numbers began to mean something, 60 started losing
+to a number this file had never heard of.** A constant that only worked while the system ignored it
+is not a constant.
+
+- The order is **derived**, not written down: `HostSortingOrder(list) + PopupLift`, walking to the
+  nearest ancestor that actually decides sorting (a root canvas, or a nested one with
+  `overrideSorting`), because reading an inert number is § 99's own fault one level up.
+- ⚠️ **It is re-derived on every open**, not only in `BuildList`. A row is routinely built before it
+  is parented into its screen, so a construction-time answer is a fact about a parent the control may
+  not have yet.
+
+### 123.6 ⚠️⚠️ FIND A RANKED MATCH: THE RIM IS A RATIO WITH A FLOOR NOW, AND THE STAGE GUESS WAS WRONG
+
+🧑: **"this button ugly"**, and asked what about it, **"ugly shadows and edges"**. Two faults, and
+the shadow one is § 123.1 already: `Action` draws its contact shadow from the same `Shade`.
+
+⚠️⚠️ **THE FIRST DIAGNOSIS OF THE EDGE WAS WRONG AND THE RENDER IS WHAT SAID SO.** Reading the
+source against his tight crop, the reasoning was *"the dark rim is lost against the near-black stage
+§ 122.11 introduced"*. `LobbyRanked-v71` shows the ranked rail is **cream**, not asphalt: the dark
+field filling his crop was the button's own fill. **A crop is not a screen**, which is `CLAUDE.md`
+§ 6.2b's whole argument arriving from the reviewer's side rather than the author's.
+
+**Measured off `LobbyRanked-v71.png` at the button's top edge, `tools/sample_png.js`:**
+
+| | Face | Rim at `Shift(0.34, 1.10)` | Reads as |
+|---|---|---|---|
+| `WoodFace` `793e1f` (ranked, custom) | value **47.5 %** | `291307`, value **16.1 %** | a black ink line on cream |
+| `MenuGreenFace` `51dd38` (login, maker) | value **86.7 %** | `174b0d`, value **29.5 %** | a dark green wall |
+
+⚠️⚠️ **THE RATIO IS FAITHFUL AND THE ABSOLUTE RESULT IS NOT, WHICH IS WHY THIS IS A FLOOR AND NOT A
+NEW NUMBER.** 0.34 is `BUTTON LONG.png`'s own proportion and it is right for the fill it was sampled
+from. **The two authored fills are 39 value points apart, so one multiplier cannot serve both**: the
+same ratio that gives the green a dark green wall gives the brown a black outline. A rim is the wall
+under a lit face, and a wall is dark; it is not ink.
+
+- `RimFloor` is **0.26**, a shade under where the green already lands unaided, so **the green is
+  untouched by construction** and only the brown is lifted off black (16.1 to 26.0).
+- ⚠️ **This is the same shape of finding as § 123.1**: a number that was correct as a ratio and
+  wrong as a result, in a file whose notes record the ratio and not the result.
+
+### 123.7 What is NOT done
+
+- ⚠️⚠️⚠️ **THE RESTORED STEPPERS PUT HIS OWN BLUE ARROWS INTO THE LOBBY, AND THAT IS A NEW INSTANCE
+  OF § 121.5 CREATED BY § 123.4.** Sampled off `LobbySettings-v71.png` at the MAP row's left arrow:
+  **`80bad9`, hue 201 at 41 per cent saturation**, which is the identical measurement § 121.5 took on
+  the picker. The arrows are the authored textures the rows carry, so the revert brought them back
+  with the interaction.
+  ⚠️⚠️ **IT IS DELIBERATELY NOT FIXED AND THE REASON IS WRITTEN DOWN TWICE.** `CLAUDE.md` § 6.4:
+  *"Do not repaint his art to satisfy this rule"*. § 120.7 and § 122.8: only he settles the arrows,
+  and his two rules genuinely disagree here. **But he has said "i dont want to see blue shit" five
+  times and this pass has now put it on a second screen, so it must be raised rather than filed.**
+  § 121.5's third option is the one that costs nothing: draw a warm arrow from the measured
+  silhouette and leave the PNG and the main menu alone.
+- **The chat still does not work and is still not diagnosed.** § 121.11 unchanged.
+- **The login card still does not use the space.** § 121.4 unchanged, and § 100 is why it is not
+  being guessed at.
+- **The chat still does not work and is still not diagnosed.** § 121.11 unchanged.
+- **The login card still does not use the space.** § 121.4 unchanged, and § 100 is why it is not
+  being guessed at.
+- **The picker's arrows are still blue.** § 121.5, still his to settle.
+- **The chat still does not work and is still not diagnosed.** § 121.11 unchanged, now said four
+  ways.
+- **The login card still does not use the space.** § 121.4 unchanged, and § 100 is why it is not
+  being guessed at.
+- **The picker's arrows are still blue.** § 121.5, still his to settle.
+
+### 123.8 Acceptance
+
+- Every touched screen re-shot at `v72` and a person looks: the three login states, the lobby,
+  `LobbySettings` (the restored steppers) and `LobbyRanked` (the floored rim). ⚠️ **All three login states, per `CLAUDE.md` § 6.2b**: the state a player meets first is
+  the one nobody had photographed last time.
+- ⚠️ **The shadow change is visible in a still and the tab change is visible in a still**, so
+  unlike § 122.9's focus work this pass can actually be judged from the renders.
+- `dotnet test` on the core, and the PlayMode UI suites.
+- A clean Windows player on the Desktop.
 
 ---
 

@@ -46,6 +46,12 @@ namespace TumbangPreso.UI
         private GameObject _list;
         private RectTransform _listRect;
 
+        /// <summary>
+        /// The open list's own <see cref="Canvas"/>, kept so <see cref="Toggle"/> can re-derive its
+        /// sorting order against the hierarchy the control is actually in when it opens.
+        /// </summary>
+        private Canvas _listCanvas;
+
         private string[] _options = Array.Empty<string>();
         private int _index;
         private Action<int> _picked;
@@ -56,6 +62,45 @@ namespace TumbangPreso.UI
 
         /// <summary>How tall one option in the open list is.</summary>
         private const float OptionHeight = 46.0f;
+
+        /// <summary>
+        /// How far above its host screen an open list sorts.
+        ///
+        /// ⚠️ IT IS A GAP RATHER THAN AN ABSOLUTE, so the popup cannot be stranded under a screen
+        /// whose order changes later. The screens in this project step in tens and hundreds (90
+        /// for the chat, 100 for a panel, 480 to 510 for the nameplate, hub and sign-in), so one
+        /// hundred clears the host and its siblings without reaching the next screen up.
+        /// </summary>
+        private const int PopupLift = 100;
+
+        /// <summary>
+        /// The `sortingOrder` an open list has to beat: the nearest ancestor that actually decides
+        /// sorting for this subtree.
+        ///
+        /// ⚠️⚠️ A NESTED `Canvas` WITHOUT `overrideSorting` CARRIES A NUMBER THAT DOES NOTHING,
+        /// AND READING ONE IS THE WHOLE OF `docs/TODO.md` § 99. That entry found 480, 500 and 510
+        /// set on three nested canvases that had never overridden anything, so the values were
+        /// inert and a fix built on them *"worked for a reason nobody checked"*. This walk skips
+        /// exactly those: only a root canvas, or a nested one that has taken sorting over, sets
+        /// the level this popup must clear.
+        ///
+        /// ⚠️ ZERO WHEN THERE IS NO ANCESTOR CANVAS AT ALL, which is a control being built into a
+        /// detached hierarchy in a test. `PopupLift` alone is then still above the default 0.
+        /// </summary>
+        private static int HostSortingOrder(GameObject go)
+        {
+            if (go == null) return 0;
+
+            for (var t = go.transform.parent; t != null; t = t.parent)
+            {
+                var canvas = t.GetComponent<Canvas>();
+                if (canvas == null) continue;
+
+                if (canvas.isRootCanvas || canvas.overrideSorting) return canvas.sortingOrder;
+            }
+
+            return 0;
+        }
 
         /// <summary>
         /// Build a dropdown as the next row of a vertical layout.
@@ -209,9 +254,37 @@ namespace TumbangPreso.UI
             // than of the rail, so every row underneath is painted after it. `docs/TODO.md` § 99
             // is the same trap one property over: a nested canvas ignores `sortingOrder` unless
             // `overrideSorting` is set, which is why both lines are here.
-            var canvas = _list.AddComponent<Canvas>();
-            canvas.overrideSorting = true;
-            canvas.sortingOrder = 60;
+            //
+            // ⚠️⚠️⚠️ AND THE ORDER IS DERIVED FROM THE HOST RATHER THAN WRITTEN DOWN, BECAUSE THE
+            // WRITTEN-DOWN ONE WAS 60 AND EVERY SCREEN THAT HOSTS THIS CONTROL SITS AT 100 OR
+            // ABOVE. 🧑 2026-09-02, off the `ui-redesign` player: **"drop down ui broken af"** and
+            // then **"i cant even change map"**, with the open MAP list drawing BEHIND the MODE,
+            // BOTS and RULES rows and ILALIM NG TULAY showing as a sliver between two of them.
+            //
+            // **`Panel` and `ConvertedScreen` build their canvas through `MenuKit.BuildCanvas` at
+            // `sortingOrder` 100**, so an overriding child at 60 sorts UNDER the whole panel: not
+            // just under the rows, under everything the panel draws. The rows are opaque and they
+            // are raycast targets, so they took the presses too, which is the half that turned a
+            // drawing fault into "i cant even change map".
+            //
+            // ⚠️⚠️ THIS IS § 99'S OWN PREDICTED REGRESSION, ARRIVING SIX SECTIONS LATER. That entry
+            // set `overrideSorting = true` in `MenuKit.BuildCanvas` and closed with *"the
+            // regression to look for is something covering something else"*. Before it, every
+            // nested `sortingOrder` was inert and this list drew in hierarchy order, which
+            // happened to be correct; the day those numbers started meaning something, **60 began
+            // losing to a number this file had never heard of.** A constant that only worked while
+            // the system ignored it is not a constant, and the comment above it was already right
+            // about the mechanism while being wrong about the value.
+            //
+            // ⚠️ SO IT IS RELATIVE, AND A SCREEN MAY CHANGE ITS OWN ORDER WITHOUT BREAKING THIS.
+            // A popup belongs above whatever opened it and nothing else in this file can know what
+            // that is. `HostSortingOrder` walks to the nearest ancestor that actually decides
+            // sorting (a root canvas, or a nested one with `overrideSorting`), because a nested
+            // canvas WITHOUT the flag carries a number that does nothing, and reading it would put
+            // the same class of bug back one level up.
+            _listCanvas = _list.AddComponent<Canvas>();
+            _listCanvas.overrideSorting = true;
+            _listCanvas.sortingOrder = HostSortingOrder(_list) + PopupLift;
             _list.AddComponent<GraphicRaycaster>();
 
             var column = new GameObject("Column", typeof(RectTransform));
@@ -284,6 +357,20 @@ namespace TumbangPreso.UI
             if (_open != null && _open != this) _open.Close();
 
             _open = this;
+
+            // ⚠️⚠️ THE ORDER IS RE-DERIVED ON EVERY OPEN, NOT ONLY WHERE IT IS FIRST SET IN
+            // `BuildList`. That runs inside `Construct`, and a row is routinely built BEFORE it is
+            // parented into the screen that hosts it: the walk would then find no ancestor canvas,
+            // answer 0, and leave the list sorting at `PopupLift` alone under a hub at 500. The
+            // hierarchy is always complete by the time somebody presses the control, so this is
+            // the one moment the answer is guaranteed correct.
+            //
+            // ⚠️ IT IS ALSO WHAT MAKES THE CONTROL SURVIVE BEING REPARENTED. `LobbyChrome` moves
+            // authored nodes between rails while it builds, and a sorting order captured at
+            // construction is a fact about a parent the control may no longer have.
+            if (_listCanvas != null)
+                _listCanvas.sortingOrder = HostSortingOrder(_list) + PopupLift;
+
             _list.SetActive(true);
             Refresh();
         }

@@ -1560,10 +1560,23 @@ namespace TumbangPreso.UI
             // the identical string into a heading as well; see `BuildColumn`'s note on the three
             // CREATEs.
             if (_primaryLabel != null) _primaryLabel.text = creating ? "CREATE ACCOUNT" : "SIGN IN";
-            _error.text = creating
-                ? "Keeps everything you have played on this machine."
-                : "";
-            _error.color = creating ? UiTheme.PaperInkSoft : UiTheme.MenuRed;
+            // ⚠️⚠️ THE CREATE HINT IS DELETED AND THE LINE IS CLEARED IN BOTH MODES. 🧑 2026-09-02,
+            // with a crop of it: **"remove pic 3 text"**, of *"Keeps everything you have played on
+            // this machine."*
+            //
+            // ⚠️⚠️ AND IT IS CLEARED RATHER THAN THE FIELD BEING REMOVED, BECAUSE THIS `Text` IS
+            // NOT A CAPTION. `_error` is the screen's one message line and four other writers use
+            // it: `Fail` (red), the two progress lines in `Submit` and the Google flow (soft ink),
+            // and the two resets at `Open`. Deleting the label to remove one string would take
+            // every error on this screen with it, silently, and a form that refuses a password
+            // without saying why is worse than one carrying a sentence he did not want.
+            //
+            // ⚠️ THE COLOUR GOES BACK TO RED UNCONDITIONALLY HERE FOR THE SAME REASON. It was only
+            // soft ink because THIS string was a hint rather than a fault; with the hint gone, a
+            // mode switch that left the line soft would paint the next genuine error in the hint's
+            // colour. The two progress writers still set their own soft ink when they run.
+            _error.text = "";
+            _error.color = UiTheme.MenuRed;
 
             // ⚠️ THE GOOGLE VERB FOLLOWS THE TAB TOO, so the two ways of doing the same thing
             // agree about which thing it is. CONNECT keeps this machine's progress; SIGN IN moves
@@ -1651,8 +1664,32 @@ namespace TumbangPreso.UI
             // pill and soft ink on the cream one is one fact (the plate flipped) rather than two:
             // ink on `WoodMid` measures 1.3:1 and is the fault `PaperButton._live`'s note records
             // on the lobby's ROOM CODE plate. Type has to invert when its ground does.
+            // ⚠️⚠️ THE IDLE TAB IS FULL `PaperInk` NOW, AND THE NOTE ABOVE IS WHY IT WAS NOT.
+            // 🧑 2026-09-02, with a crop of this exact pair: **"kinda hard to read this text"**.
+            // The paragraph above ends *"Type has to invert when its ground does"*, which is true
+            // and is only half the rule: **it has to invert to the SAME legibility, and this pair
+            // did not.** Measured as WCAG contrast:
+            //
+            // | Tab | Type on ground | Ratio |
+            // |---|---|---|
+            // | Live | `Cream` `f5e6c8` on `WoodMid` `5a2f14` | **9.20:1** |
+            // | Idle, was | `PaperInkSoft` `7a5c40` on `PaperWarm` `efdabe` | **4.50:1** |
+            // | Idle, is | `PaperInk` `3b2415` on `PaperWarm` `efdabe` | **10.66:1** |
+            //
+            // ⚠️⚠️ TWO CONTROLS IN ONE RAIL AT HALF EACH OTHER'S CONTRAST IS THE FAULT, NOT THE
+            // 4.50 ON ITS OWN. 4.50 clears the bound for large text and would be unremarkable
+            // anywhere else on the screen; it is unreadable HERE because it sits eight units from
+            // a label at 9.20 and the eye compares the pair directly. That is the same finding
+            // this method's own note records about the synthetic bold (*"the buttons are too
+            // dif"*), arriving on the axis that pass did not check.
+            //
+            // ⚠️ AND IT IS NOT A FIFTH DIFFERENCE, IT IS THE FOURTH ONE DONE PROPERLY. Soft ink
+            // was chosen to make the idle tab recede, but the pair already says which one is live
+            // twice over, structurally: eight units of height and a 10:1 plate inversion. Spending
+            // legibility on a third signal buys nothing the render can see and costs the one thing
+            // a player has to do with a tab, which is read it.
             label.fontStyle = FontStyle.Bold;
-            label.color = on ? UiTheme.Cream : UiTheme.PaperInkSoft;
+            label.color = on ? UiTheme.Cream : UiTheme.PaperInk;
         }
 
         /// <summary>

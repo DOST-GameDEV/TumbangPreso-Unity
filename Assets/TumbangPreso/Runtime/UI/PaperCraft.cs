@@ -361,8 +361,38 @@ namespace TumbangPreso.UI
         /// for one material is how a front end acquires two shadows, and `ActionShade` is kept as
         /// an alias rather than deleted so the primary's own note stays findable.
         /// </summary>
+        /// ⚠️⚠️⚠️ `WoodEdge` AT 0.48, NOT `WoodMid` AT 0.50, AND IT IS LIGHTER AND MORE SATURATED
+        /// AT ONCE RATHER THAN A TRADE BETWEEN THE TWO. 🧑 2026-09-02, with crops of the login's
+        /// CREATE ACCOUNT and the maker's KEEP AND USE: **"can we lessen or fix shadows here"**,
+        /// **"shadow here js looks so bad"**, and then the one that says it is not a tuning note,
+        /// **"rlly dont get that shadow"**. Composited over `Paper` `f4ecdd`:
+        ///
+        /// | | Composite | Hue | Saturation | Value |
+        /// |---|---|---|---|---|
+        /// | `WoodMid` at 0.50 (was) | `a78e79` | 27 | **27.8 %** | **65.5 %** |
+        /// | `WoodEdge` at 0.48 (is) | `c2a286` | 28 | **31.0 %** | **75.9 %** |
+        /// | `PaperEdge` `dcc19a`, the target | | 35 | 30.0 % | 86.3 % |
+        ///
+        /// ⚠️⚠️ THE OLD VALUE NEVER MET THE BOUND ITS OWN NOTE SET, AND THE NOTE ROUNDED IN ITS
+        /// OWN FAVOUR. § 121.1 asked for a shadow *"at or above the 30 per cent saturation every
+        /// other paper edge on the screen carries"*; `WoodMid` at half alpha lands at **27.8** and
+        /// was written up as 28. So the control 🧑 kept photographing was carrying the exact fault
+        /// the previous pass believed it had fixed.
+        ///
+        /// ⚠️⚠️ AND A DEEPER BROWN CANNOT REACH 30 BY GETTING DARKER. Past about half alpha the
+        /// composite runs toward the ink, so saturation climbs a point at a time while VALUE falls
+        /// away, which is the heavy band he photographed twice. **The chroma has to come from the
+        /// colour and not from the alpha.** `WoodEdge` `8b5227` is the palette's own edge brown
+        /// (`CLAUDE.md` § 6.4 names it), and being lighter to begin with it clears 30 per cent
+        /// while sitting ten value steps higher than what it replaces.
+        ///
+        /// ⚠️ SO THE SHADOW GOT WARMER, MORE COLOURFUL AND WEAKER TO THE EYE AT THE SAME TIME,
+        /// which is the only combination that answers both *"the shadows suck too"* and *"rlly
+        /// dont get that shadow"*. Washing it out with alpha instead would put back the
+        /// 17-per-cent neutral that earned the first complaint: **a weak shadow and a grey shadow
+        /// are the same pixel.** How much of it there is to see is `ActionDrop`'s half.
         private static readonly Color Shade = new Color(
-            UiTheme.WoodMid.r, UiTheme.WoodMid.g, UiTheme.WoodMid.b, 0.50f);
+            UiTheme.WoodEdge.r, UiTheme.WoodEdge.g, UiTheme.WoodEdge.b, 0.48f);
 
         /// <summary>
         /// The warm scrim any paper screen puts over the live street behind it.
@@ -886,7 +916,29 @@ namespace TumbangPreso.UI
         /// and lifting it 6 would be 6 per cent, so the biggest control on the screen would be the
         /// FLATTEST one. Ten holds it at about a tenth, which is the same object at a bigger size.
         /// </summary>
-        private const int ActionDrop = 10;
+        /// ⚠️⚠️ SIX, NOT TEN, AND THE ARGUMENT FOR IT IS ONE § 122.13 WROTE DOWN AND THEN DID NOT
+        /// APPLY. That note reads: *"A shadow's saturation does not depend on the width of the
+        /// object casting it; what the extra width changed was how much of it there was to see."*
+        /// **It then fixed the saturation and left how much there is to see at ten units**, which
+        /// is the half 🧑 was actually looking at when he said **"rlly dont get that shadow"**.
+        ///
+        /// ⚠️ TEN UNITS UNDER A 96-UNIT CONTROL IS A TENTH OF THE OBJECT SPENT ON ITS OWN SHADOW.
+        /// At that size it stops reading as lift and starts reading as a second object lying
+        /// behind the first, which is why the answer to *"lessen the shadows"* is this constant
+        /// rather than the alpha. `Shade` gets MORE chroma in the same pass, not less: the fault
+        /// is the quantity, and fading it out is how the grey came back last time.
+        private const int ActionDrop = 6;
+
+        /// <summary>
+        /// The darkest an <see cref="Surface.Action"/> rim may get, as an HSV value.
+        ///
+        /// ⚠️ 0.26, WHICH IS A SHADE UNDER WHERE THE GREEN PRIMARY ALREADY LANDS ON ITS OWN
+        /// (`MenuGreenFace` at 0.34 of value 86.7 gives 29.5). Picking it there rather than at a
+        /// round number is what makes the floor invisible on the fill that never needed it: the
+        /// green is untouched by construction and only the brown, whose face is 39 value points
+        /// darker, is lifted off black. See `rimColour` for the measurement and the reasoning.
+        /// </summary>
+        private const float RimFloor = 0.26f;
 
         /// <summary>
         /// The primary's cast shadow.
@@ -899,8 +951,12 @@ namespace TumbangPreso.UI
         /// which sits with the 30 per cent every paper edge on the same screen already carries.
         /// **A shadow big enough to see is a colour, and it has to be in the palette.**
         /// </summary>
+        /// ⚠️ IT TRACKS <see cref="Shade"/> AND HAS DONE SINCE § 122.13 UNIFIED THEM, so the
+        /// 2026-09-02 retune above reaches the primary too. Two constants for one material is how
+        /// a front end acquires two shadows; this stays as an alias rather than being deleted only
+        /// so the primary's own history in this note remains findable.
         private static readonly Color ActionShade = new Color(
-            UiTheme.WoodMid.r, UiTheme.WoodMid.g, UiTheme.WoodMid.b, 0.50f);
+            UiTheme.WoodEdge.r, UiTheme.WoodEdge.g, UiTheme.WoodEdge.b, 0.48f);
 
         /// <summary>
         /// The one action on the screen, drawn in his art's own order at paper's corner radius.
@@ -975,7 +1031,31 @@ namespace TumbangPreso.UI
             // its top, falls all the way down its face, and ends in a wall that is darker than
             // any part of the face.
             Color keyColour = WoodCraft.Shift(baseColour, 1.34f, 0.90f);
-            Color rimColour = WoodCraft.Shift(baseColour, 0.34f, 1.10f);
+
+            // ⚠️⚠️⚠️ THE RIM IS A RATIO WITH A FLOOR, BECAUSE 0.34 OF AN ALREADY-DARK FILL IS
+            // BLACK. 🧑 2026-09-02, of FIND A RANKED MATCH: **"this button ugly"**, and asked what
+            // about it, **"ugly shadows and edges"**. The shadow half is `Shade`; this is the edge.
+            //
+            // **Measured off `Logs/shots-runtime/LobbyRanked-v71.png` at the button's top edge:
+            // `291307`, value 16 per cent, half of that band.** The arithmetic: `WoodFace`
+            // `793e1f` is value **47.5** and 0.34 of it is 16.1, which on the cream rail this
+            // control actually sits on is a hard black outline round a brown slab.
+            //
+            // ⚠️⚠️ AND THE RATIO IS NOT WRONG, WHICH IS WHY THIS IS A FLOOR RATHER THAN A NEW
+            // NUMBER. `MenuGreenFace` `51dd38` is value **86.7**, so the same 0.34 lands at 29.5
+            // and reads as a dark green edge exactly as it does in `BUTTON LONG.png`. **The two
+            // fills are 39 value points apart, so one multiplier cannot serve both**: the ratio is
+            // faithful to his art and the ABSOLUTE result is what goes black. A rim is the wall
+            // under a lit face, and a wall is dark; it is not an ink line.
+            //
+            // ⚠️ SO GREEN IS UNTOUCHED BY CONSTRUCTION. The floor only bites when `value * 0.34`
+            // would fall under it, which is true of the brown at 47.5 and false of the green at
+            // 86.7. `RimFloor` is 0.26, a shade under where the green already lands, so the two
+            // primaries end up on the same side of black instead of on opposite ones.
+            Color.RGBToHSV(baseColour, out _, out _, out float baseValue);
+
+            float rimDrop = Mathf.Max(0.34f, RimFloor / Mathf.Max(0.01f, baseValue));
+            Color rimColour = WoodCraft.Shift(baseColour, rimDrop, 1.10f);
             Color faceTop = WoodCraft.Shift(baseColour, 1.12f, 0.94f);
             Color faceFloor = WoodCraft.Shift(baseColour, 0.58f, 1.10f);
 

@@ -367,7 +367,14 @@ namespace TumbangPreso.UI
             (SettingsRowHeight * 4.0f) + 18.0f + SettingsDetailHeight + (PaperKit.Pad * 2.0f)
             + PaperCraft.Drop;
 
-        private const float SettingsRowHeight = 56.0f;
+        /// <summary>
+        /// ⚠️⚠️ 64 AGAIN, BECAUSE THE ROWS ARE STEPPERS AGAIN. It was 64 until `18f6d81` turned
+        /// them into dropdowns and 56 while they were, and both numbers are the content added up
+        /// rather than a size that looked right: a stepper is a 42-unit arrow plus its well and
+        /// its border, a closed dropdown is a bare face. `SettingsBodyHeight` reads this, so the
+        /// drawer resizes itself and nothing else has to be told.
+        /// </summary>
+        private const float SettingsRowHeight = 64.0f;
         private const float SettingsCaptionWidth = 96.0f;
         private const float SettingsArrowSize = 42.0f;
         private const float SettingsDetailHeight = 56.0f;
@@ -1752,14 +1759,59 @@ namespace TumbangPreso.UI
 
             var config = find("ConfigPanel");
 
-            var authored = Descend(config, "Rows");
-            if (authored != null)
+            // ⚠️⚠️⚠️ THE FOUR ROWS ARE STEPPERS AGAIN, AND THIS REVERSES `18f6d81` AND § 116.8.
+            // 🧑 2026-09-02, off the `ui-redesign` player: **"whyd we even change the old design of
+            // it wherein it was clickable from left to right"**, and then the flow he wants in his
+            // own words, **"to change between maps i click match settings and i js clcik left and
+            // rigth to swtich between diff maps and bots and stuff"**. Asked which shape to bring
+            // back, he chose the authored rows exactly rather than arrows bolted onto the paper
+            // ones.
+            //
+            // ⚠️⚠️ THE ENTRY THAT REPLACED THEM RECORDS ITS OWN MANDATE AS *"His suggestion, taken
+            // literally"*, AND THE SUGGESTION WAS **"u can use dropdowns and shit to make some
+            // shit work or look good"**. That is permission to use a dropdown somewhere, and it
+            // was read as an instruction to replace a working control everywhere. § 116.8's
+            // argument (twelve controls for four choices, and no row says what the other options
+            // are) is a real argument and it is not the one he was making. **A rationale nobody
+            // asked for is how a screen he liked became a screen he could not use.**
+            //
+            // ⚠️ SO THE DROPDOWNS ARE NOT BUILT AND `WoodDropdown` IS NOT DELETED. The type still
+            // compiles, still carries its own sorting fix, and `parts.SettingsRows` stays null, on
+            // which `ConvertedMatchSetup.BuildSettingsDropdowns` already returns early and
+            // `RefreshSettingsDropdowns` is null-guarded on all four. Deleting a control he might
+            // ask for again is the mistake this comment exists to stop repeating in reverse.
+            var rows = Descend(config, "Rows");
+            if (rows != null)
             {
-                authored.SetParent(body.transform, false);
-                authored.gameObject.SetActive(false);
-            }
+                rows.SetParent(body.transform, false);
+                rows.gameObject.SetActive(true);
 
-            BuildDropdownRows(body.transform, parts);
+                // ⚠️ FOUR ROWS, NOT THREE. `BuildFormatRow` adds RULES under BOTS, and this height
+                // is what the rows container claims: left at three, the fourth row drew outside
+                // the sheet and over the cast's legs.
+                float rowsHeight = (SettingsRowHeight * 4.0f) + 16.0f;
+
+                var rowsElement = rows.GetComponent<LayoutElement>();
+                if (rowsElement == null) rowsElement = rows.gameObject.AddComponent<LayoutElement>();
+                rowsElement.minHeight = rowsHeight;
+                rowsElement.preferredHeight = rowsHeight;
+                rowsElement.flexibleHeight = 0.0f;
+
+                var rowsLayout = rows.GetComponent<HorizontalOrVerticalLayoutGroup>();
+                if (rowsLayout != null) rowsLayout.spacing = 8.0f;
+
+                Narrow(rows as RectTransform, SettingsDrawerWidth - (PaperKit.Pad * 2.0f));
+
+                DressSelectorRow(rows, "MapRow", "MapCaption", "MAP", "MapSelector",
+                                 "MapPrevButton", "MapValueLabel", "MapNextButton");
+                DressSelectorRow(rows, "ModeRow", "ModeCaption", "MODE", "ModeSelector",
+                                 "ModePrevButton", "ModeValueLabel", "ModeNextButton");
+                DressSelectorRow(rows, "DifficultyRow", "DifficultyCaption", "BOTS",
+                                 "DifficultySelector", "DifficultyPrevButton",
+                                 "DifficultyValueLabel", "DifficultyNextButton");
+
+                BuildFormatRow(rows, parts);
+            }
 
             var detail = find("DetailBox");
             if (detail != null)
@@ -1819,26 +1871,251 @@ namespace TumbangPreso.UI
             parts.SettingsBody = body;
         }
 
-        /// <summary>Where `ConvertedMatchSetup.BuildSettingsDropdowns` puts the four
-        /// <see cref="WoodDropdown"/> rows. ⚠️ The screen owns the option tables, so it builds the
-        /// controls; this owns the layout, so it builds the container.</summary>
-        private static void BuildDropdownRows(Transform body, Parts parts)
+        /// <summary>
+        /// The RULES row: STANDARD, LAST TSINELAS STANDING or MIRROR.
+        ///
+        /// ⚠️⚠️ IT IS A CLONE OF THE AUTHORED BOTS ROW RATHER THAN A ROW BUILT FROM SCRATCH, AND
+        /// THAT IS THE POINT. The three selector rows are authored nodes carrying his own arrow
+        /// TEXTURES, an authored well and an authored inner layout. A fourth row written in code
+        /// would be a fourth visual language on a rail whose whole redesign was about the first
+        /// three not lining up, and `docs/VISION.md` § 6 is the standing rule: **his UI art IS the
+        /// design system**. `Instantiate` gets all of it free and cannot drift from the other
+        /// three.
+        ///
+        /// ⚠️⚠️ AND THE BUTTONS COME BACK ON `Parts` RATHER THAN BEING FOUND BY NAME. Every other
+        /// control on this screen is wired with `OnClick("SomeButton", ...)`, which reads
+        /// `ConvertedScreen`'s name index, and **that index is built in `Start` before this method
+        /// runs**. A clone made afterwards is not in it, so a name lookup would answer null and the
+        /// row would be a stepper whose arrows do nothing: `docs/TODO.md` § 108's EQUIP button
+        /// exactly, in a place nobody would think to look for it.
+        /// </summary>
+        private static void BuildFormatRow(Transform rows, Parts parts)
         {
-            var holder = new GameObject("SettingsRows", typeof(RectTransform));
-            holder.transform.SetParent(body, false);
+            var source = Descend(rows, "DifficultyRow");
+            if (source == null) return;
 
-            var layout = holder.AddComponent<VerticalLayoutGroup>();
-            layout.spacing = 6.0f;
-            layout.childControlWidth = true;
-            layout.childControlHeight = true;
-            layout.childForceExpandWidth = true;
-            layout.childForceExpandHeight = false;
+            // ⚠️ NOT TWICE. This drawer is rebuilt whenever the lobby restyles, and a second clone
+            // would stack a duplicate RULES row under the first and push START MATCH off the rail.
+            var existing = Descend(rows, "FormatRow");
+            if (existing != null) UnityEngine.Object.Destroy(existing.gameObject);
 
-            var fitter = holder.AddComponent<ContentSizeFitter>();
-            fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
-            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            var clone = UnityEngine.Object.Instantiate(source.gameObject, rows);
+            clone.name = "FormatRow";
+            clone.transform.SetAsLastSibling();
 
-            parts.SettingsRows = holder.transform;
+            Rename(clone.transform, "DifficultyCaption", "FormatCaption");
+            Rename(clone.transform, "DifficultySelector", "FormatSelector");
+            Rename(clone.transform, "DifficultyPrevButton", "FormatPrevButton");
+            Rename(clone.transform, "DifficultyValueLabel", "FormatValueLabel");
+            Rename(clone.transform, "DifficultyNextButton", "FormatNextButton");
+
+            DressSelectorRow(rows, "FormatRow", "FormatCaption", "RULES",
+                             "FormatSelector", "FormatPrevButton",
+                             "FormatValueLabel", "FormatNextButton");
+
+            // ⚠️ THE CLONED LISTENERS GO. `Instantiate` copies a `Button`'s persistent `onClick`
+            // entries with it, so without this both arrows would still be cycling the BOT
+            // DIFFICULTY they were cloned from, on a row labelled RULES. Nothing would log.
+            var prev = Descend(clone.transform, "FormatPrevButton")?.GetComponent<Button>();
+            var next = Descend(clone.transform, "FormatNextButton")?.GetComponent<Button>();
+
+            if (prev != null) prev.onClick.RemoveAllListeners();
+            if (next != null) next.onClick.RemoveAllListeners();
+
+            parts.FormatPrev = prev;
+            parts.FormatNext = next;
+            parts.FormatValue = Descend(clone.transform, "FormatValueLabel")?.GetComponent<Text>();
+        }
+
+        private static void Rename(Transform root, string from, string to)
+        {
+            var node = Descend(root, from);
+            if (node != null) node.name = to;
+        }
+
+        /// <summary>
+        /// One selector row: caption on the left, stepper on the right.
+        ///
+        /// ⚠️⚠️ IT IS PAPER NOW AND IT WAS WOOD BEFORE `18f6d81`, WHICH IS THE ONE THING THIS
+        /// REVERT MAY NOT RESTORE. § 119 repainted the whole front end, so bringing the pre-dropdown
+        /// version back verbatim would put a `GodotTheme.WoodBox` well and amber type inside a paper
+        /// drawer: `docs/TODO.md` § 117's *"two design systems stacked"* rebuilt on purpose, and the
+        /// code-drawn half would be the half that looks wrong. **The interaction comes back; the
+        /// material does not.** The well is `PaperCraft.Surface.Slot`, the caption is the same
+        /// `PaperInkSoft` at `PaperKit.Caption` the dropdown rows used, and the value is `PaperInk`
+        /// at `PaperKit.Body`, so a restored row and a paper row are the same object.
+        ///
+        /// ⚠️ EVERY STEP IS GUARDED SEPARATELY, so a row whose caption was renamed loses its caption
+        /// and keeps its stepper rather than throwing halfway and leaving the drawer in neither
+        /// layout.
+        /// </summary>
+        private static void DressSelectorRow(Transform rows, string row, string caption,
+                                             string word, string selector, string prev,
+                                             string value, string next)
+        {
+            var rowNode = Descend(rows, row) as RectTransform;
+            if (rowNode == null) return;
+
+            var rowElement = rowNode.GetComponent<LayoutElement>();
+            if (rowElement == null) rowElement = rowNode.gameObject.AddComponent<LayoutElement>();
+            rowElement.minHeight = SettingsRowHeight;
+            rowElement.preferredHeight = SettingsRowHeight;
+            rowElement.flexibleHeight = 0.0f;
+
+            var rowLayout = rowNode.GetComponent<HorizontalLayoutGroup>();
+            if (rowLayout != null)
+            {
+                rowLayout.padding = new RectOffset(0, 0, 0, 0);
+                rowLayout.spacing = 14.0f;
+                rowLayout.childControlWidth = true;
+                rowLayout.childControlHeight = true;
+                rowLayout.childForceExpandWidth = false;
+                rowLayout.childForceExpandHeight = true;
+                rowLayout.childAlignment = TextAnchor.MiddleLeft;
+            }
+
+            // ⚠️⚠️ THE CAPTION COLUMN IS FIXED AND THAT IS THE HALF NOBODY SEES. MAP, MODE and BOTS
+            // are three different widths, and the authored group sized each caption to its own
+            // string, so the three steppers started at three different x positions. Nothing in the
+            // drawer lined up with anything, which is most of what "ugly" was the first time.
+            var captionNode = Descend(rowNode, caption);
+            var captionText = captionNode == null ? null : captionNode.GetComponent<Text>();
+
+            if (captionText != null)
+            {
+                // ⚠️ THE COLON GOES, AND IT IS WORTH 54 UNITS OF THE RAIL. The scene authors these
+                // as `MAP:`, `MODE:` and `BOTS:`, and the caption column has to be as wide as the
+                // longest; dropping the colon let `SettingsCaptionWidth` come down from 150 to 96.
+                // The value sits in its own well with an arrow either side, which says "what
+                // follows is the value" louder than a colon does.
+                captionText.text = word;
+                captionText.fontSize = PaperKit.Caption;
+                captionText.color = UiTheme.PaperInkSoft;
+                captionText.alignment = TextAnchor.MiddleLeft;
+                captionText.horizontalOverflow = HorizontalWrapMode.Overflow;
+                captionText.verticalOverflow = VerticalWrapMode.Overflow;
+                captionText.raycastTarget = false;
+
+                // ⚠️ THE INK OUTLINE HAS TO GO ON PAPER. Every `GodotTheme` menu style carries a 3
+                // to 5 unit `GodotOutline` because those styles were written to be read over a live
+                // 3D street; on an opaque cream sheet it is a dark halo round every letter, which is
+                // the fault the detail label in this same drawer already records.
+                var captionOutline = captionNode.GetComponent<GodotOutline>();
+                if (captionOutline != null) captionOutline.enabled = false;
+
+                var element = captionNode.GetComponent<LayoutElement>();
+                if (element == null) element = captionNode.gameObject.AddComponent<LayoutElement>();
+                element.minWidth = SettingsCaptionWidth;
+                element.preferredWidth = SettingsCaptionWidth;
+                element.flexibleWidth = 0.0f;
+
+                MenuKit.Fit(captionText, SettingsCaptionWidth - 8.0f);
+            }
+
+            var selectorNode = Descend(rowNode, selector) as RectTransform;
+            if (selectorNode != null)
+            {
+                // ⚠️⚠️ THE WELL IS `Tray`, WHICH IS PAPER'S OWN RECESS: *"you read it or type in
+                // it"*, no halo, no cast shadow, an inner shadow along the top. The authored plate
+                // was repainted `WoodBox` dark before `18f6d81` so the value read as set INTO the
+                // panel, and this is the same sentence in the paper language. ⚠️ `PaperSkin.Apply`
+                // rather than a sprite assignment, because it destroys the `WoodSkin` that would
+                // otherwise keep redrawing the plank underneath on the next rect change.
+                PaperSkin.Apply(selectorNode.gameObject, PaperCraft.Surface.Tray);
+
+                var plate = selectorNode.GetComponent<Image>();
+                if (plate != null)
+                {
+                    plate.type = Image.Type.Sliced;
+                    plate.color = Color.white;
+                    plate.raycastTarget = false;
+                }
+
+                var element = selectorNode.GetComponent<LayoutElement>();
+                if (element == null)
+                    element = selectorNode.gameObject.AddComponent<LayoutElement>();
+                element.minWidth = 0.0f;
+                element.preferredWidth = -1.0f;
+                element.flexibleWidth = 1.0f;
+                element.minHeight = SettingsRowHeight - 8.0f;
+                element.preferredHeight = SettingsRowHeight - 8.0f;
+
+                // ⚠️ THE AUTHORED INSET IS 45x27 AND IT WAS CUTTING THE ROW IN HALF VERTICALLY.
+                // `Inner` is a stretched child of the plate, so 27 off a 62-unit stepper leaves the
+                // arrows 35 units tall inside a 62-unit well. 10 keeps a visible border and gives
+                // the arrows the height they were drawn at.
+                var inner = Descend(selectorNode, "Inner") as RectTransform;
+                if (inner != null)
+                {
+                    inner.anchorMin = Vector2.zero;
+                    inner.anchorMax = Vector2.one;
+                    inner.offsetMin = new Vector2(10.0f, 8.0f);
+                    inner.offsetMax = new Vector2(-10.0f, -8.0f);
+
+                    var innerLayout = inner.GetComponent<HorizontalLayoutGroup>();
+                    if (innerLayout != null)
+                    {
+                        innerLayout.padding = new RectOffset(0, 0, 0, 0);
+                        innerLayout.spacing = 6.0f;
+                        innerLayout.childControlWidth = true;
+                        innerLayout.childControlHeight = true;
+                        innerLayout.childForceExpandWidth = false;
+                        innerLayout.childForceExpandHeight = true;
+                        innerLayout.childAlignment = TextAnchor.MiddleCenter;
+                    }
+                }
+            }
+
+            Arrow(rowNode, prev);
+            Arrow(rowNode, next);
+
+            var valueNode = Descend(rowNode, value);
+            var valueText = valueNode == null ? null : valueNode.GetComponent<Text>();
+
+            if (valueText != null)
+            {
+                valueText.fontSize = PaperKit.Body;
+                valueText.color = UiTheme.PaperInk;
+                valueText.alignment = TextAnchor.MiddleCenter;
+                valueText.horizontalOverflow = HorizontalWrapMode.Overflow;
+                valueText.verticalOverflow = VerticalWrapMode.Overflow;
+                valueText.raycastTarget = false;
+
+                var valueOutline = valueNode.GetComponent<GodotOutline>();
+                if (valueOutline != null) valueOutline.enabled = false;
+
+                var element = valueNode.GetComponent<LayoutElement>();
+                if (element == null) element = valueNode.gameObject.AddComponent<LayoutElement>();
+
+                // ⚠️ FLEXIBLE, WITH THE TWO ARROWS FIXED EITHER SIDE. The authored row gave the
+                // value a preferred width, so a short word like NONE left the two arrows floating
+                // in the middle of the well and a long one like ILALIM NG TULAY pushed them out of
+                // it. Pinning the arrows and letting the value take what is left is what makes the
+                // four rows read as one control repeated.
+                element.minWidth = 0.0f;
+                element.preferredWidth = -1.0f;
+                element.flexibleWidth = 1.0f;
+            }
+        }
+
+        /// <summary>One stepper arrow: square, fixed, and never resized by the value beside it.</summary>
+        private static void Arrow(Transform row, string name)
+        {
+            var node = Descend(row, name);
+            if (node == null) return;
+
+            var element = node.GetComponent<LayoutElement>();
+            if (element == null) element = node.gameObject.AddComponent<LayoutElement>();
+
+            element.minWidth = SettingsArrowSize;
+            element.preferredWidth = SettingsArrowSize;
+            element.flexibleWidth = 0.0f;
+            element.minHeight = SettingsArrowSize;
+            element.preferredHeight = SettingsArrowSize;
+            element.flexibleHeight = 0.0f;
+
+            var image = node.GetComponent<Image>();
+            if (image != null) image.preserveAspect = true;
         }
 
         /// <summary>
@@ -2411,8 +2688,29 @@ namespace TumbangPreso.UI
                 var label = button.transform.Find("Label")?.GetComponent<Text>();
                 if (label == null) return;
 
+                // ⚠️⚠️ FULL `PaperInk` ON THE IDLE TAB, WHICH IS `SignInScreen.SetTab`'S FIX
+                // APPLIED TO THE PAIR THAT SHARES ITS DESIGN. 🧑 2026-09-02 photographed the login
+                // screen's tabs (**"kinda hard to read this text"**) and this row is built to the
+                // same rule, so it carried the same fault on a lighter ground. As WCAG contrast:
+                //
+                // | Tab | Type on ground | Ratio |
+                // |---|---|---|
+                // | Live | `Cream` `f5e6c8` on `WoodMid` `5a2f14` | **9.20:1** |
+                // | Idle, was | `PaperInkSoft` `7a5c40` on `Paper` `f4ecdd` | **5.21:1** |
+                // | Idle, is | `PaperInk` `3b2415` on `Paper` `f4ecdd` | **12.34:1** |
+                //
+                // ⚠️ THE COMPLAINT IS THE RATIO BETWEEN THE TWO, NOT EITHER NUMBER. 5.21 passes on
+                // its own; it fails sitting beside 9.20 in one rail, because the eye reads the
+                // pair rather than the label. `Ghost` carries no fill, so the idle ground here is
+                // the panel's own `Paper` rather than the login's `PaperWarm`, which is why the
+                // two screens land on different numbers from the same swatch.
+                //
+                // ⚠️ THE NOTE ABOVE STILL HOLDS AND IS NOT WEAKENED BY THIS. The 10:1 value
+                // inversion and the fill-against-outline silhouette are still the two signals
+                // saying which tab is live; this changes only how legible the one you are NOT on
+                // is, and recede was never meant to mean unreadable.
                 label.fontStyle = FontStyle.Bold;
-                label.color = active ? UiTheme.Cream : UiTheme.PaperInkSoft;
+                label.color = active ? UiTheme.Cream : UiTheme.PaperInk;
             }
         }
     }
