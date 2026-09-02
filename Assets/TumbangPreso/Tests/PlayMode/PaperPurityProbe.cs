@@ -253,6 +253,30 @@ namespace TumbangPreso.PlayTests
             // in the frame and that is what makes it findable without spending an accent.
             if (t.name == "ActionSlot") return;
 
+            // ⚠️⚠️⚠️ THE FIGHTER PICKER IS WOOD AGAIN, ON HIS INSTRUCTION, AND THAT IS WHY THIS
+            // LINE EXISTS RATHER THAN THE PROBE BEING MUTED. 🧑 2026-09-02, sending a capture of
+            // the pre-paper screen: **"it used to look really good here, maybe it can retain old
+            // brownn color"**, *"just change the backgrounnd or somethhing bcz i dont like the
+            // dark blue sit"*, and the scope in his own words, **"make sure thhat if u bring this
+            // shit back u dont break other ui"**, *"js the character select"*.
+            //
+            // **This probe encodes a decision the owner has reversed for one screen**, so it is
+            // updated in the same commit as the reversal. `ConvertedCharacterSelect.Wire` carries
+            // the design argument (a picker is a stage and a stage is dark) and `docs/TODO.md`
+            // § 122.4 carries both sides of it.
+            //
+            // ⚠️ ONE NODE NAME, NOT A FLAG. Everything under `CharacterSelectPanel` is this
+            // screen and nothing else in the game is under it, so the exemption cannot widen by
+            // accident: the maker, the hub and the settings panel are siblings and are still
+            // walked. This is the same shape as the two exemptions above it.
+            //
+            // ⚠️⚠️ AND THE GATE IT REPLACES IS A RENDER, WHICH IS WEAKER, SO SAY SO OUT LOUD.
+            // Nothing now checks that this screen is COHERENTLY wooden rather than a mixture, and
+            // a mixture is exactly what § 117 was about. `UiRuntimeShots.TheLobbyDoorsDraw`
+            // photographs it every pass and a person looks; if this screen ever grows a second
+            // material again, the answer is a probe that asserts wood HERE, not deleting this line.
+            if (t.name == "CharacterSelectPanel") return;
+
             var wood = t.GetComponent<WoodSkin>();
             if (wood != null && wood.enabled)
                 offenders.Add($"{Path(t)} still carries WoodSkin ({wood.Surface})");

@@ -163,6 +163,45 @@ namespace TumbangPreso.UI
             Sign,
 
             /// <summary>
+            /// A carved wooden signboard with a raised frame round it. The game's own name, and
+            /// nothing else.
+            ///
+            /// ⚠️⚠️ 🧑 ASKED FOR IT IN THREE MESSAGES, WITH A CROP OF THE LOGIN CARD'S WORDMARK:
+            /// **"can u add a pretty outline for this too"**, *"one that reads as wooden frame or
+            /// some shit?"*, **"can u give it a wooden texture too the tump box"**.
+            ///
+            /// ⚠️⚠️ IT IS A NEW SURFACE RATHER THAN AN EDIT TO <see cref="Sign"/>, AND THE REASON
+            /// IS A SECOND CONTROL. `Sign` is also the lobby's ROOM CODE plaque and the ranked
+            /// rail's plate, which are VALUES you read at a glance; growing them a carved frame
+            /// and a grain would be spending detail on two controls he did not ask about and
+            /// making the room code compete with the primary beside it. **A role is what varies
+            /// here, never a fill** (`CLAUDE.md` § 6.5), and "the one plaque the game's own name is
+            /// carved into" is a different role from "a value on a dark plate".
+            ///
+            /// ⚠️⚠️ THE FRAME IS A REAL BAND, NOT AN OUTLINE, WHICH IS THE WHOLE OF *"reads as
+            /// wooden frame"*. An outline is a line drawn at the silhouette and reads as a border
+            /// on a rectangle; a frame is a RAISED ledge with its own lit top edge and its own
+            /// shadow falling inward onto the field it surrounds, so the field reads as sitting
+            /// BEHIND it. That inward shadow is the entire difference and it costs one gradient.
+            ///
+            /// ⚠️ AND THE GRAIN IS ONE-DIMENSIONAL. `WoodCraft`'s own note says it in as many
+            /// words: *"two-dimensional noise reads as dirt"*. Wood grain runs along the plank, so
+            /// the noise is sampled on x alone and the same value is written down the whole
+            /// column; `PaperCraft.Fibre` samples both axes because paper fibre genuinely is
+            /// two-dimensional. Using the wrong one of the two is how a wooden sign ends up
+            /// looking mouldy.
+            ///
+            /// ⚠️ IT IS DRAWN IN 🧑'S OWN CONSTRUCTION ORDER, which is the sampling `WoodCraft`'s
+            /// header records off `Art/ui/host-game/*.png`: a **bright keyline** outside a **dark
+            /// rim** over a **full-height ramp** with a **varnish band** a quarter of the way down.
+            /// The same five layers `Surface.Action` uses, at a sign's proportions instead of a
+            /// button's, so the plaque belongs to the same family as the primary under it without
+            /// being mistakable for something you can press. **A chamfer means pressable and a
+            /// round means furniture** (§ 6.5): this is rounded, on purpose, because it is a sign.
+            /// </summary>
+            Plaque,
+
+            /// <summary>
             /// The one of a set you are ON: the live tab, the selected half of a switch.
             ///
             /// ⚠️⚠️ IT EXISTS BECAUSE `Token` AGAINST `Ghost` WAS NOT ENOUGH AND THE RENDER SAID
@@ -293,10 +332,37 @@ namespace TumbangPreso.UI
         /// than the sheet's own outside edge. It is what says "inside".</summary>
         private const int TrayCorner = 8;
 
-        /// <summary>The cast shadow. ⚠️ WARM, because `CLAUDE.md` § 6.4 bans cold grey in any
-        /// layer and a neutral black at 30 per cent over cream composites as exactly that.
+        /// <summary>
+        /// The cast shadow under every paper control.
+        ///
+        /// ⚠️ WARM, because `CLAUDE.md` § 6.4 bans cold grey in any layer and a neutral black at
+        /// 30 per cent over cream composites as exactly that.
+        ///
+        /// ⚠️⚠️⚠️ AND IT IS `ActionShade`'S OWN VALUE NOW, BECAUSE THE MEASUREMENT § 121.1 TOOK ON
+        /// THE PRIMARY WAS TRUE OF EVERY OTHER CONTROL AND ONLY THE PRIMARY WAS FIXED. 🧑
+        /// 2026-09-02, with a crop of the login card: **"the shadows suck too"**, of SIGN IN,
+        /// CREATE, PLAY AS GUEST and the wordmark plaque.
+        ///
+        /// **He is describing the same grey and the arithmetic is the same arithmetic.** This was
+        /// `(0.30, 0.19, 0.10)` at **0.34** alpha; composited over `Paper` `f4ecdd` that lands at
+        /// **`bbac9b`, 17 per cent saturation**, against every paper EDGE on the same screen at
+        /// **30** (`PaperEdge` `dcc19a`). A 17-per-cent neutral beside a 30-per-cent warm edge is
+        /// § 6.4's cold-grey ban caught on the warm axis, which is exactly what
+        /// `Surface.Action`'s own note says about the wooden halo it replaced.
+        ///
+        /// ⚠️⚠️ `ActionShade`'S NOTE ALREADY DID THIS SUM AND SCOPED IT TOO NARROWLY: *"fine under
+        /// a 40-unit chip, and under a 520-unit slab it is the wide grey band"*. **The size
+        /// argument was wrong.** A shadow's saturation does not depend on the width of the object
+        /// casting it; what the extra width changed was how much of it there was to see. A rich
+        /// brown at half alpha composites to about `a78d79`, **hue 26 at 28 per cent**, which sits
+        /// with the 30 every paper edge already carries at any size.
+        ///
+        /// ⚠️ SO THERE IS ONE SHADOW COLOUR IN THIS FILE AGAIN, which is the point. Two constants
+        /// for one material is how a front end acquires two shadows, and `ActionShade` is kept as
+        /// an alias rather than deleted so the primary's own note stays findable.
         /// </summary>
-        private static readonly Color Shade = new Color(0.30f, 0.19f, 0.10f, 0.34f);
+        private static readonly Color Shade = new Color(
+            UiTheme.WoodMid.r, UiTheme.WoodMid.g, UiTheme.WoodMid.b, 0.50f);
 
         /// <summary>
         /// The warm scrim any paper screen puts over the live street behind it.
@@ -349,6 +415,7 @@ namespace TumbangPreso.UI
                 case Surface.Tray: made = PaintTray(h, pose, tall, key); break;
                 case Surface.Ghost: made = PaintGhost(h, tall, key); break;
                 case Surface.Sign: made = PaintPlate(h, tall, key, true); break;
+                case Surface.Plaque: made = PaintPlaque(h, key); break;
                 default: made = PaintPlate(h, tall, key, false); break;
             }
 
@@ -416,7 +483,23 @@ namespace TumbangPreso.UI
                     }
                     else if (shadowDepth > 0.0f && !tall)
                     {
+                        // ⚠️⚠️ THE SAME SQUARED FALLOFF `PaintRaised` HAS, AND THIS METHOD NEVER
+                        // HAD IT. It painted a flat band of `Shade` across the whole `Drop`, which
+                        // was survivable at the old 0.34 alpha and is a hard dark bar at the 0.50
+                        // that constant now carries. **A cast shadow that does not fade is a
+                        // second, darker copy of the object**, which is the sticker read
+                        // `PaintRaised`'s own note describes.
+                        //
+                        // ⚠️ IT IS THE SAME CORRECTION `Surface.Action` TOOK (cubed there, squared
+                        // here) FOR THE SAME REASON: darkest where the two surfaces nearly touch,
+                        // gone by the time it has travelled the object's own thickness. 🧑
+                        // 2026-09-02, of the login card and its plaque: **"the shadows suck too"**.
+                        int below = Drop - y;
+                        float reach = below <= 0 ? 1.0f : 1.0f - (below / (float)(Drop + 1));
+                        reach = Mathf.Clamp01(reach);
+
                         c = Fade(Shade, shadowDepth);
+                        c.a *= reach * reach;
                     }
                     else
                     {
@@ -427,6 +510,204 @@ namespace TumbangPreso.UI
                 }
 
             return WoodCraft.Finish(pixels, width, h, cap, tall, key);
+        }
+
+        // -----------------------------------------------------------------------------------
+        // PLAQUE: the game's own name, carved into a framed board.
+        // -----------------------------------------------------------------------------------
+
+        /// <summary>
+        /// How much of the plaque's height the frame band takes.
+        ///
+        /// ⚠️ 0.11, AND IT IS A FRACTION BECAUSE A FRAME IS A PROPORTION OF ITS BOARD. This is the
+        /// opposite call from <see cref="SoftCorner"/>, which is a constant precisely because a
+        /// cut-out has one pair of scissors; a frame is a piece of moulding, and a wide board with
+        /// a hairline round it reads as a printed border rather than as a made object. On the
+        /// login card's 146-unit plaque that is 16 units, which is about the width of one letter's
+        /// stroke in `TUMP.png` and therefore the width the mark itself makes look right.
+        /// </summary>
+        private const float FrameBand = 0.11f;
+
+        /// <summary>
+        /// A framed wooden board, with the field recessed inside the frame.
+        ///
+        /// ⚠️⚠️ SIX LAYERS, AND THE ONE THAT MAKES IT A FRAME RATHER THAN AN OUTLINE IS THE
+        /// FOURTH. 🧑 2026-09-02, with a crop of the login wordmark: **"can u add a pretty outline
+        /// for this too"**, *"one that reads as wooden frame or some shit?"*, **"can u give it a
+        /// wooden texture too the tump box"**.
+        ///
+        /// Outward to inward:
+        ///
+        ///   1. a **cast shadow** in the bottom `Drop` units, so the board sits ON the card,
+        ///   2. a **bright keyline** at the silhouette, which is the lit edge of every surface he
+        ///      authored (`WoodCraft`'s header samples it on all of them),
+        ///   3. a **dark rim** just inside it,
+        ///   4. the **frame band**: a lit ledge running all the way round, brightest along its own
+        ///      top edge and darkest along its bottom, so the moulding has a direction,
+        ///   5. the **inner shadow the frame casts onto the field**, three units, strongest at the
+        ///      top where the light is coming from, and
+        ///   6. the **field**: darker wood with a one-dimensional grain, which is where the
+        ///      wordmark is drawn.
+        ///
+        /// ⚠️⚠️ LAYER 5 IS THE WHOLE ARGUMENT AND IT IS ONE GRADIENT. Without it, layers 4 and 6
+        /// are two flat browns meeting at a hard line, which is exactly what an "outline" looks
+        /// like and exactly what he was pointing at. **A shadow falling from the frame onto the
+        /// field is what says the field is BEHIND the frame**, and that single relationship is the
+        /// difference between a border and a piece of joinery.
+        ///
+        /// ⚠️ AND THE FIELD IS DARKER THAN THE FRAME RATHER THAN LIGHTER. `TUMP.png` is about 60
+        /// per cent warm off-white letters carrying their own baked dark outline (`SignInScreen
+        /// .BuildLogo` has the sampling), so the mark needs a dark ground or its outline and its
+        /// faces collapse into one value. That is the finding that decided `Surface.Sign` and it
+        /// is unchanged; this only adds the frame around it.
+        ///
+        /// ⚠️ NO POSE. A plaque is furniture: it is not pressable, it has no hover and it has no
+        /// disabled state, so it takes no `Pose` parameter and cannot acquire one by accident.
+        /// `CLAUDE.md` § 6.3: a control that does nothing must not look pressable.
+        /// </summary>
+        private static Sprite PaintPlaque(int h, string key)
+        {
+            int cap = SoftCorner + Halo + Drop + 2;
+            int width = (cap * 2) + 4;
+            var pixels = new Color[width * h];
+
+            int face = h - Drop;
+
+            // ⚠️ THE KEYLINE AND RIM ARE `PaintAction`'S OWN RATIOS (5 and 4 per cent), which are
+            // `BUTTON LONG.png`'s measured 7 px and 6 px at 135. One sampling of his art, two
+            // surfaces; re-deriving them here is how the two drift apart.
+            int keyline = Mathf.Max(2, Mathf.RoundToInt(face * 0.05f));
+            int rim = Mathf.Max(2, Mathf.RoundToInt(face * 0.04f));
+            int frame = Mathf.Max(6, Mathf.RoundToInt(face * FrameBand));
+            int well = Mathf.Max(3, Mathf.RoundToInt(face * 0.03f));
+
+            int outer = keyline + rim;
+            int inner = outer + frame;
+
+            var baseColour = UiTheme.WoodFace;
+
+            var keyColour = WoodCraft.Shift(baseColour, 1.34f, 0.90f);
+            var rimColour = WoodCraft.Shift(baseColour, 0.34f, 1.10f);
+            var frameTop = WoodCraft.Shift(baseColour, 1.14f, 0.94f);
+            var frameFloor = WoodCraft.Shift(baseColour, 0.66f, 1.08f);
+
+            // ⚠️⚠️⚠️ THE FIELD IS THE ROAD, NOT WOOD, AND 🧑 REJECTED THE WOODEN ONE ON SIGHT:
+            // **"is this update login bcz its ugly (the tump logo bg wtf is that)"**, 2026-09-02,
+            // with a crop of this exact object. It was `UiTheme.WoodSlot`, so the plaque was a
+            // brown frame around a brown field, and what he photographed reads as **a picture
+            // frame with a brown photograph in it** rather than as a sign.
+            //
+            // ⚠️⚠️ A FRAME NEEDS SOMETHING THAT IS NOT ITSELF INSIDE IT. `WoodSlot` `36180c`
+            // against the frame's `WoodFace` `793e1f` is one hue at two values, so layer 5's
+            // inner shadow was the ONLY thing separating them and it is three units wide. Two
+            // browns a shadow apart is the same fault § 122.11 records one screen out (a wooden
+            // card on a wooden backdrop, *"background pretty ugly can we not use brown at all"*),
+            // arriving inside a single control.
+            //
+            // ⚠️ AND IT IS THE ASPHALT `CLAUDE.md` § 6.5 ALREADY NAMES AS A SURFACE OF THIS DESIGN
+            // SYSTEM, at the same values `ConvertedCharacterSelect.VerticalBackdrop` uses: hue
+            // about 35 at under 15 per cent saturation. **`TUMP.png` is off-white letters carrying
+            // their own baked dark outline**, and on near-black those letters are the brightest
+            // thing on the login card by a wide margin, which is what a painted sign at night
+            // actually looks like. Every channel still has more red in it than blue, which is
+            // § 6.4's one-line test.
+            var field = new Color(0.088f, 0.081f, 0.070f);
+
+            for (int y = 0; y < h; y++)
+                for (int x = 0; x < width; x++)
+                {
+                    float depth = Depth(x, y - Drop, width, face, SoftCorner);
+                    float shadowDepth = Depth(x, y, width, face, SoftCorner);
+
+                    Color c;
+
+                    if (depth > 0.0f)
+                    {
+                        int upFromFace = y - Drop;
+                        int downFromTop = (face - 1) - upFromFace;
+                        float alongFace = face <= 1 ? 0.0f : upFromFace / (float)(face - 1);
+
+                        if (depth <= keyline)
+                        {
+                            c = Fade(keyColour, depth);
+                        }
+                        else if (depth <= outer)
+                        {
+                            c = rimColour;
+                        }
+                        else if (depth <= inner)
+                        {
+                            // The moulding: a full-height ramp, like every board he authored.
+                            c = Color.Lerp(frameFloor, frameTop, alongFace);
+
+                            // ⚠️ THE VARNISH BAND SITS A QUARTER DOWN FROM THE TOP, which is where
+                            // it sits in every one of his slabs. A gloss line, not a shine.
+                            float band = 1.0f - Mathf.Abs(alongFace - 0.76f) / 0.13f;
+                            if (band > 0.0f) c = WoodCraft.Lift(c, band * 0.10f);
+
+                            // The lit crest along the very top of the moulding, and the dark lip
+                            // along the very bottom: the two edges that say which way is up.
+                            if (downFromTop < keyline)
+                                c = Color.Lerp(c, keyColour,
+                                               0.6f * (1.0f - (downFromTop / (float)keyline)));
+                            else if (upFromFace < keyline)
+                                c = Color.Lerp(c, rimColour,
+                                               0.7f * (1.0f - (upFromFace / (float)keyline)));
+                        }
+                        else
+                        {
+                            c = field;
+
+                            // ⚠️⚠️ ONE-DIMENSIONAL. `WoodCraft`'s own note: *"Two-dimensional
+                            // noise reads as dirt."* Grain runs along the plank, so the sample is
+                            // on x alone and the same value is written down the whole column.
+                            // `PaperCraft.Fibre` samples both axes because paper fibre is genuinely
+                            // two-dimensional; using the wrong one here would make the sign mouldy.
+                            float grain = Mathf.PerlinNoise(x * 0.35f, 0.0f) - 0.5f;
+                            c = WoodCraft.Lift(c, grain * 0.030f);
+
+                            // ⚠️⚠️ THE FRAME'S SHADOW FALLING INTO THE FIELD. This is the layer
+                            // that makes the thing a frame rather than an outline: see the method
+                            // header. It is strongest at the TOP, because that is where the light
+                            // is, and it wraps the sides at half strength so the recess has walls.
+                            float intoWell = Mathf.Clamp01((depth - inner) / well);
+                            float fromTop = downFromTop < inner + well
+                                ? Mathf.Clamp01(1.0f - ((downFromTop - inner) / (float)well))
+                                : 0.0f;
+
+                            float dark = Mathf.Max(fromTop, (1.0f - intoWell) * 0.5f);
+                            if (dark > 0.0f)
+                                c = Color.Lerp(c, UiTheme.WoodDark, dark * 0.7f);
+                        }
+                    }
+                    else if (shadowDepth > 0.0f)
+                    {
+                        // ⚠️ THE SAME CONTACT SHADOW `PaintAction` ARRIVED AT: cubed, so two thirds
+                        // of the alpha is spent in the first third of the drop. A squared falloff
+                        // over ten units is a blur, and on cream a blur is a smudge
+                        // (🧑: *"this still looks ugly, especially the shadow"*).
+                        int below = Drop - y;
+                        float reach = below <= 0 ? 1.0f : 1.0f - (below / (float)(Drop + 1));
+                        reach = Mathf.Clamp01(reach);
+
+                        var shade = WoodCraft.Shift(baseColour, 0.30f, 0.55f);
+                        shade.a = 0.50f;
+
+                        c = Fade(shade, shadowDepth);
+                        c.a *= reach * reach * reach;
+                    }
+                    else
+                    {
+                        c = Color.clear;
+                    }
+
+                    pixels[(y * width) + x] = c;
+                }
+
+            // ⚠️ NOT `tall`, EVER. A plaque is sliced horizontally only, so its full-height ramp,
+            // its crest and its lip arrive exactly as painted and only the flat middle stretches.
+            // Slicing it on four sides would repeat the frame's own gradient down the sides.
+            return WoodCraft.Finish(pixels, width, h, cap, false, key);
         }
 
         // -----------------------------------------------------------------------------------

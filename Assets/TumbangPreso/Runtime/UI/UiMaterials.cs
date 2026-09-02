@@ -124,6 +124,20 @@ namespace TumbangPreso.UI
         ///
         /// ⚠️ IT IS DRAWN OUTSIDE THE CONTROL, not inside it, so it never eats a pixel of the
         /// label. See <see cref="FocusRing"/>.
+        ///
+        /// ⚠️⚠️⚠️ NOTHING CALLS THIS ANY MORE AND THAT IS DELIBERATE, NOT ROT. `FocusRing` stopped
+        /// drawing a graphic on 2026-09-02 after 🧑 rejected it in three messages, the last of them
+        /// **"can u remvoe thhat black line taht shows up in everywhere? i really dont want to have
+        /// that"**. `docs/TODO.md` § 122.1 has the three structural faults, and the first of them
+        /// is in this method: **the sprite is a hard-edged rectangle with square corners**, so
+        /// around a pill it is a box near a button and around a chamfered slab it is a box near a
+        /// slab. Two colours were rejected on it before anybody looked at the shape.
+        ///
+        /// ⚠️ IT IS KEPT BECAUSE THE ARGUMENT ABOVE IT IS STILL TRUE. A focus indicator may not be
+        /// a colour change alone; what replaced this is the control's own POSE (a lift, a scale, a
+        /// grown shadow, a lightened recess), which is a shape change and satisfies the same rule.
+        /// **If a ring is ever wanted again it needs a rounded silhouette that follows its
+        /// control**, and this is the method to fix rather than to resurrect.
         /// </summary>
         public static Sprite Ring(Color colour, int thickness = 3)
         {
@@ -457,52 +471,58 @@ namespace TumbangPreso.UI
     }
 
     /// <summary>
-    /// The ring that says which control the keyboard is on.
+    /// What says which control the keyboard is on.
     ///
-    /// ⚠️⚠️ IT LISTENS RATHER THAN BEING TOLD, so a screen cannot forget to clear it. It watches
-    /// `EventSystem.currentSelectedGameObject` and its own pointer state; a screen that had to
-    /// call `Show`/`Hide` would be a list of call sites, and `ScreenTakeover`'s header is this
-    /// project's own note about what a list somebody will add a screen without costs.
+    /// ⚠️⚠️⚠️ IT DRAWS NOTHING NOW. THERE IS NO RING, ON ANY CONTROL, ON ANY SCREEN. 🧑
+    /// 2026-09-02, after a build in which this component was already amber-free and drawing
+    /// `UiTheme.WoodMid`: *"i dont like the outline at call can we rtremove that"*, **"ye wtf is
+    /// that black outline for"**, and then, unprompted and about the whole front end, **"can u
+    /// remvoe thhat black line taht shows up in everywhere? i really dont want to have that"**.
     ///
-    /// ⚠️ IT DRAWS OUTSIDE THE CONTROL. A ring drawn inside eats four units off every label on the
-    /// screen the moment anything is focused, which moves text under the player's eye.
+    /// ⚠️⚠️ THE CLASS IS KEPT AND ONLY ITS BODY CHANGED, WHICH IS THE POINT. There are eighteen
+    /// `FocusRing.Attach` call sites across five screens, and deleting the type would have meant
+    /// eighteen edits and a `game-ui-design` `missing-focus-visible` regression on every one of
+    /// them: a keyboard or pad user with no indicator at all cannot tell where they are, and that
+    /// skill's `controller-navigation-deadend` rates it critical. **One file changes; every screen
+    /// keeps a focus state and loses the mark he was pointing at.**
     ///
-    /// ⚠️ AND IT IS NOT A RAYCAST TARGET. It sits over the control it belongs to; catching a click
-    /// would make every focused button unpressable, which is the worst possible bug to ship on a
-    /// focus indicator.
-    /// </summary>
-    /// <summary>
-    /// ⚠️ IT IS NOT A POINTER HANDLER ANY MORE. It implemented `IPointerEnterHandler` and
-    /// `IPointerExitHandler` to light on hover, and `Update`'s note records why that had to stop.
-    /// A control's hover is its own pose; this says where the KEYBOARD is.
+    /// ⚠️⚠️ SO FOCUS BORROWS THE CONTROL'S OWN POSE INSTEAD OF DRAWING A SECOND OBJECT OVER IT.
+    /// `docs/TODO.md` § 120.1 gave every paper control an eased hover: the face lifts two units,
+    /// the object scales 2.5 per cent, the cast shadow grows, and on a `Tray` the recess LIGHTENS
+    /// (`PaperCraft.PaintTray`, which lerps 70 per cent of the way from `PaperWarm` to `Paper`).
+    /// **Every one of those is a visible focus indicator that already exists, is already warm, is
+    /// already in the palette, and cannot draw a line anywhere.** A ring was a third silhouette on
+    /// a screen whose entire complaint was too many rectangles.
+    ///
+    /// ⚠️⚠️ AND THE THREE FAULTS THE RING HAD ARE ALL STRUCTURAL RATHER THAN CHROMATIC, which is
+    /// why retuning the colour a third time would not have worked either. `UiMaterials.Ring`
+    /// paints a **hard-edged rectangle** with square corners: around a pill it is a box near a
+    /// button, around a chamfered `Action` it is a box near a slab, and at 3 px of `5a2f14` on
+    /// `f4ecdd` it reads as pure black at any size a player actually sees. Two colours have now
+    /// been rejected on it (`Amber` in § 121.2b, `WoodMid` here) and the shape was the constant.
+    ///
+    /// ⚠️ THE `Spread` AND `Colour` FIELDS SURVIVE AS DEAD PARAMETERS ON PURPOSE. Every call site
+    /// passes a spread, they compile untouched, and a diff of eighteen files to delete an argument
+    /// is a diff nobody can review for anything else. `Colour` is what a future ring would use if
+    /// this decision is ever reversed, and the reversal would then be inside this class.
     /// </summary>
     public sealed class FocusRing : MonoBehaviour
     {
-        private Image _ring;
-
-        /// <summary>How far outside the control the ring sits.</summary>
+        /// <summary>⚠️ UNUSED. See the class note: it is kept so the eighteen call sites compile
+        /// unchanged.</summary>
         public float Spread = 5.0f;
 
-        /// <summary>
-        /// The focus colour.
-        ///
-        /// ⚠️⚠️ IT WAS `UiTheme.Amber` AND HE REJECTED IT TWICE IN ONE SITTING, ON TWO DIFFERENT
-        /// CONTROLS. 🧑 2026-09-02: *"orange outline when i hover over start match is ugly"*, then,
-        /// with a crop of the login screen's USERNAME box, **"i dont like the orange outline for a
-        /// lot of things"**.
-        ///
-        /// **It is the same inversion `PaperCraft.Surface.Live` and `Surface.Sign` both already
-        /// made, arriving one control later.** `docs/TODO.md` § 118.4 says *amber is the marker*,
-        /// and that rule was written for a WOODEN front end where amber was the one LIGHT thing on
-        /// a dark screen. On cream it is the reverse: `ffba00` on `f4ecdd` measures **1.46:1**
-        /// (`tools/sample_png.js contrast ffba00 f4ecdd`), so an amber ring is a high-chroma shape
-        /// that carries almost no value difference from the sheet it is drawn on. It shouts and it
-        /// does not read, which is the worst pair of properties a focus indicator can have.
-        ///
-        /// ⚠️ `WoodMid` MEASURES **9.20:1** AGAINST THE SAME SHEET and introduces no colour that is
-        /// not already the ink of this front end. On cream the marker is the one DARK thing.
-        /// </summary>
+        /// <summary>⚠️ UNUSED. Kept for the same reason as <see cref="Spread"/>, and because it
+        /// records which colour a ring would take if one is ever wanted again. Two have been
+        /// rejected on this control (`Amber`, then this) and the SHAPE was the fault both
+        /// times.</summary>
         public Color Colour = UiTheme.WoodMid;
+
+        private PaperButton _button;
+        private PaperSkin _skin;
+        private InputField _field;
+        private bool _lit;
+        private bool _resolved;
 
         public static FocusRing Attach(GameObject target, float spread = 5.0f)
         {
@@ -516,63 +536,69 @@ namespace TumbangPreso.UI
             return ring;
         }
 
-        private void Start()
+        /// <summary>
+        /// ⚠️ RESOLVED LAZILY RATHER THAN IN `Awake`, because `Attach` runs during a screen's build
+        /// and `PaperButton` is very often added on the line AFTER it (see
+        /// `LobbyChrome.BuildSkillsRow` and `SignInScreen.BuildColumn`). Asking in `Awake` would
+        /// find null on exactly the controls this is for.
+        /// </summary>
+        private void Resolve()
         {
-            var go = new GameObject("FocusRing", typeof(RectTransform), typeof(Image));
-            go.transform.SetParent(transform, false);
+            if (_resolved) return;
+            _resolved = true;
 
-            _ring = go.GetComponent<Image>();
-            _ring.sprite = UiMaterials.Ring(Colour);
-            _ring.type = Image.Type.Sliced;
-            _ring.color = Colour;
-            _ring.raycastTarget = false;
+            _button = GetComponent<PaperButton>();
+            _skin = GetComponent<PaperSkin>();
+            _field = GetComponent<InputField>();
+        }
 
-            MenuKit.Stretch(_ring.rectTransform, Spread);
-
-            // ⚠️ LAST, so it draws over the control's own label rather than under it. A ring
-            // behind an opaque plate is a ring nobody sees.
-            go.transform.SetAsLastSibling();
-            _ring.enabled = false;
+        private void OnDisable()
+        {
+            // ⚠️ A CONTROL SWITCHED OFF WHILE FOCUSED NEVER GETS A DESELECT, which is the same
+            // fault `PaperButton.OnDisable` records for the pointer and the reason § 121.2's stuck
+            // hover existed at all. Releasing here means a drawer that closes over the focused
+            // field cannot leave it lit.
+            if (_lit) Release();
+            _lit = false;
         }
 
         private void Update()
         {
-            if (_ring == null) return;
+            Resolve();
 
             var events = UnityEngine.EventSystems.EventSystem.current;
-            bool selected = events != null && events.currentSelectedGameObject == gameObject;
+            bool focused = events != null && events.currentSelectedGameObject == gameObject;
 
             // ⚠️ AN INPUT FIELD IS "FOCUSED" WHEN IT IS FOCUSED, WHICH IS NOT THE SAME AS BEING
             // SELECTED. Unity keeps a field selected after it is deactivated, so asking the
-            // EventSystem alone leaves a ring on a field the player has finished typing in.
-            var field = GetComponent<InputField>();
-            if (field != null) selected = field.isFocused;
+            // EventSystem alone leaves a field lit after the player has finished typing in it.
+            if (_field != null) focused = _field.isFocused;
 
-            // ⚠️⚠️ HOVER NO LONGER LIGHTS THE RING, AND THAT IS THE WHOLE OF 🧑'S REPORT ON IT.
-            // 2026-09-02, with a crop of the lobby: *"orange outline when i hover over start match
-            // is ugly"*. Two things were wrong and only one of them was the colour:
-            //
-            // - **A rounded-rect ring around a chamfered slab.** `UiMaterials.Ring` draws one
-            //   silhouette and the control it was wrapped around draws another, so the "outline"
-            //   was a box near a button rather than an edge on one.
-            // - **It was doing a job something else already does.** `docs/TODO.md` § 120.1 gave
-            //   every paper control an eased hover: the face lifts two units, the object scales
-            //   2.5 per cent and the cast shadow grows. A second, louder hover indicator on top of
-            //   that is `CLAUDE.md` § 6.2 question 3 (*what is on screen that the player does not
-            //   need right now*) answered wrongly.
-            //
-            // ⚠️ THE RING STAYS FOR REAL FOCUS, WHICH IS THE ONLY THING IT WAS EVER NEEDED FOR.
-            // `game-ui-design`'s `missing-focus-visible` and its controller-navigation pattern
-            // both ask for a visible indicator a KEYBOARD or PAD user can find, and neither of
-            // those emits a pointer event at all. Deleting the component would have taken that
-            // with it, which is why this is a narrowing rather than a removal.
-            //
-            // ⚠️ AND A TEXT FIELD KEEPS IT UNCONDITIONALLY, because a focused field has no pose of
-            // its own: `PaperCraft.Surface.Tray` is a recess in every state, so without the ring
-            // there is nothing at all saying which of two boxes your typing goes into. It is the
-            // one place the amber reads well in his own screenshot of the login screen.
-            bool want = selected;
-            if (_ring.enabled != want) _ring.enabled = want;
+            if (focused == _lit) return;
+            _lit = focused;
+
+            if (focused) Hold();
+            else Release();
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ IT ASKS `PaperButton` FIRST AND WRITES `PaperSkin` ONLY WHEN THERE IS NO BUTTON,
+        /// AND THAT ORDER IS THE WHOLE OF NOT SHIPPING § 119.9 ROW 1 AGAIN. `PaperButton.Refresh`
+        /// writes the pose from its own pointer state every time the pointer moves; a second
+        /// writer poking `SetPose` behind its back would be two owners of one property, and the
+        /// visible result is a control that flickers back to rest the moment the mouse crosses it.
+        /// **The button owns its pose, so focus is told to the button.**
+        /// </summary>
+        private void Hold()
+        {
+            if (_button != null) { _button.SetFocused(true); return; }
+            if (_skin != null) _skin.SetPose(PaperCraft.Pose.Hover);
+        }
+
+        private void Release()
+        {
+            if (_button != null) { _button.SetFocused(false); return; }
+            if (_skin != null) _skin.SetPose(PaperCraft.Pose.Rest);
         }
     }
 }

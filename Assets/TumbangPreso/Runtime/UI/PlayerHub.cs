@@ -34,7 +34,13 @@ namespace TumbangPreso.UI
     /// </summary>
     public sealed class PlayerHub : MonoBehaviour
     {
-        private enum Tab { Profile, Friends, Loadout, Career, Matches, Account }
+        /// <summary>
+        /// ⚠️ `Loadout` IS GONE. It moved to the fighter picker on 2026-09-02
+        /// (🧑: **"put loadout here, it makes no sense to be in profile"**); `BuildTabColumn`
+        /// carries both sides of that decision and `ConvertedCharacterSelect.SlotView` is where
+        /// the feature lives now.
+        /// </summary>
+        private enum Tab { Profile, Friends, Career, Matches, Account }
 
         private const int HistoryPageSize = 20;
 
@@ -101,7 +107,18 @@ namespace TumbangPreso.UI
         private const float TabHeight = 58.0f;
 
         /// <summary>Six tabs and the five gaps between them.</summary>
-        private const float TabsHeight = (TabHeight * 6.0f) + (TabGap * 5.0f);
+        /// <summary>
+        /// The tab column, added up.
+        ///
+        /// ⚠️⚠️ FIVE, NOT SIX, SINCE 2026-09-02, AND THIS NUMBER IS WHY THE COUNT IS ARITHMETIC
+        /// RATHER THAN A CONSTANT. LOADOUT left the hub for the fighter picker on 🧑's instruction
+        /// (**"put loadout here, it makes no sense to be in profile"**); `BuildRail` sizes the card
+        /// from `RailPad + IdentityHeight + RailBlockGap + TabsHeight + RailBlockGap +
+        /// CloseHeight`, so a column that lost a tab without this line losing one would have left
+        /// **68 units of bare cream** under CLOSE. That is *"i dont want huge empty space"*
+        /// (§ 121.10 row 5) coming straight back on the same card, one tab later.
+        /// </summary>
+        private const float TabsHeight = (TabHeight * 5.0f) + (TabGap * 4.0f);
 
         private const float TabGap = 10.0f;
 
@@ -187,8 +204,9 @@ namespace TumbangPreso.UI
         private GameMode _mode = SceneFlow.SelectedMode;
         private int _page;
         private List<MatchRecord> _shown = new List<MatchRecord>();
-        private int _loadoutHeroIndex;
-        private readonly Dictionary<string, int> _loadoutViews = new Dictionary<string, int>();
+        // ⚠️ `_loadoutHeroIndex` AND `_loadoutViews` LIVED HERE AND ARE DELETED WITH THE TAB
+        // THEY BACKED. See the long note above `BuildAchievementsRows` for what moved where and
+        // for the one behaviour (browsing a locked variant) that deliberately did not come with it.
         private bool _deleteArmed;
         private string _notice = "";
 
@@ -658,11 +676,30 @@ namespace TumbangPreso.UI
             layout.childForceExpandHeight = false;
             layout.childAlignment = TextAnchor.UpperCenter;
 
+            // ⚠️⚠️⚠️ LOADOUT IS NOT IN THIS LIST ANY MORE AND THE PARAGRAPH ABOVE ARGUING FOR IT
+            // IS KEPT, BECAUSE BOTH DECISIONS WERE HIS AND THE SECOND ONE ONLY MAKES SENSE NEXT
+            // TO THE FIRST. On 2026-09-01 he could not find the ability builds (*"i also dont know
+            // hhow to navigate to loadouts section"*, *"that means if i cnat ifnd it, no one
+            // owuld"*) and they became a tab here. On 2026-09-02, having found them:
+            // **"put loadout here, it makes no sense to be in profile"**, with a crop of CHOOSE
+            // YOUR HERO, and *"there were button updates can u put loadouts in the choose ur hero
+            // screen too and shit"*.
+            //
+            // ⚠️⚠️ AND HE IS RIGHT FOR THE REASON THE NOTE ABOVE ALREADY GIVES. § 6.3's rule is
+            // *fix the door or MOVE it*, never add a second one, and this tab was a door moved to
+            // the wrong room: a build belongs to a HERO, and the screen where a hero is chosen and
+            // its two skills are described is the fighter picker. Making it a tab on the account
+            // screen fixed findability and left the player equipping a build for a character they
+            // had to re-select on a stepper to reach.
+            //
+            // ⚠️ NOTHING IS DELETED, WHICH IS THE OTHER HALF OF THE RULE. Every option, every
+            // lock, every challenge counter and `HeroBuildRules` itself are untouched and are now
+            // reached from `ConvertedCharacterSelect.SlotView` and `CycleSlot`. **A redesign that
+            // quietly loses a feature is a regression wearing a better layout** (§ 121.6 item 4).
             var order = new[]
             {
                 (Tab.Profile, "PROFILE"),
                 (Tab.Friends, "FRIENDS"),
-                (Tab.Loadout, "LOADOUT"),
                 (Tab.Career, "CAREER"),
                 (Tab.Matches, "MATCHES"),
                 (Tab.Account, "ACCOUNT"),
@@ -857,28 +894,17 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>
-        /// Opens the hub on LOADOUT, for the lobby card's YOUR SKILLS row.
+        /// ⚠️⚠️ `OpenLoadout` LIVED HERE AND IS DELETED. It was the lobby YOUR SKILLS row's deep
+        /// link into the LOADOUT tab; that row opens `ConvertedCharacterSelect` now
+        /// (`ConvertedMatchSetup.OpenLoadout`), because 🧑 asked for the feature to move:
+        /// **"put loadout here, it makes no sense to be in profile"**, 2026-09-02.
         ///
-        /// ⚠⚠ IT IS A DEEP LINK INTO THIS SCREEN AND NOT A SECOND SCREEN, WHICH IS THE
-        /// DISTINCTION `CLAUDE.md` § 6.3 ACTUALLY DRAWS. The rule bans a second DOOR to a
-        /// destination that is hard to find; the loadout has exactly one destination, this tab,
-        /// and the lobby row lands on it rather than beside it. 🧑 2026-09-01, twice: *"i also dont
-        /// know hhow to navigae to loadouts section"*, then *"btw fix ui for loadouts I oculdnt
-        /// find it, place button for it whereveer it should belonng"*. It belongs under the
-        /// character it changes.
-        ///
-        /// ⚠️ AND THE MODE IS TAKEN FROM THE LOBBY, not from whatever the career tab was last
-        /// left on. A player pressing this from a Hero Strike lobby means the kit they are about
-        /// to take into a match.
+        /// ⚠️ ITS OWN ARGUMENT SURVIVED THE MOVE AND IS WORTH KEEPING. It read: *"the loadout has
+        /// exactly one destination and the lobby row lands ON it rather than beside it"*, and
+        /// *"it belongs under the character it changes"*. **Both are still true; the destination
+        /// changed.** The picker is more literally "under the character it changes" than a tab on
+        /// the account screen ever was.
         /// </summary>
-        public void OpenLoadout()
-        {
-            _mode = SceneFlow.SelectedMode;
-            _root.SetActive(true);
-            VisibleChanged?.Invoke(true);
-            Show(Tab.Loadout);
-        }
-
         private void Close()
         {
             _deleteArmed = false;
@@ -950,7 +976,6 @@ namespace TumbangPreso.UI
             {
                 case Tab.Profile: BuildProfileTab(); break;
                 case Tab.Friends: BuildFriendsTab(); break;
-                case Tab.Loadout: BuildLoadoutTab(); break;
                 case Tab.Career: BuildCareerTab(); break;
                 case Tab.Matches: BuildMatchesTab(); break;
                 case Tab.Account: BuildAccountTab(); break;
@@ -1462,8 +1487,13 @@ namespace TumbangPreso.UI
                 Rate(_list, "Clutch rate", ProfileRules.ClutchRate(totals), totals.ComebackChances);
             }
 
+            // ⚠️ THE ABILITY BUILD ROWS WERE CALLED HERE TOO AND THE CALL IS GONE WITH THEM. This
+            // was the SECOND place they were drawn, which is § 114.12's finding from the other
+            // side: they were on the career tab AND on their own tab at once, so the same twelve
+            // rows appeared in two destinations and neither one was the answer to "where is the
+            // loadout". They are on the fighter picker now and nowhere else, which is § 6.3's
+            // *one door* stated as a fact about the code rather than about the navigation.
             BuildMasteryRows(profile);
-            BuildAbilityBuildRows(profile);
             BuildAchievementsRows(profile);
 
             UiRows.Gap(_list, 40.0f);
@@ -1516,164 +1546,40 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>
-        /// The ability builds, one collapsible group, one row per hero and slot.
+        /// ⚠️⚠️⚠️ `BuildLoadoutTab` AND `BuildAbilityBuildRows` LIVED HERE AND ARE DELETED. The
+        /// ability builds moved to the fighter picker on 2026-09-02, on 🧑's instruction:
+        /// **"put loadout here, it makes no sense to be in profile"**, with a crop of CHOOSE YOUR
+        /// HERO, and *"there were button updates can u put loadouts in the choose ur hero screen
+        /// too and shit"*. `ConvertedCharacterSelect.SlotView` and `CycleSlot` are the feature
+        /// now; `BuildTabColumn` carries the argument and `docs/TODO.md` § 122.5 is the entry.
         ///
-        /// ⚠️⚠️ IT IS HERE RATHER THAN BEHIND A BUTTON BECAUSE THE BUTTON OPENED A
-        /// SCREEN NOBODY COULD SEE. `docs/TODO.md` 108.2: `HeroLoadoutScreen` built a `Canvas` at
-        /// `sortingOrder` 95, and the hub that opens it is a 93 per cent scrim at 500. **The screen
-        /// was constructed correctly, laid out correctly, and drawn underneath the thing that
-        /// opened it**, so CUSTOMIZE LOADOUT read as a dead button. It also used
-        /// `AddComponent&lt;Canvas&gt;()` rather than `MenuKit.BuildCanvas`, so it had no
-        /// `overrideSorting`, no `AspectSafeCanvas` and no guaranteed `EventSystem`.
+        /// ⚠️⚠️ NOTHING IN THE CORE MOVED AND NOTHING WAS LOST, WHICH IS THE CLAIM WORTH BEING
+        /// ABLE TO CHECK. `HeroLoadoutRules`, `HeroBuildRules`, every variant, every unlock
+        /// challenge and every counter are untouched in
+        /// `Packages/com.tumbangpreso.core/Runtime/HeroLoadout.cs`, and the new caller reads and
+        /// writes through the same four methods this one did: `VariantsFor`, `RowFor`, `Equipped`
+        /// and `IsUnlocked`. **Only the screen changed.**
         ///
-        /// ⚠️⚠️ AND ITS EQUIP BUTTON HAD NO LISTENER AT ALL. Every row built a `Button`,
-        /// wrote SELECT or EQUIPPED on it, and never called `onClick.AddListener`, because there
-        /// was nowhere for a choice to go. `HeroBuildRules` is that store now and these rows write
-        /// through it.
+        /// ⚠️ THE TWO THINGS THAT DID NOT SURVIVE ARE NAMED RATHER THAN LEFT TO BE NOTICED:
         ///
-        /// ⚠️ A STEPPER PER SLOT RATHER THAN A CARD PER VARIANT. Six heroes times two slots
-        /// times two options is 24 cards, which is `docs/TODO.md` 92's *"theres liek 20 shits at
-        /// once"*. Twelve rows, each naming the ability it changes and what the trade costs, is the
-        /// same information in the shape the rest of this screen is already in.
+        ///   * **The hero stepper.** It existed so this tab could ask "which hero?" — a question
+        ///     the picker has already answered by construction, because the hero on screen IS the
+        ///     selection. That is the whole reason the move shortens the journey from five presses
+        ///     to two (`ConvertedMatchSetup.OpenLoadout`).
+        ///   * **`_loadoutViews`, the browse cursor.** A stepper needs somewhere to hold "the
+        ///     variant I am looking at but have not equipped"; a two-state toggle on the ability
+        ///     row itself has no cursor, so what is drawn is always what is equipped.
+        ///     `ConvertedCharacterSelect.SlotView`'s header carries that argument, and the honest
+        ///     consequence is that a locked variant can no longer be browsed — it is NAMED on the
+        ///     row with its challenge and its running count instead, which is strictly more
+        ///     information in one fewer press.
         ///
-        /// ⚠️ HERO STRIKE ONLY. `docs/VISION.md` 1.1: Classic has no kit and never gets one,
-        /// so a build row on the Classic career tab would be a control for a thing that mode does
-        /// not have.
+        /// ⚠️ AND THE CLASSIC BRANCH WENT WITH IT, correctly. This tab needed a sentence
+        /// explaining that Classic has no kit (`docs/VISION.md` § 1.1) because a tab that vanishes
+        /// in one mode reads as a lost feature. The picker has no such problem: in Classic it
+        /// draws trait meters instead of ability rows and always has, so there is nothing to
+        /// explain away.
         /// </summary>
-        /// <summary>
-        /// LOADOUT: the whole tab, and the only place in the game an ability build is equipped.
-        ///
-        /// ⚠️⚠️ THE ONE THING ON THIS TAB IS **WHICH READING OF THIS HERO'S TWO SKILLS AM I
-        /// TAKING INTO THE MATCH**, and the tab exists because that question used to be asked
-        /// four presses down inside a collapsed group nobody opened. `BuildTabBar` carries
-        /// 🧑's report in full. Everything on it is one hero: pick the hero on the first row,
-        /// read the two skills under it, and every other hero is one press of the same stepper
-        /// away. Six heroes times two slots times two readings is 24 cards if they are all drawn
-        /// at once, which is `docs/TODO.md` § 92's *"theres liek 20 shits at once"*.
-        ///
-        /// ⚠️ IT IS NOT GATED ON HAVING PLAYED. A build is a choice you make while LEARNING a
-        /// hero, and the challenge that unlocks the second reading is counted in Practice
-        /// (§ 114.16), so a fresh account is exactly who this screen is for.
-        /// </summary>
-        private void BuildLoadoutTab()
-        {
-            var profile = GameServices.Career?.Profile;
-
-            // ⚠⚠ CLASSIC GETS A SENTENCE AND NOT A MISSING TAB. `docs/VISION.md` § 1.1: Classic
-            // has no kit and never gets one, so there is genuinely nothing to equip here. A tab
-            // that VANISHES in one mode is worse than one that explains itself, though: the
-            // player who saw it yesterday now believes the game lost a feature, and § 6.3's *"a
-            // dead end is a bug"* applies to a screen that says nothing just as much as to a
-            // button that does nothing. So it says which mode owns the feature and hands over the
-            // one control that changes modes.
-            if (_mode != GameMode.HeroStrike)
-            {
-                UiRows.Section(_list, "Hero Strike only",
-                               "Classic is the street game and has no powers to build. That is the mode, not a gap.");
-                UiRows.Gap(_list, 24.0f);
-                UiRows.DropdownRow(_list, "Mode", new[] { "CLASSIC", "HERO STRIKE" }, 0,
-                    v =>
-                    {
-                        _mode = v == 1 ? GameMode.HeroStrike : GameMode.Classic;
-                        Show(Tab.Loadout);
-                    }, "Switch to Hero Strike to build a kit.");
-
-                SetFooter("Classic keeps it simple. Hero Strike is where the ceiling goes up.", "");
-                return;
-            }
-
-            BuildAbilityBuildRows(profile);
-            SetFooter("The equipped build is public in a lobby, so nobody is surprised by it.", "");
-        }
-
-        private void BuildAbilityBuildRows(PlayerProfile profile)
-        {
-            if (_mode != GameMode.HeroStrike) return;
-
-            // ⚠️⚠️ THE SUBTITLE IS 68 CHARACTERS AND IT WAS 113, WHICH `PlayerHubLayoutProbe`
-            // CAUGHT THE FIRST TIME THIS GROUP WAS EVER DRAWN AT 720p. A `UiRows.Section`
-            // subtitle does not wrap and does not shrink, so it drew 849 units into a 715 unit
-            // box, over whatever was beside it. **It went unmeasured for as long as it did
-            // because this group was unreachable** (§ 114.12): the career tab bailed out at zero
-            // matches before ever building it, and the probe's fixture has no finished matches
-            // in the mode it opens on. A string nothing draws is a string nothing measures.
-            // ⚠⚠ A SECTION HEADER AND NOT A COLLAPSED `Group`, AND THAT IS THE WHOLE MOVE.
-            // These rows ARE the tab now, so a group that hides them by default would be a tab
-            // whose contents are behind a second press, which is the fault this move exists to
-            // fix. `Group` earns its keep on the CAREER tab, where six groups of five rows would
-            // be thirty rows at once; here there are three.
-            UiRows.Section(_list, "Ability builds",
-                           "Two readings of each skill, and every option trades one for another.");
-
-            var settings = Settings.SettingsStore.Current;
-            if (settings == null) return;
-
-            _loadoutHeroIndex = Mathf.Clamp(_loadoutHeroIndex, 0, Roster.HeroPeople.Count - 1);
-            var hero = Roster.HeroPeople[_loadoutHeroIndex];
-
-            UiRows.StepperRow(_list, "Hero build", hero.Name, _loadoutHeroIndex,
-                Roster.HeroPeople.Count, v =>
-                {
-                    _loadoutHeroIndex = v;
-                    MenuSfx.Click();
-                    Show(_tab);
-                }, "Two skills, two readings each. The equipped build is public in a lobby.");
-
-            var build = HeroBuildRules.RowFor(settings.HeroBuilds, hero.Id);
-
-            for (int slot = 1; slot <= 2; slot++)
-            {
-                var options = HeroLoadoutRules.VariantsFor(hero.Id, slot);
-                if (options.Count == 0) continue;
-
-                var equipped = HeroBuildRules.Equipped(build, hero.Id, slot,
-                                                       settings.AbilityChallenges);
-                string key = hero.Id + "." + slot;
-                if (!_loadoutViews.TryGetValue(key, out int index))
-                {
-                    index = 0;
-                    for (int i = 0; i < options.Count; i++)
-                        if (options[i].Id == equipped.Id) index = i;
-                }
-                index = Mathf.Clamp(index, 0, options.Count - 1);
-
-                var shown = options[index];
-                bool unlocked = HeroBuildRules.IsUnlocked(settings.AbilityChallenges, shown);
-                int progress = HeroBuildRules.ChallengeCount(settings.AbilityChallenges, shown.Id);
-                string hint = shown.IsDefault
-                    ? shown.Description
-                    : !unlocked
-                        ? shown.Challenge + $"  ({progress} / {shown.ChallengeTarget})"
-                        : shown.Description + "  " + shown.GainLabel + "; " + shown.CostLabel + ".";
-
-                AbilityGlyph glyph = Enum.TryParse(shown.GlyphName, out AbilityGlyph parsed)
-                    ? parsed : AbilityGlyph.Burst;
-                int chosenSlot = slot;
-
-                UiRows.StepperRow(_list, "SKILL " + slot + "  ·  " + shown.BaseAbility,
-                    unlocked ? shown.Name : "LOCKED  ·  " + shown.Name,
-                    index, options.Count,
-                    v =>
-                    {
-                        _loadoutViews[key] = v;
-                        var picked = options[v];
-                        if (HeroBuildRules.IsUnlocked(settings.AbilityChallenges, picked))
-                        {
-                            if (chosenSlot == 1) build.Slot1VariantId = picked.Id;
-                            else build.Slot2VariantId = picked.Id;
-                            Settings.SettingsStore.Save();
-                            MenuSfx.Click();
-                        }
-                        else
-                        {
-                            MenuSfx.Error();
-                        }
-                        Show(_tab);
-                    },
-                    hint, AbilityIcons.For(glyph), UiTheme.ColorForHero(hero.Id));
-            }
-        }
-
         /// <summary>
         /// The achievement shelf.
         ///

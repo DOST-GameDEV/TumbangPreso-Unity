@@ -826,6 +826,24 @@ namespace TumbangPreso.UI
         private Button _button;
         private Text _label;
         private bool _hovered, _held;
+
+        /// <summary>
+        /// Whether the keyboard or the pad is on this control.
+        ///
+        /// ⚠️⚠️ IT IS A SECOND WAY INTO THE SAME POSE AND IT REPLACED A RING. 🧑 2026-09-02:
+        /// **"can u remvoe thhat black line taht shows up in everywhere? i really dont want to
+        /// have that"**. `FocusRing` used to draw a hard-edged rectangle outside the control;
+        /// it now sets this instead, so a focused control lifts, scales and grows its shadow
+        /// exactly as a hovered one does. `game-ui-design`'s `missing-focus-visible` asks for a
+        /// visible indicator and does not ask for a NEW one.
+        ///
+        /// ⚠️ IT IS SEPARATE FROM `_hovered` RATHER THAN FOLDED INTO IT, because the two are
+        /// cleared by different events: the pointer clears the first on exit and the EventSystem
+        /// clears the second on deselect, and a control can genuinely be both. Merging them would
+        /// make moving the mouse off a keyboard-focused button drop the focus mark.
+        /// </summary>
+        private bool _focused;
+
         private bool _wasInteractable = true;
         private PaperCraft.Surface _wasSurface;
 
@@ -1022,9 +1040,25 @@ namespace TumbangPreso.UI
         /// compares a frame, which matters because a lobby has about thirty of these on it and
         /// `Hud`'s per-frame rebuild once cost the 6x probe an eighth of its frames.
         /// </summary>
+        /// <summary>
+        /// Told by <see cref="FocusRing"/> when the EventSystem's selection lands here or leaves.
+        ///
+        /// ⚠️ IT GOES THROUGH `Refresh` RATHER THAN WRITING THE SKIN, so this control keeps
+        /// exactly one writer of its own pose. See <see cref="FocusRing.Hold"/> for the other half
+        /// of that argument and `docs/TODO.md` § 119.9 row 1 for what two writers cost last time.
+        /// </summary>
+        public void SetFocused(bool on)
+        {
+            if (_focused == on) return;
+            _focused = on;
+            Refresh();
+        }
+
         private void Animate()
         {
-            float wantLift = _hovered && !_held && _wasInteractable ? 1.0f : 0.0f;
+            // ⚠️ FOCUS LIFTS THE SAME TWO UNITS A HOVER DOES, deliberately, because it IS the
+            // focus indicator now. See `_focused`.
+            float wantLift = (_hovered || _focused) && !_held && _wasInteractable ? 1.0f : 0.0f;
             float wantSink = _held ? 1.0f : 0.0f;
 
             if (Mathf.Abs(_lift - wantLift) < 0.002f && Mathf.Abs(_sink - wantSink) < 0.002f)
@@ -1082,6 +1116,11 @@ namespace TumbangPreso.UI
         {
             _hovered = false;
             _held = false;
+            // ⚠️ THE FOCUS FLAG CLEARS WITH THE POINTER ONE, for the reason this method's header
+            // already gives about the pointer: a control switched off while it holds the
+            // EventSystem's selection never gets a deselect, so a drawer closing over a focused
+            // chip would bring it back lit. `FocusRing.OnDisable` releases from the other side.
+            _focused = false;
             _lift = 0.0f;
             _sink = 0.0f;
 
@@ -1244,7 +1283,7 @@ namespace TumbangPreso.UI
 
             _skin.SetPose(!on ? PaperCraft.Pose.Off
                           : _held ? PaperCraft.Pose.Press
-                          : _hovered ? PaperCraft.Pose.Hover
+                          : _hovered || _focused ? PaperCraft.Pose.Hover
                           : PaperCraft.Pose.Rest);
 
             if (_label == null) return;

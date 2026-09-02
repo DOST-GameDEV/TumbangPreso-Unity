@@ -208,7 +208,29 @@ namespace TumbangPreso.UI
             // shape sitting on a different one.
             if (_shadow != null)
             {
-                _shadow.sprite = WoodCraft.Silhouette(surface, height + 12.0f);
+                // ⚠️⚠️⚠️ THE FACE'S OWN HEIGHT, NOT `height + 12`, AND THE `+ 12` IS WHY THE FIX
+                // ABOVE ONLY HALF WORKED. 🧑 2026-09-02, of the fighter picker: **"the shadows for
+                // all buttons in character select looks weird as well"**, and
+                // `Logs/crops/picker-choose-v62.png` at 2x is what he was looking at: under CHOOSE
+                // there is a dark band whose cut corners are at a **different angle from the
+                // face's**, so each end of the slab shows a stepped double chamfer.
+                //
+                // **`WoodCraft`'s chamfer is a FRACTION of the height it is built for**, so a
+                // silhouette asked for `height + 12` gets a chamfer about 20 per cent longer than
+                // the face standing on it. The two shapes cannot line up at any offset.
+                //
+                // ⚠️ AND THE 12 WAS COMPENSATING FOR SOMETHING A NINE-SLICE DOES FOR FREE. The
+                // shadow's rect is grown 6 units on every side by `SkinLayers.Shadow`; a sliced
+                // sprite grows by stretching its MIDDLE and leaves its corner caps at the size
+                // they were authored, which is exactly the behaviour that makes the grown shadow
+                // the face's silhouette rather than a scaled copy of it. Asking for a taller
+                // sprite grows the caps as well, which is the one thing that must not happen.
+                //
+                // ⚠️ IT IS A CORRECTION AND NOT A RESTYLE, so it reaches the main menu and the
+                // match as well and cannot change either one's design: every wooden button in the
+                // game now casts a shadow shaped like itself, which is what the note above this
+                // one has claimed since 2026-09-01.
+                _shadow.sprite = WoodCraft.Silhouette(surface, height);
                 _shadow.type = Image.Type.Sliced;
                 _shadow.color = new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.55f);
                 _shadow.pixelsPerUnitMultiplier = 1.0f;

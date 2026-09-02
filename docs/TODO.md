@@ -2138,6 +2138,514 @@ one.**
 
 ---
 
+## 122 · The black line everywhere, the picker goes back to wood, and the loadout moves to the hero ⚠️⚠️ 2026-09-02, branch `ui-redesign`
+
+🧑 opened the build off `b8da3fe9` and sent nine notes across a sitting, most with a crop. Two of
+them are reversals of decisions taken the same day, and both reversals are his.
+
+⚠️⚠️ **THE ONE HE REPEATED, UNPROMPTED, AFTER ALREADY REPORTING IT ONCE: "can u remvoe thhat
+black line taht shows up in everywhere? i really dont want to have that".** He had already said
+*"i dont like the outline at call can we rtremove that"* of the login tabs and **"ye wtf is that
+black outline for"** of the lobby's JOIN A GAME. It is one component on eighteen call sites and
+§ 122.1 is what it became.
+
+⚠️ **SCOPE HE SET HIMSELF, TWICE, AND IT IS NARROWER THAN IT LOOKS**: **"make sure thhat if u
+bring this shit back u dont break other ui"**, *"js the character select"*. The wood revert in
+§ 122.4 is one screen. § 122.7 lists every place that had to be told about it and why missing any
+one of them would have made the whole change look like it did nothing.
+
+---
+
+### 122.1 ⚠️⚠️⚠️ THE BLACK LINE IS `FocusRing`, AND THE COLOUR WAS NEVER THE FAULT
+
+🧑, in order, over one sitting:
+
+| Crop | What he said |
+|---|---|
+| The login screen's SIGN IN / CREATE tabs | *"i dont like the outline at call can we rtremove that"* |
+| The lobby's JOIN A GAME chip | **"ye wtf is that black outline for"** |
+| No crop, about the whole front end | **"can u remvoe thhat black line taht shows up in everywhere? i really dont want to have that"** |
+
+**It is `UiMaterials.FocusRing`, and § 121.2b had already retuned it once in the same day.** That
+entry took it from `UiTheme.Amber` to `UiTheme.WoodMid` on a measurement (`ffba00` on `f4ecdd` is
+**1.46:1**, against **9.20:1** for the wood) and recorded him rejecting the amber twice. **Two
+colours have now been rejected on one control, which is the tell that the colour was not the
+variable.**
+
+⚠️⚠️ **THREE THINGS WERE WRONG AND ALL THREE ARE STRUCTURAL.**
+
+| What | Why it reads as "a black line" |
+|---|---|
+| **The sprite is a hard-edged rectangle with square corners.** `UiMaterials.Ring` fills every pixel outside a 3-unit inset border at full alpha, with no falloff and no radius. | Around a `Token` pill it is a box near a button; around a chamfered `Action` it is a box near a slab. **The silhouette never followed the control it belonged to**, so it read as a stray rectangle rather than as an edge on anything. |
+| **`5a2f14` at 3 px is black.** A 3-unit line at a canvas that scales on the short axis is one to two screen pixels on the window he plays in, and no hue survives at that width. | The measurement in § 121.2b is a CONTRAST ratio, which is exactly the property that made it visible and says nothing about whether it looks like ink. 9.20:1 is what you want from a focus mark and what you do not want from a line you did not ask for. |
+| **It was drawing a SECOND indicator on top of one that already existed.** § 120.1 gave every paper control an eased hover: the face lifts two units, the object scales 2.5 per cent, the cast shadow grows, and a `Tray` lightens (`PaperCraft.PaintTray` lerps 70 per cent from `PaperWarm` to `Paper`). | `CLAUDE.md` § 6.2 question 3 answered wrongly. Every control in the front end already had a visible state change; the ring added a rectangle to a screen whose entire standing complaint is too many rectangles. |
+
+**What shipped: the component draws nothing at all and drives the control's own pose instead.**
+
+- `FocusRing` keeps its name and its two public fields (`Spread`, `Colour`) and creates **no
+  `GameObject`, no `Image` and no sprite**. On focus it calls `PaperButton.SetFocused(true)`, or
+  `PaperSkin.SetPose(Hover)` when there is no button.
+- `PaperButton` gains a `_focused` flag that joins `_hovered` in both `Animate` and `Refresh`, so
+  a keyboard-focused control lifts, scales and grows its shadow exactly as a hovered one does.
+- A focused **text field** is the case § 121.2b said could not lose its ring, and it does not lose
+  a state: `Surface.Tray`'s `Pose.Hover` lightens the recess, so the box you are typing in is
+  visibly the lighter of the two. **No mark, pure value**, which is the same inversion this front
+  end has now made four times (`Surface.Live`, `Surface.Sign`, the picker's trait pips, this).
+
+⚠️⚠️ **THE CLASS IS KEPT AND ONLY ITS BODY CHANGED, AND THAT IS THE WHOLE REASON THIS IS SAFE.**
+There are eighteen `FocusRing.Attach` call sites across `LobbyChrome`, `PaperKit`, `SignInScreen`
+and `WoodDropdown`. Deleting the type would have been eighteen edits **and** a
+`game-ui-design` `missing-focus-visible` regression on every one of them: a keyboard or pad user
+with no indicator cannot tell where they are, and that skill rates `controller-navigation-deadend`
+critical. One file changed; every screen keeps a focus state and loses the mark he was pointing at.
+
+⚠️ **BOTH ENDS RELEASE.** `FocusRing.OnDisable` and `PaperButton.OnDisable` each clear the flag,
+because a control switched off while focused never receives a deselect. That is § 121.2's stuck
+hover arriving on a second input path, and it was fixed there for the pointer only.
+
+---
+
+### 122.2 The login screen: the hint nobody could parse, and the primary that was never converted
+
+- ⚠️⚠️ **"wtf does tab to move mean"**, of `TAB to move · ENTER to sign in · ESC to go back`.
+  **The line is deleted, and the answer to his question is the argument for deleting it.** It meant
+  "TAB moves the caret from USERNAME to PASSWORD", which is a browser form convention true of every
+  text field he has ever used. `game-ui-design`'s `no-keyboard-shortcut-display` is about
+  functionality a player would otherwise never DISCOVER and its own solution section says to put
+  the list on the controls screen; none of the three keys qualifies, and **ESC backing out is a
+  promise `CLAUDE.md` § 6.3 makes on every screen in the game**, so advertising it on one screen
+  teaches that it is true only there. `Update` still submits on ENTER, closes on ESC, and `Chain`
+  still wires TAB.
+  ⚠️ The 52 units are not redistributed: `FitCardToContent` sizes the card from what is on it, so
+  the card comes up shorter and the margins stay symmetric.
+
+- ⚠️⚠️⚠️ **"wtf is up witht his shadow"** and *"shadow fir this looks weirdd"*, of CREATE ACCOUNT.
+  **§ 121.1 item 3 listed this button as converted and it never was.** That entry names *"`CREATE
+  ACCOUNT` / `SIGN IN` (login)"* among the primaries taking `PaperCraft.Surface.Action`, and every
+  one of the others gets there through `PaperKit.PaperDress.ButtonSkin` — **which `SignInScreen`
+  never calls, because it is built in code.** Five screens were converted by one line in a file
+  this screen does not use.
+  **So the grey halo § 121.1 measured was still on screen**, and the measurement is that entry's
+  own, taken off `Logs/shots-runtime/SignInCreate-v56.png`, which is this button: the wooden halo
+  samples `ada69b`, **hue 37 at 10 per cent saturation and 68 per cent value**, against every paper
+  edge on the same card at **30** and the field at 96. `PaintAction` derives its contact shadow
+  from the fill, so under his green it is a dark green-brown. **The fix is one call.**
+
+- ⚠️⚠️ **"the buttons are too dif"**, then the diagnosis, **"legit one is all caps and fat af and
+  bold one isnt"**, of the SIGN IN / CREATE pair. **He counted the differences and there were
+  four**: surface (`Live` against `Token`), height (60 against 52), weight (Bold against Normal)
+  and label colour. Two controls that do the same kind of thing must look the same (§ 117's whole
+  complaint); a pair differing on four axes reads as two unrelated buttons that happen to be
+  adjacent.
+  ⚠️ **The weight was the worst of the four because it changes the letterforms.** Darumadrop One
+  ships one weight, so `FontStyle.Bold` is Unity's SYNTHETIC bold: it smears each glyph
+  horizontally without widening the advances, so the two tabs were the same string set in two
+  subtly different typefaces eight units apart. That is
+  `ConvertedCharacterSelect.BuildCustomDoor`'s *"these diff fonts look ugly"* finding about two
+  SIZES in one rail, arriving on weight.
+  **Both tabs are Bold and one size now.** Two signals survive and both are structural: eight units
+  of height off a shared floor, and a 10:1 value inversion. `game-ui-design` asks for a difference
+  that survives greyscale; it does not ask for four.
+
+---
+
+### 122.3 The wordmark gets a frame: `PaperCraft.Surface.Plaque`
+
+🧑, three messages, with a crop of the login card's TUMP plaque: **"can u add a pretty outline for
+this too"**, *"one that reads as wooden frame or some shit?"*, **"can u give it a wooden texture
+too the tump box"**.
+
+It was `Surface.Sign`: a flat wood-dark plate with a lit top lip. Correct for what that surface is
+for (the lobby's ROOM CODE, a value on a dark plate) and a rectangle of brown under the game's name.
+
+⚠️⚠️ **A NEW SURFACE RATHER THAN AN EDIT TO `Sign`, AND THE REASON IS A SECOND CONTROL.** Growing
+`Sign` a carved frame and a grain would have spent detail on the room code and the ranked plate,
+which he did not ask about, and made the room code compete with the primary beside it. **A role is
+what varies here, never a fill** (`CLAUDE.md` § 6.5): *"the one plaque the game's own name is
+carved into"* is a different role from *"a value on a dark plate"*.
+
+**Six layers, outward to inward**, and layer 5 is the entire argument:
+
+1. a **cast shadow** in the bottom `Drop` units, cubed falloff (`PaintAction`'s correction),
+2. a **bright keyline** at the silhouette, at `PaintAction`'s measured 5 per cent,
+3. a **dark rim** at 4 per cent,
+4. the **frame band**, `FrameBand` **0.11 of the face**, a full-height ramp with the varnish band
+   a quarter down, a lit crest along its own top edge and a dark lip along its bottom,
+5. ⚠️⚠️ the **inner shadow the frame casts onto the field**, strongest at the top and wrapping the
+   sides at half strength, and
+6. the **field**: `WoodSlot` with a one-dimensional grain.
+
+**Without layer 5, layers 4 and 6 are two flat browns meeting at a hard line, which is what an
+outline looks like and exactly what he was pointing at.** A shadow falling from the frame onto the
+field is what says the field is BEHIND the frame, and that one relationship is the difference
+between a border and a piece of joinery.
+
+⚠️ **THE GRAIN IS ONE-DIMENSIONAL.** `WoodCraft`'s own note: *"Two-dimensional noise reads as
+dirt."* Grain runs along the plank, so the sample is on x alone and the same value is written down
+the column. `PaperCraft.Fibre` samples both axes because paper fibre genuinely is two-dimensional;
+using the wrong one makes a wooden sign look mouldy.
+
+⚠️ **`LogoInset` DOES NOT MOVE.** It is 22 and the frame is about 16 at this height, so the mark
+clears the moulding by six units without `LogoMarkWidth` changing. **Growing the inset to "make
+room" would have shrunk the wordmark**, which is § 121.2c's fault exactly: the mark occupied 51 per
+cent of its own sign and the rest was bare brown.
+
+⚠️ **NO POSE.** A plaque is furniture, so `PaintPlaque` takes no `Pose` and cannot acquire one.
+`CLAUDE.md` § 6.3: a control that does nothing must not look pressable.
+
+---
+
+### 122.4 ⚠️⚠️⚠️ THE FIGHTER PICKER GOES BACK TO WOOD, AND THIS REVERSES § 119 FOR ONE SCREEN
+
+🧑 sent a capture of the **pre-paper** picker and three sentences over two messages:
+
+> **"it used to look really good here, maybe it can retain old brownn color"**
+> *"just change the backgrounnd or somethhing bcz i dont like the dark blue sit"*
+
+and, of the cream version that shipped:
+
+> *"i just wnat u to figure out how to make this cooler"*
+> **"maybe use a darker color or smth for the background here"**
+
+⚠️⚠️ **ALL THREE NOTES ARE ONE SCREEN AND THEY DO NOT CONFLICT. THE FAULT WAS NEVER THE DARKNESS,
+IT WAS THE HUE.** The screen has now been three things: a wooden panel on a **slate-to-midnight**
+stage (rejected, *"i dont want to see blue shit"*), a cream panel on a **cream** stage (rejected,
+*"make this cooler"*, *"old one looked prettier"*), and now a wooden panel on a **warm near-black**
+stage.
+
+**The design argument, so nobody takes it back to cream on consistency grounds.** Every other
+screen in this front end is a sheet you READ. This one is a stage you LOOK AT, and the thing on it
+is a saturated voxel figure lit from three sides. On `Paper` `f4ecdd` the brightest object in the
+frame is the BACKGROUND, so the character reads as a sticker lying on a page and all six heroes
+lose their silhouettes against the sky. That is why a fighting-game roster, a hero picker and a
+shop window are dark and a settings page is not.
+
+**What changed, all of it inside `ConvertedCharacterSelect`:**
+
+| | Was | Is | Why |
+|---|---|---|---|
+| The dress | `PaperDress.Screen(transform)` | **not called** | One line decides this screen's material. `PaperDress.Screen` takes a ROOT, so removing the call reaches exactly the subtree it used to reach and nothing else. |
+| The board | `PaperKit.Paperise(ConfigPanel, Sheet)` | `RestoreAuthoredWood` | His `SETTINGS CONFIG PANEL.png` and `MAP MODE DISPLAY.png` are simply drawn again. `PaperSkin.Apply` destroys a `WoodSkin`, so the skin has to be **destroyed** and the authored components and their `Face`/`Shadow` layers re-enabled, or two components write one Image every frame. |
+| `Backdrop` | `Paper` → `Paper` → `PaperWarm` | `WoodDeep` lifted → `WoodDeep` → `WoodDark` shifted | Hue 24 to 26 throughout: **every channel has more red in it than blue**, which is § 6.4's own one-line test. The three-stop shape survives all three repaints because it is the part that was always right. |
+| `BackdropGlow` | 0.30 → 0.13 → 0 | **flat 0.62 core, then cubed falloff** | The old curve spent **more than half its total alpha outside its own core**, which is fog rather than light. `PaintAction`'s contact-shadow correction, on a lamp. |
+| The glow's tint | `PaperEdge`, hero lerp **0.65** | `WoodEdge`, hero lerp **0.45** | This is § 121.5's open item resolved. His two notes pull against each other (**"the background corresponded to their color"** and, of the version that tints, *"yea see this doesnt look great"* about NEMU's purple): at 0.65 the pool IS the hero's hue, at 0.45 the warm lamp dominates and the hero arrives as a tint in it. **The hue moves and the value does not.** |
+| `Scrim` | 14 per cent `PaperSunk` down the LEFT | **symmetric vignette**, 0.55 `WoodDark`, squared, outer third | § 6.2c question 3 asked a third time. It has protected a wood panel from a wood backdrop, then grounded a model on cream; a dark shade on a dark stage is nothing. What a stage needs is edges. Symmetric on purpose: an asymmetric vignette reads as a light source and the screen already has one. |
+| Ability rows | `PaperWarm` in `PaperEdge` | `RowPlate` (`WoodSlot`) in `RowRim` (`WoodEdge`) | See `BoardInk`. |
+| Trait pips | filled `WoodMid` | filled **`Amber`**, empty `WoodDark` | § 119.10 took these to wood because amber on cream is 1.7:1; on `WoodSlot` the numbers invert and it is `WoodMid` that vanishes. **On a dark board the marker is the one LIGHT thing.** |
+
+⚠️⚠️ **FOUR CONSTANTS NOW NAME THIS SCREEN'S INK, BECAUSE THE MATERIAL HAS FLIPPED TWICE AND EACH
+FLIP WAS ELEVEN SEPARATE EDITS.** `BoardInk`, `BoardInkSoft`, `RowPlate`, `RowRim`. Every value in
+them already exists in `UiTheme`; they are file-local because they are this screen's READING of the
+palette, not a new palette, and putting them in the shared file is how the next screen quietly
+inherits a decision made about one.
+
+---
+
+### 122.5 ⚠️⚠️ THE LOADOUT MOVES FROM THE HUB TO THE HERO, AND THIS REVERSES § 114 FOR ONE FEATURE
+
+🧑 2026-09-02, with a crop of CHOOSE YOUR HERO: **"put loadout here, it makes no sense to be in
+profile"**, and again later, *"there were button updates can u put loadouts in the choose ur hero
+screen too and shit"*.
+
+⚠️⚠️ **BOTH DECISIONS WERE HIS AND THE SECOND ONLY MAKES SENSE NEXT TO THE FIRST, SO READ
+`PlayerHub.BuildTabColumn` BEFORE UNDOING EITHER.** On 2026-09-01 he could not find the ability
+builds at all (*"i also dont know hhow to navigate to loadouts section"*, **"that means if i cnat
+ifnd it, no one owuld"*) and they became a tab on the hub. Having found them, he now says the tab
+is the wrong room.
+
+⚠️⚠️ **HE IS RIGHT ON THE JOURNEY AS WELL AS ON THE TASTE, AND THE PRESSES ARE COUNTABLE.** The old
+route was **YOUR SKILLS row → hub → LOADOUT tab → hero stepper → slot stepper**: five presses, and
+the middle three exist only to re-select a hero the player had already chosen on the row directly
+above. `CLAUDE.md` § 6.3: *"if it takes more than three, the flow is the bug"*. It is **row → the
+skill you want** now, two presses, and **the row you press is the row that describes what you are
+choosing between**.
+
+**Where it went, and § 122.10 is the entry for the version of this that lasted one render.**
+
+- ⚠️⚠️ **It is its own board on the stage, reached from its own chip, and he asked for that in
+  those words**: **"lowk i dont want make your own and loadout to share the same button or panel
+  as lata tsinelas hero"**, *"maybe u should give it its own clickable buttons on the right"*.
+- **The tab rail is three tabs again.** HERO, LATA, TSINELAS. `MAKE YOUR OWN` left it, which is
+  § 117's rule he is restating from the outside: HERO / LATA / TSINELAS say *which category am I
+  looking at inside this screen* and MAKE YOUR OWN is a door OUT of it. § 121.5 had already spotted
+  the fourth cell and answered it by making the door the same SIZE as the tabs, which fixes the
+  half of the sentence that was not the problem.
+  ⚠️ **Every sizing fight on that rail was that one cell**: § 121.10 rows 3 and 4,
+  `BuildCustomDoor`'s 2.2-of-flex arithmetic and `FitTabLabel`'s 14-unit floor all exist because
+  `MAKE YOUR OWN` is thirteen characters in a row whose next longest is eight.
+- **Two chips on the stage, bottom right**, opposite CHOOSE and BACK: `LOADOUT` above
+  `MAKE YOUR OWN`. ⚠️ Anchored to the canvas CORNER, not offset from the centre, because
+  `AspectSafeCanvas` scales on the short axis and a hand-written offset is a layout correct at
+  exactly one aspect ratio (§ 6.2c question 1, § 92.1 fault 3).
+- ⚠️ **`LOADOUT` is absent in Classic and on the LATA and TSINELAS tabs, not greyed.** A greyed
+  control is indistinguishable from a broken one (§ 6.2), and the hub's version needed a whole
+  explanatory sentence only because a TAB that vanishes reads as a lost feature. A chip on a stage
+  does not: on the LATA tab there is visibly no hero for it to belong to. Switching tabs also
+  closes the board, or a hero's build panel would stand over a picture of a tin can.
+- **The board is four cards: two slots, two readings each.** ⚠️⚠️ **Cards rather than a stepper,
+  and that is the whole gain over the hub's version.** `BuildAbilityBuildRows` used a
+  `UiRows.StepperRow` per slot because a settings list is what that screen is made of, so the
+  player could see exactly ONE of the two readings at a time and had to click to compare them.
+  **A choice between two things is not a value you step through; it is two things you look at.**
+- **Three card states, told apart by surface before colour**: EQUIPPED is a lit plate with an amber
+  keyline carrying the word; AVAILABLE is a plain plate; LOCKED is a sunk near-black plate carrying
+  its challenge and its running count instead of its trade. ⚠️ **A locked card is still a card**,
+  so a player can see what they are working toward.
+- ⚠️ ESC closes the board and leaves the picker standing. § 6.3: *innermost layer first*. It is in
+  `Dismiss` rather than in the key handler so BACK and ESC cannot disagree.
+- The picker's three description rows keep the one part of this that was never about a control:
+  ⚠️⚠️ **they name and describe the EQUIPPED reading rather than the kit's default, which was a
+  real defect on its own.** `HeroAbilitySystem.CreateKitFor` returns the BASE kit, so the one
+  screen in the game that explains a hero was describing an ability the player was not taking into
+  the match. They are not pressable and their `raycastTarget` stays `false`.
+- The **ultimate has no card and cannot get one**. `AbilityVariant.Slot` is 1 or 2 and the
+  ultimate's is 0 by construction, per that field's own note: *"reading which one an opponent has
+  is already a skill; two readings would make the tell unreliable rather than deeper."*
+
+**What did NOT survive, named rather than left to be noticed:**
+
+- **The hero stepper.** It asked "which hero?", which the picker answers by construction. That is
+  the whole reason the journey shortens.
+- **`_loadoutViews`, the browse cursor.** A stepper needs somewhere to hold "the variant I am
+  looking at but have not equipped"; a two-state toggle has no cursor, so what is drawn is always
+  what is equipped. ⚠️ **The honest consequence: a locked variant can no longer be browsed.** It is
+  NAMED on the row with its challenge and its count instead, which is strictly more information in
+  one fewer press.
+- **The Classic explanation.** The hub's tab needed a sentence saying Classic has no kit, because a
+  tab that vanishes in one mode reads as a lost feature. The picker draws trait meters in Classic
+  and always has, so there is nothing to explain away.
+
+⚠️ **NOTHING IN THE CORE MOVED.** `HeroLoadoutRules`, `HeroBuildRules`, every variant, every
+challenge and every counter are untouched in `Packages/com.tumbangpreso.core/Runtime/HeroLoadout.cs`,
+and the new caller reads and writes through the same four methods the old one did: `VariantsFor`,
+`RowFor`, `Equipped`, `IsUnlocked`.
+
+⚠️⚠️ **AND THE ROWS WERE BEING DRAWN IN TWO PLACES, WHICH IS § 114.12 FROM THE OTHER SIDE.**
+`BuildCareerTab` also called `BuildAbilityBuildRows`, so the same twelve rows appeared on the CAREER
+tab AND on the LOADOUT tab at once and neither was the answer to "where is the loadout". Both calls
+are gone.
+
+⚠️ **THE HUB IS FIVE TABS AND `TabsHeight` FOLLOWED.** `BuildRail` sizes the card from
+`RailPad + IdentityHeight + RailBlockGap + TabsHeight + RailBlockGap + CloseHeight`, so a column
+that lost a tab without that constant losing one would have left **68 units of bare cream** under
+CLOSE, which is § 121.10 row 5's *"i dont want huge empty space"* coming straight back.
+
+⚠️ **THE LOBBY'S YOUR SKILLS ROW SURVIVES AND IS NOT A SECOND DOOR.** It opens the same screen the
+FIGHTER row above it opens, on a different question, and the summary is the difference:
+`SkillsSummary` says which hero and how many of its two skills are on a non-default reading, which
+cannot be read off the FIGHTER row at all.
+
+---
+
+### 122.6 SETTINGS in the lobby
+
+🧑: **"cann u also add a settings button in lobby?"**
+
+Until now the only way to reach the audio, video or key bindings from a lobby was to leave it:
+BACK to the main menu, SETTINGS, change the thing, PLAY, and set the room up again. **A player who
+wanted to turn the music down mid-lobby had to dissolve the room to do it.**
+
+- `LobbyChrome.BuildSettingsButton`, a plain `PaperKit.Chip` on the **top** rail, one step inside
+  the ACCOUNT door.
+- ⚠️⚠️ **THE TOP RAIL BECAUSE BOTH CHIPS ARE ABOUT YOU AND THIS MACHINE.** That rail's own header
+  says what it is for: *who you are, where you are, and how you get out*. The bottom rail is three
+  questions about the MATCH, and a control that changes the master volume is not one of them.
+- ⚠️⚠️ **IT IS `SETTINGS` AND THE OTHER ONE IS `MATCH SETTINGS`, AND THAT IS THE WAY ROUND A
+  PLAYER CAN GUESS.** `BuildSettingsDrawer` opens the map, the mode and the format: facts about
+  this match, host-only. This opens facts about this machine, for everybody. **The specific one
+  carries the adjective and the general one is the bare word**; naming this `GAME SETTINGS` would
+  have put an adjective on both and made the pair a puzzle.
+- ⚠️ **No accent.** § 118.4: one accent per screen and it is START MATCH.
+- `ConvertedMatchSetup.OpenGameSettings` instantiates `Resources/UI/SettingsPanel` lazily and keeps
+  it. ⚠️ **The same prefab the title screen and the pause card use**, which is
+  `PausePanel.OpenSettings`'s rule in as many words: *"a slider that exists in one exists in the
+  other. Two panels drift the moment one gets a row the other does not."* This is the third caller.
+- ⚠️ Found by COMPONENT on the second press, not by name: `Node()` asks `ConvertedScreen`'s name
+  index, which was built at `Wire` time and cannot know about an object created later.
+- ⚠️ `TopRailWidth` and `BuildTabs`'s `rightBlock` both grew by `SettingsWidth + Gap`. **Both or
+  neither**: the rail is sized to its content, so a chip added without the arithmetic leaves the
+  tab bar 79 units left of where it looks like it should be.
+
+---
+
+### 122.7 ⚠️⚠️ EVERY PLACE THAT HAD TO BE TOLD ABOUT THE WOOD REVERT, AND WHY MISSING ONE WOULD HAVE HIDDEN IT
+
+🧑: **"make sure thhat if u bring this shit back u dont break other ui"**. Four sites, and the
+second one is the one that would have made the whole change appear to do nothing.
+
+1. **`ConvertedCharacterSelect.Wire`** stops calling `PaperDress.Screen(transform)`.
+2. ⚠️⚠️ **`ConvertedMatchSetup.PaperiseWhatTheChromeLeaves` DRESSED THE PICKER A SECOND TIME, FROM
+   THE OUTSIDE, AND IT RUNS FIRST.** `Wire` is `Start` and does not run until the panel is first
+   switched on; that method runs on scene load, which is the entire reason it exists (its own note
+   records the picker's BACK button being wooden until somebody opened the picker). Its
+   `PaperDress.Screen(picker)` call is gone.
+3. ⚠️⚠️ **AND ITS `Nodes("ConfigPanel")` LOOP NEVER NAMED THE PICKER AT ALL.** That search walks
+   the whole scene by name, and the fighter picker has a `ConfigPanel` of its own: **it is the
+   brown board every control on that screen stands on.** A loop written for the lobby drawer's
+   leftover board was silently creaming the picker's main surface. The guard is `IsInsidePicker`,
+   which walks up the parents, because the thing being protected is a SUBTREE: comparing the node's
+   own name would have protected the panel and not the board inside it.
+4. **`PaperPurityProbe.Walk`** skips `CharacterSelectPanel` by name, alongside the two exemptions
+   already there. ⚠️ **A gate that encodes a decision the owner has reversed is updated in the same
+   commit, not muted.** ⚠️⚠️ **And the gate it replaces is a render, which is weaker, so say so:**
+   nothing now checks that this screen is COHERENTLY wooden rather than a mixture, and a mixture is
+   exactly what § 117 was about. If it grows a second material again the answer is a probe that
+   asserts wood HERE, not deleting that line.
+
+---
+
+### 122.10 ⚠️⚠️ WHAT THE v62 RENDER CHANGED, AND TWO OF THESE REVERSED A DECISION ONE RENDER OLD
+
+**This is the section to read before trusting §§ 122.4 and 122.5 above**, because four calls in
+them were wrong in a way only a picture could show. `CLAUDE.md` § 6.5: *take the picture, then take
+it again.* 🧑 looked at `CharacterSelect-v62.png` himself and named three of the four.
+
+| # | What the plan said | What the render said | What it is now |
+|---|---|---|---|
+| 1 | The stage's glow lerps 0.45 toward the hero, which is *"low chroma"* | ⚠️⚠️ **IT SHIPPED A GREEN STAGE.** `tools/sample_png.js rect` on the pool behind DANTE: **`545b2f`, hue 70 at 48 per cent saturation**, an olive. `UiTheme.HeroEarth` is `3fa65c`, and 45 per cent of the way to it from `WoodEdge` lands halfway between the two hues. **That is the fifth hue § 118.4 forbids and the exact thing he rejected on NEMU's purple** (*"yea see this doesnt look great"*). | **0.16**, computed rather than guessed. At 0.45 the six heroes span greens, cyans and magentas; at 0.16 every one lands between **hue 6 and 36**, inside the front end's own warm band. `RefreshBackdropAccent` carries the whole table. The six are still visibly different in hue, saturation and value, so the stage still answers the character. |
+| 2 | The loadout goes on the ability rows, because the panel has no vertical budget | 🧑: **"lowk i dont want make your own and loadout to share the same button or panel as lata tsinelas hero"**, *"maybe u should give it its own clickable buttons on the right"* | Its own board on the stage, its own chip. ⚠️ **The budget argument was a constraint, not a design.** `HeroPickerLayoutProbe`'s `Rows h=460 pref=644` is real and it is about the LEFT PANEL; the right two thirds of the screen is a dark stage with a model on it and nothing else. **The room was always there and it was not in the panel.** |
+| 3 | The locked variant's challenge appends to the equipped reading's summary | 🧑, of the render: **"look at this photo too theres things that overlap and shit"**. `The stomp as it is tuned. One heavy shock at the measured radius. · Long Tremor: Use Seismic Stomp eight times (0 / 8)` over two wrapped lines in a 61-unit row. **Two unrelated facts in one sentence** is § 6.2's NEVER OVERWHELMING failure at the size of one label. | The unlock belongs to the OTHER reading, so it lives on the board that shows both. The row is the equipped description and nothing else. |
+| 4 | The wooden buttons' shadows follow their faces (§ 117 fixed that) | 🧑: **"the shadows for all buttons in character select looks weird as well"**. `Logs/crops/picker-choose-v62.png` at 2x: under CHOOSE a dark band whose cut corners are at a **different angle from the face's**, so each end shows a stepped double chamfer. | ⚠️⚠️ **`GodotButton` asked `WoodCraft.Silhouette` for `height + 12`, and the chamfer is a FRACTION of height**, so the shadow's cut ran about 20 per cent longer than the face's and could not line up at any offset. The `+ 12` was compensating for the rect being grown 6 units a side — which a nine-slice does for free by stretching its MIDDLE and leaving the caps alone. **It is `height` now.** A correction, not a restyle: it reaches the main menu and the match and makes every wooden button cast a shadow shaped like itself. |
+| 5 | (not planned) | The live tab drew as a dark smudge on a dark plate. | ⚠️⚠️ **`interactable = !active` MADE THE SELECTED STATE AND THE UNAVAILABLE STATE THE SAME PICTURE**, which is the one pair `PaperCraft.Pose`'s note says must never collide: `GodotButton.Refresh` picks the `Pose.Off` sprite AND the disabled ink whenever `Interactable` is false, ahead of any variation. ⚠️ **Writing the label colour from `RefreshTabs` could never have fixed it and was tried first** — `GodotButton` writes `_label.color` from its own `Refresh` on the same frame, so it wins (§ 120.5 row 1, same screen, one property over). The live tab is interactable now and marked with 🧑's authored `WoodTabLiveButton` / `WoodTabIdleButton` pair. **The guard cost the screen its selected state to buy nothing**: pressing the tab you are on sets `_tab` to what it already is and re-runs an idempotent `Refresh`. |
+| 6 | `LOADOUT` sits above `MAKE YOUR OWN` | It sat 26 units off the floor with **its lower half outside the screen**. | The chips are anchored to the canvas' BOTTOM edge, so a larger `y` is HIGHER and the lift was passed negative. ⚠️ **A sign error against a bottom anchor is invisible in review and obvious in one picture**, which is § 6.1 in four words. |
+
+---
+
+### 122.11 ⚠️⚠️ THE BACKGROUND IS ASPHALT, WHICH IS THE FOURTH MATERIAL IT HAS WORN TODAY
+
+🧑, looking at the wooden stage § 122.4 shipped: **"background pretty ugly can we not use brown at
+all for background"**.
+
+**Read all four before proposing a fifth**, because each one was rejected for a different reason
+and the reasons do not repeat:
+
+| # | What it was | Why it went |
+|---|---|---|
+| 1 | Slate-to-midnight, *"the game's Bayan navy identity"* | *"i dont want to see blue shit, thats not in theme"*. § 6.4. |
+| 2 | `Paper` → `Paper` → `PaperWarm`, cream | *"i just wnat u to figure out how to make this cooler"*, **"maybe use a darker color or smth for the background here"**. The brightest object in the frame was the background, so every hero read as a sticker on a page. |
+| 3 | `WoodDeep` → `WoodDark`, warm near-black | **"can we not use brown at all for background"**. |
+| 4 | **Asphalt**, hue ~38 at under 15 per cent saturation, value 15 down to 5 | — |
+
+⚠️⚠️ **ASPHALT IS NOT A NEW COLOUR, IT IS THE ROAD, AND `CLAUDE.md` § 6.5 ALREADY NAMES IT AS A
+SURFACE OF THIS DESIGN SYSTEM**: *"cream and asphalt are SURFACES, not just text colours ...
+`VISION.md` § 2 rule 5 names the chalk and the road."* `PaperCraft.Surface.Slate` and
+`WoodCraft.Surface.Slate` are both already built out of it. The game is a street game played on
+tarmac.
+
+⚠️⚠️ **AND IT FIXES SOMETHING THE BROWN ONE HAD THAT WAS NOT THE DARKNESS.** A wooden backdrop
+under a wooden card is one material at two values, so the card had nothing to sit ON — which is the
+same fault the ORIGINAL scrim existed to paper over (*"protecting a wood panel from a wood
+backdrop"*, `HorizontalScrim`'s own history), arriving again from the other end. **On tarmac the
+brown card is an object lying on a road**, which is the composition the whole front end claims.
+
+⚠️ **EVERY CHANNEL STILL HAS MORE RED IN IT THAN BLUE**, which is § 6.4's own one-line test, so
+this is a warm near-black and not the cold grey that section bans. ⚠️ `UiTheme.EnvAsphalt`
+`4a4e57` is the one it is NOT: that is the world's tarmac shader and it is blue-cast. The vignette
+moved off `WoodDark` for the same reason — a brown frame round a tarmac stage is the same mismatch
+one layer out.
+
+---
+
+### 122.12 The two stage doors get their own identities
+
+🧑: **"make the buttons for loadout and make ur own prettier give them their own identities"**.
+
+⚠️⚠️ **THEY ARE ONE CONSTRUCTION WITH DIFFERENT CONTENTS, AND THAT IS THE ANSWER RATHER THAN AN
+EXCEPTION TO IT.** `CLAUDE.md` § 6.5 is that a ROLE varies and a fill never does, and § 117's whole
+complaint is controls of one kind drawn four ways. **Two controls that sit in one stack and are
+pressed the same way must be one construction**; what tells them apart is what they SAY and the
+mark they carry, and neither is a new hue.
+
+| | Verb | Says | Mark | Face |
+|---|---|---|---|---|
+| **LOADOUT** | LOADOUT | *your two skills* | **◆** amber | `WoodTabLiveButton` |
+| **MAKE YOUR OWN** | MAKE YOUR OWN | *build a character* | **›** cream | `WoodButton` |
+
+- ⚠️⚠️ **THE CHEVRON AND THE DIAMOND ARE A DOOR AND A MODE, WHICH IS A REAL DISTINCTION.**
+  `PaperKit.Chevron`'s note is the rule: *a `Tray` with no chevron is a value; a `Tray` with one is
+  a way through*. MAKE YOUR OWN **leaves** this screen, so it carries the chevron every door in the
+  lobby carries. LOADOUT opens a board ON this screen and comes back, so it does not: it takes the
+  amber marker, which is § 118.4's *amber is the marker* the right way up on a dark field.
+- ⚠️⚠️ **THE SECOND LINE IS THE HALF THAT MAKES THEM READABLE AT ALL.** `LOADOUT` is a word this
+  repository's own code spells `HeroBuild`, and `MAKE YOUR OWN` is a phrase with no noun in it.
+  § 6.2 question 2 is *what is the first press, and can the player guess it*; the pattern is the
+  lobby's own (`LobbyChrome.BuildSkillsRow`: *"a row that states a value UNDER ITS NOUN states a
+  control"*).
+- ⚠️ **The mark sits in the left inset, not in the text run.** A glyph inside the string shifts the
+  verb by half its own width, which is exactly `LobbyChrome.LiftBack`'s *"back still isnt
+  centered"*.
+
+---
+
+### 122.13 ⚠️⚠️ THE PAPER SHADOW WAS THE SAME GREY § 121.1 MEASURED, AND ONLY THE PRIMARY GOT FIXED
+
+🧑 2026-09-02, with a crop of the login card: **"the shadows suck too"**, of SIGN IN, CREATE,
+PLAY AS GUEST and the wordmark plaque. And, of the plaque specifically,
+**"is this update login bcz its ugly (the tump logo bg wtf is that)"**.
+
+**Two faults, and the first one is a number this repository had already measured on one control.**
+
+| | Was | Composited over `Paper` `f4ecdd` | Is |
+|---|---|---|---|
+| `PaperCraft.Shade`, under every paper control | `(0.30, 0.19, 0.10)` at **0.34** | **`bbac9b`, 17 per cent saturation** | `UiTheme.WoodMid` at **0.50**, which composites to about `a78d79`, **hue 26 at 28 per cent** |
+
+Every paper EDGE on the same screen carries **30 per cent** (`PaperEdge` `dcc19a`). **A
+17-per-cent neutral beside a 30-per-cent warm edge is § 6.4's cold-grey ban caught on the warm
+axis**, which is word for word what `Surface.Action`'s note says about the wooden halo § 121.1
+replaced.
+
+⚠️⚠️ **`ActionShade`'S NOTE DID THIS SUM IN AUGUST AND SCOPED IT TOO NARROWLY.** It read: *"fine
+under a 40-unit chip, and under a 520-unit slab it is the wide grey band"*. **The size argument was
+wrong.** A shadow's saturation does not depend on the width of the object casting it; what the
+extra width changed was how much of it there was to see, and a 40-unit chip is exactly where 🧑 was
+looking this time. There is one shadow colour in the file again.
+
+⚠️ **AND `PaintPlate` HAD NO FALLOFF AT ALL**, which was survivable at 0.34 and a hard dark bar at
+0.50. It takes the same squared curve `PaintRaised` has had since § 120.1: darkest where the two
+surfaces nearly touch, gone by the time it has travelled the object's own thickness.
+
+**The plaque's field is the road now, not wood.** It was `WoodSlot` inside a `WoodFace` frame, so
+the whole object was one hue at two values and layer 5's three-unit inner shadow was the only thing
+separating them: what he photographed reads as **a picture frame with a brown photograph in it**.
+⚠️ **A frame needs something that is not itself inside it.** `TUMP.png` is off-white letters with
+their own baked dark outline, so on a near-black field they are the brightest thing on the login
+card, which is what a painted sign at night actually looks like. It is the same asphalt § 122.11
+puts on the picker's stage, and it is the same fault at one control's scale.
+
+---
+
+### 122.8 What is NOT done
+
+- ⚠️ **The chat still does not work and is still not diagnosed.** § 121.11 is unchanged and reading
+  it is the next step, not guessing. He has now said it three ways.
+- ⚠️ **The login card still does not use the space.** § 121.4's measurement and three quotes stand:
+  557 units of card against a 1920-unit canvas. Untouched deliberately, because § 100 is a whole
+  pass spent undoing a guess about this exact rectangle and the two readings of *"use this whole
+  space"* produce different screens and different key-art crops.
+- ⚠️ **The picker's arrows are still blue.** § 121.5 has the measurement (about 30 per cent of
+  their opaque pixels at hue 201, 41 per cent saturation). ⚠️ **The dark stage changes this
+  question rather than settling it**: the arrows are now the only cool object on a warm near-black
+  field instead of on a warm cream one, which is more contrast and the same hue clash. Still his to
+  settle; the third option in § 121.5 (draw a warm arrow from his measured silhouette, leave the
+  file and the main menu alone) is still the one that does not repaint his art.
+- **TAYA FIRST is still the plate's width.** § 121.11, unchanged.
+- **The 16-unit caption question (§ 121.8) is still answered on one control and not as a policy.**
+- **No non-host client pass**, and no two-account pass (§ 102.5).
+
+### 122.9 Acceptance
+
+- Every touched screen re-shot at `v62` and a person looks: the login form and its CREATE state,
+  the lobby, the fighter picker on a hero with a locked variant and on one with an unlocked one,
+  and the hub's five tabs.
+- ⚠️ **The focus change is the one thing a still cannot show.** A screenshot of a control at rest
+  is identical before and after. It has to be driven: TAB through the login form and watch the
+  field lighten and each button lift, and confirm no rectangle appears anywhere.
+- `dotnet test` on the core, EditMode, the PlayMode UI suites, `Checks.RunAll`, the three `tools/`
+  audits and `node tools/check_digest_contract.js`.
+- A clean Windows player on the Desktop.
+
+---
+
 ## 121 · The v61 report: one material for the primaries, a hub with a tab column, and the stuck hover ⚠️⚠️ OPEN, 2026-09-02, branch `ui-redesign`
 
 🧑 opened the build off `d7731070` and sent fourteen notes in one sitting, with a crop for

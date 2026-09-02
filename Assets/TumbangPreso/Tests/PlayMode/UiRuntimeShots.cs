@@ -279,7 +279,7 @@ namespace TumbangPreso.PlayTests
         /// overwriting a shot leaves the previous one on screen and the whole review is conducted
         /// against an image that is no longer on disk. Bump `ShotVersion` on every iteration.
         /// </summary>
-        private const string ShotVersion = "v61";
+        private const string ShotVersion = "v66";
 
         /// <summary>
         /// The three screens the lobby opens: the fighter picker, the maker behind it, and the
@@ -332,6 +332,36 @@ namespace TumbangPreso.PlayTests
             fighter.onClick.Invoke();
             yield return new WaitForSecondsRealtime(1.0f);
             yield return Capture($"CharacterSelect-{ShotVersion}");
+
+            // ⚠️⚠️ THE LOADOUT BOARD, WHICH IS A WHOLE SCREEN THAT HAS NEVER HAD A PICTURE. It
+            // moved off the player hub onto this stage on 2026-09-02 (`docs/TODO.md` § 122.5) and
+            // `CLAUDE.md` § 6.2b's first row is the reason this line exists: *"EVERY STATE, not
+            // the one you built first"*. The three cards it draws are the only surface in the game
+            // that equips an ability build.
+            //
+            // ⚠️ IT IS FOUND BY NODE NAME AND PRESSED THROUGH `onClick`, the way a player reaches
+            // it, rather than by calling `ToggleLoadoutBoard` by reflection. A board switched on
+            // without its door is a board nobody has opened, which is `LobbyJoin-v52.png`'s fault
+            // (§ 119.9) on a different screen.
+            //
+            // ⚠️ AND IT FAILS SOFT. In Classic the door does not exist by construction, and this
+            // suite pins Hero Strike above; a warning rather than an assert keeps a mode change in
+            // this file from reading as a broken picker.
+            var loadout = Find("LoadoutDoor")?.GetComponent<Button>();
+            if (loadout != null)
+            {
+                loadout.onClick.Invoke();
+                yield return new WaitForSecondsRealtime(0.6f);
+                yield return Capture($"CharacterLoadout-{ShotVersion}");
+
+                var board = Find("LoadoutBoard");
+                if (board != null) board.SetActive(false);
+                yield return new WaitForSecondsRealtime(0.3f);
+            }
+            else
+            {
+                Debug.LogWarning("[Shot] the picker has no LOADOUT door on the hero tab.");
+            }
 
             // ⚠️ THE MAKER'S DOOR IS FOUND BY ITS LETTERING, BECAUSE IT HAS NO NAME.
             // `ConvertedCharacterSelect.BuildCustomDoor` builds it through `MenuKit.WoodButton`,
@@ -502,7 +532,12 @@ namespace TumbangPreso.PlayTests
             // Calling `Show` by reflection would photograph a state the column cannot reach and is
             // the fault § 119.9 records on `LobbyJoinPanel` (a render of four rows reading
             // `AVAILABLE GAMES APPEAR HERE`, because the panel was switched on rather than opened).
-            foreach (string tab in new[] { "FRIENDS", "LOADOUT", "CAREER", "MATCHES", "ACCOUNT" })
+            // ⚠️ `LOADOUT` LEFT THIS LIST WITH THE TAB. It moved to the fighter picker on
+            // 2026-09-02 (🧑: **"put loadout here, it makes no sense to be in profile"**);
+            // `docs/TODO.md` § 122.5 is the entry and `TheLobbyDoorsDraw` photographs the picker,
+            // which is where the feature is now. The loop only warns on a missing tab, so leaving
+            // it would have been a silent gap in the shot pass rather than a failure.
+            foreach (string tab in new[] { "FRIENDS", "CAREER", "MATCHES", "ACCOUNT" })
             {
                 var button = HubTab(tab);
                 if (button == null)

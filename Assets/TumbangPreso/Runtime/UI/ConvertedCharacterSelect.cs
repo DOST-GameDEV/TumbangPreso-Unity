@@ -35,6 +35,40 @@ namespace TumbangPreso.UI
         private int _tab;
         private readonly int[] _pick = new int[3];
 
+        // -------------------------------------------------------------------------------------
+        // THE BOARD'S OWN INK.
+        //
+        // ⚠️⚠️ FOUR CONSTANTS BECAUSE THIS SCREEN'S MATERIAL HAS NOW FLIPPED TWICE AND EVERY
+        // FLIP WAS ELEVEN SEPARATE EDITS. `docs/TODO.md` § 122.4: it went wood → paper on
+        // 2026-09-02 and paper → wood the same evening on 🧑's instruction (**"it used to look
+        // really good here, maybe it can retain old brownn color"**), and both passes had to find
+        // `UiTheme.PaperInk` in eleven places, three of which are inside string-building methods
+        // nobody greps. **A screen whose field can invert needs one name for "ink" and one for
+        // "plate", not eleven literals**, which is the same argument `UiTheme.Ink` itself lost in
+        // § 6.4 by being a colour nobody could grep for.
+        //
+        // ⚠️ AND IT IS FILE-LOCAL RATHER THAN IN `UiTheme` ON PURPOSE. These are this screen's
+        // reading of the palette, not a new palette: every value below already exists in
+        // `UiTheme` and none of them is a colour anybody picked here. Putting them in the shared
+        // file is how the next screen quietly inherits a decision that was made about one.
+        // -------------------------------------------------------------------------------------
+
+        /// <summary>Every word printed on the wooden board. ⚠️ Cream, because the board is dark
+        /// again; this was `UiTheme.PaperInk` for the length of the paper pass.</summary>
+        private static readonly Color BoardInk = UiTheme.Cream;
+
+        /// <summary>The second rank of type on the board: a caption, a tagline, a unit.</summary>
+        private static readonly Color BoardInkSoft = UiTheme.CreamMuted;
+
+        /// <summary>An ability row's plate, and the key chip on it. ⚠️ `WoodSlot` is the recess
+        /// colour this front end has used since `ui_theme.gd`, so a row reads as cut INTO the
+        /// board rather than as laid on it, which is what an ability row is.</summary>
+        private static readonly Color RowPlate = UiTheme.WoodSlot;
+
+        /// <summary>The hairline round an ability row. ⚠️ `WoodEdge` is the lit edge every raised
+        /// wooden surface in the game already carries.</summary>
+        private static readonly Color RowRim = UiTheme.WoodEdge;
+
         private Texture2D _backdropTexture;
         private Texture2D _glowTexture;
         private Texture2D _scrimTexture;
@@ -65,23 +99,48 @@ namespace TumbangPreso.UI
 
             WireTabs();
 
-            // ⚠️⚠️ ONE CALL DRESSES THIS WHOLE SCREEN IN PAPER, AND IT IS SCOPED TO THIS SUBTREE
-            // ON PURPOSE. `GodotPanel` and `GodotButton` are the choke points every converted
-            // screen is skinned through, so editing either of them would have repainted the main
-            // menu and the in-match HUD, which 🧑 scoped out twice. `PaperKit.PaperDress.Screen`
-            // walks a given root instead. See `docs/TODO.md` § 119.2 and § 119.5.
+            // ⚠️⚠️⚠️ THIS SCREEN IS WOOD AGAIN AND IT IS THE ONLY ONE, ON HIS INSTRUCTION, WITH
+            // A PICTURE OF THE VERSION HE WANTS BACK. 🧑 2026-09-02, sending a capture of the
+            // pre-paper picker: **"it used to look really good here, maybe it can retain old
+            // brownn color"**, *"just change the backgrounnd or somethhing bcz i dont like the
+            // dark blue sit"*, then, of the cream version that shipped, *"i just wnat u to figure
+            // out how to make this cooler"*, **"maybe use a darker color or smth for the
+            // background here"**, and the scope in his own words: **"make sure thhat if u bring
+            // this shit back u dont break other ui"**, *"js the character select"*.
             //
-            // ⚠️⚠️ AND IT RUNS BEFORE `Refresh`, WHICH IT DID NOT, AND THAT ORDER IS A BUG YOU CAN
-            // SEE IN `Logs/shots-runtime/CharacterSelect-v57.png`: the HERO tab, the one you are
-            // on, drew as a pale greyed pill. `RefreshTabs` asks for a `PaperSkin` and takes a
-            // wooden fallback when there is none, so running it first meant it always took the
-            // fallback, and the dress then flattened all three tabs onto one `Token`. With
-            // `interactable = false` on the live tab (which is deliberate: you cannot press the
-            // tab you are on) a plain `Token` draws as `Pose.Off`. **The selected tab was the
-            // greyed-out one.**
-            PaperDress.Screen(transform);
-
+            // ⚠️⚠️ THAT REVERSES § 119'S *"MAKE SURE AS WELL CHARACTER SELECT ... HAS THE NEW
+            // THEME"* FOR THIS SCREEN AND FOR NOTHING ELSE, AND THE REVERSAL IS HIS. Read
+            // `docs/TODO.md` § 122.4 before undoing it: the argument that took this screen to
+            // paper was consistency with the lobby, and the argument that brings it back is that
+            // **a character picker is a stage and a stage is dark.** Every hero in this game is a
+            // saturated voxel figure; on a cream sheet the brightest object in the frame is the
+            // background, so the cast reads as a sticker on paper. The old wooden panel on a dark
+            // ground is the composition his own key art already uses.
+            //
+            // ⚠️⚠️ THE SCOPE IS GUARANTEED BY WHAT IS **NOT** EDITED RATHER THAN BY CARE.
+            // `PaperDress.Screen` takes a ROOT, so removing this call reaches exactly the subtree
+            // it used to reach and nothing else: the lobby, the login screen, the hub, the maker
+            // and the settings panel each make their own call and are untouched. `PaperCraft`,
+            // `PaperKit`, `GodotTheme` and `WoodCraft` are all untouched too, which is the other
+            // half of *"dont break other ui"* — one line of one file decides this screen's
+            // material, and it is this one.
+            //
+            // ⚠️ `RefreshTabs` ALREADY HAS THE WOODEN PATH AND HAS ALWAYS HAD IT. It asks
+            // `PaperKit.MarkLive` whether the button is paper and falls back to `GodotTheme.Box`
+            // when it is not; with no dress, every tab takes that branch, which is the amber-on-
+            // wood live tab the old screenshot shows. Nothing there needed changing.
+            //
+            // ⚠️ AND `PaperPurityProbe` IS TOLD, RATHER THAN LEFT TO GO RED. That probe walks the
+            // lobby's whole scene and opens this panel through `CharacterButton`; it now skips
+            // this subtree by name, with this quote in it. A gate that encodes a decision the
+            // owner has reversed is a gate that has to be updated in the same commit, not muted.
             PaperiseAuthoredBoard();
+
+            // ⚠️ AFTER THE BOARD AND BEFORE `Refresh`. These two chips are children of the panel
+            // root rather than of any authored container, so they must not be built before the
+            // restoration walks the tree, and `RefreshTabs` reads `_loadoutDoor` when it decides
+            // whether the board's door is live.
+            BuildStageDoors();
 
             Refresh();
         }
@@ -110,15 +169,68 @@ namespace TumbangPreso.UI
         /// the ink, the frame and his own authored buttons standing on paper. The board was none
         /// of the three; it was the field.
         /// </summary>
+        /// <summary>
+        /// ⚠️⚠️⚠️ THIS METHOD NOW DOES THE OPPOSITE OF ITS NAME AND THE NAME IS KEPT SO THE
+        /// REVERSAL IS FINDABLE. It used to strip `SETTINGS CONFIG PANEL.png` and
+        /// `MAP MODE DISPLAY.png` off the board and the selector and put cream paper in their
+        /// place; the two lines above record why that was allowed and 🧑 has now asked for the
+        /// wood back on this screen (**"it used to look really good here, maybe it can retain old
+        /// brownn color"**, 2026-09-02). **His two authored PNGs are simply left alone**, which is
+        /// `CLAUDE.md` § 6.4 and `VISION.md` § 6 in their default state rather than an exception
+        /// to them: his UI art IS the design system, and this screen is the one place the pass
+        /// stopped drawing two files of it.
+        ///
+        /// ⚠️ IT IS NOT DELETED, BECAUSE IT IS WHERE THE ARGUMENT LIVES. A method that does
+        /// nothing is a method somebody removes; the four paragraphs above and below it are the
+        /// record of a decision that has now been taken in both directions, and the next person to
+        /// want cream here needs to read them before spending the day again.
+        ///
+        /// ⚠️ WHAT IT STILL DOES IS UNDO ANY PAPER THAT SURVIVED. `PaperSkin.Apply` destroys a
+        /// `WoodSkin` when it runs, so a node dressed by an earlier build of this screen and then
+        /// re-entered would keep a cream sprite with nothing to repaint it: this screen is opened
+        /// and closed many times per session and `Wire` runs once per instance. Clearing the skin
+        /// and re-enabling the authored components is what makes the reversal idempotent.
+        /// </summary>
         private void PaperiseAuthoredBoard()
         {
-            var board = Node("ConfigPanel");
-            if (board != null) PaperKit.Paperise(board.gameObject, PaperCraft.Surface.Sheet);
+            RestoreAuthoredWood(Node("ConfigPanel"));
+            RestoreAuthoredWood(Node("CharSelector"));
+        }
 
-            // ⚠️ A `Tray`, because the selector is a VALUE with an arrow either side rather than
-            // a thing you press: the arrows are the controls and they keep their own art.
-            var selector = Node("CharSelector");
-            if (selector != null) PaperKit.Paperise(selector.gameObject, PaperCraft.Surface.Tray);
+        /// <summary>
+        /// Puts a node back on the authored wooden material it shipped with.
+        ///
+        /// ⚠️ `PaperSkin` WRITES `Image.sprite` FROM `Update`, so leaving one on a node and merely
+        /// re-enabling `GodotPanel` beside it is `PaperSkin.Apply`'s own note in reverse: two
+        /// components writing one Image every frame, flickering between two materials. The skin
+        /// has to go, not be switched off.
+        /// </summary>
+        private static void RestoreAuthoredWood(Transform node)
+        {
+            if (node == null) return;
+
+            var skin = node.GetComponent<PaperSkin>();
+            if (skin != null) Destroy(skin);
+
+            // ⚠️ THE AUTHORED SPRITE IS RE-ASSERTED THROUGH THE COMPONENT THAT OWNS IT rather
+            // than written here. `GodotPanel` and `WoodSkin` both rebuild from the rect on
+            // `OnEnable`, so switching them back on is the whole restoration; writing a sprite
+            // here would be a third writer of the same property.
+            var panel = node.GetComponent<GodotPanel>();
+            if (panel != null) panel.enabled = true;
+
+            var wood = node.GetComponent<WoodSkin>();
+            if (wood != null) wood.enabled = true;
+
+            // ⚠️ AND THE TWO LAYERS `PaperDress.Strip` DEACTIVATES COME BACK. `SkinLayers` gives
+            // every wooden surface a `Face` and a `Shadow` child and the dress switches them off
+            // rather than deleting them, which `PaperPurityProbe` asserts from the other side. A
+            // board restored without them is a flat rectangle where a bevelled one used to be.
+            foreach (string layer in new[] { "Face", "Shadow" })
+            {
+                var child = node.Find(layer);
+                if (child != null) child.gameObject.SetActive(true);
+            }
         }
 
         /// <summary>
@@ -183,15 +295,61 @@ namespace TumbangPreso.UI
             // cream furniture standing on a dark wooden stage: **half of one language and half of
             // another, on the screen a player reaches from the lobby's FIGHTER row.**
             //
-            // ⚠️ THE SHAPE IS UNCHANGED FOR THE REASON ABOVE. It is still three stops with the
-            // light at the top, so the panel and the model still sit on something rather than on
-            // a flat fill; the values are 4 per cent apart rather than 40, which is what a sheet
-            // of paper under a raking light actually is. `Paper` at the top, `Paper` through the
-            // middle and `PaperWarm` at the floor, which is the same pair every `Tray` in the
-            // front end is cut out of.
-            var top = WoodCraft.Lift(UiTheme.Paper, 0.02f);
-            var middle = UiTheme.Paper;
-            var bottom = UiTheme.PaperWarm;
+            // ⚠️⚠️⚠️ AND ON 2026-09-02 IT IS A DARK WARM STAGE, WHICH IS THE THIRD AND FINAL
+            // ANSWER. 🧑, of the cream version, **"maybe use a darker color or smth for the
+            // background here"** and *"i just wnat u to figure out how to make this cooler"*; of
+            // the navy version it replaced, **"i dont like the dark blue sit"**; and of the wooden
+            // panel that stands on it, **"it used to look really good here, maybe it can retain
+            // old brownn color"**. **All three notes are one screen and they do not conflict:
+            // the fault was never the darkness, it was the HUE.**
+            //
+            // ⚠️⚠️ THE ARGUMENT, SO NOBODY TAKES THIS BACK TO CREAM ON CONSISTENCY GROUNDS. Every
+            // other screen in this front end is a sheet you READ; this one is a stage you LOOK AT,
+            // and the thing on it is a saturated voxel figure lit from three sides. On `Paper`
+            // `f4ecdd` the brightest object in the frame is the BACKGROUND, so the character reads
+            // as a sticker lying on a page and every one of the six heroes loses its silhouette
+            // against the sky. On a warm near-black the same model is the only lit thing on the
+            // screen. That is why a fighting-game roster, a hero picker and a shop window are all
+            // dark and a settings page is not.
+            //
+            // ⚠️ AND IT IS `CLAUDE.md` § 6.4 KEPT, NOT BROKEN. The three stops are `WoodDeep`
+            // lifted, `WoodDark` and `WoodDark` taken down: hue 24 to 26 throughout, which is the
+            // front end's own wood with the light almost all the way out of it. **Every channel
+            // has more red in it than blue**, which is that section's own one-line test, and there
+            // is no fifth hue anywhere in it.
+            //
+            // ⚠️ THE THREE-STOP SHAPE SURVIVES ALL THREE REPAINTS BECAUSE IT IS THE PART THAT WAS
+            // ALWAYS RIGHT: the light is at the top, so the panel and the model sit IN a room
+            // rather than on a fill. What changed each time is only where on the value axis the
+            // three stops sit, which is `game-ui-design`'s ordering: position, size, weight,
+            // colour, and colour is last.
+            // ⚠️⚠️⚠️ AND ON THE SAME EVENING IT IS **ASPHALT**, NOT WOOD, BECAUSE HE LOOKED AT THE
+            // WOODEN ONE AND SAID SO: **"background pretty ugly can we not use brown at all for
+            // background"**. This is the FOURTH material this backdrop has worn and the first
+            // three are each recorded above; read all of them before proposing a fifth.
+            //
+            // ⚠️⚠️ ASPHALT IS NOT A NEW COLOUR, IT IS THE ROAD, AND `CLAUDE.md` § 6.5 ALREADY
+            // NAMES IT AS A SURFACE OF THIS DESIGN SYSTEM: *"cream and asphalt are SURFACES, not
+            // just text colours ... `VISION.md` § 2 rule 5 names the chalk and the road."*
+            // `PaperCraft.Surface.Slate` and `WoodCraft.Surface.Slate` are both already built from
+            // it. **The game is a street game played on tarmac**, so a near-black road is the one
+            // background in the palette that is neither the furniture nor the paper.
+            //
+            // ⚠️⚠️ AND IT SOLVES THE PROBLEM THE BROWN ONE HAD, WHICH WAS NOT THE DARKNESS. A
+            // wooden backdrop under a wooden card is one material at two values, so the card had
+            // nothing to sit ON: that is the same fault the ORIGINAL scrim existed to paper over
+            // (*"protecting a wood panel from a wood backdrop"*, see `HorizontalScrim`), arriving
+            // again from the other end. On tarmac the brown card is an object lying on a road.
+            //
+            // ⚠️ THE NUMBERS, AND EVERY ONE OF THEM IS UNDER 15 PER CENT SATURATION, WHICH IS WHAT
+            // MAKES IT READ AS BLACK RATHER THAN AS BROWN. Hue stays around 35 to 40 and value
+            // runs 15 down to 5. **`CLAUDE.md` § 6.4's own one-line test still passes** — every
+            // channel has more red in it than blue — so this is a warm near-black and not the cold
+            // grey that section bans. `UiTheme.EnvAsphalt` `4a4e57` is the one it is NOT: that is
+            // the world's tarmac shader and it is blue-cast.
+            var top = new Color(0.150f, 0.140f, 0.125f);
+            var middle = new Color(0.098f, 0.091f, 0.080f);
+            var bottom = new Color(0.048f, 0.044f, 0.038f);
 
             for (int y = 0; y < height; y++)
             {
@@ -210,6 +368,35 @@ namespace TumbangPreso.UI
             return texture;
         }
 
+        /// <summary>
+        /// The pool of light the character stands in.
+        ///
+        /// ⚠️⚠️ IT IS A STAGE LAMP NOW AND IT WAS A HAZE, AND THE DIFFERENCE IS ENTIRELY IN THE
+        /// FALLOFF. The version this replaces ran 0.30 alpha at the centre to 0.13 at 45 per cent
+        /// of its radius and only then to nothing: **more than half of its total alpha was spent
+        /// outside its own core**, which on any field reads as fog rather than as light. On the
+        /// cream backdrop it was invisible; on a warm near-black it would have been a grey film
+        /// over the whole right-hand half of the screen, which is the exact word 🧑 used about a
+        /// shadow one control over (*"especially the shadow"*).
+        ///
+        /// **A lamp is bright where it points and gone a short way out.** The core is 0.62 and
+        /// holds its strength across the inner third, then falls on a CUBED curve, which is the
+        /// same correction `PaperCraft.PaintAction`'s contact shadow took on 2026-09-02 and for
+        /// the same reason: a squared falloff over a long reach is a blur, and a blur is a smudge.
+        ///
+        /// ⚠️⚠️ AND THIS IS THE HALF OF `docs/TODO.md` § 121.5 THAT WAS LEFT AS A DESIGN RATHER
+        /// THAN A CHANGE. His two notes on this screen's colour pull against each other: **"this
+        /// used to be amazing when it was brown only and the background corresponded to their
+        /// color"** and, of the version that tinted, *"yea see this doesnt look great"* (NEMU,
+        /// whose wash is purple). The resolution written there is *vary VALUE inside the family
+        /// and let the hero colour in only at low chroma*, and **the lamp is where that happens**:
+        /// the BACKDROP never changes per character, and this one contained pool does.
+        /// `RefreshBackdropAccent` carries the mixing ratio and why it is not 1.0.
+        ///
+        /// ⚠️ THE CENTRE IS THE MODEL'S OWN, NOT THE SCREEN'S. `CharacterPreview` sits in the
+        /// right-hand two thirds and the figure's chest lands near 0.70 across and 0.42 down,
+        /// which is where these two numbers came from and why they are not 0.5.
+        /// </summary>
         private static Texture2D RadialGlow()
         {
             const int size = 256;
@@ -221,10 +408,20 @@ namespace TumbangPreso.UI
             for (int x = 0; x < size; x++)
             {
                 var uv = new Vector2(x / (float)(size - 1), y / (float)(size - 1));
-                float t = Mathf.Clamp01(Vector2.Distance(uv, centre) / 0.45f);
-                float alpha = t <= 0.45f
-                    ? Mathf.Lerp(0.30f, 0.13f, t / 0.45f)
-                    : Mathf.Lerp(0.13f, 0.0f, (t - 0.45f) / 0.55f);
+
+                // ⚠️ 0.52 OF THE TEXTURE RATHER THAN 0.45, because the sprite is stretched over a
+                // 16:9 rect: a circle authored square draws as an ellipse wider than it is tall,
+                // and the model is taller than it is wide. The extra reach is what stops the pool
+                // ending at the character's shoulders.
+                float t = Mathf.Clamp01(Vector2.Distance(uv, centre) / 0.52f);
+
+                // ⚠️ FLAT ACROSS THE CORE, THEN CUBED. `1 - t³` alone would already be falling at
+                // the centre, so the brightest pixel would be a point rather than a pool and the
+                // figure would stand in a highlight instead of on a stage.
+                float alpha = t <= 0.30f
+                    ? 0.62f
+                    : 0.62f * Mathf.Pow(1.0f - ((t - 0.30f) / 0.70f), 3.0f);
+
                 pixels[y * size + x] = new Color(1.0f, 1.0f, 1.0f, alpha);
             }
 
@@ -250,19 +447,45 @@ namespace TumbangPreso.UI
             // protecting nothing. **A scrim is not decoration and it is not free**; when the thing
             // it protected against goes, the number goes with it.
             //
-            // ⚠️ IT IS NOT DELETED, BECAUSE THE LEFT THIRD IS WHERE THE MODEL STANDS and a warm
-            // shade under it is what stops a voxel character floating on a flat sheet. 14 per cent
-            // of `PaperSunk` composites about three value steps down, which is the same weight
-            // `UiRows.Band` arrived at from the other direction.
-            var ink = UiTheme.PaperSunk;
+            // ⚠️⚠️ AND ON 2026-09-02 IT IS A FRAME RATHER THAN A SHADE, WHICH IS THE THIRD TIME
+            // `CLAUDE.md` § 6.2c QUESTION 3 HAS BEEN ASKED OF THIS ONE LAYER AND THE THIRD TIME
+            // THE FIELD UNDER IT HAD MOVED. It has been 85 per cent `WoodDark` down the left edge
+            // (protecting a wood panel from a wood backdrop), then 14 per cent `PaperSunk`
+            // (grounding a model on cream), and neither number means anything now that the
+            // backdrop is a warm near-black: **a dark shade on a dark stage is nothing at all.**
+            //
+            // **What a stage needs is edges.** The screen is now one lit pool in the middle of a
+            // dark room, and without something at the far left and the far right the room simply
+            // ends at the window. So this is a symmetric vignette: darkest in the outer eighth,
+            // gone by a third of the way in, clear across the whole middle where the panel and the
+            // model live. It costs the same one texture the shade did.
+            //
+            // ⚠️ IT IS `WoodDark` AND NOT BLACK. A pure black vignette on a hue-24 backdrop is a
+            // cold edge on a warm field, which is § 6.4 caught on the same axis § 121.1 caught the
+            // primary's halo on. 0.55 at the very edge composites about four value steps down,
+            // which is a frame you feel and cannot point at.
+            //
+            // ⚠️ AND IT IS SYMMETRIC ON PURPOSE, EVEN THOUGH THE TWO SIDES HOLD DIFFERENT THINGS.
+            // An asymmetric vignette reads as a light source, and this screen already has one
+            // (`RadialGlow`, off-centre at 0.70). Two disagreeing light directions in one frame is
+            // what makes a composition feel wrong without anybody being able to say why.
+            // ⚠️ THE VIGNETTE IS THE ROAD'S OWN DARK, NOT WOOD'S. It was `UiTheme.WoodDark`, which
+            // is a brown near-black, and 🧑 took brown off this backdrop entirely
+            // (**"can we not use brown at all for background"**). A brown frame round a tarmac
+            // stage is the same mismatch one layer out.
+            var ink = new Color(0.030f, 0.027f, 0.023f);
 
             for (int x = 0; x < width; x++)
             {
                 float t = x / (float)(width - 1);
-                float alpha;
-                if (t <= 0.36f) alpha = Mathf.Lerp(0.14f, 0.11f, t / 0.36f);
-                else if (t <= 0.62f) alpha = Mathf.Lerp(0.11f, 0.03f, (t - 0.36f) / 0.26f);
-                else alpha = Mathf.Lerp(0.03f, 0.0f, (t - 0.62f) / 0.38f);
+
+                // Distance from the nearer edge, 0 at the edge and 1 at the middle.
+                float inward = Mathf.Clamp01(Mathf.Min(t, 1.0f - t) / 0.32f);
+
+                // ⚠️ SQUARED, SO THE MARK IS CONCENTRATED AT THE EDGE. A linear ramp across a
+                // third of the screen is a gradient over the panel, which would put a shadow on
+                // the one thing on this screen a player has to read.
+                float alpha = 0.55f * (1.0f - inward) * (1.0f - inward);
 
                 for (int y = 0; y < texture.height; y++)
                     pixels[y * texture.width + x] = new Color(ink.r, ink.g, ink.b, alpha);
@@ -312,8 +535,16 @@ namespace TumbangPreso.UI
         /// three tabs took whatever `MenuKit.WoodButton` derived from the box they were handed and
         /// the door hard-coded `MenuKit.MinReadableUnits`; nothing connected the two, so the row
         /// shipped in two sizes. `docs/TODO.md` § 121.5.
+        ///
+        /// ⚠️⚠️ 22 AGAIN, AND IT WAS CUT TO 20 TO MAKE ROOM FOR A CONTROL THAT IS NO LONGER HERE.
+        /// § 121.10 row 4 dropped it because `TSINELAS` and `MAKE YOUR OWN` overflowed their own
+        /// pills at 22 in a four-cell rail. `MAKE YOUR OWN` left the rail on 🧑's instruction
+        /// (§ 122.12), so three cells of four to eight characters now share 560 units: at 22 the
+        /// longest is about 105 units in a cell of about 180. **Every sizing compromise on this
+        /// rail was that one cell**, which is why the number goes back up rather than staying
+        /// where a deleted control left it.
         /// </summary>
-        private const int TabLabelSize = 20;
+        private const int TabLabelSize = 22;
 
         /// <summary>
         /// Fits one cell's lettering to the box the layout group actually gave it.
@@ -407,116 +638,487 @@ namespace TumbangPreso.UI
 
                 _tabButtons.Add(button);
             }
-
-            BuildCustomDoor(bar);
         }
 
         /// <summary>
-        /// The one door to the character creator, as the fourth control in the bar you land on.
+        /// The two doors on the stage: LOADOUT and MAKE YOUR OWN.
         ///
-        /// ⚠️⚠️ IT WAS A 200-UNIT CHIP ON THE END OF THE `STRENGTH` STRIP AND 🧑 COULD NOT FIND
-        /// IT: *"and how do u even get to this"*, of a screen he had opened by other means. That
-        /// is `docs/TODO.md` § 96 happening a second time, in the same shape: **a door placed
-        /// wherever there happened to be room, rather than where the player is looking.** The hub
-        /// put its only door in a corner chip that read as a status readout and the person who
-        /// commissioned the hub never found it; this put its only door at the end of a row of
-        /// colour-strength chips, in the one visual slot that says "another option for the control
-        /// to my left".
+        /// ⚠️⚠️⚠️ THEY ARE NOT IN THE TAB RAIL AND 🧑 TOOK THEM OUT OF IT BY NAME. 2026-09-02:
+        /// **"lowk i dont want make your own and loadout to share the same button or panel as lata
+        /// tsinelas hero"**, *"maybe u should give it its own clickable buttons on the right"*.
         ///
-        /// ⚠️⚠️ AND IT IS THE SAME DOOR MOVED, NOT A SECOND ONE. `CLAUDE.md` § 6.3: *"NEVER ADD A
-        /// SECOND DOOR TO FIX A FINDABILITY PROBLEM. Fix the door or move it."* The chip is gone
-        /// in the same commit. `RefreshCustomDoor` no longer exists.
+        /// ⚠️⚠️ HE IS RESTATING § 117'S RULE FROM THE OUTSIDE AND HE IS RIGHT. HERO, LATA and
+        /// TSINELAS answer *which category am I looking at inside this screen*; these two are a
+        /// DOOR OUT of it and a MODE of it. `docs/TODO.md` § 121.5 had already spotted the fourth
+        /// cell (*"it is a door out of this screen sitting in a row of tabs within it"*) and
+        /// answered it by making the door the same SIZE as the tabs, which fixes the half of the
+        /// sentence that was not the problem.
         ///
-        /// ⚠️⚠️ THE TAB BAR IS WHERE IT GOES BECAUSE IT COSTS NO VERTICAL BUDGET, AND THAT
-        /// CONSTRAINT IS REAL RATHER THAN INHERITED. The previous note here recorded why a third
-        /// strip row was refused: `HeroPickerLayoutProbe` dumps `Rows h=460 pref=644`, so the
-        /// vertical group is already compressing every child to fit, and a new row reopens the
-        /// 27 px dead band above the ability rows that § 94 records being "fixed" three times.
-        /// **The bar is a `HorizontalLayoutGroup` that already exists**, so a fourth cell costs
-        /// width the row has and height it does not have to find.
+        /// ⚠️⚠️ AND THE ROOM WAS ALWAYS THERE. The right two thirds of this screen is a dark stage
+        /// with a model standing on it and nothing else; every previous placement argument on this
+        /// screen (*"the bar is a `HorizontalLayoutGroup` that already exists"*, *"a third strip row
+        /// reopens the 27 px dead band"*) was reasoning about the LEFT PANEL's vertical budget,
+        /// which is genuinely full (`HeroPickerLayoutProbe`: `Rows h=460 pref=644`). **The
+        /// constraint was real and it was the wrong constraint**, because the controls did not have
+        /// to be in the panel.
         ///
-        /// ⚠️ IT IS AMBER RATHER THAN GREEN. `GodotTheme.ForButton`: green is ACT and it is
-        /// CHOOSE, which is forty units below this. Two greens on one screen is two "press me"
-        /// buttons with the more important one further from the hand, and the chip this replaces
-        /// was `WoodPrimaryButton` sitting directly above a `WoodPrimaryButton` CHOOSE.
+        /// ⚠️ THEY ARE STACKED AT THE BOTTOM RIGHT, WHICH BALANCES THE SCREEN RATHER THAN FILLING
+        /// IT. The left column ends with CHOOSE and BACK at the bottom left; this ends with two
+        /// chips at the bottom right, on the same band. `game-ui-design`'s ordering is position
+        /// first: two controls in the corner opposite the primary read as "the other things you can
+        /// do here" without a heading saying so.
         ///
-        /// ⚠️ AND 1.7 OF FLEXIBLE WIDTH, NOT 1.0. `MAKE YOUR OWN` is thirteen characters against
-        /// `LATA`'s four, and `childForceExpandWidth` would give both the same cell: the label
-        /// would then be ground down by `MenuKit.Fit` toward the 18-unit floor while LATA sat in
-        /// a box three times the size of its word.
+        /// ⚠️ LOADOUT SITS ABOVE MAKE YOUR OWN because it is the one a player opens repeatedly and
+        /// the other is a place you go once. ⚠️ **Neither is green.** `GodotTheme.ForButton`'s rule
+        /// is that green means ACT and there is one action per screen; it is CHOOSE.
+        ///
+        /// ⚠️⚠️ AND LOADOUT IS BUILT ONLY IN HERO STRIKE, NOT GREYED OUT. `docs/VISION.md` § 1.1:
+        /// Classic has no kit and never gets one, so there is genuinely nothing to equip. A greyed
+        /// control is indistinguishable from a broken one (`CLAUDE.md` § 6.2), and the hub's
+        /// version of this needed a whole explanatory sentence only because a tab that VANISHES
+        /// reads as a lost feature. A chip on a stage does not: in Classic the tabs say LATA and
+        /// TSINELAS and there is visibly no hero to build for.
         /// </summary>
-        private void BuildCustomDoor(Transform bar)
+        private void BuildStageDoors()
         {
-            var door = MenuKit.WoodButton(bar, "MAKE YOUR OWN", Vector2.zero, Vector2.zero,
-                                          new Vector2(300.0f, 56.0f),
-                                          () =>
-                                          {
-                                              MenuSfx.Click();
-                                              CustomCharacterScreen.Ensure().Open();
-                                          },
-                                          // ⚠️ PLAIN WOOD. This is a DOOR to another screen, not
-                                          // the action of this one, and § 117.3 reserved amber
-                                          // for the "look here" marker and green for "go". A door
-                                          // painted in the accent competes with the choice the
-                                          // player came to this screen to make.
-                                          "WoodButton");
+            bool heroes = SceneFlow.SelectedMode == GameMode.HeroStrike;
 
-            var element = door.gameObject.AddComponent<LayoutElement>();
-            element.preferredHeight = 56.0f;
+            // ⚠️⚠️ THE LIFT IS POSITIVE AND `CharacterSelect-v63.png` IS WHY IT HAD TO BE SAID.
+            // These are anchored to the canvas' BOTTOM edge, so a larger `y` is HIGHER; the first
+            // build passed `-StageDoorPitch` for LOADOUT on the reasoning that it sits above, and
+            // the render put it at 26 units off the floor with **its lower half outside the
+            // screen**. A sign error against a bottom anchor is invisible in review and obvious in
+            // one picture, which is `CLAUDE.md` § 6.1 in four words.
+            _customDoor = StageDoor("CustomDoor", "MAKE YOUR OWN", "build a character",
+                                    "›", false, 0.0f,
+                                    () => CustomCharacterScreen.Ensure().Open());
 
-            // ⚠️⚠️ 2.2 OF FLEX AND IT WAS 1.5, BECAUSE THE CELL COULD NOT HOLD THE WORDS AT THE
-            // ROW'S OWN SIZE. `Logs/crops/picker-tabs-final.png`: at 1.5 the door gets about 160
-            // units of a 560-unit rail, `MAKE YOUR OWN` needs about 147 at `TabLabelSize` 20, and
-            // 24 units of that is padding — so `FitTabLabel` ground the label down to about 15 and
-            // the row shipped in two sizes again. **That is the fault 🧑 named twice** (*"these
-            // buttons look ugly"*, *"these diff fonts look ugly"*) arriving through the fitter
-            // instead of through a literal.
+            if (heroes)
+                _loadoutDoor = StageDoor("LoadoutDoor", "LOADOUT", "your two skills",
+                                         "◆", true, StageDoorPitch,
+                                         () => ToggleLoadoutBoard(true));
+        }
+
+        /// <summary>How far apart the two stage doors sit, centre to centre. ⚠️ The chip height
+        /// plus `PaperKit.Gap`-scale air, stated once so the pair cannot drift.</summary>
+        private const float StageDoorPitch = StageDoorHeight + 14.0f;
+
+        private const float StageDoorWidth = 320.0f;
+
+        /// <summary>⚠️ 68 AND NOT 56, BECAUSE THESE CARRY TWO LINES NOW. See `StageDoor`: 26 of
+        /// verb plus 18 of caption plus 12 of padding plus the 6 of cast shadow every wooden face
+        /// draws inside its own bottom edge.</summary>
+        private const float StageDoorHeight = 68.0f;
+
+        /// <summary>
+        /// One chip on the stage, anchored to the canvas' bottom right.
+        ///
+        /// ⚠️⚠️ ANCHORED TO A CORNER RATHER THAN PLACED AT AN OFFSET FROM THE CENTRE, which is
+        /// `CLAUDE.md` § 6.2c question 1 and § 92.1 fault 3. `AspectSafeCanvas` scales on the SHORT
+        /// axis, so the canvas is about 1920 units wide at 4:3 and about 2250 on the window he
+        /// plays in: a control positioned from the middle would sit in two very different places
+        /// and a hand-written offset is a layout correct at exactly one aspect ratio.
+        /// `AspectRatioProbes` drives nine.
+        ///
+        /// ⚠️ 96 FROM THE BOTTOM IS `CHOOSE`'S OWN BAND. The primary's centre sits about there on
+        /// the left, so the two corners agree without either knowing about the other.
+        /// </summary>
+        private Button StageDoor(string name, string verb, string says, string mark, bool marker,
+                                 float lift, System.Action onPress)
+        {
+            // ⚠️⚠️ THE TWO DOORS ARE THE SAME OBJECT WITH DIFFERENT CONTENTS, AND THAT IS THE
+            // ANSWER TO *"give them their own identities"* RATHER THAN AN EXCEPTION TO IT. 🧑
+            // 2026-09-02: **"make the buttons for loadout and make ur own prettier give them their
+            // own identities"**. `CLAUDE.md` § 6.5 is that a ROLE varies and a fill never does, and
+            // § 117's whole complaint is controls of one kind drawn four ways. **Two controls that
+            // sit in one stack and are pressed the same way must be one construction**; what tells
+            // them apart is what they SAY and the mark they carry, both of which survive a
+            // photograph and a colourblind player and neither of which is a new hue.
             //
-            // ⚠️ WIDEN THE CELL RATHER THAN SHRINK THE TYPE, and the arithmetic says it fits: at
-            // 2.2 over 5.2 of total flex the door is about 237 units, which holds 147 of lettering
-            // with 90 of air. Shrinking the type was the other option and it is the one that made
-            // this row look wrong in the first place.
-            element.flexibleWidth = 2.2f;
-
-            _customDoor = door;
-
-            // ⚠️⚠️ THE LABEL IS RE-FITTED AGAINST THE CELL THE LAYOUT GROUP GIVES IT, AND THE
-            // FIRST RENDER OF THIS TAB IS WHY. `Logs/ui/10-picker-colours.png`, 2026-09-01: the
-            // words `MAKE YOUR OWN` ran past the button's own rounded frame and out to the panel's
-            // inner edge. **`MenuKit.WoodButton` sizes its label from the size it is HANDED**, and
-            // the 300 x 56 passed above is discarded by the `HorizontalLayoutGroup` a frame later,
-            // so the label was fitted to a box three times the cell it ended up in. This is the
-            // same two-step `CustomCharacterScreen.BuildSectionTabs` already does for the same
-            // reason; the difference there is that its cells are handed a zero size, so nobody
-            // could forget.
+            //   LOADOUT       ◆  your two skills     amber mark, `WoodTabLiveButton` face
+            //   MAKE YOUR OWN ›  build a character   cream chevron, plain `WoodButton` face
             //
-            // ⚠️ `MinReadableUnits` 18, WHICH IS THE FLOOR AND NOT A CHOICE. Thirteen characters at
-            // 18 units measure about 120, and the cell is 560 by 1.5 over 4.5 of flex, about 187
-            // before spacing. It fits with room; a longer caption here would not, which is the
-            // argument for the verb and the noun and nothing else.
-            var label = door.GetComponentInChildren<Text>(true);
+            // ⚠️⚠️ THE CHEVRON AND THE DIAMOND ARE A DOOR AND A MODE, WHICH IS A REAL DISTINCTION
+            // AND NOT DECORATION. `PaperKit.Chevron`'s note is the rule: *a `Tray` with no chevron
+            // is a value; a `Tray` with one is a way through*. MAKE YOUR OWN leaves this screen, so
+            // it gets the chevron every door in the lobby carries. LOADOUT opens a board ON this
+            // screen and comes back, so it does not: it gets the amber marker instead, which is
+            // § 118.4's *amber is the marker* the right way up on a dark field.
+            //
+            // ⚠️⚠️ AND THE SECOND LINE IS THE HALF THAT MAKES THEM READABLE AT ALL. `LOADOUT` is a
+            // word this repository's own code spells `HeroBuild`, and `MAKE YOUR OWN` is a phrase
+            // with no noun in it. `CLAUDE.md` § 6.2 question 2 is *what is the first press, and can
+            // the player guess it* — **"your two skills" and "build a character" are the answer**,
+            // and the pattern is the lobby's own (`LobbyChrome.BuildSkillsRow`: *"a row that states
+            // a value UNDER ITS NOUN states a control"*).
+            var button = MenuKit.WoodButton(transform, verb, Vector2.zero, Vector2.zero,
+                                            new Vector2(StageDoorWidth, StageDoorHeight),
+                                            () => { MenuSfx.Click(); onPress(); },
+                                            marker ? "WoodTabLiveButton" : "WoodButton");
+            button.name = name;
+
+            var rt = (RectTransform)button.transform;
+            rt.anchorMin = new Vector2(1.0f, 0.0f);
+            rt.anchorMax = new Vector2(1.0f, 0.0f);
+            rt.pivot = new Vector2(1.0f, 0.5f);
+            rt.anchoredPosition = new Vector2(-96.0f, 104.0f + lift);
+            rt.sizeDelta = new Vector2(StageDoorWidth, StageDoorHeight);
+
+            var label = button.GetComponentInChildren<Text>(true);
             if (label != null)
             {
-                // ⚠️⚠️ THE SAME SIZE AS THE THREE TABS BESIDE IT, AND IT WAS FOUR UNITS SMALLER.
-                // 🧑 2026-09-02, of this row: **"these buttons look ugly"**, and of the same fault
-                // one control over, **"these diff fonts look ugly"**. `Logs/crops/picker-tabs-v61.png`
-                // is the receipt: `HERO`, `LATA` and `TSINELAS` at `TabLabelSize` and
-                // `MAKE YOUR OWN` at 18, in one rail, at one height. **Two sizes of one typeface
-                // side by side read as two typefaces**, because the eye compares the letterforms
-                // directly instead of scanning down a column.
-                //
-                // ⚠️ IT FITS AT THE BIGGER SIZE, WHICH IS WHY THIS IS SAFE. Thirteen characters at
-                // 22 units measure about 147 and the cell is 560 by 1.5 over 4.5 of flex, about
-                // 187 before spacing. `MenuKit.Fit` is still called against the cell rather than
-                // against the 300 passed above, because the `HorizontalLayoutGroup` discards that
-                // number a frame later; that is the two-step this method has always needed and
-                // the reason `Logs/ui/10-picker-colours.png` once showed this label running past
-                // its own frame.
+                // ⚠️ THE VERB TAKES THE TOP BAND AND IS RAISED BY THE CAST SHADOW'S HALF, which is
+                // the same `PaperKit.CentreOnFace` correction one material over: every wooden face
+                // draws its shadow inside its own bottom edge, so a label centred on the RECT is
+                // three units low on the FACE.
                 label.fontSize = TabLabelSize;
-                MenuKit.Stretch(label.rectTransform, -8.0f);
-                label.alignment = TextAnchor.MiddleCenter;
-                label.horizontalOverflow = HorizontalWrapMode.Overflow;
+                label.alignment = TextAnchor.LowerCenter;
+                label.rectTransform.anchorMin = new Vector2(0.0f, 0.42f);
+                label.rectTransform.anchorMax = Vector2.one;
+                label.rectTransform.offsetMin = new Vector2(34.0f, 0.0f);
+                label.rectTransform.offsetMax = new Vector2(-34.0f, -6.0f);
+                MenuKit.Fit(label, StageDoorWidth - 68.0f);
             }
+
+            var caption = MenuKit.Label(button.transform, says, 15, UiTheme.CreamMuted,
+                Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.UpperCenter);
+            caption.name = "DoorCaption";
+            caption.raycastTarget = false;
+            caption.alignment = TextAnchor.UpperCenter;
+            caption.rectTransform.anchorMin = new Vector2(0.0f, 0.0f);
+            caption.rectTransform.anchorMax = new Vector2(1.0f, 0.42f);
+            caption.rectTransform.offsetMin = new Vector2(34.0f, 8.0f);
+            caption.rectTransform.offsetMax = new Vector2(-34.0f, 0.0f);
+
+            // ⚠️ THE MARK SITS IN THE LEFT INSET RATHER THAN BESIDE THE WORD, so the verb stays
+            // optically centred on the control whatever it says. A glyph in the text run would
+            // shift the string by half its own width, which is exactly the fault
+            // `LobbyChrome.LiftBack` records about `"‹  BACK"` (*"back still isnt centered"*).
+            var glyph = MenuKit.Label(button.transform, mark, 20,
+                marker ? UiTheme.Amber : UiTheme.Cream,
+                Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleCenter);
+            glyph.name = "DoorMark";
+            glyph.raycastTarget = false;
+            glyph.alignment = TextAnchor.MiddleCenter;
+            glyph.rectTransform.anchorMin = new Vector2(0.0f, 0.0f);
+            glyph.rectTransform.anchorMax = new Vector2(0.0f, 1.0f);
+            glyph.rectTransform.pivot = new Vector2(0.0f, 0.5f);
+            glyph.rectTransform.sizeDelta = new Vector2(34.0f, 0.0f);
+            glyph.rectTransform.anchoredPosition = new Vector2(8.0f, -3.0f);
+
+            return button;
+        }
+
+        // -------------------------------------------------------------------------------------
+        // THE LOADOUT BOARD.
+        //
+        // ⚠️⚠️ IT IS A SEPARATE SURFACE ON THE STAGE AND THAT IS 🧑'S OWN INSTRUCTION, NOT A
+        // CONVENIENCE. 2026-09-02: **"lowk i dont want make your own and loadout to share the same
+        // button or panel as lata tsinelas hero"**, *"maybe u should give it its own clickable
+        // buttons on the right"*. `docs/TODO.md` § 122.5 has the journey it replaces (five presses
+        // through the account screen) and § 122.10 has why the first attempt put it on the
+        // description rows instead and why that was wrong.
+        //
+        // ⚠️⚠️ THE ONE THING ON THIS BOARD IS **WHICH READING OF THIS HERO'S TWO SKILLS AM I
+        // TAKING INTO THE MATCH**, which is `CLAUDE.md` § 6.2 question 1. Four cards, two groups,
+        // one hero: the hero is not asked for, because the screen behind it has already answered.
+        // -------------------------------------------------------------------------------------
+
+        /// <summary>The board. ⚠️ Rebuilt on every open rather than kept in step, because it is
+        /// four cards off two `HeroBuildRules` lookups and a stale one would show a build the
+        /// match will not use.</summary>
+        private GameObject _loadoutBoard;
+
+        private const float BoardWidth = 660.0f;
+        private const float BoardPad = 22.0f;
+
+        /// <summary>
+        /// Opens or closes the loadout board.
+        ///
+        /// ⚠️ CLOSING IS ONE PRESS AND ESCAPE ALSO DOES IT. `CLAUDE.md` § 6.3: *"Escape backs out
+        /// on every screen, always, innermost layer first"*, and this is now the innermost layer of
+        /// the picker. `Dismiss` defers to it, so ESC on an open board closes the board and ESC
+        /// again leaves the picker, rather than skipping a level.
+        /// </summary>
+        private void ToggleLoadoutBoard(bool open)
+        {
+            if (!open)
+            {
+                if (_loadoutBoard != null) _loadoutBoard.SetActive(false);
+                return;
+            }
+
+            if (_loadoutBoard != null) Destroy(_loadoutBoard);
+            BuildLoadoutBoard();
+        }
+
+        private bool LoadoutBoardOpen => _loadoutBoard != null && _loadoutBoard.activeSelf;
+
+        /// <summary>
+        /// Four cards: two slots, two readings each.
+        ///
+        /// ⚠️⚠️ CARDS RATHER THAN A STEPPER, AND THAT IS THE WHOLE GAIN OVER THE HUB'S VERSION.
+        /// `PlayerHub.BuildAbilityBuildRows` used a `UiRows.StepperRow` per slot because a settings
+        /// list is what that screen is made of, so the player could see exactly ONE of the two
+        /// readings at a time and had to click to compare them. **A choice between two things is
+        /// not a value you step through; it is two things you look at.** Both are on screen here,
+        /// with their trade written on each, and the equipped one is visibly the equipped one.
+        ///
+        /// ⚠️ TWO SLOTS AND NOT THREE. The ultimate has no variants by design
+        /// (`AbilityVariant.Slot`: *"reading which one an opponent has is already a skill"*), so it
+        /// is absent rather than present and empty.
+        /// </summary>
+        private void BuildLoadoutBoard()
+        {
+            string heroId = CurrentHeroId();
+            if (string.IsNullOrEmpty(heroId)) return;
+
+            var kit = HeroAbilitySystem.CreateKitFor(heroId);
+            Color accent = UiTheme.ColorForHero(heroId);
+
+            var go = new GameObject("LoadoutBoard", typeof(RectTransform), typeof(Image));
+            go.transform.SetParent(transform, false);
+            _loadoutBoard = go;
+
+            // ⚠️ IT BLOCKS. `CLAUDE.md` § 6.2c question 5: anything covering the screen is also
+            // eating clicks and the block is usually nobody's stated job. This board sits over the
+            // model, which is draggable (`ModelPreviewInput`), so without an opaque raycast target
+            // a drag started on the board would spin the character behind it.
+            var plate = go.GetComponent<Image>();
+            plate.raycastTarget = true;
+            WoodSkin.Apply(go, WoodCraft.Surface.Panel);
+
+            var rt = (RectTransform)go.transform;
+            rt.anchorMin = new Vector2(1.0f, 0.5f);
+            rt.anchorMax = new Vector2(1.0f, 0.5f);
+            rt.pivot = new Vector2(1.0f, 0.5f);
+            rt.anchoredPosition = new Vector2(-96.0f, 40.0f);
+            rt.sizeDelta = new Vector2(BoardWidth, 640.0f);
+
+            var header = MenuKit.Label(go.transform, "LOADOUT", 26, UiTheme.Amber,
+                new Vector2(0.5f, 1.0f), new Vector2(0.0f, -44.0f),
+                new Vector2(BoardWidth - (BoardPad * 2.0f), 32.0f), TextAnchor.MiddleCenter);
+            header.fontStyle = FontStyle.Bold;
+            header.raycastTarget = false;
+
+            // ⚠️ THE HERO'S NAME IS UNDER THE HEADING BECAUSE A BUILD BELONGS TO ONE. The hub's
+            // version needed a stepper to say which hero; this one states it, because the screen
+            // behind the board has already chosen.
+            var who = MenuKit.Label(go.transform, HeroDisplayName(heroId), 18, BoardInkSoft,
+                new Vector2(0.5f, 1.0f), new Vector2(0.0f, -74.0f),
+                new Vector2(BoardWidth - (BoardPad * 2.0f), 24.0f), TextAnchor.MiddleCenter);
+            who.raycastTarget = false;
+
+            float y = -118.0f;
+            var abilities = new (HeroAbility ability, int slot)[]
+            {
+                (kit.Skill1, 1),
+                (kit.Skill2, 2),
+            };
+
+            foreach (var (ability, slot) in abilities)
+            {
+                var options = HeroLoadoutRules.VariantsFor(heroId, slot);
+                if (options == null || options.Count == 0) continue;
+
+                string title = "SKILL " + slot;
+                if (ability != null) title += "  ·  " + ability.Name;
+
+                var caption = MenuKit.Label(go.transform, title, 16, accent,
+                    new Vector2(0.5f, 1.0f), new Vector2(0.0f, y),
+                    new Vector2(BoardWidth - (BoardPad * 2.0f), 22.0f), TextAnchor.MiddleLeft);
+                caption.fontStyle = FontStyle.Bold;
+                caption.alignment = TextAnchor.MiddleLeft;
+                caption.raycastTarget = false;
+                y -= 30.0f;
+
+                foreach (var option in options)
+                {
+                    BuildVariantCard(go.transform, heroId, slot, option, accent, y);
+                    y -= 108.0f;
+                }
+
+                y -= 14.0f;
+            }
+
+            var close = MenuKit.WoodButton(go.transform, "CLOSE", new Vector2(0.5f, 0.0f),
+                new Vector2(0.0f, 46.0f), new Vector2(220.0f, 52.0f),
+                () => { MenuSfx.Back(); ToggleLoadoutBoard(false); }, "WoodButton");
+            close.name = "LoadoutClose";
+
+            // ⚠️ THE BOARD IS SIZED TO ITS CONTENT, not to a constant. Two slots times two options
+            // is fixed today and `HeroLoadoutRules` is a table somebody will add a row to;
+            // `CLAUDE.md` § 6.2c question 1 is that a panel is sized against its CONTENT and the
+            // arithmetic is stated. The running `y` is that arithmetic: 118 of heading block, 30
+            // per slot caption, 108 per card, 14 between slots, plus 112 of footer for CLOSE and
+            // its margins.
+            rt.sizeDelta = new Vector2(BoardWidth, Mathf.Abs(y) + 112.0f);
+        }
+
+        /// <summary>
+        /// One reading of one slot: what it is, what it buys, what it costs, and whether it is
+        /// yours.
+        ///
+        /// ⚠️⚠️ THE THREE STATES ARE EQUIPPED, AVAILABLE AND LOCKED, AND THEY ARE TOLD APART BY
+        /// SURFACE BEFORE COLOUR. Equipped is a lit plate with an amber keyline carrying the word
+        /// EQUIPPED; available is a plain plate; locked is a sunk near-black plate carrying its
+        /// challenge and its running count instead of its trade. `game-ui-design`'s
+        /// `colorblind-failure` is the rule and § 118.4 is this repository's version of it.
+        ///
+        /// ⚠️⚠️ A LOCKED CARD IS STILL A CARD, WHICH IS MOST OF WHY THIS BOARD EXISTS. It names the
+        /// reading, so a player can see what they are working toward. That is the half
+        /// `docs/TODO.md` § 122.5's first attempt had to append to the description line to keep,
+        /// and appending it is what 🧑 photographed as **"theres things that overlap and shit"**.
+        /// </summary>
+        private void BuildVariantCard(Transform board, string heroId, int slot,
+                                      AbilityVariant option, Color accent, float y)
+        {
+            var settings = Settings.SettingsStore.Current;
+            if (settings == null) return;
+
+            var build = HeroBuildRules.RowFor(settings.HeroBuilds, heroId);
+            var equippedVariant = HeroBuildRules.Equipped(build, heroId, slot,
+                                                          settings.AbilityChallenges);
+
+            bool equipped = equippedVariant != null && equippedVariant.Id == option.Id;
+            bool unlocked = HeroBuildRules.IsUnlocked(settings.AbilityChallenges, option);
+            int progress = HeroBuildRules.ChallengeCount(settings.AbilityChallenges, option.Id);
+
+            float width = BoardWidth - (BoardPad * 2.0f);
+
+            var card = new GameObject("Variant_" + option.Id, typeof(RectTransform),
+                                      typeof(Image), typeof(Button));
+            card.transform.SetParent(board, false);
+
+            var rt = (RectTransform)card.transform;
+            rt.anchorMin = new Vector2(0.5f, 1.0f);
+            rt.anchorMax = new Vector2(0.5f, 1.0f);
+            rt.pivot = new Vector2(0.5f, 1.0f);
+            rt.anchoredPosition = new Vector2(0.0f, y);
+            rt.sizeDelta = new Vector2(width, 98.0f);
+
+            var plate = card.GetComponent<Image>();
+            plate.sprite = GodotTheme.Box(
+                equipped ? WoodCraft.Lift(RowPlate, 0.05f)
+                         : unlocked ? RowPlate
+                         : UiTheme.WoodDark,
+                equipped ? UiTheme.Amber : unlocked ? RowRim : UiTheme.WoodDeep,
+                equipped ? 2 : 1, 6);
+            plate.type = Image.Type.Sliced;
+
+            var button = card.GetComponent<Button>();
+            button.targetGraphic = plate;
+            button.transition = Selectable.Transition.None;
+            button.onClick.AddListener(() => EquipVariant(heroId, slot, option));
+
+            var name = MenuKit.Label(card.transform, option.Name, MenuKit.MinReadableUnits,
+                unlocked ? accent : BoardInkSoft,
+                new Vector2(0.0f, 1.0f), new Vector2(14.0f, -20.0f),
+                new Vector2(width - 160.0f, 24.0f), TextAnchor.MiddleLeft);
+            name.fontStyle = FontStyle.Bold;
+            name.alignment = TextAnchor.MiddleLeft;
+            name.raycastTarget = false;
+
+            string badge = equipped ? "EQUIPPED"
+                : unlocked ? ""
+                : progress + " / " + option.ChallengeTarget;
+
+            var state = MenuKit.Label(card.transform, badge, 14,
+                equipped ? UiTheme.Amber : BoardInkSoft,
+                new Vector2(1.0f, 1.0f), new Vector2(-14.0f, -20.0f),
+                new Vector2(130.0f, 24.0f), TextAnchor.MiddleRight);
+            state.fontStyle = FontStyle.Bold;
+            state.alignment = TextAnchor.MiddleRight;
+            state.raycastTarget = false;
+
+            // ⚠️⚠️ A LOCKED CARD CARRIES ITS CHALLENGE AND AN OPEN ONE CARRIES ITS DESCRIPTION,
+            // AND THEY ARE NEVER BOTH ON SCREEN. Running the two together is exactly the fault
+            // `Logs/shots-runtime/CharacterSelect-v62.png` recorded on the picker's description
+            // rows: two unrelated facts in one wrapped paragraph inside a 61-unit box.
+            var body = MenuKit.Label(card.transform,
+                unlocked ? option.Description : option.Challenge, 16,
+                unlocked ? BoardInk : BoardInkSoft,
+                new Vector2(0.0f, 1.0f), new Vector2(14.0f, -48.0f),
+                new Vector2(width - 28.0f, 40.0f), TextAnchor.UpperLeft);
+            body.alignment = TextAnchor.UpperLeft;
+            body.horizontalOverflow = HorizontalWrapMode.Wrap;
+            body.verticalOverflow = VerticalWrapMode.Truncate;
+            body.raycastTarget = false;
+
+            // ⚠️ THE TRADE IS ITS OWN LINE, in the accent, and it is absent on a default reading.
+            // `AbilityVariant.IsDefault` is the test: a default has no gain and no cost, so a
+            // "gains nothing, costs nothing" line under it would be two nouns saying nothing.
+            if (!unlocked || option.IsDefault) return;
+
+            var trade = MenuKit.Label(card.transform,
+                option.GainLabel + "   ·   " + option.CostLabel, 14, accent,
+                new Vector2(0.0f, 0.0f), new Vector2(14.0f, 16.0f),
+                new Vector2(width - 28.0f, 20.0f), TextAnchor.MiddleLeft);
+            trade.alignment = TextAnchor.MiddleLeft;
+            trade.raycastTarget = false;
+        }
+
+        /// <summary>
+        /// Equips a reading, or refuses and says so.
+        ///
+        /// ⚠️ THE REFUSAL IS AUDIBLE AND THE CARD ALREADY EXPLAINED ITSELF, which is § 6.2's
+        /// INTUITIVE row done properly: a locked card names its challenge and its count BEFORE the
+        /// press, so the refusal confirms what the player already read rather than being where they
+        /// find out. § 108's EQUIP button with no listener is the failure this replaces.
+        ///
+        /// ⚠️ `SettingsStore.Save` RUNS ON THE PRESS. A build only written when a screen closes is
+        /// a build lost by ESC, and ESC is the one key § 6.3 promises works everywhere.
+        /// </summary>
+        private void EquipVariant(string heroId, int slot, AbilityVariant option)
+        {
+            var settings = Settings.SettingsStore.Current;
+            if (settings == null) return;
+
+            if (!HeroBuildRules.IsUnlocked(settings.AbilityChallenges, option))
+            {
+                MenuSfx.Error();
+                return;
+            }
+
+            var build = HeroBuildRules.RowFor(settings.HeroBuilds, heroId);
+            if (slot == 1) build.Slot1VariantId = option.Id;
+            else build.Slot2VariantId = option.Id;
+
+            Settings.SettingsStore.Save();
+            MenuSfx.Click();
+
+            // ⚠️⚠️ BOTH SURFACES REFRESH, AND FORGETTING THE SECOND WOULD LEAVE TWO SCREENS
+            // DISAGREEING ABOUT ONE FACT. The board redraws so the EQUIPPED badge moves, and
+            // `Refresh` redraws the picker's ability rows behind it, which name and describe the
+            // equipped reading (see `RefreshHeroLoadout`).
+            Refresh();
+            ToggleLoadoutBoard(true);
+        }
+
+        /// <summary>
+        /// The hero id the picker is currently showing, or empty when it is not showing one.
+        ///
+        /// ⚠️ IT ANSWERS EMPTY ON THE LATA AND TSINELAS TABS AND ON EVERY CLASSIC CHARACTER, which
+        /// is what stops the loadout board being built for a prop. `docs/VISION.md` § 1.1: Classic
+        /// has no kit, and a can does not have skills.
+        /// </summary>
+        private string CurrentHeroId()
+        {
+            if (_tab != 0 || SceneFlow.SelectedMode != GameMode.HeroStrike) return "";
+
+            var entries = Entries;
+            if (entries == null || entries.Count == 0) return "";
+
+            int index = Mathf.Clamp(_pick[0], 0, entries.Count - 1);
+            return entries[index].Id;
+        }
+
+        private string HeroDisplayName(string heroId)
+        {
+            foreach (var entry in Roster.HeroPeople)
+                if (entry.Id == heroId) return entry.Name;
+
+            return heroId;
         }
 
         private readonly List<Button> _tabButtons = new List<Button>();
@@ -530,7 +1132,48 @@ namespace TumbangPreso.UI
 
                 bool active = i == _tab;
                 button.transition = Selectable.Transition.None;
-                button.interactable = !active;
+
+                // ⚠️⚠️⚠️ THE LIVE TAB IS INTERACTABLE NOW, AND `interactable = !active` IS WHY THE
+                // SELECTED TAB WAS THE ONE YOU COULD NOT READ. `Logs/crops/picker-tabs-v63.png`:
+                // `HERO` drew as a sunk, desaturated near-black plate with `DisabledInk` lettering
+                // while LATA and TSINELAS sat lit beside it. **`GodotButton.Refresh` picks the
+                // `Pose.Off` sprite AND the disabled ink whenever `Interactable` is false, ahead of
+                // any variation**, so the selected state and the unavailable state were the same
+                // picture — which is the one pair `PaperCraft.Pose`'s own note says must never
+                // collide.
+                //
+                // ⚠️⚠️ AND SETTING THE LABEL COLOUR FROM HERE COULD NEVER HAVE FIXED IT, which is
+                // worth stating because it was tried one render earlier. `GodotButton` writes
+                // `_label.color` from its own `Refresh`, which runs after this method on the same
+                // frame: two owners of one property, and the component wins. `docs/TODO.md`
+                // § 120.5 row 1 is the same fault on the same screen one property over.
+                //
+                // ⚠️ THE RULE `interactable = !active` WAS PROTECTING IS KEPT AND IS FREE.
+                // Pressing the tab you are already on now sets `_tab` to the value it already has
+                // and re-runs `Refresh`, which is idempotent. **The guard existed so a press could
+                // not do something odd; it cost the screen its selected state to buy nothing.**
+                button.interactable = true;
+
+                // ⚠️ THE VARIATION IS WHAT SAYS "THIS ONE" ON THE WOODEN PATH, and it is 🧑's own
+                // authored pair rather than a colour written here: `WoodTabLiveButton` is
+                // `WoodFace` with cream lettering, `WoodTabIdleButton` is `WoodSlot` with muted.
+                // `GodotButton` resolves both to `WoodCraft.Surface.Tab`, cut at the top and
+                // square along the bottom, so the live one stands on the row.
+                if (button.TryGetComponent<GodotButton>(out var skin))
+                {
+                    string wanted = active ? "WoodTabLiveButton" : "WoodTabIdleButton";
+                    if (skin.Variation != wanted)
+                    {
+                        skin.Variation = wanted;
+
+                        // ⚠️ `Apply` RE-RESOLVES THE STYLE AND `Refresh` ONLY REPAINTS FROM THE
+                        // ONE ALREADY RESOLVED. `GodotButton` caches `_style` off the variation, so
+                        // writing the field and calling `Refresh` would swap the name and keep the
+                        // old sprites, which is a tab that changes state in the inspector and never
+                        // on screen.
+                        skin.Apply();
+                    }
+                }
 
                 // ⚠️⚠️ THIS METHOD USED TO WRITE A `GodotTheme.Box` STRAIGHT ONTO THE IMAGE, AND
                 // THAT IS A LEFTOVER OF THE OLD FRONT END THAT NO PROBE COULD SEE. `Install` runs
@@ -569,21 +1212,63 @@ namespace TumbangPreso.UI
                     // ⚠️ ON THE PAPER PATH `PaperButton.Restyle` BELOW OWNS THE COLOUR, because it
                     // reads it off the surface and is therefore the one writer. Setting it here as
                     // well is how a live tab ends up with the right plate and the wrong word.
-                    if (!paper) label.color = active ? UiTheme.Ink : UiTheme.Cream;
+                    // ⚠️⚠️ AMBER ON THE LIVE TAB, NOT INK, AND `CharacterSelect-v62.png` IS WHY.
+                    // The live tab sets `interactable = false` on purpose (you cannot press the
+                    // tab you are on), so `GodotButton` draws it with `Pose.Off`: a SUNK,
+                    // desaturated near-black plate. Ink lettering on that measures about 1.5:1 and
+                    // the crop shows `HERO` as a dark smudge on a dark plate — **the selected tab
+                    // was the one you could not read**, which is the same collision
+                    // `PaperButton.Available`'s note records from the paper side.
+                    //
+                    // ⚠️ AND IT IS THE ONE PLACE ON THIS SCREEN AMBER IS SPENT, which is § 118.4's
+                    // rule (*amber is the marker*) the right way up: the board is dark again, so
+                    // the marker is the one LIGHT thing. On cream it would be 1.7:1 and wrong,
+                    // which is what § 119.10 measured and why the pips moved the other way.
+                    if (!paper) label.color = active ? UiTheme.Amber : UiTheme.Cream;
                     label.fontStyle = FontStyle.Bold;
                 }
             }
 
-            // ⚠️ THE DOOR IS THE FOURTH CELL OF THIS RAIL AND IS NOT IN `_tabButtons`, because it
-            // is not a tab: it opens another screen. It still has to be the same SIZE as the three
-            // beside it, which is the whole of *"these diff fonts look ugly"*, so it is fitted
-            // here with them rather than left on the number `BuildCustomDoor` gave it.
-            FitTabLabel(_customDoor);
+            // ⚠️⚠️ THE FOURTH CELL IS GONE AND THAT IS WHY THIS RAIL FINALLY FITS ITS OWN TYPE.
+            // `MAKE YOUR OWN` was the fourth control here and 🧑 removed it: **"lowk i dont want
+            // make your own and loadout to share the same button or panel as lata tsinelas hero"**,
+            // *"maybe u should give it its own clickable buttons on the right"* (2026-09-02).
+            //
+            // **He is describing § 117's rule from the outside.** Four controls that do the same
+            // kind of thing must look the same, and the fourth was never the same KIND: HERO, LATA
+            // and TSINELAS say WHICH CATEGORY you are looking at inside this screen, and MAKE YOUR
+            // OWN is a door OUT of it. `docs/TODO.md` § 121.5 said exactly that (*"it is a door out
+            // of this screen sitting in a row of tabs within it"*) and answered it by making the
+            // door the same size as the tabs, which is the wrong half of the sentence.
+            //
+            // ⚠️ AND EVERY SIZING FIGHT ON THIS RAIL WAS THAT ONE CELL. § 121.10 rows 3 and 4,
+            // `BuildCustomDoor`'s 2.2-of-flex arithmetic and `FitTabLabel`'s 14-unit floor all
+            // exist because `MAKE YOUR OWN` is thirteen characters in a row whose next longest is
+            // eight. Three cells of four to eight characters share a 560-unit rail with room to
+            // spare, so `FitTabLabel` can no longer be forced under `MenuKit.MinReadableUnits`.
+
+            // ⚠️⚠️ THE LOADOUT DOOR FOLLOWS THE TAB, because a build belongs to a HERO and the
+            // other two tabs are a can and a slipper. It is HIDDEN rather than greyed, which is the
+            // same call `BuildStageDoors` makes about Classic and for the same reason: a greyed
+            // control is indistinguishable from a broken one (`CLAUDE.md` § 6.2), and on the LATA
+            // tab there is visibly no hero on screen for it to belong to.
+            //
+            // ⚠️ AND THE BOARD CLOSES WITH IT. Switching tabs while the board is open would leave
+            // a hero's build panel standing over a picture of a tin can, which is § 121.2's stuck
+            // state on a whole screen instead of on one plate.
+            bool heroTab = _tab == 0 && SceneFlow.SelectedMode == GameMode.HeroStrike;
+
+            if (_loadoutDoor != null && _loadoutDoor.gameObject.activeSelf != heroTab)
+            {
+                _loadoutDoor.gameObject.SetActive(heroTab);
+                if (!heroTab) ToggleLoadoutBoard(false);
+            }
         }
 
-        /// <summary>The MAKE YOUR OWN cell. ⚠️ Held so `RefreshTabs` can fit it with the tabs; see
-        /// `FitTabLabel` for why fitting cannot happen at build time.</summary>
+        /// <summary>The two chips on the stage. ⚠️ `_loadoutDoor` is null in Classic by
+        /// construction; see `BuildStageDoors` for why it is absent rather than greyed.</summary>
         private Button _customDoor;
+        private Button _loadoutDoor;
 
         private void OnEnable()
         {
@@ -704,6 +1389,110 @@ namespace TumbangPreso.UI
         // cannot spend, and `CosmeticsWireTests` asserts that no track pays one. The transport
         // above stays for the day an authored skin or MAKE YOUR OWN wants it.
 
+        /// <summary>
+        /// What one skill slot currently holds, and what pressing it would do.
+        ///
+        /// ⚠️⚠️ THE WHOLE OF `docs/TODO.md` § 122.5 IS THAT THE PICKER OWNS THIS NOW AND THE HUB
+        /// DOES NOT. 🧑 2026-09-02: **"put loadout here, it makes no sense to be in profile"**, and
+        /// again, *"there were button updates can u put loadouts in the choose ur hero screen too
+        /// and shit"*. He is right on the journey argument as well as the taste one
+        /// (`CLAUDE.md` § 6.3): equipping a build used to be **lobby → ACCOUNT → LOADOUT tab →
+        /// hero stepper → slot stepper**, five presses, and four of them exist only to re-select
+        /// the hero the player had already chosen on this screen. Here the hero is the thing the
+        /// screen is about, so the journey is **lobby → FIGHTER → press the skill**, two presses,
+        /// and the row you press is the row that describes what you are choosing between.
+        ///
+        /// ⚠️ IT RETURNS THE **EQUIPPED** VARIANT AND NOT THE VIEWED ONE, which is the opposite of
+        /// what `PlayerHub.BuildAbilityBuildRows` did. That tab kept a `_loadoutViews` dictionary
+        /// so a player could BROWSE a locked variant without equipping it, and it needed one
+        /// because a stepper's job is to move a cursor. **A two-state toggle on the row itself has
+        /// no cursor to keep**: what is drawn is what is equipped, and a press that cannot be
+        /// honoured (a locked variant) leaves the row exactly where it was and says why. One less
+        /// piece of state, and no way for the screen to show a build the match will not use.
+        ///
+        /// ⚠️ THE ULTIMATE'S SLOT IS 0 AND FALLS OUT HERE, so every caller gets `Total == 0` and
+        /// draws no control rather than having to know the rule. See the `abilities` table.
+        /// </summary>
+        private readonly struct SlotChoice
+        {
+            public readonly AbilityVariant Equipped;
+            public readonly AbilityVariant Next;
+            public readonly int Index, Total;
+            public readonly bool NextUnlocked;
+            public readonly int NextProgress;
+
+            public SlotChoice(AbilityVariant equipped, AbilityVariant next, int index, int total,
+                              bool nextUnlocked, int nextProgress)
+            {
+                Equipped = equipped;
+                Next = next;
+                Index = index;
+                Total = total;
+                NextUnlocked = nextUnlocked;
+                NextProgress = nextProgress;
+            }
+        }
+
+        private static SlotChoice SlotView(string heroId, int slot)
+        {
+            if (slot <= 0) return default;
+
+            var settings = Settings.SettingsStore.Current;
+            if (settings == null) return default;
+
+            var options = HeroLoadoutRules.VariantsFor(heroId, slot);
+            if (options == null || options.Count < 2) return default;
+
+            var build = HeroBuildRules.RowFor(settings.HeroBuilds, heroId);
+            var equipped = HeroBuildRules.Equipped(build, heroId, slot, settings.AbilityChallenges);
+
+            int index = 0;
+            for (int i = 0; i < options.Count; i++)
+                if (options[i].Id == equipped.Id) index = i;
+
+            var next = options[(index + 1) % options.Count];
+
+            return new SlotChoice(equipped, next, index, options.Count,
+                                  HeroBuildRules.IsUnlocked(settings.AbilityChallenges, next),
+                                  HeroBuildRules.ChallengeCount(settings.AbilityChallenges, next.Id));
+        }
+
+        /// <summary>
+        /// Equips the next reading of a slot, or refuses and says so.
+        ///
+        /// ⚠️⚠️ A REFUSAL IS AUDIBLE AND THE ROW ALREADY EXPLAINS ITSELF, which is `CLAUDE.md`
+        /// § 6.2's INTUITIVE row done properly. The failure this replaces is § 108's EQUIP button
+        /// with no `onClick`: a control that looks pressable and answers with nothing. Here a
+        /// locked variant is NAMED on the row with its own challenge and its own count before the
+        /// player presses anything, so the press confirms what the row already said rather than
+        /// being where the player finds out.
+        ///
+        /// ⚠️ `SettingsStore.Save` RUNS ON THE PRESS AND NOT ON CLOSING THE SCREEN. A build that
+        /// is only written when a screen is dismissed is a build lost by ESC, and ESC is the one
+        /// key `CLAUDE.md` § 6.3 promises works everywhere.
+        /// </summary>
+        private void CycleSlot(string heroId, int slot)
+        {
+            var view = SlotView(heroId, slot);
+            if (view.Total < 2) return;
+
+            if (!view.NextUnlocked)
+            {
+                MenuSfx.Error();
+                return;
+            }
+
+            var settings = Settings.SettingsStore.Current;
+            var build = HeroBuildRules.RowFor(settings.HeroBuilds, heroId);
+
+            if (slot == 1) build.Slot1VariantId = view.Next.Id;
+            else build.Slot2VariantId = view.Next.Id;
+
+            Settings.SettingsStore.Save();
+            MenuSfx.Click();
+            Refresh();
+        }
+
         private void RefreshHeroLoadout(Transform rows, string heroId)
         {
             _heroLoadoutHeight = 0.0f;
@@ -731,11 +1520,18 @@ namespace TumbangPreso.UI
             // being the fix to being the fallback.
             if (rows is RectTransform toLayOut) ForceLayoutFor(toLayOut);
 
-            var abilities = new (string action, HeroAbility ability, bool ult)[]
+            // ⚠️⚠️ THE SLOT NUMBER TRAVELS WITH THE ROW NOW, AND IT IS WHAT MAKES THIS SCREEN THE
+            // LOADOUT SCREEN. `HeroLoadoutRules.VariantsFor` is keyed on (hero, slot) with 1 and 2
+            // for the two skills and NOTHING for the ultimate, which is `AbilityVariant.Slot`'s own
+            // note: *"an ultimate is banked once or twice a match and reading which one an opponent
+            // has is already a skill ... two readings of the same ultimate would make the tell
+            // unreliable rather than deeper."* So `slot` is 0 on the third row by construction and
+            // the ultimate cannot accidentally acquire a build control.
+            var abilities = new (string action, HeroAbility ability, bool ult, int slot)[]
             {
-                ("Skill1", kit.Skill1, false),
-                ("Skill2", kit.Skill2, false),
-                ("Ultimate", kit.Ultimate, true),
+                ("Skill1", kit.Skill1, false, 1),
+                ("Skill2", kit.Skill2, false, 2),
+                ("Ultimate", kit.Ultimate, true, 0),
             };
 
             // The picker must answer what the whole hero does without extra clicks. Each power
@@ -744,6 +1540,14 @@ namespace TumbangPreso.UI
             {
                 var item = abilities[i];
                 if (item.ability == null) continue;
+
+                // ⚠️⚠️ THE ROW DESCRIBES THE EQUIPPED READING, NOT THE KIT'S DEFAULT, AND THAT
+                // SINGLE LOOKUP IS MOST OF *"put loadout here"*. `HeroAbilitySystem.CreateKitFor`
+                // builds the hero's BASE kit, so before this the picker showed `SEISMIC STOMP`
+                // and its default summary to a player who had equipped `CHALK PERIMETER` in the
+                // hub four screens away. **The one screen in the game that explains a hero was
+                // describing an ability that player was not taking into the match.**
+                var slotView = SlotView(heroId, item.slot);
 
                 var rowGo = new GameObject($"AbilityRow_{i}");
                 rowGo.AddComponent<RectTransform>();
@@ -761,28 +1565,42 @@ namespace TumbangPreso.UI
                 // sits on this plate at full Cream; a heavier tint would start eating the
                 // legibility that was just fixed a few lines below.
                 //
-                // ⚠️⚠️ AND THE PLATE IS CUT PAPER NOW, WHICH IS THE SAME ARGUMENT ONE MATERIAL
-                // OVER. These three rows sit INSIDE a panel `PaperDress` turned cream at
-                // `Install`, so a near-black `HeroPlate` with cream lettering on it was the old
-                // front end drawn inside the new one: 🧑, on the overhaul,
-                // *"MAKE SURE U COMPLETELY REPLACE UI BCZ I DOTN WANT LEFTOVER SHIT FROM OLD UI"*.
-                // They are `Tray` colours (`PaperWarm` in a `PaperEdge` cut) because an ability
-                // row is a thing you READ, which is what that surface means.
+                // ⚠️⚠️ AND THE PLATE IS WOOD AGAIN, BECAUSE THE PANEL UNDER IT IS. It was
+                // `HeroPlate`, then `Tray` colours for the paper pass, and it is `RowPlate` now:
+                // see that constant and `Wire`'s note for the instruction that reversed it. **The
+                // rule did not change and the board did**, which is the same sentence
+                // `CLAUDE.md` § 6.5 records about the chamfer.
                 //
                 // ⚠️ THE ULTIMATE KEEPS ITS ACCENT WASH AND ITS THICKER RIM, which is the whole
                 // point of the note above: the thing a round is spent earning must not look like
-                // the third item in a list. 0.14 of the hero colour reads on cream at least as
-                // well as it did on near-black, and the rim is the accent at full strength.
+                // the third item in a list. 0.14 of the hero colour on a wood-dark plate is the
+                // ratio it was originally tuned at, so this half is a revert rather than a retune.
                 Color plate = item.ult
-                    ? Color.Lerp(UiTheme.PaperWarm, accent, 0.14f)
-                    : UiTheme.PaperWarm;
+                    ? Color.Lerp(RowPlate, accent, 0.14f)
+                    : RowPlate;
 
                 var rowBg = rowGo.AddComponent<Image>();
                 rowBg.sprite = GodotTheme.Box(
                     plate,
-                    item.ult ? accent : UiTheme.PaperEdge,
+                    item.ult ? accent : RowRim,
                     item.ult ? 2 : 1, 6);
                 rowBg.type = Image.Type.Sliced;
+
+                // ⚠️⚠️ THESE ROWS ARE THE **LEARN** LAYER AND THEY ARE NOT PRESSABLE, WHICH IS A
+                // DECISION HE MADE AFTER SEEING THEM PRESSABLE. The first build of § 122.5 put the
+                // whole loadout on these rows as a two-state toggle, because the panel is authored
+                // at a fixed height and `HeroPickerLayoutProbe` dumps `Rows h=460 pref=644` — there
+                // was no vertical budget for a control of its own. 🧑 2026-09-02: **"lowk i dont
+                // want make your own and loadout to share the same button or panel as lata tsinelas
+                // hero"**, *"maybe u should give it its own clickable buttons on the right"*.
+                //
+                // **He is right and the budget argument was a constraint, not a design.** The right
+                // two thirds of this screen is a dark stage with a model standing on it and nothing
+                // else, so the room was always there; it was just not in the panel. `BuildStageDoors`
+                // and `LoadoutBoard` are where the loadout lives now.
+                //
+                // ⚠️ `raycastTarget` STAYS `false`, WHICH IT HAS ALWAYS BEEN. Nothing on this row
+                // is a control, so nothing on it may eat a click.
                 rowBg.raycastTarget = false;
 
                 var rowCol = rowGo.AddComponent<VerticalLayoutGroup>();
@@ -833,11 +1651,11 @@ namespace TumbangPreso.UI
                 glyphGo.transform.SetParent(header.transform, false);
                 var glyph = glyphGo.AddComponent<Image>();
                 glyph.sprite = AbilityIcons.For(item.ability.Glyph);
-                // ⚠️ `HeroGlyphOn` IS CREAM AND THESE ROWS ARE CREAM NOW. That constant is
-                // correct where it was written, which is the in-match deck over a dark plate; here
-                // it would draw the ability icon in the colour of the plate behind it. Ink, which
-                // is what every other mark on a paper surface is.
-                glyph.color = UiTheme.PaperInk;
+                // ⚠️ CREAM AGAIN, BECAUSE THE PLATE UNDER IT IS WOOD AGAIN. This was `PaperInk`
+                // for the paper pass under a note saying `HeroGlyphOn` would draw the icon in the
+                // colour of the plate behind it; that note was correct then and is now correct in
+                // the other direction, which is why the colour is `BoardInk` rather than a literal.
+                glyph.color = BoardInk;
                 glyph.preserveAspect = true;
                 glyph.raycastTarget = false;
 
@@ -850,7 +1668,10 @@ namespace TumbangPreso.UI
                 var chipGo = new GameObject("KeyChip");
                 chipGo.transform.SetParent(header.transform, false);
                 var chip = chipGo.AddComponent<Image>();
-                chip.sprite = GodotTheme.Box(UiTheme.PaperSunk, new Color(0, 0, 0, 0), 0, 4);
+                // ⚠️ THE KEY CHIP IS A HOLE IN THE PLATE, so it goes DOWN from the plate rather
+                // than up: `WoodDark` on `WoodSlot`. On the paper board it was `PaperSunk` on
+                // `PaperWarm`, which is the same relationship one material over.
+                chip.sprite = GodotTheme.Box(UiTheme.WoodDark, new Color(0, 0, 0, 0), 0, 4);
                 chip.type = Image.Type.Sliced;
                 chip.raycastTarget = false;
 
@@ -867,7 +1688,16 @@ namespace TumbangPreso.UI
                 keyLabel.raycastTarget = false;
                 MenuKit.Stretch(keyLabel.rectTransform);
 
-                var nameLbl = MenuKit.Label(header.transform, item.ability.Name, MenuKit.MinReadableUnits,
+                // ⚠️⚠️ THE VARIANT'S NAME WINS OVER THE KIT'S, WHICH IS THE VISIBLE HALF OF
+                // *"put loadout here"*. `AbilityVariant.Name` is the reading the player has
+                // equipped and `HeroAbility.Name` is the slot's default; they are the same string
+                // on a default build, so nothing moves for a fresh account and everything is
+                // correct for one that has equipped anything. See `SlotView`.
+                string abilityName = slotView.Total >= 2 && slotView.Equipped != null
+                    ? slotView.Equipped.Name
+                    : item.ability.Name;
+
+                var nameLbl = MenuKit.Label(header.transform, abilityName, MenuKit.MinReadableUnits,
                     accent,
                     Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleLeft);
                 nameLbl.fontStyle = FontStyle.Bold;
@@ -913,7 +1743,7 @@ namespace TumbangPreso.UI
                 // seent"*. This sat at 13 pt and three quarters opacity on a dark plate, which
                 // is the least readable thing on the screen carrying the only NUMBERS on it.
                 var timingLbl = MenuKit.Label(header.transform, timing, 14,
-                    UiTheme.PaperInk,
+                    BoardInk,
                     Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleRight);
                 timingLbl.fontStyle = FontStyle.Bold;
                 timingLbl.raycastTarget = false;
@@ -924,6 +1754,12 @@ namespace TumbangPreso.UI
                 // ability NAME along instead of overflowing visibly, which is worse: it looks
                 // like a layout choice rather than a bug.
                 timingLbl.gameObject.AddComponent<LayoutElement>().minWidth = 116.0f;
+
+                // ⚠️⚠️ THE BUILD MARKER THAT LIVED HERE IS GONE WITH THE PRESSABLE ROW. It read
+                // `1/2 ›` and was the affordance for a control this row no longer has. What stays
+                // is the half of § 122.5 that was never about the control: **the row names and
+                // describes the EQUIPPED reading rather than the kit's default**, which was a real
+                // defect on its own (`abilityName` above, and `summary` below).
 
                 // ⚠️⚠️ 15 pt AND FULL CREAM, UP FROM 13 pt MUTED. 🧑: *"shit down there is small
                 // and cant be seent"*. This line is the only place the picker explains what a
@@ -945,8 +1781,32 @@ namespace TumbangPreso.UI
                 // ⚠️ THE ROW GREW WITH IT. A taller line inside a `preferredHeight` that did not
                 // move would push the description into the plate's bottom border, which is the
                 // fault this was supposed to fix wearing a different hat.
-                var descLbl = MenuKit.Label(rowGo.transform, item.ability.Summary, MenuKit.MinReadableUnits,
-                    UiTheme.PaperInk, Vector2.zero, Vector2.zero, Vector2.zero,
+                // ⚠️⚠️ THE SUMMARY FOLLOWS THE EQUIPPED READING AND, WHEN THE OTHER ONE IS
+                // LOCKED, SAYS HOW TO EARN IT. `PlayerHub.BuildAbilityBuildRows` built exactly
+                // this sentence and put it in a `UiRows` hint four screens away; bringing the
+                // feature here without the sentence would have been the half of it that looks like
+                // a feature. **The challenge and its running count are the only reason a locked
+                // marker is information rather than a wall.**
+                //
+                // ⚠️ THE VARIANT'S OWN DESCRIPTION WINS OVER `HeroAbility.Summary`, and the two
+                // are the same string on a default build, so a fresh account sees no change at
+                // all. `AbilityVariant.IsDefault` is the test and it is `Challenge` being empty.
+                string summary = item.ability.Summary;
+
+                // ⚠️⚠️ THE CHALLENGE LINE IS NOT APPENDED HERE AND `Logs/shots-runtime/
+                // CharacterSelect-v62.png` IS WHY. The first build of this ran the equipped
+                // description and the locked variant's challenge into one wrapped paragraph with a
+                // `·` between them, and the render is unreadable: *"The stomp as it is tuned. One
+                // heavy shock at the measured radius. · Long Tremor: Use Seismic Stomp eight times
+                // (0 / 8)"* over two lines in a 61-unit row. **Two unrelated facts in one sentence
+                // is `CLAUDE.md` § 6.2's NEVER OVERWHELMING failure at the size of one label.**
+                // The unlock belongs to the OTHER reading, so it belongs on the board that shows
+                // both readings: `LoadoutBoard`.
+                if (slotView.Total >= 2 && slotView.Equipped != null)
+                    summary = slotView.Equipped.Description;
+
+                var descLbl = MenuKit.Label(rowGo.transform, summary, MenuKit.MinReadableUnits,
+                    BoardInk, Vector2.zero, Vector2.zero, Vector2.zero,
                     TextAnchor.UpperLeft);
                 descLbl.raycastTarget = false;
                 descLbl.horizontalOverflow = HorizontalWrapMode.Wrap;
@@ -994,14 +1854,20 @@ namespace TumbangPreso.UI
             // the cards duplicated that information and clipped against the wood panel.
         }
 
-        // ⚠️⚠️ THE FILLED PIP IS WOOD AND IT WAS AMBER, WHICH IS `docs/TODO.md` § 119.10'S
-        // MEASUREMENT ARRIVING ON A THIRD CONTROL. `(0.98, 0.78, 0.12)` is `UiTheme.Amber` written
-        // out, and amber on the cream panel these pips now sit in is **1.7:1**: the filled half of
-        // a trait bar is the half that disappears. On paper the marker is the one DARK thing, so a
-        // filled pip is wood sitting in an empty pip's groove and the pair are about 6:1 apart.
-        private static readonly Color PipFilled = UiTheme.WoodMid;
-        private static readonly Color PipEmpty = new Color(UiTheme.PaperSunk.r, UiTheme.PaperSunk.g,
-                                                           UiTheme.PaperSunk.b, 0.75f);
+        // ⚠️⚠️ THE FILLED PIP IS AMBER AGAIN, AND BOTH SWAPS WERE THE SAME MEASUREMENT READ ON
+        // TWO DIFFERENT FIELDS. § 119.10 took it from amber to `WoodMid` because `ffba00` on the
+        // cream panel is **1.7:1** and the filled half of a trait bar was the half that
+        // disappeared; the panel is wood again (see `BoardInk`), so on `WoodSlot` the numbers
+        // invert and it is `WoodMid` that vanishes. **On a dark board the marker is the one LIGHT
+        // thing, and on a light one it is the one dark thing** — the same sentence
+        // `PaperCraft.Surface.Sign` and `FocusRing` have each had to learn.
+        //
+        // ⚠️ AND THE EMPTY PIP IS THE PLATE'S OWN GROOVE RATHER THAN A GREY. A trait bar is five
+        // holes with some of them lit, so the unlit ones must be the recess colour of the surface
+        // they are cut into or the bar reads as ten objects instead of one control.
+        private static readonly Color PipFilled = UiTheme.Amber;
+        private static readonly Color PipEmpty = new Color(UiTheme.WoodDark.r, UiTheme.WoodDark.g,
+                                                           UiTheme.WoodDark.b, 0.75f);
 
         /// <summary>
         /// ⚠️⚠️ AS MANY SEGMENTS AS A TRAIT HAS POINTS, WHICH IS FIVE. This was eight, and the
@@ -1152,10 +2018,10 @@ namespace TumbangPreso.UI
             {
                 value.fontSize = choosingHero ? 32 : 30;
                 value.fontStyle = FontStyle.Bold;
-                // ⚠️ INK ON THE CLASSIC TAB, because the panel behind this label is cream now.
-                // The hero accent stays: it is a gameplay tell rather than decoration.
+                // ⚠️ `BoardInk` ON THE CLASSIC TAB, which is cream again with the board. The
+                // hero accent stays either way: it is a gameplay tell rather than decoration.
                 value.color = choosingHero
-                    ? UiTheme.ColorForHero(entry.Id) : UiTheme.PaperInk;
+                    ? UiTheme.ColorForHero(entry.Id) : BoardInk;
             }
 
             var tagline = Node("TaglineLabel")?.GetComponent<Text>();
@@ -1243,12 +2109,61 @@ namespace TumbangPreso.UI
             // not lighter.** `PaperEdge` is one step down, which keeps the halo behind the model
             // readable without turning it into a spotlight.
             //
-            // ⚠️ THE HERO LERP STILL WINS ON THE HERO TAB, and that is the point of the lerp: it
-            // is the one place on this screen the kit's own colour is allowed to wash the stage.
-            var neutralGlow = new Color(UiTheme.PaperEdge.r, UiTheme.PaperEdge.g,
-                                        UiTheme.PaperEdge.b, 1.0f);
+            // ⚠️⚠️ AND ON 2026-09-02 THE FIELD MOVED A THIRD TIME AND THE NEUTRAL WENT BACK UP.
+            // The backdrop is a warm near-black now (`VerticalBackdrop`), so the glow is an ADD
+            // against a dark ground rather than a vignette on a light one, and `PaperEdge` on
+            // near-black is a grey film. **`WoodEdge` `8b5227` is the lamp**: it is the lightest
+            // wood in the palette, it is what every raised edge in the front end is already lit
+            // with, and against `WoodDeep` it is about a 3:1 lift, which is a pool of light and
+            // not a spotlight.
+            //
+            // ⚠️⚠️ 0.45 OF THE HERO COLOUR AND IT WAS 0.65, WHICH IS THE OTHER HALF OF § 121.5.
+            // 🧑 wants the stage to answer the character (**"this used to be amazing when it was
+            // brown only and the background corresponded to their color"**) and rejected the
+            // version that let a hero's own hue across the screen (*"yea see this doesnt look
+            // great"*, of NEMU's purple). At 0.65 the pool IS the hero's hue; at 0.45 the warm
+            // lamp still dominates and the character's colour arrives as a tint in it, which is
+            // the *"low, contained glow"* that entry asks for in as many words. **The hue moves
+            // and the value does not**, which is the ordering rule this front end is built on.
+            //
+            // ⚠️ THE ALPHA IS THE TEXTURE'S AND IS NOT TOUCHED HERE. `RadialGlow` spends the
+            // whole falloff budget; multiplying it again from this method is how two people end up
+            // owning one number, and the pool would then be twice as tight on the hero tab as on
+            // the other two for no stated reason.
+            var neutralGlow = new Color(UiTheme.WoodEdge.r, UiTheme.WoodEdge.g,
+                                        UiTheme.WoodEdge.b, 1.0f);
+            // ⚠️⚠️⚠️ 0.16, AND 0.45 SHIPPED A GREEN STAGE. Measured on
+            // `Logs/shots-runtime/CharacterSelect-v62.png` with `tools/sample_png.js rect`: the
+            // pool behind DANTE came out **`545b2f`, hue 70 at 48 per cent saturation** — an
+            // olive. `UiTheme.HeroEarth` is `3fa65c`, and lerping 45 per cent of the way to it
+            // from `WoodEdge` (hue 26) lands halfway between the two hues, which is a green.
+            // **That is the fifth hue § 118.4 and § 119.1 both forbid, and it is the exact thing
+            // he rejected on the version before this one**: *"yea see this doesnt look great"*, of
+            // NEMU's purple.
+            //
+            // ⚠️⚠️ THE WHOLE TABLE, COMPUTED RATHER THAN GUESSED, WHICH IS WHY 0.16 AND NOT A
+            // ROUND NUMBER. Mixed from `WoodEdge` `8b5227` (hue 26, sat 72, val 55):
+            //
+            //   | hero            | at 0.45         | at 0.16          |
+            //   |-----------------|-----------------|------------------|
+            //   | DANTE  earth    | hue  76 sat 48  | hue **36** sat 63 |
+            //   | SEAN   fire     | hue   4 sat 69  | hue **17** sat 71 |
+            //   | CHESKA ice      | hue 113 sat 23  | hue **36** sat 50 |
+            //   | ZACK   electric | hue  49 sat 74  | hue **35** sat 73 |
+            //   | NEMU   spirit   | hue 316 sat 49  | hue **6**  sat 49 |
+            //   | PHAISTER witch  | hue 336 sat 65  | hue **7**  sat 58 |
+            //
+            // **At 0.45 the six span greens, cyans and magentas; at 0.16 every one lands between
+            // hue 6 and 36**, which is inside this front end's own warm band (the palette runs 20
+            // to 39). The six are still visibly different from each other in hue, saturation AND
+            // value, so the stage still answers the character, which is what he asked for:
+            // **"this used to be amazing when it was brown only and the background corresponded to
+            // their color"**. That is § 121.5's *"low, contained glow"* as a number.
+            //
+            // ⚠️ VALUE AND WARMTH MOVE AND HUE BARELY DOES, which is the ordering rule this whole
+            // front end is built on and the same inversion § 119.10 records for amber.
             if (entry != null && _tab == 0)
-                _glowImage.color = Color.Lerp(neutralGlow, UiTheme.ColorForHero(entry.Id), 0.65f);
+                _glowImage.color = Color.Lerp(neutralGlow, UiTheme.ColorForHero(entry.Id), 0.16f);
             else
                 _glowImage.color = neutralGlow;
         }
@@ -1427,6 +2342,22 @@ namespace TumbangPreso.UI
         /// </summary>
         private void Dismiss()
         {
+            // ⚠️⚠️ THE INNERMOST LAYER FIRST, WHICH IS `CLAUDE.md` § 6.3'S RULE VERBATIM: *"Escape
+            // backs out on every screen, always, innermost layer first."* The loadout board is a
+            // layer on top of this screen now, so ESC with it open must close IT and leave the
+            // picker standing; without this line one press would dismiss both and the player would
+            // land back in the lobby having meant to close a panel.
+            //
+            // ⚠️ IT IS IN `Dismiss` RATHER THAN IN THE KEY HANDLER, because BACK is the same
+            // journey by pointer and the two must not disagree. `ConvertedScreen`'s own note is
+            // that the key routes through the method the button calls for exactly this reason.
+            if (LoadoutBoardOpen)
+            {
+                MenuSfx.Back();
+                ToggleLoadoutBoard(false);
+                return;
+            }
+
             Closed?.Invoke();
 
             if (transform.parent != null)
@@ -1438,4 +2369,5 @@ namespace TumbangPreso.UI
             SceneFlow.Go(SceneFlow.MatchSetup);
         }
     }
+
 }

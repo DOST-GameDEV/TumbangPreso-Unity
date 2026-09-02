@@ -176,11 +176,18 @@ namespace TumbangPreso.UI
         /// `CLAUDE.md` § 6.2c question 1: a percentage of the window is
         /// not a size, and `AspectSafeCanvas` scales on the SHORT axis, so one fraction is two very
         /// different widths at two aspect ratios.
+        ///
+        /// ⚠️⚠️ AND IT GREW BY `SettingsWidth` + `PaperKit.Gap` ON 2026-09-02, WHEN 🧑 ASKED FOR
+        /// A SETTINGS DOOR ON THIS SCREEN: **"cann u also add a settings button in lobby?"**. The
+        /// rail is sized to its content, so a new control has to appear in this sum or the rail
+        /// will not be wide enough for what is on it and the tab bar's centring (see `BuildTabs`)
+        /// will lean the wrong way. **Both of those are one edit or neither**; adding the chip and
+        /// forgetting the arithmetic is `docs/TODO.md` § 114.13's fault in slow motion.
         /// </summary>
         private const float TopRailWidth =
             (PaperKit.Pad * 2.0f) + 16.0f + BackWidth + PaperKit.Gap
             + (TabWidth * 3.0f) + (PaperKit.Gap * 2.0f)
-            + PaperKit.Gap + ProfileWidth;
+            + PaperKit.Gap + SettingsWidth + PaperKit.Gap + ProfileWidth;
 
         /// <summary>The bottom rail, added up: the three columns and their gutters.</summary>
         private const float BottomRailWidth =
@@ -374,6 +381,31 @@ namespace TumbangPreso.UI
         /// `PROFILE` would have been sizing against the state nobody starts in.</summary>
         private const float ProfileWidth = 200.0f;
 
+        /// <summary>
+        /// The door to the game's own settings, between the tabs and the account door.
+        ///
+        /// ⚠️⚠️ 🧑 ASKED FOR IT BY NAME: **"cann u also add a settings button in lobby?"**,
+        /// 2026-09-02. Until then the ONLY way to reach the audio, video and key bindings from a
+        /// lobby was to leave it: BACK to the main menu, SETTINGS, change the thing, PLAY, and set
+        /// the room up again. **A player who wants to turn the music down mid-lobby had to
+        /// dissolve the room to do it**, which is `CLAUDE.md` § 6.3's journey test failing at four
+        /// presses and a destroyed match.
+        ///
+        /// ⚠️⚠️ AND IT IS **NOT** THE SAME THING AS THE `MATCH SETTINGS` CHIP ON THE BOTTOM RAIL,
+        /// WHICH IS WHY THE QUALIFIER IS ON THAT ONE AND NOT ON THIS ONE. `BuildSettingsDrawer`
+        /// opens the map, the mode and the format: facts about THIS match, on the rail that is
+        /// about this match, and only the host may change them. This opens the audio sliders and
+        /// the bindings list: facts about this MACHINE, on the rail that is about you, and every
+        /// player may change them. **The specific one carries the adjective and the general one is
+        /// the bare word**, which is the way round a player can guess; naming this one `GAME
+        /// SETTINGS` would have put an adjective on both and made the pair a puzzle.
+        ///
+        /// ⚠️ 148 IS `SETTINGS` AT `PaperKit.Body` PLUS ONE `Pad` EITHER SIDE, sized like every
+        /// other chip on this rail rather than rounded to the nearest fifty. It is narrower than
+        /// `ProfileWidth` on purpose: that door has to hold `SECURE PROGRESS`.
+        /// </summary>
+        private const float SettingsWidth = 148.0f;
+
         /// <summary>How tall the gradient bands over the street are, as a fraction of the screen.
         /// </summary>
         private const float TopBandFraction = 0.20f;
@@ -496,6 +528,7 @@ namespace TumbangPreso.UI
             LiftBack(rail.transform, leftColumn);
             BuildTabs(rail.transform, onMode, parts);
             BuildProfileButton(rail.transform, parts);
+            BuildSettingsButton(rail.transform, parts);
             LiftVersionStamp(canvasRoot, rail.transform);
         }
 
@@ -591,8 +624,14 @@ namespace TumbangPreso.UI
             // row whose left end is BACK and whose right end is the identity pair; the half of the
             // difference between those two blocks is what the bar has to lean by, and it is
             // computed rather than eyeballed.
+            // ⚠️⚠️ THE RIGHT BLOCK IS TWO CONTROLS NOW AND IT WAS ONE. `BuildSettingsButton`
+            // added a chip between the tabs and the account door on 2026-09-02
+            // (🧑: **"cann u also add a settings button in lobby?"**), and this arithmetic is what
+            // keeps the tab bar in the rail's optical middle rather than its geometric one. Miss
+            // this line and the three tabs sit 79 units left of where they look like they should.
             const float leftBlock = PaperKit.Pad + BackWidth + PaperKit.Gap;
-            const float rightBlock = PaperKit.Gap + ProfileWidth + PaperKit.Pad + 8.0f;
+            const float rightBlock = PaperKit.Gap + SettingsWidth + PaperKit.Gap
+                                     + ProfileWidth + PaperKit.Pad + 8.0f;
             barRect.anchoredPosition = new Vector2((leftBlock - rightBlock) * 0.5f, 0.0f);
             barRect.sizeDelta = new Vector2((TabWidth * 3.0f) + (PaperKit.Gap * 2.0f),
                                             PaperKit.ChipHeight);
@@ -660,6 +699,51 @@ namespace TumbangPreso.UI
             }
 
             parts.ProfileButton = button;
+        }
+
+        /// <summary>
+        /// SETTINGS, between the mode tabs and the account door.
+        ///
+        /// ⚠️⚠️ 🧑 ASKED FOR IT: **"cann u also add a settings button in lobby?"**, 2026-09-02.
+        /// <see cref="SettingsWidth"/> carries the journey it fixes and the argument for the name;
+        /// this is where it is placed and why there.
+        ///
+        /// ⚠️⚠️ IT SITS ON THE RIGHT END WITH `ACCOUNT` BECAUSE BOTH ARE ABOUT **YOU AND THIS
+        /// MACHINE**, and the top rail's own header says what the rail is for: *who you are, where
+        /// you are, and how you get out*. BACK is the way out, the three tabs are where you are,
+        /// and the two chips on the right are who you are. **Putting it on the bottom rail would
+        /// have been the wrong rail entirely**: that one is three questions about the MATCH, and a
+        /// control that changes the master volume is not one of them.
+        ///
+        /// ⚠️ AND IT IS INSIDE THE ACCOUNT DOOR, NOT OUTSIDE IT, which is `game-ui-design`'s
+        /// ordering read backwards: the rightmost thing on a rail is the last thing scanned and
+        /// `ACCOUNT` is the more important of the two (it is the only way to set a name on a
+        /// machine with no network, `docs/TODO.md` § 97). A settings door is a utility and belongs
+        /// one step in from the end.
+        ///
+        /// ⚠️⚠️ IT IS A PLAIN `PaperKit.Chip` AND CARRIES NO ACCENT, and that is § 118.4 rather
+        /// than a shortage of ideas. There is one accent per screen and it is START MATCH; a
+        /// second coloured control on the top rail would be a second "press me" competing with the
+        /// button this whole screen exists to reach. A door is furniture that opens.
+        /// </summary>
+        private static void BuildSettingsButton(Transform rail, Parts parts)
+        {
+            var button = PaperKit.Chip(rail, "GameSettingsButton", "SETTINGS");
+
+            var rect = (RectTransform)button.transform;
+            rect.anchorMin = new Vector2(1.0f, 0.5f);
+            rect.anchorMax = new Vector2(1.0f, 0.5f);
+            rect.pivot = new Vector2(1.0f, 0.5f);
+
+            // ⚠️ MEASURED FROM THE RIGHT EDGE THROUGH THE DOOR BESIDE IT, not from a number of
+            // its own. `BuildProfileButton` insets `PaperKit.Pad + 8`; this clears that control's
+            // whole width and one `Gap` more, so the pair cannot overlap however either width
+            // changes and the sum in `TopRailWidth` stays true by construction.
+            rect.anchoredPosition =
+                new Vector2(-(PaperKit.Pad + 8.0f + ProfileWidth + PaperKit.Gap), 0.0f);
+            rect.sizeDelta = new Vector2(SettingsWidth, PaperKit.ChipHeight);
+
+            parts.GameSettingsButton = button;
         }
 
         /// <summary>
@@ -2075,6 +2159,16 @@ namespace TumbangPreso.UI
             /// <summary>The door to `PlayerHub`, and the line on it.</summary>
             public Button ProfileButton;
             public Text ProfileValue;
+
+            /// <summary>
+            /// The door to the game's own settings panel: audio, video, key bindings.
+            ///
+            /// ⚠️ NOT `SettingsDrawerToggle`, WHICH IS A DIFFERENT CONTROL WITH A DIFFERENT JOB.
+            /// That one opens the MATCH settings drawer on the bottom rail (the map, the mode, the
+            /// format) and only the host may use it. See `BuildSettingsButton` for why they are
+            /// named the way they are and why they live on opposite rails.
+            /// </summary>
+            public Button GameSettingsButton;
 
             /// <summary>Raised when the player finishes editing their name, so the screen can push
             /// it to the lobby rather than waiting for the next redraw.</summary>

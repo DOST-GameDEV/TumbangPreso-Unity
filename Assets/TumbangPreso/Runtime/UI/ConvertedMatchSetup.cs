@@ -1152,6 +1152,12 @@ namespace TumbangPreso.UI
             if (_chrome?.LoadoutButton != null)
                 _chrome.LoadoutButton.onClick.AddListener(OpenLoadout);
 
+            // ⚠️ SETTINGS, ON REQUEST. 🧑 2026-09-02: **"cann u also add a settings button in
+            // lobby?"**. `LobbyChrome.BuildSettingsButton` is the control and
+            // `LobbyChrome.SettingsWidth` carries the journey it fixes.
+            if (_chrome?.GameSettingsButton != null)
+                _chrome.GameSettingsButton.onClick.AddListener(OpenGameSettings);
+
             RefreshProfileDoor();
             RefreshTier();
         }
@@ -1244,10 +1250,36 @@ namespace TumbangPreso.UI
                 : hero.Name + $"  ·  {changed} of 2 changed";
         }
 
+        /// <summary>
+        /// The lobby's YOUR SKILLS row.
+        ///
+        /// ⚠️⚠️⚠️ IT OPENS THE FIGHTER PICKER NOW, NOT THE HUB'S LOADOUT TAB, ON HIS INSTRUCTION.
+        /// 🧑 2026-09-02: **"put loadout here, it makes no sense to be in profile"**, with a crop
+        /// of CHOOSE YOUR HERO, and again *"there were button updates can u put loadouts in the
+        /// choose ur hero screen too and shit"*.
+        ///
+        /// ⚠️⚠️ HE IS RIGHT ON THE JOURNEY AS WELL AS ON THE TASTE, AND THE PRESSES ARE COUNTABLE.
+        /// The old route was **row → hub → LOADOUT tab → hero stepper → slot stepper**: five, and
+        /// the middle one exists only to re-select a hero the player had already chosen on the row
+        /// directly above this one. `CLAUDE.md` § 6.3: *"if it takes more than three, or if one of
+        /// them is a control the player has to discover rather than read, the flow is the bug"*.
+        /// It is **row → the skill you want** now, and the row you press is the row that describes
+        /// what you are choosing between.
+        ///
+        /// ⚠️ THIS ROW SURVIVES AND IS NOT DELETED, which matters because the picker's FIGHTER row
+        /// sits immediately above it and opens the same screen. **They are not a second door to
+        /// one place** (§ 6.3 forbids that): they open the same screen on two different questions,
+        /// and the summary each one carries is the difference. `SkillsSummary` says which hero and
+        /// how many of its two skills are on a non-default reading, which is a fact you cannot
+        /// read off the FIGHTER row at all.
+        ///
+        /// ⚠️ `PlayerHub.OpenLoadout` IS GONE WITH THE TAB IT OPENED. See `PlayerHub.BuildTabBar`
+        /// for what happened to it and why the hub is five tabs now.
+        /// </summary>
         private void OpenLoadout()
         {
             MenuSfx.Click();
-            _hub?.OpenLoadout();
+            OpenCharacterSelect();
         }
 
         private void OpenPlayerHub()
@@ -1269,6 +1301,50 @@ namespace TumbangPreso.UI
             // is what `NetSession.ConfigureClientHello` puts on the wire. `docs/TODO.md` § 97 and
             // the nationals in General Santos City are the reason that path has to exist.
             _hub?.Open();
+        }
+
+        /// <summary>
+        /// The lobby's copy of the settings panel, instantiated the first time it is asked for.
+        ///
+        /// ⚠️⚠️ THE SAME PREFAB THE TITLE SCREEN AND THE PAUSE CARD USE, WHICH IS THE WHOLE
+        /// POINT. `PausePanel.OpenSettings` carries the rule in as many words: *"a slider that
+        /// exists in one exists in the other. Two panels drift the moment one gets a row the other
+        /// does not."* This is the third caller and it is a copy of that method rather than a new
+        /// screen, so the lobby cannot acquire a settings page of its own.
+        ///
+        /// ⚠️ IT IS INSTANTIATED LAZILY AND KEPT. `MatchSetup.unity` does not carry a
+        /// `SettingsPanel` node (`UiRuntimeShots.TheSettingsPanelDraws` had to load `MainMenu` to
+        /// photograph one), so there is nothing in the scene to switch on. Building it on first
+        /// press costs one `Resources.Load` on a screen that is already idle, and keeping it means
+        /// the second press is free and anything left open inside it survives.
+        ///
+        /// ⚠️⚠️ AND IT IS FOUND BY COMPONENT RATHER THAN BY NAME ON THE SECOND PRESS, because the
+        /// prefab's own root name is not this file's to promise. `GetComponentInChildren` with
+        /// `true` is what makes a panel that was closed (deactivated) findable again;
+        /// `Node("SettingsPanel")` would ask `ConvertedScreen`'s name index, which was built at
+        /// `Wire` time and cannot know about an object created later.
+        /// </summary>
+        private void OpenGameSettings()
+        {
+            MenuSfx.Click();
+
+            var existing = GetComponentInChildren<ConvertedSettingsPanel>(true);
+            if (existing != null)
+            {
+                existing.gameObject.SetActive(true);
+                return;
+            }
+
+            var prefab = Resources.Load<GameObject>("UI/SettingsPanel");
+            if (prefab == null)
+            {
+                Debug.LogWarning("[Lobby] no SettingsPanel prefab in Resources/UI.");
+                return;
+            }
+
+            var panel = Instantiate(prefab, transform, false);
+            panel.name = "SettingsPanel";
+            panel.SetActive(true);
         }
 
         /// <summary>
@@ -1373,18 +1449,56 @@ namespace TumbangPreso.UI
         /// argument for making it; `PaperDress` cannot see a bare `Image` with an authored sprite
         /// on it, which is the whole subject of `docs/TODO.md` § 120.4.
         /// </summary>
+        /// <summary>
+        /// ⚠️⚠️⚠️ THE FIGHTER PICKER IS EXCLUDED FROM BOTH HALVES OF THIS METHOD NOW, AND
+        /// FORGETTING THE SECOND HALF WOULD HAVE MADE THE WHOLE REVERSAL LOOK LIKE IT DID NOTHING.
+        /// 🧑 2026-09-02 asked for that screen back in wood (**"it used to look really good here,
+        /// maybe it can retain old brownn color"**, *"js the character select"*), and
+        /// `ConvertedCharacterSelect.Wire` stopped calling `PaperDress.Screen` for it —
+        /// **but this method dresses it a second time, from the outside, and this one runs
+        /// FIRST.** `Wire` is `Start` and does not run until the panel is switched on; this runs on
+        /// scene load, which is the entire reason it exists (see the note above about the picker's
+        /// BACK button being wooden until somebody opened the picker).
+        ///
+        /// ⚠️⚠️ AND THE `ConfigPanel` LOOP IS THE SUBTLER OF THE TWO, BECAUSE IT DOES NOT NAME THE
+        /// PICKER AT ALL. `Nodes("ConfigPanel")` walks the WHOLE scene by name, and the fighter
+        /// picker has a `ConfigPanel` of its own: it is the brown board every control on that
+        /// screen stands on. So the loop written for the lobby drawer's leftover board was
+        /// silently creaming the picker's main surface as well. **A search by name is a search by
+        /// name**, which is the same class of fault `docs/TODO.md` § 120.5 row 1 records from the
+        /// other direction.
+        ///
+        /// ⚠️ THE GUARD IS `IsInsidePicker` RATHER THAN A NAME COMPARE ON THE NODE ITSELF, because
+        /// the thing being protected is a SUBTREE. Checking `board.name != "CharacterSelectPanel"`
+        /// would protect the panel and not the board inside it, which is precisely the node that
+        /// was wrong.
+        /// </summary>
         private void PaperiseWhatTheChromeLeaves()
         {
             foreach (var board in Nodes("ConfigPanel"))
             {
+                if (IsInsidePicker(board)) continue;
+
                 var panel = board.GetComponent<GodotPanel>();
                 if (panel == null) continue;
 
                 PaperKit.Paperise(board.gameObject, PaperCraft.Surface.Sheet);
             }
+        }
 
-            var picker = Node("CharacterSelectPanel");
-            if (picker != null) PaperDress.Screen(picker);
+        /// <summary>
+        /// Whether a node lives under the fighter picker.
+        ///
+        /// ⚠️ IT WALKS UP RATHER THAN CACHING THE PICKER'S TRANSFORM, because this runs a handful
+        /// of times on scene load against a tree three or four levels deep, and a cached root is a
+        /// field that can be stale by the time the second caller arrives.
+        /// </summary>
+        private static bool IsInsidePicker(Transform node)
+        {
+            for (var t = node; t != null; t = t.parent)
+                if (t.name == "CharacterSelectPanel") return true;
+
+            return false;
         }
 
         private static void Fixed(Component child, float height)

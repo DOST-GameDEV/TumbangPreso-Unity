@@ -174,8 +174,33 @@ namespace TumbangPreso.UI
         /// <summary>CONTINUE WITH GOOGLE, or null in a build with no client id. See `BuildForm`.</summary>
         private Button _googleButton;
 
-        /// <summary>The keys this form takes, written down. See `BuildForm`.</summary>
-        private Text _keyHint;
+        /// <summary>
+        /// ⚠️⚠️⚠️ DELETED. THE FIELD IS GONE AND SO IS THE LINE IT DREW.
+        ///
+        /// It read `TAB to move  ·  ENTER to sign in  ·  ESC to go back` under the last button on
+        /// the column, and 🧑's whole reaction to it was **"wtf does tab to move mean"**.
+        ///
+        /// ⚠️⚠️ THE ANSWER TO THAT QUESTION IS THE ARGUMENT FOR DELETING IT. It meant "TAB moves
+        /// the caret from USERNAME to PASSWORD", which is a browser form convention, is true of
+        /// every text field in every application he has ever used, and is not a thing a player of
+        /// a Filipino street game needs told on the first screen of the game. **A hint nobody can
+        /// parse is not a hint, it is a fourth line of type competing with the button above it.**
+        /// `CLAUDE.md` § 6.2 question 3: what is on screen that the player does not need RIGHT NOW.
+        ///
+        /// ⚠️⚠️ AND `game-ui-design`'s `no-keyboard-shortcut-display` DOES NOT ASK FOR THIS,
+        /// WHICH IS WHAT THE VERSION THIS REPLACES GOT WRONG. That sharp edge is about
+        /// FUNCTIONALITY a player would otherwise never discover (*"There are keyboard
+        /// shortcuts?"*) and its own solution section says to put the full list on the controls
+        /// screen. None of the three keys named here is undiscoverable: TAB between two visible
+        /// boxes is a reflex, ENTER submits the form the cursor is in, and ESC backing out is a
+        /// promise `CLAUDE.md` § 6.3 already makes on **every** screen in the game, which is
+        /// exactly why this screen is the wrong place to advertise it. A rule that is true
+        /// everywhere, printed on one screen, reads as a rule that is true only there.
+        ///
+        /// ⚠️ NOTHING IS LOST, AND THAT IS CHECKED RATHER THAN ASSUMED. `Update` still submits on
+        /// ENTER and closes on ESC, `Chain` still wires TAB through every control in reading
+        /// order, and `SetBootMode` still hides BACK at boot. **Only the sentence is gone.**
+        /// </summary>
 
         /// <summary>The chalk bar under whichever tab is live. See <see cref="BuildTabs"/>.</summary>
 
@@ -601,19 +626,11 @@ namespace TumbangPreso.UI
             var backLabel = _back.transform.Find("Label")?.GetComponent<Text>();
             if (backLabel != null) backLabel.color = UiTheme.PaperInkSoft;
 
-            // ⚠⚠ THE KEYS ARE ON THE SCREEN, AND `game-ui-design` LISTS THEIR ABSENCE AS A SHARP
-            // EDGE BY NAME (`No Keyboard Shortcut Display`). This form has always taken TAB and
-            // ENTER and has never said so, so every player has moused between two fields and
-            // hunted for a button. ⚠️ It names the keys rather than drawing glyphs, because this
-            // build has **zero gamepad bindings** (`FUTURE.md` § 0.6 checked it) and a controller
-            // glyph on a keyboard-only build is the `Input Prompt Mismatch` edge one page over.
-            //
-            // ⚠️ AND IT IS THE LAST THING IN THE COLUMN, under everything it describes, at the
-            // muted weight. A hint that competes with the action it explains is a second heading.
-            _keyHint = MenuKit.Label(col, "TAB to move  ·  ENTER to sign in  ·  ESC to go back",
-                PaperKit.Caption, UiTheme.PaperInkSoft, Centre,
-                new Vector2(0.0f, backY - 52.0f), new Vector2(460.0f, 26.0f));
-            _keyHint.raycastTarget = false;
+            // ⚠️⚠️ THE KEY HINT WAS BUILT HERE AND IT IS DELETED. See the `_keyHint` doc comment
+            // above for 🧑's question (**"wtf does tab to move mean"**) and the full argument. The
+            // 52 units it occupied are NOT redistributed: `FitCardToContent` sizes the card from
+            // what is actually on it, so the card comes up shorter and the margins stay symmetric.
+            // That is the whole reason that method is arithmetic rather than a constant.
 
             // ⚠️ THE CHAIN IS BUILT AFTER EVERY CONTROL EXISTS, in the order a person reads them.
             // See `Chain`: the tabs are the first stop because the first question this screen
@@ -876,7 +893,20 @@ namespace TumbangPreso.UI
             MenuKit.Place((RectTransform)plaque.transform, Centre,
                 new Vector2(0.0f, y), new Vector2(LogoPlaqueWidth, LogoPlaqueHeight));
 
-            PaperSkin.Apply(plaque, PaperCraft.Surface.Sign);
+            // ⚠️⚠️ `Plaque` AND NOT `Sign`, ON REQUEST, AND THE THREE MESSAGES ARE IN THAT
+            // SURFACE'S OWN NOTE. 🧑 2026-09-02, with a crop of exactly this object: **"can u add
+            // a pretty outline for this too"**, *"one that reads as wooden frame or some shit?"*,
+            // **"can u give it a wooden texture too the tump box"**. `Surface.Sign` is a flat
+            // wood-dark plate with a lit top lip, which is correct for the lobby's ROOM CODE and
+            // is a rectangle of brown under the game's name.
+            //
+            // ⚠️ THE INSET DOES NOT CHANGE AND THAT IS DELIBERATE. `LogoInset` is 22 and the frame
+            // band is about 16 at this height (`PaperCraft.FrameBand`), so the mark clears the
+            // moulding by six units on every side without `LogoMarkWidth` moving. **Growing the
+            // inset to "make room" would have shrunk the wordmark**, which is the exact fault
+            // § 121.2c spent a pass undoing: the mark occupied 51 per cent of its own sign and the
+            // rest was bare brown.
+            PaperSkin.Apply(plaque, PaperCraft.Surface.Plaque);
             plaque.GetComponent<Image>().raycastTarget = false;
 
             // ⚠️ THE FITTER'S BOX IS INSET FROM THE PLAQUE AND RAISED BY `PaperCraft.Drop`, which
@@ -1162,11 +1192,45 @@ namespace TumbangPreso.UI
             rt.sizeDelta = new Vector2(198.0f, live ? LiveTabHeight : IdleTabHeight);
         }
 
+        /// <summary>
+        /// CREATE ACCOUNT / SIGN IN: the one action on this screen.
+        ///
+        /// ⚠️⚠️⚠️ IT WAS THE LAST WOODEN PRIMARY IN THE PAPER FRONT END AND `docs/TODO.md`
+        /// § 121.1 ITEM 3 LISTED IT AS DONE WHEN IT WAS NOT. That entry says *"Every primary in
+        /// the paper front end takes it: `StartButton` / `PrimaryButton` (lobby), `KEEP AND USE`
+        /// (maker), `CHOOSE` (picker), **`CREATE ACCOUNT` / `SIGN IN` (login)**, the hub's footer
+        /// action"*, and every one of those goes through `PaperKit.PaperDress.ButtonSkin` — which
+        /// maps `WoodPrimaryButton` onto `PaperKit.MakeAction` — **except this one, because
+        /// `SignInScreen` is built in code and never calls `PaperDress` at all.** Five screens
+        /// were converted by one line in a file this screen does not use.
+        ///
+        /// ⚠️⚠️ SO THE GREY HALO § 121.1 MEASURED WAS STILL ON SCREEN, AND 🧑 PHOTOGRAPHED IT
+        /// TWICE: **"wtf is up witht his shadow"**, with a crop of CREATE ACCOUNT, and *"shadow
+        /// fir this looks weirdd"*. The measurement is that entry's and it was taken off
+        /// `Logs/shots-runtime/SignInCreate-v56.png`, which is **this button**: the wooden halo
+        /// samples `ada69b`, hue 37 at **10 per cent saturation and 68 per cent value**, against
+        /// every paper edge on the same card at **30 per cent** and the cream field at 96. Same
+        /// hue, a third of the chroma, eighteen value steps down: that is the "grey" he can see
+        /// and cannot name, and it is `CLAUDE.md` § 6.4's cold-grey ban caught on the warm axis.
+        ///
+        /// ⚠️ `PaperCraft.Surface.Action` DERIVES ITS SHADOW FROM ITS OWN FILL (`PaintAction`:
+        /// *"An object's shadow is its own colour with the light taken out of it, not a second
+        /// colour chosen once for every object"*), so under his green the contact shadow is a dark
+        /// green-brown rather than a neutral. **The fix is one call, not a colour.**
+        ///
+        /// ⚠️ AND IT STAYS `MenuKit.WoodButton` FOR ONE LINE BEFORE THE CONVERSION, because
+        /// `MakeAction` works on a built control: it needs the `GodotButton`, the `Label` and the
+        /// `SkinLayers` children to exist so it can silence them. Building the paper surface from
+        /// scratch here would be a second constructor for the one control that must look identical
+        /// on five screens.
+        /// </summary>
         private void BuildPrimary(Transform col, float y)
         {
             var button = MenuKit.WoodButton(col, "SIGN IN", Centre,
                 new Vector2(0.0f, y), new Vector2(420.0f, 62.0f), Submit,
                 "WoodPrimaryButton");
+
+            PaperKit.MakeAction(button.gameObject, PaperCraft.Accent.Green);
 
             _primaryLabel = button.GetComponentInChildren<Text>();
         }
@@ -1438,26 +1502,9 @@ namespace TumbangPreso.UI
             var caption = _guest != null ? _guest.GetComponentInChildren<Text>(true) : null;
             if (caption != null) caption.text = atBoot ? "CONTINUE AS GUEST" : "PLAY AS GUEST";
 
-            // ⚠⚠ THE KEY HINT FOLLOWS THE LAST VISIBLE BUTTON, NOT THE LAST BUTTON. BACK is
-            // hidden at boot, so a hint anchored under it floated 60 units below nothing on the
-            // one screen every player meets first. `CLAUDE.md` § 6.2b row 1: a screen with a mode
-            // has two layouts and you have looked at one.
-            if (_keyHint != null)
-            {
-                float anchor = atBoot ? _guest.transform.localPosition.y
-                                      : _back.transform.localPosition.y;
-                var rect = (RectTransform)_keyHint.transform;
-                rect.anchoredPosition = new Vector2(0.0f, anchor - 46.0f);
-
-                // ⚠️ ESC IS NOT OFFERED AT BOOT, because it does nothing there: the screen is not
-                // dismissable when there is nothing behind it (see `Update`). A hint naming a key
-                // that is inert is worse than no hint, and `game-ui-design`'s `Inconsistent Button
-                // Behavior` is the same rule for a control.
-                _keyHint.text = atBoot
-                    ? (_creating ? "TAB to move  ·  ENTER to create" : "TAB to move  ·  ENTER to sign in")
-                    : (_creating ? "TAB to move  ·  ENTER to create  ·  ESC to go back"
-                                 : "TAB to move  ·  ENTER to sign in  ·  ESC to go back");
-            }
+            // ⚠️ THE HINT THAT USED TO BE RE-ANCHORED AND RE-WORDED HERE IS DELETED, and with it
+            // the last thing on this screen that had to know which of its two states it was in
+            // beyond BACK and one caption. See the `_keyHint` doc comment.
         }
 
         /// <summary>
@@ -1524,14 +1571,6 @@ namespace TumbangPreso.UI
             Hang(_signInTab, -105.0f, TabsY, !creating);
             Hang(_createTab, 105.0f, TabsY, creating);
 
-            // ⚠️ THE VERB FOLLOWS THE TAB AND THE KEY LIST FOLLOWS THE MODE, so this defers to
-            // `SetBootMode` rather than writing a string that names ESC on a screen where ESC
-            // does nothing. Both run on open; this one runs first.
-            if (_keyHint != null)
-                _keyHint.text = _atBoot
-                    ? (creating ? "TAB to move  ·  ENTER to create" : "TAB to move  ·  ENTER to sign in")
-                    : (creating ? "TAB to move  ·  ENTER to create  ·  ESC to go back"
-                                : "TAB to move  ·  ENTER to sign in  ·  ESC to go back");
         }
 
         /// <summary>
@@ -1563,10 +1602,41 @@ namespace TumbangPreso.UI
             var label = button.transform.Find("Label")?.GetComponent<Text>();
             if (label == null) return;
 
-            // ⚠️ CREAM ON THE LIVE ONE NOW, BECAUSE IT IS WOOD-DARK. `PaperButton` reads the
-            // surface and does exactly this on its own, but it only does it when something makes
-            // it look; this method is the something on the frame the mode changes.
-            label.fontStyle = on ? FontStyle.Bold : FontStyle.Normal;
+            // ⚠️⚠️⚠️ BOTH TABS ARE BOLD AND BOTH ARE THE SAME SIZE, AND THE WEIGHT SWAP THAT
+            // USED TO LIVE HERE IS WHAT 🧑 PHOTOGRAPHED. 2026-09-02, with a crop of this exact
+            // pair: **"the buttons are too dif"**, then the diagnosis, **"legit one is all caps
+            // and fat af and bold one isnt"**.
+            //
+            // ⚠️⚠️ HE COUNTED THE DIFFERENCES AND THERE WERE FOUR, WHICH IS THREE MORE THAN THE
+            // JOB NEEDS. This pair was told apart by **surface** (`Live` wood-dark against
+            // `Ghost`), **height** (60 against 52), **weight** (Bold against Normal) and **label
+            // colour** (cream against soft ink) all at once. Two controls that do the same kind of
+            // thing must look the same (`docs/TODO.md` § 117's whole complaint); a tab pair
+            // differing on four axes does not read as one control with a state, it reads as two
+            // unrelated buttons that happen to be adjacent. **That is the sentence "the buttons
+            // are too dif" is making.**
+            //
+            // ⚠️⚠️ AND THE WEIGHT WAS THE WORST OF THE FOUR, BECAUSE IT CHANGES THE LETTERFORMS.
+            // Darumadrop One ships one weight, so `FontStyle.Bold` is Unity's SYNTHETIC bold: it
+            // smears each glyph horizontally. At 20 units on a 198-unit pill that thickens the
+            // strokes without widening the advances, so the idle tab and the live tab are the same
+            // string set in two subtly different typefaces eight units apart. **The eye compares
+            // letterforms directly when they are side by side**, which is the identical finding
+            // `ConvertedCharacterSelect.BuildCustomDoor` records about two SIZES in one rail
+            // (*"these diff fonts look ugly"*) arriving on weight instead.
+            //
+            // ⚠️ SO TWO SIGNALS SURVIVE AND BOTH ARE STRUCTURAL: the live tab is eight units
+            // TALLER (`LiveTabHeight`, and it grows upward off a shared floor, see `Hang`) and it
+            // is a wood-dark `Live` pill against a `Ghost` outline, which measures about 10:1 in
+            // value. `game-ui-design` forbids saying "this one" in hue alone and asks for exactly
+            // this: a difference that survives a photograph in greyscale and a colourblind player.
+            // It does not ask for four.
+            //
+            // ⚠️ THE COLOUR STILL INVERTS AND IS NOT A FIFTH DIFFERENCE. Cream on the wood-dark
+            // pill and soft ink on the cream one is one fact (the plate flipped) rather than two:
+            // ink on `WoodMid` measures 1.3:1 and is the fault `PaperButton._live`'s note records
+            // on the lobby's ROOM CODE plate. Type has to invert when its ground does.
+            label.fontStyle = FontStyle.Bold;
             label.color = on ? UiTheme.Cream : UiTheme.PaperInkSoft;
         }
 
