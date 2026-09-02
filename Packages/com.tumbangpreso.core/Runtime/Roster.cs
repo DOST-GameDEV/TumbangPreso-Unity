@@ -91,13 +91,49 @@ namespace TumbangPreso.Core
 
         /// <summary>
         /// The five playable action heroes for Hero Strike mode.
+        ///
+        /// ⚠️⚠️ **SEAN IS `bilis` 1, WHICH IS THE FLOOR, AND IT IS A SIZE DEBUFF RATHER THAN A
+        /// TUNING PASS.** 🧑 2026-08-30: *"personal chracter debuff"*, *"bcz Sean is larger than
+        /// all, he should be slower than all (he has a defender advantage)"*, *"js a bit slower
+        /// than all"*.
+        ///
+        /// The reasoning is his and it is a real asymmetry rather than a feeling: a bigger body
+        /// reaches further, and reach is the taya's whole job. `CLAUDE.md` § 4 keeps contact
+        /// resolution on DISTANCE, so a larger character is genuinely better at the one verb the
+        /// defender has, on every map, in both modes. Speed is the counterweight because it is the
+        /// attacker half of the same round: the taya rotates, so a debuff that only bites while
+        /// chasing would be a buff overall.
+        ///
+        /// ⚠️ **1 IS THE ONLY VALUE THAT SATISFIES "SLOWER THAN ALL", AND THE STEP IS 5%.**
+        /// `Balance.TraitSpeedPerPoint` is 0.05 and `TraitNeutral` is 3, so the points are a 5%
+        /// ladder and Dante already sat on 2. Sean at 2 would have TIED the slowest rather than
+        /// been it.
+        ///
+        /// | | bilis | scale | vs Sean |
+        /// |---|---|---|---|
+        /// | **SEAN** | **1** | **0.90** | — |
+        /// | DANTE | 2 | 0.95 | 5% faster |
+        /// | CHESKA | 3 | 1.00 | 11% faster |
+        /// | ZACK / NEMU / PHAISTER | 4 | 1.05 | 17% faster |
+        ///
+        /// ⚠️ **AND IT IS STILL INSIDE `Balance`'S OWN NARROW-SPREAD RULE**, which says *"a pick
+        /// 40% faster than another is not a personality, it is the correct answer"*. The widest
+        /// gap on this table is now 17%, against a 40% ceiling that rule sets.
+        ///
+        /// ⚠️ **HIS `lakas` 5 IS UNTOUCHED**, because it is the other half of being the big one
+        /// and taking it away would leave a character who is large, slow and hits like everybody
+        /// else. He is the slowest and the strongest; that is the trade.
+        ///
+        /// ⚠️ **`kuya_boy` IS NOT CHANGED.** It shares `SeanHeroKit` through
+        /// `HeroAbilitySystem.CreateKitFor`, which is an ABILITY mapping, and it is a different
+        /// Classic model with its own build. The report is about the hero's size.
         /// </summary>
         public static readonly IReadOnlyList<RosterEntry> HeroPeople = new[]
         {
             //                id              name           bilis lakas tatag
             new RosterEntry("dante",       "DANTE",           2,    4,    5),
             new RosterEntry("cheska",      "CHESKA",          3,    4,    4),
-            new RosterEntry("sean",        "SEAN",            3,    5,    3),
+            new RosterEntry("sean",        "SEAN",            1,    5,    3),
             new RosterEntry("zack",        "ZACK",            4,    3,    3),
             new RosterEntry("nemu",        "NEMU",            4,    3,    4),
             new RosterEntry("phaister",    "PHAISTER",        4,    4,    3),
@@ -122,7 +158,7 @@ namespace TumbangPreso.Core
             new RosterEntry("aling_nena",  "ALING NENA",      2,    3,    5),
             new RosterEntry("dante",       "DANTE",           2,    4,    5),
             new RosterEntry("cheska",      "CHESKA",          3,    4,    4),
-            new RosterEntry("sean",        "SEAN",            3,    5,    3),
+            new RosterEntry("sean",        "SEAN",            1,    5,    3),
             new RosterEntry("zack",        "ZACK",            4,    3,    3),
             new RosterEntry("nemu",        "NEMU",            4,    3,    4),
             new RosterEntry("phaister",    "PHAISTER",        4,    4,    3),
@@ -236,6 +272,29 @@ namespace TumbangPreso.Core
         /// literal index in a caller silently becomes a different character or a different shoe
         /// the next time somebody inserts an entry, and nothing errors.
         /// </summary>
+        /// <summary>
+        /// The string id of the character at this pick index, in this mode, or empty.
+        ///
+        /// ⚠️⚠️ THE INDEX IS A PICK AND THE ID IS THE IDENTITY, AND EVERYTHING THAT LEAVES THIS
+        /// MACHINE USES THE ID. `Roster.Slippers` records at length why a wire-facing list can
+        /// never be reordered; this is the conversion that keeps an index from becoming one.
+        /// `MatchStatsCollector` stamps a record with it, `SettingsStore.PaletteFor` looks a
+        /// loadout up by it, and `FUTURE.md` PHASE 5 requires every cosmetic to key off it.
+        ///
+        /// ⚠️ IT EXISTS BECAUSE THE SAME FIVE LINES WERE ABOUT TO BE WRITTEN A SECOND TIME.
+        /// `MatchStatsCollector.CharacterIdFor` was the first copy and `MatchInstaller` needed
+        /// the second; `docs/TODO.md` § 94.1 is what four hand-written copies of one lookup cost
+        /// the last time, so the second one goes here instead.
+        ///
+        /// ⚠️ THE TWO MODES HAVE DIFFERENT LISTS. An index means nothing without the mode it was
+        /// picked in, which is `GetPeople`'s whole reason for existing.
+        /// </summary>
+        public static string PersonIdAt(GameMode mode, int index)
+        {
+            var people = GetPeople(mode);
+            return index >= 0 && index < people.Count ? people[index].Id : "";
+        }
+
         public static int IndexIn(IReadOnlyList<RosterEntry> entries, string id)
         {
             if (entries == null || id == null) return -1;

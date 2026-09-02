@@ -57,6 +57,12 @@ namespace TumbangPreso.UI
             Snapshot();
 
             BuildRebindRows();
+
+            // ⚠️ BUILT FIRST SO IT SITS FURTHEST FROM THE FULLSCREEN BOX, which is the bottom of
+            // the picker stack. Every row here inserts directly under that box, so build order is
+            // display order reversed (see the note below). This is not a display setting and must
+            // not read as one; it is the last row on the panel, under its own sentence.
+            BuildTelemetryRow();
             BuildSlipperHighlightRow();
 
             // ⚠️ THE BUILD ORDER IS THE DISPLAY ORDER, REVERSED. All three picker rows insert
@@ -82,6 +88,45 @@ namespace TumbangPreso.UI
 
             SetText("SettingsStatusLabel", "");
             RefreshApplyState();
+        
+            // ⚠️⚠️ ONE CALL DRESSES THIS WHOLE SCREEN IN PAPER, AND IT IS SCOPED TO THIS SUBTREE
+            // ON PURPOSE. `GodotPanel` and `GodotButton` are the choke points every converted
+            // screen is skinned through, so editing either of them would have repainted the main
+            // menu and the in-match HUD, which 🧑 scoped out twice. `PaperKit.PaperDress.Screen`
+            // walks a given root instead. See `docs/TODO.md` § 119.2 and § 119.5.
+            PaperDress.Screen(transform);
+
+            FitFooterLabels();
+        }
+
+        /// <summary>
+        /// Shrinks the three footer labels until they fit the plates they are drawn on.
+        ///
+        /// ⚠️⚠️ `APPLY CHANGES` DRAWS PAST BOTH ENDS OF ITS BUTTON, which is visible in
+        /// `Logs/shots-runtime/Settings-v57.png` and is the same silent overflow `CLAUDE.md`
+        /// § 6.2c's fourth question is about: `MenuKit.Label` is set to Overflow, so a label that
+        /// does not fit is not clipped and does not wrap, it simply draws outside its box. These
+        /// three are authored in the `.tscn` at one size for one string, and `RESET ALL` and
+        /// `◀ BACK` fit while the thirteen characters of the third one do not.
+        ///
+        /// ⚠️ THE CANVAS IS UPDATED FIRST, because `MenuKit.Fit` measures against a rect and a
+        /// rect that has not been laid out reports zero, at which point the call returns without
+        /// doing anything. That silent no-op is why fitting from a build method usually fails.
+        /// </summary>
+        private void FitFooterLabels()
+        {
+            Canvas.ForceUpdateCanvases();
+
+            foreach (string name in new[] { "ApplyButton", "ResetAllButton", "BackButton" })
+            {
+                var node = Node(name) as RectTransform;
+                if (node == null) continue;
+
+                var label = node.GetComponentInChildren<Text>(true);
+                if (label == null) continue;
+
+                MenuKit.Fit(label, node.rect.width - 28.0f);
+            }
         }
 
         /// <summary>
@@ -234,8 +279,19 @@ namespace TumbangPreso.UI
             barRt.offsetMin = new Vector2(-Width, 0.0f);
             barRt.offsetMax = Vector2.zero;
 
+            // ⚠️⚠️ THE BAR INVERTS WITH THE FIELD. It was a near-black track with an AMBER handle,
+            // which is correct on a wooden panel and is the pair `docs/TODO.md` § 119.10 records
+            // 🧑 rejecting by eye on three other controls: `UiTheme.Amber` `ffba00` on
+            // `UiTheme.Paper` `f4ecdd` is **1.7:1**, so on a cream panel the moving part of the
+            // scrollbar is the part that disappears. `Logs/shots-runtime/Settings-v57.png` shows
+            // it as a yellow smear down the edge of an otherwise cream sheet.
+            //
+            // **On paper the marker is the one DARK thing**: a `PaperSunk` groove with a `WoodMid`
+            // handle in it, which is about 8:1 and introduces no colour at all. Same move as the
+            // hub's XP bar and the picker's trait pips.
             var track = barGo.GetComponent<Image>();
-            track.color = new Color(UiTheme.WoodDark.r, UiTheme.WoodDark.g, UiTheme.WoodDark.b, 0.85f);
+            track.color = new Color(UiTheme.PaperSunk.r, UiTheme.PaperSunk.g,
+                                    UiTheme.PaperSunk.b, 0.85f);
 
             var handleAreaGo = new GameObject("SlidingArea", typeof(RectTransform));
             handleAreaGo.transform.SetParent(barGo.transform, false);
@@ -250,7 +306,7 @@ namespace TumbangPreso.UI
             var handleRt = handleGo.GetComponent<RectTransform>();
             handleRt.offsetMin = Vector2.zero;
             handleRt.offsetMax = Vector2.zero;
-            handleGo.GetComponent<Image>().color = UiTheme.Amber;
+            handleGo.GetComponent<Image>().color = UiTheme.WoodMid;
 
             var bar = barGo.AddComponent<Scrollbar>();
             bar.direction = Scrollbar.Direction.BottomToTop;
@@ -502,6 +558,117 @@ namespace TumbangPreso.UI
         /// needs to see is which one is on and what else there is. A null swatch on every row
         /// hides the chip, which is the same path "Off" already takes.
         /// </summary>
+        /// <summary>
+        /// The telemetry opt-out, and the sentence that says what it is opting out of.
+        ///
+        /// ⚠️⚠️ THE SENTENCE IS NOT DECORATION, IT IS HALF THE FEATURE. `FUTURE.md` § 19.3 asks
+        /// for *"a visible opt-out in Settings that is honoured completely, and a plain statement
+        /// of what is collected"*. A switch with no explanation asks a player to make a decision
+        /// with no information, and the honest answer here is short enough to fit on one line:
+        /// counts, no names, nothing typed.
+        ///
+        /// ⚠️ AND "HONOURED COMPLETELY" MEANS `TelemetrySink` STOPS COUNTING, not just stops
+        /// sending. An opt-out that only gates the upload leaves a buffer somebody could later
+        /// decide to flush, which is the same thing as no opt-out.
+        ///
+        /// ⚠️ A DROPDOWN RATHER THAN A TICK BOX, and that is a reuse decision rather than a
+        /// design one: every tick box on this panel is a node the importer owns, and a row added
+        /// to `SettingsPanel.unity` by hand disappears the next time `TscnImporter` rebakes it.
+        /// `BuildDropdownRow` is the built-in-code path three rows already use.
+        /// </summary>
+        private void BuildTelemetryRow()
+        {
+            var options = new List<SwatchDropdown.Option>
+            {
+                new SwatchDropdown.Option("OFF", null),
+                new SwatchDropdown.Option("ON", null),
+            };
+
+            BuildDropdownRow("TelemetryRow", "Share Anonymous Stats", options,
+                             SettingsStore.Current.TelemetryEnabled ? 1 : 0,
+                             index =>
+                             {
+                                 // ⚠️ IT GOES THROUGH THE PANEL'S APPLY/BACK TRANSACTION LIKE
+                                 // EVERY OTHER ROW, RATHER THAN SAVING ON THE PICK. `Snapshot`
+                                 // captures the whole settings object as JSON and Back restores
+                                 // it, so a row that wrote to disk immediately would be a row
+                                 // Back cannot undo, on the one screen where every other control
+                                 // can be.
+                                 SettingsStore.Current.TelemetryEnabled = index == 1;
+                                 RefreshApplyState();
+                             });
+
+            BuildTelemetryNote();
+        }
+
+        /// <summary>
+        /// ⚠️ THE NOTE GOES IN AFTER THE ROW, SO IT LANDS ABOVE IT ON SCREEN. Rows insert under
+        /// `FullscreenCheck` and the last one inserted is nearest the box, which puts this line
+        /// directly under the picker it explains once the whole stack is reversed. Sizing it as
+        /// its own row rather than as a second label inside the picker keeps the label column
+        /// aligned with every other row on the panel, which is the alignment fault this file's
+        /// `BuildDropdownRow` header already records being reported once.
+        /// </summary>
+        private void BuildTelemetryNote()
+        {
+            var anchor = Node("FullscreenCheck");
+            if (anchor == null || anchor.parent == null) return;
+
+            var noteGo = new GameObject("TelemetryNote");
+            noteGo.AddComponent<RectTransform>();
+            noteGo.transform.SetParent(anchor.parent, false);
+            noteGo.transform.SetSiblingIndex(anchor.GetSiblingIndex() + 1);
+
+            // ⚠️ THE ROW NEEDS ITS OWN LAYOUT GROUP, exactly as `BuildDropdownRow` gives its row
+            // one. `MenuKit.Styled` parents the label to this object, and a child of a plain
+            // RectTransform inside a vertical list is laid out by nothing at all: it collapses to
+            // its default rect and the sentence is invisible while the row still takes its height,
+            // which reads as a gap somebody left rather than as text that failed to draw.
+            var layout = noteGo.AddComponent<HorizontalLayoutGroup>();
+            layout.childControlHeight = true;
+            layout.childControlWidth = true;
+            layout.childForceExpandHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childAlignment = TextAnchor.MiddleLeft;
+
+            var text = MenuKit.Styled(noteGo.transform, "MenuBody",
+                "Counts only: matches played, modes, maps, picks and frame rate. " +
+                "No names, no chat, nothing you type.", TextAnchor.MiddleLeft);
+            text.raycastTarget = false;
+            text.fontSize = 18;
+
+            // ⚠️⚠️ BOTH AXES, AND SETTING ONLY THE VERTICAL ONE DID NOTHING AT ALL. This block
+            // used to set `verticalOverflow = Overflow` and stop, with a note saying the sentence
+            // is *"two lines wide by design"*. **It was never two lines.** `MenuKit.Styled`
+            // leaves `horizontalOverflow = Overflow`, so the text does not wrap, so it never
+            // needs a second line, so allowing a second line changes nothing: the sentence simply
+            // ran off the side of the panel. Measured 2026-08-30 by
+            // `PhaseSurfaceLayoutProbe.TheTelemetryRowFitsItsBoxAtEveryShippedResolution` at
+            // 1280x720: **795 px of text in a 688 px box, 107 px past the edge**, and nothing
+            // errors, because Overflow is silent by construction.
+            //
+            // ⚠️⚠️ AND THE HALF THAT WENT IS THE HALF THAT MATTERS. The sentence is
+            // *"Counts only: ... No names, no chat, nothing you type."* The clause that survives
+            // at 720p is the list of what IS collected; the promise about what is not is the part
+            // off the edge. `FUTURE.md` § 19.3 asks for *"a plain statement of what is
+            // collected"*, and **a privacy disclosure that is silently truncated is worse than
+            // one that is absent**, because the reader has no way to know they are seeing half.
+            //
+            // ⚠️ `Wrap` PLUS `Overflow` IS THE PAIR. Wrap alone would clip the second line to the
+            // 48 px box, which is the wrap-and-clip trap `GameVersion.ApplyTo` and
+            // `ConvertedScreen.SetHeadline` both record. Wrapping makes the lines; vertical
+            // overflow lets them be drawn.
+            text.horizontalOverflow = HorizontalWrapMode.Wrap;
+            text.verticalOverflow = VerticalWrapMode.Overflow;
+
+            // ⚠️ 56 RATHER THAN 48, because two 18-unit lines plus their leading do not fit in
+            // 48 and the row below would be drawn through. The label may still overflow this box
+            // downward by design; the height is what the LIST reserves for it.
+            var element = noteGo.AddComponent<LayoutElement>();
+            element.minHeight = 56.0f;
+            element.preferredHeight = 56.0f;
+        }
+
         private void BuildAntiAliasRow()
         {
             var options = new List<SwatchDropdown.Option>();
@@ -947,6 +1114,23 @@ namespace TumbangPreso.UI
 
             var field = t.GetComponent<InputField>();
             if (field == null) return;
+
+            // ⚠️⚠️ A PAPER TRAY, BECAUSE THE AUTHORED FIELD IS A BARE `Image` WITH A BAKED WOOD
+            // SPRITE AND `PaperDress` CANNOT SEE IT. `Logs/shots-runtime/Settings-v57.png`: the
+            // one text box on this panel is a near-black well with a grey placeholder in it,
+            // sitting in a cream sheet, and every keycap beside it is cream. It is the same fault
+            // as the hub's backdrop and the lobby drawer's address box, which is now three
+            // separate nodes in three files: **a surface set outside `GodotPanel`, `GodotButton`
+            // and `WoodSkin` is a surface the conversion is blind to.**
+            //
+            // ⚠️ AND THE LETTERING GOES WITH IT. `PaperDress.Type` had already remapped the text
+            // and the placeholder to ink, which is what made this unreadable rather than merely
+            // old: dark ink on `WoodDark` is about 1.3:1. Setting them here keeps the two halves
+            // in one place.
+            PaperKit.Paperise(t.gameObject, PaperCraft.Surface.Tray);
+
+            if (field.textComponent != null) field.textComponent.color = UiTheme.PaperInk;
+            if (field.placeholder is Text ghost) ghost.color = UiTheme.PaperInkSoft;
 
             field.characterLimit = Balance.PlayerNameMax;
             field.text = SettingsStore.Current.PlayerName;

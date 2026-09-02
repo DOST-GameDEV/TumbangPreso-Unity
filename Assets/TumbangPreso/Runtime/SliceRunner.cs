@@ -102,6 +102,7 @@ namespace TumbangPreso
 
             GameServices.Match.RoundStarted += OnRoundStarted;
             GameServices.Match.IntermissionStarted += OnIntermission;
+            GameServices.Match.BufferSkipRequested += OnBufferSkipped;
             GameServices.Match.MatchEnded += OnMatchEnded;
         }
 
@@ -111,6 +112,7 @@ namespace TumbangPreso
 
             GameServices.Match.RoundStarted -= OnRoundStarted;
             GameServices.Match.IntermissionStarted -= OnIntermission;
+            GameServices.Match.BufferSkipRequested -= OnBufferSkipped;
             GameServices.Match.MatchEnded -= OnMatchEnded;
         }
 
@@ -171,6 +173,34 @@ namespace TumbangPreso
         private void EquipOwnedSlippers(int defenderSlot)
         {
             if (!NetAuthority.ShouldResolve()) return;
+
+            // ⚠️⚠️ THE INCOMING TAYA IS DISARMED FIRST, AND NOTHING USED TO DO THIS AT ALL.
+            // 🧑 2026-08-29, first person, tsinelas in hand, `TAYA` on his own card: *"why the
+            // fuck does taya have slipper in practice mode? Does this also happen in
+            // multiplayer"*. It did, on both: this method is the only thing that touches
+            // ownership at a round change, it runs host-side for every peer, and the loop below
+            // only ever looked at the slipper whose INDEX matches the defender's seat.
+            //
+            // ⚠️ WHICH COULD NEVER HAVE BEEN ENOUGH, because `OwnerSlot` is a label and not a
+            // lock (`Slipper`'s own note, and `docs/TODO.md` § 79.9 records that being chosen
+            // deliberately and reaffirmed). Any attacker may pick up any tsinelas, so the seat
+            // about to become taya is routinely holding somebody else's, which the loop below
+            // leaves active and equipped by construction.
+            //
+            // ⚠️ IT RUNS BEFORE THE LOOP so the shoe it frees is still available to be re-homed
+            // to its real owner in the same pass, rather than being left loose on the road.
+            // `docs/TODO.md` § 78.13 flagged that nobody had ever WATCHED a client to confirm the
+            // taya was not carrying a shoe; this is what that check would have found.
+            var incomingTaya = GameServices.Round.PlayerAt(defenderSlot);
+            var tayaHand = incomingTaya != null ? incomingTaya.GetComponent<Carrier>() : null;
+
+            if (tayaHand != null && tayaHand.Held != null)
+            {
+                var surrendered = tayaHand.Held;
+
+                if (surrendered.HostDisarm())
+                    Net.MatchRpc.Instance?.BroadcastSlipperState(surrendered);
+            }
 
             // ⚠️⚠️ ONLY SEATS THAT EXIST. With the practice lobby set to NONE the three bot seats
             // are never built (`MatchInstaller`), so a tsinelas can be indexed to a body that is
@@ -250,10 +280,42 @@ namespace TumbangPreso
 
         private void Advance() => GameServices.Match.AdvanceRound();
 
+        /// <summary>
+        /// ⚠️ THE PENDING `Invoke` IS CANCELLED BEFORE THE ROUND ADVANCES, and without that the
+        /// original 15 s timer still fires later and advances a SECOND round nobody played. See
+        /// `MatchDirector.SkipBuffer` for why the decision is not made here.
+        /// </summary>
+        private void OnBufferSkipped()
+        {
+            CancelInvoke(nameof(Advance));
+            Advance();
+        }
+
         private void OnMatchEnded(int winningSlot)
         {
             GameServices.Round.EndRound();
             Running = false;
+
+            // ⚠️⚠️ THE CAST FREEZES WHEN THE MATCH IS WON, AND THIS RUNNER NEVER DID IT.
+            // `MatchBootstrap.OnMatchEnded` has carried `main.gd::_on_match_won_freeze_physics`
+            // since it was written, but the arena runs on THIS component, and it was getting the
+            // same effect for free from `EndRound` clearing `RoundActive`, which the movement
+            // gate used to read. It does not any more (see `CharacterMotor.CanMove`, and 🧑's
+            // *"cant move during buffer time"*), so without this the winner and three bots would
+            // carry on playing underneath the result board: exactly the failure `MatchBootstrap`
+            // describes in its own note.
+            //
+            // ⚠️ THE WARMUP BUFFER IS DELIBERATELY NOT THIS. Between rounds the game continues
+            // and the player is invited to practise; only the end of the match is final, and only
+            // the end of the match parks the input.
+            if (Seats != null)
+            {
+                foreach (var seat in Seats)
+                {
+                    if (seat == null) continue;
+                    seat.FreezeForMatchEnd();
+                }
+            }
 
             // ⚠️ END THE FREEZE BEFORE RESTORING THE SCALE, or the restore writes 1.0 and the
             // freeze's own restore then writes 0.05 back over it a few frames later.
@@ -281,6 +343,12 @@ namespace TumbangPreso
                 m.IsDefender = slot == defenderSlot;
                 m.HoldingSlipper = false;
                 m.Stamina.RefillAndClearFatigue();
+
+                // ⚠️ THE MATCH-END PARK IS LIFTED HERE, and it is the other half of the freeze
+                // added in `OnMatchEnded`. `Intent.Parked` is permanent by design, so a second
+                // match played on seats that were not rebuilt would open with four bodies that
+                // read input and ignore it. A round must never begin parked.
+                m.Intent.Parked = false;
 
                 // ⚠⚠ THE HERO KIT RESETS WITH THE BODY. Ultimate charge, cooldowns and
                 // anything still running are cleared here, at the one place every round

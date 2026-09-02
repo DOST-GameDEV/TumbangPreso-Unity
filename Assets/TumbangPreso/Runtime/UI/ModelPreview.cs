@@ -106,7 +106,45 @@ namespace TumbangPreso.UI
         /// than its Godot character-select reference. This factor exists only to keep both call
         /// sites tied to one explicit conversion value.
         /// </summary>
-        public const float LightExposure = 1.0f;
+        /// <remarks>
+        /// ⚠️⚠️ 0.651, NOT 1.0, AND THIS IS THE ANSWER TO `docs/TODO.md` § 79.1. 🧑, holding the
+        /// picker beside the lobby: *"fix shader on chara select too look at pic 1 vs pic 2, it
+        /// should look more like pic 2"*, and after the first pass of this batch, *"yea cheska
+        /// still pale af"*, *"compared to the other 2 maps that have better lighting for
+        /// characters"*.
+        ///
+        /// THE NUMBERS ABOVE ARE GODOT `light_energy` VALUES AND UNITY `intensity` IS NOT THE
+        /// SAME UNIT. `TscnImporter` has known this since the maps were converted and applies
+        /// `KeyEnergyToIntensity = 0.651f` to EVERY light it imports, calibrated against a
+        /// captured Godot frame and asserted by `ToneSweep`. This screen transcribed
+        /// `CharacterSelect.tscn`'s 1.35 and 0.45 and applied no conversion at all, so the
+        /// character portrait has been lit **1 / 0.651 = 1.54x hotter than every map in the
+        /// game** for its whole life. That is precisely "the character screen is lit differently
+        /// from the game", and it is why the cast reads pale and low contrast there and rich in
+        /// the lobby: the same palette under half a stop more key has nowhere left to go.
+        ///
+        /// ⚠️ THE HOOK WAS ALREADY HERE AND EMPTY, which is the part worth noticing. The comment
+        /// this replaces said this factor *"exists only to keep both call sites tied to one
+        /// explicit conversion value"* — it was built to be the conversion and left at 1.0, so
+        /// every later pass read a deliberate-looking constant and moved on. Three sessions
+        /// guessed at the ambient and the grade instead.
+        ///
+        /// ⚠️ IT IS A SECOND COPY OF ONE NUMBER AND THAT IS PINNED BY A TEST RATHER THAN BY THE
+        /// COMPILER, because it has to be. `TscnImporter` lives in the Editor assembly and this
+        /// is Runtime, so the constant cannot be shared: Runtime referencing Editor is the one
+        /// dependency that cannot exist. `TscnImporter`'s own note says `ToneSweep` and
+        /// `tools/read_sweep.py` will re-derive 0.651 if the render path ever changes, and a
+        /// re-derivation that moved one copy and not the other would put the character screen
+        /// back where it started. `ModelPreviewLightingTests` reads both files and fails if they
+        /// disagree.
+        ///
+        /// ⚠️ THE AMBIENT IS DELIBERATELY NOT SCALED BY THIS. See <see cref="PreviewAmbient"/>:
+        /// it is an `ambient_light_energy` blended with a sky contribution, which is a different
+        /// quantity converted a different way (`TscnImporter.Energised`), and the measured fault
+        /// was in the direct term. Scaling both at once would be two changes with one
+        /// measurement between them.
+        /// </remarks>
+        public const float LightExposure = 0.651f;
 
         /// <summary>
         /// ⚠️⚠️ THE PREVIEW HAD NO AMBIENT OF ITS OWN AND INHERITED THE MENU'S, WHICH IS WHY THE
@@ -140,8 +178,31 @@ namespace TumbangPreso.UI
         /// light on every surface and Berto rendered as pale yellow with no skin tone left.
         /// 0.65 of it is 0.5506, which is the number that belongs here.
         /// </remarks>
+        /// <remarks>
+        /// ⚠️⚠️ THE HUE IS THE GAME'S NOW, AT THIS SCREEN'S OWN LEVEL. 🧑 2026-08-29, after the
+        /// map ambience was warmed: *"make sure the ambience shows up in character select too"*.
+        ///
+        /// The base was (0.62745, 0.57647, 0.52157), a red-to-blue ratio of **1.203**. Every map
+        /// in the game sits at Eskinita's **1.33** (its Flat ambient is (0.934, 0.830, 0.700),
+        /// and Ilalim ng Tulay was moved onto the same 1.000 : 0.888 : 0.749 the same day). So
+        /// the character screen was washing its subjects with a cooler, greyer ambient than the
+        /// street they walk out onto, on top of being lit 1.54x too hot — the two halves of
+        /// `docs/TODO.md` § 79.1.
+        ///
+        /// ⚠️ THE LUMINANCE IS PRESERVED EXACTLY AND ONLY THE RATIO MOVES, which is what makes
+        /// this safe to land beside the `LightExposure` fix. Rec. 709 luma of the old value is
+        /// 0.51186; the new base carries the game's hue at the same 0.51186, so it cannot
+        /// brighten or darken the cast and can only warm it. Two changes with one measurement
+        /// between them is what the § 79.1 note warns against, and this is deliberately not that:
+        /// `LightExposure` moves the LEVEL, this moves the COLOUR, and the probe reports both.
+        ///
+        /// ⚠️ IT IS NO LONGER A LITERAL TRANSCRIPTION OF `CharacterSelect.tscn`, AND THAT IS THE
+        /// POINT RATHER THAN A REGRESSION. The Godot Environment's own ambient hue is what the
+        /// numbers above were; the whole complaint is that this screen does not look like the
+        /// game, and matching the game beats matching a scene file the game no longer uses.
+        /// </remarks>
         public static readonly Color PreviewAmbient =
-            new Color(0.62745f, 0.57647f, 0.52157f) * (1.35f * 0.65f);
+            new Color(0.64690f, 0.57440f, 0.48450f) * (1.35f * 0.65f);
 
         public const float TurnDegrees = 38.0f;
         public const float TurnPeriod = 9.0f;
@@ -252,6 +313,67 @@ namespace TumbangPreso.UI
         /// ⚠️ AND IT MUST BE CALLED AFTER <see cref="Show"/>, because `uniformExtent` changes
         /// what the framing COMPUTES and the subject was already measured on the way in.
         /// </summary>
+        /// <summary>
+        /// Where up the subject the camera aims, as a fraction of its own height.
+        ///
+        /// ⚠️ IT DEFAULTS TO <see cref="AimHeightRatio"/> AND EVERY EXISTING CALLER LEAVES IT
+        /// THERE, so the CHARACTER screen, the tutorial tiles and all seven probes are framed
+        /// exactly as they were measured. Only <see cref="LookAt"/> moves it.
+        /// </summary>
+        private float _aimHeightRatio = AimHeightRatio;
+
+        /// <summary>
+        /// Points the camera at one part of the body and pulls in on it.
+        ///
+        /// ⚠️⚠️ THIS IS THE "MULTI-STAGE CAMERA ZOOM" A CREATOR SCREEN NEEDS, AND ZOOM ALONE IS
+        /// NOT IT. A previous pass shipped a `CameraZoomFocus` enum with four values and an event,
+        /// and nothing anywhere moved a camera; the obvious repair, calling
+        /// <see cref="SetTileFraming"/> with a smaller factor, would have pulled in on
+        /// `AimHeightRatio` 0.54, **which is the waist**. Zooming toward the waist to look at a
+        /// hat is worse than not zooming: the head leaves the frame. **The aim has to move with
+        /// the distance or neither is worth doing.**
+        ///
+        /// ⚠️ THE RATIO IS OF THE SUBJECT'S OWN MEASURED BOUNDS, not of a world height, because
+        /// the cast spans 132 mm from the shortest rig to the tallest
+        /// (`docs/Voxel_Person_Guide.md` § 5.7) and a fixed world aim would frame a bald rig's
+        /// forehead and a mop-haired one's chin.
+        ///
+        /// ⚠️ IT DOES NOT TOUCH `_userTookOver`, so a player who has dragged the model round keeps
+        /// their angle when the section changes. Losing a rotation you set on purpose because you
+        /// moved to the next row is the kind of thing that reads as the screen fighting you.
+        /// </summary>
+        public void LookAt(float heightRatio, float zoom)
+        {
+            _aimHeightRatio = Mathf.Clamp01(heightRatio);
+            _userZoom = Mathf.Clamp(zoom, ZoomMin, ZoomMax);
+            _needsFrame = true;
+        }
+
+        /// <summary>
+        /// Puts the subject in the MIDDLE of its frame, for a caller whose controls are not in
+        /// the way.
+        ///
+        /// ⚠️⚠️ `FrameHorizontalOffsetRatio` IS THE CHARACTER SELECT SCREEN'S NUMBER AND IT IS
+        /// WRONG EVERYWHERE ELSE. Its own note says why it exists: *"every control on this screen
+        /// sits in the left third, so a centred subject would stand behind them"*. **The character
+        /// maker's controls are on the RIGHT**, so the same offset shoved the model 19 per cent of
+        /// the frame width TOWARD the panel and out of the middle of its own card. 🧑 2026-09-01,
+        /// over the MAKE YOUR OWN screen: *"this shhit is off center"*, and measured off that
+        /// shot the figure's centre sat 17 per cent of the card's width right of the card's.
+        ///
+        /// ⚠️ IT IS NOT <see cref="SetTileFraming"/>, WHICH IS THE OTHER HALF OF THAT METHOD AND
+        /// THE HALF THIS CALLER MUST NOT HAVE. That one also overwrites `_userZoom` and turns on
+        /// `_uniformExtent`, which is for a small tile showing one prop; the maker sets its own
+        /// zoom per section through <see cref="LookAt"/> and would have it silently replaced.
+        /// **Two behaviours behind one method is why this needed a second door and not a second
+        /// argument.**
+        /// </summary>
+        public void CentreSubject()
+        {
+            _centreSubject = true;
+            _needsFrame = true;
+        }
+
         public void SetTileFraming(float factor, bool uniformExtent = false)
         {
             _centreSubject = true;
@@ -493,6 +615,19 @@ namespace TumbangPreso.UI
         public void Show(GameObject prefab, AnimationClip[] clips, Color[] palette) => Show(prefab, clips, palette, null);
 
         /// <summary>
+        /// ⚠️⚠️ THE TSINELAS TAB SAYS SO, BECAUSE THIS SCREEN CANNOT WORK IT OUT. One rig shows
+        /// three categories here — the cast, the cans and the tsinelas — and a slipper and a can
+        /// are indistinguishable from inside: both arrive with no palette, and § 79.7 records
+        /// them sharing source materials. The 16-slot palette test below separates a PERSON from
+        /// a prop and cannot separate the two props. `ConvertedCharacterSelect` already knows
+        /// which tab it is on, so it is the thing that tells us.
+        ///
+        /// ⚠️ IT DEFAULTS TO FALSE, so every existing caller keeps the shading it had and only
+        /// the shoe tab changes. See `ToonSkin.ApplySlipper`.
+        /// </summary>
+        public bool ShowingSlipper { get; set; }
+
+        /// <summary>
         /// ⚠️ THE SCREEN AND THE MATCH MUST APPLY THE PALETTE THE SAME WAY. What you pick and
         /// what walks out cannot look like two different characters, and the only way to
         /// guarantee that is for both to go through `ToonSkin` with the same sixteen colours.
@@ -535,7 +670,46 @@ namespace TumbangPreso.UI
             //
             // This screen is the one place a player looks at a character up close, so it is also
             // the only place the error was ever going to be visible.
-            Visual.ToonSkin.Apply(_model, Visual.ToonSkin.PersonOutlineWidth, palette);
+            // ⚠️⚠️ A PROP GETS THE PROP WIDTH, AND THIS SCREEN GAVE EVERYTHING THE PERSON ONE.
+            // 🧑 2026-08-29: *"lessen the outline for all slippers that shader applies"*,
+            // *"cant see some details anymore"*, and, on where he was looking: *"character select
+            // is what im talking abt btw"*.
+            //
+            // This tab shows three categories through one rig — the cast, the cans and the
+            // tsinelas — and every one of them was outlined at `PersonOutlineWidth`. That number
+            // is derived for a Person: the note above works it out from `PERSON_SCALE` 2.38 and
+            // the voxel face's own feature size, and it is more than three times
+            // `PropOutlineWidth`. On a 0.432 m shoe it is an ink shell far wider than the strap,
+            // the toe seam or the footbed lip it is supposed to be drawing a border around, which
+            // is the detail he cannot see. `docs/TODO.md` § 43 measured this exact failure on
+            // this exact model and fixed it only for the decal submesh.
+            //
+            // ⚠️ THE PALETTE IS THE DISCRIMINATOR AND IT IS NOT A PROXY. Every `person_*.asset`
+            // carries exactly 16 swatches and every `slipper_*` and `can_*` carries none, checked
+            // across the whole roster, because the sixteen-slot remap is what a Person IS to
+            // `ToonSkin` (see its `Variant`). A prop has no palette to remap, so the same test
+            // that decides whether to remap decides which border to draw.
+            //
+            // ⚠️ THE CAST IS UNCHANGED, WHICH HE ASKED FOR IN TERMS: *"make sure lessening shader
+            // for slippers doesnt lessen everyone's"*. A 16-colour subject still takes the 19 mm
+            // this method's note derives.
+            bool isPerson = palette != null && palette.Length == 16;
+
+            // ⚠️ A TSINELAS TAKES THE FLAT SKIN HERE TOO, AND IT HAS TO BE THE SAME ONE THE MATCH
+            // USES. This screen exists so that what you pick and what walks out cannot look like
+            // two different things, which is the rule stated at the top of this method; dressing
+            // the picker shoe differently from the match shoe would break it in the one place it
+            // is most visible. § 79.7 was that bug in the other direction.
+            if (!isPerson && ShowingSlipper)
+            {
+                Visual.ToonSkin.ApplySlipper(_model, Visual.ToonSkin.PropOutlineWidth);
+            }
+            else
+            {
+                Visual.ToonSkin.Apply(_model,
+                    isPerson ? Visual.ToonSkin.PersonOutlineWidth : Visual.ToonSkin.PropOutlineWidth,
+                    palette);
+            }
 
             if (petModel != null)
             {
@@ -743,7 +917,7 @@ namespace TumbangPreso.UI
             float width = Mathf.Max(Mathf.Max(bounds.size.x, bounds.size.z), 0.001f);
 
             _frameAim = new Vector3(bounds.center.x,
-                                    bounds.min.y + height * AimHeightRatio,
+                                    bounds.min.y + height * _aimHeightRatio,
                                     bounds.center.z);
 
             float halfFov = Mathf.Tan(_camera.fieldOfView * 0.5f * Mathf.Deg2Rad);
@@ -795,7 +969,37 @@ namespace TumbangPreso.UI
             return new Bounds(centre, extents * 2.0f);
         }
 
-        private void LateUpdate()
+        private void LateUpdate() => Step();
+
+        /// <summary>
+        /// Runs one frame's worth of preview work and renders the camera into
+        /// <see cref="Target"/>, for a probe that is photographing this screen outside play mode.
+        ///
+        /// ⚠️⚠️ THIS EXISTS BECAUSE NOTHING IN THE REPOSITORY COULD SEE THE CHARACTER SCREEN, AND
+        /// THREE SESSIONS GUESSED AT A FAULT ON IT INSTEAD. `docs/TODO.md` § 79.1: IKE is
+        /// `Kd 0.052 0.058 0.074` in its own `.mtl` and renders mid grey here, and every
+        /// explanation offered for that was argued from source rather than measured, because the
+        /// only two renderers in the project point somewhere else. `ModelSheet` shoots a
+        /// different camera with a different projection and § 43's rule is that a render from one
+        /// camera is not evidence about another.
+        ///
+        /// ⚠️ IT IS THE REAL COMPONENT OR IT IS WORTHLESS. A probe that rebuilds this camera,
+        /// its two lights, its ambient and its grade beside it is a SECOND implementation, free
+        /// to agree with the screen while the screen is wrong. `LateUpdate` is split rather than
+        /// duplicated for exactly that reason: there is one body and both callers run it.
+        ///
+        /// ⚠️ THE EXPLICIT `Render()` IS THE PART EDIT MODE NEEDS. A camera with a target texture
+        /// draws itself every frame in play mode and never outside it, so a probe that only
+        /// stepped the logic would save whatever the texture happened to hold.
+        /// </summary>
+        public void StepForCapture()
+        {
+            Step();
+
+            if (_camera != null) _camera.Render();
+        }
+
+        private void Step()
         {
             if (_camera == null) return;
 
@@ -813,8 +1017,30 @@ namespace TumbangPreso.UI
 
             if (_needsFrame) Frame();
 
+            // ⚠️⚠️ THE HANDOVER EXPIRES NOW, IT IS NOT PERMANENT. 🧑 2026-08-29, on the picker:
+            // *"this is supposed to be like rotating and shit, both slippers and tsinelas and
+            // hero"*, *"they can be movable"*, *"like they stop rotating if we move"*, *"and go
+            // back to rotating in character select after"*.
+            //
+            // The sweep already stopped on the first drag and its own note said that was for
+            // good, so one nudge left every subsequent subject standing still: the screen looks
+            // broken rather than settled, and the turn is what shows a model's back and sides at
+            // all. Letting the takeover lapse gives the three states he asked for in order.
+            //
+            // ⚠️ `_turnPhase` IS FROZEN WHILE THE PLAYER HAS IT, not advanced and ignored, so the
+            // sweep resumes from exactly where it stopped instead of snapping to wherever the
+            // sine would have travelled. The phase only moves inside the branch below.
+            //
+            // ⚠️ THE CAMERA KEEPS THE PLAYER'S ORBIT. Dragging moves `_userYaw` and `_userPitch`,
+            // which are the CAMERA's, while the sweep turns the MODEL; resuming one does not
+            // discard the other, so the subject starts turning again from the angle they chose
+            // rather than jumping back to front-on.
+            if (_userTookOver && Time.unscaledTime - _lastUserInput >= ResumeTurnAfterSeconds)
+                _userTookOver = false;
+
             // THE MODEL TURNS. The idle sweep is a there-and-back through TurnDegrees either
-            // side of front-on, over TurnPeriod seconds. It stops the moment the player drags.
+            // side of front-on, over TurnPeriod seconds. It stops while the player is handling
+            // it and resumes once they have left it alone.
             if (_model != null && !_userTookOver)
             {
                 _turnPhase += Time.unscaledDeltaTime;
@@ -875,9 +1101,18 @@ namespace TumbangPreso.UI
         ///
         /// ⚠️ THE FIRST DRAG ENDS THE IDLE SWEEP FOR GOOD. See the class note.
         /// </summary>
+        /// <summary>How long the subject stays still after the player last touched it, before
+        /// the idle sweep takes over again. Long enough to inspect a model without it turning
+        /// under the pointer, short enough that the screen does not look frozen.</summary>
+        private const float ResumeTurnAfterSeconds = 2.5f;
+
+        /// <summary>When the player last dragged or zoomed. See the note in `LateUpdate`.</summary>
+        private float _lastUserInput;
+
         public void Orbit(Vector2 delta)
         {
             _userTookOver = true;
+            _lastUserInput = Time.unscaledTime;
 
             // ⚠️⚠️ THE TWO AXES DO NOT TAKE THE SAME CORRECTION, AND ASSUMING THEY DID IS WHY
             // THIS HAS BEEN WRONG TWICE. The signs were first copied straight from
@@ -910,6 +1145,7 @@ namespace TumbangPreso.UI
             if (!_wheelZooms) return;
 
             _userTookOver = true;
+            _lastUserInput = Time.unscaledTime;
             _userZoom = Mathf.Clamp(_userZoom - wheel * ZoomStep, ZoomMin, ZoomMax);
         }
 
@@ -921,6 +1157,12 @@ namespace TumbangPreso.UI
             _userZoom = 1.0f;
             _userTookOver = false;
             _turnPhase = InitialTurnPhase;
+
+            // ⚠️ THE AIM COMES BACK TOO. `LookAt` moves it and RESET means the measured shot,
+            // which is the whole subject at `AimHeightRatio`. A reset that left the camera
+            // pointing at the shoes would be a reset button that does not reset.
+            _aimHeightRatio = AimHeightRatio;
+            _needsFrame = true;
 
             if (_model != null)
                 _model.transform.localRotation = Quaternion.Euler(0.0f, FacingYaw, 0.0f);

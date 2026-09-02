@@ -30,11 +30,12 @@ namespace TumbangPreso.UI
             Choice(card.transform, "RESUME", Resume);
             Choice(card.transform, "SETTINGS", OpenSettings);
 
-            Choice(card.transform, "QUIT TO MENU", () =>
-            {
-                Time.timeScale = 1.0f;
-                SceneFlow.Go(SceneFlow.MainMenu);
-            }, "WoodDangerButton");
+            // ⚠️⚠️ THROUGH `LeaveMatchToMainMenu`, WHICH ALSO ENDS THE SESSION. These two lines
+            // used to be here verbatim, and `NetworkManager` is `DontDestroyOnLoad`: a HOST that
+            // quit to the menu was still hosting, so the other three carried on playing a match
+            // nothing was refereeing. That method's header carries the report and the rest of it.
+            Choice(card.transform, "QUIT TO MENU", SceneFlow.LeaveMatchToMainMenu,
+                   "WoodDangerButton");
         }
 
         /// <summary>

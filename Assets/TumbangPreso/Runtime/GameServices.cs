@@ -37,6 +37,24 @@ namespace TumbangPreso
         public static MatchDirector Match { get; private set; }
         public static RoundDirector Round { get; private set; }
         public static Audio.MusicDirector Music { get; private set; }
+        public static Net.PlayerAccount Account { get; private set; }
+
+        /// <summary>Counts what happens in a match, host-side. See its own header for why it
+        /// is not simply a listener on `MatchDirector.Scored`.</summary>
+        public static MatchStatsCollector Stats { get; private set; }
+
+        /// <summary>The career: profile, match history and the queue of records that have not
+        /// reached the server yet.</summary>
+        public static Net.CareerStore Career { get; private set; }
+
+        /// <summary>
+        /// Session telemetry: the first-launch funnel and the match-level counters, batched and
+        /// sent once. `docs/TODO.md` § 90.3.
+        /// </summary>
+        public static Net.TelemetrySink Telemetry { get; private set; }
+
+        /// <summary>Friends, blocks and presence. `docs/TODO.md` § 102.</summary>
+        public static Net.SocialStore Social { get; private set; }
 
         /// <summary>The announcer. Godot had it inside AudioManager; it is its own director
         /// here because its take pooling, per-line cooldowns and music ducking are a system,
@@ -112,6 +130,31 @@ namespace TumbangPreso
             Round = _root.AddComponent<RoundDirector>();
             Music = _root.AddComponent<Audio.MusicDirector>();
             Voice = _root.AddComponent<Audio.VoiceDirector>();
+            Account = _root.AddComponent<Net.PlayerAccount>();
+
+            // ⚠️ THE CAREER IS ADDED AFTER THE ACCOUNT, DELIBERATELY. `CareerStore.Awake`
+            // subscribes to `PlayerAccount.Changed` so it can sync the moment a sign-in lands,
+            // and `AddComponent` runs `Awake` immediately: reversing these two lines gives the
+            // career a null account to subscribe to and nothing ever uploads.
+            Career = _root.AddComponent<Net.CareerStore>();
+
+            // ⚠️ AND THE COLLECTOR LAST, because its `OnEnable` subscribes to `Match` and its
+            // `Adopt` reaches `Career`. Same hazard, same answer: order the construction rather
+            // than hoping for one.
+            Stats = _root.AddComponent<MatchStatsCollector>();
+
+            // ⚠️ TELEMETRY IS BUILT LAST AND IT DEPENDS ON NOTHING ABOVE IT, which is the point.
+            // Its `Awake` opens the first-launch funnel, and a funnel whose first step could be
+            // skipped by an earlier service failing would measure the boot it wanted rather than
+            // the boot that happened. Nothing else in this list reads it, so it can never be the
+            // reason another service is missing.
+            Telemetry = _root.AddComponent<Net.TelemetrySink>();
+
+            // ⚠️ SOCIAL AFTER THE CAREER, because `SocialStore.Load` keys its cache on
+            // `CareerStore.LocalPlayerId` and a cache with no owner is one player's friends list
+            // drawn under another player's name. Same hazard and same answer as the two lines
+            // above: order the construction rather than hoping for one.
+            Social = _root.AddComponent<Net.SocialStore>();
         }
 
         /// <summary>
@@ -127,6 +170,11 @@ namespace TumbangPreso
             Match = null;
             Round = null;
             Music = null;
+            Account = null;
+            Career = null;
+            Stats = null;
+            Telemetry = null;
+            Social = null;
 
             _menuTrack = null;
             _matchTrack = null;

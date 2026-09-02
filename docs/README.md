@@ -21,6 +21,13 @@ add its row here in the same commit.
 | [`HUMAN.md`](HUMAN.md) | **The standing instructions in his own words**, which is the record of what has already been asked for and what has already been rejected. Check it before proposing something that sounds new. |
 | [`art_refs/`](art_refs/) | The reference art the props were drawn from. ⚠️ `Art_Direction.md` § 4a records that the drawing-derived slippers were deleted and must not be rebuilt. |
 
+## What comes after the port
+
+| File | What it is |
+|---|---|
+| [`FUTURE.md`](FUTURE.md) | **The live-service and esport plan, in eighteen ordered phases, each with a prompt written to brief a whole session.** Accounts, profile and stats, telemetry, progression, cosmetics, social, matchmaking, competitive integrity, ranked, mastery paths, bots and population, modes and maps, seasons, controller, mobile, accessibility, tournaments and replays, distribution. **All eighteen prompts live in its § 19** with an index, § 0.5 is the standing preamble every prompt in both files inherits, and § 0.6 is the staleness protocol plus a PROMPT ZERO that refreshes both documents against the code. ⚠️ **It is a plan, not a decision that any of it ships**, and where it disagrees with `VISION.md` about what the game is, `VISION.md` wins. Every phase is costed against a free tier, because there is no budget. |
+| [`INSPIRATION.md`](INSPIRATION.md) | **What to steal from thirty other games, and what it becomes in a four-player street game with a rotating taya.** The WHY behind `FUTURE.md`'s WHAT. Game by game with a "what it becomes here" for each, plus the queue-versus-mode structure (ranked is its own menu entry, not a third ruleset), the loadout and challenge-unlock design, achievements, and the problems a four-player free for all has that no borrowed system solves: **three of four players lose every match**, and a player far behind at the final round has nothing to play for. Carries ten paste-ready prompts in its § 8, a rejected register in § 10 recording every idea he has killed and why and a combined 27-step order with `FUTURE.md`'s phases in § 8.6. ⚠️ **A plan, not a decision.** |
+
 ## Port work
 
 | File | What it is |

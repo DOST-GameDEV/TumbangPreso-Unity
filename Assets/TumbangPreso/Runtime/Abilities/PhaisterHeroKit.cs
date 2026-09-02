@@ -35,26 +35,67 @@ namespace TumbangPreso.Abilities
         // A verb wired twice is a verb wired once and maintained never.
 
         /// <summary>
-        /// Skill 1: HEX (2 charges per round)
-        /// Chalks a ward on the road. Anyone who walks into it loses their footing.
+        /// Skill 1: HEX (2 charges per round). HOLD to place, release to chalk it.
+        ///
+        /// ⚠️⚠️ IT WAS A FIXED 4.5 m IN FRONT OF HER NOSE AND THAT IS THE WHOLE ABILITY BEING
+        /// GUESSED AT. 🧑 2026-09-02: *"Her q should be holdable and person using her and only
+        /// that person should be able to see where the held skill will go"*, *"if person
+        /// releases it will be cast"*. A ward is a trap: its value is entirely in WHERE it is,
+        /// which means the one thing the power was not letting her decide was the only decision
+        /// in it. Aiming by walking backwards and forwards to change a fixed offset is not
+        /// aiming, it is arithmetic performed with your feet.
+        ///
+        /// ⚠️ THE RANGE BAND IS 2.2 TO 5.5 m, WHICH IS DELIBERATELY THE BLINK'S. Her two placed
+        /// powers now reach the same distance and ramp over the same 0.55 s, so learning one
+        /// teaches the other; the maximum came off `ShadowPhaseBlinkAbility.MaxRange` for that
+        /// reason rather than from the old 4.5. The minimum is a body length clear of her, so a
+        /// panicked release still lands a ward she can back away over rather than one she is
+        /// standing in.
+        ///
+        /// ⚠️⚠️ `maxHoldSeconds: 0`, SO ONLY THE RELEASE CASTS IT, AND THAT IS ALSO WHAT HE
+        /// ASKED FOR ON THE BLINK: *"i want it to cast only when i let go"* (2026-08-27). The
+        /// hold buys nothing after the 0.55 s ramp, so `docs/VISION.md` § 4's *"nothing may
+        /// reward waiting"* is answered the same way it is there: she keeps full movement, the
+        /// anti-camp clock keeps running, and a longer hold pays out exactly zero.
+        ///
+        /// ⚠️⚠️ AND THE TELEGRAPH IS A WARD RATHER THAN A RING, WHICH IS THE OTHER HALF OF THE
+        /// SAME REPORT: *"can u make a magic circle for her q as well? its ugly bcz its js a
+        /// shadow"*. `HeroHazards.SpawnHexSigil` already draws `VfxShapes.WardCircle` when the
+        /// hex lands; the aim mark is now the same inscription, so the promise and the thing
+        /// promised are one object. See `GroundReticle.Style`.
+        ///
+        /// ⚠️ ONLY SHE SEES IT. `GroundReticle.Show` refuses to draw for anybody the camera is
+        /// not looking through, which is his *"and only that personn should be able to see"* and
+        /// was already true for the blink. A held aim is a decision that has not been made yet;
+        /// painting it on the road for the other three hands away the one thing hold-to-aim
+        /// buys, which is that you may change your mind.
         /// </summary>
         private sealed class HexSigilAbility : HeroAbility
         {
             private const float HexRadius = 2.4f;
             private const float SigilLifetime = 6.0f;
 
+            /// <summary>Nearest she may chalk one. A ward under her own feet is not a trap.</summary>
+            private const float MinRange = 2.2f;
+
+            /// <summary>Furthest, at a full hold. The blink's reach, deliberately.</summary>
+            private const float MaxRange = 5.5f;
+
             public HexSigilAbility()
                 : base("phaister_skill1", "HEX",
-                       "Chalks a hex circle on the road. Anyone who walks into it loses their footing.",
+                       "Hold to place a hex circle on the road, then let go to chalk it. Anyone who walks into it loses their footing.",
                        0.0f, SigilLifetime, AbilityGlyph.PhaisterHexSigil,
-                       summary: "A circle on the ground. Walk in and you stumble.",
+                       summary: "Hold to aim, release to chalk. Walk in and you stumble.",
                        telegraphRadius: HexRadius,
-                       telegraphRange: 4.5f,
+                       telegraphRange: MaxRange,
                        castAction: "hero-phaister-hex",
                        viewmodelAction: "cast-hex",
+                       castCue: "sfx_cast_phaister_hex",
                        charges: 2,
                        rechargedBy: Recharge.Never)
             {
+                AimByHolding(MinRange, MaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
+                TelegraphStyle = Visual.GroundReticle.Style.Ward;
             }
 
             protected override void OnActivate(AbilityContext ctx)
@@ -65,11 +106,20 @@ namespace TumbangPreso.Abilities
                 // had no voice to play until now.
                 NetCue.Play("hero_phaister_grunt", ctx.Position);
 
-                var forwardAim = ctx.Forward;
-                Vector3 targetPos = ctx.Position + forwardAim * 4.5f;
+                // ⚠️⚠️ THE WARD GOES WHERE THE RING WAS, NOT WHERE SHE IS POINTING NOW. This is
+                // the same read `ShadowPhaseBlinkAbility` makes and for the same reason: the
+                // player has been looking at that circle for up to half a second, and a cast
+                // that recomputes the destination from `ctx.Forward` would place it wherever the
+                // mouse happened to be on the frame the finger came up. The fallback is the
+                // aimed reach along the current facing, which is what a kit with no system
+                // attached (a probe, a headless match) gets.
+                Vector3 targetPos = AimedDestination(ctx);
+
                 int slot = ctx.Motor != null ? ctx.Motor.PlayerSlot : -1;
 
-                HeroHazards.SpawnHexSigil(targetPos, HexRadius, SigilLifetime, slot);
+                HeroHazards.SpawnHexSigil(targetPos,
+                    HexRadius * ctx.CostScale("phaister.1.brand"), SigilLifetime, slot,
+                    ctx.GainScale("phaister.1.brand"));
                 AbilityVfx.AttachAura(ctx.Motor.transform, AbilityVfx.Aura.WitchSigil, 1.5f);
             }
         }
@@ -130,7 +180,8 @@ namespace TumbangPreso.Abilities
                        telegraphRadius: ArrivalMark,
                        telegraphRange: MaxRange,
                        castAction: "hero-phaister-blink",
-                       viewmodelAction: "blink")
+                       viewmodelAction: "blink",
+                       castCue: "sfx_cast_phaister_blink")
             {
                 // ⚠️⚠️ `maxHoldSeconds: 0` MEANS THE RELEASE IS THE ONLY THING THAT CASTS IT.
                 // It was 1.10 s and it fired itself at the ceiling; 🧑 2026-08-27, having played
@@ -154,23 +205,32 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                // ⚠️ `sfx_ghost_teleport` IS NEMU'S AND IS KEPT DELIBERATELY. `docs/TODO.md`
-                // § 21.4 took the borrowed cues off her ward and her ultimate; this one stays
-                // because a blink IS the physical event Nemu's phase is, and two heroes who
-                // share an element are allowed to share the sound of the one thing they both
-                // literally do. What she needed was her own THROAT over it, which is the line
-                // below. It is now a NETWORKED cue: see `NetCue`.
+                // ⚠️⚠️ `sfx_ghost_teleport` IS OFF THE DEPARTURE AS OF 2026-09-02, AND THE
+                // ARGUMENT THAT KEPT IT HERE IS WORTH READING BEFORE PUTTING IT BACK. It was:
+                // *"a blink IS the physical event Nemu's phase is, and two heroes who share an
+                // element are allowed to share the sound of the one thing they both literally
+                // do"*, after `docs/TODO.md` § 21.4 took the borrowed cues off her ward and her
+                // ultimate.
+                //
+                // What that reasoning missed is that Nemu was playing the same cue on BOTH of her
+                // skills, so it was not two heroes sharing one event, it was three powers across
+                // the two heroes least able to afford it sharing one sound. 🧑 2026-09-02: *"make
+                // it unique throughout each character"*. Her departure is `sfx_cast_phaister_blink`
+                // now, sounded centrally off `HeroAbility.CastCue`.
+                //
+                // ⚠️ THE ARRIVAL IS UNCHANGED. `sfx_blink_arrive` still plays at the far end, up
+                // to 5.5 m away, and its own note has why a cue fired at `startPos` cannot cover
+                // that.
                 NetCue.Play("hero_phaister_grunt", ctx.Position);
-                NetCue.Play("sfx_ghost_teleport", ctx.Position);
 
                 Vector3 startPos = ctx.Position;
                 Vector3 facing = ctx.Forward;
 
                 // Where the ring the player has been looking at for the last half second is.
-                var system = ctx.Motor != null ? ctx.Motor.AbilitySystem : null;
-                Vector3 destination = system != null
-                    ? system.AimDestination(this)
-                    : startPos + facing * AimRangeFor(HeldSecondsOnCast);
+                // ⚠️ THROUGH `HeroAbility.AimedDestination` SINCE 2026-09-02. This was the only
+                // copy of that read until the hex and both of Cheska's placed powers needed the
+                // same three lines; it is on the base class now, with the same fallback.
+                Vector3 destination = AimedDestination(ctx);
 
                 // ⚠️⚠️ THE TWO ENDS ARE TWO DIFFERENT EFFECTS AND NEITHER IS THE OTHER MIRRORED.
                 // `HeroHazards.SpawnShadowRift` is a torn vertical sheet at the place she left;
@@ -263,22 +323,26 @@ namespace TumbangPreso.Abilities
         /// `docs/TODO.md` § 23 left this open in as many words: *"Phaister's eclipse curse
         /// staggers for 0.50 s, below `Balance.MinStunDown`, so her ultimate does not hold
         /// anybody and gets no coat"*. `CharacterMotor.ApplyStagger` forces anything at or under
-        /// the 1.20 s floor back to `StunElement.None`, so the most expensive power in her kit
+        /// the then-1.20 s floor back to `StunElement.None`, so the most expensive power in her kit
         /// applied a knockback hitch, drew no element coat, raised no mash card, and was
         /// unmashable and unnoticeable at the same time. It was left alone rather than retuned
         /// because it is a balance question; this is the answer, written down.
         ///
         /// ⚠️⚠️ **1.60 s, FIVE PRESSES, AND ONLY INSIDE THE REACH.** The three numbers together:
         ///
-        ///   * **1.60 s** clears `Balance.MinStunDown` by 0.40, which is the smallest hold that
-        ///     actually IS one. Anything at 1.20 or under is silently demoted and this entry is
-        ///     the record of what that costs.
+        ///   * **1.60 s** cleared `Balance.MinStunDown` by 0.40 when that floor was 1.20, which
+        ///     was then the smallest hold that actually IS one; anything at or under the floor is
+        ///     silently demoted and this entry is the record of what that costs. ⚠️ THE FLOOR IS
+        ///     0.60 AS OF § 83.14, so this now clears it by a full second and the hold is not the
+        ///     marginal thing it was written as.
         ///   * **5 presses** against Cheska's 9, Dante's 8, Zack's 7, Nemu's 6 and Sean's 4.
         ///     `docs/TODO.md` § 23's rule is *"how hard the skill is supposed to hit"*, and the
         ///     thing that separates this from Cheska's nova is that it can hold **three people
         ///     at once**. A multi-target hold has to be shorter per victim than a single-target
         ///     one or it is three novas for one price. `perPress = (1.60 - 1.20) / 5 = 0.08 s`,
-        ///     so a player who answers it is free in about 1.2 s against 1.6 unanswered.
+        ///     so a player who answered it was free in about 1.2 s against 1.6 unanswered. At
+        ///     the 0.60 floor the same five presses buy 0.20 s each and free them in 0.6 s, which
+        ///     is the point of § 83.14: every declared press pays.
         ///   * **The 5 m reach**, where it used to hit `round.Players` with no distance test at
         ///     all: an ultimate that reaches a player standing in the far corner of a 14 m box
         ///     cannot be positioned against, and positioning is the counterplay. The reach is
@@ -412,8 +476,10 @@ namespace TumbangPreso.Abilities
                        telegraphRadius: Reach,
                        telegraphRange: 0.0f,
                        castAction: "hero-phaister-eclipse",
-                       viewmodelAction: "coven-eclipse")
+                       viewmodelAction: "coven-eclipse",
+                       castCue: "sfx_cast_phaister_coven")
             {
+                TelegraphStyle = Visual.GroundReticle.Style.Ward;
             }
 
             protected override void OnActivate(AbilityContext ctx)
@@ -489,9 +555,13 @@ namespace TumbangPreso.Abilities
                     if (diff.magnitude > Reach) continue;
 
                     p.ApplyStagger(CurseHold, StunElement.Hex, CurseBreakPresses);
-                    AbilityVfx.AttachAura(p.transform, AbilityVfx.Aura.WitchEclipse, 2.5f);
-                    ComicPopup.Spawn(p.transform.position + Vector3.up * 1.3f, "CURSED!",
-                                     UiTheme.HeroWitchBright, 1.2f);
+
+                    // ⚠️ RELAYED. The stagger is a RULE and stays here behind the host gate;
+                    // the aura and the CURSED! plate are what three other people could not see.
+                    // See `Visual.MatchFlair`.
+                    Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.HeroCursed,
+                                               mySlot, p.PlayerSlot,
+                                               p.transform.position, CurseHold);
                 }
             }
         }

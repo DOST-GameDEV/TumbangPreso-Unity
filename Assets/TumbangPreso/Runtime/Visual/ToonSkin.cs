@@ -28,9 +28,33 @@ namespace TumbangPreso.Visual
     /// </summary>
     public static class ToonSkin
     {
-        /// <summary>`character_visual.gd::OUTLINE_WORLD_WIDTH`. How thick a prop's ink border
-        /// is in world units, whatever the mesh is scaled by.</summary>
-        public const float PropOutlineWidth = 0.012f;
+        /// <summary>
+        /// `character_visual.gd::OUTLINE_WORLD_WIDTH`. How thick a prop's ink border is in world
+        /// units, whatever the mesh is scaled by.
+        ///
+        /// ⚠️⚠️ 0.006 m, HALVED FROM 0.012, AND IT IS THE SAME ARITHMETIC § 43 ALREADY WROTE
+        /// DOWN. 🧑 2026-08-29: *"lessen the outline for all slippers that shader applies"*,
+        /// *"makes it ugly"*, *"cant see some details anymore"*.
+        ///
+        /// § 43's note on the IKE speckle measured the problem exactly and then fixed only the
+        /// symptom: *"`modelWidth` is derived from the WHOLE MODEL's bounds, 0.012 m of
+        /// world-space ink for a 0.432 m shoe ... Inflating that swoosh by 12 mm in every
+        /// direction produces a hull far larger than the shape it is supposed to outline, so the
+        /// ink covers the decal"*. The answer there was to stop drawing a hull on slot > 0, which
+        /// saved the decal and left every OTHER piece of small relief on a shoe — the strap, the
+        /// footbed lip, the toe seam — inside a 12 mm border on a 432 mm object. **2.8 per cent
+        /// of the model's own length, per side.** That is the detail he cannot see any more.
+        ///
+        /// ⚠️⚠️ PROPS ONLY. THE CAST IS NOT TOUCHED, AND HE ASKED FOR THAT IN TERMS:
+        /// *"make sure lessening shader for slippers doesnt lessen everyone's"*.
+        /// <see cref="PersonOutlineWidth"/> is a separate constant and stays at its measured
+        /// 0.008 x 2.38. The two have always been separate; this is why.
+        ///
+        /// ⚠️ IT IS A WORLD WIDTH, SO IT IS SCALE-FREE AND THE LATA THINS BY THE SAME RATIO. That
+        /// is wanted rather than tolerated: the can is a 0.12 m object wearing the same 12 mm
+        /// border, which is the worst ratio of anything in the game.
+        /// </summary>
+        public const float PropOutlineWidth = 0.006f;
 
         /// <summary>`person_outline.tres` carries 0.008 in the model space of a rig that is then
         /// scaled by PERSON_SCALE 2.38, so the world width it renders at is this.</summary>
@@ -62,6 +86,40 @@ namespace TumbangPreso.Visual
         private static readonly int OutlineColorId = Shader.PropertyToID("_OutlineColor");
         private static readonly int OutlineWidthId = Shader.PropertyToID("_OutlineWidth");
         private static readonly int CutoffId = Shader.PropertyToID("_Cutoff");
+
+        // -------------------------------------------------- § THE TSINELAS FLAT SKIN, REVERTED
+        //
+        // ⚠️⚠️ SLIPPERS WEAR THE SAME TWO-BAND RAMP AS EVERY OTHER PROP, AND A FLATTENED ONE WAS
+        // TRIED HERE AND TAKEN BACK OUT ON 2026-08-31. What stood here was `_ShadowBand` 0.86
+        // over a `_BandEdge` of 0.30, for shoes only, against the shader's own 0.45 over 0.03,
+        // mixed into the cache key so it could not leak onto the cans. The note stays because the
+        // reason it was added is still on file and its removal would otherwise read as a tidy-up.
+        //
+        // ⚠️⚠️ IT WAS A FIX FOR A SYMPTOM WHOSE CAUSE WAS SOMEWHERE ELSE ENTIRELY. 🧑 2026-08-29:
+        // *"pls overhaul how shader applies to slippers AND ONLY SLIPPERS bcz the slippers change
+        // color or form entirely"*, then *"js remove or severely lessen shader coloring effect on
+        // slippers as a whole"*. The colour he was describing was the one in his own hands, and
+        // it never came from this ramp: `ViewmodelArms.Build` writes `UiTheme.PropFoam` (#7a5741)
+        // into a MaterialPropertyBlock on the held renderer, a block overrides `_Color` for EVERY
+        // submesh whatever material sits in the slot, and nothing ever cleared it. Every tsinelas
+        // in first person rendered as that one flat brown, on every skin, for the whole match.
+        // `ViewmodelArms.MatchSkin` carries the fix and the three passes that missed it.
+        //
+        // ⚠️ SO FLATTENING THE RAMP COULD NOT HAVE WORKED, AND IT COST EVERY SHOE ITS FORM. These
+        // models are `baseColorFactor` and nothing else: `tsinelas_heels.glb` is three materials
+        // at 0.020, 0.000 and 0.077 with ZERO textures, and `tsinelas_crocs.glb` is 0.915, 0.027
+        // and 0.5, also with none. The two-band ramp is the only thing in the frame separating an
+        // ankle strap from the sole behind it. At 0.86 over 0.30 that is 14 per cent of falloff
+        // smeared across a third of the ramp, which on a black shoe is nothing at all: the heels
+        // rendered as a silhouette with the ink outline doing all the work. 🧑 2026-08-31, with
+        // the original render beside the build: *"the shaders were okay when i added the
+        // slippers"*, *"it only broke when i asked [for it] to remove them / lessen the effect on
+        // the slippers"*, *"in ur process of fixing it u made all slippers look ugly"*.
+        //
+        // ⚠️ DO NOT PUT IT BACK WITHOUT CHECKING FOR A PROPERTY BLOCK FIRST. If a shoe ever reads
+        // as one flat colour again, the question is which renderer is carrying a `_Color` in a
+        // block, not how hard the key light is cutting it. A shading ramp cannot make three
+        // materials agree on a single colour. A block can, and did.
 
         // ------------------------------------------------------------------ § THE RENDER STYLE
         //
@@ -239,6 +297,38 @@ namespace TumbangPreso.Visual
             new Dictionary<Material, Material>();
 
         public static void Apply(GameObject model, float worldWidth) => Apply(model, worldWidth, null);
+
+        /// <summary>
+        /// Dress a TSINELAS. The same two-band toon face and ink outline every other prop wears:
+        /// see § THE TSINELAS FLAT SKIN, REVERTED at the top of this file for the shoe-only
+        /// flattening that used to sit behind this entry point and why it came out again.
+        ///
+        /// ⚠️⚠️ EVERY PLACE A SLIPPER IS DRESSED CALLS THIS, AND THAT IS THE WHOLE REQUIREMENT.
+        /// 🧑 asked for it to *"actually reflect in the game as well as all maps"*, and a slipper
+        /// is skinned from five places that have nothing to do with each other: `MatchInstaller`
+        /// builds the match copy, `SceneBuilder` builds the scene-authored one, `ModelPreview`
+        /// builds the character-screen one, `ViewmodelArms.MatchSkin` builds the one in your own
+        /// hand, and `ModelSheet` builds the contact sheet. Miss one and the shoe changes
+        /// appearance when it changes screens, which is the class of bug § 79.7 already was.
+        /// `SlipperSkinTests` asserts the set.
+        ///
+        /// ⚠️ IT IS A SEPARATE ENTRY POINT RATHER THAN A GUESS INSIDE `Apply`. There is no
+        /// reliable way to look at a `Renderer` and know it is a shoe: the props share source
+        /// materials and mesh names with the cans, and `ModelPreview` dresses all three
+        /// categories through one rig. The caller is the only thing that knows, so the caller
+        /// says so. This is the same reasoning `Show` uses to pick a Person outline width from
+        /// the presence of a 16-slot palette rather than from the model.
+        /// </summary>
+        public static void ApplySlipper(GameObject model, float worldWidth)
+        {
+            if (model == null || Shader == null) return;
+
+            foreach (var renderer in model.GetComponentsInChildren<Renderer>(includeInactive: true))
+                ApplySlipper(renderer, worldWidth);
+        }
+
+        public static void ApplySlipper(Renderer renderer, float worldWidth) =>
+            Apply(renderer, worldWidth, null);
 
         /// <summary>
         /// ⚠️ THE PALETTE IS APPLIED HERE RATHER THAN AS A SEPARATE MATERIAL, and that is what

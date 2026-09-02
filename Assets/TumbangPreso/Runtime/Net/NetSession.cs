@@ -32,6 +32,13 @@ namespace TumbangPreso.Net
     /// </summary>
     public sealed class NetSession : MonoBehaviour, INetProvider
     {
+        private static string LocalLobbyName()
+        {
+            string account = GameServices.Account?.LobbyName;
+            if (!string.IsNullOrWhiteSpace(account)) return account;
+            string local = Settings.SettingsStore.Current.PlayerName;
+            return Core.AccountRules.Handle(local, "");
+        }
         public static NetSession Instance { get; private set; }
 
         public const int DefaultPort = LobbySession.DefaultPort;
@@ -62,6 +69,15 @@ namespace TumbangPreso.Net
         /// mismatch is a thing the player can actually fix, and it is indistinguishable from a
         /// host that vanished unless somebody prints it.
         /// </summary>
+        /// <summary>
+        /// What a peer is told when the host closes the session on purpose.
+        ///
+        /// ⚠️ IT IS A SENTENCE, NOT A CODE. `PlayerFacingDisconnectReason` passes a reason
+        /// straight through to the lobby's alert line, so this is read by a player and not by
+        /// software. `LobbySession.MatchFullMessage` is written the same way for the same reason.
+        /// </summary>
+        public const string HostLeftMessage = "The host left the game.";
+
         public static event Action<string> ClientDisconnected;
 
         /// <summary>Why the last client connection ended. Read once by the join screen, which
@@ -88,6 +104,18 @@ namespace TumbangPreso.Net
             public int Protocol;
             public string Token;
             public string Name;
+
+            // ⚠️⚠️ THESE TWO ARE THE IMPERSONATION GUARD ON THE WIRE, `docs/TODO.md` § 88.1c.
+            // `AccountPlayerId` is what the peer says its account is, and `HandleProof` is a
+            // short-lived value the account endpoint minted for THAT account and nobody else.
+            // Neither is trusted here: the pair only lets the host ask the endpoint one question.
+            //
+            // ⚠️ THE PROOF IS NOT A CREDENTIAL AND MUST NEVER BE REPLACED BY ONE. The obvious
+            // shortcut is to put the peer's own UGS access token in this payload and let the host
+            // check it, which hands whoever is hosting the ability to act as that player against
+            // every service in the project. A peer-hosted game means the host is a stranger.
+            public string AccountPlayerId;
+            public string HandleProof;
         }
 
         /// <summary>
@@ -136,7 +164,136 @@ namespace TumbangPreso.Net
         // `slipper_index`, so one player's PAMBAHAY throws 4/2/4 and the other's throws
         // 3/2/4 in the same match, and every prediction between them drifts with no error
         // anywhere. Refusing at approval is the cheaper failure.
-        public const int ProtocolVersion = 10;
+        // ⚠️⚠️ 10 to 11 ADDS `CastDenied`, AND IT IS A BUMP FOR THE OPPOSITE REASON TO 9 to 10.
+        // That one changed no message at all and bumped because a shared table had been re-pointed.
+        // This one adds a NAME to the wire: the host now answers a refused `ReqAbility` instead of
+        // dropping it, and a peer built on 10 has no handler registered for the reply.
+        //
+        // ⚠️ THE FAILURE WOULD BE QUIET RATHER THAN LOUD, WHICH IS WHY IT IS WORTH THE BUMP.
+        // Netcode logs an unregistered named message and carries on, so a mixed pair would play:
+        // the 11 host would refuse a cast and believe it had said so, and the 10 client would sit
+        // on a cooldown it can no longer get back, because `HeroAbility.ApplyNetworkSnapshot` is
+        // raise-only for the owner while a round is live. That is a player quietly losing an
+        // ultimate, in a build that otherwise looks fine. Refusing at approval is cheaper.
+        //
+        // ⚠️ THE PROP STREAM'S DELIVERY SPLIT IN THE SAME BATCH IS NOT PART OF THIS. `SyncSlipper`
+        // and `SyncLata` kept every field and every field order; only the channel some of their
+        // packets travel on changed, and delivery is not in the payload. It is recorded here
+        // rather than given its own number because it needs none.
+        // ⚠️⚠️ 11 TO 12, FOR A CHANGE OF FIELD MEANING, WHICH IS THE MOST DANGEROUS KIND AND THE
+        // ONE `audit_wire_payloads.py` CANNOT SEE. `docs/TODO.md` § 78.1: `SyncSlipper` and
+        // `SlipperPose` are now addressed by `Slipper.SeatOfOrigin` where their first field used
+        // to be `OwnerSlot`, and `SyncSlipper` gained `OwnerSlot` back as ordinary payload.
+        //
+        // The audit compares the writer and the reader field by field and both halves moved
+        // together, so it reads 0 mismatched and is right to: the two ends of THIS build agree.
+        // What it cannot check is a build on 11 talking to a build on 12, where the field count
+        // differs by one and every field after the first is read from the wrong offset — a
+        // silently misread position, state and holder rather than an error. § 38.20's last bullet
+        // says this in general terms; this is the case it was written for.
+        //
+        // ⚠️ AND THE MEANING CHANGE ALONE WOULD DESERVE IT EVEN AT THE SAME FIELD COUNT. An 11
+        // peer would read a seat index as an owner, which for the taya's tsinelas is exactly the
+        // -1 this change exists to stop happening.
+        /// <summary>
+        /// ⚠️ 13 SINCE 2026-08-29. `Flair` is a new named message (`Visual.MatchFlair`), so a
+        /// build without its handler drops every one of them and its players see none of the
+        /// tags, blocks, bank shots or zaps the host is announcing — a silent half-working match
+        /// rather than a refusal, which is the case this number exists to prevent. Both machines
+        /// rebuild from the same branch; that is by design.
+        ///
+        /// ⚠️⚠️ **14 SINCE 2026-08-30**, for `ReqTime` and `SyncTime`, the two messages behind
+        /// the spectator pause (`MatchRpc` § THE BROADCAST CLOCK). This one is the strongest case
+        /// this number has ever had: a peer without the `SyncTime` handler **does not stop**.
+        /// The spectator calls a pause, three screens freeze, one carries on playing a match
+        /// nobody else is in, and the two versions then disagree about every position for as long
+        /// as the pause lasts. That is worse than either a refusal or a missing effect.
+        /// ⚠️⚠️ **15 SINCE 2026-08-30**, for `MatchRecord`, the one message that carries a
+        /// whole finished match to every peer (`MatchRpc.BroadcastMatchRecord`). A peer without
+        /// the handler still plays the match correctly and then silently gets no end-of-match
+        /// summary and no career entry for a game it played, which is the quiet kind of wrong
+        /// this number exists to turn into a refusal. `docs/TODO.md` § 89.
+        ///
+        /// ⚠️⚠️ **16 SINCE 2026-08-30**, for the two fields the impersonation guard puts in the
+        /// approval hello and in `Identify` (`docs/TODO.md` § 88.1c and § 90.1). `Identify` is a
+        /// `FastBufferWriter` message read field by field in order, so a peer on 15 writes five
+        /// values where a host on 16 reads seven and every field after the third is read from the
+        /// wrong offset. That is the case `audit_wire_payloads.py` cannot see, because both ends
+        /// of THIS build agree; § 89.5 records the same trap one message earlier.
+        ///
+        /// ⚠️ AND THE QUIET HALF WOULD BE WORSE THAN THE LOUD ONE. Even if the payload were
+        /// tolerant, a 15 peer carries no proof, so on a 16 host it arrives unverified and any
+        /// account handle it claims is demoted to a host-allocated tag. Everybody on the older
+        /// build would silently be renamed in a lobby that looked like it was working.
+        ///
+        /// ⚠️⚠️ **17 SINCE 2026-08-31**, for cosmetics: one field on `Identify`, one on
+        /// `SelectLobbyPick`, and two per seat on `SyncLobbyPicks` (`docs/TODO.md` § 101).
+        /// **All three are `FastBufferWriter` messages read field by field in order**, which is
+        /// the same trap 16 and § 89.5 record: a peer on 16 writes seven values where a host on 17
+        /// reads eight, and every field after that is read from the wrong offset. `SyncLobbyPicks`
+        /// is the worst of the three, because its per-seat loop would go out of phase on seat 0
+        /// and mis-read the name, the picks and the ready flag of every seat after it. **A lobby
+        /// where everybody is wearing the wrong face is not a cosmetic bug.**
+        ///
+        /// ⚠️ THE SPECTATOR COUNT AT THE END OF `SyncLobbyPicks` IS WHY IT CANNOT BE MADE
+        /// TOLERANT THE WAY THAT FIELD WAS. `OnSyncLobbyPicksMsg` reads the count with a
+        /// `reader.Length > reader.Position` guard, which works for ONE trailing value. These two
+        /// are inside the per-seat loop, ahead of everything the loop reads next, so there is no
+        /// position at which "is there more" answers the right question.
+        /// </summary>
+        /// ⚠️⚠️ 18 IS THE LOOK FRAME AND THE QUEUE. `LobbySeatInfo.PaletteId` became
+        /// `LobbySeatInfo.Look` and carries a `LookCodec` frame rather than a bare palette id, so
+        /// a 17 build and an 18 build would read one another's seat table and dress every remote
+        /// player from a string neither recognises. That is the exact fault the paragraph above
+        /// is about, one field along.
+        ///
+        /// ⚠️⚠️ 19 IS THE CUSTOM CHARACTER, SINCE 2026-08-31, AND IT IS THE FIRST FIELD IN THIS
+        /// LIST THAT DECIDES A GAMEPLAY THING RATHER THAN A COSMETIC ONE. `LobbySeatInfo.Custom`
+        /// carries a `CustomCharacterRules` `C3` frame, and inside it is `HeroKitId`: which hero's
+        /// skills and ultimate that seat brings into Hero Strike (`docs/TODO.md` § 110.5). A peer
+        /// that could not read the field would draw a stranger AND read the wrong ability tells
+        /// off them, which `docs/VISION.md` § 4 says is a skill the whole competitive mode rests
+        /// on. One field on `Identify`, one on `SelectLobbyPick`, one per seat on
+        /// `SyncLobbyPicks`, § 112.
+        ///
+        /// ⚠️ THE TWO PEER-TO-HOST MESSAGES READ IT UNDER A LENGTH GUARD AND `SyncLobbyPicks`
+        /// CANNOT, which is the split the paragraph above already records: a trailing field can be
+        /// made tolerant and a field inside a per-seat loop cannot. This constant is what stops
+        /// the second case from ever arising.
+        ///
+        /// ⚠⚠ 21 IS THE MATCH FORMAT, SINCE 2026-09-01, AND IT IS THE FIRST ENTRY IN THIS LIST
+        /// THAT CHANGES THE RULES OF THE MATCH RATHER THAN WHAT IS IN IT. PHASE 12's
+        /// `MatchFormat` rides beside `GameMode` on a new `SelectFormat` / `SyncFormat` pair
+        /// (`MatchRpc`), so a host running LAST TSINELAS STANDING and a peer that has never heard
+        /// of it would be **two different games sharing one scoreboard**: the peer would see
+        /// attackers stop throwing for no reason and a round awarded to nobody it can account for.
+        /// A cosmetic mismatch draws a stranger; this one disputes the result.
+        ///
+        /// ⚠️ THE MESSAGE IS NEW RATHER THAN A FIELD ON `SelectMode`, which is the tolerance
+        /// argument above applied on purpose: a build that does not know `SyncFormat` ignores an
+        /// unregistered message name, where a widened `SelectMode` would read a format out of the
+        /// bytes it expects a mode in. **The version still moves**, because tolerating the message
+        /// is not the same as playing the same game.
+        public const int ProtocolVersion = 21;
+
+        /// <summary>
+        /// What this machine's hosted lobby publishes to QUICK MATCH, or
+        /// <see cref="ServerQuery.HostedAdvert.None"/> when it is not offering itself to
+        /// strangers.
+        ///
+        /// ⚠️⚠️ A ROOM IS NOT IN THE QUEUE UNTIL SOMEBODY PUTS IT THERE, AND THE DEFAULT IS
+        /// OUT. Every lobby in this game auto-hosts on arrival (`ConvertedMatchSetup.AutoHost`),
+        /// so if the default were "in the pool" then pressing PLAY would silently offer the
+        /// player's room to the internet, and somebody waiting for one friend would find three
+        /// strangers in their chairs. `Matchmaker` sets this when the player presses QUICK MATCH
+        /// and clears it when they cancel.
+        ///
+        /// ⚠️ IT LIVES HERE RATHER THAN ON `Matchmaker` BECAUSE THIS CLASS OWNS BOTH WRITERS.
+        /// The advert is written by `StartRelayHost` and again by every `PublishLobbyCounts`, and
+        /// a value the matchmaker held would have to be fetched by a class that must keep working
+        /// when no matchmaker exists at all (LAN, practice, the whole of the nationals venue).
+        /// </summary>
+        public ServerQuery.HostedAdvert Advert { get; set; } = ServerQuery.HostedAdvert.None;
 
         private const string SeatAssignmentMessage = "tp.seat.assignment.v1";
         private readonly Dictionary<ulong, ConnectionHello> _helloByClient =
@@ -358,7 +515,7 @@ namespace TumbangPreso.Net
             {
                 LocalSlot = dedicated ? -1 : 0;
 
-                _beacon.HostName = Settings.SettingsStore.Current.PlayerName;
+                _beacon.HostName = LocalLobbyName();
                 _beacon.JoinCode = Lobby.JoinCode;
                 _beacon.Port = port;
                 _beacon.InProgress = false;
@@ -562,6 +719,9 @@ namespace TumbangPreso.Net
 
                 Lobby.IsDedicated = false;
                 Lobby.OpenLobby(new System.Random(Environment.TickCount));
+                // ⚠️ THE RELAY PATHS ARE THE ONLY ONES ALLOWED TO SPEND A SERVICE CALL ON THE WAY
+                // TO A MATCH. See PrimeHandleProofAsync: LAN and direct-address joins may never.
+                await PrimeHandleProofAsync();
                 ConfigureClientHello();
 
                 bool ok = _nm.StartHost();
@@ -579,7 +739,7 @@ namespace TumbangPreso.Net
                 if (ok)
                 {
                     LocalSlot = 0;
-                    _beacon.HostName = Settings.SettingsStore.Current.PlayerName;
+                    _beacon.HostName = LocalLobbyName();
                     _beacon.JoinCode = Lobby.JoinCode;
                     _beacon.Port = DefaultPort;
                     _beacon.InProgress = false;
@@ -589,11 +749,12 @@ namespace TumbangPreso.Net
                     if (Query != null)
                     {
                         _ = Query.CreateHostedLobbyAsync(
-                            Settings.SettingsStore.Current.PlayerName,
+                            LocalLobbyName(),
                             Lobby.JoinCode,
                             relayCode,
                             Lobby.SeatedPeerCount(),
-                            Lobby.OccupiedSeatCount());
+                            Lobby.OccupiedSeatCount(),
+                            Advert);
                     }
                 }
 
@@ -652,6 +813,9 @@ namespace TumbangPreso.Net
                 IsRelay = true;
                 RelayJoinCode = relayJoinCode.Trim();
 
+                // ⚠️ THE RELAY PATHS ARE THE ONLY ONES ALLOWED TO SPEND A SERVICE CALL ON THE WAY
+                // TO A MATCH. See PrimeHandleProofAsync: LAN and direct-address joins may never.
+                await PrimeHandleProofAsync();
                 ConfigureClientHello();
                 bool ok = _nm.StartClient();
                 if (ok) RegisterSeatHandler();
@@ -705,7 +869,50 @@ namespace TumbangPreso.Net
             _localShutdown = true;
             _everConnected = false;
             _beacon.StopAll();
+
+            // ⚠⚠ THE BROADCAST CLOCK IS HANDED BACK, OR A SESSION THAT ENDS MID-PAUSE FREEZES THE
+            // PROCESS. Spectators may stop a live match (`MatchRpc` § THE BROADCAST CLOCK), and
+            // `Time.timeScale` is a global that outlives this object: a host that quits while the
+            // game is paused, or a client dropped during one, would walk back to a title screen
+            // whose every animation and button had stopped, with nothing on screen saying why.
+            // `MatchResult`'s own header records that exact failure happening once already, from
+            // a different writer, and this is the same lifetime rule: whoever can stop time
+            // restores it on every exit path including death.
+            Time.timeScale = 1.0f;
             if (Query != null) _ = Query.DeleteHostedLobbyAsync();
+
+            // ⚠️⚠️ A HOST TELLS ITS PEERS IT IS LEAVING. IT USED TO JUST STOP ANSWERING.
+            // 🧑 2026-08-29: *"disconnect logic is thoroughly broken ... if lobby host leaves the
+            // game or disconnects all other palyers stay in the game"*.
+            //
+            // `Shutdown()` alone is not a goodbye. NGO only sets a flag and tears the transport
+            // down from its own update loop (see `WaitForShutdown` below), and whatever the
+            // client end eventually notices, it notices through `DisconnectTimeoutMS` — which is
+            // a silence timer. So three players carried on playing a match with no referee for as
+            // long as that timer runs, and the reports of people "staying in the game" are that
+            // window seen from the room.
+            //
+            // ⚠️ `DisconnectClient` IS AN ACTUAL MESSAGE AND CARRIES A REASON, which is the other
+            // half: `PlayerFacingDisconnectReason` turns it into the line the lobby prints, so a
+            // player who was dropped is told they were dropped rather than watching a lobby empty
+            // itself. A timeout can only ever say "disconnected".
+            //
+            // ⚠️ THE LIST IS COPIED BEFORE IT IS WALKED. `DisconnectClient` mutates
+            // `ConnectedClientsIds` as it goes, and enumerating a collection while it removes
+            // from itself is an exception on the way out of a match.
+            if (_nm != null && _nm.IsListening && _nm.IsServer)
+            {
+                var leaving = new List<ulong>(_nm.ConnectedClientsIds);
+                foreach (ulong clientId in leaving)
+                {
+                    if (clientId == _nm.LocalClientId) continue;
+                    try { _nm.DisconnectClient(clientId, HostLeftMessage); }
+                    catch (Exception e)
+                    {
+                        Debug.LogWarning($"[Net] could not tell {clientId} the host is leaving: {e.Message}");
+                    }
+                }
+            }
 
             if (_nm != null && _nm.IsListening) _nm.Shutdown();
 
@@ -801,7 +1008,18 @@ namespace TumbangPreso.Net
         /// </summary>
         private void ConfigureTimeouts()
         {
-            _utp.DisconnectTimeoutMS = 30000;
+            // ⚠️⚠️ 8000, DOWN FROM 30000, AND THIRTY SECONDS IS NOT A TIMEOUT ANYBODY CAN PLAY
+            // THROUGH. This is the silence timer: how long a peer keeps believing in a machine it
+            // has stopped hearing from. `Stop` now sends a real `DisconnectClient` so an orderly
+            // exit is instant and never reaches this at all, but the case this covers is the one
+            // that cannot say goodbye — alt-F4, a pulled cable, a laptop lid. Half a minute of
+            // four people standing in a match whose host is gone is most of a round.
+            //
+            // ⚠️ AND IT IS NOT SET SHORTER THAN THAT, because it is also what a real network
+            // hiccup is measured against. The VPS is 48 ms from Manila and the LAN is under 2;
+            // eight seconds of complete silence on either is a machine that has gone, not a
+            // machine that is late.
+            _utp.DisconnectTimeoutMS = 8000;
             _utp.ConnectTimeoutMS = 2000;
             _utp.MaxConnectAttempts = 12;
         }
@@ -869,6 +1087,18 @@ namespace TumbangPreso.Net
             _beacon.InProgress = Lobby.MatchInProgress;
         }
 
+        /// <summary>
+        /// Push the current counts and the current <see cref="Advert"/> to the lobby record.
+        ///
+        /// ⚠️⚠️ IT IS THE SAME WRITE `PublishLobbyCounts` ALREADY MAKES ON EVERY SEAT
+        /// CHANGE, NOT A SECOND ONE. `Matchmaker` changes the advert at three moments and all
+        /// three are moments the outside world has to be told about anyway: entering the queue,
+        /// cancelling it, and opening a backfill seat. Giving the matchmaker its own writer would
+        /// be a second place that decides what a lobby record says, which is the shape
+        /// `docs/TODO.md` § 38.5 found three dead protocols in.
+        /// </summary>
+        public void RepublishLobbyAdvert() => PublishLobbyCounts();
+
         private void PublishLobbyCounts()
         {
             if (_beacon == null) return;
@@ -879,7 +1109,8 @@ namespace TumbangPreso.Net
             {
                 _ = Query.UpdateHostedLobbyAsync(Lobby.SeatedPeerCount(),
                                                  Lobby.OccupiedSeatCount(),
-                                                 Lobby.MatchInProgress);
+                                                 Lobby.MatchInProgress,
+                                                 Advert);
             }
         }
 
@@ -892,14 +1123,129 @@ namespace TumbangPreso.Net
         private void ConfigureClientHello()
         {
             var settings = Settings.SettingsStore.Current;
+            var account = GameServices.Account;
             var hello = new ConnectionHello
             {
                 Protocol = ProtocolVersion,
-                Token = NetIdentity.Token,
-                Name = string.IsNullOrWhiteSpace(settings.PlayerName) ? "Player" : settings.PlayerName.Trim()
+                Token = account?.ConnectionToken ?? NetIdentity.Token,
+                Name = LocalLobbyName(),
+
+                // ⚠️ WHATEVER IS CACHED, AND NEVER A NETWORK CALL FROM HERE. This runs inside
+                // every start path including the two LAN ones, and `FUTURE.md` § 0.5 rule 7 says
+                // a LAN match may never sit behind a login. `PrimeHandleProofAsync` fetches one
+                // on the relay paths, before this; empty here is a normal, playable state.
+                AccountPlayerId = account != null && account.IsSignedIn ? account.PlayerId : "",
+                HandleProof = account?.HandleProof ?? "",
             };
 
             _nm.NetworkConfig.ConnectionData = Encoding.UTF8.GetBytes(JsonUtility.ToJson(hello));
+        }
+
+        /// <summary>
+        /// Fetches a handle proof before an ONLINE start path builds its hello.
+        ///
+        /// ⚠️⚠️ IT IS CALLED ON THE RELAY PATHS ONLY, AND THAT IS THE RULE RATHER THAN AN
+        /// OPTIMISATION. `FUTURE.md` § 0.5 rule 7: LAN, direct-address joins, Practice and
+        /// Training may never sit behind a login, so none of them may spend a service call on the
+        /// way to a match. A LAN peer arrives with no proof and keeps the name it claims, exactly
+        /// as it did before the guard existed.
+        /// </summary>
+        private static async Task PrimeHandleProofAsync()
+        {
+            var account = GameServices.Account;
+            if (account == null) return;
+            await account.EnsureHandleProofAsync();
+        }
+
+        /// <summary>
+        /// One answer per (player id, proof) pair, so a reconnect inside the fast-reconnect
+        /// window and a second `Identify` from a live peer cost nothing.
+        ///
+        /// ⚠️ AN `Unreachable` ANSWER IS DELIBERATELY NOT CACHED. It describes the network for a
+        /// moment rather than the player, and caching it would hold a whole lobby unverified for
+        /// the rest of the session because the Wi-Fi dropped one packet while the first peer was
+        /// arriving.
+        /// </summary>
+        private readonly Dictionary<string, (Core.AccountRules.HandleCheck Check, string Handle)>
+            _handleChecks = new Dictionary<string, (Core.AccountRules.HandleCheck, string)>();
+
+        /// <summary>
+        /// The host side of `docs/TODO.md` § 88.1c: asks the account endpoint whether an arriving
+        /// peer owns the handle it claimed, then re-resolves the lobby name from the answer.
+        ///
+        /// ⚠️⚠️ IT IS FIRE AND FORGET AND NOTHING WAITS ON IT. The seat, the picks and the whole
+        /// lobby are already resolved by the time this starts. If it never answers, the lobby is
+        /// the lobby that shipped before the guard, which is the only acceptable failure mode for
+        /// a game that has to run in a hall with the internet unplugged.
+        /// </summary>
+        /// <summary>
+        /// A disconnect reason as one of a handful of groupable buckets.
+        ///
+        /// ⚠️ THE BUCKETS ARE MATCHED AGAINST WHAT THIS FILE ITSELF WRITES. `ApproveConnection`
+        /// composes the version and capacity sentences a few hundred lines above, and `Admit`
+        /// composes the replacement one, so these substrings are not guesses about a vendor
+        /// string. If one of those sentences is reworded, this reads `other` rather than lying,
+        /// which is the right way round for a number nobody is watching.
+        /// </summary>
+        private static string ClassifyDisconnect(string reason, bool wasLocal)
+        {
+            if (wasLocal) return "local";
+            if (string.IsNullOrWhiteSpace(reason)) return "dropped";
+            if (reason.Contains("protocol") || reason.Contains("version")) return "version";
+            if (reason.Contains("full")) return "full";
+            if (reason.Contains("Replaced")) return "replaced";
+            if (reason.Contains("identity")) return "identity";
+            return "other";
+        }
+
+        /// <summary>
+        /// The entry point for the other arrival path. `MatchRpc.HandleIdentify` admits a peer
+        /// too, so the guard has to hang off both or it has a documented way around it.
+        /// </summary>
+        public void VerifyArrival(int peerId, string accountPlayerId, string proof)
+            => VerifyArrivalAsync(peerId, accountPlayerId, proof);
+
+        private async void VerifyArrivalAsync(int peerId, string accountPlayerId, string proof)
+        {
+            if (!IsHost || string.IsNullOrEmpty(accountPlayerId) || string.IsNullOrEmpty(proof))
+                return;
+
+            // ⚠️ ONLY ONLINE. On LAN there is no endpoint to ask and no login to sit behind, and
+            // asking anyway would put a several-second service timeout in the path of a hall full
+            // of machines joining off the beacon.
+            if (!IsRelay) return;
+
+            // ⚠️⚠️ THE WHOLE BODY IS GUARDED BECAUSE THIS IS `async void`. Nothing awaits it, so
+            // an exception escaping here has no caller to land in and takes the process with it.
+            // A guard that fails must cost a name, never a match.
+            try
+            {
+                string key = accountPlayerId + "|" + proof;
+                if (!_handleChecks.TryGetValue(key, out var answer))
+                {
+                    answer = await PlayerAccount.VerifyHandleAsync(accountPlayerId, proof);
+                    if (answer.Check != Core.AccountRules.HandleCheck.Unreachable)
+                        _handleChecks[key] = answer;
+                }
+
+                if (Lobby == null) return;
+                if (!Lobby.ApplyHandleCheck(peerId, accountPlayerId, answer.Check, answer.Handle)) return;
+
+                if (answer.Check == Core.AccountRules.HandleCheck.NotOwned)
+                {
+                    var record = Lobby.PeerById(peerId);
+                    Debug.LogWarning(
+                        $"[Net] peer {peerId} claimed a handle it cannot prove; seated as " +
+                        $"{record?.Name}. docs/TODO.md § 88.1c.");
+                }
+
+                MatchRpc.Instance?.BroadcastLobbyPicks();
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[Net] handle verification for peer {peerId} failed; " +
+                                 $"the claimed name stands: {e.Message}");
+            }
         }
 
         private void ApproveConnection(NetworkManager.ConnectionApprovalRequest request,
@@ -911,12 +1257,45 @@ namespace TumbangPreso.Net
                                Math.Max(_nm.ConnectedClientsIds.Count, _helloByClient.Count)
                                < LobbySession.MaxConnections;
 
-            response.Approved = protocolMatches && hasCapacity;
+            // ⚠️⚠️ THE BLOCK LIST IS ENFORCED HERE, AND THIS IS THE ONLY PLACE IN THE GAME IT
+            // CAN DO ANYTHING TODAY. `FUTURE.md` § 6 asks for *"blocking, which must survive
+            // matchmaking: a blocked player is never queued into your match"*, and there is no
+            // matchmaker until Phase 7. **In this build that requirement is "a blocked player
+            // cannot join the lobby you host"**, which is the same guarantee for the only way
+            // two players can currently end up in one room. `docs/TODO.md` § 102.
+            //
+            // ⚠️ IT IS THE ACCOUNT ID, NOT THE CLAIMED NAME. A block keyed on a handle is a block
+            // somebody escapes by renaming themselves, and § 88.1c spent a whole entry on the
+            // difference between a claim and an identity. The id in the hello is unverified at
+            // this instant — `VerifyArrivalAsync` runs after seating — but a liar's only gain is
+            // sending an id that is NOT on the list, which is the same as not being blocked.
+            // **A block cannot be defeated by lying about who you are, only by not being you.**
+            //
+            // ⚠️ AND IT IS THE HOST'S OWN LIST. A client's block list is nobody else's business
+            // and does not travel; the person who owns the room decides who is in it.
+            bool blocked = hello != null &&
+                           Core.SocialRules.IsBlocked(GameServices.Social?.List, hello.AccountPlayerId);
+
+            response.Approved = protocolMatches && hasCapacity && !blocked;
             response.CreatePlayerObject = false;
             response.Pending = false;
+            // ⚠️ THE REFUSAL SAYS WHAT THE ROOM HOLDS. "Lobby is full" is true of a room with
+            // four players and true of a room with four players and four spectators, and only
+            // one of those two is a thing the person reading it can do anything about — namely
+            // wait for somebody to leave rather than for a match to end. See
+            // `LobbySession.MaxSpectators`.
+            // ⚠️ THE BLOCK'S REASON DOES NOT SAY IT IS A BLOCK. `SocialRules.WhyCannotRequest`
+            // carries the same rule for friend requests: telling somebody they have been blocked
+            // is how a block becomes an argument, and the host is a player in the same room.
+            // "Could not join" is what every shipping game says.
             response.Reason = !protocolMatches
                 ? $"Game version mismatch (network protocol {ProtocolVersion})"
-                : hasCapacity ? string.Empty : "Lobby is full";
+                : blocked
+                    ? "Could not join this game."
+                    : hasCapacity
+                        ? string.Empty
+                        : $"This game is full: {LobbySession.MaxPlayers} players and "
+                          + $"{LobbySession.MaxSpectators} spectators.";
 
             if (response.Approved) _helloByClient[request.ClientNetworkId] = hello;
         }
@@ -1058,7 +1437,13 @@ namespace TumbangPreso.Net
                     int charPick = s.CharacterPick >= 0 ? s.CharacterPick : 0;
                     int canPick = s.CanPick >= 0 ? s.CanPick : 0;
                     int slipperPick = s.SlipperPick >= 0 ? s.SlipperPick : 0;
-                    MatchRpc.Instance?.IdentifyServerRpc(NetIdentity.Token, s.PlayerName, charPick, canPick, slipperPick);
+                    var identity = GameServices.Account;
+                    MatchRpc.Instance?.IdentifyServerRpc(
+                        identity?.ConnectionToken ?? NetIdentity.Token,
+                        LocalLobbyName(),
+                        identity != null && identity.IsSignedIn ? identity.PlayerId : "",
+                        identity?.HandleProof ?? "",
+                        charPick, canPick, slipperPick);
                 }
                 return;
             }
@@ -1074,8 +1459,8 @@ namespace TumbangPreso.Net
             {
                 hello = new ConnectionHello
                 {
-                    Token = NetIdentity.Token,
-                    Name = settings.PlayerName
+                    Token = GameServices.Account?.ConnectionToken ?? NetIdentity.Token,
+                    Name = LocalLobbyName()
                 };
             }
             else if (!_helloByClient.TryGetValue(clientId, out hello))
@@ -1088,6 +1473,10 @@ namespace TumbangPreso.Net
             var record = Lobby.Admit((int)clientId, hello.Token, hello.Name,
                                      out int replacedPeerId);
             SendSeatAssignment(clientId, record.Seat);
+
+            // ⚠️ AFTER THE SEAT, NOT BEFORE IT. The peer is playing by the end of this method;
+            // the guard only decides what it is CALLED. `docs/TODO.md` § 88.1c.
+            VerifyArrivalAsync((int)clientId, hello.AccountPlayerId, hello.HandleProof);
 
             // A relaunch can establish the new socket before the generous 30 second timeout
             // retires the old one. The durable token has already moved the seat above, so the
@@ -1109,6 +1498,20 @@ namespace TumbangPreso.Net
                 int canPick = settings.CanPick >= 0 ? settings.CanPick : 0;
                 int slipperPick = settings.SlipperPick >= 0 ? settings.SlipperPick : 0;
                 Lobby.SetPicks((int)clientId, charPick, canPick, slipperPick);
+
+                // ⚠️⚠️ AND ITS OWN COSMETICS, FOR THE SAME REASON AND IN THE SAME PLACE. The
+                // host never sends itself an `Identify`, so this is the only path on which its
+                // banner and palette are ever authorised; without it the host is the one seat in
+                // the room wearing nothing, on every screen including its own. `docs/TODO.md`
+                // § 101. **It still goes through `BannerRules.Authorise`** rather than being
+                // trusted: the copy nobody checks is the copy that is wrong (§ 94.1).
+                // ⚠️ AND ITS CUSTOM CHARACTER RIDES THE SAME CALL, for the same reason: this is
+                // the only path on which the HOST's own seat is ever told what it is bringing.
+                // Without it the one seat that cannot fail to be there is the one seat that never
+                // brings a custom character, on its own screen and on everybody else's.
+                MatchRpc.Instance?.HostAuthoriseCosmetics(
+                    (int)clientId, LocalCosmetics.Encoded(charPick), charPick,
+                    LocalCosmetics.CustomCharacter());
             }
 
             PublishLobbyCounts();
@@ -1135,6 +1538,14 @@ namespace TumbangPreso.Net
             // to act on, and a version mismatch in particular is a thing they CAN fix.
             string reason = _nm != null ? _nm.DisconnectReason : null;
             SetStatus(string.IsNullOrWhiteSpace(reason) ? "disconnected" : $"disconnected: {reason}");
+
+            // ⚠️⚠️ THE REASON IS REDUCED TO A CLASS BEFORE IT IS COUNTED, AND THE SENTENCE IS
+            // NEVER SENT. `FUTURE.md` § 3 asks for a disconnect rate, which needs four or five
+            // buckets; the string itself is host-authored free text that a modified peer could
+            // put anything at all into, and `TelemetryRules.Label` would refuse it for having a
+            // space in it anyway. A bucket is groupable, a sentence is a hundred distinct values
+            // for one cause. `docs/TODO.md` § 90.3.
+            GameServices.Telemetry?.NoteDisconnect(ClassifyDisconnect(reason, _localShutdown));
 
             // ⚠️ A DISCONNECT WE ASKED FOR IS NOT AN EVENT ANYBODY NEEDS TELLING ABOUT. The
             // player is already navigating; announcing it and dragging them to the join screen

@@ -30,14 +30,39 @@ namespace TumbangPreso.UI
         // CORE. Text, surfaces, and the two that mean something.
         // -------------------------------------------------------------------
 
-        /// <summary>Near-black navy: text, borders, pressed fills.</summary>
-        public static readonly Color Ink = Hex("040838");
+        /// <summary>
+        /// Near-black WARM ink: text, borders, pressed fills, and the outline on every menu type
+        /// style in <see cref="GodotTheme"/>.
+        ///
+        /// ⚠️⚠️ IT WAS `040838`, A NEAR-BLACK NAVY, AND THAT IS THE BLUE `CLAUDE.md` § 6.4 IS
+        /// ABOUT. 🧑 2026-08-31: *"i dont like blue outlines its out of theme"*, and again on
+        /// 2026-09-01: *"i dont want to see blue shit, thats not in theme"*. § 6.4 was written
+        /// after the first and fixed the rank emblems; it could not fix this, because **every
+        /// `MenuDisplay`, `MenuHeading`, `MenuBody`, `MenuCaption` and `MenuValue` outline in the
+        /// game read this constant**, so the whole menu was outlined in navy on brown wood. At
+        /// four to six pixels on a heading that is a visible cold ring.
+        ///
+        /// `1c0f06` is the ink named in § 6.4's palette and in `VISION.md` § 6 (wood `31190B`,
+        /// `5A2F14`, `8B5227`, cream `F5E6C8`, amber `FFBA00`, ink `1C0F06`). It is the same
+        /// darkness and none of the hue.
+        ///
+        /// ⚠️ IT IS ALSO THE TEXT COLOUR ON CREAM AND WHITE FIELDS (the sign-in inputs, the
+        /// tab labels), where warm near-black is strictly more correct than navy against paper.
+        /// </summary>
+        public static readonly Color Ink = Hex("1c0f06");
 
-        /// <summary>Light neutral: screen background.</summary>
-        public static readonly Color Panel = Hex("e1e5e8");
+        /// <summary>
+        /// Light neutral: screen background.
+        ///
+        /// ⚠️ IT WAS `e1e5e8`, A COOL BLUE-GREY, AND IT IS WARM PAPER NOW. See <see cref="Ink"/>
+        /// and `CLAUDE.md` § 6.4: the rule is the whole palette, not only outlines, and a grey
+        /// with a blue cast next to `8b5227` wood reads as blue rather than as neutral.
+        /// </summary>
+        public static readonly Color Panel = Hex("e9e1d4");
 
-        /// <summary>Slightly lighter: raised card and control fill.</summary>
-        public static readonly Color Card = Hex("f5f7fa");
+        /// <summary>Slightly lighter: raised card and control fill. ⚠️ Was `f5f7fa`, same
+        /// reason as <see cref="Panel"/>.</summary>
+        public static readonly Color Card = Hex("f7f1e4");
 
         /// <summary>⚠️ MEANS "ATTACKING SIDE". Never reuse it decoratively.</summary>
         public static readonly Color Offense = Hex("f87020");
@@ -69,10 +94,198 @@ namespace TumbangPreso.UI
         public static readonly Color Cream = Hex("f5e6c8");
         public static readonly Color Amber = Hex("ffba00");
 
+        /// <summary>
+        /// The face of a wooden CONTROL, measured off 🧑's own `BUTTON LONG.png`.
+        ///
+        /// ⚠️⚠️ IT IS SAMPLED FROM THE AUTHORED ART RATHER THAN PICKED FROM THE SET ABOVE, AND
+        /// THAT IS THE WHOLE REASON IT EXISTS. `WoodCraft` generates a control as seven values of
+        /// ONE colour, so the base it starts from decides whether a code-drawn button sits beside
+        /// his `BUTTON LONG` as a sibling or as a near miss. `793e1f` is the varnish band at 25
+        /// per cent down the centre of that texture, which is the brightest point of the face and
+        /// therefore the anchor the rest of the ramp is expressed against.
+        ///
+        /// ⚠️ IT SITS BETWEEN <see cref="WoodMid"/> `5a2f14` AND <see cref="WoodEdge"/> `8b5227`
+        /// AND IS NEITHER. Both of those were already being used as button fills, and both are
+        /// wrong by enough to see: `WoodMid` is a fifth darker than his face and `WoodEdge` is his
+        /// KEYLINE colour, so a button filled with it came out the colour of its own outline.
+        /// </summary>
+        public static readonly Color WoodFace = Hex("793e1f");
+
+        /// <summary>
+        /// The face of a wooden PANEL, off `SETTINGS CONFIG PANEL.png` and `MAP MODE DISPLAY.png`.
+        ///
+        /// ⚠️ ONE VALUE DARKER THAN <see cref="WoodFace"/> AND THAT ONE VALUE IS DELIBERATE IN
+        /// HIS ART. Both panel textures peak at `783e1f` and both button textures at `793e1f`:
+        /// furniture sits a shade back from the controls standing on it, which is what keeps a
+        /// row of buttons legible against the card they are in. Keeping the two constants apart
+        /// means a future palette change cannot accidentally flatten them together.
+        /// </summary>
+        public static readonly Color WoodPanelFace = Hex("783e1f");
+
+        /// <summary>
+        /// The face of a wooden SLOT you type into, off `TEXT FIELD.png`.
+        ///
+        /// ⚠️⚠️ IT IS THE SAME CONSTRUCTION AS THE BUTTON AT A LOWER VALUE, WHICH IS THE PART
+        /// WORTH KNOWING. `TEXT FIELD.png` and `BUTTON LONG.png` are the same 818x135 chamfered
+        /// slab with the same `99572b` keyline; only the face differs, `4e2211` against `793e1f`,
+        /// which is 0.64 of the value. **His field is his button, darker.** Two controls a player
+        /// can tell apart at a glance, out of one drawing, and that relationship is what
+        /// `WoodCraft` reproduces rather than a second hand-tuned texture.
+        ///
+        /// ⚠️ AND THE RAMP IS INVERTED ON IT: `461e0f` at 10 per cent down against `4e2211` at
+        /// 25, so the TOP is the dark end. The light is above the screen and the near wall of a
+        /// recess is the one in shadow, so a slot is lit from below and a board is lit from above.
+        /// `WoodCraft.PaintWood` flips it on this surface and on no other.
+        /// </summary>
+        public static readonly Color WoodFieldFace = Hex("4e2211");
+
+        /// <summary>
+        /// The darkest wooden face: an unselected tab, and anything that has to sit clearly
+        /// BEHIND a control of the same shape beside it.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE <see cref="WoodFieldFace"/> WAS NOT DARK ENOUGH TO SEPARATE
+        /// TWO TABS AND THAT WAS MEASURED BY LOOKING. `793e1f` against `4e2211` is an obvious
+        /// difference in a colour picker, and on `Logs/shots-runtime/Lobby-v44.png` PRACTICE and
+        /// MULTIPLAYER still read as the same control: every `WoodCraft` face carries a varnish
+        /// band, the eye compares the BRIGHT band of one against the bright band of the other,
+        /// and `4e2211`'s peak sits inside `793e1f`'s ramp. At `36180c` the idle tab's brightest
+        /// pixel is darker than the live tab's darkest, so the two cannot be confused at any size.
+        ///
+        /// ⚠️ THIS IS THE ARGUMENT FOR CHECKING CONTRAST AGAINST THE RENDER RATHER THAN AGAINST
+        /// THE CONSTANTS. A palette diff says these two are far apart; the picture said they were
+        /// not, because what a gradient actually shows a reader is its highlight.
+        /// </summary>
+        public static readonly Color WoodSlot = Hex("36180c");
+
+        /// <summary>
+        /// The road, for a UI well: a log, a list, anything chalk is drawn on.
+        ///
+        /// ⚠️⚠️ IT IS NOT <see cref="EnvAsphalt"/> AND IT MUST NOT BECOME IT. That constant is
+        /// `4a4e57`, which has **more blue in it than red**, and `CLAUDE.md` § 6.4 states the test
+        /// in exactly those terms: a hex with more blue than red does not belong in a menu. It is
+        /// correct where it lives, on an arena floor under a graded 3D light, and it would read as
+        /// the cold slate this front end has already been told five times to stop drawing.
+        ///
+        /// ⚠️ IT IS A WARM NEAR-BLACK ONE STEP OFF <see cref="WoodDark"/>, so a slate well inside
+        /// a wooden card reads as a hole in the wood rather than as a foreign panel laid on it.
+        /// </summary>
+        public static readonly Color Asphalt = Hex("2f2118");
+
+        // -------------------------------------------------------------------
+        // THE PAPER SET. The front end's DOMINANT surface as of 2026-09-01.
+        //
+        // ⚠️⚠️ THIS REVERSES THE FIGURE AND THE GROUND, AND IT IS 🧑'S OWN INSTRUCTION WITH TWO
+        // HEXES ATTACHED. He sent the `TUMP` sticker logo and a two-swatch card and said: *"game
+        // reads as too brown bcz the game itself is brown already (the map and shit)"*, *"can we
+        // remodel the color of all UI for lobby and login to look like this?"*, *"i want us to
+        // play around the 2 colors i attached"*.
+        //
+        // ⚠️⚠️ HE IS DESCRIBING A CONTRAST FAULT RATHER THAN A TASTE ONE, AND IT IS MEASURABLE.
+        // Eskinita's road, houses and poles occupy hue 20 to 40 at 30 to 60 per cent saturation.
+        // `WoodFace` `793e1f` is hue 22 at 74 per cent. **The furniture and the world it sits on
+        // were the same colour**, so every panel in `Lobby-v51.png` has to be found by its keyline
+        // rather than seen as a shape. Cream at `f4ecdd` is 6 per cent saturated: it separates
+        // from that world on VALUE and SATURATION at once, which is the one pair of axes the
+        // street does not already occupy.
+        //
+        // ⚠️ AND IT IS NOT A NEW HUE. Both swatches are hue 34 to 38, one step off `Cream`
+        // `f5e6c8` and inside the same warm family as the wood. `CLAUDE.md` § 6.4's palette is
+        // unchanged and no blue, navy or cold grey enters anywhere: what changes is which member
+        // of it is the FIELD and which is the FIGURE. Wood is the ink and the frame now; paper is
+        // the surface.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// The lighter of his two swatches, and the front end's primary surface.
+        ///
+        /// ⚠️ IT IS THE LOGO'S OWN GROUND. `Art/ui/TUMP.png` is white lettering with a sand halo
+        /// on a linen field; sampling the linen gives `f2ead9`, which is this within a point on
+        /// every channel. The palette was already on screen in the game's own mark.
+        /// </summary>
+        public static readonly Color Paper = Hex("f4ecdd");
+
+        /// <summary>
+        /// The warmer of his two swatches: anything RECESSED into <see cref="Paper"/>.
+        ///
+        /// ⚠️ THE TWO ARE ONLY 4 PER CENT APART IN VALUE AND THAT IS THE POINT. A tray cut into a
+        /// sheet is the same paper under less light, so the difference has to be small enough to
+        /// read as shading and large enough to find. Anything wider turns a form into a set of
+        /// stripes, which is what the zebra bands in § 92 were.
+        /// </summary>
+        public static readonly Color PaperWarm = Hex("efdabe");
+
+        /// <summary>
+        /// The die-cut halo: the band of sand a sticker keeps around its own artwork.
+        ///
+        /// ⚠️⚠️ IT IS THE LOGO'S CONSTRUCTION, NOT A BORDER COLOUR. Every letter of `TUMP` and the
+        /// blob behind it carry the same outside band, which is what makes the mark read as a
+        /// physical cut-out lying on a surface rather than as a shape drawn on one. `PaperCraft`
+        /// puts that band OUTSIDE the fill rather than inside it, which is why a cream panel here
+        /// does not read as a cream rectangle with a line round it.
+        /// </summary>
+        public static readonly Color PaperEdge = Hex("dcc19a");
+
+        /// <summary>The sand under a paper control that is pressed, and the lip along its bottom.
+        /// ⚠️ Sampled a step below <see cref="PaperEdge"/> so a pressed token darkens INTO its own
+        /// halo rather than picking up a second colour.</summary>
+        public static readonly Color PaperSunk = Hex("cbac83");
+
+        /// <summary>
+        /// Ink on paper: the type colour for every word drawn on <see cref="Paper"/>.
+        ///
+        /// ⚠️ IT IS <see cref="WoodMid"/>'S DARKNESS, NOT <see cref="Ink"/>'S. Near-black on cream
+        /// is a contrast ratio of about 17:1, which reads as a printed form and is the opposite of
+        /// the calm 🧑 asked for (*"ur goal is to make it ... calming"*). `3b2415` on `f4ecdd` is
+        /// 10.4:1, still far above the 4.5:1 floor `game-ui-design`'s `validations.md` sets for
+        /// body copy, and it is the colour his own wood already is.
+        /// </summary>
+        public static readonly Color PaperInk = Hex("3b2415");
+
+        /// <summary>
+        /// Secondary type on paper: captions, hints, the second line of a row.
+        ///
+        /// ⚠️ A LIGHTER INK RATHER THAN A TRANSPARENT ONE, because alpha over a sheet that itself
+        /// sits over a live street changes colour with whatever is behind the screen.
+        ///
+        /// ⚠️⚠️ IT WAS `8a6c50` AND THAT MEASURED 4.1:1 AGAINST `PaperWarm`, WHICH IS UNDER THE
+        /// FLOOR. `game-ui-design`'s `validations.md` sets 4.5:1 for body copy, and this colour
+        /// carries every caption on the front end: the loadout line under a character name, the
+        /// settings summary under the chip, `tap to copy`, the seat plates' second line. Computing
+        /// the ratio rather than eyeballing it is the whole lesson of `CLAUDE.md` § 6.4, where a
+        /// near-black navy looked black in a code review for the entire life of the file.
+        /// `7a5c40` measures **5.2:1** on `f4ecdd` and 4.9 on `efdabe`, and is still visibly a
+        /// quieter voice than <see cref="PaperInk"/> at 12.1.
+        /// </summary>
+        public static readonly Color PaperInkSoft = Hex("7a5c40");
+
+        public static Font Font => MenuKit.Font;
+
         public static Color CreamMuted => new Color(Cream.r, Cream.g, Cream.b, 0.68f);
 
         public static readonly Color MenuGreen = Hex("21a131");
         public static readonly Color MenuGreenLit = Hex("69e548");
+
+        /// <summary>
+        /// The face of the PRIMARY action, measured off 🧑's own `JOIN BUTTON.png`.
+        ///
+        /// ⚠️⚠️ GREEN IS HIS PRIMARY COLOUR AND THAT IS EVIDENCE RATHER THAN TASTE. `JOIN
+        /// BUTTON.png` and the `PLAY` pennant are both authored green, and `JOIN BUTTON` is
+        /// pixel-for-pixel the same construction as `BUTTON LONG` with one colour swapped:
+        /// keyline `90ea40` against `99572b`, rim `3caf2d` against `612e15`, face peak `51dd38`
+        /// against `793e1f`, floor `188427` against `421806`. **The same seven values of a
+        /// different hue**, which is the whole system `WoodCraft` transcribes.
+        ///
+        /// ⚠️ THIS IS THE PEAK, NOT <see cref="MenuGreen"/> `21a131`, WHICH IS A THIRD DARKER
+        /// THAN ANY PIXEL IN HIS BUTTON. A primary drawn at the old constant came out as a
+        /// muddy bottle green beside his art; `WoodCraft` expresses its whole ramp against the
+        /// peak, so handing it the floor of the ramp as the base darkened every stop again.
+        ///
+        /// ⚠️ AND IT IS NOWHERE NEAR `Offense` or `Defense`. Hue 110, against 22 and 207: green
+        /// is 88 degrees off the attacker's orange and 97 off the taya's blue, so a green button
+        /// cannot be read as a role. That constraint is `Art_Direction.md` § 1 and it is the only
+        /// thing that limits which hues a control may take.
+        /// </summary>
+        public static readonly Color MenuGreenFace = Hex("51dd38");
         public static readonly Color MenuRed = Hex("ed2136");
         public static readonly Color MenuRedLit = Hex("fa7653");
 

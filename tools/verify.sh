@@ -57,6 +57,22 @@ PY
     return 0
 }
 
+# ⚠️⚠️ THE CHEAPEST GATE IN THE REPO AND IT CATCHES THE MOST EXPENSIVE CLASS OF BUG. It runs in
+# under a second, needs no editor, and every row it prints is something one player out of four
+# sees or hears. docs/TODO.md sections 83.12 and 83.16: it found 41 of them in one run, including
+# the tag's entire presentation and the sound of the can going over.
+#
+# ⚠️ IT IS FIRST, BEFORE dotnet AND BEFORE UNITY, so a fault that needs no compiler is reported
+# without waiting for one.
+run_presentation() {
+    say "who actually sees and hears each event"
+    if python tools/audit_presentation_reach.py; then
+        :
+    else
+        FAILED=1
+    fi
+}
+
 run_core() {
     say "core rules, no Unity"
     if dotnet test Core.Tests/TumbangPreso.Core.Tests.csproj --nologo | tail -2; then
@@ -104,8 +120,8 @@ run_wallclock() {
 }
 
 case "$MODE" in
-    fast)      run_core; run_checks; run_editmode ;;
-    full)      run_core; run_checks; run_editmode; run_playmode ;;
+    fast)      run_presentation; run_core; run_checks; run_editmode ;;
+    full)      run_presentation; run_core; run_checks; run_editmode; run_playmode ;;
     wallclock) run_wallclock ;;
     *)
         echo "usage: tools/verify.sh [fast|full|wallclock]"

@@ -83,6 +83,12 @@ namespace TumbangPreso.EditorTools.MapKit
                 return false;
             }
 
+            if (!AsphaltRoadSurface.ExecuteForScene(IlalimNgTulayBuilder.ScenePath))
+            {
+                Debug.LogError("[IlalimNgTulayPipeline] the asphalt surface failed.");
+                return false;
+            }
+
             bool measured = MapGeometryCheck.Execute(true);
 
             // ⚠️ THE CAPTURE STILL RUNS ON A FAILED MEASUREMENT, ON PURPOSE. The findings name a
@@ -91,7 +97,7 @@ namespace TumbangPreso.EditorTools.MapKit
             // half of the diagnosis, so the exit code carries the failure instead.
             bool captured = IlalimNgTulayShowcaseProbe.Execute();
 
-            Debug.Log($"[IlalimNgTulayPipeline] fascia authored, map rebuilt, " +
+            Debug.Log($"[IlalimNgTulayPipeline] fascia authored, map rebuilt, asphalt laid, " +
                       $"geometry {(measured ? "OK" : "FAILED")}, capture {(captured ? "OK" : "FAILED")}.");
 
             return measured && captured;

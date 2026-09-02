@@ -223,6 +223,21 @@ namespace TumbangPreso.Abilities
         /// </summary>
         public bool AimBeacon { get; protected set; }
 
+        /// <summary>
+        /// Which face the ground telegraph wears for this ability.
+        ///
+        /// ⚠️ IT SITS BESIDE <see cref="AimBeacon"/> BECAUSE IT IS THE SAME KIND OF FACT: what
+        /// the telegraph should LOOK like, declared by the ability that knows, rather than
+        /// guessed at the draw site off the kit's type. `HeroAbilitySystem.UpdateReticle`'s own
+        /// note records what guessing there cost: nine of twelve numbers on screen disagreed
+        /// with the game.
+        ///
+        /// ⚠️ THE DEFAULT IS THE RING AND MOST ABILITIES MUST KEEP IT. A style per hero is a
+        /// second design system; see `GroundReticle.Style`.
+        /// </summary>
+        public Visual.GroundReticle.Style TelegraphStyle { get; protected set; }
+            = Visual.GroundReticle.Style.Ring;
+
         // ------------------------------------------------------------------ hold to aim
         //
         // ⚠️⚠️ 🧑 2026-08-26, ON THE BLINK: *"let her HOLD e to control where she will go and make
@@ -326,6 +341,38 @@ namespace TumbangPreso.Abilities
         /// </summary>
         public float HeldSecondsOnCast { get; internal set; }
 
+        /// <summary>
+        /// Where this cast was aimed, for an <see cref="OnActivate"/> to spawn its effect at.
+        ///
+        /// ⚠️⚠️ IT IS THE RING THE PLAYER WAS LOOKING AT, NOT `ctx.Forward` RE-READ ON THE
+        /// RELEASE FRAME. Those are different points and the difference is a whole ability: the
+        /// player has been holding a mark on the ground for up to half a second, and a mouse
+        /// moves. `HeroAbilitySystem.AimDestination` reads the same `HeldSecondsOnCast` the
+        /// system wrote immediately before calling `Activate`, and it clamps X and Z
+        /// independently to the playable rectangle, which is `CLAUDE.md` § 4's *"the box is a
+        /// SQUARE, not a circle"*: a radial clamp and a square one disagree by 2.9 m on the
+        /// diagonal, exactly where somebody aims when they are cutting a corner.
+        ///
+        /// ⚠️ THE FALLBACK IS THE AIMED REACH ALONG THE CURRENT FACING, unclamped, and it is
+        /// reached only by a kit with no `HeroAbilitySystem` attached: a `dotnet test` fixture, a
+        /// headless probe, an editor showcase. Returning `Vector3.zero` there would put every
+        /// probe's hazard on the origin, which is the middle of the court.
+        ///
+        /// ⚠️ IT IS ON THE BASE CLASS SO THE FOUR KITS THAT AIM CANNOT WRITE FOUR SLIGHTLY
+        /// DIFFERENT VERSIONS OF IT. Phaister's blink had the only copy for a week; the moment a
+        /// second ability needed it, the choice was one method here or a growing family of
+        /// near-identical three-line reads. Same reasoning as `AimByHolding` itself.
+        /// </summary>
+        protected Vector3 AimedDestination(AbilityContext ctx)
+        {
+            if (ctx == null) return Vector3.zero;
+
+            var system = ctx.Motor != null ? ctx.Motor.AbilitySystem : null;
+            return system != null
+                ? system.AimDestination(this)
+                : ctx.Position + ctx.Forward * AimRangeFor(HeldSecondsOnCast);
+        }
+
         /// <summary>Turns this ability into a hold-to-aim cast. Call from a kit's constructor.</summary>
         protected void AimByHolding(float minRange, float maxRange,
                                     float rampSeconds = 0.55f, float maxHoldSeconds = 1.10f)
@@ -347,6 +394,55 @@ namespace TumbangPreso.Abilities
         /// </summary>
         public string ViewmodelAction { get; protected set; }
 
+        /// <summary>
+        /// The sound this ability makes when it is CAST, as an `AudioCues` id.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE EIGHTEEN POWERS WERE SPEAKING WITH SIX VOICES. Measured
+        /// 2026-09-02 by reading the six kits: Sean's three all opened on `sfx_fire_whoosh`,
+        /// Zack's three on `sfx_lightning_strike`, two of Cheska's on `sfx_ice_freeze`, two of
+        /// Nemu's on `sfx_ghost_teleport`, two of Dante's on `sfx_explosion_heavy`. So a player
+        /// could hear WHICH HERO had cast something and never WHAT. 🧑: *"as well as add sfx for
+        /// each skill, for all character as well as the ones in loadout"*, *"make sure the sfx
+        /// matches wat the skill really does"*.
+        ///
+        /// ⚠️ IT IS THE VERB'S SOUND, NOT THE ELEMENT'S. A barricade is three things punching up
+        /// out of the road and a magnet is a thing dragged to your hand; neither of those is
+        /// "ice" or "lightning", and playing the element for all three is exactly what made them
+        /// interchangeable. `tools/generate_skill_audio.py` has one synth per ability and its
+        /// header carries the rule that no two of them are the same recipe.
+        ///
+        /// ⚠️⚠️ AND IT IS PLAYED IN ONE PLACE, `HeroAbilitySystem.PlayCastConfirm`, WHICH IS THE
+        /// SAME ARGUMENT `Glyph` AND `TelegraphRadius` WON. A cue played from inside each
+        /// `OnActivate` is eighteen places to forget, and a new hero would compile, run and cast
+        /// in silence. It also means the sound reaches every peer for free: that method is
+        /// already the one both the local cast and `ApplyNetworkCast` come through, and it plays
+        /// through `NetCue`. 🧑: *"make sure sfx can be heard by everyone in all modes / not js
+        /// client sided"*.
+        ///
+        /// ⚠️ EMPTY MEANS SILENT AND IS NOT AN ERROR. `NetCue.Play` is given nothing at all
+        /// rather than a missing id, which `AudioCues`'s own note records as the fault that cost
+        /// two months of silence on `sfx_lrt_pass`.
+        /// </summary>
+        public string CastCue { get; protected set; }
+
+        /// <summary>
+        /// The cue the equipped loadout alternate wants instead, or null for the slot's own.
+        ///
+        /// ⚠️ WRITTEN BY `HeroAbilitySystem.ApplyLoadoutToPresentation` AND BY NOTHING ELSE, in
+        /// the same pass that scales the telegraph. An alternate changes how the power behaves,
+        /// so it changes what the power sounds like doing it; Long Tremor sweeps feet instead of
+        /// throwing bodies, and its cue is a low horizontal sweep rather than a vertical slam.
+        ///
+        /// ⚠️ EXACTLY ONE OF THE TWO EVER PLAYS. It is not layered over `CastCue`, because two
+        /// sounds a frame apart for one press is a flam, which is the fault `sfx_lrt_rumble`'s
+        /// deletion records.
+        /// </summary>
+        public string VariantCastCue { get; internal set; }
+
+        /// <summary>The cue this cast should actually play.</summary>
+        public string EffectiveCastCue =>
+            string.IsNullOrEmpty(VariantCastCue) ? CastCue : VariantCastCue;
+
         protected HeroAbility(string id, string name, string description, float cooldown,
                               float duration = 0.0f,
                               UI.AbilityGlyph glyph = UI.AbilityGlyph.Burst,
@@ -355,9 +451,12 @@ namespace TumbangPreso.Abilities
                               float telegraphRange = 0.0f,
                               string castAction = null,
                               string viewmodelAction = null,
+                              string castCue = null,
                               int charges = 0,
                               Recharge rechargedBy = Recharge.Never)
         {
+            CastCue = castCue;
+
             Id = id;
             Name = name;
             Description = description;
@@ -372,6 +471,21 @@ namespace TumbangPreso.Abilities
             MaxCharges = charges;
             ChargesRemaining = charges;
             RechargedBy = rechargedBy;
+        }
+
+        /// <summary>
+        /// Applies the checked loadout to the numbers the deck and reticle expose. The effect
+        /// call site still uses the same scale, so the promise and the result move together.
+        /// </summary>
+        internal void ScaleLoadout(float duration = 1.0f, float telegraphRadius = 1.0f,
+                                   float telegraphRange = 1.0f, float aimMax = 1.0f,
+                                   float aimRamp = 1.0f)
+        {
+            Duration *= Mathf.Max(0.05f, duration);
+            TelegraphRadius *= Mathf.Max(0.05f, telegraphRadius);
+            TelegraphRange *= Mathf.Max(0.05f, telegraphRange);
+            AimMaxRange *= Mathf.Max(0.05f, aimMax);
+            AimRampSeconds *= Mathf.Max(0.05f, aimRamp);
         }
 
         // -------------------------------------------------------------------
@@ -407,12 +521,49 @@ namespace TumbangPreso.Abilities
         /// unstunnable. A running duration expires on its own within seconds; a cooldown does
         /// not, which is why only the cooldown is worth carrying across the wire at all.
         /// </summary>
-        public void ApplyNetworkSnapshot(float cooldownRemaining, int chargesRemaining)
+        public void ApplyNetworkSnapshot(float cooldownRemaining, int chargesRemaining,
+                                         bool mayLower = true)
         {
-            CooldownRemaining = Mathf.Max(0.0f, cooldownRemaining);
+            // ⚠️⚠️ `mayLower` IS WHAT STOPS AN ABILITY BEING SPAMMED ON A LOSSY LINK, and it is
+            // false for exactly one peer: the one that owns this seat, while a round is live.
+            // 🧑 2026-08-29, of Phaister: *"si phaister need ayusin yung 2nd ability kasi
+            // spammable teleport (lan problem)"*, and later *"phaister ability works right
+            // everywhere else except for lan"*, *"its spammable in lan, weirdly"*.
+            //
+            // The chain, and none of it is Phaister-specific:
+            //
+            //   1. A client casts. `HeroAbilitySystem.Cast` predicts locally, which spends the
+            //      cooldown on the client, and sends `RequestAbilityCast`.
+            //   2. The host checks `PlausibleIntentPose`: is the pose the client claims within
+            //      `IntentPoseLeeway` 2.25 m of the host's own copy of that body? If not, the
+            //      request is DROPPED. Silently, and correctly as far as that guard goes.
+            //   3. Because it dropped, the host never ran `Activate`, so the host's copy of that
+            //      kit still reads a cooldown of ZERO.
+            //   4. The next `BroadcastAbilityState` sends that zero to everyone, and the OWNER
+            //      assigned it straight over the cooldown it had just spent. Ready again, one
+            //      snapshot later, for as long as the player kept pressing.
+            //
+            // ⚠️ AND THAT IS WHY IT WAS LAN-ONLY, WHICH IS THE PART THAT LOOKS IMPOSSIBLE.
+            // Nothing here branches on the transport. Step 2 fails when the host's copy of a
+            // moving body is more than 2.25 m stale, which is 375 ms at a sprint, and until this
+            // batch `SyncUnit` and `SubmitMove` went out `ReliableSequenced`: one lost packet
+            // head-of-line blocked the whole pose stream and delivered the backlog in a burst.
+            // Hamachi has real loss and a smaller MTU, so the LAN sessions produced those stalls
+            // and the relay sessions did not. `MatchRpc.PoseDelivery` attacks the same root from
+            // the transport end; this is the half that holds even when a packet does go missing.
+            //
+            // ⚠️ THE HOST CAN STILL MAKE AN ABILITY UNAVAILABLE, which is the direction authority
+            // actually needs. It may raise a cooldown on anybody at any time. What it may no
+            // longer do is hand the owner a cast back by reporting a state it reached by refusing
+            // to act.
+            float wanted = Mathf.Max(0.0f, cooldownRemaining);
+            CooldownRemaining = mayLower ? wanted : Mathf.Max(CooldownRemaining, wanted);
 
             if (UsesCharges)
-                ChargesRemaining = Mathf.Clamp(chargesRemaining, 0, MaxCharges);
+            {
+                int clamped = Mathf.Clamp(chargesRemaining, 0, MaxCharges);
+                ChargesRemaining = mayLower ? clamped : Mathf.Min(ChargesRemaining, clamped);
+            }
         }
 
         /// <summary>
@@ -423,6 +574,26 @@ namespace TumbangPreso.Abilities
         {
             if (!UsesCharges) return;
             ChargesRemaining = Mathf.Min(MaxCharges, ChargesRemaining + 1);
+        }
+
+        /// <summary>
+        /// Puts the two numbers that gate a NEW cast back to ready, and touches nothing else.
+        ///
+        /// ⚠️⚠️ IT IS NOT `Reset` AND IT MUST NOT BECOME IT. `Reset` also clears
+        /// `DurationRemaining` without running <see cref="OnEnd"/>, which is the fault
+        /// `HeroKit.Reset` carries a whole note about: an ability caught mid-duration has its
+        /// grant left switched on with no timer left to switch it off, and Dante would spend the
+        /// rest of the round unstunnable. This runs EVERY FRAME while the sandbox is on, so that
+        /// would not be an edge case, it would be the normal outcome of holding a skill key.
+        ///
+        /// ⚠️ ONLY <see cref="PracticeSandbox"/> CALLS IT, and the name says so on purpose. A
+        /// method called `ClearCooldown` invites a gameplay caller; there is no legitimate one,
+        /// because every cooldown in the game is a balance number.
+        /// </summary>
+        public void RefillForSandbox()
+        {
+            CooldownRemaining = 0.0f;
+            if (UsesCharges) ChargesRemaining = MaxCharges;
         }
 
         public virtual bool CanActivate(AbilityContext ctx)
@@ -533,6 +704,51 @@ namespace TumbangPreso.Abilities
         public virtual void Reactivate(AbilityContext ctx)
         {
             EndEarly(ctx);
+        }
+
+        /// <summary>
+        /// Takes back a cast this peer PREDICTED and the host then refused.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE THE HOST USED TO REFUSE SILENTLY AND THE OWNER PAID FOR IT.
+        /// `HeroAbilitySystem.Cast` runs the kit locally before it asks, so by the time
+        /// `MatchRpc.OnReqAbilityMsg` drops the request on `PlausibleIntentPose` the client has
+        /// already spent the cooldown, played the confirm and drawn the effect. Nothing came
+        /// back, so the player was charged a full cooldown for an ability that never happened on
+        /// the machine that decides what happened. `ApplyNetworkSnapshot`'s `mayLower` guard, which
+        /// is `docs/TODO.md` § 71's Phaister fix, is what stops the host handing the cast straight
+        /// BACK a snapshot later, and it is deliberately one-directional: it closed the spam and
+        /// it made the silent refusal permanent instead of self-healing. This is the other
+        /// direction, and it is the one the owner actually needs.
+        ///
+        /// ⚠️⚠️ IT IS NOT `Reset()`. Reset zeroes `DurationRemaining` behind the ability's back,
+        /// and `ResetForRound`'s note records at length what that leaks: Demonic Carapace's stun
+        /// immunity and Phantom Phase's tag immunity are GRANTS handed out in `OnActivate` and
+        /// taken back in `OnEnd`, so dropping the timer without running `OnEnd` leaves a client
+        /// permanently unstunnable off a refused cast. `EndEarly` is the path that ends a live
+        /// effect properly and is a no-op when nothing is running.
+        ///
+        /// ⚠️⚠️ AND THE WIND-UP HAS TO COME OFF FIRST, FOR THE REASON `Reset` GIVES. A refusal can
+        /// land during the wind-up beat, when `OnActivate` has NOT run yet and the caster is
+        /// rooted in a speed zone that only `ReleaseRoot` can exit. Zeroing `WindupRemaining`
+        /// without releasing would strand the player at `RootSpeed` for the rest of the match with
+        /// nothing left to let them go, which is the worst outcome in this file.
+        ///
+        /// ⚠️ THE REFUND IS THE EXACT INVERSE OF WHAT `Activate` SPENT, and it is written as the
+        /// same branch so the two cannot drift: a charge ability spends a charge and nothing else,
+        /// so it gets the charge back and its cooldown is not touched.
+        ///
+        /// ⚠️ THE CAP IS REAL. `GrantCharge` clamps to `MaxCharges` and this goes through it, so a
+        /// duplicated or replayed refusal cannot mint charges.
+        /// </summary>
+        public void RollBackPredictedCast(AbilityContext ctx)
+        {
+            ReleaseRoot();
+            WindupRemaining = 0.0f;
+
+            EndEarly(ctx);
+
+            if (UsesCharges) GrantCharge();
+            else CooldownRemaining = 0.0f;
         }
 
         public void EndEarly(AbilityContext ctx)

@@ -98,3 +98,12 @@ Assets/InitTestScene*.unity.meta
 # label falls back to the version number, which is the same thing an empty stamp means.
 Assets/TumbangPreso/Resources/BuildBranch.txt
 Assets/TumbangPreso/Resources/BuildBranch.txt.meta
+
+# Unity's Performance Testing package writes these into Assets/ on every test run, so they
+# appear as untracked files after any EditMode or PlayMode launch and are regenerated the next
+# time. Same reasoning as the stamp above: a file whose whole job is to be rewritten by a tool
+# is a merge conflict waiting for whoever runs the suite next.
+Assets/Resources/PerformanceTestRunInfo.json
+Assets/Resources/PerformanceTestRunInfo.json.meta
+Assets/Resources/PerformanceTestRunSettings.json
+Assets/Resources/PerformanceTestRunSettings.json.meta

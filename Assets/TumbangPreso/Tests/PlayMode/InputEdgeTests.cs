@@ -32,7 +32,7 @@ namespace TumbangPreso.PlayTests
         private static IEnumerator LoadArena()
         {
             var load = SceneManager.LoadSceneAsync("Eskinita", LoadSceneMode.Single);
-            while (load != null && !load.isDone) yield return null;
+            yield return ProbeWait.Done(load, "scene load");
 
             // The installer builds the match in Start and the cast needs a few steps to settle
             // onto the ground before any of them is worth testing.

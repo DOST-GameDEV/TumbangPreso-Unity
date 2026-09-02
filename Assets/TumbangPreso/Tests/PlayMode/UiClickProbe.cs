@@ -58,6 +58,14 @@ namespace TumbangPreso.PlayTests
             // missing overlay on every run.
             ("MainMenu", "CreditsPanel"),
             ("MatchSetup", "CharacterSelectPanel"),
+
+            // ⚠️ BUILT FROM CODE AND PARKED INACTIVE, NOT AUTHORED IN THE .unity.
+            // `LobbyJoinPanel.Build` constructs the card and calls `SetActive(false)` on it, so
+            // it is a child of the lobby's canvas from the first frame and `FindByName` reaches
+            // it. It carries the JOIN CODE OR IP ADDRESS field, which is one of the two controls
+            // that widening this probe to `InputField` exists to check, and it is behind a
+            // button rather than on the screen: nothing else in the suite ever opens it.
+            ("MatchSetup", "LobbyJoinPanel"),
         };
 
         /// <summary>
@@ -94,7 +102,7 @@ namespace TumbangPreso.PlayTests
                 }
 
                 var load = SceneManager.LoadSceneAsync(screen, LoadSceneMode.Single);
-                while (load != null && !load.isDone) yield return null;
+                yield return ProbeWait.Done(load, "scene load");
 
                 for (int i = 0; i < SettleFrames; i++) yield return null;
 
@@ -223,12 +231,30 @@ namespace TumbangPreso.PlayTests
                 // in the project that could have seen it, and it was the one class of Selectable
                 // on the screen it did not enumerate.
                 //
-                // ⚠️ IT IS A DENYLIST RATHER THAN EVERY Selectable ON PURPOSE. Toggles and input
-                // fields are also Selectables, and several of them sit below the fold on this
-                // same screen; sweeping them all in is a bigger claim than this probe has ever
-                // made and would fail on controls nobody has reported. Widen it deliberately,
-                // not by accident.
-                if (!(button is Button) && !(button is Dropdown) && !(button is Slider)) continue;
+                // ⚠️ IT IS A DENYLIST RATHER THAN EVERY Selectable ON PURPOSE. Toggles are also
+                // Selectables, and several of them sit below the fold on this same screen;
+                // sweeping them all in is a bigger claim than this probe has ever made and would
+                // fail on controls nobody has reported. Widen it deliberately, not by accident.
+                //
+                // ⚠️⚠️ AND `InputField` IS IN AS OF 2026-08-29, DELIBERATELY, BECAUSE THE
+                // EXCLUSION HID THE ONLY TWO CONTROLS ANYBODY HAS REPORTED DEAD SINCE. 🧑 named
+                // both on the same day: *"sa lobby hindi nagana yung player name, hindi makapag
+                // input ng name"* and *"hindi maka input ng code and lobby code sa lobby"*. They
+                // are `LobbyChrome.BuildNameField`'s `PlayerNameEdit` and
+                // `LobbyJoinPanel.BuildEntryRow`'s `JoinAddressEdit`, and they are both
+                // `InputField`s: the one class of Selectable on the one screen that this probe
+                // was written to check was the class it stepped over. The note above said to
+                // widen it deliberately rather than by accident, and this is that.
+                //
+                // ⚠️ A FIELD IS JUDGED ON EXACTLY THE SAME TERMS AS A BUTTON, and that is the
+                // point rather than a shortcut. `InputField.ActivateInputField` is reached by the
+                // EventSystem's pointer-down on the field's own graphic, so "the topmost hit at
+                // my centre is me or my child" IS the question of whether a player can type in
+                // it. `LobbyChat` already works around a screen that fails this, by calling
+                // `ActivateInputField` from its own `OnPointerClick`; that workaround is evidence
+                // the failure is real and reachable, not a reason to stop checking for it.
+                if (!(button is Button) && !(button is Dropdown) && !(button is Slider)
+                    && !(button is InputField)) continue;
 
                 var rect = button.transform as RectTransform;
                 if (rect == null) continue;

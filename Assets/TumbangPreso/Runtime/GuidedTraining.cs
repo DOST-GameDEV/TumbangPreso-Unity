@@ -63,8 +63,42 @@ namespace TumbangPreso
         private bool _ready;
         private bool _advancing;
         private bool _defenderResetArmed;
+
+        /// <summary>
+        /// The arming coroutine for <see cref="Lesson.DefenderReset"/>, held so it can be
+        /// stopped.
+        ///
+        /// ⚠️⚠️ IT WAS FIRE AND FORGET AND IT COULD KNOCK THE CAN OVER DURING THE **NEXT**
+        /// LESSON. `ArmDefenderReset` waits out the restore protection before it topples the
+        /// can, and `Update` completes the current lesson on `N`, so a player who pressed the
+        /// skip key while that wait was running arrived at PUNCH and the can went over under
+        /// them a moment later. `RoundDirector.ResolveTag` opens with `if (Lata == null ||
+        /// !Lata.IsUpright) return;` — **so every punch and every lunge for the rest of the
+        /// route was refused in silence**, which is one half of 🧑 2026-09-02's *"u cant raise
+        /// can and tag ppl"*. A lesson's own timers end with the lesson.
+        /// </summary>
+        private Coroutine _armRoutine;
+
+        /// <summary>
+        /// `Time.time` when the current lesson began, so a lesson can ask "has this happened
+        /// SINCE I started" rather than "has this ever happened".
+        ///
+        /// ⚠️ IT IS WHAT MAKES A HIT READABLE WITHOUT A COUNTER TO ZERO. See
+        /// <see cref="CombatVerbs.LastShoveLandedAt"/>.
+        /// </summary>
+        private float _lessonBeganAt;
+
+        /// <summary>
+        /// `Time.time` of the last tag the STUDENT scored, written from
+        /// <see cref="RoundDirector.Tagged"/>.
+        ///
+        /// ⚠️ OFF THE EVENT RATHER THAN OFF A COOLDOWN, because a cooldown is set before the
+        /// cone is searched. `CombatVerbs.StepPunch` writes `_punchCooldown` on line two and
+        /// finds its victim on line fourteen; the lesson was reading line two.
+        /// </summary>
+        private float _lastTagByStudentAt = -999.0f;
+
         private float _metric;
-        private float _baselineCooldown;
         private float _lastTripLeft;
         private Vector3 _lastPosition;
 
@@ -88,6 +122,12 @@ namespace TumbangPreso
 
             _carrier = _local.GetComponent<Carrier>();
             _verbs = _local.GetComponent<CombatVerbs>();
+
+            // ⚠️ THE TAG IS SUBSCRIBED TO, NOT POLLED. `RoundDirector.Tagged` fires from
+            // `ResolveTag`, which is the ONE function that decides a tag happened, for the jab
+            // and the lunge and for a bot and a human alike. Watching a cooldown instead is what
+            // let PUNCH and LUNGE be completed by pressing the key at nobody.
+            if (GameServices.Round != null) GameServices.Round.Tagged += OnSomebodyTagged;
             _abilities = _local.AbilitySystem;
             _emotes = _local.GetComponent<EmotePlayer>();
 
@@ -238,8 +278,23 @@ namespace TumbangPreso
                         CompleteLesson();
                     break;
 
+                // ⚠️⚠️ THE THREE CONTACT LESSONS ASK WHETHER THE VERB **LANDED**, AND ALL THREE
+                // USED TO ASK WHETHER IT FIRED. 🧑 2026-09-02: *"sometimes some tasks get marked
+                // even if u dont rlly do them like pushing ppl (as long as u click push it gets
+                // marked as done)"*. Each read `<verb>CooldownLeft > _baselineCooldown + 0.05f`,
+                // and in `CombatVerbs` every one of those cooldowns is written BEFORE the cone
+                // is searched — `StepPunch` sets `_punchCooldown` on its second line and finds
+                // its victim on its fourteenth. So a press aimed at the sky completed the
+                // lesson, and the one thing these three lessons exist to teach, which is that
+                // the taya's verbs have a reach and an arc, was the thing the tick did not ask
+                // about.
+                //
+                // ⚠️ THE SIGNALS ARE THE ONES THE GAME ITSELF USES. `LastShoveLandedAt` is
+                // written inside `ApplyShoveTo`, the single place a shove moves anybody, and the
+                // tag comes off `RoundDirector.Tagged`, the event `ResolveTag` raises. Neither
+                // can report a hit the match did not resolve.
                 case Lesson.Shove:
-                    if (_verbs != null && _verbs.ShoveCooldownLeft > _baselineCooldown + 0.05f)
+                    if (_verbs != null && _verbs.LastShoveLandedAt > _lessonBeganAt)
                         CompleteLesson();
                     break;
 
@@ -268,14 +323,13 @@ namespace TumbangPreso
                     if (_defenderResetArmed && _lata.IsUpright) CompleteLesson();
                     break;
 
+                // ⚠️ BOTH TAG LESSONS READ THE SAME SIGNAL, because both verbs end in the same
+                // call. `StepPunch` reaches `ResolveTag` directly and `SweepLungeTag` reaches it
+                // from the dash sweep; a lesson that watched the lunge's own cooldown was
+                // measuring the dash rather than the tag it is for.
                 case Lesson.Punch:
-                    if (_verbs != null && _verbs.PunchCooldownLeft > _baselineCooldown + 0.05f)
-                        CompleteLesson();
-                    break;
-
                 case Lesson.Lunge:
-                    if (_verbs != null && _verbs.LungeCooldownLeft > _baselineCooldown + 0.05f)
-                        CompleteLesson();
+                    if (_lastTagByStudentAt > _lessonBeganAt) CompleteLesson();
                     break;
 
                 case Lesson.TripRecovery:
@@ -346,11 +400,44 @@ namespace TumbangPreso
 
         private void SetProgress(float ratio) => _hud?.SetProgress(Mathf.Clamp01(ratio));
 
+        /// <summary>
+        /// A lesson is answered. Flash the card, sound it, and move on after a beat.
+        ///
+        /// ⚠️⚠️ THE ROUTE WAS SILENT, AND CLEARING A STEP IS THE ONE MOMENT IT HAS TO PAY OFF.
+        /// 🧑 2026-09-02: *"can u add sfx too for eac stage cleared in tutorial?"*. Seventeen
+        /// lessons went by with a 0.70 s scale pop on a card the student is not looking at, since
+        /// they are looking at the thing they just did.
+        ///
+        /// ⚠️⚠️ THE PITCH RISES ACROSS THE ROUTE AND THAT IS THE FEATURE, NOT DECORATION. One
+        /// unchanging ping seventeen times is a notification; a tone that climbs a fifth from
+        /// lesson one to lesson seventeen is progress you can hear without reading `03 / 17` off
+        /// the card. `AudioDirector.PlayAtVaried` takes a min and a max and picks between them,
+        /// so passing the same value twice is how you ask it for an exact pitch.
+        ///
+        /// ⚠️ `score_award` RATHER THAN A NEW CUE, AND `AudioCueCheck` IS WHY. Every id in
+        /// `AudioCues` must have a file on disk; inventing `tutorial_step` here would register a
+        /// cue with nothing behind it, which `sfx_lrt_pass`'s note records costing two months of
+        /// silence. `score_award` is already the game's "you did the thing" ping and this is
+        /// exactly that.
+        ///
+        /// ⚠️ AT `Vector3.zero`, LIKE `MenuSfx`. This is a UI event and not something that
+        /// happened at a place on the court, so a positioned voice would pan it away from a
+        /// student standing off-centre.
+        /// </summary>
         private void CompleteLesson()
         {
             if (_advancing) return;
             _advancing = true;
             _hud?.FlashComplete();
+
+            // 1.00 at LOOK to 1.50 at EMOTE, which is a fifth over the seventeen.
+            float climb = LessonCount > 1
+                ? Mathf.Clamp01((int)_lesson / (float)(LessonCount - 1))
+                : 0.0f;
+            float pitch = Mathf.Lerp(1.00f, 1.50f, climb);
+
+            GameServices.Audio?.PlayAtVaried("score_award", Vector3.zero, pitch, pitch, 0.85f);
+
             StartCoroutine(AdvanceAfterBeat());
         }
 
@@ -435,6 +522,98 @@ namespace TumbangPreso
             _local.Intent.AllowOnly(_unlocked);
         }
 
+        /// <summary>
+        /// Which side of the game a lesson is about.
+        ///
+        /// ⚠️⚠️ THE ROLE WAS INHERITED FROM WHICHEVER LESSON RAN BEFORE, AND THAT IS THE WHOLE
+        /// FAULT. 🧑 2026-08-29 gave the diagnosis himself and it was right: *"i think its bcz the
+        /// role doesnt change in between those phases"*, with *"can hold x to reset here"* and
+        /// *"u also cant tag"*.
+        ///
+        /// **`DefenderReset` was the only lesson in the route that made you the taya.** `Punch`
+        /// and `Lunge` come straight after it, are titled `PUNCH A VULNERABLE ATTACKER` and
+        /// `LUNGE`, and set no role at all — they only READ `_local.IsDefender` to decide where
+        /// to stand the dummy. And `CombatVerbs` refuses both outright:
+        ///
+        ///     if (... || !_motor.IsDefender || !_motor.CanAct()) return false;
+        ///
+        /// So any route that reached them without passing through `DefenderReset` asked for two
+        /// verbs the player was structurally incapable of performing, and refused every press in
+        /// silence. **That route is one keypress away**: `Update` completes the current lesson on
+        /// `N`, and it auto-completes the four hero lessons for a seat with no kit. Somebody who
+        /// pressed N because the reset looked stuck arrived at PUNCH as an attacker and could not
+        /// tag, which is both halves of his report from one cause.
+        ///
+        /// ⚠️ SO THE ROLE IS DECLARED BY THE LESSON RATHER THAN LEFT TO THE ORDER. The route can
+        /// then be entered anywhere — skipped through, jumped into by a probe, restarted — and
+        /// still be coherent, which is what makes `TutorialDefenderProbe` a test of the game
+        /// rather than a test of one path through it.
+        /// </summary>
+        private static bool LessonIsTheTayas(Lesson lesson)
+            => lesson == Lesson.DefenderReset
+            || lesson == Lesson.Punch
+            || lesson == Lesson.Lunge;
+
+        /// <summary>
+        /// Puts the student on the side the lesson is about, and only when they are not already
+        /// on it.
+        ///
+        /// ⚠️ ONLY ON A CHANGE, because `BecomeDefender` teleports to the can and drops whatever
+        /// is in hand. Re-running it on every lesson would yank a player across the street
+        /// between PUNCH and LUNGE for no reason and undo `PrepareDummyInFront`'s placement.
+        ///
+        /// ⚠️ AND THE ATTACKER SIDE IS APPLIED TOO, NOT JUST THE TAYA. `TripRecovery` and `Emote`
+        /// follow the two taya lessons, and a player left holding the taya's role through them is
+        /// being taught the wrong half of the game: the trip lesson's own text is about being an
+        /// attacker put on the road.
+        /// </summary>
+        private void ApplyLessonRole(Lesson lesson)
+        {
+            if (_local == null || lesson >= Lesson.Complete) return;
+
+            bool wantsTaya = LessonIsTheTayas(lesson);
+            if (_local.IsDefender == wantsTaya) return;
+
+            if (wantsTaya) BecomeDefender();
+            else BecomeAttacker();
+        }
+
+        /// <summary>
+        /// Everything a lesson has to hand the NEXT one, cleared before it starts.
+        ///
+        /// ⚠️⚠️ A LESSON WAS ABLE TO STUN THE LESSON AFTER IT. `DefenderReset` is step 13 and
+        /// `Ultimate` is step 12, and his screenshot of the failure is drenched in the magenta of
+        /// Nemu's DEVOURING SEANCE. A live hazard zone from a practice cast stuns whoever stands
+        /// in it; `CharacterMotor.CanAct()` is `RoundActive &amp;&amp; !IsStunned`, and
+        /// `Carrier.Update` returns before it ever reaches `StepDefender`.
+        ///
+        /// ⚠️ `ResetHeroKit` DID NOT AND COULD NOT COVER THIS. It resets the KIT — cooldowns and
+        /// charge — not the objects a cast has already put in the world, and the four hero
+        /// lessons call it on the way IN with nothing cleaning up on the way out.
+        ///
+        /// ⚠️⚠️ AND IT IS RIGHT WHETHER OR NOT IT WAS A CAUSE. A tutorial that asks you to perform
+        /// a verb has to start you able to perform it; a student held by their own previous
+        /// exercise has been given an objective and had the means to meet it taken away. This is
+        /// a route with an instructor, not a match.
+        ///
+        /// ⚠️ THE HAZARDS GO FIRST AND THE STUN SECOND, because clearing the stun while the zone
+        /// that applied it is still on the road buys exactly one frame before it lands again.
+        /// </summary>
+        private void ClearTheLastLessonsMess()
+        {
+            foreach (var volume in FindObjectsByType<Abilities.HazardVolume>(
+                         FindObjectsSortMode.None))
+            {
+                if (volume != null && volume.gameObject != null) Destroy(volume.gameObject);
+            }
+
+            if (_local == null) return;
+
+            _local.ClearStun();
+            _local.ClearTrip();
+            _local.Stamina.RefillAndClearFatigue();
+        }
+
         private void EnterLesson(Lesson lesson)
         {
             _lesson = lesson;
@@ -442,9 +621,53 @@ namespace TumbangPreso
             _metric = 0.0f;
             _lastPosition = _local.transform.position;
             _defenderResetArmed = false;
+            _lessonBeganAt = Time.time;
             _marker?.Bind(null);
             SetProgress(0.0f);
             ApplyVerbLock(lesson);
+
+            // ⚠️⚠️ THE PREVIOUS LESSON'S ARMING TIMER IS STOPPED FIRST. See `_armRoutine`: a
+            // wait left running from `DefenderReset` topples the can inside the lesson AFTER it,
+            // and a can on its side refuses every tag in the game.
+            if (_armRoutine != null)
+            {
+                StopCoroutine(_armRoutine);
+                _armRoutine = null;
+            }
+
+            // ⚠️ BOTH BEFORE THE SWITCH, NOT AFTER IT. `Lesson.TripRecovery` opens by calling
+            // `_local.ApplyTrip()` and `Lesson.DefenderReset` opens by calling `BecomeDefender`;
+            // clearing or re-roling afterwards would undo the two lessons whose whole subject is
+            // the state being cleared.
+            ClearTheLastLessonsMess();
+
+            // ⚠️⚠️ AND THE CAN GOES BACK ON ITS MARK BEFORE THE ROLE IS APPLIED, WHICH IS AN
+            // ORDERING FIX AND THE OTHER HALF OF 🧑's *"u cant raise can"*. `BecomeDefender`
+            // teleports the student to `_lata.transform.position + back * 1.15`, measured
+            // against wherever the can happens to be lying — and `Lata.HostRestore` **moves the
+            // can**: its own note says *"IT GOES BACK ON ITS MARK AND THEN STANDS UP"*, because
+            // a can that stands up where it was knocked to is a can the next throw cannot miss.
+            // `ArmDefenderReset` called that restore one frame AFTER the teleport, so on any
+            // route where an earlier lesson had knocked the can off its mark (the THROW and
+            // PEKTUS lessons are two of them, and the can rolls) the student was set down beside
+            // the empty patch of road the can had just left. `Carrier.StepDefender` needs
+            // `Balance.InteractionRadius`, 1.6 m, so holding the key there does nothing at all
+            // and there is no message saying why.
+            //
+            // ⚠️ IT COVERS PUNCH AND LUNGE TOO, AND THERE IT IS NOT ABOUT PLACEMENT. Both are
+            // tag lessons, and `RoundDirector.ResolveTag` refuses outright while the can is
+            // down. Neither lesson stood it up, so both inherited whatever `DefenderReset` had
+            // left — which, if it was skipped or abandoned, is a can on its side.
+            //
+            // ⚠️ IT RESTORES UNCONDITIONALLY RATHER THAN ONLY WHEN THE CAN IS DOWN, because
+            // `HostRestore` is what puts it back on the MARK and an upright can can still be
+            // metres from it: `Lata.HostKnockDown` starts a roll and `HostRestore` is the only
+            // thing that ends one. PUNCH and LUNGE both stand the dummy relative to
+            // `_lata.transform.position` inside `PrepareDummyInFront`, so a drifted can moves
+            // the whole exercise off the chalk box it is supposed to be taught inside.
+            if (LessonIsTheTayas(lesson) && _lata != null) _lata.HostRestore();
+
+            ApplyLessonRole(lesson);
 
             // ⚠️ THE DUMMY GOES AWAY AGAIN BETWEEN THE LESSONS THAT WANT IT. Three of the
             // seventeen need a body in front of you; the other fourteen do not, and a character
@@ -521,7 +744,6 @@ namespace TumbangPreso
                     // 1.60, so this is still comfortably inside the verb being taught.
                     PrepareDummyInFront(1.40f, attacker: true);
                     _local.Stamina.RefillAndClearFatigue();
-                    _baselineCooldown = _verbs != null ? _verbs.ShoveCooldownLeft : 0.0f;
                     title = "SHOVE AN ATTACKER";
                     body = "Shove the training dummy. It costs stamina you may need for the run back out.";
                     action = Key("Grab") + "  ·  SHOVE";
@@ -560,18 +782,20 @@ namespace TumbangPreso
                     break;
 
                 case Lesson.DefenderReset:
-                    BecomeDefender();
+                    // ⚠️ NO `BecomeDefender()` HERE ANY MORE. `ApplyLessonRole` above already
+                    // ran it, from `LessonIsTheTayas`, and now runs it AFTER the can is back on
+                    // its mark, which is the whole point of the reordering. The second call was
+                    // a duplicate that happened to be the one whose placement was wrong.
                     title = "ROLE SWAP: DEFENDER";
                     body = "You are now the taya. Stay inside the chalk box and hold the pickup key by the down lata to stand it up.";
                     action = Key("Grab") + "  ·  HOLD TO RESET";
                     _marker?.Bind(_lata.transform);
-                    StartCoroutine(ArmDefenderReset());
+                    _armRoutine = StartCoroutine(ArmDefenderReset());
                     break;
 
                 case Lesson.Punch:
                     // ⚠️ 1.50 m against `Balance.PunchRange` 1.70, for the reason on the shove.
                     PrepareDummyInFront(1.50f, attacker: true);
-                    _baselineCooldown = _verbs != null ? _verbs.PunchCooldownLeft : 0.0f;
                     title = "PUNCH A VULNERABLE ATTACKER";
                     body = "The defender's left click is a quick stationary tag. The dummy is holding a slipper inside your box.";
                     action = Key("SpecialAbility") + "  ·  PUNCH";
@@ -580,7 +804,6 @@ namespace TumbangPreso
 
                 case Lesson.Lunge:
                     PrepareDummyInFront(3.0f, attacker: true);
-                    _baselineCooldown = _verbs != null ? _verbs.LungeCooldownLeft : 0.0f;
                     title = "LUNGE";
                     body = "Hold to charge, release to dash, and sweep through the dummy. Use this when an attacker is running past you.";
                     action = Key("Lunge") + "  ·  HOLD, THEN RELEASE";
@@ -606,6 +829,12 @@ namespace TumbangPreso
                     body = "You tested movement, stamina, jumping, throwing, retrieval, Pektus, hero powers, both roles, tags, fall recovery and emotes.";
                     action = "ENTER  ·  RETURN TO MAIN MENU";
                     _marker?.Bind(null);
+
+                    // ⚠️ THE END OF THE ROUTE GETS THE MATCH FANFARE, NOT AN EIGHTEENTH PING.
+                    // `CompleteLesson` climbs a fifth over seventeen steps and then stops; a
+                    // route that ended on the same sound as step sixteen would be seventeen
+                    // notifications rather than an arc with a finish on it.
+                    GameServices.Audio?.PlayAt("match_win", Vector3.zero);
                     break;
             }
 
@@ -613,12 +842,45 @@ namespace TumbangPreso
                             _local.IsDefender ? UiTheme.Defense : UiTheme.Offense);
         }
 
+        /// <summary>
+        /// Topples the can so there is something for the student to stand back up.
+        ///
+        /// ⚠️⚠️ THE RESTORE MOVED OUT OF HERE, INTO `EnterLesson`, AND THAT IS THE ORDERING FIX.
+        /// It ran one frame after `BecomeDefender` had already placed the student beside the
+        /// can's OLD position, and `HostRestore` teleports the can to its mark. See the note at
+        /// the `LessonIsTheTayas` restore for the whole story.
+        ///
+        /// ⚠️⚠️ AND IT WAITS ON THE FLAG RATHER THAN ON A DURATION. `WaitForSeconds(
+        /// Balance.ThrowRestoreCooldown + 0.08f)` was the right length by arithmetic and the
+        /// wrong thing to ask: `HostKnockDown` refuses while `Lata.IsProtected`, so anything
+        /// that shortens or lengthens that window silently leaves this lesson unarmable, with
+        /// `_defenderResetArmed` false, the can standing, and a student holding the pickup key
+        /// at an upright can for ever. Polling the real flag cannot drift from the real gate,
+        /// and it costs nothing when there is no protection to wait out.
+        ///
+        /// ⚠️⚠️ THE GUARD IS ELAPSED TIME AND IT WAS A FRAME COUNT FOR ONE COMMIT. A protection
+        /// that never expires would spin this coroutine for the rest of the session, so it needs
+        /// a ceiling; 600 frames is ten seconds at 60 Hz **and about a second in batchmode**,
+        /// where nothing caps the frame rate. `TutorialDefenderProbe` failed on exactly that: the
+        /// guard ran out while `IsProtected` was still true, the knockdown was refused, and the
+        /// error below fired on a build that was working. **A frame is not a unit of time in this
+        /// project**, and `Balance.ThrowRestoreCooldown` is 1.25 s, so 5 s is four times the real
+        /// window on any machine.
+        /// </summary>
         private IEnumerator ArmDefenderReset()
         {
-            _lata.HostRestore();
-            yield return new WaitForSeconds(Balance.ThrowRestoreCooldown + 0.08f);
+            for (float waited = 0.0f; _lata.IsProtected && waited < 5.0f; waited += Time.deltaTime)
+                yield return null;
+
             _lata.HostKnockDown(-1);
             _defenderResetArmed = !_lata.IsUpright;
+
+            if (!_defenderResetArmed)
+                Debug.LogError("[Training] the can refused to go over, so ROLE SWAP: DEFENDER "
+                               + "cannot be completed. IsProtected="
+                               + _lata.IsProtected + " IsUpright=" + _lata.IsUpright);
+
+            _armRoutine = null;
         }
 
         private void PrepareAttackerThrow()
@@ -873,9 +1135,20 @@ namespace TumbangPreso
             PlaceOwnSlipperOnTheRoad(toLata, reach);
         }
 
+        /// <summary>The student landed a tag. Which lesson cares is decided in `EvaluateLesson`.</summary>
+        private void OnSomebodyTagged(int tayaSlot, int victimSlot)
+        {
+            if (_local != null && tayaSlot == _local.PlayerSlot) _lastTagByStudentAt = Time.time;
+        }
+
         private void OnDestroy()
         {
             GameLaunch.GuidedTutorial = false;
+
+            // ⚠️ UNSUBSCRIBED WITH THE ROUTE. `RoundDirector` outlives this component, and a
+            // handler on a destroyed MonoBehaviour throws once per tag for the rest of the
+            // session. `MatchInstaller` records the same fault on `LataRestored`.
+            if (GameServices.Round != null) GameServices.Round.Tagged -= OnSomebodyTagged;
 
             // ⚠️⚠️ THE VERB LOCK IS RELEASED WITH THE ROUTE, AND NOT DOING THIS WOULD SHIP A
             // PLAYER WHO CANNOT THROW. `InputIntent` belongs to the SEAT, which outlives this

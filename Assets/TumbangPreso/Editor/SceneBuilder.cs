@@ -169,6 +169,18 @@ namespace TumbangPreso.EditorTools
             Object.DestroyImmediate(visual.GetComponent<Collider>());
 
             var s = go.AddComponent<Slipper>();
+
+            // ⚠️⚠️ `SeatOfOrigin` IS SET HERE TOO, AND FORGETTING IT MAKES A SLIPPER INVISIBLE TO
+            // THE WIRE. `MatchRpc.FindSlipper` addresses a tsinelas by this field
+            // (`docs/TODO.md` § 78.1), and it defaults to -1, which that sweep skips. A slipper
+            // authored into a scene by this builder rather than spawned by
+            // `MatchInstaller.BuildSlipper` would therefore never be broadcast and never be
+            // applied on a client: present and correct on the host, absent on every peer.
+            //
+            // ⚠️ IT IS THE SEAT, NOT THE OWNER, and the two are equal only at build time.
+            // `SliceRunner.EquipOwnedSlippers` rewrites `OwnerSlot` every round; this one never
+            // moves for the life of the match, which is the whole point of it.
+            s.SeatOfOrigin = slot;
             s.OwnerSlot = slot;
             s.SkinIndex = slot;
             return s;

@@ -15,7 +15,7 @@ namespace TumbangPreso.Abilities
         public ZackHeroKit() : base("zack", "ZACK")
         {
             Skill1 = new StaticRailGrindAbility(this);
-            Skill2 = new OverchargeThrowAbility(this);
+            Skill2 = new MagnetRecallAbility(this);
             Ultimate = new ThunderstrikeOverdriveAbility(this);
         }
 
@@ -102,7 +102,8 @@ namespace TumbangPreso.Abilities
                        46.0f, 2.5f, TumbangPreso.UI.AbilityGlyph.ZackSprint,
                        summary: "Move faster, and shock whoever chases your trail.",
                        castAction: "hero-zack-sprint",
-                       viewmodelAction: "sprint-electric")
+                       viewmodelAction: "sprint-electric",
+                       castCue: "sfx_cast_zack_sprint")
             {
                 _kit = kit;
             }
@@ -117,12 +118,17 @@ namespace TumbangPreso.Abilities
 
                 ctx.Motor.ApplyImpulse(forward.normalized * 12.0f);
 
+                // ⚠️ `sfx_lightning_strike` OPENED ALL THREE OF HIS ABILITIES. See
+                // `HeroAbility.CastCue`: the sprint is an accelerating impulse train, the magnet
+                // is a rising pull into a slap, and the summon is ring modulation going tight.
+                // The strike itself still sounds, from the payload, where it lands.
                 NetCue.Play("hero_zack_grunt", ctx.Position);
-                NetCue.Play("sfx_lightning_strike", ctx.Position);
 
                 _wake.Clear();
                 _wake.Enqueue(ctx.Position);
-                HeroHazards.SpawnShockTrail(ctx.Position, TrailRadius, 3.0f, ctx.Motor.PlayerSlot);
+                HeroHazards.SpawnShockTrail(ctx.Position,
+                    TrailRadius * ctx.CostScale("zack.1.arcline"), 3.0f,
+                    ctx.Motor.PlayerSlot, ctx.GainScale("zack.1.arcline"));
                 _trailDropTimer = 0.25f;
 
                 // ⚠️ THE SPARKS GO ON ZACK, NOT ON THE TRAIL DISCS. One dash drops up to thirty
@@ -151,7 +157,9 @@ namespace TumbangPreso.Abilities
                 if (_wake.Count > lagSamples) drop = _wake.Dequeue();
                 else return;   // still inside the first half second: nothing behind him yet
 
-                var disc = HeroHazards.SpawnShockTrail(drop, TrailRadius, 3.0f, ctx.Motor.PlayerSlot);
+                var disc = HeroHazards.SpawnShockTrail(drop,
+                    TrailRadius * ctx.CostScale("zack.1.arcline"), 3.0f,
+                    ctx.Motor.PlayerSlot, ctx.GainScale("zack.1.arcline"));
                 if (disc == null) return;
 
                 _live.Enqueue(disc);
@@ -179,52 +187,174 @@ namespace TumbangPreso.Abilities
             }
         }
 
-        private sealed class OverchargeThrowAbility : HeroAbility
+        /// <summary>
+        /// Skill 2: MAGNET. Your own tsinelas snaps back into your hand from anywhere.
+        ///
+        /// ⚠️⚠️ IT REPLACES STATIC CHARGE, WHICH WAS SEAN'S IGNITION CANNON WITH A DIFFERENT
+        /// ELEMENT ON IT. 🧑 2026-09-02: *"the kit of zack and sean are the exact fricking
+        /// same"*, *"bcaz its js speed up and upgraded attack"*, *"it feels like theyre the exact
+        /// same character js diff color based on kits"*. He is right and this file already said
+        /// so: `docs/Hero_Strike_Balance.md` § 4.4 is titled *"Sean and Zack shipped as the same
+        /// kit in three matching slots"*, and the fix attempted there moved NUMBERS — Sean got
+        /// the blast, Zack got the speed. Two throw buffs tuned apart are still two throw buffs,
+        /// and slot two was the loudest of the three matches.
+        ///
+        /// ⚠️⚠️ SO THE NICHE IS THE ONE THING THIS GAME IS ACTUALLY ABOUT. `docs/VISION.md` § 0:
+        /// *"The tension is the retrieval, not the throw."* Every attacker's round is throw, walk
+        /// back in, get caught or do not; the taya's only scoring verb exists to punish that
+        /// walk. **Nothing in the game touched that loop until now.** Zack is the hero who can
+        /// skip the walk, which makes him the one attacker a taya cannot plan around by standing
+        /// between somebody and their tsinelas, and it is a job no other kit is doing.
+        ///
+        /// ⚠️⚠️ THE COST IS THAT IT IS PAID FOR BY HITTING. It keeps `Recharge.LataKnocked` from
+        /// the ability it replaces, and it keeps ONE charge instead of two: recall, throw, land
+        /// it, recall again. A Zack who hits never walks; a Zack who misses walks exactly like
+        /// everybody else, from wherever the miss went. That is a skill loop rather than a
+        /// cooldown, and it is self-limiting without a single new number.
+        ///
+        /// ⚠️ AND IT REFUSES RATHER THAN WASTING THE CHARGE when there is nothing to pull:
+        /// already holding one, somebody else picked it up, or it is still in the air. See
+        /// <see cref="CanActivate"/>. `HeroKit.CastOutcome.CannotAct` is buffered and retried for
+        /// `InputBufferWindow`, so a press made a fraction of a second before the tsinelas lands
+        /// still fires when it does.
+        ///
+        /// ⚠️ THE GLYPH IS KEPT. `AbilityGlyph.ZackOvercharge` is a charge orb with things
+        /// orbiting it, which reads as a magnet as readily as it read as static, and
+        /// `EveryAbilityAcrossAllHeroesHasAUniqueBespokeGlyph` only asks that no two abilities
+        /// share one. `VISION.md` § 3's rule is that an icon says what the power does to the
+        /// WORLD; pulling and charging are both "this thing attracts", and inventing an
+        /// eighteenth bespoke glyph to say so again would be art spent on a distinction the
+        /// player never has to make.
+        /// </summary>
+        private sealed class MagnetRecallAbility : HeroAbility
         {
+            /// <summary>
+            /// How long the tsinelas takes to reach him, in seconds.
+            ///
+            /// ⚠️⚠️ IT IS NOT INSTANT AND THE DELAY IS THE COUNTERPLAY. An arc that crosses the
+            /// court is the loudest thing on screen and it points straight at Zack, so the taya
+            /// is TOLD that he is about to be armed and where he is standing. A recall with no
+            /// flight would be a hero who rearms with no tell at all, which is the one shape
+            /// `docs/VISION.md` § 1.1 rules out: every power has to be readable by the people it
+            /// is used against.
+            ///
+            /// ⚠️ 0.45 s IS UNDER `Balance.TagStunTime` AND THAT IS DELIBERATE. It has to be
+            /// short enough that recalling mid-chase is a real option; it is long enough that a
+            /// taya standing next to him gets a beat to close.
+            /// </summary>
+            private const float FlightSeconds = 0.45f;
+
+            /// <summary>
+            /// How long the returned tsinelas stays live in his hand, in seconds.
+            ///
+            /// ⚠️⚠️ THE CHARGE IS KEPT AND FOLDED INTO THE RECALL RATHER THAN DELETED WITH THE
+            /// ABILITY IT CAME FROM. `SlipperAffinity.ElectricStun`, `Carrier.HostThrowAt`,
+            /// `StatusStack` and `Slipper.TriggerAffinityImpact` are all built around
+            /// <see cref="ZackHeroKit.IsOverchargeThrowActive"/>; dropping the only thing that
+            /// sets it would have left four files of shipped, tuned behaviour that nothing in the
+            /// game could ever reach again.
+            ///
+            /// ⚠️ AND IT IS THE BETTER ABILITY FOR IT. The shoe comes back LIVE, so the recall
+            /// and the charged throw are one loop instead of two presses that happen to sit on
+            /// the same hero: pull it in, throw it hard, knock the lata over, get the charge
+            /// back. 10 s is the window STATIC CHARGE carried, unchanged.
+            /// </summary>
+            private const float ChargeSeconds = 10.0f;
+
             private readonly ZackHeroKit _kit;
 
-            public OverchargeThrowAbility(ZackHeroKit kit)
-                // ⚠️⚠️ TWO CHARGES A ROUND, BACK ONE PER LATA KNOCKDOWN, RATHER THAN AN 8 s
-                // COOLDOWN. It leaves an effect on the court, which is the half of the split
-                // that takes charges (`HeroAbility.MaxCharges`), and the recharge closes the
-                // skill's own loop: charge the throw, land it on the lata, get the charge back.
-                // A player who keeps hitting keeps casting; a player who keeps missing gets two.
-                //
-                // ⚠️ THE DESCRIPTION LEADS WITH SPEED NOW BECAUSE THE SKILL DOES. Its impact
-                // radius came down from 5.5 m to 2.0 m in `Slipper.TriggerAffinityImpact`, so
-                // this is a throw that is hard to read rather than a throw that covers the
-                // court. `docs/Hero_Strike_Balance.md` § 4.4: Sean and Zack shipped as the same
-                // kit in three matching slots, and the explosion is Sean's half of that split.
-                : base("zack_skill2", "STATIC CHARGE",
-                       "Charges your next throw. It flies much faster and flatter, and jolts whoever is standing where it lands.",
-                       0.0f, 10.0f, TumbangPreso.UI.AbilityGlyph.ZackOvercharge,
-                       summary: "Your next throw flies faster and jolts where it lands.",
+            public MagnetRecallAbility(ZackHeroKit kit)
+                : base("zack_skill2", "MAGNET",
+                       "Snaps your own tsinelas back into your hand from anywhere, still live. That throw flies faster and jolts where it lands.",
+                       0.0f, ChargeSeconds, TumbangPreso.UI.AbilityGlyph.ZackOvercharge,
+                       summary: "Pulls your tsinelas back, charged. No walk back in.",
                        castAction: "hero-zack-charge",
                        viewmodelAction: "overcharge",
-                       charges: 2,
+                       castCue: "sfx_cast_zack_magnet",
+                       charges: 1,
                        rechargedBy: Recharge.LataKnocked)
             {
                 _kit = kit;
             }
 
+            /// <summary>
+            /// ⚠️ EVERY REFUSAL IS A STATE THE PLAYER CAN SEE ON THE COURT. He is holding one, it
+            /// is in the air, or somebody else has it. None of the three is a bug and none of
+            /// them should cost the charge, which is why this is a `CanActivate` and not a check
+            /// inside `OnActivate`.
+            /// </summary>
+            public override bool CanActivate(AbilityContext ctx)
+            {
+                if (!base.CanActivate(ctx)) return false;
+                if (ctx.Motor == null || ctx.Motor.IsDefender) return false;
+                // ⚠️⚠️ ALREADY HOLDING ONE IS A REFUSAL AND NOT A FREE CHARGE-UP, AND THAT IS
+                // WHAT KEEPS THIS FROM BEING SEAN'S SKILL WITH EXTRA STEPS. If it charged a
+                // tsinelas he is already carrying, the ability would be IGNITION CANNON and the
+                // recall would be a rider on it rather than the point of it. He has to have
+                // thrown, which is the whole loop.
+                if (ctx.Carrier != null && ctx.Carrier.Held != null) return false;
+
+                return FindOwn(ctx) != null;
+            }
+
+            /// <summary>
+            /// His own tsinelas, if it is lying in the street.
+            ///
+            /// ⚠️ `OwnerSlot`, WHICH IS DEALT PER ROUND BY `SliceRunner.EquipOwnedSlippers` AND
+            /// IS A LABEL RATHER THAN A LOCK (`Slipper.OwnerSlot`, `docs/TODO.md` § 79.9). That
+            /// is the right key anyway: this power is about the walk back to YOUR shoe, and a
+            /// version that could yank somebody else's out from under them would be a different,
+            /// much nastier ability wearing this one's description.
+            ///
+            /// ⚠️ `Loose` ONLY. In flight it has not landed yet and held means somebody beat him
+            /// to it, which is exactly the moment the taya's positioning is supposed to have paid
+            /// off.
+            /// </summary>
+            private static Slipper FindOwn(AbilityContext ctx)
+            {
+                if (ctx == null || ctx.Motor == null) return null;
+
+                foreach (var s in UnityEngine.Object.FindObjectsByType<Slipper>(
+                             FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+                {
+                    if (s == null || s.OwnerSlot != ctx.Motor.PlayerSlot) continue;
+                    if (s.State != SlipperState.Loose) continue;
+                    return s;
+                }
+
+                return null;
+            }
+
             protected override void OnActivate(AbilityContext ctx)
             {
-                _kit.IsOverchargeThrowActive = true;
-                Visual.AbilityVfx.AttachHandVfx(ctx.Motor.transform, Visual.AbilityVfx.Aura.ElectricSpark, Duration);
-                NetCue.Play("sfx_lightning_strike", ctx.Position);
+                var mine = FindOwn(ctx);
+                if (mine == null) return;
 
-                // ⚠️⚠️ HIS MOTIF: THE CHARGE LOOKS FOR SOMEWHERE TO GO. `docs/TODO.md` § 27.2.
-                // Every other effect in this game is built from constants and a position; this
-                // one asks what is actually near him and arcs to it, so a charged Zack standing
-                // next to the lata looks different from a charged Zack alone in a corner. It is
-                // the one element whose fiction is that it connects things that already exist,
-                // and nothing else in the kit was saying so.
-                //
-                // ⚠️ PURELY VISUAL AND DELIBERATELY SHORT. It places no `HazardVolume`, staggers
-                // nobody and reaches 3.2 m, which is inside the arc's own fiction and well under
-                // the range at which knowing where somebody is standing would matter. An arc that
-                // reached a body through a barricade would be an aimbot drawn in lightning.
-                HeroHazards.SpawnCircuitArcs(ctx.Position, 3.2f, ctx.Motor.PlayerSlot);
+                Vector3 from = mine.transform.position;
+
+                // ⚠️ THE CAST CUE SOUNDS AT ZACK, CENTRALLY. What plays HERE is the far end:
+                // the tsinelas leaving the road, up to a court away, which is the same reasoning
+                // `sfx_blink_arrive` records about the far end of a teleport.
+                NetCue.Play("hero_zack_grunt", ctx.Position);
+                NetCue.Play("slipper_bounce", from);
+
+                // ⚠️⚠️ THE ARC IS DRAWN FOR EVERYBODY AND THE EQUIP IS DECIDED BY THE HOST, WHICH
+                // IS `CLAUDE.md` § 4 IN ONE METHOD. `SpawnCircuitArcs` is presentation and runs on
+                // every peer; `Slipper.HostForceEquip` opens with `NetAuthority.ShouldResolve()`
+                // and is a no-op anywhere else, so a client predicts the effect and the host
+                // decides the state. A client that could put a tsinelas in its own hand is a
+                // client that can arm itself.
+                HeroHazards.SpawnCircuitArcs(from, Mathf.Max(2.0f, Vector3.Distance(from, ctx.Position)),
+                                             ctx.Motor.PlayerSlot);
+                Visual.AbilityVfx.AttachHandVfx(ctx.Motor.transform,
+                                                Visual.AbilityVfx.Aura.ElectricSpark, ChargeSeconds);
+
+                mine.HostForceEquip(ctx.Motor);
+
+                // ⚠️ THE SHOE ARRIVES LIVE. See `ChargeSeconds`: this flag is what
+                // `Carrier.HostThrowAt` reads to stamp `SlipperAffinity.ElectricStun` onto the
+                // launch, and `Carrier` clears it on the throw, so one recall charges one throw.
+                _kit.IsOverchargeThrowActive = true;
             }
 
             protected override void OnEnd(AbilityContext ctx)
@@ -237,25 +367,66 @@ namespace TumbangPreso.Abilities
         {
             private readonly ZackHeroKit _kit;
 
+            /// <summary>Closest he can call it. Under this it is on his own head.</summary>
+            private const float MinRange = 1.5f;
+
+            /// <summary>
+            /// Furthest, at a full hold.
+            ///
+            /// ⚠️ 7.0 m IS HALF THE 14 m BOX, AND IT IS THE LONGEST AIM BAND IN THE GAME BY
+            /// DESIGN. It costs 20 charges, the ceiling of the range, and the price note above
+            /// says why it was that expensive: *"it needs no aim, cannot miss, and there is
+            /// nothing the victims can read in advance and act on"*. Two of those three are no
+            /// longer true, so the reach is what the aim buys back.
+            /// </summary>
+            private const float MaxRange = 7.0f;
+
             public ThunderstrikeOverdriveAbility(ZackHeroKit kit)
                 : base("zack_ultimate", "THUNDERSTRIKE",
-                       "Calls lightning down on where you stand. Everyone caught underneath is stunned where they are.",
+                       "Hold to pick a spot, let go and the sky opens on it. Everyone caught underneath is stunned where they stand.",
                        0.0f, 7.0f, TumbangPreso.UI.AbilityGlyph.ZackThunderstrike,
-                       summary: "Lightning on your position. Stuns everyone it catches.",
-                       telegraphRadius: 4.5f, telegraphRange: 0.0f,
+                       summary: "Hold to aim, release. Stuns everyone under the strike.",
+                       telegraphRadius: 4.5f, telegraphRange: MaxRange,
                        castAction: "hero-zack-summon",
-                       viewmodelAction: "summon-lightning")
+                       viewmodelAction: "summon-lightning",
+                       castCue: "sfx_cast_zack_summon")
             {
+                // ⚠️⚠️ IT IS AIMED NOW, AND THAT IS THE THIRD OF THE THREE MATCHING SLOTS. 🧑
+                // 2026-09-02: *"the kit of zack and sean are the exact fricking same"*.
+                // Thunderstrike put a 4.5 m stun circle on Zack's own feet; Supernova puts a
+                // 4.8 m knockback circle on Sean's. Two ultimates that go off under the caster
+                // and cannot miss are one ultimate with two particle systems, whatever the
+                // payload does afterwards.
+                //
+                // ⚠️ SEAN'S STAYS SELF-CENTRED AND MUST. He leaps and lands on it, so the circle
+                // IS where his body arrives; making both of them aimed would fix the sameness by
+                // deleting the one thing that was already his. Sean commits his body, Zack
+                // commits the sky.
+                //
+                // ⚠️ AND IT COSTS ZACK THE ONE THING THE PRICE WAS PAYING FOR: a hold-to-aim
+                // ultimate can be read by everybody in the room, because the wind-up is now a
+                // decision made in the open rather than a press with no tell. `UltimateCost`
+                // stays at 20 for one release and is the first number to revisit if Zack comes
+                // back weak; the reach is the compensation offered first because it is the one
+                // that adds a decision rather than removing a cost.
+                AimByHolding(MinRange, MaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
+                TelegraphStyle = Visual.GroundReticle.Style.Storm;
                 _kit = kit;
                 Windup = UltimateWindup;
             }
 
             protected override void OnActivate(AbilityContext ctx)
             {
+                // ⚠️ THE STRIKE LANDS ON THE RING, THE GRUNT COMES FROM ZACK. They are different
+                // places now, and `AudioDirector` parks a pooled voice at the point it is given:
+                // a thunderclap fired at the caster while the lightning hits seven metres away
+                // is the fault `LrtTrainFlyby` records about a moving train.
+                Vector3 at = AimedDestination(ctx);
+
                 NetCue.Play("hero_zack_ult", ctx.Position);
-                NetCue.Play("sfx_lightning_strike", ctx.Position);
-                HeroHazards.CreateThunderstrike(ctx.Position, 4.5f, ctx.Motor.PlayerSlot);
-                Visual.AbilityVfx.SpawnElectricArcs(ctx.Position, 4.5f);
+                NetCue.Play("sfx_lightning_strike", at);
+                HeroHazards.CreateThunderstrike(at, 4.5f, ctx.Motor.PlayerSlot);
+                Visual.AbilityVfx.SpawnElectricArcs(at, 4.5f);
 
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
                 if (squash != null) squash.Stretch(0.4f);

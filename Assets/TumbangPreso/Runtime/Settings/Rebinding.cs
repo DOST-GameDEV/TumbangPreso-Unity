@@ -48,6 +48,21 @@ namespace TumbangPreso.Settings
     /// means "show the overlay". `FindDuplicateBindings` checks per context and passes. Both
     /// curve rows stay in the panel under PLAYING THE GAME and stay rebindable, and every screen
     /// that teaches them reads the live binding through `Hud.KeyLabel`.
+    ///
+    /// ⚠️⚠️ AND R IS THE ONE OVERLAP THAT WAS NOT LEGAL, WHICH IS WHY IT WAS THE ONE REPORTED.
+    /// 🧑 2026-08-29: *"theres a conflict, R for spectator map to replay and ready can u pls fix
+    /// that"*. `SpectatorReplay` is `Y` now; the other four overlaps stay exactly as they are.
+    ///
+    /// **The rule above is "a spectator has no body", and READY is the one gameplay action that
+    /// does not need one.** `ReadyGate` and `BufferSkipVote` both read `ReadyUp` from whoever
+    /// presses it regardless of role — `docs/TODO.md` § 78.6 is a whole entry about a spectator's
+    /// R reaching a quorum that excludes them — so a spectator pressing R fired the pre-round
+    /// ready, the buffer-skip vote AND the replay from one key. That is not an overlap the
+    /// context can separate, because both sides of it are live in the same context.
+    ///
+    /// ⚠️ THE SPECTATOR ACTION MOVED, NOT THE PLAYER ONE. R is taught on the ready prompt, in the
+    /// rebind panel under ROUND AND SCREEN and by the buffer-skip row; replay is an operator key
+    /// nobody is taught in a match. When two must part, the one with fewer readers moves.
     /// </summary>
     public static class Rebinding
     {

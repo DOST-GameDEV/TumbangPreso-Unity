@@ -8,6 +8,12755 @@ items move to **Closed** at the bottom with one line on how they were verified.
 
 Read [`VISION.md`](VISION.md) first if you have not. Several entries here only make sense
 against the readability budget in its § 2.
+⚠️ **The live-service and esport plan lives in [`FUTURE.md`](FUTURE.md) and
+[`INSPIRATION.md`](INSPIRATION.md), NOT here.** Accounts, profiles, stats, matchmaking, ranked,
+progression, cosmetics, loadouts, achievements, controller, mobile, accessibility and tournaments
+are eighteen ordered phases in `FUTURE.md`, each with a prompt written to brief a whole session;
+`INSPIRATION.md` is the study of thirty other games behind them, plus ten more prompts and the
+combined order. **None of it is scheduled and none of it is open work**, which is exactly why they
+are separate files: an entry in this list is something somebody should do, and those are things
+somebody might decide to do. **Phase 1 was explicitly started on 2026-08-31 and is § 88 below.**
+**Phase 2 followed on 2026-08-30 and is § 89**: the profile, the stats and the match history.
+Read § 89.3 before changing who submits a match record, and § 89.6 before changing any rule in
+`ProfileRules`, which is written twice on purpose.
+**§ 90 closes Phase 1's last open item and adds Phase 3**: the impersonation guard (§ 90.1, which
+corrects the fix § 88.1c prescribed) and telemetry (§ 90.3, whose event names are a contract that
+must not be renamed). ⚠️ `NetSession.ProtocolVersion` is **16**; both machines rebuild.
+Written 2026-08-31 on 🧑's brief.
+⚠️⚠️ **STALE SINCE 2026-09-01: THE LIVE BRANCH IS `ui-redesign`, NOT `profile-stats`.** § 119
+through § 123 are all on it and every one of them is front-end work. The paragraph below is kept
+because its second half is still true and still load-bearing (`accounts` and the plans branch are
+deleted and must not be named again), but **the first sentence has been pointing new sessions at a
+branch six sections behind for two days.** A pointer to "the live branch" is exactly the kind of
+line that goes stale silently, which is why it now says the date it was last true.
+
+⚠️ **The superseded original:** *`profile-stats` IS THE ONLY LIVE BRANCH. BRANCH OFF IT.* Its parent `accounts` was
+fully merged into it (`f8b47d01`, contained in `profile-stats`) and was **deleted local and
+remote on 2026-08-30**, together with the stale local ref for a plans branch that had been gone
+on the remote for longer. 🧑 asked for both by name. Every commit either held is reachable
+from `profile-stats`; **neither is to be named again in a handoff, a document or a prompt.**
+`main` is 10 commits behind and is not the work.
+⚠️⚠️ **§ 94 IS PHASE 4.5 AND IT FOUND THAT NO CAREER HAD EVER REACHED THE SERVER.** Every match
+record written since Phase 2 was refused **422** and the upload queue had been wedged behind the
+first one since. Read **§ 94.1** before touching `MatchStatsCollector`, `CareerStore` or anything
+that decides which line in a `MatchRecord` belongs to the local player: there is now exactly one
+answer to that, `CareerStore.LocalPlayerId`, and it used to have four hand-written copies that all
+agreed on the wrong value. § 94.7 is the readability pass on the hub that 🧑 asked for in the same
+session.
+
+✅ **§ 90.7 closes Phase 3's own last open item, the FPS distribution, so PHASES 1, 2 AND 3 HAVE
+NOTHING OPEN.** It also answers the half of § 17 that nothing in this repository could: a probe can
+force a machine to 50 fps, and only telemetry can say whether a real player is down there.
+⚠️ **`FUTURE.md` § 0.4's advice at this point is to stop and play it for a week** rather than start
+Phase 4, because every argument in phases 4 through 17 is settled faster with real numbers than
+with opinions, and as of today there are numbers to point at.
+
+⚠️⚠️ **§ 115 IS THE MOST RECENT SESSION AND IT IS EIGHT FAULTS HE FOUND IN ONE BUILD PLUS
+PHASES 11 AND 12.** Read § 115.6 before touching any door in the front end: he commissioned the
+loadout feature, read the entry that shipped it, and could not find it. `NetSession.ProtocolVersion`
+is **21** (the match FORMAT, § 115.10), so both machines rebuild off the same branch.
+⚠️ **§ 115.10 also says what is NOT built**: LAST TSINELAS STANDING has rules, tests and a document
+and no match half, and it is deliberately absent from the lobby's RULES row until it has one.
+
+⚠️⚠️ **§ 113 IS THE CURRENT STATE OF THE CHARACTER MAKER AND § 112 IS HOW IT GOT ITS
+RIG.** § 113 is the pass 🧑 asked for on 2026-09-01: the clothes now hang off the ARM and LEG
+bones rather than off the torso, the screen is opaque, and the door to it is the fourth cell of
+the loadout tab bar instead of a chip on a colour strip. ⚠️ **§ 113.1 before authoring any
+garment**: a bottom is two tables now, a waistband and a leg, and a leg piece must be symmetric
+in `U` or it draws between the knees on one side.
+
+⚠️⚠️ **§ 112 IS THE ONE TO READ BEFORE TOUCHING THE CHARACTER MAKER. § 112.8 IS THE ONE TO READ
+BEFORE TRUSTING ANY RENDER OF IT, AND § 112.12 IS THE ONE TO READ BEFORE BELIEVING A DIAGNOSIS OF
+ONE**: every wearable was sampling the whole palette atlas because a primitive cube's UVs span 0
+to 1, and it looked so exactly like z-fighting that two passes of geometry work went into it before
+anybody asked where the blue in a wood-amber-cream beanie was coming from. The base rig is a new, naked, bald, faceless `.glb`
+(`tools/build_base_voxel.py`), the custom character now enters a match, and
+`NetSession.ProtocolVersion` is **19**. ⚠️ **And `RosterBook.FindPersonArt("custom")` had answered
+null since the day it was written**, so the creator, its probe and all 87 cells of the wardrobe
+sheet were dressing `bayan` while every one of them looked green.
+
+✅ **The unplugged LAN run is DONE, confirmed by 🧑 on 2026-08-31.** This entry read "what has
+never been tested is every screen between the menu and the match with UGS unreachable", and it was
+carried forward as the one urgent item in the plan. **It has been tested. Stop reporting it as
+outstanding.** The nationals are in General Santos City and venue internet still cannot be assumed,
+so the requirement itself stands: a full four-player match must remain startable and completable on
+LAN with the internet physically unplugged, and **Phase 1 must not break it**. That is now a
+regression to protect rather than a gap to close.
+
+---
+
+## 88 · Accounts and identity ⚠️ IN PROGRESS 2026-08-31
+
+Phase 1 of `FUTURE.md` was explicitly commissioned. Its preflight was stale in an important way:
+Authentication was not unused. `NetIdentity` already signed in anonymously at boot, cached the
+attempt, persisted the UGS session, and degraded to a local token for LAN. `UgsCheck` also exercised
+that path. The account layer extends that proven seam rather than creating a second sign-in owner.
+
+**Built in this phase:** `PlayerAccount` owns the player id, display name, discriminator, bio,
+country, pronouns and signed-in/local state and raises `Changed`; the splash awaits its bounded
+boot barrier before activating the menu; username/password linking uses
+`AddUsernamePasswordAsync` and asserts the anonymous PlayerId did not change; username sign-in can
+move the account to a second device; deletion clears Cloud Save before deleting Authentication;
+the first score queues the upgrade offer for the next menu; and offline tournament guests get an
+ephemeral local identity without overwriting the machine owner's account.
+
+**Database shape:** Authentication owns credentials and the stable id. The server-side Cloud Code
+script `ugs/cloud-code/player-account.js` validates profile writes and stores one protected
+`accountProfile` record in Cloud Save. The client never writes Cloud Save directly. Local JSON is
+the offline cache and remote valid fields win when the endpoint answers.
+
+**Lobby identity:** every local hello, identify message and beacon reads `PlayerAccount.LobbyName`
+rather than `Settings.PlayerName`; the host accepts only a core-validated `display#1234` handle and
+allocates a deterministic fallback tag for an invalid claim.
+
+**Done looks like:** the Phase 1 acceptance list in `FUTURE.md` § 1 plus a deployed
+`player-account` Cloud Code endpoint, Core, EditMode and focused PlayMode green, an unplugged LAN
+run, a clean Windows player on the Desktop, committed and pushed.
+
+### 88.1 · Three things the first pass got wrong, found by running its own tests
+
+The account work above was written but never committed and never run: the session that wrote it
+went looking for a Unity package-manager fault instead. There was none. `Temp/UnityLockfile` was
+stale, which is § 7 of `CLAUDE.md` verbatim, and after removing it the project compiles and the
+suites run. **Nothing was wrong with the editor, the `Library`, or the machine's UPM cache.**
+`AppData\Local\Unity\cache\upm.accounts-backup` is that session's moved-aside copy and can be
+deleted; Unity rebuilt `upm` beside it.
+
+Running the suites then found three real defects, all in the new code.
+
+**88.1a · Two name lengths, and the shorter one is on the wire.** `AccountRules.DisplayNameMax`
+was written as 16 while `Balance.PlayerNameMax` has been 14. That is not a cosmetic
+disagreement. `LanBeacon` truncates the name it broadcasts to the `Balance` value, the settings
+field sets `characterLimit` from it, and `Hud`'s row width was measured against that many "W"s
+(`Hud.cs` ~2895). A 16-character account name therefore renders past a measured layout and
+arrives over LAN clipped, so the name in the profile and the name on the scoreboard stop being
+the same string. `DisplayNameMax` is now `= Balance.PlayerNameMax`, one constant, and
+`TheAccountNameLimitIsTheOneTheWireAndTheHudUse` fails if they are ever split again.
+⚠️ The Cloud Code validator had the same 16 hardcoded, and the server is the authority: it would
+have stored a 15-character name that every client then silently clipped. It reads 14 now, with a
+comment saying it is the one place the number is written twice.
+
+**88.1b · Every LAN peer was renamed `Player#tag`, which is the nationals case.** Arrival kept
+the claimed name only when it was already a full `name#1234` handle and rewrote everything else to
+`Player#tag`. Everything else is: every LAN peer, every build older than this branch, and every
+client whose profile has not finished loading. Four machines joining off the beacon in a hall
+would have rendered as four rows nobody could tell apart, in the one venue where that matters
+most. `AccountRules.ArrivalHandle` now keeps a usable claimed name and allocates the tag from the
+durable token, and falls back to `Player` only for a name that cannot be shown at all. It sits in
+the core rather than in `LobbySession` because it is a rule, per `FUTURE.md` § 0.5 rule 3.
+
+**88.1c · ✅ CLOSED 2026-08-30 BY § 90.1, WHICH ALSO CORRECTS THE FIX THIS ENTRY PRESCRIBES.**
+⚠️ The last paragraph below says to have the host ask the endpoint whether a player id owns a
+handle. **That does not work on its own**: the player id arrives in the same message as the
+handle, from the same peer, so an impostor claims both and the endpoint truthfully says yes. The
+missing half is proof that the peer IS the account it names. § 90.1 has what shipped. The
+statement of the problem below is still exactly right and is kept for it.
+
+**The problem, as first written:** ⚠️⚠️ **THE IMPERSONATION GUARD DOES NOT EXIST YET, AND THE
+TEST SAID IT DID.** The
+brief's reason for routing the lobby name through the account was that *"the first thing anybody
+does with a new account system is impersonate somebody"*. The rule written for it was backwards.
+It rewrote a bare `Maria Clara` on the theory that it was forging `Maria Clara#4417`, while
+admitting a claimed `Maria Clara#4417` **verbatim** in the assertion directly above it. So it
+punished the honest case and waved the actual attack through, and
+`LobbyAcceptsOnlyCanonicalAccountHandles` asserted that as correct behaviour.
+
+**A peer-hosted lobby cannot close this on its own.** The tag of a real account is allocated by
+UGS Player Names, so the host cannot recompute it from the token and cannot tell a genuine
+`Maria Clara#4417` from a claimed one. Closing it needs the host to ask the `player-account`
+endpoint whether this player id owns this handle, cache the answer, and **fall through to the
+claim on LAN or when the endpoint is unreachable**, because § 0.5 rule 7 says a LAN match may
+never sit behind a login. That is the next piece of work on this phase and it is not built.
+The test is now `LobbyKeepsAUsableNameAndAlwaysTagsIt` and asserts only what is true today.
+
+**88.1d · The splash could wait forever on a service that answers slowly rather than not at
+all.** The splash holds the menu until `PlayerAccount.InitializeAsync` completes, and the splash's
+own `MaxWait` only logs a warning: its loop has no upper bound. The boot budget raced **only the
+sign-in**, leaving `RefreshFromAuthenticationAsync` unbounded behind it, and that awaits Player
+Names and then Cloud Save. A service that accepts the connection and then never answers is exactly
+what venue Wi-Fi behind a captive portal does, which is the network the nationals will be played
+on, and it is the one failure a try/catch cannot see. The budget now covers the whole remote path.
+⚠️ A late answer is not thrown away: the work keeps running and applies itself through `Changed`,
+so a slow connection costs a few seconds of showing the local name rather than the account.
+
+**88.1e · A tournament guest overwrote the machine owner's account.** `SignInAsGuest` documents
+that it does not replace the owner's account, and `Persist` broke that promise: every write goes
+through `Apply`, so a guest editing a profile wrote the guest id, name, tag and bio straight over
+the owner's saved account. That is somebody handing their laptop over for one match at an offline
+tournament and getting it back with a different account on it. `Persist` now returns early while a
+guest is active, a guest is refused `DeleteAsync` outright (it clears the settings file, and the
+settings file is still the owner's), and a late remote answer parks itself as what `LeaveGuest`
+returns to rather than applying over the guest mid-session.
+
+**88.1f · The upgrade offer wrote `settings.json` on every point scored.** `MarkWorthKeeping` is
+reached from `MatchDirector.AddScore`, which is every point, and passive defence pays +10 a second
+while the lata stands. It set the pending flag and saved without first checking whether the flag
+was already set, so a round reserialised the settings file about once a second per defender, on
+the thread the match steps on. The decision is now `AccountRules.ShouldQueueUpgradeOffer` in the
+core, with the already-pending term as a named argument and three tests on it, so it is one write
+per session.
+
+**Verified:** Core 135/135 (`dotnet test`), from 69 before the phase. EditMode 236/236, read from
+`Logs/tests.xml` rather than the exit code.
+
+### 88.2 · The UGS project belongs to somebody else, and the service half is blocked on that
+
+🧑, 2026-08-31, shown the dashboard steps: *"can we js connect it to my acct instead bcz this
+isnt mine"*.
+
+**The project is `090f4720-e3f8-466f-b8f5-7679c6b41fb1` under org `paulandreirecio22`.** The Unity
+Hub on this machine is signed in as `M4tyuuu` / `matthewtlabrador@gmail.com`, whose own org is
+`matthewtlabrador`. So the editor is his and the cloud project is not, which is why he cannot make
+the service account that Cloud Code deployment needs.
+
+⚠️ **THE LINK IS TWO LINES AND NO CODE.** `cloudProjectId` and `organizationId` in
+`ProjectSettings/ProjectSettings.asset`, lines 738 and 742. Nothing in `Assets/`,
+`Packages/`, `ugs/` or `docs/` holds a copy; `PlayerAccount.CallCloudAsync` reads
+`Application.cloudProjectId` at runtime and follows the file. `tools/relink_ugs_project.sh` does
+the swap, refuses an id that is not a UUID, and prints what it cannot prove.
+
+**Three things to know before relinking, none of which are reasons not to:**
+
+1. ⚠️ **A UGS PlayerId is scoped to its project, so this is a reset rather than a transfer.** Every
+   existing anonymous id dies. **That costs nothing today and will not stay that way**: once
+   Phase 2 gives people profiles, stats and match history, the same move throws all of it away.
+   **Now is the cheapest this will ever be.**
+2. ⚠️⚠️ **EVERY MACHINE MUST BE ON THE SAME PROJECT OR ONLINE PLAY SILENTLY STOPS WORKING BETWEEN
+   THEM.** Two builds on different UGS projects resolve a join code in different namespaces, so
+   the room is simply not there. It does not read as a misconfiguration, it reads as an empty
+   lobby. His second laptop and any teammate's build must be rebuilt off the same branch.
+   **LAN discovery is unaffected**, because `LanBeacon` never touches UGS.
+3. The new project needs Authentication (anonymous **and** username/password), Relay, Lobby,
+   Cloud Save and Cloud Code enabled. Relay and Lobby are already proven on the old project, so
+   the shapes are known good; only the toggles move.
+
+⚠️⚠️ **AND `UgsCheck` CANNOT VERIFY ANY OF THIS HEADLESSLY, WHICH COST A RUN TO LEARN.**
+`UnityServices.InitializeAsync` refuses outside Play Mode with *"Unity Services can only be
+initialized in Play Mode"*, so a batchmode `UgsCheck.Run` reports step 2 and then FAILS step 3 for
+a reason that has nothing to do with the project. Batchmode also has no Hub session token, so it
+cannot see the signed-in account either, which `UgsCheck`'s own step 1 comment already says.
+**The real check is the menu item `Tumbang Preso > Check UGS Wiring` from an open editor.**
+⚠️ Also do not pass `-quit` alongside `-executeMethod UgsCheck.Run`: it polls from
+`EditorApplication.update` and exits itself, so `-quit` kills it before one UGS call is pumped and
+the log just stops after the compile.
+
+**✅ RELINKED 2026-08-31.** The project is now
+**`dcf0831e-a5f4-43b4-832e-b687f13a3569`** under org **`matthewtlabrador`**, genesis org
+`18968483660152`, created by 🧑 on his own account. `ProjectSettings.asset` lines 738 and 742 are
+the whole change and `git diff --numstat` on that file reads `2 2`.
+
+**Verified so far:** `OnlineSignInProbe` passes 2/2 against the new project, including
+`ALinkedBuildNeverSettlesOnNotLinked`, so the build resolves the new id rather than reporting
+itself unlinked. ⚠️ **That is not proof the services are on.** The probe asserts the boot attempt
+happens and settles; it passes offline too. Relay and Lobby are only provable from
+`Tumbang Preso > Check UGS Wiring` in an open editor.
+
+⚠️⚠️ **PAUL'S BUILD CANNOT SEE THIS ONE ONLINE UNTIL HE REBUILDS OFF THIS BRANCH.** Different UGS
+project means a join code resolves in a different namespace, so the room is not there and it reads
+as an empty lobby rather than as an error. **LAN is unaffected.** This is the first thing to check
+if anybody reports online play "broken" after pulling.
+
+⚠️ **COPPA on the new project reads "NOT primarily targeting children" and must stay that way.**
+Marking it child-directed disables username/password auth and restricts Cloud Save, which is
+exactly the account layer § 88 just built.
+
+### 88.3 · What the new project actually needed, which was one click and not five
+
+⚠️⚠️ **RELAY, LOBBY AND CLOUD SAVE HAVE NO ENABLE TOGGLE ANY MORE. THEY AUTO-PROVISION ON FIRST
+USE.** Four of the five "services to switch on" written above did not exist as switches. Their
+dashboard pages are documentation with no enable button, and a fresh project answers Relay and
+Lobby calls immediately. Time was spent hunting toggles that were never there.
+
+⚠️ **AND ANONYMOUS SIGN-IN IS NOT AN IDENTITY PROVIDER.** The Identity Providers page reading
+*"You have no identity providers"* is the correct healthy state for a project whose anonymous
+sign-in works, and it was briefly read as a misconfiguration. **The one thing that genuinely had to
+be added was Username & Password**, which IS a provider, and which the account upgrade path needs.
+It is added and Enabled as of 2026-08-31.
+
+✅ **Proven live on `dcf0831e-a5f4-43b4-832e-b687f13a3569`**, `UgsServicesProbe` 3/3:
+anonymous sign-in returned `qmSg3PKweGRSWqRcd9g0Bo80UKH4`, Relay allocated join code `WGF96G` for
+a host of three, and a private lobby was created and deleted.
+
+**`Assets/TumbangPreso/Tests/PlayMode/UgsServicesProbe.cs` is new and is the answer to the
+`UgsCheck` problem in § 88.2.** Play Mode is the one context allowed to initialise UGS, so the
+three calls that a batch `UgsCheck` cannot make are made from there instead. ⚠️ It is
+`[Category("Ugs")]` and excluded from the default PlayMode run, for the same reason `WallClock`
+excludes `AiDiagnosticProbe`: it talks to a live service, needs a network and spends free-tier
+quota. Run it on purpose after a relink:
+
+```
+Unity.exe -batchmode -runTests -projectPath . -testPlatform PlayMode           -testCategory "Ugs" -testResults Logs/ugsprobe.xml -logFile Logs/ugsprobe.log
+```
+
+⚠️ **`OnlineSignInProbe` passing is not the same claim.** It asserts the boot attempt happens and
+settles, which is true offline and true against a project with every service off. It answers "did
+we try"; this answers "did the service say yes". Both are wanted.
+
+### 88.4 · ✅ The service half is done. Phase 1 is complete.
+
+Service account `tumbangpreso-deploy` exists, `ugs login` is stored locally, and
+`ugs deploy ugs/cloud-code` created **`player-account`**, which reports `script is already
+active` on a publish attempt because deploy publishes it.
+
+✅ **`UgsServicesProbe` 4/4**, and the fourth is the one that matters: `TheAccountEndpointAnswersALoad`
+calls the live endpoint with a real player bearer token and gets `{"output":{"profile":""}}`.
+An empty profile is the correct answer for a player who has never saved one. That single test
+proves the deploy, the publish, the service-account roles and the client's auth all line up,
+which is every part of this that could be misconfigured.
+
+⚠️ **THE CLI NEEDS MORE THAN CLOUD CODE EDITOR AND CLOUD SAVE EDITOR, WHICH COST A ROUND TRIP.**
+With only those two, every command fails `403 Forbidden` on **`GetEnvironments`** rather than on
+the thing being asked for, because the CLI resolves the environment before it does anything else.
+The error names an endpoint nobody asked for, which is what makes it confusing. 🧑 resolved it by
+granting the service account everything. ⚠️ **If that is ever tightened, keep an environments read
+role**, or the CLI breaks again with an error that does not mention environments.
+
+❌ **SUPERSEDED 2026-08-30, AND THE PARAGRAPH BELOW IS KEPT BECAUSE ITS REASONING IS WHY.**
+The duplicate is gone: Phase 2 needed a THIRD copy of this request, so it moved into
+`Assets/TumbangPreso/Runtime/Net/CloudCode.cs`, which the game itself calls, and the probe now
+calls that. A shared helper the shipping code uses is not the seam this paragraph was refusing,
+and `CareerAndCloudCodeTests.EveryCloudCodeRequestGoesThroughTheOneHelper` fails if a fourth is
+ever written by hand. § 89.5.
+
+⚠️ **`TheAccountEndpointAnswersALoad` DUPLICATES `PlayerAccount.CallCloudAsync` ON PURPOSE AND THE
+TWO MUST MOVE TOGETHER.** That method is private, and widening it so a test could reach it would
+put a seam in shipping code for one probe. The duplication is the lesser cost, but if the call
+shape drifts, **the probe passes while the game fails**, which is the worst outcome available.
+Prefer deleting the test over letting it rot. It probes with `load` rather than `save` or
+`delete` so it never writes a real profile or exercises the destructive path against a live
+project.
+
+✅ **PHASE 1 IS COMPLETE AS OF 2026-08-30.** The one thing that was never part of it, the
+impersonation gap in § 88.1c, is built and is § 90.1. ⚠️ Read § 90.1 rather than § 88.1c for
+how it works: the fix § 88.1c prescribed is not sufficient on its own and that entry now says so.
+
+⚠️ **AND THE UNPLUGGED LAN RUN IS NOT OUTSTANDING.** 🧑 confirmed on 2026-08-31 that it has been
+done. Several documents said otherwise and they are corrected in the same commit as this line.
+**The account layer is the thing most likely to regress it**, because a boot that waits on UGS is
+exactly what an unplugged venue produces, so re-run it after any change to `PlayerAccount`'s boot
+path. § 88.1d is the bound that protects it.
+
+---
+
+## 89 · The profile, the stats and the match history ⚠️ IN PROGRESS 2026-08-30
+
+Phase 2 of `FUTURE.md`, commissioned off its § 19.2 prompt. Phase 1 (§ 88) is under it, and the
+`player-account` endpoint was re-proved before any of this was planned, per that prompt's own
+VERIFY FIRST block: `ugs cloud-code scripts list` reports `player-account`, and the `Ugs` PlayMode
+category came back **4/4 with `total="4"`**, which is the check `FUTURE.md` § 0.5 rule 9 asks for
+rather than a green tick over an empty run.
+
+**What a match now produces.** The host counts one `MatchRecord` covering all four seats, mints it
+a `MatchId` at the whistle, broadcasts it to every peer, and each peer submits its own line to the
+`match-record` Cloud Code endpoint from its own authenticated session. The endpoint accumulates
+that player's `PlayerProfile` and stores the record in a 100-entry history. Nothing in the loop is
+per event: a Hero Strike match carrying nine hundred passive-defence ticks costs one call per
+player.
+
+**Where the code went**, per `FUTURE.md` § 0.5 rule 3:
+
+| Piece | Where |
+|---|---|
+| `MatchRecord`, `PlayerMatchStats`, `MatchRecordRules` | `Packages/com.tumbangpreso.core/Runtime/MatchRecord.cs` |
+| `PlayerProfile`, `CareerTotals`, `ProfileRules` | `Packages/com.tumbangpreso.core/Runtime/PlayerProfile.cs` |
+| Host-side counting | `Assets/TumbangPreso/Runtime/MatchStatsCollector.cs` |
+| Local cache, offline queue, submission | `Assets/TumbangPreso/Runtime/Net/CareerStore.cs` |
+| The one Cloud Code request | `Assets/TumbangPreso/Runtime/Net/CloudCode.cs` |
+| The server, and the authority | `ugs/cloud-code/match-record.js` |
+| The career page | `Assets/TumbangPreso/Runtime/UI/ProfileOverlay.cs` |
+| The end-of-match summary | `MatchResult.OnRecordReady` |
+
+⚠️ **No rate is ever stored.** Every rate on the profile is two counts divided at read time by
+`MatchRecordRules.Rate`. A stored rate cannot be re-derived after a balance change and cannot be
+summed across two seasons, and adding two seasons together is the first thing anybody does with a
+career page.
+
+⚠️ **Nothing in this phase awards XP, a level or a rank.** The fields are on the document from day
+one so no profile written now has to be migrated later, and Phase 4 and Phase 9 fill them.
+`PlayingAMatchAwardsNoXpAndNoRank` asserts it. The header draws neither: an empty rank badge on
+every account in the game teaches every player that the game has a rank.
+
+### 89.1 · "Retrievals under pressure" needed a threshold, and it is derived rather than picked
+
+`FUTURE.md` § 2.2 asks for retrievals and retrievals under pressure, and names only the reason
+(`VISION.md` § 0: the tension is the retrieval). It does not say how close is close.
+
+`MatchRecordRules.PressureRadius` is **2.30 m** and every part of it is measured.
+`Balance.LungeSpeed²/(2·Balance.Friction)` is the distance the taya's dash covers, which is
+7.746²/(2·30) = **1.00 m**, because `CLAUDE.md` § 4 requires every impulse to be written as a
+distance and solved for a speed; `Balance.LungeTagRadius` is the **1.30 m** the sweep then reaches.
+So the stat asks the only question worth asking of a pickup: could the defender have taken you for
+it, right then, without moving first.
+
+⚠️ **It lives in `MatchRecordRules`, not in `Balance`.** `Balance` holds numbers the MATCH reads,
+and nothing in the match reads this one. A stat threshold sitting among them is the next reader's
+excuse to make gameplay depend on it. `ThePressureRadiusIsTheTayasStandingLungeReach` fails if
+anybody replaces the arithmetic with a literal.
+
+⚠️ **Only your own tsinelas counts as a retrieval**, which is the line `Carrier.NotifyHolding`
+already draws for the hero economy. Picking up somebody else's is a denial play and a good one,
+but it is not the run the game is built around and it carries none of the same risk.
+
+⚠️ **The per-tsinelas record is keyed on `Slipper.SeatOfOrigin`, never on `OwnerSlot`**, which is
+§ 78.1's fault one object further on. `OwnerSlot` is state the game rewrites every round and
+`SliceRunner.EquipOwnedSlippers` sets the taya's to -1, so a record read off it would have no
+slipper for whichever seat was defending, and a per-tsinelas win rate would under-count the
+taya's shoe forever. The scene is searched once per match rather than once per seat.
+⚠️ `MatchBootstrap`, the headless probe path, never assigns `SeatOfOrigin`, so a probe match
+records an empty slipper id. That is correct rather than a gap: a probe has no player whose
+record it could belong to, and `ProfileRules.Apply` skips an empty id instead of inventing one.
+
+### 89.2 · "Longest survival as last attacker" is an interpretation, because nothing is eliminated
+
+`FUTURE.md` § 2.2 asks for *"longest survival as last attacker"*. That is a stat from a game where
+players go out. **This game eliminates nobody.** A tag costs a teleport, a stagger and the whole
+trip again, and the round carries on with all four.
+
+The reading that survives contact with the rules is **the last of the three attackers not yet
+caught this round**: while you are the only one the taya has not taken, you are the only one they
+can still take. `MatchStatsCollector` tracks it off `RoundDirector.Tagged`, opens the clock when
+exactly one attacker is untagged, and closes it when that one is tagged or the round ends.
+
+**This is written down because it is a decision rather than a derivation**, and the next person to
+read § 2.2 will reach for elimination and find none. If it is the wrong reading, the fix is a
+different rule here, not a new event in the match.
+
+### 89.3 · ⚠️⚠️ EACH PEER SUBMITS ITS OWN LINE, WHICH DEPARTS FROM THE LETTER OF § 19.2
+
+`FUTURE.md` § 2.3 says *"the host writes the record and that is a known hole, not an oversight"*,
+and § 19.2's "Done when" says the whole match costs **one endpoint call**. The obvious build is the
+host calling the endpoint once and the endpoint writing all four career documents. **That is not
+what shipped**, per § 0.5 rule 11, and this is the argument.
+
+The hole § 2.3 names is that **the host authors the numbers**. It still does: every count in the
+record comes from `MatchStatsCollector` on one machine, and a modified host can lie about all of
+them. Phase 8 is what closes that, and nothing here claims to.
+
+Letting the host also **write** three other people's career documents is a second hole and a much
+worse one. It is the difference between spoofing a match you played in and editing a stranger's
+account: a host who never plays another game with you could still rewrite your career forever,
+because the endpoint would have to accept any player id its caller named.
+
+So the record is broadcast to every peer, and **each peer submits only its own line, from its own
+authenticated session**. `match-record.js` refuses a record that `context.playerId` is not in, and
+writes only that player's documents. It costs **one call per player per match** instead of one per
+match, which still satisfies what § 0.3 and § 19.2 step 3 are actually protecting: never one call
+per event.
+
+⚠️ **A second thing falls out of it, and is the reason not to reverse this casually.** An offline
+or LAN-only peer has no UGS id, only the local token `GameSettings.MintToken` mints. Under the
+host-writes-everybody design the server would create a career document keyed by that token which
+nothing will ever read. Under this one it simply does not call: it keeps a local career and queues.
+
+### 89.4 · What § 2.1 asks for that is not on the screen, and which phase owns each
+
+The career page draws the header card, the career strip, the mode tabs, the stat blocks, the paged
+match history and the match detail. Four things in § 2.1 are deliberately absent, and each would be
+an empty box today:
+
+| § 2.1 item | Why not now |
+|---|---|
+| Avatar | `FUTURE.md` § 1.4 is still an open argument (an in-game avatar builder rather than a photo upload) and 🧑 has not answered it. There is nothing to draw. |
+| Rank badge, peak rank | Phase 9. The fields are on the document; drawing an empty badge teaches every player the game has a rank. |
+| Achievement and highlight shelf | Phase 10 owns achievements. |
+| Compare with a friend | Phase 6 owns friends. There is nobody to compare against. |
+
+⚠️ **Level and border are a different case and are not in that table**, because the FIELD shipped
+and only the awarding did not. Phase 4 fills it with no migration.
+
+### 89.5 · The protocol is 15, and § 88.4's probe duplication is resolved
+
+⚠️ **`NetSession.ProtocolVersion` is 15**, for the one new message `MatchRecord`
+(`MatchRpc.BroadcastMatchRecord`), which carries a whole finished match to every peer. A peer
+without the handler plays the match correctly and then silently gets no end-of-match summary and no
+career entry for a game it played, which is exactly the quiet kind of wrong this number exists to
+turn into a refusal. **Both machines rebuild off this branch.**
+⚠️⚠️ **AND THE MESSAGE IS BIGGER THAN A PACKET, WHICH THE DEFAULT DELIVERY WOULD NOT HAVE TOLD
+ANYBODY.** Every other named message in `MatchRpc` is tens of bytes and takes the default
+`ReliableSequenced`. A `MatchRecord` is four players times twenty-six fields of JSON and
+**measures 2312 bytes** at full length;
+`ReliableSequenced` cannot split a message, so an oversized one is refused by the transport,
+the host logs a line nobody reads, and every client silently gets no summary and no career
+entry, which is precisely the failure the version bump above exists to make impossible. It goes
+`ReliableFragmentedSequenced`. ⚠️ Do not size this against a 1500-byte MTU:
+`MatchRpc.PoseDelivery`'s note records that they play over Hamachi, a VPN with a smaller MTU and
+real loss, and that the relay path *"was not better designed, it was luckier"*.
+`AFullMatchRecordNeedsMoreThanOnePacketAndIsSentFragmented` measures the record and fails if
+somebody puts the delivery back.
+
+⚠️ `ChatAndLobbyChromeTests.TheProtocolCarriesEveryRosterBump` caught the bump on the first
+EditMode run of this work, which is the whole reason that tripwire exists; it is re-armed at 15.
+
+⚠️ **§ 88.4 said the probe's hand-written copy of `PlayerAccount.CallCloudAsync` had to stay a
+copy, and that is no longer true.** It kept the duplicate because the method was private and
+widening it *"would put a seam in shipping code for one probe"*, while naming the cost outright:
+*"if the call shape drifts, the probe passes while the game fails, which is the worst outcome
+available."* Phase 2 needed a THIRD copy for the career endpoint, which is the point at which two
+copies with a note becomes the failure the note was warning about. The request now lives in
+`Net.CloudCode`; `PlayerAccount` calls it and so does the probe. A shared helper the game uses is
+not a seam, and the drift § 88.4 feared cannot happen. `TheCareerEndpointAnswersALoad` is the new
+`Ugs` test, and it is the only thing that catches a script that was written but never deployed,
+because `CareerStore` is built to keep a local career quietly when the service is unreachable.
+
+### 89.6 · `ProfileRules` is written twice, in C# and in JavaScript
+
+`ugs/cloud-code/match-record.js` is `ProfileRules.cs` and `MatchRecordRules.cs` again. Cloud Code
+cannot import the C#, and the C# cannot run in Cloud Code, so this is the same trade
+`player-account.js` records about `DisplayNameMax`, applied to a whole file instead of a constant.
+
+- **The C# is the specification** and carries the tests. When the two disagree, the JS is the bug.
+- **The symptom a player sees is a career that changes the moment they come back online**, because
+  `CareerStore` is an optimistic local cache and the server's profile REPLACES it whole on the next
+  answer. There is no merge and there must not be: two counters that both claim to know how many
+  matches you have played cannot be reconciled without the records that produced them, and the
+  records are on the server.
+- **If a rule changes in `ProfileRules`, it changes in the JS in the same commit.** Every function
+  in the script names the C# member it mirrors, so the two can be diffed by eye.
+
+### 89.7 · The offline path, and the LAN run it must not regress
+
+A match played with the internet unplugged updates the local profile, lands in the local history,
+and joins a queue capped at 20 matches. `CareerStore.FlushAsync` sends it on the next successful
+sign-in, oldest first, and **stops at the first failure** rather than firing nineteen more requests
+at a service that is not there.
+
+⚠️ **The queue is written BEFORE the call is tried, not after it fails.** A process killed
+mid-request is the case a queue exists for, and one only written in the failure branch has already
+lost the record by then. A duplicate submission is free: `ProfileRules.Apply` refuses a match id it
+has already counted, on the server as well as on the client.
+
+⚠️⚠️ **§ 88's warning applies to this phase too, and it is the thing to re-test.** The unplugged
+LAN run is DONE and is a regression to protect, not an open task. Nothing in this phase sits on the
+boot path, but `CareerStore` now writes `Application.persistentDataPath/career.json` and subscribes
+to `PlayerAccount.Changed`, so **re-run the unplugged four-player match after this lands**, per
+`FUTURE.md` § 0.5 rule 7.
+
+⚠️ **A career cached for a different account is discarded rather than merged.** Two people share
+this machine at a tournament; merging would hand somebody else's knockdowns to whoever signs in
+next, which is worse than losing an offline queue. `OwnerId` is empty on a fresh install and adopts
+the first account to write, so somebody who has never signed in keeps everything they played
+offline.
+
+---
+
+### 89.8 · Verified
+
+- **Core 164/164** (`dotnet test`), from 135 before this phase. 29 of the new tests are the
+  record and profile rules: placements, clutch, idempotency, streaks, comeback denominators,
+  history trimming, the sample-size gate and the pressure radius.
+- **EditMode 236/236 -> 241/241**, read from `Logs/tests.xml` rather than from the exit code.
+  ⚠️ The first run was 235/236: `TheProtocolCarriesEveryRosterBump` caught the `MatchRecord`
+  message, which is the tripwire working. Re-armed at 15.
+- **All five editor checks OK in one launch** (`Checks.RunAll`), and a clean Windows player
+  on the Desktop. `MapGeometryCheck` prints per-prop FAIL lines for Eskinita dressing that
+  it does not gate on; the run's own verdict is OK and nothing in this phase touches a scene.
+- **`CareerAndCloudCodeTests` is new and reads source as text**, because both faults it looks
+  for are invisible to every other test here: a second hand-written Cloud Code request still
+  works until it drifts, and nothing on this machine compiles the JavaScript. It gates the
+  one-helper rule and pins `PLAYER_COUNT`, `HISTORY_LIMIT`, `APPLIED_ID_MEMORY`,
+  `DISPLAY_NAME_MAX` and `DISPLAY_NAME_MIN` in the two scripts to the core constants. **That
+  makes § 88.1a a gate rather than a paragraph** asking somebody to remember.
+- **`Ugs` category 5/5.** `player-account` answered `{"profile":""}` and `match-record`
+  answered `{"applied":false,"profile":""}`, which is the correct answer for a player who has
+  never finished a match.
+  ⚠️⚠️ **AND THAT PAIR OF ANSWERS TURNED OUT TO PROVE LESS THAN IT READS AS PROVING. § 90.5.**
+  Both probe with `load`, which is the branch an ABSENT action falls through to, and Cloud Code
+  was stripping the action because the scripts declared no parameters. `submit` had therefore
+  never run and no career had ever reached the server, with every probe green throughout. Fixed
+  and redeployed 2026-08-30; a parser now fails if a script reads a parameter it does not declare. Both went through `Net.CloudCode`, so the probe now proves the
+  transport the game uses.
+- **`BotBehaviourProbe` 3/3**, whole matches in both modes on both maps, which is what exercises
+  the throw, retrieval, shove and lunge hooks in `Carrier` and `CombatVerbs`.
+
+⚠️ **STILL TO DO ON THIS PHASE, AND IT IS NOT CODE:** the unplugged four-player LAN run, per
+§ 89.7. It is a regression to protect, not an open task, and this is the phase most able to
+break it. **§ 90.4 is what is automated in its place, and what to check when the four machines
+are on the table.** It applies to § 90 as well as to this phase: the protocol is 16 now, so every
+machine has to be rebuilt before the run means anything.
+
+---
+
+### 89.9 · Two things found by reviewing this phase rather than by running it
+
+Both were caught before the branch was played, and both are the kind that pass every test and
+then fail in front of people.
+
+**The record broadcast would have been silently refused by the transport.** Covered in § 89.5:
+it is 2312 bytes, `ReliableSequenced` cannot split a message, and the whole feature would have
+worked perfectly in single player and done nothing at all online. The measurement is now a test.
+
+**The mastery list overlapped the stat block on the career page.** Laid out at 660 by 120 in the
+bottom-left of the panel, its top edge sat at 188 px from the floor while the last stat row's
+box reached down to 156, and its own bottom ran into the REFRESH and CLOSE row. Eighteen
+characters plus six heroes is a grid rather than a footnote, so it moved behind a CHARACTERS
+button into its own panel, the same shape the match detail already uses. ⚠️ It is also only
+rebuilt while that panel is open: a string for eighteen characters rebuilt on every `Changed`
+from a screen nobody is looking at is the shape `Hud`'s per-frame rebuild took an eighth of the
+probe's frames with.
+
+⚠️ **And the stat block had 14 slots for a 16-row list**, so the two rows appended after the
+fact (average time to first throw, distance per round) fell off the end silently, which is
+exactly the pair nobody would notice missing. They are in the list proper now and a
+`Debug.Assert` fails if the block is ever smaller than what it is asked to write.
+
+---
+
+## 90 · The impersonation guard, and telemetry ⚠️ 2026-08-30
+
+Two things in one branch because they share a wire bump and a Cloud Code deploy: § 88.1c, which
+was the last open item on Phase 1, and Phase 3 of `FUTURE.md`, which § 3 says to do alongside
+Phase 2 rather than after it.
+
+⚠️ **`NetSession.ProtocolVersion` is 16.** Both machines rebuild off this branch or they refuse
+each other at approval, by design. § 90.1 is why.
+
+⚠️⚠️ **READ § 90.5 FIRST IF YOU TOUCH ANY CLOUD CODE SCRIPT.** Deploying this phase's third
+script found that Cloud Code had been stripping every parameter the scripts did not declare, so
+`player-account`'s save and delete and `match-record`'s submit had **never once run** against the
+live project, with every probe green throughout. Fixed and redeployed in this branch.
+
+---
+
+### 90.1 · ✅ The impersonation guard is built. § 88.1c is closed.
+
+§ 88.1c stated the problem and the reason it was blocked: *"A peer-hosted lobby cannot close this
+on its own. The tag of a real account is allocated by UGS Player Names, so the host cannot
+recompute it from the token and cannot tell a genuine `Maria Clara#4417` from a claimed one."*
+
+**⚠️⚠️ THE FIX § 88.1c PRESCRIBED DOES NOT WORK ON ITS OWN, AND THIS IS THE CORRECTION.** That
+entry says to have *"the host ask the `player-account` endpoint whether this player id owns this
+handle"*. The player id in that sentence arrives in the same message as the handle, from the same
+peer, and a peer that lies about one lies about both. An impostor claiming `Maria Clara#4417`
+simply also claims Maria's player id, the endpoint truthfully answers *yes, that handle belongs to
+that id*, and the guard waves the attack through exactly as the test in § 88.1c did. The missing
+half is not a lookup, it is **proof that the peer is the account it names**.
+
+**What shipped, in three parts.**
+
+**1. The tag is derived, not allocated.** `AccountRules.DerivedTag(playerId)` is FNV-1a of the
+stable player id, and `player-account.js` computes the same digits server-side and **ignores
+whatever discriminator a client sends on a save**. That removes the blocker § 88.1c named: there
+is now one tag source in the game, the server can recompute it without storing anything, and a
+tag stops being a value a client can assert about itself.
+⚠️ **UGS Player Names is still written, for the display name only**, so the dashboard shows a
+person rather than a uuid. Its allocated tag is discarded, deliberately.
+⚠️ **A client that could write its own tag could write somebody else's and then attest to it**,
+which is why the server-side derivation is load-bearing rather than tidy.
+
+**2. A proof, minted by the owner and checked by the host.** The peer calls
+`player-account` with `attest` from its own authenticated session; the endpoint stores a random
+short-lived value beside that account and answers with it plus the handle it will vouch for. The
+peer puts the value in its connection hello. The host calls `verify` with the claimed player id
+and that value, and the endpoint reads the OTHER player's stored proof with a service token and
+answers one boolean and one handle.
+⚠️ **The obvious alternative is to put the peer's own UGS access token in the hello and let the
+host check it.** That hands whoever is hosting the ability to act as that player against every
+service in the project, and in a peer-hosted game the host is a stranger. A proof writes nothing,
+names no other player, and expires in `AccountRules.HandleProofMinutes` (10).
+⚠️ **There is no signature and no hashing primitive involved.** Cloud Code's runtime does not
+offer one this script can rely on, so the proof is checked by reading it back out of Cloud Save.
+That is enough for what it has to do and it needs nothing but the API already in use.
+
+**3. A refused claim keeps its name and loses its tag.** `AccountRules.VerifiedArrivalHandle` is
+the rule. `Maria Clara#4417` that cannot be proved arrives as `Maria Clara#8812`, tagged from the
+durable token.
+⚠️⚠️ **DELETING THE NAME OUTRIGHT WOULD BE § 88.1b ALL OVER AGAIN**: four machines joining off
+the beacon in a hall rendering as four identical rows, in the one venue where telling the seats
+apart matters most. The display name is not the identity and never was; the tag is.
+
+**⚠️⚠️ AND NONE OF IT GATES A LAN MATCH, WHICH IS `FUTURE.md` § 0.5 RULE 7 AND IS NOT
+NEGOTIABLE.** Arrival resolves a usable name immediately with no service call; the check is fired
+afterwards and only on the relay paths, and `ApplyHandleCheck` upgrades or demotes the name when
+an answer lands. `HandleCheck` has **four** values and two of them resolve identically today:
+`NotAsked` is LAN and `Unreachable` is a venue behind a captive portal. They are separate on
+purpose, because one of them is a case somebody might one day want to refuse and collapsing them
+would take the unplugged hall down with it.
+
+**⚠️ AN UNREACHABLE ANSWER IS NEVER CACHED.** It describes the network for a moment rather than
+the player, and caching it would hold a whole lobby unverified for the rest of the session
+because one packet dropped while the first peer was arriving. `Owned` and `NotOwned` are cached
+per (player id, proof), so a reconnect and a re-identify cost nothing.
+
+**⚠️ THE ANSWER CACHE OUTLIVES THE SESSION IT WAS FILLED IN, AND THAT IS FINE ON PURPOSE.**
+`NetSession._handleChecks` is not cleared when a session stops, unlike `_helloByClient` beside it.
+An entry is keyed on (player id, proof) and a proof expires in ten minutes, so a stale entry can
+only ever be re-read by a peer presenting the same proof inside its own lifetime, and what it says
+was true when it was minted. It is a handful of short strings for the life of the process. If it
+is ever cleared for tidiness, clear it where `_helloByClient` is cleared and nowhere else: doing it
+per arrival would spend a service call on every reconnect inside the fast-reconnect window, which
+is the cost the cache exists to avoid.
+
+**⚠️ THE GUARD HANGS OFF BOTH ARRIVAL PATHS.** A peer reaches `LobbySession.Admit` through the
+approval hello **and** again through `MatchRpc.HandleIdentify`, and a check wired into only one of
+them is a check with a documented way around it.
+
+**What this does NOT fix, and saying so is the point.** The host still authors every number in a
+match record (`§ 89.3`), and a modified host can still lie about all of them. This is about who
+you are, not about what you scored. Phase 8 is the other one.
+
+**Where it lives:**
+
+| Piece | Where |
+|---|---|
+| `DerivedTag`, `OwnedHandle`, `OwnsHandle`, `HandleCheck`, `VerifiedArrivalHandle` | `Packages/com.tumbangpreso.core/Runtime/AccountRules.cs` |
+| `attest`, `verify`, server-side tag derivation | `ugs/cloud-code/player-account.js` |
+| `EnsureHandleProofAsync`, `VerifyHandleAsync` | `Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs` |
+| `PeerRecord.ClaimedName`, `ApplyHandleCheck` | `Assets/TumbangPreso/Runtime/Net/LobbySession.cs` |
+| The hello fields, `VerifyArrival`, the cache | `Assets/TumbangPreso/Runtime/Net/NetSession.cs` |
+| The two new `Identify` fields | `Assets/TumbangPreso/Runtime/Net/MatchRpc.cs` |
+
+### 90.2 · One thing the guard needed that Phase 1 had not built
+
+**⚠️ A SIGNED-IN PLAYER HAD NO STORED PROFILE, SO THERE WAS NOTHING TO ATTEST TO.**
+`player-account.js`'s `attest` derives the handle it vouches for from the STORED profile, because
+a handle accepted from the caller is a handle anybody can claim. Until this branch a profile was
+only written when somebody opened the account screen or attached a password, so an ordinary
+signed-in player had no stored profile, could mint no proof, and **every online lobby would have
+fallen through to the unverified path forever**, which looks exactly like a guard that works.
+`RefreshFromAuthenticationAsync` now writes the profile once, on the first boot that finds the
+cloud empty.
+
+⚠️ **A FAILED LOAD COUNTS AS "THE CLOUD HAS ONE".** An unreachable endpoint answers the same way
+an empty profile does, and writing on that branch would overwrite a real stored profile with
+whatever this machine had on disk the moment the network wobbled. Missing a first write costs one
+boot; the other way round costs an account.
+
+### 90.3 · Phase 3: telemetry, and the event-name contract
+
+`FUTURE.md` § 3 and its § 19.3 prompt. The prompt's VERIFY FIRST asks whether an analytics package
+is already present: **`com.unity.services.analytics` is not in the manifest and is not used
+anywhere.** `com.unity.modules.unityanalytics` in `Packages/manifest.json` is the legacy built-in
+module, not the UGS SDK, and nothing references `AnalyticsService`.
+
+**⚠️⚠️ IT DOES NOT USE UGS ANALYTICS, AND THAT IS A DECISION RATHER THAN AN OVERSIGHT.**
+`Net/CloudCode.cs`'s header already records why: *"this repository's generated PackageManager
+state cannot currently resolve an added package"*, which is the same reason the Cloud Code REST
+shape is written out by hand rather than taken from its SDK. On top of that, UGS Analytics custom
+events have to be declared in the dashboard before they are processed, which would make every new
+event in this contract a manual step somebody has to remember, on an account only 🧑 can open.
+Telemetry therefore goes through the transport that is already deployed, already proven by a
+probe, and already free: one more Cloud Code script.
+⚠️ **`FUTURE.md` § 0.3 lists UGS Analytics as the telemetry line and that row is now stale.**
+Corrected there in the same commit, per § 0.5 rule 2.
+
+**The contract. ⚠️⚠️ A RENAMED EVENT IS A BROKEN HISTORY.** Nothing errors when a name changes;
+a counter silently restarts at zero beside a year of data it can never be joined to again. These
+names are chosen once. `TelemetryEvents` holds them, `telemetry.js` refuses a name it does not
+know, and `CareerAndCloudCodeTests.TheTelemetryScriptKnowsExactlyTheEventsTheCoreCanSend` fails if
+the two lists ever differ, in content **or in order**.
+
+| Event | Raised | Carries |
+|---|---|---|
+| `first_launch` | `TelemetrySink.Awake`, once per install | nothing |
+| `first_sign_in` | the splash, when the account barrier settles | nothing |
+| `first_menu` | the splash, when the menu is handed over | nothing |
+| `first_queue` | the MULTIPLAYER screen | nothing |
+| `first_match_started` | round 1, on every peer | nothing |
+| `first_match_finished` | a record adopted, on every peer | nothing |
+| `session_start` | every launch | nothing |
+| `session_end` | quit | `seconds` |
+| `match_started` | round 1, every peer | `mode`, `map`, `seats`, `bots` |
+| `match_finished` | record adopted, every peer | `mode`, `map`, `rounds`, `seconds`, `placement` |
+| `match_left` | `SceneFlow.LeaveMatchToMainMenu` | `mode`, `round` (0 means not in a match) |
+| `pick` | record adopted, this seat only, humans only | `mode`, `character`, `slipper` |
+| `settings_snapshot` | boot, and when sign-in settles | `gpu`, `cores`, `ram_gb`, `screen_w`, `screen_h`, `online` |
+| `disconnect` | `NetSession.OnClientDisconnected` | `reason` as one of `local`, `dropped`, `version`, `full`, `replaced`, `identity`, `other` |
+| `match_frame_rate` | record adopted, every peer | `mode`, `map`, `band`, `fps_avg`, `fps_p50`, `fps_p5`, `fps_p1`, `frames`. § 90.7 |
+
+⚠️⚠️ **THE FUNNEL LIST IS ORDERED AND APPEND-ONLY, AND THE ORDER IS THE MEANING.** "How far did
+this player get" is an index comparison, so inserting a step in the middle silently rewrites what
+every already-stored funnel position is claiming: a player recorded at index 3 becomes a player
+who reached a step that did not exist when they played. Add to the END, or add a second funnel.
+This is `FUTURE.md` § 0.5 rule 5, which `Roster.Slippers` records for the wire, applied to a list
+that crosses time instead of a network.
+
+**⚠️ ONE BATCH PER SESSION, NEVER ONE CALL PER EVENT.** `FUTURE.md` § 0.3's only hard rule about
+Cloud Code, and telemetry is the feature most able to break it: a Hero Strike match carries nine
+hundred passive-defence ticks. `TelemetryRules.Fold` collapses identical events into a count in
+memory and the buffer is capped at 64 distinct shapes, past which counts on rows already in the
+buffer keep rising and only new shapes are dropped.
+⚠️ **There are three flush points and each SENDS AND CLEARS**, so nothing is counted twice: quit
+(the primary one), a finished match (so a crash afterwards does not cost the match numbers), and a
+new funnel step (bounded by construction, six per install, ever).
+⚠️ **The quit flush usually loses the race and that is accepted.** Unity tears the process down
+without waiting for a `Task`. Blocking quit on a network call would hang the game for seconds on
+bad venue Wi-Fi in exchange for a number; the match flush is what makes the trade survivable.
+⚠️ **A crash is measured as the ABSENCE of `session_end`**, which is why it is sent at all and
+why it is not worth more effort than that: `session_start` minus `session_end` is the crash rate
+§ 3 asks for, and neither half has to be perfect to be useful.
+
+**⚠️⚠️ NO PERSONALLY IDENTIFYING FIELD, EVER, ENFORCED TWICE.** `TelemetryRules` refuses a
+parameter whose NAME means a person (`name`, `email`, `player`, `account`, `handle`, `id`,
+`token`, `ip`, `device`, and nine more), and refuses any value that is not a short bucket label:
+free text is rejected outright rather than truncated, because a clipped label is a new value that
+will never join to the one it came from. `telemetry.js` applies the same rules again, because the
+client is the half somebody can edit.
+⚠️ **AND NO IDENTIFIER IS SENT AT ALL.** The endpoint keys everything on `context.playerId` from
+the authenticated session, which a client cannot set, so there is nothing in the payload to leak,
+to get wrong, or to have to strip later.
+
+**The opt-out.** `Settings > Share Anonymous Stats`, defaulting to ON, with the sentence
+*"Counts only: matches played, modes, maps, picks and frame rate. No names, no chat, nothing you
+type."* underneath it.
+⚠️⚠️ **TURNING IT OFF STOPS THE COUNTING, NOT ONLY THE SENDING.** An opt-out that gates the
+upload alone leaves a buffer a later version could decide to flush, which is the same thing as no
+opt-out. `TelemetrySink.Note` returns immediately when it is off, so nothing accumulates.
+⚠️ **It is a dropdown rather than a tick box**, and that is reuse rather than design: every tick
+box on that panel is a node `TscnImporter` owns and rebakes, so a row added to the scene by hand
+disappears. `BuildDropdownRow` is the built-in-code path three other rows already use.
+
+**Storage, and what is approximate.** Each player's counters and funnel timestamps go in that
+player's own protected Cloud Save document, which is **exact**. A project-wide rollup is kept in
+Cloud Save custom data so the funnel can be read at all.
+⚠️⚠️ **THE ROLLUP IS APPROXIMATE AND SAYING SO IS THE POINT.** Cloud Save has no atomic
+increment, so two sessions submitting in the same instant can lose one update. At four to eight
+concurrent players that is a rounding error against numbers whose job is to say "most people stop
+here"; at a size where it would matter, this is the wrong storage and the answer is a real
+analytics sink rather than a lock. **Any number that has to be defended is recomputed from the
+per-player documents.**
+⚠️ **A failed rollup never fails the submit.** The per-player write has already landed and is the
+exact copy; failing would make the client retry a batch it already delivered.
+⚠️ **A rollup this Cloud Save module cannot reach degrades to per-player only** rather than
+erroring, and `report` says so. Read it with the `Ugs` probe, or by calling the endpoint with
+`{"action":"report"}`.
+
+**Two things `FUTURE.md` § 3 asks for that are not here, per § 0.5 rule 11:**
+
+- **Queue times by rating band.** There is no matchmaking queue and no rating; Phase 7 and Phase 9
+  own both. `first_queue` is the honest substitute for the funnel step: the first time somebody
+  opens the MULTIPLAYER screen, which is the first time they try to play with other people at all.
+  ⚠️ **Do not later read that step as a queue time.**
+- **FPS distribution.** ✅ **CLOSED 2026-08-30 by § 90.7**, which is the per-match sampler this
+  bullet asked for. The hardware key (`gpu`, `cores`, `ram_gb`, screen size) shipped with the rest
+  of Phase 3; the frame rate itself did not, because a percentile sampled over a whole session
+  including menus and a loading screen would describe nothing. **Phase 3 has nothing open.**
+
+### 90.4 · The unplugged LAN run, per § 89.7
+
+⚠️⚠️ **THE FOUR-MACHINE PHYSICAL RUN IS 🧑'S AND CANNOT BE DONE FROM HERE.** It needs four
+machines, four people and a cable pulled out of a router. § 89.7 asks for it to be re-run after
+Phase 2, and this branch touches the boot path again (§ 90.2 adds one first-boot profile write,
+and the guard adds a service call to the two RELAY start paths only).
+
+**What is automated instead, so the software half is a gate rather than a memory:**
+
+- `LanArrivalNeedsNoServiceAndNamesFourPeersApart` seats four peers with no service call at all
+  and asserts four distinct readable rows. That is § 88.1b's hall, as a test.
+- `AnUncheckedPeerKeepsTheNameItClaimed` covers both `NotAsked` and `Unreachable`.
+- `PrimeHandleProofAsync` is called from the two relay start paths and from nowhere else, so the
+  LAN, direct-address, Practice and Training paths spend no service call on the way to a match.
+- `TelemetrySink.Flush` returns immediately when there is no signed-in account, so an unplugged
+  session buffers and never calls.
+
+**⚠️ WHAT TO ACTUALLY CHECK WHEN THE FOUR MACHINES ARE ON THE TABLE**, beyond "does it play":
+every machine must be rebuilt off this branch, because `ProtocolVersion` is 16 and 15 refuses it
+at approval by design; and all four names in the lobby must read as four different people, which
+is the thing the guard could plausibly have broken.
+
+⚠️⚠️ **§ 94.5 EXTENDS BOTH LISTS WITH PHASE 4'S ROWS AND ADDS SIX MORE BY-HAND STEPS, AND ONE OF
+THEM IS THE ONE THAT HAS NEVER WORKED.** Step 4 is *reconnect, sign in, and watch the queue
+flush*: that is § 94.1, it had been broken since Phase 2, and this list is where it should have
+been caught. **Read § 94.5 with this section, not instead of it.**
+
+---
+
+### 90.5 · ⚠️⚠️ CLOUD CODE WAS STRIPPING EVERY PARAMETER, SO PHASE 1 AND PHASE 2 HAD ENDPOINTS THAT ONLY LOOKED DEPLOYED
+
+**Found by the live probe on 2026-08-30, not by reasoning.** The new telemetry test called the
+endpoint with `{"action":"report"}` and got back `{"accepted":0,"funnel":{},"refused":0,
+"rolled":false}`, which is the **submit** branch's payload. The script had never seen an action.
+
+**⚠️ CLOUD CODE DELIVERS ONLY THE PARAMETERS A SCRIPT DECLARES IN `module.exports.params`.**
+Everything else arrives as `undefined`. None of the three scripts declared any.
+
+**⚠️⚠️ WHAT THAT HAD ALREADY COST, AND IT IS NOT SMALL.** Every script dispatches on
+`params.action || "<default>"`, so a stripped action does not throw, does not log, and returns a
+well-formed answer from the wrong branch:
+
+| Call | What it did instead | Since |
+|---|---|---|
+| `player-account` `save` | fell to `load` and returned the stored profile. **No profile was ever written.** | Phase 1 |
+| `player-account` `delete` | fell to `load`. **Account deletion never cleared Cloud Save.** | Phase 1 |
+| `match-record` `submit` | fell to `load`, and the `record` parameter was stripped too. **No career has ever reached the server.** | Phase 2 |
+| `match-record` `history` | fell to `load`, so a paged history answered a profile. | Phase 2 |
+
+**⚠️⚠️ AND EVERY PROBE PASSED THROUGHOUT**, which is the part worth keeping. § 88.4 and § 89.8
+both record their endpoint tests as proof the deploy landed, and both are worded as *"it
+answered"*: `TheAccountEndpointAnswersALoad` probes with `load`, which IS the default branch, and
+`TheCareerEndpointAnswersALoad` does the same. A test that exercises the default branch cannot
+tell a delivered parameter from a stripped one. **The probes were not wrong about what they
+claimed; they claimed less than everyone read them as claiming.**
+
+**⚠️ THE PER-PLAYER CAREER ON DISK WAS NEVER AFFECTED.** `CareerStore` is an optimistic local
+cache by design (§ 89.6) and keeps a full local profile and history when the service is
+unreachable, so nothing a player has played is lost. What was lost is the server copy, which is
+what makes a career survive a reinstall or a second machine. Nobody would have noticed until
+somebody signed in somewhere else and found an empty career.
+
+**Fixed by declaring the parameters in all three scripts, redeployed 2026-08-30.**
+`CareerAndCloudCodeTests.EveryParameterACloudCodeScriptReadsIsDeclaredSoItIsNotStripped` parses
+each script and fails if it reads a `params.x` it does not declare, so the next action added with
+a new parameter cannot repeat this.
+
+⚠️ **`events` IS DECLARED AS `JSON` AND NOT AS `String`.** The telemetry batch is an array of
+objects and the client sends it as one; declared as a string it would arrive as text, and the
+script's first act is `Array.isArray`, which would answer false and accept nothing. Same silent
+shape, one type further on.
+
+**⚠️⚠️ AND THE FIX TOOK TWO MORE DEPLOYS, BECAUSE TWO OTHER THINGS SILENTLY DROP THE WHOLE
+DECLARATION.** Both were found by deploying and then reading `ugs cloud-code scripts get <name>`,
+which prints the parameters the SERVICE holds rather than the ones the file contains. **That
+command is the only way to see any of this.**
+
+1. **`events: "JSON"` dropped the entire block, not the one entry.** `params: []`, so `action`
+   went with it and every call fell back to the default branch again. `String` and `Numeric` are
+   the only two types these three scripts have proven against this project. The batch is
+   serialised by the client and read by `parseBatch`, exactly as `match-record` has always
+   carried its record.
+2. **⚠️⚠️ A TOP-LEVEL `function parameters(...)` IN THE FILE DROPPED IT TOO, AND THAT WAS THE
+   REAL ONE.** The script deployed, the code was complete and correct in the service, and the
+   parameter list came back empty. It was bisected against the live service one top-level
+   declaration at a time (the constants fine, `text` fine, `parameters` not), and **renaming it
+   to `columnsFrom` was the entire fix.** Do not name anything at the top level of a Cloud Code
+   script `parameters`. `CareerAndCloudCodeTests` fails on one now.
+
+⚠️ **THE COMMENT ABOVE THE BLOCK IS FINE, AND SO ARE THE ⚠️ GLYPHS IN IT.** Both were suspected
+and both were cleared by deploying without them. Worth knowing before somebody strips a comment
+looking for this again.
+
+⚠️ **WHEN ADDING AN ACTION, PROBE THE NEW BRANCH RATHER THAN THE DEFAULT ONE.** That is the
+lesson this cost, and it is why `TheAccountEndpointRefusesAHandleProofItNeverMinted` asserts a
+specific `"owned":false` rather than that something came back: the assertion has to be a string
+only the intended branch can produce.
+
+### 90.6 · Verified
+
+- **Core 214/214** (`dotnet test`), from 164 before this phase. The new ones are the impersonation
+  rules (tag derivation, ownership, the four `HandleCheck` outcomes) and the telemetry contract
+  (funnel order, monotonicity, parameter refusal, folding and the buffer bound).
+  ⚠️ **`TheDerivedTagMatchesTheServerScriptsCopyOfTheSameHash` pins four vectors produced by
+  RUNNING the JavaScript**, because nothing on this machine compiles it and the two copies of
+  FNV-1a can only be compared through values one of them produced. If it goes red the client and
+  the server have stopped agreeing about who owns which tag.
+- **EditMode 241/241 -> 250/250**, read from `Logs/tests.xml` rather than from the exit code.
+  ⚠️ The first run was 240/241: `TheProtocolCarriesEveryRosterBump` caught the bump to 16, which
+  is the tripwire working for the second phase running. Re-armed at 16.
+- **`Ugs` category 5/5 -> 7/7, against the live project**, and two of them are new proofs rather
+  than new coverage:
+  - `TheAccountEndpointRefusesAHandleProofItNeverMinted` answered
+    `{"handle":"","owned":false}`. That is the guard failing CLOSED, which is the half worth
+    gating on: an endpoint that answered `owned` here would wave every impostor through.
+  - `TheTelemetryEndpointAcceptsABatchWithoutTouchingTheFunnel` answered
+    `{"accepted":1,"funnel":{},"refused":0,"rolled":true}`.
+    ⚠️ **`"rolled":true` is the one thing about the storage design that could not be settled by
+    reading anything.** It says Cloud Save custom data is reachable from Cloud Code on this
+    project, so the project-wide rollup exists rather than degrading to per-player documents.
+    ⚠️ And it probes with `session_start` on purpose: a funnel step is impossible to un-record by
+    construction, so a probe must never send one. `"funnel":{}` asserts it did not.
+- **All five editor checks OK in one launch** (`Checks.RunAll`): `RESULT: OK. All 5 checks passed
+  in one launch.` ⚠️ `MapGeometryCheck` still prints per-prop FAIL lines for Eskinita dressing
+  that it does not gate on, exactly as § 89.8 records; the run's own verdict is OK and nothing in
+  this branch touches a scene.
+- **`BotBehaviourProbe` 3/3 on the default set**: `ClassicBotsPlayAWholeMatch`,
+  `HeroStrikeBotsPlayAWholeMatchAndUseTheirKits` and `HeroStrikeBotsPlayAWholeMatchUnderTheBridge`,
+  whole matches in both modes on both maps. That is what exercises everything Phase 2 hooked into
+  `Carrier` and `CombatVerbs`, plus the two telemetry calls this branch added to
+  `MatchStatsCollector`.
+  ⚠️ **`TwoIdenticalMatchesLandInsideTheNoiseFloor` ALSO PASSED**, which is the test `CLAUDE.md`
+  § 7.1 names as how you ask whether the probe is still honest after touching anything the bots
+  read.
+  ⚠️⚠️ **`TheOverclockWindowSweep` IS RED AND IT IS NOT THIS BRANCH.** It is `[Category
+  ("WallClock")]`, excluded from every standard run on purpose, and it is red for exactly the
+  reason § 16 was written: two runs of one build at one rate still do not produce the same match.
+  It was only run here because `-testFilter BotBehaviourProbe` does not exclude the category the
+  way `-testCategory "!WallClock"` does. Do not read it as a regression, and do not chase it
+  without reading § 16 first.
+- **A clean Windows player on the Desktop.**
+
+⚠️ **WHAT IS NOT VERIFIED HERE, AND CANNOT BE FROM THIS MACHINE:** the unplugged four-player LAN
+run. § 90.4 lists what is automated in its place and what to check when the four machines are on
+the table. **The protocol is 16, so every machine has to be rebuilt off this branch before that
+run means anything at all.**
+
+---
+
+### 90.7 · ✅ The FPS distribution, which was the last open part of Phase 3
+
+§ 90.3's final bullet asked for *"a per-match sampler, which is a small piece of work and belongs
+beside `HudPerformanceProbe`"*. That is what this is. **Phase 3 now has nothing open.**
+
+**⚠️⚠️ IT IS PER MATCH BECAUSE A PER-SESSION PERCENTILE DESCRIBES NOTHING, AND THAT IS WHY THIS
+WAS LEFT OUT RATHER THAN RUSHED.** A session is the splash, the menu, character select, a loading
+screen and then a match. On a short session those are most of the frames and none of the ones
+anybody cares about, and a menu renders at whatever it likes. A number that describes a menu is
+worse than no number, because somebody will quote it.
+
+**The window is `RoundDirector.RoundActive` and nothing else.** It is false through the scene
+load, the countdown, every gap between rounds and the whole results board, so none of those
+frames reach the sample. `MatchFrameRateProbe.ALiveRoundFillsTheSampleAndTheGapsBetweenRoundsDoNot`
+is that sentence as a test, and it is the assertion the probe exists for: everything else about
+this is arithmetic that `Core.Tests` settles in a millisecond.
+
+**⚠️⚠️ IT IS SAMPLED ON EVERY PEER, ABOVE `MatchStatsCollector`'S HOST GATE.** Every other number
+in that class is host-only for the reason `MatchDirector` gives about points, that a number in the
+match may only be created in one place. **A frame rate is not a number in the match.** It is a
+property of the machine reading it, `FUTURE.md` § 3 asks for the distribution ACROSS machines, and
+collected behind the gate it would be the host's frame rate reported once per peer: a
+plausible-looking answer to a question nobody asked. The telemetry match-started count already
+sits above that gate for the same reason.
+
+**⚠️ IT IS A HISTOGRAM, NOT A LIST OF FRAMES.** An eight-round Hero Strike set is about 43,000
+frames at 60 fps, which as a growing list is 170 KB reallocated through a dozen doublings while
+somebody is playing. `FrameRateHistogram` is 256 fixed buckets of 0.5 ms, so a frame costs one
+index and one increment and allocates nothing, forever. `HudPerformanceProbe` exists because a
+single HUD string rebuilt per frame already cost the 6x probe an eighth of its frames.
+⚠️ **The percentiles are therefore bucket-accurate rather than exact.** Half a bucket is 0.25 ms,
+so the worst error is **0.8 per cent at 30 fps, 1.5 at 60 and 3.6 at 144**: it grows with the
+frame rate because a fixed slice of TIME is a widening slice of RATE, and the resolution is spent
+where the band edges are rather than where the headline number is. The AVERAGE is exact anyway,
+because `Seconds` is a running sum of what was added rather than a walk over the buckets.
+
+**⚠️⚠️ THE LOWS ARE THE POINT AND THE AVERAGE IS NEARLY USELESS ON ITS OWN, WITH A NUMBER RATHER
+THAN AN OPINION.** 990 frames at 60 fps and 10 at 10 fps is a match that visibly stalls ten times
+over seventeen and a half seconds. **Its average is 57.1 fps**, under three frames a second off a
+perfect run, and its median is exactly 60.
+Only the 1 per cent low says 10. "The game feels bad on my laptop" is a stutter far more often
+than it is a low average, so `fps_p5` and `fps_p1` travel beside `fps_avg` and `fps_p50`.
+⚠️ `fps_p5` and `fps_p1` are the "5 per cent low" and the "1 per cent low", so they are the fifth
+and first percentiles of the RATE and the ninety-fifth and ninety-ninth of the FRAME TIME. Read
+from the wrong end every number still looks plausible and the stutter column reports the good
+frames, which is why the ordering between them is asserted in both the unit tests and the probe.
+
+**⚠️⚠️ THE BAND EDGES ARE § 17 AND THIS IS THE HALF OF § 17 NOTHING COULD ANSWER FROM HERE.**
+That entry measured the bots falling off a cliff when the frame step reaches the physics step: at
+1/60 s they throw 40 to 90 times a match and cast 27 to 38 skills, and at 0.02 s, which is
+**50 fps**, the same build threw 18 times and cast **nothing**. The shipped physics rate is 50 Hz,
+so a 50 Hz panel, vsync on a heavy scene or a laptop under load puts a real player in the row with
+zero casting in it, and § 17's step 1 is *"reproduce it in the player"*. `FrameCapProbe` can force
+the band; only telemetry can say whether anybody is actually IN it. So a band edge sits at 50
+rather than at a tidier 45, and 50 to 60 is its own narrow band because "just above the step" has
+never been measured in either direction. The five are `fps_under_30`, `fps_30_50`, `fps_50_60`,
+`fps_60_90`, `fps_90_up`.
+⚠️ **A band name is a stored label and therefore a contract, exactly like an event name.**
+Renaming `fps_30_50` restarts a counter at zero beside a history it can never be joined to again.
+SPLIT a band at a new edge and name both halves anew; never re-point an existing name at a
+different range.
+
+**⚠️⚠️ THE EVENT SITS EXACTLY ON `TelemetryRules.MaxParametersPerEvent`, WHICH IS 8.** Three
+labels and five numbers. A ninth column does not error: `Accept` trims the numbers by ordinal key
+order and `columnsFrom` in `telemetry.js` trims by insertion order, so adding one silently deletes
+a different one on each side. `FrameRateTests.TheFrameRateEventKeepsEveryColumnItSends` fails
+instead.
+⚠️ **No hardware key travels with it.** `settings_snapshot` already carries the gpu, core count,
+memory and screen size, and the endpoint keys both events on the same authenticated player id, so
+the join happens server-side on a field a client cannot set. Repeating the gpu here would spend
+two of the eight columns saying something already stored.
+⚠️ **`frames` survives `TelemetryRules.IsSafeParameterName` by one letter**, because the refused
+fragment is `name` and `frames` does not contain it. `frame_name` and `named_frames` would both be
+stripped in silence, costing the column that says how big the sample was.
+
+**⚠️ TURNING THE OPT-OUT OFF STOPS THE COUNTING, NOT ONLY THE SENDING**, which § 90.3 already
+promised for the rest of telemetry. The histogram is 256 integers rather than a growing list, so
+the gate buys nothing in memory; it is the promise being kept where it would be easiest to quietly
+not keep it. `ATelemetryOptOutStopsTheCountingAndNotOnlyTheSending` asserts it.
+
+**⚠️ THE SAMPLE IS CLEARED AT ROUND 1, NOT AFTER IT IS SENT.** A match that is abandoned,
+disconnected from or never adopted never reaches `Adopt`, so a sampler cleared on send would carry
+the abandoned match's frames into the next one and report a number describing two matches on two
+different maps. The first round is the one moment every peer reaches, whatever happened before it.
+
+**⚠️⚠️ `Time.unscaledDeltaTime` DOES NOT FOLLOW `Time.captureDeltaTime`, AND THIS ENTRY SAID IT
+DID UNTIL A TEST WAS WRITTEN TO PROVE IT.** The sampler reads `unscaledDeltaTime` rather than
+`deltaTime`, because `deltaTime` is scaled and a match at half time scale on a machine holding 60
+fps would report 30. The comment beside it then claimed that under a captured step both clocks
+read the captured value, so a probe run would fill the histogram with a tidy 60. That was read out
+of documentation. **Measured: under a captured step of 16.67 ms the sample read 2.13 to 2.30 ms per
+frame**, 435 to 469 fps across two runs, which is the batchmode editor's real wall clock. Every probe in this
+repository drives its match with a captured step, so every one of them fills this histogram with a
+number that has nothing to do with a player's machine.
+
+⚠️ **It is harmless for exactly one reason, and the test now asserts that reason as well as the
+number.** `TelemetrySink.Flush` returns immediately when no account is signed in, and a probe never
+signs in, so nothing a probe measures has ever left the machine.
+`UnderACapturedStepTheSampleReadsWallClockAndNothingSendsIt` checks `BatchesSent` is 0 beside it.
+⚠️⚠️ **DO NOT "FIX" THE SAMPLER TO READ THE CAPTURED STEP.** A fabricated 60 fps in the sample of
+some future run that DOES sign in is a worse failure than an obviously silly one: 435 fps is
+visibly not a player, and a clean 60 is indistinguishable from one.
+
+**⚠️ A MATCH WITH FEWER THAN 60 SAMPLED FRAMES IS NOT REPORTED AT ALL.** The server folds numbers
+into a running mean, so a 12-frame match would weigh exactly as much as a full eight-round set.
+Sixty is two seconds at 30 fps: low enough that a match somebody left early still counts, high
+enough that a round flicking active for three frames during a scene load does not.
+
+**What this does NOT answer, and saying so is the point.** The rollup stores numbers as a sum and
+a count, so what comes back is the **mean of per-match percentiles** rather than a global
+percentile. That is the right reading of "is anybody playing at 40 fps" and the wrong reading of
+"what is the worst frame anybody has ever seen". The per-player documents are exact per event
+shape and are what any number that has to be defended is recomputed from, exactly as § 90.3 says
+of everything else here.
+
+**Where it lives:**
+
+| Piece | Where |
+|---|---|
+| `FrameRateHistogram`, `FrameRateBands` | `Packages/com.tumbangpreso.core/Runtime/FrameRate.cs` |
+| `TelemetryEvents.MatchFrameRate` | `Packages/com.tumbangpreso.core/Runtime/Telemetry.cs` |
+| `SampleFrameRate`, the per-match clear, the report call | `Assets/TumbangPreso/Runtime/MatchStatsCollector.cs` |
+| `NoteFrameRate` | `Assets/TumbangPreso/Runtime/Net/TelemetrySink.cs` |
+| The name the server will accept | `ugs/cloud-code/telemetry.js` |
+| The arithmetic | `Core.Tests/FrameRateTests.cs` |
+| The window, in a real arena | `Assets/TumbangPreso/Tests/PlayMode/MatchFrameRateProbe.cs` |
+
+### 90.8 · Verified for § 90.7, and the one thing that is NOT
+
+- **Core 214/214 -> 237/237** (`dotnet test`, 367 ms). The new ones are the histogram (a dropped
+  zero-length frame, the open-ended last bucket read at its floor, a share smaller than one frame
+  naming the worst frame), the stutter case that measures the 57.1 fps average, the band edges as
+  a `[Theory]` pinned either side of 30, 50, 60 and 90, and the eight-column event surviving
+  `Accept` intact.
+- **EditMode 250/250**, read from `Logs/tests.xml`. No new cases; the signal is that
+  `TheTelemetryScriptKnowsExactlyTheEventsTheCoreCanSend` went green with `match_frame_rate` added
+  to `TelemetryEvents.All` and to `telemetry.js`, which is the two halves of the contract agreeing.
+- **`MatchFrameRateProbe` 4/4**: the live round filled the sample,
+  `EndRound` stopped it dead (the assertion the probe exists for), and the opt-out stopped the
+  counting. `Logs/match-frame-rate.txt` reads 310 frames, **752.9 fps average, band
+  `fps_90_up`**, which is a batchmode editor with nothing to draw and is exactly why the probe's
+  header says not to read that file as a machine's frame rate.
+  ⚠️⚠️ **THE FOURTH CASE WENT RED ON ITS FIRST RUN AND IT WAS RIGHT TO.** It was written to assert
+  that `Time.unscaledDeltaTime` follows `Time.captureDeltaTime`, which is what the sampler's
+  comment claimed; it read **2.13 ms against a captured 16.67 ms**, and 2.30 ms on the re-run.
+  The code is unchanged and
+  correct, the comment was wrong, and the test now pins the measured behaviour and the reason it
+  is harmless. This is the entry's own rule about porting from the code rather than the prose,
+  applied to a comment.
+- **`BotBehaviourProbe` 3/3** on the default set, whole matches in both modes on both maps. That is
+  the regression gate for putting anything in `MatchStatsCollector.Update`, which is now called
+  on every frame of every match on every peer.
+- **All three `tools/` audits exit 0**: 44 effect call sites with 0 ungated on another body, 52
+  wire entry points with 0 unreachable, and 55 named messages with 0 mismatched. ⚠️ The last of
+  those was exiting **1** before this branch touched it, for a reason that was nothing to do with
+  the wire; § 38.6 now carries it.
+- **`telemetry.js` redeployed, and its parameter block read back off the SERVICE** with
+  `ugs cloud-code scripts get telemetry`: `action` and `events`, both `STRING`. All three scripts
+  were checked, because § 90.5's whole lesson is that a deploy can drop the block silently and go
+  on answering normally. The live copy contains `match_frame_rate`.
+
+✅ **§ 90.9 CLOSES BOTH OF THE TWO THINGS THIS ENTRY LEFT UNMEASURED.** The paragraph below is
+kept as the record of what was outstanding and why it mattered; read § 90.9 for the numbers.
+
+**What was outstanding, as first written:**
+
+1. **`UgsServicesProbe.TheTelemetryEndpointAcceptsEveryColumnOfAFrameRateEvent` HAS NOT RUN**, so
+   the `Ugs` category is 7/7 as § 90.6 left it rather than the 8/8 it should now be. It asserts
+   `"refused":0` against the LIVE endpoint, which is the only thing that can tell a repository
+   whose two halves agree from a service running an older script. The redeploy and the
+   `scripts get` above are the evidence that exists in its place.
+
+**Run it before the next build**, and it needs nothing set up:
+
+```
+Unity.exe -batchmode -runTests -projectPath . -testPlatform PlayMode -testCategory "Ugs"
+```
+
+⚠️ **And there is no Windows player for this work on the Desktop.** The one sitting there is from
+§ 90.6. `Checks.RunAll` has not been re-run either; nothing in this branch touches a scene, an
+audio cue or a map, so it is expected to be OK, but expected is not measured.
+
+---
+
+### 90.9 · ✅ The live endpoint proof § 90.8 was missing, measured 2026-08-30
+
+- **`Ugs` category 7/7 -> 8/8 against the live project**, read from `Logs/ugs.xml`
+  (`total="8" passed="8" failed="0"`, 20.9 s). The eighth is
+  `TheTelemetryEndpointAcceptsEveryColumnOfAFrameRateEvent` and the service answered
+  **`{"accepted":1,"funnel":{},"refused":0,"rolled":true}`**.
+  ⚠️⚠️ **`"refused":0` IS THE WHOLE POINT AND `"accepted":1` IS NOT.** A service running the
+  pre-`match_frame_rate` script would still have answered `accepted` for the batch and dropped the
+  event, because § 90.5's fault mode is a well-formed answer from the wrong shape rather than an
+  error. Refusing zero of eight columns is the statement that the deployed script knows the event
+  the core now sends, which no amount of reading either half of this repository can establish.
+  ⚠️ `"funnel":{}` again asserts the probe did not record a funnel step, per § 90.6: a funnel
+  step cannot be un-recorded, so a probe must never send one.
+- **Core 237/237** re-run at 290 ms, unchanged.
+- **All three `tools/` audits exit 0**, unchanged: 44 effect call sites with 0 ungated on another
+  body, 52 wire entry points with 0 unreachable, 55 named messages with 0 mismatched.
+- **EditMode 250/250**, read from `Logs/tests.xml` (`total="250" passed="250" failed="0"`, 4.6 s).
+  No code changed in this entry, so the signal is only that nothing drifted.
+- **`Checks.RunAll` OK, all five in one launch**: `RESULT: OK. All 5 checks passed in one launch.`
+  ⚠️ `MapGeometryCheck` still prints the per-prop `FAIL` lines for Eskinita dressing that it
+  does not gate on, exactly as § 89.8 and § 90.6 record. Its own verdict is `RESULT: OK`, and
+  the run's verdict is the `RESULT:` line rather than the loudest line.
+- **A clean Windows player on the Desktop**: `[Build] SUCCEEDED. 764 MB, 65s ->
+  C:\Users\matth\Desktop\TumbangPreso-Unity\TumbangPreso.exe`, with `TumbangPreso.exe` and
+  `TumbangPreso_Data` both carrying timestamps from this run rather than from § 90.6's.
+
+⚠️ **Still not verified and still cannot be from this machine:** the unplugged four-player LAN
+run of § 90.4, which needs four rebuilt machines because `ProtocolVersion` is 16.
+
+---
+
+## 91 · Phase 4: XP, levels and hero mastery ⚠️⚠️ 2026-08-30
+
+`FUTURE.md` PHASE 4 and its prompt 19.4, commissioned after 🧑 confirmed phases 1 to 3 were
+done: *"is phase 1-3 fully donne? if yes then u can work on phase 4"*.
+
+⚠️ **`FUTURE.md` 0.4 SAYS TO PLAY IT FOR A WEEK BEFORE STARTING THIS, AND 🧑 OVERRODE THAT IN
+THE SAME BREATH:** *"the testing goes in the ennd and its finne to go ahead of schedule"*. The
+advice still stands for the BALANCE half: every number below is a starting point and the
+telemetry from 90.3 is what should move it, not an opinion. Nothing here is claimed as measured.
+
+### 91.1 The AFK check, which had to exist before XP did
+
+⚠️⚠️ **19.4 ORDERS IT FIRST AND THE REASON IS ARITHMETIC: COMPLETION IS THE BIGGEST TERM.**
+A match pays 100 for finishing against a maximum of 40 for winning, so the moment XP exists, a
+seat that loads in and walks away collects the largest single reward in the system four times an
+hour. Built first, exactly as the prompt orders it.
+
+⚠️⚠️ **THE SIGNAL IS MOVEMENT, NOT INPUT, AND THE OBVIOUS IMPLEMENTATION IS THE WRONG ONE.**
+19.4 says to use *"the input telemetry the bots already produce"*, which reads as
+`InputIntent`. **The host never receives a remote player's `InputIntent`.**
+`MatchRpc.SubmitMoveServerRpc` carries a transform, not a key, so an intent-based check would
+have caught the local seat and the bots and nobody else, which is precisely the three seats that
+cannot be a remote AFK player. Position arrives for every seat and `MatchStatsCollector` already
+samples it for `DistanceTravelled`.
+
+- **`ProgressionRules.AfkRoundMetres` is 5.06 m and is DERIVED**: two seconds of walking at the
+  attacker's speed (`Balance.Speed * Balance.AttackerSpeedScale`) out of a 90 second round.
+  `BotBehaviourProbe` measures live seats at roughly **130 m a round**, so the bar is about 4 per
+  cent of what playing looks like. It separates "did nothing whatsoever" from "played badly", and
+  only the first is what PHASE 4 means.
+- A round also counts as played on any host-resolved verb, so a taya who plants themselves by the
+  lata and punches everything is not AFK. The anti-camp clock already owns whether that is legal.
+- **`PlayerMatchStats.ActiveRounds` is -1 for "nobody measured this"**, the same sentinel and the
+  same reason as `TimeToFirstThrow`. Every record written before this phase, every record in an
+  offline queue and every record from a peer on an older build carries -1.
+  ⚠️⚠️ **READING -1 AS ZERO WOULD MARK EVERY HISTORICAL MATCH AFK** and strike out accounts
+  for games they played properly. `AnUnmeasuredRecordIsNeverAfk` is that test.
+- **`MatchStatsCollector.PadUnplayedRounds` credits every seat with rounds that never happened.**
+  `record.Rounds` is the SCHEDULED total, so a Hero Strike match that ended after three rounds
+  still says 8; without the padding every player in it reads 3 active out of 8 and is paid
+  nothing for a game they played to the end.
+- Escalation is one sentence long, which is its budget under 0.5 rule 11b: go AFK and the match
+  pays nothing, do it three times and the next three matches pay nothing. An AFK match does NOT
+  serve the suspension, or the fastest way out of one would be to keep standing still.
+
+### 91.2 What a match pays, and why the loser still gets most of it
+
+| Term | XP | Why |
+|---|---|---|
+| Finished the match | 100 | The biggest single term. 19.4: weight completion heavily. |
+| Placement | 40 / 25 / 15 / 10 | Light on purpose. First beats last by 30. |
+| Knocked the lata | 15 | |
+| Retrieved under pressure | 20 | The biggest objective. `VISION.md` 0: the retrieval IS the game. |
+| Tagged as taya | 15 | |
+| Sabotage | 10 | |
+| No penalties | 15 | Pays for NOT doing something, so it reaches the taya and the attackers with one rule. |
+
+**A player who finishes last with nothing earns 110 against 140 for a clean win: 79 per cent.**
+`FinishingLastStillPaysMostOfWhatWinningPays` bounds that at 70 per cent so the tables can move
+without the test becoming a copy of them.
+
+⚠️ **LEAVING PAYS ZERO WITHOUT A RULE FOR IT.** A `MatchRecord` is authored at the whistle, so
+a leaver is never paid rather than being penalised. That is the whole asymmetry PHASE 4 asks for
+and it cost no code.
+
+⚠️ **EVERY OBJECTIVE PAYS ONCE, NOT PER EVENT.** A per-event rate is a second scoring system
+running beside `MatchDirector.AddScore` and the player would have to hold both in their head.
+
+### 91.3 The curve is flat in both directions
+
+⚠️⚠️ **NO DIMINISHING RETURNS, NO RESTED BONUS, NO DAILY CAP, AND ALSO NO RISING LEVEL
+COST.** PHASE 4 cuts the first three by name and 🧑 cut two rate curves personally. The fourth is
+the same argument one step further on: **a rising cost per level is diminishing returns wearing a
+different hat**, felt identically by the player and impossible for them to see the source of.
+Every level costs `XpPerLevel` forever.
+
+- **1000 XP a level**, which is 5 matches at best and 9 at worst. That range is the number
+  telemetry should move.
+- Uncapped, never below 1, **a new border every 50 levels** and border 0 is the one everybody
+  starts with, so the first EARNED border is at level 50.
+- **Mastery costs 2000, twice the account**, because it is per hero and there are six of them. A
+  mastery number that moved as fast as the account level would say nothing about the hero.
+- Mastery is paid **the same XP the account got**, not a second calculation. One number earned,
+  spent on two tracks that divide it differently.
+
+### 91.4 Rewards are titles, badges, palettes and borders, and they are not stored
+
+⚠️⚠️ **`Reward` HAS NO NUMERIC FIELD AND THAT IS RULE 4 ENFORCED BY THE SHAPE OF THE TYPE.**
+0.5 rule 4 says nothing on a progression track may change a gameplay number and to write the test
+that proves it. A test that walked today's reward table would pass forever and prove nothing
+about the row somebody adds next year, so `ARewardCannotCarryAGameplayNumber` walks the CLASS by
+reflection instead: a reward that cannot hold a number cannot change one.
+
+⚠️ **WHAT A PLAYER OWNS IS A PURE FUNCTION OF THEIR LEVEL.** `ProgressionRules.AccountRewards`
+computes it, nothing is written to the document, there is no inventory to migrate when a row is
+added, and a title added at level 30 is granted retroactively to everybody past 30 for free.
+`PlayerProfile.Inventory` stays Phase 5's and must not start carrying track rewards.
+
+### 91.5 ⚠️⚠️ A STATIC `LastAward` RACED ITS OWN TEST SUITE, AND THAT WAS NOT A TEST ARTEFACT
+
+The first version parked the award on `ProfileRules.LastAward` so the results board could read it
+after the fact. **xUnit runs test CLASSES in parallel**, `ProgressionTests` and
+`PlayerProfileTests` applied a match at the same moment, and one read the other one. The fix is
+an `out` parameter, and the reason it matters in the GAME rather than only in the tests: the same
+global would be read by the results board while the offline queue flushed a second record on a
+background task, and the symptom would be a player seeing somebody else XP about once in a
+hundred matches. **Nobody would ever have reproduced that.** A return value cannot race.
+
+⚠️ **AND `Award` IS CALLED FROM INSIDE `ProfileRules.Apply`, NEVER BESIDE IT.** `Apply` refuses
+a `MatchId` it has already counted and the offline queue exists precisely to resubmit records, so
+a second call site would pay the same match twice with nothing reporting an error. Both halves,
+C# and `match-record.js`, do it inside the guard. `ResubmittingAMatchPaysItOnce`.
+
+### 91.6 The server runs the same arithmetic and the constants are written twice
+
+0.5 rule 6 puts the award on the server. `ugs/cloud-code/match-record.js` carries a second copy of
+every XP constant and of the six hero ids, the same unavoidable trade this file already records
+about `ProfileRules` as a whole and `player-account.js` records about `DisplayNameMax`.
+**`TheServerScriptAgreesWithTheCoreAboutHeroesAndRates` reads the script as text** and fails if
+they drift, which is the only signal that exists: per 90.5, a disagreement produces a
+well-formed answer with the wrong numbers in it.
+
+⚠️ **The client computes the award too, and is never the authority.** `CareerStore.LastAward`
+exists so the end-of-match bar can move before the endpoint answers and so an unplugged LAN match
+can still show a player what they earned (rule 7). If the two disagree, the server is right.
+
+### 91.7 Where the player sees it
+
+- **The end-of-match board** grows a level line, a bar and the breakdown, drawn from
+  `ProgressionRules.Breakdown` rather than from a list the screen keeps.
+  ⚠️ **The three zero-pay cases read differently on purpose**: nothing to show hides the block,
+  while "away for a whole round" and "no XP while the penalty lasts" are stated, because a bar
+  that silently does not move is how a progression system gets reported as broken.
+- **The nameplate and the hub header** carry the level and the bar, per 92.
+- **The hub career tab** carries the six hero mastery rows.
+
+### 91.8 Not done in this phase
+
+- **Titles, badges, palettes and borders are computed and are not yet WORN.** The tables exist,
+  `AccountRewards(level)` answers what a player owns, and nothing draws a title next to a name in
+  a lobby or applies a palette to a character. That is Phase 5, which owns cosmetics and the
+  equip surface, and doing half of it here would put a second cosmetic system beside the one
+  Phase 5 is going to build.
+- **`ARewardEarnedOnTheWayUpIsReportedOnce` covers a single level-up.** A match that crosses two
+  reward levels at once is impossible at the current rate (215 XP maximum against 1000 a level)
+  and is handled, but is not measured against a real record.
+
+---
+
+## 92 · The account and career screens, rebuilt ⚠️⚠️ 2026-08-30
+
+🧑 sent four screenshots and five sentences in a row, and they are the specification:
+*"ui for player account is so ugly"*, *"theres liek 20 shits at once"*, *"everything is js shit
+on one block and is overwhelming"*, *"THINK ABT conncepts like visual hierarchy annd user
+experiennce bcz this ui is so bad"*, *"look wtf why are these buttons here"*.
+
+### 92.1 What was actually wrong, in five faults rather than one
+
+1. **One panel doing six unrelated jobs.** `AccountOverlay` asked for display name, bio, country,
+   pronouns, username and password at once, then offered SAVE PROFILE, LINK USERNAME, SIGN IN,
+   DELETE ACCOUNT, PLAY AS GUEST and CLOSE **in two rows of three at identical size**. Nothing on
+   it was primary, so nothing led.
+2. ⚠️⚠️ **DELETE ACCOUNT WAS A PEER OF PLAY AS GUEST AND CLOSE**, same row, same size. One
+   misclick from a lost career.
+3. **Absolute Y offsets instead of layout.** Six captions and six fields at hand-written offsets
+   (-196, -286, -376, -466, -566, -656) inside an 870 px panel, and the career page the same in a
+   940 px one. **A hand-written offset is a layout that is correct at exactly one panel height
+   and one aspect ratio**, and `AspectRatioProbes` drives nine. 🧑's career screenshot shows the
+   result: the buttons run off the bottom of the screen and a stray CLASSIC label is drawn
+   straight through the HERO STRIKE tab.
+4. **Fifteen identical stat rows with no hierarchy**, opening with `0/0 (needs 10 throws)` eight
+   times on a fresh account. ⚠️ That half-obeyed `FUTURE.md` 2.2: it withheld the NUMBER and
+   still drew the ROW. Withholding the row is what the rule meant.
+5. **Two floating buttons the menu did not know about.** `AccountOverlay` and `ProfileOverlay`
+   each built their own canvas and parked a wood button at its own offset from the top right, in
+   a different visual language from the arrow buttons beside them. That is 🧑's *"why are these
+   buttons here"*, and the answer is that nothing was laying them out.
+
+### 92.2 The references, which 🧑 chose
+
+Valorant settings, PUBG settings, the Riot sign-in client and the PUBG Mobile login, sent with
+*"look at how valorant settings look like"* and *"look at their signup screens"*. Two patterns
+come out of them and both are now built:
+
+- **A settings screen is rows, not a form.** Full width, label hard left, control hard right,
+  a section header with one grey line of explanation above each group, and alternating row bands
+  so the eye can cross half a screen. One persistent action in a corner.
+- **A sign-in is a narrow column beside art, asking two things.** Micro-labels above the fields,
+  one primary, two tiny footer links. Valorant asks for two things and offers three links.
+
+### 92.3 What shipped
+
+| File | What it is |
+|---|---|
+| `UiRows.cs` | The row kit. `Section`, `Row`, `ValueRow`, `FieldRow`, `ButtonRow`, `ScrollList`. **Nothing in it takes an offset**, which is fault 3 made impossible rather than fixed. |
+| `PlayerHub.cs` | Four tabs, PROFILE / CAREER / MATCHES / ACCOUNT, one persistent header carrying the handle, level and XP bar, one footer action per tab. Replaces `AccountOverlay` and `ProfileOverlay`. |
+| `SignInScreen.cs` | The Riot layout. Its own screen, a segmented SIGN IN / CREATE, two fields, one primary, errors under the fields. |
+| `PlayerNameplate.cs` | The corner chip that replaces both floating buttons and is the only way in. |
+
+- **`AccountOverlay.cs` and `ProfileOverlay.cs` are DELETED**, not deactivated. 68.3's
+  keep-the-old-chrome rule protects a replacement that might turn out worse; this is a deletion
+  🧑 asked for four times with pictures.
+- **The career tab opens with the matches, wins, win rate and hours**, then Attack, Retrieval,
+  Defence, Melee, Standout and Hero mastery as named groups. **A rate whose sample cannot carry
+  it is now absent rather than printed as `0/0`.**
+- **An empty career is one card, one sentence and a PLAY button**, replacing three different
+  "no matches" sentences drawn at once above fifteen rows of zeroes.
+- **Signing in never opens by itself.** `PlayerAccount` still signs in anonymously at boot and the
+  player still reaches the menu playable, which is Phase 1's rule and is not negotiable:
+  *"never block a first-time player on a form"*. 🧑's *"usually u dont open up login in the actual
+  game screen yet"* is about the PANEL, not about the boot behaviour.
+
+### 92.3b Collapsing, and the one dropdown
+
+🧑, after the first pass: *"usually to make shit easier to navigate games use dropdownns and
+shit annd separate shit"*, *"u figure out which parts need this annd apply this logic"*.
+
+⚠️⚠️ **GROUPING WITHOUT COLLAPSING DOES NOT ACTUALLY FIX THE COMPLAINT.** The first pass split
+the career tab into six named groups, which is better organised and is still thirty rows on one
+screen: the same wall of numbers, aligned. **A group only helps if it can be shut.**
+
+**What collapses, and why each default is what it is.** The rule is: open what somebody arriving
+at that tab came for, closed what is detail or danger.
+
+| Tab | Open | Closed |
+|---|---|---|
+| PROFILE | Identity: one field and the tag | Optional details, which is three fields nobody fills in on a first visit and was three of the six things the old panel asked at once |
+| CAREER | Overview: mode, matches, wins, win rate, hours, finishes | Attack, Retrieval, Defence, Melee, Standout, Hero mastery |
+| ACCOUNT | This account, and whichever of "keep your progress" or "another machine" applies | Tournament guest, unless one is already playing; Danger, unless the delete is armed |
+
+⚠️ **A CLOSED GROUP IS NOT BUILT, NOT HIDDEN.** `PlayerHub.Show` rebuilds the whole tab on every
+change, so honouring a closed group costs nothing, there is no hidden subtree recomputing layout,
+and the scroll height is honest about what is on screen.
+
+⚠️⚠️ **AND `SaveProfile` HAD TO LEARN ABOUT IT, WHICH IS THE TRAP IN THIS PATTERN.**
+`SetProfileAsync` takes all four fields at once and a closed group has no `InputField` to read.
+Reading a destroyed one throws; defaulting it to an empty string would **silently wipe a bio the
+player had written** because they happened to have the group shut. `ForgetFields` nulls the
+handles on every rebuild and the save falls back to the account's current value for anything not
+on screen.
+
+⚠️ **THE MARKS ARE ASCII PLUS AND MINUS, NOT CHEVRONS.** The font is Darumadrop One and it has
+no multiplication glyph; assuming it has arrows is the same bet one step further on, and a missing
+glyph draws as an empty box on the one row whose whole job is to say whether the group is open.
+
+**One dropdown, and it replaces the pair of buttons that overlapped.** The career mode picker was
+two wood buttons side by side, which is what drew CLASSIC through HERO STRIKE in the screenshot.
+`UiRows.DropdownRow` is one control. ⚠️ **Its template is built by hand**, because
+`AddComponent<Dropdown>` produces a control with a null template that draws its caption correctly
+and does nothing when pressed, which is the same silent class `MenuKit.EnsureHitArea` records
+about four sliders that shipped dead.
+
+### 92.4 Where every phase 1 to 3 surface went
+
+🧑 asked for this by name: *"focus on fixing ui first of phase 1-3"*, *"figure out where
+everything should go"*. Phases 1, 2 and 3 produced sixteen things a player can see or press.
+**Every one of them now has exactly one home**, which is the property the old arrangement did not
+have: the handle was drawn on two panels, the status line reported six unrelated actions, and the
+upgrade offer had no home at all because it hijacked the whole screen.
+
+| What | Where it was | Where it is |
+|---|---|---|
+| Display name, bio, country, pronouns | Four fields on the account form | Hub, PROFILE, two sections |
+| Your handle `name#1234` | The account panel header AND the career panel header | The hub header, once, plus the nameplate |
+| Your tag is not editable | Nowhere. Nothing said it | A PROFILE row that says who gives it and why |
+| Sign in | A button in a row of three | `SignInScreen`, its own screen |
+| Link a username | A button in a row of three | The same screen, on the CREATE segment |
+| Play as guest | A button beside DELETE ACCOUNT | Hub, ACCOUNT, "Tournament guest" |
+| Delete account | Between PLAY AS GUEST and CLOSE, same size | Hub, ACCOUNT, last section, own heading, two presses |
+| Signed-in state, player id | One status line shared by six actions | Two ACCOUNT rows that only ever say one thing |
+| **The upgrade offer** | **Force-opened the whole panel over the menu** | A line on the nameplate, and pressing it lands on ACCOUNT |
+| Career totals | Career panel, top | Hub, CAREER, first four rows |
+| Per-mode stats | Fifteen identical rows | Hub, CAREER, six named groups |
+| Mode switch | Two wood buttons that overlapped a label | One CAREER row |
+| Match history | Career panel, right column | Hub, MATCHES |
+| Match detail | A popup off the career panel | Hub, MATCHES, click the row |
+| Per-character mastery | A CHARACTERS panel behind a button | Hub, CAREER, "Hero mastery" |
+| Level and XP | Nowhere. Phase 4 had no surface | Nameplate, hub header, and the end-of-match board |
+| Telemetry opt-out | Settings panel | **Unchanged.** It is a setting and it was already in the right place |
+| Sign-in at boot | The splash awaits the account barrier | **Unchanged, and deliberately so.** See below |
+
+⚠⚠ **THE BOOT BEHAVIOUR IS THE ONE THING THAT MUST NOT MOVE.** 🧑's *"usually u dont open
+up login in the actual game screen yet"* is about the PANEL, and it would be easy to read as "put
+a login screen at boot". **Do not.** `PlayerAccount` signs in anonymously before the menu is
+interactive and Phase 1's rule is *"never block a first-time player on a form"*, which is the
+single most valuable thing about this flow and the reason a first launch reaches PLAY in one
+press. `SignInScreen` is only ever reached by pressing something.
+
+⚠️ **AND THE OFFER NEARLY DIED IN THE REBUILD.** `ShouldOfferUpgrade` had exactly one reader,
+`AccountOverlay.Install`, and deleting that file deleted the feature with it. It was caught by
+walking this table rather than by anything failing. **A screen removed is a set of behaviours
+removed**, and the only way to see it is to list them.
+
+### 92.5 Measured
+
+⚠⚠ **`PlayerHubLayoutProbe` IS THE PART THAT MAKES THIS MORE THAN A REDESIGN.** Three of
+§ 92.1's five faults were layout faults a measurement would have caught the day they were
+written, and none did, because the UI probes covered the HUD, the character screen and the hero
+picker and nothing covered these two screens. The probe drives the REAL hub through
+`PlayerNameplate.Install`, walks all four tabs and the sign-in screen at the same nine
+resolutions `AspectRatioProbes` and `HudOverflowProbe` use, and asserts:
+
+- **Every visible label fits the box it was given**, measured through `preferredWidth` rather than
+  a font metric. That is the exact fault in the career screenshot: `MenuKit.Label` sets
+  `horizontalOverflow = Overflow`, so a string that does not fit draws straight over its
+  neighbour and nothing errors.
+- **Every label is above `MenuKit.MinReadableUnits`.**
+- **The nameplate is on screen at all nine**, which is the assertion the whole redesign turns on
+  given that it replaced two buttons that were in the wrong place.
+
+⚠️ **`GameServices.Account` AND `.Career` ARE NULL IN THE PROBE AND THAT IS COVERAGE, NOT A
+GAP.** It is what a player sees booting with no connection, and every empty state on these screens
+is therefore measured, which is the state the old career page got most wrong.
+
+⚠️⚠️ **AND IT FAILED THE NEW SCREENS ON ITS FIRST RUN, WHICH IS THE ENTIRE POINT.** Every
+one of them was written at the reference screenshots’ type scale, a 17-unit row label over a
+13-unit hint, and **this project has a measured floor of 18** (`MenuKit.MinReadableUnits`).
+`ui_theme.gd` records three separate attempts at small text in this game, each answered with
+*"text still small"*, and `AspectRatioProbes` fails anything under it.
+
+⚠️ **RAISING THE HINT ALONE WOULD HAVE INVERTED THE HIERARCHY**, putting an 18-unit hint above
+a 17-unit label and telling the reader the hint mattered more. The floor moved the whole scale
+instead: **heading 26, label and value 22, subtitle and hint 18**, three steps in the same order,
+with `UiRows.RowHeight` going 56 to 64 because a row that does not grow with its type is a row
+whose two lines touch. ⚠️ It also caught `MatchResult`’s `_yourMatchLine`, which **shipped at 17
+units** and had never been measured by anything.
+
+### 92.6 What the first render found, and what that says about the probe
+
+⚠️⚠️ **`CLAUDE.md` § 6.1 IS WRITTEN ABOUT MODELS AND IT IS THE SAME RULE HERE: SHOW, DO NOT
+DESCRIBE.** `PlayerHubLayoutProbe.PhotographEveryScreen` writes a PNG of every screen to
+`Logs/ui/`. The layout probe was green before the first picture was taken, and the picture found
+five things, **two of which the probe could never have seen and one of which it should have.**
+
+1. ⚠️⚠️ **THE ENTIRE ROW LIST WAS INVISIBLE, AND THE LAYOUT PROBE PASSED.**
+   `UiRows.ScrollList` put its `Mask` on an Image at **alpha 0**. A Mask writes its stencil from
+   the graphic it sits on, so alpha 0 masks EVERYTHING OUT: the viewport existed, the rows
+   existed, every rect was correct, and nothing drew. The screenshot is the header, the four
+   tabs, the level bar and the SAVE button over an empty field.
+   ⚠️ **The probe passed it because it asserted that SOME labels were measured**, and the
+   chrome is labels. It now counts `Row_` and `Section_` objects in the list. **A test that
+   cannot fail on an empty screen is not a test of that screen**, and this one shipped green
+   over a completely blank one.
+2. **The nameplate and the hub header drew the same handle in the same corner, overlapping.**
+   `PlayerHub.VisibleChanged` now hides the plate while the hub is up. Two canvases with
+   different sorting orders is not a defence: the plate is the thing the player just pressed.
+3. **The zebra band was solid grey.** It was written at 6 per cent white, measured against the
+   wood panel `UiRows` was designed for; the hub is a 93 per cent scrim over the live street,
+   which is far darker, so the same alpha read as blocks. It is 3.5 per cent now.
+   ⚠️ **A number tuned against one background is not a number.** The render is how it gets
+   measured, and there was no render until there was.
+4. **The sign-in screen wiped its own explanation.** `Open` called `SetMode`, which writes the
+   one line saying what CREATE actually does (it keeps this machine's progress), and then set
+   `_error.text = ""` immediately after. The gap in the screenshot is where that sentence should
+   have been. The clear happens before the mode is set now.
+5. **The hub showed through beside the sign-in column.** The reference is a form column beside
+   ART; a 72 per cent scrim over a live four-tab panel put a half-covered ACCOUNT tab there
+   instead, with its rows sliced by the column edge. `SignInScreen.Opened` hides the hub root.
+
+⚠️⚠️ **THE LESSON IS NOT "ADD MORE ASSERTIONS", IT IS THAT A LAYOUT PROBE AND A PICTURE ANSWER
+DIFFERENT QUESTIONS.** The probe asks whether every string fits its box and is legible, and it
+found a type scale below the readable floor that no screenshot would have made obvious. The
+picture asks whether the screen is a screen, and it found a blank one the probe called fine.
+**Neither replaces the other, and this entry exists so nobody deletes one of them.**
+
+### 92.7 Verified
+
+- **Core 266/266**, **EditMode 250/250**, **PlayMode 107/108**, **Checks.RunAll OK for all five
+  in one launch**, and all three `tools/` audits exit 0.
+  ⚠️⚠️ **THE ONE RED IS § 93 AND IT IS NOT THIS WORK.** `CarryTests` measures a held tsinelas
+  drifting 0.084 m against a 0.05 m bound; nothing in this branch touches `Carrier`, the animator
+  or `LateUpdate`.
+- **`PlayerHubLayoutProbe` 4/4**: every tab and the sign-in screen at nine resolutions, the
+  nameplate on screen at all nine, and seven PNGs in `Logs/ui/`.
+- ⚠️⚠️ **THE FULL PLAYMODE SWEEP FOUND TWO REAL BUGS IN THIS WORK THAT NOTHING ELSE WOULD
+  HAVE.** `EveryButtonIsReachable` reported eight settings controls *"blocked by
+  MainMenuCanvas/NameplateCanvas/Nameplate"*, and
+  `TheWheelScrollsTheSettingsListFromEveryPartOfIt` found the wheel swallowed at one of its
+  forty-five sample points over the same object. **A new always-on chrome element covered the
+  corner of every panel on the title screen**, and neither the layout probe nor a screenshot of
+  the hub could ever have seen it, because the fault is on a different screen.
+  `PlayerNameplate.Update` is the fix: it hides the plate whenever any `ConvertedOverlay` is
+  active rather than waiting to be told, because the first attempt hooked the menu's click
+  handler and both probes open the panel directly.
+- ⚠️ **AND A RENDER FOUND A THIRD.** At sorting order 85 the hub had the MULTIPLAYER setup
+  screen drawn through it, join-code field and all. 85 was picked against the two overlays this
+  replaced and says nothing about the converted screens, several of which carry their own orders
+  authored in a `.tscn`. The hub is 500 now and the sign-in screen 510.
+
+### 92.8 Not done
+
+- **The upgrade offer still opens the sign-in path rather than a toast.** `ShouldOfferUpgrade`
+  used to force the whole account panel open on the menu; it now surfaces as a row on the ACCOUNT
+  tab. A dismissible nameplate badge would be better and is not built.
+- **No avatar.** `FUTURE.md` 1.4 is still an open argument nobody has answered, so the nameplate
+  portrait is an empty slot rather than a guess.
+- ✅ ~~**The per-match detail scoreboard is not in the MATCHES tab yet.**~~ **CORRECTED
+  2026-08-30: IT SHIPPED IN THE SAME COMMIT THIS ENTRY IS PART OF, AND THIS BULLET WAS STALE THE
+  DAY IT WAS WRITTEN.** `PlayerHub.BuildMatchesTab` wires every row through
+  `UiRows.RowButton(..., () => OpenDetail(captured))`, `BuildDetail` builds the panel and
+  `OpenDetail` fills it with the four-player breakdown as one monospaced block. ⚠️ **Found by
+  walking the deferred list against the code rather than by reading the list**, which is
+  `FUTURE.md` § 0.5 rule 2 doing its job on this file's own "not done" section. A deferred list
+  nobody re-checks becomes a list of things that get rebuilt.
+
+---
+
+## 93 · OPEN: a held tsinelas drifts 0.084 m from the hand, and it is not this branch ⚠️⚠️
+
+**Found 2026-08-30 by the first full `-testCategory "!WallClock"` run this branch has had.**
+
+```
+CarryTests.AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor
+a held slipper drifted 0.084 m from the hand while its carrier walked
+  Expected: less than 0.05
+  But was:  0.0837778747
+```
+
+⚠️⚠️ **IT IS NOT THE UI WORK AND IT IS NOT PHASE 4.** Nothing in either touches `Carrier`,
+`CharacterMotor`, the animator, or anything in `LateUpdate`. The only gameplay file this branch
+edited is `MatchStatsCollector`, which added one float accumulation to `SampleDistance` and
+cannot move a mesh. `git log` on `CarryTests.cs` and `Carrier.cs` ends at § 78's carry-lift work
+and at Phase 2's record commit; neither is from this session.
+
+⚠️ **THE TEST'S OWN MESSAGE NAMES THE CAUSE IT WAS WRITTEN FOR:** *"The carry has to run in
+LateUpdate: Unity evaluates the Animator between Update and LateUpdate, so a bone read in Update
+is the PREVIOUS frame's pose and the slipper trails the hand by one frame of animation."* The
+measured 0.084 m is **1.7 times** the 0.05 m bound, which is the size of one frame of arm swing
+rather than of a rounding error, so the shape fits that cause exactly.
+
+**What is not known and has to be measured before anything is changed:**
+
+1. **Whether it is a regression or has been red for a while.** Nobody has run a full PlayMode
+   sweep on `profile-stats`; every run before this one was `-testFilter`ed to the suite being
+   worked on, which is what § 90.8 and § 90.6 record doing. **Bisect it before fixing it**, or the
+   fix will be aimed at whichever commit is convenient.
+2. **Whether it is timing-sensitive.** `CLAUDE.md` § 7 records `AiDiagnosticProbe` failing at
+   21.6 s, 29.9 s and 37.6 s against one bound on an unchanged build. Run it three times before
+   believing one number, per § 16's arithmetic.
+   ⚠️ **UPDATE 2026-08-30, AND IT ARGUES AGAINST TIMING:** a second full sweep measured
+   **0.092 m** where the first measured **0.084 m**, both against 0.05 m. Two samples 1.7x and
+   1.8x over the bound is not the shape of a flake, and both sit close to one frame of arm swing,
+   which is the cause the test's own message names. **Question 2 is close to answered; question 1
+   is not, and is still the one to spend a bisect on.**
+
+⚠️ **DO NOT WIDEN THE BOUND TO MAKE IT PASS.** 0.05 m is a fifth of a hand and the whole point
+of the test; `BotBehaviourProbe`'s header has the standing rule about this and it applies here.
+
+---
+
+## 94 · Phase 4.5: quality control across phases 1 to 4 ⚠️⚠️ 2026-08-30
+
+`FUTURE.md` § 4.5, commissioned by 🧑 by name. Phases 1 to 4 shipped in two days and each was
+verified against ITS OWN acceptance list; nothing had ever been verified across all four at once.
+The phase asks four questions nobody asked the first time, and **the first one it asked found that
+no career had ever reached the server.**
+
+### 94.1 · ⚠️⚠️ EVERY MATCH RECORD THIS GAME HAS EVER WRITTEN WAS REFUSED 422, AND THE QUEUE HAD BEEN BLOCKED SINCE PHASE 2
+
+**Found by reading the player's own `Player.log` before writing a line of code**, which is the
+whole argument for `FUTURE.md` § 4.5.1: *"prove it from the running game rather than from
+`docs/TODO.md`"*.
+
+```
+[NetIdentity] Signed in to UGS as mNThUUFyQXAsXLXJPT4sVOFThDTY on profile default.
+[Career] submission deferred; 3 queued: Cloud Code 'match-record' failed (422)
+```
+
+A successful sign-in and a 422 in the same session. `career.json` said the rest:
+
+```
+OwnerId: mNThUUFyQXAsXLXJPT4sVOFThDTY          <- the UGS account
+Queue[0].Players[0..3].PlayerId:
+  c5bcd766f9d4422ea52595b4ccfb8fd6              <- GameSettings.PlayerToken, x4
+Queue[0].Players[0..3].IsBot: false, false, false, false
+```
+
+**Three faults, stacked, each of which alone would have been enough.**
+
+1. ⚠️⚠️ **THE RECORD CARRIED A CONNECTION TOKEN WHERE THE SERVER COMPARES AN ACCOUNT ID.**
+   `ugs/cloud-code/match-record.js`'s `submit` finds the submitter with
+   `p.PlayerId === context.playerId`, and `context.playerId` is the UGS Authentication player id
+   and nothing else. `MatchStatsCollector.IdentifySeats` stamped
+   `PlayerAccount.ConnectionToken`, which reads `IsGuest ? PlayerId : NetIdentity.Token`.
+   ⚠️ **`IsGuest` IS THE TOURNAMENT-GUEST FLAG, NOT "SIGNED IN ANONYMOUSLY", AND THAT IS THE
+   WHOLE MISREADING.** For every ordinary player it is false, so the expression returns
+   `NetIdentity.Token`, which falls back to the machine's local settings token the moment UGS is
+   not signed in *at the whistle*. Sign-in completing thirty seconds later does not go back and
+   fix a record that has already been written. The endpoint then throws
+   `"this player has no line in that match record"`, Cloud Code answers **422**, and it will
+   answer 422 on every retry for ever, because both of its refusals are pure functions of the
+   record and the caller.
+
+2. ⚠️⚠️ **A PERMANENTLY REFUSABLE RECORD SAT AT THE HEAD OF THE QUEUE AND BLOCKED EVERY MATCH
+   BEHIND IT.** `CareerStore.FlushAsync` stops at the first failure, correctly, because the usual
+   reason a submission fails is that the network is gone. It had no way to tell that apart from a
+   record the service will never take. **So one bad record is not one lost match, it is every
+   match from then on**, and the player's screen said `3 match(es) waiting to upload` while the
+   real number was "all of them, permanently".
+
+3. **All four lines were marked `IsBot: false` and carried one id**, so even a correct id would
+   have credited this player with `LineFor`'s FIRST match, which is seat 0. The local career
+   proves it: `Mastery: [{ Id: "dante", Xp: 425 }]` on a machine whose player had been sitting in
+   a different chair. ⚠️ **The local half of the same bug is invisible by construction**, because
+   the local screens looked the player up with the same wrong id as the local record, so they
+   agreed with each other perfectly.
+
+**What that means for what shipped.** Phase 2's career, Phase 4's XP and every hero mastery
+number were **local-only from the day they were written**. `UgsServicesProbe` was green
+throughout, because it probes `match-record` with `load`, and `load` is the branch that reads.
+
+**The fix, in four places.**
+
+| Where | What changed |
+|---|---|
+| `MatchStatsCollector.IdentifySeats` | The local seat stamps `account.PlayerId`; a remote seat stamps `PeerRecord.AccountPlayerId`, which is what protocol 16 already puts in the approval hello for the impersonation guard. `PeerRecord.Token` was the same wrong answer one machine further away. |
+| `CareerStore.LocalPlayerId` | ⚠️ **ONE OWNER FOR "WHICH LINE IS MINE", WHICH HAD FOUR.** `MatchStatsCollector`, `CareerStore.Record`, `MatchResult` and `PlayerHub` each wrote `Account?.ConnectionToken ?? NetIdentity.Token` out by hand. Four consistent copies of a wrong id is the shape that hides for two phases. |
+| `MatchRecordRules.Submittable` | The two throws in the endpoint's `submit`, mirrored in the core, decided without a call. Cloud Code answers a throw and an unwell service both as one failure, so the client cannot learn the difference from the outside; it can compute it exactly. |
+| `CareerStore.DropUnsubmittable` | Runs before every flush and abandons what can never be accepted, loudly and counted, so the queue head can never be permanently wedged again. The local career keeps the match: `ProfileRules.Apply` counted it when it was played and dropping the upload does not undo that. |
+
+⚠️⚠️ **THE THREE RECORDS ON THE PLAYER'S MACHINE ARE NOT RECOVERABLE AND ARE DROPPED ON THE NEXT
+BOOT.** All four of their lines carry one id, so there is no way to tell which was his; a repair
+that guessed would write a stranger's seat into his career. The warning names each match id.
+
+**Two probes now stand where nothing did.**
+
+- **`MatchRecordIdentityProbe`** runs a real solo match on **seat 1** through
+  `MatchDirector.AdvanceRound`, and asserts that exactly one line is a person, that it is the seat
+  that played, that its id is `CareerStore.LocalPlayerId` and is *not* `GameSettings.PlayerToken`,
+  that every bot carries an empty id, and that `Submittable` says the endpoint would take it.
+  ⚠️ **Seat 1, not seat 0**, because seat 0 is the answer a great many wrong implementations give
+  by accident. ⚠️ **It destroys `CareerStore` for the duration**: the editor and the built player
+  share `Application.persistentDataPath`, so a probe that ends a match writes into the real
+  `career.json`.
+- **`CloudEndpointActionProbe.ARealSubmissionPaysExactlyWhatProgressionRulesSays`** is § 94.2.
+
+### 94.2 · A probe case per endpoint ACTION, and there are ten of them rather than nine
+
+`FUTURE.md` § 4.5.2 is the template and § 90.5 is why it exists: three scripts, a stripped
+parameter, and a well-formed answer from the wrong branch with nothing logged. **Every assertion
+below is a string only the intended branch can produce.**
+
+⚠️ **THE PLAN FILE SAID NINE AND MISSED `attest`.** `player-account` has five branches, not four:
+`load`, `save`, `delete`, **`attest`** and `verify`. `attest` is the half of the impersonation
+guard that MINTS a proof and it had no coverage in either direction.
+`UgsServicesProbe.TheAccountEndpointRefusesAHandleProofItNeverMinted` says so in its own header:
+a probe player has never saved a profile, so attest has nothing to vouch for and mints nothing,
+which means that test passes against an endpoint whose attest branch does not work at all.
+`FUTURE.md` § 4.5.2 is corrected in this commit, per § 0.5 rule 2.
+
+| Script | Action | The string only that branch can produce |
+|---|---|---|
+| `player-account` | `save` | the `handle` key, which no other branch returns, carrying the name just sent |
+| `player-account` | `load` | that same name, read back through a different branch |
+| `player-account` | `delete` | proven by the `load` AFTER it no longer returning the name |
+| `player-account` | `attest` | `"proof":"` and `"expires":"`, for a player that has a saved handle |
+| `player-account` | `verify` | `"owned":true` for the proof `attest` just minted |
+| `match-record` | `load` | `"applied":false` |
+| `match-record` | `history` | `"total":`, the only key `load` does not also return |
+| `match-record` | `submit` | `"applied":true`, plus the XP delta below |
+| `telemetry` | `submit` | `"refused":1` for a name that is in no list anywhere |
+| `telemetry` | `report` | `"rollup"`, and a funnel ARRAY rather than the submit branch's object |
+
+⚠️⚠️ **`save`, `delete` AND `submit` WRITE, SO THE WHOLE PROBE RUNS ON A THROWAWAY UGS PROFILE**
+(`qa45`, via `AuthenticationService.SwitchProfile`). One of them deletes an account and one pays
+XP into a career; neither may land on an identity anything else uses. ⚠️ **The sign-out on the way
+past is `SignOut(false)`.** `SignOut(true)` clears the cached anonymous session and mints a new
+player id next boot, which throws away whatever career that identity had.
+
+⚠️⚠️ **AND THE FIRST VERSION OF THIS PARAGRAPH WAS WRONG IN A WAY WORTH RECORDING, BECAUSE THE
+RUN DISPROVED IT.** It said the editor and the built player share the UGS credential cache, so the
+editor's `default` player IS the account somebody is playing on. **They do not.** Authentication
+caches into `PlayerPrefs`, and on Windows the editor's live in
+`HKCU\Software\Unity\UnityEditor\<Company>\<Product>` while a player's live in
+`HKCU\Software\<Company>\<Product>`. The measurement: the editor's `default` profile signed in as
+`qmSg3PKwe...` while the built player on this machine is `mNThUUFy...`.
+⚠️ **WHAT THEY DO SHARE IS `Application.persistentDataPath`**, so `settings.json` and `career.json`
+ARE the player's own files. That hazard is real and belongs to `MatchRecordIdentityProbe`, which
+destroys `CareerStore` for its duration; it is a different hazard from this one and conflating the
+two is how the wrong reason got written down.
+
+⚠️ **`telemetry`'s `refused:1` CASE IS NEW AND IS THE ONE THAT CAN FAIL WHEN THE SERVICE IS RIGHT
+AND THE REPOSITORY IS WRONG.** § 90.9 asserts `refused:0` for events the game sends. Nothing
+asserted the count ever MOVES, so a deployed script that accepted everything, typos included,
+satisfied every check while turning a renamed event into a silently lost one. § 90.3's whole point
+is that a renamed event is a broken history and nothing errors.
+
+**And the XP assertion, which § 4.5.1 calls the single most valuable check in the phase.**
+`ARealSubmissionPaysExactlyWhatProgressionRulesSays` submits a real `MatchRecord`, reads the
+profile back through `load`, and asserts the XP moved by exactly `ProgressionRules.MatchXp`.
+
+- ⚠️⚠️ **THE MATCH ID IS UNIQUE PER RUN.** `applyRecord` refuses an id it has already counted and
+  answers `applied:false` with a **200**, which is a success. A fixed id would pass this test on
+  its second run by counting nothing, and the delta would be zero against an expectation of zero.
+  ✅ **Demonstrated across two runs on one profile: `0 -> 215`, then `215 -> 430`.** The second run
+  paid again rather than being swallowed, which is what proves the unique id is doing its job and
+  that the idempotency guard is not quietly eating a real submission.
+- ⚠️⚠️ **`applied:true` IS ASSERTED BEFORE THE DELTA**, because they are different failures:
+  `applied:false` means refused or replayed, a wrong delta on `applied:true` means
+  `ProgressionRules.cs` and the `matchXp` copy in `match-record.js` have drifted. Reading only the
+  delta reports the first as the second.
+- The record wins, and carries a knockdown, a pressured retrieval, a tag, a sabotage and no
+  penalties, so **all five objectives and the placement bonus are live**. A record that scored
+  nothing would assert completion XP alone and leave five of six terms untested.
+- It also asserts the server's `Level` agrees with its own `Xp` through
+  `ProgressionRules.LevelForXp`, which is the second half of § 91.6's written-twice problem.
+
+⚠️ **AND A 40 ms EDITMODE TEST NOW STANDS BESIDE IT.**
+`CareerAndCloudCodeTests.TheCareerScriptStillAgreesWithTheCoreAboutEveryXpNumber` compares all
+eleven progression constants, including `PLACEMENT_XP` element by element, as source text. **The
+live probe asks whether the DEPLOYED script agrees; this asks whether the REPOSITORY does**, and
+it is the one that fails before anything is pushed. § 90.9 makes the same argument for telemetry.
+The placement table is compared per element rather than by length because a four-entry array that
+agrees on its first and last value is exactly the edit somebody makes tuning second place.
+
+### 94.2b · ⚠️⚠️ AND THE XP ASSERTION FOUND A SECOND, INDEPENDENT REASON: PHASE 4'S SERVER SCRIPT HAD NEVER BEEN DEPLOYED
+
+**The first live run of `ARealSubmissionPaysExactlyWhatProgressionRulesSays` failed like this:**
+
+```
+the server paid 0 XP for a match ProgressionRules.MatchXp values at 215.
+  Expected: 215
+  But was:  0
+```
+
+⚠️ **AND `applied:true` HAD ALREADY PASSED**, which is why the assertion order in that test is
+what it is. The record was accepted, counted into the career, and paid nothing.
+
+**The service was running a pre-Phase-4 copy of `match-record.js`.**
+
+```
+ugs cloud-code scripts get match-record | grep -c "COMPLETION_XP"   ->  0
+                                          datePublished             ->  2026-08-30T01:15:52
+```
+
+Zero occurrences of `COMPLETION_XP`, of `function award`, of `MASTERY_HEROES`. The active version
+was published at **01:15 UTC**, which is **six hours before the commit that wrote Phase 4's
+progression**. The file was written, tested, committed and never pushed to the service.
+
+⚠️⚠️ **SO THERE WERE TWO INDEPENDENT REASONS NO XP HAD EVER MOVED SERVER-SIDE, AND FIXING EITHER
+ONE ALONE WOULD HAVE LEFT IT BROKEN.** § 94.1's identity fault meant no record ever reached the
+endpoint; this meant the endpoint would not have paid for one if it had. **They hid each other**:
+with the queue wedged, nothing ever exercised the deployed script's submit branch, so its missing
+half could not surface.
+
+⚠️⚠️ **NOTHING IN THE REPOSITORY COULD SEE THIS AND ONE THING NEARLY COULD.**
+`CareerAndCloudCodeTests.TheCareerScriptStillAgreesWithTheCoreAboutEveryXpNumber`, written earlier
+in this same session, compares the C# to **the file on disk** and passed the whole time. § 90.5's
+lesson is written down and is exactly this shape one layer up: *"`ugs cloud-code scripts get
+<name>` is the only way to see what the service actually holds."* **A repository test cannot tell
+you what is deployed, and a green probe against `load` cannot either**, because `load` is the one
+branch the old copy still served correctly.
+
+**Fixed by `ugs deploy ugs/cloud-code`.** ⚠️ **It reported all three files as "Updated" and only
+`match-record` actually got a new version**, which is worth knowing before reading that output as
+proof of anything: `player-account` still reads `datePublished 2026-08-30T01:15:52` and
+`telemetry` `02:20:01`, because their deployed copies were already byte-identical to the
+repository's. **The CLI's summary lists what it considered, not what it changed.** The thing that
+tells you what the service holds is `ugs cloud-code scripts get <name>`, and the thing that tells
+you whether it WORKS is the Ugs probe category.
+
+`match-record`'s `datePublished` is now `2026-08-30T11:18:03` and the same probe reads:
+
+```
+[CloudEndpointActionProbe] match-record submit paid 215 XP, 0 -> 215,
+                           exactly what ProgressionRules.MatchXp says
+```
+
+⚠️ **THE STANDING RULE THIS ADDS.** `CLAUDE.md` § 2.2 says finished means pushed. **For anything
+under `ugs/`, finished means DEPLOYED**, and a commit is not a deployment. The cheapest guard is
+the one that just caught it: run `-testCategory "Ugs"` before calling a phase shipped, because it
+is the only thing in this project that asks the service rather than the repository.
+
+### 94.3 · Every acceptance bullet, with a named test or a named reason
+
+⚠️ **CORRECTION TO `FUTURE.md` § 4.5.1, PER § 0.5 RULE 2: PHASES 3 AND 4 HAVE NO "DONE LOOKS
+LIKE" LIST.** § 4.5.1 says *"§§ 1, 2, 3 and 4 each end with a 'done looks like' list"* and only
+§§ 1 and 2 do. Phases 3 and 4 end in bullets, so the bullets are walked as the acceptance list.
+The plan file is corrected in this commit.
+
+**PHASE 1 · ACCOUNTS AND IDENTITY**
+
+| Bullet | Named test, or named reason |
+|---|---|
+| A fresh install reaches the menu signed in with no prompt | ⚠️ **NO TEST, AND THE REASON IS THAT IT CANNOT HAVE ONE HERE.** "Fresh" means no `settings.json` and no UGS credential cache, and both live in `Application.persistentDataPath`, which the editor SHARES with the built player on this machine. A test that made itself a fresh install would delete the player's real account. **On § 90.4's by-hand list.** What IS covered: `OnlineSignInProbe` asserts the boot attempt happens and settles, `PlayerHubLayoutProbe` drives every hub tab with `GameServices.Account` null, which is the unresolved-account boot state, and `AccountRulesTests.ArrivalFallsBackToPlayerOnlyWhenTheNameCannotBeShown` covers the name a first launch gets. |
+| The id survives a restart | `AccountRulesTests.ArrivalIsStableForTheSameTokenAcrossRestarts`, plus `GameSettings.AccountPlayerId` being written by `PlayerAccount` and read by `ReadLocal`. |
+| A username can be attached later without losing anything | `AccountRulesTests.ValidRemoteValuesWinAndMissingRemoteValuesKeepLocalData` and `UnreachableServiceNeverErasesTheLocalProfile` cover the merge; `CloudEndpointActionProbe.TheAccountEndpointSavesLoadsAndDeletesAProfile` covers the round trip through the real `save` branch. ⚠️ **The Username & Password provider itself is still untested by anything**, because exercising it creates a real credentialed account on the live project. Named on the deferred list, § 94.6. |
+| **An account can be deleted** | ✅ **CLOSED. `CloudEndpointActionProbe.TheAccountEndpointSavesLoadsAndDeletesAProfile`.** § 4.5.1 named this as never having been run by a probe and it was right: the `delete` branch had run zero times in its life. It is proven by the `load` AFTER it, not by its own empty answer, because a `load` with nothing saved returns the same thing. |
+| An offline tournament guest can enter without replacing the owner's account | `PlayerAccount._primaryProfile` is parked on `EnterGuest` and restored by `LeaveGuest`. ⚠️ **No test, and the reason is that the guest path switches the live UGS session**, which is the same hazard as the fresh-install bullet. **On § 90.4's by-hand list.** ⚠️ This bullet is also the one that made `ConnectionToken` look reasonable, and § 94.1 is what that cost. |
+| Pulling the network cable still lets a LAN match start | ✅ Confirmed by 🧑 on 2026-08-31 and **not to be re-raised**. The software half is § 90.4's automated list, now with § 94.5's Phase 4 rows added. |
+
+**PHASE 2 · THE PROFILE, THE STATS AND THE MATCH HISTORY**
+
+| Bullet | Named test, or named reason |
+|---|---|
+| Finishing a match writes exactly one record | `MatchRecordIdentityProbe.AFinishedMatchNamesExactlyOneSeatAsThisPlayer` runs a real match to its end and reads `MatchStatsCollector.Last`. ⚠️ **"Exactly one" across four machines is not testable from one process**; the mechanism is the `NetAuthority.ShouldResolve()` gate at the top of `OnMatchEnded` and the record being broadcast rather than re-counted, and `MatchRecordRules` refusing a duplicate `MatchId` on both sides is the belt to that brace. |
+| The profile updates without a reload | `CareerStore.Changed` -> `PlayerHub.OnDataChanged` -> `Show(_tab)`, wired in `PlayerHub.Install`. Covered indirectly: `PlayerHubLayoutProbe` rebuilds every tab through the same `Show`. |
+| **Career totals survive a reinstall on the same account** | ✅ **CLOSED, AND THIS IS WHAT § 4.5.1 MEANT BY "never tested end to end".** `CloudEndpointActionProbe.ARealSubmissionPaysExactlyWhatProgressionRulesSays` submits a record and then reads the profile back through `load` **without touching any local cache at all**. A server-side career read by a client that has none is a reinstall in every way that matters. ⚠️ **Until § 94.1 it would have failed**, because nothing had ever been stored to survive anything. |
+| One Cloud Code invocation per player per match, not one per event | `CareerAndCloudCodeTests.EveryCloudCodeRequestGoesThroughTheOneHelper` proves there is a single request site; `CareerStore.Record` calls `FlushAsync` once and `FlushAsync` sends one call per queued record. ⚠️ **§ 94.1 is the reason this bullet was true and worthless**: one call per match, every one of them refused. |
+
+**PHASE 3 · TELEMETRY**
+
+| Bullet | Named test, or named reason |
+|---|---|
+| Events reach the service and unknown names do not | `UgsServicesProbe.TheTelemetryEndpointAcceptsEveryColumnOfAFrameRateEvent` (`refused:0`) and the new `CloudEndpointActionProbe.TheTelemetryEndpointRefusesAnEventNameItDoesNotKnow` (`refused:1`). ⚠️ **The pair is the test; neither half alone is.** |
+| The event names in the game and in the script are the same list | `CareerAndCloudCodeTests.TheTelemetryScriptKnowsExactlyTheEventsTheCoreCanSend`, as text, on every run. |
+| The funnel records a step once, ever | Server-side by construction (`if (!profile.Funnel[name])`). ⚠️ **Deliberately not tested against the live service and never will be**: the only way to test it is to record a first-launch that can never be undone, which would put a fake into the number `FUTURE.md` § 3 calls the most valuable in the plan. Every probe asserts `"funnel":{}` instead, which is the promise that no probe ever wrote one. |
+| The opt-out stops the counting, not only the sending | `MatchFrameRateProbe.ATelemetryOptOutStopsTheCountingAndNotOnlyTheSending`. |
+| The FPS window is the match, not the session | `MatchFrameRateProbe.ALiveRoundFillsTheSampleAndTheGapsBetweenRoundsDoNot`. |
+| **The opt-out is on a screen a player can read** | ✅ **CLOSED, AND IT WAS FALSE AT 720p.** `PhaseSurfaceLayoutProbe.TheTelemetryRowFitsItsBoxAtEveryShippedResolution` found the disclosure running 107 px off the side of the panel on the smallest shipped resolution. § 94.4. |
+
+**PHASE 4 · PROGRESSION**
+
+| Bullet | Named test, or named reason |
+|---|---|
+| XP from completion, placement and objectives, weighted so leaving is what costs | `ProgressionTests` in `Core.Tests`, and now `CloudEndpointActionProbe.ARealSubmissionPaysExactlyWhatProgressionRulesSays` against the deployed script. |
+| Uncapped level, a border every 50 | `ProgressionRules.LevelForXp` / `BorderForLevel`, `ProgressionTests`. |
+| Per-hero mastery, the six heroes only | `ProgressionTests.TheServerScriptsCopyOfTheHeroListMatchesTheRoster`. |
+| Every reward is cosmetic and touches no gameplay number | `ARewardCannotCarryAGameplayNumber`. ⚠️ § 91.5: its subject used to be a static and raced its own suite. |
+| An AFK seat is paid nothing | `ProgressionRules.WasAfk` and its tests. ⚠️ **§ 91.1: it reads MOVEMENT, and the prompt said `InputIntent`.** |
+| The rate is flat in both directions | Two constants and no curve; `TheCareerScriptStillAgreesWithTheCoreAboutEveryXpNumber` pins both copies. |
+| **A match awards XP computed server-side** | ✅ **CLOSED, AND IT WAS FALSE UNTIL TODAY.** `ARealSubmissionPaysExactlyWhatProgressionRulesSays`. § 94.1 is why: no submission had ever been accepted, so every XP a player had ever seen was the local optimistic copy and nothing else. |
+| **The player can see it** | ✅ `PhaseSurfaceLayoutProbe.TheEndOfMatchXpBlockFitsItsBoxAtEveryShippedResolution` for the results board, `PlayerHubLayoutProbe` for the hub header. |
+
+### 94.4 · The two phase surfaces no layout probe reached
+
+`FUTURE.md` § 4.5.3 named both and was right: `PlayerHubLayoutProbe` is scoped to its own canvases
+on purpose, so **the end-of-match XP block and the settings telemetry row had never been measured
+at any resolution.** Between them they are everything a player can see of Phases 3 and 4.
+
+`PhaseSurfaceLayoutProbe` covers both at the same nine resolutions the other three UI probes use.
+
+- ⚠️⚠️ **THE XP BLOCK IS DRIVEN THROUGH REFLECTION AND THE TWO ALTERNATIVES ARE BOTH WORSE.**
+  Making `ShowProgression` public would be adding a seam to shipping code for a test, which
+  `FUTURE.md` § 4.5.6 rules out by name. Taking the real path is worse than that: the block is
+  filled from `CareerStore.LastAward`, which only `CareerStore.Record` writes, which saves
+  `career.json` **and** calls `FlushAsync`, and `PlayerAccount` signs in anonymously at boot, so
+  the probe would write a fabricated match into the player's real career and submit it to their
+  live account. **The test supplies the inputs and the shipping code produces the strings**: the
+  award comes from `ProgressionRules.Award`, so a probe cannot pass by agreeing with itself.
+- **The fixture levels up on purpose**, because `LEVEL 12 · LEVEL UP · +215 XP` is the longest of
+  the four headlines the block can draw and the short one proves nothing about it.
+- **The bar is asserted separately from the labels.** It is an `Image`, so no amount of text
+  measurement can see it running off the card, and it is the part a player actually looks at.
+- ⚠️⚠️ **IT FOUND A REAL PHASE 3 BUG ON ITS FIRST GREEN RUN, WHICH IS WHY THIS PHASE EXISTS.**
+  The telemetry disclosure on the settings panel **ran off the side of the panel at 1280x720**:
+  795 px of sentence in a 688 px box, 107 px past the edge, silently.
+
+  `BuildTelemetryNote` set `verticalOverflow = Overflow` with a comment saying the sentence is
+  *"two lines wide by design"*. **It was never two lines.** `MenuKit.Styled` leaves
+  `horizontalOverflow = Overflow`, so the text does not wrap, so it never needs a second line, so
+  allowing one changes nothing. **Setting one axis and not the other is a no-op that reads like a
+  fix**, and it survived because Overflow is silent by construction: nothing wraps, nothing clips,
+  nothing errors, and the label is still "there".
+
+  ⚠️⚠️ **AND THE HALF THAT FELL OFF IS THE HALF THAT MATTERS.** The sentence is *"Counts only:
+  matches played, modes, maps, picks and frame rate. No names, no chat, nothing you type."* What
+  survives at 720p is the list of what IS collected; the promise about what is not is past the
+  edge. `FUTURE.md` § 19.3 asks for *"a plain statement of what is collected"*, and **a privacy
+  disclosure that is silently truncated is worse than one that is absent**, because the reader has
+  no way to know they are seeing half of it. Fixed: `Wrap` plus `Overflow`, which is the pair, and
+  the row reserves 56 px rather than 48 so two 18-unit lines do not draw through the row below.
+
+  ⚠️ **THE PROBE NOW ASSERTS BOTH AXES.** Asserting the vertical mode alone, which is what the
+  first version did, passes the broken version.
+- ⚠️ **`LobbyChrome.SettingsSummary` AT 16 UNITS IS NOT A BUG AND § 92.6 LEFT IT UNOWNED.** It is
+  on the LOBBY rather than on the settings panel, it is an authored exception with 🧑's own
+  instruction beside it (*"make font size here smaller"*), and `LobbyChrome`'s constant carries
+  the argument: three words that the drawer directly beneath restates at 26 units. **Recorded in
+  the probe itself so the next reader stops looking rather than "fixing" a decision.**
+
+### 94.5 · Offline and LAN, for all four phases at once
+
+Per `FUTURE.md` § 0.5 rule 7 and § 4.5.4. **Added to § 90.4's automated list:**
+
+- **§ 94.1's queue fix is the biggest offline result in this section and it was not on the plan's
+  list.** A record authored before the account finished signing in used to wedge the upload queue
+  for ever. That is *the* offline case: play at a venue with no internet, sign in later, and every
+  match ever played afterwards is stuck behind the first one.
+  `MatchRecordTests.ARecordWithNoLineForThisPlayerIsRefusedWithoutCallingTheEndpoint` is the rule
+  and `CareerStore.DropUnsubmittable` is the glue.
+- `PlayerHubLayoutProbe` drives all four hub tabs and the sign-in screen with
+  `GameServices.Account` and `.Career` **null**, which is exactly a boot with no connection. Every
+  empty state on those screens is therefore measured.
+- `PhaseSurfaceLayoutProbe` draws the end-of-match XP block from a local `XpAward` with no service
+  call at all, which is what an unplugged LAN match shows.
+- `ProfileRules.Apply` awards XP into the local profile with no network
+  (`PlayerProfileTests.PlayingAMatchAwardsXpButStillNoRankAndNoInventory`), so an offline match
+  still pays and still animates.
+- `CareerStore.FlushAsync` and `RefreshAsync` both return immediately when there is no signed-in
+  account, so an unplugged session costs no timeouts.
+
+**⚠️ WHAT STILL HAS TO BE WALKED BY HAND, added to § 90.4's list.** Every one of these needs the
+cable physically out, and none can be automated from a process that shares this machine's account:
+
+1. Boot with no connection: the menu is interactive and the nameplate reads the local handle.
+2. Open the hub on all four tabs offline. CAREER and MATCHES must show their empty states rather
+   than a spinner or a zero.
+3. Play a LAN match to the end. The XP bar on the results board must move.
+4. Reconnect and sign in. **The queue must flush and the level must jump to the server's number**,
+   which is the step that has never once worked and is § 94.1.
+5. A fresh install: delete `settings.json` and the UGS cache, boot offline, and reach PLAY in one
+   press.
+6. Tournament guest in and out, checking the owner's account is still there afterwards.
+
+### 94.6 · Deferred by design, so nobody refiles it as a bug
+
+`FUTURE.md` § 4.5.5 asks for this list once, in one place.
+
+| Absent | Why, and who owns it |
+|---|---|
+| **The avatar** | `FUTURE.md` § 1.4 is an open ARGUMENT nobody has answered: an in-game builder rather than a photo upload, because a photo upload is moderation and storage. The nameplate portrait is an empty slot rather than a guess. |
+| **Every Phase 4 reward** | ⚠️⚠️ **Titles, badges, palettes and borders are COMPUTED AND WORN BY NOTHING.** `ProgressionRules.AccountRewards` returns them and no screen equips one. § 91.8. **Phase 5 owns it.** |
+| **The rank badge** | Phase 9. There is no rating, so there is nothing to show. |
+| **Achievements** | Phase 10. |
+| **Compare with a friend** | Phase 6. There is no friend list. |
+| **Rename cooldown and profanity filter** | `FUTURE.md` § 1.3 specifies both and neither is built. A name can be changed as often as the player likes and is checked only against `AccountRules`' character class. |
+| **Email recovery** | § 1.2. Email is stored as an optional field and does nothing. ⚠️ Its § 1.5 age note is the reason to leave it that way rather than to finish it casually. |
+| **Username and password sign-in, tested** | The provider is added on the project and `SignInScreen` drives it, and **no automated test touches it**, because exercising it creates a real credentialed account on the live project. It is on the by-hand list. |
+| ~~The per-match detail scoreboard in MATCHES~~ | ✅ **NOT DEFERRED. It shipped and § 92.8 was stale.** The rows go through `UiRows.RowButton` into `OpenDetail`. Corrected 2026-08-30. |
+| **The upgrade offer as a toast** | § 92.8. It is a row on ACCOUNT; a dismissible nameplate badge would be better. |
+| **A career authored offline before a first sign-in** | ⚠️ **This is a decision, not an omission.** The local career already resets when the account id changes (`[Career] the cached career belongs to another account`), so re-stamping such records onto the new id would contradict that. § 94.1's drop path names each abandoned match in the log. |
+
+### 94.7 · The hub, made readable, because it shipped hard to read
+
+🧑 sent the CAREER tab back on 2026-08-30: *"thoroughly plan how to make this shit prettier as well
+as easier to process as well because its so messy and ugly"*.
+
+⚠️⚠️ **§ 92 FIXED THE STRUCTURE AND DID NOT FIX THE READING, AND THOSE ARE DIFFERENT PROBLEMS.**
+Everything § 92 claims is true: nothing is at a hand-written offset any more, the six groups
+collapse, no rate prints over a sample that cannot carry it. **And the screen was still hard to
+read**, because the faults below are not structural, and `PlayerHubLayoutProbe` cannot see any of
+them: every label fitted its box, every label cleared the readable floor, and every one of these
+was true at the same time. **`FUTURE.md` § 4.5.3 says so in advance** and it is worth quoting
+because it was written before this happened: *"it cannot see a screen that is ugly, and it cannot
+see a control nobody can find. Do not read a green run as 'the UI is good'."*
+
+**Five faults, measured off 🧑's own screenshot at 1920x1080.**
+
+1. ⚠️⚠️ **THE VALUE WAS 1600 px FROM ITS LABEL.** `Matches played` sat at x = 145 and its `12` at
+   x = 1770, because rows are full width and the value was pinned hard right. **A label and its
+   value at opposite edges of the screen are not a row**, and there were thirty of them.
+   ⚠️ **The reference was misread and this is the interesting part.** Valorant and PUBG put a
+   WIDE CONTROL, a dropdown or a slider, in the right-hand column, so it fills the space and reads
+   as one object with its label. A two-character number fills nothing. **What survives the copy is
+   the COLUMN, not the alignment.** `UiRows.ValueColumn` is 0.56 of the row, a fraction rather
+   than an offset so it holds at all nine resolutions, and values are left-aligned inside it, so
+   they line up with each other AND sit a short fixed distance from their labels.
+2. **The zebra ran straight through the section headers.** It counted every `Row_` in the list, so
+   whether a group's first row was banded depended on how many rows the groups ABOVE it had, which
+   on the career tab **changes with the player's own history**: a group opens shaded on one account
+   and clear on another. Banding is meant to say "these rows belong together". It restarts at every
+   `Section_` now.
+3. **A shut group cost three lines to say nothing.** The subtitle sat under the heading whether the
+   group was open or shut, so six shut groups spent about **680 px**, most of a screen, on
+   headings. The sentence moves onto the heading's own line, in the value column, muted: a shut
+   group is one row and six of them fit where two did. ⚠️ **The subtitle is still there**, for the
+   reason `UiRows.Section` already recorded: it is the one line saying what is inside.
+4. **`Finishes` was four facts in one string.** `1st 3   2nd 3   3rd 3   4th 3`, right-aligned, so
+   the spacing between four separate numbers was whatever the font did with three spaces.
+   `UiRows.DistributionRow` gives each a captioned cell. ⚠️ **It is not a chart and must not become
+   one**: four bars need a scale, a scale needs a maximum, and a maximum over a dozen matches is
+   noise drawn at full height.
+5. ⚠️⚠️ **THE XP BAR WAS DRAWN UNDER THE CLOSE BUTTON.** The track was centred at -300 with a
+   half-width of 220, so it ran to x = -80; CLOSE starts at -208. **128 px of the bar, the end a
+   player reads to see how close they are, was behind a wood button.** It is in the screenshot.
+   The block now ends at -238 and its three parts are laid out from that one number, with the XP
+   count beside the level. ⚠️ **This is § 92.1 fault 3 exactly, one level up**: two absolute
+   offsets authored separately, each correct alone, never checked against each other. § 92 made it
+   impossible inside a row and left it possible in the chrome around them.
+
+**And two more the FIRST RENDER of the fix found, which is the pattern § 92.6 named.**
+
+6. ⚠️⚠️ **MOVING THE COLUMN MADE EVERY CONTROL FILL IT, AND THE WIDEST CONTROL BECAME THE
+   LOUDEST THING ON THE SCREEN.** `Row`'s slot spans `ValueColumn` to the right margin, about
+   715 px at 1920, and `FieldRow` and `DropdownRow` both called `MenuKit.Stretch` on it. So the
+   display-name field, **a box for fourteen characters**, became a 715 px white rectangle, and the
+   CLASSIC picker became another one. That is the hierarchy fault 🧑 reported in the first place
+   arriving by a different route: nothing led, because the largest object on the page was the one
+   that mattered least. `UiRows.Cap` pins a control at the column's left edge and gives it its
+   authored width; field 360, dropdown 340, button 260. ⚠️ **All three are under 368**, which is
+   the column's width at 4:3, the narrowest shape the probe drives. Widen one past that and it
+   overhangs its row.
+7. **`ButtonRow` centred its button in the column** rather than starting it at the column, so on
+   the ACCOUNT tab SET ONE UP sat 225 px right of where every number and every dropdown on the
+   same screen begins. **One column or none.** The footer note had the same shape of error against
+   the other axis: `ListArea` starts at 6 per cent of the width and the note was pinned at 60 px,
+   so the one sentence explaining a tab hung outside the column of every row above it.
+8. ⚠️ **THE MATCHES TAB SPELLED THE MODE `HEROSTRIKE`.** It uppercased
+   `GameMode.HeroStrike.ToString()`, which is a **wire value**, not a name: `docs/VISION.md` § 1
+   calls it HERO STRIKE and every other screen writes it that way, so one screen out of five
+   spelled a mode differently from the rest of the game. `MenuKit.ModeLabel` is the one owner now
+   and it takes the STRING rather than the enum, because a `MatchRecord` stores its mode as text
+   and may hold one this build does not know: **an unrecognised mode is uppercased and shown
+   rather than blanked**, so a record from a newer build reads as its own name instead of nothing.
+
+⚠️ **THE HONEST LIMIT OF ALL OF THIS.** Six of the seven are measurable and none of them were
+measured, because a probe that asks "does it fit" cannot ask "can it be read". **The picture is
+what asks the second question**, which is `PlayerHubLayoutProbe.PhotographEveryScreen`'s whole job
+and § 92.6's lesson repeating: faults 6 and 7 exist because the fix for fault 1 was rendered and
+looked at, and they would have shipped otherwise. **There is no assertion in this repository that
+would have caught a value 1600 px from its label, and this entry does not claim to have added
+one.**
+
+### 94.8 · Verified
+
+- **Core 269/269** (`dotnet test`, about 300 ms), **EditMode 251/251**, **`Checks.RunAll` OK, all
+  five in one launch**, and all three `tools/` audits exit 0 (44 effect call sites with 0 ungated
+  on another body, 52 wire entry points with 0 unreachable, 55 named messages with 0 mismatched).
+- ⚠️⚠️ **UGS 14/14 AGAINST THE LIVE PROJECT, UP FROM 8/8**, and the line the whole phase was
+  commissioned for:
+
+  ```
+  [CloudEndpointActionProbe] match-record submit paid 215 XP, 0 -> 215,
+                             exactly what ProgressionRules.MatchXp says
+  ```
+
+  It was **0 -> 0 on the first run**, which is § 94.2b.
+- **PlayMode, targeted: 15/15** across `PlayerHubLayoutProbe`, `PhaseSurfaceLayoutProbe`,
+  `MatchRecordIdentityProbe`, `AspectRatioProbes`, `HudOverflowProbe`, `UiClickProbe`,
+  `UiRuntimeShots`, `LobbyStyleProbe` and `HeroPickerLayoutProbe`, then **11/11** on a second pass
+  that added `SettingsWheelProbe`. ⚠️ **Those two suites are in the set on purpose**: § 92.7
+  records `UiClickProbe.EveryButtonIsReachable` and
+  `SettingsWheelProbe.TheWheelScrollsTheSettingsListFromEveryPartOfIt` catching a new always-on
+  chrome element covering the corner of every panel on a screen it had nothing to do with. This
+  change edits the same shared row kit, so they are the regression that matters.
+- **Full PlayMode, `-testCategory "!WallClock"`: 117 cases, 116 passed, 556 s.** The one red is
+  § 93's `CarryTests`, at 0.092 m against a 0.05 m bound. 117 is 108 plus this entry's nine new
+  cases.
+- ⚠️⚠️ **AND THE HONEST PART: THAT SWEEP WAS KILLED TWICE BEFORE IT WAS ALLOWED TO FINISH, AND
+  BOTH TIMES THE DIAGNOSIS WAS WRONG.** It was called a hang because the log stopped growing for
+  eighteen minutes and no `.xml` appeared, and `CLAUDE.md` § 7 records a real batchmode hang with
+  that exact signature. **It was not hanging. It was inside `BotBehaviourProbe`**, which runs
+  three whole matches at a fixed step, logs almost nothing while it does, and accounts for 263 of
+  the 556 seconds on its own. A silent log is this suite's normal state for four minutes at a
+  stretch.
+  ⚠️ **THE CHECK THAT SETTLES IT COSTS ONE COMMAND AND WAS NOT RUN EITHER TIME:**
+  `grep -oE "TumbangPreso\.PlayTests\.[A-Za-z]+" Logs/play.log | sort -u | tail` names the suite
+  it is actually in. **Look at where it IS before concluding it is nowhere.** An entry claiming an
+  unproven gate was written and then had to be deleted, which is worse than waiting nine minutes.
+- ⚠️ **§ 93's `CarryTests` red is still red and is still not this work.** A held tsinelas drifting
+  **0.092 m** this run against a 0.05 m bound, up from the 0.084 m § 93 recorded; nothing in this
+  branch touches `Carrier`, the animator or `LateUpdate`. ⚠️ **Two samples, 0.084 and 0.092, are
+  now on record and both are well outside the bound**, which weakens § 93's open question 2 about
+  timing sensitivity: this does not look like a flake. Do not let it be absorbed into this entry,
+  and do not widen the bound.
+- **A clean Windows player is on the Desktop**, built after every gate above.
+
+---
+
+## 124 · The skills are aimed and drawn in their own hand, the tutorial stopped lying, and Zack stopped being Sean ⚠️⚠️ 2026-09-02, branch `ui-redesign`
+
+🧑 pulled the branch onto this machine and asked for four things in one sitting: the powers to be
+aimable and previewed properly, the tutorial fixed *"thoroughly"* because it *"has been a
+reoccuring problem"*, Zack and Sean pulled apart, and an offline switch for testing. All of it is
+in this section. **Nothing here touches the front end**, which is §§ 116 to 123's scope.
+
+---
+
+### 124.1 A power that lands somewhere is aimed by holding its key, and four of them were not
+
+🧑: *"Her q should be holdable and person using her and only that personn should be able to see
+where the held skill will go"*, *"if person releases it will be cast"*, then the general form of it,
+which is the actually useful sentence: **"By do thhis for all i mean u figure out whichh skills in
+aall should have holdable shit so that u can figure out where skill will land and not js guess"**,
+and *"maybe cheska's wall and slow should have this too"*.
+
+**The rule that came out of it: an ability is hold-to-aim when the player has to choose a PLACE,
+and is not when the place is decided by something else.** The five that are:
+
+| Ability | Was | Now |
+|---|---|---|
+| Phaister **HEX** | `ctx.Position + forward * 4.5` | 2.2 to 5.5 m, release casts |
+| Phaister **SHADOW BLINK** | already aimed (§ 24) | unchanged |
+| Cheska **PERMAFROST SHEET** | `+ forward * 2.8` | 1.8 to 5.0 m |
+| Cheska **ICE BARRICADE** | `+ forward * 2.2` | 1.8 to 4.0 m, the shortest band in the game |
+| Zack **THUNDERSTRIKE** | on his own feet | 1.5 to 7.0 m, the longest |
+
+**And the four that deliberately are not**, because "where" is not the question they ask:
+
+- **Dante's SEISMIC STOMP** and **Cheska's GLACIAL NOVA** and **Sean's SUPERNOVA** go off around
+  the caster. Sean's is a leap: the circle IS where his body arrives.
+- **Dante's TITAN FISSURE** is a 50 degree cone, not a circle at a distance. A range slider on it
+  would move the ring away from the cone the rules actually test.
+- **Nemu's DEVOURING SEANCE** lands on Kuro, and putting Kuro somewhere is what ASTRAL HIJACK is
+  for. It is already aimed, through a different verb.
+- **BOLT SPRINT**, **FLAME RUSH**, **PHANTOM VEIL**, **IGNITION CANNON**, **MAGNET** and
+  **DEMONIC CARAPACE** place nothing.
+
+⚠️⚠️ **`AIController.Consider` ROUTES A HOLD-TO-AIM POWER THROUGH `HoldAim` NOW, AND UNTIL THIS
+COMMIT ONE CALL SITE DID IT BY HAND.** `Tap` alternates the key on and off every frame, so a bot's
+hold is one frame and `AimRangeFor` returns the MINIMUM. That was written up when the blink was the
+only such ability and wired at the blink's own branch; adding four more would have pinned every one
+of them to its shortest reach for three of the four seats in every match, with nothing erroring.
+`Consider` asks `HeroAbility.HoldToAim` now, so a new hero cannot ship with a held power the bots
+tap.
+
+⚠️ **`HeroAbility.AimedDestination` is the one read of "where was this aimed", on the base class.**
+Phaister's blink had the only copy; it is four abilities now. The fallback for a kit with no
+`HeroAbilitySystem` (a probe, a headless match) is the aimed reach along the current facing, never
+`Vector3.zero`, which would put every probe's hazard on the middle of the court.
+
+⚠️ **The post-cast confirmation flash goes where the power LANDED, not to its maximum reach.**
+`HeroAbilitySystem.SpawnCastFeedback` used `TelegraphCentre`, which is `Position + Forward *
+TelegraphRange`, and for an aimed power `TelegraphRange` is the FURTHEST it can be thrown. A hex
+placed at the near end of the ramp flashed several metres past its own ward.
+
+---
+
+### 124.2 The preview is the hero's own shape, in chalk, and it was one grey ring for everybody
+
+🧑, having been given a hero-coloured ring by the 2026-08-27 pass: *"show like a proper visual
+indiicator of how skill will land or how it will look like IN THEIR THEME OR SMTH"*, *"I dont wannt
+just a fkn shadow like old phaister Q hold"*, *"can u make a magic circle for her q as well? its
+ugly bcz its js a shadow"*.
+
+**The 2026-08-27 pass fixed the emission and left the shape.** That is why the ring stopped reading
+as a literal shadow and still read as nothing in particular: one annulus, one tick crown and one
+wash, for six heroes and eighteen powers.
+
+`GroundReticle.Style` is a motif per hero, built from the same `VfxShapes` generator the hero's own
+effects use:
+
+| Hero | Motif | Generator |
+|---|---|---|
+| Phaister | **Ward** | `WardCircle(12, 4, 0.022f)`, which is what `SpawnHexSigil` draws one bar heavier |
+| Cheska | **Frost** | `Corona(20, 0.66f, 0.30f)`, a hard toothed edge |
+| Dante | **Fissure** | `Fracture(6, 3, 0.048f)`, a few thick splits |
+| Zack | **Storm** | `Fracture(9, 4, 0.016f)`, the same generator as a crackle |
+| Sean | **Ember** | `Cinder(4, 11, 0.46f)` |
+| Nemu | **Maw** | `Hollow(44, 0.58f, 0.22f)` |
+
+⚠️⚠️ **AND THE PREVIEW IS CHALK WHILE THE REAL THING IS THE HERO'S ACCENT.** 🧑: *"make sure its
+diff from the actual skill cast to"*, *"make it a diff color, bcz it might be confusing if its the
+same skill already"*. Before this a held ward and a live hex two metres apart were the same shape in
+the same colour. Three things separate them now and each is independent of the other two:
+
+1. **Colour.** The stroke is `UiTheme.Cream`; only the 0.12 interior wash keeps the hero accent.
+   Chalk on asphalt is the game's own vocabulary for a plan, and it is the one mark no ability ever
+   leaves behind.
+2. **Motion.** The preview turns at 18 deg/s. Every hazard this game puts on the road is
+   deliberately static, so anything rotating is not there yet.
+3. **Weight.** The preview's bar is thinner than the effect's.
+
+⚠️ **`Flash` keeps the hero accent, deliberately.** It answers "where did that go off", by which
+time the power has landed, so it SHOULD match the thing it is confirming.
+
+⚠️ **Only the caster sees a held preview, and that was already true.** `GroundReticle.Show` refuses
+to draw for anybody the camera is not looking through (2026-08-27, *"make sure only she can see
+it"*). It is worth restating because it is now five abilities rather than one.
+
+⚠️ **The motif is ONE object whose mesh is swapped, not six switched on and off.** A reticle lives
+on every character in the match; six generated meshes per character, five-sixths of them for a hero
+this seat is not playing, is memory spent on nothing. `RebuildMotif` destroys the old mesh with the
+swap, because `VfxShapes.Own` only frees on object death and this object outlives the match.
+
+---
+
+### 124.3 The tutorial: two real faults, and both of them were about the can
+
+🧑: *"tutorial is broken, speciifcally raising can and tagging"*, *"u can[t] raise can and tag ppl,
+Not sure why, maybe bcz u still have attacker role?"*, *"thoroughly fix tutorial as this has been a
+reoccuring problem"*.
+
+⚠️⚠️ **HIS DIAGNOSIS WAS THE 2026-08-29 ONE AND THAT ONE WAS ALREADY FIXED.** `TutorialDefenderProbe`
+was re-run first and passed both cases: `local.IsDefender = True` at `DefenderReset`, the channel
+reached 1.000, the can stood up, and the role table is correct for all seventeen lessons. **The role
+is not the fault this time.** Two other things are.
+
+**(1) `BecomeDefender` placed the student beside the can's OLD position.** It teleports to
+`_lata.transform.position + back * 1.15`, and `ArmDefenderReset` then called `Lata.HostRestore` one
+frame later — which **moves the can**. Its own note says so: *"IT GOES BACK ON ITS MARK AND THEN
+STANDS UP"*, because a can that stands up where it was knocked to is a can the next throw cannot
+miss. So on any route where an earlier lesson had knocked the can off its mark, and the THROW and
+PEKTUS lessons both do, the student was set down beside the patch of road the can had just left.
+`Carrier.StepDefender` needs `Balance.InteractionRadius`, **1.6 m**, so holding the key there does
+nothing and nothing says why. **The restore happens in `EnterLesson`, before `ApplyLessonRole`, and
+it is unconditional**: an upright can can still be metres from its mark, and PUNCH and LUNGE both
+stand the dummy relative to `_lata.transform.position`.
+
+**(2) `RoundDirector.ResolveTag` refuses every tag while the can is down, and nothing stood it up.**
+`if (Lata == null || !Lata.IsUpright) return;`. `Lesson.Punch` and `Lesson.Lunge` inherited whatever
+`DefenderReset` had left, and `DefenderReset` ends with the can **knocked over** if it was skipped
+or abandoned. **That route is one keypress away** — `N` completes the current lesson — and it is
+the same shape as the 2026-08-29 fault one gate further in. Worse: `ArmDefenderReset` was fire and
+forget, so pressing `N` during its wait left a coroutine that toppled the can **during the PUNCH
+lesson**. `_armRoutine` is stopped by `EnterLesson` now.
+
+⚠️ **And the arming waits on `Lata.IsProtected` rather than on `Balance.ThrowRestoreCooldown +
+0.08f`.** The duration was right by arithmetic and the wrong thing to ask: `HostKnockDown` refuses
+while protected, so anything that retunes that window leaves the lesson unarmable, with the can
+standing and the student holding the pickup key at it for ever. It also logs an error and names both
+flags if the knockdown is refused anyway, because a lesson that cannot be completed should say so.
+
+### 124.4 Three lessons were completed by pressing the key at nobody
+
+🧑: *"also sometimes some tasks get marked even if u dont rlly do them like pushing ppl (as long as
+u click push it gets marked as done)"*.
+
+SHOVE, PUNCH and LUNGE each read `<verb>CooldownLeft > _baselineCooldown + 0.05f`, which is the verb
+having **fired**. In `CombatVerbs` every one of those cooldowns is written before the cone is
+searched — `StepPunch` sets `_punchCooldown` on its second line and finds its victim on its
+fourteenth — so a press into empty air completed the lesson. **The one thing those three lessons
+exist to teach, that the taya's verbs have a reach and an arc, was the thing the tick did not ask
+about.**
+
+They read the signals the game itself uses now:
+
+- **Shove**: `CombatVerbs.LastShoveLandedAt`, written inside `ApplyShoveTo`, which is the single
+  place a shove moves anybody and is reached by both the solo path and `HostResolveShove`.
+- **Punch and lunge**: `RoundDirector.Tagged`, the event `ResolveTag` raises. Both verbs end in that
+  one call, so both lessons read one signal.
+
+⚠️ `_lessonBeganAt` is what makes a timestamp readable without a counter for somebody to zero. A
+counter would need a second writer on a field the combat code owns.
+
+---
+
+### 124.5 Zack and Sean were one kit in three matching slots, and only one of the three had been fixed
+
+🧑: *"the kit of zack and sean are the exact fricking same"*, *"bcaz its js speed up and upgraded
+attack"*, *"but it feels like theyre the exact same character js diff color based on kits"*.
+
+⚠️⚠️ **`docs/Hero_Strike_Balance.md` § 4.4 IS TITLED WITH THIS EXACT COMPLAINT AND THE FIX IT
+RECORDS MOVED NUMBERS.** Sean got the blast radius, Zack got the flight speed. Two throw buffs tuned
+apart are still two throw buffs. The three matching slots were:
+
+| | Sean | Zack | Now |
+|---|---|---|---|
+| Skill 1 | committed dash | sustained speed | **already different**, kept |
+| Skill 2 | next throw explodes | next throw is faster | **Zack's is a recall** |
+| Ultimate | slam under himself | strike under himself | **Zack's is aimed** |
+
+**Zack Skill 2 is MAGNET: his own tsinelas snaps out of the street back into his hand, live.**
+`docs/VISION.md` § 0: *"The tension is the retrieval, not the throw."* Every attacker's round is
+throw, walk back in, get caught or do not, and the taya's only scoring verb exists to punish that
+walk. **Nothing in the game touched that loop until now**, so it is a job no other kit is doing.
+
+- **One charge, back on a lata knockdown**, which is the recharge STATIC CHARGE already had. Recall,
+  throw, land it, recall again: a Zack who hits never walks and a Zack who misses walks like
+  everybody else, from wherever the miss went. Self-limiting with no new number.
+- **The charge is kept and folded in.** `SlipperAffinity.ElectricStun`, `Carrier.HostThrowAt`,
+  `StatusStack` and `Slipper.TriggerAffinityImpact` are all built around
+  `ZackHeroKit.IsOverchargeThrowActive`; deleting the only thing that set it would have stranded
+  four files of shipped, tuned behaviour. The shoe comes back LIVE, so the recall and the charged
+  throw are one loop rather than two presses on one hero.
+- **It refuses rather than spending the charge** when he is already holding one, when it is in the
+  air, or when somebody else picked it up. Holding one being a refusal is what stops it being
+  IGNITION CANNON with a rider: he has to have thrown.
+- **The glyph is kept.** `AbilityGlyph.ZackOvercharge` is an orb with things drawn around it, which
+  reads as a magnet as readily as it read as static.
+
+**Zack's ultimate is aimed**, 1.5 to 7.0 m, the longest band in the game. `UltimateCost` stays at 20
+for one release: the price note says it was expensive because it *"needs no aim, cannot miss, and
+there is nothing the victims can read in advance"*, and two of those three are no longer true, so
+**the reach is the compensation offered first, and the cost is the first number to revisit if he
+comes back weak.** ⚠️ **Sean's stays self-centred and must**: he leaps and lands on it, so the
+circle IS where his body arrives. Aiming both would fix the sameness by deleting the one thing that
+was already his.
+
+⚠️ `HeroLoadout.cs`'s `zack.2.*` rows carry `BaseAbility` **"MAGNET"** now. `HeroLoadoutTests`
+compares that string to the ability's real name off the kit, which is the whole reason the field
+exists, and a table naming an ability that no longer exists is § 108.3's `berto` fault again.
+
+---
+
+### 124.6 The loadout alternates named a percentage instead of a play
+
+🧑: *"thoroughly improve the loadout skills as well"*, *"i want each loadout skill to feel
+thoroughly unique and actually add value and feel like a niche kit that is great in the game"*.
+
+**First, the audit, because § 101.1 is the reason to do it before anything else**: all twelve
+alternates are consumed somewhere. Not one is a `zack.2.*` row that nothing reads. So this is a
+design complaint and not a dead feature.
+
+**Every alternate's name, description and both labels now describe what happens to a person.** A
+player cannot feel 25 per cent of a knockback and can absolutely feel whether the person they
+stomped flew away or fell over at their feet. `+25% radius / -25% knockback` is now
+`Wider break, takes them down / They land at your feet, not away`.
+
+**And Long Tremor actually does that**: with `dante.1.tremor` equipped the stomp trips everyone
+inside the break instead of launching them. ⚠️ **It is a sidegrade and not a bonus**, which is the
+rule `HeroLoadoutTests.IsBudgetNeutral` enforces on the numbers and cannot enforce on behaviour: the
+trip REPLACES the launch the declared cost already paid for. A knocked-down attacker is beside the
+lata and can mash out; a launched one is metres away and upright. Which you want depends on whether
+you are the taya.
+
+⚠️⚠️ **OPEN: the other eleven alternates are relabelled but still pure numbers.** Long Tremor is the
+pattern to copy and the honest state is that it is one of twelve. The next pass gives each remaining
+alternate one behavioural signature at its spawn site, through `ctx.HasVariant`, which
+`dante.2.plating` and `nemu.1.fade` already use. **Do not add a signature that is a gain**: read
+Long Tremor's note first.
+
+---
+
+### 124.7 An offline no-cooldown switch, and the guard is the absence of a network
+
+🧑, with a screenshot of three deck tiles reading WAIT under "Warm up freely, powers start with the
+round": *"i wanna be able to test shit too so pls add option or buttonn to remove cooldowns in
+practice mode"*, *"get rid of this wait shit in practice mode if i click a button"*, *"make sure
+this doesnt leak into actual game or shti"*.
+
+⚠️⚠️ **THE THING IT UNDOES WAS ALSO ASKED FOR AND BOTH ASKS ARE RIGHT.** 2026-08-30: *"remove unli
+skill before round bcz ppl fly out of map and shit"* is why `HeroKit.PracticeMode` refuses every cast
+while the round clock is stopped and why the tile reads WAIT. The first ask is about a match, the
+second is about a test bench, so `PracticeSandbox` is neither a balance change nor a revert: off by
+default, has to be pressed, and unreachable anywhere a second player can see it.
+
+- **`PracticeSandbox.Allowed` is `!NetAuthority.IsNetworked`**, not a `GameLaunch` flag. False for a
+  host, false for a client, false on Relay and false on LAN, answered by the provider. A launch flag
+  would have been a fourth thing to remember to clear and the one case where being wrong is a
+  modified client.
+- **`Active` ands the switch with the guard on every read**, so it cannot latch: a sandbox left on
+  in a solo match simply stops answering true the moment a session exists. `GameLaunch.Reset` still
+  clears it so the BUTTON does not read ON in a room where it does nothing.
+- **It buys the cast, not the currency.** `HeroAbilitySystem.Award` still gates on `PracticeMode`,
+  so a sandbox cast banks no ultimate charge and no objective award can be farmed off it.
+- **`HeroAbility.RefillForSandbox` touches the two numbers that gate a NEW cast and nothing else.**
+  It is not `Reset`, which clears `DurationRemaining` without running `OnEnd` and would leave Dante
+  permanently unstunnable — that is an edge case once a match and would be the normal outcome of
+  holding a key at 60 Hz.
+- **The control is `[F1]` and a state plate under the ready prompt**, not a uGUI button, because
+  `CursorMode.Play` locks the pointer for the whole match: a button there would draw correctly,
+  raycast nothing and read as dead, which is a worse answer to *"if i click a button"* than a key
+  that works. A literal key rather than an input-map action, because a developer switch in the
+  rebinding panel would ship "NO COOLDOWNS" in the controls screen.
+- **The plate is drawn whenever the switch is on, in every round**, not only in the window where it
+  was pressed. A rule this unusual must never be quietly in force.
+
+---
+
+### 124.8 The Slipper Highlight list could only be clicked on the letters
+
+🧑, on the settings dropdown: *"weird its so hard to select slipper highlight"*, *"im spamming ts and
+it wonnt select"*, then *"it selects but its hard to select"*.
+
+`SwatchDropdown.BuildTemplate` builds an `ItemBackground` stretched across the whole 44-unit row and
+its comment says *"it is what receives the click across the whole row"*. **It never could.** Every
+graphic in that file is made by `NewImage`, which sets `raycastTarget = false` on everything it
+returns, so the ring, the dot, the swatch and that plate were all inert and the only thing a pointer
+could hit was the label's own text rect. The plate is switched back on; the other four stay off,
+because a decoration that eats clicks is how a control ends up with a dead patch in the middle.
+
+⚠️ `WoodDropdown` does not have this fault. Its rows are a full-row `Image` with a `Button` on the
+same object.
+
+
+---
+
+### 124.9 Eighteen powers were speaking with six voices
+
+🧑: *"as well as add sfx for each skill, for all character as well as the ones in loadout"*,
+*"make it unique throughout each character (dont generate them the same way bcz theyll end up
+sounding the same huhu)"*, *"make sure the sfx matches wat the skill really does"*, *"make sure sfx
+can be heard by everyone in all modes / not js client sided"*.
+
+**The measurement, taken by reading the six kits rather than by listening:**
+
+| Cue | Played at the cast by |
+|---|---|
+| `sfx_fire_whoosh` | Sean's FLAME RUSH, IGNITION CANNON **and** SUPERNOVA |
+| `sfx_lightning_strike` | Zack's BOLT SPRINT, MAGNET **and** THUNDERSTRIKE |
+| `sfx_ice_freeze` | Cheska's PERMAFROST SHEET **and** ICE BARRICADE |
+| `sfx_ghost_teleport` | Nemu's PHANTOM VEIL, her ASTRAL HIJACK **and** Phaister's SHADOW BLINK |
+| `sfx_explosion_heavy` | Dante's SEISMIC STOMP **and** TITAN FISSURE |
+
+**So a press told the room which hero and never which power.** Thirteen of the eighteen casts were
+one of five sounds.
+
+⚠️⚠️ **THE FIX IS `HeroAbility.CastCue`, PLAYED IN ONE PLACE.** `HeroAbilitySystem.PlayCastConfirm`
+sounds it, which is the same argument `Glyph` and `TelegraphRadius` won: eighteen `OnActivate`
+methods is eighteen places to forget, and a new hero would compile, run and cast in silence. That
+method is also already the one BOTH the local cast and `ApplyNetworkCast` come through, and it
+plays through `NetCue`, so **"heard by everyone" is a property of where it is called and not an
+extra thing to remember.**
+
+⚠️ **The element cues are kept and are still played by the PAYLOADS.** A hex still sounds
+`sfx_hex_cast` when the ward lands and a supernova still cracks `sfx_explosion_heavy` where it
+hits. What changed is that the press no longer plays the element as well.
+
+⚠️⚠️ **NO TWO OF THE THIRTY ARE THE SAME RECIPE, AND THE METHOD IS WHAT DIFFERS RATHER THAN THE
+PARAMETERS.** That is the instruction he gave for the ultimate themes on 2026-08-27 (*"dont
+generate it the same way bcz its gonna sound the same way"*) and the same fault § 19 records about
+the VFX. `tools/generate_skill_audio.py` is a THIRD generator, seeded separately from the payload
+one, so a rebuild of either set cannot touch the other. One family per hero:
+
+| Hero | Family | Why it is that |
+|---|---|---|
+| Dante | physical mass: sub bodies, discrete debris grains | nothing he does rings |
+| Cheska | additive inharmonic partials | ice is the only element in the game that rings |
+| Sean | turbulence: resonant noise with a moving centre, no tuned content | fire has no pitch |
+| Zack | discontinuity: impulse trains, sample-and-hold, ring modulation | electricity is not a body |
+| Nemu | breath and reversal: comb filtering, backwards envelopes | nothing she does arrives |
+| Phaister | Karplus-Strong and bell partials | she is the only one with a decay you can hear |
+
+⚠️ **And the VERB, not the element, inside each family.** Cheska's sheet SPREADS (partials that
+rise while they decay) and her barricade STANDS UP (three discrete chirps sweeping up with a hard
+stop): same element, opposite gesture, which is the whole reason each slot needed its own. Sean's
+supernova is the only cue in the game with a real gap in the middle, because the hang is what makes
+the landing land. Zack's magnet is the only one whose envelope RISES, because the ability is
+nothing happening and then the shoe being in his hand.
+
+**The twelve loadout alternates get their own too**, and they are not the slot's cue pitched:
+`HeroAbility.VariantCastCue` is assigned by `ApplyLoadoutToPresentation`, exactly one of the two
+ever plays, and a default variant clears it back to null.
+
+⚠️ **`HeroAbilitySystem.VariantCue` is a twelve-row switch and not a string transform.**
+`"zack.2.discharge"` to `"sfx_var_zack_discharge"` works for every row today and would silently
+produce an id with no file the first time a variant's tail stopped matching its wav. An
+unregistered cue does not error, it is simply silent, which is what `sfx_lrt_pass` cost two months
+of.
+
+⚠️⚠️ **AND THE FIRST RUN OF THE GENERATOR DIED WITH A `MemoryError` TWELVE FILES IN.**
+`cast_sean_cannon`'s fuse was `while t < 0.52` over a gap shrinking by a constant factor, which is
+a geometric series: it converges at 0.393 s and never reaches 0.52. **The twelve files that had
+already been written looked exactly like a successful partial run.** A `while` loop over an
+accelerating schedule needs a count as well as a bound.
+
+### 124.10 The tutorial had no sound at all when you cleared a step
+
+🧑: *"can u add sfx too for eac stage cleared in tutorial?"*.
+
+Seventeen lessons went by with a 0.70 s scale pop on a card the student is not looking at, because
+they are looking at the thing they just did. `CompleteLesson` sounds `score_award` now, and **the
+pitch climbs a fifth from lesson one to lesson seventeen**, so progress through the route is
+audible without reading `03 / 17` off the card. The end of the route gets `match_win` instead of an
+eighteenth ping.
+
+⚠️ `score_award` rather than a new cue id, because `AudioCueCheck` requires a file for every
+registered id and this is exactly the game's existing "you did the thing" ping. ⚠️ At
+`Vector3.zero` like `MenuSfx`, because it is a UI event and not something that happened at a place
+on the court.
+
+
+---
+
+### 124.11 `LoadoutSurfaceProbe` was knocking on a door § 122 moved, and the rewiring found two faults I had just written
+
+Five of its cases were failing with **`no button reading 'LOADOUT' on the hub`**, and they were
+failing before this section's work started. § 122.5 moved the ability builds off the player hub onto
+the CHOOSE YOUR HERO stage, on his instruction (**"put loadout here, it makes no sense to be in
+profile"**), and the probe was not moved with it. Nothing was broken in the game; the coverage was.
+
+⚠️⚠️ **THAT IS THE THIRD TIME A SHIPPED MOVE HAS LEFT A PROBE POINTING AT THE OLD DOOR.** § 96 is
+the hub's one door nobody could find, § 114 is `PlayerNameplate` no longer installed by any screen
+while `PlayerHubLayoutProbe` still drove it, and this is the same shape. **A green probe for a
+screen nobody can reach is worse than a red one**, and a red one for a screen that works is noise
+that teaches the next reader to skim the results.
+
+**The probe is rewired to the board rather than rewritten from scratch**, deliberately: this file
+has now followed the feature through three screens and its header carries all three moves, which is
+the record that makes the pattern visible at all. The control shape changed with the screen, so the
+cases did too:
+
+| Was, on the hub | Is, on the stage |
+|---|---|
+| a hero stepper plus two `UiRows` skill steppers | the picker's own selection plus four `Variant_*` tiles |
+| "only one hero's two skills are offered" | "every tile on the board belongs to the hero on the stage" |
+| the glyph is on the stepper | the glyph is on the slot HEAD, shared by both readings of that slot |
+| step past a locked row | **press** a locked tile, because every tile has a live `Button` whatever its state |
+| `UiRows.StepperWidth` against the 4:3 value column | every `Text` on every tile against its own tile at nine resolutions |
+
+⚠️⚠️ **IT PRESSES THE REAL DOOR AND MUST KEEP DOING SO.** `ToggleLoadoutBoard` is private and one
+line of reflection away, and a probe that called it would pass on a build where the chip had been
+deleted — which is exactly how this file went stale. `CLAUDE.md` § 6.3: *every destination has a
+visible door, and a door is a thing that looks pressable.* Pressing it is the assertion.
+
+⚠️⚠️ **AND REWIRING IT IMMEDIATELY FOUND TWO FAULTS IN § 124.6, WHICH IS THE ARGUMENT FOR DOING IT
+AT ALL.** The relabelling in that entry rewrote every alternate to name a play rather than a
+percentage. That was the right change and it was authored against nothing, on a card nobody had
+measured:
+
+- **Seven of the twelve descriptions were over budget.** The tile's body is 52 units of
+  `PaperKit.Caption` 16 in a 311-unit band with **`verticalOverflow = Truncate`**, which is two
+  lines and about 78 characters. Long Tremor's was 105. **Truncate drops a whole line in silence**,
+  and § 122.14 caught this same box reading *"The stomp as it is tuned. One heavy shock at"* and
+  stopping, one pass earlier.
+- **Eleven of the twelve trade lines were over budget.** It is one 13 pt `MenuKit.Label` with **no
+  wrapping**, drawing `GainLabel + "   ·   " + CostLabel`, so the seven-character separator comes
+  out of the same ~48 characters. `Wider break, takes them down · They land at your feet, not away`
+  is 67, about 435 units in a 311-unit band. **A `MenuKit.Label` overflows rather than shrinking**,
+  so it draws over its neighbour: § 108's stepper again, one control along.
+
+**The two overflows fail in opposite directions and neither is visible in a code review**, which is
+`CLAUDE.md` § 6.2c stated as a pair. All 24 rows are re-fitted, and the bound is asserted twice:
+`Phase10Tests.EveryVariantRowFitsTheTileItIsDrawnOn` in 40 ms with the arithmetic written out, and
+`EveryTileLabelFitsItsTileAtEveryShippedResolution` against the real rects. ⚠️ **The cheap one
+carries the numbers on purpose**: a bound only a twelve-minute PlayMode run can enforce is a bound
+somebody edits a string past on a Friday.
+
+⚠️ The arithmetic, so the next person does not round it: the board is 1020 wide with 28 of padding,
+so the inner width is 964; the slot head takes 250 and the gap 14, leaving 700; two options at a 14
+gap is a **343-unit tile**, and 16 of padding either side is a **311-unit band**.
+
+### 124.12 The description ceiling, found by adding four lines to a card that does not truncate
+
+The hold-to-aim pass rewrote five descriptions and pushed MAGNET to 177 characters and HEX to 142,
+against a previous longest of 120 (SUPERNOVA). `AbilityInspectPanel` sets the body to `Wrap` with
+**`VerticalWrapMode.Overflow`** and a `minHeight` of 120, on purpose: the tray is the one place in
+the game that must not truncate, because it exists to hold the sentences `VISION.md` § 3 forbids the
+deck from carrying. **The consequence is that a long description is not clipped, it draws over the
+card underneath** — which that file's own note warns about in those words, about the `minHeight`
+floor, one size change earlier.
+
+All five are back under 120 and `EverySummaryFitsTheCardItIsDrawnIn` asserts 125 now. ⚠️ The number
+is measured: about 32 characters a line at 20 pt in a 640 px body, four lines at `minHeight` 120.
+
+---
+
+## 123 · The match settings go back to steppers, the shadow was retuned on the wrong axis, and a tab pair sat at half its neighbour's contrast ⚠️⚠️ 2026-09-02, branch `ui-redesign`
+
+🧑 opened the `ui-redesign` player and sent five notes with crops, four of them about two objects:
+the paper cast shadow and the login screen's tab pair. **Scope was set in his own words, *"edits
+are limited to lobby and login screen for now"*.**
+
+### 123.1 ⚠️⚠️ THE SHADOW: § 122.13 FIXED THE COLOUR AND LEFT THE QUANTITY, AND THE QUANTITY WAS THE COMPLAINT
+
+🧑, in order, with crops of the login's CREATE ACCOUNT and the maker's KEEP AND USE:
+**"can we lessen or fix shadows here"**, **"shadow here js looks so bad"**, and the one that says
+it is not a tuning note, **"rlly dont get that shadow"**.
+
+⚠️⚠️ **§ 122.13 WROTE THE CORRECT SENTENCE AND THEN ACTED ON HALF OF IT.** Its own words: *"A
+shadow's saturation does not depend on the width of the object casting it; what the extra width
+changed was how much of it there was to see."* It then changed the SATURATION and left HOW MUCH
+THERE IS TO SEE at ten units. Ten units under a 96-unit control is a tenth of the object spent on
+its own shadow, at which size it stops reading as lift and starts reading as a second object.
+
+⚠️⚠️ **AND THE OLD VALUE NEVER MET THE BOUND ITS OWN NOTE SET.** § 121.1 asked for a shadow *"at
+or above the 30 per cent saturation every other paper edge on the screen carries"*. Measured over
+`Paper` `f4ecdd`:
+
+| | Composite | Hue | Saturation | Value |
+|---|---|---|---|---|
+| `WoodMid` at 0.50 (was, written up as 28) | `a78e79` | 27 | **27.8 %** | **65.5 %** |
+| `WoodEdge` at 0.48 (is) | `c2a286` | 28 | **31.0 %** | **75.9 %** |
+| `PaperEdge` `dcc19a`, the target | | 35 | 30.0 % | 86.3 % |
+
+**So the control he kept photographing was carrying the exact fault the previous pass believed it
+had fixed**, and the note had rounded 27.8 up to 28 in its own favour.
+
+⚠️ **A DEEPER BROWN CANNOT REACH 30 BY GETTING DARKER.** Past about half alpha the composite runs
+toward the ink: saturation climbs a point at a time while value falls away, which is the heavy band
+he photographed. **The chroma has to come from the colour, not from the alpha.** `WoodEdge`
+`8b5227` is the palette's own edge brown and, being lighter to begin with, clears 30 per cent while
+sitting ten value steps higher than what it replaces.
+
+- `PaperCraft.Shade` and `ActionShade`: `WoodMid` 0.50 to **`WoodEdge` 0.48**.
+- `PaperCraft.ActionDrop`: **10 to 6**, which is the half § 122.13 skipped.
+- ⚠️ **IT IS CUT, NOT FADED, AND THAT IS THE WHOLE DESIGN.** Washing the shadow out with alpha is
+  what put a 17-per-cent neutral under every control and earned *"the shadows suck too"* in the
+  first place. **A weak shadow and a grey shadow are the same pixel.** The shadow got warmer, more
+  colourful and weaker to the eye at once, which is the only combination that answers both notes.
+
+### 123.2 ⚠️⚠️ THE TAB PAIR: THE FAULT IS THE RATIO BETWEEN TWO LABELS, NOT EITHER LABEL
+
+🧑, with a crop of the login screen's SIGN IN and CREATE: **"kinda hard to read this text"**.
+
+`SignInScreen.SetTab`'s own note ends *"Type has to invert when its ground does"*, which is true and
+is half the rule: **it has to invert to the SAME legibility, and this pair did not.**
+
+| Tab | Type on ground | Ratio |
+|---|---|---|
+| Live | `Cream` `f5e6c8` on `WoodMid` `5a2f14` | **9.20:1** |
+| Idle, was | `PaperInkSoft` `7a5c40` on `PaperWarm` `efdabe` | **4.50:1** |
+| Idle, is | `PaperInk` `3b2415` on `PaperWarm` `efdabe` | **10.66:1** |
+
+⚠️⚠️ **4.50 IS NOT A FAILING NUMBER AND THAT IS THE POINT.** It clears the bound for large text and
+would be unremarkable anywhere else on the screen. It is unreadable HERE because it sits eight units
+from a label at 9.20 and the eye reads the PAIR rather than the label. This is the same finding
+`SetTab` already records about the synthetic bold (*"the buttons are too dif"*), arriving on the one
+axis that pass did not check.
+
+⚠️ **AND IT IS NOT A FIFTH DIFFERENCE, IT IS THE FOURTH ONE DONE PROPERLY.** Soft ink was chosen to
+make the idle tab recede; the pair already says which one is live twice over and structurally, by
+eight units of height and a 10:1 plate inversion. A third signal buys nothing a render can see and
+costs the only thing a player does with a tab, which is read it.
+
+⚠️⚠️ **`LobbyChrome.Paint` CARRIED THE SAME FAULT AND IS FIXED IN THE SAME COMMIT**, because it is
+built to the same rule on a lighter ground: `PaperInkSoft` on `Paper` `f4ecdd` is **5.21:1** against
+the same 9.20 live, now **12.34:1**. `Ghost` has no fill, which is why one swatch lands on two
+numbers across the two screens.
+
+### 123.3 The create hint is deleted, and the field it lived in is not
+
+🧑: **"remove pic 3 text"**, of *"Keeps everything you have played on this machine."*
+
+⚠️⚠️ **THE STRING IS CLEARED RATHER THAN THE LABEL REMOVED, AND THE DIFFERENCE IS EVERY ERROR ON
+THIS SCREEN.** `_error` is the sign-in screen's one message line and five writers share it: `Fail`
+in red, the two progress lines in `Submit` and the Google flow in soft ink, and the two resets in
+`Open`. **Deleting the label to remove one sentence would take every error with it, silently**, and
+a form that refuses a password without saying why is worse than one carrying a line he did not want.
+
+⚠️ `_error.color` goes back to `MenuRed` unconditionally in `SetMode`. It was only soft ink because
+THAT string was a hint rather than a fault; with the hint gone, a mode switch would have painted the
+next genuine error in the hint's colour.
+
+### 123.4 ⚠️⚠️⚠️ THE MATCH SETTINGS GO BACK TO STEPPERS, AND THIS REVERSES `18f6d81` AND § 116.8
+
+🧑: **"drop down ui broken af"**, **"i cant even change map"**, and then the question that matters
+more than the bug, **"whyd we even change the old design of it wherein it was clickable from left to
+right"**, with the flow he wants spelled out: *"to change between maps i click match settings and i
+js clcik left and rigth to swtich between diff maps and bots and stuff"*. Asked which shape to bring
+back, he chose **the authored rows exactly**.
+
+⚠️⚠️ **THE COMMIT THAT REPLACED THEM RECORDS ITS OWN MANDATE AS *"His suggestion, taken literally"*,
+AND THE SUGGESTION WAS "u can use dropdowns and shit to make some shit work or look good".** That is
+permission to use a dropdown somewhere. It was read as an instruction to replace a working control
+everywhere. § 116.8's argument is a real one (twelve controls for four choices, and no row says what
+the other options are) and **it is not the argument he was making**. A rationale nobody asked for is
+how a screen he liked became a screen he could not use.
+
+- **`LobbyChrome`: the authored `Rows` are active again**, `DressSelectorRow`, `BuildFormatRow`,
+  `Rename` and `Arrow` are restored, and `BuildDropdownRows` is gone. `SettingsRowHeight` is back to
+  **64** from 56, and `SettingsBodyHeight` is derived from it, so the drawer resizes itself.
+- ⚠️⚠️ **THE INTERACTION COMES BACK AND THE MATERIAL DOES NOT.** Restoring the pre-`18f6d81`
+  version verbatim would put a `GodotTheme.WoodBox` well and amber type inside a drawer § 119
+  repainted in paper: § 117's *"two design systems stacked"* rebuilt deliberately, with the
+  code-drawn half being the wrong one again. The well is `PaperCraft.Surface.Tray`, the caption is
+  `PaperInkSoft` at `PaperKit.Caption` and the value is `PaperInk` at `PaperKit.Body`, which are the
+  dropdown rows' own values, so a restored row and a paper row are the same object.
+- ⚠️ **`WoodDropdown` IS NOT DELETED**, and § 123.5 is why it still had to be fixed first.
+  `parts.SettingsRows` is simply never assigned; `BuildSettingsDropdowns` already returns early on
+  null and `RefreshSettingsDropdowns` is null-guarded on all four. Deleting a control he may ask for
+  again is this section's own mistake run backwards.
+
+### 123.5 ⚠️⚠️ THE DROPDOWN WAS ALSO GENUINELY BROKEN, AND IT IS § 99'S PREDICTED REGRESSION ARRIVING
+
+**Fixed rather than left to rot with the feature**, because the type survives and because the cause
+is one every popup in this project can hit.
+
+`WoodDropdown`'s open list set `overrideSorting = true` with **`sortingOrder = 60`**. `Panel` and
+`ConvertedScreen` build their canvas through `MenuKit.BuildCanvas` at **100**. An overriding child at
+60 inside a host at 100 sorts **under the whole host**, so the open list drew beneath the MODE, BOTS
+and RULES rows, with ILALIM NG TULAY showing as a sliver between two of them. The rows are opaque and
+they are raycast targets, **so they took the presses as well**, which is the half that turned a
+drawing fault into *"i cant even change map"*.
+
+⚠️⚠️ **§ 99 PREDICTED THIS IN WRITING AND NOBODY WENT LOOKING.** It set `overrideSorting = true` in
+`MenuKit.BuildCanvas` and closed with *"the regression to look for is something covering something
+else"*. Before that change every nested `sortingOrder` was inert and this list drew in hierarchy
+order, which happened to be right. **The day those numbers began to mean something, 60 started losing
+to a number this file had never heard of.** A constant that only worked while the system ignored it
+is not a constant.
+
+- The order is **derived**, not written down: `HostSortingOrder(list) + PopupLift`, walking to the
+  nearest ancestor that actually decides sorting (a root canvas, or a nested one with
+  `overrideSorting`), because reading an inert number is § 99's own fault one level up.
+- ⚠️ **It is re-derived on every open**, not only in `BuildList`. A row is routinely built before it
+  is parented into its screen, so a construction-time answer is a fact about a parent the control may
+  not have yet.
+
+### 123.6 ⚠️⚠️ FIND A RANKED MATCH: THE RIM IS A RATIO WITH A FLOOR NOW, AND THE STAGE GUESS WAS WRONG
+
+🧑: **"this button ugly"**, and asked what about it, **"ugly shadows and edges"**. Two faults, and
+the shadow one is § 123.1 already: `Action` draws its contact shadow from the same `Shade`.
+
+⚠️⚠️ **THE FIRST DIAGNOSIS OF THE EDGE WAS WRONG AND THE RENDER IS WHAT SAID SO.** Reading the
+source against his tight crop, the reasoning was *"the dark rim is lost against the near-black stage
+§ 122.11 introduced"*. `LobbyRanked-v71` shows the ranked rail is **cream**, not asphalt: the dark
+field filling his crop was the button's own fill. **A crop is not a screen**, which is `CLAUDE.md`
+§ 6.2b's whole argument arriving from the reviewer's side rather than the author's.
+
+**Measured off `LobbyRanked-v71.png` at the button's top edge, `tools/sample_png.js`:**
+
+| | Face | Rim at `Shift(0.34, 1.10)` | Reads as |
+|---|---|---|---|
+| `WoodFace` `793e1f` (ranked, custom) | value **47.5 %** | `291307`, value **16.1 %** | a black ink line on cream |
+| `MenuGreenFace` `51dd38` (login, maker) | value **86.7 %** | `174b0d`, value **29.5 %** | a dark green wall |
+
+⚠️⚠️ **THE RATIO IS FAITHFUL AND THE ABSOLUTE RESULT IS NOT, WHICH IS WHY THIS IS A FLOOR AND NOT A
+NEW NUMBER.** 0.34 is `BUTTON LONG.png`'s own proportion and it is right for the fill it was sampled
+from. **The two authored fills are 39 value points apart, so one multiplier cannot serve both**: the
+same ratio that gives the green a dark green wall gives the brown a black outline. A rim is the wall
+under a lit face, and a wall is dark; it is not ink.
+
+- `RimFloor` is **0.26**, a shade under where the green already lands unaided, so **the green is
+  untouched by construction** and only the brown is lifted off black (16.1 to 26.0).
+- ⚠️ **This is the same shape of finding as § 123.1**: a number that was correct as a ratio and
+  wrong as a result, in a file whose notes record the ratio and not the result.
+
+### 123.7 ⚠️⚠️⚠️ THE CHAT: IT IS uGUI'S ORDERING, AND EVERY PART OF OUR FILE WAS CORRECT IN ISOLATION
+
+🧑 has reported this four ways since 2026-09-01, starting with **"chat doesnt work at all btw"**.
+§ 121.11 read the source twice and could not place it, and said why: *"either the submit never
+fires or the push never draws, and those are different bugs in different files"*. **It is neither.**
+
+⚠️⚠️ **`LobbyChatProbe` IS THE ANSWER TO § 121.11'S OWN INSTRUCTION** (*"a probe that types into the
+field and photographs the result is the cheapest way to make it repeatable"*), and its first run
+eliminated every candidate that had been guessed at:
+
+| Link | Result |
+|---|---|
+| `EventSystem` present | yes |
+| `MatchRpc.Instance` | present |
+| A press at the field's position reaches it (`RaycastAll`) | **yes**, top hit is `ChatField` |
+| The field takes focus from that press | **yes**, `isFocused` true, `AnyTyping` true |
+| `Submit` sends and the host echoes | **yes** |
+| The line draws on the log | **yes**, `Player#8226: probe hello` |
+
+**So the pipeline works, which is why three passes of reading it found nothing.**
+
+⚠️⚠️ **THE FAULT IS IN `InputField`'S CALL ORDER AND IT IS VISIBLE ONLY IN THE PACKAGE SOURCE.**
+`KeyPressed` returns `EditState.Finish` on Return for any `lineType` other than `MultiLineNewline`,
+and the caller then does, in this order:
+
+    if (!m_WasCanceled) SendOnSubmit();
+    DeactivateInputField();
+
+`SendOnSubmit` is what calls `LobbyChat.Submit`, so **the `ActivateInputField()` that kept the field
+ready for the next line ran INSIDE the submit and was thrown away by the `DeactivateInputField()`
+one line later.** The player types, presses Enter, the line sends correctly and appears, and the
+field goes dead under the cursor. Every keystroke after that lands on nothing.
+
+⚠️⚠️ **THAT IS WHY IT WAS NEVER REPRODUCIBLE FROM A DESCRIPTION: THE FEATURE IS NOT DEAD, IT IS DEAD
+FROM THE SECOND LINE ONWARD.** "Chat doesnt work at all" is an accurate report of what it feels like
+and a misleading one about where to look, and the probe's own submit test passes because invoking
+`onSubmit` directly never runs uGUI's deactivate.
+
+- The re-focus is deferred one frame through `RefocusNextFrame`, which is after uGUI has finished
+  with the event. The coroutine is guarded so holding Enter cannot queue them.
+- ⚠️ **It re-checks `_field` and `activeInHierarchy` on the far side of the frame**, because a
+  player can press Enter and leave the lobby in the same frame.
+
+### 123.8 What is NOT done
+
+- ⚠️⚠️⚠️ **THE RESTORED STEPPERS PUT HIS OWN BLUE ARROWS INTO THE LOBBY, AND THAT IS A NEW INSTANCE
+  OF § 121.5 CREATED BY § 123.4.** Sampled off `LobbySettings-v71.png` at the MAP row's left arrow:
+  **`80bad9`, hue 201 at 41 per cent saturation**, which is the identical measurement § 121.5 took on
+  the picker. The arrows are the authored textures the rows carry, so the revert brought them back
+  with the interaction.
+  ⚠️⚠️ **IT IS DELIBERATELY NOT FIXED AND THE REASON IS WRITTEN DOWN TWICE.** `CLAUDE.md` § 6.4:
+  *"Do not repaint his art to satisfy this rule"*. § 120.7 and § 122.8: only he settles the arrows,
+  and his two rules genuinely disagree here. **But he has said "i dont want to see blue shit" five
+  times and this pass has now put it on a second screen, so it must be raised rather than filed.**
+  § 121.5's third option is the one that costs nothing: draw a warm arrow from the measured
+  silhouette and leave the PNG and the main menu alone.
+- **The chat still does not work and is still not diagnosed.** § 121.11 unchanged.
+- **The login card still does not use the space.** § 121.4 unchanged, and § 100 is why it is not
+  being guessed at.
+- **The chat still does not work and is still not diagnosed.** § 121.11 unchanged.
+- **The login card still does not use the space.** § 121.4 unchanged, and § 100 is why it is not
+  being guessed at.
+- **The picker's arrows are still blue.** § 121.5, still his to settle.
+- **The chat still does not work and is still not diagnosed.** § 121.11 unchanged, now said four
+  ways.
+- **The login card still does not use the space.** § 121.4 unchanged, and § 100 is why it is not
+  being guessed at.
+- **The picker's arrows are still blue.** § 121.5, still his to settle.
+
+### 123.9 Acceptance
+
+- Every touched screen re-shot at `v72` and a person looks: the three login states, the lobby,
+  `LobbySettings` (the restored steppers) and `LobbyRanked` (the floored rim). ⚠️ **All three login states, per `CLAUDE.md` § 6.2b**: the state a player meets first is
+  the one nobody had photographed last time.
+- ⚠️ **The shadow change is visible in a still and the tab change is visible in a still**, so
+  unlike § 122.9's focus work this pass can actually be judged from the renders.
+- `dotnet test` on the core, and the PlayMode UI suites.
+- A clean Windows player on the Desktop.
+
+---
+
+## 122 · The black line everywhere, the picker goes back to wood, and the loadout moves to the hero ⚠️⚠️ 2026-09-02, branch `ui-redesign`
+
+🧑 opened the build off `b8da3fe9` and sent nine notes across a sitting, most with a crop. Two of
+them are reversals of decisions taken the same day, and both reversals are his.
+
+⚠️⚠️ **THE ONE HE REPEATED, UNPROMPTED, AFTER ALREADY REPORTING IT ONCE: "can u remvoe thhat
+black line taht shows up in everywhere? i really dont want to have that".** He had already said
+*"i dont like the outline at call can we rtremove that"* of the login tabs and **"ye wtf is that
+black outline for"** of the lobby's JOIN A GAME. It is one component on eighteen call sites and
+§ 122.1 is what it became.
+
+⚠️ **SCOPE HE SET HIMSELF, TWICE, AND IT IS NARROWER THAN IT LOOKS**: **"make sure thhat if u
+bring this shit back u dont break other ui"**, *"js the character select"*. The wood revert in
+§ 122.4 is one screen. § 122.7 lists every place that had to be told about it and why missing any
+one of them would have made the whole change look like it did nothing.
+
+---
+
+### 122.1 ⚠️⚠️⚠️ THE BLACK LINE IS `FocusRing`, AND THE COLOUR WAS NEVER THE FAULT
+
+🧑, in order, over one sitting:
+
+| Crop | What he said |
+|---|---|
+| The login screen's SIGN IN / CREATE tabs | *"i dont like the outline at call can we rtremove that"* |
+| The lobby's JOIN A GAME chip | **"ye wtf is that black outline for"** |
+| No crop, about the whole front end | **"can u remvoe thhat black line taht shows up in everywhere? i really dont want to have that"** |
+
+**It is `UiMaterials.FocusRing`, and § 121.2b had already retuned it once in the same day.** That
+entry took it from `UiTheme.Amber` to `UiTheme.WoodMid` on a measurement (`ffba00` on `f4ecdd` is
+**1.46:1**, against **9.20:1** for the wood) and recorded him rejecting the amber twice. **Two
+colours have now been rejected on one control, which is the tell that the colour was not the
+variable.**
+
+⚠️⚠️ **THREE THINGS WERE WRONG AND ALL THREE ARE STRUCTURAL.**
+
+| What | Why it reads as "a black line" |
+|---|---|
+| **The sprite is a hard-edged rectangle with square corners.** `UiMaterials.Ring` fills every pixel outside a 3-unit inset border at full alpha, with no falloff and no radius. | Around a `Token` pill it is a box near a button; around a chamfered `Action` it is a box near a slab. **The silhouette never followed the control it belonged to**, so it read as a stray rectangle rather than as an edge on anything. |
+| **`5a2f14` at 3 px is black.** A 3-unit line at a canvas that scales on the short axis is one to two screen pixels on the window he plays in, and no hue survives at that width. | The measurement in § 121.2b is a CONTRAST ratio, which is exactly the property that made it visible and says nothing about whether it looks like ink. 9.20:1 is what you want from a focus mark and what you do not want from a line you did not ask for. |
+| **It was drawing a SECOND indicator on top of one that already existed.** § 120.1 gave every paper control an eased hover: the face lifts two units, the object scales 2.5 per cent, the cast shadow grows, and a `Tray` lightens (`PaperCraft.PaintTray` lerps 70 per cent from `PaperWarm` to `Paper`). | `CLAUDE.md` § 6.2 question 3 answered wrongly. Every control in the front end already had a visible state change; the ring added a rectangle to a screen whose entire standing complaint is too many rectangles. |
+
+**What shipped: the component draws nothing at all and drives the control's own pose instead.**
+
+- `FocusRing` keeps its name and its two public fields (`Spread`, `Colour`) and creates **no
+  `GameObject`, no `Image` and no sprite**. On focus it calls `PaperButton.SetFocused(true)`, or
+  `PaperSkin.SetPose(Hover)` when there is no button.
+- `PaperButton` gains a `_focused` flag that joins `_hovered` in both `Animate` and `Refresh`, so
+  a keyboard-focused control lifts, scales and grows its shadow exactly as a hovered one does.
+- A focused **text field** is the case § 121.2b said could not lose its ring, and it does not lose
+  a state: `Surface.Tray`'s `Pose.Hover` lightens the recess, so the box you are typing in is
+  visibly the lighter of the two. **No mark, pure value**, which is the same inversion this front
+  end has now made four times (`Surface.Live`, `Surface.Sign`, the picker's trait pips, this).
+
+⚠️⚠️ **THE CLASS IS KEPT AND ONLY ITS BODY CHANGED, AND THAT IS THE WHOLE REASON THIS IS SAFE.**
+There are eighteen `FocusRing.Attach` call sites across `LobbyChrome`, `PaperKit`, `SignInScreen`
+and `WoodDropdown`. Deleting the type would have been eighteen edits **and** a
+`game-ui-design` `missing-focus-visible` regression on every one of them: a keyboard or pad user
+with no indicator cannot tell where they are, and that skill rates `controller-navigation-deadend`
+critical. One file changed; every screen keeps a focus state and loses the mark he was pointing at.
+
+⚠️ **BOTH ENDS RELEASE.** `FocusRing.OnDisable` and `PaperButton.OnDisable` each clear the flag,
+because a control switched off while focused never receives a deselect. That is § 121.2's stuck
+hover arriving on a second input path, and it was fixed there for the pointer only.
+
+---
+
+### 122.2 The login screen: the hint nobody could parse, and the primary that was never converted
+
+- ⚠️⚠️ **"wtf does tab to move mean"**, of `TAB to move · ENTER to sign in · ESC to go back`.
+  **The line is deleted, and the answer to his question is the argument for deleting it.** It meant
+  "TAB moves the caret from USERNAME to PASSWORD", which is a browser form convention true of every
+  text field he has ever used. `game-ui-design`'s `no-keyboard-shortcut-display` is about
+  functionality a player would otherwise never DISCOVER and its own solution section says to put
+  the list on the controls screen; none of the three keys qualifies, and **ESC backing out is a
+  promise `CLAUDE.md` § 6.3 makes on every screen in the game**, so advertising it on one screen
+  teaches that it is true only there. `Update` still submits on ENTER, closes on ESC, and `Chain`
+  still wires TAB.
+  ⚠️ The 52 units are not redistributed: `FitCardToContent` sizes the card from what is on it, so
+  the card comes up shorter and the margins stay symmetric.
+
+- ⚠️⚠️⚠️ **"wtf is up witht his shadow"** and *"shadow fir this looks weirdd"*, of CREATE ACCOUNT.
+  **§ 121.1 item 3 listed this button as converted and it never was.** That entry names *"`CREATE
+  ACCOUNT` / `SIGN IN` (login)"* among the primaries taking `PaperCraft.Surface.Action`, and every
+  one of the others gets there through `PaperKit.PaperDress.ButtonSkin` — **which `SignInScreen`
+  never calls, because it is built in code.** Five screens were converted by one line in a file
+  this screen does not use.
+  **So the grey halo § 121.1 measured was still on screen**, and the measurement is that entry's
+  own, taken off `Logs/shots-runtime/SignInCreate-v56.png`, which is this button: the wooden halo
+  samples `ada69b`, **hue 37 at 10 per cent saturation and 68 per cent value**, against every paper
+  edge on the same card at **30** and the field at 96. `PaintAction` derives its contact shadow
+  from the fill, so under his green it is a dark green-brown. **The fix is one call.**
+
+- ⚠️⚠️ **"the buttons are too dif"**, then the diagnosis, **"legit one is all caps and fat af and
+  bold one isnt"**, of the SIGN IN / CREATE pair. **He counted the differences and there were
+  four**: surface (`Live` against `Token`), height (60 against 52), weight (Bold against Normal)
+  and label colour. Two controls that do the same kind of thing must look the same (§ 117's whole
+  complaint); a pair differing on four axes reads as two unrelated buttons that happen to be
+  adjacent.
+  ⚠️ **The weight was the worst of the four because it changes the letterforms.** Darumadrop One
+  ships one weight, so `FontStyle.Bold` is Unity's SYNTHETIC bold: it smears each glyph
+  horizontally without widening the advances, so the two tabs were the same string set in two
+  subtly different typefaces eight units apart. That is
+  `ConvertedCharacterSelect.BuildCustomDoor`'s *"these diff fonts look ugly"* finding about two
+  SIZES in one rail, arriving on weight.
+  **Both tabs are Bold and one size now.** Two signals survive and both are structural: eight units
+  of height off a shared floor, and a 10:1 value inversion. `game-ui-design` asks for a difference
+  that survives greyscale; it does not ask for four.
+
+---
+
+### 122.3 The wordmark gets a frame: `PaperCraft.Surface.Plaque`
+
+🧑, three messages, with a crop of the login card's TUMP plaque: **"can u add a pretty outline for
+this too"**, *"one that reads as wooden frame or some shit?"*, **"can u give it a wooden texture
+too the tump box"**.
+
+It was `Surface.Sign`: a flat wood-dark plate with a lit top lip. Correct for what that surface is
+for (the lobby's ROOM CODE, a value on a dark plate) and a rectangle of brown under the game's name.
+
+⚠️⚠️ **A NEW SURFACE RATHER THAN AN EDIT TO `Sign`, AND THE REASON IS A SECOND CONTROL.** Growing
+`Sign` a carved frame and a grain would have spent detail on the room code and the ranked plate,
+which he did not ask about, and made the room code compete with the primary beside it. **A role is
+what varies here, never a fill** (`CLAUDE.md` § 6.5): *"the one plaque the game's own name is
+carved into"* is a different role from *"a value on a dark plate"*.
+
+**Six layers, outward to inward**, and layer 5 is the entire argument:
+
+1. a **cast shadow** in the bottom `Drop` units, cubed falloff (`PaintAction`'s correction),
+2. a **bright keyline** at the silhouette, at `PaintAction`'s measured 5 per cent,
+3. a **dark rim** at 4 per cent,
+4. the **frame band**, `FrameBand` **0.11 of the face**, a full-height ramp with the varnish band
+   a quarter down, a lit crest along its own top edge and a dark lip along its bottom,
+5. ⚠️⚠️ the **inner shadow the frame casts onto the field**, strongest at the top and wrapping the
+   sides at half strength, and
+6. the **field**: `WoodSlot` with a one-dimensional grain.
+
+**Without layer 5, layers 4 and 6 are two flat browns meeting at a hard line, which is what an
+outline looks like and exactly what he was pointing at.** A shadow falling from the frame onto the
+field is what says the field is BEHIND the frame, and that one relationship is the difference
+between a border and a piece of joinery.
+
+⚠️ **THE GRAIN IS ONE-DIMENSIONAL.** `WoodCraft`'s own note: *"Two-dimensional noise reads as
+dirt."* Grain runs along the plank, so the sample is on x alone and the same value is written down
+the column. `PaperCraft.Fibre` samples both axes because paper fibre genuinely is two-dimensional;
+using the wrong one makes a wooden sign look mouldy.
+
+⚠️ **`LogoInset` DOES NOT MOVE.** It is 22 and the frame is about 16 at this height, so the mark
+clears the moulding by six units without `LogoMarkWidth` changing. **Growing the inset to "make
+room" would have shrunk the wordmark**, which is § 121.2c's fault exactly: the mark occupied 51 per
+cent of its own sign and the rest was bare brown.
+
+⚠️ **NO POSE.** A plaque is furniture, so `PaintPlaque` takes no `Pose` and cannot acquire one.
+`CLAUDE.md` § 6.3: a control that does nothing must not look pressable.
+
+---
+
+### 122.4 ⚠️⚠️⚠️ THE FIGHTER PICKER GOES BACK TO WOOD, AND THIS REVERSES § 119 FOR ONE SCREEN
+
+🧑 sent a capture of the **pre-paper** picker and three sentences over two messages:
+
+> **"it used to look really good here, maybe it can retain old brownn color"**
+> *"just change the backgrounnd or somethhing bcz i dont like the dark blue sit"*
+
+and, of the cream version that shipped:
+
+> *"i just wnat u to figure out how to make this cooler"*
+> **"maybe use a darker color or smth for the background here"**
+
+⚠️⚠️ **ALL THREE NOTES ARE ONE SCREEN AND THEY DO NOT CONFLICT. THE FAULT WAS NEVER THE DARKNESS,
+IT WAS THE HUE.** The screen has now been three things: a wooden panel on a **slate-to-midnight**
+stage (rejected, *"i dont want to see blue shit"*), a cream panel on a **cream** stage (rejected,
+*"make this cooler"*, *"old one looked prettier"*), and now a wooden panel on a **warm near-black**
+stage.
+
+**The design argument, so nobody takes it back to cream on consistency grounds.** Every other
+screen in this front end is a sheet you READ. This one is a stage you LOOK AT, and the thing on it
+is a saturated voxel figure lit from three sides. On `Paper` `f4ecdd` the brightest object in the
+frame is the BACKGROUND, so the character reads as a sticker lying on a page and all six heroes
+lose their silhouettes against the sky. That is why a fighting-game roster, a hero picker and a
+shop window are dark and a settings page is not.
+
+**What changed, all of it inside `ConvertedCharacterSelect`:**
+
+| | Was | Is | Why |
+|---|---|---|---|
+| The dress | `PaperDress.Screen(transform)` | **not called** | One line decides this screen's material. `PaperDress.Screen` takes a ROOT, so removing the call reaches exactly the subtree it used to reach and nothing else. |
+| The board | `PaperKit.Paperise(ConfigPanel, Sheet)` | `RestoreAuthoredWood` | His `SETTINGS CONFIG PANEL.png` and `MAP MODE DISPLAY.png` are simply drawn again. `PaperSkin.Apply` destroys a `WoodSkin`, so the skin has to be **destroyed** and the authored components and their `Face`/`Shadow` layers re-enabled, or two components write one Image every frame. |
+| `Backdrop` | `Paper` → `Paper` → `PaperWarm` | `WoodDeep` lifted → `WoodDeep` → `WoodDark` shifted | Hue 24 to 26 throughout: **every channel has more red in it than blue**, which is § 6.4's own one-line test. The three-stop shape survives all three repaints because it is the part that was always right. |
+| `BackdropGlow` | 0.30 → 0.13 → 0 | **flat 0.62 core, then cubed falloff** | The old curve spent **more than half its total alpha outside its own core**, which is fog rather than light. `PaintAction`'s contact-shadow correction, on a lamp. |
+| The glow's tint | `PaperEdge`, hero lerp **0.65** | `WoodEdge`, hero lerp **0.45** | This is § 121.5's open item resolved. His two notes pull against each other (**"the background corresponded to their color"** and, of the version that tints, *"yea see this doesnt look great"* about NEMU's purple): at 0.65 the pool IS the hero's hue, at 0.45 the warm lamp dominates and the hero arrives as a tint in it. **The hue moves and the value does not.** |
+| `Scrim` | 14 per cent `PaperSunk` down the LEFT | **symmetric vignette**, 0.55 `WoodDark`, squared, outer third | § 6.2c question 3 asked a third time. It has protected a wood panel from a wood backdrop, then grounded a model on cream; a dark shade on a dark stage is nothing. What a stage needs is edges. Symmetric on purpose: an asymmetric vignette reads as a light source and the screen already has one. |
+| Ability rows | `PaperWarm` in `PaperEdge` | `RowPlate` (`WoodSlot`) in `RowRim` (`WoodEdge`) | See `BoardInk`. |
+| Trait pips | filled `WoodMid` | filled **`Amber`**, empty `WoodDark` | § 119.10 took these to wood because amber on cream is 1.7:1; on `WoodSlot` the numbers invert and it is `WoodMid` that vanishes. **On a dark board the marker is the one LIGHT thing.** |
+
+⚠️⚠️ **FOUR CONSTANTS NOW NAME THIS SCREEN'S INK, BECAUSE THE MATERIAL HAS FLIPPED TWICE AND EACH
+FLIP WAS ELEVEN SEPARATE EDITS.** `BoardInk`, `BoardInkSoft`, `RowPlate`, `RowRim`. Every value in
+them already exists in `UiTheme`; they are file-local because they are this screen's READING of the
+palette, not a new palette, and putting them in the shared file is how the next screen quietly
+inherits a decision made about one.
+
+---
+
+### 122.5 ⚠️⚠️ THE LOADOUT MOVES FROM THE HUB TO THE HERO, AND THIS REVERSES § 114 FOR ONE FEATURE
+
+🧑 2026-09-02, with a crop of CHOOSE YOUR HERO: **"put loadout here, it makes no sense to be in
+profile"**, and again later, *"there were button updates can u put loadouts in the choose ur hero
+screen too and shit"*.
+
+⚠️⚠️ **BOTH DECISIONS WERE HIS AND THE SECOND ONLY MAKES SENSE NEXT TO THE FIRST, SO READ
+`PlayerHub.BuildTabColumn` BEFORE UNDOING EITHER.** On 2026-09-01 he could not find the ability
+builds at all (*"i also dont know hhow to navigate to loadouts section"*, **"that means if i cnat
+ifnd it, no one owuld"*) and they became a tab on the hub. Having found them, he now says the tab
+is the wrong room.
+
+⚠️⚠️ **HE IS RIGHT ON THE JOURNEY AS WELL AS ON THE TASTE, AND THE PRESSES ARE COUNTABLE.** The old
+route was **YOUR SKILLS row → hub → LOADOUT tab → hero stepper → slot stepper**: five presses, and
+the middle three exist only to re-select a hero the player had already chosen on the row directly
+above. `CLAUDE.md` § 6.3: *"if it takes more than three, the flow is the bug"*. It is **row → the
+skill you want** now, two presses, and **the row you press is the row that describes what you are
+choosing between**.
+
+**Where it went, and § 122.10 is the entry for the version of this that lasted one render.**
+
+- ⚠️⚠️ **It is its own board on the stage, reached from its own chip, and he asked for that in
+  those words**: **"lowk i dont want make your own and loadout to share the same button or panel
+  as lata tsinelas hero"**, *"maybe u should give it its own clickable buttons on the right"*.
+- **The tab rail is three tabs again.** HERO, LATA, TSINELAS. `MAKE YOUR OWN` left it, which is
+  § 117's rule he is restating from the outside: HERO / LATA / TSINELAS say *which category am I
+  looking at inside this screen* and MAKE YOUR OWN is a door OUT of it. § 121.5 had already spotted
+  the fourth cell and answered it by making the door the same SIZE as the tabs, which fixes the
+  half of the sentence that was not the problem.
+  ⚠️ **Every sizing fight on that rail was that one cell**: § 121.10 rows 3 and 4,
+  `BuildCustomDoor`'s 2.2-of-flex arithmetic and `FitTabLabel`'s 14-unit floor all exist because
+  `MAKE YOUR OWN` is thirteen characters in a row whose next longest is eight.
+- **Two chips on the stage, bottom right**, opposite CHOOSE and BACK: `LOADOUT` above
+  `MAKE YOUR OWN`. ⚠️ Anchored to the canvas CORNER, not offset from the centre, because
+  `AspectSafeCanvas` scales on the short axis and a hand-written offset is a layout correct at
+  exactly one aspect ratio (§ 6.2c question 1, § 92.1 fault 3).
+- ⚠️ **`LOADOUT` is absent in Classic and on the LATA and TSINELAS tabs, not greyed.** A greyed
+  control is indistinguishable from a broken one (§ 6.2), and the hub's version needed a whole
+  explanatory sentence only because a TAB that vanishes reads as a lost feature. A chip on a stage
+  does not: on the LATA tab there is visibly no hero for it to belong to. Switching tabs also
+  closes the board, or a hero's build panel would stand over a picture of a tin can.
+- **The board is four cards: two slots, two readings each.** ⚠️⚠️ **Cards rather than a stepper,
+  and that is the whole gain over the hub's version.** `BuildAbilityBuildRows` used a
+  `UiRows.StepperRow` per slot because a settings list is what that screen is made of, so the
+  player could see exactly ONE of the two readings at a time and had to click to compare them.
+  **A choice between two things is not a value you step through; it is two things you look at.**
+- **Three card states, told apart by surface before colour**: EQUIPPED is a lit plate with an amber
+  keyline carrying the word; AVAILABLE is a plain plate; LOCKED is a sunk near-black plate carrying
+  its challenge and its running count instead of its trade. ⚠️ **A locked card is still a card**,
+  so a player can see what they are working toward.
+- ⚠️ ESC closes the board and leaves the picker standing. § 6.3: *innermost layer first*. It is in
+  `Dismiss` rather than in the key handler so BACK and ESC cannot disagree.
+- The picker's three description rows keep the one part of this that was never about a control:
+  ⚠️⚠️ **they name and describe the EQUIPPED reading rather than the kit's default, which was a
+  real defect on its own.** `HeroAbilitySystem.CreateKitFor` returns the BASE kit, so the one
+  screen in the game that explains a hero was describing an ability the player was not taking into
+  the match. They are not pressable and their `raycastTarget` stays `false`.
+- The **ultimate has no card and cannot get one**. `AbilityVariant.Slot` is 1 or 2 and the
+  ultimate's is 0 by construction, per that field's own note: *"reading which one an opponent has
+  is already a skill; two readings would make the tell unreliable rather than deeper."*
+
+**What did NOT survive, named rather than left to be noticed:**
+
+- **The hero stepper.** It asked "which hero?", which the picker answers by construction. That is
+  the whole reason the journey shortens.
+- **`_loadoutViews`, the browse cursor.** A stepper needs somewhere to hold "the variant I am
+  looking at but have not equipped"; a two-state toggle has no cursor, so what is drawn is always
+  what is equipped. ⚠️ **The honest consequence: a locked variant can no longer be browsed.** It is
+  NAMED on the row with its challenge and its count instead, which is strictly more information in
+  one fewer press.
+- **The Classic explanation.** The hub's tab needed a sentence saying Classic has no kit, because a
+  tab that vanishes in one mode reads as a lost feature. The picker draws trait meters in Classic
+  and always has, so there is nothing to explain away.
+
+⚠️ **NOTHING IN THE CORE MOVED.** `HeroLoadoutRules`, `HeroBuildRules`, every variant, every
+challenge and every counter are untouched in `Packages/com.tumbangpreso.core/Runtime/HeroLoadout.cs`,
+and the new caller reads and writes through the same four methods the old one did: `VariantsFor`,
+`RowFor`, `Equipped`, `IsUnlocked`.
+
+⚠️⚠️ **AND THE ROWS WERE BEING DRAWN IN TWO PLACES, WHICH IS § 114.12 FROM THE OTHER SIDE.**
+`BuildCareerTab` also called `BuildAbilityBuildRows`, so the same twelve rows appeared on the CAREER
+tab AND on the LOADOUT tab at once and neither was the answer to "where is the loadout". Both calls
+are gone.
+
+⚠️ **THE HUB IS FIVE TABS AND `TabsHeight` FOLLOWED.** `BuildRail` sizes the card from
+`RailPad + IdentityHeight + RailBlockGap + TabsHeight + RailBlockGap + CloseHeight`, so a column
+that lost a tab without that constant losing one would have left **68 units of bare cream** under
+CLOSE, which is § 121.10 row 5's *"i dont want huge empty space"* coming straight back.
+
+⚠️ **THE LOBBY'S YOUR SKILLS ROW SURVIVES AND IS NOT A SECOND DOOR.** It opens the same screen the
+FIGHTER row above it opens, on a different question, and the summary is the difference:
+`SkillsSummary` says which hero and how many of its two skills are on a non-default reading, which
+cannot be read off the FIGHTER row at all.
+
+---
+
+### 122.6 SETTINGS in the lobby
+
+🧑: **"cann u also add a settings button in lobby?"**
+
+Until now the only way to reach the audio, video or key bindings from a lobby was to leave it:
+BACK to the main menu, SETTINGS, change the thing, PLAY, and set the room up again. **A player who
+wanted to turn the music down mid-lobby had to dissolve the room to do it.**
+
+- `LobbyChrome.BuildSettingsButton`, a plain `PaperKit.Chip` on the **top** rail, one step inside
+  the ACCOUNT door.
+- ⚠️⚠️ **THE TOP RAIL BECAUSE BOTH CHIPS ARE ABOUT YOU AND THIS MACHINE.** That rail's own header
+  says what it is for: *who you are, where you are, and how you get out*. The bottom rail is three
+  questions about the MATCH, and a control that changes the master volume is not one of them.
+- ⚠️⚠️ **IT IS `SETTINGS` AND THE OTHER ONE IS `MATCH SETTINGS`, AND THAT IS THE WAY ROUND A
+  PLAYER CAN GUESS.** `BuildSettingsDrawer` opens the map, the mode and the format: facts about
+  this match, host-only. This opens facts about this machine, for everybody. **The specific one
+  carries the adjective and the general one is the bare word**; naming this `GAME SETTINGS` would
+  have put an adjective on both and made the pair a puzzle.
+- ⚠️ **No accent.** § 118.4: one accent per screen and it is START MATCH.
+- `ConvertedMatchSetup.OpenGameSettings` instantiates `Resources/UI/SettingsPanel` lazily and keeps
+  it. ⚠️ **The same prefab the title screen and the pause card use**, which is
+  `PausePanel.OpenSettings`'s rule in as many words: *"a slider that exists in one exists in the
+  other. Two panels drift the moment one gets a row the other does not."* This is the third caller.
+- ⚠️ Found by COMPONENT on the second press, not by name: `Node()` asks `ConvertedScreen`'s name
+  index, which was built at `Wire` time and cannot know about an object created later.
+- ⚠️ `TopRailWidth` and `BuildTabs`'s `rightBlock` both grew by `SettingsWidth + Gap`. **Both or
+  neither**: the rail is sized to its content, so a chip added without the arithmetic leaves the
+  tab bar 79 units left of where it looks like it should be.
+
+---
+
+### 122.7 ⚠️⚠️ EVERY PLACE THAT HAD TO BE TOLD ABOUT THE WOOD REVERT, AND WHY MISSING ONE WOULD HAVE HIDDEN IT
+
+🧑: **"make sure thhat if u bring this shit back u dont break other ui"**. Four sites, and the
+second one is the one that would have made the whole change appear to do nothing.
+
+1. **`ConvertedCharacterSelect.Wire`** stops calling `PaperDress.Screen(transform)`.
+2. ⚠️⚠️ **`ConvertedMatchSetup.PaperiseWhatTheChromeLeaves` DRESSED THE PICKER A SECOND TIME, FROM
+   THE OUTSIDE, AND IT RUNS FIRST.** `Wire` is `Start` and does not run until the panel is first
+   switched on; that method runs on scene load, which is the entire reason it exists (its own note
+   records the picker's BACK button being wooden until somebody opened the picker). Its
+   `PaperDress.Screen(picker)` call is gone.
+3. ⚠️⚠️ **AND ITS `Nodes("ConfigPanel")` LOOP NEVER NAMED THE PICKER AT ALL.** That search walks
+   the whole scene by name, and the fighter picker has a `ConfigPanel` of its own: **it is the
+   brown board every control on that screen stands on.** A loop written for the lobby drawer's
+   leftover board was silently creaming the picker's main surface. The guard is `IsInsidePicker`,
+   which walks up the parents, because the thing being protected is a SUBTREE: comparing the node's
+   own name would have protected the panel and not the board inside it.
+4. **`PaperPurityProbe.Walk`** skips `CharacterSelectPanel` by name, alongside the two exemptions
+   already there. ⚠️ **A gate that encodes a decision the owner has reversed is updated in the same
+   commit, not muted.** ⚠️⚠️ **And the gate it replaces is a render, which is weaker, so say so:**
+   nothing now checks that this screen is COHERENTLY wooden rather than a mixture, and a mixture is
+   exactly what § 117 was about. If it grows a second material again the answer is a probe that
+   asserts wood HERE, not deleting that line.
+
+---
+
+### 122.10 ⚠️⚠️ WHAT THE v62 RENDER CHANGED, AND TWO OF THESE REVERSED A DECISION ONE RENDER OLD
+
+**This is the section to read before trusting §§ 122.4 and 122.5 above**, because four calls in
+them were wrong in a way only a picture could show. `CLAUDE.md` § 6.5: *take the picture, then take
+it again.* 🧑 looked at `CharacterSelect-v62.png` himself and named three of the four.
+
+| # | What the plan said | What the render said | What it is now |
+|---|---|---|---|
+| 1 | The stage's glow lerps 0.45 toward the hero, which is *"low chroma"* | ⚠️⚠️ **IT SHIPPED A GREEN STAGE.** `tools/sample_png.js rect` on the pool behind DANTE: **`545b2f`, hue 70 at 48 per cent saturation**, an olive. `UiTheme.HeroEarth` is `3fa65c`, and 45 per cent of the way to it from `WoodEdge` lands halfway between the two hues. **That is the fifth hue § 118.4 forbids and the exact thing he rejected on NEMU's purple** (*"yea see this doesnt look great"*). | **0.16**, computed rather than guessed. At 0.45 the six heroes span greens, cyans and magentas; at 0.16 every one lands between **hue 6 and 36**, inside the front end's own warm band. `RefreshBackdropAccent` carries the whole table. The six are still visibly different in hue, saturation and value, so the stage still answers the character. |
+| 2 | The loadout goes on the ability rows, because the panel has no vertical budget | 🧑: **"lowk i dont want make your own and loadout to share the same button or panel as lata tsinelas hero"**, *"maybe u should give it its own clickable buttons on the right"* | Its own board on the stage, its own chip. ⚠️ **The budget argument was a constraint, not a design.** `HeroPickerLayoutProbe`'s `Rows h=460 pref=644` is real and it is about the LEFT PANEL; the right two thirds of the screen is a dark stage with a model on it and nothing else. **The room was always there and it was not in the panel.** |
+| 3 | The locked variant's challenge appends to the equipped reading's summary | 🧑, of the render: **"look at this photo too theres things that overlap and shit"**. `The stomp as it is tuned. One heavy shock at the measured radius. · Long Tremor: Use Seismic Stomp eight times (0 / 8)` over two wrapped lines in a 61-unit row. **Two unrelated facts in one sentence** is § 6.2's NEVER OVERWHELMING failure at the size of one label. | The unlock belongs to the OTHER reading, so it lives on the board that shows both. The row is the equipped description and nothing else. |
+| 4 | The wooden buttons' shadows follow their faces (§ 117 fixed that) | 🧑: **"the shadows for all buttons in character select looks weird as well"**. `Logs/crops/picker-choose-v62.png` at 2x: under CHOOSE a dark band whose cut corners are at a **different angle from the face's**, so each end shows a stepped double chamfer. | ⚠️⚠️ **`GodotButton` asked `WoodCraft.Silhouette` for `height + 12`, and the chamfer is a FRACTION of height**, so the shadow's cut ran about 20 per cent longer than the face's and could not line up at any offset. The `+ 12` was compensating for the rect being grown 6 units a side — which a nine-slice does for free by stretching its MIDDLE and leaving the caps alone. **It is `height` now.** A correction, not a restyle: it reaches the main menu and the match and makes every wooden button cast a shadow shaped like itself. |
+| 5 | (not planned) | The live tab drew as a dark smudge on a dark plate. | ⚠️⚠️ **`interactable = !active` MADE THE SELECTED STATE AND THE UNAVAILABLE STATE THE SAME PICTURE**, which is the one pair `PaperCraft.Pose`'s note says must never collide: `GodotButton.Refresh` picks the `Pose.Off` sprite AND the disabled ink whenever `Interactable` is false, ahead of any variation. ⚠️ **Writing the label colour from `RefreshTabs` could never have fixed it and was tried first** — `GodotButton` writes `_label.color` from its own `Refresh` on the same frame, so it wins (§ 120.5 row 1, same screen, one property over). The live tab is interactable now and marked with 🧑's authored `WoodTabLiveButton` / `WoodTabIdleButton` pair. **The guard cost the screen its selected state to buy nothing**: pressing the tab you are on sets `_tab` to what it already is and re-runs an idempotent `Refresh`. |
+| 6 | `LOADOUT` sits above `MAKE YOUR OWN` | It sat 26 units off the floor with **its lower half outside the screen**. | The chips are anchored to the canvas' BOTTOM edge, so a larger `y` is HIGHER and the lift was passed negative. ⚠️ **A sign error against a bottom anchor is invisible in review and obvious in one picture**, which is § 6.1 in four words. |
+
+---
+
+### 122.11 ⚠️⚠️ THE BACKGROUND IS ASPHALT, WHICH IS THE FOURTH MATERIAL IT HAS WORN TODAY
+
+🧑, looking at the wooden stage § 122.4 shipped: **"background pretty ugly can we not use brown at
+all for background"**.
+
+**Read all four before proposing a fifth**, because each one was rejected for a different reason
+and the reasons do not repeat:
+
+| # | What it was | Why it went |
+|---|---|---|
+| 1 | Slate-to-midnight, *"the game's Bayan navy identity"* | *"i dont want to see blue shit, thats not in theme"*. § 6.4. |
+| 2 | `Paper` → `Paper` → `PaperWarm`, cream | *"i just wnat u to figure out how to make this cooler"*, **"maybe use a darker color or smth for the background here"**. The brightest object in the frame was the background, so every hero read as a sticker on a page. |
+| 3 | `WoodDeep` → `WoodDark`, warm near-black | **"can we not use brown at all for background"**. |
+| 4 | **Asphalt**, hue ~38 at under 15 per cent saturation, value 15 down to 5 | — |
+
+⚠️⚠️ **ASPHALT IS NOT A NEW COLOUR, IT IS THE ROAD, AND `CLAUDE.md` § 6.5 ALREADY NAMES IT AS A
+SURFACE OF THIS DESIGN SYSTEM**: *"cream and asphalt are SURFACES, not just text colours ...
+`VISION.md` § 2 rule 5 names the chalk and the road."* `PaperCraft.Surface.Slate` and
+`WoodCraft.Surface.Slate` are both already built out of it. The game is a street game played on
+tarmac.
+
+⚠️⚠️ **AND IT FIXES SOMETHING THE BROWN ONE HAD THAT WAS NOT THE DARKNESS.** A wooden backdrop
+under a wooden card is one material at two values, so the card had nothing to sit ON — which is the
+same fault the ORIGINAL scrim existed to paper over (*"protecting a wood panel from a wood
+backdrop"*, `HorizontalScrim`'s own history), arriving again from the other end. **On tarmac the
+brown card is an object lying on a road**, which is the composition the whole front end claims.
+
+⚠️ **EVERY CHANNEL STILL HAS MORE RED IN IT THAN BLUE**, which is § 6.4's own one-line test, so
+this is a warm near-black and not the cold grey that section bans. ⚠️ `UiTheme.EnvAsphalt`
+`4a4e57` is the one it is NOT: that is the world's tarmac shader and it is blue-cast. The vignette
+moved off `WoodDark` for the same reason — a brown frame round a tarmac stage is the same mismatch
+one layer out.
+
+---
+
+### 122.12 The two stage doors get their own identities
+
+🧑: **"make the buttons for loadout and make ur own prettier give them their own identities"**.
+
+⚠️⚠️ **THEY ARE ONE CONSTRUCTION WITH DIFFERENT CONTENTS, AND THAT IS THE ANSWER RATHER THAN AN
+EXCEPTION TO IT.** `CLAUDE.md` § 6.5 is that a ROLE varies and a fill never does, and § 117's whole
+complaint is controls of one kind drawn four ways. **Two controls that sit in one stack and are
+pressed the same way must be one construction**; what tells them apart is what they SAY and the
+mark they carry, and neither is a new hue.
+
+| | Verb | Says | Mark | Face |
+|---|---|---|---|---|
+| **LOADOUT** | LOADOUT | *your two skills* | **◆** amber | `WoodTabLiveButton` |
+| **MAKE YOUR OWN** | MAKE YOUR OWN | *build a character* | **›** cream | `WoodButton` |
+
+- ⚠️⚠️ **THE CHEVRON AND THE DIAMOND ARE A DOOR AND A MODE, WHICH IS A REAL DISTINCTION.**
+  `PaperKit.Chevron`'s note is the rule: *a `Tray` with no chevron is a value; a `Tray` with one is
+  a way through*. MAKE YOUR OWN **leaves** this screen, so it carries the chevron every door in the
+  lobby carries. LOADOUT opens a board ON this screen and comes back, so it does not: it takes the
+  amber marker, which is § 118.4's *amber is the marker* the right way up on a dark field.
+- ⚠️⚠️ **THE SECOND LINE IS THE HALF THAT MAKES THEM READABLE AT ALL.** `LOADOUT` is a word this
+  repository's own code spells `HeroBuild`, and `MAKE YOUR OWN` is a phrase with no noun in it.
+  § 6.2 question 2 is *what is the first press, and can the player guess it*; the pattern is the
+  lobby's own (`LobbyChrome.BuildSkillsRow`: *"a row that states a value UNDER ITS NOUN states a
+  control"*).
+- ⚠️ **The mark sits in the left inset, not in the text run.** A glyph inside the string shifts the
+  verb by half its own width, which is exactly `LobbyChrome.LiftBack`'s *"back still isnt
+  centered"*.
+
+---
+
+### 122.13 ⚠️⚠️ THE PAPER SHADOW WAS THE SAME GREY § 121.1 MEASURED, AND ONLY THE PRIMARY GOT FIXED
+
+🧑 2026-09-02, with a crop of the login card: **"the shadows suck too"**, of SIGN IN, CREATE,
+PLAY AS GUEST and the wordmark plaque. And, of the plaque specifically,
+**"is this update login bcz its ugly (the tump logo bg wtf is that)"**.
+
+**Two faults, and the first one is a number this repository had already measured on one control.**
+
+| | Was | Composited over `Paper` `f4ecdd` | Is |
+|---|---|---|---|
+| `PaperCraft.Shade`, under every paper control | `(0.30, 0.19, 0.10)` at **0.34** | **`bbac9b`, 17 per cent saturation** | `UiTheme.WoodMid` at **0.50**, which composites to about `a78d79`, **hue 26 at 28 per cent** |
+
+Every paper EDGE on the same screen carries **30 per cent** (`PaperEdge` `dcc19a`). **A
+17-per-cent neutral beside a 30-per-cent warm edge is § 6.4's cold-grey ban caught on the warm
+axis**, which is word for word what `Surface.Action`'s note says about the wooden halo § 121.1
+replaced.
+
+⚠️⚠️ **`ActionShade`'S NOTE DID THIS SUM IN AUGUST AND SCOPED IT TOO NARROWLY.** It read: *"fine
+under a 40-unit chip, and under a 520-unit slab it is the wide grey band"*. **The size argument was
+wrong.** A shadow's saturation does not depend on the width of the object casting it; what the
+extra width changed was how much of it there was to see, and a 40-unit chip is exactly where 🧑 was
+looking this time. There is one shadow colour in the file again.
+
+⚠️ **AND `PaintPlate` HAD NO FALLOFF AT ALL**, which was survivable at 0.34 and a hard dark bar at
+0.50. It takes the same squared curve `PaintRaised` has had since § 120.1: darkest where the two
+surfaces nearly touch, gone by the time it has travelled the object's own thickness.
+
+**The plaque's field is the road now, not wood.** It was `WoodSlot` inside a `WoodFace` frame, so
+the whole object was one hue at two values and layer 5's three-unit inner shadow was the only thing
+separating them: what he photographed reads as **a picture frame with a brown photograph in it**.
+⚠️ **A frame needs something that is not itself inside it.** `TUMP.png` is off-white letters with
+their own baked dark outline, so on a near-black field they are the brightest thing on the login
+card, which is what a painted sign at night actually looks like. It is the same asphalt § 122.11
+puts on the picker's stage, and it is the same fault at one control's scale.
+
+---
+
+### 122.14 ⚠️⚠️ THE LOADOUT BOARD'S FIRST RENDER: EVERY LABEL DREW OUTSIDE ITS OWN CARD
+
+`Logs/shots-runtime/CharacterLoadout-v66.png` is the first picture this screen has ever had, and
+it caught two faults that no probe in this repository can see.
+
+**1. `MenuKit.Place` writes `anchoredPosition`, and a rect's pivot is its CENTRE.** Every label on
+a card was anchored to a CORNER and offset inward by the padding, which reads like an inset and is
+a centre: an anchor of `(0, 1)` with an offset of `(14, -20)` puts a 456-unit box's MIDDLE 14 units
+in from the left edge, so **214 units of it draws outside the card**. The render shows the variant
+names and descriptions floating on the stage to the left of the board and the EQUIPPED badges
+hanging off its right edge.
+
+⚠️ **So every box is centre-anchored now and the arithmetic is stated once**: the card is `width`
+by 98 with its centre at zero, a left-aligned box of `w` sits at `-(width / 2) + Pad + (w / 2)`,
+and the three bands are the header at +32, the body at 0 and the trade at -32. They cannot overlap,
+and **an overlap between two labels is silent in every direction** (§ 102.4).
+
+**2. CLOSE sat on top of the LOADOUT chip.** Both stage doors and the board are anchored to the
+same bottom-right corner. Both chips hide while the board is up, which is the right answer rather
+than a dodge: **a door you have already walked through is not a control you need** (§ 6.2 question
+3), and MAKE YOUR OWN in particular would throw away an unsaved look if pressed from there.
+⚠️ The loadout chip comes back **only if the hero tab is still showing**; a bare `!open` would have
+undone `RefreshTabs`, which hides that chip on LATA and TSINELAS and then calls this to shut the
+board. Two writers of one visibility flag, and this one runs second. `OnHeroTab` is one predicate
+now because three methods were asking the same question.
+
+---
+
+### 122.15 The login uses the whole left side, and the wordmark comes out of its box
+
+🧑 2026-09-02, with a capture of the pre-paper login attached: **"can u use the whole space like
+this? for left?"** And, with a 6x crop of the plaque: **"this looks very ugly i dont get why tump
+is in a box"**.
+
+⚠️⚠️ **THE FIRST SETTLES § 121.4, WHICH WAS LEFT OPEN BECAUSE NOBODY COULD SETTLE IT.** His words
+then were *"ugly ass empty space here"*, *"cant u js use the left side as space like"*, **"like use
+this whole space for login"**, and § 121.11 recorded why it was not acted on: *"the two readings of
+'use this whole space' (a wider floating card, or a full-height panel bled off the left edge)
+produce different screens and different key-art crops."* **He has drawn the one he means.**
+
+⚠️⚠️ **AND IT REVERSES § 100, WHICH IS A WHOLE PASS SPENT GOING THE OTHER WAY.** That entry cut the
+column from 38 per cent of the window to *"580 units, which is the form plus one margin either
+side"*. **The reversal is his and the fault § 100 fixed is still real**, which is why `ColumnUnits`
+is 660 units rather than a percentage: `AspectSafeCanvas` scales on the short axis, so a fraction
+is two different widths at two aspect ratios (§ 6.2c question 1).
+
+- ⚠️ **The bleed is 40 units and only on the left**: the card's halo and its 18-unit corner radius
+  go off the window, so the column reads as a board the screen stands on. The right edge keeps its
+  cut, because that is the edge a player sees.
+- ⚠️⚠️ **`FitCardToContent` STOPPED WRITING A HEIGHT AND THAT WAS NOT OPTIONAL.** The column's rect
+  is stretched vertically now, and **on a stretched rect `sizeDelta.y` is an INSET from the
+  parent's edges rather than a height**: the old line would have written 900 into a field meaning
+  "900 units past the screen on each side". What survives is the half that was always the point,
+  which is that the content block is centred on the column so the two margins are equal at any
+  content in every state.
+- ⚠️⚠️ **AND THE KEY ART IS RE-FITTED IN THE SAME COMMIT, WHICH IS EXACTLY § 100'S OWN FAULT.**
+  That entry: *"the key art enveloped the full canvas and the column then covered a third of it,
+  so the crop was computed for a frame that does not exist and the cast came out off-centre with
+  its heads cut off."* `BuildKeyArt`'s full-bleed note was correct about a FLOATING card and is
+  false again the moment the card is a wall. The mask is inset by the column's visible width.
+
+**The plaque is deleted.** ⚠️⚠️ **His question is the argument and it is the one nobody asked.**
+Three passes tuned that box (`Surface.Sign`, § 121.2c's sizing, § 122.3's carved frame and asphalt
+field) and not one asked what it was FOR. **It was scaffolding for a problem solved twice over**:
+it existed because a `RawImage` tint MULTIPLIES, so `TUMP.png` tinted dark went muddy, and the
+answer was to stop tinting it. The mark draws at `Color.white` and **carries its own dark outline
+and its own drop shadow baked in**, so on the cream column it already has what a ground was being
+asked to provide. ⚠️ § 121.2c measured the mark at **51 per cent of its own sign** and grew it by
+deleting empty wood; § 122.3 then put a 16-unit frame back round it. **A logo with a frame drawn
+round it is a logo somebody was not confident in.**
+
+---
+
+### 122.16 The room code sat on the bottom of its own plate
+
+🧑: **"make this botton look prettier MN26 is so close to the bottom of box even tho theres a lot
+of space at top"**.
+
+⚠️ **He is describing the anchor exactly.** The value was `TextAnchor.LowerCenter` inside a band
+that is taller than a `PaperKit.Display` glyph, so it drew against the bottom of its box and every
+spare unit stacked above it as a gap. **A value pinned to one edge of its box puts all of its slack
+on the other edge.** It is `MiddleCenter` now, and the band moved from 0.58 to 0.60, which puts its
+optical centre in the middle of the FACE rather than of the RECT — the plate draws its cast shadow
+inside its own bottom `PaperCraft.Drop` units, so the two are three units apart. Same correction
+`PaperKit.CentreOnFace` makes for every chip in the game.
+
+---
+
+### 122.17 ⚠️⚠️ THE PICKER'S CONTROLS ARE PAPER ON A DARK STAGE, WHICH IS THE "COMPLETELY DIFFERENT STYLE" HE ASKED FOR
+
+🧑 2026-09-02, with a crop of the two stage doors and one of the loadout board: **"can we use a
+completley diff style for the buttons"**, *"u figure it out how to do it thank u"*, *"pic 2 looks
+very ugly too"*.
+
+⚠️⚠️ **THE FAULT WAS THAT NOTHING ON THAT HALF OF THE SCREEN WAS A DIFFERENT KIND OF OBJECT FROM
+ANYTHING ELSE.** § 122.4 put the picker back in wood, and the doors and the board were then built
+in wood too: the card, the chips, the board and its four cards were all brown slabs with brown
+keylines at four values, so **the eye had nothing separating *the thing you read* from *the thing
+you press*.** That is § 117's complaint (**"everything feels repetitive bcz i think u use the same
+code to generate them all"**) arriving on a screen that had just been rebuilt to answer it.
+
+⚠️⚠️ **AND PAPER IS THE ANSWER RATHER THAN A NEW STYLE, WHICH MATTERS BECAUSE § 6.5 FORBIDS
+INVENTING ONE.** This front end has exactly two materials and the other one is built, photographed
+and his: a pill with a halo, a physical lip, an eased hover and cream paper instead of a plank.
+**On a near-black stage a cream chip is the highest-contrast object in the frame**, which is what a
+control meant to be found should be, and it cannot be confused with the wooden card beside it.
+
+| | Surface | Type |
+|---|---|---|
+| **LOADOUT** chip | `Live`, a wood-dark pill | cream, amber ◆ |
+| **MAKE YOUR OWN** chip | `Token`, a warm cream pill | ink, soft › |
+| The board | `Sheet` | ink |
+| A card, EQUIPPED | `Live` | cream, amber EQUIPPED |
+| A card, AVAILABLE | `Token` | ink |
+| A card, LOCKED | `Ghost`, two hairlines and almost no fill | soft ink, and its count |
+
+⚠️ **NOT ONE OF THOSE IS A FILL.** The old set was three `GodotTheme.Box` calls with different
+fills and border widths, which is the failure § 6.5 names by name: *"a screen of twelve plates that
+were all one call with a different fill, and the way that happened is that the fill was a
+parameter."* A locked card and an available one differed by two browns and one pixel of border.
+⚠️ `Ghost` is **the shape of an absence** and is what § 118.3 wrote it for.
+
+⚠️ **The picker's own card stays wood**, because that is the thing he asked to keep (§ 122.4) and
+it is the thing you READ. These are the things you PRESS.
+
+---
+
+### 122.18 ⚠️⚠️ THE LOADOUT BOARD, REDESIGNED AGAINST THE GAMES IT IS ACTUALLY COPYING
+
+🧑 2026-09-02, of the paper board § 122.17 shipped: **"loadout genuinely ugly"**, *"thoroughly
+compare to other games loadouts and shit and plan how to make our own"*.
+
+**Six faults, and the first one explains four of them.**
+
+| # | What is wrong | Why |
+|---|---|---|
+| 1 | ⚠️⚠️ **The two options for a slot are STACKED, so four options read as a list of four things rather than as two either/or choices.** | A list says *here are some items*. A choice says *this or that*. `PlayerHub`'s stepper was rejected for showing one option at a time; stacking them shows both and still does not say they are alternatives. **Side by side is the whole fix**, and it is what every game below does. |
+| 2 | **No icons anywhere.** | The picker's own ability rows lead with `AbilityIcons.For(glyph)` and the board dropped them. `docs/VISION.md` § 3 rule 1: *the icon says what the power does to the WORLD*, and it is the fastest thing on the screen to read. |
+| 3 | **A locked option is a bare `0 / 8`.** | A fraction is a fact; a bar is a feeling of distance. Every unlock screen in the genre draws the bar. |
+| 4 | **The trade never appears on a fresh account.** `GainLabel` / `CostLabel` draw only on an unlocked non-default variant, and on a fresh account there are none. | **The trade IS the system.** A player who cannot see what switching buys cannot want to switch, so the whole feature reads as two names. |
+| 5 | **It covers the character.** | The loadout is FOR the character. |
+| 6 | The header is small, the margins are wide and CLOSE is alone at the bottom. | Consequence of 1: a list of four rows in a tall box leaves the box mostly empty. |
+
+**What the games actually do, and what transfers.**
+
+| Game | Shape | Transfers? |
+|---|---|---|
+| ⚠️⚠️ **Risk of Rain 2** — and this is not a comparison, it is **the stated source**: `AbilityVariant.Challenge`'s own doc says *"The Risk of Rain 2 style challenge that unlocks it"* and `FUTURE.md` § 1250 says the same. | A skill slot is a row: the slot's big icon on the left, then the alternatives as a **horizontal strip of icon tiles**. The selected tile is ringed. A locked tile is dimmed with a lock, and its challenge is written out. | **Almost all of it.** The strip, the ring, the lock, the challenge text. |
+| **Overwatch / Valorant hero detail** | The character stays on screen; the abilities are a row of icons with one sentence each. | The character staying visible (fault 5) and icon-first rows (fault 2). |
+| **Deep Rock Galactic** | Option chips per slot, with the **stat delta** shown against the equipped one. | The trade as a first-class line rather than an afterthought (fault 4). |
+| **Apex / CoD loadout** | Two columns: category left, cards right. | Only the column split, which we already have as slot-caption-then-options. |
+
+⚠️ **What does NOT transfer, and it is the one to be firm about: a comparison TABLE.** DRG and CoD
+put numbers side by side because their options differ on six axes. Ours differ on **one gain and
+one cost, both already written as a phrase** (`HeroLoadoutRules`), and every option is a sidegrade
+by design (`FUTURE.md` § 10: *unlockable skills must be sidegrades*). A table would be five columns
+of "As tuned".
+
+**The design.**
+
+- **A wide, short board across the bottom of the stage**, not a tall slab over the model. The
+  character's head and shoulders stay visible, which is fault 5.
+- **One row per slot.** Left: the slot's ability glyph, `SKILL 1`, the base ability's name and its
+  key. Right: **the two options as tiles, side by side.**
+- **A tile carries, top to bottom:** the variant name; the one-line description; and then either
+  the **trade** (`gain · cost`, in the accent) or, when locked, the **challenge with a progress
+  bar**. ⚠️ Never both, which is § 122.10 row 3's fault.
+- **Three states by SURFACE, as § 122.17 established**: EQUIPPED is `Live` with an amber EQUIPPED
+  mark, AVAILABLE is `Token`, LOCKED is `Ghost` with a lock glyph.
+- ⚠️ **The default option shows a trade too, and it reads `As tuned · As tuned`,** which is what
+  the table already says. That is fault 4 fixed by drawing what is there rather than by writing
+  anything new.
+
+---
+
+### 122.8 What is NOT done
+
+- ⚠️ **The chat still does not work and is still not diagnosed.** § 121.11 is unchanged and reading
+  it is the next step, not guessing. He has now said it three ways.
+- ⚠️ **The login card still does not use the space.** § 121.4's measurement and three quotes stand:
+  557 units of card against a 1920-unit canvas. Untouched deliberately, because § 100 is a whole
+  pass spent undoing a guess about this exact rectangle and the two readings of *"use this whole
+  space"* produce different screens and different key-art crops.
+- ⚠️ **The picker's arrows are still blue.** § 121.5 has the measurement (about 30 per cent of
+  their opaque pixels at hue 201, 41 per cent saturation). ⚠️ **The dark stage changes this
+  question rather than settling it**: the arrows are now the only cool object on a warm near-black
+  field instead of on a warm cream one, which is more contrast and the same hue clash. Still his to
+  settle; the third option in § 121.5 (draw a warm arrow from his measured silhouette, leave the
+  file and the main menu alone) is still the one that does not repaint his art.
+- **TAYA FIRST is still the plate's width.** § 121.11, unchanged.
+- **The 16-unit caption question (§ 121.8) is still answered on one control and not as a policy.**
+- **No non-host client pass**, and no two-account pass (§ 102.5).
+
+### 122.9 Acceptance
+
+- Every touched screen re-shot at `v62` and a person looks: the login form and its CREATE state,
+  the lobby, the fighter picker on a hero with a locked variant and on one with an unlocked one,
+  and the hub's five tabs.
+- ⚠️ **The focus change is the one thing a still cannot show.** A screenshot of a control at rest
+  is identical before and after. It has to be driven: TAB through the login form and watch the
+  field lighten and each button lift, and confirm no rectangle appears anywhere.
+- `dotnet test` on the core, EditMode, the PlayMode UI suites, `Checks.RunAll`, the three `tools/`
+  audits and `node tools/check_digest_contract.js`.
+- A clean Windows player on the Desktop.
+
+---
+
+## 121 · The v61 report: one material for the primaries, a hub with a tab column, and the stuck hover ⚠️⚠️ OPEN, 2026-09-02, branch `ui-redesign`
+
+🧑 opened the build off `d7731070` and sent fourteen notes in one sitting, with a crop for
+almost every one. He also said how he wanted them handled: **"thorouhly plan how to fix
+everything btw"**, *"dont js shit out fixes"*, *"dont worry abt the stuff im liosting, im js
+listing them"*, and **"i want u to think abt color and visual harmony in makingh fixes"**.
+
+⚠️⚠️ **THIS ENTRY IS THE PLAN AND IT IS WRITTEN BEFORE THE WORK, WHICH IS THE ORDER
+`CLAUDE.md` § 6.2a ASKS FOR AND THE ONE § 118.2 NAMES: run `game-ui-design` as a CRITIC first.**
+Every row below has a cause in a named file and, where a colour or a distance is claimed, a
+number measured off a render rather than an adjective.
+
+⚠️ **`tools/sample_png.js` IS NEW AND IT IS WHY THE NUMBERS EXIST.** Every colour argument in
+this file (§ 119.1's road sampling, § 119.10's 1.7:1, § 120.6's channel split of `TUMP.png`) was
+produced by a tool that was not in this repository, so no reader could re-run one. It decodes a
+PNG with `zlib` and nothing else, because `python` is not on PATH here, and it prints pixels,
+scan lines, the commonest colours in a box, and the WCAG ratio between two hexes.
+
+---
+
+### 121.1 ⚠️⚠️ THE ONE FINDING THAT EXPLAINS FIVE OF HIS NOTES: THE PRIMARY IS THE ONLY CONTROL IN THE PAPER FRONT END STILL DRAWN IN WOOD, AND ITS SHADOW IS GREY
+
+🧑, on four different screens, without connecting them himself:
+
+| Screen | What he said |
+|---|---|
+| Lobby | *"orange outline when i hover over start match is ugly"*, then **"u really have to redesign start match button, it doesnt FEEL like a start match button"**, then the correction that matters: **"i like the size adn color but it feells so flat, it doesn thave start match energy"** |
+| Character maker | *"js make buttons prettier"*, **"bcz i dont get why theres rounded sshit next to square shit or wtbv the design of the shit nexxt to it is"** (BACK, a paper pill, beside KEEP AND USE, a chamfered green slab) |
+| Character select | *"these buttons look ugly"* (the four-tab row, three surfaces in one rail) |
+
+**Measured off `Logs/shots-runtime/SignInCreate-v56.png` with `tools/sample_png.js`:**
+
+| What | The pixel | Hue | Saturation | Value |
+|---|---|---|---|---|
+| The cream field | `f4ecdd` | 39 | 9 % | 96 % |
+| **A paper control's edge** (`PLAY AS GUEST`, x=227) | `dcc19a` | 35 | **30 %** | 86 % |
+| **The green primary's edge** (`CREATE ACCOUNT`, x=161) | `ada69b` | 37 | **10 %** | **68 %** |
+
+⚠️⚠️ **SAME HUE, A THIRD OF THE CHROMA, EIGHTEEN VALUE STEPS DARKER. That is the "grey" he can
+see and cannot name**, and it is `CLAUDE.md` § 6.4's rule caught on the warm axis rather than the
+blue one: the section forbids *"cold grey"* and a 10 per cent saturation neutral beside a 30 per
+cent warm edge is exactly that, whatever its hue reads as in a hex.
+
+**And the silhouette is the other half.** `WoodCraft.Surface.Action` is chamfered and every paper
+control is a pill or an 18-unit round, so on the maker's footer a rounded cream pill stands beside
+a chamfered green slab with a grey halo. 🧑 named the silhouette clash before anybody measured the
+colour, which is § 6.5's *"A CHAMFER MEANS PRESSABLE AND A ROUND MEANS FURNITURE"* read back at us
+from the outside: **the chamfer is now the odd one out, because everything else on these screens
+became paper and the primary did not.**
+
+⚠️⚠️ **AND "FLAT" IS A THIRD, SEPARATE FAULT ON THE SAME OBJECT, WHICH IS WHY HE SAID IT AFTER
+SAYING HE LIKED THE COLOUR.** § 120.1 gave every paper control an eased hover and press:
+`PaperButton` lifts the face two units, scales the object 2.5 per cent, sinks the lettering by
+`Drop` and takes the cast shadow off, all in unscaled time and faster down than up.
+**`LobbyChrome.BuildActionSlot` disables `ArrowButtonView` on the primary and attaches no
+`PaperButton`, so the one control on the screen that most needs to feel pressable is the only one
+in the front end with no motion at all.** It has `GodotButton`'s sprite swap and Godot's five-unit
+label sink and nothing else. *"it feells so flat"* is a measurement of that gap.
+
+**What done looks like:**
+
+1. ⚠️ **`PaperCraft.Surface.Action`: one new construction, in paper's own language.** A raised
+   slab built by `PaintRaised`'s rules (lit top edge, 14 per cent ramped wall, squared-falloff
+   cast shadow) at primary weight, with the corner radius of a `Token` rather than a chamfer, and
+   **a warm shadow derived from the fill rather than a neutral**. The shadow must sit at or above
+   the 30 per cent saturation every other paper edge on the screen carries, which is the number in
+   the table above and is the whole of what "harmony" means here.
+2. ⚠️⚠️ **THE FILL IS A PARAMETER AND § 6.5 SAYS THAT IS HOW SCREENS BECOME ONE SCREEN, SO READ
+   WHY THIS IS THE EXCEPTION.** That rule forbids a fill being the ONLY difference between two
+   ROLES. There is one role here, `Action`, it appears once per screen by construction, and the
+   two fills are both authored: 🧑's green (`UiTheme.MenuGreenFace`, the measured peak of
+   `JOIN BUTTON.png`) and the lobby's brown, which he asked to keep by name (*"i like the size adn
+   color"*, and § 119.10's *"u can also still use the brown color ... start match lowk looks
+   good"*). **Two authored fills, one construction, one per screen.**
+3. **Every primary in the paper front end takes it**: `StartButton` / `PrimaryButton` (lobby),
+   `KEEP AND USE` (maker), `CHOOSE` (picker), `CREATE ACCOUNT` / `SIGN IN` (login), the hub's
+   footer action. ⚠️ **The main menu keeps `WoodCraft` untouched**, which is the scope line § 119
+   draws and the reason `WoodCraft` is not being edited.
+4. **`PaperButton` goes on all of them**, which is the motion. ⚠️ **`GodotButton` already owns the
+   label's position on these nodes** (its own five-unit sink), so `PaperButton` must not write the
+   label offset while a live `GodotButton` is present: two owners of one transform property is
+   § 119.9 row 1 and it has already shipped once.
+
+---
+
+### 121.2 ⚠️⚠️ THE STUCK HOVER, AND IT IS A CACHE KEY WITH ONE FIELD MISSING ✅ CAUSE FOUND
+
+🧑, with a crop of the lobby's mode tabs, one lit brown and one outlined: **"theres brown ink left
+over if i dont hover back to the buttons on top"**, *"i like it but make it so that i dont have to
+hover back to buttons on top to get rid of it"*.
+
+**`PaperSkin.Rebuild` keyed its cache on the rect height and the SURFACE and not on the POSE:**
+
+```
+if (_built > 0.0f && Mathf.Abs(height - _built) < 2.0f && _builtSurface == Surface) return;
+```
+
+`SetPose` clears `_built` to force the repaint, and **`Rebuild` returns without painting and
+without recording anything when the rect reports zero height**, which is every frame the control
+is inactive. A drawer that closes over a hovered chip is exactly that: the pose write is dropped,
+`_pose` still says `Hover`, and the next `OnEnable` repaints from it. **The plate comes back lit,
+on a control nothing is pointing at, and only a fresh enter-and-exit clears it.**
+
+⚠️ **THE SURFACE WAS IN THE KEY AND THE POSE WAS NOT, WHICH IS WHY IT LOOKED LIKE A COLOUR BUG.**
+`PaperKit.MarkLive` swapping `Live` for `Ghost` always repainted, so the tab row's SELECTION was
+never wrong. Only its lighting was, which is why "brown ink left over" is a better description of
+it than anything the code says.
+
+**The fix, and it is two lines plus a guard:**
+
+- `PaperSkin._builtPose` joins the cache key, so a pose written against a zero-height rect is
+  re-applied the moment the rect exists instead of being forgotten.
+- `PaperButton.OnDisable` already resets `_hovered`, `_held`, the scale and the label. **It must
+  also put the SKIN back to `Rest`**, because that method's own header says *"a control that is
+  switched off mid-hover never gets its `OnPointerExit`"* and it was fixing the transform half of
+  that and not the surface half.
+- `PaperButton.OnEnable` re-asserts the pose, so a control that was disabled by something other
+  than a pointer (a tab rebuild, a drawer) cannot come back mid-animation.
+
+---
+
+### 121.2b ⚠️⚠️ THE AMBER FOCUS RING, WHICH HE REJECTED THREE TIMES IN ONE SITTING ON THREE DIFFERENT CONTROLS
+
+🧑, in order: *"orange outline when i hover over start match is ugly"*, then, with a crop of the
+login screen's USERNAME box, **"i dont like the orange outline for a lot of things"**, then the
+question that settles the design rather than the colour: **"why do we even have an orange outline
+when we hover or select stuff"**.
+
+**It is the keyboard and controller focus indicator, and it was doing two jobs badly.**
+
+| What | The measurement | What it becomes |
+|---|---|---|
+| It lit on POINTER HOVER as well as on focus | § 120.1 already gives every paper control an eased hover: the face lifts two units, the object scales 2.5 per cent and the cast shadow grows. **A second, louder hover indicator on top of a hover indicator** is `CLAUDE.md` § 6.2 question 3 answered wrongly. | Hover is the pose. The ring lights for real focus only, which is `game-ui-design`'s `missing-focus-visible` and its controller-navigation pattern, neither of which emits a pointer event. |
+| It was `UiTheme.Amber` | `ffba00` on `Paper` `f4ecdd` is **1.46:1** (`tools/sample_png.js contrast`). **A high-chroma shape carrying almost no value difference from the sheet under it**: it shouts and it does not read, which is the worst pair of properties a focus indicator can have. | `UiTheme.WoodMid`, which measures **9.20:1** on the same sheet and adds no colour that is not already this front end's ink. |
+| It drew a rounded-rect ring around a chamfered slab | Two silhouettes, so the "outline" was a box near a button rather than an edge on one. | Moot on the primary, which is a pill in the same family as everything else now (§ 121.1). |
+
+⚠️⚠️ **IT IS THE SAME INVERSION `PaperCraft.Surface.Live` AND `Surface.Sign` BOTH ALREADY MADE,
+ARRIVING ONE CONTROL LATER.** § 118.4 says *amber is the marker*; that rule was written for a
+WOODEN front end where amber was the one LIGHT thing on a dark screen. **Invert the field and the
+rule inverts with it: on cream the marker is the one DARK thing.** § 119.10 records him rejecting
+that ratio by eye on two other controls before this one.
+
+⚠️ **DELETING THE COMPONENT WAS THE WRONG ANSWER AND IT WAS TEMPTING.** A text field has no pose
+of its own (`Surface.Tray` is a recess in every state), so without a focus mark there is nothing
+at all saying which of two boxes your typing goes into. This is a narrowing, not a removal.
+
+---
+
+### 121.2c The wordmark on the login card: half its own sign was empty brown
+
+🧑: **"improve tump logo integration in lobby too, I like the current setup but it doesnt have
+much impact, especially wiht a brown button thats empty like taht"**.
+
+⚠️⚠️ **THE OLD CODE'S OWN COMMENT IS THE CONFESSION AND NOBODY HAD MULTIPLIED IT OUT.** It read:
+*"at 420 wide less 2 x 26 of inset the mark is 368 wide and about 106 tall, and 120 units of
+plaque less the inset and the six-unit shadow leaves it 62. So the fit is decided by HEIGHT and
+the mark draws about 216 x 62 in the middle of the plaque."* **216 of 420 is 51 per cent.** The
+game's name occupied half of its own sign and the rest was bare wood, which is exactly what he
+photographed.
+
+**A fitter whose box is a different shape from the thing in it always spends the difference as
+margin.** `TUMP.png` is 1835x527 (3.482:1) and the box was 368x62 (5.9:1), so the mark was pinned
+by height and the width ran away. The fix is to size the MARK and derive the plaque from it, so
+the box and the mark are the same shape and the fitter has no slack to spend: **336 units wide
+against 216, a little over half again, bought by deleting empty wood rather than by growing the
+sign.**
+
+⚠️ **The plaque grew 26 units taller, so `Logo` moves up 13 to hold the 36-unit gap under it.**
+That gap is the number he asked for after *"this part looks too tight"* (§ 119.10), and letting it
+close to 23 would have put the identity block back on top of the form block.
+
+---
+
+### 121.3 The lobby, five notes
+
+| # | 🧑's words | The cause | What done looks like |
+|---|---|---|---|
+| 1 | *"these look ugly"*, *"it looks ugly bcz it isnt centered like both of them and theres big empty space"* (the DANTE and SKILLS rows) | **The SKILLS pair is not centred and DANTE is.** `LobbyChrome.BuildSkillsRow` gives the caption a box ending 10 units left of the row's middle and the value a box STARTING at the middle, left-aligned. So the pair spans from `centre - captionWidth - 10` to `centre + valueWidth`: `SKILLS` is about 62 units and `Standard Build` about 130, which puts the pair's own centre **34 units right of the row's**. `BuildCharacterRow` centres `DANTE` properly, so the two rows in one column have two different centre lines. | The caption and the value become ONE centred object (a horizontal group that sizes to its content and centres as a unit), so the pair's centre IS the row's centre and cannot drift when either string changes. ⚠️ The two boxes must still not overlap, which is why they share an edge today; a layout group gives the same guarantee without the arithmetic. |
+| 2 | *"also make everything centered (your tier unranked looks ugly bcz it isnt centered"* | `LobbyChrome.BuildTierPlate` draws all three lines `UpperLeft` / `MiddleLeft` / `LowerLeft` while the fighter column beside it and the mode plate above it are centred. **One plate on the rail is aligned differently from every other.** | All three lines centre. ⚠️ The note wraps to two lines and its box is already measured at 64 units for exactly that (see that method); centring changes the alignment and must not change the height. |
+| 3 | *"orange outline when i hover over start match is ugly"* | `FocusRing` lights on POINTER HOVER as well as on real focus, and it draws `UiMaterials.Ring(Amber)`, a **rounded-rect** outline, around a **chamfered** slab. Two faults: a silhouette that does not follow the control, and an accent spent on hovering. Amber on `Paper` measures **1.46:1** (`sample_png.js contrast ffba00 f4ecdd`), which is under even the 1.7 § 119.10 records him rejecting by eye. | The ring stops reacting to the pointer and lights only for keyboard and controller focus, which is what `game-ui-design`'s `missing-focus-visible` actually asks for; hover is already said by the pose (§ 121.1 item 4). ⚠️ **The input fields keep their ring**, because a focused text field has no other state and that is the one place the amber outline reads well in his own screenshot. |
+| 4 | **"Taya first is ugly and unreadable, too much empty space too"**, *"maybe tighten its box and add outline to Taya first or smth (its okay if player you and taya first boxes doesnt match), js keep everything centered still"*, and **"ALSO i want taya first to be ABOVE the player you, instead of it being button"** | `LobbyNameplates` draws TAYA FIRST as a full-width bar UNDER the name plate, in the same family as a pressable chip. **It is a badge and it is drawn as a button**, which is `CLAUDE.md` § 6.3's *"one that does nothing must not look pressable"* the wrong way round, and it is below the thing it qualifies. | The badge moves ABOVE the plate, sizes to its own lettering rather than to the plate's width, gets a keyline so it reads as a stamp rather than a slab, and keeps its text centred. ⚠️ **It stops sharing the plate's width on purpose and he said so**: *"its okay if player you and taya first boxes doesnt match"*. |
+| 5 | **"chat doesnt work at all btw"**, with the drawer open, an empty log and a live `Say something` field | ⚠️ **NOT DIAGNOSED YET AND IT MUST NOT BE GUESSED AT.** § 79.3 has had *"THE LOBBY CHAT STRIP SHOWS NOTHING"* open since 2026-08-29 and this is either that or a second fault on top of it. `LobbyChat.Submit` routes to `MatchRpc.Instance.SendChatServerRpc`, so the first question is whether `MatchRpc.Instance` is non-null in a lobby that has auto-hosted, and the second is whether anything writes the local line when it is null. **Reproduce it in the running player first**, single machine, then hosted. |
+
+---
+
+⚠️⚠️ **AND THE CHAT IS TWO SEPARATE COMPLAINTS, WHICH IS WHY IT IS NOT ONE ROW.** Besides
+**"chat doesnt work at all btw"** he sent, of the same drawer, **"also chat is awkwardly placed,
+it looks very ugly"**. One is a function that does not run and one is a composition; fixing either
+does not touch the other, and shipping the second without the first would be a beautiful drawer
+that still does nothing. **Reproduce the function fault in the running player first**, because
+§ 79.3 has had *"THE LOBBY CHAT STRIP SHOWS NOTHING"* open since 2026-08-29 and this is either
+that entry or a second fault standing on it. His crop shows the well empty and the `Say something`
+field live, which is the same picture § 79.3 describes.
+
+⚠️ **The placement half has a measurement already**: § 118.1 row 1 records the well as *"about 70
+units tall to hold one 18-unit line, and the line sits at its BOTTOM because lines fill upward, so
+two thirds of it is empty by construction"*. That was written before the drawer existed and the
+arithmetic survived the move into it.
+
+---
+
+### 121.4 The login screen, two notes, and the first is not what it looks like
+
+- **"sign in isnt centered"**, with a crop of the two tabs. ⚠️⚠️ **MEASURED ON `SignIn-v56.png`
+  AND IT IS CENTRED THERE, WHICH MEANS THE MEASUREMENT HAS TO BE RETAKEN ON THE BUILD HE IS
+  ACTUALLY LOOKING AT.** The pill spans x 176 to 365 (centre **270.5**) and the lettering's ink
+  spans 242 to 300 (centre **271**): half a pixel. **But v56 predates § 120.3**, which moved
+  `SignInScreen.SetTab` onto `PaperKit.MarkLive` and therefore changed the idle tab from `Token`
+  to `Ghost` and the live one to `Live` at a different height (`LiveTabHeight` 60 against
+  `IdleTabHeight` 52). His crop shows the `Live`/`Ghost` pair, so it is the newer geometry.
+  **The first action is a fresh shot at `v61` and the same two scans**, not a fix.
+  ⚠️ `PaperKit.CentreOnFace` is the likely suspect and § 120.2 is the receipt for why: two
+  correction sites that move a label six units in opposite directions already shipped once on
+  BACK, and a `Live` surface has a `Drop` a `Ghost` does not.
+- **"ugly ass empty space here"**, *"cant u js use the left side as space like"*, **"like use this
+  whole space for login"**, with the card cropped and then a second crop of the card enlarged into
+  the space beside it. The card is **557 units wide against a 1920-unit canvas**, sitting at
+  `CardMargin` 96 from the left edge, and § 120.6 has just sized its HEIGHT to its content while
+  leaving its WIDTH at `ColumnUnits` 560. So the form is a narrow strip with the cast beside it,
+  and inside the strip the pitch between blocks is 120 units, which is where the vertical holes he
+  is pointing at come from.
+  ⚠️⚠️ **THIS REVERSES § 100 AND THE REVERSAL IS HIS, SO READ § 100 BEFORE TOUCHING IT.** That
+  entry cut the column from 38 per cent of the window to 580 units *"which is the form plus one
+  margin either side"*, because 860 units of wood around a 420-unit form was swallowing the key
+  art. **The answer is not to stretch the form back out to 1200**, which is § 94.7 fault 6 exactly
+  (the widest control becomes the loudest thing on the screen). It is to give the wider card
+  something to PUT there: the wordmark and one line of purpose on one side, the tabs, the two
+  fields and the primary on the other, so the space is filled by content rather than by a
+  stretched text box.
+  ⚠️ **And the key art must be re-fitted in the same commit.** § 6.2c question 2: the picture's
+  frame ends where the opaque thing starts, and `BuildKeyArt` currently envelopes the WHOLE canvas
+  on the argument that the card floats over it. A card that takes half the screen makes that
+  argument false again, which is the exact fault § 100 recorded as *"the art is cut off"*.
+
+---
+
+### 121.5 The character select, three notes, and one of them is the blue arrows
+
+- **"these buttons look ugly"** (the `HERO` / `LATA` / `TSINELAS` / `MAKE YOUR OWN` row). Three
+  surfaces in one rail: `HERO` is a `Live` pill, `LATA` and `TSINELAS` are `Ghost` outlines, and
+  `MAKE YOUR OWN` is a filled `Token` with no outline, at a smaller type size because it is the
+  longest string and `MenuKit.Fit` shrank it. **Four controls that do the same kind of thing must
+  look the same** (§ 117's whole complaint), and the fourth is not even the same KIND: it is a
+  door out of this screen sitting in a row of tabs within it.
+- **"this looks ugly"**, *"i think it can be improved by using diff background"*, **"this used to
+  be amazing when it was brown only and the background corresponded to their color"**, then, of
+  the version that does tint: *"yea see this doesnt look great"* (NEMU, whose wash is purple).
+  ⚠️⚠️ **BOTH NOTES ARE TRUE AND THEY ARE THE WHOLE COLOUR PROBLEM ON THIS SCREEN.** He wants the
+  backdrop to respond to the character; he does not want the character's own hue painted across a
+  cream sheet, because six heroes' colours include a purple and a magenta and **the front end has
+  four hues in it on purpose** (§ 119.1, § 118.4: *"do not add a fifth hue"*). The resolution has
+  to be a treatment that varies by character WITHOUT importing an arbitrary hue: vary the
+  backdrop's VALUE and its warmth within the paper family and let the character's colour appear as
+  a low, contained glow behind the model rather than as a full-screen wash. **Value is an ordering
+  tool and hue is the last one**, which is the same inversion § 119.10 records for amber.
+- ⚠️⚠️ **THE ARROWS ARE BLUE AND THEY ARE NOW ON A CREAM SCREEN, WHICH IS THE CONTEXT § 120.7
+  SAID TO LOOK AT.** Measured on `Assets/TumbangPreso/Art/ui/host-game/Arrow Left 64.png` (which
+  is 27x39, not 64x64): of the opaque pixels, about **70 per cent `ffffff`** and about **30 per
+  cent the `80bad9` family, hue 201 at 41 per cent saturation.** Against a field at hue 39 they
+  are the only cool object in the front end, and they sit beside `DANTE` in his own green.
+  **Both of his rules still disagree and § 120.7 is still right that only he settles it, but there
+  is now a third option that was not on the table then**: the same decision the lobby already made
+  twice, which is to stop DRAWING one of his files on the paper screens while leaving the file,
+  the main menu and every other use of it untouched. A warm arrow drawn from his measured
+  silhouette is not a repaint of his art; it is the treatment `ConfigPanel` and `MAP MODE DISPLAY`
+  already got in § 120.4. ⚠️ **Do not runtime-tint the PNG**, which § 120.7 rules out by name and
+  which would multiply his white down to tan and his blue to mud.
+
+---
+
+### 121.6 The player hub, which is § 120.7's own open item and the largest piece
+
+⚠️ **THIS IS NOT ONE OF HIS NOTES. It is what § 120.7 named as unfinished** and what § 119.5
+planned from the start: *"an ID card with a tab COLUMN rather than a tab row ... six tabs across a
+header is the row that made § 92 unreadable"*.
+
+Measured off `LobbyAccount-v56.png`, and the shape of it survives § 120's repaint: six 168-unit
+tabs run across the screen at y = -182, the list starts 232 units below the top, and **on the
+PROFILE tab of a fresh account the bottom 45 per cent of the screen is bare cream**. That is
+§ 6.2's *"big ass empty sopace"* on the one screen in the game that is entirely about the player.
+
+**What done looks like:**
+
+1. **The navigation becomes a column down the left**, inside an ID card that carries the handle,
+   the account state and the XP block above it. One object: who you are, where you can go.
+2. **The content region takes the rest** and gets a page of its own, so an empty tab reads as a
+   page with room on it rather than as a screen with a hole. ⚠️ Narrowing the list also pulls
+   `UiRows.ValueColumn` in with it, which shortens the label-to-value journey § 94.7 fault 1
+   measured at 1600 px; the value column must stay above 368 units at the narrowest shape, which
+   is the number `UiRows.Cap` records and the reason every control in that file is under it.
+3. **Every empty state is designed rather than left short**: a fresh career, an empty match
+   history, no friends, and a guest account.
+4. ⚠️⚠️ **NOTHING IS LOST.** § 119.3's inventory for the hub is CLOSE, six tabs, the footer
+   action, the detail view and its BACK, and every `UiRows` row inside all six. The detail popup
+   in particular exists because deleting `ProfileOverlay` would otherwise have deleted a shipped
+   feature (§ 92.4), and a redesign that quietly loses a screen is a regression wearing a better
+   layout.
+5. **`PlayerHubLayoutProbe` presses tabs by their lettering**, so the labels may not change, and
+   it drives nine resolutions, so nothing here may be a hand-written offset that is correct at one
+   of them.
+
+---
+
+### 121.7 What this pass must NOT do
+
+- ⚠️ **Not the main menu and not the in-match HUD.** Scoped out three times now (§ 118.4, § 119,
+  and *"except for main menu and actual game for now"*).
+- ⚠️ **Not `WoodCraft`.** It draws the main menu and the match. § 121.1 adds a surface to
+  `PaperCraft` instead, which is the file that owns the paper front end.
+- ⚠️ **Not a fifth hue, and no blue, navy or cold grey in any layer.** § 6.4. The measurement in
+  § 121.1 is that rule applied to a shadow nobody had thought to sample.
+- ⚠️ **Not a re-baseline of `CarryTests`.** § 93, § 117.8, § 118.4, § 120.9. It is unrelated
+  gameplay work and it is red for a reason that is written down three times.
+- ⚠️ **Not a chase of `146/146`.** § 120.9 classifies the open PlayMode failures and two of them
+  are a documented design conflict rather than a defect; § 121.8 is where that decision gets made
+  on evidence rather than on the assertion's say-so.
+
+---
+
+### 121.8 The 16-unit caption question, which § 120.9 left open on purpose
+
+`PaperKit.Caption` is **16** and `MenuKit.MinReadableUnits` is **18**, `PaperKit`'s header states
+the conflict as a deliberate decision, and two probes encode the floor as an assertion that cannot
+see the argument.
+
+⚠️⚠️ **IT IS SETTLED BY LOOKING AT THE RUNNING BUILD AND NOT BY EITHER FILE WINNING ON PAPER.**
+The measurable half is contrast, and it is already good: `PaperInkSoft` on `Paper` is **5.21:1**
+and `PaperInk` on `Paper` is **12.34:1** (`sample_png.js contrast`). The unmeasurable half is
+whether 16 units is legible at the size he plays at, and the answer differs per screen: a caption
+under a `Title` value is a restatement, and a caption that is the ONLY place a fact appears is
+not. **Walk every screen that uses one** (sign in, the queue card, the hub, match settings, the
+picker, the maker, the lobby drawers) and split them into those two groups before changing a
+constant, because raising the constant grows every caption in the front end by an eighth and
+`MenuKit.Fit` cannot rescue an overflow below the same floor.
+
+---
+
+### 121.10 ⚠️⚠️ WHAT THE RENDERS CHANGED, AND THREE OF THESE REVERSED A DECISION TAKEN ONE RENDER EARLIER
+
+**This is the section to read before trusting anything above it**, because the plan in § 121.1 to
+§ 121.6 was written from crops and four of its calls were wrong in a way only a fresh picture
+could show. `CLAUDE.md` § 6.5's closing line, *"take the picture, then take it again"*, is the
+whole of this pass.
+
+| # | What the plan said | What the render said | What it is now |
+|---|---|---|---|
+| 1 | The primary's chamfer is the odd one out, so make it a pill | ⚠️⚠️ **THE CHAMFER WAS NEVER THE FAULT.** `Logs/crops/start-cap-v61.png` at 6x: **two objects stacked** — a new `Action` pill on the node's own Image and 🧑's chamfered `Artwork` child drawing straight over it. That is what he photographed as *"its a circle and a sharp shape at the same time"*, and it is what "rounded shit next to square shit" meant on the maker's footer too. | The child graphics go (`PaperKit.MakeAction`) and the surface is **chamfered again**, on his instruction after seeing both: **"i kinda preferred the sharper edges on this, i js wanted u to make it mroe 3d"**. `CLAUDE.md` § 6.5 is back the right way up: one chamfer per screen, and it is the one action. |
+| 2 | Give the primary depth | *"this still looks ugly, especially the shadow"*, *"it feells so flat"* | The face ramp went from a 34-point value spread to **54**, the wall from 16 per cent of the face to **22**, and the cast shadow from a squared falloff over ten units to a **cubed** one: two thirds of the alpha inside the first third of the drop. A blur became a contact shadow. |
+| 3 | `Ghost` is the right idle for a tab | ⚠️⚠️ **A TAB ROW WAS TWO SILHOUETTES.** `Logs/crops/picker-tabs-v61.png`: `HERO` a pill, `LATA` and `TSINELAS` 18-unit rounded rectangles, `MAKE YOUR OWN` a pill. `PaperCraft.Surface.Live`'s own note forbids exactly this in writing (*"Same pill ... Giving the selected tab its own shape would say 'these two controls are different KINDS of thing'"*) and nobody had checked it from the idle side. | `PaperKit.MarkLive`'s default idle is `Token`. ⚠️ **AND THERE IS A SECOND DECIDER**: `PaperDress.ButtonSkin` maps `WoodTabIdleButton` to a surface as well, and it runs AFTER `PlayerHub.Highlight` on every tab press, so the hub's column stayed `Ghost` while the picker's row changed. **Both had to say `Token`.** |
+| 4 | One size for every cell in the picker's tab rail | 22 units **overflowed** `TSINELAS` and `MAKE YOUR OWN` past their own pills. The three tabs get about 124 units of cell from the `HorizontalLayoutGroup` and the door about 187; `MenuKit.WoodButton` fits its label to the size it is HANDED, which is the 180 and 300 passed in and discarded a frame later. | The size comes down and every cell is re-fitted against the rect the layout group actually gave it, which is the two-step `BuildCustomDoor` already documented and the other three cells never did. |
+| 5 | The hub's identity block is a fixed height | On a fresh account it drew a name, a sentence, a rule and then **79 units of nothing**, because the XP guards empty the words and the space was still reserved. 🧑: **"thhis looks really good just tighten it, i dont want huge empty space"** | The block has two heights and `RefreshHeader` picks, and the card is content-height rather than full height. |
+| 6 | (not planned) | `LobbyAccount-v61.png`: the account line reads `PLAYING ON THIS MACHINE ONLY · no` and stops. A 44-unit box, a 46-character sentence at 18 units in a 368-unit rail, and `verticalOverflow = Truncate` **drops whole lines in silence**. | Three lines. ⚠️ Truncate is still right; the fix for a truncation is a box that fits the sentence, not a box that lets it escape. |
+
+⚠️ **`tools/sample_png.js` GREW A `crop` MODE FOR THIS AND IT IS WHY ROW 1 WAS FOUND AT ALL.** A
+1920x1080 render shown at chat size draws a 500-unit control's keyline about one pixel wide; the
+stacked silhouette was invisible in the full frame and unmistakable at 6x. **`CLAUDE.md` § 6.1
+says show, do not describe, and a picture too small to read is a description.**
+
+---
+
+### 121.11 What is NOT done, named rather than left implied
+
+⚠️ **EVERY ITEM HERE IS ONE HE RAISED, SO NONE OF THEM IS A NICE-TO-HAVE.** They are open because
+they need either a decision only he can make or a reproduction that batch mode cannot produce.
+
+- ⚠️⚠️ **THE CHAT DOES NOT WORK AND IT IS NOT DIAGNOSED.** 🧑: **"chat doesnt work at all btw"**,
+  and separately **"also chat is awkwardly placed, it looks very ugly"**, and
+  **"can u figure out where to put chat and hwo to make it work bcz it s lowkey ugly"**. Read this
+  far and no further, because the reading is not finished: `LobbyChat.Submit` is wired to
+  `InputField.onSubmit`, and on a lobby with no peer `MatchRpc.SendChatServerRpc` returns false and
+  `AddLocal` is supposed to push *"Not connected. That line was not sent."* onto the log. **His
+  screenshot shows an empty log**, so either the submit never fires or the push never draws, and
+  those are different bugs in different files. ⚠️ **The host path has its own echo**
+  (`HostRelayChat` ends with `OnChatLine?.Invoke`, because `SendNamedMessageToAll` loops back and
+  `OnChatLineMsg` refuses the host), so "the sender never sees its own line" is ruled out for a
+  host and NOT for a client. **Reproduce it in the player before writing anything**, and a probe
+  that types into the field and photographs the result is the cheapest way to make it repeatable.
+- ⚠️ **THE LOGIN CARD STILL DOES NOT USE THE SPACE.** § 121.4 has the measurement and the three
+  quotes. It is unstarted rather than half-done, deliberately: § 100 is a whole pass spent undoing
+  a guess about this exact rectangle, and the two readings of *"use this whole space"* (a wider
+  floating card, or a full-height panel bled off the left edge) produce different screens and
+  different key-art crops.
+- ⚠️ **THE PICKER'S BACKDROP DOES NOT RESPOND TO THE CHARACTER.** § 121.5 has both of his notes and
+  they pull against each other: *"this used to be amazing when it was brown only and the
+  background corresponded to their color"* and, of the version that tints, *"yea see this doesnt
+  look great"*. The resolution written there (vary VALUE inside the paper family and let the hero
+  colour in only at low chroma) is a design, not a change.
+- ⚠️ **THE ARROWS ARE STILL BLUE**, and § 121.5 has the fresh measurement: about 30 per cent of
+  their opaque pixels are hue 201 at 41 per cent saturation, on a field at hue 39. **Both of his
+  rules still disagree** and § 120.7 is still right that only he settles it; what is new is a
+  third option that does not repaint the file.
+- **TAYA FIRST is above the plate and centred and is still the plate's width.** He asked for the
+  box to be tightened to its own lettering and said the two boxes need not match; that half is
+  done in position and not in size.
+- **The 16-unit caption question (§ 121.8) is answered on one control and not as a policy.** The
+  lobby's SKILLS row is one size now because he named it (*"these diff fonts look ugly"*); every
+  other `PaperKit.Caption` in the front end is untouched and `PlayerHubLayoutProbe` and
+  `QueueCardLayoutProbe` still fail on the sign-in screen's and the queue card's.
+- **The hub is photographed on a FRESH account only.** § 121.9 asks for a populated one and for
+  the long-name state; the long name is shot and the populated career is not, because a probe
+  cannot mint a career without writing one.
+- **No non-host client pass.** Every shot in this pass is a host that auto-hosted on load.
+- ⚠️⚠️ **THE LAN ADDRESS IS STILL TRUNCATED IN THE HOSTING DRAWER, AND FIVE ATTEMPTS DID NOT MOVE
+  IT.** `Logs/crops/address-final4.png`: the tray reads `25.3.149.221:8` and the rest is behind
+  the COPY button. The row's COLUMNS are fixed (§ 121.10 and `ShareCaption`) and this is the
+  remaining half. **What is known:** there is exactly one writer (`ConvertedMatchSetup` line
+  ~3000), it demonstrably runs, and changing `fontSize` there produced **no visible change across
+  four renders**, with and without a `MenuKit.Fit` after it, with the fit against the rect and
+  against a computed width. **So something else is deciding this label's size and it is not that
+  line.** Do not tune the number again; find the second writer first. ⚠️ COPY puts the whole
+  string on the clipboard, so the feature works and the display does not, which is why this is a
+  defect rather than an outage.
+
+---
+
+### 121.9 Acceptance
+
+- Every screen re-shot at `v61` and a person looks at the picture. ⚠️ `UiRuntimeShots.ShotVersion`
+  bumps once per iteration, not once per pass.
+- **The hub gets shots it has never had**: all six tabs, on a FRESH account and on a populated
+  one, plus a long display name.
+- `PaperPurityProbe`, `LobbyStyleProbe`, `PlayerHubLayoutProbe`, `UiClickProbe` and
+  `AspectRatioProbes` green; Core, EditMode and `Checks.RunAll` green.
+- ⚠️ **The five failures § 120.9 names are re-classified against a run rather than inherited**,
+  and the splash-shader one gets the confirmation against `9c85c2f` that § 120.9 says it never
+  got.
+- A clean Windows player on the Desktop, built after every gate above.
+
+---
+
+## 120 · The buttons get a thickness, and the four screens § 119.11 left get finished ⚠️⚠️ 2026-09-02, branch `ui-redesign`
+
+🧑, on the v56 build: **"REWORK THE BUTTONS so that it feels great to click and isnt flat"**,
+**"MAKE SURE AS WELL CHARACTER SELECT AS WELL AS EVERYTHING WIRED TO LOBBY HAS THE NEW THEME"**,
+and **"PLS FINSH THE STUFF LEFT UNDONE"**, which is § 119.11 by name. Plus seven notes off the
+same build, every one of which is a row below.
+
+⚠️⚠️ **THE ONE FINDING WORTH CARRYING OUT OF THIS ENTRY: `PaperDress` WALKS `GodotPanel`,
+`GodotButton` AND `WoodSkin`, AND A SURFACE SET OUTSIDE THOSE THREE IS A SURFACE THE CONVERSION
+CANNOT SEE.** This pass found **five** of them, in five files, and every one had the same shape: a
+bare `Image` with a colour or a baked sprite written straight onto it, converted by nothing, with
+its own lettering remapped to ink by `PaperDress.Type` on the way past. **A half-converted screen
+is worse than an unconverted one**, because the type is now the wrong colour for the surface
+rather than merely old. § 120.4 lists all five.
+
+---
+
+### 120.1 The material: what "2d and blank" actually was
+
+🧑, three times: *"these buttons can be improved and look better"*, *"the butons look 2d too and
+blank"*, then the instruction above. Every raised paper surface already had a halo, a bottom lip
+and a cast shadow, and it still read as a sticker. Four reasons, all in `PaperCraft.PaintRaised`:
+
+| What was wrong | The number |
+|---|---|
+| The face was a **flat fill**. `WoodCraft` has expressed every one of 🧑's authored surfaces as a full-height ramp since it was written; this file drew the same object as one colour with a rim. | 4 per cent top to bottom now. Enough for a direction, little enough that eight chips in a row stay one material. |
+| **No lit top edge**, which `PaintPlate` has always had. Under a light above the screen a raised object is bright along its top, and this construction only drew the bottom half of that. | 2 units at 0.55, which is `PaintPlate`'s own number. |
+| The bottom **wall** was 7 per cent of the face: two units on a 40-unit chip, under a four-unit halo. The control had a shadow but no THICKNESS. | 14 per cent, ramped rather than banded, because a cut paper edge catches light at the top of the cut and none at the bottom. |
+| The cast shadow was a **flat copy of the silhouette at one alpha**. | Squared falloff: darkest where the surfaces nearly touch, gone by the time it has travelled the object's own height. |
+
+⚠️⚠️ **AND HALF THE FEEL IS NOT IN THE SPRITE AT ALL.** `PaperButton` eased nothing: a sprite
+swap is one frame, so hover and press were as much motion as a checkbox has. Hover now lifts the
+face two units and the object 2.5 per cent; a press takes the whole cast shadow, sinks the
+lettering by `Drop` and takes 3 per cent off the scale. Both eased in **unscaled** time (this
+front end draws over a paused game), **faster down than up** (26 against 15), which is the
+asymmetry a physical key has.
+
+- ⚠️ **2.5 PER CENT IS MEASURED AGAINST THE ROW, NOT THE BUTTON.** A lobby chip is 40 units in a
+  rail with a 10-unit gap; at five per cent a hovered chip grows two units and closes a fifth of
+  the gap, which reads as the row shuffling. At 2.5 it is one unit.
+- ⚠️ **`localScale` CANNOT REFLOW A LAYOUT GROUP** (Unity lays out on `rect`), and it is not
+  written at all on a node whose `ArrowButtonView` is still live, which is § 119.9 row 1 made
+  impossible rather than remembered.
+
+### 120.2 BACK was six units low and half a chevron left, and both were in one method
+
+*"back still isnt centered as well"*. Two faults on one control, neither where the previous two
+passes looked.
+
+- **Vertically:** `LobbyChrome.LiftBack` wrote `offsetMax = (0, -PaperCraft.Drop)`, which pulls the
+  label box's TOP edge DOWN. `PaperKit.Chip` raises the BOTTOM edge instead. Both move the
+  lettering six units and they move it **in opposite directions**, so BACK sat **twelve units**
+  below every other chip in the game and both lines looked equally reasonable in review.
+  `PaperKit.CentreOnFace` is the only place either is written now.
+- **Horizontally:** the label read `"‹  BACK"` with two spaces. `Text` centres on the string's own
+  ink, so the chevron and the word are centred TOGETHER and the word therefore sits right of the
+  pill's middle by half the chevron plus half the gap: about **eleven units on a 120-unit chip**.
+  One space.
+
+### 120.3 ⚠️⚠️ FIVE SCREENS SAID "THIS IS THE ONE YOU ARE ON" IN FIVE WAYS AND THREE OF THEM WERE BROKEN
+
+`PlayerHub.Highlight`, `ConvertedCharacterSelect.RefreshTabs`, `CustomCharacterScreen`'s slot
+tabs, `SignInScreen.SetTab` and `LobbyJoinPanel.PaintChip`.
+
+| The copy | What was wrong |
+|---|---|
+| the hub, the picker, the maker | wrote a `GodotButton` variation that `PaperDress` had already disabled (it rewrites its own sprite on hover, so the dress turns it off). **The live tab was invisible.** |
+| the login screen, the join panel | `Token` against `Ghost`, which `Lobby-v52.png` measured at **4 per cent apart in value** and which the lobby abandoned for exactly that reason. Written before that measurement. |
+| all five | had to remember to re-tint the lettering as a second step, and each did it differently. |
+
+`PaperKit.MarkLive` writes the surface, re-tints through `PaperButton` (which reads the colour off
+the surface rather than being told), and **answers false when there is no paper skin** so a caller
+with a wooden fallback can take it. ⚠️ **The idle surface is a parameter**: a tab you are not on is
+an alternative (`Ghost`), a dropdown option you have not chosen is still a value you are reading
+(`Tray`).
+
+Two rules fell out of it:
+
+- ⚠️⚠️ **A `Live` CONTROL IS NEVER DRAWN "OFF", EVEN WHEN `Button.interactable` IS FALSE.**
+  `RefreshTabs` sets `interactable = !active` on purpose so the tab you are on cannot be pressed
+  again. Without the exception **the selected tab is also the greyed-out one**, which is the one
+  pair `PaperCraft.Pose`'s own note says must never collide. It is visible in
+  `CharacterSelect-v57.png`.
+- ⚠️ **`Sign` COUNTS AS WOOD-DARK FOR LETTERING, NOT JUST `Live`.** The ROOM CODE plaque is a
+  `Sign`, carries a `PaperButton` because it is pressable, and came back with a `PaperInk` caption
+  on `WoodMid`: **1.3:1**, measured off `Lobby-v57.png`, and 🧑's *"pic 1 can be improve"* on that
+  exact plate.
+
+### 120.4 ⚠️⚠️ THE FIVE SURFACES THE CONVERSION COULD NOT SEE
+
+| Where | What it was | What it looked like |
+|---|---|---|
+| `PlayerHub` backdrop | `MenuKit.Backdrop(_root, WoodDeep)` | Dark brown board under labels `PaperDress.Type` had already remapped to ink. **"PLAYER CARD IS STILL BROWN AND HARD TO READ"** |
+| `CustomCharacterScreen` backdrop | the same line | MAKE YOUR OWN written in dark brown on a dark brown board, with a cream model card and cream buttons around it |
+| `ConvertedMatchSetup` address + code boxes | `GodotTheme.WoodBox` sprite on a bare `Image` | ink on `WoodDark`, about **1.3:1**. *"cant see fonnt"* |
+| `ConvertedSettingsPanel` `PlayerNameField` | authored `.tscn` node, baked wood sprite | the one text box on a cream panel is a near-black well with a grey placeholder |
+| `ConvertedCharacterSelect` `ConfigPanel` + `CharSelector` | 🧑's own `SETTINGS CONFIG PANEL.png` and `MAP MODE DISPLAY.png` | cream furniture standing on a dark wooden board |
+
+⚠️⚠️ **THE LAST ROW IS THE ONE PLACE THIS PASS STOPS DRAWING ONE OF HIS PNGs, AND IT NEEDS SAYING
+OUT LOUD.** `CLAUDE.md` § 6.4 forbids repainting his art and this does not repaint it: the files
+are untouched, the main menu still draws them, and it is **the same decision the lobby already
+made** when `LobbyChrome.BuildSettingsDrawer` took `Rows` out of the authored `ConfigPanel` and
+left the board behind. His art that is a CONTROL stays: `GAME BANNER.png` is still the headline,
+the two arrows are still the arrows, `BUTTON LONG.png` is still CHOOSE. § 119.1 states the rule
+the board was failing: **wood is the ink, the frame and his own authored buttons standing on
+paper**; the board was the field.
+
+⚠️ **`PaperPurityProbe` CANNOT SEE ANY OF THE FIVE**, because it walks COMPONENTS. Widening it to
+flag a bare `Image` carrying a `box_`, `wc_`, `wcsil_`, `plank_` or `btn_` sprite is § 120.7.
+
+### 120.5 Six ordering faults, which are the ones a picture finds and a reading does not
+
+| # | The render | The cause |
+|---|---|---|
+| 1 | `CharacterSelect-v57.png`: the tab you are on is greyed out | `Wire` ran `Refresh()` **before** `PaperDress.Screen`, so `RefreshTabs` always took its wooden fallback and the dress then flattened all three tabs onto one `Token` |
+| 2 | `CharacterMaker-v57.png`: FACE is paper, the other five sections are wood | the dress ran once at `Build`, and everything in the right-hand column is destroyed and rebuilt on every slot press, section press and value change. It runs at the end of `Refresh` now, which is what `PlayerHub.Show` already did |
+| 3 | `LobbyServers-v57.png`: `JOIN A GAME` drawn through `START SERVER` | neither label is ever fitted: `MenuKit.WoodButton` only calls `Fit` when handed a width, and both are built at `(0, 44)`. In a 380-unit column two expanded halves are **185 units** and `JOIN A GAME` needs about 210. They stack now, full width, which is also the hierarchy the comment above them already claimed |
+| 4 | `Settings-v57.png`: `APPLY CHANGES` draws past both ends of its button | same silent overflow. The three footer labels are fitted after a forced canvas update, because `Fit` measures a rect and an un-laid-out rect reports zero and the call does nothing |
+| 5 | `LobbyServers-v57` **and** `-v58`: SPECTATE across the heading | ⚠️⚠️ **TWO CAUSES, AND THE FIRST FIX DID NOT SHOW UNTIL THE SECOND RENDER.** `SetHeadline` gives up when the rect reports zero and `LayoutRebuilder` cannot rebuild an inactive canvas, which this drawer always is when `Refresh` runs — so the heading was never fitted at all. And it could not have fitted: the cell is about 200 units and `LOBBY · YOU ARE HOSTING` needs about **253 at the 18-unit floor**. Stacked, and the word LOBBY is gone |
+| 6 | `LobbyAccount-v57.png`: a stray tan rule under CLOSE | the XP track. The branch that empties the level and the count when a profile has no XP has always left the 440-unit track drawn; on `WoodDeep` an empty `WoodDark` groove was invisible and on paper it is four value steps darker than the sheet |
+
+### 120.6 The rest of his notes
+
+- **"LOGIN can be improved, especially TUMP logo in login"**. ⚠️⚠️ **THE TINT WAS THE PROBLEM AND
+  NO BETTER TINT FIXES IT.** Sampling `Resources/UI/main-menu/TUMP.png` (1835x527): about **60 per
+  cent** warm off-white in the `e0d0c0` family, which is the letter faces, and about **40 per
+  cent** `303030` to `404040`, which is an outline and a drop shadow **baked into the file**. A
+  `RawImage` colour MULTIPLIES, so `PaperInk` `3b2415` takes the faces to about `201206` and the
+  outline to about `0b0704`: two things four values apart end up one value apart and the mark
+  collapses into a brown blob with a slightly darker rim. **Multiply can only darken**, so no tint
+  lightens the faces back out. It is nailed to a wood `Sign` plaque and drawn at `Color.white`,
+  which is the picture the title screen shows and the composition the mark was drawn for.
+- **The login card** was 900 units around 809 of content: 68 units of margin above and **23**
+  below. With `GoogleSignIn.IsAvailable` true it **overflowed by 43** — nobody has seen that,
+  because no build here has a client id in it yet (§ 115.8), so the layout is correct today and
+  breaks the day somebody pastes a string into a text file. `FitCardToContent` takes the span and
+  puts the card's centre on the content's centre, so both margins are equal by construction.
+  ⚠️ The first version sized to `max(|top|, |bottom|) * 2`, which keeps the card centred on the
+  SCREEN and is only correct when the content is centred on the card. It is not.
+- **The sign-in tab pair** is `Live` against `Ghost`, which § 119.11 named as the first thing left
+  undone and which was an omission rather than a decision.
+- **"match settings ui look ugly"**. The closed dropdown face had a caret saying it opened and
+  nothing at all under the pointer: no hover, no press, no sound, which made choosing a map the one
+  silent press in the front end. The face and every option carry `PaperButton` now. And the chosen
+  option was **a bold word among four identical trays** — weight is the weakest of the four
+  ordering tools and it was the only one this list spent. It is a `Live` pill.
+- **"pic 1 can be improve"**. Besides the caption contrast above: a four-character code drawn
+  `LowerLeft` on a 380-unit plaque leaves about **240 units of empty wood** with `tap to copy`
+  marooned in the far corner. Three strings, three corners, nothing in the middle. The code is
+  centred.
+- **`UiRows.Band` was white at 3.5 per cent**, and that constant's own comment already said *a
+  number tuned against one background is not a number* and would need re-measuring on a light one.
+  On `Paper` it is about one value step in the last channel: **there was no banding at all** on any
+  of the three screens that build rows. `PaperSunk` at 14 per cent, four value steps down, which is
+  the weight the white 3.5 had over the old scrim.
+- **Four more amber-on-cream controls**, all at the **1.7:1** § 119.10 records 🧑 rejecting by eye:
+  the hub's XP fill, the picker's trait pips, the settings scrollbar handle, and the dropdown's
+  chosen-option mark. All are wood in a `PaperSunk` groove now, about 8:1, and none introduces a
+  colour.
+
+### 120.7 What is NOT done, named rather than left implied
+
+- ⚠️ **`PaperPurityProbe` STILL WALKS COMPONENTS ONLY, AND § 120.4 IS FIVE THINGS IT CANNOT SEE.**
+  It should also flag a bare `Image` whose sprite name starts with `box_`, `wc_`, `wcsil_`,
+  `plank_` or `btn_` (the generated wood keys; paper's are `pc_`), exempting anything whose sprite
+  comes from `Art/ui/`. **And it only builds the lobby and the login screen**: the picker, the hub,
+  the maker and the settings panel are out of its reach, which is why every fault in § 120.4 and
+  § 120.5 had to be found in a photograph.
+- ⚠️ **THE HUB IS STILL A TAB ROW AND § 119.5 SAYS IT SHOULD BE A TAB COLUMN.** *"an ID card with a
+  tab COLUMN rather than a tab row ... six tabs across a header is the row that made § 92
+  unreadable"*. It is legible now and it is not the composition that was planned, and
+  `LobbyAccount-v58.png` shows the cost: on the PROFILE tab of a fresh account **the bottom 45 per
+  cent of the screen is empty cream**, which is § 6.2's *"big ass empty sopace"* on a new screen.
+  A column would fill the left edge and narrow the rows at the same time.
+- ⚠️ **`Art/ui/host-game/Arrow Left 64.png` AND `Arrow Right 64.png` CARRY BLUE, AND THAT IS A
+  DECISION FOR 🧑 RATHER THAN A FIX.** Sampled: **77.5 per cent `f0f0f0`** and **about 20 per cent
+  `80b0d0`**, which is a cold blue shadow baked into the file. `CLAUDE.md` § 6.4 says *do not
+  repaint his art* and names the pennants as the exemption; these are his art too. He has also said
+  *"i dont want to see blue shit"* five times. **Both rules are his, they disagree on this file,
+  and only he can settle it.** The arrows are untouched.
+- **The `WELCOME BACK` state still has no render**, for the reason `UiRuntimeShots` states in that
+  method: it needs an account with a password attached, which a probe cannot create.
+- **`LobbyChat`'s in-match instance is still wooden**, deliberately, because the in-match HUD is
+  out of scope.
+
+### 120.8 Acceptance
+
+- ✅ Twelve versioned states photographed at `v60`, up from nine: the three lobby modes, the three
+  drawers, the join panel, the account screen, the three login states, **and the character select,
+  the character maker and the settings panel**, which § 119.11 named as converted and never looked
+  at. ⚠️ Those last two were being written to `CharacterSelectPanel.png` and `SettingsPanel.png`
+  with **no version in the name**, so every review of them for a month was conducted against
+  whichever copy the chat client had already cached (`CLAUDE.md` § 6.1).
+- ✅ Core 430/430, the three `tools/` audits green (48 sites / 0 ungated on another body, 54 wire
+  entry points / 0 unreachable, 57 messages / 0 mismatched).
+- ✅ EditMode 284/284 and `Checks.RunAll` five of five.
+- ✅ **`PaperPurityProbe` GREEN**, and it is a wider gate than it was: it walks sprites as
+  well as components, it knows a wooden backdrop from a paper one, and it opens the fighter
+  picker and the player hub before it looks. `LobbyStyleProbe`, `UiClickProbe`,
+  `AspectRatioProbes` and `PlayerHubLayoutProbe`'s hub cases are green with it.
+- ⚠️⚠️ **THE PLAYMODE SUITE IS NOT ALL GREEN AND FOUR OF THE FAILURES ARRIVED WITH THIS BRANCH.**
+  § 120.9 names each one, with the `git show 9c85c2f` that proves the construct it fails on is
+  byte-identical at the commit this pass started from. **Do not absorb them into this entry and do
+  not re-baseline them.**
+- ⚠️ **A person looks at the picture.**
+
+---
+
+### 120.9 ⚠️⚠️ FIVE PLAYMODE FAILURES THAT ARE NOT THIS WORK
+
+The handoff for § 119 says `PaperPurityProbe`, `LobbyStyleProbe`, `QueueCardLayoutProbe`,
+`PlayerHubLayoutProbe`, `UiClickProbe` and `AspectRatioProbes` were green at `9c85c2f`. **Three of
+them are not**, plus two failures outside that list. The evidence that each predates this pass is
+`git show 9c85c2f` on the exact construct the failure names. ⚠️ **Do not let them be absorbed into
+§ 120 and do not re-baseline them**, which is the rule § 93's `CarryTests` red already established
+in this file.
+
+**The run: 146 PlayMode cases, 140 passed, 5 of the 6 failures are the rows below**, and the sixth
+is `PaperPurityProbe`, which is this pass's own widened gate and is green once it stops reporting
+deactivated `SkinLayers` children (see that file's `WoodenSprite`).
+
+| Test | The message | Why it is not this pass |
+|---|---|---|
+| `PlayerHubLayoutProbe.TheSignInScreenFitsItsBoxAtEveryShippedResolution` | `16:9 720p signin: 'Label' is authored at 16 units, below the 18-unit floor.` | `SignInScreen._keyHint`, the two field captions, the error line and the placeholder are all `MenuKit.Label(..., PaperKit.Caption, ...)`, and `MenuKit.Label` names every label it makes `Label`. Identical at `9c85c2f` (line 592 there, 608 now). |
+| `QueueCardLayoutProbe.TheQueueCardFitsItsBoxAtEveryShippedResolution` | `16:9 720p queue: 'Label' is 16 units, under the 18-unit floor.` | `QueueCard.Row(..., PaperKit.Caption, ...)`, three call sites, byte-identical at `9c85c2f`. `QueueCard.cs` has no commit in this pass. |
+| `QueueCardLayoutProbe.TheDoorAndTheCardAreNeverBothOnScreen` | `in state Searching the card and its own door are both on screen` | `QueueCard` builds `QuickMatchButton` at `9c85c2f` exactly as it does now, and neither that file nor this probe is touched by any commit here. |
+| `PhaseSurfaceLayoutProbe.EveryRectOnTheBootSplashHasARectToResolveAgainst` | `Unhandled log message: '[Assert] State comes from an incompatible keyword space` | It is a shader keyword assert raised during the splash, not a layout measurement, and **the two shaders it names are different on two consecutive runs** (`Particles/Simple Lit` against `Particles/Lit` on one, `Unlit` against `Baked Lit` on the next), which is what a warm-up race looks like rather than a fault. Nothing in this pass touches a shader, a particle system or a material. ⚠️ **NOT confirmed against `9c85c2f` by a run**, only by inspection; that confirmation is the first thing to do. |
+| `CarryTests.AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor` | `a held slipper drifted 0.084 m ... Expected: less than 0.05` | ⚠️ **ALREADY RECORDED, TWICE.** § 93 has it at 0.084 m and § 118 has it at 0.092 m, and the § 119 handoff says in as many words *"Do not re-baseline CarryTests (§ 117.8)"*. Nothing in this pass touches `Carrier`, the animator or `LateUpdate`. **This run reproduces § 93's exact 0.0837 m**, which is a third sample outside the bound and further weakens the "it is a timing flake" reading. |
+
+⚠️⚠️ **THE FIRST TWO ARE ONE FAULT AND IT IS A DESIGN CONFLICT RATHER THAN A BUG.**
+`PaperKit.Caption` is **16** and `MenuKit.MinReadableUnits` is **18**, and `PaperKit`'s own header
+states the conflict as a decision: *"`Caption` is under it, and it is allowed for the same reason
+`LobbyChrome.SummarySize` is: it is only ever a restatement of something already on the screen at
+`Title` or larger."* Two probes encode the floor as an assertion and cannot see that argument. So
+the two files disagree in writing and one of them has to give.
+
+**What done looks like, and it is a judgement rather than a fix:**
+
+- **Raise `PaperKit.Caption` to 18.** One constant. It is `docs/VISION.md`'s own readability floor,
+  and 🧑 has complained about small type in this front end before by name
+  (*"shit down there is small and cant be seent"*, recorded in `ConvertedCharacterSelect`). ⚠️ It
+  grows every caption in the paper front end by an eighth, so it needs a render pass: labels sized
+  against 16 can overflow, and `MenuKit.Fit` cannot rescue them because it will not go below the
+  same 18.
+- **Or teach the two probes what a restatement is**, which means a name convention
+  (`PaperKit.Ink` already renames its labels to `Ink` and `InkSoft`; `MenuKit.Label` does not) and
+  weakens a gate that has caught real faults.
+
+**The third is a screen that no longer exists.** § 119.8 deleted the QUICK MATCH chip from the
+lobby: matchmaking is the RANKED tab now and it drives the one primary, so `QueueCard`'s own door
+and card are no longer two controls on one rail. The probe's invariant is about a composition that
+was replaced, and somebody has to decide whether it still means anything before it is either fixed
+or deleted.
+
+## 119 · The whole front end is repainted in PAPER, and the lobby is rebuilt around the room ⚠️⚠️ OPEN, 2026-09-01, branch `ui-redesign`
+
+🧑, with a crop of the lobby, a crop of the join panel, `Art/ui/TUMP.png` and a two-swatch card:
+*"game reads as too brown bcz the game itself is brown already (the map and shit)"*, *"Look at the
+logo, pic 3"*, *"can we remodel the color of all UI for lobby and login to look like this?"*, *"i
+want us to play around the 2 colors i attached"*, and then, widening it three times in a row:
+*"not just color overaul u can genuinnely overaul the whole thing bcz its ugly"*, *"u can overhaul
+the wole lobby and login bcz its ugly as fuck ... it feels overwhelming and not nice to look at as
+a user"*, **"redesign teh whole ass UI (dont touch the camera and shit tho) ... ur goal is to make
+it inntuitive and easy for user to traverse and calming. I DONT WANT it to be overwhelming for
+htem"**.
+
+⚠️⚠️ **HE ALSO GAVE THE PERMISSION § 118.4 SAYS THIS NEEDS, IN ADVANCE AND BY NAME:** *"i think
+handoff says u cant recolor and shit but i give u permission to overhaul"*, and
+*"OVERHAUL UI FOR EVERYTHING IN LOBBBY INCLUDING AS WELL EVERYTHING U CAN CLICK IN LOBBY LIKE
+CHARACTER SELECT, CHARACTER MAKING, SETTINGS, ETC EVERYTHING (except for main menu and actual game
+for now)"*. **The main menu and the in-match HUD are still out of scope and so is the lobby
+camera.**
+
+### 119.1 ⚠️⚠️ THE DIAGNOSIS IS HIS AND IT IS MEASURABLE: THE UI AND THE WORLD ARE THE SAME COLOUR
+
+*"game reads as too brown bcz the game itself is brown already"*. Sampling
+`Logs/shots-runtime/Lobby-v51.png`: Eskinita's road, houses, poles and fences sit at **hue 18 to
+40, saturation 30 to 60 per cent**. `UiTheme.WoodFace` `793e1f`, which is every panel, rail, card
+and toggle on that screen, is **hue 22 at 74 per cent**. Every surface in the front end is
+therefore a slightly darker version of the picture behind it, and the only thing separating the
+two is the keyline. **No amount of bevel, grain, varnish or composition fixes that**, which is why
+§ 116, § 117 and § 118 each improved the screen and each left him saying it still looked wrong.
+
+⚠️ **`f4ecdd` AND `efdabe` ARE NOT A FIFTH HUE.** Both are hue 34 to 38 at 6 to 20 per cent
+saturation, one step off `UiTheme.Cream` `f5e6c8`, which has been in the palette since
+`ui_theme.gd`. `CLAUDE.md` § 6.4 is intact: no blue, no navy, no cold grey, and the wood, amber,
+green and ink are all unchanged. **What changes is which member of the palette is the FIELD.**
+Paper is the surface now; wood is the ink, the frame and his own authored buttons standing on it.
+
+⚠️ **AND THE SWATCHES ARE ALREADY IN HIS OWN MARK.** `Art/ui/TUMP.png` is white lettering with a
+sand halo on a linen field; the linen samples `f2ead9`, within a point of `f4ecdd` on every
+channel. The palette was on screen in the game logo before he sent the card.
+
+### 119.2 The two new files, and why they are new files rather than an edit
+
+| File | What it is |
+|---|---|
+| `Runtime/UI/PaperCraft.cs` | Five CONSTRUCTIONS in cut paper: `Sheet`, `Token`, `Tray`, `Ghost`, `Sign`. Each differs in silhouette and relief, not only in fill. Plus `PaperSkin`, the rect watcher, which **destroys any `WoodSkin` on the same node**. |
+| `Runtime/UI/PaperKit.cs` | The atoms and the four-step type scale (44 / 26 / 20 / 16), one `Gap` of 12, and `PaperButton`, the pose driver. **Deliberately a kit of parts and not a screen builder**, because a shared `BuildPanel(title, rows)` is exactly how five screens become one screen five times. |
+
+⚠️ **`WoodCraft` IS NOT DELETED AND MUST NOT BE.** It draws every wooden control in the main menu
+and in the match, neither of which this pass may touch, and it is the transcription of his
+authored art. The two materials share `WoodCraft.Depth` and `WoodCraft.Finish` (made `internal`)
+so the two cannot pick up different corner anti-aliasing.
+
+### 119.3 ⚠️⚠️ THE CONTROL INVENTORY. NOTHING ON THIS LIST MAY DISAPPEAR
+
+🧑, twice: *"MAKE SURE EVERYTHING U REPLACED IS ACCOUNTED FOR AND WE DONT LOSE BUTTONS"*, and
+*"Im so worried ull leave old UI int he shhit and itll be a mess ... as well as forget UI"*. This
+is the answer to the second half, and `PaperPurityProbe` (§ 119.6) is the answer to the first.
+
+**LOBBY** — the converted node names `ConvertedMatchSetup` resolves by name. Renaming or dropping
+any of these breaks the wiring silently, which is what the `LobbyChrome` header warns about:
+
+`BackButton` · `StartButton` · `PrimaryButton` · `SeatButton0..3` · `SeatHeading` · `SeatHint` ·
+`CharacterButton` · `CharacterSelectPanel` · `MapPreview` · `MapValueLabel` · `ModeValueLabel` ·
+`DifficultyValueLabel` · `DetailLabel` · `MapPrevButton` · `MapNextButton` · `ModePrevButton` ·
+`ModeNextButton` · `ModeRow` · `DifficultyPrevButton` · `DifficultyNextButton` · `FormatPrevButton`
+· `StatusLabel`
+
+**LOBBY** — the controls built in code:
+
+| Control | Lives in | Where it goes now |
+|---|---|---|
+| BACK | `LobbyChrome.LiftBack` | top rail, far left |
+| PRACTICE / MULTIPLAYER tabs | `LobbyChrome.BuildTabs` | top rail, centre |
+| YOUR PROFILE door | `LobbyChrome.BuildProfileButton` | **top rail, far right** (🧑: *"i tink te profile screen should be more up instead of being below character select"*) |
+| player name field | `LobbyChrome.BuildNameField` | the hub PROFILE tab behind that door |
+| CHARACTER door | `LobbyChrome.BuildCharacterButton` | bottom rail, left column, row 1 |
+| LOADOUT door | `LobbyChrome.BuildLoadoutButton` | bottom rail, left column, row 2 |
+| ROOM CODE + tap to copy | `LobbyChrome.BuildRoomSign` | bottom rail, right column, on the `Sign` surface |
+| MATCH SETTINGS toggle + summary | `LobbyChrome.BuildLeftRail` | bottom rail, centre column, above the primary |
+| MAP / MODE / BOTS / RULES dropdowns | `ConvertedMatchSetup.BuildSettingsDropdowns`, `WoodDropdown` | the settings drawer, which opens UPWARD out of the rail |
+| START MATCH / READY / CONNECTING | `StartButton`, `PrimaryButton` | bottom rail, centre column: the one thing on the screen |
+| QUICK MATCH + queue card | `QueueCard` | a drawer above the right column, never a floating corner card |
+| JOIN / SERVERS | `LobbyJoinPanel`, `_joinButton`, `_onlineButton` | one chip in the right column, opening the rebuilt takeover |
+| CHAT | `LobbyChat` | one chip in the right column, opening a drawer |
+| SPECTATE | `_spectate` | the seat plates: a free seat is pressable and says so |
+| SECURE YOUR PROGRESS | `LobbyChrome` footer link | a chip only while the account is a guest |
+| version stamp | `VersionStamp` | on the top rail, not floating over the road (§ 118.1 row 8) |
+
+**LOGIN** (`SignInScreen`): SIGN IN tab · CREATE tab · username · password · primary
+(SIGN IN / CREATE ACCOUNT) · CONTINUE WITH GOOGLE · PLAY AS GUEST · BACK · the WELCOME BACK state
+CONTINUE and SIGN IN AS SOMEBODY ELSE · the footer key hints. **Eleven controls across three
+states, and § 6.2b first row is why all three get photographed.**
+
+**JOIN A GAME** (`LobbyJoinPanel`): code/IP field · JOIN · six browser rows · BACK TO LOBBY ·
+LEAVE GAME.
+
+**CHARACTER SELECT** (`ConvertedCharacterSelect`): `CharPrevButton` · `CharNextButton` ·
+`CharValueLabel` · `CharacterPreview` · `TabBar` · `TraitRows` · `NameRow` · `NameCaption` ·
+`TaglineLabel` · `ConfirmButton` · `BackButton` · `BackdropGlow`.
+
+**CHARACTER MAKER** (`CustomCharacterScreen`): SLOT 1..3 tabs · SURPRISE ME · PRESETS · BACK ·
+KEEP AND USE · the ten wardrobe categories · the colour dial.
+
+**SETTINGS** (`ConvertedSettingsPanel`): `ApplyButton` · `BackButton` · `ResetAllButton` ·
+`FullscreenCheck` · `PlayerNameField` · `BindingsList`.
+
+**HUB** (`PlayerHub`): CLOSE · six tabs (PROFILE, FRIENDS, LOADOUT, CAREER, MATCHES, ACCOUNT) ·
+the footer action (SAVE / REFRESH) · the detail view BACK · every `UiRows` row inside them.
+
+### 119.4 The lobby new composition: one room, two rails
+
+⚠️⚠️ **THIS IS § 118.1 ROW 2 ANSWERED STRUCTURALLY RATHER THAN BY FILLING THE HOLE.** That row
+measures 680 units of empty screen on the left and 475 on the right, between a top band and a
+bottom rail, with four corners and nothing between them. The answer is not more furniture in the
+middle; it is **two full-width rails and a middle that is only the room**, which is the mechanism
+§ 118.3 credits to Rocket League and Overwatch and which Fall Guys uses for exactly this screen.
+
+```
++----------------------------------------------------------------------+
+|  < BACK        PRACTICE  .  MULTIPLAYER            [ YOU  > ]   v1.00 |  top rail, 88
++----------------------------------------------------------------------+
+|                                                                      |
+|      BOT        [ YOU ]        OPEN SEAT        BOT                   |  seat plates
+|       o            o               - -            o                   |  the cast
+|                                                                      |
++----------------------------------------------------------------------+
+|  YOUR FIGHTER >  |  MATCH SETTINGS v |  ROOM   VQ7A     tap to copy   |  bottom rail, 180
+|  DANTE . PASIP   |  +--------------+ |  +-----+ +-----+ +-----+       |
+|  YOUR BUILD   >  |  |  START MATCH | |  |QUICK| |JOIN | |CHAT |       |
++----------------------------------------------------------------------+
+```
+
+- **The middle is never chrome.** Only the cast and the four seat plates.
+- **Every drawer opens UPWARD out of the bottom rail and is attached to the column that opened
+  it.** Nothing on this screen floats in a corner any more, which is what made the queue card and
+  the chat read as unrelated boxes.
+- **A free seat is a `Ghost` and says `OPEN SEAT`**, which is § 118.1 row 3 and the Among Us
+  mechanism: an empty seat cannot be drawn with a filled surface however it is coloured.
+- **The two player-card rows stop being near-twins** (§ 118.1 row 4): FIGHTER is a two-line row
+  and BUILD is a one-line row, in a left column that is the only stack of rows on the screen.
+- **BACK stops competing with the tabs** (§ 118.1 row 5): it is a small pill at the far edge of
+  the rail and the tabs are the only thing in its centre.
+- **`tap to copy` sits on the amber band of a `Sign`** (§ 118.1 row 7), the one accent on the
+  screen, instead of being 15-unit muted cream on wood.
+- **The version stamp sits on the top rail** (§ 118.1 row 8).
+
+### 119.5 Each screen gets its own device, because the repetition complaint is about method
+
+🧑: *"DONT USE THE SAME METHODS IN MAKING DIFF PAGES AND PANELS unless u have to bcz the comment
+last time by everyone is that our ui looked bland and repetitive"*.
+
+| Screen | Its device | Why that one |
+|---|---|---|
+| LOBBY | two full-width rails, empty middle | the room is the picture |
+| LOGIN | ONE sticker card over full-bleed key art | it is the logo own construction, and the screen has one job |
+| JOIN A GAME | one sheet, one field, and a SEGMENTED list (NEARBY / ONLINE) rather than two always-open sections | pic 2: *"COULD USE ON SOME WORKING ON BCZ IT FEELS OVERWHELMING"*. Two headed sections plus a field plus a footer is four groups; one field and one switchable list is two |
+| QUEUE | a drawer that grows out of the rail | it is a state of the lobby, not a separate screen |
+| CHARACTER SELECT | a filmstrip: the model large, the roster as a strip under it | it is a picker, and picker content is pictures |
+| CHARACTER MAKER | a workbench: the model left, one category open at a time on the right | ten categories cannot all be on screen |
+| SETTINGS | a folder: groups closed by default with a one-line summary on each header | `CLAUDE.md` § 6.2 question 3 |
+| HUB | an ID card with a tab COLUMN rather than a tab row | six tabs across a header is the row that made § 92 unreadable |
+
+### 119.6 ⚠️⚠️ `PaperPurityProbe` IS THE GATE ON "NO LEFTOVER OLD UI", AND IT IS THE POINT
+
+🧑: *"MAKE SURE U COMPLETELY REPLACE UI BCZ I DOTN WANT LEFTOVER SHIT FROM OLD UI TO STILL BE
+FRIGGING WITH US"*.
+
+**Every previous pass in this file was verified by looking at a picture, and a picture cannot see a
+surface that is behind another surface or off the edge of a drawer that is currently shut.** The
+probe builds the lobby and the login screen, walks every `Image` under them, and fails on any node
+that still carries `WoodSkin`, `GodotPanel`, a `GodotTheme.Box` sprite or a `UiMaterials.Plank`
+sprite, unless it is:
+
+- one of the authored textures (anything whose sprite comes from `Art/ui/`), or
+- inside the match HUD or the main menu, which are out of scope.
+
+⚠️ **IT ALSO ASSERTS THE INVENTORY IN § 119.3**: every named control resolves, is active in at
+least one state, and has at least one `onClick` listener. That is the half § 118.5 acceptance
+could not cover, and it is *"we dont lose buttons"* written as a test rather than as care.
+
+### 119.7 Acceptance
+
+- Every state photographed over the real background at 1920x1080 **and at his window shape**, with
+  `UiRuntimeShots.ShotVersion` bumped every iteration.
+- `PaperPurityProbe`, `LobbyStyleProbe`, `QueueCardLayoutProbe`, `PlayerHubLayoutProbe`,
+  `UiClickProbe`, `AspectRatioProbes` green, plus Core, EditMode and the full PlayMode suite.
+- `Checks.RunAll` five of five and the three `tools/` audits.
+- ⚠️ **A person looks at the picture.**
+
+---
+
+### 119.8 ⚠️⚠️ THE REDUNDANCY 🧑 FOUND, AND THE LADDER THAT HAD NO DOOR
+
+🧑, looking at the first paper build: **"dont quick match and start match do the same thing? kinda
+confusing no?"**, then the fix in his own words: *"maybe for lobby separate it into ranked and
+custom or other shit"*, *"maybe if ull join other server or use lan thats custom"*, *"you know use
+other games as referenc"*, and **"make custom and ranked ladder shit diff dont jsut copy paste, bcz
+ranked laddder dont need join code"**, *"make it as well na u cant queue with a friend in ranked
+ladder or smth"*.
+
+**He is right and the screen had two primaries.** START MATCH loaded an arena with whoever was in
+the four seats; QUICK MATCH joined a queue that would find a room and load an arena. Both said "a
+match starts now", they sat 400 units apart in one rail, and no position fixes two controls with
+the same verb.
+
+⚠️ **THE MECHANISM IS THE ONE EVERY GAME IN § 118.3 USES: one primary verb, and the MODE chosen
+beside it.** Rocket League's home screen is PLAY over Casual / Competitive / Private; Overwatch 2
+has one button whose LABEL follows the mode selector above it; Valorant puts a mode dropdown next
+to one START. None of them ships two buttons that both start a game.
+
+| Mode | The one thing | The primary | The right column | Settings |
+|---|---|---|---|---|
+| `Practice` | play now, alone | START MATCH | **nothing, and the rail shrinks** | open |
+| `Ranked` | climb | FIND A RANKED MATCH | your TIER and the party rule | **locked plate, not a greyed chip** |
+| `Custom` | get friends in | START MATCH / READY | the room code plaque, JOIN, CHAT | open |
+
+⚠️⚠️ **AND THE LADDER HAD NEVER BEEN REACHABLE BY ANY PLAYER.** `QueueCard.OnQuickMatchPressed`
+passed `QueueStake.Casual` as a literal. `QueueStake.Ranked` exists in the core, `PartyRules.CanQueue`
+refuses a full stack and an unsigned member for it, `BotFillRules` has separate timing for it,
+`RatingRules` owns five tiers and `MatchStatsCollector` reads
+`Matchmaker.Current.Stake == QueueStake.Ranked` to decide whether a result counts. **All of Phase 9
+shipped behind a constant no screen could change**, and nothing logged, because casual is a
+perfectly valid queue. `QueueCard.Stake` is a field now and the RANKED tab sets it.
+
+⚠️ **THE PARTY RULE IS STATED BEFORE THE PRESS.** `PartyRules.RefusalLabel` writes a good sentence
+and the player only ever saw it AFTER pressing, which `CLAUDE.md` § 6.2 calls the INTUITIVE
+failure. The tier plate carries *"Solo, or a party of up to three"* and, for a guest, *"The ladder
+keeps a rating, so it needs an account. Practice and custom rooms never ask."*
+
+⚠️ **ONE SLOT, THREE OCCUPANTS, EXACTLY ONE VISIBLE.** A separate `RankedButton` was built first and
+`Logs/shots-runtime/LobbyRanked-v53.png` killed it: a rounded green rectangle where every other mode
+has 🧑's authored chamfered slab. **The one primary has to be one OBJECT** or "always in the same
+place" is true of the position and false of everything else. `OnStartPressed` dispatches on the
+mode.
+
+### 119.9 ⚠️⚠️ FIVE FAULTS THE RENDERS FOUND AND NO PROBE COULD, AND ONE OF THEM TOOK THREE PASSES
+
+| # | What the picture showed | The cause |
+|---|---|---|
+| 1 | START MATCH drawn 110 units wide with its label clipped, on PRACTICE, and still wrong after a 1.5 s wait | ⚠️⚠️ **`ArrowButtonView.SetPivot` RE-APPLIES `_offMin` AND `_offMax` EVERY FRAME UNTIL ITS PIVOT LANDS**, and those are the offsets captured when the component last ran: the AUTHORED rect, not the one `LobbyChrome` just gave it. Correct on the main menu, where the pennant keeps its own rect; fatal on any control this pass reparents. `PaperKit.Paperise` switches it off for every node it touches. **Two of 🧑's reports, *"back is brokenn"* and *"te back button still broken"*, were the same bug on a different control**, and the second one is what proved the inset was never the cause. |
+| 2 | `SKILLS` drawn through `Standard Build` | Two labels whose boxes overlapped by 46 units. **An overlap between two labels is silent in every direction**; § 102.4 is the same fault measured horizontally. Two boxes that share an edge cannot overlap by construction. |
+| 3 | `ROOM CODE` drawn through the code | Same shape, on the plaque: a caption inset 24 from the bottom and a 44-unit value inset 26 from the top overlap by 12 on a 62-unit plate. |
+| 4 | The tier plate showed `UNRANKED` and no sentence | The value's rect stretched to the plate's bottom edge and drew over the note. A `Text` draws nothing where it has no glyphs, so the covering label is invisible. |
+| 5 | `v1.0.0` drawn through the word BACK | The rail's bottom-left corner and a 44-unit chip's vertical centre are the same 14 units of padding apart. |
+
+⚠️ **AND THE SHOT PASS ITSELF WAS WRONG TWICE.** It opened `LobbyJoinPanel` with `SetActive(true)`
+rather than `Open()`, so `Refresh` never ran and `LobbyJoin-v52.png` is four rows reading
+`AVAILABLE GAMES APPEAR HERE`; and it photographed the lobby 0.6 s after a tab switch, inside a
+0.45 s unfurl with a stagger. **A render of a state the game cannot reach is worse than no render.**
+
+### 119.10 What 🧑 rejected by eye, with the number that agreed with him each time
+
+| His words | The measurement |
+|---|---|
+| *"this yellow dont look good withh creme too btw"* | `UiTheme.Amber` `ffba00` on `UiTheme.Paper` `f4ecdd` is **1.7:1**. Amber leaves the front end; the marker role moves from HUE to VALUE and the room code is a wood plaque with cream lettering, 10:1. § 118.4's *"amber is the marker"* was written for a WOODEN front end, where amber was the one light thing on a dark screen. **Invert the field and the rule inverts with it.** |
+| *"this yellow shit uglyu"*, of `SECURE YOUR PROGRESS` | Same 1.7:1, and 20 characters in a 200-unit chip. It is `ACCOUNT` in ink now. |
+| *"maybe bcz u just recolored them all"* | Every control was a flat pill with a halo and a 2-unit lip: nothing had a below, so nothing had a height. Every raised surface casts a shadow inside its own bounds now, and a press collapses it. |
+| *"this 2nd pic ugly too its still 2d"* | A `Tray` was one dark band along its top edge, which is a gradient rather than a hole. It is four things now: a hard inner shadow, a wrap down the side walls, a lit floor and a cut edge. |
+| *"big ass empty sopace"* | The fighter column was 400 units around a 154-unit name, so the name sat at one edge and its chevron at the other. Sized to content, and every row centres its own strings. |
+| *"why is entire right side empty"* | The bottom rail reserved 420 units for a mode column PRACTICE has nothing to put in. The rail has a `ContentSizeFitter` now and the column comes off, so the island re-centres. |
+| *"its still so big too"* then *"make taht start match bigger"* | Not contradictory. **The CHROME got tighter and the ACTION got bigger**: `PaperKit.Pad` 18 to 14 and `Gap` 12 to 10, against a primary that went 88 to 104. The ratio that decides whether the button reads as the biggest thing is its height against the 44-unit chip above it: **2.4 to 1, from 1.6 to 1.** |
+| *"why does insert player name still live here"* | `PlayerHub.BuildProfileTab` has had a `Display name` row since Phase 1. The rail's field was a second control writing the same string. |
+
+### 119.11 What is NOT done, named rather than left implied ✅ CLOSED BY § 120, 2026-09-02
+
+⚠️ **THE FIRST THREE ARE DONE AND § 120 IS WHERE THEY ARE WRITTEN UP.** 🧑 asked for exactly this
+list back: **"PLS FINSH THE STUFF LEFT UNDONE"**. The last two are still open and are still open
+for the reasons stated below rather than by oversight; they are repeated in § 120.7 so the next
+reader finds them in the newest entry.
+
+- ✅ ⚠️ **The sign-in screen's tab pair still uses `Token` against `Ghost`.** The lobby's uses
+  `Live` against `Ghost` after the render showed 4 per cent was not enough; the login screen was
+  not re-shot between those two changes and is inconsistent by omission, not by decision.
+  **`SignInScreen.SetTab` goes through `PaperKit.MarkLive` now, with four other tab rows that had
+  the same fault in three different forms (§ 120.3).**
+- ✅ ⚠️ **The login card is 900 units tall around about 700 of content.** The Y offsets inside it
+  are the ones `SignInScreen` has always used and they were spaced for a full-height column.
+  **Measured: 809 of content, 68 units of margin above and 23 below, and it OVERFLOWED by 43 on
+  the Google branch nobody has a client id for. `FitCardToContent` sizes and centres it on its own
+  content now (§ 120.6).**
+- ✅ **The character select, the character maker and the settings panel are dressed by
+  `PaperKit.PaperDress.Screen` and have not been photographed.** The pass converts them; nobody has
+  looked at whether the compositions still work in the new material. **Photographed at `v58` by
+  `UiRuntimeShots.TheLobbyDoorsDraw` and `TheSettingsPanelDraws`, and all three were broken:
+  § 120.4 rows 2, 4 and 5, and § 120.5 rows 1, 2 and 4.**
+- **`LobbyChat`'s in-match instance is deliberately untouched** and still wooden, because the
+  in-match HUD is out of scope. ⚠️ **Still true and still deliberate.**
+- **`UiRuntimeShots` does not photograph the WELCOME BACK state**, which needs an account with a
+  password attached and cannot be made in a probe. It is stated in that method rather than skipped.
+  ⚠️ **Still true.**
+
+---
+
+## 118 · The lobby is coherent now and it is not finished ⚠️⚠️ OPEN, 2026-09-01, branch `ui-redesign`
+
+🧑, after § 117 landed and he had looked at every render: *"create handoff to improve lobby ui even
+furthre bcz it looks kinda ugly in some parts"*, *"ask that thing to critique it as well"*, and
+*"tell it to use other games as referenc"*.
+
+⚠️⚠️ **§ 117 FIXED THE LANGUAGE. THIS IS ABOUT THE COMPOSITION, AND THEY ARE DIFFERENT JOBS.**
+Every surface on the lobby is now drawn in the geometry his own art is drawn in (`WoodCraft`), the
+accent is spent once, and no control is distinguished by hue alone. **None of that is the same as
+the screen being well composed**, and the eight rows below are what is left when the material
+question is answered. Measured off `Logs/shots-runtime/Lobby-v51.png` and its three sibling states.
+
+### 118.1 The eight things that still read badly, ranked by how much they cost
+
+| # | What | Why it reads badly | The measurement |
+|---|---|---|---|
+| 1 | ⚠️⚠️ **The chat is a placeholder.** | An empty asphalt well with one muted line at its bottom-left, under a header, with nothing else on that side of the screen. It is the only surface on the lobby that looks unfinished rather than quiet. | The well is about 70 units tall to hold one 18-unit line, and the line sits at its BOTTOM because lines fill upward, so two thirds of it is empty by construction. |
+| 2 | ⚠️⚠️ **The screen is four corners and a hole.** | The cast is the picture and the chrome frames it, which is the intended arrangement (§ 116.4), but there is no middle ground at all: nothing lives between the top band and the bottom rails on either side. | Left side: the tab row ends at y≈100 and MATCH SETTINGS starts at y≈780. **680 units of nothing.** Right side: the player card ends at y≈370 and LOBBY & CHAT starts at y≈845. **475 units of nothing.** |
+| 3 | **The three seats that are not you say nothing.** | Three identical `BOT` plates and no statement anywhere that three bots will fill in, or that a friend could take one of those seats. The room code is on the card and the empty seats are in the middle, and nothing connects them. | `LobbyNameplates`. A player who has never played this game cannot tell whether BOT means "a bot is here" or "this seat is empty". |
+| 4 | **The player card's two wooden rows are still near-twins.** | The character row (62 units, two lines) and the build row (38, one line) share a fill, a chevron and an inset. The footer link and the paper tag both read as their own thing; these two do not. | `LobbyChrome.BuildCharacterButton` and `BuildLoadoutButton`. |
+| 5 | **BACK competes with the tab row.** | Same band, same height family, same material, and it is the one control on the screen that leaves. | `LobbyChrome.LiftBack`. |
+| 6 | **Nothing moves.** | The main menu's pennants unfurl on every entry (`ArrowButtonView`, and 🧑 asked for that animation by name), and the lobby has no entrance at all: it cuts in fully drawn. | The drawers open and close with no transition either. |
+| 7 | **`tap to copy` is 15 units and low contrast** on the one control the screen exists to produce. | `CreamMuted` at 15 on wood, beside a 30-unit amber code. | `LobbyChrome.BuildRoomSign`. |
+| 8 | **The version stamp sits on nothing** in the bottom-right corner, over the road. | Every other word on the screen is on a surface. | `VersionStamp`. |
+
+### 118.2 ⚠️⚠️ THE METHOD, AND IT IS NOT "MAKE IT PRETTIER"
+
+**Run `game-ui-design` (installed at `~/.agents/skills/game-ui-design`) as a CRITIC first**, before
+writing anything. 🧑 asked for that in as many words. Its `references/patterns.md`,
+`sharp_edges.md` and `validations.md` are the three files; `CLAUDE.md` § 6.2, § 6.2b and § 6.2c
+and `FUTURE.md` § 0.5b are this repository's own versions of the same questions and they win where
+they disagree.
+
+⚠️ **Answer § 6.2's four questions about the lobby out loud before touching it**, and note that
+the answer to the first one has changed: START MATCH is unambiguously the one thing now, which it
+was not when § 116 was written.
+
+### 118.3 Other games, which 🧑 asked for by name, and what actually transfers
+
+⚠️⚠️ **`FUTURE.md` § 0.5b's warning applies to every row here: COPY THE MECHANISM, NOT THE LOOK.**
+The table in that section exists because the screens in § 92 were built by copying screenshots and
+were still wrong. **Name what the mechanism assumes about the content, then check whether this
+game's content has that shape.**
+
+| Game | The mechanism worth stealing | What it assumes |
+|---|---|---|
+| **Among Us** | The room code IS the lobby's headline, drawn enormous, and the empty seats are visibly seats. | That the primary job of the lobby is getting three other people INTO it. That is true here and § 118.1 row 3 is the gap. |
+| **Fall Guys / Stumble Guys** | The cast stands in a lit room and the chrome hugs the edges; the middle is never chrome. | That there is something worth looking at in the middle. There is: `LobbyCast`. This is what the lobby already does. |
+| **Brawl Stars** | One enormous primary in the bottom-left corner the thumb rests in, and everything else is a small chip. | A touch device. The hierarchy transfers; the sizes do not. |
+| **Rocket League** | A wide bottom bar that owns every action, so the play area above it is never interrupted. | That the actions fit on one row. Four here (start, quick, join, settings) probably do. |
+| **Overwatch 2 / Valorant** | A persistent top rail for identity and a persistent bottom rail for actions, with the middle reserved. | Both have far more chrome than this game does; taking the rails without the content is how § 118.1 row 2 stays true. |
+| **Party Animals** | Seats are physical objects in the room, and joining is walking into one. | A 3D lobby with room to move. This game's cast already stands in the street; the seats are `LobbyNameplates`. |
+
+### 118.4 What NOT to do, because it has already been decided
+
+- ⚠️⚠️ **Do not repaint his authored art.** `VISION.md` § 6, `CLAUDE.md` § 6.4 and § 6.5. START
+  MATCH is `BUTTON LONG.png` through `ArrowButtonView`, the pennants are his, `TUMP.png` is his.
+  The wordmark's CARVE is a tint treatment he asked for by name and the file is untouched.
+- ⚠️⚠️ **Do not add a fifth hue, and do not add blue or navy in any layer.** § 6.4, which he has
+  now had to state seven times.
+- ⚠️ **Do not put the accent back on a drawer toggle or a tab.** § 117.3. Amber is the marker (the
+  room code), green is the action (`JOIN BUTTON.png` is authored green), wood is everything else.
+- ⚠️ **Do not draw a new surface with `GodotTheme.Box` or `UiMaterials.Plank`.** § 6.5: pick a
+  `WoodCraft.Surface` role. Those two are the old language and are kept only for callers that
+  cannot know their own height.
+- ⚠️ **Do not touch the main menu or the in-match HUD.** Scoped out twice: *"dont touch main menu
+  and inngame ui"*.
+- ⚠️ **Do not re-baseline `CarryTests`.** § 117.8.
+
+### 118.5 Acceptance
+
+- Every state photographed, over the real background, at 1920x1080 **and at his window shape**
+  (`CLAUDE.md` § 6.2b: `Fullscreen` is false in his `settings.json`). `UiRuntimeShots.TheLobbyDraws`
+  takes four of the states; **bump `ShotVersion` every iteration** or the review is conducted
+  against a cached image.
+- `LobbyStyleProbe`, `QueueCardLayoutProbe`, `PlayerHubLayoutProbe`, `UiClickProbe` and
+  `AspectRatioProbes` green, plus the full PlayMode suite.
+- ⚠️ **A person looks at the picture.** A green layout probe is not a good screen, and § 117.7 is
+  seven faults that every probe in this repository was green through.
+
+---
+
+## 117 · The front end was two design systems stacked, and the code-drawn one was the wrong one ⚠️⚠️ 2026-09-01, branch `ui-redesign`
+
+🧑 opened the build off § 116 and rejected it: **"ui still looks unnatural and ugly"**, *"its a
+step in right direction but could be better"*. Then the cause, in his own words, twice:
+
+> *"the issue with old UI is everything feels repetitive bcz i think u use the same code to
+> generate them all, i want u to try to avoid that again"*
+
+> **"make sure all ui isnt generated in the same way but follows a central theme bcz old issue
+> was it read as repetitive with everyone just being brown and boring"**
+
+And the scope, widened from § 116's *"lobby and login only"*: *"u can overhaul phase 1 to phase 12
+ui and make it in a new style that looks great"*, *"idk if i said this yet but rebuiuld phase 1 to
+phase 12 ui"*, *"u have permission to overhaul everything btw, even the color and shit and
+design, as long as it looks good"*, with the standing brief restated: *"as long as u thoroughhly
+plan it and as well as make sure to make it intuitive to navigate and not overwhelming for ppl"*.
+⚠️ **He kept the two exclusions from § 116**: the main menu and the in-match HUD are still out.
+
+### 117.1 ⚠️⚠️ THE FINDING, AND IT IS NOT A COLOUR PROBLEM: HIS ART AND THE CODE DRAW OPPOSITE OBJECTS
+
+§ 116 answered *"repetitive"* with more variety inside one construction: grain, a lit top edge, a
+chalk rule. It did not move, because the construction itself was the fault. **Sampling
+`Assets/TumbangPreso/Art/ui/host-game/*.png` pixel by pixel settles it:**
+
+| Piece | Silhouette | Keyline | Rim | Face peak | Face floor |
+|---|---|---|---|---|---|
+| `BUTTON LONG` | chamfer, 30 px cut at 135 tall | `99572b`, 7 px | `612e15`, 6 px | `793e1f` | `421806` |
+| `TEXT FIELD` | chamfer, same cut | `99572b`, 7 px | `3f1a0c`, 6 px | `4e2211` | `2a0d03` |
+| `MAP MODE DISPLAY` | round, ~10 px radius | `99572b`, 6 px | `612e15` | `793e1f` | `421807` |
+| `SETTINGS CONFIG PANEL` | round, hand-wobbled | `99572b`, 5 px | `612d15` | `783e1f` | `4a1b07` |
+| `JOIN BUTTON` | chamfer, same cut | `90ea40`, 7 px | `3caf2d` | `51dd38` | `188427` |
+
+- **Every surface he authored is a chamfered or rounded slab with a BRIGHT keyline outside a DARK
+  rim, over a full-height gradient with a varnish band a quarter of the way down.**
+- **Every surface drawn in code was a rounded rectangle with a DARK outline over a FLAT face**,
+  because `GodotTheme.Box(fill, border, 5, 12)` is what every plate and every button resolved to,
+  and `UiMaterials.CarvedButton` kept the face flat on purpose (a four-sided nine-slice smears any
+  gradient across its centre row; its own header records this).
+- **The lobby draws both at once.** `StartButton` carries `ArrowButtonView` and is his own art, so
+  his chamfered bright-keylined button and a code-drawn dark-outlined rounded rect sat in the same
+  460-unit rail. That is what *"unnatural"* names, and no amount of bevel on the second one fixes
+  it.
+
+⚠️⚠️ **AND THE LAST ROW OF THAT TABLE IS THE WHOLE SYSTEM.** `JOIN BUTTON` is `BUTTON LONG` with
+one colour swapped: keyline, rim and every stop of the face are the SAME COLOUR at different
+values. **One base colour generates a complete control.** `WoodCraft` is that transcription, and
+the ratios are stored as multipliers on HSV value rather than as hexes precisely so a second
+colour does not need a second table, which is how `GodotTheme` ended up with four rectangles that
+differed only by fill.
+
+### 117.2 ⚠️⚠️ "EVERYONE JUST BEING BROWN" IS A SEPARATE COMPLAINT AND IT NEEDED A SEPARATE ANSWER
+
+Counted off `Logs/shots-runtime/Lobby-v43.png`: **eleven brown plates**, and `CLAUDE.md` § 6.4
+fixes the palette at wood, cream, amber and ink and forbids a fifth hue. Every pass so far read
+that as *"use wood"* and left cream as a text colour only.
+
+**Cream is a SURFACE in his own art** (the login screen's input boxes are cream plates on a wood
+column) and so is asphalt (`VISION.md` opens on a street game; § 2 rule 5 names the chalk and the
+road). So the front end is **three materials built three different ways**, not one generator with
+a fill parameter:
+
+| Material | How it is built | What it carries |
+|---|---|---|
+| **WOOD** | keyline, dark rim, varnish band, vertical ramp | buttons, headers, cards, rails |
+| **PAPER** | flat, fibre speckle, NO bevel and NO ramp, one ink hairline, ink type | anything read or typed on a light ground |
+| **SLATE** | matte near-black, no keyline, one lit lip along the top | logs, wells, anything chalk is drawn on |
+
+Seven roles across them (`Button`, `Action`, `Panel`, `Header`, `Field`, `Paper`/`PaperField`,
+`Slate`), and ⚠️ **the enum is closed on purpose**: the caller picks a ROLE and the material,
+silhouette, relief and colour all follow, so two surfaces with different jobs cannot come out
+identical and a new one has to be argued for in the enum rather than invented at a call site.
+
+⚠️ **`UiTheme.Asphalt` is `241a14` and NOT `EnvAsphalt` `4a4e57`**, which has more blue in it than
+red. § 6.4 states the test in exactly those terms. The arena constant is correct where it lives,
+under a graded 3D light, and would read as the cold slate this file has been told five times to
+stop drawing.
+
+### 117.3 ⚠️⚠️ THE HIERARCHY WAS INVERTED: THE ACCENT WAS ON TWO DRAWER TOGGLES AND NOT ON THE PRIMARY
+
+On the shipped lobby the three loudest controls were solid amber: the live tab, `MATCH SETTINGS`
+and `LOBBY & SERVERS`. **START MATCH, the one control the screen exists to reach, was plain
+brown.** § 116.4 states the rule (*"one accent, spent on the primary"*) and applied it only to the
+queue card; the two toggles kept the amber they were given on 2026-08-28 under *"align the yellow
+thing with match settings"*, which was a request about ALIGNMENT that nobody re-read as a request
+about colour. `CLAUDE.md` § 6.2c question 3, one control over.
+
+- **Both toggles are `WoodHeaderButton` now**: a wooden sign, square along its top edge and
+  rounded below, so it reads as hung ON the drawer under it. ⚠️ **A different shape, not a dimmer
+  colour**, because a colourblind player and a photograph both survive a silhouette.
+- **The live tab is RAISED and the idle tab is RECESSED** (`WoodTabIdleButton`, drawn through
+  `Surface.Field`, lit from below). Three signals: relief, the amber chalk bar that moves under
+  the live one, and height. None of them is hue.
+- **START MATCH is untouched authored art** and is now the largest uncontested object on the
+  screen, which is position and size carrying the hierarchy instead of paint. ⚠️ `VISION.md` § 6
+  and § 6.4's own exemption: **do not repaint his art.**
+
+### 117.4 ⚠️⚠️ THREE STRINGS IN THE LOBBY WERE DRAWN BY A FONT THAT IS NOT THIS GAME'S
+
+Darumadrop One's cmap carries **525 glyphs** and `◀` (U+25C0), `✓` (U+2713) and `✎` (U+270E) are
+not among them. `LobbyChrome.BuildIdentity` already recorded this for the pencil in August and
+fixed that one; **two more shipped and both are in the middle of the screen**:
+
+| Where | What | Fix |
+|---|---|---|
+| `LobbyNameplates:303` | `{name}   ◀`, the marker saying which body is YOU | the word `YOU` |
+| `LobbyNameplates:238` | `✓`, the ready tick on four plates over the cast | `UiMaterials.ChalkTick`, a drawn chalk mark |
+| `ConvertedMatchSetup:140` | `YouMark = "◀ YOU"` on every seat row | `"YOU"` |
+
+⚠️ **`▼` U+25BC and `▲` U+25B2 ARE in the font and were checked**, which is why the drawer carets
+are still characters. Verify with the cmap, not by looking: a fallback glyph renders, it just
+renders in a different typeface at a different baseline, which is invisible in a code review and
+obvious on screen.
+
+### 117.5 The player card was five amber captions, and four of them restated their own control
+
+🧑: *"I donnt want redundannt UI"*. The card read PLAYER NAME / PLAYING AS / ROOM CODE / YOUR
+SKILLS / YOUR PROFILE: five all-caps amber headings at one size in one colour, each over a
+44-unit plate at 3 units of spacing. **Nothing led, because five things shouting equally is
+silence**, and the card ran 390 units, over a third of the screen's height.
+
+Four captions went, and each was restating the control under it:
+
+- **PLAYER NAME** over a field holding the player's name, on the player's own card, whose
+  placeholder already reads TAP TO SET YOUR NAME.
+- **PLAYING AS** over the character's name and a chevron, with the model on screen behind it.
+- **YOUR SKILLS** over `PHAISTER · standard build`, directly under the row that already reads
+  PHAISTER. `SetSkills` writes the build alone now and the row above supplies the subject.
+- **YOUR PROFILE** over a button reading SECURE YOUR PROGRESS: the caption and the label were two
+  different sentences about two different things.
+
+⚠️⚠️ **AND THE ROOM CODE BECAME THE CARD'S HEADER.** § 116.6 moved it out of a closed drawer and
+was right to; it then made it the third of five equal rows, which is the same burial one layer up.
+It is the first thing on the card, the only amber on it, and it answers *"how does my friend get
+in"* with no press at all. ⚠️ Practice has no room, so `SetCode` takes the whole sign off and the
+card closes up.
+
+**What replaced the captions is space.** `FUTURE.md` § 0.5b's fourth ordering tool: spacing went 3
+to 8 between siblings and to a 14-unit chalk rule between groups, which is the only way space
+orders anything (there has to be more than one size of it). Three type steps replaced one: 52 for
+the sign, 62 for the character row, 38 for the two footer rows.
+
+### 117.7 ⚠️⚠️ WHAT THE RENDERS CHANGED, BECAUSE FOUR OF THESE WERE INVISIBLE IN THE SOURCE
+
+🧑: *"take pics too and juge how to improve it"*, and `CLAUDE.md` § 6.2a: **a green layout probe
+is not a good screen.** Four passes were shot at `Logs/shots-runtime/Lobby-v43..v46.png`, and
+every row below is a fault that a code review had already read past.
+
+| Seen in | The fault | Why the source hid it |
+|---|---|---|
+| `v44` | **PRACTICE and MULTIPLAYER were still hard to tell apart** after the idle tab dropped from `WoodFace` `793e1f` to `WoodFieldFace` `4e2211`. | A palette diff says those are far apart. Every `WoodCraft` face carries a varnish band and the eye compares the two BRIGHT bands, and `4e2211`'s peak sits inside `793e1f`'s ramp. `WoodSlot` `36180c` puts the idle tab's brightest pixel below the live tab's darkest. |
+| `v45` | **They were STILL hard to tell apart.** | Both carry the same bright keyline, which is the loudest feature of a 56-unit control, so the fill difference is not what a reader is comparing. **The size difference is what fixed it** — and see the next row, because there was not one. |
+| `v45` | ⚠️⚠️ **THE LIVE TAB WAS NEVER TALLER, IN ANY BUILD.** Three separate comments in this repository state it is *"four units taller"* as the half of the distinction that survives a colourblind player. | `BuildTabs` set `childForceExpandHeight = true`, and a `HorizontalLayoutGroup` with that on gives every child the bar's height and **silently overrides every `LayoutElement` under it**. A claim in a comment is not a measurement. |
+| `v44`, `v45` | **The card's chalk rules were invisible at 0.30 and still invisible at 0.55.** | The tint MULTIPLIES the sprite's own alpha, and `UiMaterials.ChalkRule` paints a dusty stroke already averaging about half opacity. 0.55 of that is a quarter-strength mark on brown. 0.85 now. |
+| `v44`, `v45` | **The queue's chalk rule drew a bright line across the bottom edge of the frame**, amber then cream, outside the button both times. | It is a child of the ROW, and the row reserved 14 units under the button purely to hold it, so "under the button" and "off the bottom of the screen" were the same place. **Deleted, with its 14 units.** |
+| `v44` | **The chat's log read as a hole rather than a surface.** | `Asphalt` plus 22 per cent of black at the top is darker than the night road behind it, and a well darker than everything around it stops being a well. 12 per cent, and the base lifted to `2f2118`. |
+| `v45` | **The card was a paper tag and then three brown plates**, the bottom two identical 38-unit rows with identical chevrons. | The loadout and the whole player hub were being offered as equals. The profile row is a transparent footer link now: same 302 x 38 hit area, one fewer rectangle. |
+
+⚠️ **AND THE ONE THAT DID NOT NEED A RENDER, BECAUSE IT NEEDED A FONT DUMP:** § 117.4's three
+missing glyphs. A fallback glyph renders. It just renders in a different typeface at a different
+baseline, which is invisible in a code review and obvious on screen, and `grep` cannot see it
+either. Read the cmap.
+
+### 117.8 Two red PlayMode cases this pass did not cause, and what they actually were
+
+⚠️⚠️ **`LoadoutSurfaceProbe` HAD BEEN RED SINCE § 115.6 AND ITS OWN FAILURE MESSAGE POINTED AT
+THE WRONG SECTION.** All five of its cases reported *"the CAREER tab has no Ability builds
+group"* and cited § 114.12, which is a real fault about the career tab bailing out at zero
+matches. It was not that. **§ 115.6 moved the loadout out of a collapsed group on CAREER into a
+tab of its own**, because 🧑 commissioned the feature and then could not find it twice; the group
+is built by `PlayerHub.BuildLoadoutTab` and the probe was still pressing `CAREER`. One word.
+
+⚠️ **A STALE TEST THAT NAMES A CAUSE IS WORSE THAN ONE THAT SAYS NOTHING.** The message read as a
+regression in the code under test and cost a pass to disprove. When a surface moves, the probe
+that points at it moves in the same commit.
+
+⚠️⚠️ **`CarryTests.AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor` IS INTERMITTENT
+AND THAT IS NOW MEASURED RATHER THAN GUESSED.** It failed twice reporting a held slipper drifting
+**0.0918578357 m** against a 0.050 bound, at the identical figure both times, then passed alone,
+then **passed in a full 141/141 PlayMode run with nothing about it changed**. Nothing in this pass
+touches carry, the animator or `LateUpdate`.
+
+⚠️ **SO IT IS THE SECOND WALL-CLOCK-SHAPED TEST IN THIS SUITE AND IT IS NOT TAGGED AS ONE.**
+`CLAUDE.md` § 7 and § 6 record the same shape for `AiDiagnosticProbe`: a bound that holds or does
+not depending on how busy the machine is, failing at 21.6, 29.9 and 37.6 seconds against 20.0 and
+passing on immediate re-runs. **An identical failure figure across runs points at a frame the
+carry missed rather than at noise in the measurement**, which is worth one look before anybody
+tags it `WallClock` and stops seeing it. Do not re-baseline the bound: the bound is the assertion.
+
+### 117.9 ⚠️⚠️ FOUR MORE HE CAUGHT BY LOOKING, AND EVERY ONE WAS A PIECE OF THE OLD LANGUAGE LEFT BEHIND
+
+🧑 sent four crops in a row off the `v48` and `v49` renders. **None of them is a layout fault and
+none is visible to any probe**; all four are what happens when the SHAPE of the front end changes
+and something drawn for the old shape is not revisited.
+
+| His words | What it was | What it is now |
+|---|---|---|
+| *"the shadows dont follow the actual ckickables as well"* | `SkinLayers.Shadow` paints `GodotTheme.ShadowBox()`, a ROUNDED rectangle, six units grown and five down. Correct when every face was rounded; the faces are chamfered now, so the shadow stuck out of all four cut corners. | `WoodCraft.Silhouette` paints the face's own outline, solid and white, tinted by the caller. `GodotButton` and `GodotPanel` both feed it. |
+| *"whats that empty space bcz of roudned age"* | The sign-in column is edge-anchored and full height, and a `WoodCraft` panel is rounded on all four corners, so the screen's own corner showed background through the radius. | The column bleeds 28 units off the left, top and bottom, so the curve is outside the frame. ⚠️ **Not the right edge**: that one is seen, and `ColumnEdge` draws the lit line down it. |
+| *"this line looks weird"*, then *"this stray light brown adn yellow line dont make sense i think its leftover stuff from old ui"* | A 436-unit `WoodEdge` strip rule under BOTH tabs and an amber chalk bar under the live one. Both were written when the two tabs differed by a FILL and nothing else, and the bar was the answer to `colorblind-failure`. | Both deleted, on **both** screens. The tabs are four different things now: raised against recessed, `793e1f` against `36180c`, cream against muted, and 8 to 14 units taller. Three of the four survive a greyscale photograph, so the rule is met without a loose mark. |
+| *"it would look better if tump looked engraved into the wood like color as opposed to just floating"* | The wordmark is a white texture on a wood column, so the game's name was the brightest object on the screen and belonged to no surface. | Three tinted copies of the same texture: ink two units up (the shadowed top wall of the groove), lit wood two down (the far wall), and a face one value under the plank. ⚠️ **A treatment, not a repaint**: the PNG is untouched and the title screen still draws it white. |
+
+⚠️⚠️ **THE PATTERN ACROSS ALL FOUR IS THE ONE WORTH KEEPING: WHEN A SHAPE CHANGES, EVERY LAYER
+DRAWN AGAINST THE OLD SHAPE IS NOW WRONG AND NONE OF THEM WILL FAIL A TEST.** The shadow, the
+corner radius, the tab marker and the strip rule were each correct on the day they were written
+and each became a leftover the moment the face under them stopped being a rounded rectangle.
+**Grep for the layers, do not wait for the render.**
+
+### 117.10 The second round of his notes, and the two that needed the ASSET read rather than the code
+
+⚠️⚠️ **A TAB IS ITS OWN SILHOUETTE NOW, BECAUSE IT WAS BORROWING ONE THAT IS UPSIDE DOWN.**
+🧑, with a crop of the sign-in row: **"its also weird that create is just a rectanhle"**. The live
+tab was drawn as `WoodCraft.Surface.Header`, which is SQUARE along the top and rounded below:
+exactly right for a sign nailed across the top of the drawer under it, exactly wrong for a tab,
+where the square end is the one that should be sitting on the row. `Surface.Tab` is the chamfer
+flipped, cut at the top two corners only, so a tab is visibly a member of the button family
+without being mistakable for one. Every tab strip in the game uses it: the lobby, the sign-in
+screen, the hub and the character maker.
+
+⚠️⚠️ **THE WORDMARK NEEDED THE ASSET LOOKED AT, NOT THE CODE.** 🧑: *"it would look better if tump
+looked engraved into the wood like color as opposed to just floating"*, then on the first attempt:
+*"make this look stamped/engraved/ better, it doesnt look great right now"*.
+
+**`TUMP.png` is not a silhouette.** It is cream painted letters that already carry a dark ink
+outline AND a grey drop shadow baked into the file, so a uniform tint colours all three at once.
+The first attempt drew a dark copy, a light copy and a face copy of a texture that is itself three
+things: nine layers of edge inside a 90-unit-tall word, which composites to a brown blob with a
+halo. **It is two copies now** — an ink groove three units up, and a face in a pale warm wood that
+keeps the plank's hue.
+
+⚠️ **AND THE FACE IS LIGHTER THAN THE PLANK, WHICH DEPARTS FROM A TEXTBOOK ENGRAVE ON PURPOSE.**
+A groove cut in wood and left bare is darker than the board, and at this size that is an
+unreadable game name on the first screen a player ever sees. **A groove cut and then PAINTED is
+what every sari-sari sign actually is**, and it is lighter.
+
+**The rest of the round, all measured off `Logs/ui/07-signin.png`:**
+
+- ⚠️ *"this part looks too tight"*: the live tab's bottom edge was at 124 and the USERNAME
+  caption's box topped out at 119. **Five units of air between a control and the next control's
+  label**, in a column whose block pitch is 120. The form dropped 30 and then, on request
+  (*"raise tump and sign in and create to create space for username and password"*), the wordmark
+  and the tabs went up 40 as well. Both gaps are about 45 units now and the caption clears the tab
+  row by 85.
+- ⚠️ **The last two amber ACTIONS went green.** `START WITH 3 BOTS` on the queue card and JOIN in
+  the lobby drawer were still amber, which was correct while amber was the action colour and is
+  not now that § 117.3 made it the marker. Measured off `LobbyServers-v50.png`: an amber
+  `START WITH 3 BOTS` sat directly under START MATCH and **read as the more important of the
+  two**, which is § 117.3's inversion again, one surface down, hidden behind a state nobody
+  photographs at rest.
+- ⚠️ `MAKE YOUR OWN` on character select is plain wood. It is a DOOR to another screen, not the
+  action of that one, and a door painted in the accent competes with the choice the player came
+  there to make.
+
+### 117.6 What is NOT done, named rather than left implied
+
+- ⚠️ **THE "LOBBY HAS NO KEYBOARD CHAIN" ITEM IN § 116.5 IS HALF STALE AND IS CORRECTED HERE.**
+  The lobby is navigable without a mouse: `KeyboardCursor` is installed on it, Tab and the arrows
+  wake a selection on START MATCH, and every `Selectable` on the screen already carries Unity's
+  `Automatic` spatial navigation. What it does not have is an EXPLICIT chain like
+  `SignInScreen.Chain`. **That is probably correct here and should not be "fixed" without a
+  reason**: `Chain` exists on the sign-in screen because two tabs sit at the same height there and
+  "up" from the password field is genuinely ambiguous, and the lobby's controls are in four
+  separated corners where spatial navigation answers what a hand-written order would only
+  duplicate. ⚠️ The real open question is whether the reading order Automatic produces matches the
+  JOURNEY order, and nobody has watched somebody Tab through it.
+- **No probe looks at any of this.** The two rules a test COULD hold are the touch-target floor
+  and "no control is distinguished by colour alone", and neither is asserted anywhere. ⚠️ The
+  second one is now nearly checkable, because every pair this pass touched differs in silhouette
+  or relief and a probe could read the `WoodCraft.Surface` off the component.
+- **`UiMaterials.CarvedButton` and `Plank` are still live** and still correct for a caller that
+  cannot know its own height (`WoodDropdown`'s list rows). ⚠️ They are the OLD language; anything
+  that can know its height should be on `WoodSkin` instead, and the two should not be mixed inside
+  one card.
+
+---
+
+## 116 · The front end had one material and no focus state ⚠️⚠️ 2026-09-01, branch `ui-redesign`
+
+🧑, after eight fixes had landed and every one of them was correct: **"our UI is ugly and
+repetitive and unimaginative"**, then *"make the ui genuinely good and easy to go thru as a
+human"*, then the scope: **"overhaul lobby UI and login ui, focus only on that for now"** and
+*"dont touch main menu and inngame ui"*.
+
+He also installed a skill for it and named it twice, replacing an earlier one:
+`npx skills add https://github.com/omer-metin/skills-for-antigravity --skill game-ui-design`.
+⚠️ **The one he retracted, `nextlevelbuilder/ui-ux-pro-max-skill`, was never installed**, so there
+was nothing to remove.
+
+### 116.1 ⚠️⚠️ "REPETITIVE" IS ACCURATE AND IT IS ONE SPRITE
+
+**Every plate in this game is `GodotTheme.WoodBox`**: one nine-slice, one bevel, drawn at four
+sizes. The lobby's MATCH SETTINGS pill, its LOBBY & SERVERS pill, the player card, the chat plate,
+the queue card, the sign-in column, every hub row and every button are the same rectangle. Nothing
+is wrong with any one of them, and a screen made of twelve reads as a form.
+
+**The answer is not more colour.** `CLAUDE.md` § 6.4 and `VISION.md` § 6 fix the palette at wood,
+cream, amber and ink, and a fifth hue would be the thing that looks broken. So the variety comes
+from **surface and edge**, in `UiMaterials`:
+
+- ⚠️⚠️ **THE LIGHT COMES FROM ABOVE AND EVERY SURFACE AGREES ABOUT IT.** A raised thing is bright
+  along its top edge, a recessed thing is dark along it, and the player reads which is which
+  without being told. `WoodBox` draws the same bevel on all four sides, so **a button and the well
+  it sits in were the same object at two sizes.** This one decision is most of what stops eight
+  rectangles reading as eight rectangles.
+- **A plank has grain**, three per cent, running down it. At eight it is noise on a screen that
+  already has a live street behind it; at three it only stops a fill from looking like a fill.
+  `VISION.md` § 2 rule 3 is the same argument about abilities: detail, not area.
+- ⚠️⚠️ **AND THE CHALK IS THE ONE PIECE THAT IS ABOUT THE GAME.** The arena's box is chalk on
+  asphalt, `MapGeometryCheck` gates it, and `VISION.md` § 2 rule 5 names it as one of the three
+  things a screenshot must show. **The front end had no chalk in it anywhere.** A straight cream
+  line under a heading is a divider from a settings dialog; the same line with a wobble and dust
+  on it is this game's own mark and costs one 64x8 texture.
+
+⚠️ **Nothing in `UiMaterials` repaints his authored art.** The pennants, the arrow textures, the
+nine-patch buttons and the key art are untouched; every CONTROL is still drawn with them. This is
+the surface behind them, which was never art: it was `Image.color = WoodDeep`.
+
+### 116.2 ⚠️⚠️ THERE WAS NO FOCUS INDICATOR IN THE ENTIRE FRONT END, AND THE SKILL NAMES IT TWICE
+
+`game-ui-design` lists it as a pattern (*"clear visual focus indicator (not just colour change)
+... works on all backgrounds, visible for colourblind users"*) and again as the sharp edge
+`colorblind-failure`. **Every selected control in this game says so by turning amber**, which is
+invisible to a player who cannot separate amber from wood and ambiguous to everybody else, because
+amber is also this front end's ACCENT: the lit tab and the primary action were saying the same
+thing in the same colour eight rows apart.
+
+`FocusRing` is a ring drawn OUTSIDE the control, so it never eats a pixel of a label, and it
+**listens rather than being told**: it watches `EventSystem.currentSelectedGameObject` and its own
+pointer state, so a screen cannot forget to clear it. ⚠️ It is not a raycast target, because a
+focus indicator that ate the click on the control it is indicating would be the worst possible
+version of this feature.
+
+⚠️ **An `InputField` is "focused" when it is focused, which is not the same as being selected.**
+Unity keeps a field selected after it is deactivated, so asking the EventSystem alone leaves a ring
+on a field the player has finished typing in.
+
+### 116.3 The login screen ✅ REBUILT
+
+- **The column is a plank** with a lit top edge and a three-unit `WoodEdge` line down its right
+  side, which is what makes it read as a board in front of the art rather than as a crop of it.
+- **A chalk rule under the heading.**
+- ⚠️⚠️ **THE TWO MODES ARE ONE SEGMENTED CONTROL, NOT TWO PILLS.** They sit in a recessed well so
+  they read as two halves of one thing, the live half is lit, and **a chalk bar sits under it**.
+  The bar is the part that survives a colourblind player, a bad monitor and a photograph.
+- ⚠️⚠️ **ENTER SUBMITS AND IT USED TO SUBMIT FROM NEITHER FIELD.** `onSubmit` was on nothing: a
+  player who typed a password and pressed Enter, which is what everybody does, got nothing and had
+  to reach for the mouse.
+- ⚠️⚠️ **TAB WALKS THE FORM.** `Selectable.navigation` is off by default on everything built in
+  code, and `game-ui-design` calls a menu you cannot leave without a pointer a **Controller
+  Navigation Deadend**: an anti-pattern AND a sharp edge, because it is the failure that makes a
+  screen unusable rather than ugly. ⚠️ The chain is EXPLICIT and not `Automatic`, because from the
+  password field "up" is ambiguous between two tabs at the same height and the answer changes with
+  the window's aspect.
+- **The keys are written on the screen.** `No Keyboard Shortcut Display` is a named sharp edge and
+  this form has always taken TAB and ENTER without saying so. ⚠️ It names the keys rather than
+  drawing controller glyphs, because this build has **zero gamepad bindings** and a glyph on a
+  keyboard-only build is the `Input Prompt Mismatch` edge one page over.
+- **The caret starts in the field you have to fill in.** A returning player's username is already
+  filled from the account, so the focus goes to the password instead of making them tab past their
+  own name.
+- **The rhythm is three blocks, not nine rows**: identity, form, actions. 80 units inside a block,
+  120 between them, and the pitch is the field height plus its caption rather than a new number.
+
+### 116.4 The lobby ✅ REBUILT
+
+⚠️⚠️ **THE LOUDEST CONTROL ON THE SCREEN WAS NOT THE PRIMARY ONE.** QUICK MATCH was a 560-unit
+amber bar across the bottom centre, over the cast, and START MATCH is the primary. `game-ui-design`
+puts POSITION first among the ordering tools and names the result of getting it wrong (`UI Blocking
+Action`); two accented controls competing for the same job is not a hierarchy, it is a coin toss
+the player makes every time they look at the screen.
+
+- **The queue moved into the action rail**, under START MATCH. The rail is the PLAY column and both
+  ways of starting a game belong in it: START MATCH is *"these seats, now"* and QUICK MATCH is
+  *"find me people"*. One accent, spent on the primary; the queue gets plain wood and a chalk rule,
+  which says "a way in" without claiming to be THE way in.
+- ⚠️⚠️ **AND THAT DELETES § 115.2's WHOLE CLASS OF FAULT RATHER THAN FIXING IT AGAIN.** A plate
+  placed by hand has to be positioned against an edge, and `MenuKit.Place` pivots at the CENTRE, so
+  44 units of the searching card were under the bottom of the screen with CANCEL in them. **A child
+  of a `VerticalLayoutGroup` cannot be off the screen.**
+- ⚠️ **The order trap that came with it**: `BuildLobbyEntryControls` runs BEFORE
+  `LobbyChrome.Apply`, so a queue built there asks for a rail that does not exist and falls back to
+  the canvas silently. `InstallQueueCard` runs after the chrome and says why.
+- **The centre of the screen goes back to the cast.**
+
+**Materials, in the rail and on the player card:** the drawer's BODY is a recessed plank and its
+TOGGLE is a raised one; the player card is raised and the name field inside it is recessed, so the
+thing you type in reads as cut into the thing it is on. Both were `GodotTheme.WoodBox` with the
+same bevel on all four sides, which is why the screen read as a stack of identical planks.
+
+**Every pressable thing in the lobby wears a ring** when it has the pointer or the keyboard. Until
+this pass none of them said anything at all: `TextureButtonFeedback` tints a very dark brown by a
+few per cent, which is a change nobody can see.
+
+### 116.6 ⚠⚠ THE ROOM CODE WAS INSIDE A CLOSED DRAWER, AND IT IS THE ONE FACT THE SCREEN EXISTS TO PRODUCE
+
+🧑: *"make the ui genuinely good and easy to go thru as a human"*. `CLAUDE.md` § 6.3's method is
+to walk the journey out loud and count the presses, so: **"I want my friend to join me"** was open
+LOBBY & SERVERS, find the code row among the network rows, read it out. **Three presses and a hunt,
+for the single thing a host needs from a multiplayer lobby.**
+
+- It is a row on the player card now, in the corner the player is already reading, at 30 units in
+  amber because it is read across a room and typed into a phone.
+- **It copies itself.** A four-character code read off a screen and retyped into Discord is four
+  chances to get it wrong; `GUIUtility.systemCopyBuffer` is one line. ⚠️ The label says `copied`
+  for a moment, because a press that silently succeeds is § 53.5's dead button from the other side.
+- ⚠️ **It is not two places saying one thing twice.** The drawer's row is part of the JOIN
+  surface, where you type somebody ELSE's code; the card's is the answer to *"how do they get in"*.
+  Different questions, different owners.
+- ⚠️ **Practice has no room and therefore no code**, and the whole row leaves rather than
+  showing an empty plate under an amber heading.
+
+### 116.7 ⚠⚠⚠ THE BUTTONS WERE THE BIGGEST PROBLEM, AND EVERY BUTTON IN THE GAME WAS ONE FUNCTION CALL
+
+🧑 2026-09-01, with two crops: *"buttons are the same"*, *"wtf is this"*, then
+**"buttons were the biggest problem btw"**, *"thoroughly try to overhaul the enntire ui bcz the
+overhaul u did still looks ugly"*, and *"u can use dropdowns and shit to make some shit work or
+look good"*.
+
+**He is right, and it is `GodotTheme.Box(fill, border, 5, 12)`.** A flat fill, a flat five-pixel
+border and a twelve-pixel corner, and that is the entire button vocabulary of this game: the green
+primary, the amber tab, the wood secondary and the red danger button are **the same rectangle four
+times with the fill swapped**. `game-ui-design`'s ordering tools are position, size, weight and
+colour, in that order, and this front end was communicating every hierarchy it has with the LAST
+one.
+
+`UiMaterials.CarvedButton` replaces it for every wood variation. Four things happen that did not:
+
+1. ⚠️⚠️ **AN INK OUTLINE, WHICH IS THE GAME'S OWN LOOK.** Every character wears an 8 mm ink
+   outline (`ToonSkin.PersonOutlineWidth`) and the menus wore none, so the UI and the cast looked
+   like they came from two different games. **This is the single biggest reason the new buttons
+   read as belonging to Tumbang Preso** rather than to a template.
+2. **A lit top edge and a shaded bottom one**, which is `Plank`'s rule applied to a control.
+3. **An inner bevel line**, which is the difference between a plastic slab and painted wood.
+4. ⚠️ **`chunky` MAKES THE PRIMARY A DIFFERENT OBJECT RATHER THAN A DIFFERENT COLOUR**: a thicker
+   outline and a deeper bevel, so it reads as heavier at a glance and in a photograph.
+
+⚠️ **The pressed state swaps the lighting rather than darkening the fill**, which is what lets a
+press read as a press without moving the label.
+
+⚠️⚠️ **AND THE FACE IS FLAT IN THE MIDDLE BECAUSE THE NINE-SLICE FORCES IT, NOT BY CHOICE.** A
+sliced sprite stretches its centre row, so a gradient across the whole height smears; the top and
+bottom slices keep their pixels, which is exactly where the bevel lives. **A full-height gradient
+is the trap that looks right at the authored size and streaked at every other one.**
+
+**Every button label gets a shadow**, which `game-ui-design` lists as the sharp edge
+`No Text Outline Or Shadow`. Cream on wood is legible in a still and soft over a live street with a
+sunset in it, which is what is behind every button in this game.
+
+⚠️⚠️ **AND THE SEGMENTED CONTROL HE POINTED AT IS GONE RATHER THAN RETUNED.** *"wtf is this"* was
+two buttons inside a dark box, which is not a segmented control: **it added a third rectangle to a
+screen whose whole complaint was too many identical rectangles**, and a recessed plank at that size
+is mostly its own shadow. A tab strip is a LINE with the live tab standing on it, which is the
+metaphor every player already knows and costs one chalk rule instead of a plate. The live tab is
+also four units TALLER, because size survives a colourblind player and a photograph.
+
+### 116.8 The match settings are four dropdowns, which is his own suggestion taken literally
+
+🧑: *"u can use dropdowns and shit to make some shit work or look good"*.
+
+**MAP, MODE, BOTS and RULES were four identical `< VALUE >` rows: twelve controls to express four
+choices**, and not one of them says what the other options are or how many there are. Pressing an
+arrow four times to find the fourth map is a guessing game with a button on it.
+`game-ui-design`'s Progressive Information Disclosure is the pattern: layer one is the current
+value, layer two is the whole list on demand.
+
+- ⚠️⚠️ **`UiRows.DropdownRow` COULD NOT BE REUSED AND THAT IS A MEASUREMENT.** It is built for the
+  hub's list: `UiRows.Row` puts its label in a 420-unit box and starts the value column at 0.56 of
+  the row, so it needs a list about **1480 units wide** before the hint stops drawing through the
+  control. **The lobby rail is 460.** § 108's `StepperRow` shipped 476 units wide into a
+  1366-pixel window with its right-hand arrow off the screen; a rail control has to be built
+  against the rail. `WoodDropdown` is that control.
+- ⚠️⚠️ **THE OPEN LIST OVERLAYS AND DOES NOT PUSH**, via `LayoutElement.ignoreLayout`, for the
+  reason § 115.7 records: a `VerticalLayoutGroup` owns every active child, so a list that took
+  part in the layout would shove every row under it down the rail and walk START MATCH off the
+  bottom of the screen. **That exact fault shipped in the chat the same day.**
+- ⚠️ **It has its own sorting canvas.** Sibling order decides draw order, and this object is the
+  last child of its own ROW rather than of the rail, so every row underneath is painted after it.
+  § 99 is the same trap one property over, which is why `overrideSorting` is set as well.
+- ⚠️ **Every handler is the one the stepper already used.** They take a DELTA, so the dropdown
+  passes `chosen - current` rather than opening a second path into the same state: each of those
+  four carries a host check, a settings write and an RPC, and a second path is § 38.5's three dead
+  protocols.
+- ⚠️ **The authored stepper rows are switched off, not destroyed.** `LobbyStyle.Classic` uses them
+  and `ConvertedScreen` indexed every one of their buttons by name in `Start`.
+- **The drawer is 306 units tall now, down from 364**: four 56-unit rows, three 6-unit gaps, the
+  detail box and the padding, added up.
+
+### 116.5 What is NOT done, named rather than left implied
+
+- **The lobby has no keyboard chain yet.** The login screen has one (`SignInScreen.Chain`); the
+  lobby's controls are still pointer-only, which is `game-ui-design`'s `Controller Navigation
+  Deadend` on the screen a player spends the most time in.
+- **The hub, the maker and the character select were not touched.** 🧑 scoped this pass:
+  *"overhaul lobby UI and login ui, focus only on that for now"*, and *"dont touch main menu and
+  inngame ui"*. They still use `GodotTheme.WoodBox` everywhere and they still have no focus state.
+- ⚠️ **The dropdown idea is taken up for the lobby rail only** (§ 116.8). The hub's own rows
+  still use `UiRows.DropdownRow`, which is correct there, and the character maker's steppers are
+  untouched. **The old note, kept because it names what was decided:** 🧑: *"u can use dropdowns and shit to make some
+  shit work or look good"*. The lobby's four selector rows (MAP, MODE, BOTS, RULES) are steppers
+  with authored arrow art, and `UiRows.DropdownRow` already exists and is used on the hub; turning
+  the rail's rows into dropdowns is the obvious next pass and it is **not** a repaint, because a
+  dropdown shows every option at once and a stepper hides all but one.
+- **No probe looks at any of this.** `game-ui-design`'s rules are mostly about what a person sees;
+  the two that a test COULD hold are the touch-target floor and "no control is only distinguished
+  by colour", and neither is asserted anywhere.
+
+---
+
+## 115 · Eight faults in one build, phases 11 and 12, and the door he could not find ⚠️⚠️ 2026-09-01
+
+🧑 opened the build off `gemini-rework` and sent eight reports in twenty minutes, most with a
+screenshot. **Not one needed a repro step and not one was found by a probe.** Then phases 11 and
+12, then Google sign-in, on the same day.
+
+| # | What he said | What it was | Where |
+|---|---|---|---|
+| 1 | *"create acct doesnt work"* | A failed SIGN IN left the UGS session signed out and this game's `IsSignedIn` `true`, so CREATE called `AddUsernamePasswordAsync` against a signed-out service. | § 115.1 |
+| 2 | *"bug with quick mat ui"* | The queue card is placed by its CENTRE, so 44 of its 280 units, and CANCEL inside them, were under the bottom of the screen. | § 115.2 |
+| 3 | *"profile ui ugly"*, *"cannt read"*, *"dont make it transparent"* | The hub's scrim is 0.93 and 0.93 is not opaque over a lit street. § 113 found the same thing one screen over, one day earlier. | § 115.3 |
+| 4 | *"this shhit is off center"* | The maker inherits the character SELECT screen's horizontal camera offset, which exists to clear a control column on the LEFT. The maker's column is on the right. | § 115.4 |
+| 5 | *"clicking escape from make your own put me here"* | `Input.GetKeyDown` is a fact about the frame, so one press closed the maker AND backed the screen under it out to the main menu, where the boot login step re-opened because its gate is never cleared. | § 115.5 |
+| 6 | *"i also dont know hhow to navigae to loadouts section"* | Four presses deep and two of them invisible. | § 115.6 |
+| 7 | *"lobby chat goes past screen"*, *"lobby chat doesnnt work at all"* | The scrollback is a child of the chat's own `VerticalLayoutGroup`, which owns every active child, so it was laid out as the next chat ROW and grew downward off the screen. | § 115.7 |
+| 8 | *"can we add some sort of authentication too? ... google acct"* | New work. | § 115.8 |
+
+⚠️⚠️ **AND THE SENTENCE TO CARRY OUT OF THIS ENTRY IS HIS, ABOUT NUMBER 6:** *"that isnt my
+fault thats ur fault"*, *"everything should be easy to navigate to and intuitive"*, **"that means
+if i cnat ifnd it, no one owuld"**. He commissioned the loadout feature, he read the entry that
+shipped it, and he could not reach it. That is the highest-authority findability signal this
+project can get.
+
+### 115.1 CREATE ACCOUNT was calling a signed-in-only endpoint on a signed-out service ✅ FIXED
+
+The red line under the password read **"Invalid state for this operation. The player is signed
+out."**, which is UGS's own message and not one this game writes.
+
+**The path there is two presses.** `SignInAsync` signs the anonymous session OUT before it can
+sign a username in, because `SignInWithUsernamePasswordAsync` refuses to run while a session is
+live. When that sign-in FAILS, which is what happens the first time anybody tries a username
+before creating it, **nothing put the anonymous session back**: the service was signed out and
+`PlayerAccount.IsSignedIn` was still `true`, because only `Apply` writes it and no `Apply` runs on
+that path. Switching to CREATE then passed the guard and called `AddUsernamePasswordAsync`.
+
+Three changes, and the second is the one that mattered:
+
+- **The guard asks the service, not the flag.** `EnsureLiveSessionAsync` runs before every
+  operation that needs a session and repairs it rather than refusing.
+- ⚠️⚠️ **`SignOut(clearCredentials: false)`, AND `true` IS WHAT MADE IT UNRECOVERABLE.** `true`
+  wipes the cached anonymous SESSION TOKEN, which is the only thing that can bring this machine's
+  existing player back; without it a repair sign-in mints a new player id and silently abandons
+  every match, level and mastery on the machine. `false` keeps it, so the repair restores the same
+  player.
+- **A failed sign-in restores the session before it reports the error.** One wrong password used to
+  poison every account operation for the rest of the launch.
+
+### 115.2 The queue card's CANCEL button was under the bottom of the screen ✅ FIXED
+
+`MenuKit.Place` PIVOTS AT (0.5, 0.5), so the offset it takes is a CENTRE and not an edge: a
+280-tall card placed at y 96 spans **-44 to 236**. The one control on the card the player needs,
+the way out of the queue, was the one control off the screen. It is placed from the door's bottom
+edge now, arithmetically, so the two states of the control sit on the same line.
+
+### 115.3 The hub's scrim was 0.93 and 0.93 is not opaque ✅ FIXED
+
+**Seven per cent of a lit street is still a street.** Under this screen are four voxel characters
+at full saturation, the amber MATCH SETTINGS and LOBBY & SERVERS plates, a green START MATCH and a
+row of houses, and every one stayed legible through the scrim. § 113 records the identical finding
+on the character maker one day earlier, including that the answer is not 0.99: **there is nothing
+here for a scrim to protect.** Solid wood, alpha 1.0.
+
+### 115.4 The maker's model stood 17 per cent right of the card it was in ✅ FIXED
+
+`ModelPreview` carries `FrameHorizontalOffsetRatio` -0.19, whose own note says why it exists:
+*"every control on this screen sits in the left third, so a centred subject would stand behind
+them"*. **That is the character SELECT screen. The maker's column is on the RIGHT**, so the same
+offset shoved the model toward the panel. `ModelPreview.CentreSubject` is the fix and it is
+deliberately not `SetTileFraming`, which also overwrites the zoom.
+
+⚠️ **The vertical half was the section aims.** The camera puts the AIM POINT at the centre of the
+frame, so an aim of 0.76 puts three quarters of the body below the centre line and leaves the top
+of the card empty. The range is 0.44 to 0.68 now: the camera still moves visibly between sections
+and the body's centre stays within about a tenth of a frame of the card's.
+
+### 115.5 One press of Escape left two screens ✅ FIXED
+
+`Input.GetKeyDown` is a fact about the frame and every `Update` in the process reads the same
+answer. `CustomCharacterScreen` closed itself and `ConvertedScreen.Update` under it backed the
+character select out to the main menu on the same press.
+
+- **`ScreenTakeover.EscapeIsSpoken`** is the arbiter: a converted screen stands down when a
+  takeover is open OR when one has already spent this frame's press. ⚠️ **Both halves are needed
+  because script order is undefined**: one covers the takeover updating first, the other covers it
+  updating second.
+- ⚠️⚠️ **AND THE HUB AND THE SIGN-IN SCREEN WERE NEVER IN THE REGISTER AT ALL.** `ScreenTakeover`
+  had exactly one member, the maker. Both are full-screen takeovers and nothing in the game knew
+  they existed.
+- **The second half of the bug is that the login step re-opens.** `SceneFlow.BootedThroughSplash`
+  is never cleared, so it means "every time this process shows the main menu", not "once per
+  launch". `SceneFlow.LoginStepOffered` is the one-shot.
+
+### 115.6 LOADOUT is a tab now, and the lobby card has a door to it ✅ FIXED
+
+**It was four presses deep and two of them were invisible**: a group called *Ability builds*,
+CLOSED BY DEFAULT, at the bottom of the CAREER tab, and on a fresh account the career tab returned
+before building it at all (§ 114.12). A collapsed group is a good answer to *"never overwhelming"*
+and a bad one to *"where is the thing"*: `CLAUDE.md` § 6.2 is three separate claims and this
+feature passed the third by failing the second.
+
+- **The rows are a LOADOUT tab on the hub**, uncollapsed, and they are gone from the career tab
+  and from `EmptyCareer`. **The door moved, it did not multiply** (§ 6.3).
+- **The lobby player card has a YOUR SKILLS row** directly under PLAYING AS, showing the equipped
+  build and opening the hub on that tab. A loadout is a fact about the character on the row above
+  it. ⚠️ **Hidden in Classic rather than greyed**: `VISION.md` § 1.1, Classic has no kit.
+- ⚠️ **The tab is spelled the way he asked for it.** The code calls these hero BUILDS; the word he
+  reaches for is LOADOUT.
+
+### 115.7 The lobby chat log was laid out as a chat row ✅ FIXED
+
+**The scrollback panel is a child of the chat, and the chat's `VerticalLayoutGroup` owns the
+position and size of every ACTIVE child it has.** The moment `OpenHistory` switched it on, the
+group took the 460-unit box, ignored its top-edge anchors, and placed it as the next row in the
+column: under the "Say something" field, growing DOWNWARD off the screen, with `SetAsLastSibling`
+guaranteeing it went last.
+
+The group also added its height to the chat's own preferred height, which is the second half of
+what he asked for: **"without making lobby annd servers move"**. `LobbyChrome.StackRight`
+positions that pill off `PanelHeight` every frame, so opening the log walked the whole right-hand
+rail up the screen. `LayoutElement.ignoreLayout` is the whole fix, and every anchor below it was
+already correct and had never once been used.
+
+### 115.8 Google sign-in, without a platform SDK ✅ BUILT, DARK UNTIL A CLIENT ID EXISTS
+
+UGS ships `SignInWithGoogleAsync(idToken)` and `LinkWithGoogleAsync`, and **has no way of getting
+an id token on Windows**: every sample takes it from Google Play Games or Firebase. So
+`Net/GoogleSignIn.cs` is Google's own "OAuth 2.0 for installed applications" flow — system
+browser, loopback listener, PKCE — and the UGS call is one line at the end of it.
+
+- ⚠️⚠️ **PKCE is not optional for a desktop client.** Anything compiled into this .exe is readable
+  by anybody who has the .exe. The verifier is 64 random bytes and the challenge its SHA-256.
+- ⚠️⚠️ **The listener binds before the browser opens.** An already-signed-in Chrome profile
+  redirects in about a second, and a redirect to a port nothing is listening on is a browser error
+  instead of a signed-in game.
+- ⚠️ **A favicon request is not the redirect.** The listener waits until a request actually carries
+  `code` or `error`.
+- ⚠️⚠️ **IT SHIPS DARK.** `GoogleSignIn.IsAvailable` is false until `Resources/google_oauth.txt`
+  exists, and the button is NOT BUILT rather than hidden, so the column closes up. A visible button
+  that explains why it cannot work is § 108's dead EQUIP button with an apology on it.
+- **CONNECT and SIGN IN are two verbs**, exactly like the username pair: linking keeps this
+  machine's progress, signing in moves to another account. The verb follows the tab.
+
+**🧑 has two things to do that no amount of code can:** create an OAuth **Desktop app** client in
+the Google Cloud console and put its client id on line 1 of
+`Assets/TumbangPreso/Resources/google_oauth.txt` (line 2 for the secret if the console issues one),
+and switch **Google** on in the UGS dashboard's Identity Providers page with the same client id.
+⚠️ Anonymous sign-in is not an identity provider, so an otherwise empty page is still the healthy
+state (`tump.md`).
+
+### 115.9 PHASE 11: the queue offers bots rather than nothing ⚠️ CORE AND QUEUE SHIPPED
+
+`Core/BotFill.cs`, `Core.Tests/Phase11And12Tests.cs`, `Matchmaker.OffersBotFill`, the card's
+second button, and the rating weight in **both** copies of the rating maths.
+
+- **45 seconds casual, 150 ranked.** The casual offer lands while the search is still widening
+  (`MatchmakingRules.SecondsToWidest` is 60); the ranked one lands long after it has stopped.
+- ⚠️⚠️ **BOTS IN RANKED ARE ALLOWED AND `FUTURE.md` § 19.11'S PROMPT SAYS THE OPPOSITE.** The
+  prompt asks for a test asserting *"never bots in ranked"*; § 11's body reverses it in 🧑's own
+  words with the reason and an expiry. **The body is newer and the body is the decision**, and
+  `BotFillRules.RankedAcceptsBots` is the one constant that flips it back.
+- ⚠️⚠️ **EVERY HUMAN SEAT PAST THE FIRST IS A QUARTER OF THE RESULT.** Four humans is a full
+  rating change, three is 0.667, two is 0.333 and one is **zero**. `FUTURE.md` § 11 states the
+  requirement and not the number: *"a result with a bot in it cannot move a rating the same amount
+  as one without, or the fastest climb in the game is queueing at 4 a.m."*
+- ⚠️⚠️ **THE BLEND SCALES THE DEVIATION TOO, AND SCALING ONLY THE RATING WOULD BE THE SUBTLE
+  VERSION OF THE SAME EXPLOIT.** Deviation is confidence and it shrinks with every match played;
+  farming bots at a third of the gain while collecting a full match of confidence would let
+  somebody lock in a soft rating and defend it. A zero-weight match is not a season match either.
+- ⚠️ **It is written twice**, `RatingRules.Blend` and `blendRank` in `match-record.js`, for the
+  reason `IntegrityRules.Digest` is: **the server computes the rating and the game has to be able
+  to say what it will be.**
+
+**Still open in Phase 11:** bot difficulty tiers are already exposed (the lobby's BOTS row, and
+they cross the wire), so what is left is the LABEL audit — `FUTURE.md` § 11 names three surfaces
+(the lobby, the scoreboard, the match history) and only the lobby is verified.
+
+### 115.10 PHASE 12: a format is not a mode ⚠️ MIRROR SHIPS, LAST TSINELAS IS HALF BUILT
+
+`Core/CustomGame.cs` and **`docs/Formats.md`**, which is the sibling document `FUTURE.md` § 19.12
+requires: *"write each mode's rules and win condition into `docs/Design.md` or a sibling document
+in the same commit as the code"*.
+
+⚠️⚠️ **`FUTURE.md` § 12 CALLS THESE "MODES" AND THEY MUST NOT BE `GameMode` VALUES.** That enum is
+a ruleset identity, not a label: `VISION.md` § 1 says Classic and Hero Strike are two games,
+`MatchRules.RoundCountFor` branches on it, `ProfileRules` keeps a separate career per value and
+says so on screen, and `MatchRecord.Mode` is a stored string older builds read back. **Both formats
+are playable in either mode**, which is the tell that they are not modes.
+
+- ✅ **MIRROR IS COMPLETE.** `CustomGameRules.MirrorIndex` is derived from the UTC week and never
+  stored, so a LAN room with no internet mirrors the same character as an online one.
+  `MatchInstaller` overrides every seat at the door rather than writing over three people's saved
+  picks. ⚠️ The modulo is made positive by hand: C#'s `%` keeps the sign of the left operand and a
+  venue machine with a clock set before the epoch would index off the front of the roster.
+- ⚠️⚠️ **LAST TSINELAS STANDING IS NOT IN THE RULES ROW AND THAT IS DELIBERATE.** Its rules are
+  written, tested and documented; **its match half is not built.** Offering it today would be a
+  control that changes a caption and nothing else, which is § 108's EQUIP button with no listener,
+  and this project has shipped that fault twice.
+  **What it needs, and it is contained:** `RoundDirector` holds a per-attacker stock reset at round
+  start; `ResolveTag` spends one; a spent attacker is out for the round; the round ends when one
+  attacker is left (`CustomGameRules.LastAttackerStanding` already answers that and deliberately
+  answers -1 for a tie rather than inventing a winner). ⚠️ **The loss event is the TAG**, not the
+  throw: `docs/Formats.md` § 1 carries why charging the throw would delete the game.
+- **`NetSession.ProtocolVersion` is 21.** A new `SelectFormat`/`SyncFormat` pair, and it is the
+  first entry in that list that changes the WIN CONDITION rather than what is in the match.
+- **The RULES row is a CLONE of the authored BOTS row**, not a row built in code: the three
+  selector rows carry authored arrow textures, an authored plate and an authored inner layout, and
+  a fourth built from scratch would be a fourth visual language on the rail whose whole redesign
+  was about the first three not lining up. ⚠️ **`Instantiate` copies `onClick` too**, so the cloned
+  arrows are cleared or they cycle the bot difficulty they came from, on a row labelled RULES.
+- ⚠️ **Its buttons come back on `Parts` rather than by name.** `ConvertedScreen` builds its name
+  index in `Start`, before the chrome runs, so a clone made afterwards is not in it and
+  `OnClick("FormatPrevButton", ...)` would find nothing.
+
+**Still open in Phase 12:** the rest of custom games (rounds, round seconds, score target, private
++ password) — the rules and the wire form are written, tested and clamped in
+`CustomGameRules`; nothing draws them yet. And map rotation with a vote, which § 12 says to build
+before a fourth map.
+
+### 115.11 PHASE 13 was thought through rather than started, and it is `FUTURE.md` § 13.1
+
+🧑: *"thoroughly think on ur own what should go on phase 13"*, then, before any of it was built,
+*"no need to work on phase 13, we have a bigger problem"*. **The thinking is written down and the
+code is not started**, which is the right place for it to have stopped. Four findings worth
+keeping:
+
+- **Nothing in the game says a season exists.** Season 1 ends **2026-11-10** and there is no row,
+  no countdown and no summary.
+- ⚠️⚠️ **THE SUMMARY CARD MUST BE BUILT AT LOAD, NOT AT SUBMIT.** `beginSeason` runs inside
+  `match-record.js` on submission, so a player who does not play never crosses the boundary and one
+  who does crosses it silently with their old season already overwritten.
+- ⚠️⚠️ **A SOFT RESET WITH SIX PLAYERS IS WORSE THAN NO SEASON.** Glicko-2's reset pulls every
+  rating toward the mean, which is right for a ladder with a population; this game's population is
+  the people in one room. **The season should roll over rather than reset below a threshold**, and
+  it is the same population argument, with the same expiry, as the bots-in-ranked reversal.
+- ⚠️ **A calendar that needs a server is a calendar that is blank at the nationals.**
+
+---
+
+## 114 · The boot is four screens, the lobby is the home, and the colour dial is deleted ⚠️⚠️ 2026-09-01
+
+🧑, over four screenshots of the shipped build: *"fucked up UI"*, *"I think the player shit should
+live in lobby screen, not play"*, *"the ui rn is so confusing i dont know where anything that was
+developed phase 1-10 onwards live"*, *"remove bh studios here and use white screen for unity too"*,
+*"also i dont like that loading screen keeps showing the pic of our game"*, *"i want it to strictly
+be this: UNITY -> BH STUDIOS ANIMATION -> LOGIN -> MAIN MENU -> LOBBY. AND LOBBY IS WHERE ALL UI
+SHOULD LIVE"*, *"make this loading screen properly work"*, and, on the hero picker, *"this shit
+shiuld be gone the clothes color and soft bold and shit"*, *"I asked for this shhit to be removed
+before, the color shit for the chracters bcz i wanted customization to eb for the make your own
+only"*.
+
+**Six faults and one deletion. The through-line is that nine phases of features each found their
+own corner of the front end, and nothing ever said where the front end's rooms are.** § 96 is the
+same fault one feature wide (the hub had one door and its commissioner never found it); this is
+that fault at the scale of the whole game.
+
+### 114.1 The boot sequence is named, and every screen in it has one job
+
+⚠️⚠️ **THE ORDER IS A CONTRACT NOW, NOT AN EMERGENT PROPERTY OF WHICHEVER SCREEN HAPPENED TO OPEN
+ITSELF.** It was emergent until today, which is why the account screen appeared over a lit menu
+(§ 111) and why the game's key art appeared in the middle of a studio sting.
+
+| Step | Screen | Its one job | Owner |
+|---|---|---|---|
+| 1 | **UNITY** | The engine credit the licence requires. White, no studio mark on it. | `ProjectSettings.asset` |
+| 2 | **BH STUDIOS** | The studio sting, and the loading hold behind it. White throughout. | `SplashScreen.cs` |
+| 3 | **LOGIN** | Who is playing. One press out, every launch, never needs the network. | `SignInScreen.cs` |
+| 4 | **MAIN MENU** | Four doors: PLAY, TUTORIAL, SETTINGS, QUIT. Nothing else. | `ConvertedMainMenu.cs` |
+| 5 | **LOBBY** | Everything else in the game. | `ConvertedMatchSetup.cs` + `LobbyChrome.cs` |
+
+⚠️ **STEPS 1 AND 2 ARE ONE WHITE FRAME AS FAR AS THE PLAYER IS CONCERNED.** That is the whole
+reason the Unity screen goes white: two brand screens in two background colours read as a glitch
+between them, and the engine splash is the one screen in the game whose timing cannot be edited.
+
+### 114.2 The Unity splash carried the studio mark, so the studio appeared twice
+
+**What was wrong.** `m_SplashScreenLogos` held `bh_studios_logo.png` on a navy
+`m_SplashScreenBackgroundColor` (0.0157, 0.0314, 0.2196). So the boot was: BH mark on navy for two
+seconds, then a cut to the BH animation on white. The same mark, twice, in two colours, with a
+colour cut between them.
+
+**What shipped.** The logo list is empty, the background is white, and
+`m_SplashScreenLogoStyle` goes to Dark on Light so Unity's own mark is legible on it.
+⚠️ **`m_ShowUnitySplashScreen` STAYS 1 AND MUST.** It is not removable on this licence, which is
+the fact `BootSting`'s header already records, and the sting is timed to play across it.
+
+### 114.3 The game's key art was the loading hold, and it is deleted from the boot
+
+**What was wrong.** `SplashScreen.BuildSplashArt` loaded `Resources/UI/splash_art.png`, the
+1267x697 cast-and-lata key art, and revealed it the frame the video finished. The preload
+routinely runs past six seconds and says so in its own warning, so **the longest single screen a
+first-time player meets was a piece of marketing art with a progress bar over it**, before they had
+seen the menu, the street or a single character in motion.
+
+🧑: *"i dont like that loading screen keeps showing the pic of our game"*, then, pointing at the
+white BH frame: *"dude the loading screen is in the white bh mark"*.
+
+**What shipped.** `BuildSplashArt` and the `_art` field are **deleted**. The video's last frame is
+held instead of being switched off, so the hold is the white BH mark the sting ends on, and the
+backdrop under it is white rather than black so a window that is not 16:9 letterboxes into white
+rather than into a black bar. The clip is fitted rather than stretched, for the same reason: a
+studio mark is a logo and gets `FitInside`, which is `CLAUDE.md` § 6.2c question 2.
+
+⚠️ **AND THE FADE-IN IS FROM WHITE NOW, NOT FROM BLACK.** The Unity screen ends white and this one
+starts white; a 0.35 s fade up from black between them is a black flash in the middle of one
+continuous white beat. The fade OUT stays black, because what follows it is a lit street.
+
+⚠️ **WHAT THE ART WAS ALSO DOING, PER § 6.2c QUESTION 5: NOTHING.** It was `raycastTarget = false`
+on a scene with no other interactive content, so unlike § 100's scrim there is no blocker to
+replace. `splash_art.png` stays in `Resources` because `SignInScreen` draws it as the login
+screen's art side, which is where a piece of key art belongs.
+
+### 114.4 ⚠️⚠️ THE LOADING ANIMATION FROZE INSIDE THE TWO STAGES THAT BLOCK, AND THAT IS WHAT "DOESN'T WORK" MEANT
+
+🧑: *"it js doesnt work properly, the loading animation, make it work"*.
+
+**Four separate faults, and only the last is cosmetic.**
+
+1. ⚠️⚠️ **THE COROUTINE BLOCKS THE FRAME, SO THE DOTS AND THE BAR STOP DEAD.**
+   `Shader.WarmupAllShaders()` and `Resources.LoadAll<AudioClip>("")` are single synchronous calls
+   that own the main thread for seconds at a time, and `UpdateLoadingAnimation` runs on the main
+   thread. **A loading animation that stops during loading is worse than no animation**, because
+   the one thing it exists to say is that the program is alive. The audio sweep is chunked into
+   batches with a `yield` between them now, and the roster walk yields every few entries.
+   ⚠️ `Shader.WarmupAllShaders` cannot be chunked and is the one stage that still blocks; it is
+   moved to the FRONT, where it is covered by the fade-in, and the stage is labelled before it
+   runs rather than after.
+2. ⚠️⚠️ **THE ACCOUNT BARRIER WAS NOT IN THE PROGRESS MODEL AT ALL.** `PreloadComplete` is
+   `_assetsPreloaded && _menu.progress >= 0.9f`, and the loop ALSO waits on
+   `accountBarrier.IsCompleted`. So the bar reached its last stage, read `opening main menu`, and
+   then the screen sat there for however long the service took, **with a full bar and a label that
+   had already claimed the menu was opening.** That is the exact frame 🧑 photographed. Sign-in now
+   owns the 0.92 to 0.99 span with its own label, and **the bar only reaches 1.0 on the frame the
+   screen leaves.**
+3. ⚠️ **PROGRESS SNAPPED BETWEEN STAGES.** `SetLoadingStage` wrote `fillAmount` directly, so the
+   bar jumped 0.14 to 0.27 in one frame and then sat still for three seconds. There is a target
+   and a shown value now, and the shown value eases toward the target every frame, so the bar is
+   always moving in the direction of the truth without ever claiming to be further along than it
+   is.
+4. ⚠️ **IT WAS DRAWN IN `LegacyRuntime.ttf` AT 18 UNITS OVER A 4-UNIT TRACK.** The game's own font
+   is `Darumadrop One` and every other screen uses it. The bar is 6 units, the track is 420, and
+   the label clears `MenuKit.MinReadableUnits`.
+
+### 114.5 LOGIN is its own step, on every launch, and it leaves on its own
+
+**What was wrong.** The account screen was shown by `PlayerNameplate.OfferTheAccountChoiceOnce`,
+gated on `GameSettings.AccountChoiceMade`, which means **once per machine, for ever**. So the step
+🧑 drew in his flow existed for exactly one launch of one install and then vanished, and it was
+drawn over the main menu rather than before it (§ 111).
+
+**What shipped**, and it is his choice of the three offered: *"Every launch, auto-skip after a
+beat"*.
+
+- `SignInScreen.OpenAtBoot()` runs on every launch behind `SceneFlow.BootedThroughSplash`, which is
+  a boot rather than a scene load. § 97's note on that flag is unchanged and still load-bearing.
+- **When no account is attached** it is the form: two fields, CREATE, and CONTINUE AS GUEST.
+- **When one is attached** it draws `SIGNED IN AS <name>` and passes through on its own after
+  **1.2 s**, or immediately on any press. It is a beat, not a gate.
+- ⚠️⚠️ **CONTINUE AS GUEST IS STILL ONE PRESS AND STILL NEEDS NO NETWORK.** § 97, and the nationals
+  in General Santos City are the reason. `PlayerHubLayoutProbe.TheBootAccountScreenIsOfferedOnceAnd
+  OnePressLeavesIt` is renamed to match the new rule and still runs with a null account.
+- ⚠️ **THE AUTO-PASS IS ON UNSCALED TIME AND IS CANCELLED BY ANY INPUT**, so a player who wants to
+  switch accounts is never carried past the screen by a timer.
+
+### 114.6 The colour dial is deleted, and customization is MAKE YOUR OWN only
+
+🧑, twice: *"this shit shiuld be gone the clothes color and soft bold and shit"*, and *"I asked for
+this shhit to be removed before, the color shit for the chracters bcz i wanted customization to eb
+for the make your own only"*.
+
+**And his screenshot shows a second, independent fault: the three rows drew on top of each other.**
+`COLOURS`, `CLOTHES` and `STRENGTH` overlap the ability list, so `SEISMIC STOMP`'s row has
+`AS DRAWN` and `BOLD` printed through it. `RefreshTintRows` returns a height that
+`RefreshPaletteRow`'s caller adds to a column height computed before either ran. **That is § 102.4
+again**: a vertical overflow, invisible to every probe in the project, because they all measure
+horizontally.
+
+**It is deleted rather than fixed**, which makes the layout fault moot as well.
+
+- **Gone from `ConvertedCharacterSelect`:** `RefreshTintRows`, `BuildTintSwatch`,
+  `BuildStrengthChip`, `RefreshPaletteRow`, `TintSteps`, `TintStrengths`, `SwatchSize`,
+  `PaletteRowHeight`, and the `paletteHeight` term in both column-height sums.
+- ⚠️⚠️ **THE CORE KEEPS `PaletteRules`, `PaletteVariants` AND `LoadoutRules.PaletteFor`, AND THAT
+  IS DELIBERATE.** A palette still crosses the wire, remote seats still wear one, and § 101.1's
+  variant-naming fix is still asserted by `CosmeticsWireTests`. **Deleting the picker deletes the
+  control, not the capability**, so bringing an earned palette back later is one method on one
+  screen rather than a re-derivation of the authorisation path.
+- ⚠️ **THE CONSEQUENCE, STATED PLAINLY: A MASTERY PALETTE IS CURRENTLY UNEQUIPPABLE.**
+  `mastery.<hero>.palette.alt1` is still awarded and still owned; there is no longer a surface that
+  equips it. That is the deletion he asked for, not an oversight, and it is written here so nobody
+  re-discovers it as a bug in three weeks.
+- `CosmeticSurfaceProbe`'s two COLOURS cases are replaced by one that asserts **no hero tab draws a
+  colour control at all**, which is the new rule stated as a test rather than a comment.
+
+### 114.7 ⚠️⚠️ THE LOBBY IS THE HOME, THE MAIN MENU IS A DOOR, AND THIS IS THE ANSWER TO "I DONT KNOW WHERE ANYTHING LIVES"
+
+🧑: *"the ui rn is so confusing i dont know where anything that was developed phase 1-10 onwards
+live"*, and *"AND LOBBY IS WHERE ALL UI SHOULD LIVE"*.
+
+**He is describing a real property of the build rather than a feeling.** Nine phases shipped nine
+surfaces and they landed in three different places:
+
+| Where it was | What was there |
+|---|---|
+| **Main menu** | The nameplate, and behind it the whole hub: PROFILE, FRIENDS, CAREER, MATCHES, ACCOUNT. Plus the boot account screen. |
+| **Lobby** | QUICK MATCH and the queue card, the join card, the cast, the chat, the map, mode and bots. |
+| **Character select, from the lobby** | The locker, the palette picker, MAKE YOUR OWN. |
+
+**Two of the three are one press from PLAY and the third is one press from the title screen, which
+means the player has to know which of two screens a feature lives behind before they can look for
+it.** That is the findability failure § 6.3 names, and the rule it also names is why the fix is not
+a second door: *"NEVER ADD A SECOND DOOR TO FIX A FINDABILITY PROBLEM. Fix the door or move it."*
+
+**So the door moves.**
+
+- ⚠️⚠️ **`PlayerNameplate` IS NO LONGER INSTALLED BY `ConvertedMainMenu`.** The title screen is the
+  four pennants and the credits link, and nothing else. It is a door, not a screen.
+- ⚠️⚠️ **THE LOBBY'S EXISTING IDENTITY CARD BECOMES THE DOOR, RATHER THAN A NAMEPLATE BEING ADDED
+  BESIDE IT.** `LobbyChrome.BuildIdentity` already draws PLAYER NAME and PLAYING AS in the top
+  right corner, which is where a player already looks to find themselves. It gains a third block,
+  `YOUR PROFILE`, carrying the level and the rank and opening `PlayerHub`. **Adding a nameplate to
+  the lobby would have put two identity plates on one screen**, which is § 92's six-button panel
+  arriving one control at a time.
+- `PlayerHub` is installed by `ConvertedMatchSetup` directly rather than by the nameplate, and it
+  still installs `SignInScreen`. One chain, one owner, unchanged shape.
+- ⚠️ **THE HUB HIDES THE LOBBY CHROME WHILE IT IS OPEN**, by the same mechanism the nameplate used
+  to hide for overlays: the hub watches, rather than every opener remembering to tell it.
+  `PlayerNameplate`'s own header records why that direction is the right one.
+
+**The journey, walked out loud, which is what § 6.3 asks for before any of this is built:**
+
+| I want to | Presses, before | Presses, after |
+|---|---|---|
+| see my rank | PLAY is wrong; back out, find the chip on the title screen, PROFILE | PLAY, YOUR PROFILE |
+| add a friend | back out to the title, chip, FRIENDS | PLAY, YOUR PROFILE, FRIENDS |
+| queue ranked | PLAY, QUICK MATCH | unchanged |
+| make my own character | PLAY, PLAYING AS, MAKE YOUR OWN | unchanged |
+| change my password | back out to the title, chip, ACCOUNT, SIGN IN | PLAY, YOUR PROFILE, ACCOUNT |
+
+**Nothing gets longer and three things get shorter, and every one of them now starts with the same
+press.** That is the property worth having: **PLAY is the way into the game, not the way into a
+match.**
+
+### 114.8 What is deliberately NOT moving
+
+⚠️ **Written down because the instruction was "all UI", and three things are outside what that can
+sensibly mean.**
+
+- **SETTINGS and CREDITS stay on the main menu.** They are not player state, they are application
+  state, and a player who wants to change their resolution before pressing PLAY must not have to
+  enter a lobby to do it. His answer to the question named PLAY, TUTORIAL, SETTINGS and QUIT as
+  what remains.
+- **The pause panel keeps its own settings route.** Same argument, from inside a match.
+- **The end-of-match board keeps its ADD FRIEND per human.** § 102: the moment you want to add
+  somebody is the moment you just played them, and routing that through the lobby's hub would be
+  four presses for a thing that is currently one.
+
+### 114.9 ⚠️⚠️ THE BLUE HE KEPT ASKING ABOUT WAS ONE CONSTANT, AND `CLAUDE.md` § 6.4 COULD NOT SEE IT
+
+🧑, five times in one session, with § 6.4 already written into `CLAUDE.md` from the last time:
+*"i dont want to see blue shit"*, *"thats not in theme"*, *"hey i said i dont want blue or
+navy"*, *"thats off theme"*, *"put in claude md to not use blue hshit"*.
+
+**He was right and the rule was too narrow.** § 6.4 said "never use blue or navy OUTLINES on any
+UI icon or asset", which was written after the rank emblems and describes the one surface the
+fault had been seen on. Four things were blue and none of them was an icon outline:
+
+| Where | What | Why the narrow rule missed it |
+|---|---|---|
+| ⚠️⚠️ **`UiTheme.Ink`** | **`040838`, a near-black NAVY**, and the outline colour of every menu type style in `GodotTheme`: `MenuDisplay`, `MenuHeading`, `MenuBody`, `MenuCaption`, `MenuValue`. | **One constant put navy on every word in the front end**, at four to six pixels of outline on a heading. It is called "ink", so it reads as black in a diff and as a cold ring on screen. `1c0f06` now, which is the ink § 6.4's own palette line already named. |
+| **`ConvertedCharacterSelect.VerticalBackdrop`** | Three stops of slate to midnight, behind the hero picker, with a comment calling it *"the game's Bayan navy identity"*. | It is a background, not an icon, and the comment asserted it was the identity. Nothing else in the front end used that colour. Wood now: `WoodEdge` lifted, `WoodMid`, `WoodDeep`. |
+| **`HorizontalScrim`, `MatchResult`, `RoleSwapCard`** | The same navy as a scrim at 72, 82 and 85 per cent. | Same. `UiTheme.WoodDark` now. |
+| **`UiTheme.Panel` and `Card`, `SwatchDropdown.RingGrey`** | `e1e5e8`, `f5f7fa` and (0.62, 0.64, 0.68): greys with a blue cast. | "Grey" is not "blue" until it sits next to `8b5227` wood. Warm paper and warm grey now. |
+
+⚠️⚠️ **AND A FIFTH, WHICH IS THE ONE THAT WOULD HAVE MADE THE OTHER FOUR POINTLESS:
+`GameBuilder.ConfigureSplash` REWRITES `backgroundColor`, `logos` AND `unityLogoStyle` ON EVERY
+BUILD.** So the three fields changed in `ProjectSettings.asset` for § 114.2 would have survived
+exactly until the next build and then silently reverted to navy with the BH logo back on it.
+**Both places or neither**, and the method now writes white, `DarkOnLight` and an empty logo
+array. ⚠️ It also reverses § 111.1 by name, which is what 🧑 asked for: the studio mark moved to
+its own beat rather than being deleted.
+
+⚠️ **The sweep that found it is worth keeping**: a script over `Assets/TumbangPreso/Runtime` and
+`Editor` for any `new Color(r,g,b)` or `Hex("rrggbb")` whose blue channel clears red by a margin.
+It also turned up the picker's `bayanBlue` backdrop glow (which is what tints the arrow buttons)
+and `MatchResult`'s card-fold shadow, both now warm. **The hero accents, `UiTheme.Defense` and the
+ability VFX are the expected hits and are exempt.**
+
+⚠️⚠️ **THE RULE IS WIDENED IN `CLAUDE.md` § 6.4 RATHER THAN RESTATED HERE**, with the table above
+as its receipt and one line that is the actual check: **if a hex has more blue in it than red, it
+does not belong in a menu**, and grep the third channel rather than trusting a colour name.
+
+⚠️ **TWO THINGS ARE EXEMPT AND BOTH ARE WRITTEN INTO THAT SECTION.** `UiTheme.Defense`
+(`0080e8`) MEANS the taya and is a gameplay fact, not a style, and may never appear as menu
+chrome (`ChatAndLobbyChromeTests` asserts that for the lobby plates). And **the authored pennant
+art is his own**: PLAY green, SETTINGS yellow, TUTORIAL blue, QUIT red are the design system per
+`VISION.md` § 6, and repainting them to satisfy a rule about code-chosen colours would be the
+rule eating the thing it exists to protect.
+
+### 114.10 Acceptance
+
+- Boot reads UNITY (white) to BH STUDIOS (white) to LOGIN to MAIN MENU to LOBBY, with no colour cut
+  between the first two and no game art anywhere before the menu.
+- The loading bar and dots keep moving through every stage except the shader warm-up, and the bar
+  never reads full while the screen is still up.
+- The hero picker draws no COLOURS, CLOTHES or STRENGTH row on any tab, and nothing overlaps the
+  ability list.
+- The title screen has no nameplate on it. The lobby's identity card opens the hub.
+- `UiClickProbe.EveryButtonIsReachable` is green on both the menu and the lobby, which is the check
+  that catches new chrome covering something (§ 92.7, three times now).
+- `PlayerHubLayoutProbe` photographs the login screen in **both** states, per § 6.2b's first row.
+- Nothing in `Assets/TumbangPreso/Runtime/UI` chooses a colour whose blue channel exceeds its
+  red channel, except `UiTheme.Defense` and the hero accents.
+
+### 114.12 ⚠️⚠️ EVERY PHASE 1 TO 10 AUDITED FOR A ROUTE, AND TWO OF THEM HAD NONE ON A FRESH ACCOUNT
+
+🧑: *"make sure phase 1-10 already exist in the game and can be accessed thru ui and hud"*.
+
+**Every one of them exists. Phase 10 is shipped too, which corrects a claim `FUTURE.md` still
+carries**: § 108 landed the ability variants (`Core/HeroLoadout.cs`) and the achievement shelf
+(`Core/Achievements.cs`), so "10 onward are not scheduled" is stale.
+
+**But "it exists" and "a player can reach it" are two different questions, and this is the entry
+that asks the second one.** The route below is the whole route, from the title screen, after
+§ 114.7 moved the door.
+
+| Phase | The surface | The route, in presses | Verified |
+|---|---|---|---|
+| **1 · Accounts** | `SignInScreen` | Boot LOGIN, **every launch**. Also PLAY, YOUR PROFILE, ACCOUNT, SIGN IN. | ✅ |
+| **2 · Profile, stats, history** | `PlayerHub` PROFILE / CAREER / MATCHES | PLAY, YOUR PROFILE. | ✅ |
+| **3 · Telemetry** | **none, by design** | `FUTURE.md` § 3: it is a backend phase. A telemetry screen would be a screen about us, not about the player. | n/a |
+| **4 · Progression** | XP bar and level on the hub header, mastery rows on CAREER, the XP card on the end-of-match board | PLAY, YOUR PROFILE. Or finish a match. | ✅ |
+| **5 · Cosmetics** | Banner slots on PROFILE; the banner drawn on the lobby plate and the result board; MAKE YOUR OWN | PLAY, YOUR PROFILE, Banner. Or PLAY, PLAYING AS, MAKE YOUR OWN. | ✅ ⚠️ the hero colour dial is deleted, § 114.6 |
+| **6 · Social** | FRIENDS tab; ADD per human on the result board | PLAY, YOUR PROFILE, FRIENDS. | ✅ |
+| **7 · Matchmaking** | `QueueCard`, QUICK MATCH | PLAY. It is on the lobby, in the middle. | ✅ |
+| **8 · Integrity** | **none, by design** | § 104: `ScoreWitness` tallies the score event stream. There is nothing for a player to press, and a screen would advertise a guard. | n/a |
+| **9 · Ranked** | Tier on the profile door and the hub header, Competitive Rank group on CAREER, `RankIcons` badge | PLAY, then read the card. | ✅ |
+| **10 · Loadouts, variants, achievements** | Ability builds and Achievements groups on CAREER | PLAY, YOUR PROFILE, CAREER. | ⚠️⚠️ **was unreachable, fixed below** |
+
+⚠️⚠️ **TWO FAULTS, AND BOTH HID PHASE 10 FROM THE PLAYER IT WAS BUILT FOR.**
+
+1. **`BuildCareerTab` bailed to `EmptyCareer` on `totals.Matches == 0` and both groups are built
+   after that line.** So **a fresh account could not reach the ability builds or the achievement
+   shelf by any route at all.** Both are things you do BEFORE your first match: a build is a
+   choice made while learning a hero, and the shelf is the one surface that says what there is to
+   do. `EmptyCareer` draws both now, plus the mode dropdown they need.
+2. ⚠️⚠️ **`PlayerHub._mode` WAS HARD-CODED TO `GameMode.Classic` AND THE GAME DEFAULTS TO HERO
+   STRIKE.** `SceneFlow.SelectedMode` is Hero Strike, the lobby lands in it, and the ranked ladder
+   is on it (§ 105). So the career tab opened on the OTHER game's numbers, and **Ability builds is
+   Hero Strike only**, so the group was invisible until the player found a dropdown inside a group
+   called Overview and changed a mode they had not chosen. It follows `SceneFlow.SelectedMode`
+   now. **A tab that opens on the wrong mode is a tab whose contents look missing**, which is the
+   same class as § 96: the feature is there, nobody can find it.
+
+⚠️⚠️ **AND THE MOMENT THOSE TWO GROUPS BECAME REACHABLE, THE PROBE FOUND A THIRD FAULT IN THEM
+THAT HAD BEEN TRUE SINCE THE DAY THEY WERE WRITTEN.** `PlayerHubLayoutProbe` came back red at
+720p: **Ability builds' section subtitle wanted 849 units in a 715 unit box**, and a
+`UiRows.Section` subtitle neither wraps nor shrinks, so it drew over whatever was beside it.
+Achievements' was the same shape one line shorter. **Both are now cut to about 68 characters.**
+
+**The lesson is worth more than the fix: unreachable code is unmeasured code.** Two probes and
+nine resolutions were green across this screen for as long as these groups have existed, because
+a group the tab never builds is a group no probe ever draws. **The fixture was in the wrong mode
+for the same reason** (it seeded Classic while the hub opens on Hero Strike), which means it had
+never photographed Ability builds either. That is the same family as § 101.1's assertion inside
+an `if`: **a check that can decide not to run is a check that is not running.**
+
+⚠️ **AND THE ONE THAT IS NOT A FAULT, WRITTEN DOWN SO IT IS NOT "FIXED" LATER:** phases 3 and 8
+have no player surface **on purpose**, and adding one would be `FUTURE.md` § 0.5 rule 11b
+("a cheap addition that adds a bar, a screen, a number or a new word is still a candidate for
+cutting") broken in the other direction.
+
+### 114.13 ⚠️⚠️ QUICK MATCH WAS DRAWN ACROSS THE CAST'S HEADS, AND ITS ROOT HAD NO RECT AT ALL
+
+🧑's first words this session were *"fucked up UI"*, over the lobby screenshot. **The single most
+visible thing wrong with that picture is that QUICK MATCH, a 560-unit amber bar, is sitting in the
+middle of the window across all four characters' faces.** It is anchored to the BOTTOM edge, 96
+units up, and it is nowhere near the bottom.
+
+**The cause is one missing component.** `QueueCard.Build` does `new GameObject("QueueCard")`,
+which comes with a plain `Transform`, and nothing in `Construct` adds a `Graphic` to that object
+itself, so it never acquired a `RectTransform`. `LobbyJoinPanel` is built the same way and is fine
+purely by accident: it puts its scrim `Image` on its own root, and `Image` requires a
+`RectTransform`, so Unity adds one.
+
+⚠️⚠️ **A `RectTransform` WHOSE PARENT IS A PLAIN `Transform` HAS NO PARENT RECT TO RESOLVE
+AGAINST**, so every anchor under it resolved against a zero-sized point at the canvas centre. Both
+the door and the queue state landed 96 units above the middle of the window. Measured off his
+screenshot: the button's centre is about 112 px above the centre of a 1104 px tall frame, and 96
+canvas units is about 98 px at that height.
+
+**This is `SplashScreen.BuildSurface`'s "the logo is a postage stamp" note for the third time**,
+and `CLAUDE.md` § 6.2c question 1: a size and a position are only correct against the rectangle
+they are actually measured against, and when that rectangle does not exist the failure is silent.
+
+⚠️⚠️ **AND `QueueCardLayoutProbe` WAS GREEN THROUGH ALL OF IT**, because every row inside the card
+fits the card. **The card was in the wrong place on the screen, and nothing in this repository
+looks at where a card is.** § 6.2a's line, again: the probe asks whether the screen is a screen,
+the picture asks whether it can be read. **He read it in one glance and no test could.**
+
+### 114.11 What the probes had to change, and the one that is honestly weaker now
+
+- **`CosmeticSurfaceProbe`**: `TheColoursRowDrawsOneSwatchPerOwnedPaletteAndOneForDefault` and
+  `AFreshAccountGetsNoColoursRowAtAll` are replaced by `NoHeroTabDrawsAnyColourControlAtAll`,
+  which seeds two owned palettes (the state the deleted row WOULD have drawn in, so absence
+  actually proves something) and then asserts the three node names are gone **and** that the
+  column's rows fit inside the column. The second half is the overlap in his screenshot, and
+  § 102.4 is why it is measured vertically.
+- **`LobbyStyleProbe.TheProfileDoorOpensTheHub`** is new: it presses the door on both tabs and
+  asserts the hub opens. § 108's receipt is why it presses rather than measuring: an EQUIP button
+  with no `onClick` and a screen drawn under the screen that opened it both looked fine.
+- **`PlayerHubLayoutProbe.TheBootAccountScreenIsOfferedOnceAndOnePressLeavesIt`** is
+  `TheLoginStepAppearsEveryLaunchAndOnePressLeavesIt`, and its second half now asserts the
+  OPPOSITE of what it did: the screen comes back on the second launch. It drives `SignInScreen`
+  directly rather than through the nameplate.
+- **`PlayerHubLayoutProbe.SeedCareer` seeds HERO STRIKE, not Classic**, because the hub follows
+  `SceneFlow.SelectedMode` now and that is Hero Strike. The fixture had been in the other mode all
+  along, which is why the Ability builds group had never been photographed and its subtitle had
+  never been measured. `Boot` states the mode out loud rather than inheriting process state.
+- ⚠️⚠️ **AND THE ONE THAT IS WEAKER: `TheNameplateStaysOnScreenAtEveryShippedResolution` NOW
+  TESTS CHROME NOTHING INSTALLS.** `PlayerNameplate` is kept under § 68.3 and the probe keeps it
+  compiling and laying out, but it is no longer coverage of a shipped screen and the class header
+  says so. **The door a player presses is covered by the new `LobbyStyleProbe` case**, and if the
+  nameplate is not restored within a few sessions the case and the class should go together.
+
+### 114.15 ⚠️⚠️ WHAT IS STILL OPEN IN PHASES 1 TO 10, AND IT IS SIX THINGS
+
+🧑 2026-09-01: *"it will contain leftover work for phase 1-10 to make sure phase 1 to 10 is done
+when done ask handoff to start of phase 11"*. **This is that list, and it is the definition of
+done for the first ten phases.** § 114.12 is the reachability audit; this is what is not finished
+behind the surfaces it found.
+
+**Two of the six need the second laptop and cannot be closed on this machine.**
+
+| # | Phase | What is open | Where |
+|---|---|---|---|
+| 1 | **6 · Social** | ⚠️⚠️ **`request`, `accept`, `decline` and `remove` HAVE NEVER RUN BETWEEN TWO REAL ACCOUNTS.** `CloudEndpointActionProbe` has one throwaway UGS profile, so `load`, `presence`, `block` and `unblock` are green against the live service and the four that need a second party are not. **Thirty minutes, two laptops.** | § 102.5 |
+| 2 | **8 · Integrity** | ⚠️⚠️ **WHETHER A SECOND MACHINE'S COPY OF THE SCORE EVENT STREAM REPRODUCES THE SAME DIGEST.** `ScoreWitnessProbe` tests the risky half on one machine and cannot test the other. Same trip as row 1. | § 104.7 |
+| 3 | **10 · Loadouts** | ✅ **CLOSED 2026-09-01, § 114.16.** `ChallengesEnforced` is `true`, `AbilityChallengeProgress` counts successful local casts in Practice, and **all twelve alternates now change the match** rather than only the label. ⚠️ Two rows were rewritten in the same pass for being budget-neutral AND pointless, which is a bar the sidegrade test cannot see. | `Core/HeroLoadout.cs`, § 114.16 |
+| 4 | **10 · Achievements** | ✅ **CLOSED 2026-09-01, § 114.16.** Rewards are in `BannerRules.Earned`, newly crossed ones ride `XpAward.Unlocked` onto the result board. ⚠️ **Five of the fifteen had no `ProgressFor` case at all** and read 0 on a career that had done the thing hundreds of times. | `Core/Achievements.cs`, `MatchResult` |
+| 5 | **5 · Cosmetics** | ✅ **CLOSED 2026-09-01, § 114.16.** Decided the first of the two ways: mastery 5 and 15 pay wearable hero titles and **no track awards a palette any more**. The transport is untouched and `CosmeticsWireTests` now asserts both halves. | § 114.6, § 114.16 |
+| 6 | **6 · Social** | ✅ **BUILT AND DEPLOYED 2026-09-01, § 114.16.** Sharded `handle-index-XX` documents, `SocialStore.RequestHandle`, a FIND A FRIEND group on FRIENDS. ⚠️ **The index is a route and never the authority**: `resolve` re-reads the target's protected profile and requires the exact current handle. ⚠️ **Two real accounts finding each other is row 1's trip, not this row's.** | § 102.2, § 114.16 |
+
+⚠️ **AND ONE THAT IS THIS SESSION'S OWN**: § 114.14's parentage check, which is one assertion and
+would have caught § 114.13 and two faults before it. ✅ **BUILT 2026-09-01**, see § 114.14.
+
+✅ **FOUR OF THE SIX ARE CLOSED AS OF 2026-09-01 AND THE TWO THAT ARE LEFT ARE THE SAME TRIP.**
+Rows 1 and 2 both need a SECOND MACHINE and neither can be closed here, which is why they were
+written as one thirty-minute pass rather than two tasks: two real accounts exercising request,
+accept, decline, remove, presence and a block that the host's lobby then refuses, and a second
+machine reproducing the host's score-witness digest off the same event stream. ⚠️ **Both machines
+must be on protocol 20 and the same `gemini-rework` commit**, or they refuse each other at
+approval by design and neither half of the pass can start.
+
+**When all six are closed, phases 1 to 10 are done and the next thing is `FUTURE.md` PHASE 11,
+bots, backfill and the population problem.** ⚠️ Read § 0.5 and § 0.5b before starting it, and
+§ 19.0 first: that prompt exists to refresh the plan before it is used, and this entry has already
+found two things `FUTURE.md` was stale about (Phase 10's status, and Phase 5's colour dial).
+
+### 114.14 The gap this session leaves open, named rather than left implied
+
+⚠️⚠️ **NOTHING IN THIS PROJECT CAN SEE THAT A CARD IS IN THE WRONG PART OF THE SCREEN.** § 114.13
+is the receipt: a 560-unit amber bar sat across four characters' faces for as long as QUICK MATCH
+has existed, `QueueCardLayoutProbe` was green, `LobbyStyleProbe` was green, and 🧑 named it in one
+glance. Every layout check here asks whether a label fits its own box.
+
+**What would catch the next one is cheap and is not built:** a check that every code-built panel's
+root is a `RectTransform` whose parent is also a `RectTransform`. That is the exact fault three
+times now (`SplashScreen.BuildSurface`'s postage-stamp logo, `SignInScreen.BuildLogo`'s
+`FitInParent` with no box of its own, and this), and unlike "is this in the right place" it is a
+question a test can actually answer. **Do not turn it into a general layout probe**; it is one
+assertion about parentage.
+
+✅ **BUILT 2026-09-01, AS `Tests/PlayMode/RectParentage.cs` AND THREE CALL SITES.** It is one
+static method, `AssertEveryRectHasARectParent`, and it asks exactly the question above and
+nothing else: **every `RectTransform` below a canvas has a `RectTransform` parent.** It reports
+the offending node's full path, because "a rect has no rect parent" is not actionable and
+`QueueCard/Door under QueueCard` is a one-line fix.
+
+⚠️ **IT ASKS ABOUT RECTS, NOT ABOUT EVERY CHILD OF A CANVAS, AND THE NARROWING IS DELIBERATE.**
+A plain `Transform` under a canvas is legitimate on its own: a holder for a previewed model, a
+pooled effect, an audio source. What is never legitimate is a `RectTransform` hanging off one,
+because that is the object whose anchors resolve against a zero-sized point at the canvas centre.
+Asserting "every child of a canvas is a rect" would be the general layout probe this entry rules
+out, and it would fail on things that are fine.
+
+**The three call sites are the three surfaces the fault has actually shipped on**, each in the
+probe that already builds that screen rather than in a new one:
+`QueueCardLayoutProbe.TheQueueCardFitsItsBox...` (§ 114.13),
+`PlayerHubLayoutProbe.EveryTabFitsItsBox...` and `.TheSignInScreenFitsItsBox...`
+(`SignInScreen.BuildLogo`), and a new
+`PhaseSurfaceLayoutProbe.EveryRectOnTheBootSplashHasARectToResolveAgainst`
+(`SplashScreen.BuildSurface`). ⚠️ **The splash is driven by reflection on `BuildSurface` and
+`Run` is never called**, for the reason that file's XP case gives about `ShowProgression`: `Run`
+preloads every asset in the project, starts a video, signs the account in and then loads the next
+scene, so calling it would end the suite rather than measure a screen.
+
+### 114.16 Phase 10 made real: the counters, the twelve effects, one hero at a time, and the build on the wire ✅ 2026-09-01
+
+🧑, redirecting mid-session: *"the new loadouts have to substantially be different from old
+abilities, dont watn them to read as useless or the exact same"*. **§ 114.15 row 3 asked for the
+counters; that sentence is what the rest of this entry is answering.** The previous system stored
+a selection, printed a percentage beside it, and changed nothing in a match.
+
+**The unlock is a local, Practice-safe cast counter, and it is deliberately NOT the reward
+ledger.** `AbilityChallengeProgress` lives in `settings.json`, `HeroBuildRules.NoteSuccessfulCast`
+increments it, `GameSettings.NoteAbilityCast` saves only when the capped counter actually moves,
+and `HeroAbilitySystem.PlayCastConfirm` calls it **only on the local owner** — the same
+method runs on observers through `ApplyNetworkCast`, so counting every presentation would award
+one step per connected peer. `HeroLoadoutRules.ChallengesEnforced` is `true`.
+⚠️⚠️ **THE FIRST DRAFT READ `BannerRules.Owns` AND THAT WOULD HAVE MADE THE PHASE'S CENTRAL
+PROMISE FALSE.** A reward is written by `match-record.js` off a submitted career; Phase 10
+promises every alternate is earnable in Practice against bots, where no record is ever submitted
+and the service may not be reachable at all. **Nothing would have logged it**: the challenge
+string would simply never tick. `RewardKind.AbilityVariant` is awarded by no track in the game
+either, so `HeroBuildRules.IsUnlocked(PlayerProfile, ...)` could only ever answer "locked" for all
+twelve. That overload and its `Equipped` sibling are **deleted** rather than left beside the real
+one, which is § 101.1's lesson: an overload that can only return the fallback is worse than none.
+
+**All twelve alternates now change the match**, wired through `AbilityContext.GainScale` and
+`CostScale`, plus `HeroAbilitySystem.VariantGain`/`VariantCost` for effect code that holds the
+system rather than a context (`Carrier` scales a throw, `Slipper` scales the crater).
+
+⚠️⚠️ **AND EVERY PRESENTATION NUMBER IS READ OFF THE TABLE RATHER THAN TYPED BESIDE IT.**
+`ApplyLoadoutToPresentation` hard-coded `1.25f` next to `dante.1.tremor` while the blast used
+`ctx.GainScale`, which is the same fraction from `HeroLoadout.cs`. They agreed on the day they
+were typed and nothing kept them agreeing: raising Arc Line from 30 to 45 per cent, which this
+session did, would have moved the shock and left the aiming ring at 30, **so the telegraph would
+have drawn a lie.** `docs/Design.md`'s opening rule as code: a number in one place, or it is two
+numbers. Same fix in `Carrier`, where Snap Discharge's throw was written `2.4f` (`1.6 x 1.5`).
+
+**Two rows were rewritten because they read as useless**, which is the acceptance bar 🧑 named:
+
+- **Arc Line, 30 → 45 per cent, and the gain now reaches two numbers.** At 30 it bought **0.075 s
+  of extra stagger on a 0.25 s stumble, which is four frames**: the one alternate in the twelve a
+  player could not feel. It scales the stagger AND divides the 1.1 s re-shock interval, so the
+  lane shocks harder and sooner. ⚠️ Its cost is the one that matters most to the room: `VISION.md`
+  § 2 measures Zack's corridor at **27.2 per cent of the box off a 6.0 s cooldown**, more floor
+  than any ultimate, and a 45 per cent width cut takes one dash's lane to about 8 per cent.
+- **Slow Brand** scales the drag, the stagger and the re-bite rate rather than the stagger alone,
+  for the same arithmetic: 40 per cent of 0.35 s is a tenth of a second.
+- **Short Leash promised a parameter that does not exist.** It read "+30% reach", and Kuro flies
+  free while possessed: the ability ends on its own duration (`GhostPetCompanion`), there is no
+  leash radius. It is flight speed at 40 per cent now, which is the difference between arriving
+  while somebody is still bent over their tsinelas and arriving after.
+- ⚠️ **Long Tremor stays at 25 per cent and the row now says not to raise it.** Its gain is a
+  RADIUS, so it is already the largest change in the table by what the player sees (2.2 m to
+  2.75 m is 56 per cent more floor), and it is the only row that GROWS a footprint against
+  `VISION.md` § 2 rule 1's 1.8 to 2.5 m. A bigger number there is bought out of the readability
+  budget the whole mode is balanced against.
+
+**One hero at a time on CAREER.** Six heroes times two slots is twelve steppers on one screen,
+which is § 92's *"theres liek 20 shits at once"* rebuilt. There is a hero stepper, then that
+hero's two skills, each carrying **the ability's own bespoke glyph** (`AbilityIcons.For`) inside
+the existing 336-unit control rather than beside it: `UiRows.Cap` is 368 units at 4:3 and § 108 is
+the receipt for what a wider control costs. A locked row reads `LOCKED · <name>` with the
+challenge and an `n / target` counter, and pressing it plays `MenuSfx.Error` and writes nothing.
+
+**The build crosses the wire and is public, which is `FUTURE.md` PHASE 10's own bullet.**
+`LobbySeatInfo.Build` carries a `B1` frame beside `Look` and `Custom`; the host re-encodes what it
+decodes (`HeroBuildRules.NormaliseForWire`), so another hero's option, the wrong slot and an
+unknown id are all refused by the receiver rather than trusted. It is drawn on the lobby identity
+strip and the result board **without adding another plate**, which is § 92 again.
+⚠️⚠️ **`NetSession.ProtocolVersion` IS 20 AND BOTH MACHINES MUST REBUILD OFF THE SAME COMMIT.**
+The per-seat field inside `SyncLobbyPicks`' loop cannot be made tolerant, and a peer that misread
+it would bind every remote body to the DEFAULT build and then simulate hazards at sizes the host
+never spawned: **the two machines would disagree about where the floor is dangerous**, which is
+worse than a cosmetic misread. `ChatAndLobbyChromeTests.TheProtocolCarriesEveryRosterBump` is the
+gate.
+
+**Achievements now pay out and say so.** `BannerRules.Earned` includes achievement rewards,
+newly crossed ones are appended to `XpAward.Unlocked`, and the result board already prints those
+lines. ⚠️⚠️ **AND FIVE OF THE FIFTEEN HAD NO `ProgressFor` CASE AT ALL**, so they read 0 of 25 on
+a career that had done it two hundred times: `ProgressFor` ends in `default: return 0`, which is
+not a compiler error, not a log line and not a blank tile. `ach.salisi_master`, `ach.hero_squad`,
+`ach.walang_mintis`, `ach.dalubhasa_hero` and `ach.tulong_tropa` were all in that state.
+`Phase10Tests.AProfileThatHasDoneEverythingUnlocksEveryAchievementInTheCatalog` maxes every input
+and demands the whole shelf, because a missing case and an unearned achievement both answer 0 and
+the function cannot be asked which one it meant.
+⚠️ **`ach.tulong_tropa` also had a requirement nothing could ever satisfy**: "add your first
+friend", on a shelf derived purely from `PlayerProfile`, which does not carry the friend list and
+must not (§ 98.1b: `AdoptRemoteProfile` strips any field the deployed script does not know). It is
+"Isa sa Tropa", two different characters finished, and the NAME moved with the requirement.
+
+✅ **§ 114.15 ROW 5 IS DECIDED: THE MASTERY PALETTES BECOME TITLES.** Level 5 and 15 pay
+`title.specialist` and `title.veteran` rather than `palette.alt1` and `.alt2`, because § 114.6
+deleted the only control that could equip a palette. The transport is untouched and stays for an
+authored skin or MAKE YOUR OWN: `CosmeticsWireTests` asserts both halves now, that **no track
+pays a palette** and that an unowned one still authorises to the default.
+
+⚠️⚠️ **AND FRIENDS BY NAME#TAG IS AN INDEX THAT IS A ROUTE AND NEVER THE AUTHORITY.**
+`ugs/cloud-code/player-account.js` keeps sharded `handle-index-XX` custom documents keyed by an
+FNV-1a hash of the normalised handle, and `resolve` **re-reads the target's own protected profile
+and requires the exact current handle** before answering. Two writes cannot be made atomic here: a
+rename writes the new row and then deletes the old one, and a crash between them leaves a row
+pointing at somebody who no longer answers to that handle. Returning that id would send a friend
+request **to the wrong account**, which is worse than the feature not existing.
+⚠️⚠️ **THE WRITE HALF IS BEST-EFFORT AND THAT IS § 94.1'S LESSON, NOT TIMIDITY.** The index is
+maintained inside `tryIndex`, so a missing service token can never throw out of a `save`: a save
+that throws is a career document that never lands, and `CareerStore.FlushAsync` wedges its whole
+queue behind the first refusal. **A lost index row costs one failed search until the next save;
+a lost save costs the account.**
+
+---
+
+## 113 · The clothes were not clothes, the screen was see-through, and the door was a chip ⚠️⚠️ 2026-09-01
+
+🧑, opening the build, in one stretch: *"make proper ui for this shit"*, *"also currently the
+clothes they wear are ugly and dont look like clothes so make that better"*, *"look this ugly ass
+ui its overwhelming"*, *"and how do u even get to this"*, *"why can i see the main menu"*, *"give
+it a solid brown background too or creme coz this looks ugly"*, *"make sure ui is intuitive and id
+like it if i can get to make ur own from when i click play"*, *"give many ooptions"*, and *"dont
+stop until the model builder works"*.
+
+**Five separate faults, and only one of them is a matter of taste.** Every one of the other four
+is a measurement that disagrees with what shipped.
+
+| The complaint | What was actually wrong | Where |
+|---|---|---|
+| *"dont look like clothes"* | **Every bottom in the game was a plank at crotch height over two bare legs**, because a bottom was authored on the TORSO frame and one unit of that frame's `V` is 168 mm against a 176 mm leg | § 113.1 |
+| the same | **Every sleeve was a box on the chest that happened to reach the arm in bind pose**, and stayed on the chest the moment the arm moved | § 113.2 |
+| *"why can i see the main menu"* | The scrim was **0.94 and 0.94 is not opaque**, over a lit street with saturated menu signage in it | § 113.3 |
+| *"its overwhelming"* | Three greens, two tab bars, a duplicated section heading and a three-sentence footer, on one screen | § 113.4 |
+| *"how do u even get to this"* | The only door was a **200-unit chip on the end of a colour-strength strip** | § 113.5 |
+
+### 113.1 · ⚠️⚠️ EVERY PAIR OF SHORTS IN THIS GAME WAS A BAND AT THE HIP, AND THE CONTACT SHEET HAD SAID SO FOR A DAY
+
+`Logs/ui/wardrobe-bottoms-*_v2.png` is twelve cells and twelve near-identical blue slabs sticking
+out in front of a belly, over a pair of completely bare legs. **The sheet was green, the entries
+were all distinct in the source, and nobody read the picture.** `CLAUDE.md` § 6.1: *show, do not
+describe* is only half of it; the other half is looking at what came back.
+
+**The cause is the frame, not the numbers.** `VoxelDresser.MeasureAnchor`'s torso case runs from
+the `torso` bone, y 0.1745, to the `head` bone, y 0.3432, so:
+
+- **one unit of torso `V` is 168 mm and the whole leg is 176 mm.** § 110's own remark records the
+  arithmetic and then draws the wrong conclusion from it: it says *"mid-thigh is -0.20, the knee is
+  -0.36"*, and `V` -0.20 is **34 mm below the hip**, which is the top of the thigh on a rig whose
+  legs are 24 per cent of its height.
+- **the deepest hem anybody dared author was `Track pants` at -0.92**, because the entry above that
+  had gone through the street. So the LONGEST trousers in the wardrobe stopped at the ankle by
+  accident of the frame and every other garment stopped at the hip.
+- **and it could not be fixed by making the boxes longer.** A box parented to the torso bone does
+  not move when a leg does. Correct trousers on that frame are trousers that stand still while the
+  character runs.
+
+⚠️⚠️ **SO A BOTTOM IS TWO PIECES NOW: A WAISTBAND ON THE TORSO AND A LEG ON EACH LEG BONE.**
+`VoxelWardrobe.BottomLegs` is the new table, parallel to `Bottoms`, dressed once per leg exactly as
+`Footwear` already was. The leg frame is the one the shoes have used since § 112 and it is the
+right shape for this: **`V` 0 is the floor and `V` 1 is the hip**, so a hem is a fraction of the leg
+the player can actually see, and it stays mid-thigh at 85 per cent height and at 115.
+
+⚠️ **THE HEMS ARE NOW NAMEABLE**: mid-thigh 0.52, knee 0.36, calf 0.20, ankle 0.06. Sixteen bottoms
+spread across that range instead of twelve bunched inside 34 mm of hip.
+
+⚠️⚠️ **AND THE WAISTBANDS LOST THEIR FORWARD LEDGE.** `W` went up to **1.36** on the old entries,
+which is what put a light-blue plank out in front of the stomach in all twelve renders; nothing is
+past 1.16 now and the accents sit on the seat and the sides rather than on the front plane.
+
+⚠️ **A LEG GARMENT MUST BE SYMMETRIC IN `U`**, and there is a test for it now.
+`MeasureAnchor` centres a leg on its own bone with a positive x extent, so `U +1` is the outside of
+the left leg and the **inside** of the right one: an asymmetric leg comes out mirrored on one side
+and a cargo pocket appears between the knees.
+`CustomCharacterWardrobeTests.EveryLegGarmentIsSymmetricAcrossTheLeg` fails on it.
+
+### 113.2 · ⚠️⚠️ AND EVERY SLEEVE WAS WELDED TO THE CHEST, WHICH IS WHY BIND POSE LOOKED FINE
+
+`VoxelWardrobe.Tops` authored its sleeves as torso boxes at `U` 1.60 to 2.80. **The arms of this rig
+point sideways** (`arm-left` runs x 0.0999 to 0.3836 at a near-constant height), so in bind pose a
+box that wide lands exactly on the arm and every render ever taken of it was correct. It is only
+wrong while the game is being played, which is the one place no probe in this repository looks.
+
+⚠️⚠️ **THE FIX IS A SECOND FRAME ON THE SAME BONE, NOT A CHANGE TO THE EXISTING ONE.**
+`VoxelAnchor.ArmLeft` is the **wrist**: it centres on `shoulder + reach * 0.80` with `reach * 0.20`
+of half width, which is the outer fifth of the limb and exactly what a band wraps. Re-pointing it at
+the whole arm would silently rescale all six `Wristwear` entries, and § 112.10 is the entry about
+those six being wrong in two axes at once with every test green. **A new frame cannot break an old
+one.** `VoxelAnchor.SleeveLeft` and `SleeveRight` span shoulder joint to fingertip.
+
+⚠️⚠️ **`U -1` IS THE SHOULDER ON BOTH ARMS, AND THAT COSTS A SIGNED EXTENT.** The arm bones sit at
+mirrored x, so a frame with a positive extent makes `U +1` the hand on the left and the shoulder on
+the right: one authored sleeve would come out back to front on one side. `MeasureAnchor` returns a
+signed `extents.x` for the sleeve frames, and the placement loop now takes `Mathf.Abs` when it sizes
+the box. ⚠️ **The sign must not reach the scale.** A cube at negative scale is inside out: its
+normals point in, and `ToonSkin`'s inverted-hull outline inverts with it and floods the sleeve with
+ink. That is the same failure `CustomCharacterWardrobeTests.NoBoxIsInsideOut` exists for, arriving
+from the frame instead of from the authoring.
+
+⚠️ **EVERY SLEEVE KEEPS THE LENGTH IT SHIPPED WITH.** The torso frame is 0.1279 of half width and
+the arm runs 0.0999 to 0.3836, so torso `U` 1.72 is sleeve `U` -0.15 and torso `U` 2.80 is +0.82.
+The lengths are converted, not re-chosen; what changed is the bone.
+
+### 113.3 · ⚠️⚠️ 0.94 IS NOT OPAQUE, AND THE ARITHMETIC SAYS IT SHOULD HAVE BEEN
+
+`CustomCharacterScreen` drew `Color(0.03, 0.02, 0.01, 0.94)` over character select. Six per cent of
+a lit street is supposed to be nothing. Measured off `Logs/ui/20-creator-face-laptop_v1.png`, the
+brick behind the heading reads **(58, 52, 48)** where the arithmetic promises about (16, 13, 12),
+because the surface under it is not mid grey: it is a facade in direct light, with the TUMP wordmark
+a metre high on it and the menu's PLAY, SETTINGS, TUTORIAL and QUIT signs in saturated green and
+amber beside it. **Six per cent of a saturated plate is still a legible plate**, and 🧑 read all
+four words through the form.
+
+⚠️⚠️ **AND THE ANSWER IS NOT 0.99, IT IS TO ASK WHAT THE SCRIM IS FOR.** `CLAUDE.md` § 6.2c
+question 3: *a scrim buys legibility over a live 3D scene, or separation from one; ask what it
+protects before retuning it.* The one thing on this screen is a character you are dressing. A street
+behind him is a second character competing for the same eye and there is nothing for a scrim to
+protect, **so this is a surface rather than a scrim**: `UiTheme.WoodDeep`, alpha 1.0. 🧑 asked for
+exactly that: *"give it a solid brown background too or creme"*.
+
+⚠️ **IT IS ALSO THE BLOCKER** (§ 6.2c question 4). Everything a player can act on is inside this
+screen while it is up, and the opaque `Image` is what stops a press reaching the loadout screen
+underneath.
+
+⚠️ **THE MODEL SITS ON A CARD NOW.** The backdrop is what removed the street; the card is what stops
+the figure reading as a cut-out standing in front of a menu. It is a shade DARKER than the field,
+not lighter: the character is a bright voxel figure wearing an 8 mm ink outline, and a cream card
+would put the loudest surface on the screen behind the thing it exists to show.
+
+### 113.4 · ⚠️⚠️ THREE GREENS ON ONE SCREEN, AND `GodotTheme` HAD ALREADY WRITTEN DOWN WHY THAT IS WRONG
+
+The live slot tab, the live section tab and KEEP AND USE were all `WoodPrimaryButton`, which is
+`UiTheme.MenuGreen`. `GodotTheme.ForButton`'s own comment, added when the same mistake was made on
+the lobby: *"AMBER IS THE SELECTED-TAB COLOUR AND IT IS NOT A SECOND 'GO' BUTTON... painting it
+green put two 'press me' buttons on one screen with the more important one further from the hand."*
+**Green is the ACT colour and exactly one control on this screen acts.** Both tab bars are
+`WoodAmberButton` now.
+
+What else came off, each against `CLAUDE.md` § 6.2's third question, *what is on screen that the
+player does not need right now*:
+
+- ⚠️⚠️ **THE SECTION HEADING WAS THE TAB SAID TWICE.** `UiRows.Section` draws its title as an amber
+  heading, and the tab that opened it is lit amber forty units above. The screen said **FACE**
+  twice and spent 96 units of list on the second one. The blurb is one line of chrome under the tab
+  bar now. ⚠️ It also removes a width trap: `Section`'s stacked subtitle is laid at a fixed
+  `SidePadding + 420` in an 840-unit box, which needs a list about 1300 units wide, and this
+  screen's column is 1000.
+- **THE NAME FIELD MOVED INTO THE HEADER.** A name is not a facial feature, and it was the first row
+  of the `FACE` section: a player looking for it under any other tab could not find it, because
+  switching tabs rebuilt the list and the field went with it. It was also the only row carrying a
+  `hint`, which is what forced the whole column to stay wide enough for `UiRows.Row`'s 800-unit hint
+  box. ⚠️ `UiRows.Field` is `FieldRow`'s widget extracted rather than a second `InputField` built by
+  hand, which is § 94.1's four copies of one lookup.
+- **THE FOOTER WAS THREE SENTENCES** and two of them described buttons eighty units to their right
+  saying the same thing in bigger type. It is *"Drag to turn, wheel to zoom."* now, under the model,
+  because that is the only part of it that was not already written on a button.
+- **SURPRISE ME AND PRESETS LEFT THE ACTION ROW.** Four same-sized buttons along one edge is four
+  equal choices, and two of them were BACK, which discards, and KEEP AND USE, which is the only
+  reason the screen exists (`FUTURE.md` § 0.5b question 4). These two act on the character, so they
+  sit under the character.
+
+⚠️⚠️ **AND THE COLUMN IS A FIXED 1000 UNITS ANCHORED TO THE RIGHT EDGE, NOT A FRACTION.**
+`AspectSafeCanvas` is `Expand`, so the canvas is **never narrower than 1920 units**: at 4:3 it is
+1920 by 1440 and gets taller rather than thinner. A fixed width therefore cannot be squeezed off a
+narrow screen, and 🧑 plays in a short WIDE window where a fraction is 1300 units of nothing.
+**1000 is arithmetic**: `UiRows.Row` puts its label in a 420-unit box starting at `SidePadding` 24,
+so the label ends at 444, and `UiRows.ValueColumn` 0.56 of 1000 is 560, which is 116 units after it.
+The tab bar used to run on two different fractions from the rows it switched.
+
+⚠️ **THE MODEL CARD TAKES THE SLACK AND THE COLUMN DOES NOT**, which is why the card is anchored to
+both edges. Two fixed columns would put 640 units of empty brown down the middle of an ultrawide.
+§ 6.2c question 1 says size a panel against its content: the column's content is a row, the card's
+content is a character, and a character is happy to be bigger.
+
+### 113.5 · ⚠️⚠️ THE DOOR WAS A CHIP ON THE END OF A COLOUR-STRENGTH STRIP, WHICH IS § 96 A SECOND TIME
+
+*"and how do u even get to this"*, asked about a screen he had already opened. The only door to the
+character maker was a 200-unit `MAKE YOUR OWN · <NAME>` button appended to the `STRENGTH` row of the
+loadout panel, after `SOFT`, `AS DRAWN` and `BOLD`. **That is the one visual slot on the screen that
+says "another option for the control to my left."**
+
+**§ 96 is the same fault with different furniture**: the player hub had exactly one door, a corner
+chip stating a name and a level, and the person who commissioned the hub never found it. Both were
+placed where there happened to be room rather than where the player is looking.
+
+⚠️⚠️ **IT IS THE FOURTH CELL OF THE TAB BAR NOW, AND IT IS THE SAME DOOR MOVED RATHER THAN A
+SECOND ONE.** `CLAUDE.md` § 6.3: *"NEVER ADD A SECOND DOOR TO FIX A FINDABILITY PROBLEM. Fix the
+door or move it."* `RefreshCustomDoor` is deleted in the same commit.
+
+⚠️⚠️ **THE BAR IS WHERE IT GOES BECAUSE IT COSTS NO VERTICAL BUDGET, AND THAT CONSTRAINT IS REAL.**
+The previous note recorded why a third strip row was refused and it was right:
+`HeroPickerLayoutProbe` dumps `Rows h=460 pref=644`, so the vertical group is already compressing
+every child, and a new row reopens the 27 px dead band above the ability rows that § 94 records
+being "fixed" three times without moving. **A `HorizontalLayoutGroup` that already exists costs
+width the row has and no height at all.**
+
+⚠️ **AND THE MOVE MEASURABLY RELIEVED THE COLUMN RATHER THAN ADDING TO IT.** The probe's dump read
+`Rows h=460 pref=644` with the chip on the strength row and reads **`Rows h=460 pref=582`** without
+it: 62 units of over-subscription gone. The dead band itself is **unchanged at 27 px**, which is
+what § 111.4 measured on a reverted `78d9aebb` base, so it is still the same pre-existing red and
+still not this work.
+
+⚠️ **AMBER, NOT GREEN.** The chip was `WoodPrimaryButton` sitting forty units above a
+`WoodPrimaryButton` CHOOSE. ⚠️ **And 1.7 of flexible width, not 1.0**: `MAKE YOUR OWN` is thirteen
+characters against `LATA`'s four, and `childForceExpandWidth` gives both the same cell, so
+`MenuKit.Fit` would grind the long one toward the 18-unit floor while LATA sat in a box three times
+the size of its word.
+
+**The journey, named out loud, which is what § 6.3 asks for:** PLAY, which lands on the lobby; the
+character card, which is the biggest thing on it and already says who you are; MAKE YOUR OWN, at the
+top of the screen that opens. **Three presses, no control that has to be discovered rather than
+read.**
+
+### 113.6 · More to choose from, because that was asked for too
+
+*"give many ooptions"*. Four tops and four bottoms appended, so the wardrobe is **144 entries**
+across ten categories rather than 136.
+
+- **Tops:** Basketball warm-up, Kamiseta, Bomber jacket, Crop hoodie.
+- **Bottoms:** Jogger pants, Denim overalls, School slacks, Tapered joggers.
+
+⚠️ **APPENDED, NEVER INSERTED**, and the names go in `CustomCharacterRules` in the same edit.
+`TopClothingIndex` and `BottomClothingIndex` cross the wire and are written into every saved slot: a
+row added in the middle re-dresses everybody's character, and a name added to one of the two lists
+and not the other is what `CustomCharacterWardrobeTests.AssertSameList` fails on.
+
+⚠️⚠️ **AND THE HEMS ARE THE REASON SIXTEEN TOPS ARE NOW SIXTEEN TOPS.** The old bodies all started
+at `V` 0.00, so the contact sheet is a row of identical red rectangles differing only in a detail
+too small to see. `V` 0 is the hip, so a hem below it reads as worn over the waistband and above it
+as cropped; the spread is deliberate and it is the second read after the sleeve.
+
+### 113.7 · ⚠️⚠️ A TOP WITH NO SLEEVE ROW RENDERS PERFECTLY, WHICH IS WHY THE SPLIT NEEDED A TEST
+
+Splitting a garment across two tables has a silent failure mode: append a top to `Tops`, forget
+`TopSleeves`, and the shirt draws, the layout is fine, every probe is green, and the character walks
+into a match in a long-sleeved hoodie with two bare arms. Worse, an entry appended to one table and
+**inserted** into the other pairs every garment after it with the wrong sleeve, and both indices
+cross the wire.
+
+`CustomCharacterWardrobeTests.EveryTopHasASleeveAndEveryBottomHasALeg` compares the two tables by
+NAME rather than by count, for the reason `AssertSameList` already gives: a count check passes
+through a rename, and the rename is the worse half of the bug.
+
+⚠️ **THE TWO LIMB TABLES ARE IN `EverySlotIsInsideThePalette` AND `NoBoxIsInsideOut` BUT NOT IN
+`OnlyNoneIsAllowedToBeEmpty`.** A slot and a winding are wrong wherever they appear; an EMPTY sleeve
+is the correct geometry for a sando.
+
+### 113.9 · Verified
+
+- `dotnet test Core.Tests` **407/407**.
+- EditMode **283/283**, which is 281 plus this entry's two:
+  `EveryTopHasASleeveAndEveryBottomHasALeg` and `EveryLegGarmentIsSymmetricAcrossTheLeg`.
+- **Full PlayMode, `-testCategory "!WallClock"`: 134 cases, 132 passed.** ⚠️ **Both reds are the
+  two this branch already carried and both were re-measured rather than assumed:**
+  - `CarryTests.AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor` at **0.0838 m** against
+    the 0.050 m bound. § 93 recorded 0.084 and § 112.13 recorded 0.092. **Three samples now and all
+    three are outside the bound**, which continues to argue against a flake. Nothing here touches
+    `Carrier`, the animator or `LateUpdate`. **Do not widen the bound.**
+  - `HeroPickerLayoutProbe.TheHeroPickerHasNoDeadBandAboveTheAbilityRows` at **27 px**, which is
+    byte for byte the number § 111.4 measured on a reverted `78d9aebb` base. ⚠️ **This is the probe
+    for the screen this entry changed, so identical was the thing to check for**, and the dump also
+    shows `Rows pref` DOWN from 644 to 582 because the door chip left the strength row.
+- `WardrobeSheetProbe` green, **150 renders** in `Logs/ui/wardrobe-*_v3.png` across ten categories,
+  up from 142 at `_v2`. ⚠️ **`_v3`, because `_v2` is on disk and in the scrollback** and it is the
+  BEFORE for this entry: `CLAUDE.md` § 6.1.
+- `CustomCharacterScreenProbe` green: six sections at nine resolutions, plus eight pictures at
+  `20-creator-face-*_v2` and `21-creator-clothes-*_v2`.
+- `UiClickProbe` green, which is what says the new opaque backdrop and the new tab are not covering
+  anything.
+- `Checks.RunAll`: **all five OK in one launch.** ⚠️ `MapGeometryCheck` prints FAIL lines for
+  Eskinita dressing props and still reports OK: those are ungated maps and that is its normal
+  output, not a regression from this work.
+- `node tools/check_digest_contract.js` green, `7b135cbb69492fa5`.
+- The three `tools/` audits: **44 ability sites, 0 ungated on another body; 53 wire entry points,
+  0 unreachable; 55 named messages, 0 mismatched.**
+- ⚠️ **`git status` was checked for collateral.** Ten source files and `docs/TODO.md`, and nothing
+  else. **No `.glb`, no `.tres`, no `.asset` and no scene is in the diff at all**, which is the
+  promise 🧑 asked for: *"dont toucht heh existing onnes, i will be very mad if u break or fuck up
+  any of the existing ones"*.
+- ⚠️⚠️ **AND THE FIRST BUILD DID NOT RUN, WITH EXIT CODE 1 AND A 21-LINE LOG.** That is
+  `CLAUDE.md` § 7's lock signature exactly, and § 112.13 records the same thing after
+  `Checks.RunAll`: **a batchmode `-runTests` launch stays alive holding `Temp/UnityLockfile` after
+  it has already written its `.xml` and reported green.** The one command that settles it is the
+  one § 112.13 names, and it named the culprit in a line:
+  `Get-CimInstance Win32_Process -Filter "Name='Unity.exe'"` printed the previous PlayMode filter
+  run's own command line, twenty minutes after that run had been reported complete. Killing it and
+  its `AssetImportWorkerHW0` child, then deleting the lockfile, made the build run. **Check what is
+  holding the lock before believing the build is broken**, and check it whether or not the last run
+  said it finished.
+- ⚠️ **`NetSession.ProtocolVersion` is UNCHANGED at 19.** No wire field changed shape; two lists
+  grew, and a grown list is a wider range of an existing integer. § 113.8 records what a mixed pair
+  does with the four new indices.
+
+### 113.8 · STILL OPEN
+
+- ⚠️⚠️ **§ 102.5 AND § 104.7, THE TWO-ACCOUNT RUN, ARE UNCHANGED AND STILL NEED TWO MACHINES.**
+  Nothing here touches them. § 109.5 has the steps.
+- **The height and build dials are still not on the contact sheet.** § 112.14's last bullet stands:
+  they are the two controls that change the rig rather than adding to it, and a row shooting one
+  outfit at 85, 100 and 115 per cent would answer whether the wardrobe still fits at the ends of its
+  own range. **It matters more now than it did**, because a trouser leg is a fraction of a leg that
+  the build dial scales.
+- **`WardrobeSheetProbe` reframes per cell.** `ModelPreview.LookAt` aims at a fraction of the
+  subject's own bounds, so an afro moves the camera. It does not stop the sheet answering its
+  question; it makes two cells harder to compare than they should be.
+- ⚠️⚠️ **EVERY HAT AND EVERY CUT DRAWS ABOUT 1.35 TIMES THE WIDTH OF THE SKULL, AND THE CAUSE IS
+  THE EAR NUBS.** Measured off `Logs/ui/wardrobe-hats-*_v3.png`: the bare head in cell 0 is about
+  170 px across and the hat in cell 1 is about 230 px, on the same rig at the same framing.
+  `VoxelDresser.MeasureAnchor`'s head case uses `head-mesh`'s own bounds, x ±0.2268, and **those
+  bounds include the ears**, which stick out roughly 59 mm past the skull on each side. So the
+  skull is about x ±0.168, which is `U` ±0.74, and a hat body authored at `U` ±1.00 is 35 per cent
+  too wide. It reads as a box sitting on a head rather than a hat on a head, and it is why the
+  default preset's `Ice-drop towel` is the loudest thing in
+  `Logs/ui/20-creator-face-laptop_v2.png`.
+  ⚠️⚠️ **THE FRAME ITSELF IS NOT THE BUG AND MUST NOT BE NARROWED.** § 112.3's face table is
+  measured against exactly this frame and lands correctly: the eyes are `U` 0.19 to 0.44, which is
+  x 0.0439 to 0.1003, which is where the donor's own face art is. **Narrowing the head frame moves
+  every eye, brow, mouth and mark inward with it**, which is § 110.9's three shipped-wrong passes
+  arriving again. The correction belongs on the `Headwear` and `Hairstyles` tables, as one named
+  constant with this measurement beside it, applied through `Scalp`, `Loaf` and `Band` so a future
+  entry cannot miss it.
+  ⚠️ **AND IT IS WIDTH ONLY.** `FaceW` 0.94 puts the face plane at z 0.1576 against a frame that
+  runs to 0.1676, so the depth is 6 per cent proud rather than 35, and scaling `W` would push every
+  brim back into the forehead.
+- ⚠️ **The four appended tops and four appended bottoms have never been worn in a MATCH**, only on
+  the contact sheet and in the creator. They cross the wire as indices 16 to 19 and 12 to 15, and
+  `NetSession.ProtocolVersion` is unchanged at **19** because no field changed shape: a peer on an
+  older build sends an index this build understands and receives one it clamps. That clamp is
+  `CustomCharacterRules.Normalise`, and it means an old peer draws a DIFFERENT garment rather than
+  no garment. **Two machines on this branch agree; a mixed pair does not**, which is the same
+  property every appended list in this project has and the reason they are appended.
+
+---
+
+## 112 · The base rig is naked now, and the custom character walks into a match ⚠️⚠️ 2026-08-31
+
+🧑, on the character maker: *"maybe generate a completely new voxel that will be customizable...
+like everything in it is movable and shit, dont toucht heh existing onnes, i will be very mad if u
+break or fuck up any of the existing ones"*, and *"using the simplest character taht we have as
+base and they will start out as naked"*. Then, asked how other games do it: *"idk what method games
+like monster hunter or shit does do get this working mayeb copy a version that works for us"*.
+
+**They all do the same three things, and this repo had two of them.**
+
+| The piece | Before | Now |
+|---|---|---|
+| a **naked base mesh** | ❌ `team-custom.glb` is a copy of a fully dressed hero | ✅ `team-custom-base.glb`: bald, bare, faceless |
+| **per-slot equipment geometry** | ✅ `VoxelWardrobe`, 87 entries, since § 110 | ✅ re-authored against the new rig |
+| a **colour remap** | ✅ the sixteen-slot palette, since the port | ✅ unchanged |
+
+### 112.1 · ⚠️⚠️ THE MISSING FIRST PIECE IS WHY EVERY WEARABLE HAD TO **COVER** RATHER THAN **BE**
+
+`VoxelWardrobe`'s own header stated the trade and § 110.3 argued for it: the base rig is one baked
+mesh with hair, a sando and shorts in it, so *"a box that fully encloses the region under it IS the
+replacement"*. That was the right call **given that rig**, and it cost three things that no amount
+of tuning could fix:
+
+- **every hairstyle was a lid.** `Scalp` was ONE box, the head's full width, from the hairline to
+  past the crown, because it had to enclose a baked mop. `Bald` was that same lid painted in skin.
+  🧑 asked for hair and what shipped was a hat.
+- **a sando was a box over another box.** The silhouette a player reads at arena distance was the
+  outer of two garments, and the inner one was still there.
+- **every expression needed a face plate.** The rig's eyes and mouth are painted into `head-mesh`'s
+  UVs at slot 8, so twelve expressions each laid a skin-coloured rectangle over them first.
+  ⚠️ **And it did not even cover them**: the plate started at `V` 0.32 of the old head box, which
+  is y 0.480, and the baked eyes start at y 0.4621. Nobody had measured it.
+
+**All three stop existing against a bare rig.** They are not three bugs, they were one decision.
+
+### 112.2 · The new rig, and the rig it came from
+
+`tools/build_base_voxel.py`. It **imports** `build_person_voxel.py` and points that module's
+globals at its own tables, rather than copying the pipeline: the retarget, the inverse bind
+matrices, the family remap, the chamfer, the normal smoothing, the glTF repack and all four
+build-time constraint checks are the shipped ones. A copy would drift, and the thing it would drift
+on is the animation retarget, which does not fail loudly — it tears the mesh apart on the first
+clip that plays.
+
+⚠️⚠️ **THE SIMPLEST RIG IN THE SET IS `character-male-d` AND IT IS ALREADY IN THAT FILE.**
+1239 verts, 711 triangles, five palette slots, and **it is the only one of the twelve that is
+bald**. `build_person_voxel.py` already lifts its skull as `DONOR_SKULL` and **throws slot 13
+away**, on the grounds that the pate *"is the HAIR volume worn in skin"* and keeping it leaves an
+authored mop nowhere to sit. **For a base rig that sentence is the requirement rather than the
+problem.** So this build keeps 15 AND 13, and drops slot 8, which is the painted-on eyes and mouth.
+
+The body is fourteen skin boxes: a foot, an ankle and a shin per leg, four for the torso, and an
+upper arm and a hand per arm. Nothing else.
+
+⚠️ **IT IS AUTHORED TO MEASURE THE SAME AS THE RIG IT REPLACES, TO WITHIN A FEW MILLIMETRES**,
+because `VoxelDresser.MeasureAnchor` derives every wearable frame from the live rig:
+
+| | `team-custom.glb` | `team-custom-base.glb` |
+|---|---|---|
+| `body-mesh` | x ±0.3836, y 0 to 0.366, z -0.104 to 0.134 | x ±0.3836, y 0 to 0.358, z -0.098 to 0.134 |
+| `torso` bone | \|x\| 0.128, y 0.1745 to 0.3499 | \|x\| 0.128, y 0.1745 to 0.3526 |
+| `arm-left` | x 0.0999 to 0.3836 | x 0.0999 to 0.3836 |
+| `head-mesh` | x ±0.26, y 0.340 to **0.778**, z ±0.26 | x ±0.2268, y 0.3432 to **0.7218**, z -0.1724 to 0.1676 |
+
+**So the torso, the arms and the legs kept their authoring and only the head was re-measured.**
+That is the whole reason tops, bottoms, neckwear, wristwear and footwear are untouched below.
+
+Height 0.7218, legs 24 per cent, torso 23, head 52, which is the family band `_family` puts every
+character on. It passes the height check unchanged: the cast spans 0.6613 to 0.7928.
+
+### 112.3 · ⚠️⚠️ THE HEAD FRAME MOVED AND EVERY `V` ON IT MOVED WITH IT
+
+This is § 110.9 happening for a fourth time and being answered the same way: **measure, do not
+estimate.** One command, two minutes:
+
+```
+python tools/glb_bone_bounds.py Assets/TumbangPreso/Art/characters/persons/team-custom-base.glb
+```
+
+The old head box ran to y 0.778 because it contained a mop that stood 60 mm above the skull. The
+new one stops at the crown of a bald head. **A `V` is a fraction of whatever is in the box**, so
+the same feature is at a different number:
+
+| | old | new | why |
+|---|---|---|---|
+| eye line | `V` 0.50 to 0.57 | **0.31 to 0.44** | measured off the donor's own eyes, y 0.4621 to 0.5113 |
+| mouth | 0.38 to 0.43 | **0.15 to 0.24** | the donor's mouth, y 0.4016 to 0.4349 |
+| hairline | 0.64 | **0.55** | above the brow, where the skull has narrowed to `U` 0.75 |
+| face plane | `W` 0.77 | **0.94** | the front of a bald skull, z 0.1576, with no fringe in front of it |
+| proud clearance | 18 mm | **10 mm** | twice what the ink outline needs and no more |
+
+⚠️⚠️ **AND THE FRAME IS ANISOTROPIC, WHICH NOTHING HAD NOTICED.** `U 1.0` is 0.2268 of model
+space and `W 1.0` is 0.170, so **the head box is a third deeper per unit than it is wide per unit**.
+From `V` 0.50 to 0.69 the skull's cross-section is a CIRCLE of radius 0.17, which reads as `U` 0.75
+and `W` 1.00 at the same time. A hair shell authored at U 0.84 and W 0.84 is therefore 20 mm proud
+at the ears and **24 mm inside the head at the forehead**: a fringe that vanishes and a nape that
+does not. `VoxelWardrobe.WPerU` is 1.334 and `Band` is the helper that applies it, so anything
+round on the head is authored in U once.
+
+### 112.4 · What changed in the wardrobe, and what deliberately did not
+
+| Table | Change |
+|---|---|
+| **Hairstyles** | rebuilt. `Scalp` is **four stacked bands following the skull's taper** instead of one box: the head is `U` 1.00 at eye level, 0.75 by `V` 0.50, 0.57 by 0.81 and 0.40 by 0.94, and a single box at the widest of those is a mortarboard. `spread` is the style control: 0.86 shaved, 0.94 buzz, 1.00 ordinary, 1.22 afro. |
+| **`Bald`** | **draws nothing at all.** It is the one entry in the project allowed to be empty under a name other than `None`, and `CustomCharacterWardrobeTests` names it explicitly rather than widening its rule. ⚠️ **If it ever has to grow geometry again, the base rig has stopped being bald and everything else in that file is wrong too.** |
+| **Expressions** | the face plate is **deleted**. There is nothing painted on the head to cover, so an expression draws straight onto skin. U and V re-measured. |
+| **Marks** | every hand-typed `V` remapped onto the new face band. A 0.36 was a cheek on the old head and is the bridge of the nose on this one. |
+| **Headwear** | re-tuned. On the old rig `V 1.0` was the top of a mop, so a cap band at 0.96 sat on hair; on the bald rig `V 1.0` IS the crown and the same number puts the band on top of the skull. |
+| **Eyewear** | lenses sized against the measured eye (`U` 0.19 to 0.44) instead of running to 0.58. Temple arms reach `U` ±1.02, which is the side of the head by measurement. |
+| **Tops, Bottoms, Neckwear, Wristwear, Footwear** | ⚠️ **UNCHANGED, AND THAT IS A RESULT RATHER THAN AN OMISSION.** The torso, arm and leg frames measure the same on both rigs (§ 112.2), so re-authoring them would have been churn with a rendering risk and no gain. |
+
+⚠️ **Every list is the same length and every name is in the same position**, so no saved character
+and no wire index means anything different. `CustomCharacterWardrobeTests` compares names, not
+counts, and would have failed on a rename.
+
+### 112.5 · ⚠️⚠️ NOTHING EXISTING WAS TOUCHED, AND THE LIST IS SHORT ENOUGH TO CHECK
+
+🧑: *"dont toucht heh existing onnes, i will be very mad if u break or fuck up any of the existing
+ones"*.
+
+- `team-custom.glb`, `person_team-custom.tres` and `person_custom.asset` are **byte for byte what
+  they were**. So is every other `team-*.glb` and every `character-*.glb`.
+- `RosterBookBuilder` gained a **row**, `custom_base`, beside the `custom` one. Repointing `custom`
+  would have changed what an existing asset resolves to; adding an id costs nothing.
+- `tools/build_person_voxel.py` is **not edited**. `build_base_voxel.py` imports it and assigns its
+  globals, the same way `build_custom_hero_voxel.py` already did.
+- `CustomCharacterRules.BaseRigId` is a second constant. `CustomCharacterId` still says `custom`
+  and still crosses the wire, because it is an identity and the other one is a mesh.
+
+### 112.6 · The custom character walks into a match ✅ CLOSES § 108.5 AND § 110.8
+
+`CustomCharacterStore.ActiveWire()` produced the string and nothing sent it. It travels now.
+
+- **`LobbySeatInfo.Custom`** carries the `C3` frame beside `Look`. ⚠️ **`custom` is still not a row
+  in `Roster.AllPeople` and must not become one**: that list's order is a network contract and
+  entries are appended, never inserted, so a nineteenth row meaning "custom" would change what
+  index 18 resolves to on every build that has not shipped yet.
+- **One field on `Identify`, one on `SelectLobbyPick`, one per seat on `SyncLobbyPicks`.**
+  ⚠️ `NetSession.ProtocolVersion` is **19**. Both machines rebuild off the same branch.
+- **The host normalises and re-encodes**, exactly as it does for the banner:
+  `MatchRpc.HostAuthoriseCosmetics` runs the frame through `CustomCharacterRules.Normalise`, so
+  every index is clamped into its own list and `HeroKitId` is resolved by `KitFor` before it reaches
+  anybody. **A modified client cannot send an out-of-range hat or a kit built out of three heroes.**
+  ⚠️ **A frame that does not start `C3:` is refused, not decoded.** `DecodeWire` answers a DEFAULT
+  character for a version it does not know, which is right when reading your own save file and
+  wrong here: it would seat a stranger for a peer playing a roster hero.
+- **`MatchInstaller.CustomFor(slot)`** asks the seat table first and falls back to the local store
+  **for the local seat only**. That file's own palette block already carries the rule: *guessing a
+  remote peer's choice from this machine's settings would dress a stranger in the local player's
+  character.* The fallback covers offline matches, which have no seat table at all.
+- **The kit is honoured.** `HeroAbilitySystem.BindHero` is given `KitFor(custom.HeroKitId)`, so a
+  custom character telegraphs exactly like the hero whose kit it carries (§ 110.5).
+- **The lata and the tsinelas are equipped**, from `CanIndex` and `SlipperIndex`, which were already
+  indices into the real `Roster.Cans` and `Roster.Slippers`.
+- **Height and build reach the match seat.** ⚠️ **Scale, re-align, then dress, and the order is not
+  interchangeable**: `ApplyModel` has already dropped the model onto the capsule floor against the
+  UNSCALED bounds, so a height scale applied after it leaves the feet in the air. `AlignToCapsuleFloor`
+  is public for exactly this. ⚠️ **The capsule and every reach number are untouched**
+  (`FUTURE.md` § 0.5 rule 4).
+
+### 112.7 · ⚠️⚠️ THE WARDROBE IS STILL SEALED OFF FROM THE ROSTER, AND THE TEST MOVED TO KEEP IT
+
+`CustomCharacterWardrobeTests.NothingButTheCustomCharacterScreenTouchesTheWardrobe` reads every
+`.cs` in the project as text and fails if anything outside a short allowlist names `VoxelDresser`
+or `VoxelWardrobe`. That is the promise that no wearable can ever land on Berto (§ 111.5), and
+`MatchInstaller` is not the creator screen.
+
+**The honest way to let a match seat be dressed without opening the wardrobe to the roster is a
+single owner that cannot be handed a roster hero.** `CustomCharacterOutfit` takes a
+`CustomCharacter` and a rig, and there is no overload that dresses anything else. The ten
+`VoxelDresser.Dress` calls, the palette build and the body scale were private methods of
+`CustomCharacterScreen`, so a match seat could only ever have had a **second implementation** of
+what a custom character looks like — which is exactly § 94.1's four hand-written copies of "which
+line in this record is mine", all agreeing on the wrong value.
+
+The test is `NothingButTheCustomCharactersOwnFilesTouchTheWardrobe` now and the allowlist gained
+one file. ⚠️ **`MatchInstaller` still does not name `VoxelDresser` and the test still fails if it
+ever does.** `WardrobeSheetProbe` also stopped reimplementing the palette ramp beside the screen's
+copy, so the contact sheet can no longer agree with a screen that is wrong.
+
+### 112.8 · ⚠️⚠️ AND THE WARDROBE HAD NEVER BEEN RENDERED ON THE CUSTOM RIG AT ALL. IT WAS ON BERTO.
+
+**Found by opening the first `_v2` render**, which came back as a Kenney boy with a black mop, a
+painted-on angry face and blue overalls. That is `bayan`, `character-male-f.glb`, roster entry 0.
+
+`RosterBook.FindPersonArt` searches `RosterBook.People` and nothing else.
+`RosterBookBuilder.BuildSingleEntry` wrote `person_custom.asset` **to disk** and never added it to
+that list, so **`FindPersonArt("custom")` has answered null since the first time anything called
+it.** Every caller has a "degrade to roster entry 0" fallback, correctly, and every one of them
+fired:
+
+| Caller | What it was actually drawing |
+|---|---|
+| `CustomCharacterScreen.ShowModel` | `bayan` |
+| `CustomCharacterScreenProbe` (2/2 green) | `bayan` |
+| `WardrobeSheetProbe`, all 87 cells | `bayan` |
+
+⚠️⚠️ **SO § 110.9'S FRAME TABLE IS A CORRECT MEASUREMENT OF A FILE THAT WAS NEVER ON SCREEN.**
+That entry records the head frame being *"guessed twice and both guesses shipped visibly wrong"*
+and closes with the right rule — read the `.glb`, group vertices by their heaviest `JOINTS_0`
+weight, print the extents per bone. **The measurement was of `team-custom.glb` and the render was
+of `character-male-f.glb`**, whose head box, hairline and face plane are all somewhere else. Three
+successive passes at those numbers each looked wrong in the picture and nobody could say why,
+because the two halves of the comparison were different characters.
+
+**This is `docs/TODO.md` § 101.1 one asset over**, and its sentence is the one to keep: a palette
+could never be equipped by anybody and the feature had already shipped, because *"both arms of
+`LoadoutRules.PaletteFor` returned the default, for every input there is"*. **A fallback that
+always fires is indistinguishable from a feature that works.**
+
+**The fix is three lines and a guard.**
+
+- `RosterBookBuilder` **appends** the off-roster entries to `book.People`. ⚠️ It cannot move an
+  index: `RosterBook.Resolve` asks `Roster` for the id at an index and then searches for THAT id,
+  which is this class's own opening rule — *"resolving by id rather than by position is what makes
+  that safe"*. A row past the eighteenth is reachable by name and by nothing else.
+- `BuildSingleEntry` **returns the asset** instead of a bool nobody read, so forgetting to file it
+  is hard rather than silent.
+- `RosterBook.IsOffRoster` names the two ids allowed to carry art without being roster rows, and
+  `ValidateList` checks against it. ⚠️ **The guard it exempts is not widened**: *"art cannot
+  introduce a roster entry; the list order is a network contract"* is still enforced for everything
+  else, and a third id cannot arrive by accident.
+- `CustomCharacterWardrobeTests.TheWardrobesOwnBaseRigIsReachableByName` is the red-not-puzzle
+  assertion. It checks the row, the model AND the palette, because an entry that resolves with a
+  null model draws nothing and `RosterBook.Validate` only checks that for ids that ARE roster rows.
+
+### 112.10 · ⚠️⚠️ `V` IS 0 TO 1 AND `MeasureAnchor`'S OWN COMMENT SAID IT WAS -1 TO 1
+
+**Third fault found by opening a picture, and the biggest of the three.** The first contact sheet
+of the bare rig shows both tsinelas lying flat on the street **a body length below the feet**.
+
+`VoxelPart`'s header has always been right: *"U is across, -1 at the left edge, +1 at the right.
+V is up, **0 at the bottom** of the measured box, 1 at the top."* The placement loop agrees with
+it. But `MeasureAnchor`'s leg case carried a ⚠️⚠️ note reading *"A LEG'S V = -1 IS THE FLOOR,
+BY CONSTRUCTION RATHER THAN BY A NUMBER"*, and **three whole tables were authored from that
+sentence instead of from the code**:
+
+| Table | Authored | What it actually asked for |
+|---|---|---|
+| **Footwear**, 6 entries | `V` -1.02 to -0.56 | a sole 170 mm **under the street**, which is 400 mm of world |
+| **Wristwear**, 6 entries | `V` -1.08 to 1.08 | a box 310 mm tall hung off the bottom of a 143 mm frame |
+| **Bottoms**, 8 entries | `V` -1.62 to 0.14 | a hem at y -0.095, below the floor, on a leg only 176 mm long |
+
+⚠️⚠️ **AND NONE OF THE THREE WAS VISIBLE TO ANY TEST.** `CustomCharacterWardrobeTests` was
+green through all of it: every name had boxes, every box was inside the palette, no box was inside
+out. **A box that exists is not a box in the right place**, which is § 110.9's own closing
+sentence arriving for the fourth time.
+
+⚠️ **THE WRIST ROW IS THE ONE THE CONTACT SHEET DOES NOT PHOTOGRAPH.** `WardrobeSheetProbe`
+shoots nine categories and wrist is not one of them, so six wearables had shipped with **nothing
+having ever looked at them**. That is the gap that let the wrist numbers be wrong for as long as
+the shoe numbers were, and it is the one thing in this section still open (§ 112.14).
+
+**What changed, and every number is measured rather than picked:**
+
+- the comment is corrected and says what it cost.
+- **Footwear** is re-authored against `V` 0 = floor, 1 = hip: a sole occupies `V` -0.01 to about
+  0.10 and a strap crosses the instep at 0.10 to 0.20. ⚠️ **The base rig's foot came down from
+  46 mm to 30 mm** to make room for that (`tools/build_base_voxel.py`): a sole cannot be authored
+  UNDER a foot whose bottom is already on the ground.
+- **Wristwear** wraps at `V` -0.04 to 1.04, and **the arm frame's depth is centred on the model
+  axis rather than on the bone**. `arm-left` sits at z -0.01725 while the arm's geometry is centred
+  on z 0.001, because the shoulder JOINT is behind the middle of the limb: measured against the
+  bone the arm ran `W` -0.67 to +1.24, so a band at ±1.0 was 60 mm short at the front. Against the
+  model axis it runs -0.94 to +0.97.
+- **The arm frame is 0.40 of the mesh half height, not 0.20.** The arm measures 140 mm thick and
+  the old factor gave it a frame 72 mm deep, so a band that wrapped in the numbers was buried in
+  the middle of a solid box.
+- **Bottoms** get real hems. One unit of `V` on the torso frame is 167 mm and **the whole leg is
+  176 mm**, so mid-thigh is -0.20, the knee is -0.36, the calf is -0.62 and the ankle is -0.92.
+- **Bottoms are `U` 1.20 rather than 1.06.** A garment is sized against the TORSO frame while the
+  thigh belongs to the LEG bone; at 1.06 every pair of shorts left a bare notch down the outside of
+  the leg. The base rig's shin came in to x 0.144 in the same pass, so the two now overlap by the
+  8 mm the ink outline needs.
+
+### 112.11 · More to choose from, because the ask was expansiveness
+
+🧑: *"pls create more clothes and thinngs u can customize tho in caharacter select, like eyes,
+mouth , hats, accessories etc"*, and earlier, *"IF ur character maker isnt expansive enough like
+stardew valley or monster hunter world then keep going"*.
+
+| Slot | Was | Now | Added |
+|---|---|---|---|
+| Expression | 12 | **18** | Grumpy, Beaming, Nervous, Deadpan, Hyped, Sly |
+| Face marks | 10 | **14** | Nose plaster, Brow scar, Tribal stripes, Dirt smudge |
+| Hairstyle | 12 | **18** | Undercut, Side part, Braids, Bowl cut, Ponytail, Dreadlocks |
+| Top | 10 | **16** | Basketball tank, Denim jacket, Sweater vest, Camisa chino, Windbreaker, Ilalim hoodie |
+| Bottom | 8 | **12** | Basketball shorts, Chinos, Cutoffs, Malong wrap |
+| Headwear | 12 | **18** | Straw hat, Beret, Cowboy hat, Party hat, Flat cap, Bike helmet |
+| Eyewear | 9 | **14** | Reading glasses, Eye black, Half-rim, Swim goggles, Welding shades |
+| Neck | 8 | **12** | Winter scarf, Coach whistle, Camera strap, Puka shells |
+| Wrist | 6 | **10** | Bangles, Taped wrist, Fitness band, Friendship threads |
+| Footwear | 6 | **10** | Basketball highs, Trekking sandals, Rain boots, School shoes |
+
+**87 entries became 136**, and the combination count before wrists, neck, footwear, height and
+build is now over **250 billion**. ⚠️ Every one is geometry;
+`CustomCharacterWardrobeTests` still fails on a name with no boxes behind it.
+
+⚠️⚠️ **EVERY ADDITION IS APPENDED AND NONE IS INSERTED, AND THAT IS NOT A STYLE CHOICE.** Each
+index is written into `GameSettings.CustomCharacterWires` and crosses the wire inside a `C3` frame.
+A row added in the middle silently re-dresses every character anybody has already made and makes
+two peers draw different people from the same number, which is exactly what § 110.6 refuses `C2`
+frames for. The lists are duplicated in `CustomCharacterRules` on purpose and
+`CustomCharacterWardrobeTests` compares them **by name and position**, so a mismatch is red rather
+than quiet.
+
+### 112.12 · ⚠️⚠️ AND THE SPECKLE WAS NEVER Z-FIGHTING. EVERY WEARABLE WAS SAMPLING THE WHOLE PALETTE ATLAS.
+
+**Two passes of geometry separation were spent chasing this before anybody asked where the blue
+was coming from.** A beanie whose only three allowed tones are wood, amber and cream came back
+striped **red, white and blue**, and a hat cannot z-fight into a colour that is not in it.
+
+`Toon.shader` picks a Person's colour from **which 32x32 cell of the 512x512 atlas a vertex
+lands in**. That is the whole palette mechanism, and `tools/build_person_voxel.py`'s `cell_uv` is
+its authoring half: a box declares a slot by putting its UVs at the centre of that slot's cell.
+**`GameObject.CreatePrimitive(PrimitiveType.Cube)` arrives with UVs spanning 0 to 1 across every
+face**, so every wardrobe box sampled all 256 cells and the shader handed back a different palette
+slot per texel. On a large flat garment one cell dominates and it reads as a solid colour with
+"z-fighting" round the edges; on anything small it reads as confetti.
+
+⚠️ **`VoxelDresser.PinToPaletteCell` is the fix and it is six lines.** It copies the mesh, writes
+`cell_uv`'s coordinate into every UV, and assigns it. ⚠️ **The mesh is COPIED**: `CreatePrimitive`
+hands out Unity's shared built-in cube, so writing UVs onto it would repaint every primitive cube
+in the process, including the fallback capsule `MatchInstaller` builds when a model is missing.
+
+**This is `docs/TODO.md` § 87's rule arriving again**, and its sentence is the one to keep: *when a
+surface reads as one flat colour across skins that share no material, ask which renderer carries a
+property block, not how the light is hitting it.* Here it is the other half of the same question:
+**ask which channel decides a surface's colour before deciding the geometry is at fault.**
+
+⚠️⚠️ **AND THE GEOMETRY SEPARATION WORK IS KEPT, NOT REVERTED.** The 8 mm ink outline really does
+bridge two surfaces closer than 0.10 of W, the beanie cuff really did share a face with its crown,
+and both are corrected. What changed is that they were never the thing making the renders look
+broken. **A fix that lands on top of a misdiagnosis is still a fix; it is the CONFIDENCE that was
+wrong**, and this entry exists so the next reader does not undo the separations looking for the
+real cause.
+
+### 112.13 · Verified
+
+- `dotnet test Core.Tests` **407/407**.
+- EditMode **281/281** (+1: `TheWardrobesOwnBaseRigIsReachableByName`).
+  ⚠️ Six of these were RED on the first run after the work and all six were this work, not
+  regressions: the protocol pin at 18, an inside-out face box, `MatchInstaller` naming the dresser
+  in a COMMENT (the text test doing exactly its job), and three `GeneratedAnimationTests` that go
+  red because `custom` and `custom_base` are in `RosterBook.People` now and had no baked dance.
+  ⚠️⚠️ **THAT LAST ONE IS A FEATURE ARRIVING, NOT A BREAKAGE**: the custom character had never
+  had its dance baked, because the book never listed it, so a custom character in a match would
+  have stood still through every emote. `GeneratedAnimationAuthor.Run` bakes 20 rigs now.
+- `WardrobeSheetProbe` green, **142 renders** in `Logs/ui/wardrobe-*_v2.png`, ten categories.
+- PlayMode **7/7** on `WardrobeSheetProbe`, `CustomCharacterScreenProbe`, `ScoreWitnessProbe`,
+  `MatchRecordIdentityProbe` and `UiClickProbe`, which are the suites this branch can reach.
+  ⚠️⚠️ **THE FULL `-testCategory "!WallClock"` SWEEP WAS NOT COMPLETED AND THE REASON IS THE
+  MACHINE, NOT THE BRANCH.** Two sweeps were queued at once, they fought for the project lock, and
+  the survivor crashed at `Begin MonoManager ReloadAssembly` inside mono's `wakeup_pipes_init`.
+  Clearing `Temp/` and every Unity child fixed it and the targeted pass then ran clean.
+  ⚠️ **AND `Logs/play.xml` FROM A KILLED RUN IS NOT OVERWRITTEN, IT IS LEFT.** A stale one dated
+  `2026-08-31 03:08` was read twice as a fresh result, reporting `ScoreWitnessProbe` red;
+  `ScoreWitnessProbe` passes. **Delete the results file before a run and check its `start-time`
+  before believing it**, which is `CLAUDE.md` § 7's "assert on the xml, never the exit code" with
+  the missing half attached: assert on a FRESH xml.
+- `CustomCharacterScreenProbe` green.
+- `Checks.RunAll` all five in one launch.
+  ⚠️⚠️ **AND IT DOES NOT EXIT THE EDITOR AFTER IT PRINTS `RESULT: OK`.** The batchmode process
+  stayed alive holding `Temp/UnityLockfile`, so the NEXT launch sat blocked with a 25-line log and
+  no error, which is exactly the shape `CLAUDE.md` § 7 records for a stale lockfile with no Unity
+  process alive: *"no log, no error, no exit code."* This is the same symptom from the other side,
+  a live process rather than a dead file, and the check is the same one:
+  `Get-CimInstance Win32_Process -Filter "Name='Unity.exe'"` prints the COMMAND LINE, which says
+  which launch is holding it. **Look at what is holding the lock before believing the run that is
+  waiting on it has failed.**
+- `node tools/check_digest_contract.js` green, `7b135cbb69492fa5`.
+- The three `tools/` audits: **44 ability sites, 0 ungated on another body; 53 wire entry points,
+  0 unreachable; 55 named messages, 0 mismatched.** ⚠️ The third is the one that matters here: it
+  compares each message's writer to its reader field by field, and this branch added a field to
+  three of them.
+- ⚠️ **`git status` was checked for collateral.** `person_custom.asset` and all twenty
+  `GeneratedAnimations/*.asset` came back as modified with an EMPTY diff, which is a line-ending
+  rewrite rather than a change, and were reverted. **No `team-*.glb` and no existing `.tres` is in
+  the diff at all.**
+
+### 112.14 · STILL OPEN
+
+- ⚠️⚠️ **§ 102.5 AND § 104.7, THE TWO-ACCOUNT RUN, ARE UNCHANGED AND STILL NEED TWO MACHINES.**
+  Nothing in this section touches them and nothing on one machine can. § 109.5 has the steps.
+- **The contact sheet is the acceptance test for the wardrobe and it is a picture.**
+  `WardrobeSheetProbe` writes `Logs/ui/wardrobe-*_v2.png`, one per entry, named for what it is.
+  ⚠️ **`_v2`, because `_v1` is on disk and in the scrollback**: `CLAUDE.md` § 6.1, chat clients
+  cache by filename. The `_v1` sheet is of the DRESSED rig, on `bayan`, and is the before.
+- ⚠️⚠️ **THE SHEET HAS NO WRIST ROW AND THAT IS THE NEXT THING TO ADD TO IT.** It shoots hair,
+  face, marks, hats, eyes, tops, bottoms, neck and shoes: nine categories out of ten. Wristwear is
+  the one nothing has ever photographed, and § 112.10 is what that cost — six wearables authored
+  against a frame that was wrong in two axes at once, for as long as the shoes were, with every
+  test green. **One more `Row(...)` call is the whole change**, plus the two-argument aim and zoom
+  that frames a forearm.
+- ⚠️ **The height and build dials are not on the sheet either**, and they are the two controls
+  that change the rig rather than adding to it. A row that shot the same outfit at 85, 100 and
+  115 per cent would be three cells and would answer whether the wardrobe still fits at the ends
+  of its own range.
+
+---
+
+## 111 · The build he opened: no studio mark, and the boot screen in the wrong unit space ⚠️⚠️ 2026-08-31
+
+🧑, opening the player: *"i also checked out the build and the ui is brokeN. 1. doesnt start with
+BH STUDIOS anymroe in loading screeN. 2. wtf is thhis shhit"*, with a screenshot of the account
+form floating over a fully lit main menu, no wood column and no key art.
+
+**Two separate faults, both in the build and neither visible to any probe in the repository.**
+
+### 111.1 · ⚠️⚠️ THE STUDIO LOGO: `LoadAssetAtPath<Sprite>` RETURNS NULL FOR A SPRITE SHEET
+
+`GameBuilder.ConfigureSplash` loads `Art/ui/brand/bh_studios_logo.png` and hands it to
+`PlayerSettings.SplashScreen.logos`. It came back null and the build logged **one `LogWarning` in an
+eight-thousand-line log** and shipped without the mark.
+
+**The cause is in the `.meta` and it has been there since `2385c4c5`, the commit that stood the
+project up: `spriteMode: 2`.** That is `SpriteImportMode.Multiple`, which makes the sprites
+SUB-ASSETS and leaves the file's MAIN asset a `Texture2D`. `LoadAssetAtPath<Sprite>` only ever
+returns the main asset. **The file is present, correct and imported as a Sprite, and the loader
+could never see it.**
+
+⚠️ **A NULL HERE IS INDISTINGUISHABLE FROM A MISSING FILE AND IT WAS REPORTED AS ONE.** The
+retry path underneath it could not help either: it needs `AssetImporter.GetAtPath` to answer, and in
+a cold batchmode session that is null too until the asset has been through the import queue.
+`Logs/gr_build.log` line 512 shows Unity importing the file **four lines after** the method had
+already given up on it.
+
+**Three changes, and the middle one is the fix:**
+
+1. `AssetDatabase.ImportAsset(..., ForceUpdate | ForceSynchronousImport)` first, so a cold session
+   has the asset before it is asked for. Same trap `CLAUDE.md` § 6.1 records for `.glb` sub-assets,
+   in the other direction.
+2. **`LoadAllAssetsAtPath` and take the first `Sprite`**, which works for `Single` and `Multiple`
+   alike. ⚠️ **The `.meta` is NOT rewritten to `Single` to fix this.** Changing a shared
+   importer setting to satisfy one reader is how the next reader breaks.
+3. `Resources.Load` as a last resort, because the same picture ships at
+   `Resources/UI/brand/bh_studios_logo.png` for the in-game sting.
+
+⚠️ **AND THE FAILURE IS A `LogError` NOW.** A warning about branding is a warning nobody
+sees. The message names the path.
+
+### 111.2 · ⚠️⚠️ A NESTED CANVAS IGNORES ITS OWN `CanvasScaler`, AND § 99 ONLY FIXED HALF OF THIS
+
+**The boot screen he photographed and the boot screen every probe photographs are the same method
+with different parents, and that is the entire difference.**
+
+- `Logs/ui/09-signin-at-boot-windowed.png`, taken minutes before he opened the build: **correct.**
+  Wood column on the left, cast filling the right.
+- His build: the form floating on the right, no column, no key art, the menu fully lit behind it.
+
+`PlayerHubLayoutProbe.Boot` does `_host = new GameObject("HubProbeHost")` and adds the nameplate to
+it, so `MenuKit.BuildCanvas` produces a **root** canvas. In the game, `ConvertedMainMenu` installs
+the nameplate **on its own GameObject**, which lives inside `MainMenuCanvas`, so every canvas built
+under it is **nested**.
+
+⚠️⚠️ **UNITY RESOLVES SCALE ON THE ROOT CANVAS ONLY. A NESTED CANVAS INHERITS THE ROOT'S
+`scaleFactor` WHATEVER ITS OWN SCALER SAYS.** `MenuKit.BuildCanvas` adds a `CanvasScaler`, sets the
+1920x1080 reference, matches on height and calls `AspectSafeCanvas.Apply`, and **all four are inert
+on a nested canvas**. Every offset, every column width and every image fit `SignInScreen` computes
+is then in the wrong unit space.
+
+**Measured:** `NestedCanvasProbe` reports `SignInCanvas scaleFactor 0.711, isRootCanvas False`.
+
+⚠️⚠️ **AND § 99 IS THE SAME TRAP ONE PROPERTY OVER, HALF FIXED.** That entry records
+`sortingOrder` being silently ignored on a nested canvas and answers it with
+`overrideSorting = true`. **Nobody asked what else a nested canvas ignores.** It is the scaler, and
+it has been wrong ever since.
+
+**The fix: `MenuKit.BuildCanvas` builds at the SCENE ROOT when the parent it is handed is inside
+another canvas.** One condition, one method, and it corrects the nameplate (480), the hub (500), the
+sign-in screen (510) and the character creator (520) at once. `overrideSorting` stays but is now
+redundant rather than load-bearing, because a root canvas sorts on its own order anyway.
+
+⚠️ **THE OWNER IS NOT ABANDONED.** A detached canvas outlives `Destroy(owner)`, and a
+full-screen canvas nothing can close is a worse bug than the one being fixed. `CanvasLifetime`
+watches its owner and destroys the canvas when it goes, the same way `PlayerNameplate.Update`
+watches the overlays rather than trusting whoever opened one to say so.
+
+### 111.3 · ⚠️⚠️ THE REASON NEITHER FAULT COULD BE CAUGHT, AND IT IS THE SAME REASON TWICE
+
+**Both probes built their subject in a way the game never does.** A splash logo loaded through a
+path the editor resolves differently from a cold batch session; a screen built on a bare GameObject
+where the game builds it inside a canvas. `CLAUDE.md` § 6.2b's four rows are about photographing
+the right STATE; this is a fifth row about photographing the right PARENT.
+
+⚠️ **`NestedCanvasProbe` IS THE GUARD AND IT IS WRITTEN THE OTHER WAY ROUND FROM HOW IT
+STARTED.** Its first version asserted the canvas WAS nested, because it was written to reproduce the
+bug, and it did, in one picture. It asserts `isRootCanvas` now, for the sign-in screen and for the
+hub, so the fault cannot come back quietly.
+
+### 111.4 · Two PlayMode reds that are NOT this work, checked rather than assumed
+
+The full PlayMode run is **132/134**. Both failures were tested against the base commit before
+being written off, because *"it was already broken"* is the easiest thing in the world to say and
+the hardest to trust.
+
+| Red | Verdict |
+|---|---|
+| `CarryTests.AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor`, **0.084 m** against a 0.050 m bound | § 93, open since 2026-08-30, and § 106 already records it at 0.084 and 0.092 on two separate runs. Nothing in this branch touches `Carrier`, the animator or `LateUpdate`. ⚠️ **Do not widen the bound.** |
+| `HeroPickerLayoutProbe.TheHeroPickerHasNoDeadBandAboveTheAbilityRows`, **27 px** against a 10 px spacing | **Measured on the base.** `ConvertedCharacterSelect.cs` was reverted to its `78d9aebb` contents, the probe was re-run, and it failed with **the identical 27 px**. The dead band is `Label h=56 pref=27` in the tagline box and predates every change here. § 94 records it being "fixed" three times without moving. |
+
+⚠️⚠️ **AND THE DOOR MOVED BECAUSE OF THAT SECOND ONE ANYWAY.** MAKE YOUR OWN was a third
+strip row on a column the probe's own dump shows over-subscribed (`Rows h=460 pref=644`), so it went
+into a budget that was already short. It rides the STRENGTH row now as a 200-unit button beside the
+three chips, `pref` is back to 582, and the column has 62 units more room than it did before this
+branch. **The pre-existing red is a smaller red than it was.**
+
+### 111.5 · ⚠️⚠️ THE CUSTOM WARDROBE IS SEALED OFF FROM EVERY EXISTING CHARACTER, AND A TEST HOLDS IT
+
+🧑: *"i want u to make sure all the shit ur doing is slef contained and doesnt fuck up anyones
+shit"*, and *"dont toucht heh existing onnes, i will be very mad if u break or fuck up any of the
+existing ones"*.
+
+**`VoxelDresser` is reachable from exactly one runtime file.** `CustomCharacterScreen` calls it; the
+two probes that photograph the wardrobe call it; nothing else in the project mentions it.
+`CustomCharacterWardrobeTests.NothingButTheCustomCharacterScreenTouchesTheWardrobe` reads every
+`.cs` under `Assets/TumbangPreso` as text and fails on any other file that names it, which is the
+same technique the three `tools/` audits use and for the same reason: **a reference that exists is a
+reference a behaviour test cannot see until somebody exercises it.**
+
+⚠️ **AND NOTHING TOUCHES A ROSTER `.glb`, A ROSTER `.tres` OR A ROSTER PALETTE.** The
+wardrobe hangs runtime boxes on the `custom` rig alone, `person_custom.asset` is its own
+`RosterEntryAsset`, and `custom` is deliberately not a row in `Roster.AllPeople`. The one change
+that reaches a canonical character is `PaletteRules.IsProtectedSlot`, which **takes** reach away
+from a dial rather than adding any (§ 107).
+
+---
+
+## 110 · The character maker gets a wardrobe, and the custom hero borrows a kit ⚠️⚠️ 2026-08-31
+
+🧑, opening the screen § 108 built: *"does character maker or whatver its called work? like if i
+change size or eyes or mouth or add an accessory i can actually see it. can i change the color of
+thhose clothes too?? IF ur character maker isnt expansive enough like stardew valley or monster
+hunter world then keep going"*, and then *"make ur own assets or clothes or expressions or voxel or
+wtv u need to make it more expansive"*.
+
+### 110.1 · ⚠️⚠️ THE HONEST ANSWER WAS NO, AND THE COUNT WAS TWO OUT OF FIFTEEN
+
+§ 108 gave the maker a screen, three save slots, persistence, a live preview and a working door.
+**What it did not give it was content.** Of fifteen controls, exactly two moved anything on the
+model:
+
+| Control | Did it show? | Why not |
+|---|---|---|
+| Skin tone | **yes** | written into palette slots 13, 14, 15 |
+| Hair colour | **yes** | written into slots 10, 11, 12 |
+| Top, bottom | half | the COLOUR changed, derived from the garment index; the CUT never did |
+| Height, build | **no** | the number was stored and nothing scaled the rig |
+| Expression, marks | **no** | no geometry, and the rig's own face is painted into `head-mesh`'s UVs |
+| Hairstyle | **no** | 48 names, no meshes |
+| Headwear, eyewear, wrist, neck | **no** | 32, 24, 24 and 20 names, no meshes |
+| Footwear, lata | **no** | names invented rather than pointing at `Roster.Slippers` and `Roster.Cans` |
+
+**That is a data model with a screen in front of it, which is one step further along than
+§ 108.1's data model with nothing in front of it and still not a character maker.**
+
+### 110.2 · ⚠️⚠️ THE FIX IS A RUNTIME VOXEL WARDROBE, AND THE KEY IS THAT NOTHING IS AUTHORED IN MILLIMETRES
+
+`tools/wearables_registry.py` already had thirteen wearables in it, written by the Python pipeline
+as absolute box coordinates in ONE rig's model space: a goggle lens at `y 0.635 to 0.690` is a
+measurement of `team-inday` and of nothing else. `docs/Voxel_Person_Guide.md` § 5.7 records what
+that costs: **the cast spans 132 mm from the shortest rig to the tallest**, so a hat authored
+against one head sits on another's forehead.
+
+**`VoxelPart` is normalised instead.** `U` is across, `V` is up, `W` is forward, each `-1` to `1`
+of the MEASURED part it hangs off, and a value past `1` is deliberately proud of the surface.
+`VoxelDresser` measures `head-mesh` and `body-mesh` off their own renderers every time it dresses,
+so **one authored hat fits every character in the cast** and a rig that changes shape tomorrow
+still wears it.
+
+⚠️ **THE BONE NAMES ARE REAL AND WERE CHECKED RATHER THAN ASSUMED.** The `.glb` carries
+`root, leg-left, leg-right, torso, arm-left, arm-right, head` as node names, which is
+`tools/build_person_voxel.py`'s own `BONE` table, and `DanceClip` and `HeroAbilityClips` already
+key animation curves on the same strings. Boxes are parented to the BONE, so a hat follows the head
+when it turns.
+
+⚠️ **AND EVERY BOX GOES THROUGH `ToonSkin.Apply`.** `docs/CANONICAL_RENDERING_PIPELINE.md`
+§ 1: the toon shader, the ink outline and Unity's linear conversion ARE the look. A cube that
+skipped them would read as a sticker stuck to the character.
+
+### 110.3 · ⚠️⚠️ COVER, DO NOT REPLACE, AND THE FACE IS WHERE THAT NEEDED CARE
+
+The base rig is one baked mesh with hair, a sando and shorts already in it. Removing a region of it
+at runtime means re-authoring the `.glb` per combination, which is twelve hairstyles times ten tops
+of offline builds for one character. **A voxel character is a stack of boxes, so a box that fully
+encloses the region under it IS the replacement**, and it costs one draw call rather than a build.
+Every hairstyle below therefore encloses the scalp rather than sitting on it, and `Bald` is a
+skin-coloured shell, which is the proof the rule holds.
+
+⚠️⚠️ **THE FACE IS THE EXCEPTION AND IT NEEDED A PLATE.** The rig's own eyes and mouth are
+painted into `head-mesh`'s UVs at slot 8, so a new pair of eyes in front of them leaves the old pair
+visible around the edges. Every expression lays a skin-coloured plate over the front of the head
+first and draws on that.
+
+⚠️ **AND EVERY FEATURE CLEARS THE INK OUTLINE BY CONSTRUCTION.**
+`docs/CANONICAL_RENDERING_PIPELINE.md` pitfall 5: `ToonSkin.Apply` extrudes the inverted hull by
+`PersonOutlineWidth`, about 8 to 12 mm, so **a decal 2 to 4 mm proud is swallowed whole.** The face
+layers are plate, then features, then marks, then eyewear, each one step further out.
+
+### 110.4 · What the wardrobe actually holds
+
+Every one of these is authored voxel geometry in `VoxelWardrobe`, and
+`CustomCharacterWardrobeTests` fails if a name in `CustomCharacterRules` has no boxes behind it.
+
+| Slot | Count | Notes |
+|---|---|---|
+| Skin tone | 32 | warm only, hex carried in the name |
+| Expression | 12 | eyes, brows and mouth. ⚠️ **the expression is in the BROW**: at arena distance a voxel eye is two pixels |
+| Face marks | 10 | bandage, freckles, scar, war paint, eye patch |
+| Hairstyle | 12 | including `Bald`, which is the shell that proves the covering rule |
+| Hair colour | 24 | fourteen natural then ten dyes |
+| Top | 10 | ⚠️ **the SLEEVE is the read**, not the shirt |
+| Bottom | 8 | ⚠️ **the HEM HEIGHT is the read** |
+| Clothing colour | 16 | applied to top and bottom SEPARATELY |
+| Headwear | 12 | cap forward and backwards, bucket, salakot, beanie, bandana, headband, towel, durag, visor, horns |
+| Eyewear | 9 | glasses, shades, matrix, goggles, aviators, visor, dust mask, chalk mark |
+| Neck | 8 | chains, dogtag, rosary, good morning towel, lanyard, neckerchief |
+| Wrist | 6 | ⚠️ on `arm-right`, which is the throwing arm and the one on screen in FPP |
+| Footwear | 6 | tsinelas through court kicks |
+| Height | 7 steps | 85 to 115 per cent, five at a time |
+| Build | 3 | lean, regular, stocky |
+| Tsinelas, lata | 6 + 6 | ⚠️ **the real `Roster.Slippers` and `Roster.Cans`**, not invented names |
+
+**That is over four billion looks before wrists, neck, footwear, height and build are counted**, and
+`ThereIsEnoughToMakeSomethingWithAndTheCountIsWrittenDown` asserts the floor so a future deletion is
+red rather than quiet.
+
+⚠️⚠️ **THE LISTS GOT SHORTER AND THAT IS THE POINT.** 48 hairstyles became 12, 48 tops became
+10, 32 hats became 12. **Twelve hats that exist beat thirty-two names that do not**, and the count
+that matters to a player is the combination count, not the list length.
+
+### 110.5 · ⚠️⚠️ THE CUSTOM CHARACTER BORROWS ONE HERO'S KIT, WHOLE
+
+🧑, 2026-08-31: *"they can only use onne chharacter at a time with custom everything annd im
+thinnking that it can js borrow the skills of any of the characters for its skills and ult"*, then
+*"it can only follow onne skill tree tho and cant mix diff shits"*.
+
+**The second sentence is the rule and it is the one that protects the game.** A custom character
+that could take Zack's Bolt Sprint with Cheska's Ice Barricade and Sean's Supernova would be a
+seventh hero built out of the best third of six, and `docs/VISION.md` § 4's whole competitive
+argument is that reading which ultimate an opponent has banked is a skill. **Borrowing a whole kit
+keeps every tell in the game true: a custom character telegraphs exactly like the hero whose kit it
+carries.**
+
+⚠️⚠️ **THE SHAPE OF THE DATA IS THE ENFORCEMENT.** `CustomCharacter.HeroKitId` is ONE string,
+so a mixture is not something a modified client can send: there is no field for skill one and skill
+two separately. `CustomCharacterKitTests.ThereIsExactlyOneKitFieldSoAMixtureCannotBeExpressed` walks
+the type by reflection and fails if a second one is ever added, and its failure message is the rule.
+
+⚠️ **A CLASSIC CHARACTER'S ID IS NOT A KIT.** `KitFor` resolves `bayan` (BERTO),
+`lola_pacing`, an empty string and anything unknown to the first hero, because a Hero Strike seat
+with no kit has no skills and no ultimate, which is a broken match rather than a missing cosmetic.
+§ 108.3 is the entry about a loadout table that thought Berto was a hero.
+
+⚠️ **AND THE ROW NAMES THE ABILITIES UNDER IT**, transcribed from the `base(...)` calls in
+`Assets/TumbangPreso/Runtime/Abilities/*HeroKit.cs`, so the choice is made on what the kit DOES.
+`docs/VISION.md` § 3: character select is the LEARN layer.
+
+### 110.6 · The wire format is `C3` and `C1` and `C2` are refused
+
+Two more fields (`TopColorIndex`, `BottomColorIndex`), two changed (`CanIndex`, `SlipperIndex` now
+index the real roster lists), one added (`HeroKitId`), and every other index now means something
+different because the lists it points into are a quarter of the length.
+
+⚠️⚠️ **A `C2` FRAME DECODED AGAINST THE NEW LISTS IS NOT AN OLD CHARACTER, IT IS A DIFFERENT
+CHARACTER WEARING SOMEBODY ELSE'S CLOTHES.** Neither `C1` nor `C2` ever shipped in a build, so
+`DecodeWire` refuses both and answers a default rather than guessing. That is the same degradation
+`PaletteRules.IsKnownVariant` guarantees for an unknown palette id: **an id that does not resolve
+degrades, it does not blank, and it never silently means something else.**
+
+### 110.7 · Height and build scale the RIG and nothing else
+
+⚠️⚠️ **THE CAPSULE, THE REACH AND EVERY DISTANCE IN `Combat` ARE UNTOUCHED**, which is what
+keeps this inside `docs/FUTURE.md` § 0.5 rule 4. `CLAUDE.md` § 4 resolves contact by DISTANCE, and
+`Roster.HeroPeople`'s header is the receipt for what a size difference is worth here: Sean sits at
+the speed floor entirely because he is the big one. A scale that reached the collider would be a
+cosmetic deciding who gets tagged.
+
+⚠️ **HEIGHT IS Y AND BUILD IS X AND Z**, which is why they are two controls. A single uniform
+scale makes a short character a SMALL character, and short-and-wide is the silhouette most of this
+cast actually is. The bound on build is 8 per cent either side: the visual scale is expression
+rather than a stat, and the bound is there because a silhouette twice everyone else's width is a
+readability problem (`docs/VISION.md` § 2) whether or not it is a balance one.
+
+### 110.9 · ⚠️⚠️ THE FRAMES WERE GUESSED TWICE AND BOTH GUESSES SHIPPED VISIBLY WRONG
+
+**Written down because it is `docs/Voxel_Person_Guide.md` § 5.8 happening again in a new file.**
+That section's rule is *"A transcribed constant is a measurement of one thing presented as a law"*,
+and the first two passes at `VoxelDresser.MeasureAnchor` broke it by estimating instead:
+
+| Guess | What it drew | What the measurement said |
+|---|---|---|
+| ⚠️⚠️ **The torso frame is `body-mesh` narrowed a bit** | **Every shirt painted the character's forearms.** | `body-mesh`'s half width is **0.3836, which is the whole ARM SPAN**. The torso is **0.128**, measured by walking the skin weights. A sleeve at U 1.1 was reaching to the fingertips. |
+| ⚠️⚠️ **The face is at the front of the head box** | The hair drew as a **helmet jutting over the forehead**, and the face plate floated in front of the nose. | The head box runs to z **0.26** and **the face is at z 0.20**; the last 60 mm is the hair fringe. `FaceW` is 0.77, not 0.85. |
+| ⚠️ **The eye line is halfway up the head** | Eyes on the forehead. | The head box is y 0.340 to 0.778 and **includes the hair mass above the skull**, so the eye line is at **0.57** of it. |
+| ⚠️ **An arm hangs downward** | A wristband wrapping thin air beside the elbow. | `arm-left` runs x **0.0999 to 0.3836 at a near-constant height**: it is a horizontal bar. U runs ALONG the limb and a band is narrow in U and wraps in V and W. |
+
+**The measurement is one script and it took two minutes**: read the `.glb`, group the vertices by
+their heaviest `JOINTS_0` weight, print the extents per bone. The table it produced is now in
+`MeasureAnchor`'s own header, and the frames are derived from the BONES at runtime rather than from
+those numbers, so a rig that changes shape tomorrow still wears the wardrobe.
+
+⚠️⚠️ **AND NONE OF THE FOUR WAS VISIBLE TO A TEST.** `CustomCharacterWardrobeTests` was green
+through all of them: every name had boxes, every box was inside the palette, no box was inside out.
+**A box that exists is not a box in the right place**, and the only thing that can tell the
+difference is the picture. `WardrobeSheetProbe` is that picture now: one PNG per entry, every
+category, on the real rig through the real shader, named for what it is so a cell can be identified
+three weeks later without counting along a row.
+
+⚠️ **`CLAUDE.md` § 6.1 ASKED FOR THIS AND ONE SHOT OF ONE COMBINATION IS NOT IT.** The creator
+screen's own probe photographs whatever slot 1 happens to be wearing, which is one hat out of twelve
+and one cut out of twelve. **A wardrobe is judged as a set**: the question is not whether the beanie
+works, it is whether the beanie reads differently from the bucket hat at the size a player sees
+them.
+
+### 110.8 · STILL OPEN ✅ ALL THREE CLOSED 2026-08-31 BY § 112.6
+
+⚠️ **Every bullet below is now done and the entry is kept rather than deleted**, because the
+sentence *"the wardrobe makes that job easier rather than harder"* turned out to be exactly right
+and is worth having on record: the match path really was the same calls the preview already made,
+once they had one owner (`CustomCharacterOutfit`). `NetSession.ProtocolVersion` is **19**.
+
+- ⚠️⚠️ **THE CUSTOM CHARACTER STILL DOES NOT WALK INTO A MATCH.** § 108.5 is unchanged:
+  `CustomCharacterStore.ActiveWire()` produces the string and nothing sends it, and
+  `MatchInstaller` still spawns a `Roster` entry. **The wardrobe makes that job easier rather than
+  harder**: `VoxelDresser.Dress` takes a rig and a palette and knows nothing about the preview, so
+  the match path is the same four calls against `CharacterVisual`'s model.
+- **The borrowed kit is stored and not yet honoured.** `HeroAbilitySystem.CreateKitFor` maps a
+  character id to a kit; it needs one more arm that reads `HeroKitId` when the id is `custom`.
+- **The lata and the tsinelas are chosen and not yet equipped.** They are indices into
+  `Roster.Cans` and `Roster.Slippers`, which `CharacterLoadout.CanPick` and `SlipperPick` already
+  carry, so this is a write rather than a protocol.
+
+---
+
+## 109 · Phase 6's last mile: the three-hour hang, and the presence state nothing had ever lit ⚠️⚠️ 2026-08-31
+
+Handed over as *"finish Phase 6"*, with four jobs. Three are closed here and the fourth cannot be
+done by one machine.
+
+### 109.1 · ⚠️⚠️ A PLAYMODE RUN HUNG FOR 3 h 24 m AND NAMED NOTHING, AND THE HANDOFF BLAMED THE WRONG FUNCTION
+
+The run was `-testFilter "ScoreWitnessProbe|QueueCardLayoutProbe"`, started 11:37, still going at
+15:01 with 5.6 hours of CPU across `Unity.exe`'s threads. `Logs/witness.log` was 257 KB and its last
+useful line was `[QueueCardLayoutProbe] wrote ... queue_card_v1.png`: **the test after it started
+and logged nothing at all.** A separate `-testCategory "Ugs"` run had been killed the same way at
+11:25.
+
+⚠️⚠️ **THE HANDOFF SAID `CloudEndpointActionProbe.Await` *"spins
+`while (!task.IsCompleted) yield return null` with no timeout"*. IT DOES NOT AND HAS NOT SINCE
+`816af8b3`.** That method takes `float timeoutSeconds = 30.0f`, compares against
+`Time.realtimeSinceStartup`, and throws a `TimeoutException` naming the bound. **Reading the file
+was one minute and it would have redirected the whole investigation.** `FUTURE.md` § 0.5 rule 2:
+where a document and the code disagree, the code is right.
+
+**What was actually unbounded: seventy `while (load != null && !load.isDone) yield return null;`
+loops across forty-nine PlayMode probes.** Nobody had looked at them because a scene load
+"obviously" finishes. `ProbeWait.Done` is the bound now, on all seventy sites, at **6000 frames or
+180 seconds**, and it throws with the operation's name and its progress.
+
+⚠️ **THE FRAME HALF OF THE BOUND IS THE ONE THAT WORKS HERE, AND THE LOG PROVES IT.**
+`SocialStore`'s 60-second presence heartbeat fired about 230 times into `witness.log` while the test
+sat there, so **frames were being pumped throughout**: the editor loop was alive and one coroutine
+was not progressing. A frame counter fires in that state. Both bounds are checked because a wall
+clock also catches a genuinely frozen editor and the pair costs one comparison.
+
+⚠️ **THIS DOES NOT SAY WHY THE SCENE LOAD STALLED, AND IT IS NOT MEANT TO.** It converts a
+hang with no name into a failure with one, which is the difference between an afternoon and three
+minutes. The handoff's own sentence is the argument: *a probe that can hang for ever cannot be a
+gate.*
+
+⚠️ **THE STALE `Temp/UnityLockfile` WAS REAL AND WAS CLEARED.** `CLAUDE.md` § 7. There were
+also two live `Unity.exe` processes still holding the project from the killed runs; the lockfile
+alone would not have been enough.
+
+### 109.2 · The presence log was 230 copies of one warning
+
+`SocialStore.SendPresence` logged `[Social] presence not written: Singleton is not initialized` with
+a full stack trace every heartbeat, and `NetIdentity` disables UGS sign-in in batch mode **on
+purpose**, so that message is EXPECTED there. 257 KB of identical stack trace is what a reader has
+to wade through to find a real failure. It logs once per distinct cause now.
+
+### 109.3 · ⚠️⚠️ `PresenceState.Queued` COULD BARELY EVER HAVE BEEN SEEN, AND THAT IS ARITHMETIC RATHER THAN A BUG REPORT
+
+Phase 6 reserved the value, Phase 7 made `SocialStore.CurrentState` produce it, and § 106.3 left it
+open as *"derived rather than pushed and nothing has ever seen it lit"*.
+
+**It is derived at WRITE time and the write is every `SocialRules.PresenceWriteSeconds` = 60 s.** A
+player who presses QUICK MATCH and is placed forty seconds later passes through `Queued` entirely
+between two heartbeats, and **no friend ever sees it.** `FUTURE.md` § 6 calls that state *"the single
+highest-converting moment a friends list has"*, because it is the one state where the answer to
+"can I join them" is yes and they are not busy.
+
+**Fixed by writing on a CHANGE as well as on the timer**, floored at
+`SocialRules.PresenceChangeMinSeconds` = 10 s so a flickering state cannot become a write per
+flicker.
+
+⚠️ **AND `FUTURE.md` § 19.6'S RULE IS UNTOUCHED**: *"presence polling must not raise the
+service query rate."* Polling is still 60 s. This is EVENT driven and the events are menu to queue,
+queue to match, match to menu: **three extra writes in an hour, against sixty heartbeats.**
+
+### 109.4 · Friends by display name and tag: the design, written down, still not built
+
+§ 102.2 declined this and § 106.3 kept it declined. The reason still holds: Cloud Save is keyed by
+player id with no query-by-value, so a lookup needs an index document, and **a stale index hands a
+friend request to the wrong account.**
+
+⚠️⚠️ **THERE IS A DESIGN THAT REMOVES THE FAILURE MODE ENTIRELY AND IT IS TWO READS.**
+
+1. The index maps `handle -> playerId` and is written **only by `player-account.js`, on a rename**,
+   so it is server-authoritative and no client can write into it.
+2. A lookup reads the index, then **loads the candidate account and returns it only if that
+   account's CURRENT handle still matches what was searched for.**
+
+**A stale index can then produce a MISS and can never produce the wrong person**, which is the whole
+bug class gone for the cost of one extra read. A miss is a retry; a wrong person is a friend request
+delivered to a stranger.
+
+⚠️ **STILL NOT BUILT, DELIBERATELY.** It is a service design change under `ugs/`, and under
+`ugs/` finished means DEPLOYED. It is written down here so the next session builds this version
+rather than the naive one, which is the thing § 102.2 was actually protecting against.
+
+### 109.5 · ⚠️⚠️ OPEN, AND IT NEEDS TWO MACHINES: THE TWO-ACCOUNT RUN
+
+§ 102.5 and § 104.7 are **still open** and nothing in this session could close them.
+`request`, `accept`, `decline` and `remove` write into a SECOND player's document and have never
+been exercised between two real accounts; since 2026-08-31 the identical cross-player write carries
+Phase 8's corroboration through `serviceStore(context)` (§ 104.4b), so **if the service token cannot
+read and write another player's document, Phase 8 silently never corroborates anything and no rating
+ever moves. Nothing errors.** Same shape as § 90.5.
+
+**This is a thirty-minute manual pass and it is the highest-value open item in the whole social and
+ranked stack.** It needs two laptops, two accounts, and one person. It is not something a session on
+one machine can fake, and § 102.5's own note forbids the obvious shortcut: the probe must not grow a
+second real account, because the editor and the built player share the UGS credential cache and a
+probe on the `default` profile overwrites his real display name.
+
+**Done looks like:** both machines on this branch and on UGS project
+`dcf0831e-a5f4-43b4-832e-b687f13a3569`; A adds B and B accepts; B declines a second request; A
+removes B; B blocks A and A can neither join B's lobby nor be offered it by QUICK MATCH; then one
+ranked Hero Strike match played to the end with both accounts and each `Player.log` read for the
+submit answer. ⚠️⚠️ **Look for `"verdict":"witnessed"`. `"pending"` after BOTH have submitted
+means the cross-player write does not work, and that is the finding.** ⚠️ **Read the REFUSED
+count, never the accepted count.**
+
+---
+
+## 108 · The custom character had no screen, and two screens were drawn under the screen that opened them ⚠️⚠️ 2026-08-31
+
+🧑: *"MAKE SURE WTV GEMINI MADE LOOKS GOOD ANND CAN ACTUALLY BE USED"*, *"MAKE SURE UI WORKS ENND
+TO END ANND WORKS GOOD ANND RENDERS RIGHT"*.
+
+An audit of the `gemini-rework` branch against `matchmaking-ranked`. **It compiles, all five checks
+pass and 382 core tests are green, and four of its five new features could not be reached by a
+player at all.** Every fault below is a thing that is true of the code rather than a preference.
+
+### 108.1 · ⚠️⚠️ THE CUSTOM CHARACTER CREATOR HAD NO SCREEN, AND ITS ONE DOOR WENT NOWHERE
+
+`CustomCharacterCreator` was a 388-line `MonoBehaviour` with 22 setter methods, four C# events, a
+`CreatorStage` enum and a `CameraZoomFocus` enum. **It drew nothing: no canvas, no row, no label, no
+button.** Nothing in the project ever created one, so its only door,
+`FindFirstObjectByType<CustomCharacterCreator>()` on character select, returned null on every press.
+`CLAUDE.md` § 6.2: *"A FEATURE WITHOUT A SCREEN IS NOT SHIPPED, AND 'I ADDED A ROW FOR IT' IS NOT A
+DESIGN."*
+
+Four more things were true inside it:
+
+- `ApplyLiveCharacterToPreview` computed a 16-colour array into a private field **and never touched
+  the preview**. `_preview` was assigned once in `BindPreview` and never read again.
+- The array it computed wrote the bottom-half clothing colour into **slots 7, 8 and 9, and slot 8 is
+  the FACE** (`PaletteRules.FaceSlot`; `docs/Voxel_Person_Guide.md`: *"A light slot 8 does not give a
+  light-haired character, it gives one with no face"*). It never shipped as denim eyes only because
+  the method was dead.
+- The top and bottom colours were **hard-coded constants**, so 48 tops and 36 bottoms were 84 names
+  attached to one red and one denim blue.
+- `CameraFocusChanged` fired a four-value enum that **nothing subscribed to**, and the obvious
+  repair, zooming, would have pulled in on `ModelPreview.AimHeightRatio` 0.54, **which is the
+  waist**: zooming toward the waist to look at a hat pushes the head out of frame.
+
+Nothing persisted, either. `CustomCharacterCreator.Profile` was a `static` field on a
+`MonoBehaviour`, so every character anybody made was gone when the game closed. `docs/TODO.md`
+§ 107 asks for *"3 characters u can save at once"* and **a character you cannot save is not a save
+slot.**
+
+**Built instead:** `CustomCharacterScreen`, a real full-screen takeover on `MenuKit.BuildCanvas` at
+sorting order 520, with the model at full size on the left through `ModelPreview` with the real toon
+shader, six sections on the right, a `< NAME  n/total >` stepper per choice, Escape, a working BACK
+that discards and a KEEP AND USE that writes. `CustomCharacterStore` persists the three slots into
+`GameSettings.CustomCharacterWires` as three wire strings. `ModelPreview.LookAt` is the camera focus
+that was claimed, and it moves the AIM as well as the distance.
+
+⚠️ **THE DOOR IS A ROW ON CHARACTER SELECT** reading `MAKE YOUR OWN  ·  SLOT n: <name>`, at
+the bottom of the list you already pick a character from. `CLAUDE.md` § 6.3: one door, where you
+already are, never a second one to fix findability.
+
+### 108.2 · ⚠️⚠️ TWO SCREENS WERE BUILT CORRECTLY AND DRAWN UNDERNEATH THE SCREEN THAT OPENED THEM
+
+`HeroLoadoutScreen` and `AchievementsScreen` were both opened by a button on the hub's CAREER tab,
+and both set `_canvas.sortingOrder = 95`. **The hub is a 93 per cent scrim at 500.** Both screens
+constructed themselves, laid themselves out and rendered, entirely behind the thing that opened
+them, so CUSTOMIZE LOADOUT and VIEW ALL ACHIEVEMENTS read as dead buttons.
+
+Both also used `gameObject.AddComponent<Canvas>()` rather than `MenuKit.BuildCanvas`, so neither got
+`overrideSorting`, `AspectSafeCanvas` or the guaranteed `EventSystem`, and neither had an `Update`
+reading Escape. `docs/TODO.md` § 99 is the entry recording that a nested canvas ignores
+`sortingOrder` outright, and § 92.7 is the entry recording that raising a sorting number appeared to
+fix something and cannot have.
+
+**Both screens are deleted.** Achievements and ability builds are collapsible groups on the CAREER
+tab now, built from `UiRows`, which is one door instead of three and no new canvas at all.
+
+### 108.3 · ⚠️⚠️ THE ABILITY SIDEGRADE TABLE DESCRIBED A GAME THAT DOES NOT EXIST
+
+`HeroLoadoutRules` listed the heroes as `berto, sean, dante, cheska, zack, nemu` and gave them
+`Barricade Shield`, `Ground Slam`, `Sprint Burst`, `Quick Toss`, `Sniper Aim`, `Ricochet Bank`,
+`Decoy Slipper`, `Grapple Tether`, `Heavy Smash`, `Brace Guard`, `Chalk Trap` and `Smoke Screen`.
+**Not one of those abilities is in this repository.** The real kits are:
+
+| Hero | Skill 1 | Skill 2 | Ultimate |
+|---|---|---|---|
+| DANTE | SEISMIC STOMP | DEMONIC CARAPACE | TITAN FISSURE |
+| CHESKA | PERMAFROST SHEET | ICE BARRICADE | GLACIAL NOVA |
+| SEAN | FLAME RUSH | IGNITION CANNON | SUPERNOVA |
+| ZACK | BOLT SPRINT | STATIC CHARGE | THUNDERSTRIKE |
+| NEMU | PHANTOM VEIL | ASTRAL HIJACK | DEVOURING SEANCE |
+| PHAISTER | HEX | SHADOW BLINK | GRAND COVEN |
+
+⚠️⚠️ **AND `berto` IS NOT A HERO.** `Roster.HeroPeople` is DANTE, CHESKA, SEAN, ZACK, NEMU and
+**PHAISTER**; `bayan`, display name BERTO, is the first of the twelve CLASSIC street characters and
+has no kit. **The table offered ability sidegrades to a character with no abilities and silently
+dropped one of the six who has them.** The same wrong list is in five documents and all five are
+corrected.
+
+Three more:
+
+- **Every row drew `AbilityGlyph.Zone`**, whatever the ability. `docs/VISION.md` § 3: *"The glyph
+  lives on the ability, not in a lookup table, so a new hero cannot ship with three blank tiles."*
+  Fifteen bespoke hero glyphs exist and none were used.
+- **The EQUIP button had no `onClick` listener at all.** It was created with a `Button` component
+  and a label reading SELECT or EQUIPPED and nothing else, because there was no store for a choice
+  to go into. `HeroBuild` and `GameSettings.HeroBuilds` are that store now.
+- **`Phase10Tests` could not fail.** It asserted that six hard-coded strings were present in a
+  hard-coded array in the file beside it. It was green through every fault above.
+
+`HeroLoadoutTests` reads `Roster.HeroPeople` directly, asserts `Gain + Cost == 0` on all 24 rows
+(`FUTURE.md` PHASE 10: *"a test asserts it"*), and asserts an illegal build falls back to the
+default rather than being honoured.
+
+⚠️ **`HeroLoadoutRules.ChallengesEnforced` IS FALSE ON PURPOSE.** Phase 10's per-hero
+challenge counters are not built, and with the flag true every alternate would read LOCKED on every
+account, which is § 92.1 fault 4: *fifteen rows of `0/0 (needs 10 throws)` that taught a new player
+the game was broken.* **Handing them all out early costs nothing and that is proved rather than
+hoped**: budget neutrality is asserted on every row, so an account with everything unlocked is
+differently shaped and never stronger. The flag flips when the counters land.
+
+### 108.4 · The colour dial was deleted instead of narrowed, and the damage it was written for survived
+
+Covered in `FUTURE.md` § 5.1. Short version: the TINT and STRENGTH rows were removed outright,
+`ShowModel` still applied `SettingsStore.LookFor`, so **every hue already saved to disk was still
+being painted with the only screen that could reset it now gone.** `PaletteRules.IsProtectedSlot`
+carries the skin ramp (13, 14, 15) beside the face (8) now, on both sides of the wire, and the rows
+are back captioned CLOTHES because that is what they do.
+
+⚠️ **AND THE GARMENTS ARE STILL NAMES.** 48 tops, 36 bottoms, 48 hairstyles, 24
+expressions, 20 face markings and the four accessory lists have **no geometry behind them**. What
+changes on screen when you step through them is the palette colour, not the cut.
+`tools/wearables_registry.py` and `tools/compile_modular_hero.py` are the pipeline that has to feed
+them and `docs/wearables_catalog.md` is the contract. **This is the honest state of the feature and
+it is written here rather than left to be rediscovered.**
+
+### 108.5 · ✅ CLOSED 2026-08-31 BY § 112.6: it crosses the wire and enters a match
+
+⚠️ **The "done looks like" below is what shipped, almost to the letter**, and the warning under it
+was obeyed: `custom` is still not a row in `Roster.AllPeople`. **The one difference is which id the
+art comes from** — `CustomCharacterRules.BaseRigId` (`custom_base`) rather than `custom`, because
+the rig the wardrobe dresses is a new naked one and `team-custom.glb` was left untouched. § 112.
+
+`CustomCharacterStore.ActiveWire()` produces the string and **nothing sends it**; `MatchInstaller`
+still spawns a `Roster` entry. So the character can be made, saved, previewed and set active, and
+the match still shows whoever was picked off the roster.
+
+**Done looks like:** `LobbySeatInfo` carries the wire string beside `Look`, `MatchRpc` and
+`MatchInstaller` resolve `RosterBook.FindPersonArt("custom")` and apply the palette, and a peer sees
+it. ⚠️ **`custom` is deliberately NOT a row in `Roster.AllPeople`** and must not become one:
+that list's header is explicit that its order is a network contract and entries are appended, never
+inserted, so a nineteenth row meaning "custom" would change what index 18 resolves to on every build
+that has not shipped yet. It travels as its own field with its own id.
+
+### 108.6 · Smaller things found in the same pass
+
+- **`PlayerNameplate`'s rank badge was drawn dead over the portrait's face**, anchor (0.5, 0.5) with
+  a zero offset at 44 px inside the picture of the player's own character. It is 30 px in the
+  bottom-right corner now. `CLAUDE.md` § 6.2c question 2.
+- **`PlayerNameplate` asked for a takeover register in a comment and did not get one.** Its own note
+  reads *"THIS IS THE THIRD TIME A NEW FULL-SCREEN THING HAS HAD TO BE TAUGHT TO THIS METHOD... A
+  list of screens to hide for is a list somebody will add a screen without."* Two more code-built
+  canvases were then added and neither was in the list. `ScreenTakeover` is the register; screens
+  add themselves on `Awake` and the plate asks.
+- **`CustomCharacterRules` lost every underscore in a name.** It encoded `:` as `_` and decoded every
+  `_` as a space, so `BATANG_KALYE` came back as `BATANG KALYE` and no round trip could recover it.
+  `CustomCharacterTests` asserted the mangled form, so the test locked the bug in. The escape is
+  `%3A` and `RosterIntegrityTests.ACustomCharacterNameSurvivesTheCodec` runs five names through it.
+- **`CustomCharacter` is written entirely in auto-properties, and `JsonUtility` serialises FIELDS
+  ONLY**, so a `List<CustomCharacter>` in `GameSettings` would have written three empty objects and
+  read three empty objects back with no error. The slots persist as wire strings instead, which
+  reuses the codec and cannot drift from the network format because it IS the network format.
+- **`Matchmaker.Start` was renamed to `StartQueue`** with no note. It is a correct rename (`Start` is
+  a Unity lifecycle message name on a `MonoBehaviour`) and it is recorded here because a rename with
+  no reason attached is a rename the next person undoes.
+- **`PersonSwapProbe`'s `NewModel` and `RosterId` were switched from `phaister` to `custom`**, so the
+  canonical turnaround probe now photographs the custom rig. Left as-is because the custom hero is
+  what is being iterated on, and noted because `CLAUDE.md` § 6.1 calls that probe the canonical
+  output and a reader will expect it to point at the last character authored.
+- **`Assets/TumbangPreso/Runtime/Settings/GameSettings.cs` carries four leaked Python
+  template fragments in
+  its doc comments**, left behind by a Python template in an earlier session. Pre-existing on
+  `matchmaking-ranked`, comments only, cosmetic. Not fixed here; noted so it is not rediscovered.
+
+### 108.6b · ⚠️⚠️ THE FIRST RENDER OF THE NEW SCREEN HAD SIX FAULTS AND THE PROBE WAS GREEN THROUGH ALL OF THEM
+
+**Written down because it is `CLAUDE.md` § 6.2's own argument happening again, on the screen
+built to answer it.** `CustomCharacterScreenProbe` passed 2/2: every section drew rows, every label
+was above the 18-unit floor, every label fitted its own box at all nine resolutions. Then the
+picture was opened.
+
+| Fault | Cause | Why no probe could see it |
+|---|---|---|
+| ⚠️⚠️ **The heading, the footer sentence and two of the four buttons were off the left edge of the canvas** | `MenuKit.Place` pivots at (0.5, 0.5), so **every offset it takes is a CENTRE**. A 760-unit heading at `offset.x = 96` spans -284 to 476. | The label fitted its box perfectly. The box was in the wrong place, and no check in the repository asks whether a rect is inside the canvas. |
+| ⚠️⚠️ **The right-hand `>` of every stepper was not on screen at 1366x768** | The control laid out to 476 units against a value column that is about 368 at 4:3. `UiRows.Cap` already records that number. | Same: each piece fitted its own rect. |
+| ⚠️⚠️ **CLOTHES, GEAR and KIT were off the right edge, so half the screen was unreachable** | Six 144-unit tabs at 150 spacing is 900 units, placed inside a `UiRows.Row` control slot of about 460. | The three tabs that fitted, fitted. **A probe that presses a tab it can find cannot report a tab it cannot.** |
+| ⚠️⚠️ **Every row's hint drew straight through its own value** | `UiRows.Row`'s hint box ends 828 units in and the control column starts at `ValueColumn` 0.56. The hub's list is about 1690 units wide so they never meet; this screen's was 1056. | `PlayerHubLayoutProbe`'s wrap check is vertical and this overlap is horizontal, between two rects that each fit. |
+| ⚠️ **The model was a head cropped at the chin** | `LookAt(0.88, 0.66)` on a tall narrow stage. | Nothing measures framing. |
+| ⚠️ **The stage was a fixed 860 units, which is 45 per cent of the canvas at 16:9 and 60 per cent at 4:3** | `AspectSafeCanvas` scales on the SHORT axis, so the canvas is about 1920 units wide at 16:9 and 1440 at 4:3. `CLAUDE.md` § 6.2c question 1, exactly. | A fraction of a variable width is not a width, and no probe asks what a number was measured against. |
+
+⚠️⚠️ **THE FIRST FOUR ARE ONE FAULT WITH FOUR FACES: A RECT THAT FITS ITS OWN CONTENTS AND
+OVERLAPS ITS NEIGHBOUR.** Every layout check in this repository measures a label against the box it
+was given. **Nothing measures a box against the boxes beside it, or against the canvas.** That is
+the next probe worth writing and it is not written yet.
+
+⚠️ `CLAUDE.md` § 6.2c has a fifth row now, about sizing a control against the narrowest column
+it will ever live in rather than against 1920, because that one is a rule rather than an incident.
+
+### 108.6c · The scrim reads weaker in a capture than it does in the game, and that is the capture
+
+The shots in `Logs/ui/2*-creator-*_v1.png` show PLAY, SETTINGS, TUTORIAL and QUIT legible behind a
+94 per cent backdrop, which looks like the fault `CLAUDE.md` § 6.2b records as *"a floating form
+over a fully lit menu"*. **It is not.** `UiRuntimeShots`' own header states the rule: a real frame
+composites an overlay canvas AFTER post, so the UI a player sees is ungraded, while a capture has to
+flip the canvas to `ScreenSpaceCamera` and that puts it THROUGH `ColourGrade`'s ACES curve, which
+lifts exactly these dark values. **Do not retune a scrim off one of these PNGs.**
+
+⚠️ **AND THE BACKGROUND IN THE SHOT IS THE WRONG ONE ANYWAY**, which is § 6.2b row 2 in
+reverse. The probe opens the creator over `MainMenu` because that is the scene it can load cheaply;
+a player reaches it from CHARACTER SELECT. The scrim is 0.94 to match `PlayerHub`'s 0.93 rather than
+tuned against either, deliberately: one visual language (`docs/VISION.md` § 6), and a number tuned
+against one background is not a number.
+
+### 108.7 · Verified
+
+- `dotnet test Core.Tests` **394/394** (+12: `RosterIntegrityTests` 8, `HeroLoadoutTests` rewritten
+  from a suite that compared a constant to itself).
+- EditMode **265/265**.
+- `CustomCharacterScreenProbe` **2/2**: six sections at nine resolutions, rows counted rather than
+  labels, and eight PNGs in `Logs/ui/`.
+- `Checks.RunAll` all five OK in one launch.
+- `node tools/check_digest_contract.js` green.
+- ⚠️⚠️ **AND THE SIX FAULTS IN § 108.6b WERE FOUND BY OPENING THE PICTURE, NOT BY ANY OF
+  THE ABOVE.** `CLAUDE.md` § 6.2: *"A GREEN LAYOUT PROBE IS NOT A GOOD SCREEN... The probe asks
+  whether the screen is a screen; the picture asks whether it can be read."* This entry is the fifth
+  time that sentence has been paid for.
+
+---
+
+## 107 · Roster Integrity and the 3-Slot Custom Character Creator ⚠️⚠️ 2026-08-31
+
+🧑, reviewing the 2026-08-31 build and the screenshot of a green/cyan Berto with magenta clothes:
+> *"clarificatiopn: i didnnt want all characters to be customizable. I just wanted tehre to be a create ur own charcter slot and u can fully customize it (facial expression, clothes, skinn tone, height, size, accessories, everythinngs ), theres like 3 characters u can save at once but only onne is used. i didnt want it to be appliable to all characters wth. maybe the heroes we can change their clothes and shit but donnt touch the skin and shit of classic wtf"*
+
+⚠️⚠️ **STATUS: THE DIAGNOSIS BELOW IS RIGHT AND THE FIX THAT FOLLOWED IT WAS NOT.
+§ 108 IS WHAT ACTUALLY SHIPPED.** The pass that read this entry deleted the dial instead of
+narrowing it, which threw away the clothes half 🧑 asked to keep, left every hue already saved to
+disk still being painted with no screen to reset it, and replaced the row with a button that called
+`FindFirstObjectByType<CustomCharacterCreator>()` against an object nothing ever creates.
+`PaletteRules.IsProtectedSlot` is the fix: the three skin slots joined the face slot, on both sides
+of the wire, and the clothes stayed free.
+
+### 107.1 · ⚠️⚠️ THE ROOT FAULT: APPLYING WHOLE-BODY HUE ROTATION TO CANONICAL HEROES
+§ 106.1 shipped a "TINT and STRENGTH dial" straight onto the character select screen that shifted the entire 16-slot palette of whatever character was selected, including skin, face, and hair. Applied to Berto, it produced an alien green figure that destroyed the character's Filipino identity and readability.
+
+### 107.2 · THE ARCHITECTURAL SPECIFICATION: TWO DISTINCT SYSTEMS
+1. **Every named character: the twelve Classic street kids and the six heroes (DANTE, CHESKA,
+   SEAN, ZACK, NEMU, PHAISTER)**:
+   - ⚠️ **`Berto` IS A CLASSIC CHARACTER, NOT A HERO**, and this line called him one.
+     `Roster.HeroPeople` is the six above; `bayan`, display name BERTO, is the first of the twelve
+     Classic street characters and has no ability kit. § 108.3 is what that mistake cost.
+   - **Locked Base Identity**: Canonical skin tones, facial geometry, eye shapes, hair colors, and base silhouettes are fixed.
+   - **No Alien Tint Sliders**: Global hue-shifting/tint dials on named heroes are removed.
+   - **Cosmetics = Thematic Outfits/Skins Only**: Future cosmetics for heroes are strictly clothing swaps and jackets that respect character recognition.
+
+2. **The "Create Your Own Character" System (Custom Character Creator)**:
+   - **Dedicated Slot**: A dedicated "Custom Character" slot on the character select/loadout screen.
+   - **3 Save Slots**: Players can create and store up to **3 custom characters** (e.g. *Slot 1*, *Slot 2*, *Slot 3*), selecting **1 active custom character** for matches.
+   - **Deep Customization Dimensions**:
+     1. **Facial Expressions & Features**: Eyes (determined, chill, fierce, happy, focused), eyebrows, mouth/smirk, face paint/chalk marks.
+     2. **Natural Filipino Skin Tones**: Warm golden-bronze, kayumanggi, deep warm brown, tan, fair peach (`docs/Art_Direction.md`).
+     3. **Body Proportions**: Height presets (kid, teen, tall) and build presets (lean, athletic, stocky) bounded within competitive gameplay read volumes.
+     4. **Hairstyle & Hair Color**: Fade, undercut, buzz, long waves, curly top, spiky, twin pigtails, with natural street hair colors.
+     5. **Streetwear & Outfits**: Sandos, graphic tees, oversized basketball jerseys, track jackets, denim shorts, cargo shorts, rolled jeans.
+     6. **Modular Accessories**: Caps (forward/backward), beanies, *gulaman* towels over neck/shoulder, shades, goggles, wristbands, chain necklaces (`docs/wearables_catalog.md`).
+     7. **Footwear & Lata**: Custom *tsinelas* (strap and sole colorways, crosshatch patterns) + custom *lata* (classic milk can, rusted, soda, painted street designs).
+
+---
+
+## 106 · Phases 5 and 6 finished: the free colour dial, and parties as queue tickets ⚠️⚠️ 2026-08-31
+
+🧑, mid-session: *"also finish building phase 5-6"*, and the sentence that decides what "finished"
+means here: *"the main purpose of the customizationn shit is so that ppl coudl spend their time
+making their own character"*.
+
+### 106.1 · ⚠️⚠️ PHASE 5 SHIPPED A REWARD AND NOT A PLACE TO SPEND AN EVENING, AND THAT IS WHAT WAS MISSING
+
+§§ 98 and 101 are the as-built record for Phase 5 and everything in them still stands: the banner
+is one object, palettes are derived by hue rotation rather than authored, the banner and the
+palette cross the wire, remote seats wear the palette, and the colour picker is a COLOURS row on
+character select. **Every one of those is a REWARD.** A player owns zero palettes until they reach
+hero mastery 5, `RefreshPaletteRow` correctly draws nothing at all until then (§ 0.5b question 3),
+and so the answer to *"can I make my own character"* on a fresh account was no.
+
+**What is new is a free colour dial, and it is not gated on anything.**
+
+| Row on character select | What it is | Earned? |
+|---|---|---|
+| **COLOURS** | The palettes hero mastery pays out. Unchanged from § 101. | Yes |
+| **TINT** | Twelve hue swatches, 30 degrees apart, composed on top of whatever palette is equipped | **No, from level 1** |
+| **STRENGTH** | SOFT, AS DRAWN, BOLD | **No, from level 1** |
+
+⚠️ **`FUTURE.md` § 0.5 rule 4 is the rule this had to satisfy and it satisfies it exactly**:
+nothing on a progression track may change a gameplay number, and a colour changes none. The earned
+palettes stay earned and are the named presets; the dial is expression rather than progress, the
+same way a display name is. **The row above is what you unlocked and the two rows below are what
+you make.**
+
+⚠️⚠️ **THERE IS NO BRIGHTNESS DIAL AND THERE MUST NEVER BE ONE.** `PaletteVariants.Rotate` already
+recorded why the earned variants rotate hue and nothing else: **the toon shader bands on VALUE**,
+so the two-band read that tells three attackers apart at distance is a function of lightness. A
+player who could drag their own value could dress as a silhouette, and `VISION.md` § 2 rule 5 is a
+measured readability budget rather than a preference. Saturation does not touch the banding and is
+still bounded at `PaletteRules.SaturationMin` 55 and `SaturationMax` 145: at zero a character reads
+as a shadow on the Eskinita road, far above 100 the ramp's two bands collapse and the character
+flattens into a sticker.
+
+⚠️ **The dial is clamped on the RECEIVING side, not only on the sending one.**
+`LoadoutRules.LookFor` runs on both, so a modified client that sends a saturation of zero is drawn
+at the floor. The earned half is checked against ownership; the free half is only clamped, which is
+the whole ownership model in one line.
+
+### 106.2 · ⚠️⚠️ `LobbySeatInfo.PaletteId` IS NOW `LobbySeatInfo.Look` AND THAT IS WHY THE PROTOCOL IS 18
+
+A palette id could only say which of two earned presets a player had equipped. "What this character
+looks like" is three values now, and `Roster.Slippers`' rule says the way to put three values on a
+wire two builds have to agree about is **one versioned string**, not three fields a hand-maintained
+writer and reader can get out of order. `LookCodec` is that string, `L1:<paletteId>:<hue>:<sat>`,
+and a build that does not recognise `L1` draws the authored colours, which is the same degradation
+`PaletteRules.IsKnownVariant` already guarantees for an unknown id.
+
+⚠️ **The name changed with the contents on purpose.** A field called `PaletteId` holding a look
+frame is the shape § 94.1 is about.
+
+⚠️ `BannerClaim` gained `HueDegrees` and `SaturationPercent`, appended at the END of the codec
+frame and never inserted, so an older frame reads its seven fields and stops.
+`BannerTests.AClaimCarriesOnlyWhatAuthorisesIt` was updated deliberately rather than incidentally:
+those two are **not** authorising facts and the comment there says so.
+
+### 106.3 · Phase 6's three exceptions, and which of them Phase 7 closed
+
+§ 102.2 named three bullets of Phase 6 that could not be built as written. Phase 7 closes one of
+them exactly as `FUTURE.md` § 6 predicted it would.
+
+| § 102.2's exception | Status now |
+|---|---|
+| **Parties that "queue together" need a queue** | ✅ **CLOSED.** `PartyRules` is the rule set and `QueueCard` presses it: QUICK MATCH in a room of three looks for a lobby with three chairs (`PartyRules.SeatsNeeded`, `MatchmakingRules.Evaluate`'s `seatsNeeded`). ⚠️ **The rail did not change**, which is what § 6 said would happen: a friend's JOIN button still hands a join code to `LobbyJoinPanel` |
+| **Friends by display name and tag need an index document** | ❌ **STILL OPEN AND STILL DECLINED.** Cloud Save is keyed by player id with no query-by-value and a stale index hands a friend request to the wrong account. Recent players remains the shipped path. Nothing in Phase 7 changed the storage this needs |
+| **Blocking must survive matchmaking** | ✅ **CLOSED, AT TWO GATES.** `MatchmakingRules.Evaluate` refuses a blocked host **before** the rating is even considered, and connection approval still refuses one that gets through. Two gates for one rule on purpose: approval alone would let the queue find a blocked host, connect, and bounce the player straight back out, which reads as the queue being broken rather than as a block working. `MatchmakingTests.ABlockedHostIsNeverJoinedAtAnyBandWidth` asserts it at the widest band too, because a block that expires after seventy-five seconds of queuing is not a block |
+
+⚠️⚠️ **AND § 102.5 IS STILL OPEN AND IS STILL THE NEXT THING TO DO WITH THE SOCIAL LAYER.** No
+two-account run has happened. `request`, `accept`, `decline` and `remove` are proven by the core
+tests and by reading the deployed script, not by a live round trip between two players. That is a
+thirty-minute manual pass on the two laptops and nothing in this session touched it.
+
+⚠️ **A party of four cannot queue RANKED and a party of two or three can.** § 105.4 has the
+decision and the reasoning; `FUTURE.md` § 6 raised the question and deferred it to Phase 9, and
+§ 19.9 step 9 is the instruction to decide it and assert it in a test.
+
+---
+
+## 105 · Phase 9: one ladder, five tiers, Glicko-2 ⚠️⚠️ 2026-08-31
+
+`FUTURE.md` PHASE 9 and § 19.9. **Three questions in that prompt say "ask before building" and all
+three were asked and answered on 2026-08-31.**
+
+### 105.1 · The three decisions, and who made them
+
+| Question | `FUTURE.md`'s note | 🧑's answer |
+|---|---|---|
+| Which mode carries the one ladder | *"Hero Strike is the obvious candidate, but 🧑 has not said so. Ask before building"* | **Hero Strike.** `VISION.md` § 1 says it exists to raise the competitive ceiling. Classic stays the street game and the tournament ruleset, unranked |
+| Sixteen rungs or five | *"⚠️⚠️ ASKED AND NOT ANSWERED 2026-08-31... do not assume the sixteen-rung version"* | **Five tiers, no divisions.** `FUTURE.md` § 0.5 rule 11b is the test that decides it: the cost of a feature is what the PLAYER has to hold in their head, and sixteen rungs is fifteen more words than five |
+| The tier names | *"🧑 names them"* | **BATA, KANTO, BARANGAY, KAMPEON, ALAMAT**, the set already suggested in § 9. `RatingRules.TierNames` is the one place they are written |
+
+### 105.2 · What is built
+
+- **`Core/Rating.cs`**: Glicko-2 with the volatility iteration (Illinois), the six-pairwise
+  expansion, the tiers, the floors and the season. `Core.Tests/RatingTests.cs` is 13 tests.
+- **The three `FUTURE.md` § 19.9 done-when measurements are the three named tests**, not prose:
+  `ASimulatedSeasonSortsFourPlayersIntoTheirTrueOrder` (120 matches, four true strengths, correct
+  order and everybody settled), `ANewPlayerSettlesInsideTenMatchesFromAMidLadderStart`, and
+  `AClearlyStrongerNewAccountClimbsOutOfALowBandQuickly` (eight straight wins over a 1100 field
+  moves a new account past 1700 and into KAMPEON).
+- **The second copy in `ugs/cloud-code/match-record.js`**, because the endpoint is the only writer
+  of a rating (`FUTURE.md` § 0.5 rule 6).
+- **Everyone starts at 1500 with a 350 deviation**, which is mid-ladder and BARANGAY, so a tier is
+  shown from match one. ❌ **No placement matches**, cut in § 9 and not re-added.
+- **Season boundary is arithmetic on a fixed epoch** (`RatingRules.SeasonOneStartUtc`, ten weeks),
+  because a season that has to be rolled over by hand is a season that stays open for eight months.
+- **A soft reset pulls 40 per cent toward the mean and never wipes.** The peak survives; the FLOOR
+  does not, and § 105.3 is why.
+- ❌ **No decay, no demotion buffer, no margin multiplier.** All three stayed cut.
+
+### 105.3 · ⚠️ THE RANK FLOOR SURVIVES A LOSS AND DOES NOT SURVIVE A SEASON
+
+`INSPIRATION.md` § 2.19: once a tier is reached the season cannot fall below it, which costs one
+comparison and removes the most common reason people stop queueing. `RatingRules.ApplyFloors`
+**raises the floor before it enforces it**, so reaching a tier and immediately losing cannot drop
+out of the tier that was just reached. That ordering IS the promise.
+
+Carrying the floor into the next season would make the ladder only ever ratchet upward, which is a
+leaderboard of who has played longest. So `BeginSeason` clears it and keeps the peak.
+
+### 105.4 · ⚠️⚠️ A FOUR-STACK CANNOT QUEUE RANKED. PARTIES OF TWO AND THREE CAN
+
+`FUTURE.md` § 6 raised it and deferred the choice to Phase 9; § 19.9 step 9 is the instruction to
+decide and assert it. **The decision is the second option**, and the reasoning is § 0.5 rule 11b
+again: "you cannot queue ranked as a full four" is one sentence and it appears on the button at the
+moment it matters. Excluding **every** party from ranked would be a shorter rule and a worse game,
+because two friends cannot arrange a four-player result between themselves: the other two seats are
+strangers who are trying to win. `PartyTests.AFourStackCannotQueueRankedAndATwoOrThreeStackCan`.
+
+⚠️ **Ranked also needs an account and quick match does not.** `FUTURE.md` § 0.5 rule 7 is respected
+rather than bent: practice, training, LAN and joining by code stay outside a login, and a ladder is
+the one thing that genuinely cannot work for an identity that only exists on one machine.
+
+### 105.5 · ⚠️⚠️ THE ONE PLACE THE ENDPOINT KNOWINGLY APPROXIMATES ITS OWN SPECIFICATION
+
+`RatingRules.UpdateAll` takes all four real rank states, because Glicko-2 is a batch system.
+**`match-record.js` cannot**: it is called once per player, by that player, and reading three other
+players' rank documents on every submission would be twelve extra Cloud Save reads per match on a
+free tier (`FUTURE.md` § 0.5 rule 8). So the endpoint treats every opponent as sitting at the start
+rating with the start deviation.
+
+**What that costs:** beating a stronger player pays the same as beating an average one.
+**What it does not cost:** the ORDER of the ladder, because every player is measured against the
+same reference.
+
+⚠️ **The fix for the day there is a budget is one line of design, written down now so it is not
+re-derived**: the FIRST submitter of a match writes a snapshot of all four rank states into the
+same shared verdict row § 104 already creates, and later submitters read it. One extra read, no
+extra writes.
+
+### 105.6 · What the player actually sees, and the trap § 0.5b named for it
+
+`FUTURE.md` § 0.5b's phase 9 row: the surface is "a badge on the nameplate and a rating line on the
+end-of-match board", the one thing on it is "which way the number moved, and by how much", and the
+trap is **"level and rank must never be confusable"**.
+
+- **The nameplate draws `LV 14 · KAMPEON`.** Level keeps its `LV` prefix and its bar; the tier is a
+  WORD with no number on it at all. `14 · 3` could be misread as one quantity and this cannot.
+- **An unranked account draws no tier**, rather than the word UNRANKED. `FUTURE.md` § 2.2: withhold
+  the ROW, not just the number.
+- **A tier that is still moving fast says so**, with a `?` on the plate and STILL PLACING YOU on the
+  board, because a first-week tier is a guess and letting a player quote it as settled is how a
+  ladder gets a reputation for being random.
+- ⚠️ **No rating is drawn anywhere.** `FUTURE.md` § 9: "the player never sees the number, only the
+  tier". A number on the board would also be the end of ever retuning the thresholds.
+
+---
+
+## 104 · Phase 8: the witnessed result, and the finding that the plan's design would have been theatre ⚠️⚠️ 2026-08-31
+
+`FUTURE.md` PHASE 8 and § 19.8. ⚠️⚠️ **THE FIRST THING THIS PHASE FOUND IS THAT ITS OWN
+SPECIFICATION RESTS ON SOMETHING THIS CODEBASE DOES NOT DO**, and `FUTURE.md` § 0.5 rule 11 is the
+instruction for that case: do the part that still makes sense, write what changed here, correct the
+plan, and put the disagreement at the top of the handoff.
+
+### 104.1 · ⚠️⚠️ EVERY PEER ALREADY SUBMITS THE HOST'S OWN JSON, SO COMPARING SUBMISSIONS WOULD HAVE PROVED THAT JSON ROUND-TRIPS
+
+`FUTURE.md` § 8.1 says: *"The clients already have everything needed. Every peer derives the
+scoreboard from the scoring events it already receives, because that is how the HUD stays in
+sync."* **They receive the events and they derive nothing from them.**
+
+What actually happens at the whistle is `MatchRpc.BroadcastMatchRecord`: the host serialises its
+finished `MatchRecord` and every peer calls `GameServices.Stats.Adopt` on it (protocol 15 added
+that broadcast). Every peer then submits its own line **out of the host's record**. So four
+"independent" submissions were four byte-identical copies of one machine's opinion.
+
+**A corroboration scheme built on that would have been theatre**, and theatre is worse than nothing
+here, because § 9's own opening line is that a rank a host can award itself is worse than no rank.
+
+⚠️⚠️ **AND THE SAME FINDING REMOVES THE HARDEST QUESTION § 8.1 LEFT OPEN: WHO CHOOSES THE
+WITNESS.** A witness chosen by the host is a witness chosen by the suspect; a witness derived from
+the match id is derived from a value the host minted. With every peer already submitting, nobody
+chooses.
+
+### 104.2 · What shipped instead: the comparison is against the EVENT STREAM
+
+`Runtime/Net/ScoreWitness.cs`. Every peer keeps its own running tally of `MatchDirector.Scored`,
+which is the announcement `AddScore` already makes for every point in the game, reliably, to
+everybody, because the toast, the sting and the scoreboard pulse all hang off it. At the whistle the
+peer substitutes its OWN scores into the host's record, re-derives the placements, and hashes that.
+
+- **`IntegrityRules.Digest` is FNV-1a 64 over a canonical string of the outcome-bearing fields
+  only.** Score, placement, bot flag, character, round count, winner, and the ranked flag.
+- ⚠️⚠️ **THE PER-MACHINE MEASUREMENTS ARE DELIBERATELY OUTSIDE THE DIGEST.** Distance travelled,
+  time to first throw and the defence tick counter are sampled off each peer's own frame timing, so
+  two honest clients disagree about them in the third decimal place every match. Putting them in
+  would dispute every match in the game and the mechanism would be switched off inside a week.
+- ⚠️ **64 bits and not 32.** This is compared across a trust boundary, and a 32-bit digest can be
+  collided by brute force on a laptop.
+- ⚠️⚠️ **A PEER THAT DID NOT SEE THE WHOLE MATCH SUBMITS NOTHING, AND SILENCE IS NOT A DISPUTE.**
+  Backfill puts people into a running match on purpose and a reconnect does the same; both miss the
+  events that went out before they arrived, so both would tally short and accuse an honest host.
+  `ScoreWitness.Complete` is the gate.
+
+### 104.3 · ⚠️⚠️ WHAT THIS DOES AND DOES NOT STOP, WHICH § 19.8'S DONE-WHEN ASKS FOR BY NAME
+
+- ✅ **A host that plays an honest match and then submits a better scoreboard.** This is the cheap
+  attack and the one a script kiddie actually runs.
+- ✅ **Two colluding players.** Two agreeing submissions out of four leaves two disagreeing ones,
+  and a disagreement beats a majority: three agreeing and one dissenting is DISPUTED, not
+  witnessed. A vote would let three colluding players ratify anything.
+- ❌ **A modified host that awards itself points DURING the match.** `MatchDirector.AddScore` is the
+  single host-side writer and every peer's tally is built from the events that function broadcast,
+  so a host that lies in play sends every peer the same fabricated total and all four agree. **This
+  is the honest limit and `FUTURE.md` § 8.2's dedicated servers are the answer to it.** It is also
+  a strictly stronger claim than § 8.1's own limit ("two colluding players"), and § 8.1 has been
+  corrected to say so.
+- ❌ **Four colluding players.** A room where every human is in on it is not a matchmaking problem.
+- ❌ **A player who never submits.** A phone losing signal at the whistle is indistinguishable from
+  a client refusing to corroborate.
+
+### 104.4 · ⚠️ THE ARBITER, WHICH IS WHERE A SHARED VERDICT CAN LIVE AT ALL
+
+Cloud Save is keyed by player id and there is no game-scoped document this endpoint can rely on, so
+corroboration needs one agreed place to write. **The arbiter is the lexicographically smallest
+human player id in the record**, computed identically by all four peers from the record they each
+hold, and the verdict row lives in that player's protected data under `matchVerdicts` (a rolling 60).
+
+⚠️ **A host that forges player ids to move the arbiter fails safe**: its submission lands in a
+document nobody else writes to, stays PENDING for ever, and never pays a rating.
+
+⚠️⚠️ **AND THE RATING IS PARKED RATHER THAN APPLIED OPTIMISTICALLY.** The endpoint cannot write
+into the first submitter's profile when the SECOND submitter corroborates them, because the two are
+different documents. So the first submitter's computed state is parked on their own profile
+(`PlayerProfile.PendingRankedMatchIds`, and the endpoint's `PendingRanked`) and collected on their
+next `load`, which every client already calls at boot and after every match. **No polling and no
+extra request anywhere.** A disputed match drops off the list and pays nothing.
+
+### 104.4b · ⚠️⚠️ AND CORROBORATION MUST NEVER BE ABLE TO COST A PLAYER THEIR CAREER
+
+Measured on 2026-08-31 and this is why the guard exists rather than being a precaution: a
+`-testCategory "Ugs"` run **went silent for three minutes inside `CloudEndpointActionProbe` and
+had to be killed**, on the first run after the verdict machinery was added. `serviceStore`
+constructs happily from an undefined `context.serviceToken` and then every request it makes is
+refused and retried, so the submission a player is waiting on sits there rather than failing.
+
+Three things changed, and all three are the same rule: **Phase 8 is an ADDITION to a submission
+path that has worked since Phase 2, and an addition may degrade but must never subtract.**
+
+1. **The service token is checked before the call is attempted**, so a missing one is a branch not
+   taken rather than a stall.
+2. **The whole corroboration block is inside a `try`**, and a failure means `pending`, which pays
+   no rating. Conservative in the direction that matters, and logged rather than swallowed.
+3. **`collectPendingRanked` degrades the same way on `load`.** A `load` that threw would leave a
+   player unable to open the career screen because a rating they cannot see is unreadable.
+
+⚠️⚠️ **AND THE FIVE-SECOND WRITE FLOOR TURNED OUT TO BREAK THE ONE THING THIS ENDPOINT EXISTS
+FOR, WHICH IS THE OFFLINE QUEUE.** `CareerStore.FlushAsync` sends queued records **in a tight
+loop**, oldest first: that is the entire design of playing on a bad connection and catching up
+later. A floor between writes refuses the second record, and the loop stops at the first failure
+by design, so catching up would take five seconds a match and every one would arrive as an error.
+**The floor applies to `abandon` and `report` only**, which are the two actions a client can call
+in a loop without playing anything. The hourly cap still applies to everything and is what
+actually stops a runaway client.
+
+⚠️ **WHETHER THE SERVICE TOKEN CAN ACTUALLY READ AND WRITE ANOTHER PLAYER'S DOCUMENT IS STILL
+UNPROVEN AGAINST THE LIVE SERVICE.** `social.js` has used `serviceStore` since Phase 6 and § 102.5
+records that its cross-player paths have never had a two-account run either. **If the token turns
+out to be unusable, corroboration degrades to every match reading `pending` and no rating ever
+moving**, silently and by design rather than by accident. That is the first thing to check on the
+two-laptop pass, and it is why § 104.7 exists.
+
+---
+
+### 104.5 · ⚠️⚠️ THE DIGEST IS WRITTEN TWICE AND `tools/check_digest_contract.js` IS WHAT KEEPS THE TWO HONEST
+
+A silent disagreement between the C# and the JavaScript would dispute every match in the game, no
+rating would ever move, and **nothing anywhere would log an error**. That is the same failure shape
+as § 90.5, where no career had ever reached the server and every probe was green throughout.
+
+So the contract is a frozen string rather than a property: `DigestContractTests.ReferenceDigest` is
+`7b135cbb69492fa5`, a person typed it, and the node check runs the DEPLOYED script's own functions
+against the same fixture and compares. It exits non-zero, so it gates a verification pass beside the
+three python audits.
+
+```bash
+node tools/check_digest_contract.js
+```
+
+⚠️ **If `Canonical` changes deliberately, change both sides and then the literal, in one commit,
+and say so in the handoff.** Changing only the literal makes the test green and the ladder dead.
+
+### 104.6 · The rest of § 19.8
+
+- **Sanity checks** (`IntegrityRules.Check`): more knockdowns than throws, more hits than attempts,
+  defence longer than the match, a placement that disagrees with the scores, an impossible duration
+  or travel distance. ⚠️ **Every one is a statement about arithmetic rather than about play.** The
+  score ceiling is deliberately unreachable, because refusing a real result is far worse than
+  accepting a modest lie: the lie is caught by the digest, and the refusal is a player being told
+  their best game never happened.
+- **Leaver penalties that distinguish a leave from a disconnect.** ⚠️⚠️ **THE MECHANISM IS A FLAG
+  ON DISK, NOT A BUTTON.** Reporting an abandon when the player presses QUIT penalises only the
+  people polite enough to press it: alt-F4 would be free. `CareerStore.InMatchSinceUtc` is written
+  at round 1 of a networked match with another human in it and cleared when a record is adopted, so
+  **the next launch finds a match that was started and never finished** and reports it once. A
+  reconnect that plays to the whistle clears it, which is why coming back is not punished.
+- **Escalating cooldowns**: 0, 2 min, 10 min, 30 min, 60 min, over a rolling seven days. ⚠️ **The
+  first one is free on purpose.** One abandoned match is a doorbell or a brownout, and this
+  audience is students on home connections in Metro Manila. The escalation is aimed at a habit.
+- **Rate limits**: five seconds between career writes, sixty an hour, ten reports a day. Invisible
+  to anybody actually playing, and a cap on a client stuck in a retry loop.
+- **Reporting** from the end-of-match board, six reasons, no free-text box. ⚠️ **It writes a count
+  and there is no console to read it**, which is § 0.5b's phase 8 row followed rather than argued
+  with: "resist building a moderation console. This phase's success is invisible." A report with
+  nobody to read it is still worth taking, because the player needs somewhere to put the feeling.
+  Pretending to act on it would be worse than saying nothing.
+
+### 104.7 · What this phase owes and has not got
+
+⚠️⚠️ **NO FOUR-MACHINE RUN HAS HAPPENED, AND THE ONE ASSUMPTION THAT NEEDS ONE IS WHETHER THE EVENT
+STREAM REPRODUCES THE FINAL SCORE EXACTLY.** If any point in the game is ever awarded without a
+`Scored` announcement, every honest match would read as disputed. `ScoreWitnessProbe` runs a real
+solo match and asserts the host's own tally equals its own record line for line, which tests the
+risky half locally; what it cannot test is a second machine's copy of the same stream. **That is a
+two-laptop pass and it belongs with § 102.5's, which is also outstanding.**
+
+### 104.8 · ⚠️⚠️ FOUND ON THE WAY: `MatchRecordIdentityProbe` HAD AN ASSERTION THAT COULD NEVER PASS IN BATCH MODE
+
+It failed on this branch and it is **not** a regression from this work. `NetIdentity.AttemptSignInAsync`
+returns false immediately when `Application.isBatchMode`, **by design and with a comment saying
+so**, so `PlayerAccount.PlayerId` is empty in every headless run and `CareerStore.LocalPlayerId`
+correctly falls back to `NetIdentity.Token`, which IS `GameSettings.PlayerToken`.
+
+The probe's last assertion was `AreNotEqual(PlayerToken, mine.PlayerId)`. **Offline, the record
+carrying the machine token is the right answer rather than the fault**, so that line was asserting
+that the machine was online. `UgsServicesProbe` reaches past the same gate by calling
+`AuthenticationService.SignInAnonymouslyAsync` itself, which is why it is green in the same run.
+
+⚠️ **THE CLAIM MOVED RATHER THAN BEING WEAKENED.**
+`TheRecordNeverCarriesTheMachineTokenWhileSignedIn` is `[Category("Ugs")]`, signs in the way
+`UgsServicesProbe` does, and asserts it where it can be evaluated. ⚠️⚠️ **Making it conditional
+with an `if` was the obvious fix and is the one § 101.1 forbids**: an assertion inside an `if` is
+an assertion that can decide not to run, and that is exactly how a palette that could never be
+equipped by anybody shipped green.
+
+⚠️ **The rest of the probe was passing throughout**, including the seat, the id via
+`MatchRecordRules.LineFor`, the three blank bot ids and `Submittable`.
+
+---
+
+## 103 · Phase 7: QUICK MATCH as a rating-banded queue ⚠️⚠️ 2026-08-31
+
+`FUTURE.md` PHASE 7 and § 19.7, on the brief *"build phase7-9"*.
+
+### 103.1 · ⚠️⚠️ THE MATCH-QUALITY METRIC IS THE SPREAD OF FOUR RATINGS AND THE TEST FOR IT IS THE FIRST THING IN THE FILE
+
+`FUTURE.md` § 7: *"A 4-player free for all matches differently from a team game. There is no team
+to balance. The job is not make two sides equal, it is put four players of similar skill in one
+room."* A lobby holding one 1400 and three 900s is a bad match for all four people in it, and
+**every team-based fairness formula calls it balanced**: 1400+900 against 900+900 is a 250-point
+gap and there are team games shipping today that would take it.
+
+`MatchmakingRules.Spread` is the metric. ⚠️ **`MatchmakingRules.BestTeamSplitGap` is the WRONG
+metric, is in the core on purpose, and is called by nothing in the game.**
+`MatchmakingTests.ALobbyOfOne1400AndThreeNineHundredsIsBadBySpreadAndBalancedByTeamFairness`
+asserts both halves of that sentence, because asserting only the spread would leave the next person
+free to "simplify" the check into the team formula and still see green. **Deleting that function
+deletes the proof, not dead code.**
+
+### 103.2 · ⚠️⚠️ IT ADDS ZERO SERVICE REQUESTS, WHICH IS THE CONSTRAINT § 19.7 NAMES
+
+*"This must not raise the query rate against the free tier."* `ServerQuery` already queries UGS
+Lobby every 4 seconds while browsing and heartbeats a hosted lobby every 15. `Matchmaker`
+**subscribes to `ServersChanged` and decides against records that loop already fetched.** Six extra
+strings on a record that is already being fetched cost nothing.
+
+⚠️ **The widening is LOCAL, which is the second half of the same argument.** A queue that
+republished its band every 15 seconds would be one lobby write per queuing player per step.
+`MatchmakingRules.Evaluate` checks the band from **both** sides, so a searcher whose own band has
+widened finds a patient host without the patient host saying anything.
+
+⚠️ **Only `Pool` is indexed.** UGS gives a lobby a fixed handful of index slots and S1 is the join
+code and S2 the in-progress flag already; the band and the seat extremes are read client-side off
+records the browse loop has, so indexing them would spend a scarce slot to save nothing.
+
+### 103.3 · The schedule, and what the player sees while it runs
+
+Start at plus or minus 100, widen by 100 every 15 s, stop at plus or minus 500 and take anybody.
+That is § 7's schedule unchanged, and `MatchmakingRules.WidenSteps` and `SecondsToWidest` are
+DERIVED from those three constants rather than written, because a fourth constant is a number that
+can disagree with the other three (§ 88.1a is the entry about exactly that).
+
+⚠️⚠️ **A WIDENING STEP RE-EVALUATES IMMEDIATELY RATHER THAN WAITING FOR THE LIST TO CHANGE.** The
+whole point of widening is that lobbies which were outside the band are inside it now, and none of
+them had to move for that to become true. Without it, a stable list of near-misses would never be
+reconsidered and the bar would fill while nothing happened behind it.
+
+**`QueueCard` is the surface**, and § 0.5b's phase 7 row is unusually specific about it: "a queue
+state on the mode screen, not a screen of its own", and the trap is **"a spinner is not a state.
+Say the mode, the time elapsed, and how to cancel, and never block the menu behind it."** All four
+are on the card and all four are asserted.
+
+- ⚠️⚠️ **NO SCRIM, AND `CLAUDE.md` § 6.2c QUESTION 3 IS WHY.** `LobbyJoinPanel` has a 68 per cent
+  scrim because it is a modal asking a question. This is the opposite: the player is queueing so
+  they can carry on doing something else, and every word on the card sits on an opaque wood plate.
+  A scrim would dim the lobby, the cast and the chat for no legibility at all and would eat every
+  click on the screen underneath. **The plate blocks exactly its own rectangle, and it says so.**
+- ⚠️ **The width is measured against its content** (§ 6.2c question 1): 560 units is the taya
+  sentence at 18 units over two lines plus one margin either side. It is not a fraction of the
+  window, because `AspectSafeCanvas` scales on the short axis and a percentage is two very different
+  widths at 4:3 and on the short wide window he plays in (§ 100).
+- ⚠️ **The door and the card are never both on screen.** They are two states of one control.
+
+### 103.4 · ⚠️⚠️ THE GAME NOW SAYS THE TAYA ROTATES, AND IT NEVER HAS BEFORE
+
+`FUTURE.md` § 7: *"THE TAYA ROTATION IS WHAT MAKES THIS FAIR AT ALL, and it is worth saying in the
+queue UI: everyone defends once, so a bad first round is not a lost match."* `INSPIRATION.md` § 4.5
+is titled "the taya rotation is a gift and nobody knows it".
+
+The sentence is `MatchmakingRules.TayaRotationPromise`, in the core, **with a test**, because it is
+a claim about the rules: the taya role is derived `(round - 1) % 4` (`CLAUDE.md` § 4), so "everyone
+defends exactly once" is true by construction rather than by bookkeeping. A queue is the one screen
+in the game where a player is doing nothing but waiting, which is the only moment where a sentence
+is not in the way.
+
+### 103.5 · Backfill, and why almost all of it already existed
+
+`FUTURE.md` § 7 asks for one behaviour: *"a match that loses a player advertises the seat rather
+than dying."* Everything underneath it was already built for the reconnect window:
+`LobbySession.Depart` holds the chair against the leaver's durable token and `RuleOnArrival` hands
+a free seat to a newcomer mid-match. **What was missing was that nothing told the outside world the
+chair existed**, because a lobby record with `InProgress` set is refused by
+`MatchmakingRules.Evaluate` unless it is also backfilling. `Matchmaker.OfferBackfillSeat` is the
+flag and `MatchRpc`'s departure handler is the one caller.
+
+⚠️ **A backfill searches at the widest band from the first second.** Three people are standing in a
+live match playing three-on-one against a bot while it waits, so the cost of a wide band is a
+slightly uneven round and the cost of a narrow one is the rest of the match.
+
+⚠️ **A room that never queued still backfills, and advertises into its own pool to do it.** What a
+private room does not want is to have been findable before the match started, which is what
+`ServerQuery.HostedAdvert.None` gives it: **every lobby in this game auto-hosts on arrival, so a
+default of "in the pool" would silently offer the player's room to the internet.**
+
+### 103.6 · Pools, and the queue structure question § 19.7 says to verify first
+
+§ 19.7: *"`docs/INSPIRATION.md` § 3's queue structure has been built or at least decided, because
+it determines what queues exist."* **It had not been built.** PROMPT I5 has never been run and
+nothing navigates to `ConvertedModeSelect` at all: PLAY lands straight on the lobby (§ 68.5). So
+this phase DECIDED it, minimally, rather than building a menu nobody asked for:
+
+- **One casual queue, which is exactly what `INSPIRATION.md` § 3.4 tells a population of this size
+  to start with.** *"Four queues at thirty concurrent players is zero queues."*
+- **`MatchmakingRules.PoolKey` is `v<protocol>.<mode>.<stake>.<device>.<platform>`**, so the
+  structure for splitting is in place and unused. Adding RANKED to the menu is a `QueueStake` and
+  no new machinery.
+- ⚠️ **The protocol version is in the key.** Two builds that would refuse each other at connection
+  approval must not be offered each other by the queue first: the player would watch a queue find a
+  match and then bounce off it with a version message.
+- ⚠️ **Input device and platform are MEASURED, not configured.** § 7 asks for pools separated by
+  both, "which is free and removes the entire aim-assist argument before it starts", and a setting
+  the player can change is a setting somebody sets to get into a softer pool. There are **zero**
+  gamepad bindings in the input map today, so every real lobby advertises `KeyboardMouse` and Phase
+  14 turns the second value on without a wire change.
+
+⚠️⚠️ **WHAT IS STILL OPEN FROM I5: the population GATE is not built.** § 3.4 asks for real logic
+that opens a queue when its median wait sits under 60 s for a week and merges it back when the 90th
+percentile exceeds 180 s. **With one queue there is nothing to gate**, and the telemetry that would
+measure it is Phase 3's. It becomes real the day RANKED is added to the menu, and that is the
+moment to run PROMPT I5 properly.
+
+---
+
+## 102 · Phase 6: friends, presence and blocking ⚠️⚠️ 2026-08-31
+
+🧑: *"when u finish phase 5 completley work onn phase 6, finis phase 6 completley too"*.
+
+`FUTURE.md` PHASE 6 and § 19.6. **What shipped, what could not, and why**, because two of the six
+bullets in that phase depend on a matchmaker that does not exist until Phase 7 and one depends on a
+service query Cloud Save does not have.
+
+### 102.1 · What is built
+
+| Piece | Where |
+|---|---|
+| The rules | `Packages/com.tumbangpreso.core/Runtime/Social.cs`. Friends, blocks, presence, caps, the rail's order, and the recent-players derivation. 25 tests. |
+| The endpoint | `ugs/cloud-code/social.js`, **deployed**. `load`, `presence`, `request`, `accept`, `decline`, `remove`, `block`, `unblock`. |
+| The client | `Assets/TumbangPreso/Runtime/Net/SocialStore.cs`, a cache in front of the endpoint, in `GameServices.Social`. |
+| The screen | A **FRIENDS tab** on the hub. |
+| The prompt | An **ADD** button per human you just played with, on the end-of-match board. |
+| The teeth | `NetSession.ApproveConnection` refuses a peer whose account id is on the host's block list. |
+
+⚠️⚠️ **PRESENCE IS WRITTEN EVERY 60 s AND NOT AT `ServerQuery`'S 4 s**, which `FUTURE.md` § 19.6
+rules out by name: *"presence polling must not raise the service query rate."* A lobby list goes
+stale in seconds; presence changes when somebody presses PLAY. **A friend is believed online for
+180 s after their last write**, so one missed heartbeat does not blink them out, and a stale row
+reads OFFLINE at BOTH ends — the server applies the bound before it answers and the client applies
+it again before it draws.
+
+⚠️ **`load` LOOKS UP AT MOST 30 FRIENDS' PRESENCE.** Cloud Save is keyed per player, so there is no
+"read these thirty documents" call: it is thirty reads server-side inside one invocation the client
+pays one round trip for. The cap is what stops a hundred-friend account turning one press into a
+hundred reads.
+
+### 102.2 · ⚠️⚠️ THREE THINGS `FUTURE.md` § 6 ASKS FOR THAT ARE NOT IN THIS BUILD, AND WHY
+
+**These are written down rather than quietly dropped**, per `FUTURE.md` § 0.5 rule 11.
+
+| Asked for | Why not | What is there instead |
+|---|---|---|
+| ⚠️⚠️ **"Parties of 2 to 4 that queue together"** | **There is no queue.** Matchmaking is Phase 7 and QUICK MATCH does not exist, so "queue together" is a button that cannot do anything. Building a party object now would be a lobby with a second name for it. | **A party is "be in the same lobby", and that already works.** A friend who is in a joinable lobby publishes its join code with their presence; JOIN on the rail hands it to `LobbyJoinPanel`, which resolves it LAN-first then online exactly as a typed code. When Phase 7 lands, a party becomes a queue ticket and this rail does not change. |
+| ⚠️⚠️ **"Friends by display name and tag"** | **Cloud Save is a key-value store keyed by player id, with no query-by-value.** Resolving `Maria Clara#4417` to an id needs an INDEX document that every rename has to update, and that is a service design decision with a real failure mode (a stale index hands a request to the wrong account), not a UI task. | **Recent players and player id.** `SocialRules.RecentPlayers` reads the `MatchRecord` every peer already receives, so the highest-value path — *"the highest-converting social prompt any game of this shape has"*, § 6's own words — ships. |
+| **"Blocking, which must survive matchmaking"** | Same reason: no matchmaker. | **A blocked account cannot join a lobby you host**, refused at connection approval, which is the only way two players can currently end up in one room. Phase 9 inherits the rule and § 8's ranked note already carries it. |
+
+⚠️ **AND THE SHARE CODE IS THE PLAYER ID.** It needs no index and no storage. It is long and ugly,
+and it is the answer for exactly one case: somebody who wants to add a person they have never
+played with. The id is on the ACCOUNT tab.
+
+### 102.3 · ⚠️⚠️ THE HOST DECIDES, AND A FRIEND REQUEST IS THE ONLY THING A STRANGER CAN PUT IN YOUR DOCUMENT
+
+Everything in `SocialRules.WhyCannotRequest` is about the SENDER's own state, which a modified
+client simply lies about. **The rule that matters is `AcceptsRequestFrom`, and it runs where the
+write lands**, inside the endpoint, against the recipient's own document. Same shape as
+`BannerRules.Authorise` in § 101 and the same rule `LobbySession` has always followed: a client
+asks, the server answers.
+
+⚠️ **THE SENDER IS NEVER TOLD THEY WERE BLOCKED.** The request is dropped and their pending row
+simply never resolves. Telling somebody they have been blocked is how a block becomes an argument,
+and the same rule governs the connection refusal: it says *"Could not join this game."* and not
+why.
+
+⚠️ **BLOCKING SOMEBODY YOU ARE FRIENDS WITH ENDS THE FRIENDSHIP, ON BOTH SIDES.** A block that
+leaves a friendship standing is a label rather than a boundary, and a pending request from somebody
+you blocked would sit in your inbox for ever with no way to act on it. **A friendship is one fact
+stored twice**, so both copies move together or neither does — `remove` and `block` both clear the
+other side.
+
+### 102.4 · ⚠️⚠️ A HINT THAT WRAPPED DREW OVER THE ROW UNDERNEATH IT, ON EVERY SCREEN `UiRows` BUILDS
+
+**Found in the render of the new FRIENDS tab, not by a test.** `UiRows.Row` gives a hint a 24-unit
+box and `HorizontalWrapMode.Wrap`, and set `LayoutElement.preferredHeight` to a flat `RowHeight`.
+So a two-line sentence wrapped correctly and then **drew its second line below its own zebra band**,
+over whatever was under it.
+
+⚠️⚠️ **AND NO PROBE IN THE PROJECT COULD SEE IT, WHICH IS § 95 ROTATED NINETY DEGREES.**
+`PlayerHubLayoutProbe` and `PhaseSurfaceLayoutProbe` compare `preferredWidth` against the rect and
+**skipped wrapping labels entirely** — `if (horizontalOverflow == Wrap) continue;` — because a
+wrapped label's preferred width is inside its box by definition. That is what wrapping means. The
+overflow was vertical and every check in the repository measured horizontally.
+
+**Two fixes, and the second is the one that lasts.** `UiRows.Row` measures `preferredHeight` and
+grows the row and the note's own box by the difference, re-centring the label; and
+`PlayerHubLayoutProbe` now asserts `preferredHeight <= rect.height` on every wrapping label instead
+of skipping it. ⚠️ **Measured off the text rather than counted off the string**: the note's rect is
+a fixed 800 units, so the answer is the same at every resolution.
+
+### 102.5 · What is NOT proven, and it is the honest gap
+
+⚠️⚠️ **NO TWO-ACCOUNT RUN HAS HAPPENED.** `CloudEndpointActionProbe` has one throwaway UGS profile
+(`qa45`), so what is proven against the LIVE service is `load`, `presence`, `block` and `unblock` —
+every branch that touches only the caller's own document. **`request`, `accept`, `decline` and
+`remove` write into a second player's document and are covered by the core tests and by reading the
+script, not by a live round trip.**
+
+**Done looks like:** two accounts, on the two laptops, befriend each other, see each other's
+presence change when one enters a match, and one blocks the other and is refused at the door. That
+is a thirty-minute manual pass and it is the next thing to do with this feature.
+
+⚠️ **The probe must not grow a second real account to fix this.** `CloudEndpointActionProbe`'s
+header records why `qa45` exists: the editor and the built player share the UGS credential cache,
+so a probe on the `default` profile overwrites his real display name and can delete his profile.
+
+**Verified:** Core **317/317** (+25), EditMode **257/257** (+2), **UGS 16/16 against the live
+project** including two new social cases that exercised the deployed script's own branches,
+`PlayerHubLayoutProbe` **5/5** with FRIENDS in the tab loop and `13-hub-friends-empty.png` in
+`Logs/ui/`, `Checks.RunAll` all five, and the three `tools/` audits exit 0.
+⚠️ **`ugs cloud-code scripts get social` reads back all six declared parameters**, which per § 90.5
+is the only way to know the service holds what the file says.
+
+---
+
+## 101 · Phase 5 continued: the banner on the wire, palettes on remote seats, and the colour picker ⚠️⚠️ 2026-08-31
+
+🧑: *"pls thoroughly check ur phase 1-4 and if its good work onn phase 5"*, and *"make sure ui
+looks great annd is intuitive for all"*.
+
+**Phases 1 to 4 were re-verified first and all of it is green**: Core 277/277 before this work,
+EditMode 251/251, **UGS 14/14 against the live project**, `Checks.RunAll` all five in one launch,
+and the three `tools/` audits exit 0. ⚠️ **The UGS run is the one that counts**, per § 94.2b's
+standing rule: it is the only gate in the project that asks the service rather than the repository.
+
+### 101.1 · ⚠️⚠️ A PALETTE COULD NEVER BE EQUIPPED, BY ANYBODY, AND THE FEATURE HAD SHIPPED
+
+**Found while writing the wire, not by playing.** `LoadoutRules.PaletteFor` returned the default
+for **every input there is**, so every character in the game wore its authored colours and nothing
+anywhere said why.
+
+**The two halves disagreed about what a palette is called.**
+`ProgressionRules.MasteryRewardsAt` names every mastery reward
+**`mastery.<hero>.<suffix>`**, so the palette a player actually owns is
+`mastery.zack.palette.alt1`. `PaletteRules.HueShiftFor` was a `switch` on the bare
+`palette.alt1`. So:
+
+- equipping `palette.alt1` failed `BannerRules.Owns`, because that is not an id anybody owns; and
+- equipping `mastery.zack.palette.alt1` failed `PaletteRules.IsKnownVariant`, because the switch
+  had never heard of it.
+
+**Both arms returned `DefaultId`.** ⚠️⚠️ **This is § 91.8's "computed and worn by nothing" one
+layer further down, and § 98 was written believing that layer was done.** Every palette in the
+game is a mastery reward — the account table pays none — so there was no input at all for which
+the feature worked.
+
+**The fix is `PaletteRules.Names`:** a variant is named by the TAIL of an id and the prefix says
+where it was earned. ⚠️ **The match is on a dot boundary rather than a bare `EndsWith`**, or a
+future `palette.alt10` would answer to `palette.alt1` and two variants would be one colour.
+
+⚠️⚠️ **AND THE TEST THAT SHOULD HAVE CAUGHT IT HAD AN ASSERTION INSIDE AN `if`.** The first
+version of `APaletteIsAuthorisedFromTheClaimAndAnUnearnedOneIsRefused` read the earned palette off
+the fixture and skipped the check when there was not one; the fixture was an account-level profile
+with no mastery, so there never was one, and **it passed against a completely dead feature**. It
+is now `APaletteEarnedThroughMasteryCanActuallyBeWorn`, which asserts the list is not empty first.
+**An assertion inside an `if` is an assertion that can decide not to run.**
+
+### 101.2 · The wire, and why the host decides rather than each peer
+
+`NetSession.ProtocolVersion` is **17**. One field on `Identify`, one on `SelectLobbyPick`, and two
+per seat inside `SyncLobbyPicks`.
+
+| Piece | What it is |
+|---|---|
+| `BannerClaim` | What a peer wants to wear **plus the two facts that authorise it**: claimed XP and claimed mastery levels. ⚠️ Deliberately not a `PlayerProfile`: that document is thirty fields and a match history, and **a type that carries a career is a type somebody eventually reads a career out of.** |
+| `BannerCodec` | The claim and the worn selection as ONE wire field each. ⚠️ Not JSON, because the core may not see `UnityEngine` and `JsonUtility` is on the wrong side of that line. |
+| `BannerRules.Authorise` | `Normalise` against the claim's own numbers. |
+| `LocalCosmetics` | The one builder for "what am I wearing", for the reason `CareerStore.LocalPlayerId` is one owner (§ 94.1). |
+
+⚠️⚠️ **§ 98.2 SAID `Normalise` WOULD RUN "ON THE RECEIVING SIDE AGAINST THE SENDER'S PROFILE" AND
+THE HOST IS THAT SIDE.** It takes the claim, authorises it once, and broadcasts the RESULT in the
+seat table. That correction is worth more than the wording it replaces:
+
+- **Everybody in the room draws the same banner, because one machine decided it.** Four peers each
+  normalising their own copy is four answers to one question, which is exactly the shape § 94.1
+  records four hand-written copies of.
+- **It is the rule the rest of the lobby already follows.** `LobbySeatInfo.Ready` carries the same
+  note: a peer never writes its own row in the table, and § 54 records what trusting one cost.
+- **The authorising numbers stop at the host.** Only ids leave it, so nobody can read a stranger's
+  XP off the wire.
+
+⚠️⚠️ **THE HONEST LIMIT, WRITTEN DOWN RATHER THAN IMPLIED: A MODIFIED CLIENT CAN CLAIM A LEVEL IT
+HAS NOT REACHED AND WEAR A TITLE EARLY.** There is no server in a LAN match, the host is a player
+(`FUTURE.md` § 8.1), and asking the account endpoint per peer per cosmetic would put a round trip
+in front of a lobby that must work with the cable out (§ 97). **The claim is checked for
+consistency, not for truth**, and `FUTURE.md` § 0.5 rule 4 is what makes that acceptable: a
+cosmetic cannot move a gameplay number, so the worst case is somebody lying about their reading
+age.
+
+⚠️ **THE CLAIM RIDES `SelectLobbyPick` AS WELL AS `Identify`, AND THAT IS NOT REDUNDANT.** The
+palette is remembered per CHARACTER, so it is a fact about the player *and* the character; a claim
+sent only at join would leave everybody dressed in whatever they were holding when they walked in.
+
+⚠️⚠️ **AND THE HOST AUTHORISES ITS OWN CLAIM TOO.** It never sends itself an `Identify`, so
+`NetSession` calls the same method on the host's own peer id. Without it the host is the one seat
+in the room wearing nothing, on every screen including its own — and it would be the one copy
+nobody checked, which § 94.1 says is the copy that is wrong.
+
+### 101.3 · Remote seats wear it, which was step 3
+
+`MatchInstaller.BuildSeat` carried a note saying a remote peer's palette *"has to arrive over the
+wire before it can be drawn, and it does not yet"*. It does now, and **three paths dress a body,
+so all three read the same field**: `BuildSeat` at spawn, `SyncPicksClientRpc` when a client is
+corrected about which character a seat is, and `ApplyRosterToLiveSeats` when the roster changes.
+
+⚠️⚠️ **`SyncPicksClientRpc` WOULD HAVE UNDONE THE PALETTE ON EVERY PICK CHANGE.** It passed
+`person.Palette` straight through, so it repainted every seat in its authored colours after
+`MatchInstaller` had dressed it correctly. That is a fifth fault of exactly the kind the four
+already recorded in that method's header are, **and invisible on the host for the same reason:**
+the host never runs the client half.
+
+⚠️ **THE LOCAL SEAT READS ITS OWN SETTINGS AND EVERY OTHER SEAT READS THE WIRE.** The old note's
+warning stands: guessing a remote peer's palette from this machine's settings would dress a
+stranger in the local player's choice.
+
+### 101.4 · Where a banner is seen, and the one place it deliberately is not
+
+| Surface | What it draws |
+|---|---|
+| The lobby plate | The title, on its own strip under the name, with TAYA FIRST stacked below it when both are showing. ⚠️ **Two strips, never one control with two meanings** — that is what `SignInScreen`'s guest button was rebuilt to remove (§ 97). |
+| The end-of-match board | The title, in its own column, smaller and quieter than the name. ⚠️ **On a cell rather than appended to the name**, because a title concatenated into a name measures and truncates differently from the row above it. |
+| **The in-match nameplate** | ⚠️⚠️ **NOTHING, ON PURPOSE.** `docs/VISION.md` § 2 is a readability budget for a 14 by 14 m box holding four players, one lata, four tsinelas and up to twelve live abilities, and § 3's rule is one line: *"the in-match HUD carries no sentences."* **A banner belongs where people look at each other, which is before the match and after it.** |
+
+⚠️ **THE LABEL IS RESOLVED FROM THE ID, NEVER SENT.** `ProgressionRules.LabelForRewardId` exists
+because the peer drawing somebody else's banner has no access to their career and cannot read the
+label off the reward. An id this build has never heard of resolves to **empty**, so a peer on a
+newer build wearing a newer title draws a plate with a name on it rather than one reading
+`mastery.zack.title.katuwang`.
+
+### 101.5 · ⚠️⚠️ THE LOCKER IS THE CHARACTER SELECT SCREEN, AND THAT CORRECTS `FUTURE.md` § 0.5b
+
+That table asks Phase 5 for *"a locker, reached from the hub"*, with **the character, wearing it**
+as the one thing on it. **This screen is already that**: the model, the real toon shader, the ink
+outline and the equipped palette are all on it, and `RefreshPreview` has applied the palette since
+§ 98. **A locker on the hub would be a second screen showing the same character worse**, which is
+§ 92's fault with a new name.
+
+**The journey settles it** (`CLAUDE.md` § 6.3): PLAY, pick, recolour, done is three presses on a
+screen you are already looking at, against five that begin by hunting a corner chip **nobody has
+found yet (§ 96)**. § 0.5 rule 11 says a phase that disagrees with that table corrects it, so
+`FUTURE.md` PHASE 5's row now says so.
+
+**What shipped:** a COLOURS row at the top of the character column, DEFAULT plus one swatch per
+owned palette.
+
+- ⚠️⚠️ **IT IS NOT DRAWN AT ALL WHEN NOTHING IS EARNED**, which is § 0.5b question 3 answered
+  rather than skipped. A row reading COLOURS with one dead swatch is the fifteen rows of
+  `0/0 (needs 10 throws)` that taught a new player the game was broken (§ 92.1 fault 4).
+  **A control whose only option is the one you already have is not a control.**
+- ⚠️⚠️ **THE SWATCH IS PAINTED THROUGH THE SAME `PaletteVariants.For` THE MODEL GOES THROUGH**, so
+  it cannot disagree with the character standing beside it. `ToonSkin.ApplySlipper`'s header
+  records what a second source of colour cost: a shoe that changed colour depending on the screen.
+- ⚠️ **THE SLOT IT SAMPLES IS CHOSEN BY SATURATION × VALUE, NOT BY INDEX.** The sixteen slots are
+  an atlas, not a ranking: on several of the cast slot 0 is an off-white, so three variants would
+  have been three shades of the same grey and the control would have looked broken rather than
+  subtle. The face slot is excluded, because it is the one slot no variant rotates.
+- ⚠️ **DEFAULT IS A SWATCH.** Without it there is no way back from a variant, and § 6.3 calls a
+  dead end a bug.
+- ⚠️ **BOTH MODES, ABOVE THE HERO STRIKE EARLY RETURN**, or the one cosmetic control in the game
+  would change meaning with the mode.
+
+### 101.6 · ⚠️⚠️ THE NEW PROBE WROTE A PALETTE INTO HIS REAL `settings.json`, AND IT TOOK A RENDER TO NOTICE
+
+`CosmeticSurfaceProbe` presses a swatch to photograph the selected state.
+`SettingsStore.SetPaletteFor` **saves**, deliberately — a cosmetic choice lost on quit is worse
+than one you cannot make — and the editor shares `Application.persistentDataPath` with the built
+player, **so the file it wrote is the file he plays with.** The teardown restored `dante` and the
+picker had recoloured `berto`, so a palette he never chose survived the run and was still in
+`settings.json` afterwards. It is cleared, and the teardown now snapshots and restores the whole
+`CharacterLoadouts` list.
+
+⚠️ **A PROBE THAT PRESSES A BUTTON THAT PERSISTS HAS TO PUT THE WHOLE STORE BACK**, not the row it
+expected to be touched. `CloudEndpointActionProbe`'s throwaway UGS profile is the same lesson one
+service further out, and this is the second time the shared `persistentDataPath` has cost
+something.
+
+### 101.7 · ⚠️ AND THE FIRST RENDER WAS OF A SCREEN THAT DOES NOT EXIST
+
+The probe opened the picker with `panel.SetActive(true)`. `ConvertedMatchSetup.OpenCharacterSelect`
+also calls `SetAsLastSibling`, and its own note says why: the lobby's runtime chrome is built after
+the authored panel, so hierarchy order alone draws the left rail and the tabs over the picker's
+backdrop. **The shot came out with MATCH SETTINGS drawn straight through the CHOOSE button**, which
+read as a real layout fault on a screen he uses every match.
+
+⚠️⚠️ **THAT IS `CLAUDE.md` § 6.2b COMMITTED BY THE PROBE RATHER THAN BY THE GAME**, and it cost a
+diagnosis. The probe presses `CharacterButton` now, which is the door the player uses.
+⚠️ **`UiClickProbe` said `ConfirmButton: ok` throughout**, because the raycast at its centre landed
+five pixels clear of the pill: **reachable is not readable**, one more time.
+
+**Verified:** Core **292/292** (+15), EditMode **255/255** (+4, `CosmeticsWireTests`),
+`CosmeticSurfaceProbe` **3/3** with renders `10`, `11` and `12` in `Logs/ui/`, and
+`audit_wire_payloads.py` reads `Identify 8/8`, `SelectLobbyPick 5/5`, `SyncLobbyPicks 13/13` with
+**0 mismatched of 55**, which is the check that the three writers and their readers still agree
+field for field.
+
+---
+
+## 100 · ⚠️⚠️ THE BOOT SCREEN'S ART WAS FITTED TO A FRAME NOBODY CAN SEE, AND THE COLUMN WAS SIZED AGAINST THE WINDOW INSTEAD OF AGAINST THE FORM
+
+**Reported 2026-08-31 by 🧑, with a screenshot of the shipped boot screen**: *"This shhit is
+horrible bro the art is cut off can u properly cut it at the appropriate amt and maybe make the
+box smaller, the create account box, u properly thinnk abt how to make the characters look good,
+also nno nneed to darkenn it"*.
+
+⚠️⚠️ **THIS IS THE FIRST FAULT ON THIS SCREEN THAT WAS NOT A FLOW BUG OR A SORTING BUG. § 97.2's
+table has six rows and § 99 has the seventh, and every one of them was about WHERE the screen
+drew. This one is about what it looks like when it draws correctly**, which is the half no probe
+in this repository has ever had an opinion about.
+
+**Three faults, and the first two are the same mistake in two places: a size measured against the
+wrong rectangle.**
+
+| Fault | What it actually was | What he saw |
+|---|---|---|
+| ⚠️⚠️ **The picture was enveloped to the WHOLE CANVAS and then a third of it was covered by the column.** | `BuildKeyArt` stretched `KeyArt` across `_root` and let `AspectRatioFitter.EnvelopeParent` crop it against the full screen. **The crop was therefore computed for a frame that does not exist**, and what the player got was an off-centre window into it. | The cast pushed off-centre, the character on the far left behind the wood, and, because his window is wider than 16:9 while the art is 16:9, enveloping to the full canvas matched WIDTH and **cut the top and the bottom off**. That is where the chopped heads came from. |
+| ⚠️⚠️ **The column was 38 PER CENT OF THE WINDOW around a 420-unit form.** | `AspectSafeCanvas` scales on the SHORT axis, so on the short wide window he plays in the canvas is about **2250 units across** and 38 per cent of it is **860 units of wood**. The form never grew. The empty wood either side of it did, and it took the picture's space with it. | *"maybe make the box smaller"*. It is 580 units now: the form plus one margin either side, which is what the Riot reference's column actually is. |
+| ⚠️ **The scrim was still knocking the art back 55 per cent.** | It was 72 over the live street, retuned to 55 when the art landed, and never asked what it was still FOR. **Every word on this screen sits on an opaque column and the art side carries no text at all**, so it was dimming the one thing the player is meant to look at in order to protect text that is not on it. | *"nno nneed to darkenn it"*. Gone when there is art. |
+
+**The fix, and it is arithmetic rather than taste.** The art side is now its own rect, `canvas
+width - 580` by `canvas height`, with a `RectMask2D`, and the picture envelopes THAT.
+
+- On his window that region is about **1670x1080, which is 1.55**, and the picture is **1.82**.
+  A region NARROWER than the picture matches HEIGHT, so **the full height of the art is on screen
+  and nothing is cut off the top or the bottom**. The only crop is a symmetric slice off each end,
+  about 7.5 per cent, and every character survives it.
+- At 1920x1080 the region is 1340x1080 and the slice is the widest it ever gets, leaving the
+  middle **68 per cent**. ⚠️ **The cast spans 13 to 90 per cent of the frame, so at 16:9 the
+  outermost character is clipped at the frame edge and that is not a bug that can be fixed by
+  moving the crop**: 68 per cent of a frame cannot hold 77 per cent of a cast, and biasing the
+  window left or right only chooses which of the two outer characters gets cut. Centred is the
+  answer that cuts least and cuts symmetrically. **Renders at both shapes are in `Logs/ui/`.**
+
+⚠️ **THE CROP IS NOT BIASED UPWARD, AND IT WAS TRIED ON PAPER FIRST.** A pivot above centre would
+keep the sky and lose the road on very wide windows, but the lata and the tsinelas ARE the bottom
+of this picture and they are the game's two objects. There is no crop worth taking that cuts them.
+
+⚠️⚠️ **AND THE OVERFLOW IS MASKED RATHER THAN COVERED, WHICH IS § 99'S LESSON APPLIED BEFORE IT
+COSTS ANYTHING.** Enveloping means the picture is bigger than its region by construction, and the
+old arrangement relied on the column being opaque and later in the hierarchy to hide the part that
+spilled under it. That is true until somebody reorders two lines or gives the column a translucent
+skin. `RectMask2D` makes the region's edge the picture's edge whatever is drawn beside it.
+
+⚠️⚠️ **DELETING THE SCRIM ALSO DELETED THE THING THAT WAS BLOCKING CLICKS, AND THAT WOULD HAVE
+SHIPPED.** The scrim was a full-screen raycast target, so it was silently what stopped a press on
+the art side reaching the title screen underneath. With it gone, at boot the player could have
+pressed PLAY **through** the picture, on the one screen that exists to ask a question first. The
+key art is the blocker now (`raycastTarget = true`); `RectMask2D` is an `ICanvasRaycastFilter`, so
+the block stops exactly where the picture does and the opaque column takes the rest.
+
+**Verified:** `PlayerHubLayoutProbe` 5/5, including `PhotographEveryScreen`, whose
+`08-signin-at-boot-over-the-menu.png` and `09-signin-at-boot-windowed.png` are the two renders
+this entry is written from. ⚠️ **The probe was green before this change too**, which is § 6.2b's
+whole point one more time: it asserts the labels fit their boxes, and every label always did.
+
+---
+
+## 99 · ⚠️⚠️ EVERY `sortingOrder` A CODE-BUILT SCREEN SET WAS SILENTLY IGNORED, AND § 92.7'S FIX NEVER WORKED
+
+**Found 2026-08-31 when 🧑 opened the 00:24 player**: *"i opened the game what the fuclk is
+this"*, with the boot account form floating over a fully lit title screen, no scrim, no wood
+column, and the nameplate drawn across it.
+
+**A `Canvas` nested inside another `Canvas` renders as part of its parent's batch, in hierarchy
+order, and honours its own `sortingOrder` only when `overrideSorting` is true.**
+`MenuKit.BuildCanvas` never set it. `PlayerNameplate`, `PlayerHub` and `SignInScreen` all live on
+`ConvertedMainMenu`'s GameObject, which is inside `MainMenuCanvas`, so **480, 500 and 510 were
+three numbers that did nothing at all.**
+
+⚠️⚠️ **THE SCREEN'S LAYOUT WAS NEVER WRONG, WHICH IS WHY FOUR GREEN RENDERS MISSED IT.**
+`Logs/ui/09-signin-at-boot-windowed.png` shows the same screen at his exact window shape, correct:
+opaque column on the left, everything in its place, CONTINUE AS GUEST at the bottom. **A probe
+builds these screens with no menu around them**, so the nesting that breaks them does not exist in
+the test. The bug is not in the screen, it is in the relationship between the screen and what it
+was parented to.
+
+⚠️⚠️ **AND § 92.7 RECORDED THIS SYMPTOM WITH THE WRONG CAUSE.** It reads: *"At sorting order 85
+the hub had the MULTIPLAYER setup screen drawn through it, join-code field and all... The hub is
+500 now and the sign-in screen 510."* **Raising the numbers cannot have fixed anything, because
+the numbers were inert.** Whatever changed that day was which screen happened to be loaded. **A
+fix that works for a reason nobody checked is a fix that comes back**, and it came back six days
+later on the one screen every player meets first.
+
+**The fix is one line in `MenuKit.BuildCanvas`:** `canvas.overrideSorting = true`. Every authored
+order now means what its comment already claimed.
+
+⚠️ **WHAT TO WATCH.** Three canvases changed layer at once, so the regression to look for is
+something covering something else. `UiClickProbe.EveryButtonIsReachable` and
+`SettingsWheelProbe` are the two that can see it and both are in the gate for this change; § 92.7
+records them catching exactly that class twice before.
+
+---
+
+## 98 · Phase 5 begins: the banner, and wiring the rewards nothing wore ⚠️⚠️ 2026-08-31
+
+🧑: *"when ur donne wiht that start with phase 5"*. `FUTURE.md` PHASE 5 is cosmetics and
+character customisation.
+
+⚠️⚠️ **IT STARTS BY WIRING WHAT PHASE 4 ALREADY EARNS, NOT BY AUTHORING ANYTHING NEW**, which is
+what this file's own § 0.5b row for Phase 5 says to do: *"Wire the EXISTING rewards before
+authoring one new one, or the first thing this phase ships is a second unworn set."* § 91.8 is the
+entry: titles, badges, palettes and borders are computed by `ProgressionRules.AccountRewards` and
+`MasteryRewards` and **worn by nothing**. A progression track whose rewards are invisible is a
+number going up.
+
+### 98.1 · The banner is one object, and it absorbed six slots before it was written
+
+`FUTURE.md` PHASE 5 cut them by name. An earlier version of that phase listed a nameplate, a
+title, a badge, an emblem, a frame, a border, a mastery number and an avatar as **separate**
+cosmetic slots, each with its own inventory category, its own UI row and its own wire field.
+**They all do the same job: they say who you are next to your name.**
+
+⚠️ **AND `RewardKind` ALREADY HAS EXACTLY THE RIGHT SHAPE FOR IT**, which is worth noticing
+before designing anything: `Title`, `Badge`, `Palette`, `Border`. Those are the banner's four
+fields. Phase 4 built the vocabulary without having anywhere to put it.
+
+**`Packages/com.tumbangpreso.core/Runtime/Banner.cs`:**
+
+| Piece | What it is |
+|---|---|
+| `BannerSelection` | Four string ids and up to three tracker ids. Nothing else. |
+| `BannerRules.Earned` | The account track plus every hero's mastery track, derived from the profile. ⚠️ **No inventory document**, so there is nothing to migrate when the table grows and no way for a stored list and the table to disagree. |
+| `BannerRules.Normalise` | **The whole security model of cosmetics.** |
+| `BannerRules.TrackerIds` | Eight trackers, every one already derivable from `CareerTotals`. |
+
+⚠️⚠️ **`Normalise` DROPS AN UNEARNED FIELD RATHER THAN REFUSING THE BANNER, AND THAT IS A
+GRIEFING FIX RATHER THAN A STYLE CHOICE.** A banner arrives from a peer as four strings. If one
+unearned id threw the whole selection away, **anybody could blank a stranger's banner by sending
+one junk id alongside their real ones.** Dropping the field is the smallest correct answer: the
+honest parts still draw. `BannerTests.OneUnearnedFieldDoesNotTakeTheEarnedOnesWithIt`.
+
+⚠️ **STRING IDS, NEVER INDICES.** `FUTURE.md` PHASE 5 is explicit and `Roster.Slippers` records
+what inserting a row into a wire-facing list costs. Every peer resolves these ids, so an index
+that shifts dresses somebody else's character.
+
+⚠️ **THREE TRACKER SLOTS, AND THE NUMBER IS THE POINT RATHER THAN A LIMIT TO RAISE.** A banner
+showing everything says nothing; choosing WHICH three is the expression. Raising it turns a
+statement into a dump, which is § 92.1 fault 4 one screen over.
+
+⚠️⚠️ **AND `ABannerCannotCarryAGameplayNumber` IS THE SAME REFLECTION GUARD `Reward` HAS**, for
+the same rule (§ 0.5 rule 4) and for the same reason: a type that cannot hold a number cannot
+change one, and that is only worth anything if adding a field in a hurry fails a test.
+
+### 98.1b · The surface, on PROFILE, and where it is stored
+
+**A BANNER group on the hub's PROFILE tab**, which is where identity already lives: the display
+name and the tag are on that tab and a banner is the same kind of fact.
+
+⚠️⚠️ **IT APPEARS ONLY ONCE THERE IS SOMETHING TO WEAR, WHICH IS § 0.5b QUESTION 3 ANSWERED
+RATHER THAN SKIPPED.** A fresh account has earned nothing, and four dropdowns each reading NONE
+is **§ 92.1 fault 4 in a new costume**: the fifteen rows of `0/0 (needs 10 throws)` that taught a
+new player the game was broken. Closed with one sentence it says where the rewards come from; open
+with real choices in it, it is worth looking at. A kind with nothing earned in it is not drawn at
+all, because a dropdown whose only entry is NONE is a control that cannot do anything.
+
+⚠️ **THE DROPDOWN SHOWS `Label` AND STORES `Id`.** A reward's label is prose somebody may reword;
+its id crosses the wire and never changes. Phase 5's string-id rule is about keeping that pair
+apart.
+
+⚠️⚠️ **IT IS STORED IN `GameSettings`, NOT ON `PlayerProfile`, AND PUTTING IT ON THE PROFILE
+WOULD HAVE DELETED IT ON EVERY MATCH.** That document round-trips through
+`ugs/cloud-code/match-record.js`, and `CareerStore.AdoptRemoteProfile` **replaces** the local copy
+with whatever the endpoint answers. The deployed script does not know these fields, so it would
+answer without them and **every submitted match would silently strip the player's banner.**
+§ 94.2b is the entry about a deployed script running behind the repository; this is what that
+costs if a field is added before the endpoint knows it. **The order is fixed: endpoint first, then
+the profile carries it, then the storage moves.**
+
+### 98.2 · Not done yet, and in this order
+
+1. ✅ **The surface.** Done, § 98.1b. ⚠️ **Rendered but not yet reviewed by 🧑**, and § 0.5b is
+   explicit that a green layout probe is not a good screen.
+2. **The wire.** A banner is only worth wearing if other people see it: the lobby, the scoreboard
+   and the end-of-match board. ⚠️⚠️ **That is a protocol change and `NetSession.ProtocolVersion`
+   goes up, so both machines rebuild.** `Normalise` runs on the RECEIVING side against the
+   sender's profile, which is the reason it is in the core.
+3. **Palettes actually applied.** `ToonSkin`'s palette remap already recolours a whole character
+   from 16 slots per renderer, so a colour variant is nearly free; nothing wires a `RewardKind.
+   Palette` id to it yet.
+4. **The favourite loadout per character** that Phase 5 calls *"worth more than it costs"*.
+
+---
+
+## 97 · The boot account screen, PUBG-shaped, with the guest escape ⚠️⚠️ 2026-08-31
+
+🧑: *"does sign up page show up first thing when someonne opens thhe game or what"*, then
+*"i want this like pubg but they have ann option to continue right as a guest"*.
+
+⚠️⚠️ **THIS REVERSES § 92.3, WHICH CALLED THE BOOT BEHAVIOUR "THE ONE THING THAT MUST NOT
+MOVE".** It is reversed by the person whose game it is, and the reversal is narrower than it
+looks, which is why both positions can be true.
+
+**What § 92.3 refused and what this is are not the same object.** What it refused was
+`AccountOverlay.Install` ending with `if (account.ShouldOfferUpgrade) OpenOffer()`: **a panel with
+six fields and a password box, appearing unasked, over the menu, to a player who had just earned
+something.** What PUBG Mobile actually does, and what this is, is one screen asking one question
+with a one-press escape sitting on it. **The escape is the entire argument.**
+
+⚠️⚠️ **AND THE ESCAPE IS THE THING THAT MUST NEVER DEGRADE, SO IT HAS AN ASSERTION RATHER THAN A
+PARAGRAPH.** `PlayerHubLayoutProbe.TheBootAccountScreenIsOfferedOnceAndOnePressLeavesIt` runs with
+`GameServices.Account` **null**, which is a machine that has never reached the service, and
+asserts that CONTINUE AS GUEST is present, that one press closes the screen, and that the answer
+is recorded. **If that button ever grows an `await` or needs an account, the case goes red.** The
+nationals are in General Santos City and the venue internet cannot be assumed; this screen is now
+in front of the game, so "works with the cable out" stopped being a nice property and became a
+release gate.
+
+**What shipped.**
+
+| Piece | What it does |
+|---|---|
+| `GameSettings.AccountChoiceMade` | Records the ANSWER, not the outcome. ⚠️ **Gating on "has no password" instead would show the screen on every launch to every player who chose to stay a guest**, which is the nag PUBG's screen is not, and would make CONTINUE AS GUEST a button that does nothing lasting. |
+| `SignInScreen.OpenAtBoot` | The same screen, opened on CREATE, with BACK hidden. ⚠️ **BACK at boot dismisses to nothing**, which is how a player gets stuck on a black frame. |
+| `SignInScreen.BootGuest` | Records the answer and closes. **It deliberately does NOT call `SignInAsGuest`.** |
+| `PlayerNameplate.OfferTheAccountChoiceOnce` | The opener, in the one place that already owns this chain. |
+
+⚠️⚠️ **THE OBVIOUS MISTAKE HERE WOULD HAVE BEEN REUSING `SignInAsGuest`, AND IT IS ALREADY ON
+THE SCREEN UNDER A SIMILAR NAME.** That method is the TOURNAMENT guest: it parks the owner's
+profile in `_primaryProfile` and `LeaveGuest` throws away what the guest earned. Running it at
+boot would have made every first-time player a temporary user of their own game and binned their
+first evening. **Two behaviours behind one word is what this screen was rebuilt to remove**, so
+the caption changes with the mode: PLAY AS GUEST from the ACCOUNT tab, **CONTINUE AS GUEST** at
+boot, and they are separate methods.
+
+⚠️ **THERE IS NOTHING FOR THE BOOT GUEST PATH TO DO, WHICH IS THE POINT.** `PlayerAccount` has
+already signed in anonymously behind the loading screen, or already fallen back to the local
+profile. "Continue as guest" is the player accepting the account they were given, so the only
+state that changes is that the game stops asking.
+
+⚠️ **EVERY EXISTING PLAYER SEES IT ONCE.** A `bool` absent from a saved `settings.json`
+deserialises to false, so the flag needs no migration and everybody who already has the game is
+asked on their next launch. That is correct: nobody has been asked yet.
+
+### 97.1 · ⚠️⚠️ A SCENE LOAD IS NOT A BOOT, AND GATING ON THE NAMEPLATE ALONE BLOCKED THE WHOLE SETTINGS PANEL
+
+**The first version opened the screen from `PlayerNameplate.Install` and nothing else.** A
+nameplate is installed by every path that shows the menu, so
+`UiClickProbe.EveryButtonIsReachable` came back with **every settings control on the title screen
+"blocked by MainMenuCanvas/SignInCanvas/SignInRoot/Column/Label"**: the boot question had opened
+over a menu a probe loaded directly, and nothing in that probe was ever going to answer it.
+
+⚠️⚠️ **THIS IS THE THIRD TIME THAT PROBE HAS CAUGHT NEW MENU CHROME COVERING SOMETHING, AND THE
+SECOND TIME IN TWO DAYS.** § 92.7 records it finding the nameplate itself blocking eight settings
+controls and swallowing the mouse wheel. **A full-screen thing added to the title screen is the
+single most reliable way to break a screen it has nothing to do with**, and the only reason it
+keeps getting caught is that the probe asserts reachability rather than existence.
+
+**The fix is `SceneFlow.BootedThroughSplash`**, set by `SplashScreen` the moment it hands over.
+The menu is reached three ways and only one of them is a launch: from the splash, from
+`LeaveMatchToMainMenu`, and from a test loading it by name.
+
+⚠️ **IT IS A SESSION FACT AND `AccountChoiceMade` IS A MACHINE FACT, AND THEY MUST NOT BE
+COLLAPSED INTO ONE.** "Did this process boot" is not "has this player answered". One flag doing
+both would either ask on every scene load or ask nobody.
+
+⚠️ **AND THE PROBE THAT TESTS THE FEATURE HAS TO CLAIM A BOOT**, which is the honest shape: the
+boot case sets `BootedThroughSplash` and restores it, and every other case relies on the guard.
+A test that could not tell the two apart would be testing neither.
+
+### 97.2 · What the screen actually looks like, after four rounds of him looking at it
+
+⚠️⚠️ **EVERY ONE OF THESE CAME FROM A RENDER OR FROM HIM OPENING THE BUILD, AND NONE OF THEM
+FROM A TEST.** The layout probe was green through all of it. `FUTURE.md` § 0.5b's line about a
+green probe not being a good screen has now been paid for four times on one screen.
+
+| What was wrong | The fix |
+|---|---|
+| ⚠️⚠️ **The form floated over a lit menu with the nameplate across it**, no scrim, no column. | § 99: nested canvases ignore `sortingOrder`. **The layout was never wrong.** |
+| ⚠️ **The nameplate drew on top of it.** | It hides for the hub and for `ConvertedOverlay` and knew nothing about a third code-built canvas. |
+| ⚠️⚠️ *"ugly big ass space i hate this ui its so ugly"* | The form was pinned to the column's TOP and the two footer buttons to its BOTTOM, so **the taller the window the bigger the void.** Every row is placed from the column's CENTRE now, so the block cannot split, and CONTINUE AS GUEST sits directly under the primary: **a choice and its alternative are one group.** |
+| *"can u use the real TUMP text logo taht we have on title screen"* | It was the word "TUMP" set in the menu font, not the wordmark. `Resources/UI/main-menu/TUMP.png`, the same asset the title screen draws. ⚠️ **Loaded as `Texture2D` into a `RawImage`**, because that file is imported as a plain texture and `Resources.Load<Sprite>` answers **null** for it: the first version fell back to the label silently. |
+| *"put USER NAME and PASSWORD Text in the middle bcz everything is cetnnered excepot for them"* | Centred. ⚠️ **This overrides the Riot reference deliberately**: its column is left-aligned so its captions align to something; ours is centred, so copying the caption's alignment without the column's is copying the look and not the rule. |
+| *"can u put the frigging splash art there now"* | The key art is behind the form now, enveloped, with the scrim dropped from 72 per cent to 55 because there is something behind it worth seeing. |
+
+⚠️ **AND ONE CLAIM IN `SignInScreen` WAS CORRECTED RATHER THAN DELETED.** `BuildScrim` argued the
+art side should be the LIVE SCENE rather than a texture, *"without shipping a 4 MB PNG that goes
+stale"*. That was right when there was no key art. There is one now, it ships anyway for the
+loading screen, and **the live scene is not visible behind this screen at boot at all**, because
+the menu is a different canvas. `CLAUDE.md` § 3: record the reasoning, not just the change.
+
+---
+
+## 96 · OPEN: he has never found the way into the hub ⚠️⚠️
+
+**Reported 2026-08-30, by 🧑, about the shipped screens themselves.** Sent the hub's PROFILE tab
+and the sign-in screen: *"i didnnt see that at all bruhh"*, *"didnt see this too"*.
+
+⚠️⚠️ **THE SCREENS ARE FINE AND THAT IS WHY THIS IS WORTH AN ENTRY.** Both are built, both are
+reachable, both are measured at nine resolutions by `PlayerHubLayoutProbe`, and both have been
+green since § 92. **He has been playing the build and has never opened either of them.**
+
+**The sign-in screen is expected and is not a bug.** § 92.3: *"Signing in never opens by itself."*
+It is reached only by pressing something, deliberately, because Phase 1's rule is never to block a
+first-time player on a form. A player who has not gone looking for it has not missed anything.
+
+⚠️⚠️ **THE HUB IS THE PROBLEM, AND `PlayerNameplate` IS THE ONLY DOOR.** § 92.4 records that the
+plate *"replaces both floating buttons and is the only way in"*, and that was the right call: the
+two buttons it replaced were what he complained about (*"look wtf why are these buttons here"*).
+**But one small chip in the corner of the title screen is now the sole entrance to four tabs, a
+career, a match history and the whole account system**, and the person who commissioned it did not
+find it.
+
+⚠️ **`FUTURE.md` § 4.5.3 PREDICTED EXACTLY THIS AND NAMED IT AS THE THING A PROBE CANNOT SEE:**
+*"it cannot see a screen that is ugly, and it cannot see a control nobody can find."* The probe
+asserts the plate is on screen at all nine resolutions. It is. That is not the same claim as
+"somebody looks at it".
+
+**What is NOT known, and must not be guessed at.** Whether the plate is too small, too quiet, in a
+corner nobody looks at, or simply does not read as pressable. **Do not fix this by adding a second
+door**, which is how the six-button panel happened in the first place. Ask him what he expected to
+press, or watch one launch.
+
+**Candidates, cheapest first, none of them chosen:**
+1. The plate does not look like a control. It has no press affordance and no hover state.
+2. It says the handle and the level and never says what pressing it does.
+3. `PLAY / SETTINGS / TUTORIAL / QUIT` is a strong vertical rail and the eye may never leave it.
+
+**Done looks like:** he opens the hub without being told where it is.
+
+---
+
+## 95 · ✅ CLOSED: the four title-screen buttons overflowed their own artwork at 720p
+
+⚠️⚠️ **THIS ENTRY WAS FILED AGAINST THE WRONG SCREEN AND THE CORRECTION IS THE INTERESTING
+PART.** It read "a label on the settings panel", because the probe reached the panel with
+`panel.GetComponentInParent<Canvas>(true)` and that resolves to **`MainMenuCanvas`**: the settings
+panel is a child of the menu's canvas, so "the settings canvas" was the whole title screen.
+**A scope described in prose is not a scope.** The permanent overflow dump added to
+`PhaseSurfaceLayoutProbe` names the full transform path, and the answer was not the settings panel
+at all:
+
+```
+[PhaseSurfaceLayoutProbe] 1280x720 settings panel: 4 label(s) overflow
+  needs 330 in 320 at 141u  MainMenuCanvas/StartButton/Caption     "PLAY"
+  needs 414 in 401 at  99u  MainMenuCanvas/SettingsButton/Caption  "SETTINGS"
+  needs 455 in 374 at  99u  MainMenuCanvas/TutorialButton/Caption  "TUTORIAL"
+  needs 228 in 215 at  99u  MainMenuCanvas/QuitButton/Caption      "QUIT"
+```
+
+**All four pennants on the first screen of the game, at the most common laptop resolution.**
+TUTORIAL is **22 per cent** over its box.
+
+**The cause.** `TscnUiImporter.ConfigureArrowButton` writes the `label_size` the `.tscn` authored,
+a fixed 99 to 141 units, and the caption's rect is anchor-stretched inside the pennant, so **the
+box shrinks with the canvas and the font does not.** A font size authored against one canvas width
+is not a font size. ⚠️ **And it is silent**: `MakeText` leaves `horizontalOverflow = Overflow`, so
+the word does not wrap and does not clip, it draws off the end of the pennant and over the tip of
+the artwork. Nothing errors. Same class as `MenuKit.Label`'s note, `GameVersion.ApplyTo` and
+`ConvertedScreen.SetHeadline`, on the screen every player sees first.
+
+**The fix is in `ArrowButtonView.FitCaption`**, beside the pivot logic that already re-applies
+itself until the rect has a width. It restores the authored size and re-runs `MenuKit.Fit`
+whenever the box changes width, so a player who starts windowed and then maximises gets the big
+type back. ⚠️ **The restore is the half that is easy to leave out**, because `MenuKit.Fit` only
+ever shrinks, and without it the first small window a player opens costs them the type scale for
+the rest of the session.
+
+⚠️ **WHY NO EXISTING PROBE SAW IT.** `AspectRatioProbes` drives this screen at all nine
+resolutions and asserts the font FLOOR and that things are on screen; it does not compare
+`preferredWidth` against the box. **A 141-unit label is a long way from the 18-unit floor and
+still does not fit.** The dump is permanent now and prints on every run of
+`PhaseSurfaceLayoutProbe`.
+
+---
+
+## 95b · OPEN: nothing asserts that a menu label fits, only that it is legible ⚠️
+
+**Split out of § 95 rather than fixed with it, because the fix and the gate are different jobs.**
+`AspectRatioProbes.EveryShippedResolutionKeepsTheWholeAuthoredLayoutOnScreen` checks
+`fontSize >= MenuKit.MinReadableUnits` and that rects are inside the canvas. It does **not** check
+`preferredWidth <= rect.width`, which is the check that would have caught § 95 the day the
+pennants were imported.
+
+⚠️ **IT IS NOT A ONE-LINE ADDITION AND THAT IS WHY IT IS OPEN.** Turning the dump into an
+assertion across the whole title screen will surface every other authored label in the converted
+`.tscn` set at once, and some of those may be deliberate. **Run the dump first and read the list**,
+then decide per label, then assert. `PhaseSurfaceLayoutProbe.DumpOverflowing` is the tool and it
+already prints path, string, box, need and font size.
+
+**Done looks like:** `AspectRatioProbes` fails on an overflowing menu label, and every exception
+is named in code with a reason rather than being absent from the check.
+
+---
+
+## 95c · CLOSED: the loading screen was a black rectangle for most of the boot
+
+🧑 sent the key art on 2026-08-31: *"add this photo in loading screen"*, *"its the splash art for
+loading screenn"*. It lives at `Assets/TumbangPreso/Resources/UI/splash_art.png`, 1267x697.
+
+⚠️⚠️ **THE WINDOW IT FILLS IS THE LONGEST SINGLE STRETCH OF THE GAME A FIRST-TIME PLAYER SEES.**
+The studio sting is about half a second. The preload behind it **routinely runs past six seconds**
+and logs when it does (`[Splash] preload exceeded six seconds`). Everything after the sting was a
+black rectangle with three tansan dots on it.
+
+**What shipped.** `SplashScreen.BuildSplashArt` puts the art under the video, and the boot loop
+switches the video surface off the frame the sting ends so the art is revealed.
+
+- ⚠️⚠️ **SWITCHING THE SURFACE OFF IS THE HALF THAT IS EASY TO MISS.** A `VideoPlayer` that has
+  finished leaves its LAST FRAME in the render texture, so without it the `RawImage` above the art
+  keeps drawing a frozen studio logo for the entire remainder of the preload and the art is never
+  seen once. The bug would have been "I added the art and nothing changed".
+- ⚠️ **`RawImage` AND `Resources.Load<Texture2D>`, NOT A SPRITE.** A sprite needs the texture type
+  set on a `.meta` nobody edits by hand and that a re-import can reset; a `RawImage` draws a plain
+  `Texture2D` with whatever import settings the file arrived with. One less thing that can come
+  back as a magenta rectangle.
+- ⚠️ **IT COVERS, IT DOES NOT STRETCH.** The art is about 1.82:1 and the game ships at nine shapes
+  from 4:3 to 21:9. `AspectRatioFitter.EnvelopeParent` fills the window and crops the overflow;
+  `Stretch` would distort the whole cast on every shape that is not 1.82, which is eight of the
+  nine. The black `Backdrop` underneath already assumed a cover.
+- ⚠️ **A MISSING FILE IS SILENT.** `Resources.Load` answers null rather than throwing and the black
+  backdrop stands, with one warning. A boot screen is the worst place in the game to take an
+  exception.
+
+**Not done, deliberately.** The art is one file rather than a versioned series, because
+`CLAUDE.md` § 6.1's version-the-filename rule exists for model ITERATIONS being reviewed in chat
+and this is authored key art. If it is replaced, replace it in place and say so in the commit.
+
+---
+
+## 71 · The 2026-08-29 report, and the two faults only a non-host could see
+
+Reported in one batch. This entry carries the ones that are closed; § 72 carries the one that
+is not.
+
+### 71.1 · A host saw its own game in JOIN A GAME ✅ CLOSED 2026-08-29
+
+🧑: *"na kikita sarili sa lobby (join a game)"*.
+
+A host broadcasts to `255.255.255.255` and to every interface's directed broadcast, and its own
+listener is bound to `IPAddress.Any` on the same port, so it receives every packet it sends.
+The row was indistinguishable from a real game because it WAS one, and pressing JOIN asked the
+transport to connect to a server this process already is.
+
+⚠️ Address and port cannot answer "is this me". The loopback arrives on whichever interface the
+OS routed it through, and on a machine with a virtual adapter (Hamachi, Radmin, WSL, all named
+in `LanBeacon`'s own header) that is routinely not the one you would guess. `LanBeacon` now
+mints a per-PROCESS id, puts it on the wire, and drops what matches its own. Per process rather
+than per machine: two windows side by side for a two-window test are two games and each must
+still see the other.
+
+The payload is a new magic (`MagicV2`) rather than a longer one, because the host name is last
+precisely so it may contain the separator, which makes `parts.Length` useless as a version
+discriminator. v1 is still parsed, so an old build is listed rather than vanishing.
+
+The ONLINE half needs no id: a relay lobby IS its join code. That filter is gated on being the
+host, or a client would hide the lobby it is sitting in from its own browser.
+
+**Verified:** `LobbyAndSettingsTests`, three new cases covering the round trip, a v1 payload,
+and a v1 name containing the separator that has the same field count as a v2 payload.
+
+### 71.2 · The dance emote did two swings and froze ✅ CLOSED 2026-08-29
+
+🧑: *"sa dance emote dalawang swings lang sya and nag stostop na sya sumayaw"*.
+
+`EmoteLoops` said `{ "dance", true }` and `CharacterAnimator.Play` asked for it with
+`playable.SetDuration(double.MaxValue)`. Both were correct, and the disagreement was between
+them: an infinite DURATION says when the PLAYABLE is finished, not what the CLIP does past its
+own end. An `AnimationClipPlayable` past `clip.length` holds its final pose unless the clip
+asset is marked Loop Time in the importer, so an infinite duration on an unlooped clip buys a
+pose that never ends rather than a groove that never ends.
+
+⚠️ Fixed by wrapping the playable's time in `HoldLastFrame`, next to the hold it is the other
+half of, and NOT in the importer. `CLAUDE.md` § 6 says every clip here is placeholder and the
+team's own are coming; an import setting is a property of the asset that the replacement
+arrives without, so the loop would have broken again on the commit that swaps the art. It is a
+no-op on a clip that already loops.
+
+### 71.3 · Bots and slippers left the map, on LAN, for everybody except the host ✅ CLOSED 2026-08-29
+
+🧑: *"idk if its bcz we are using hamachi or its genuinely broken but the bots go out of bounds
+and lan is highly buggy ... for online servers it isnt like that"*, and then the detail that
+settles it: *"its js taht we witnessed in lan that if u werent host, the bots and slippers were
+going out of map"*.
+
+Two independent causes, and either alone leaves the other's failure reachable.
+
+**The transport.** `CustomMessagingManager.SendNamedMessageToAll` takes a `NetworkDelivery` with
+a default of `ReliableSequenced`, and every call in `MatchRpc` omitted it. `SyncUnit` therefore
+went out reliably at one message per body per fixed step: four seats at 50 Hz is 200
+guaranteed-delivery messages a second carrying nothing but a pose the next one replaces.
+
+⚠️⚠️ Reliable is not "the same but safer" for a snapshot stream, it is actively worse. A
+sequenced channel may not deliver N+1 until N has arrived, so one lost packet holds up every
+pose behind it and the whole backlog then lands at once. On the receiving end that is a body
+frozen for a beat and then moved a long way in one step, and `ApplyNetworkTransform` treats a
+jump over 3 m as a correction and SNAPS: through a wall, through the chalk, wherever the
+straight line goes. Nothing about this was LAN-specific; a reliable stream at that rate simply
+needs a link with very little loss to look fine, and the relay path was not better designed, it
+was luckier. `SyncUnit` and `SubmitMove` are `UnreliableSequenced` now, and every other message
+in the file stays reliable, because the rest are EVENTS that happen once and are never repeated.
+
+**The walls existed on one machine.** The host simulates these bodies and its simulation is
+clamped twice; a client writes whatever arrived straight onto the transform. `SetNetworkPose`
+and `Slipper.ApplySnapshotState` now clamp to the same numbers the host clamps to, so a replica
+can only ever refuse a position the host would also have refused. `MeasurePlayableBounds` runs
+in `Start` on every peer, so a client has had the right numbers all along and never used them.
+
+**Verified:** `ArenaBoundsProbe`, and by the arithmetic above. ⚠️ The two-machine case has NOT
+been re-run on Hamachi; that needs two people and is the acceptance test.
+
+⚠⚠ **THE TRANSPORT HALF WAS APPLIED TO THE BOTS AND NOT TO THE SLIPPERS, AND THE PARAGRAPH
+ABOVE IS WHY IT LOOKED FINISHED.** The rule it states, that everything except the two pose streams
+is an EVENT, is true of a grab and of a throw and is NOT true of this file's own
+`BroadcastSlipperStateIfChanged`, which is a position stream wearing the `SyncSlipper` name and
+fired 50 times a second at `ReliableSequenced` for any shoe in flight. So the tsinelas half of
+🧑's report kept its transport cause for a day after the bots lost theirs.
+**§ 77.1 is the fix and the arithmetic.**
+
+### 71.4 · Every arena was measured with Eskinita's walls ✅ CLOSED 2026-08-29
+
+🧑: *"out of bounds sa ilalim ng tulay map"*, *"ilalim ng tulay map appears to have broken
+boundary logic"*, and *"refine out of bounds logic for all maps ... make sure it doesnt go past
+the bounds humans are allowed to go"*.
+
+`MatchInstaller` seeded the search with Eskinita's 8.6 and 13.0 and took `Mathf.Max` over the
+wall colliders, reading each one's CENTRE. Three faults in four lines:
+
+1. **The centre, not the face.** `AIController.PlayableHalfX`'s own note says in capitals that
+   it is THE WALL FACES; the code under it measured centres, so every limit was too generous by
+   half a wall on every map. Eskinita's walls are centred at 8.6 and 0.5 thick: the face is
+   **8.10**, and the game had been using 8.6.
+2. **The maximum, seeded.** A map could only ever measure LARGER than Eskinita, and taking the
+   farthest wall applies the far side's distance to both sides of a symmetric clamp.
+3. **A kerb is not a wall.** Ilalim ng Tulay parents its GROUND under `Bounds`: the ground
+   plate, both pavements and both kerbs, every one of them 0.25 m in half height and enormous in
+   Z. "Thin across one axis" is as true of a kerb as of a wall, and the tightest is a 0.18 m
+   kerb at x = 6.83. Clamping there fences the round onto the tarmac while the pavement either
+   side is floor the game is played on.
+
+Tallness separates them, not names: `tools/maps/build_*.py` emit the arenas wholesale, so
+matching on "Wall" in a node name works until the next layout run. `cc.stepOffset` is 0.3 and
+the capsule is 1.6, so `MinimumWallHalfHeight` 0.5 sits above anything a player steps onto and
+below every real wall in the three arenas.
+
+Measured, through the shipped path:
+
+| arena | halfX | halfZ | ceiling | was |
+|---|---|---|---|---|
+| Eskinita | 8.10 | 17.50 | 12.00 | 8.60 x 18.00 |
+| Bayan Plaza | 12.50 | 12.50 | 12.00 | 13.00 x 13.00 |
+| Ilalim ng Tulay | 11.00 | 16.50 | 12.00 | 11.20 x 16.70 |
+
+⚠️ ONE pair of numbers clamps people, bots and tsinelas alike (`CharacterMotor` twice,
+`AIController.ClampToPlayable`, `Slipper`), which is what makes "it doesnt go past the bounds
+humans are allowed to go" true by construction rather than by three clamps being kept in step.
+
+**Verified:** `ArenaBoundsProbe`, which measures every arena through `MeasurePlayableBounds`
+itself and asserts relations rather than transcribed numbers, because the maps are emitted
+wholesale. It also fails a run in which all three arenas measure identically, which is the
+shape a measurement that cannot shrink has.
+
+### 71.5 · The arena had no lid ✅ CLOSED 2026-08-29
+
+🧑: *"make sure theres invisible bounds in the sky as well as those walls that return the
+slippers or make them bounce"*, and *"give reasonable high ceilings in all maps"*.
+
+`BounceOffBounds` walled X and Z and left Y open, so a hard throw aimed high went over the top
+of a 6 m wall and the RESTING clamp then dragged it back to an edge it had never touched: the
+shoe teleported to a wall out of open air, which reads as the throw being eaten. A tsinelas
+nobody can retrieve is an attacker deleted from the round.
+
+The lid is measured off the same wall boxes the sides are, taking the LOWEST wall top because
+that is the one a throw can clear, and then floored at `MinimumCeilingY` 12.0. Ilalim ng
+Tulay's walls are 3.0 in half height, so its own wall tops would have put an invisible roof at
+6 m over the one map with the lowest scenery; 12 m is the other two arenas' own wall tops, so
+the floor is the height the game already plays under rather than a number picked to feel right.
+
+### 71.6 · A disconnect dropped you into the retired pre-lobby screen ✅ CLOSED 2026-08-29
+
+🧑: *"sometimes ppl go back to Old ui when they disconnect, they shoudl stay in lobby screen but
+js get kicked out of current lobby and go back to their own"*, and *"if host leaves, nonhosts in
+lobby should auto leave that lobby as well"*.
+
+`MatchRpc.HandleClientDisconnected` sent every dropped peer to `MultiplayerSetup`, whose own
+note in `SceneFlow` records that nothing has navigated there since § 68.5 and that it is kept
+only so the redesign can be reverted in one line. It read as "sometimes" because
+`ConvertedMatchSetup` subscribes to the SAME event and handles it correctly in place, so which
+of the two a player got depended on handler order and on whether the lobby was loaded.
+
+Already on the lobby now means do nothing, which is not an optimisation: the lobby's handler
+writes the one actionable line a player can act on (a protocol mismatch is a thing they can
+fix), and reloading the scene would destroy it. From anywhere else it lands on the lobby with
+`SceneFlow.Networked` set, so a player arrives in their own empty lobby rather than on the
+practice tab. And the lobby's handler now calls `NetSession.Stop`, so the client actually LEAVES
+rather than sitting in the shape of a lobby with nothing behind it.
+
+### 71.7 · The protocol tripwire had been red for three bumps ✅ CLOSED 2026-08-29
+
+`ChatAndLobbyChromeTests.TheProtocolCarriesTheChatBump` asserted 7 while
+`NetSession.ProtocolVersion` reached 10. The constant was last moved by `886a981`; the
+assertion was last written by `ed082c8`, three bumps earlier. Every EditMode run since has been
+one test red for a reason that was true and finished, which is the state that teaches a reader
+to skim the failure list.
+
+⚠️ The beacon's wire change in § 71.1 deliberately does NOT move `ProtocolVersion`. That
+constant gates the netcode hello at approval and costs both machines a rebuild off the same
+commit (§ 59.4); `LanBeacon` versions its own payload and still parses v1, so spending a
+protocol bump on a backward-compatible discovery change would refuse peers who have no reason
+to be refused.
+
+---
+
+## 72 · Two lobby controls reported dead that every headless check says are alive ⚠️ OPEN
+
+🧑 2026-08-29: *"sa lobby hindi nagana yung player name, hindi makapag input ng name
+(singleplayer)"*, *"hindi maka input ng code and lobby code sa lobby"*, and, confirming the
+first: *"apparently u cant set ur name in singleplayer too"*.
+
+**Both reproduce for the player and neither reproduces headlessly.** Written down rather than
+guessed at, because the obvious fix was tried first and came back green.
+
+What has been ruled out, and how:
+
+- **Something covering the control.** `UiClickProbe` was widened to enumerate `InputField`,
+  which its own note asked to be done deliberately rather than by accident, and the lobby's
+  join card was added to its overlay list (it is built from code and parked inactive, so
+  nothing in the suite had ever opened it). `PlayerNameEdit` and `JoinAddressEdit` both report
+  `ok`: the topmost raycast hit at each field's centre is the field itself.
+- **The click not taking the caret, or losing it.** `LobbyTypingProbe` is new and walks the next
+  two steps of the same press: pointer-down and click through the EventSystem, then the
+  selection re-read ten frames later. Both fields take the selection and keep it.
+- **Legacy input being switched off.** `activeInputHandler` is 2, which is Both, and the
+  `MatchSetup` scene's EventSystem carries a `StandaloneInputModule`.
+- **The lobby chat stealing focus.** `LobbyChat` calls `ActivateInputField` from three places,
+  but the only one reachable without typing in the chat first is gated on Return, and its
+  `Update` returns early in the lobby before reaching it.
+
+⚠️ The probes run a lobby with `SceneFlow.Networked` false, which IS the singleplayer case both
+name-field reports name, so that is not the gap either.
+
+**What has not been ruled out:** ✅ **the live NETWORKED lobby is ruled out as of § 77.4.**
+`NetworkedLobbyTypingProbe` starts a real host through `NetSession.StartHostAsync`, sets
+`SceneFlow.Networked`, and runs `LobbyTypingProbe.Check` itself rather than a copy of it, so the
+two probes differ in exactly one thing. It passes, and it logs an inventory naming every
+`InputField` and whether `LobbyChat` was live while it passed, because a pass with no chat in the
+scene would rule out nothing.
+
+⚠⚠ **SO ONE SUSPECT IS LEFT AND IT IS THE BUILT PLAYER AS OPPOSED TO THE EDITOR**, which is
+the only item on this list no probe in this repository can reach. Everything else named here has
+now been driven. `LobbyChat`'s `OnPointerClick` exists because a press
+that missed its field was being swallowed by a plate, which is evidence this class of failure is
+real on this screen even though neither probe can currently produce it.
+
+**Done looks like:** a probe that reproduces it, then a fix. ⚠️ Do not "fix" this blind by
+adding an `ActivateInputField` to both fields. That is the workaround `LobbyChat` already
+carries, it would make the report go away without anybody knowing what was wrong, and the same
+cause would surface on the next field somebody adds.
+
+---
+
+## 73 · The rest of the 2026-08-29 batch: feel, audio, and the casts nobody could tell apart
+
+### 73.1 · The volume faders were wired correctly and felt broken ✅ CLOSED 2026-08-29
+
+🧑: *"audio in settings is also broken, even when i lower its still very very loud"*.
+
+Nothing was broken in the wiring. The sliders are authored 0 to 1, the setter writes on every
+value change, and all five things that play a sound read the value live. The fault is the
+CURVE: amplitude is not loudness. Half the groove is -6 dB, which reads as "slightly quieter",
+and the shipped default of 0.8 is -1.9 dB, so the top third of every fader did nothing audible.
+
+`GameSettings.Gain` squares the slider position, which lands close to proportional: 0.5 becomes
+a quarter of the amplitude, 0.2 becomes 0.04, and 1.0 is still exactly 1.0, so nothing is
+quieter at full than it was. ⚠️ The conversion lives in ONE place and `AudioDirector`,
+`VoiceDirector`, `MusicDirector`, `BootSting` and `SplashScreen` read it, because five copies
+of a curve is five places to miss the next one, and the sting and the splash are precisely the
+two that play before a player can reach the panel to turn them down.
+
+**Verified:** `LobbyAndSettingsTests`, two cases: the curve is monotonic with fixed ends, and
+the two faders multiply after being curved separately rather than before.
+
+### 73.2 · Nobody readies in the lobby any more ✅ CLOSED 2026-08-29
+
+🧑: *"si host lang nakakapag start ng game, yung other players hindi na need mag ready"*.
+
+READY had already stopped STARTING anything (`MatchRpc.HostPeerLeft` records the gate coming
+off it), so what was left was a button three players had to press for a tally nothing read: a
+ceremony that could only fail, because a lobby where one person forgets is indistinguishable
+from a lobby waiting on a fourth player who never joined. The guest button reads WAITING FOR
+HOST and the host's START MATCH no longer carries a count of a gate that does not exist.
+
+⚠️ The ready WIRE is untouched. `DeclareReadyServerRpc`, `BroadcastReadyTally` and `ReadyGate`
+are what the PRE-ROUND gate inside a match runs on, which is a different gate with a different
+job. Only the lobby stops asking. Matthew's four-player gate on the host button is kept.
+
+### 73.3 · The ability text was under the floor the project already asserts ✅ CLOSED 2026-08-29
+
+🧑: *"mahirap basahin yung text sa skill description"*.
+
+`AbilityInspectPanel` had its body at 15 units, the kind and cooldown at 14, the key chip and
+header hint at 15, against `MenuKit.MinReadableUnits` 18 that `AspectRatioProbes` enforces and
+that `LobbyChrome.BuildIdentity` cites by name when it rejected a 14-unit caption.
+
+⚠️⚠️ That tray is the worst place in the game to be under it. `VISION.md` § 3 gives ability
+text three homes and the deck deliberately carries no sentences, so the tray is where a player
+is meant to actually READ what a power does; prose nobody can read at the one place it is
+allowed to be prose fails the middle layer of that whole answer. Character select carried the
+same sentence at 15, so the complaint was true of the ability text everywhere it appears.
+
+⚠️ Both rows GREW with the type rather than being left to overflow: four lines of 18 is 108
+against 90, and the hero block goes 214 to 289. `HeroPickerLayoutProbe` and `AspectRatioProbes`
+check the plates still hold it.
+
+### 73.4 · Wood buttons size their label to their box ✅ CLOSED 2026-08-29
+
+🧑: *"and laki ng join at spectate button tas ang liit naman ng mga text hindi balanced"*.
+
+`GodotTheme.FontSizeButton` is one number for every button in the game, so a 40 px chip and a
+940 px browser row both got 18 units and every large control read as a big empty plank with a
+caption in the middle. The complaint is not that the type is too small OR that the boxes are
+too big; it is that only one of the two was ever a variable.
+
+`MenuKit.BalancedButtonUnits` applies the ratio the small controls already have. ⚠️ It only
+ever GROWS, so no button anywhere gets smaller type than it had, and the label is fitted back
+to the box WIDTH afterwards so a long caption in a narrow box shrinks to the floor rather than
+being clipped.
+
+### 73.5 · The lobby chat drew outside its plate ✅ CLOSED 2026-08-29
+
+🧑: *"nag ooverflow yung text sa lobby chat"*.
+
+`MenuKit.FitBlock` sets `verticalOverflow = Overflow` and shrinks the type until the block fits
+its cap, which works right up until the font hits `MinReadableUnits` and cannot go lower.
+`MatchRpc.MaxChatLength` is 120, and 120 characters at 18 units in a 560 px panel is three lines
+against a two-line slot: the `LayoutElement` claimed 52 px while the label DREW 78 and painted
+the remainder over the START button underneath.
+
+⚠️ Clipped rather than grown, because the plate is a fixed size by design and the lobby shows
+`LobbyVisibleLines` deliberately. Nothing is lost: the whole line is in the scrollable log.
+
+### 73.6 · Six ultimates were one nod of the head ✅ CLOSED 2026-08-29
+
+🧑: *"make sure theres an animation for all interactions like pushing tayaing or skill casting,
+make the animations appropriate for skills and what theyre doing btw dont js spam the same
+animation"*, and *"make sure everyone sees this not just host or client"*.
+
+⚠️⚠️ `ActionClips` READS as eighteen distinct hero casts and PLAYED nothing of the sort. Entry
+zero of every hero chain is a `hero-*` clip; the CC0 rig carries 43 named clips and not one is
+a cast, so `Play` falls straight through to entry one. Entry one was `emote-yes` for Supernova,
+Thunderstrike, Titan Fissure, Glacial Nova, Devouring Seance and Grand Coven alike, and
+`attack-melee-right` covered four more skills. **The first slot being correct is what hid it.**
+
+Entry one is now chosen for the MOTION, under three rules: no hero repeats a clip inside its
+own kit, no two ultimates share one at all, and where two heroes do share, the thing they are
+doing is the same thing. Thirteen usable clips against eighteen casts makes some sharing
+arithmetic; sharing it between a dash and a dash rather than between six ultimates is the whole
+difference. The shove and the punch are told apart too: both played `attack-melee-right`, so a
+push that moves you and a jab that tags you were one gesture, and reading which is coming is
+the counterplay.
+
+**And the reach-down was relayed once for a hold that repeats.** `Carrier.StepDefender`
+re-fires the gesture every `ViewmodelArms.GrabSeconds` across a 1.5 s channel, and that repeat
+was purely LOCAL: `ResetPhase.Start` is sent once, so the taya saw themselves reaching over and
+over while the other three saw one reach and a statue for 1.1 s. ⚠️ The host relays it on its
+own clock in `HostStepResetChannels` rather than through a new wire phase, because adding a
+`Repeat` to `ResetPhase` is a protocol bump and § 59.4 is what one costs.
+
+**Verified:** four tests in `HeroPresentationTests`. ⚠️ They resolve against the rig's real
+clip inventory (`RigClips`) rather than a fixed chain depth, because the base verbs name a real
+clip at entry zero and the hero casts never do; the first version assumed one depth for both
+and reported the shove as playing its own fallback. **When the team's own cast animations land,
+add their names to `RigClips` and these tests start measuring the real casts with no other
+change.**
+
+### 73.7 · The intermission can be skipped by agreement ✅ CLOSED 2026-08-29
+
+🧑: *"vote to skip buffer time"*.
+
+15 s runs between every round, so a four round Classic match spends 45 s with nobody playing.
+The buffer is not padding, the role swap has to be read and the next taya has to find their
+mark, but that job is finished the moment everybody has understood it and how long that takes
+is the players' answer rather than a constant's.
+
+⚠️ It is a VOTE and UNANIMOUS rather than a majority. Ending the intermission early takes
+reading time from whoever has not finished reading, and the person who most needs it is the one
+who just became the taya, who is exactly who a majority can outvote. The clock stays as the
+backstop, so a player who never presses anything loses nothing.
+
+⚠️⚠️ It counts PEERS, never characters, which is the trap `ReadyGate`'s header records from the
+other side: every match has four bodies because empty seats are bot-filled and a bot cannot
+press a key. It reuses READY rather than inventing a key, and the two can never fire together.
+
+⚠️ The decision lives on `MatchDirector` because there are TWO runners and one rule:
+`SliceRunner` schedules the advance with `WarmupBufferDuration` and `MatchBootstrap` with
+`IntermissionDuration`, both on their own `Invoke`. Putting the skip in either would give the
+shipped arena a feature the other path silently lacks, which is what `SliceRunner`'s own header
+forbids. Each runner cancels its own pending `Invoke`, or the original timer fires later and
+advances a second round nobody played.
+
+### 73.8 · The three source audits are green again ✅ CLOSED 2026-08-29
+
+`CLAUDE.md` § 7.1 requires `audit_ability_authority.py` to report **0 ungated on another body**,
+and this batch's hazard work took it to 7 before taking it back to 0.
+
+⚠️⚠️ FIVE OF THE SEVEN WERE REAL AND TWO WERE FORMATTING, AND TELLING THEM APART IS THE POINT.
+Letting a peer predict a pull or a slow on its own body genuinely writes to a `CharacterMotor`
+that is not `ctx.Motor`, so the audit was right to raise it. The fix is not to exempt them: it
+is to write the invariant out inline as
+`if (NetAuthority.ShouldResolve() || p.PlayerSlot == NetAuthority.LocalSlot)`, which says "the
+host may move anybody, anybody may move themselves" and is exactly the permission being taken.
+A hoisted `bool resolves` is invisible to the audit, and so is a braceless one-liner or a
+condition wrapped onto a second line, which is what the last two were.
+
+`audit_wire_payloads.py` also caught the new `SkipBuffer` message writing one field and reading
+none. It was a placeholder byte, and the audit is right that one written and none read is
+indistinguishable from a field somebody forgot to parse. The message carries no payload now;
+`StartMatch` is the precedent.
+
+### 73.9 · bundleVersion is 1.0.0 ✅ CLOSED 2026-08-29
+
+🧑: *"pls update version number 1.0.0 when u finish"*. `GameVersion.Value` reads
+`Application.version`, so the corner label and the wire both follow with no other change.
+
+---
+
+## 74 · Zack's shock trail has the hazard bug that was fixed everywhere else ✅ CLOSED 2026-08-29
+
+`ShockTrailComponent.Update` opens with `if (!NetAuthority.ShouldResolve()) return;`, which is
+the exact shape § 71 removed from Nemu's void and Cheska's ice: the effect runs on the host
+alone, and a client's own body is moved only by the host's position stream, which
+`ApplyNetworkTransform` filters below 1.25 m. Anything continuous is therefore invisible to
+three of the four players.
+
+⚠️ IT WAS LEFT ALONE ON PURPOSE. Nobody has reported it, and retuning an ability that was not
+in the batch is how a fix becomes a regression somebody else has to find. It is written down
+rather than done so the next session does not have to rediscover the shape.
+
+**Done looks like:** the same treatment the other two got, and `audit_ability_authority.py`
+still reporting 0 ungated on another body afterwards.
+
+✅ **DONE IN § 77.3, AS NETWORK WORK RATHER THAN AS A RETUNE, AND NO NUMBER CHANGED.** The owner's
+boost runs wherever the peer owns that body; the stagger and its two flourishes stay host-only. The
+audit reports **0 ungated on another body** and it caught the first draft of the change doing the
+opposite, which § 77.3 records.
+
+---
+
+## 75 · The slipper throw wind-up, and what was actually checked ✅ CLOSED 2026-08-29
+
+🧑 2026-08-29: *"no wind up charger for slipper throw"*.
+
+Every part of the wind-up was traced and every part is present and wired:
+
+- **The charge itself.** `Carrier.StepAttacker` starts `_charging` on the press, accumulates to
+  `Balance.ChargeFullTime`, and throws on release at `ThrowRules.PowerFor`.
+- **The first-person arm.** `CameraRig.ApplyFpp` reads `Carrier.ObservedChargePower` and calls
+  `ViewmodelArms.SetCharge`, which cocks the arm back by `WindupRad` 0.62 rad.
+- **The third-person body.** `CharacterAnimator.StepChargePose` writes the same 0.62 rad onto
+  the `arm-right` bone, and all 25 person rigs carry that bone (checked in the `.glb`).
+- **The observed value is set locally**, not only over the wire: `BroadcastCharge` calls
+  `ApplyObservedCharge` before it sends, so it runs offline too.
+- **The meter.** `YouCard` fills `_chargeFill` from `Carrier.ChargeRatio`.
+- **The trajectory preview.** `MatchInstaller` line 797 attaches one per seat, so the § 12
+  fault where it was never instantiated is closed.
+
+So the report is real and none of the obvious mechanisms is missing, which means it is asking
+for something that is not there rather than something that broke. The three readings, and they
+want different work:
+
+1. **A minimum wind-up before a throw may leave the hand.** Today a tap throws instantly at
+   `Balance.ChargeMinPower`, so a quick throw has no visible commitment at all. This is a
+   BALANCE change and `docs/Design.md` governs it.
+2. **A charge meter somewhere other than the YOU card**, which is small and at the edge.
+3. **A stronger read on the arm**, that is, 0.62 rad is not enough to see.
+
+**Done looks like:** ask which, then do it. Do not guess: (1) changes a number `Design.md`
+owns, and shipping the wrong one of these is a retune that has to be undone.
+
+✅ **ASKED AND ANSWERED 2026-08-29: reading (3).** 🧑 picked *"the arm barely moves, 0.62 rad
+is too subtle"*, so this was presentation and not balance after all. `ViewmodelArms.WindupRad`
+is 1.02 rad and **no number in `Balance` or `Design.md` moved**. § 78.5 has the change and the
+bound that caps it. ⚠️ **The value of this entry is that it was NOT guessed**: readings (1) and
+(2) would each have shipped a change he did not ask for, and (1) would have been a retune.
+
+## 76 · Holding the pickup key does not right the can in the tutorial ✅ CLOSED 2026-08-29
+
+🧑 2026-08-29: *"in tutorial holding 'x' doesn't reset the can"*, and then, on the build
+carrying the batch below: **the tutorial can-reset is fixed.**
+
+⚠⚠ **CLOSED ON THE PLAYER'S REPORT, NOT ON A MEASUREMENT, AND THAT DISTINCTION IS THE
+WHOLE VALUE OF THIS LINE.** Nothing in this session reproduced it and nothing in this session
+targeted it: the eight gates below were traced and every one passed, so no code on that path was
+changed. It is therefore fixed by something else in the batch rather than by a fix aimed at it,
+and **which** something is not known. The two candidates are both in this file: § 71.4 remeasured
+every arena's bounds from the wall FACES rather than their centres, which moves where a knocked
+can may come to rest, and § 71.3 clamped replica props to those same bounds. The one gate below
+that a source read explicitly could not settle is `inRing`, which is a question about **where the
+can rolls to**, and both of those entries changed exactly that.
+
+⚠️ **SO THE TEST IN "DONE LOOKS LIKE" IS STILL WORTH WRITING, AND IT IS NOW THE ONLY THING
+THAT WOULD TELL ANYBODY WHY THIS STOPPED HAPPENING.** A report closing a bug nobody deliberately
+fixed is a bug that can come back on the commit that retunes the arena, with nothing anywhere to
+catch it. It is left below rather than deleted with the entry.
+
+The trace is kept in full for that reason.
+
+**Not reproduced headlessly, and every gate on the path was traced and passes.** Written down
+in full because ruling these out is most of the work, and the next session should start after
+this list rather than at the top of it.
+
+The path is `Carrier.Update` to `StepDefender`, and it needs all of the following. Each was
+checked against the tutorial's own setup in `GuidedTraining`:
+
+| gate | where | why it passes in training |
+|---|---|---|
+| `_motor.CanAct()` | `Carrier.Update` | `CanAct` is `RoundActive && !IsStunned`. `ApplyRoles` calls `Round.ApplySnapshot(RoundTime, true, slot)`, and that `true` IS `roundActive`. |
+| `_motor.IsDefender` | `Carrier.Update` | `Lesson.DefenderReset` opens with `BecomeDefender()`, which is `ApplyRoles(_local.PlayerSlot)`. |
+| `lata != null` | `StepDefender` | Reads `GameServices.Round.Lata`, which `MatchInstaller` sets at build. Training runs through the same installer. |
+| `!lata.IsUpright` | `StepDefender` | `ArmDefenderReset` restores, waits `ThrowRestoreCooldown + 0.08`, then `HostKnockDown(-1)`. |
+| `HostKnockDown` not refused | `Lata` | It returns early while `IsProtected`. `_restoreProtectionLeft` ticks down in `StepStatePresentation`, which `Update` calls UNCONDITIONALLY, so the window really has expired by then. |
+| `intent.Pressed(Verb.Grab)` | `StepDefender` | X is bound to `Grab` in the input asset. |
+| `Verb.Grab` unlocked | `InputIntent.Locked` | `ApplyVerbLock` is CUMULATIVE and `Lesson.Retrieve` teaches `Grab` several lessons earlier, so it is in `_unlocked` by then. |
+| `inRing` | `StepDefender` | Flat distance to the lata under `Balance.InteractionRadius`. |
+
+⚠️ The one that cannot be checked by reading is `inRing`. `HostKnockDown` topples AND ROLLS the
+can (`_rollAngleDeg`, `_lastRollPosition`), so where it comes to rest is a physical outcome
+rather than a constant, and the lesson's marker binds to `_lata.transform` so a player follows
+it. If the roll can leave the can somewhere the player cannot get inside `InteractionRadius` of,
+that is the bug and none of the above would show it.
+
+**Done looks like:** a PlayMode test that enters `Lesson.DefenderReset` through
+`GuidedTraining`, holds `Verb.Grab` on a driven `InputIntent` for `Balance.ResetChannelTime`,
+and asserts `Lata.IsUpright`. That test is the deliverable even if it passes, because it turns
+this entry from a report into a measurement. ⚠️ Drive the INTENT rather than synthesising a key
+press: `InputIntent` is the seam the bots already use and it needs no input system at all.
+
+⚠️ Do not "fix" this by widening `Balance.InteractionRadius`. That constant is shared with the
+live game and `docs/Design.md` owns it; if the roll is the cause, the fix is where the can comes
+to rest, not how far a taya can reach.
+
+---
+
+## 77 · The network deep-dive: the half of § 71.3 that was never applied, and a refusal that was never sent ✅ CLOSED 2026-08-29
+
+Picked up from the § 71.3 handoff, which asked for four things: verify § 71.3 landed, answer the
+silent `PlausibleIntentPose` drop, build § 72's probe against a live lobby, and do § 74. All four
+are below. ⚠️ **The one thing that could not be done on this machine is the acceptance test**, and
+it is unchanged: see § 77.5.
+
+**Verifying § 71.3 landed, which was item 1:** it did, both halves. `MatchRpc.PoseDelivery` is
+`UnreliableSequenced` and is passed by `SyncUnit` and `SubmitMove`; `CharacterMotor.SetNetworkPose`
+and `Slipper.ApplySnapshotState` both clamp replicas to `AIController.PlayableHalfX/Z`. What the
+verification found is that the transport half was applied to one of the two objects the report
+named, which is § 77.1.
+
+### 77.1 ⚠️⚠️ THE SLIPPER STREAM WAS STILL RELIABLE AT 50 Hz, WHICH IS THE TSINELAS HALF OF THE ORIGINAL REPORT ✅
+
+🧑 2026-08-29 said *"the bots **and slippers** were going out of map"*. § 71.3 fixed the bots.
+
+`MatchRpc.PoseDelivery` moved `SyncUnit` and `SubmitMove` to `UnreliableSequenced` and left every
+other message reliable, on a rule stated in its own header: *"the slipper's state changes and the
+lata going over are EVENTS: each one happens once and nothing later repeats it"*. **That sentence
+is true of a grab and of a throw and it is not true of `BroadcastSlipperStateIfChanged`**, which is
+a POSITION stream carrying the same message name. It fires from `FixedUpdate` whenever the shoe has
+moved more than `PropMoveEpsilon`, 1 cm, and a tsinelas in flight moves roughly 0.3 m per step:
+
+| | before | after |
+|---|---|---|
+| a slipper in flight | 50 reliable `SyncSlipper`/s | 50 unreliable `SlipperPose`/s, plus 2 reliable `SyncSlipper`/s |
+| a slipper at rest | 2 reliable `SyncSlipper`/s | 2 reliable `SyncSlipper`/s, unchanged |
+| a grab or a throw | reliable `SyncSlipper` | reliable `SyncSlipper`, unchanged |
+
+So the exact failure `PoseDelivery`'s own header calls *"actively worse"* was left in place for the
+second of the two objects the report named. One lost packet head-of-line blocked the shoe's backlog
+and delivered it in a burst, and ⚠️ **`Slipper.ApplySnapshotState` writes the arriving position
+straight onto the transform with no correction filter at all**, so unlike a body there is not even
+`ApplyNetworkTransform`'s smoothing between the burst and the screen. § 71.3's clamp is what kept
+the shoe inside the walls; it never stopped it teleporting along them.
+
+⚠️⚠️ **THE FIX IS A SPLIT INTO TWO MESSAGES, NOT A FLIP OF THE MESSAGE.** `SyncSlipper` is
+genuinely two things at once: its position fully replaces itself every step and can afford to be
+lost, while its state, holder, affinity and thrower are the events § 71.3 was right to protect. So
+**`SyncSlipper` keeps every field and stays reliable**, and a new **`SlipperPose`** carries an
+owner, a position, a rotation and a velocity on `PoseDelivery`. `SyncLata` and a new **`LataPose`**
+are the same split, because a struck can ROLLS and `IsUpright` going over is what scores.
+
+⚠⚠ **THE FIRST DRAFT SENT ONE MESSAGE ON TWO CHANNELS DEPENDING ON WHAT HAD CHANGED, AND
+THAT IS WRONG IN A WAY WORTH WRITING DOWN, because it looks strictly cheaper and it is not.** Two
+channels have NO ordering between them: `UnreliableSequenced` drops an old packet only against
+others on its OWN channel. A pose sent one step BEFORE a throw can therefore arrive one step AFTER
+the reliable throw packet, and because that pose carried the whole payload it would put the
+tsinelas back into the hand it had just left, re-run `ReleasePreviousHolder` and `NotifyEquipped`
+for a grab that had already ended, and correct itself 20 ms later. **That is § 38.8's two-authors
+buzz arriving by a new road**, and trading § 71.3's burst for it would have been a lateral move. A
+message that carries no state cannot do it, which is why the split is by PAYLOAD rather than by a
+delivery flag, and why `Slipper.ApplySnapshotPose` and `Lata.ApplySnapshotPose` are new methods
+that touch a transform and refuse to touch anything else.
+
+⚠️ **THE HALF-SECOND KEEPALIVE IS WHAT MAKES THIS SAFE RATHER THAN ONLY CHEAPER**, and it was
+already there for the § 38.18 rate limit. Every discrete field is re-sent reliably twice a second
+whether or not it changed, so a peer that missed the reliable edge AND the unreliable poses either
+side of it is corrected within `PropKeepaliveSeconds`.
+
+⚠️ **AFFINITY AND `ThrowerSlot` JOINED THE WATCHED SET.** Both already travelled and neither is
+derivable from a position; while every packet went reliably it did not matter which fields a
+re-send was for. Deciding the channel by what changed makes the question live, so the set has to be
+the whole discrete payload rather than the two fields that happened to be tracked for the rate
+limit.
+
+⚠️ **The unconditional senders are untouched.** `Carrier` calls `BroadcastSlipperState` on a grab
+and on a throw and the reset channel calls `BroadcastLataState` on a restore. Those take the
+reliable default and this change cannot reach them.
+
+⚠️⚠️ **AND A CARRIED SHOE WAS COSTING FIFTY POSE PACKETS A SECOND THAT THE RECEIVER THREW AWAY**,
+found while writing the split. `ApplySnapshotState` has always refused to write a position while
+the state is `Held`, because `Carrier` parents the tsinelas to the carry anchor on every peer and
+the hand is its only author (§ 38.8). The host sent one anyway, every step, for every held slipper.
+A tsinelas is in somebody's hand for a large part of a round and there are four of them, so **this
+is § 38.18's finding one object further in**, and it gets the same answer: the pose is not sent
+while the shoe is carried. Picking it up and throwing it are discrete changes and still go
+reliably the instant they happen.
+
+⚠️⚠️ **THE ONE ARTIFACT THIS LEAVES, WRITTEN DOWN RATHER THAN GUESSED AT.** Splitting by payload
+removes the corruption but not the ordering: a pose sent while a shoe was in flight can still
+arrive after the reliable packet that says it has landed, and move a resting tsinelas by one
+step's travel. It then stays there until the next keepalive, so the bound is **0.5 s and about
+0.3 m**, position only, with no state, holder or score involved. The grab-to-throw transition
+cannot produce it at all, because a carried shoe now sends no poses.
+
+⚠️ **IT IS NOT FIXED, AND THE FIX IS KNOWN IF IT IS EVER SEEN:** stamp `SlipperPose` with the
+host's `Time.fixedTime` and have `Slipper.ApplySnapshotPose` refuse a stamp older than the last
+one it applied. That was deliberately not built here, because it is a wire change justified by an
+artifact nobody has observed, on a path this machine cannot measure at all (§ 77.5), and § 71.3 is
+the entry that records what reasoning about this stream without two machines is worth. **Look for
+it on the two-machine run**: a tsinelas that settles, twitches once and settles again.
+
+**Verified:** EditMode 200, PlayMode 87, and `audit_wire_payloads.py` reads 51 named messages with
+**0 mismatched**, which is the check that matters here: `SlipperPose` at 4 fields and `LataPose` at
+2 agree between writer and reader, and no field or field order moved on `SyncSlipper` or `SyncLata`.
+`audit_request_call_sites.py` reads 47 entry points, 0 unreachable, which is what says the two new
+senders are actually reached.
+
+### 77.2 ⚠️⚠️ A REFUSED CAST IS ANSWERED NOW, WHERE IT USED TO BE DROPPED IN SILENCE ✅
+
+This is the handoff's second item, and § 71's `PlausibleIntentPose` note names it exactly: a silent
+drop is still wrong, because the client predicted a cast the host refused.
+
+`HeroAbilitySystem.Cast` runs the kit LOCALLY and then asks, so by the time
+`MatchRpc.OnReqAbilityMsg` refuses, the owner has already spent the cooldown, played the confirm
+and drawn the effect. Every refusal in that handler was a bare `return`.
+
+⚠️⚠️ **AND THE ONE THING THAT USED TO PAPER OVER IT WAS CORRECTLY REMOVED THIS WEEK, WHICH IS WHY
+THIS BECAME URGENT RATHER THAN COSMETIC.** Until § 71 the owner's cooldown was assigned straight
+from the host's 5 Hz `SyncAbility`, so a refused cast healed itself: the host's copy still read
+zero, the client took that zero, the ability came back. **That is the Phaister spammable-teleport
+bug**, and `HeroAbility.ApplyNetworkSnapshot`'s `mayLower` guard closed it by making the owner's
+cooldown raise-only. Closing it converted a self-healing divergence into a permanent one. The host
+may still take an ability away at any moment, which is the direction authority needs; what it could
+not do was give one back after refusing to act, and a refusal is precisely when it must.
+
+**The shape:** a new `CastDenied` named message, host to the one peer that asked, carrying the seat
+and the ability slot and no reason code. `HeroAbilitySystem.RollBackPredictedCast` answers it.
+
+⚠️⚠️ **THE ROLLBACK IS NOT `Reset()`, FOR THE REASON `ResetForRound` ALREADY RECORDS.** Reset zeroes
+`DurationRemaining` behind the ability's back, and Demonic Carapace's stun immunity and Phantom
+Phase's tag immunity are GRANTS handed out in `OnActivate` and taken back in `OnEnd`: dropping the
+timer without running `OnEnd` would leave a client permanently unstunnable off a refused cast.
+`HeroAbility.RollBackPredictedCast` releases the wind-up root FIRST, because a refusal can land mid
+wind-up when the caster is rooted in a speed zone that only `ReleaseRoot` can exit, then calls
+`EndEarly`, then refunds the exact resource `Activate` spent, through `GrantCharge` so the cap
+still holds.
+
+⚠️ **It answers with the refusal the player already knows**: the same quiet `ui_error` and the same
+deck flash a cooldown press gets. The player does not need to be told the difference between "the
+host said no" and "it was not ready"; they need the power back and one beat saying it did not fire.
+
+⚠️⚠️ **A REQUEST THAT FAILS `SenderOwnsClaimedSeat` IS STILL DROPPED IN SILENCE, DELIBERATELY.**
+That message is malformed or hostile rather than refused, the host cannot know what the sender
+predicted, and answering it would be the host taking direction about which kit to touch from an
+unverified claim. Everything below that line answers.
+
+⚠️ **`ProtocolVersion` 10 to 11**, and `TheProtocolCarriesEveryRosterBump` moved with it in the same
+commit. It is a bump for adding a NAME to the wire: a peer on 10 has no handler for the reply, and
+the failure would be quiet rather than loud, which is exactly what makes it worth refusing at
+approval. A 10 client would sit on a cooldown it can no longer get back, because the `mayLower`
+guard above is raise-only. ⚠️ **§ 77.1 ADDS TWO MORE NAMES IN THE SAME BUMP**, `SlipperPose` and `LataPose`. No existing
+field or field order moved, so a peer on 10 would still read `SyncSlipper` correctly; it would
+simply never hear the stream between the reliable edges and would see a tsinelas move twice a
+second. One bump covers all three names.
+
+### 77.3 ⚠️ ZACK'S SHOCK TRAIL, WHICH IS § 74 ✅
+
+`ShockTrailComponent.Update` opened with `if (!NetAuthority.ShouldResolve()) return;`, the exact
+shape § 71 removed from Nemu's void and Cheska's ice. **Zack's own turbo boost is 6.0 scaled by
+`Time.deltaTime`, about 0.1 m in a frame**, and `ApplyNetworkTransform` ignores a correction under
+1.25 m while the owner is predicting, so on every peer that was not the host it was not weak, it
+was ABSENT. A dash that pays out only for whoever happens to be hosting is not a balanced ability.
+
+The owner's boost now runs wherever the peer owns that body, which is "the host may move anybody;
+anybody may move themselves". The stagger, the popup and the stars stay host-only, because a
+stagger is a DECISION about another body and the two flourishes are announcements. ⚠️ **No number
+changed.**
+
+⚠️⚠️ **AND THE AUDIT CAUGHT THE FIRST DRAFT OF THIS, WHICH IS WORTH RECORDING.** Writing the
+stagger gate as a hoisted `bool resolves` took `audit_ability_authority.py` from **0 ungated on
+another body to 1** on the same edit: it reads brace depth for a literal `ShouldResolve()` and a
+local bool is invisible to it. Cheska's ice carries a note saying exactly this and it was still
+worth re-learning. The gate is written out at the call site and the count is back to 0.
+
+### 77.4 § 72's probe now hosts, which was the last thing it had never done ✅ BUILT, ⚠️ STILL GREEN
+
+`NetworkedLobbyTypingProbe` is § 72's *"a probe that reproduces it"*, built as asked. It starts a
+real host through `NetSession.StartHostAsync`, sets `SceneFlow.Networked`, loads `MatchSetup`, and
+then runs **`LobbyTypingProbe.Check` itself rather than a copy of it**, so the two probes differ in
+exactly one thing: whether a host is listening. That check was made `internal` rather than
+duplicated, for the reason `CLAUDE.md` § 4 gives about the core sources compiling in place.
+
+⚠️ **IT PASSES, SO IT DOES NOT REPRODUCE THE REPORT.** That is a result rather than a failure:
+§ 72's closing line named the live networked lobby as one of exactly two things never driven, and
+this retires it. It also writes an INVENTORY into `Logs/lobby-typing-networked.txt` whether or not
+anything fails, naming every `InputField` and whether `LobbyChat` was present and active, because a
+pass with no chat in the scene rules out nothing while a pass with the chat live rules out § 72's
+leading suspect.
+
+⚠️⚠️ **SO § 72 STAYS OPEN AND ITS REMAINING SUSPECT IS NOW A BUILT PLAYER AS OPPOSED TO THE
+EDITOR**, which is the one item on its list that no probe in this repository can reach.
+
+### 77.5 What is still not measured
+
+⚠️⚠️ **THE TWO-MACHINE ACCEPTANCE TEST HAS STILL NOT BEEN RUN, AND EVERYTHING ABOVE IS SOURCE AND
+ARITHMETIC.** § 71.3's closing note, § 38.20's standing note and § 56's first bullet all say the
+same thing and all three are still true. This session ran on one machine. **Both § 71.3 and § 77.1
+need two peers on a LAN, ideally over Hamachi, watched from the NON-HOST seat**, and that is the
+acceptance test for the whole out-of-bounds report.
+
+⚠️ **`CastDenied` has never travelled between two processes either.** The refusal path is reached
+only when the host refuses a client's cast, and no test in this repository has one peer predicting
+against another peer's kit. **Done looks like:** a two-process run that forces a refusal, which a
+stale pose induces most easily by holding back the client's `SubmitMove`, and asserts that the
+owner's cooldown comes back.
+
+---
+
+## 78 · The two-machine acceptance test, run at last, and the batch it paid for
+
+🧑 2026-08-29, opening the session: *"thoroughly fix network its heabily broken still especially
+in lan"*. § 77.5 said the acceptance test had never been run and that everything in § 77 was
+"source and arithmetic". It has been run now. **Two built players, two processes, over the Wi-Fi
+adapter's own LAN address (192.168.1.144) rather than loopback**, `NetStateReport` on both.
+
+⚠️⚠️ **THIS IS STILL NOT TWO MACHINES.** One desktop, one NIC, one clock. § 38.20's standing note
+survives and should not be ticked off this entry. What it DOES retire is weaker and was still
+worth buying: until now nothing had ever compared what two live peers believe about the same
+running match, and four of the findings below are things no amount of reading the wire produced.
+
+### 78.0 ⚠️⚠️ THE HARNESS NEEDS `-tp-autostart`, AND WITHOUT IT A TWO-PROCESS RUN MEASURES NOTHING
+
+Recorded first because it cost the first three runs and it looks exactly like a catastrophic
+networking bug.
+
+`-tp-host -tp-allbots` alone, with a client attached, produces: `round 0`, `round active False`,
+every score 0, 0 lata flips, and four bots wandering an arena for 70 s. The identical switches
+with **no** client produce a real match. The obvious reading is "connecting a second peer stops
+the round starting", and it is wrong.
+
+⚠️ `MatchInstaller.UseReadyGate` defaults **true**, so `runner.AutoStart` is false and
+`ReadyGate` owns the round start. `ExpectedReadyCount` is `LobbySession.PlayingPeerCount`, which
+is 1 for a lone host and 2 once a client attaches, and **nothing in `-tp-host` presses R**.
+A solo host trips its own quorum; two peers never do. `NetAutomationProbe` exists for exactly
+this and is the fix: **`-tp-autostart 2` on BOTH processes.** With it the match plays normally,
+which is what every measurement below was taken from.
+
+**Done looks like:** `NetStateReport`'s header naming the ready state, so a run that never
+started says so on its own face instead of looking like a replication failure. Not built.
+
+### 78.1 ⚠️⚠️ WHAT TWO LIVE PEERS AGREE AND DISAGREE ABOUT, MEASURED — AND THE TAYA'S TSINELAS ✅ FIXED
+
+Host `-tp-allbots -tp-autostart 2`; client **without** `-tp-allbots`, so the client runs no bot
+of its own and **everything it believes arrived over the wire**. Reports ~6 s apart (the client
+is given the shorter `-tp-netseconds`, per § 56's note about `Application.Quit`).
+
+| | host | client |
+|---|---|---|
+| round / defender / active | 2 / 1 / True | 2 / 1 / True |
+| characters | 0, 3, 0, 3 | 0, 3, 0, 3 |
+| score seat 0 / 2 | 1650 / 200 | 1650 / 200 |
+| travelled seat 0 / 2 / 3 | 1.40 / 1.50 / 1.59 m/s | 1.30 / 1.52 / 1.66 m/s |
+| lata upright, flips | False, 19 | False, 17 |
+| **slipper 0-3 state** | **0, -1, 0, 0 (all free)** | **1, 1, 1, 1 (all held)** |
+| **slipper 0-3 holder** | **-1, -1, -1, -1** | **0, 1, 2, 3** |
+| **skills seat 3** | **3** | **19** |
+
+✅ **The round, the roster, the taya, the scores and the MOVEMENT all replicate.** Seats 0, 2 and
+3 land within 7 per cent of the host's metres-per-second on a client that is simulating none of
+them. That is the first direct evidence this project has that the transform stream works, and it
+is § 71.3 and § 77.1 doing their job.
+
+⚠️⚠️ **THE SLIPPER STATE DOES NOT, AND ONE ROW OF IT IS A REAL BUG THAT IS NOW DIAGNOSED.**
+
+⚠️ **First, what the 6 s gap DOES explain, said plainly so nobody over-reads the table.** Slippers
+2 and 3 show 31 and 25 transitions on the client against 33 and 27 on the host, so the client is
+receiving those edges; the two peers sampling `Held` versus `Loose` six seconds apart in a live
+round is ordinary and is **not** evidence of anything. Do not quote those two rows as a fault.
+
+⚠⚠ **Slipper 1 is the one that cannot be explained by timing, and it is the taya's.** The
+host reports state `-1`, which is `NetStateReport`'s "no such slipper" and not a `SlipperState`;
+the client reports it `Held` by seat 1. Seat 1 is the DEFENDER in round 2. A taya holding a
+tsinelas is not a six-second window, it is a whole-round property, and it is wrong by the rules.
+
+**The mechanism, and it is one line:** `MatchRpc.FindSlipper` addresses a slipper **by its
+`OwnerSlot`**, and `OwnerSlot` is mutable state that changes every round.
+`SliceRunner.EquipOwnedSlippers` disowns the taya's shoe with
+`slipper.OwnerSlot = index != defenderSlot && seated ? index : -1`, and `FindSlipper` skips
+anything with `owner < 0`. So the moment a seat becomes taya:
+
+1. the host's tick loop does `BroadcastSlipperStateIfChanged(FindSlipper(slot))`, which is
+   `(null)` for the defender's slot and returns immediately, so **that shoe stops being
+   broadcast at all**; and
+2. even if it were sent, `BroadcastSlipperState` writes `OwnerSlot` as the first field and
+   `SyncSlipperClientRpc` opens with `FindSlipper(ownerSlot)`, so a `-1` is **unaddressable on
+   the receiving side too**.
+
+**A client therefore never hears another word about the taya's tsinelas for the whole round**, and
+keeps the last state it did hear: `Held`, by the seat that is now the taya. `Carrier` parents the
+shoe to the carry anchor on every peer, so **every non-host peer renders the taya walking around
+carrying a slipper**, all round, every round. The host cannot see it: on the host that object is
+correctly parked out of play. That is § 38's thesis exactly, one object further in.
+
+⚠️ **IT IS NOT A KEEPALIVE FAILURE, WHICH IS WHY § 77.1 IS NOT AT FAULT.** The 0.5 s keepalive
+works; it is never reached, because the object is filtered out one call earlier by an addressing
+scheme that uses a field the game rewrites each round. **An identity must not be a piece of
+mutable state.**
+
+**Done looks like** the taya's tsinelas parked out of play on a client exactly as it is on the
+host, and slipper 1's row matching. Two candidate fixes, and they are not equal:
+
+* **Address by the slipper's INDEX in `SliceRunner.Slippers`, which never changes**, and let
+  `OwnerSlot` travel as an ordinary replicated field. Correct, and it is a wire change: a new key
+  field on `SyncSlipper` and `SlipperPose`, `ProtocolVersion` 11 → 12, and
+  `TheProtocolCarriesEveryRosterBump` moved in the same commit.
+* **Keep `OwnerSlot` stable as the seat of origin and add a separate replicated `InPlay` flag**
+  for the disown. Smaller on the wire, but `OwnerSlot == -1` currently MEANS "disowned" to
+  `CanBeGrabbedBy`, to scoring and to the pickup rules, so it moves that meaning across several
+  files and is the wider blast radius of the two.
+
+✅ **FIXED, TAKING THE FIRST OPTION.** `Slipper.SeatOfOrigin` is assigned once per match in
+`MatchInstaller.BuildSlipper` and never written again; `MatchRpc.FindSlipper` keys on it, the
+keepalive and change-detection dictionaries key on it, and `SyncSlipper` and `SlipperPose` are
+addressed by it. `OwnerSlot` goes back to being what its own note always said it was — a LABEL for
+the foot arrow and the owner glow — and now TRAVELS as ordinary payload instead of doubling as an
+address.
+
+⚠️ **OWNERSHIP JOINED THE WATCHED SET IN THE SAME EDIT, and leaving it out would have been a
+quieter version of the same bug.** The round that disowns a slipper changes no state, no holder,
+no affinity and no thrower, so with ownership unwatched the change would have been sent only on
+the next half-second keepalive — and every client would have kept the previous round's owner on
+its arrow and its glow until then.
+
+⚠️ **IT IS NOT DERIVED ON THE CLIENT, DELIBERATELY.** A client could work ownership out from the
+defender it already replicates, and that would have avoided the wire field; it would also be a
+second implementation of `EquipOwnedSlippers`' rule, free to drift from the first. One author.
+
+⚠⚠ **`ProtocolVersion` 11 → 12, AND THIS IS THE BUMP `audit_wire_payloads.py` CANNOT ARGUE FOR.**
+The audit compares writer against reader and both halves moved together, so it reads 0 mismatched
+and is correct to. What it cannot see is an 11 peer against a 12 peer, where the field count
+differs by one and everything after the first field is read at the wrong offset — silently misread
+bytes, not an error. § 38.20's last bullet is the general statement; this is the instance.
+`TheProtocolCarriesEveryRosterBump` moved in the same commit.
+
+⚠⚠ **AND THE ADDRESSING FIX ALONE DID NOT WORK. THE VERIFICATION RUN IS WHAT SAID SO, AND
+THIS IS THE MOST USEFUL LINE IN THE ENTRY.** With `SeatOfOrigin` keying everything, the re-run
+still showed the host at `-1` and the client at `Held by 1`. The reason is a second host-only
+action nobody had written down: `EquipOwnedSlippers` does not merely disown the taya's shoe, it
+**switches the object off** — `slipper.gameObject.SetActive(false)`, to take it out of
+`Carrier.TryPickup` and out of the render. Two consequences, both fatal:
+
+1. `MatchRpc.FindSlipper` swept with `FindObjectsInactive.Exclude`, so **the host could not find
+   the object it had just parked** and still never broadcast it; and
+2. nothing on the wire carried "switched off" anyway, so a client had no way to act on it.
+
+**So the complete fix is three things, not one:** address by `SeatOfOrigin`; sweep with
+`FindObjectsInactive.Include` so a parked shoe stays findable; and put the active flag on
+`SyncSlipper` as discrete state, applied on the client with the object switched ON before the
+snapshot and OFF after it (so `ReleasePreviousHolder` runs and the taya's `Carrier` actually lets
+go rather than being left pointing at a hidden object).
+
+⚠️ **"IT IS SWITCHED OFF" IS STATE, AND HOST-ONLY `SetActive` IS A REPLICATION HOLE WHEREVER IT
+APPEARS.** This is worth generalising: a host that hides an object behind `ShouldResolve()` has
+changed the world for itself only. Nothing audits for it — `audit_wire_payloads` compares fields
+that exist and cannot ask about a field that should.
+
+✅ **VERIFIED BY THE SAME MEASUREMENT THAT FOUND IT.** Two processes over the Wi-Fi LAN address,
+host `-tp-allbots`, client simulating nothing, round 2 with seat 1 as taya. Slipper 1's row, both
+peers:
+
+    slipper    on  state  owner  holder  changes
+    1           n      1     -1       1        1
+
+Identical. Before the fix the client had that row `on = y, holder 1` while the host could not
+address the object at all. The `on` column and the `owner` column are new in `NetStateReport` for
+exactly this comparison — the report keyed on `OwnerSlot` too, so **the instrument had the same
+bug as the thing it was measuring** and could only ever print `-1`.
+
+⚠️ The live shoes (2 and 3) still differ between the two reports and that remains expected: they
+are being picked up and thrown while the two samples are ~6 s apart. Only slipper 1 is the
+whole-round property, and it is the one that had to match.
+
+⚠️ **`skills` 19 against 3 on one seat is the same shape one layer up**, and it is NOT the
+all-bots confound this time. § 77.2's `CastDenied` answers a refusal, but a request that fails
+`SenderOwnsClaimedSeat` is still dropped in silence by design, so a client that predicts on a
+seat it does not own diverges permanently. Whether that is what this is has not been established.
+
+**Done looks like:** a run where the two slipper tables match. Reproduce with the scripts in this
+entry's commit message; they take about four minutes.
+
+### 78.2 ⚠️⚠️ THE SPECTATOR CAMERA NEVER HAD THE INK PASS, SO EVERY SCREENSHOT WAS A DIFFERENT GAME ✅
+
+🧑, holding a spectator frame beside a first-person one: *"is it js me or the shaders are very dif
+for spectator and actual"*, then *"spectatator might not be getting shaders"*. He was right.
+
+`CameraRig.Awake` adds three passes: `ColourGrade`, `PostAntiAlias` and `WorldOutline`.
+`SpectatorCamera.Awake` added the first two and **never the third**. The spectator frame has the
+grade and the filter and no ink line anywhere; the gameplay frame has a black edge on every
+silhouette. Same street, same shaders on the models, different picture.
+
+⚠️ **This is the second half of the fault `SpectatorCamera`'s own `ColourGrade` note records.**
+That note says this camera "is a fourth rig with its own object (§ 3a) and was simply never given
+one" — the grade was then added, and the outline, which landed on `CameraRig` in a different
+session for a different reason, was not. **Two rigs that must look identical, built by two
+methods**, which is §§ 53.1, 57.1, 60, 62.1 and 63.1 one surface further out.
+
+⚠️⚠️ **IT MATTERS MORE THAN IT LOOKS BECAUSE SPECTATOR IS THE CINEMATICS CAMERA.** Every recording,
+every sponsor screenshot and every replay this project produces comes out of this rig, so the
+frame the game was being judged by was the one missing its art direction.
+
+**Fixed** by adding `WorldOutline` after `PostAntiAlias` and before the replay capture, which is
+`CameraRig`'s own order. **Anything added to `CameraRig`'s post stack belongs here too.**
+
+### 78.3 ⚠️ THE LATA CARD WAS SIZED FOR ITS WORST CASE AND THEREFORE WRONG ALMOST ALWAYS ✅
+
+🧑, over a frame of it: *"fix this hud, it should only extend when it has to, not all the tim"*.
+
+`FitLataCard` measured all thirteen strings the card can ever hold and took the maximum, once.
+The plate then sat permanently at the width of `"CAMPING  ·  DEFENSE SCORE PAUSED"` — the longest
+line in the set and one of the rarest — while showing `"LATA  ·  UPRIGHT"`.
+
+⚠️ **And one of the thirteen was a string the card cannot show.** `LataTitleLines` still carried
+`"⚠  LATA DOWN  ⚠"`; the glyph pair was removed when the can stopped saying so in three places at
+once, and this list was not moved with it. The card had been sized for two glyphs and four spaces
+for as long as the fit has existed.
+
+**Fixed** by fitting the two lines the card is showing NOW, keyed on those two strings plus the
+canvas scale, and re-fitting on the frame either row changes. ⚠️ The per-frame cost the old shape
+was avoiding is still avoided and is now *lower*: two strings on the few frames the card changes
+what it says, against thirteen once.
+
+⚠️ **`WidestLineWidth` was deleted rather than left unused**, because `BuildLataCard`'s own note
+records this file's worst bug of that kind: that method and its lists were written, documented in
+§ 18 as the worked example, and **nothing called it**, so the card shipped 147 units off the right
+edge of the display. Leaving it with no call site again would rebuild the exact trap.
+
+### 78.4 ⚠️⚠️ THE FIRST-PERSON TSINELAS WAS ANCHORED BY ITS MESH ORIGIN AND NEVER ROTATED ✅
+
+🧑: *"the slippers on my arm dont look right"*, *"iits floating a bit and doesnt look the way a
+slipper would sit on a hand"*, *"pls fix the fpp view on slippers"*.
+
+Two faults, and the screenshot shows both: the shoe hangs in space between the arms, and it lies
+across the view with its sole to the camera.
+
+⚠️ **The float is § 70.2's own requirement meeting a hand-typed offset.** Every slipper mesh is
+**centred on XY and seated on Z = 0** — measured, *"every one has `min.y == 0.0000`"* — so the
+authored origin is on the SOLE at one end of the shoe. `HeldSlipperLocal` placed that ORIGIN at
+the hand, which puts the sole's corner in the fist and the whole shoe out beside it.
+`NormaliseHeldSize` now subtracts the scaled bounds centre, so the MIDDLE of the shoe lands on
+the anchor whatever origin its author chose.
+
+⚠️ **The rotation was simply never applied.** `Carrier` places the world object with
+`hand.rotation * Slipper.CarryRotation`, and § 70.3 fixed **+X as the length convention** for the
+whole roster. The viewmodel set `localPosition` and stopped. It now reuses `Slipper.CarryRotation`
+rather than restating the quarter turn, plus a 14° roll so the footbed shows.
+
+⚠️⚠️ **`SlipperLength` IS UNCHANGED AT 0.46 AND MUST STAY THAT WAY.** It reads oversized in the
+frame and that is deliberate: it was raised from 0.34 on 🧑's explicit *"pls try to make slipper
+look bigger in fpp too bcz it looks so small"*. The report this entry fixes is placement, and
+centring the shoe in the fist changes how it fills the frame on its own. **Do not "also" shrink
+it; that re-opens a closed report.**
+
+### 78.5 ⚠️ § 75 ANSWERED: THE WIND-UP IS PRESENT AND WAS TOO SMALL TO SEE ✅
+
+§ 75 refused to guess between three readings because one of them changes a number `Design.md`
+owns. Asked and answered: 🧑 picked **"the arm barely moves, 0.62 rad is too subtle"**.
+
+`ViewmodelArms.WindupRad` 0.62 → **1.02 rad (36° → 58°)**. `CharacterAnimator.ChargePoseRad` is
+defined as that field, so the third-person body moves with the first-person arm and the other
+three players get the read too.
+
+⚠️⚠️ **NOTHING IN `Balance` MOVED.** `ThrowRules.PowerFor`, `ChargeFullTime` and `ChargeMinPower`
+are untouched, so a tap still throws instantly at the same power. This is presentation only and
+`docs/Design.md` is unaffected — which is precisely why § 75 was worth leaving open for an answer.
+
+⚠️ The .gd's original bound still caps it: the fist must stay inside the frame at the top of the
+swing. 58° holds that; further does not.
+
+### 78.6 ⚠️⚠️ R READIED A SPECTATOR, AND THE VOTE COUNTED IN A QUORUM THAT EXCLUDES THEM ✅
+
+🧑: *"r for spectatotr does ready and replay, conflict"*.
+
+`CLAUDE.md` § 4 lets the spectator set reuse gameplay keys, and the whole permission rests on one
+sentence: *"a spectator has no body, no seat and no `CharacterMotor`, so while watching every
+gameplay action is inert"*. **READY was the exception nobody checked.** `ReadyGate.Update` reads
+the `ReadyUp` action straight off the input asset rather than through a body, so R rolled the
+replay and submitted a vote in the same frame.
+
+⚠️⚠️ **AND IT WAS A CORRECTNESS BUG, NOT ONLY A CONTROL ONE.** `ExpectedReadyCount` counts
+`PlayingPeerCount`, which excludes spectators by construction, while `DeclareReady` keyed the set
+on the sender's peer id and asked no such question. **A watcher's vote was added to a quorum that
+had never counted them**, so three people watching a two-player lobby could start the match on
+their own. The set and the total now come from the same population.
+
+⚠️ Gated on `GameLaunch.Spectator` rather than `_local == null`, because under `AllBots` the gate
+is handed seat 0 as a stand-in local (§ 34's clamp). `NetAutomationProbe` calls
+`DeclareReadyServerRpc` directly, so `-tp-autostart` still works on an all-bots peer.
+
+### 78.7 ⚠️ THE INK WAS TOO HEAVY ON PROPS, IN THREE PLACES ✅
+
+🧑: *"lessen the outline for all slippers that shader applies"*, *"as well as overall effect of
+shader, lessen it"*, *"makes it ugly"*, *"cant see some details anymore"*, and the bound:
+*"make sure lessening shader for slippers doesnt lessen everyone's"*.
+
+1. **`ToonSkin.PropOutlineWidth` 0.012 → 0.006.** § 43 already did this arithmetic and then fixed
+   only the symptom: *"0.012 m of world-space ink for a 0.432 m shoe"* is **2.8 per cent of the
+   model's own length per side**. It stopped the hull eating the swoosh by suppressing the border
+   on slot > 0, and left every other piece of relief on a shoe inside a 12 mm shell.
+2. **`WorldOutline._opacity` 1.0 → 0.6.** The screen-space pass stacks on top of the per-model
+   hull, so every silhouette was lined twice. Opacity rather than thickness: a thinner
+   screen-space line breaks up under camera motion because the edge is found per pixel.
+3. **`ModelPreview` gave PROPS the PERSON width.** The character screen shows the cast, the cans
+   and the tsinelas through one rig and outlined all three at `PersonOutlineWidth`, which is
+   derived for a 2.38-scaled voxel face and is more than three times the prop number.
+
+⚠️ **The cast is untouched in all three.** `PersonOutlineWidth` keeps its measured 0.008 × 2.38.
+The discriminator in `ModelPreview` is the 16-colour palette, which every `person_*.asset` carries
+and no `slipper_*` or `can_*` does — the same test that decides whether to remap decides which
+border to draw.
+
+### 78.8 ✅ CLOSED 2026-08-30: IKE READS WHITE ON CHARACTER SELECT
+
+🧑: *"pls make ike black too, the shader made it white"*, and, asked where: *"character select is
+what im talking abt btw"*.
+
+**Ruled out by measuring, not by reading:**
+
+* **The mesh and the material.** `tsinelas_sike.obj` renders correctly DARK on `ModelSheet`
+  (`Logs/model-sheet.png`, r56c6), wearing the game's own `ToonSkin` material. The `.mtl` still
+  carries § 70.1's `Kd 0.105 0.115 0.145` and the roster asset still points at the `.obj`.
+* **The preview's ambient.** The obvious candidate, because `TumbangPreso/Toon` is a surface
+  shader with no `noambient` and Unity adds `RenderSettings.ambientLight` in **after the tonemap
+  and outside the palette remap**, which lifts a near-black albedo far more than a bright one.
+  ⚠️ **It does not survive arithmetic:** the preview uses (0.627, 0.576, 0.522) × 0.8775 and the
+  model sheet, where the shoe looks right, uses (0.62, 0.58, 0.52) × 0.78. **Those are 14 per cent
+  apart and cannot turn black into white.**
+
+⚠️ **§ 43's rule applies and is why this is still open: a render from one camera is not evidence
+about another.** `ModelSheet` is ORTHOGRAPHIC and `ModelPreview` is PERSPECTIVE at near 0.05, and
+that difference has already produced one IKE fault that was signed off on a clean sheet render and
+was still broken in the build. The prop-width fix in § 78.7 changes this screen and may move it.
+
+**Done looks like:** a capture of the character screen on the TSINELAS tab with IKE selected,
+compared against `Logs/model-sheet.png` r56c6. `tools/shoot_charselect.ps1` drives the built
+player to that screen and is the instrument; it needs the two extra clicks for the tab and the
+row. **Do not adjust a colour until that picture exists.**
+
+✅ **CLOSED 2026-08-30 ON 🧑'S OWN REPORT OFF THE SHIPPED BUILD**, and it is recorded that way
+rather than as a fix, because **no change was ever made against this entry**. 🧑: *"78.8 (IKE reads
+white) ... are resolved btw"*.
+
+⚠️ **WHAT ALMOST CERTAINLY DID IT, so a recurrence is not re-diagnosed from zero.** Three later
+entries all landed on the same surface after this one was written, any of which could have moved
+it, and none of which was aimed at it:
+
+* § 78.7 narrowed the prop ink in three places, which this entry had already flagged as *"changes
+  this screen and may move it"*;
+* § 79.7 found that the character screen was lighting props in **Godot's units against Unity's**,
+  which is a whole-screen exposure error and is exactly the shape that turns a near-black albedo
+  white while leaving a bright one looking fine;
+* § 79.11 flattened the tsinelas shading so only the tsinelas changed.
+
+The arithmetic in this entry ruled out the preview's ambient at 14 per cent and was right to; what
+it did not consider is that the LIGHT, not the ambient, was in the wrong unit system. § 79.7 is
+the entry that says so.
+
+⚠️ **THE INSTRUMENT STILL DOES NOT EXIST**, and that is the one thing this entry asked for that
+remains undone. `tools/shoot_charselect.ps1` still needs the two clicks for the TSINELAS tab and
+the IKE row. If a prop ever reads wrong on that screen again, write those two clicks first: this
+entry spent three sessions on arguments that a single capture would have settled, and it was
+closed in the end by a person looking at it rather than by anything in the harness.
+
+### 78.10 ⚠️ DANTE'S ARM MARKINGS WERE WEARING AN INK BORDER WIDER THAN THEMSELVES ✅
+
+🧑 2026-08-29, off a first-person frame: *"fix the markings and toon shader lines or wtv lines
+thes are for dante's fpp bcz it doesnt look like his character's real markings"*.
+
+`ViewmodelArms.AddMeshAccessory` outlined **every** accessory at `ToonSkin.PersonOutlineWidth`,
+which is 0.019 m and is derived for a whole Person (the 2.38 rig scale and the voxel face's
+feature size). Dante's runic glyph and his chevrons are boxes **0.015 to 0.018 m thick**, so the
+inverted-hull border was **wider than the plate it was outlining**: it swallowed the marking, met
+itself around the edges, and what reached the screen was a sprawl of thin dark lines instead of a
+green glyph with a dark edge.
+
+⚠️⚠️ **IT IS § 43 ON A DIFFERENT SURFACE.** That entry measured the identical failure on the IKE
+swoosh — *"a hull far larger than the shape it is supposed to outline, so the ink covers the decal
+and only fragments show through"* — and fixed it by dropping the hull on `slot > 0`, on the rule
+that detail sitting on an already-outlined base needs no border of its own. **An accessory is that
+same thing built from separate objects rather than submeshes**, so the slot rule could not reach
+it and the fault survived on the viewmodel.
+
+**Fixed** by solving the width from the accessory's own geometry: a quarter of its THINNEST axis,
+capped at `PersonOutlineWidth`. ⚠️ **Solved rather than zeroed, because the pieces are not all
+small**: Dante's leather sleeve is 0.30 m and is a form in its own right that still wants the full
+border. A 0.015 m glyph now takes 0.00375 m; anything thicker than 0.076 m is unchanged. Measured
+from the mesh, so `AddCylinderAccessory` and every future shape are covered without a second call
+site to keep in step.
+
+### 78.11 ⚠️⚠️ DANTE'S GREEN MARKINGS WERE THE WRONG SHAPE **AND** THE WRONG DIRECTION ✅
+
+🧑 2026-08-29, after § 78.10 fixed the ink: *"he has diff arm markings"*, *"that is not how
+dante's arms look like at all"*, and, cropping the left forearm out of a render, *"this
+specifically bcz it doesnt matcht eh arm of the model"*.
+
+**Measured off `Logs/cast-sheet.png`, Dante at r4c1, cropped per arm and magnified 10x.** He is
+asymmetric and neither arm was right:
+
+| | model | viewmodel had |
+|---|---|---|
+| left forearm | **two green stripes running ALONG the arm**, parallel, separated by bare skin, each kinked once near the top | two "^" CHEVRONS across the arm: angled legs meeting under an apex block, stacked |
+| right forearm | **one green band running ALONG the arm**, stepping narrow in the middle and wide at both ends, gold strip outboard | a three-piece "runic glyph" (conduit, crossbar, hook) projected on four faces |
+
+⚠⚠ **THE DIRECTION IS THE WHOLE FAULT AND IT IS WHY THIS READ AS A DIFFERENT CHARACTER.**
+Both markings run LENGTHWISE on him and both ran CROSSWISE in the viewmodel. In first person the
+forearm is close to vertical on screen, so lengthwise stripes read as a sleeve pattern and
+cross-arm arrows read as rank insignia. Same palette, same two colours, opposite garment.
+
+⚠⚠ **AND THE FIRST ATTEMPT AT THIS OVERSHOT BADLY, WHICH IS THE MORE USEFUL LESSON.** It
+deleted the leather sleeve, the harness strap, the buckle and the gold cuff as well, on the
+reasoning that the model shows bare skin there. 🧑 rejected it outright: *"infact old one was
+better"*, *"all i needed u to change in old one was the green markings"*. **The scope of a fix is
+the reported thing, not everything nearby that also looks arguable.** The original geometry was
+restored from git and only the green was replaced.
+
+⚠️ **BOTH FACES PLUS THE OUTER EDGE**, which the old glyph's own node names already knew:
+`RightBasisX/Y/Z` and `LeftBasisX/Y/Z` are rotated frames rather than mirrored scales, so local
++Z faces opposite ways on the two arms and a marking on one face vanishes through most of the
+swing. A first cut of the right arm's band used the left arm's sign and rendered a bare forearm.
+
+⚠️⚠️ **READ THE CAST SHEET, NEVER THE MODEL SHEET, FOR A CHARACTER.** `ModelSheet` renders the
+full sheet with **no palette** and says so in its own index (`[no palette, stock atlas colours]`),
+so Dante appears there in the source asset's blue and orange and looks like somebody else
+entirely. That render was shown to 🧑 as a reference and the reply was *"thats not our dante"*,
+*"wtf"*, which was correct. `ModelSheet.RunCast` applies `RosterEntryAsset.Palette` and is the
+only one of the two that shows the character the game actually draws. **The palettes are not
+corrupt; the sheet just does not use them.**
+
+**Done looks like** each hero's FPP arms shot next to that hero's cast-sheet crop and judged side
+by side. Dante is done; the other five have never been checked this way and at least one of them
+is likely to carry the same class of invention.
+
+⚠️ **THE HERO KITS ARE STILL STACKED BOXES AND THAT IS A SEPARATE, OPEN QUESTION.**
+`BuildDanteAccessories` is roughly thirty `AddBoxAccessory` calls, which is exactly the
+construction `VISION.md` § 2 rule 3 names: *"Five polygons handed to one builder are one thing."*
+This entry fixes how they are OUTLINED and says nothing about whether they are the right way to
+build an arm. **Done looks like** an FPP capture of each hero's arms next to that hero's character
+art, judged side by side. Not shot this session.
+
+### 78.12 ⚠️ REOPENED 2026-08-30: `CarryTests` HAS A FRAME-TIMING ASSERTION THAT FAILS UNDER LOAD
+
+`AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor` failed twice in a row on 2026-08-29
+with **0.062 m against a 0.050 m bound**, after passing 87/87 three times earlier the same day on
+the same machine.
+
+⚠⚠ **IT IS NOT A REGRESSION, AND THAT WAS ESTABLISHED BY BISECTING RATHER THAN BY ARGUING.**
+The session's uncommitted work was stashed and the test re-run against the committed baseline
+alone: **it failed there too.** So nothing in this batch causes it. Recorded because the obvious
+reading, "the viewmodel slipper work broke the carry", is wrong and would cost the next session an
+afternoon.
+
+**Why it is fragile.** It walks a carrier for 60 RENDERED frames and takes the worst per-frame gap
+between the shoe and the hand anchor, minus `Slipper.RestHeight`. Two things make that
+load-sensitive:
+
+* the loop is `yield return null`, so a dropped frame is a bigger animation step and a bigger
+  one-frame lag between the Animator's pose and the carry; and
+* `RestHeight` is `Mathf.Max(Balance.SlipperRestHeight, r.bounds.extents.y)`, and `r.bounds` is a
+  **world-space AABB**, so the subtracted lift changes as the shoe rotates through the walk. The
+  measurement's own baseline moves with the thing it is measuring.
+
+It failed on a machine that had been running Unity renders and two-process network tests
+back to back for hours, which is exactly the condition `docs/TODO.md` § 6 describes for
+`AiDiagnosticProbe`: *"its result depends on how busy the machine is"*.
+
+**Done looks like** one of:
+
+* `[Category("WallClock")]` on this case, which is what § 6 did for the same class of problem, so
+  it runs on purpose rather than gating every batch; or
+* measuring the gap in the anchor's LOCAL space so the rotating world AABB stops moving the
+  baseline; or
+* a bound derived from the actual per-frame animation step rather than a flat 0.05 m.
+
+⚠️ **Do not simply raise the number.** The assertion is protecting a real fix (the carry running
+in `LateUpdate` rather than `Update`), and a looser bound would stop catching the regression it
+exists for.
+
+✅ **CLOSED 2026-08-30 ON 🧑'S REPORT: it has been green since.** *"78.12 (flaky CarryTests timing)
+... are resolved btw"*. The 2026-08-29 PlayMode run in § 83.25 is the record: **90/92, and this was
+not one of the two reds.** None of the three fixes listed above was applied, so what closed it is
+the machine being idle rather than the assertion being made robust.
+
+⚠️⚠️ **REOPENED THE SAME DAY, ON EVIDENCE RATHER THAN ON A REPORT.** It failed again in the
+PlayMode run on the §§ 84 and 85 batch, on a machine that had been running Unity renders, an FPP
+capture sweep and two test suites back to back — which is precisely the condition described above.
+§ 86.3 records it beside the two reds that WERE from that batch. **Take the second of the three
+options below**: measure the gap in the anchor's LOCAL space so the rotating world-space AABB stops
+moving the baseline. Closing this on "it was green last time" is what this entry has now done once.
+
+⚠️⚠️ **IT IS A REPORT AND NOT A DEFECT IN THE CARRY, AND THE THREE OPTIONS ABOVE ARE KEPT
+VERBATIM FOR THAT REASON.** Everything this entry measured about WHY it is fragile is still true
+of the code: the loop still steps on `yield return null`, and `RestHeight` still subtracts a
+world-space AABB that rotates through the walk, so the measurement's own baseline still moves with
+the thing it measures. **If this row goes red again, it is this entry and not a new one** — take
+the second option (measure in the anchor's local space), which is the only one of the three that
+removes the fragility instead of scheduling around it.
+
+### 78.13 What is still not measured
+
+* ⚠️⚠️ **TWO REAL MACHINES.** § 38.20 stands. This session used two processes on one desktop over
+  the real Wi-Fi address, which is closer than loopback and is not two NICs, two clocks or a
+  switch between them. **The tsinelas twitch § 77.1 predicts** (settles, twitches once, settles
+  again, bounded at 0.5 s and 0.3 m) was NOT looked for: nobody watched the non-host seat, because
+  both windows were driven headlessly and read through `NetStateReport`.
+* ⚠️⚠️ **`CastDenied` HAS STILL NEVER TRAVELLED**, and § 77.5's second item is untouched. Nothing
+  here forces a host refusal of a cast the owner predicted, and no test asserts the cooldown comes
+  back. The `skills` divergence in § 78.1 is adjacent evidence, not that test.
+* ⚠️ **§ 72's built-player suspect is untouched.** The name and code fields were not typed into in
+  a built player this session.
+* ⚠️ **The § 78.1 fix is verified by report comparison, not by eye.** Nobody has WATCHED a
+  client to confirm the taya is no longer carrying a shoe; the two reports agreeing is strong
+  evidence and is not the same thing as looking at it.
+
+---
+
+## 79 · The 2026-08-29 evening batch: what he reported, what landed, and what is still open
+
+🧑 played the build and reported twenty-two things in one sitting, with screenshots. **Every one of
+those screenshots is committed at [`docs/reports/2026-08-29/reported/`](reports/2026-08-29/reported/)
+and its README maps each image to the entry below.** ⚠️ **Delete that folder when this section is
+closed**; it is evidence for one batch, not documentation.
+
+⚠️⚠️ **THE SEVEN THAT LANDED ARE IN §§ 78.2 to 78.11 AND IN THE COMMITS OF 2026-08-29.** This entry
+is the REMAINDER, so that the next session starts from a list rather than from the chat log.
+
+✅ **SECOND PASS, 2026-08-29 EVENING.** § 79.1, § 79.2, § 79.4 and § 79.6's probe gap are closed,
+§ 79.11 is new work he asked for in the same sitting (the tsinelas flat skin), and § 79.3, § 79.8
+and § 79.9 are still open but each now has a harness or a named suspect instead of a guess.
+
+⚠️⚠️ **THE ONE THING TO CARRY OUT OF THIS PASS, IF YOU READ NOTHING ELSE: TWO OF THE THREE FAULTS
+WERE INVISIBLE TO A CODE READ AND BOTH WERE FOUND THE SAME WAY.** § 79.1 was a constant that looked
+deliberate (`LightExposure = 1.0f`, documented as the conversion hook and left empty) and § 79.4 was
+excluded by a confident, wrong premise about what legacy `Text` can draw. Neither yields to
+reasoning about the source; both fell over immediately once something rendered the screen and
+printed a number. **The probes are the deliverable, more than the fixes are.**
+
+⚠️ **AND ONE MEASUREMENT TRAP CAUGHT THIS SESSION TWICE, IN BOTH DIRECTIONS.** An image effect does
+not run outside play mode, so an editor-mode capture of any graded camera is a picture of a frame
+the player never sees (§ 79.1). And a value bisected against the wrong lighting is not a value: the
+IKE albedo was solved to 0.0180 while the preview was still lit 1.54x too hot, and rendered pure
+black once that was fixed (§ 79.1, and the ladder in `tsinelas_sike.mtl`). **Fix the light before
+you fix the colour.**
+
+### 79.1 ✅ FIXED: THE CHARACTER SCREEN WAS LIT IN GODOT'S UNITS AND THE MAPS IN UNITY'S
+
+**This subsumes § 78.8.** Images `10` (character select, pale), `11` (the lobby cast, correct) and
+`14` (IKE reading mid grey).
+
+**THE CAUSE, AND IT IS ONE CONSTANT.** `TscnImporter` converts every imported map light with
+`KeyEnergyToIntensity = 0.651f`, because Godot `light_energy` and Unity `intensity` are not the
+same unit; the factor is calibrated against a captured Godot frame and re-derivable through
+`ToneSweep`. `ModelPreview.BuildLights` transcribed `CharacterSelect.tscn`'s energies of **1.35
+and 0.45 and applied no conversion at all**, so the character portrait has been lit
+**1 / 0.651 = 1.54x hotter than every map in the game** since it was written. That is exactly
+"the character screen is lit differently from the game": the same palette under half a stop more
+key has nowhere left to go, so it reads pale and low contrast there and rich in the lobby.
+
+⚠️⚠️ **THE HOOK WAS ALREADY THERE AND EMPTY, WHICH IS WHY THREE SESSIONS WALKED PAST IT.**
+`ModelPreview.LightExposure` existed, was documented as *"exists only to keep both call sites tied
+to one explicit conversion value"*, and was set to **1.0**. It reads like a deliberate constant, so
+every previous pass took the lights as given and went looking at the ambient and the grade instead.
+It is now `0.651f`, and `ModelPreviewLightingTests` reads `TscnImporter.cs` as text and fails if
+the two copies ever disagree. They cannot be one constant: the importer is in the Editor assembly
+and the preview is in Runtime.
+
+⚠️ **IKE NEEDED A SECOND, SEPARATE FIX, AND IT IS A COLOUR-SPACE ONE.** `tsinelas_sike.mtl`'s Kd is
+consumed as a **linear** reflectance, not as an sRGB display value. That is why *"make sike darker
+too"* and *"sike/ike still aint dark enough"* both failed: halving 0.105 to 0.052 moves the SCREEN
+value only from about 92/255 to 75/255. Measured on the character screen, with the ladder recorded
+in the `.mtl` itself: 0.0520 renders 111, 0.0300 renders 73, **0.0180 renders 44 (shipped)**,
+0.0110 renders 15, 0.0070 renders 0. Note the direction of the last one: `ColourGrade` **crushes**
+its toe rather than lifting it, so the first attempt at solving this on paper produced a pure black
+shoe. The value is bisected on renders.
+
+⚠️ **AND `ModelPreviewProbe` IS THE THING THAT MADE ALL OF IT VISIBLE**, which is what § 79.1 asked
+for before anything else. `Assets/TumbangPreso/Tests/PlayMode/ModelPreviewProbe.cs` drives the real
+`ModelPreview` and shoots every subject through four arms (shipped, no-ambient, no-grade,
+no-lights), printing the mean over the subject's own pixels using the alpha channel as the mask.
+The `no-lights` arm is what named the direct term: IKE went from 89 to 30 with the two preview
+lights off while killing the ambient moved it only 89 to 83.
+
+⚠️⚠️ **IT MUST BE A PLAYMODE TEST AND THE EDITOR-TOOL VERSION OF IT LIED.** The first draft ran as
+`-executeMethod` and reported that disabling the preview's `ColourGrade` changed the frame by
+nothing on all four subjects, which reads exactly like "the character screen has no tonemap" and
+would have been this session's headline finding. `OnRenderImage` only runs on a component marked
+`[ExecuteAlways]` and `ColourGrade` is not, so an edit-mode capture of this screen photographs a
+frame the player never sees. `ModelSheet.BuildLight` records the same trap from the other side and
+compensates its own key and ambient for it. **An image effect cannot be measured outside play
+mode.**
+
+**Four things this entry previously listed as ruled out, and how they held up.** All four readings
+were correct and none of them was the cause, which is worth keeping because the cause was in the
+one place nobody had a way to look at:
+
+* *not the mesh or the material* — correct, and it stayed correct;
+* *not the ambient value on its own* — correct, and the probe put a number on it: killing the
+  ambient outright moves IKE by 6 of 255;
+* *`LightingToon` multiplies by albedo, so the direct term cannot lift a dark surface* — correct
+  as written, and it is why the direct term being 1.54x too strong was invisible to a code read.
+  It does not lift a dark surface, it multiplies one, and a 1.54x multiplier on an albedo that is
+  itself being read in the wrong colour space is how a near-black shoe reaches mid grey;
+* *the preview is the only camera carrying a grade without `WorldOutline`* — still true, still not
+  the cause, and still worth a look for a different reason (image `10` has no ink edge on Cheska
+  where image `11` does).
+
+⚠️ **STILL OPEN, SMALL:** the preview's ambient is NOT scaled by the 0.651 conversion, deliberately.
+`PreviewAmbient` is an `ambient_light_energy` blended with a sky contribution, which
+`TscnImporter.Energised` converts by a different route, and the measured fault was in the direct
+term. Scaling both at once would have been two changes with one measurement between them. If the
+cast still reads a shade flat after a played build, that is the next thing to measure, not a guess.
+
+### 79.2 ✅ CLOSED 2026-08-30: ILALIM NG TULAY IS HAZIER AND PALER THAN ESKINITA
+
+Image `12`. 🧑: *"ilalim ng tulay as well should look more like the other map's shaders"*.
+
+Each map carries its own `Visual.MapGrade` (brightness, contrast, saturation, exposure, white) and
+its own ambient and fog, and `ColourGrade` on the camera applies the grade. `IlalimNgTulayBuilder`
+sets one at line ~288 and `MapGradeSanityTests` asserts a band around it, so **the band is the
+first thing to read**: if the value is inside it and the map still looks wrong, the band is wrong.
+
+⚠️ Commit `f36aebd` is *"Stop the ink hull eating decals, and warm Ilalim out of its haze"*, so
+this has been reached for once already. Read what it changed before changing it again.
+
+**Done looks like:** the two maps' lobby frames side by side with the same cast, and a note saying
+which of grade, ambient or fog was the difference.
+
+✅ **ANSWERED: IT IS THE AMBIENT, AND IT IS NOT THE GRADE.** Measured off the two scene files rather
+than argued, which is the comparison this entry asked for:
+
+| | Eskinita | Ilalim ng Tulay (was) |
+|---|---|---|
+| ambient mode | Flat | Trilight |
+| sky | (0.934, 0.830, 0.700) | (0.78, 0.76, 0.72) |
+| **equator** | **(0.114, 0.125, 0.133)** | **(0.60, 0.58, 0.56)** |
+| **ground** | **(0.047, 0.043, 0.035)** | **(0.24, 0.24, 0.26)** |
+| fog | off | on, near-white, linear 40-120 m |
+
+**Five times Eskinita's ambient on every vertical face and five times on every downward one.**
+`TumbangPreso/Toon` is a surface shader with no `noambient`, so that lands on top of the lit colour
+and outside the palette remap: high key, low contrast, no hue left. That is "hazier and paler"
+exactly, and it is why the grade band was the wrong place to look — the grade is inside its band
+and correct.
+
+⚠️⚠️ **THE 2026-08-28 PASS CAUSED THIS, AND ITS DIAGNOSIS WAS RIGHT.** That pass found a cool
+near-white sky putting 0.98 of blue on up-facing surfaces against 0.45 on the verticals, correctly
+called that spread "dull", and closed the gap by **raising the equator**. Warming the sky was
+right; closing a spread by lifting the dark end rather than lowering the bright one traded a blue
+cast for a white wash. Now 0.78 / 0.34 / 0.14: still three times Eskinita's equator, because this
+is the one arena under a solid deck and that difference is real information about the space, but
+two thirds less wash.
+
+⚠️ **THE FOG IS LEFT ALONE.** It was already pushed from 22.5 m to 40 m on 2026-08-28 with the
+reasoning recorded in place, it clears the whole playable street, and its job (stopping the far
+backdrop plate ending in a hard line) is real.
+
+⚠️⚠️ **THE SCENE IS WHAT SHIPS, SO `IlalimNgTulayPipeline` MUST BE RE-RUN AFTER THIS.** The change
+is in `IlalimNgTulayBuilder` and the player loads `IlalimNgTulay.unity`.
+`MapGradeSanityTests.TheIlalimBuilderAgreesWithTheSceneItGenerates` guards the MapGrade block and
+**does not guard the ambient**, so a builder edit that is never baked diverges silently. That is
+the same trap the test itself was written for.
+
+---
+
+⚠️⚠️⚠️ **CLOSED 2026-08-30, AND EVERY NUMBER IN THE TABLE ABOVE WAS READ OFF A FIELD UNITY NEVER
+USES.** 🧑, with the two lobbies side by side: *"look eskinita vs ilalim ng tulay in lobby, the
+lighting is so diff"*, *"make lighting similar"*, *"eskinita is the better one make ilalim ng tulay
+matchthat"*. This is the FOURTH pass on this map's ambient and the first three all measured the
+same wrong thing.
+
+**`Eskinita.unity` is `m_AmbientMode: 3`, which is Flat.** Under Flat, Unity lights every direction
+from `m_AmbientSkyColor` alone; `m_AmbientEquatorColor` and `m_AmbientGroundColor` are dead storage
+that the scene file still carries. The comparison table above was built by reading those two dead
+lines. Eskinita's real ambient on a vertical face — a character's front, which is the entire lobby
+frame — is its Flat colour **(0.934, 0.830, 0.700)**, not the (0.114, 0.125, 0.133) this entry
+compared against.
+
+**So the arithmetic ran backwards, and the correction went the wrong way:**
+
+| | claimed above | actually |
+|---|---|---|
+| Eskinita, vertical faces | 0.114 | **0.934** |
+| Ilalim after the 2026-08-29 pass | 0.340 | 0.340 |
+| ratio | *"still three times Eskinita's"* | **0.36 OF Eskinita's** |
+
+That pass LOWERED the equator from 0.60 to 0.34 to remove a wash, believing it was still three
+times too bright. It was already 0.64 too dark and it went to 0.36 of it, which is why the cast
+went from pale to murky and why 🧑 could tell the two maps apart from across the room.
+
+✅ **THE FIX IS FLAT AMBIENT AT ESKINITA'S EXACT COLOUR, IN THE BUILDER AND BAKED INTO THE SCENE.**
+Trilight is gone rather than retuned. It was kept twice on the argument that a map under a solid
+deck should distinguish what the sky reaches from what it does not, which is sound and is not worth
+what it costs: a mode with two decorative fields sitting beside one live one is what made this
+mistake available on every one of the three attempts. **The deck still shades the street**, through
+the thing that was always doing it — the directional at (1, 0.96, 0.88) intensity 1.15 with shadows
+on, which is already brighter than Eskinita's own 0.749 sun. The fog is untouched.
+
+✅ **AND THE GAP THIS ENTRY NAMED IS NOW A TEST.**
+`MapGradeSanityTests.IlalimIsLitLikeEskinitaInTheSceneThatShips` reads both **scenes** (not the
+builders, because the scene is what ships), asserts the MODE first — a colour comparison between
+two scenes in different ambient modes is meaningless — and then asserts the two Flat colours are
+equal to three decimals. The builder-versus-scene divergence this entry warned about is covered
+one test up; this is the half that was missing.
+
+### 79.3 ⚠️ THE LOBBY CHAT STRIP SHOWS NOTHING, AND THE HISTORY CAP IS UNDOCUMENTED ⚠️ OPEN
+
+Image `18`. 🧑: *"lobby chat ui overflow"*, *"wtf happens if thers more than 100 messages, can i
+scroll thru it?"*, *"u dont see most recent chats in say something"*.
+
+**Two of the three questions already have answers in the source**, and they should be told to him
+rather than investigated:
+
+* the scrollable log keeps `LobbyChat.MaxHistory` = **100 lines** and drops the oldest past that
+  (`_history.RemoveAt(0)`), and it **is** scrollable, through `_historyScroll`;
+* the strip above the field is capped at `LobbyVisibleLines` = **2** by design, with the rest
+  behind the click.
+
+⚠️⚠️ **THE ACTUAL BUG IS THAT THE STRIP SHOWED ZERO LINES, NOT TWO.** In image `18` the log holds
+four messages and the box above the field is empty. `SetLines` fills `_lines[4]` and `_lines[5]`
+for the lobby and deactivates the rest, and the panel is built
+`(LineHeight + 4) * LobbyVisibleLines` tall, so two rows should be visible. **Not reproduced by
+reading.** Drive it: `NetworkedLobbyTypingProbe` already stands up a real lobby, and `LobbyChat`
+is on that screen.
+
+**Done looks like:** the last two lines visible above the field with the log closed, and a decision
+recorded on whether 100 is enough.
+
+⚠️ **THE TWO ANSWERS HE ASKED FOR, TO BE TOLD RATHER THAN INVESTIGATED** (both confirmed in source
+this session): the scrollable log keeps **`LobbyChat.MaxHistory` = 100** lines and drops the oldest
+past that, and **yes it scrolls**, through `_historyScroll`. The strip above the field is capped at
+**`LobbyVisibleLines` = 2** by design, with everything else behind the click.
+
+⚠️ **STILL OPEN, AND NOW WITH A HARNESS RATHER THAN A READ.**
+`Assets/TumbangPreso/Tests/PlayMode/LobbyChatStripProbe.cs` stands up a real lobby-mode `LobbyChat`,
+pushes four messages at realistic length through the component's own `Add` path, and asserts two
+things: that `LobbyVisibleLines` rows are active, and that each active row's `preferredHeight` fits
+the rect it is clipped to.
+
+⚠️⚠️ **THE SECOND ASSERTION IS THE POINT, AND IT IS WHY CHECKING `Text.text` WOULD HAVE PASSED
+AGAINST HIS SCREENSHOT.** `SetLines` ends by setting `verticalOverflow = Truncate` on every active
+row, after `MenuKit.FitBlock(line, LineHeight * 2.0f)` has been allowed to size the type against a
+TWO-line cap while the row's own `LayoutElement` is pinned to ONE line at `LineHeight` = 26.
+**Legacy `Text` on `Truncate` clips by whole lines, so a label whose content is taller than its
+rect paints nothing at all** while remaining active, non-empty and correctly sized. That is the
+suspected mechanism for "the strip showed zero lines, not two".
+
+**The probe passes as written**, so the fault does not reproduce at these four message lengths on
+this canvas scale.
+
+✅ **AND THE OVERFLOW HE MEANT WAS THE OPEN LOG, NOT THE STRIP.** He sent a second screenshot:
+ten lines against the top of the panel with **the first one clipped in half by the header**, and a
+third of the box empty underneath. That is `OpenHistory` setting
+`_historyScroll.verticalNormalizedPosition = 0.0f`.
+
+⚠️⚠️ **A `ScrollRect` NORMALISES AGAINST `content.height - viewport.height`, SO THAT VALUE IS
+MEANINGLESS WHEN THE CONTENT IS THE SHORTER OF THE TWO.** Unity then leaves the content's
+`anchoredPosition` wherever it last was, which is pushed UP by however tall the log was the last
+time it was long enough to scroll. **So the panel looks correct after a hundred messages and broken
+after ten** — the reverse of how an overflow normally behaves, and the reason reading
+`LobbyVisibleLines` never explained it. `SnapHistoryToNewest` writes a short log flush to the top
+directly; there is no normalised position that expresses "shorter than the box".
+
+⚠️ **THE TWO-LINE STRIP IS STILL UNREPRODUCED** and its probe still passes. If it recurs, the
+`Truncate` mechanism in the note above is the standing suspect.
+
+### 79.4 ✅ FIXED: IT WAS THE PENALTY HITMARKER, AND THE SEARCH WAS RULED OUT BY A WRONG PREMISE
+
+Image `02`. 🧑: *"WHY IS THERE ! FOR SPECTATOR"*, then *"i want the ! shit gone completley in
+spectatotr mode"*, *"bcz ⚠️ should not show up in spectator mode"*.
+
+**It is `Hud._hitmarker`** (`Hud.cs`, built around line 3585): a legacy `Text` at dead screen
+centre whose default symbol is `"💥"`. `RoundDirector` pops it with the literal string `"⚠️"` on
+every taya-camp tick (line ~325) and every slipper-idle tick (line ~419). In image `02` the taya is
+near the middle of frame, so the mark lands on them and reads as a world-space marker over that
+player; it is not attached to anything.
+
+⚠️⚠️ **THE PREVIOUS SEARCH FAILED ON ONE FALSE PREMISE, AND IT IS WORTH RECORDING BECAUSE IT IS
+REUSABLE.** This entry said: *"It renders as a full-colour triangle, which legacy `Text` cannot
+draw, so it is an `Image` with a sprite"*. **Legacy `Text` can.** A dynamic font falls back to the
+OS face for any glyph it does not carry, and on Windows that face is Segoe UI Emoji, which is a
+COLOUR font (COLR/CPAL). So "full colour" excluded exactly the right answer, and the two label
+fields the search did check (`_crosshair`, `_vulnerable`) were the wrong two. **Do not rule out a
+`Text` because a glyph is coloured.**
+
+**The fix** is in `PopHitmarker` rather than at the two call sites: it returns early while
+`_spectating`, and `EnterSpectatorMode` clears any mark already on screen. A hitmarker is
+first-person feedback about something happening to YOUR unit and a spectator has no unit, which is
+the same argument `CLAUDE.md` § 4 makes for the whole spectator control set. Gating the callers
+would have left the next caller to rediscover it. It takes the `sfx_hitmarker` cue with it.
+
+### 79.4b ✅ THE BROADCAST CHROME LOST THREE THINGS HE DID NOT WANT
+
+Same frame. 🧑: *"remove live here too"*, *"remove live netwrok here as well as WASD FLY"*.
+
+* `Hud._spectatorLiveBug`, the red `● LIVE` in the top-right corner, now draws nothing in the live
+  state. ⚠️ **The widget is kept and only its default state is blank.** Its other two states,
+  `⏪ INSTANT REPLAY` and `⏸ TACTICAL PAUSE`, each tell a watcher that the frame is NOT the present
+  moment, which is the one thing a broadcast corner is for. Live is the absence of both.
+* `SpectatorCamera.StatusText`'s `● LIVE NETWORK  |  ` prefix is gone for the same reason. The
+  three branches above it (replay, pause, slow-mo) stay. Live was the `else`: it only ever fired
+  in the ordinary case, and it fired on a networked match and stayed silent on a local one, which
+  makes it a netcode readout wearing a broadcast label.
+* `WASD fly` is dropped from `ControlsText`. It is the one item on that line that teaches nothing:
+  every other entry names a key a player would not guess, and WASD is the same walk the whole game
+  is played with.
+
+### 79.5 ✅ THE PICKER TURNS AGAIN AFTER THE PLAYER LETS GO
+
+Image `17`. 🧑: *"this is supposed to be like rotating and shit, both slippers and tsinelas and
+hero"*, *"they stop rotating if we move"*, *"and go back to rotating in character select after"*.
+
+The idle sweep existed and stopped on the first drag, permanently, by design. It now lapses 2.5 s
+after the last drag or zoom. `_turnPhase` is frozen while the player has it rather than advanced
+and ignored, so the sweep resumes where it stopped; the camera keeps the orbit they chose.
+
+### 79.6 ✅ FOUR LABELS AND ONE PANEL THAT DID NOT FIT
+
+Images `01`, `13`, `15`, `16`, `19`, `22`. All shipped 2026-08-29:
+
+* the lata card fits the lines it is showing (§ 78.3);
+* the hero picker's ability rows measure their own summary, and the column is sized to the rows
+  actually built rather than to a constant 289 — the ultimate's plate was drawn outside the panel;
+* `WAITING FOR 4 PLAYERS` and `START MATCH` go through one fit that **grows as well as shrinks**,
+  from a fixed ceiling each call so repeated swaps cannot ratchet the type down;
+* the decorative `EDIT` on the player name field is deleted; the field always took the click.
+
+⚠️ **`HeroPickerLayoutProbe` WAS GREEN THROUGH ALL OF THIS AND SHOULD NOT HAVE BEEN.** It checks
+the gap under the tagline and the tagline's own slack, and asserts **nothing about the bottom of
+the column against the panel**, which is the edge the ultimate ran past. **Add that assertion.**
+
+✅ **ADDED 2026-08-29 — AND IT WENT RED IMMEDIATELY, SO § 79.6's FIX WAS INCOMPLETE.** The probe
+now finds the LAST `AbilityRow_` and asserts its bottom edge against `ConfigPanel`'s, tolerance
+`MaxBottomOverflow` = 4 px for the nine-patch border and rounding.
+
+⚠️⚠️ **`AbilityRow_2` IS STILL DRAWN 14 px BELOW THE PANEL. THE ULTIMATE'S PLATE STILL HANGS OUT
+OF THE WOOD, AND IT IS NOT WHAT § 79.6 THOUGHT IT WAS.** Measured, from the probe's own dump:
+
+```
+ConfigPanel   h=540  top=1208 bottom=668   (40 px padding each side, so 460 for the column)
+Rows          h=460  min=338  pref=524     <- wants 524, given 460, DEFICIT 64
+  TabBar      h=62   TabBar/NameRow/Tagline are 62 + 105 + 56
+  NameRow     h=105  min=86  pref=115
+  TaglineLabel h=56  min=56  pref=56
+  TraitRows   h=207  min=104 pref=261      <- wants 261, given 207
+    AbilityRow_0/1/2  h=83 each, min=83, pref=83, flex=1
+```
+
+**Three 83 px rows need 249 plus spacing in a box that is 207.** § 79.6 sized the column to the
+rows actually built, which was the right change and fixed the number `TraitRows` ASKS for
+(`pref=261` is correct). It did not fix the fact that the panel has only 460 px to give.
+
+⚠️⚠️ **AND THE OVERFLOW IS FORCED BY ONE LINE: `rowLe.minHeight = rowLe.preferredHeight`**
+(`ConvertedCharacterSelect.cs` ~590). **A `VerticalLayoutGroup` will not shrink a child below its
+`minHeight`; it overflows the container instead.** So the column CAN be squeezed and its rows
+CANNOT, and the surplus goes out the bottom of the wood. Pinning min to pref is what converts "a
+tight column" into "a plate drawn outside the panel".
+
+✅ **FIXED, AND 🧑 FOUND THE TELL HIMSELF:** *"oh shit if i click next it gets fixed"*, *"but yea
+when u open its still fucken broken"*.
+
+⚠️⚠️ **IT IS THE LAYOUT-BLIND FIRST PASS, NOT A SIZING CONSTANT.** `RefreshHeroLoadout` measures
+each ability summary against `rows.rect.width` to decide whether it wraps, and **reserves the
+taller two-line box whenever it cannot measure** — which its own note says is the safe direction
+and is correct. On the frame the panel is switched on `rect.width` is 0, so EVERY row takes that
+branch: `descHeight` 44 instead of 22, three rows, **66 px of surplus against the 64 px the column
+was measured overflowing by.** Cycling the hero re-runs `Refresh` against a real width, most
+summaries fit one line, and the column drops back inside the wood. That is exactly the behaviour
+he described, and it is why the deficit arithmetic above pointed at `minHeight` when the real
+answer was upstream of it.
+
+**The fallback stays and a second pass was added**: `_refreshPending` re-runs `Refresh` on the next
+`LateUpdate`, the same shape as § 80.2's `_refitPending`. ⚠️ **Nothing was made to compress**, so
+no description is clipped. ⚠️ **The last ROW is measured, not the column's rect**: the column is a
+`VerticalLayoutGroup` whose own rect was already correct, and the ultimate row is the child that
+was drawn past the wood, so measuring the container would have passed then too. The two existing
+assertions could not see this class of fault at all, and that is structural rather than an
+oversight: both measure INSIDE the column (one gap between two rows, one box against its own
+text), and a column whose rows are each correctly sized and spaced can still be taller than the
+panel holding it. Only a child edge against the PARENT's edge can see it.
+
+### 79.7 ✅ EVERY HELD TSINELAS WAS THE PLACEHOLDER COLOUR
+
+Images `20` and `21`. 🧑: *"ingame shader messes up the color of slippers"*, *"doesnt look anything
+like the frigging character select anymore"*, *"pls fix the shaders for slippers i dont want them
+to fuck up the color"*.
+
+`ViewmodelArms.MatchSkin` opened with `if (filter.sharedMesh == source.sharedMesh) return;` and the
+material copy was **below** it. `Build` dresses the viewmodel shoe in `UiTheme.PropFoam` (#7a5741,
+a flat mid brown) as a stand-in, so any path reaching `MatchSkin` with the mesh already right kept
+that stand-in for the whole match. The mesh was correct and the colour was a placeholder, and one
+condition guarded both. The mesh write is still skipped when it would be a no-op; the materials are
+copied every time.
+
+⚠️ `SceneBuilder` also builds slippers and did not set `SeatOfOrigin`, which `MatchRpc.FindSlipper`
+now addresses them by (§ 78.1). Fixed in the same commit: a scene-authored slipper would have been
+present on the host and absent on every client.
+
+### 79.8 ⚠️⚠️ THE FIRST-PERSON SLIPPER IS STILL NOT RIGHT, AND HE HAS SAID SO TWICE ⚠️ OPEN
+
+Images `05` and `07`. 🧑: *"the slippers on my arm dont look right"*, *"iits floating a bit"*, then
+of the fix, *"dude this sucks"*, and *"u dont see the slipper at all bro, i wanna be able to
+inspect the details"*.
+
+**What has been tried, so it is not tried again blindly:**
+
+1. anchored by the mesh's own origin — the shoe hung in space beside the hand, because § 70.2
+   requires every slipper mesh to be **centred on XY and seated on Z = 0**, so its origin is on the
+   sole at one end;
+2. centred on the fist with `Slipper.CarryRotation` — the quarter turn points the toe **at the
+   camera**, and the shoe disappeared into the arm;
+3. laid along the forearm — visible, but it lands exactly where the hand mesh is and the two read
+   as one brown mass, which is what *"this sucks"* was about.
+
+⚠️ **THE ARM'S LOCAL AXES ARE NOT WHAT THEY LOOK LIKE**, and this cost two of the three attempts.
+`RightBasisX/Y/Z` are a baked rotated frame: local **+Y runs toward the hand**, and local **-Z is
+toward the camera and up**. A positive Z offset pushes the shoe **away and down, behind the arm**.
+
+⚠️ **AND THE SNAPSHOT TOOL CANNOT JUDGE THIS.** `FppArmsSnapshotTool` builds the viewmodel with its
+default placeholder mesh dressed in `PropFoam`, so every review of the held slipper so far has been
+against a flat brown blob rather than the real skin. **Fix the tool first**: give it a real
+`Slipper` and call `MatchSkin`, or the next iteration is blind too.
+
+**Done looks like:** the shoe clear of the hand, its profile readable, wearing its own skin, judged
+by 🧑 off a capture that shows the real material.
+
+✅ **THE TOOL IS FIXED, WHICH WAS THE PRECONDITION.** `FppArmsSnapshotTool` now builds a REAL
+`Slipper` from the roster (`BuildSlipperSource`), dresses it through `ToonSkin.ApplySlipper` exactly
+as `MatchInstaller` does, and calls `arms.MatchSkin(...)` before every capture. It also sweeps ten
+tsinelas on one character (`fpp_held_<id>_v17.png`) so the whole roster is reviewable in a sitting.
+Two traps found writing it, both recorded at the call site:
+
+* ⚠️ **`MatchSkin` must be called AFTER `SetCharacter`**, which rebuilds the arms and re-dresses
+  what hangs off them. Applied first, the placeholder silently wins and the tool goes back to
+  photographing a brown blob with no error.
+* ⚠️ **The source slipper is parked 40 m away rather than deactivated.** `MatchSkin` reads it
+  through `GetComponentInChildren<MeshFilter>()`, which skips inactive objects, so switching it off
+  makes it invisible to the very method it exists for.
+
+⚠️⚠️ **STILL OPEN: THE POSE ITSELF, AND THERE IS NOW A FOURTH THING TO KNOW BEFORE ATTEMPTING IT.**
+`FppArmsSnapshotTool` is an EDITOR tool doing a manual `camera.Render()`, so `ColourGrade` never
+runs in it (`OnRenderImage` needs `[ExecuteAlways]`, which that component does not have and must
+not get). Its captures are therefore a whole stop hotter than the game, the same way `ModelSheet`'s
+are and for the same reason — `ModelSheet.BuildLight` compensates its key and ambient by hand and
+this tool does not. **Judge the shoe's PLACEMENT off it; do not judge its colour off it.** For
+colour, use `ModelPreviewProbe`, which is a PlayMode test and gets the real grade.
+
+### 79.9 ⚠️ TWO PRACTICE REPORTS, NEITHER INVESTIGATED ⚠️ OPEN
+
+🧑: *"practice mode broken wtf, when i threw the slipper on the floor (very far from can, it js
+fell)"*, and separately *"sometimes i pick up a slipper in practice mode and a diff slipper gets
+handed to me"*.
+
+⚠️⚠️ **THE SECOND ONE IS NOT A BUG AND MUST NOT BE "FIXED".** `Slipper`'s own note: *"OWNERSHIP IS
+A LABEL, NOT A LOCK. Any attacker may pick up any slipper."* It was reversed twice in one day and
+the open version was chosen deliberately, because a slipper you can lose to a rival is more
+contested than one nobody may touch. **Tell him rather than change it.**
+
+The first is unexamined. A throw that drops at the feet means no impulse reached the shoe;
+`Carrier.StepAttacker` releases at `ThrowRules.PowerFor`, and `Balance.ChargeMinPower` is the tap
+floor. Check whether it reproduces with a full charge before touching a number.
+
+⚠️ **STILL OPEN, WITH ONE SUSPECT NARROWED BY READING (not yet driven).** `Carrier.Release` has two
+branches. On `NetAuthority.ShouldRequest()` it predicts the presentation and sends
+`RequestThrowServerRpc`, deliberately NOT clearing `Held`; otherwise it calls `HostThrowAt`, which
+opens `if (!NetAuthority.ShouldResolve() || Held == null) return;`. **A mode where neither
+`ShouldRequest` nor `ShouldResolve` is true drops the throw on the floor with no impulse and no
+error**, and the arm still swings because the presentation half is separate. That is exactly the
+shape of "I threw it and it just fell". Practice is the mode most likely to sit outside both, since
+it is the one that stands up a match without a host relationship.
+
+**Next step is to assert it rather than read it**: a PlayMode case that enters practice, charges to
+full, releases, and asserts the slipper's speed is above `ThrowRules.PowerFor(ChargeFullTime)`
+rather than zero. **Do not touch `ChargeMinPower`** until that says the power is the problem; if
+the authority gate is the problem, a bigger number changes nothing.
+
+### 79.11 ✅ THE TSINELAS ARE SHADED ALMOST FLAT NOW, AND ONLY THE TSINELAS
+
+🧑 2026-08-29, after § 79.7's placeholder fix had already shipped and he was still unhappy: *"pls
+overhaul how shader applies to slippers AND ONLY SLIPPERS bcz the slippers change color or form
+entirely ahha"*, *"lowk pls js remove or severely lessen shader coloring effect on slippers as a
+whole"*, *"it makes it look so shitty"*, and the constraint: *"make sure it doesnt affect shader
+for anything else and it actually reflects in the game as well as all maps"*.
+
+**What was recolouring them.** `LightingToon` is `Albedo * _LightColor0 * level` with
+`level = lerp(_ShadowBand, 1, band)` and `_ShadowBand` = **0.45**, stepped over a `_BandEdge` of
+**0.03**. Every surface facing away from the key is multiplied down to 45 per cent across a hard
+three-per-cent ramp. On a CHARACTER that is the look: big subject, saturated palette, reads as cel
+shading. On a 0.43 m shoe it lands as one hard division across the whole prop, so the toe box and
+the midsole render as two different colours and neither is the colour on the picker.
+
+**`ToonSkin.ApplySlipper`** dresses a shoe with `_ShadowBand` **0.86** over a `_BandEdge` of
+**0.30**: a 14 per cent falloff spread over a third of the ramp, so what shading is left describes
+the curve instead of cutting it.
+
+⚠️ **NOT 1.0, AND THE FLOOR IS SOMEBODY ELSE'S MEASUREMENT.** Fully unlit removes the form;
+`tsinelas_sike.mtl`'s header records that exact failure from the albedo side — *"every curve on the
+upper resolves to the same value and the shoe renders as a flat silhouette"*.
+
+⚠️⚠️ **THE FLAT FLAG IS PART OF THE MATERIAL CACHE KEY, AND WITHOUT THAT IT LEAKS ONTO THE CANS.**
+`ToonSkin.Variant` caches on (source material, key), and a slipper and a can can arrive sharing one
+imported source material; whichever was dressed first would hand its shading to the other. Same
+fault the palette note in that file records for the cast.
+
+⚠️ **FIVE CALL SITES, AND MISSING ONE MEANS THE SHOE CHANGES APPEARANCE WHEN IT CHANGES SCREENS**
+— which is what § 79.7 already was. `MatchInstaller` (the match copy, every map), `ViewmodelArms`
+(the placeholder at build and the real skin in `MatchSkin`), `ModelPreview` (the picker, via the
+new `ShowingSlipper` flag that `ConvertedCharacterSelect` sets from the tsinelas tab), `ModelSheet`
+(the reference sheet, by `tsinelas_*` filename) and `FppArmsSnapshotTool`.
+
+⚠️ **`ModelPreview` CANNOT WORK OUT THAT A SUBJECT IS A SHOE**, which is why the flag is set from
+outside. One rig shows three categories on that screen and a slipper and a can are indistinguishable
+from inside: both arrive with no palette, and the 16-slot palette test only separates a PERSON from
+a prop. The picker's tab is the only thing that knows.
+
+**Asserted by `SlipperSkinTests`** (EditMode, 3 cases): that a slipper carries the flat band, that
+a NON-slipper sharing its source material still carries the shader defaults 0.45 / 0.03, that the
+numbers are a severe lessening rather than a no-op, and that all four shipping call sites still
+route through `ApplySlipper`.
+
+### 79.10 What this batch did NOT get to
+
+⚠️ **UPDATED 2026-08-29 EVENING.** The four items below were written before the second pass; the
+first, third and fourth still stand exactly as written. Everything else in § 79 is now either
+closed above or carries its own narrowed next step (§ 79.3 has a probe, § 79.8 has a working
+snapshot tool, § 79.9 has a named suspect).
+
+* ⚠️⚠️ **NO TWO-MACHINE RUN.** § 78.13 still stands. He has the build on a second laptop now, and
+  both machines must be on **`ProtocolVersion` 12** or the join is refused at approval.
+  ⚠️ **AND THE TWO LAPTOPS HAVE DIFFERENT WINDOWS PROFILES**, `matth` and `Matthew`, so the clone
+  path and `GameBuilder`'s Desktop target both differ. A handoff that names one machine's path
+  sends the other session to a folder that does not exist, which reads exactly like a build that
+  never ran. `CLAUDE.md` § 7 already carries this for the build output.
+* ⚠️ **The other five heroes' arms have never been compared to their models.** Dante's were an
+  invented garment in the right palette (§ 78.11); there is no reason to think he is the only one.
+* ⚠️ **`CarryTests` is still failing** on a frame-timing assertion, pre-existing and bisected
+  (§ 78.12).
+* ⚠️ **§ 72 is still open**: the lobby name and code fields in a BUILT player, the one suspect no
+  probe here can reach.
+
+---
+
+## 81 · ⚠️⚠️ THE PLAYMODE ARENA SUITE IS NOT A GATE ANY MORE, AND HERE IS THE EVIDENCE
+
+🧑 2026-08-29, after watching a session spend an hour bisecting it: *"what if playmode tests are
+shitty and useless"*, *"what if the tests themselves are outdated"*. **He is right about the arena
+half of it, and the case is worth writing down because the next session will otherwise burn the
+same hour.**
+
+**1. NOT ONE OF THE ELEVEN BUGS FIXED ON 2026-08-29 WAS CAUGHT BY A PLAYMODE TEST.** Every one came
+from him playing the build, or from a render or a printed measurement. The suite was green through
+all of them.
+
+**2. TWO TESTS WERE GREEN WHILE THE EXACT FAULT THEY ARE NAMED FOR WAS ON SCREEN.**
+
+* `HeroPickerLayoutProbe` passed while the ultimate's plate drew outside the wood panel (§ 79.6).
+  Both its assertions measure INSIDE the column; nothing compared a child to its parent.
+* `CarryTests.AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor` asserts
+  `Distance(slipper.transform.position, anchor.position) - RestHeight`. **That is the slipper's
+  ORIGIN**, which `RideAnchor` sets by construction, so the assertion is arithmetically satisfied
+  no matter where the drawn shoe is. § 80.5 is a player reporting the shoe hanging off the arm
+  **in the presence of a passing test whose name is that it does not.**
+
+**3. THE ARENA TESTS DEPEND ON SUITE ORDER, WHICH MEANS THEY ARE PARTLY TESTING THE RUNNER.**
+`AiLaneTests`, `BotBehaviourProbe`, `BotMotionProbe`, `EmoteLifecycleProbe`, `EmoteCameraProbe`,
+`InputEdgeTests` and `ModelFacingProbe` all fail **in isolation** with "the arena did not build a
+full cast of People, expected 4 but was 1", and pass in a full run. Bisected against a stashed tree
+and against the parent commit: it is not any one change.
+
+**4. IT IS NOT REPRODUCIBLE RUN TO RUN.** `CarryTests` failed one full run and passed the next with
+no code change; the same tree produced 88/90 and then 76/90.
+
+⚠️ **WHAT TO TRUST INSTEAD, AND IT IS NOT NOTHING.** `Core.Tests` is 111 assertions in about
+100 ms and every balance number is in it. EditMode is 205 and deterministic, and `SlipperSkinTests`
+added on the same day is the thing that proves the tsinelas shading cannot leak onto the cans.
+`Checks.RunAll` and the three `tools/audit_*.py` read real scenes and real source. **Those four plus
+a render are the pass.** A PlayMode number should be read as a smoke signal, not a gate, until the
+ordering dependency in § 81.3 is fixed.
+
+⚠️ **DO NOT DELETE THEM.** Several of them encode real, hard-won reasoning, and `BotBehaviourProbe`
+is the only thing that plays a whole match. The defect is the harness, not the intent: they need a
+shared fixture that builds a cast, so each can stand alone. That is the work.
+
+---
+
+## 80 · The 2026-08-29 late batch, reported while § 79 was being fixed
+
+🧑 kept playing the build while the § 79 work was landing and reported these. **Everything here is
+his, from the built player.** The four that landed are ticked; the four that did not each carry
+what was narrowed, so the next session starts from a suspect rather than from the screenshot.
+
+### 80.1 ✅ FIXED: THE TAYA WAS CARRYING A TSINELAS, IN PRACTICE **AND** IN MULTIPLAYER
+
+🧑, first person, shoe in hand, `TAYA` on his own card: *"why the fuck does taya have slipper in
+practice mode? Does this also happen in multiplayer"*. **It did, on both**, and the answer to the
+second half is the important part: `SliceRunner.EquipOwnedSlippers` is host-side and runs for every
+peer, so nothing about this was practice-specific.
+
+**`Carrier.Held` was assigned `null` in exactly ONE place in the entire file** — at the end of a
+throw. Nothing emptied a hand when its owner became taya. `EquipOwnedSlippers` disowns and
+deactivates the slipper whose INDEX matches the defender's seat and never looks at what anybody is
+actually holding.
+
+⚠️⚠️ **AND DEACTIVATING BY INDEX COULD NEVER HAVE FIXED IT, BECAUSE OWNERSHIP IS A LABEL.**
+§ 79.9 records that being chosen deliberately and reaffirmed: any attacker may pick up any
+tsinelas. So the incoming taya is routinely holding somebody ELSE'S shoe, which that loop leaves
+active and equipped by construction. ⚠️ **The viewmodel is a separate mesh too**, so even for a
+matching index, switching the world object off left the first-person copy in frame.
+
+`Slipper.HostDisarm()` is the inverse of `HostForceEquip`, and `EquipOwnedSlippers` calls it on the
+incoming taya BEFORE its loop, so the freed shoe is still re-homed to its real owner in the same
+pass. ⚠️ **§ 78.13 predicted this exact gap**: *"Nobody has WATCHED a client to confirm the taya is
+no longer carrying a shoe"*. This is what watching found.
+
+### 80.2 ✅ FIXED: `START MATCH` DREW TINY, AND THE SETTINGS UI "RANDOMLY" CORRECTED ITSELF
+
+🧑: *"small ass start match also sometimes the match setttings ui become small then randomly
+updates"*.
+
+`SetFittedButtonLabel` read `if (room <= 1.0f) return;` **before** `text.fontSize = maxSize`. So a
+call landing on a frame where the rect was not laid out yet returned leaving the font at whatever
+the previous call left it — and the previous call is very often `WAITING FOR 4 PLAYERS`, 21
+characters, stepped down to the 18 floor. The seat fills, this fires with `START MATCH`, the rect
+is not ready, and the short string inherits the long string's shrunken size and keeps it.
+
+⚠️ **`rect.width` IS 0 UNTIL THE FIRST LAYOUT PASS, WHICH IS THE FRAME A PANEL IS SWITCHED ON**, so
+this is the normal case for the first refresh after opening, not a rare one. `ModelPreview.
+EnsureTexture` carries a note about the same trap and `LobbyChat`'s panel records it a third time.
+
+The reset is hoisted above the guard, so a bail now leaves the label at its authored size, and a
+`_refitPending` flag re-runs the fit on the next `LateUpdate`. ⚠️ **That flag piggy-backs on the
+EXISTING `LateUpdate`**: Unity binds one message per component and a second one is a hard compile
+error, which a first attempt hit.
+
+### 80.3 ✅ FIXED: `RIGHTING LATA [E]` WAS CLIPPED TO `RIGHTING LA`
+
+🧑: *"'righting lata' text overflow, maybe shorten that and check for other text overflows here"*.
+It is a `BuildMeter` row, so the key sits in a narrow column beside a fill bar; its siblings are
+`[LMB]` at 5 characters and `LUNGE [RMB]` at 11, and this was **17**. Now `RESET [E]`, which is
+also the game's own word: `Design.md` calls the verb resetting the lata and the lata card on the
+same screen already reads `RESETTING 53%`. `RIGHTING` appeared nowhere else in the game.
+
+### 80.4 ✅ FIXED: THE HOLD-TAB TRAY WAS DRAWN THROUGH THE ABILITY DECK, AND ITS TEXT WAS AT THE FLOOR
+
+🧑: *"broken ui placement here when u hold tab"*, and *"also the texthere is hard to read"*.
+
+⚠️⚠️ **THE ARITHMETIC WAS ALREADY WRITTEN DOWN IN `Hud`, WHICH IS HOW WRONG THE PLACEMENT WAS.**
+That file works the bottom band out in full: hero deck **14 to 92**, Classic deck **24 to 124**,
+inspect hint **132 to 150**, ready prompt plate **156 to 190**. `AbilityInspectPanel` is 236 tall
+with a bottom pivot and rested at **16**, so it spanned 16 to 252 — through both decks, through the
+hint that tells you to open it, and through the prompt plate. It now rests at **196**, six px over
+the tallest of them, which is the clearance `Hud` uses between its own stacked lines.
+
+The body text was authored at `MenuKit.MinReadableUnits`. ⚠️ **That is a FLOOR — the size below
+which a fitter may not shrink text — so the one panel whose entire job is to be read was set to the
+smallest type the project permits anywhere.** Now 21, with the card's `minHeight` moved 108 → 126
+and the tray 236 → 254, because the note directly above that block warns that a floor left behind
+is how an `Overflow` label starts drawing over the card under it.
+
+### 80.5 ✅ FIXED: THE CARRIED TSINELAS FLOATED OFF THE ARM IN THIRD PERSON, FOR EVERY UNIT
+
+**The carry placed the slipper's ORIGIN at the hand, and § 70.2 puts that origin on the SOLE at one
+END of the shoe** (*"every one has `min.y == 0.0000` in glTF space"*). So the visible mesh always
+hung off the hand by however far its author put the origin from its middle — a different amount for
+each of the nine skins, which is why it looked like a float rather than a constant offset.
+`Carrier.RideAnchor` now writes the rotation first and subtracts `Slipper.DrawnCentreOffset`, which
+is read off `Renderer.bounds` and is therefore solved per skin.
+
+⚠️⚠️ **`CarryTests` COULD NOT SEE THIS AND STILL CANNOT, WHICH IS WHY IT SHIPPED.** That test
+asserts on `Distance(slipper.transform.position, anchor.position) - RestHeight` — **the ORIGIN**
+against the anchor — and `RideAnchor` sets exactly that, so the assertion was arithmetically
+satisfied while the drawn shoe was anywhere at all. **The test measures the origin and the player
+sees the mesh.** Its § 78.12 failure is a separate, genuine frame-timing artefact and is unrelated;
+do not read this fix as having addressed that.
+
+⚠️ **THE VIEWMODEL HAD ALREADY SOLVED THE SAME BUG IN THE OTHER VIEW.**
+`ViewmodelArms.NormaliseHeldSize` subtracts `grip * (bounds.center * k)` for precisely this, and
+§ 79.8 records the first-person version as its attempt 1: *"the shoe hung in space beside the
+hand"*. Two carries, one correction, and only one of them had it.
+
+
+🧑, with a posed screenshot: *"also slipper floats for everyone including bots, it isnt on their
+arms i had to do this pose to show it but it floats for all poses"*.
+
+⚠️ **THIS IS THE THIRD-PERSON CARRY AND IT IS NOT § 79.8.** § 79.8 is the first-person VIEWMODEL
+copy, a different object with a different anchor, and its three recorded attempts are all about
+`ViewmodelArms.HeldSlipperLocal`. This one is the world object that everybody else sees, placed by
+`Carrier` against the hand anchor. **Both being wrong at once is what makes them easy to confuse.**
+
+⚠️ **AND § 78.12'S RED TEST IS A RED HERRING FOR THIS ONE, WHICH IS WORTH SAYING PLAINLY BECAUSE IT
+LOOKS LIKE THE ALARM.** `AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor` fails at
+0.064 m against a 0.050 m bound, and it is a test about the gap between the shoe and the hand,
+reported at the same time as a player seeing a gap between the shoe and the hand. **They are not
+the same thing.** That assertion measures the ORIGIN, which was never wrong; its failure is the
+one-frame Animator lag § 78.12 bisected. Fixing the float does not turn it green and was never
+going to.
+
+### 80.6 ✅ FIXED: THE DANCE WAS A REAL CLIP WITH ZERO CURVES IN THE BUILT PLAYER
+
+🧑: *"dance doesnt make u dance anymore"*, *"it js makes u t pose"*.
+
+⚠️ **A T-POSE IS THE BIND POSE, WHICH MEANS NO CLIP IS PLAYING AT ALL** — it is not a wrong clip
+and not a bad pose. `DanceClip.Build` writes arm rotations lerping **25° to 160°**, so if the clip
+were running it could not look like a T.
+
+`CharacterAnimator.EmoteClips["dance"]` is the chain `{ DanceClip.ClipName, "idle" }` and
+`ResolveChain` returns the first of those present in `_clips`, or **null**. `DanceClip.Build`
+returns null unless it finds all seven of `root`, `torso`, `head`, `arm-left`, `arm-right`,
+`leg-left`, `leg-right` by exact name. **So a T-pose requires BOTH the generated clip and `idle` to
+be missing.**
+
+**Ruled out this session, so nobody repeats it:**
+
+* ⚠️ **The rigs have all seven bones, exactly spelled.** Dumped off every character via
+  `FppArmsSnapshotTool.InspectHeroModels`: the distinct bone set across the whole cast is exactly
+  `arm-left, arm-right, head, leg-left, leg-right, root, torso`. `DanceClip.Build` therefore does
+  NOT bail on a missing bone, which was the first and most obvious suspect.
+* ⚠️ **The wheel is not off by one.** `Emotes.All` puts `dance` at index 4 and `tpose` at index 5,
+  adjacent, and `tpose`'s chain is `{ "static", idle }` — which really would look like this report.
+  But `Emotes.SegmentFor` floors `angle / span` and `EmoteWheel` places each label at
+  `span * i + span * 0.5`, the centre of that same wedge. Label and hit test agree.
+* ⚠️ **`DanceClip`'s curves are not flat.** The arm keys lerp **25° to 160°**, so a running clip
+  cannot render as a T.
+
+⚠️⚠️ **AND A PROBE FOR IT WAS WRITTEN, RUN, AND DELETED — READ THIS BEFORE WRITING THE NEXT ONE.**
+`EmoteClipResolutionProbe` played each emote on a live unit and asserted a bone moved. It could not
+be made to work: **run on its own it reports "no defender seat found"**, because loading `Eskinita`
+and calling `BeginRound` does not by itself build a cast, and **added to the full suite it took the
+run from 2 failures to 16**, breaking `AiLaneTests`, `BotBehaviourProbe`, `BotMotionProbe`,
+`EmoteLifecycleProbe`, `InputEdgeTests` and `ModelFacingProbe` with "the arena did not build a full
+cast of People, expected 4 but was 1". Bisected: those same tests fail in isolation **with the probe
+removed and with the whole batch stashed**, so they depend on suite ORDER and shared state, and
+adding a class perturbs it.
+
+**So the real blocker on § 80.6 was that the PlayMode suite has hidden inter-test dependencies**, and
+any new probe that loads an arena was liable to trip them. The diagnosis had to come from the
+editor-versus-player boundary instead.
+
+⚠️⚠️ **A T-POSE DID NOT MEAN NO CLIP WAS PLAYING. IT MEANT A VALID CLIP WITH ZERO CURVES WAS
+PLAYING.** `DanceClip.Build` creates a non-legacy `AnimationClip` and fills it with
+`AnimationClip.SetCurve`. Unity supports that call for a non-legacy clip in the editor only; at
+runtime it only supports legacy clips, and `AnimationClipPlayable` refuses a legacy clip. The
+Windows player therefore created `generated-dance`, resolved it ahead of `idle`, and played an
+empty clip. An empty clip contributes the rig's bind pose. That is the reported T-pose without a
+missing bone, a bad wheel index or a flat authored curve.
+
+⚠️ **THE FIX IS EDITOR-BAKED PER RIG, NOT ONE SHARED CLIP.** All seven bone names agree, but the
+outer node is part of every binding: Berto's curve starts `character-male-f/root` and Maring's
+starts `character-female-f/root`. `GeneratedAnimationAuthor` writes one
+`GeneratedAnimationSet` under Resources for each of the 18 shipped hierarchies. The player loads
+the set matching the instantiated Animator and never calls `DanceClip.Build`; the editor-only
+fallback remains for hand-built fixtures.
+
+`GeneratedAnimationTests` asserts every saved dance has curves, every curve path binds on the
+roster model whose set carries it, and a sample at 0.50 s moves both arms, with the raised arm past
+100 degrees. A separate temporary Windows player drove the actual `AnimationClipPlayable` at the
+same beat and printed **PASS, left 160.0 degrees, right 25.0 degrees**. It was built under `work/`
+and did not touch the Desktop player.
+
+**Verified:** Core **111/111**, EditMode **215/215**, `Checks.RunAll` **5/5**, all three source
+audits green, and the separate Windows-player `AnimationClipPlayable` probe above.
+
+### 80.8 ⚠️ OPEN: THE GENERATED HERO CASTS USE THE SAME PLAYER-ONLY CURVE API
+
+`HeroAbilityClips.BuildAll` also creates non-legacy clips and fills them with `SetCurve` at runtime.
+That is structurally the same editor-versus-player fault § 80.6 fixed for dance. It was discovered
+while tracing the dance, not reported from a played cast, and was not widened into this fix because
+baking all 18 casts across 18 model-specific paths adds 342 large curve assets. Diagnose one cast
+in a temporary built player, then choose between editor-baked sets and an animation job rather than
+assuming the editor's working curves ship.
+
+### 80.7 ✅ FIXED: ILALIM HAS ESKINITA'S ASPHALT GRAIN WITHOUT THE DARK PATCH SLABS
+
+🧑, pointing at an Eskinita lobby frame: *"can u give all other maps rich floors like this? borrow
+from online assets if u have to"*.
+
+⚠️⚠️ **THE TEXTURE, THE MATERIAL AND THE WHOLE GENERATOR ALREADY EXISTED AND WERE POINTED AT ONE
+SCENE.** `AsphaltRoadSurface` lays a real textured quad over the road and carried
+`private const string ScenePath = ".../Eskinita.unity"`. Bayan Plaza and Ilalim ng Tulay were
+therefore still showing the bare Kenney kit road, which is a single flat swatch sampled out of the
+shared town atlas — exactly the "there is no texture on this" look that class's own header
+describes at length. **That is the entire difference he was pointing at.** It is now a `Maps`
+table and one launch does all three.
+
+⚠️ **SO THE LICENSING QUESTION NEVER AROSE, AND THAT MATTERS MORE THAN THE WORK DID.** `CLAUDE.md`
+§ 6 says the art is the team's own, the repo tracks provenance in `NEW_SLIPPER_LICENSES.txt`, and
+this is a competition entry going to a national final; a downloaded texture with the wrong licence
+is very hard to undo once it is in a submitted binary. `asphalt.png` was already in the tree and
+already shipping on one map. **If a future pass does want new ground art, that decision is still
+his to make and the licence goes in the ledger beside it.**
+
+⚠️ **A MAP WITH NO ROAD NODE IS SKIPPED WITH A WARNING RATHER THAN FAILING THE RUN.** Bayan Plaza
+is a plaza and is allowed not to have one; a tool that errors on that cannot go in a pipeline.
+`EnvColourPass.RoadGroups` is the authority for what a road node may be called.
+
+⚠️⚠️ **THE FIRST ATTEMPT WAS RUN, MEASURED, AND REVERTED.** Laying it on all three by renderer
+bounds failed `MapGeometryCheck` **on a gated map**:
+
+```
+FAIL IlalimNgTulay/AsphaltSurface: floats 0.061 m above .../Lupa/FarGroundPlate
+     (footprint 80.00 by 240.00 m)
+```
+
+**80 by 240 metres.** Eskinita's `Kalsada` group is the playable street and nothing else, so
+encapsulating its renderer bounds gives a quad the size of the road — which is why this tool has
+worked for a year on the one map it was written for. Ilalim ng Tulay's `Kalsada` ALSO holds the far
+backdrop road out to the fog line, so the identical measurement produces a sheet covering the whole
+map, hovering a millimetre over the ground plates it swallowed. It also left two stray `Quad`
+primitives in Eskinita.
+
+⚠️ **THE FIX IS SIZED TO THE PLAYABLE ROAD, NOT TO A GROUP.** Ilalim's surface is **14 by 37 m**:
+the two kerb/chalk lines at x = +/-7, and the north/south wall faces at z = +/-16.5 plus 2 m behind
+each wall so the seam is not visible from the box. It does not depend on the `Kalsada` backdrop,
+and it leaves those source renderers enabled because they continue beyond the skin. Eskinita keeps
+its measured group bound. Each size has its own material so their four-metre texture grain cannot
+overwrite one another through a shared `_MainTex_ST`.
+
+🧑 then circled every dark grey rectangle on the played road and said *"remove this all"*. Those
+were the seven `AsphaltPatch_*` slabs in `BuildRoadSurfaceDetail`, not shadows and not part of the
+texture. They are deleted from the builder and from the scene. Lane paint, manholes and the chalk
+stay above one continuous asphalt surface.
+
+⚠️ **THE MAP PIPELINE LAYS THE SURFACE AFTER EVERY REBUILD.** The builder replaces the whole scene,
+so running it without `AsphaltRoadSurface` would otherwise restore the flat road while leaving the
+generator itself correct. `MapSurfaceTests` opens the saved scene and asserts one 14 by 37 m
+textured, colliderless surface and zero patch slabs.
+
+**Verified:** Core **111/111**, EditMode **206/206**, `Checks.RunAll` **5/5**, all three source
+audits green, `IlalimNgTulayPipeline` green, and fifteen v24 in-engine renders in
+`Logs/shots-ilalim/`; `ilalim_thrower_view_v24.png` and `ilalim_taya_view_v24.png` show the road
+from both playable ends with the patch rectangles gone.
+
+
+
+---
+
+## 82 · The 2026-08-29 night batch: the match that was over before it started
+
+Reported from a four-player LAN game with 🧑 as a CLIENT, not the host. Two screenshots: the
+lobby, and the arena eight seconds later with the final standings up.
+
+### 82.1 ✅ FIXED: THE MATCH ENDED FOR EVERY NON-HOST ONE SECOND AFTER IT BEGAN
+
+🧑: *"wtf the game started as done for all non hosts and host is still playing"*.
+
+**The screenshot is the whole diagnosis if you read the two halves against each other.** The
+result board says `DRAW`, `HERO STRIKE · FINAL STANDINGS · 8 ROUNDS`, and four rows of `0 PTS`.
+Behind it the scoreboard reads `PHAISTER 100 · MALLOWS 30 · MATTHEW 0 · ROCKAFORT 0` and the clock
+is at **01:26 of round 1**. So the board is real, the scores underneath it are real and still
+arriving, and the two disagree — which rules out "the match ended" and leaves only "something
+raised the end-of-match event over a live match".
+
+**The cause is a race between the host's own scene load and everybody else's.**
+
+1. `MatchRpc.HostStartMatch` sends the `StartMatch` message to the peers and **then** loads the
+   host's own arena. Every peer, host included, loads its arena independently.
+2. `MatchRpc.FixedUpdate` writes `SyncWorld` at 5 Hz for the whole of that load, and the
+   `inProgress` field on it is `GameServices.Match.MatchInProgress` — which is still **false** on
+   the host, because the flag is set by `SliceRunner.Begin`, which lives in the scene that has not
+   finished loading.
+3. A client whose disk answered first is already in its arena with `MatchInProgress` **true**.
+4. The next of those packets is therefore a true → false edge, and `MatchDirector.ApplySnapshot`
+   raises `MatchEnded` on exactly that edge.
+
+⚠️⚠️ **THE EDGE WAS ADDED TO FIX THE OPPOSITE FAULT AND IT IS STILL RIGHT.** `ApplySnapshot`'s own
+header records why a client needs the end of the match as an event: without it a client never saw
+the final standings and the whole rematch vote was unreachable for anyone but the host. The fault
+is not the edge, it is that **an edge cannot tell "the match you are in has ended" from "the match
+you are in had not started when I wrote this"**, and the host produces five of the second kind per
+second across the load.
+
+⚠️ **WHAT IT COSTS IS MORE THAN A PANEL.** `SliceRunner.OnMatchEnded` runs on the same event and
+parks the cast — `Intent.Parked` is permanent by design — so the three clients were not merely
+looking at a wrong screen, they were **out of the game for the rest of the match** while the host
+played on. That is the same report from the other side.
+
+⚠️ **IT IS A RACE, SO IT IS A COIN FLIP PER CLIENT PER MATCH.** The host is immune by
+construction. That is why it survived every headless probe and every single-machine test: one
+process cannot lose a race to itself, and `NetworkMultiProcessProbes` starts its peers against a
+host that is already in the arena.
+
+**The fix is one question asked in one place.** `MatchDirector.HostConfirmedInProgress` records
+whether the host has described **this** match as running at least once, `StartMatch` clears it, and
+`IsPreStartSnapshot` is the three-term test the guard reads. `MatchRpc.SyncWorldSnapshotClientRpc`
+drops such a packet **whole**.
+
+⚠️ **THE WHOLE PACKET, NOT JUST THE EVENT**, because the same `inProgress` goes to
+`RoundDirector.ApplySnapshot` on the next line, which clears `RoundActive` and with it `CanAct`.
+Believing the guard and applying the state trades a phantom result board for a body that cannot
+move.
+
+⚠️ **NO WIRE CHANGE AND NO PROTOCOL BUMP, AND THE ALTERNATIVE THAT WOULD HAVE NEEDED ONE IS
+WORSE.** A match generation counter in the payload drifts the moment somebody joins late: a joiner
+adopts the host's number from the first packet it receives and then increments past it in its own
+`StartMatch`, after which every packet it receives looks stale forever. `NetSession.ProtocolVersion`
+is untouched at 12.
+
+**Verified:** `MatchStartRaceTests`, five cases — the pre-start packet is dropped, the real end of
+the match still fires, a rematch re-arms the guard, a lobby peer is unaffected, and a late joiner
+is confirmed by the first packet it gets and still sees the result board.
+
+### 82.2 ✅ FIXED: `WAITING FOR HOST` READ AS A BROKEN SCREEN, AND THE LEADER ID WAS ON THE WIRE ALREADY
+
+🧑: *"ready for clients is broken, it js says waiting for host"*.
+
+The guest lobby button is **working as designed** — § 80's decision stands, READY is gone and only
+the host starts — but the label was the reason it did not look like it. The comment above that line
+had already decided the right thing (*"Saying who everybody is waiting for is the useful thing
+left"*) and then the code named a ROLE, not a person, and an unnamed role reads as a placeholder
+somebody forgot to fill in.
+
+It now reads `WAITING FOR MALLOWS`.
+
+⚠️⚠️ **THE NAME NEEDED THE LEADER, AND THE LEADER WAS BEING THROWN AWAY AT THE DOOR.**
+`MatchRpc.SendSeating` has always written `lobby.LeaderPeerId` into the `Seating` payload, and
+`OnSeatingMsg` read it into a local called `leaderId` **and never used it**. Every client's
+`LobbySession.LeaderPeerId` therefore stayed at the -1 it is constructed with, for the whole
+session. `ApplyLeaderFromHost` applies it; election stays a host rule, the same split
+`HostAssignSeat` and `OnSeatingMsg` already keep for seats.
+
+⚠️ **THE LEADER IS LOOKED UP IN THE ROSTER, NOT ASSUMED TO BE PEER 0.** Peer 0 is right on every
+listen host and wrong on the Linux dedicated build, where the server holds no seat and
+`IsSeatlessReferee` keeps it out of the election entirely.
+
+⚠️ **AND IT IS FITTED, NOT `SetText`.** A player name is unbounded where `WAITING FOR HOST` was 16
+fixed characters, and every converted label carries `m_HorizontalOverflow: 1`, so the overflow
+would have been silent — the same trap § 80.2 fixed one plate over.
+
+### 82.3 ✅ CLOSED 2026-08-30 BY § 84.8: THE HOST'S HALF OF § 82.1
+
+The client now refuses the stale packet, but **the host is still writing it** — five per second for
+the length of its arena load, each one describing a match it has already told four people to start
+as not running.
+
+The obvious gate is wrong and worth writing down so nobody spends the hour: `LobbySession.
+MatchInProgress` is set by `HostStartMatch` and cleared only by `NetSession`'s shutdown path, so it
+is **still true while the result board is up**. Gating the broadcast on `lobby.MatchInProgress &&
+!match.MatchInProgress` would suppress the packet that ends the match, which is the one packet in
+the exchange that must not be dropped.
+
+**Done looks like** an explicit latch set wherever the host commits to loading an arena — both
+`HostStartMatch` and the rematch path through `MatchResult.BeginRematchLocally`, which reloads on
+every peer and has the identical race — and cleared the first time `GameServices.Match.
+MatchInProgress` reads true. It is a bandwidth and honesty fix, not a correctness one, now that the
+client refuses the packet.
+
+✅ **DONE 2026-08-30, EXACTLY AS SPECIFIED ABOVE.** `MatchRpc._loadingOwnArena`, set in
+`HostStartMatch` and in `MatchResult.BeginRematchNow`, cleared by `BroadcastMatchState` on the
+first frame the host's own `MatchDirector.MatchInProgress` reads true. § 84.8.
+
+
+---
+
+## 83 · The 2026-08-29 balance-and-controls batch, reported while § 82 was being pushed
+
+Reported in one stretch from the built player, all 🧑, most of it while he was watching other
+people test. Three groups: the taya is too weak, three controls do nothing, and two panels draw
+one wrong frame when they open.
+
+### 83.1 ✅ ATTACKERS AND BOTS ARE 40% SLOWER, SPRINT INCLUDED
+
+🧑: *"defender kinda hard now so can we slow down all attackers as well as bot, even when they
+sprint, by 40%"*.
+
+`Balance.AttackerSpeedScale` 0.75 → **0.45**, which is 0.75 x 0.60. Walk **3.45 → 2.07 m/s**,
+sprint **5.18 → 3.11 m/s**.
+
+⚠️ **ONE CONSTANT DOES ALL OF IT BECAUSE THE SPEED IS A PRODUCT.** `CharacterMotor` composes
+`Speed * RoleSpeedScale * PersonSpeedScale * sprint * SpeedZones`, so scaling the role term scales
+every state an attacker can be in — walking, sprinting, fatigued, inside a hazard zone — by
+exactly 0.60. Cutting `SprintScale` instead would have left the walk alone **and** slowed the
+taya's sprint, which is the opposite of the ask.
+
+⚠️ **THE BOTS COME FOR FREE.** `AIController` drives the same `InputIntent` through the same
+motor. There is no second speed path, so "as well as bot" needed no second change.
+
+⚠️⚠️ **`TripGraceAfterGetUp` HAD TO MOVE WITH IT, AND LEAVING IT WOULD HAVE REINTRODUCED A LOOP.**
+It was solved against 3.45 m/s: 1.20 s carried an attacker 4.14 m, clear of the 2.60 m widest
+hazard footprint. At 2.07 m/s the same 1.20 s covers **2.48 m**, which is UNDER that footprint — a
+slower attacker would stand up still inside the hazard that felled them with the grace already
+spent, which is exactly the ping-pong that constant exists to stop. Now **1.60 s**, covering
+3.31 m.
+
+### 83.1b ✅ CLOSED: see the full entry lower in this section
+
+It was open for about an hour. `StaminaDrainRate` was re-solved twice, the invariant is a
+test now, and the whole measurement is written up under **§ 83.1b** further down, beside
+§ 83.23 which moved the speed again.
+
+
+### 83.2 ✅ THE TAYA CATCHES WIDER, AND IS TESTED BEFORE THE CAN
+
+🧑, twice: *"make hit box for defender bigger but make sure it reverts to nroaml when theyre
+attacker ... this is bcz defender kinda feels weak right now"*, then the shape of it: *"make
+hitbox bigger horizontally but not fatter so taht tehy can defend perktus bettert"*, and
+*"make sure defender cna block too"*.
+
+Two changes, both in `Slipper`.
+
+**`Balance.DefenderBlockRadiusBonus` = 0.35 m**, added in `HitsBody` to the FLAT reach and only
+when `who.IsDefender`. The test was `SlipperHitRadius + CharacterController.radius`, about 0.60 m,
+against a projectile crossing it at up to 18.5 m/s — **0.37 m of travel per 50 Hz physics step**.
+A Pektus throw curves ACROSS that window rather than into it, so the taya was being asked to stand
+within a third of a metre of a path they cannot predict.
+
+⚠️⚠️ **IT IS NOT ON THE `CharacterController`, WHICH IS THE WHOLE OF "NOT FATTER".** Growing the
+capsule would widen the physical body: the taya would shove attackers, snag on the map, settle
+differently at spawn and read as a wider character on screen. This number is consulted only when
+deciding whether a slipper CONNECTS.
+
+⚠️ **HORIZONTAL ONLY.** `HitsBody`'s vertical test is untouched, so a throw over the head still
+sails over it.
+
+⚠️ **THE REVERT HE ASKED TO BE SURE OF IS FREE**: `HitsBody` reads `IsDefender` on the frame of
+the test, so the bonus arrives and leaves with the role and there is no per-match state to unwind
+when the taya rotates.
+
+**And the taya's body is now tested BEFORE the can.** `Lata.Connects` is a flat distance with no
+vertical test and the can was checked first, so a taya standing between a throw and the can lost
+the tie inside a single physics step. They were doing the one thing the role is for and the can
+was scored through them.
+
+⚠️ **ONLY THE TAYA IS HOISTED.** An attacker standing over the can must not shield it — that
+would let the throwing side park a body on the objective. The general loop still catches them
+after the can, exactly as before.
+
+⚠️ **AND IT IS NOT A FREE TURTLE.** `ScoreTayaCampPenalty` is -5 a second after
+`TayaCampGracePeriod` inside `TayaCampRadius`, so blocking everything from on top of the can costs
+the round. The counterweight was already in the rules; this makes the trade a real one instead of
+a lost tie.
+
+### 83.3 ✅ THE TAYA IS 10% FASTER, AND THEIR SPEED HAS A NAME NOW
+
+🧑: *"make them a bit faster too"*, in the same breath as the block.
+`Balance.DefenderSpeedScale` = **1.10**, so 4.6 → **5.06 m/s**.
+
+⚠️ **IT WAS A LITERAL `1.0f` INSIDE `Stamina.RoleSpeedScale`**, which is how it survived every
+retune of the attacker's half: a number with no name cannot be found by anybody searching for
+"defender speed". Both scales are named constants now, and the ratio between them is the whole
+balance of chase versus escape.
+
+### 83.4 ✅ R DID NOT SKIP THE BUFFER, BECAUSE IT ASKED FOR AN ACTION MAP THAT DOES NOT EXIST
+
+🧑: *"r skip doesnt work too"*.
+
+`BufferSkipVote.Awake` called `asset.FindActionMap("Gameplay", false)`. **`TumbangPreso.inputactions`
+has exactly one action map and it is called `Player`.** Every other resolver in the game asks for
+that name — `ReadyGate`, `Hud`, `EmoteWheel`, `Rebinding`, `AbilityInspectPanel`,
+`SpectatorCamera`, `PlayerInputReader` — and this one did not. It got null back, `FindAction` was
+never reached, and `_readyUp` was null for the entire lifetime of the component, so `Update`'s own
+null guard swallowed every press in silence.
+
+⚠️ **`throwIfNotFound: false` IS WHAT MADE IT SILENT**, and it is the right argument for a
+resolver that must not crash a match. So the language cannot catch this and a text search can.
+
+⚠️ **AND THE MAP IS ENABLED HERE NOW**, as `ReadyGate.Awake` does. An action that resolves but is
+not enabled reports no press either, so fixing only the name would have moved the silence one line
+down.
+
+**Verified by `InputResolverTests`**, three cases: every `FindActionMap("…")` in the runtime names
+a map that exists, every `FindAction("…")` names an action in some map, and `BufferSkipVote`
+specifically asks for `Player`. The first two are the guard against the whole class.
+
+### 83.5 ✅ `ATTACKERROCKAFORT` — THE YOU CARD'S IDENTITY ROW COLLIDED A SECOND TIME
+
+🧑: *"this has overflow as well"*, with the role and the name drawn on top of each other.
+
+**This row has now done it twice** — `TAYA (DEFENDEDANTE` was the first — and the first fix
+treated the symptom by shortening the role string. Both children carry `flexibleWidth: 1`, so each
+gets half of the 336 px content box, about 163 px. `ATTACKER` at 32 pt does not fit 163 px, and
+`Label` sets `HorizontalWrapMode.Overflow`, so the role drew straight past its half into a name
+anchored `MiddleRight`. **The best-fit on the name shrinks the NAME and can do nothing about a
+label overrunning from the left**, which is why shortening the role bought time rather than a fix.
+
+`flexibleWidth: 0` on the role plus `childControlWidth` is the structural answer: the group asks
+`Text` for its own `preferredWidth` and gives it exactly that, so the role is never clipped and
+never overruns whichever of `TAYA` and `ATTACKER` it holds, and the name takes the remainder with
+a 140 px floor.
+
+### 83.6 ✅ TWO PANELS DREW ONE WRONG FRAME ON OPEN AND CORRECTED THEMSELVES
+
+🧑: *"first time u open pic 1 it overflows and auto fixes itself ... pls make it fixed from the
+start"* (CHOOSE YOUR HERO), and *"this also starts small and becomes bigger when u click shti ...
+can ui make thsi shit start big ... its so small"* (START MATCH).
+
+**Same cause, two fitters.** `rect.rect.width` is 0 until the first layout pass, and the first
+layout pass happens AFTER the frame a panel is switched on. `SetHeadline` bailed and left the
+headline at its authored size; `SetFittedButtonLabel` bailed and set `_refitPending`. § 80.2 made
+that correction deterministic and left it **one frame late** — and one frame late is the frame the
+player is looking at when a panel opens, which is why both reports are about the FIRST time.
+
+`ConvertedScreen.ForceLayoutFor` rebuilds the layout before either one measures, so both are right
+on frame one.
+
+⚠️⚠️ **IT REBUILDS THE OUTERMOST LAYOUT ANCESTOR, NOT THE LABEL.** A `Text` inside a
+`HorizontalLayoutGroup` inside a `VerticalLayoutGroup` is sized by the OUTER one; rebuilding the
+label re-runs a pass that reads a width its parent has not computed yet and returns the same 0.
+Finding that root is the reason it is a method rather than a line at each call site.
+
+⚠️ **THE DEFERRED PATHS STAY.** A canvas that is inactive on this frame cannot be rebuilt at all,
+which `LayoutRebuilder` states outright. Forcing turns the deferred path from the normal case into
+the rare one; it does not remove it.
+
+### 83.7 ✅ READY IS A WORKING CONTROL IN THE LOBBY AGAIN
+
+🧑: *"ready for clients is broken, it js says waiting for host"*, and then, on the branch carrying
+§ 82.2: *"ready logic still not working ... ready in lobby dont work"*.
+
+⚠️⚠️ **§ 80's REMOVAL TOOK THE CONTROL AS WELL AS THE GATE, AND THAT WAS ONE STEP TOO FAR.** It
+answered *"si host lang nakakapag start ng game, yung other players hindi na need mag ready"* by
+deleting the button — but `LobbySeatInfo.Ready` still travels, `LobbyNameplates` still draws a
+tick over every seat, and `BroadcastReadyTally` still counts. What shipped was a lobby that
+**DISPLAYS readiness with nothing anywhere that can set it**: an affordance three players can see
+and none of them can move. That is a stronger reading of "doesn't work" than the missing button on
+its own.
+
+⚠️⚠️ **AND THE TWO INSTRUCTIONS DO NOT CONFLICT, WHICH IS WHY BOTH ARE OBEYED.** His sentence was
+about who STARTS a match, and READY does not start one: `HostStartMatch` is reached only from
+`OnStartPressed`, only on the host, and no tally gates it. READY is a signal to the host that you
+are set — which is what the tick over your head was always drawing — and nobody is blocked by
+forgetting it.
+
+The guest button reads `READY` when it is not set and `WAITING FOR <HOST>` once it is; pressing it
+again takes the tick back off. A spectator's stays `SPECTATING` and dead, because a spectator
+holds no seat, has no tick, and `LobbySession.ReadyVoterCount` excludes them anyway.
+
+⚠️ **THE HOST'S NAME COMES OFF THE ROSTER, NOT FROM PEER 0.** Peer 0 is right on every listen host
+and wrong on the Linux dedicated build, where the server holds no seat and `IsSeatlessReferee`
+keeps it out of the election. The leader id it is matched against is the one § 82.2 stopped
+throwing away.
+
+### 83.8 ✅ CLOSED: see the full entry lower in this section
+
+The probe was written and every gate on the reset path measured green, which ruled the
+lesson's own setup out and left the cause elsewhere. 🧑 named it — the role did not follow
+the lesson — and the fix and the second probe case are written up under **§ 83.8** further
+down.
+
+
+### 83.9 ✅ FIXED: CLIENTS PLAYED THE WRONG HERO'S POWERS, BECAUSE THE PICK SYNC FIXES THE ART AND NOT THE KIT
+
+🧑 2026-08-29, watching a four-player test: *"some clients dont see the correct ability effects
+but host do"*.
+
+`MatchRpc.SyncPicksClientRpc` is the only correction a client ever gets for **which hero a seat
+is**. Its header already carries three faults found in it and fixed, and all three are about the
+MODEL: the wrong roster, an index guard that skipped applying the art, and a dropped pet. The
+fourth is that it never touched the KIT.
+
+`MatchInstaller` binds a hero exactly once, at spawn, from whatever the lobby table said at that
+moment:
+
+```csharp
+var abilities = go.AddComponent<Abilities.HeroAbilitySystem>();
+string heroId = heroPeople[motor.CharacterIndex].Id;
+abilities.BindHero(heroId);
+```
+
+⚠️⚠️ **A CLIENT THAT BUILT ITS ARENA BEFORE THE PICKS LANDED THEREFORE HAD THE RIGHT BODY AND
+SOMEBODY ELSE'S POWERS**, and `ApplyNetworkCast` resolves a replicated cast through
+`AbilityFor(slot)` — so what it played was slot 1 **of the wrong hero**. That is "not the correct
+effects" precisely: an effect appears, and it is a different one.
+
+⚠️ **AND § 82.1 IS WHY THAT IS THE COMMON CASE RATHER THAN A RARE ONE.** The client is routinely
+the FASTER machine into the arena; the whole of § 82.1 is what happens when it is.
+
+⚠️ **THE HOST IS RIGHT BY CONSTRUCTION**, which is the exact shape of the report. It spawns from
+its own authoritative table and never receives this message, so nobody watching the host could see
+it.
+
+`RebindKitIfHeroChanged` rebuilds the kit when, and only when, the hero actually changed.
+
+⚠️ **ONLY ON A REAL CHANGE, BECAUSE `BindHero` BUILDS A FRESH `HeroKit`** and drops every cooldown
+and the ultimate charge with it. `BroadcastPicks` goes out on every seat change and inside every
+world snapshot; rebinding on each of those would hand a client a full ultimate meter several times
+a round.
+
+⚠️ **AND IT COMPARES THE KIT'S TYPE RATHER THAN REMEMBERING AN INDEX**, so the guard cannot drift
+out of step with the thing it guards. `CreateKitFor` is the one function mapping a hero id to a
+kit; asking whether the built kit is the same type that id would produce answers "is this the
+right hero" with no second field for anybody to forget to write.
+
+### 83.10 ✅ FIXED: THE MASH STOPPED PAYING AFTER TWO OR THREE PRESSES
+
+🧑: *"some button mash dont work ... only up to 2-3 button mash and nothing registers anymore"*.
+
+**The trip mash was not it and the arithmetic says so.** `StreetTripHazard` sets `TripDuration`
+2.50 s, `MinTripDown` is 0.35 and `MashRecoverPerPress` is 0.22, so a trip has 2.15 s of slack and
+accepts about **ten** presses.
+
+**The ABILITY stun was.** `Combat.StunMashPerPress` sells `stunTotal - MinStunDown` across the
+ability's declared press count, and `MashOutOfStun` refuses everything once `stunLeft` reaches the
+floor. `MinStunDown` was **1.20**, and the stuns that actually shipped are short:
+
+| ability | hold | presses | slack at 1.20 | per press | dead time after |
+|---|---|---|---|---|---|
+| Sean, `Fire` | 1.50 s | 4 | **0.30 s** | 0.075 s | 1.10 s |
+| possession, `Void` | 1.80 s | 6 | 0.60 s | 0.100 s | 1.20 s |
+| shock | 2.00 s | 7 | 0.80 s | 0.114 s | 1.20 s |
+| Dante, `Stone` | 2.20 s | 8 | 1.00 s | 0.125 s | 1.20 s |
+| Cheska, `Ice` | 2.50 s | 9 | 1.30 s | 0.144 s | 1.20 s |
+| Phaister, `Hex` | 1.60 s | 5 | 0.40 s | 0.080 s | 1.20 s |
+
+Four presses at the 10 Hz `MashCooldown` is 0.4 s of input, and the shortest of them then spent
+**1.1 s refusing every further press with the meter frozen**. Two or three presses and nothing
+registers is that, exactly, and it is worst on the ability a player meets most.
+
+⚠️⚠️ **SEAN'S OWN COMMENT RECORDED THE SYMPTOM WITHOUT SEEING IT.** It read *"the 1.5 s duration
+leaves only 0.3 s of mashable slack above `Balance.MinStunDown`, so four presses is already
+brisk"* — 0.3 s over four presses is 0.075 s each. The number was written down, correctly, and
+nobody divided it.
+
+`MinStunDown` is **0.60** now. The same six sell 0.90, 1.20, 1.40, 1.60, 1.90 and 1.00 s, so
+**every declared press pays and the last one lands on the floor** instead of a third of the way to
+it.
+
+⚠️ **THE PRESS COUNTS ARE UNTOUCHED AND THAT IS THE POINT.** They are the per-ability tunable
+(`StunBreakPressesDefault`'s note: *"the tunable is how many presses a skill is worth"*), and
+moving them would have retuned six kits to fix one constant. An **unanswered** stun is still its
+full length, so a caster's cooldown buys exactly what it did before against anybody who does not
+fight it.
+
+⚠️ **THE MICRO-STAGGERS ARE STILL UNMASHABLE AND ALWAYS WERE.** `ApplyStagger(0.2f)` through
+`(0.4f)` are under the floor, so `CharacterMotor.ApplyStagger` demotes them to `StunElement.None`
+and they raise no card. They are a quarter of a second; if that ever needs answering the fix is
+the element on them, not a lower floor.
+
+⚠️ **`BalanceTests.ShoveCost_IsPayableAndRoleScaleIsByRole` RE-TYPED TWO BALANCE NUMBERS AND BROKE
+ON § 83.1.** It asserted the literals 1.0 and 0.75. A test that re-types a constant only proves
+somebody edited two files instead of one; it now asserts the two named constants and the invariant
+worth holding — **the taya is the faster role** — which a future retune must not invert by
+accident.
+
+
+### 83.11 ✅ CLOSED: see the full entry lower in this section
+
+The guess in this slot was that the two surfaces were lit differently. They are not: they
+build the tsinelas identically and the match adds an owner rim in gold. Written up under
+**§ 83.11** further down.
+
+
+### 83.12 ✅ FIXED: EVERY NON-HOST WAS MISSING HALF THE SOUND, AND THE CLOCK SPOKE EARLY
+
+Two reports, one family. 🧑 2026-08-29, watching a four-player test:
+
+- *"wrong sfx played for non host, 30 seconds played even tho no 30 seconds yet"*
+- *"non hosts dont have sfx in some plarts, example, lata down/ lata hit has no sound for non
+  host but has sound for host"*
+
+⚠️⚠️ **THE AUDIT THAT WAS WRITTEN FOR EXACTLY THIS COULD NOT SEE IT, AND THAT IS THE FINDING
+WORTH KEEPING.** `tools/audit_audio_reach.py` reports a `GameServices.Audio` call as HOST-ONLY
+when a `ShouldResolve()` early return is open **at the same brace depth**. Every site it once
+flagged was fixed months ago and it now reports five, all of them inside `NetCue` and `MatchRpc`
+where being host-side is the point. **It came back clean while eight real sounds were host-only**,
+because in every one of those the gate is in the CALLER:
+
+| the sound | where it plays | the gate, one or two frames up |
+|---|---|---|
+| `can_knockdown` + `lata_impact` | `Lata.SetUpright` | `HostKnockDown` |
+| `reset_complete` + `lata_seal` | `Lata.SetUpright` | `HostRestore` |
+| `slipper_land`, a throw that missed | `Slipper.Land` | `Slipper.FixedUpdate` |
+| `slipper_land`, a bank off a pillar | `BounceOffObstacles`, `BounceOffBounds` | same |
+| `hit_body` + `guard_block`, a BLOCK | `Slipper.HostBlockedBy` | same |
+| `slipper_bounce`, the near miss | `TrackClassicNearMiss` | same |
+| `ability_flick_dash` | `TriggerAffinityImpact` | same |
+| `tag` + `downed` | `RoundDirector.ApplyTagPenalty` | its caller |
+
+That is the throw landing, the block, the tag and the can — **the four things the whole game is
+made of** — audible on one machine out of four. All eight now go through `NetCue`, which was
+written for this and whose header names two of them as the reason it exists. `NetCue.PlayImpact`
+is new and relays both layers at the volumes `AudioDirector` mixes them at, so a client hears the
+same hit as the host rather than a thinner one.
+
+⚠️⚠️ **AND THE VISUAL HALF WENT WITH IT, WHICH IS PART OF WHAT HE MEANT BY CLIENTS NOT SEEING THE
+RIGHT EFFECTS.** `Lata.SetUpright` also owned the `TUMBA!` / `LATA DOWN!` popup, the hitmarker,
+the impact burst, the confetti and the camera punch. All of it sat inside the same host-only
+method, so three players watched the objective fall in silence with nothing on screen.
+`AnnounceUprightChange` is that block extracted, and `ApplySnapshotState` calls it on the upright
+EDGE when this peer is not the host. ⚠️ The impact CUE is deliberately not in there: it travels by
+`NetCue` from the host, and having it in both would play it twice on a client.
+
+⚠️ **THE ANNOUNCER IS NOT RELAYED AND MUST NOT BE.** `NetCue`'s header is explicit that it is for
+WORLD events; a voice line is a per-listener commentary track, so each peer speaks its own off the
+state it has just been told about.
+
+**The "30 seconds" half was a clock, not a cue, and it had two faults.**
+
+`Hud.UpdateTimer` called `VoiceDirector.TickClock` **unconditionally**, including through the
+pre-round window and the whole warmup buffer, where `TimeLeft` is whatever the last round ended at
+rather than the clock of the round about to start. On a client that low value arrives from the
+host at 5 Hz and is spoken before the round it belongs to has begun. It is now gated on
+`RoundActive && MatchInProgress`.
+
+And `VoiceDirector.OnRoundStarted` — which clears `_clock30Said` and `_clock10Said` so each
+warning speaks once **per round** — is wired to `MatchDirector.RoundStarted`, which
+`ApplySnapshot`'s header records as deliberately never raised on a client. **So on a client the
+two flags were set in round one and never cleared again**: rounds two through eight got no clock
+warnings at all, and any warning spoken early was spent for the rest of the match.
+`MatchRpc.ApplyNetworkRoundBoundary` now resets them on the `roundActive` false → true edge — the
+same derived edge that file already defends at length for the intermission card, reused rather
+than re-invented, and costing no wire change.
+
+⚠️ **THE AUDIT SHOULD LEARN TO FOLLOW ONE CALLER**, which is the guard against the next eight.
+Reporting a method as host-only when EVERY call site of it is host-gated would have caught all
+eight of these from a terminal. That is not done and is worth doing before the next audio pass.
+
+### 83.13 ✅ THE ROUND BUFFER IS 5 SECONDS
+
+🧑 2026-08-29: *"make round buffer 5 seconds for all, 15 seconds reportedly too long"* —
+"reportedly" because it came from the people testing rather than from him.
+
+`Balance.WarmupBufferDuration` 15.0 → **5.0**. **The arithmetic is why 15 was indefensible once
+the mode count doubled**: Hero Strike is eight rounds, so seven buffers at 15 s is **1 m 45 s of a
+match with nobody playing**, against about 12 m of play. At 5 s it is 35 s. Classic's four rounds
+go from 45 s to 15 s.
+
+⚠️ **`BufferSkipVote` IS NOT MADE REDUNDANT BY THIS.** It was added the same day for the same
+complaint; a unanimous vote is what lets a room that is ready end even five seconds early, and
+this is what the room that says nothing gets. The clock was always the backstop and it is a
+shorter backstop now.
+
+⚠️ **THE ROLE SWAP CARD FITS, CHECKED RATHER THAN ASSUMED.** `RoleSwapCard` spends `RevealDelay`
+1.2 + `RevealFade` 0.35 + a hold of `max(1, buffer - 1.2 - 0.35 - 1.5)` + 1.5 s on
+`ROUND n — FIGHT!`. At 5 s the hold is 1.95 and the timeline totals 5.0 exactly. Below about
+4.05 s the `max(1, …)` floor takes over and the card starts being cut off by the round beginning,
+so that is the floor for any further trim.
+
+⚠️ Three comments that spelled "15 s" and "fifteen seconds" out in prose were corrected in
+`CharacterMotor` and `BufferSkipVote` rather than left to become the next person's wrong premise.
+
+### 83.14 ✅ FIXED: LEAVING A MATCH NEVER ENDED THE SESSION, SO A HOST THAT QUIT WAS STILL HOSTING
+
+🧑 2026-08-29: *"disconnect logic is thoroughly broken. if lobby host leaves the game or
+disconnects all other palyers stay in the game and if they leave they go to this screen and have
+to restart to do shit"*, and *"it should be taht if hosts disconnects u js go back to ur own lobby
+and leave their server"*.
+
+⚠️⚠️ **THERE WERE THREE EXITS FROM A MATCH AND NOT ONE OF THEM STOPPED THE NETWORK.**
+`PausePanel`'s QUIT TO MENU, `MatchResult`'s MAIN MENU and `ConvertedMatchResult`'s MenuButton
+were three copies of `Time.timeScale = 1; SceneFlow.Go(MainMenu)`. **`NetworkManager` is
+`DontDestroyOnLoad`.**
+
+So a HOST that quit to the menu **was still hosting**: its transport kept listening, nobody was
+disconnected, and the other three carried on playing a match refereed by a machine sitting on the
+title screen. That is the report exactly, and it is not a race or a timing window — it is what
+that code does every time. A CLIENT that quit was still connected too, holding its seat in a lobby
+it had left.
+
+⚠️ **AND IT IS WHY HE COULD NOT HOST AFTERWARDS.** A process that never stopped being a client
+cannot become a host: *"what if i want to host on my lan"*.
+
+`SceneFlow.LeaveMatchToMainMenu` is the one exit now, and it stops the session, restores the clock
+and releases the pointer on the way. ⚠️ The two result boards and the pause panel each restored
+some of those by hand and none of them restored all three.
+
+**Two more things had to move with it.**
+
+⚠️⚠️ **A HOST NOW SAYS GOODBYE INSTEAD OF JUST STOPPING ANSWERING.** `NetSession.Stop` called
+`_nm.Shutdown()`, which is not a goodbye: NGO sets a flag and tears the transport down from its
+own update loop, and whatever a client eventually notices, it notices through
+`DisconnectTimeoutMS` — a **silence timer**. `Stop` now sends every peer a real `DisconnectClient`
+carrying `NetSession.HostLeftMessage`, so the room empties instantly and each player is told why.
+⚠️ The id list is copied before it is walked, because `DisconnectClient` mutates
+`ConnectedClientsIds` as it goes.
+
+⚠️⚠️ **AND `DisconnectTimeoutMS` WAS 30000.** That is the case an orderly exit no longer reaches —
+alt-F4, a pulled cable, a lid closing — and **half a minute of four people standing in a match
+whose host is gone is most of a round.** It is 8000 now. Not shorter: it is also what a real
+network hiccup is measured against, and the VPS is 48 ms from Manila while the LAN is under 2, so
+eight seconds of total silence is a machine that has gone rather than one that is late.
+
+**What a client does when the host vanishes was already right and is now reachable.**
+`MatchRpc.HandleClientDisconnected` sends a disconnected peer to `MatchSetup` with
+`SceneFlow.Networked` set, so they land in their OWN lobby; `ConvertedMatchSetup` has its own
+handler for the case where they are already on that screen. Neither had been firing during a match
+because nothing was disconnecting anybody.
+
+### 83.15 ✅ A LEAVE CONTROL THAT DOES NOT REQUIRE JOINING SOMEWHERE ELSE
+
+🧑: *"make it possible to leave someones server too even tho u wont join another one bcz rn the
+option for servere is Join and leave (u have to join a new server to leave) (what if i want to
+host on my lan)?"*
+
+The join card offered JOIN and BACK TO LOBBY, and BACK only closes the card. **The only two things
+in the game that actually ended a session were BACK on the lobby screen — which also leaves the
+screen — and joining somewhere else.** So a player who was finished with somebody's lobby stayed
+connected to it, and a process that is still a client cannot host.
+
+`LEAVE GAME` sits beside BACK TO LOBBY and calls the same `NetSession.Stop`, then **does not
+navigate**. That is the whole difference from the lobby's BACK button: the ask was to end up in
+your own lobby able to press HOST, and `Stop` resets the peer table, the leader, `MatchInProgress`
+and the relay fields, so what is left is the state a freshly opened lobby has.
+
+⚠️ **IT WORKS FOR A HOST TOO**, and on a host it is the only orderly way to close a room from that
+screen — § 83.14's `DisconnectClient` is what makes closing it polite.
+
+⚠️ **IT IS HIDDEN WHEN THERE IS NOTHING TO LEAVE, NOT GREYED.** An offline player has no session,
+and a dead control on a card with two live ones reads as a fault.
+
+⚠️ **AND IT TELLS THE LOBBY THROUGH `Joined`**, the event `ConvertedMatchSetup` already listens to
+for "something about this session changed, redraw yourself". Adding a second event for the
+opposite direction would be a second thing to keep in step.
+
+### 83.16 ✅ THE VISUAL HALF OF EVERY HOST-RESOLVED MOMENT, AND THE AUDIT THAT FOUND ALL 41
+
+🧑, as the last item of the batch: *"ur final task is to make sure that all host sided shit is seen
+by everyone and not js host"*.
+
+**§ 83.12 fixed eight sounds by hand. This is the same fault for the things you LOOK at, and it
+was found by a tool rather than by reading.**
+
+`tools/audit_presentation_reach.py` is the successor to `audit_audio_reach.py` and differs in two
+ways. It **propagates**: a method is host-only if it is gated itself, or if every call site of it
+is inside a method that is host-only, iterated to a fixed point. And it looks at **presentation,
+not just audio** — `ComicPopup`, `ImpactBurst`, `HitFeel`, `DizzyStars`, `Hud.TriggerHitmarker`,
+`Hud.ReportStyle`, `CameraRig.ImpactPunch` and the announcer, as well as `GameServices.Audio`.
+
+It found **41 host-only call sites across 108**, in seven methods:
+
+| method | what one player out of four saw |
+|---|---|
+| `RoundDirector.ApplyTagPenalty` | stars, TAGGED!, hitstop, burst, flash, both squashes, camera punch, HULI! |
+| `Slipper.HostBlockedBy` | flash, burst, squash, HARANG! |
+| `Slipper.BounceOffObstacles` / `BounceOffBounds` | BANK! and the bank-shot award, twice |
+| `Slipper.TriggerAffinityImpact` | the zap ring, the stars, the jolt |
+| `Slipper.TrackClassicNearMiss` | SO CLOSE |
+| `Lata.HostKnockDown` | TUMBA! |
+| `Carrier.HostThrowAt` | PEKTUS CURVE / LET FLY |
+
+⚠️⚠️ **THE CAMERA PUNCH ON A TAG IS THE CLEAREST OF THEM.** `rig.IsFollowing(victim)` was already
+the correct test and it could **only ever pass on the host**, so a player who got tagged felt
+nothing and the host got a jolt for somebody else's tag. Running the same line on four machines is
+what makes it mean what it says.
+
+**`Visual.MatchFlair` is `NetCue` for the things you look at.** The host calls `Announce`, which
+draws locally and relays; every peer runs `Play`, which **rebuilds the presentation from its own
+scene** given a kind, up to two seat numbers, a point and a scalar.
+
+⚠️ **SEATS AND A POINT, NOT A DESCRIPTION OF AN EFFECT.** Every peer already has all four bodies
+and the whole roster; what it lacks is the EVENT. That is four bytes and two ints against
+serialising a particle system, and it is why a client's camera punch lands on the client's camera.
+
+⚠️⚠️ **THE RULES DID NOT MOVE AND MUST NOT.** The stagger, the stamina refill, the teleport and
+the score all stay behind the host gate in the method that owned them; `MatchFlair` draws and
+touches no state. A client that could stun a body from a message is a client that decides, which
+is `CLAUDE.md` § 4.
+
+⚠️ **THE ANNOUNCER IS SPOKEN PER PEER RATHER THAN RELAYED**, which is `NetCue`'s own rule for a
+commentary track: each machine says its own line off the event, so nobody hears somebody else's
+announcer at the wrong moment.
+
+⚠️ **THE AUDIT EXITS 1 WHEN ANYTHING IS HOST-ONLY**, so it can gate a build, and it is the guard
+against the next forty-one. ⚠️ Its first version reported **zero**, because it closed each method
+on the line after its own signature — the `{` is on the next line in this codebase, so `depth`
+at the signature is still the class depth. It waits for the body to open now, and the note
+recording that is in the file.
+
+### 83.17 ✅ SPECTATE WAS REFUSED IN SILENCE AFTER THE FIRST MATCH
+
+🧑 2026-08-29: *"spectate button dont work in multiplayer"*.
+
+`ToggleSpectate` sends `RequestSeatServerRpc(-1)`, the host runs `LobbySession.TryTakeSeat`, and
+that method opens with:
+
+```csharp
+if (MatchInProgress) return false;
+```
+
+⚠️⚠️ **AND NOTHING CLEARED `MatchInProgress` ON THE WAY BACK TO THE LOBBY.** `HostStartMatch` sets
+it and only `NetSession.Stop` cleared it, which happens when the whole session ends. So from the
+first START MATCH of a session until the process left multiplayer entirely, **every seat request
+was refused**: SPECTATE, and the four seat buttons with it. From the button that is
+indistinguishable from a control nobody wired up, which is exactly how it was reported.
+
+`LobbySession.ReturnToLobby` clears it, and `ConvertedMatchSetup.Wire` calls it on the host,
+because **being on the lobby screen is the definition of "no match is running here"**.
+
+⚠️ **IT IS NOT `EndMatch`, AND THE DIFFERENCE IS THE JOIN CODE.** `EndMatch` also wipes
+`_seenThisMatch` and the code, which is right when a session is torn down and wrong here: the
+lobby draws that code for people to type, and clearing it would leave an open room unjoinable.
+The held seats do go, because a held chair means "somebody in THIS match left it" and that promise
+expires with the match.
+
+⚠️ **THE HOST DOES IT AND BROADCASTS THE ROSTER**, because the flag is host-authoritative: a
+client's copy is written from the `Seating` payload, so a client clearing its own would disagree
+with the machine that decides.
+
+### 83.18 ✅ A SPECTATOR POV CUT NOW HAS THE HANDS OF THE PERSON BEING WATCHED
+
+🧑 2026-08-29: *"f1-f4 for spectator show FPP arms of the ppl ur lookinga t in fpp"*.
+
+`CameraRig` mounts `ViewmodelArms` on the LOCAL player's camera and drives them from that player's
+`Carrier` and `CombatVerbs`. `SpectatorCamera` is a different object, so F1-F4 parked a lens at
+somebody's eyes and drew **an empty street** — a first-person view with no first person in it,
+which is the whole point of the cut.
+
+`StepPovArms` mounts the same component on the spectator camera and drives it from `_follow`, with
+the same three charge sources in the same order. ⚠️ That order is load-bearing and `CameraRig`
+records why: a throw wind-up needs something in hand, so a TAYA falls through every branch — and
+the taya is the player a POV cut is most often on.
+
+⚠️⚠️ **THE BODY IS HIDDEN AT THE SAME TIME, AND WITHOUT THAT IT LOOKS WORSE THAN NO ARMS.**
+`PovForwardOffset` puts the lens 0.34 m in front of the eyes so the chibi head is not rendered
+from inside, which means the unit's REAL arms are in frame; adding a viewmodel on top gives four
+arms. Same mechanism as `CameraRig.ApplyFppSelfHide`: `ShadowsOnly`, so the body still casts its
+shadow into the shot and only this camera stops seeing it.
+
+⚠️ **AND IT IS RESTORED ON EVERY TARGET SWITCH AND ON `OnDisable`.** A unit left on `ShadowsOnly`
+is a player deleted from every other view in the room, including their own, and nothing else would
+ever put them back.
+
+⚠️ The seat and scale are read from `CameraRig`'s own constants rather than retyped. Two
+viewmodels that disagree about where a hand is would make a POV cut look like a different game
+from the player's own screen.
+
+### 83.19 ✅ CLOSED BY § 83.22: 22 PRESENTATION SITES LEFT, ALL IN THE HERO KITS AND HAZARDS
+
+All 22 are fixed and the audit reports zero. This entry is kept for the analysis of
+which rows were real and which were the audit misreading a deliberate `||` split; § 83.22
+records what sharpening it took to tell them apart.
+
+`tools/audit_presentation_reach.py` is down from 41 to 22, and what remains is one file's worth:
+`HeroHazards`, `SeanHeroKit` and `PhaisterHeroKit`.
+
+**They are not all real, and the audit says which is which only approximately.** `HeroHazards` has
+already had this exact treatment — its own notes record *"the whole thing ran behind
+`NetAuthority.ShouldResolve()`, so three of..."* and the deliberate
+`if (ShouldResolve() || p.PlayerSlot == NetAuthority.LocalSlot)` split that replaced it. The audit
+matches a gate as "a line mentioning `ShouldResolve` that also contains `return`", so a method
+holding both that split AND an unrelated early return reads as gated.
+
+**Confirmed real, checked by hand:**
+
+* `SeanHeroKit.OnTick` opens `if (!NetAuthority.ShouldResolve()) return;` and then attaches
+  `DizzyStars` and calls `HitFeel.Land` on the victim. Three players out of four see a burning
+  attacker with no stars and feel no jolt.
+* `HeroHazards` line 1108 and line 1272 `Update`s carry the same bare gate.
+
+**Done looks like** teaching the audit to print the LINE of the gate it matched, so a reviewer can
+tell a real one from the `||` split in two seconds, and then routing the real ones through
+`NetCue` and `Visual.MatchFlair` exactly as § 83.12 and § 83.16 did. ⚠️ Do NOT "fix" the `||`
+split sites: that pattern is correct and its own comment at line 1973 records a previous audit
+being fooled by the same shape.
+
+### 83.20 ✅ R WAS READY *AND* REPLAY, AND ONLY THAT OVERLAP WAS ILLEGAL
+
+🧑 2026-08-29: *"theres a conflict, R for spectator map to replay and ready can u pls fix that"*.
+
+The input asset has five keys carrying both a player action and a spectator one — B, C, F, Tab and
+R — and `Rebinding`'s header calls that **legal rather than an oversight**, with a stated rule:
+*"a spectator has no body, so no throw can be curving while that key means show the overlay"*.
+
+⚠️⚠️ **THE RULE IS RIGHT AND R IS THE ONE CASE IT DOES NOT COVER, BECAUSE READY IS THE ONE
+GAMEPLAY ACTION THAT NEEDS NO BODY.** `ReadyGate` and `BufferSkipVote` both read `ReadyUp` from
+whoever presses it regardless of role — `docs/TODO.md` § 78.6 is an entire entry about a
+spectator's R reaching a quorum that excludes them — so one press fired the pre-round ready, the
+buffer-skip vote **and** the replay. Both sides of that overlap are live in the same context, so
+no context check can separate them.
+
+`SpectatorReplay` is **Y** now. ⚠️ **The other four are untouched**: they are a written decision,
+and re-solving them would be a rebind four players have to relearn to fix a fault only one key
+has.
+
+⚠️ **THE SPECTATOR ACTION MOVED, NOT THE PLAYER ONE.** R is taught on the ready prompt, in the
+rebind panel under ROUND AND SCREEN, and by the buffer-skip row; replay is an operator key nobody
+is taught in a match. When two must part, the one with fewer readers moves. Every screen that
+teaches either reads the live binding through `Hud.KeyLabel`, so nothing else had to change.
+
+### 83.21 ✅ EIGHT MAY JOIN: FOUR PLAY AND FOUR WATCH
+
+🧑 2026-08-29: *"make it so taht more than 4 ppl can join, like up to 8 ppl can join but only the
+first 4 are players and last 4 are spectators"*.
+
+⚠️⚠️ **THE MACHINERY WAS ALREADY THERE AND ONE LINE REFUSED IT.** `LobbySession.Admit` has always
+answered a seatless arrival with `Seat = -1, Spectator = true`, and everything downstream already
+excludes a spectator by design: `PlayingPeerCount`, `ReadyVoterCount`, the skip-vote quorum,
+`MatchInstaller`'s body building and the spectator camera. What turned a fifth person away was the
+last line of `RuleOnArrival`:
+
+```csharp
+return MatchInProgress ? MidMatchRuling.Spectate : MidMatchRuling.Refuse;
+```
+
+**A running match could be watched and a LOBBY could not** — which is exactly backwards for the
+case a tournament has, where everybody arrives at once, four sit down and the rest want to be in
+the same room rather than told to come back. It is `Spectate` either way now.
+
+⚠️ **`Refuse` STILL MEANS SOMETHING**: an empty token, on the first line of the method. That is a
+malformed arrival, not a full room.
+
+**The ceiling is 8 and it is arithmetic rather than a literal.** `MaxSpectators = 4` and
+`MaxConnections = MaxPlayers + MaxSpectators`. It was a bare `12` sitting above a bare `4`, and
+two numbers with no arithmetic between them is how "how many can watch" became a question nobody
+could answer without counting.
+
+⚠️ **THE CAPACITY REFUSAL LIVES IN `NetSession.ApproveConnection` AND NOT IN `RuleOnArrival`**, and
+that split is deliberate: the ruling answers *what is this person for*, the transport answers *is
+there room at all*, it answers before a peer record exists, and it is the only one of the two that
+can put a sentence on the wire. The sentence now names both halves — "4 players and 4 spectators"
+— because "Lobby is full" is true of a room with four people and of a room with eight, and only
+one of those tells the reader whether to wait for a seat or for a whole match.
+
+⚠️⚠️ **AND THE GALLERY IS ON SCREEN, WHICH IS THE HALF THAT WOULD HAVE MADE IT LOOK BROKEN.**
+There are four seat plates and a spectator holds no seat, so four people could be in the room with
+nothing anywhere saying so — and "did they even join?" is the first thing anybody asks. The lobby
+heading reads `LOBBY · YOU ARE HOSTING · 3 WATCHING`, and a spectator's own hint line tells them
+how to stop watching.
+
+⚠️ **THE COUNT IS REPLICATED, NOT COUNTED LOCALLY.** `LobbySeatInfo`'s header records that a
+client's own `LobbySession` is deliberately unpopulated, so a client counting its own peers would
+always draw zero. It rides `SyncLobbyPicks`, which already goes out on every seat change, every
+ready press and every world snapshot — exactly when the number can move — rather than becoming a
+fifth message for one int.
+
+⚠️ **THE READER LENGTH-CHECKS BEFORE TAKING IT.** `FastBufferReader` throws past the end of a
+payload and a handler that throws drops everything queued behind it, so a mixed-build room loses a
+NUMBER rather than the lobby.
+
+⚠️ **AND THE HEADING IS FITTED NOW.** `LOBBY · YOU ARE HOSTING · 4 WATCHING` is 38 characters
+where the old string was 23, and this very plate already has a note recording it drawn as
+`LOBBY · YOU ARE HOSTIN` with the SPECTATE button over the last letters. `SetHeadline` measures;
+`SetText` never did.
+
+### 83.22 ✅ ZERO HOST-ONLY: THE HERO KITS AND HAZARDS, AND THE GATE THAT KEEPS THEM THAT WAY
+
+The rest of 🧑's *"make sure that all host sided shit is seen by everyone and not js host"*, and
+the closing of § 83.19.
+
+**41 → 22 → 0.** `tools/audit_presentation_reach.py` now reports **93 presentation call sites, 93
+reachable by every peer**, and it exits 1 when that stops being true.
+
+**What was left after § 83.16 was one file's worth, and it had one shape:** `ApplyStagger(...)`
+followed by a flourish, inside a `ShouldResolve()` gate. Every one of them had already had its
+SOUND moved to `NetCue` and none of them had had its LOOK moved anywhere, so **a client heard the
+poltergeist connect and saw nothing hit anybody**:
+
+| what landed | what three players out of four got |
+|---|---|
+| Sean's Ignition dash | the bump, and no stars and no jolt on the body it hit |
+| Nemu's poltergeist | the `downed` thud, and no `BOO!`, no stars |
+| Phaister's eclipse | nothing at all: no aura, no `CURSED!` |
+| Phaister's hex sigil | the falling cue, and no `HEXED!` |
+| Zack's static zone | no zap ring, no stars |
+| Zack's thunderstrike | **no crack, no ring** — the loudest moment in his kit, on one machine |
+| Cheska's ice | no `WHOA!` |
+| Cheska's wall shattering | twelve pieces, silently and invisibly |
+| the burn pulse | no `BAM!` |
+| every explosion's stars | nothing |
+
+Nine new `MatchFlair.Kind` values carry them, and six zone cues that were still on
+`GameServices.Audio` moved to `NetCue`.
+
+⚠️ **THE KINDS ARE SEPARATE VALUES RATHER THAN ONE KIND PLUS A WORD ON THE WIRE**, which keeps the
+payload exactly what it already was: a kind, two seats, a point and a scalar. A popup string per
+hit is a per-frame allocation and a second thing to keep in step.
+
+⚠️ **`strength` CARRIES THE STAGGER'S OWN DURATION**, so the stars last as long as the hold on
+every screen. A crown that outlives the stun tells three other players somebody is still held when
+they are not, and the taya reads exactly that to decide whether to commit.
+
+⚠️ **THE COLOUR IS DERIVED FROM THE CASTER, NOT SENT.** `UiTheme.BrightForHero` off the actor's
+`CharacterIndex` is the same lookup each of these lines was doing by writing the accent literally,
+and it cannot drift from the kit it belongs to.
+
+⚠️⚠️ **AND THE RULES DID NOT MOVE, IN ANY OF THEM.** Every `ApplyStagger`, `ApplyImpulse` and score
+stays on the line it was on, behind the gate it was behind. `MatchFlair` draws and touches no
+state.
+
+**Two rounds of sharpening the audit, both worth keeping:**
+
+⚠️ **NAME-KEYED CALLER EDGES COLLIDE ACROSS TYPES.** One `x.Update(dt)` written inside a host-only
+method made **every** `Update` in the project host-only, and the first fixed run reported 23
+hazards that are spawned on every peer and tick on every peer. Edges are per FILE now, and Unity
+message names are always entry points because the engine calls them.
+
+⚠️⚠️ **A GATE ONLY COVERS WHAT COMES AFTER IT.** `HeroHazards.CreateExplosion` draws its picture
+and THEN gates — its own note says the order is the point — so a whole-method flag reported the
+one call that was already correct. The audit records the LINE a body-depth gate fires on and
+compares, both for a direct call and along every caller edge. It also ignores a gate written
+inside a loop or an `if`, because that guards the block and not the method, which is what the
+deliberate `if (ShouldResolve() || p.PlayerSlot == LocalSlot)` split looks like.
+
+⚠️ **`tools/verify.sh` RUNS IT FIRST, BEFORE `dotnet` AND BEFORE UNITY.** It takes under a second,
+needs no editor, and a fault that needs no compiler should not wait for one. `audit_audio_reach.py`
+is kept: it is the narrower question and it still answers it, and this entry is the record of what
+it could not see.
+
+### 83.8 ✅ FIXED: THE TUTORIAL'S ROLE DID NOT FOLLOW THE LESSON, AND HE DIAGNOSED IT HIMSELF
+
+🧑 2026-08-29: *"can hold x to reset here"*, *"u also cant tag"*, and then, twice, the answer:
+*"i think its bcz the role doesnt change in between those phases"*, and *"that role itseld should
+shift between phases. Like at throwing stage they should be allowed to be attacker and do shit,
+but the moment theyre asked to raise can or tag, they should be given defender role and allowed to
+do defender shit"*.
+
+⚠️⚠️ **`DefenderReset` WAS THE ONLY LESSON IN THE ROUTE THAT MADE YOU THE TAYA.** `Punch` and
+`Lunge` come straight after it, are titled `PUNCH A VULNERABLE ATTACKER` and `LUNGE`, and **set no
+role at all** — they only READ `_local.IsDefender` to decide where to stand the dummy. And
+`CombatVerbs` refuses both outright:
+
+```csharp
+if (... || !_motor.IsDefender || !_motor.CanAct()) return false;
+```
+
+**So any route that reached them without passing through `DefenderReset` asked for two verbs the
+player was structurally incapable of performing, and refused every press in silence.**
+
+⚠️ **AND THAT ROUTE IS ONE KEYPRESS AWAY.** `Update` completes the current lesson on `N`, and it
+auto-completes the four hero lessons for a seat with no kit. Somebody who pressed N because the
+reset looked stuck arrived at PUNCH as an attacker and could not tag — **both halves of the report
+from one cause**, and exactly the reading he gave.
+
+The role is declared by the lesson now (`LessonIsTheTayas`) and applied on entry
+(`ApplyLessonRole`). The route can be entered anywhere — skipped through, restarted, jumped into
+by a probe — and still be coherent.
+
+⚠️ **ONLY ON A CHANGE.** `BecomeDefender` teleports to the can and empties the hand; re-running it
+every lesson would yank a player across the street between PUNCH and LUNGE and undo
+`PrepareDummyInFront`'s placement.
+
+⚠️ **AND THE ATTACKER SIDE IS APPLIED TOO, NOT JUST THE TAYA.** `TripRecovery` and `Emote` follow
+the two taya lessons, and the trip lesson's own text is about an attacker being put on the road.
+
+**Second cause, fixed with it: a lesson could stun the lesson after it.** `DefenderReset` is step
+13 and `Ultimate` is step 12, and his screenshot of the failure is drenched in the magenta of
+Nemu's DEVOURING SEANCE. A live hazard zone from a practice cast stuns whoever stands in it,
+`CanAct()` is `RoundActive && !IsStunned`, and `Carrier.Update` returns before it reaches
+`StepDefender`. ⚠️ `ResetHeroKit` could never have covered this: it resets the KIT, not the objects
+a cast has already put in the world. `ClearTheLastLessonsMess` destroys live `HazardVolume`s and
+clears the student's stun, trip and fatigue on every lesson boundary.
+
+⚠️ **BOTH RUN BEFORE THE SWITCH, NOT AFTER IT**, because `TripRecovery` opens by calling
+`ApplyTrip()` and `DefenderReset` opens by calling `BecomeDefender()` — clearing afterwards would
+undo the two lessons whose whole subject is the state being cleared.
+
+**Verified by `TutorialDefenderProbe`, two cases.** The first is the one § 76 asked for and never
+got: it walks to `ROLE SWAP: DEFENDER`, prints every gate on the reset path with its live value,
+holds `Verb.Grab` on a driven `InputIntent` and asserts the can stands up. The second walks the
+**whole route with nothing performed**, which is what holding N does, and asserts at every step
+that the role matches what the lesson is asking for and that the student can act. That second case
+is the one that would have caught this in the first place.
+
+⚠️ **§ 76 CLOSED THIS ON A REPORT AND SAID AT THE TIME IT WOULD COME BACK** — *"a report closing a
+bug nobody deliberately fixed is a bug that can come back on the commit that retunes the arena,
+with nothing anywhere to catch it"*. It came back three days later. The probe is the thing that
+entry asked for, and it exists now.
+
+### 83.1b ✅ CLOSED: THE INTERLOCKED SET, RE-MEASURED, AND THE INVARIANT IS A TEST NOW
+
+`Stamina`'s header has always said StaminaMax, StaminaDrainRate, SprintScale and
+ConfinementRadius are ONE SET, that *"the bar is dimensioned to roughly one crossing of the danger
+zone, which is the retrieval the whole game is about"*, and that *"a change to any one of the four
+has to be re-measured against the other three rather than reasoned about"*.
+
+**§ 83.1 changed one of the four. Here is the measurement.**
+
+| | sprint | on a full bar | buys |
+|---|---|---|---|
+| before § 83.1 | 4.6 x 0.75 x 1.5 = **5.175 m/s** | 60/40 = 1.50 s | **7.76 m** |
+| after, at drain 40 | 4.6 x 0.45 x 1.5 = **3.105 m/s** | 60/40 = 1.50 s | **4.66 m** |
+| after, at drain 24 | 3.105 m/s | 60/24 = 2.50 s | **7.76 m** |
+
+⚠️⚠️ **7.76 m IS `ConfinementRadius` PLUS A MARGIN, WHICH IS WHAT "ONE CROSSING" MEANS**: in from
+the chalk to the can and back out. At drain 40 the 40% speed cut left an attacker with **67% of a
+crossing on a full bar** — sprint in, and not out, on every map, every time. **That is not the
+taya being stronger, it is retrieval being impossible**, and the taya being stronger is what he
+asked for.
+
+`StaminaDrainRate` is **24**, and a full bar buys the 7.76 m it always did.
+
+⚠️⚠️ **THE DRAIN MOVED AND `StaminaMax` DID NOT, WHICH IS THE HALF THAT MATTERS.** Buying the same
+distance by raising the pool from 60 to 100 works too, and silently retunes everything priced
+against it: `ShoveStaminaCost` is 25, which is **42% of a 60 bar and 25% of a 100 one**, and
+`StaminaSprintFloor` is 7.5. Slowing the drain keeps every fraction on the bar exactly where it
+was and changes only the thing that had to change.
+
+⚠️ **AND THE REGEN IS UNTOUCHED**, so a full refill is still `StaminaMax / StaminaRegenRate` = 3 s.
+What a sprint costs in time to earn back is unchanged; what it buys in ground is back to what it
+was.
+
+⚠️⚠️ **THE INVARIANT IS A TEST NOW, WHICH IT NEVER WAS.**
+`BalanceTests.ASprintBuysOneCrossingOfTheDangerZone` asserts the DISTANCE against
+`ConfinementRadius`. The set was documented in a sentence and re-measured by hand or not at all,
+which is exactly how it fell out of step — and it runs in 40 ms with no editor, against the
+alternative of finding out from a playtest at the nationals.
+
+⚠️ **IT IS A BAND, NOT A KNOB.** Anything between the box's radius and twice it is a design
+decision; anything outside is an accident. `SprintToEmpty_TakesPoolOverDrainRate` keeps its
+literal alongside it for the same reason — its other assertion restates the formula and would
+pass at any drain rate.
+
+### 83.11 ✅ FIXED: THE TSINELAS LOOKED DIFFERENT IN A MATCH BECAUSE YOUR OWN ONE WAS RIMMED GOLD
+
+🧑 2026-08-29: *"pls js remove shader for slippers, especially the color. idk what does it but the
+slippers are a completley diff color ingame and character select"*.
+
+⚠️⚠️ **THE TWO SURFACES BUILD THE TSINELAS IDENTICALLY, AND THE MATCH ADDS ONE THING.**
+`MatchInstaller.BuildSlipper` and `ModelPreview` both call
+`ToonSkin.ApplySlipper(model, PropOutlineWidth)`, so the material, the flat shading and the ink
+are the same in both places — § 79.11's work is intact and was never the difference.
+
+What the match adds is `Slipper.RefreshHighlight`, which writes a `MaterialPropertyBlock` rimming
+**your own** shoe in `OwnerRimColour` — a gold chosen precisely so it cannot be mistaken for any
+skin. There is no `Slipper` component on the picker. **So the picker showed the skin he chose and
+the match showed that skin under gold**, which is "a completely different colour" exactly.
+
+`Balance.OwnerRimStrength` is **0**.
+
+⚠️ **A ZERO, NOT A DELETION.** The affordance is one number away if the team misses it, and the
+machinery — `SetOwnerGlow`, the per-peer note about why a glow is never replicated, the property
+block — is untouched and still correct.
+
+⚠️⚠️ **AND "WHICH ONE IS MINE" IS STILL ANSWERED TWICE OVER**, which is what makes this safe rather
+than a feature being dropped. `LandedRimStrength` is a separate, settings-driven highlight on a
+tsinelas that has come to REST — the moment you have actually lost track of it — and every player
+picks their own skin, so four shoes on the road are four different shoes. The glow was answering a
+question the skin picker already answers.
+
+### 83.23 ✅ THE ATTACKER NERF SOFTENED TO 27%, AND THE SPEED PROVABLY FOLLOWS THE ROLE ON EVERY PEER
+
+🧑 2026-08-29, after playing the 40%: *"my speed reduction might have been too harsh, u can
+increase a bit ... js a bit ... but i want the nerf to stay for attackers"*.
+
+`AttackerSpeedScale` 0.45 → **0.55**, a **27% cut** from the original 0.75 rather than 40%.
+
+| scale | walk | sprint | cut |
+|---|---|---|---|
+| 0.75, original | 3.45 | 5.18 | — |
+| 0.45, first pass | 2.07 | 3.11 | 40% |
+| **0.55, shipped** | **2.53** | **3.79** | **27%** |
+
+⚠️ **THE TAYA IS STILL THE FASTER ROLE BY A WIDE MARGIN**: 5.06 m/s WALKING against an attacker's
+3.79 m/s SPRINTING. The thing he asked for in the first place is untouched.
+
+⚠️⚠️ **AND THE TWO DERIVED CONSTANTS MOVED WITH IT, WHICH IS THE POINT OF § 83.1b EXISTING.**
+`StaminaDrainRate` is **29** (40 at 0.75, 24 at 0.45), so a full bar still buys **7.85 m** of
+sprint against a 7.0 m box. `TripGraceAfterGetUp` stays at 1.60 and is now MARGIN rather than
+necessity — 1.20 s would cover 3.04 m and clear the 2.60 m footprint — and it stays because the
+cost of the longer window is four tenths of a second of hazard immunity and the cost of the short
+one is a player passed back and forth between two hazards, which is a bug rather than a balance
+number.
+
+**None of that had to be remembered.** `ASprintBuysOneCrossingOfTheDangerZone` fails the moment
+the bar stops buying a crossing, in 40 ms, with no editor.
+
+### 83.24 ✅ THE SPEED FOLLOWS THE ROLE ON EVERY PEER, AND NOW THERE ARE TESTS THAT SAY SO
+
+🧑, immediately after the retune: *"make sure speed changes when role changes okay, and not just
+host side"*.
+
+**Fair thing to be suspicious of** — this project's recurring network fault is a rule that
+resolves on one machine, and §§ 82.1, 83.9, 83.12 and 83.16 in this very batch are all that shape.
+Worse, "your body moves at the wrong speed for a whole round" is invisible to the person it is
+happening to, because they have nothing to compare against.
+
+**It is already right, for three reasons, and `RoleSpeedTests` is those three reasons written down
+so they cannot quietly stop being true:**
+
+1. **The two roles are two different numbers and the taya is the faster.** Asserted against
+   `DefenderSpeedScale` and `AttackerSpeedScale` rather than against literals.
+
+2. ⚠️⚠️ **THE SCALE IS READ PER PHYSICS STEP FROM THE LIVE FLAG, NOT CACHED.** `CharacterMotor`
+   composes `Balance.Speed * Stamina.RoleSpeedScale(_isDefender) * ...` inside `FixedUpdate`, so
+   whoever writes `IsDefender` — the host from its own rules, a client from the replicated
+   snapshot — the very next step composes the speed from it. A copy taken at spawn or at a round
+   boundary is a body that keeps the previous round's speed, and **on a client nothing would ever
+   correct it**. The test asserts the read is inside the step and that no cached field exists.
+
+3. ⚠️⚠️ **A CLIENT'S `IsDefender` IS STAMPED FROM `SyncWorld` WITH NO GATE ON IT, WHICH IS THE
+   HALF HE WAS ASKING ABOUT.** `RoundDirector.ApplySnapshot` writes `RoundActive` onto the four
+   bodies only `if (matchInProgress)` — that guard is load-bearing and its own note records a
+   client frozen solid without it — and it writes `IsDefender` **outside** that block,
+   unconditionally, at 5 Hz. So a taya rotation reaches every peer as data and each peer's motor
+   acts on it locally. The test asserts the ORDER of those two loops, because moving the role
+   stamp inside the guard is the one edit that would break this and it would look like tidying up.
+
+⚠️ **AND A FOURTH: THE ROLE APPEARS IN THE SPEED PRODUCT EXACTLY ONCE.** The speed is
+`Speed * RoleSpeedScale * PersonSpeedScale * sprint * SpeedZones`; a second term that quietly
+asked about the role would be a second place to keep in step and a second place for the host and a
+client to disagree. The test parses the product and counts.
+
+### 83.25 THE VERDICT ON THE BUILD THIS BATCH SHIPPED, AND THE TWO PLAYMODE ROWS THAT ARE RED
+
+Run after the build on 2026-08-29, on the branch tip `552a07f3`.
+
+| gate | result |
+|---|---|
+| `audit_presentation_reach.py` | **93 / 93 reachable by every peer, 0 host-only** |
+| Core (`dotnet test`) | **112 / 112** |
+| EditMode | **230 / 230** |
+| PlayMode, `!WallClock` | **90 / 92**, 8 m 23 s |
+
+**Neither of the two is a regression from this batch, and both were checked rather than assumed.**
+
+⚠️ **`HeroPickerLayoutProbe.TheHeroPickerHasNoDeadBandAboveTheAbilityRows` IS RED BY DESIGN AND
+THIS FILE ALREADY SAYS SO.** § 79.6's own entry records the assertion being added earlier the same
+day and going red immediately, with the measurement: `AbilityRow_2` is **14 px below
+`ConfigPanel`**, and the `Rows` column wants 524 px in the 460 it is given — **a 64 px deficit**.
+The ultimate's plate hangs out of the wood. It is an open UI fault with its numbers already
+written down, not something this batch broke.
+
+⚠️ **`PreviewDragProbe.DraggingTheSubjectMovesItWithThePointer` IS AN ORDER-DEPENDENT FLAKE, AND
+IT WAS RE-RUN ALONE TO PROVE IT: 1/1 GREEN.** In the suite it fails on an unhandled log message —
+*"Some objects were not cleaned up when closing the scene ... LobbyCastStage"* — which is
+`LobbyCast`'s stage, parented into the additively loaded arena and destroyed BY NAME in
+`ConvertedMatchSetup.OnDestroy`. `Destroy` is deferred to the end of the frame and this probe has
+**no `[TearDown]`**, so whether the teardown lands before the scene closes depends on which test
+ran before it.
+
+**Done looks like** a `[TearDown]` on `PreviewDragProbe` that unloads the scene and yields a frame,
+the way `TrainingStreetProbe.Quiesce` and `SoloPracticeTests` already do — both carry a note about
+a live state outliving its scene poisoning the NEXT suite, which is this from the other side.
+⚠️ Do **not** silence it with `LogAssert.Expect`: the message is true, and the object it names is
+real.
+
+✅ **DONE 2026-08-30**, as a `[UnityTearDown]` rather than a `[TearDown]` because it has to yield.
+§ 84.9.
+
+⚠️ **`HeroPickerLayoutProbe` IS STILL RED AND § 84.3 IS THE ATTEMPT AT IT.** That entry forces
+the layout before `RefreshHeroLoadout` measures, which removes the 66 px of surplus this probe was
+measuring on the first pass. **It has not been re-run against a two-machine session and the PlayMode
+suite is the gate that answers it**; if the row is still red, the 64 px deficit in § 79.6 is
+structural and `rowLe.minHeight = rowLe.preferredHeight` is the line that entry names.
+
+---
+
+## 84 · The 2026-08-30 batch: twelve reports off the shipped build, and a lighting number read off a dead field
+
+Everything here came from 🧑 playing `db58fdb6` and sending screenshots, in one sitting, while the
+batch was being worked. The entries are in the order they were reported, not the order they were
+fixed.
+
+⚠️⚠️ **THREE OF THESE ARE ENTRIES THIS FILE ALREADY CALLED FIXED, AND ALL THREE HAVE THE SAME
+SHAPE: A CORRECTION THAT LANDS ONE FRAME LATE.** § 80.2, § 83.6 and § 79.6 each found a screen
+measuring itself before the layout system had given it a size, and each answered it with a retry on
+the next `LateUpdate`. **One frame late is the frame the player is looking at**, so all three read
+to him as unfixed, and he said so in the same words he used the first time: *"the box size adjusts
+after a click, i want it to be good from the start"*. § 84.3 is the general answer.
+
+### 84.1 ✅ FIXED: NON-HOSTS BOUNCED OFF A CEILING THAT IS NOT THERE, EVERY TIME THEY JUMPED
+
+🧑: *"randomly jittering in online game for non hosts when they jump"*, *"jittering (its like there
+is a ceiling above them and they bounce up and down very fast)"*.
+
+`CharacterMotor.ApplyNetworkTransform` opened with `_velocity = velocity;`, **unconditionally**,
+above the guard that protects a predicting owner's position:
+
+```csharp
+_velocity = velocity;                                  // <- every packet, every body
+_networkGrounded = grounded;
+float error = Vector3.Distance(transform.position, position);
+if (reconcileLocal && error < 1.25f) return;           // <- the position WAS protected
+```
+
+A client SIMULATES its own body (`Simulates()`), so a jump writes `_velocity.y =
+Balance.JumpVelocity` locally on the press frame. The host has not seen that press yet — it is
+still in flight on `SubmitMove` — so the next `SyncUnit` carries the host's copy of that seat still
+resting on the ground at `GroundedRestVelocityY` = **-2.0**, and the first line stamped it over the
+jump. The body fell. A packet or two later the host's simulation caught up and sent
++`JumpVelocity`, so it rose again, and at the pose rate those two answers alternate several times a
+second.
+
+⚠️⚠️ **PREDICTION WAS RIGHT ABOUT WHERE THE BODY IS AND WRONG ABOUT WHERE IT WAS GOING, AND THE
+INTEGRATOR TURNS THE SECOND INTO THE FIRST ONE STEP LATER.** That is why reading the pose path did
+not explain it: the position guard was there, correct, and working the whole time.
+
+The assignment moved below the guard. ⚠️ **An observed replica is unaffected**: `ApplyUnitMove` and
+every other seat pass `reconcileLocal: false` and still take the host's velocity on every packet,
+which is what `StepNetworkReplica`'s one-beat lead and `CharacterAnimator` both read.
+
+⚠️ **AND NOTHING ABOUT THE TRANSPORT WAS TOUCHED.** 🧑, in the same breath: *"lan is very lag and
+delayed for non host btw, online server is more reliable"*, then *"pls dont break online server in
+the process of fixing lan lag for non hosts"*. This fix is in the shared reconcile path and helps
+both sides identically; no tick rate, channel or pool setting was changed. **The LAN-versus-relay
+difference is NOT explained by this entry and is still open, see § 84.12.**
+
+### 84.2 ✅ FIXED: `R` DID NOTHING WITH A SPECTATOR IN THE ROOM, AND A SPECTATING HOST HUNG ITS OWN GATE
+
+🧑: *"R doesnt work if theres a spectator"*.
+
+`LobbySession.PlayingPeerCount(int localPeerId)` read:
+
+```csharp
+// The local peer counts even while its own spectator flag is in flight.
+if (p.PeerId == localPeerId || !p.Spectator) count++;
+```
+
+⚠️⚠️ **THE SECOND HALF OF THAT `||` ALREADY COUNTS EVERY PEER WHOSE FLAG IS NOT SET, SO THE FIRST
+HALF COULD ONLY EVER FIRE FOR A LOCAL PEER WHOSE FLAG *WAS* SET.** It did not protect a decision in
+flight. It counted a decision already taken, the wrong way.
+
+`ReadyGate.Update` refuses to send a press for `GameLaunch.Spectator` — § 78.6 established that,
+and it is right: the set and the total must be drawn from one population. So a host who clicked
+SPECTATE in its own lobby was one vote in a quorum it could never vote in. Everyone else pressed R,
+the tally stopped one short, and the match never started. **`BufferSkipVote.Needed` and
+`MatchResult.ExpectedVotes` are the same call**, so the round-buffer skip and the rematch died the
+same way in the same lobby.
+
+The exemption is deleted and the `localPeerId` argument went with it rather than being left unused
+at five call sites. The in-flight case it claimed to cover is handled by the floor of 1 that was
+already there: a peer with no record here yet is not counted at all, the count reaches 0, and the
+floor asks for its own press. `LobbyAndSettingsTests.PlayingPeerCountExcludesASpectatingLocalPeer`
+asserts it from both chairs.
+
+⚠️ **`ReadyGate`'s note about the argument being a PEER id and not a SEAT is kept in place.** That
+collision is real and would come back with the argument; the note now says not to reintroduce it.
+
+### 84.3 ✅ FIXED: EVERY PANEL THAT SIZES ITSELF WAS ONE FRAME LATE, WHICH IS THE FRAME HE SEES
+
+🧑: *"size randomly changes when u click something, it gets bigger (in match settings)"*, and then,
+plainly: *"the box size adjusts after a click, i want it to be good from the start"*. With the
+CHOOSE YOUR HERO panel photographed before and after a click.
+
+**Nothing was random and nothing corrected itself.** § 80.2 and § 83.6 both diagnosed this
+correctly — `rect.rect.width` is 0 until the first layout pass and the first layout pass is AFTER
+the frame a panel is switched on — and both answered it with a flag re-run on the next
+`LateUpdate`. § 79.6 did the same for the hero picker's ability rows with `_refreshPending`. Three
+screens, three deferred retries, and **the earliest a correct size could appear was frame one
+rather than frame zero**. The next thing he clicked ran another refresh whose deferred pass landed
+on a rect that was real by then, which is the whole of "it fixes itself when I click".
+
+Two call sites now run the same work synchronously first:
+
+* **`ConvertedMatchSetup.Refresh`** ends with `FitEverything()` instead of only arming `_fitFrames`.
+  That method already opens with `LayoutRebuilder.ForceRebuildLayoutImmediate` on the canvas rect,
+  which is precisely the pass `LateUpdate` was waiting for Unity to run.
+* **`ConvertedCharacterSelect.RefreshHeroLoadout`** calls `ForceLayoutFor(rows)` before it measures
+  `rows.rect.width` to decide whether each ability summary wraps. Without it every row took the
+  cannot-measure branch and reserved the taller two-line box: 66 px of surplus across three rows,
+  against the 64 px § 79.6 measured the column overflowing by.
+
+⚠️⚠️ **THE DEFERRED PASSES ALL STAY, AND THAT IS NOT BELT AND BRACES.** § 83.6 wrote down why and
+it is still true: **a canvas that is inactive on this frame cannot be rebuilt at all**, which
+`LayoutRebuilder` states outright. `FitPasses` also exists because the layout chain does not
+converge in one pass. Forcing turns the deferred path from the normal case into the rare one; it
+does not remove it.
+
+⚠️ **A THIRD SCREENSHOT IN THE SAME BATCH IS PROBABLY AN EDITOR ARTEFACT AND IS RECORDED HERE
+RATHER THAN FIXED.** 🧑, of the lobby: *"this shows up for a split second when u press play"*,
+with the whole screen drawn oversized — MATCH SETTINGS in the bottom-left corner, LOBBY & SERVERS
+running off the right edge — over a map that has not rendered yet.
+
+That is not a label fit and the two changes above do not address it: **the whole canvas is at the
+wrong scale for one frame**, which is a `CanvasScaler` question rather than a layout one, and the
+3D behind it is the arena scene still loading additively. Both are consistent with Unity's Game
+view reporting a stale size on the first frame after Play is pressed, on Free Aspect, which is the
+Editor and not the player. **Check it in the built .exe before touching `AspectSafeCanvas`**: if it
+happens there too, the suspect is `ConvertedScreen.Start` applying `screenMatchMode` after the
+scaler has already handled its first frame, and the fix is to apply it in `Awake`. If it only
+happens in the Editor, there is nothing to fix and this paragraph is why.
+
+### 84.4 ✅ FIXED: THE OPEN CHAT LOG STILL CLIPPED ITS FIRST LINE, AFTER § 79.3 FIXED THAT
+
+🧑 sent the log open on THREE messages with the first one cut in half by the header and two thirds
+of the box empty below it. That is the same picture § 79.3 was closed on, taken after the fix
+shipped.
+
+§ 79.3's diagnosis was right: a `ScrollRect` normalises against `content.height - viewport.height`,
+so `verticalNormalizedPosition = 0` is meaningless when the content is the shorter of the two, and
+Unity leaves `anchoredPosition` wherever the last, longer log pushed it. `SnapHistoryToNewest` was
+written to detect that case and write the position directly.
+
+⚠️⚠️ **IT DETECTED IT WITH A HEIGHT THAT HAD NOT BEEN RECOMPUTED YET, SO THE SHORT-CONTENT BRANCH
+WAS SKIPPED AND THE MEANINGLESS WRITE RAN ANYWAY.** `OpenHistory` called `Canvas.
+ForceUpdateCanvases()` and treated that as enough. **It is not**: that call flushes the canvas
+batches, it does not run the layout system, so the `ContentSizeFitter` had not yet resized
+`content` for the text written one line earlier. Three short lines were measured at whatever the
+log stood at last time. This is `ConvertedScreen.ForceLayoutFor`'s fault class, four surfaces over,
+and § 84.3 above is the same trap on two more.
+
+Three changes: `LayoutRebuilder.ForceRebuildLayoutImmediate(content)` before the height is read;
+**the position is now written directly in BOTH directions** and the normalised path is gone rather
+than kept for the tall case, because one branch resting on a value that is undefined either side of
+a boundary is how this came back; and a `_snapPending` retry on the next `LateUpdate` for the
+inactive-canvas case, which also re-snaps when a new line arrives while the log is open.
+
+### 84.5 ✅ FIXED: NO POWER STARTS BEFORE THE ROUND DOES
+
+🧑: *"remove unli skill before round bcz ppl fly out of map and shit"*.
+
+⚠️⚠️ **THIS REVERSES A WRITTEN INSTRUCTION AND THE OLD ONE WAS GRANTED EXACTLY AS ASKED.** 🧑
+2026-08-25: *"BUt i want ppl to be able to test skills still and shit during buffer period so maybe
+during buffer period give them diff timers"*. `HeroKit.PracticeMode` answered it by splitting the
+economy from the practice: the banked charge froze, and the ultimate stayed castable as often as
+the player liked off a counter that existed only while the round clock was stopped.
+
+**What that produced is the report.** The warm-up before round one is the one window in the game
+where bodies may walk while nothing is refereeing — `RoundDirector.ApplySnapshot` explains why:
+`CharacterMotor.RoundActive` defaults TRUE so the free-roam window works, while the director
+correctly says no round is running. So `CanAct()` was true, `PracticeMode` was true, and the
+ultimate was **free, unspent and repeatable**. Dante's stomp, Sean's Supernova and Zack's charge
+are all impulses; `Balance` derives every one of them from `Friction` as a distance. An unlimited
+number of them fired at four bodies standing in a box is people leaving the map.
+
+`HeroKit.Fire` and `HeroKit.CastUltimate` now return a new `CastOutcome.NotYet` while
+`PracticeMode` is set. ⚠️ **It is a refusal rather than `CannotAct`, and that difference is what
+happens at GO**: `CannotAct` holds the press and retries it for `InputBufferWindow`, which is right
+for a stun and would have meant every ultimate pressed in the last 0.30 s of the warm-up firing on
+the first frame of the round, four bodies deep. ⚠️ **The reactivation branch stays ABOVE the gate**
+so a decoy already out when the round ends can still be recalled: ending something running is not
+starting something new.
+
+⚠️ **THE HALF HE ASKED FOR IN 2026-08-25 IS KEPT.** The banked charge still neither accrues nor is
+spent while the clock is stopped, which is the *"pause when the game isnt ongoing"* sentence and
+the half that never launched anybody. `InputMapAndAbilityTests.TheWarmUpRefusesEveryPowerAndLeavesTheBankAlone`
+asserts both together.
+
+⚠️ **THE GUIDED TUTORIAL IS UNAFFECTED AND NEVER WAS AFFECTED.** `RoundDirector.FixedUpdate`
+returns on `!RoundActive` before it reaches the `GameLaunch.GuidedTutorial` branch, so a tutorial
+round has `RoundActive` TRUE and `PracticeMode` FALSE: the lesson always cast real powers on real
+cooldowns.
+
+⚠️⚠️ **AND THE HUD STOPPED PROMISING IT, WHICH IS THREE SURFACES.** `HeroKit.IsUltimateReady`
+opened with `PracticeMode ||`, so the ultimate tile was lit through the whole warm-up; both skill
+tiles read `IsReady`, which is genuinely true while nothing is cooling; and the ready prompt said
+*"Practice freely, scores are paused"*. All three would have gone on inviting a press the rules now
+refuse, which is `HeroAbilitySystem`'s own rule — *"a second opinion about when a round is live is
+how a HUD ends up disagreeing with the rules"* — arriving from the presentation side. The tiles are
+dark with `NOT YET` on them and the hero prompt reads *"Warm up freely, powers start with the
+round."* Walking, throwing and picking up are untouched, which is what the free-roam window is for.
+
+### 84.6 ✅ FIXED: THE TAYA'S RED WARNING WAS NEVER REMOVED, IT WAS 0.096 OF AN ALPHA
+
+🧑: *"bring back the red aura or some shit in the screen of taya (theres like a warning that lata is
+down if ur taya) (i think it got remvoed by accident, js remake it if it doesnt exist)"*.
+
+**It exists and it has been driven the whole time.** `Hud.UpdateDanger` sets it per screen, which is
+the half that makes it information: a defender sees their can is down, an attacker sees they are
+catchable, neither sees the other's. `DownedVignette.shader` is in `m_AlwaysIncludedShaders`, so
+this is not § 67.3's stripping fault either.
+
+⚠️⚠️ **THE SHADER'S OWN HEADER HAD ALREADY DONE THE ARITHMETIC THAT CONDEMNS THE LEVEL.** It
+records that the material's 0.6 alpha times `DangerHoldAlpha` = 0.16 puts *"the strongest pixel on
+screen at about 0.096"*, **at the corners**, over a centre held at exactly zero. 0.096 of red on
+the four corners of a street scene is not a warning.
+
+⚠️ **0.16 WAS CHOSEN AGAINST A FLAT FULL-SCREEN RECT AND NOTHING RE-DERIVED IT AFTERWARDS.** That
+number answered a real measurement — *"the entire arena was washed red"*, which reads as the
+renderer being broken — from before `DownedVignette.shader` existed. The shader then put the
+opacity where the player is not looking, `smoothstep(0.3, 1.2, dist)`, dead clear inside a radius
+of 0.3 and only full at the corners, and the constant sized for the flat version was left standing
+underneath it.
+
+`DangerHoldAlpha` is **0.55**, which against the ramp is 0.33 in the corners, about 0.17 at the
+middle of each edge, and still exactly zero through the centre of the frame — **less red over the
+part of the screen the player plays in than the old flat 0.16 was.** ⚠️ `DownedFlashPeak` moved to
+**0.90** with it: `UpdateDanger` takes `Max(pulse, hold)`, so leaving the peak at 0.45 under a 0.55
+hold would have made a knockdown, the loudest single moment in the taya's game, invisible.
+
+### 84.7 ✅ FIXED: THE LOBBY LIT ILALIM NG TULAY AT A THIRD OF ESKINITA. SEE § 79.2
+
+🧑: *"look eskinita vs ilalim ng tulay in lobby, the lighting is so diff"*, *"eskinita is the better
+one make ilalim ng tulay matchthat"*. The fourth pass on this map's ambient, and the first three all
+compared against `m_AmbientEquatorColor` on a scene that is `m_AmbientMode: 3` (Flat), where that
+field lights nothing. Full account, the corrected table and the new parity test are in **§ 79.2**,
+which this closes.
+
+### 84.8 ✅ THE HOST STOPPED BROADCASTING "NO MATCH RUNNING" THROUGH ITS OWN ARENA LOAD. § 82.3 CLOSED
+
+`MatchRpc._loadingOwnArena` is set in `HostStartMatch` and in the rematch path through
+`MatchResult.BeginRematchNow`, and cleared by `BroadcastMatchState` on the first frame the host's
+own `MatchDirector.MatchInProgress` reads true.
+
+⚠️ § 82.3 named the wrong gate in advance so nobody would spend the hour on it, and that warning
+stands: `LobbySession.MatchInProgress` is still true while the result board is up, so gating on it
+would suppress the packet that ENDS the match. This is an explicit one-shot latch answering "is the
+host mid-load", which no existing flag answers.
+
+⚠️ **IT IS BANDWIDTH AND HONESTY, NOT CORRECTNESS.** § 82.1's receiving-end guard
+(`MatchDirector.IsPreStartSnapshot`) is what actually protects the client and stays the
+load-bearing half, because an honest sender cannot be relied on across versions.
+
+### 84.9 ✅ `PreviewDragProbe` HAS A TEARDOWN. § 83.25 CLOSED
+
+A `[UnityTearDown]` that parks the runner in a fresh empty scene, unloads every scene the test
+opened (the arena rides in additively beside MatchSetup, and Unity refuses to unload the last one),
+and then yields a frame so the deferred `Destroy` calls actually run before the unload completes.
+Same shape as `TrainingStreetProbe.Quiesce` and `SoloPracticeTests`.
+
+⚠️ **NOT `LogAssert.Expect`**, as § 83.25 instructed: the *"objects were not cleaned up ...
+LobbyCastStage"* message is true and the object it names is real.
+
+### 84.10 ⚠️ OPEN: THE FIRST-PERSON TSINELAS DOES NOT LOOK LIKE THE TSINELAS. § 79.8, WITH A HERO NAMED
+
+🧑: *"also slipper in character sleect doesnt look like FPP version of slipper"*, then, with an FPP
+screenshot: *"this is heel btw"*, *"this is heel but it doesnt look like heel"*.
+
+**This is § 79.8 and it should be worked there**, but it now has something that entry did not: a
+named prop and a picture from the GAME rather than from the snapshot tool. In the capture the held
+object is a large flat brown shape filling a quarter of the frame, clipping into the arm, with none
+of HEELS' own silhouette in it — while a slipper carried by another player in the same frame reads
+correctly.
+
+⚠️ **`ViewmodelArms.MatchSkin` IS CALLED EVERY FRAME FROM `CameraRig`, so the mesh and the
+materials are being copied.** Two things it does are shape-sensitive and neither has been measured
+against a non-slipper silhouette: `NormaliseHeldSize` scales the copy to a target LENGTH, which is
+a different operation on a heel than on a flip-flop, and § 79.8's third attempt laid the shoe along
+the forearm, *"where it lands exactly where the hand mesh is and the two read as one brown mass"* —
+which is what this capture looks like.
+
+**Do this before touching a number**: § 79.8 records that `FppArmsSnapshotTool` was fixed
+specifically so this can be judged off a real skin, and it sweeps ten tsinelas on one character.
+Shoot HEELS with it, judge the PLACEMENT off that capture and not the colour (the tool has no
+`ColourGrade`, § 79.8's fourth trap), and read that entry's list of three failed attempts first.
+
+✅ **THAT SWEEP WAS RUN, AND IT MOVES THE DIAGNOSIS OFF THE POSE.**
+`Logs/shots-fpp/fpp_held_heels_v18.png` beside `Logs/shots-fpp/fpp_held_sandals_v18.png`, same
+code path, same frame, same character:
+
+* **SANDALS reads perfectly.** A dark, detailed sandal sitting in the fist, broadside to the
+  camera, unmistakable.
+* **HEELS is a thin tan ribbon.** Its strap arc lands dead centre of frame while the body of the
+  shoe sits behind the hand, and the tan it is drawn in is very close to `ViewmodelArms.ArmColour`
+  (0.784, 0.529, 0.353). That is the *"one brown mass"* of § 79.8's third attempt, and it is
+  exactly what 🧑's in-game screenshot shows.
+
+⚠⚠ **SO IT IS NOT THE POSE, WHICH IS WHAT THREE ATTEMPTS ASSUMED.** One pose renders one prop
+correctly and another as a wisp, so the variable is the MESH, and the two candidates are both in
+`ViewmodelArms.NormaliseHeldSize`: it scales so the **longest AABB axis** is `SlipperLength` 0.46,
+and it centres on **`bounds.center`**. A heel's AABB is dominated by its ankle strap, so the strap
+eats the length budget while the shoe's body is smaller than every other prop's, and the centring
+puts the strap where the shoe should be. Neither number is wrong for a flip-flop and both are wrong
+for a shoe with a hole in the middle of its bounding box.
+
+⚠ **THE COLOUR IS NOT JUDGED HERE**, per this entry's fourth trap: the tool has no `ColourGrade`.
+The SILHOUETTE is, and that is what the comparison above is about.
+
+⚠⚠ **NOT FIXED, DELIBERATELY, AND THIS IS THE ONE THING IN THE 2026-08-30 BATCH LEFT UNDONE.**
+Every candidate is a change to how a mesh is presented, this entry's own header says the answer is
+*"judged by 🧑 off a capture"*, and three previous sessions each shipped a plausible fix that he
+then rejected in one line. The two captures are the thing to put in front of him first.
+
+### 84.11 ✅ ANSWERED BY HIM, THEN FIXED IN § 86.1: `PAUSE` IN MULTIPLAYER
+
+🧑: *"pause doesnt work in multiplayer"*, reported in the same breath as § 84.2 and therefore
+probably from the same hosting-and-spectating session.
+
+**There are two pauses and reading the source does not say which one he pressed:**
+
+1. **The Escape menu** (`PauseWatcher` to `UI.PausePanel`). Built unconditionally in
+   `MatchInstaller.BuildCameraAndHud` for every peer, spectators included, and it has **no
+   networked gate anywhere**. It is a menu and not a time control: it has never stopped the clock,
+   and its title reads `MATCH MENU · LIVE`. Nothing found in a read explains it failing online.
+2. **The broadcast pause** (`SpectatorCamera.StepBroadcastKeys`, `SpectatorPause`). This is
+   **deliberately locked in a networked match** and says so: `LIVE NETWORK · TIME CONTROLS LOCKED`,
+   on the written rule that *"a remote viewer must never acquire authority over a live tournament
+   simply by spectating"*. If this is the one he means, the behaviour is correct and the fault is
+   that a 1.5 s toast is easy to miss.
+
+⚠️ **THE SEPARATION TEST IS ONE QUESTION AND IT SHOULD BE ASKED BEFORE ANY CODE IS WRITTEN**: does
+the card with RESUME / SETTINGS / QUIT TO MENU appear at all? If it appears and its buttons do
+nothing, that is `CursorMode`'s fault class and `PausePanel`'s own header describes it exactly. If
+it never appears, the reader is dead and `PauseWatcher` is where to look. If he never saw a card
+because he was pressing the broadcast key as a spectator, there is nothing to fix and the toast
+needs to be louder.
+
+⚠️ **`Input.GetKeyDown(KeyCode.Escape)` WAS RULED OUT AS THE CAUSE**: `PauseWatcher` reads legacy
+input, but so does every other Escape handler in the project, and Escape works in single player.
+
+✅ **HE ANSWERED: IT IS THE SECOND ONE.** *"spectator pause"*, *"pause is for spectatotr"*. So the
+Escape menu was never broken and candidate 1 above is closed unread — which is the value of having
+asked rather than guessed, because the fix for candidate 1 would have been a change to a working
+path. The refusal in candidate 2 is lifted in **§ 86.1**, along with the written rule it rested on.
+
+### 84.12 ✅ EXPLAINED AND FIXED IN § 86.2: LAN IS LAGGIER FOR A NON-HOST THAN THE VULTR RELAY
+
+🧑: *"lan is very lag and delayed for non host btw, online server is more reliable"*, and then
+*"pls dont break online server in the process of fixing lan lag for non hosts"*.
+
+⚠️⚠️ **NOTHING IN THIS BATCH TOUCHED THE TRANSPORT, AND THAT IS DELIBERATE.** § 84.1 fixed a jitter
+that lives in the shared reconcile path and helps both sides identically; no tick rate, channel or
+pool setting was changed, and the instruction above is why. **§ 84.1 does not explain this report**
+and closing one on the other would be the wrong conclusion.
+
+**It is backwards on its face**, which is the interesting part: a LAN hop is single-digit
+milliseconds and Singapore is not, so a LAN client feeling WORSE points at something other than the
+link. Candidates, none measured:
+
+* the two peers are on the same machine or the same congested Wi-Fi rather than a switch, so the
+  host process and the client process contend for one CPU and one radio;
+* Hamachi is in the path, which is a relay wearing a LAN's clothes;
+* `PoseDelivery` and the 5 Hz `MatchSyncInterval` are tuned against the relay's characteristics and
+  nobody has ever compared them on a LAN.
+
+**Done looks like** a number rather than an impression: `NetStateReport` already exists, and one
+capture from a client on each path — round-trip and the arrival spacing of `SyncUnit` — would say
+which of the three it is. **Do not retune anything until that capture exists.**
+
+✅ **NONE OF THE THREE. IT WAS 35 ms OF FILTER LAG IN THE RECEIVING PEER, AND THE ARITHMETIC IS IN
+§ 86.2.** `StepNetworkReplica` led its target by the SEND interval (0.020 s) and then ran it through
+a `SmoothDamp` with a 0.055 s time constant, which trails by about that whole constant. **It is a
+fixed cost that does not care about the link**: on the relay it hides inside the round trip, and on
+a LAN it is essentially all of the lag there is. That is exactly why it read as backwards.
+
+### 84.13 ✅ SEAN IS THE SLOWEST HERO, BECAUSE HE IS THE BIGGEST ONE
+
+🧑: *"personal chracter debuff"*, *"bcz Sean is larger than all, he should be slower than all (he
+has a defender advantage)"*, *"js a bit slower than all"*.
+
+**The reasoning is his and it is a real asymmetry rather than a feeling.** A bigger body reaches
+further, and `CLAUDE.md` § 4 keeps contact resolution on DISTANCE rather than on a trigger volume,
+so a larger character is genuinely better at the one verb the defender has, on every map, in both
+modes. Speed is the right counterweight because the taya rotates: a debuff that only bit while
+chasing would be a buff over the match.
+
+⚠️⚠️ **1 IS THE ONLY VALUE THAT SAYS "SLOWER THAN ALL", AND DANTE IS WHY.**
+`Balance.TraitSpeedPerPoint` is 0.05 and `Roster.TraitNeutral` is 3, so `bilis` is a 5% ladder.
+Dante was already on 2. **Sean written as 2 would have TIED the slowest rather than been it**, and
+nothing in the harness would have noticed.
+
+| | bilis | scale | vs Sean |
+|---|---|---|---|
+| **SEAN** | **1** | **0.90** | — |
+| DANTE | 2 | 0.95 | 5% faster |
+| CHESKA | 3 | 1.00 | 11% faster |
+| ZACK · NEMU · PHAISTER | 4 | 1.05 | 17% faster |
+
+⚠️ **STILL INSIDE `Balance`'S OWN NARROW-SPREAD RULE**, which says *"a pick 40% faster than another
+is not a personality, it is the correct answer"*. The widest gap on the hero table is now **17%**,
+and the assertion holds the 40% ceiling itself so a future row cannot walk past it quietly.
+
+⚠️ **0.90 IS NOT A NEW EXTREME.** `ClassicPeople` has held LOLA PACING at `bilis` 1 since the
+roster was written, so that scale has been played for weeks.
+
+⚠️ **HIS `lakas` 5 IS UNTOUCHED.** It is the other half of being the big one, and taking it away
+would leave a character who is large, slow and hits like everybody else. Slowest and strongest is
+the trade.
+
+⚠️ **BOTH TABLES MOVED.** `HeroPeople` is what Hero Strike reads and `AllPeople` is the master
+list; a trait edited in one is two characters wearing one name.
+`BalanceTests.SeanIsStrictlyTheSlowestHero_InEveryTableThatHoldsHim` asserts it in both, and skips
+the Classic cast by id — the two modes are not variants of each other (`CLAUDE.md` § 1), so a
+Classic character and a hero never stand in one match, which is what makes Lola Pacing irrelevant
+to "slower than all" rather than a counterexample.
+
+⚠️ **`kuya_boy` IS NOT CHANGED.** It shares `SeanHeroKit` through
+`HeroAbilitySystem.CreateKitFor`, which is an ABILITY mapping; it is a different Classic model with
+its own build, and the report is about the hero's size.
+
+### 84.14 ⚠️ OPEN, AND NOT REPRODUCED BY READING: THE "6K POINTS CAP"
+
+🧑: *"theres also a 6k points cap bug pls remove poitns cap"*.
+
+⚠️⚠️ **THERE IS NO POINTS CAP IN THE CODE, AND THE SEARCH IS WRITTEN DOWN HERE SO NOBODY RUNS IT A
+SECOND TIME.** Nothing was changed, because removing a cap that does not exist means changing
+something else at random.
+
+**What was checked, all of it negative:**
+
+* `Scoreboard.Add` is `_scores[slot] = Math.Max(0, _scores[slot] + MatchRules.PointsFor(e))` —
+  a floor at zero and **no ceiling**. `Set`, `SetAll` and `Total` have none either, and the field
+  is `int[]`.
+* `MatchDirector.AddScore` has three early returns and none of them is a number:
+  `!MatchInProgress`, `IsWarmupBuffer`, `!NetAuthority.ShouldResolve()`.
+* The wire carries `int[] scores` inside `SyncWorld` through a 256-byte `FastBufferWriter`; four
+  ints cannot overflow it and nothing narrows the type.
+* `Hud` prints `scoreNow.ToString()` with no format string and no clamp; the only `Clamp` near the
+  scoreboard is the 0.34 s pulse timer.
+* `MatchResult` and `ConvertedMatchResult` clamp a texture wrap mode and a winning SLOT index, not
+  a score.
+* A regex sweep for any `Clamp(...)` or `Min(...)` against a four-digit literal across
+  `Assets/TumbangPreso/Runtime` and the Core package returns **nothing**. The only 6000 in the
+  project is `VoiceDirector`'s per-line cooldown in milliseconds.
+* Not the ultimate meter either, in case the word "points" meant that: `HeroKit.UltimateMax` is
+  **20** and the per-hero costs run 90 to 150 against earnings measured in single digits.
+
+⚠️ **THE MOST PLAUSIBLE MECHANISM IS NOT A CAP AT ALL, AND IT IS ALREADY A KNOWN FAULT CLASS.**
+`AddScore` returns silently while `MatchInProgress` is false. § 82.1 is an entire entry about a
+client's `MatchInProgress` being dropped by a stale host packet, and a board frozen at whatever it
+held reads exactly like a ceiling — except that the ceiling would be a different number every time,
+which is the thing to check.
+
+**Done looks like** four facts, any one of which locates it: **was it exactly 6000 or about 6000;
+was it host or client; did it stop mid-round or at a round boundary; and did the other players'
+scores keep rising.** If it is exactly 6000 every time, it is a constant nobody has found and this
+list says where it is not. If it is approximate and client-side, it is § 82.1's family and § 84.8
+is the entry that just tightened it.
+
+---
+
+### 84.15 The sweep of what was already closed, since the handoff's list was stale
+
+🧑: *"§ 78.8 ... § 78.12 ... are resolved btw, there might be other todo shit thats resolved"*.
+Every entry the 2026-08-29 handoff listed as open was re-read against its own heading:
+
+| entry | handoff said | actually |
+|---|---|---|
+| § 78.8 IKE reads white | open | **closed on his report**, see the entry |
+| § 78.12 flaky `CarryTests` | open | **closed on his report**, and green in § 83.25's own run |
+| § 79.2 Ilalim hazier and paler | open | **closed here**, § 84.7 |
+| § 79.3 lobby chat strip | open | open, and re-reported today: § 84.4 |
+| § 79.6 hero picker column | fixed | re-reported today: § 84.3 |
+| § 79.8 first-person tsinelas | open | open, § 84.10 |
+| § 79.9 two practice reports | open | open, still uninvestigated |
+| § 80.6 dance curves | open | **already ✅ in its own heading**, closed 2026-08-29 |
+| § 80.7 Ilalim asphalt grain | open | **already ✅ in its own heading**, closed 2026-08-29 |
+| § 82.3 host SyncWorld latch | open | **closed here**, § 84.8 |
+| § 83.25 `PreviewDragProbe` | open | **closed here**, § 84.9 |
+
+⚠️ **TWO OF THE ELEVEN WERE ALREADY TICKED IN THIS FILE AND THE HANDOFF COPIED THEM ANYWAY**, which
+is exactly what `CLAUDE.md` § 2.4 forbids: *"a pointer to its `docs/TODO.md` entry rather than a
+copy of it. Copies go stale; the file does not."* § 80.6 and § 80.7 were closed in the same session
+that wrote the handoff listing them as open.
+
+**Still open after this sweep**, all with their own entries: § 63.2, § 66.5, § 70.13, § 79.8,
+§ 79.9, § 80.8, § 84.10, § 84.11, § 84.12, § 84.14.
+
+⚠ § 79.3's two-line strip is still unreproduced and its probe still passes; the OPEN LOG half of
+that entry is what § 84.4 closes.
+
+---
+
+---
+
+## 85 · The 2026-08-30 AUDIO and VISUAL list, sent as one block
+
+🧑 sent this as a headed list rather than as loose reports, off the same `db58fdb6` build as § 84:
+
+> **AUDIO**
+> - Round Music still plays after winning instead of Main Menu
+> - Round Music still plays even when exiting to lobby
+> - No audio cue on victory, like wala ung jingle unlke last time
+>
+> **VISUAL**
+> - Chat does not appear on preview after 1 chat
+> - Overflowing text eg. Attacker Rockafort in the bottom left
+
+⚠️⚠️ **THREE OF THE FIVE ARE THINGS THAT WERE BUILT AND NEVER SELECTED, WHICH IS THIS PROJECT'S
+MOST EXPENSIVE FAULT CLASS AND ITS CHEAPEST TO FIX.** `MatchInstaller` already records two of them
+by name — `DebugPlayerSwitcher` had no call site anywhere, `SpectatorCamera` had been audited line
+by line and nothing selected it. Add the `match_win` cue and the menu bed on the lobby to that
+list. **Nothing in the harness looks for a catalogue entry with no caller**, and § 85.6 is the
+proposal that would.
+
+### 85.1 ✅ FIXED: THE ROUND MUSIC PLAYED OVER THE RESULT BOARD AND ON INTO THE LOBBY
+
+Two of the three audio lines are one fault: **nothing ever ended the match bed.**
+
+`Hud` starts it — `Music.Play("match", MatchTrack)` on the ready countdown — and
+`MatchInstaller` stops it on the way IN (`StopNow()` before the ready gate, so the arena loads in
+silence). After that the only writer left in the game is `ConvertedMainMenu.Wire`, which plays
+`"menu"`. So the bed ended correctly on exactly one path: quitting all the way to the TITLE screen.
+
+⚠️⚠️ **AND THE PLAYER ALMOST NEVER TAKES THAT PATH.** `MatchResult`'s MAIN MENU, `PausePanel`'s
+QUIT TO MENU and a declined rematch all land on the **lobby** (`MatchSetup`), which had no opinion
+about music at all. The round loop therefore played under the standings, under the rematch vote,
+and under the lobby, for as long as the player stayed there.
+
+**Two lines, at the two places that already own those moments:**
+
+* `ConvertedMatchSetup.Wire` plays `"menu"`, which is the line `ConvertedMainMenu.Wire` has always
+  had. ⚠️ `MusicDirector.Play` is idempotent on the name, so arriving at the lobby FROM the title
+  screen costs nothing and does not restart a track the player is already listening to.
+* `MatchResult.PlayTheWin` hands back to `"menu"` on the frame the board appears, rather than
+  waiting for the scene change. That is the moment the change means something.
+
+⚠️ **IT IS `Play`, NOT `StopNow`.** Silence over a result board reads as the audio having crashed,
+which is the same misreading `DownedVignette`'s header records about a held red tint and § 84.6
+acted on.
+
+### 85.2 ✅ FIXED: `match_win` WAS IN THE CATALOGUE, IN THE DUCK LIST, AND IN NO CODE THAT PLAYS IT
+
+🧑: *"No audio cue on victory, like wala ung jingle unlke last time"*.
+
+**The cue exists and always has.** `AudioCues` lists `match_win` in the live catalogue, gives it a
+0.0 dB trim, and puts it in `DuckTriggers` — so the music bed was already written to get out of its
+way, for a sound nothing played. A grep across `Assets` finds the string in the catalogue, in that
+duck list and in one test, and **in no call site**.
+
+⚠️ **THE VOICE LINE IS A DIFFERENT THING AND IS WHY THIS LOOKED WIRED.** `VoiceDirector.OnMatchWon`
+plays a `match_win` VOICE take and is hooked up in `MatchInstaller`. Two systems, one name: the
+announcer spoke and the jingle never did, which is exactly *"wala ung jingle"* rather than "no
+audio at all".
+
+`MatchResult.PlayTheWin` plays it, at the camera, the way `Hud` plays `sfx_super_ready`. ⚠️ **At
+the camera and not at the origin**: the rig is 3D, so a cue played at the world origin of a match
+whose camera is thirty metres away arrives quiet and panned to one side.
+
+### 85.3 ✅ FIXED: THE CHAT STRIP WENT BLANK AFTER THE FIRST MESSAGE, EXACTLY AS § 79.3 PREDICTED
+
+🧑: *"Chat does not appear on preview after 1 chat"*.
+
+⚠️⚠️ **§ 79.3 NAMED THIS MECHANISM AS THE STANDING SUSPECT, COULD NOT REPRODUCE IT AT FOUR SHORT
+MESSAGES, AND WROTE IT DOWN ANYWAY. That note is what closed this in one read.** Its words: *"If it
+recurs, the `Truncate` mechanism in the note above is the standing suspect."*
+
+`SetLines` does three things to every visible row, and the second contradicts the first:
+
+```csharp
+element.minHeight = LineHeight;          // 26 px. ONE line.
+element.preferredHeight = LineHeight;
+MenuKit.FitBlock(line, LineHeight * 2.0f);   // sized against 52 px. TWO lines.
+line.verticalOverflow = VerticalWrapMode.Truncate;
+```
+
+`FitBlock` shrinks the type until the wrapped block fits the cap it is GIVEN, so a message that
+wraps was declared to fit at a size that draws 52 px of text into a 26 px rect. **Legacy `Text` on
+`Truncate` clips by WHOLE LINES**, so a rect that cannot hold one whole line at the chosen size
+paints **nothing at all** — while remaining active, non-empty and correctly sized. That is why
+every check that read `Text.text` passed against his screenshot, and it is why the first, short
+message showed and the next one vanished.
+
+The cap is `LineHeight`. The type now shrinks until one line genuinely fits the rect it is clipped
+to, so the two numbers describe the same box. ⚠️ **A line too long to fit even at
+`MenuKit.MinReadableUnits` is still clipped, and that is the design**: this strip shows
+`LobbyVisibleLines` = 2 of the log by intent and the whole message is in the scrollable history
+behind the click, on `Overflow`, inside a viewport. What changed is that it clips to one READABLE
+line instead of to nothing.
+
+⚠️⚠️ **`LobbyChatStripProbe` ASSERTS EXACTLY THE RIGHT PROPERTY AND WAS GREEN THROUGH ALL OF
+IT, WHICH IS THE PART WORTH RECORDING.** It is not a weak test: it pushes two messages at
+`MatchRpc.MaxChatLength` = 120 through the component's own `Add` path, and its bound is
+`preferredHeight <= rect.height` on the row's OWN rect, with a comment naming the whole-line
+`Truncate` mechanism. That is the fault, written down, being checked for.
+
+**It passes on the canvas it builds for itself and fails on his**, so the difference is a canvas
+scale or a panel width this probe does not reproduce, and 🧑's screen is the one that counts. The
+fix above removes the knife edge rather than moving it: with the cap at `LineHeight` the fitted
+block is bounded by the same number the rect is, so `need <= have` now holds by construction at
+every scale instead of by arithmetic at this one. **Leave the probe as it is** — it is the guard
+against the cap being widened again, and its messages are already at the maximum a peer can send.
+
+### 85.4 ✅ FIXED: `ATTACKER ROCKAFORT`, THE THIRD TIME, AND THIS TIME IT IS BOUNDED
+
+🧑: *"Overflowing text eg. Attacker Rockafort in the bottom left"*. The YOU card's identity row.
+`TAYA (DEFENDEDANTE` was the first (§ 79 era), `ATTACKERROCKAFORT` the second (§ 83.5).
+
+**§ 83.5's fix was right about the cause and incomplete about the bound.** It replaced a 50/50
+`flexibleWidth: 1` split with `flexibleWidth: 0` on the role plus `childControlWidth`, so the group
+asks the role `Text` for its own `preferredWidth` and gives it exactly that. That stops the role
+DRAWING past a half-width box it was given. It does not stop it ASKING for more than the row has.
+
+⚠️⚠️ **A `HorizontalLayoutGroup` WILL NOT SHRINK A CHILD BELOW ITS MINIMUM; IT OVERFLOWS THE
+CONTAINER INSTEAD.** The row asked for `preferredWidth(ATTACKER at 32 pt)` + 10 px spacing + the
+name's 140 px floor, and when that sum passes the 336 px content box the surplus goes out of the
+wood. **That is the mechanism § 79.6 measured on the hero picker column**
+(`rowLe.minHeight = rowLe.preferredHeight` overflowing a `VerticalLayoutGroup`), arriving on the
+other axis: the container can be squeezed and the children cannot.
+
+Two lines: the role's `LayoutElement` takes `preferredWidth = 170`, and the role gets the same
+best-fit the name already had (max 32, floor `MenuKit.MinReadableUnits`) so it shrinks INTO that
+bound rather than being clipped by it. **170 + 10 + 140 = 320 against 336**, so the row fits by
+construction whatever the two strings are, instead of by the arithmetic happening to work out.
+
+⚠️ **`TAYA` NEVER TOUCHES THE CAP.** Only `ATTACKER` on a narrow card steps down a point or two,
+which is the trade this row has been asking for since the first report.
+
+### 85.5 ⚠️ PART FIXED: HEELS IS THE ONLY UNTEXTURED PROP IN THE ROSTER, AND IT WAS ALSO CRUSHED TO BLACK
+
+🧑, after the FPP captures: *"these arent heels tho"*, *"i want it to look realistic liek 2nd but
+the 1st pic dont look like heels"*, pointing at `fpp_held_sandals_v18.png` as the standard.
+
+**This is § 84.10 and § 79.8 resolved down to an ASSET fault, measured out of the `.glb` files
+rather than argued.** `tsinelas_heels.glb`, against the props either side of it:
+
+| prop | file size | meshes | primitives | verts | materials | **textures** |
+|---|---|---|---|---|---|---|
+| **heels** | 671 KB | 1 | 3 | 15554 | 3 | **0** |
+| alpombra | 5.2 MB | 1 | 5 | 41696 | 5 | 5 |
+| sandals | 21.4 MB | 1 | 3 | 9674 | 3 | 9 |
+| loafers | 111 KB | 1 | 1 | 1117 | 1 | 1 |
+
+⚠️⚠️ **HEELS IS THE ONLY TSINELAS IN THE GAME WITH NO TEXTURE MAPS AT ALL**, and its three
+materials are flat and near-black: `black` (0.020), `black.001` (0.000) and `gray` (0.077), with no
+base colour texture on any of them. Its source, `src_heels_plateau_sandal.glb`, has zero images
+too, so the prop has never had a skin at any point in the pipeline. Sandals and alpombra read as
+real shoes because they carry 9 and 5 images respectively.
+
+⚠️ **AND A NEAR-BLACK, UNTEXTURED PROP IS § 70.1 AND § 78.8's FAULT CLASS EXACTLY.** § 70.1: *"IKE
+WAS NOT AN UGLY MODEL, IT WAS A BLACK ONE"*, and § 78.8 is a whole entry about a near-black shoe
+reading WHITE on the character screen. `TumbangPreso/Toon` is a surface shader with no `noambient`,
+so ambient lands on top of the lit colour and outside the palette remap, and it lifts a 0.02 albedo
+proportionally far more than a bright one. That is why the FPP capture shows a pale tan ribbon
+where the material says black.
+
+⚠️⚠️ **THE DECISION IS HIS AND IT IS AN ART SOURCING ONE, WHICH IS WHY NOTHING WAS CHANGED.** The
+only realistic heel-shaped source in the repo is `src_alpombra_heel_mule.glb` — a heel mule, 6.5 MB,
+5 textures — and **ALPOMBRA is already using it**, which is itself worth a look, since an alpombra
+is a carpet slipper. So the three options are:
+
+1. **Re-source HEELS.** A textured heel model, imported through the same pipeline. This is the
+   only option that produces what he asked for and it needs an asset that is not in the repo.
+2. **Swap the two sources**, if the alpombra entry was mis-sourced: give HEELS the heel mule and
+   find a carpet slipper for ALPOMBRA. Costs one asset instead of two, and `alpombra` currently
+   renders beautifully, so it trades a good frame for a correct one.
+3. **Author the three materials by hand.** No new asset. It cannot add detail the mesh does not
+   have, but it would at least stop the prop being one flat tone: a dark leather upper, a tan
+   footbed and a black sole would read as a shoe instead of a ribbon.
+
+✅ **OPTION 3 IS DONE, AND IT IS § 70.1's FIX APPLIED TO A THIRD PROP.** 🧑: *"dude show me how
+heel looks like now"*. The three `baseColorFactor` values in `tsinelas_heels.glb` were rewritten in
+place, keeping the BIN chunk byte-identical:
+
+| material | was | now | what it is |
+|---|---|---|---|
+| `black` | 0.020, 0.020, 0.020 | **0.115, 0.100, 0.105** | the upper and the straps |
+| `black.001` | 0.000, 0.000, 0.000 | **0.075, 0.068, 0.072** | the sole |
+| `gray` | 0.077, 0.074, 0.072 | **0.290, 0.250, 0.228** | the platform and footbed |
+
+⚠⚠ **0.115 IS NOT A TASTE, IT IS § 70.1's NUMBER.** That entry lifted IKE off the floor to
+`Kd 0.105 0.115 0.145` for this exact reason: `TumbangPreso/Toon` is a surface shader with **no
+`noambient`**, so `RenderSettings.ambientLight` is added on top of the lit colour, after the
+tonemap and outside the palette remap. Against an ambient near 0.9 a 0.02 albedo contributes about
+2% of the pixel and the ambient contributes the rest, so **the shoe rendered in the ambient's own
+hue rather than in its own colour** — which on a warm-lit stage is the tan of the arm beside it.
+That is why a material sheet reading pure black produced a pale ribbon on screen, and it is the
+same fault § 78.8 spent three sessions on from the other end.
+
+⚠ **AND THE THREE ARE NOW SEPARATED, WHICH IS THE HALF THAT MAKES IT READ AS A SHOE.** They were
+0.020 / 0.000 / 0.077 — three tones inside a 0.08 band, which is one tone once ambient lands on it.
+0.075 to 0.290 is a 4x spread, so the platform, the footbed and the straps are distinguishable
+shapes instead of one silhouette.
+
+⚠⚠ **THIS DOES NOT ADD DETAIL THE MESH DOES NOT HAVE, AND OPTIONS 1 AND 2 ARE STILL ON THE
+TABLE.** Heels remains the only prop in the roster with **zero texture maps**, so it can be a
+correctly shaded black platform sandal and it cannot be as rich as SANDALS' nine images. If that is
+not enough, the decision is which of options 1 and 2 above to take, and that is an art sourcing
+call rather than a code one.
+
+---
+
+⚠⚠⚠ **AND THEN THE RECOLOUR CHANGED NOTHING ON SCREEN, WHICH IS WHAT FINALLY NAMED THE FAULT.**
+🧑: *"dude it looks identical"*, *"i want it to look like the one in character select"*,
+*"remvoe the shaders for it or wwathever is fkn with its colior"*.
+
+The capture after the edit came back **byte-identical** to the one before it. That is not a stale
+artifact: `FppArmsSnapshotTool.BuildSlipperSource` now forces
+`AssetDatabase.ImportAsset(..., ForceUpdate)` before every shoot and logs the albedo it resolved,
+and the values are live on the renderer.
+
+```
+[FppSkin] heels   slot 0 'black'     glTF/PbrMetallicRoughness  baseColorFactor=(0.373,0.349,0.357)  no texture
+[FppSkin] heels   slot 2 'gray'      glTF/PbrMetallicRoughness  baseColorFactor=(0.575,0.537,0.515)  no texture
+[FppSkin] sandals slot 0 'Upper_1'   glTF/PbrMetallicRoughness  baseColorFactor=(1,1,1)  baseColorTexture=Image_0
+```
+
+✅ **SO THE ANSWER IS THE SECOND TOON PASS, AND IT IS REMOVED.** `ViewmodelArms.MatchSkin` copied
+the world slipper's materials and then ran `ToonSkin.ApplySlipper` over the copy again. That second
+call does not retune the material it was handed — `ToonSkin.Variant` resolves back through `Origin`
+and **rebuilds from the source**, so the shoe in the hand was a second dressing of the skin rather
+than the same dressing. For a prop with a texture that is invisible, because the texture carries the
+colour; **heels is the only tsinelas with none**, so its entire appearance rested on that rebuild
+landing identically, and the one surface where it showed is the one nobody could compare side by
+side.
+
+Copying and stopping makes the hand copy identical to the world copy **by construction**, which is
+his sentence exactly: the tsinelas on your arm is the one on the character screen.
+
+⚠️ **THE COST IS THE INK BORDER AND IT IS DELIBERATE.** That second call existed to re-derive the
+outline against the fistful-sized copy's own scale, so the border now reads heavier in first person
+than in third. **If it reads too thick, re-derive the WIDTH alone** on the copied material rather
+than restoring the call, because restoring the call is what reintroduces the rebuild.
+
+⚠️⚠️⚠️ **AND THE ALBEDO LIFT IS REVERTED, BECAUSE THE CHARACTER SCREEN PROVES THE ASSET WAS
+NEVER WRONG.** 🧑 sent the picker's own render of HEELS with *"should look like this"*: a
+**black** strappy platform heel with a **light grey footbed**, drawn from those very factors —
+0.020 and 0.000 on the two straps and 0.077 on the platform. Under the picker's light that is
+exactly the shoe in his image.
+
+So the three numbers in the table above were the RIGHT numbers and § 70.1's reasoning does not
+apply here: **IKE was black and read WHITE everywhere; heels is black and reads correct
+everywhere except one surface.** A fault on one surface is not a fault in the asset, and lifting
+the albedo would have turned his black heel grey on the character screen to fix a viewmodel that
+had a different problem entirely. `tsinelas_heels.glb` is restored byte-for-byte.
+
+⚠⚠ **THE LESSON IS THE ORDER OF THE TWO QUESTIONS.** "Is this asset wrong" was asked first
+because the material sheet looked extreme, and it cost an edit, a forced reimport and two captures.
+"Does it look right ANYWHERE ELSE" is the cheaper question and it eliminates the asset in one
+screenshot — which is what his did. **Ask it first next time**: when one surface disagrees with
+three, the surface is the suspect.
+
+✅ **WHAT ACTUALLY SHIPS IS THE ONE LINE IN `ViewmodelArms.MatchSkin`**: copy the world slipper's
+dressing and stop, so the shoe in the hand is the shoe on the character screen by construction.
+
+### 85.6 ✅ THE PATTERN RATHER THAN THE BUG: NOTHING LOOKED FOR A CUE WITH NO CALLER
+
+§ 85.2 is the fourth time a finished feature has shipped with no call site — `DebugPlayerSwitcher`,
+`SpectatorCamera`, `HeroAbilitySystem.ResetKit` and now the `match_win` sting. Every one of them
+was found by a person playing rather than by the harness, and every one of them is trivially
+detectable from the source: **a name in `AudioCues`'s live catalogue that no `PlayAt`, `PlayImpact`
+or `PlayAtVaried` call ever passes.**
+
+✅ **DONE, AND IT WENT IN THE CHECK THAT WAS ALREADY ASKING THE OTHER TWO DIRECTIONS.**
+`AudioCueCheck` already reported *"cues with no file"* (catalogue against disk) and *"files no live
+cue can reach"* (disk against catalogue), and **both sides were present and correct for
+`match_win`**. The missing question is the catalogue against the CODE, and it is the only one of
+the three a player can hear. It now prints `-- live cues that no code plays --`, gathered on the
+same pass that already reads every runtime file for the undeclared direction, so it costs nothing.
+
+⚠️ **IT IS A REPORT, NOT A FAILURE, AND DOES NOT INCREMENT `problems`.** A cue can be
+legitimately dormant: `boot_sting` is played through a video path the text scan cannot see, and
+`AudioCues` itself documents five `.wav` files orphaned when the ability layer was deleted. Failing
+the gate on those would teach the next person to skip the block, which is worse than not printing
+it. **Read the list and know why each line is on it**, which is the standard § 6 sets for the
+wall-clock probes.
+
+⚠️ **THE OUTPUT IS IN `Logs/audio-cue-check.txt`** and `tools/verify.sh fast` prints its verdict
+line on every run.
+
+---
+
+---
+
+## 86 · The spectator pause, and the 35 ms every non-host was standing behind
+
+### 86.1 ✅ EVERY SPECTATOR CAN STOP THE MATCH, AND THIS REVERSES A WRITTEN RULE
+
+🧑 2026-08-30, after being asked which of the game's two pauses he meant (§ 84.11): *"spectator
+pause"*, *"pause is for spectatotr"*, then the shape of it: *"give spectators the authority to
+pause, all of them can pause"*, *"make sure time pauses if u pause as well as everything happening
+and spectator can move"*, *"liek in game like mobile legends"*.
+
+⚠️⚠️ **NOTHING WAS BROKEN. IT WAS REFUSED, ON PURPOSE, AND SAID SO.**
+`SpectatorCamera.StepBroadcastKeys` answered every time-control press in a networked match with
+`LIVE NETWORK · TIME CONTROLS LOCKED`, under a header that read: *"Pause and speed manipulation are
+offline-only by construction: a remote viewer must never acquire authority over a live tournament
+simply by spectating."*
+
+**That rule was protecting a tournament against a stranger.** The spectators in this game are the
+four people waiting for the next match and whoever is casting it, and an observer stopping the game
+to talk over a fight is a broadcast feature rather than an exploit. **All of them can**, which he
+said in those words, so there is no leader check and no host check on who may ASK.
+
+⚠️⚠️ **THE HOST IS STILL THE ONLY WRITER OF THE CLOCK, AND THAT IS NOT A CONTRADICTION.** A
+spectator sends `ReqTime`; the host validates, applies, and broadcasts `SyncTime` to everybody.
+That is `CLAUDE.md` § 4's rule — state is produced in one place — applied to time. Four peers each
+writing their own `Time.timeScale` is four matches, and the two that mattered would drift apart
+inside a second.
+
+⚠️ **A PLAYER CANNOT.** `OnReqTimeMsg` refuses any sender whose `PeerRecord.Spectator` is not set,
+so somebody losing cannot stop the round they are losing. The local press is refused first with a
+toast (`LIVE MATCH · ONLY A SPECTATOR MAY PAUSE`) so the answer is immediate rather than a silence.
+
+⚠️ **THE SPECTATOR STILL FLIES**, which he asked for explicitly. Nothing had to change: this camera
+has always run on `Time.unscaledDeltaTime` and its own header already recorded *"Broadcast cameras
+remain responsive during a tactical pause"*. The `Hud` is on the unscaled clock too, so the toast
+announcing the pause can expire while the match it is announcing is stopped dead.
+
+⚠️⚠️ **EVERY PEER IS TOLD, AND THAT IS NOT DECORATION.** A frozen game with no explanation is
+indistinguishable from a crash, and this is a pause the player did not press. `MatchRpc.
+TimeScaleChanged` fires on every peer and `Hud.OnBroadcastClock` says **PAUSED BY A SPECTATOR**
+rather than PAUSED, because a player who reads PAUSED goes looking for the menu they did not open.
+
+⚠️ **`Hitstop.End()` RUNS ON EVERY PEER BEFORE THE WRITE.** It is the other writer of
+`Time.timeScale` in this project and it restores to 1 when it expires, which would quietly un-pause
+a paused match a fraction of a second later.
+
+⚠️⚠️ **AND `NetSession.Stop` HANDS THE CLOCK BACK.** `Time.timeScale` is a global that outlives the
+session: a host that quits mid-pause, or a client dropped during one, would walk back to a title
+screen whose every animation and button had stopped with nothing on screen saying why.
+`MatchResult`'s own header records that exact failure happening once already from a different
+writer. Whoever can stop time restores it on every exit path including death.
+
+⚠️⚠️ **PROTOCOL 13 → 14, AND THIS IS THE STRONGEST CASE THAT NUMBER HAS EVER HAD.** A peer without
+the `SyncTime` handler **does not stop**. The pause is called, three screens freeze, one carries on
+playing a match nobody else is in, and the two builds then disagree about every position for as
+long as it lasts. That is worse than a refusal and worse than a missing effect, which are the two
+cases the version gate was written for.
+
+### 86.2 ✅ THE REPLICA LED BY ONE PACKET AND LAGGED BY A WHOLE FILTER
+
+🧑: *"make sure lan isnt laggy as fuck anymore bcz ealrier non hosts were all behind"*, and earlier
+the same day, *"lan is very lag and delayed for non host btw, online server is more reliable"*.
+§ 84.12 recorded that as open and unexplained. **It is explained now, and it is arithmetic.**
+
+`CharacterMotor.StepNetworkReplica` composed two numbers that answer different questions:
+
+```csharp
+Vector3 target = _networkTargetPosition + _networkTargetVelocity * 0.02f;   // the lead
+Vector3.SmoothDamp(transform.position, target, ..., 0.055f, ...);           // the filter
+```
+
+The **lead** was sized against the SEND interval: `StepNetworkTransform` sends on the physics step,
+so 50 Hz, so 0.020 s, which compensates for the packet being one tick old. It does nothing about
+the filter. A critically damped `SmoothDamp` with a 0.055 s time constant **trails its target by
+about that whole constant**, so a replica sat roughly **35 ms behind the host's own body before a
+single millisecond of network latency**, on every peer, on every map, forever.
+
+⚠️⚠️ **AND THAT IS WHY IT READ AS WORSE ON A LAN THAN ON THE RELAY, WHICH IS THE PART THAT MAKES
+NO SENSE UNTIL YOU SEE IT.** 35 ms of filter lag is a fixed cost that does not care about the link.
+On the Singapore relay it is a small fraction of the round trip and disappears into it; on a LAN
+where the round trip is about a millisecond it is **essentially all of the lag there is**, and it
+is the only thing left to notice. His two reports are one number seen from two links.
+
+The lead is the smoothing time now, so the filter's output lands ON the host's position instead of
+behind it. ⚠️ **It is not `0.055 + 0.020`**: adding the packet age on top would put the replica
+AHEAD of the host and turn every direction change into an overshoot and a snap. The send interval
+is already inside the smoothing window, not beside it. ⚠️ **The velocity is the host's own**,
+transmitted rather than differentiated, so this is interpolation arriving on time rather than
+extrapolation guessing at a future.
+
+⚠️⚠️ **NOTHING ABOUT THE TRANSPORT MOVED, WHICH IS THE INSTRUCTION.** 🧑: *"pls dont break online
+server in the process of fixing lan lag for non hosts"*. No tick rate, no delivery channel, no pool
+setting, no `MatchSyncInterval`. This is one constant in the receiving peer's own smoothing, so the
+relay is affected exactly as the LAN is and neither is favoured. It is also the fix
+`StepNetworkTransform`'s own note asked for in advance: *"the answer is interpolation on the
+receiving end first, not a lower send rate on its own."*
+
+⚠️ **STILL NOT TWO-MACHINE TESTED**, like everything networked in §§ 84 and 86. The arithmetic is
+sound and the direction is not in doubt; whether 0.055 is now the right smoothing constant at all
+is a question only two PCs in a room can answer. If it reads as rubber-banding rather than lag,
+lower the constant rather than the lead.
+
+### 86.4 ✅ THE CHAT EXTENDS IN PLACE, AND THE SEPARATE WINDOW IS GONE
+
+🧑 2026-08-30: *"pls overhaul how chat works instead of making a separate window just make the
+chat extend when u click it anywhere and make it so that it doesnt make the shit above it move"*,
+and, in the same breath, granting the permission the old design existed to avoid: *"its the one
+thing im giving authorization to cover shit"*.
+
+**Three requirements, and the third is the one that constrains the other two.**
+
+1. **Extend in place.** `_historyPanel` is parented to the chat's own rect now instead of to the
+   root canvas, anchored to the chat's TOP edge and growing `ExpandedHeight` = 460 units upward.
+   ⚠⚠ **The top edge and not the bottom**: anchored to the bottom it would have grown up THROUGH
+   the two visible lines and the `Say something` field, so opening the log to read a message would
+   hide the box you answer it in.
+2. **Cover what is above it.** A nested `Canvas` with `overrideSorting` at 90 is what lets a child
+   draw over its own ancestors. ⚠ 90 sorts BELOW the character picker's 100 on purpose: both are
+   lobby overlays and the picker is the one that must never be drawn through.
+3. **Move nothing.** `LobbyChrome.StackRight` positions the LOBBY & SERVERS pill off
+   `LobbyChat.PanelHeight` every frame, and that reads `_rect.rect.height`. **So `_rect` must not
+   change size**, and it does not: the extension is a separate rect that overlaps upward. Growing
+   the chat itself would have walked the whole right-hand rail up the screen, which is the fault
+   `PanelHeight`'s own note records from the other direction.
+
+⚠ **THE CENTRED WINDOW CAME FROM A REAL CONSTRAINT AND IT IS STILL TRUE.** Its note recorded that
+a box centred inside a bottom-left strip is centred on the STRIP rather than on the screen, which
+is why it was moved to the root canvas. That reasoning was correct for a window and is simply not
+what is wanted any more.
+
+⚠ **THE DIMMING BACKDROP WENT WITH IT.** It existed so a click on empty road would close a modal
+(*"it clsoes when u click out"*, 2026-08-28). An in-place extension is not a modal, and a
+full-screen raycast target over a lobby full of controls is a thing that eats presses. The ways out
+are now the same click that opened it (`OnPointerClick` toggles), the CLOSE button, and Escape.
+
+### 86.3 ✅ TWO PROBES CAUGHT TWO REGRESSIONS FROM THIS SAME DAY'S WORK, WHICH IS THE POINT OF THEM
+
+The PlayMode run on the § 84 and § 85 batch came back **89/92**, and two of the three were mine.
+Both are written up here rather than quietly fixed, because in both cases the probe was right and
+the change was wrong.
+
+**`HudOverflowProbe`** failed at all nine resolutions: § 84.5's warm-up tile said `NOT YET`, which
+needs 80 to 84 units in a 60-unit `State` box and hung up to 24 units out of the tile. § 18's rule
+is size the card or shorten the string and **never the font**, and that box is one of three in a
+60 px square the rest of the deck aligns against, so the string moved: **`WAIT`**.
+
+**`LobbyChatStripProbe`** failed with the exact numbers § 85.3 was written to fix, from the other
+side: rows 26 px, text needing **43 and 44 px at size 18**. So capping the fit at `LineHeight` was
+necessary and not sufficient — at `MatchRpc.MaxChatLength` = 120 characters the type bottoms out at
+`MenuKit.MinReadableUnits` and the block still wants two lines. Shrinking further is forbidden by
+that constant and growing the row is forbidden by 🧑's *"i want u to not make the chat extend
+anymore"*, **so the only lever left is the text.** `LobbyChat.Ellipsise` binary-searches the string
+down until `preferredHeight` fits the row and appends an ellipsis. Nothing is lost: the whole
+message is in the scrollable log behind the click, which is where a 120-character sentence belongs.
+
+⚠⚠ **AND THE SYNCHRONOUS FIT ITSELF THEN BROKE TWO MORE, WHICH IS THE SAME LESSON A THIRD
+TIME.** `MatchRunTests` and `PreviewDragProbe` — neither of which has anything to do with a name
+field — went red on an unhandled error log: *"Coroutine couldn't be started because the the game
+object 'LobbyIdentity' is inactive"*, from
+`Canvas.ForceUpdateCanvases` inside `ConvertedMatchSetup.FitEverything`.
+
+`InputField.OnDisable` calls `DeactivateInputField`, which raises `onEndEdit` with the text it
+already had. So closing the lobby scene ran a full `Refresh` from inside Unity's own deactivation,
+which was harmless for as long as `Refresh` only ARMED a deferred fit and became an error the
+moment § 84.3 made it fit synchronously.
+
+⚠️ **THE GUARD IS ON THE FIELD, NOT ON THE SCREEN.** An `isActiveAndEnabled` check on
+`ConvertedMatchSetup` does not catch it — the screen is still active while one of its children is
+being disabled — so the test was tried and the reds did not move. The object that knows is the
+`InputField` itself, and a callback that arrives while it is inactive is a teardown artefact rather
+than somebody finishing typing.
+
+✅ **AND THE RUN AFTER ALL OF THAT IS 91/92**, with `HeroPickerLayoutProbe` green **for the first
+time since § 79.6 measured its 64 px deficit** — § 84.3's forced layout is what closed it, which
+is the same fix and the same frame-zero argument. `PreviewDragProbe`, `LobbyChatStripProbe`,
+`HudOverflowProbe` and `MatchRunTests` are all green.
+
+⚠️ **THE LAST RED IS § 78.12 AND IT IS NOT FROM THIS BATCH.**
+`CarryTests.AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor` failed on a machine that had
+been running Unity renders, a capture sweep and two test suites back to back, which is precisely
+the condition that entry describes. **§ 78.12 was closed on 🧑's report that it had been green and
+is reopened here on evidence.** Its own analysis stands unchanged and so does its instruction: take
+the second of its three options — measure the gap in the anchor's LOCAL space so the rotating
+world-space AABB stops moving the baseline — rather than raising the bound.
+
+---
+
+## 87 · Every tsinelas rendered flat brown in first person, and the fix for it flattened the shading on all of them ✅ FIXED 2026-08-31
+
+🧑 2026-08-31, with a screenshot of CROCS on the road beside CROCS in his own hand: *"wtf are the
+shaders doing for FPP view"*, *"slippers on ground look completely diff"*, *"i want them to reflect
+their actual colors wtf"*, *"its all turning brown and ugly, almost all detail becomes deleted
+too"*. Then, with the original HEELS render beside the build: *"the shaders were okay when i added
+the slippers"*, *"it only broke when i asked [for it] to remove them / lessen the effect on the
+slippers"*, *"my problem with it is that it made some slippers look ugly and in ur process of
+fixing it u made all slippers look ugly"*.
+
+**This is one bug, reported five times over three days, and four separate fixes were shipped
+against it without any of them being able to touch it.**
+
+### 87.1 ✅ A MaterialPropertyBlock WAS PAINTING EVERY HELD SLIPPER #7a5741
+
+`ViewmodelArms.Build` creates the held shoe from code, and a `MeshRenderer` added in code has no
+material, which Unity draws in magenta. So it calls `MaterialKit.Dress(_heldRenderer,
+UiTheme.PropFoam)`, and `Dress` writes its tint into a **MaterialPropertyBlock**.
+
+⚠️⚠️ **A PROPERTY BLOCK IS PER-RENDERER AND IT OVERRIDES THE NAMED PROPERTY ON EVERY SUBMESH,
+WHATEVER MATERIAL IS SITTING IN THE SLOT.** Nothing ever cleared it. `MatchSkin` copied the mesh
+and copied one material per submesh off the world object, correctly, and then the block overrode
+`_Color` on all of them anyway.
+
+The numbers are why it deleted the detail as well as the colour. `Toon.shader` does
+`base *= _Color.rgb` with `_MainTex` defaulting to white, and the shoes are `baseColorFactor` and
+nothing else:
+
+| skin | materials | textures |
+|---|---|---|
+| `tsinelas_crocs.glb` | 0.915 white, 0.027 black, 0.5 grey | **none** |
+| `tsinelas_heels.glb` | 0.020, 0.000, 0.077 | **none** |
+
+With no texture, `_Color` **is** the entire appearance of the surface. The block did not tint those
+shoes, it **replaced** them: a white croc, a black heel and the five-surface `tsinelas_classic` all
+rendered as the same flat #7a5741 slab in the hand while every peer, the ground copy and the
+character screen showed the real thing. "Almost all detail becomes deleted" is that, exactly.
+
+**The fix** is in `ViewmodelArms.MatchSkin`: mirror the WORLD slipper's property block onto the
+held renderer rather than only clearing the placeholder. Same "identical by construction" rule the
+material copy already follows, and it carries `Slipper.RefreshHighlight`'s `_RimStrength`,
+`_RimColor` and `_OutlineColor` across, so the shoe in your hand glows when the one on the ground
+does. `SlipperSkinTests.TheViewmodelCopyTakesTheWorldSlippersPropertyBlock` is the regression
+guard.
+
+### 87.2 ✅ WHY FOUR EARLIER FIXES ALL MISSED IT, WHICH IS THE PART WORTH KEEPING
+
+Every one of these was a real fault, was correctly diagnosed, and was correctly fixed. **Not one of
+them touches a property block, so not one of them could ever have changed the colour**, and each
+was signed off against a frame that was still brown for the reason above.
+
+1. **The hardcoded placeholder mesh** (b7c4cb2d). The viewmodel wore `tsinelas_classic` whatever
+   you picked. Fixed: the mesh now comes off the carried object.
+2. **The early return that guarded the material copy with the mesh check** (0e019557). A path that
+   arrived with the mesh already right kept the placeholder dressing. Fixed: the materials are
+   copied unconditionally.
+3. **`sharedMaterial` assigning an array of length one.** A renderer silently does not draw
+   submeshes past the end of its material array, so multi-surface skins lost every surface but the
+   first. Fixed by `CopySurfaces`.
+4. **The second toon pass** (§ 85, 2026-08-30). Removed on the theory that rebuilding a variant for
+   a texture-less skin was what changed its colour. It was not. **This one is now reverted** (87.4).
+
+⚠️ **The lesson is a general one and it is worth more than the fix.** A renderer's final colour
+comes from three layers, and only two of them are visible in the inspector: the shader's
+properties, the material's values, and **the property block on top of both**. When a surface reads
+as one flat colour across skins that share no material, the question is which renderer is carrying
+a block, not how the light is hitting it. A ramp cannot make three materials agree on a colour. A
+block can, and did.
+
+### 87.3 ✅ THE TOON PASS IS BACK ON THE FIRST-PERSON COPY
+
+`ToonSkin.ApplySlipper(_heldRenderer, PropOutlineWidth)` returns to the end of `MatchSkin`. Its own
+removal note recorded the cost of taking it out and that cost was real: `ToonSkin` inflates the ink
+hull in MODEL space, the copied materials were dressed against the WORLD object's scale, and the
+viewmodel copy is fistful-sized, so an ink border derived for a 0.43 m shoe lying on the road
+renders as a slab on the same shoe held at arm's length.
+
+⚠️ It is cheaper than it looks. `Variant` is cached on (source material, quantised width) and
+`Origin` resolves an already-dressed material back to what it was built from, so this asks the
+cache for one material per skin per width for the life of the process, and `Apply` skips the
+`sharedMaterials` write entirely when nothing moved.
+
+### 87.4 ✅ THE TSINELAS FLAT SKIN IS REVERTED, AND HE REVERSED THE INSTRUCTION HIMSELF
+
+`ToonSkin.SlipperShadowBand` 0.86 and `SlipperBandEdge` 0.30 are **deleted**, along with the `flat`
+flag through `Apply`, `Variant` and the cache key. Shoes are back on the shader's own 0.45 over
+0.03, which is what every other prop and the whole cast wear.
+
+It was added on 2026-08-29 for *"js remove or severely lessen shader coloring effect on slippers as
+a whole"*. That was a report written against the brown hand copy, not against the ramp, so
+flattening could never have fixed it, and on these models it cost real form: with no textures
+anywhere in the newer skins, the two-band ramp is the **only** thing in the frame separating an
+ankle strap from the sole behind it. At 0.86 over 0.30 there is 14 per cent of falloff smeared
+across a third of the ramp, so HEELS rendered as a silhouette with the ink outline doing all the
+work. That is the render he held up beside the original and called ugly.
+
+⚠️ `SlipperSkinTests` carried a guard written specifically to fail a later pass that set these back
+to the defaults. **That guard was doing its job against the wrong target**, and it has been
+inverted: the file now asserts that a shoe and a can sharing a source material come out shaded the
+same, and that a dressed shoe keeps a non-zero ink hull.
+
+⚠️ **`ApplySlipper` STAYS as the slipper entry point even though it is now the same dressing as
+`Apply`.** Five unrelated files skin a shoe (`MatchInstaller`, `ViewmodelArms`, `ModelPreview`,
+`ModelSheet`, and the editor probes) and `SlipperSkinTests` reads all of them as text; keeping one
+named entry point is what makes "every screen shows the same shoe" checkable, and it is where the
+next shoe-only change would go.
+
+### 87.5 ✅ THE FPP SWEEP HAD BEEN SHOOTING NINE SHOES AND REPORTING TEN
+
+Found while checking 87.1 against every skin. `FppArmsSnapshotTool.SlipperSweep` listed
+`"classic"`, and there is no such id in this game. `BuildSlipperSource` logs a warning, returns
+null, and the loop does `continue`, so **the sweep came back one picture short and looked
+complete**: ten entries in the array, nine `fpp_held_*.png` on disk, and nobody counting.
+
+⚠️ **The skin it was silently dropping is `tsinelas`**, roster row 0 and the default shoe, so the
+one tsinelas most players hold had never been photographed in the hand on any version of this tool.
+The ids are corrected to `Roster.Slippers` and the capture version is bumped so the complete set
+sits beside v18 and v19 rather than overwriting them.
+
+⚠️⚠️ **AND THE LIST TO CHECK AGAINST IS `Roster.Slippers`, NOT THE `Roster/` FOLDER.** A first
+attempt at this fix guessed `pangbanyo` off the asset filenames and shot nine again: there are
+**eleven** `slipper_*.asset` files and only ten are in `RosterBook.Slippers`.
+`slipper_pangbanyo.asset` is an orphan from when that shoe was folded into the PAMBAHAY ROW rather
+than appended as its own, which `Roster.Slippers` records at length because deleting a row shifts
+every index above it across the wire. The folder is not the roster.
+
+⚠️ **A skipped subject in a sweep is worse than a failed one**, because a failure is loud and a
+`continue` is not. Anything that iterates a roster by string id should be cross-checked against
+`Roster.Slippers` rather than trusted, and the header on `SlipperSweep` now says so.
 
 ---
 
@@ -990,6 +13739,16 @@ shipped pair is the only combination that has been measured working.
    arm for anything worth 20 per cent), and compare skill uses first. The batch-mode row that
    started this entry read **zero** at 0.02 s, so a player row with any casting at all in it
    already answers the question.
+
+   ✅ **AND THE OTHER HALF OF THIS QUESTION IS NOW BEING MEASURED FROM REAL PLAYERS, § 90.7.**
+   `FrameCapProbe` can force a machine into the band; only telemetry can say whether anybody is
+   actually IN it, and that was the part nothing here could answer. The per-match frame-rate event
+   reports a band whose edges are this entry's numbers rather than round ones: `fps_30_50` is
+   below the 0.02 s physics step, `fps_50_60` is the boundary case nobody has measured in either
+   direction, and `fps_60_90` is the rate every probe number in this repository was taken at.
+   ⚠️ **A band edge that drifts off 50 answers a different question while looking like the same
+   one**, which is why `FrameRateBands.PhysicsStepFps` is pinned to the physics rate and
+   `FrameRateTests.TheStepEdgeIsThePhysicsRateRatherThanACoincidence` fails if it moves.
 2. **Find the quantised thing.** The first suspect is the `InputIntent` edge protocol.
    `CharacterMotor.FixedUpdate` reads `JustPressed` and calls `CommitFrame` at the END of the
    physics step while the producers write in `Update`, so how many `Update`s fall between two
@@ -3545,7 +16304,7 @@ the method works, not that the game reaches it, and both dead charge relays woul
 
 ### 38.6 ⚠️⚠️ EVERY PAYLOAD IS NOW CHECKED FIELD BY FIELD, AND NOTHING CHECKED THEM BEFORE ✅
 
-`MatchRpc` speaks 41 named messages and every one is a hand-written pair: a run of
+`MatchRpc` speaks 55 named messages and every one is a hand-written pair: a run of
 `WriteValueSafe` and a run of `ReadValueSafe`. **Netcode does not check that the two agree.** A
 field added to one half does not fail; the reader consumes the same bytes in the wrong order and
 hands the game plausible garbage. `SyncWorld` grew a tournament-clock block during this very
@@ -3558,7 +16317,29 @@ mismatch. ⚠️ **It is a COUNT and TYPE check, not a NAME check**: two floats 
 halves are invisible to it and are a real bug. What it closes is the class that has actually
 happened. Three deliberate asymmetries are listed with their reasons rather than silenced.
 
-Current state: **41 named messages, 0 mismatched.**
+Current state: **55 named messages, 0 mismatched.**
+
+⚠️⚠️ **AND IT WAS EXITING 1 ON A CORRECT MESSAGE, FOUND 2026-08-30 WHILE VERIFYING § 90.7.** The
+count above had also stood at 41 since this entry was written, so nothing had re-read it in
+fourteen messages' worth of growth. `Flair` reported *"writer emits 0 fields, reader takes 5"*
+against a writer and a reader that agree exactly, field for field and type for type
+(`BroadcastFlair` and `OnFlairMsg`, five fields each: `byte`, `int`, `int`, `Vector3`, `float`).
+
+**The cause is one line of the parser and it is worth knowing about.** The tool resets its pending
+run at every method boundary, deliberately, because accumulating across one once made a writer
+whose send sits inside an `if` donate its fields to the next message in the file. `Flair` is the
+only message in `MatchRpc` whose writer and whose SEND live in two different methods:
+`BroadcastFlair` writes the five fields and hands the writer to `HostRelayFlair`, which loops the
+peers and sends. The reset fired at the second declaration and the run was gone.
+
+**⚠️⚠️ A FALSE RED IS WORSE THAN A MISSING CHECK, WHICH IS WHY THIS WAS FIXED RATHER THAN NOTED.**
+This audit gates a verification pass (`CLAUDE.md` § 7.1). A gate that is red for a reason nobody
+can act on is a gate everybody learns to walk past, and the next time it goes red for the real
+reason, on a message that genuinely grew a field on one side, it will be walked past too.
+⚠️ **The fix locates the run rather than suppressing the check.** A method that RECEIVES a
+`FastBufferWriter` is continuing somebody else's run, so the reset does not fire on it; `Flair` is
+now counted and type-checked as 5 against 5 rather than excused. It is not in `ACCEPTED` and must
+not be put there.
 
 ### 38.7 ⚠️ A CLIENT'S LUNGE RESOLVED ITS OWN TAG ✅
 
@@ -8723,6 +21504,17 @@ block. Every other number in it is worthless if that reads 1 where 4 was asked f
 ---
 
 ## Closed
+
+- **Bot targeting, backwards throws, multiplayer bot control and the taya cooldown label.**
+  ✅ 2026-08-29. Defender bots now distribute focus windows evenly across every eligible
+  attacker before selecting anyone twice, with no host, remote-human or bot identity term.
+  Tactical scoring only breaks ties among equally served targets. Planted throwers turn through
+  the shared input and bounded motor yaw, and cannot release outside a 12 degree facing cone.
+  Multiplayer hosts can select NONE; empty chairs read OPEN and the fixed four-seat rules refuse
+  to start until four people are seated. Disconnects do not install replacement AI while that
+  option is active. The short taya jab now reports TAG CD instead of PUNCH CD. Verified by 111
+  Core tests and 191 EditMode tests; the PlayMode pass compiled and entered the seeded match
+  probes before it was stopped at the user's request to push immediately.
 
 - **Lobby client synchronization, pick normalization, and host non-zero seat picks.** ✅ 2026-08-26.
   `LobbySession._peers` was only populated host-side on `Admit()`, leaving client `PeerCount` at 0

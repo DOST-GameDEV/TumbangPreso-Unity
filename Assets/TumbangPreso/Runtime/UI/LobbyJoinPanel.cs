@@ -41,12 +41,29 @@ namespace TumbangPreso.UI
     {
         /// <summary>How many rows each browser draws. Four is what the old screen drew and it is
         /// the number that fits the card without scrolling.</summary>
-        private const int RowCount = 2;
+        /// <summary>
+        /// How many rows the browser draws.
+        ///
+        /// ⚠️⚠️ FOUR NOW, AND IT WAS TWO PER GROUP BECAUSE THERE WERE TWO GROUPS. 🧑 2026-09-01,
+        /// with a crop of this panel: *"PIC 2 COULD USE ON SOME WORKING ON BCZ IT FEELS
+        /// OVERWHELMING"*. The old layout had a heading, a hint, a field, a JOIN button, a
+        /// second heading, two rows, a third heading, two more rows and a footer: **ten stacked
+        /// things in a 940-unit card, seven of which were on screen saying nothing** because both
+        /// lists are empty until a game answers. One switchable list is two groups instead of
+        /// four, and four rows in it is more of the ONE list that has anything in it.
+        /// </summary>
+        private const int RowCount = 4;
 
-        private const float CardWidth = 940.0f;
-        private const float CardHeight = 520.0f;
-        private const float RowHeight = 48.0f;
-        private const float Pad = 22.0f;
+        /// <summary>
+        /// ⚠️ 820, DOWN FROM 940, AND THE 120 CAME OUT OF A ROW THAT NEVER NEEDED IT. The widest
+        /// string this card draws is a LAN row: a host name, a seat count, a state and an
+        /// `address:port`, about 640 units at <see cref="PaperKit.Body"/>. 940 was sized against
+        /// the screen rather than against the content, which is `CLAUDE.md` § 6.2c question 1.
+        /// </summary>
+        private const float CardWidth = 820.0f;
+        private const float CardHeight = 560.0f;
+        private const float RowHeight = 52.0f;
+        private const float Pad = 24.0f;
 
         /// <summary>Raised after a join has actually connected. The lobby redraws; it does not
         /// reload. See the header.</summary>
@@ -63,8 +80,6 @@ namespace TumbangPreso.UI
         private NetSession _net;
 
         private InputField _entry;
-        private Text _lanTitle;
-        private Text _onlineTitle;
 
         private readonly List<Button> _lanRows = new List<Button>();
         private readonly List<Text> _lanRowLabels = new List<Text>();
@@ -100,16 +115,17 @@ namespace TumbangPreso.UI
         private void Construct()
         {
             var scrim = gameObject.AddComponent<Image>();
-            scrim.color = new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.68f);
+
+            // ⚠️ WARM AND WEAKER. `PaperCraft.Scrim` carries the reasoning: every word on this
+            // card sits on opaque cream, so the scrim buys separation and nothing else, and
+            // `CLAUDE.md` § 6.4 bans a neutral black dim over a warm street because it composites
+            // as cold grey.
+            scrim.color = PaperCraft.Scrim;
             scrim.raycastTarget = true;
             MenuKit.Stretch(scrim.rectTransform, 0.0f);
 
-            var cardGo = new GameObject("JoinCard");
-            cardGo.transform.SetParent(transform, false);
-            var card = cardGo.AddComponent<Image>();
-            card.sprite = GodotTheme.WoodBox(UiTheme.WoodDeep, UiTheme.WoodEdge);
-            card.type = Image.Type.Sliced;
-            card.color = Color.white;
+            var card = PaperKit.Sheet(transform, "JoinCard");
+            var cardGo = card.gameObject;
             MenuKit.Place(card.rectTransform, new Vector2(0.5f, 0.5f), Vector2.zero,
                           new Vector2(CardWidth, CardHeight));
 
@@ -132,26 +148,147 @@ namespace TumbangPreso.UI
             layout.childAlignment = TextAnchor.UpperCenter;
             MenuKit.Stretch(column.GetComponent<RectTransform>(), 0);
 
-            Heading(column.transform, "JOIN A GAME", 34, UiTheme.Amber, 40);
+            var title = Heading(column.transform, "JOIN A GAME", PaperKit.Title,
+                                UiTheme.PaperInk, 34);
+            title.alignment = TextAnchor.MiddleLeft;
+            title.fontStyle = FontStyle.Bold;
 
             var hint = Heading(column.transform,
                                "Type a four-character code or an address, or pick a game below.",
-                               18, UiTheme.CreamMuted, 24);
+                               PaperKit.Caption, UiTheme.PaperInkSoft, 24);
             hint.alignment = TextAnchor.MiddleLeft;
 
             BuildEntryRow(column.transform);
 
-            _lanTitle = Heading(column.transform, "ON YOUR NETWORK", 20, UiTheme.Cream, 26);
-            _lanTitle.alignment = TextAnchor.MiddleLeft;
-            BuildRows(column.transform, _lanRows, _lanRowLabels, OnLanRowClicked,
-                      "SEARCHING FOR LAN GAMES…");
+            BuildSourceSwitch(column.transform);
 
-            _onlineTitle = Heading(column.transform, "ONLINE", 20, UiTheme.Cream, 26);
-            _onlineTitle.alignment = TextAnchor.MiddleLeft;
-            BuildRows(column.transform, _onlineRows, _onlineRowLabels, OnOnlineRowClicked,
+            // ⚠️⚠️ ONE LIST AREA, TWO GROUPS INSIDE IT, AND ONLY ONE OF THEM IS EVER ACTIVE. The
+            // rows themselves are unchanged and so is everything that fills them; what changed is
+            // that the card no longer shows two headed, mostly empty lists at once. See
+            // <see cref="RowCount"/> for the count and 🧑 for the complaint.
+            _list = new GameObject("BrowserList", typeof(RectTransform));
+            _list.transform.SetParent(column.transform, false);
+
+            var listLayout = _list.AddComponent<VerticalLayoutGroup>();
+            listLayout.spacing = 6.0f;
+            listLayout.childControlWidth = true;
+            listLayout.childControlHeight = true;
+            listLayout.childForceExpandWidth = true;
+            listLayout.childForceExpandHeight = false;
+
+            var listElement = _list.AddComponent<LayoutElement>();
+            listElement.minHeight = (RowHeight * RowCount) + (6.0f * (RowCount - 1));
+            listElement.preferredHeight = listElement.minHeight;
+            listElement.flexibleHeight = 0.0f;
+
+            _lanGroup = Group(_list.transform, "NearbyGames");
+            BuildRows(_lanGroup.transform, _lanRows, _lanRowLabels, OnLanRowClicked,
+                      "SEARCHING YOUR NETWORK…");
+
+            _onlineGroup = Group(_list.transform, "OnlineGames");
+            BuildRows(_onlineGroup.transform, _onlineRows, _onlineRowLabels, OnOnlineRowClicked,
                       "CHECKING ONLINE SERVERS…");
 
             BuildFooter(column.transform);
+
+            SetSource(false);
+        }
+
+        private GameObject _list;
+        private GameObject _lanGroup;
+        private GameObject _onlineGroup;
+        private Button _nearbyChip;
+        private Button _onlineChip;
+
+        /// <summary>Which half of the browser is showing. ⚠️ NEARBY first, because a LAN game is
+        /// the one that works at the GenSan venue with no internet, which `docs/TODO.md` § 97
+        /// records as the reason no gate on this screen may need the network.</summary>
+        private bool _showOnline;
+
+        /// <summary>A stack that fills the list area, so the two groups occupy the same space and
+        /// the card cannot change height when the switch is pressed.</summary>
+        private static GameObject Group(Transform parent, string name)
+        {
+            var go = new GameObject(name, typeof(RectTransform));
+            go.transform.SetParent(parent, false);
+
+            var layout = go.AddComponent<VerticalLayoutGroup>();
+            layout.spacing = 6.0f;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = false;
+
+            var fitter = go.AddComponent<ContentSizeFitter>();
+            fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            return go;
+        }
+
+        /// <summary>
+        /// The segmented NEARBY / ONLINE switch that replaced two always-open sections.
+        ///
+        /// ⚠️ IT CARRIES THE COUNT, which is what the two headings used to do
+        /// (`ON YOUR NETWORK · 3`). A switch that says how many games are behind each side is a
+        /// switch a player can use without pressing it, which is the whole reason the counts were
+        /// on the headings in the first place.
+        /// </summary>
+        private void BuildSourceSwitch(Transform parent)
+        {
+            var row = new GameObject("SourceSwitch", typeof(RectTransform));
+            row.transform.SetParent(parent, false);
+
+            var layout = row.AddComponent<HorizontalLayoutGroup>();
+            layout.spacing = PaperKit.Gap;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = true;
+
+            var element = row.AddComponent<LayoutElement>();
+            element.minHeight = PaperKit.ChipHeight;
+            element.preferredHeight = PaperKit.ChipHeight;
+            element.flexibleHeight = 0.0f;
+
+            _nearbyChip = PaperKit.Chip(row.transform, "NearbyChip", "ON YOUR NETWORK");
+            _onlineChip = PaperKit.Chip(row.transform, "OnlineChip", "ONLINE");
+
+            _nearbyChip.onClick.AddListener(() => SetSource(false));
+            _onlineChip.onClick.AddListener(() => SetSource(true));
+        }
+
+        private void SetSource(bool online)
+        {
+            _showOnline = online;
+
+            if (_lanGroup != null) _lanGroup.SetActive(!online);
+            if (_onlineGroup != null) _onlineGroup.SetActive(online);
+
+            PaintChip(_nearbyChip, !online);
+            PaintChip(_onlineChip, online);
+        }
+
+        /// <summary>⚠️ SURFACE AND WEIGHT, NEVER HUE. The same rule the lobby tabs and the sign-in
+        /// tabs follow, and the same reason: `game-ui-design` lists colour-only state as an
+        /// anti-pattern and `docs/TODO.md` § 118.4 forbids the accent on a tab.</summary>
+        private static void PaintChip(Button chip, bool on)
+        {
+            if (chip == null) return;
+
+            // ⚠️⚠️ `Live` AGAINST `Ghost`, WHICH IS THE PAIR EVERY SWITCH IN THE GAME NOW USES.
+            // This one was written as `Token` against `Ghost`, which
+            // `Logs/shots-runtime/Lobby-v52.png` measured at **4 per cent apart in value** and
+            // which the lobby's own tabs abandoned for exactly that reason. It was built before
+            // that measurement and kept the pair that had been rejected; `PaperKit.MarkLive` is
+            // the one place either is written now, and it re-tints the lettering as well, which is
+            // the line every hand-written copy of this forgot.
+            PaperKit.MarkLive(chip, on);
+
+            var label = chip.transform.Find("Label")?.GetComponent<Text>();
+            if (label == null) return;
+
+            label.fontStyle = on ? FontStyle.Bold : FontStyle.Normal;
         }
 
         private static Text Heading(Transform parent, string text, int size, Color colour, float height)
@@ -195,9 +332,10 @@ namespace TumbangPreso.UI
             fieldGo.transform.SetParent(row.transform, false);
 
             var fieldImg = fieldGo.AddComponent<Image>();
-            fieldImg.sprite = GodotTheme.WoodBox(UiTheme.WoodDark, UiTheme.WoodEdge);
-            fieldImg.type = Image.Type.Sliced;
-            fieldImg.color = Color.white;
+            PaperSkin.Apply(fieldGo, PaperCraft.Surface.Tray);
+            // ⚠️ A CHAMFERED SLOT, WHICH IS WHAT HIS `TEXT FIELD.png` IS. See `WoodCraft`: a
+            // rounded box with a dark outline is the language the code used to draw in and his
+            // art never did, and this field sits next to a button drawn from the new one.
 
             var fieldElement = fieldGo.AddComponent<LayoutElement>();
             fieldElement.flexibleWidth = 1;
@@ -205,13 +343,14 @@ namespace TumbangPreso.UI
             fieldElement.preferredHeight = RowHeight;
             fieldElement.flexibleHeight = 0.0f;
 
-            var placeholder = MenuKit.Label(fieldGo.transform, "JOIN CODE OR IP ADDRESS", 20,
-                                            UiTheme.CreamMuted, Vector2.zero, Vector2.zero,
+            var placeholder = MenuKit.Label(fieldGo.transform, "JOIN CODE OR IP ADDRESS",
+                                            PaperKit.Body,
+                                            UiTheme.PaperInkSoft, Vector2.zero, Vector2.zero,
                                             Vector2.zero, TextAnchor.MiddleLeft);
             placeholder.raycastTarget = false;
             Inset(placeholder.rectTransform);
 
-            var typed = MenuKit.Label(fieldGo.transform, "", 20, UiTheme.Cream,
+            var typed = MenuKit.Label(fieldGo.transform, "", PaperKit.Body, UiTheme.PaperInk,
                                       Vector2.zero, Vector2.zero, Vector2.zero,
                                       TextAnchor.MiddleLeft);
             typed.raycastTarget = false;
@@ -233,9 +372,15 @@ namespace TumbangPreso.UI
             _entry.onSubmit.AddListener(_ => Join());
 
             // ---- the button -----------------------------------------------------------
+            // ⚠️⚠️ GREEN, WHICH IS 🧑'S OWN PRIMARY COLOUR, AND IT WAS THE LAST BIG AMBER SLAB
+            // IN THE FRONT END. `Art/ui/host-game/JOIN BUTTON.png` is authored green and is
+            // pixel-for-pixel `BUTTON LONG.png` with one colour swapped, so **his art already
+            // says that the thing called JOIN is green**. Amber is this front end's "look here"
+            // marker (the room code, the live tab's chalk bar) and spending it on an action put
+            // the marker colour and the action colour in the same paint.
             var join = MenuKit.WoodButton(row.transform, "JOIN", Vector2.zero, Vector2.zero,
                                           new Vector2(140.0f, RowHeight), Join,
-                                          "WoodAmberButton");
+                                          "WoodPrimaryButton");
             join.name = "JoinButton";
 
             var joinElement = join.gameObject.AddComponent<LayoutElement>();
@@ -253,22 +398,35 @@ namespace TumbangPreso.UI
             {
                 int index = i;
 
-                var button = MenuKit.WoodButton(parent, "", Vector2.zero, Vector2.zero,
-                                                new Vector2(0.0f, RowHeight), () => onClick(index));
-                button.name = $"BrowserRow{rows.Count}";
+                // ⚠️⚠️ A ROW IS A `Tray` AND NOT A BUTTON-SHAPED SLAB, WHICH IS THE WHOLE
+                // DIFFERENCE BETWEEN A LIST AND A COLUMN OF BUTTONS. Eight identical wooden
+                // buttons stacked in a card is the shape 🧑 called overwhelming; a list of rows
+                // cut into the sheet reads as one object with entries in it. `PaperCraft` draws
+                // a tray with no halo and a shadow along its top edge, so it is visibly recessed
+                // rather than raised, and the pointer state lightens it instead of outlining it,
+                // which is what stops a list of eight flickering as the mouse crosses it.
+                var button = PaperKit.Chip(parent, $"BrowserRow{rows.Count}", "", PaperKit.Body);
+                button.onClick.AddListener(() => onClick(index));
+
+                var rowSkin = button.GetComponent<PaperSkin>();
+                if (rowSkin != null)
+                {
+                    rowSkin.Surface = PaperCraft.Surface.Tray;
+                    rowSkin.Rebuild();
+                }
 
                 var element = button.gameObject.AddComponent<LayoutElement>();
                 element.minHeight = RowHeight;
                 element.preferredHeight = RowHeight;
                 element.flexibleHeight = 0.0f;
 
-                var label = button.GetComponentInChildren<Text>();
+                var label = button.transform.Find("Label")?.GetComponent<Text>();
                 if (label != null)
                 {
                     label.alignment = TextAnchor.MiddleLeft;
-                    label.fontSize = 20;
+                    label.fontSize = PaperKit.Body;
                     label.text = i == 0 ? firstPlaceholder : "AVAILABLE GAMES APPEAR HERE";
-                    label.color = UiTheme.CreamMuted;
+                    label.color = UiTheme.PaperInkSoft;
                     Inset(label.rectTransform);
                 }
 
@@ -301,13 +459,115 @@ namespace TumbangPreso.UI
             element.preferredHeight = RowHeight;
             element.flexibleHeight = 0.0f;
 
-            var close = MenuKit.WoodButton(row.transform, "BACK TO LOBBY", Vector2.zero,
-                                           Vector2.zero, new Vector2(0.0f, RowHeight), Close);
-            close.name = "CloseJoinButton";
+            var close = PaperKit.Chip(row.transform, "CloseJoinButton", "BACK TO LOBBY");
+            close.onClick.AddListener(Close);
             var closeElement = close.gameObject.AddComponent<LayoutElement>();
             closeElement.minHeight = RowHeight;
             closeElement.preferredHeight = RowHeight;
             closeElement.flexibleHeight = 0.0f;
+
+            // ⚠️⚠️ AND A WAY OUT OF SOMEBODY ELSE'S GAME THAT IS NOT JOINING A THIRD ONE.
+            // 🧑 2026-08-29: *"make it possible to leave someones server too even tho u wont join
+            // another one bcz rn the option for servere is Join and leave (u have to join a new
+            // server to leave) (what if i want to host on my lan)?"*.
+            //
+            // This card offered JOIN and BACK TO LOBBY, and BACK only closes the card. The only
+            // things that actually ended a session were BACK on the lobby screen, which also
+            // leaves the screen, and joining somewhere else — **so the process stayed connected
+            // to a lobby the player had finished with, and a process that is still a client
+            // cannot become a host.** That is why he could not host on his own LAN without
+            // restarting the game.
+            //
+            // ⚠️ IT IS HIDDEN WHEN THERE IS NOTHING TO LEAVE, not greyed. An offline player has
+            // no session, and a dead control on a card with two live ones reads as a fault; the
+            // three-line refusal this file gives for a greyed browser row is about a row that is
+            // always there. `Refresh` sets it every time the card is drawn.
+            _leave = MenuKit.WoodButton(row.transform, "LEAVE GAME", Vector2.zero,
+                                        Vector2.zero, new Vector2(0.0f, RowHeight), Leave,
+                                        "WoodDangerButton");
+            _leave.name = "LeaveGameButton";
+
+            // ⚠️⚠️ IT IS PAPER LIKE EVERYTHING ELSE ON THIS CARD, AND IT WAS THE ONE THING ON IT
+            // THAT WAS NOT. `PaperPurityProbe` found it once the probe started walking the
+            // screens the lobby opens: this whole panel is built out of `PaperKit` atoms and this
+            // single control came through `MenuKit.WoodButton`, so it drew as a wooden danger
+            // plate on a cream sheet. ⚠️ **It is hidden until there is a session to end**, which
+            // is exactly the state a render cannot photograph and the reason § 119.6 wanted a
+            // probe rather than a picture.
+            //
+            // ⚠️ THE RED STAYS IN THE LETTERING RATHER THAN IN THE PLATE. `WoodDangerButton` said
+            // "this one is destructive" with a red slab; on cream the same statement is made by
+            // `UiTheme.MenuRed` type on a plain token, which is one saturated word instead of a
+            // saturated rectangle and does not compete with the green primary two controls away.
+            PaperKit.Paperise(_leave.gameObject, PaperCraft.Surface.Token);
+
+            var leaveLabel = _leave.GetComponentInChildren<Text>(true);
+            if (leaveLabel != null)
+            {
+                leaveLabel.name = "Label";
+                leaveLabel.color = UiTheme.MenuRed;
+                leaveLabel.fontStyle = FontStyle.Bold;
+            }
+
+            // ⚠️ AFTER THE LABEL, AND WITH `KeepLabelColour` SET. `PaperButton.Awake` captures the
+            // child it will move and tint the moment the component is added, and it would tint
+            // this one back to ink: the flag is what says the red is the caller's decision. See
+            // that field's own note for why exactly one control in the game sets it.
+            var leaveChip = _leave.GetComponent<PaperButton>();
+            if (leaveChip == null) leaveChip = _leave.gameObject.AddComponent<PaperButton>();
+            leaveChip.KeepLabelColour = true;
+
+            var leaveElement = _leave.gameObject.AddComponent<LayoutElement>();
+            leaveElement.minHeight = RowHeight;
+            leaveElement.preferredHeight = RowHeight;
+            leaveElement.flexibleHeight = 0.0f;
+            _leave.gameObject.SetActive(false);
+        }
+
+        /// <summary>The LEAVE GAME control. Only on screen while there is a session to end.</summary>
+        private Button _leave;
+
+        /// <summary>
+        /// End this peer's session and stay exactly where we are.
+        ///
+        /// ⚠️⚠️ IT DOES NOT NAVIGATE, AND THAT IS THE WHOLE DIFFERENCE FROM THE LOBBY'S BACK
+        /// BUTTON. Back calls the same `Stop` and then leaves for the main menu; the ask was for
+        /// the player to end up **in their own lobby, able to press HOST**, which is what this
+        /// does. `NetSession.Stop` resets the peer table, the leader, `MatchInProgress` and the
+        /// relay fields, so what is left is the same clean state a freshly opened lobby has.
+        ///
+        /// ⚠️ IT WORKS FOR A HOST TOO, AND ON A HOST IT IS THE ONLY ORDERLY WAY TO CLOSE A
+        /// ROOM FROM THIS SCREEN. `Stop` now sends every peer a real `DisconnectClient` carrying
+        /// `NetSession.HostLeftMessage`, so the other three are told rather than left to a
+        /// silence timer.
+        ///
+        /// ⚠️ THE CARD CLOSES AFTERWARDS. Leaving is finished business, and a browser still
+        /// listing the game you have just left is an invitation to walk straight back into it by
+        /// accident.
+        /// </summary>
+        private void Leave()
+        {
+            if (_net == null || !_net.IsNetworked)
+            {
+                Report("You are not in anybody's game.");
+                return;
+            }
+
+            bool wasHost = NetAuthority.IsHost;
+            _net.Stop();
+
+            Report(wasHost ? "Room closed. You can host again or join somebody."
+                           : "Left the game. You can host now, or join somebody else.");
+
+            Refresh();
+            Close();
+
+            // ⚠️ THE LOBBY IS TOLD, THROUGH THE EVENT IT ALREADY LISTENS TO. `Joined` is the
+            // "something about this session changed, redraw yourself" signal
+            // `ConvertedMatchSetup` subscribes to; raising it here is what turns the seats, the
+            // nameplates and the START/READY button back into a lobby of one. Adding a second
+            // event for the opposite direction would be a second thing to keep in step.
+            Joined?.Invoke();
         }
 
         /// <summary>
@@ -370,11 +630,16 @@ namespace TumbangPreso.UI
         /// </summary>
         private void Refresh()
         {
+            // ⚠️ THE LEAVE CONTROL APPEARS ONLY WHEN THERE IS SOMETHING TO LEAVE. See `Leave`:
+            // an offline player has no session, and this card is opened from the lobby in both
+            // states.
+            if (_leave != null) _leave.gameObject.SetActive(_net != null && _net.IsNetworked);
+
             var lan = _net?.Beacon?.SortedEntries ?? new List<LanEntry>();
 
-            _lanTitle.text = lan.Count > 0
+            SetChipLabel(_nearbyChip, lan.Count > 0
                 ? $"ON YOUR NETWORK  ·  {lan.Count}"
-                : "ON YOUR NETWORK  ·  searching...";
+                : "ON YOUR NETWORK");
 
             _lanAddresses.Clear();
 
@@ -398,11 +663,28 @@ namespace TumbangPreso.UI
                      $"{entry.HostName}   ·   {entry.Players}/{entry.MaxPlayers}   ·   {state}   ·   {address}");
             }
 
-            var online = _net?.Query?.Servers?.ToList() ?? new List<ServerQuery.Entry>();
+            // ⚠️⚠️ OUR OWN LOBBY IS NOT A GAME WE CAN JOIN. 🧑 2026-08-29:
+            // *"na kikita sarili sa lobby (join a game)"*. The LAN half is filtered at the source
+            // by `LanBeacon.IsOurOwn`, which can compare a per-process id; the ONLINE half has no
+            // such id on the wire, but it does not need one, because a relay lobby IS its join
+            // code. If we are hosting and a listed code is the code we are advertising, that row
+            // is this process.
+            //
+            // ⚠️ THE HOST GATE IS PART OF THE TEST, not a shortcut past it. A CLIENT holds the
+            // host's join code in the same field once it has joined, and filtering on the code
+            // alone would then hide the lobby that client is sitting in from its own browser
+            // while it is still perfectly able to see everybody else's.
+            string ownCode = _net != null && _net.IsNetworked && _net.IsHost
+                ? (_net.Lobby?.JoinCode ?? "")
+                : "";
 
-            _onlineTitle.text = online.Count > 0
-                ? $"ONLINE  ·  {online.Count}"
-                : "ONLINE  ·  no answer yet";
+            var online = (_net?.Query?.Servers ?? Enumerable.Empty<ServerQuery.Entry>())
+                .Where(e => string.IsNullOrEmpty(ownCode)
+                            || !string.Equals(e.JoinCode, ownCode, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            SetChipLabel(_onlineChip, online.Count > 0 ? $"ONLINE  ·  {online.Count}"
+                                                        : "ONLINE");
 
             _onlineCodes.Clear();
 
@@ -434,6 +716,15 @@ namespace TumbangPreso.UI
         /// deactivated object is meaningless, and `MenuKit.Fit` would then leave a host name typed
         /// on another machine running off the side of the card.
         /// </summary>
+        private static void SetChipLabel(Button chip, string text)
+        {
+            var label = chip == null ? null : chip.transform.Find("Label")?.GetComponent<Text>();
+            if (label == null) return;
+
+            label.text = text;
+            MenuKit.Fit(label, ((RectTransform)chip.transform).rect.width - 24.0f, 13);
+        }
+
         private static void Draw(Button row, Text label, string text)
         {
             row.gameObject.SetActive(true);
@@ -442,8 +733,8 @@ namespace TumbangPreso.UI
             if (label == null) return;
 
             label.text = text;
-            label.color = UiTheme.Cream;
-            label.fontSize = 20;
+            label.color = UiTheme.PaperInk;
+            label.fontSize = PaperKit.Body;
 
             float room = label.rectTransform.rect.width;
             if (room <= 1.0f) room = CardWidth - (Pad * 2.0f) - 36.0f;
@@ -455,7 +746,7 @@ namespace TumbangPreso.UI
         {
             Draw(row, label, text);
             row.interactable = false;
-            if (label != null) label.color = UiTheme.CreamMuted;
+            if (label != null) label.color = UiTheme.PaperInkSoft;
         }
 
         // ------------------------------------------------------------------------------

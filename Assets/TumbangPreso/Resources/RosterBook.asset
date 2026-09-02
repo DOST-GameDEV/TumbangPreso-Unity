@@ -31,6 +31,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7c7994baa482eb64ba8bc1809d5b3cc9, type: 2}
   - {fileID: 11400000, guid: 86af06543288730408d46a1356227e28, type: 2}
   - {fileID: 11400000, guid: 0a80b9e5ea3f53245a9b764c0e16bf50, type: 2}
+  - {fileID: 11400000, guid: 37b573facc5d0d54184a98dfb6c245db, type: 2}
+  - {fileID: 11400000, guid: fba31e377879d0644a880f2f70a2b12c, type: 2}
   Cans:
   - {fileID: 11400000, guid: 87c3c01b07782624aa1933e1330ab204, type: 2}
   - {fileID: 11400000, guid: ce0626ac5db14f2409ddadc10dd61d76, type: 2}

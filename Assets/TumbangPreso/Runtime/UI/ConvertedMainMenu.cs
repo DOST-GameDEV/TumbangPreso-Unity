@@ -17,6 +17,16 @@ namespace TumbangPreso.UI
     ///
     /// ⚠️⚠️ THERE ARE TWO OVERLAYS NOW, NOT THREE. The tutorial one was deleted; see
     /// <see cref="Wire"/>.
+    ///
+    /// ⚠️⚠️ AND THE ACCOUNT AND CAREER OVERLAYS ARE GONE, and so is the `PlayerNameplate` that
+    /// replaced them. **This screen is four doors: PLAY, TUTORIAL, SETTINGS, QUIT, plus the
+    /// credits link.** Everything about the PLAYER lives in the lobby now
+    /// (`LobbyChrome.BuildIdentity`, `docs/TODO.md` § 114.7). See the note in <see cref="Wire"/>
+    /// for why two buttons on this screen was the bug, and why moving the one that replaced them
+    /// is not the same mistake again.
+    ///
+    /// ⚠️ THE ONE THING THAT DID NOT MOVE IS THE LOGIN STEP, because it has to happen before the
+    /// lobby exists. <see cref="OfferTheLoginStep"/>.
     /// </summary>
     public sealed class ConvertedMainMenu : ConvertedScreen
     {
@@ -74,8 +84,77 @@ namespace TumbangPreso.UI
             Cursor.visible = true;
 
             GameServices.Music?.Play("menu", GameServices.MenuTrack);
+
+            // ⚠️⚠️ THE TITLE SCREEN IS FOUR DOORS AND NOTHING ELSE, SINCE 2026-09-01. 🧑, over
+            // four screenshots of the shipped build: *"I think the player shit should live in
+            // lobby screen, not play"*, *"the ui rn is so confusing i dont know where anything
+            // that was developed phase 1-10 onwards live"*, and *"AND LOBBY IS WHERE ALL UI
+            // SHOULD LIVE"*. `docs/TODO.md` § 114.7 is the entry.
+            //
+            // ⚠️⚠️ SO `PlayerNameplate` IS NO LONGER INSTALLED HERE, AND THE PARAGRAPH THIS
+            // REPLACES IS STILL CORRECT ABOUT WHY IT EXISTED. It replaced two floating wood
+            // buttons (*"look wtf why are these buttons here"*, § 92) with one plate that was the
+            // single door to four tabs, a career, a match history and the whole account system.
+            // That was the right fix for "this screen grew a button per feature". **What it could
+            // not fix is that the door was on a screen the player leaves immediately**: the hub
+            // sat on the title screen while every other thing a player does between matches sat
+            // in the lobby, so which of two screens a feature lived behind was something you had
+            // to know before you could look for it.
+            //
+            // ⚠️ THE DOOR MOVED RATHER THAN MULTIPLIED, which is § 6.3's rule by name: NEVER ADD
+            // A SECOND DOOR TO FIX A FINDABILITY PROBLEM. `LobbyChrome.BuildIdentity`'s player
+            // card is the door now, and `ConvertedMatchSetup` owns the hub.
+            //
+            // ⚠️⚠️ AND THE BOOT LOGIN STEP STAYS HERE, BECAUSE IT HAS TO HAPPEN BEFORE THE LOBBY
+            // EXISTS. `PlayerNameplate.OfferTheAccountChoiceOnce` used to own it, so deleting the
+            // plate from this screen would have deleted the LOGIN step out of the sequence 🧑
+            // wrote down. That is § 6.2c question 5 (*if I delete this, what else was it doing*)
+            // answered before the deletion instead of after it.
+            OfferTheLoginStep();
         }
 
+        /// <summary>
+        /// LOGIN, step 3 of five. See `SignInScreen.OpenAtBoot`.
+        ///
+        /// ⚠️⚠️ GATED ON `SceneFlow.BootedThroughSplash`, WHICH IS A LAUNCH RATHER THAN A SCENE
+        /// LOAD, AND THAT DISTINCTION COST A RED PROBE TO LEARN. That flag's own note carries it
+        /// in full: this scene is reached from the splash, from `LeaveMatchToMainMenu` and from
+        /// any test that loads it by name, and `UiClickProbe.EveryButtonIsReachable` once came
+        /// back with every settings control blocked by `SignInCanvas` because the question opened
+        /// over a menu a probe had loaded directly and nothing was ever going to answer it.
+        ///
+        /// ⚠️ IT IS NO LONGER GATED ON `GameSettings.AccountChoiceMade`. That made it a
+        /// once-per-machine event; 🧑 asked for it on every launch, with a returning player
+        /// passed through automatically. `docs/TODO.md` § 114.5.
+        /// </summary>
+        private void OfferTheLoginStep()
+        {
+            if (!SceneFlow.BootedThroughSplash) return;
+
+            // ⚠️⚠️ ONCE PER LAUNCH, NOT ONCE PER VISIT TO THIS SCENE. See
+            // `SceneFlow.LoginStepOffered`: the flag above is never cleared, so every return to
+            // the main menu in one process re-asked a question the player had already answered,
+            // and 🧑 met it coming back out of the character maker.
+            if (SceneFlow.LoginStepOffered) return;
+            SceneFlow.LoginStepOffered = true;
+
+            var signIn = gameObject.GetComponent<SignInScreen>();
+            if (signIn == null) signIn = gameObject.AddComponent<SignInScreen>();
+
+            signIn.Install();
+            signIn.OpenAtBoot();
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE NAMEPLATE-HIDING THIS METHOD USED TO DO IS GONE WITH THE NAMEPLATE, AND THE
+        /// REASON IT EXISTED IS WORTH KEEPING. `UiClickProbe.EveryButtonIsReachable` found eight
+        /// settings controls blocked by that plate and
+        /// `SettingsWheelProbe.TheWheelScrollsTheSettingsListFromEveryPartOfIt` found the wheel
+        /// swallowed over it, because it lived on its own canvas above the converted screens and
+        /// covered the top left of every panel this method opens. **Both probes still run against
+        /// this screen and both are the regression that matters if anything is ever put back in
+        /// that corner.** § 92.7, and `docs/TODO.md` § 114.7 for where the plate went.
+        /// </summary>
         private void Overlay(string button, string panel)
         {
             var node = Node(panel);

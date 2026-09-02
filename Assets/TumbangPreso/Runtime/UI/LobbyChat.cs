@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using TumbangPreso.Net;
 using UnityEngine;
@@ -70,6 +71,18 @@ namespace TumbangPreso.UI
         public void OnPointerClick(UnityEngine.EventSystems.PointerEventData e)
         {
             if (_inMatch || _field == null) return;
+
+            // ⚠⚠ THE SAME CLICK CLOSES IT. 🧑 2026-08-30: *"just make the chat extend when u click
+            // it anywhere"*. It is one control that grows and shrinks, not a door to a window, and
+            // the dimmed backdrop that used to catch a click-out went with the window
+            // (`BuildHistoryPanel`). Without a toggle here the only ways back would be the CLOSE
+            // button and Escape, and the press that opened it would do nothing the second time,
+            // which reads as the control being stuck.
+            if (_historyPanel != null && _historyPanel.activeSelf)
+            {
+                CloseHistory();
+                return;
+            }
 
             OpenHistory();
             _field.ActivateInputField();
@@ -208,7 +221,8 @@ namespace TumbangPreso.UI
 
             for (int i = 0; i < MaxLines; i++)
             {
-                var line = MenuKit.Label(transform, "", LineSize, UiTheme.Cream,
+                var line = MenuKit.Label(transform, "", LineSize,
+                                         _inMatch ? UiTheme.Cream : UiTheme.PaperInk,
                                          Vector2.zero, Vector2.zero, Vector2.zero,
                                          TextAnchor.LowerLeft);
 
@@ -241,9 +255,32 @@ namespace TumbangPreso.UI
             if (!_inMatch)
             {
                 var plate = gameObject.AddComponent<Image>();
-                plate.sprite = GodotTheme.WoodBox(UiTheme.WoodDeep, UiTheme.WoodEdge);
-                plate.type = Image.Type.Sliced;
-                plate.color = Color.white;
+
+                // ⚠⚠⚠ IT IS ASPHALT, NOT WOOD, AND THAT IS THE POINT. 🧑 2026-09-01:
+                // *"make sure all ui isnt generated in the same way but follows a central theme
+                // bcz old issue was it read as repetitive with everyone just being brown and
+                // boring"*. Counted off `Logs/shots-runtime/Lobby-v43.png` the lobby was eleven
+                // brown plates, and this was one of them: a recessed brown plank inside a brown
+                // rail under a brown drawer toggle.
+                //
+                // A chat log is a LIST OF LINES, and this game already has a surface lines are
+                // written on. `VISION.md` opens on a street game, § 2 rule 5 names the chalk and
+                // the road as two of the three things a frame must show, and `MapGeometryCheck`
+                // gates the chalk box in every arena. `WoodCraft.Surface.Slate` is that road:
+                // matte, no keyline, one lit lip along the top edge where the rail above it
+                // catches the light. **It costs no new colour** and it is the only thing on the
+                // right-hand side that is not a board.
+                // ⚠️⚠️ IT IS A PAPER SHEET NOW, AND THE ASPHALT NOTE ABOVE IS KEPT BECAUSE ITS
+                // REASONING IS STILL RIGHT ABOUT THE PROBLEM AND WAS WRONG ABOUT THE ANSWER. The
+                // complaint it was written against was *"everyone just being brown"*, and slate
+                // did fix that for one panel; what it could not fix is that the whole front end
+                // and the whole street are the same hue. Now that every rail is cream, a matte
+                // near-black well is the ONE dark object on the screen and reads as a hole cut in
+                // it, which is the exact failure `WoodCraft.PaintSlate` records at 0.22 alpha and
+                // corrects to 0.12. A log is a list of lines; on a paper front end it is written
+                // on paper.
+                plate.raycastTarget = true;
+                PaperSkin.Apply(gameObject, PaperCraft.Surface.Sheet);
 
                 // ⚠️ IT DOES EAT CLICKS, unlike everything else this component draws. A chat panel
                 // you can click THROUGH into the seat rows behind it is a panel that steals half
@@ -265,9 +302,20 @@ namespace TumbangPreso.UI
             _fieldRow.transform.SetParent(transform, false);
 
             var image = _fieldRow.AddComponent<Image>();
-            image.sprite = GodotTheme.WoodBox(UiTheme.WoodDark, UiTheme.WoodEdge);
-            image.type = Image.Type.Sliced;
-            image.color = Color.white;
+
+            // ⚠️⚠️ THE FIELD IS CHAMFERED AND THE LOG BEHIND IT IS NOT, WHICH IS HOW A
+            // PLAYER TELLS THEM APART. Both are dark, and before this pass both were the same
+            // `GodotTheme.WoodBox` rounded rectangle at two fills, so the chat read as one tall
+            // dark box with a line across it. In 🧑's own art a CHAMFER means a thing you touch
+            // (`BUTTON LONG`, `TEXT FIELD`) and a ROUND means furniture (`MAP MODE DISPLAY`), so
+            // the silhouette is already carrying that distinction everywhere else on the screen.
+            // `WoodCraft`'s header has the sampled evidence.
+            // ⚠️ THE FIELD IS A `Tray` AND THE LOG BEHIND IT IS A `Sheet`, which is the same
+            // distinction the note above draws, one material later: a `Tray` is cut INTO the
+            // sheet and carries a shadow along its top edge, a `Sheet` stands on the road and
+            // carries a halo. One is a thing you type in, the other is a thing you read.
+            if (_inMatch) WoodSkin.Apply(_fieldRow, WoodCraft.Surface.Field);
+            else PaperSkin.Apply(_fieldRow, PaperCraft.Surface.Tray);
 
             var element = _fieldRow.AddComponent<LayoutElement>();
             element.minHeight = FieldHeight;
@@ -275,13 +323,16 @@ namespace TumbangPreso.UI
 
             var placeholder = MenuKit.Label(_fieldRow.transform,
                                             _inMatch ? "ENTER to talk" : "Say something",
-                                            LineSize, UiTheme.CreamMuted,
+                                            LineSize,
+                                            _inMatch ? UiTheme.CreamMuted
+                                                     : UiTheme.PaperInkSoft,
                                             Vector2.zero, Vector2.zero, Vector2.zero,
                                             TextAnchor.MiddleLeft);
             placeholder.raycastTarget = false;
             Inset(placeholder.rectTransform);
 
-            var typed = MenuKit.Label(_fieldRow.transform, "", LineSize, UiTheme.Cream,
+            var typed = MenuKit.Label(_fieldRow.transform, "", LineSize,
+                                      _inMatch ? UiTheme.Cream : UiTheme.PaperInk,
                                       Vector2.zero, Vector2.zero, Vector2.zero,
                                       TextAnchor.MiddleLeft);
             typed.raycastTarget = false;
@@ -477,6 +528,48 @@ namespace TumbangPreso.UI
             if (_field == null) return;
 
             _field.text = "";
+
+            // ⚠️⚠️⚠️ THE RE-FOCUS HAS TO WAIT A FRAME, AND CALLING IT HERE IS WHY THE CHAT READ AS
+            // BROKEN AFTER THE FIRST LINE. 🧑 has reported this four ways, starting with **"chat
+            // doesnt work at all btw"**, and `docs/TODO.md` § 121.11 could not place it from the
+            // source because every part of this file is correct in isolation.
+            //
+            // **The fault is in uGUI's ordering, not in ours.** `InputField.KeyPressed` returns
+            // `EditState.Finish` on Return, and the caller does exactly this, in this order:
+            //
+            //     if (!m_WasCanceled) SendOnSubmit();
+            //     DeactivateInputField();
+            //
+            // `SendOnSubmit` is what calls this method. So an `ActivateInputField()` on this line
+            // runs INSIDE the submit, and `DeactivateInputField()` then runs immediately after it
+            // and throws the focus away. **The player types a line, presses Enter, the line sends
+            // correctly, and the field goes dead under the cursor**; every following keystroke
+            // lands on nothing and the chat looks like it stopped working after one message. The
+            // first line arriving is what makes this so hard to report: the feature is not dead,
+            // it is dead from the second line onward.
+            //
+            // ⚠️ SO IT IS DEFERRED BY ONE FRAME, WHICH IS AFTER uGUI HAS FINISHED. A coroutine is
+            // the cheapest thing that is definitely later than the rest of this call stack, and
+            // the guard on it is what stops a queue of them building up if somebody holds Enter.
+            if (_refocus != null) StopCoroutine(_refocus);
+            _refocus = StartCoroutine(RefocusNextFrame());
+        }
+
+        private Coroutine _refocus;
+
+        /// <summary>
+        /// ⚠️ IT RE-CHECKS EVERYTHING, because a frame is long enough for the lobby to have gone.
+        /// The player can press Enter and leave the screen in the same frame, and re-focusing a
+        /// field on a destroyed panel is an exception in a coroutine nothing is watching.
+        /// </summary>
+        private IEnumerator RefocusNextFrame()
+        {
+            yield return null;
+
+            _refocus = null;
+
+            if (_inMatch || _field == null || !_field.gameObject.activeInHierarchy) yield break;
+
             _field.ActivateInputField();
         }
 
@@ -514,6 +607,13 @@ namespace TumbangPreso.UI
             {
                 SetLines();
                 RefreshHistoryPanel();
+
+                // ⚠️ A LINE ARRIVING WHILE THE LOG IS OPEN MOVES THE BOTTOM OF IT, so the log
+                // has to follow. Without this the panel stays on the line that was newest when
+                // it was opened and every message after that arrives off screen, which is the
+                // same complaint the snap was written for (*"u dont see most recent chats"*)
+                // reached from the other direction.
+                if (_historyPanel != null && _historyPanel.activeSelf) _snapPending = true;
                 return;
             }
 
@@ -540,6 +640,19 @@ namespace TumbangPreso.UI
                 {
                     _lines[i].text = i < target ? "" : _history[first + i - target];
                 }
+
+                // ⚠⚠ AN EMPTY CHAT SAYS SO INSTEAD OF BEING A HOLE. The lobby panel is a FIXED
+                // two-line box by design (🧑: *"i want u to not make the chat extend anymore"*), so
+                // before anybody speaks it is a dark rectangle with an input under it and nothing
+                // explaining the gap. Measured off `Logs/shots-runtime/Lobby-v43.png`, where it is
+                // the one thing on the right rail that reads as broken. **One muted line costs
+                // nothing and turns reserved space into an invitation**, which is the same
+                // argument `LobbyChat.FieldHeight` makes for the field filling the plate.
+                //
+                // ⚠️ IT IS NOT PUSHED INTO `_history`. A placeholder in the log would be a line
+                // the scrollable view then shows for ever, and `RefreshHistoryPanel` already has
+                // its own `EmptyLog` for that surface.
+                if (_history.Count == 0) _lines[_lines.Count - 1].text = EmptyLog;
             }
 
             foreach (var line in _lines)
@@ -568,7 +681,11 @@ namespace TumbangPreso.UI
 
                 if (!has) continue;
 
-                line.color = UiTheme.Cream;
+                // ⚠️ THE EMPTY LINE IS MUTED, so it reads as the absence of messages rather than
+                // as a message somebody sent.
+                line.color = _inMatch
+                    ? (line.text == EmptyLog ? UiTheme.CreamMuted : UiTheme.Cream)
+                    : (line.text == EmptyLog ? UiTheme.PaperInkSoft : UiTheme.PaperInk);
 
                 if (element != null)
                 {
@@ -576,8 +693,108 @@ namespace TumbangPreso.UI
                     element.preferredHeight = LineHeight;
                 }
 
-                MenuKit.FitBlock(line, LineHeight * 2.0f);
+                // ⚠⚠ FITTED TO THE HEIGHT THE ROW ACTUALLY HAS, AND `LineHeight * 2.0f` HERE IS
+                // WHY THE STRIP WENT BLANK. 🧑 2026-08-30: *"Chat does not appear on preview after
+                // 1 chat"*. `docs/TODO.md` § 79.3 named this mechanism as the standing suspect and
+                // could not reproduce it at four short messages; a longer one reproduces it every
+                // time.
+                //
+                // The two lines above pin this row's `LayoutElement` to ONE `LineHeight`, 26 px.
+                // This call then allowed the type to be sized against a TWO-line cap, 52 px, so a
+                // message that wrapped was declared to fit at a size that draws 52 px of text into
+                // a 26 px rect. **Legacy `Text` on `Truncate` clips by WHOLE LINES**, and a rect
+                // that cannot hold one whole line at the chosen size paints nothing at all — while
+                // remaining active, non-empty and correctly sized, which is why every check that
+                // read `Text.text` passed against his screenshot.
+                //
+                // Fitting to `LineHeight` shrinks the type until ONE line genuinely fits the rect
+                // it is clipped to, so the two numbers finally describe the same box.
+                //
+                // ⚠ A LINE TOO LONG TO FIT AT `MenuKit.MinReadableUnits` IS STILL CLIPPED, and that
+                // is the design rather than a shortfall: this strip shows `LobbyVisibleLines` of
+                // the log by intent, and the whole message is in the scrollable history behind the
+                // click, on `Overflow`, inside a viewport. What changed is that it now clips to
+                // ONE READABLE LINE instead of to nothing.
+                // ⚠️ THE EMPTY-STATE LINE IS NOT FITTED OR CUT. It is sixteen characters this file
+                // wrote itself, so the machinery for arbitrary 120-character strings typed by a
+                // stranger has nothing to do here — and it was DOING something: measured off
+                // `Logs/shots-runtime/Lobby-v43.png` the panel read **"No message⋯"**, because
+                // `Ellipsise` measures `preferredHeight` against a rect the layout has not sized
+                // yet on the frame the panel is built. A hint that gets cut is worse than no hint.
+                if (line.text == EmptyLog)
+                {
+                    line.fontSize = LineSize;
+                    line.verticalOverflow = VerticalWrapMode.Overflow;
+                    continue;
+                }
+
+                MenuKit.FitBlock(line, LineHeight);
+
+                // ⚠️⚠️ AND IT IS CLIPPED TO WHAT IT WAS JUST FITTED TO. 🧑 2026-08-29: *"nag
+                // ooverflow yung text sa lobby chat"*. `MenuKit.FitBlock` sets
+                // `verticalOverflow = Overflow` and then SHRINKS the type until the block fits
+                // the cap it was given, which works right up until the font hits
+                // `MenuKit.MinReadableUnits` 18 and cannot go lower. `MatchRpc.MaxChatLength` is
+                // 120 characters, and 120 characters at 18 units in a 560 px panel is three
+                // lines against a two-line slot: the `LayoutElement` then claims 52 px while the
+                // label DRAWS 78, and legacy `Text` on Overflow happily paints the remainder
+                // outside the plate, over the START button underneath it.
+                //
+                // ⚠️ CLIPPED RATHER THAN GROWN, because the plate is a fixed size by design and
+                // the lobby deliberately shows only `LobbyVisibleLines` of the log. Nothing is
+                // lost: the whole line is in the scrollable history behind the click, which is
+                // on `Overflow` inside a viewport and is the right place for it.
+                line.verticalOverflow = VerticalWrapMode.Truncate;
+
+                // ⚠️⚠️ AND THE STRING IS CUT WHEN THE TYPE CANNOT SHRINK ANY FURTHER, WHICH IS THE
+                // OTHER HALF AND THE ONE THE FIT ALONE COULD NEVER DO. `LobbyChatStripProbe`
+                // measured it: at `MatchRpc.MaxChatLength` = 120 characters the fit bottoms out at
+                // `MenuKit.MinReadableUnits` 18 and the block still wants **43 px in a 26 px row**.
+                // Legacy `Text` on `Truncate` clips by whole lines, so the row paints NOTHING
+                // while staying active and non-empty. Shrinking further is forbidden by that
+                // constant and growing the row is forbidden by 🧑's *"i want u to not make the
+                // chat extend anymore"*, so the only remaining lever is the text.
+                Ellipsise(line, LineHeight);
             }
+        }
+
+        /// <summary>
+        /// Cut a line down until it fits the box it is clipped to, and say so with an ellipsis.
+        ///
+        /// ⚠️ NOTHING IS LOST AND THAT IS WHAT MAKES THE CUT HONEST. The whole message is in the
+        /// scrollable log behind the click, on `Overflow`, inside a viewport, which is where a
+        /// 120-character sentence belongs. This strip's job is *"you have new messages, here is
+        /// roughly what they say"*.
+        ///
+        /// ⚠️ A BINARY SEARCH, NOT A CHARACTER-AT-A-TIME LOOP. `preferredHeight` re-runs the text
+        /// generator on every read, and this runs on every arriving message with two rows live;
+        /// 7 measurements instead of up to 120 is the difference between free and noticeable.
+        ///
+        /// ⚠️ AND IT MEASURES THE SAME PROPERTY THE PROBE ASSERTS ON, deliberately. A fit checked
+        /// against a different number from the one the test reads is how this went green while
+        /// his screen was blank.
+        /// </summary>
+        private static void Ellipsise(Text line, float room)
+        {
+            if (line == null || string.IsNullOrEmpty(line.text)) return;
+            if (line.preferredHeight <= room + 0.5f) return;
+
+            string full = line.text;
+
+            // Low is a length known too long, high a length known to fit. 4 is short enough that
+            // any row can hold it, and it is the floor the search cannot go under.
+            int low = 4, high = full.Length;
+
+            while (high - low > 1)
+            {
+                int mid = (low + high) / 2;
+                line.text = full.Substring(0, mid) + "…";
+
+                if (line.preferredHeight <= room + 0.5f) low = mid;
+                else high = mid;
+            }
+
+            line.text = full.Substring(0, low) + "…";
         }
 
         /// <summary>
@@ -593,55 +810,112 @@ namespace TumbangPreso.UI
         /// ⚠️ AND IT SORTS BELOW THE CHARACTER PICKER (100) ON PURPOSE. Both are lobby overlays,
         /// and the picker is the one that must never be drawn through.
         /// </summary>
+        /// <summary>
+        /// How tall the chat stands while it is open, in reference units.
+        ///
+        /// ⚠️ IT IS A HEIGHT AND NOT A LINE COUNT, because the log is one wrapped `Text` inside a
+        /// `ScrollRect` rather than a stack of rows. `MaxHistory` still bounds what is IN it.
+        /// </summary>
+        private const float ExpandedHeight = 460.0f;
+
         private void BuildHistoryPanel()
         {
-            var canvas = GetComponentInParent<Canvas>();
-            Transform root = canvas != null ? canvas.rootCanvas.transform : (_rect != null ? _rect.parent : null);
-            if (root == null) return;
+            if (_rect == null) return;
 
+            // ⚠⚠⚠ IT IS PARENTED TO THE CHAT AND GROWS UPWARD OUT OF IT, AND IT USED TO BE A
+            // CENTRED 780 x 560 WINDOW OVER A DIMMED LOBBY. 🧑 2026-08-30: *"pls overhaul how chat
+            // works instead of making a separate window just make the chat extend when u click it
+            // anywhere and make it so that it doesnt make the shit above it move"*, and, in the
+            // same breath, granting the permission the old design was built to avoid: *"its the
+            // one thing im giving authorization to cover shit"*.
+            //
+            // The centred window came from a real constraint — the previous note recorded that a
+            // box centred inside a bottom-left strip is centred on the STRIP, not on the screen,
+            // so it was moved to the root canvas to get the middle of the frame. That is still
+            // true and it is no longer what is wanted: the ask is for the control to grow where
+            // it already is.
+            //
+            // ⚠⚠ THE CHAT'S OWN RECT NEVER CHANGES SIZE, WHICH IS THE SECOND HALF OF THE ASK AND
+            // THE EASIEST TO GET WRONG. *"make it so that it doesnt make the shit above it move"*.
+            // `PanelHeight` reads `_rect.rect.height` and `LobbyChrome.StackRight` positions the
+            // LOBBY & SERVERS pill off that number every frame, so growing `_rect` would walk the
+            // whole right-hand rail up the screen. This is a SEPARATE rect that overlaps upward
+            // and leaves `_rect` alone, so the stack above it cannot notice.
+            //
+            // ⚠ AND THE DIMMING BACKDROP IS GONE WITH THE WINDOW. It existed so a click on empty
+            // road would close a modal (*"it clsoes when u click out"*, 2026-08-28); an in-place
+            // extension is not a modal, it does not take the screen, and a full-screen raycast
+            // target over a lobby somebody is trying to click is a control that eats presses. The
+            // three ways out are the same click that opened it, the CLOSE button and Escape.
             _historyPanel = new GameObject("LobbyChatLog");
-            _historyPanel.transform.SetParent(root, false);
+            _historyPanel.transform.SetParent(_rect, false);
 
             var layer = _historyPanel.AddComponent<RectTransform>();
-            MenuKit.Stretch(layer, 0.0f);
 
+            // ⚠️⚠️ `ignoreLayout`, AND WITHOUT IT THE LOG IS LAID OUT AS A CHAT ROW AND EVERY
+            // ANCHOR BELOW IS OVERWRITTEN. 🧑 2026-09-01: *"lobby chat goes past screen"* with the
+            // LOBBY CHAT heading and the CLOSE button hanging off the bottom edge of the window,
+            // then *"lobby chat doesnnt work at all"*, then the design restated: *"lobby chat is
+            // supposed to extend the box when u openn it without making lobby annd servers move
+            // ... it just goes over it and u can chat and see chat history and scroll chats"*.
+            //
+            // **This panel is a child of the chat, and the chat's own `VerticalLayoutGroup` owns
+            // the position and size of every ACTIVE child it has.** So the moment `OpenHistory`
+            // switched it on, the group took the 460-unit box, ignored the top-edge anchors set
+            // below, and placed it as the next row in the column: under the "Say something"
+            // field, growing DOWNWARD off the bottom of the screen, with `SetAsLastSibling`
+            // guaranteeing it went last. The group also added the panel's height to the chat's
+            // own preferred height, which is the second half of the ask: `LobbyChrome.StackRight`
+            // positions the LOBBY & SERVERS pill off `PanelHeight` every frame, so opening the
+            // log walked the whole right-hand rail up the screen.
+            //
+            // ⚠️ ONE LINE, AND IT IS THE LINE THAT MAKES "OVERLAP" DIFFERENT FROM "BE A ROW".
+            // An ignored child keeps its own anchors, contributes nothing to the parent's
+            // preferred size, and is skipped by the spacing too. Everything below this line was
+            // already correct and had never once been used.
+            _historyPanel.AddComponent<LayoutElement>().ignoreLayout = true;
+
+            // ⚠⚠ IT SITS ON THE CHAT'S TOP EDGE, NOT ON ITS BOTTOM ONE, AND THAT IS THE WHOLE
+            // DIFFERENCE BETWEEN EXTENDING AND COVERING. Anchored to the bottom it would have
+            // grown up THROUGH the two visible lines and the "Say something" field, so opening the
+            // log to read a message would hide the box you answer it in. Anchored to the top, the
+            // collapsed chat stays exactly where it was and the scrollback is added above it —
+            // which is what "extend" means, and it is why the field is still reachable while the
+            // log is open (`OnPointerClick` focuses it on the same press).
+            layer.anchorMin = new Vector2(0.0f, 1.0f);
+            layer.anchorMax = new Vector2(1.0f, 1.0f);
+            layer.pivot = new Vector2(0.5f, 0.0f);
+            layer.offsetMin = Vector2.zero;
+            layer.offsetMax = new Vector2(0.0f, ExpandedHeight);
+
+            // ⚠ ITS OWN SORTING ORDER, KEPT FROM THE OLD DESIGN. A nested `Canvas` with
+            // `overrideSorting` is what lets a child draw over its own ancestors, which is exactly
+            // the authorization he gave. ⚠ 90 SORTS BELOW THE CHARACTER PICKER (100) ON PURPOSE:
+            // both are lobby overlays and the picker is the one that must never be drawn through.
             var ownCanvas = _historyPanel.AddComponent<Canvas>();
             ownCanvas.overrideSorting = true;
             ownCanvas.sortingOrder = 90;
             _historyPanel.AddComponent<GraphicRaycaster>();
 
-            // ⚠️ THE BACKDROP IS WHAT MAKES "CLICK OUT" CLOSE IT. 🧑 2026-08-28: *"it clsoes when u
-            // click out"*. A click on empty road is not an event any of this receives, so the
-            // overlay supplies the surface that hears it. It is nearly transparent rather than
-            // invisible because a full-screen raycast target that draws nothing is the control
-            // that eats a press and gets reported as a dead button.
-            var backdrop = new GameObject("Backdrop");
-            backdrop.transform.SetParent(_historyPanel.transform, false);
-            var shade = backdrop.AddComponent<Image>();
-            shade.color = new Color(0.0f, 0.0f, 0.0f, 0.55f);
-            shade.raycastTarget = true;
-            MenuKit.Stretch(shade.rectTransform, 0.0f);
-            var dismiss = backdrop.AddComponent<Button>();
-            dismiss.targetGraphic = shade;
-            dismiss.transition = Selectable.Transition.None;
-            dismiss.onClick.AddListener(CloseHistory);
-
             var box = new GameObject("Panel");
             box.transform.SetParent(_historyPanel.transform, false);
             var plate = box.AddComponent<Image>();
-            plate.sprite = GodotTheme.WoodBox(UiTheme.WoodDeep, UiTheme.WoodEdge);
-            plate.type = Image.Type.Sliced;
-            plate.color = Color.white;
+
+            // The opened log is a wooden card holding an asphalt well, which is the same pairing
+            // the collapsed chat uses one size down. See the `Slate` note in `Install`.
+            PaperSkin.Apply(box, PaperCraft.Surface.Sheet);
+
+            // ⚠ IT EATS CLICKS. The panel is opaque wood over a lobby full of controls, and a
+            // press that fell through to a seat row underneath it would seat the player from a
+            // click they aimed at a chat message.
             plate.raycastTarget = true;
 
+            // The plate fills the extension exactly; the layer above is what positions it.
             var panelRect = plate.rectTransform;
-            panelRect.anchorMin = new Vector2(0.5f, 0.5f);
-            panelRect.anchorMax = new Vector2(0.5f, 0.5f);
-            panelRect.pivot = new Vector2(0.5f, 0.5f);
-            panelRect.anchoredPosition = Vector2.zero;
-            panelRect.sizeDelta = new Vector2(780.0f, 560.0f);
+            MenuKit.Stretch(panelRect, 0.0f);
 
-            var title = MenuKit.Label(box.transform, "LOBBY CHAT", 30, UiTheme.Cream,
+            var title = MenuKit.Label(box.transform, "LOBBY CHAT", PaperKit.Title,
+                                      UiTheme.PaperInk,
                                       Vector2.zero, Vector2.zero, Vector2.zero,
                                       TextAnchor.MiddleLeft);
             var titleRect = title.rectTransform;
@@ -652,9 +926,20 @@ namespace TumbangPreso.UI
             titleRect.offsetMax = new Vector2(-170.0f, -14.0f);
             title.raycastTarget = false;
 
+            // ⚠️⚠️ THE ONE WOODEN CONTROL LEFT ON A PAPER PANEL, AND IT TOOK A WIDENED PROBE TO
+            // FIND IT. `PaperPurityProbe` reported `LobbyChatLog/Panel/Button_CLOSE still carries
+            // GodotButton (WoodButton)` once it started opening the screens the lobby opens: this
+            // panel builds its own surfaces through `PaperSkin` and never calls `PaperDress`, so
+            // the one control built through `MenuKit.WoodButton` stayed wood inside a cream box.
+            // It is inside a drawer that is shut most of the time, which is exactly the case
+            // `docs/TODO.md` § 119.6 says a render cannot check.
             var close = MenuKit.WoodButton(box.transform, "CLOSE", Vector2.one,
                                            Vector2.zero, new Vector2(132.0f, 46.0f),
                                            CloseHistory);
+            PaperKit.Paperise(close.gameObject, PaperCraft.Surface.Token);
+            if (close.GetComponent<PaperButton>() == null)
+                close.gameObject.AddComponent<PaperButton>();
+
             var closeRect = close.transform as RectTransform;
             closeRect.pivot = Vector2.one;
             closeRect.anchoredPosition = new Vector2(-18.0f, -14.0f);
@@ -662,9 +947,7 @@ namespace TumbangPreso.UI
             var viewportGo = new GameObject("Viewport");
             viewportGo.transform.SetParent(box.transform, false);
             var viewportImage = viewportGo.AddComponent<Image>();
-            viewportImage.sprite = GodotTheme.WoodBox(UiTheme.WoodDark, UiTheme.WoodEdge);
-            viewportImage.type = Image.Type.Sliced;
-            viewportImage.color = Color.white;
+            PaperSkin.Apply(viewportGo, PaperCraft.Surface.Tray);
             var viewportRect = viewportImage.rectTransform;
             viewportRect.anchorMin = Vector2.zero;
             viewportRect.anchorMax = Vector2.one;
@@ -686,7 +969,7 @@ namespace TumbangPreso.UI
             _historyText = contentGo.AddComponent<Text>();
             _historyText.font = MenuKit.Font;
             _historyText.fontSize = 22;
-            _historyText.color = UiTheme.Cream;
+            _historyText.color = UiTheme.PaperInk;
             _historyText.alignment = TextAnchor.UpperLeft;
             _historyText.alignByGeometry = true;
             _historyText.horizontalOverflow = HorizontalWrapMode.Wrap;
@@ -739,7 +1022,90 @@ namespace TumbangPreso.UI
             _historyPanel.transform.SetAsLastSibling();
 
             Canvas.ForceUpdateCanvases();
-            if (_historyScroll != null) _historyScroll.verticalNormalizedPosition = 0.0f;
+            SnapHistoryToNewest();
+
+            // ⚠️⚠️ AND AGAIN NEXT FRAME, WHICH IS THE HALF THAT ACTUALLY LANDS ON A COLD OPEN.
+            // See `SnapHistoryToNewest`: the rebuild it does cannot run on a canvas that is
+            // inactive this frame, and `LayoutRebuilder` says so outright. § 83.6 shipped the
+            // same pairing for `ConvertedScreen` under the same constraint and § 80.2 before it.
+            _snapPending = true;
+        }
+
+        /// <summary>
+        /// ⚠️ ONE FRAME LATE IS STILL WRONG, SO THIS IS A SECOND CHANCE AND NOT THE PLAN.
+        /// `OpenHistory` snaps immediately and sets this; if that snap measured a rect the layout
+        /// had not produced yet, the same call one frame later measures a real one.
+        /// </summary>
+        private bool _snapPending;
+
+        private void LateUpdate()
+        {
+            if (!_snapPending) return;
+
+            _snapPending = false;
+            SnapHistoryToNewest();
+        }
+
+        /// <summary>
+        /// Puts the log on its newest line, and puts a SHORT log flush against the top of the box.
+        ///
+        /// ⚠️⚠️ `verticalNormalizedPosition = 0` IS MEANINGLESS WHEN THE CONTENT IS SHORTER THAN
+        /// THE VIEWPORT, AND THAT IS THE REPORTED OVERFLOW. 🧑 2026-08-29 with a screenshot of the
+        /// open log: ten lines sitting against the top of the panel with the FIRST ONE CLIPPED in
+        /// half by the header, and a third of the box empty underneath them.
+        ///
+        /// A `ScrollRect` normalises the scroll against `content.height - viewport.height`. When
+        /// the content is the shorter of the two that difference is zero or negative, the
+        /// normalised value divides by nothing meaningful, and Unity leaves the content's
+        /// `anchoredPosition` wherever it last was — which here is pushed UP by however tall the
+        /// log was the last time it was long enough to scroll. So the panel looks correct after a
+        /// hundred messages and broken after ten, which is the reverse of what an overflow bug
+        /// normally does and is why reading `LobbyVisibleLines` never explained it.
+        ///
+        /// ⚠️ THE CONTENT IS TOP-ANCHORED AND TOP-PIVOTED (see `BuildHistoryPanel`), so y = 0 is
+        /// flush under the header. Writing it directly is the only thing that reaches this case;
+        /// there is no normalised position that expresses "shorter than the box".
+        /// </summary>
+        private void SnapHistoryToNewest()
+        {
+            if (_historyScroll == null) return;
+
+            var content = _historyScroll.content;
+            var viewport = _historyScroll.viewport;
+            if (content == null || viewport == null) return;
+
+            // ⚠️⚠️ THE HEIGHT IS REBUILT BEFORE IT IS READ, AND NOT REBUILDING IT IS WHY THE
+            // FIRST FIX DID NOT TAKE. 🧑 2026-08-30 sent the log open on THREE messages with the
+            // first one clipped in half by the header and two thirds of the box empty below it,
+            // which is the same picture that produced this method — after this method shipped.
+            //
+            // `OpenHistory` called `Canvas.ForceUpdateCanvases()` and treated that as enough.
+            // It is not: it flushes the canvas batches, it does not run the layout system, so
+            // `ContentSizeFitter` had not yet resized `content` for the text written one line
+            // earlier. `content.rect.height` was therefore the height of whatever the log held
+            // the LAST time it was measured. Three short lines read as tall, the short-content
+            // branch below was skipped, and the meaningless normalised write ran instead — which
+            // leaves `anchoredPosition` exactly where the previous, longer log had pushed it.
+            //
+            // ⚠️ THIS IS `ConvertedScreen.ForceLayoutFor`'S FAULT CLASS, FOUR SURFACES OVER, and
+            // `ModelPreview.EnsureTexture`, § 80.2, § 83.6 and § 79.6 are the others. A rect has
+            // no size until a layout pass has run on it, and the frame a panel is switched on is
+            // always before that pass.
+            LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+
+            float overflow = content.rect.height - viewport.rect.height;
+
+            // ⚠️⚠️ THE POSITION IS WRITTEN DIRECTLY IN BOTH DIRECTIONS NOW, and the normalised
+            // path is gone rather than kept for the tall case. A `ScrollRect` normalises against
+            // `content.height - viewport.height`, so 0 means "the bottom" only while that
+            // difference is positive; the moment it is not, Unity divides by nothing meaningful
+            // and leaves the content wherever it last was. Keeping one branch on a value that is
+            // undefined either side of a boundary is how this came back. The content is
+            // top-anchored and top-pivoted (`BuildHistoryPanel`), so y is simply how far it has
+            // been pushed up out of the box: 0 is flush under the header, and `overflow` is the
+            // newest line resting on the bottom edge.
+            content.anchoredPosition = new Vector2(content.anchoredPosition.x,
+                                                   Mathf.Max(0.0f, overflow));
         }
 
         private void RefreshHistoryPanel()

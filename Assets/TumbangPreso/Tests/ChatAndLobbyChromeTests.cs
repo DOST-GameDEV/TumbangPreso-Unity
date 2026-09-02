@@ -117,14 +117,107 @@ namespace TumbangPreso.Tests
         /// both machines must be rebuilt from the same commit or they refuse each other at
         /// approval. This is a tripwire rather than a truth: if somebody adds a message and
         /// forgets the bump, the number here stops matching what they wrote and this fails.
+        ///
+        /// ⚠️⚠️ IT WENT STALE AT 7 WHILE THE CONSTANT REACHED 10, AND A TRIPWIRE NOBODY RE-ARMS
+        /// IS A TRIPWIRE THAT ONLY EVER REPORTS ITSELF. The constant was last moved by `886a981`
+        /// ("Land the last four slippers"); this assertion was last written by `ed082c8`, three
+        /// bumps earlier. Every EditMode run since has been one test red for a reason that was
+        /// true and finished, which is the state that teaches a reader to skim past the failure
+        /// list — and this suite's whole value is that the list is normally empty.
+        ///
+        /// ⚠️ THE LAN BEACON'S WIRE CHANGE ON 2026-08-29 DELIBERATELY DID **NOT** MOVE THIS.
+        /// `LanBeacon` versions its own payload with its own magic (`MagicV2`) and still parses
+        /// v1, so an old build is discovered rather than refused. `ProtocolVersion` gates the
+        /// netcode HELLO at approval and costs both machines a rebuild off the same commit
+        /// (§ 59.4); spending that on a discovery format that is explicitly backward compatible
+        /// would refuse peers who have no reason to be refused.
         /// </summary>
         [Test]
-        public void TheProtocolCarriesTheChatBump()
+        public void TheProtocolCarriesEveryRosterBump()
         {
-            Assert.AreEqual(7, NetSession.ProtocolVersion,
-                "the expanded append-only slipper roster changes the meaning of replicated pick " +
-                "indices and therefore requires protocol 7. If a message or roster index was " +
-                "added or removed since, bump this and the constant together.");
+            // ⚠️ 13 SINCE 2026-08-29: `Flair` was added (`Visual.MatchFlair`, docs/TODO.md
+            // § 83.16). A build without that handler drops every one of those messages and its
+            // players silently see none of the tags, blocks, bank shots or zaps the host is
+            // announcing, which is the half-working match this tripwire exists to refuse.
+            //
+            // ⚠⚠ 14 SINCE 2026-08-30: `ReqTime` and `SyncTime`, the spectator pause
+            // (docs/TODO.md § 86). This is the strongest case the number has ever had. A peer
+            // without the `SyncTime` handler **does not stop**: the pause is called, three
+            // screens freeze, one keeps playing, and the two builds then disagree about every
+            // position for as long as it lasts.
+            //
+            // ⚠⚠ 15 SINCE 2026-08-30: `MatchRecord`, the one message that carries a whole
+            // finished match to every peer (docs/TODO.md § 89.5). A peer without the handler
+            // plays the match correctly and then silently gets no end-of-match summary and no
+            // career entry for a game it just played, which is the same quiet kind of wrong the
+            // two entries above describe: nothing errors, and a player is simply missing what
+            // everybody else got.
+            //
+            // ⚠⚠ 16 SINCE 2026-08-30: the account id and the handle proof in the approval hello
+            // and in `Identify`, which is the impersonation guard (docs/TODO.md § 88.1c and
+            // § 90.1). `Identify` is read field by field in order, so a peer writing five values
+            // where the host reads seven misreads everything after the third, and that is the
+            // class of fault `audit_wire_payloads.py` cannot see because both ends of THIS build
+            // agree. The quiet half is worse than the loud one even so: a peer on 15 carries no
+            // proof, so every account handle it claims is demoted to a host-allocated tag and
+            // everybody on the older build is silently renamed in a lobby that looks fine.
+            //
+            // ⚠⚠ 17 SINCE 2026-08-31: cosmetics (docs/TODO.md § 101). One field on `Identify`,
+            // one on `SelectLobbyPick`, and **two per seat inside `SyncLobbyPicks`' loop**. That
+            // last one is the worst wire change this number has ever gated: the loop and its
+            // reader are kept in step by hand, so a peer on 16 goes out of phase on SEAT 0 and
+            // then reads the name, the picks and the ready flag of every seat after it from the
+            // wrong offset. A lobby in which everybody is wearing somebody else's face, ready
+            // state and character is not a cosmetic bug.
+            //
+            // ⚠️ AND THE TOLERANT TRICK DOES NOT APPLY HERE. `OnSyncLobbyPicksMsg` reads the
+            // trailing spectator count behind a `reader.Length > reader.Position` guard, which
+            // works for one value at the END of a payload. These two sit inside the per-seat
+            // loop with more fields after them, so there is no position at which "is there more"
+            // answers the right question.
+            // ⚠⚠ 18 SINCE 2026-08-31: the look frame (docs/TODO.md § 106.2). The per-seat
+            // `PaletteId` string became `Look` and carries a `LookCodec` frame rather than a bare
+            // palette id, so a 17 build and an 18 build read one another's seat table and dress
+            // every remote player from a string neither recognises.
+            //
+            // ⚠️ THE FIELD COUNT DID NOT CHANGE AND THE MEANING DID, WHICH IS WHY THIS BUMP IS
+            // EASY TO TALK YOURSELF OUT OF. `audit_wire_payloads.py` compares a writer to a
+            // reader inside ONE build and would stay green through a change that only breaks two
+            // builds against each other, which is the whole reason this constant exists.
+            // ⚠⚠ 19 SINCE 2026-09-01: the custom character (docs/TODO.md § 112.6). One field on
+            // `Identify`, one on `SelectLobbyPick`, and **one per seat inside `SyncLobbyPicks`'
+            // loop**, carrying a `CustomCharacterRules` `C3` frame.
+            //
+            // ⚠️⚠️ AND IT IS THE FIRST ENTRY IN THIS LIST THAT DECIDES A GAMEPLAY THING RATHER
+            // THAN A COSMETIC ONE. Inside that frame is `HeroKitId`: which hero's skills and
+            // ultimate the seat brings into Hero Strike. A peer that could not read the field
+            // would draw a stranger AND read the wrong ability tells off them, and
+            // `docs/VISION.md` § 4's whole competitive argument is that reading which ultimate an
+            // opponent has banked is a skill. The two peer-to-host messages read it behind a
+            // `reader.Length > reader.Position` guard; the per-seat one cannot, for the reason
+            // written four paragraphs up.
+            // ⚠⚠ 20 SINCE 2026-09-01: the Hero Strike BUILD (docs/TODO.md § 114.15 row 3). One
+            // field on `Identify`, one on `SelectLobbyPick`, and **one per seat inside
+            // `SyncLobbyPicks`' loop**, carrying a `HeroBuildRules` `B1` frame.
+            //
+            // ⚠️⚠️ IT IS THE SECOND ENTRY IN THIS LIST THAT DECIDES A GAMEPLAY THING, AND UNLIKE
+            // 19 IT DECIDES ONE ON EVERY SEAT IN EVERY HERO STRIKE MATCH. Inside the frame are
+            // the two ability readings that seat brought: whether Cheska's sheet is a wide slow
+            // one or a small vicious one, whether Zack's lane is wide or thin. A peer that could
+            // not read it would bind every remote body to the DEFAULT build and then simulate
+            // hazards at sizes the host never spawned, so the two machines would disagree about
+            // where the floor is dangerous. That is worse than a cosmetic misread and it is why
+            // this is a refusal at approval rather than a tolerated trailing field.
+            // ⚠⚠ 21 SINCE 2026-09-01: PHASE 12's MATCH FORMAT (`docs/TODO.md` § 115, and
+            // `docs/Formats.md`). A new `SelectFormat` / `SyncFormat` pair, and it is the THIRD
+            // entry that decides a gameplay thing and the first that decides the WIN CONDITION.
+            // A host running LAST TSINELAS STANDING and a peer that has never heard of it are two
+            // different games sharing one scoreboard: the peer sees attackers stop throwing for
+            // no reason and a round awarded to somebody it cannot account for. Cosmetic mismatch
+            // draws a stranger; this one disputes the result, so it is a refusal at approval.
+            Assert.AreEqual(21, NetSession.ProtocolVersion,
+                "a message or a replicated roster index has been added or removed. Bump this " +
+                "number and `NetSession.ProtocolVersion` together, in the same commit.");
         }
     }
 }

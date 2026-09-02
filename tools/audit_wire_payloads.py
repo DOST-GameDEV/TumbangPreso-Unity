@@ -4,7 +4,7 @@ Every named message, its writer's field order and its reader's field order, side
 
 WHY THIS EXISTS
 ---------------
-`MatchRpc` speaks 30-odd custom messages and every one of them is a hand-written pair: a
+`MatchRpc` speaks 55 custom messages and every one of them is a hand-written pair: a
 run of `writer.WriteValueSafe(...)` on the sending side and a run of
 `reader.ReadValueSafe(out ...)` on the receiving side. Netcode does not check that the two
 agree. A field added to one and not the other, or two fields swapped, does not fail: the
@@ -48,6 +48,22 @@ READ_ANY = re.compile(r"reader\.ReadValueSafe\(\s*out\s")
 SEND = re.compile(r"SendNamedMessage(?:ToAll)?\(\s*\"(?P<name>[A-Za-z0-9_]+)\"")
 HANDLER = re.compile(r"RegisterNamedMessageHandler\(\"(?P<name>[A-Za-z0-9_]+)\",\s*(?P<fn>\w+)\)")
 METHOD = re.compile(r"^\s*(?:private|public|internal)\s+[\w<>\[\],\.\?]+\s+(?P<fn>\w+)\s*\(")
+
+# ⚠️⚠️ A METHOD THAT RECEIVES A `FastBufferWriter` IS CONTINUING SOMEBODY ELSE'S RUN, AND THE
+# METHOD-BOUNDARY RESET MUST NOT FIRE ON IT. Measured 2026-08-30: `Flair` is the one message whose
+# writer and whose send live in two methods (`BroadcastFlair` writes the five fields, then hands
+# the writer to `HostRelayFlair`, which loops the peers and sends). The reset cleared the run at
+# the second declaration, so the audit reported "writer emits 0 fields, reader takes 5" against a
+# writer and a reader that agree exactly, field for field and type for type, and exited 1.
+#
+# ⚠️ THAT MATTERS MORE THAN ONE WRONG ROW. This audit gates a verification pass (`CLAUDE.md`
+# § 7.1), so a false red is a gate everybody learns to walk past, which is the only way § 38.6's
+# real finding gets missed when it comes. `docs/TODO.md` § 38.6.
+#
+# ⚠️ IT DOES NOT SUPPRESS THE CHECK, it locates the run. `Flair` is still counted and still
+# type-checked, now as 5 against 5.
+RELAY = re.compile(
+    r"^\s*(?:private|public|internal)\s+[\w<>\[\],\.\?]+\s+\w+\s*\([^)]*FastBufferWriter\s+\w+")
 
 # Runs the parser cannot see, because the field is emitted inside a loop.
 LOOPS = {
@@ -94,6 +110,9 @@ def collect_writers(lines):
     ⚠️ THE RUN RESETS AT A METHOD BOUNDARY. Accumulating across one made a writer whose send
     is inside an `if` donate its fields to the next message in the file, which reported a
     correct `SyncWorld` as one field long.
+
+    ⚠️ EXCEPT AT A METHOD THAT TAKES THE WRITER AS A PARAMETER, which is continuing the run
+    rather than starting one. See `RELAY` above and `docs/TODO.md` § 38.6.
     """
     runs = {}
     pending = []
@@ -103,7 +122,7 @@ def collect_writers(lines):
         if stripped.startswith("//") or stripped.startswith("///"):
             continue
 
-        if METHOD.match(line):
+        if METHOD.match(line) and not RELAY.match(line):
             pending = []
 
         if WRITE.search(line):

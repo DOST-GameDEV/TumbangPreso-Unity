@@ -45,11 +45,62 @@ namespace TumbangPreso.PlayTests
         /// </summary>
         private const float DragPixels = 120.0f;
 
+        /// <summary>
+        /// Take the scene down deliberately, and give Unity the frame it needs to do it.
+        ///
+        /// ⚠️⚠️ WITHOUT THIS, THIS PROBE FAILS ON SOMEBODY ELSE'S RUBBISH AND PASSES 1/1 ALONE.
+        /// `docs/TODO.md` § 83.25 measured it: in the suite it goes red on an unhandled log
+        /// message, *"Some objects were not cleaned up when closing the scene ...
+        /// LobbyCastStage"*, which is `LobbyCast`'s stage. That object is parented into the
+        /// additively loaded arena and destroyed BY NAME in `ConvertedMatchSetup.OnDestroy`;
+        /// `Object.Destroy` is deferred to the end of the frame, so whether the destroy lands
+        /// before the scene closes depends entirely on which test ran before this one and how
+        /// its last frame ended.
+        ///
+        /// Loading an empty scene here ends this test's own MatchSetup on a frame this method
+        /// controls, and the `yield return null` is what lets the deferred destroys actually
+        /// run before the unload completes. Same shape as `TrainingStreetProbe.Quiesce` and
+        /// `SoloPracticeTests`, both of which carry a note about live state outliving its scene
+        /// and poisoning the NEXT suite. This is that fault from the receiving end.
+        ///
+        /// ⚠️⚠️ AND IT IS NOT `LogAssert.Expect`. § 83.25 says so outright: the message is true
+        /// and the object it names is real. Silencing it would leave a real leak unreported and
+        /// would go on hiding it for every probe that loads this screen afterwards.
+        ///
+        /// ⚠️ IT IS A `[UnityTearDown]` RATHER THAN A `[TearDown]` BECAUSE IT HAS TO YIELD. A
+        /// plain `[TearDown]` cannot wait a frame, which is the only part of this that does any
+        /// work.
+        /// </summary>
+        [UnityTearDown]
+        public IEnumerator TearDown()
+        {
+            // ⚠️ A SCENE TO STAND IN FIRST. Unity refuses to unload the last loaded scene, and
+            // the arena rides in ADDITIVELY beside MatchSetup, so "unload everything this test
+            // opened" needs somewhere for the runner to live while it happens.
+            var parking = SceneManager.CreateScene("PreviewDragProbeTeardown");
+            SceneManager.SetActiveScene(parking);
+
+            for (int i = SceneManager.sceneCount - 1; i >= 0; i--)
+            {
+                var scene = SceneManager.GetSceneAt(i);
+                if (!scene.IsValid() || !scene.isLoaded) continue;
+                if (scene == parking) continue;
+
+                var unload = SceneManager.UnloadSceneAsync(scene);
+                yield return ProbeWait.Done(unload, "scene unload");
+            }
+
+            // ⚠️ THE FRAME IS THE POINT OF THE WHOLE METHOD. `Object.Destroy` runs at the end of
+            // a frame, so a teardown that returns without yielding leaves exactly the deferred
+            // destroys this exists to drain.
+            yield return null;
+        }
+
         [UnityTest]
         public IEnumerator DraggingTheSubjectMovesItWithThePointer()
         {
             var load = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
-            while (load != null && !load.isDone) yield return null;
+            yield return ProbeWait.Done(load, "scene load");
 
             for (int i = 0; i < 30; i++) yield return null;
 

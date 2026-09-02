@@ -329,16 +329,31 @@ namespace TumbangPreso
             Vector3 wish = new Vector3(axis.x, 0.0f, axis.y);
             if (wish.sqrMagnitude > 1.0f) wish.Normalize();
 
-            if (wish.sqrMagnitude < 0.0001f) return Vector3.zero;
-
             if (MouseAimed)
             {
+                if (wish.sqrMagnitude < 0.0001f) return Vector3.zero;
                 wish = transform.TransformDirection(wish);
                 wish.y = 0.0f;
                 return wish.normalized;
             }
 
-            wish = wish.normalized;
+            Vector3 movement = wish.sqrMagnitude < 0.0001f ? Vector3.zero : wish.normalized;
+            Vector3 facing = movement;
+
+            // A movement-aimed body normally turns from its movement keys. A bot holding a
+            // throw has deliberately planted its feet, so the same rule otherwise leaves its
+            // yaw frozen at the direction of its last step while the ballistic aim moves to the
+            // lata. FaceAimPoint is an input request rather than an AI-only transform write: the
+            // motor still owns the turn speed and the bot still uses the same physical body.
+            if (Intent.FaceAimPoint && Intent.HasAimPoint)
+            {
+                facing = Intent.AimPoint - transform.position;
+                facing.y = 0.0f;
+                if (facing.sqrMagnitude > 0.0001f) facing.Normalize();
+                else facing = movement;
+            }
+
+            if (facing.sqrMagnitude < 0.0001f) return movement;
 
             // ⚠️⚠️ THE BODY TURNS AT A BOUNDED RATE. IT USED TO SNAP, AND THAT IS THE WHOLE OF
             // 🧑'S 2026-08-27 REPORT: *"they can look straight behind them and turn in 0.1
@@ -385,7 +400,7 @@ namespace TumbangPreso
             // correct and no settle wobble. The ease is in how the rate is reached, not in an
             // oscillation around the mark.
             float remaining = Quaternion.Angle(transform.rotation,
-                                               Quaternion.LookRotation(wish, Vector3.up));
+                                               Quaternion.LookRotation(facing, Vector3.up));
 
             float wantRate = Mathf.Clamp(remaining / AiTuning.BodyTurnReachSeconds,
                                          AiTuning.BodyTurnSettleDegPerSecond,
@@ -403,9 +418,9 @@ namespace TumbangPreso
 
             float maxTurn = _turnRate * Mathf.Max(0.0f, dt);
             transform.rotation = Quaternion.RotateTowards(
-                transform.rotation, Quaternion.LookRotation(wish, Vector3.up), maxTurn);
+                transform.rotation, Quaternion.LookRotation(facing, Vector3.up), maxTurn);
 
-            return wish;
+            return movement;
         }
 
         /// <summary>
@@ -521,7 +536,14 @@ namespace TumbangPreso
             // Being stunned stops you ACTING; it does not exempt you from the world. A shove
             // that could not push a stunned body is a shove that cannot combo into a tag,
             // which is the interaction `IsTaggable`'s own header exists to protect.
-            bool canSteer = CanAct();
+            // ⚠️⚠️ IT ASKS `CanMove()`, NOT `CanAct()`, AND THAT ONE WORD IS 🧑's *"cant move
+            // during buffer time"*. See CanMove: the HUD spends the whole of
+            // `Balance.WarmupBufferDuration` saying "WARMUP / PRACTICE BUFFER · SCORES PAUSED",
+            // which is an invitation to practise. `EndRound` had cleared `RoundActive` on every
+            // body before that window opened, so what the player actually got was the whole
+            // buffer standing still reading an offer they could not take. It was FIFTEEN SECONDS
+            // when that was found and is 5 now (§ 83.13); the fault would be the same at either.
+            bool canSteer = CanMove();
 
             Vector2 axis = canSteer ? Intent.MoveAxis : Vector2.zero;
             bool moving = axis.sqrMagnitude > 0.0001f;
@@ -776,8 +798,6 @@ namespace TumbangPreso
         public void ApplyNetworkTransform(Vector3 position, float yaw, Vector3 velocity,
                                           bool grounded, bool reconcileLocal, bool force = false)
         {
-            _velocity = velocity;
-
             // ⚠️ ASSIGNED BEFORE THE RECONCILE RETURN BELOW, AND THAT ORDERING MATTERS. A body
             // whose owner is predicting it skips the rest of this method whenever the error is
             // small, which is most frames; the pose it keeps is its own, but the grounded bit is
@@ -786,6 +806,30 @@ namespace TumbangPreso
 
             float error = Vector3.Distance(transform.position, position);
             if (reconcileLocal && error < 1.25f) return;
+
+            // ⚠️⚠️ THE VELOCITY IS TAKEN WITH THE POSITION OR NOT AT ALL, AND IT USED TO BE
+            // TAKEN ON THE LINE ABOVE `_networkGrounded`, UNCONDITIONALLY. 🧑 2026-08-30, of an
+            // online match: *"randomly jittering in online game for non hosts when they jump"*,
+            // *"its like there is a ceiling above them and they bounce up and down very fast"*.
+            //
+            // A client SIMULATES its own body (`Simulates()`), so a jump writes
+            // `_velocity.y = Balance.JumpVelocity` locally on the press frame. The host has not
+            // seen that press yet — it is still in flight on `SubmitMove` — so the very next
+            // `SyncUnit` carries the host's copy of that seat still resting on the ground at
+            // `GroundedRestVelocityY` = -2.0, and the old first line stamped it straight over
+            // the jump. The body fell. A packet or two later the host's simulation caught up and
+            // sent +`JumpVelocity`, so it rose again, and at the pose rate the two answers
+            // alternate several times a second: a body slamming into a ceiling that is not there.
+            //
+            // ⚠️ THE POSITION HAD THE GUARD ALL ALONG AND THE VELOCITY DID NOT, WHICH IS WHY
+            // READING THE POSE PATH DID NOT EXPLAIN IT. Prediction was correct about WHERE the
+            // body is for the whole 1.25 m window and wrong about where it was GOING every
+            // frame inside it, and the integrator turns the second into the first one step later.
+            //
+            // ⚠️ AN OBSERVED REPLICA IS UNAFFECTED. `ApplyUnitMove` and every other seat pass
+            // `reconcileLocal: false`, so they still take the host's velocity on every packet,
+            // which is what `StepNetworkReplica`'s one-beat lead and the animator both read.
+            _velocity = velocity;
 
             _networkTargetPosition = position;
             _networkTargetYaw = yaw;
@@ -831,10 +875,45 @@ namespace TumbangPreso
             // `docs/TODO.md` § 63.4.
             _grounded = _networkGrounded;
 
-            // Lead by one render-sized beat so a 50 Hz stream does not look one packet behind.
-            Vector3 target = _networkTargetPosition + _networkTargetVelocity * 0.02f;
+            // ⚠️⚠️ THE LEAD IS THE SMOOTHING, AND IT USED TO BE ONE PACKET. 🧑 2026-08-30, of a
+            // LAN match: *"lan isnt laggy as fuck anymore bcz ealrier non hosts were all
+            // behind"*, and separately *"lan is very lag and delayed for non host btw, online
+            // server is more reliable"*.
+            //
+            // The old pair was a 0.020 s lead against a 0.055 s `SmoothDamp`, and those two
+            // numbers are answering different questions. The lead was sized against the SEND
+            // interval — `StepNetworkTransform` sends on the physics step, so 50 Hz, so 0.020 s
+            // — which compensates for the packet being one tick old. It does nothing about the
+            // smoothing itself, and a critically damped filter with a 0.055 s time constant
+            // **trails its target by about that whole time constant**. So a replica sat roughly
+            // 0.055 - 0.020 = **35 ms behind the host's own body before a single millisecond of
+            // network latency**, on every peer, on every map.
+            //
+            // ⚠️⚠️ AND THAT IS WHY IT READ AS WORSE ON A LAN THAN ON THE RELAY, WHICH IS THE PART
+            // THAT MAKES NO SENSE UNTIL YOU SEE IT. 35 ms of filter lag is a fixed cost that does
+            // not care about the link; on the Singapore relay it is a small fraction of the
+            // round trip and invisible, and on a LAN where the round trip is ~1 ms it is
+            // essentially ALL of the lag, and it is the only thing left to notice.
+            //
+            // Leading by the smoothing time is what makes the filter's output land ON the host's
+            // position instead of behind it. The velocity is the host's own, transmitted rather
+            // than differentiated, so this is interpolation arriving on time rather than
+            // extrapolation guessing at a future.
+            //
+            // ⚠️ IT IS NOT `0.055 + 0.020`. Adding the packet age on top would put the replica
+            // AHEAD of the host and turn every direction change into an overshoot-and-snap. The
+            // send interval is already inside the smoothing window, not beside it.
+            //
+            // ⚠️⚠️ THIS IS THE HALF THE SEND-RATE NOTE ABOVE `StepNetworkTransform` PREDICTED.
+            // Its own words: *"If that ever needs to come down, the answer is interpolation on
+            // the receiving end first, not a lower send rate on its own."* Nothing about the
+            // transport, the tick rate or the delivery channel moved, so the relay is affected
+            // exactly as the LAN is and neither is favoured.
+            const float NetworkSmoothTime = 0.055f;
+
+            Vector3 target = _networkTargetPosition + _networkTargetVelocity * NetworkSmoothTime;
             Vector3 position = Vector3.SmoothDamp(transform.position, target,
-                                                   ref _networkSmoothVelocity, 0.055f,
+                                                   ref _networkSmoothVelocity, NetworkSmoothTime,
                                                    40.0f, dt);
             float yaw = Mathf.SmoothDampAngle(transform.eulerAngles.y, _networkTargetYaw,
                                               ref _networkYawVelocity, 0.045f,
@@ -842,8 +921,36 @@ namespace TumbangPreso
             SetNetworkPose(position, yaw);
         }
 
+        /// <summary>
+        /// Puts a replica where the host says it is.
+        ///
+        /// ⚠️⚠️ THE ARENA WALLS APPLY TO A PICTURE OF A BODY EXACTLY AS THEY DO TO A BODY, AND
+        /// UNTIL 2026-08-29 THEY DID NOT. 🧑, of a LAN match: *"if u werent host, the bots and
+        /// slippers were going out of map"*. Only the non-host saw it, and that is the whole
+        /// tell: the host SIMULATES these bodies and its simulation is clamped twice, at
+        /// `MoveStep` and at the confinement. A client does neither. It writes whatever arrived
+        /// straight onto the transform, so the walls existed on exactly one machine in the match.
+        ///
+        /// ⚠️ IT IS THE SAME PAIR OF NUMBERS THE HOST CLAMPS TO, so this can never disagree with
+        /// the host about a position the host considers legal: it can only refuse one the host
+        /// would have refused too. That is what makes it safe to apply to a stream this peer has
+        /// no authority over. `MatchInstaller.MeasurePlayableBounds` runs in `Start` on every
+        /// peer, so a client has had the right numbers all along and simply never used them.
+        ///
+        /// ⚠️ Y IS NOT CLAMPED. Jumps, falls, the kill plane and Ilalim ng Tulay's viaduct all
+        /// live on that axis and none of them is a wall.
+        ///
+        /// ⚠️ THIS IS THE SECOND HALF OF A TWO-PART FIX AND IT IS THE HALF THAT CANNOT REGRESS.
+        /// `MatchRpc.PoseDelivery` stops the reliable-channel bursts that made a replica jump far
+        /// enough for `ApplyNetworkTransform` to treat it as a correction and snap; this makes the
+        /// destination legal whatever the transport does. Either alone leaves the other's failure
+        /// reachable.
+        /// </summary>
         private void SetNetworkPose(Vector3 position, float yaw)
         {
+            position.x = Mathf.Clamp(position.x, -AIController.PlayableHalfX, AIController.PlayableHalfX);
+            position.z = Mathf.Clamp(position.z, -AIController.PlayableHalfZ, AIController.PlayableHalfZ);
+
             bool enabled = _cc != null && _cc.enabled;
             if (enabled) _cc.enabled = false;
             transform.SetPositionAndRotation(position, Quaternion.Euler(0.0f, yaw, 0.0f));
@@ -876,7 +983,10 @@ namespace TumbangPreso
                 // be told apart from an input bug.
                 _velocity.y = GroundedRestVelocityY;
 
-                if (Intent.JustPressed(Verb.Jump) && CanAct())
+                // ⚠️ `CanMove()`, FOR THE REASON THE STEER GATE GIVES. Walking and jumping are
+                // one permission: gating them differently is how you get a player who can hop
+                // through the warmup buffer but not walk across it.
+                if (Intent.JustPressed(Verb.Jump) && CanMove())
                 {
                     _velocity.y = Balance.JumpVelocity;
                     GameServices.Audio?.PlayAtVaried("jump", transform.position,
@@ -997,6 +1107,38 @@ namespace TumbangPreso
         // -------------------------------------------------------------------
 
         public bool CanAct() => RoundActive && !IsStunned;
+
+        /// <summary>
+        /// May this body WALK right now? A different question from <see cref="CanAct"/>, and
+        /// keeping the two apart is 🧑 2026-08-28: *"cant move during buffer time"*.
+        ///
+        /// ⚠️⚠️ THE ROUND IS NOT PART OF IT, AND PUTTING IT BACK RE-BREAKS THE WARMUP.
+        /// `RoundDirector.EndRound` clears `RoundActive` on every seat and the next round is
+        /// `Balance.WarmupBufferDuration` away, 5 s since § 83.13 and 15 s when this was found.
+        /// `SliceRunner.OnIntermission`
+        /// spends that window putting everyone on their new marks with their tsinelas already in
+        /// hand, `MatchDirector.IsWarmupBuffer` suspends scoring for it, and `Hud.WarmupLine`
+        /// prints "WARMUP / PRACTICE BUFFER · SCORES PAUSED" across the top. Every part of that
+        /// is built to be practised in, and a movement gate reading `RoundActive` froze the whole
+        /// cast for the whole of it, once per round boundary.
+        ///
+        /// `character_base.gd:932` gates the same code on `state != State.NORMAL` and on nothing
+        /// else. The round is a rule about SCORING, not about legs.
+        ///
+        /// ⚠️ NOTHING IS SCOREABLE IN THE WINDOW REGARDLESS, so this cannot leak points.
+        /// `IsTaggable` and `CanThrow` still read `RoundActive` and still refuse, `AddScore`
+        /// returns early on `IsWarmupBuffer`, and `OnRoundStarted` calls `ResetWorld` again on
+        /// the whistle, so wandering during the buffer cannot buy position either: whoever walks
+        /// off is teleported back to their mark before the round begins.
+        ///
+        /// ⚠️ AND THE END OF THE MATCH IS STILL A HARD STOP, through a different mechanism.
+        /// `FreezeForMatchEnd` parks `InputIntent`, which zeroes `MoveAxis` for a bot and a human
+        /// alike. That is the .gd's own `_on_match_won_freeze_physics` and it is the right home
+        /// for a stop meant to be permanent. See `SliceRunner.OnMatchEnded`, which had been
+        /// leaning on `RoundActive` for it and now calls the freeze outright.
+        /// </summary>
+        public bool CanMove() => !IsStunned;
+
         public bool IsStunned => _stunLeft > 0.0f;
         public bool HoldingSlipper { get; set; }
 

@@ -1,5 +1,7 @@
+using System;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
+using TumbangPreso.Visual;
 using UnityEngine;
 
 namespace TumbangPreso
@@ -187,6 +189,164 @@ namespace TumbangPreso
         /// </summary>
         public static bool PreviewOnly;
 
+        /// <summary>Eskinita's house facades, and the fallback when a map ships no `Bounds`.</summary>
+        public const float DefaultHalfX = 8.6f;
+        public const float DefaultHalfZ = 13.0f;
+
+        /// <summary>Eskinita's wall tops, and the fallback when a map ships no `Bounds`.</summary>
+        public const float DefaultCeilingY = 12.0f;
+
+        /// <summary>
+        /// No arena gets a lid lower than this, however short its walls are.
+        ///
+        /// ⚠️⚠️ THE WALL TOPS ALONE WOULD HAVE GIVEN ILALIM NG TULAY A 6 m CEILING, and 🧑 asked
+        /// for the opposite: *"give reasonable high ceilings in all maps"*. Its walls are 3.0 in
+        /// half height because it is a road under a viaduct rather than a street of houses, so
+        /// taking the wall top literally would have made the one map with the lowest scenery also
+        /// the one map where a normal lob hits an invisible roof. A lid is there to stop a
+        /// tsinelas LEAVING, not to flatten the arc of a throw.
+        ///
+        /// ⚠️ 12 m IS THE OTHER TWO ARENAS' OWN WALL TOPS, so this is not a number picked to feel
+        /// right: it is the height the game already plays under on Eskinita and Bayan Plaza,
+        /// applied to the map that would otherwise be the exception. Nothing a player throws
+        /// reaches it in normal play; what reaches it is a full-power throw aimed at the sky,
+        /// which is exactly the shot that used to leave the map.
+        /// </summary>
+        public const float MinimumCeilingY = 12.0f;
+
+        /// <summary>
+        /// The inward face of one wall box, on the axis it actually walls off, or a negative
+        /// number when the collider is not a wall this measurement can use.
+        ///
+        /// ⚠️⚠️ THE FACE, NOT THE CENTRE, AND READING THE CENTRE IS HALF OF WHY BODIES LEFT THE
+        /// MAP. The old measurement took `col.transform.position + col.center`, which is the
+        /// middle of the wall, so every limit was too generous by half that wall's thickness.
+        /// `AIController.PlayableHalfX`'s own note says in capitals that it is THE WALL FACES;
+        /// the code under it had been measuring centres, and a doc and a number that disagree is
+        /// the shape of fault this repo's rules exist to stop.
+        ///
+        /// ⚠️ WHICH AXIS A BOX WALLS OFF IS DECIDED BY WHICH WAY IT IS THIN. A wall is long along
+        /// the edge it runs down and thin across it, so the thin axis is the one it stops you on.
+        /// Asking the collider's world AABB rather than its local size is what makes this survive
+        /// a wall that is rotated or scaled by its parent, and the arenas are emitted wholesale by
+        /// `tools/maps/build_*.py`, so nothing about their transforms is hand-kept.
+        ///
+        /// ⚠️ COLLIDERS ACROSS THE MIDDLE ARE IGNORED, which is the 1.0 m test the old code had
+        /// and the one thing about it worth keeping: a bridge pier or a kerb sitting near the
+        /// origin is an obstacle inside the arena, not the edge of it, and `BounceOffObstacles`
+        /// is what handles those.
+        /// </summary>
+        /// <summary>
+        /// How tall a box under `Bounds` has to be before it counts as a wall.
+        ///
+        /// ⚠️⚠️ WITHOUT THIS, ILALIM NG TULAY MEASURES 6.65 AND THE ARENA IS THE ROAD ONLY. That
+        /// map parents its GROUND under `Bounds`: the ground plate, `PavementWest` and
+        /// `PavementEast`, and `KerbWest` and `KerbEast`. Every one of them is 0.25 m in half
+        /// height and enormous in Z, so "thin across one axis" is true of a kerb exactly as it is
+        /// true of a wall, and the tightest of them is a 0.18 m kerb at x = 6.83. Clamping the
+        /// arena to that is not a wall, it is the edge of the tarmac: the pavement either side is
+        /// floor the game is meant to be played on, and both maps' probes photograph bodies
+        /// standing on it.
+        ///
+        /// ⚠️ TALLNESS IS WHAT SEPARATES THEM, NOT NAMES. Matching on "Wall" in the node name
+        /// would work today and break the first time `tools/maps/build_*.py` renames anything, and
+        /// those scripts emit the arenas WHOLESALE. What is actually true of a wall is that a body
+        /// cannot get over it: `cc.stepOffset` is 0.3 and the capsule is 1.6 tall, so 0.5 m of
+        /// half height is comfortably above anything a player steps onto and comfortably below
+        /// every real wall in the three arenas (Eskinita and Bayan Plaza are 6.0, Ilalim is 3.0).
+        /// </summary>
+        public const float MinimumWallHalfHeight = 0.5f;
+
+        /// <summary>
+        /// The top of a wall box, which is the arena's ceiling on that side.
+        ///
+        /// ⚠️ IT IS THE SAME BOXES THE SIDES ARE MEASURED FROM, so a map cannot acquire a ceiling
+        /// that disagrees with its walls. Ilalim ng Tulay's walls are 3.0 in half height against
+        /// Eskinita's 6.0, and that difference is real: one is a road under a viaduct.
+        /// </summary>
+        public static float WallTop(Bounds box) => box.center.y + box.extents.y;
+
+        public static float WallFace(Bounds box, out bool constrainsX)
+        {
+            constrainsX = box.extents.x < box.extents.z;
+
+            // A kerb, a pavement and the ground plate are all thin across one axis. Only a wall
+            // is also tall. See MinimumWallHalfHeight.
+            if (box.extents.y < MinimumWallHalfHeight) return -1.0f;
+
+            float centre = constrainsX ? box.center.x : box.center.z;
+            float extent = constrainsX ? box.extents.x : box.extents.z;
+            float face = Mathf.Abs(centre) - extent;
+
+            return face > 1.0f ? face : -1.0f;
+        }
+
+        /// <summary>
+        /// Measures the arena the round is about to be played in, and writes the one pair of
+        /// numbers that clamps every body and every tsinelas in it.
+        ///
+        /// ⚠️⚠️ THE TIGHTEST WALL, NOT THE FARTHEST, AND THE OLD `Mathf.Max` IS THE OTHER HALF OF
+        /// 🧑 2026-08-29's *"out of bounds sa ilalim ng tulay map"*. Seeding with Eskinita's 8.6
+        /// and 13.0 and then taking the maximum means a map can only ever be measured LARGER than
+        /// Eskinita: an arena that is genuinely narrower keeps Eskinita's walls, and everything
+        /// the numbers clamp is free to walk to a place that map has no floor for. Ilalim ng Tulay
+        /// is a road under a viaduct and is narrower across than a street of houses, so it got
+        /// the one shape of arena this arithmetic cannot express.
+        ///
+        /// ⚠️ AND THE MAXIMUM WAS WRONG ON ITS OWN TERMS EVEN WITHOUT THE SEED. Taking the
+        /// farthest wall on an axis applies the far side's distance to BOTH sides, so any arena
+        /// that is not symmetric lets a body through the near wall by the difference. The minimum
+        /// is the only answer that is safe on both sides of a symmetric clamp, and the clamp is
+        /// symmetric everywhere it is read: `CharacterMotor` twice, `AIController.ClampToPlayable`
+        /// and `Slipper.BounceOffBounds`.
+        ///
+        /// ⚠️ ONE NUMBER FOR PEOPLE, BOTS AND TSINELAS, which is what makes 🧑's *"make sure it
+        /// doesnt go past the bounds humans are allowed to go"* true by construction rather than
+        /// by three clamps being kept in step. There is no second bound to forget.
+        /// </summary>
+        public static void MeasurePlayableBounds()
+        {
+            var bounds = GameObject.Find("Bounds");
+
+            float halfX = float.PositiveInfinity;
+            float halfZ = float.PositiveInfinity;
+            float ceiling = float.PositiveInfinity;
+
+            if (bounds != null)
+            {
+                foreach (var col in bounds.GetComponentsInChildren<BoxCollider>())
+                {
+                    float face = WallFace(col.bounds, out bool constrainsX);
+                    if (face < 0.0f) continue;
+
+                    if (constrainsX) halfX = Mathf.Min(halfX, face);
+                    else halfZ = Mathf.Min(halfZ, face);
+
+                    // ⚠️ THE LOWEST WALL TOP, because that is the one a tsinelas can be thrown
+                    // over. A ceiling set from the tallest would leave the shortest side open,
+                    // which is the only side anybody would find.
+                    ceiling = Mathf.Min(ceiling, WallTop(col.bounds));
+                }
+            }
+
+            // ⚠️ A MAP THAT WALLS ONE AXIS AND NOT THE OTHER KEEPS THE DEFAULT ON THE OTHER,
+            // rather than inheriting an infinity that would clamp nothing at all. Each axis
+            // falls back on its own, because they are measured from different colliders.
+            AIController.PlayableHalfX = float.IsInfinity(halfX) ? DefaultHalfX : halfX;
+            AIController.PlayableHalfZ = float.IsInfinity(halfZ) ? DefaultHalfZ : halfZ;
+
+            // ⚠️⚠️ THE ARENA HAS A LID NOW, AND IT DID NOT. 🧑 2026-08-29: *"make sure theres
+            // invisible bounds in the sky as well as those walls that return the slippers or make
+            // them bounce"*. `BounceOffBounds` walled X and Z and left Y open, so a tsinelas
+            // thrown hard and high went straight over the top of a 6 m wall and came down outside
+            // the arena, where the resting clamp then dragged it back to a wall it had never
+            // touched. A shoe that leaves the map is an attacker deleted from the round, which is
+            // the same cost the resting clamp's own note describes at length.
+            AIController.PlayableCeilingY = float.IsInfinity(ceiling)
+                ? DefaultCeilingY
+                : Mathf.Max(ceiling, MinimumCeilingY);
+        }
+
         private void Start()
         {
             // The arena was loaded to be looked at, not played. See PreviewOnly.
@@ -204,25 +364,7 @@ namespace TumbangPreso
             // player chose. Applied once here, before any seat is built.
             AIController.ApplyDifficultyFromSettings();
 
-            var bounds = GameObject.Find("Bounds");
-            if (bounds != null)
-            {
-                float maxX = 8.6f;
-                float maxZ = 13.0f;
-                foreach (var col in bounds.GetComponentsInChildren<BoxCollider>())
-                {
-                    Vector3 c = col.transform.position + col.center;
-                    if (Mathf.Abs(c.x) > 1.0f) maxX = Mathf.Max(maxX, Mathf.Abs(c.x));
-                    if (Mathf.Abs(c.z) > 1.0f) maxZ = Mathf.Max(maxZ, Mathf.Abs(c.z));
-                }
-                AIController.PlayableHalfX = maxX;
-                AIController.PlayableHalfZ = maxZ;
-            }
-            else
-            {
-                AIController.PlayableHalfX = 8.6f;
-                AIController.PlayableHalfZ = 13.0f;
-            }
+            MeasurePlayableBounds();
 
             var lata = BuildLata();
             var seats = new CharacterMotor[Balance.PlayerCount];
@@ -398,6 +540,18 @@ namespace TumbangPreso
             int pick = (isNetworked && defenderSeatInfo != null && defenderSeatInfo.CanPick >= 0)
                 ? defenderSeatInfo.CanPick
                 : Settings.SettingsStore.Current.CanPick;
+
+            // ⚠️⚠️ A CUSTOM CHARACTER BRINGS ITS OWN LATA, AND IT OVERRIDES THE SEAT'S PICK
+            // RATHER THAN SITTING BESIDE IT. `docs/TODO.md` § 110.8's third open bullet: the
+            // indices are already the real `Roster.Cans` and `Roster.Slippers` rows, so this is a
+            // write and not a protocol. Two answers to "which can" would be two answers, and
+            // `CanIndex` is the one the player chose on the screen that shows them the can.
+            //
+            // ⚠️ SEAT 0 IS THE ONE THAT DECIDES, which is this method's existing rule and not a
+            // new one: the lata belongs to the match, and the taya of round one owns its skin.
+            var defenderCustom = CustomFor(0);
+            if (defenderCustom != null) pick = defenderCustom.CanIndex;
+
             var art = _book != null ? _book.CanArt(pick) : null;
 
             if (art != null && art.Model != null)
@@ -445,6 +599,13 @@ namespace TumbangPreso
                 ? Settings.SettingsStore.Current.SlipperPick
                 : (seatInfo != null && seatInfo.SlipperPick >= 0 ? seatInfo.SlipperPick : slot);
 
+            // ⚠️ AND ITS OWN TSINELAS. Same rule as the lata one method up, per seat rather than
+            // per match, because the slipper is the thing the player throws and gets caught
+            // retrieving. `docs/VISION.md`: *"the tension is the retrieval"*, so this is the prop
+            // a player looks at most.
+            var custom = CustomFor(slot);
+            if (custom != null) pick = custom.SlipperIndex;
+
             var art = _book != null ? _book.SlipperArt(pick) : null;
 
             if (art != null && art.Model != null)
@@ -455,7 +616,11 @@ namespace TumbangPreso
 
                 // The other hero prop. Same reasoning as the lata, and the owner glow below
                 // drives _RimStrength, which this shader is the one that actually carries.
-                Visual.ToonSkin.Apply(model, Visual.ToonSkin.PropOutlineWidth);
+                //
+                // ⚠️ `ApplySlipper`, NOT `Apply`, AND THIS IS THE MATCH COPY: the one that has to
+                // look the same on every map. `SlipperSkinTests` reads all five sites as text and
+                // fails if any one of them drops back to plain `Apply`.
+                Visual.ToonSkin.ApplySlipper(model, Visual.ToonSkin.PropOutlineWidth);
             }
             else
             {
@@ -467,6 +632,18 @@ namespace TumbangPreso
             }
 
             var s = go.AddComponent<Slipper>();
+
+            // ⚠️⚠️ THE STABLE IDENTITY IS SET HERE AND NEVER AGAIN, WHICH IS THE POINT OF IT.
+            // `OwnerSlot` below starts equal to it and is then rewritten every round by
+            // `SliceRunner.EquipOwnedSlippers` (the taya's shoe goes to -1). `SeatOfOrigin` does
+            // not move, so `MatchRpc.FindSlipper` has something to address a tsinelas BY that
+            // cannot vanish underneath it. `docs/TODO.md` § 78.1 is what this fixes and
+            // `Slipper.SeatOfOrigin` carries the reasoning.
+            //
+            // ⚠️ ASSIGNED ON EVERY PEER, WHICH IS WHY IT NEEDS NO REPLICATION. This method runs
+            // on host and client alike and indexes by seat in both, so the two ends agree by
+            // construction rather than by being told.
+            s.SeatOfOrigin = slot;
             s.OwnerSlot = slot;
             s.SkinIndex = pick;
 
@@ -496,6 +673,56 @@ namespace TumbangPreso
                 Destroy(c);
             }
         }
+
+        /// <summary>
+        /// The custom character sitting in a seat, or null for a roster one.
+        ///
+        /// ⚠️⚠️ THIS METHOD IS WHAT CLOSED `docs/TODO.md` § 108.5 AND § 110.8, WHICH SAID
+        /// *"`CustomCharacterStore.ActiveWire()` produces the string and nothing sends it;
+        /// `MatchInstaller` still spawns a `Roster` entry"*. A player could make a character,
+        /// save it, preview it and set it active, and the match still showed whoever they had
+        /// picked off the roster. It travels in `LobbySeatInfo.Custom` now, § 112.
+        ///
+        /// ⚠️⚠️ THE SEAT TABLE IS ASKED FIRST AND THE LOCAL STORE IS ONLY A FALLBACK FOR THE
+        /// LOCAL SEAT, AND THAT ORDER IS THE WHOLE SAFETY PROPERTY. `MatchInstaller`'s palette
+        /// block already carries the warning this obeys: **guessing a remote peer's choice from
+        /// this machine's settings would dress a stranger in the local player's character.** A
+        /// remote seat gets what the host published or nothing at all.
+        ///
+        /// ⚠️ THE LOCAL FALLBACK IS NOT REDUNDANT AND IT COVERS TWO REAL CASES: an offline match
+        /// (Practice, Training, a probe), where there is no seat table at all, and the window
+        /// between pressing PLAY and the host having authorised this machine's own frame.
+        ///
+        /// ⚠️ AND THE FRAME MUST SAY `C3`. `CustomCharacterRules.DecodeWire` answers a DEFAULT
+        /// character for a version it does not know, which is right when reading your own save
+        /// file and wrong here: it would seat a stranger for a peer playing a roster hero.
+        /// The result is cached per seat because three separate builders ask for it.
+        /// </summary>
+        private CustomCharacter CustomFor(int slot)
+        {
+            if (slot < 0 || slot >= Balance.PlayerCount) return null;
+            if (_customChecked[slot]) return _custom[slot];
+
+            _customChecked[slot] = true;
+
+            var net = Net.NetSession.Instance;
+            bool isNetworked = net != null && net.IsNetworked;
+
+            var seatInfo = isNetworked ? Net.MatchRpc.Instance?.GetSeatInfo(slot) : null;
+            string wire = seatInfo != null && seatInfo.Occupied ? seatInfo.Custom ?? "" : "";
+
+            if (string.IsNullOrEmpty(wire) && slot == HumanSeat)
+                wire = Net.LocalCosmetics.CustomCharacter();
+
+            _custom[slot] = !string.IsNullOrEmpty(wire) && wire.StartsWith("C3:")
+                ? CustomCharacterRules.DecodeWire(wire)
+                : null;
+
+            return _custom[slot];
+        }
+
+        private readonly CustomCharacter[] _custom = new CustomCharacter[Balance.PlayerCount];
+        private readonly bool[] _customChecked = new bool[Balance.PlayerCount];
 
         /// <summary>
         /// ⚠️ 1.6 CAPSULE, 1.25 EYE. Those belong to the Person ROLE, not to any model, and
@@ -534,7 +761,7 @@ namespace TumbangPreso
 
             if (isLocalHuman)
             {
-                motor.PlayerName = Settings.SettingsStore.Current.PlayerName;
+                motor.PlayerName = GameServices.Account?.LobbyName ?? Settings.SettingsStore.Current.PlayerName;
                 motor.CharacterIndex = Settings.SettingsStore.Current.CharacterPick >= 0
                     ? Settings.SettingsStore.Current.CharacterPick
                     : AiCharacterIndex(slot);
@@ -552,9 +779,28 @@ namespace TumbangPreso
                 motor.CharacterIndex = AiCharacterIndex(slot);
             }
 
+            // ⚠⚠ PHASE 12, MIRROR: EVERY SEAT PLAYS THE SAME CHARACTER, DECIDED BY THE WEEK.
+            // `docs/Formats.md` § 2. It is applied HERE, after every other rule has decided what
+            // each seat brought, because that is what makes it *"one line of lobby logic"*
+            // (`FUTURE.md` § 12): the pick still crosses the wire, still shows in the lobby, and
+            // is overridden at the door. Applying it in the lobby instead would mean writing over
+            // three other people's saved picks, which is a format changing a preference.
+            //
+            // ⚠️ IT IS DERIVED FROM THE UTC WEEK ON EVERY MACHINE INDEPENDENTLY and never sent,
+            // so a LAN room with no internet mirrors the same character as an online one. The
+            // custom character is left alone deliberately: `CustomFor` is somebody's own creation
+            // and a mirror of it would be four copies of a character three of them cannot see.
+            if (SceneFlow.SelectedFormat == MatchFormat.Mirror)
+            {
+                var mirrorPeople = Roster.GetPeople(SceneFlow.SelectedMode);
+                motor.CharacterIndex = CustomGameRules.MirrorIndex(mirrorPeople.Count, DateTime.UtcNow);
+            }
+
             go.AddComponent<Carrier>();
             go.AddComponent<CombatVerbs>();
             go.AddComponent<Social.EmotePlayer>();
+
+            var custom = CustomFor(slot);
 
             if (SceneFlow.SelectedMode == GameMode.HeroStrike)
             {
@@ -563,7 +809,27 @@ namespace TumbangPreso
                 string heroId = (motor.CharacterIndex >= 0 && motor.CharacterIndex < heroPeople.Count)
                     ? heroPeople[motor.CharacterIndex].Id
                     : "dante";
-                abilities.BindHero(heroId);
+
+                // ⚠️⚠️ A CUSTOM CHARACTER BORROWS ONE HERO'S KIT, WHOLE, AND NEVER A MIXTURE.
+                // 🧑, 2026-08-31: *"it can js borrow the skills of any of the characters for its
+                // skills and ult"*, and immediately after, *"it can only follow onne skill tree
+                // tho and cant mix diff shits"*. `HeroKitId` is ONE string, so a mixture is not
+                // something a modified client can express, and `KitFor` resolves an empty or
+                // unknown id to the first hero rather than to nothing: a Hero Strike seat with no
+                // kit has no skills and no ultimate, which is a broken match rather than a missing
+                // cosmetic. `docs/TODO.md` § 110.5.
+                //
+                // ⚠️ THE ID IS ALREADY NORMALISED. The host ran the frame through
+                // `CustomCharacterRules.Normalise` before publishing it, so this is resolving a
+                // decision rather than trusting a claim.
+                if (custom != null) heroId = CustomCharacterRules.KitFor(custom.HeroKitId);
+
+                HeroBuild heroBuild = isLocalHuman
+                    ? Settings.SettingsStore.CheckedHeroBuildFor(heroId)
+                    : seatInfo != null && seatInfo.Occupied
+                        ? HeroBuildRules.Decode(seatInfo.Build, heroId)
+                        : null;
+                abilities.BindHero(heroId, heroBuild);
             }
 
             // The role ring and floating tag. Parented under the seat so it inherits position
@@ -582,11 +848,78 @@ namespace TumbangPreso
             // moved the CharacterController along with the mesh. See SetModelRoot.
             visual.SetModelRoot(visualRoot.transform);
 
-            var art = _book != null ? _book.PersonArt(motor.CharacterIndex, SceneFlow.SelectedMode) : null;
+            // ⚠️⚠️ A CUSTOM SEAT WEARS THE BASE RIG AND NEVER A ROSTER ONE. `custom_base` is the
+            // bald, bare `.glb` the wardrobe is authored against (`tools/build_base_voxel.py`);
+            // dressing a roster hero would put a hat on Berto, which is the one thing § 111.5's
+            // test exists to make impossible. It falls back to the roster pick when the asset is
+            // missing, which is what a fresh clone before `RosterBookBuilder.Build` looks like:
+            // a player in the wrong body beats a player with no body.
+            var art = _book == null
+                ? null
+                : custom != null
+                    ? _book.FindPersonArt(CustomCharacterRules.BaseRigId)
+                      ?? _book.PersonArt(motor.CharacterIndex, SceneFlow.SelectedMode)
+                    : _book.PersonArt(motor.CharacterIndex, SceneFlow.SelectedMode);
 
             if (art != null && art.Model != null)
             {
-                visual.ApplyModel(art.Model, art.Tint, art.Clips, art.Palette, art.PetModel);
+                // ⚠️⚠️ THE EQUIPPED PALETTE, LOCAL SEAT FROM SETTINGS AND EVERY OTHER SEAT FROM
+                // THE WIRE. This block used to end at the local seat with a note saying a remote
+                // peer's choice *"has to arrive over the wire before it can be drawn, and it does
+                // not yet"*. It does now: the host authorises each peer's claim and publishes the
+                // answer in the seat table (`docs/TODO.md` § 101).
+                //
+                // ⚠️⚠️ THE REMOTE VALUE IS READ FROM THE REPLICATED TABLE AND NEVER GUESSED. The
+                // old note's warning stands and is the reason this reads `GetSeatInfo` rather
+                // than falling back to anything local: **guessing a remote peer's palette from
+                // this machine's settings would dress a stranger in the local player's choice.**
+                // An absent or empty id is the authored colours, which is the right answer for a
+                // bot, an empty seat and a peer on an older build alike.
+                //
+                // ⚠️ `PaletteVariants.For` IS THE ONE OWNER and answers the authored array
+                // unchanged for an empty or unknown id, so this is safe on every seat.
+                string characterId = Roster.PersonIdAt(motor.Mode, motor.CharacterIndex);
+                var look = slot == humanSeat
+                    ? Settings.SettingsStore.LookFor(characterId)
+                    : LookCodec.Decode(Net.MatchRpc.Instance?.GetSeatInfo(slot)?.Look ?? "");
+
+                // ⚠️⚠️ A CUSTOM SEAT DOES NOT GO THROUGH `PaletteVariants` AT ALL, AND THAT IS
+                // THE POINT RATHER THAN AN OMISSION. `PaletteVariants` rotates an AUTHORED
+                // palette and `PaletteRules.IsProtectedSlot` holds the skin and the face out of
+                // that rotation, so a hue dial can never reach a canonical character's skin
+                // (`docs/TODO.md` § 107). This character's skin is not rotated, it is CHOSEN, so
+                // it is written straight in by `CustomCharacterOutfit.PaletteFor` and never
+                // travels that path. `docs/FUTURE.md` § 5.2: two categories, two rules.
+                var palette = custom != null
+                    ? CustomCharacterOutfit.PaletteFor(art.Palette, custom)
+                    : PaletteVariants.For(art.Palette, look);
+
+                visual.ApplyModel(art.Model, art.Tint, art.Clips, palette, art.PetModel);
+
+                // ⚠️⚠️ SCALE, RE-ALIGN, THEN DRESS, AND THE ORDER IS NOT INTERCHANGEABLE.
+                // ⚠️ THE DRESSER IS NOT NAMED IN THIS FILE, EVEN IN A COMMENT, AND THAT IS THE
+                // TEST DOING ITS JOB RATHER THAN A STYLE RULE.
+                // `CustomCharacterWardrobeTests.NothingButTheCustomCharactersOwnFilesTouchThe`
+                // `Wardrobe` reads every `.cs` as TEXT, so a comment mentioning the type is a hit,
+                // and it caught this line on the first run. `CustomCharacterOutfit` is the only
+                // door and this file goes through it.
+                //
+                // Dressing MEASURES the head, torso, arms and legs off the live rig, so
+                // anything that changes what those measure has to happen first; and
+                // `ApplyModel` has already dropped the model onto the capsule floor against the
+                // UNSCALED bounds, so a height scale applied after it leaves the feet in the air
+                // or the shins in the ground. `AlignToCapsuleFloor` is public for exactly this.
+                //
+                // ⚠️ THE SCALE IS ON THE MODEL AND NEVER ON THE CAPSULE. `CLAUDE.md` § 4
+                // resolves contact by DISTANCE, so a height dial that reached the collider would
+                // be a cosmetic deciding who gets tagged. `CustomCharacterOutfit.ApplyBodyScale`
+                // carries the argument in full.
+                if (custom != null && visual.Model != null)
+                {
+                    CustomCharacterOutfit.ApplyBodyScale(visual.Model, custom);
+                    visual.AlignToCapsuleFloor();
+                    CustomCharacterOutfit.Dress(visual.Model, custom, palette);
+                }
 
                 // Strip from the whole seat, because the visual parents the model under the
                 // seat root rather than under visualRoot. The CharacterController survives by
@@ -646,7 +979,8 @@ namespace TumbangPreso
                 // nameplate to a roster name for a player who is still connected.
                 go.AddComponent<AIController>();
             }
-            else if (!isHumanPlayer && (!isNetworked || NetAuthority.IsHost))
+            else if (AIController.BotsEnabled && !isHumanPlayer &&
+                     (!isNetworked || NetAuthority.IsHost))
             {
                 // Unoccupied seats run AI on the host only
                 go.AddComponent<AIController>();
@@ -862,7 +1196,8 @@ namespace TumbangPreso
                 reader.enabled = false;
                 Destroy(reader);
 
-                if (NetAuthority.IsHost && body.GetComponent<AIController>() == null)
+                if (AIController.BotsEnabled && NetAuthority.IsHost &&
+                    body.GetComponent<AIController>() == null)
                     body.gameObject.AddComponent<AIController>();
 
                 body.ForgetInputSource();
@@ -871,6 +1206,11 @@ namespace TumbangPreso
 
         private void BuildReadyGate(CharacterMotor local, SliceRunner runner)
         {
+            // ⚠️ ONE PER MATCH, ON THE SAME OBJECT AS THE RUNNER AND THE GATE. `MatchRpc` finds
+            // it with `FindFirstObjectByType`, so a second copy would take half the votes and
+            // neither would reach the total. See `BufferSkipVote`.
+            gameObject.AddComponent<BufferSkipVote>();
+
             var gate = gameObject.AddComponent<ReadyGate>();
 
             gate.RoundShouldBegin += runner.Begin;

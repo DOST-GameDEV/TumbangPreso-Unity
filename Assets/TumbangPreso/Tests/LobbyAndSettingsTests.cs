@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using NUnit.Framework;
 using TumbangPreso.Core;
 using TumbangPreso.Net;
@@ -24,6 +25,21 @@ namespace TumbangPreso.Tests
             var lobby = new LobbySession { IsDedicated = dedicated };
             lobby.OpenLobby(new Random(12345));
             return lobby;
+        }
+
+        [Test]
+        public void MultiplayerLobbyIncludesTheNoBotsOption()
+        {
+            bool previous = UI.SceneFlow.Networked;
+            UI.SceneFlow.Networked = true;
+
+            var count = typeof(UI.ConvertedMatchSetup).GetProperty(
+                "DifficultyOptionCount", BindingFlags.Static | BindingFlags.NonPublic);
+
+            Assert.IsNotNull(count);
+            Assert.AreEqual(AIController.NoBotsIndex + 1, (int)count.GetValue(null));
+
+            UI.SceneFlow.Networked = previous;
         }
 
         // -------------------------------------------------------------------
@@ -655,9 +671,16 @@ namespace TumbangPreso.Tests
             Assert.IsFalse(full.IsJoinable, "every chair is taken");
             Assert.IsTrue(full.CanSpectate, "there is still room on the wire");
 
-            // Two playing, six watching. Joinable, and the old single count said otherwise.
+            // Two playing and the rest watching, one socket short of the ceiling. Joinable, and
+            // the old single count said otherwise.
+            //
+            // ⚠️ COUNTED OFF `MaxConnections` RATHER THAN TYPED AS 8. It was a literal, and when
+            // the ceiling came down from 12 to 8 (§ 83.21) that literal stopped meaning "busy"
+            // and started meaning "packed" — so this case silently became a duplicate of the one
+            // below it and failed. The thing being asserted is "sockets left over", which is a
+            // position relative to the ceiling, not a number.
             var busy = Lan("Busy", seated: 2, occupied: 2, inProgress: false);
-            busy.Connections = 8;
+            busy.Connections = LobbySession.MaxConnections - 1;
             Assert.IsTrue(busy.IsJoinable,
                 "spectators are not players, and counting them as players hid the lobby");
 
@@ -689,6 +712,102 @@ namespace TumbangPreso.Tests
             Assert.AreEqual(LobbySession.MaxConnections, entry.MaxConnections);
             Assert.AreEqual("Old Build", entry.HostName);
             Assert.IsTrue(entry.IsJoinable);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ A VOLUME SLIDER MUST DO SOMETHING AUDIBLE IN ITS TOP HALF. 🧑 2026-08-29: *"audio
+        /// in settings is also broken, even when i lower its still very very loud"*. The wiring
+        /// was correct and the CURVE was not: amplitude is not loudness, so half the groove was
+        /// -6 dB and the shipped default of 0.8 was -1.9 dB, which is inaudible as a change.
+        /// </summary>
+        [Test]
+        public void HalfTheVolumeSliderIsAboutHalfTheLoudnessRatherThanSixDecibels()
+        {
+            // The ends are fixed points: full is full, and off is silent. Anything else would
+            // make this a retune of the game's loudness rather than a fix to the control.
+            Assert.AreEqual(1.0f, Settings.GameSettings.Gain(1.0f), 0.0001f);
+            Assert.AreEqual(0.0f, Settings.GameSettings.Gain(0.0f), 0.0001f);
+
+            Assert.AreEqual(0.25f, Settings.GameSettings.Gain(0.5f), 0.0001f,
+                "half the knob should be a quarter of the amplitude, which is about half as loud");
+
+            // Monotonic, so dragging down never gets louder.
+            float previous = -1.0f;
+            for (int i = 0; i <= 20; i++)
+            {
+                float g = Settings.GameSettings.Gain(i / 20.0f);
+                Assert.Greater(g, previous);
+                previous = g;
+            }
+        }
+
+        /// <summary>
+        /// ⚠️ THE TWO FADERS CURVE SEPARATELY AND THEN MULTIPLY, which is what a mixer does.
+        /// Curving their product would make each fader's feel depend on where the other sits.
+        /// </summary>
+        [Test]
+        public void TheSfxFaderSitsUnderTheMasterFader()
+        {
+            var s = new Settings.GameSettings { MasterVolume = 0.5f, SfxVolume = 0.5f };
+
+            Assert.AreEqual(0.0625f, s.SfxGain, 0.0001f);
+
+            s.MasterVolume = 0.0f;
+            Assert.AreEqual(0.0f, s.SfxGain, 0.0001f,
+                "master at zero must silence the sfx bus whatever the sfx fader says");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE BEACON ID IS WHAT STOPS A HOST FINDING ITSELF, so it has to survive the round
+        /// trip intact. 🧑 2026-08-29: *"na kikita sarili sa lobby (join a game)"*. A host
+        /// broadcasts to every interface and its own listener is bound to `IPAddress.Any`, so it
+        /// receives every packet it sends; `LanBeacon.IsOurOwn` drops those by comparing this
+        /// field, and it can only do that if the parser gives back exactly what the builder put in.
+        /// </summary>
+        [Test]
+        public void TheBeaconIdSurvivesTheRoundTrip()
+        {
+            string payload = LanBeacon.BuildPayload(8910, 2, 4, false, "K7X9", "Host",
+                                                    2, 5, 12, "abc123def456");
+
+            Assert.IsTrue(LanBeacon.TryParsePayload(payload, "10.0.0.9", out var entry));
+            Assert.AreEqual("abc123def456", entry.BeaconId);
+            Assert.AreEqual("Host", entry.HostName, "the id must not be read as part of the name");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ AN OLD BUILD IS LISTED, NOT MISTAKEN FOR US. It advertises the v1 magic and no id
+        /// at all, and `IsOurOwn` refuses to match an empty one. That is the correct direction to
+        /// fail in: one row too many in the browser is a nuisance, and a real host filtered out of
+        /// it is a game nobody on the network can join.
+        /// </summary>
+        [Test]
+        public void APayloadFromBeforeTheBeaconIdCarriesNoneAndIsStillListed()
+        {
+            string old = string.Join("|", LanBeacon.Magic, "8910", "2", "4", "0", "K7X9",
+                                     "2", "5", "12", "Old Build");
+
+            Assert.IsTrue(LanBeacon.TryParsePayload(old, "192.168.1.50", out var entry));
+            Assert.AreEqual("", entry.BeaconId);
+            Assert.AreEqual("Old Build", entry.HostName);
+            Assert.AreEqual(5, entry.Connections, "the v1 extended counts still read where they were");
+        }
+
+        /// <summary>
+        /// ⚠️ THE VERSION IS FIELD 0, NOT THE FIELD COUNT, and this is the case that decides it.
+        /// A v1 host whose player typed one separator into their name produces eleven fields,
+        /// which is exactly the length of a v2 payload. Discriminating on the count would read
+        /// that player's name as a beacon id and shift the whole name one field left.
+        /// </summary>
+        [Test]
+        public void AV1NameWithASeparatorIsNotMistakenForAV2BeaconId()
+        {
+            string old = string.Join("|", LanBeacon.Magic, "8910", "2", "4", "0", "K7X9",
+                                     "2", "5", "12", "Ma", "te");
+
+            Assert.IsTrue(LanBeacon.TryParsePayload(old, "192.168.1.50", out var entry));
+            Assert.AreEqual("", entry.BeaconId);
+            Assert.AreEqual(Settings.GameSettings.SanitiseName("Ma|te"), entry.HostName);
         }
 
         /// <summary>
@@ -791,13 +910,30 @@ namespace TumbangPreso.Tests
             Assert.IsTrue(overflow.Spectator, "no chair means a spectator, never a seatless player");
         }
 
+        /// <summary>
+        /// ⚠️ IT ASSERTED THE LITERAL 12 AND BROKE ON § 83.21, WHICH IS THE RIGHT WAY ROUND. The
+        /// ceiling moved to 8 on 🧑's *"up to 8 ppl can join but only the first 4 are players and
+        /// last 4 are spectators"*, and a tripwire on a capacity number is worth having.
+        ///
+        /// What it holds now is the RELATIONSHIP rather than the numbers: the room is the seats
+        /// plus the gallery, and the gallery is not empty. Re-typing 8 here would only prove
+        /// somebody edited two files instead of one.
+        /// </summary>
         [Test]
-        public void MaxConnectionsExceedsMaxPlayersToAccommodateSpectators()
+        public void MaxConnectionsIsTheSeatsPlusTheGallery()
         {
             Assert.Greater(LobbySession.MaxConnections, LobbySession.MaxPlayers,
-                "Relay connection ceiling must exceed player seat count to allow spectators");
-            Assert.AreEqual(12, LobbySession.MaxConnections);
-            Assert.AreEqual(4, LobbySession.MaxPlayers);
+                "the connection ceiling must exceed the seat count or nobody can watch");
+
+            Assert.AreEqual(LobbySession.MaxPlayers + LobbySession.MaxSpectators,
+                            LobbySession.MaxConnections,
+                            "the room is the seats plus the gallery and nothing else");
+
+            Assert.AreEqual(4, LobbySession.MaxPlayers,
+                "four seats is a design rule, not a capacity number");
+
+            Assert.Greater(LobbySession.MaxSpectators, 0,
+                "a gallery of nobody is the refusal § 83.21 removed");
         }
 
         // -------------------------------------------------------------------
@@ -1118,21 +1254,58 @@ namespace TumbangPreso.Tests
 
             // Dedicated referee (peer 1) does not count towards ready quorum
             lobby.Admit(1, "ref-token", "Referee");
-            Assert.AreEqual(1, lobby.PlayingPeerCount(1), "Floored at 1 when no human players are seated");
+            Assert.AreEqual(1, lobby.PlayingPeerCount(), "Floored at 1 when no human players are seated");
 
             // Human player 1 (host)
             lobby.Admit(2, "p1-token", "Host Player");
-            Assert.AreEqual(1, lobby.PlayingPeerCount(2));
+            Assert.AreEqual(1, lobby.PlayingPeerCount());
 
             // Human player 2 (guest)
             lobby.Admit(3, "p2-token", "Guest Player");
-            Assert.AreEqual(2, lobby.PlayingPeerCount(2));
+            Assert.AreEqual(2, lobby.PlayingPeerCount());
 
             // Spectator (peer 4)
             var spec = lobby.Admit(4, "spec-token", "Spectator");
             spec.Spectator = true;
             spec.Seat = -1;
-            Assert.AreEqual(2, lobby.PlayingPeerCount(2), "Spectators must not be counted in ready quorum");
+            Assert.AreEqual(2, lobby.PlayingPeerCount(), "Spectators must not be counted in ready quorum");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE PEER DOING THE COUNTING IS COUNTED BY THE SAME RULE AS EVERYBODY ELSE, AND
+        /// UNTIL 2026-08-30 IT WAS NOT. 🧑: *"R doesnt work if theres a spectator"*.
+        ///
+        /// `PlayingPeerCount` used to exempt the local peer from the spectator test so its own
+        /// flag could arrive late. `ReadyGate.Update` returns without voting for
+        /// `GameLaunch.Spectator`, so a host that clicked SPECTATE in its own lobby was one
+        /// vote in a quorum it could not reach: everyone else pressed R and the match never
+        /// started. The set and the total have to be drawn from one population, which is the
+        /// rule § 78.6 already wrote down for the opposite direction.
+        ///
+        /// ⚠️ IT IS ASSERTED FROM BOTH CHAIRS. The spectating peer asking, and a playing peer
+        /// asking about it, must get the same answer, because on a listen host those are the
+        /// same call made by two processes.
+        /// </summary>
+        [Test]
+        public void PlayingPeerCountExcludesASpectatingLocalPeer()
+        {
+            var lobby = new LobbySession();
+            lobby.OpenLobby(new System.Random(7));
+
+            var host = lobby.Admit(2, "host-token", "Hosting Spectator");
+            var guest = lobby.Admit(3, "guest-token", "Guest Player");
+
+            Assert.AreEqual(2, lobby.PlayingPeerCount(), "Two seated humans before anyone watches");
+
+            // The host gives its chair up to watch, which is what the lobby's SPECTATE control
+            // does. Its seat goes back and its record is flagged, exactly as `Admit` flags an
+            // arrival that finds no chair.
+            host.Seat = -1;
+            host.Spectator = true;
+
+            Assert.AreEqual(1, lobby.PlayingPeerCount(),
+                            "A spectating host must not be counted in a quorum it cannot vote in");
+            Assert.AreEqual(1, guest.Seat, "The guest keeps the chair it was admitted to");
         }
 
         [Test]
@@ -1140,7 +1313,7 @@ namespace TumbangPreso.Tests
         {
             var lobby = new LobbySession();
             lobby.OpenLobby(new System.Random(42));
-            Assert.AreEqual(1, lobby.PlayingPeerCount(0), "Empty lobby must floor at 1 so gate does not auto-satisfy");
+            Assert.AreEqual(1, lobby.PlayingPeerCount(), "Empty lobby must floor at 1 so gate does not auto-satisfy");
         }
 
         [Test]
@@ -1555,6 +1728,163 @@ namespace TumbangPreso.Tests
             Assert.AreEqual("host:99999", NetSession.SplitHostPort("host:99999", ref port),
                             "65535 is the ceiling");
             Assert.AreEqual(LobbySession.DefaultPort, port);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THIS TEST USED TO ASSERT THE OPPOSITE, AND THE RULE IT ASSERTED WAS BACKWARDS.
+        /// It admitted a full `Maria Clara#4417` verbatim and rewrote a bare `Maria Clara` to
+        /// `Player#tag`, on the reading that the bare name was a forgery attempt. It is not: the
+        /// bare name is what every LAN peer and every pre-account build sends. Meanwhile the
+        /// claim it accepted verbatim is the actual attack, because nothing here can check that
+        /// the sender owns that handle. So the old rule punished the honest case and waved the
+        /// forgery through.
+        ///
+        /// ⚠️⚠️ WHAT THIS STILL ASSERTS, AND WHY IT IS RIGHT EVEN NOW THE GUARD EXISTS: arrival
+        /// resolves a name with NO service call at all. The check is a network round trip and the
+        /// lobby must never wait for one (`FUTURE.md` § 0.5 rule 7), so a claimed handle is
+        /// admitted on arrival and re-resolved later by `ApplyHandleCheck`. This is the LAN and
+        /// offline path in full, and the four-machines-in-a-hall case § 88.1b was written for.
+        /// `LobbyDemotesAClaimTheAccountEndpointRefuses` is the other half.
+        /// </summary>
+        [Test]
+        public void LobbyKeepsAUsableNameAndAlwaysTagsIt()
+        {
+            var lobby = new LobbySession();
+
+            var full = lobby.Admit(1, "player-one", "Maria Clara#4417", out _);
+            Assert.AreEqual("Maria Clara#4417", full.Name);
+
+            // The bare name is kept rather than replaced, and given a tag of its own.
+            var bare = lobby.Admit(2, "player-two", "Maria Clara", out _);
+            Assert.IsTrue(AccountRules.TrySplitHandle(bare.Name, out string bareName, out string bareTag));
+            Assert.AreEqual("Maria Clara", bareName);
+            StringAssert.IsMatch("^[0-9]{4}$", bareTag);
+
+            // A name that cannot be shown at all is the only thing that becomes `Player`.
+            var unusable = lobby.Admit(3, "player-three", "  ", out _);
+            StringAssert.StartsWith("Player#", unusable.Name);
+
+            Assert.AreEqual(AccountRules.HandleMax, AccountRules.DisplayNameMax + 5);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE IMPERSONATION GUARD AS THE LOBBY SEES IT, `docs/TODO.md` § 88.1c. The core
+        /// tests assert what the rule does with each answer; this asserts that the lobby applies
+        /// it to the ORIGINAL CLAIM rather than to the name it already resolved, which is the
+        /// thing a second pass gets wrong: a demotion that re-tagged a tag, or a second answer
+        /// for one peer that compounded instead of replacing.
+        /// </summary>
+        [Test]
+        public void LobbyDemotesAClaimTheAccountEndpointRefuses()
+        {
+            var lobby = new LobbySession();
+            lobby.Admit(1, "impostor-token", "Maria Clara#4417", out _);
+
+            Assert.IsTrue(lobby.ApplyHandleCheck(1, "impostor-id",
+                AccountRules.HandleCheck.NotOwned, ""));
+
+            var record = lobby.PeerById(1);
+            StringAssert.StartsWith("Maria Clara#", record.Name,
+                "the display name must survive a refusal: a hall of four beacons that all read " +
+                "`Player#tag` is docs/TODO.md § 88.1b all over again");
+            Assert.AreNotEqual("Maria Clara#4417", record.Name, "the claimed tag must be gone");
+
+            // ⚠️ RUNNING THE SAME ANSWER TWICE CHANGES NOTHING. A reconnect, a re-identify and a
+            // late duplicate answer all reach this, and a rule applied to its own output would
+            // walk the tag every time.
+            string once = record.Name;
+            Assert.IsFalse(lobby.ApplyHandleCheck(1, "impostor-id",
+                AccountRules.HandleCheck.NotOwned, ""));
+            Assert.AreEqual(once, record.Name);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ `FUTURE.md` § 0.5 RULE 7 AT THE LOBBY BOUNDARY. A LAN match may never sit behind
+        /// a login, and venue Wi-Fi at the nationals may not exist at all, so "we did not ask"
+        /// and "it did not answer" must both leave four peers named exactly as they claimed.
+        /// </summary>
+        [Test]
+        public void LanArrivalNeedsNoServiceAndNamesFourPeersApart()
+        {
+            var lobby = new LobbySession();
+            var names = new System.Collections.Generic.HashSet<string>();
+
+            for (int i = 0; i < LobbySession.MaxPlayers; i++)
+            {
+                var peer = lobby.Admit(10 + i, $"lan-token-{i}", $"Kalye Kid {i}", out _);
+
+                // Nothing is asked and nothing answers: this is the unplugged hall.
+                Assert.IsFalse(lobby.ApplyHandleCheck(10 + i, "",
+                    AccountRules.HandleCheck.Unreachable, ""));
+
+                Assert.IsTrue(AccountRules.TrySplitHandle(peer.Name, out string shown, out string tag));
+                Assert.AreEqual($"Kalye Kid {i}", shown);
+                StringAssert.IsMatch("^[0-9]{4}$", tag);
+                Assert.IsTrue(names.Add(peer.Name), "two LAN peers rendered as the same row");
+            }
+
+            Assert.AreEqual(LobbySession.MaxPlayers, names.Count);
+        }
+
+        /// <summary>
+        /// A verified peer is called what the SERVICE says, not what it claimed, so a host does
+        /// not have to trust a single character of the claim once there is an answer.
+        /// </summary>
+        [Test]
+        public void LobbyTakesTheVerifiedHandleOverTheClaimedOne()
+        {
+            var lobby = new LobbySession();
+            lobby.Admit(1, "token-a", "Somebody Else#1234", out _);
+
+            Assert.IsTrue(lobby.ApplyHandleCheck(1, "player-a",
+                AccountRules.HandleCheck.Owned, "Maria Clara#4417"));
+            Assert.AreEqual("Maria Clara#4417", lobby.PeerById(1).Name);
+        }
+
+        /// <summary>
+        /// ⚠️ AN ANSWER ABOUT SOMEBODY ELSE IS DROPPED. Verification is async and a reconnect
+        /// inside the fast-reconnect window mints a new proof for the same token, so a stale
+        /// answer can land after the new transport has taken the record.
+        /// </summary>
+        [Test]
+        public void ALateAnswerAboutADifferentAccountIsIgnored()
+        {
+            var lobby = new LobbySession();
+
+            // ⚠️ THE CLAIM IS DELIBERATELY NOT THE VERIFIED HANDLE. `ApplyHandleCheck` answers
+            // "did the visible name change", so a peer whose claim was already correct answers
+            // false on a successful check, which is right and is not what this test is about.
+            lobby.Admit(1, "token-a", "Somebody Else#1234", out _);
+
+            Assert.IsTrue(lobby.ApplyHandleCheck(1, "player-a",
+                AccountRules.HandleCheck.Owned, "Maria Clara#4417"));
+
+            Assert.IsFalse(lobby.ApplyHandleCheck(1, "somebody-else",
+                AccountRules.HandleCheck.Owned, "Impostor#0001"));
+            Assert.AreEqual("Maria Clara#4417", lobby.PeerById(1).Name);
+        }
+
+        [Test]
+        public void AccountFieldsSurviveSettingsValidationOffline()
+        {
+            var settings = new GameSettings
+            {
+                PlayerToken = "offline-token",
+                // ⚠️ WITHIN `AccountRules.DisplayNameMax`, WHICH IS 14. This read
+                // "Tournament Guest" while the limit was briefly 16 and truncated the moment the
+                // account name went back to the one length the wire and the HUD already used.
+                PlayerName = "  Tourney Guest  ",
+                AccountBio = new string('b', AccountRules.BioMax + 20),
+                AccountCountry = "ph",
+                AccountPronouns = "they/them",
+            };
+
+            settings.Validate();
+            Assert.AreEqual("Tourney Guest", settings.PlayerName);
+            Assert.AreEqual(AccountRules.BioMax, settings.AccountBio.Length);
+            Assert.AreEqual("PH", settings.AccountCountry);
+            Assert.AreEqual("they/them", settings.AccountPronouns);
+            StringAssert.IsMatch("^[0-9]{4}$", settings.AccountDiscriminator);
         }
     }
 }

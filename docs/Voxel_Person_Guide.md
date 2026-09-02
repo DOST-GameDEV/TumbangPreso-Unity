@@ -524,6 +524,42 @@ what separated this from 5.7, which was still there underneath it.
 - **Slots 9, 10 and 11 are spare.** They keep the stock Kenney values, so the shader
   has something sane to read if a future box uses them.
 
+### 6.1 The custom character's palette, and which slots it writes
+
+`docs/FUTURE.md` § 5 and `docs/TODO.md` § 107 define **MAKE YOUR OWN**: three saved characters, one
+active. Its model is `team-custom.glb` and it is the one person in the game whose sixteen palette
+slots are WRITTEN from a player's choices rather than authored.
+
+| Band | Slots | Written from |
+|---|---|---|
+| Skin | **13, 14, 15** | `CustomCharacterRules.SkinToneNames`, 32 warm tones, hex carried in the name |
+| Hair | 10, 11, 12 | `CustomCharacterScreen.HairColour`, 14 naturals then dyes |
+| Top | 4, 5, 6 | derived from the garment index |
+| Bottom | 0, 1, 2 | derived from the garment index |
+| **Face** | **8** | **nothing. Never touched.** |
+
+⚠️⚠️ **SLOT 8 IS THE FACE AND THE FIRST VERSION OF THIS SCREEN WROTE THE TROUSERS INTO IT.**
+`CustomCharacterCreator.ApplyLiveCharacterToPreview` used slots 7, 8 and 9 for the bottom half.
+§ 3's table in this document is explicit: *"A light slot 8 does not give a light-haired
+character, it gives one with no face."* It never shipped only because that method never reached a
+preview. `PaletteRules.FaceSlot` is the constant and `PaletteRules.IsProtectedSlot` is the question.
+
+⚠️⚠️ **13, 14 AND 15 ARE MEASURED, NOT GUESSED, AND § 5.7 IS WHY THAT SENTENCE IS HERE.**
+That section records *"slot 13 is his hair" was one session's guess*, written down as a fact, and it
+cost a build. `MapSource/materials_persons/person_team-zack.tres` carries slot 13 and slot 15 at the
+same lit tone with slot 14 a clear step darker: a skin ramp, and the same shape on every person
+palette in that folder.
+
+⚠️ **THE HEIGHT WINDOW IS 85 TO 115 PER CENT**, `CustomCharacter.MinHeightPercent` and
+`MaxHeightPercent`. This section said `0.90x to 1.10x`, which is `CLAUDE.md` § 5's rule broken:
+a number in the code must match a number in the prose or one of the two is a bug. The code was
+right.
+
+⚠️ **THE GARMENT GEOMETRY IS NOT BUILT AND THE COLOURS ARE STAND-INS.** 48 tops and 36
+bottoms are NAMES today; what changes on screen when you step through them is the colour, not the
+cut. `docs/TODO.md` § 108.4 is the entry, and the wearable envelopes for headwear, eyewear and
+jewellery are in `docs/wearables_catalog.md` and `tools/wearables_registry.py`.
+
 ---
 
 ## 7 · The other tools

@@ -202,7 +202,7 @@ namespace TumbangPreso.EditorTools
                 shoe.transform.localPosition = palm + Vector3.up * CharacterVisual.HandTopLift;
                 shoe.transform.localRotation = Quaternion.identity;
 
-                ToonSkin.Apply(shoe, ToonSkin.PropOutlineWidth);
+                ToonSkin.ApplySlipper(shoe, ToonSkin.PropOutlineWidth);
                 return;
             }
         }

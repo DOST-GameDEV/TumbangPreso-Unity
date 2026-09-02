@@ -113,12 +113,20 @@ namespace TumbangPreso.Visual
             var cells = new (int, int, int)[vertices.Length];
             var sums = new Dictionary<(int, int, int), Vector3>(vertices.Length);
 
+            // ⚠️⚠️ THE FIRST NORMAL AT EACH POSITION IS KEPT, AND IT IS THE FALLBACK THE SECOND
+            // PASS NEEDS. See the zero-sum note below: a per-VERTEX fallback breaks the one
+            // property this whole file exists to guarantee, and the only way to keep it is to
+            // have a per-POSITION answer ready for the degenerate case too.
+            var representative = new Dictionary<(int, int, int), Vector3>(vertices.Length);
+
             for (int i = 0; i < vertices.Length; i++)
             {
                 var cell = Cell(vertices[i]);
                 cells[i] = cell;
                 sums.TryGetValue(cell, out var running);
                 sums[cell] = running + normals[i];
+
+                if (!representative.ContainsKey(cell)) representative[cell] = normals[i];
             }
 
             var tangents = new Vector4[vertices.Length];
@@ -130,9 +138,31 @@ namespace TumbangPreso.Visual
                 // ⚠️ A ZERO SUM IS REAL AND MUST FALL BACK. Two faces meeting at exactly 180°
                 // (a flat card, a zero-thickness fin) cancel to nothing, and normalising that
                 // gives a NaN which the GPU renders as a vertex flung to infinity: one stray
-                // triangle smeared across the screen. Falling back to the vertex's own normal
-                // reproduces the old behaviour for that vertex, which is a gap at worst.
-                var welded = summed.sqrMagnitude > 1e-12f ? summed.normalized : normals[i];
+                // triangle smeared across the screen.
+                //
+                // ⚠️⚠️ BUT IT FALLS BACK PER POSITION, NOT PER VERTEX, AND `normals[i]` HERE WAS
+                // THE ONE CASE THAT STILL TORE. Its own note claimed the vertex's own normal was
+                // "a gap at worst". That is exactly the gap this file exists to close, and on a
+                // cancelling pair it is the WIDEST one possible. A zero sum means the normals at
+                // that position oppose each other, so handing each copy its own sends them 180°
+                // apart: the two halves of the hull inflate in opposite directions and the shell
+                // opens by twice the outline width.
+                //
+                // Measured by `OutlineWeldTests.VerticesSharingAPositionInflateTheSameWay`, which
+                // failed on `tsinelas_sike.obj` vertex 432 with a tangent distance of 2.0, which
+                // is the maximum two unit vectors can be apart and the signature of the cancelling
+                // pair rather than of a near miss. That mesh is the one carrying its wordmark as
+                // GEOMETRY (see CLAUDE.md §4a), and a flat applied decal is precisely the
+                // zero-thickness fin this branch describes.
+                //
+                // Taking the first normal seen at that position instead gives every copy there
+                // the SAME direction, which is the whole closure property, and it is still one of
+                // the mesh's own normals rather than an invented one. A fin displaces instead of
+                // inflating, which is the correct degenerate answer: a surface with no interior
+                // has no hull to grow.
+                var welded = summed.sqrMagnitude > 1e-12f
+                    ? summed.normalized
+                    : representative[cells[i]];
 
                 tangents[i] = new Vector4(welded.x, welded.y, welded.z, 1.0f);
             }

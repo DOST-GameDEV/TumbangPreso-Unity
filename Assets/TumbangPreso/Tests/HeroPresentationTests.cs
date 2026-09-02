@@ -190,6 +190,27 @@ namespace TumbangPreso.Tests
 
                     Assert.IsNotEmpty(ability.Description,
                         $"{hero}: {ability.Name} has no description for the inspect tray");
+
+                    // ⚠️⚠️ THE DESCRIPTION HAS A CEILING TOO, AND THE TRAY IS THE ONE PLACE IN
+                    // THE GAME THAT DOES NOT TRUNCATE. `AbilityInspectPanel` sets the body to
+                    // `HorizontalWrapMode.Wrap` with `VerticalWrapMode.Overflow` and a
+                    // `minHeight` of 120, deliberately: it exists to hold the sentences the deck
+                    // refuses to carry, so cutting them off here would leave the full text
+                    // nowhere at all. **The consequence is that a long description does not get
+                    // clipped, it draws over the card underneath**, which is the fault that
+                    // file's own note warns about in those words.
+                    //
+                    // ⚠️ 125 IS MEASURED, NOT CHOSEN. The body is about 640 px wide at 20 pt,
+                    // which is roughly 32 characters a line, and `minHeight` 120 is four lines at
+                    // that size. The longest description that shipped before 2026-09-02 was
+                    // SUPERNOVA at 120. The hold-to-aim pass on that date pushed MAGNET to 177
+                    // and HEX to 142 before this bound existed, which is a fifth line and a half
+                    // drawn through the card below them.
+                    Assert.LessOrEqual(ability.Description.Length, 125,
+                        $"{hero}: {ability.Name}'s description is {ability.Description.Length} " +
+                        "characters. The inspect tray body wraps and OVERFLOWS rather than " +
+                        "truncating, so anything over about four lines draws over the card " +
+                        "under it. Move the detail into the summary or cut a clause.");
                 }
             }
         }
@@ -236,8 +257,8 @@ namespace TumbangPreso.Tests
         [Test]
         public void TelegraphsMatchWhatTheAbilityPlaces()
         {
-            AssertTelegraph("cheska", 1, 2.3f, 2.8f);   // SpawnIceSheet(pos + fwd*2.8, 2.3)
-            AssertTelegraph("cheska", 2, 1.6f, 2.2f);   // barricade HazardVolume 1.6 at fwd*2.2
+            AssertTelegraph("cheska", 1, 2.3f, 5.0f);   // SpawnIceSheet(aimed, max 5.0, radius 2.3)
+            AssertTelegraph("cheska", 2, 1.6f, 4.0f);   // barricade HazardVolume 1.6, aimed to 4.0
             AssertTelegraph("cheska", 3, 4.6f, 0.0f);   // nova freeze check <= 4.6 at self
 
             AssertTelegraph("dante", 1, 2.2f, 0.0f);    // CreateExplosion(pos, 2.2)
@@ -254,9 +275,9 @@ namespace TumbangPreso.Tests
 
             AssertTelegraph("zack", 1, 0.0f, 0.0f);     // dash
             AssertTelegraph("zack", 2, 0.0f, 0.0f);     // throw empower
-            AssertTelegraph("zack", 3, 4.5f, 0.0f);     // CreateThunderstrike(pos, 4.5)
+            AssertTelegraph("zack", 3, 4.5f, 7.0f);     // CreateThunderstrike(aimed, max 7.0, 4.5)
 
-            AssertTelegraph("phaister", 1, 2.4f, 4.5f); // Hex ward
+            AssertTelegraph("phaister", 1, 2.4f, 5.5f); // Hex ward, aimed to 5.5
 
             // ⚠️ THE BLINK HAS A TELEGRAPH NOW BECAUSE IT IS AIMED. It was 0/0 while it was an
             // impulse fired on the press edge, which the reticle could never have drawn in time.
@@ -751,6 +772,144 @@ namespace TumbangPreso.Tests
             float d = Mathf.Abs(a - b) % 360.0f;
             return d > 180.0f ? 360.0f - d : d;
         }
+
+        // -------------------------------------------------------------------
+        // § WHAT A CAST ACTUALLY LOOKS LIKE
+        // -------------------------------------------------------------------
+
+        /// <summary>Every hero action, in the order `HeroAbility.CastAction` names them.</summary>
+        private static readonly string[] Ultimates =
+        {
+            "hero-sean-supernova", "hero-zack-summon", "hero-dante-fissure",
+            "hero-cheska-nova", "hero-nemu-seance", "hero-phaister-eclipse",
+        };
+
+        private static readonly string[][] Kits =
+        {
+            new[] { "hero-sean-dash", "hero-sean-ignite", "hero-sean-supernova" },
+            new[] { "hero-zack-sprint", "hero-zack-charge", "hero-zack-summon" },
+            new[] { "hero-dante-stomp", "hero-dante-roar", "hero-dante-fissure" },
+            new[] { "hero-cheska-frostwave", "hero-cheska-raise", "hero-cheska-nova" },
+            new[] { "hero-nemu-ghoststep", "hero-nemu-project", "hero-nemu-seance" },
+            new[] { "hero-phaister-hex", "hero-phaister-blink", "hero-phaister-eclipse" },
+        };
+
+        /// <summary>
+        /// Every clip name the CC0 rig this project ships actually carries, read off
+        /// `Art/characters/persons/*.glb`.
+        ///
+        /// ⚠️⚠️ IT IS WRITTEN DOWN HERE BECAUSE THE GAP BETWEEN THIS LIST AND THE ACTION TABLE IS
+        /// THE BUG. Entry zero of every hero chain is a `hero-*` clip, and not one of them is in
+        /// this list: `Play` falls through, so the table READS as eighteen distinct casts and
+        /// PLAYS whatever the first name in this set is. Asserting on entry zero would pass
+        /// forever and prove nothing about what a player sees.
+        ///
+        /// ⚠️ WHEN THE TEAM'S OWN ANIMATIONS LAND, ADD THEIR NAMES HERE. These tests then start
+        /// measuring the real casts instead of the fallbacks, with no other change, which is the
+        /// point of the chains. `CLAUDE.md` § 6 has the queue.
+        /// </summary>
+        private static readonly HashSet<string> RigClips = new HashSet<string>
+        {
+            "attack-kick-left", "attack-kick-right", "attack-melee-left", "attack-melee-right",
+            "crouch", "die", "drive", "emote-no", "emote-yes", "fall",
+            "holding-both", "holding-both-shoot", "holding-left", "holding-left-shoot",
+            "holding-right", "holding-right-shoot", "idle", "interact-left", "interact-right",
+            "jump", "pick-up", "sit", "sprint", "static", "walk",
+        };
+
+        /// <summary>
+        /// The clip an action REALLY plays today: the first name in its chain the rig has.
+        ///
+        /// ⚠️ THE BASE VERBS AND THE HERO CASTS RESOLVE AT DIFFERENT DEPTHS, which is why this
+        /// cannot just read entry one. `shove` names a real clip at entry zero and a hero cast
+        /// never does, so a test that assumed one depth for both reported the shove as playing
+        /// its own fallback.
+        /// </summary>
+        private static string Shipped(string action)
+        {
+            foreach (string clip in Visual.CharacterAnimator.ActionChains[action])
+                if (RigClips.Contains(clip)) return clip;
+
+            Assert.Fail($"'{action}' names no clip this rig carries, so it animates nothing");
+            return null;
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ ALL SIX ULTIMATES PLAYED `emote-yes` UNTIL 2026-08-29. 🧑: *"dont js spam the same
+        /// animation"*. Supernova, Thunderstrike, Titan Fissure, Glacial Nova, Devouring Seance
+        /// and Grand Coven were one nod of the head between them, and nothing could see it
+        /// because entry zero of each chain named a distinct clip that does not exist.
+        /// </summary>
+        [Test]
+        public void NoTwoUltimatesPlayTheSameAnimation()
+        {
+            var seen = new Dictionary<string, string>();
+
+            foreach (string ult in Ultimates)
+            {
+                string clip = Shipped(ult);
+
+                Assert.IsFalse(seen.ContainsKey(clip),
+                    $"{ult} and {(seen.ContainsKey(clip) ? seen[clip] : "")} both play '{clip}'. "
+                    + "An ultimate is the most memorable thing a hero does; two of them sharing "
+                    + "one gesture is the whole of the report this test was written for.");
+
+                seen[clip] = ult;
+            }
+        }
+
+        /// <summary>
+        /// ⚠️ A HERO MAY NOT REPEAT ITSELF INSIDE ITS OWN KIT. Sharing a gesture with ANOTHER
+        /// hero is arithmetic: thirteen usable clips against eighteen casts. Sharing one between
+        /// your own Q and your own F means you cannot tell your own two powers apart, which is
+        /// the version of this that costs a player something.
+        /// </summary>
+        [Test]
+        public void NoHeroPlaysOneAnimationForTwoOfItsOwnPowers()
+        {
+            foreach (var kit in Kits)
+            {
+                var seen = new HashSet<string>();
+
+                foreach (string action in kit)
+                {
+                    string clip = Shipped(action);
+                    Assert.IsTrue(seen.Add(clip),
+                        $"{action} reuses '{clip}' inside its own kit");
+                }
+            }
+        }
+
+        /// <summary>
+        /// ⚠️ THE SHOVE AND THE PUNCH ARE DIFFERENT COMMITMENTS AND USED TO BE ONE GESTURE. Both
+        /// played `attack-melee-right`, so an opponent could not read which was coming, and
+        /// reading it is the counterplay. 🧑 named *"pushing"* and *"tayaing"* separately for
+        /// exactly this reason.
+        /// </summary>
+        [Test]
+        public void ThePushAndTheTagAreToldApart()
+        {
+            Assert.AreNotEqual(Shipped("shove"), Shipped("punch"));
+            Assert.AreNotEqual(Shipped("shove"), Shipped("lunge"));
+        }
+
+        /// <summary>
+        /// ⚠️ EVERY CHAIN NEEDS A SECOND AND A THIRD NAME. The first is aspirational, so a chain
+        /// of length one is a cast that silently does nothing at all on every rig that ships.
+        /// </summary>
+        [Test]
+        public void EveryActionChainHasAFallbackBehindTheAspirationalClip()
+        {
+            foreach (var pair in Visual.CharacterAnimator.ActionChains)
+            {
+                Assert.GreaterOrEqual(pair.Value.Length, 2,
+                    $"'{pair.Key}' has no fallback, so it animates nothing on a rig without it");
+
+                foreach (string clip in pair.Value)
+                    Assert.IsFalse(string.IsNullOrWhiteSpace(clip), $"'{pair.Key}' has a blank entry");
+            }
+        }
+
     }
 }
 

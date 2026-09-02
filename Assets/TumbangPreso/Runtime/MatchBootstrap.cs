@@ -68,6 +68,7 @@ namespace TumbangPreso
 
             GameServices.Match.RoundStarted += OnRoundStarted;
             GameServices.Match.IntermissionStarted += OnIntermission;
+            GameServices.Match.BufferSkipRequested += OnBufferSkipped;
             GameServices.Match.MatchEnded += OnMatchEnded;
 
             GameServices.Match.StartMatch();
@@ -86,6 +87,16 @@ namespace TumbangPreso
         }
 
         private void AdvanceAfterIntermission() => GameServices.Match.AdvanceRound();
+
+        /// <summary>
+        /// ⚠️ THE PENDING `Invoke` IS CANCELLED FIRST, or the original timer still fires later
+        /// and advances a second round nobody played. See `MatchDirector.SkipBuffer`.
+        /// </summary>
+        private void OnBufferSkipped()
+        {
+            CancelInvoke(nameof(AdvanceAfterIntermission));
+            AdvanceAfterIntermission();
+        }
 
         private void OnMatchEnded(int winningSlot)
         {

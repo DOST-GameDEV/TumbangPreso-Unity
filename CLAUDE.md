@@ -68,6 +68,37 @@ the whole game, which won its regional, in under two weeks.
 and compilation, tests, probes, renders and builds all run from the command line. Hand back
 only a human judgement ("does this FEEL right", "is this the art we want") or a credential.
 
+### 2.1b ⚠️⚠️ NEVER SIT AND WATCH A TEST RUN. RUN IT IN THE BACKGROUND AND KEEP CODING.
+
+🧑 2026-08-29, watching a fifteen-minute stretch of nothing but Unity launches: *"can u
+make sure ur never wasting time js doing fucking tests, unless its the last thing, i hate it ...
+code or some shit while ur doing tests"*.
+
+A batchmode Unity launch is **three to twelve minutes** and a cold `Library` import is longer.
+Blocking on one is that many minutes of a session spent producing nothing, and this repo's normal
+day is a dozen of them.
+
+**So:**
+
+- **Start every `Unity.exe -runTests`, every `-executeMethod`, every build and every long probe
+  with `run_in_background`.** The harness re-invokes when it finishes; there is nothing to poll
+  and nothing to wait for.
+- **Then immediately start the next piece of work.** Read the next file, write the next fix,
+  draft the next `docs/TODO.md` entry. There is always something that does not depend on the
+  result you are waiting for.
+- **Collect the verdict later**, off `Logs/*.xml`, when the notification arrives. ⚠️ Still assert
+  on the XML and never on the exit code (§ 7).
+- **The one exception is the LAST run before a build**, where the verdict IS the next step and
+  there is genuinely nothing else to do.
+
+⚠️ **`dotnet test` ON `Core.Tests` IS NOT THIS.** It is about 40 ms and needs no editor, so run
+it in the foreground as often as you like — it is the cheapest signal in the repo and the reason
+the rules core is engine-free.
+
+⚠️ **AND DO NOT EDIT `.cs` FILES WHILE A UNITY RUN IS IN FLIGHT.** It recompiles mid-run and
+the result describes neither version. Edit documents, plan, or read while one is going; save the
+code edits for when it lands, or start the run only once a batch is complete.
+
 ### 2.2 The shape of a session: WORK → BUILD → HANDOFF
 
 🧑 2026-08-16: *"ALL TASKS I ASK -> build -> handoff"*, and, watching a build start with six
@@ -259,6 +290,267 @@ describing a mesh in prose is the slowest possible way to be told it is wrong.
 - **Force-reimport sub-assets before rendering.** Rebuilding a pet or accessory `.glb` from
   Python changes the file on disk while Unity keeps the old one in memory; the render then
   shows geometry that is no longer there.
+
+### 6.2 ⚠️⚠️ THE STANDING BRIEF FOR EVERY SCREEN: INTUITIVE, EASY TO GET AROUND, NEVER OVERWHELMING
+
+🧑, twice, unprompted: *"i want the user experience of movinng around the game to feel
+intuitive"*, and *"i wwant the user experience for the UI of this app to feel intuitive and easy to
+navigate and not overwhelming"*.
+
+**This is the acceptance test for every screen in the game, and it is three separate claims. All
+three have already failed here, each with its own receipt.**
+
+| The claim | What failing it looks like | The receipt |
+|---|---|---|
+| ⚠️⚠️ **INTUITIVE** | The player cannot predict what a control does before pressing it, or presses something and nothing happens. | `docs/TODO.md` § 108: an EQUIP button with no `onClick` listener, and a CUSTOMIZE LOADOUT button opening a screen drawn underneath the screen that opened it. Both looked fine. Both did nothing. |
+| ⚠️⚠️ **EASY TO NAVIGATE** | The player cannot FIND the thing, or cannot get back out. | § 96: the hub had exactly one door, a corner chip reading a name and a level, and **the person who commissioned the hub never found it.** § 6.3 is the method. |
+| ⚠️⚠️ **NEVER OVERWHELMING** | Everything the feature can do is on screen at once, in one flat list, with nothing saying what matters. | § 92: *"theres liek 20 shits at once"*, six buttons in six visual languages. § 94.7: *"its so messy and ugly"*, seven readability faults with every probe green. |
+
+**So, before writing a screen and again before calling it done, answer these in one sentence each:**
+
+1. **What is the ONE thing on this screen?** Everything else is sized, placed and coloured against
+   it. If two things are competing, one of them is decoration.
+2. **What is the first press, and can the player guess it?** Name it out loud. A control that has
+   to be discovered rather than read is the bug.
+3. **What is on screen that the player does not need RIGHT NOW?** Collapse it, move it behind a
+   section header, or cut it. ⚠️ **A group closed by default with a one-line summary on its
+   header beats the same rows always open**, and the summary is what makes it worth opening.
+4. **How do they get out, and is it one press?** Escape, always, innermost layer first.
+
+⚠️ **AND THE TEST FOR ADDING ANYTHING IS WHAT THE PLAYER HAS TO HOLD IN THEIR HEAD, NOT WHAT IT
+COSTS TO BUILD.** 🧑, asked which features to drop: *"i have ai dont think abt 5 students shit"*,
+and *"the cutting shit i want should be focused onn things that overcomplicate game for ppl"*.
+A cheap addition that adds a bar, a screen, a number or a new word is still a candidate for
+cutting. `docs/FUTURE.md` § 0.5 rule 11b.
+
+⚠️ **THE THREE SECTIONS BELOW ARE HOW THIS BRIEF IS MET, NOT SEPARATE RULES.** § 6.2b is what to
+take a picture OF, § 6.2c is the four questions about every rectangle, and § 6.3 is the journey
+between screens. **None of the three is visible to any probe in this repository**, which is why
+they are here rather than in a test.
+
+### 6.2a Every screen gets designed, and the method is written down
+
+⚠️⚠️ **A FEATURE WITHOUT A SCREEN IS NOT SHIPPED, AND "I ADDED A ROW FOR IT" IS NOT A DESIGN.**
+🧑 has rejected the same screen twice for the same reason: *"theres liek 20 shits at once"*
+(`docs/TODO.md` § 92) and then *"its so messy and ugly"*, *"I js wannted u to imrpove hwo u put
+the text annd readability and visual hierarachy"* (§ 94.7). Both were built by the last person to
+touch the feature, at the end, without a method.
+
+**The method is [`docs/FUTURE.md`](docs/FUTURE.md) § 0.5b and it applies to ANY screen in this
+repository**, not only to the phases in that file. Five questions before you write it, four
+ordering tools in order (position, size, weight and colour, space), a table of what actually
+transfers from the games it copies, and the four things a screen owes before it is done.
+⚠️ **§ 0.5b's per-phase table answers "what is the one thing on this screen" for every remaining
+phase**, so no screen starts from a blank page.
+
+⚠️⚠️ **AND THE LINE WORTH REPEATING HERE: A GREEN LAYOUT PROBE IS NOT A GOOD SCREEN.**
+`PlayerHubLayoutProbe` and `PhaseSurfaceLayoutProbe` assert every label fits its box and clears
+the 18-unit floor. **Seven readability faults were true at once while both were green**, including
+a value drawn 1600 px from its label and an XP bar drawn underneath a button. **The probe asks
+whether the screen is a screen; the picture asks whether it can be read.** Take the picture.
+
+### 6.2b ⚠️⚠️ THE FOUR WAYS A SCREEN SHIPS BROKEN AFTER BEING "RENDERED", AND THE CHECK FOR EACH
+
+🧑, after opening a build whose new boot screen drew as a floating form over a fully lit menu with
+the nameplate across it: *"i opened the game what the fuclk is this"*, then *"theres problems like
+this that i want to be checked nnext time UI is made"*, *"I want the user version to actually be a
+great experience"*.
+
+**That screen HAD a render. Four of them, green, at nine resolutions.** Every one was of a
+different screen than the one he opened. **Take the picture is not enough; this is what to take a
+picture OF.**
+
+| Ask | Why it is not optional | What it cost |
+|---|---|---|
+| ⚠️⚠️ **EVERY STATE, not the one you built first.** | A screen with a mode has two layouts and you have looked at one. | The sign-in screen was shot only as `Open()`. It ships as `OpenAtBoot()` too, which hides BACK, renames a button and has no hub behind it. **The state a player meets first was the state nobody had seen.** |
+| ⚠️⚠️ **OVER THE REAL BACKGROUND, never an empty scene.** | Every scrim, every panel alpha and every band is a number tuned against what is behind it. | `UiRows.Band` is 3.5 per cent measured against the lit street. Shots taken over a blank scene are shots of a different screen, and 🧑 spotted the swap instantly: *"i lowk liked the light brown bg earlier fuck that blue shti"*. |
+| ⚠️⚠️ **AT THE SHAPE HE ACTUALLY PLAYS AT.** | `Fullscreen` is **false** in his `settings.json`. He plays in a short wide window, and all nine probe resolutions are taller than it. | A column of hard-coded Y offsets collapsed into a heap in the middle of the screen. **A screen that only exists at 16:9 is a screen nobody in this room has seen.** |
+| ⚠️⚠️ **WITH EVERY ALWAYS-ON PIECE OF CHROME STILL LIVE.** | Chrome does not know about a screen added after it. | `PlayerNameplate` hides for the hub and for every `ConvertedOverlay` and knew nothing about a third code-built canvas, so it drew straight across the account form. **This is the third time that method has had to be taught about a new screen**, which is the argument for asking "is anything on top of me" rather than keeping a list. |
+
+⚠️ **AND IF IT CANNOT BE RENDERED, IT DOES NOT SHIP OPEN.** A screen that appears unasked at boot
+is the one screen where "I could not get a picture of it" is not an acceptable answer, because
+every player meets it before anything else.
+
+### 6.2c ⚠️⚠️ FOUR QUESTIONS ABOUT EVERY RECTANGLE ON A SCREEN, BECAUSE PHASES 1 TO 4 GOT THEM WRONG SEVEN TIMES
+
+🧑, after four phases of account and career UI: *"phase 1-4 had horrible ui integraitons"*, and, on
+the boot screen specifically: *"This shhit is horrible bro the art is cut off... u properly thinnk
+abt how to make the characters look good"*.
+
+**§ 6.2b is about photographing the right screen. This is about the screen itself, and every row
+below is a fault that shipped in this repository rather than a principle.** `docs/TODO.md` § 92
+(the six-button panel), § 94.7 (seven readability faults at once, all green) and § 100 (the art
+fitted to a frame nobody can see) are the receipts.
+
+| Ask, of every rect you write | The rule | What it cost |
+|---|---|---|
+| ⚠️⚠️ **What is this size measured AGAINST?** | **A size is only correct against the rectangle the player actually sees.** A percentage of the window is not a size: `AspectSafeCanvas` scales on the SHORT axis, so the canvas is about 1920 units wide at 4:3 and about 2250 on his window, and one fraction is two very different widths. **Size a panel against its CONTENT and state the arithmetic.** | § 100: the sign-in column was 38 per cent of the window around a 420-unit form, so on the window he plays in it was **860 units of wood around a form that never grew**. It is 580 units now, which is the form plus one margin either side, and it cannot swallow a narrow screen because `Expand` guarantees the canvas is never under 1920 units wide. Same family as § 92.1 fault 3, which is why `UiRows` takes no offsets. |
+| ⚠️⚠️ **Is this image fitted to the region it is SEEN in, or to the whole screen?** | **Every image gets an explicit fit decision and an explicit parent.** Envelope a background, fit a logo, and in both cases the parent must be the visible region, not `_root`. If something opaque covers part of the screen, the picture's frame ends where that thing starts. | § 100: the key art enveloped the full canvas and the column then covered a third of it, so the crop was computed for a frame that does not exist and the cast came out off-centre with its heads cut off. `SignInScreen.BuildLogo` records the same fault one size down: `FitInParent` sizes against the PARENT, so a fitter with no box of its own drew the wordmark three hundred pixels tall through the form. |
+| ⚠️⚠️ **What is this dimming layer FOR, and is that still true?** | **A scrim buys legibility over a live 3D scene, or separation from one. It is not decoration and it is not free.** If every word on the screen sits on an opaque panel, a scrim over the art side is dimming the one thing the player is meant to look at in exchange for nothing. **Ask what it protects before retuning it.** | § 100: 72 per cent over the live street, retuned to 55 when the key art landed, and never asked what it was still for. 🧑: *"nno nneed to darkenn it"*. `UiRows.Band` is the same rule the other way round: a number tuned against one background is not a number. |
+| ⚠️⚠️ **Is this width measured against the NARROWEST box it will ever live in?** | **A control is sized against 4:3, never against 1920.** `UiRows.Cap` records the number: the value column is about **368 units at 4:3** and every control in that file fits inside it. A width chosen at the reference resolution is a width that only exists at the reference resolution, and the failure is silent because `MenuKit.Label` OVERFLOWS rather than wrapping: the control does not shrink, it draws over its neighbour or off the edge. | `docs/TODO.md` § 108: the first `StepperRow` laid out to 476 units, so at 1366x768 **the right-hand arrow was simply not on screen**, and the row's own hint drew straight through the value beside it. The layout probe was green: every label fitted its own box, and the boxes overlapped each other. |
+| ⚠️⚠️ **If I delete this, what else was it doing?** | **Anything covering the screen is also eating clicks, and the block is usually nobody's stated job.** When a full-screen graphic goes, name its replacement blocker in the same commit. | § 100: the scrim was silently what stopped a press on the art side reaching the title screen underneath. Deleting it would have let a player press PLAY **through** the boot screen, on the one screen that exists to ask a question first. The key art is the blocker now, and it says so. |
+
+⚠️⚠️ **AND NONE OF THE FOUR IS VISIBLE TO ANY PROBE IN THIS REPOSITORY, WHICH IS THE POINT OF
+PUTTING THEM HERE.** `PlayerHubLayoutProbe` was green through every one of them, because a label
+that fits its box fits its box whether the picture behind it is beautiful or butchered. **The probe
+asks whether the screen is a screen. This section is what to look at in the picture.**
+
+### 6.3 ⚠️⚠️ MOVING AROUND THE GAME IS ITS OWN DESIGN PROBLEM, AND THE UNIT IS THE JOURNEY
+
+🧑, 2026-08-31: *"i want the user experience of movinng around the game to feel intuitive"*, and
+*"lets say im a player and i want to do something or find something, make sure that entire
+experience feels great"*.
+
+**Walk the journey out loud before building any of it**: *"I want to X"* to *"X is done"*, naming
+every press. If it takes more than three, or if one of them is a control the player has to
+discover rather than read, **the flow is the bug and no amount of layout fixes it.**
+
+- ⚠️⚠️ **EVERY DESTINATION HAS A VISIBLE DOOR, AND A DOOR IS A THING THAT LOOKS PRESSABLE.**
+  `docs/TODO.md` § 96: the player hub had exactly one door, a corner chip stating a name and a
+  level, and **the person who commissioned the hub never found it.** Four tabs, a career, a match
+  history and the whole account system sat behind something that read as a status readout.
+- ⚠️⚠️ **NEVER ADD A SECOND DOOR TO FIX A FINDABILITY PROBLEM.** That is exactly how § 92's
+  six-button panel happened: a button per feature, each in its own visual language, each at its
+  own hard-coded offset, and 🧑 asking *"look wtf why are these buttons here"*. **Fix the door or
+  move it.**
+- **Escape backs out on every screen, always, innermost layer first.** `ConvertedScreen.CancelTarget`
+  exists because three screens shipped with a dead Escape; the hub and the sign-in screen are
+  built in code rather than converted and inherited none of it until 2026-08-31. **A player who
+  learns Escape is reliable and then meets one screen where it is not has learned that it is
+  unreliable.**
+- **A control that does something must react to the pointer; one that does nothing must not look
+  pressable.** The pennants scale and light up and the plate beside them did not move at all.
+- **A dead end is a bug.** A button that dismisses to nothing is worse than no button.
+- ⚠️ **The escape from any gate is ONE press and never needs the network.** § 97, and the
+  nationals in General Santos City are why.
+
+⚠️⚠️ **`UiClickProbe` CAN PROVE NOTHING IS COVERED AND HAS CAUGHT NEW CHROME BLOCKING A SCREEN
+THREE TIMES. IT CANNOT TELL YOU A DOOR NOBODY LOOKS AT IS A DOOR NOBODY FINDS.** That one needs a
+person. Watch a launch, or ask what they expected to press.
+
+⚠️ **`UiRows` OR IT IS NOT A SETTINGS-SHAPED SCREEN.** Nothing in that file takes an offset,
+which is fault 3 of § 92.1 made impossible rather than fixed. A hand-written Y offset is a layout
+correct at exactly one panel height and one aspect ratio, and `AspectRatioProbes` drives nine.
+
+### 6.4 ⚠️⚠️ NEVER USE BLUE OR NAVY ANYWHERE IN THE UI. NOT OUTLINES, NOT FILLS, NOT BACKGROUNDS, NOT GREYS WITH A BLUE CAST
+
+🧑 2026-08-31: *"i dont like blue outlines its out of theme"*, *"can u put in claude md to
+never use blue outlines and shit for ui"*. Then 2026-09-01, having opened a build with § 6.4
+already in this file: *"i dont want to see blue shit"*, *"thats not in theme"*, *"hey i said i
+dont want blue or navy"*, *"thats off theme"*, *"put in claude md to not use blue hshit"*.
+
+⚠️⚠️ **HE HAD TO SAY IT FIVE MORE TIMES BECAUSE THE FIRST VERSION OF THIS SECTION SAID
+"OUTLINES", AND THE BLUE HE WAS LOOKING AT WAS NOT AN OUTLINE.** It was four things, and every
+one of them passed a reading of the narrow rule:
+
+| Where | What it was | Why it was invisible to the narrow rule |
+|---|---|---|
+| ⚠️⚠️ **`UiTheme.Ink`** | `040838`, a near-black **navy**, and the outline colour of **every** menu type style in `GodotTheme` (`MenuDisplay`, `MenuHeading`, `MenuBody`, `MenuCaption`, `MenuValue`). | It was called "ink", so it read as black at a glance and as a cold ring at four to six pixels on a heading. **One constant put navy on every word in the front end.** It is `1c0f06` now. |
+| **The character select backdrop** | Three stops of slate-to-midnight, with a comment calling it *"the game's Bayan navy identity"*. | It is a background, not an icon. Nothing else in the front end uses that colour, so the "identity" was one screen's. Wood now. |
+| **`MatchResult` and `RoleSwapCard` scrims** | The same navy at 72 and 82 per cent. | Same. |
+| **`UiTheme.Panel` and `Card`** | `e1e5e8` and `f5f7fa`: greys with a blue cast, used as the fill under form fields. | "Grey" is not "blue" until it is sitting next to `8b5227` wood, where it reads cold. Warm paper now. |
+| ⚠️⚠️ **`GameBuilder.ConfigureSplash`** | Wrote the navy splash background and the studio logo **on every build**. | **A colour set in `ProjectSettings.asset` is not set.** This method overwrites `backgroundColor`, `logos` and `unityLogoStyle` every time, so an inspector change survives until the next build and then reverts with no error. **Both places or neither.** |
+
+- **The rule, stated wide:** no blue, no navy, no cold grey, in any UI colour, in any layer.
+  Outlines, fills, panel backgrounds, scrims, rings, gradients, glyph tints, disabled states.
+  **If a hex has more blue in it than red, it does not belong in a menu.**
+- **The palette:** carved wood (`#31190B` deep, `#5A2F14` mid, `#8B5227` edge, `#1D0E06` dark),
+  cream paper and chalk (`#F5E6C8`), amber gold (`#FFBA00`), warm ink (`#1C0F06`). Geometry comes
+  from warm tone-on-tone bevels and borderless shapes.
+- ⚠️⚠️ **THE ONE EXEMPTION, AND IT IS A GAMEPLAY FACT RATHER THAN A STYLE: `UiTheme.Defense`
+  (`0080e8`) MEANS "THE TAYA".** It is the defending side's colour in the match, opposite
+  `Offense` orange, and it is the only blue in the project that may be drawn. **It may never
+  appear as menu chrome**, which is what `ChatAndLobbyChromeTests` asserts for the lobby
+  nameplates: a decorative blue that happens to be the role colour teaches the player a role that
+  is not there.
+- ⚠️ **THE AUTHORED PENNANT ART IS NOT THIS EITHER.** PLAY green, SETTINGS yellow, TUTORIAL blue
+  and QUIT red are 🧑's own nine-patch art and `docs/VISION.md` § 6 says his UI art IS the design
+  system. **Do not repaint his art to satisfy this rule.** This section is about colours chosen
+  in code.
+- ⚠️ **CHECK IT BY GREPPING, NOT BY LOOKING.** `UiTheme.Ink` was navy for the entire life of this
+  file and nobody saw it, because a near-black navy looks black in a code review and blue on a
+  1440p screen at six pixels of outline. `grep -rnE 'Hex\("[0-9a-f]{6}"\)' Assets/TumbangPreso/Runtime/UI/UiTheme.cs`
+  and read the third channel.
+
+⚠️⚠️ **THIS SECTION WAS INSERTED BETWEEN § 6.3'S HEADING AND § 6.3'S BODY, so for one commit
+§ 6.3 was an empty heading and every word of the journey rule read as if it belonged to a rule
+about outline colour.** It is here, after § 6.3 finishes, for that reason. A heading with no body
+is not a formatting slip in this file: § 6.3 is the section `docs/TODO.md` § 96 and § 92 both point
+at, and a reader who followed either pointer landed on nothing.
+
+- ⚠️ **THE ORIGINAL, NARROW VERSION OF THIS RULE READ: "UI icons, rank emblems, state badges,
+  glyphs and panels must never carry dark blue, navy or cold ink OUTLINES."** It is kept here
+  because it names the surface the fault was first found on (the rank emblems), and because the
+  gap between it and the table above is the whole lesson: **a rule written against the one place
+  a fault was seen does not cover the constant that caused it.**
+- ⚠️ **THIS IS `docs/VISION.md` § 6 APPLIED, NOT A NEW RULE.** *"His UI art is the design system.
+  Wood, amber, cream, ink. Anything drawn in a different visual language is the thing that looks
+  broken, not the thing that looks new."*
+
+### 6.5 ⚠️⚠️ THE FRONT END IS DRAWN IN HIS ART'S OWN GEOMETRY, AND `WoodCraft` IS WHERE THAT LIVES
+
+🧑 2026-09-01, after a whole pass that had already replaced every button and every plate:
+*"ui still looks unnatural and ugly"*, then the cause in his own words: *"the issue with old UI is
+everything feels repetitive bcz i think u use the same code to generate them all"*, and
+**"make sure all ui isnt generated in the same way but follows a central theme bcz old issue was
+it read as repetitive with everyone just being brown and boring"**.
+
+⚠️⚠️ **§ 6.4 FIXES THE PALETTE AND THAT WAS NEVER THE PROBLEM. THE PROBLEM WAS THE SHAPE.**
+Sampling `Assets/TumbangPreso/Art/ui/host-game/*.png` pixel by pixel: **every surface he authored
+is a chamfered or rounded slab with a BRIGHT keyline outside a DARK rim, over a full-height
+gradient with a varnish band a quarter of the way down.** Every surface drawn in code was a
+rounded rectangle with a DARK outline over a FLAT face. **The lobby draws both at once**, because
+`StartButton` is his own `BUTTON LONG` texture, so his art and the code sat in one 460-unit rail
+in two opposite visual languages and the code-drawn half was the one that looked wrong.
+
+- **`Runtime/UI/WoodCraft.cs` is the transcription and its header carries the measurements.** Read
+  it before drawing any new surface. `JOIN BUTTON.png` is `BUTTON LONG.png` with one colour
+  swapped, keyline to floor, so **one base colour generates a whole control** and the ratios are
+  stored as multipliers on HSV value rather than as hexes.
+- ⚠️⚠️ **THE PAPER FRONT END HAS ITS OWN PRIMARY NOW, AND IT IS THE ONE CHAMFER ON A CREAM SCREEN.**
+  `PaperCraft.Surface.Action`, added 2026-09-02. Until then the one action on every paper screen was
+  still `GodotTheme.WoodPrimaryButton`, so START MATCH, CREATE ACCOUNT, KEEP AND USE and CHOOSE were
+  wooden objects standing in rows of paper ones. 🧑 found it on four screens without connecting them
+  (*"i dont get why theres rounded sshit next to square shit"*, *"it feells so flat"*, **"can u js
+  remake the entire start match button"**), and the measurement is in `docs/TODO.md` § 121.1: the
+  wooden halo sampled `ada69b`, **hue 37 at 10 per cent saturation**, against every paper edge on the
+  same screen at **30**. A neutral that dark and that grey beside warm cream is § 6.4's cold-grey ban
+  caught on the warm axis. ⚠️ **The `Accent` beside it is a closed list of two colours he authored**
+  (his green, and the lobby's brown he asked to keep), not the `fill` parameter this section forbids:
+  one role, one per screen, two authored fills.
+- ⚠️⚠️ **AND `PaperKit.MakeAction` SWITCHES OFF EVERY CHILD GRAPHIC, WHICH IS THE ONLY REASON IT
+  WORKS.** `PaperKit.Paperise` disables `GodotButton` and the two `SkinLayers` children it knows by
+  name; `ArrowButtonView` builds three more (`Artwork`, `Lit`, `Rim`) that nothing had heard of, so
+  the first build drew **his chamfered `BUTTON LONG.png` on top of a new surface** and 🧑 photographed
+  it as *"its a circle and a sharp shape at the same time"*. **Disabling a component does not remove
+  the objects it made.** This is the one place in the front end that stops drawing an authored
+  control, he asked for it by name, and the file, the main menu and the unfurl are untouched.
+- ⚠️ **PICK A ROLE, NOT A FILL.** `WoodCraft.Surface` is a closed list (`Button`, `Action`,
+  `Panel`, `Header`, `Field`, `Paper`, `PaperField`, `Slate`) and the material, silhouette, relief
+  and colour all follow from it. The failure this replaced is a screen of twelve plates that were
+  all one call with a different fill, and the way that happened is that the fill was a parameter.
+- ⚠️ **A CHAMFER MEANS PRESSABLE AND A ROUND MEANS FURNITURE**, in his art with no exception. A
+  shape difference survives a photograph and a colourblind player; a fill difference does not.
+- ⚠️⚠️ **AND "BROWN AND BORING" NEEDED A SECOND ANSWER: cream and asphalt are SURFACES, not just
+  text colours.** His login fields are cream plates and `VISION.md` § 2 rule 5 names the chalk and
+  the road. Paper and Slate are built by different rules from wood (no keyline, no ramp, no
+  bevel), so they cannot read as another plank.
+- ⚠️ **`WoodSkin` OR THE SPRITE IS WRONG.** A slab is sliced horizontally only, so it is correct
+  at exactly the height it was built for; every rect in this front end is driven by a layout group
+  or an aspect-scaled canvas, so no caller can know its own height when it builds itself. The
+  component watches the rect. `GodotButton` and `GodotPanel` carry the same watch for the
+  converted screens, which is how one edit reached every button and every panel in phases 1 to 12.
+- ⚠️ **NOTHING IN IT REPAINTS HIS ART.** The pennants, `BUTTON LONG`, `JOIN BUTTON`, the arrows
+  and the key art are still drawn from the PNGs. This is the surface AROUND them.
+- ⚠️⚠️ **GREEN IS HIS PRIMARY COLOUR AND IT IS EVIDENCE, NOT TASTE.** `JOIN BUTTON.png` and the
+  `PLAY` pennant are both authored green. `UiTheme.MenuGreenFace` is the measured peak; `MenuGreen`
+  `21a131` is a third darker than any pixel in his button and produced a bottle-green slab.
+
+⚠️⚠️ **AND EVERY ONE OF THE SIX FIXES IN `docs/TODO.md` § 117.7 WAS INVISIBLE IN THE SOURCE AND
+OBVIOUS IN A RENDER.** A live tab that three comments in this repository call *"four units
+taller"* was never taller in any build, because `childForceExpandHeight` silently overrides every
+`LayoutElement` under it. A chalk rule at 0.55 alpha is a quarter-strength mark, because the tint
+multiplies the sprite's own. **Take the picture, then take it again.**
 
 `docs/CANONICAL_RENDERING_PIPELINE.md` has the exact commands and five recorded pitfalls.
 ⚠️ **That document is written for Antigravity and its "MANDATE FOR ALL AGENTS" heading is that
@@ -458,7 +750,7 @@ every file in a pre-existing output directory was freshly emitted.
   non-zero, so they gate a verification pass:
   - `audit_ability_authority.py` walks every ability call that moves a body or writes score and
     reports whether a `NetAuthority.ShouldResolve()` gate is open at that brace depth. ⚠️ **Every
-    `other` row must read HOST-ONLY.** It is currently 40 sites, 25 gated, **0 ungated on another
+    `other` row must read HOST-ONLY.** It is currently 44 sites, 29 gated, **0 ungated on another
     body**; `docs/TODO.md` § 25.1 is the entry it was written for.
   - `audit_request_call_sites.py` reports every wire entry point in `Runtime/Net/` that nothing
     calls. ⚠️ **Tests deliberately do not count**: a test calling a request proves the method

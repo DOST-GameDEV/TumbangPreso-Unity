@@ -54,7 +54,9 @@ namespace TumbangPreso.UI
 
         /// <summary>The unselected ring. Mid grey so it reads as "not chosen" without competing
         /// with the swatch beside it.</summary>
-        private static readonly Color RingGrey = new Color(0.62f, 0.64f, 0.68f, 1.0f);
+        // ⚠️ WARM, NOT COOL. It was (0.62, 0.64, 0.68), a blue-grey, which is `CLAUDE.md` § 6.4's
+        // rule broken by a ring rather than by an outline. Same value, no blue in it.
+        private static readonly Color RingGrey = new Color(0.66f, 0.62f, 0.56f, 1.0f);
 
         public static Dropdown Build(Transform parent, IList<Option> options, int initial,
                                      Vector2 size, Action<int> onChanged)
@@ -184,6 +186,18 @@ namespace TumbangPreso.UI
             itemBg.color = new Color(0, 0, 0, 0);
             itemBg.sprite = GodotTheme.Plain(6);
             itemBg.type = Image.Type.Sliced;
+
+            // ⚠️⚠️ AND IT HAS TO BE SWITCHED BACK ON, BECAUSE `NewImage` TURNS RAYCASTING OFF
+            // FOR EVERYTHING IT BUILDS. The comment directly above says this rect receives the
+            // click across the whole row, and it has never been able to: every graphic in this
+            // file comes through that helper, so the ring, the dot, the swatch and this plate
+            // were all `raycastTarget = false`, and the ONLY thing in a 44-unit row a pointer
+            // could hit was the label's own text rect. 🧑 2026-09-02, on the Slipper Highlight
+            // list: *"im spamming ts and it wonnt select"*, then *"it selects but its hard to
+            // select"* — which is exactly the shape of a hit area that is the glyphs of a word
+            // rather than the row they sit in. The other four are correctly off: a decoration
+            // that eats clicks is how a control ends up with a dead patch in the middle.
+            itemBg.raycastTarget = true;
 
             var ring = NewImage(item.transform, "Ring");
             ring.sprite = GodotTheme.Box(RingGrey, RingGrey, 0, (int)(RadioSize * 0.5f));

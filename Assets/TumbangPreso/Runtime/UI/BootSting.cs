@@ -67,7 +67,9 @@ namespace TumbangPreso.UI
             _source.spatialBlend = 0.0f;
 
             var settings = Settings.SettingsStore.Current;
-            _source.volume = Mathf.Clamp01(settings.MasterVolume * settings.SfxVolume);
+            // ⚠️ THE STING PLAYS BEFORE ANYBODY CAN REACH THE SETTINGS PANEL, so it is one
+            // of the two sounds most worth having on the same curve as everything else.
+            _source.volume = Mathf.Clamp01(settings.SfxGain);
 
             _source.Play();
         }

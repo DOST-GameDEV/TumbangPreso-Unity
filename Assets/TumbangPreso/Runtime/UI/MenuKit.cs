@@ -43,11 +43,70 @@ namespace TumbangPreso.UI
         public static Canvas BuildCanvas(Transform parent, string name)
         {
             var go = new GameObject(name);
-            go.transform.SetParent(parent, false);
+
+            // ⚠️⚠️ A TAKEOVER CANVAS IS BUILT AT THE SCENE ROOT WHEN ITS ASKED-FOR PARENT IS
+            // INSIDE ANOTHER CANVAS, AND THE BOOT SCREEN 🧑 PHOTOGRAPHED IS WHY.
+            // *"wtf is thhis shhit"*, 2026-08-31, with the account form floating over a fully lit
+            // menu, no wood column and no key art. `docs/TODO.md` § 111.2 and
+            // `NestedCanvasProbe` reproduce it in one picture.
+            //
+            // **A NESTED CANVAS IGNORES ITS OWN `CanvasScaler`.** Unity resolves scale on the ROOT
+            // canvas only, so a nested one inherits the root's `scaleFactor` whatever its own
+            // scaler says. Everything below in this method (the 1920x1080 reference, the match on
+            // height, `AspectSafeCanvas.Apply`) is INERT on a nested canvas, and every offset,
+            // column width and image fit the screen computes is then in the wrong unit space. The
+            // probe measured `SignInCanvas` at `scaleFactor 0.711` with `isRootCanvas false`.
+            //
+            // ⚠️⚠️ AND § 99 IS THE SAME TRAP ONE PROPERTY OVER, HALF FIXED. That entry records
+            // `sortingOrder` being silently ignored on a nested canvas and answers it with
+            // `overrideSorting = true` below. **Nobody asked what else a nested canvas ignores**,
+            // and the answer is the scaler. Detaching answers both at once and makes
+            // `overrideSorting` redundant rather than load-bearing; it is kept because a caller
+            // may still pass a root parent.
+            //
+            // ⚠️ THE OWNER IS NOT ABANDONED. `CanvasLifetime` destroys the detached canvas when
+            // the object that asked for it goes, because `Destroy(owner)` no longer takes it.
+            bool nested = parent != null && parent.GetComponentInParent<Canvas>() != null;
+
+            if (nested)
+            {
+                var scene = parent.gameObject.scene;
+                if (scene.IsValid())
+                    UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(go, scene);
+
+                go.AddComponent<CanvasLifetime>().Bind(parent.gameObject);
+            }
+            else
+            {
+                go.transform.SetParent(parent, false);
+            }
 
             var canvas = go.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.pixelPerfect = true;
+
+            // ⚠️⚠️ WITHOUT THIS, EVERY `sortingOrder` A CODE-BUILT SCREEN SETS IS SILENTLY
+            // IGNORED, AND THAT SHIPPED. A `Canvas` nested inside another `Canvas` renders as
+            // part of its PARENT's batch, in hierarchy order, and only honours its own
+            // `sortingOrder` when `overrideSorting` is true. `PlayerNameplate`, `PlayerHub` and
+            // `SignInScreen` all live on `ConvertedMainMenu`'s GameObject, which is inside
+            // `MainMenuCanvas`, so **480, 500 and 510 were three numbers that did nothing.**
+            //
+            // ⚠️⚠️ 🧑 OPENED THE 2026-08-31 00:24 PLAYER AND GOT THE ACCOUNT FORM FLOATING OVER
+            // A FULLY LIT TITLE SCREEN: *"i opened the game what the fuclk is this"*. The
+            // sign-in screen's own 72 per cent scrim and its opaque wood column were both drawn
+            // UNDER the menu's pennants and street, leaving only the labels that happened to land
+            // later in the hierarchy. Nothing was wrong with that screen's layout: the same
+            // screen renders correctly in `Logs/ui/09-signin-at-boot-windowed.png`, because a
+            // probe builds it with no menu around it.
+            //
+            // ⚠️ AND `docs/TODO.md` § 92.7 ALREADY RECORDED THE SYMPTOM WITHOUT THE CAUSE. It
+            // reads *"At sorting order 85 the hub had the MULTIPLAYER setup screen drawn through
+            // it... The hub is 500 now and the sign-in screen 510."* Raising the numbers appeared
+            // to fix it and cannot have: the numbers were inert. What actually changed that day
+            // was which screen was loaded. **A fix that works for a reason nobody checked is a
+            // fix that comes back**, and it came back here.
+            canvas.overrideSorting = true;
 
             var scaler = go.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
@@ -249,6 +308,33 @@ namespace TumbangPreso.UI
         /// </summary>
         public const int MinReadableUnits = 18;
 
+        /// <summary>
+        /// How a game mode is written for a player to read.
+        ///
+        /// ⚠️⚠️ `GameMode.HeroStrike.ToString()` IS A WIRE VALUE AND UPPERCASING IT PRINTS
+        /// `HEROSTRIKE`, WHICH IS NOT THE NAME OF ANYTHING. `docs/VISION.md` § 1 calls the mode
+        /// **HERO STRIKE** and every other screen in the game writes it that way; the hub's match
+        /// history and match detail were uppercasing the enum, so one screen out of five spelled
+        /// the mode differently from the rest. Found in the first render of the MATCHES tab.
+        ///
+        /// ⚠️ IT TAKES THE STRING, NOT THE ENUM, ON PURPOSE. A `MatchRecord` carries `Mode` as
+        /// text because it is stored and replayed and may hold a mode this build does not know;
+        /// `FUTURE.md` § 0.5 rule 5 is the same argument about wire-facing identity. **An
+        /// unknown mode is uppercased and shown rather than blanked**, so a record from a newer
+        /// build reads as its own name instead of as nothing.
+        /// </summary>
+        public static string ModeLabel(string mode)
+        {
+            if (string.IsNullOrWhiteSpace(mode)) return "";
+            return string.Equals(mode.Trim(), Core.GameMode.HeroStrike.ToString(),
+                                 System.StringComparison.OrdinalIgnoreCase)
+                ? "HERO STRIKE"
+                : mode.Trim().ToUpperInvariant();
+        }
+
+        /// <summary>The same, from the enum the menus hold.</summary>
+        public static string ModeLabel(Core.GameMode mode) => ModeLabel(mode.ToString());
+
         public static Text Label(Transform parent, string text, int size, Color color,
                                  Vector2 anchor, Vector2 offset, Vector2 boxSize,
                                  TextAnchor align = TextAnchor.MiddleCenter)
@@ -276,6 +362,48 @@ namespace TumbangPreso.UI
         /// A wood-faced button, with the five StyleBox states, the sink on press, and the two
         /// sounds. Identical to what the converter produces for a `WoodButton`.
         /// </summary>
+        /// <summary>Room left either side of a button's label, so the words never touch the
+        /// wooden border.</summary>
+        public const float ButtonLabelPadding = 14.0f;
+
+        /// <summary>
+        /// How large a button's label should be, given the theme's size and the box it sits in.
+        ///
+        /// ⚠️⚠️ THE THEME'S `FontSizeButton` IS ONE NUMBER FOR EVERY BUTTON IN THE GAME, AND
+        /// THAT IS WHAT READS AS UNBALANCED. 🧑 2026-08-29: *"and laki ng join at spectate button
+        /// tas ang liit naman ng mga text hindi balanced"*. A 40 px chip and a 940 px browser row
+        /// both got 18 units, so the small controls looked right and every large one looked like
+        /// a big empty plank with a caption in the middle of it. The complaint is not that the
+        /// type is too small OR that the boxes are too big; it is that the two do not move
+        /// together, and only one of them was ever a variable.
+        ///
+        /// ⚠️ IT ONLY EVER GROWS. `Mathf.Max` against the theme size means no button anywhere
+        /// gets SMALLER type than it has today, so this cannot regress a screen nobody reported.
+        /// The floor is `MinReadableUnits` by construction because `FontSizeButton` is 18, which
+        /// is that constant.
+        ///
+        /// ⚠️ 0.42 IS THE CAP HEIGHT A BUTTON LABEL WANTS, not a number picked to taste: the
+        /// theme's own 18 units in the 40 px chips this game already ships is 0.45, and the
+        /// 28-unit heading in a 64 px header row is 0.44. Applying the ratio the small controls
+        /// already have to the large ones is what makes them one family. A 48 px row goes 18 to
+        /// 20, and a 64 px button goes 18 to 26.
+        /// </summary>
+        public static int BalancedButtonUnits(int themeUnits, float boxHeight)
+        {
+            if (boxHeight <= 1.0f) return themeUnits;
+
+            int wanted = Mathf.RoundToInt(boxHeight * 0.42f);
+            return Mathf.Max(themeUnits, Mathf.Min(wanted, MaxButtonUnits));
+        }
+
+        /// <summary>
+        /// ⚠️ A CEILING, BECAUSE A FULL-WIDTH BAR IS NOT A HEADLINE. Some lobby rows are 80 px
+        /// tall to give a wooden plate presence, and 34-unit type in one would compete with the
+        /// screen's actual heading. `GodotTheme.FontSizeHeading` is 28 and a button is never
+        /// more important than a heading.
+        /// </summary>
+        public const int MaxButtonUnits = 28;
+
         public static Button WoodButton(Transform parent, string text, Vector2 anchor,
                                         Vector2 offset, Vector2 size, Action onClick,
                                         string variation = "WoodButton")
@@ -291,9 +419,15 @@ namespace TumbangPreso.UI
 
             var style = GodotTheme.ForButton(variation);
 
-            var label = Label(go.transform, text, style.FontSize, style.Ink,
-                              new Vector2(0.5f, 0.5f), Vector2.zero, size);
+            var label = Label(go.transform, text, BalancedButtonUnits(style.FontSize, size.y),
+                              style.Ink, new Vector2(0.5f, 0.5f), Vector2.zero, size);
             label.raycastTarget = false;
+
+            // ⚠️ AND THEN SHRUNK BACK IF THE WORDS ARE LONGER THAN THE BOX IS WIDE. Scaling type
+            // to a button's HEIGHT says nothing about its WIDTH, and BACK TO LOBBY in a narrow
+            // box would simply be bigger and clipped. `Fit` stops at `MinReadableUnits`, so the
+            // two rules compose: fill the box when there is room, never go below the floor.
+            if (size.x > 1.0f) Fit(label, size.x - (ButtonLabelPadding * 2.0f));
 
             // ⚠️ RE-APPLIED AFTER THE VARIATION IS SET. AddComponent runs OnEnable immediately,
             // which skins the button with the field's DEFAULT variation; assigning the real one

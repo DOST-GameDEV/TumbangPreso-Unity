@@ -43,6 +43,14 @@ namespace TumbangPreso.UI
 
             SetText("BannerLabel", "MULTIPLAYER");
 
+            // ⚠️ THIS SCREEN IS WHAT `FUTURE.md` § 3's FUNNEL CALLS "first queue". There is no
+            // matchmaking queue to instrument yet (Phase 7 owns that), and the honest equivalent
+            // is the first time somebody tries to play with other people at all. Reaching here is
+            // that moment: hosting, browsing LAN and entering a join code all start on this
+            // screen. `docs/TODO.md` § 90.3 records the substitution so the step is not later
+            // read as a queue time.
+            GameServices.Telemetry?.NoteQueueOpened();
+
             // ⚠️⚠️ WHY THE LAST JOIN ENDED, SHOWN ON THE SCREEN THAT CAN ACT ON IT. A refused
             // approval arrives seconds after `Join` has already navigated to the lobby, so the
             // reason used to be written to a status label on a screen nobody was looking at and

@@ -289,6 +289,40 @@ namespace TumbangPreso.CameraSystem
             if (GetComponent<Visual.PostAntiAlias>() == null)
                 gameObject.AddComponent<Visual.PostAntiAlias>();
 
+            // ⚠️⚠️ THE INK PASS, AND WITHOUT IT THE SPECTATOR WAS WATCHING A DIFFERENT GAME.
+            // 🧑 2026-08-29, holding a spectator frame beside a first-person one: *"is it js me
+            // or the shaders are very dif for spectator and actual"*, then *"spectatator might
+            // not be getting shaders"*. He was reading it correctly and this is the whole of it.
+            //
+            // `CameraRig.Awake` adds three passes — `ColourGrade`, `PostAntiAlias` and
+            // `WorldOutline` — and this camera was given the first two and never the third. The
+            // ink edge is not an effect on this game, it IS the art direction (`VISION.md` § 6,
+            // *"his UI art is the design system ... wood, amber, cream, ink"*), so a frame
+            // without it does not read as a subtler picture, it reads as an untextured one: the
+            // screenshots show flat pale facades with no line anywhere against the same street
+            // drawn in first person with a black edge on every silhouette.
+            //
+            // ⚠️⚠️ THIS IS THE SECOND HALF OF THE FAULT `ColourGrade`'S NOTE ABOVE RECORDS, AND
+            // IT ARRIVED THE SAME WAY. That note says this camera "is a fourth rig with its own
+            // object (§3a) and was simply never given one" — the grade was then added here and
+            // the outline, added to `CameraRig` in a different session for a different reason,
+            // was not. Two rigs that must look identical and are built by two methods is the
+            // shape `docs/TODO.md` §§ 53.1, 57.1, 60, 62.1 and 63.1 each are, one surface
+            // further out. **Anything added to `CameraRig`'s post stack belongs here too.**
+            //
+            // ⚠️ AFTER `PostAntiAlias` AND BEFORE `SpectatorReplayCapture`, WHICH IS EXACTLY
+            // `CameraRig`'S ORDER. Unity runs image effects in component order, so matching the
+            // order is what makes the two cameras produce the same picture rather than merely
+            // carry the same components. The replay is added in `Start`, so it still records
+            // last, and it now records the frame the spectator actually saw.
+            //
+            // ⚠️ `PrototypeEnabled` IS SET FOR THE REASON `CameraRig` SETS IT: the component's
+            // own toggle defaults false, so attaching it alone would leave the pass inert and
+            // reproduce the *"i dont see any world outlines"* report on this camera only.
+            var outline = GetComponent<Visual.WorldOutline>();
+            if (outline == null) outline = gameObject.AddComponent<Visual.WorldOutline>();
+            outline.PrototypeEnabled = true;
+
             BindActions();
 
             // Start above and behind the base circle, looking at it. The circle is at the
@@ -371,6 +405,12 @@ namespace TumbangPreso.CameraSystem
         {
             EndReplay(showLiveToast: false);
             UnhookHighlights();
+
+            // ⚠️ THE BORROWED BODY GOES BACK WHEN THIS CAMERA DOES. A spectator leaving the arena
+            // with a unit still set to `ShadowsOnly` deletes that player from every other view,
+            // including their own, and nothing else would ever put them back. See `StepPovArms`.
+            RestorePovBody();
+            if (_povViewmodel != null) _povViewmodel.gameObject.SetActive(false);
 
             if (_ownsTimeScale)
             {
@@ -468,8 +508,14 @@ namespace TumbangPreso.CameraSystem
                     // Yaw is TAKEN from the unit; pitch stays on the mouse.
                     _yawDeg = _follow.transform.eulerAngles.y;
                     ApplyRotation();
+
+                    // ⚠️ THE HANDS OF WHOEVER IS BEING WATCHED. See `StepPovArms`.
+                    StepPovArms(delta);
                     return;
                 }
+
+                // Leaving POV puts the body back and takes the borrowed hands away.
+                StepPovArms(delta);
 
                 // Follow mode holds a fixed offset in the camera's own current bearing, so
                 // the player still owns the angle and only gives up the position.
@@ -567,9 +613,30 @@ namespace TumbangPreso.CameraSystem
         }
 
         // -------------------------------------------------------------------
-        // BROADCAST CONTROLS. Pause and speed manipulation are offline-only by construction:
-        // a remote viewer must never acquire authority over a live tournament simply by
-        // spectating. Replay is a local pixel overlay and is safe on either side of the wire.
+        // BROADCAST CONTROLS.
+        //
+        // ⚠⚠ PAUSE AND SPEED ARE NETWORKED NOW, AND THIS BLOCK USED TO REFUSE THEM OUTRIGHT.
+        // It read *"offline-only by construction: a remote viewer must never acquire authority
+        // over a live tournament simply by spectating"* and answered every press with
+        // `LIVE NETWORK · TIME CONTROLS LOCKED`. 🧑 2026-08-30, after being asked which of the
+        // game's two pauses he meant: *"pause is for spectatotr"*, *"give spectators the authority
+        // to pause, all of them can pause"*, *"make sure time pauses if u pause as well as
+        // everything happening and spectator can move"*, *"liek in game like mobile legends"*.
+        //
+        // The old rule guarded a tournament against a stranger. The spectators here are the people
+        // waiting for the next match and whoever is casting it, and an observer stopping the game
+        // to talk over a fight is the feature he is naming. **Every spectator can**, which he said
+        // twice, so there is no leader check.
+        //
+        // ⚠ THE HOST REMAINS THE ONLY WRITER OF THE CLOCK. This sends a REQUEST and applies
+        // nothing locally; `MatchRpc.RequestTimeScaleServerRpc` carries the whole reasoning and
+        // the refusal for a peer that holds a seat. Four peers each writing `Time.timeScale` is
+        // four matches.
+        //
+        // ⚠ SOLO IS UNCHANGED and still writes the clock directly, because there is nobody to
+        // ask and no second machine to disagree with.
+        //
+        // Replay is a local pixel overlay and is safe on either side of the wire.
 
         private void StepBroadcastKeys()
         {
@@ -618,9 +685,32 @@ namespace TumbangPreso.CameraSystem
                                 || kb.digit2Key.wasPressedThisFrame
                                 || kb.digit3Key.wasPressedThisFrame;
 
+            // ⚠⚠ A NETWORKED TIME PRESS IS A REQUEST, AND ONLY A SPECTATOR MAY MAKE ONE. The
+            // host answers and tells everybody; see the header above and
+            // `MatchRpc.RequestTimeScaleServerRpc`. A peer holding a chair is refused there too,
+            // so this check is the courtesy message rather than the rule.
             if (askedForTime && NetAuthority.IsNetworked)
             {
-                UI.Hud.Instance?.ShowToast("LIVE NETWORK  ·  TIME CONTROLS LOCKED", 1.5f);
+                if (!GameLaunch.Spectator)
+                {
+                    UI.Hud.Instance?.ShowToast("LIVE MATCH  ·  ONLY A SPECTATOR MAY PAUSE", 1.5f);
+                    return;
+                }
+
+                // ⚠ THE LOCAL BOOKKEEPING STILL MOVES, so the next press toggles the other way and
+                // the overlay reads correctly. What it does NOT do is write `Time.timeScale`: the
+                // number arrives back through `SyncTime`, which is what keeps four screens on one
+                // clock even when a packet is late.
+                if (Fired(_pauseKey))
+                {
+                    _broadcastPaused = !_broadcastPaused;
+                    Net.MatchRpc.Instance?.RequestTimeScaleServerRpc(
+                        _broadcastPaused ? 0.0f : _selectedTimeScale);
+                }
+
+                if (kb.digit1Key.wasPressedThisFrame) RequestBroadcastScale(0.25f);
+                if (kb.digit2Key.wasPressedThisFrame) RequestBroadcastScale(0.50f);
+                if (kb.digit3Key.wasPressedThisFrame) RequestBroadcastScale(1.00f);
                 return;
             }
 
@@ -643,6 +733,21 @@ namespace TumbangPreso.CameraSystem
             UI.Hud.Instance?.ShowToast(_broadcastPaused
                 ? "TACTICAL PAUSE  ·  CAMERA STILL LIVE"
                 : $"BACK TO ACTION  ·  {_selectedTimeScale:0.##}x", 1.1f);
+        }
+
+        /// <summary>
+        /// The networked half of <see cref="SetBroadcastScale"/>: pick a speed and ask for it.
+        ///
+        /// ⚠ IT SETS `_selectedTimeScale` LOCALLY SO THE NEXT UN-PAUSE ASKS FOR THE RIGHT SPEED.
+        /// That field is this camera's memory of what "back to action" means, and it is not
+        /// authoritative over anything: the clock everybody actually runs on is whatever
+        /// `SyncTime` last delivered.
+        /// </summary>
+        private void RequestBroadcastScale(float scale)
+        {
+            _broadcastPaused = false;
+            _selectedTimeScale = Mathf.Clamp(scale, 0.25f, 1.0f);
+            Net.MatchRpc.Instance?.RequestTimeScaleServerRpc(_selectedTimeScale);
         }
 
         private void SetBroadcastScale(float scale)
@@ -798,6 +903,17 @@ namespace TumbangPreso.CameraSystem
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920.0f, 1080.0f);
             scaler.matchWidthOrHeight = 1.0f;
+
+            // ⚠️⚠️ THE ONE CANVAS IN THE GAME THAT WAS STILL MISSING THE ASPECT RULE.
+            // `AspectSafeCanvas` opens by calling itself *"one rule for every canvas in the
+            // game"*, and every other screen-space canvas here routes through it: the HUD, the
+            // menus, the result board, the role-swap card, the splash, the you-card, the arrows
+            // and every imported screen via `ConvertedScreen`. This one was built with a bare
+            // `matchWidthOrHeight = 1.0`, which is match-on-HEIGHT, so on anything narrower than
+            // 16:9 the spectator's picture-in-picture was cropped off the side of the display.
+            // `ComicPopup` is the only other holdout and it is correctly exempt: it is a WORLD
+            // canvas on `ConstantPixelSize`, which `Apply` no-ops on by design.
+            UI.AspectSafeCanvas.Apply(scaler);
 
             var panelGo = new GameObject("ReplayPictureInPicture");
             panelGo.transform.SetParent(canvasGo.transform, false);
@@ -1129,6 +1245,137 @@ namespace TumbangPreso.CameraSystem
         /// number-row slow-motion controls and give an operator four predictable camera cuts
         /// without tabbing through the roster on air.
         /// </summary>
+        // -------------------------------------------------------------------
+        // § THE HANDS OF WHOEVER IS BEING WATCHED
+        //
+        // ⚠️⚠️ A POV CUT SHOWED A FIRST-PERSON VIEW WITH NO FIRST PERSON IN IT. 🧑 2026-08-29:
+        // *"f1-f4 for spectator show FPP arms of the ppl ur lookinga t in fpp"*. `CameraRig`
+        // mounts `ViewmodelArms` on the LOCAL player's camera and drives them from that player's
+        // `Carrier` and `CombatVerbs`; this camera is a different object, so pressing F1 parked a
+        // lens at somebody's eyes and drew an empty street. The whole point of a POV cut is that
+        // it is what THEY see.
+        //
+        // ⚠️ THE BODY IS HIDDEN AT THE SAME TIME, AND WITHOUT THAT IT LOOKS WORSE THAN NO ARMS.
+        // `PovForwardOffset` puts the lens 0.34 m in front of the eyes so the chibi head is not
+        // rendered from inside it, which means the unit's REAL arms are in frame. Adding a
+        // viewmodel on top gives four arms. `CameraRig.ApplyFppSelfHide` solves the same problem
+        // for the local player with the same mechanism: `ShadowsOnly`, so the body still casts
+        // its shadow into the shot and only the camera stops seeing it.
+        //
+        // ⚠️ AND IT IS RESTORED WHENEVER POV ENDS, INCLUDING ON A TARGET SWITCH. The hide is per
+        // renderer and per target; leaving it on a unit the operator has cut away from would take
+        // a player out of every other camera in the room, including their own.
+        // -------------------------------------------------------------------
+
+        private CameraSystem.ViewmodelArms _povArms;
+        private Transform _povViewmodel;
+        private CharacterMotor _povHidden;
+        private readonly List<Renderer> _povHiddenRenderers = new List<Renderer>();
+        private readonly List<UnityEngine.Rendering.ShadowCastingMode> _povShadowModes =
+            new List<UnityEngine.Rendering.ShadowCastingMode>();
+
+        private void StepPovArms(float delta)
+        {
+            bool wanted = _pov && _follow != null;
+
+            if (!wanted)
+            {
+                if (_povViewmodel != null) _povViewmodel.gameObject.SetActive(false);
+                RestorePovBody();
+                return;
+            }
+
+            EnsurePovArms();
+            if (_povArms == null) return;
+
+            if (_povHidden != _follow) HidePovBody(_follow);
+
+            if (!_povViewmodel.gameObject.activeSelf) _povViewmodel.gameObject.SetActive(true);
+
+            _povArms.MatchCharacter(_follow);
+
+            // ⚠️ POLLED, NOT EVENT-DRIVEN, for the reason `CameraRig` gives on the same three
+            // lines: what a unit holds changes DURING a round, and an event-driven copy shows the
+            // wrong shoe until the next swap.
+            var carrier = _follow.GetComponent<Carrier>();
+            var held = carrier != null ? carrier.Held : null;
+
+            _povArms.SetHolding(held != null);
+
+            // ⚠️ THE SAME THREE SOURCES IN THE SAME ORDER AS THE LOCAL RIG: a throw wind-up needs
+            // something in hand, so a TAYA would fall through every branch and the POV cut of the
+            // one player everybody is watching would be the one with a dead arm.
+            float charge = -1.0f;
+            if (held != null && carrier != null) charge = carrier.ObservedChargePower;
+
+            if (charge < 0.0f)
+            {
+                var verbs = _follow.GetComponent<CombatVerbs>();
+                if (verbs != null) charge = verbs.ObservedLungeCharge;
+            }
+
+            _povArms.SetCharge(charge);
+
+            if (held != null) _povArms.MatchSkin(held);
+
+            _povArms.StepVisuals(delta);
+        }
+
+        private void EnsurePovArms()
+        {
+            if (_povArms != null) return;
+
+            // ⚠️ THE SAME SEAT AND SCALE THE LOCAL RIG USES, read from it rather than retyped.
+            // Two viewmodels that disagree about where a hand is would make a POV cut look like a
+            // different game from the player's own screen, which is the one thing it must not.
+            var go = new GameObject("~SpectatorViewmodelArms");
+            go.transform.SetParent(transform, false);
+            go.transform.localScale = Vector3.one * CameraSystem.CameraRig.ViewmodelScale;
+            go.transform.localPosition = CameraSystem.CameraRig.ViewmodelSeat;
+            go.transform.localRotation = Quaternion.identity;
+
+            _povArms = go.AddComponent<CameraSystem.ViewmodelArms>();
+
+            foreach (var c in go.GetComponentsInChildren<Collider>(true)) Destroy(c);
+
+            _povViewmodel = go.transform;
+        }
+
+        private void HidePovBody(CharacterMotor who)
+        {
+            RestorePovBody();
+            if (who == null) return;
+
+            _povHidden = who;
+
+            foreach (var r in who.GetComponentsInChildren<Renderer>(true))
+            {
+                if (r == null) continue;
+                if (r.shadowCastingMode == UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly)
+                    continue;
+
+                _povShadowModes.Add(r.shadowCastingMode);
+                r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
+                _povHiddenRenderers.Add(r);
+            }
+        }
+
+        private void RestorePovBody()
+        {
+            for (int i = 0; i < _povHiddenRenderers.Count; i++)
+            {
+                var r = _povHiddenRenderers[i];
+                if (r == null) continue;
+                r.shadowCastingMode = i < _povShadowModes.Count
+                    ? _povShadowModes[i]
+                    : UnityEngine.Rendering.ShadowCastingMode.On;
+            }
+
+            _povHiddenRenderers.Clear();
+            _povShadowModes.Clear();
+            _povHidden = null;
+        }
+
         private void SelectPlayerPov(int slot)
         {
             CharacterMotor wanted = null;
@@ -1263,7 +1510,12 @@ namespace TumbangPreso.CameraSystem
 
             string Key(string action) => Settings.Rebinding.DisplayNameFor(asset, action).ToUpperInvariant();
 
-            return "SPECTATOR    WASD fly · F1-F4 player POV · " + Key("SpectatorCycleTarget")
+            // ⚠️ `WASD fly` IS GONE ON PURPOSE. 🧑 2026-08-29, pointing at this overlay:
+            // *"remove live netwrok here as well as WASD FLY"*. It is the one item on the line
+            // that teaches nothing: every other entry names a key the player would not guess,
+            // while WASD is the same walk the whole game is already played with, and the status
+            // line above it already says `FREE FLIGHT` with the speed.
+            return "SPECTATOR    F1-F4 player POV · " + Key("SpectatorCycleTarget")
                  + " follow · " + Key("SpectatorPov") + " POV/chase · " + Key("SpectatorFreeFly")
                  + " free · WHEEL speed/zoom · " + Key("SpectatorAutopilot") + " autopilot\n"
                  + "BROADCAST    " + Key("SpectatorReplay") + " replay · " + Key("SpectatorPause")
@@ -1290,8 +1542,17 @@ namespace TumbangPreso.CameraSystem
                 broadcast = "⏸ TACTICAL PAUSE  |  ";
             else if (_selectedTimeScale < 0.99f)
                 broadcast = $"SLOW-MO {_selectedTimeScale:0.##}x  |  ";
-            else if (NetAuthority.IsNetworked)
-                broadcast = "● LIVE NETWORK  |  ";
+
+            // ⚠️⚠️ THERE IS NO `● LIVE NETWORK` PREFIX ANY MORE. 🧑 2026-08-29: *"remove live
+            // netwrok here as well as WASD FLY"*, and *"remove live here too"* about the red bug
+            // in the corner, which is the same word in the other place.
+            //
+            // ⚠️ THE THREE BRANCHES ABOVE STAY, AND THAT IS THE WHOLE DISTINCTION. Replay, pause
+            // and slow-mo each say the frame is NOT the present moment, which a watcher cannot
+            // work out by looking. Live was the else: it fired whenever none of those did, so it
+            // only ever announced the ordinary case, and it announced it on a networked match
+            // and stayed silent on a local one, which makes it a netcode readout wearing a
+            // broadcast label.
 
             // ⚠️ THE AUTOPILOT ANNOUNCES ITSELF, AND IT HAS TO. A camera that moves on its own
             // with nothing on screen saying so is indistinguishable from a camera somebody else

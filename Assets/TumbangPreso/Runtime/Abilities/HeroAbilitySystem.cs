@@ -13,6 +13,9 @@ namespace TumbangPreso.Abilities
     public sealed class HeroAbilitySystem : MonoBehaviour
     {
         public HeroKit Kit { get; private set; }
+        public string HeroId { get; private set; } = "dante";
+        private AbilityVariant _skill1Variant;
+        private AbilityVariant _skill2Variant;
         private CharacterMotor _motor;
         private Carrier _carrier;
         private CombatVerbs _verbs;
@@ -101,10 +104,167 @@ namespace TumbangPreso.Abilities
             _reticle = GroundReticle.Create(transform);
         }
 
-        public void BindHero(string heroId)
+        public void BindHero(string heroId, HeroBuild build = null)
         {
-            Kit = CreateKitFor(heroId);
+            HeroId = string.IsNullOrEmpty(heroId) ? "dante" : heroId.ToLowerInvariant();
+            Kit = CreateKitFor(HeroId);
+            _skill1Variant = HeroBuildRules.Equipped(build, HeroId, 1, null)
+                             ?? HeroLoadoutRules.DefaultFor(HeroId, 1);
+            _skill2Variant = HeroBuildRules.Equipped(build, HeroId, 2, null)
+                             ?? HeroLoadoutRules.DefaultFor(HeroId, 2);
+            ApplyLoadoutToPresentation();
         }
+
+        /// <summary>
+        /// The telegraph, the reticle and the aim beacon, moved by the same fraction the effect
+        /// itself is moved by.
+        ///
+        /// ⚠️⚠️ EVERY NUMBER HERE IS READ OFF THE VARIANT, NEVER WRITTEN AS A LITERAL. The first
+        /// draft of this method hard-coded `1.25f` beside `dante.1.tremor` while the blast at the
+        /// call site used `ctx.GainScale`, which is the same fraction from the table. They agreed
+        /// on the day they were typed and nothing kept them agreeing: raising Arc Line from 30 to
+        /// 45 per cent would have moved the shock and left the ring the player aims with at 30,
+        /// so the telegraph would draw a lie. `docs/Design.md`'s opening rule as code: a number
+        /// in one place or it is two numbers.
+        /// </summary>
+        private void ApplyLoadoutToPresentation()
+        {
+            if (Kit == null) return;
+
+            // ⚠️⚠️ THE ALTERNATE'S SOUND IS ASSIGNED HERE AND CLEARED HERE, IN THAT ORDER, SO A
+            // LOADOUT CHANGE CANNOT LEAVE A STALE ONE ON THE KIT. A sidegrade changes what the
+            // power does, so it changes what the power sounds like doing it: Long Tremor sweeps
+            // feet instead of throwing bodies and its cue has no vertical slam in it.
+            // `tools/generate_skill_audio.py` builds the twelve, each by a different method.
+            //
+            // ⚠️ A DEFAULT VARIANT HAS NO ROW HERE AND MUST NOT. `VariantCastCue` goes back to
+            // null for it, so `HeroAbility.EffectiveCastCue` falls through to the slot's own cue
+            // — which is the whole point of "as tuned".
+            if (Kit.Skill1 != null) Kit.Skill1.VariantCastCue = VariantCue(_skill1Variant?.Id);
+            if (Kit.Skill2 != null) Kit.Skill2.VariantCastCue = VariantCue(_skill2Variant?.Id);
+
+            switch (_skill1Variant?.Id)
+            {
+                // The break grows, so the ring the player stomps inside grows with it.
+                case "dante.1.tremor":
+                    Kit.Skill1?.ScaleLoadout(telegraphRadius: Gain("dante.1.tremor")); break;
+
+                // A smaller sheet: the ring is the sheet, so it shrinks by the cost.
+                case "cheska.1.blackice":
+                    Kit.Skill1?.ScaleLoadout(telegraphRadius: Cost("cheska.1.blackice")); break;
+
+                // A longer veil is a longer ability, and the deck's cooldown ring reads it.
+                case "nemu.1.fade":
+                    Kit.Skill1?.ScaleLoadout(duration: Gain("nemu.1.fade")); break;
+
+                case "phaister.1.brand":
+                    Kit.Skill1?.ScaleLoadout(telegraphRadius: Cost("phaister.1.brand")); break;
+            }
+
+            switch (_skill2Variant?.Id)
+            {
+                case "dante.2.plating":
+                    Kit.Skill2?.ScaleLoadout(duration: Gain("dante.2.plating")); break;
+
+                case "cheska.2.spires":
+                    Kit.Skill2?.ScaleLoadout(telegraphRadius: Gain("cheska.2.spires")); break;
+
+                // ⚠️ THE ARMED WINDOW IS THE COST ON BOTH OF THESE. Flare Shot and Snap Discharge
+                // both buy speed with how long the shoe stays armed after the cast, and that
+                // window IS `HeroAbility.Duration`: the deck bar draining faster is the whole
+                // warning a player gets that they have to throw now.
+                case "sean.2.flare":
+                    Kit.Skill2?.ScaleLoadout(duration: Cost("sean.2.flare")); break;
+
+                case "zack.2.discharge":
+                    Kit.Skill2?.ScaleLoadout(duration: Cost("zack.2.discharge")); break;
+
+                case "nemu.2.leash":
+                    Kit.Skill2?.ScaleLoadout(duration: Cost("nemu.2.leash")); break;
+
+                // ⚠️ LONG STRIDE IS THE ONE ROW WHOSE COST IS A DIVISION. It goes further (the
+                // gain scales the reach) and takes proportionally LONGER to ramp to the far mark,
+                // so the ramp is divided by the cost rather than multiplied by it. The player
+                // sees both in the live aim beacon before releasing, which is what makes it a
+                // read for the taya rather than a free upgrade.
+                case "phaister.2.stride":
+                    Kit.Skill2?.ScaleLoadout(telegraphRange: Gain("phaister.2.stride"),
+                                             aimMax: Gain("phaister.2.stride"),
+                                             aimRamp: 1.0f / Cost("phaister.2.stride"));
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// The cast sound one loadout alternate wants, or null for a default.
+        ///
+        /// ⚠️ A SWITCH RATHER THAN A NAME DERIVED FROM THE ID. `"zack.2.discharge"` to
+        /// `"sfx_var_zack_discharge"` is a string transform that works for all twelve rows today
+        /// and would silently produce a cue id with no file behind it the first time somebody
+        /// added a variant whose tail did not match its wav. `AudioCues`'s own header records
+        /// what an unregistered id costs: the sound simply does not play and nothing errors.
+        /// Twelve explicit rows fail at compile time instead.
+        /// </summary>
+        private static string VariantCue(string variantId)
+        {
+            switch (variantId)
+            {
+                case "dante.1.tremor": return "sfx_var_dante_tremor";
+                case "dante.2.plating": return "sfx_var_dante_plating";
+                case "cheska.1.blackice": return "sfx_var_cheska_blackice";
+                case "cheska.2.spires": return "sfx_var_cheska_spires";
+                case "sean.1.afterburn": return "sfx_var_sean_afterburn";
+                case "sean.2.flare": return "sfx_var_sean_flare";
+                case "zack.1.arcline": return "sfx_var_zack_arcline";
+                case "zack.2.discharge": return "sfx_var_zack_discharge";
+                case "nemu.1.fade": return "sfx_var_nemu_fade";
+                case "nemu.2.leash": return "sfx_var_nemu_leash";
+                case "phaister.1.brand": return "sfx_var_phaister_brand";
+                case "phaister.2.stride": return "sfx_var_phaister_stride";
+                default: return null;
+            }
+        }
+
+        /// <summary>Whether this body is running one named alternate.</summary>
+        public bool HasVariant(string variantId)
+            => (!string.IsNullOrEmpty(variantId))
+               && ((_skill1Variant != null && _skill1Variant.Id == variantId)
+                   || (_skill2Variant != null && _skill2Variant.Id == variantId));
+
+        /// <summary>
+        /// 1 plus the authored gain of a variant, whether or not this body is wearing it.
+        ///
+        /// ⚠️ THESE TWO ARE THE TABLE'S OWN ARITHMETIC AND ARE DELIBERATELY UNCONDITIONAL. They
+        /// are only ever called from inside a `case` that has already matched the equipped id, so
+        /// an ownership test here would be a second, weaker copy of the switch above.
+        /// </summary>
+        private static float Gain(string variantId)
+        {
+            var variant = HeroLoadoutRules.VariantById(variantId);
+            return variant == null ? 1.0f : 1.0f + variant.Gain;
+        }
+
+        /// <summary>1 plus the authored (negative) cost of a variant. See <see cref="Gain"/>.</summary>
+        private static float Cost(string variantId)
+        {
+            var variant = HeroLoadoutRules.VariantById(variantId);
+            return variant == null ? 1.0f : 1.0f + variant.Cost;
+        }
+
+        /// <summary>
+        /// The gain fraction for a variant if this body is wearing it, otherwise 1. For effect
+        /// code that holds the system rather than an <see cref="AbilityContext"/>: `Carrier`
+        /// scales a throw, `Slipper` scales the crater it makes on landing.
+        /// </summary>
+        public float VariantGain(string variantId)
+            => HasVariant(variantId) ? Gain(variantId) : 1.0f;
+
+        /// <summary>The cost fraction for a variant if this body is wearing it, otherwise 1.</summary>
+        public float VariantCost(string variantId)
+            => HasVariant(variantId) ? Cost(variantId) : 1.0f;
+
+        /// <summary>The checked variant in one skill slot, defaults included.</summary>
+        public AbilityVariant VariantFor(int slot) => slot == 1 ? _skill1Variant : _skill2Variant;
 
         public static HeroKit CreateKitFor(string heroId)
         {
@@ -151,7 +311,22 @@ namespace TumbangPreso.Abilities
             // already calls paused: the warm-up before round one and the buffer between rounds.
             // A second opinion about when a round is live is how a HUD ends up disagreeing with
             // the rules.
-            Kit.PracticeMode = GameServices.Round == null || !GameServices.Round.RoundActive;
+            //
+            // ⚠️⚠️ AND THE OFFLINE TEST BENCH IS THE ONE THING THAT MAY SAY OTHERWISE. See
+            // `PracticeSandbox`: the switch is off by default, unreachable in any networked
+            // session, and its whole purpose is casting during the window this line closes. It
+            // is anded in HERE, on the one assignment, rather than at each of the three places
+            // `PracticeMode` is read, so a future reader cannot be given a different answer
+            // from the HUD tile beside it.
+            Kit.PracticeMode = !PracticeSandbox.Active
+                               && (GameServices.Round == null || !GameServices.Round.RoundActive);
+
+            // ⚠️ THE REFILL IS BEFORE `Tick`, NOT AFTER IT. `Kit.Tick` is what runs an active
+            // ability's duration down and what `OnEnd` hangs off; zeroing cooldowns after it
+            // would be the same frame's work undone, and a duration cleared from out here would
+            // strand a grant switched on with no timer left to switch it off. Only the two
+            // numbers that gate a NEW cast are touched.
+            if (PracticeSandbox.Active) RefillForSandbox();
 
             if (NetAuthority.IsNetworked)
             {
@@ -253,6 +428,27 @@ namespace TumbangPreso.Abilities
 
         /// <summary>Was this slot's key down on the previous Update? One entry per slot.</summary>
         private readonly bool[] _keyWasDown = { false, false, false };
+
+        /// <summary>
+        /// The offline test bench's per-frame refill: no cooldowns, no charge cost, a full
+        /// ultimate meter.
+        ///
+        /// ⚠️ THE METER IS TOPPED UP RATHER THAN MADE FREE, so `CastUltimate` still runs its
+        /// real branch order and still spends the bank. A player testing an ultimate in the
+        /// sandbox sees the same refusal messages a match would give them for everything except
+        /// the two things the switch is for.
+        ///
+        /// ⚠️ IT IS NOT ROUTED THROUGH `HeroKit`, because a kit method called from `Tick` would
+        /// be one an override could inherit and a shipped hero could accidentally use. This is a
+        /// caller-side effect on a switch this class already reads.
+        /// </summary>
+        private void RefillForSandbox()
+        {
+            Kit.Skill1?.RefillForSandbox();
+            Kit.Skill2?.RefillForSandbox();
+            Kit.Ultimate?.RefillForSandbox();
+            Kit.AddUltimateCharge(Kit.UltimateCost);
+        }
 
         private void Aim(InputIntent intent, Verb verb, Slot slot, ref float bufferedAt)
         {
@@ -440,6 +636,44 @@ namespace TumbangPreso.Abilities
             var animator = GetComponentInChildren<Visual.CharacterAnimator>();
             var ability = AbilityFor(slot);
 
+            // ⚠️⚠️ EVERY CAST SOUNDS FROM HERE AND FROM NOWHERE ELSE. See `HeroAbility.CastCue`
+            // for what this replaces: eighteen powers opening on six shared element cues, so a
+            // press told the room which hero and never which power. Playing it centrally rather
+            // than from each `OnActivate` is the same argument `Glyph` and `TelegraphRadius` won
+            // — eighteen call sites is eighteen places to forget, and a new hero would compile,
+            // run and cast in silence.
+            //
+            // ⚠️⚠️ IT REACHES EVERYBODY BY BEING PLAYED ON EVERY PEER, NOT BY BEING RELAYED, AND
+            // THE `SuppressRelay` IS LOAD-BEARING. 🧑 2026-09-02: *"make sure sfx can be heard by
+            // everyone in all modes / not js client sided"*. This method is called on the caster
+            // AND, through `ApplyNetworkCast`, on the host's copy of that seat and on every
+            // observing client — that is how the animation and the ground flash already reach the
+            // room. A cue that ALSO relayed from each of those would be broadcast once per peer:
+            // four players means four copies of one cast, a few tens of milliseconds apart, which
+            // is the flam `sfx_lrt_rumble`'s deletion records. Suppressed, every machine plays it
+            // locally exactly once, and offline the suppression does nothing at all.
+            //
+            // ⚠️ `EffectiveCastCue` PICKS THE LOADOUT ALTERNATE'S SOUND WHEN ONE IS EQUIPPED, and
+            // exactly one of the two ever plays, for the same reason.
+            //
+            // ⚠️ AN EMPTY CUE IS SILENCE AND NOT AN ERROR. `NetCue.Play` is simply not called,
+            // rather than being handed an id with no file behind it.
+            if (ability != null && !string.IsNullOrEmpty(ability.EffectiveCastCue))
+            {
+                using (NetCue.SuppressRelay())
+                    NetCue.Play(ability.EffectiveCastCue, transform.position);
+            }
+
+            // ⚠️⚠️ COUNT THE CAST ONLY ON THE OWNER. `ApplyNetworkCast` also calls this method on
+            // observers, so counting every presentation would award one step per connected peer.
+            // Practice has no transport and uses `GameLaunch.SoloSeat`; a bot never earns a
+            // player's local unlock even when all-bots diagnostics are running.
+            bool localOwner = !NetAuthority.IsNetworked
+                ? _motor != null && !_motor.IsBot && _motor.PlayerSlot == GameLaunch.SoloSeat
+                : _motor != null && !_motor.IsBot && _motor.PlayerSlot == NetAuthority.LocalSlot;
+            if (localOwner && (slot == Slot.Skill1 || slot == Slot.Skill2))
+                Settings.SettingsStore.NoteAbilityCast(HeroId, slot == Slot.Skill1 ? 1 : 2);
+
             string castClip = ability?.CastAction;
             string vmClip = ability?.ViewmodelAction;
 
@@ -472,7 +706,71 @@ namespace TumbangPreso.Abilities
             // did that land", which is the question a player actually has.
             if (_reticle == null || ability == null || !ability.HasTelegraph) return;
 
-            _reticle.Flash(TelegraphCentre(ability), ability.TelegraphRadius, AccentColour(), 0.35f);
+            _reticle.SetStyle(ability.TelegraphStyle);
+
+            // ⚠️⚠️ A HOLD-TO-AIM POWER'S CONFIRM GOES WHERE IT WAS AIMED, NOT AT ITS MAXIMUM
+            // REACH. `TelegraphCentre` is `Position + Forward * TelegraphRange`, and
+            // `TelegraphRange` is the FURTHEST an aimed power can be thrown, so a hex placed at
+            // the near end of the ramp flashed its confirmation several metres past where the
+            // ward actually landed. That is the exact fault this class's own header calls out by
+            // name: a telegraph that lies is worse than no telegraph, because a player believes
+            // it once and then stops believing all of them. `AimDestination` reads the same
+            // `HeldSecondsOnCast` the kit read when it spawned the thing.
+            Vector3 landed = ability.HoldToAim
+                ? AimDestination(ability)
+                : TelegraphCentre(ability);
+
+            _reticle.Flash(landed, ability.TelegraphRadius, AccentColour(), 0.35f);
+        }
+
+        /// <summary>
+        /// The host refused a cast this peer had already predicted. Take it back.
+        ///
+        /// ⚠️⚠️ THE SILENT DROP IS THE BUG THIS CLOSES, NOT THE DROP ITSELF. `MatchRpc
+        /// .OnReqAbilityMsg` has six ways to refuse a request and every one of them was a bare
+        /// `return`: the wrong seat, a non-finite number, no kit, an ability slot out of range,
+        /// the host's own `ApplyNetworkCast` saying no, and `PlausibleIntentPose` saying the pose
+        /// the client claims is more than `IntentPoseLeeway` from the host's copy of that body.
+        /// The guards are right. Refusing without telling anybody is what left the client running
+        /// a match the host was not refereeing: it had spent the cooldown, drawn the effect and
+        /// heard the confirm for something that, on the machine that decides, did not happen.
+        ///
+        /// ⚠️⚠️ AND `PlausibleIntentPose` IS NOT A RARE PATH. `docs/TODO.md` § 71.3 measured why:
+        /// 2.25 m of leeway is 375 ms at a sprint, and while the pose stream went out reliably a
+        /// single lost packet head-of-line blocked it for longer than that. The transport half of
+        /// that entry should make this uncommon. Uncommon is not the same as correct, and a
+        /// player who loses an ultimate to one dropped packet has lost the round it was banked
+        /// for.
+        ///
+        /// ⚠️ IT ANSWERS WITH THE REFUSAL THE PLAYER ALREADY KNOWS. `PlayRefusal` is the same
+        /// quiet `ui_error` a cooldown press gets, and `_answer` is set to `Cooling` so the deck
+        /// flashes the tile exactly as it does for any other refused press. The player does not
+        /// need to be told the difference between "the host said no" and "it was not ready"; they
+        /// need the power back and one unmistakable beat saying it did not go off.
+        ///
+        /// ⚠️ ONLY THE OWNER MAY RUN THIS, AND THE WIRE ENFORCES IT FROM THE OTHER END TOO.
+        /// `OnCastDeniedMsg` refuses anything that is not the host speaking and refuses a slot
+        /// that is not this peer's own; the guard here is the second half of that pair, so a
+        /// future caller cannot roll back somebody else's kit.
+        /// </summary>
+        public void RollBackPredictedCast(Slot slot)
+        {
+            if (Kit == null || _motor == null) return;
+            if (NetAuthority.IsHost) return;
+            if (_motor.PlayerSlot != NetAuthority.LocalSlot) return;
+
+            var ability = AbilityFor(slot);
+            if (ability == null) return;
+
+            // ⚠️ THE ROLLBACK RUNS UNDER `SuppressRelay` LIKE EVERY OTHER NETWORKED KIT CALL IN
+            // THIS FILE. `EndEarly` reaches `OnEnd`, and some `OnEnd` bodies play a cue; relaying
+            // those outward would have a client asking the host to announce the end of an effect
+            // the host never started.
+            using (NetCue.SuppressRelay()) ability.RollBackPredictedCast(_context);
+
+            _answer[(int)slot] = HeroKit.CastOutcome.Cooling;
+            _answeredAt[(int)slot] = Time.time;
+            PlayRefusal();
         }
 
         private void PlayRefusal()
@@ -766,6 +1064,7 @@ namespace TumbangPreso.Abilities
             // and the second one is the harder of the two. `UiTheme.BrightForHero` carries why a
             // mid-value accent reads as a shadow on ghosted geometry.
             _reticle.SetBeacon(ability.AimBeacon);
+            _reticle.SetStyle(ability.TelegraphStyle);
             _reticle.Show(AimPoint(ability, range), ability.TelegraphRadius, AccentBright());
             return true;
         }

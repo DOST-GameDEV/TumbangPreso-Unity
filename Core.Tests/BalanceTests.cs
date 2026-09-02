@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections.Generic;
 using TumbangPreso.Core;
 using Xunit;
@@ -55,7 +56,19 @@ namespace TumbangPreso.Core.Tests
 
             Assert.True(s.IsFatigued);
             Assert.Equal(Balance.StaminaMax / Balance.StaminaDrainRate, elapsed, 1);
-            Assert.Equal(1.5f, elapsed, 1);
+
+            // ⚠️ 2.1, UP FROM 1.5, AND THE SECONDS ARE NOT THE THING BEING GUARDED. The drain
+            // went 40 → 24 → 29 across 2026-08-29 so a full bar would keep buying the same
+            // DISTANCE while the attacker speed was cut and then partly restored (§§ 83.1b and
+            // 83.23); the pool is unchanged throughout, so every fraction priced against it —
+            // the shove's 25, the sprint floor's 7.5 — is unchanged too.
+            //
+            // ⚠️ THE LITERAL EARNS ITS PLACE ANYWAY, because the line above it is a tautology:
+            // it restates the formula `Stamina` implements and would pass at any drain rate.
+            // This one says what that formula currently WORKS OUT TO, which is the number a
+            // player experiences. `ASprintBuysOneCrossingOfTheDangerZone` holds the invariant
+            // that says whether it is the right number.
+            Assert.Equal(2.1f, elapsed, 1);
         }
 
         /// <summary>
@@ -186,7 +199,52 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(0, s.SpeedZones.Count);
         }
 
-        /// <summary>The shove costs 25 of 60, and an attacker walks at 0.75 of the taya.</summary>
+        /// <summary>
+        /// A full bar buys one crossing of the danger zone, which is the retrieval the whole
+        /// game is about.
+        ///
+        /// ⚠️⚠️ THIS IS THE INVARIANT `Stamina`'s HEADER NAMES AND NOBODY COULD RUN. It says
+        /// StaminaMax, StaminaDrainRate, SprintScale and ConfinementRadius are ONE INTERLOCKED
+        /// SET and that *"a change to any one of the four has to be re-measured against the other
+        /// three rather than reasoned about"* — and then the re-measurement lived only in that
+        /// sentence. When 🧑 asked for attackers to be 40% slower (§ 83.1), the set silently fell
+        /// out of step: a full bar went from 7.76 m of sprint to 4.66 m, so an attacker could
+        /// sprint in to the can and not back out, on every map, every time.
+        ///
+        /// ⚠️ IT IS A DISTANCE AND NOT A TIME, which is the finding that entry records. Asserting
+        /// the seconds would have passed through the whole change without noticing.
+        ///
+        /// ⚠️ THE BAND IS WIDE ON PURPOSE. This is not a knob, it is a guard against a retune
+        /// that quietly halves or doubles what a sprint is worth; anything inside the box's own
+        /// radius and twice it is a design decision, and anything outside is an accident.
+        /// </summary>
+        [Fact]
+        public void ASprintBuysOneCrossingOfTheDangerZone()
+        {
+            float sprintSpeed = Balance.Speed * Balance.AttackerSpeedScale * Balance.SprintScale;
+            float seconds = Balance.StaminaMax / Balance.StaminaDrainRate;
+            float distance = sprintSpeed * seconds;
+
+            Assert.True(distance >= Balance.ConfinementRadius,
+                $"a full bar sprints {distance:0.00} m and the danger zone is "
+                + $"{Balance.ConfinementRadius:0.00} m across. An attacker who can sprint in and "
+                + "not out cannot retrieve, which is the game.");
+
+            Assert.True(distance <= Balance.ConfinementRadius * 2.0f,
+                $"a full bar sprints {distance:0.00} m, which is more than twice the "
+                + $"{Balance.ConfinementRadius:0.00} m zone. A sprint that crosses it twice over "
+                + "makes the taya's positioning free to ignore.");
+        }
+
+        /// <summary>
+        /// The shove costs 25 of 60, and the two role scales are the two named constants.
+        ///
+        /// It asserted the LITERALS 1.0 and 0.75, and both moved on 2026-08-29 (docs/TODO.md
+        /// sections 83.1 and 83.3). A test that re-types a balance number tests only that
+        /// somebody edited two files instead of one; what is worth holding is that the scale is
+        /// read from the role and that the taya is the faster of the two, which is the whole
+        /// shape of chase versus escape and is what a retune must not accidentally invert.
+        /// </summary>
         [Fact]
         public void ShoveCost_IsPayableAndRoleScaleIsByRole()
         {
@@ -194,8 +252,11 @@ namespace TumbangPreso.Core.Tests
             Assert.True(s.Spend(Balance.ShoveStaminaCost));
             Assert.Equal(Balance.StaminaMax - Balance.ShoveStaminaCost, s.Current, 3);
 
-            Assert.Equal(1.0f, Stamina.RoleSpeedScale(isDefender: true), 3);
-            Assert.Equal(0.75f, Stamina.RoleSpeedScale(isDefender: false), 3);
+            Assert.Equal(Balance.DefenderSpeedScale, Stamina.RoleSpeedScale(isDefender: true), 3);
+            Assert.Equal(Balance.AttackerSpeedScale, Stamina.RoleSpeedScale(isDefender: false), 3);
+
+            Assert.True(Balance.DefenderSpeedScale > Balance.AttackerSpeedScale,
+                        "the taya must stay the faster role");
         }
 
         // ===================================================================
@@ -848,6 +909,68 @@ namespace TumbangPreso.Core.Tests
 
             Assert.Equal(Roster.ClassicPeople, Roster.GetPeople(GameMode.Classic));
             Assert.Equal(Roster.HeroPeople, Roster.GetPeople(GameMode.HeroStrike));
+        }
+
+        /// <summary>
+        /// Sean is the slowest hero, strictly, and the two tables that hold him agree.
+        ///
+        /// ⚠⚠ IT IS A SIZE DEBUFF AND `Roster.HeroPeople`'S HEADER CARRIES THE REASONING.
+        /// 🧑 2026-08-30: *"bcz Sean is larger than all, he should be slower than all (he has a
+        /// defender advantage)"*, *"js a bit slower than all"*. A bigger body reaches further and
+        /// contact resolves by DISTANCE, so being large is a real advantage at the one verb the
+        /// taya has.
+        ///
+        /// ⚠⚠ STRICTLY SLOWEST, NOT JOINT-SLOWEST, WHICH IS THE HALF A NUMBER CHANGE CAN LOSE.
+        /// Dante is on 2, so a "slower Sean" written as 2 would have tied rather than led, and
+        /// nothing would have failed. The points are a 5% ladder, so 1 is the only value that
+        /// expresses the ask at all.
+        ///
+        /// ⚠ AND IT IS ASSERTED IN BOTH TABLES. `HeroPeople` is what Hero Strike reads and
+        /// `AllPeople` is the master list; a trait edited in one and not the other is two
+        /// characters wearing one name, which is exactly the fault `AllPersonRows_AreDistinct`
+        /// above exists for, one list over.
+        /// </summary>
+        [Fact]
+        public void SeanIsStrictlyTheSlowestHero_InEveryTableThatHoldsHim()
+        {
+            var heroIds = Roster.HeroPeople.Select(e => e.Id).ToHashSet();
+
+            foreach (var table in new[] { Roster.HeroPeople, Roster.AllPeople })
+            {
+                var sean = table.First(e => e.Id == "sean");
+
+                foreach (var other in table)
+                {
+                    if (other.Id == "sean") continue;
+
+                    // ⚠⚠ HEROES ONLY, AND LOLA PACING IS THE REASON THIS FILTER EXISTS. She is
+                    // `bilis` 1 in `ClassicPeople` and has been since the roster was written, so
+                    // "slower than all" cannot mean the master list: `AllPeople` holds both
+                    // casts and `CLAUDE.md` § 1 says the two modes are not variants of each
+                    // other, so a Classic character and a hero never stand in one match. The ask
+                    // was about the six who do. Her row is also the precedent that says 0.90 is a
+                    // shipped, played value rather than a new extreme.
+                    if (!heroIds.Contains(other.Id)) continue;
+
+                    Assert.True(sean.Bilis < other.Bilis,
+                        $"{other.Name} is not faster than SEAN ({other.Bilis} against " +
+                        $"{sean.Bilis}). Sean is the largest body in the game and the slowest by " +
+                        "design; see Roster.HeroPeople's header.");
+                }
+            }
+
+            // The ladder, so the size of the debuff is on record and not only its direction.
+            Assert.Equal(0.90f, Roster.TraitScale(1, Balance.TraitSpeedPerPoint), 6);
+            Assert.Equal(0.95f, Roster.TraitScale(2, Balance.TraitSpeedPerPoint), 6);
+
+            // ⚠ STILL INSIDE `Balance`'s narrow-spread rule: *"a pick 40% faster than another
+            // is not a personality, it is the correct answer"*. The widest gap is 17%.
+            float slowest = Roster.TraitScale(Roster.TraitMin, Balance.TraitSpeedPerPoint);
+            float fastest = Roster.TraitScale(Roster.TraitMax, Balance.TraitSpeedPerPoint);
+            Assert.True(fastest / slowest < 1.40f,
+                "the speed spread across the roster has passed 40%, which Balance's trait note " +
+                "calls the point where a pick stops being a personality and becomes the correct " +
+                "answer");
         }
 
         /// <summary>

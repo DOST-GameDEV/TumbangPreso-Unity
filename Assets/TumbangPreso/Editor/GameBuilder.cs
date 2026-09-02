@@ -77,54 +77,49 @@ namespace TumbangPreso.EditorTools
         }
 
         /// <summary>
-        /// Puts the studio's mark on the one screen the engine insists on drawing.
+        /// The engine splash: white, Unity's mark alone, and nothing of ours on it.
         ///
-        /// ⚠️⚠️ UNITY'S SPLASH CANNOT BE TURNED OFF ON THIS LICENCE, so the alternative is not
-        /// "no engine logo", it is an unbranded engine logo in front of the game's own opening
-        /// animation. Adding the BH Studios mark beside it and matching the background to the
-        /// menu's navy makes the two read as one sequence rather than as an interruption. The
-        /// boot sting starts before this screen (see <c>BootSting</c>), so it has sound too.
+        /// ⚠️⚠️ THIS REVERSES `docs/TODO.md` § 111.1, WHICH PUT THE BH STUDIOS MARK ON THIS
+        /// SCREEN, AND THE REVERSAL WAS ASKED FOR BY NAME. 🧑 2026-09-01, over a screenshot of
+        /// exactly what that entry built: *"remove bh studios here and use white screen for unity
+        /// too"*. **The studio mark is not lost, it moved to its own beat**: the boot sequence is
+        /// UNITY (white) then BH STUDIOS (the video in `SplashScreen.unity`, also white) then
+        /// LOGIN. § 114.1 and § 114.2.
+        ///
+        /// ⚠️⚠️ THE SAME MARK ON NAVY AND THEN ON WHITE IS WHY. § 111.1 matched this screen to
+        /// "the menu's own navy" so the two would read as one sequence; the sting itself is a
+        /// black mark on white, so what actually shipped was the studio's logo twice, in two
+        /// background colours, with a hard colour cut between them. White here and white there is
+        /// one continuous frame, which is what that entry was trying to buy.
+        ///
+        /// ⚠️⚠️ AND THIS METHOD IS WHY THE `ProjectSettings.asset` FIELDS ARE NOT ENOUGH ON THEIR
+        /// OWN. It runs on EVERY build and writes `backgroundColor`, `logos` and `unityLogoStyle`
+        /// over whatever the asset holds, so a change made only in the inspector survives exactly
+        /// until the next build and then silently reverts. **Both places or neither.**
+        ///
+        /// ⚠️ `showUnityLogo` STAYS TRUE AND MUST. Unity's splash is not removable on this
+        /// licence, which is the fact `BootSting`'s header records and the reason the sting is
+        /// timed to play across it. `DarkOnLight` is what makes the engine mark legible now that
+        /// the background is white.
+        ///
+        /// ⚠️ THE LOGO LOOKUP IS DELETED WITH THE LOGO. It was force-import, `LoadAllAssetsAtPath`
+        /// for the sub-asset, a `spriteImportMode` repair and a `Resources` fallback, and every
+        /// one of those lines existed to get `bh_studios_logo.png` onto THIS screen. Nothing else
+        /// in the project reads a Sprite from that file. **The file itself is kept**: it is still
+        /// the source of the in-game sting's own artwork.
         /// </summary>
         private static void ConfigureSplash()
         {
-            var logo = AssetDatabase.LoadAssetAtPath<Sprite>(
-                "Assets/TumbangPreso/Art/ui/brand/bh_studios_logo.png");
-
-            if (logo == null)
-            {
-                var importer = AssetImporter.GetAtPath(
-                    "Assets/TumbangPreso/Art/ui/brand/bh_studios_logo.png") as TextureImporter;
-
-                if (importer != null)
-                {
-                    importer.textureType = TextureImporterType.Sprite;
-                    importer.SaveAndReimport();
-
-                    logo = AssetDatabase.LoadAssetAtPath<Sprite>(
-                        "Assets/TumbangPreso/Art/ui/brand/bh_studios_logo.png");
-                }
-            }
-
             PlayerSettings.SplashScreen.show = true;
             PlayerSettings.SplashScreen.showUnityLogo = true;
             PlayerSettings.SplashScreen.animationMode = PlayerSettings.SplashScreen.AnimationMode.Dolly;
-            PlayerSettings.SplashScreen.unityLogoStyle = PlayerSettings.SplashScreen.UnityLogoStyle.LightOnDark;
+            PlayerSettings.SplashScreen.unityLogoStyle = PlayerSettings.SplashScreen.UnityLogoStyle.DarkOnLight;
             PlayerSettings.SplashScreen.drawMode = PlayerSettings.SplashScreen.DrawMode.UnityLogoBelow;
 
-            // The menu's own navy, so the engine logo hands over to the sting without a flash.
-            PlayerSettings.SplashScreen.backgroundColor = new Color(0.0157f, 0.0314f, 0.2196f, 1.0f);
+            PlayerSettings.SplashScreen.backgroundColor = Color.white;
 
-            if (logo == null)
-            {
-                Debug.LogWarning("[Build] no BH Studios logo for the splash; " +
-                                 "the engine logo will show on its own.");
-                return;
-            }
-
-            PlayerSettings.SplashScreen.logos = new[]
-            {
-                PlayerSettings.SplashScreenLogo.Create(2.0f, logo),
-            };
+            // ⚠️ EMPTY, NOT UNSET. An unassigned array leaves whatever the last build wrote.
+            PlayerSettings.SplashScreen.logos = new PlayerSettings.SplashScreenLogo[0];
         }
 
         /// <summary>

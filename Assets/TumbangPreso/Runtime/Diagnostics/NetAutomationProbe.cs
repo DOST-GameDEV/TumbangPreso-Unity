@@ -83,7 +83,7 @@ namespace TumbangPreso.Diagnostics
                 return;
             }
 
-            int playing = net.Lobby.PlayingPeerCount(NetAuthority.LocalPeerId);
+            int playing = net.Lobby.PlayingPeerCount();
             if (NetAuthority.IsHost && playing < _expectedPeers)
             {
                 _readyStableFor = 0.0f;

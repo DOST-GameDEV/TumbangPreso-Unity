@@ -190,11 +190,23 @@ namespace TumbangPreso.Diagnostics
             _lastCharge[kit] = kit.UltimateCharge;
         }
 
-        private static Slipper FindSlipper(int ownerSlot)
+        /// <summary>
+        /// ⚠️⚠️ BY `SeatOfOrigin`, NOT BY `OwnerSlot`, AND THE INSTRUMENT HAD THE SAME BUG AS THE
+        /// THING IT MEASURES. `docs/TODO.md` § 78.1: `OwnerSlot` goes to -1 the round its seat
+        /// becomes taya, so this returned null for the defender's tsinelas and the report printed
+        /// `-1` — which reads as "no such object" and is how the bug was found, but it also meant
+        /// the row could never show what that shoe was actually doing. Keyed on the seat, all four
+        /// rows are always populated and the OWNER is printed as its own column instead.
+        /// </summary>
+        /// ⚠️ INACTIVE INCLUDED, because "switched off" is exactly the state this report has to be
+        /// able to show: the taya's tsinelas is parked with `SetActive(false)` and excluding it
+        /// would print `-1` on a peer that has it right and `-1` on a peer that has never heard
+        /// about it. Those are different facts and the `on` column separates them.
+        private static Slipper FindSlipper(int seatOfOrigin)
         {
-            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude,
+            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Include,
                                                          FindObjectsSortMode.None))
-                if (s != null && s.OwnerSlot == ownerSlot) return s;
+                if (s != null && s.SeatOfOrigin == seatOfOrigin) return s;
 
             return null;
         }
@@ -236,16 +248,21 @@ namespace TumbangPreso.Diagnostics
             }
 
             sb.AppendLine();
-            sb.AppendLine($"{"slipper",-8} {"state",6} {"holder",7} {"changes",8}");
-            sb.AppendLine(new string('-', 34));
+            // ⚠️ `owner` IS ITS OWN COLUMN NOW. It is the field `docs/TODO.md` § 78.1 stopped using
+            // as an address, and it is what says whether the taya's tsinelas has been correctly
+            // disowned on this peer: the defender's row should read owner -1 on BOTH reports.
+            sb.AppendLine($"{"slipper",-8} {"on",4} {"state",6} {"owner",6} {"holder",7} {"changes",8}");
+            sb.AppendLine(new string('-', 45));
 
-            for (int slot = 0; slot < Balance.PlayerCount; slot++)
+            for (int seat = 0; seat < Balance.PlayerCount; seat++)
             {
-                var s = FindSlipper(slot);
+                var s = FindSlipper(seat);
                 int holder = s != null && s.Holder != null ? s.Holder.PlayerSlot : -1;
+                int owner = s != null ? s.OwnerSlot : -1;
+                string on = s == null ? "-" : (s.gameObject.activeSelf ? "y" : "n");
 
-                sb.AppendLine($"{slot,-8} {(s != null ? (int)s.State : -1),6} {holder,7} " +
-                              $"{_slipperTransitions[slot],8}");
+                sb.AppendLine($"{seat,-8} {on,4} {(s != null ? (int)s.State : -1),6} {owner,6} " +
+                              $"{holder,7} {_slipperTransitions[seat],8}");
             }
 
             sb.AppendLine();

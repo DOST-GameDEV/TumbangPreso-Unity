@@ -38,6 +38,31 @@ namespace TumbangPreso.Visual
     public static class DanceClip
     {
         /// <summary>
+        /// Resources folder containing the editor-baked dance sets. Each rig has one because
+        /// its model-specific outer node is part of every curve path.
+        /// </summary>
+        public const string ResourceFolder = "GeneratedAnimations";
+
+        /// <summary>
+        /// Resource name for the clip set that binds to this Animator hierarchy. It is the first
+        /// node on the path to the skeleton root, which is also the model-specific part of every
+        /// curve binding.
+        /// </summary>
+        public static string ResourceName(Transform animatorRoot)
+        {
+            if (animatorRoot == null) return null;
+
+            Transform bone = FindDeep(animatorRoot, "root");
+            if (bone == null) return null;
+
+            Transform first = bone;
+            while (first.parent != null && first.parent != animatorRoot)
+                first = first.parent;
+
+            return first.parent == animatorRoot ? first.name : null;
+        }
+
+        /// <summary>
         /// The name the clip is cached under, so `EmoteClips` can name it like a shipped clip.
         ///
         /// ⚠️ IT CANNOT COLLIDE WITH AN IMPORTED CLIP. The rig's 32 are all plain lowercase
@@ -63,8 +88,9 @@ namespace TumbangPreso.Visual
         };
 
         /// <summary>
-        /// Builds the clip for one instanced model, or returns null if this model has no rig
-        /// (a Prop, or a model still being assembled).
+        /// Authors the clip for one model in the editor, or returns null if this model has no rig
+        /// (a Prop, or a model still being assembled). `GeneratedAnimationAuthor` persists the
+        /// result as an asset before a player is built.
         /// </summary>
         /// <param name="animatorRoot">
         /// The transform the Animator sits on. Every curve path is relative to it.
@@ -93,15 +119,26 @@ namespace TumbangPreso.Visual
                 name = ClipName,
 
                 // ⚠️ NOT `legacy`. The graph plays this through AnimationClipPlayable, which
-                // refuses a legacy clip outright.
+                // refuses a legacy clip outright. This is why the curves must be baked in the
+                // editor instead of assigned after the player has started.
                 legacy = false,
 
-                // ⚠️ NOT `wrapMode = Loop` EITHER, AND THAT IS DELIBERATE ON A CLIP MEANT TO
-                // REPEAT. Every imported clip on this rig is authored non-looping and the emote
-                // system replays the looping ones itself, from `EmoteLoops`. A clip that
-                // carried its own loop would repeat correctly while quietly bypassing the one
-                // mechanism every other emote goes through, leaving the next person to edit
-                // `EmoteLoops` with one emote it does not govern.
+                // ⚠️⚠️ THIS LINE IS INERT AND THE COMMENT THAT USED TO SIT ON IT SAID THE
+                // OPPOSITE OF WHAT IT DOES. It read "NOT `wrapMode = Loop` EITHER, AND THAT IS
+                // DELIBERATE" directly above `wrapMode = WrapMode.Loop`, so a previous edit
+                // changed the value and left the reasoning, which is the exact disagreement
+                // `CLAUDE.md` § 5 exists to catch.
+                //
+                // ⚠️ `wrapMode` ONLY GOVERNS A `legacy` CLIP, and this one is not legacy because
+                // `AnimationClipPlayable` refuses those outright. What the playable actually
+                // reads is `clip.isLooping`, which comes from the import settings and is FALSE
+                // for a clip built at runtime; there is no runtime API to set it.
+                //
+                // ⚠️ SO THE REPLAY IS THE EMOTE SYSTEM'S JOB, exactly as the old note claimed it
+                // should be, and as of 2026-08-29 it finally is. `EmoteLoops` says
+                // `{ "dance", true }` and `CharacterAnimator.HoldLastFrame` wraps the playable's
+                // time for any clip that does not loop on its own. Before that the table said
+                // loop, this line said loop, and the dance still played once and froze.
                 wrapMode = WrapMode.Loop,
             };
 

@@ -147,7 +147,13 @@ namespace TumbangPreso.UI
             switch (variation)
             {
                 case "WoodPrimaryButton":
-                    return Wood(UiTheme.MenuGreen, UiTheme.MenuGreenLit, UiTheme.Ink, UiTheme.Ink);
+                    // ⚠️ THE FACE IS THE MEASURED PEAK OFF `JOIN BUTTON.png`, NOT `MenuGreen`.
+                    // See `UiTheme.MenuGreenFace`: `WoodCraft` builds a control as seven values of
+                    // one colour expressed against its PEAK, so handing it `21a131`, which is a
+                    // third darker than any pixel in his button, darkened every stop again and
+                    // produced a bottle-green slab beside his authored art.
+                    return Wood(UiTheme.MenuGreenFace, UiTheme.MenuGreenLit, UiTheme.Ink,
+                                UiTheme.Ink);
 
                 // ⚠️⚠️ AMBER IS THE SELECTED-TAB COLOUR AND IT IS NOT A SECOND "GO" BUTTON.
                 // `WoodPrimaryButton` is green and means ACT: it is START MATCH and READY. A tab
@@ -169,8 +175,64 @@ namespace TumbangPreso.UI
                     // Not DANGER: that hue means downed / out of bounds, and a button is not a state.
                     return Wood(UiTheme.MenuRed, UiTheme.MenuRedLit, UiTheme.Cream, UiTheme.Ink);
 
+                // ⚠️⚠️ A SECTION HEADER IS NOT A BUTTON EVEN THOUGH IT IS PRESSABLE, AND GIVING
+                // IT ITS OWN VARIATION IS WHAT STOPS THE LOBBY SHOUTING. 🧑 2026-09-01: *"ui
+                // still looks unnatural and ugly"*. On the lobby the two loudest controls on the
+                // screen were `MATCH SETTINGS` and `LOBBY & SERVERS`, both solid amber slabs,
+                // while `START MATCH` (the primary, and the whole reason the screen exists) was
+                // plain wood: **the accent was spent on two drawer toggles and withheld from the
+                // action.** `docs/TODO.md` § 116.4 states the intended rule, *one accent, spent on
+                // the primary*, and applied it only to the queue card; the toggles kept the amber
+                // they were given on 2026-08-28 for a different reason (*"align the yellow thing
+                // with match settings"*, which was about alignment and not about colour).
+                //
+                // ⚠️ IT IS A DIFFERENT SHAPE, NOT A QUIETER COLOUR, WHICH IS THE POINT.
+                // `WoodCraft.Surface.Header` is square along its top edge and rounded below, so a
+                // header reads as a sign hung ON the drawer under it rather than as another card
+                // floating beside it. `game-ui-design` orders position, size, weight and colour in
+                // that order, and this is the difference between using the third tool and the
+                // fourth.
+                case "WoodHeaderButton":
+                    return Wood(UiTheme.WoodFace, UiTheme.WoodEdge, UiTheme.Cream, UiTheme.Amber);
+
+                // ⚠️⚠️ AN UNSELECTED TAB IS RECESSED, NOT MERELY DARKER, AND THAT IS THE WHOLE
+                // TAB METAPHOR. The live tab was a solid amber plate and the other one plain
+                // wood, so the pair communicated with colour alone: `game-ui-design` lists that
+                // as `colorblind-failure` and it also spent the screen's accent on a control that
+                // states where you already are rather than on the one that starts the game.
+                //
+                // Drawn through `WoodCraft.Surface.Field` the idle tab has its light coming from
+                // BELOW, which is what a surface pushed into the board looks like, while the live
+                // one keeps the varnish band near its top. **Two objects at two depths**, plus
+                // the amber chalk bar under the live one, plus four units of height: three
+                // signals, none of which is hue.
+                // ⚠️⚠️ THE IDLE FACE IS `WoodSlot` AND IT WAS `WoodFieldFace`, WHICH WAS NOT
+                // ENOUGH. Measured by looking at `Logs/shots-runtime/Lobby-v44.png`: `793e1f`
+                // against `4e2211` is a real difference in a colour picker and PRACTICE and
+                // MULTIPLAYER were still hard to tell apart on the screen, because both faces
+                // carry the same varnish ramp and the eye compares the BRIGHT band rather than
+                // the average. Dropping the idle face to `36180c` moves its bright band below the
+                // live face's dark end, so the two no longer overlap anywhere.
+                // ⚠️ THE LIVE TAB IS ITS OWN VARIATION NOW RATHER THAN BORROWING
+                // `WoodHeaderButton`. Both are `WoodFace` on a raised face, so the paint is
+                // unchanged; what changed is the SILHOUETTE the variation resolves to.
+                // `WoodCraft.Surface.Tab` is cut at the top and square along the bottom, and
+                // `Header` is the other way up, which is what 🧑 was looking at when he said the
+                // live tab reads as *"just a rectanhle"*.
+                case "WoodTabLiveButton":
+                    return Wood(UiTheme.WoodFace, UiTheme.WoodEdge, UiTheme.Cream, UiTheme.Amber);
+
+                case "WoodTabIdleButton":
+                    return Wood(UiTheme.WoodSlot, UiTheme.WoodEdge, UiTheme.CreamMuted,
+                                UiTheme.Cream);
+
+                // ⚠️⚠️ THE FILL IS `WoodFace` NOW AND IT WAS `WoodDeep`, WHICH IS A NEAR-BLACK.
+                // Measured off `BUTTON LONG.png`: his own button's face peaks at `793e1f`, and
+                // `31190b` is less than half that value, so every plain wood button in the game
+                // was drawn a great deal darker than the authored button sitting next to it in
+                // the same rail. `UiTheme.WoodFace` carries the sampling.
                 case "WoodButton":
-                    return Wood(UiTheme.WoodDeep, UiTheme.WoodMid, UiTheme.Cream, UiTheme.Amber);
+                    return Wood(UiTheme.WoodFace, UiTheme.WoodEdge, UiTheme.Cream, UiTheme.Amber);
 
                 case "PrimaryButton":
                     return new ButtonStyle
@@ -226,6 +288,8 @@ namespace TumbangPreso.UI
         public static bool IsButtonVariation(string variation) =>
             variation == "WoodButton" || variation == "WoodPrimaryButton" ||
             variation == "WoodDangerButton" || variation == "WoodAmberButton" ||
+            variation == "WoodHeaderButton" || variation == "WoodTabIdleButton" ||
+            variation == "WoodTabLiveButton" ||
             variation == "PrimaryButton" ||
             variation == "DangerButton";
 
@@ -445,6 +509,7 @@ namespace TumbangPreso.UI
             // Buttons: four states each.
             foreach (var variation in new[]
                      { "WoodButton", "WoodPrimaryButton", "WoodDangerButton", "WoodAmberButton",
+                       "WoodHeaderButton", "WoodTabIdleButton", "WoodTabLiveButton",
                        "Button", "PrimaryButton" })
             {
                 var style = ForButton(variation);

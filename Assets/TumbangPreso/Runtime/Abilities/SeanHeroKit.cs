@@ -64,7 +64,8 @@ namespace TumbangPreso.Abilities
                        50.0f, 0.6f, TumbangPreso.UI.AbilityGlyph.SeanRush,
                        summary: "Rush forward. Knocks down who you hit, burns who follows.",
                        castAction: "hero-sean-dash",
-                       viewmodelAction: "thrust-fire")
+                       viewmodelAction: "thrust-fire",
+                       castCue: "sfx_cast_sean_rush")
             {
             }
 
@@ -80,7 +81,9 @@ namespace TumbangPreso.Abilities
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
                 if (squash != null) squash.DashStretch(forward, 0.35f);
 
-                ctx.Motor.ApplyImpulse(forward.normalized * 17.0f + Vector3.up * 1.5f);
+                ctx.Motor.ApplyImpulse(forward.normalized * 17.0f
+                                       * ctx.CostScale("sean.1.afterburn")
+                                       + Vector3.up * 1.5f);
                 _live.Clear();
                 DropScorch(ctx);
 
@@ -91,7 +94,6 @@ namespace TumbangPreso.Abilities
                                              Visual.AbilityVfx.Aura.FireEmber, Duration);
 
                 NetCue.Play("hero_sean_grunt", ctx.Position);
-                NetCue.Play("sfx_fire_whoosh", ctx.Position);
             }
 
             protected override void OnTick(AbilityContext ctx, float dt)
@@ -124,19 +126,37 @@ namespace TumbangPreso.Abilities
                             Vector3 hitForce = (diff.sqrMagnitude > 0.01f ? diff.normalized : ctx.Forward) * 15.0f;
                             hitForce.y = 4.5f;
                             p.ApplyImpulse(hitForce);
-                            // ⚠️ 4, WHICH IS NEAR THE FLOOR ON PURPOSE. This is a SKILL on
-                            // a short cooldown, not an ultimate: it should interrupt a run and
-                            // be shrugged off, and a burn nobody can shake is a different
-                            // ability. The 1.5 s duration leaves only 0.3 s of mashable slack
-                            // above `Balance.MinStunDown`, so four presses is already brisk.
+                            // ⚠️ 4, WHICH IS THE LIGHTEST HOLD IN THE GAME ON PURPOSE. This is
+                            // a SKILL on a short cooldown, not an ultimate: it should interrupt
+                            // a run and be shrugged off, and a burn nobody can shake is a
+                            // different ability.
+                            //
+                            // ⚠️⚠️ THIS WAS THE WORST CASE OF § 83.14 AND THE NOTE HERE RECORDED
+                            // THE SYMPTOM WITHOUT SEEING IT. It read *"the 1.5 s duration leaves
+                            // only 0.3 s of mashable slack above `Balance.MinStunDown`, so four
+                            // presses is already brisk"* — 0.3 s over four presses is 0.075 s
+                            // each, and once they were spent `MashOutOfStun` refused every press
+                            // for the remaining 1.1 s. Four presses at 10 Hz is 0.4 s of input,
+                            // so the player spent nearly three times that hammering a key that
+                            // did nothing: 🧑's *"only up to 2-3 button mash and nothing registers
+                            // anymore"*. The floor is 0.60 now and the same four presses buy
+                            // 0.225 s each, which is what "brisk" was supposed to mean.
                             p.ApplyStagger(1.5f, StunElement.Fire, 4);
                             // ⚠️ A DASH THROUGH THREE PLAYERS USED TO PRINT THREE "BAM!"s
                             // ON TOP OF ITS OWN "ROCKET!". The stars and the sound already
                             // confirm each hit.
-                            DizzyStars.Attach(p.transform, 1.5f, UiTheme.HeroFireBright);
                             NetCue.Play("bump", p.transform.position);
-                            Visual.HitFeel.Land(p, Visual.HitFeel.Weight.Knockdown,
-                                                UiTheme.HeroFireBright);
+
+                            // ⚠️⚠️ THE STARS AND THE JOLT TRAVEL NOW, AND THE SOUND ALREADY DID.
+                            // `OnTick` opens with `if (!NetAuthority.ShouldResolve()) return;`, so
+                            // three players out of four watched a burning attacker with no crown
+                            // over them and felt nothing when it was their own body. The accent
+                            // and the weight are the same two this line chose by hand;
+                            // `MatchFlair` looks the colour up off the caster's hero instead, so
+                            // it cannot drift from the kit it belongs to.
+                            Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.HeroHit,
+                                                       ctx.Motor != null ? ctx.Motor.PlayerSlot : -1,
+                                                       p.PlayerSlot, p.transform.position, 1.5f);
                         }
                     }
                 }
@@ -148,7 +168,8 @@ namespace TumbangPreso.Abilities
                 // rather than a disc now, and a streak with no direction is just a disc that
                 // took more triangles to draw. A player who finds one has to be able to tell
                 // which way Sean went, which is most of what surviving Sean is.
-                var disc = HeroHazards.SpawnFireTrail(ctx.Position, TrailRadius, 3.0f,
+                var disc = HeroHazards.SpawnFireTrail(ctx.Position, TrailRadius,
+                                                      3.0f * ctx.GainScale("sean.1.afterburn"),
                                                       ctx.Motor.PlayerSlot, ctx.Forward);
                 if (disc == null) return;
 
@@ -186,6 +207,7 @@ namespace TumbangPreso.Abilities
                        summary: "Your next throw explodes where it lands.",
                        castAction: "hero-sean-ignite",
                        viewmodelAction: "ignite",
+                       castCue: "sfx_cast_sean_cannon",
                        charges: 2,
                        rechargedBy: Recharge.LataKnocked)
             {
@@ -196,7 +218,6 @@ namespace TumbangPreso.Abilities
             {
                 _kit.IsIgnitionCannonActive = true;
                 Visual.AbilityVfx.AttachHandVfx(ctx.Motor.transform, Visual.AbilityVfx.Aura.FireEmber, Duration);
-                NetCue.Play("sfx_fire_whoosh", ctx.Position);
             }
 
             protected override void OnEnd(AbilityContext ctx)
@@ -231,8 +252,10 @@ namespace TumbangPreso.Abilities
                        summary: "Leap and crash down. Leaves burning ground where you land.",
                        telegraphRadius: 4.8f, telegraphRange: 0.0f,
                        castAction: "hero-sean-supernova",
-                       viewmodelAction: "supernova-slam")
+                       viewmodelAction: "supernova-slam",
+                       castCue: "sfx_cast_sean_supernova")
             {
+                TelegraphStyle = Visual.GroundReticle.Style.Ember;
                 Windup = UltimateWindup;
             }
 
@@ -250,7 +273,6 @@ namespace TumbangPreso.Abilities
                 // Launch upward
                 ctx.Motor.ApplyImpulse(Vector3.up * 14.0f + ctx.Forward * 4.0f);
                 NetCue.Play("hero_sean_ult", ctx.Position);
-                NetCue.Play("sfx_fire_whoosh", ctx.Position);
             }
 
             protected override void OnTick(AbilityContext ctx, float dt)

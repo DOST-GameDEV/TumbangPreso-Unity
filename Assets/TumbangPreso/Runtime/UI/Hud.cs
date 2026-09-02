@@ -43,18 +43,45 @@ namespace TumbangPreso.UI
         public const int CrosshairOutline = 5;
 
         /// <summary>
-        /// ⚠️ THE HELD DANGER TINT IS 0.16, NOT THE FLASH'S 0.45, and the distinction is the
-        /// whole reconciliation. Two states last tens of seconds — the taya's can being down,
-        /// and an attacker being catchable — and a full-screen red rect held at flash strength
+        /// ⚠️ THE HELD DANGER TINT IS BELOW THE FLASH'S, and the distinction is the whole
+        /// reconciliation. Two states last tens of seconds — the taya's can being down, and an
+        /// attacker being catchable — and a full-screen red rect held at flash strength
         /// *"reads as the renderer being broken: measured on the first captured frame of a live
-        /// match, the entire arena was washed red"*. 0.16 tints the frame enough to be noticed
-        /// in peripheral vision and stays readable through for a whole round. The knockdown
+        /// match, the entire arena was washed red"*. The hold tints the frame enough to be
+        /// noticed in peripheral vision and stays readable for a whole round; the knockdown
         /// PULSE is kept on top of it, so the moment still punches.
+        ///
+        /// ⚠️⚠️ 0.16 WAS SO FAR BELOW IT THAT THE WARNING READ AS DELETED. 🧑 2026-08-30:
+        /// *"bring back the red aura or some shit in the screen of taya (theres like a warning
+        /// that lata is down if ur taya) (i think it got remvoed by accident, js remake it if it
+        /// doesnt exist)"*. It was never removed: `UpdateDanger` has driven it the whole time,
+        /// and `DownedVignette.shader` is in `m_AlwaysIncludedShaders` so it is not a stripping
+        /// fault either. **The level was the fault, and the shader's own header had already
+        /// done the arithmetic**: it records that the material's 0.6 alpha times this 0.16
+        /// puts *"the strongest pixel on screen at about 0.096"*, at the CORNERS, over a centre
+        /// held at zero. 0.096 of red on the four corners of a street scene is not a warning, it
+        /// is a rounding error, and the one person on the reporting end of it said so.
+        ///
+        /// ⚠️ THE SHAPE IS WHAT MADE RAISING IT SAFE, AND IT IS WHY THIS IS NOT A REVERSION.
+        /// The 0.16 was chosen against a FLAT full-screen rect, which is what shipped before
+        /// `DownedVignette.shader` was written: at that time every pixel of the frame carried
+        /// the number, so 0.16 was already most of what the eye could take. The shader put the
+        /// opacity where the player is not looking — `smoothstep(0.3, 1.2, dist)` is dead clear
+        /// inside a radius of 0.3 and only reaches full at the corners — and nothing re-derived
+        /// this constant afterwards. Against the ramp, 0.55 lands at **0.33 in the corners,
+        /// about 0.17 at the middle of each edge, and still exactly zero through the centre of
+        /// the frame**, which is less red over the part of the screen the player actually plays
+        /// in than the old flat 0.16 was.
+        ///
+        /// ⚠️ AND THE PULSE MOVED WITH IT so a knockdown is still an EVENT against the hold.
+        /// `UpdateDanger` takes `Max(pulse, hold)`: leaving the peak at 0.45 under a 0.55 hold
+        /// would have made the loudest single moment in the taya's game invisible, which is the
+        /// same class of fault as the one above arriving one line later.
         /// </summary>
-        public const float DangerHoldAlpha = 0.16f;
+        public const float DangerHoldAlpha = 0.55f;
 
         public const float DownedFlashTime = 0.45f;
-        public const float DownedFlashPeak = 0.45f;
+        public const float DownedFlashPeak = 0.90f;
 
         public const int StatusRowLimit = 4;
         public const int StatusFontSize = 20;
@@ -153,6 +180,8 @@ namespace TumbangPreso.UI
         private RectTransform _countdownRt;
 
         private Text _readyPrompt;
+        private Text _sandboxToggle;
+        private Image _sandboxPlate;
         private Text _readyObjective;
         private Image _readyPromptPlate;
         private Image _readyObjectivePlate;
@@ -368,6 +397,46 @@ namespace TumbangPreso.UI
         /// doing in it — dead air at exactly the moment somebody who has just read the tutorial
         /// needs it confirmed.
         /// </summary>
+        /// <summary>
+        /// Reads the sandbox key and paints the toggle plate.
+        ///
+        /// ⚠️⚠️ IT RUNS ABOVE THE `_local == null` GUARD IN `Update`, LIKE THE SPECTATOR KEYS
+        /// DIRECTLY ABOVE IT AND FOR THE SAME REASON: this is not a verb performed by a
+        /// character, so gating it on having one would make it dead exactly when a scene is
+        /// still assembling and he is mashing it.
+        ///
+        /// ⚠️ THE PLATE IS SHOWN WHILE THE WARM-UP PROMPT IS UP, **OR** WHENEVER THE SWITCH IS
+        /// ON. The first half is discovery: it is the screen he photographed. The second is the
+        /// one that matters more — a rule this unusual must never be quietly in force, so as
+        /// long as cooldowns are off, the screen says so, in every round and not only in the
+        /// window where it was pressed.
+        ///
+        /// ⚠️ AND IT DRAWS NOTHING AT ALL IN A NETWORKED MATCH, because `PracticeSandbox.Allowed`
+        /// is false there and the key is refused by `Toggle`. There is no state in which this
+        /// row appears to a player who could be affected by somebody else's press.
+        /// </summary>
+        private void UpdateSandboxToggle()
+        {
+            if (_sandboxToggle == null) return;
+
+            var keyboard = Keyboard.current;
+            if (keyboard != null && keyboard.f1Key.wasPressedThisFrame && PracticeSandbox.Allowed)
+                PracticeSandbox.Toggle();
+
+            bool on = PracticeSandbox.Active;
+            bool show = PracticeSandbox.Allowed && (on || _readyWindowOpen);
+
+            _sandboxToggle.enabled = show;
+            if (_sandboxPlate != null) _sandboxPlate.enabled = show;
+            if (!show) return;
+
+            _sandboxToggle.text = on ? "[F1]  NO COOLDOWNS: ON" : "[F1]  NO COOLDOWNS: OFF";
+
+            // ⚠️ THE LIT STATE IS AMBER, NOT `UiTheme.Defense`. Blue means the taya and nothing
+            // else, which `CLAUDE.md` § 6.4 states as a rule after it had to be said six times.
+            _sandboxToggle.color = on ? UiTheme.Amber : UiTheme.CreamMuted;
+        }
+
         public void ShowReadyPrompt(bool show)
         {
             // ⚠ RESET ON THE EDGE, NOT ON EVERY CALL. `ReadyGate` raises this once per phase
@@ -388,8 +457,15 @@ namespace TumbangPreso.UI
                 // when ready." across 800 px of screen, which is four separate assertions the
                 // player has to parse to find the one instruction in it. All-caps also removes
                 // the word shapes that make a glance enough.
+                // ⚠️⚠️ THE HERO LINE NO LONGER SAYS "PRACTICE", BECAUSE THE POWERS ARE OFF. It
+                // read "Practice freely, scores are paused", which was true while
+                // `HeroKit.PracticeMode` handed out free casts and became a lie the moment 🧑
+                // asked for that to stop (*"remove unli skill before round bcz ppl fly out of
+                // map and shit"*, 2026-08-30). Walking, throwing and picking up are still free,
+                // which is what "warm up" covers and what the free-roam window is for; the
+                // second clause names the one thing that is not.
                 _readyPrompt.text = SceneFlow.SelectedMode == GameMode.HeroStrike
-                    ? $"Practice freely, scores are paused. Press {ready} when ready."
+                    ? $"Warm up freely, powers start with the round. Press {ready} when ready."
                     : $"Warm up freely, scores are paused. Press {ready} when ready.";
                 _readyPrompt.enabled = show;
                 if (_readyPromptPlate != null) _readyPromptPlate.enabled = show;
@@ -580,12 +656,14 @@ namespace TumbangPreso.UI
         private void OnEnable()
         {
             if (GameServices.Match != null) GameServices.Match.Scored += OnScored;
+            Net.MatchRpc.TimeScaleChanged += OnBroadcastClock;
             TrySubscribeRound();
         }
 
         private void OnDisable()
         {
             if (GameServices.Match != null) GameServices.Match.Scored -= OnScored;
+            Net.MatchRpc.TimeScaleChanged -= OnBroadcastClock;
 
             if (_roundHooked && GameServices.Round != null)
             {
@@ -593,6 +671,35 @@ namespace TumbangPreso.UI
             }
 
             _roundHooked = false;
+        }
+
+        /// <summary>
+        /// Say why the world stopped.
+        ///
+        /// ⚠⚠ A FROZEN GAME WITH NO EXPLANATION IS INDISTINGUISHABLE FROM A CRASH, and this
+        /// pause is one the player did not press. 🧑 asked for spectators to be able to stop a
+        /// live match (`MatchRpc` § THE BROADCAST CLOCK), which means three other people's screens
+        /// stop for a reason that is not on any of them. The toast is the only thing that
+        /// separates "an observer called a pause" from "the build hung".
+        ///
+        /// ⚠ IT NAMES THE SPECTATOR AS THE CAUSE rather than saying PAUSED, because a player who
+        /// reads PAUSED looks for the menu they did not open.
+        ///
+        /// ⚠ THE TOAST CLOCK IS `Time.unscaledDeltaTime` (see `Update`), so this one can still
+        /// expire while the match it is announcing is stopped dead. A toast driven by scaled time
+        /// would stay on screen forever at exactly the moment it is needed.
+        /// </summary>
+        private void OnBroadcastClock(float scale)
+        {
+            if (scale <= 0.001f)
+            {
+                ShowToast("PAUSED BY A SPECTATOR", 2.0f);
+                return;
+            }
+
+            ShowToast(scale >= 0.999f
+                ? "BACK TO ACTION"
+                : $"SLOW MOTION  ·  {scale:0.##}x", 1.4f);
         }
 
         private bool _roundHooked;
@@ -745,6 +852,18 @@ namespace TumbangPreso.UI
             // character, which is the line this method is drawn along.
             _crosshair.enabled = false;
             _vulnerable.enabled = false;
+
+            // ⚠️ AND THE HITMARKER, WHICH THIS LIST MISSED AND `docs/TODO.md` § 79.4 WAS. It is
+            // the same class of thing as the two lines above it, it was simply not in the list,
+            // and a mark already on screen at the moment a player becomes a watcher would
+            // otherwise finish its 0.28 s fade in the new mode. `PopHitmarker` refuses while
+            // spectating; this clears the one that may already be up.
+            if (_hitmarker != null)
+            {
+                _hitmarker.enabled = false;
+                _hitmarkerTimer = 0.0f;
+            }
+
             _readyPrompt.enabled = false;
             _readyObjective.enabled = false;
             if (_readyPromptPlate != null) _readyPromptPlate.enabled = false;
@@ -830,7 +949,20 @@ namespace TumbangPreso.UI
                                           TextAnchor.MiddleRight, 4);
             Place(_spectatorLiveBug.rectTransform, new Vector2(1.0f, 1.0f),
                   new Vector2(-24, -24), new Vector2(260, 34));
-            _spectatorLiveBug.text = "● LIVE";
+
+            // ⚠️⚠️ THE CORNER STARTS EMPTY, BECAUSE "LIVE" IS THE STATE THAT SAYS NOTHING.
+            // 🧑 2026-08-29, pointing at the red bug in the corner of a spectator frame:
+            // *"remove live here too"*.
+            //
+            // ⚠️ THE WIDGET IS KEPT AND ONLY ITS DEFAULT STATE IS BLANK, WHICH IS NOT THE SAME
+            // AS DELETING IT. The other two states it carries, `⏪ INSTANT REPLAY` and
+            // `⏸ TACTICAL PAUSE`, each tell a watcher that what they are looking at is NOT the
+            // present moment, which is the one thing a broadcast corner is for and the one
+            // thing the bottom status line does not say on its own. Live is the default and
+            // the absence of either of those, so drawing it is a label that is only ever
+            // redundant: `SpectatorCamera.StatusText` already opens `● LIVE NETWORK  |  `
+            // along the bottom of the same frame.
+            _spectatorLiveBug.text = "";
         }
 
         public void SetSpectatorControlsVisible(bool visible)
@@ -879,7 +1011,9 @@ namespace TumbangPreso.UI
                 }
                 else
                 {
-                    _spectatorLiveBug.text = "● LIVE";
+                    // See the build site: live is the absence of the other two, so it draws
+                    // nothing rather than a red bug that repeats the bottom status line.
+                    _spectatorLiveBug.text = "";
                     _spectatorLiveBug.color = UiTheme.Danger;
                 }
             }
@@ -997,6 +1131,8 @@ namespace TumbangPreso.UI
             if (_spectating && Fired(SpectatorAction("CleanFeed"))) SetCleanFeed(!_cleanFeed);
             if (_spectating && Fired(SpectatorAction("SpectatorControls")))
                 SetSpectatorControlsVisible(!_spectatorControlsVisible);
+
+            UpdateSandboxToggle();
 
             if (GameServices.Match == null || GameServices.Round == null) return;
 
@@ -1156,7 +1292,25 @@ namespace TumbangPreso.UI
 
             // The announcer's clock warnings ride the same value the clock draws, so "thirty
             // seconds" is spoken on the frame the HUD first shows 30.
-            GameServices.Voice?.TickClock(left);
+            //
+            // ⚠️⚠️ ONLY WHILE A ROUND IS ACTUALLY RUNNING, AND WITHOUT THAT IT SPOKE AT THE WRONG
+            // TIME ON EVERY NON-HOST. 🧑 2026-08-29: *"wrong sfx played for non host, 30 seconds
+            // played even tho no 30 seconds yet"*. This ran unconditionally, including through
+            // the pre-round window and the whole warmup buffer, where `TimeLeft` is whatever the
+            // last round ended at rather than the clock of the round about to start — and on a
+            // client that value arrives from the host at 5 Hz, so the low reading is replicated
+            // and spoken before the round it belongs to has begun.
+            //
+            // ⚠️ THE HOST WAS MOSTLY SPARED BY ACCIDENT, which is why it reads as a client fault.
+            // `RoundStarted` fires there and resets the two flags a frame later; a client never
+            // gets that event at all (`MatchDirector.ApplySnapshot`'s header says why), so on a
+            // client a warning spoken early is a warning spent for good and the real one is
+            // silent as well.
+            if (GameServices.Round.RoundActive && GameServices.Match != null &&
+                GameServices.Match.MatchInProgress)
+            {
+                GameServices.Voice?.TickClock(left);
+            }
 
             // ⚠️ ONLY ON THE SECOND, NOT EVERY FRAME. The clock has one-second resolution, and
             // assigning `Text.text` invalidates the mesh and queues a reshape whether or not the
@@ -1221,7 +1375,16 @@ namespace TumbangPreso.UI
 
             if (GameServices.Match.IsWarmupBuffer)
             {
-                _round.text = WarmupLine;
+                // ⚠️ THE SKIP TALLY RIDES THE LINE THAT IS ALREADY THERE rather than adding a
+                // widget. `docs/TODO.md` § 45 took five ambient sines and three copies of "LATA
+                // DOWN" off this HUD; a new box for two numbers that live for fifteen seconds
+                // would be putting one of them straight back. See `BufferSkipVote`.
+                _round.text = BufferSkipVote.Showing && BufferSkipVote.VotesNeeded > 1
+                    ? $"{WarmupLine}   ·   [{KeyLabel("ReadyUp")}] SKIP  " +
+                      $"{BufferSkipVote.Votes}/{BufferSkipVote.VotesNeeded}"
+                    : BufferSkipVote.Showing
+                        ? $"{WarmupLine}   ·   [{KeyLabel("ReadyUp")}] SKIP"
+                        : WarmupLine;
 
                 // ⚠️⚠️ THE ROUND-LINE CACHE IS DROPPED HERE, and forgetting this is how a guard
                 // like it turns into a stuck label. This branch writes the label itself, so the
@@ -1561,6 +1724,13 @@ namespace TumbangPreso.UI
                 _lataUprightShown = lata.IsUpright ? 1 : 0;
                 _lataLabel.text = lata.IsUpright ? "LATA  ·  UPRIGHT" : "LATA DOWN";
                 _lataLabel.color = lata.IsUpright ? UiTheme.Defense : UiTheme.Offense;
+
+                // ⚠️ RE-FIT ON THE FRAME THE TEXT CHANGES, not on the next one. The call at the
+                // top of this method runs before either row is written, so on its own it would
+                // size the card to what it said LAST frame and the new line would sit in the old
+                // plate for a frame. Both writers re-fit; the guard inside makes the second call
+                // of a frame a pair of string compares.
+                FitLataCard();
             }
 
             bool down = !lata.IsUpright;
@@ -1676,6 +1846,11 @@ namespace TumbangPreso.UI
             _lataHintShown = line;
             _lataHint.text = line;
             _lataHint.enabled = line != "";
+
+            // The hint is the row that actually changes during a round, and it is the one whose
+            // longest member ("CAMPING  ·  DEFENSE SCORE PAUSED") used to hold the whole card
+            // open permanently. See `FitLataCard`.
+            FitLataCard();
         }
 
         /// <summary>
@@ -1861,8 +2036,9 @@ namespace TumbangPreso.UI
         //
         // ⚠️⚠️ AND IT IS WHY THE SHAPE MATTERS RATHER THAN THE ALPHA. `SetDownedFlash` records
         // the measurement that governs this whole file: a held full-screen tint reads as the
-        // renderer being broken. That is why held states sit at `DangerHoldAlpha` 0.16 while
-        // only a 0.45 s pulse goes to 0.45. A tag stun is FIVE SECONDS: too long for a flash,
+        // renderer being broken. That is why held states sit at `DangerHoldAlpha` while only a
+        // 0.45 s pulse goes to `DownedFlashPeak`, and why both are read through a vignette ramp
+        // rather than painted flat. A tag stun is FIVE SECONDS: too long for a flash,
         // far too punchy to hold at flash strength, and too important to drop to 0.16, because
         // it is the single biggest moment in the defender's game. The reference resolves it by
         // putting the opacity where the player is not looking, so there is no alpha ceiling here
@@ -2239,8 +2415,13 @@ namespace TumbangPreso.UI
             BuildFloatingText();
             BuildCrosshair();
 
-            // Its own object, deliberately: the arrows are positioned from screen centre in raw
-            // pixels, and putting them under the scaled HUD canvas would move them.
+            // Its own canvas, deliberately: the arrows are placed by projecting a world point and
+            // pushing it to whichever edge it leaves through, which is a different frame of
+            // reference from every anchored card above and should not inherit their layout. It
+            // carries the same 1920x1080 aspect-safe scaler, so it stays the same size as the
+            // rest of the interface. ⚠️ THE PLACEMENT MATHS IS IN CANVAS UNITS, NOT PIXELS: this
+            // comment used to claim raw pixels, and `OffscreenIndicators.UpdateOne` half believed
+            // it, which is the bug fixed there.
             var indicatorGo = new GameObject("OffscreenIndicators");
             indicatorGo.transform.SetParent(transform, false);
             _indicators = indicatorGo.AddComponent<OffscreenIndicators>();
@@ -2916,18 +3097,28 @@ namespace TumbangPreso.UI
             _lataCard.gameObject.SetActive(false);
         }
 
-        /// <summary>Every string `UpdateLataCard` can put in the TITLE row. See
-        /// <see cref="LataHintLines"/> for the hint row and the reason both are lists.</summary>
+        /// <summary>
+        /// Every string `UpdateLataCard` can put in the TITLE row. See <see cref="LataHintLines"/>
+        /// for the hint row and the reason both are lists.
+        ///
+        /// ⚠️⚠️ THE SECOND ENTRY READ `"⚠  LATA DOWN  ⚠"` AND THE CARD HAS NOT DRAWN THAT SINCE
+        /// THE WARNING GLYPHS WERE REMOVED. `UpdateLataCard` writes a bare `"LATA DOWN"`; the
+        /// glyph pair went when the can stopped saying so in three places at once (see that
+        /// method's note on 🧑's *"repetitive lata down"*), and this list was not moved with it.
+        /// It mattered because the fit below MEASURED this array: the card was being sized for
+        /// two glyphs and four spaces it can never show, on every resolution, for a year.
+        /// </summary>
         public static readonly string[] LataTitleLines =
         {
             "LATA  ·  UPRIGHT",
-            "⚠  LATA DOWN  ⚠",
+            "LATA DOWN",
         };
 
         /// <summary>The authored width, which the fit below can only ever widen past.</summary>
         public const float LataCardFloor = 380.0f;
 
         private string _lataFittedLine;
+        private string _lataFittedHint;
         private float _lataFittedScale = -1.0f;
 
         /// <summary>
@@ -2946,6 +3137,26 @@ namespace TumbangPreso.UI
         /// probe an eighth of its frames. The scale changes when the window moves monitors and
         /// the line list never changes, so this runs about once a match.
         /// </summary>
+        /// ⚠️⚠️ IT FITS THE LINES THE CARD IS SHOWING NOW, NOT THE WIDEST IT COULD EVER SHOW.
+        /// 🧑 2026-08-29, over a frame of the card: *"fix this hud, it should only extend when it
+        /// has to, not all the tim"*. This measured all thirteen strings once and took the
+        /// maximum, so the plate sat permanently at the width of `"CAMPING  ·  DEFENSE SCORE
+        /// PAUSED"` — the longest line in the set and one of the rarest — while showing
+        /// `"LATA  ·  UPRIGHT"`. A card sized for its worst case is a card that is the wrong size
+        /// almost always, and the empty wood to the right of the text is what he was pointing at.
+        ///
+        /// ⚠️⚠️ THE PER-FRAME COST THE OLD SHAPE WAS AVOIDING IS STILL AVOIDED, AND THAT IS WHY
+        /// THE SENTINEL IS THE STRINGS RATHER THAN A BOOL. The note above is right that measuring
+        /// through a `Text` generates glyphs and must not run 60 times a second; it was wrong that
+        /// the only way to avoid it was to measure everything once. Keying on the two live
+        /// strings plus the scale makes the common frame a pair of string compares, and an actual
+        /// re-measure costs TWO strings on the frames the card changes what it says — which is
+        /// strictly less work than the thirteen this used to do, and it now happens a handful of
+        /// times a round instead of once a match.
+        ///
+        /// ⚠️ THE HINT IS MEASURED AS EMPTY WHILE IT IS DISABLED. `UpdateLataCard` sets
+        /// `_lataHint.enabled = line != ""`, so a card showing only a title must not be sized for
+        /// the stale sentence still sitting in the disabled label.
         private void FitLataCard()
         {
             if (_lataCard == null || _lataHint == null || _lataLabel == null) return;
@@ -2953,18 +3164,43 @@ namespace TumbangPreso.UI
             var canvas = _lataHint.canvas;
             float scale = canvas != null ? canvas.scaleFactor : 1.0f;
 
-            // The sentinel is the hint label's own identity plus the scale, so the first call
-            // always measures and later ones only re-measure when the canvas rescales.
-            if (_lataFittedLine == "fitted" && Mathf.Approximately(scale, _lataFittedScale)) return;
+            string title = _lataLabel.text ?? "";
+            string hint = _lataHint.enabled ? _lataHint.text ?? "" : "";
 
-            _lataFittedLine = "fitted";
+            // ⚠️ THE TWO LINES ARE CACHED SEPARATELY RATHER THAN JOINED INTO ONE KEY. Under
+            // a bare concatenation the pairs ("AB", "C") and ("A", "BC") produce the same key,
+            // so the card would keep a width that had been measured for different text. A
+            // separator character fixes that only for as long as no line can ever contain it;
+            // two fields cannot collide at all and cost one extra string compare.
+            if (_lataFittedLine == title && _lataFittedHint == hint &&
+                Mathf.Approximately(scale, _lataFittedScale)) return;
+
+            _lataFittedLine = title;
+            _lataFittedHint = hint;
             _lataFittedScale = scale;
 
-            float widest = Mathf.Max(WidestLineWidth(_lataHint, LataHintLines),
-                                     WidestLineWidth(_lataLabel, LataTitleLines));
+            float needed = Mathf.Max(LineWidth(_lataLabel, title), LineWidth(_lataHint, hint));
 
             var rt = _lataCard.rectTransform;
-            rt.sizeDelta = new Vector2(Mathf.Max(LataCardFloor, widest), rt.sizeDelta.y);
+            rt.sizeDelta = new Vector2(Mathf.Max(LataCardFloor, needed), rt.sizeDelta.y);
+        }
+
+        /// <summary>
+        /// The width one line needs, measured through the label that will draw it and padded by
+        /// the `WoodCard` inset. Transcribed from `WidestLineWidth`, which this replaces.
+        /// </summary>
+        private static float LineWidth(Text probe, string line)
+        {
+            if (string.IsNullOrEmpty(line)) return 0.0f;
+
+            string keep = probe.text;
+            probe.text = line;
+            float width = probe.preferredWidth;
+            probe.text = keep;
+
+            // 22 left and 22 right, from `WoodCard`'s padding, plus a pixel so a rounded
+            // `preferredWidth` never lands exactly on the border.
+            return Mathf.Ceil(width) + 45.0f;
         }
 
         /// <summary>
@@ -2997,27 +3233,15 @@ namespace TumbangPreso.UI
             "PROTECTED  9.9s",
         };
 
-        /// <summary>
-        /// The width the card needs for the longest string it can ever show, measured through the
-        /// label that will draw it and padded by the `WoodCard` inset.
-        /// </summary>
-        private static float WidestLineWidth(Text probe, string[] lines)
-        {
-            string keep = probe.text;
-            float widest = 0.0f;
-
-            foreach (string line in lines)
-            {
-                probe.text = line;
-                widest = Mathf.Max(widest, probe.preferredWidth);
-            }
-
-            probe.text = keep;
-
-            // 22 left and 22 right, from `WoodCard`'s padding, plus a pixel so a rounded
-            // `preferredWidth` never lands exactly on the border.
-            return Mathf.Ceil(widest) + 45.0f;
-        }
+        // ⚠️⚠️ `WidestLineWidth` WAS DELETED HERE, AND THE REASON IS THE NOTE IN `BuildLataCard`.
+        // That note records this file's own worst bug of the kind: the method was written, its
+        // line lists were written, both were documented in `docs/TODO.md` § 18 as the worked
+        // example — and nothing called it, so the card shipped 147 units too narrow off the right
+        // edge of the display. `FitLataCard` now measures the two live lines instead of the
+        // thirteen possible ones, which left this with no call site again. Leaving it would
+        // rebuild the exact trap that note exists to describe, so it is gone rather than kept
+        // "in case": `LineWidth` is the one-line form and the lists it used to walk are still
+        // here, still public, and still what `HudOverflowProbe` reads.
 
         /// <summary>
         /// The get-up prompt: which key, and how close the mashing has got.
@@ -3437,6 +3661,34 @@ namespace TumbangPreso.UI
             _readyPrompt.text = "Walk around freely. Press [R] when you're ready to start the round.";
             _readyPrompt.enabled = false;
 
+            // ⚠️⚠️ THE TEST-BENCH TOGGLE, AND IT SITS HERE BECAUSE THIS IS THE SCREEN HE
+            // PHOTOGRAPHED. 🧑 2026-09-02, with a shot of three tiles reading WAIT under
+            // "Warm up freely, powers start with the round": *"get rid of this wait shit in
+            // practice mode if i click a button"*. The answer to a complaint about a specific
+            // line of text belongs beside that line, not in a settings tab two screens away.
+            //
+            // ⚠️⚠️ IT IS A KEY AND A STATE PLATE RATHER THAN A CLICKABLE BUTTON, AND THE CURSOR
+            // IS WHY. `CursorMode.Play` locks the pointer for the whole match (`MatchHost` line
+            // 113), so a uGUI button on this canvas would draw correctly, raycast nothing and
+            // read as a dead control — which is a worse answer to *"if i click a button"* than a
+            // key that works. The plate is styled as the button it stands in for and names its
+            // own key, the way `_readyPrompt` above names R.
+            //
+            // ⚠️ A LITERAL KEY, NOT AN ACTION IN THE INPUT MAP, AND ONLY BECAUSE IT IS NOT A
+            // VERB. `docs/VISION.md` § 3 forbids a literal for anything the rebinding panel
+            // shows, and everything it shows is something a player does to the game. This is a
+            // developer switch that cannot exist in a networked session; adding it to the map
+            // would put "NO COOLDOWNS" in the controls panel of a shipped build.
+            _sandboxPlate = BannerPlate("SandboxTogglePlate", new Vector2(0, PromptY + 38.0f),
+                                        new Vector2(260, 30), UiTheme.HeroRim);
+
+            _sandboxToggle = HudLabel(_root, "SandboxToggle", 15, UiTheme.CreamMuted,
+                                      TextAnchor.MiddleCenter);
+            Place(_sandboxToggle.rectTransform, new Vector2(0.5f, 0.0f),
+                  new Vector2(0, PromptY + 38.0f), new Vector2(260, 26));
+            _sandboxToggle.text = "[F1]  NO COOLDOWNS: OFF";
+            _sandboxToggle.enabled = false;
+
             // ⚠️ A HOLD KEY NOBODY IS TOLD ABOUT IS A KEY NOBODY PRESSES. One quiet line
             // above the deck, in the muted cream the rest of the HUD uses for asides, naming
             // whatever key is actually bound.
@@ -3600,9 +3852,30 @@ namespace TumbangPreso.UI
         private Slipper[] _pickupCandidates;
         private float _pickupScanAt = -99.0f;
 
+        /// <summary>
+        /// ⚠️⚠️ A SPECTATOR NEVER SEES ONE, AND THAT IS `docs/TODO.md` § 79.4. 🧑, off a
+        /// spectator frame with an orange triangle sitting over the taya: *"WHY IS THERE ! FOR
+        /// SPECTATOR"*, then *"i want the ! shit gone completley in spectatotr mode"*.
+        ///
+        /// The mark is this label and the symbol is the literal `"⚠️"` that `RoundDirector`
+        /// passes on a taya-camp tick and on a slipper-idle tick. § 79.4 searched for a sprite
+        /// and ruled out legacy `Text` on the grounds that it *"cannot draw a full-colour
+        /// triangle"*: it can, because a dynamic font falls back to the OS emoji face for a
+        /// glyph it does not carry, and Segoe UI Emoji is a COLOUR font. That is the whole
+        /// reason the search missed it, and it is why the two label fields the search DID check
+        /// (`_crosshair` and `_vulnerable`) were the wrong two.
+        ///
+        /// ⚠️ THE GUARD IS HERE RATHER THAN AT THE TWO CALL SITES, because the hitmarker is
+        /// first-person feedback about something happening to YOUR unit, and a spectator has no
+        /// unit for anything to happen to. `CLAUDE.md` § 4 makes that argument for the whole
+        /// spectator control set: no body, no seat, no `CharacterMotor`. Gating the callers
+        /// would leave the next caller to rediscover it.
+        ///
+        /// ⚠️ IT TAKES THE SOUND WITH IT. The cue is the audible half of the same signal, and a
+        /// spectator hearing a penalty land on somebody else's seat is the same fault.
         public void PopHitmarker(Color color, string symbol = "💥")
         {
-            if (_hitmarker == null) return;
+            if (_hitmarker == null || _spectating) return;
             _hitmarkerTimer = 0.28f;
             _hitmarker.text = symbol;
             _hitmarker.color = color;
@@ -4365,9 +4638,9 @@ namespace TumbangPreso.UI
             float dt = Time.unscaledDeltaTime;
 
             PaintSkillCard(_skill1Card, kit.Skill1, heroColor, abilitySystem,
-                           Abilities.HeroAbilitySystem.Slot.Skill1, dt);
+                           Abilities.HeroAbilitySystem.Slot.Skill1, dt, kit.PracticeMode);
             PaintSkillCard(_skill2Card, kit.Skill2, heroColor, abilitySystem,
-                           Abilities.HeroAbilitySystem.Slot.Skill2, dt);
+                           Abilities.HeroAbilitySystem.Slot.Skill2, dt, kit.PracticeMode);
             PaintUltimateCard(kit, heroColor, abilitySystem, dt);
         }
 
@@ -4387,7 +4660,8 @@ namespace TumbangPreso.UI
         /// </summary>
         private static void PaintSkillCard(AbilityCard card, Abilities.HeroAbility skill,
                                            Color heroColor, Abilities.HeroAbilitySystem system,
-                                           Abilities.HeroAbilitySystem.Slot slot, float dt)
+                                           Abilities.HeroAbilitySystem.Slot slot, float dt,
+                                           bool roundClockStopped)
         {
             if (card == null) return;
 
@@ -4418,6 +4692,36 @@ namespace TumbangPreso.UI
             card.WasReady = ready;
 
             PaintCharges(card, skill, heroColor, dt);
+
+            // ⚠️⚠️ THE WARM-UP TILE IS DARK, FOR THE SAME REASON THE ULTIMATE'S IS. Since
+            // 2026-08-30 no power may START while the round clock is stopped (🧑: *"remove unli
+            // skill before round bcz ppl fly out of map and shit"*, and `HeroKit.PracticeMode`
+            // carries the whole report). `skill.IsReady` is still TRUE through the warm-up — the
+            // cooldown genuinely is not running — so this tile would draw the Ready arm's lit rim
+            // over a press `HeroKit.Fire` now refuses, which is the anti-clunk rule three
+            // paragraphs down arriving from the other direction: a press that is refused must not
+            // look like a press that worked, and neither must the tile that invited it.
+            //
+            // ⚠️ IT IS PLACED AFTER `PaintCharges` SO THE PIPS STILL DRAW. How many charges the
+            // player will start the round with is true information and does not depend on the
+            // clock; only the invitation to spend one is withdrawn.
+            //
+            // ⚠️ AND AFTER `WasReady`, so the pop still fires on the frame the round begins
+            // rather than being swallowed by a state the tile passed through while dark.
+            if (roundClockStopped && !skill.IsActive)
+            {
+                card.Rim.color = UiTheme.HeroRim;
+                card.Glyph.color = UiTheme.HeroGlyphOff;
+                card.Key.color = UiTheme.CreamMuted;
+                card.State.text = "WAIT";
+
+                if (card.Fill != null) card.Fill.fillAmount = 0.0f;
+                if (card.CooldownSweep != null) card.CooldownSweep.fillAmount = 0.0f;
+
+                ApplyAnswer(card, system, slot, heroColor);
+                ApplyPop(card, dt);
+                return;
+            }
 
             // ⚠️⚠️ A CHARGE SKILL AT ZERO IS NOT "COOLING", AND THAT DISTINCTION IS THE WHOLE
             // REASON THIS BRANCH EXISTS. Its `Cooldown` is 0 so it would fall through to the
@@ -4731,8 +5035,13 @@ namespace TumbangPreso.UI
                 return;
             }
 
+            // ⚠ `NotYet` IS IN THIS LIST BECAUSE IT IS A REFUSAL. A press during the warm-up is
+            // answered and cleared like an empty meter (see `HeroKit.CastOutcome`), so a tile
+            // that did not flash for it would leave the one refusal in the game with no feedback
+            // — on the exact screen 🧑 asked to stop launching people from.
             if (answer == Abilities.HeroKit.CastOutcome.Cooling ||
                 answer == Abilities.HeroKit.CastOutcome.NoCharge ||
+                answer == Abilities.HeroKit.CastOutcome.NotYet ||
                 answer == Abilities.HeroKit.CastOutcome.CannotAct)
             {
                 if (since > RefusalFlashSeconds)
@@ -4789,16 +5098,30 @@ namespace TumbangPreso.UI
 
             if (kit.PracticeMode)
             {
-                // ⚠️ THE PRACTICE TILE IS LIT WITHOUT PRETENDING TO BE CHARGED. The meter still
-                // draws the banked charge, because that IS what the player will start the round
-                // with; the rim says the cast is free right now. Showing 100% here would tell
-                // them they had an ultimate they have not earned.
-                card.Rim.color = heroColor;
-                card.Glyph.color = UiTheme.HeroGlyphOn;
-                card.Key.color = UiTheme.Cream;
-                card.State.text = "";
+                // ⚠️⚠️ THE WARM-UP TILE IS DARK NOW AND IT USED TO BE LIT. It painted the rim in
+                // the hero's colour with an empty state line, which said "castable right now",
+                // and until 2026-08-30 that was true: `HeroKit.PracticeMode` made every power
+                // free while the round clock was stopped. 🧑 *"remove unli skill before round bcz
+                // ppl fly out of map and shit"* ended that, and a tile still promising the cast
+                // would be the HUD disagreeing with the rules — the fault `HeroAbilitySystem`'s
+                // header calls out by name.
+                //
+                // ⚠️ THE METER STILL DRAWS THE BANKED CHARGE, which is the one thing the old
+                // branch had right: that IS what the player starts the round holding, and
+                // blanking it would lose the only readout of an ultimate carried across a round.
+                card.Rim.color = UiTheme.HeroRim;
+                card.Glyph.color = UiTheme.HeroGlyphOff;
+                card.Key.color = UiTheme.CreamMuted;
 
-                PaintUltSegments(card, ratio, heroColor, UiTheme.HeroRim);
+                // ⚠️⚠️ "WAIT", NOT "NOT YET", AND `HudOverflowProbe` IS WHY. The first version of
+                // this line read "NOT YET" and the probe failed it at every one of nine
+                // resolutions: 80 to 84 units of type in a 60-unit `State` box, hanging up to 24
+                // units out of the tile. `docs/TODO.md` § 18's rule is size the card or shorten
+                // the string and NEVER the font, and this box is one of three in a 60 px square
+                // that the rest of the deck is aligned against. So the string is what moved.
+                card.State.text = "WAIT";
+
+                PaintUltSegments(card, ratio, UiTheme.HeroRim, UiTheme.HeroRim);
 
                 _lastUltReady = false;
                 ApplyAnswer(card, system, Abilities.HeroAbilitySystem.Slot.Ultimate, heroColor);

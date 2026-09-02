@@ -74,7 +74,7 @@ namespace TumbangPreso.PlayTests
             UI.SceneFlow.SelectedMode = Core.GameMode.HeroStrike;
 
             var load = SceneManager.LoadSceneAsync("Eskinita", LoadSceneMode.Single);
-            while (load != null && !load.isDone) yield return null;
+            yield return ProbeWait.Done(load, "scene load");
             for (int i = 0; i < 30; i++) yield return null;
 
             var hud = Object.FindFirstObjectByType<UI.Hud>();
@@ -142,7 +142,7 @@ namespace TumbangPreso.PlayTests
         public IEnumerator EveryHudElementIsLaidOutWhereTheSceneSaysItIs()
         {
             var load = SceneManager.LoadSceneAsync("Eskinita", LoadSceneMode.Single);
-            while (load != null && !load.isDone) yield return null;
+            yield return ProbeWait.Done(load, "scene load");
 
             // Long enough for the installer to build the match, the HUD to bind a seat and every
             // layout group to have run at least once.

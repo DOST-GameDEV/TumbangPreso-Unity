@@ -1,6 +1,6 @@
 # Voxel Wearables & Accessories Catalog
 
-This document defines the modular 3D voxel wearable and accessory catalog for *Tumbang Preso* characters. These items are designed for future character customization features where players can equip, swap, and layer headwear, eyewear, and jewelry onto their character models.
+This document defines the modular 3D voxel wearable and accessory catalog for *Tumbang Preso* characters. These items are designed for the **3-Slot "Create Your Own Character" system** (`docs/FUTURE.md` § 5, `docs/TODO.md` § 107) and hero outfit customization, where players can equip, swap, and layer headwear, eyewear, streetwear, and accessories onto their custom character models without violating roster hero visual integrity.
 
 ---
 

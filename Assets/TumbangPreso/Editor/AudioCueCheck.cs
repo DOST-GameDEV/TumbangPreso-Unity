@@ -132,6 +132,10 @@ namespace TumbangPreso.EditorTools
             // MemoryExtensions span extension wins and demands a StringComparison.
             var declared = new HashSet<string>(AudioCues.Live, StringComparer.Ordinal);
 
+            // Every literal cue name any runtime file passes to a play call. Gathered on the
+            // pass below and read by direction 3.
+            var fired = new HashSet<string>(StringComparer.Ordinal);
+
             foreach (string file in Directory.GetFiles(RuntimeRoot, "*.cs",
                                                        SearchOption.AllDirectories))
             {
@@ -140,6 +144,11 @@ namespace TumbangPreso.EditorTools
                 foreach (Match m in Regex.Matches(text, CallSitePattern))
                 {
                     string cue = m.Groups["cue"].Value;
+
+                    // Direction 3's evidence, gathered on the pass that is already reading
+                    // every runtime file. See the block below.
+                    fired.Add(cue);
+
                     if (declared.Contains(cue)) continue;
 
                     sb.AppendLine($"  UNDECLARED: {Path.GetFileName(file)} fires '{cue}', " +
@@ -149,6 +158,40 @@ namespace TumbangPreso.EditorTools
                 }
             }
             if (undeclared == 0) sb.AppendLine("  none");
+
+            // ⚠️⚠️ DIRECTION 3: A CUE THAT IS DECLARED, SHIPPED AS A FILE, AND PLAYED BY NOTHING.
+            // 🧑 2026-08-30: *"No audio cue on victory, like wala ung jingle unlke last time"*.
+            // `match_win` was in `AudioCues.Live`, had a real `.wav` behind it, and was one of the
+            // six names in `DuckTriggers` — so the music bed was written to get out of the way of
+            // a sound nothing ever played. `docs/TODO.md` § 85.2.
+            //
+            // ⚠️ THE OTHER TWO DIRECTIONS COULD NOT SEE IT, AND THAT IS STRUCTURAL RATHER THAN AN
+            // OVERSIGHT. "Cues with no file" asks about the catalogue against the disk, and "files
+            // no live cue can reach" asks about the disk against the catalogue. **Both sides were
+            // present and correct.** The missing question is about the catalogue against the
+            // CODE, and it is the only one of the three a player can hear.
+            //
+            // ⚠️ IT IS A REPORT, NOT A FAILURE, so it does not increment `problems`. A cue can be
+            // legitimately dormant: `boot_sting` is played through a video path this regex cannot
+            // see, and `AudioCues` itself documents five `.wav` files orphaned when the ability
+            // layer was deleted. Failing the gate on those would teach the next person to ignore
+            // this block, which is worse than not printing it. **Read the list and know why each
+            // line is on it** — that is the same standard `docs/TODO.md` § 6 sets for the
+            // wall-clock probes.
+            sb.AppendLine();
+            sb.AppendLine("-- live cues that no code plays --");
+            int dormant = 0;
+
+            foreach (string cue in AudioCues.Live)
+            {
+                if (fired.Contains(cue)) continue;
+
+                sb.AppendLine($"  DORMANT: '{cue}' is declared and has a file, and no call site " +
+                              "in Runtime plays it. Either it is a feature nobody selected, or " +
+                              "it is fired from somewhere this text scan cannot see.");
+                dormant++;
+            }
+            if (dormant == 0) sb.AppendLine("  none");
 
             // Direction 2: a file no cue can reach. The silent failure.
             sb.AppendLine();

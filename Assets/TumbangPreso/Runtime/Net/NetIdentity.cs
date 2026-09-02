@@ -356,6 +356,32 @@ namespace TumbangPreso.Net
             SignInAttempts = 0;
         }
 
+        /// <summary>
+        /// PlayerAccount may replace the anonymous session with username credentials. It owns
+        /// that operation, while this class still owns the online availability answer used by
+        /// Relay and Lobby, so the new authenticated session is adopted here in one place.
+        /// </summary>
+        public static void AdoptCurrentSession()
+        {
+            if (UnityServices.State == ServicesInitializationState.Initialized &&
+                AuthenticationService.Instance != null && AuthenticationService.Instance.IsSignedIn)
+            {
+                _attempt = Task.FromResult(true);
+                Settle(OnlineState.SignedIn,
+                    $"Signed in to UGS as {AuthenticationService.Instance.PlayerId} on profile {Profile}. " +
+                    "Relay and Lobby are available.");
+            }
+        }
+
+        /// <summary>Clears the cached answer after account deletion without touching local LAN identity.</summary>
+        public static void ForgetCurrentSession()
+        {
+            _attempt = null;
+            State = OnlineState.Unknown;
+            StateReason = "";
+            SignInAttempts = 0;
+        }
+
         /// <summary>Testing seam to simulate specific tokens without network or settings I/O.</summary>
         public static void OverrideForTesting(string token) => _overrideTokenForTesting = token;
 

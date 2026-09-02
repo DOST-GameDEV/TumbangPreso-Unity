@@ -58,6 +58,27 @@ namespace TumbangPreso.UI
             public Text Meta;
         }
 
+        /// <summary>
+        /// Where the tray rests, measured up from the bottom of the screen.
+        ///
+        /// ⚠️⚠️ 196, NOT 16, AND AT 16 THIS PANEL WAS DRAWN THROUGH EVERY OTHER BOTTOM ELEMENT
+        /// IN THE GAME. 🧑 2026-08-29, holding TAB in a Hero Strike match: *"broken ui placement
+        /// here when u hold tab"*, with the three cards sitting on top of the ability deck.
+        ///
+        /// ⚠️ THE ARITHMETIC IS ALREADY WRITTEN DOWN IN `Hud`, WHICH IS HOW WRONG THIS WAS. That
+        /// file works out the bottom band in full for the intermission lines: the hero deck spans
+        /// **y 14 to 92** (`DeckBottomMargin` + `DeckHeight`), the Classic deck **24 to 124**, the
+        /// inspect hint **132 to 150** and the ready prompt plate **156 to 190**. This tray is 236
+        /// tall with a bottom pivot, so resting at 16 put it at **16 to 252**: straight through
+        /// both decks, the hint that tells you to open it, and the prompt plate, all four.
+        ///
+        /// ⚠️ SO IT CLEARS THE TALLEST THING BELOW IT RATHER THAN BEING NUDGED. 196 is six px
+        /// over the prompt plate's 190, which is the same clearance `Hud` leaves between its own
+        /// two stacked lines. Stacking upward from the taller deck is what makes one number
+        /// correct in both modes, and that is `Hud`'s own rule for this band.
+        /// </summary>
+        private const float RestY = 196.0f;
+
         public static AbilityInspectPanel Create(Transform parent)
         {
             var go = new GameObject("AbilityInspect", typeof(RectTransform));
@@ -77,8 +98,8 @@ namespace TumbangPreso.UI
             _rt.anchorMin = new Vector2(0.5f, 0.0f);
             _rt.anchorMax = new Vector2(0.5f, 0.0f);
             _rt.pivot = new Vector2(0.5f, 0.0f);
-            _rt.anchoredPosition = new Vector2(0, 16);
-            _rt.sizeDelta = new Vector2(1060, 236);
+            _rt.anchoredPosition = new Vector2(0, RestY);
+            _rt.sizeDelta = new Vector2(1060, 276);
 
             // ⚠️ THE WOOD SET, NOT A SLATE-BLUE GLASS OF ITS OWN. This tray opens over a
             // live match with the wooden scoreboard and clock already on screen, so it was the
@@ -112,13 +133,14 @@ namespace TumbangPreso.UI
             headerHlg.childForceExpandWidth = false;
             Height(headerRow, 26);
 
-            _title = Label(headerRow.transform, "Title", 22, UiTheme.Amber, TextAnchor.MiddleLeft);
+            _title = Label(headerRow.transform, "Title", 24, UiTheme.Amber, TextAnchor.MiddleLeft);
             _title.fontStyle = FontStyle.Bold;
             _title.text = "HERO POWERS";
             var titleLe = _title.gameObject.AddComponent<LayoutElement>();
             titleLe.flexibleWidth = 1.0f;
 
-            _hint = Label(headerRow.transform, "Hint", 15, UiTheme.CreamMuted, TextAnchor.MiddleRight);
+            _hint = Label(headerRow.transform, "Hint", MenuKit.MinReadableUnits, UiTheme.Cream,
+                          TextAnchor.MiddleRight);
             _hint.text = "HOLD [TAB] TO INSPECT";
             var hintLe = _hint.gameObject.AddComponent<LayoutElement>();
             hintLe.minWidth = 220;
@@ -213,7 +235,8 @@ namespace TumbangPreso.UI
             chipRt.anchoredPosition = new Vector2(-1, 1);
             chipRt.sizeDelta = new Vector2(24, 18);
 
-            card.Key = Label(chipGo.transform, "Key", 15, UiTheme.Cream, TextAnchor.MiddleCenter);
+            card.Key = Label(chipGo.transform, "Key", MenuKit.MinReadableUnits, UiTheme.Cream,
+                             TextAnchor.MiddleCenter);
             card.Key.fontStyle = FontStyle.Bold;
             MenuKit.Stretch(card.Key.rectTransform);
 
@@ -229,9 +252,25 @@ namespace TumbangPreso.UI
             var nameStackLe = nameStack.AddComponent<LayoutElement>();
             nameStackLe.flexibleWidth = 1.0f;
 
-            card.Name = Label(nameStack.transform, "Name", 19, UiTheme.Cream, TextAnchor.MiddleLeft);
+            // ⚠️⚠️ THE BOX IS 1.35x THE TYPE, AND AT 1:1 THE NAME AND THE COOLDOWN DREW ON TOP OF
+            // EACH OTHER. 🧑 2026-08-29, of this tray in a live match: *"tab is unreadable and so
+            // much fucked of text overflow and format"*, with `DEMONIC CARAPACE` overlapping
+            // `62s CD · 4s` and `TITAN FISSURE` overlapping `OBJECTIVE`.
+            //
+            // A 21-unit label was being forced into a 22 px box and an 18-unit one into 18 px.
+            // Legacy `Text` draws at its font's LINE HEIGHT, which is meaningfully taller than
+            // the point size, so a box sized to the number clips the glyphs; and because
+            // `nameCol` has `childControlHeight`, the group holds each child at that height and
+            // the surplus is simply painted over the row underneath. **A text box sized to its
+            // font size is not a text box that fits its text.**
+            //
+            // ⚠️ 1.35 IS THE RATIO THE PICKER ALREADY USES. `ConvertedCharacterSelect.
+            // HeroTaglineHeight` multiplies a measured line by 1.35 for the same reason, and
+            // `HeroPickerLayoutProbe`'s `MaxSlack` note records that a real line measures about
+            // 1.16, so 1.35 is one line plus a descender rather than a guess.
+            card.Name = Label(nameStack.transform, "Name", 21, UiTheme.Cream, TextAnchor.MiddleLeft);
             card.Name.fontStyle = FontStyle.Bold;
-            Height(card.Name.gameObject, 22);
+            Height(card.Name.gameObject, 28);
 
             var metaRow = new GameObject("MetaRow", typeof(RectTransform));
             metaRow.transform.SetParent(nameStack.transform, false);
@@ -241,25 +280,69 @@ namespace TumbangPreso.UI
             metaHlg.childForceExpandHeight = true;
             metaHlg.childForceExpandWidth = false;
             metaHlg.spacing = 6.0f;
-            Height(metaRow, 18);
+            // ⚠️ 24, NOT 18, FOR THE REASON ON `card.Name` DIRECTLY ABOVE: an 18-unit label in an
+            // 18 px box paints its descenders over whatever is under it.
+            Height(metaRow, 24);
 
-            card.Kind = Label(metaRow.transform, "Kind", 14, UiTheme.Amber, TextAnchor.MiddleLeft);
+            card.Kind = Label(metaRow.transform, "Kind", MenuKit.MinReadableUnits, UiTheme.Amber,
+                              TextAnchor.MiddleLeft);
             card.Kind.fontStyle = FontStyle.Bold;
 
-            card.Meta = Label(metaRow.transform, "Meta", 14, UiTheme.Highlight, TextAnchor.MiddleLeft);
+            card.Meta = Label(metaRow.transform, "Meta", MenuKit.MinReadableUnits, UiTheme.Highlight,
+                              TextAnchor.MiddleLeft);
             card.Meta.fontStyle = FontStyle.Bold;
 
+            // ⚠️⚠️ EVERY LABEL ON THIS PANEL IS AT `MenuKit.MinReadableUnits` OR ABOVE AS OF
+            // 2026-08-29, AND FIVE OF THEM WERE BELOW IT. 🧑: *"mahirap basahin yung text sa
+            // skill description"*. The body was 15 units, the kind and the cooldown 14, the key
+            // chip and the header hint 15, against a floor of 18 that `AspectRatioProbes`
+            // already asserts for exactly this reason and that `LobbyChrome.BuildIdentity`'s note
+            // cites by name when it rejected a 14-unit caption for being unreadable.
+            //
+            // ⚠️⚠️ AND THIS PANEL IS THE WORST PLACE IN THE GAME TO HAVE BEEN UNDER IT.
+            // `docs/VISION.md` § 3 gives the ability text exactly three homes: LEARN on character
+            // select, RECALL behind the hold key, PLAY on the deck. The deck deliberately carries
+            // no sentences at all, so this tray is where a player is meant to actually READ what
+            // a power does. Prose nobody can read at the one place it is allowed to be prose
+            // makes the whole three-layer answer fail at its middle layer.
+            //
+            // ⚠️ THE HINT ALSO CAME OFF `CreamMuted`. Muted is for a label whose job is to be
+            // ignorable; this one tells you which key you are holding to keep the panel open.
+            //
+            // ⚠️ `minHeight` MOVED WITH THE TYPE, 90 to 108. The note below says the card is tall
+            // enough for four lines AT THIS SIZE, which stopped being true the moment the size
+            // changed: four lines of 15 is 90 and four of 18 is 108. A floor left behind is how
+            // an `Overflow` label starts drawing over the card under it.
             // Description body with generous padding and clean font
             // ⚠️⚠️ THE TRAY IS THE ONE PLACE THAT DOES NOT TRUNCATE. It exists to hold the
             // sentences the deck deliberately refuses to carry, so cutting them off here would
             // leave the full text nowhere in the game at all. `Overflow` rather than
             // `Truncate`, and the card is tall enough for four lines at this size.
-            card.Body = Label(go.transform, "Body", 15, UiTheme.Cream, TextAnchor.UpperLeft);
+            // ⚠️⚠️ 21, NOT `MinReadableUnits`. 🧑 2026-08-29, of these cards: *"also the texthere
+            // is hard to read"*. `MenuKit.MinReadableUnits` is 18 and it is a FLOOR — the size
+            // below which a fitter is forbidden to shrink text — and this label was authored AT
+            // the floor, so the one panel in the game whose entire job is to be read was set to
+            // the smallest type the project permits anywhere.
+            //
+            // ⚠️ IT IS AFFORDABLE HERE AND NOWHERE ELSE, which is why this is not a global
+            // change. Every other 18 in the HUD is a label competing with the match for space
+            // while the round runs; this tray only exists while the player is HOLDING a key and
+            // deliberately not playing, so it may spend the room. `VISION.md` § 3 is the rule it
+            // serves: the deck carries no sentences and every sentence lives behind this hold.
+            const int BodySize = 20;
+
+            card.Body = Label(go.transform, "Body", BodySize, UiTheme.Cream,
+                              TextAnchor.UpperLeft);
             card.Body.horizontalOverflow = HorizontalWrapMode.Wrap;
             card.Body.verticalOverflow = VerticalWrapMode.Overflow;
             var bodyLe = card.Body.gameObject.AddComponent<LayoutElement>();
             bodyLe.flexibleHeight = 1.0f;
-            bodyLe.minHeight = 90;
+
+            // ⚠️ THE FLOOR MOVES WITH THE SIZE, AND THE NOTE DIRECTLY ABOVE THIS BLOCK IS THE
+            // WARNING FOR EXACTLY THIS: *"a floor left behind is how an `Overflow` label starts
+            // drawing over the card under it"*. Four lines at 21 is 126, where four at 18 was
+            // 108. The panel's own height grows by the same 18 px.
+            bodyLe.minHeight = 120;
 
             return card;
         }
@@ -342,7 +425,7 @@ namespace TumbangPreso.UI
             float eased = held ? EaseOutBack(_open) : EaseInQuad(_open);
 
             _group.alpha = Mathf.Clamp01(_open * 1.35f);
-            _rt.anchoredPosition = new Vector2(0, 16 + (1.0f - eased) * -SlideDistance);
+            _rt.anchoredPosition = new Vector2(0, RestY + (1.0f - eased) * -SlideDistance);
 
             for (int i = 0; i < _cards.Length; i++)
             {
@@ -381,7 +464,7 @@ namespace TumbangPreso.UI
             gameObject.SetActive(true);
 
             if (_group != null) _group.alpha = 1.0f;
-            if (_rt != null) _rt.anchoredPosition = new Vector2(0, 16);
+            if (_rt != null) _rt.anchoredPosition = new Vector2(0, RestY);
 
             foreach (var card in _cards)
             {
@@ -448,6 +531,32 @@ namespace TumbangPreso.UI
             t.raycastTarget = false;
             t.horizontalOverflow = HorizontalWrapMode.Wrap;
             t.verticalOverflow = VerticalWrapMode.Overflow;
+
+            // ⚠️⚠️ EVERY LABEL ON THIS TRAY GETS AN INK OUTLINE, AND IT IS THE ANSWER TO "BLURRY"
+            // RATHER THAN TO "TOO SMALL". 🧑 2026-08-29, holding TAB: *"text here is genuinely
+            // blurry too btw"*, *"the text when u click tab to see skills maybe add outline to
+            // the gren shit idk"*. He is describing the ability NAME, which is drawn in that
+            // hero's accent — Dante's is a mid green — directly onto `UiTheme.HeroPlateRaised`,
+            // a mid-dark brown.
+            //
+            // ⚠️ IT IS A CONTRAST PROBLEM WEARING A SHARPNESS PROBLEM'S CLOTHES. The tray is
+            // authored at 1060 units wide and the canvas scales it down to whatever the window
+            // is, so a 20-unit glyph can land on eight or nine real pixels. At that size legacy
+            // `Text` has almost no edge left, and a mid green on a mid brown has almost no
+            // luminance step either, so the two failures compound into something that reads as
+            // out of focus. Raising the point size alone cannot fix it, because the scale factor
+            // moves with the window and the panel is already as tall as the band allows.
+            //
+            // ⚠️ SO THE FIX IS THE SAME ONE THE REST OF THE GAME ALREADY USES ON ITS ART: an ink
+            // edge. `ToonSkin.Ink` is what every character and prop is outlined in, and this
+            // borrows the same near-black so the UI and the world agree about what an outline is.
+            // One pixel each way is enough to give a glyph a hard boundary at any scale, which is
+            // exactly what was missing.
+            var outline = go.AddComponent<Outline>();
+            outline.effectColor = new Color(Visual.ToonSkin.Ink.r, Visual.ToonSkin.Ink.g,
+                                            Visual.ToonSkin.Ink.b, 0.85f);
+            outline.effectDistance = new Vector2(1.0f, -1.0f);
+            outline.useGraphicAlpha = true;
 
             return t;
         }

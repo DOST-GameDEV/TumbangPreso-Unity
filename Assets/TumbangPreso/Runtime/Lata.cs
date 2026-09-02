@@ -113,13 +113,21 @@ namespace TumbangPreso
         }
 
         /// <summary>
-        /// Applies a host snapshot without playing knockdown/restoration feedback. Rejoin is
-        /// observation of an existing state, not a new can event.
+        /// Applies a host snapshot. Rejoin is observation of an existing state, not a new can
+        /// event, so nothing here replays a round the arriving peer did not watch.
+        ///
+        /// ⚠️ IT DOES ANNOUNCE A CHANGE NOW, AND ONLY A CHANGE. This used to play no feedback at
+        /// all, which was right for a rejoin and wrong for the 5 Hz stream a client spends the
+        /// whole match receiving: the can going over is an EDGE in this data, and refusing to
+        /// read it is why three players out of four saw the objective fall in silence. See
+        /// `AnnounceUprightChange`, which is gated on the edge and on not being the host.
         /// </summary>
         public void ApplySnapshotState(Vector3 position, Quaternion rotation,
                                        bool isUpright, int skinIndex)
         {
             bool restoredOnThisPeer = !_isUpright && isUpright;
+            bool knockedOnThisPeer = _isUpright && !isUpright;
+
             transform.SetPositionAndRotation(position, rotation);
             _skinIndex = skinIndex;
             _isUpright = isUpright;
@@ -130,7 +138,51 @@ namespace TumbangPreso
             _rollAngleDeg = isUpright ? 0.0f : rotation.eulerAngles.y;
             _lastRollPosition = position;
             RefreshStatePresentation();
+
+            // ⚠️⚠️ THE ANNOUNCER SPEAKS ON A CLIENT TOO, AND IT NEVER DID. 🧑 2026-08-29:
+            // *"non hosts dont have sfx in some plarts, example, lata down/ lata hit has no sound
+            // for non host but has sound for host"*. `SetUpright` is the one place both lines are
+            // spoken and it is host-only by construction, so `tumbang!` and `lata restored` were
+            // heard on one machine out of four — the loudest moment in a round, announced to
+            // whoever happened to press HOST.
+            //
+            // ⚠️ THE VOICE IS NOT PUT THROUGH `NetCue` AND MUST NOT BE. That class's header is
+            // explicit that it is for WORLD events; the announcer is a per-listener commentary
+            // track, so the right shape is each peer speaking its own line off the state it has
+            // just been told about, which is exactly this line.
+            //
+            // ⚠️ ON THE EDGE, AND ON THE EDGE ONLY, which is what keeps this method's promise
+            // that a rejoin is *"observation of an existing state, not a new can event"*: a
+            // snapshot that does not change the flag says nothing. A rejoin that lands exactly on
+            // the frame the can goes over will speak once, which is the correct answer anyway.
+            //
+            // ⚠️ AND ONLY OFF THE HOST, so the listen host does not say it twice — `SetUpright`
+            // has already spoken there, and `HostSyncPeer` feeds the host its own snapshot back.
+            if (!NetAuthority.ShouldResolve() && (knockedOnThisPeer || restoredOnThisPeer))
+                AnnounceUprightChange(isUpright);
+
             UprightChanged?.Invoke(isUpright);
+        }
+
+        /// <summary>
+        /// Moves a replica can along the host's path WITHOUT touching whether it is standing.
+        ///
+        /// ⚠️⚠️ THE ROLL IS A STREAM AND GOING OVER IS AN EVENT, AND THEY TRAVEL SEPARATELY NOW.
+        /// A struck can rolls for a second or so, which is a position that fully replaces itself
+        /// every step and can afford to lose a packet; `_isUpright` is what scores and may never
+        /// lose one. `Slipper.ApplySnapshotPose` carries the full reasoning, including why the
+        /// unreliable half must carry no state at all rather than state the receiver ignores.
+        ///
+        /// ⚠️ IT DELIBERATELY DOES NOT TOUCH `_toppleAngle`, `_rollAngleDeg` OR THE PROTECTION
+        /// WINDOW. Those are consequences of the state change that `ApplySnapshotState` sets when
+        /// the event arrives, and re-deriving them from a rotation fifty times a second would let
+        /// a pose packet restart a restore-protection window the host has already spent.
+        /// `_lastRollPosition` moves with the transform because it is the roll's own trail.
+        /// </summary>
+        public void ApplySnapshotPose(Vector3 position, Quaternion rotation)
+        {
+            transform.SetPositionAndRotation(position, rotation);
+            _lastRollPosition = position;
         }
 
         /// <summary>Host-side. Knock it over and pay the thrower.</summary>
@@ -183,7 +235,12 @@ namespace TumbangPreso
             if (GameServices.Match != null && throwerSlot == GameServices.Match.DefenderSlot) return;
 
             GameServices.Match.AddScore(throwerSlot, ScoreEvent.LataKnocked);
-            UI.Hud.ReportStyle(throwerSlot, 42.0f, "TUMBA!");
+            // ⚠️⚠️ RELAYED, BECAUSE THE ENCLOSING VERB IS HOST-RESOLVED AND WHAT IT DRAWS IS
+            // FOR EVERYBODY. 🧑 2026-08-29: *"make sure that all host sided shit is seen by
+            // everyone and not js host"*. See `Visual.MatchFlair` and
+            // `tools/audit_presentation_reach.py`, which is what found this one.
+            Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.LataDown,
+                                       throwerSlot, -1, transform.position);
 
             // ⚠️⚠️ THE CAN USED TO REACH INTO `AIController` AND START AN EMOTE FROM HERE, AND
             // THAT CALL IS GONE ON PURPOSE. It was a second path into the celebration: it skipped
@@ -248,41 +305,78 @@ namespace TumbangPreso
             // taya's longest commitment in the game was the cue that means "starting". It is also
             // why `reset_complete` and `reset_channel_complete` both shipped as live cues with
             // zero call sites anywhere in the port.
+            //
+            // ⚠️⚠️ THROUGH `NetCue`, BECAUSE THIS METHOD ONLY EVER RUNS ON THE HOST AND THE SOUND
+            // IS FOR EVERYBODY. 🧑 2026-08-29: *"lata down/ lata hit has no sound for non host but
+            // has sound for host"*. `SetUpright` is reached from `HostKnockDown` and `HostRestore`
+            // and nowhere else, and both open with `NetAuthority.ShouldResolve()`; a client is
+            // told the can moved by `ApplySnapshotState`, which bypasses this method on purpose so
+            // that a rejoin does not replay the round it walked into. So the two loudest events in
+            // a round were audible on one machine out of four.
+            //
+            // ⚠️ THE GATE ABOVE IT IS STILL RIGHT AND IS NOT WHAT MOVED. `NetCue`'s header states
+            // the rule: the host is the only peer that may DECIDE the can went over, and deciding
+            // and announcing were the same line. This separates them and changes nothing offline,
+            // where `NetCue` is exactly `GameServices.Audio` with no transport running.
             if (value)
-                GameServices.Audio?.PlayImpact("reset_complete", "lata_seal",
-                                               transform.position, 0.72f);
+                NetCue.PlayImpact("reset_complete", "lata_seal", transform.position, 0.72f);
             else
-                GameServices.Audio?.PlayImpact("can_knockdown", "lata_impact",
-                                               transform.position, 1.0f);
+                NetCue.PlayImpact("can_knockdown", "lata_impact", transform.position, 1.0f);
 
-            if (value)
-            {
-                GameServices.Voice?.OnLataRestored();
-                Visual.ComicPopup.Spawn(transform.position + Vector3.up * 0.8f, "RESTORED!", UI.UiTheme.Defense, 1.2f);
-            }
-            else
-            {
-                GameServices.Voice?.OnLataKnocked();
-                string callout = UI.SceneFlow.SelectedMode == GameMode.Classic
-                    ? "TUMBA!" : "LATA DOWN!";
-                Visual.ComicPopup.Spawn(transform.position + Vector3.up * 0.8f, callout, UI.UiTheme.Offense, 1.4f);
-                UI.Hud.TriggerHitmarker(UI.UiTheme.Offense, "💥");
-                Visual.ImpactBurst.SpawnAt(transform.position);
-                Abilities.HeroHazards.SpawnConfettiShower(transform.position, 24);
-                if (UnityEngine.Camera.main != null)
-                {
-                    var rig = UnityEngine.Camera.main.GetComponent<CameraSystem.CameraRig>();
-                    if (rig != null)
-                    {
-                        Vector3 away = UnityEngine.Camera.main.transform.position - transform.position;
-                        rig.ImpactPunch(away.sqrMagnitude > 0.01f ? away.normalized : Vector3.back, 0.8f);
-                    }
-                }
-            }
+            AnnounceUprightChange(value);
 
             RefreshStatePresentation();
 
             UprightChanged?.Invoke(value);
+        }
+
+        /// <summary>
+        /// Everything a player SEES and HEARS when the can changes state, apart from the impact
+        /// itself.
+        ///
+        /// ⚠️⚠️ IT IS A SEPARATE METHOD SO A CLIENT CAN RUN IT, AND EVERY LINE OF IT USED TO BE
+        /// HOST-ONLY. 🧑 2026-08-29: *"lata down/ lata hit has no sound for non host but has sound
+        /// for host"*, and *"some clients dont see the correct ability effects but host do"*.
+        /// `SetUpright` is reached only from `HostKnockDown` and `HostRestore`, both gated on
+        /// `NetAuthority.ShouldResolve()`; a client learns the can moved through
+        /// `ApplySnapshotState`, which bypasses `SetUpright` on purpose. So the announcer, the
+        /// `TUMBA!` / `LATA DOWN!` popup, the hitmarker, the burst, the confetti and the camera
+        /// punch — **the entire presentation of the loudest event in the game** — happened on one
+        /// machine out of four. Three players watched the can silently lie down.
+        ///
+        /// ⚠️ THE IMPACT CUE IS NOT IN HERE, and that is not an oversight: it goes out through
+        /// `NetCue` from `SetUpright`, which plays it locally and relays it, so putting it here as
+        /// well would play it twice on a client. Sound that travels and presentation that is
+        /// derived are two different mechanisms and only one of them belongs on the wire.
+        ///
+        /// ⚠️ THE CAMERA PUNCH IS PER-MACHINE BY NATURE. It reads `Camera.main`, so each peer
+        /// punches its own rig from its own position, which is the correct behaviour and is only
+        /// available because this runs locally rather than being relayed.
+        /// </summary>
+        private void AnnounceUprightChange(bool nowUpright)
+        {
+            if (nowUpright)
+            {
+                GameServices.Voice?.OnLataRestored();
+                Visual.ComicPopup.Spawn(transform.position + Vector3.up * 0.8f, "RESTORED!", UI.UiTheme.Defense, 1.2f);
+                return;
+            }
+
+            GameServices.Voice?.OnLataKnocked();
+            string callout = UI.SceneFlow.SelectedMode == GameMode.Classic
+                ? "TUMBA!" : "LATA DOWN!";
+            Visual.ComicPopup.Spawn(transform.position + Vector3.up * 0.8f, callout, UI.UiTheme.Offense, 1.4f);
+            UI.Hud.TriggerHitmarker(UI.UiTheme.Offense, "💥");
+            Visual.ImpactBurst.SpawnAt(transform.position);
+            Abilities.HeroHazards.SpawnConfettiShower(transform.position, 24);
+
+            if (UnityEngine.Camera.main == null) return;
+
+            var rig = UnityEngine.Camera.main.GetComponent<CameraSystem.CameraRig>();
+            if (rig == null) return;
+
+            Vector3 away = UnityEngine.Camera.main.transform.position - transform.position;
+            rig.ImpactPunch(away.sqrMagnitude > 0.01f ? away.normalized : Vector3.back, 0.8f);
         }
 
         /// <summary>

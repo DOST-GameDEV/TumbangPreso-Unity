@@ -165,7 +165,22 @@ namespace TumbangPreso.UI
             _isDefenderPerson = _character.IsPerson && isDefense;
 
             if (_isAttackerPerson) _chargeKey.text = "[LMB]";
-            if (_isDefenderPerson) _resetKey.text = "RIGHTING LATA [E]";
+            // ⚠️⚠️ `RESET [E]`, NOT `RIGHTING LATA [E]`, AND THE OLD ONE WAS DRAWN CLIPPED.
+            // 🧑 2026-08-29, off the taya card in the built player, where it read `RIGHTING LA`:
+            // *"'righting lata' text overflow, maybe shorten that and check for other text
+            // overflows here"*.
+            //
+            // ⚠️ THE ROW IS A METER, SO THE LABEL COLUMN IS NARROW BY DESIGN. This is the same
+            // `BuildMeter` row the other two use, and the key sits beside a fill bar rather than
+            // across the card. Its siblings are `[LMB]` at 5 characters and `LUNGE [RMB]` at 11;
+            // this was **17** and had nowhere to go.
+            //
+            // ⚠️ AND `RESET` IS THE GAME'S OWN WORD FOR IT RATHER THAN A SHORTER SYNONYM.
+            // `docs/Design.md` describes the verb as the taya RESETTING the lata, and the lata
+            // card on the same screen already reads `RESETTING 53%` while it is happening, so the
+            // two surfaces now say the same thing. `RIGHTING` was the only place that word
+            // appeared anywhere in the game.
+            if (_isDefenderPerson) _resetKey.text = "RESET [E]";
 
             _carrier = _character.GetComponent<Carrier>();
             _verbs = _character.GetComponent<CombatVerbs>();
@@ -414,11 +429,60 @@ namespace TumbangPreso.UI
             // 22/19 to 30/28, with a screenshot answered *"text still small"* each time.
             _class = Label(identity.transform, "ClassLabel", 32, UiTheme.Cream,
                            TextAnchor.MiddleLeft);
-            _class.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1.0f;
+
+            // ⚠️⚠️ THE ROLE TAKES ITS OWN WIDTH AND THE NAME TAKES THE REST. IT WAS A 50/50
+            // SPLIT AND THAT IS WHY THE ROW COLLIDED A SECOND TIME. 🧑 2026-08-29, with a
+            // screenshot reading `ATTACKERROCKAFORT`: *"this has overflow as well"*.
+            //
+            // Both children had `flexibleWidth: 1`, so each got half of the 336 px content box —
+            // about 163 px. `ATTACKER` at 32 pt does not fit 163 px in Darumadrop, and `Label`
+            // sets `HorizontalWrapMode.Overflow`, so the role simply drew PAST its half and
+            // straight into a name that is anchored `MiddleRight`. The best-fit added to
+            // `_detail` shrinks the NAME and can do nothing about the label overrunning from the
+            // left, which is why `TAYA (DEFENDEDANTE` came back as `ATTACKERROCKAFORT` the moment
+            // the strings on the two sides were long enough again.
+            //
+            // ⚠️ `flexibleWidth: 0` PLUS `childControlWidth` IS THE FIX: the group asks `Text`
+            // for its own `preferredWidth` and gives it exactly that, so the role is never
+            // clipped and never overruns, whichever of `TAYA` and `ATTACKER` it is holding.
+            var classLayout = _class.gameObject.AddComponent<LayoutElement>();
+            classLayout.flexibleWidth = 0.0f;
+
+            // ⚠⚠ AND THE ROLE IS BOUNDED, BECAUSE `flexibleWidth: 0` ALONE LET IT ASK FOR MORE
+            // THAN THE ROW HAS. 🧑 2026-08-30, a THIRD report on this one row: *"Overflowing text
+            // eg. Attacker Rockafort in the bottom left"*.
+            //
+            // `childControlWidth` gives an unbounded child its `preferredWidth`, and a
+            // `HorizontalLayoutGroup` will not shrink a child below its `minWidth` — it overflows
+            // the container instead. So the row asked for `preferredWidth(ATTACKER at 32 pt)` plus
+            // 10 px of spacing plus the name's 140 px floor, and when that sum passes the 336 px
+            // content box the surplus goes out of the wood. **That is exactly the mechanism
+            // `docs/TODO.md` § 79.6 measured on the hero picker** (`rowLe.minHeight =
+            // rowLe.preferredHeight` overflowing a `VerticalLayoutGroup`), arriving on the other
+            // axis: the container CAN be squeezed and the children CANNOT.
+            //
+            // 170 + 10 + 140 = **320 against 336**, so the row now fits by construction whatever
+            // the two strings are, rather than by the arithmetic happening to work out.
+            classLayout.preferredWidth = 170.0f;
+
+            // ⚠ THE ROLE SHRINKS INTO THAT BOUND RATHER THAN BEING CLIPPED BY IT, which is the
+            // half that makes the cap safe. `TAYA` never needs it; `ATTACKER` steps down a point or
+            // two on a narrow card and stays readable, with the same `MenuKit.MinReadableUnits`
+            // floor the name below already uses.
+            _class.resizeTextForBestFit = true;
+            _class.resizeTextMaxSize = 32;
+            _class.resizeTextMinSize = MenuKit.MinReadableUnits;
 
             _detail = Label(identity.transform, "DetailLabel", 34, UiTheme.Offense,
                             TextAnchor.MiddleRight);
-            _detail.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1.0f;
+
+            var detailLayout = _detail.gameObject.AddComponent<LayoutElement>();
+            detailLayout.flexibleWidth = 1.0f;
+
+            // ⚠️ AND THE NAME KEEPS A FLOOR, so `ATTACKER` cannot eat the whole row on a wider
+            // font or a smaller card. Below this the best-fit below has nothing to work with and
+            // the name is clipped instead of shrunk.
+            detailLayout.minWidth = 140.0f;
 
             // ⚠️⚠️ THE NAME SHRINKS RATHER THAN OVERLAPPING THE ROLE, AND SHORTENING THE ROLE
             // STRING ALONE WOULD NOT HAVE BEEN ENOUGH. Two `Overflow` labels in one layout row

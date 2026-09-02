@@ -41,7 +41,10 @@ namespace TumbangPreso.UI
             }
 
             OnClick("RematchButton", SceneFlow.StartMatch);
-            OnClick("MenuButton", () => SceneFlow.Go(SceneFlow.MainMenu));
+            // ⚠️ THE SAME EXIT THE PAUSE MENU AND `MatchResult` USE, so leaving a networked
+            // match ends the session whichever board the player happens to be looking at. See
+            // `SceneFlow.LeaveMatchToMainMenu`.
+            OnClick("MenuButton", SceneFlow.LeaveMatchToMainMenu);
         }
 
         private static void SetChildText(Transform root, string childName, string value)

@@ -44,6 +44,14 @@ namespace TumbangPreso.UI
         /// </summary>
         protected override bool Cancel()
         {
+            // ⚠️⚠️ THE HUB ANSWERS ITS OWN ESCAPE AND THIS SCREEN MUST NOT ANSWER THE SAME ONE.
+            // `ConvertedScreen.Update` and `PlayerHub.Update` both read `GetKeyDown` on the frame
+            // the key goes down, so without this line one press closes the hub AND stops the
+            // transport and drops the player on the title screen. Returning true consumes the
+            // press here without doing anything, which is `CLAUDE.md` § 6.3's innermost-layer
+            // rule: the hub is the inner layer and it has already handled it.
+            if (_hub != null && _hub.IsOpen) return true;
+
             if (_joinPanel != null && _joinPanel.IsOpen)
             {
                 _joinPanel.Close();
@@ -80,6 +88,9 @@ namespace TumbangPreso.UI
         /// <see cref="LobbyJoinPanel"/> and `docs/TODO.md` § 68.11.</summary>
         private LobbyJoinPanel _joinPanel;
 
+        /// <summary>QUICK MATCH and the queue state it turns into. See <see cref="QueueCard"/>.</summary>
+        private QueueCard _queueCard;
+
         private GameObject _lobbyEntryRow;
         private Button _joinButton;
         private Button _onlineButton;
@@ -101,6 +112,21 @@ namespace TumbangPreso.UI
         private LobbyChat _chat;
 
         /// <summary>
+        /// PROFILE, FRIENDS, CAREER, MATCHES and ACCOUNT, opened from the player card.
+        ///
+        /// ⚠️⚠️ IT LIVES ON THIS SCREEN SINCE 2026-09-01 AND IT USED TO LIVE ON THE TITLE SCREEN.
+        /// 🧑: *"I think the player shit should live in lobby screen, not play"*, and *"the ui rn
+        /// is so confusing i dont know where anything that was developed phase 1-10 onwards
+        /// live"*. `docs/TODO.md` § 114.7 has the journey table; the short version is that nine
+        /// phases of features landed in two different places and the player had to know which
+        /// before they could look. **Everything about the player is one press from PLAY now.**
+        ///
+        /// ⚠️ `ConvertedMainMenu` NO LONGER INSTALLS `PlayerNameplate`, so this is the only hub
+        /// in the game and there is no window where two exist.
+        /// </summary>
+        private PlayerHub _hub;
+
+        /// <summary>
         /// What each seat is wearing, rebuilt on every refresh and handed to the cast.
         ///
         /// ⚠️ ONE ARRAY, REUSED. `Refresh` runs on every arrow press, every seat message, every
@@ -111,7 +137,10 @@ namespace TumbangPreso.UI
 
         private readonly int[] _replicatedPicks = new int[Balance.PlayerCount * 4];
 
-        private const string YouMark = "◀ YOU";
+        // ⚠⚠ THE ARROW IS GONE FOR THE SAME REASON `LobbyNameplates` RECORDS: `◀` (U+25C0)
+        // is not in Darumadrop One, so every seat row carrying this string drew one glyph out of
+        // a fallback system font beside eleven drawn out of the game's own.
+        private const string YouMark = "YOU";
 
         /// <summary>
         /// ⚠️⚠️ NONE IS LAST, AND IT IS AN ABSENCE RATHER THAN A TIER. 🧑, 2026-08-26: *"add
@@ -119,9 +148,9 @@ namespace TumbangPreso.UI
         /// there no bots"*. The index is `AIController.NoBotsIndex`; its note explains why the
         /// entry could not go at the front of this array.
         ///
-        /// ⚠️ AND IT IS OFFLINE ONLY. See <see cref="DifficultyOptionCount"/>: three empty seats
-        /// in a networked lobby is a different feature with its own rules about who may join
-        /// them, and nobody has asked for it.
+        /// NONE is also available to a multiplayer host. Because the match rules require four
+        /// rotating seats, switching fillers off requires all four seats to be occupied before
+        /// START MATCH becomes available. Empty lobby rows remain joinable and read OPEN.
         /// </summary>
         private static readonly string[] Difficulties = { "EASY", "NORMAL", "HARD", "NONE" };
 
@@ -130,19 +159,52 @@ namespace TumbangPreso.UI
             "EASY Slower reactions and looser angles. Good for learning the throw arc.",
             "NORMAL The default, and the tier every balance number in this project was measured at. Reads your bearing, leads the lata, and blocks about 38% of what you throw.",
             "HARD Snappier reads and tighter defense. Will punish greedy slipper retrievals.",
-            "NONE An empty street. Nobody else spawns, so the lata, the tsinelas and the whole arena are yours to practise the throw and the retrieval run in."
+            "NONE No filler bots. Practice starts alone; multiplayer waits until all four human seats are filled."
         };
 
         /// <summary>
         /// How many entries of <see cref="Difficulties"/> this lobby may cycle through.
-        ///
-        /// ⚠️ A NETWORKED LOBBY STOPS AT HARD. NONE removes three seats from the match, and a
-        /// seat is what a peer joins: replicating "there are no seats" to a lobby somebody is
-        /// sitting in has no defined answer. Offline practice is the whole of what was asked
-        /// for, so that is the whole of what ships.
         /// </summary>
-        private static int DifficultyOptionCount
-            => SceneFlow.Networked ? Difficulties.Length - 1 : Difficulties.Length;
+        private static int DifficultyOptionCount => Difficulties.Length;
+
+        /// <summary>
+        /// PHASE 12's RULES row, and its one line of detail each.
+        ///
+        /// ⚠⚠ THE NAMES AND THE SENTENCES COME OUT OF THE CORE, NOT OUT OF THIS FILE.
+        /// `CustomGameRules.FormatName` and `FormatBlurb` are the same strings `docs/Formats.md`
+        /// documents and the same ones a lobby advert will eventually carry; a second copy typed
+        /// here is the shape § 5's Design.md drift rule warns about, where the prose and the code
+        /// disagree and nobody can say which is the bug.
+        ///
+        /// ⚠️ THE DETAIL LINE IS PREFIXED WITH THE NAME to match `DifficultyDetails`, whose
+        /// entries read `EASY Slower reactions...`. The detail box draws one string and the first
+        /// word is what tells the player which option it is describing.
+        /// </summary>
+        private static string FormatLabel(int index)
+            => CustomGameRules.FormatName(FormatAt(index));
+
+        private static string FormatDetail(int index)
+            => CustomGameRules.FormatName(FormatAt(index)) + " " + CustomGameRules.FormatBlurb(FormatAt(index));
+
+        private static MatchFormat FormatAt(int index)
+            => index <= 0 ? MatchFormat.Standard : MatchFormat.Mirror;
+
+        /// <summary>
+        /// ⚠⚠ TWO, NOT THREE, AND LAST TSINELAS STANDING IS THE ONE MISSING. Its RULES are
+        /// written, tested and documented (`CustomGameRules`, `Phase11And12Tests`,
+        /// `docs/Formats.md` § 1) and **its match half is not built**: a tag has to cost a
+        /// tsinelas, a spent attacker has to be out for the round, and the round has to end when
+        /// one is left. Offering it on this row today would be a control that changes the caption
+        /// and nothing else, which is `docs/TODO.md` § 108's EQUIP button with no listener, and
+        /// this project has shipped that fault twice. **It goes in the row the day the match
+        /// obeys it**; `docs/TODO.md` § 115 carries the design and the remaining work.
+        ///
+        /// ⚠️ MIRROR IS COMPLETE AND SHIPS: `MatchInstaller` overrides every seat's character
+        /// from `CustomGameRules.MirrorIndex`, so picking it changes the four people who walk out.
+        /// </summary>
+        private const int FormatOptionCount = 2;
+
+        private int _format;
 
         /// <summary>
         /// ⚠️⚠️ "THIS IS THE MULTIPLAYER LOBBY" AND "A TRANSPORT IS UP" ARE TWO DIFFERENT
@@ -178,6 +240,22 @@ namespace TumbangPreso.UI
         {
             for (int i = 0; i < _replicatedPicks.Length; i++) _replicatedPicks[i] = -1;
 
+            // ⚠️⚠️ THE MENU BED, BECAUSE THIS SCREEN IS WHERE A MATCH IS LEFT AND NOTHING PUT IT
+            // BACK. 🧑 2026-08-30: *"Round Music still plays even when exiting to lobby"*, and
+            // *"Round Music still plays after winning instead of Main Menu"*.
+            //
+            // `ConvertedMainMenu.Wire` has always done exactly this line, so the TITLE screen was
+            // fine and only this one was not — and the lobby is where the player actually ends up:
+            // `MatchResult`'s MAIN MENU and `PausePanel`'s QUIT TO MENU both come back through
+            // here, as does every rematch that is declined. `MusicDirector` had no other opinion
+            // about the match bed once `Hud` started it at the countdown, so it simply kept
+            // playing over a lobby.
+            //
+            // ⚠️ `Play` IS IDEMPOTENT ON THE NAME. `MusicDirector.Play` returns without touching
+            // the sources when `Current` already matches, so arriving here from the title screen
+            // costs nothing and does not restart the track the player was already listening to.
+            GameServices.Music?.Play("menu", GameServices.MenuTrack);
+
             // ⚠️ THE SESSION IS CREATED HERE WHEN THIS IS THE LOBBY, rather than inherited from
             // a screen that ran first. `NetSession.Instance` was guaranteed non-null only because
             // `ConvertedMultiplayerSetup.Wire` called `Ensure()` before navigating here; arriving
@@ -203,10 +281,30 @@ namespace TumbangPreso.UI
                 // with the other three chairs drawn as bots because no roster ever arrived. See
                 // `NetSession.ClientDisconnected`.
                 NetSession.ClientDisconnected += HandleClientDisconnected;
+
+                // ⚠️⚠️ BEING ON THIS SCREEN IS THE DEFINITION OF "NO MATCH IS RUNNING HERE", AND
+                // NOTHING SAID SO. `LobbySession.MatchInProgress` was set by `HostStartMatch` and
+                // cleared only when the whole session ended, so a host who played one match and
+                // came back had every later seat request refused by `TryTakeSeat`'s opening
+                // guard — SPECTATE included, silently. See `LobbySession.ReturnToLobby`.
+                //
+                // ⚠️ THE HOST DOES IT AND TELLS EVERYBODY, because the flag is host-authoritative:
+                // a client's copy is written from the `Seating` payload, so the roster broadcast
+                // is what carries the correction to the other three screens. A client running
+                // this on its own would disagree with the machine that decides.
+                if (NetAuthority.IsHost && net.Lobby.MatchInProgress)
+                {
+                    net.Lobby.ReturnToLobby();
+                    MatchRpc.Instance?.BroadcastLobbyPicks();
+                }
             }
 
             _map = Mathf.Max(0, Array.IndexOf(SceneFlow.Maps, SceneFlow.SelectedMap));
             _difficulty = Mathf.Clamp(Settings.SettingsStore.Current.AiDifficulty, 0, DifficultyOptionCount - 1);
+            AIController.ApplyDifficulty(_difficulty);
+
+            _format = Mathf.Clamp(Settings.SettingsStore.Current.MatchFormat, 0, FormatOptionCount - 1);
+            SceneFlow.SelectedFormat = FormatAt(_format);
 
             var previewNode = Node("MapPreview");
             if (previewNode != null) _preview = previewNode.GetComponent<MapPreviewSurface>();
@@ -224,6 +322,15 @@ namespace TumbangPreso.UI
 
             OnClick("DifficultyPrevButton", () => OnDifficultyCycle(-1));
             OnClick("DifficultyNextButton", () => OnDifficultyCycle(1));
+
+            // ⚠⚠ WIRED BY REFERENCE, NOT BY NAME, AND `LobbyChrome.BuildFormatRow` IS WHY: the
+            // RULES row is a clone made after `ConvertedScreen` built its name index, so
+            // `OnClick("FormatPrevButton", ...)` would find nothing and the arrows would be dead.
+            if (_chrome?.FormatPrev != null)
+                _chrome.FormatPrev.onClick.AddListener(() => OnFormatCycle(-1));
+
+            if (_chrome?.FormatNext != null)
+                _chrome.FormatNext.onClick.AddListener(() => OnFormatCycle(1));
 
             OnClick("CharacterButton", OpenCharacterSelect);
             OnClick("PrimaryButton", OnPrimaryPressed);
@@ -258,7 +365,21 @@ namespace TumbangPreso.UI
             // the entry row goes into the right column's list and the tabs are measured against a
             // banner that has to exist. Applying the chrome first would move an empty column and
             // then have rows added back into it at the authored anchors.
-            _chrome = LobbyChrome.Apply(transform, Node, IsLobby, SelectTab);
+            _chrome = LobbyChrome.Apply(transform, Node, IsLobby, SelectMode);
+
+            // ⚠️ AFTER THE CHROME, ON PURPOSE. See `InstallQueueCard`.
+            InstallQueueCard();
+            BuildSettingsDropdowns();
+
+            PaperiseWhatTheChromeLeaves();
+
+            // ⚠⚠ THE KEYBOARD CAN DRIVE THIS SCREEN NOW, AND IT NEVER COULD. `KeyboardCursor`
+            // carries the reasoning, including why the selection is NOT pre-armed: the chat field
+            // is always open in this lobby and ENTER is what a player presses to talk, so a
+            // pre-selected START MATCH would turn a stray Enter into a launched match.
+            var primary = Node("StartButton")?.GetComponent<Selectable>()
+                          ?? Node("PrimaryButton")?.GetComponent<Selectable>();
+            if (primary != null) KeyboardCursor.Install(gameObject, primary);
 
             // ⚠️⚠️ A NAME TYPED IN THE LOBBY HAS TO REACH THE OTHER THREE MACHINES, AND NOTHING
             // CARRIED IT. `NetSession.ConfigureClientHello` sends `Settings.PlayerName` at
@@ -268,7 +389,16 @@ namespace TumbangPreso.UI
             // own commit rather than off a redraw, because a redraw is not what changed the name.
             if (_chrome != null) _chrome.NameCommitted = PublishName;
 
+            InstallPlayerHub();
+
             BuildChat();
+
+            // ⚠️ THE QUEUE CARD IS SHOWN OR HIDDEN ON THE WAY IN AS WELL AS ON A MODE SWITCH.
+            // `SelectMode` only runs when the player CHANGES mode, so a screen entered as custom
+            // would keep the ladder queue alive on a tab nobody is on, which is exactly the fault
+            // `BuildLobbyEntryControls` records for the join controls one method up.
+            RefreshQueueVisibility(_chrome != null ? _chrome.Mode
+                                   : (IsLobby ? LobbyMode.Custom : LobbyMode.Practice));
 
             // ⚠️ MEASURED, NOT ASSUMED. See `LobbyChrome.ReportColumns`: three renders in a row
             // disagreed with the arithmetic and a screenshot could not say which of the three
@@ -277,6 +407,7 @@ namespace TumbangPreso.UI
 
             MatchRpc.OnMapChanged += HandleMapSynced;
             MatchRpc.OnDifficultyChanged += HandleDifficultySynced;
+            MatchRpc.OnFormatChanged += HandleFormatSynced;
             MatchRpc.OnLobbyPicksSynced += HandleLobbyPicksSynced;
             MatchRpc.OnLobbyRosterSynced += HandleLobbyRosterSynced;
             MatchRpc.OnLobbyReadyChanged += HandleLobbyReadyChanged;
@@ -369,6 +500,42 @@ namespace TumbangPreso.UI
             Refresh();
 
             DriveAutomation();
+            DriveFriendJoin();
+        }
+
+        /// <summary>
+        /// Acts on a join code the friends rail handed over. `docs/TODO.md` § 102.
+        ///
+        /// ⚠️⚠️ IT PRESSES THE REAL CONTROL, WHICH IS THE SAME RULE `DriveAutomation` FOLLOWS
+        /// AND FOR THE SAME REASON. `LobbyJoinPanel.AutomationJoin` goes through `Connect` and
+        /// raises `Joined` exactly as a finger does, so a friend join and a typed join are one
+        /// code path. Reaching past the panel into `NetSession` would prove the transport works
+        /// and say nothing about whether the flow does.
+        ///
+        /// ⚠️ THE CODE IS CONSUMED BEFORE THE AWAIT, not after. Anything else and a slow
+        /// handshake leaves the field set while the player backs out, and the next visit to this
+        /// scene rejoins a lobby nobody asked for.
+        /// </summary>
+        private async void DriveFriendJoin()
+        {
+            string code = SceneFlow.PendingJoinCode;
+            if (string.IsNullOrEmpty(code)) return;
+
+            SceneFlow.PendingJoinCode = "";
+
+            if (_joinPanel == null) return;
+
+            _joinPanel.Open();
+            bool joined = await _joinPanel.AutomationJoin(code);
+
+            if (this == null) return;
+
+            // ⚠️ A FAILED JOIN LEAVES THE PANEL OPEN WITH ITS OWN MESSAGE IN IT, WHICH IS THE
+            // POINT. The friend's lobby may have filled or closed between the rail drawing it and
+            // the press landing, and `LobbyJoinPanel.Report` already says which; closing the panel
+            // on failure would dismiss the only explanation the player gets. `CLAUDE.md` § 6.3: a
+            // dead end is a bug.
+            if (!joined) Debug.Log($"[Social] could not join {code} from the friends rail.");
         }
 
         /// <summary>
@@ -461,6 +628,18 @@ namespace TumbangPreso.UI
             SceneFlow.StartMatch();
         }
 
+        /// <summary>
+        /// The authored size of the lobby heading, and the ceiling the fit starts from.
+        ///
+        /// ⚠️⚠️ THE HEADING IS FITTED NOW BECAUSE IT GREW. `LOBBY · YOU ARE HOSTING · 4 WATCHING`
+        /// is 38 characters where `LOBBY · YOU ARE HOSTING` was 23, and this file already carries
+        /// a note about that exact plate: *"still reads `LOBBY · YOU ARE HOSTIN` with the SPECTATE
+        /// button over the last letters"*. `SetText` writes the string and asks nothing about the
+        /// box; `SetHeadline` measures it and steps down, and § 83.6 made that answer correct on
+        /// the frame the panel opens instead of one frame later.
+        /// </summary>
+        private const int LobbyHeadingSize = 28;
+
         private void BuildRightPanelNetwork()
         {
             var heading = Node("SeatHeading");
@@ -474,16 +653,29 @@ namespace TumbangPreso.UI
             headerRow.transform.SetParent(rows, false);
             headerRow.transform.SetSiblingIndex(headingIndex);
 
-            var hLayout = headerRow.AddComponent<HorizontalLayoutGroup>();
-            hLayout.spacing = 16;
+            // ⚠️⚠️ STACKED, NOT SIDE BY SIDE, AND THE ARITHMETIC IS WHY. 🧑, with a crop of this
+            // drawer: *"improve ui there cant see fonnt"*, and `LobbyServers-v57.png` and `-v58`
+            // both show SPECTATE drawn across the last letters of the heading. **Fitting cannot
+            // fix it, which is what the second render proved.** `LobbyChrome` narrows this column
+            // to `RoomColumnWidth` 380; SPECTATE takes 140 and the spacing 16, so the heading's
+            // cell is about 200 units, and `LOBBY · YOU ARE HOSTING` needs about 253 even at
+            // `MenuKit.MinReadableUnits` 18, which is the floor `MenuKit.Fit` refuses to go below.
+            // A control that cannot fit at the floor is a LAYOUT problem, and `Fit` says so by
+            // returning false, which nothing was reading.
+            //
+            // One above the other, each on the full 380, and the heading loses the word LOBBY as
+            // well: this drawer is the lobby, so naming it in its own heading is the redundancy
+            // 🧑 objects to by name (*"I donnt want redundannt UI"*).
+            var hLayout = headerRow.AddComponent<VerticalLayoutGroup>();
+            hLayout.spacing = 8;
             hLayout.childControlWidth = true;
             hLayout.childControlHeight = true;
-            hLayout.childForceExpandWidth = false;
-            hLayout.childForceExpandHeight = true;
+            hLayout.childForceExpandWidth = true;
+            hLayout.childForceExpandHeight = false;
 
             var hElement = headerRow.AddComponent<LayoutElement>();
-            hElement.minHeight = 46;
-            hElement.preferredHeight = 46;
+            hElement.minHeight = 46 + 8 + 40;
+            hElement.preferredHeight = hElement.minHeight;
             hElement.flexibleWidth = 1;
 
             heading.SetParent(headerRow.transform, false);
@@ -502,9 +694,7 @@ namespace TumbangPreso.UI
             _spectate = MenuKit.WoodButton(headerRow.transform, "SPECTATE", Vector2.zero, Vector2.zero,
                                            new Vector2(140.0f, 40.0f), ToggleSpectate);
             _spectate.name = "SpectateButton";
-            var specElement = _spectate.gameObject.AddComponent<LayoutElement>();
-            specElement.preferredWidth = 140.0f;
-            specElement.preferredHeight = 40.0f;
+            Fixed(_spectate, 40.0f);
 
             var label = _spectate.GetComponentInChildren<Text>();
             if (label != null) label.fontSize = 18;
@@ -513,6 +703,9 @@ namespace TumbangPreso.UI
 
             var shareHeading = MiniSection(rows, "SHARE THIS LOBBY");
             shareHeading.SetSiblingIndex(insertIndex++);
+
+            // ⚠️ ONE WIDTH FOR BOTH SHARE ROWS' CAPTIONS, so their boxes and their COPY buttons
+            // land on the same two x positions by construction. See `ShareCaption`.
 
             // 2. Address Row (placed directly in rows container below headerRow)
             _addressRow = new GameObject("AddressRow");
@@ -531,13 +724,32 @@ namespace TumbangPreso.UI
             addrElement.preferredHeight = 44;
             addrElement.flexibleWidth = 1;
 
+            // ⚠️⚠️ THE ADDRESS ROW GETS A CAPTION BECAUSE THE CODE ROW HAS ONE, AND WITHOUT IT
+            // THE TWO ROWS ARE DIFFERENT SHAPES. 🧑 2026-09-02, with a crop of this drawer:
+            // **"make this look better"**. Under `SHARE THIS LOBBY` sat `[box][COPY]` and then
+            // `[CODE][box][COPY]`: **two rows that do the same job, one indented 74 units further
+            // than the other, with their two COPY buttons at two different x.** Nothing in the
+            // panel lined up with anything else, which is the whole of what "looks worse" means
+            // when every individual control is fine.
+            //
+            // ⚠️ IT IS THE SAME `CaptionWidth` FOR BOTH, so the columns are equal by construction
+            // rather than by two numbers that happen to match today. `docs/TODO.md` § 94.7 fault 7
+            // is this rule stated once already: **one column or none.**
+            ShareCaption(_addressRow.transform, "ADDRESS");
+
             // Address display box
             var addrBox = new GameObject("AddressBox");
             addrBox.transform.SetParent(_addressRow.transform, false);
-            var addrBoxImg = addrBox.AddComponent<Image>();
-            addrBoxImg.sprite = GodotTheme.WoodBox(UiTheme.WoodDark, UiTheme.WoodEdge);
-            addrBoxImg.type = Image.Type.Sliced;
-            addrBoxImg.color = Color.white;
+            // ⚠️⚠️ A PAPER TRAY, BECAUSE A RAW SPRITE ON A BARE `Image` IS INVISIBLE TO
+            // `PaperDress`. 🧑, with a crop of this drawer: **"improve ui there cant see fonnt"**,
+            // and this box is the worst of it. The dress walks `GodotPanel`, `GodotButton` and
+            // `WoodSkin`; this node carried none of the three, so it stayed a near-black
+            // `WoodBox` while the lettering inside it was converted normally (`PaperDress.Type`
+            // remaps `UiTheme.Cream` to ink, because on paper cream is invisible). **Ink on
+            // WoodDark measures about 1.3:1.** It is the same fault as the hub's backdrop and it
+            // is the third time this pass has found it: a colour set outside the two skin
+            // components is a colour the conversion cannot see.
+            PaperSkin.Apply(addrBox, PaperCraft.Surface.Tray);
             var addrBoxElement = addrBox.AddComponent<LayoutElement>();
             addrBoxElement.flexibleWidth = 1;
             addrBoxElement.minHeight = 44;
@@ -553,13 +765,14 @@ namespace TumbangPreso.UI
             _addressText.rectTransform.offsetMax = new Vector2(-16, 0);
 
             _addressCopyBtn = MenuKit.WoodButton(_addressRow.transform, "COPY", Vector2.zero, Vector2.zero,
-                                                 new Vector2(96, 40), OnAddressCopyPressed);
+                                                 new Vector2(84, 40), OnAddressCopyPressed);
             var addrCopyElement = _addressCopyBtn.gameObject.AddComponent<LayoutElement>();
-            addrCopyElement.preferredWidth = 96;
+            addrCopyElement.preferredWidth = 84;
             addrCopyElement.preferredHeight = 40;
             _addressCopyBtnText = _addressCopyBtn.GetComponentInChildren<Text>();
 
             // 3. Code Row (placed directly in rows container below addressRow)
+            // (see ShareCaption for why both rows now start with one)
             _codeRow = new GameObject("CodeRow");
             _codeRow.transform.SetParent(rows, false);
             _codeRow.transform.SetSiblingIndex(insertIndex++);
@@ -580,21 +793,31 @@ namespace TumbangPreso.UI
             var codeCaption = new GameObject("CodeCaption");
             codeCaption.transform.SetParent(_codeRow.transform, false);
             var codeCaptionElement = codeCaption.AddComponent<LayoutElement>();
-            codeCaptionElement.preferredWidth = 64;
+
+            // ⚠️ THE SAME WIDTH AS THE ADDRESS ROW'S CAPTION AND IT WAS 64. See `ShareCaption`:
+            // two rows doing the same job with two different first columns is why this drawer
+            // looked wrong while every control in it was correct.
+            codeCaptionElement.preferredWidth = ShareCaptionWidth;
+            codeCaptionElement.minWidth = ShareCaptionWidth;
+            codeCaptionElement.flexibleWidth = 0.0f;
             codeCaptionElement.minHeight = 44;
-            var captionText = MenuKit.Label(codeCaption.transform, "CODE", 20, UiTheme.Amber,
+            // ⚠️ SOFT INK, NOT AMBER. `UiTheme.Amber` `ffba00` on `UiTheme.Paper` `f4ecdd`
+            // measures **1.46:1** (`tools/sample_png.js contrast`), and § 119.10 records 🧑
+            // rejecting that ratio by eye on two other controls. It is a caption on a cream
+            // drawer, so it takes the same soft ink every other caption in this front end takes;
+            // the row's own value is the thing that should be dark.
+            var captionText = MenuKit.Label(codeCaption.transform, "CODE", PaperKit.Caption,
+                                            UiTheme.PaperInkSoft,
                                             Vector2.zero, Vector2.zero, Vector2.zero,
-                                            TextAnchor.MiddleCenter);
+                                            TextAnchor.MiddleLeft);
             captionText.horizontalOverflow = HorizontalWrapMode.Overflow;
             MenuKit.Stretch(captionText.rectTransform, 0);
 
             // Code display box
             var codeBox = new GameObject("CodeBox");
             codeBox.transform.SetParent(_codeRow.transform, false);
-            var codeBoxImg = codeBox.AddComponent<Image>();
-            codeBoxImg.sprite = GodotTheme.WoodBox(UiTheme.WoodDark, UiTheme.WoodEdge);
-            codeBoxImg.type = Image.Type.Sliced;
-            codeBoxImg.color = Color.white;
+            // ⚠️ THE SAME TRAY AS THE ADDRESS BOX ABOVE, for the same reason. See that note.
+            PaperSkin.Apply(codeBox, PaperCraft.Surface.Tray);
             var codeBoxElement = codeBox.AddComponent<LayoutElement>();
             codeBoxElement.flexibleWidth = 1;
             codeBoxElement.minHeight = 44;
@@ -610,12 +833,136 @@ namespace TumbangPreso.UI
             _codeText.rectTransform.offsetMax = new Vector2(-16, 0);
 
             _codeCopyBtn = MenuKit.WoodButton(_codeRow.transform, "COPY", Vector2.zero, Vector2.zero,
-                                              new Vector2(96, 40), OnCodeCopyPressed);
+                                              new Vector2(84, 40), OnCodeCopyPressed);
             var codeCopyElement = _codeCopyBtn.gameObject.AddComponent<LayoutElement>();
-            codeCopyElement.preferredWidth = 96;
+            codeCopyElement.preferredWidth = 84;
             codeCopyElement.preferredHeight = 40;
             _codeCopyBtnText = _codeCopyBtn.GetComponentInChildren<Text>();
         }
+        /// <summary>
+        /// The queue, built after the chrome so it can live in the chrome's rail.
+        ///
+        /// ⚠⚠ ORDER, AND IT IS THE SAME ORDER TRAP `LobbyChrome.Apply`'S OWN CALL SITE RECORDS
+        /// ONE METHOD UP: *"last of the build steps, because it REARRANGES what the steps above
+        /// created"*. `BuildLobbyEntryControls` runs BEFORE the chrome, so a queue built there
+        /// asks for a rail that does not exist yet and silently falls back to the canvas, which is
+        /// the floating plate this pass removed. The queue is the one lobby control that has to be
+        /// built after the rail rather than before it.
+        /// </summary>
+        /// <summary>
+        /// The match settings, as four dropdowns instead of four steppers.
+        ///
+        /// ⚠⚠⚠ 🧑 ASKED FOR THIS BY NAME: *"u can use dropdowns and shit to make some shit
+        /// work or look good"*, in the same message as *"buttons were the biggest problem"*. Four
+        /// `&lt; VALUE &gt;` rows is **twelve controls to express four choices**, and not one of
+        /// them says what the other options are. `WoodDropdown` carries the rest of the argument.
+        ///
+        /// ⚠⚠ THE OPTION TABLES LIVE HERE AND THE BOX LIVES IN THE CHROME, which is why this
+        /// method is on this class. `GameLaunch.Maps`, `MenuKit.ModeLabel`, `Difficulties` and the
+        /// formats are all this screen's, together with the index, the wire call and the rule
+        /// about who is allowed to change each one.
+        ///
+        /// ⚠⚠ AND EVERY HANDLER IS THE ONE THE STEPPER ALREADY USED. `OnMapCycle` and its
+        /// siblings take a DELTA, because a stepper is all they have ever been asked to serve;
+        /// a dropdown hands back an absolute index, so each call is `chosen - current` rather than
+        /// a second path into the same state. **A second path is `docs/TODO.md` § 38.5's three
+        /// dead protocols**, and these four each carry a host check, a settings write and an RPC.
+        /// </summary>
+        private void BuildSettingsDropdowns()
+        {
+            var rows = _chrome?.SettingsRows;
+            if (rows == null) return;
+
+            const float Caption = 96.0f;
+
+            var mapNames = new string[SceneFlow.Maps.Length];
+            for (int i = 0; i < mapNames.Length; i++)
+                mapNames[i] = SceneFlow.PreviewFor(SceneFlow.Maps[i]).Name;
+
+            _mapDrop = WoodDropdown.Build(rows, "MAP", Caption, mapNames, _map,
+                                          v => OnMapCycle(v - _map));
+
+            _modeDrop = WoodDropdown.Build(rows, "MODE", Caption,
+                                           new[] { "CLASSIC", "HERO STRIKE" },
+                                           SceneFlow.SelectedMode == GameMode.HeroStrike ? 1 : 0,
+                                           v => OnModeCycle(v - (SceneFlow.SelectedMode == GameMode.HeroStrike ? 1 : 0)));
+
+            _botsDrop = WoodDropdown.Build(rows, "BOTS", Caption, Difficulties, _difficulty,
+                                           v => OnDifficultyCycle(v - _difficulty));
+
+            var formats = new string[FormatOptionCount];
+            for (int i = 0; i < formats.Length; i++) formats[i] = FormatLabel(i);
+
+            _rulesDrop = WoodDropdown.Build(rows, "RULES", Caption, formats, _format,
+                                            v => OnFormatCycle(v - _format));
+        }
+
+        private WoodDropdown _mapDrop, _modeDrop, _botsDrop, _rulesDrop;
+
+        /// <summary>
+        /// ⚠️ THE DROPDOWNS FOLLOW THE STATE RATHER THAN OWNING IT. In a networked lobby the host
+        /// picks and every peer is told over the wire (`HandleMapSynced` and its siblings), so a
+        /// control that remembered its own index would drift from the match it is describing the
+        /// first time somebody else changed the map.
+        /// </summary>
+        private void RefreshSettingsDropdowns()
+        {
+            bool mayEdit = !SceneFlow.Networked || NetAuthority.IsHost;
+
+            if (_mapDrop != null) { _mapDrop.SetIndex(_map); _mapDrop.SetInteractable(mayEdit); }
+            if (_botsDrop != null) { _botsDrop.SetIndex(_difficulty); _botsDrop.SetInteractable(mayEdit); }
+            if (_rulesDrop != null) { _rulesDrop.SetIndex(_format); _rulesDrop.SetInteractable(mayEdit); }
+
+            if (_modeDrop != null)
+            {
+                _modeDrop.SetIndex(SceneFlow.SelectedMode == GameMode.HeroStrike ? 1 : 0);
+                _modeDrop.SetInteractable(mayEdit);
+            }
+        }
+
+        private void InstallQueueCard()
+        {
+            if (!IsLobby || _queueCard != null) return;
+
+            var canvas = GetComponentInParent<Canvas>();
+            if (canvas == null) return;
+
+            // ⚠⚠ THE QUEUE LIVES IN THE ACTION RAIL NOW, UNDER START MATCH, AND IT USED TO FLOAT
+            // IN THE MIDDLE OF THE SCREEN. 🧑 2026-09-01: *"our UI is ugly and repetitive and
+            // unimaginative"*. `QueueCard.Dock` carries the argument: the rail is the PLAY column,
+            // both ways of starting a game belong in it, and two accented controls competing for
+            // the same job is not a hierarchy. It also deletes § 115.2's whole class of fault: a
+            // child of a layout group cannot be placed off the bottom of the screen.
+            //
+            // ⚠️ AND IT STILL NEVER BLOCKS THE LOBBY. `QueueCard`'s header is why it has no
+            // scrim: a player in a queue is queueing so they can carry on doing something else,
+            // so chat, the join code and the seat rows all stay live beside it.
+            //
+            // ⚠️ THE CANVAS IS THE FALLBACK. `LobbyStyle.Classic` does not build the rail (it is
+            // the authored screen, kept working at every commit, § 68.3), so on that style the
+            // queue goes back to being a floating plate rather than disappearing.
+            // ⚠️⚠️ THE QUEUE'S DOOR IS THE RANKED PRIMARY NOW, NOT A CHIP. 🧑: **"dont quick
+            // match and start match do the same thing? kinda confusing no?"** They did, and the fix
+            // was structural: matchmaking is its own MODE with its own primary button, so the
+            // screen has exactly one control that starts a game at any moment. See `LobbyMode`.
+            _queueCard = _chrome?.QueueDock != null
+                ? QueueCard.Dock(_chrome.QueueDock, null)
+                : QueueCard.Build(canvas.transform);
+
+            // ⚠️ THE LADDER IS THE ONLY THING THIS CARD QUEUES FOR NOW. `QueueCard.Stake` records
+            // what the old constant cost: Phase 9 shipped a whole rating system nothing could
+            // reach.
+            _queueCard.Stake = Core.QueueStake.Ranked;
+            _queueCard.Status += SetStatus;
+            _queueCard.Joined += HandleJoinedInPlace;
+
+            // ⚠️ PHASE 11'S OFFER LANDS ON THE SAME START PATH THE BUTTON USES, and the card
+            // deliberately does not know how to start a match. See `QueueCard.StartWithBots`:
+            // every decision a start needs (the map, the seats, whether the room is networked)
+            // lives here, and a second path through them is `docs/TODO.md` § 38.5's dead protocol.
+            _queueCard.StartWithBots += StartAgainstBots;
+        }
+
 
         /// <summary>
         /// The row that gets you OUT of your own lobby and into somebody else's, plus the switch
@@ -655,6 +1002,8 @@ namespace TumbangPreso.UI
             net.BrowseLan();
             net.Query?.StartBrowsing();
 
+
+
             _joinPanel = LobbyJoinPanel.Build(canvas.transform, net);
             _joinPanel.Status += SetStatus;
             _joinPanel.Joined += HandleJoinedInPlace;
@@ -678,31 +1027,535 @@ namespace TumbangPreso.UI
             row.transform.SetParent(_codeRow.transform.parent, false);
             row.transform.SetSiblingIndex(actionHeading.GetSiblingIndex() + 1);
 
-            var layout = row.AddComponent<HorizontalLayoutGroup>();
-            layout.spacing = 10;
+            // ⚠️⚠️ STACKED, NOT SIDE BY SIDE, AND 🧑 PHOTOGRAPHED WHY. With a crop of this drawer:
+            // **"improve ui there cant see fonnt and shit overflows"**, and
+            // `Logs/shots-runtime/LobbyServers-v56.png` shows `JOIN A GAME` drawn straight through
+            // `START SERVER`.
+            //
+            // **The cause is that neither label is ever fitted.** `MenuKit.WoodButton` only calls
+            // `MenuKit.Fit` when it is given a width, and these two are built at `(0, 44)` so the
+            // layout group decides the width later and the fit never runs. `LobbyChrome` then
+            // narrows this whole column to `RoomColumnWidth` 380, so two expanded halves are
+            // **185 units each** and `JOIN A GAME` at 20 units needs about 210. A legacy `Text`
+            // set to Overflow draws past its box in silence, which is `CLAUDE.md` § 6.2c's fourth
+            // question exactly: a width chosen at the reference resolution is a width that only
+            // exists there, and the failure is invisible to every probe because each label fits
+            // its own rect.
+            //
+            // ⚠️ AND STACKING IS THE RIGHT ANSWER RATHER THAN A SMALLER FONT, because the note
+            // below already says these two are not equals: JOIN is the action a player opened this
+            // drawer to take and START SERVER is the alternative. Side by side at one weight they
+            // were a coin toss; one above the other they are a choice with an order. Full width
+            // also means the fit can never come back, whatever the column is narrowed to.
+            var layout = row.AddComponent<VerticalLayoutGroup>();
+            layout.spacing = 8;
             layout.childControlWidth = true;
             layout.childControlHeight = true;
             layout.childForceExpandWidth = true;
-            layout.childForceExpandHeight = true;
+            layout.childForceExpandHeight = false;
 
             var element = row.AddComponent<LayoutElement>();
-            element.minHeight = 44;
-            element.preferredHeight = 44;
+            element.minHeight = (44 * 2) + 8;
+            element.preferredHeight = element.minHeight;
             element.flexibleWidth = 1;
 
+            // ⚠️⚠️ JOIN IS GREEN, WHICH IS 🧑'S OWN PRIMARY COLOUR AND NOT A NEW ONE.
+            // `Art/ui/host-game/JOIN BUTTON.png` is authored green, and sampling it shows it is
+            // `BUTTON LONG.png` with one colour swapped: same chamfer, same 7 px keyline, the
+            // same seven values of a different hue (`UiTheme.MenuGreenFace` carries the numbers).
+            // **His art already says green means go**, and this row is the one action in this
+            // drawer a player came here to take; START SERVER beside it is the alternative.
+            // Drawn at the same weight they were a coin toss, which is `game-ui-design`'s
+            // `UI Blocking Action` read one control down.
             _joinButton = MenuKit.WoodButton(row.transform, "JOIN A GAME", Vector2.zero,
                                              Vector2.zero, new Vector2(0.0f, 44.0f),
-                                             OpenJoinPanel);
+                                             OpenJoinPanel, "WoodPrimaryButton");
             _joinButton.name = "OpenJoinButton";
-            _joinButton.gameObject.AddComponent<LayoutElement>().minHeight = 44;
+            Fixed(_joinButton, 44);
+
+            // ⚠️⚠️ CONVERTED HERE RATHER THAN LEFT TO THE DRESS, BECAUSE THE DRESS HAS ALREADY
+            // RUN BY THE TIME THIS EXISTS. `LobbyChrome.BuildRoomDrawer` calls
+            // `PaperDress.Screen(details)` on the authored column and this button is built into
+            // that column afterwards, so it kept `GodotTheme.WoodPrimaryButton`: on
+            // `Logs/crops/hosting-v62.png` it is the one flat green slab with a grey keyline in a
+            // drawer of paper controls. **Same fault as § 120.5 row 1**, which is a method running
+            // after the dress and writing its own sprite; this is the mirror of it, a control
+            // created after the dress and never getting one.
+            PaperKit.MakeAction(_joinButton.gameObject, PaperCraft.Accent.Green);
 
             _onlineButton = MenuKit.WoodButton(row.transform, "START SERVER", Vector2.zero,
                                                Vector2.zero, new Vector2(0.0f, 44.0f),
                                                ToggleOnline);
             _onlineButton.name = "GoOnlineButton";
-            _onlineButton.gameObject.AddComponent<LayoutElement>().minHeight = 44;
+            Fixed(_onlineButton, 44);
 
             _lobbyEntryRow = row;
+        }
+
+        /// <summary>
+        /// Installs the hub and hangs it off the player card's YOUR PROFILE row.
+        ///
+        /// ⚠️ THE HUB INSTALLS `SignInScreen` ITSELF, exactly as it did under the nameplate, so
+        /// the chain is one owner deep rather than two screens both reaching for it. See
+        /// `PlayerHub.Install`.
+        ///
+        /// ⚠️ AND IT IS INSTALLED ON BOTH TABS, not only on the lobby. PRACTICE is the same
+        /// screen with the network off; a career and a match history are not networked facts, and
+        /// a door that exists on one tab and not the other is the kind of thing a player learns
+        /// as "sometimes it is there".
+        /// </summary>
+        private void InstallPlayerHub()
+        {
+            _hub = gameObject.GetComponent<PlayerHub>();
+            if (_hub == null) _hub = gameObject.AddComponent<PlayerHub>();
+
+            _hub.Install();
+
+            if (_chrome?.JoinChip != null)
+            {
+                // ⚠️ IT TOGGLES THE AUTHORED RIGHT COLUMN, which holds the seat list, the LAN
+                // address, the room code row and the two entry buttons (`JOIN A GAME` and
+                // `START SERVER`). One press opens everything about getting in and out of a room;
+                // nothing about it is on screen while you are not asking.
+                _chrome.JoinChip.onClick.AddListener(() =>
+                {
+                    var drawer = _chrome.LobbyDrawer;
+                    if (drawer == null) return;
+
+                    bool open = !drawer.activeSelf;
+                    drawer.SetActive(open && IsLobby);
+                    if (open && _chat != null) _chat.gameObject.SetActive(false);
+
+                    // ⚠️⚠️ THE HEADING IS RE-FITTED ON THE OPEN, AND WITHOUT THIS IT IS NEVER
+                    // FITTED AT ALL. `Logs/shots-runtime/LobbyServers-v57.png` shows
+                    // `LOBBY · YOU ARE HOST` with SPECTATE drawn across the last letters, which
+                    // is the exact string `LobbyHeadingSize`'s note says was fixed. It was, once:
+                    // `ConvertedScreen.SetHeadline` measures the rect and gives up when the rect
+                    // reports zero, and **`LayoutRebuilder` cannot rebuild a canvas that is
+                    // inactive on that frame**, which this drawer always is when `Refresh` runs.
+                    // So the measurement silently returned every time and the label kept its
+                    // authored 28 units.
+                    //
+                    // ⚠️ `Refresh` RATHER THAN A DIRECT RE-FIT, because the room string is built
+                    // from three live facts (host or client, the spectator count, the seat rows)
+                    // and duplicating that here is how the two copies drift.
+                    if (open) Refresh();
+                });
+            }
+
+            if (_chrome?.ProfileButton != null)
+                _chrome.ProfileButton.onClick.AddListener(OpenPlayerHub);
+
+            // ⚠️ YOUR SKILLS LANDS ON THE LOADOUT TAB DIRECTLY. See `PlayerHub.OpenLoadout` and
+            // `LobbyChrome.BuildLoadoutButton`: 🧑 could not find the loadout twice, and the answer
+            // is the row under the character it belongs to rather than a fifth place to look.
+            if (_chrome?.LoadoutButton != null)
+                _chrome.LoadoutButton.onClick.AddListener(OpenLoadout);
+
+            // ⚠️ SETTINGS, ON REQUEST. 🧑 2026-09-02: **"cann u also add a settings button in
+            // lobby?"**. `LobbyChrome.BuildSettingsButton` is the control and
+            // `LobbyChrome.SettingsWidth` carries the journey it fixes.
+            if (_chrome?.GameSettingsButton != null)
+                _chrome.GameSettingsButton.onClick.AddListener(OpenGameSettings);
+
+            RefreshProfileDoor();
+            RefreshTier();
+        }
+
+        /// <summary>
+        /// The two words on the YOUR SKILLS row: the hero, and how many of its skills are on a
+        /// non-default reading.
+        ///
+        /// ⚠⚠ IT NAMES THE HERO BECAUSE A BUILD BELONGS TO ONE. Six heroes have their own
+        /// builds and only one of them is the character on the row above; a summary that said
+        /// *"2 of 2 changed"* with no name would be a fact about somebody the player is not
+        /// playing. `HeroBuildRules.RowFor` is per hero for the same reason.
+        ///
+        /// ⚠️ AND A CLASSIC CHARACTER NEVER REACHES THIS. `SetSkills` hides the whole row in
+        /// Classic (`docs/VISION.md` § 1.1), so this is only ever asked about a hero.
+        /// </summary>
+        /// <summary>
+        /// Writes the ladder plate: where you stand, and what the ladder will refuse.
+        ///
+        /// ⚠️⚠️ THE PARTY RULE IS STATED BEFORE THE PRESS, WHICH IS THE HALF THAT WAS MISSING.
+        /// 🧑: *"make it as well na u cant queue with a friend in ranked ladder or smth"*.
+        /// `PartyRules.CanQueue` has refused a full stack in ranked since Phase 7
+        /// (`MaxRankedSize` is `Balance.PlayerCount - 1`) and has refused an unsigned member for
+        /// just as long, and `PartyRules.RefusalLabel` writes a good sentence about it. **But the
+        /// player only ever saw that sentence AFTER pressing the button**, which `CLAUDE.md` § 6.2
+        /// calls the INTUITIVE failure: a control whose refusal is the only way to learn its rule.
+        ///
+        /// ⚠️ AN UNPLACED PLAYER IS TOLD SO RATHER THAN SHOWN A TIER THEY HAVE NOT EARNED.
+        /// `RatingRules.TierFor` answers `BATA` for the starting rating, so reading it before any
+        /// ranked match is played would advertise a rank nobody has been given.
+        ///
+        /// ⚠️ AND A GUEST IS TOLD THE ONE THING THAT BLOCKS THEM. `PartyRules.CanQueue` refuses a
+        /// member who is not signed in, and `FUTURE.md` § 0.5 rule 7 is why that is the ONLY gate
+        /// in this game behind a login: a ladder has nowhere to keep a rating for an anonymous
+        /// machine-local identity. Practice, custom, LAN and joining by code never ask.
+        /// </summary>
+        private void RefreshTier()
+        {
+            if (_chrome == null || _chrome.Mode != LobbyMode.Ranked) return;
+
+            var account = GameServices.Account;
+            bool signedIn = account != null && !account.IsGuest;
+
+            if (!signedIn)
+            {
+                _chrome.SetTier("SIGN IN",
+                    "The ladder keeps a rating, so it needs an account. "
+                    + "Practice and custom rooms never ask.");
+                return;
+            }
+
+            var rank = GameServices.Career?.Profile?.Rank;
+
+            if (rank == null || rank.MatchesThisSeason == 0)
+            {
+                _chrome.SetTier("UNRANKED",
+                    "Play one ladder match to be placed. Solo, or a party of up to three.");
+                return;
+            }
+
+            var tier = Core.RatingRules.TierFor(rank.Rating);
+            bool placing = rank.Deviation > Core.RatingRules.SettledDeviation;
+
+            _chrome.SetTier(Core.RatingRules.TierName(tier),
+                placing
+                    ? $"{rank.MatchesThisSeason} this season, still placing. "
+                      + "Solo, or a party of up to three."
+                    : $"{rank.Rating:0} rating, {rank.MatchesThisSeason} this season. "
+                      + "Solo, or a party of up to three.");
+        }
+
+        private static string EquippedBuildSummary()
+        {
+            var people = Roster.GetPeople(GameMode.HeroStrike);
+            var hero = Roster.At(people, Settings.SettingsStore.Current.CharacterPick);
+            if (hero == null) return "Pick a build";
+
+            var settings = Settings.SettingsStore.Current;
+            var build = HeroBuildRules.RowFor(settings.HeroBuilds, hero.Id);
+
+            int changed = 0;
+            for (int slot = 1; slot <= 2; slot++)
+            {
+                var equipped = HeroBuildRules.Equipped(build, hero.Id, slot, settings.AbilityChallenges);
+                if (equipped != null && !equipped.IsDefault) changed++;
+            }
+
+            return changed == 0
+                ? hero.Name + "  ·  standard build"
+                : hero.Name + $"  ·  {changed} of 2 changed";
+        }
+
+        /// <summary>
+        /// The lobby's YOUR SKILLS row.
+        ///
+        /// ⚠️⚠️⚠️ IT OPENS THE FIGHTER PICKER NOW, NOT THE HUB'S LOADOUT TAB, ON HIS INSTRUCTION.
+        /// 🧑 2026-09-02: **"put loadout here, it makes no sense to be in profile"**, with a crop
+        /// of CHOOSE YOUR HERO, and again *"there were button updates can u put loadouts in the
+        /// choose ur hero screen too and shit"*.
+        ///
+        /// ⚠️⚠️ HE IS RIGHT ON THE JOURNEY AS WELL AS ON THE TASTE, AND THE PRESSES ARE COUNTABLE.
+        /// The old route was **row → hub → LOADOUT tab → hero stepper → slot stepper**: five, and
+        /// the middle one exists only to re-select a hero the player had already chosen on the row
+        /// directly above this one. `CLAUDE.md` § 6.3: *"if it takes more than three, or if one of
+        /// them is a control the player has to discover rather than read, the flow is the bug"*.
+        /// It is **row → the skill you want** now, and the row you press is the row that describes
+        /// what you are choosing between.
+        ///
+        /// ⚠️ THIS ROW SURVIVES AND IS NOT DELETED, which matters because the picker's FIGHTER row
+        /// sits immediately above it and opens the same screen. **They are not a second door to
+        /// one place** (§ 6.3 forbids that): they open the same screen on two different questions,
+        /// and the summary each one carries is the difference. `SkillsSummary` says which hero and
+        /// how many of its two skills are on a non-default reading, which is a fact you cannot
+        /// read off the FIGHTER row at all.
+        ///
+        /// ⚠️ `PlayerHub.OpenLoadout` IS GONE WITH THE TAB IT OPENED. See `PlayerHub.BuildTabBar`
+        /// for what happened to it and why the hub is five tabs now.
+        /// </summary>
+        private void OpenLoadout()
+        {
+            MenuSfx.Click();
+            OpenCharacterSelect();
+        }
+
+        private void OpenPlayerHub()
+        {
+            MenuSfx.Click();
+
+            // ⚠️⚠️ IT OPENS ON **PROFILE** NOW, NOT ON ACCOUNT, AND THE DOOR'S NEW NAME IS WHY.
+            // 🧑 2026-09-01: *"can u replace secure progress to Account and allow to put thhe name
+            // there if not logged in, bcz offlinne mode is for torunnaments and shit"*. A guest
+            // used to be dropped straight onto the ACCOUNT tab, and the note this replaces was
+            // right about the reason: the door said `SECURE YOUR PROGRESS` and that tab is where
+            // signing in happens, so landing anywhere else was answering a different question.
+            // **The door says `ACCOUNT` now and the thing a player wants behind it is their own
+            // name**, which is the first row of PROFILE; the sign-in offer is one tab away and the
+            // whole tab row is visible the moment the screen opens.
+            //
+            // ⚠️ AND ON A MACHINE WITH NO NETWORK THIS IS THE ONLY WAY TO SET A NAME AT ALL. See
+            // `PlayerHub.BuildProfileTab`: the field falls back to `Settings.SettingsStore`, which
+            // is what `NetSession.ConfigureClientHello` puts on the wire. `docs/TODO.md` § 97 and
+            // the nationals in General Santos City are the reason that path has to exist.
+            _hub?.Open();
+        }
+
+        /// <summary>
+        /// The lobby's copy of the settings panel, instantiated the first time it is asked for.
+        ///
+        /// ⚠️⚠️ THE SAME PREFAB THE TITLE SCREEN AND THE PAUSE CARD USE, WHICH IS THE WHOLE
+        /// POINT. `PausePanel.OpenSettings` carries the rule in as many words: *"a slider that
+        /// exists in one exists in the other. Two panels drift the moment one gets a row the other
+        /// does not."* This is the third caller and it is a copy of that method rather than a new
+        /// screen, so the lobby cannot acquire a settings page of its own.
+        ///
+        /// ⚠️ IT IS INSTANTIATED LAZILY AND KEPT. `MatchSetup.unity` does not carry a
+        /// `SettingsPanel` node (`UiRuntimeShots.TheSettingsPanelDraws` had to load `MainMenu` to
+        /// photograph one), so there is nothing in the scene to switch on. Building it on first
+        /// press costs one `Resources.Load` on a screen that is already idle, and keeping it means
+        /// the second press is free and anything left open inside it survives.
+        ///
+        /// ⚠️⚠️ AND IT IS FOUND BY COMPONENT RATHER THAN BY NAME ON THE SECOND PRESS, because the
+        /// prefab's own root name is not this file's to promise. `GetComponentInChildren` with
+        /// `true` is what makes a panel that was closed (deactivated) findable again;
+        /// `Node("SettingsPanel")` would ask `ConvertedScreen`'s name index, which was built at
+        /// `Wire` time and cannot know about an object created later.
+        /// </summary>
+        private void OpenGameSettings()
+        {
+            MenuSfx.Click();
+
+            var existing = GetComponentInChildren<ConvertedSettingsPanel>(true);
+            if (existing != null)
+            {
+                existing.gameObject.SetActive(true);
+                return;
+            }
+
+            var prefab = Resources.Load<GameObject>("UI/SettingsPanel");
+            if (prefab == null)
+            {
+                Debug.LogWarning("[Lobby] no SettingsPanel prefab in Resources/UI.");
+                return;
+            }
+
+            var panel = Instantiate(prefab, transform, false);
+            panel.name = "SettingsPanel";
+            panel.SetActive(true);
+        }
+
+        /// <summary>
+        /// The one line on the door, and what it says depends on whether there is anything of the
+        /// player's own to say yet.
+        ///
+        /// ⚠️⚠️ THE THREE STATES ARE ORDERED BY URGENCY AND THAT ORDER IS COPIED RATHER THAN
+        /// REINVENTED. `PlayerNameplate.Refresh` carries the full argument: the upgrade offer wins
+        /// because it is the only one of the three that can expire into lost progress; the level
+        /// wins over the hint because a player who has earned something already knows the card is
+        /// theirs; the hint is for the player who has not pressed it yet, which is the state 🧑
+        /// was in when he said *"i didnnt see that at all bruhh"* (§ 96).
+        ///
+        /// ⚠️ AN UNRANKED ACCOUNT DRAWS NO TIER RATHER THAN THE WORD `UNRANKED`. `FUTURE.md`
+        /// § 2.2: withhold the row, not just the number.
+        /// </summary>
+        private void RefreshProfileDoor()
+        {
+            var label = _chrome?.ProfileValue;
+            if (label == null) return;
+
+            var account = GameServices.Account;
+
+            // ⚠️⚠️ INK, NEVER AMBER, AND SHORT ENOUGH FOR THE CHIP. 🧑, with a crop of this exact
+            // control: **"this yellow shit uglyu"**. `ffba00` on `f4ecdd` measures **1.7:1**, so on
+            // a cream rail this was simultaneously the loudest and the least legible thing on the
+            // screen, and it was directly competing with the primary action for the eye
+            // (`docs/TODO.md` § 117.3 is the same fault one control over). `SECURE YOUR PROGRESS`
+            // is also 20 characters against a 200-unit chip, which is why it overflowed its own
+            // pill in `Logs/shots-runtime/Lobby-v53.png`.
+            if (account != null && account.ShouldOfferUpgrade)
+            {
+                Door(label, "SECURE PROGRESS");
+                return;
+            }
+
+            var profile = GameServices.Career?.Profile;
+            int xp = profile?.Xp ?? 0;
+
+            if (xp <= 0)
+            {
+                // ⚠️ ONE WORD, NOT THREE. `PROFILE · CAREER · MATCHES` was a list of the tabs
+                // behind the door written on the door, which is 190 units of lettering in a chip
+                // sized for a label. The hub's own tab row says what is in it.
+                Door(label, "PROFILE");
+                return;
+            }
+
+            string line = $"LV {ProgressionRules.LevelForXp(xp)}";
+
+            var rank = profile.Rank;
+            if (rank != null && rank.MatchesThisSeason > 0)
+            {
+                string tier = RatingRules.TierName(RatingRules.TierFor(rank.Rating));
+
+                // ⚠️ A TIER STILL MOVING FAST SAYS SO. `RatingRules.SettledDeviation`: a
+                // first-week tier is a guess and must not be quotable as settled.
+                if (rank.Deviation > RatingRules.SettledDeviation) tier += " ?";
+                line += $"   ·   {tier}";
+            }
+
+            Door(label, line);
+        }
+
+        /// <summary>⚠️ ONE PLACE WRITES THIS LABEL, so the colour and the fit cannot be got right
+        /// in three branches and wrong in a fourth. `LobbyChrome.ProfileWidth` is sized against the
+        /// longest string this ever carries.</summary>
+        private static void Door(Text label, string text)
+        {
+            label.text = text;
+            label.color = UiTheme.PaperInk;
+            label.fontSize = PaperKit.Body;
+            MenuKit.Fit(label, 200.0f - 24.0f, 13);
+        }
+
+        /// <summary>
+        /// Pins a child of a vertical group to one height and stops it flexing.
+        ///
+        /// ⚠️ `childForceExpandHeight` IS OFF ON EVERY GROUP IN THIS FRONT END (`PaperKit.Stack`
+        /// carries the reason: it silently overrides every `LayoutElement` under it), so a child
+        /// that does not state its own height gets its PREFERRED one, and a `GameObject` built
+        /// from code has none. A `minHeight` alone was enough while these rows were laid out
+        /// horizontally and is not once they stack.
+        /// </summary>
+        /// <summary>
+        /// Dresses the two authored subtrees the lobby chrome takes things OUT of and leaves.
+        ///
+        /// ⚠️⚠️ BOTH WERE REPORTED BY THE WIDENED `PaperPurityProbe` AND NEITHER IS REACHABLE BY
+        /// ANY OTHER ROUTE. `LobbyChrome.BuildSettingsDrawer` moves the authored `Rows` out of
+        /// `LeftColumn/ConfigPanel` into a paper drawer and leaves the board itself behind, still
+        /// carrying its `GodotPanel`; and `CharacterSelectPanel` dresses itself in
+        /// `ConvertedCharacterSelect.Wire`, which is `Start` and therefore **does not run until
+        /// the panel is first switched on**. So the picker's BACK button was wooden from scene
+        /// load until the first time anybody opened the picker.
+        ///
+        /// ⚠️ IT IS IDEMPOTENT, which is what makes the overlap with `Wire` harmless.
+        /// `PaperSkin.Apply` destroys any `WoodSkin` it finds and `PaperDress` disables rather
+        /// than destroys, so the picker being dressed twice costs one walk of a subtree.
+        ///
+        /// ⚠️ AND IT DOES NOT TOUCH THE PICKER'S AUTHORED BOARD. That is
+        /// `ConvertedCharacterSelect.PaperiseAuthoredBoard`'s decision to make and it carries the
+        /// argument for making it; `PaperDress` cannot see a bare `Image` with an authored sprite
+        /// on it, which is the whole subject of `docs/TODO.md` § 120.4.
+        /// </summary>
+        /// <summary>
+        /// ⚠️⚠️⚠️ THE FIGHTER PICKER IS EXCLUDED FROM BOTH HALVES OF THIS METHOD NOW, AND
+        /// FORGETTING THE SECOND HALF WOULD HAVE MADE THE WHOLE REVERSAL LOOK LIKE IT DID NOTHING.
+        /// 🧑 2026-09-02 asked for that screen back in wood (**"it used to look really good here,
+        /// maybe it can retain old brownn color"**, *"js the character select"*), and
+        /// `ConvertedCharacterSelect.Wire` stopped calling `PaperDress.Screen` for it —
+        /// **but this method dresses it a second time, from the outside, and this one runs
+        /// FIRST.** `Wire` is `Start` and does not run until the panel is switched on; this runs on
+        /// scene load, which is the entire reason it exists (see the note above about the picker's
+        /// BACK button being wooden until somebody opened the picker).
+        ///
+        /// ⚠️⚠️ AND THE `ConfigPanel` LOOP IS THE SUBTLER OF THE TWO, BECAUSE IT DOES NOT NAME THE
+        /// PICKER AT ALL. `Nodes("ConfigPanel")` walks the WHOLE scene by name, and the fighter
+        /// picker has a `ConfigPanel` of its own: it is the brown board every control on that
+        /// screen stands on. So the loop written for the lobby drawer's leftover board was
+        /// silently creaming the picker's main surface as well. **A search by name is a search by
+        /// name**, which is the same class of fault `docs/TODO.md` § 120.5 row 1 records from the
+        /// other direction.
+        ///
+        /// ⚠️ THE GUARD IS `IsInsidePicker` RATHER THAN A NAME COMPARE ON THE NODE ITSELF, because
+        /// the thing being protected is a SUBTREE. Checking `board.name != "CharacterSelectPanel"`
+        /// would protect the panel and not the board inside it, which is precisely the node that
+        /// was wrong.
+        /// </summary>
+        private void PaperiseWhatTheChromeLeaves()
+        {
+            foreach (var board in Nodes("ConfigPanel"))
+            {
+                if (IsInsidePicker(board)) continue;
+
+                var panel = board.GetComponent<GodotPanel>();
+                if (panel == null) continue;
+
+                PaperKit.Paperise(board.gameObject, PaperCraft.Surface.Sheet);
+            }
+        }
+
+        /// <summary>
+        /// Whether a node lives under the fighter picker.
+        ///
+        /// ⚠️ IT WALKS UP RATHER THAN CACHING THE PICKER'S TRANSFORM, because this runs a handful
+        /// of times on scene load against a tree three or four levels deep, and a cached root is a
+        /// field that can be stale by the time the second caller arrives.
+        /// </summary>
+        private static bool IsInsidePicker(Transform node)
+        {
+            for (var t = node; t != null; t = t.parent)
+                if (t.name == "CharacterSelectPanel") return true;
+
+            return false;
+        }
+
+        private static void Fixed(Component child, float height)
+        {
+            var element = child.gameObject.GetComponent<LayoutElement>();
+            if (element == null) element = child.gameObject.AddComponent<LayoutElement>();
+
+            element.minHeight = height;
+            element.preferredHeight = height;
+            element.flexibleHeight = 0.0f;
+        }
+
+        /// <summary>
+        /// The word at the start of a SHARE THIS LOBBY row, at one width for both rows.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE THE TWO ROWS WERE DIFFERENT SHAPES AND 🧑 COULD SEE IT WITHOUT
+        /// BEING ABLE TO NAME IT. 2026-09-02, with a crop of the hosting drawer: **"make this look
+        /// better"**. Under one heading sat `[box][COPY]` and then `[CODE][box][COPY]`: **two rows
+        /// that do the same job, one indented 74 units further than the other, with their two COPY
+        /// buttons at two different x.** Every individual control was fine and the panel still
+        /// read as a mess, which is what a broken column always looks like.
+        ///
+        /// ⚠️ ONE CONSTANT, TWO CALLERS, so the columns cannot drift apart again. `docs/TODO.md`
+        /// § 94.7 fault 7 states the rule once already: **one column or none.**
+        /// </summary>
+        private const float ShareCaptionWidth = 76.0f;
+
+        /// <summary>How wide a COPY button is. ⚠️ Both rows share it so their two buttons land on
+        /// one x; see <see cref="ShareCaption"/>.</summary>
+        private const float ShareCopyWidth = 84.0f;
+
+        /// <summary>
+        /// How much room the address value actually has, added up rather than measured.
+        ///
+        /// ⚠️ THE ARITHMETIC: the drawer is 380 wide with a 14-unit inset either side, and the row
+        /// spends `ShareCaptionWidth` 76, `ShareCopyWidth` 84 and two 10-unit gaps. 380 - 28 - 76
+        /// - 84 - 20 = 172, less the tray's own 16-unit insets on each side, which leaves 140.
+        /// </summary>
+        private const float AddressRoom = 140.0f;
+
+        private static void ShareCaption(Transform row, string text)
+        {
+            var go = new GameObject($"{text}Caption");
+            go.transform.SetParent(row, false);
+
+            var element = go.AddComponent<LayoutElement>();
+            element.preferredWidth = ShareCaptionWidth;
+            element.minWidth = ShareCaptionWidth;
+            element.flexibleWidth = 0.0f;
+            element.minHeight = 44.0f;
+
+            var label = MenuKit.Label(go.transform, text, PaperKit.Caption, UiTheme.PaperInkSoft,
+                                      Vector2.zero, Vector2.zero, Vector2.zero,
+                                      TextAnchor.MiddleLeft);
+            label.horizontalOverflow = HorizontalWrapMode.Overflow;
+            label.raycastTarget = false;
+            MenuKit.Stretch(label.rectTransform, 0.0f);
         }
 
         private static Transform MiniSection(Transform parent, string text)
@@ -834,10 +1687,54 @@ namespace TumbangPreso.UI
         /// appearing in other people's browsers as a joinable game that nobody is in. That is the
         /// same leak `Cancel` closes for Escape.
         /// </summary>
-        private void SelectTab(bool lobby)
+        /// <summary>
+        /// Switches the screen between PRACTICE, RANKED and CUSTOM.
+        ///
+        /// ⚠️⚠️ IT REPLACED `SelectTab(bool)` AND THE EXTRA STATE IS THE WHOLE POINT. `LobbyMode`
+        /// carries 🧑's diagnosis in full; the short version is that START MATCH and QUICK MATCH
+        /// were two primaries with the same verb, and the fix is that matchmaking is a MODE rather
+        /// than a second button.
+        ///
+        /// ⚠️ RANKED AND CUSTOM ARE BOTH NETWORKED, so the transport question and the mode question
+        /// are no longer the same question. `SceneFlow.Networked` is still the one bit the rest of
+        /// the game reads, and it is derived here rather than passed in.
+        ///
+        /// ⚠️⚠️ AND RANKED FORCES HERO STRIKE, BECAUSE THE LADDER IS HERO STRIKE. `docs/TODO.md`
+        /// § 105: one ladder, five tiers, on that mode only. Letting a player select the ladder and
+        /// then quietly queue them into Classic would be a rating that means two different games.
+        /// </summary>
+        private void SelectMode(LobbyMode mode)
         {
-            if (lobby == IsLobby) return;
+            if (_chrome != null && _chrome.Mode == mode) return;
 
+            bool lobby = mode != LobbyMode.Practice;
+
+            if (mode == LobbyMode.Ranked)
+            {
+                SceneFlow.SelectedMode = GameMode.HeroStrike;
+                _format = 0;
+            }
+
+            // ⚠️ THE TRANSPORT ONLY CHANGES WHEN THE NETWORKED-NESS DOES. Switching between RANKED
+            // and CUSTOM is a change of what the screen is FOR, not of whether it is online, so
+            // tearing the session down between them would drop a player out of a room they are
+            // standing in to show them a ladder.
+            if (lobby == IsLobby)
+            {
+                MenuSfx.Click();
+                _chrome?.SetMode(mode);
+                Refresh();
+                RefreshQueueVisibility(mode);
+
+                if (mode == LobbyMode.Custom && !IsLive) AutoHost();
+                return;
+            }
+
+            SelectTab(lobby, mode);
+        }
+
+        private void SelectTab(bool lobby, LobbyMode mode)
+        {
             MenuSfx.Click();
 
             var net = NetSession.Instance;
@@ -857,19 +1754,33 @@ namespace TumbangPreso.UI
                 SetStatus("");
             }
 
-            // ⚠️ THE BOTS ROW IS RE-CLAMPED, because `DifficultyOptionCount` drops NONE in a
-            // networked lobby: three empty seats is a different feature with its own rules about
-            // who may sit in them. Switching to MULTIPLAYER while NONE was selected would
-            // otherwise leave an index one past the end of the list the row can cycle.
             _difficulty = Mathf.Clamp(_difficulty, 0, DifficultyOptionCount - 1);
 
             ApplyCastVisibility();
-            _chrome?.SetActive(lobby);
+            _chrome?.SetMode(mode);
 
             Refresh();
+            RefreshQueueVisibility(mode);
 
-            if (lobby) AutoHost();
+            // ⚠️ ONLY CUSTOM OPENS A ROOM. A ranked player is put into a room BY the matchmaker, so
+            // hosting one first would advertise a lobby nobody should join by code and would put
+            // the ladder queue behind a listen server it does not need.
+            if (mode == LobbyMode.Custom) AutoHost();
         }
+
+        /// <summary>
+        /// ⚠️⚠️ THE QUEUE CARD ONLY EXISTS IN RANKED. It is the drawer that grows out of the ranked
+        /// primary, so in the other two modes it is not a hidden control, it is a control that has
+        /// nothing to do. The note this replaces said the queue was a LOBBY control hidden on
+        /// practice, which was true when there were two tabs and one of them held both ways of
+        /// starting a game.
+        /// </summary>
+        private void RefreshQueueVisibility(LobbyMode mode)
+        {
+            if (_queueCard != null)
+                _queueCard.gameObject.SetActive(mode == LobbyMode.Ranked);
+        }
+
 
         /// <summary>
         /// Puts each seat's PICKED character in its chair and writes its plate.
@@ -903,6 +1814,9 @@ namespace TumbangPreso.UI
             var people = Roster.GetPeople(SceneFlow.SelectedMode);
 
             int defender = MatchRules.DefenderSlotFor(1);
+
+            // ⚠️ SET BY THE FIRST SEAT THAT IS NOT A PERSON. See the note where it is read.
+            bool explained = false;
 
             for (int seat = 0; seat < _castPicks.Length; seat++)
             {
@@ -938,7 +1852,21 @@ namespace TumbangPreso.UI
                 // literal `Player`, which `PlayerLabel` already treats as anonymous for everybody
                 // else; four plates reading `Player` is the exact fault that method's header
                 // records. Somebody who has not set a name is still unambiguously themselves.
-                string who = mine ? LocalName() : occupied ? PlayerLabel(info, seat) : "BOT";
+                string who = mine ? LocalName()
+                    : occupied ? PlayerLabel(info, seat)
+                    : AIController.BotsEnabled ? "BOT" : "OPEN SEAT";
+
+                // ⚠️⚠️ THE SEAT SAYS WHAT KIND OF SEAT IT IS, AND `docs/TODO.md` § 118.1 ROW 3 IS
+                // WHY. Three identical plates reading `BOT` could not tell a new player whether a
+                // bot was sitting there or whether the seat was free; both readings are
+                // reasonable and only one is true. `LobbyNameplates.SeatKind` turns that into a
+                // SURFACE difference (a person is a cream sheet, a bot is a recessed tray, an
+                // empty seat is an outline), which is what Among Us does and what § 118.3 says
+                // transfers, because *"the primary job of the lobby is getting three other people
+                // INTO it"*.
+                var kind = mine || occupied ? LobbyNameplates.SeatKind.Person
+                    : AIController.BotsEnabled ? LobbyNameplates.SeatKind.Bot
+                    : LobbyNameplates.SeatKind.Open;
 
                 // ⚠️ THE TICK IS THE HOST'S ANSWER FOR EVERY SEAT NOW, AND THE LOCAL SEAT IS
                 // STILL ALLOWED TO BE AHEAD OF IT. `LobbySeatInfo.Ready` travels with the roster,
@@ -958,11 +1886,77 @@ namespace TumbangPreso.UI
                     ? (!mine && !occupiedByOther && !matchRunning)
                     : (!GameLaunch.Spectator && !mine);
 
-                _nameplates.SetSeat(seat, who,
+                // ⚠️⚠️ THE TITLE COMES OFF THE REPLICATED SEAT FOR EVERY SEAT INCLUDING THIS
+                // ONE, AND READING THE LOCAL SETTINGS FOR THE LOCAL SEAT WOULD BE WRONG EVEN
+                // THOUGH IT WOULD USUALLY AGREE. The host authorises every banner, so the table
+                // is the answer to "what is this player allowed to wear"; the local settings are
+                // the answer to "what did they ask for". **If those two ever differ, the player
+                // needs to see the one everybody else sees**, or they are the only person in the
+                // room looking at a title that is not there. `docs/TODO.md` § 101.
+                string title = info != null
+                    ? ProgressionRules.LabelForRewardId(info.Banner?.TitleId)
+                    : "";
+
+                // ⚠️ AN UNOCCUPIED SEAT EXPLAINS ITSELF, IN PLACE, RATHER THAN IN A HINT
+                // ELSEWHERE ON THE SCREEN. The authored `SeatHint` used to carry this sentence
+                // from the bottom of a panel on the far side of the frame, which is § 94.7's
+                // *"a value drawn 1600 px from its label"*: the words were about the seats and
+                // were nowhere near them.
+                // ⚠️⚠️ ONE BOT EXPLAINS ITSELF AND THE OTHER TWO DO NOT. On
+                // `Logs/shots-runtime/Lobby-v55.png` the sentence *fills in if nobody joins* is on
+                // screen three times, in three plates, at three heights, which is three quarters
+                // of the words in the middle of the frame saying one thing. **A rule stated once
+                // is information and a rule stated three times is texture**, and 🧑's brief for
+                // this whole pass is *"I DONT WANT it to be overwhelming for htem"*.
+                //
+                // ⚠️ IT IS THE FIRST BOT SEAT RATHER THAN A FIXED INDEX, because which seats hold
+                // bots depends on who has joined: seat 0 can be a person and seat 3 a bot.
+                if (kind == LobbyNameplates.SeatKind.Bot)
+                    title = explained ? "" : "fills in if nobody joins";
+                else if (kind == LobbyNameplates.SeatKind.Open)
+                    title = explained ? "" : (canTake ? "tap to sit here" : "waiting for a player");
+
+                if (kind != LobbyNameplates.SeatKind.Person) explained = true;
+
+                // ⚠️⚠️ THE BUILD IS PUBLIC WITHOUT ADDING ANOTHER PLATE. Phase 10 requires
+                // opponents to be able to read a sidegrade before the fight, while § 92 is the
+                // receipt for solving every new fact with another box. The existing identity
+                // strip carries the optional title and the two selected skill names in one line.
+                if (SceneFlow.SelectedMode == GameMode.HeroStrike && info != null)
+                {
+                    string heroId = people[pick].Id;
+                    if (!string.IsNullOrEmpty(info.Custom))
+                        heroId = CustomCharacterRules.KitFor(
+                            CustomCharacterRules.DecodeWire(info.Custom).HeroKitId);
+                    // ⚠️⚠️ ONLY WHAT IS DIFFERENT ABOUT THIS OPPONENT, NEVER THE WHOLE BUILD.
+                    // Naming both slots meant every plate in the lobby carried
+                    // `Seismic Stomp / Demonic Carapace` before anybody had unlocked anything:
+                    // 273 px of the reader's attention spent saying "this player is normal", on a
+                    // strip 120 px wide. `LobbyStyleProbe` measured it. **A default is the
+                    // assumption, so printing it is noise**, and what Phase 10 owes the room is
+                    // the fact that somebody's ice sheet is going to be small and vicious rather
+                    // than wide and slow. A plate with no build line means a stock kit.
+                    var publicBuild = HeroBuildRules.Decode(info.Build, heroId);
+                    var first = HeroBuildRules.Equipped(publicBuild, heroId, 1, null);
+                    var second = HeroBuildRules.Equipped(publicBuild, heroId, 2, null);
+
+                    string buildLabel = "";
+                    if (first != null && !first.IsDefault) buildLabel = first.Name;
+                    if (second != null && !second.IsDefault)
+                        buildLabel = string.IsNullOrEmpty(buildLabel)
+                            ? second.Name : buildLabel + " / " + second.Name;
+
+                    if (!string.IsNullOrEmpty(buildLabel))
+                        title = string.IsNullOrEmpty(title)
+                            ? buildLabel : title + "  ·  " + buildLabel;
+                }
+
+                _nameplates.SetSeat(seat, who, title,
                                     ready: ready,
                                     taya: seat == defender,
                                     you: mine,
-                                    canTake: canTake);
+                                    canTake: canTake,
+                                    kind: kind);
             }
 
             // ⚠️ THE LINE IS CENTRED ON THIS MACHINE'S OWN SEAT. See `LobbyCast.SetLocalSeat`.
@@ -997,11 +1991,27 @@ namespace TumbangPreso.UI
             // ⚠️ THE SAME MARGIN AND WIDTH THE REST OF THE RIGHT-HAND SIDE USES. See
             // `LobbyChrome`'s harmony block: the player card, the lobby drawer and this share one
             // edge and one width, which is the difference between a column and three boxes.
-            _chat.PlaceBottomRight(48.0f, 40.0f, 460.0f);
-            _chat.gameObject.SetActive(IsLobby);
+            // ⚠️⚠️ THE CHAT IS A DRAWER NOW AND IT IS SHUT BY DEFAULT, WHICH IS `docs/TODO.md`
+            // § 118.1 ROW 1 CLOSED. It used to be a permanently open asphalt well about 70 units
+            // tall holding one 18-unit line, and because lines fill upward that line sat at the
+            // BOTTOM of it: two thirds of the surface was empty by construction, on the one part
+            // of the screen that had nothing else on it. **An empty log is not a screen element,
+            // it is a promise that something will appear**, and a promise does not need to be on
+            // screen while it is unkept.
+            //
+            // ⚠️ IT IS PLACED ABOVE THE BOTTOM RAIL RATHER THAN AT THE BOTTOM MARGIN. 40 + 192 is
+            // the rail, plus one `PaperKit.Gap`; the width is the room column's.
+            _chat.PlaceBottomRight(40.0f, 40.0f + 192.0f + PaperKit.Gap, 460.0f);
+            _chat.gameObject.SetActive(false);
 
-            // The drawer above it has to know how tall this ended up. See `LateUpdate`.
-            _chrome?.StackRight(_chat.PanelHeight);
+            if (_chrome?.ChatChip != null)
+            {
+                _chrome.ChatChip.onClick.AddListener(() =>
+                {
+                    bool open = !_chat.gameObject.activeSelf;
+                    _chat.gameObject.SetActive(open && IsLobby);
+                });
+            }
         }
 
         /// <summary>
@@ -1034,7 +2044,7 @@ namespace TumbangPreso.UI
         private static string LocalName()
         {
             string name = Settings.GameSettings.SanitiseName(
-                Settings.SettingsStore.Current.PlayerName);
+                GameServices.Account?.LobbyName ?? Settings.SettingsStore.Current.PlayerName);
 
             name = string.IsNullOrWhiteSpace(name) ? "" : name.Trim();
 
@@ -1087,10 +2097,19 @@ namespace TumbangPreso.UI
 
             var s = Settings.SettingsStore.Current;
 
-            MatchRpc.Instance?.IdentifyServerRpc(NetIdentity.Token, s.PlayerName,
-                                                 Mathf.Max(0, s.CharacterPick),
-                                                 Mathf.Max(0, s.CanPick),
-                                                 Mathf.Max(0, s.SlipperPick));
+            // ⚠️ THE ACCOUNT ID AND THE PROOF GO WITH EVERY IDENTIFY, NOT ONLY THE FIRST. This
+            // re-identify is how a pick change reaches the host, and a message that carried the
+            // handle without the proof would arrive as an unprovable claim and demote a player
+            // who did nothing but change their slipper. `docs/TODO.md` § 88.1c.
+            var account = GameServices.Account;
+            MatchRpc.Instance?.IdentifyServerRpc(
+                account?.ConnectionToken ?? NetIdentity.Token,
+                account?.LobbyName ?? s.PlayerName,
+                account != null && account.IsSignedIn ? account.PlayerId : "",
+                account?.HandleProof ?? "",
+                Mathf.Max(0, s.CharacterPick),
+                Mathf.Max(0, s.CanPick),
+                Mathf.Max(0, s.SlipperPick));
         }
 
         private void OpenJoinPanel()
@@ -1332,6 +2351,25 @@ namespace TumbangPreso.UI
 
             if (GameLaunch.Spectator) return;
 
+            // ⚠️⚠️ A GUEST IN THE LOBBY PRESSES READY HERE AGAIN, AND THE GUARD THAT USED TO
+            // REFUSE IT IS GONE ON PURPOSE. 🧑 2026-08-29, on the build carrying the removal:
+            // *"ready logic still not working ... ready in lobby dont work"*.
+            //
+            // The removal answered *"si host lang nakakapag start ng game, yung other players
+            // hindi na need mag ready"* by deleting the CONTROL as well as the gate, and that
+            // went one step too far: `LobbySeatInfo.Ready` still travels, `LobbyNameplates` still
+            // draws a tick over every seat, and `BroadcastReadyTally` still counts. What shipped
+            // was a lobby that DISPLAYS readiness with nothing anywhere that can set it — an
+            // affordance three players can see and none of them can move, which is a stronger
+            // reading of "doesn't work" than the missing button on its own.
+            //
+            // ⚠️⚠️ AND THE TWO INSTRUCTIONS DO NOT ACTUALLY CONFLICT, WHICH IS WHY BOTH ARE
+            // OBEYED. His sentence was about who STARTS a match, and READY does not start one:
+            // `MatchRpc.HostStartMatch` is reached only from `OnStartPressed`, only on the host,
+            // and no tally gates it. READY is now a signal to the host that you are set, which is
+            // what the tick over your head was always drawing. Nobody is blocked by forgetting it.
+            if (IsLobby && GameLaunch.Spectator) return;
+
             // ⚠️ THE PRESS CARRIES ITS STATE, because the button is a toggle and the message was
             // not: un-readying sent a second "I am ready", which the host's set swallowed as a
             // duplicate, so the tick could be turned off on this screen and nowhere else.
@@ -1369,11 +2407,63 @@ namespace TumbangPreso.UI
             Refresh();
         }
 
+        /// <summary>
+        /// PHASE 11: the player waited, nobody came, and they pressed START WITH BOTS.
+        ///
+        /// ⚠⚠ IT TURNS THE BOTS ON RATHER THAN ASSUMING THEY ARE. `AIController.BotsEnabled` is
+        /// false whenever the practice lobby is set to NONE, and it is a STATIC that survives the
+        /// scene: a player who turned bots off to practise alone, then queued, then accepted three
+        /// bots would otherwise be refused by `OnStartPressed`'s own guard, on a press whose whole
+        /// text is the word BOTS. The tier is left exactly where they set it.
+        ///
+        /// ⚠⚠ AND IT PRESSES THE LOBBY'S OWN PRIMARY BUTTON RATHER THAN REIMPLEMENTING IT.
+        /// `OnPrimaryPressed` already answers the only question that matters here, *"is this room
+        /// networked"*: a solo practice lobby loads the arena, and a networked one goes through
+        /// the ready gate and the host. Writing that branch a second time is exactly the shape
+        /// `docs/TODO.md` § 38.5 records costing three dead protocols, and the branch it would
+        /// have duplicated is the one that decides whether a match happens at all.
+        /// </summary>
+        private void StartAgainstBots()
+        {
+            if (_difficulty == AIController.NoBotsIndex)
+            {
+                _difficulty = (int)Core.Difficulty.Normal;
+                Settings.SettingsStore.Current.AiDifficulty = _difficulty;
+                Settings.SettingsStore.Save();
+            }
+
+            AIController.ApplyDifficulty(_difficulty);
+            AIController.BotsEnabled = true;
+
+            Refresh();
+            OnPrimaryPressed();
+        }
+
         private void OnStartPressed()
         {
+            // ⚠️⚠️ ONE BUTTON, TWO VERBS, DECIDED HERE. `LobbyMode` carries 🧑's diagnosis:
+            // **"dont quick match and start match do the same thing? kinda confusing no?"** The
+            // answer is that they are the same CONTROL in two modes rather than two controls in
+            // one, and this is the branch that makes that true. A ranked press must never reach
+            // `HostStartMatch`, which would load an arena with three bots and submit it to the
+            // ladder.
+            if (_chrome != null && _chrome.Mode == LobbyMode.Ranked)
+            {
+                _queueCard?.StartRanked();
+                return;
+            }
+
             var net = NetSession.Instance;
             if (net != null && net.IsNetworked && NetAuthority.IsHost)
             {
+                if (!AIController.BotsEnabled &&
+                    net.Lobby.OccupiedSeatCount() < Balance.PlayerCount)
+                {
+                    SetAlert("Bots are off. Fill all four player seats before starting.");
+                    Refresh();
+                    return;
+                }
+
                 var readyGate = FindFirstObjectByType<ReadyGate>();
                 if (readyGate != null)
                 {
@@ -1441,6 +2531,7 @@ namespace TumbangPreso.UI
             if (!NetAuthority.IsHost && SceneFlow.Networked) return;
 
             Cycle(ref _difficulty, DifficultyOptionCount, delta);
+            AIController.ApplyDifficulty(_difficulty);
             if (NetAuthority.IsHost && SceneFlow.Networked)
             {
                 MatchRpc.Instance?.SelectDifficultyServerRpc(_difficulty);
@@ -1453,9 +2544,53 @@ namespace TumbangPreso.UI
             Refresh();
         }
 
+        /// <summary>
+        /// PHASE 12: cycle the RULES row.
+        ///
+        /// ⚠️ ONLY THE HOST MAY CHANGE IT IN A NETWORKED ROOM, exactly like the map and the
+        /// mode. A format decides the win condition, so a peer that could set it could hand three
+        /// other people a different game between the lobby and the whistle.
+        /// </summary>
+        private void OnFormatCycle(int delta)
+        {
+            if (!NetAuthority.IsHost && SceneFlow.Networked) return;
+
+            Cycle(ref _format, FormatOptionCount, delta);
+            ApplyFormat();
+
+            if (SceneFlow.Networked && NetAuthority.IsHost)
+                MatchRpc.Instance?.SelectFormatServerRpc(_format);
+
+            MenuSfx.Click();
+            Refresh();
+        }
+
+        private void HandleFormatSynced(int format)
+        {
+            _format = Mathf.Clamp(format, 0, FormatOptionCount - 1);
+            ApplyFormat();
+            Refresh();
+        }
+
+        /// <summary>
+        /// ⚠️ THE SETTING IS WRITTEN HERE AND NOT IN `Refresh`, because `Refresh` runs on every
+        /// redraw including one caused by a REMOTE change. A peer that saved the host's choice
+        /// would open its own next practice lobby on somebody else's rules.
+        /// </summary>
+        private void ApplyFormat()
+        {
+            SceneFlow.SelectedFormat = FormatAt(_format);
+
+            if (SceneFlow.Networked && !NetAuthority.IsHost) return;
+
+            Settings.SettingsStore.Current.MatchFormat = _format;
+            Settings.SettingsStore.Save();
+        }
+
         private void HandleDifficultySynced(int difficulty)
         {
             _difficulty = Mathf.Clamp(difficulty, 0, DifficultyOptionCount - 1);
+            AIController.ApplyDifficulty(_difficulty);
             Refresh();
         }
 
@@ -1500,11 +2635,41 @@ namespace TumbangPreso.UI
             _readyCount = 0;
             _readyExpected = 0;
 
+            // ⚠️⚠️ THE SESSION IS STOPPED, NOT JUST REPORTED. 🧑 2026-08-29: *"if host leaves,
+            // nonhosts in lobby should auto leave that lobby as well"*. `NetSession
+            // .OnClientDisconnected` clears the lobby MODEL before raising this, so the seats and
+            // the peer table are already gone, but the transport is not: `_nm` has been shut down
+            // under us and `NetSession` still holds a session object that reports itself as
+            // having been networked. What the player was left in was the shape of a lobby with
+            // nothing behind it, and the next HOST or JOIN had to reconcile that rather than
+            // start clean.
+            //
+            // ⚠️ IT IS SAFE TO CALL WITH THE TRANSPORT ALREADY DOWN. `Stop` guards its shutdown
+            // with `_nm.IsListening` and everything after it is bookkeeping that is idempotent:
+            // `Lobby.Reset`, the seat latch, the relay fields. This is the same call BACK and
+            // Escape already make on the way out of a lobby, which is exactly the state being
+            // reproduced here, and the player is now in their OWN empty lobby.
+            //
+            // ⚠️ AFTER THE ALERT, NOT BEFORE. `Stop` writes "offline" over the session status,
+            // and `SetAlert` above is the one line that says WHY the lobby emptied.
+            var net = NetSession.Instance;
+            if (net != null) net.Stop();
+
             OpenJoinPanel();
             Refresh();
         }
 
-        private void HandleLobbyRosterSynced(LobbySeatInfo[] seats) => RefreshSeats();
+        /// <summary>
+        /// ⚠️ THE BUTTONS GO WITH THE SEATS NOW. A guest's button reads `WAITING FOR MALLOWS`,
+        /// and the name it draws comes out of this very table: the roster is what turns the
+        /// leader's peer id into a person. Refreshing only the plates left the button saying
+        /// `WAITING FOR HOST` until some unrelated lobby event happened to repaint it.
+        /// </summary>
+        private void HandleLobbyRosterSynced(LobbySeatInfo[] seats)
+        {
+            RefreshSeats();
+            RefreshActionButtons();
+        }
 
         private void HandleModeSynced(int mode) => Refresh();
 
@@ -1624,12 +2789,14 @@ namespace TumbangPreso.UI
                     }
                     else
                     {
-                        seatText = $"{SeatName(seat)}   · BOT";
+                        seatText = $"{SeatName(seat)}   · " +
+                                   (AIController.BotsEnabled ? "BOT" : "OPEN");
                     }
                 }
                 else
                 {
-                    seatText = $"{SeatName(seat)}   · BOT";
+                    seatText = $"{SeatName(seat)}   · " +
+                               (AIController.BotsEnabled ? "BOT" : "OPEN");
                 }
 
                 SetText($"SeatButton{seat}", seatText);
@@ -1695,14 +2862,49 @@ namespace TumbangPreso.UI
             if (skin != null)
             {
                 skin.Variation = GameLaunch.Spectator ? "WoodPrimaryButton" : "WoodButton";
-                skin.Apply();
-                skin.Refresh();
+
+                // ⚠️⚠️ AND THE PAPER SKIN IS WRITTEN TOO, BECAUSE THE `GodotButton` IS DISABLED BY
+                // THE TIME ANYBODY PRESSES THIS. `LobbyChrome.BuildRoomDrawer` runs
+                // `PaperDress.Screen` over this whole column, and the dress turns `GodotButton`
+                // off on the way past (it rewrites its own sprite on hover, so leaving it on
+                // flips the control back to wood under the pointer). So the two lines below were
+                // shouting into a component nobody reads: **SPECTATE and SPECTATING were the same
+                // picture**, and 🧑 said so with a crop of this drawer (*"SPECTATE"* among the
+                // things he could not read on it). It is `PlayerHub.Highlight`'s fault, on a
+                // second control, found by looking for the shape of it.
+                var paper = _spectate.GetComponent<PaperSkin>();
+                if (paper != null)
+                {
+                    paper.Surface = GameLaunch.Spectator
+                        ? PaperCraft.Surface.Live : PaperCraft.Surface.Token;
+                    paper.Rebuild();
+
+                    var chip = _spectate.GetComponent<PaperButton>();
+                    if (chip != null) chip.Restyle();
+                }
+                else
+                {
+                    skin.Apply();
+                    skin.Refresh();
+                }
             }
 
             var label = _spectate.GetComponentInChildren<Text>();
             if (label != null)
             {
                 label.text = GameLaunch.Spectator ? "SPECTATING" : "SPECTATE";
+
+                // ⚠️ AND THE LONGER WORD IS FITTED. `SPECTATING` is ten characters in a 140-unit
+                // chip that `SPECTATE`'s eight were sized for, and `MenuKit.Label` overflows
+                // rather than wrapping, so the extra two draw over the seat heading beside it.
+                // This file already carries the same fault one plate over
+                // (`SetHeadline`, *"reads LOBBY · YOU ARE HOSTIN"*).
+                //
+                // ⚠️ THE SIZE IS RESET FIRST. `MenuKit.Fit` only ever steps DOWN, so without this
+                // the one press that shows the longer word would shrink the shorter one for the
+                // rest of the launch. `SetHeadline` records the same reset one plate over.
+                label.fontSize = 18;
+                MenuKit.Fit(label, 140.0f - 20.0f);
             }
         }
 
@@ -1781,6 +2983,27 @@ namespace TumbangPreso.UI
             var net = NetSession.Instance;
             bool isNetworked = net != null && net.IsNetworked;
 
+            // ⚠️ THE DOOR'S LINE IS A VIEW OF THE CAREER, so it is redrawn wherever the screen is
+            // redrawn rather than once at build time. `LobbyChrome.Parts.RefreshSummary` records
+            // what the other answer costs: a label composed inside `Apply` shipped the authored
+            // placeholder for a whole session because `Apply` runs before the first `Refresh`.
+            RefreshProfileDoor();
+
+            // ⚠️⚠️ AND THE TIER PLATE IS THE SAME FAULT, WHICH IS WHY IT IS THE LINE BELOW.
+            // `RefreshTier` was called from exactly one place, the end of `InstallPlayerHub`, and
+            // its first statement is `if (_chrome.Mode != LobbyMode.Ranked) return;` — install
+            // happens in CUSTOM. **So the ladder plate was never written by anything**, ever, and
+            // `LobbyRanked-v58.png` and `-v59` both show the authored `UNRANKED` placeholder with
+            // an empty sentence under it. `docs/TODO.md` § 119.9 row 4 fixed the overlap that was
+            // hiding the note and nobody noticed the note was also never set.
+            //
+            // ⚠️ THE PARTY RULE IS THE POINT OF THAT PLATE. § 119.8: *"make it as well na u cant
+            // queue with a friend in ranked ladder or smth"*, and `PartyRules.RefusalLabel` writes
+            // a good sentence the player only ever saw AFTER pressing, which `CLAUDE.md` § 6.2
+            // calls the INTUITIVE failure. A plate that states it and is never filled in is the
+            // same failure with more code behind it.
+            RefreshTier();
+
             SceneFlow.SelectedMap = SceneFlow.Maps[Mathf.Clamp(_map, 0, SceneFlow.Maps.Length - 1)];
 
             // ⚠️ THE NAME AND TAGLINE COME FROM THE MAP REGISTRY, NOT FROM STRING SURGERY ON THE
@@ -1810,6 +3033,18 @@ namespace TumbangPreso.UI
 
             SetText("ModeValueLabel", SceneFlow.SelectedMode == GameMode.HeroStrike ? "HERO STRIKE" : "CLASSIC");
             SetText("DifficultyValueLabel", Difficulties[_difficulty]);
+            RefreshSettingsDropdowns();
+
+            if (_chrome?.FormatValue != null)
+            {
+                _chrome.FormatValue.text = FormatLabel(_format);
+
+                // ⚠️ FITTED, BECAUSE `LAST TSINELAS STANDING` IS 21 CHARACTERS IN A WELL SIZED
+                // FOR `ILALIM NG TULAY`. `MenuKit.Label` OVERFLOWS by default and the failure is
+                // silent: the value does not shrink, it draws over the arrow beside it.
+                // `CLAUDE.md` § 6.2c question 4.
+                MenuKit.Fit(_chrome.FormatValue, LobbyChrome.FormatValueWidth);
+            }
             SetText("DetailLabel", $"{mapName}   {tagline}");
 
             if (_preview != null)
@@ -1834,26 +3069,100 @@ namespace TumbangPreso.UI
             // `LobbyChrome.BuildCharacterButton` for why the split is the point of the redesign
             // rather than a formatting preference.
             if (_chrome != null) _chrome.SetLoadout(person, $"{can}  ·  {slipper}");
+
+            // ⚠⚠ THE SKILLS ROW SAYS WHAT IS EQUIPPED RATHER THAN THE WORD "LOADOUT" TWICE. The
+            // caption above it already says YOUR SKILLS; a row that then reads LOADOUT is
+            // § 94.7's *"the same number twice"* one control over. What a player wants to know
+            // before pressing it is which build they are about to take into the match.
+            if (_chrome != null)
+                _chrome.SetSkills(SceneFlow.SelectedMode == GameMode.HeroStrike, EquippedBuildSummary());
             else SetText("CharacterButton", $"{person} · {can} · {slipper}  ›");
 
             // Heading & hints
             if (IsLobby && isNetworked)
             {
-                SetText("SeatHeading", NetAuthority.IsHost ? "LOBBY  ·  YOU ARE HOSTING" : "LOBBY  ·  CONNECTED");
+                // ⚠️⚠️ THE GALLERY IS NAMED IN THE HEADING, BECAUSE IT HAS NOWHERE ELSE TO GO.
+                // 🧑 2026-08-29: *"make it so taht more than 4 ppl can join, like up to 8 ppl can
+                // join but only the first 4 are players and last 4 are spectators"*. There are
+                // four seat plates and a spectator holds no seat, so without this line four
+                // people can be in the room with nothing on screen saying they are there — and
+                // "did they join?" is the first question anybody asks.
+                //
+                // ⚠️ IT IS THE REPLICATED COUNT, NOT A LOCAL ONE. `LobbySeatInfo`'s header
+                // records that a client's own `LobbySession` is deliberately unpopulated, so a
+                // client counting its own peers would always draw zero. `MatchRpc.
+                // SpectatorsWatching` rides the roster broadcast.
+                //
+                // ⚠️ AND IT IS OMITTED AT ZERO RATHER THAN DRAWN AS `0 WATCHING`. A count of
+                // nothing is a row that teaches the player a number to ignore.
+                int watching = MatchRpc.SpectatorsWatching;
+                // ⚠️ THE WORD `LOBBY` IS GONE. It named the drawer inside the drawer, which is
+                // 🧑's *"I donnt want redundannt UI"*, and it was eight of the characters that
+                // would not fit. See the header row above for the arithmetic.
+                string room = NetAuthority.IsHost ? "YOU ARE HOSTING" : "CONNECTED";
+                if (watching > 0)
+                    room += watching == 1 ? "  ·  1 WATCHING" : $"  ·  {watching} WATCHING";
+
+                SetHeadline("SeatHeading", room, LobbyHeadingSize);
                 // ⚠️ SHORT ENOUGH TO FIT THE SLOT THE LAYOUT GIVES IT. The first version of these
                 // two ran to three wrapped lines in a box the vertical group had sized for two,
                 // and the third line was drawn underneath the seat rows. `FitEverything` now asks
                 // the group for the height as well, but a hint that needs three lines of a
                 // four-line panel is a hint nobody reads: the fix is both.
                 SetText("SeatHint", NetAuthority.IsHost
-                        ? "You pick the map and the mode. Click a free seat to move. Empty seats are bots."
-                        : "The leader picks the map and the mode. Click a free seat to move.");
+                        ? (AIController.BotsEnabled
+                            ? "You pick the map and the mode. Click a free seat to move. Empty seats are bots."
+                            : "Bots are off. Fill all four seats with players before starting.")
+                        : GameLaunch.Spectator
+                            ? "You are watching. Click a free seat to join the match."
+                            : "The leader picks the map and the mode. Click a free seat to move.");
 
                 // Network rows
                 if (_addressRow != null)
                 {
                     _addressRow.SetActive(true);
-                    if (_addressText != null) _addressText.text = HostAddress();
+
+                    if (_addressText != null)
+                    {
+                        _addressText.text = HostAddress();
+
+                        // ⚠️⚠️ THE ADDRESS IS THE ONE STRING ON THIS SCREEN THAT HAS TO
+                        // SURVIVE IN FULL, AND FIVE ATTEMPTS HAVE NOT MADE IT. A player reads it
+                        // off one machine and types it into another, so a truncated address is
+                        // not a cosmetic fault, it is the feature not working, on the screen
+                        // § 97 protects for the tournament case where there is no other way in.
+                        // `Logs/crops/address-final4.png` still reads `25.3.149.221:8`, with the
+                        // tail behind the COPY button rather than clipped: a legacy `Text` set to
+                        // Overflow neither shrinks nor clips, and the tray it sits in is opaque.
+                        //
+                        // ⚠️ THE LAYOUT IS FORCED BEFORE ANYTHING MEASURES THIS ROW. Without it
+                        // a fit reads whatever `sizeDelta` the box was built with rather than the
+                        // width its `HorizontalLayoutGroup` gives it, which is the trap
+                        // `ConvertedCharacterSelect.FitTabLabel` records and the reason the
+                        // address still read `25.3.149.22:` after the first fix.
+                        var addrRow = _addressRow.transform as RectTransform;
+                        if (addrRow != null) LayoutRebuilder.ForceRebuildLayoutImmediate(addrRow);
+
+                        // ⚠️ THE FIT IS AGAINST A COMPUTED WIDTH AND NOT AGAINST THE RECT,
+                        // because the rect lied in BOTH directions across four renders.
+                        // `MenuKit.Fit` picks the LARGEST size that fits the room it is handed, so
+                        // an unresolved layout grew the text straight back to 20 and a
+                        // half-resolved one shrank it to something arbitrary. `AddressRoom` is
+                        // that arithmetic written down instead of asked for: `RoomColumnWidth`
+                        // less its two insets, less this row's caption, its COPY button and the
+                        // two gaps between the three. It is right on the first frame as well as
+                        // the tenth. 12 as the floor and not 18, because a fixed-width value
+                        // being copied is usable slightly small and worth nothing cut in half.
+                        //
+                        // ⚠️⚠️ AND THE TWO LINES BELOW DEMONSTRABLY RUN AND DEMONSTRABLY DO
+                        // NOTHING. Changing the size here moved no pixel across four renders,
+                        // with and without a fit after it, against the rect and against this
+                        // computed width. **Something else is deciding this label's size and it
+                        // has not been found.** `docs/TODO.md` § 121.11 holds the open defect:
+                        // do not tune the number again, find the second writer first.
+                        _addressText.fontSize = PaperKit.Caption;
+                        MenuKit.Fit(_addressText, AddressRoom, 12);
+                    }
                 }
 
                 if (_codeRow != null)
@@ -1862,6 +3171,13 @@ namespace TumbangPreso.UI
                     _codeRow.SetActive(!string.IsNullOrEmpty(code));
                     if (_codeText != null) _codeText.text = code;
                 }
+
+                // ⚠⚠ THE CODE IS ON THE CARD AS WELL AS IN THE DRAWER, AND THAT IS NOT TWO
+                // PLACES SAYING ONE THING TWICE. The drawer's row is part of the JOIN surface,
+                // where you TYPE somebody else's code; the card's is the answer to *"how does my
+                // friend get in"*, which is the question a host has and which used to need three
+                // presses to answer. `LobbyChrome.BuildCodeButton` carries the journey.
+                _chrome?.SetCode(net?.Lobby?.JoinCode ?? "");
             }
             else if (IsLobby)
             {
@@ -1874,6 +3190,10 @@ namespace TumbangPreso.UI
 
                 if (_addressRow != null) _addressRow.SetActive(false);
                 if (_codeRow != null) _codeRow.SetActive(false);
+
+                // ⚠️ NO TRANSPORT MEANS NO CODE, and the row goes rather than showing an empty
+                // plate under an amber heading.
+                _chrome?.SetCode("");
             }
             else
             {
@@ -1884,6 +3204,10 @@ namespace TumbangPreso.UI
 
                 if (_addressRow != null) _addressRow.SetActive(false);
                 if (_codeRow != null) _codeRow.SetActive(false);
+
+                // ⚠️ PRACTICE HAS NO ROOM AND THEREFORE NO CODE. Leaving the row up on this tab
+                // would advertise a way in to a match nobody else can join.
+                _chrome?.SetCode("");
             }
 
             RefreshActionButtons();
@@ -1904,6 +3228,45 @@ namespace TumbangPreso.UI
             // inside `LobbyChrome.Apply`, which runs before this method has ever run, so it shipped
             // `CAPTURE` from the authored placeholder on a screen set to Hero Strike.
             _chrome?.RefreshSummary?.Invoke();
+
+            // ⚠️⚠️ ONE PASS RUNS NOW, AND THE DEFERRED ONES ARE THE SAFETY NET RATHER THAN THE
+            // PLAN. 🧑 2026-08-30, of the match settings drawer: *"size randomly changes when u
+            // click something, it gets bigger"*, *"the box size adjusts after a click, i want it
+            // to be good from the start"*.
+            //
+            // Every fit lived in `LateUpdate`, so the earliest a correct size could appear was
+            // the frame AFTER the drawer opened — and the frame after is the one the player is
+            // looking at when they open it. Nothing ever "randomly" corrected: the correction was
+            // always exactly one frame late, and the next thing the player clicked ran another
+            // `Refresh` whose deferred pass then landed on a rect that was real by then.
+            //
+            // ⚠️ IT IS THE SAME CALL, NOT A SECOND CODE PATH. `FitEverything` opens with
+            // `LayoutRebuilder.ForceRebuildLayoutImmediate` on the canvas rect, which is precisely
+            // the pass `LateUpdate` was waiting for Unity to run; running it here means the widths
+            // this method measures against are real on the frame the drawer is switched on. The
+            // same fix as § 83.6's `ConvertedScreen.ForceLayoutFor`, one screen over.
+            //
+            // ⚠️⚠️ AND THE DEFERRED PASSES STAY, FOR THE REASON § 83.6 GIVES: a canvas that is
+            // inactive on this frame cannot be rebuilt at all, which `LayoutRebuilder` states
+            // outright. `FitPasses` also exists because the layout chain does not converge in one
+            // pass, and `FitSelectorValuesTogether` resets to the authored size every time so a
+            // later, better-measured pass can undo an earlier one's pessimism. This call makes
+            // the first of those passes happen on frame zero; it does not remove the rest.
+            //
+            // ⚠⚠ AND IT IS SKIPPED WHILE THIS SCREEN IS NOT ACTIVE, WHICH IS NOT A TIDINESS
+            // GUARD. `MatchRunTests` and `PreviewDragProbe` both went red on it: closing the
+            // scene disables the name field, `InputField.OnDisable` fires its value-changed
+            // callback, that reaches `PublishName` and so `Refresh`, and `ForceUpdateCanvases`
+            // inside `FitEverything` then tries to start a coroutine on a GameObject Unity is
+            // in the middle of deactivating —
+            // *"Coroutine couldn't be started because the the game object 'LobbyIdentity' is
+            // inactive"*. An error log during teardown fails every PlayMode test in the file.
+            //
+            // ⚠ IT IS THE SAME RULE § 83.6 ALREADY WROTE DOWN, arriving from the other side: a
+            // canvas that is inactive on this frame cannot be rebuilt at all. Refreshing the
+            // STRINGS on a hidden screen is free and worth doing; measuring them is not possible
+            // and `_fitFrames` below already covers the frame it comes back.
+            if (isActiveAndEnabled) FitEverything();
 
             _fitFrames = FitPasses;
         }
@@ -1963,13 +3326,30 @@ namespace TumbangPreso.UI
         /// </summary>
         private void LateUpdate()
         {
-            // ⚠️⚠️ THE RIGHT-HAND RAIL IS RE-STACKED EVERY FRAME AND IT IS FREE. The chat panel
-            // collapses onto its content and GROWS AS LINES ARRIVE, so the LOBBY & SERVERS pill
-            // above it cannot be placed once: `LobbyChat.PanelHeight`'s note records what
-            // positioning it off the capacity instead of the panel produced, which is a pill
-            // floating in the middle of the frame with 160 px of road under it. `StackRight`
-            // returns immediately when the height has not moved.
-            if (_chrome != null && _chat != null) _chrome.StackRight(_chat.PanelHeight);
+            // ⚠️⚠️ NOTHING IS RE-STACKED HERE ANY MORE AND THAT IS THE POINT OF THE 2026-09-01
+            // REBUILD. The chat, the queue card and the settings body used to be three plates
+            // anchored to canvas corners, so each had to be positioned against the MEASURED height
+            // of the others every frame and `Logs/shots-runtime/Lobby-v36.png` still shipped a
+            // pill floating over the fourth character with 160 px of road under it. Each is a
+            // child of the rail column that opens it now, so the anchor does the arithmetic and
+            // there is none left to run. See `LobbyChrome.Drawer`.
+
+            // ⚠️ THE ACTION BUTTON RE-FITS ON THE FRAME AFTER A MEASURE THAT HAD NO RECT. See
+            // `SetFittedButtonLabel`: `rect.width` is 0 until the first layout pass, which is
+            // exactly the frame this panel is switched on, and the old code returned from there
+            // leaving the font at whatever the previous string left it. That is the whole of
+            // 🧑's *"small ass start match ... then randomly updates"* — nothing re-fitted, so the
+            // size corrected itself only when some unrelated lobby event happened to call the
+            // refresh again on a frame when the width was real.
+            //
+            // ⚠️ IT PIGGY-BACKS ON THIS `LateUpdate` RATHER THAN ADDING A SECOND ONE. Unity binds
+            // one message per component and a duplicate is a hard compile error, which is what a
+            // first attempt at this hit.
+            if (_refitPending)
+            {
+                _refitPending = false;
+                RefreshActionButtons();
+            }
 
             if (_fitFrames <= 0) return;
 
@@ -2153,6 +3533,102 @@ namespace TumbangPreso.UI
         /// the host, the one person who has to decide when to start, was the one person who could
         /// not see how many people were ready.
         /// </summary>
+        /// <summary>
+        /// Writes a button's label and sizes the type to the plate: up to <paramref name="maxSize"/>
+        /// when the string is short, stepping down only far enough to fit when it is long.
+        ///
+        /// ⚠️⚠️ IT GROWS AS WELL AS SHRINKS, WHICH `SetHeadline` DOES NOT. Two complaints about
+        /// this one button on 2026-08-29 and they pull opposite ways: *"fix this overflow"*, with
+        /// WAITING FOR 4 PLAYERS drawn off both ends of the wood, and *"start match text too
+        /// small in practice"*, with START MATCH floating in the middle of a large empty plate.
+        /// A shrink-only fit answers the first and makes the second permanent, because the
+        /// authored size was picked for the long string and every short one then inherits it.
+        ///
+        /// ⚠️ THE SIZE IS RE-DERIVED FROM `maxSize` ON EVERY CALL, NOT FROM THE LABEL'S CURRENT
+        /// SIZE. Reading the live size would ratchet: the long string shrinks the label, the
+        /// short string is fitted from the already-shrunk size, and after a few swaps between the
+        /// two states the button is unreadable. Every call starts from the same ceiling.
+        ///
+        /// ⚠️ A RECT THAT HAS NOT BEEN LAID OUT REPORTS 0 AND IS LEFT ALONE. Fitting against a
+        /// zero width would drive the font to its floor on the first frame, which is the trap
+        /// `ConvertedScreen.SetHeadline` records for the CharacterSelect ribbon.
+        /// </summary>
+        private void SetFittedButtonLabel(string nodeName, string value, int maxSize)
+        {
+            var node = Node(nodeName);
+            if (node == null) return;
+
+            var text = node.GetComponent<Text>() ?? node.GetComponentInChildren<Text>();
+            if (text == null) return;
+
+            text.text = value;
+            text.horizontalOverflow = HorizontalWrapMode.Overflow;
+
+            // ⚠️⚠️ THE RESET IS ABOVE THE GUARD, AND HAVING IT BELOW IS THE WHOLE OF "small ass
+            // start match". 🧑 2026-08-29, with a screenshot of START MATCH drawn tiny in a full
+            // size plate: *"small ass start match also sometimes the match setttings ui become
+            // small then randomly updates"*.
+            //
+            // This method used to read `if (room <= 1) return;` BEFORE `fontSize = maxSize`, so a
+            // call that landed on a frame where the rect was not laid out yet returned leaving
+            // the font at **whatever the previous call left it**. The previous call is very often
+            // `WAITING FOR 4 PLAYERS`, which is 21 characters and gets stepped down to the 18
+            // floor; the seat then fills, this fires with `START MATCH`, the rect is not ready,
+            // and the short string inherits the long string's shrunken size and keeps it.
+            //
+            // ⚠️ `rect.width` IS 0 UNTIL THE FIRST LAYOUT PASS, which is exactly the frame a panel
+            // is switched on — the same trap `ModelPreview.EnsureTexture` carries a note about and
+            // the same one that makes `LobbyJoinPanel`'s boxes vanish while its headings draw. So
+            // this path is not rare, it is the normal case for the first refresh after opening.
+            //
+            // ⚠️ AND IT IS ALSO THE "randomly updates" HALF. Nothing was re-fitting; the size
+            // corrected itself only when some unrelated lobby event happened to call this again on
+            // a frame when the rect was valid, which reads exactly like the UI updating at random.
+            // The retry below makes that deterministic instead of incidental.
+            text.fontSize = maxSize;
+
+            // ⚠️⚠️ THE LAYOUT IS FORCED BEFORE IT IS MEASURED, SO THE FIT IS RIGHT ON FRAME ONE.
+            // 🧑 2026-08-29, off the character screen: *"first time u open pic 1 it overflows and
+            // auto fixes itself ... pls make it fixed from the start"*. The retry below made the
+            // correction DETERMINISTIC and left it one frame LATE, which is the frame the player
+            // is looking at when a panel opens.
+            //
+            // ⚠️ `ForceRebuildLayoutImmediate` IS ASKED OF THE PARENT, NOT OF THE LABEL. A `Text`
+            // inside a `HorizontalLayoutGroup` is sized BY that group, so rebuilding the child
+            // alone re-runs a pass that reads a width nobody has written yet. Walking up to the
+            // topmost rect with a layout group on it is what makes the number real.
+            //
+            // ⚠️ AND THE RETRY BELOW STAYS. A rect can still report 0 when the whole canvas is
+            // inactive on this frame, which no amount of forcing fixes, and that is exactly what
+            // `LayoutRebuilder` documents. Forcing turns the deferred path from the NORMAL case
+            // into the rare one; it does not remove it.
+            ForceLayoutFor(text.rectTransform);
+
+            float room = text.rectTransform.rect.width;
+
+            if (room <= 1.0f)
+            {
+                // Left at the authored size, which is correct for every short string and merely
+                // one frame wide for a long one, and asked to measure again once there is a rect.
+                _refitPending = true;
+                return;
+            }
+
+            while (text.fontSize > MinButtonFontSize && text.preferredWidth > room)
+                text.fontSize -= 2;
+        }
+
+        /// <summary>Set when a fit was asked for before the layout could answer. Read by the
+        /// existing <c>LateUpdate</c>. See <see cref="SetFittedButtonLabel"/>.</summary>
+        private bool _refitPending;
+
+        /// <summary>The floor the fit above will not go under, so a very long state stays
+        /// readable rather than shrinking to nothing.</summary>
+        private const int MinButtonFontSize = 18;
+
+        /// <summary>What a lobby action button may grow to when its string is short.</summary>
+        private const int MaxButtonFontSize = 40;
+
         private void RefreshActionButtons()
         {
             var primNode = Node("PrimaryButton");
@@ -2161,10 +3637,43 @@ namespace TumbangPreso.UI
             bool live = IsLive;
             bool host = NetAuthority.IsHost;
 
-            // Only guests press READY: the host has START MATCH in the same slot. Showing the
-            // host inside the denominator produced the permanent 3/4 state when all three guests
-            // had readied, even though the host had no READY button to supply the fourth vote.
-            string tally = _readyExpected > 0 ? $"   {_readyCount}/{_readyExpected}" : "";
+            // ⚠️⚠️ THE LADDER OWNS THE SLOT WHILE IT IS SELECTED, AND THE OTHER TWO GO. `LobbyMode`
+            // and `LobbyChrome.BuildActionSlot`: one primary, always in the same place, and its
+            // LABEL is what changes with the mode. A ranked player must not be able to reach
+            // `OnPrimaryPressed`, which readies or starts a local match.
+            bool ranked = _chrome != null && _chrome.Mode == LobbyMode.Ranked;
+
+            if (ranked)
+            {
+                // ⚠️⚠️ THE LADDER BORROWS `StartButton` RATHER THAN OWNING A BUTTON. See
+                // `LobbyChrome.BuildActionSlot`: a third control drawn by `MenuKit.WoodButton`
+                // came out a rounded green rectangle where every other mode has 🧑's authored
+                // chamfered slab, so "one primary, always in the same place" was true of the
+                // position and false of the object. `OnStartPressed` dispatches on the mode.
+                if (primNode != null) primNode.gameObject.SetActive(false);
+                if (startNode == null) return;
+
+                startNode.gameObject.SetActive(true);
+
+                bool queueing = _queueCard != null && _queueCard.IsQueueing;
+                bool signedIn = GameServices.Account != null && !GameServices.Account.IsGuest;
+
+                SetFittedButtonLabel("StartButton",
+                    queueing ? "SEARCHING..." : "FIND A RANKED MATCH", MaxButtonFontSize);
+
+                var rankedButton = startNode.GetComponent<Button>();
+                if (rankedButton != null) rankedButton.interactable = signedIn && !queueing;
+
+                return;
+            }
+
+            // ⚠️⚠️ NO READY TALLY ON EITHER BUTTON SINCE 2026-08-29. 🧑: *"si host lang nakakapag
+            // start ng game, yung other players hindi na need mag ready"*. Nothing counts those
+            // votes any more, so drawing "1/3" beside START MATCH described a gate that does not
+            // exist and read as three seats still owing something before the host could press it.
+            // `_readyCount` and `_readyExpected` are still written by `HandleLobbyReadyChanged`,
+            // because the host still broadcasts them and the in-match `ReadyGate` runs on the
+            // same message; they are simply not drawn where they would mean a requirement.
 
             if (IsLobby && live && host)
             {
@@ -2172,15 +3681,32 @@ namespace TumbangPreso.UI
                 if (startNode != null)
                 {
                     startNode.gameObject.SetActive(true);
-                    SetText("StartButton", $"START MATCH{tally}");
+                    bool fullWithoutBots = AIController.BotsEnabled ||
+                                           (NetSession.Instance != null &&
+                                            NetSession.Instance.Lobby.OccupiedSeatCount() >= Balance.PlayerCount);
+                    // ⚠️⚠️ FITTED, NOT JUST SET. 🧑 2026-08-29, over this exact plate:
+                    // *"fix this overflow"*. "START MATCH" is 11 characters and fits the authored
+                    // button; "WAITING FOR 4 PLAYERS" is 21 and ran out of both ends of the wood.
+                    // `SetText` writes the string and asks nothing about the box, and every
+                    // converted label carries `m_HorizontalOverflow: 1`, so the overflow is
+                    // silent by construction. `SetHeadline` is the fitting form and its own
+                    // header records this same trap on the CharacterSelect ribbon.
+                    //
+                    // ⚠️ THE AUTHORED SIZE IS PASSED SO THE SHORT STRING IS UNAFFECTED. It only
+                    // steps down while the text is wider than the plate, so START MATCH still
+                    // draws at full size and only the long state shrinks.
+                    SetFittedButtonLabel("StartButton", fullWithoutBots
+                        ? "START MATCH"
+                        : "WAITING FOR 4 PLAYERS", MaxButtonFontSize);
                     var btn = startNode.GetComponent<Button>();
-                    if (btn != null) btn.interactable = true;
+                    if (btn != null) btn.interactable = fullWithoutBots;
                 }
                 return;
             }
 
             if (startNode != null) startNode.gameObject.SetActive(false);
             if (primNode == null) return;
+
 
             primNode.gameObject.SetActive(true);
             var prim = primNode.GetComponent<Button>();
@@ -2201,12 +3727,74 @@ namespace TumbangPreso.UI
                 return;
             }
 
+            // ⚠️⚠️ A GUEST HAS NO READY BUTTON. READY had already stopped STARTING anything
+            // (`MatchRpc.HostPeerLeft` records the gate being taken off it), so what was left was
+            // a button three players had to press for a tally nothing read: a ceremony that could
+            // only fail, because a lobby where one person forgets to press it looks identical to
+            // a lobby waiting on a fourth player who never joined.
+            //
+            // ⚠️ RELABELLED RATHER THAN HIDDEN. It is the only control in this slot, and an empty
+            // slot where three of the four players read the game's state looks like a screen that
+            // failed to build. Saying who everybody is waiting for is the useful thing left.
+            //
+            // ⚠️ THE READY WIRE IS NOT DELETED. `DeclareReadyServerRpc`, `BroadcastReadyTally`
+            // and `ReadyGate` are what the PRE-ROUND gate inside a match runs on, which is a
+            // different gate with a different job. Only the LOBBY stops asking.
+            //
+            // ⚠️⚠️ THE PARAGRAPH ABOVE IS HISTORY AS OF LATER THE SAME DAY: THE BUTTON IS A
+            // WORKING READY AGAIN. 🧑, on the build that shipped the removal: *"ready for clients
+            // is broken, it js says waiting for host"*, and then *"ready logic still not working
+            // ... ready in lobby dont work"*. `OnPrimaryPressed` carries the reconciliation of
+            // that with his earlier *"si host lang nakakapag start"*: READY signals, it does not
+            // start, and the host's START is still the only thing that loads an arena.
+            //
+            // ⚠️ SO IT IS INTERACTABLE, AND A SPECTATOR'S IS NOT. A spectator holds no seat, has
+            // no tick to set and cannot be waited for; `LobbySession.ReadyVoterCount` excludes
+            // them for the same reason, so a pressable button there would be the dead control
+            // this branch just stopped drawing for everybody else.
+            //
+            // ⚠️ THE READY STATE NAMES THE HOST, WHICH IS WHAT THE OLD LABEL WAS TRYING TO DO.
+            // Once you have readied, the honest thing on the button is who the room is waiting
+            // for, and pressing it again takes the tick back off.
+            //
+            // ⚠️ FITTED, NOT `SetText`. A player name is unbounded where `WAITING FOR HOST` was
+            // 16 fixed characters, and every converted label carries `m_HorizontalOverflow: 1`,
+            // so an overflow here would be silent. Same trap the START plate above records.
             string label = GameLaunch.Spectator
                 ? "SPECTATING"
-                : _localReady ? "CANCEL READY" : "READY";
+                : _localReady ? $"WAITING FOR {HostLabel()}" : "READY";
 
-            SetText("PrimaryButton", $"{label}{tally}");
+            SetFittedButtonLabel("PrimaryButton", label, MaxButtonFontSize);
             if (prim != null) prim.interactable = !GameLaunch.Spectator;
+        }
+
+        /// <summary>
+        /// The lobby leader's name in capitals, or `HOST` when this peer cannot yet name them.
+        ///
+        /// ⚠️ THE LEADER IS LOOKED UP IN THE ROSTER RATHER THAN ASSUMED TO BE PEER 0. Peer 0 is
+        /// the listen host and is the right answer in every game he has played, and it is the
+        /// wrong answer on the Linux dedicated build, where the server holds no seat and
+        /// `LobbySession.IsSeatlessReferee` keeps it out of the election entirely. Asking the
+        /// roster costs a loop over four entries and is correct on both.
+        ///
+        /// ⚠️ AND IT FALLS BACK RATHER THAN DRAWING A BLANK. The leader id arrives on `Seating`,
+        /// which a peer gets once, so there is a window before it in which the honest answer is
+        /// the role rather than the person.
+        /// </summary>
+        private static string HostLabel()
+        {
+            var net = NetSession.Instance;
+            int leader = net != null ? net.Lobby.LeaderPeerId : -1;
+            if (leader < 0) return "HOST";
+
+            for (int seat = 0; seat < Balance.PlayerCount; seat++)
+            {
+                var info = MatchRpc.Instance?.GetSeatInfo(seat);
+                if (info != null && info.Occupied && info.PeerId == leader)
+                    return PlayerLabel(info, seat).ToUpperInvariant();
+            }
+
+            return "HOST";
         }
 
         /// <summary>
@@ -2277,6 +3865,7 @@ namespace TumbangPreso.UI
 
             MatchRpc.OnMapChanged -= HandleMapSynced;
             MatchRpc.OnDifficultyChanged -= HandleDifficultySynced;
+            MatchRpc.OnFormatChanged -= HandleFormatSynced;
             MatchRpc.OnLobbyPicksSynced -= HandleLobbyPicksSynced;
             MatchRpc.OnLobbyRosterSynced -= HandleLobbyRosterSynced;
             MatchRpc.OnLobbyReadyChanged -= HandleLobbyReadyChanged;

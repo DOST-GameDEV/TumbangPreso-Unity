@@ -112,18 +112,24 @@ namespace TumbangPreso
         }
 
         /// <summary>
-        /// ⚠️⚠️ `PlayingPeerCount` WANTS A PEER ID AND WAS BEING HANDED A SEAT. Its argument is
-        /// only there so the local peer still counts while its own spectator flag is in flight,
-        /// and it compares that argument against `PeerRecord.PeerId`. Passing `LocalSlot` made
-        /// the comparison land on whichever CLIENT happened to share a number with this peer's
+        /// ⚠️⚠️ `PlayingPeerCount` TOOK A PEER ID AND WAS ONCE HANDED A SEAT, AND THE ARGUMENT
+        /// IS GONE NOW. It existed so the local peer counted while its own spectator flag was
+        /// in flight; it compared against `PeerRecord.PeerId`, and passing `LocalSlot` made the
+        /// comparison land on whichever CLIENT happened to share a number with this peer's
         /// chair, so a host in seat 1 forgave a spectating client 1 and a spectating host in
         /// seat 1 was itself dropped from its own quorum. Same fault class as the peer-versus-seat
         /// collision in `DeclareReady` above, one call frame further out.
+        ///
+        /// ⚠️ THE EXEMPTION ITSELF THEN TURNED OUT TO BE THE BUG — it could only ever count a
+        /// peer already flagged a spectator, which is the one peer `Update` below refuses to
+        /// vote for — so a spectating HOST hung its own gate. `LobbySession.PlayingPeerCount`
+        /// carries the report and the arithmetic. **Do not reintroduce the argument**: this note
+        /// is kept only so the seat-versus-peer collision above is not rediscovered from scratch.
         /// </summary>
         private int ExpectedReadyCount()
         {
             var lobby = Net.NetSession.Instance?.Lobby;
-            return lobby?.PlayingPeerCount(NetAuthority.LocalPeerId) ?? 1;
+            return lobby?.PlayingPeerCount() ?? 1;
         }
 
         private void RaiseNetReady()
@@ -197,6 +203,37 @@ namespace TumbangPreso
             }
 
             if (_countingDown || !_awaitingLocalReady) return;
+
+            // ⚠️⚠️ A SPECTATOR'S R IS THE REPLAY KEY AND MUST NOT ALSO BE THE READY KEY.
+            // 🧑 2026-08-29: *"r for spectatotr does ready and replay, conflict"*.
+            //
+            // `CLAUDE.md` § 4 permits the spectator set to reuse gameplay keys, and the whole
+            // permission rests on one sentence: *"a spectator has no body, no seat and no
+            // `CharacterMotor`, so while watching every gameplay action is inert"*. READY was the
+            // exception nobody checked. This method reads the `ReadyUp` action directly off the
+            // input asset rather than through a body, so the press fired for a watcher too and R
+            // rolled the replay AND submitted a vote in the same frame.
+            //
+            // ⚠️⚠️ AND IT WAS A CORRECTNESS BUG, NOT ONLY A CONTROL ONE, WHICH IS WHY THE GATE
+            // IS HERE RATHER THAN IN THE BINDING TABLE. `ExpectedReadyCount` counts
+            // `LobbySession.PlayingPeerCount`, which EXCLUDES spectators by construction — but
+            // `DeclareReady` keyed the set on the sender's peer id and asked no such question, so
+            // a watcher's vote was added to a quorum that had never counted them. Three people
+            // watching a two-player lobby could therefore start the match on their own, and the
+            // two who were actually playing never pressed anything. The set and the total have to
+            // be drawn from the same population.
+            //
+            // ⚠️ IT IS THE SAME TEST `MatchInstaller` USES FOR THE CAMERA, and deliberately not
+            // `_local == null`: under `GameLaunch.AllBots` the gate is handed seat 0 as a stand-in
+            // `local` (`seats[Mathf.Max(0, HumanSeat)]`), so a null check would let an all-bots
+            // run vote with a body nobody is driving. `docs/TODO.md` § 34 is that same clamp
+            // causing a different fault one surface over.
+            //
+            // ⚠️ THE PROBE PATH IS UNAFFECTED. `NetAutomationProbe` calls
+            // `MatchRpc.DeclareReadyServerRpc` itself rather than pressing this action, which is
+            // what keeps `-tp-autostart` working on an all-bots peer that this gate now ignores.
+            if (GameLaunch.Spectator) return;
+
             if (_readyUp == null || !_readyUp.WasPressedThisFrame()) return;
 
             if (_local != null) ReadyGestureRequested?.Invoke(_local);

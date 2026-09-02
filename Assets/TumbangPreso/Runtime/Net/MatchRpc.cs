@@ -91,6 +91,18 @@ namespace TumbangPreso.Net
                         // draws the same tick on the host's screen that the broadcast puts on
                         // everybody else's. See `LobbySeatInfo.Ready`.
                         Ready = _lobbyReady.Contains(peer.PeerId),
+
+                        // ⚠️⚠️ THE BANNER, THE LOOK AND THE CUSTOM CHARACTER ARE ANSWERED HERE
+                        // TOO, AND THE FIRST TWO WERE NOT. `MatchInstaller.BuildSeat` calls
+                        // `GetSeatInfo`, and on the HOST that is this branch rather than the
+                        // replicated table, so anything missing from this object is a field the
+                        // host draws blank on its own screen while every client draws it
+                        // correctly. That is the hardest kind of cosmetic bug to see, because the
+                        // machine reporting it is the only one it is wrong on.
+                        Banner = peer.Banner ?? new BannerSelection(),
+                        Look = peer.Look ?? "",
+                        Custom = peer.Custom ?? "",
+                        Build = peer.Build ?? "",
                     };
                 }
                 return new LobbySeatInfo { Seat = slot, Occupied = false };
@@ -114,6 +126,74 @@ namespace TumbangPreso.Net
             }
             DontDestroyOnLoad(gameObject);
         }
+
+        /// <summary>
+        /// How the two POSITION streams are sent, and the only two messages in this file that do
+        /// not go reliably.
+        ///
+        /// ⚠️⚠️ THE DEFAULT IS `ReliableSequenced` AND IT WAS BEING TAKEN, WHICH IS THE WHOLE OF
+        /// 🧑 2026-08-29: *"idk if its bcz we are using hamachi or its genuinely broken but the
+        /// bots go out of bounds and lan is highly buggy ... for online servers it isnt like
+        /// that"*. `SendNamedMessageToAll` has a `NetworkDelivery` parameter with a default, and
+        /// every call in this file omitted it, so `SyncUnit` went out reliably at one message per
+        /// body per fixed step: four seats at 50 Hz is 200 guaranteed-delivery messages a second
+        /// carrying nothing but a pose that the next one replaces.
+        ///
+        /// ⚠️⚠️ RELIABLE IS NOT "THE SAME BUT SAFER" FOR A SNAPSHOT STREAM, IT IS ACTIVELY WORSE,
+        /// and head-of-line blocking is why. A sequenced channel may not deliver message N+1
+        /// until N has arrived, so ONE lost packet holds up every pose behind it until the
+        /// retransmit lands, and then the whole backlog arrives at once. On the receiving end
+        /// that is a body frozen for a beat and then moved a long way in one step, and
+        /// `CharacterMotor.ApplyNetworkTransform` treats a jump over 3 m as a correction and
+        /// SNAPS: through a wall, through the chalk, wherever the straight line goes. That is
+        /// "the bots go out of bounds" exactly, and the same burst at smaller amplitudes is the
+        /// jitter reported beside it. Retransmitting a pose that has already been superseded is
+        /// spending the link to deliver something the receiver will discard.
+        ///
+        /// ⚠️ WHICH IS ALSO WHY LAN WAS THE HALF THAT BROKE. Nothing here is LAN-specific; a
+        /// reliable stream at this rate simply needs a link with very little loss to look fine,
+        /// and Hamachi is a VPN with a smaller MTU and real packet loss. The relay path was not
+        /// better designed, it was luckier.
+        ///
+        /// ⚠️ SEQUENCED RATHER THAN BARE UNRELIABLE, so an older pose that overtakes a newer one
+        /// is DROPPED instead of applied. Both messages carry a complete state rather than a
+        /// delta, so a lost one costs 20 ms of smoothing and nothing else, but an out-of-order
+        /// one applied would drag the body backwards.
+        ///
+        /// ⚠️⚠️ AND EVERY OTHER MESSAGE IN THIS FILE STAYS RELIABLE. Chat, seating, the start
+        /// whistle, the ready tally, the slipper's state changes and the lata going over are
+        /// EVENTS: each one happens once and nothing later repeats it, so a dropped one is a
+        /// point never scored or a match that never begins. Only a stream that fully replaces
+        /// itself every step can afford to lose a packet, and exactly two of them do.
+        /// </summary>
+        private const NetworkDelivery PoseDelivery = NetworkDelivery.UnreliableSequenced;
+
+        /// <summary>
+        /// How the finished match record is sent, and the other place in this file that does
+        /// not take the default.
+        ///
+        /// ⚠️⚠️ IT IS FRAGMENTED BECAUSE THE MESSAGE IS BIGGER THAN A PACKET, AND THE DEFAULT
+        /// WOULD NOT HAVE FAILED LOUDLY. Every other message in this file is tens of bytes;
+        /// a `MatchRecord` is four players times twenty-six fields of JSON, which MEASURES
+        /// **2312 bytes** at full length, which is past the transport's single-packet payload.
+        /// `ReliableSequenced` cannot split a message, so an oversized one is refused by the
+        /// transport rather than delivered in pieces: the host logs a line nobody reads and
+        /// every client silently gets no end-of-match summary and no career entry, which is
+        /// exactly the failure the protocol bump for this message was meant to make
+        /// impossible. `ReliableFragmentedSequenced` is the pipeline that exists for this.
+        ///
+        /// ⚠️ AND MTU IS SMALLER THAN THE NUMBER YOU WOULD GUESS ON THE LINK THEY ACTUALLY
+        /// PLAY ON. `PoseDelivery`'s note above records that Hamachi is a VPN with a smaller
+        /// MTU and real loss, and that the relay path *"was not better designed, it was
+        /// luckier"*. A payload sized against a 1500-byte assumption is the same mistake one
+        /// layer up.
+        ///
+        /// ⚠️ STILL RELIABLE AND STILL SEQUENCED. It is an EVENT that happens once per match
+        /// and nothing later repeats it, which is the same test `PoseDelivery`'s note applies
+        /// to everything else here: only a stream that fully replaces itself every step can
+        /// afford to lose a packet, and a match record is the opposite of that.
+        /// </summary>
+        private const NetworkDelivery RecordDelivery = NetworkDelivery.ReliableFragmentedSequenced;
 
         private void OnEnable() => NetSession.ClientDisconnected += HandleClientDisconnected;
 
@@ -151,7 +231,39 @@ namespace TumbangPreso.Net
         /// </summary>
         private void HandleClientDisconnected(string reason)
         {
-            UI.SceneFlow.Go(UI.SceneFlow.MultiplayerSetup);
+            // ⚠️⚠️ THE LOBBY, NOT `MultiplayerSetup`, AND THIS LINE IS THE WHOLE OF 🧑 2026-08-29:
+            // *"sometimes ppl go back to Old ui when they disconnect, they shoudl stay in lobby
+            // screen but js get kicked out of current lobby and go back to their own"*.
+            //
+            // `MultiplayerSetup` is the retired pre-lobby form. `SceneFlow.MultiplayerSetup`'s
+            // own note says nothing has navigated to it since § 68.5 and that it is kept only so
+            // the redesign can be reverted in one line: this was the last caller, and it was
+            // dropping a disconnected player into a screen that is no longer part of the game.
+            // It read as "sometimes" because it is a race. `ConvertedMatchSetup` subscribes to
+            // the SAME event and handles it correctly in place, so which of the two a player got
+            // depended on handler order and on whether the lobby screen happened to be loaded.
+            //
+            // ⚠️ ALREADY ON THE LOBBY MEANS DO NOTHING, and that is not an optimisation. The
+            // lobby's own handler shows the reason, clears the ready tally and opens the join
+            // panel; reloading the scene from here would destroy the alert it had just written
+            // and hand the player a silent screen instead of the one actionable line they get
+            // (a protocol mismatch is a thing they can fix). Two owners, one event, and the one
+            // that is on screen wins.
+            //
+            // ⚠️ `Networked` IS SET SO THE LOBBY COMES UP AS A LOBBY. `ConvertedMatchSetup`
+            // derives `IsLobby` from it, and arriving with it false would land the player on the
+            // PRACTICE tab with no chat, no seats and no way back to multiplayer except the tab
+            // bar. `NetSession.OnClientDisconnected` has already called `Lobby.Reset()` by the
+            // time this runs, so what they arrive in is their OWN empty lobby, which is exactly
+            // what was asked for.
+            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
+                == UI.SceneFlow.MatchSetup)
+            {
+                return;
+            }
+
+            UI.SceneFlow.Networked = true;
+            UI.SceneFlow.Go(UI.SceneFlow.MatchSetup);
         }
 
         private void OnDestroy()
@@ -197,12 +309,16 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("SelectMode", OnSelectModeMsg);
             cm.RegisterNamedMessageHandler("SyncDiff", OnSyncDiffMsg);
             cm.RegisterNamedMessageHandler("SelectDiff", OnSelectDiffMsg);
+            cm.RegisterNamedMessageHandler("SyncFormat", OnSyncFormatMsg);
+            cm.RegisterNamedMessageHandler("SelectFormat", OnSelectFormatMsg);
             cm.RegisterNamedMessageHandler("SyncLobbyPicks", OnSyncLobbyPicksMsg);
             cm.RegisterNamedMessageHandler("SelectLobbyPick", OnSelectLobbyPickMsg);
             cm.RegisterNamedMessageHandler("SyncPicks", OnSyncPicksMsg);
             cm.RegisterNamedMessageHandler("SyncWorld", OnSyncWorldMsg);
             cm.RegisterNamedMessageHandler("SyncLata", OnSyncLataMsg);
             cm.RegisterNamedMessageHandler("SyncSlipper", OnSyncSlipperMsg);
+            cm.RegisterNamedMessageHandler("LataPose", OnLataPoseMsg);
+            cm.RegisterNamedMessageHandler("SlipperPose", OnSlipperPoseMsg);
             cm.RegisterNamedMessageHandler("SubmitMove", OnSubmitMoveMsg);
             cm.RegisterNamedMessageHandler("SyncUnit", OnSyncUnitMsg);
             cm.RegisterNamedMessageHandler("ReqPunch", OnReqPunchMsg);
@@ -215,20 +331,26 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("PlayEmote", OnPlayEmoteMsg);
             cm.RegisterNamedMessageHandler("StartMatch", OnStartMatchMsg);
             cm.RegisterNamedMessageHandler("ReqSnapshot", OnReqSnapshotMsg);
+            cm.RegisterNamedMessageHandler("SkipBuffer", OnSkipBufferMsg);
             cm.RegisterNamedMessageHandler("SyncAbility", OnSyncAbilityMsg);
             cm.RegisterNamedMessageHandler("RebindSeat", OnRebindSeatMsg);
             cm.RegisterNamedMessageHandler("ReqCue", OnReqCueMsg);
             cm.RegisterNamedMessageHandler("PlayCue", OnPlayCueMsg);
+            cm.RegisterNamedMessageHandler("Flair", OnFlairMsg);
             cm.RegisterNamedMessageHandler("ReqAbility", OnReqAbilityMsg);
             cm.RegisterNamedMessageHandler("PlayAbility", OnPlayAbilityMsg);
+            cm.RegisterNamedMessageHandler("CastDenied", OnCastDeniedMsg);
             cm.RegisterNamedMessageHandler("ReqMash", OnReqMashMsg);
             cm.RegisterNamedMessageHandler("ThrowCharge", OnThrowChargeMsg);
             cm.RegisterNamedMessageHandler("ReqThrowCharge", OnReqThrowChargeMsg);
             cm.RegisterNamedMessageHandler("PlayAction", OnPlayActionMsg);
             cm.RegisterNamedMessageHandler("PlayStyle", OnPlayStyleMsg);
             cm.RegisterNamedMessageHandler("Score", OnScoreMsg);
+            cm.RegisterNamedMessageHandler("MatchRecord", OnMatchRecordMsg);
             cm.RegisterNamedMessageHandler("Chat", OnChatMsg);
             cm.RegisterNamedMessageHandler("ChatLine", OnChatLineMsg);
+            cm.RegisterNamedMessageHandler("ReqTime", OnReqTimeMsg);
+            cm.RegisterNamedMessageHandler("SyncTime", OnSyncTimeMsg);
 
             _handlersOn = cm;
         }
@@ -341,29 +463,48 @@ namespace TumbangPreso.Net
         /// ⚠️ A MISS REFILLS THE WHOLE TABLE, so a fresh arena costs ONE scan rather than four.
         /// The sweep keeps FIRST match per seat, which is what the loop it replaced returned.
         /// </summary>
-        private static readonly Slipper[] _slippersByOwner = new Slipper[Balance.PlayerCount];
+        /// ⚠️⚠️ KEYED ON `SeatOfOrigin`, NOT ON `OwnerSlot`, AND THE DIFFERENCE IS A REAL BUG THAT
+        /// A TWO-PROCESS LAN RUN FOUND (`docs/TODO.md` § 78.1). `OwnerSlot` is rewritten every
+        /// round — `SliceRunner.EquipOwnedSlippers` disowns the taya's shoe to -1 — and the loop
+        /// below skips anything negative, so **the defender's tsinelas became unaddressable on
+        /// both peers at once**: the host's tick did `BroadcastSlipperStateIfChanged(null)` and
+        /// stopped sending it, and a client could not have applied it either. Every non-host peer
+        /// therefore drew the taya carrying a slipper for the whole round.
+        /// `Slipper.SeatOfOrigin` is assigned once per match on every peer and never moves.
+        private static readonly Slipper[] _slippersBySeat = new Slipper[Balance.PlayerCount];
 
-        private static Slipper FindSlipper(int ownerSlot)
+        /// ⚠️⚠️ INACTIVE OBJECTS ARE INCLUDED, AND THAT IS THE SECOND HALF OF § 78.1. Keying on
+        /// `SeatOfOrigin` alone did NOT fix the taya's tsinelas, and the verification run is what
+        /// said so. `SliceRunner.EquipOwnedSlippers` does not merely disown the defender's shoe,
+        /// it **switches the object off** — `slipper.gameObject.SetActive(false)`, host-side, to
+        /// take it out of `Carrier.TryPickup` and out of the render. `FindObjectsInactive.Exclude`
+        /// then hid it from this sweep too, so the host could not find the object it had just
+        /// parked and therefore never broadcast a word about it. **An object being switched off
+        /// is a fact the other peers need, so it must stay findable in order to be sent.**
+        ///
+        /// ⚠️ THE CACHED ENTRY NO LONGER TESTS `activeInHierarchy` EITHER, for the same reason:
+        /// the round a seat becomes taya, that test would evict a perfectly good entry and the
+        /// refill below would decline to put it back.
+        private static Slipper FindSlipper(int seatOfOrigin)
         {
-            if (ownerSlot >= 0 && ownerSlot < _slippersByOwner.Length)
+            if (seatOfOrigin >= 0 && seatOfOrigin < _slippersBySeat.Length)
             {
-                var cached = _slippersByOwner[ownerSlot];
-                if (cached != null && cached.gameObject.activeInHierarchy &&
-                    cached.OwnerSlot == ownerSlot)
+                var cached = _slippersBySeat[seatOfOrigin];
+                if (cached != null && cached.SeatOfOrigin == seatOfOrigin)
                     return cached;
             }
 
-            System.Array.Clear(_slippersByOwner, 0, _slippersByOwner.Length);
+            System.Array.Clear(_slippersBySeat, 0, _slippersBySeat.Length);
 
-            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Include))
             {
-                int owner = s.OwnerSlot;
-                if (owner < 0 || owner >= _slippersByOwner.Length) continue;
-                if (_slippersByOwner[owner] == null) _slippersByOwner[owner] = s;
+                int seat = s.SeatOfOrigin;
+                if (seat < 0 || seat >= _slippersBySeat.Length) continue;
+                if (_slippersBySeat[seat] == null) _slippersBySeat[seat] = s;
             }
 
-            return ownerSlot >= 0 && ownerSlot < _slippersByOwner.Length
-                ? _slippersByOwner[ownerSlot]
+            return seatOfOrigin >= 0 && seatOfOrigin < _slippersBySeat.Length
+                ? _slippersBySeat[seatOfOrigin]
                 : null;
         }
 
@@ -401,22 +542,64 @@ namespace TumbangPreso.Net
         // IDENTITY AND SEATING
         // -------------------------------------------------------------------
 
-        public void IdentifyServerRpc(string token, string name, int charPick, int canPick, int slipperPick)
+        /// <summary>
+        /// ⚠️ THE ACCOUNT ID AND THE HANDLE PROOF TRAVEL WITH THE NAME, AND THEY ARE WHY THE
+        /// PROTOCOL IS 16. `docs/TODO.md` § 88.1c. This message is read field by field in order,
+        /// so the two new values are a wire change even though nothing else moved: a peer writing
+        /// five where the host reads seven misreads every field after the third. Neither value is
+        /// trusted here; together they let the host ask the account endpoint one question.
+        /// </summary>
+        public void IdentifyServerRpc(string token, string name, string accountPlayerId,
+                                      string handleProof, int charPick, int canPick, int slipperPick)
+            => IdentifyServerRpc(token, name, accountPlayerId, handleProof, charPick, canPick,
+                                 slipperPick, LocalCosmetics.Encoded(charPick),
+                                 LocalCosmetics.CustomCharacter(),
+                                 LocalCosmetics.HeroBuild(charPick));
+
+        /// <summary>
+        /// ⚠️⚠️ THE COSMETICS CLAIM IS ONE FIELD AND IT IS WHY THE PROTOCOL IS 17. It carries the
+        /// banner, the palette and the two facts that authorise them, encoded by `BannerCodec`.
+        /// **One field rather than eighteen**, for the reason the paragraph above gives about
+        /// reading this message in order: a banner is four ids, three trackers, a palette, an XP
+        /// figure and up to six mastery pairs, and every one of those would be another chance to
+        /// write the halves out of step. `audit_wire_payloads.py` compares a writer to its reader
+        /// field by field, so one field is one thing for it to check.
+        ///
+        /// ⚠️ NOTHING HERE IS TRUSTED. `HandleIdentify` runs `BannerRules.Authorise` and stores
+        /// the ANSWER; the claim itself is never kept and never rebroadcast.
+        /// </summary>
+        /// <param name="custom">
+        /// ⚠️⚠️ THE CUSTOM CHARACTER, AND IT IS WHY THE PROTOCOL IS 19. Same argument as the
+        /// cosmetics claim above: it is ONE versioned string (`CustomCharacterRules.EncodeWire`,
+        /// a `C3` frame) carrying twenty fields, rather than twenty fields a writer and a reader
+        /// have to be kept in step by hand. Empty means "playing as a roster character", which is
+        /// also what every build before this one sends, so a mixed-build room degrades to the
+        /// roster rather than to a broken hero.
+        /// </param>
+        public void IdentifyServerRpc(string token, string name, string accountPlayerId,
+                                      string handleProof, int charPick, int canPick, int slipperPick,
+                                      string cosmetics, string custom = "", string build = "")
         {
             if (_nm == null || _nm.CustomMessagingManager == null) return;
 
             if (NetAuthority.IsHost)
             {
-                HandleIdentify(0, token, name, charPick, canPick, slipperPick);
+                HandleIdentify(0, token, name, accountPlayerId, handleProof, charPick, canPick,
+                               slipperPick, cosmetics, custom, build);
                 return;
             }
 
-            using var writer = new FastBufferWriter(256, Allocator.Temp);
+            using var writer = new FastBufferWriter(1024, Allocator.Temp);
             writer.WriteValueSafe(token ?? "");
             writer.WriteValueSafe(name ?? "");
+            writer.WriteValueSafe(accountPlayerId ?? "");
+            writer.WriteValueSafe(handleProof ?? "");
             writer.WriteValueSafe(charPick);
             writer.WriteValueSafe(canPick);
             writer.WriteValueSafe(slipperPick);
+            writer.WriteValueSafe(cosmetics ?? "");
+            writer.WriteValueSafe(custom ?? "");
+            writer.WriteValueSafe(build ?? "");
             _nm.CustomMessagingManager.SendNamedMessage("Identify", NetworkManager.ServerClientId, writer);
         }
 
@@ -426,24 +609,49 @@ namespace TumbangPreso.Net
 
             reader.ReadValueSafe(out string token);
             reader.ReadValueSafe(out string name);
+            reader.ReadValueSafe(out string accountPlayerId);
+            reader.ReadValueSafe(out string handleProof);
             reader.ReadValueSafe(out int charPick);
             reader.ReadValueSafe(out int canPick);
             reader.ReadValueSafe(out int slipperPick);
+            reader.ReadValueSafe(out string cosmetics);
 
-            HandleIdentify(senderClientId, token, name, charPick, canPick, slipperPick);
+            // ⚠️ READ ONLY IF IT IS THERE, WHICH IS THE SAME GUARD `OnSyncLobbyPicksMsg` PUTS ON
+            // THE SPECTATOR COUNT AND FOR THE SAME REASON: `FastBufferReader` THROWS past the end
+            // of a payload, and a message handler that throws drops everything queued behind it.
+            // `NetSession.ProtocolVersion` 19 refuses a mixed room at approval, so this can only
+            // fire in a build where the two halves of this method have drifted, which is exactly
+            // when a dead handler is hardest to diagnose.
+            string custom = "";
+            if (reader.Length > reader.Position) reader.ReadValueSafe(out custom);
+            string build = "";
+            if (reader.Length > reader.Position) reader.ReadValueSafe(out build);
+
+            HandleIdentify(senderClientId, token, name, accountPlayerId, handleProof, charPick,
+                           canPick, slipperPick, cosmetics, custom, build);
         }
 
-        private void HandleIdentify(ulong senderClientId, string token, string name, int charPick, int canPick, int slipperPick)
+        private void HandleIdentify(ulong senderClientId, string token, string name,
+                                    string accountPlayerId, string handleProof,
+                                    int charPick, int canPick, int slipperPick,
+                                    string cosmetics, string custom, string build)
         {
             int peerId = (int)senderClientId;
             var lobby = NetSession.Instance?.Lobby;
             if (lobby == null) return;
 
             var record = lobby.Admit(peerId, token, name);
+
+            // ⚠️ THE SECOND ARRIVAL PATH, AND IT NEEDS THE GUARD AS MUCH AS THE FIRST. A peer
+            // reaches `Admit` through the approval hello and again through this message, and a
+            // check wired into only one of them is a check with a documented way around it.
+            NetSession.Instance?.VerifyArrival(peerId, accountPlayerId, handleProof);
+
             int resolvedCharPick = charPick >= 0 ? charPick : 0;
             int resolvedCanPick = canPick >= 0 ? canPick : 0;
             int resolvedSlipperPick = slipperPick >= 0 ? slipperPick : 0;
             lobby.SetPicks(peerId, resolvedCharPick, resolvedCanPick, resolvedSlipperPick);
+            HostAuthoriseCosmetics(peerId, cosmetics, resolvedCharPick, custom, build);
 
             // ⚠️ THE MODE IS THE FIRST THING A JOINER IS TOLD, for the reason `HostStartMatch`
             // gives: everything below it is interpreted through the mode, and a late joiner may
@@ -482,6 +690,74 @@ namespace TumbangPreso.Net
             BroadcastLobbyPicks();
             BroadcastPicks();
             BroadcastWorldSnapshot();
+        }
+
+        /// <summary>
+        /// Decide what one peer is allowed to wear, and write only the answer onto its record.
+        ///
+        /// ⚠️⚠️ EVERY DECISION IS HOST-SIDE, WHICH IS `LobbySession`'S OWN RULE APPLIED TO
+        /// COSMETICS: *"a client asks; this answers. Nothing here may be driven from a client
+        /// message without the host re-checking it."* A peer sends what it wants to wear and the
+        /// XP and mastery that would authorise it; `BannerRules.Authorise` runs here, once, and
+        /// the room is told the RESULT. **Four peers each normalising their own copy would be
+        /// four answers to one question**, which is the shape `docs/TODO.md` § 94.1 records four
+        /// hand-written copies of.
+        ///
+        /// ⚠️ THE CLAIM IS NOT STORED. `PeerRecord.Banner` holds the authorised selection and
+        /// nothing on the record can be read back as an unchecked id, because there is no
+        /// unchecked id on it.
+        ///
+        /// ⚠️⚠️ AND IT RUNS ON EVERY PICK CHANGE, NOT ONLY ON ARRIVAL. The palette is a fact
+        /// about the player AND the character (`FUTURE.md` PHASE 5's favourite loadout per
+        /// character), so a claim authorised once at join would dress a peer who switched
+        /// character in the palette of the one they walked in with.
+        /// </summary>
+        /// <param name="custom">
+        /// ⚠️⚠️ THE PEER'S CUSTOM CHARACTER, AND THE HOST RE-ENCODES IT RATHER THAN STORING WHAT
+        /// ARRIVED. `CustomCharacterRules.Normalise` clamps every index into its own list and
+        /// resolves `HeroKitId` through `KitFor`, so a modified client cannot claim a hat that
+        /// does not exist or a kit built out of three heroes: what the room receives is what this
+        /// machine wrote. Same arrangement as the banner one line up, and `docs/TODO.md` § 110.5
+        /// is why the kit half of it matters more than the hat half.
+        /// </param>
+        public void HostAuthoriseCosmetics(int peerId, string cosmetics, int charPick,
+                                           string custom = "", string build = "")
+        {
+            if (!NetAuthority.IsHost) return;
+
+            var record = NetSession.Instance?.Lobby?.PeerById(peerId);
+            if (record == null) return;
+
+            // ⚠️⚠️ AN UNRECOGNISED FRAME IS REFUSED, NOT DECODED, AND THE DIFFERENCE MATTERS.
+            // `CustomCharacterRules.DecodeWire` answers a DEFAULT character for a version it does
+            // not know, which is the right answer when you are reading your own save file and the
+            // wrong one here: it would put a stranger in the seat of a peer who is playing as a
+            // roster hero. An empty frame means "roster character" and so does a frame this build
+            // cannot read, so both land on empty.
+            record.Custom = !string.IsNullOrEmpty(custom) && custom.StartsWith("C3:")
+                ? CustomCharacterRules.EncodeWire(CustomCharacterRules.DecodeWire(custom))
+                : "";
+
+            // ⚠️ AN EMPTY FRAME IS A PEER ON AN OLDER BUILD OR A PLAYER WEARING NOTHING, AND
+            // BOTH WANT THE SAME ANSWER. `BannerCodec.DecodeClaim` never throws and answers an
+            // empty claim, which authorises to an empty banner: no decoration, drawn deliberately.
+            var claim = BannerCodec.DecodeClaim(cosmetics);
+
+            record.Banner = BannerRules.Authorise(claim);
+
+            string characterId = Core.Roster.PersonIdAt(UI.SceneFlow.SelectedMode, charPick);
+            if (!string.IsNullOrEmpty(record.Custom))
+                characterId = CustomCharacterRules.KitFor(
+                    CustomCharacterRules.DecodeWire(record.Custom).HeroKitId);
+
+            record.Build = UI.SceneFlow.SelectedMode == GameMode.HeroStrike
+                ? HeroBuildRules.Encode(HeroBuildRules.Decode(build, characterId), characterId)
+                : "";
+
+            // ⚠️ THE WHOLE LOOK, NOT ONLY THE EARNED PALETTE. `BannerRules.AuthoriseLook`
+            // checks the reward half and clamps the free half, so what lands in the seat table is
+            // a decision about both. See `LobbySeatInfo.Look`.
+            record.Look = LookCodec.Encode(BannerRules.AuthoriseLook(claim, characterId));
         }
 
         /// <summary>
@@ -599,6 +875,11 @@ namespace TumbangPreso.Net
                 // out, which is the difference between a button that explains itself and one that
                 // silently does nothing when the host's `TryTakeSeat` refuses it.
                 net.Lobby.MatchInProgress = inProgress;
+
+                // ⚠️ AND SO WAS THE LEADER, ON THE LINE ABOVE IT. `leaderId` was read off the
+                // wire and dropped; see `LobbySession.ApplyLeaderFromHost`. The lobby's guest
+                // button names the host with it.
+                net.Lobby.ApplyLeaderFromHost(leaderId);
 
                 net.SetLocalSeating(seat, spectator);
             }
@@ -950,6 +1231,113 @@ namespace TumbangPreso.Net
             OnChatLine?.Invoke(who, line);
         }
 
+        // -------------------------------------------------------------------
+        // § THE BROADCAST CLOCK
+        //
+        // ⚠⚠ SPECTATORS MAY STOP THE MATCH, AND THIS REVERSES A WRITTEN RULE. `SpectatorCamera`'s
+        // broadcast block said, in terms: *"Pause and speed manipulation are offline-only by
+        // construction: a remote viewer must never acquire authority over a live tournament simply
+        // by spectating"*, and refused every time control with `LIVE NETWORK · TIME CONTROLS
+        // LOCKED`. 🧑 2026-08-30, asked which of the two pauses he meant and answering plainly:
+        // *"pause is for spectatotr"*, *"give spectators the authority to pause, all of them can
+        // pause"*, *"make sure time pauses if u pause as well as everything happening and spectator
+        // can move"*, *"liek in game like mobile legends"*.
+        //
+        // The old rule was protecting a tournament against a stranger. This game's spectators are
+        // the four people waiting for the next match and whoever is casting it, and the ask is a
+        // broadcast feature: MLBB's observers stop the game to talk over a fight. **All of them
+        // can pause**, which he said twice, so there is no leader check here.
+        //
+        // ⚠⚠ THE HOST IS STILL THE ONLY WRITER, AND THAT IS NOT A CONTRADICTION. A spectator
+        // ASKS (`ReqTime`) and the host DECIDES and TELLS EVERYONE (`SyncTime`), which is
+        // `CLAUDE.md` § 4's rule that state is produced in one place. Four peers each writing their
+        // own `Time.timeScale` is four different matches, and the two that mattered would drift
+        // apart inside a second.
+        //
+        // ⚠ A PLAYER CANNOT. The request is refused unless the sender's `PeerRecord.Spectator` is
+        // set, so somebody losing cannot stop the round they are losing.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// A spectator asking the host to stop or slow the match. Host-applied, then broadcast.
+        /// </summary>
+        public void RequestTimeScaleServerRpc(float scale)
+        {
+            if (NetAuthority.IsHost)
+            {
+                HostSetTimeScale(scale);
+                return;
+            }
+
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+
+            using var writer = new FastBufferWriter(16, Allocator.Temp);
+            writer.WriteValueSafe(scale);
+            _nm.CustomMessagingManager.SendNamedMessage("ReqTime", NetworkManager.ServerClientId, writer);
+        }
+
+        private void OnReqTimeMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
+
+            reader.ReadValueSafe(out float scale);
+
+            // ⚠ THE SENDER MUST BE A WATCHER. `TrySenderSeat` answers the opposite question, so
+            // this asks the lobby directly: a peer with a chair is playing and may not stop the
+            // match it is playing in.
+            var peer = NetSession.Instance?.Lobby?.PeerById((int)senderClientId);
+            if (peer == null || !peer.Spectator) return;
+
+            HostSetTimeScale(scale);
+        }
+
+        /// <summary>
+        /// Apply a broadcast clock on the host and hand the same number to every peer.
+        ///
+        /// ⚠ CLAMPED HOST-SIDE, NOT TRUSTED FROM THE WIRE. 0 is the pause and 1 is normal; a
+        /// hostile or corrupted 50 would run the match at fifty times speed on four machines.
+        /// </summary>
+        public void HostSetTimeScale(float scale)
+        {
+            if (!NetAuthority.IsHost) return;
+
+            float safe = Mathf.Clamp(scale, 0.0f, 1.0f);
+
+            // ⚠ THE HITSTOP IS ENDED FIRST, on every peer, because it is the other writer of
+            // `Time.timeScale` in this project and it restores to 1 when it expires — which would
+            // quietly un-pause a paused match a fraction of a second later.
+            Hitstop.End();
+            Time.timeScale = safe;
+            TimeScaleChanged?.Invoke(safe);
+
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+
+            using var writer = new FastBufferWriter(16, Allocator.Temp);
+            writer.WriteValueSafe(safe);
+            _nm.CustomMessagingManager.SendNamedMessageToAll("SyncTime", writer);
+        }
+
+        private void OnSyncTimeMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            // ⚠ THE HOST IS ITS OWN CLIENT AND `SendNamedMessageToAll` LOOPS BACK TO IT. See
+            // § THE LOOPBACK: applying this again on the host would be harmless but the guard is
+            // the house style and it keeps the event from firing twice.
+            if (NetAuthority.IsHost) return;
+            if (!FromHost(senderClientId)) return;
+
+            reader.ReadValueSafe(out float scale);
+
+            Hitstop.End();
+            Time.timeScale = Mathf.Clamp(scale, 0.0f, 1.0f);
+            TimeScaleChanged?.Invoke(Time.timeScale);
+        }
+
+        /// <summary>
+        /// Raised on every peer when the broadcast clock moves, so a HUD can say why the world
+        /// stopped. A player who is not told is looking at a frozen game with no explanation.
+        /// </summary>
+        public static event System.Action<float> TimeScaleChanged;
+
         private void OnChatLineMsg(ulong senderClientId, FastBufferReader reader)
         {
             if (NetAuthority.IsHost) return;
@@ -1091,7 +1479,8 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(yaw);
             writer.WriteValueSafe(velocity);
             writer.WriteValueSafe(grounded);
-            _nm.CustomMessagingManager.SendNamedMessage("SubmitMove", NetworkManager.ServerClientId, writer);
+            _nm.CustomMessagingManager.SendNamedMessage("SubmitMove", NetworkManager.ServerClientId,
+                                                        writer, PoseDelivery);
         }
 
         private void OnSubmitMoveMsg(ulong senderClientId, FastBufferReader reader)
@@ -1164,7 +1553,7 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(unit.Stamina.Current);
             writer.WriteValueSafe(unit.Stamina.IdleSeconds);
             writer.WriteValueSafe(unit.Stamina.FatigueLeft);
-            _nm.CustomMessagingManager.SendNamedMessageToAll("SyncUnit", writer);
+            _nm.CustomMessagingManager.SendNamedMessageToAll("SyncUnit", writer, PoseDelivery);
         }
 
         private void OnSyncUnitMsg(ulong senderClientId, FastBufferReader reader)
@@ -1525,6 +1914,9 @@ namespace TumbangPreso.Net
         /// than at COMPLETE time. Without this a defender could open a channel legitimately, walk
         /// out of the ring, and still land the reset a second later.
         /// </summary>
+        /// <summary>When each open reset channel last had its reach-down relayed to the peers.</summary>
+        private readonly Dictionary<int, float> _lastResetGestureRelay = new Dictionary<int, float>();
+
         private void HostStepResetChannels()
         {
             if (_resetChannelStart.Count == 0) return;
@@ -1532,12 +1924,47 @@ namespace TumbangPreso.Net
             List<int> dead = null;
             foreach (var kv in _resetChannelStart)
             {
-                if (HostMayChannelReset(kv.Key)) continue;
-                (dead ??= new List<int>()).Add(kv.Key);
+                if (!HostMayChannelReset(kv.Key))
+                {
+                    (dead ??= new List<int>()).Add(kv.Key);
+                    continue;
+                }
+
+                // ⚠️⚠️ THE REACH-DOWN IS RELAYED FOR THE WHOLE HOLD, NOT ONCE AT THE START. 🧑
+                // 2026-08-29, of the animation work: *"make sure everyone sees this not just host
+                // or client"*. `Carrier.StepDefender` re-fires the gesture every
+                // `ViewmodelArms.GrabSeconds` because the channel runs for
+                // `Balance.ResetChannelTime`, 1.5 s, and one 0.40 s reach leaves two thirds of
+                // the longest hold in the game with nothing moving in it. That repeat was purely
+                // LOCAL: `ResetPhase.Start` is sent once, so the taya saw themselves reaching
+                // over and over while the other three saw one reach and then a statue for 1.1 s.
+                //
+                // ⚠️ RELAYED FROM THE HOST ON ITS OWN CLOCK RATHER THAN BY A NEW WIRE PHASE.
+                // Adding a `Repeat` to `ResetPhase` would be a protocol change, and § 59.4 is
+                // what a protocol bump costs: both machines rebuilt off the same commit or they
+                // refuse each other at approval. The host already knows the channel is open and
+                // already ticks every physics step, so it can produce the repeat without anybody
+                // sending anything new.
+                //
+                // ⚠️ AND IT SKIPS THE OWNER, like the `Start` relay above it, because that peer
+                // is the one already playing it locally on its own timer.
+                float now = Time.time;
+                float last = _lastResetGestureRelay.TryGetValue(kv.Key, out float t) ? t : kv.Value;
+
+                if (now - last >= CameraSystem.ViewmodelArms.GrabSeconds)
+                {
+                    _lastResetGestureRelay[kv.Key] = now;
+                    BroadcastActionExceptOwner(kv.Key, "grab");
+                }
             }
 
             if (dead == null) return;
-            foreach (int slot in dead) _resetChannelStart.Remove(slot);
+
+            foreach (int slot in dead)
+            {
+                _resetChannelStart.Remove(slot);
+                _lastResetGestureRelay.Remove(slot);
+            }
         }
 
         public void RequestEmoteServerRpc(int slot, string id)
@@ -1712,6 +2139,71 @@ namespace TumbangPreso.Net
             HostRelayCue(id, position, volumeScale, senderClientId);
         }
 
+        // -------------------------------------------------------------------
+        // § THE VISUAL HALF OF A CUE
+        //
+        // ⚠️⚠️ EVERY POPUP, BURST, STAR, CAMERA PUNCH AND STYLE AWARD IN A HOST-RESOLVED VERB
+        // WAS DRAWN ON ONE SCREEN. 🧑 2026-08-29: *"ur final task is to make sure that all host
+        // sided shit is seen by everyone and not js host"*. `NetCue` had already separated
+        // deciding from announcing for SOUND; the things you look at were still written on the
+        // line after the resolution, inside the same `ShouldResolve()` gate.
+        // `tools/audit_presentation_reach.py` counted 41 of them across seven methods.
+        //
+        // ⚠️ IT CARRIES A KIND AND SEATS, NOT A DESCRIPTION OF AN EFFECT. Every peer already has
+        // all four bodies and the whole roster; what it lacks is the event. `Visual.MatchFlair`
+        // rebuilds the presentation from its own scene, which is also what makes a client's
+        // camera punch land on the client's camera.
+        // -------------------------------------------------------------------
+
+        /// <summary>HOST ONLY. Tells every other peer to draw one match moment.</summary>
+        public void BroadcastFlair(byte kind, int actor, int subject, Vector3 at, float strength)
+        {
+            // ⚠️ A CLIENT THAT REACHES `MatchFlair.Announce` DRAWS AND SENDS NOTHING. The host is
+            // the only peer that may decide a tag happened, so it is the only one whose account
+            // of it may travel; the guard is here rather than at each call site for the same
+            // reason `MatchDirector.AddScore` keeps its own.
+            if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
+            if (!Finite(at) || !Finite(strength)) return;
+
+            using var writer = new FastBufferWriter(64, Allocator.Temp);
+            writer.WriteValueSafe(kind);
+            writer.WriteValueSafe(actor);
+            writer.WriteValueSafe(subject);
+            writer.WriteValueSafe(at);
+            writer.WriteValueSafe(strength);
+            HostRelayFlair(writer);
+        }
+
+        private void HostRelayFlair(FastBufferWriter writer)
+        {
+            foreach (ulong clientId in _nm.ConnectedClientsIds)
+            {
+                // ⚠️ NOT BACK TO THE HOST'S OWN CLIENT ID. `MatchFlair.Announce` has already
+                // drawn it here, on the frame it happened; the same rule `HostRelayCue` states.
+                if (clientId == _nm.LocalClientId) continue;
+                _nm.CustomMessagingManager.SendNamedMessage("Flair", clientId, writer);
+            }
+        }
+
+        private void OnFlairMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!FromHost(senderClientId)) return;
+
+            reader.ReadValueSafe(out byte kind);
+            reader.ReadValueSafe(out int actor);
+            reader.ReadValueSafe(out int subject);
+            reader.ReadValueSafe(out Vector3 at);
+            reader.ReadValueSafe(out float strength);
+
+            if (!Finite(at) || !Finite(strength)) return;
+            if (actor < -1 || actor >= Balance.PlayerCount) return;
+            if (subject < -1 || subject >= Balance.PlayerCount) return;
+
+            // ⚠️ `Play`, NOT `Announce`. A replicated copy must not relay itself onward, which is
+            // the same loop `NetCue.SuppressRelay` exists to break for sounds.
+            Visual.MatchFlair.Play((Visual.MatchFlair.Kind)kind, actor, subject, at, strength);
+        }
+
         private void OnPlayCueMsg(ulong senderClientId, FastBufferReader reader)
         {
             if (!FromHost(senderClientId)) return;
@@ -1784,17 +2276,40 @@ namespace TumbangPreso.Net
 
             if (abilitySlot < 0 || abilitySlot > 2) return;
             if (!SenderOwnsClaimedSeat(senderClientId, claimedSlot, out var unit)) return;
+
+            // ⚠️⚠️ FROM HERE DOWN EVERY REFUSAL ANSWERS THE SENDER. Above this line the message is
+            // malformed or is claiming a seat it does not hold, and the host cannot know what the
+            // sender predicted; below it the sender is the verified owner of a seat that really
+            // did predict this cast, so a silent `return` is the host charging a player for an
+            // ability it then declined to run. See the § note above `HostDenyAbilityCast`.
             if (!PlausibleIntentPose(unit, position) || !Finite(forward) ||
-                !Finite(aimPoint) || !Finite(heldSeconds)) return;
+                !Finite(aimPoint) || !Finite(heldSeconds))
+            {
+                HostDenyAbilityCast(senderClientId, claimedSlot, abilitySlot);
+                return;
+            }
 
             heldSeconds = Mathf.Clamp(heldSeconds, 0.0f, 30.0f);
             var system = unit.AbilitySystem;
-            if (system == null) return;
+            if (system == null)
+            {
+                HostDenyAbilityCast(senderClientId, claimedSlot, abilitySlot);
+                return;
+            }
 
             var slot = (Abilities.HeroAbilitySystem.Slot)abilitySlot;
             var outcome = system.ApplyNetworkCast(slot, position, forward, aimPoint,
                                                   heldSeconds, authoritative: true);
-            if (outcome != Abilities.HeroKit.CastOutcome.Cast) return;
+            if (outcome != Abilities.HeroKit.CastOutcome.Cast)
+            {
+                // ⚠️ `Missing` IS REFUSED LIKE THE REST AND THAT IS DELIBERATE. A hero with no
+                // second skill cannot have predicted one, so this is unreachable for that reason;
+                // if it ever becomes reachable, the client having spent nothing means the refund
+                // is a no-op rather than a gift. Refusing everything that is not `Cast` keeps the
+                // rule "the host answers every request it did not run" true without a list.
+                HostDenyAbilityCast(senderClientId, claimedSlot, abilitySlot);
+                return;
+            }
 
             BroadcastAbilityCast(claimedSlot, abilitySlot, position, forward,
                                  aimPoint, heldSeconds, senderClientId);
@@ -1842,6 +2357,77 @@ namespace TumbangPreso.Net
             Unit(slot)?.AbilitySystem?.ApplyNetworkCast(
                 (Abilities.HeroAbilitySystem.Slot)abilitySlot,
                 position, forward, aimPoint, heldSeconds, authoritative: false);
+        }
+
+        // -------------------------------------------------------------------
+        // § THE REFUSAL, WHICH IS THE OTHER HALF OF A PREDICTED CAST
+        //
+        // ⚠️⚠️ A CLIENT PREDICTS EVERY CAST AND THE HOST USED TO REFUSE IN SILENCE.
+        // `HeroAbilitySystem.Cast` runs the kit locally FIRST and then asks, so by the time
+        // `OnReqAbilityMsg` drops a request the owner has already spent the cooldown, played the
+        // confirm and drawn the effect. Every refusal in that handler was a bare `return`. The
+        // client was then running a match the host was not refereeing, and nothing anywhere would
+        // ever tell it so.
+        //
+        // ⚠️⚠️ AND THE ONE FIX THAT USED TO PAPER OVER IT WAS CORRECTLY REMOVED, WHICH IS WHY THIS
+        // IS NEEDED NOW. Until `docs/TODO.md` § 71 the owner's cooldown was simply assigned from
+        // the host's 5 Hz `SyncAbility`, so a refused cast healed itself: the host's copy still
+        // read zero, the client took that zero, and the ability came back. That is the Phaister
+        // *"spammable teleport (lan problem)"* bug, and `HeroAbility.ApplyNetworkSnapshot`'s
+        // `mayLower` guard closed it by making the owner's cooldown raise-only. Closing it turned
+        // a self-healing divergence into a permanent one: correct, and half a fix. The host may
+        // still take an ability away at any time. What it could not do was give one back after
+        // refusing to act, and a refusal is exactly when it must.
+        //
+        // ⚠️ IT IS SENT ONLY TO THE PEER THAT ASKED. Nobody else predicted anything, so nobody
+        // else has anything to take back, and a broadcast would invite three other kits to roll
+        // back a cast they never made.
+        //
+        // ⚠️ IT CARRIES NO REASON, ON PURPOSE. Six guards refuse for six reasons and the player
+        // needs one outcome from all of them: the power back, and one beat that says it did not
+        // go off. A reason code on the wire is a thing to keep in step for no gameplay gain.
+        //
+        // ⚠️⚠️ IT IS NOT SENT WHEN THE SENDER DOES NOT OWN THE SEAT IT CLAIMS. That request is
+        // malformed or hostile rather than refused, this peer cannot know what the sender
+        // actually predicted, and answering it would be the host taking direction about which kit
+        // to touch from an unverified claim. `SenderOwnsClaimedSeat` stays a bare return.
+        // -------------------------------------------------------------------
+
+        /// <summary>Tells one client the cast it predicted was refused, so it can take it back.</summary>
+        public void HostDenyAbilityCast(ulong clientId, int slot, int abilitySlot)
+        {
+            if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
+
+            // ⚠️ THE HOST NEVER DENIES ITSELF. Its own casts never travel as a request at all;
+            // `RequestAbilityCastServerRpc` resolves them in its `IsHost` branch, so a refusal
+            // there is just the kit saying no locally, which the deck already answers.
+            if (clientId == _nm.LocalClientId) return;
+
+            using var writer = new FastBufferWriter(16, Allocator.Temp);
+            writer.WriteValueSafe(slot);
+            writer.WriteValueSafe(abilitySlot);
+            _nm.CustomMessagingManager.SendNamedMessage("CastDenied", clientId, writer);
+        }
+
+        private void OnCastDeniedMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            // ⚠️ THE HOST IS ITS OWN CLIENT AND ONLY THE HOST MAY REFUSE. The first half keeps a
+            // listen host out of a path that would roll back authoritative state; the second is
+            // the rule every "play this" handler in this file carries (`FromHost`).
+            if (NetAuthority.IsHost || !FromHost(senderClientId)) return;
+
+            reader.ReadValueSafe(out int slot);
+            reader.ReadValueSafe(out int abilitySlot);
+
+            if (!ValidSlot(slot) || abilitySlot < 0 || abilitySlot > 2) return;
+
+            // ⚠️ ONLY THIS PEER'S OWN SEAT. `RollBackPredictedCast` checks the same thing from
+            // the other end; a refusal naming somebody else's seat is a message this peer has no
+            // business acting on, and the other three kits are replicas that never predicted.
+            if (slot != NetAuthority.LocalSlot) return;
+
+            Unit(slot)?.AbilitySystem?.RollBackPredictedCast(
+                (Abilities.HeroAbilitySystem.Slot)abilitySlot);
         }
 
         /// <summary>One client mash press; the host decides which active state it answers.</summary>
@@ -1974,6 +2560,65 @@ namespace TumbangPreso.Net
             _nm.CustomMessagingManager.SendNamedMessageToAll("Score", writer);
         }
 
+        /// <summary>
+        /// Sends the finished match record to every peer, once, at the end of the match.
+        ///
+        /// ⚠️⚠️ THE HOST IS THE ONLY MACHINE THAT COUNTED THE MATCH, SO WITHOUT THIS A CLIENT
+        /// HAS NO CAREER AT ALL. `MatchStatsCollector` is host-gated for the same reason
+        /// `AddScore` is, which leaves the other three players with nothing to show on the
+        /// end-of-match summary and nothing to submit for their own profile. This is the one
+        /// message that carries a whole match, and it is one message per match.
+        ///
+        /// ⚠️ IT IS SENT AND NOT REQUESTED. A client that had to ask would have to know when to
+        /// ask, and the moment it knows the match ended is a snapshot edge that can arrive
+        /// before the host has finished writing the record.
+        ///
+        /// ⚠️ EVERY PEER RECEIVES THE WHOLE RECORD, INCLUDING THE OTHER THREE LINES, and that is
+        /// deliberate: `FUTURE.md` § 2.1 item 6 draws the full four-player scoreboard in the
+        /// match detail. It carries no account ids for anybody a peer does not already see in
+        /// the lobby, because the ids in it are the same durable tokens seating already uses.
+        /// </summary>
+        public void BroadcastMatchRecord(Core.MatchRecord record)
+        {
+            if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
+            if (record == null) return;
+
+            string json = JsonUtility.ToJson(record);
+            if (string.IsNullOrEmpty(json)) return;
+
+            // ⚠️⚠️ SIZED FROM THE STRING RATHER THAN FROM A CONSTANT, AND THE BUFFER IS NOT THE
+            // SAME QUESTION AS THE PACKET. `FastBufferWriter` needs room for the whole message
+            // in memory, which is what this is; splitting it across the wire is `RecordDelivery`
+            // and is decided separately. A fixed buffer picked by eye is the shape that starts
+            // truncating silently the day somebody adds a stat to `PlayerMatchStats`.
+            using var writer = new FastBufferWriter(
+                FastBufferWriter.GetWriteSize(json) + 64, Allocator.Temp);
+            writer.WriteValueSafe(json);
+            _nm.CustomMessagingManager.SendNamedMessageToAll("MatchRecord", writer, RecordDelivery);
+        }
+
+        private void OnMatchRecordMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            // ⚠️ THE HOST IS ITS OWN CLIENT AND `SendNamedMessageToAll` LOOPS BACK TO IT. It
+            // adopted the record before sending; taking it again here would submit the same
+            // match twice. `ProfileRules.Apply` would refuse the duplicate, but a wasted
+            // endpoint call per match is a cost with no upside. See § THE LOOPBACK.
+            if (NetAuthority.IsHost) return;
+            if (!FromHost(senderClientId)) return;
+
+            reader.ReadValueSafe(out string json);
+            if (string.IsNullOrWhiteSpace(json)) return;
+
+            var record = JsonUtility.FromJson<Core.MatchRecord>(json);
+            if (record == null) return;
+
+            // ⚠️ NORMALISED ON ARRIVAL, BECAUSE THIS ARRIVED FROM ANOTHER MACHINE. The host
+            // already normalised it, and that is exactly why a peer cannot assume it did: the
+            // sender is the one party this client has no reason to trust about its own career.
+            Core.MatchRecordRules.Normalise(record);
+            GameServices.Stats?.Adopt(record);
+        }
+
         private void OnScoreMsg(ulong senderClientId, FastBufferReader reader)
         {
             // ⚠️ THE HOST IS ITS OWN CLIENT AND `SendNamedMessageToAll` LOOPS BACK TO IT. It
@@ -2072,8 +2717,26 @@ namespace TumbangPreso.Net
             // once it is set. Left false, a player who dropped mid-match lost their seat and their
             // score to the next arrival, and anyone joining a running match was turned away.
             var lobby = NetSession.Instance?.Lobby;
+
+            // The rules rotate one taya across four fixed seats. With filler bots disabled an
+            // empty chair cannot defend its round, so the host must wait for four people rather
+            // than starting a match with an inert body. The lobby button carries the same gate;
+            // this check is the authoritative backstop for every other caller.
+            if (!AIController.BotsEnabled &&
+                (lobby == null || lobby.OccupiedSeatCount() < Balance.PlayerCount))
+            {
+                Debug.LogWarning("[Lobby] start refused: bots are off and not all four seats are occupied.");
+                return;
+            }
+
             lobby?.StartMatch();
             _lobbyReady.Clear();
+
+            // ⚠️ THE HOST STOPS TALKING ABOUT A MATCH IT HAS NOT STARTED YET. See
+            // `_loadingOwnArena`: everything below tells four peers to load an arena, and the
+            // host then loads its own while `FixedUpdate` keeps writing `SyncWorld` at 5 Hz
+            // carrying a `MatchInProgress` that is still false. `docs/TODO.md` § 82.3.
+            _loadingOwnArena = true;
 
             // ⚠️⚠️ THE MODE GOES FIRST, BEFORE `StartMatch`, AND THE ORDER IS THE WHOLE POINT.
             // `OnStartMatchMsg` calls `UI.SceneFlow.StartMatch()`, which loads the arena scene
@@ -2288,6 +2951,66 @@ namespace TumbangPreso.Net
             OnDifficultyChanged?.Invoke(difficulty);
         }
 
+        /// <summary>
+        /// PHASE 12: the match FORMAT, which rides beside the mode rather than replacing it.
+        ///
+        /// ⚠⚠ IT IS ITS OWN MESSAGE AND NOT A FIELD ON `SelectMode`, and the reason is
+        /// `LobbySeatInfo`'s: **a field added to one half of a named message is not an error, it
+        /// is silently misread bytes** (`docs/TODO.md` § 38.6, and `tools/audit_wire_payloads.py`
+        /// exists because of it). Widening an existing message costs a protocol break either way,
+        /// and a new name makes a build that does not know the format ignore it rather than read
+        /// a mode out of the wrong four bytes.
+        ///
+        /// ⚠️ AND `ProtocolVersion` STILL MOVES, 20 -> 21, because a host on 21 running LAST
+        /// TSINELAS STANDING and a client on 20 playing standard rules would be two different
+        /// games sharing a scoreboard. `NetSession.ProtocolVersion`: both machines rebuild off
+        /// the same branch or they refuse each other at approval, by design.
+        /// </summary>
+        public static event Action<int> OnFormatChanged;
+
+        public void SelectFormatServerRpc(int format)
+        {
+            if (NetAuthority.IsHost)
+            {
+                SyncFormatClientRpc(format);
+                return;
+            }
+
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+            using var writer = new FastBufferWriter(16, Allocator.Temp);
+            writer.WriteValueSafe(format);
+            _nm.CustomMessagingManager.SendNamedMessage("SelectFormat", NetworkManager.ServerClientId, writer);
+        }
+
+        private void OnSelectFormatMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
+            if (!SenderMayConfigureLobby(senderClientId)) return;
+            reader.ReadValueSafe(out int format);
+            SyncFormatClientRpc(format);
+        }
+
+        private void SyncFormatClientRpc(int format)
+        {
+            if (!NetAuthority.IsHost) return;
+            if (_nm != null && _nm.CustomMessagingManager != null)
+            {
+                using var writer = new FastBufferWriter(16, Allocator.Temp);
+                writer.WriteValueSafe(format);
+                _nm.CustomMessagingManager.SendNamedMessageToAll("SyncFormat", writer);
+            }
+            OnFormatChanged?.Invoke(format);
+        }
+
+        private void OnSyncFormatMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            // ⚠️ See `OnSyncDiffMsg`: the host is its own client and a broadcast loops back.
+            if (NetAuthority.IsHost) return;
+
+            reader.ReadValueSafe(out int format);
+            OnFormatChanged?.Invoke(format);
+        }
+
         private void OnSyncDiffMsg(ulong senderClientId, FastBufferReader reader)
         {
             // ⚠️ THE HOST IS ITS OWN CLIENT AND `SendNamedMessageToAll` LOOPS BACK TO IT.
@@ -2300,8 +3023,25 @@ namespace TumbangPreso.Net
             OnDifficultyChanged?.Invoke(diff);
         }
 
+        /// <summary>
+        /// ⚠️⚠️ THE COSMETICS CLAIM RIDES THIS MESSAGE AS WELL AS `Identify`, AND THAT IS NOT
+        /// REDUNDANT. The palette is remembered PER CHARACTER (`FUTURE.md` PHASE 5's favourite
+        /// loadout), so changing character changes what this peer is wearing. A claim sent only
+        /// at join would leave everybody dressed in the palette of whoever they were holding when
+        /// they walked into the lobby, which is the one thing a per-character loadout must not do.
+        /// </summary>
         public void SelectLobbyPickServerRpc(int character, int can, int slipper)
         {
+            string cosmetics = LocalCosmetics.Encoded(character);
+
+            // ⚠️⚠️ THE CUSTOM CHARACTER RIDES THIS TOO, AND NOT ONLY `Identify`, FOR THE SAME
+            // REASON THE CLAIM DOES. The creator's KEEP AND USE button and the MAKE YOUR OWN row
+            // on character select both change what this player is bringing while they are already
+            // in a lobby. A frame sent only at join would leave every peer wearing whoever they
+            // walked in as, which is the one thing a per-character choice must not do.
+            string custom = LocalCosmetics.CustomCharacter();
+            string build = LocalCosmetics.HeroBuild(character, custom);
+
             if (NetAuthority.IsHost)
             {
                 var lobby = NetSession.Instance?.Lobby;
@@ -2311,17 +3051,26 @@ namespace TumbangPreso.Net
                     // LocalSlot is 0-3 (a seat) while _peers is keyed by transport client ID.
                     int hostPeerId = _nm != null ? (int)_nm.LocalClientId : 0;
                     lobby.SetPicks(hostPeerId, character, can, slipper);
+
+                    // ⚠️ THE HOST AUTHORISES ITS OWN CLAIM TOO, RATHER THAN TRUSTING ITSELF.
+                    // A host wearing a title it has not earned would be the one seat in the room
+                    // nobody checked, and `docs/TODO.md` § 94.1's lesson is that the copy nobody
+                    // checks is the copy that is wrong.
+                    HostAuthoriseCosmetics(hostPeerId, cosmetics, character, custom, build);
                     BroadcastLobbyPicks();
                 }
                 return;
             }
 
             if (_nm == null || _nm.CustomMessagingManager == null) return;
-            using var writer = new FastBufferWriter(32, Allocator.Temp);
+            using var writer = new FastBufferWriter(1024, Allocator.Temp);
             writer.WriteValueSafe(0);
             writer.WriteValueSafe(character);
             writer.WriteValueSafe(can);
             writer.WriteValueSafe(slipper);
+            writer.WriteValueSafe(cosmetics ?? "");
+            writer.WriteValueSafe(custom ?? "");
+            writer.WriteValueSafe(build ?? "");
             _nm.CustomMessagingManager.SendNamedMessage("SelectLobbyPick", NetworkManager.ServerClientId, writer);
         }
 
@@ -2335,11 +3084,20 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out int character);
             reader.ReadValueSafe(out int can);
             reader.ReadValueSafe(out int slipper);
+            reader.ReadValueSafe(out string cosmetics);
+
+            // ⚠️ SAME LENGTH GUARD AS `OnIdentifyMsg`, AND FOR THE SAME REASON: a handler that
+            // throws past the end of a payload drops every message queued behind it.
+            string custom = "";
+            if (reader.Length > reader.Position) reader.ReadValueSafe(out custom);
+            string build = "";
+            if (reader.Length > reader.Position) reader.ReadValueSafe(out build);
 
             var lobby = NetSession.Instance?.Lobby;
             if (lobby != null)
             {
                 lobby.SetPicks((int)senderClientId, character, can, slipper);
+                HostAuthoriseCosmetics((int)senderClientId, cosmetics, character, custom, build);
                 BroadcastLobbyPicks();
             }
         }
@@ -2367,6 +3125,15 @@ namespace TumbangPreso.Net
                         CanPick = peer.CanPick,
                         SlipperPick = peer.SlipperPick,
                         Ready = _lobbyReady.Contains(peer.PeerId),
+
+                        // ⚠️⚠️ THE AUTHORISED BANNER, NEVER THE CLAIM. `HostAuthoriseCosmetics`
+                        // has already run `BannerRules.Authorise` on whatever this peer sent, so
+                        // what goes out to the room is a decision rather than a request. See
+                        // `LobbySeatInfo.Banner`.
+                        Banner = peer.Banner ?? new BannerSelection(),
+                        Look = peer.Look ?? "",
+                        Custom = peer.Custom ?? "",
+                        Build = peer.Build ?? "",
                     };
                 }
                 else
@@ -2382,6 +3149,10 @@ namespace TumbangPreso.Net
                         CanPick = -1,
                         SlipperPick = -1,
                         Ready = false,
+                        Banner = new BannerSelection(),
+                        Look = "",
+                        Custom = "",
+                        Build = "",
                     };
                 }
                 _replicatedSeats[slot] = seats[slot];
@@ -2403,7 +3174,38 @@ namespace TumbangPreso.Net
                     writer.WriteValueSafe(s.CanPick);
                     writer.WriteValueSafe(s.SlipperPick);
                     writer.WriteValueSafe(s.Ready);
+
+                    // ⚠️⚠️ ONE FIELD PER SEAT, AND IT IS WHY THE PROTOCOL IS 17. `BannerCodec`
+                    // encodes the four ids and the trackers into one string, for the reason
+                    // `IdentifyServerRpc` gives: this loop and its reader are kept in step by
+                    // hand, and five more fields per seat is twenty more chances to write them
+                    // out of order. `audit_wire_payloads.py` checks one against the other.
+                    writer.WriteValueSafe(BannerCodec.EncodeSelection(s.Banner));
+                    writer.WriteValueSafe(s.Look ?? "");
+
+                    // ⚠️ ONE MORE STRING PER SEAT AND IT IS WHY THE PROTOCOL IS 19. It is a
+                    // whole custom character in a `C3` frame, already normalised by the host, so
+                    // a client that receives it can build the seat without asking anything else.
+                    // Empty is the roster case and is what three of the four seats usually carry.
+                    writer.WriteValueSafe(s.Custom ?? "");
+                    writer.WriteValueSafe(s.Build ?? "");
                 }
+
+                // ⚠️⚠️ THE GALLERY RIDES THE ROSTER, BECAUSE A SPECTATOR HAS NO SEAT AND SO NO
+                // ROW IN THE TABLE ABOVE. 🧑 2026-08-29: *"make it so taht more than 4 ppl can
+                // join, like up to 8 ppl can join but only the first 4 are players and last 4 are
+                // spectators"*. Four people can now be in the room with nothing anywhere on a
+                // client that says so — `LobbySeatInfo` is per SEAT by construction, and a client
+                // cannot count them itself because `LobbySeatInfo`'s own header records that a
+                // client's `LobbySession` is deliberately unpopulated.
+                //
+                // ⚠️ ON THIS MESSAGE RATHER THAN A FIFTH ONE. It already goes out on every seat
+                // change, every ready press and every world snapshot, which is exactly when the
+                // number can move. `docs/TODO.md` § 38.5 found three verbs with two protocols
+                // each and the dead one being the maintained one; a message for one int that an
+                // existing broadcast has a natural place for is how that starts.
+                writer.WriteValueSafe(lobby.SpectatorCount());
+
                 _nm.CustomMessagingManager.SendNamedMessageToAll("SyncLobbyPicks", writer);
             }
 
@@ -2420,9 +3222,22 @@ namespace TumbangPreso.Net
                 }
             }
 
+            // ⚠️ THE HOST SETS ITS OWN, because `SendNamedMessageToAll` is not applied on the
+            // sender (see § THE LOOPBACK) so `OnSyncLobbyPicksMsg` never runs here.
+            SpectatorsWatching = lobby.SpectatorCount();
+
             OnLobbyPicksSynced?.Invoke(table);
             OnLobbyRosterSynced?.Invoke(seats);
         }
+
+        /// <summary>
+        /// How many people are in the room without a seat, as the host last said.
+        ///
+        /// ⚠️ REPLICATED RATHER THAN COUNTED, for the reason `LobbySeatInfo`'s header gives: a
+        /// client's own `LobbySession` is deliberately not populated, so asking it is asking a
+        /// table nobody fills in.
+        /// </summary>
+        public static int SpectatorsWatching { get; private set; }
 
         private void OnSyncLobbyPicksMsg(ulong senderClientId, FastBufferReader reader)
         {
@@ -2445,6 +3260,10 @@ namespace TumbangPreso.Net
                 reader.ReadValueSafe(out int canPick);
                 reader.ReadValueSafe(out int slipperPick);
                 reader.ReadValueSafe(out bool ready);
+                reader.ReadValueSafe(out string banner);
+                reader.ReadValueSafe(out string look);
+                reader.ReadValueSafe(out string custom);
+                reader.ReadValueSafe(out string build);
 
                 var info = new LobbySeatInfo
                 {
@@ -2457,12 +3276,35 @@ namespace TumbangPreso.Net
                     CanPick = canPick,
                     SlipperPick = slipperPick,
                     Ready = ready,
+
+                    // ⚠️ NOT RE-AUTHORISED HERE, AND THAT IS THE ARRANGEMENT RATHER THAN AN
+                    // OMISSION. The host has already decided; a client that checked again would
+                    // need every peer's XP to do it, which is exactly the thing `BannerClaim`'s
+                    // header says must stop at the host.
+                    Banner = BannerCodec.DecodeSelection(banner),
+                    Look = look ?? "",
+
+                    // ⚠️ NOT RE-NORMALISED HERE EITHER. The host already ran the frame through
+                    // `CustomCharacterRules.Normalise` and re-encoded it, so what arrives is a
+                    // decision. `MatchInstaller` decodes it once when it builds the seat.
+                    Custom = custom ?? "",
+                    Build = build ?? "",
                 };
                 if (seat >= 0 && seat < _replicatedSeats.Length)
                 {
                     _replicatedSeats[seat] = info;
                 }
                 if (i < seats.Length) seats[i] = info;
+            }
+
+            // ⚠️ READ AFTER THE SEATS AND ONLY IF IT IS THERE. `FastBufferReader` throws past the
+            // end of a payload, and a message handler that throws drops everything queued behind
+            // it. Protocol 13 guarantees a sender that writes this field, and the length check is
+            // what makes a mixed-build room a missing NUMBER rather than a dead lobby.
+            if (reader.Length > reader.Position)
+            {
+                reader.ReadValueSafe(out int watching);
+                SpectatorsWatching = Mathf.Max(0, watching);
             }
 
             var table = new int[Balance.PlayerCount * 4];
@@ -2519,6 +3361,38 @@ namespace TumbangPreso.Net
                 unit.PlayerName = human ? info.Name : "";
                 unit.IsBot = !human;
             }
+        }
+
+        /// <summary>
+        /// The colours a seat is actually painted in: the authored palette, recoloured by
+        /// whatever the host said this seat is allowed to wear.
+        ///
+        /// ⚠️⚠️ THE LOCAL SEAT READS ITS OWN SETTINGS AND EVERY OTHER SEAT READS THE WIRE, AND
+        /// THE ASYMMETRY IS THE POINT. `MatchInstaller.BuildSeat` carries the long-standing
+        /// version of this note: **guessing a remote peer's palette from this machine's settings
+        /// would dress a stranger in the local player's choice.** The local seat is the one case
+        /// where the local answer is the true one, and it is also the only seat whose choice can
+        /// change without a packet.
+        ///
+        /// ⚠️ AN UNKNOWN OR EMPTY ID IS THE AUTHORED PALETTE, because `PaletteVariants.For` says
+        /// so: nothing equipped, a variant this build has never heard of, and a malformed id all
+        /// want the character to look normal rather than to look broken.
+        /// </summary>
+        private static UnityEngine.Color[] PaletteForSeat(int slot, UnityEngine.Color[] authored,
+                                                          GameMode mode, int charIndex)
+        {
+            string characterId = Core.Roster.PersonIdAt(mode, charIndex);
+
+            // ⚠️⚠️ THE LOCAL SEAT READS ITS OWN SETTINGS AND EVERY OTHER SEAT READS THE
+            // WIRE, AND THE ASYMMETRY IS DELIBERATE. The local player's dial has to answer
+            // instantly while they are dragging it, before any round trip; a remote peer's look
+            // is whatever the host authorised, and guessing it from this machine's settings would
+            // dress a stranger in the local player's choice.
+            var look = slot == NetAuthority.LocalSlot
+                ? Settings.SettingsStore.LookFor(characterId)
+                : LookCodec.Decode(Instance?.GetSeatInfo(slot)?.Look ?? "");
+
+            return Visual.PaletteVariants.For(authored, look);
         }
 
         // -------------------------------------------------------------------
@@ -2587,13 +3461,79 @@ namespace TumbangPreso.Net
                     if (person != null && person.Model != null)
                     {
                         var vis = who.GetComponent<Visual.CharacterVisual>();
+
+                        // ⚠️⚠️ 5. AND IT REPAINTED EVERY SEAT IN ITS AUTHORED COLOURS, WHICH
+                        // WOULD HAVE UNDONE THE PALETTE THE MOMENT A PICK CHANGED. This method is
+                        // the client's only correction for WHICH character a seat is, so it runs
+                        // after `MatchInstaller` has already dressed the seat correctly; passing
+                        // `person.Palette` here would have been a fifth fault of exactly the kind
+                        // the four above are, and invisible on the host for the same reason.
                         vis?.ApplyModel(person.Model, person.Tint, person.Clips,
-                                        person.Palette, person.PetModel);
+                                        PaletteForSeat(slot, person.Palette, mode, charIndex),
+                                        person.PetModel);
                     }
+
+                    // ⚠️⚠️ 4. AND IT FIXED THE ART WITHOUT FIXING THE POWERS, WHICH IS
+                    // 🧑 2026-08-29: *"some clients dont see the correct ability effects but host
+                    // do"*. The three faults above are all about the MODEL; this table also
+                    // carries the only correction a client ever gets for WHICH HERO a seat is,
+                    // and `MatchInstaller` binds the kit exactly once, at spawn, from whatever
+                    // the lobby table said at that moment. A client that built its arena before
+                    // the picks landed - which § 82.1 shows is routinely the FASTER machine,
+                    // not a rare one - therefore ended up with the right body and somebody
+                    // else's kit, and `ApplyNetworkCast` resolves the replicated cast through
+                    // `AbilityFor(slot)`, so slot 1 of the wrong hero is what it played.
+                    //
+                    // ⚠️ THE HOST IS RIGHT BY CONSTRUCTION, which is exactly the shape of the
+                    // report: it spawns from its own authoritative table and never needs this
+                    // message. Nobody watching the host could see it.
+                    //
+                    // ⚠️ REBOUND ONLY WHEN THE HERO ACTUALLY CHANGES. `BindHero` builds a fresh
+                    // `HeroKit`, which drops every cooldown and the ultimate charge with it, and
+                    // `BroadcastPicks` goes out on every seat change and inside every world
+                    // snapshot. Rebinding on each of those would hand a client a full ultimate
+                    // meter several times a round.
+                    RebindKitIfHeroChanged(who);
                 }
 
                 ApplySlipperSkin(slot, table[i + 3]);
             }
+        }
+
+        /// <summary>
+        /// Give this seat the kit its CURRENT `CharacterIndex` calls for, if it is not already
+        /// holding it.
+        ///
+        /// ⚠️⚠️ IT COMPARES THE KIT'S TYPE RATHER THAN REMEMBERING AN INDEX, so it cannot
+        /// drift out of step with the thing it is guarding. `HeroAbilitySystem` exposes the kit it
+        /// built and `CreateKitFor` is the one function that maps a hero id to a kit; asking
+        /// whether the built kit is the same TYPE the id would produce answers "is this the right
+        /// hero" without a second field for anybody to forget to write.
+        ///
+        /// ⚠️ CLASSIC HAS NO KITS AND MUST NOT GROW ONE HERE. `MatchInstaller` only adds the
+        /// component in Hero Strike (`CLAUDE.md` § 1: the two modes are not variants of each
+        /// other), so a null component is the correct state in Classic and not a seat to repair.
+        /// </summary>
+        private static void RebindKitIfHeroChanged(CharacterMotor who)
+        {
+            var abilities = who.AbilitySystem;
+            if (abilities == null) return;
+
+            var heroPeople = Core.Roster.GetPeople(GameMode.HeroStrike);
+            if (heroPeople == null || heroPeople.Count == 0) return;
+
+            string heroId = who.CharacterIndex >= 0 && who.CharacterIndex < heroPeople.Count
+                ? heroPeople[who.CharacterIndex].Id
+                : "dante";
+
+            var wanted = Abilities.HeroAbilitySystem.CreateKitFor(heroId);
+            if (wanted == null) return;
+            if (abilities.Kit != null && abilities.Kit.GetType() == wanted.GetType()) return;
+
+            HeroBuild build = who.PlayerSlot == NetAuthority.LocalSlot
+                ? Settings.SettingsStore.CheckedHeroBuildFor(heroId)
+                : HeroBuildRules.Decode(Instance?.GetSeatInfo(who.PlayerSlot)?.Build, heroId);
+            abilities.BindHero(heroId, build);
         }
 
         public void BroadcastPicks()
@@ -2667,16 +3607,35 @@ namespace TumbangPreso.Net
             lata.ApplySnapshotState(pos, rot, isUpright, skinIndex);
         }
 
-        public void SyncSlipperClientRpc(int ownerSlot, int holderSlot, Vector3 pos,
-                                         Quaternion rot, int state, Vector3 velocity,
-                                         float pektusSpin, int affinity, int throwerSlot)
+        public void SyncSlipperClientRpc(int seatOfOrigin, int ownerSlot, bool inPlay,
+                                         int holderSlot, Vector3 pos, Quaternion rot, int state,
+                                         Vector3 velocity, float pektusSpin, int affinity,
+                                         int throwerSlot)
         {
-            var s = FindSlipper(ownerSlot);
+            // ⚠️ LOOKED UP BY SEAT, WRITTEN WITH THE OWNER. `docs/TODO.md` § 78.1: this line read
+            // `FindSlipper(ownerSlot)`, so a disowned taya slipper arrived as -1 and was dropped.
+            var s = FindSlipper(seatOfOrigin);
             if (s == null) return;
+
+            // ⚠️ OWNERSHIP IS APPLIED BEFORE THE STATE, not derived on this side. The host rewrites
+            // it every round and it drives the foot arrow and the owner glow; re-deriving it here
+            // would be a second implementation of `EquipOwnedSlippers`' rule, free to drift.
+            s.OwnerSlot = ownerSlot;
+
+            // ⚠️⚠️ SWITCHED ON BEFORE THE STATE IS APPLIED, AND OFF AFTER IT, WHICH IS NOT
+            // SYMMETRY FOR ITS OWN SAKE. Coming back into play, the object has to exist before
+            // `ApplySnapshotState` puts it in a hand. Going OUT of play, the state has to be
+            // applied FIRST so `ReleasePreviousHolder` runs and the taya's `Carrier` actually
+            // lets go: deactivating first would leave that hand still pointing at a switched-off
+            // shoe, which is the half-cleared relationship `Slipper.ReleasePreviousHolder`'s own
+            // note is about.
+            if (inPlay && !s.gameObject.activeSelf) s.gameObject.SetActive(true);
 
             var holder = holderSlot >= 0 ? Unit(holderSlot) : null;
             s.ApplySnapshotState((SlipperState)state, holder, pos, rot, velocity,
                                  pektusSpin, (SlipperAffinity)affinity, throwerSlot);
+
+            if (!inPlay && s.gameObject.activeSelf) s.gameObject.SetActive(false);
         }
 
         /// <summary>
@@ -2690,6 +3649,20 @@ namespace TumbangPreso.Net
                                                float timeLeft, int[] scores,
                                                bool inProgress, bool roundActive)
         {
+            // ⚠️⚠️ A PACKET THE HOST WROTE BEFORE ITS OWN ARENA LOADED IS DROPPED WHOLE.
+            // `MatchDirector.IsPreStartSnapshot` carries the full account and the quote;
+            // `docs/TODO.md` § 82. In one line: the host keeps streaming `SyncWorld` at 5 Hz
+            // while it loads the arena it has just told everybody to load, and every one of
+            // those packets says the match is NOT running. A client that finished loading first
+            // read that as the match ending one second after it began.
+            //
+            // ⚠️ THE GUARD IS HERE, NOT INSIDE `ApplySnapshot`, BECAUSE THERE ARE TWO DIRECTORS.
+            // The same `inProgress` goes to `RoundDirector.ApplySnapshot` on the next line, which
+            // clears `RoundActive` and with it `CanAct`. Refusing the match half and applying the
+            // round half swaps a phantom result board for a body that cannot move.
+            if (GameServices.Match != null && GameServices.Match.IsPreStartSnapshot(inProgress))
+                return;
+
             bool wasRoundActive = GameServices.Round != null && GameServices.Round.RoundActive;
 
             GameServices.Match?.ApplySnapshot(scores, roundNumber, inProgress);
@@ -2725,6 +3698,26 @@ namespace TumbangPreso.Net
         private static void ApplyNetworkRoundBoundary(bool wasRoundActive, bool roundActive,
                                                       bool inProgress, int roundNumber)
         {
+            // ⚠️⚠️ THE ANNOUNCER'S PER-ROUND STATE IS RESET HERE, BECAUSE A CLIENT NEVER GETS
+            // `RoundStarted`. 🧑 2026-08-29: *"wrong sfx played for non host, 30 seconds played
+            // even tho no 30 seconds yet"*. `VoiceDirector.OnRoundStarted` clears `_clock30Said`
+            // and `_clock10Said` so each warning speaks once PER ROUND, and it is wired to
+            // `MatchDirector.RoundStarted` — which `ApplySnapshot`'s header records as
+            // deliberately not raised on a client, because its other subscribers teleport bodies
+            // and advance rounds. So on a client the two flags were set in round one and never
+            // cleared again: rounds two through eight got no clock warnings at all, and any
+            // warning spoken at the wrong moment was spent for the rest of the match.
+            //
+            // ⚠️ THE EDGE IS THE ONE THE CARD ALREADY USES AND COSTS NO WIRE CHANGE. `roundActive`
+            // going false → true is a round beginning and happens at no other time; that is the
+            // same derivation this method's header spends four paragraphs defending for the
+            // intermission card, reused rather than re-invented.
+            //
+            // ⚠️ AND IT IS ABOVE THE CARD'S NULL GUARD ON PURPOSE. The announcer is not the card
+            // and must not stop working on a screen that has no card on it.
+            if (!wasRoundActive && roundActive)
+                GameServices.Voice?.OnRoundStarted(roundNumber);
+
             var card = FindFirstObjectByType<UI.RoleSwapCard>();
             if (card == null) return;
 
@@ -2741,6 +3734,47 @@ namespace TumbangPreso.Net
             if (!wasRoundActive && roundActive) card.DismissAndPractice();
         }
 
+        /// <summary>
+        /// Set the moment the host commits to loading an arena, cleared the first time its own
+        /// `MatchDirector` says the match is running. While it is up, this host has told four
+        /// people to start a match it has not started itself yet.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE THE HOST WAS BROADCASTING "NO MATCH RUNNING" THROUGH ITS OWN
+        /// ARENA LOAD, FIVE TIMES A SECOND. `docs/TODO.md` § 82.3. § 82.1 fixed the receiving
+        /// end — `MatchDirector.IsPreStartSnapshot` drops the packet on the client, and that is
+        /// the half that had to exist because the honest sender cannot be relied on across
+        /// versions — so this is bandwidth and honesty rather than correctness. It is still worth
+        /// having: a stream of packets asserting something false is a trap for the next person
+        /// reading a capture.
+        ///
+        /// ⚠️⚠️ `LobbySession.MatchInProgress` IS THE OBVIOUS GATE AND IT IS WRONG. § 82.3 wrote
+        /// that down so nobody spends the hour twice: it is set by `HostStartMatch` and cleared
+        /// only by `NetSession`'s shutdown path, so it is **still true while the result board is
+        /// up**. Gating on `lobby.MatchInProgress &amp;&amp; !match.MatchInProgress` would suppress
+        /// the packet that ENDS the match, which is the one packet in the whole exchange that
+        /// must not be dropped.
+        ///
+        /// ⚠️ SO IT IS A ONE-SHOT LATCH, NOT A STATE. It answers "is the host mid-load", which no
+        /// existing flag answers, and it can only ever suppress packets that repeat a value the
+        /// host is about to contradict.
+        /// </summary>
+        private bool _loadingOwnArena;
+
+        /// <summary>
+        /// The host has committed to an arena and is about to load it. See
+        /// <see cref="_loadingOwnArena"/>.
+        ///
+        /// ⚠️ THE REMATCH PATH CALLS THIS TOO. `UI.MatchResult.BeginRematchLocally` reloads on
+        /// every peer and has the identical race; a latch set only in `HostStartMatch` would be
+        /// correct for the first match of a session and for no other.
+        /// </summary>
+        public static void HostBeginningArenaLoad()
+        {
+            if (!NetAuthority.IsHost || Instance == null) return;
+
+            Instance._loadingOwnArena = true;
+        }
+
         private void BroadcastMatchState()
         {
             if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
@@ -2748,6 +3782,16 @@ namespace TumbangPreso.Net
             var match = GameServices.Match;
             var round = GameServices.Round;
             if (match == null) return;
+
+            // ⚠️ CLEARED BY THE HOST'S OWN DIRECTOR, NOT BY A SCENE EVENT. `SliceRunner.Begin`
+            // is what sets `MatchInProgress`, so this is the first packet after the host's arena
+            // is genuinely live, which is exactly the moment the suppression stops being true.
+            if (match.MatchInProgress) _loadingOwnArena = false;
+
+            // ⚠️ AND THE SUPPRESSION IS ONLY EVER OF A FALSE `inProgress`. If the host somehow
+            // reaches here with the latch up and a live match, the line above has already cleared
+            // it; there is no path where this drops a packet carrying new information.
+            if (_loadingOwnArena) return;
 
             var scores = new int[Balance.PlayerCount];
             for (int i = 0; i < scores.Length; i++) scores[i] = match.ScoreFor(i);
@@ -2794,6 +3838,65 @@ namespace TumbangPreso.Net
         /// <summary>How far a prop must move before it is worth a packet. One centimetre.</summary>
         private const float PropMoveEpsilon = 0.01f;
 
+        // -------------------------------------------------------------------
+        // § THE PROP STREAM IS A POSE STREAM TOO, AND `PoseDelivery`'S NOTE MISSED IT
+        //
+        // ⚠️⚠️ 🧑 2026-08-29 SAID *"the bots AND SLIPPERS were going out of map"*, AND ONLY THE
+        // BOTS HALF WAS FIXED. `docs/TODO.md` § 71.3 moved `SyncUnit` and `SubmitMove` to
+        // `PoseDelivery` and left everything else reliable on a stated rule: *"the slipper's
+        // state changes and the lata going over are EVENTS: each one happens once and nothing
+        // later repeats it"*. That sentence is true of a grab and of a throw. It is NOT true of
+        // this file's own `BroadcastSlipperStateIfChanged`, which is a POSITION stream wearing
+        // the same message name: it fires on `FixedUpdate` whenever the shoe has moved more than
+        // `PropMoveEpsilon`, and a tsinelas in flight moves about 0.3 m per step. A thrown
+        // slipper was therefore 50 reliable messages a second, per slipper, which is the exact
+        // shape `PoseDelivery`'s own header calls *"actively worse"*.
+        //
+        // ⚠️⚠️ SO THE TSINELAS HALF OF THE REPORT HAD ITS TRANSPORT CAUSE LEFT IN PLACE. One lost
+        // packet head-of-line blocked the shoe's whole backlog and delivered it at once, and
+        // `Slipper.ApplySnapshotState` writes the arriving position straight onto the transform
+        // with no correction filter of any kind, so a burst is not smoothed there the way
+        // `ApplyNetworkTransform` at least tries to smooth a body. The § 71.3 clamp is what kept
+        // it inside the walls; it did not stop the shoe teleporting along them.
+        //
+        // ⚠️⚠️ AND THE ANSWER IS NOT TO FLIP THE MESSAGE, IT IS TO SPLIT IT IN TWO. `SyncSlipper`
+        // is genuinely two things at once. Its position fully replaces itself every step and can
+        // afford to be lost; its STATE, its HOLDER, its affinity and its thrower are the events
+        // § 71.3 was protecting, and a dropped one is a shoe stuck in the wrong hand for the rest
+        // of the round. So `SyncSlipper` keeps every field and stays reliable, and a new
+        // `SlipperPose` carries a position and nothing else on `PoseDelivery`.
+        //
+        // ⚠️⚠️ THE FIRST DRAFT OF THIS SENT THE SAME MESSAGE ON TWO DIFFERENT CHANNELS DEPENDING
+        // ON WHAT HAD CHANGED, AND THAT WAS WRONG IN A WAY WORTH RECORDING, because it looks
+        // strictly cheaper and it is not. Two channels have NO ordering between them: only
+        // `UnreliableSequenced` drops an old packet, and only against others on its own channel.
+        // A pose sent one step BEFORE a throw could therefore arrive one step AFTER the reliable
+        // throw packet, and since that pose carried the whole payload it would put the tsinelas
+        // back into the hand it had just left, re-run `ReleasePreviousHolder` and `NotifyEquipped`
+        // for a grab that had already ended, and correct itself 20 ms later. That is § 38.8's
+        // two-authors buzz arriving by a new road. **A message that carries no state cannot do
+        // it**, which is why the split is by PAYLOAD and not by delivery flag.
+        //
+        // ⚠️ THE KEEPALIVE IS WHAT MAKES THIS SAFE RATHER THAN MERELY CHEAPER, and it was already
+        // here for a different reason. Every discrete field is re-sent reliably twice a second
+        // whether or not it changed, so even a peer that missed the reliable edge AND the two
+        // unreliable poses either side of it is corrected within `PropKeepaliveSeconds`.
+        //
+        // ⚠️ THE LATA IS THE SAME SPLIT FOR THE SAME REASON. A can that has been hit ROLLS, and
+        // a roll is a pose stream; `IsUpright` going over is the event that scores. Position-only
+        // packets go unreliable, the upright bit and the skin never do.
+        //
+        // ⚠️ THE UNCONDITIONAL SENDERS ARE UNTOUCHED AND STAY RELIABLE. `Carrier` calls
+        // `BroadcastSlipperState` directly on a grab and on a throw and the reset channel calls
+        // `BroadcastLataState` on a restore. Those are pure events with no stream behind them, so
+        // they take the default and this change cannot reach them.
+        // -------------------------------------------------------------------
+
+        // ⚠️ THERE IS NO `PropEventDelivery` CONSTANT. `SyncSlipper` and `SyncLata` take
+        // `SendNamedMessageToAll`'s reliable DEFAULT exactly as they always have, so no event
+        // caller had to change and none can be broken by forgetting an argument. Only the two new
+        // pose messages name a delivery, and they name `PoseDelivery`.
+
         private Vector3 _lastLataPosition = new Vector3(float.NaN, float.NaN, float.NaN);
         private bool _lastLataUpright;
         private float _lataKeepaliveLeft;
@@ -2801,6 +3904,16 @@ namespace TumbangPreso.Net
         private readonly Dictionary<int, Vector3> _lastSlipperPosition = new Dictionary<int, Vector3>();
         private readonly Dictionary<int, int> _lastSlipperState = new Dictionary<int, int>();
         private readonly Dictionary<int, int> _lastSlipperHolder = new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _lastSlipperAffinity = new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _lastSlipperThrower = new Dictionary<int, int>();
+
+        /// <summary>Ownership travels now, so a change of it is a discrete change. See
+        /// <see cref="Slipper.SeatOfOrigin"/> and `docs/TODO.md` § 78.1.</summary>
+        private readonly Dictionary<int, int> _lastSlipperOwner = new Dictionary<int, int>();
+
+        /// <summary>Whether the object is switched on. The taya's tsinelas is parked with
+        /// `SetActive(false)` and that never reached a client. See § 78.1.</summary>
+        private readonly Dictionary<int, int> _lastSlipperActive = new Dictionary<int, int>();
         private readonly Dictionary<int, float> _slipperKeepaliveLeft = new Dictionary<int, float>();
 
         private void BroadcastLataStateIfChanged()
@@ -2813,49 +3926,119 @@ namespace TumbangPreso.Net
             bool moved = (lata.transform.position - _lastLataPosition).sqrMagnitude
                          > PropMoveEpsilon * PropMoveEpsilon;
 
-            if (!moved && lata.IsUpright == _lastLataUpright && _lataKeepaliveLeft > 0.0f) return;
+            bool toppled = lata.IsUpright != _lastLataUpright;
+            bool keepalive = _lataKeepaliveLeft <= 0.0f;
+
+            if (!moved && !toppled && !keepalive) return;
 
             _lastLataPosition = lata.transform.position;
             _lastLataUpright = lata.IsUpright;
             _lataKeepaliveLeft = PropKeepaliveSeconds;
 
-            BroadcastLataState();
+            // ⚠️ A ROLL IS A POSE AND TRAVELS AS ONE; GOING OVER IS THE EVENT THAT SCORES AND
+            // TRAVELS AS THE FULL RELIABLE SNAPSHOT. See the § note above.
+            if (toppled || keepalive) BroadcastLataState();
+            else BroadcastLataPose();
         }
 
         private void BroadcastSlipperStateIfChanged(Slipper slipper)
         {
             if (slipper == null) return;
 
+            // ⚠️⚠️ THE KEY IS THE SEAT OF ORIGIN AND THE OWNER IS NOW A WATCHED FIELD. Both halves
+            // of that matter and `docs/TODO.md` § 78.1 is why. These dictionaries used to be keyed
+            // on `OwnerSlot`, which goes to -1 the round its seat becomes taya, so the taya's shoe
+            // both fell out of the table and stopped being reachable at all. And because ownership
+            // now travels rather than being re-derived on the far side, a CHANGE of owner is a
+            // discrete change like any other: without it, the round that disowns a slipper would
+            // send nothing and every client would keep the previous round's owner on its foot
+            // arrow and its owner glow.
+            int seat = slipper.SeatOfOrigin;
             int owner = slipper.OwnerSlot;
             int state = (int)slipper.State;
             int holder = slipper.Holder != null ? slipper.Holder.PlayerSlot : -1;
 
-            float left = _slipperKeepaliveLeft.TryGetValue(owner, out float k) ? k : 0.0f;
+            // ⚠️ AFFINITY AND THROWER JOIN STATE AND HOLDER AS DISCRETE FIELDS, AND THEY WERE NOT
+            // WATCHED BEFORE. Both already travel in the payload and neither is derivable from a
+            // position: `Affinity` is what makes a pektus curve read as one, and `ThrowerSlot` is
+            // who a bank is credited to. While every packet went reliably it did not matter which
+            // fields a re-send was for, because none could be lost. Deciding the channel by what
+            // changed makes the question live, so the set has to be the whole discrete payload
+            // rather than the two fields somebody happened to be tracking for the rate limit.
+            int affinity = (int)slipper.Affinity;
+            int thrower = slipper.ThrowerSlot;
+
+            // ⚠️⚠️ WHETHER THE OBJECT IS SWITCHED ON IS DISCRETE STATE AND IT NEVER TRAVELLED.
+            // `EquipOwnedSlippers` parks the taya's tsinelas with `SetActive(false)` behind the
+            // host gate, so on a client it stayed on, stayed in that seat's hand, and the taya
+            // walked the whole round carrying a shoe (§ 78.1).
+            int active = slipper.gameObject.activeSelf ? 1 : 0;
+
+            if (seat < 0) return;
+
+            float left = _slipperKeepaliveLeft.TryGetValue(seat, out float k) ? k : 0.0f;
             left -= Time.fixedDeltaTime;
 
-            bool moved = !_lastSlipperPosition.TryGetValue(owner, out var previous)
-                         || (slipper.transform.position - previous).sqrMagnitude
-                            > PropMoveEpsilon * PropMoveEpsilon;
+            // ⚠️⚠️ A CARRIED SHOE IS NOT WORTH A SINGLE POSE PACKET, AND IT WAS COSTING FIFTY A
+            // SECOND. `Slipper.ApplySnapshotPose` returns immediately while the state is `Held`,
+            // because `Carrier` parents the tsinelas to the carry anchor on every peer and the
+            // hand is its only author (the § 38.8 buzz). So every one of those packets was sent,
+            // routed, and discarded on arrival by design. A tsinelas is in somebody's hand for a
+            // large part of a round and there are four of them: this is § 38.18's finding again,
+            // one object further in, and it is the same answer, do not send what nobody applies.
+            //
+            // ⚠️ THE DISCRETE HALF IS UNAFFECTED. Picking it up and throwing it are state changes
+            // and still go reliably the moment they happen, and the keepalive still re-sends the
+            // holder twice a second, so a peer that missed the grab is corrected on the same
+            // half-second bound as everything else.
+            // ⚠️ A PARKED SHOE SENDS NO POSE EITHER, for the same reason a carried one does not:
+            // it is switched off on every peer that has heard about it, so its position is not a
+            // thing anybody draws. The discrete edge that parks it still goes reliably.
+            bool carried = slipper.State == SlipperState.Held || active == 0;
 
-            bool changed = moved
-                           || !_lastSlipperState.TryGetValue(owner, out int lastState) || lastState != state
-                           || !_lastSlipperHolder.TryGetValue(owner, out int lastHolder) || lastHolder != holder;
+            bool moved = !carried
+                         && (!_lastSlipperPosition.TryGetValue(seat, out var previous)
+                             || (slipper.transform.position - previous).sqrMagnitude
+                                > PropMoveEpsilon * PropMoveEpsilon);
 
-            if (!changed && left > 0.0f)
+            bool discrete = !_lastSlipperState.TryGetValue(seat, out int lastState) || lastState != state
+                            || !_lastSlipperHolder.TryGetValue(seat, out int lastHolder) || lastHolder != holder
+                            || !_lastSlipperAffinity.TryGetValue(seat, out int lastAff) || lastAff != affinity
+                            || !_lastSlipperThrower.TryGetValue(seat, out int lastThr) || lastThr != thrower
+                            || !_lastSlipperOwner.TryGetValue(seat, out int lastOwner) || lastOwner != owner
+                            || !_lastSlipperActive.TryGetValue(seat, out int lastActive) || lastActive != active;
+
+            bool keepalive = left <= 0.0f;
+
+            if (!moved && !discrete && !keepalive)
             {
-                _slipperKeepaliveLeft[owner] = left;
+                _slipperKeepaliveLeft[seat] = left;
                 return;
             }
 
-            _lastSlipperPosition[owner] = slipper.transform.position;
-            _lastSlipperState[owner] = state;
-            _lastSlipperHolder[owner] = holder;
-            _slipperKeepaliveLeft[owner] = PropKeepaliveSeconds;
+            _lastSlipperPosition[seat] = slipper.transform.position;
+            _lastSlipperState[seat] = state;
+            _lastSlipperHolder[seat] = holder;
+            _lastSlipperAffinity[seat] = affinity;
+            _lastSlipperThrower[seat] = thrower;
+            _lastSlipperOwner[seat] = owner;
+            _lastSlipperActive[seat] = active;
+            _slipperKeepaliveLeft[seat] = PropKeepaliveSeconds;
 
-            BroadcastSlipperState(slipper);
+            // ⚠️⚠️ THIS BRANCH IS THE TSINELAS HALF OF 🧑'S *"the bots and slippers were going
+            // out of map"*, AND IT IS THE HALF § 71.3 DID NOT FIX. A shoe in flight moves every
+            // step, so before this it was 50 guaranteed-delivery messages a second carrying a
+            // position the next one replaces. See the § note above.
+            if (discrete || keepalive) BroadcastSlipperState(slipper);
+            else BroadcastSlipperPose(slipper);
         }
 
-        /// <summary>Sends the authoritative can immediately, outside the fixed world tick.</summary>
+        /// <summary>
+        /// Sends the whole authoritative can, reliably, immediately and outside the world tick.
+        ///
+        /// ⚠️ EVERY FIELD, EVERY TIME, ON THE RELIABLE DEFAULT. This is the EVENT half of the
+        /// split described above; `BroadcastLataPose` is the stream half.
+        /// </summary>
         public void BroadcastLataState()
         {
             if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
@@ -2870,7 +4053,26 @@ namespace TumbangPreso.Net
             _nm.CustomMessagingManager.SendNamedMessageToAll("SyncLata", writer);
         }
 
-        /// <summary>Sends one authoritative slipper immediately and on the fixed world tick.</summary>
+        /// <summary>The rolling can, and nothing else about it.</summary>
+        public void BroadcastLataPose()
+        {
+            if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
+            var lata = GameServices.Round?.Lata;
+            if (lata == null) return;
+
+            using var writer = new FastBufferWriter(64, Allocator.Temp);
+            writer.WriteValueSafe(lata.transform.position);
+            writer.WriteValueSafe(lata.transform.rotation);
+            _nm.CustomMessagingManager.SendNamedMessageToAll("LataPose", writer, PoseDelivery);
+        }
+
+        /// <summary>
+        /// Sends one whole authoritative slipper, reliably, immediately and on the world tick.
+        ///
+        /// ⚠️ EVERY FIELD, EVERY TIME, ON THE RELIABLE DEFAULT. `Carrier` calls this on a grab and
+        /// on a throw and both are events. This is the EVENT half of the split described above;
+        /// `BroadcastSlipperPose` is the stream half.
+        /// </summary>
         public void BroadcastSlipperState(Slipper slipper)
         {
             if (!NetAuthority.IsHost || slipper == null ||
@@ -2879,7 +4081,18 @@ namespace TumbangPreso.Net
 
             int holderSlot = slipper.Holder != null ? slipper.Holder.PlayerSlot : -1;
             using var writer = new FastBufferWriter(128, Allocator.Temp);
+
+            // ⚠️⚠️ THE KEY FIELD IS `SeatOfOrigin` AND OWNERSHIP FOLLOWS IT AS ORDINARY PAYLOAD.
+            // It used to be `OwnerSlot` doing both jobs, which is `docs/TODO.md` § 78.1: the taya's
+            // shoe goes to owner -1 for a round and became unaddressable rather than merely
+            // disowned. The seat never moves, so it can be addressed; the owner does move, so it
+            // is sent.
+            writer.WriteValueSafe(slipper.SeatOfOrigin);
             writer.WriteValueSafe(slipper.OwnerSlot);
+
+            // ⚠️ WHETHER IT IS IN PLAY AT ALL. `EquipOwnedSlippers` switches the taya's shoe off
+            // host-side; without this the client kept it on and in that seat's hand (§ 78.1).
+            writer.WriteValueSafe(slipper.gameObject.activeSelf);
             writer.WriteValueSafe(holderSlot);
             writer.WriteValueSafe(slipper.transform.position);
             writer.WriteValueSafe(slipper.transform.rotation);
@@ -2889,6 +4102,23 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe((int)slipper.Affinity);
             writer.WriteValueSafe(slipper.ThrowerSlot);
             _nm.CustomMessagingManager.SendNamedMessageToAll("SyncSlipper", writer);
+        }
+
+        /// <summary>One slipper's flight path, and nothing else about it.</summary>
+        public void BroadcastSlipperPose(Slipper slipper)
+        {
+            if (!NetAuthority.IsHost || slipper == null ||
+                _nm == null || _nm.CustomMessagingManager == null)
+                return;
+
+            // ⚠️ ADDRESSED BY SEAT, LIKE `SyncSlipper`. A pose keyed on a field that goes -1 for
+            // the taya is a pose nobody can apply; see `Slipper.SeatOfOrigin`.
+            using var writer = new FastBufferWriter(64, Allocator.Temp);
+            writer.WriteValueSafe(slipper.SeatOfOrigin);
+            writer.WriteValueSafe(slipper.transform.position);
+            writer.WriteValueSafe(slipper.transform.rotation);
+            writer.WriteValueSafe(slipper.Velocity);
+            _nm.CustomMessagingManager.SendNamedMessageToAll("SlipperPose", writer, PoseDelivery);
         }
 
         public void BroadcastWorldSnapshot()
@@ -2925,9 +4155,9 @@ namespace TumbangPreso.Net
                 if (s != null)
                 {
                     int holderSlot = s.Holder != null ? s.Holder.PlayerSlot : -1;
-                    SyncSlipperClientRpc(s.OwnerSlot, holderSlot, s.transform.position,
-                        s.transform.rotation, (int)s.State, s.Velocity, s.PektusSpin,
-                        (int)s.Affinity, s.ThrowerSlot);
+                    SyncSlipperClientRpc(s.SeatOfOrigin, s.OwnerSlot, s.gameObject.activeSelf,
+                        holderSlot, s.transform.position, s.transform.rotation, (int)s.State,
+                        s.Velocity, s.PektusSpin, (int)s.Affinity, s.ThrowerSlot);
 
                     BroadcastSlipperState(s);
                 }
@@ -3006,8 +4236,26 @@ namespace TumbangPreso.Net
             var kit = unit != null && unit.AbilitySystem != null ? unit.AbilitySystem.Kit : null;
             if (kit == null) return;
 
+            // ⚠️⚠️ THE OWNER'S OWN COOLDOWNS MAY BE RAISED BY THIS AND NOT LOWERED, WHILE A
+            // ROUND IS LIVE. That is the spammable-teleport fix; `HeroAbility
+            // .ApplyNetworkSnapshot` carries the whole chain, and the short version is that a
+            // host which REFUSED a cast reports the state it actually has, which is no cooldown,
+            // and assigning that over the cooldown the owner just spent predicting hands the
+            // ability straight back.
+            //
+            // ⚠️⚠️ AND IT IS GATED ON THE ROUND BEING LIVE, WHICH IS NOT A DETAIL. `SliceRunner
+            // .ResetWorld` calls `ResetKit` on every seat at a round boundary, and that is a
+            // legitimate clearing that MUST reach the owner or it starts the next round holding
+            // a cooldown nothing will ever tick away. The intermission is exactly when the round
+            // clock is stopped, so asking the round is asking the right question rather than
+            // special-casing the reset. A reconnecting client is covered too: its kit is rebuilt
+            // at zero, so raising it to the host's value is what the rule already does.
+            bool mine = slot == NetAuthority.LocalSlot;
+            bool roundLive = GameServices.Round != null && GameServices.Round.RoundActive;
+
             kit.ApplyNetworkSnapshot(ultimateCharge, skill1Cooldown, skill1Charges,
-                                     skill2Cooldown, skill2Charges, ultimateCooldown);
+                                     skill2Cooldown, skill2Charges, ultimateCooldown,
+                                     mayLower: !mine || !roundLive);
         }
 
         private void OnSyncAbilityMsg(ulong senderClientId, FastBufferReader reader)
@@ -3077,7 +4325,9 @@ namespace TumbangPreso.Net
             // had just produced. See § THE LOOPBACK.
             if (NetAuthority.IsHost) return;
 
+            reader.ReadValueSafe(out int seatOfOrigin);
             reader.ReadValueSafe(out int ownerSlot);
+            reader.ReadValueSafe(out bool inPlay);
             reader.ReadValueSafe(out int holderSlot);
             reader.ReadValueSafe(out Vector3 pos);
             reader.ReadValueSafe(out Quaternion rot);
@@ -3087,8 +4337,36 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out int affinity);
             reader.ReadValueSafe(out int throwerSlot);
 
-            SyncSlipperClientRpc(ownerSlot, holderSlot, pos, rot, state, velocity, pektusSpin,
-                                 affinity, throwerSlot);
+            SyncSlipperClientRpc(seatOfOrigin, ownerSlot, inPlay, holderSlot, pos, rot, state,
+                                 velocity, pektusSpin, affinity, throwerSlot);
+        }
+
+        // ⚠️ BOTH POSE HANDLERS APPLY A POSITION AND REFUSE TO TOUCH ANYTHING ELSE, which is what
+        // makes them safe to receive out of order with respect to the reliable channel. See the
+        // § note above `BroadcastLataStateIfChanged` and `Slipper.ApplySnapshotPose`.
+
+        private void OnLataPoseMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (NetAuthority.IsHost) return;
+
+            reader.ReadValueSafe(out Vector3 pos);
+            reader.ReadValueSafe(out Quaternion rot);
+
+            GameServices.Round?.Lata?.ApplySnapshotPose(pos, rot);
+        }
+
+        private void OnSlipperPoseMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (NetAuthority.IsHost) return;
+
+            reader.ReadValueSafe(out int seatOfOrigin);
+            reader.ReadValueSafe(out Vector3 pos);
+            reader.ReadValueSafe(out Quaternion rot);
+            reader.ReadValueSafe(out Vector3 velocity);
+
+            if (!ValidSlot(seatOfOrigin)) return;
+
+            FindSlipper(seatOfOrigin)?.ApplySnapshotPose(pos, rot, velocity);
         }
 
         // -------------------------------------------------------------------
@@ -3250,9 +4528,56 @@ namespace TumbangPreso.Net
             BroadcastWorldSnapshot();
         }
 
+        /// <summary>
+        /// One player saying they are done reading the role swap. See `BufferSkipVote`.
+        ///
+        /// ⚠️ IT RETURNS WHETHER THE VOTE REACHED THE WIRE, like `DeclareReadyServerRpc` and for
+        /// the same reason: `IsListening` is true from `StartClient` and not from approval, so a
+        /// press made during the join window has nowhere to go and the caller has to know that
+        /// rather than believe it voted.
+        /// </summary>
+        public bool RequestSkipBufferServerRpc()
+        {
+            if (NetAuthority.IsHost)
+            {
+                FindFirstObjectByType<BufferSkipVote>()?.HostCastVote(NetAuthority.LocalPeerId);
+                return true;
+            }
+
+            if (_nm == null || !_nm.IsListening || _nm.CustomMessagingManager == null) return false;
+
+            // ⚠️ NO PAYLOAD AT ALL. The vote carries no data and the voter is `senderClientId`,
+            // which the transport supplies and the sender cannot type. A placeholder byte here
+            // made `tools/audit_wire_payloads.py` report a writer/reader mismatch, correctly:
+            // one field written and none read is exactly the shape of a field somebody forgot to
+            // parse, and the audit cannot tell a deliberate filler from that. `StartMatch` is the
+            // precedent for a genuinely empty message.
+            using var writer = new FastBufferWriter(8, Allocator.Temp);
+            _nm.CustomMessagingManager.SendNamedMessage("SkipBuffer", NetworkManager.ServerClientId, writer);
+            return true;
+        }
+
+        /// <summary>
+        /// ⚠️ THE VOTER IS THE SENDER, NEVER A NUMBER IN THE PAYLOAD. A claimed peer id on this
+        /// message would let one client vote on everybody else's behalf and end the intermission
+        /// alone. `senderClientId` comes from the transport and cannot be typed by the sender,
+        /// which is the same rule `SenderOwnsClaimedSeat` applies to every other request here.
+        /// </summary>
+        private void OnSkipBufferMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
+
+            FindFirstObjectByType<BufferSkipVote>()?.HostCastVote((int)senderClientId);
+        }
+
         public void HostPeerLeft(int peerId)
         {
             if (!NetAuthority.IsHost) return;
+
+            // ⚠️ THE SKIP VOTE HAS THE SAME HOLE AS THE READY GATE AND THE REMATCH VOTE: a peer
+            // that quits mid-buffer drops the denominator, and with nobody re-evaluating the
+            // players still waiting sit on a gate that is already satisfied.
+            FindFirstObjectByType<BufferSkipVote>()?.OnPeerLeft(peerId);
 
             _spawned.Remove(peerId);
 
@@ -3292,10 +4617,19 @@ namespace TumbangPreso.Net
                     var unit = Unit(seat);
                     if (unit != null)
                     {
-                        unit.IsBot = true;
-                        if (unit.GetComponent<AIController>() == null)
+                        if (AIController.BotsEnabled)
                         {
-                            unit.gameObject.AddComponent<AIController>();
+                            unit.IsBot = true;
+                            if (unit.GetComponent<AIController>() == null)
+                                unit.gameObject.AddComponent<AIController>();
+                        }
+                        else
+                        {
+                            // Bots-off lobbies reserve the chair for reconnection but do not
+                            // install a replacement driver. Release any last remote input so the
+                            // disconnected body cannot keep walking on a stale held key.
+                            unit.Intent.Clear();
+                            unit.Intent.CommitFrame();
                         }
 
                         // ⚠⚠ THE SEAT JUST CHANGED HANDS AND `CharacterMotor` CACHES WHO DRIVES IT.
@@ -3304,6 +4638,21 @@ namespace TumbangPreso.Net
                         // statue on every client's screen. See `StepNetworkTransform`.
                         unit.ForgetInputSource();
                     }
+
+                    // ⚠️⚠️ AND THE ROOM SAYS THE SEAT IS OPEN, WHICH IS THE WHOLE OF
+                    // BACKFILL. `FUTURE.md` § 7 asks for exactly one behaviour, "a match that
+                    // loses a player advertises the seat rather than dying", and everything under
+                    // it was already built for the reconnect window: `LobbySession.Depart` holds
+                    // the chair against the durable token and `RuleOnArrival` hands a free seat to
+                    // a newcomer mid-match. **What was missing was that nothing told the outside
+                    // world the chair existed**, because a lobby record with `InProgress` set is
+                    // refused by `MatchmakingRules.Evaluate` unless it is also backfilling.
+                    //
+                    // ⚠️ ONLY WHILE A MATCH IS RUNNING. A seat opening in the LOBBY is
+                    // already advertised by the seat count, and flagging a backfill there would
+                    // put a room that never queued into the pool.
+                    if (lobby.MatchInProgress)
+                        FindFirstObjectByType<Matchmaker>()?.OfferBackfillSeat(true);
                 }
             }
 

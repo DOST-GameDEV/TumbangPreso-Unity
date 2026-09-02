@@ -115,6 +115,12 @@ namespace TumbangPreso.Visual
         };
 
         /// <summary>
+        /// The action table, for the tests that assert what a player will actually see. See the
+        /// § THE HERO CASTS note inside it for why the SECOND entry is the one that ships.
+        /// </summary>
+        public static IReadOnlyDictionary<string, string[]> ActionChains => ActionClips;
+
+        /// <summary>
         /// The gameplay verbs' reads.
         ///
         /// ⚠️⚠️ LUNGE AND PUNCH HAVE THEIR OWN CLIPS AND MUST KEEP THEM. Both used to play the
@@ -130,36 +136,67 @@ namespace TumbangPreso.Visual
         private static readonly Dictionary<string, string[]> ActionClips = new Dictionary<string, string[]>
         {
             { "throw", new[] { Throwing, PickUp, Interact } },
-            { "shove", new[] { "attack-melee-right", "attack-kick-right", Interact } },
+
+            // ⚠️ THE SHOVE LEADS WITH THE OFF ARM AND THE PUNCH WITH THE STRONG ONE, so the two
+            // are told apart from behind. They both played `attack-melee-right` and were one
+            // gesture: a push that moves somebody and a jab that tags them are different
+            // commitments and an opponent has to be able to read which is coming.
+            { "shove", new[] { "attack-melee-left", "attack-melee-right", Interact } },
             { "ready", new[] { "emote-yes", Interact } },
             { "grab", new[] { PickUp, Interact, "interact-left" } },
             { "lunge", new[] { "attack-kick-right", "attack-melee-right", Interact } },
-            { "punch", new[] { "attack-melee-right", "attack-kick-right", Interact } },
+            { "punch", new[] { "attack-melee-right", "attack-kick-left", Interact } },
 
-            // Hero ability action fallback chains
+            // -------------------------------------------------------------------
+            // § THE HERO CASTS
+            //
+            // ⚠️⚠️ EVERY `hero-*` CLIP IN THE FIRST SLOT IS ASPIRATIONAL AND NONE OF THEM EXISTS
+            // TODAY, WHICH MAKES THE SECOND SLOT THE ONE THAT SHIPS. The CC0 rig carries exactly
+            // 43 named clips and not one is a hero cast; `Play` falls to the next name in the
+            // chain, so what a player actually sees is entry two, every time, on every hero.
+            //
+            // ⚠️⚠️ AND ENTRY TWO USED TO BE `emote-yes` FOR ALL SIX ULTIMATES. 🧑 2026-08-29:
+            // *"make sure theres an animation for all interactions like pushing tayaing or skill
+            // casting, make the animations appropriate for skills and what theyre doing btw dont
+            // js spam the same animation"*. Supernova, Thunderstrike, Titan Fissure, Glacial
+            // Nova, Devouring Seance and Grand Coven were one nod of the head between them, and
+            // `attack-melee-right` covered four more skills on top. The first slot being right
+            // is what hid it: the table READS as eighteen distinct casts.
+            //
+            // ⚠️ SO THE SECOND SLOT IS CHOSEN FOR THE MOTION, not to fill the row. The rule
+            // applied: no hero repeats a clip inside its own kit, no two ULTIMATES share one at
+            // all, and where two heroes do share, the thing they are doing is the same thing (two
+            // dashes, two casts thrown from the hand). Thirteen usable clips against eighteen
+            // casts means some sharing is arithmetic; sharing it between a dash and a dash rather
+            // than between six ultimates is the whole difference.
+            //
+            // ⚠️ THE FIRST SLOT STAYS. When the team's own cast animations land they drop in by
+            // name with no code change, which is the entire reason these are chains.
+            // -------------------------------------------------------------------
+
             { "hero-sean-dash", new[] { "hero-sean-dash", "attack-kick-right", Sprint } },
             { "hero-sean-ignite", new[] { "hero-sean-ignite", "attack-melee-right", Interact } },
-            { "hero-sean-supernova", new[] { "hero-sean-supernova", "attack-melee-right", Jump } },
+            { "hero-sean-supernova", new[] { "hero-sean-supernova", Jump, "attack-melee-right" } },
 
             { "hero-zack-sprint", new[] { "hero-zack-sprint", Sprint, "attack-kick-right" } },
-            { "hero-zack-charge", new[] { "hero-zack-charge", "attack-melee-right", Interact } },
-            { "hero-zack-summon", new[] { "hero-zack-summon", "emote-yes", Interact } },
+            { "hero-zack-charge", new[] { "hero-zack-charge", "emote-no", "attack-melee-right" } },
+            { "hero-zack-summon", new[] { "hero-zack-summon", "holding-both-shoot", Jump } },
 
-            { "hero-dante-stomp", new[] { "hero-dante-stomp", "attack-kick-right", PickUp } },
-            { "hero-dante-roar", new[] { "hero-dante-roar", "emote-yes", "attack-melee-right" } },
-            { "hero-dante-fissure", new[] { "hero-dante-fissure", "attack-melee-right", PickUp } },
+            { "hero-dante-stomp", new[] { "hero-dante-stomp", PickUp, "attack-kick-right" } },
+            { "hero-dante-roar", new[] { "hero-dante-roar", "attack-melee-left", "emote-yes" } },
+            { "hero-dante-fissure", new[] { "hero-dante-fissure", "attack-kick-left", PickUp } },
 
             { "hero-cheska-frostwave", new[] { "hero-cheska-frostwave", "interact-right", "attack-melee-right" } },
             { "hero-cheska-raise", new[] { "hero-cheska-raise", PickUp, Interact } },
-            { "hero-cheska-nova", new[] { "hero-cheska-nova", "emote-yes", Interact } },
+            { "hero-cheska-nova", new[] { "hero-cheska-nova", "holding-left-shoot", Jump } },
 
             { "hero-nemu-ghoststep", new[] { "hero-nemu-ghoststep", Sprint, Walk } },
-            { "hero-nemu-project", new[] { "hero-nemu-project", "interact-right", "attack-melee-right" } },
+            { "hero-nemu-project", new[] { "hero-nemu-project", "interact-left", "attack-melee-left" } },
             { "hero-nemu-seance", new[] { "hero-nemu-seance", "emote-yes", Interact } },
 
             { "hero-phaister-hex", new[] { "hero-phaister-hex", "interact-right", "attack-melee-right" } },
             { "hero-phaister-blink", new[] { "hero-phaister-blink", "attack-kick-right", Sprint } },
-            { "hero-phaister-eclipse", new[] { "hero-phaister-eclipse", "emote-yes", Interact } },
+            { "hero-phaister-eclipse", new[] { "hero-phaister-eclipse", Crouch, "holding-both" } },
         };
 
         [SerializeField] private float _blend = 0.12f;
@@ -307,28 +344,52 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>
-        /// Clips this project builds rather than imports. Today that is § THE DANCE, which
-        /// exists because a seven-bone rig has nothing retargetable to borrow.
+        /// Clips this project authors from mathematical curves rather than imports. The dance
+        /// is baked; the older hero-cast path below is tracked separately in TODO § 80.8.
         ///
-        /// ⚠️ BUILT PER CHARACTER, NOT ONCE AND SHARED, because the curve paths contain the
-        /// instanced model's own node names and the twelve rigs do not agree on them. It is a
-        /// few kilobytes of curve per body.
+        /// ⚠️⚠️ THE DANCE IS BAKED AS AN ASSET, NOT BUILT IN THE PLAYER. `AnimationClip.SetCurve`
+        /// populates a non-legacy clip in the editor and is editor-only for that clip type at
+        /// runtime. The old code called it here in every build, received a valid clip with zero
+        /// curves, and then preferred that empty `generated-dance` over `idle`. A valid empty
+        /// clip is the bind pose, which is exactly the reported dance T-pose.
         ///
-        /// ⚠️ AND IT IS CALLED LAST, so it cannot satisfy the "did this rig ship any animation"
-        /// test that gates the editor's last-resort clip lookup. See the call site.
+        /// `GeneratedAnimationAuthor` writes one set under Resources per rig hierarchy, which
+        /// preserves the curves in a player. The outer node is model-specific, so sharing one
+        /// set would bind `character-male-f/root` onto `character-female-f` and move nothing.
+        /// `GeneratedAnimationTests` asserts the selected set against every roster model.
+        ///
+        /// ⚠️ THE EDITOR FALLBACK EXISTS FOR HAND-BUILT TEST FIXTURES ONLY. It is compiled out
+        /// of a player so this fault cannot return as an apparently successful empty clip.
         /// </summary>
         private void BuildGeneratedClips()
         {
             if (_animator == null) return;
 
-            var dance = DanceClip.Build(_animator.transform);
-            if (dance != null) _clips[DanceClip.ClipName] = dance;
+            string rig = DanceClip.ResourceName(_animator.transform);
+            var baked = string.IsNullOrEmpty(rig)
+                ? null
+                : Resources.Load<GeneratedAnimationSet>($"{DanceClip.ResourceFolder}/{rig}");
+
+            if (baked != null && baked.Clips != null)
+            {
+                foreach (var clip in baked.Clips)
+                    if (clip != null) _clips[clip.name] = clip;
+            }
+
+#if UNITY_EDITOR
+            if (!_clips.ContainsKey(DanceClip.ClipName))
+            {
+                var dance = DanceClip.Build(_animator.transform);
+                if (dance != null) _clips[DanceClip.ClipName] = dance;
+            }
+#endif
 
             var heroClips = HeroAbilityClips.BuildAll(_animator.transform);
             if (heroClips != null)
             {
                 foreach (var kvp in heroClips)
-                    if (kvp.Value != null) _clips[kvp.Key] = kvp.Value;
+                    if (kvp.Value != null && !_clips.ContainsKey(kvp.Key))
+                        _clips[kvp.Key] = kvp.Value;
             }
         }
 
@@ -660,6 +721,12 @@ namespace TumbangPreso.Visual
             if (_graph.IsValid()) _graph.Play();
         }
 
+        /// <summary>True while a one-shot still owns the body. Read by callers that want to
+        /// REPEAT a read over a hold that outlasts it, without cutting the previous one off
+        /// part-played. See `Carrier.StepDefender`, where the reset channel runs far longer than
+        /// the gesture that announces it.</summary>
+        public bool IsPlayingAction => _oneShotLeft > 0.0f;
+
         /// <summary>A non-looping action that owns the body until it finishes.</summary>
         public void PlayOneShot(string clipName)
         {
@@ -754,17 +821,69 @@ namespace TumbangPreso.Visual
         /// than of behaviour. Zeroing the speed one frame short of the end holds the pose for
         /// as long as the state that asked for it lasts.
         /// </summary>
+        /// <summary>
+        /// Runs the end of whatever is on the front input: a non-looping clip freezes on its last
+        /// pose, a looping one wraps back to its start.
+        ///
+        /// ⚠️⚠️ THE WRAP IS DONE HERE BECAUSE `SetDuration` DOES NOT DO IT, AND THAT IS 🧑
+        /// 2026-08-29: *"sa dance emote dalawang swings lang sya and nag stostop na sya
+        /// sumayaw"*. `Play` asks for a loop with `playable.SetDuration(double.MaxValue)`, and
+        /// that is a statement about when the PLAYABLE is finished, not about what the CLIP does
+        /// when it runs off its own end. An `AnimationClipPlayable` past `clip.length` holds the
+        /// final pose unless the clip asset itself is marked Loop Time in the importer, so an
+        /// infinite duration on an unlooped clip buys a pose that never ends rather than a groove
+        /// that never ends. `EmoteLoops` said `{ "dance", true }` and the dance still played
+        /// once and froze, which is why reading that table was not enough to find this: both
+        /// halves looked correct and the disagreement was between them.
+        ///
+        /// ⚠️ WRAPPED HERE RATHER THAN FIXED IN THE IMPORTER, DELIBERATELY. `CLAUDE.md` § 4a:
+        /// every clip in the project is placeholder and the team's own animations are coming.
+        /// An import setting is a property of THIS asset that the replacement arrives without,
+        /// so the loop would break again on the commit that swaps the art, silently, and the
+        /// report would come back a second time. This holds whatever the clips are, which is the
+        /// same reason `CharacterAnimator` reads clip names off the asset instead of assuming
+        /// them.
+        ///
+        /// ⚠️ IT IS A NO-OP ON A CLIP THAT ALREADY LOOPS. `GetTime` accumulates past the clip's
+        /// length whether or not the clip wraps visually, so on a properly imported locomotion
+        /// clip this rewrites the time to the phase it was already showing.
+        /// </summary>
         private void HoldLastFrame()
         {
-            if (!_holdAtEnd) return;
-
             var front = Front();
             if (!front.IsValid()) return;
 
-            double length = front.GetAnimationClip() != null
-                ? front.GetAnimationClip().length
-                : 0.0;
+            var clip = front.GetAnimationClip();
+            double length = clip != null ? clip.length : 0.0;
             if (length <= 0.0) return;
+
+            if (!_holdAtEnd)
+            {
+                // ⚠️⚠️ ONLY A CLIP THAT DOES NOT LOOP ITSELF, AND THE FIRST VERSION OF THIS DID
+                // IT TO EVERYTHING. `CarryTests` caught it: a held tsinelas drifted 0.063 m from
+                // the hand against a 0.050 bound while its carrier walked. Rewriting the time on
+                // a clip that ALREADY wraps sends it back exactly one cycle, and a walk cycle
+                // whose first and last frames are not identical pops the hand by that seam on the
+                // frame it happens. The locomotion clips are imported with Loop Time and need no
+                // help; the emotes are the ones that do not.
+                //
+                // ⚠️ `clip.isLooping` IS THE IMPORT SETTING, which is exactly the question being
+                // asked: "does this asset wrap on its own, or do I have to". It is the one place
+                // in this class that reads an import flag, and it reads it to decide whether to
+                // COMPENSATE for it rather than to depend on it, so the note in `HoldLastFrame`'s
+                // header about the art being replaced still holds. A replacement clip that
+                // arrives unlooped gets the wrap; one that arrives looped does not need it.
+                if (clip.isLooping) return;
+
+                double time = front.GetTime();
+
+                // ⚠️ THE REMAINDER, NOT ZERO. Snapping to 0 on the frame the clip runs out
+                // throws away however far past the seam this frame's delta carried it, which at
+                // 30 fps is a third of the frames landing on the downbeat twice.
+                if (time >= length) front.SetTime(time % length);
+
+                return;
+            }
 
             if (front.GetTime() >= length - 0.001)
             {
@@ -832,11 +951,34 @@ namespace TumbangPreso.Visual
 
             // Retire whatever was on input 0 and slide the current clip down to it, so the
             // mixer always crossfades from what you were doing to what you are doing now.
+            //
+            // ⚠️⚠️ THE OUTGOING PLAYABLE IS CAPTURED BEFORE THE DISCONNECT, AND READING IT AFTER
+            // WAS THE BUG. `PlayableGraph.Disconnect` sets that input to `Playable.Null`, so the
+            // old line (disconnect, then `ConnectInput(0, _mixer.GetInput(1), 0)`) connected
+            // NOTHING to input 0 on every single clip change. Nothing threw and nothing logged,
+            // because connecting an invalid source is a silent no-op.
+            //
+            // What it cost is the whole crossfade. An `AnimationMixerPlayable` whose weights sum
+            // below one fills the remainder from the stream's DEFAULT values, which is the rig's
+            // bind pose, so for the first `_blend` seconds of every transition the body was being
+            // blended out of a T-pose rather than out of the clip it was actually in. On
+            // locomotion that is a twitch you could mistake for footwork. On a ONE-SHOT it is the
+            // reported bug: a jab or a kick is about a third of a second, so the blend-in is most
+            // of the clip and the verb reads as a snap and a shrug rather than as a swing.
+            // 🧑 2026-08-28: *"no animation when tagging"*.
+            //
+            // ⚠️ AND THE RETIRED PLAYABLE IS DESTROYED, WHICH IT ALSO WAS NOT. The old code
+            // destroyed input 0 and then never connected anything there, so the clip LEAVING
+            // input 1 was disconnected and abandoned: one orphaned `AnimationClipPlayable` per
+            // clip change, for the life of the graph. A match makes hundreds per character.
+            var outgoing = _mixer.GetInput(1);
+
             if (_mixer.GetInput(0).IsValid()) _mixer.GetInput(0).Destroy();
-            if (_mixer.GetInput(1).IsValid())
+
+            if (outgoing.IsValid())
             {
                 _graph.Disconnect(_mixer, 1);
-                _mixer.ConnectInput(0, _mixer.GetInput(1), 0);
+                _mixer.ConnectInput(0, outgoing, 0);
             }
 
             var playable = AnimationClipPlayable.Create(_graph, clip);

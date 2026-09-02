@@ -1,4 +1,6 @@
 using NUnit.Framework;
+using System.Collections.Generic;
+using System.Reflection;
 using TumbangPreso.Core;
 using UnityEngine;
 
@@ -56,6 +58,47 @@ namespace TumbangPreso.Tests
             Assert.IsFalse(i.Pressed(Verb.Sprint));
             Assert.IsFalse(i.JustPressed(Verb.Sprint));
             Assert.AreEqual(Vector2.zero, i.MoveAxis);
+        }
+
+        [Test]
+        public void Intent_ClearsBotFacingWithoutReleasingACharge()
+        {
+            var i = new InputIntent();
+            i.Set(Verb.SpecialAbility, true);
+            i.AimPoint = Vector3.forward * 10.0f;
+            i.FaceAimPoint = true;
+
+            i.ClearAim();
+
+            Assert.IsFalse(i.HasAimPoint);
+            Assert.IsFalse(i.FaceAimPoint);
+            Assert.IsTrue(i.Pressed(Verb.SpecialAbility),
+                "clearing last frame's aim must not release a held throw");
+        }
+
+        [Test]
+        public void TayaJabReportsTagCooldownInsteadOfPunchCooldown()
+        {
+            var go = new GameObject("CooldownLabelTaya", typeof(CharacterController));
+            var motor = go.AddComponent<CharacterMotor>();
+            typeof(CharacterMotor).GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic)
+                ?.Invoke(motor, null);
+            motor.IsDefender = true;
+            var carrier = go.AddComponent<Carrier>();
+            var verbs = go.AddComponent<CombatVerbs>();
+
+            var cooldown = typeof(CombatVerbs).GetField(
+                "_punchCooldown", BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.IsNotNull(cooldown);
+            cooldown.SetValue(verbs, 1.0f);
+
+            var rows = new List<StatusRow>();
+            StatusStack.Collect(motor, carrier, verbs, rows);
+
+            Assert.IsTrue(rows.Exists(row => row.Label == "TAG CD"));
+            Assert.IsFalse(rows.Exists(row => row.Label == "PUNCH CD"));
+
+            Object.DestroyImmediate(go);
         }
 
         // -------------------------------------------------------------------
@@ -256,6 +299,55 @@ namespace TumbangPreso.Tests
             match.IsWarmupBuffer = true;
             match.AddScore(0, ScoreEvent.LataKnocked);
             Assert.AreEqual(Balance.ScoreTag, match.ScoreFor(0), "Score must not increase during warmup buffer");
+
+            Object.DestroyImmediate(go);
+        }
+
+        /// <summary>
+        /// There is no ceiling on a score, at any point in the path that awards one.
+        ///
+        /// ⚠⚠ THIS EXISTS BECAUSE A PLAYTEST SAID THERE WAS ONE AND A SOURCE READ COULD NOT FIND
+        /// IT. 🧑 2026-08-30: *"theres also a 6k points cap bug pls remove poitns cap"*, *"my
+        /// playtesters found that it didnt go past 6k"*, with a result board reading
+        /// **SEAN 6000 PTS** over 5530, 4880 and 4405.
+        ///
+        /// Every candidate was checked by reading and every one came back clean: `Scoreboard.Add`
+        /// floors at zero and has no ceiling, the field is `int[]`, `MatchResult.RenderStandings`
+        /// prints `ScoreFor` with no clamp, `SyncWorld` carries `int[]` in a 256-byte writer
+        /// against about 54 bytes of payload, and a regex sweep for any four-digit clamp across
+        /// the runtime and the core package returns nothing. `docs/TODO.md` § 84.14 lists the
+        /// whole search so nobody runs it twice.
+        ///
+        /// ⚠ SO THIS IS A TRIPWIRE RATHER THAN A REPRODUCTION. It drives the real award path,
+        /// guards and all, well past the number he reported. **If it is ever red, the cap is in
+        /// this layer and this test names it.** While it is green the fault is somewhere else,
+        /// and the next place to look is what STOPS awards rather than what bounds them:
+        /// `AddScore` returns silently on `!MatchInProgress` and on `IsWarmupBuffer`, and the
+        /// test directly above this one is about the second of those.
+        ///
+        /// ⚠ IT AWARDS THROUGH `AddScore`, NOT THROUGH `Scoreboard`, deliberately. The container
+        /// is engine-free and provably uncapped; the guards are the part that could stop a match
+        /// dead at an arbitrary number, and they are only reachable from here.
+        /// </summary>
+        [Test]
+        public void MatchDirector_HasNoPointsCeiling_PastTheReported6000()
+        {
+            var go = new GameObject("TestScoreCeiling");
+            var match = go.AddComponent<MatchDirector>();
+            match.StartMatch();
+
+            // 100 knockdowns at `ScoreLataKnocked` is 10000, comfortably past 6000 and past any
+            // plausible round-length maximum, on one seat.
+            for (int i = 0; i < 100; i++) match.AddScore(0, ScoreEvent.LataKnocked);
+
+            Assert.AreEqual(Balance.ScoreLataKnocked * 100, match.ScoreFor(0),
+                "the award path stopped short. A ceiling has appeared between MatchDirector."
+                + "AddScore and Scoreboard.Add, which is exactly the 6000 report and this test "
+                + "is where it is now visible.");
+
+            Assert.Greater(match.ScoreFor(0), 6000,
+                "the score did not pass 6000, which is the number the 2026-08-30 playtest "
+                + "reported as a ceiling. docs/TODO.md section 84.14.");
 
             Object.DestroyImmediate(go);
         }

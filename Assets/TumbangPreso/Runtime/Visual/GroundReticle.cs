@@ -33,11 +33,97 @@ namespace TumbangPreso.Visual
         private GameObject _centreGo;
         private GameObject _crownGo;
         private GameObject _beaconGo;
+        private GameObject _motifGo;
         private Renderer _rimRenderer;
         private Renderer _fillRenderer;
         private Renderer _centreRenderer;
         private Renderer _crownRenderer;
         private Renderer _beaconRenderer;
+        private Renderer _motifRenderer;
+
+        // -------------------------------------------------------------------
+        // § THE PREVIEW IS DRAWN IN THE HERO'S OWN LANGUAGE, IN CHALK
+        //
+        // ⚠️⚠️ 🧑 2026-09-02, having been given a hero-coloured ring: *"show like a proper visual
+        // indiicator of how skill will land or how it will look like IN THEIR THEME OR SMTH"*,
+        // *"I dont wannt just a fkn shadow like old phaister Q hold"*. The 2026-08-27 pass fixed
+        // the EMISSION, which is why the ring stopped reading as a literal shadow, and left the
+        // SHAPE alone: one annulus, one tick crown and one wash for all six heroes and all
+        // eighteen powers. A telegraph that is the same object whichever hero you are playing
+        // tells the player nothing about the power except where it is, and "where" was never the
+        // interesting half of a hex, a fissure or a barricade.
+        //
+        // ⚠️⚠️ SO THE STYLE IS THE HERO'S MOTIF AND THE COLOUR IS CHALK, AND THE SPLIT IS THE
+        // SECOND HALF OF THE SAME REPORT: *"make sure its diff from the actual skill cast to"*,
+        // *"make it a diff color, bcz it might be confusing if its the same skill already"*.
+        // Before this the held ring took the hero's BRIGHT accent and the ward the hex leaves on
+        // the road takes the hero's accent, so a held preview and a live hazard two metres apart
+        // were the same shape in the same colour and the player had to guess which one would
+        // trip them.
+        //
+        //   * The **shape** says which power this is. It is built from the same `VfxShapes`
+        //     generator the effect itself uses, so the preview is recognisably the thing.
+        //   * The **colour** says whether it is real yet. Chalk cream, breathing, for a plan;
+        //     the hero's own accent, solid, for anything that has landed.
+        //
+        // ⚠️ CHALK IS NOT AN ARBITRARY UI COLOUR HERE. `docs/VISION.md` § 2 names the chalk and
+        // the road, and the arena's own box is chalked on asphalt: a plan drawn in chalk over a
+        // street game is the game's own vocabulary for "this is where it is going to go", and it
+        // is the one thing on the ground that no ability ever leaves behind.
+        //
+        // ⚠️ THE WASH KEEPS THE HERO ACCENT AT 0.10. It is the "am I inside it" surface rather
+        // than the identity, and stripping the colour out of it too would make every preview in
+        // the game one object again, one layer down.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// Which motif the ground preview wears. One per hero, not one per ability.
+        ///
+        /// ⚠️ PER HERO RATHER THAN PER ABILITY, DELIBERATELY. A motif per power is eighteen
+        /// shapes to author and eighteen to keep in step with what `OnActivate` spawns, which is
+        /// exactly the drift `HeroAbility.TelegraphRadius` exists to stop. A motif per hero is
+        /// six, it is the thing the player is actually learning to recognise across a match, and
+        /// a kit that forgets to set one falls back to <see cref="Ring"/> and looks like the game
+        /// did before.
+        /// </summary>
+        public enum Style
+        {
+            /// <summary>Rim, tick crown, wash. The fallback, and Classic's.</summary>
+            Ring,
+
+            /// <summary>An inscribed ward, turning slowly. Phaister.</summary>
+            Ward,
+
+            /// <summary>A frost rosette with a hard toothed edge. Cheska.</summary>
+            Frost,
+
+            /// <summary>Split ground: a few thick cracks from the centre. Dante.</summary>
+            Fissure,
+
+            /// <summary>Many thin arcs, crackling. Zack.</summary>
+            Storm,
+
+            /// <summary>Scattered embers thickening toward the rim. Sean.</summary>
+            Ember,
+
+            /// <summary>A torn hollow ring, the mouth of something. Nemu.</summary>
+            Maw,
+        }
+
+        private Style _style = Style.Ring;
+
+        /// <summary>Which motif the current mesh was built for, so it is rebuilt only on a change.</summary>
+        private Style _motifBuiltFor = Style.Ring;
+
+        /// <summary>
+        /// The preview's stroke colour: chalk on asphalt.
+        ///
+        /// ⚠️ IT IS `UiTheme.Cream`, THE SAME CREAM AS THE HUD'S TYPE, rather than white. White
+        /// on a sunlit court is a blown highlight and on Ilalim ng Tulay it is the only pure
+        /// value in the frame; the game's cream is what every other readable thing on screen is
+        /// already drawn in.
+        /// </summary>
+        private static Color Chalk => UiTheme.Cream;
 
         /// <summary>
         /// Whether this ability wants a standing mark at the destination as well as a ring.
@@ -137,6 +223,17 @@ namespace TumbangPreso.Visual
             _fillRenderer = _fillGo.GetComponent<Renderer>();
             _centreRenderer = _centreGo.GetComponent<Renderer>();
 
+            // ⚠️ THE MOTIF IS ONE OBJECT WHOSE MESH IS SWAPPED, NOT SIX OBJECTS SWITCHED ON AND
+            // OFF. A reticle lives on every character in the match, and six generated meshes per
+            // character that five-sixths of the time nobody draws is memory and build time spent
+            // on a hero this seat is not playing. `RebuildMotif` runs when the style actually
+            // changes, which is once per ability the player aims.
+            _motifGo = VfxShapes.Lay(transform, "ReticleMotif", MotifMesh(Style.Ring),
+                                     1.0f, 0.034f);
+            _motifRenderer = _motifGo.GetComponent<Renderer>();
+            VfxMaterial.Ghost(_motifRenderer, Chalk, 1.70f);
+            _motifGo.SetActive(false);
+
             _beaconGo = VfxShapes.Stand(transform, "ReticleBeacon",
                                         VfxShapes.TwoSided(VfxShapes.Rift(11, 0.30f, 0.44f, 0.05f, 91)),
                                         0.62f, heightScale: 2.10f);
@@ -159,6 +256,95 @@ namespace TumbangPreso.Visual
         {
             _wantsBeacon = wanted;
             if (_beaconGo != null && !wanted) _beaconGo.SetActive(false);
+        }
+
+        /// <summary>
+        /// Which motif to draw for the ability currently being telegraphed.
+        ///
+        /// ⚠️ THE RIM AND THE CROWN GO AWAY UNDER A MOTIF RATHER THAN SITTING BEHIND IT. Two
+        /// concentric edge treatments 10 per cent apart is the flat-blob read this class's own
+        /// note opens with, and every motif carries an edge of its own. The wash and the centre
+        /// pip stay: the wash is the "am I inside it" surface and the pip is the aim point, and
+        /// no motif has either.
+        /// </summary>
+        public void SetStyle(Style style) => _style = style;
+
+        /// <summary>
+        /// The mesh for one hero's motif.
+        ///
+        /// ⚠️⚠️ EVERY ONE IS THE SAME GENERATOR THE HERO'S OWN EFFECTS USE, AT A THINNER BAR.
+        /// That is what makes a preview read as *that power about to happen* rather than as a
+        /// second unrelated decal: `HeroHazards.SpawnHexSigil` draws `WardCircle`, Dante's
+        /// fissure draws `Fracture`, Sean's burning ground draws `Cinder`. The bar is thinner
+        /// and the colour is chalk, so it is unmistakably the plan and not the thing.
+        ///
+        /// ⚠️ THE SEEDS ARE FIXED CONSTANTS, NOT THE OWNER'S SLOT. This mesh is drawn every
+        /// frame the key is held; a seed that varied per cast would reshuffle the inscription
+        /// under the player's eye while they were trying to aim with it.
+        /// </summary>
+        private static Mesh MotifMesh(Style style)
+        {
+            switch (style)
+            {
+                // Twelve inscribed cells and four medallions: the hex's own ward, one bar-width
+                // lighter than `SpawnHexSigil` draws it.
+                case Style.Ward:
+                    return VfxShapes.WardCircle(12, 4, 0.022f, 3);
+
+                // ⚠️ A HARD TOOTHED EDGE AND A DEEP INNER RATIO. Frost is read at its boundary,
+                // which is the one thing a player sliding toward it needs, and 0.66 leaves the
+                // interior open enough to see a body standing in it.
+                case Style.Frost:
+                    return VfxShapes.Corona(20, 0.66f, 0.30f, 11);
+
+                // ⚠️ SIX THICK ARMS FROM THE CENTRE, WHICH IS WHAT A SPLIT LOOKS LIKE FROM
+                // ABOVE. `from: 0.10` keeps them off the very centre so the aim pip stays
+                // readable inside them.
+                case Style.Fissure:
+                    return VfxShapes.Fracture(6, 3, 0.048f, 23, 0.10f);
+
+                // ⚠️ THE SAME GENERATOR AS THE FISSURE AT NINE THIN ARMS AND FOUR LEVELS OF
+                // BRANCHING, AND THE DIFFERENCE IS LEGIBLE AT A GLANCE. Dante's is a few heavy
+                // splits; this is a crackle. One shape family, two readings, no third mesh to
+                // keep in step with anything.
+                case Style.Storm:
+                    return VfxShapes.Fracture(9, 4, 0.016f, 47, 0.04f);
+
+                // Embers thickening toward the rim, which is where Sean's burning ground is
+                // densest.
+                case Style.Ember:
+                    return VfxShapes.Cinder(4, 11, 0.46f, 59);
+
+                // A torn ring with the middle gone: the mouth of the seance rather than a disc.
+                case Style.Maw:
+                    return VfxShapes.Hollow(44, 0.58f, 0.22f, 71);
+
+                default:
+                    return VfxShapes.Collar(64, 0.05f, 0.955f);
+            }
+        }
+
+        /// <summary>
+        /// Swap the motif mesh when the aimed ability changes hero.
+        ///
+        /// ⚠️ THE OLD MESH IS DESTROYED WITH THE SWAP. `VfxShapes.Own` ties a generated mesh to
+        /// the object that draws it, and that only fires when the OBJECT dies; this object
+        /// outlives the match, so replacing `sharedMesh` without freeing the old one leaks a
+        /// mesh per style change for the whole session. `VfxShapes.Own`'s own note has the
+        /// arithmetic for why that class of leak is not a tidiness point here.
+        /// </summary>
+        private void RebuildMotif()
+        {
+            if (_motifGo == null || _motifBuiltFor == _style) return;
+
+            _motifBuiltFor = _style;
+
+            var filter = _motifGo.GetComponent<MeshFilter>();
+            if (filter == null) return;
+
+            var old = filter.sharedMesh;
+            filter.sharedMesh = MotifMesh(_style);
+            if (old != null) Destroy(old);
         }
 
         private GameObject Disc(string name, float lift)
@@ -303,11 +489,38 @@ namespace TumbangPreso.Visual
             // happened to look at. ⚠️ THE MESH PIECES ARE UNIT-RADIUS AND THE PRIMITIVE IS
             // UNIT-DIAMETER, which is why one gets `_radius` and the other `_radius * 2`.
             float diameter = _radius * 2.0f;
+
+            // ⚠️ THE TWO FACES ARE SWITCHED, NOT LAYERED. See `SetStyle`.
+            RebuildMotif();
+
+            bool motif = _style != Style.Ring;
+            if (_rimGo != null && _rimGo.activeSelf == motif) _rimGo.SetActive(!motif);
+            if (_crownGo != null && _crownGo.activeSelf == motif) _crownGo.SetActive(!motif);
+            if (_motifGo != null && _motifGo.activeSelf != motif) _motifGo.SetActive(motif);
+
             if (_rimGo != null) _rimGo.transform.localScale = new Vector3(_radius, 1.0f, _radius);
             if (_crownGo != null) _crownGo.transform.localScale = new Vector3(_radius * 1.10f, 1.0f, _radius * 1.10f);
             if (_centreGo != null) _centreGo.transform.localScale = new Vector3(_radius * 0.16f, 1.0f, _radius * 0.16f);
             if (_fillGo != null)
                 _fillGo.transform.localScale = new Vector3(diameter * FillRatio, 0.02f, diameter * FillRatio);
+
+            if (_motifGo != null && motif)
+            {
+                _motifGo.transform.localScale = new Vector3(_radius, 1.0f, _radius);
+
+                // ⚠️ IT TURNS, AND SLOWLY, BECAUSE A STATIC INSCRIPTION ON ASPHALT IS A STAIN.
+                // 18 degrees a second is a third of a turn while the reach is still ramping, so
+                // it reads as alive without ever spinning fast enough to smear the glyphs.
+                //
+                // ⚠️⚠️ AND THE TURN IS THE THIRD THING SEPARATING A PREVIEW FROM A LANDED
+                // EFFECT, after the shape family and the chalk. Every hazard this game puts on
+                // the road is deliberately STATIC (`HeroHazards`: *"rectilinear, dense, WRITTEN,
+                // and STATIC"*), because a hazard that moves invites the player to read the
+                // movement as its edge advancing. Nothing that is really there rotates, so
+                // anything rotating is not there yet. 🧑 2026-09-02: *"make sure its diff from
+                // the actual skill cast to"*.
+                _motifGo.transform.localRotation = Quaternion.Euler(0.0f, Time.time * 18.0f, 0.0f);
+            }
 
             if (_beaconGo != null)
             {
@@ -394,19 +607,28 @@ namespace TumbangPreso.Visual
             // ⚠️ THE WASH IS 0.12, DOWN FROM 0.22, AND THE EDGE IS WHAT WENT UP. A telegraph that
             // tints the court is information; one that covers it is a lid, and the interior is
             // exactly the patch of ground the player is trying to read a body on.
-            Tint(_rimRenderer, 0.95f * alpha * breathe);
-            Tint(_crownRenderer, 0.70f * alpha * breathe);
-            Tint(_fillRenderer, 0.12f * alpha * breathe);
-            Tint(_centreRenderer, 0.90f * alpha);
+            Color stroke = _flashLeft > 0.0f ? _colour : Chalk;
 
-            if (_beaconGo != null && _beaconGo.activeSelf) Tint(_beaconRenderer, 0.88f * breathe);
+            Tint(_rimRenderer, stroke, 0.95f * alpha * breathe);
+            Tint(_crownRenderer, stroke, 0.70f * alpha * breathe);
+            Tint(_fillRenderer, _colour, 0.12f * alpha * breathe);
+            Tint(_centreRenderer, stroke, 0.90f * alpha);
+
+            // ⚠️ THE MOTIF IS TINTED LIKE THE RIM AND NOT LIKE THE CROWN. It IS the edge under
+            // this style, so anything dimmer would be the shadow read all over again, which is
+            // the whole fault this file was rewritten for.
+            if (_motifGo != null && _motifGo.activeSelf)
+                Tint(_motifRenderer, stroke, 0.95f * alpha * breathe);
+
+            if (_beaconGo != null && _beaconGo.activeSelf)
+                Tint(_beaconRenderer, stroke, 0.88f * breathe);
         }
 
-        private void Tint(Renderer target, float alpha)
+        private void Tint(Renderer target, Color rgb, float alpha)
         {
             if (target == null) return;
 
-            var colour = new Color(_colour.r, _colour.g, _colour.b, Mathf.Clamp01(alpha));
+            var colour = new Color(rgb.r, rgb.g, rgb.b, Mathf.Clamp01(alpha));
             var material = target.material;
             material.color = colour;
 

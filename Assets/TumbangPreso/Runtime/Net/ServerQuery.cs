@@ -71,8 +71,65 @@ namespace TumbangPreso.Net
             public bool InProgress;
             public float LastSeen;
 
+            /// <summary>
+            /// What QUICK MATCH needs to decide about this lobby, all of it read off the record
+            /// the browse loop was already fetching.
+            ///
+            /// ⚠️⚠️ SIX MORE STRINGS ON AN EXISTING FETCH IS ZERO MORE REQUESTS, AND THAT
+            /// IS THE WHOLE COST CONTROL FOR PHASE 7. `FUTURE.md` § 19.7: "this must not raise
+            /// the query rate against the free tier." A matchmaker that asked the service its own
+            /// filtered questions would double the request rate of the one service this game
+            /// cannot do without. `Matchmaker` subscribes to <see cref="ServersChanged"/> and
+            /// issues nothing of its own.
+            /// </summary>
+            public string PoolKey = "";
+            public int BandLow;
+            public int BandHigh;
+            public int SeatLow;
+            public int SeatHigh;
+            public bool Backfill;
+            public string HostPlayerId = "";
+
             public int Players => Seated;
             public bool IsJoinable => !InProgress && Occupied < Capacity;
+
+            /// <summary>This entry as the shape `MatchmakingRules` decides on.</summary>
+            public Core.LobbyAdvert AsAdvert() => new Core.LobbyAdvert(
+                PoolKey, new Core.RatingBand(BandLow, BandHigh), SeatLow, SeatHigh,
+                Seated, Capacity <= 0 ? LobbySession.MaxPlayers : Capacity,
+                InProgress, Backfill, HostPlayerId);
+        }
+
+        /// <summary>
+        /// Everything a host publishes about the match it is offering.
+        ///
+        /// ⚠️ IT IS A STRUCT PASSED WHOLE RATHER THAN SIX MORE ARGUMENTS ON TWO METHODS.
+        /// `CreateHostedLobbyAsync` and `UpdateHostedLobbyAsync` write the same fields and are
+        /// maintained by hand in two places; eleven positional arguments is how the two drift.
+        /// </summary>
+        public struct HostedAdvert
+        {
+            public string PoolKey;
+            public int BandLow;
+            public int BandHigh;
+            public int SeatLow;
+            public int SeatHigh;
+            public bool Backfill;
+            public string HostPlayerId;
+
+            /// <summary>What a lobby that is not queueing publishes: a pool nothing matches and a
+            /// band nobody is inside. ⚠️  **A PRIVATE ROOM MUST NOT BE QUICK-MATCHABLE.** A player
+            /// who pressed HOST to play with one friend has not opted into strangers.</summary>
+            public static HostedAdvert None => new HostedAdvert
+            {
+                PoolKey = "",
+                BandLow = 0,
+                BandHigh = 0,
+                SeatLow = int.MaxValue,
+                SeatHigh = int.MinValue,
+                Backfill = false,
+                HostPlayerId = "",
+            };
         }
 
         private readonly Dictionary<string, Entry> _seen = new Dictionary<string, Entry>();
@@ -93,6 +150,7 @@ namespace TumbangPreso.Net
         private int _pendingSeated;
         private int _pendingOccupied;
         private bool _pendingInProgress;
+        private HostedAdvert _pendingAdvert;
         private bool _creatingLobby;
 
         public IEnumerable<Entry> Servers => _seen.Values;
@@ -193,6 +251,28 @@ namespace TumbangPreso.Net
                                 if (lobby.Data.TryGetValue("InProgress", out var ip)) inProgress = ip.Value == "1";
                             }
 
+                            // ⚠️  READ WITH THE SAME TOLERANCE AS EVERY OTHER FIELD ABOVE: a
+                            // lobby hosted by an older build simply has no pool key, which
+                            // `MatchmakingRules.Evaluate` answers `WrongPool` for. It stays
+                            // visible in the browser and is not offered to the queue, which is
+                            // exactly right for a room that never opted in.
+                            string poolKey = "";
+                            string hostPlayerId = "";
+                            int bandLow = 0, bandHigh = 0;
+                            int seatLow = int.MaxValue, seatHigh = int.MinValue;
+                            bool backfill = false;
+
+                            if (lobby.Data != null)
+                            {
+                                if (lobby.Data.TryGetValue("Pool", out var pk)) poolKey = pk.Value ?? "";
+                                if (lobby.Data.TryGetValue("HostId", out var hid)) hostPlayerId = hid.Value ?? "";
+                                if (lobby.Data.TryGetValue("BandLow", out var bl)) int.TryParse(bl.Value, out bandLow);
+                                if (lobby.Data.TryGetValue("BandHigh", out var bh)) int.TryParse(bh.Value, out bandHigh);
+                                if (lobby.Data.TryGetValue("SeatLow", out var sl)) int.TryParse(sl.Value, out seatLow);
+                                if (lobby.Data.TryGetValue("SeatHigh", out var sh)) int.TryParse(sh.Value, out seatHigh);
+                                if (lobby.Data.TryGetValue("Backfill", out var bf)) backfill = bf.Value == "1";
+                            }
+
                             if (!_seen.TryGetValue(lobby.Id, out var entry))
                             {
                                 entry = new Entry { Id = lobby.Id };
@@ -206,6 +286,13 @@ namespace TumbangPreso.Net
                             entry.Occupied = occupied;
                             entry.Capacity = lobby.MaxPlayers;
                             entry.InProgress = inProgress;
+                            entry.PoolKey = poolKey;
+                            entry.HostPlayerId = hostPlayerId;
+                            entry.BandLow = bandLow;
+                            entry.BandHigh = bandHigh;
+                            entry.SeatLow = seatLow;
+                            entry.SeatHigh = seatHigh;
+                            entry.Backfill = backfill;
                             entry.LastSeen = Time.unscaledTime;
                         }
 
@@ -326,7 +413,8 @@ namespace TumbangPreso.Net
         /// <summary>
         /// Registers a new UGS Lobby when hosting online via Relay.
         /// </summary>
-        public async Task<string> CreateHostedLobbyAsync(string hostName, string joinCode, string relayCode, int seated, int occupied)
+        public async Task<string> CreateHostedLobbyAsync(string hostName, string joinCode, string relayCode,
+                                                         int seated, int occupied, HostedAdvert advert)
         {
             _creatingLobby = true;
             try
@@ -346,7 +434,22 @@ namespace TumbangPreso.Net
                         { "HostName", new DataObject(DataObject.VisibilityOptions.Public, lobbyName) },
                         { "Seated", new DataObject(DataObject.VisibilityOptions.Public, seated.ToString(), DataObject.IndexOptions.N1) },
                         { "Occupied", new DataObject(DataObject.VisibilityOptions.Public, occupied.ToString(), DataObject.IndexOptions.N2) },
-                        { "InProgress", new DataObject(DataObject.VisibilityOptions.Public, "0", DataObject.IndexOptions.S2) }
+                        { "InProgress", new DataObject(DataObject.VisibilityOptions.Public, "0", DataObject.IndexOptions.S2) },
+
+                        // ⚠️⚠️  THE QUEUE'S OWN FIELDS, AND ONLY `Pool` IS INDEXED.
+                        // An indexed field is one a QUERY can filter on, and UGS gives a lobby a
+                        // fixed handful of index slots: S1 is the join code and S2 is the
+                        // in-progress flag already. The pool takes S3 so a future tier-2
+                        // matchmaker could filter server-side; the band and the seat extremes are
+                        // read client-side off records the browse loop already has, so indexing
+                        // them would spend a scarce slot to save nothing.
+                        { "Pool", new DataObject(DataObject.VisibilityOptions.Public, advert.PoolKey ?? "", DataObject.IndexOptions.S3) },
+                        { "HostId", new DataObject(DataObject.VisibilityOptions.Public, advert.HostPlayerId ?? "") },
+                        { "BandLow", new DataObject(DataObject.VisibilityOptions.Public, advert.BandLow.ToString()) },
+                        { "BandHigh", new DataObject(DataObject.VisibilityOptions.Public, advert.BandHigh.ToString()) },
+                        { "SeatLow", new DataObject(DataObject.VisibilityOptions.Public, advert.SeatLow.ToString()) },
+                        { "SeatHigh", new DataObject(DataObject.VisibilityOptions.Public, advert.SeatHigh.ToString()) },
+                        { "Backfill", new DataObject(DataObject.VisibilityOptions.Public, advert.Backfill ? "1" : "0") }
                     }
                 };
 
@@ -364,7 +467,8 @@ namespace TumbangPreso.Net
                 if (_hasPendingCounts)
                 {
                     _hasPendingCounts = false;
-                    await UpdateHostedLobbyAsync(_pendingSeated, _pendingOccupied, _pendingInProgress);
+                    await UpdateHostedLobbyAsync(_pendingSeated, _pendingOccupied, _pendingInProgress,
+                                                 _pendingAdvert);
                 }
 
                 return lobby.Id;
@@ -383,7 +487,8 @@ namespace TumbangPreso.Net
         /// <summary>
         /// Updates dynamic match counts and progress state in UGS Lobby data.
         /// </summary>
-        public async Task UpdateHostedLobbyAsync(int seated, int occupied, bool inProgress)
+        public async Task UpdateHostedLobbyAsync(int seated, int occupied, bool inProgress,
+                                                 HostedAdvert advert)
         {
             if (string.IsNullOrEmpty(_activeHostLobbyId))
             {
@@ -395,6 +500,7 @@ namespace TumbangPreso.Net
                     _pendingSeated = seated;
                     _pendingOccupied = occupied;
                     _pendingInProgress = inProgress;
+                    _pendingAdvert = advert;
                 }
                 return;
             }
@@ -407,7 +513,23 @@ namespace TumbangPreso.Net
                     {
                         { "Seated", new DataObject(DataObject.VisibilityOptions.Public, seated.ToString(), DataObject.IndexOptions.N1) },
                         { "Occupied", new DataObject(DataObject.VisibilityOptions.Public, occupied.ToString(), DataObject.IndexOptions.N2) },
-                        { "InProgress", new DataObject(DataObject.VisibilityOptions.Public, inProgress ? "1" : "0", DataObject.IndexOptions.S2) }
+                        { "InProgress", new DataObject(DataObject.VisibilityOptions.Public, inProgress ? "1" : "0", DataObject.IndexOptions.S2) },
+
+                        // ⚠️⚠️  THE BAND IS REPUBLISHED ON EVERY COUNT CHANGE AND NOT ON A
+                        // TIMER OF ITS OWN. `Matchmaker` widens the local band every 15 seconds
+                        // and a host that pushed each step would be one write every 15 seconds
+                        // per queuing host, which is the free tier being spent on nothing: a
+                        // searcher already checks the band from BOTH sides
+                        // (`MatchmakingRules.Evaluate`), so its own widening finds the patient
+                        // host without the patient host having to say anything. What genuinely
+                        // has to be pushed is a seat opening, and that is a count change.
+                        { "Pool", new DataObject(DataObject.VisibilityOptions.Public, advert.PoolKey ?? "", DataObject.IndexOptions.S3) },
+                        { "HostId", new DataObject(DataObject.VisibilityOptions.Public, advert.HostPlayerId ?? "") },
+                        { "BandLow", new DataObject(DataObject.VisibilityOptions.Public, advert.BandLow.ToString()) },
+                        { "BandHigh", new DataObject(DataObject.VisibilityOptions.Public, advert.BandHigh.ToString()) },
+                        { "SeatLow", new DataObject(DataObject.VisibilityOptions.Public, advert.SeatLow.ToString()) },
+                        { "SeatHigh", new DataObject(DataObject.VisibilityOptions.Public, advert.SeatHigh.ToString()) },
+                        { "Backfill", new DataObject(DataObject.VisibilityOptions.Public, advert.Backfill ? "1" : "0") }
                     }
                 };
 

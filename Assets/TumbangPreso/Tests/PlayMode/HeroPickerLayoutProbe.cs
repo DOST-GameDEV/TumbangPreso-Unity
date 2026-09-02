@@ -45,7 +45,7 @@ namespace TumbangPreso.PlayTests
         public IEnumerator TheHeroPickerHasNoDeadBandAboveTheAbilityRows()
         {
             var load = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
-            while (load != null && !load.isDone) yield return null;
+            yield return ProbeWait.Done(load, "scene load");
 
             yield return new WaitForSecondsRealtime(1.0f);
 
@@ -118,7 +118,64 @@ namespace TumbangPreso.PlayTests
                 $"reserved under the hero's description. Check the LE() values below: " +
                 $"GetPreferredHeight is Max(min, pref), so a stale minHeight beats whatever " +
                 $"Refresh writes as the preference.\n{dump}");
+
+            // ---- THE BOTTOM OF THE COLUMN AGAINST THE PANEL --------------------------------
+            //
+            // ⚠️⚠️ THIS PROBE WAS GREEN WHILE THE ULTIMATE'S PLATE DREW OUTSIDE THE WOOD, AND
+            // THAT IS WHY THIS BLOCK EXISTS. 🧑 2026-08-29 with a screenshot of Dante's picker,
+            // `docs/reports/2026-08-29/reported/13.png`: *"fix hud here it overflows"*. The fix
+            // shipped as § 79.6 and this file did not change, so nothing here would have caught
+            // it and nothing here would catch it coming back.
+            //
+            // ⚠️ THE TWO ASSERTIONS ABOVE CANNOT SEE IT, AND THAT IS STRUCTURAL RATHER THAN AN
+            // OVERSIGHT. Both measure INSIDE the column: one the gap between two rows, the other
+            // one box against its own text. A column whose rows are each correctly sized and
+            // correctly spaced can still be taller than the panel holding it, and every
+            // measurement between its own children stays healthy while it runs off the bottom.
+            // The only thing that can see it is a child edge against the PARENT's edge.
+            //
+            // ⚠️ THE LAST ROW IS THE ONE MEASURED, not the column's rect. The column is a
+            // `VerticalLayoutGroup` and its own rect is whatever the group computed, which is the
+            // number that was already correct; the ULTIMATE row is the last child and the thing
+            // that was drawn past the wood. Measuring the container would have passed then too.
+            Transform lastAbility = null;
+            foreach (Transform child in rows.transform)
+            {
+                if (child.name.StartsWith("AbilityRow_")) lastAbility = child;
+            }
+
+            Assert.IsNotNull(lastAbility, "the hero picker built no ability rows at all.\n" + dump);
+
+            var configPanel = FindUnder(panel, "ConfigPanel");
+            Assert.IsNotNull(configPanel, "no ConfigPanel to measure the column against.\n" + dump);
+
+            float columnBottom = BottomOf(lastAbility.GetComponent<RectTransform>());
+            float panelBottom = BottomOf(configPanel.GetComponent<RectTransform>());
+
+            // Positive means the row's bottom edge is BELOW the panel's, in canvas units.
+            float overflow = (panelBottom - columnBottom) / scale;
+
+            Debug.Log($"[Picker] lastRow={lastAbility.name} overflow={overflow:F1}");
+
+            Assert.LessOrEqual(overflow, MaxBottomOverflow,
+                $"'{lastAbility.name}' is drawn {overflow:F0} px below the bottom of the wood " +
+                $"panel that is supposed to contain it, so the ultimate's plate hangs outside " +
+                $"the frame. This is the fault in reported/13.png. The row heights below say " +
+                $"which box is pushing the column past the panel.\n{dump}");
         }
+
+        /// <summary>
+        /// How far the last ability row may sit below the panel's inner edge.
+        ///
+        /// ⚠️ IT IS NOT ZERO, AND THE SLACK IS THE PANEL'S OWN BORDER RATHER THAN TOLERANCE FOR
+        /// A BUG. `ConfigPanel` is a nine-patch wood box whose sliced border is a few pixels of
+        /// frame, and the column is laid out against the padded content rect inside it, so a
+        /// correctly fitted column's last row sits a little inside the panel's outer corners
+        /// and can round to a pixel or two the other way. The reported overflow was the whole
+        /// ultimate plate, tens of pixels, so this fails on the real thing and passes on the
+        /// rounding, which is the same standard <see cref="MaxSlack"/> is set to.
+        /// </summary>
+        private const float MaxBottomOverflow = 4.0f;
 
         /// <summary>
         /// How much taller than its text the tagline's box may be.

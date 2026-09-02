@@ -68,6 +68,17 @@ namespace TumbangPreso
         public bool HasAimPoint { get; private set; }
 
         /// <summary>
+        /// Turn the body toward <see cref="AimPoint"/> even when no movement key is held.
+        ///
+        /// Bots use this while charging a throw. The throw solver has always aimed the
+        /// tsinelas at the lata, but a movement-aimed body only changed yaw while walking, so
+        /// a bot that arrived with its back to the can could release a correct backwards shot.
+        /// Keeping the request in the shared intent preserves the one-input-path rule and lets
+        /// the ordinary motor apply the same bounded turn used for movement.
+        /// </summary>
+        public bool FaceAimPoint { get; set; }
+
+        /// <summary>
         /// ⚠️ PARKED INPUT IS NOT THE SAME AS NO INPUT. A unit whose input is parked (a
         /// menu is open, the round is over, they are mid-emote) must report everything
         /// released rather than simply stop updating, or a verb held across the boundary
@@ -94,6 +105,14 @@ namespace TumbangPreso
             Move = Vector2.zero;
             SpinInput = 0.0f;
             HasAimPoint = false;
+            FaceAimPoint = false;
+        }
+
+        /// <summary>Clears producer-owned aiming state without releasing held verbs.</summary>
+        public void ClearAim()
+        {
+            HasAimPoint = false;
+            FaceAimPoint = false;
         }
 
         /// <summary>
@@ -121,7 +140,18 @@ namespace TumbangPreso
         /// <summary>Restricts this unit to the given verbs. Null clears the restriction.</summary>
         public void AllowOnly(HashSet<Verb> verbs) => _allowed = verbs;
 
-        private bool Locked(Verb v) => _allowed != null && !_allowed.Contains(v);
+        /// <summary>
+        /// Whether the guided route is currently withholding this verb.
+        ///
+        /// ⚠️ PUBLIC SO A PROBE CAN TELL A LOCK FROM AN UNPRESSED KEY. `Pressed` folds `Parked`,
+        /// `Locked` and "not held" into one false, which is right for the game and useless for a
+        /// diagnosis: *"can hold x to reset here"* has three different causes and they need
+        /// different fixes. `TutorialDefenderProbe` prints all three separately.
+        ///
+        /// ⚠️ IT IS A QUERY AND NOTHING WRITES THROUGH IT. `AllowOnly` remains the only way to
+        /// change the set, and it stays the guided route's to call.
+        /// </summary>
+        public bool Locked(Verb v) => _allowed != null && !_allowed.Contains(v);
 
         public bool Pressed(Verb v) => !Parked && !Locked(v) && _held.Contains(v);
 

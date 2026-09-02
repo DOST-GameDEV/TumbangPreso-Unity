@@ -75,7 +75,7 @@ namespace TumbangPreso.PlayTests
                     SceneFlow.Networked = lobby;
 
                     var load = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
-                    while (load != null && !load.isDone) yield return null;
+                    yield return ProbeWait.Done(load, "scene load");
 
                     for (int i = 0; i < SettleFrames; i++) yield return null;
 
@@ -104,6 +104,101 @@ namespace TumbangPreso.PlayTests
             Assert.IsEmpty(overflowing,
                 "these labels draw outside the box they were given:\n  " +
                 string.Join("\n  ", overflowing));
+        }
+
+        /// <summary>
+        /// The door to `PlayerHub`, on the lobby, where all of it lives now.
+        ///
+        /// ⚠️⚠️ THIS IS THE CASE THAT COVERS THE DOOR A PLAYER ACTUALLY PRESSES, AND IT EXISTS
+        /// BECAUSE THE OLD ONE COVERED A DOOR NOBODY CAN REACH. `docs/TODO.md` § 114.7:
+        /// `PlayerNameplate` is no longer installed by any screen, so
+        /// `PlayerHubLayoutProbe.TheNameplateStaysOnScreenAtEveryShippedResolution` is now a test
+        /// of kept-but-uninstalled chrome. **A green probe on a screen the player never sees is
+        /// worse than no probe, because it reads as coverage.**
+        ///
+        /// ⚠️⚠️ IT ASSERTS THE PRESS, NOT THE RECTANGLE. `CLAUDE.md` § 6.2's INTUITIVE row and
+        /// § 108's receipt: an EQUIP button with no `onClick` listener and a CUSTOMIZE LOADOUT
+        /// button opening a screen drawn underneath the screen that opened it. **Both looked
+        /// fine. Both did nothing.** So this presses the button and asks whether the hub is
+        /// showing afterwards.
+        ///
+        /// ⚠️ AND IT RUNS ON BOTH TABS. A career and a match history are not networked facts, and
+        /// a door that exists on the lobby tab and not on practice is one a player learns as
+        /// "sometimes it is there".
+        /// </summary>
+        [UnityTest]
+        public IEnumerator TheProfileDoorOpensTheHub()
+        {
+            Screen.SetResolution(Width, Height, false);
+            for (int i = 0; i < 10; i++) yield return null;
+
+            bool previousNetworked = SceneFlow.Networked;
+            var report = new StringBuilder();
+
+            foreach (bool lobby in new[] { false, true })
+            {
+                SceneFlow.Networked = lobby;
+
+                var load = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
+                yield return ProbeWait.Done(load, "scene load");
+                for (int i = 0; i < SettleFrames; i++) yield return null;
+
+                Canvas.ForceUpdateCanvases();
+
+                string what = lobby ? "LOBBY" : "PRACTICE";
+
+                var door = FindByName("ProfileButton");
+                Assert.IsNotNull(door,
+                    $"{what}: the lobby's player card has no YOUR PROFILE row. It is the only " +
+                    "door to the hub in the game (docs/TODO.md § 114.7).");
+
+                var button = door.GetComponent<Button>();
+                Assert.IsNotNull(button, $"{what}: the profile row is not a Button");
+                Assert.IsTrue(button.interactable, $"{what}: the profile door is not interactable");
+
+                // ⚠️ THE LINE SAYS SOMETHING. § 96: the plate this replaces read as a status
+                // readout and the person who commissioned the hub never pressed it, so a door
+                // with an empty label is the fault that entry is about.
+                var label = door.GetComponentInChildren<Text>(true);
+                Assert.IsNotNull(label, $"{what}: the profile door has no label");
+                Assert.IsNotEmpty(label.text, $"{what}: the profile door's label is blank");
+                Assert.GreaterOrEqual(label.fontSize, MenuKit.MinReadableUnits,
+                    $"{what}: the profile door reads at {label.fontSize} units, under the " +
+                    $"{MenuKit.MinReadableUnits} floor.");
+
+                var hub = Object.FindFirstObjectByType<PlayerHub>();
+                Assert.IsNotNull(hub, $"{what}: the lobby installed no PlayerHub");
+                Assert.IsFalse(hub.IsOpen, $"{what}: the hub was already open before anything was pressed");
+
+                button.onClick.Invoke();
+                for (int i = 0; i < 5; i++) yield return null;
+
+                Assert.IsTrue(hub.IsOpen,
+                    $"{what}: pressing YOUR PROFILE did not open the hub. That is § 108's fault " +
+                    "exactly: a control that looks pressable and does nothing.");
+
+                report.AppendLine($"{what,-9} door reads [{label.text}] and opens the hub");
+
+                var net = Net.NetSession.Instance;
+                if (net != null) net.Stop();
+                for (int i = 0; i < 5; i++) yield return null;
+            }
+
+            SceneFlow.Networked = previousNetworked;
+            Debug.Log("[Lobby] profile door\n" + report);
+        }
+
+        /// <summary>The first object called <paramref name="name"/> under any live canvas.</summary>
+        private static GameObject FindByName(string name)
+        {
+            foreach (var canvas in Object.FindObjectsByType<Canvas>(FindObjectsInactive.Include,
+                                                                    FindObjectsSortMode.None))
+            {
+                foreach (var t in canvas.GetComponentsInChildren<Transform>(true))
+                    if (t != null && t.name == name) return t.gameObject;
+            }
+
+            return null;
         }
 
         /// <summary>

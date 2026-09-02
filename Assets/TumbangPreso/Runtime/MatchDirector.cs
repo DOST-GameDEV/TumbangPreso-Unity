@@ -89,6 +89,11 @@ namespace TumbangPreso
             // header: a point that can only be created in one function cannot be created on a
             // client at all, and the same is now true of the noise it makes.
             Net.MatchRpc.Instance?.BroadcastScore(slot, e);
+
+            // A first point is the first durable result the game can honestly call worth
+            // keeping today. PlayerAccount records the offer for the next menu rather than
+            // interrupting the round with a credential form.
+            GameServices.Account?.MarkWorthKeeping();
         }
 
         /// <summary>
@@ -143,12 +148,59 @@ namespace TumbangPreso
         {
             bool wasInProgress = MatchInProgress;
 
+            if (inProgress) HostConfirmedInProgress = true;
+
             _scores.SetAll(scores);
             RoundNumber = roundNumber;
             MatchInProgress = inProgress;
 
-            if (wasInProgress && !inProgress) MatchEnded?.Invoke(_scores.WinningSlot());
+            // ⚠️ THE EDGE NEEDS THE HOST TO HAVE CONFIRMED THIS MATCH FIRST. See
+            // `IsPreStartSnapshot`: without that clause the falling edge also fires on a packet
+            // the host wrote BEFORE it started, which is the whole of § 82.
+            if (wasInProgress && !inProgress && HostConfirmedInProgress)
+                MatchEnded?.Invoke(_scores.WinningSlot());
         }
+
+        /// <summary>
+        /// Whether the host has described THIS match as running at least once on this peer.
+        ///
+        /// Cleared by every local `StartMatch`, so it answers "has the host caught up with the
+        /// match I just started", not "was a match ever running".
+        /// </summary>
+        public bool HostConfirmedInProgress { get; private set; }
+
+        /// <summary>
+        /// ⚠️⚠️ A SNAPSHOT FROM BEFORE THE HOST'S OWN ARENA FINISHED LOADING, AND IT ENDED THE
+        /// MATCH FOR EVERY CLIENT IN THE ROOM. `docs/TODO.md` § 82. 🧑 2026-08-29, from a client:
+        /// *"wtf the game started as done for all non hosts and host is still playing"*, with the
+        /// final standings up at 01:26 of round 1 and every column reading 0 PTS.
+        ///
+        /// `HostStartMatch` sends `StartMatch` to the peers and THEN loads the host's own arena,
+        /// and `MatchRpc.FixedUpdate` goes on writing `SyncWorld` at 5 Hz throughout that load
+        /// carrying `match.MatchInProgress`, which is still **false** because the host's
+        /// `SliceRunner.Begin` has not run yet. A client whose disk answered first is already
+        /// in its arena with `MatchInProgress` true, so the next of those packets is a true → false
+        /// edge and `ApplySnapshot` raised `MatchEnded` on it: `UI.MatchResult` drew the final
+        /// standings over a match one second old, and `SliceRunner.OnMatchEnded` parked the cast
+        /// for good. Scores kept arriving underneath it, which is why the HUD read 100/30/0/0
+        /// behind a board that said everybody drew on nothing.
+        ///
+        /// It is a race, so it is a coin flip per client per match rather than a fault that shows
+        /// up every time, and the host is immune by construction.
+        ///
+        /// ⚠️ THE WHOLE PACKET IS DROPPED, NOT JUST THE EVENT. `MatchRpc` hands the same
+        /// `inProgress` to `RoundDirector.ApplySnapshot`, which clears `RoundActive` and with it
+        /// `CanAct`; believing the event and applying the state would leave the body unable to
+        /// move until the host caught up.
+        ///
+        /// ⚠️ IT COSTS NO WIRE CHANGE AND NO PROTOCOL BUMP, which is why it is written as a
+        /// question about local state rather than as a match id in the payload. A generation
+        /// counter incremented on each peer drifts the moment somebody joins late: a joiner
+        /// adopts the host's number and then increments past it in its own `StartMatch`, after
+        /// which every packet it receives looks stale forever.
+        /// </summary>
+        public bool IsPreStartSnapshot(bool inProgress) =>
+            MatchInProgress && !inProgress && !HostConfirmedInProgress;
 
         public void StartMatch()
         {
@@ -156,6 +208,13 @@ namespace TumbangPreso
             RoundNumber = 0;
             MatchInProgress = true;
             IsWarmupBuffer = false;
+
+            // ⚠️ CLEARED HERE AND ONLY HERE. A rematch runs this again on every peer, and the
+            // host reloads its arena on the same race the first match does, so a flag left
+            // standing from the PREVIOUS match would let the stale packet through second time
+            // round. See `IsPreStartSnapshot`.
+            HostConfirmedInProgress = false;
+
             AdvanceRound();
         }
 
@@ -165,6 +224,7 @@ namespace TumbangPreso
             RoundNumber = 0;
             MatchInProgress = false;
             IsWarmupBuffer = false;
+            HostConfirmedInProgress = false;
         }
 
         public void AdvanceRound()
@@ -194,7 +254,42 @@ namespace TumbangPreso
             }
 
             IsWarmupBuffer = true;
+            SkipRequested = false;
             IntermissionStarted?.Invoke(next, MatchRules.DefenderSlotFor(next));
+        }
+
+        // -------------------------------------------------------------------
+        // § SKIPPING THE BUFFER
+        //
+        // ⚠️⚠️ THE DECISION LIVES HERE BECAUSE THERE ARE TWO RUNNERS AND ONLY ONE RULE. 🧑
+        // 2026-08-29: *"vote to skip buffer time"*. `SliceRunner` schedules the advance with
+        // `Balance.WarmupBufferDuration` and `MatchBootstrap` with `Balance.IntermissionDuration`,
+        // and both are `Invoke` calls on their own component. Putting the skip in either one
+        // would give the shipped arena a feature the other path silently lacks, which is exactly
+        // what `SliceRunner`'s own header forbids: *"it must not acquire rules of its own"*.
+        // The director raises the event; each runner cancels its own pending `Invoke` and
+        // advances, which is the one thing each of them genuinely owns.
+        //
+        // ⚠️ WHO MAY CALL IT IS NOT DECIDED HERE. `BufferSkipVote` counts the votes and only the
+        // host calls this, for the same reason `AdvanceRound` is host-only: a round boundary is
+        // a decision, and `CLAUDE.md` § 4 keeps decisions on one machine.
+        // -------------------------------------------------------------------
+
+        /// <summary>Raised when the intermission should end early. See the section note.</summary>
+        public event Action BufferSkipRequested;
+
+        /// <summary>
+        /// True once the buffer has been skipped, so a second vote arriving a frame later cannot
+        /// advance the round twice. Cleared by <see cref="BeginIntermission"/>.
+        /// </summary>
+        public bool SkipRequested { get; private set; }
+
+        public void SkipBuffer()
+        {
+            if (!IsWarmupBuffer || SkipRequested) return;
+
+            SkipRequested = true;
+            BufferSkipRequested?.Invoke();
         }
     }
 }

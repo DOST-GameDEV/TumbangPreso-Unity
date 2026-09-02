@@ -138,7 +138,10 @@ namespace TumbangPreso
                 if (verbs.PunchCooldownLeft > 0.0f)
                     into.Add(new StatusRow
                     {
-                        Label = "PUNCH CD",
+                        // To the player this is the taya's short-range tag, not a generic
+                        // fighting-game punch. The implementation and animation remain a jab;
+                        // the cooldown label names the game action the role is trying to land.
+                        Label = "TAG CD",
                         Remaining = verbs.PunchCooldownLeft,
                         Total = Balance.PunchCooldown,
                         Timed = true,

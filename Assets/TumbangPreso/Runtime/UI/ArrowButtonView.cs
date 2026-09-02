@@ -158,11 +158,99 @@ namespace TumbangPreso.UI
                 _pivotSet = true;
             }
 
+            FitCaption();
+
             if (_entering) StepEntrance();
             else StepScale();
         }
 
         private bool _pivotSet;
+
+        private Text _caption;
+        private int _captionAuthoredSize;
+        private float _captionRoom = -1.0f;
+
+        /// <summary>
+        /// Shrinks the pennant's caption until it fits the pennant, on every resolution change.
+        ///
+        /// ⚠️⚠️ THE FOUR TITLE-SCREEN BUTTONS OVERFLOWED THEIR OWN ARTWORK AT 1280x720 AND HAD
+        /// SHIPPED THAT WAY. Measured 2026-08-30 by `PhaseSurfaceLayoutProbe`'s overflow dump:
+        /// **TUTORIAL wanted 455 px in a 374 px box, SETTINGS 414 in 401, PLAY 330 in 320 and
+        /// QUIT 228 in 215.** TUTORIAL is 22 per cent over. `ConfigureArrowButton` writes the
+        /// `label_size` the `.tscn` authored, which was chosen against one canvas width, and the
+        /// caption's rect is anchor-stretched, so its box shrinks with the screen while the font
+        /// does not. **A font size authored at one resolution is not a font size.**
+        ///
+        /// ⚠️⚠️ AND IT IS SILENT, WHICH IS WHY IT LASTED. `MakeText` leaves
+        /// `horizontalOverflow = Overflow`, so the word does not wrap and does not clip: it draws
+        /// straight off the end of the pennant, over the artwork's tip and into the street.
+        /// Nothing errors. It is the same class `MenuKit.Label`'s note, `GameVersion.ApplyTo` and
+        /// `ConvertedScreen.SetHeadline` all record, on the first screen of the game.
+        ///
+        /// ⚠️ THE AUTHORED SIZE IS RESTORED BEFORE EACH FIT, because `MenuKit.Fit` only ever
+        /// shrinks. Without the restore a player who opened the game in a small window and then
+        /// maximised it would keep the small type for the rest of the session, which is a
+        /// different bug wearing the same fix.
+        ///
+        /// ⚠️⚠️ IT CHECKS THE RESULT EVERY FRAME AND KEEPS GOING UNTIL IT FITS, WHICH THE FIRST
+        /// VERSION DID NOT, AND THE MEASUREMENT IS WHY. Fitting once per width change left three
+        /// of the four still over at 720p: **PLAY 326 in 320, TUTORIAL 380 in 374, QUIT 218 in
+        /// 215**, having already shrunk (TUTORIAL from 99 units to 83). `MenuKit.Fit` loops
+        /// `while (preferredWidth > room)`, so a loop that exits with the label still too wide
+        /// means `Text.preferredWidth` answered from a generator that had not re-run for the size
+        /// just written. **A single pass is only as good as the measurement inside it**, and this
+        /// one is a legacy `Text` measuring itself mid-edit.
+        ///
+        /// ⚠️ SO THE LOOP IS OUTSIDE, ACROSS FRAMES, WHERE EVERY MEASUREMENT IS DEFINITELY FRESH.
+        /// It converges in a handful of frames during the menu's own unfurl animation, which is
+        /// well before anybody can read the word, and it is self-correcting: whatever the cause of
+        /// a stale measurement, the next frame sees the real one.
+        ///
+        /// ⚠️ THE COST IS ONE `preferredWidth` READ PER PENNANT PER FRAME once it fits, which
+        /// Unity serves from its own cache while nothing about the label changes. The alternative,
+        /// trusting one pass, is what shipped the overflow.
+        /// </summary>
+        private void FitCaption()
+        {
+            if (_rt == null) return;
+
+            if (_caption == null)
+            {
+                var node = transform.Find("Caption");
+                _caption = node != null ? node.GetComponent<Text>() : null;
+                if (_caption == null) return;
+
+                _captionAuthoredSize = _caption.fontSize;
+            }
+
+            float room = _caption.rectTransform.rect.width;
+            if (room <= 1.0f) return;
+
+            // A box that changed size gets the authored type back first, because `MenuKit.Fit`
+            // only ever shrinks and a window that grew would otherwise keep the small size.
+            if (Mathf.Abs(room - _captionRoom) >= 0.5f)
+            {
+                _captionRoom = room;
+                _caption.fontSize = _captionAuthoredSize;
+            }
+            else if (_caption.preferredWidth <= room)
+            {
+                return;
+            }
+
+            MenuKit.Fit(_caption, room, CaptionFloorUnits);
+        }
+
+        /// <summary>
+        /// How small a pennant caption may get before the word is the thing that has to change.
+        ///
+        /// ⚠️ 44, NOT `MenuKit.MinReadableUnits`. That floor is 18 and exists so a SENTENCE does
+        /// not become texture; these are four single words on the biggest buttons in the game, at
+        /// an authored 99 to 141 units. A pennant reading QUIT at 18 units would clear the floor
+        /// and look broken. If a caption ever hits 44 the answer is a shorter word or a wider
+        /// pennant, and `MenuKit.Fit` returns false to say so.
+        /// </summary>
+        private const int CaptionFloorUnits = 44;
 
         private void StepEntrance()
         {

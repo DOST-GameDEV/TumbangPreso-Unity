@@ -122,6 +122,13 @@ namespace TumbangPreso
         private float _throwLockLeft;
         private float _channel;
 
+        /// <summary>The channel time the reset gesture was last fired at, so the read repeats on
+        /// its own length instead of once per press. See <see cref="StepDefender"/>.
+        /// ⚠️ IT NEEDS NO RESET OF ITS OWN: the opening frame is detected from `_channel` being
+        /// zero and rewrites this on the way past, so a stale value cannot survive a press.
+        /// </summary>
+        private float _lastResetGesture;
+
         public Slipper Held { get; private set; }
         public float ChargeRatio => ThrowRules.ChargeRatio(_charge);
         public float ChannelRatio { get; private set; }
@@ -226,9 +233,18 @@ namespace TumbangPreso
             NetCue.PlayVaried("throw_release", origin, 0.94f, 1.07f, 0.95f);
             GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("throw");
             GetComponentInChildren<Visual.CharacterSquashStretch>()?.DashStretch(transform.forward, 0.14f);
-            UI.Hud.ReportStyle(_motor.PlayerSlot,
-                               5.0f + Mathf.Abs(spin) * 7.0f,
-                               Mathf.Abs(spin) >= 0.4f ? "PEKTUS CURVE" : "LET FLY");
+            // ⚠️⚠️ RELAYED, BECAUSE THE ENCLOSING VERB IS HOST-RESOLVED AND WHAT IT DRAWS IS
+            // FOR EVERYBODY. 🧑 2026-08-29: *"make sure that all host sided shit is seen by
+            // everyone and not js host"*. See `Visual.MatchFlair` and
+            // `tools/audit_presentation_reach.py`, which is what found this one.
+            Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.Throw,
+                                       _motor.PlayerSlot, -1, origin, spin);
+
+            // ⚠️ COUNTED HERE AND NOT AT THE INPUT, BECAUSE A PRESS IS NOT A THROW. This body
+            // is behind `NetAuthority.ShouldResolve()` and a live `Held`, so it is reached once
+            // per tsinelas that actually left a hand. `MatchStatsCollector` gates itself again
+            // for the same reason every verb does; the two guards are cheap and independent.
+            GameServices.Stats?.NoteThrow(_motor.PlayerSlot);
 
             var ability = _motor.AbilitySystem;
             ability?.OnThrowReleased();
@@ -239,13 +255,17 @@ namespace TumbangPreso
             if (ability != null && ability.Kit is ZackHeroKit zack &&
                 (zack.IsOverchargeThrowActive || zack.IsThunderstrikeActive))
             {
-                velocity *= 1.6f;
+                // ⚠️ THE ALTERNATE'S FRACTION COMES OFF THE TABLE, NOT OUT OF THIS LINE. `2.4f`
+                // was written here as `1.6 x 1.5` at a moment when Snap Discharge happened to be
+                // +50 per cent; the row is the only place that number may live, or the label the
+                // player reads and the shoe they throw are two different numbers.
+                velocity *= 1.6f * ability.VariantGain("zack.2.discharge");
                 affinity = SlipperAffinity.ElectricZap;
                 zack.IsOverchargeThrowActive = false;
             }
             else if (ability != null && ability.Kit is SeanHeroKit sean && sean.IsIgnitionCannonActive)
             {
-                velocity *= 1.3f;
+                velocity *= 1.3f * ability.VariantGain("sean.2.flare");
                 affinity = SlipperAffinity.FireExplosive;
                 sean.IsIgnitionCannonActive = false;
             }
@@ -314,10 +334,46 @@ namespace TumbangPreso
             // ⚠️ ONLY YOUR OWN TSINELAS COUNTS. Picking up somebody else's is a denial play and
             // a fine one, but it is not the run this game is built around and it carries none of
             // the same risk. `OwnerSlot` is authoritative; a slipper nobody owns pays nothing.
+            // ⚠️ MEASURED AT THE SAME PLACE THE ECONOMY IS PAID, AND FOR THE SAME REASON.
+            // This method is the one funnel every pickup arrives through, and the guard above
+            // makes it idempotent, so a retrieval is counted exactly once and cannot be counted
+            // twice by the double call that guard exists for. The distance to the taya is taken
+            // NOW: it is what decides whether this was a run under pressure or a walk, and one
+            // frame later the defender has moved.
+            GameServices.Stats?.NoteRetrieval(
+                _motor.PlayerSlot, what.OwnerSlot == _motor.PlayerSlot, DistanceToTaya());
+
             if (what.OwnerSlot == _motor.PlayerSlot)
                 _motor.AbilitySystem?.OnOwnSlipperRetrieved();
 
             _throwLockLeft = what.ThrowLock;
+        }
+
+        /// <summary>
+        /// Flat distance from this body to the current taya, or -1 when there is not one to
+        /// measure against.
+        ///
+        /// ⚠️ FLAT, LIKE EVERY OTHER CONTACT MEASUREMENT IN THE GAME. Height is what a jump
+        /// and a kerb change, and `CLAUDE.md` § 4's distance rule is about the floor plan.
+        ///
+        /// ⚠️ -1 IS NOT ZERO. Zero would read as the taya standing on top of you, and would
+        /// score every pickup in a Practice round that has no defender in it as made under
+        /// maximum pressure.
+        /// </summary>
+        private float DistanceToTaya()
+        {
+            var round = GameServices.Round;
+            var match = GameServices.Match;
+            if (round == null || match == null) return -1.0f;
+
+            var taya = round.PlayerAt(match.DefenderSlot);
+            if (taya == null || taya == _motor) return -1.0f;
+
+            Vector3 a = transform.position;
+            Vector3 b = taya.transform.position;
+            a.y = 0.0f;
+            b.y = 0.0f;
+            return Vector3.Distance(a, b);
         }
 
         /// <summary>
@@ -444,9 +500,29 @@ namespace TumbangPreso
                 // back OUT before applying any offset. `RideAnchor` does not reparent, it copies a
                 // position every frame instead (see this function's own note above), so there was
                 // never an inherited scale here to undo, and multiplying one in was pure invention.
-                Held.transform.SetPositionAndRotation(
-                    hand.position + hand.up * Held.RestHeight,
-                    hand.rotation * Slipper.CarryRotation);
+                // ⚠️⚠️ THE ROTATION IS WRITTEN FIRST AND THE DRAWN CENTRE IS SUBTRACTED, AND
+                // WITHOUT THAT SECOND TERM THE SHOE HANGS OFF THE HAND FOR EVERY UNIT. 🧑
+                // 2026-08-29: *"slipper floats for everyone including bots, it isnt on their arms
+                // ... it floats for all poses"*. `docs/TODO.md` § 80.5.
+                //
+                // The line above placed the slipper's ORIGIN at the anchor, and § 70.2 fixes
+                // every slipper mesh as centred on XY and seated on Z = 0, so that origin is on
+                // the SOLE at one END of the shoe. What the player sees is the mesh, which was
+                // therefore always offset from the hand by however far its author put the origin
+                // from its middle — a different amount for each of the nine skins.
+                //
+                // ⚠️ THE ROTATION HAS TO BE SET BEFORE THE OFFSET IS READ. `DrawnCentreOffset`
+                // comes off `Renderer.bounds`, which is world space, so it is only the correct
+                // vector once the shoe is already turned the way it will be drawn. Reading it
+                // first and rotating after corrects along the wrong axis, which is exactly the
+                // trap `ViewmodelArms.NormaliseHeldSize` records for the first-person copy.
+                //
+                // ⚠️ `CarryTests` CANNOT SEE THIS AND STILL CANNOT. It asserts on the ORIGIN's
+                // distance from the anchor, which this still satisfies; see `DrawnCentreOffset`.
+                // The float was never a violation of anything that was being measured.
+                Held.transform.rotation = hand.rotation * Slipper.CarryRotation;
+                Held.transform.position =
+                    hand.position + hand.up * Held.RestHeight - Held.DrawnCentreOffset;
 
                 return;
             }
@@ -753,16 +829,44 @@ namespace TumbangPreso
             // *"make sure my arm moves or does an animation when i interact with objects like in
             // the real game — raise can, tag someone"*. Raising the can is this.
             //
-            // ⚠️ ON THE OPENING FRAME ONLY, or the clip restarts every frame of a 1.5 s hold and
-            // the arm never leaves the first pose.
+            // ⚠️ NOT EVERY FRAME, or the clip restarts before it has moved and the arm never
+            // leaves its first pose. That is the trap this branch has always guarded against.
             //
-            // ⚠️ AND NO CUE HERE. `Lata.SetUpright` owns the channel's sound off the can's own
-            // state; a `PlayAt` on this frame would be a second source for the same event.
-            if (_channel <= 0.0f)
+            // ⚠️⚠️ BUT ONCE PER PRESS WAS TOO FEW, AND THAT IS THE OTHER HALF OF 🧑's *"no
+            // animation when ... raising lata"*. The gesture runs `ViewmodelArms.GrabSeconds`,
+            // 0.40 s, and the channel is held for `Lata.ResetChannelTime`, so the arm reached
+            // down once, came home, and then stood perfectly still for the rest of the hold while
+            // the meter filled and the can stayed on its side. Re-firing on the read's own length
+            // makes it a repeated reach, which is what righting a can looks like, and it goes
+            // through the one call site so both views get it rather than the viewmodel being
+            // posed behind the body's back.
+            //
+            // ⚠️⚠️ THE REPEAT IS GATED ON BOTH CLIPS, and either alone re-opens the trap from the
+            // other side. The body's read is a one-shot whose length comes off the rig, so waiting
+            // only on `IsPlayingAction` would restart the arm every frame on a rig with no
+            // `pick-up`: `PlayOneShot` returns silently on a missing clip and the timer never
+            // starts. Waiting only on the arm's length would cut a longer body clip off
+            // part-played. Both means the read repeats at the pace of whichever view is slower.
+            //
+            // ⚠️ `ReportResetPhase(Start)` STAYS ON THE OPENING FRAME ALONE. It is a network
+            // event announcing that a channel began, not a cosmetic one, and firing it four times
+            // for one hold would tell every peer the reset restarted three times.
+            var anim = GetComponentInChildren<Visual.CharacterAnimator>();
+
+            bool opening = _channel <= 0.0f;
+            bool bodyFinished = anim == null || !anim.IsPlayingAction;
+            bool armFinished = _channel - _lastResetGesture >= CameraSystem.ViewmodelArms.GrabSeconds;
+
+            if (opening || (bodyFinished && armFinished))
             {
-                GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("grab");
-                ReportResetPhase(Net.MatchRpc.ResetPhase.Start);
+                _lastResetGesture = _channel;
+                anim?.PlayAction("grab");
             }
+
+            // ⚠️ AND NO CUE HERE. `Lata.SetUpright` owns the channel's sound off the can's own
+            // state; a `PlayAt` on this frame would be a second source for the same event, which
+            // matters more now that the read above fires more than once.
+            if (opening) ReportResetPhase(Net.MatchRpc.ResetPhase.Start);
 
             _channel += dt;
             ChannelRatio = Mathf.Clamp01(_channel / lata.ResetChannelTime);

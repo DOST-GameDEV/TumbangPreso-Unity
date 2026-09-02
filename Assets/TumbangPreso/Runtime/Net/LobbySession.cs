@@ -33,6 +33,46 @@ namespace TumbangPreso.Net
         public int CharacterPick = -1;
         public int CanPick = -1;
         public int SlipperPick = -1;
+
+        // ⚠️ THE RAW CLAIM IS KEPT BESIDE THE RESOLVED NAME BECAUSE THE ANSWER ARRIVES LATER.
+        // `docs/TODO.md` § 88.1c: the account endpoint is asked whether this peer owns the handle
+        // it claimed, and that is a network round trip the lobby must not wait for. So arrival
+        // resolves a usable name immediately from the claim, and `ApplyHandleCheck` recomputes it
+        // from these three fields when the answer lands. Without the claim stored, the second
+        // pass would have nothing to re-derive from but its own first guess.
+        public string ClaimedName = "";
+        public string AccountPlayerId = "";
+        public AccountRules.HandleCheck HandleTrust = AccountRules.HandleCheck.NotAsked;
+
+        /// <summary>
+        /// What this peer is allowed to wear, decided by the host when the claim arrived.
+        ///
+        /// ⚠️⚠️ THE CLAIM IS NOT KEPT AND THAT IS DELIBERATE. `BannerRules.Authorise` is a pure
+        /// function, so storing the answer rather than the question means nothing downstream can
+        /// accidentally read an unauthorised id: **there is no unauthorised id on this record to
+        /// read.** The same reasoning `docs/TODO.md` § 94.1 arrived at the hard way, where four
+        /// copies of "which line is mine" all agreed on the wrong value because each was free to
+        /// derive it again.
+        ///
+        /// ⚠️ NEVER NULL, so no drawing code has to null-check a cosmetic.
+        /// </summary>
+        public BannerSelection Banner = new BannerSelection();
+
+        /// <summary>The character palette this peer may wear, authorised with the banner.</summary>
+        public string Look = "";
+
+        /// <summary>
+        /// The custom character this peer is bringing, as a `C3` frame, or empty for a roster one.
+        ///
+        /// ⚠️ NORMALISED ON ARRIVAL, NOT AS SENT, which is the same rule as `Banner` two fields
+        /// up: what is stored is the host's answer and not the peer's question, so nothing
+        /// downstream can read an out-of-range index or a mixed hero kit. It is re-encoded through
+        /// `CustomCharacterRules.Normalise` in `MatchRpc.HostAuthoriseCosmetics`.
+        /// </summary>
+        public string Custom = "";
+
+        /// <summary>The checked Hero Strike build, never the peer's raw claim.</summary>
+        public string Build = "";
     }
 
     /// <summary>
@@ -55,11 +95,32 @@ namespace TumbangPreso.Net
         public const int MaxPlayers = 4;
 
         /// <summary>
-        /// ⚠️ MaxConnections (12) is deliberately larger than MaxPlayers (4). Four seats is a
-        /// design rule, twelve connections is a capacity ceiling, and the gap is what lets
-        /// spectators attend a full match. Relay allocations use this count.
+        /// How many people may WATCH on top of the four who play.
+        ///
+        /// ⚠️⚠️ 🧑 2026-08-29: *"make it so taht more than 4 ppl can join, like up to 8 ppl can
+        /// join but only the first 4 are players and last 4 are spectators"*. Four seats is a
+        /// design rule and this is the gallery; together they are the room.
+        ///
+        /// ⚠️ THE MECHANISM WAS ALREADY THERE AND ONLY THE CEILING AND THE LOBBY RULE WERE
+        /// WRONG. `Admit` has always answered a seatless arrival with `Seat = -1, Spectator =
+        /// true`, and everything downstream — the camera, the HUD, the ready quorum, the skip
+        /// vote — already excludes them. What refused a fifth person was `RuleOnArrival`'s last
+        /// line, which said `MatchInProgress ? Spectate : Refuse`: **a running match could be
+        /// watched and a LOBBY could not.** That is now `Spectate` either way.
         /// </summary>
-        public const int MaxConnections = 12;
+        public const int MaxSpectators = 4;
+
+        /// <summary>
+        /// ⚠️ MaxConnections is deliberately larger than MaxPlayers. Four seats is a design rule,
+        /// the total is a capacity ceiling, and the gap is what lets spectators attend. Relay
+        /// allocations use this count.
+        ///
+        /// ⚠️⚠️ IT IS DERIVED NOW, AND IT WAS THE LITERAL 12 WITH FOUR SEATS UNDER IT. Two
+        /// numbers with no arithmetic between them is how "how many can watch" became a thing
+        /// nobody could answer without counting: **8 = 4 + 4** says it, and moving either half
+        /// moves the total without a second edit.
+        /// </summary>
+        public const int MaxConnections = MaxPlayers + MaxSpectators;
 
         /// <summary>
         /// ⚠️ THE ALPHABET EXCLUDES EVERY CONFUSABLE CHARACTER. No 0/O, no 1/I/L. A join code
@@ -174,12 +235,30 @@ namespace TumbangPreso.Net
             // 2. A seat is genuinely free.
             if (FreeSeatCount() > 0) return MidMatchRuling.Seat;
 
-            // 3. Full, but a match ending will free seats. Watch until then.
-            return MatchInProgress ? MidMatchRuling.Spectate : MidMatchRuling.Refuse;
+            // 3. Every seat is taken. Watch.
+            //
+            // ⚠️⚠️ IT USED TO BE `MatchInProgress ? Spectate : Refuse`, SO A RUNNING MATCH COULD
+            // BE WATCHED AND A LOBBY COULD NOT. 🧑 2026-08-29: *"make it so taht more than 4 ppl
+            // can join, like up to 8 ppl can join but only the first 4 are players and last 4 are
+            // spectators"*. A fifth person turning up before START MATCH was turned away, and
+            // that is the case a tournament actually has — everybody arrives at once, four sit
+            // down, the rest want to watch the same room rather than be told to come back.
+            //
+            // ⚠️ THE CAPACITY REFUSAL LIVES IN `NetSession.ApproveConnection` AND NOT HERE, and
+            // that split is deliberate. This method answers "what is this person FOR"; the
+            // transport answers "is there room at all", it answers it before a peer record
+            // exists, and it is the only one of the two that can put a sentence on the wire for
+            // the player to read. A refusal invented here would be a peer admitted and then
+            // silently made useless.
+            //
+            // ⚠️ `Refuse` IS STILL REACHABLE AND STILL MEANS SOMETHING: an empty token, on the
+            // first line. That is a malformed arrival rather than a full room.
+            return MidMatchRuling.Spectate;
         }
 
         public PeerRecord Admit(int peerId, string token, string name)
             => Admit(peerId, token, name, out _);
+
 
         /// <summary>
         /// Admits a transport and reports an older still-connected transport replaced by the
@@ -194,8 +273,17 @@ namespace TumbangPreso.Net
                 PeerId = peerId,
                 Token = token ?? "",
 
-                // ⚠️ SANITISED ONCE, HERE, ON ARRIVAL. Not at draw time, and not on the client.
-                Name = Settings.GameSettings.SanitiseName(name),
+                // ⚠️ ACCOUNT HANDLE VALIDATED ONCE, HERE, ON ARRIVAL. The display name and
+                // discriminator travel together, so a clipped suffix cannot impersonate a real
+                // account handle on the scoreboard.
+                //
+                // ⚠️⚠️ AND THE NAME RESOLVES NOW RATHER THAN AFTER THE ACCOUNT ENDPOINT ANSWERS,
+                // WHICH IS `FUTURE.md` § 0.5 RULE 7 IN ONE LINE. Verification is a network round
+                // trip; a lobby that waited for it would be a LAN match sitting behind a login,
+                // and the nationals are in a hall whose Wi-Fi may not exist. `ApplyHandleCheck`
+                // upgrades or demotes this the moment there is an answer, and never before.
+                Name = AccountRules.ArrivalHandle(name, token),
+                ClaimedName = name ?? "",
             };
 
             // A replacement connection can arrive before the transport's generous 30 second
@@ -279,6 +367,39 @@ namespace TumbangPreso.Net
 
             ClaimLeaderIfVacant(peerId);
             return record;
+        }
+
+        /// <summary>
+        /// Records the account endpoint's answer about an arriving peer and re-resolves its name.
+        /// `docs/TODO.md` § 88.1c. Answers true when the visible name changed.
+        ///
+        /// ⚠️⚠️ THE RESULT IS RE-DERIVED FROM THE ORIGINAL CLAIM, NOT PATCHED ONTO THE CURRENT
+        /// NAME. Arrival already turned the claim into something showable, so a second pass that
+        /// edited `Name` would be resolving a resolved value: a demotion would re-tag a tag, and
+        /// a late second answer for the same peer would compound rather than replace. One rule,
+        /// one input, run again.
+        ///
+        /// ⚠️ AND IT REFUSES AN ANSWER FOR A PEER THAT HAS SINCE BEEN REPLACED. Verification is
+        /// async and a reconnect inside the fast-reconnect window mints a new proof for the same
+        /// token, so the old answer can land after the new transport has taken the record. The
+        /// player id is the guard: an answer about somebody else is dropped.
+        /// </summary>
+        public bool ApplyHandleCheck(int peerId, string accountPlayerId,
+                                     AccountRules.HandleCheck check, string ownedHandle)
+        {
+            if (!_peers.TryGetValue(peerId, out var record)) return false;
+            if (!string.IsNullOrEmpty(record.AccountPlayerId) &&
+                record.AccountPlayerId != accountPlayerId) return false;
+
+            record.AccountPlayerId = accountPlayerId ?? "";
+            record.HandleTrust = check;
+
+            string resolved = AccountRules.VerifiedArrivalHandle(
+                record.ClaimedName, record.Token, check, ownedHandle);
+
+            if (resolved == record.Name) return false;
+            record.Name = resolved;
+            return true;
         }
 
         /// <summary>
@@ -452,6 +573,29 @@ namespace TumbangPreso.Net
         public bool IsLeader(int peerId) => peerId >= 0 && peerId == LeaderPeerId;
 
         /// <summary>
+        /// The leader, as the HOST has just told this client it is.
+        ///
+        /// ⚠️⚠️ THE FIELD ALREADY TRAVELLED AND WAS THROWN AWAY AT THE DOOR. `SendSeating` writes
+        /// `lobby.LeaderPeerId` into the `Seating` payload and `OnSeatingMsg` read it into a local
+        /// called `leaderId` and never used it, so every client's `LeaderPeerId` stayed at the -1
+        /// it is constructed with. Anything a client wanted to ask about the leader — starting
+        /// with "whose name goes on WAITING FOR HOST" — had no answer available.
+        ///
+        /// ⚠️ IT IS A SEPARATE METHOD FROM `ClaimLeaderIfVacant` AND `ReassignLeader` BECAUSE
+        /// THOSE TWO DECIDE AND THIS ONE OBEYS. Election is a host rule and stays on the host;
+        /// a client applies the answer it was sent and elects nobody, which is the same split
+        /// `HostAssignSeat` and `OnSeatingMsg` already keep for seats.
+        /// </summary>
+        public void ApplyLeaderFromHost(int peerId)
+        {
+            int resolved = peerId < 0 ? -1 : peerId;
+            if (LeaderPeerId == resolved) return;
+
+            LeaderPeerId = resolved;
+            LeaderChanged?.Invoke(resolved);
+        }
+
+        /// <summary>
         /// A dedicated server's own peer holds no seat and plays nothing — it referees.
         /// </summary>
         public bool IsSeatlessReferee(int peerId) => IsDedicated && peerId == 1;
@@ -469,17 +613,42 @@ namespace TumbangPreso.Net
         ///
         /// ⚠️ FLOORED AT 1 so a host whose peer list has not populated yet still needs its own
         /// press rather than starting instantly on an empty count.
+        ///
+        /// ⚠️⚠️ THE LOCAL PEER USED TO BE EXEMPT FROM THE SPECTATOR TEST AND THAT EXEMPTION
+        /// HUNG THE GATE. 🧑 2026-08-30: *"R doesnt work if theres a spectator"*. The line read
+        /// `if (p.PeerId == localPeerId || !p.Spectator) count++;` under a comment saying the
+        /// local peer counts *"even while its own spectator flag is in flight"* — but the second
+        /// half of that `||` already counts every peer whose flag is not set, so the FIRST half
+        /// could only ever fire for a local peer whose flag was set. It did not protect a
+        /// decision in flight; it counted a decision already taken, the wrong way.
+        ///
+        /// What that costs: `ReadyGate.Update` refuses to send a press for `GameLaunch.Spectator`
+        /// (§ 78.6, and it is right to — the set and the total must come from one population),
+        /// so a HOST who clicked SPECTATE in its own lobby was counted in a quorum it could never
+        /// vote in. Everybody else pressed R, the tally stopped one short, and the match never
+        /// started. `BufferSkipVote.Needed` and `MatchResult.ExpectedVotes` are the same call and
+        /// hung the same way, so the buffer skip and the rematch died with it.
+        ///
+        /// ⚠️ THE IN-FLIGHT CASE IS COVERED BY THE FLOOR, NOT BY AN EXEMPTION. A peer that has
+        /// no record here yet is not counted at all, the count reaches 0, and the floor of 1
+        /// asks for its own press.
+        ///
+        /// ⚠️ AND THE PEER ID ARGUMENT IS GONE WITH IT rather than left unused. It existed only
+        /// to serve that exemption, every caller passed the same expression, and an argument that
+        /// no longer decides anything is the next reader's false lead. `ReadyGate`'s note about
+        /// it being a PEER id and not a SEAT is kept there, because the collision it records is
+        /// still what this method would suffer if the argument ever came back.
         /// </summary>
-        public int PlayingPeerCount(int localPeerId)
+        public int PlayingPeerCount()
         {
             int count = 0;
 
             foreach (var p in _peers.Values)
             {
                 if (IsSeatlessReferee(p.PeerId)) continue;
+                if (p.Spectator) continue;
 
-                // The local peer counts even while its own spectator flag is in flight.
-                if (p.PeerId == localPeerId || !p.Spectator) count++;
+                count++;
             }
 
             return count < 1 ? 1 : count;
@@ -538,6 +707,34 @@ namespace TumbangPreso.Net
         /// player is not free, and a browser that says 3/4 for a match that will refuse the next
         /// arrival is worse than one that says 4/4.
         /// </summary>
+        /// <summary>
+        /// How many connected peers are watching rather than playing.
+        ///
+        /// ⚠️ IT COUNTS THE FLAG, NOT `PeerCount - SeatedPeerCount`. A peer mid-admission has a
+        /// record with no seat and no spectator flag for one call, and the subtraction would
+        /// report them as an audience member; `Admit`'s own note records the same distinction
+        /// costing the ready gate a press it waited on forever.
+        ///
+        /// ⚠️ AND THE DEDICATED SERVER IS NOT IN THE GALLERY. It is a referee, it is marked
+        /// `Spectator` so nothing hands it a body, and counting it would advertise a room as
+        /// having one more watcher than it has people.
+        /// </summary>
+        public int SpectatorCount()
+        {
+            int watching = 0;
+            foreach (var p in _peers.Values)
+            {
+                if (p == null || !p.Spectator) continue;
+                if (IsSeatlessReferee(p.PeerId)) continue;
+                watching++;
+            }
+
+            return watching;
+        }
+
+        /// <summary>Is there room for one more person, in any role?</summary>
+        public bool HasRoomForAnother() => ConnectedHumanCount() < MaxConnections;
+
         public int OccupiedSeatCount()
         {
             int taken = 0;
@@ -588,6 +785,37 @@ namespace TumbangPreso.Net
         public void StartMatch()
         {
             MatchInProgress = true;
+            _heldSeats.Clear();
+        }
+
+        /// <summary>
+        /// The match is over and everybody is back on the lobby screen.
+        ///
+        /// ⚠️⚠️ NOTHING CLEARED `MatchInProgress` ON THE WAY BACK, AND THAT IS WHY SPECTATE AND
+        /// THE FOUR SEAT BUTTONS WENT DEAD AFTER THE FIRST MATCH. 🧑 2026-08-29: *"spectate
+        /// button dont work in multiplayer"*.
+        ///
+        /// `HostStartMatch` sets it and only `NetSession.Stop` cleared it, which happens when the
+        /// whole session ends. So from the first START MATCH of a session until the process left
+        /// the lobby entirely, this flag stayed true — and `TryTakeSeat` opens with
+        /// `if (MatchInProgress) return false;`. **Every seat request after the first match was
+        /// refused in silence**, including the one SPECTATE sends. From the button it is
+        /// indistinguishable from a control that was never wired up, which is exactly how it was
+        /// reported.
+        ///
+        /// ⚠️ IT IS NOT `EndMatch`, AND THE DIFFERENCE IS THE JOIN CODE. `EndMatch` also clears
+        /// `_seenThisMatch` and the code, which is right when a session is being torn down and
+        /// wrong here: the lobby draws that code for people to type, and wiping it on the way
+        /// back from a match would leave the room unjoinable with the room still open.
+        ///
+        /// ⚠️ THE HELD SEATS GO, THOUGH. A held chair means "somebody in THIS match left it", and
+        /// that promise expires with the match — carrying one into the next one is what
+        /// `StartMatch`'s own note says would hand a fresh match's seat to whoever held it in the
+        /// last one.
+        /// </summary>
+        public void ReturnToLobby()
+        {
+            MatchInProgress = false;
             _heldSeats.Clear();
         }
 

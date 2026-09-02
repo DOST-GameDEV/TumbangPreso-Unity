@@ -43,12 +43,28 @@ namespace TumbangPreso.EditorTools
     /// </summary>
     public static class PersonSwapProbe
     {
-        /// <summary>The rig under test, and the one it replaces. ⚠️ BOTH, because "the new one
-        /// is 0.6790 tall" means nothing without the range it has to sit inside.</summary>
-        private const string NewModel = "Assets/TumbangPreso/Art/characters/persons/team-phaister.glb";
+        /// <summary>
+        /// The rig under test, and the one it replaces. ⚠️ BOTH, because "the new one is 0.6790
+        /// tall" means nothing without the range it has to sit inside.
+        ///
+        /// ⚠️⚠️ IT POINTS AT THE LAST CHARACTER AUTHORED AND THAT IS WHAT `CLAUDE.md` § 6.1
+        /// EXPECTS OF IT. `docs/TODO.md` § 108.6 recorded these two moving from `phaister` to
+        /// `custom` with a note that a reader will expect the canonical turnaround to be of the
+        /// most recent rig; they are on `custom_base` now, which is the naked base mesh the
+        /// character maker dresses (`tools/build_base_voxel.py`, § 112). **A turnaround of it is
+        /// deliberately a bald faceless mannequin**: that is what the file is, and a run that
+        /// photographs hair or a face means the base rig has stopped being a base rig.
+        ///
+        /// ⚠️ THE OLD MODEL IS THE CC0 RIG THE SKELETON AND ALL 32 CLIPS COME FROM, which is
+        /// what makes the height comparison meaningful. It is not the shape donor: the skull is
+        /// lifted off `character-male-d`.
+        /// </summary>
+        private const string NewModel =
+            "Assets/TumbangPreso/Art/characters/persons/team-custom-base.glb";
+
         private const string OldModel = "Assets/TumbangPreso/Art/characters/persons/character-female-a.glb";
 
-        private const string RosterId = "phaister";
+        private const string RosterId = "custom_base";
         private const string ReportPath = "Logs/person-swap-probe.txt";
         private const string ShotPath = "Logs/person-swap-probe.png";
 
@@ -1343,7 +1359,7 @@ namespace TumbangPreso.EditorTools
                 shoe.transform.localPosition = palm + Vector3.up * CharacterVisual.HandTopLift;
                 shoe.transform.localRotation = Quaternion.identity;
 
-                ToonSkin.Apply(shoe, ToonSkin.PropOutlineWidth);
+                ToonSkin.ApplySlipper(shoe, ToonSkin.PropOutlineWidth);
                 return;
             }
         }

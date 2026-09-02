@@ -318,6 +318,46 @@ namespace TumbangPreso.Audio
             // least able to afford it.
             "hero_phaister_ult", "hero_phaister_grunt",
 
+            // ⚠️⚠️ ONE CAST SOUND PER ABILITY, AND ONE PER LOADOUT ALTERNATE. Thirty cues, added
+            // 2026-09-02. 🧑: *"as well as add sfx for each skill, for all character as well as
+            // the ones in loadout"*, *"make it unique throughout each character (dont generate
+            // them the same way bcz theyll end up sounding the same huhu)"*, *"make sure the sfx
+            // matches wat the skill really does"*.
+            //
+            // ⚠️ WHAT THEY REPLACE, MEASURED BY READING THE SIX KITS: Sean's FLAME RUSH,
+            // IGNITION CANNON and SUPERNOVA all opened on `sfx_fire_whoosh`; Zack's three all on
+            // `sfx_lightning_strike`; two of Cheska's on `sfx_ice_freeze`; two of Nemu's on
+            // `sfx_ghost_teleport`; two of Dante's on `sfx_explosion_heavy`. **Eighteen powers
+            // with six voices**, so the cast told you which hero and never which power.
+            //
+            // ⚠️ THE ELEMENT CUES ARE KEPT AND ARE STILL PLAYED BY THE PAYLOADS. A hex still
+            // sounds like `sfx_hex_cast` when the ward lands and a nova still rings
+            // `sfx_frost_nova`; what changed is that the PRESS no longer plays the element too.
+            // Deleting them would have taken the sound off the hazards as well.
+            //
+            // ⚠️ `tools/generate_skill_audio.py` IS A THIRD GENERATOR AND ITS HEADER SAYS WHY.
+            // The voices are unseeded and rewrite themselves every run; the payloads are seeded;
+            // these are seeded separately, so a rebuild of any one set cannot touch the other
+            // two. Every synth in it names its own method, because § 19's *"the same logic and
+            // code was used to generate all of them"* is the fault this whole pass is about.
+            "sfx_cast_dante_stomp", "sfx_cast_dante_carapace", "sfx_cast_dante_fissure",
+            "sfx_cast_cheska_sheet", "sfx_cast_cheska_barricade", "sfx_cast_cheska_nova",
+            "sfx_cast_sean_rush", "sfx_cast_sean_cannon", "sfx_cast_sean_supernova",
+            "sfx_cast_zack_sprint", "sfx_cast_zack_magnet", "sfx_cast_zack_summon",
+            "sfx_cast_nemu_veil", "sfx_cast_nemu_hijack", "sfx_cast_nemu_seance",
+            "sfx_cast_phaister_hex", "sfx_cast_phaister_blink", "sfx_cast_phaister_coven",
+
+            // ⚠️ THE TWELVE ALTERNATES. A sidegrade changes what the power does, so it changes
+            // what the power sounds like doing it: Long Tremor sweeps feet instead of throwing
+            // bodies and its cue is a horizontal sweep with no slam in it. Exactly one of the
+            // two ever plays; see `HeroAbility.VariantCastCue`.
+            "sfx_var_dante_tremor", "sfx_var_dante_plating",
+            "sfx_var_cheska_blackice", "sfx_var_cheska_spires",
+            "sfx_var_sean_afterburn", "sfx_var_sean_flare",
+            "sfx_var_zack_arcline", "sfx_var_zack_discharge",
+            "sfx_var_nemu_fade", "sfx_var_nemu_leash",
+            "sfx_var_phaister_brand", "sfx_var_phaister_stride",
+
             // The shove and the block, via aliases.
             "hit_body", "bump_swing",
 

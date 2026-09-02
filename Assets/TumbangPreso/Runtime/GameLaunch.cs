@@ -136,6 +136,14 @@ namespace TumbangPreso
             PendingStatusMessage = "";
             Spectator = false;
             GuidedTutorial = false;
+
+            // ⚠️ THE SANDBOX SWITCH IS OFF ON EVERY LAUNCH, WHICH IS ABOUT THE BUTTON AND NOT
+            // ABOUT THE RULE. `PracticeSandbox.Active` already ands with "this session is not
+            // networked", so leaving it on could not affect a real match; what it COULD do is
+            // draw a lit NO COOLDOWNS toggle in a room where it does nothing, which is a HUD
+            // disagreeing with the game.
+            PracticeSandbox.Clear();
+
             ClearSeating();
         }
     }

@@ -35,9 +35,23 @@ caught. `VISION.md` § 0 states it as the sentence every rule protects.
 | Players | 4, free for all | 4, free for all |
 | Rounds | **4**, one full rotation | **8**, two full rotations |
 | Round length | 90 s | 90 s |
-| Roster | the twelve street characters | the six heroes |
+| Roster | the twelve street characters, plus your own | the six heroes, plus your own |
 | Powers | **none, and that is the feature** | two skills and an ultimate each |
 | Governed by | `Design.md` | `Design.md` § 13 points at the files |
+
+### 2.1 Roster Integrity & The Custom Character Creator
+- **Every named character keeps their own skin.** The twelve Classic street characters and the six
+  heroes (DANTE, CHESKA, SEAN, ZACK, NEMU, PHAISTER) have canonical skin tones and faces that no
+  colour control can reach. `PaletteRules.IsProtectedSlot` carries the skin ramp beside the face,
+  so the clothes stay customisable and the skin never moves. `docs/TODO.md` § 107.
+  ⚠️ **BERTO IS A CLASSIC CHARACTER AND NOT A HERO.** This line listed him among the heroes;
+  `Roster.HeroPeople` is the list and `bayan` (BERTO) is not in it.
+- **The custom character borrows one hero's kit, whole.** In Hero Strike it brings the skills and
+  ultimate of one of the six, chosen on the creator's KIT page, and it can never mix two.
+  ⚠️ **That is what keeps every ability tell in the game true**: a custom character telegraphs
+  exactly like the hero whose kit it carries, so reading which ultimate an opponent has banked stays
+  a skill rather than a guess (`docs/VISION.md` § 4, `docs/TODO.md` § 110.5).
+- **Dedicated "Create Your Own Character" Slot**: Features **3 save slots** (Custom 1, 2, 3) where players can fully customize their own street kid avatar (facial expressions, natural Filipino skin tone palette, height, body size, hair style/color, streetwear, accessories, custom tsinelas, and custom lata). One active custom character is chosen for play.
 
 Four seats. One is the **taya** (defender); the other three are **attackers**. The taya rotates
 clockwise every round, derived as `(round - 1) % 4`, so everyone defends the same number of times
@@ -219,11 +233,12 @@ above Dante's and below Zack's.
 | Slot | Name | Cost | What it does |
 |---|---|---|---|
 | Skill 1 | **BOLT SPRINT** | 30 s | Faster movement, and the trail behind you shocks anyone chasing |
-| Skill 2 | **STATIC CHARGE** | 2 charges, +1 per lata knocked | Your next throw flies much faster and flatter and jolts whoever is standing where it lands |
-| Ultimate | **THUNDERSTRIKE** | 150 | Lightning on your position. Everyone underneath is stunned where they stand |
+| Skill 2 | **MAGNET** | 1 charge, +1 per lata knocked | Snaps your own tsinelas out of the street back into your hand, still live. That throw flies much faster and jolts where it lands |
+| Ultimate | **THUNDERSTRIKE** | 150 | Hold to pick a spot up to 7 m out, let go and the sky opens on it. Everyone underneath is stunned where they stand |
 
 The most expensive ultimate in the game, because a stun on everyone near the can is the strongest
-opening in it.
+opening in it. It is aimed rather than self-centred as of 2026-09-02: `docs/TODO.md` § 124.5 has why,
+and why Sean's stayed under his own feet.
 
 #### CHESKA, ice. Ultimate costs **140**.
 
@@ -395,8 +410,12 @@ Four peers, host authoritative. **Every point is awarded in one function on the 
 resolves by distance on the host, and a client never creates score. Peers join by code or over
 LAN discovery; seats are what a peer joins, so bot-filled seats cannot vote in a rematch.
 
-⚠️ The transport has never been run as two real processes on a LAN. `Port_Ledger.md` carries that
-caveat rather than implying otherwise.
+✅ **The transport HAS been run on a real LAN, with the internet unplugged**, confirmed by 🧑 on
+2026-08-31. This line read "has never been run as two real processes on a LAN" and was stale; the
+same claim was carried in `docs/TODO.md`'s header and `FUTURE.md` § 17 and is corrected in all of
+them together. ⚠️ **The requirement it was guarding is permanent**: venue internet at the nationals
+cannot be assumed, so a four-player match must stay startable and completable with UGS unreachable.
+Treat it as a regression check after any change to the boot or network path, not as an open task.
 
 ---
 

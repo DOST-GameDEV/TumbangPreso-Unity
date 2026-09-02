@@ -51,6 +51,36 @@ namespace TumbangPreso
         /// </summary>
         public int OwnerSlot { get => _ownerSlot; set => _ownerSlot = value; }
 
+        /// <summary>
+        /// The seat this tsinelas was BUILT for, which never changes for the life of the match.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE `OwnerSlot` WAS BEING USED AS AN ADDRESS AND IT IS NOT ONE.
+        /// `docs/TODO.md` § 78.1 is the measurement that found this on a two-process LAN run.
+        /// `MatchRpc.FindSlipper` looked a slipper up BY `OwnerSlot`, and `OwnerSlot` is state
+        /// the game rewrites every round: `SliceRunner.EquipOwnedSlippers` disowns the taya's
+        /// shoe with `OwnerSlot = -1`, and `FindSlipper` skips anything negative. So the moment a
+        /// seat became taya its tsinelas became **unaddressable on both peers at once** — the
+        /// host stopped broadcasting it (`FindSlipper(defenderSlot)` is null, and
+        /// `BroadcastSlipperStateIfChanged(null)` returns) and a client could not have applied it
+        /// anyway (`SyncSlipperClientRpc` opens with `FindSlipper(ownerSlot)` on a `-1`).
+        ///
+        /// The visible result was that **every non-host peer rendered the taya carrying a
+        /// slipper for the whole round**, frozen in the state it held when they were last an
+        /// attacker, because `Carrier` parents the shoe to the carry anchor on every peer and
+        /// nothing ever told the client to let go. The host could not see it: on the host that
+        /// object is correctly parked out of play. § 38's thesis, one object further in.
+        ///
+        /// ⚠️ **AN IDENTITY MUST NOT BE A PIECE OF MUTABLE STATE.** This is the identity;
+        /// `OwnerSlot` goes back to being what its own note above says it is, a LABEL that the
+        /// foot arrow and the owner glow read.
+        ///
+        /// ⚠️ IT IS NOT ON THE WIRE AND DOES NOT NEED TO BE. `MatchInstaller.BuildSlipper`
+        /// assigns it by seat on every peer, so both ends already agree on it without being told,
+        /// which is the same reason the taya role is derived rather than replicated
+        /// (`VISION.md` § 4).
+        /// </summary>
+        public int SeatOfOrigin { get; set; } = -1;
+
         public SlipperState State { get; private set; } = SlipperState.Loose;
 
         /// <summary>
@@ -330,6 +360,47 @@ namespace TumbangPreso
         /// that stops at a fixed floor epsilon draws its line to the ground. The line is right;
         /// the tall skin simply stops higher.
         /// </summary>
+        /// <summary>
+        /// The vector from this object's ORIGIN to the middle of the shoe it actually draws, in
+        /// world space at whatever rotation and scale it is wearing right now.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE THE ORIGIN IS NOT IN THE MIDDLE OF THE SHOE, AND THAT IS A
+        /// REQUIREMENT RATHER THAN AN ACCIDENT. `docs/TODO.md` § 70.2 fixed every slipper mesh as
+        /// **centred on XY and seated on Z = 0** — measured, *"every one has `min.y == 0.0000` in
+        /// glTF space"* — so the authored origin sits on the SOLE, at one END of the shoe. Placing
+        /// that origin at a hand therefore hangs the whole visible shoe off into space beside it.
+        ///
+        /// 🧑 2026-08-29, with a posed screenshot: *"also slipper floats for everyone including
+        /// bots, it isnt on their arms i had to do this pose to show it but it floats for all
+        /// poses"*. `docs/TODO.md` § 80.5.
+        ///
+        /// ⚠️⚠️ AND `CarryTests` IS BLIND TO IT BY CONSTRUCTION, WHICH IS WHY IT SHIPPED. That
+        /// test measures `Distance(slipper.transform.position, anchor.position) - RestHeight`,
+        /// which is the ORIGIN against the anchor. `RideAnchor` sets exactly that, so the
+        /// assertion is arithmetically satisfied while the drawn shoe is anywhere at all. **The
+        /// test measures the origin and the player sees the mesh.**
+        ///
+        /// ⚠️ THE VIEWMODEL ALREADY SOLVED THIS, IN THE OTHER VIEW AND WITH THE SAME REASONING.
+        /// `ViewmodelArms.NormaliseHeldSize` subtracts `grip * (bounds.center * k)` for precisely
+        /// this, and § 79.8 records the first-person version of the bug as its attempt 1: *"the
+        /// shoe hung in space beside the hand"*. The two carries were fixed years apart in
+        /// developer time and only one of them got the correction.
+        ///
+        /// ⚠️ READ OFF `Renderer.bounds`, WHICH IS SOLVED PER SKIN RATHER THAN GUESSED. Nine
+        /// slippers from five sources have five ideas of where a shoe's origin is; a constant
+        /// would be right for one of them. The world AABB of a ROTATED mesh is centred on that
+        /// mesh's rotated centre, so this is the true offset and not an approximation, and it
+        /// costs nothing because the renderer maintains those bounds anyway.
+        /// </summary>
+        public Vector3 DrawnCentreOffset
+        {
+            get
+            {
+                var r = GetComponentInChildren<Renderer>();
+                return r != null ? r.bounds.center - transform.position : Vector3.zero;
+            }
+        }
+
         public float RestHeight
         {
             get
@@ -464,6 +535,52 @@ namespace TumbangPreso
             return true;
         }
 
+        /// <summary>
+        /// Takes this tsinelas out of whoever is holding it, without throwing it. The inverse of
+        /// <see cref="HostForceEquip"/>.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE NOTHING EMPTIED THE NEW TAYA'S HAND, AND THE TAYA IS THE ONE
+        /// UNIT THAT MAY NOT CARRY ONE. 🧑 2026-08-29, off the built player with a tsinelas in
+        /// his own first-person hands and `TAYA` on his card: *"why the fuck does taya have
+        /// slipper in practice mode? Does this also happen in multiplayer"*. **It does.**
+        /// `SliceRunner.EquipOwnedSlippers` runs host-side on every peer's behalf and is the only
+        /// thing that touches ownership at a round change; it disowns and deactivates the slipper
+        /// whose INDEX matches the defender's seat, and never looks at what anybody is actually
+        /// holding. `Carrier.Held` was assigned to `null` in exactly one place in the whole file,
+        /// at the end of a throw.
+        ///
+        /// ⚠️ SO IT IS NOT ONLY THE TAYA'S OWN SHOE, WHICH IS WHY DEACTIVATING BY INDEX COULD
+        /// NEVER HAVE FIXED IT. `OwnerSlot` is a label and not a lock — this class says so in as
+        /// many words and `docs/TODO.md` § 79.9 records the decision being taken deliberately and
+        /// twice — so the incoming taya is frequently holding somebody ELSE'S tsinelas, which
+        /// that loop leaves active and equipped by construction.
+        ///
+        /// ⚠️ AND THE VIEWMODEL IS A SEPARATE MESH, so even for a matching index, switching the
+        /// world object off left the first-person copy in frame. `Carrier.NotifyHolding(null)`
+        /// clears `HoldingSlipper`, which is what `ViewmodelArms.SetHolding` reads.
+        /// </summary>
+        public bool HostDisarm()
+        {
+            if (!NetAuthority.ShouldResolve()) return false;
+            if (State != SlipperState.Held || Holder == null) return false;
+
+            var previous = Holder;
+
+            SetState(SlipperState.Loose);
+            Holder = null;
+            _velocity = Vector3.zero;
+
+            previous.HoldingSlipper = false;
+
+            // ⚠️ ONLY IF THAT CARRIER IS STILL POINTING AT *THIS* TSINELAS, which is the same
+            // guard `ReleasePreviousHolder` carries and for the same reason: a body that has
+            // since picked up a different shoe is holding something real.
+            var carrier = previous.GetComponent<Carrier>();
+            if (carrier != null && carrier.Held == this) carrier.NotifyHolding(null);
+
+            return true;
+        }
+
         public float PektusSpin { get; private set; }
 
         /// <summary>
@@ -487,7 +604,29 @@ namespace TumbangPreso
             // for as long as anybody held it. The STATE and the HOLDER are authoritative; while
             // it is in a hand, the position is a consequence of them.
             if (state != SlipperState.Held)
+            {
+                // ⚠️⚠️ THE WALLS APPLY TO THE REPLICA TOO, AND THIS IS THE TSINELAS HALF OF 🧑
+                // 2026-08-29's *"if u werent host, the bots and slippers were going out of
+                // map"*. Only the non-host saw it because only the host runs `BounceOffBounds`
+                // and the resting clamp: `FixedUpdate` returns immediately on a peer that is not
+                // simulating, so on a client the arena had no edges at all and a shoe went
+                // wherever the last packet said.
+                //
+                // ⚠️ THE SAME LIMITS THE HOST BOUNCES AND RESTS AGAINST, margin included, so this
+                // can only ever refuse a position the host would also have refused. A tsinelas
+                // that came to rest outside the wall is an attacker deleted from the round, which
+                // is what the note on the resting clamp already says at length.
+                position.x = ClampToPlayableAxis(position.x, AIController.PlayableHalfX);
+                position.z = ClampToPlayableAxis(position.z, AIController.PlayableHalfZ);
+
+                // ⚠️ THE LID IS CLAMPED ON THE REPLICA TOO, and only downward: a client must not
+                // draw a tsinelas above a ceiling the host bounced it off, but it must not push
+                // one UP off the ground either, so this is a ceiling rather than an axis clamp.
+                float ceiling = AIController.PlayableCeilingY - Balance.SlipperHitRadius;
+                if (position.y > ceiling) position.y = ceiling;
+
                 transform.SetPositionAndRotation(position, rotation);
+            }
 
             SetState(state);
             Holder = state == SlipperState.Held ? holder : null;
@@ -509,6 +648,54 @@ namespace TumbangPreso
                 Holder.HoldingSlipper = true;
                 Holder.GetComponent<Carrier>()?.NotifyEquipped(this);
             }
+        }
+
+        /// <summary>
+        /// Moves a replica along the host's path WITHOUT touching what it is or who has it.
+        ///
+        /// ⚠️⚠️ THIS EXISTS SO THE POSE MAY TRAVEL ON A DIFFERENT CHANNEL FROM THE STATE, AND
+        /// THAT IS THE WHOLE REASON IT IS A SEPARATE METHOD RATHER THAN A FLAG ON
+        /// `ApplySnapshotState`. `MatchRpc` sends a shoe in flight fifty times a second, which
+        /// must be unreliable or one lost packet head-of-line blocks the stream and delivers a
+        /// burst (`MatchRpc.PoseDelivery`, `docs/TODO.md` § 71.3 and § 77.1). Its state, holder,
+        /// affinity and thrower are events and must be reliable. Two channels for one object have
+        /// no ordering between them, so if the unreliable packets also CARRIED the state, a pose
+        /// sent a step before a throw could arrive a step after it and put the tsinelas back in
+        /// the hand it had just left. Carrying no state at all is what makes that unthinkable
+        /// rather than unlikely.
+        ///
+        /// ⚠️ WHAT THAT STILL LEAVES, SO NOBODY REDISCOVERS IT: carrying no state removes the
+        /// CORRUPTION, not the ordering. A pose sent while the shoe was in flight can still arrive
+        /// after the reliable packet that says it has landed and move a resting tsinelas by one
+        /// step's travel, until the next keepalive corrects it. The bound is 0.5 s and about
+        /// 0.3 m, position only. The fix if it is ever seen is a `Time.fixedTime` stamp on the
+        /// message and a refusal here of anything older than the last applied; it was not built
+        /// because no two-machine run has ever watched this stream. `docs/TODO.md` § 77.1.
+        ///
+        /// ⚠️ A HELD SHOE IS PLACED BY THE HAND AND NEVER BY THE WIRE, which is the same rule
+        /// `ApplySnapshotState` states at length: `Carrier` parents it to the carry anchor on
+        /// every peer, and writing a position underneath that is the two-author buzz of § 38.8.
+        ///
+        /// ⚠️ THE WALLS AND THE LID APPLY HERE TOO, and they are the same numbers the host bounces
+        /// and rests against, so this can only refuse a position the host would have refused. It
+        /// is the § 71.3 clamp, on the path that now carries most of the packets.
+        /// </summary>
+        public void ApplySnapshotPose(Vector3 position, Quaternion rotation, Vector3 velocity)
+        {
+            if (State == SlipperState.Held) return;
+
+            position.x = ClampToPlayableAxis(position.x, AIController.PlayableHalfX);
+            position.z = ClampToPlayableAxis(position.z, AIController.PlayableHalfZ);
+
+            float ceiling = AIController.PlayableCeilingY - Balance.SlipperHitRadius;
+            if (position.y > ceiling) position.y = ceiling;
+
+            transform.SetPositionAndRotation(position, rotation);
+
+            // ⚠️ THE VELOCITY IS THE SMOOTHING HINT AND ONLY MEANS ANYTHING IN FLIGHT. A loose
+            // shoe has none, and writing one would give a resting tsinelas a drift this peer has
+            // no authority to invent.
+            if (State == SlipperState.InFlight) _velocity = velocity;
         }
 
         public void HostThrow(CharacterMotor thrower, Vector3 origin, Vector3 velocity, SlipperAffinity affinity = SlipperAffinity.Normal, float pektusSpin = 0.0f)
@@ -629,13 +816,25 @@ namespace TumbangPreso
                 // ⚠️ THE SLIPPER STYLE, because a tsinelas going off is the game's joke and not
                 // an ultimate. It shared the supernova's fireball, flash, shake and sound, which
                 // told the player the two were the same size of event.
-                Abilities.HeroHazards.CreateExplosion(transform.position, 2.6f, 13.0f, 1.4f, _throwerSlot, "BOOM!",
+                //
+                // ⚠️⚠️ FLARE SHOT TIGHTENS THE CRATER, AND IT IS READ HERE RATHER THAN AT THE
+                // THROW. `AdoptState` can hand a peer a shoe that is already in flight with no
+                // record of how it left the hand, so a flag latched in `HostThrow` would be
+                // false on exactly the machines that did not watch the throw and they would
+                // draw a 2.6 m fireball over a 1.95 m blast. Every peer binds the seat's
+                // checked build in `MatchInstaller`, so asking the thrower at impact gives the
+                // same answer everywhere. The fraction is read off the row rather than written
+                // here, for the reason `Carrier`'s throw note gives.
+                var caster = GameServices.Round?.PlayerAt(_throwerSlot);
+                float blastRadius = 2.6f * (caster != null && caster.AbilitySystem != null
+                    ? caster.AbilitySystem.VariantCost("sean.2.flare")
+                    : 1.0f);
+                Abilities.HeroHazards.CreateExplosion(transform.position, blastRadius, 13.0f, 1.4f, _throwerSlot, "BOOM!",
                     style: Abilities.HeroHazards.ExplosionStyle.Slipper);
             }
             else if (Affinity == SlipperAffinity.ElectricZap)
             {
-                Visual.ComicPopup.Zap(transform.position);
-                GameServices.Audio?.PlayAt("ability_flick_dash", transform.position);
+                NetCue.Play("ability_flick_dash", transform.position);
 
                 var round = GameServices.Round;
                 if (round != null)
@@ -658,10 +857,14 @@ namespace TumbangPreso
                         // `docs/Hero_Strike_Balance.md` § 4.4.
                         if (Vector3.Distance(transform.position, p.transform.position) <= 2.0f)
                         {
+                            // ⚠️ THE STAGGER STAYS HERE AND THE FLOURISH TRAVELS. The stun is a
+                            // RULE and belongs on the host behind this gate; the stars, the jolt
+                            // and the zap ring are what three other people could not see. See
+                            // `Visual.MatchFlair`, which draws them from the seat number.
                             p.ApplyStagger(1.5f);
-                            Visual.DizzyStars.Attach(p.transform, 1.5f, UI.UiTheme.HeroElectricBright);
-                            Visual.HitFeel.Land(p, Visual.HitFeel.Weight.Jolt,
-                                                UI.UiTheme.HeroElectricBright);
+                            Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.Zap,
+                                                       _throwerSlot, p.PlayerSlot,
+                                                       transform.position);
                         }
                     }
                 }
@@ -747,7 +950,37 @@ namespace TumbangPreso
 
             var round = GameServices.Round;
 
-            // The can first: it is the thing being aimed at.
+            // ⚠️⚠️ THE TAYA'S BODY IS TESTED BEFORE THE CAN, AND EVERY OTHER BODY AFTER IT.
+            // 🧑 2026-08-29: *"make sure defender cna block too"*, and *"feels like shit get past
+            // defender very easily"*. `Lata.Connects` is a FLAT distance with no vertical test, and
+            // the can check ran first, so a taya standing between a throw and the can lost the tie
+            // inside a single physics step: at 18.5 m/s a step covers 0.37 m, which is most of the
+            // window their body occupies. The taya was doing the one thing their role is for and
+            // the can was scored through them.
+            //
+            // ⚠️ ONLY THE TAYA IS HOISTED. An ATTACKER standing over the can must not shield it —
+            // that would let the throwing side park a body on the objective, which is the exact
+            // abuse the taya's own camp penalty exists to stop on the other side. The loop below
+            // still catches them, after the can, as it always did.
+            //
+            // ⚠️ AND IT IS NOT A FREE TURTLE. `ScoreTayaCampPenalty` is -5 a second after
+            // `TayaCampGracePeriod` inside `TayaCampRadius`, so standing on the can to block
+            // everything costs the taya the round. The counterweight was already in the rules;
+            // this line is what makes the trade a real one rather than a lost tie.
+            if (round != null && _throwerIgnoreLeft <= 0.0f)
+            {
+                foreach (var p in round.Players)
+                {
+                    if (p == null || !p.IsDefender || p.PlayerSlot == _throwerSlot) continue;
+                    if (!HitsBody(p)) continue;
+
+                    TriggerAffinityImpact();
+                    HostBlockedBy(p);
+                    return;
+                }
+            }
+
+            // The can next: it is the thing being aimed at.
             if (round?.Lata != null && round.Lata.IsUpright && round.Lata.Connects(transform.position))
             {
                 TriggerAffinityImpact();
@@ -825,9 +1058,19 @@ namespace TumbangPreso
             // ⚠️ THE CUE AND THE HYPE BOTH STAY. The whip-past sound is what sells the miss, and
             // `ReportStyle` is Classic-only and pays 10 hype rather than printing anything on a
             // Hero Strike screen.
-            GameServices.Audio?.PlayAtVaried("slipper_bounce", lata.transform.position,
-                                             1.08f, 1.18f, 0.55f);
-            UI.Hud.ReportStyle(_throwerSlot, 10.0f, "SO CLOSE");
+            // ⚠️⚠️ THROUGH `NetCue`: `FixedUpdate` OPENS WITH `ShouldResolve()`, SO EVERY SOUND
+            // BELOW IT WAS HOST-ONLY. 🧑 2026-08-29: *"non hosts dont have sfx in some plarts"*.
+            // `tools/audit_audio_reach.py` could not see this class of fault at all, because it
+            // looks for a gate at the same brace depth and this one is two frames up the stack.
+            // See `docs/TODO.md` § 83.12.
+            NetCue.PlayVaried("slipper_bounce", lata.transform.position,
+                              1.08f, 1.18f, 0.55f);
+            // ⚠️⚠️ RELAYED, BECAUSE THE ENCLOSING VERB IS HOST-RESOLVED AND WHAT IT DRAWS IS
+            // FOR EVERYBODY. 🧑 2026-08-29: *"make sure that all host sided shit is seen by
+            // everyone and not js host"*. See `Visual.MatchFlair` and
+            // `tools/audit_presentation_reach.py`, which is what found this one.
+            Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.NearMiss,
+                                       _throwerSlot, -1, lata.transform.position);
         }
 
         /// <summary>
@@ -873,7 +1116,19 @@ namespace TumbangPreso
             Vector3 flat = new Vector3(transform.position.x - centre.x, 0.0f,
                                        transform.position.z - centre.z);
 
-            if (flat.magnitude > Balance.SlipperHitRadius + radius) return false;
+            // ⚠️⚠️ THE TAYA CATCHES WIDER, AND ONLY THE TAYA. `Balance.DefenderBlockRadiusBonus`
+            // carries the quotes and the reasoning; the two things to know here are that it is
+            // added to the FLAT test only, so a throw over the head still misses, and that it is
+            // read off `IsDefender` on the frame of the test, so it reverts with the role and
+            // leaves no state behind when the taya rotates.
+            //
+            // ⚠️ THE `CharacterController` IS DELIBERATELY NOT TOUCHED. That is what keeps the
+            // body the size it looks: 🧑 asked for *"bigger horizontally but not fatter"*, and a
+            // fatter capsule would shove attackers, snag on the map and change the spawn settle.
+            float reach = Balance.SlipperHitRadius + radius
+                          + (who.IsDefender ? Balance.DefenderBlockRadiusBonus : 0.0f);
+
+            if (flat.magnitude > reach) return false;
 
             float dy = transform.position.y - centre.y;
             return dy >= -height * 0.5f && dy <= height * 0.5f;
@@ -944,18 +1199,31 @@ namespace TumbangPreso
             transform.position = closest.point + normal * (Balance.SlipperHitRadius + 0.02f);
 
             _bankCount++;
-            GameServices.Audio?.PlayAtVaried("slipper_land", transform.position,
-                                             0.88f, 1.08f, 0.85f);
+            NetCue.PlayVaried("slipper_land", transform.position, 0.88f, 1.08f, 0.85f);
 
             if (_bankCount == 1 && Mathf.Abs(PektusSpin) >= Balance.PektusBankSpinThreshold)
             {
-                Visual.ComicPopup.Spawn(transform.position + Vector3.up * 0.35f,
-                    "BANK!", UI.UiTheme.Highlight, 1.0f);
-                UI.Hud.ReportStyle(_throwerSlot, 18.0f, "BANK SHOT");
+                // ⚠️ RELAYED. `FixedUpdate` is host-gated, so the popup and the style award were
+                // drawn on one screen. See `Visual.MatchFlair`.
+                Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.BankShot,
+                                           _throwerSlot, -1, transform.position);
             }
 
             if (_bankCount > Balance.MaxScoringBanks)
                 _throwerSlot = -1;
+        }
+
+        /// <summary>
+        /// One axis of the wall the tsinelas is allowed to reach, margin included.
+        ///
+        /// ⚠️ IT IS SHARED BY THE BOUNCE, THE RESTING PLACE AND THE REPLICA so the three cannot
+        /// drift. All three had the same two lines written out separately, which is how the
+        /// replica came to be missing them entirely.
+        /// </summary>
+        private static float ClampToPlayableAxis(float value, float half)
+        {
+            float limit = half - Balance.SlipperHitRadius;
+            return limit > 0.0f ? Mathf.Clamp(value, -limit, limit) : value;
         }
 
         private void BounceOffBounds()
@@ -984,19 +1252,39 @@ namespace TumbangPreso
                 bounced = true;
             }
 
+            // ⚠️⚠️ AND THE SKY IS A WALL TOO, WHICH IT WAS NOT UNTIL 2026-08-29. 🧑: *"make sure
+            // theres invisible bounds in the sky as well as those walls that return the slippers
+            // or make them bounce"*. X and Z were walled and Y was open, so a hard throw aimed
+            // high went over the top of a 6 m wall, and the RESTING clamp then dragged it back to
+            // an edge it had never touched: the shoe teleported to a wall from open air, which
+            // reads as the throw being eaten. A tsinelas nobody can retrieve is an attacker
+            // deleted from the round.
+            //
+            // ⚠️ IT IS A CEILING AND NOT A FLOOR. Nothing here touches downward travel: the
+            // ground, the kill plane and the resting height own that, and reflecting upward off
+            // a low Y would turn every landing into a bounce.
+            float ceiling = AIController.PlayableCeilingY - Balance.SlipperHitRadius;
+
+            if (p.y > ceiling)
+            {
+                p.y = ceiling;
+                _velocity.y = -Mathf.Abs(_velocity.y) * restitution;
+                bounced = true;
+            }
+
             transform.position = p;
 
             if (!bounced) return;
 
             _bankCount++;
-            GameServices.Audio?.PlayAtVaried("slipper_land", transform.position,
-                                             0.88f, 1.08f, 0.85f);
+            NetCue.PlayVaried("slipper_land", transform.position, 0.88f, 1.08f, 0.85f);
 
             if (_bankCount == 1 && Mathf.Abs(PektusSpin) >= Balance.PektusBankSpinThreshold)
             {
-                Visual.ComicPopup.Spawn(transform.position + Vector3.up * 0.35f,
-                    "BANK!", UI.UiTheme.Highlight, 1.0f);
-                UI.Hud.ReportStyle(_throwerSlot, 18.0f, "BANK SHOT");
+                // ⚠️ RELAYED. `FixedUpdate` is host-gated, so the popup and the style award were
+                // drawn on one screen. See `Visual.MatchFlair`.
+                Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.BankShot,
+                                           _throwerSlot, -1, transform.position);
             }
 
             // One authored bank can still score. Further wall contacts remain valid
@@ -1034,19 +1322,26 @@ namespace TumbangPreso
         private void HostBlockedBy(CharacterMotor blocker)
         {
             // A body block is a hit too — it is the taya's entire passive verb.
-            blocker.GetComponentInChildren<Visual.CharacterVisual>()?.FlashHit();
-            Visual.ImpactBurst.SpawnAt(blocker.transform.position);
-            blocker.GetComponentInChildren<Visual.CharacterSquashStretch>()?
-                .Impact(_velocity, 0.22f);
+            //
+            // ⚠️⚠️ AND IT WAS DRAWN ON ONE SCREEN. `FixedUpdate` is host-gated, so the flash, the
+            // burst and the squash reached the host and nobody else, which for the taya's only
+            // unpressed verb means three players out of four blocked a throw with no sign that
+            // anything happened. See `Visual.MatchFlair`.
+            Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.Block,
+                                       -1, blocker.PlayerSlot, transform.position,
+                                       _velocity.magnitude);
 
             // ⚠️⚠️ AND IT MAKES A SOUND, WHICH IT DID NOT. `slipper.gd:1170` plays `hit_body` on
             // exactly this path. This function's own header says a verb with no feedback is a
             // verb the player cannot tell they performed, and it then gave the block a flash and
             // a burst and left it silent — so the one thing a taya can do without pressing
             // anything was the one thing they could not hear.
-            GameServices.Audio?.PlayImpact("hit_body", "guard_block",
-                                           transform.position, 0.72f);
-            UI.Hud.ReportStyle(blocker.PlayerSlot, 12.0f, "HARANG!");
+            // ⚠️⚠️ THROUGH `NetCue`: `FixedUpdate` OPENS WITH `ShouldResolve()`, SO EVERY SOUND
+            // BELOW IT WAS HOST-ONLY. 🧑 2026-08-29: *"non hosts dont have sfx in some plarts"*.
+            // `tools/audit_audio_reach.py` could not see this class of fault at all, because it
+            // looks for a gate at the same brace depth and this one is two frames up the stack.
+            // See `docs/TODO.md` § 83.12.
+            NetCue.PlayImpact("hit_body", "guard_block", transform.position, 0.72f);
 
             float speed = Combat.BlockKnockbackSpeed(_skinIndex, blocker.CharacterIndex);
             Vector3 along = _velocity;
@@ -1207,8 +1502,7 @@ namespace TumbangPreso
             if (fromFlight)
             {
                 TriggerAffinityImpact();
-                GameServices.Audio?.PlayAtVaried("slipper_land", transform.position,
-                                                 0.88f, 1.08f, 0.88f);
+                NetCue.PlayVaried("slipper_land", transform.position, 0.88f, 1.08f, 0.88f);
             }
 
             // § THE LANDED HIGHLIGHT. Written AFTER the state above, never before: SetState

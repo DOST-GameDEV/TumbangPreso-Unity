@@ -25,7 +25,10 @@ namespace TumbangPreso.Abilities
         // -------------------------------------------------------------------
         // ICE WALL BARRICADE (Cheska Skill 2)
         // -------------------------------------------------------------------
-        public static GameObject SpawnIceBarricade(Vector3 position, Vector3 forward, float duration = 6.0f)
+        public static GameObject SpawnIceBarricade(Vector3 position, Vector3 forward,
+                                                   float duration = 6.0f,
+                                                   float spanScale = 1.0f,
+                                                   float thicknessScale = 1.0f)
         {
             var go = new GameObject("IceBarricade");
             go.transform.position = position;
@@ -43,8 +46,9 @@ namespace TumbangPreso.Abilities
                 float rotY = i * 8.0f + Random.Range(-4.0f, 4.0f);
                 float rotZ = i * -4.0f;
 
-                pillar.transform.localScale = new Vector3(width, height, 0.55f);
-                pillar.transform.localPosition = new Vector3(i * 0.75f, height * 0.5f, -Mathf.Abs(i) * 0.12f);
+                pillar.transform.localScale = new Vector3(width, height, 0.55f * thicknessScale);
+                pillar.transform.localPosition = new Vector3(i * 0.75f * spanScale,
+                    height * 0.5f, -Mathf.Abs(i) * 0.12f);
                 pillar.transform.localRotation = Quaternion.Euler(Random.Range(-4.0f, 4.0f), rotY, rotZ);
 
                 // ⚠️ THE ONE EFFECT THAT IS BOTH SEE-THROUGH AND SOLID. Everything else that
@@ -106,7 +110,7 @@ namespace TumbangPreso.Abilities
             var comp = go.AddComponent<IceBarricadeComponent>();
             comp.Duration = duration;
 
-            HazardVolume.Attach(go, 1.6f, -1);
+            HazardVolume.Attach(go, 1.6f * spanScale, -1);
 
             return go;
         }
@@ -156,8 +160,13 @@ namespace TumbangPreso.Abilities
                 // of ice failing and coming down in twelve pieces. It is the single worst cue
                 // mismatch left in the game and it is in the one place in Cheska's kit where ice
                 // genuinely does break.
-                ComicPopup.Freeze(transform.position);
-                GameServices.Audio?.PlayAt("sfx_ice_shatter", transform.position);
+                // ⚠️⚠️ BOTH HALVES TRAVEL. `Shatter` is reached only from a host-gated
+                // `Update`, so a wall of ice coming down in twelve pieces did it silently and
+                // invisibly for three players. The note above about the cue being the worst
+                // mismatch in the game is still true of the sound; this is who hears it.
+                NetCue.Play("sfx_ice_shatter", transform.position);
+                Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.IceShatter, -1, -1,
+                                           transform.position);
                 Object.Destroy(gameObject);
             }
         }
@@ -165,7 +174,9 @@ namespace TumbangPreso.Abilities
         // -------------------------------------------------------------------
         // ICE SHEET ZONE (Cheska Skill 1)
         // -------------------------------------------------------------------
-        public static GameObject SpawnIceSheet(Vector3 position, float radius = 2.3f, float duration = 5.0f, int ownerSlot = -1)
+        public static GameObject SpawnIceSheet(Vector3 position, float radius = 2.3f,
+                                                float duration = 5.0f, int ownerSlot = -1,
+                                                float effectScale = 1.0f)
         {
             var go = new GameObject("IceSheetZone");
             go.transform.position = position;
@@ -352,6 +363,9 @@ namespace TumbangPreso.Abilities
             comp.Radius = radius;
             comp.Duration = duration;
             comp.OwnerSlot = ownerSlot;
+            comp.ChillMultiplier = Mathf.Clamp(1.0f - ((1.0f - 0.55f) * effectScale),
+                                                 0.25f, 0.95f);
+            comp.SlipScale = Mathf.Max(0.25f, effectScale);
 
             // ⚠️ REGISTERED WITH `HazardMap` SO THE BOTS PATH AROUND IT. Without this an
             // attacker walks straight through on its way to a tsinelas, gets caught, and the
@@ -366,10 +380,64 @@ namespace TumbangPreso.Abilities
             public float Radius = 4.5f;
             public float Duration = 5.0f;
             public int OwnerSlot = -1;
+
+            /// <summary>
+            /// What the ice does to your top speed while you are standing on it.
+            ///
+            /// ⚠️ 0.55 IS A REAL COST AND STILL LETS YOU WALK OUT, which is the shape every
+            /// hazard in this game is tuned to: `docs/VISION.md` § 4 says nothing may reward
+            /// waiting, and a slow you cannot escape is a stun wearing a slow's name. At 0.55 a
+            /// 4.5 m sheet takes about 1.6 s to cross instead of 0.9, so it costs an attacker
+            /// most of a second on the run back in, which IS the tension the whole game is about.
+            /// </summary>
+            public float ChillMultiplier = 0.55f;
+            public float SlipScale = 1.0f;
+
             private float _left;
             private float _whoaCooldown;
 
+            /// <summary>
+            /// Whose speed this sheet is currently holding down.
+            ///
+            /// ⚠️⚠️ IT EXISTS BECAUSE `SpeedZones` IS A STACK AND AN UNPAIRED `Enter` NEVER COMES
+            /// BACK. A player slowed on the frame they stepped on and never released would carry
+            /// 0.55 of their speed for the rest of the match, with nothing on screen saying why,
+            /// and the second sheet they crossed would take them to 0.30. Enter once on the frame
+            /// you cross in, exit once on the frame you cross out, and exit whatever is left in
+            /// `OnDestroy`.
+            /// </summary>
+            private readonly HashSet<int> _chilled = new HashSet<int>();
+
             private void Start() => _left = Duration;
+
+            /// <summary>
+            /// ⚠️⚠️ THE ICE THAWING MUST GIVE BACK EVERY SLOW IT IS STILL HOLDING, and this is
+            /// the half that is easy to forget because it is invisible when it is missing: the
+            /// zone disappears, the player keeps walking, and they are simply slower than
+            /// everybody else for the rest of the round. `Duration` runs out while somebody is
+            /// standing on it more often than not, so this is the COMMON path rather than an
+            /// edge case.
+            /// </summary>
+            private void OnDestroy()
+            {
+                var round = GameServices.Round;
+                if (round == null) { _chilled.Clear(); return; }
+
+                foreach (var p in round.Players)
+                {
+                    if (p == null || !_chilled.Contains(p.PlayerSlot)) continue;
+
+                    // Same rule as the entry: see the note in `Update`. ⚠️ BRACED, because
+                    // `tools/audit_ability_authority.py` tracks the gate by brace depth and reads
+                    // a braceless one-liner as ungated.
+                    if (NetAuthority.ShouldResolve() || p.PlayerSlot == NetAuthority.LocalSlot)
+                    {
+                        p.ExitSpeedZone(ChillMultiplier);
+                    }
+                }
+
+                _chilled.Clear();
+            }
 
             private void Update()
             {
@@ -391,7 +459,7 @@ namespace TumbangPreso.Abilities
                     // to thirty marks and each lives 3 s, so trail expiry cues would be thirty
                     // overlapping tails inside three seconds. Same measurement `AbilityVfx` uses
                     // to keep emitters off trails. Singular zones only.
-                    GameServices.Audio?.PlayAt("sfx_ice_thaw", transform.position);
+                    NetCue.Play("sfx_ice_thaw", transform.position);
                     Object.Destroy(gameObject);
                     return;
                 }
@@ -399,9 +467,31 @@ namespace TumbangPreso.Abilities
                 // Slow rotation on the ice zone
                 transform.Rotate(Vector3.up, 20.0f * Time.deltaTime);
 
-                if (!NetAuthority.ShouldResolve()) return;
+                // ⚠️⚠️ IT SLOWS YOU NOW, AND UNTIL 2026-08-29 IT DID NOTHING A PLAYER COULD NAME.
+                // 🧑: *"make cheska q ice slow ppl or have impact bcz it doesnt feel lke
+                // anything"*. Every word of that was accurate. The zone's whole effect was a
+                // 5.5 impulse along the direction you were ALREADY travelling, which is an
+                // overshoot, not a slow: it made you slightly harder to stop and did not cost you
+                // a step. There is a real slow mechanism in this project (`EnterSpeedZone`, a
+                // stack living in `Stamina`, used by `HazardZone` and the boost pads) and the ice
+                // was the one hazard that never reached for it.
+                //
+                // ⚠️⚠️ AND THE WHOLE THING RAN BEHIND `NetAuthority.ShouldResolve()`, SO THREE OF
+                // THE FOUR PLAYERS FELT NOTHING WHATEVER. A client's own body is moved by the
+                // host's position stream, and `CharacterMotor.ApplyNetworkTransform` ignores a
+                // correction under 1.25 m while the owner is predicting. A slow is a continuous
+                // difference that never reaches 1.25 m in a single step, so it was filtered out
+                // completely on every peer that was not the host. Same shape as Nemu's pull below.
+                //
+                // ⚠️ A PEER SLOWING ITS OWN BODY IS PREDICTION, NOT AUTHORITY. `EnterSpeedZone`
+                // and `ApplyImpulse` both refuse a body this peer does not own, so this loop is
+                // safe to run everywhere: the host applies it to all four, each client to exactly
+                // its own, and the two agree. What stays behind the gate is everything that is a
+                // DECISION rather than a movement.
                 var round = GameServices.Round;
                 if (round == null) return;
+
+                bool resolves = NetAuthority.ShouldResolve();
 
                 foreach (var p in round.Players)
                 {
@@ -409,18 +499,62 @@ namespace TumbangPreso.Abilities
 
                     Vector3 diff = p.transform.position - transform.position;
                     diff.y = 0.0f;
-                    if (diff.magnitude <= Radius)
+
+                    bool inside = diff.magnitude <= Radius;
+                    bool chilled = _chilled.Contains(p.PlayerSlot);
+
+                    // ⚠️⚠️ ENTER AND EXIT ARE PAIRED THROUGH A SET, AND THE SET IS THE WHOLE
+                    // CORRECTNESS ARGUMENT. `SpeedZones` is a STACK: one `Enter` needs exactly one
+                    // `Exit` or the multiplier never comes back, and a player who walked through
+                    // the ice twice would be permanently slowed with nothing on screen to explain
+                    // it. Entering once on the frame you cross in, and exiting once on the frame
+                    // you cross out or the ice thaws, is what makes it balanced by construction.
+                    // ⚠️⚠️ THE CONDITION IS THE INVARIANT, WRITTEN OUT. "The host may move
+                    // anybody; anybody may move themselves" is exactly what a peer predicting its
+                    // own body is allowed to do, and saying it here rather than hoisting a bool
+                    // is what keeps `tools/audit_ability_authority.py` able to read it: that
+                    // audit reports every effect on ANOTHER body that is not inside a
+                    // `ShouldResolve()` gate, `CLAUDE.md` § 7.1 requires the count to be zero,
+                    // and a hoisted flag is invisible to it. The runtime guard inside
+                    // `CharacterMotor.ApplyImpulse` and `EnterSpeedZone` refuses a body this peer
+                    // does not own regardless, so this is belt and braces rather than the only
+                    // thing standing between a client and somebody else's body.
+                    if (NetAuthority.ShouldResolve() || p.PlayerSlot == NetAuthority.LocalSlot)
                     {
-                        // Apply friction loss & cartoon uncontrollable slip in velocity direction
+                        if (inside && !chilled)
+                        {
+                            p.EnterSpeedZone(ChillMultiplier);
+                            _chilled.Add(p.PlayerSlot);
+                        }
+                        else if (!inside && chilled)
+                        {
+                            p.ExitSpeedZone(ChillMultiplier);
+                            _chilled.Remove(p.PlayerSlot);
+                        }
+                    }
+
+                    if (inside)
+                    {
+                        // The cartoon overshoot is kept ON TOP of the slow: the slow is what
+                        // costs you, the slide is what tells you why.
                         if (p.Velocity.sqrMagnitude > 0.1f)
                         {
-                            Vector3 slip = p.Velocity.normalized * 5.5f * Time.deltaTime;
-                            p.ApplyImpulse(slip);
+                            Vector3 slip = p.Velocity.normalized * 5.5f * SlipScale * Time.deltaTime;
 
-                            if (_whoaCooldown <= 0.0f)
+                            if (NetAuthority.ShouldResolve() ||
+                                p.PlayerSlot == NetAuthority.LocalSlot)
+                            {
+                                p.ApplyImpulse(slip);
+                            }
+
+                            // ⚠️ THE POPUP AND THE CUE ARE ANNOUNCEMENTS AND STAY HOST-ONLY, so
+                            // four machines do not each raise their own copy of one event.
+                            if (resolves && _whoaCooldown <= 0.0f)
                             {
                                 _whoaCooldown = 1.2f;
-                                ComicPopup.Whoa(p.transform.position);
+                                Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.HeroWhoa,
+                                                           OwnerSlot, p.PlayerSlot,
+                                                           p.transform.position);
 
                                 // ⚠️⚠️ `NetCue`, BECAUSE THIS LINE IS NOW BEHIND A HOST GATE.
                                 // Making the zone host-authoritative (`docs/TODO.md` § 38) put
@@ -440,7 +574,9 @@ namespace TumbangPreso.Abilities
         // -------------------------------------------------------------------
         // SHOCK TRAIL ZONE (Zack Skill 1)
         // -------------------------------------------------------------------
-        public static GameObject SpawnShockTrail(Vector3 position, float radius = 2.0f, float duration = 3.0f, int ownerSlot = -1)
+        public static GameObject SpawnShockTrail(Vector3 position, float radius = 2.0f,
+                                                 float duration = 3.0f, int ownerSlot = -1,
+                                                 float effectScale = 1.0f)
         {
             var go = new GameObject("ShockTrailZone");
             go.transform.position = position;
@@ -541,6 +677,7 @@ namespace TumbangPreso.Abilities
             comp.Radius = radius;
             comp.Duration = duration;
             comp.OwnerSlot = ownerSlot;
+            comp.EffectScale = effectScale;
 
             return go;
         }
@@ -580,6 +717,7 @@ namespace TumbangPreso.Abilities
             public float Radius = 2.0f;
             public float Duration = 3.0f;
             public int OwnerSlot = -1;
+            public float EffectScale = 1.0f;
             private float _left;
             private readonly Dictionary<int, float> _nextStaggerBySlot = new Dictionary<int, float>();
 
@@ -597,10 +735,33 @@ namespace TumbangPreso.Abilities
 
                 Burn(transform, _left, Duration);
 
-                if (!NetAuthority.ShouldResolve()) return;
+                // ⚠️⚠️ THIS USED TO BE `if (!NetAuthority.ShouldResolve()) return;` AND ZACK'S OWN
+                // BOOST WAS THEREFORE INVISIBLE TO HIM ON EVERY MACHINE BUT THE HOST. Same shape
+                // as Cheska's ice above and Nemu's void below, and `docs/TODO.md` § 74 is the
+                // entry that carried it: a client's own body is moved only by the host's position
+                // stream, and `CharacterMotor.ApplyNetworkTransform` ignores a correction under
+                // 1.25 m while the owner is predicting. The turbo is 6.0 scaled by `Time.deltaTime`,
+                // which is about 0.1 m in a frame, so it never reached the threshold in a single
+                // step and was filtered out completely: not weak on three of the four screens,
+                // ABSENT. A dash that pays out only for whoever happens to be hosting is not a
+                // balanced ability.
+                //
+                // ⚠️ IT WAS LEFT ALONE ON PURPOSE UNTIL NOW, and § 74 says why: nobody had
+                // reported it, and retuning an ability that was not in the batch is how a fix
+                // becomes a regression. It is done here as network work rather than as a retune,
+                // and no number in it changed.
+                //
+                // ⚠️ A PEER MOVING ITS OWN BODY IS PREDICTION, NOT AUTHORITY. `ApplyImpulse`
+                // refuses a body this peer does not own, so the owner branch is safe everywhere:
+                // the host applies it to all four, each client to exactly its own, and the two
+                // agree. What stays behind the gate is everything that is a DECISION.
                 var round = GameServices.Round;
                 if (round == null) return;
 
+                // ⚠️ NO HOISTED `resolves` HERE, UNLIKE THE ICE AND THE VOID. Both of those need
+                // one for a popup and a cue that sit outside an effect call; this loop's only
+                // host-gated line is the stagger itself, so the gate is written at that line and
+                // a local would be both unused and unreadable to the authority audit.
                 foreach (var p in round.Players)
                 {
                     if (p == null) continue;
@@ -611,17 +772,59 @@ namespace TumbangPreso.Abilities
                         if (p.PlayerSlot == OwnerSlot)
                         {
                             // Turbo speed boost to Zack
-                            p.ApplyImpulse(p.transform.forward * 6.0f * Time.deltaTime);
+                            //
+                            // ⚠️⚠️ THE CONDITION IS THE INVARIANT, WRITTEN OUT RATHER THAN
+                            // HOISTED. "The host may move anybody; anybody may move themselves"
+                            // is what a peer predicting its own body is allowed to do, and
+                            // `tools/audit_ability_authority.py` reads this literally: it reports
+                            // every effect on ANOTHER body that is not inside a `ShouldResolve()`
+                            // gate, `CLAUDE.md` § 7.1 requires that count to be zero, and a
+                            // hoisted flag is invisible to it. Cheska's ice carries the same note
+                            // for the same reason.
+                            if (NetAuthority.ShouldResolve() ||
+                                p.PlayerSlot == NetAuthority.LocalSlot)
+                            {
+                                p.ApplyImpulse(p.transform.forward * 6.0f * Time.deltaTime);
+                            }
                         }
                         else
                         {
                             // Discrete pulses keep the trail threatening without turning
                             // every rendered frame into a permanent action lock.
-                            if (CanPulse(_nextStaggerBySlot, p.PlayerSlot, 1.1f))
+                            //
+                            // ⚠️⚠️ THE STAGGER STAYS HOST-ONLY AND SO DOES ITS FLAVOUR. A stagger
+                            // is a DECISION about somebody else's body, which is the half of this
+                            // loop that authority actually governs, and `CanPulse` is rate state
+                            // that only means anything on the machine keeping it. The popup and
+                            // the stars ride behind that decision deliberately: they are
+                            // announcements, and four machines each raising their own copy of one
+                            // event is the fault `docs/TODO.md` § 38.1 records eleven times.
+                            //
+                            // ⚠️⚠️ WRITTEN OUT RATHER THAN AS THE HOISTED `resolves`, AND THE
+                            // AUDIT IS WHY. The first draft of this change said `resolves &&` here
+                            // and `tools/audit_ability_authority.py` went from 0 ungated on
+                            // another body to 1 on the same commit: it reads the brace depth for a
+                            // literal `ShouldResolve()` and a local bool is invisible to it. That
+                            // is the audit doing its job, and the fix is to say the invariant
+                            // rather than to widen the audit.
+                            // ⚠️⚠️ ARC LINE MOVES THE INTERVAL AS WELL AS THE STAGGER, AND THAT IS
+                            // THE WHOLE REASON THE ROW IS WORTH EQUIPPING. `EffectScale` on the
+                            // 0.25 s stumble alone bought four frames at 30 per cent, which is
+                            // the definition of an alternate that reads as the same ability.
+                            // Dividing the 1.1 s re-shock window by the same fraction is what
+                            // turns a thin lane into a place you do not walk through twice.
+                            if (NetAuthority.ShouldResolve() &&
+                                CanPulse(_nextStaggerBySlot, p.PlayerSlot,
+                                         1.1f / Mathf.Max(0.25f, EffectScale)))
                             {
-                                p.ApplyStagger(0.25f);
-                                ComicPopup.Zap(p.transform.position);   // Flavour: culled past 15 m
-                                DizzyStars.Attach(p.transform, 1.2f, UiTheme.HeroElectricBright);
+                                p.ApplyStagger(0.25f * EffectScale);
+
+                                // ⚠️ RELAYED, and the sound beside it already was. See
+                                // `Visual.MatchFlair`; the zap ring is culled past 15 m by
+                                // `ComicPopup` itself on whichever machine draws it.
+                                Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.HeroZapped,
+                                                           OwnerSlot, p.PlayerSlot,
+                                                           p.transform.position, 1.2f);
                             }
                         }
                     }
@@ -951,7 +1154,9 @@ namespace TumbangPreso.Abilities
                         if (CanPulse(_nextBurnBySlot, p.PlayerSlot, 0.85f))
                         {
                             p.ApplyStagger(0.2f);
-                            ComicPopup.Bam(p.transform.position);
+                            Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.HeroBam,
+                                                       OwnerSlot, p.PlayerSlot,
+                                                       p.transform.position, 0.2f);
                         }
                     }
                 }
@@ -1107,8 +1312,12 @@ namespace TumbangPreso.Abilities
                         // standing inside a nova.
                         _target.ApplyStagger(1.8f, StunElement.Void, 6);
                         _target.ApplyImpulse(Random.onUnitSphere * 4.0f);
-                        DizzyStars.Attach(_target.transform, 1.8f, UiTheme.HeroSpiritBright);
-                        ComicPopup.Boo(_target.transform.position);
+
+                        // ⚠️ RELAYED, LIKE THE `downed` CUE THREE LINES DOWN. The sound of the
+                        // poltergeist connecting reached every peer and the sight of it did not.
+                        Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.HeroBoo,
+                                                   OwnerSlot, _target.PlayerSlot,
+                                                   _target.transform.position, 1.8f);
 
                         // ⚠️ `NetCue` FOR THE REASON THE ICE SHEET RECORDS: this sits behind the
                         // host gate three lines up, so three of the four players could not hear
@@ -1412,7 +1621,7 @@ namespace TumbangPreso.Abilities
                 if (_left > 0.0f) return;
 
                 if (!string.IsNullOrEmpty(Cue))
-                    GameServices.Audio?.PlayAt(Cue, transform.position);
+                    NetCue.Play(Cue, transform.position);
 
                 Object.Destroy(gameObject);
             }
@@ -1626,6 +1835,33 @@ namespace TumbangPreso.Abilities
             /// </summary>
             public float PullStrength = 4.0f;
 
+            /// <summary>
+            /// How much harder the very centre pulls than the rim.
+            ///
+            /// ⚠️ IT IS A MULTIPLIER ON TOP OF `PullStrength` RATHER THAN A SECOND STRENGTH, so
+            /// the rim of every zone using this component keeps the force it was tuned with and
+            /// only the inside gains. Nemu's SKILL-tier Seance Void and her ULTIMATE share this
+            /// class, and a skill that suddenly funnelled like an ultimate would be the
+            /// *"reads as a one time"* complaint in another costume.
+            /// </summary>
+            public float CentreBite = 2.2f;
+
+            /// <summary>
+            /// How far off the ground the very centre of the vortex holds a body.
+            ///
+            /// ⚠️ IT TAPERS TO NOTHING AT THE RIM, so walking past the edge of a void does not
+            /// bounce you. Only being properly inside it takes your feet away.
+            ///
+            /// ⚠️ 0 ON EVERY ZONE THAT IS NOT AN ULTIMATE. This component is Nemu's SKILL-tier
+            /// Seance Void as well, and a skill that lifts people off the floor is an ultimate.
+            /// `SpawnKuroUnbound` is the only thing that sets it.
+            /// </summary>
+            public float LiftHeight;
+
+            /// <summary>How hard the servo chases <see cref="LiftHeight"/>. See the note at the
+            /// call site for why this is a velocity rather than an acceleration.</summary>
+            public float LiftSpring = 5.0f;
+
             /// <summary>How fast a loose tsinelas slides in, in metres per second.</summary>
             public float SlipperPull = 5.5f;
 
@@ -1642,7 +1878,7 @@ namespace TumbangPreso.Abilities
                     // ⚠️ IT CUTS RATHER THAN FADES, which is the whole shape of the cue. A tail
                     // that trails off says the danger is lessening; a hole in the world is either
                     // there or it is not, and four players need to know which on one frame.
-                    GameServices.Audio?.PlayAt("sfx_void_close", transform.position);
+                    NetCue.Play("sfx_void_close", transform.position);
                     Object.Destroy(gameObject);
                     return;
                 }
@@ -1650,9 +1886,24 @@ namespace TumbangPreso.Abilities
                 // Rotate cosmic vortex discs
                 transform.Rotate(Vector3.up, 75.0f * Time.deltaTime);
 
-                if (!NetAuthority.ShouldResolve()) return;
+                // ⚠️⚠️ THIS USED TO BE `if (!NetAuthority.ShouldResolve()) return;` AND THAT IS
+                // WHY THREE OF THE FOUR PLAYERS FELT NOTHING. 🧑 2026-08-29: *"walang higop ss ni
+                // Nemu"*, and then *"MAKE NEEMUS PULL REALLY GOOD LIKE ACTUALLY FEELABLE BY
+                // EVERYONE, make it pull tsinelas humans (not can tho)"*. The drag ran on the
+                // host alone, so a client's own body was moved only by the host's position
+                // stream, and `CharacterMotor.ApplyNetworkTransform` ignores a correction under
+                // 1.25 m while the owner is predicting. A suction is a continuous nudge that
+                // never reaches 1.25 m in one step, so for every peer that was not the host it
+                // was filtered out completely: not weak, ABSENT. Same shape as Cheska's ice.
+                //
+                // ⚠️ A PEER PULLING ITS OWN BODY IS PREDICTION, NOT AUTHORITY, the same
+                // permission the movement keys already have. `CharacterMotor.ApplyImpulse`
+                // refuses any body this peer does not own, so the loop below is safe everywhere:
+                // the host moves all four, each client moves exactly its own, and they agree.
                 var round = GameServices.Round;
                 if (round == null) return;
+
+                bool resolves = NetAuthority.ShouldResolve();
 
                 // -------------------------------------------------------------------
                 // § THE PULL
@@ -1682,13 +1933,109 @@ namespace TumbangPreso.Abilities
 
                     Vector3 diff = transform.position - p.transform.position;
                     diff.y = 0.0f;
-                    if (diff.magnitude <= Radius)
+
+                    float distance = diff.magnitude;
+                    if (distance > Radius || distance <= 0.001f) continue;
+
+                    // ⚠️⚠️ IT PULLS HARDER THE CLOSER YOU ARE, AND A FLAT IMPULSE IS WHY IT NEVER
+                    // READ AS SUCTION. A constant drag across the whole disc is a headwind: you
+                    // lean into it and walk out at a slightly reduced speed, which is the same
+                    // sensation anywhere in the zone and tells you nothing about where the danger
+                    // is. A funnel accelerates as it closes, so the rim is escapable and the
+                    // middle is not, and the player learns the shape of the thing by being in it.
+                    // `CentreBite` is the multiplier at the very middle and it falls to 1.0 at
+                    // the rim, so the rim behaves exactly as it did and only the inside changes.
+                    float closeness = 1.0f - (distance / Radius);
+                    float bite = Mathf.Lerp(1.0f, CentreBite, closeness);
+
+                    // ⚠️⚠️ THE PULL HAS TO BEAT `Balance.Friction`, AND THIS IS THE ARITHMETIC
+                    // THAT EXPLAINS WHY 14 FELT LIKE NOTHING EVEN ON THE HOST.
+                    // `CharacterMotor` decays `_externalVelocity` by `Friction` (30.0) every
+                    // second, and this adds `PullStrength` per second to it. The net is
+                    // `(PullStrength - Friction)`, so anything at or below 30 accumulates
+                    // EXACTLY ZERO inward speed no matter how long you stand in it. The old 14
+                    // was not a weak pull, it was arithmetically no pull at all, and the earlier
+                    // note calling it "13 per cent of Balance.Speed" was measuring the impulse
+                    // rather than what survived the decay.
+                    //
+                    // ⚠️ SO THE NUMBER IS AN ACCELERATION ABOVE FRICTION, not a speed. At the rim
+                    // `PullStrength` 62 nets 32 m/s², which saturates `Balance.MaxKnockbackSpeed`
+                    // 16 in half a second and comfortably beats walking out at `Balance.Speed`
+                    // 4.6. With `CentreBite` the middle nets far more and is simply not
+                    // survivable, which is 🧑 2026-08-29: *"actually pull everything to the middle
+                    // of ult"*.
+                    // ⚠️⚠️ THE CONDITION IS THE INVARIANT, WRITTEN OUT. "The host may move anybody;
+                    // anybody may move themselves" is exactly what a peer predicting its own body
+                    // is allowed to do, and saying it inline rather than hoisting a bool is what
+                    // keeps `tools/audit_ability_authority.py` able to read it: that audit reports
+                    // every effect on ANOTHER body not inside a `ShouldResolve()` gate,
+                    // `CLAUDE.md` § 7.1 requires the count to be zero, and a hoisted flag is
+                    // invisible to it. `CharacterMotor.ApplyImpulse` refuses a body this peer does
+                    // not own regardless, so this is belt and braces rather than the only thing
+                    // between a client and somebody else's body.
+                    if (NetAuthority.ShouldResolve() || p.PlayerSlot == NetAuthority.LocalSlot)
                     {
-                        p.ApplyImpulse(diff.normalized * PullStrength * Time.deltaTime);
-                        if (CanPulse(_nextDrowseBySlot, p.PlayerSlot, 1.25f))
-                            p.ApplyStagger(0.35f);
+                        p.ApplyImpulse(diff.normalized * PullStrength * bite * Time.deltaTime);
+                    }
+
+                    // -------------------------------------------------------------------
+                    // § THE LIFT
+                    //
+                    // ⚠️⚠️ 🧑 2026-08-29: *"make it even stronger i want ppl floating in air"*.
+                    // The void takes them off the ground now, hardest at the centre and not at
+                    // all at the rim, so being caught reads as being swallowed rather than as
+                    // being slowed down.
+                    //
+                    // ⚠️⚠️ THE LIFT IS NOT SCALED BY `Time.deltaTime` AND THE HORIZONTAL PULL IS,
+                    // WHICH LOOKS LIKE A BUG AND IS THE OPPOSITE. `CharacterMotor.ApplyImpulse`
+                    // treats the two axes differently on purpose: the horizontal component is
+                    // ADDED to `_externalVelocity`, so it is an acceleration and needs dt, while
+                    // a positive y ASSIGNS `_velocity.y` outright, so it is a velocity and must
+                    // not be. Scaling it by dt would set a vertical speed of a few centimetres a
+                    // second and read as the floor being sticky.
+                    //
+                    // ⚠️ IT IS A SERVO AGAINST A TARGET HEIGHT RATHER THAN A CONSTANT CLIMB. A
+                    // fixed upward velocity would fly them out of the world; this pushes up only
+                    // while they are below the height the vortex wants them at, so gravity pulls
+                    // them back a little, the servo catches them, and the result is a bob. That
+                    // bob is what "floating" looks like, and it costs nothing to get right.
+                    float wantedHeight = LiftHeight * closeness;
+                    float above = p.transform.position.y - transform.position.y;
+
+                    if (wantedHeight > 0.05f && above < wantedHeight)
+                    {
+                        float climb = Mathf.Clamp((wantedHeight - above) * LiftSpring,
+                                                  0.0f, Balance.MaxKnockbackLift);
+
+                        // ⚠️ THE GATE IS ON ONE LINE, and the height test is nested inside it
+                        // rather than joined to it. `audit_ability_authority.py` looks for a line
+                        // that STARTS with `if` and mentions `ShouldResolve()`; a condition
+                        // wrapped onto a second line reads to it as no gate at all.
+                        if (NetAuthority.ShouldResolve() || p.PlayerSlot == NetAuthority.LocalSlot)
+                        {
+                            if (climb > 0.05f) p.ApplyImpulse(Vector3.up * climb);
+                        }
+                    }
+
+                    // ⚠️ THE STAGGER IS A DECISION AND STAYS HOST-ONLY. Predicting a stagger on
+                    // your own body would flinch you on a frame the host never agreed to, and
+                    // `StunElement`/`ApplyStagger` is exactly the class of state `CLAUDE.md` § 4
+                    // keeps on one machine.
+                    if (NetAuthority.ShouldResolve() &&
+                        CanPulse(_nextDrowseBySlot, p.PlayerSlot, 1.25f))
+                    {
+                        p.ApplyStagger(0.35f);
                     }
                 }
+
+                // ⚠️ THE TSINELAS ARE HOST-ONLY AND THE BODIES ARE NOT, and the asymmetry is the
+                // authority rather than an oversight. A slipper is a shared object whose position
+                // the host streams to everybody (`BroadcastSlipperState`); a client shoving one
+                // locally would be overwritten by the next snapshot and would buzz between the
+                // two, which is the exact fault `Slipper.ApplySnapshotState`'s note records about
+                // a HELD shoe having two authors. Your own body is yours to predict; a tsinelas
+                // lying in the street is not.
+                if (!resolves) return;
 
                 // ⚠️ A HELD TSINELAS IS NOT PULLED AND DOES NOT NEED TO BE: it is in somebody's
                 // hand, and that somebody is being pulled by the loop above. Yanking it out of
@@ -1699,9 +2046,16 @@ namespace TumbangPreso.Abilities
                     {
                         Vector3 sDiff = transform.position - s.transform.position;
                         sDiff.y = 0.0f;
-                        if (sDiff.magnitude <= Radius && sDiff.magnitude > 0.5f)
+                        // ⚠️ THE DEAD ZONE IS 0.12 m, DOWN FROM 0.5. 🧑 asked for everything to be
+                        // pulled *"to the middle"*, and half a metre of slack meant a ring of
+                        // tsinelas parked around the eye of a vortex rather than in it. It is not
+                        // zero because a shoe exactly on the centre has no direction to be pushed
+                        // in and `normalized` of a zero vector is a zero vector.
+                        if (sDiff.magnitude <= Radius && sDiff.magnitude > 0.12f)
                         {
-                            s.transform.position += sDiff.normalized * SlipperPull * Time.deltaTime;
+                            float reach = Mathf.Min(SlipperPull * Time.deltaTime,
+                                                    sDiff.magnitude - 0.12f);
+                            s.transform.position += sDiff.normalized * reach;
                         }
                     }
                 }
@@ -2323,7 +2677,30 @@ namespace TumbangPreso.Abilities
             // possible and is now a decision rather than a formality. That bound is the whole
             // design: `docs/VISION.md` § 4 forbids anything with no counterplay, and a pull the
             // player cannot beat is a stun that lasts as long as the ultimate does.
-            comp.PullStrength = 14.0f;
+            // ⚠️⚠️ 14.0 TO 30.0, AND THE HONEST REASON IS THAT 14 WAS NEVER THE NUMBER ANYBODY
+            // ACTUALLY FELT. 🧑 2026-08-29: *"walang higop ss ni Nemu"*, *"make nemu ult pull
+            // stronger"*, *"MAKE NEEMUS PULL REALLY GOOD LIKE ACTUALLY FEELABLE BY EVERYONE"*.
+            // The drag was host-only until this batch, so on three machines out of four the
+            // strength was irrelevant: it was multiplying an effect that never ran. Raising it
+            // without fixing that would have been tuning a number nobody was reading.
+            //
+            // ⚠️ WITH `CentreBite` 2.2 THE MIDDLE PULLS AT 66, which is comfortably more than
+            // `Balance.Speed`, so the very centre is genuinely inescapable and the rim at 30 is
+            // a hard fight you can still win. That gradient is the point: an ultimate you can
+            // stroll out of anywhere is decoration, and one you cannot escape anywhere is a stun
+            // with a 7 second duration, which `docs/VISION.md` § 4 rules out.
+            //
+            // ⚠️ AND IT STILL PULLS NOBODY IT SHOULD NOT. The owner is exempt, and the lata is
+            // not touched by any of this: see the note in the component, which is the whole
+            // reason there is no code for it there.
+            comp.PullStrength = 62.0f;
+
+            // The tsinelas get dragged properly too, which is the *"pull tsinelas humans"* half.
+            // 5.5 m/s was slower than a walk, so a shoe sitting inside the void barely crept.
+            comp.SlipperPull = 16.0f;
+
+            // The centre takes them off their feet. See `LiftHeight`.
+            comp.LiftHeight = 2.4f;
             comp.SlipperPull = 9.0f;
 
             HazardVolume.Attach(go, radius, ownerSlot);
@@ -2513,7 +2890,8 @@ namespace TumbangPreso.Abilities
         /// HEX. A ward chalked on the road: rings, a written band, nested squares.
         /// </summary>
         public static GameObject SpawnHexSigil(Vector3 position, float radius = 2.4f,
-                                                    float duration = 6.0f, int ownerSlot = -1)
+                                               float duration = 6.0f, int ownerSlot = -1,
+                                               float effectScale = 1.0f)
         {
             var go = new GameObject("HexWardZone");
             go.transform.position = position;
@@ -2602,6 +2980,7 @@ namespace TumbangPreso.Abilities
             comp.Radius = radius;
             comp.Duration = duration;
             comp.OwnerSlot = ownerSlot;
+            comp.EffectScale = effectScale;
 
             HazardVolume.Attach(go, radius, ownerSlot);
             return go;
@@ -3748,6 +4127,7 @@ namespace TumbangPreso.Abilities
             public float Radius = 2.4f;
             public float Duration = 6.0f;
             public int OwnerSlot = -1;
+            public float EffectScale = 1.0f;
             private float _left;
             private readonly Dictionary<int, float> _nextHexBySlot = new Dictionary<int, float>();
 
@@ -3778,12 +4158,20 @@ namespace TumbangPreso.Abilities
                     if (diff.magnitude <= Radius)
                     {
                         // Apply hex curse: reduce speed and stagger on intervals
-                        p.ApplyImpulse(-p.Velocity.normalized * 3.5f * Time.deltaTime);
+                        p.ApplyImpulse(-p.Velocity.normalized * 3.5f * EffectScale * Time.deltaTime);
 
-                        if (CanPulse(_nextHexBySlot, p.PlayerSlot, 1.10f))
+                        // ⚠️ SLOW BRAND RE-BITES SOONER, for the reason Arc Line's note above
+                        // gives: a 40 per cent gain spent only on a 0.35 s stagger is a tenth of
+                        // a second and nobody can feel it. The 1.44 m ward is small enough to
+                        // walk around, so what it does to somebody who did not is allowed to be
+                        // severe.
+                        if (CanPulse(_nextHexBySlot, p.PlayerSlot,
+                                     1.10f / Mathf.Max(0.25f, EffectScale)))
                         {
-                            p.ApplyStagger(0.35f);
-                            ComicPopup.Spawn(p.transform.position + Vector3.up * 1.2f, "HEXED!", UiTheme.HeroWitchBright, 1.0f);
+                            p.ApplyStagger(0.35f * EffectScale);
+                            Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.HeroHexed,
+                                                       OwnerSlot, p.PlayerSlot,
+                                                       p.transform.position, 0.35f);
 
                             // ⚠ THE VICTIM GETS A DIFFERENT CUE FROM THE CAST, and it falls
                             // rather than rises. Every other on-hit sound in this game is an
@@ -3930,8 +4318,12 @@ namespace TumbangPreso.Abilities
             // landed on the sound of a dash, from the deleted ability set. `sfx_lightning_strike`
             // stays on the CAST, where the arc is; this is the bolt reaching the street, and it
             // has the crack, the ground sub and the roll that a dash cannot supply.
-            GameServices.Audio?.PlayAt("sfx_thunder_impact", position);
-            ComicPopup.Zap(position);
+            // ⚠️⚠️ BOTH HALVES TRAVEL NOW. `CreateThunderstrike` is only ever reached
+            // from a host-resolved cast, so the loudest moment in Zack's kit landed on one
+            // machine: no crack, no ring, nothing on the street. `NetCue` carries the sound and
+            // `MatchFlair` the sight, which is the split this whole batch is about.
+            NetCue.Play("sfx_thunder_impact", position);
+            Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.Thunder, -1, -1, position);
 
             // Camera shake on main camera
             if (UnityEngine.Camera.main != null)
@@ -3957,7 +4349,9 @@ namespace TumbangPreso.Abilities
                         // entirely on the rim, and the escape is priced to match.
                         p.ApplyStagger(2.0f, StunElement.Shock, 7);
                         p.ApplyImpulse((diff.sqrMagnitude > 0.01f ? diff.normalized : Vector3.forward) * 12.0f + Vector3.up * 3.5f);
-                        DizzyStars.Attach(p.transform, 2.0f, UiTheme.HeroElectricBright);
+                        Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.HeroHit,
+                                                   sourceSlot, p.PlayerSlot,
+                                                   p.transform.position, 2.0f);
                     }
                 }
             }
@@ -4264,7 +4658,9 @@ namespace TumbangPreso.Abilities
                         // `ApplyStagger`, so the small slipper blast does not dress as a hold.
                         p.ApplyStagger(stunTime, ElementForStyle(style),
                                        Balance.StunBreakPressesDefault);
-                        DizzyStars.Attach(p.transform, stunTime, UiTheme.HeroFireBright);
+                        Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.HeroHit,
+                                                   sourceSlot, p.PlayerSlot,
+                                                   p.transform.position, stunTime);
                     }
                 }
             }
@@ -4420,7 +4816,7 @@ namespace TumbangPreso.Abilities
             //    never reached from here. `AbilityVfx` has one for each of these.
             look.Burst(center, radius);
 
-            GameServices.Audio?.PlayAt(look.Cue, center);
+            NetCue.Play(look.Cue, center);
 
             // Comic Popup
             if (!string.IsNullOrEmpty(comicText))
@@ -4521,7 +4917,7 @@ namespace TumbangPreso.Abilities
                 // ⚠️ THE SHATTER IS TWELVE FLYING SHARDS AND A SOUND. It does not also need
                 // a word, and it fires once per frozen player, so a three-target nova used to
                 // print three of them 2.5 s after the cast.
-                GameServices.Audio?.PlayAt("sfx_ice_freeze", transform.position);
+                NetCue.Play("sfx_ice_freeze", transform.position);
                 Object.Destroy(gameObject);
             }
         }

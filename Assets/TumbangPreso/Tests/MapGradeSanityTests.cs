@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
@@ -225,6 +226,69 @@ namespace TumbangPreso.Tests
                     + "the scene. The SCENE is what ships. Re-run IlalimNgTulayPipeline, or "
                     + "correct whichever of the two is wrong.");
             }
+        }
+
+        /// <summary>
+        /// The ambient, which is the setting that actually lights the cast, held against the map
+        /// it is supposed to match.
+        ///
+        /// ⚠️⚠️ THIS EXISTS BECAUSE THE SAME MAP HAS NOW BEEN "MATCHED TO ESKINITA" FOUR TIMES
+        /// AND THE FIRST THREE COMPARED A DEAD FIELD. `docs/TODO.md` § 79.2 built a whole table
+        /// out of Eskinita's `m_AmbientEquatorColor`, which Unity does not read: that scene is
+        /// `m_AmbientMode: 3` (Flat), and under Flat every direction is lit by
+        /// `m_AmbientSkyColor` alone. One pass then LOWERED Ilalim's equator to close a gap that
+        /// the reading had inverted. 🧑 2026-08-30: *"look eskinita vs ilalim ng tulay in lobby,
+        /// the lighting is so diff"*.
+        ///
+        /// ⚠️ IT ASSERTS THE MODE FIRST AND THAT IS THE POINT. A colour comparison between two
+        /// scenes in different ambient modes is meaningless, so the mode is what a regression has
+        /// to trip over before it can reach the numbers.
+        ///
+        /// ⚠️ AND IT READS THE SCENES, NOT THE BUILDERS, because the scene is what ships. The
+        /// builder-versus-scene split is covered one test up.
+        /// </summary>
+        [Test]
+        public void IlalimIsLitLikeEskinitaInTheSceneThatShips()
+        {
+            const int flat = 3;
+
+            foreach (string map in new[] { "Eskinita", "IlalimNgTulay" })
+            {
+                string path = MapDirectory + "/" + map + ".unity";
+                Assert.IsTrue(File.Exists(path), path + " is missing");
+
+                string text = File.ReadAllText(path);
+
+                var mode = Regex.Match(text, @"m_AmbientMode:\s*(?<v>\d+)");
+                Assert.IsTrue(mode.Success, "no m_AmbientMode in " + path);
+                Assert.AreEqual(flat, int.Parse(mode.Groups["v"].Value),
+                    map + " is not on Flat ambient. Both arenas are lit by one number so that "
+                    + "'match the other map' is a comparison anybody can make; a Trilight scene "
+                    + "puts two decorative fields beside the live one, which is exactly how the "
+                    + "0.34 equator was read as 'three times Eskinita's' when it was 0.36 of it.");
+            }
+
+            Assert.AreEqual(AmbientSky("Eskinita"), AmbientSky("IlalimNgTulay"),
+                "Ilalim ng Tulay's ambient no longer matches Eskinita's. If that is deliberate, "
+                + "say so in IlalimNgTulayBuilder and change this test with it; if it is not, "
+                + "re-run IlalimNgTulayPipeline. The scene is what ships.");
+        }
+
+        /// <summary>The Flat ambient colour of one map scene, rounded to the third decimal the
+        /// scene files are written to.</summary>
+        private static string AmbientSky(string map)
+        {
+            string text = File.ReadAllText(MapDirectory + "/" + map + ".unity");
+
+            var match = Regex.Match(
+                text,
+                @"m_AmbientSkyColor:\s*\{r:\s*(?<r>[-0-9.]+),\s*g:\s*(?<g>[-0-9.]+),"
+                + @"\s*b:\s*(?<b>[-0-9.]+)");
+
+            Assert.IsTrue(match.Success, "no m_AmbientSkyColor in " + map);
+
+            return string.Join(",", new[] { "r", "g", "b" }.Select(
+                k => float.Parse(match.Groups[k].Value).ToString("F3")));
         }
     }
 }

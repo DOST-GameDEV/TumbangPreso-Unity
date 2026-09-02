@@ -157,9 +157,17 @@ namespace TumbangPreso
             // it connects gives the other three players no warning it happened, and a miss
             // looks identical to not having pressed anything.
             // § THE VIEWMODEL RIDES ALONG. `PlayAction` drives the first-person arm too, from
-            // its one call site — see its note. The arms carry no `shove` clip, so this resolves
-            // to the procedural kick, which is exactly what the .gd does for it.
+            // its one call site. See its note.
+            //
+            // ⚠️⚠️ THE KICK IS ASKED FOR EXPLICITLY NOW, AND IT HAS TO BE. The arms used to carry
+            // no `shove` clip, so `PlayViewmodelAction` fell through to its procedural kick and
+            // this line got the view shake for free. They carry one as of 2026-08-28, and that
+            // fallback is documented to retire the moment a clip with the name exists, so the
+            // free kick went with it: the shove would have gained an arm and quietly lost its
+            // weight on the same commit. `ReleaseLunge` has always asked outright, at 1.4,
+            // because a dash is meant to hit the camera harder than a push.
             Animator?.PlayAction("shove");
+            Rig?.ViewmodelKick(Vector3.forward);
             NetCue.Play("bump_swing", transform.position);
 
             if (NetAuthority.ShouldRequest())
@@ -174,6 +182,20 @@ namespace TumbangPreso
                 Net.MatchRpc.Instance?.BroadcastAction(_motor.PlayerSlot, "shove");
 
             var victim = FindInCone(Balance.ShoveRange, Balance.ShoveArcDeg, requireTaggable: false);
+
+            // ⚠️⚠️ COUNTED HERE AND IN `HostResolveShove`, WHICH IS TWO SITES FOR ONE STAT AND
+            // IS NOT A DUPLICATE. These are two different bodies: this line is reached for the
+            // host's own seat and in solo play, and a CLIENT has already returned above at
+            // `ShouldRequest()` so its shove is counted once, on the host, when the request
+            // lands. Counting at the press instead would be one site and would count a shove
+            // twice for every client in the room.
+            //
+            // ⚠️ EVERYTHING THAT CAN REFUSE THE VERB IS ABOVE THIS LINE: the cooldown, being
+            // the taya, a fatigued bar and the stamina spend. A press that never became a
+            // shove is not a miss, and counting it as one makes the hit rate a measure of how
+            // often somebody mashed.
+            GameServices.Stats?.NoteShoveAttempt(_motor.PlayerSlot, victim != null);
+
             if (victim == null)
             {
                 _shoveCooldown = Balance.ShoveMissCooldown;
@@ -197,9 +219,15 @@ namespace TumbangPreso
 
             _punchCooldown = Balance.PunchCooldown;
 
-            // Same rule as the shove: the jab reads on the swing, and `PlayAction` now carries
-            // the first-person kick with it.
+            // Same rule as the shove: the jab reads on the swing, in both views, and it asks for
+            // its own view kick rather than relying on the fallback the new `punch` clip has now
+            // retired. See the note on the shove.
+            //
+            // ⚠️ AT THE DEFAULT STRENGTH, NOT THE LUNGE'S 1.4. The taya carries two tag verbs and
+            // the whole reason to have both is that they feel different: the jab is cheap,
+            // instant and close, the dash is a commitment. One shake for both flattens that.
             Animator?.PlayAction("punch");
+            Rig?.ViewmodelKick(Vector3.forward);
 
             if (NetAuthority.ShouldRequest())
             {
@@ -255,6 +283,10 @@ namespace TumbangPreso
         private void ReleaseLunge(float power)
         {
             _lungeCooldown = Balance.LungeCooldown;
+
+            // ⚠️ THE SAME TWO-SITE PAIRING THE SHOVE ABOVE EXPLAINS. This is the host's own
+            // body and the solo game; `HostResolveLunge` is a client's, resolved on the host.
+            GameServices.Stats?.NoteLungeAttempt(_motor.PlayerSlot);
             _lungeActiveLeft = Balance.LungeActiveTime;
             _lungeFrom = transform.position;
 
@@ -319,6 +351,12 @@ namespace TumbangPreso
 
                 if (DistanceToSegment(t, a, b) > Balance.LungeTagRadius) continue;
 
+                // ⚠️ COUNTED BEFORE THE TAG RATHER THAN AFTER IT. `ResolveTag` re-checks the
+                // whole world and can still refuse, but a refusal there means the sweep found
+                // somebody the rules protect, not that the lunge missed. A hit rate counting
+                // only the tags that scored would be measuring the victim's state instead of
+                // the taya's aim.
+                GameServices.Stats?.NoteLungeHit(_motor.PlayerSlot);
                 round.ResolveTag(_motor, p);
                 _lungeActiveLeft = 0.0f; // one tag per lunge
                 return;
@@ -363,6 +401,9 @@ namespace TumbangPreso
             _lungeActiveLeft = Balance.LungeActiveTime;
             _lungeFrom = from;
 
+            // The other half of the pair; see `ReleaseLunge`.
+            GameServices.Stats?.NoteLungeAttempt(_motor.PlayerSlot);
+
             Vector3 flat = facing;
             flat.y = 0.0f;
             _motor.ApplyImpulse(flat.normalized * Balance.LungeSpeed * power);
@@ -382,6 +423,9 @@ namespace TumbangPreso
             var victim = FindInCone(from, facing, Balance.ShoveRange, Balance.ShoveArcDeg,
                                     requireTaggable: false);
 
+            // The other half of the pair; see the note on the local path above.
+            GameServices.Stats?.NoteShoveAttempt(_motor.PlayerSlot, victim != null);
+
             if (victim == null)
             {
                 _shoveCooldown = Balance.ShoveMissCooldown;
@@ -392,9 +436,34 @@ namespace TumbangPreso
             return true;
         }
 
+        /// <summary>
+        /// `Time.time` of the last shove that actually moved somebody, or a large negative
+        /// number if this seat has never landed one.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE A COOLDOWN IS NOT A HIT, AND THE TUTORIAL WAS READING ONE AS
+        /// THE OTHER. `GuidedTraining` completed SHOVE, PUNCH and LUNGE the moment the matching
+        /// `*CooldownLeft` rose above its baseline, which is the verb having FIRED. 🧑
+        /// 2026-09-02: *"sometimes some tasks get marked even if u dont rlly do them like
+        /// pushing ppl (as long as u click push it gets marked as done)"*. Every one of those
+        /// three cooldowns is set before the cone is searched, so a press into empty air
+        /// completed the lesson and the student was taught that the verb needs no aim.
+        ///
+        /// ⚠️ IT IS A TIMESTAMP RATHER THAN A COUNTER BECAUSE THE READER IS A LESSON WITH A
+        /// START. A counter would have to be zeroed by whoever reads it, which is a second
+        /// writer on a field the combat code owns; a lesson can simply remember the time it
+        /// began and ask whether anything has landed since.
+        ///
+        /// ⚠️ SET IN `ApplyShoveTo`, WHICH IS THE ONE PLACE A SHOVE LANDS. `StepShove` reaches
+        /// it in solo play and on the host's own seat, `HostResolveShove` reaches it for a
+        /// client's request, and neither can push anybody without coming through here.
+        /// </summary>
+        public float LastShoveLandedAt { get; private set; } = -999.0f;
+
         /// <summary>The push itself, shared by the local and networked paths.</summary>
         private void ApplyShoveTo(CharacterMotor victim)
         {
+            LastShoveLandedAt = Time.time;
+
             Vector3 push = victim.transform.position - transform.position;
             push.y = 0.0f;
             push = push.normalized * Balance.ShoveSpeed

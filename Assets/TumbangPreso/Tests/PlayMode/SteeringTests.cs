@@ -1,6 +1,9 @@
 using System.Collections;
+using System.Collections.Generic;
+using System.Reflection;
 using NUnit.Framework;
 using TumbangPreso.CameraSystem;
+using TumbangPreso.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
@@ -28,10 +31,69 @@ namespace TumbangPreso.PlayTests
     public class SteeringTests
     {
         [UnityTest]
+        public IEnumerator TagSelectionServesEveryEligibleSeatBeforeRepeating()
+        {
+            GameServices.Ensure();
+            GameServices.Round.Clear();
+
+            var lataGo = new GameObject("FairTargetLata");
+            GameServices.Round.Lata = lataGo.AddComponent<Lata>();
+
+            var defenderGo = new GameObject("FairTargetDefender", typeof(CharacterController));
+            var defender = defenderGo.AddComponent<CharacterMotor>();
+            defender.PlayerSlot = 0;
+            defender.IsDefender = true;
+            defenderGo.AddComponent<Carrier>();
+            var brain = defenderGo.AddComponent<AIController>();
+            GameServices.Round.Register(defender);
+
+            var attackers = new List<CharacterMotor>();
+            for (int slot = 1; slot < Balance.PlayerCount; slot++)
+            {
+                var go = new GameObject($"FairTargetSeat{slot}", typeof(CharacterController));
+                var motor = go.AddComponent<CharacterMotor>();
+                motor.PlayerSlot = slot;
+                motor.IsDefender = false;
+                motor.IsBot = slot == 2;
+                motor.HoldingSlipper = true;
+                attackers.Add(motor);
+                GameServices.Round.Register(motor);
+            }
+
+            GameServices.Round.BeginRound();
+            yield return null;
+
+            MethodInfo select = typeof(AIController).GetMethod(
+                "TagTarget", BindingFlags.Instance | BindingFlags.NonPublic);
+            FieldInfo focusUntil = typeof(AIController).GetField(
+                "_tagFocusUntil", BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.IsNotNull(select);
+            Assert.IsNotNull(focusUntil);
+
+            var counts = new int[Balance.PlayerCount];
+            for (int pick = 0; pick < 6; pick++)
+            {
+                focusUntil.SetValue(brain, 0.0f);
+                var target = (CharacterMotor)select.Invoke(brain, null);
+                Assert.IsNotNull(target);
+                counts[target.PlayerSlot]++;
+            }
+
+            Assert.AreEqual(2, counts[1]);
+            Assert.AreEqual(2, counts[2]);
+            Assert.AreEqual(2, counts[3]);
+
+            GameServices.Round.Clear();
+            foreach (var attacker in attackers) Object.DestroyImmediate(attacker.gameObject);
+            Object.DestroyImmediate(defenderGo);
+            Object.DestroyImmediate(lataGo);
+        }
+
+        [UnityTest]
         public IEnumerator TheArenaGivesTheLocalSeatMouseAim()
         {
             var load = SceneManager.LoadSceneAsync("Eskinita", LoadSceneMode.Single);
-            while (load != null && !load.isDone) yield return null;
+            yield return ProbeWait.Done(load, "scene load");
 
             for (int i = 0; i < 20; i++) yield return null;
 
@@ -117,6 +179,34 @@ namespace TumbangPreso.PlayTests
 
             Object.DestroyImmediate(go);
             Object.DestroyImmediate(floor);
+        }
+
+        [UnityTest]
+        public IEnumerator APlantedBotTurnsTowardItsAimWithoutSliding()
+        {
+            var go = new GameObject("AimingBot", typeof(CharacterController));
+            // No floor on purpose. The assertion is about horizontal intent; a physics contact
+            // would add CharacterController depenetration to the thing being measured.
+            go.transform.position = new Vector3(0.0f, 3.0f, 0.0f);
+            go.transform.rotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
+            var motor = go.AddComponent<CharacterMotor>();
+
+            Vector3 planted = go.transform.position;
+            motor.Intent.Move = Vector2.zero;
+            motor.Intent.AimPoint = Vector3.forward * 10.0f;
+            motor.Intent.FaceAimPoint = true;
+            motor.Intent.CommitFrame();
+
+            for (int i = 0; i < 30; i++) yield return new WaitForFixedUpdate();
+
+            Vector3 drift = go.transform.position - planted;
+            drift.y = 0.0f;
+            Assert.Less(drift.magnitude, 0.05f,
+                "turning to aim made the planted thrower slide");
+            Assert.Greater(Vector3.Dot(go.transform.forward, Vector3.forward), 0.97f,
+                $"the planted thrower still faces {go.transform.forward} instead of its aim");
+
+            Object.DestroyImmediate(go);
         }
     }
 }

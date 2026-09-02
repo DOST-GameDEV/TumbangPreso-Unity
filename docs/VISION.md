@@ -248,8 +248,22 @@ penalties on consecutive runs. **None of the three were visible by playing it.**
 - **Emotes end only by interruption.** There is no emote timer.
 - **The art is the team's own and is being built character by character.** The replacement
   queue is `docs/Port_Plan.md` § 8; the authoring guide is `docs/Voxel_Person_Guide.md`.
+- **The custom character borrows a whole hero kit and never a mixture.** Settled 2026-08-31.
+  🧑: *"it can js borrow the skills of any of the characters for its skills and ult"*, and
+  *"it can only follow onne skill tree tho and cant mix diff shits"*. One `HeroKitId` field, so the
+  shape of the data is the enforcement. § 4's argument is why: reading which ultimate an opponent
+  has banked is a skill, and a seventh kit assembled from the best third of six would make every
+  ability tell in the game unreliable.
 - **His UI art is the design system.** Wood, amber, cream, ink. Anything drawn in a different
   visual language is the thing that looks broken, not the thing that looks new.
+- **Nobody's skin is a dial, and everybody's clothes are.** Every named character, the twelve
+  Classic street kids and the six heroes (DANTE, CHESKA, SEAN, ZACK, NEMU, PHAISTER), keeps their
+  own skin tone and face. `PaletteRules.IsProtectedSlot` holds the face slot and the three skin
+  slots out of every recolour, on both sides of the wire, so the colour dial reaches the clothes
+  and cannot reach the person. Deep customisation is the **MAKE YOUR OWN** screen: three saved
+  characters, one of them active. `docs/TODO.md` § 107.
+  ⚠️ **BERTO IS NOT A HERO** and this line listed him as one. `Roster.HeroPeople` is
+  the six above; `bayan`, display name BERTO, is the first of the twelve Classic characters.
 
 ---
 

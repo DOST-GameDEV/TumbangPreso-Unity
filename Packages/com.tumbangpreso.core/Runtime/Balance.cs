@@ -31,7 +31,30 @@ namespace TumbangPreso.Core
         public const int PlayerCount = 4;
         public const float RoundTime = 90.0f;
         public const float IntermissionDuration = 3.0f;
-        public const float WarmupBufferDuration = 15.0f;
+
+        /// <summary>
+        /// The pause between rounds, in which the role swap is read and the next taya finds their
+        /// mark.
+        ///
+        /// ⚠️⚠️ 5.0, DOWN FROM 15.0. 🧑 2026-08-29, off a played eight-round match: *"make round
+        /// buffer 5 seconds for all, 15 seconds reportedly too long"* — "reportedly" because it
+        /// came from the people testing rather than from him.
+        ///
+        /// **The arithmetic is why 15 was indefensible once the mode count doubled.** Hero Strike
+        /// is eight rounds, so seven buffers at 15 s is **1 m 45 s of a match with nobody
+        /// playing**, against 12 m of actual play. At 5 s it is 35 s. Classic's four rounds go
+        /// from 45 s to 15 s.
+        ///
+        /// ⚠️ `BufferSkipVote` STAYS AND IS NOT MADE REDUNDANT BY THIS. It was added on the same
+        /// day for the same complaint, and a unanimous vote is what lets a room that is ready end
+        /// even five seconds early; this is what the room that says nothing gets. The clock was
+        /// always the backstop and it is a shorter backstop now.
+        ///
+        /// ⚠️ IT IS THE ROLE SWAP CARD'S BUDGET TOO. `RoleSwapCard.ShowForShot` runs its timeline
+        /// inside this window; anything longer than 5 s of animation there is now cut off by the
+        /// round starting rather than by the card finishing.
+        /// </summary>
+        public const float WarmupBufferDuration = 5.0f;
 
         // -------------------------------------------------------------------
         // SCORING — round_manager.gd
@@ -165,7 +188,70 @@ namespace TumbangPreso.Core
         // -------------------------------------------------------------------
 
         public const float Speed = 4.6f;
-        public const float AttackerSpeedScale = 0.75f;
+
+        /// <summary>
+        /// ⚠️⚠️ 0.45, DOWN FROM 0.75, AND IT IS A 40% CUT HE ASKED FOR BY NAME. 🧑 2026-08-29,
+        /// after playing the 8-round Hero Strike build: *"defender kinda hard now so can we slow
+        /// down all attackers as well as bot, even when they sprint, by 40%"*, and separately
+        /// *"feels like shit get past defender very easily"*.
+        ///
+        /// ⚠️⚠️ 0.55 SINCE LATER THE SAME DAY, AND THE NERF STAYS. 🧑, after playing the 40%:
+        /// *"my speed reduction might have been too harsh, u can increase a bit ... js a bit ...
+        /// but i want the nerf to stay for attackers"*.
+        ///
+        /// 0.45 → **0.55**, which is a **27% cut** from the original 0.75 rather than 40%.
+        /// **Walk 2.53 m/s, sprint 3.79 m/s**, against 3.45 and 5.18 before any of this.
+        ///
+        /// | scale | walk | sprint | cut |
+        /// |---|---|---|---|
+        /// | 0.75, original | 3.45 | 5.18 | — |
+        /// | 0.45, first pass | 2.07 | 3.11 | 40% |
+        /// | **0.55, shipped** | **2.53** | **3.79** | **27%** |
+        ///
+        /// ⚠️ THE TAYA IS STILL THE FASTER ROLE BY A WIDE MARGIN: 5.06 m/s walking against an
+        /// attacker's 3.79 m/s SPRINTING. That is the thing he asked for and it is untouched.
+        ///
+        /// ⚠️ AND `StaminaDrainRate` MOVED WITH IT, AGAIN. § 83.1b: the bar buys a DISTANCE, so a
+        /// speed change is a drain change or the interlock breaks. 29 at 0.55, where it was 24 at
+        /// 0.45 and 40 at 0.75, and `ASprintBuysOneCrossingOfTheDangerZone` is what says so
+        /// without anybody having to remember.
+        ///
+        /// ⚠️ THE SPRINT IS CUT BY THE SAME 40% WITHOUT TOUCHING `SprintScale`, WHICH IS WHY IT
+        /// IS THIS CONSTANT THAT MOVED. `CharacterMotor` composes speed as
+        /// `Speed * RoleSpeedScale * PersonSpeedScale * sprint * SpeedZones`, all multiplicative,
+        /// so scaling the role term scales every state an attacker can be in — walking, sprinting,
+        /// fatigued and inside a hazard zone — by exactly 0.60. Cutting `SprintScale` instead
+        /// would have slowed the sprint and left the walk untouched, and would have hit the TAYA's
+        /// sprint too, which is the opposite of the ask.
+        ///
+        /// ⚠️ IT REACHES THE BOTS FOR FREE. `AIController` drives the same `InputIntent` through
+        /// the same motor; there is no second speed path to change. The second half of the quote
+        /// is therefore satisfied by this line and not by anything in `AIController`.
+        ///
+        /// ⚠️⚠️ AND IT MOVES THE INTERLOCKED SET. `Stamina`'s header names StaminaMax,
+        /// StaminaDrainRate, SprintScale and ConfinementRadius as one set dimensioned so the bar
+        /// buys roughly one crossing of the danger zone. A 40% slower attacker covers 40% less
+        /// ground on the same bar, so **a sprint no longer buys a full crossing** — that is a
+        /// deliberate consequence of the ask, not an oversight, and it is what makes the taya
+        /// stronger. `TripGraceAfterGetUp` was re-solved against the new speed; nothing else in
+        /// the set was, and re-measuring it is `docs/TODO.md` § 83.1.
+        /// </summary>
+        public const float AttackerSpeedScale = 0.55f;
+
+        /// <summary>
+        /// The taya's own multiplier, which used to be a literal 1.0 inside `RoleSpeedScale`.
+        ///
+        /// ⚠️ 🧑 2026-08-29, in the same breath as widening the block: *"make them a bit faster
+        /// too"*. 4.6 x 1.10 = **5.06 m/s**. "A bit" is taken at its word: the taya was already
+        /// the faster role and the attacker cut above is doing most of the work.
+        ///
+        /// ⚠️ IT IS A NAMED CONSTANT RATHER THAN A NUMBER IN THE EXPRESSION, because the two role
+        /// scales are read against each other constantly — the ratio is the whole balance of
+        /// chase versus escape — and one of them being invisible is how it stayed at 1.0 through
+        /// every retune of the other.
+        /// </summary>
+        public const float DefenderSpeedScale = 1.10f;
+
         public const float SprintScale = 1.50f;
         public const float Friction = 30.0f;
         public const float Gravity = 20.0f;
@@ -219,7 +305,46 @@ namespace TumbangPreso.Core
         // -------------------------------------------------------------------
 
         public const float StaminaMax = 60.0f;
-        public const float StaminaDrainRate = 40.0f;
+        /// <summary>
+        /// Stamina spent per second of sprinting.
+        ///
+        /// ⚠️⚠️ 24, DOWN FROM 40, AND IT MOVED BECAUSE THE ATTACKER'S SPEED DID. `Stamina`'s
+        /// header states the invariant this belongs to and states it as a DISTANCE, not a time:
+        /// *"the bar is dimensioned to roughly one crossing of the danger zone, which is the
+        /// retrieval the whole game is about"*, and *"a change to any one of the four has to be
+        /// re-measured against the other three rather than reasoned about"*. § 83.1 changed one
+        /// of the four. This is that re-measurement, and it is arithmetic rather than taste:
+        ///
+        /// | | sprint | on a full bar | buys |
+        /// |---|---|---|---|
+        /// | before § 83.1 | 4.6 x 0.75 x 1.5 = **5.175 m/s** | 60/40 = 1.50 s | **7.76 m** |
+        /// | at 0.45, drain 40 | 4.6 x 0.45 x 1.5 = **3.105 m/s** | 60/40 = 1.50 s | **4.66 m** |
+        /// | at 0.55, drain 40 | 4.6 x 0.55 x 1.5 = **3.795 m/s** | 60/40 = 1.50 s | **5.69 m** |
+        /// | **at 0.55, drain 29** | **3.795 m/s** | 60/29 = 2.07 s | **7.85 m** |
+        ///
+        /// **About 7.8 m is `ConfinementRadius` plus a margin**, which is what "one crossing"
+        /// means: in from the chalk to the can and back out. At the untouched drain of 40 the
+        /// speed cut left an attacker with **60 to 73% of a crossing on a full bar** depending on
+        /// the scale — they could sprint in and not out, every time, on every map. That is not
+        /// the taya being stronger, it is retrieval being impossible, and § 83.1b flagged it as
+        /// the thing to measure.
+        ///
+        /// ⚠️⚠️ THE DRAIN MOVED AND `StaminaMax` DID NOT, WHICH IS THE HALF THAT MATTERS. Buying
+        /// the same distance by raising the bar to 100 would have worked and would have silently
+        /// retuned everything else priced against it: `ShoveStaminaCost` is 25, which is 42% of a
+        /// 60 bar and 25% of a 100 one, and `StaminaSprintFloor` is 7.5. Slowing the drain keeps
+        /// every fraction on the bar exactly where it was and changes only the thing that had to
+        /// change.
+        ///
+        /// ⚠️ AND THE REGEN IS UNTOUCHED, so a full refill is still `StaminaMax / StaminaRegenRate`
+        /// = 3 s. What a sprint COSTS in time to earn back is unchanged; what it BUYS in ground
+        /// is back to what it was.
+        ///
+        /// ⚠️ `BalanceTests.ASprintBuysOneCrossingOfTheDangerZone` holds this. It asserts the
+        /// DISTANCE against `ConfinementRadius`, so the next person to move the speed, the bar,
+        /// the drain or the box gets told rather than finding out from a playtest.
+        /// </summary>
+        public const float StaminaDrainRate = 29.0f;
         public const float StaminaRegenRate = 20.0f;
         public const float StaminaRegenDelay = 1.0f;
 
@@ -302,6 +427,40 @@ namespace TumbangPreso.Core
 
         public const float LaunchSpeed = 18.5f;
         public const float SlipperHitRadius = 0.23f;
+
+        /// <summary>
+        /// Extra HORIZONTAL reach on the taya's body when a tsinelas is tested against it, and
+        /// on nobody else's.
+        ///
+        /// ⚠️⚠️ 🧑 2026-08-29, twice: *"make hit box for defender bigger but make sure it reverts
+        /// to nroaml when theyre attacker ... this is bcz defender kinda feels weak right now"*,
+        /// and then the shape of it: *"make hitbox bigger horizontally but not fatter so taht
+        /// tehy can defend perktus bettert"*.
+        ///
+        /// **A block is the taya's only way to stop a throw that is already in the air**, and
+        /// `Slipper.HitsBody` tested it against `SlipperHitRadius + CharacterController.radius`
+        /// — about 0.60 m of flat reach for a projectile crossing that window at up to 18.5 m/s,
+        /// which at a 50 Hz physics step is 0.37 m of travel per test. A Pektus throw curves
+        /// ACROSS that window rather than into it, so the taya was being asked to stand within a
+        /// third of a metre of a path they cannot predict.
+        ///
+        /// ⚠️⚠️ IT IS ADDED IN `HitsBody` AND NOT TO THE `CharacterController`, WHICH IS THE
+        /// WHOLE OF "NOT FATTER". Growing the capsule would widen the physical body: the taya
+        /// would push attackers around, snag on the map, spawn-settle differently, and read as a
+        /// wider character on screen. This number is only ever consulted when deciding whether a
+        /// slipper CONNECTS, so the body stays exactly the size it looks.
+        ///
+        /// ⚠️ AND HORIZONTAL ONLY, ON PURPOSE. `HitsBody`'s vertical test is unchanged, so a
+        /// throw sailing over the taya's head still sails over it. Widening both would have made
+        /// the taya a column rather than a person.
+        ///
+        /// ⚠️ THE REVERT IS FREE BECAUSE THERE IS NO STATE. `HitsBody` reads `who.IsDefender` on
+        /// the frame of the test, so the bonus arrives and leaves with the role and there is
+        /// nothing to unwind when the taya rotates — which is precisely what he asked to be sure
+        /// of. `docs/TODO.md` § 83.2.
+        /// </summary>
+        public const float DefenderBlockRadiusBonus = 0.35f;
+
         public const float MaxFlightTime = 6.0f;
 
         /// <summary>
@@ -441,7 +600,34 @@ namespace TumbangPreso.Core
         /// machine, so this is computed locally each time it changes and never sent — a
         /// networked glow would light one slipper for everybody.
         /// </summary>
-        public const float OwnerRimStrength = 0.85f;
+        /// <summary>
+        /// How hard the local player's OWN tsinelas is rimmed, so they can pick it out of four.
+        ///
+        /// ⚠️⚠️ 0.0, AND IT IS OFF BECAUSE HE ASKED FOR IT OFF BY NAME. 🧑 2026-08-29: *"pls js
+        /// remove shader for slippers, especially the color. idk what does it but the slippers
+        /// are a completley diff color ingame and character select"*.
+        ///
+        /// **That is exactly what this constant did, and it is the whole of the difference he
+        /// was looking at.** The two surfaces build the tsinelas identically — `MatchInstaller`
+        /// and `ModelPreview` both call `ToonSkin.ApplySlipper(model, PropOutlineWidth)` — so the
+        /// material, the flat shading and the ink are the same in both places. What the MATCH
+        /// adds is `Slipper.RefreshHighlight`, which writes a `MaterialPropertyBlock` rimming
+        /// YOUR shoe in `OwnerRimColour`, a gold chosen precisely so it *cannot* be mistaken for
+        /// any skin. There is no `Slipper` component on the picker, so the picker showed the
+        /// skin he chose and the match showed that skin under gold.
+        ///
+        /// ⚠️ IT IS A ZERO RATHER THAN A DELETION, so the affordance is one number away if the
+        /// team misses it. The rest of the machinery — `SetOwnerGlow`, the per-peer note about
+        /// why it is never replicated, the property block — is untouched and still correct.
+        ///
+        /// ⚠️⚠️ AND "WHICH ONE IS MINE" IS STILL ANSWERED TWICE OVER, which is why this is a
+        /// safe thing to turn off rather than a feature being dropped. `LandedRimStrength` is a
+        /// separate, settings-driven highlight on a tsinelas that has come to REST — the moment
+        /// you have actually lost track of it — and every player picks their own skin, so four
+        /// shoes on the road are four different shoes. The glow was the answer to a question the
+        /// skin picker already answers.
+        /// </summary>
+        public const float OwnerRimStrength = 0.0f;
 
         /// <summary>
         /// The rim strength on a tsinelas that has just been thrown and come to rest.
@@ -622,13 +808,28 @@ namespace TumbangPreso.Core
         /// Ilalim ng Tulay meant two hazards 2.6 m apart could pass a player back and forth.
         ///
         /// ⚠ SOLVED AGAINST THE FOOTPRINT, NOT PICKED. An attacker moves at
-        /// `Speed` * `AttackerSpeedScale` = 3.45 m/s, so 1.20 s carries them 4.14 m. The largest
+        /// `Speed` * `AttackerSpeedScale` = 2.53 m/s, so 1.60 s carries them 4.05 m. The largest
         /// hazard footprint on the map is 2.60 m, so the grace covers walking clear of the thing
         /// that felled you from its centre, with margin.
         ///
+        /// ⚠️⚠️ 1.60, RE-SOLVED WHEN `AttackerSpeedScale` FELL ON 2026-08-29, AND THE OLD 1.20
+        /// WOULD HAVE REINTRODUCED THE LOOP RATHER THAN MERELY BEEN STALE. It was solved against
+        /// 3.45 m/s and covered 4.14 m; at the 2.07 m/s of the first pass the same 1.20 s covers
+        /// only **2.48 m**, which is UNDER the 2.60 m footprint it exists to clear. A slower
+        /// attacker would have stood up still inside the hazard that felled them, with the grace
+        /// already expired — the exact ping-pong this constant was added to stop.
+        ///
+        /// ⚠️ AT THE SHIPPED 0.55 IT IS MARGIN RATHER THAN NECESSITY — 1.20 s would cover 3.04 m
+        /// and clear the footprint — AND IT STAYS AT 1.60 ANYWAY. The cost of the longer window
+        /// is that a hazard cannot re-trip you for four tenths of a second more; the cost of the
+        /// short one is a player passed back and forth between two hazards, which is a bug and
+        /// not a balance number. **This is what "re-measure the interlocked set" means in
+        /// practice**, and it is the one member of it that can be re-solved by arithmetic rather
+        /// than by playing.
+        ///
         /// ⚠ IT LIVES ON THE MOTOR, NOT ON THE HAZARD, so every hazard present and future
         /// respects one window rather than each keeping its own.</summary>
-        public const float TripGraceAfterGetUp = 1.20f;
+        public const float TripGraceAfterGetUp = 1.60f;
 
         // -------------------------------------------------------------------
         // § MASHING OUT OF AN ABILITY STUN
@@ -697,13 +898,47 @@ namespace TumbangPreso.Core
         ///
         /// ⚠⚠ IT IS A FLOOR AND IT IS WHAT KEEPS A COOLDOWN WORTH SPENDING. Without one, a
         /// player with fast hands would clear a stun in three presses and every control ability
-        /// in Hero Strike would stop being a control ability. 1.20 s is long enough that the
-        /// caster still gets the opening they paid for and short enough that the victim is not
-        /// spectating. It is the same argument `MinTripDown` makes, at a higher number because
-        /// the thing being escaped cost somebody a cooldown.
+        /// in Hero Strike would stop being a control ability. It is the same argument
+        /// `MinTripDown` makes, at a higher number because the thing being escaped cost somebody
+        /// a cooldown.
         ///
-        /// ⚠ AND IT IS ABOVE `Balance.MashCooldown` BY MORE THAN AN ORDER OF MAGNITUDE, so the
-        /// floor can never be reached by a single lucky press inside one frame's window.</summary>
-        public const float MinStunDown = 1.20f;
+        /// ⚠⚠ **0.60, DOWN FROM 1.20, BECAUSE AT 1.20 THE MASH STOPPED PAYING AFTER TWO OR THREE
+        /// PRESSES AND THE PLAYER WAS STILL HOLDING THE KEY DOWN.** 🧑 2026-08-29: *"some button
+        /// mash dont work ... only up to 2-3 button mash and nothing registers anymore"*.
+        ///
+        /// **The floor was measured against nothing, and the stuns that shipped are short.**
+        /// `Combat.StunMashPerPress` sells `stunTotal - MinStunDown` across the ability's press
+        /// count, and `MashOutOfStun` refuses everything once `stunLeft` reaches the floor. So at
+        /// 1.20 the whole mash was worth this much:
+        ///
+        /// | ability | hold | presses | slack at 1.20 | per press | dead time after |
+        /// |---|---|---|---|---|---|
+        /// | Sean, `StunElement.Fire` | 1.50 s | 4 | **0.30 s** | 0.075 s | 1.10 s |
+        /// | possession, `Void` | 1.80 s | 6 | 0.60 s | 0.100 s | 1.20 s |
+        /// | shock | 2.00 s | 7 | 0.80 s | 0.114 s | 1.20 s |
+        /// | Dante, `Stone` | 2.20 s | 8 | 1.00 s | 0.125 s | 1.20 s |
+        /// | Cheska, `Ice` | 2.50 s | 9 | 1.30 s | 0.144 s | 1.20 s |
+        ///
+        /// Four presses at the 10 Hz `MashCooldown` is 0.4 s of input; the shortest of them then
+        /// spent **1.1 s refusing every further press**, with the meter frozen. That is the
+        /// report exactly, and it is worst on the ability a player meets most.
+        ///
+        /// At 0.60 the same five sell 0.90, 1.20, 1.40, 1.60 and 1.90 s, so **every declared
+        /// press pays and the last one lands on the floor rather than a third of the way to it.**
+        ///
+        /// ⚠ THE PRESS COUNTS ARE UNTOUCHED AND THAT IS THE POINT. They are the per-ability
+        /// tunable — see `StunBreakPressesDefault` — and moving them would have retuned five
+        /// kits to fix one constant. An unanswered stun is still its full length, so the caster's
+        /// cooldown buys exactly what it did before against anybody who does not fight it.
+        ///
+        /// ⚠ AND IT IS STILL ABOVE `Balance.MashCooldown` BY SIX TIMES, so the floor can never be
+        /// reached by a single lucky press inside one frame's window.
+        ///
+        /// ⚠ THE MICRO-STAGGERS ARE STILL UNMASHABLE AND ALWAYS WERE. `ApplyStagger(0.2f)`
+        /// through `ApplyStagger(0.4f)` are under this floor, so `StunMashPerPress` returns 0 and
+        /// `MashOutOfStun` refuses immediately. They are a quarter of a second and nobody mashes
+        /// them; if that ever needs answering the fix is `StunElement.None` on them, not a lower
+        /// floor.</summary>
+        public const float MinStunDown = 0.60f;
     }
 }

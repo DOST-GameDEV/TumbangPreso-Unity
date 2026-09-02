@@ -1,5 +1,8 @@
 # Converted from sike_sandals.glb. Geometry is original and correct; do not regenerate.
 # The body colour lives in tsinelas_sike.mtl and is maintained by hand. See the note there.
+# ⚠️ THIS HEADER IS TOUCHED ON PURPOSE WHENEVER THE .mtl CHANGES. Unity watches the .obj and
+# not the .mtl, so a material-only edit is not reimported and the old colour keeps shipping.
+# Body darkened to 0.052/0.058/0.074 on 2026-08-29; the geometry is untouched.
 mtllib tsinelas_sike.mtl
 o tsinelas_sike
 v 0.04056 0.11729 -0.05005

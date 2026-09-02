@@ -32,10 +32,18 @@ namespace TumbangPreso.Abilities
 
         private sealed class PermafrostSheetAbility : HeroAbility
         {
+            /// <summary>Nearest she may freeze. Closer and she is standing on it.</summary>
+            private const float MinRange = 1.8f;
+
+            /// <summary>Furthest, at a full hold. See the constructor for why it is 5.0.</summary>
+            private const float MaxRange = 5.0f;
+
             // ⚠️ THE TELEGRAPH NUMBERS ARE THE SPAWN NUMBERS. 2.3 m is the radius handed to
-            // `SpawnIceSheet` below and 2.8 m is how far in front it is placed. They are the
-            // same measurement written twice, so `TelegraphsMatchWhatTheAbilityPlaces` asserts
-            // the pair rather than trusting either.
+            // `SpawnIceSheet` below, and the range is now `MaxRange` because the sheet is aimed:
+            // `TelegraphRange` means "the furthest this can be placed" for a hold-to-aim power,
+            // which is what `HeroAbilitySystem.AimPoint` and `AIController.FootprintOf` both
+            // read. They are the same measurement written twice, so
+            // `TelegraphsMatchWhatTheAbilityPlaces` asserts the pair rather than trusting either.
             public PermafrostSheetAbility()
                 // ⚠️⚠️ TWO CHARGES A ROUND AND NO RECHARGE, DOWN FROM 12.8 CASTS OFF A 7 s
                 // COOLDOWN. It places a zone, so it is on the charge half of the split, and it
@@ -48,14 +56,29 @@ namespace TumbangPreso.Abilities
                 // `docs/VISION.md` § 2 rule 4 broken by one ability against itself. That is
                 // fixed in `HeroHazards.SpawnIceSheet` rather than here.
                 : base("cheska_skill1", "PERMAFROST SHEET",
-                       "Freezes a patch of court in front of you. Anyone who runs across it loses their footing and slides.",
+                       "Hold to place a frozen patch, then let go. Anyone who runs across it loses their footing and slides.",
                        0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.CheskaFrostSheet,
-                       summary: "Frost patch ahead. Whoever crosses it slides.",
-                       telegraphRadius: 2.3f, telegraphRange: 2.8f,
+                       summary: "Hold to aim, release to freeze. Whoever crosses slides.",
+                       telegraphRadius: 2.3f, telegraphRange: MaxRange,
                        castAction: "hero-cheska-frostwave",
                        viewmodelAction: "frost-sweep",
+                       castCue: "sfx_cast_cheska_sheet",
                        charges: 2)
             {
+                // ⚠️⚠️ HOLD TO PLACE IT, RELEASE TO FREEZE. 🧑 2026-09-02: *"maybe cheska's wall
+                // and slow should have this too"*, and then the general form: *"figure out
+                // whichh skills in aall should have holdable shit so that u can figure out where
+                // skill will land and not js guess"*. A fixed 2.8 m offset makes the aim a
+                // function of where her FEET are, so the only way to place a slick was to walk
+                // to a spot 2.8 m short of it, and the ability's whole job is cutting a lane she
+                // is not standing in.
+                //
+                // ⚠️ 1.8 TO 5.0 m, WHICH IS SHORTER THAN PHAISTER'S 5.5. Her sheet is 2.3 m
+                // across against the hex's 2.4 and it lasts 5 s, but it costs no cooldown at all
+                // and she has two of them: reach is the lever that keeps two free zone placements
+                // from covering the same ground a single hex has to be spent on.
+                AimByHolding(MinRange, MaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
+                TelegraphStyle = Visual.GroundReticle.Style.Frost;
             }
 
             protected override void OnActivate(AbilityContext ctx)
@@ -72,22 +95,38 @@ namespace TumbangPreso.Abilities
                 // on. It is done now because the alternative is doing it later, from memory,
                 // across five files, on the day the ability RPC lands.
                 NetCue.Play("hero_cheska_grunt", ctx.Position);
-                NetCue.Play("sfx_ice_freeze", ctx.Position);
 
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
                 if (squash != null) squash.DashStretch(ctx.Forward, 0.25f);
 
-                Vector3 target = ctx.Position + ctx.Forward * 2.8f;
+                float areaScale = ctx.CostScale("cheska.1.blackice");
+                float effectScale = ctx.GainScale("cheska.1.blackice");
+                Vector3 target = AimedDestination(ctx);
                 // ⚠️⚠️ ONE CALLOUT PER EVENT. This fired "SLIP ZONE!" and `SpawnIceSheet`
                 // fired "SLIP & SLIDE!" at the same point on the same frame, saying the same
                 // thing twice in two different phrasings. The hazard keeps its line because the
                 // hazard is the thing that persists.
-                HeroHazards.SpawnIceSheet(target, 2.3f, 5.0f, ctx.Motor.PlayerSlot);
+                HeroHazards.SpawnIceSheet(target, 2.3f * areaScale, 5.0f,
+                                          ctx.Motor.PlayerSlot, effectScale);
             }
         }
 
         private sealed class IceBarricadeAbility : HeroAbility
         {
+            /// <summary>Nearest she may raise it. Closer than this and it is her own wall.</summary>
+            private const float WallMinRange = 1.8f;
+
+            /// <summary>
+            /// Furthest, at a full hold.
+            ///
+            /// ⚠️ 4.0 m, THE SHORTEST AIM BAND IN THE GAME, AND IT IS SHORT ON PURPOSE. A
+            /// barricade closes a lane outright and she gets ONE a round; letting her drop it
+            /// across the far side of the court would make it a zoning tool she never has to
+            /// stand near. Her ask of the player is still *which* approach to close, and now
+            /// also how far up it, but she has to be in the fight to answer either.
+            /// </summary>
+            private const float WallMaxRange = 4.0f;
+
             // 1.6 m is the `HazardVolume` radius the barricade registers, which is the circle
             // bots steer around and therefore the honest footprint. The three pillars measure
             // 2.35 m across the face, so the ring reads as slightly tighter than the wall looks:
@@ -105,25 +144,27 @@ namespace TumbangPreso.Abilities
                 // central risk rather than by a timer. It is also the only recharge in the game
                 // keyed to this event, which keeps it hers.
                 : base("cheska_skill2", "ICE BARRICADE",
-                       "Raises three ice pillars in front of you. Bodies and thrown tsinelas both stop at them, so the lata gets time.",
+                       "Hold to pick the line, then let go to raise three ice pillars. Bodies and thrown tsinelas both stop at them.",
                        0.0f, 0.0f, TumbangPreso.UI.AbilityGlyph.CheskaBarricade,
-                       summary: "Three ice pillars ahead. Bodies and tsinelas stop at them.",
-                       telegraphRadius: 1.6f, telegraphRange: 2.2f,
+                       summary: "Hold to aim, release to raise. Bodies and tsinelas stop at it.",
+                       telegraphRadius: 1.6f, telegraphRange: WallMaxRange,
                        castAction: "hero-cheska-raise",
                        viewmodelAction: "raise-barricade",
+                       castCue: "sfx_cast_cheska_barricade",
                        charges: 1,
                        rechargedBy: Recharge.OwnSlipperRetrieved)
             {
+                AimByHolding(WallMinRange, WallMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
+                TelegraphStyle = Visual.GroundReticle.Style.Frost;
             }
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                NetCue.Play("sfx_ice_freeze", ctx.Position);
 
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
                 if (squash != null) squash.Squash(0.2f);
 
-                Vector3 wallPos = ctx.Position + ctx.Forward * 2.2f;
+                Vector3 wallPos = AimedDestination(ctx);
 
                 // ⚠️⚠️ THE 3.2 IS A DURATION IN SECONDS AND IT USED TO BE PASSED AS IF IT WERE A
                 // RADIUS. `SpawnIceBarricade(position, forward, duration = 6.0f)` has no radius
@@ -142,7 +183,9 @@ namespace TumbangPreso.Abilities
                 // enough to cross the box. 6.0 s is what the signature always defaulted to and
                 // what the ability was written against before the parameter mix-up on
                 // 2026-08-23. `docs/Hero_Strike_Balance.md` § 3.2.
-                HeroHazards.SpawnIceBarricade(wallPos, ctx.Forward, duration: 6.0f);
+                HeroHazards.SpawnIceBarricade(wallPos, ctx.Forward, duration: 6.0f,
+                    spanScale: ctx.GainScale("cheska.2.spires"),
+                    thicknessScale: ctx.CostScale("cheska.2.spires"));
             }
         }
 
@@ -155,8 +198,10 @@ namespace TumbangPreso.Abilities
                        summary: "Freezes everyone near you and clears the tsinelas away.",
                        telegraphRadius: 4.6f, telegraphRange: 0.0f,
                        castAction: "hero-cheska-nova",
-                       viewmodelAction: "nova-burst")
+                       viewmodelAction: "nova-burst",
+                       castCue: "sfx_cast_cheska_nova")
             {
+                TelegraphStyle = Visual.GroundReticle.Style.Frost;
                 Windup = UltimateWindup;
             }
 

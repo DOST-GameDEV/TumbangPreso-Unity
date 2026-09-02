@@ -188,8 +188,87 @@ namespace TumbangPreso.UI
         /// <summary>Which game mode the next match loads. Default is Hero Strike.</summary>
         public static GameMode SelectedMode = GameMode.HeroStrike;
 
+        /// <summary>
+        /// PHASE 12: which FORMAT the next match plays. Standard is the game as it ships.
+        ///
+        /// ⚠⚠ IT SITS BESIDE THE MODE AND NEVER REPLACES IT, which is the distinction
+        /// `docs/Formats.md` § 0 exists to hold: Classic and Hero Strike are two games, and a
+        /// format is a rule change played inside either one. A Classic Last Tsinelas match is
+        /// still a Classic match in the career.
+        ///
+        /// ⚠️ IT IS A SESSION FACT LIKE `SelectedMode`, WRITTEN BY THE LOBBY AND READ BY THE
+        /// MATCH, and it is mirrored into `settings.json` by the lobby so a player who picked
+        /// MIRROR last night finds it still picked. `MatchRpc.SelectFormatServerRpc` is what makes
+        /// every machine in a room agree about it.
+        /// </summary>
+        public static MatchFormat SelectedFormat = MatchFormat.Standard;
+
+        /// <summary>
+        /// A join code the next `MatchSetup` should act on, set by a screen that is not the lobby.
+        ///
+        /// ⚠️⚠️ IT EXISTS SO THERE IS ONE JOIN PATH RATHER THAN TWO. `docs/TODO.md` § 102: the
+        /// friends rail lives on the hub, which is on the title screen, and joining a friend means
+        /// loading the lobby scene first. Wiring the hub straight into `NetSession` would be a
+        /// second copy of the reconnection, seat-reclamation and relay-versus-LAN decisions
+        /// `LobbyJoinPanel` already owns, and § 38.5 records what that costs: three dead protocols
+        /// and the maintained one being the one nothing called.
+        ///
+        /// ⚠️ IT IS CONSUMED, NOT READ. `ConvertedMatchSetup` clears it the moment it takes it, so
+        /// a player who leaves a lobby and comes back is not silently rejoined to the room they
+        /// just left. A one-shot fact that is not cleared is a fact that fires for ever.
+        ///
+        /// ⚠️ AND IT IS A SESSION FACT, NOT A SETTING. Same rule as `SceneFlow.BootedThroughSplash`
+        /// in § 97.1: "somebody pressed JOIN a second ago" and "this machine has a friend" are not
+        /// the same kind of thing and must not be collapsed into one flag.
+        /// </summary>
+        public static string PendingJoinCode = "";
+
         /// <summary>True when the next match is networked rather than against bots.</summary>
         public static bool Networked;
+
+        /// <summary>
+        /// True once the splash screen has handed over to the menu in this process.
+        ///
+        /// ⚠️⚠️ IT EXISTS SO THE BOOT ACCOUNT SCREEN CAN TELL A LAUNCH FROM A SCENE LOAD, AND
+        /// THE DIFFERENCE COST A RED PROBE TO LEARN. `PlayerNameplate.OfferTheAccountChoiceOnce`
+        /// was gated on nothing but a nameplate being installed, and a nameplate is installed by
+        /// every path that shows the menu: `UiClickProbe.EveryButtonIsReachable` came back with
+        /// **every settings control blocked by `SignInCanvas`**, because the question opened over
+        /// a menu a probe had loaded directly and nothing was ever going to answer it.
+        ///
+        /// ⚠️ THE MENU IS REACHED THREE WAYS and only one of them is a launch: from the splash,
+        /// from `LeaveMatchToMainMenu`, and from a test loading it by name. A first-time player is
+        /// only behind the first.
+        ///
+        /// ⚠️ IT IS NOT SAVED AND MUST NOT BE. It answers "did THIS process boot", which is a
+        /// fact about the session; whether the player has ANSWERED is
+        /// `GameSettings.AccountChoiceMade`, which is a fact about the machine. Two different
+        /// questions, and collapsing them would either nag every launch or ask nobody.
+        /// </summary>
+        public static bool BootedThroughSplash;
+
+        /// <summary>
+        /// True once THIS launch has already shown the login step.
+        ///
+        /// ⚠️⚠️ `BootedThroughSplash` IS NEVER CLEARED, SO ON ITS OWN IT SAYS "EVERY TIME THIS
+        /// PROCESS SHOWS THE MAIN MENU", NOT "ONCE PER LAUNCH". 🧑 2026-09-01, after pressing
+        /// Escape in the character maker: *"clicking escape from make your own put me here"*,
+        /// with a shot of the boot CREATE ACCOUNT screen. Escape backed the screen underneath out
+        /// to the main menu (which `ScreenTakeover.EscapeIsSpoken` now prevents), the menu's
+        /// `Start` ran again, and `OfferTheLoginStep` asked the same question a second time
+        /// because nothing had recorded that it had already been answered.
+        ///
+        /// ⚠️ TWO FLAGS AND NOT ONE, for the same reason § 97.1 gives for keeping
+        /// `BootedThroughSplash` and `GameSettings.AccountChoiceMade` apart: *"did this process
+        /// boot"* and *"has this launch already asked"* are different questions, and collapsing
+        /// them either nags on every scene load or asks nobody. The menu is reached three ways
+        /// (the splash, `LeaveMatchToMainMenu`, and a test loading it by name) and only the first
+        /// is a launch; this is what makes the other two silent.
+        ///
+        /// ⚠️ AND IT IS NOT SAVED, exactly like the flag above it. It is a fact about the
+        /// process, and 🧑 asked for the login step on EVERY launch (`docs/TODO.md` § 114.5).
+        /// </summary>
+        public static bool LoginStepOffered;
 
         public static void Go(string scene)
         {
@@ -282,7 +361,69 @@ namespace TumbangPreso.UI
             SelectedMap = Eskinita;
             SelectedMode = GameMode.HeroStrike;
 
+            // ⚠️ THE TUTORIAL IS ALWAYS STANDARD. It teaches the game's own rules, and a player
+            // who left MIRROR selected last night would otherwise be taught tumbang preso by four
+            // copies of one character.
+            SelectedFormat = MatchFormat.Standard;
+
             Go(Eskinita);
+        }
+
+        /// <summary>
+        /// The one way out of a match, and the only one that ends the session as well as the
+        /// scene.
+        ///
+        /// ⚠️⚠️ ⚠️ THE THREE EXITS FROM A MATCH ALL CALLED `Go(MainMenu)` AND NONE OF THEM
+        /// STOPPED THE NETWORK. 🧑 2026-08-29: *"disconnect logic is thoroughly broken. if lobby
+        /// host leaves the game or disconnects all other palyers stay in the game and if they
+        /// leave they go to this screen and have to restart to do shit"*.
+        ///
+        /// `PausePanel`'s QUIT TO MENU, `MatchResult`'s MAIN MENU and `ConvertedMatchResult`'s
+        /// MenuButton were three copies of the same two lines, and `NetworkManager` is
+        /// `DontDestroyOnLoad`. **So a HOST that quit to the menu was still hosting**: its
+        /// transport kept listening, nobody was disconnected, and three players carried on
+        /// playing a match being refereed by a machine sitting on the title screen. And a CLIENT
+        /// that quit was still connected, holding its seat in a lobby it had left.
+        ///
+        /// ⚠️ IT IS ALSO WHY HE COULD NOT HOST AFTERWARDS. A process that never stopped hosting
+        /// cannot start hosting, which is the *"what if i want to host on my lan"* half of the
+        /// same report.
+        ///
+        /// ⚠️ `Stop` IS SAFE OFFLINE AND SAFE TWICE. It guards its shutdown on `IsListening` and
+        /// everything after it is idempotent bookkeeping, so the practice match and the tutorial
+        /// pay nothing for going through here.
+        ///
+        /// ⚠️ AND THE CURSOR AND THE CLOCK ARE PART OF LEAVING, NOT PART OF THE MENU. A match
+        /// captures the pointer and the result board slows time; the two result screens each
+        /// restored them by hand and the pause panel restored only the clock. One exit, one
+        /// answer, and a screen that is entered from anywhere else is unaffected.
+        /// </summary>
+        public static void LeaveMatchToMainMenu()
+        {
+            // ⚠️⚠️ LEAVE RATE BY ROUND IS THE ONE NUMBER IN `FUTURE.md` § 3 THAT NOTHING ELSE IN
+            // THIS PROJECT CAN RECONSTRUCT. A finished match is in the career history and could
+            // be recounted from it; a match somebody walked out of in round two leaves no trace
+            // anywhere, and it is the number that says whether the eight-round Hero Strike set is
+            // too long. It is recorded HERE because this is the single exit: the pause panel, the
+            // results board and both result screens all come through this method, which is the
+            // property that paragraph below was written to protect.
+            //
+            // ⚠️ A ROUND OF 0 MEANS "NOT IN A MATCH", which is the results board and is most of
+            // the traffic through here. The server keeps it as its own bucket rather than as a
+            // leave: the difference between finishing and walking out is the entire question.
+            var match = GameServices.Match;
+            GameServices.Telemetry?.NoteMatchLeft(
+                SelectedMode.ToString(),
+                match != null && match.MatchInProgress ? match.RoundNumber : 0);
+
+            Time.timeScale = 1.0f;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+
+            Net.NetSession.Instance?.Stop();
+
+            Networked = false;
+            Go(MainMenu);
         }
 
         public static void Quit()

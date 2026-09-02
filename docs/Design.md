@@ -1009,6 +1009,7 @@ still applies to it.
 | Tsinelas that cannot be reached where they landed | `Balance.SlipperMaxRestReach` 1.2, `Balance.MaxAirborneTime` |
 | Arena confinement for bodies, not just slippers | `CharacterMotor.Confine` and `CharacterMotor.Teleport` |
 | Pektus curve throw | `Core/Balance.cs`, the `Pektus*` block |
+| **Character Customization & 3-Slot Custom Creator** | **[`docs/FUTURE.md`](FUTURE.md) § 5 and [`docs/TODO.md`](TODO.md) § 107.** Canonical heroes (Berto, etc.) have locked skin tones and identity. Dedicated "Create Your Own Character" slot features 3 save slots (1 active in match) with full facial, skin, height, and accessory options |
 
 **The five kits, for orientation only. The files are the truth.**
 

@@ -248,3 +248,53 @@ did.
 | Magenta slipper / can accents | `PROP_FOAM` brown and Sarsi livery | superseded by the human's own second prop moodboard: *"the magenta stuff is just placeholder"* |
 | 1024² PBR on both props | Flat colour | the pipeline emits no UVs and the stated reference is flat colour |
 | Props at hero scale | Real scale, then the 1.6× slipper for drama | the board had no environment to be out of proportion with |
+
+---
+
+## 8 · Character Customization, Roster Integrity & Skin Tones
+
+### 8.1 Canonical Roster Heroes: Fixed Identity Law
+The twelve Classic street characters (BERTO, MARING, TOTOY, INDAY, KUYA BOY, ATE GIRLIE, TIKBOY, BEBANG, JUN-JUN, LOLA PACING, MANG KANOR, ALING NENA) and the six Hero Strike heroes (DANTE, CHESKA, SEAN, ZACK, NEMU, PHAISTER) have fixed, non-negotiable character art:
+
+⚠️⚠️ **THE SIX HEROES ARE DANTE, CHESKA, SEAN, ZACK, NEMU AND PHAISTER, AND `Berto` IS NOT ONE OF THEM.** `Roster.HeroPeople` is the list. `bayan`, whose display name is BERTO, is the first of the twelve CLASSIC street characters and has no ability kit at all. Five documents and one code table wrote *"heroes (Berto, Sean, Dante, Cheska, Zack, Nemu, Phaister)"* on 2026-08-31 and `HeroLoadoutRules` then shipped ability sidegrades for Berto while omitting Phaister entirely. `HeroLoadoutTests.EveryVariantBelongsToAHeroTheGameActuallyHas` reads `Roster.HeroPeople` directly now, so the table and the roster cannot drift again. `docs/TODO.md` § 108.3.
+
+- **Skin tones, facial features, hair geometry, and eye shapes are canonical and locked.**
+- **No global tint dials or alien hue sliders on classic heroes.** Berto must never be tinted green, cyan, or magenta.
+- **Hero Cosmetics are Outfits Only**: Thematic jackets, alternate streetwear, or tournament jerseys that preserve the hero's identifiable silhouette.
+
+### 8.2 Custom Character Creator: 3-Slot Modular System
+The dedicated "Create Your Own Character" feature (3 save slots, 1 active) allows deep personalization within the authentic Filipino street universe:
+- **Authentic skin tone palette**: **32 warm tones**, from `Porcelain Fair (#FCE7DC)` to
+  `Deep Kalye Bark (#4E240D)`, running through `Golden Bronze (#ECAA6C)`,
+  `Classic Kayumanggi (#C88A52)`, `Sun-Baked Tan (#DC9E64)`, `Warm Chestnut (#8D5B34)` and
+  `Sunlit Peach (#F4C29E)`.
+  ⚠️⚠️ **THE LIST LIVES IN `CustomCharacterRules.SkinToneNames` AND THE HEX IS PART OF THE
+  NAME**, which is why this document names five of them as landmarks rather than transcribing
+  thirty-two. This section said there were five, in a document a reader would reasonably treat
+  as the definition, while the code had thirty-two: **a table copied out of a list is a table
+  that disagrees with the list the first time somebody appends to one of them.**
+  ⚠️ Every one is warm. There is no cyan, magenta or grey in the skin list at all, which is
+  the constraint 🧑 asked for, and it is a property of the authored values rather than of a
+  filter somebody has to remember to apply.
+- **Facial Expressions**: Expressive voxel eyes and mouth decals (chill, determined, fierce, happy, focused).
+- **Body and height scaling**: bound to **85 to 115 per cent**, which is
+  `CustomCharacter.MinHeightPercent` and `MaxHeightPercent`, so hitbox alignment and jump
+  clearances stay competitive.
+  ⚠️ **THIS LINE SAID `0.90x to 1.10x` AND THE CODE SAID 85 TO 115, WHICH IS `CLAUDE.md`
+  § 5's RULE BROKEN**: *a number in the code must match a number here, or one of the two is a
+  bug.* The code is right and the prose was wrong, so the prose moved.
+  `RosterIntegrityTests.TheHeightWindowIsTheOneTheDocumentsQuote` is what stops the next
+  disagreement being found by a player. ⚠️ **It is bounded at all because
+  `CLAUDE.md` § 4 resolves contact by DISTANCE**: reach is the taya's whole job, so an unbounded
+  height dial would be a cosmetic that decides who gets tagged.
+- **Wearable Accessories**: Bound strictly to headwear/eyewear/jewelry envelopes defined in `docs/wearables_catalog.md` without extending into role-indicating color spaces (`#f87020` offense orange or `#0080e8` defense blue).
+
+---
+
+## 9 · UI Icon Suite & Borderless Carved Wood Palette
+
+### 9.1 The Law of No Blue Outlines
+UI icons, badges, rank emblems, and state glyphs must **never** carry dark blue, navy, or cold ink outlines:
+- **No Cold Outlines**: Dark blue strokes (`#040838`) on brown wood panels read as harsh blue rings and clash with the game's warm, sunlit street style.
+- **Warm Wood & Amber Definition**: All shapes, shields, wings, slippers, and cans are defined by tone-on-tone carved wood geometry (`#31190B` deep wood, `#5A2F14` mid wood, `#8B5227` edge wood), cream parchment inlays (`#F5E6C8`), and glowing amber gold (`#FFBA00`).
+- **Escalation**: Ranks escalate in physical frame weight and amber presence from rookie wooden plaque (Bata) to radiant 8-ray sunburst (Alamat).
