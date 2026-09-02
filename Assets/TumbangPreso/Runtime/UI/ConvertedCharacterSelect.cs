@@ -751,60 +751,93 @@ namespace TumbangPreso.UI
             // the player guess it* — **"your two skills" and "build a character" are the answer**,
             // and the pattern is the lobby's own (`LobbyChrome.BuildSkillsRow`: *"a row that states
             // a value UNDER ITS NOUN states a control"*).
-            var button = MenuKit.WoodButton(transform, verb, Vector2.zero, Vector2.zero,
-                                            new Vector2(StageDoorWidth, StageDoorHeight),
-                                            () => { MenuSfx.Click(); onPress(); },
-                                            marker ? "WoodTabLiveButton" : "WoodButton");
-            button.name = name;
+            // ⚠️⚠️⚠️ PAPER, NOT WOOD, AND 🧑 ASKED FOR A DIFFERENT MATERIAL IN THOSE WORDS.
+            // 2026-09-02, with a crop of the two wooden chips: **"can we use a completley diff
+            // style for the buttons"**, *"u figure it out how to do it thank u"*, and of the
+            // loadout board, *"pic 2 looks very ugly too"*.
+            //
+            // ⚠️⚠️ THE FAULT WAS THAT NOTHING ON THAT HALF OF THE SCREEN WAS A DIFFERENT KIND OF
+            // OBJECT FROM ANYTHING ELSE. A wooden chip on a dark stage beside a wooden card is one
+            // material at three values: the card, the doors and the board were all brown slabs
+            // with brown keylines, so the eye had nothing to separate *the thing you are reading*
+            // from *the thing you can press*. That is § 117's complaint (**"everything feels
+            // repetitive bcz i think u use the same code to generate them all"**) arriving on a
+            // screen that had just been rebuilt to answer it.
+            //
+            // ⚠️⚠️ AND PAPER IS THE ANSWER RATHER THAN A NEW STYLE, WHICH MATTERS BECAUSE
+            // `CLAUDE.md` § 6.5 FORBIDS INVENTING ONE. This front end has exactly two materials
+            // and the other one is already built, already photographed and already his:
+            // `PaperCraft` is a pill with a halo, a physical lip, an eased hover and cream paper
+            // instead of a plank. **On a near-black stage a cream chip is the highest-contrast
+            // object in the frame**, which is what a control you are meant to find should be, and
+            // it cannot be confused with the wooden card it stands next to.
+            //
+            // ⚠️ THE PICKER'S OWN CARD STAYS WOOD. That is the thing he asked to keep
+            // (§ 122.4, **"it used to look really good here, maybe it can retain old brownn
+            // color"**) and it is the thing you READ. These are the things you PRESS.
+            var go = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button));
+            go.transform.SetParent(transform, false);
 
-            var rt = (RectTransform)button.transform;
+            PaperSkin.Apply(go, marker ? PaperCraft.Surface.Live : PaperCraft.Surface.Token);
+
+            var button = go.GetComponent<Button>();
+            button.transition = Selectable.Transition.None;
+            button.targetGraphic = go.GetComponent<Image>();
+            button.onClick.AddListener(() => { MenuSfx.Click(); onPress(); });
+
+            var rt = (RectTransform)go.transform;
             rt.anchorMin = new Vector2(1.0f, 0.0f);
             rt.anchorMax = new Vector2(1.0f, 0.0f);
             rt.pivot = new Vector2(1.0f, 0.5f);
             rt.anchoredPosition = new Vector2(-96.0f, 104.0f + lift);
             rt.sizeDelta = new Vector2(StageDoorWidth, StageDoorHeight);
 
-            var label = button.GetComponentInChildren<Text>(true);
-            if (label != null)
-            {
-                // ⚠️ THE VERB TAKES THE TOP BAND AND IS RAISED BY THE CAST SHADOW'S HALF, which is
-                // the same `PaperKit.CentreOnFace` correction one material over: every wooden face
-                // draws its shadow inside its own bottom edge, so a label centred on the RECT is
-                // three units low on the FACE.
-                label.fontSize = TabLabelSize;
-                label.alignment = TextAnchor.LowerCenter;
-                label.rectTransform.anchorMin = new Vector2(0.0f, 0.42f);
-                label.rectTransform.anchorMax = Vector2.one;
-                label.rectTransform.offsetMin = new Vector2(34.0f, 0.0f);
-                label.rectTransform.offsetMax = new Vector2(-34.0f, -6.0f);
-                MenuKit.Fit(label, StageDoorWidth - 68.0f);
-            }
+            // ⚠️⚠️ `Live` FOR LOADOUT AND `Token` FOR THE DOOR, WHICH IS A VALUE INVERSION OF
+            // ABOUT 10:1 AND NOT A HUE. `PaperCraft.Surface.Live` is a wood-dark pill with cream
+            // lettering and `Token` is a warm cream one with ink: the same pair every tab row in
+            // the game uses, and the one difference that survives a photograph in greyscale.
+            // LOADOUT is the one of the two you open repeatedly, so it takes the heavier surface.
+            bool dark = marker;
 
-            var caption = MenuKit.Label(button.transform, says, 15, UiTheme.CreamMuted,
-                Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.UpperCenter);
+            var label = PaperKit.Ink(go.transform, verb, PaperKit.Body, TextAnchor.LowerCenter);
+            label.name = "Label";
+            label.fontStyle = FontStyle.Bold;
+            label.color = dark ? UiTheme.Cream : UiTheme.PaperInk;
+            label.raycastTarget = false;
+            label.rectTransform.anchorMin = new Vector2(0.0f, 0.44f);
+            label.rectTransform.anchorMax = Vector2.one;
+            label.rectTransform.offsetMin = new Vector2(30.0f, 0.0f);
+            label.rectTransform.offsetMax = new Vector2(-30.0f, -4.0f);
+
+            var caption = PaperKit.Ink(go.transform, says, PaperKit.Caption,
+                                       TextAnchor.UpperCenter, soft: true);
             caption.name = "DoorCaption";
+            caption.color = dark ? UiTheme.CreamMuted : UiTheme.PaperInkSoft;
             caption.raycastTarget = false;
-            caption.alignment = TextAnchor.UpperCenter;
             caption.rectTransform.anchorMin = new Vector2(0.0f, 0.0f);
-            caption.rectTransform.anchorMax = new Vector2(1.0f, 0.42f);
-            caption.rectTransform.offsetMin = new Vector2(34.0f, 8.0f);
-            caption.rectTransform.offsetMax = new Vector2(-34.0f, 0.0f);
+            caption.rectTransform.anchorMax = new Vector2(1.0f, 0.44f);
+            caption.rectTransform.offsetMin = new Vector2(30.0f, PaperCraft.Drop);
+            caption.rectTransform.offsetMax = new Vector2(-30.0f, 0.0f);
 
             // ⚠️ THE MARK SITS IN THE LEFT INSET RATHER THAN BESIDE THE WORD, so the verb stays
-            // optically centred on the control whatever it says. A glyph in the text run would
-            // shift the string by half its own width, which is exactly the fault
-            // `LobbyChrome.LiftBack` records about `"‹  BACK"` (*"back still isnt centered"*).
-            var glyph = MenuKit.Label(button.transform, mark, 20,
-                marker ? UiTheme.Amber : UiTheme.Cream,
-                Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleCenter);
+            // optically centred whatever it says. A glyph in the text run shifts the string by
+            // half its own width, which is `LobbyChrome.LiftBack`'s *"back still isnt centered"*.
+            var glyph = PaperKit.Ink(go.transform, mark, PaperKit.Body, TextAnchor.MiddleCenter);
             glyph.name = "DoorMark";
+            glyph.color = marker ? UiTheme.Amber : UiTheme.PaperInkSoft;
             glyph.raycastTarget = false;
-            glyph.alignment = TextAnchor.MiddleCenter;
             glyph.rectTransform.anchorMin = new Vector2(0.0f, 0.0f);
             glyph.rectTransform.anchorMax = new Vector2(0.0f, 1.0f);
             glyph.rectTransform.pivot = new Vector2(0.0f, 0.5f);
-            glyph.rectTransform.sizeDelta = new Vector2(34.0f, 0.0f);
-            glyph.rectTransform.anchoredPosition = new Vector2(8.0f, -3.0f);
+            glyph.rectTransform.sizeDelta = new Vector2(30.0f, 0.0f);
+            glyph.rectTransform.anchoredPosition = new Vector2(10.0f, -(PaperCraft.Drop * 0.5f));
+
+            // ⚠️ `PaperButton` IS THE MOTION AND IT IS THE OTHER HALF OF *"a different style"*.
+            // These lift two units, scale 2.5 per cent and grow their cast shadow under the
+            // pointer, eased in unscaled time (§ 120.1). The wooden set swaps a sprite in one
+            // frame, which is as much motion as a checkbox has.
+            go.AddComponent<PaperButton>();
+            FocusRing.Attach(go, 4.0f);
 
             return button;
         }
@@ -907,9 +940,13 @@ namespace TumbangPreso.UI
             // eating clicks and the block is usually nobody's stated job. This board sits over the
             // model, which is draggable (`ModelPreviewInput`), so without an opaque raycast target
             // a drag started on the board would spin the character behind it.
+            // ⚠️⚠️ PAPER, LIKE THE TWO CHIPS THAT OPEN IT, AND FOR THE REASON `StageDoor`'S NOTE
+            // GIVES AT LENGTH. 🧑 2026-09-02, of the wooden version: *"pic 2 looks very ugly too"*.
+            // A brown board of brown cards on a dark stage beside a brown card is one material at
+            // four values, and nothing in the frame told the eye which of them it could press.
             var plate = go.GetComponent<Image>();
             plate.raycastTarget = true;
-            WoodSkin.Apply(go, WoodCraft.Surface.Panel);
+            PaperSkin.Apply(go, PaperCraft.Surface.Sheet);
 
             var rt = (RectTransform)go.transform;
             rt.anchorMin = new Vector2(1.0f, 0.5f);
@@ -918,7 +955,7 @@ namespace TumbangPreso.UI
             rt.anchoredPosition = new Vector2(-96.0f, 40.0f);
             rt.sizeDelta = new Vector2(BoardWidth, 640.0f);
 
-            var header = MenuKit.Label(go.transform, "LOADOUT", 26, UiTheme.Amber,
+            var header = MenuKit.Label(go.transform, "LOADOUT", PaperKit.Title, UiTheme.PaperInk,
                 new Vector2(0.5f, 1.0f), new Vector2(0.0f, -44.0f),
                 new Vector2(BoardWidth - (BoardPad * 2.0f), 32.0f), TextAnchor.MiddleCenter);
             header.fontStyle = FontStyle.Bold;
@@ -927,7 +964,7 @@ namespace TumbangPreso.UI
             // ⚠️ THE HERO'S NAME IS UNDER THE HEADING BECAUSE A BUILD BELONGS TO ONE. The hub's
             // version needed a stepper to say which hero; this one states it, because the screen
             // behind the board has already chosen.
-            var who = MenuKit.Label(go.transform, HeroDisplayName(heroId), 18, BoardInkSoft,
+            var who = MenuKit.Label(go.transform, HeroDisplayName(heroId), 18, UiTheme.PaperInkSoft,
                 new Vector2(0.5f, 1.0f), new Vector2(0.0f, -74.0f),
                 new Vector2(BoardWidth - (BoardPad * 2.0f), 24.0f), TextAnchor.MiddleCenter);
             who.raycastTarget = false;
@@ -952,7 +989,7 @@ namespace TumbangPreso.UI
                 // CENTRED pivot, so an x of zero on a box the width of the board's content is the
                 // only version of "flush left" that cannot hang off an edge. See
                 // `BuildVariantCard` for the render that made that worth writing down.
-                var caption = MenuKit.Label(go.transform, title, 16, accent,
+                var caption = MenuKit.Label(go.transform, title, 16, UiTheme.PaperInkSoft,
                     new Vector2(0.5f, 1.0f), new Vector2(0.0f, y),
                     new Vector2(BoardWidth - (BoardPad * 2.0f), 22.0f), TextAnchor.MiddleLeft);
                 caption.fontStyle = FontStyle.Bold;
@@ -969,10 +1006,10 @@ namespace TumbangPreso.UI
                 y -= 14.0f;
             }
 
-            var close = MenuKit.WoodButton(go.transform, "CLOSE", new Vector2(0.5f, 0.0f),
-                new Vector2(0.0f, 46.0f), new Vector2(220.0f, 52.0f),
-                () => { MenuSfx.Back(); ToggleLoadoutBoard(false); }, "WoodButton");
-            close.name = "LoadoutClose";
+            var close = PaperKit.Chip(go.transform, "LoadoutClose", "CLOSE");
+            close.onClick.AddListener(() => { MenuSfx.Back(); ToggleLoadoutBoard(false); });
+            MenuKit.Place((RectTransform)close.transform, new Vector2(0.5f, 0.0f),
+                          new Vector2(0.0f, 46.0f), new Vector2(220.0f, 52.0f));
 
             // ⚠️ THE BOARD IS SIZED TO ITS CONTENT, not to a constant. Two slots times two options
             // is fixed today and `HeroLoadoutRules` is a table somebody will add a row to;
@@ -1025,19 +1062,39 @@ namespace TumbangPreso.UI
             rt.anchoredPosition = new Vector2(0.0f, y);
             rt.sizeDelta = new Vector2(width, 98.0f);
 
+            // ⚠️⚠️ THREE STATES, THREE SURFACES, AND NOT ONE OF THEM IS A FILL. `PaperCraft` is a
+            // closed list of roles (`CLAUDE.md` § 6.5) and all three of these already exist:
+            //
+            //   EQUIPPED   `Live`   a wood-dark pill with cream lettering, about 10:1 against the
+            //                       sheet. The one dark object on the board is the one you have.
+            //   AVAILABLE  `Token`  a warm cream plate with a lip and a cast shadow: pressable.
+            //   LOCKED     `Ghost`  two hairlines and almost no fill. **The shape of an absence**,
+            //                       which is what that surface was written for (§ 118.3).
+            //
+            // ⚠️ THE OLD SET WAS THREE `GodotTheme.Box` CALLS WITH DIFFERENT FILLS AND BORDER
+            // WIDTHS, which is the exact failure § 6.5 names: *"a screen of twelve plates that
+            // were all one call with a different fill, and the way that happened is that the fill
+            // was a parameter."* A locked card and an available one differed by two browns and one
+            // pixel of border.
             var plate = card.GetComponent<Image>();
-            plate.sprite = GodotTheme.Box(
-                equipped ? WoodCraft.Lift(RowPlate, 0.05f)
-                         : unlocked ? RowPlate
-                         : UiTheme.WoodDark,
-                equipped ? UiTheme.Amber : unlocked ? RowRim : UiTheme.WoodDeep,
-                equipped ? 2 : 1, 6);
-            plate.type = Image.Type.Sliced;
+            plate.raycastTarget = true;
+            PaperSkin.Apply(card, equipped ? PaperCraft.Surface.Live
+                                : unlocked ? PaperCraft.Surface.Token
+                                : PaperCraft.Surface.Ghost);
 
             var button = card.GetComponent<Button>();
             button.targetGraphic = plate;
             button.transition = Selectable.Transition.None;
             button.onClick.AddListener(() => EquipVariant(heroId, slot, option));
+
+            // ⚠️ A LOCKED CARD IS NOT INTERACTABLE, SO IT DRAWS ITSELF AS UNAVAILABLE AND STILL
+            // TAKES THE PRESS. `PaperButton.Available` returns true for a `Live` surface only, so
+            // the equipped card keeps its lit plate; a `Ghost` goes to `Pose.Off` and stops
+            // lifting under the pointer, which is the honest read. **The listener stays wired**
+            // because `EquipVariant` is what plays the refusal, and a control that answers with
+            // silence is § 108's dead EQUIP button.
+            card.AddComponent<PaperButton>();
+            FocusRing.Attach(card, 3.0f);
 
             // ⚠️⚠️⚠️ EVERY BOX ON THIS CARD IS CENTRE-ANCHORED AND POSITIONED FROM THE CARD'S OWN
             // MIDDLE, AND `Logs/shots-runtime/CharacterLoadout-v66.png` IS WHY IT HAS TO BE SAID.
@@ -1063,8 +1120,15 @@ namespace TumbangPreso.UI
 
             float nameWidth = width - (pad * 2.0f) - badgeWidth - 10.0f;
 
+            // ⚠️ CREAM ON THE EQUIPPED CARD BECAUSE ITS PLATE IS WOOD-DARK, ink on the other
+            // two. `PaperButton._live`'s note is the receipt: ink on `WoodMid` measures 1.3:1 and
+            // is the lobby ROOM CODE fault. Type inverts when its ground does.
+            Color cardInk = equipped ? UiTheme.Cream
+                : unlocked ? UiTheme.PaperInk
+                : UiTheme.PaperInkSoft;
+
             var name = MenuKit.Label(card.transform, option.Name, MenuKit.MinReadableUnits,
-                unlocked ? accent : BoardInkSoft,
+                unlocked ? cardInk : UiTheme.PaperInkSoft,
                 new Vector2(0.5f, 0.5f),
                 new Vector2(-(width * 0.5f) + pad + (nameWidth * 0.5f), 32.0f),
                 new Vector2(nameWidth, 24.0f), TextAnchor.MiddleLeft);
@@ -1077,7 +1141,7 @@ namespace TumbangPreso.UI
                 : progress + " / " + option.ChallengeTarget;
 
             var state = MenuKit.Label(card.transform, badge, 14,
-                equipped ? UiTheme.Amber : BoardInkSoft,
+                equipped ? UiTheme.Amber : UiTheme.PaperInkSoft,
                 new Vector2(0.5f, 0.5f),
                 new Vector2((width * 0.5f) - pad - (badgeWidth * 0.5f), 32.0f),
                 new Vector2(badgeWidth, 24.0f), TextAnchor.MiddleRight);
@@ -1091,7 +1155,7 @@ namespace TumbangPreso.UI
             // rows: two unrelated facts in one wrapped paragraph inside a 61-unit box.
             var body = MenuKit.Label(card.transform,
                 unlocked ? option.Description : option.Challenge, 16,
-                unlocked ? BoardInk : BoardInkSoft,
+                unlocked ? cardInk : UiTheme.PaperInkSoft,
                 new Vector2(0.5f, 0.5f), new Vector2(0.0f, 0.0f),
                 new Vector2(width - (pad * 2.0f), 36.0f), TextAnchor.UpperLeft);
             body.alignment = TextAnchor.UpperLeft;
@@ -1105,7 +1169,8 @@ namespace TumbangPreso.UI
             if (!unlocked || option.IsDefault) return;
 
             var trade = MenuKit.Label(card.transform,
-                option.GainLabel + "   ·   " + option.CostLabel, 14, accent,
+                option.GainLabel + "   ·   " + option.CostLabel, 14,
+                equipped ? UiTheme.Amber : accent,
                 new Vector2(0.5f, 0.5f), new Vector2(0.0f, -32.0f),
                 new Vector2(width - (pad * 2.0f), 20.0f), TextAnchor.MiddleLeft);
             trade.alignment = TextAnchor.MiddleLeft;

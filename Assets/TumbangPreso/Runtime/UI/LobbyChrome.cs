@@ -1473,20 +1473,20 @@ namespace TumbangPreso.UI
             // `TS5U`, because a 16-unit caption inset 24 from the bottom and a 44-unit value inset
             // 26 from the top overlap by 12 units on a 62-unit plate. **Two labels overlapping is
             // silent in every direction**, which is § 102.4's fault rotated 90 degrees.
-            caption.rectTransform.anchorMin = new Vector2(0.0f, 0.58f);
+            caption.rectTransform.anchorMin = new Vector2(0.0f, 0.60f);
             caption.rectTransform.anchorMax = new Vector2(1.0f, 1.0f);
             caption.rectTransform.offsetMin = new Vector2(PaperKit.Pad, 0.0f);
-            caption.rectTransform.offsetMax = new Vector2(-PaperKit.Pad, -8.0f);
+            caption.rectTransform.offsetMax = new Vector2(-PaperKit.Pad, -7.0f);
 
             var hint = MenuKit.Label(go.transform, "tap to copy", PaperKit.Caption,
                                      UiTheme.CreamMuted, Vector2.zero, Vector2.zero,
                                      Vector2.zero, TextAnchor.UpperRight);
             hint.name = "RoomCodeHint";
             hint.raycastTarget = false;
-            hint.rectTransform.anchorMin = new Vector2(0.0f, 0.58f);
+            hint.rectTransform.anchorMin = new Vector2(0.0f, 0.60f);
             hint.rectTransform.anchorMax = new Vector2(1.0f, 1.0f);
             hint.rectTransform.offsetMin = new Vector2(PaperKit.Pad, 0.0f);
-            hint.rectTransform.offsetMax = new Vector2(-PaperKit.Pad, -8.0f);
+            hint.rectTransform.offsetMax = new Vector2(-PaperKit.Pad, -7.0f);
 
             // ⚠️⚠️ CENTRED, BECAUSE THE CODE IS THE ONE FACT ON THIS PLATE AND IT WAS SITTING IN
             // THE CORNER OF IT. 🧑, with a crop of exactly this plaque: **"pic 1 can be improve"**.
@@ -1495,9 +1495,23 @@ namespace TumbangPreso.UI
             // three strings, three corners, and the middle of the object empty. The caption and
             // the hint keep the top band's two ends, which is what makes them read as labels ON
             // the sign rather than as competitors with it.
+            // ⚠️⚠️⚠️ `MiddleCenter`, NOT `LowerCenter`, AND THAT ONE WORD IS WHAT
+            // 🧑 PHOTOGRAPHED. 2026-09-02, with a crop of this plaque: **"make this botton look
+            // prettier MN26 is so close to the bottom of box even tho theres a lot of space at
+            // top"**. He is describing the anchor exactly: the code was drawn against the BOTTOM
+            // of its own band, so it sat on the plate's inner edge with every spare unit of the
+            // band stacked above it as a gap. **A value pinned to one edge of its box puts all of
+            // its slack on the other edge**, and the slack here is the difference between a
+            // 44-unit `Display` glyph and a 29-unit band.
+            //
+            // ⚠️ AND THE BAND MOVED WITH IT. 0.60 rather than 0.58 lifts the code's box two
+            // per cent, which is what puts its optical centre in the middle of the FACE rather
+            // than in the middle of the RECT: the plate draws its cast shadow inside its own
+            // bottom `PaperCraft.Drop` units, so the two are three units apart. That is the same
+            // correction `PaperKit.CentreOnFace` makes for every chip in the game.
             var label = MenuKit.Label(go.transform, "", PaperKit.Display, UiTheme.Cream,
                                       Vector2.zero, Vector2.zero, Vector2.zero,
-                                      TextAnchor.LowerCenter);
+                                      TextAnchor.MiddleCenter);
             // ⚠️⚠️ IT IS CALLED `Label`, AND THE NAME IS WIRING RATHER THAN A DESCRIPTION.
             // `PaperButton` looks for a child called `Label` and falls back to the FIRST `Text`
             // under the control; on this plate that fallback is `RoomCodeCaption`, so the
@@ -1508,9 +1522,10 @@ namespace TumbangPreso.UI
             label.name = "Label";
             label.fontStyle = FontStyle.Bold;
             label.raycastTarget = false;
+            label.alignment = TextAnchor.MiddleCenter;
             label.rectTransform.anchorMin = new Vector2(0.0f, 0.0f);
-            label.rectTransform.anchorMax = new Vector2(1.0f, 0.58f);
-            label.rectTransform.offsetMin = new Vector2(PaperKit.Pad, PaperCraft.Drop + 2.0f);
+            label.rectTransform.anchorMax = new Vector2(1.0f, 0.60f);
+            label.rectTransform.offsetMin = new Vector2(PaperKit.Pad, PaperCraft.Drop);
             label.rectTransform.offsetMax = new Vector2(-PaperKit.Pad, 0.0f);
 
             go.AddComponent<PaperButton>();

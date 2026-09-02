@@ -48,7 +48,17 @@ namespace TumbangPreso.UI
         /// (4:3) and about 26 on his window. There is no shape where this column squeezes the
         /// form or eats the picture.
         /// </summary>
-        private const float ColumnUnits = 560.0f;
+        private const float ColumnUnits = 660.0f;
+
+        /// <summary>
+        /// How far the column runs off the left edge of the window.
+        ///
+        /// ⚠️ IT IS THE CARD'S OWN HALO PLUS ITS CORNER RADIUS, so the only thing cut off the
+        /// screen is the die-cut edge nobody can see anyway. `PaperCraft` cuts every sheet at 18
+        /// units and draws a halo outside that; bleeding 40 puts both past the window and leaves
+        /// the column reading as a board the screen stands on rather than as a card near a corner.
+        /// </summary>
+        private const float ColumnBleed = 40.0f;
 
         /// <summary>
         /// The card's height BEFORE it is measured, and it is only ever a starting value.
@@ -348,10 +358,27 @@ namespace TumbangPreso.UI
             var side = new GameObject("ArtSide", typeof(RectTransform));
             side.transform.SetParent(_root.transform, false);
 
+            // ⚠️⚠️⚠️ THE ART'S FRAME ENDS WHERE THE COLUMN STARTS AGAIN, AND `CLAUDE.md` § 6.2c
+            // QUESTION 2 IS THE WHOLE OF WHY. *"Is this image fitted to the region it is SEEN in,
+            // or to the whole screen?"* The note above is correct about a FLOATING card — the
+            // region really was the whole canvas then, because the picture continued behind it.
+            // 🧑 asked for a full-height column bled off the left edge on 2026-09-02 (**"can u use
+            // the whole space like this? for left?"**), so **the argument that made a full-bleed
+            // fit safe is false again**: a third of the picture is now behind an opaque board.
+            //
+            // ⚠️⚠️ AND THIS IS EXACTLY THE FAULT § 100 RECORDS, WHICH IS WHY IT IS WORTH THE FOUR
+            // LINES. That entry: *"the key art enveloped the full canvas and the column then
+            // covered a third of it, so the crop was computed for a frame that does not exist and
+            // the cast came out off-centre with its heads cut off."* The mask is inset by the
+            // column's visible width, so the envelope is computed against the strip a player can
+            // actually see and the cast is centred in it.
+            //
+            // ⚠️ THE INSET IS THE COLUMN'S VISIBLE WIDTH, not `ColumnUnits`. The board runs
+            // `ColumnBleed` off the left edge, so what covers the window is the difference.
             var sideRt = (RectTransform)side.transform;
             sideRt.anchorMin = Vector2.zero;
             sideRt.anchorMax = Vector2.one;
-            sideRt.offsetMin = Vector2.zero;
+            sideRt.offsetMin = new Vector2(ColumnUnits - ColumnBleed, 0.0f);
             sideRt.offsetMax = Vector2.zero;
             side.AddComponent<RectMask2D>();
 
@@ -417,12 +444,40 @@ namespace TumbangPreso.UI
             // `CardHeight` is that plus one margin either side. `CLAUDE.md` § 6.2c question 1: a
             // percentage of the window is not a size, and `AspectSafeCanvas` scales on the SHORT
             // axis, so one fraction is two different widths at two aspect ratios.
+            // ⚠️⚠️⚠️ IT IS A FULL-HEIGHT COLUMN BLED OFF THE LEFT EDGE AGAIN, ON HIS
+            // INSTRUCTION AND WITH HIS OWN PICTURE OF IT. 🧑 2026-09-02: **"can u use the whole
+            // space like this? for left?"**, attached to a capture of the pre-paper login: a
+            // column running the full height of the window, running off the left edge, with the
+            // key art filling everything to the right of it.
+            //
+            // ⚠⚠ THAT SETTLES `docs/TODO.md` § 121.4, WHICH WAS LEFT OPEN ON PURPOSE BECAUSE
+            // NOBODY COULD SETTLE IT. His words then were *"ugly ass empty space here"*, *"cant u
+            // js use the left side as space like"*, **"like use this whole space for login"**, and
+            // § 121.11 recorded why it was not acted on: *"the two readings of 'use this whole
+            // space' (a wider floating card, or a full-height panel bled off the left edge) produce
+            // different screens and different key-art crops."* **He has now drawn the one he
+            // means.**
+            //
+            // ⚠⚠ AND IT REVERSES § 100, WHICH IS A WHOLE PASS SPENT GOING THE OTHER WAY, SO READ
+            // THAT ENTRY BEFORE UNDOING THIS. It cut the column from 38 per cent of the window to
+            // *"580 units, which is the form plus one margin either side"*, because 860 units of
+            // wood around a 420-unit form was swallowing the key art. **The reversal is his and the
+            // fault § 100 fixed is still real**, which is why the number below is not a fraction:
+            // `ColumnUnits` is a unit width measured against the FORM, and `AspectSafeCanvas`
+            // scales on the short axis, so a percentage here would be two very different widths at
+            // two aspect ratios (§ 6.2c question 1).
+            //
+            // ⚠️ THE BLEED IS 40 UNITS AND ONLY ON THE LEFT. The card's own halo and its 18-unit
+            // corner radius are cut off the window edge, so the column reads as a board the screen
+            // is standing on rather than as a card that happens to be near the corner; the RIGHT
+            // edge keeps its cut, because that is the edge the player actually sees.
             var rt = (RectTransform)columnGo.transform;
-            rt.anchorMin = new Vector2(0.0f, 0.5f);
-            rt.anchorMax = new Vector2(0.0f, 0.5f);
+            rt.anchorMin = new Vector2(0.0f, 0.0f);
+            rt.anchorMax = new Vector2(0.0f, 1.0f);
             rt.pivot = new Vector2(0.0f, 0.5f);
-            rt.anchoredPosition = new Vector2(CardMargin, 0.0f);
-            rt.sizeDelta = new Vector2(ColumnUnits, CardHeight);
+            rt.anchoredPosition = new Vector2(-ColumnBleed, 0.0f);
+            rt.offsetMin = new Vector2(-ColumnBleed, -ColumnBleed);
+            rt.offsetMax = new Vector2(ColumnUnits - ColumnBleed, ColumnBleed);
 
             // ⚠⚠ THE COLUMN IS A PLANK NOW AND IT WAS A FLAT FILL WITH A NINE-PATCH ON IT.
             // 🧑 2026-09-01: *"our UI is ugly and repetitive and unimaginative"*. `UiMaterials`
@@ -731,10 +786,25 @@ namespace TumbangPreso.UI
             // **So take the span, and put the card's centre where the content's centre is.** The
             // two margins are then equal by construction, at any content, in every state, which is
             // the whole reason this is arithmetic rather than a tuned number.
+            // ⚠️⚠️⚠️ THE CARD'S HEIGHT IS THE WINDOW'S NOW, SO ONLY THE CONTENT MOVES. The column
+            // is a full-height board bled off the left edge (see `BuildColumn` and 🧑's picture),
+            // which means its rect is STRETCHED vertically: on a stretched rect `sizeDelta.y` is
+            // an INSET from the parent's edges rather than a height, so the line this replaces
+            // would have written a 900 into a field that means "900 units taller than the screen
+            // on each side" and the column would have run a long way past both edges.
+            //
+            // **What survives is the half that was always the point**: the content block is
+            // centred on the column rather than pinned to its top, so the air above the wordmark
+            // and the air under the last button are equal by construction, at any content, in
+            // every state. `CardMarginY` no longer decides anything, because a full-height board
+            // has as much margin as the window gives it.
             float centreY = (top + bottom) * 0.5f;
 
-            card.sizeDelta = new Vector2(card.sizeDelta.x, (top - bottom) + (CardMarginY * 2.0f));
-            card.anchoredPosition = new Vector2(card.anchoredPosition.x, centreY);
+            for (int i = 0; i < col.childCount; i++)
+            {
+                if (col.GetChild(i) is not RectTransform child) continue;
+                child.anchoredPosition -= new Vector2(0.0f, centreY);
+            }
         }
 
         /// <summary>
@@ -888,88 +958,33 @@ namespace TumbangPreso.UI
             // `docs/VISION.md` § 6 and `CLAUDE.md` § 6.4: do not repaint his art. Every previous
             // version of this method tinted the file two or three times; this one draws it at
             // `Color.white`, which is the file.
-            var plaque = new GameObject("LogoPlaque", typeof(RectTransform), typeof(Image));
-            plaque.transform.SetParent(col, false);
-            MenuKit.Place((RectTransform)plaque.transform, Centre,
-                new Vector2(0.0f, y), new Vector2(LogoPlaqueWidth, LogoPlaqueHeight));
-
-            // ⚠️⚠️ `Plaque` AND NOT `Sign`, ON REQUEST, AND THE THREE MESSAGES ARE IN THAT
-            // SURFACE'S OWN NOTE. 🧑 2026-09-02, with a crop of exactly this object: **"can u add
-            // a pretty outline for this too"**, *"one that reads as wooden frame or some shit?"*,
-            // **"can u give it a wooden texture too the tump box"**. `Surface.Sign` is a flat
-            // wood-dark plate with a lit top lip, which is correct for the lobby's ROOM CODE and
-            // is a rectangle of brown under the game's name.
+            // ⚠️⚠️⚠️ THE PLAQUE IS DELETED AND THE MARK IS PRINTED STRAIGHT ON THE COLUMN. 🧑
+            // 2026-09-02, with a 6x crop of it: **"this looks very ugly i dont get why tump is in
+            // a box"**.
             //
-            // ⚠️ THE INSET DOES NOT CHANGE AND THAT IS DELIBERATE. `LogoInset` is 22 and the frame
-            // band is about 16 at this height (`PaperCraft.FrameBand`), so the mark clears the
-            // moulding by six units on every side without `LogoMarkWidth` moving. **Growing the
-            // inset to "make room" would have shrunk the wordmark**, which is the exact fault
-            // § 121.2c spent a pass undoing: the mark occupied 51 per cent of its own sign and the
-            // rest was bare brown.
-            PaperSkin.Apply(plaque, PaperCraft.Surface.Plaque);
-            plaque.GetComponent<Image>().raycastTarget = false;
-
-            // ⚠️ THE FITTER'S BOX IS INSET FROM THE PLAQUE AND RAISED BY `PaperCraft.Drop`, which
-            // is the same correction `PaperKit.CentreOnFace` makes for lettering and for the same
-            // reason: the plaque draws its cast shadow inside its own bottom six units, so a mark
-            // centred on the RECT is three units low on the FACE. `FitInParent` measures against
-            // the parent, so the inset has to be a real rect and not an offset on the image.
+            // ⚠️⚠️ HIS QUESTION IS THE ARGUMENT AND IT IS THE ONE NOBODY ASKED. Three passes tuned
+            // that box (`Surface.Sign`, then § 121.2c's sizing, then § 122.3's carved frame and
+            // asphalt field) and not one of them asked what the box was FOR. **It was scaffolding
+            // for a problem that had already been solved twice over**: it existed because a
+            // `RawImage` tint MULTIPLIES, so `TUMP.png` tinted dark went muddy, and the answer was
+            // to give it a dark ground and stop tinting it. The mark is drawn at `Color.white`
+            // now — it has been since that pass — and **the asset carries its own dark outline and
+            // its own drop shadow baked in**, so on the cream column it already has everything a
+            // ground was being asked to provide.
+            //
+            // ⚠️⚠️ AND THE BOX WAS COSTING THE THING IT WAS MEANT TO HELP. § 121.2c measured the
+            // mark at **51 per cent of its own sign** and grew it to 336 units by deleting empty
+            // wood; § 122.3 then put a 16-unit frame back round it. A logo with a frame drawn
+            // round it is a logo somebody was not confident in. **The column is the ground.**
+            //
+            // ⚠️ `LogoPlaqueWidth` AND `LogoPlaqueHeight` ARE KEPT AND STILL SIZE THE SLOT, so the
+            // mark is exactly the width it was and the gap under it is still the 36 units he asked
+            // for in § 119.10 (*"this part looks too tight"*). Only the Image is gone.
             var box = new GameObject("LogoBox", typeof(RectTransform));
-            box.transform.SetParent(plaque.transform, false);
-            MenuKit.Stretch((RectTransform)box.transform, -LogoInset);
-            ((RectTransform)box.transform).offsetMin =
-                new Vector2(LogoInset, LogoInset + PaperCraft.Drop);
+            box.transform.SetParent(col, false);
+            MenuKit.Place((RectTransform)box.transform, Centre,
+                new Vector2(0.0f, y), new Vector2(LogoMarkWidth, LogoMarkWidth / LogoAspect));
 
-            // ⚠️⚠️⚠️ THE WORDMARK IS CARVED INTO THE PLANK RATHER THAN LAID ON IT, ON REQUEST.
-            // 🧑 2026-09-01: *"it would look better if tump looked engraved into the wood like
-            // color as opposed to just floating"*. He is right about the read: the asset is white
-            // letters and the column is `WoodCraft` wood, so the game's name was the brightest
-            // object on the screen and belonged to no surface. A carved sign is also what the
-            // rest of this front end now claims to be made of.
-            //
-            // ⚠️⚠️⚠️ TWO COPIES, NOT THREE, AND THE THIRD ONE IS WHY THE FIRST ATTEMPT WAS MUD.
-            // 🧑, on that attempt: *"make this look stamped/engraved/ better, it doesnt look
-            // great right now"*. **The asset is not a silhouette.** `TUMP.png` is cream painted
-            // letters that already carry a dark ink outline AND a grey drop shadow baked into the
-            // file, so a uniform tint colours all three at once: the first version drew a dark
-            // copy, a light copy and a face copy of a texture that is itself three things, which
-            // is nine layers of edge in a 90-unit-tall word. It read as a brown blob with a halo.
-            //
-            // **So: one groove and one face.**
-            //
-            //   1. a copy tinted INK, three units UP -> the shadowed near wall of the cut. The
-            //      asset's own baked outline is doing the right job here for once: tinted to ink
-            //      it IS the wall.
-            //   2. the face, dead centre, in a PALE WARM WOOD rather than a dark one.
-            //
-            // ⚠️⚠️ THE FACE IS LIGHTER THAN THE PLANK AND NOT DARKER, WHICH IS THE ONE PLACE THIS
-            // DEPARTS FROM A TEXTBOOK ENGRAVE. A groove cut in wood and left bare is darker than
-            // the board, and at this size that is an unreadable game name on the first screen a
-            // player ever sees. A groove cut and then PAINTED is what every sari-sari sign in the
-            // country actually is, and it is lighter. `VISION.md` opens on a street game; the sign
-            // is the thing that survives the rain.
-            //
-            // ⚠️ THREE UNITS AND NOT TWO. The wordmark draws about 90 units tall, and at two the
-            // groove was inside the asset's own baked outline and invisible.
-            //
-            // ⚠️⚠️ AND THIS IS A TREATMENT, NOT A REPAINT OF HIS ART. `CLAUDE.md` § 6.4 forbids
-            // repainting authored art and 🧑 asked for this one directly, which is what that rule
-            // defers to. The FILE is untouched and the title screen still draws it white; only
-            // this screen tints its own three copies.
-            // ⚠️⚠️ THE WORDMARK IS PRINTED ON THE CARD NOW, NOT CARVED INTO WOOD. The carve
-            // was two copies of the mark, a dark groove offset three units up under a pale face,
-            // and it was tuned against `UiTheme.WoodPanelFace`: on cream the pale face is lighter
-            // than the card it sits on and the whole word disappears. 🧑 asked for the carve by
-            // name on the wooden column (`docs/TODO.md` § 117.10) and that column is gone; what
-            // survives the material change is the SHADOW, which is what makes a printed mark sit
-            // on paper rather than float over it.
-            //
-            // ⚠️ THE PNG IS UNTOUCHED. `VISION.md` § 6: his art is the design system. This tints
-            // a `RawImage`, which is a treatment applied to the file, not an edit of it.
-            // ⚠️⚠️ ONE LAYER, AT `Color.white`. The shadow copy went with the tint: it existed to
-            // make a flat ink silhouette sit ON the cream rather than float over it, and the
-            // plaque's own cast shadow does that job for the whole block now. Two marks three
-            // units apart, both dark, on a dark ground, would be a blur.
             var image = Engraved(box.transform, logo, "Logo", 0.0f, Color.white);
             image.raycastTarget = false;
         }

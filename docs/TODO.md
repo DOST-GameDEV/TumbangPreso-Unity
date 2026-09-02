@@ -2642,6 +2642,105 @@ now because three methods were asking the same question.
 
 ---
 
+### 122.15 The login uses the whole left side, and the wordmark comes out of its box
+
+🧑 2026-09-02, with a capture of the pre-paper login attached: **"can u use the whole space like
+this? for left?"** And, with a 6x crop of the plaque: **"this looks very ugly i dont get why tump
+is in a box"**.
+
+⚠️⚠️ **THE FIRST SETTLES § 121.4, WHICH WAS LEFT OPEN BECAUSE NOBODY COULD SETTLE IT.** His words
+then were *"ugly ass empty space here"*, *"cant u js use the left side as space like"*, **"like use
+this whole space for login"**, and § 121.11 recorded why it was not acted on: *"the two readings of
+'use this whole space' (a wider floating card, or a full-height panel bled off the left edge)
+produce different screens and different key-art crops."* **He has drawn the one he means.**
+
+⚠️⚠️ **AND IT REVERSES § 100, WHICH IS A WHOLE PASS SPENT GOING THE OTHER WAY.** That entry cut the
+column from 38 per cent of the window to *"580 units, which is the form plus one margin either
+side"*. **The reversal is his and the fault § 100 fixed is still real**, which is why `ColumnUnits`
+is 660 units rather than a percentage: `AspectSafeCanvas` scales on the short axis, so a fraction
+is two different widths at two aspect ratios (§ 6.2c question 1).
+
+- ⚠️ **The bleed is 40 units and only on the left**: the card's halo and its 18-unit corner radius
+  go off the window, so the column reads as a board the screen stands on. The right edge keeps its
+  cut, because that is the edge a player sees.
+- ⚠️⚠️ **`FitCardToContent` STOPPED WRITING A HEIGHT AND THAT WAS NOT OPTIONAL.** The column's rect
+  is stretched vertically now, and **on a stretched rect `sizeDelta.y` is an INSET from the
+  parent's edges rather than a height**: the old line would have written 900 into a field meaning
+  "900 units past the screen on each side". What survives is the half that was always the point,
+  which is that the content block is centred on the column so the two margins are equal at any
+  content in every state.
+- ⚠️⚠️ **AND THE KEY ART IS RE-FITTED IN THE SAME COMMIT, WHICH IS EXACTLY § 100'S OWN FAULT.**
+  That entry: *"the key art enveloped the full canvas and the column then covered a third of it,
+  so the crop was computed for a frame that does not exist and the cast came out off-centre with
+  its heads cut off."* `BuildKeyArt`'s full-bleed note was correct about a FLOATING card and is
+  false again the moment the card is a wall. The mask is inset by the column's visible width.
+
+**The plaque is deleted.** ⚠️⚠️ **His question is the argument and it is the one nobody asked.**
+Three passes tuned that box (`Surface.Sign`, § 121.2c's sizing, § 122.3's carved frame and asphalt
+field) and not one asked what it was FOR. **It was scaffolding for a problem solved twice over**:
+it existed because a `RawImage` tint MULTIPLIES, so `TUMP.png` tinted dark went muddy, and the
+answer was to stop tinting it. The mark draws at `Color.white` and **carries its own dark outline
+and its own drop shadow baked in**, so on the cream column it already has what a ground was being
+asked to provide. ⚠️ § 121.2c measured the mark at **51 per cent of its own sign** and grew it by
+deleting empty wood; § 122.3 then put a 16-unit frame back round it. **A logo with a frame drawn
+round it is a logo somebody was not confident in.**
+
+---
+
+### 122.16 The room code sat on the bottom of its own plate
+
+🧑: **"make this botton look prettier MN26 is so close to the bottom of box even tho theres a lot
+of space at top"**.
+
+⚠️ **He is describing the anchor exactly.** The value was `TextAnchor.LowerCenter` inside a band
+that is taller than a `PaperKit.Display` glyph, so it drew against the bottom of its box and every
+spare unit stacked above it as a gap. **A value pinned to one edge of its box puts all of its slack
+on the other edge.** It is `MiddleCenter` now, and the band moved from 0.58 to 0.60, which puts its
+optical centre in the middle of the FACE rather than of the RECT — the plate draws its cast shadow
+inside its own bottom `PaperCraft.Drop` units, so the two are three units apart. Same correction
+`PaperKit.CentreOnFace` makes for every chip in the game.
+
+---
+
+### 122.17 ⚠️⚠️ THE PICKER'S CONTROLS ARE PAPER ON A DARK STAGE, WHICH IS THE "COMPLETELY DIFFERENT STYLE" HE ASKED FOR
+
+🧑 2026-09-02, with a crop of the two stage doors and one of the loadout board: **"can we use a
+completley diff style for the buttons"**, *"u figure it out how to do it thank u"*, *"pic 2 looks
+very ugly too"*.
+
+⚠️⚠️ **THE FAULT WAS THAT NOTHING ON THAT HALF OF THE SCREEN WAS A DIFFERENT KIND OF OBJECT FROM
+ANYTHING ELSE.** § 122.4 put the picker back in wood, and the doors and the board were then built
+in wood too: the card, the chips, the board and its four cards were all brown slabs with brown
+keylines at four values, so **the eye had nothing separating *the thing you read* from *the thing
+you press*.** That is § 117's complaint (**"everything feels repetitive bcz i think u use the same
+code to generate them all"**) arriving on a screen that had just been rebuilt to answer it.
+
+⚠️⚠️ **AND PAPER IS THE ANSWER RATHER THAN A NEW STYLE, WHICH MATTERS BECAUSE § 6.5 FORBIDS
+INVENTING ONE.** This front end has exactly two materials and the other one is built, photographed
+and his: a pill with a halo, a physical lip, an eased hover and cream paper instead of a plank.
+**On a near-black stage a cream chip is the highest-contrast object in the frame**, which is what a
+control meant to be found should be, and it cannot be confused with the wooden card beside it.
+
+| | Surface | Type |
+|---|---|---|
+| **LOADOUT** chip | `Live`, a wood-dark pill | cream, amber ◆ |
+| **MAKE YOUR OWN** chip | `Token`, a warm cream pill | ink, soft › |
+| The board | `Sheet` | ink |
+| A card, EQUIPPED | `Live` | cream, amber EQUIPPED |
+| A card, AVAILABLE | `Token` | ink |
+| A card, LOCKED | `Ghost`, two hairlines and almost no fill | soft ink, and its count |
+
+⚠️ **NOT ONE OF THOSE IS A FILL.** The old set was three `GodotTheme.Box` calls with different
+fills and border widths, which is the failure § 6.5 names by name: *"a screen of twelve plates that
+were all one call with a different fill, and the way that happened is that the fill was a
+parameter."* A locked card and an available one differed by two browns and one pixel of border.
+⚠️ `Ghost` is **the shape of an absence** and is what § 118.3 wrote it for.
+
+⚠️ **The picker's own card stays wood**, because that is the thing he asked to keep (§ 122.4) and
+it is the thing you READ. These are the things you PRESS.
+
+---
+
 ### 122.8 What is NOT done
 
 - ⚠️ **The chat still does not work and is still not diagnosed.** § 121.11 is unchanged and reading
