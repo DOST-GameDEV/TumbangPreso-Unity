@@ -681,16 +681,27 @@ dotnet test Core.Tests/TumbangPreso.Core.Tests.csproj
 "/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -projectPath . -testPlatform PlayMode -testCategory "!WallClock;!ThumbFloor" -testResults Logs/play.xml -logFile Logs/play.log
 ```
 
-⚠️⚠️ **`!ThumbFloor` IS THE SECOND EXCLUSION AND IT IS A KNOWN GAP, NOT A FLAKE.**
+⚠️⚠️ **`!ThumbFloor` IS THE SECOND EXCLUSION AND IT IS A SHRINKING GAP RATHER THAN A FLAKE.**
 `InputSurfaceProbe.TheFrontEndMeetsTheThumbFloor` measures every menu control against the
-144-unit touch target floor and **1582 measurements across 12 shapes are currently under it**,
-because the front end was authored for a mouse: settings rows sit about 34 units apart and the
-main menu's pennants about 60. `ScreenFocus` pads a hit area only as far as its neighbours allow,
-so the shortfall is real and cannot be padded away. **Fixing it is a layout pass on the converted
-screens** (`docs/TODO.md` § 125.13), not input work. It is excluded rather than deleted because a
-known gap with no test is a gap that gets forgotten, and it is excluded rather than left failing
-because a permanently red test teaches people to skim results exactly as a falsely green one does.
-Run it on purpose with `-testCategory "ThumbFloor"`; the failure message is the worklist.
+144-unit touch target floor. It read **1519 measurements under it across 12 shapes** until
+2026-09-03 and reads **50** now, all near misses (`docs/TODO.md` § 126.2 and § 126.12).
+
+⚠️⚠️ **THE CAUSE WAS NOT "NOT ENOUGH PADDING", IT WAS "NOWHERE TO PAD INTO", AND EVERY ONE OF THE
+1519 SAID SO.** Each reported a size exactly equal to the control's own artwork, which means the
+pad had grown by ZERO units: `ScreenFocus.ApplyTouchTargets` takes half the gap to a neighbour and
+these rows are stacked with no gap at all. `ScreenFocus.MakeRoomForThumbs` now raises the layout
+row a group actually owns, forces a rebuild, and pads after, so the growth has somewhere to go.
+⚠️ **The half that matters is that `EveryScreenHasAFocusPathAndReachableTouchTargets` still
+passes**: that is the check that a press at a control's centre lands on that control, and it is
+what caught the padding bug in § 125.4. Making forty rows taller stole no presses.
+
+⚠️⚠️ **RUN IT ALONE.** `InputSurfaceProbe` loads every scene in the build settings and opens every
+overlay it can discover, so it is the most destructive fixture in the suite: in a twelve-suite run
+it took most of the group down with it and the numbers were meaningless. See § 126.8.
+
+Run it on purpose with `-testCategory "ThumbFloor"`; the failure message is the worklist, and
+`Logs/input-surface.txt` carries the whole sweep including the scrollbars it exempts and any note
+that the camera was replaced part way through, which means fewer shapes were measured.
 
 ⚠️⚠️ **`-testCategory "!WallClock"` IS PART OF THE COMMAND, NOT AN OPTIMISATION.**
 `AiDiagnosticProbe` runs a round at 1x for about 80 real seconds by design, so its result depends

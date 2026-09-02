@@ -1295,8 +1295,16 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 does not.** A 4-player game with 30 concurrent players has a queue problem that no amount of
 ranked polish fixes, and the fastest way to make a competitive game feel dead is an empty queue.
 
-- **Difficulty tiers for bots**, exposed in Practice and in custom games. `AIController` exists and
-  the bots already press the same buttons a human does, so this is tuning, not architecture.
+- ✅ **Difficulty tiers for bots: ALREADY BUILT, verified 2026-09-03 against the code.** This is
+  § 0.6 earning its keep: the bullet read as unstarted work and the whole thing is shipped.
+  `AIController.Difficulty` is a three-tier enum, `AiTuning.For(tier)` carries the personality per
+  tier, `ApplyDifficulty(savedIndex)` reads the saved setting, `ApplyDifficultyFromSettings` is
+  called by `MatchInstaller` on every match, and the settings panel has the row. ⚠️ **`NoBotsIndex`
+  is a fourth option meaning NONE**, asked for by name (*"make it so that in practice mode theres
+  an option to turn off all bots"*), and it is an absence of SEATS rather than a parked brain.
+  ⚠️ **The tier still clamps to 0..2 when NONE is selected**, deliberately, so an out-of-range cast
+  can never reach `AiTuning.For`. **Do not rebuild any of this.** What is genuinely open below is
+  the QUEUE half, not the bot half.
 - ❌ **Bot backfill of an abandoned seat. CUT 2026-08-30, on 🧑's instruction:** *"we dont want
   bot backfill"*. A seat that empties mid-match stays empty. ⚠️ **This is a narrower cut than it
   looks and the code already does the narrow half**: `MatchRpc.HostPeerLeft` installs an
@@ -1325,7 +1333,11 @@ ranked polish fixes, and the fastest way to make a competitive game feel dead is
 - ❌ **No named practice ladder. CUT 2026-08-31.** A separate progression track against bots is a
   fourth bot feature and a fifth progression system, and Practice plus `GuidedTraining` already
   give a new player somewhere to learn.
-- ⚠️ **Bots must be visibly labelled.** A player who thinks they beat a person and did not will be
+- ✅ **Bots must be visibly labelled: ALREADY DONE in the lobby**, verified 2026-09-03.
+  `ConvertedMatchSetup` and `LobbyNameplates` write `BOT` on an occupied seat and `OPEN SEAT` on an
+  empty one. ⚠️ **And `MatchRecord.PlayerLine.IsBot` already exists on the wire and in the record**,
+  which is the field rule 1 above needs: the rating system CAN know. **What is missing is a rating
+  that reads it**, not a flag to read. A player who thinks they beat a person and did not will be
   angrier when they find out than they would have been to know.
 
 ⚠️ **AND THE HARD PART IS THAT THE BOTS ARE A BALANCE INSTRUMENT TOO.** `BotBehaviourProbe`'s
@@ -1616,6 +1628,15 @@ cheap phone screen all produce the same failure: you cannot tell the taya from t
 well as hue. A shape on the nameplate, an icon on the marker, a different outline weight. Then add
 palettes for deuteranopia, protanopia and tritanopia that keep the two roles maximally separated in
 whatever the player actually sees.
+
+⚠️⚠️ **STARTED 2026-09-03, AND CHECKING THE CLAIM FIRST CHANGED THE WORK. `docs/TODO.md` § 127.**
+Two of the three surfaces named above already carried a second channel and nobody had noticed: the
+scoreboard prints `DEFENDER` / `ATTACKER` as a word, and the floating tag writes `· TAYA` on the
+defender alone. **The FLOOR RING was the hue-only one**, and it is the one that decides a fight,
+because the tag fades out at twelve metres in a fourteen-metre box. The taya's ring is an annulus
+now and an attacker's is still a disc, which is a shape rather than a colour and **spends less of
+§ 2's area budget rather than more**. ⚠️ **The crosshair and the lata label are still hue-only**,
+and the acceptance test, a greyscale frame, has not been run yet. § 127.3 has both.
 
 ### 16.2 The rest of the accessibility list
 

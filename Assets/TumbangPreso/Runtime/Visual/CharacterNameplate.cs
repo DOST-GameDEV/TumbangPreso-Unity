@@ -46,10 +46,50 @@ namespace TumbangPreso.Visual
         private CharacterMotor _character;
         private Transform _ring;
         private Renderer _ringRenderer;
+        private MeshFilter _ringFilter;
+        private Mesh _discMesh;
         private MaterialPropertyBlock _ringBlock;
         private TextMesh _label;
         private Transform _labelTransform;
         private Color _roleColor = UiTheme.Defense;
+
+        /// <summary>
+        /// How many of THIS mesh's own radii make one unit of `localScale`. See `ApplySizing`:
+        /// the cylinder primitive is built at radius 0.5 and the collar at radius 1.0.
+        /// </summary>
+        private float _ringUnitSpan = 2.0f;
+
+        /// <summary>
+        /// The taya's ring, generated once and shared by every unit that ever defends.
+        ///
+        /// ⚠️⚠️ `HideAndDontSave` AND A NULL RE-CHECK, WHICH IS THE SAME PAIR
+        /// `InputLayer.TouchSkin.Alive` RECORDS AND FOR THE SAME REASON: a runtime-generated
+        /// asset with no owner is destroyed by a scene load, and Unity reports a destroyed object
+        /// as null, so the flag stops it dying and the null check rebuilds it if it does anyway.
+        /// A mesh that has been destroyed under a live `MeshFilter` draws nothing at all, so the
+        /// taya would simply have no marker for the rest of the match.
+        ///
+        /// ⚠️ 32 SIDES, AND IT IS A MARKER RATHER THAN AN EFFECT. Every other caller of
+        /// `VfxShapes` picks a low count on purpose, because a faceted silhouette is this game's
+        /// look; this one has to read as a clean circle at a glance from across a 14 m box while
+        /// somebody is running at you, so it is the one place a high count is right.
+        ///
+        /// ⚠️ `innerRatio` 0.66 IS THE THICKNESS AND IT IS THE SIGNAL. Too thin and it disappears
+        /// against the road at distance; too thick and it is a disc with a dot missing, which is
+        /// the shape it has to be distinguishable FROM.
+        /// </summary>
+        private static Mesh _tayaRing;
+
+        private static Mesh TayaRingMesh()
+        {
+            if (_tayaRing != null) return _tayaRing;
+
+            _tayaRing = VfxShapes.Collar(sides: 32, height: 0.10f, innerRatio: 0.66f);
+            _tayaRing.name = "TayaRing";
+            _tayaRing.hideFlags = HideFlags.HideAndDontSave;
+
+            return _tayaRing;
+        }
 
         private void Awake()
         {
@@ -91,6 +131,14 @@ namespace TumbangPreso.Visual
             _ring = ringGo.transform;
             _ring.SetParent(transform, false);
             _ringRenderer = ringGo.GetComponent<Renderer>();
+
+            // ⚠️ THE PRIMITIVE'S OWN CYLINDER IS KEPT AS THE ATTACKER'S DISC rather than
+            // generated, because it is already here, it is already the shape three of the four
+            // bodies want, and a shared built-in mesh costs nothing. `Refresh` swaps between this
+            // and the taya's ring.
+            _ringFilter = ringGo.GetComponent<MeshFilter>();
+            _discMesh = _ringFilter.sharedMesh;
+
             _ringBlock = new MaterialPropertyBlock();
 
             var labelGo = new GameObject("NameplateLabel");
@@ -160,9 +208,15 @@ namespace TumbangPreso.Visual
 
             float ringRadius = radius * RingRadiusRatio;
 
-            // A Unity cylinder is 2 units tall at scale 1, hence the flat Y — this is a disc,
-            // not a column.
-            _ring.localScale = new Vector3(ringRadius * 2.0f, 0.005f, ringRadius * 2.0f);
+            // ⚠️⚠️ THE SCALE DEPENDS ON WHICH MESH IS ON, AND GETTING THIS WRONG DRAWS A MARKER
+            // TWICE THE RIGHT SIZE. A Unity cylinder primitive is 1 unit ACROSS (radius 0.5), so
+            // it wants `ringRadius * 2`; `VfxShapes.Collar` is built at unit RADIUS, so it wants
+            // `ringRadius`. `_ringUnitSpan` carries whichever applies and `Refresh` sets it in the
+            // same breath as the mesh, because a role swap changes both.
+            //
+            // The flat Y is what makes either of them a disc rather than a column.
+            _ring.localScale = new Vector3(ringRadius * _ringUnitSpan, 0.005f,
+                                           ringRadius * _ringUnitSpan);
             _ring.localPosition = new Vector3(0.0f, feetY + RingFloorMargin, 0.0f);
 
             float labelMargin = LabelMarginAtPersonScale * (height / PersonCapsuleHeight);
@@ -176,6 +230,55 @@ namespace TumbangPreso.Visual
 
             bool isDefense = _character.IsDefender;
             _roleColor = isDefense ? UiTheme.Defense : UiTheme.Offense;
+
+            // ⚠️⚠️ THE TAYA'S MARKER IS A RING AND AN ATTACKER'S IS A DISC, AND THAT IS THE ONLY
+            // PLACE THE ROLE IS CARRIED BY SOMETHING OTHER THAN HUE ON THE FLOOR.
+            // `docs/FUTURE.md` § 16.1: *"the roles are currently distinguished by hue alone. A
+            // colourblind player, a bad projector at a tournament, or a cheap phone screen all
+            // produce the same failure: you cannot tell the taya from the attackers."*
+            //
+            // ⚠️ RE-VERIFIED BEFORE IT WAS BUILT, AND HALF OF THAT CLAIM WAS ALREADY STALE.
+            // The scoreboard spends the role colour on the WORD `DEFENDER` / `ATTACKER` and says
+            // so in its own note, and the tag below already writes `· TAYA` on the defender and
+            // nothing on the other three. **The floor ring was the one that was still hue-only**,
+            // and it is the one that matters most in play: it is where the retrieval happens, and
+            // the tag above the head fades out past `FadeStart`, twelve metres.
+            //
+            // ⚠️⚠️ A SHAPE, NOT A SECOND COLOUR, WHICH IS `CLAUDE.md` § 6.5'S RULE ONE SUBSYSTEM
+            // OVER: *"a chamfer means pressable and a round means furniture ... a shape difference
+            // survives a photograph and a colourblind player; a fill difference does not."*
+            //
+            // ⚠️ AND IT SPENDS LESS FLOOR RATHER THAN MORE, WHICH `VfxShapes.Collar` ALREADY
+            // ARGUES IN ITS OWN WORDS: *"a ring at 8 per cent thickness costs about a sixth of the
+            // painted floor its filled equivalent does, at the same radius, carrying the same
+            // information about where the edge is."* `docs/VISION.md` § 2 is a budget on AREA, so
+            // the accessible answer is also the cheaper one.
+            //
+            // ⚠️ IT REUSES `Collar` RATHER THAN GENERATING A NINTH RING. `VISION.md` § 2 rule 3:
+            // *"a slab with walls, a field of broken plates, a swept flame ... are five things.
+            // Five polygons handed to one builder are one thing."* `Wedges` was the other
+            // candidate and is wrong here: it jitters every plate on purpose, and a role marker
+            // has to be the SAME shape on every taya in every round or it is not a signal.
+            //
+            // ⚠️ ONLY THE TAYA CHANGES, WHICH MATCHES THE DECISION THE TAG BELOW ALREADY MADE.
+            // There is exactly one taya and everybody else is an attacker by definition, so the
+            // ring says the same thing the word does and neither of them is spent on the other
+            // three bodies.
+            if (isDefense)
+            {
+                _ringFilter.sharedMesh = TayaRingMesh();
+                _ringUnitSpan = 1.0f;
+            }
+            else
+            {
+                _ringFilter.sharedMesh = _discMesh;
+                _ringUnitSpan = 2.0f;
+            }
+
+            // ⚠️ THE SIZE IS RE-APPLIED BECAUSE THE SPAN JUST CHANGED. A role swap runs through
+            // here every round and the two meshes are built at different radii; without this the
+            // taya's ring would be drawn at the disc's scale for the rest of the round.
+            ApplySizing();
 
             _ringBlock.SetColor("_Color", new Color(_roleColor.r, _roleColor.g, _roleColor.b, 0.8f));
             _ringBlock.SetColor("_BaseColor", new Color(_roleColor.r, _roleColor.g, _roleColor.b, 0.8f));

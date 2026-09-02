@@ -9,12 +9,14 @@ before inventing a task, and update it in the same commit as the work.
 
 ## What is open right now
 
-Twelve sections, and this list is the whole of it. Everything else in this repository's history
+Fourteen sections, and this list is the whole of it. Everything else in this repository's history
 is in the archive with its number unchanged.
 
 | § | Open work | Where it bites |
 |---|---|---|
 | **126** | This session: the full PlayMode suite, the thumb floor, the move stick, rumble, the device toggle, the .apk | § 126.8 is the big one: **the full PlayMode run is not a reliable gate** |
+| **127** | Phase 16.1: the taya's floor marker is a RING, an attacker's a DISC | Needs its greyscale frame before it can close. § 127.3 |
+| **128** | Phase 11 is mostly built and the plan did not know it | What is left is the RATING reading `IsBot`, not the bots |
 | **126.11** | Crossplay is argued, not demonstrated | Both players exist; nobody has watched them join |
 | **93** | A held tsinelas drifts 0.084 m from the hand | Four samples now, all outside the bound. Not a flake |
 | **96** | He has never found the way into the hub | The door, not the layout. `CLAUDE.md` § 6.3 |
@@ -25,11 +27,18 @@ is in the archive with its number unchanged.
 | **88, 89** | Accounts and the career layer, in progress | Read § 89.6 before touching `ProfileRules`, written in C# and again in JS |
 | **118, 119, 121** | The paper front end: what is coherent and what is not finished | |
 
-⚠️⚠️ **AND THE SIX UNSTARTED PHASES ARE NOT IN THIS FILE AT ALL.** Bots and population (11),
-modes and maps (12), seasons (13), accessibility (16), tournaments and replays (17) and getting it
-in front of people (18) live in [`FUTURE.md`](FUTURE.md) with a written prompt each. **They are
-things somebody might decide to do; an entry here is something somebody should do.** That
-distinction is the reason they are separate files.
+⚠️⚠️ **AND THE "UNSTARTED" PHASES ARE NOT ALL UNSTARTED, WHICH IS WHY § 0.6 EXISTS.** Bots and
+population (11), modes and maps (12), seasons (13), accessibility (16), tournaments and replays
+(17) and getting it in front of people (18) live in [`FUTURE.md`](FUTURE.md) with a written prompt
+each. **They are things somebody might decide to do; an entry here is something somebody should
+do.** Checked against the code on 2026-09-03, before doing any of them:
+
+| Phase | What is actually there |
+|---|---|
+| **11** | ⚠️ **Mostly built.** Difficulty tiers, a NONE option, `BOT` labels and `MatchRecord.IsBot` all ship. § 128 is the open half: **the rating does not read the flag** |
+| **12** | ⚠️ **Both modes exist in the core.** `MatchFormat.LastTsinelas` and `Mirror`, with `CustomGame.MirrorIndex` doing the weekly rotation. LAST TSINELAS still has **no match half**. **Map rotation and a map vote are the genuinely unbuilt cheap win** and nothing greps for either |
+| **16** | ⚠️ **Started.** § 127: the taya's floor marker is a ring. The crosshair and the lata label are still hue-only, and none of § 16.2 is begun |
+| **13, 17, 18** | Not started. ⚠️ § 17's unplugged LAN run is DONE and must not be re-raised |
 
 ---
 
@@ -83,6 +92,122 @@ taht again"*.
    appear more than once. Renumbering would break every pointer in `CLAUDE.md`, `VISION.md`,
    `FUTURE.md` and the code comments, which is a worse trade than a duplicate heading. **Search by
    title as well as by number.**
+
+---
+
+## 128 · Phase 11 is mostly built and the plan does not know it ⚠️ OPEN, 2026-09-03, branch `ui-redesign`
+
+Checked against the code rather than the plan, which is `docs/FUTURE.md` § 0.5 rule 2. **Two of
+Phase 11's bullets are shipped and were written as unstarted work**, and `FUTURE.md` § 11 is
+corrected in the same commit.
+
+- ✅ **Bot difficulty tiers.** `AIController.Difficulty` is three tiers, `AiTuning.For(tier)` holds
+  the personality, `ApplyDifficulty` reads the saved index, `MatchInstaller` calls it every match,
+  and the settings panel has the row. `NoBotsIndex` is a fourth option meaning NONE and is an
+  absence of SEATS rather than a parked brain. **Do not rebuild it.**
+- ✅ **Bots are visibly labelled.** `ConvertedMatchSetup` and `LobbyNameplates` write `BOT` on an
+  occupied seat and `OPEN SEAT` on an empty one.
+- ✅ **`MatchRecord.PlayerLine.IsBot` already exists**, on the wire and in the stored record.
+
+### 128.1 What is actually open
+
+- ⚠️⚠️ **THE RATING DOES NOT READ `IsBot`, AND PHASE 11 SAYS IT MUST.** § 11's own rule 1, written
+  when 🧑 allowed bots in ranked (*"im okay with bot showing up in rank if theres no ppl bcz no one
+  plays this game yet anyways"*): *"A result with a bot in it cannot move a rating the same amount
+  as one without, or the fastest climb in the game is queueing at 4 a.m."* **The flag is there and
+  nothing consults it.** Done looks like: `RatingRules` taking the bot count for the match and
+  damping the change, with the number decided in `Design.md` rather than here, and a core test that
+  a four-human result moves a rating further than a three-bot one.
+- ⚠️ **No bot fill in the casual queue after a wait threshold.** `Matchmaker` carries `Backfilling`
+  for a running match with a free seat, which is a different thing: that is a human joining a game
+  in progress. Nothing sends a bot to a queue that will not fill.
+- ⏳ **And § 11 records its own expiry.** The bots-in-ranked decision was taken because *"no one
+  plays this game yet"*, which is a statement about the population, so it stops being true the day
+  the queue fills itself. **Re-ask it then, together with § 13.1's season rollover**, which was
+  taken for the same reason on the same day.
+
+---
+
+## 127 · Phase 16.1: the taya is a RING and an attacker is a DISC ⚠️⚠️ OPEN, 2026-09-03, branch `ui-redesign`
+
+`docs/FUTURE.md` § 16.1 is the one item the handoff into this session called out as *"real"*:
+
+> `Art_Direction.md` § 1 is a law that never bends: **orange is OFFENSE, blue is DEFENCE**, and the
+> whole HUD, every role marker and every readability decision rests on it. ... **the roles are
+> currently distinguished by hue alone**. A colourblind player, a bad projector at a tournament, or
+> a cheap phone screen all produce the same failure: you cannot tell the taya from the attackers.
+
+### 127.1 Half of that claim was already stale, and the half that was not is the one that matters
+
+⚠️ **§ 0.6's own instruction is to check a claim before acting on it**, and checking this one moved
+the work. **Two surfaces already carry the role in a second channel:**
+
+- **The scoreboard.** `Hud`'s row builder prints `DEFENDER` or `ATTACKER` as a WORD in every row and
+  spends the role colour on that cell alone, deliberately: *"that is the one cell where the colour
+  IS the content."* The role rail and the row plate carry it again at a distance.
+- **The floating tag over a unit.** `CharacterNameplate` writes `NAME · TAYA` on the defender and
+  the bare name on the other three, and its note explains that the suffix is on the taya alone
+  because *"which of the four is the taya is the one fact worth naming in the world"*.
+
+⚠️⚠️ **THE FLOOR RING WAS THE ONE THAT WAS STILL HUE-ONLY, AND IT IS THE ONE A PLAYER ACTUALLY
+READS.** One disc per unit, same radius, same shape, `UiTheme.Defense` or `UiTheme.Offense`. It is
+on the floor where the retrieval happens, and the tag above the head fades out past `FadeStart`,
+**twelve metres**, in a box that is fourteen metres across. At range, in a fight, the ring is the
+whole signal.
+
+### 127.2 A shape, not a second colour, and it costs less floor rather than more
+
+**The taya's ring is a `VfxShapes.Collar` (an annulus) and an attacker's stays the filled disc.**
+
+- ⚠️ **`CLAUDE.md` § 6.5 already states this rule one subsystem over**: *"a chamfer means pressable
+  and a round means furniture ... a shape difference survives a photograph and a colourblind
+  player; a fill difference does not."* This is that rule applied to the floor.
+- ⚠️⚠️ **AND IT SPENDS LESS OF `docs/VISION.md` § 2'S AREA BUDGET, WHICH `Collar` ARGUES ITSELF:**
+  *"a ring at 8 per cent thickness costs about a sixth of the painted floor its filled equivalent
+  does, at the same radius, carrying the same information about where the edge is."* The accessible
+  answer is also the cheaper one, which is not usually how this goes.
+- ⚠️ **IT REUSES A GENERATOR RATHER THAN ADDING A NINTH.** `VISION.md` § 2 rule 3: *"five polygons
+  handed to one builder are one thing."* `Wedges` was the other candidate and is wrong here for a
+  reason worth writing down: **it jitters every plate on purpose**, and a role marker has to be the
+  same shape on every taya in every round or it is not a signal.
+- ⚠️ **ONLY THE TAYA CHANGES**, which is the decision the tag above it had already made. There is
+  exactly one taya and everybody else is an attacker by definition.
+- ⚠️ **The scale had to become role-dependent and that is the one place this can go wrong.** A Unity
+  cylinder primitive is built at radius 0.5 and `Collar` at radius 1.0, so `_ringUnitSpan` carries
+  the factor and `Refresh` sets it in the same breath as the mesh. Set one without the other and
+  the marker draws at twice or half its size.
+
+### 127.3 ⚠️ OPEN: what is left of Phase 16
+
+✅ **The shape is proven as GEOMETRY, and that is not the same as proven as a picture.**
+`Assets/TumbangPreso/Tests/RoleMarkerTests.cs`, EditMode, two cases: the taya's mesh has **no
+vertex nearer than 0.594 of its own radius** (so there is a real hole in it) and is built at unit
+radius, and the attacker's cylinder reaches its own centre (so the two are not the same shape).
+**EditMode is 297/297 with them in.**
+
+⚠️⚠️ **AND ASSERTING THE MESH IS WHAT A RENDER COULD NOT DO HERE, WHICH IS WORTH WRITING DOWN
+BECAUSE `CLAUDE.md` § 6.1 SAYS TAKE THE PICTURE.** The picture was taken: `GameplayShots` ran a
+live round and `Logs/shots-play/round-witness.png` shows an attacker's orange disc cleanly from
+above. **The taya's marker was caught only edge-on**, from a first-person camera standing on top of
+it, and from that angle a ring and a disc are the same picture. The camera goes where the round
+puts it. **A hole in a mesh is a fact about the mesh**, so it is asserted where a camera angle
+cannot defeat it.
+
+- ⚠️⚠️ **STILL OWED: THE GREYSCALE FRAME, AT AN ANGLE THAT SHOWS THE TAYA'S FEET.** *"If the taya
+  cannot be picked out of a desaturated frame, the second channel is not there yet."* The mesh test
+  says the code did what it was told; **it does not say a player can read it at eight metres.**
+  `scratchpad/greyscale.py` desaturates at Rec. 601, the same weighting `AbilityShowcaseProbe`
+  measures luminance with. **Do not close § 127 without it.**
+- ⚠️ **The crosshair and the lata label are still hue-only** (`Hud`: `UiTheme.Offense` /
+  `UiTheme.Defense`). Both are small and the lata card has words beside it, so they are a lower
+  bar than the ring was, but they are the rest of § 16.1.
+- ❌ **Nothing else in § 16.2 is started**: UI scale, larger text, hold-versus-toggle for sprint and
+  grab, FOV and shake sliders, a reduced-effects mode, subtitles for callouts, a high-contrast HUD,
+  flash reduction, and colour-independent slipper highlights. ⚠️ **`AbilityShowcaseProbe`'s 12 per
+  cent screen-white bound already half implements the flash item**, which is the cheapest of them
+  to finish.
+- ⚠️ **§ 16.3 (localisation) is CUT and must stay cut.** 🧑: *"english only"*. The cost was never
+  the translation, it was keeping three languages in step for ever.
 
 ---
 
@@ -1112,10 +1237,33 @@ the write is in code, on every build, and it still did not take.**
 
 ⚠️ **THE EMULATOR IS A 1-CORE, GPU-DISABLED, TRANSLATING DEVICE AND IS NOT A PERFORMANCE
 MEASUREMENT.** `SystemInfo CPU = x86-64, Cores = 1, Memory = 2474mb`, `hw.gpu.enabled = no` in
-the AVD, and every native instruction translated from ARM. Shader warm-up was slow enough that
-Android raised its own "isn't responding" dialog over the game's loading screen. **`FUTURE.md`
-§ 15 item 3 (performance on device) cannot be answered here**, and a number taken from this
-emulator would be worse than no number.
+the AVD, and every native instruction translated from ARM. **`FUTURE.md` § 15 item 3 (performance
+on device) cannot be answered here**, and a number taken from this emulator would be worse than no
+number.
+
+⚠️⚠️ **BUT IT DID FIND ONE REAL THING, AND IT IS THE FIRST THING A PHONE MEETS.** The app never
+got past its own **"preparing shaders"** bar in two separate launches, several minutes each, and
+Android raised its "isn't responding" dialog over the loading screen twice. The cause is one line:
+
+```csharp
+SetLoadingStage("preparing shaders", 0.04f);
+yield return null;
+Shader.WarmupAllShaders();      // SplashScreen.PreloadGameAssets, stage 1
+```
+
+**`Shader.WarmupAllShaders()` compiles every variant in the build in a single blocking call**, and
+it is the ONE stage in that whole routine that cannot yield. ⚠️ **The method's own header already
+states the rule it breaks**: *"IT YIELDS BETWEEN EVERY STAGE, DELIBERATELY. This runs while a video
+is playing; a stage that blocks for 400 ms stutters the sting itself"*, and every other stage was
+carefully broken up per character for exactly that reason (§ 114.4). This one was left whole
+because on a desktop it costs a few seconds.
+
+**Done looks like:** a `ShaderVariantCollection` warmed a slice per frame, so the bar moves and the
+OS never sees a frozen main thread. ⚠️ **It is not only an emulator problem**: a cheap Metro Manila
+handset is the target (`ConfigureAndroid`'s own note) and it will pay a version of this cost on
+every cold boot, on the one screen where a player has nothing to look at but a bar that is not
+moving. ⚠️ **And an ANR at boot is the worst place to have one**, because Android offers the player
+a button that closes the game.
 
 ⚠️ **AND A WARNING WORTH ACTING ON BEFORE A REAL PHONE:** *"PlayerSettings->Active Input Handling
 is set to Both, this is unsupported on Android and might cause issues with input and application
