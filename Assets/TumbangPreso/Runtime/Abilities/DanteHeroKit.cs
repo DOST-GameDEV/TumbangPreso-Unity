@@ -50,8 +50,10 @@ namespace TumbangPreso.Abilities
                        telegraphRadius: 2.2f, telegraphRange: 0.0f,
                        castAction: "hero-dante-stomp",
                        viewmodelAction: "stomp-heavy",
+                       castCue: "sfx_cast_dante_stomp",
                        charges: 2)
             {
+                TelegraphStyle = Visual.GroundReticle.Style.Fissure;
             }
 
             protected override void OnActivate(AbilityContext ctx)
@@ -60,7 +62,6 @@ namespace TumbangPreso.Abilities
                 float knockback = 10.0f * ctx.CostScale("dante.1.tremor");
                 // Play heavy titan grunt and bass thud
                 NetCue.Play("hero_dante_grunt", ctx.Position);
-                NetCue.Play("sfx_explosion_heavy", ctx.Position);
 
                 // Squash and stretch ground thump
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
@@ -87,6 +88,39 @@ namespace TumbangPreso.Abilities
                     style: HeroHazards.ExplosionStyle.Quake, facing: ctx.Forward);
 
                 var round = ctx.Round;
+
+                // ⚠️⚠️ LONG TREMOR SWEEPS FEET INSTEAD OF THROWING BODIES, AND THAT IS WHAT
+                // MAKES IT AN ABILITY RATHER THAN A PERCENTAGE. 🧑 2026-09-02: *"i want each
+                // loadout skill to feel thoroughly unique and actually add value and feel like a
+                // niche kit"*. Every alternate in the table moved one number, and a player cannot
+                // feel 25 per cent of a knockback; they can absolutely feel whether the person
+                // they stomped flew away or fell over at their feet.
+                //
+                // ⚠️ IT IS A SIDEGRADE AND NOT A BONUS, WHICH IS THE RULE THE WHOLE SYSTEM RESTS
+                // ON (`AbilityVariant`, `HeroLoadoutTests.IsBudgetNeutral`). The trip REPLACES
+                // the launch the cost already paid for: a knocked-down attacker is still beside
+                // the lata and can mash out of it, where a launched one is metres away and
+                // upright. Which of those you want depends on whether you are the taya, so it is
+                // a decision rather than an upgrade.
+                //
+                // ⚠️ HOST-ONLY, LIKE EVERY OTHER THING IN THIS METHOD THAT MOVES A BODY.
+                // `tools/audit_ability_authority.py` reads exactly this gate at exactly this
+                // brace depth and every `other` row it prints must read HOST-ONLY.
+                if (round != null && NetAuthority.ShouldResolve()
+                    && ctx.HasVariant("dante.1.tremor"))
+                {
+                    foreach (var p in round.Players)
+                    {
+                        if (p == null || p.PlayerSlot == ctx.Motor.PlayerSlot) continue;
+
+                        Vector3 diff = p.transform.position - ctx.Position;
+                        diff.y = 0.0f;
+                        if (diff.magnitude > radius) continue;
+
+                        p.ApplyTrip();
+                    }
+                }
+
                 if (round != null && NetAuthority.ShouldResolve())
                 {
                     // Repel slippers with extra force
@@ -138,7 +172,8 @@ namespace TumbangPreso.Abilities
                        62.0f, 4.0f, TumbangPreso.UI.AbilityGlyph.DanteShield,
                        summary: "Nothing stuns, shoves or slips you while it holds.",
                        castAction: "hero-dante-roar",
-                       viewmodelAction: "carapace-guard")
+                       viewmodelAction: "carapace-guard",
+                       castCue: "sfx_cast_dante_carapace")
             {
             }
 
@@ -258,15 +293,16 @@ namespace TumbangPreso.Abilities
                        summary: "Splits the ground ahead. Launches whoever is in front of you.",
                        telegraphRadius: 4.5f, telegraphRange: 2.2f,
                        castAction: "hero-dante-fissure",
-                       viewmodelAction: "fissure-slam")
+                       viewmodelAction: "fissure-slam",
+                       castCue: "sfx_cast_dante_fissure")
             {
+                TelegraphStyle = Visual.GroundReticle.Style.Fissure;
                 Windup = UltimateWindup;
             }
 
             protected override void OnActivate(AbilityContext ctx)
             {
                 NetCue.Play("hero_dante_ult", ctx.Position);
-                NetCue.Play("sfx_explosion_heavy", ctx.Position);
                 HeroHazards.SpawnVolcanicRockDebris(ctx.Position, 14, 4.5f);
                 Visual.AbilityVfx.SpawnMagmaEruption(ctx.Position + ctx.Forward * 2.5f, 4.5f);
 

@@ -55,7 +55,8 @@ namespace TumbangPreso.Abilities
                        52.0f, 2.5f, TumbangPreso.UI.AbilityGlyph.NemuPhase,
                        summary: "Phase forward, outrun pursuit, and deny the next tag.",
                        castAction: "hero-nemu-ghoststep",
-                       viewmodelAction: "ghost-step")
+                       viewmodelAction: "ghost-step",
+                       castCue: "sfx_cast_nemu_veil")
             {
             }
 
@@ -64,7 +65,6 @@ namespace TumbangPreso.Abilities
                 _longFadeSlow = ctx.HasVariant("nemu.1.fade");
                 if (_longFadeSlow) ctx.Motor.EnterSpeedZone(0.65f);
                 NetCue.Play("hero_nemu_grunt", ctx.Position);
-                NetCue.Play("sfx_ghost_teleport", ctx.Position);
 
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
                 if (squash != null) squash.Stretch(0.3f);
@@ -155,6 +155,7 @@ namespace TumbangPreso.Abilities
                        summary: "Possess your familiar; recast to teleport to it.",
                        castAction: "hero-nemu-project",
                        viewmodelAction: "project-spirit",
+                       castCue: "sfx_cast_nemu_hijack",
                        charges: 1)
             {
             }
@@ -172,7 +173,6 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                NetCue.Play("sfx_ghost_teleport", ctx.Position);
 
                 var visual = ctx.Motor.GetComponent<Visual.CharacterVisual>();
                 if (visual != null && visual.Companion != null)
@@ -271,8 +271,10 @@ namespace TumbangPreso.Abilities
                        // through a deeper core and pulled debris, rather than by being wide.
                        telegraphRadius: 2.8f, telegraphRange: 3.5f,
                        castAction: "hero-nemu-seance",
-                       viewmodelAction: "seance-channel")
+                       viewmodelAction: "seance-channel",
+                       castCue: "sfx_cast_nemu_seance")
             {
+                TelegraphStyle = Visual.GroundReticle.Style.Maw;
                 Windup = UltimateWindup;
             }
 

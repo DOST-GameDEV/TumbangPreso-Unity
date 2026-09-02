@@ -131,6 +131,18 @@ namespace TumbangPreso.Abilities
         {
             if (Kit == null) return;
 
+            // ⚠️⚠️ THE ALTERNATE'S SOUND IS ASSIGNED HERE AND CLEARED HERE, IN THAT ORDER, SO A
+            // LOADOUT CHANGE CANNOT LEAVE A STALE ONE ON THE KIT. A sidegrade changes what the
+            // power does, so it changes what the power sounds like doing it: Long Tremor sweeps
+            // feet instead of throwing bodies and its cue has no vertical slam in it.
+            // `tools/generate_skill_audio.py` builds the twelve, each by a different method.
+            //
+            // ⚠️ A DEFAULT VARIANT HAS NO ROW HERE AND MUST NOT. `VariantCastCue` goes back to
+            // null for it, so `HeroAbility.EffectiveCastCue` falls through to the slot's own cue
+            // — which is the whole point of "as tuned".
+            if (Kit.Skill1 != null) Kit.Skill1.VariantCastCue = VariantCue(_skill1Variant?.Id);
+            if (Kit.Skill2 != null) Kit.Skill2.VariantCastCue = VariantCue(_skill2Variant?.Id);
+
             switch (_skill1Variant?.Id)
             {
                 // The break grows, so the ring the player stomps inside grows with it.
@@ -180,6 +192,36 @@ namespace TumbangPreso.Abilities
                                              aimMax: Gain("phaister.2.stride"),
                                              aimRamp: 1.0f / Cost("phaister.2.stride"));
                     break;
+            }
+        }
+
+        /// <summary>
+        /// The cast sound one loadout alternate wants, or null for a default.
+        ///
+        /// ⚠️ A SWITCH RATHER THAN A NAME DERIVED FROM THE ID. `"zack.2.discharge"` to
+        /// `"sfx_var_zack_discharge"` is a string transform that works for all twelve rows today
+        /// and would silently produce a cue id with no file behind it the first time somebody
+        /// added a variant whose tail did not match its wav. `AudioCues`'s own header records
+        /// what an unregistered id costs: the sound simply does not play and nothing errors.
+        /// Twelve explicit rows fail at compile time instead.
+        /// </summary>
+        private static string VariantCue(string variantId)
+        {
+            switch (variantId)
+            {
+                case "dante.1.tremor": return "sfx_var_dante_tremor";
+                case "dante.2.plating": return "sfx_var_dante_plating";
+                case "cheska.1.blackice": return "sfx_var_cheska_blackice";
+                case "cheska.2.spires": return "sfx_var_cheska_spires";
+                case "sean.1.afterburn": return "sfx_var_sean_afterburn";
+                case "sean.2.flare": return "sfx_var_sean_flare";
+                case "zack.1.arcline": return "sfx_var_zack_arcline";
+                case "zack.2.discharge": return "sfx_var_zack_discharge";
+                case "nemu.1.fade": return "sfx_var_nemu_fade";
+                case "nemu.2.leash": return "sfx_var_nemu_leash";
+                case "phaister.1.brand": return "sfx_var_phaister_brand";
+                case "phaister.2.stride": return "sfx_var_phaister_stride";
+                default: return null;
             }
         }
 
@@ -269,7 +311,22 @@ namespace TumbangPreso.Abilities
             // already calls paused: the warm-up before round one and the buffer between rounds.
             // A second opinion about when a round is live is how a HUD ends up disagreeing with
             // the rules.
-            Kit.PracticeMode = GameServices.Round == null || !GameServices.Round.RoundActive;
+            //
+            // ⚠️⚠️ AND THE OFFLINE TEST BENCH IS THE ONE THING THAT MAY SAY OTHERWISE. See
+            // `PracticeSandbox`: the switch is off by default, unreachable in any networked
+            // session, and its whole purpose is casting during the window this line closes. It
+            // is anded in HERE, on the one assignment, rather than at each of the three places
+            // `PracticeMode` is read, so a future reader cannot be given a different answer
+            // from the HUD tile beside it.
+            Kit.PracticeMode = !PracticeSandbox.Active
+                               && (GameServices.Round == null || !GameServices.Round.RoundActive);
+
+            // ⚠️ THE REFILL IS BEFORE `Tick`, NOT AFTER IT. `Kit.Tick` is what runs an active
+            // ability's duration down and what `OnEnd` hangs off; zeroing cooldowns after it
+            // would be the same frame's work undone, and a duration cleared from out here would
+            // strand a grant switched on with no timer left to switch it off. Only the two
+            // numbers that gate a NEW cast are touched.
+            if (PracticeSandbox.Active) RefillForSandbox();
 
             if (NetAuthority.IsNetworked)
             {
@@ -371,6 +428,27 @@ namespace TumbangPreso.Abilities
 
         /// <summary>Was this slot's key down on the previous Update? One entry per slot.</summary>
         private readonly bool[] _keyWasDown = { false, false, false };
+
+        /// <summary>
+        /// The offline test bench's per-frame refill: no cooldowns, no charge cost, a full
+        /// ultimate meter.
+        ///
+        /// ⚠️ THE METER IS TOPPED UP RATHER THAN MADE FREE, so `CastUltimate` still runs its
+        /// real branch order and still spends the bank. A player testing an ultimate in the
+        /// sandbox sees the same refusal messages a match would give them for everything except
+        /// the two things the switch is for.
+        ///
+        /// ⚠️ IT IS NOT ROUTED THROUGH `HeroKit`, because a kit method called from `Tick` would
+        /// be one an override could inherit and a shipped hero could accidentally use. This is a
+        /// caller-side effect on a switch this class already reads.
+        /// </summary>
+        private void RefillForSandbox()
+        {
+            Kit.Skill1?.RefillForSandbox();
+            Kit.Skill2?.RefillForSandbox();
+            Kit.Ultimate?.RefillForSandbox();
+            Kit.AddUltimateCharge(Kit.UltimateCost);
+        }
 
         private void Aim(InputIntent intent, Verb verb, Slot slot, ref float bufferedAt)
         {
@@ -558,6 +636,34 @@ namespace TumbangPreso.Abilities
             var animator = GetComponentInChildren<Visual.CharacterAnimator>();
             var ability = AbilityFor(slot);
 
+            // ⚠️⚠️ EVERY CAST SOUNDS FROM HERE AND FROM NOWHERE ELSE. See `HeroAbility.CastCue`
+            // for what this replaces: eighteen powers opening on six shared element cues, so a
+            // press told the room which hero and never which power. Playing it centrally rather
+            // than from each `OnActivate` is the same argument `Glyph` and `TelegraphRadius` won
+            // — eighteen call sites is eighteen places to forget, and a new hero would compile,
+            // run and cast in silence.
+            //
+            // ⚠️⚠️ IT REACHES EVERYBODY BY BEING PLAYED ON EVERY PEER, NOT BY BEING RELAYED, AND
+            // THE `SuppressRelay` IS LOAD-BEARING. 🧑 2026-09-02: *"make sure sfx can be heard by
+            // everyone in all modes / not js client sided"*. This method is called on the caster
+            // AND, through `ApplyNetworkCast`, on the host's copy of that seat and on every
+            // observing client — that is how the animation and the ground flash already reach the
+            // room. A cue that ALSO relayed from each of those would be broadcast once per peer:
+            // four players means four copies of one cast, a few tens of milliseconds apart, which
+            // is the flam `sfx_lrt_rumble`'s deletion records. Suppressed, every machine plays it
+            // locally exactly once, and offline the suppression does nothing at all.
+            //
+            // ⚠️ `EffectiveCastCue` PICKS THE LOADOUT ALTERNATE'S SOUND WHEN ONE IS EQUIPPED, and
+            // exactly one of the two ever plays, for the same reason.
+            //
+            // ⚠️ AN EMPTY CUE IS SILENCE AND NOT AN ERROR. `NetCue.Play` is simply not called,
+            // rather than being handed an id with no file behind it.
+            if (ability != null && !string.IsNullOrEmpty(ability.EffectiveCastCue))
+            {
+                using (NetCue.SuppressRelay())
+                    NetCue.Play(ability.EffectiveCastCue, transform.position);
+            }
+
             // ⚠️⚠️ COUNT THE CAST ONLY ON THE OWNER. `ApplyNetworkCast` also calls this method on
             // observers, so counting every presentation would award one step per connected peer.
             // Practice has no transport and uses `GameLaunch.SoloSeat`; a bot never earns a
@@ -600,7 +706,21 @@ namespace TumbangPreso.Abilities
             // did that land", which is the question a player actually has.
             if (_reticle == null || ability == null || !ability.HasTelegraph) return;
 
-            _reticle.Flash(TelegraphCentre(ability), ability.TelegraphRadius, AccentColour(), 0.35f);
+            _reticle.SetStyle(ability.TelegraphStyle);
+
+            // ⚠️⚠️ A HOLD-TO-AIM POWER'S CONFIRM GOES WHERE IT WAS AIMED, NOT AT ITS MAXIMUM
+            // REACH. `TelegraphCentre` is `Position + Forward * TelegraphRange`, and
+            // `TelegraphRange` is the FURTHEST an aimed power can be thrown, so a hex placed at
+            // the near end of the ramp flashed its confirmation several metres past where the
+            // ward actually landed. That is the exact fault this class's own header calls out by
+            // name: a telegraph that lies is worse than no telegraph, because a player believes
+            // it once and then stops believing all of them. `AimDestination` reads the same
+            // `HeldSecondsOnCast` the kit read when it spawned the thing.
+            Vector3 landed = ability.HoldToAim
+                ? AimDestination(ability)
+                : TelegraphCentre(ability);
+
+            _reticle.Flash(landed, ability.TelegraphRadius, AccentColour(), 0.35f);
         }
 
         /// <summary>
@@ -944,6 +1064,7 @@ namespace TumbangPreso.Abilities
             // and the second one is the harder of the two. `UiTheme.BrightForHero` carries why a
             // mid-value accent reads as a shadow on ghosted geometry.
             _reticle.SetBeacon(ability.AimBeacon);
+            _reticle.SetStyle(ability.TelegraphStyle);
             _reticle.Show(AimPoint(ability, range), ability.TelegraphRadius, AccentBright());
             return true;
         }

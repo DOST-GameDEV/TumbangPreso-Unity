@@ -79,7 +79,7 @@ namespace TumbangPreso.UI
         /// <summary>Zack Skill 1: Bolt Sprint (Dynamic high-speed lightning streak bolt).</summary>
         ZackSprint,
 
-        /// <summary>Zack Skill 2: Static Charge (Electrified spark core with orbital charge arcs).</summary>
+        /// <summary>Zack Skill 2: Magnet (Electrified spark core with orbital charge arcs). ⚠️ THE GLYPH IS KEPT FROM STATIC CHARGE, WHICH THIS SLOT REPLACED ON 2026-09-02: an orb with things drawn around it reads as a magnet exactly as well as it read as static, and `MagnetRecallAbility` carries why a seventh Zack glyph would be art spent on a distinction the player never makes.</summary>
         ZackOvercharge,
 
         /// <summary>Zack Ultimate: Thunderstrike (Overhead thundercloud with downward lightning strike).</summary>
@@ -200,7 +200,7 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.CheskaBarricade: return "ICE BARRICADE";
                 case AbilityGlyph.CheskaNova: return "GLACIAL BURST";
                 case AbilityGlyph.ZackSprint: return "BOLT SPRINT";
-                case AbilityGlyph.ZackOvercharge: return "STATIC THROW";
+                case AbilityGlyph.ZackOvercharge: return "MAGNET PULL";
                 case AbilityGlyph.ZackThunderstrike: return "THUNDERSTRIKE";
                 case AbilityGlyph.NemuPhase: return "PHANTOM VEIL";
                 case AbilityGlyph.NemuAstralPet: return "ASTRAL HIJACK";

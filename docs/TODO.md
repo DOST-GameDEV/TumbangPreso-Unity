@@ -2145,6 +2145,426 @@ one.**
 
 ---
 
+## 124 · The skills are aimed and drawn in their own hand, the tutorial stopped lying, and Zack stopped being Sean ⚠️⚠️ 2026-09-02, branch `ui-redesign`
+
+🧑 pulled the branch onto this machine and asked for four things in one sitting: the powers to be
+aimable and previewed properly, the tutorial fixed *"thoroughly"* because it *"has been a
+reoccuring problem"*, Zack and Sean pulled apart, and an offline switch for testing. All of it is
+in this section. **Nothing here touches the front end**, which is §§ 116 to 123's scope.
+
+---
+
+### 124.1 A power that lands somewhere is aimed by holding its key, and four of them were not
+
+🧑: *"Her q should be holdable and person using her and only that personn should be able to see
+where the held skill will go"*, *"if person releases it will be cast"*, then the general form of it,
+which is the actually useful sentence: **"By do thhis for all i mean u figure out whichh skills in
+aall should have holdable shit so that u can figure out where skill will land and not js guess"**,
+and *"maybe cheska's wall and slow should have this too"*.
+
+**The rule that came out of it: an ability is hold-to-aim when the player has to choose a PLACE,
+and is not when the place is decided by something else.** The five that are:
+
+| Ability | Was | Now |
+|---|---|---|
+| Phaister **HEX** | `ctx.Position + forward * 4.5` | 2.2 to 5.5 m, release casts |
+| Phaister **SHADOW BLINK** | already aimed (§ 24) | unchanged |
+| Cheska **PERMAFROST SHEET** | `+ forward * 2.8` | 1.8 to 5.0 m |
+| Cheska **ICE BARRICADE** | `+ forward * 2.2` | 1.8 to 4.0 m, the shortest band in the game |
+| Zack **THUNDERSTRIKE** | on his own feet | 1.5 to 7.0 m, the longest |
+
+**And the four that deliberately are not**, because "where" is not the question they ask:
+
+- **Dante's SEISMIC STOMP** and **Cheska's GLACIAL NOVA** and **Sean's SUPERNOVA** go off around
+  the caster. Sean's is a leap: the circle IS where his body arrives.
+- **Dante's TITAN FISSURE** is a 50 degree cone, not a circle at a distance. A range slider on it
+  would move the ring away from the cone the rules actually test.
+- **Nemu's DEVOURING SEANCE** lands on Kuro, and putting Kuro somewhere is what ASTRAL HIJACK is
+  for. It is already aimed, through a different verb.
+- **BOLT SPRINT**, **FLAME RUSH**, **PHANTOM VEIL**, **IGNITION CANNON**, **MAGNET** and
+  **DEMONIC CARAPACE** place nothing.
+
+⚠️⚠️ **`AIController.Consider` ROUTES A HOLD-TO-AIM POWER THROUGH `HoldAim` NOW, AND UNTIL THIS
+COMMIT ONE CALL SITE DID IT BY HAND.** `Tap` alternates the key on and off every frame, so a bot's
+hold is one frame and `AimRangeFor` returns the MINIMUM. That was written up when the blink was the
+only such ability and wired at the blink's own branch; adding four more would have pinned every one
+of them to its shortest reach for three of the four seats in every match, with nothing erroring.
+`Consider` asks `HeroAbility.HoldToAim` now, so a new hero cannot ship with a held power the bots
+tap.
+
+⚠️ **`HeroAbility.AimedDestination` is the one read of "where was this aimed", on the base class.**
+Phaister's blink had the only copy; it is four abilities now. The fallback for a kit with no
+`HeroAbilitySystem` (a probe, a headless match) is the aimed reach along the current facing, never
+`Vector3.zero`, which would put every probe's hazard on the middle of the court.
+
+⚠️ **The post-cast confirmation flash goes where the power LANDED, not to its maximum reach.**
+`HeroAbilitySystem.SpawnCastFeedback` used `TelegraphCentre`, which is `Position + Forward *
+TelegraphRange`, and for an aimed power `TelegraphRange` is the FURTHEST it can be thrown. A hex
+placed at the near end of the ramp flashed several metres past its own ward.
+
+---
+
+### 124.2 The preview is the hero's own shape, in chalk, and it was one grey ring for everybody
+
+🧑, having been given a hero-coloured ring by the 2026-08-27 pass: *"show like a proper visual
+indiicator of how skill will land or how it will look like IN THEIR THEME OR SMTH"*, *"I dont wannt
+just a fkn shadow like old phaister Q hold"*, *"can u make a magic circle for her q as well? its
+ugly bcz its js a shadow"*.
+
+**The 2026-08-27 pass fixed the emission and left the shape.** That is why the ring stopped reading
+as a literal shadow and still read as nothing in particular: one annulus, one tick crown and one
+wash, for six heroes and eighteen powers.
+
+`GroundReticle.Style` is a motif per hero, built from the same `VfxShapes` generator the hero's own
+effects use:
+
+| Hero | Motif | Generator |
+|---|---|---|
+| Phaister | **Ward** | `WardCircle(12, 4, 0.022f)`, which is what `SpawnHexSigil` draws one bar heavier |
+| Cheska | **Frost** | `Corona(20, 0.66f, 0.30f)`, a hard toothed edge |
+| Dante | **Fissure** | `Fracture(6, 3, 0.048f)`, a few thick splits |
+| Zack | **Storm** | `Fracture(9, 4, 0.016f)`, the same generator as a crackle |
+| Sean | **Ember** | `Cinder(4, 11, 0.46f)` |
+| Nemu | **Maw** | `Hollow(44, 0.58f, 0.22f)` |
+
+⚠️⚠️ **AND THE PREVIEW IS CHALK WHILE THE REAL THING IS THE HERO'S ACCENT.** 🧑: *"make sure its
+diff from the actual skill cast to"*, *"make it a diff color, bcz it might be confusing if its the
+same skill already"*. Before this a held ward and a live hex two metres apart were the same shape in
+the same colour. Three things separate them now and each is independent of the other two:
+
+1. **Colour.** The stroke is `UiTheme.Cream`; only the 0.12 interior wash keeps the hero accent.
+   Chalk on asphalt is the game's own vocabulary for a plan, and it is the one mark no ability ever
+   leaves behind.
+2. **Motion.** The preview turns at 18 deg/s. Every hazard this game puts on the road is
+   deliberately static, so anything rotating is not there yet.
+3. **Weight.** The preview's bar is thinner than the effect's.
+
+⚠️ **`Flash` keeps the hero accent, deliberately.** It answers "where did that go off", by which
+time the power has landed, so it SHOULD match the thing it is confirming.
+
+⚠️ **Only the caster sees a held preview, and that was already true.** `GroundReticle.Show` refuses
+to draw for anybody the camera is not looking through (2026-08-27, *"make sure only she can see
+it"*). It is worth restating because it is now five abilities rather than one.
+
+⚠️ **The motif is ONE object whose mesh is swapped, not six switched on and off.** A reticle lives
+on every character in the match; six generated meshes per character, five-sixths of them for a hero
+this seat is not playing, is memory spent on nothing. `RebuildMotif` destroys the old mesh with the
+swap, because `VfxShapes.Own` only frees on object death and this object outlives the match.
+
+---
+
+### 124.3 The tutorial: two real faults, and both of them were about the can
+
+🧑: *"tutorial is broken, speciifcally raising can and tagging"*, *"u can[t] raise can and tag ppl,
+Not sure why, maybe bcz u still have attacker role?"*, *"thoroughly fix tutorial as this has been a
+reoccuring problem"*.
+
+⚠️⚠️ **HIS DIAGNOSIS WAS THE 2026-08-29 ONE AND THAT ONE WAS ALREADY FIXED.** `TutorialDefenderProbe`
+was re-run first and passed both cases: `local.IsDefender = True` at `DefenderReset`, the channel
+reached 1.000, the can stood up, and the role table is correct for all seventeen lessons. **The role
+is not the fault this time.** Two other things are.
+
+**(1) `BecomeDefender` placed the student beside the can's OLD position.** It teleports to
+`_lata.transform.position + back * 1.15`, and `ArmDefenderReset` then called `Lata.HostRestore` one
+frame later — which **moves the can**. Its own note says so: *"IT GOES BACK ON ITS MARK AND THEN
+STANDS UP"*, because a can that stands up where it was knocked to is a can the next throw cannot
+miss. So on any route where an earlier lesson had knocked the can off its mark, and the THROW and
+PEKTUS lessons both do, the student was set down beside the patch of road the can had just left.
+`Carrier.StepDefender` needs `Balance.InteractionRadius`, **1.6 m**, so holding the key there does
+nothing and nothing says why. **The restore happens in `EnterLesson`, before `ApplyLessonRole`, and
+it is unconditional**: an upright can can still be metres from its mark, and PUNCH and LUNGE both
+stand the dummy relative to `_lata.transform.position`.
+
+**(2) `RoundDirector.ResolveTag` refuses every tag while the can is down, and nothing stood it up.**
+`if (Lata == null || !Lata.IsUpright) return;`. `Lesson.Punch` and `Lesson.Lunge` inherited whatever
+`DefenderReset` had left, and `DefenderReset` ends with the can **knocked over** if it was skipped
+or abandoned. **That route is one keypress away** — `N` completes the current lesson — and it is
+the same shape as the 2026-08-29 fault one gate further in. Worse: `ArmDefenderReset` was fire and
+forget, so pressing `N` during its wait left a coroutine that toppled the can **during the PUNCH
+lesson**. `_armRoutine` is stopped by `EnterLesson` now.
+
+⚠️ **And the arming waits on `Lata.IsProtected` rather than on `Balance.ThrowRestoreCooldown +
+0.08f`.** The duration was right by arithmetic and the wrong thing to ask: `HostKnockDown` refuses
+while protected, so anything that retunes that window leaves the lesson unarmable, with the can
+standing and the student holding the pickup key at it for ever. It also logs an error and names both
+flags if the knockdown is refused anyway, because a lesson that cannot be completed should say so.
+
+### 124.4 Three lessons were completed by pressing the key at nobody
+
+🧑: *"also sometimes some tasks get marked even if u dont rlly do them like pushing ppl (as long as
+u click push it gets marked as done)"*.
+
+SHOVE, PUNCH and LUNGE each read `<verb>CooldownLeft > _baselineCooldown + 0.05f`, which is the verb
+having **fired**. In `CombatVerbs` every one of those cooldowns is written before the cone is
+searched — `StepPunch` sets `_punchCooldown` on its second line and finds its victim on its
+fourteenth — so a press into empty air completed the lesson. **The one thing those three lessons
+exist to teach, that the taya's verbs have a reach and an arc, was the thing the tick did not ask
+about.**
+
+They read the signals the game itself uses now:
+
+- **Shove**: `CombatVerbs.LastShoveLandedAt`, written inside `ApplyShoveTo`, which is the single
+  place a shove moves anybody and is reached by both the solo path and `HostResolveShove`.
+- **Punch and lunge**: `RoundDirector.Tagged`, the event `ResolveTag` raises. Both verbs end in that
+  one call, so both lessons read one signal.
+
+⚠️ `_lessonBeganAt` is what makes a timestamp readable without a counter for somebody to zero. A
+counter would need a second writer on a field the combat code owns.
+
+---
+
+### 124.5 Zack and Sean were one kit in three matching slots, and only one of the three had been fixed
+
+🧑: *"the kit of zack and sean are the exact fricking same"*, *"bcaz its js speed up and upgraded
+attack"*, *"but it feels like theyre the exact same character js diff color based on kits"*.
+
+⚠️⚠️ **`docs/Hero_Strike_Balance.md` § 4.4 IS TITLED WITH THIS EXACT COMPLAINT AND THE FIX IT
+RECORDS MOVED NUMBERS.** Sean got the blast radius, Zack got the flight speed. Two throw buffs tuned
+apart are still two throw buffs. The three matching slots were:
+
+| | Sean | Zack | Now |
+|---|---|---|---|
+| Skill 1 | committed dash | sustained speed | **already different**, kept |
+| Skill 2 | next throw explodes | next throw is faster | **Zack's is a recall** |
+| Ultimate | slam under himself | strike under himself | **Zack's is aimed** |
+
+**Zack Skill 2 is MAGNET: his own tsinelas snaps out of the street back into his hand, live.**
+`docs/VISION.md` § 0: *"The tension is the retrieval, not the throw."* Every attacker's round is
+throw, walk back in, get caught or do not, and the taya's only scoring verb exists to punish that
+walk. **Nothing in the game touched that loop until now**, so it is a job no other kit is doing.
+
+- **One charge, back on a lata knockdown**, which is the recharge STATIC CHARGE already had. Recall,
+  throw, land it, recall again: a Zack who hits never walks and a Zack who misses walks like
+  everybody else, from wherever the miss went. Self-limiting with no new number.
+- **The charge is kept and folded in.** `SlipperAffinity.ElectricStun`, `Carrier.HostThrowAt`,
+  `StatusStack` and `Slipper.TriggerAffinityImpact` are all built around
+  `ZackHeroKit.IsOverchargeThrowActive`; deleting the only thing that set it would have stranded
+  four files of shipped, tuned behaviour. The shoe comes back LIVE, so the recall and the charged
+  throw are one loop rather than two presses on one hero.
+- **It refuses rather than spending the charge** when he is already holding one, when it is in the
+  air, or when somebody else picked it up. Holding one being a refusal is what stops it being
+  IGNITION CANNON with a rider: he has to have thrown.
+- **The glyph is kept.** `AbilityGlyph.ZackOvercharge` is an orb with things drawn around it, which
+  reads as a magnet as readily as it read as static.
+
+**Zack's ultimate is aimed**, 1.5 to 7.0 m, the longest band in the game. `UltimateCost` stays at 20
+for one release: the price note says it was expensive because it *"needs no aim, cannot miss, and
+there is nothing the victims can read in advance"*, and two of those three are no longer true, so
+**the reach is the compensation offered first, and the cost is the first number to revisit if he
+comes back weak.** ⚠️ **Sean's stays self-centred and must**: he leaps and lands on it, so the
+circle IS where his body arrives. Aiming both would fix the sameness by deleting the one thing that
+was already his.
+
+⚠️ `HeroLoadout.cs`'s `zack.2.*` rows carry `BaseAbility` **"MAGNET"** now. `HeroLoadoutTests`
+compares that string to the ability's real name off the kit, which is the whole reason the field
+exists, and a table naming an ability that no longer exists is § 108.3's `berto` fault again.
+
+---
+
+### 124.6 The loadout alternates named a percentage instead of a play
+
+🧑: *"thoroughly improve the loadout skills as well"*, *"i want each loadout skill to feel
+thoroughly unique and actually add value and feel like a niche kit that is great in the game"*.
+
+**First, the audit, because § 101.1 is the reason to do it before anything else**: all twelve
+alternates are consumed somewhere. Not one is a `zack.2.*` row that nothing reads. So this is a
+design complaint and not a dead feature.
+
+**Every alternate's name, description and both labels now describe what happens to a person.** A
+player cannot feel 25 per cent of a knockback and can absolutely feel whether the person they
+stomped flew away or fell over at their feet. `+25% radius / -25% knockback` is now
+`Wider break, takes them down / They land at your feet, not away`.
+
+**And Long Tremor actually does that**: with `dante.1.tremor` equipped the stomp trips everyone
+inside the break instead of launching them. ⚠️ **It is a sidegrade and not a bonus**, which is the
+rule `HeroLoadoutTests.IsBudgetNeutral` enforces on the numbers and cannot enforce on behaviour: the
+trip REPLACES the launch the declared cost already paid for. A knocked-down attacker is beside the
+lata and can mash out; a launched one is metres away and upright. Which you want depends on whether
+you are the taya.
+
+⚠️⚠️ **OPEN: the other eleven alternates are relabelled but still pure numbers.** Long Tremor is the
+pattern to copy and the honest state is that it is one of twelve. The next pass gives each remaining
+alternate one behavioural signature at its spawn site, through `ctx.HasVariant`, which
+`dante.2.plating` and `nemu.1.fade` already use. **Do not add a signature that is a gain**: read
+Long Tremor's note first.
+
+---
+
+### 124.7 An offline no-cooldown switch, and the guard is the absence of a network
+
+🧑, with a screenshot of three deck tiles reading WAIT under "Warm up freely, powers start with the
+round": *"i wanna be able to test shit too so pls add option or buttonn to remove cooldowns in
+practice mode"*, *"get rid of this wait shit in practice mode if i click a button"*, *"make sure
+this doesnt leak into actual game or shti"*.
+
+⚠️⚠️ **THE THING IT UNDOES WAS ALSO ASKED FOR AND BOTH ASKS ARE RIGHT.** 2026-08-30: *"remove unli
+skill before round bcz ppl fly out of map and shit"* is why `HeroKit.PracticeMode` refuses every cast
+while the round clock is stopped and why the tile reads WAIT. The first ask is about a match, the
+second is about a test bench, so `PracticeSandbox` is neither a balance change nor a revert: off by
+default, has to be pressed, and unreachable anywhere a second player can see it.
+
+- **`PracticeSandbox.Allowed` is `!NetAuthority.IsNetworked`**, not a `GameLaunch` flag. False for a
+  host, false for a client, false on Relay and false on LAN, answered by the provider. A launch flag
+  would have been a fourth thing to remember to clear and the one case where being wrong is a
+  modified client.
+- **`Active` ands the switch with the guard on every read**, so it cannot latch: a sandbox left on
+  in a solo match simply stops answering true the moment a session exists. `GameLaunch.Reset` still
+  clears it so the BUTTON does not read ON in a room where it does nothing.
+- **It buys the cast, not the currency.** `HeroAbilitySystem.Award` still gates on `PracticeMode`,
+  so a sandbox cast banks no ultimate charge and no objective award can be farmed off it.
+- **`HeroAbility.RefillForSandbox` touches the two numbers that gate a NEW cast and nothing else.**
+  It is not `Reset`, which clears `DurationRemaining` without running `OnEnd` and would leave Dante
+  permanently unstunnable — that is an edge case once a match and would be the normal outcome of
+  holding a key at 60 Hz.
+- **The control is `[F1]` and a state plate under the ready prompt**, not a uGUI button, because
+  `CursorMode.Play` locks the pointer for the whole match: a button there would draw correctly,
+  raycast nothing and read as dead, which is a worse answer to *"if i click a button"* than a key
+  that works. A literal key rather than an input-map action, because a developer switch in the
+  rebinding panel would ship "NO COOLDOWNS" in the controls screen.
+- **The plate is drawn whenever the switch is on, in every round**, not only in the window where it
+  was pressed. A rule this unusual must never be quietly in force.
+
+---
+
+### 124.8 The Slipper Highlight list could only be clicked on the letters
+
+🧑, on the settings dropdown: *"weird its so hard to select slipper highlight"*, *"im spamming ts and
+it wonnt select"*, then *"it selects but its hard to select"*.
+
+`SwatchDropdown.BuildTemplate` builds an `ItemBackground` stretched across the whole 44-unit row and
+its comment says *"it is what receives the click across the whole row"*. **It never could.** Every
+graphic in that file is made by `NewImage`, which sets `raycastTarget = false` on everything it
+returns, so the ring, the dot, the swatch and that plate were all inert and the only thing a pointer
+could hit was the label's own text rect. The plate is switched back on; the other four stay off,
+because a decoration that eats clicks is how a control ends up with a dead patch in the middle.
+
+⚠️ `WoodDropdown` does not have this fault. Its rows are a full-row `Image` with a `Button` on the
+same object.
+
+
+---
+
+### 124.9 Eighteen powers were speaking with six voices
+
+🧑: *"as well as add sfx for each skill, for all character as well as the ones in loadout"*,
+*"make it unique throughout each character (dont generate them the same way bcz theyll end up
+sounding the same huhu)"*, *"make sure the sfx matches wat the skill really does"*, *"make sure sfx
+can be heard by everyone in all modes / not js client sided"*.
+
+**The measurement, taken by reading the six kits rather than by listening:**
+
+| Cue | Played at the cast by |
+|---|---|
+| `sfx_fire_whoosh` | Sean's FLAME RUSH, IGNITION CANNON **and** SUPERNOVA |
+| `sfx_lightning_strike` | Zack's BOLT SPRINT, MAGNET **and** THUNDERSTRIKE |
+| `sfx_ice_freeze` | Cheska's PERMAFROST SHEET **and** ICE BARRICADE |
+| `sfx_ghost_teleport` | Nemu's PHANTOM VEIL, her ASTRAL HIJACK **and** Phaister's SHADOW BLINK |
+| `sfx_explosion_heavy` | Dante's SEISMIC STOMP **and** TITAN FISSURE |
+
+**So a press told the room which hero and never which power.** Thirteen of the eighteen casts were
+one of five sounds.
+
+⚠️⚠️ **THE FIX IS `HeroAbility.CastCue`, PLAYED IN ONE PLACE.** `HeroAbilitySystem.PlayCastConfirm`
+sounds it, which is the same argument `Glyph` and `TelegraphRadius` won: eighteen `OnActivate`
+methods is eighteen places to forget, and a new hero would compile, run and cast in silence. That
+method is also already the one BOTH the local cast and `ApplyNetworkCast` come through, and it
+plays through `NetCue`, so **"heard by everyone" is a property of where it is called and not an
+extra thing to remember.**
+
+⚠️ **The element cues are kept and are still played by the PAYLOADS.** A hex still sounds
+`sfx_hex_cast` when the ward lands and a supernova still cracks `sfx_explosion_heavy` where it
+hits. What changed is that the press no longer plays the element as well.
+
+⚠️⚠️ **NO TWO OF THE THIRTY ARE THE SAME RECIPE, AND THE METHOD IS WHAT DIFFERS RATHER THAN THE
+PARAMETERS.** That is the instruction he gave for the ultimate themes on 2026-08-27 (*"dont
+generate it the same way bcz its gonna sound the same way"*) and the same fault § 19 records about
+the VFX. `tools/generate_skill_audio.py` is a THIRD generator, seeded separately from the payload
+one, so a rebuild of either set cannot touch the other. One family per hero:
+
+| Hero | Family | Why it is that |
+|---|---|---|
+| Dante | physical mass: sub bodies, discrete debris grains | nothing he does rings |
+| Cheska | additive inharmonic partials | ice is the only element in the game that rings |
+| Sean | turbulence: resonant noise with a moving centre, no tuned content | fire has no pitch |
+| Zack | discontinuity: impulse trains, sample-and-hold, ring modulation | electricity is not a body |
+| Nemu | breath and reversal: comb filtering, backwards envelopes | nothing she does arrives |
+| Phaister | Karplus-Strong and bell partials | she is the only one with a decay you can hear |
+
+⚠️ **And the VERB, not the element, inside each family.** Cheska's sheet SPREADS (partials that
+rise while they decay) and her barricade STANDS UP (three discrete chirps sweeping up with a hard
+stop): same element, opposite gesture, which is the whole reason each slot needed its own. Sean's
+supernova is the only cue in the game with a real gap in the middle, because the hang is what makes
+the landing land. Zack's magnet is the only one whose envelope RISES, because the ability is
+nothing happening and then the shoe being in his hand.
+
+**The twelve loadout alternates get their own too**, and they are not the slot's cue pitched:
+`HeroAbility.VariantCastCue` is assigned by `ApplyLoadoutToPresentation`, exactly one of the two
+ever plays, and a default variant clears it back to null.
+
+⚠️ **`HeroAbilitySystem.VariantCue` is a twelve-row switch and not a string transform.**
+`"zack.2.discharge"` to `"sfx_var_zack_discharge"` works for every row today and would silently
+produce an id with no file the first time a variant's tail stopped matching its wav. An
+unregistered cue does not error, it is simply silent, which is what `sfx_lrt_pass` cost two months
+of.
+
+⚠️⚠️ **AND THE FIRST RUN OF THE GENERATOR DIED WITH A `MemoryError` TWELVE FILES IN.**
+`cast_sean_cannon`'s fuse was `while t < 0.52` over a gap shrinking by a constant factor, which is
+a geometric series: it converges at 0.393 s and never reaches 0.52. **The twelve files that had
+already been written looked exactly like a successful partial run.** A `while` loop over an
+accelerating schedule needs a count as well as a bound.
+
+### 124.10 The tutorial had no sound at all when you cleared a step
+
+🧑: *"can u add sfx too for eac stage cleared in tutorial?"*.
+
+Seventeen lessons went by with a 0.70 s scale pop on a card the student is not looking at, because
+they are looking at the thing they just did. `CompleteLesson` sounds `score_award` now, and **the
+pitch climbs a fifth from lesson one to lesson seventeen**, so progress through the route is
+audible without reading `03 / 17` off the card. The end of the route gets `match_win` instead of an
+eighteenth ping.
+
+⚠️ `score_award` rather than a new cue id, because `AudioCueCheck` requires a file for every
+registered id and this is exactly the game's existing "you did the thing" ping. ⚠️ At
+`Vector3.zero` like `MenuSfx`, because it is a UI event and not something that happened at a place
+on the court.
+
+
+---
+
+### 124.11 OPEN: `LoadoutSurfaceProbe` still looks for a door § 122 moved
+
+Five of its cases fail with **`no button reading 'LOADOUT' on the hub`**, and they were failing
+before this section's work started. § 122.5 moved the loadout off the player hub and onto the
+CHOOSE YOUR HERO stage, on his instruction (**"put loadout here, it makes no sense to be in
+profile"**), and the probe was not moved with it. **Nothing is broken in the game**: the board, the
+chips and every variant work where § 122 put them, and `HeroLoadoutTests` covers the rules core.
+What is broken is the coverage.
+
+⚠️ **Done looks like**: `LoadoutSurfaceProbe` opens character select rather than the hub, finds the
+`LOADOUT` chip § 122.11 describes, and asserts the same five things it asserts today. It is a probe
+rewiring and not a fix.
+
+⚠️ **AND IT IS THE THIRD TIME A SHIPPED MOVE HAS LEFT A PROBE POINTING AT THE OLD DOOR**, which is
+why it is written down rather than quietly deleted: § 96 records the hub's one door being
+unfindable, § 114 records `PlayerNameplate` no longer being installed by any screen while its probe
+still drove it, and this is the same shape. **A green probe for a screen nobody can reach is worse
+than a red one.**
+
+### 124.12 The description ceiling, found by adding four lines to a card that does not truncate
+
+The hold-to-aim pass rewrote five descriptions and pushed MAGNET to 177 characters and HEX to 142,
+against a previous longest of 120 (SUPERNOVA). `AbilityInspectPanel` sets the body to `Wrap` with
+**`VerticalWrapMode.Overflow`** and a `minHeight` of 120, on purpose: the tray is the one place in
+the game that must not truncate, because it exists to hold the sentences `VISION.md` § 3 forbids the
+deck from carrying. **The consequence is that a long description is not clipped, it draws over the
+card underneath** — which that file's own note warns about in those words, about the `minHeight`
+floor, one size change earlier.
+
+All five are back under 120 and `EverySummaryFitsTheCardItIsDrawnIn` asserts 125 now. ⚠️ The number
+is measured: about 32 characters a line at 20 pt in a 640 px body, four lines at `minHeight` 120.
+
+---
+
 ## 123 · The match settings go back to steppers, the shadow was retuned on the wrong axis, and a tab pair sat at half its neighbour's contrast ⚠️⚠️ 2026-09-02, branch `ui-redesign`
 
 🧑 opened the `ui-redesign` player and sent five notes with crops, four of them about two objects:

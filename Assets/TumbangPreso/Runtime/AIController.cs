@@ -4304,15 +4304,14 @@ namespace TumbangPreso
                     // point she LEAVES, so the question is whether anybody is near her now.
                     bool shoveOnDeparture = targetDistance <= 3.0f;
 
-                    // ⚠️ THE CONVICTION WINDOW IS IN FRONT OF THE HOLD, NOT INSTEAD OF IT.
-                    // `Consider` answers "have I wanted this long enough to commit"; `HoldAim`
-                    // then runs every frame after that, exactly as before, so the aim ramp is
-                    // untouched. Wiring the two the other way round would make the deliberation
-                    // part of the hold and pin every bot blink to the minimum range again.
+                    // ⚠️ THROUGH `Consider` LIKE EVERY OTHER SLOT SINCE 2026-09-02. This was
+                    // `Weighed` and then `HoldAim` written out by hand, because the blink was the
+                    // only hold-to-aim power in the game; `Consider` asks the ability now, so the
+                    // five that exist today and any hero added later all get the hold without a
+                    // second call site to remember. `Consider`'s own note has the report.
                     if (_driving && (Plan == AiPlan.Withdraw || shoveOnDeparture
-                                     || targetDistance <= 5.5f)
-                        && Weighed(Verb.Skill2, dt))
-                        HoldAim(intent, Verb.Skill2, kit.Skill2, dt);
+                                     || targetDistance <= 5.5f))
+                        Consider(intent, Verb.Skill2, dt);
                 }
             }
 
@@ -4537,10 +4536,48 @@ namespace TumbangPreso
         }
 
         /// <summary>Press <paramref name="verb"/>, but only once it has been wanted long
-        /// enough. The drop-in replacement for `Tap` inside `StepHeroAbilities`.</summary>
+        /// enough. The drop-in replacement for `Tap` inside `StepHeroAbilities`.
+        ///
+        /// ⚠️⚠️ IT ROUTES A HOLD-TO-AIM POWER THROUGH `HoldAim` RATHER THAN THROUGH `Tap`, AND
+        /// UNTIL 2026-09-02 ONE CALL SITE DID THAT BY HAND. The § HOLDING A HOLD-TO-AIM POWER
+        /// note above was written when Phaister's blink was the only such ability in the game and
+        /// says so in as many words: *"`Tap` alternates on and off every frame, so a bot's hold
+        /// is one frame long ... `AimRangeFor` returns the MINIMUM every time"*. There are five
+        /// now — the hex, both of Cheska's placed powers and Zack's Thunderstrike joined it — and
+        /// every one of them would have been cast at its minimum reach by three of the four seats
+        /// in every match, silently, with nothing erroring and nothing looking broken.
+        ///
+        /// ⚠️ ASKED OF THE ABILITY, NOT LISTED HERE. `HeroAbility.HoldToAim` is the same flag
+        /// `HeroAbilitySystem` reads to decide which edge casts, so a new hero cannot ship with a
+        /// held power the bots tap. A list of verbs in this file would be the second place to
+        /// remember, which is what `HeroAbility.Glyph` and `TelegraphRadius` both record going
+        /// wrong.
+        ///
+        /// ⚠️ THE CONVICTION WINDOW STAYS IN FRONT OF THE HOLD. `Weighed` answers "have I wanted
+        /// this long enough to commit" and `HoldAim` then runs every frame after that, which is
+        /// exactly how the hand-wired blink call was ordered. Wiring them the other way round
+        /// would make the deliberation part of the hold and pin every aimed cast to the minimum
+        /// again.</summary>
         private void Consider(InputIntent intent, Verb verb, float dt)
         {
-            if (Weighed(verb, dt)) Tap(intent, verb);
+            if (!Weighed(verb, dt)) return;
+
+            var ability = AbilityForVerb(verb);
+            if (ability != null && ability.HoldToAim) HoldAim(intent, verb, ability, dt);
+            else Tap(intent, verb);
+        }
+
+        /// <summary>The ability in the slot a hero verb drives, or null off a hero.</summary>
+        private Abilities.HeroAbility AbilityForVerb(Verb verb)
+        {
+            var kit = _motor != null && _motor.AbilitySystem != null
+                ? _motor.AbilitySystem.Kit : null;
+            if (kit == null) return null;
+
+            if (verb == Verb.Skill1) return kit.Skill1;
+            if (verb == Verb.Skill2) return kit.Skill2;
+            if (verb == Verb.Ultimate) return kit.Ultimate;
+            return null;
         }
 
         private void ReleaseUntouchedHeroButtons(InputIntent intent)

@@ -190,6 +190,27 @@ namespace TumbangPreso.Tests
 
                     Assert.IsNotEmpty(ability.Description,
                         $"{hero}: {ability.Name} has no description for the inspect tray");
+
+                    // ⚠️⚠️ THE DESCRIPTION HAS A CEILING TOO, AND THE TRAY IS THE ONE PLACE IN
+                    // THE GAME THAT DOES NOT TRUNCATE. `AbilityInspectPanel` sets the body to
+                    // `HorizontalWrapMode.Wrap` with `VerticalWrapMode.Overflow` and a
+                    // `minHeight` of 120, deliberately: it exists to hold the sentences the deck
+                    // refuses to carry, so cutting them off here would leave the full text
+                    // nowhere at all. **The consequence is that a long description does not get
+                    // clipped, it draws over the card underneath**, which is the fault that
+                    // file's own note warns about in those words.
+                    //
+                    // ⚠️ 125 IS MEASURED, NOT CHOSEN. The body is about 640 px wide at 20 pt,
+                    // which is roughly 32 characters a line, and `minHeight` 120 is four lines at
+                    // that size. The longest description that shipped before 2026-09-02 was
+                    // SUPERNOVA at 120. The hold-to-aim pass on that date pushed MAGNET to 177
+                    // and HEX to 142 before this bound existed, which is a fifth line and a half
+                    // drawn through the card below them.
+                    Assert.LessOrEqual(ability.Description.Length, 125,
+                        $"{hero}: {ability.Name}'s description is {ability.Description.Length} " +
+                        "characters. The inspect tray body wraps and OVERFLOWS rather than " +
+                        "truncating, so anything over about four lines draws over the card " +
+                        "under it. Move the detail into the summary or cut a clause.");
                 }
             }
         }
@@ -236,8 +257,8 @@ namespace TumbangPreso.Tests
         [Test]
         public void TelegraphsMatchWhatTheAbilityPlaces()
         {
-            AssertTelegraph("cheska", 1, 2.3f, 2.8f);   // SpawnIceSheet(pos + fwd*2.8, 2.3)
-            AssertTelegraph("cheska", 2, 1.6f, 2.2f);   // barricade HazardVolume 1.6 at fwd*2.2
+            AssertTelegraph("cheska", 1, 2.3f, 5.0f);   // SpawnIceSheet(aimed, max 5.0, radius 2.3)
+            AssertTelegraph("cheska", 2, 1.6f, 4.0f);   // barricade HazardVolume 1.6, aimed to 4.0
             AssertTelegraph("cheska", 3, 4.6f, 0.0f);   // nova freeze check <= 4.6 at self
 
             AssertTelegraph("dante", 1, 2.2f, 0.0f);    // CreateExplosion(pos, 2.2)
@@ -254,9 +275,9 @@ namespace TumbangPreso.Tests
 
             AssertTelegraph("zack", 1, 0.0f, 0.0f);     // dash
             AssertTelegraph("zack", 2, 0.0f, 0.0f);     // throw empower
-            AssertTelegraph("zack", 3, 4.5f, 0.0f);     // CreateThunderstrike(pos, 4.5)
+            AssertTelegraph("zack", 3, 4.5f, 7.0f);     // CreateThunderstrike(aimed, max 7.0, 4.5)
 
-            AssertTelegraph("phaister", 1, 2.4f, 4.5f); // Hex ward
+            AssertTelegraph("phaister", 1, 2.4f, 5.5f); // Hex ward, aimed to 5.5
 
             // ⚠️ THE BLINK HAS A TELEGRAPH NOW BECAUSE IT IS AIMED. It was 0/0 while it was an
             // impulse fired on the press edge, which the reticle could never have drawn in time.

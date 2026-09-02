@@ -180,6 +180,8 @@ namespace TumbangPreso.UI
         private RectTransform _countdownRt;
 
         private Text _readyPrompt;
+        private Text _sandboxToggle;
+        private Image _sandboxPlate;
         private Text _readyObjective;
         private Image _readyPromptPlate;
         private Image _readyObjectivePlate;
@@ -395,6 +397,46 @@ namespace TumbangPreso.UI
         /// doing in it — dead air at exactly the moment somebody who has just read the tutorial
         /// needs it confirmed.
         /// </summary>
+        /// <summary>
+        /// Reads the sandbox key and paints the toggle plate.
+        ///
+        /// ⚠️⚠️ IT RUNS ABOVE THE `_local == null` GUARD IN `Update`, LIKE THE SPECTATOR KEYS
+        /// DIRECTLY ABOVE IT AND FOR THE SAME REASON: this is not a verb performed by a
+        /// character, so gating it on having one would make it dead exactly when a scene is
+        /// still assembling and he is mashing it.
+        ///
+        /// ⚠️ THE PLATE IS SHOWN WHILE THE WARM-UP PROMPT IS UP, **OR** WHENEVER THE SWITCH IS
+        /// ON. The first half is discovery: it is the screen he photographed. The second is the
+        /// one that matters more — a rule this unusual must never be quietly in force, so as
+        /// long as cooldowns are off, the screen says so, in every round and not only in the
+        /// window where it was pressed.
+        ///
+        /// ⚠️ AND IT DRAWS NOTHING AT ALL IN A NETWORKED MATCH, because `PracticeSandbox.Allowed`
+        /// is false there and the key is refused by `Toggle`. There is no state in which this
+        /// row appears to a player who could be affected by somebody else's press.
+        /// </summary>
+        private void UpdateSandboxToggle()
+        {
+            if (_sandboxToggle == null) return;
+
+            var keyboard = Keyboard.current;
+            if (keyboard != null && keyboard.f1Key.wasPressedThisFrame && PracticeSandbox.Allowed)
+                PracticeSandbox.Toggle();
+
+            bool on = PracticeSandbox.Active;
+            bool show = PracticeSandbox.Allowed && (on || _readyWindowOpen);
+
+            _sandboxToggle.enabled = show;
+            if (_sandboxPlate != null) _sandboxPlate.enabled = show;
+            if (!show) return;
+
+            _sandboxToggle.text = on ? "[F1]  NO COOLDOWNS: ON" : "[F1]  NO COOLDOWNS: OFF";
+
+            // ⚠️ THE LIT STATE IS AMBER, NOT `UiTheme.Defense`. Blue means the taya and nothing
+            // else, which `CLAUDE.md` § 6.4 states as a rule after it had to be said six times.
+            _sandboxToggle.color = on ? UiTheme.Amber : UiTheme.CreamMuted;
+        }
+
         public void ShowReadyPrompt(bool show)
         {
             // ⚠ RESET ON THE EDGE, NOT ON EVERY CALL. `ReadyGate` raises this once per phase
@@ -1089,6 +1131,8 @@ namespace TumbangPreso.UI
             if (_spectating && Fired(SpectatorAction("CleanFeed"))) SetCleanFeed(!_cleanFeed);
             if (_spectating && Fired(SpectatorAction("SpectatorControls")))
                 SetSpectatorControlsVisible(!_spectatorControlsVisible);
+
+            UpdateSandboxToggle();
 
             if (GameServices.Match == null || GameServices.Round == null) return;
 
@@ -3616,6 +3660,34 @@ namespace TumbangPreso.UI
                   new Vector2(520, 30));
             _readyPrompt.text = "Walk around freely. Press [R] when you're ready to start the round.";
             _readyPrompt.enabled = false;
+
+            // ⚠️⚠️ THE TEST-BENCH TOGGLE, AND IT SITS HERE BECAUSE THIS IS THE SCREEN HE
+            // PHOTOGRAPHED. 🧑 2026-09-02, with a shot of three tiles reading WAIT under
+            // "Warm up freely, powers start with the round": *"get rid of this wait shit in
+            // practice mode if i click a button"*. The answer to a complaint about a specific
+            // line of text belongs beside that line, not in a settings tab two screens away.
+            //
+            // ⚠️⚠️ IT IS A KEY AND A STATE PLATE RATHER THAN A CLICKABLE BUTTON, AND THE CURSOR
+            // IS WHY. `CursorMode.Play` locks the pointer for the whole match (`MatchHost` line
+            // 113), so a uGUI button on this canvas would draw correctly, raycast nothing and
+            // read as a dead control — which is a worse answer to *"if i click a button"* than a
+            // key that works. The plate is styled as the button it stands in for and names its
+            // own key, the way `_readyPrompt` above names R.
+            //
+            // ⚠️ A LITERAL KEY, NOT AN ACTION IN THE INPUT MAP, AND ONLY BECAUSE IT IS NOT A
+            // VERB. `docs/VISION.md` § 3 forbids a literal for anything the rebinding panel
+            // shows, and everything it shows is something a player does to the game. This is a
+            // developer switch that cannot exist in a networked session; adding it to the map
+            // would put "NO COOLDOWNS" in the controls panel of a shipped build.
+            _sandboxPlate = BannerPlate("SandboxTogglePlate", new Vector2(0, PromptY + 38.0f),
+                                        new Vector2(260, 30), UiTheme.HeroRim);
+
+            _sandboxToggle = HudLabel(_root, "SandboxToggle", 15, UiTheme.CreamMuted,
+                                      TextAnchor.MiddleCenter);
+            Place(_sandboxToggle.rectTransform, new Vector2(0.5f, 0.0f),
+                  new Vector2(0, PromptY + 38.0f), new Vector2(260, 26));
+            _sandboxToggle.text = "[F1]  NO COOLDOWNS: OFF";
+            _sandboxToggle.enabled = false;
 
             // ⚠️ A HOLD KEY NOBODY IS TOLD ABOUT IS A KEY NOBODY PRESSES. One quiet line
             // above the deck, in the muted cream the rest of the HUD uses for asides, naming

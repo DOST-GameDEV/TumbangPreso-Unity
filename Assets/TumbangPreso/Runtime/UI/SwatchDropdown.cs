@@ -187,6 +187,18 @@ namespace TumbangPreso.UI
             itemBg.sprite = GodotTheme.Plain(6);
             itemBg.type = Image.Type.Sliced;
 
+            // ⚠️⚠️ AND IT HAS TO BE SWITCHED BACK ON, BECAUSE `NewImage` TURNS RAYCASTING OFF
+            // FOR EVERYTHING IT BUILDS. The comment directly above says this rect receives the
+            // click across the whole row, and it has never been able to: every graphic in this
+            // file comes through that helper, so the ring, the dot, the swatch and this plate
+            // were all `raycastTarget = false`, and the ONLY thing in a 44-unit row a pointer
+            // could hit was the label's own text rect. 🧑 2026-09-02, on the Slipper Highlight
+            // list: *"im spamming ts and it wonnt select"*, then *"it selects but its hard to
+            // select"* — which is exactly the shape of a hit area that is the glyphs of a word
+            // rather than the row they sit in. The other four are correctly off: a decoration
+            // that eats clicks is how a control ends up with a dead patch in the middle.
+            itemBg.raycastTarget = true;
+
             var ring = NewImage(item.transform, "Ring");
             ring.sprite = GodotTheme.Box(RingGrey, RingGrey, 0, (int)(RadioSize * 0.5f));
             ring.type = Image.Type.Sliced;

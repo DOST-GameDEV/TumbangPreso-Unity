@@ -1027,7 +1027,7 @@ namespace TumbangPreso.UI
                 case "dante": return "SEISMIC STOMP  ·  DEMONIC CARAPACE  ·  TITAN FISSURE";
                 case "cheska": return "PERMAFROST SHEET  ·  ICE BARRICADE  ·  GLACIAL NOVA";
                 case "sean": return "FLAME RUSH  ·  IGNITION CANNON  ·  SUPERNOVA";
-                case "zack": return "BOLT SPRINT  ·  STATIC CHARGE  ·  THUNDERSTRIKE";
+                case "zack": return "BOLT SPRINT  ·  MAGNET  ·  THUNDERSTRIKE";
                 case "nemu": return "PHANTOM VEIL  ·  ASTRAL HIJACK  ·  DEVOURING SEANCE";
                 default: return "HEX  ·  SHADOW BLINK  ·  GRAND COVEN";
             }

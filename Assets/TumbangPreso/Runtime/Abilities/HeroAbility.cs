@@ -223,6 +223,21 @@ namespace TumbangPreso.Abilities
         /// </summary>
         public bool AimBeacon { get; protected set; }
 
+        /// <summary>
+        /// Which face the ground telegraph wears for this ability.
+        ///
+        /// ⚠️ IT SITS BESIDE <see cref="AimBeacon"/> BECAUSE IT IS THE SAME KIND OF FACT: what
+        /// the telegraph should LOOK like, declared by the ability that knows, rather than
+        /// guessed at the draw site off the kit's type. `HeroAbilitySystem.UpdateReticle`'s own
+        /// note records what guessing there cost: nine of twelve numbers on screen disagreed
+        /// with the game.
+        ///
+        /// ⚠️ THE DEFAULT IS THE RING AND MOST ABILITIES MUST KEEP IT. A style per hero is a
+        /// second design system; see `GroundReticle.Style`.
+        /// </summary>
+        public Visual.GroundReticle.Style TelegraphStyle { get; protected set; }
+            = Visual.GroundReticle.Style.Ring;
+
         // ------------------------------------------------------------------ hold to aim
         //
         // ⚠️⚠️ 🧑 2026-08-26, ON THE BLINK: *"let her HOLD e to control where she will go and make
@@ -326,6 +341,38 @@ namespace TumbangPreso.Abilities
         /// </summary>
         public float HeldSecondsOnCast { get; internal set; }
 
+        /// <summary>
+        /// Where this cast was aimed, for an <see cref="OnActivate"/> to spawn its effect at.
+        ///
+        /// ⚠️⚠️ IT IS THE RING THE PLAYER WAS LOOKING AT, NOT `ctx.Forward` RE-READ ON THE
+        /// RELEASE FRAME. Those are different points and the difference is a whole ability: the
+        /// player has been holding a mark on the ground for up to half a second, and a mouse
+        /// moves. `HeroAbilitySystem.AimDestination` reads the same `HeldSecondsOnCast` the
+        /// system wrote immediately before calling `Activate`, and it clamps X and Z
+        /// independently to the playable rectangle, which is `CLAUDE.md` § 4's *"the box is a
+        /// SQUARE, not a circle"*: a radial clamp and a square one disagree by 2.9 m on the
+        /// diagonal, exactly where somebody aims when they are cutting a corner.
+        ///
+        /// ⚠️ THE FALLBACK IS THE AIMED REACH ALONG THE CURRENT FACING, unclamped, and it is
+        /// reached only by a kit with no `HeroAbilitySystem` attached: a `dotnet test` fixture, a
+        /// headless probe, an editor showcase. Returning `Vector3.zero` there would put every
+        /// probe's hazard on the origin, which is the middle of the court.
+        ///
+        /// ⚠️ IT IS ON THE BASE CLASS SO THE FOUR KITS THAT AIM CANNOT WRITE FOUR SLIGHTLY
+        /// DIFFERENT VERSIONS OF IT. Phaister's blink had the only copy for a week; the moment a
+        /// second ability needed it, the choice was one method here or a growing family of
+        /// near-identical three-line reads. Same reasoning as `AimByHolding` itself.
+        /// </summary>
+        protected Vector3 AimedDestination(AbilityContext ctx)
+        {
+            if (ctx == null) return Vector3.zero;
+
+            var system = ctx.Motor != null ? ctx.Motor.AbilitySystem : null;
+            return system != null
+                ? system.AimDestination(this)
+                : ctx.Position + ctx.Forward * AimRangeFor(HeldSecondsOnCast);
+        }
+
         /// <summary>Turns this ability into a hold-to-aim cast. Call from a kit's constructor.</summary>
         protected void AimByHolding(float minRange, float maxRange,
                                     float rampSeconds = 0.55f, float maxHoldSeconds = 1.10f)
@@ -347,6 +394,55 @@ namespace TumbangPreso.Abilities
         /// </summary>
         public string ViewmodelAction { get; protected set; }
 
+        /// <summary>
+        /// The sound this ability makes when it is CAST, as an `AudioCues` id.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE EIGHTEEN POWERS WERE SPEAKING WITH SIX VOICES. Measured
+        /// 2026-09-02 by reading the six kits: Sean's three all opened on `sfx_fire_whoosh`,
+        /// Zack's three on `sfx_lightning_strike`, two of Cheska's on `sfx_ice_freeze`, two of
+        /// Nemu's on `sfx_ghost_teleport`, two of Dante's on `sfx_explosion_heavy`. So a player
+        /// could hear WHICH HERO had cast something and never WHAT. 🧑: *"as well as add sfx for
+        /// each skill, for all character as well as the ones in loadout"*, *"make sure the sfx
+        /// matches wat the skill really does"*.
+        ///
+        /// ⚠️ IT IS THE VERB'S SOUND, NOT THE ELEMENT'S. A barricade is three things punching up
+        /// out of the road and a magnet is a thing dragged to your hand; neither of those is
+        /// "ice" or "lightning", and playing the element for all three is exactly what made them
+        /// interchangeable. `tools/generate_skill_audio.py` has one synth per ability and its
+        /// header carries the rule that no two of them are the same recipe.
+        ///
+        /// ⚠️⚠️ AND IT IS PLAYED IN ONE PLACE, `HeroAbilitySystem.PlayCastConfirm`, WHICH IS THE
+        /// SAME ARGUMENT `Glyph` AND `TelegraphRadius` WON. A cue played from inside each
+        /// `OnActivate` is eighteen places to forget, and a new hero would compile, run and cast
+        /// in silence. It also means the sound reaches every peer for free: that method is
+        /// already the one both the local cast and `ApplyNetworkCast` come through, and it plays
+        /// through `NetCue`. 🧑: *"make sure sfx can be heard by everyone in all modes / not js
+        /// client sided"*.
+        ///
+        /// ⚠️ EMPTY MEANS SILENT AND IS NOT AN ERROR. `NetCue.Play` is given nothing at all
+        /// rather than a missing id, which `AudioCues`'s own note records as the fault that cost
+        /// two months of silence on `sfx_lrt_pass`.
+        /// </summary>
+        public string CastCue { get; protected set; }
+
+        /// <summary>
+        /// The cue the equipped loadout alternate wants instead, or null for the slot's own.
+        ///
+        /// ⚠️ WRITTEN BY `HeroAbilitySystem.ApplyLoadoutToPresentation` AND BY NOTHING ELSE, in
+        /// the same pass that scales the telegraph. An alternate changes how the power behaves,
+        /// so it changes what the power sounds like doing it; Long Tremor sweeps feet instead of
+        /// throwing bodies, and its cue is a low horizontal sweep rather than a vertical slam.
+        ///
+        /// ⚠️ EXACTLY ONE OF THE TWO EVER PLAYS. It is not layered over `CastCue`, because two
+        /// sounds a frame apart for one press is a flam, which is the fault `sfx_lrt_rumble`'s
+        /// deletion records.
+        /// </summary>
+        public string VariantCastCue { get; internal set; }
+
+        /// <summary>The cue this cast should actually play.</summary>
+        public string EffectiveCastCue =>
+            string.IsNullOrEmpty(VariantCastCue) ? CastCue : VariantCastCue;
+
         protected HeroAbility(string id, string name, string description, float cooldown,
                               float duration = 0.0f,
                               UI.AbilityGlyph glyph = UI.AbilityGlyph.Burst,
@@ -355,9 +451,12 @@ namespace TumbangPreso.Abilities
                               float telegraphRange = 0.0f,
                               string castAction = null,
                               string viewmodelAction = null,
+                              string castCue = null,
                               int charges = 0,
                               Recharge rechargedBy = Recharge.Never)
         {
+            CastCue = castCue;
+
             Id = id;
             Name = name;
             Description = description;
@@ -475,6 +574,26 @@ namespace TumbangPreso.Abilities
         {
             if (!UsesCharges) return;
             ChargesRemaining = Mathf.Min(MaxCharges, ChargesRemaining + 1);
+        }
+
+        /// <summary>
+        /// Puts the two numbers that gate a NEW cast back to ready, and touches nothing else.
+        ///
+        /// ⚠️⚠️ IT IS NOT `Reset` AND IT MUST NOT BECOME IT. `Reset` also clears
+        /// `DurationRemaining` without running <see cref="OnEnd"/>, which is the fault
+        /// `HeroKit.Reset` carries a whole note about: an ability caught mid-duration has its
+        /// grant left switched on with no timer left to switch it off, and Dante would spend the
+        /// rest of the round unstunnable. This runs EVERY FRAME while the sandbox is on, so that
+        /// would not be an edge case, it would be the normal outcome of holding a skill key.
+        ///
+        /// ⚠️ ONLY <see cref="PracticeSandbox"/> CALLS IT, and the name says so on purpose. A
+        /// method called `ClearCooldown` invites a gameplay caller; there is no legitimate one,
+        /// because every cooldown in the game is a balance number.
+        /// </summary>
+        public void RefillForSandbox()
+        {
+            CooldownRemaining = 0.0f;
+            if (UsesCharges) ChargesRemaining = MaxCharges;
         }
 
         public virtual bool CanActivate(AbilityContext ctx)

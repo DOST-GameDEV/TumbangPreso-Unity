@@ -233,11 +233,12 @@ above Dante's and below Zack's.
 | Slot | Name | Cost | What it does |
 |---|---|---|---|
 | Skill 1 | **BOLT SPRINT** | 30 s | Faster movement, and the trail behind you shocks anyone chasing |
-| Skill 2 | **STATIC CHARGE** | 2 charges, +1 per lata knocked | Your next throw flies much faster and flatter and jolts whoever is standing where it lands |
-| Ultimate | **THUNDERSTRIKE** | 150 | Lightning on your position. Everyone underneath is stunned where they stand |
+| Skill 2 | **MAGNET** | 1 charge, +1 per lata knocked | Snaps your own tsinelas out of the street back into your hand, still live. That throw flies much faster and jolts where it lands |
+| Ultimate | **THUNDERSTRIKE** | 150 | Hold to pick a spot up to 7 m out, let go and the sky opens on it. Everyone underneath is stunned where they stand |
 
 The most expensive ultimate in the game, because a stun on everyone near the can is the strongest
-opening in it.
+opening in it. It is aimed rather than self-centred as of 2026-09-02: `docs/TODO.md` § 124.5 has why,
+and why Sean's stayed under his own feet.
 
 #### CHESKA, ice. Ultimate costs **140**.
 

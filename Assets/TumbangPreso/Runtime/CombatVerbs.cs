@@ -436,9 +436,34 @@ namespace TumbangPreso
             return true;
         }
 
+        /// <summary>
+        /// `Time.time` of the last shove that actually moved somebody, or a large negative
+        /// number if this seat has never landed one.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE A COOLDOWN IS NOT A HIT, AND THE TUTORIAL WAS READING ONE AS
+        /// THE OTHER. `GuidedTraining` completed SHOVE, PUNCH and LUNGE the moment the matching
+        /// `*CooldownLeft` rose above its baseline, which is the verb having FIRED. 🧑
+        /// 2026-09-02: *"sometimes some tasks get marked even if u dont rlly do them like
+        /// pushing ppl (as long as u click push it gets marked as done)"*. Every one of those
+        /// three cooldowns is set before the cone is searched, so a press into empty air
+        /// completed the lesson and the student was taught that the verb needs no aim.
+        ///
+        /// ⚠️ IT IS A TIMESTAMP RATHER THAN A COUNTER BECAUSE THE READER IS A LESSON WITH A
+        /// START. A counter would have to be zeroed by whoever reads it, which is a second
+        /// writer on a field the combat code owns; a lesson can simply remember the time it
+        /// began and ask whether anything has landed since.
+        ///
+        /// ⚠️ SET IN `ApplyShoveTo`, WHICH IS THE ONE PLACE A SHOVE LANDS. `StepShove` reaches
+        /// it in solo play and on the host's own seat, `HostResolveShove` reaches it for a
+        /// client's request, and neither can push anybody without coming through here.
+        /// </summary>
+        public float LastShoveLandedAt { get; private set; } = -999.0f;
+
         /// <summary>The push itself, shared by the local and networked paths.</summary>
         private void ApplyShoveTo(CharacterMotor victim)
         {
+            LastShoveLandedAt = Time.time;
+
             Vector3 push = victim.transform.position - transform.position;
             push.y = 0.0f;
             push = push.normalized * Balance.ShoveSpeed

@@ -155,9 +155,15 @@ namespace TumbangPreso.Core
             // the only row that grows a footprint, and `docs/VISION.md` § 2 rule 1 asks a skill
             // for 1.8 to 2.5 m; 2.75 is over that already and a "bigger" number here would be
             // bought straight out of the readability budget the whole mode is balanced against.
+            // ⚠️⚠️ THE ROW NAMES WHAT HAPPENS TO A PERSON NOW, NOT WHAT HAPPENS TO A NUMBER.
+            // 🧑 2026-09-02: *"i want each loadout skill to feel thoroughly unique and actually
+            // add value and feel like a niche kit that is great in the game"*. Twelve alternates
+            // that all read "+N% something / -N% something else" are twelve spreadsheet rows, and
+            // a player cannot feel 25 per cent of a knockback. `DanteHeroKit` sweeps feet on this
+            // variant as of the same day, so the sentence and the game now say the same thing.
             new AbilityVariant("dante.1.tremor", "dante", 1, "SEISMIC STOMP", "DanteStomp",
-                "Long Tremor", "The break reaches half again as much street and lands softer.",
-                0.25f, -0.25f, "+25% radius", "-25% knockback",
+                "Long Tremor", "Reaches half again as much street, and sweeps feet instead of throwing bodies. They stay where they fell.",
+                0.25f, -0.25f, "Wider break, takes them down", "They land at your feet, not away",
                 "Use Seismic Stomp eight times", true, 8),
 
             new AbilityVariant("dante.2.carapace", "dante", 2, "DEMONIC CARAPACE", "DanteShield",
@@ -165,8 +171,8 @@ namespace TumbangPreso.Core
                 0.0f, 0.0f, "As tuned", "As tuned"),
 
             new AbilityVariant("dante.2.plating", "dante", 2, "DEMONIC CARAPACE", "DanteShield",
-                "Heavy Plating", "Holds longer and slows you while it is up.",
-                0.30f, -0.30f, "+30% duration", "-30% move speed while up",
+                "Heavy Plating", "Stays up much longer, but you walk while it does. A wall you can place yourself, not an escape.",
+                0.30f, -0.30f, "Walk in and take what you need", "You are slow the whole time",
                 "Use Demonic Carapace six times", true, 6),
 
             // ---------------------------------------------------------------
@@ -177,8 +183,8 @@ namespace TumbangPreso.Core
                 0.0f, 0.0f, "As tuned", "As tuned"),
 
             new AbilityVariant("cheska.1.blackice", "cheska", 1, "PERMAFROST SHEET", "CheskaFrostSheet",
-                "Black Ice", "A smaller sheet that is much harder to stand on.",
-                0.35f, -0.35f, "+35% slip", "-35% floor area",
+                "Black Ice", "A patch half the size that nobody keeps their feet on. For a doorway, not a lane.",
+                0.35f, -0.35f, "Nobody crosses it standing", "Covers a doorway, not a lane",
                 "Use Permafrost Sheet eight times", true, 8),
 
             new AbilityVariant("cheska.2.barricade", "cheska", 2, "ICE BARRICADE", "CheskaBarricade",
@@ -186,8 +192,8 @@ namespace TumbangPreso.Core
                 0.0f, 0.0f, "As tuned", "As tuned"),
 
             new AbilityVariant("cheska.2.spires", "cheska", 2, "ICE BARRICADE", "CheskaBarricade",
-                "Split Spires", "Two narrow pillars instead of one wall. Wider cover, easier to run between.",
-                0.40f, -0.40f, "+40% span", "-40% wall thickness",
+                "Split Spires", "Two thin pillars set wide instead of one wall. Covers more of the approach, and a body can slip between them.",
+                0.40f, -0.40f, "Covers the whole approach", "There is a gap, and they will find it",
                 "Use Ice Barricade six times", true, 6),
 
             // ---------------------------------------------------------------
@@ -198,8 +204,8 @@ namespace TumbangPreso.Core
                 0.0f, 0.0f, "As tuned", "As tuned"),
 
             new AbilityVariant("sean.1.afterburn", "sean", 1, "FLAME RUSH", "SeanRush",
-                "Afterburn", "A shorter run that leaves a trail living longer behind it.",
-                0.30f, -0.30f, "+30% trail life", "-30% dash distance",
+                "Afterburn", "A short burst that leaves the road burning far longer. You are not escaping with this one, you are closing a lane behind you.",
+                0.30f, -0.30f, "The road stays lit behind you", "You do not get far",
                 "Use Flame Rush eight times", true, 8),
 
             new AbilityVariant("sean.2.cannon", "sean", 2, "IGNITION CANNON", "SeanIgnite",
@@ -207,12 +213,12 @@ namespace TumbangPreso.Core
                 0.0f, 0.0f, "As tuned", "As tuned"),
 
             new AbilityVariant("sean.2.flare", "sean", 2, "IGNITION CANNON", "SeanIgnite",
-                "Flare Shot", "Flies flat and fast, and cracks in a tighter circle.",
-                0.25f, -0.25f, "+25% flight speed", "-25% blast radius",
+                "Flare Shot", "A flat, fast shot that cracks in a tight circle. Made for hitting the lata, not for catching whoever is standing near it.",
+                0.25f, -0.25f, "Hard to read, hard to dodge", "You have to actually hit it",
                 "Use Ignition Cannon eight times", true, 8),
 
             // ---------------------------------------------------------------
-            // ZACK. BOLT SPRINT / STATIC CHARGE. `ZackHeroKit`.
+            // ZACK. BOLT SPRINT / MAGNET. `ZackHeroKit`.
             // ---------------------------------------------------------------
             new AbilityVariant("zack.1.sprint", "zack", 1, "BOLT SPRINT", "ZackSprint",
                 "Bolt Sprint", "The sprint as it is tuned.",
@@ -228,18 +234,27 @@ namespace TumbangPreso.Core
             // Zack's corridor at 27.2 per cent of the box off a 6.0 s cooldown, more floor than
             // any ultimate; a 0.45 width cut takes one dash's lane to about 8 per cent.
             new AbilityVariant("zack.1.arcline", "zack", 1, "BOLT SPRINT", "ZackSprint",
-                "Arc Line", "One thin lane that shocks harder and shocks again sooner.",
-                0.45f, -0.45f, "+45% shock", "-45% trail width",
+                "Arc Line", "One thin live wire instead of a corridor. Whoever follows you down it is shocked harder and shocked again sooner.",
+                0.45f, -0.45f, "Punishes anyone who follows", "One lane wide, easy to step around",
                 "Use Bolt Sprint eight times", true, 8),
 
-            new AbilityVariant("zack.2.charge", "zack", 2, "STATIC CHARGE", "ZackOvercharge",
-                "Static Charge", "The charge as it is tuned.",
+            // ⚠️⚠️ THE SLOT IS MAGNET NOW AND `BaseAbility` HAD TO MOVE WITH IT.
+            // `HeroLoadoutTests` reads the kit and compares this string to the ability's real
+            // name, which is the whole reason that field exists: STATIC CHARGE was deleted in
+            // `ZackHeroKit` on 2026-09-02 because it was Sean's Ignition Cannon with a different
+            // element on it, and a variant table naming an ability that no longer exists is the
+            // exact fault § 108.3 records about `berto`.
+            new AbilityVariant("zack.2.charge", "zack", 2, "MAGNET", "ZackOvercharge",
+                "Magnet", "The pull as it is tuned. One charge, back on a knockdown.",
                 0.0f, 0.0f, "As tuned", "As tuned"),
 
-            new AbilityVariant("zack.2.discharge", "zack", 2, "STATIC CHARGE", "ZackOvercharge",
-                "Snap Discharge", "The throw launches much faster, but the charge expires sooner.",
-                0.50f, -0.50f, "+50% throw speed", "-50% hold time",
-                "Use Static Charge eight times", true, 8),
+            // ⚠️ THE ALTERNATE SELLS THE THROW AND PAYS WITH THE WINDOW, which is the same trade
+            // Snap Discharge made and the one row of the old pair that still describes something
+            // the ability does. What changed is what it is attached to.
+            new AbilityVariant("zack.2.discharge", "zack", 2, "MAGNET", "ZackOvercharge",
+                "Snap Discharge", "The tsinelas comes back hot and does not stay that way. Throw it now or throw it cold.",
+                0.50f, -0.50f, "Almost no time to read it", "Throw it now or lose it",
+                "Use Magnet eight times", true, 8),
 
             // ---------------------------------------------------------------
             // NEMU. PHANTOM VEIL / ASTRAL HIJACK. `NemuHeroKit`.
@@ -249,8 +264,8 @@ namespace TumbangPreso.Core
                 0.0f, 0.0f, "As tuned", "As tuned"),
 
             new AbilityVariant("nemu.1.fade", "nemu", 1, "PHANTOM VEIL", "NemuPhase",
-                "Long Fade", "Stay unseen longer, and move slower while you are.",
-                0.35f, -0.35f, "+35% duration", "-35% move speed while veiled",
+                "Long Fade", "Untouchable for much longer, at a walk. You are crossing the court, not running out of a corner.",
+                0.35f, -0.35f, "Long enough to walk in and out", "You are walking, not running",
                 "Use Phantom Veil eight times", true, 8),
 
             new AbilityVariant("nemu.2.hijack", "nemu", 2, "ASTRAL HIJACK", "NemuAstralPet",
@@ -263,8 +278,8 @@ namespace TumbangPreso.Core
             // does exist is his speed, and 40 per cent of it is the difference between arriving
             // while somebody is still bent over their tsinelas and arriving after.
             new AbilityVariant("nemu.2.leash", "nemu", 2, "ASTRAL HIJACK", "NemuAstralPet",
-                "Short Leash", "Kuro darts. He gets there first and lets go much sooner.",
-                0.40f, -0.40f, "+40% flight speed", "-40% hold",
+                "Short Leash", "Kuro darts across the street and drops you back almost at once. A look, not a scouting run.",
+                0.40f, -0.40f, "He is there before they move", "One look and you are back",
                 "Use Astral Hijack six times", true, 6),
 
             // ---------------------------------------------------------------
@@ -281,8 +296,8 @@ namespace TumbangPreso.Core
             // 1.44 m brand is a place one attacker genuinely cannot cross rather than a smaller
             // version of the same puddle.
             new AbilityVariant("phaister.1.brand", "phaister", 1, "HEX", "PhaisterHexSigil",
-                "Slow Brand", "A small ward that holds much harder and re-bites much sooner.",
-                0.40f, -0.40f, "+40% hold", "-40% sigil radius",
+                "Slow Brand", "A tight ward that holds much harder and bites again much sooner. One person genuinely cannot cross it.",
+                0.40f, -0.40f, "They are not getting out of it", "Small enough to walk around",
                 "Use Hex eight times", true, 8),
 
             new AbilityVariant("phaister.2.blink", "phaister", 2, "SHADOW BLINK", "PhaisterShadowBlink",
@@ -290,8 +305,8 @@ namespace TumbangPreso.Core
                 0.0f, 0.0f, "As tuned", "As tuned"),
 
             new AbilityVariant("phaister.2.stride", "phaister", 2, "SHADOW BLINK", "PhaisterShadowBlink",
-                "Long Stride", "Further, with a longer wind-up you can be read on.",
-                0.30f, -0.30f, "+30% distance", "-30% cast speed",
+                "Long Stride", "Reaches much further, and takes long enough to aim that the taya can watch you decide.",
+                0.30f, -0.30f, "Across the court in one press", "They can see it coming",
                 "Use Shadow Blink eight times", true, 8),
         };
 

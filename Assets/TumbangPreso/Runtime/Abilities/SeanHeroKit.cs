@@ -64,7 +64,8 @@ namespace TumbangPreso.Abilities
                        50.0f, 0.6f, TumbangPreso.UI.AbilityGlyph.SeanRush,
                        summary: "Rush forward. Knocks down who you hit, burns who follows.",
                        castAction: "hero-sean-dash",
-                       viewmodelAction: "thrust-fire")
+                       viewmodelAction: "thrust-fire",
+                       castCue: "sfx_cast_sean_rush")
             {
             }
 
@@ -93,7 +94,6 @@ namespace TumbangPreso.Abilities
                                              Visual.AbilityVfx.Aura.FireEmber, Duration);
 
                 NetCue.Play("hero_sean_grunt", ctx.Position);
-                NetCue.Play("sfx_fire_whoosh", ctx.Position);
             }
 
             protected override void OnTick(AbilityContext ctx, float dt)
@@ -207,6 +207,7 @@ namespace TumbangPreso.Abilities
                        summary: "Your next throw explodes where it lands.",
                        castAction: "hero-sean-ignite",
                        viewmodelAction: "ignite",
+                       castCue: "sfx_cast_sean_cannon",
                        charges: 2,
                        rechargedBy: Recharge.LataKnocked)
             {
@@ -217,7 +218,6 @@ namespace TumbangPreso.Abilities
             {
                 _kit.IsIgnitionCannonActive = true;
                 Visual.AbilityVfx.AttachHandVfx(ctx.Motor.transform, Visual.AbilityVfx.Aura.FireEmber, Duration);
-                NetCue.Play("sfx_fire_whoosh", ctx.Position);
             }
 
             protected override void OnEnd(AbilityContext ctx)
@@ -252,8 +252,10 @@ namespace TumbangPreso.Abilities
                        summary: "Leap and crash down. Leaves burning ground where you land.",
                        telegraphRadius: 4.8f, telegraphRange: 0.0f,
                        castAction: "hero-sean-supernova",
-                       viewmodelAction: "supernova-slam")
+                       viewmodelAction: "supernova-slam",
+                       castCue: "sfx_cast_sean_supernova")
             {
+                TelegraphStyle = Visual.GroundReticle.Style.Ember;
                 Windup = UltimateWindup;
             }
 
@@ -271,7 +273,6 @@ namespace TumbangPreso.Abilities
                 // Launch upward
                 ctx.Motor.ApplyImpulse(Vector3.up * 14.0f + ctx.Forward * 4.0f);
                 NetCue.Play("hero_sean_ult", ctx.Position);
-                NetCue.Play("sfx_fire_whoosh", ctx.Position);
             }
 
             protected override void OnTick(AbilityContext ctx, float dt)
