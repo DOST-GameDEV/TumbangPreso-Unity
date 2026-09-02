@@ -858,12 +858,9 @@ namespace TumbangPreso.UI
         // -------------------------------------------------------------------------------------
 
         /// <summary>The board. ⚠️ Rebuilt on every open rather than kept in step, because it is
-        /// four cards off two `HeroBuildRules` lookups and a stale one would show a build the
+        /// four tiles off two `HeroBuildRules` lookups and a stale one would show a build the
         /// match will not use.</summary>
         private GameObject _loadoutBoard;
-
-        private const float BoardWidth = 660.0f;
-        private const float BoardPad = 22.0f;
 
         /// <summary>
         /// Opens or closes the loadout board.
@@ -911,18 +908,34 @@ namespace TumbangPreso.UI
         private bool OnHeroTab => _tab == 0 && SceneFlow.SelectedMode == GameMode.HeroStrike;
 
         /// <summary>
-        /// Four cards: two slots, two readings each.
+        /// Two rows, one per skill, each holding its two readings side by side.
         ///
-        /// ⚠️⚠️ CARDS RATHER THAN A STEPPER, AND THAT IS THE WHOLE GAIN OVER THE HUB'S VERSION.
-        /// `PlayerHub.BuildAbilityBuildRows` used a `UiRows.StepperRow` per slot because a settings
-        /// list is what that screen is made of, so the player could see exactly ONE of the two
-        /// readings at a time and had to click to compare them. **A choice between two things is
-        /// not a value you step through; it is two things you look at.** Both are on screen here,
-        /// with their trade written on each, and the equipped one is visibly the equipped one.
+        /// ⚠️⚠️⚠️ IT IS A WIDE BOARD ACROSS THE BOTTOM OF THE STAGE AND IT WAS A TALL SLAB OVER
+        /// THE MODEL. 🧑 2026-09-02: **"loadout genuinely ugly"**, *"thoroughly compare to other
+        /// games loadouts and shit and plan how to make our own"*. `docs/TODO.md` § 122.18 is the
+        /// comparison and the six faults; this is the shape it arrived at.
         ///
-        /// ⚠️ TWO SLOTS AND NOT THREE. The ultimate has no variants by design
-        /// (`AbilityVariant.Slot`: *"reading which one an opponent has is already a skill"*), so it
-        /// is absent rather than present and empty.
+        /// ⚠️⚠️ **THE ONE CHANGE THAT FIXES FOUR OF THE SIX IS THAT A SLOT'S TWO OPTIONS SIT SIDE
+        /// BY SIDE.** Stacked, four options read as a list of four things: *here are some items*.
+        /// Side by side they read as two choices: *this or that*. `PlayerHub`'s stepper was
+        /// rejected for showing one option at a time, and stacking them shows both without ever
+        /// saying they are alternatives. **The geometry is the sentence.**
+        ///
+        /// ⚠️⚠️ AND THE SOURCE IS NAMED IN THIS REPOSITORY ALREADY, so this is less a comparison
+        /// than finally drawing what the data model has always described.
+        /// `AbilityVariant.Challenge`'s own doc reads *"The Risk of Rain 2 style challenge that
+        /// unlocks it"* and `docs/FUTURE.md` says the same. That game draws a slot as its big icon
+        /// followed by a strip of alternatives, ringed when selected, dimmed with a lock and its
+        /// challenge when not. **That is this method.**
+        ///
+        /// ⚠️ THE CHARACTER STAYS VISIBLE, which is § 122.18 fault 5 and is what Overwatch's and
+        /// Valorant's hero panels get right: the loadout is FOR the model, so a panel that covers
+        /// it asks the player to choose a look they cannot see.
+        ///
+        /// ⚠️ WHAT DELIBERATELY DOES **NOT** TRANSFER IS A COMPARISON TABLE. Deep Rock and CoD put
+        /// numbers in columns because their options differ on six axes; ours differ on one gain
+        /// and one cost, both already authored as a phrase, and every option is a sidegrade by
+        /// design (`FUTURE.md` § 10). A table here would be five columns of "As tuned".
         /// </summary>
         private void BuildLoadoutBoard()
         {
@@ -937,106 +950,182 @@ namespace TumbangPreso.UI
             _loadoutBoard = go;
 
             // ⚠️ IT BLOCKS. `CLAUDE.md` § 6.2c question 5: anything covering the screen is also
-            // eating clicks and the block is usually nobody's stated job. This board sits over the
-            // model, which is draggable (`ModelPreviewInput`), so without an opaque raycast target
-            // a drag started on the board would spin the character behind it.
-            // ⚠️⚠️ PAPER, LIKE THE TWO CHIPS THAT OPEN IT, AND FOR THE REASON `StageDoor`'S NOTE
-            // GIVES AT LENGTH. 🧑 2026-09-02, of the wooden version: *"pic 2 looks very ugly too"*.
-            // A brown board of brown cards on a dark stage beside a brown card is one material at
-            // four values, and nothing in the frame told the eye which of them it could press.
+            // eating clicks, and the block is usually nobody's stated job. The model behind it is
+            // draggable (`ModelPreviewInput`), so without an opaque raycast target a drag started
+            // on the board would spin the character.
             var plate = go.GetComponent<Image>();
             plate.raycastTarget = true;
             PaperSkin.Apply(go, PaperCraft.Surface.Sheet);
 
+            // ⚠️⚠️ ANCHORED TO THE BOTTOM OF THE STAGE AND CENTRED ON THE STAGE'S OWN MIDDLE, not
+            // on the canvas'. The picker's card owns the left side, so the stage is everything
+            // right of it; centring on the canvas would put a third of the board under the card.
+            // See `StageCentre`.
             var rt = (RectTransform)go.transform;
-            rt.anchorMin = new Vector2(1.0f, 0.5f);
-            rt.anchorMax = new Vector2(1.0f, 0.5f);
-            rt.pivot = new Vector2(1.0f, 0.5f);
-            rt.anchoredPosition = new Vector2(-96.0f, 40.0f);
-            rt.sizeDelta = new Vector2(BoardWidth, 640.0f);
+            rt.anchorMin = new Vector2(0.5f, 0.0f);
+            rt.anchorMax = new Vector2(0.5f, 0.0f);
+            rt.pivot = new Vector2(0.5f, 0.0f);
+            rt.anchoredPosition = new Vector2(StageCentre, 40.0f);
+            rt.sizeDelta = new Vector2(BoardWidth, BoardHeight);
 
-            var header = MenuKit.Label(go.transform, "LOADOUT", PaperKit.Title, UiTheme.PaperInk,
-                new Vector2(0.5f, 1.0f), new Vector2(0.0f, -44.0f),
-                new Vector2(BoardWidth - (BoardPad * 2.0f), 32.0f), TextAnchor.MiddleCenter);
+            float inner = BoardWidth - (BoardPad * 2.0f);
+
+            var header = MenuKit.Label(go.transform,
+                "LOADOUT   ·   " + HeroDisplayName(heroId), PaperKit.Title, UiTheme.PaperInk,
+                new Vector2(0.5f, 1.0f), new Vector2(0.0f, -34.0f),
+                new Vector2(inner, 30.0f), TextAnchor.MiddleLeft);
             header.fontStyle = FontStyle.Bold;
+            header.alignment = TextAnchor.MiddleLeft;
             header.raycastTarget = false;
 
-            // ⚠️ THE HERO'S NAME IS UNDER THE HEADING BECAUSE A BUILD BELONGS TO ONE. The hub's
-            // version needed a stepper to say which hero; this one states it, because the screen
-            // behind the board has already chosen.
-            var who = MenuKit.Label(go.transform, HeroDisplayName(heroId), 18, UiTheme.PaperInkSoft,
-                new Vector2(0.5f, 1.0f), new Vector2(0.0f, -74.0f),
-                new Vector2(BoardWidth - (BoardPad * 2.0f), 24.0f), TextAnchor.MiddleCenter);
-            who.raycastTarget = false;
+            var close = PaperKit.Chip(go.transform, "LoadoutClose", "CLOSE");
+            close.onClick.AddListener(() => { MenuSfx.Back(); ToggleLoadoutBoard(false); });
+            MenuKit.Place((RectTransform)close.transform, new Vector2(0.5f, 1.0f),
+                          new Vector2((inner * 0.5f) - 70.0f, -34.0f),
+                          new Vector2(140.0f, 44.0f));
 
-            float y = -118.0f;
-            var abilities = new (HeroAbility ability, int slot)[]
+            float y = -80.0f;
+
+            var abilities = new (HeroAbility ability, int slot, string action)[]
             {
-                (kit.Skill1, 1),
-                (kit.Skill2, 2),
+                (kit.Skill1, 1, "Skill1"),
+                (kit.Skill2, 2, "Skill2"),
             };
 
-            foreach (var (ability, slot) in abilities)
+            foreach (var (ability, slot, action) in abilities)
             {
                 var options = HeroLoadoutRules.VariantsFor(heroId, slot);
                 if (options == null || options.Count == 0) continue;
 
-                string title = "SKILL " + slot;
-                if (ability != null) title += "  ·  " + ability.Name;
+                BuildSlotHead(go.transform, ability, slot, action, accent, y);
 
-                // ⚠️ THE SLOT CAPTION IS LEFT-ALIGNED INSIDE A FULL-WIDTH CENTRED BOX, not a
-                // narrow box pushed left. `MenuKit.Place` writes `anchoredPosition` against a
-                // CENTRED pivot, so an x of zero on a box the width of the board's content is the
-                // only version of "flush left" that cannot hang off an edge. See
-                // `BuildVariantCard` for the render that made that worth writing down.
-                var caption = MenuKit.Label(go.transform, title, 16, UiTheme.PaperInkSoft,
-                    new Vector2(0.5f, 1.0f), new Vector2(0.0f, y),
-                    new Vector2(BoardWidth - (BoardPad * 2.0f), 22.0f), TextAnchor.MiddleLeft);
-                caption.fontStyle = FontStyle.Bold;
-                caption.alignment = TextAnchor.MiddleLeft;
-                caption.raycastTarget = false;
-                y -= 30.0f;
+                // ⚠️⚠️ THE TILES SHARE THE ROW WITH THE SLOT HEAD RATHER THAN SITTING UNDER IT,
+                // which is what makes a row a row. `SlotHeadWidth` is the head's share and the
+                // tiles split what is left, so a third reading added to `HeroLoadoutRules` would
+                // narrow the tiles rather than break the layout.
+                float tileArea = inner - SlotHeadWidth - TileGap;
+                float tileWidth = (tileArea - (TileGap * (options.Count - 1))) / options.Count;
 
-                foreach (var option in options)
+                for (int i = 0; i < options.Count; i++)
                 {
-                    BuildVariantCard(go.transform, heroId, slot, option, accent, y);
-                    y -= 108.0f;
+                    float x = -(inner * 0.5f) + SlotHeadWidth + TileGap
+                              + (i * (tileWidth + TileGap)) + (tileWidth * 0.5f);
+
+                    BuildVariantTile(go.transform, heroId, slot, options[i], accent,
+                                     x, y, tileWidth);
                 }
 
-                y -= 14.0f;
+                y -= TileHeight + SlotGap;
             }
+        }
 
-            var close = PaperKit.Chip(go.transform, "LoadoutClose", "CLOSE");
-            close.onClick.AddListener(() => { MenuSfx.Back(); ToggleLoadoutBoard(false); });
-            MenuKit.Place((RectTransform)close.transform, new Vector2(0.5f, 0.0f),
-                          new Vector2(0.0f, 46.0f), new Vector2(220.0f, 52.0f));
+        /// <summary>How wide and tall the board is, and the pitch of everything on it.
+        /// ⚠️ Constants because `BuildLoadoutBoard` runs a cursor down them, and a literal inside
+        /// that loop is a number nobody can find again from a render.</summary>
+        private const float BoardWidth = 1020.0f;
+        private const float BoardHeight = 388.0f;
+        private const float BoardPad = 28.0f;
 
-            // ⚠️ THE BOARD IS SIZED TO ITS CONTENT, not to a constant. Two slots times two options
-            // is fixed today and `HeroLoadoutRules` is a table somebody will add a row to;
-            // `CLAUDE.md` § 6.2c question 1 is that a panel is sized against its CONTENT and the
-            // arithmetic is stated. The running `y` is that arithmetic: 118 of heading block, 30
-            // per slot caption, 108 per card, 14 between slots, plus 112 of footer for CLOSE and
-            // its margins.
-            rt.sizeDelta = new Vector2(BoardWidth, Mathf.Abs(y) + 112.0f);
+        /// <summary>The slot head's share of a row: the glyph, the slot number, the ability's own
+        /// name and its key. ⚠️ 250 holds `DEMONIC CARAPACE` beside a 44-unit glyph.</summary>
+        private const float SlotHeadWidth = 250.0f;
+
+        private const float TileHeight = 124.0f;
+        private const float TileGap = 14.0f;
+        private const float SlotGap = 22.0f;
+
+        /// <summary>
+        /// Where the middle of the stage is, in canvas units from the canvas' own centre.
+        ///
+        /// ⚠️ THE PICKER'S CARD OWNS THE LEFT OF THE SCREEN AND THE STAGE IS EVERYTHING RIGHT OF
+        /// IT, so the stage's centre is not the screen's: it is the midpoint of the card's right
+        /// edge and the window's, which at the 1920-unit reference is about 350 units right of
+        /// centre. **`AspectSafeCanvas` scales on the SHORT axis**, so this is stated in units
+        /// against the reference rather than as a fraction, which is `CLAUDE.md` § 6.2c question 1.
+        /// </summary>
+        private const float StageCentre = 350.0f;
+
+        /// <summary>
+        /// The left of a slot row: which skill this is, what the kit calls it, and its key.
+        ///
+        /// ⚠️⚠️ THE GLYPH LEADS, WHICH IS § 122.18 FAULT 2 AND `docs/VISION.md` § 3 RULE 1: *"the
+        /// icon says what the power does to the WORLD, not what element it is made of"*. The
+        /// picker's own ability rows have led with `AbilityIcons.For` since they were written and
+        /// the first build of this board dropped them, so the fastest thing on the screen to read
+        /// was missing from the one screen that is entirely about abilities.
+        ///
+        /// ⚠️ AND THE KEY COMES FROM THE LIVE BINDING (`Hud.KeyLabelFor`), never a literal.
+        /// `VISION.md` § 3: *"a screen that teaches the wrong key is worse than one that teaches
+        /// none"*, and `game-ui-design` lists a hard-coded button prompt as an error by name.
+        /// </summary>
+        private void BuildSlotHead(Transform board, HeroAbility ability, int slot, string action,
+                                   Color accent, float y)
+        {
+            float inner = BoardWidth - (BoardPad * 2.0f);
+            float left = -(inner * 0.5f);
+            float textX = left + 150.0f;
+
+            var glyphGo = new GameObject("SlotGlyph", typeof(RectTransform), typeof(Image));
+            glyphGo.transform.SetParent(board, false);
+
+            var glyph = glyphGo.GetComponent<Image>();
+            glyph.sprite = ability != null ? AbilityIcons.For(ability.Glyph) : null;
+            glyph.color = accent;
+            glyph.preserveAspect = true;
+            glyph.raycastTarget = false;
+            MenuKit.Place((RectTransform)glyphGo.transform, new Vector2(0.5f, 1.0f),
+                          new Vector2(left + 30.0f, y - 44.0f), new Vector2(48.0f, 48.0f));
+
+            var number = MenuKit.Label(board, "SKILL " + slot, PaperKit.Caption,
+                UiTheme.PaperInkSoft, new Vector2(0.5f, 1.0f),
+                new Vector2(textX, y - 24.0f),
+                new Vector2(180.0f, 20.0f), TextAnchor.MiddleLeft);
+            number.alignment = TextAnchor.MiddleLeft;
+            number.fontStyle = FontStyle.Bold;
+            number.raycastTarget = false;
+
+            var name = MenuKit.Label(board, ability != null ? ability.Name : "", PaperKit.Body,
+                UiTheme.PaperInk, new Vector2(0.5f, 1.0f),
+                new Vector2(textX, y - 50.0f),
+                new Vector2(180.0f, 24.0f), TextAnchor.MiddleLeft);
+            name.alignment = TextAnchor.MiddleLeft;
+            name.fontStyle = FontStyle.Bold;
+            name.raycastTarget = false;
+            MenuKit.Fit(name, 180.0f, 14);
+
+            var key = MenuKit.Label(board, Hud.KeyLabelFor(action), PaperKit.Caption,
+                UiTheme.PaperInkSoft, new Vector2(0.5f, 1.0f),
+                new Vector2(textX, y - 74.0f),
+                new Vector2(180.0f, 20.0f), TextAnchor.MiddleLeft);
+            key.alignment = TextAnchor.MiddleLeft;
+            key.raycastTarget = false;
         }
 
         /// <summary>
-        /// One reading of one slot: what it is, what it buys, what it costs, and whether it is
-        /// yours.
+        /// One reading of one slot, as a tile you press.
         ///
-        /// ⚠️⚠️ THE THREE STATES ARE EQUIPPED, AVAILABLE AND LOCKED, AND THEY ARE TOLD APART BY
-        /// SURFACE BEFORE COLOUR. Equipped is a lit plate with an amber keyline carrying the word
-        /// EQUIPPED; available is a plain plate; locked is a sunk near-black plate carrying its
-        /// challenge and its running count instead of its trade. `game-ui-design`'s
-        /// `colorblind-failure` is the rule and § 118.4 is this repository's version of it.
+        /// ⚠️⚠️ THREE STATES, THREE SURFACES, AND NOT ONE OF THEM IS A FILL. `PaperCraft` is a
+        /// closed list of roles (`CLAUDE.md` § 6.5) and all three already exist:
         ///
-        /// ⚠️⚠️ A LOCKED CARD IS STILL A CARD, WHICH IS MOST OF WHY THIS BOARD EXISTS. It names the
-        /// reading, so a player can see what they are working toward. That is the half
-        /// `docs/TODO.md` § 122.5's first attempt had to append to the description line to keep,
-        /// and appending it is what 🧑 photographed as **"theres things that overlap and shit"**.
+        ///   EQUIPPED   `Live`   a wood-dark plate with cream lettering, about 10:1 against the
+        ///                       sheet. The one dark object in a row is the one you have.
+        ///   AVAILABLE  `Token`  a warm cream plate with a lip and a cast shadow: pressable.
+        ///   LOCKED     `Ghost`  two hairlines and almost no fill, which is **the shape of an
+        ///                       absence** and is what § 118.3 wrote that surface for.
+        ///
+        /// ⚠️⚠️ THE THIRD LINE IS THE TRADE, AND ON A LOCKED TILE IT IS A PROGRESS BAR. § 122.18
+        /// fault 4: `GainLabel` and `CostLabel` used to draw only on an unlocked NON-DEFAULT
+        /// variant, so **on a fresh account the trade never appeared at all** and the system read
+        /// as two names. A default's trade is `As tuned · As tuned`, which is what the table
+        /// already says and is exactly what a player needs in order to see that the other option
+        /// is a TRADE rather than an upgrade (`FUTURE.md` § 10: every option is a sidegrade).
+        ///
+        /// ⚠️ AND A LOCKED TILE GETS A BAR RATHER THAN A BARE `0 / 8`. A fraction is a fact and a
+        /// bar is a distance. § 122.18 fault 3.
         /// </summary>
-        private void BuildVariantCard(Transform board, string heroId, int slot,
-                                      AbilityVariant option, Color accent, float y)
+        private void BuildVariantTile(Transform board, string heroId, int slot,
+                                      AbilityVariant option, Color accent,
+                                      float x, float y, float width)
         {
             var settings = Settings.SettingsStore.Current;
             if (settings == null) return;
@@ -1048,133 +1137,177 @@ namespace TumbangPreso.UI
             bool equipped = equippedVariant != null && equippedVariant.Id == option.Id;
             bool unlocked = HeroBuildRules.IsUnlocked(settings.AbilityChallenges, option);
             int progress = HeroBuildRules.ChallengeCount(settings.AbilityChallenges, option.Id);
+            int target = Mathf.Max(1, option.ChallengeTarget);
 
-            float width = BoardWidth - (BoardPad * 2.0f);
-
-            var card = new GameObject("Variant_" + option.Id, typeof(RectTransform),
+            var tile = new GameObject("Variant_" + option.Id, typeof(RectTransform),
                                       typeof(Image), typeof(Button));
-            card.transform.SetParent(board, false);
+            tile.transform.SetParent(board, false);
 
-            var rt = (RectTransform)card.transform;
+            var rt = (RectTransform)tile.transform;
             rt.anchorMin = new Vector2(0.5f, 1.0f);
             rt.anchorMax = new Vector2(0.5f, 1.0f);
             rt.pivot = new Vector2(0.5f, 1.0f);
-            rt.anchoredPosition = new Vector2(0.0f, y);
-            rt.sizeDelta = new Vector2(width, 98.0f);
+            rt.anchoredPosition = new Vector2(x, y);
+            rt.sizeDelta = new Vector2(width, TileHeight);
 
-            // ⚠️⚠️ THREE STATES, THREE SURFACES, AND NOT ONE OF THEM IS A FILL. `PaperCraft` is a
-            // closed list of roles (`CLAUDE.md` § 6.5) and all three of these already exist:
+            // ⚠️⚠️⚠️ ALL THREE STATES SHARE ONE SILHOUETTE, AND `CharacterLoadout-v69.png` IS WHY
+            // THIS IS NOT `Live` / `Token` / `Ghost`. Those three are the right pair of ideas at
+            // CHIP height and the wrong ones here: `PaintRaised` builds a PILL whose corner radius
+            // is half its face, so at 124 units `Live` and `Token` draw as lozenges with 59-unit
+            // ends, while `Ghost` is an 18-unit rounded rect. **Two states of one control in two
+            // different shapes**, which is § 121.10 row 3's finding on the tab rail arriving on a
+            // taller object.
             //
-            //   EQUIPPED   `Live`   a wood-dark pill with cream lettering, about 10:1 against the
-            //                       sheet. The one dark object on the board is the one you have.
-            //   AVAILABLE  `Token`  a warm cream plate with a lip and a cast shadow: pressable.
-            //   LOCKED     `Ghost`  two hairlines and almost no fill. **The shape of an absence**,
-            //                       which is what that surface was written for (§ 118.3).
-            //
-            // ⚠️ THE OLD SET WAS THREE `GodotTheme.Box` CALLS WITH DIFFERENT FILLS AND BORDER
-            // WIDTHS, which is the exact failure § 6.5 names: *"a screen of twelve plates that
-            // were all one call with a different fill, and the way that happened is that the fill
-            // was a parameter."* A locked card and an available one differed by two browns and one
-            // pixel of border.
-            var plate = card.GetComponent<Image>();
+            // ⚠️ SO THE PAIR IS `Sign` AND `Sheet`, WHICH ARE THE SAME CONSTRUCTION INVERTED.
+            // `PaintPlate` draws both: same soft corner, same halo, same cast shadow, and the only
+            // difference is that one is cream and one is wood-dark with a lit lip. That is
+            // `Surface.Sign`'s own note in as many words (*"the same construction in wood: same
+            // silhouette, same halo, same cast shadow, inverted values"*), and it is a value
+            // inversion of about 10:1 rather than a hue. `Ghost` shares the same 18-unit corner,
+            // so all three tiles are one shape at three fills.
+            var plate = tile.GetComponent<Image>();
             plate.raycastTarget = true;
-            PaperSkin.Apply(card, equipped ? PaperCraft.Surface.Live
-                                : unlocked ? PaperCraft.Surface.Token
+            PaperSkin.Apply(tile, equipped ? PaperCraft.Surface.Sign
+                                : unlocked ? PaperCraft.Surface.Sheet
                                 : PaperCraft.Surface.Ghost);
 
-            var button = card.GetComponent<Button>();
+            var button = tile.GetComponent<Button>();
             button.targetGraphic = plate;
             button.transition = Selectable.Transition.None;
             button.onClick.AddListener(() => EquipVariant(heroId, slot, option));
 
-            // ⚠️ A LOCKED CARD IS NOT INTERACTABLE, SO IT DRAWS ITSELF AS UNAVAILABLE AND STILL
-            // TAKES THE PRESS. `PaperButton.Available` returns true for a `Live` surface only, so
-            // the equipped card keeps its lit plate; a `Ghost` goes to `Pose.Off` and stops
-            // lifting under the pointer, which is the honest read. **The listener stays wired**
-            // because `EquipVariant` is what plays the refusal, and a control that answers with
-            // silence is § 108's dead EQUIP button.
-            card.AddComponent<PaperButton>();
-            FocusRing.Attach(card, 3.0f);
+            tile.AddComponent<PaperButton>();
+            FocusRing.Attach(tile, 3.0f);
 
-            // ⚠️⚠️⚠️ EVERY BOX ON THIS CARD IS CENTRE-ANCHORED AND POSITIONED FROM THE CARD'S OWN
-            // MIDDLE, AND `Logs/shots-runtime/CharacterLoadout-v66.png` IS WHY IT HAS TO BE SAID.
-            // The first build anchored each label to a CORNER of the card and offset it inward by
-            // the padding, and **every label drew half outside the board**: the names and the
-            // descriptions floated on the stage to the left of it and the EQUIPPED badges hung off
-            // the right edge.
-            //
-            // **`MenuKit.Place` writes `anchoredPosition`, and a rect's pivot is its CENTRE.** So
-            // an anchor of (0, 1) with an offset of (14, -20) puts a 456-unit box's MIDDLE 14
-            // units in from the left edge, which is 214 units of it outside the card. The offset
-            // reads like an inset and is a centre.
-            //
-            // ⚠️ SO THE ARITHMETIC IS STATED ONCE AND EVERY BOX USES IT. The card is `width` by 98
-            // with its own centre at zero, so the top edge is +49 and the bottom is -49; a
-            // left-aligned box of `w` sits at `-(width / 2) + Pad + (w / 2)`. Three bands, and they
-            // cannot overlap: the header at +32 spans +44 to +20, the body at 0 spans +18 to -18,
-            // and the trade at -32 spans -22 to -42. **An overlap between two labels is silent in
-            // every direction** (§ 102.4), which is why the bands are written out rather than
-            // eyeballed.
-            const float pad = 14.0f;
-            const float badgeWidth = 130.0f;
-
-            float nameWidth = width - (pad * 2.0f) - badgeWidth - 10.0f;
-
-            // ⚠️ CREAM ON THE EQUIPPED CARD BECAUSE ITS PLATE IS WOOD-DARK, ink on the other
-            // two. `PaperButton._live`'s note is the receipt: ink on `WoodMid` measures 1.3:1 and
-            // is the lobby ROOM CODE fault. Type inverts when its ground does.
-            Color cardInk = equipped ? UiTheme.Cream
+            // ⚠️ CREAM ON THE EQUIPPED TILE BECAUSE ITS PLATE IS WOOD-DARK, ink on the other two.
+            // `PaperButton._live`'s note is the receipt: ink on `WoodMid` measures 1.3:1 and is
+            // the lobby ROOM CODE fault. Type inverts when its ground does.
+            Color ink = equipped ? UiTheme.Cream
                 : unlocked ? UiTheme.PaperInk
                 : UiTheme.PaperInkSoft;
+            Color inkSoft = equipped ? UiTheme.CreamMuted : UiTheme.PaperInkSoft;
 
-            var name = MenuKit.Label(card.transform, option.Name, MenuKit.MinReadableUnits,
-                unlocked ? cardInk : UiTheme.PaperInkSoft,
-                new Vector2(0.5f, 0.5f),
-                new Vector2(-(width * 0.5f) + pad + (nameWidth * 0.5f), 32.0f),
-                new Vector2(nameWidth, 24.0f), TextAnchor.MiddleLeft);
-            name.fontStyle = FontStyle.Bold;
+            const float pad = 16.0f;
+            float band = width - (pad * 2.0f);
+
+            // ⚠️⚠️ EVERY BOX ON THIS TILE IS CENTRE-ANCHORED AND POSITIONED FROM THE TILE'S OWN
+            // MIDDLE, which is the correction `docs/TODO.md` § 122.14 records: `MenuKit.Place`
+            // writes `anchoredPosition` against a CENTRED pivot, so a corner anchor with an inward
+            // offset puts the box's MIDDLE at the inset and draws most of it outside the tile.
+            float top = TileHeight * 0.5f;
+
+            var name = MenuKit.Label(tile.transform, option.Name, PaperKit.Body, ink,
+                new Vector2(0.5f, 0.5f), new Vector2(0.0f, top - 26.0f),
+                new Vector2(band, 24.0f), TextAnchor.MiddleLeft);
             name.alignment = TextAnchor.MiddleLeft;
+            name.fontStyle = FontStyle.Bold;
             name.raycastTarget = false;
+            MenuKit.Fit(name, band - 86.0f, 14);
 
-            string badge = equipped ? "EQUIPPED"
-                : unlocked ? ""
-                : progress + " / " + option.ChallengeTarget;
+            if (equipped)
+            {
+                var mark = MenuKit.Label(tile.transform, "EQUIPPED", 13, UiTheme.Amber,
+                    new Vector2(0.5f, 0.5f), new Vector2(0.0f, top - 26.0f),
+                    new Vector2(band, 24.0f), TextAnchor.MiddleRight);
+                mark.alignment = TextAnchor.MiddleRight;
+                mark.fontStyle = FontStyle.Bold;
+                mark.raycastTarget = false;
+            }
+            else if (!unlocked)
+            {
+                var mark = MenuKit.Label(tile.transform, "LOCKED", 13, inkSoft,
+                    new Vector2(0.5f, 0.5f), new Vector2(0.0f, top - 26.0f),
+                    new Vector2(band, 24.0f), TextAnchor.MiddleRight);
+                mark.alignment = TextAnchor.MiddleRight;
+                mark.fontStyle = FontStyle.Bold;
+                mark.raycastTarget = false;
+            }
 
-            var state = MenuKit.Label(card.transform, badge, 14,
-                equipped ? UiTheme.Amber : UiTheme.PaperInkSoft,
-                new Vector2(0.5f, 0.5f),
-                new Vector2((width * 0.5f) - pad - (badgeWidth * 0.5f), 32.0f),
-                new Vector2(badgeWidth, 24.0f), TextAnchor.MiddleRight);
-            state.fontStyle = FontStyle.Bold;
-            state.alignment = TextAnchor.MiddleRight;
-            state.raycastTarget = false;
-
-            // ⚠️⚠️ A LOCKED CARD CARRIES ITS CHALLENGE AND AN OPEN ONE CARRIES ITS DESCRIPTION,
-            // AND THEY ARE NEVER BOTH ON SCREEN. Running the two together is exactly the fault
-            // `Logs/shots-runtime/CharacterSelect-v62.png` recorded on the picker's description
-            // rows: two unrelated facts in one wrapped paragraph inside a 61-unit box.
-            var body = MenuKit.Label(card.transform,
-                unlocked ? option.Description : option.Challenge, 16,
-                unlocked ? cardInk : UiTheme.PaperInkSoft,
-                new Vector2(0.5f, 0.5f), new Vector2(0.0f, 0.0f),
-                new Vector2(width - (pad * 2.0f), 36.0f), TextAnchor.UpperLeft);
+            // ⚠️⚠️ 52 UNITS AND NOT 40, BECAUSE 40 TRUNCATED THE SECOND LINE. On
+            // `CharacterLoadout-v69.png` the equipped tile read *"The stomp as it is tuned. One
+            // heavy shock at"* and stopped: two lines of `PaperKit.Caption` 16 need about 42 with
+            // their leading, and `verticalOverflow = Truncate` **drops a whole line in silence**,
+            // which is § 121.10 row 6's fault on a third surface. The tile is 124 tall and had 15
+            // units doing nothing under the trade line, so this is spending slack rather than
+            // growing anything.
+            var body = MenuKit.Label(tile.transform,
+                unlocked ? option.Description : option.Challenge, PaperKit.Caption, ink,
+                new Vector2(0.5f, 0.5f), new Vector2(0.0f, top - 68.0f),
+                new Vector2(band, 52.0f), TextAnchor.UpperLeft);
             body.alignment = TextAnchor.UpperLeft;
             body.horizontalOverflow = HorizontalWrapMode.Wrap;
             body.verticalOverflow = VerticalWrapMode.Truncate;
             body.raycastTarget = false;
 
-            // ⚠️ THE TRADE IS ITS OWN LINE, in the accent, and it is absent on a default reading.
-            // `AbilityVariant.IsDefault` is the test: a default has no gain and no cost, so a
-            // "gains nothing, costs nothing" line under it would be two nouns saying nothing.
-            if (!unlocked || option.IsDefault) return;
+            if (unlocked)
+            {
+                var trade = MenuKit.Label(tile.transform,
+                    option.GainLabel + "   ·   " + option.CostLabel, 13,
+                    equipped ? UiTheme.Amber : accent,
+                    new Vector2(0.5f, 0.5f), new Vector2(0.0f, -top + 18.0f),
+                    new Vector2(band, 18.0f), TextAnchor.MiddleLeft);
+                trade.alignment = TextAnchor.MiddleLeft;
+                trade.raycastTarget = false;
+                return;
+            }
 
-            var trade = MenuKit.Label(card.transform,
-                option.GainLabel + "   ·   " + option.CostLabel, 14,
-                equipped ? UiTheme.Amber : accent,
-                new Vector2(0.5f, 0.5f), new Vector2(0.0f, -32.0f),
-                new Vector2(width - (pad * 2.0f), 20.0f), TextAnchor.MiddleLeft);
-            trade.alignment = TextAnchor.MiddleLeft;
-            trade.raycastTarget = false;
+            BuildProgressBar(tile.transform, band, -top + 18.0f,
+                             progress / (float)target, inkSoft);
+
+            var count = MenuKit.Label(tile.transform, progress + " / " + target, 13, inkSoft,
+                new Vector2(0.5f, 0.5f), new Vector2(0.0f, -top + 18.0f),
+                new Vector2(band, 18.0f), TextAnchor.MiddleRight);
+            count.alignment = TextAnchor.MiddleRight;
+            count.raycastTarget = false;
+        }
+
+        /// <summary>
+        /// How far along a challenge is, as a bar.
+        ///
+        /// ⚠️ TWO IMAGES AND NO SPRITE. A groove at 30 per cent of the ink and a fill at full: the
+        /// pair reads at a glance, costs nothing to generate, and cannot go stale the way a baked
+        /// nine-patch does when the tile's width changes.
+        ///
+        /// ⚠️ THE FILL IS THE SAME INK AS THE COUNT BESIDE IT rather than an accent. This tile is
+        /// LOCKED: an accent on it would make the thing you cannot have the brightest object in
+        /// the row, which is `CLAUDE.md` § 6.2's *what is the ONE thing on this screen* answered
+        /// backwards.
+        /// </summary>
+        private static void BuildProgressBar(Transform tile, float width, float y,
+                                             float fraction, Color ink)
+        {
+            fraction = Mathf.Clamp01(fraction);
+
+            // ⚠️ THE GROOVE STOPS SHORT OF THE COUNT. The fraction and the bar share a line, so
+            // the bar takes the left two thirds and the count the right third; a full-width bar
+            // would run under the digits.
+            float barWidth = width * 0.62f;
+            float left = -(width * 0.5f) + (barWidth * 0.5f);
+
+            var grooveGo = new GameObject("Groove", typeof(RectTransform), typeof(Image));
+            grooveGo.transform.SetParent(tile, false);
+            var groove = grooveGo.GetComponent<Image>();
+            groove.color = new Color(ink.r, ink.g, ink.b, 0.30f);
+            groove.raycastTarget = false;
+            MenuKit.Place((RectTransform)grooveGo.transform, new Vector2(0.5f, 0.5f),
+                          new Vector2(left, y), new Vector2(barWidth, 6.0f));
+
+            if (fraction <= 0.0f) return;
+
+            var fillGo = new GameObject("Fill", typeof(RectTransform), typeof(Image));
+            fillGo.transform.SetParent(tile, false);
+            var fill = fillGo.GetComponent<Image>();
+            fill.color = ink;
+            fill.raycastTarget = false;
+
+            // ⚠️ IT GROWS FROM THE LEFT EDGE, so a pivot of zero and a position at the groove's
+            // own left end. Centring it would make a half-full bar a floating stub.
+            var fillRt = (RectTransform)fillGo.transform;
+            fillRt.anchorMin = new Vector2(0.5f, 0.5f);
+            fillRt.anchorMax = new Vector2(0.5f, 0.5f);
+            fillRt.pivot = new Vector2(0.0f, 0.5f);
+            fillRt.anchoredPosition = new Vector2(left - (barWidth * 0.5f), y);
+            fillRt.sizeDelta = new Vector2(barWidth * fraction, 6.0f);
         }
 
         /// <summary>

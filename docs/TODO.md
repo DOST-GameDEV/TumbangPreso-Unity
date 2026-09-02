@@ -2741,6 +2741,54 @@ it is the thing you READ. These are the things you PRESS.
 
 ---
 
+### 122.18 ⚠️⚠️ THE LOADOUT BOARD, REDESIGNED AGAINST THE GAMES IT IS ACTUALLY COPYING
+
+🧑 2026-09-02, of the paper board § 122.17 shipped: **"loadout genuinely ugly"**, *"thoroughly
+compare to other games loadouts and shit and plan how to make our own"*.
+
+**Six faults, and the first one explains four of them.**
+
+| # | What is wrong | Why |
+|---|---|---|
+| 1 | ⚠️⚠️ **The two options for a slot are STACKED, so four options read as a list of four things rather than as two either/or choices.** | A list says *here are some items*. A choice says *this or that*. `PlayerHub`'s stepper was rejected for showing one option at a time; stacking them shows both and still does not say they are alternatives. **Side by side is the whole fix**, and it is what every game below does. |
+| 2 | **No icons anywhere.** | The picker's own ability rows lead with `AbilityIcons.For(glyph)` and the board dropped them. `docs/VISION.md` § 3 rule 1: *the icon says what the power does to the WORLD*, and it is the fastest thing on the screen to read. |
+| 3 | **A locked option is a bare `0 / 8`.** | A fraction is a fact; a bar is a feeling of distance. Every unlock screen in the genre draws the bar. |
+| 4 | **The trade never appears on a fresh account.** `GainLabel` / `CostLabel` draw only on an unlocked non-default variant, and on a fresh account there are none. | **The trade IS the system.** A player who cannot see what switching buys cannot want to switch, so the whole feature reads as two names. |
+| 5 | **It covers the character.** | The loadout is FOR the character. |
+| 6 | The header is small, the margins are wide and CLOSE is alone at the bottom. | Consequence of 1: a list of four rows in a tall box leaves the box mostly empty. |
+
+**What the games actually do, and what transfers.**
+
+| Game | Shape | Transfers? |
+|---|---|---|
+| ⚠️⚠️ **Risk of Rain 2** — and this is not a comparison, it is **the stated source**: `AbilityVariant.Challenge`'s own doc says *"The Risk of Rain 2 style challenge that unlocks it"* and `FUTURE.md` § 1250 says the same. | A skill slot is a row: the slot's big icon on the left, then the alternatives as a **horizontal strip of icon tiles**. The selected tile is ringed. A locked tile is dimmed with a lock, and its challenge is written out. | **Almost all of it.** The strip, the ring, the lock, the challenge text. |
+| **Overwatch / Valorant hero detail** | The character stays on screen; the abilities are a row of icons with one sentence each. | The character staying visible (fault 5) and icon-first rows (fault 2). |
+| **Deep Rock Galactic** | Option chips per slot, with the **stat delta** shown against the equipped one. | The trade as a first-class line rather than an afterthought (fault 4). |
+| **Apex / CoD loadout** | Two columns: category left, cards right. | Only the column split, which we already have as slot-caption-then-options. |
+
+⚠️ **What does NOT transfer, and it is the one to be firm about: a comparison TABLE.** DRG and CoD
+put numbers side by side because their options differ on six axes. Ours differ on **one gain and
+one cost, both already written as a phrase** (`HeroLoadoutRules`), and every option is a sidegrade
+by design (`FUTURE.md` § 10: *unlockable skills must be sidegrades*). A table would be five columns
+of "As tuned".
+
+**The design.**
+
+- **A wide, short board across the bottom of the stage**, not a tall slab over the model. The
+  character's head and shoulders stay visible, which is fault 5.
+- **One row per slot.** Left: the slot's ability glyph, `SKILL 1`, the base ability's name and its
+  key. Right: **the two options as tiles, side by side.**
+- **A tile carries, top to bottom:** the variant name; the one-line description; and then either
+  the **trade** (`gain · cost`, in the accent) or, when locked, the **challenge with a progress
+  bar**. ⚠️ Never both, which is § 122.10 row 3's fault.
+- **Three states by SURFACE, as § 122.17 established**: EQUIPPED is `Live` with an amber EQUIPPED
+  mark, AVAILABLE is `Token`, LOCKED is `Ghost` with a lock glyph.
+- ⚠️ **The default option shows a trade too, and it reads `As tuned · As tuned`,** which is what
+  the table already says. That is fault 4 fixed by drawing what is there rather than by writing
+  anything new.
+
+---
+
 ### 122.8 What is NOT done
 
 - ⚠️ **The chat still does not work and is still not diagnosed.** § 121.11 is unchanged and reading

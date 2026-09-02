@@ -331,7 +331,29 @@ namespace TumbangPreso.UI
 
         /// <summary>The room plaque, and the height its 40-unit code needs with a caption over it.
         /// </summary>
-        private const float RoomSignHeight = 62.0f;
+        /// <summary>
+        /// ⚠️⚠️⚠️ 82, AND 62 WAS SMALLER THAN THE CODE IT HAD TO HOLD. 🧑 2026-09-02, of the plate
+        /// after `docs/TODO.md` § 122.16 had already re-centred the value: **"this ugly maybe
+        /// center the code up"**, *"room code and tap to copy are okay"*.
+        ///
+        /// **Centring could not fix it and the arithmetic says why.** The plate draws its cast
+        /// shadow inside its own bottom `PaperCraft.Drop` 6, so a 62-unit plate is a 56-unit face;
+        /// the caption row owns the top 40 per cent of it, which left the code a band of about
+        /// **31 units for a `PaperKit.Display` glyph that is 44**. `MenuKit.Label` OVERFLOWS
+        /// rather than shrinking, so the code spilled about six units past its box in both
+        /// directions and the bottom one landed on the plate's inner edge. **A value centred in a
+        /// box too small for it is still touching both ends of the box.**
+        ///
+        /// ⚠️ THE ROOM COLUMN HAD THE ROOM AND THE RAIL DOES NOT GROW. `BottomRailHeight` is
+        /// driven by the ACTION column (`SettingsChipHeight` 62 + `Gap` 10 + `ActionHeight` 96 =
+        /// 168 of inner height); the room column was `RoomSignHeight` 62 + `Gap` + `ChipHeight` 40
+        /// = 112, so **56 units were spare**. This spends 20 of them and leaves 36.
+        ///
+        /// ⚠️ AND `BuildTierPlate` FOLLOWS BY CONSTRUCTION, because its own height is written as
+        /// `RoomSignHeight + ChipHeight + Gap + 40`. The ranked rail cannot drift out of step with
+        /// the custom one, which is the whole reason that line is arithmetic.
+        /// </summary>
+        private const float RoomSignHeight = 82.0f;
 
         /// <summary>
         /// How tall the opened settings drawer is.
@@ -1473,7 +1495,7 @@ namespace TumbangPreso.UI
             // `TS5U`, because a 16-unit caption inset 24 from the bottom and a 44-unit value inset
             // 26 from the top overlap by 12 units on a 62-unit plate. **Two labels overlapping is
             // silent in every direction**, which is § 102.4's fault rotated 90 degrees.
-            caption.rectTransform.anchorMin = new Vector2(0.0f, 0.60f);
+            caption.rectTransform.anchorMin = new Vector2(0.0f, 0.72f);
             caption.rectTransform.anchorMax = new Vector2(1.0f, 1.0f);
             caption.rectTransform.offsetMin = new Vector2(PaperKit.Pad, 0.0f);
             caption.rectTransform.offsetMax = new Vector2(-PaperKit.Pad, -7.0f);
@@ -1483,7 +1505,7 @@ namespace TumbangPreso.UI
                                      Vector2.zero, TextAnchor.UpperRight);
             hint.name = "RoomCodeHint";
             hint.raycastTarget = false;
-            hint.rectTransform.anchorMin = new Vector2(0.0f, 0.60f);
+            hint.rectTransform.anchorMin = new Vector2(0.0f, 0.72f);
             hint.rectTransform.anchorMax = new Vector2(1.0f, 1.0f);
             hint.rectTransform.offsetMin = new Vector2(PaperKit.Pad, 0.0f);
             hint.rectTransform.offsetMax = new Vector2(-PaperKit.Pad, -7.0f);
@@ -1524,7 +1546,10 @@ namespace TumbangPreso.UI
             label.raycastTarget = false;
             label.alignment = TextAnchor.MiddleCenter;
             label.rectTransform.anchorMin = new Vector2(0.0f, 0.0f);
-            label.rectTransform.anchorMax = new Vector2(1.0f, 0.60f);
+            // ⚠️ 0.72, WHICH IS 23 UNITS OF CAPTION ROW ON AN 82-UNIT PLATE AND 53 FOR THE CODE.
+            // A 44-unit glyph centred in 53 clears both ends by four units, which is the first
+            // time this plate has had a box its own value fits inside. See `RoomSignHeight`.
+            label.rectTransform.anchorMax = new Vector2(1.0f, 0.72f);
             label.rectTransform.offsetMin = new Vector2(PaperKit.Pad, PaperCraft.Drop);
             label.rectTransform.offsetMax = new Vector2(-PaperKit.Pad, 0.0f);
 
