@@ -314,7 +314,13 @@ namespace TumbangPreso.UI
         /// far end of the row. ⚠️ It is a DIFFERENT SHAPE from the row above it on purpose
         /// (`docs/TODO.md` § 118.1 row 4) and its two strings are ADJACENT rather than pinned to
         /// opposite edges, which is 🧑's *"big ass empty sopace"*.</summary>
-        private const float SkillsRowHeight = 40.0f;
+        /// <summary>
+        /// The BUILD row. ⚠️ THE SAME HEIGHT AS THE FIGHTER ROW SINCE 2026-09-02, because it is
+        /// the same object now: a value over what it is. It was 40 against 54, which is two rows
+        /// in one column at two heights on two centre lines, and 🧑 read that as
+        /// **"it isnt centered like both of them"**.
+        /// </summary>
+        private const float SkillsRowHeight = FighterRowHeight;
 
         /// <summary>The room plaque, and the height its 40-unit code needs with a caption over it.
         /// </summary>
@@ -920,52 +926,41 @@ namespace TumbangPreso.UI
             // labels overlapping is silent in every direction** (§ 102.4 rotated). A horizontal
             // group sized to its own content cannot overlap either, and it also cannot be wrong
             // when the value string changes length, which the hand-written version always could.
-            var pair = new GameObject("LoadoutPair", typeof(RectTransform));
-            pair.transform.SetParent(go.transform, false);
-
-            var pairRt = (RectTransform)pair.transform;
-            pairRt.anchorMin = new Vector2(0.5f, 0.5f);
-            pairRt.anchorMax = new Vector2(0.5f, 0.5f);
-            pairRt.pivot = new Vector2(0.5f, 0.5f);
-
-            // ⚠️ THE PAIR RIDES UP BY `Drop`, like every other label on a raised paper surface.
-            // See `PaperKit.CentreOnFace`: the cast shadow lives inside the control's own bottom
-            // units, so centring on the rect puts the lettering low by half of it.
-            pairRt.anchoredPosition = new Vector2(0.0f, PaperCraft.Drop * 0.5f);
-
-            var pairLayout = pair.AddComponent<HorizontalLayoutGroup>();
-            pairLayout.spacing = 8.0f;
-            pairLayout.childControlWidth = true;
-            pairLayout.childControlHeight = true;
-            pairLayout.childForceExpandWidth = false;
-            pairLayout.childForceExpandHeight = false;
-            pairLayout.childAlignment = TextAnchor.MiddleCenter;
-
-            var fitter = pair.AddComponent<ContentSizeFitter>();
-            fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
-            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-
-            // ⚠️⚠️ THE CAPTION IS THE SAME SIZE AS THE VALUE AND IT WAS FOUR UNITS SMALLER.
-            // 🧑 2026-09-02, with a crop of this one row: **"these diff fonts look ugly"**. It was
-            // `PaperKit.Caption` 16 beside `PaperKit.Body` 20, and **two sizes of one typeface on
-            // one line, 22 units apart, read as two typefaces** rather than as a hierarchy: at
-            // that distance the eye compares the letterforms directly instead of scanning down a
-            // column, which is the only arrangement in which a four-unit step is legible as a
-            // step.
+            // ⚠️⚠️ THE TWO DOORS IN THIS COLUMN ARE ONE SHAPE NOW: A VALUE OVER WHAT IT IS.
+            // 🧑 2026-09-02, with a crop of both rows: *"these look ugly"*, **"it looks ugly bcz
+            // it isnt centered like both of them and theres big empty space"**, and then the ask
+            // that decided the copy: **"make this look better its confusing what they do, u have
+            // permission to overhaul the text on them to make it easier to uunderstand"**.
             //
-            // ⚠️ THE PAIR IS STILL RANKED, IN VALUE INSTEAD OF IN SIZE. `soft` is
-            // `UiTheme.PaperInkSoft`, which measures **5.21:1** on `Paper` against the value's
-            // **12.34:1** (`tools/sample_png.js contrast`): the caption is plainly the quieter of
-            // the two and neither is under the readable floor. It is the same inversion this pass
-            // makes everywhere else, applied to type instead of to a plate.
-            var caption = PaperKit.Ink(pair.transform, "SKILLS", PaperKit.Body,
-                                       TextAnchor.MiddleRight, soft: true);
-            caption.name = "LoadoutCaption";
-            caption.raycastTarget = false;
-
-            var label = PaperKit.Ink(pair.transform, "", PaperKit.Body, TextAnchor.MiddleLeft);
+            // **Two faults, and the second one is the interesting one.** The rows were different
+            // shapes (a two-line block over a one-line pair, at two heights, on two centre lines),
+            // AND neither said what pressing it did: `DANTE` is a name and `SKILLS Standard Build`
+            // is a setting, and a player who has never opened either cannot tell that both are
+            // doors to other screens. **A row that states a value states a fact; a row that states
+            // a value UNDER ITS NOUN states a control.**
+            //
+            // So both are now the same object: the VALUE on top at `PaperKit.Title`, and what it
+            // is underneath at `PaperKit.Caption` in soft ink, with the chevron that says it
+            // opens. `DANTE / Fighter · Pasip · Tsinelas` and `Standard Build / Skill loadout`.
+            // The ranking is by SIZE and VALUE rather than by two type sizes on one line, which is
+            // the arrangement he rejected as *"these diff fonts look ugly"*.
+            var label = PaperKit.Ink(go.transform, "", PaperKit.Title, TextAnchor.LowerCenter);
             label.name = "LoadoutValue";
             label.raycastTarget = false;
+            label.fontStyle = FontStyle.Bold;
+            label.rectTransform.anchorMin = new Vector2(0.0f, 0.44f);
+            label.rectTransform.anchorMax = Vector2.one;
+            label.rectTransform.offsetMin = new Vector2(34.0f, 0.0f);
+            label.rectTransform.offsetMax = new Vector2(-34.0f, -4.0f);
+
+            var caption = PaperKit.Ink(go.transform, "Skill loadout", PaperKit.Caption,
+                                       TextAnchor.UpperCenter, soft: true);
+            caption.name = "LoadoutCaption";
+            caption.raycastTarget = false;
+            caption.rectTransform.anchorMin = new Vector2(0.0f, 0.0f);
+            caption.rectTransform.anchorMax = new Vector2(1.0f, 0.44f);
+            caption.rectTransform.offsetMin = new Vector2(34.0f, PaperCraft.Drop);
+            caption.rectTransform.offsetMax = new Vector2(-34.0f, 0.0f);
 
             PaperKit.Chevron(go.transform);
 
@@ -2159,8 +2154,8 @@ namespace TumbangPreso.UI
                     trimmed = trimmed.Substring(split + 1).Trim();
 
                 LoadoutValue.text = Sentence(trimmed);
-                LoadoutValue.fontSize = PaperKit.Body;
-                MenuKit.Fit(LoadoutValue, FighterColumnWidth - 130.0f);
+                LoadoutValue.fontSize = PaperKit.Title;
+                MenuKit.Fit(LoadoutValue, FighterColumnWidth - 68.0f);
             }
 
             public void SetLoadout(string character, string loadout)
@@ -2177,7 +2172,16 @@ namespace TumbangPreso.UI
                     // ⚠️ SENTENCE CASE. See `Sentence`: caps for verbs and names, sentence case for
                     // anything the player merely reads. `PASIP · TSINELAS` under a 26-unit `DANTE`
                     // was two shouted lines in a 62-unit row.
-                    CharacterLoadout.text = Sentence(loadout);
+                    // ⚠️⚠️ IT SAYS WHAT THE ROW IS, NOT JUST WHAT IS IN IT. 🧑 2026-09-02:
+                    // **"make this look better its confusing what they do, u have permission to
+                    // overhaul the text on them to make it easier to uunderstand"**. The line read
+                    // `Pasip · Tsinelas`, which are the lata and the tsinelas this fighter is
+                    // carrying: true, and it never told a player who had not already opened the
+                    // picker that the row above it is a FIGHTER or that pressing it changes one.
+                    // The noun goes first for the same reason the BUILD row's does.
+                    CharacterLoadout.text = string.IsNullOrWhiteSpace(loadout)
+                        ? "Fighter"
+                        : "Fighter  ·  " + Sentence(loadout);
                     CharacterLoadout.fontSize = PaperKit.Caption;
                     MenuKit.Fit(CharacterLoadout, FighterColumnWidth - 60.0f, 12);
                 }

@@ -368,17 +368,7 @@ namespace TumbangPreso.UI
             // `SETTINGS CONFIG PANEL.png` and `MAP MODE DISPLAY.png` when they were the field
             // rather than the control. **His art that is still a control on this screen stays:**
             // the pennants, `JOIN BUTTON.png`, the arrows, `TUMP.png` and the key art.
-            foreach (var graphic in target.GetComponentsInChildren<Image>(true))
-            {
-                if (graphic == null || graphic.gameObject == target) continue;
-                graphic.enabled = false;
-            }
-
-            foreach (var raw in target.GetComponentsInChildren<RawImage>(true))
-            {
-                if (raw == null || raw.gameObject == target) continue;
-                raw.enabled = false;
-            }
+            PaperButton.SilenceChildGraphics(target);
 
             var skin = target.GetComponent<PaperSkin>();
             if (skin != null)
@@ -1129,6 +1119,39 @@ namespace TumbangPreso.UI
             if (_skin == null) _skin = GetComponent<PaperSkin>();
             if (_skin != null)
                 _skin.SetPose(Available ? PaperCraft.Pose.Rest : PaperCraft.Pose.Off);
+
+            // ⚠️⚠️ AN `Action` RE-SILENCES ITS CHILD GRAPHICS EVERY TIME IT IS SWITCHED ON, AND
+            // `Logs/crops/join-v63.png` IS WHY THAT IS NOT PARANOIA. `PaperKit.MakeAction` walks
+            // the children once, at build time, and the lobby's JOIN A GAME still came back as
+            // 🧑's wooden green slab with its grey halo: that button is built INTO A DRAWER THAT
+            // IS SWITCHED OFF, so its `GodotButton` and its `SkinLayers` had not run yet when the
+            // walk happened, and the layers appeared the first time the drawer opened.
+            //
+            // **A one-shot cleanup cannot cover an object whose layers are created lazily**, and
+            // the whole class of fault this pass keeps meeting is a second writer arriving after
+            // the conversion (§ 119.9 row 1, § 120.5 row 1, and this). Re-running it on enable
+            // costs a walk of three or four children on the frame a drawer opens.
+            if (_skin != null && _skin.Surface == PaperCraft.Surface.Action)
+                SilenceChildGraphics(gameObject);
+        }
+
+        /// <summary>
+        /// Switches off every graphic below a node except its own surface.
+        ///
+        /// ⚠️ AN `Action` OWNS EXACTLY ONE SURFACE BY DEFINITION, so this is a rule rather than a
+        /// list of layer names. `PaperKit.Paperise` names `Face` and `Shadow`; `ArrowButtonView`
+        /// builds `Artwork`, `Lit` and `Rim`; the next component to draw a layer will name it
+        /// something else again, and a list is a list somebody has to remember to extend.
+        /// </summary>
+        internal static void SilenceChildGraphics(GameObject target)
+        {
+            if (target == null) return;
+
+            foreach (var graphic in target.GetComponentsInChildren<Image>(true))
+                if (graphic != null && graphic.gameObject != target) graphic.enabled = false;
+
+            foreach (var raw in target.GetComponentsInChildren<RawImage>(true))
+                if (raw != null && raw.gameObject != target) raw.enabled = false;
         }
 
         public void OnPointerEnter(PointerEventData e)

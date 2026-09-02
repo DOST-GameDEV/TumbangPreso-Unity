@@ -781,7 +781,23 @@ namespace TumbangPreso.UI
                         float reach = below <= 0 ? 1.0f : 1.0f - (below / (float)(drop + 1));
                         reach = Mathf.Clamp01(reach);
 
-                        c = Fade(ActionShade, shadowDepth);
+                        // ⚠️⚠️ THE SHADOW TAKES THE FILL'S OWN HUE, AND A FIXED BROWN ONE WAS
+                        // WRONG UNDER THE GREEN. `Logs/crops/join-v64.png` at 4x: a warm brown
+                        // contact shadow under a saturated green slab reads as a **grey** smear,
+                        // which is the exact word 🧑 used about the old halo (*"especially the
+                        // shadow"*) arriving from the opposite direction. An object's shadow is
+                        // its own colour with the light taken out of it, not a second colour
+                        // chosen once for every object.
+                        //
+                        // ⚠️ IT IS STILL WARM AND STILL IN THE PALETTE, because it is derived from
+                        // a fill that is: `CLAUDE.md` § 6.4 bans a cold grey and this cannot
+                        // produce one from either accent. 0.30 of the value at 0.55 of the
+                        // saturation is dark enough to read on cream and desaturated enough not to
+                        // look like a second, smaller button underneath the first.
+                        var shade = WoodCraft.Shift(baseColour, 0.30f, 0.55f);
+                        shade.a = ActionShade.a;
+
+                        c = Fade(shade, shadowDepth);
                         c.a *= reach * reach * reach;
                     }
                     else

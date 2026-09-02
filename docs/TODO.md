@@ -2540,6 +2540,16 @@ they need either a decision only he can make or a reproduction that batch mode c
   the long-name state; the long name is shot and the populated career is not, because a probe
   cannot mint a career without writing one.
 - **No non-host client pass.** Every shot in this pass is a host that auto-hosted on load.
+- ⚠️⚠️ **THE LAN ADDRESS IS STILL TRUNCATED IN THE HOSTING DRAWER, AND FIVE ATTEMPTS DID NOT MOVE
+  IT.** `Logs/crops/address-final4.png`: the tray reads `25.3.149.221:8` and the rest is behind
+  the COPY button. The row's COLUMNS are fixed (§ 121.10 and `ShareCaption`) and this is the
+  remaining half. **What is known:** there is exactly one writer (`ConvertedMatchSetup` line
+  ~3000), it demonstrably runs, and changing `fontSize` there produced **no visible change across
+  four renders**, with and without a `MenuKit.Fit` after it, with the fit against the rect and
+  against a computed width. **So something else is deciding this label's size and it is not that
+  line.** Do not tune the number again; find the second writer first. ⚠️ COPY puts the whole
+  string on the clipboard, so the feature works and the display does not, which is why this is a
+  defect rather than an outage.
 
 ---
 

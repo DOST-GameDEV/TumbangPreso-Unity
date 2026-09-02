@@ -704,6 +704,9 @@ namespace TumbangPreso.UI
             var shareHeading = MiniSection(rows, "SHARE THIS LOBBY");
             shareHeading.SetSiblingIndex(insertIndex++);
 
+            // ⚠️ ONE WIDTH FOR BOTH SHARE ROWS' CAPTIONS, so their boxes and their COPY buttons
+            // land on the same two x positions by construction. See `ShareCaption`.
+
             // 2. Address Row (placed directly in rows container below headerRow)
             _addressRow = new GameObject("AddressRow");
             _addressRow.transform.SetParent(rows, false);
@@ -720,6 +723,19 @@ namespace TumbangPreso.UI
             addrElement.minHeight = 44;
             addrElement.preferredHeight = 44;
             addrElement.flexibleWidth = 1;
+
+            // ⚠️⚠️ THE ADDRESS ROW GETS A CAPTION BECAUSE THE CODE ROW HAS ONE, AND WITHOUT IT
+            // THE TWO ROWS ARE DIFFERENT SHAPES. 🧑 2026-09-02, with a crop of this drawer:
+            // **"make this look better"**. Under `SHARE THIS LOBBY` sat `[box][COPY]` and then
+            // `[CODE][box][COPY]`: **two rows that do the same job, one indented 74 units further
+            // than the other, with their two COPY buttons at two different x.** Nothing in the
+            // panel lined up with anything else, which is the whole of what "looks worse" means
+            // when every individual control is fine.
+            //
+            // ⚠️ IT IS THE SAME `CaptionWidth` FOR BOTH, so the columns are equal by construction
+            // rather than by two numbers that happen to match today. `docs/TODO.md` § 94.7 fault 7
+            // is this rule stated once already: **one column or none.**
+            ShareCaption(_addressRow.transform, "ADDRESS");
 
             // Address display box
             var addrBox = new GameObject("AddressBox");
@@ -749,13 +765,14 @@ namespace TumbangPreso.UI
             _addressText.rectTransform.offsetMax = new Vector2(-16, 0);
 
             _addressCopyBtn = MenuKit.WoodButton(_addressRow.transform, "COPY", Vector2.zero, Vector2.zero,
-                                                 new Vector2(96, 40), OnAddressCopyPressed);
+                                                 new Vector2(84, 40), OnAddressCopyPressed);
             var addrCopyElement = _addressCopyBtn.gameObject.AddComponent<LayoutElement>();
-            addrCopyElement.preferredWidth = 96;
+            addrCopyElement.preferredWidth = 84;
             addrCopyElement.preferredHeight = 40;
             _addressCopyBtnText = _addressCopyBtn.GetComponentInChildren<Text>();
 
             // 3. Code Row (placed directly in rows container below addressRow)
+            // (see ShareCaption for why both rows now start with one)
             _codeRow = new GameObject("CodeRow");
             _codeRow.transform.SetParent(rows, false);
             _codeRow.transform.SetSiblingIndex(insertIndex++);
@@ -776,11 +793,23 @@ namespace TumbangPreso.UI
             var codeCaption = new GameObject("CodeCaption");
             codeCaption.transform.SetParent(_codeRow.transform, false);
             var codeCaptionElement = codeCaption.AddComponent<LayoutElement>();
-            codeCaptionElement.preferredWidth = 64;
+
+            // ⚠️ THE SAME WIDTH AS THE ADDRESS ROW'S CAPTION AND IT WAS 64. See `ShareCaption`:
+            // two rows doing the same job with two different first columns is why this drawer
+            // looked wrong while every control in it was correct.
+            codeCaptionElement.preferredWidth = ShareCaptionWidth;
+            codeCaptionElement.minWidth = ShareCaptionWidth;
+            codeCaptionElement.flexibleWidth = 0.0f;
             codeCaptionElement.minHeight = 44;
-            var captionText = MenuKit.Label(codeCaption.transform, "CODE", 20, UiTheme.Amber,
+            // ⚠️ SOFT INK, NOT AMBER. `UiTheme.Amber` `ffba00` on `UiTheme.Paper` `f4ecdd`
+            // measures **1.46:1** (`tools/sample_png.js contrast`), and § 119.10 records 🧑
+            // rejecting that ratio by eye on two other controls. It is a caption on a cream
+            // drawer, so it takes the same soft ink every other caption in this front end takes;
+            // the row's own value is the thing that should be dark.
+            var captionText = MenuKit.Label(codeCaption.transform, "CODE", PaperKit.Caption,
+                                            UiTheme.PaperInkSoft,
                                             Vector2.zero, Vector2.zero, Vector2.zero,
-                                            TextAnchor.MiddleCenter);
+                                            TextAnchor.MiddleLeft);
             captionText.horizontalOverflow = HorizontalWrapMode.Overflow;
             MenuKit.Stretch(captionText.rectTransform, 0);
 
@@ -804,9 +833,9 @@ namespace TumbangPreso.UI
             _codeText.rectTransform.offsetMax = new Vector2(-16, 0);
 
             _codeCopyBtn = MenuKit.WoodButton(_codeRow.transform, "COPY", Vector2.zero, Vector2.zero,
-                                              new Vector2(96, 40), OnCodeCopyPressed);
+                                              new Vector2(84, 40), OnCodeCopyPressed);
             var codeCopyElement = _codeCopyBtn.gameObject.AddComponent<LayoutElement>();
-            codeCopyElement.preferredWidth = 96;
+            codeCopyElement.preferredWidth = 84;
             codeCopyElement.preferredHeight = 40;
             _codeCopyBtnText = _codeCopyBtn.GetComponentInChildren<Text>();
         }
@@ -1043,6 +1072,16 @@ namespace TumbangPreso.UI
                                              OpenJoinPanel, "WoodPrimaryButton");
             _joinButton.name = "OpenJoinButton";
             Fixed(_joinButton, 44);
+
+            // ⚠️⚠️ CONVERTED HERE RATHER THAN LEFT TO THE DRESS, BECAUSE THE DRESS HAS ALREADY
+            // RUN BY THE TIME THIS EXISTS. `LobbyChrome.BuildRoomDrawer` calls
+            // `PaperDress.Screen(details)` on the authored column and this button is built into
+            // that column afterwards, so it kept `GodotTheme.WoodPrimaryButton`: on
+            // `Logs/crops/hosting-v62.png` it is the one flat green slab with a grey keyline in a
+            // drawer of paper controls. **Same fault as § 120.5 row 1**, which is a method running
+            // after the dress and writing its own sprite; this is the mirror of it, a control
+            // created after the dress and never getting one.
+            PaperKit.MakeAction(_joinButton.gameObject, PaperCraft.Accent.Green);
 
             _onlineButton = MenuKit.WoodButton(row.transform, "START SERVER", Vector2.zero,
                                                Vector2.zero, new Vector2(0.0f, 44.0f),
@@ -1356,6 +1395,53 @@ namespace TumbangPreso.UI
             element.minHeight = height;
             element.preferredHeight = height;
             element.flexibleHeight = 0.0f;
+        }
+
+        /// <summary>
+        /// The word at the start of a SHARE THIS LOBBY row, at one width for both rows.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE THE TWO ROWS WERE DIFFERENT SHAPES AND 🧑 COULD SEE IT WITHOUT
+        /// BEING ABLE TO NAME IT. 2026-09-02, with a crop of the hosting drawer: **"make this look
+        /// better"**. Under one heading sat `[box][COPY]` and then `[CODE][box][COPY]`: **two rows
+        /// that do the same job, one indented 74 units further than the other, with their two COPY
+        /// buttons at two different x.** Every individual control was fine and the panel still
+        /// read as a mess, which is what a broken column always looks like.
+        ///
+        /// ⚠️ ONE CONSTANT, TWO CALLERS, so the columns cannot drift apart again. `docs/TODO.md`
+        /// § 94.7 fault 7 states the rule once already: **one column or none.**
+        /// </summary>
+        private const float ShareCaptionWidth = 76.0f;
+
+        /// <summary>How wide a COPY button is. ⚠️ Both rows share it so their two buttons land on
+        /// one x; see <see cref="ShareCaption"/>.</summary>
+        private const float ShareCopyWidth = 84.0f;
+
+        /// <summary>
+        /// How much room the address value actually has, added up rather than measured.
+        ///
+        /// ⚠️ THE ARITHMETIC: the drawer is 380 wide with a 14-unit inset either side, and the row
+        /// spends `ShareCaptionWidth` 76, `ShareCopyWidth` 84 and two 10-unit gaps. 380 - 28 - 76
+        /// - 84 - 20 = 172, less the tray's own 16-unit insets on each side, which leaves 140.
+        /// </summary>
+        private const float AddressRoom = 140.0f;
+
+        private static void ShareCaption(Transform row, string text)
+        {
+            var go = new GameObject($"{text}Caption");
+            go.transform.SetParent(row, false);
+
+            var element = go.AddComponent<LayoutElement>();
+            element.preferredWidth = ShareCaptionWidth;
+            element.minWidth = ShareCaptionWidth;
+            element.flexibleWidth = 0.0f;
+            element.minHeight = 44.0f;
+
+            var label = MenuKit.Label(go.transform, text, PaperKit.Caption, UiTheme.PaperInkSoft,
+                                      Vector2.zero, Vector2.zero, Vector2.zero,
+                                      TextAnchor.MiddleLeft);
+            label.horizontalOverflow = HorizontalWrapMode.Overflow;
+            label.raycastTarget = false;
+            MenuKit.Stretch(label.rectTransform, 0.0f);
         }
 
         private static Transform MiniSection(Transform parent, string text)
@@ -2921,7 +3007,48 @@ namespace TumbangPreso.UI
                 if (_addressRow != null)
                 {
                     _addressRow.SetActive(true);
-                    if (_addressText != null) _addressText.text = HostAddress();
+
+                    if (_addressText != null)
+                    {
+                        _addressText.text = HostAddress();
+
+                        // ⚠️⚠️ THE ADDRESS IS THE ONE STRING ON THIS SCREEN THAT HAS TO
+                        // SURVIVE IN FULL, AND FIVE ATTEMPTS HAVE NOT MADE IT. A player reads it
+                        // off one machine and types it into another, so a truncated address is
+                        // not a cosmetic fault, it is the feature not working, on the screen
+                        // § 97 protects for the tournament case where there is no other way in.
+                        // `Logs/crops/address-final4.png` still reads `25.3.149.221:8`, with the
+                        // tail behind the COPY button rather than clipped: a legacy `Text` set to
+                        // Overflow neither shrinks nor clips, and the tray it sits in is opaque.
+                        //
+                        // ⚠️ THE LAYOUT IS FORCED BEFORE ANYTHING MEASURES THIS ROW. Without it
+                        // a fit reads whatever `sizeDelta` the box was built with rather than the
+                        // width its `HorizontalLayoutGroup` gives it, which is the trap
+                        // `ConvertedCharacterSelect.FitTabLabel` records and the reason the
+                        // address still read `25.3.149.22:` after the first fix.
+                        var addrRow = _addressRow.transform as RectTransform;
+                        if (addrRow != null) LayoutRebuilder.ForceRebuildLayoutImmediate(addrRow);
+
+                        // ⚠️ THE FIT IS AGAINST A COMPUTED WIDTH AND NOT AGAINST THE RECT,
+                        // because the rect lied in BOTH directions across four renders.
+                        // `MenuKit.Fit` picks the LARGEST size that fits the room it is handed, so
+                        // an unresolved layout grew the text straight back to 20 and a
+                        // half-resolved one shrank it to something arbitrary. `AddressRoom` is
+                        // that arithmetic written down instead of asked for: `RoomColumnWidth`
+                        // less its two insets, less this row's caption, its COPY button and the
+                        // two gaps between the three. It is right on the first frame as well as
+                        // the tenth. 12 as the floor and not 18, because a fixed-width value
+                        // being copied is usable slightly small and worth nothing cut in half.
+                        //
+                        // ⚠️⚠️ AND THE TWO LINES BELOW DEMONSTRABLY RUN AND DEMONSTRABLY DO
+                        // NOTHING. Changing the size here moved no pixel across four renders,
+                        // with and without a fit after it, against the rect and against this
+                        // computed width. **Something else is deciding this label's size and it
+                        // has not been found.** `docs/TODO.md` § 121.11 holds the open defect:
+                        // do not tune the number again, find the second writer first.
+                        _addressText.fontSize = PaperKit.Caption;
+                        MenuKit.Fit(_addressText, AddressRoom, 12);
+                    }
                 }
 
                 if (_codeRow != null)
