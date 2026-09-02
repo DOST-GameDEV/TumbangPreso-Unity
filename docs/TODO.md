@@ -2614,6 +2614,34 @@ puts on the picker's stage, and it is the same fault at one control's scale.
 
 ---
 
+### 122.14 ⚠️⚠️ THE LOADOUT BOARD'S FIRST RENDER: EVERY LABEL DREW OUTSIDE ITS OWN CARD
+
+`Logs/shots-runtime/CharacterLoadout-v66.png` is the first picture this screen has ever had, and
+it caught two faults that no probe in this repository can see.
+
+**1. `MenuKit.Place` writes `anchoredPosition`, and a rect's pivot is its CENTRE.** Every label on
+a card was anchored to a CORNER and offset inward by the padding, which reads like an inset and is
+a centre: an anchor of `(0, 1)` with an offset of `(14, -20)` puts a 456-unit box's MIDDLE 14 units
+in from the left edge, so **214 units of it draws outside the card**. The render shows the variant
+names and descriptions floating on the stage to the left of the board and the EQUIPPED badges
+hanging off its right edge.
+
+⚠️ **So every box is centre-anchored now and the arithmetic is stated once**: the card is `width`
+by 98 with its centre at zero, a left-aligned box of `w` sits at `-(width / 2) + Pad + (w / 2)`,
+and the three bands are the header at +32, the body at 0 and the trade at -32. They cannot overlap,
+and **an overlap between two labels is silent in every direction** (§ 102.4).
+
+**2. CLOSE sat on top of the LOADOUT chip.** Both stage doors and the board are anchored to the
+same bottom-right corner. Both chips hide while the board is up, which is the right answer rather
+than a dodge: **a door you have already walked through is not a control you need** (§ 6.2 question
+3), and MAKE YOUR OWN in particular would throw away an unsaved look if pressed from there.
+⚠️ The loadout chip comes back **only if the hero tab is still showing**; a bare `!open` would have
+undone `RefreshTabs`, which hides that chip on LATA and TSINELAS and then calls this to shut the
+board. Two writers of one visibility flag, and this one runs second. `OnHeroTab` is one predicate
+now because three methods were asking the same question.
+
+---
+
 ### 122.8 What is NOT done
 
 - ⚠️ **The chat still does not work and is still not diagnosed.** § 121.11 is unchanged and reading

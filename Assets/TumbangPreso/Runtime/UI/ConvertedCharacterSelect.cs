@@ -842,6 +842,24 @@ namespace TumbangPreso.UI
         /// </summary>
         private void ToggleLoadoutBoard(bool open)
         {
+            // ⚠️⚠️ THE TWO STAGE DOORS GO AWAY WHILE THE BOARD IS UP, AND
+            // `Logs/shots-runtime/CharacterLoadout-v66.png` IS WHY. Both chips are anchored to the
+            // canvas' bottom-right corner and so is the board; on that render CLOSE sat directly on
+            // top of the LOADOUT chip, which is two pressable things in one place and the worse of
+            // the two is the one that reopens what you are looking at.
+            //
+            // ⚠️ AND IT IS THE RIGHT ANSWER RATHER THAN A DODGE OF A LAYOUT PROBLEM: **a door you
+            // have already walked through is not a control you need**. `CLAUDE.md` § 6.2 question
+            // 3 is *what is on screen that the player does not need RIGHT NOW*, and MAKE YOUR OWN
+            // in particular would throw away an unsaved look if pressed by accident from here.
+            // ⚠️⚠️ THE LOADOUT CHIP COMES BACK ONLY IF THE HERO TAB IS STILL THE ONE SHOWING,
+            // AND WRITING `!open` HERE WOULD HAVE UNDONE `RefreshTabs`. That method hides this
+            // chip on the LATA and TSINELAS tabs and then calls this with `false` to shut the
+            // board; a bare `!open` would switch the chip straight back on over a picture of a
+            // tin can. **Two writers of one visibility flag, and this one runs second.**
+            if (_customDoor != null) _customDoor.gameObject.SetActive(!open);
+            if (_loadoutDoor != null) _loadoutDoor.gameObject.SetActive(!open && OnHeroTab);
+
             if (!open)
             {
                 if (_loadoutBoard != null) _loadoutBoard.SetActive(false);
@@ -853,6 +871,11 @@ namespace TumbangPreso.UI
         }
 
         private bool LoadoutBoardOpen => _loadoutBoard != null && _loadoutBoard.activeSelf;
+
+        /// <summary>Whether the picker is showing a hero rather than a can or a slipper. ⚠️ One
+        /// predicate, because three methods ask it and a fourth copy is how the loadout chip and
+        /// the loadout board end up disagreeing about which tab they belong to.</summary>
+        private bool OnHeroTab => _tab == 0 && SceneFlow.SelectedMode == GameMode.HeroStrike;
 
         /// <summary>
         /// Four cards: two slots, two readings each.
@@ -924,6 +947,11 @@ namespace TumbangPreso.UI
                 string title = "SKILL " + slot;
                 if (ability != null) title += "  ·  " + ability.Name;
 
+                // ⚠️ THE SLOT CAPTION IS LEFT-ALIGNED INSIDE A FULL-WIDTH CENTRED BOX, not a
+                // narrow box pushed left. `MenuKit.Place` writes `anchoredPosition` against a
+                // CENTRED pivot, so an x of zero on a box the width of the board's content is the
+                // only version of "flush left" that cannot hang off an edge. See
+                // `BuildVariantCard` for the render that made that worth writing down.
                 var caption = MenuKit.Label(go.transform, title, 16, accent,
                     new Vector2(0.5f, 1.0f), new Vector2(0.0f, y),
                     new Vector2(BoardWidth - (BoardPad * 2.0f), 22.0f), TextAnchor.MiddleLeft);
@@ -1011,10 +1039,35 @@ namespace TumbangPreso.UI
             button.transition = Selectable.Transition.None;
             button.onClick.AddListener(() => EquipVariant(heroId, slot, option));
 
+            // ⚠️⚠️⚠️ EVERY BOX ON THIS CARD IS CENTRE-ANCHORED AND POSITIONED FROM THE CARD'S OWN
+            // MIDDLE, AND `Logs/shots-runtime/CharacterLoadout-v66.png` IS WHY IT HAS TO BE SAID.
+            // The first build anchored each label to a CORNER of the card and offset it inward by
+            // the padding, and **every label drew half outside the board**: the names and the
+            // descriptions floated on the stage to the left of it and the EQUIPPED badges hung off
+            // the right edge.
+            //
+            // **`MenuKit.Place` writes `anchoredPosition`, and a rect's pivot is its CENTRE.** So
+            // an anchor of (0, 1) with an offset of (14, -20) puts a 456-unit box's MIDDLE 14
+            // units in from the left edge, which is 214 units of it outside the card. The offset
+            // reads like an inset and is a centre.
+            //
+            // ⚠️ SO THE ARITHMETIC IS STATED ONCE AND EVERY BOX USES IT. The card is `width` by 98
+            // with its own centre at zero, so the top edge is +49 and the bottom is -49; a
+            // left-aligned box of `w` sits at `-(width / 2) + Pad + (w / 2)`. Three bands, and they
+            // cannot overlap: the header at +32 spans +44 to +20, the body at 0 spans +18 to -18,
+            // and the trade at -32 spans -22 to -42. **An overlap between two labels is silent in
+            // every direction** (§ 102.4), which is why the bands are written out rather than
+            // eyeballed.
+            const float pad = 14.0f;
+            const float badgeWidth = 130.0f;
+
+            float nameWidth = width - (pad * 2.0f) - badgeWidth - 10.0f;
+
             var name = MenuKit.Label(card.transform, option.Name, MenuKit.MinReadableUnits,
                 unlocked ? accent : BoardInkSoft,
-                new Vector2(0.0f, 1.0f), new Vector2(14.0f, -20.0f),
-                new Vector2(width - 160.0f, 24.0f), TextAnchor.MiddleLeft);
+                new Vector2(0.5f, 0.5f),
+                new Vector2(-(width * 0.5f) + pad + (nameWidth * 0.5f), 32.0f),
+                new Vector2(nameWidth, 24.0f), TextAnchor.MiddleLeft);
             name.fontStyle = FontStyle.Bold;
             name.alignment = TextAnchor.MiddleLeft;
             name.raycastTarget = false;
@@ -1025,8 +1078,9 @@ namespace TumbangPreso.UI
 
             var state = MenuKit.Label(card.transform, badge, 14,
                 equipped ? UiTheme.Amber : BoardInkSoft,
-                new Vector2(1.0f, 1.0f), new Vector2(-14.0f, -20.0f),
-                new Vector2(130.0f, 24.0f), TextAnchor.MiddleRight);
+                new Vector2(0.5f, 0.5f),
+                new Vector2((width * 0.5f) - pad - (badgeWidth * 0.5f), 32.0f),
+                new Vector2(badgeWidth, 24.0f), TextAnchor.MiddleRight);
             state.fontStyle = FontStyle.Bold;
             state.alignment = TextAnchor.MiddleRight;
             state.raycastTarget = false;
@@ -1038,8 +1092,8 @@ namespace TumbangPreso.UI
             var body = MenuKit.Label(card.transform,
                 unlocked ? option.Description : option.Challenge, 16,
                 unlocked ? BoardInk : BoardInkSoft,
-                new Vector2(0.0f, 1.0f), new Vector2(14.0f, -48.0f),
-                new Vector2(width - 28.0f, 40.0f), TextAnchor.UpperLeft);
+                new Vector2(0.5f, 0.5f), new Vector2(0.0f, 0.0f),
+                new Vector2(width - (pad * 2.0f), 36.0f), TextAnchor.UpperLeft);
             body.alignment = TextAnchor.UpperLeft;
             body.horizontalOverflow = HorizontalWrapMode.Wrap;
             body.verticalOverflow = VerticalWrapMode.Truncate;
@@ -1052,8 +1106,8 @@ namespace TumbangPreso.UI
 
             var trade = MenuKit.Label(card.transform,
                 option.GainLabel + "   ·   " + option.CostLabel, 14, accent,
-                new Vector2(0.0f, 0.0f), new Vector2(14.0f, 16.0f),
-                new Vector2(width - 28.0f, 20.0f), TextAnchor.MiddleLeft);
+                new Vector2(0.5f, 0.5f), new Vector2(0.0f, -32.0f),
+                new Vector2(width - (pad * 2.0f), 20.0f), TextAnchor.MiddleLeft);
             trade.alignment = TextAnchor.MiddleLeft;
             trade.raycastTarget = false;
         }
@@ -1104,7 +1158,7 @@ namespace TumbangPreso.UI
         /// </summary>
         private string CurrentHeroId()
         {
-            if (_tab != 0 || SceneFlow.SelectedMode != GameMode.HeroStrike) return "";
+            if (!OnHeroTab) return "";
 
             var entries = Entries;
             if (entries == null || entries.Count == 0) return "";
@@ -1256,7 +1310,7 @@ namespace TumbangPreso.UI
             // ⚠️ AND THE BOARD CLOSES WITH IT. Switching tabs while the board is open would leave
             // a hero's build panel standing over a picture of a tin can, which is § 121.2's stuck
             // state on a whole screen instead of on one plate.
-            bool heroTab = _tab == 0 && SceneFlow.SelectedMode == GameMode.HeroStrike;
+            bool heroTab = OnHeroTab;
 
             if (_loadoutDoor != null && _loadoutDoor.gameObject.activeSelf != heroTab)
             {
