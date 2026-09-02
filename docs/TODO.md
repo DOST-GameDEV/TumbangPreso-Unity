@@ -2316,7 +2316,50 @@ under a lit face, and a wall is dark; it is not ink.
 - ⚠️ **This is the same shape of finding as § 123.1**: a number that was correct as a ratio and
   wrong as a result, in a file whose notes record the ratio and not the result.
 
-### 123.7 What is NOT done
+### 123.7 ⚠️⚠️⚠️ THE CHAT: IT IS uGUI'S ORDERING, AND EVERY PART OF OUR FILE WAS CORRECT IN ISOLATION
+
+🧑 has reported this four ways since 2026-09-01, starting with **"chat doesnt work at all btw"**.
+§ 121.11 read the source twice and could not place it, and said why: *"either the submit never
+fires or the push never draws, and those are different bugs in different files"*. **It is neither.**
+
+⚠️⚠️ **`LobbyChatProbe` IS THE ANSWER TO § 121.11'S OWN INSTRUCTION** (*"a probe that types into the
+field and photographs the result is the cheapest way to make it repeatable"*), and its first run
+eliminated every candidate that had been guessed at:
+
+| Link | Result |
+|---|---|
+| `EventSystem` present | yes |
+| `MatchRpc.Instance` | present |
+| A press at the field's position reaches it (`RaycastAll`) | **yes**, top hit is `ChatField` |
+| The field takes focus from that press | **yes**, `isFocused` true, `AnyTyping` true |
+| `Submit` sends and the host echoes | **yes** |
+| The line draws on the log | **yes**, `Player#8226: probe hello` |
+
+**So the pipeline works, which is why three passes of reading it found nothing.**
+
+⚠️⚠️ **THE FAULT IS IN `InputField`'S CALL ORDER AND IT IS VISIBLE ONLY IN THE PACKAGE SOURCE.**
+`KeyPressed` returns `EditState.Finish` on Return for any `lineType` other than `MultiLineNewline`,
+and the caller then does, in this order:
+
+    if (!m_WasCanceled) SendOnSubmit();
+    DeactivateInputField();
+
+`SendOnSubmit` is what calls `LobbyChat.Submit`, so **the `ActivateInputField()` that kept the field
+ready for the next line ran INSIDE the submit and was thrown away by the `DeactivateInputField()`
+one line later.** The player types, presses Enter, the line sends correctly and appears, and the
+field goes dead under the cursor. Every keystroke after that lands on nothing.
+
+⚠️⚠️ **THAT IS WHY IT WAS NEVER REPRODUCIBLE FROM A DESCRIPTION: THE FEATURE IS NOT DEAD, IT IS DEAD
+FROM THE SECOND LINE ONWARD.** "Chat doesnt work at all" is an accurate report of what it feels like
+and a misleading one about where to look, and the probe's own submit test passes because invoking
+`onSubmit` directly never runs uGUI's deactivate.
+
+- The re-focus is deferred one frame through `RefocusNextFrame`, which is after uGUI has finished
+  with the event. The coroutine is guarded so holding Enter cannot queue them.
+- ⚠️ **It re-checks `_field` and `activeInHierarchy` on the far side of the frame**, because a
+  player can press Enter and leave the lobby in the same frame.
+
+### 123.8 What is NOT done
 
 - ⚠️⚠️⚠️ **THE RESTORED STEPPERS PUT HIS OWN BLUE ARROWS INTO THE LOBBY, AND THAT IS A NEW INSTANCE
   OF § 121.5 CREATED BY § 123.4.** Sampled off `LobbySettings-v71.png` at the MAP row's left arrow:
@@ -2342,7 +2385,7 @@ under a lit face, and a wall is dark; it is not ink.
   being guessed at.
 - **The picker's arrows are still blue.** § 121.5, still his to settle.
 
-### 123.8 Acceptance
+### 123.9 Acceptance
 
 - Every touched screen re-shot at `v72` and a person looks: the three login states, the lobby,
   `LobbySettings` (the restored steppers) and `LobbyRanked` (the floored rim). ⚠️ **All three login states, per `CLAUDE.md` § 6.2b**: the state a player meets first is

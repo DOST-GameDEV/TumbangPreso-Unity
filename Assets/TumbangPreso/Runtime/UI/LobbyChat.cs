@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using TumbangPreso.Net;
 using UnityEngine;
@@ -527,6 +528,48 @@ namespace TumbangPreso.UI
             if (_field == null) return;
 
             _field.text = "";
+
+            // ⚠️⚠️⚠️ THE RE-FOCUS HAS TO WAIT A FRAME, AND CALLING IT HERE IS WHY THE CHAT READ AS
+            // BROKEN AFTER THE FIRST LINE. 🧑 has reported this four ways, starting with **"chat
+            // doesnt work at all btw"**, and `docs/TODO.md` § 121.11 could not place it from the
+            // source because every part of this file is correct in isolation.
+            //
+            // **The fault is in uGUI's ordering, not in ours.** `InputField.KeyPressed` returns
+            // `EditState.Finish` on Return, and the caller does exactly this, in this order:
+            //
+            //     if (!m_WasCanceled) SendOnSubmit();
+            //     DeactivateInputField();
+            //
+            // `SendOnSubmit` is what calls this method. So an `ActivateInputField()` on this line
+            // runs INSIDE the submit, and `DeactivateInputField()` then runs immediately after it
+            // and throws the focus away. **The player types a line, presses Enter, the line sends
+            // correctly, and the field goes dead under the cursor**; every following keystroke
+            // lands on nothing and the chat looks like it stopped working after one message. The
+            // first line arriving is what makes this so hard to report: the feature is not dead,
+            // it is dead from the second line onward.
+            //
+            // ⚠️ SO IT IS DEFERRED BY ONE FRAME, WHICH IS AFTER uGUI HAS FINISHED. A coroutine is
+            // the cheapest thing that is definitely later than the rest of this call stack, and
+            // the guard on it is what stops a queue of them building up if somebody holds Enter.
+            if (_refocus != null) StopCoroutine(_refocus);
+            _refocus = StartCoroutine(RefocusNextFrame());
+        }
+
+        private Coroutine _refocus;
+
+        /// <summary>
+        /// ⚠️ IT RE-CHECKS EVERYTHING, because a frame is long enough for the lobby to have gone.
+        /// The player can press Enter and leave the screen in the same frame, and re-focusing a
+        /// field on a destroyed panel is an exception in a coroutine nothing is watching.
+        /// </summary>
+        private IEnumerator RefocusNextFrame()
+        {
+            yield return null;
+
+            _refocus = null;
+
+            if (_inMatch || _field == null || !_field.gameObject.activeInHierarchy) yield break;
+
             _field.ActivateInputField();
         }
 
