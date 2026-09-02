@@ -891,7 +891,7 @@ namespace TumbangPreso.PlayTests
                 foreach (var (w, h, name) in ProbeResolutions.Phone)
                 {
                     yield return Shoot(hud, w, h,
-                        $"{outDir}/touch-{mode}-{name.Replace(' ', '-').Replace(':', '-')}-v3.png");
+                        $"{outDir}/touch-{mode}-{name.Replace(' ', '-').Replace(':', '-')}-v4.png");
                 }
 
                 // ⚠️⚠️ THE RUNNER IS TAKEN DOWN AGAIN, AND `GameplayShots` RECORDS WHAT LEAVING IT

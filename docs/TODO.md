@@ -9,14 +9,15 @@ before inventing a task, and update it in the same commit as the work.
 
 ## What is open right now
 
-Fourteen sections, and this list is the whole of it. Everything else in this repository's history
+Fifteen sections, and this list is the whole of it. Everything else in this repository's history
 is in the archive with its number unchanged.
 
 | § | Open work | Where it bites |
 |---|---|---|
 | **126** | This session: the full PlayMode suite, the thumb floor, the move stick, rumble, the device toggle, the .apk | § 126.8 is the big one: **the full PlayMode run is not a reliable gate** |
 | **127** | Phase 16.1: the taya's floor marker is a RING, an attacker's a DISC | Needs its greyscale frame before it can close. § 127.3 |
-| **128** | Phase 11 is mostly built and the plan did not know it | What is left is the RATING reading `IsBot`, not the bots |
+| **128** | Phases 11 and 12 are almost entirely built | ⚠️ Phase 11 has **nothing** open. Phase 12 owes LAST TSINELAS a match half and a map vote |
+| **129** | Three faults off the first phone render | The blurry HUD and the overflowing YOU card are fixed; § 129.3 is the mechanism behind all three |
 | **126.11** | Crossplay is argued, not demonstrated | Both players exist; nobody has watched them join |
 | **93** | A held tsinelas drifts 0.084 m from the hand | Four samples now, all outside the bound. Not a flake |
 | **96** | He has never found the way into the hub | The door, not the layout. `CLAUDE.md` § 6.3 |
@@ -95,39 +96,116 @@ taht again"*.
 
 ---
 
-## 128 · Phase 11 is mostly built and the plan does not know it ⚠️ OPEN, 2026-09-03, branch `ui-redesign`
+## 129 · Three faults off the first phone render, and the one that was invisible on a monitor ⚠️ OPEN, 2026-09-03, branch `ui-redesign`
 
-Checked against the code rather than the plan, which is `docs/FUTURE.md` § 0.5 rule 2. **Two of
-Phase 11's bullets are shipped and were written as unstarted work**, and `FUTURE.md` § 11 is
-corrected in the same commit.
+🧑, reading `Logs/shots-touch/touch-HeroStrike-20-9-phone-v4.png`: **"mobile version kinda blurry
+text is is js me"**, then **"dont show #8826 or the player tag of ppl here bcz it makes it too
+long"** and *"and it overflows"*.
 
-- ✅ **Bot difficulty tiers.** `AIController.Difficulty` is three tiers, `AiTuning.For(tier)` holds
-  the personality, `ApplyDifficulty` reads the saved index, `MatchInstaller` calls it every match,
-  and the settings panel has the row. `NoBotsIndex` is a fourth option meaning NONE and is an
-  absence of SEATS rather than a parked brain. **Do not rebuild it.**
-- ✅ **Bots are visibly labelled.** `ConvertedMatchSetup` and `LobbyNameplates` write `BOT` on an
-  occupied seat and `OPEN SEAT` on an empty one.
-- ✅ **`MatchRecord.PlayerLine.IsBot` already exists**, on the wire and in the stored record.
+### 129.1 ✅ The in-match HUD was the one canvas in the game that did not snap to pixels
 
-### 128.1 What is actually open
+`MenuKit.BuildCanvas` sets `pixelPerfect`, `ConvertedScreen.Start` sets it, `TscnUiImporter` bakes
+it into the converted scenes. **`Hud.Build` constructs its canvas by hand and was missed**, and so
+does `MatchResult`. Both are fixed.
 
-- ⚠️⚠️ **THE RATING DOES NOT READ `IsBot`, AND PHASE 11 SAYS IT MUST.** § 11's own rule 1, written
-  when 🧑 allowed bots in ranked (*"im okay with bot showing up in rank if theres no ppl bcz no one
-  plays this game yet anyways"*): *"A result with a bot in it cannot move a rating the same amount
-  as one without, or the fastest climb in the game is queueing at 4 a.m."* **The flag is there and
-  nothing consults it.** Done looks like: `RatingRules` taking the bot count for the match and
-  damping the change, with the number decided in `Design.md` rather than here, and a core test that
-  a four-human result moves a rating further than a three-bot one.
-- ⚠️ **No bot fill in the casual queue after a wait threshold.** `Matchmaker` carries `Backfilling`
-  for a running match with a free seat, which is a different thing: that is a human joining a game
-  in progress. Nothing sends a bot to a queue that will not fill.
-- ⏳ **And § 11 records its own expiry.** The bots-in-ranked decision was taken because *"no one
-  plays this game yet"*, which is a statement about the population, so it stops being true the day
-  the queue fills itself. **Re-ask it then, together with § 13.1's season rollover**, which was
-  taken for the same reason on the same day.
+⚠️⚠️ **IT IS WORSE ON A PHONE, AND THAT IS ARITHMETIC RATHER THAN BAD LUCK.** `AspectSafeCanvas`
+matches on HEIGHT against a 1080 reference, so a 1080-tall phone sits at scale **1.0** and a 1440p
+monitor at **1.33**. At 1.0 a half-unit offset is half a physical pixel, which is the worst case
+for resampling; at 1.33 it lands nearer a whole pixel more often. **The build that needed the
+setting most was the one that never had it**, which is why five sessions of desktop renders did not
+catch it and the first phone render did.
+
+⚠️ **Still unset, deliberately, and listed so the next reader does not have to re-derive it:**
+`OffscreenIndicators` (a root canvas, but it draws arrows rather than reading matter) and
+`DebugBar` (no scaler, debug only). `GuidedTraining` and `SpectatorCamera`'s replay canvas both set
+`overrideSorting`, which makes them NESTED, and **`pixelPerfect` is a root-canvas setting that a
+nested canvas ignores**, so setting it there would be cargo cult.
+
+### 129.2 ✅ The YOU card named the account handle, and an account handle has no length bound
+
+The card read `ATTACKI` with `PLAYER#8226` drawn straight through it. **This is the third overflow
+on that one row** and `YouCard` already carries the notes for the first two: `TAYA (DEFENDEDANTE`
+(2026-08-27) and `ATTACKERROCKAFORT`.
+
+⚠️⚠️ **THE FIRST TWO WERE FIXED BY MAKING A STRING SHORTER AND THIS ONE COULD NOT BE.**
+`CharacterMotor.DisplayName()` answers `CharacterName()` for a bot and `_playerName` for a human,
+so every previous fit was measured against the ROSTER, where `PHAISTER` is the longest name at
+eight characters. A real account arrives as `PLAYER#8226` and a custom one can be longer. **Every
+earlier fix moved the number at which the row breaks; naming the character removes the class.**
+
+⚠️ **AND IT LOSES NOTHING.** This is the one card that is about YOU: a player does not need to be
+told their own handle six minutes into a match, and what they can genuinely forget is which of the
+eighteen fighters they picked. The handle is still on the scoreboard, where distinguishing four
+seats is the whole job. `CharacterMotor.CharacterName()` is public for this.
+
+### 129.3 ⚠️ OPEN: the same row is still two overflowing children in one box
+
+The fix above removes the cause that was reported. **It does not change the mechanism**, and
+`YouCard`'s own note names it: the row is a `HorizontalLayoutGroup` with two `flexibleWidth: 1`
+children both set to `HorizontalWrapMode.Overflow`, so **when two strings do not fit they do not
+shrink, they draw over each other.** Three separate reports have now come out of that one
+arrangement.
+
+**Done looks like:** the row measured rather than trusted, the way `MenuKit.Fit` already does it
+elsewhere, so a string that does not fit steps down a point instead of overprinting its neighbour.
+⚠️ **Until then, treat any new string on this card as a fourth report waiting to happen.**
 
 ---
 
+## 128 · Phases 11 and 12 are almost entirely built, and this entry was wrong about it once ⚠️ OPEN, 2026-09-03, branch `ui-redesign`
+
+Checked against the code rather than the plan, which is `docs/FUTURE.md` § 0.5 rule 2.
+
+⚠️⚠️ **AND THE FIRST VERSION OF THIS SECTION, PUSHED IN `c89d646`, SAID THE RATING DID NOT READ
+`IsBot`. IT DOES. THE MISTAKE IS KEPT HERE BECAUSE OF HOW IT WAS MADE.** I grepped
+`Packages/.../Rating*.cs` and `MatchRecord.cs` for the word "bot", found the FIELD and no use of
+it, and wrote the conclusion. **The use is in two places that grep could not see**: it is spelled
+`humans` rather than `bot` on the C# side (`RatingRules.Blend(before, after, weight)`), and the
+caller is not C# at all, it is `ugs/cloud-code/match-record.js`:
+
+```js
+const humans = record.Players.filter(p => p && !p.IsBot).length;
+const weight = botWeight(humans, record.Players.length);
+const after  = blendRank(profile.Rank, ..., weight);
+```
+
+**A grep for the noun missed the code that does the thing.** `CLAUDE.md` § 4a's whole argument is
+that a rule kept by remembering goes stale; this is the reader's version of it, and the lesson is
+`audit_request_call_sites.py`'s in miniature: **ask what calls it, not what mentions it.**
+
+### 128.1 What is actually built, so nobody rebuilds it
+
+- ✅ **Bot difficulty tiers**, a NONE option, and `AiTuning.For(tier)`. `MatchInstaller` applies it.
+- ✅ **Bots labelled `BOT`** in the lobby, from `BotFillRules.BotTag`, one string in the core.
+- ✅ **Bot fill after a wait threshold.** `BotFillRules.CasualFillAfterSeconds` is **45**, ranked is
+  **150**, and `Matchmaker` and `QueueCard` both call it. Phase 11's *"a 45-second queue that ends
+  in a playable match beats a 4-minute queue that ends in nothing"* is the shipped number.
+- ✅ **The rating knows.** `BotFillRules.Weight` is a straight line (every human seat past the
+  first is a quarter of the result), `RatingRules.Blend` scales **rating, deviation AND volatility**
+  so a bot farm cannot buy confidence cheaply, a zero-weight match does not count as a season
+  match, and the same table is written again in `match-record.js` because the server computes the
+  rating and the game has to be able to predict it. `Phase11And12Tests` asserts both sides.
+- ✅ **MIRROR**, including `CustomGame.MirrorIndex` picking the same character on every machine
+  from the week number with no service at all, and a test for the pre-epoch clock a venue produces.
+- ✅ **Custom games**: password, rounds, round length, bots, formats, the wire parse, and
+  `CanBeRanked` refusing every one of them.
+
+### 128.2 ⚠️ What is genuinely open in Phase 12
+
+- ⚠️⚠️ **LAST TSINELAS STANDING HAS RULES, TESTS, A DOCUMENT AND NO MATCH HALF.**
+  `CustomGameRules` carries `StartingTsinelas` 3, `TsinelasLeft`, `IsOut` and
+  `LastAttackerStanding`, and `Phase11And12Tests` asserts all of them. **`MatchFormat.LastTsinelas`
+  appears nowhere in `Assets/TumbangPreso/Runtime/`**: `MatchInstaller` handles `Mirror` and
+  nothing handles this. It is also deliberately absent from the lobby's format list
+  (`ConvertedMatchSetup.FormatAt` maps index 0 to Standard and anything else to Mirror), which is
+  correct: **a format a player can pick and the match cannot run is worse than one that is not
+  offered.** § 129 is the match half.
+- ⚠️ **Map rotation and a map vote do not exist.** Nothing in the repository greps for either.
+  `FUTURE.md` § 12: *"A map is the most expensive content in the game. Map rotation and a map vote
+  are nearly free and buy most of the same freshness. Build those before building a fourth map."*
+  **This is the cheapest unbuilt thing in the phase** and it is still unbuilt.
+
+---
 ## 127 · Phase 16.1: the taya is a RING and an attacker is a DISC ⚠️⚠️ OPEN, 2026-09-03, branch `ui-redesign`
 
 `docs/FUTURE.md` § 16.1 is the one item the handoff into this session called out as *"real"*:

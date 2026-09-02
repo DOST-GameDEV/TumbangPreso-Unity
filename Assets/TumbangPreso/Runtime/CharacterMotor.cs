@@ -125,7 +125,11 @@ namespace TumbangPreso
 
         /// <summary>The roster pick's name, falling back to the seat number.
         /// CharacterIndex is -1 until a pick arrives.</summary>
-        private string CharacterName()
+        /// ⚠️ PUBLIC SINCE 2026-09-03, FOR `YouCard`. It needs the character rather than the
+        /// account handle, because a handle has no length bound and that row has overflowed three
+        /// times. `DisplayName` still prefers the handle for a human, which is right everywhere
+        /// the question is "which of these four seats is that".
+        public string CharacterName()
         {
             // ⚠️ THE CORE ROSTER, NOT RosterBook. RosterBook maps an index to a model; the
             // NAME is balance-layer data and lives in the engine-free package, so a headless

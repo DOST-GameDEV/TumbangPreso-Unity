@@ -1333,12 +1333,16 @@ ranked polish fixes, and the fastest way to make a competitive game feel dead is
 - ❌ **No named practice ladder. CUT 2026-08-31.** A separate progression track against bots is a
   fourth bot feature and a fifth progression system, and Practice plus `GuidedTraining` already
   give a new player somewhere to learn.
-- ✅ **Bots must be visibly labelled: ALREADY DONE in the lobby**, verified 2026-09-03.
-  `ConvertedMatchSetup` and `LobbyNameplates` write `BOT` on an occupied seat and `OPEN SEAT` on an
-  empty one. ⚠️ **And `MatchRecord.PlayerLine.IsBot` already exists on the wire and in the record**,
-  which is the field rule 1 above needs: the rating system CAN know. **What is missing is a rating
-  that reads it**, not a flag to read. A player who thinks they beat a person and did not will be
-  angrier when they find out than they would have been to know.
+- ✅ **Bots must be visibly labelled: DONE**, verified 2026-09-03. `BotFillRules.BotTag` is one
+  string in the core and the lobby writes it. A player who thinks they beat a person and did not
+  will be angrier when they find out than they would have been to know.
+- ✅ **AND SO IS EVERYTHING ELSE IN THIS PHASE, INCLUDING THE PART THAT LOOKS HARDEST.**
+  `BotFillRules` carries the 45-second casual threshold, the 150-second ranked one, and
+  `Weight(humans, seats)`: **every human seat past the first is a quarter of the result**, so four
+  humans is 1.0 and a solo human against three bots is 0.0. `RatingRules.Blend` applies it to
+  rating, deviation AND volatility, and `ugs/cloud-code/match-record.js` computes the same weight
+  from `IsBot` server-side. ⚠️ **Rule 1 above is therefore satisfied**, and `Phase11And12Tests`
+  asserts both halves against one table. **Phase 11 has nothing open.** `docs/TODO.md` § 128.
 
 ⚠️ **AND THE HARD PART IS THAT THE BOTS ARE A BALANCE INSTRUMENT TOO.** `BotBehaviourProbe`'s
 numbers are liveness floors, never comparisons at n=1, and `docs/TODO.md` § 16 carries the noise

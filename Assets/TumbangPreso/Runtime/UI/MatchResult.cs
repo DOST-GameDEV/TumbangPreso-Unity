@@ -567,6 +567,12 @@ namespace TumbangPreso.UI
 
             _canvas = canvasGo.AddComponent<Canvas>();
             _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+
+            // ⚠️ SNAPPED TO PIXELS, for the reason `Hud.Build` records at length: this is a root
+            // `ScreenSpaceOverlay` canvas built by hand rather than through `MenuKit.BuildCanvas`,
+            // so it never inherited the setting every other surface in the game has. It is the
+            // screen a match ends on and it is nothing but reading matter.
+            _canvas.pixelPerfect = true;
             _canvas.sortingOrder = 100;   // over the HUD
 
             var scaler = canvasGo.AddComponent<CanvasScaler>();

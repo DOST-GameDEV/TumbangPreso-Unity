@@ -137,9 +137,29 @@ namespace TumbangPreso.UI
             _class.text = isDefense ? "TAYA" : "ATTACKER";
 
             // ⚠️ THE SCORE WAS REMOVED FROM THIS ROW. 🧑 2026-07-31: *"why are there points
-            // here, it's already up top it feels redundant"*. The row says who you are instead,
-            // which is the only place the player's own chosen name appears to them.
-            _detail.text = _character.DisplayName();
+            // here, it's already up top it feels redundant"*. The row says who you are instead.
+            //
+            // ⚠️⚠️ AND IT IS THE CHARACTER'S NAME, NOT THE ACCOUNT HANDLE, WHICH IS THE THIRD
+            // TIME THIS ROW HAS OVERFLOWED AND THE FIRST TIME THE CAUSE WAS UNBOUNDED. The two
+            // notes above record `TAYA (DEFENDEDANTE` and `ATTACKERROCKAFORT`, and both were
+            // fixed by making the strings SHORTER. 🧑 2026-09-03, off the phone render:
+            // **"dont show #8826 or the player tag of ppl here bcz it makes it too long"**, and
+            // *"and it overflows"*, over a card reading `ATTACKI` with `PLAYER#8226` drawn
+            // straight through it.
+            //
+            // ⚠️⚠️ THE DIFFERENCE THAT MATTERS: A CHARACTER NAME IS BOUNDED AND AN ACCOUNT HANDLE
+            // IS NOT. `DisplayName()` answers `CharacterName()` for a BOT and `_playerName` for a
+            // human, so every previous fit was measured against the roster (`PHAISTER` is the
+            // longest at eight characters) while a real player arrives as `PLAYER#8226` and a
+            // custom one can be longer still. **Shortening the other half again would only move
+            // the number at which it breaks.** Naming the character removes the class of fault.
+            //
+            // ⚠️ AND IT LOSES NOTHING THE PLAYER NEEDED. This is the one card that is about YOU,
+            // and a player does not need to be told their own handle six minutes into a match;
+            // what they can genuinely forget is which of the eighteen fighters they picked. The
+            // handle is still on the scoreboard, where it is the thing that distinguishes four
+            // seats from each other.
+            _detail.text = _character.CharacterName();
 
             Color accent = isDefense ? UiTheme.Defense : UiTheme.Offense;
 

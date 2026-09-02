@@ -2403,6 +2403,27 @@ namespace TumbangPreso.UI
             _canvas = canvasGo.AddComponent<Canvas>();
             _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
 
+            // ⚠️⚠️ THE IN-MATCH HUD WAS THE ONE CANVAS IN THE GAME THAT DID NOT SNAP TO PIXELS,
+            // AND IT IS THE ONE A PLAYER LOOKS AT LONGEST. `MenuKit.BuildCanvas` sets this,
+            // `ConvertedScreen.Start` sets it, `TscnUiImporter` bakes it in, and this canvas is
+            // built by hand right here and was missed. 🧑 2026-09-03, off the phone render:
+            // **"mobile version kinda blurry text is is js me"**. It was not just him: the
+            // scoreboard, the round line and the toast were all soft while the menus were crisp.
+            //
+            // ⚠️ LEGACY `Text` IS RASTERISED AT ITS FINAL TRANSFORM, so a glyph landing on a
+            // fractional canvas pixel is resampled, and Darumadrop's edges are exactly where that
+            // shows. `ConvertedScreen` records the same fact in its own words: *"Godot snaps this
+            // UI to physical pixels; do the same for every converted screen from the shared base
+            // so one panel cannot regress."* **This canvas is not a converted screen, which is
+            // precisely why the shared base never reached it.**
+            //
+            // ⚠️ IT IS WORSE ON A PHONE AND THAT IS ARITHMETIC RATHER THAN BAD LUCK.
+            // `AspectSafeCanvas` matches on HEIGHT against a 1080 reference, so a 1080-tall phone
+            // sits at scale 1.0 and a 1440p monitor at 1.33: at 1.0 a half-unit offset is half a
+            // physical pixel, which is the worst case for resampling, and at 1.33 it lands nearer
+            // a whole one more often. **The build that needed this most was the one without it.**
+            _canvas.pixelPerfect = true;
+
             var scaler = canvasGo.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920, 1080);
