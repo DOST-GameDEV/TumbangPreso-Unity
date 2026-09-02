@@ -38,8 +38,108 @@ namespace TumbangPreso.UI
 
         private const int HistoryPageSize = 20;
 
+        // -------------------------------------------------------------------
+        // § THE TWO REGIONS, AND EVERY NUMBER IN THEM IS DERIVED FROM ONE OTHER NUMBER.
+        //
+        // ⚠️⚠️ NOTHING HERE IS A FRACTION OF THE CANVAS, AND THAT IS `CLAUDE.md` § 6.2c QUESTION 1
+        // APPLIED. `AspectSafeCanvas` uses `Expand`, so the canvas is about 1920 units wide at 4:3
+        // and about 2400 on the short wide window he actually plays in: **one fraction is two
+        // different widths.** The rail is a fixed 420 because that is what its content needs, and
+        // the page is "whatever is left", which is the only pair of definitions that holds at all
+        // nine resolutions `PlayerHubLayoutProbe` drives.
+        // -------------------------------------------------------------------
+
+        /// <summary>The air between the screen's edge and either region.</summary>
+        private const float ScreenMargin = 56.0f;
+
+        /// <summary>
+        /// ⚠️ 420 IS THE CONTENT PLUS ONE INSET EITHER SIDE, NOT A PROPORTION. The widest thing in
+        /// the card is a 368-unit tab, and 368 + 26 + 26 is 420. Sizing it against the window is
+        /// the fault § 100 records on the sign-in column, where 38 per cent of his window was 860
+        /// units of board around a 420-unit form.
+        /// </summary>
+        private const float RailWidth = 420.0f;
+
+        private const float RailPad = 26.0f;
+
+        /// <summary>The gap between the rail and the page. ⚠️ Wider than `RailPad` on purpose: the
+        /// space BETWEEN two objects has to beat the space inside either of them or they read as
+        /// one object with a line down it.</summary>
+        private const float RailGap = 36.0f;
+
+        /// <summary>
+        /// How much of the rail the identity block owns WHEN THERE IS XP TO SHOW.
+        ///
+        /// ⚠️ THE ARITHMETIC, SO THE NEXT PERSON DOES NOT RE-DERIVE IT: the handle's box is
+        /// centred 28 below the pad and is 56 tall, so it ends 56 below it; the state line hangs
+        /// from 76 and is given three lines, 66, so it ends at 142; the rule is at 158; the level
+        /// row is centred at 188 and is 28 tall, so it ends at 202; the XP track is centred at 216
+        /// and is 10 tall, so it ends at 221. Eight units of air under that is 229.
+        /// </summary>
+        private const float IdentityHeight = 229.0f;
+
+        /// <summary>
+        /// The same block on an account that has never earned XP, which is every fresh account.
+        ///
+        /// ⚠️⚠️ IT COLLAPSES RATHER THAN LEAVING THE ROOM EMPTY, AND HE CAUGHT THAT IN THE FIRST
+        /// RENDER OF THE COLUMN. 🧑 2026-09-02, with a crop of this rail: **"thhis looks really
+        /// good just tighten it, i dont want huge empty space"**. `RefreshHeader` has always
+        /// hidden the level, the XP count and (since § 120.5 row 6) the track itself when
+        /// `Xp == 0`, so on a fresh account the block was drawing a name, a sentence, a rule and
+        /// then **79 units of nothing**, which is the exact fault § 120.5 row 6 records one
+        /// control smaller: a mark that means nothing, left drawn because the branch that empties
+        /// it only emptied the words.
+        ///
+        /// ⚠️ THE HEIGHT IS A LAYOUT FACT AND THEREFORE LIVES WHERE THE LAYOUT IS, which is why
+        /// `RefreshHeader` writes it rather than `BuildIdentity`. The block is built once and the
+        /// account changes underneath it: signing in mid-session turns the XP on, and a height
+        /// captured at build time would be a rail that is correct until the player does the one
+        /// thing this screen exists for.
+        /// </summary>
+        private const float IdentityHeightNoXp = 166.0f;
+
+        private const float TabHeight = 58.0f;
+
+        /// <summary>Six tabs and the five gaps between them.</summary>
+        private const float TabsHeight = (TabHeight * 6.0f) + (TabGap * 5.0f);
+
+        private const float TabGap = 10.0f;
+
+        private const float CloseHeight = 52.0f;
+
+        /// <summary>
+        /// The air between the rail's three blocks: identity, destinations, the way out.
+        ///
+        /// ⚠️ BIGGER THAN `TabGap` ON PURPOSE. The space BETWEEN two groups has to beat the space
+        /// inside either of them or the reader sees one list of eight things instead of three
+        /// blocks, which is the ordering tool `game-ui-design` calls the last and cheapest one and
+        /// the one this rail spends instead of drawing more lines.
+        /// </summary>
+        private const float RailBlockGap = 24.0f;
+
+        /// <summary>The page's one status line, above the rows.</summary>
+        private const float PageHeaderHeight = 44.0f;
+
+        /// <summary>The page's one action, below the rows.</summary>
+        private const float PageFooterHeight = 76.0f;
+
+        /// <summary>
+        /// ⚠️ THE STATUS LINE IS CAPPED RATHER THAN STRETCHED, AND § 94.7 FAULT 6 IS WHY. When the
+        /// value column moved, every control that was allowed to fill its slot became the widest
+        /// object on the page and therefore the loudest: a field for fourteen characters drew as a
+        /// 715 px white rectangle. A `Text` has no fill, so the cap here is not about loudness but
+        /// about the same discipline: the page is up to 1840 units wide on his window, and a
+        /// sentence given all of it wraps nowhere and runs under the action button in the corner.
+        /// </summary>
+        private const float PageNoteWidth = 980.0f;
+
+        private const float PageActionWidth = 230.0f;
+
         private Canvas _canvas;
         private GameObject _root;
+        private RectTransform _rail;
+        private RectTransform _tabHost;
+        private RectTransform _pageArea;
         private RectTransform _list;
         private ScrollRect _scroll;
 
@@ -238,16 +338,37 @@ namespace TumbangPreso.UI
             // shadow falling on nothing.
             MenuKit.Backdrop(_root.transform, UiTheme.Paper);
 
-            BuildHeader();
-            BuildTabBar();
+            // ⚠️⚠️ TWO REGIONS, AND THE LEFT ONE IS AN ID CARD WITH THE NAVIGATION IN IT. This is
+            // `docs/TODO.md` § 119.5's own plan for this screen finally built: *"an ID card with a
+            // tab COLUMN rather than a tab row ... six tabs across a header is the row that made
+            // § 92 unreadable"*, and § 120.7 named it as the largest thing left undone, with the
+            // cost measured: **on the PROFILE tab of a fresh account the bottom 45 per cent of the
+            // screen was bare cream**, which is § 6.2's *"big ass empty sopace"* on the one screen
+            // in the game that is entirely about the player.
+            //
+            // **A column fixes both halves of that at once and § 120.7 says so in one line:** *"A
+            // column would fill the left edge and narrow the rows at the same time."* The rows get
+            // narrower, so `UiRows.ValueColumn` comes in with them and the label-to-value journey
+            // § 94.7 fault 1 measured at 1600 px shortens again; and the tall empty left edge is
+            // now the object that says who you are and where you can go.
+            BuildRail();
+            BuildPage();
+
+            BuildIdentity();
+            BuildTabColumn();
+            BuildRailFooter();
 
             var listGo = new GameObject("ListArea", typeof(RectTransform));
-            listGo.transform.SetParent(_root.transform, false);
+            listGo.transform.SetParent(_pageArea, false);
             var listRt = (RectTransform)listGo.transform;
-            listRt.anchorMin = new Vector2(0.06f, 0.0f);
-            listRt.anchorMax = new Vector2(0.94f, 1.0f);
-            listRt.offsetMin = new Vector2(0.0f, 96.0f);
-            listRt.offsetMax = new Vector2(0.0f, -232.0f);
+            listRt.anchorMin = Vector2.zero;
+            listRt.anchorMax = Vector2.one;
+            // ⚠️ THE INSETS ARE AGAINST THE PAGE, NOT AGAINST THE SCREEN, which is the whole point
+            // of the page being a rect of its own. The old version wrote `0.06` and `0.94` of the
+            // WHOLE canvas here, and `AspectSafeCanvas` scales on the short axis, so one fraction
+            // was two different widths at two aspect ratios (`CLAUDE.md` § 6.2c question 1).
+            listRt.offsetMin = new Vector2(0.0f, PageFooterHeight);
+            listRt.offsetMax = new Vector2(0.0f, -PageHeaderHeight);
 
             _list = UiRows.ScrollList(listGo.transform, "Rows", out _scroll);
             MenuKit.Stretch((RectTransform)_scroll.transform);
@@ -304,67 +425,157 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>
-        /// The identity band: who you are, once, at the top, in the biggest type on the screen.
+        /// The left rail: an ID card with the whole of the navigation inside it.
         ///
-        /// ⚠️⚠️ IT IS THE ONLY PLACE THE HANDLE APPEARS NOW. The old arrangement printed it on the
-        /// account panel AND on the career panel, so two screens each claimed to be where your
-        /// name lived and neither was the header of anything. A header that persists across the
-        /// tabs is what makes four tabs feel like one screen.
+        /// ⚠️⚠️ IT REPLACES A SIX-TAB ROW ACROSS THE TOP AND `docs/TODO.md` § 119.5 PLANNED THIS
+        /// FROM THE START: *"an ID card with a tab COLUMN rather than a tab row ... six tabs
+        /// across a header is the row that made § 92 unreadable"*. § 120.7 then measured what the
+        /// row cost: on the PROFILE tab of a fresh account **the bottom 45 per cent of the screen
+        /// was bare cream**, because a row across the top spends 232 units of height on chrome and
+        /// leaves the content one wide short block with nothing under it.
+        ///
+        /// **The rail says three things top to bottom, which is the whole reason it is one object
+        /// rather than three:** who you are, where you can go, and how you leave. `CLAUDE.md`
+        /// § 6.3's four questions about a journey are answered in one column, in reading order.
+        ///
+        /// ⚠️ FULL HEIGHT, AND SIZED IN UNITS RATHER THAN AS A FRACTION. `AspectSafeCanvas` scales
+        /// on the SHORT axis, so the canvas is about 1920 wide at 4:3 and about 2400 on his
+        /// window: a fraction of the width is two different rails. 420 units is the widest control
+        /// this card carries (a 368-unit label plus one 26-unit inset either side) and it is
+        /// therefore the same rail at every shape the game ships at.
         /// </summary>
-        private void BuildHeader()
+        private void BuildRail()
         {
-            _handle = MenuKit.Label(_root.transform, "", 44, UiTheme.Cream,
-                new Vector2(0.0f, 1.0f), new Vector2(400.0f, -78.0f), new Vector2(680.0f, 58.0f),
-                TextAnchor.MiddleLeft);
+            var card = PaperKit.Sheet(_root.transform, "IdentityRail");
+            card.raycastTarget = true;
 
-            _state = MenuKit.Label(_root.transform, "", MenuKit.MinReadableUnits,
-                UiTheme.CreamMuted, new Vector2(0.0f, 1.0f), new Vector2(420.0f, -122.0f),
-                new Vector2(720.0f, 28.0f), TextAnchor.MiddleLeft);
-
-            // ⚠️⚠️ THE WHOLE XP BLOCK MOVED LEFT ON 2026-08-30 BECAUSE THE BAR WAS DRAWN UNDER
-            // THE CLOSE BUTTON. The track was centred at -300 with a half-width of 220, so it ran
-            // to x = -80; CLOSE is centred at -118 with a half-width of 90, so it starts at -208.
-            // **128 px of the bar, which is the end a player reads to see how close they are to
-            // the next level, was behind a wood button.** It is in 🧑's own screenshot and it is
-            // the same class of fault as everything in § 92: two absolute offsets authored
-            // separately, each correct on its own, never checked against each other.
+            // ⚠️⚠️ THE CARD IS THE HEIGHT OF ITS CONTENT AND IT WAS FULL HEIGHT, AND HE REJECTED
+            // THAT ON THE FIRST RENDER: **"thhis looks really good just tighten it, i dont want
+            // huge empty space"**. Full height put three blocks in a 1000-unit column and left
+            // about 300 units of bare card between them, which is the same *"big ass empty
+            // sopace"* § 119.10 records him rejecting on the fighter column, one screen over.
             //
-            // The block now ends at -238, which clears CLOSE's left edge by 30 px, and the three
-            // parts are laid out from that one number: level at the bar's left end, the XP count
-            // at its right end, the bar under both.
-            const float XpRight = -238.0f;
-            const float XpWidth = 440.0f;
-            const float XpCentre = XpRight - XpWidth * 0.5f;
+            // ⚠️ EMPTY CARD AND EMPTY FIELD ARE NOT THE SAME THING, and that distinction is the
+            // whole reason this works. A card that ends is an object with a size; the paper under
+            // it is the screen's own margin. The hole he photographed was INSIDE a drawn surface,
+            // which reads as a layout that failed to fill itself.
+            //
+            // ⚠️ THE HEIGHT IS WRITTEN BY `RefreshHeader`, not here. It depends on whether the
+            // account has XP, and the account can change while this screen is open.
+            _rail = card.rectTransform;
+            _rail.anchorMin = new Vector2(0.0f, 1.0f);
+            _rail.anchorMax = new Vector2(0.0f, 1.0f);
+            _rail.pivot = new Vector2(0.0f, 1.0f);
+            _rail.anchoredPosition = new Vector2(ScreenMargin, -ScreenMargin);
+            _rail.sizeDelta = new Vector2(RailWidth, RailPad + IdentityHeight + RailBlockGap
+                                                     + TabsHeight + RailBlockGap + CloseHeight
+                                                     + RailPad);
+        }
 
-            _levelChip = MenuKit.Label(_root.transform, "", 22, UiTheme.Amber,
-                new Vector2(1.0f, 1.0f), new Vector2(XpRight - XpWidth + 100.0f, -80.0f),
-                new Vector2(200.0f, 32.0f), TextAnchor.MiddleLeft);
+        /// <summary>
+        /// Everything the rail is not: the rows, their one status line and the tab's one action.
+        ///
+        /// ⚠️ IT IS A RECT WITH NO GRAPHIC ON IT, WHICH IS DELIBERATE. A second big card beside
+        /// the first would make this screen two boxes on a board, which is the fault § 92 records
+        /// (*"everything is js shit on one block"*) solved by adding a block. The page is a REGION:
+        /// it exists so that every inset inside it is measured against the space the rows actually
+        /// have, instead of against the whole canvas.
+        /// </summary>
+        private void BuildPage()
+        {
+            var go = new GameObject("Page", typeof(RectTransform));
+            go.transform.SetParent(_root.transform, false);
 
-            // ⚠️ THE NUMBER IS NEW AND THE BAR NEEDED IT. A bar with no scale says "somewhere
-            // between two levels", which is the one thing the player can already see. `FUTURE.md`
-            // PHASE 4 asks for the level and the progress to be legible at a glance and a bare
-            // 8 px sliver is not; `ProgressionRules.XpPerLevel` is flat, so the denominator is a
-            // constant and the fraction is honest without any further arithmetic.
-            _xpCount = MenuKit.Label(_root.transform, "", MenuKit.MinReadableUnits,
-                UiTheme.CreamMuted, new Vector2(1.0f, 1.0f), new Vector2(XpRight - 120.0f, -80.0f),
-                new Vector2(240.0f, 28.0f), TextAnchor.MiddleRight);
+            _pageArea = (RectTransform)go.transform;
+            _pageArea.anchorMin = Vector2.zero;
+            _pageArea.anchorMax = Vector2.one;
+            _pageArea.offsetMin = new Vector2(ScreenMargin + RailWidth + RailGap, ScreenMargin);
+            _pageArea.offsetMax = new Vector2(-ScreenMargin, -ScreenMargin);
+        }
 
-            // ⚠️ THE XP BAR IS HERE RATHER THAN ON THE CAREER TAB because it is identity, not a
-            // statistic: `FUTURE.md` PHASE 4 puts level and border on the header card, and a bar
-            // that only exists on one tab stops being the thing you glance at.
+        /// <summary>
+        /// Who you are, at the top of the rail, in the biggest type on the screen.
+        ///
+        /// ⚠️⚠️ IT IS THE ONLY PLACE THE HANDLE APPEARS. The old arrangement printed it on the
+        /// account panel AND on the career panel, so two screens each claimed to be where your
+        /// name lived and neither was the header of anything. A block that persists across the
+        /// tabs is what makes six tabs feel like one screen.
+        ///
+        /// ⚠️⚠️ THE XP BLOCK IS NO LONGER ANYWHERE NEAR A BUTTON, WHICH IS § 94.7 FAULT 5 MADE
+        /// IMPOSSIBLE RATHER THAN FIXED. That fault was a 440-unit track centred at -300 running
+        /// under a CLOSE button that started at -208: **128 px of the bar, the end a player reads
+        /// to see how close they are, drawn behind a wood button.** It was corrected by moving the
+        /// block to a number that cleared CLOSE by 30 px, which is two absolute offsets checked
+        /// against each other once. Here the track is a child of the card, inset from the card's
+        /// own edges, and the only other thing in the card is below it in the same column: there
+        /// is no second offset for it to disagree with.
+        /// </summary>
+        private void BuildIdentity()
+        {
+            float inner = RailWidth - (RailPad * 2.0f);
+
+            // ⚠️⚠️ EVERY OFFSET HERE IS THE BOX'S CENTRE, BECAUSE `MenuKit.Place` PINS THE PIVOT
+            // TO (0.5, 0.5) AND WRITING A PIVOT AFTERWARDS MOVES THE RECT BY HALF ITS OWN SIZE.
+            // That is a silent shift of 184 units on a 368-unit box, and it is the same class of
+            // fault as § 120.2's BACK: two lines that both look like a placement, one of which
+            // quietly undoes the other. `Mid` is the one place the arithmetic is written.
+            float mid = RailPad + (inner * 0.5f);
+
+            _handle = MenuKit.Label(_rail, "", 44, UiTheme.PaperInk,
+                new Vector2(0.0f, 1.0f), new Vector2(mid, -(RailPad + 28.0f)),
+                new Vector2(inner, 56.0f), TextAnchor.MiddleLeft);
+
+            // ⚠️⚠️ IT WRAPS, AND ON A 420-UNIT RAIL IT HAS TO. The longest string this label ever
+            // holds is `GUEST  ·  nothing is being saved to an account`, which is about 470 units
+            // at 18 and was given a 720-unit box when this block ran across the top of the screen.
+            // In a column it does not fit on one line at any readable size, and `MenuKit.Label`
+            // OVERFLOWS rather than wrapping (`CLAUDE.md` § 6.2c), so without this it would draw
+            // straight off the side of the card. Two lines of 18 is 40 units and the block below
+            // is placed from that number.
+            // ⚠️⚠️ THREE LINES, AND TWO WAS A TRUNCATION THE FIRST RENDER CAUGHT. On
+            // `LobbyAccount-v61.png` this label reads `PLAYING ON THIS MACHINE ONLY  ·  no` and
+            // stops: the string ends `no username yet`, the box was 44 units, and
+            // `verticalOverflow = Truncate` **drops whole lines silently**. A 46-character
+            // sentence at 18 units in a 368-unit box is three lines, so it is given three.
+            //
+            // ⚠️ TRUNCATE RATHER THAN OVERFLOW IS STILL RIGHT. Overflow would draw the fourth line
+            // over the rule under it, which is the silent overlap § 102.4 records; the fix for a
+            // truncation is a box that fits the sentence, not a box that lets it escape.
+            _state = MenuKit.Label(_rail, "", MenuKit.MinReadableUnits,
+                UiTheme.PaperInkSoft, new Vector2(0.0f, 1.0f),
+                new Vector2(mid, -(RailPad + 109.0f)), new Vector2(inner, 66.0f),
+                TextAnchor.UpperLeft);
+            _state.horizontalOverflow = HorizontalWrapMode.Wrap;
+            _state.verticalOverflow = VerticalWrapMode.Truncate;
+
+            var rule = PaperKit.Rule(_rail);
+            MenuKit.Place(rule.rectTransform, new Vector2(0.0f, 1.0f),
+                new Vector2(mid, -(RailPad + 158.0f)), new Vector2(inner, 2.0f));
+
+            _levelChip = MenuKit.Label(_rail, "", 22, UiTheme.PaperInk,
+                new Vector2(0.0f, 1.0f),
+                new Vector2(RailPad + (inner * 0.25f), -(RailPad + 188.0f)),
+                new Vector2(inner * 0.5f, 28.0f), TextAnchor.MiddleLeft);
+
+            _xpCount = MenuKit.Label(_rail, "", MenuKit.MinReadableUnits,
+                UiTheme.PaperInkSoft, new Vector2(0.0f, 1.0f),
+                new Vector2(RailPad + (inner * 0.75f), -(RailPad + 188.0f)),
+                new Vector2(inner * 0.5f, 28.0f), TextAnchor.MiddleRight);
+
             var track = new GameObject("XpTrack", typeof(RectTransform), typeof(Image));
-            track.transform.SetParent(_root.transform, false);
-            MenuKit.Place((RectTransform)track.transform, new Vector2(1.0f, 1.0f),
-                new Vector2(XpCentre, -114.0f), new Vector2(XpWidth, 10.0f));
+            track.transform.SetParent(_rail, false);
+
+            MenuKit.Place((RectTransform)track.transform, new Vector2(0.0f, 1.0f),
+                new Vector2(mid, -(RailPad + 216.0f)), new Vector2(inner, 10.0f));
+
             // ⚠️⚠️ THE BAR INVERTS WITH THE FIELD, WHICH IS THE SAME MOVE `PaperCraft.Surface.Sign`
             // RECORDS. It was an amber fill on a near-black track, which is correct on a wooden
             // screen where amber is the one light thing; on cream `UiTheme.Amber` `ffba00` against
-            // `Paper` `f4ecdd` is **1.7:1** and the filled part of the bar is the part that
-            // disappears. 🧑 rejected that ratio by eye twice on other controls
-            // (`docs/TODO.md` § 119.10), so this is applying his answer rather than re-testing it.
-            //
-            // **On paper the marker is the one DARK thing**: a `PaperSunk` groove with wood in it
-            // is 8:1 and introduces no colour at all.
+            // `Paper` `f4ecdd` measures **1.46:1** (`tools/sample_png.js contrast`) and the FILLED
+            // part of the bar is the part that disappears. He rejected that ratio by eye twice on
+            // other controls (`docs/TODO.md` § 119.10), so this is applying his answer rather than
+            // re-testing it. On paper the marker is the one DARK thing: wood in a `PaperSunk`
+            // groove is about 8:1 and introduces no colour at all.
             track.GetComponent<Image>().color = UiTheme.PaperSunk;
 
             var fillGo = new GameObject("Fill", typeof(RectTransform), typeof(Image));
@@ -377,55 +588,76 @@ namespace TumbangPreso.UI
             fill.anchorMax = new Vector2(0.0f, 1.0f);
             fill.offsetMin = Vector2.zero;
             fill.offsetMax = Vector2.zero;
-
-            MenuKit.WoodButton(_root.transform, "CLOSE", new Vector2(1.0f, 1.0f),
-                new Vector2(-118.0f, -74.0f), new Vector2(180.0f, 52.0f), Close);
         }
 
         /// <summary>
-        /// ⚠️ TABS ACROSS THE TOP, WHICH IS THE REFERENCE'S ARRANGEMENT. Valorant runs
-        /// GENERAL / GRAPHICS QUALITY / STATS across the top of its settings and PUBG runs its
-        /// sections down a rail; either works, and across the top is the one that survives a
-        /// 16:10 window without a second scroll region.
+        /// The six destinations, down the rail, in the space between the identity block and the
+        /// way out.
         ///
-        /// ⚠️⚠️ FRIENDS IS THE FIFTH AND IT IS A TAB RATHER THAN A GROUP ON `PROFILE`, WHICH IS
-        /// A DECISION AND NOT AN OVERSIGHT. `FUTURE.md` § 0.5b's row for Phase 6 asks for *"a
-        /// friends rail on the hub"* with **who is online now** as the one thing on it, and a
-        /// group buried inside a tab about YOU fails that twice over: it is collapsed by default
-        /// like every other group, and PROFILE is the screen about the local player while this is
-        /// the only screen in the game about anybody else.
+        /// ⚠️⚠️ A COLUMN RATHER THAN A ROW, AND THE REASON IS A MEASUREMENT RATHER THAN A STYLE.
+        /// Six tabs across the top were 168 units wide at a 176 pitch, so every label had to fit
+        /// **148 units of usable width**: `ACCOUNT` and `MATCHES` were at the edge of it and any
+        /// seventh destination would have had to shrink all six. Down a 420-unit rail each tab has
+        /// **368**, which is two and a half times the room, and a seventh costs one row of height
+        /// on a column that has spare height by construction.
         ///
-        /// ⚠️ AND A TAB IS NOT A SECOND DOOR. `CLAUDE.md` § 6.3's rule is about the MENU growing
-        /// a button per feature (§ 92's six-button panel); the hub still has exactly one entrance
-        /// and everything inside it is one press from the others. `docs/TODO.md` § 102.
+        /// ⚠️ THEY ARE CENTRED IN THE SPACE THEY HAVE RATHER THAN PACKED AT THE TOP OF IT. Six
+        /// 58-unit tabs with a 10-unit gap are 398 units; the rail's middle band is about 690 at
+        /// 1080 and about 1050 at 4:3, so packing them would leave a growing hole under the last
+        /// one at exactly the aspect ratios `AspectRatioProbes` drives. Centred, the slack is
+        /// split above and below and reads as air.
         ///
-        /// ⚠️ THE SPACING IS DERIVED RATHER THAN TYPED. Five tabs at the four-tab offsets would
-        /// have run the last one off the panel, and the next tab added would do it again.
+        /// ⚠️⚠️ LOADOUT IS A TAB BECAUSE NOBODY COULD FIND IT AS A GROUP, AND HE IS THE "NOBODY".
+        /// 2026-09-01: *"i also dont know hhow to navigate to loadouts section"*, then, before
+        /// anybody could answer: *"that isnt my fault thats ur fault"*, *"that means if i cnat ifnd
+        /// it, no one owuld"*. It was four presses deep and two of them were invisible: the rows
+        /// lived in a group called *Ability builds*, CLOSED BY DEFAULT, at the bottom of the CAREER
+        /// tab, and on a fresh account the career tab returned before building it at all. **A
+        /// collapsed group is a good answer to "never overwhelming" and a bad one to "where is the
+        /// thing"**, and `CLAUDE.md` § 6.2 is three separate claims: this feature passed the third
+        /// by failing the second.
+        ///
+        /// ⚠️ THE DOOR MOVED, IT DID NOT MULTIPLY, WHICH IS § 6.3's RULE BY NAME. There is exactly
+        /// one place in the game that equips an ability build and it is named on the tab column you
+        /// land on. And it is spelled the way he asks for it: the code calls these hero BUILDS
+        /// (`HeroBuildRules`) and the word he reaches for is LOADOUT.
+        ///
+        /// ⚠️⚠️ FRIENDS IS A TAB RATHER THAN A GROUP ON `PROFILE`, WHICH IS A DECISION AND NOT AN
+        /// OVERSIGHT. `FUTURE.md` § 0.5b's row for Phase 6 asks for *"a friends rail on the hub"*
+        /// with **who is online now** as the one thing on it, and a group buried inside a tab about
+        /// YOU fails that twice over: it is collapsed by default like every other group, and
+        /// PROFILE is the screen about the local player while this is the only screen in the game
+        /// about anybody else.
         /// </summary>
-        private void BuildTabBar()
+        private void BuildTabColumn()
         {
-            // ⚠️⚠️ LOADOUT IS A TAB BECAUSE NOBODY COULD FIND IT AS A GROUP, AND 🧑 IS THE
-            // "NOBODY". 2026-09-01: *"i also dont know hhow to navigate to loadouts section"*, and
-            // then, before anybody could answer: *"that isnt my fault thats ur fault"*, *"that
-            // means if i cnat ifnd it, no one owuld"*. He commissioned the feature, he read the
-            // entry that shipped it, and he still could not reach it.
-            //
-            // **It was four presses deep and two of them were invisible.** The rows lived in a
-            // group called *Ability builds*, CLOSED BY DEFAULT, at the bottom of the CAREER tab,
-            // and on a fresh account the career tab returned before building it at all
-            // (`EmptyCareer`, § 114.12). A collapsed group is a good answer to *"never
-            // overwhelming"* and a bad one to *"where is the thing"*: `CLAUDE.md` § 6.2 is three
-            // separate claims and this feature passed the third by failing the second.
-            //
-            // ⚠️ THE DOOR MOVED, IT DID NOT MULTIPLY, WHICH IS § 6.3's RULE BY NAME. The group is
-            // GONE from the career tab and from `EmptyCareer`; there is exactly one place in the
-            // game that equips an ability build and it is named on the tab bar you land on. A
-            // second entrance beside the collapsed one would have been § 92's six-button panel
-            // reassembling itself.
-            //
-            // ⚠️ AND IT IS SPELLED THE WAY HE ASKED FOR IT. The code calls these hero BUILDS
-            // (`HeroBuildRules`) and the word he reaches for is LOADOUT. The tab is the player's
-            // word; the type names are the code's.
+            var host = new GameObject("TabColumn", typeof(RectTransform));
+            host.transform.SetParent(_rail, false);
+
+            // ⚠️⚠️ TOP-ANCHORED AND FIXED HEIGHT, NOT STRETCHED AND CENTRED. The first version
+            // filled the space between the identity block and CLOSE and centred the six tabs in
+            // it, which on a full-height card meant **two holes rather than one**: about 200 units
+            // above the tabs and 150 below. 🧑, with a crop of it: **"just tighten it, i dont want
+            // huge empty space"**. The card is content-height now (see `BuildRail`), so the tabs
+            // hang from the block above them and there is nothing left to centre in.
+            _tabHost = (RectTransform)host.transform;
+            _tabHost.anchorMin = new Vector2(0.0f, 1.0f);
+            _tabHost.anchorMax = new Vector2(1.0f, 1.0f);
+            _tabHost.pivot = new Vector2(0.5f, 1.0f);
+            _tabHost.offsetMin = new Vector2(RailPad, 0.0f);
+            _tabHost.offsetMax = new Vector2(-RailPad, 0.0f);
+            _tabHost.anchoredPosition =
+                new Vector2(0.0f, -(RailPad + IdentityHeight + RailBlockGap));
+            _tabHost.sizeDelta = new Vector2(_tabHost.sizeDelta.x, TabsHeight);
+
+            var layout = host.AddComponent<VerticalLayoutGroup>();
+            layout.spacing = TabGap;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = false;
+            layout.childAlignment = TextAnchor.UpperCenter;
+
             var order = new[]
             {
                 (Tab.Profile, "PROFILE"),
@@ -436,40 +668,85 @@ namespace TumbangPreso.UI
                 (Tab.Account, "ACCOUNT"),
             };
 
-            // ⚠️ 176 AT SIX TABS, AND THE TAB IS 168 WIDE. Six 192-unit tabs at a 200 pitch is
-            // 1200 units of bar with 8 units between them, which reads as one continuous plank
-            // rather than as six controls. The pitch and the width come down together so the
-            // gap stays the 8 units five tabs had, and the bar is 1056 wide, inside the
-            // 1920-unit floor `AspectSafeCanvas` guarantees at every aspect.
-            const float Pitch = 176.0f;
-            float first = -Pitch * (order.Length - 1) * 0.5f;
-
-            for (int i = 0; i < order.Length; i++)
-                AddTab(order[i].Item1, order[i].Item2, first + Pitch * i);
+            foreach (var (tab, label) in order) AddTab(host.transform, tab, label);
         }
 
-        private void AddTab(Tab tab, string label, float x)
+        private void AddTab(Transform host, Tab tab, string label)
         {
-            _tabs[tab] = MenuKit.WoodButton(_root.transform, label, new Vector2(0.5f, 1.0f),
-                new Vector2(x, -182.0f), new Vector2(168.0f, 54.0f), () => Show(tab));
+            var button = MenuKit.WoodButton(host, label, new Vector2(0.5f, 0.5f),
+                Vector2.zero, new Vector2(368.0f, TabHeight), () => Show(tab));
+
+            // ⚠️ THE LAYOUT GROUP OWNS THE RECT, SO THE HEIGHT HAS TO BE STATED AS AN ELEMENT.
+            // `MenuKit.WoodButton` writes `sizeDelta`, and `childControlHeight` overwrites it on
+            // the next pass; § 117.7 records the same thing happening to a tab that three comments
+            // in this repository called *"four units taller"* and that was never taller in any
+            // build, because `childForceExpandHeight` silently beat every `LayoutElement` under it.
+            var element = button.gameObject.GetComponent<LayoutElement>();
+            if (element == null) element = button.gameObject.AddComponent<LayoutElement>();
+            element.minHeight = TabHeight;
+            element.preferredHeight = TabHeight;
+            element.flexibleHeight = 0.0f;
+
+            _tabs[tab] = button;
+        }
+
+        /// <summary>
+        /// The way out, at the bottom of the rail.
+        ///
+        /// ⚠️⚠️ IT MOVED OUT OF THE TOP-RIGHT CORNER AND INTO THE COLUMN, AND THAT IS WHAT MAKES
+        /// THE RAIL A WHOLE OBJECT. `CLAUDE.md` § 6.3's last question about any screen is *"how do
+        /// they get out, and is it one press"*, and the answer now sits in the same column as
+        /// every other place this screen can send you, at the end of it. A floating CLOSE in a
+        /// corner is a control with no neighbours, which is what § 92's six-button panel was made
+        /// of.
+        ///
+        /// ⚠️ IT IS NAMED, AND THE NAME IS LOAD-BEARING FOR THE SHOT PASS. `UiRuntimeShots` used
+        /// to close this screen with `Find("HubRoot").GetComponentInChildren&lt;Button&gt;()`,
+        /// which is "the first button in the hierarchy" and was CLOSE only by accident of build
+        /// order. In a column the first button is PROFILE, so the probe would have pressed a tab
+        /// and photographed the hub it was trying to leave.
+        ///
+        /// ⚠️ ESCAPE STILL DOES THIS AND ALWAYS DID. See `Update`: innermost layer first, the
+        /// match-detail popup before the screen. The button is the visible door; Escape is the one
+        /// a player who has learned this game already knows.
+        /// </summary>
+        private void BuildRailFooter()
+        {
+            var close = MenuKit.WoodButton(_rail, "CLOSE", new Vector2(0.5f, 0.0f),
+                new Vector2(0.0f, RailPad + (CloseHeight * 0.5f)),
+                new Vector2(RailWidth - (RailPad * 2.0f), CloseHeight), Close);
+
+            close.gameObject.name = "HubClose";
         }
 
         private void BuildFooter()
         {
-            // ⚠️ ALIGNED WITH THE LIST, NOT WITH THE SCREEN. `ListArea` starts at 6 per cent of
-            // the width, which is x = 115 at 1920, and this note started at x = 60, so the one
-            // sentence explaining the whole tab hung 55 px outside the column every row above it
-            // shares. It reads as something that fell off rather than as the footer of anything.
-            _footerNote = MenuKit.Label(_root.transform, "", MenuKit.MinReadableUnits,
-                UiTheme.CreamMuted, new Vector2(0.06f, 0.0f), new Vector2(420.0f, 50.0f),
-                new Vector2(840.0f, 28.0f), TextAnchor.MiddleLeft);
+            // ⚠️⚠️ THE ONE LINE EXPLAINING A TAB SITS ABOVE THE ROWS IT EXPLAINS, NOT UNDER THEM.
+            // It was a footer, at the bottom-left of the whole screen, about 900 units below the
+            // first row it described and under a list the player has to scroll to the end of to
+            // reach. **A caption that arrives after the thing it captions is not a caption.** It
+            // also carries the live status on two tabs (`career.Status`, `Loading...`), and a
+            // status line the player only meets by scrolling is a status nobody reads.
+            //
+            // ⚠️ IT IS ALIGNED TO THE PAGE, so it starts at the same x as every row under it. The
+            // version this replaces was pinned at 6 per cent of the canvas while `ListArea` began
+            // somewhere else, which § 94.7 fault 7 records as *"one column or none"*.
+            _footerNote = MenuKit.Label(_pageArea, "", MenuKit.MinReadableUnits,
+                UiTheme.PaperInkSoft, new Vector2(0.0f, 1.0f),
+                new Vector2(PageNoteWidth * 0.5f, -18.0f),
+                new Vector2(PageNoteWidth, 30.0f), TextAnchor.MiddleLeft);
 
-            // ⚠️⚠️ ONE ACTION, BOTTOM RIGHT, AND IT CHANGES WITH THE TAB. PUBG parks a single
-            // persistent action there (UPLOAD TO CLOUD) and that is the whole idea: a screen with
-            // one button has an obvious thing to do, and a screen with six has none. Everything
-            // else on this screen is a row.
-            _footerAction = MenuKit.WoodButton(_root.transform, "SAVE", new Vector2(1.0f, 0.0f),
-                new Vector2(-140.0f, 50.0f), new Vector2(230.0f, 56.0f), FooterPressed,
+            // ⚠️⚠️ ONE ACTION, BOTTOM RIGHT OF THE PAGE, AND IT CHANGES WITH THE TAB. PUBG parks a
+            // single persistent action there (UPLOAD TO CLOUD) and that is the whole idea: a
+            // screen with one button has an obvious thing to do and a screen with six has none.
+            // Everything else on this page is a row.
+            //
+            // ⚠️ BOTTOM RIGHT OF THE PAGE RATHER THAN OF THE SCREEN, which is now a different
+            // place. It applies to the rows, so it belongs under the rows; the rail's own footer
+            // is CLOSE, which applies to the screen.
+            _footerAction = MenuKit.WoodButton(_pageArea, "SAVE", new Vector2(1.0f, 0.0f),
+                new Vector2(-(PageActionWidth * 0.5f), 34.0f),
+                new Vector2(PageActionWidth, 56.0f), FooterPressed,
                 "WoodPrimaryButton");
 
             _footerLabel = _footerAction.GetComponentInChildren<Text>();
@@ -755,6 +1032,19 @@ namespace TumbangPreso.UI
 
             _handle.text = account != null ? account.LobbyName : "PLAYER";
 
+            // ⚠️⚠️ THE HANDLE IS FITTED NOW, AND IN A COLUMN IT HAS TO BE. Across the top of the
+            // screen it had a 680-unit box, which no display name could overflow; in a 420-unit
+            // rail it has 368, and `Balance.PlayerNameMax` is 14 characters. Measured in
+            // Darumadrop One at 44 units, fourteen wide characters run about **430**, so the
+            // longest legal name overflows by about 60 and `MenuKit.Label` OVERFLOWS rather than
+            // wrapping (`CLAUDE.md` § 6.2c): it would draw straight off the side of the card,
+            // silently. `Fit` shrinks to the readable floor, which at 44 is four steps of room.
+            //
+            // ⚠️ THE TAG IS NOT PART OF THIS STRING. `LobbyName` is the display name; the `#1296`
+            // half lives on the PROFILE tab's own row, which is where § 92.3 put it.
+            _handle.fontSize = 44;
+            MenuKit.Fit(_handle, RailWidth - (RailPad * 2.0f));
+
             _state.text = account == null ? ""
                 : account.IsGuest ? "GUEST  ·  nothing is being saved to an account"
                 : account.HasPassword ? $"SIGNED IN AS {account.Username.ToUpperInvariant()}"
@@ -794,6 +1084,28 @@ namespace TumbangPreso.UI
             // number, applied to the one part of that block that was not covered by it.
             if (_xpFill != null && _xpFill.transform.parent != null)
                 _xpFill.transform.parent.gameObject.SetActive(xp > 0);
+
+            // ⚠️⚠️ AND THE RAIL COLLAPSES BY THE HEIGHT THOSE THREE CONTROLS WERE OCCUPYING,
+            // WHICH IS THE OTHER HALF OF THE SAME BRANCH. The guards above have always emptied
+            // the level and the count when there is no XP, and § 120.5 row 6 added the track to
+            // them; **the SPACE was still reserved**, so on every fresh account the card drew a
+            // name, a sentence, a rule and then 79 units of nothing. 🧑, with a crop of exactly
+            // that: **"thhis looks really good just tighten it, i dont want huge empty space"**.
+            //
+            // ⚠️ IT IS WRITTEN HERE RATHER THAN AT BUILD TIME BECAUSE THE ACCOUNT CHANGES UNDER
+            // THIS SCREEN. Signing in is something a player does WITH this screen open, and a
+            // height captured in `BuildIdentity` would be a rail that is correct until the moment
+            // the thing it describes happens.
+            float identity = xp > 0 ? IdentityHeight : IdentityHeightNoXp;
+
+            if (_rail != null)
+                _rail.sizeDelta = new Vector2(RailWidth,
+                    RailPad + identity + RailBlockGap + TabsHeight + RailBlockGap
+                    + CloseHeight + RailPad);
+
+            if (_tabHost != null)
+                _tabHost.anchoredPosition =
+                    new Vector2(0.0f, -(RailPad + identity + RailBlockGap));
         }
 
         // -------------------------------------------------------------------
@@ -1874,8 +2186,21 @@ namespace TumbangPreso.UI
             // career. It still takes two presses and the second one says so.
             UiRows.Gap(_list, 48.0f);
 
+            // ⚠️⚠️ THE SENTENCE IS SHORTER BECAUSE THE PAGE IS NARROWER, AND THIS IS THE ONE
+            // REGRESSION THE TAB COLUMN CAUSED. `PlayerHubLayoutProbe`, at 16:9 720p:
+            // *"'Label' needs 575 units for "Deleting removes the account, the profile and every
+            // match on the server." and was given 567"*. A shut group's summary lands in
+            // `UiRows.ValueColumn`, which is a FRACTION of the row, so moving the navigation into
+            // a 420-unit rail took about a fifth off every row and this was the one sentence with
+            // less than a fifth of slack in it.
+            //
+            // ⚠️ IT IS THE COPY THAT GIVES RATHER THAN THE LAYOUT, and that is the cheaper trade
+            // here: the heading already says **Danger** and the row under it already says
+            // *Delete this account*, so the word "Deleting" was the third statement of the same
+            // fact in three lines. `MenuKit.Fit` cannot rescue it (it stops at the 18-unit floor
+            // and this is already 18) and wrapping would draw the second line over the rule.
             if (Group("Danger",
-                      "Deleting removes the account, the profile and every match on the server.",
+                      "Removes the account, the profile and every match on the server.",
                       _deleteArmed))
             {
                 UiRows.ButtonRow(_list, "Delete this account",

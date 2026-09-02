@@ -305,12 +305,79 @@ namespace TumbangPreso.UI
         /// usefully, makes the current tab unclickable: pressing the tab you are already on
         /// should do nothing.
         /// </summary>
+        /// <summary>
+        /// One size for every cell in the tab rail, including the door on the end of it.
+        ///
+        /// ⚠️ IT IS A CONSTANT BECAUSE IT WAS TWO NUMBERS IN TWO METHODS AND THEY DISAGREED. The
+        /// three tabs took whatever `MenuKit.WoodButton` derived from the box they were handed and
+        /// the door hard-coded `MenuKit.MinReadableUnits`; nothing connected the two, so the row
+        /// shipped in two sizes. `docs/TODO.md` § 121.5.
+        /// </summary>
+        private const int TabLabelSize = 20;
+
+        /// <summary>
+        /// Fits one cell's lettering to the box the layout group actually gave it.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE SETTING ONE SIZE FOR THE ROW OVERFLOWED TWO OF THE FOUR CELLS.
+        /// `Logs/crops/picker-tabs-v61b.png`: at 22 units `TSINELAS` and `MAKE YOUR OWN` drew
+        /// **outside their own pills**. `MenuKit.WoodButton` fits a label to the size it is
+        /// HANDED, and every cell in this rail is handed a number (180, or 300 for the door) that
+        /// the `HorizontalLayoutGroup` discards a frame later: the three tabs end up at about 124
+        /// units and the door at about 187. **A width passed to a control inside a layout group is
+        /// not that control's width**, which is `CLAUDE.md` § 6.2c question 1 in the one form this
+        /// file keeps meeting it.
+        ///
+        /// ⚠️ SO IT MEASURES THE RECT RATHER THAN TRUSTING A CONSTANT, and it runs from
+        /// `RefreshTabs`, which happens after a layout pass rather than during construction. That
+        /// is the two-step `BuildCustomDoor` has always done for the door alone and the other
+        /// three cells never did.
+        /// </summary>
+        private static void FitTabLabel(Button button)
+        {
+            if (button == null) return;
+
+            var label = button.GetComponentInChildren<Text>(true);
+            if (label == null) return;
+
+            label.fontSize = TabLabelSize;
+
+            // ⚠️⚠️ THE LAYOUT IS FORCED BEFORE THE RECT IS READ, AND WITHOUT IT THE FIT MEASURES
+            // A BOX THAT DOES NOT EXIST YET. `Logs/crops/picker-tabs-final.png` is the receipt for
+            // the version that did not: `MAKE YOUR OWN` still ran outside its own pill, because
+            // `rect.width` was still the 300 `BuildCustomDoor` passed to `MenuKit.WoodButton`
+            // rather than the ~187 the `HorizontalLayoutGroup` gives it. **An un-laid-out rect
+            // reports the size somebody typed, not the size it will have**, which is the same
+            // finding § 120.5 row 4 records for the settings footer and the reason that fix waits
+            // on a forced canvas update too.
+            var rt = (RectTransform)button.transform;
+            var bar = rt.parent as RectTransform;
+            if (bar != null) LayoutRebuilder.ForceRebuildLayoutImmediate(bar);
+
+            // ⚠️ 14 AS THE FLOOR RATHER THAN 18, AND ONLY HERE. A tab's lettering is a NAME on a
+            // control the player can also see the shape and position of, and this rail has to
+            // hold `MAKE YOUR OWN` beside `LATA` in cells the layout group decides. The
+            // alternative is the label drawing outside its own pill, which is what it was doing.
+            float room = rt.rect.width - 24.0f;
+            if (room > 1.0f) MenuKit.Fit(label, room, 14);
+        }
+
         private void WireTabs()
         {
             var bar = Node("TabBar");
             if (bar == null) return;
 
             for (int i = bar.childCount - 1; i >= 0; i--) Destroy(bar.GetChild(i).gameObject);
+
+            // ⚠️⚠️ THE CELLS NEED AIR BETWEEN THEM AND THE AUTHORED BAR GIVES THEM NONE.
+            // `Logs/crops/picker-tabs-final.png`: four pills touching along a 560-unit rail, which
+            // reads as one segmented plank rather than as four controls. `PlayerHub.BuildTabColumn`
+            // hit the identical fault from the other axis and `docs/TODO.md` § 121.10 row 3 is the
+            // silhouette half of it. `PaperKit.Gap` is the one spacing constant in this front end
+            // (see its note: *"One spacing constant used everywhere is what makes a screen feel
+            // calm without anybody being able to point at why"*), so it is the number here too
+            // rather than a literal chosen for this rail.
+            var barLayout = bar.GetComponent<HorizontalLayoutGroup>();
+            if (barLayout != null) barLayout.spacing = PaperKit.Gap;
 
             _tabButtons.Clear();
 
@@ -332,6 +399,11 @@ namespace TumbangPreso.UI
                 var element = button.gameObject.AddComponent<LayoutElement>();
                 element.preferredHeight = 56.0f;
                 element.flexibleWidth = 1.0f;
+
+                // ⚠️ EVERY CELL IN THIS RAIL IS ONE SIZE. See `TabLabelSize`: the door on the end
+                // set its own and the row shipped in two.
+                var tabLabel = button.GetComponentInChildren<Text>(true);
+                if (tabLabel != null) tabLabel.fontSize = TabLabelSize;
 
                 _tabButtons.Add(button);
             }
@@ -391,7 +463,22 @@ namespace TumbangPreso.UI
 
             var element = door.gameObject.AddComponent<LayoutElement>();
             element.preferredHeight = 56.0f;
-            element.flexibleWidth = 1.5f;
+
+            // ⚠️⚠️ 2.2 OF FLEX AND IT WAS 1.5, BECAUSE THE CELL COULD NOT HOLD THE WORDS AT THE
+            // ROW'S OWN SIZE. `Logs/crops/picker-tabs-final.png`: at 1.5 the door gets about 160
+            // units of a 560-unit rail, `MAKE YOUR OWN` needs about 147 at `TabLabelSize` 20, and
+            // 24 units of that is padding — so `FitTabLabel` ground the label down to about 15 and
+            // the row shipped in two sizes again. **That is the fault 🧑 named twice** (*"these
+            // buttons look ugly"*, *"these diff fonts look ugly"*) arriving through the fitter
+            // instead of through a literal.
+            //
+            // ⚠️ WIDEN THE CELL RATHER THAN SHRINK THE TYPE, and the arithmetic says it fits: at
+            // 2.2 over 5.2 of total flex the door is about 237 units, which holds 147 of lettering
+            // with 90 of air. Shrinking the type was the other option and it is the one that made
+            // this row look wrong in the first place.
+            element.flexibleWidth = 2.2f;
+
+            _customDoor = door;
 
             // ⚠️⚠️ THE LABEL IS RE-FITTED AGAINST THE CELL THE LAYOUT GROUP GIVES IT, AND THE
             // FIRST RENDER OF THIS TAB IS WHY. `Logs/ui/10-picker-colours.png`, 2026-09-01: the
@@ -410,7 +497,22 @@ namespace TumbangPreso.UI
             var label = door.GetComponentInChildren<Text>(true);
             if (label != null)
             {
-                label.fontSize = MenuKit.MinReadableUnits;
+                // ⚠️⚠️ THE SAME SIZE AS THE THREE TABS BESIDE IT, AND IT WAS FOUR UNITS SMALLER.
+                // 🧑 2026-09-02, of this row: **"these buttons look ugly"**, and of the same fault
+                // one control over, **"these diff fonts look ugly"**. `Logs/crops/picker-tabs-v61.png`
+                // is the receipt: `HERO`, `LATA` and `TSINELAS` at `TabLabelSize` and
+                // `MAKE YOUR OWN` at 18, in one rail, at one height. **Two sizes of one typeface
+                // side by side read as two typefaces**, because the eye compares the letterforms
+                // directly instead of scanning down a column.
+                //
+                // ⚠️ IT FITS AT THE BIGGER SIZE, WHICH IS WHY THIS IS SAFE. Thirteen characters at
+                // 22 units measure about 147 and the cell is 560 by 1.5 over 4.5 of flex, about
+                // 187 before spacing. `MenuKit.Fit` is still called against the cell rather than
+                // against the 300 passed above, because the `HorizontalLayoutGroup` discards that
+                // number a frame later; that is the two-step this method has always needed and
+                // the reason `Logs/ui/10-picker-colours.png` once showed this label running past
+                // its own frame.
+                label.fontSize = TabLabelSize;
                 MenuKit.Stretch(label.rectTransform, -8.0f);
                 label.alignment = TextAnchor.MiddleCenter;
                 label.horizontalOverflow = HorizontalWrapMode.Overflow;
@@ -453,6 +555,10 @@ namespace TumbangPreso.UI
                     face.type = Image.Type.Sliced;
                 }
 
+                // ⚠️ FITTED HERE RATHER THAN AT BUILD TIME, because this method runs after a
+                // layout pass and `WireTabs` does not. See `FitTabLabel`.
+                FitTabLabel(button);
+
                 var label = button.GetComponentInChildren<Text>();
                 if (label != null)
                 {
@@ -467,7 +573,17 @@ namespace TumbangPreso.UI
                     label.fontStyle = FontStyle.Bold;
                 }
             }
+
+            // ⚠️ THE DOOR IS THE FOURTH CELL OF THIS RAIL AND IS NOT IN `_tabButtons`, because it
+            // is not a tab: it opens another screen. It still has to be the same SIZE as the three
+            // beside it, which is the whole of *"these diff fonts look ugly"*, so it is fitted
+            // here with them rather than left on the number `BuildCustomDoor` gave it.
+            FitTabLabel(_customDoor);
         }
+
+        /// <summary>The MAKE YOUR OWN cell. ⚠️ Held so `RefreshTabs` can fit it with the tabs; see
+        /// `FitTabLabel` for why fitting cannot happen at build time.</summary>
+        private Button _customDoor;
 
         private void OnEnable()
         {

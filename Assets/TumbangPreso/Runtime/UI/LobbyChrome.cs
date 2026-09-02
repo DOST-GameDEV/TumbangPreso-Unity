@@ -219,8 +219,18 @@ namespace TumbangPreso.UI
         /// the old arrangement, and the difference is that none of it is in the middle any more.
         /// The cast's feet sit at about y=760 in `Logs/shots-runtime/Lobby-v51.png` and this rail's
         /// top edge is at y=860, so nothing on it crosses a body.
+        ///
+        /// ⚠️⚠️ 202 SINCE 2026-09-02, AND THE 18 IS THE SETTINGS CHIP GROWING RATHER THAN A
+        /// RETUNE OF THE RAIL. `SettingsChipHeight` went 44 to 62 because both of its lines were
+        /// drawing outside boxes shorter than their own type (🧑: *"too tight vertically, the text
+        /// feel like the text is abt to overflow"*), and this number is that chip plus the gap
+        /// plus the primary plus the padding. **It is derived, so it is written as the sum rather
+        /// than as a literal**: the previous three values here were all typed by hand and the note
+        /// above had to explain each of them after the fact.
         /// </summary>
-        private const float BottomRailHeight = 184.0f;
+        private const float BottomRailHeight =
+            SettingsChipHeight + PaperKit.Gap + ActionHeight + (PaperKit.Pad * 2.0f)
+            + PaperCraft.Drop;
 
         /// <summary>
         /// The left column of the bottom rail: who you are playing.
@@ -252,15 +262,50 @@ namespace TumbangPreso.UI
         /// ends smear. 500 is a little over the authored width, which is the widest it can be drawn
         /// and still look like the object it is a photograph of.
         /// </summary>
-        private const float ActionWidth = 520.0f;
+        /// <summary>
+        /// How wide the one action is.
+        ///
+        /// ⚠️⚠️ 460 SINCE 2026-09-02 AND IT WAS 520. 🧑, of the remade button: **"maybe tighten
+        /// start match button theres big empty space"**. Measured off
+        /// `Logs/crops/start-match-v61c.png`: `START MATCH` draws about **330 units** of lettering
+        /// in a 520-unit slab, so 190 units, more than a third of the control, was bare brown. The
+        /// longest label this slot ever holds is `FIND A RANKED MATCH` at about 400, and
+        /// `ConvertedMatchSetup.SetFittedButtonLabel` fits it, so 460 is that plus one 30-unit
+        /// margin either side.
+        ///
+        /// ⚠️ IT IS THE SAME NOTE HE HAS MADE ABOUT FOUR OTHER CONTROLS ON THIS SCREEN
+        /// (*"big ass empty sopace"*, § 119.10) and the answer is always the same one: **size the
+        /// control against its content and state the arithmetic**, `CLAUDE.md` § 6.2c question 1.
+        /// The rail is 60 units narrower with it, which is the tightening he asked for twice.
+        /// </summary>
+        private const float ActionWidth = 460.0f;
 
         /// <summary>START MATCH / FIND A RANKED MATCH / START PRACTICE. The one control on this
         /// screen that ends the screen.</summary>
         private const float ActionHeight = 96.0f;
 
-        /// <summary>The two-line MATCH SETTINGS chip: its name over the settings it summarises.
+        /// <summary>
+        /// The two-line MATCH SETTINGS chip: its name over the settings it summarises.
+        ///
+        /// ⚠️⚠️ 62 AND IT WAS 44, WHICH WAS SHORTER THAN THE TYPE IT HELD. 🧑 2026-09-02, with a
+        /// crop of it: **"match setings look weird, especially with it being too tight vertically,
+        /// the text feel like the text is abt to overflow"**. He is describing an arithmetic
+        /// error and the numbers are these:
+        ///
+        /// The chip draws its cast shadow inside its own bottom `PaperCraft.Drop` 6, so 44 units
+        /// of layout is **38 units of face**. The title owns the top 52 per cent less a 6-unit
+        /// inset, which is about **17 units for a 20-unit line**; the summary owns the bottom 48
+        /// per cent less 8, which is about **13 units for a 16-unit line**. **Both boxes were
+        /// shorter than the glyphs in them**, and a legacy `Text` with `verticalOverflow =
+        /// Overflow` draws outside its box rather than clipping, which is precisely the "about to
+        /// overflow" read: the letters were already outside, and only the absence of anything
+        /// immediately above or below them hid it.
+        ///
+        /// ⚠️ 62 IS THE CONTENT ADDED UP RATHER THAN A ROUNDER NUMBER: a 20-unit line at 1.25
+        /// leading is 25, a 16-unit line is 20, the shadow is 6 and the two insets are 11. That is
+        /// 62, and it is the first height at which neither line is drawing outside its own box.
         /// </summary>
-        private const float SettingsChipHeight = 44.0f;
+        private const float SettingsChipHeight = 62.0f;
 
         /// <summary>The FIGHTER row: a name over a loadout, so two lines.</summary>
         private const float FighterRowHeight = 54.0f;
@@ -854,32 +899,73 @@ namespace TumbangPreso.UI
             button.transition = Selectable.Transition.None;
             button.targetGraphic = go.GetComponent<Image>();
 
-            // ⚠️ THE CAPTION AND THE VALUE ARE ONE CENTRED PAIR, for the reason the row above
-            // is centred: two strings pinned to opposite edges of a row wider than both is the
-            // hole 🧑 photographed. The caption sits immediately left of the value and the pair
-            // floats in the middle as one object.
-            var caption = PaperKit.Ink(go.transform, "SKILLS", PaperKit.Caption,
+            // ⚠️⚠️ THE PAIR IS ONE OBJECT THAT CENTRES ITSELF, AND THE ARITHMETIC IT REPLACES WAS
+            // OFF-CENTRE BY CONSTRUCTION. 🧑 2026-09-02, with a crop of this row and the DANTE row
+            // above it: *"these look ugly"*, then the diagnosis in his own words, **"it looks ugly
+            // bcz it isnt centered like both of them and theres big empty space"**.
+            //
+            // **He is right and it is measurable.** The previous version gave the caption a box
+            // ending 10 units LEFT of the row's middle and the value a box STARTING at the middle,
+            // left-aligned. So the visible pair ran from `centre - captionWidth - 10` to
+            // `centre + valueWidth`: `SKILLS` is about 62 units at `Caption` and `Standard Build`
+            // about 130 at `Body`, which puts the pair's own centre **about 34 units right of the
+            // row's**. `BuildCharacterRow` above centres `DANTE` properly, so the two rows in one
+            // column had two different centre lines and the eye reads the mismatch long before it
+            // can name it. **The old note claimed the pair "floats in the middle as one object";
+            // it was two objects that met in the middle, which is not the same thing.**
+            //
+            // ⚠️ A LAYOUT GROUP KEEPS THE GUARANTEE THE OLD ARITHMETIC WAS BOUGHT FOR. That code
+            // had the two boxes share an edge on purpose, because `Lobby-v55.png` showed `SKILLS`
+            // drawn straight through `Standard Build` when they overlapped by 46 units, and **two
+            // labels overlapping is silent in every direction** (§ 102.4 rotated). A horizontal
+            // group sized to its own content cannot overlap either, and it also cannot be wrong
+            // when the value string changes length, which the hand-written version always could.
+            var pair = new GameObject("LoadoutPair", typeof(RectTransform));
+            pair.transform.SetParent(go.transform, false);
+
+            var pairRt = (RectTransform)pair.transform;
+            pairRt.anchorMin = new Vector2(0.5f, 0.5f);
+            pairRt.anchorMax = new Vector2(0.5f, 0.5f);
+            pairRt.pivot = new Vector2(0.5f, 0.5f);
+
+            // ⚠️ THE PAIR RIDES UP BY `Drop`, like every other label on a raised paper surface.
+            // See `PaperKit.CentreOnFace`: the cast shadow lives inside the control's own bottom
+            // units, so centring on the rect puts the lettering low by half of it.
+            pairRt.anchoredPosition = new Vector2(0.0f, PaperCraft.Drop * 0.5f);
+
+            var pairLayout = pair.AddComponent<HorizontalLayoutGroup>();
+            pairLayout.spacing = 8.0f;
+            pairLayout.childControlWidth = true;
+            pairLayout.childControlHeight = true;
+            pairLayout.childForceExpandWidth = false;
+            pairLayout.childForceExpandHeight = false;
+            pairLayout.childAlignment = TextAnchor.MiddleCenter;
+
+            var fitter = pair.AddComponent<ContentSizeFitter>();
+            fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            // ⚠️⚠️ THE CAPTION IS THE SAME SIZE AS THE VALUE AND IT WAS FOUR UNITS SMALLER.
+            // 🧑 2026-09-02, with a crop of this one row: **"these diff fonts look ugly"**. It was
+            // `PaperKit.Caption` 16 beside `PaperKit.Body` 20, and **two sizes of one typeface on
+            // one line, 22 units apart, read as two typefaces** rather than as a hierarchy: at
+            // that distance the eye compares the letterforms directly instead of scanning down a
+            // column, which is the only arrangement in which a four-unit step is legible as a
+            // step.
+            //
+            // ⚠️ THE PAIR IS STILL RANKED, IN VALUE INSTEAD OF IN SIZE. `soft` is
+            // `UiTheme.PaperInkSoft`, which measures **5.21:1** on `Paper` against the value's
+            // **12.34:1** (`tools/sample_png.js contrast`): the caption is plainly the quieter of
+            // the two and neither is under the readable floor. It is the same inversion this pass
+            // makes everywhere else, applied to type instead of to a plate.
+            var caption = PaperKit.Ink(pair.transform, "SKILLS", PaperKit.Body,
                                        TextAnchor.MiddleRight, soft: true);
             caption.name = "LoadoutCaption";
             caption.raycastTarget = false;
-            MenuKit.Stretch(caption.rectTransform, 0.0f);
-            // ⚠️⚠️ THE CAPTION STOPS 10 UNITS SHORT OF THE MIDDLE AND THE VALUE STARTS AT IT.
-            // `Logs/shots-runtime/Lobby-v55.png` reads `St̶a̶ndard Build` with `SKILLS` drawn
-            // through it, because the caption's box ran to the middle and the value's began 46
-            // units before it: a 46-unit overlap, and **two labels overlapping is silent in every
-            // direction** (§ 102.4, rotated). Two boxes that share an edge cannot overlap by
-            // construction, which is the only version of this that stays fixed.
-            caption.rectTransform.offsetMin = new Vector2(24.0f, PaperCraft.Drop);
-            caption.rectTransform.offsetMax =
-                new Vector2(-((FighterColumnWidth * 0.5f) + 10.0f), 0.0f);
 
-            var label = PaperKit.Ink(go.transform, "", PaperKit.Body, TextAnchor.MiddleLeft);
+            var label = PaperKit.Ink(pair.transform, "", PaperKit.Body, TextAnchor.MiddleLeft);
             label.name = "LoadoutValue";
             label.raycastTarget = false;
-            MenuKit.Stretch(label.rectTransform, 0.0f);
-            label.rectTransform.offsetMin =
-                new Vector2((FighterColumnWidth * 0.5f) - 4.0f, PaperCraft.Drop);
-            label.rectTransform.offsetMax = new Vector2(-34.0f, 0.0f);
 
             PaperKit.Chevron(go.transform);
 
@@ -1165,7 +1251,27 @@ namespace TumbangPreso.UI
                 var nodeElement = node.GetComponent<LayoutElement>();
                 if (nodeElement != null) nodeElement.ignoreLayout = true;
 
-                if (node.GetComponent<Button>() != null) FocusRing.Attach(node.gameObject, 5.0f);
+                // ⚠️⚠️ THE PRIMARY IS PAPER'S OWN `Action` NOW, IN THE BROWN HE ASKED TO KEEP.
+                // 🧑 2026-09-02, in order: *"orange outline when i hover over start match is
+                // ugly"*, **"u really have to redesign start match button, it doesnt FEEL like a
+                // start match button"**, then the correction that says what the fault actually is,
+                // **"i like the size adn color but it feells so flat, it doesn thave start match
+                // energy"**, and finally **"i want start amtchg to still be brown okay"**.
+                //
+                // **Size and colour were never the problem and he said so.** This node kept
+                // `GodotButton` and had `ArrowButtonView` switched off above, so while § 120.1 was
+                // giving every paper chip in the front end an eased hover, a 2.5 per cent lift and
+                // a collapsing shadow, **the one control the screen exists for had a sprite swap
+                // and nothing else.** `PaperCraft.Surface.Action` is the depth and
+                // `PaperKit.MakeAction` is the motion; `docs/TODO.md` § 121.1 carries the
+                // measurement of the grey halo that came off with the wooden construction.
+                //
+                // ⚠️ NO `FocusRing` ON IT ANY MORE. It lit on POINTER HOVER as well as on focus
+                // and drew a rounded-rect amber outline around a chamfered slab: a silhouette that
+                // did not follow the control, in a colour that measures **1.46:1** on `Paper`. The
+                // hover is said by the pose now, which is what a hover is for; the ring stays on
+                // the controls that have no other focus state (see `FocusRing`).
+                PaperKit.MakeAction(node.gameObject, PaperCraft.Accent.Wood);
             }
 
             var status = Descend(leftColumn, "StatusLabel");
@@ -1408,8 +1514,20 @@ namespace TumbangPreso.UI
             element.preferredHeight = element.minHeight;
             element.flexibleHeight = 0.0f;
 
+            // ⚠️⚠️ ALL THREE LINES CENTRE, AND THIS PLATE WAS THE ONE THING ON THE RAIL THAT DID
+            // NOT. 🧑 2026-09-02: **"also make everything centered (your tier unranked looks ugly
+            // bcz it isnt centered"**. The fighter rows to its left centre, the mode plate above
+            // the primary centres, the room code centres since § 120.6, and these three were
+            // `UpperLeft` / `MiddleLeft` / `LowerLeft`. **One plate aligned differently from every
+            // other plate in the same rail reads as a mistake even to somebody who cannot say
+            // which plate is wrong**, which is what the four ordering tools mean by consistency.
+            //
+            // ⚠️ THE HEIGHTS DO NOT MOVE. This method's own note measures the note's box at 64
+            // units for a caption that wraps to two lines of 16; centring changes alignment only,
+            // and re-deriving the bands here would put § 119.9 row 4 back (a value's rect drawn
+            // over a sentence, invisible because a `Text` draws nothing where it has no glyphs).
             var caption = PaperKit.Ink(go.transform, "YOUR TIER", PaperKit.Caption,
-                                       TextAnchor.UpperLeft, soft: true);
+                                       TextAnchor.UpperCenter, soft: true);
             caption.raycastTarget = false;
             MenuKit.Stretch(caption.rectTransform, 0.0f);
             caption.rectTransform.offsetMin = new Vector2(PaperKit.Pad, 0.0f);
@@ -1422,7 +1540,7 @@ namespace TumbangPreso.UI
             // **An overlap between two labels is silent in every direction**, which is the fault
             // § 102.4 records for `UiRows` measured horizontally and this one is vertical.
             var tier = PaperKit.Marker(go.transform, "UNRANKED", PaperKit.Display,
-                                       TextAnchor.MiddleLeft);
+                                       TextAnchor.MiddleCenter);
             tier.name = "TierValue";
             tier.raycastTarget = false;
             // ⚠️ 0.42, WHICH IS 64 UNITS OF NOTE ON A 152-UNIT PLATE: two 20-unit lines plus the
@@ -1432,7 +1550,7 @@ namespace TumbangPreso.UI
             tier.rectTransform.offsetMin = new Vector2(PaperKit.Pad, 0.0f);
             tier.rectTransform.offsetMax = new Vector2(-PaperKit.Pad, -(PaperKit.Pad + 16.0f));
 
-            var note = PaperKit.Ink(go.transform, "", PaperKit.Caption, TextAnchor.LowerLeft,
+            var note = PaperKit.Ink(go.transform, "", PaperKit.Caption, TextAnchor.LowerCenter,
                                     soft: true);
             note.name = "TierNote";
             note.raycastTarget = false;

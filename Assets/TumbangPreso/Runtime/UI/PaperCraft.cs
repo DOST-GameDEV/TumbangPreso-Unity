@@ -77,6 +77,13 @@ namespace TumbangPreso.UI
     /// | `Tray` | tight 8-unit round | NO halo, NO shadow, an inner shadow along the TOP | you read it or type in it |
     /// | `Ghost` | soft 18-unit round | two hairlines, no fill, no shadow | nothing is here YET |
     /// | `Sign` | soft 18-unit round | halo, cream face, a solid amber band, a cast shadow | the one fact on the screen |
+    /// | `Action` | **chamfer**, 0.34 of the height | bright keyline, dark rim, full-height ramp, a varnish band, a 22 per cent wall, a contact shadow | the ONE thing the screen is for |
+    ///
+    /// ⚠️⚠️ `Action` IS THE SEVENTH AND IT IS THE ONLY CHAMFER, WHICH IS `CLAUDE.md` § 6.5 RATHER
+    /// THAN AN EXCEPTION TO IT: *a chamfer means pressable and a round means furniture*, in his
+    /// art with no exception. Six rounds and one cut corner is that rule with one action per
+    /// screen. 🧑 chose the shape after seeing both: **"i kinda preferred the sharper edges on
+    /// this, i js wanted u to make it mroe 3d"**. `docs/TODO.md` § 121.1.
     ///
     /// ⚠️ THE HALO IS OUTSIDE THE ARTWORK, WHICH IS THE LOGO'S OWN MOVE AND NOT A BORDER. Every
     /// letter of `TUMP` and the blob behind it keep a band of sand outside their own edge, which is
@@ -92,8 +99,15 @@ namespace TumbangPreso.UI
     /// where a screen of planks reads as busy, and it is the whole of 🧑's *"calming"*.
     ///
     /// ⚠️ NOTHING HERE REPAINTS HIS ART, WHICH IS `VISION.md` § 6 AND `CLAUDE.md` § 6.4. The
-    /// pennants, `BUTTON LONG`, `JOIN BUTTON`, the arrows, `TUMP.png` and the key art are all
-    /// still drawn from the PNGs, untinted.
+    /// pennants, `JOIN BUTTON`, the arrows, `TUMP.png` and the key art are all still drawn from
+    /// the PNGs, untinted.
+    ///
+    /// ⚠️⚠️ ONE EXCEPTION AS OF 2026-09-02 AND IT IS HIS OWN CALL: THE LOBBY'S PRIMARY NO LONGER
+    /// DRAWS `BUTTON LONG.png`. 🧑: **"can u js remake the entire start match button? keep the
+    /// color and font and shit but remake the whole button, bcz i think trying to imrpove it
+    /// manually will lead nowhere"**. The FILE is untouched and the main menu still draws it with
+    /// its unfurl intact; `PaperKit.MakeAction` switches off the `Artwork` child on that one node,
+    /// which is the same decision `docs/TODO.md` § 120.4 recorded for two other authored PNGs.
     ///
     /// ⚠️ THE GEOMETRY IS SHARED WITH `WoodCraft` ON PURPOSE. `WoodCraft.Depth` and
     /// `WoodCraft.Finish` are `internal` and used here rather than copied: that file's own note
@@ -166,6 +180,60 @@ namespace TumbangPreso.UI
             /// otherwise entirely paper.
             /// </summary>
             Live,
+
+            /// <summary>
+            /// The ONE action on a screen: START MATCH, CREATE ACCOUNT, KEEP AND USE, CHOOSE.
+            ///
+            /// ⚠️⚠️ IT EXISTS BECAUSE THE PRIMARY WAS THE LAST CONTROL IN THIS FRONT END STILL
+            /// DRAWN IN WOOD, AND HE FOUND IT ON FOUR SCREENS WITHOUT CONNECTING THEM. 2026-09-02:
+            /// **"u really have to redesign start match button, it doesnt FEEL like a start match
+            /// button"**, then the correction that names the fault exactly, **"i like the size adn
+            /// color but it feells so flat, it doesn thave start match energy"**, and on the
+            /// maker's footer, **"i dont get why theres rounded sshit next to square shit"**.
+            ///
+            /// ⚠️⚠️ THE "GREY" HE CAN SEE AND CANNOT NAME IS MEASURED, AND IT IS THE SHADOW.
+            /// `tools/sample_png.js row` on `Logs/shots-runtime/SignInCreate-v56.png` at y=767:
+            /// the cream field is `f4ecdd` (hue 39, **sat 9 per cent**), a paper control's own
+            /// edge is `dcc19a` (hue 35, **sat 30**), and the wooden primary's halo is `ada69b`
+            /// (hue 37, **sat 10, value 68**). **Same hue, a third of the chroma, eighteen value
+            /// steps darker than the sheet.** `CLAUDE.md` section 6.4 bans cold grey in any layer,
+            /// and a 10-per-cent-saturation neutral beside a 30-per-cent warm edge is that rule
+            /// caught on the warm axis rather than on the blue one. `docs/TODO.md` 121.1.
+            ///
+            /// ⚠️ SO IT IS A PILL, LIKE EVERY OTHER PRESSABLE THING HERE. `WoodCraft.Surface.Action`
+            /// is chamfered, which was correct while the front end was wood: 6.5's rule is *a
+            /// chamfer means pressable and a round means furniture*, and when everything around it
+            /// became a rounded paper token the chamfer stopped saying "press me" and started
+            /// saying "different object". **The rule did not change; the surroundings did.**
+            ///
+            /// ⚠️ AND IT IS BUILT IN HIS ART'S OWN ORDER, which is what makes it read as one of
+            /// his rather than as a coloured rectangle: `WoodCraft`'s header samples every surface
+            /// he authored as a **bright keyline outside a dark rim over a full-height ramp**, and
+            /// this is that construction at paper's corner radius with a warm cast shadow.
+            /// </summary>
+            Action,
+        }
+
+        /// <summary>
+        /// The two fills a <see cref="Surface.Action"/> may take.
+        ///
+        /// ⚠️⚠️ A CLOSED LIST OF TWO AUTHORED COLOURS, WHICH IS WHY IT IS NOT THE `fill` PARAMETER
+        /// THE ENUM ABOVE FORBIDS. `docs/VISION.md` and `CLAUDE.md` 6.5 say a fill must not be the
+        /// only difference between two ROLES, because that is how a screen becomes twelve plates
+        /// from one call. There is exactly one role here, it appears **once per screen** by
+        /// construction, and both members are colours he authored rather than colours anybody
+        /// picked: `Green` is the measured peak of his `JOIN BUTTON.png` and `Wood` is the brown
+        /// he asked to keep by name on the lobby (*"i like the size adn color"*, and 119.10's
+        /// *"u can also still use the brown color ... start match lowk looks good"*).
+        /// </summary>
+        public enum Accent
+        {
+            /// <summary>His own green. `JOIN BUTTON.png` and the PLAY pennant are both authored in
+            /// it, which `docs/VISION.md` section 6.5 calls evidence rather than taste.</summary>
+            Green,
+
+            /// <summary>The lobby's brown, kept because he asked for it on that screen.</summary>
+            Wood,
         }
 
         /// <summary>
@@ -248,13 +316,28 @@ namespace TumbangPreso.UI
         /// keeps a laid-out control honest; nothing should call this directly except a caller that
         /// genuinely knows its own final height.
         /// </summary>
-        public static Sprite Slab(Surface surface, float height, Pose pose = Pose.Rest)
+        public static Sprite Slab(Surface surface, float height, Pose pose = Pose.Rest,
+                                  Accent accent = Accent.Green)
         {
-            bool tall = height > WoodCraft.TallSurface;
-            int h = tall ? 96 : Mathf.Clamp(Mathf.RoundToInt(height / 4.0f) * 4, 20,
-                                            WoodCraft.TallSurface);
+            // ⚠️⚠️ AN ACTION IS NEVER "TALL", AND WITHOUT THIS THE PRIMARY LOSES ITS SHADOW.
+            // `WoodCraft.TallSurface` is the height above which a surface is treated as a board
+            // and sliced on both axes, and `PaintRaised` drops the cast shadow for a tall one
+            // because a rail lies almost flat. The lobby's primary is 96 units, which is exactly
+            // at that boundary, so the one control on the screen that most needs to stand up was
+            // the one being drawn as furniture. It is pinned to the raised construction here.
+            bool tall = surface != Surface.Action && height > WoodCraft.TallSurface;
 
-            string key = $"pc_{surface}_{pose}_{h}_{tall}";
+            int h = surface == Surface.Action
+                ? Mathf.Clamp(Mathf.RoundToInt(height / 4.0f) * 4, 40, 160)
+                : tall ? 96
+                : Mathf.Clamp(Mathf.RoundToInt(height / 4.0f) * 4, 20, WoodCraft.TallSurface);
+
+            // ⚠️ THE ACCENT IS IN THE KEY ONLY FOR AN ACTION. Every other surface ignores it, and
+            // putting it in their keys would double a cache that is already keyed on four things.
+            string key = surface == Surface.Action
+                ? $"pc_{surface}_{accent}_{pose}_{h}"
+                : $"pc_{surface}_{pose}_{h}_{tall}";
+
             if (Cache.TryGetValue(key, out var cached) && cached != null) return cached;
 
             Sprite made;
@@ -262,6 +345,7 @@ namespace TumbangPreso.UI
             {
                 case Surface.Token: made = PaintRaised(h, pose, tall, key, false); break;
                 case Surface.Live: made = PaintRaised(h, pose, tall, key, true); break;
+                case Surface.Action: made = PaintAction(h, pose, key, accent); break;
                 case Surface.Tray: made = PaintTray(h, pose, tall, key); break;
                 case Surface.Ghost: made = PaintGhost(h, tall, key); break;
                 case Surface.Sign: made = PaintPlate(h, tall, key, true); break;
@@ -412,7 +496,14 @@ namespace TumbangPreso.UI
             // ⚠️ AND IT IS A RAMP, NOT A BAND. A flat dark stripe along the bottom is the same
             // gradient-instead-of-a-hole fault `PaintTray` records one construction over: a cut
             // paper edge catches a little light at the top of the cut and none at the bottom.
-            int wall = Mathf.Max(3, Mathf.RoundToInt(face * 0.14f));
+            // ⚠️⚠️ 18 PER CENT SINCE 2026-09-02, UP FROM 14, AND IT IS THE SAME ASK THE PRIMARY
+            // GOT: **"I want all buttons in that menu to feel like 3d and shit"**, *"its okay if
+            // theyre circular and stuff"*. The primary went to a 22-per-cent wall and stopped
+            // looking flat (`PaperCraft.Surface.Action`); every chip beside it kept 14 and now
+            // reads as the printed version of the same object. **The wall is the cut edge and the
+            // cut edge is what the eye reads as thickness**, which is the finding this file
+            // already recorded when it went 7 to 14 and did not follow through.
+            int wall = Mathf.Max(4, Mathf.RoundToInt(face * 0.18f));
 
             // ⚠️⚠️ A LIT TOP EDGE, WHICH `PaintPlate` HAS ALWAYS HAD AND THIS CONSTRUCTION NEVER
             // DID. That asymmetry is most of why the rails read as card and the chips standing on
@@ -447,8 +538,14 @@ namespace TumbangPreso.UI
                             // Four per cent from top to bottom: enough that the surface has a
                             // direction, little enough that a row of eight chips still reads as
                             // one material.
+                            // ⚠️⚠️ THE RAMP IS 9 PER CENT AND IT WAS 4. Same note as the wall above
+                            // and the same request: *"I want all buttons in that menu to feel like
+                            // 3d and shit"*. Four per cent top to bottom is a direction you can
+                            // measure and cannot see; nine is the first value at which a row of
+                            // chips reads as eight lit objects rather than as eight fills, and it
+                            // is still under a tenth, so the row is plainly one material.
                             float alongFace = face <= 1 ? 0.0f : upFromFace / (float)(face - 1);
-                            c = Fibre(WoodCraft.Lift(fill, (alongFace - 0.5f) * -0.04f), x, y);
+                            c = Fibre(WoodCraft.Lift(fill, (alongFace - 0.5f) * -0.09f), x, y);
 
                             if (pressed)
                             {
@@ -496,6 +593,206 @@ namespace TumbangPreso.UI
                 }
 
             return WoodCraft.Finish(pixels, width, h, cap, tall, key);
+        }
+
+        // -----------------------------------------------------------------------------------
+        // ACTION: the one thing the screen is for.
+        // -----------------------------------------------------------------------------------
+
+        /// <summary>
+        /// How far the primary stands off the sheet. ⚠️ TEN AGAINST A CHIP'S SIX, AND THE RATIO IS
+        /// THE POINT. A chip is 40 units tall and lifts 6, which is 15 per cent; the primary is 96
+        /// and lifting it 6 would be 6 per cent, so the biggest control on the screen would be the
+        /// FLATTEST one. Ten holds it at about a tenth, which is the same object at a bigger size.
+        /// </summary>
+        private const int ActionDrop = 10;
+
+        /// <summary>
+        /// The primary's cast shadow.
+        ///
+        /// ⚠️⚠️ IT IS A SEPARATE CONSTANT FROM <see cref="Shade"/> BECAUSE THE MEASUREMENT SAID
+        /// SO. Composited over `Paper` `f4ecdd`, `Shade` lands near `bbac9b`, which is **17 per
+        /// cent saturation**: fine under a 40-unit chip, and under a 520-unit slab it is the wide
+        /// grey band `docs/TODO.md` 121.1 measures at `ada69b` and 10 per cent on the wooden one.
+        /// A rich brown at half alpha composites to about `a78d78`, **hue 26 at 28 per cent**,
+        /// which sits with the 30 per cent every paper edge on the same screen already carries.
+        /// **A shadow big enough to see is a colour, and it has to be in the palette.**
+        /// </summary>
+        private static readonly Color ActionShade = new Color(
+            UiTheme.WoodMid.r, UiTheme.WoodMid.g, UiTheme.WoodMid.b, 0.50f);
+
+        /// <summary>
+        /// The one action on the screen, drawn in his art's own order at paper's corner radius.
+        ///
+        /// ⚠️⚠️ FIVE LAYERS, AND EVERY ONE OF THEM IS A ROW IN `WoodCraft`'s SAMPLING TABLE OF THE
+        /// SURFACES HE AUTHORED: a **bright keyline** outside a **dark rim** over a **full-height
+        /// ramp** with a **varnish band** a quarter of the way down, plus the **lit top edge**
+        /// `PaintPlate` has always had. The wooden `Action` had four of the five and a chamfer;
+        /// this has all five and a pill, so it belongs to the row of paper controls it stands in
+        /// rather than to the menu it came from. `docs/TODO.md` 121.1.
+        ///
+        /// ⚠️⚠️ THE HOVER AND THE PRESS ARE BIGGER HERE THAN ON A CHIP, ON PURPOSE. He said the
+        /// SIZE and the COLOUR were already right and that it *"feells so flat"* and *"doesn
+        /// thave start match energy"*, which is a statement about MOTION and DEPTH rather than
+        /// about either. A hover adds four units of stand-off against a chip's two, and a press
+        /// takes the whole ten away and moves the shading to the inside of the top edge, so the
+        /// slab travels a fifth of its own thickness under the pointer.
+        ///
+        /// ⚠️ IT IS NEVER DRAWN "OFF" AS A GREY PLATE. A disabled primary desaturates towards the
+        /// sheet and keeps its shape, because a primary that goes grey is the one control a player
+        /// reads as broken rather than as unavailable.
+        /// </summary>
+        private static Sprite PaintAction(int h, Pose pose, string key, Accent accent)
+        {
+            bool pressed = pose == Pose.Press;
+            bool off = pose == Pose.Off;
+
+            int drop = pressed ? 0 : pose == Pose.Hover ? ActionDrop + 4 : ActionDrop;
+            int face = h - drop;
+
+            // ⚠️⚠️ A CHAMFER, AND THE PILL IT REPLACES LASTED ONE RENDER. 🧑 2026-09-02, having
+            // seen both: **"i kinda preferred the sharper edges on this, i js wanted u to make it
+            // mroe 3d"**, then *"i prefer the old sharper edges on it"*. **The silhouette was
+            // never the fault and the first version of this method got that wrong**: what he
+            // photographed as *"a circle and a sharp shape at the same time"* was TWO objects
+            // stacked, his authored `Artwork` child drawing over a new pill on the node's own
+            // Image, and `PaperKit.MakeAction` is where that is fixed. Rounding the primary was
+            // solving a problem that had already been solved somewhere else.
+            //
+            // ⚠️ SO `CLAUDE.md` § 6.5 IS BACK THE RIGHT WAY UP: *a chamfer means pressable and a
+            // round means furniture*, in his art with no exception. The one action on the screen
+            // is the one chamfered thing on it, which is the rule doing exactly what it says.
+            //
+            // ⚠️ 0.34 OF THE FACE IS MEASURED OFF `BUTTON LONG.png`'S OWN CUT rather than picked:
+            // its end taper runs about a third of the slab's height. At 96 units that is a 29-unit
+            // diagonal, which is what makes the shape read as a slab with its corners taken off
+            // rather than as an octagon.
+            float corner = face * 0.34f;
+            int cap = Mathf.CeilToInt(corner) + ActionDrop + 8;
+            int width = (cap * 2) + 4;
+            var pixels = new Color[width * h];
+
+            // ⚠️ BOTH BASES ARE AUTHORED. `MenuGreenFace` is the measured peak of `JOIN
+            // BUTTON.png` (`UiTheme` carries that note and why `MenuGreen` is a third too dark),
+            // and `WoodFace` is the brown of `BUTTON LONG.png`.
+            Color baseColour = accent == Accent.Green ? UiTheme.MenuGreenFace : UiTheme.WoodFace;
+
+            if (off) baseColour = WoodCraft.Shift(baseColour, 0.86f, 0.34f);
+
+            // ⚠️ HOVER LIGHTENS THE WHOLE OBJECT BY ONE STEP RATHER THAN SWAPPING A COLOUR IN, so
+            // the ramp, the keyline and the rim all move together and the control stays one
+            // material. A hover that changes only the face is what made the old set read as a
+            // colour swatch that happened to be under the pointer.
+            if (pose == Pose.Hover) baseColour = WoodCraft.Shift(baseColour, 1.07f, 0.99f);
+
+            // ⚠️⚠️ THE RAMP IS THE 3D AND IT WAS TOO SHY. 🧑, of the first build of this surface:
+            // *"i js wanted u to make it mroe 3d"*. It ran 1.04 of the base at the top to 0.70 at
+            // the bottom, which is a 34-point spread on a 96-unit object: enough to see and not
+            // enough to read as a lit solid. `WoodCraft`'s sampling of his own art is a
+            // FULL-HEIGHT ramp, and these numbers are that: **1.12 down to 0.58**, a 54-point
+            // spread, with the rim below it darker still. A slab lit from above is bright along
+            // its top, falls all the way down its face, and ends in a wall that is darker than
+            // any part of the face.
+            Color keyColour = WoodCraft.Shift(baseColour, 1.34f, 0.90f);
+            Color rimColour = WoodCraft.Shift(baseColour, 0.34f, 1.10f);
+            Color faceTop = WoodCraft.Shift(baseColour, 1.12f, 0.94f);
+            Color faceFloor = WoodCraft.Shift(baseColour, 0.58f, 1.10f);
+
+            // ⚠️ THE KEYLINE IS 5 PER CENT AND THE RIM 4, WHICH IS `BUTTON LONG.png`'S OWN RATIO
+            // (7 px and about 6 px at 135) rather than a pair of round numbers.
+            int keyline = Mathf.Max(2, Mathf.RoundToInt(face * 0.05f));
+            int rim = Mathf.Max(2, Mathf.RoundToInt(face * 0.04f));
+
+            // ⚠️⚠️ 22 PER CENT AGAINST A CHIP'S 14, AND THE WALL IS WHAT "3D" ACTUALLY MEANS HERE.
+            // The eye reads thickness off the CUT EDGE, not off the shading on the top surface: a
+            // 96-unit slab with a 21-unit wall is an object you could pick up, and the same slab
+            // with a 13-unit wall is a printed shape with a gradient on it. This is the one number
+            // that changed the read.
+            int wall = Mathf.Max(6, Mathf.RoundToInt(face * 0.22f));
+            int crest = Mathf.Max(3, Mathf.RoundToInt(face * 0.07f));
+
+            for (int y = 0; y < h; y++)
+                for (int x = 0; x < width; x++)
+                {
+                    float faceDepth = Depth(x, y - drop, width, face, corner, true);
+                    float shadowDepth = drop > 0 ? Depth(x, y, width, face, corner, true) : -1.0f;
+
+                    Color c;
+
+                    if (faceDepth > 0.0f)
+                    {
+                        int upFromFace = y - drop;
+                        int downFromTop = (face - 1) - upFromFace;
+                        float alongFace = face <= 1 ? 0.0f : upFromFace / (float)(face - 1);
+
+                        if (faceDepth <= keyline)
+                        {
+                            c = Fade(keyColour, faceDepth);
+                        }
+                        else if (faceDepth <= keyline + rim)
+                        {
+                            c = rimColour;
+                        }
+                        else
+                        {
+                            c = Color.Lerp(faceFloor, faceTop, alongFace);
+
+                            // ⚠️ THE VARNISH BAND SITS A QUARTER DOWN FROM THE TOP, which is where
+                            // it sits in every one of his authored slabs. It is a narrow lift
+                            // rather than a highlight shape: a gloss line, not a shine.
+                            float band = 1.0f - Mathf.Abs(alongFace - 0.76f) / 0.13f;
+                            if (band > 0.0f) c = WoodCraft.Lift(c, band * 0.10f);
+
+                            if (pressed)
+                            {
+                                if (downFromTop < rim + wall)
+                                    c = Color.Lerp(c, rimColour,
+                                                   1.0f - (downFromTop / (float)(rim + wall)));
+                            }
+                            else
+                            {
+                                if (upFromFace < keyline + rim + wall)
+                                {
+                                    float into = 1.0f - ((upFromFace - keyline - rim)
+                                                         / (float)Mathf.Max(1, wall));
+                                    c = Color.Lerp(c, rimColour, Mathf.Clamp01(into) * 0.98f);
+                                }
+
+                                if (downFromTop < crest)
+                                    c = Color.Lerp(c, keyColour,
+                                                   0.72f * (1.0f - (downFromTop / (float)crest)));
+                            }
+                        }
+                    }
+                    else if (shadowDepth > 0.0f && !off)
+                    {
+                        // ⚠️⚠️ A CONTACT SHADOW, NOT A HALO, AND HE NAMED THE OLD ONE AS THE WORST
+                        // PART: *"this still looks ugly, especially the shadow"*. It was
+                        // `ActionShade` with a SQUARED falloff over ten units, which is a soft
+                        // gradient reaching a long way from the object in every direction: a blur
+                        // rather than a shadow, and on cream a blur reads as a smudge.
+                        //
+                        // **A slab lying on paper is darkest where the two surfaces nearly touch
+                        // and gone within a few units.** The falloff is cubed now, so two thirds
+                        // of the alpha is spent in the first third of the drop, and the alpha it
+                        // starts from is higher: a tighter, darker, warmer mark that ends where
+                        // the object's own thickness ends.
+                        int below = drop - y;
+                        float reach = below <= 0 ? 1.0f : 1.0f - (below / (float)(drop + 1));
+                        reach = Mathf.Clamp01(reach);
+
+                        c = Fade(ActionShade, shadowDepth);
+                        c.a *= reach * reach * reach;
+                    }
+                    else
+                    {
+                        c = Color.clear;
+                    }
+
+                    pixels[(y * width) + x] = c;
+                }
+
+            return WoodCraft.Finish(pixels, width, h, cap, false, key);
         }
 
         // -----------------------------------------------------------------------------------
@@ -646,6 +943,16 @@ namespace TumbangPreso.UI
         /// different origins, so both are this call with a different `y`.
         /// </summary>
         private static float Depth(int x, int y, int width, int height, float corner)
+            => Depth(x, y, width, height, corner, false);
+
+        /// <summary>
+        /// ⚠️ THE `chamfer` OVERLOAD EXISTS FOR <see cref="Surface.Action"/> AND FOR NOTHING ELSE.
+        /// Every other paper surface is a round, because a cut-out has one pair of scissors; the
+        /// primary is the one control in this front end drawn in 🧑's own chamfer, and he asked
+        /// for that twice after seeing it as a pill: **"i kinda preferred the sharper edges on
+        /// this"**, *"i prefer the old sharper edges on it"*.
+        /// </summary>
+        private static float Depth(int x, int y, int width, int height, float corner, bool chamfer)
         {
             if (y < 0 || y >= height) return -1.0f;
 
@@ -655,7 +962,7 @@ namespace TumbangPreso.UI
             float dx = (midX + 0.5f) - Mathf.Abs(x - midX);
             float dy = (midY + 0.5f) - Mathf.Abs(y - midY);
 
-            return WoodCraft.Depth(dx, dy, corner, false, false);
+            return WoodCraft.Depth(dx, dy, corner, chamfer, false);
         }
 
         /// <summary>
@@ -700,10 +1007,50 @@ namespace TumbangPreso.UI
     {
         public PaperCraft.Surface Surface = PaperCraft.Surface.Sheet;
 
+        /// <summary>
+        /// Which of the two authored fills a <see cref="PaperCraft.Surface.Action"/> takes.
+        ///
+        /// ⚠️ IGNORED BY EVERY OTHER SURFACE, and deliberately not a `Color`. See
+        /// `PaperCraft.Accent`: a closed list of two colours he authored is not the open `fill`
+        /// parameter `CLAUDE.md` 6.5 forbids, and making it a colour field here is precisely how
+        /// it would become one.
+        /// </summary>
+        public PaperCraft.Accent Accent = PaperCraft.Accent.Green;
+
         private Image _image;
         private float _built = -1.0f;
         private PaperCraft.Surface _builtSurface;
         private PaperCraft.Pose _pose = PaperCraft.Pose.Rest;
+
+        /// <summary>
+        /// The pose the sprite currently on the Image was baked for.
+        ///
+        /// ⚠️⚠️ IT IS PART OF THE CACHE KEY NOW AND LEAVING IT OUT IS HALF OF THE STUCK-HOVER
+        /// BUG. 🧑 2026-09-02, with a crop of the lobby's mode tabs: **"theres brown ink left over
+        /// if i dont hover back to the buttons on top"**, *"make it so that i dont have to hover
+        /// back to buttons on top to get rid of it"*.
+        ///
+        /// `SetPose` clears `_built` to force a repaint, and `Rebuild` **returns without painting
+        /// and without recording anything when the rect reports zero height** — which is every
+        /// frame the control is inactive, and a drawer closing is exactly that. The pose write was
+        /// therefore dropped on the floor, and the next `OnEnable` repainted with `_built = -1`
+        /// against a `_pose` field still holding `Hover`. **The plate came back lit, on a control
+        /// nothing was pointing at, and only a fresh enter-and-exit could clear it.**
+        ///
+        /// ⚠️ THE SURFACE WAS ALREADY IN THE KEY AND THE POSE WAS NOT, which is why this looked
+        /// like a colour bug rather than a state bug: `MarkLive` swapping `Live` for `Ghost` DID
+        /// repaint, so the tab row's selection was always right and only its lighting was stale.
+        /// </summary>
+        private PaperCraft.Pose _builtPose = PaperCraft.Pose.Rest;
+
+        /// <summary>The accent the sprite on the Image was baked for. ⚠️ In the key for the same
+        /// reason the pose is: a caller that swaps it must not need to know to invalidate.
+        /// </summary>
+        private PaperCraft.Accent _builtAccent = PaperCraft.Accent.Green;
+
+        /// <summary>The sprite this skin last wrote, so it can tell when somebody else has
+        /// overwritten it. See the note in <see cref="Rebuild"/>.</summary>
+        private Sprite _wrote;
 
         public static PaperSkin Apply(GameObject target, PaperCraft.Surface surface)
         {
@@ -762,13 +1109,32 @@ namespace TumbangPreso.UI
             // ⚠️ A RECT THAT HAS NOT BEEN LAID OUT YET REPORTS 0, and baking against that pins the
             // control to the 20-unit floor forever. See `WoodSkin.Rebuild`.
             if (height <= 1.0f) return;
+
+            // ⚠️⚠️ THE SPRITE ITSELF IS PART OF THE TEST NOW, BECAUSE SOMETHING ELSE WRITING IT IS
+            // A FAULT THIS REPOSITORY HAS SHIPPED TWICE. `docs/TODO.md` § 120.5 row 1:
+            // `ConvertedCharacterSelect.RefreshTabs` ran AFTER `PaperDress.Screen` and wrote a
+            // `GodotTheme.Box` straight onto the Image, and this method's cache said the height
+            // and the surface had not changed, **so the paper sprite was never put back and the
+            // picker's tab bar was an amber nine-patch for a whole pass.** Any caller that reaches
+            // for `Image.sprite` on a dressed node does the same thing, and there is no way to
+            // stop them from here.
+            //
+            // ⚠️ IT IS A REFERENCE COMPARE, NOT A REBUILD. `PaperCraft.Slab` caches by key, so the
+            // sprite this skin wants is the same object every frame; noticing that the Image is
+            // holding a different one costs one pointer compare and repairs the frame after the
+            // overwrite instead of the pass after the render.
             if (_built > 0.0f && Mathf.Abs(height - _built) < 2.0f
-                && _builtSurface == Surface) return;
+                && _builtSurface == Surface && _builtPose == _pose && _builtAccent == Accent
+                && ReferenceEquals(_image.sprite, _wrote))
+                return;
 
             _built = height;
             _builtSurface = Surface;
+            _builtPose = _pose;
+            _builtAccent = Accent;
 
-            _image.sprite = PaperCraft.Slab(Surface, height, _pose);
+            _image.sprite = PaperCraft.Slab(Surface, height, _pose, Accent);
+            _wrote = _image.sprite;
             _image.type = Image.Type.Sliced;
             _image.color = Color.white;
 

@@ -832,9 +832,33 @@ namespace TumbangPreso.PlayTests
 
                 measured++;
 
-                Assert.GreaterOrEqual(label.fontSize, MenuKit.MinReadableUnits,
+                // ⚠️⚠️ THE FLOOR IS THE PAPER SCALE'S SMALLEST STEP, NOT `MinReadableUnits`, AND
+                // THAT IS A CORRECTION TO THIS PROBE RATHER THAN TO THE FRONT END. It asserted 18
+                // and `PaperKit.Caption` is **16**, so it failed on the sign-in screen for a size
+                // `PaperKit`'s own header states as a decision: *"`Caption` is under it, and it is
+                // allowed for the same reason `LobbyChrome.SummarySize` is: it is only ever a
+                // restatement of something already on the screen at `Title` or larger, never the
+                // only place a fact appears."* **Two files disagreed in writing and this one was
+                // not the design.** `docs/TODO.md` § 120.9 left the choice open and § 121.8 is
+                // where it was made: 🧑, 2026-09-02, *"u can change the tests to fit our shit bcz
+                // they might be stale af"*, and, on the general question, *"if supporting text is
+                // deliberately subordinate but still clearly readable, do not destroy the
+                // hierarchy just to satisfy a generic probe"*.
+                //
+                // ⚠️⚠️ IT IS STILL A GATE AND IT IS A TIGHTER ONE IN THE PLACE THAT MATTERS. The
+                // scale is four steps (44 / 26 / 20 / 16) and this now asserts that every label is
+                // ON it: anything under 16 fails as before, **and so does anything BETWEEN 16 and
+                // 18**, which is the shape a hand-typed size takes. A number nobody chose is the
+                // fault this probe exists to find; 16 is a number somebody chose and wrote down.
+                Assert.GreaterOrEqual(label.fontSize, PaperKit.Caption,
                     $"{resolution} {screen}: '{label.name}' is authored at {label.fontSize} " +
-                    $"units, below the {MenuKit.MinReadableUnits}-unit floor.");
+                    $"units, below the {PaperKit.Caption}-unit floor of the paper type scale.");
+
+                Assert.IsFalse(label.fontSize > PaperKit.Caption
+                               && label.fontSize < MenuKit.MinReadableUnits,
+                    $"{resolution} {screen}: '{label.name}' is {label.fontSize} units, which is " +
+                    $"not a step on the scale. Use {PaperKit.Caption} for a restatement or " +
+                    $"{MenuKit.MinReadableUnits} and up for anything a player has to read.");
 
                 // ⚠️⚠️ A WRAPPING LABEL IS CHECKED VERTICALLY, AND UNTIL 2026-08-31 IT WAS NOT
                 // CHECKED AT ALL. `continue` was the whole treatment: a wrapped label's preferred

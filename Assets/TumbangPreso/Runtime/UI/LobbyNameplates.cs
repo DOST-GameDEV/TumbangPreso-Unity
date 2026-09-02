@@ -204,11 +204,32 @@ namespace TumbangPreso.UI
                 PaperSkin.Apply(tag, PaperCraft.Surface.Sign);
                 tagFill.raycastTarget = false;
 
+                // ⚠️⚠️ IT SITS ABOVE THE PLATE NOW AND HE ASKED FOR THAT BY NAME. 🧑 2026-09-02,
+                // with a crop of his own seat: **"Taya first is ugly and unreadable, too much
+                // empty space too"**, *"maybe tighten its box and add outline to Taya first or
+                // smth (its okay if player you and taya first boxes doesnt match), js keep
+                // everything centered still"*, and **"ALSO i want taya first to be ABOVE the
+                // player you, instead of it being button"**.
+                //
+                // **Three faults, and "instead of it being button" is the one that explains the
+                // other two.** A full-plate-width dark bar hanging under a name, with its own cast
+                // shadow, is the silhouette of a pressable control: `CLAUDE.md` § 6.3 says *one
+                // that does nothing must not look pressable*, and this is that rule broken in the
+                // one place a player is looking at four of them at once. The width came from
+                // `wanted`, which is the NAME's width, so a long handle gave the badge a long
+                // empty plaque and the two-word label floated in the middle of it, which is the
+                // *"too much empty space"*.
+                //
+                // ⚠️ ABOVE RATHER THAN BELOW IS ALSO THE RIGHT READING ORDER. The role is what
+                // this seat is about to DO and the name is who it is; the eye arrives at the head,
+                // and the thing worth knowing before the name is that this one defends first.
+                // The title strip stays below, where it belongs, because a title is a property OF
+                // the name rather than a fact about the round.
                 var tagRect = tagFill.rectTransform;
-                tagRect.anchorMin = new Vector2(0.5f, 0.0f);
-                tagRect.anchorMax = new Vector2(0.5f, 0.0f);
-                tagRect.pivot = new Vector2(0.5f, 1.0f);
-                tagRect.anchoredPosition = new Vector2(0.0f, -4.0f);
+                tagRect.anchorMin = new Vector2(0.5f, 1.0f);
+                tagRect.anchorMax = new Vector2(0.5f, 1.0f);
+                tagRect.pivot = new Vector2(0.5f, 0.0f);
+                tagRect.anchoredPosition = new Vector2(0.0f, 4.0f);
                 tagRect.sizeDelta = new Vector2(PlateMinWidth, TagHeight + PaperCraft.Drop);
 
                 // ⚠️⚠️ CREAM, BECAUSE THE TAG IS A WOOD PLAQUE. `PaperCraft.Surface.Sign` stopped

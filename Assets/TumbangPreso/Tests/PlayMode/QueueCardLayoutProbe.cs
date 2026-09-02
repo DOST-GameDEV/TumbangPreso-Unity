@@ -265,8 +265,31 @@ namespace TumbangPreso.PlayTests
                 Assert.IsNotNull(door, "the QUICK MATCH door is gone");
                 Assert.IsNotNull(plate, "the queue card is gone");
 
-                Assert.IsFalse(door.gameObject.activeSelf && plate.gameObject.activeSelf,
-                    $"in state {value} the card and its own door are both on screen");
+                // ⚠️⚠️ THE INVARIANT IS "NOT TWO LIVE CONTROLS", NOT "NOT TWO ACTIVE OBJECTS",
+                // AND THE OLD WORDING FAILED THE SHIPPED DESIGN. `QueueCard.Refresh`'s own header
+                // says why: **the door is DIMMED, not hidden**, because QUICK MATCH shares a
+                // `HorizontalLayoutGroup` with JOIN and CHAT and taking it off the row makes the
+                // other two jump sideways under the player's hand the instant it is pressed. And
+                // in the un-docked path the geometry settles it outright: the door is 64 units
+                // tall centred at `DoorCentreY` 96, so it spans 64 to 128, and the card is 348
+                // tall centred at 238, so it spans 64 to 412. **The card covers the door
+                // completely and is built after it, so it draws on top.**
+                //
+                // ⚠️ `activeSelf` WAS THEREFORE ASKING THE WRONG QUESTION: an object that is
+                // covered by an opaque plate and cannot be pressed is not "on screen" in any sense
+                // a player would recognise, which is exactly the reading `docs/TODO.md` § 120.9
+                // flagged and could not settle without a picture. 🧑 2026-09-02, on this class of
+                // failure: *"u can change the tests to fit our shit bcz they might be stale af"*.
+                //
+                // **What must never happen is two controls a player can press that mean opposite
+                // things**, which is what this asserts now.
+                bool doorIsLive = door.gameObject.activeInHierarchy
+                                  && door.GetComponent<Button>() != null
+                                  && door.GetComponent<Button>().interactable;
+
+                Assert.IsFalse(doorIsLive && plate.gameObject.activeSelf,
+                    $"in state {value} the queue card is up and its own door is still pressable, "
+                    + "so the player can join a queue they are already in.");
 
                 Assert.IsTrue(door.gameObject.activeSelf || plate.gameObject.activeSelf,
                     $"in state {value} the queue has no visible control at all, which is a " +
@@ -384,9 +407,21 @@ namespace TumbangPreso.PlayTests
                 var rect = label.rectTransform.rect;
                 if (rect.width <= 1.0f) continue;
 
-                Assert.GreaterOrEqual(label.fontSize, MenuKit.MinReadableUnits,
+                // ⚠️⚠️ THE FLOOR IS `PaperKit.Caption`, NOT `MinReadableUnits`, AND THE REASONING
+                // IS WRITTEN OUT IN `PlayerHubLayoutProbe.Measure` RATHER THAN COPIED HERE. The
+                // short version: `PaperKit`'s header states 16 as a deliberate step for a
+                // restatement, this file asserted 18, and the two disagreed in writing while
+                // `QueueCard.Row`'s three `PaperKit.Caption` call sites were byte-identical for a
+                // month (`docs/TODO.md` § 120.9). **Anything off the four-step scale still fails**,
+                // including anything between 16 and 18, which is what a hand-typed size looks like.
+                Assert.GreaterOrEqual(label.fontSize, PaperKit.Caption,
                     $"{resolution} queue: '{label.name}' is {label.fontSize} units, under the " +
-                    $"{MenuKit.MinReadableUnits}-unit floor. docs/TODO.md § 92.5.");
+                    $"{PaperKit.Caption}-unit floor of the paper type scale. docs/TODO.md § 121.8.");
+
+                Assert.IsFalse(label.fontSize > PaperKit.Caption
+                               && label.fontSize < MenuKit.MinReadableUnits,
+                    $"{resolution} queue: '{label.name}' is {label.fontSize} units, which is not " +
+                    "a step on the scale.");
 
                 // ⚠️ A WRAPPING LABEL IS MEASURED VERTICALLY AND NOT HORIZONTALLY, WHICH IS
                 // § 102.4 APPLIED RATHER THAN QUOTED. A wrapped label's preferred WIDTH is inside

@@ -471,17 +471,38 @@ namespace TumbangPreso.UI
     /// would make every focused button unpressable, which is the worst possible bug to ship on a
     /// focus indicator.
     /// </summary>
-    public sealed class FocusRing : MonoBehaviour,
-        UnityEngine.EventSystems.IPointerEnterHandler,
-        UnityEngine.EventSystems.IPointerExitHandler
+    /// <summary>
+    /// ⚠️ IT IS NOT A POINTER HANDLER ANY MORE. It implemented `IPointerEnterHandler` and
+    /// `IPointerExitHandler` to light on hover, and `Update`'s note records why that had to stop.
+    /// A control's hover is its own pose; this says where the KEYBOARD is.
+    /// </summary>
+    public sealed class FocusRing : MonoBehaviour
     {
         private Image _ring;
-        private bool _hovered;
 
         /// <summary>How far outside the control the ring sits.</summary>
         public float Spread = 5.0f;
 
-        public Color Colour = UiTheme.Amber;
+        /// <summary>
+        /// The focus colour.
+        ///
+        /// ⚠️⚠️ IT WAS `UiTheme.Amber` AND HE REJECTED IT TWICE IN ONE SITTING, ON TWO DIFFERENT
+        /// CONTROLS. 🧑 2026-09-02: *"orange outline when i hover over start match is ugly"*, then,
+        /// with a crop of the login screen's USERNAME box, **"i dont like the orange outline for a
+        /// lot of things"**.
+        ///
+        /// **It is the same inversion `PaperCraft.Surface.Live` and `Surface.Sign` both already
+        /// made, arriving one control later.** `docs/TODO.md` § 118.4 says *amber is the marker*,
+        /// and that rule was written for a WOODEN front end where amber was the one LIGHT thing on
+        /// a dark screen. On cream it is the reverse: `ffba00` on `f4ecdd` measures **1.46:1**
+        /// (`tools/sample_png.js contrast ffba00 f4ecdd`), so an amber ring is a high-chroma shape
+        /// that carries almost no value difference from the sheet it is drawn on. It shouts and it
+        /// does not read, which is the worst pair of properties a focus indicator can have.
+        ///
+        /// ⚠️ `WoodMid` MEASURES **9.20:1** AGAINST THE SAME SHEET and introduces no colour that is
+        /// not already the ink of this front end. On cream the marker is the one DARK thing.
+        /// </summary>
+        public Color Colour = UiTheme.WoodMid;
 
         public static FocusRing Attach(GameObject target, float spread = 5.0f)
         {
@@ -514,9 +535,6 @@ namespace TumbangPreso.UI
             _ring.enabled = false;
         }
 
-        public void OnPointerEnter(UnityEngine.EventSystems.PointerEventData e) => _hovered = true;
-        public void OnPointerExit(UnityEngine.EventSystems.PointerEventData e) => _hovered = false;
-
         private void Update()
         {
             if (_ring == null) return;
@@ -530,7 +548,30 @@ namespace TumbangPreso.UI
             var field = GetComponent<InputField>();
             if (field != null) selected = field.isFocused;
 
-            bool want = selected || _hovered;
+            // ⚠️⚠️ HOVER NO LONGER LIGHTS THE RING, AND THAT IS THE WHOLE OF 🧑'S REPORT ON IT.
+            // 2026-09-02, with a crop of the lobby: *"orange outline when i hover over start match
+            // is ugly"*. Two things were wrong and only one of them was the colour:
+            //
+            // - **A rounded-rect ring around a chamfered slab.** `UiMaterials.Ring` draws one
+            //   silhouette and the control it was wrapped around draws another, so the "outline"
+            //   was a box near a button rather than an edge on one.
+            // - **It was doing a job something else already does.** `docs/TODO.md` § 120.1 gave
+            //   every paper control an eased hover: the face lifts two units, the object scales
+            //   2.5 per cent and the cast shadow grows. A second, louder hover indicator on top of
+            //   that is `CLAUDE.md` § 6.2 question 3 (*what is on screen that the player does not
+            //   need right now*) answered wrongly.
+            //
+            // ⚠️ THE RING STAYS FOR REAL FOCUS, WHICH IS THE ONLY THING IT WAS EVER NEEDED FOR.
+            // `game-ui-design`'s `missing-focus-visible` and its controller-navigation pattern
+            // both ask for a visible indicator a KEYBOARD or PAD user can find, and neither of
+            // those emits a pointer event at all. Deleting the component would have taken that
+            // with it, which is why this is a narrowing rather than a removal.
+            //
+            // ⚠️ AND A TEXT FIELD KEEPS IT UNCONDITIONALLY, because a focused field has no pose of
+            // its own: `PaperCraft.Surface.Tray` is a recess in every state, so without the ring
+            // there is nothing at all saying which of two boxes your typing goes into. It is the
+            // one place the amber reads well in his own screenshot of the login screen.
+            bool want = selected;
             if (_ring.enabled != want) _ring.enabled = want;
         }
     }

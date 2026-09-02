@@ -495,7 +495,12 @@ namespace TumbangPreso.UI
             // ⚠️ AND NOTHING BELOW `Primary` MOVED BY MORE THAN THE SAME 30, because he said
             // everything below the tabs already looks good and the actions block is measured
             // against itself.
-            const float Logo = 330.0f;
+            // ⚠️ 343 AND NOT 330, AND IT IS THE PLAQUE GROWING RATHER THAN A RETUNE. See
+            // `LogoMarkWidth`: the sign is 146 units tall now against 120, so holding the old
+            // centre would have closed the gap under it from 36 units to 23 and put the identity
+            // block back on top of the form block, which is the *"this part looks too tight"* he
+            // reported on the tab row. The underside stays at 270 by construction.
+            const float Logo = 343.0f;
             const float Tabs = 200.0f;
             const float UserField = 30.0f;
             const float PassField = -82.0f;
@@ -951,9 +956,43 @@ namespace TumbangPreso.UI
         /// identity block and the FORM block below it stop being two blocks: at `Logo` 330 the
         /// plaque's underside is at 270 and the live tab's top is at 234.
         /// </summary>
-        private const float LogoPlaqueWidth = 420.0f;
-        private const float LogoPlaqueHeight = 120.0f;
-        private const float LogoInset = 26.0f;
+        /// <summary>
+        /// The wordmark's DRAWN width, and every other number here is derived from it.
+        ///
+        /// ⚠️⚠️ THE PLAQUE USED TO BE THE AUTHORED NUMBER AND THE MARK WAS WHATEVER FITTED INSIDE
+        /// IT, WHICH IS HOW HALF THE PLAQUE ENDED UP EMPTY. 🧑 2026-09-02, with a crop of it:
+        /// **"improve tump logo integration in lobby too, I like the current setup but it doesnt
+        /// have much impact, especially wiht a brown button thats empty like taht"**.
+        ///
+        /// **The arithmetic in the old note is the confession.** It read: *"at 420 wide less 2 x
+        /// 26 of inset the mark is 368 wide and about 106 tall, and 120 units of plaque less the
+        /// inset and the six-unit shadow leaves it 62. So the fit is decided by HEIGHT and the
+        /// mark draws about 216 x 62 in the middle of the plaque."* **216 of 420 is 51 per cent:
+        /// the game's name occupied half of its own sign and the rest was bare brown.** A fitter
+        /// whose box is a different shape from the thing in it always spends the difference as
+        /// margin, and nobody had multiplied it out.
+        ///
+        /// ⚠️ SO THE MARK IS SIZED AND THE PLAQUE FOLLOWS. `TUMP.png` is 1835x527, which is
+        /// 3.482:1, so a 336-unit mark is 96.5 tall; the box is exactly that shape, the fitter has
+        /// no slack to spend, and the plaque is the box plus one inset either side. **The mark is
+        /// 336 units wide where it was 216: a little over half again.** That is the "impact", and
+        /// it is bought by deleting empty wood rather than by growing the sign.
+        ///
+        /// ⚠️ `Logo` MOVED UP WITH IT. The plaque is 146 tall against 120, so at the old y its
+        /// underside would have landed 23 units above the live tab instead of 36, and the identity
+        /// block and the form block would have stopped reading as two blocks. See `BuildColumn`,
+        /// where the 36 is the number he asked for after *"this part looks too tight"*.
+        /// </summary>
+        private const float LogoMarkWidth = 336.0f;
+
+        /// <summary>`TUMP.png` is 1835x527. ⚠️ Written as the division so a re-export that changes
+        /// the file's shape is a one-line correction with the source visible.</summary>
+        private const float LogoAspect = 1835.0f / 527.0f;
+
+        private const float LogoInset = 22.0f;
+        private const float LogoPlaqueWidth = LogoMarkWidth + (LogoInset * 2.0f);
+        private const float LogoPlaqueHeight =
+            (LogoMarkWidth / LogoAspect) + (LogoInset * 2.0f) + PaperCraft.Drop;
 
         /// <summary>
         /// One layer of the carved wordmark: the texture, fitted, tinted and nudged.

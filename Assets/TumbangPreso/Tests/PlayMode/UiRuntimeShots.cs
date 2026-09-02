@@ -279,7 +279,7 @@ namespace TumbangPreso.PlayTests
         /// overwriting a shot leaves the previous one on screen and the whole review is conducted
         /// against an image that is no longer on disk. Bump `ShotVersion` on every iteration.
         /// </summary>
-        private const string ShotVersion = "v60";
+        private const string ShotVersion = "v61";
 
         /// <summary>
         /// The three screens the lobby opens: the fighter picker, the maker behind it, and the
@@ -491,9 +491,61 @@ namespace TumbangPreso.PlayTests
 
             yield return Capture($"LobbyAccount-{ShotVersion}");
 
-            var close = Find("HubRoot") != null
-                ? Find("HubRoot").GetComponentInChildren<Button>() : null;
-            if (close != null) close.onClick.Invoke();
+            // ⚠️⚠️ ALL SIX TABS, AND UNTIL NOW THIS SCREEN HAD EXACTLY ONE PICTURE. Every review
+            // of the hub for a month has been conducted against `LobbyAccount-*.png`, which is the
+            // PROFILE tab of whatever account the probe machine happens to have. **Five of the six
+            // destinations behind the game's only account door had never been photographed at
+            // all**, which is `CLAUDE.md` § 6.2b's first row (*"EVERY STATE, not the one you built
+            // first"*) on the largest code-built surface in the project.
+            //
+            // ⚠️ IT PRESSES THE TABS THE WAY A PLAYER DOES, by lettering, through `onClick`.
+            // Calling `Show` by reflection would photograph a state the column cannot reach and is
+            // the fault § 119.9 records on `LobbyJoinPanel` (a render of four rows reading
+            // `AVAILABLE GAMES APPEAR HERE`, because the panel was switched on rather than opened).
+            foreach (string tab in new[] { "FRIENDS", "LOADOUT", "CAREER", "MATCHES", "ACCOUNT" })
+            {
+                var button = HubTab(tab);
+                if (button == null)
+                {
+                    Debug.LogWarning($"[Shot] the hub has no {tab} tab.");
+                    continue;
+                }
+
+                button.onClick.Invoke();
+                yield return new WaitForSecondsRealtime(0.5f);
+                yield return Capture($"Hub{tab}-{ShotVersion}");
+            }
+
+            // ⚠️⚠️ AND THE LONGEST LEGAL NAME, WHICH IS A STATE NO SHOT HAS EVER HELD. The rail is
+            // 420 units wide and the handle draws at 44, so `Balance.PlayerNameMax` characters is
+            // the case `PlayerHub.RefreshHeader`'s `MenuKit.Fit` exists for. A probe account is
+            // called `Player`, so without this the fitted path is never exercised in a picture.
+            var longName = Find("PlayerNameEdit")?.GetComponent<InputField>();
+            if (longName != null)
+            {
+                var profileTab = HubTab("PROFILE");
+                if (profileTab != null)
+                {
+                    profileTab.onClick.Invoke();
+                    yield return new WaitForSecondsRealtime(0.4f);
+                }
+
+                longName.text = new string('W', Core.Balance.PlayerNameMax);
+                longName.onEndEdit.Invoke(longName.text);
+                yield return new WaitForSecondsRealtime(0.5f);
+                yield return Capture($"HubLongName-{ShotVersion}");
+            }
+
+            // ⚠️⚠️ BY NAME, AND IT USED TO BE "THE FIRST BUTTON UNDER `HubRoot`". That resolved to
+            // CLOSE only by accident of build order, and `docs/TODO.md` § 121.6 moved the
+            // navigation into a column down the left: the first button is PROFILE now, so the old
+            // line would have pressed a TAB and then photographed the screen it was trying to
+            // leave. `PlayerHub.BuildRailFooter` names the node for exactly this reason.
+            var close = Find("HubClose")?.GetComponent<Button>();
+            Assert.IsNotNull(close,
+                "the hub must have a named way out. It is the last thing in the identity rail; "
+                + "see PlayerHub.BuildRailFooter.");
+            close.onClick.Invoke();
             yield return new WaitForSecondsRealtime(0.4f);
 
             // Both drawers are part of the requested composition checkpoint. Photographing only
@@ -664,6 +716,29 @@ namespace TumbangPreso.PlayTests
 
             yield return Capture(node);
             target.SetActive(false);
+        }
+
+        /// <summary>
+        /// The hub tab whose lettering reads <paramref name="label"/>.
+        ///
+        /// ⚠️ BY LETTERING RATHER THAN BY NODE NAME, which is what `PlayerHubLayoutProbe` already
+        /// does and for the same reason: the tabs are built by `MenuKit.WoodButton`, which leaves
+        /// the default GameObject name, so the only thing that identifies one is the word on it.
+        /// **That word is also the only thing the player has**, so a probe that finds it by
+        /// anything else is not asking the question the player asks.
+        /// </summary>
+        private static Button HubTab(string label)
+        {
+            var hub = Find("HubRoot");
+            if (hub == null) return null;
+
+            foreach (var button in hub.GetComponentsInChildren<Button>(true))
+            {
+                var text = button.GetComponentInChildren<Text>(true);
+                if (text != null && text.text == label) return button;
+            }
+
+            return null;
         }
 
         private static GameObject Find(string name)

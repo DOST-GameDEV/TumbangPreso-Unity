@@ -310,6 +310,110 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>
+        /// Makes a control THE action on its screen: one call, one appearance, everywhere.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE THE PRIMARY WAS THE ONE CONTROL EACH SCREEN STILL DREW ITS OWN
+        /// WAY, AND HE FOUND IT ON FOUR OF THEM IN ONE SITTING. 2026-09-02: **"u really have to
+        /// redesign start match button, it doesnt FEEL like a start match button"**, *"i like the
+        /// size adn color but it feells so flat"*, and, of BACK sitting beside KEEP AND USE,
+        /// **"i dont get why theres rounded sshit next to square shit"**. The lobby's came from
+        /// `GodotTheme.WoodPrimaryButton`, the login's from the same, the maker's and the picker's
+        /// from `MenuKit.WoodButton`: four screens, one intention, four constructions.
+        /// `docs/TODO.md` 121.1 has the measurement that settled it.
+        ///
+        /// ⚠️ IT DISABLES `GodotButton` RATHER THAN LIVING BESIDE IT, which `Paperise` already
+        /// does for every other converted control and which matters more here than anywhere: that
+        /// component sinks the LABEL five units on a press and so does `PaperButton`. **Two owners
+        /// of one transform property is 119.9 row 1** and it has shipped once already.
+        ///
+        /// ⚠️ THE LETTERING IS CENTRED ON THE FACE, NOT ON THE RECT. Every raised paper surface
+        /// draws its cast shadow inside its own bottom units, so a label centred on the rect sits
+        /// low by half the drop. `CentreOnFace` is the one place that correction is written, for
+        /// the reason 120.2 records: it had been written twice before and one copy had the sign
+        /// backwards.
+        /// </summary>
+        public static PaperButton MakeAction(GameObject target, PaperCraft.Accent accent)
+        {
+            if (target == null) return null;
+
+            Paperise(target, PaperCraft.Surface.Action);
+
+            // ⚠️⚠️⚠️ EVERY CHILD GRAPHIC GOES, AND WITHOUT THIS THE BUTTON DRAWS TWO SILHOUETTES
+            // AT ONCE. 🧑 2026-09-02, with a crop of the first build of this surface:
+            // **"ew wtf os i[ with that start match shit its a circle and a sharp shape at the
+            // same time wtfffffffffffffffffffffffff"**, and then **"can u js remake the entire
+            // start match button? keep the color and font and shit but remake the whole button,
+            // bcz i think trying to imrpove it manually will lead nowhere"**.
+            //
+            // **He was describing exactly what was on screen and it took a 6x crop to see why.**
+            // `Logs/crops/start-cap-v61.png`: a rounded `Action` pill on the node's own Image, and
+            // 🧑's chamfered `BUTTON LONG.png` drawn on top of it by a CHILD. `Paperise` disables
+            // `GodotButton` and the two `SkinLayers` children it knows about, `Face` and `Shadow`
+            // — and `ArrowButtonView` builds three more (`Artwork`, `Lit`, `Rim`) that nothing in
+            // that method has ever heard of. **Disabling a component does not remove the objects
+            // it made**, which is the same finding `PaperDress`'s own header records about
+            // `SkinLayers` and is now the second time it has cost a render.
+            //
+            // ⚠️ SO IT WALKS RATHER THAN NAMING. A list of layer names is a list somebody has to
+            // extend, and the layer added next year is the one that draws through the primary. An
+            // `Action` owns exactly one surface by definition, so "every graphic below me that is
+            // not the lettering" is the rule rather than five strings.
+            //
+            // ⚠️⚠️ AND THIS IS THE ONE PLACE THIS PASS STOPS DRAWING AN AUTHORED CONTROL, WHICH
+            // NEEDS SAYING OUT LOUD BECAUSE `CLAUDE.md` § 6.4 AND `docs/VISION.md` § 6 BOTH
+            // FORBID REPAINTING HIS ART. Three things make it the right call and he made the
+            // first of them: **he asked for the button to be remade, by name, twice.** The FILE
+            // is untouched, the main menu still draws it through `ArrowButtonView` with its
+            // unfurl intact, and `docs/TODO.md` § 120.4 already recorded the same decision for
+            // `SETTINGS CONFIG PANEL.png` and `MAP MODE DISPLAY.png` when they were the field
+            // rather than the control. **His art that is still a control on this screen stays:**
+            // the pennants, `JOIN BUTTON.png`, the arrows, `TUMP.png` and the key art.
+            foreach (var graphic in target.GetComponentsInChildren<Image>(true))
+            {
+                if (graphic == null || graphic.gameObject == target) continue;
+                graphic.enabled = false;
+            }
+
+            foreach (var raw in target.GetComponentsInChildren<RawImage>(true))
+            {
+                if (raw == null || raw.gameObject == target) continue;
+                raw.enabled = false;
+            }
+
+            var skin = target.GetComponent<PaperSkin>();
+            if (skin != null)
+            {
+                skin.Accent = accent;
+                skin.Rebuild();
+            }
+
+            var label = target.transform.Find("Label") != null
+                ? target.transform.Find("Label").GetComponent<Text>()
+                : target.GetComponentInChildren<Text>();
+
+            if (label != null)
+            {
+                label.color = UiTheme.Cream;
+                label.alignment = TextAnchor.MiddleCenter;
+
+                // ⚠️ THE AUTHORED SHADOW COMES OFF. `GodotButton` adds a `Shadow` to every wooden
+                // label so cream survives over a lit street; on an opaque slab it only thickens
+                // the strokes, which is the same argument `PaperKit.Ink`'s header makes about
+                // outlines and is why no paper type in this file carries one.
+                var shadow = label.GetComponent<Shadow>();
+                if (shadow != null) shadow.enabled = false;
+
+                CentreOnFace(label);
+            }
+
+            var chip = target.GetComponent<PaperButton>();
+            if (chip == null) chip = target.AddComponent<PaperButton>();
+            chip.Restyle();
+
+            return chip;
+        }
+
+        /// <summary>
         /// A chalk hairline, for separating two groups of rows inside one sheet.
         ///
         /// ⚠️ A RULE RATHER THAN A SECOND SHEET. The fault § 92 records is a screen made of boxes
@@ -351,13 +455,35 @@ namespace TumbangPreso.UI
         /// </summary>
         /// <param name="idle">
         /// What the control is when it is NOT the one you are on.
-        /// ⚠️ `Ghost` FOR A TAB AND `Tray` FOR A LIST ROW, and the difference is not decoration.
-        /// A tab you are not on is an alternative you could move to, which is an outline; an
-        /// option in an open dropdown is a value you are reading, which is a slot. Drawing the
-        /// unselected options of a list as ghosts turns four readable rows into four empty ones.
+        ///
+        /// ⚠️⚠️ IT WAS `Ghost` AND THE RENDER SAID NO: A TAB ROW WAS TWO DIFFERENT SILHOUETTES.
+        /// `Logs/crops/picker-tabs-v61.png` is four controls in one rail: `HERO` a full pill,
+        /// `LATA` and `TSINELAS` 18-unit rounded RECTANGLES, `MAKE YOUR OWN` a pill again. 🧑, of
+        /// that exact row: **"these buttons look ugly"**, and of the same fault on the lobby's
+        /// primary, **"i dont get why theres rounded sshit next to square shit"**.
+        ///
+        /// **`PaperCraft.Surface.Live`'s own note had already forbidden this in writing:** *"`Live`
+        /// IS THIS SAME OBJECT INVERTED, not a second silhouette. Same pill, same halo, same lip,
+        /// same shadow; only the values swap. Giving the selected tab its own shape would say
+        /// 'these two controls are different KINDS of thing', which is the opposite of what a tab
+        /// pair means."* It was paired with `Ghost`, which is a different shape, so the rule was
+        /// broken from the side nobody was looking at.
+        ///
+        /// ⚠️ AND THE OLD ARGUMENT FOR `Ghost` NO LONGER HOLDS, WHICH IS WHY THIS IS A CORRECTION
+        /// RATHER THAN A REVERSAL. It read: *"A tab you are not on is an alternative you could
+        /// move to, which is an outline."* That was written when the live half was `Token`, and
+        /// § 120.3 measured `Token` against `Ghost` at **4 per cent apart in value** and moved the
+        /// live half to `Live`. With a wood-dark `Live` the pair is a **10:1** inversion whatever
+        /// the idle is, so the shape no longer has to carry the difference and can go back to
+        /// meaning what it says: `Token` is *you can press it*, which is exactly what an
+        /// unselected tab is, and `Ghost` is *nothing is here yet*, which it never was.
+        ///
+        /// ⚠️ `Tray` FOR A LIST ROW STILL STANDS. An option in an open dropdown is a value you are
+        /// reading, which is a slot; drawing those as tokens would make four readable rows into
+        /// four buttons.
         /// </param>
         public static bool MarkLive(Component control, bool live,
-                                    PaperCraft.Surface idle = PaperCraft.Surface.Ghost)
+                                    PaperCraft.Surface idle = PaperCraft.Surface.Token)
         {
             if (control == null) return false;
 
@@ -453,10 +579,20 @@ namespace TumbangPreso.UI
     /// *"MAKE SURE U COMPLETELY REPLACE UI BCZ I DOTN WANT LEFTOVER SHIT FROM OLD UI TO STILL BE
     /// FRIGGING WITH US"*. `PaperPurityProbe` is the gate that says this actually happened.
     ///
-    /// ⚠️ THE GREEN PRIMARY IS LEFT ALONE. `WoodPrimaryButton` is 🧑's own `JOIN BUTTON.png`
-    /// colour and `CLAUDE.md` § 6.5 calls green his primary; on a cream screen it is the only
-    /// saturated object in the frame, which is what makes the one action findable without
-    /// spending the accent. Repainting it would leave a screen with no figure at all.
+    /// ⚠️⚠️ CORRECTED 2026-09-02: THE GREEN PRIMARY IS NOT LEFT ALONE ANY MORE, AND THE OLD NOTE
+    /// IS KEPT HERE BECAUSE ITS ARGUMENT WAS RIGHT AND ITS CONCLUSION WAS NOT. It read:
+    /// *"`WoodPrimaryButton` is his own `JOIN BUTTON.png` colour and `CLAUDE.md` § 6.5 calls green
+    /// his primary; on a cream screen it is the only saturated object in the frame, which is what
+    /// makes the one action findable without spending the accent. Repainting it would leave a
+    /// screen with no figure at all."*
+    ///
+    /// **Every clause of that is still true and none of it required the WOODEN construction.**
+    /// `PaperCraft.Surface.Action` keeps the colour, keeps the saturation and keeps the figure,
+    /// and drops the chamfer and the 10-per-cent-saturation halo that made the one control on the
+    /// screen look like it came from a different program. `docs/TODO.md` § 121.1 is the
+    /// measurement and 🧑's *"i dont get why theres rounded sshit next to square shit"* is the
+    /// report. **A rule written to protect a colour ended up protecting a silhouette nobody meant
+    /// to keep**, which is the same shape of mistake `CLAUDE.md` § 6.4 records about "outlines".
     /// </summary>
     public static class PaperDress
     {
@@ -484,7 +620,20 @@ namespace TumbangPreso.UI
             // pass immediately undoes it, which is a live tab with ink words on a dark plate, and
             // is 🧑's *"hard to read"* on the hub's tab bar exactly.
             foreach (var chip in root.GetComponentsInChildren<PaperButton>(true))
+            {
                 chip.Restyle();
+
+                // ⚠️⚠️ AND THE LETTERING IS LIFTED ONTO THE FACE, WHICH NOTHING THAT ARRIVES
+                // THROUGH THIS PASS HAD EVER HAD. 🧑 2026-09-02, of the picker's tab rail:
+                // **"problem wiht this is they arent centered"**, *"look it droops a bit down
+                // more"*. `PaperKit.Chip` and `MakeAction` centre on the face at build time; a
+                // converted `GodotButton` keeps whatever box the `.tscn` or `MenuKit.WoodButton`
+                // gave it, and every raised surface hides six units of cast shadow inside its own
+                // bottom edge. **Every tab in the game was three units low.** See
+                // `PaperButton.CentreLabelOnFace`; it latches, because this method runs after
+                // every tab press.
+                chip.CentreLabelOnFace();
+            }
         }
 
         private static void Panel(GodotPanel panel)
@@ -512,8 +661,37 @@ namespace TumbangPreso.UI
         {
             if (skin == null) return;
 
-            // ⚠️ THE PRIMARY KEEPS ITS WOOD. See the class note.
-            if (skin.Variation == "WoodPrimaryButton" || skin.Variation == "PrimaryButton") return;
+            // ⚠️⚠️ ALREADY AN ACTION: LEAVE IT, AND THIS GUARD IS LOAD-BEARING TWICE OVER.
+            // `PaperDress.Screen` runs after EVERY tab build and every drawer open, and
+            // `MakeAction` calls `PaperKit.CentreOnFace`, which ADDS `PaperCraft.Drop` to the
+            // label's inset rather than assigning it (see that method: adding is what lets a chip
+            // keep the padding its caller gave it). Running it twice would walk the lettering six
+            // units up the button on every redraw. It also stops this pass from taking the lobby's
+            // BROWN primary, which `LobbyChrome.BuildActionSlot` has already converted with the
+            // other accent, and flattening it back to a `Token`.
+            var already = skin.GetComponent<PaperSkin>();
+            if (already != null && already.Surface == PaperCraft.Surface.Action) return;
+
+            // ⚠️⚠️ THE PRIMARY IS PAPER'S OWN `Action` NOW, AND THIS ONE LINE IS WHY IT WAS WOOD
+            // ON FIVE SCREENS. This method used to `return` here, under a note saying the green
+            // primary keeps its wood because it is the only saturated object in the frame and
+            // repainting it would leave a screen with no figure. **The figure argument was right
+            // and the conclusion was wrong**: an `Action` is still his authored green, still the
+            // only saturated object on the screen, and now it is also the same KIND of object as
+            // everything standing beside it.
+            //
+            // 🧑 2026-09-02, with a crop of the maker's footer showing BACK beside KEEP AND USE:
+            // **"i dont get why theres rounded sshit next to square shit or wtbv the design of the
+            // shit nexxt to it is"**. That was this early return, seen from the outside: a rounded
+            // paper pill next to a chamfered wooden slab with a halo that measures **10 per cent
+            // saturation** beside paper edges at 30 (`docs/TODO.md` § 121.1). Every green primary
+            // in the paper front end goes through one call now: CREATE ACCOUNT, KEEP AND USE,
+            // CHOOSE, JOIN, the hub's footer action and the queue's.
+            if (skin.Variation == "WoodPrimaryButton" || skin.Variation == "PrimaryButton")
+            {
+                PaperKit.MakeAction(skin.gameObject, PaperCraft.Accent.Green);
+                return;
+            }
 
             // ⚠️⚠️ THE LIVE TAB IS `Live` AND NOT `Token`, AND THAT ONE ROW IS WHY THE HUB'S TAB
             // BAR WAS UNREADABLE. 🧑 2026-09-01, with a crop of the account screen: **"PLAYER CARD
@@ -527,8 +705,22 @@ namespace TumbangPreso.UI
             // from the other end. `Token` against `Ghost` measured 4 per cent apart on
             // `Lobby-v52.png` and the lobby moved to a value inversion; every converted screen
             // kept the pair that had already been rejected, because the mapping lived here.
+            // ⚠️⚠️ THE IDLE TAB IS A `Token` NOW AND THIS IS THE SECOND OF TWO PLACES THAT DECIDE
+            // IT, WHICH IS WHY THE HUB AND THE PICKER DISAGREED FOR A WHOLE RENDER.
+            // `PaperKit.MarkLive` picks the surface when a tab is pressed and THIS picks it when
+            // the screen is dressed, and `PlayerHub.Show` runs `Highlight` **before**
+            // `PaperDress.Screen`: so changing only `MarkLive` fixed the fighter picker's row and
+            // left the hub's column exactly as it was, because the dress ran afterwards and put
+            // `Ghost` back. **Two writers of one property, found in a picture rather than in a
+            // review** (`Logs/crops/hub-tabs-v61b.png` against `picker-tabs-v61b.png` from the
+            // same run), which is the same shape as § 119.9 row 1 and § 120.5 row 1.
+            //
+            // ⚠️ THE REASON IT IS `Token` IS IN `MarkLive`'S OWN `idle` PARAMETER: a tab row was
+            // shipping as two different SILHOUETTES, a `Live` pill against `Ghost` rounded
+            // rectangles, which `PaperCraft.Surface.Live`'s note forbids in writing. 🧑, of that
+            // row: **"these buttons look ugly"**. `docs/TODO.md` § 121.10 row 3.
             var surface = skin.Variation == "WoodTabIdleButton"
-                ? PaperCraft.Surface.Ghost
+                ? PaperCraft.Surface.Token
                 : skin.Variation == "WoodTabLiveButton"
                 ? PaperCraft.Surface.Live
                 : PaperCraft.Surface.Token;
@@ -676,6 +868,58 @@ namespace TumbangPreso.UI
         /// </summary>
         private bool _mayScale;
 
+        /// <summary>
+        /// Whether the lettering has already been lifted onto the face.
+        ///
+        /// ⚠️⚠️ IT IS A LATCH BECAUSE THE CORRECTION IS AN ADDITION AND `PaperDress.Screen` RUNS
+        /// AFTER EVERY TAB PRESS AND EVERY DRAWER OPEN. Applying it twice walks the words three
+        /// units up the control on every redraw, which is the failure `PaperKit.CentreOnFace`'s
+        /// own note warns about from the other side.
+        /// </summary>
+        private bool _facedLabel;
+
+        /// <summary>
+        /// Lifts the lettering off the cast shadow so it is centred on the FACE, not on the rect.
+        ///
+        /// ⚠️⚠️ HE SAW THIS BY EYE ON A TAB RAIL AND HE IS RIGHT TO THE PIXEL. 2026-09-02, with a
+        /// crop of the fighter picker's four tabs: **"problem wiht this is they arent centered"**,
+        /// then, in case it was not clear, *"look it droops a bit down more"*.
+        ///
+        /// **Every raised paper surface draws its cast shadow inside its own bottom
+        /// `PaperCraft.Drop` units**, so a 56-unit control is a 50-unit face with 6 units of
+        /// shadow under it. A label centred on the RECT is therefore centred three units below the
+        /// middle of the thing it is printed on, on every control, forever. Small enough to
+        /// survive review and big enough to see, which is exactly the class `docs/TODO.md` § 120.2
+        /// records for BACK: *"BACK sat twelve units below every other chip in the game and both
+        /// lines looked equally reasonable in review."*
+        ///
+        /// ⚠️ `PaperKit.Chip` AND `MakeAction` DO THIS AT BUILD TIME through `CentreOnFace`, which
+        /// raises the box's BOTTOM edge. This is for everything that arrives through `PaperDress`
+        /// instead: a `GodotButton` converted from a `.tscn` or from `MenuKit.WoodButton`, which
+        /// is every tab in the game, CLOSE, the hub's column, the picker's rail and the maker's
+        /// two rows. **None of them had ever had it.**
+        /// </summary>
+        public void CentreLabelOnFace()
+        {
+            if (_facedLabel) return;
+            _facedLabel = true;
+
+            if (_label == null)
+                _label = transform.Find("Label") != null
+                    ? transform.Find("Label").GetComponent<Text>()
+                    : GetComponentInChildren<Text>();
+
+            if (_label == null) return;
+
+            _label.rectTransform.anchoredPosition +=
+                new Vector2(0.0f, PaperCraft.Drop * 0.5f);
+
+            // ⚠️ THE REST POSITION IS FORGOTTEN SO THE ANIMATOR RE-READS IT. `_home` is what the
+            // hover and the press are measured from; leaving the old value here would make every
+            // press put the lettering back where it used to droop.
+            _home = null;
+        }
+
         /// <summary>Where the label sits at rest, so the press can put it back. ⚠️ Captured on the
         /// first refresh rather than in `Awake`, because a label inside a layout group has no
         /// position until the first layout pass has run.</summary>
@@ -697,6 +941,20 @@ namespace TumbangPreso.UI
         private bool _live => _skin != null
                               && (_skin.Surface == PaperCraft.Surface.Live
                                   || _skin.Surface == PaperCraft.Surface.Sign);
+
+        /// <summary>
+        /// Whether the face under the lettering is dark, and therefore wants CREAM words.
+        ///
+        /// ⚠️⚠️ IT IS SEPARATE FROM <see cref="_live"/> AND MERGING THE TWO WOULD BREAK THE
+        /// PRIMARY. `_live` does two jobs: it picks the lettering AND it is the exception that
+        /// stops a selected tab ever being drawn "off". An `Action` wants the first and must not
+        /// have the second: START MATCH is genuinely unavailable while a room is connecting, and a
+        /// primary that cannot draw its own disabled state is a button a player presses into
+        /// silence. `docs/TODO.md` 121.1.
+        /// </summary>
+        private bool _darkFace => _live
+                                  || (_skin != null
+                                      && _skin.Surface == PaperCraft.Surface.Action);
 
         /// <summary>
         /// Whether this control should draw as available.
@@ -840,6 +1098,37 @@ namespace TumbangPreso.UI
             if (_mayScale) transform.localScale = Vector3.one;
             if (_label != null && _home.HasValue)
                 _label.rectTransform.anchoredPosition = _home.Value;
+
+            // ⚠️⚠️ THE SURFACE HAS TO GO BACK TOO, AND THIS METHOD WAS FIXING ONLY THE TRANSFORM
+            // HALF OF ITS OWN HEADER. 🧑 2026-09-02, with a crop of the lobby's mode tabs:
+            // **"theres brown ink left over if i dont hover back to the buttons on top"**. The
+            // three lines above put the scale and the lettering back and left the PLATE lit, so a
+            // chip that was under the pointer when its drawer closed came back drawn as hovered
+            // by something nobody was pointing at. `docs/TODO.md` § 121.2.
+            //
+            // ⚠️ IT IS SAFE TO WRITE WHILE INACTIVE ONLY BECAUSE `PaperSkin` NOW KEEPS THE POSE
+            // IN ITS CACHE KEY. `Rebuild` bails on a zero-height rect, which is exactly what this
+            // rect reports on the frame it is switched off, so before that change this line would
+            // have been dropped on the floor and the bug would have looked fixed in the source.
+            if (_skin != null) _skin.SetPose(PaperCraft.Pose.Rest);
+        }
+
+        /// <summary>
+        /// ⚠️ THE OTHER END OF `OnDisable`. A control can be switched off by something that is not
+        /// a pointer at all (a tab rebuild, `PlayerHub.Show` destroying a list, a drawer), and the
+        /// pointer may well be somewhere else entirely by the time it comes back. Re-asserting the
+        /// resting pose here means the first frame a control is visible is never mid-animation.
+        /// </summary>
+        private void OnEnable()
+        {
+            _hovered = false;
+            _held = false;
+            _lift = 0.0f;
+            _sink = 0.0f;
+
+            if (_skin == null) _skin = GetComponent<PaperSkin>();
+            if (_skin != null)
+                _skin.SetPose(Available ? PaperCraft.Pose.Rest : PaperCraft.Pose.Off);
         }
 
         public void OnPointerEnter(PointerEventData e)
@@ -914,8 +1203,12 @@ namespace TumbangPreso.UI
 
             bool on = Available;
 
-            _label.color = !on ? UiTheme.PaperInkSoft
-                : _live ? UiTheme.Cream
+            // ⚠️ A DISABLED ACTION KEEPS CREAM LETTERING RATHER THAN DROPPING TO SOFT INK. The
+            // slab desaturates towards the sheet but stays dark (see `PaintAction`), so soft ink
+            // on it measures worse than the 4.5:1 floor, and "unavailable" is already said by the
+            // colour of the plate.
+            _label.color = _darkFace ? UiTheme.Cream
+                : !on ? UiTheme.PaperInkSoft
                 : UiTheme.PaperInk;
         }
 

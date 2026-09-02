@@ -507,6 +507,24 @@ in two opposite visual languages and the code-drawn half was the one that looked
   it before drawing any new surface. `JOIN BUTTON.png` is `BUTTON LONG.png` with one colour
   swapped, keyline to floor, so **one base colour generates a whole control** and the ratios are
   stored as multipliers on HSV value rather than as hexes.
+- ⚠️⚠️ **THE PAPER FRONT END HAS ITS OWN PRIMARY NOW, AND IT IS THE ONE CHAMFER ON A CREAM SCREEN.**
+  `PaperCraft.Surface.Action`, added 2026-09-02. Until then the one action on every paper screen was
+  still `GodotTheme.WoodPrimaryButton`, so START MATCH, CREATE ACCOUNT, KEEP AND USE and CHOOSE were
+  wooden objects standing in rows of paper ones. 🧑 found it on four screens without connecting them
+  (*"i dont get why theres rounded sshit next to square shit"*, *"it feells so flat"*, **"can u js
+  remake the entire start match button"**), and the measurement is in `docs/TODO.md` § 121.1: the
+  wooden halo sampled `ada69b`, **hue 37 at 10 per cent saturation**, against every paper edge on the
+  same screen at **30**. A neutral that dark and that grey beside warm cream is § 6.4's cold-grey ban
+  caught on the warm axis. ⚠️ **The `Accent` beside it is a closed list of two colours he authored**
+  (his green, and the lobby's brown he asked to keep), not the `fill` parameter this section forbids:
+  one role, one per screen, two authored fills.
+- ⚠️⚠️ **AND `PaperKit.MakeAction` SWITCHES OFF EVERY CHILD GRAPHIC, WHICH IS THE ONLY REASON IT
+  WORKS.** `PaperKit.Paperise` disables `GodotButton` and the two `SkinLayers` children it knows by
+  name; `ArrowButtonView` builds three more (`Artwork`, `Lit`, `Rim`) that nothing had heard of, so
+  the first build drew **his chamfered `BUTTON LONG.png` on top of a new surface** and 🧑 photographed
+  it as *"its a circle and a sharp shape at the same time"*. **Disabling a component does not remove
+  the objects it made.** This is the one place in the front end that stops drawing an authored
+  control, he asked for it by name, and the file, the main menu and the unfurl are untouched.
 - ⚠️ **PICK A ROLE, NOT A FILL.** `WoodCraft.Surface` is a closed list (`Button`, `Action`,
   `Panel`, `Header`, `Field`, `Paper`, `PaperField`, `Slate`) and the material, silhouette, relief
   and colour all follow from it. The failure this replaced is a screen of twelve plates that were

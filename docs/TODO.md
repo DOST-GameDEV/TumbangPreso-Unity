@@ -2138,6 +2138,426 @@ one.**
 
 ---
 
+## 121 · The v61 report: one material for the primaries, a hub with a tab column, and the stuck hover ⚠️⚠️ OPEN, 2026-09-02, branch `ui-redesign`
+
+🧑 opened the build off `d7731070` and sent fourteen notes in one sitting, with a crop for
+almost every one. He also said how he wanted them handled: **"thorouhly plan how to fix
+everything btw"**, *"dont js shit out fixes"*, *"dont worry abt the stuff im liosting, im js
+listing them"*, and **"i want u to think abt color and visual harmony in makingh fixes"**.
+
+⚠️⚠️ **THIS ENTRY IS THE PLAN AND IT IS WRITTEN BEFORE THE WORK, WHICH IS THE ORDER
+`CLAUDE.md` § 6.2a ASKS FOR AND THE ONE § 118.2 NAMES: run `game-ui-design` as a CRITIC first.**
+Every row below has a cause in a named file and, where a colour or a distance is claimed, a
+number measured off a render rather than an adjective.
+
+⚠️ **`tools/sample_png.js` IS NEW AND IT IS WHY THE NUMBERS EXIST.** Every colour argument in
+this file (§ 119.1's road sampling, § 119.10's 1.7:1, § 120.6's channel split of `TUMP.png`) was
+produced by a tool that was not in this repository, so no reader could re-run one. It decodes a
+PNG with `zlib` and nothing else, because `python` is not on PATH here, and it prints pixels,
+scan lines, the commonest colours in a box, and the WCAG ratio between two hexes.
+
+---
+
+### 121.1 ⚠️⚠️ THE ONE FINDING THAT EXPLAINS FIVE OF HIS NOTES: THE PRIMARY IS THE ONLY CONTROL IN THE PAPER FRONT END STILL DRAWN IN WOOD, AND ITS SHADOW IS GREY
+
+🧑, on four different screens, without connecting them himself:
+
+| Screen | What he said |
+|---|---|
+| Lobby | *"orange outline when i hover over start match is ugly"*, then **"u really have to redesign start match button, it doesnt FEEL like a start match button"**, then the correction that matters: **"i like the size adn color but it feells so flat, it doesn thave start match energy"** |
+| Character maker | *"js make buttons prettier"*, **"bcz i dont get why theres rounded sshit next to square shit or wtbv the design of the shit nexxt to it is"** (BACK, a paper pill, beside KEEP AND USE, a chamfered green slab) |
+| Character select | *"these buttons look ugly"* (the four-tab row, three surfaces in one rail) |
+
+**Measured off `Logs/shots-runtime/SignInCreate-v56.png` with `tools/sample_png.js`:**
+
+| What | The pixel | Hue | Saturation | Value |
+|---|---|---|---|---|
+| The cream field | `f4ecdd` | 39 | 9 % | 96 % |
+| **A paper control's edge** (`PLAY AS GUEST`, x=227) | `dcc19a` | 35 | **30 %** | 86 % |
+| **The green primary's edge** (`CREATE ACCOUNT`, x=161) | `ada69b` | 37 | **10 %** | **68 %** |
+
+⚠️⚠️ **SAME HUE, A THIRD OF THE CHROMA, EIGHTEEN VALUE STEPS DARKER. That is the "grey" he can
+see and cannot name**, and it is `CLAUDE.md` § 6.4's rule caught on the warm axis rather than the
+blue one: the section forbids *"cold grey"* and a 10 per cent saturation neutral beside a 30 per
+cent warm edge is exactly that, whatever its hue reads as in a hex.
+
+**And the silhouette is the other half.** `WoodCraft.Surface.Action` is chamfered and every paper
+control is a pill or an 18-unit round, so on the maker's footer a rounded cream pill stands beside
+a chamfered green slab with a grey halo. 🧑 named the silhouette clash before anybody measured the
+colour, which is § 6.5's *"A CHAMFER MEANS PRESSABLE AND A ROUND MEANS FURNITURE"* read back at us
+from the outside: **the chamfer is now the odd one out, because everything else on these screens
+became paper and the primary did not.**
+
+⚠️⚠️ **AND "FLAT" IS A THIRD, SEPARATE FAULT ON THE SAME OBJECT, WHICH IS WHY HE SAID IT AFTER
+SAYING HE LIKED THE COLOUR.** § 120.1 gave every paper control an eased hover and press:
+`PaperButton` lifts the face two units, scales the object 2.5 per cent, sinks the lettering by
+`Drop` and takes the cast shadow off, all in unscaled time and faster down than up.
+**`LobbyChrome.BuildActionSlot` disables `ArrowButtonView` on the primary and attaches no
+`PaperButton`, so the one control on the screen that most needs to feel pressable is the only one
+in the front end with no motion at all.** It has `GodotButton`'s sprite swap and Godot's five-unit
+label sink and nothing else. *"it feells so flat"* is a measurement of that gap.
+
+**What done looks like:**
+
+1. ⚠️ **`PaperCraft.Surface.Action`: one new construction, in paper's own language.** A raised
+   slab built by `PaintRaised`'s rules (lit top edge, 14 per cent ramped wall, squared-falloff
+   cast shadow) at primary weight, with the corner radius of a `Token` rather than a chamfer, and
+   **a warm shadow derived from the fill rather than a neutral**. The shadow must sit at or above
+   the 30 per cent saturation every other paper edge on the screen carries, which is the number in
+   the table above and is the whole of what "harmony" means here.
+2. ⚠️⚠️ **THE FILL IS A PARAMETER AND § 6.5 SAYS THAT IS HOW SCREENS BECOME ONE SCREEN, SO READ
+   WHY THIS IS THE EXCEPTION.** That rule forbids a fill being the ONLY difference between two
+   ROLES. There is one role here, `Action`, it appears once per screen by construction, and the
+   two fills are both authored: 🧑's green (`UiTheme.MenuGreenFace`, the measured peak of
+   `JOIN BUTTON.png`) and the lobby's brown, which he asked to keep by name (*"i like the size adn
+   color"*, and § 119.10's *"u can also still use the brown color ... start match lowk looks
+   good"*). **Two authored fills, one construction, one per screen.**
+3. **Every primary in the paper front end takes it**: `StartButton` / `PrimaryButton` (lobby),
+   `KEEP AND USE` (maker), `CHOOSE` (picker), `CREATE ACCOUNT` / `SIGN IN` (login), the hub's
+   footer action. ⚠️ **The main menu keeps `WoodCraft` untouched**, which is the scope line § 119
+   draws and the reason `WoodCraft` is not being edited.
+4. **`PaperButton` goes on all of them**, which is the motion. ⚠️ **`GodotButton` already owns the
+   label's position on these nodes** (its own five-unit sink), so `PaperButton` must not write the
+   label offset while a live `GodotButton` is present: two owners of one transform property is
+   § 119.9 row 1 and it has already shipped once.
+
+---
+
+### 121.2 ⚠️⚠️ THE STUCK HOVER, AND IT IS A CACHE KEY WITH ONE FIELD MISSING ✅ CAUSE FOUND
+
+🧑, with a crop of the lobby's mode tabs, one lit brown and one outlined: **"theres brown ink left
+over if i dont hover back to the buttons on top"**, *"i like it but make it so that i dont have to
+hover back to buttons on top to get rid of it"*.
+
+**`PaperSkin.Rebuild` keyed its cache on the rect height and the SURFACE and not on the POSE:**
+
+```
+if (_built > 0.0f && Mathf.Abs(height - _built) < 2.0f && _builtSurface == Surface) return;
+```
+
+`SetPose` clears `_built` to force the repaint, and **`Rebuild` returns without painting and
+without recording anything when the rect reports zero height**, which is every frame the control
+is inactive. A drawer that closes over a hovered chip is exactly that: the pose write is dropped,
+`_pose` still says `Hover`, and the next `OnEnable` repaints from it. **The plate comes back lit,
+on a control nothing is pointing at, and only a fresh enter-and-exit clears it.**
+
+⚠️ **THE SURFACE WAS IN THE KEY AND THE POSE WAS NOT, WHICH IS WHY IT LOOKED LIKE A COLOUR BUG.**
+`PaperKit.MarkLive` swapping `Live` for `Ghost` always repainted, so the tab row's SELECTION was
+never wrong. Only its lighting was, which is why "brown ink left over" is a better description of
+it than anything the code says.
+
+**The fix, and it is two lines plus a guard:**
+
+- `PaperSkin._builtPose` joins the cache key, so a pose written against a zero-height rect is
+  re-applied the moment the rect exists instead of being forgotten.
+- `PaperButton.OnDisable` already resets `_hovered`, `_held`, the scale and the label. **It must
+  also put the SKIN back to `Rest`**, because that method's own header says *"a control that is
+  switched off mid-hover never gets its `OnPointerExit`"* and it was fixing the transform half of
+  that and not the surface half.
+- `PaperButton.OnEnable` re-asserts the pose, so a control that was disabled by something other
+  than a pointer (a tab rebuild, a drawer) cannot come back mid-animation.
+
+---
+
+### 121.2b ⚠️⚠️ THE AMBER FOCUS RING, WHICH HE REJECTED THREE TIMES IN ONE SITTING ON THREE DIFFERENT CONTROLS
+
+🧑, in order: *"orange outline when i hover over start match is ugly"*, then, with a crop of the
+login screen's USERNAME box, **"i dont like the orange outline for a lot of things"**, then the
+question that settles the design rather than the colour: **"why do we even have an orange outline
+when we hover or select stuff"**.
+
+**It is the keyboard and controller focus indicator, and it was doing two jobs badly.**
+
+| What | The measurement | What it becomes |
+|---|---|---|
+| It lit on POINTER HOVER as well as on focus | § 120.1 already gives every paper control an eased hover: the face lifts two units, the object scales 2.5 per cent and the cast shadow grows. **A second, louder hover indicator on top of a hover indicator** is `CLAUDE.md` § 6.2 question 3 answered wrongly. | Hover is the pose. The ring lights for real focus only, which is `game-ui-design`'s `missing-focus-visible` and its controller-navigation pattern, neither of which emits a pointer event. |
+| It was `UiTheme.Amber` | `ffba00` on `Paper` `f4ecdd` is **1.46:1** (`tools/sample_png.js contrast`). **A high-chroma shape carrying almost no value difference from the sheet under it**: it shouts and it does not read, which is the worst pair of properties a focus indicator can have. | `UiTheme.WoodMid`, which measures **9.20:1** on the same sheet and adds no colour that is not already this front end's ink. |
+| It drew a rounded-rect ring around a chamfered slab | Two silhouettes, so the "outline" was a box near a button rather than an edge on one. | Moot on the primary, which is a pill in the same family as everything else now (§ 121.1). |
+
+⚠️⚠️ **IT IS THE SAME INVERSION `PaperCraft.Surface.Live` AND `Surface.Sign` BOTH ALREADY MADE,
+ARRIVING ONE CONTROL LATER.** § 118.4 says *amber is the marker*; that rule was written for a
+WOODEN front end where amber was the one LIGHT thing on a dark screen. **Invert the field and the
+rule inverts with it: on cream the marker is the one DARK thing.** § 119.10 records him rejecting
+that ratio by eye on two other controls before this one.
+
+⚠️ **DELETING THE COMPONENT WAS THE WRONG ANSWER AND IT WAS TEMPTING.** A text field has no pose
+of its own (`Surface.Tray` is a recess in every state), so without a focus mark there is nothing
+at all saying which of two boxes your typing goes into. This is a narrowing, not a removal.
+
+---
+
+### 121.2c The wordmark on the login card: half its own sign was empty brown
+
+🧑: **"improve tump logo integration in lobby too, I like the current setup but it doesnt have
+much impact, especially wiht a brown button thats empty like taht"**.
+
+⚠️⚠️ **THE OLD CODE'S OWN COMMENT IS THE CONFESSION AND NOBODY HAD MULTIPLIED IT OUT.** It read:
+*"at 420 wide less 2 x 26 of inset the mark is 368 wide and about 106 tall, and 120 units of
+plaque less the inset and the six-unit shadow leaves it 62. So the fit is decided by HEIGHT and
+the mark draws about 216 x 62 in the middle of the plaque."* **216 of 420 is 51 per cent.** The
+game's name occupied half of its own sign and the rest was bare wood, which is exactly what he
+photographed.
+
+**A fitter whose box is a different shape from the thing in it always spends the difference as
+margin.** `TUMP.png` is 1835x527 (3.482:1) and the box was 368x62 (5.9:1), so the mark was pinned
+by height and the width ran away. The fix is to size the MARK and derive the plaque from it, so
+the box and the mark are the same shape and the fitter has no slack to spend: **336 units wide
+against 216, a little over half again, bought by deleting empty wood rather than by growing the
+sign.**
+
+⚠️ **The plaque grew 26 units taller, so `Logo` moves up 13 to hold the 36-unit gap under it.**
+That gap is the number he asked for after *"this part looks too tight"* (§ 119.10), and letting it
+close to 23 would have put the identity block back on top of the form block.
+
+---
+
+### 121.3 The lobby, five notes
+
+| # | 🧑's words | The cause | What done looks like |
+|---|---|---|---|
+| 1 | *"these look ugly"*, *"it looks ugly bcz it isnt centered like both of them and theres big empty space"* (the DANTE and SKILLS rows) | **The SKILLS pair is not centred and DANTE is.** `LobbyChrome.BuildSkillsRow` gives the caption a box ending 10 units left of the row's middle and the value a box STARTING at the middle, left-aligned. So the pair spans from `centre - captionWidth - 10` to `centre + valueWidth`: `SKILLS` is about 62 units and `Standard Build` about 130, which puts the pair's own centre **34 units right of the row's**. `BuildCharacterRow` centres `DANTE` properly, so the two rows in one column have two different centre lines. | The caption and the value become ONE centred object (a horizontal group that sizes to its content and centres as a unit), so the pair's centre IS the row's centre and cannot drift when either string changes. ⚠️ The two boxes must still not overlap, which is why they share an edge today; a layout group gives the same guarantee without the arithmetic. |
+| 2 | *"also make everything centered (your tier unranked looks ugly bcz it isnt centered"* | `LobbyChrome.BuildTierPlate` draws all three lines `UpperLeft` / `MiddleLeft` / `LowerLeft` while the fighter column beside it and the mode plate above it are centred. **One plate on the rail is aligned differently from every other.** | All three lines centre. ⚠️ The note wraps to two lines and its box is already measured at 64 units for exactly that (see that method); centring changes the alignment and must not change the height. |
+| 3 | *"orange outline when i hover over start match is ugly"* | `FocusRing` lights on POINTER HOVER as well as on real focus, and it draws `UiMaterials.Ring(Amber)`, a **rounded-rect** outline, around a **chamfered** slab. Two faults: a silhouette that does not follow the control, and an accent spent on hovering. Amber on `Paper` measures **1.46:1** (`sample_png.js contrast ffba00 f4ecdd`), which is under even the 1.7 § 119.10 records him rejecting by eye. | The ring stops reacting to the pointer and lights only for keyboard and controller focus, which is what `game-ui-design`'s `missing-focus-visible` actually asks for; hover is already said by the pose (§ 121.1 item 4). ⚠️ **The input fields keep their ring**, because a focused text field has no other state and that is the one place the amber outline reads well in his own screenshot. |
+| 4 | **"Taya first is ugly and unreadable, too much empty space too"**, *"maybe tighten its box and add outline to Taya first or smth (its okay if player you and taya first boxes doesnt match), js keep everything centered still"*, and **"ALSO i want taya first to be ABOVE the player you, instead of it being button"** | `LobbyNameplates` draws TAYA FIRST as a full-width bar UNDER the name plate, in the same family as a pressable chip. **It is a badge and it is drawn as a button**, which is `CLAUDE.md` § 6.3's *"one that does nothing must not look pressable"* the wrong way round, and it is below the thing it qualifies. | The badge moves ABOVE the plate, sizes to its own lettering rather than to the plate's width, gets a keyline so it reads as a stamp rather than a slab, and keeps its text centred. ⚠️ **It stops sharing the plate's width on purpose and he said so**: *"its okay if player you and taya first boxes doesnt match"*. |
+| 5 | **"chat doesnt work at all btw"**, with the drawer open, an empty log and a live `Say something` field | ⚠️ **NOT DIAGNOSED YET AND IT MUST NOT BE GUESSED AT.** § 79.3 has had *"THE LOBBY CHAT STRIP SHOWS NOTHING"* open since 2026-08-29 and this is either that or a second fault on top of it. `LobbyChat.Submit` routes to `MatchRpc.Instance.SendChatServerRpc`, so the first question is whether `MatchRpc.Instance` is non-null in a lobby that has auto-hosted, and the second is whether anything writes the local line when it is null. **Reproduce it in the running player first**, single machine, then hosted. |
+
+---
+
+⚠️⚠️ **AND THE CHAT IS TWO SEPARATE COMPLAINTS, WHICH IS WHY IT IS NOT ONE ROW.** Besides
+**"chat doesnt work at all btw"** he sent, of the same drawer, **"also chat is awkwardly placed,
+it looks very ugly"**. One is a function that does not run and one is a composition; fixing either
+does not touch the other, and shipping the second without the first would be a beautiful drawer
+that still does nothing. **Reproduce the function fault in the running player first**, because
+§ 79.3 has had *"THE LOBBY CHAT STRIP SHOWS NOTHING"* open since 2026-08-29 and this is either
+that entry or a second fault standing on it. His crop shows the well empty and the `Say something`
+field live, which is the same picture § 79.3 describes.
+
+⚠️ **The placement half has a measurement already**: § 118.1 row 1 records the well as *"about 70
+units tall to hold one 18-unit line, and the line sits at its BOTTOM because lines fill upward, so
+two thirds of it is empty by construction"*. That was written before the drawer existed and the
+arithmetic survived the move into it.
+
+---
+
+### 121.4 The login screen, two notes, and the first is not what it looks like
+
+- **"sign in isnt centered"**, with a crop of the two tabs. ⚠️⚠️ **MEASURED ON `SignIn-v56.png`
+  AND IT IS CENTRED THERE, WHICH MEANS THE MEASUREMENT HAS TO BE RETAKEN ON THE BUILD HE IS
+  ACTUALLY LOOKING AT.** The pill spans x 176 to 365 (centre **270.5**) and the lettering's ink
+  spans 242 to 300 (centre **271**): half a pixel. **But v56 predates § 120.3**, which moved
+  `SignInScreen.SetTab` onto `PaperKit.MarkLive` and therefore changed the idle tab from `Token`
+  to `Ghost` and the live one to `Live` at a different height (`LiveTabHeight` 60 against
+  `IdleTabHeight` 52). His crop shows the `Live`/`Ghost` pair, so it is the newer geometry.
+  **The first action is a fresh shot at `v61` and the same two scans**, not a fix.
+  ⚠️ `PaperKit.CentreOnFace` is the likely suspect and § 120.2 is the receipt for why: two
+  correction sites that move a label six units in opposite directions already shipped once on
+  BACK, and a `Live` surface has a `Drop` a `Ghost` does not.
+- **"ugly ass empty space here"**, *"cant u js use the left side as space like"*, **"like use this
+  whole space for login"**, with the card cropped and then a second crop of the card enlarged into
+  the space beside it. The card is **557 units wide against a 1920-unit canvas**, sitting at
+  `CardMargin` 96 from the left edge, and § 120.6 has just sized its HEIGHT to its content while
+  leaving its WIDTH at `ColumnUnits` 560. So the form is a narrow strip with the cast beside it,
+  and inside the strip the pitch between blocks is 120 units, which is where the vertical holes he
+  is pointing at come from.
+  ⚠️⚠️ **THIS REVERSES § 100 AND THE REVERSAL IS HIS, SO READ § 100 BEFORE TOUCHING IT.** That
+  entry cut the column from 38 per cent of the window to 580 units *"which is the form plus one
+  margin either side"*, because 860 units of wood around a 420-unit form was swallowing the key
+  art. **The answer is not to stretch the form back out to 1200**, which is § 94.7 fault 6 exactly
+  (the widest control becomes the loudest thing on the screen). It is to give the wider card
+  something to PUT there: the wordmark and one line of purpose on one side, the tabs, the two
+  fields and the primary on the other, so the space is filled by content rather than by a
+  stretched text box.
+  ⚠️ **And the key art must be re-fitted in the same commit.** § 6.2c question 2: the picture's
+  frame ends where the opaque thing starts, and `BuildKeyArt` currently envelopes the WHOLE canvas
+  on the argument that the card floats over it. A card that takes half the screen makes that
+  argument false again, which is the exact fault § 100 recorded as *"the art is cut off"*.
+
+---
+
+### 121.5 The character select, three notes, and one of them is the blue arrows
+
+- **"these buttons look ugly"** (the `HERO` / `LATA` / `TSINELAS` / `MAKE YOUR OWN` row). Three
+  surfaces in one rail: `HERO` is a `Live` pill, `LATA` and `TSINELAS` are `Ghost` outlines, and
+  `MAKE YOUR OWN` is a filled `Token` with no outline, at a smaller type size because it is the
+  longest string and `MenuKit.Fit` shrank it. **Four controls that do the same kind of thing must
+  look the same** (§ 117's whole complaint), and the fourth is not even the same KIND: it is a
+  door out of this screen sitting in a row of tabs within it.
+- **"this looks ugly"**, *"i think it can be improved by using diff background"*, **"this used to
+  be amazing when it was brown only and the background corresponded to their color"**, then, of
+  the version that does tint: *"yea see this doesnt look great"* (NEMU, whose wash is purple).
+  ⚠️⚠️ **BOTH NOTES ARE TRUE AND THEY ARE THE WHOLE COLOUR PROBLEM ON THIS SCREEN.** He wants the
+  backdrop to respond to the character; he does not want the character's own hue painted across a
+  cream sheet, because six heroes' colours include a purple and a magenta and **the front end has
+  four hues in it on purpose** (§ 119.1, § 118.4: *"do not add a fifth hue"*). The resolution has
+  to be a treatment that varies by character WITHOUT importing an arbitrary hue: vary the
+  backdrop's VALUE and its warmth within the paper family and let the character's colour appear as
+  a low, contained glow behind the model rather than as a full-screen wash. **Value is an ordering
+  tool and hue is the last one**, which is the same inversion § 119.10 records for amber.
+- ⚠️⚠️ **THE ARROWS ARE BLUE AND THEY ARE NOW ON A CREAM SCREEN, WHICH IS THE CONTEXT § 120.7
+  SAID TO LOOK AT.** Measured on `Assets/TumbangPreso/Art/ui/host-game/Arrow Left 64.png` (which
+  is 27x39, not 64x64): of the opaque pixels, about **70 per cent `ffffff`** and about **30 per
+  cent the `80bad9` family, hue 201 at 41 per cent saturation.** Against a field at hue 39 they
+  are the only cool object in the front end, and they sit beside `DANTE` in his own green.
+  **Both of his rules still disagree and § 120.7 is still right that only he settles it, but there
+  is now a third option that was not on the table then**: the same decision the lobby already made
+  twice, which is to stop DRAWING one of his files on the paper screens while leaving the file,
+  the main menu and every other use of it untouched. A warm arrow drawn from his measured
+  silhouette is not a repaint of his art; it is the treatment `ConfigPanel` and `MAP MODE DISPLAY`
+  already got in § 120.4. ⚠️ **Do not runtime-tint the PNG**, which § 120.7 rules out by name and
+  which would multiply his white down to tan and his blue to mud.
+
+---
+
+### 121.6 The player hub, which is § 120.7's own open item and the largest piece
+
+⚠️ **THIS IS NOT ONE OF HIS NOTES. It is what § 120.7 named as unfinished** and what § 119.5
+planned from the start: *"an ID card with a tab COLUMN rather than a tab row ... six tabs across a
+header is the row that made § 92 unreadable"*.
+
+Measured off `LobbyAccount-v56.png`, and the shape of it survives § 120's repaint: six 168-unit
+tabs run across the screen at y = -182, the list starts 232 units below the top, and **on the
+PROFILE tab of a fresh account the bottom 45 per cent of the screen is bare cream**. That is
+§ 6.2's *"big ass empty sopace"* on the one screen in the game that is entirely about the player.
+
+**What done looks like:**
+
+1. **The navigation becomes a column down the left**, inside an ID card that carries the handle,
+   the account state and the XP block above it. One object: who you are, where you can go.
+2. **The content region takes the rest** and gets a page of its own, so an empty tab reads as a
+   page with room on it rather than as a screen with a hole. ⚠️ Narrowing the list also pulls
+   `UiRows.ValueColumn` in with it, which shortens the label-to-value journey § 94.7 fault 1
+   measured at 1600 px; the value column must stay above 368 units at the narrowest shape, which
+   is the number `UiRows.Cap` records and the reason every control in that file is under it.
+3. **Every empty state is designed rather than left short**: a fresh career, an empty match
+   history, no friends, and a guest account.
+4. ⚠️⚠️ **NOTHING IS LOST.** § 119.3's inventory for the hub is CLOSE, six tabs, the footer
+   action, the detail view and its BACK, and every `UiRows` row inside all six. The detail popup
+   in particular exists because deleting `ProfileOverlay` would otherwise have deleted a shipped
+   feature (§ 92.4), and a redesign that quietly loses a screen is a regression wearing a better
+   layout.
+5. **`PlayerHubLayoutProbe` presses tabs by their lettering**, so the labels may not change, and
+   it drives nine resolutions, so nothing here may be a hand-written offset that is correct at one
+   of them.
+
+---
+
+### 121.7 What this pass must NOT do
+
+- ⚠️ **Not the main menu and not the in-match HUD.** Scoped out three times now (§ 118.4, § 119,
+  and *"except for main menu and actual game for now"*).
+- ⚠️ **Not `WoodCraft`.** It draws the main menu and the match. § 121.1 adds a surface to
+  `PaperCraft` instead, which is the file that owns the paper front end.
+- ⚠️ **Not a fifth hue, and no blue, navy or cold grey in any layer.** § 6.4. The measurement in
+  § 121.1 is that rule applied to a shadow nobody had thought to sample.
+- ⚠️ **Not a re-baseline of `CarryTests`.** § 93, § 117.8, § 118.4, § 120.9. It is unrelated
+  gameplay work and it is red for a reason that is written down three times.
+- ⚠️ **Not a chase of `146/146`.** § 120.9 classifies the open PlayMode failures and two of them
+  are a documented design conflict rather than a defect; § 121.8 is where that decision gets made
+  on evidence rather than on the assertion's say-so.
+
+---
+
+### 121.8 The 16-unit caption question, which § 120.9 left open on purpose
+
+`PaperKit.Caption` is **16** and `MenuKit.MinReadableUnits` is **18**, `PaperKit`'s header states
+the conflict as a deliberate decision, and two probes encode the floor as an assertion that cannot
+see the argument.
+
+⚠️⚠️ **IT IS SETTLED BY LOOKING AT THE RUNNING BUILD AND NOT BY EITHER FILE WINNING ON PAPER.**
+The measurable half is contrast, and it is already good: `PaperInkSoft` on `Paper` is **5.21:1**
+and `PaperInk` on `Paper` is **12.34:1** (`sample_png.js contrast`). The unmeasurable half is
+whether 16 units is legible at the size he plays at, and the answer differs per screen: a caption
+under a `Title` value is a restatement, and a caption that is the ONLY place a fact appears is
+not. **Walk every screen that uses one** (sign in, the queue card, the hub, match settings, the
+picker, the maker, the lobby drawers) and split them into those two groups before changing a
+constant, because raising the constant grows every caption in the front end by an eighth and
+`MenuKit.Fit` cannot rescue an overflow below the same floor.
+
+---
+
+### 121.10 ⚠️⚠️ WHAT THE RENDERS CHANGED, AND THREE OF THESE REVERSED A DECISION TAKEN ONE RENDER EARLIER
+
+**This is the section to read before trusting anything above it**, because the plan in § 121.1 to
+§ 121.6 was written from crops and four of its calls were wrong in a way only a fresh picture
+could show. `CLAUDE.md` § 6.5's closing line, *"take the picture, then take it again"*, is the
+whole of this pass.
+
+| # | What the plan said | What the render said | What it is now |
+|---|---|---|---|
+| 1 | The primary's chamfer is the odd one out, so make it a pill | ⚠️⚠️ **THE CHAMFER WAS NEVER THE FAULT.** `Logs/crops/start-cap-v61.png` at 6x: **two objects stacked** — a new `Action` pill on the node's own Image and 🧑's chamfered `Artwork` child drawing straight over it. That is what he photographed as *"its a circle and a sharp shape at the same time"*, and it is what "rounded shit next to square shit" meant on the maker's footer too. | The child graphics go (`PaperKit.MakeAction`) and the surface is **chamfered again**, on his instruction after seeing both: **"i kinda preferred the sharper edges on this, i js wanted u to make it mroe 3d"**. `CLAUDE.md` § 6.5 is back the right way up: one chamfer per screen, and it is the one action. |
+| 2 | Give the primary depth | *"this still looks ugly, especially the shadow"*, *"it feells so flat"* | The face ramp went from a 34-point value spread to **54**, the wall from 16 per cent of the face to **22**, and the cast shadow from a squared falloff over ten units to a **cubed** one: two thirds of the alpha inside the first third of the drop. A blur became a contact shadow. |
+| 3 | `Ghost` is the right idle for a tab | ⚠️⚠️ **A TAB ROW WAS TWO SILHOUETTES.** `Logs/crops/picker-tabs-v61.png`: `HERO` a pill, `LATA` and `TSINELAS` 18-unit rounded rectangles, `MAKE YOUR OWN` a pill. `PaperCraft.Surface.Live`'s own note forbids exactly this in writing (*"Same pill ... Giving the selected tab its own shape would say 'these two controls are different KINDS of thing'"*) and nobody had checked it from the idle side. | `PaperKit.MarkLive`'s default idle is `Token`. ⚠️ **AND THERE IS A SECOND DECIDER**: `PaperDress.ButtonSkin` maps `WoodTabIdleButton` to a surface as well, and it runs AFTER `PlayerHub.Highlight` on every tab press, so the hub's column stayed `Ghost` while the picker's row changed. **Both had to say `Token`.** |
+| 4 | One size for every cell in the picker's tab rail | 22 units **overflowed** `TSINELAS` and `MAKE YOUR OWN` past their own pills. The three tabs get about 124 units of cell from the `HorizontalLayoutGroup` and the door about 187; `MenuKit.WoodButton` fits its label to the size it is HANDED, which is the 180 and 300 passed in and discarded a frame later. | The size comes down and every cell is re-fitted against the rect the layout group actually gave it, which is the two-step `BuildCustomDoor` already documented and the other three cells never did. |
+| 5 | The hub's identity block is a fixed height | On a fresh account it drew a name, a sentence, a rule and then **79 units of nothing**, because the XP guards empty the words and the space was still reserved. 🧑: **"thhis looks really good just tighten it, i dont want huge empty space"** | The block has two heights and `RefreshHeader` picks, and the card is content-height rather than full height. |
+| 6 | (not planned) | `LobbyAccount-v61.png`: the account line reads `PLAYING ON THIS MACHINE ONLY · no` and stops. A 44-unit box, a 46-character sentence at 18 units in a 368-unit rail, and `verticalOverflow = Truncate` **drops whole lines in silence**. | Three lines. ⚠️ Truncate is still right; the fix for a truncation is a box that fits the sentence, not a box that lets it escape. |
+
+⚠️ **`tools/sample_png.js` GREW A `crop` MODE FOR THIS AND IT IS WHY ROW 1 WAS FOUND AT ALL.** A
+1920x1080 render shown at chat size draws a 500-unit control's keyline about one pixel wide; the
+stacked silhouette was invisible in the full frame and unmistakable at 6x. **`CLAUDE.md` § 6.1
+says show, do not describe, and a picture too small to read is a description.**
+
+---
+
+### 121.11 What is NOT done, named rather than left implied
+
+⚠️ **EVERY ITEM HERE IS ONE HE RAISED, SO NONE OF THEM IS A NICE-TO-HAVE.** They are open because
+they need either a decision only he can make or a reproduction that batch mode cannot produce.
+
+- ⚠️⚠️ **THE CHAT DOES NOT WORK AND IT IS NOT DIAGNOSED.** 🧑: **"chat doesnt work at all btw"**,
+  and separately **"also chat is awkwardly placed, it looks very ugly"**, and
+  **"can u figure out where to put chat and hwo to make it work bcz it s lowkey ugly"**. Read this
+  far and no further, because the reading is not finished: `LobbyChat.Submit` is wired to
+  `InputField.onSubmit`, and on a lobby with no peer `MatchRpc.SendChatServerRpc` returns false and
+  `AddLocal` is supposed to push *"Not connected. That line was not sent."* onto the log. **His
+  screenshot shows an empty log**, so either the submit never fires or the push never draws, and
+  those are different bugs in different files. ⚠️ **The host path has its own echo**
+  (`HostRelayChat` ends with `OnChatLine?.Invoke`, because `SendNamedMessageToAll` loops back and
+  `OnChatLineMsg` refuses the host), so "the sender never sees its own line" is ruled out for a
+  host and NOT for a client. **Reproduce it in the player before writing anything**, and a probe
+  that types into the field and photographs the result is the cheapest way to make it repeatable.
+- ⚠️ **THE LOGIN CARD STILL DOES NOT USE THE SPACE.** § 121.4 has the measurement and the three
+  quotes. It is unstarted rather than half-done, deliberately: § 100 is a whole pass spent undoing
+  a guess about this exact rectangle, and the two readings of *"use this whole space"* (a wider
+  floating card, or a full-height panel bled off the left edge) produce different screens and
+  different key-art crops.
+- ⚠️ **THE PICKER'S BACKDROP DOES NOT RESPOND TO THE CHARACTER.** § 121.5 has both of his notes and
+  they pull against each other: *"this used to be amazing when it was brown only and the
+  background corresponded to their color"* and, of the version that tints, *"yea see this doesnt
+  look great"*. The resolution written there (vary VALUE inside the paper family and let the hero
+  colour in only at low chroma) is a design, not a change.
+- ⚠️ **THE ARROWS ARE STILL BLUE**, and § 121.5 has the fresh measurement: about 30 per cent of
+  their opaque pixels are hue 201 at 41 per cent saturation, on a field at hue 39. **Both of his
+  rules still disagree** and § 120.7 is still right that only he settles it; what is new is a
+  third option that does not repaint the file.
+- **TAYA FIRST is above the plate and centred and is still the plate's width.** He asked for the
+  box to be tightened to its own lettering and said the two boxes need not match; that half is
+  done in position and not in size.
+- **The 16-unit caption question (§ 121.8) is answered on one control and not as a policy.** The
+  lobby's SKILLS row is one size now because he named it (*"these diff fonts look ugly"*); every
+  other `PaperKit.Caption` in the front end is untouched and `PlayerHubLayoutProbe` and
+  `QueueCardLayoutProbe` still fail on the sign-in screen's and the queue card's.
+- **The hub is photographed on a FRESH account only.** § 121.9 asks for a populated one and for
+  the long-name state; the long name is shot and the populated career is not, because a probe
+  cannot mint a career without writing one.
+- **No non-host client pass.** Every shot in this pass is a host that auto-hosted on load.
+
+---
+
+### 121.9 Acceptance
+
+- Every screen re-shot at `v61` and a person looks at the picture. ⚠️ `UiRuntimeShots.ShotVersion`
+  bumps once per iteration, not once per pass.
+- **The hub gets shots it has never had**: all six tabs, on a FRESH account and on a populated
+  one, plus a long display name.
+- `PaperPurityProbe`, `LobbyStyleProbe`, `PlayerHubLayoutProbe`, `UiClickProbe` and
+  `AspectRatioProbes` green; Core, EditMode and `Checks.RunAll` green.
+- ⚠️ **The five failures § 120.9 names are re-classified against a run rather than inherited**,
+  and the splash-shader one gets the confirmation against `9c85c2f` that § 120.9 says it never
+  got.
+- A clean Windows player on the Desktop, built after every gate above.
+
+---
+
 ## 120 · The buttons get a thickness, and the four screens § 119.11 left get finished ⚠️⚠️ 2026-09-02, branch `ui-redesign`
 
 🧑, on the v56 build: **"REWORK THE BUTTONS so that it feels great to click and isnt flat"**,
