@@ -421,6 +421,77 @@ namespace TumbangPreso.UI
 
                 foreach (var action in group.Actions) BuildRebindRow(list, action);
             }
+
+            BuildTouchLayoutRows(list);
+        }
+
+        /// <summary>
+        /// The door into the touch customiser, and the escape from a layout somebody has broken.
+        ///
+        /// ⚠️⚠️ THIS IS THE VISIBLE DOOR `CLAUDE.md` § 6.3 DEMANDS, AND WITHOUT IT THE CUSTOMISER
+        /// IS `docs/TODO.md` § 96 ALL OVER AGAIN: a whole screen reachable only by somebody who
+        /// already knows it exists. The hub's one door was *"a corner chip stating a name and a
+        /// level"* and the person who commissioned it never found it. A labelled row in the
+        /// controls list, in the same place every other control lives, is where a player looking
+        /// for controls will look.
+        ///
+        /// ⚠️⚠️ AND `RESET TOUCH LAYOUT` IS ON THIS SCREEN RATHER THAN ONLY ON THE CUSTOMISER,
+        /// BECAUSE THE CUSTOMISER IS WHERE YOU BREAK IT. A player who drags THROW half off the
+        /// screen and closes the screen has no control to press and no obvious way back;
+        /// `TouchHud.ClampIntoCanvas` stops the worst of it, but the recovery has to exist
+        /// somewhere that does not depend on the layer being usable. § 6.3: a dead end is a bug.
+        ///
+        /// ⚠️ THE ROWS ARE HERE ON EVERY PLATFORM, not hidden behind a touch check. A desktop
+        /// player on a 2-in-1 has a touchscreen, and `TouchLayoutScreen.Open` forces the layer on
+        /// so the screen is usable with a mouse. A row that appears only on Android is a row
+        /// nobody can test on the machine this game is built on.
+        /// </summary>
+        private void BuildTouchLayoutRows(Transform list)
+        {
+            BuildGroupHeading(list, "TOUCH CONTROLS");
+
+            BuildActionRow(list, "TouchLayoutRow", "On-screen controls", "CUSTOMISE",
+                           () => InputLayer.TouchLayoutScreen.Open());
+
+            BuildActionRow(list, "TouchResetRow", "Reset on-screen layout", "RESET",
+                           () =>
+                           {
+                               InputLayer.TouchLayoutStore.ResetAll();
+                               SetText("SettingsStatusLabel",
+                                       "On-screen controls are back to the default layout.");
+                           });
+        }
+
+        /// <summary>A label and one button, in the same shape as a rebind row.</summary>
+        private void BuildActionRow(Transform list, string name, string label, string button,
+                                    System.Action onClick)
+        {
+            var rowGo = new GameObject(name);
+            rowGo.AddComponent<RectTransform>();
+            rowGo.transform.SetParent(list, false);
+
+            var row = rowGo.AddComponent<HorizontalLayoutGroup>();
+            row.childControlHeight = true;
+            row.childControlWidth = true;
+            row.childForceExpandHeight = false;
+            row.childForceExpandWidth = false;
+            row.childAlignment = TextAnchor.MiddleLeft;
+            row.spacing = 0.0f;
+
+            var text = MenuKit.Styled(rowGo.transform, "MenuBody", label, TextAnchor.MiddleLeft);
+            text.raycastTarget = false;
+
+            var labelElement = text.gameObject.AddComponent<LayoutElement>();
+            labelElement.preferredWidth = ActionLabelWidth;
+            labelElement.minHeight = BindingControlSize.y;
+
+            var control = MenuKit.WoodButton(rowGo.transform, button, Vector2.zero, Vector2.zero,
+                                             BindingControlSize, onClick, "Button");
+
+            var buttonElement = control.gameObject.AddComponent<LayoutElement>();
+            buttonElement.preferredWidth = BindingControlSize.x;
+            buttonElement.preferredHeight = BindingControlSize.y;
+            buttonElement.flexibleWidth = 1.0f;
         }
 
         /// <summary>

@@ -575,6 +575,15 @@ namespace TumbangPreso.UI
             AspectSafeCanvas.Apply(scaler);
             canvasGo.AddComponent<GraphicRaycaster>();
 
+            // ⚠️⚠️ THIS CANVAS IS BUILT BY HAND RATHER THAN BY `MenuKit.BuildCanvas`, ON PURPOSE:
+            // it parents itself under `Hud.CleanFeedRoot` so the clean feed takes it, and
+            // `BuildCanvas` DETACHES a canvas whose parent is inside another one. So it opts into
+            // the two things the kit would otherwise have given it. `InputSurfaceCheck` is what
+            // noticed the gap, and it is the end-of-match board: the one screen every player
+            // reaches, with REMATCH and LEAVE on it and no way for a pad to press either.
+            InputLayer.UiInputModule.Ensure();
+            InputLayer.ScreenFocus.Install(canvasGo);
+
             // ⚠️ THE BACKDROP IS THE INK NAVY AT 0.72, NOT BLACK AT 0.55. `MatchResult.tscn`
             // authors `Color(0.015686, 0.031373, 0.219608, 0.72)`, the same colour the
             // intermission card dims with. Black at half strength leaves the lit arena reading

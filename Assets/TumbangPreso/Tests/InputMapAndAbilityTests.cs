@@ -82,6 +82,21 @@ namespace TumbangPreso.Tests
             foreach (var action in map.actions)
             {
                 if (action.name == "Move" && (listed.Contains("MoveForward") || listed.Contains("Move"))) continue;
+
+                // ⚠️⚠️ `Look` IS THE PAD'S RIGHT STICK AND HAS NO REBIND ROW BY DESIGN, WHICH IS
+                // THE SAME EXEMPTION `Move` TAKES ONE LINE UP AND FOR A STRONGER REASON. A rebind
+                // row captures ONE control and shows its name; a stick is a two-axis Value
+                // action, so the row would either capture one axis of it (leaving the other
+                // silently bound to the old stick) or display `2DVECTOR(MODE:2)`, which is
+                // literally the string `docs/TODO.md` § 18 records the tutorial teaching before
+                // `Hud.CompositeLabel` was written. 🧑: *"wtf is 2d vector modee?"*.
+                //
+                // ⚠️ THE SENSITIVITY SLIDER IS THE SETTING THAT COVERS IT. `CameraRig` scales all
+                // three devices through `MouseSensitivity`, so the thing a player actually wants
+                // to change about looking already has a row. Rebinding WHICH stick looks is not a
+                // request anybody has made, and it is why this is an exemption rather than a gap.
+                if (action.name == "Look") continue;
+
                 if (!listed.Contains(action.name)) orphans.Add(action.name);
             }
 

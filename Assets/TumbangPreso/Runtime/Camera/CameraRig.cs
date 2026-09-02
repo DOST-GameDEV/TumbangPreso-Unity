@@ -685,12 +685,7 @@ namespace TumbangPreso.CameraSystem
             if (_aimSource != AimSource.Mouse) return;
             if (UI.EmoteWheel.AnyOpen) return;
 
-            var s = Settings.SettingsStore.Current;
-            float sens = BaseSensitivity * s.MouseSensitivity;
-
-            float dx = Input.GetAxisRaw("Mouse X") * sens;
-            float dy = Input.GetAxisRaw("Mouse Y") * sens;
-            if (s.InvertY) dy = -dy;
+            LookThisFrame(out float dx, out float dy);
 
             if (Mathf.Abs(dx) > 0.0001f && companion != null)
                 companion.transform.Rotate(Vector3.up, dx * 10.0f, Space.World);
@@ -730,6 +725,40 @@ namespace TumbangPreso.CameraSystem
             transform.SetPositionAndRotation(wanted, rot);
         }
 
+        /// <summary>
+        /// This frame's look, already scaled by the player's sensitivity and invert-Y.
+        ///
+        /// ⚠️⚠️ IT ASKS THE INTENT RATHER THAN THE HARDWARE, AND THAT IS THE WHOLE GAMEPAD AND
+        /// TOUCH FIX. All three look methods in this file used to call
+        /// `Input.GetAxisRaw("Mouse X")` themselves, which made the camera the SECOND place in
+        /// the game that reads a device. `PlayerInputReader`'s class note says there is exactly
+        /// one, and the cost of the exception was that a pad's right stick and a phone's drag had
+        /// nowhere to arrive: supporting them here would have meant a fourth and fifth hardware
+        /// read, each carrying its own copy of the deadzone, the response curve and this
+        /// invert-Y line. `PlayerInputReader.ReadLookDelta` sums the three devices into
+        /// `Intent.LookDelta` and every rig in the game reads that one number.
+        ///
+        /// ⚠️ THE SENSITIVITY AND THE INVERT STAY HERE, deliberately. They are a VIEW
+        /// preference, not a device fact, and applying them at the producer would scale a bot's
+        /// zero by a slider and make the setting mean something different per device.
+        ///
+        /// ⚠️ THE SETTING IS STILL CALLED `MouseSensitivity` AND IS NOW READ BY THREE DEVICES.
+        /// Renaming it would move a `PlayerPrefs` key and silently reset every player's
+        /// sensitivity to the default, which is a worse trade than a stale field name. The
+        /// settings panel labels the row, and the label is what a player reads.
+        /// </summary>
+        private void LookThisFrame(out float dx, out float dy)
+        {
+            var s = Settings.SettingsStore.Current;
+            float sens = BaseSensitivity * s.MouseSensitivity;
+
+            Vector2 look = _character != null ? _character.Intent.LookAxis : Vector2.zero;
+
+            dx = look.x * sens;
+            dy = look.y * sens;
+            if (s.InvertY) dy = -dy;
+        }
+
         private void StepLook()
         {
             if (_aimSource != AimSource.Mouse) return;
@@ -741,12 +770,7 @@ namespace TumbangPreso.CameraSystem
             // `_unhandled_input`; Unity has no such ordering, so it is an explicit check.
             if (UI.EmoteWheel.AnyOpen) return;
 
-            var s = Settings.SettingsStore.Current;
-            float sens = BaseSensitivity * s.MouseSensitivity;
-
-            float dx = Input.GetAxisRaw("Mouse X") * sens;
-            float dy = Input.GetAxisRaw("Mouse Y") * sens;
-            if (s.InvertY) dy = -dy;
+            LookThisFrame(out float dx, out float dy);
 
             // ⚠️ YAW GOES ON THE BODY, PITCH STAYS ON THE RIG. The body turning is what makes
             // a throw leave along the sight line; a rig that yawed on its own would let the
@@ -1280,12 +1304,7 @@ namespace TumbangPreso.CameraSystem
             if (_character.Intent.Parked) return;
             if (UI.EmoteWheel.AnyOpen) return;
 
-            var s = Settings.SettingsStore.Current;
-            float sens = BaseSensitivity * s.MouseSensitivity;
-
-            float dx = Input.GetAxisRaw("Mouse X") * sens;
-            float dy = Input.GetAxisRaw("Mouse Y") * sens;
-            if (s.InvertY) dy = -dy;
+            LookThisFrame(out float dx, out float dy);
 
             _emoteYawDeg += dx * 10.0f;
             _emotePitchDeg = Mathf.Clamp(_emotePitchDeg - dy * 10.0f,

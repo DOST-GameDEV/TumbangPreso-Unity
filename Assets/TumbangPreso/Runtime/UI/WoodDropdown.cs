@@ -287,6 +287,16 @@ namespace TumbangPreso.UI
             _listCanvas.sortingOrder = HostSortingOrder(_list) + PopupLift;
             _list.AddComponent<GraphicRaycaster>();
 
+            // ⚠️⚠️ AN OPEN DROPDOWN IS A SCREEN INSIDE A SCREEN, AND WITHOUT ITS OWN FOCUS PATH A
+            // PAD WALKS STRAIGHT OUT OF IT. The popup is a child of whatever opened it, so the
+            // outer `ScreenFocus` would sweep these option rows into the settings list behind
+            // them and pressing DOWN on the last option would land on a row the player cannot
+            // see. `ScreenFocus.Owns` gives the innermost one the controls, and because
+            // `AdoptSelection` never steals a selection that is already inside itself, the popup
+            // keeps focus while it is open with no modal stack to maintain.
+            InputLayer.UiInputModule.Ensure();
+            InputLayer.ScreenFocus.Install(_list);
+
             var column = new GameObject("Column", typeof(RectTransform));
             column.transform.SetParent(_list.transform, false);
             MenuKit.Stretch((RectTransform)column.transform, -6.0f);

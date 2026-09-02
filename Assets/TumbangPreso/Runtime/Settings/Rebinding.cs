@@ -273,8 +273,78 @@ namespace TumbangPreso.Settings
         }
 
         /// <summary>
+        /// Every binding index that belongs to <paramref name="actionName"/>, across all devices.
+        ///
+        /// ⚠️⚠️ THIS EXISTS BECAUSE `ResolveActionAndBindingIndex` RETURNS THE FIRST BINDING AND
+        /// AN ACTION NOW HAS SEVERAL. Before the gamepad pass every action held exactly one
+        /// control, so "the first binding" and "the binding" were the same sentence, and
+        /// `FindDuplicateBindings` was written against that. With a pad binding added beside each
+        /// keyboard one, the first-binding version checked the keyboard half and **silently
+        /// stopped checking the half that had just been added**, which is the one class of
+        /// failure this file's own class note says nobody notices.
+        ///
+        /// ⚠️ A COMPOSITE PART BELONGS TO ITS OWN DIRECTION, NOT TO THE WHOLE COMPOSITE. Asking
+        /// for MoveForward's bindings must not return MoveBackward's key, and it must not return
+        /// the pad's `leftStick` either: the stick is a plain binding on `Move` that no discrete
+        /// direction owns, so it is correctly nobody's and correctly never clashes.
+        /// </summary>
+        public static List<int> ResolveBindingIndices(InputActionAsset asset, string actionName,
+                                                      out InputAction action)
+        {
+            var found = new List<int>();
+            action = null;
+            if (asset == null || string.IsNullOrEmpty(actionName)) return found;
+
+            bool isMovePart = actionName == "MoveForward" || actionName == "MoveBackward"
+                              || actionName == "MoveLeft" || actionName == "MoveRight";
+
+            if (isMovePart)
+            {
+                action = Find(asset, "Move");
+                if (action == null) return found;
+
+                string part = actionName == "MoveForward" ? "up" :
+                              actionName == "MoveBackward" ? "down" :
+                              actionName == "MoveLeft" ? "left" : "right";
+
+                for (int i = 0; i < action.bindings.Count; i++)
+                {
+                    var b = action.bindings[i];
+                    if (b.isPartOfComposite
+                        && string.Equals(b.name, part, System.StringComparison.OrdinalIgnoreCase))
+                        found.Add(i);
+                }
+
+                return found;
+            }
+
+            action = Find(asset, actionName);
+            if (action == null) return found;
+
+            for (int i = 0; i < action.bindings.Count; i++)
+            {
+                var b = action.bindings[i];
+                if (b.isComposite || b.isPartOfComposite) continue;
+                if (string.IsNullOrEmpty(b.effectivePath)) continue;
+
+                found.Add(i);
+            }
+
+            return found;
+        }
+
+        /// <summary>
         /// Every control bound twice across two different actions, as "path: ActionA, ActionB".
         /// Empty means the map is clean.
+        ///
+        /// ⚠️⚠️ THE UNIT OF THE RULE IS A CONTROL PATH, WHICH ALREADY CARRIES THE DEVICE, SO A
+        /// KEYBOARD KEY AND A PAD BUTTON CAN NEVER COLLIDE WITH EACH OTHER. `&lt;Keyboard&gt;/f`
+        /// and `&lt;Gamepad&gt;/buttonNorth` are different strings, and no press produces both.
+        /// That is the honest reading of `CLAUDE.md` § 4's *"one control, one action, per
+        /// CONTEXT"*: what the rule forbids is two actions firing off ONE press, and the device
+        /// is part of what a press is. **The rule is therefore now checked per device and per
+        /// context at once, with no new concept**, which is the same narrowing
+        /// <see cref="SpectatorContext"/> records rather than a second exception beside it.
         /// </summary>
         public static List<string> FindDuplicateBindings(InputActionAsset asset)
         {
@@ -284,17 +354,19 @@ namespace TumbangPreso.Settings
 
             foreach (string action in RebindableActions)
             {
-                if (!ResolveActionAndBindingIndex(asset, action, out var a, out int bindingIndex))
-                    continue;
+                var indices = ResolveBindingIndices(asset, action, out var a);
+                if (a == null) continue;
 
-                var b = a.bindings[bindingIndex];
-                string path = b.effectivePath;
-                if (string.IsNullOrEmpty(path)) continue;
+                foreach (int index in indices)
+                {
+                    string path = a.bindings[index].effectivePath;
+                    if (string.IsNullOrEmpty(path)) continue;
 
-                if (!owners.TryGetValue(path, out var list))
-                    owners[path] = list = new List<string>();
+                    if (!owners.TryGetValue(path, out var list))
+                        owners[path] = list = new List<string>();
 
-                if (!list.Contains(action)) list.Add(action);
+                    if (!list.Contains(action)) list.Add(action);
+                }
             }
 
             // ⚠⚠ A CLASH IS TWO ACTIONS THAT CAN FIRE ON THE SAME SCREEN, NOT TWO ACTIONS ON
@@ -335,6 +407,40 @@ namespace TumbangPreso.Settings
         }
 
         /// <summary>
+        /// What <paramref name="action"/> is bound to on ONE device, or "-" when it is on none.
+        ///
+        /// ⚠️⚠️ `docs/VISION.md` § 3: *"Key labels come from the live binding, never from a
+        /// literal. A screen that teaches the wrong key is worse than one that teaches none."*
+        /// That rule is the reason this overload exists rather than a glyph table: a player on a
+        /// pad must be told BUTTON SOUTH and a player on a keyboard SPACE, and both have to
+        /// follow a rebind. A table keyed by action would be a second place to forget, which is
+        /// the argument `HeroAbility.Glyph` won.
+        ///
+        /// ⚠️ IT RETURNS "-" RATHER THAN THE KEYBOARD BINDING WHEN A DEVICE HAS NONE. Falling
+        /// back would print SPACE on a pad prompt for `ToggleFullscreen`, which has no pad
+        /// binding on purpose (`ScreenInputCatalogue`), and teach a control that does not exist.
+        /// </summary>
+        public static string DisplayNameFor(InputActionAsset asset, string action, string device)
+        {
+            var indices = ResolveBindingIndices(asset, action, out var a);
+            if (a == null) return "-";
+
+            foreach (int index in indices)
+            {
+                string path = a.bindings[index].effectivePath;
+                if (DeviceOf(path) != device) continue;
+
+                return InputControlPath.ToHumanReadableString(
+                    path, InputControlPath.HumanReadableStringOptions.OmitDevice);
+            }
+
+            return "-";
+        }
+
+        /// <summary>The device prefix a gamepad binding carries. One place, so a typo cannot hide.</summary>
+        public const string GamepadDevice = "<Gamepad>";
+
+        /// <summary>
         /// Rebind <paramref name="action"/> to <paramref name="control"/>.
         /// </summary>
         /// <summary>
@@ -357,9 +463,22 @@ namespace TumbangPreso.Settings
         /// <summary>Tell every cached key label that it is out of date.</summary>
         public static void Invalidate() => Revision++;
 
+        /// <summary>
+        /// The device prefix of a control path, e.g. `&lt;Gamepad&gt;` from
+        /// `&lt;Gamepad&gt;/buttonSouth`. Empty when the path does not name one.
+        /// </summary>
+        public static string DeviceOf(string path)
+        {
+            if (string.IsNullOrEmpty(path) || path[0] != '<') return "";
+
+            int close = path.IndexOf('>');
+            return close < 0 ? "" : path.Substring(0, close + 1);
+        }
+
         public static string TryRebind(InputActionAsset asset, string action, InputControl control)
         {
             string path = control.path;
+            string device = DeviceOf(path);
 
             foreach (string other in RebindableActions)
             {
@@ -370,15 +489,35 @@ namespace TumbangPreso.Settings
                 // the obvious key for no reason a player could ever work out from the screen.
                 if (!ShareAContext(action, other)) continue;
 
-                if (ResolveActionAndBindingIndex(asset, other, out var otherAction, out int otherIndex))
-                {
+                // ⚠️ EVERY BINDING OF THE OTHER ACTION, NOT ITS FIRST. This compared one binding
+                // when an action only had one; with a pad binding beside each keyboard one, the
+                // first-binding version let a player bind their pad's A button to two different
+                // actions and refused nothing, because it was only ever looking at the keys.
+                var otherIndices = ResolveBindingIndices(asset, other, out var otherAction);
+                if (otherAction == null) continue;
+
+                foreach (int otherIndex in otherIndices)
                     if (otherAction.bindings[otherIndex].effectivePath == path)
                         return LabelFor(other);
-                }
             }
 
-            if (!ResolveActionAndBindingIndex(asset, action, out var target, out int index))
-                return LabelFor(action);
+            var indices = ResolveBindingIndices(asset, action, out var target);
+            if (target == null || indices.Count == 0) return LabelFor(action);
+
+            // ⚠️⚠️ THE OVERRIDE LANDS ON THE BINDING FOR THE DEVICE THE PLAYER JUST PRESSED, AND
+            // TARGETING THE FIRST ONE WOULD HAVE SILENTLY DESTROYED THEIR KEYBOARD. Rebinding
+            // SPRINT with a pad wrote the pad's path over binding 0, which is the KEY: the row
+            // then read "Button South", the key stopped working, and there was no way back to it
+            // except Reset All. One row, two devices, two bindings, and each is rebound on its own.
+            int index = indices[0];
+
+            foreach (int candidate in indices)
+            {
+                if (DeviceOf(target.bindings[candidate].effectivePath) != device) continue;
+
+                index = candidate;
+                break;
+            }
 
             target.ApplyBindingOverride(index, path);
             Invalidate();

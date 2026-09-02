@@ -897,6 +897,15 @@ namespace TumbangPreso.UI
             ownCanvas.sortingOrder = 90;
             _historyPanel.AddComponent<GraphicRaycaster>();
 
+            // ⚠️ THE OPENED LOG IS A SCREEN INSIDE THE LOBBY, so it owns its own focus path
+            // rather than being chained into the lobby's. `ScreenFocus.Owns` is what keeps the
+            // two apart: without a `ScreenFocus` here the lobby's would swallow the log's rows,
+            // and pressing DOWN inside an open chat log would walk out of it into the seat list
+            // behind. ⚠️ Chat is also its own INPUT context (`PlayerInputReader` and
+            // `CLAUDE.md` § 4): a player who is typing has no verbs.
+            InputLayer.UiInputModule.Ensure();
+            InputLayer.ScreenFocus.Install(_historyPanel);
+
             var box = new GameObject("Panel");
             box.transform.SetParent(_historyPanel.transform, false);
             var plate = box.AddComponent<Image>();

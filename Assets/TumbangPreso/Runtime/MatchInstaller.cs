@@ -1360,6 +1360,27 @@ namespace TumbangPreso
             var hud = hudGo.AddComponent<UI.Hud>();
             hud.Bind(local);
 
+            // ⚠️⚠️ THE THUMB LAYER IS A SEPARATE CANVAS AND IS INSTALLED HERE, NOT INSIDE `Hud`.
+            // The HUD strips itself for a spectator and hides entirely for `CleanFeed`; the
+            // controls must survive both, because a player who hid the HUD still has to be able
+            // to throw. `TouchHud.Install` returns null on a device with no touchscreen, so this
+            // line costs a desktop match one null check.
+            //
+            // ⚠️ IT ASKS THE MODE EVERY MATCH. The skill rail is Hero Strike only per
+            // `VISION.md` § 1.1, and the layer outlives a single match: a Classic match started
+            // after a Hero Strike one would otherwise keep three buttons that do nothing.
+            var touch = InputLayer.TouchHud.Install();
+
+            if (touch != null)
+            {
+                // ⚠️ THE SAME SEAT THE HUD IS BOUND TO, ON THE LINE ABOVE. `TouchHud` hides
+                // itself whenever that seat cannot act, which is how the controls stay off the
+                // pause menu and off every screen a player opens mid-match. 🧑, seeing them over
+                // a lobby: *"yo why the buttons here"*.
+                touch.Bind(local);
+                touch.ApplyModeVisibility();
+            }
+
             // The HUD STRIPS for a watcher rather than being replaced: the clock and the
             // scoreboard are facts about the match and are what somebody watching wants.
             if (_spectating) hud.EnterSpectatorMode();

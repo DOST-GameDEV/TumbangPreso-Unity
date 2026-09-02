@@ -30,21 +30,15 @@ namespace TumbangPreso.PlayTests
     public class AspectRatioProbes
     {
         /// <summary>
-        /// The list the handoff asks for: 16:9 from 720p to 1440p, the common laptop panel,
-        /// 16:10, both ultrawides, and 4:3.
+        /// The nine desktop shapes plus the phones, from <see cref="ProbeResolutions"/>.
+        ///
+        /// ⚠️⚠️ THE LIST MOVED OUT OF THIS FILE ON 2026-09-02 AND GAINED THE PHONE SHAPES WITH
+        /// THE MOVE. It was private here and `InputSurfaceProbe` needed the same nine; a copy is
+        /// two lists that agree until somebody edits one, which is `docs/TODO.md` § 124.11's
+        /// fault in a different costume. Adding a resolution now reaches every layout probe in
+        /// the project at once, which is the point.
         /// </summary>
-        private static readonly (int W, int H, string Name)[] Resolutions =
-        {
-            (1280,  720, "16:9 720p"),
-            (1600,  900, "16:9 900p"),
-            (1920, 1080, "16:9 1080p"),
-            (2560, 1440, "16:9 1440p"),
-            (1366,  768, "16:9 laptop"),
-            (1920, 1200, "16:10"),
-            (2560, 1080, "21:9"),
-            (3440, 1440, "21:9 1440p"),
-            (1024,  768, "4:3"),
-        };
+        private static readonly (int W, int H, string Name)[] Resolutions = ProbeResolutions.All();
 
         /// <summary>
         /// ⚠️ THE ARITHMETIC, ASSERTED SEPARATELY FROM THE SCENE. If this one fails the scaler

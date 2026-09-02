@@ -121,12 +121,17 @@ namespace TumbangPreso.UI
 
             // ⚠️ A MENU NEEDS AN EVENT SYSTEM OR NOTHING IS CLICKABLE, and the failure mode is
             // silent: the buttons draw perfectly and simply never respond.
-            if (UnityEngine.EventSystems.EventSystem.current == null)
-            {
-                var es = new GameObject("EventSystem");
-                es.AddComponent<UnityEngine.EventSystems.EventSystem>();
-                es.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
-            }
+            InputLayer.UiInputModule.Ensure();
+
+            // ⚠️⚠️ EVERY CODE-BUILT SCREEN GETS ITS CONTROLLER FOCUS PATH AND ITS THUMB-SIZED HIT
+            // AREAS HERE, BY CONSTRUCTION, AND THAT IS THE WHOLE FUTURE-PROOFING ARGUMENT. 🧑:
+            // *"anytime we add a feature, make sure all controller and mobile is considered"*.
+            // Every screen this game builds in code goes through this one method, so a screen
+            // written next month inherits both without anybody remembering to ask for them.
+            // `ScreenFocus`'s own note carries the three times a per-screen list went stale
+            // (`docs/TODO.md` § 96, § 114, § 124.11) and `InputSurfaceCheck` refuses a source file
+            // that builds a Canvas without coming through here.
+            InputLayer.ScreenFocus.Install(go);
 
             return canvas;
         }

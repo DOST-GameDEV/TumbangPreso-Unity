@@ -51,6 +51,107 @@ namespace TumbangPreso.EditorTools
             EditorApplication.Exit(ok ? 0 : 1);
         }
 
+        [MenuItem("Tumbang Preso/Build Android Player")]
+        public static void BuildAndroidFromMenu() => BuildAndroidPlayer(DefaultAndroidOutput());
+
+        public static void BuildAndroid()
+        {
+            bool ok = BuildAndroidPlayer(CommandLineOutput() ?? DefaultAndroidOutput());
+            EditorApplication.Exit(ok ? 0 : 1);
+        }
+
+        /// <summary>
+        /// The .apk, beside the Windows player on the same Desktop.
+        ///
+        /// ⚠️ ONE FILE, NOT A FOLDER, WHICH `PurgeOutputDirectory` HAS TO BE TOLD ABOUT. The
+        /// Windows player is a directory it can delete wholesale; an .apk is a single file in a
+        /// directory that may hold other things. It gets its OWN directory for exactly that
+        /// reason, so the purge rule that protects the Windows build protects this one unchanged.
+        /// </summary>
+        public static string DefaultAndroidOutput()
+        {
+            string desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            return Path.Combine(desktop, "TumbangPreso-Android", "TumbangPreso.apk");
+        }
+
+        private static bool BuildAndroidPlayer(string outputPath)
+        {
+            if (!ConfigureAndroid()) return false;
+
+            // ⚠️⚠️ THE TARGET IS SWITCHED BEFORE THE BUILD, NOT LEFT TO `BuildPlayer`. Switching
+            // is what re-evaluates `UNITY_ANDROID`, and this project branches on it in
+            // `Matchmaker.LocalPlatform`, `Matchmaker.LocalInputDevice` and
+            // `TouchHud.ShouldShow`. A player built without the switch compiles those three
+            // branches for the EDITOR's platform, so the .apk would report itself as a desktop
+            // peer and ship with no touch controls, and nothing would error.
+            if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.Android)
+            {
+                if (!EditorUserBuildSettings.SwitchActiveBuildTarget(
+                        NamedBuildTarget.Android, BuildTarget.Android))
+                {
+                    Debug.LogError("[Build] could not switch to the Android target. Is the " +
+                                   "Android module installed for this editor? Check " +
+                                   "Editor/Data/PlaybackEngines for AndroidPlayer.");
+                    return false;
+                }
+            }
+
+            return Execute(outputPath, BuildTarget.Android);
+        }
+
+        /// <summary>
+        /// The Android player settings, all of them argued rather than defaulted.
+        ///
+        /// ⚠️⚠️ `ARM64 | X86_64`, AND DROPPING THE SECOND IS WHAT MAKES A BUILD UNTESTABLE ON
+        /// THIS MACHINE. Every Android emulator worth running is x86_64; a phone is ARM64. An
+        /// ARM64-only .apk installs on neither emulator and can only be verified by somebody with
+        /// a handset, and there is not one on this team (🧑, 2026-09-02: *"i dont have any
+        /// nadroid at all"*). Building both is a few minutes of IL2CPP and is the difference
+        /// between a verified build and a hopeful one.
+        ///
+        /// ⚠️ X86_64 FORCES IL2CPP. Mono only emits ARMv7 and x86 on Android, so the scripting
+        /// backend is not a free choice here; it follows from wanting to run the thing.
+        ///
+        /// ⚠️ LANDSCAPE, LOCKED. The arena is 14 m by 14 m read across the screen and the whole
+        /// front end is authored against a 1920x1080 canvas matched on HEIGHT; a portrait phone
+        /// would crop it to a 9:16 slice, which is `AspectSafeCanvas`'s failure mode rather than
+        /// a layout to design. `InputSurfaceProbe` drives the two landscape phone shapes.
+        /// </summary>
+        private static bool ConfigureAndroid()
+        {
+            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android,
+                                                    "com.bhstudios.tumbangpreso");
+
+            PlayerSettings.SetScriptingBackend(NamedBuildTarget.Android, ScriptingImplementation.IL2CPP);
+            PlayerSettings.Android.targetArchitectures =
+                AndroidArchitecture.ARM64 | AndroidArchitecture.X86_64;
+
+            // API 24 is Android 7.0: it is what the Input System's touch stack and Netcode's
+            // transport both assume, and it is old enough to cover the phones this game is
+            // actually aimed at in Metro Manila.
+            PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel24;
+            PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevelAuto;
+
+            PlayerSettings.defaultInterfaceOrientation = UIOrientation.LandscapeLeft;
+            PlayerSettings.allowedAutorotateToPortrait = false;
+            PlayerSettings.allowedAutorotateToPortraitUpsideDown = false;
+            PlayerSettings.allowedAutorotateToLandscapeLeft = true;
+            PlayerSettings.allowedAutorotateToLandscapeRight = true;
+
+            // ⚠️⚠️ THE INTERNET PERMISSION IS REQUIRED OR CROSSPLAY IS DEAD ON ARRIVAL, AND THE
+            // FAILURE IS SILENT. Without it every UGS call and every Netcode connection fails at
+            // runtime with a socket error, which reads exactly like "the lobby is empty" rather
+            // than like a missing manifest line. `forceInternetPermission` is the one-line answer
+            // and it costs a desktop build nothing.
+            PlayerSettings.Android.forceInternetPermission = true;
+
+            // A phone throttles hard. 30 is a floor the thermals can hold; the desktop build is
+            // untouched, because this is an Android-only player setting.
+            PlayerSettings.Android.startInFullscreen = true;
+
+            return true;
+        }
+
         private static string CommandLineOutput()
         {
             string[] args = Environment.GetCommandLineArgs();

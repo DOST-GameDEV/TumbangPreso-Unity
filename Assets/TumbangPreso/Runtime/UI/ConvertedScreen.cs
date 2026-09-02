@@ -56,6 +56,20 @@ namespace TumbangPreso.UI
             // in the base class means a screen added later cannot forget.
             CursorMode.Release();
 
+            // ⚠️⚠️ AND EVERY CONVERTED SCREEN GETS ITS CONTROLLER FOCUS PATH AND ITS THUMB-SIZED
+            // HIT AREAS FOR THE SAME REASON THE LINE ABOVE RELEASES THE MOUSE: *"doing it in the
+            // base class means a screen added later cannot forget."* That sentence was already
+            // this file's own argument for the cursor; it is the whole answer to 🧑's *"anytime we
+            // add a feature, make sure all controller and mobile is considered"*.
+            //
+            // ⚠️ THE MODULE FIRST, THEN THE FOCUS. `ScreenFocus.AdoptSelection` needs an
+            // EventSystem to select into, and five of these scenes ship an authored one carrying
+            // the LEGACY module, which a pad cannot drive at all. `UiInputModule.Ensure` upgrades
+            // it in place; without that this screen would have a perfect focus path and no
+            // device able to walk it.
+            InputLayer.UiInputModule.Ensure();
+            InputLayer.ScreenFocus.Install(gameObject);
+
             // Legacy Text is rasterised into the Canvas at its final transform. Allowing
             // fractional canvas pixels softens every Darumadrop edge, especially after a
             // fullscreen resolution change. Godot snaps this UI to physical pixels; do the

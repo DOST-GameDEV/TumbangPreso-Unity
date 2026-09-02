@@ -4467,6 +4467,9 @@ namespace TumbangPreso.UI
 
         private static int _keyLabelsRevision = -1;
 
+        /// <summary>Which device the cached labels were resolved for. See `KeyLabel`.</summary>
+        private static int _keyLabelsDevice = -1;
+
         private static string KeyLabel(string action)
         {
             if (_bindingAsset == null)
@@ -4477,9 +4480,22 @@ namespace TumbangPreso.UI
 
             if (_bindingAsset == null) return action == "Ultimate" ? "F" : action == "Skill2" ? "E" : "Q";
 
-            if (_keyLabelsRevision != Settings.Rebinding.Revision)
+            // ⚠️⚠️ THE CACHE IS KEYED ON THE DEVICE AS WELL AS ON THE BINDING REVISION SINCE
+            // 2026-09-02, AND WITHOUT THAT A PAD PLAYER IS TAUGHT KEYS THEY DO NOT HAVE. This
+            // resolved binding 0, which is always the KEYBOARD one, so a controller player was
+            // told to press X to pick up a slipper while holding a device with no X on it.
+            // `docs/VISION.md` § 3 calls that out in the same breath as a literal: *"a screen
+            // that teaches the wrong key is worse than one that teaches none."*
+            //
+            // ⚠️ ONE COUNTER PER REASON, BOTH CHECKED. `Rebinding.Revision` moves when a binding
+            // moves; `LastInputDevice.Revision` moves when the player picks up a different
+            // device. A cache keyed on only one of the two goes stale on the other, and the
+            // staleness is invisible: a label that is merely WRONG still draws perfectly.
+            if (_keyLabelsRevision != Settings.Rebinding.Revision
+                || _keyLabelsDevice != InputLayer.LastInputDevice.Revision)
             {
                 _keyLabelsRevision = Settings.Rebinding.Revision;
+                _keyLabelsDevice = InputLayer.LastInputDevice.Revision;
                 _keyLabels.Clear();
             }
 
@@ -4497,6 +4513,24 @@ namespace TumbangPreso.UI
 
             if (act == null || act.bindings.Count == 0)
                 return action == "Ultimate" ? "F" : action == "Skill2" ? "E" : "Q";
+
+            // ⚠️⚠️ THE PAD'S OWN BINDING FIRST, WHEN THE PLAYER IS ON A PAD. `Rebinding` resolves
+            // per device and returns "-" rather than falling back, which is right for the
+            // settings panel and wrong here: a prompt must always say SOMETHING, and an action
+            // with no pad binding at all (`ToggleFullscreen`) still has a key worth naming. So
+            // this ASKS for the pad label and keeps the keyboard answer when there is none.
+            //
+            // ⚠️ TOUCH IS NOT ASKED FOR, DELIBERATELY. A thumb control carries its own label
+            // painted on it (`InputCatalogue`'s `TouchLabel`), so a prompt telling a phone player
+            // to "press THROW" is naming a button they are already looking at. On touch the
+            // keyboard answer is the harmless one, and the deck is what teaches.
+            if (InputLayer.LastInputDevice.Current == InputLayer.InputDeviceKind.Gamepad)
+            {
+                string pad = Settings.Rebinding.DisplayNameFor(
+                    _bindingAsset, action, Settings.Rebinding.GamepadDevice);
+
+                if (!string.IsNullOrEmpty(pad) && pad != "-") return pad.ToUpperInvariant();
+            }
 
             // ⚠️⚠️ A COMPOSITE'S HEAD IS NOT A KEY, AND PRINTING IT IS HOW THE TUTORIAL CAME TO
             // TEACH `[2DVECTOR(MODE:2)]`. 🧑, off the played build: *"wtf is 2d vector modee?"*.

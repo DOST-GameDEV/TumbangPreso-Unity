@@ -65,8 +65,8 @@ mind we dont have budget for paying for anything"*.
 | Content | 18 characters, 6 heroes, 6 lata, 10 tsinelas, 3 maps, `RosterBook` resolving id to model and palette. |
 | Recolouring | `ToonSkin`'s 16-slot palette remap, per renderer, cached. **A colour variant of any character is already nearly free.** |
 | Settings | `Settings.SettingsStore` for persistence, `Rebinding` for the input map. |
-| Input | `TumbangPreso.inputactions`: **Keyboard and Mouse only.** Zero gamepad bindings, zero touch bindings, no control schemes. |
-| Build targets | Windows Standalone, WebGL, Linux Dedicated Server. **No Android, no iOS.** |
+| Input | ⚠️ **REVERSED 2026-09-02.** Read `docs/TODO.md` § 125 and `CLAUDE.md` § 4a. This row said *"Keyboard and Mouse only. Zero gamepad bindings, zero touch bindings, no control schemes."* It is now **three control schemes, 26 gamepad bindings and a generated on-screen touch layer**, and a new `Verb` does not COMPILE without a pad binding and a thumb target. |
+| Build targets | ⚠️ **Windows Standalone, WebGL, Linux Dedicated Server AND ANDROID**, as of 2026-09-02. Still **no iOS**: it needs a Mac the team does not have. |
 | Localisation | **None, and it stays none.** English only, § 16.3. |
 | Accessibility | **None beyond rebinding.** No colourblind mode, no UI scale, no subtitle system. |
 
@@ -351,8 +351,8 @@ THIS IS TRUE.** The prose about design intent ages well. The claims about the co
 | A claimed lobby handle is verified | `grep -n VerifiedArrivalHandle Packages/com.tumbangpreso.core/Runtime/AccountRules.cs` | The impersonation guard is built, `docs/TODO.md` § 90.1. ⚠️ § 88.1c's prescribed fix is NOT what shipped and that entry says so; read § 90.1. |
 | Every Cloud Code call goes through one helper | `grep -rn "cloud-code.services.api.unity.com" Assets` returns exactly `Net/CloudCode.cs` | A second hand-written request has appeared. `docs/TODO.md` § 89.5 records why that is the shape where the probe passes and the game fails. |
 | Discovery is UGS Lobby, connection is UGS Relay | Read the header of `Assets/TumbangPreso/Runtime/Net/ServerQuery.cs` | The whole of §§ 0.3, 7 and 8 assumes UGS. Re-cost them. |
-| The input map has no gamepad or touch bindings | `grep -c Gamepad Assets/TumbangPreso/Resources/TumbangPreso.inputactions` | Phases 14 and 15 shrink a lot. |
-| Build targets are Windows, WebGL, Linux server only | `ls "/c/Program Files/Unity/Hub/Editor/*/Editor/Data/PlaybackEngines/"` | Phase 15 step 1 may already be done. |
+| ⚠️ **STALE SINCE 2026-09-02:** the input map has no gamepad or touch bindings | `grep -c Gamepad Assets/TumbangPreso/Resources/TumbangPreso.inputactions` returns **26**, not 0 | Phase 14 is SHIPPED and Phase 15 is playable. This row is kept because it is the check that proves it, and because it is the exact form § 0.6 asks for: read the code, not the prose. |
+| ⚠️ **STALE SINCE 2026-09-02:** build targets are Windows, WebGL, Linux server only | `ls "/c/Program Files/Unity/Hub/Editor/*/Editor/Data/PlaybackEngines/"` shows **AndroidPlayer** | Phase 15 step 1 is done. ⚠️ **It is per MACHINE, not per repo**: the module is an editor install, so a fresh laptop shows the old answer and has to install it again. |
 | There is no colourblind support and no UI scale | `grep -rn "colourblind|colorblind|UiScale" --include=*.cs Assets` | Phase 16 shrinks. |
 | Progression exists, and XP is awarded server-side | `grep -rn ProgressionRules Packages/com.tumbangpreso.core`, then `grep -n award ugs/cloud-code/match-record.js` | Phase 4 has shipped. Read `docs/TODO.md` § 91 before touching a rate, and § 91.5 before moving the award to a second call site. |
 | The account and career screens are `PlayerHub` | `grep -rn "class PlayerHub" Assets` | `AccountOverlay` and `ProfileOverlay` are DELETED, not deactivated. `docs/TODO.md` § 92. Build new settings-shaped screens out of `UiRows`, never out of hand-written Y offsets. |
@@ -1501,23 +1501,31 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
-## PHASE 14 · CONTROLLER SUPPORT
+## PHASE 14 · CONTROLLER SUPPORT ✅ SHIPPED 2026-09-02, branch `ui-redesign`
 
-**Starting point: zero.** `TumbangPreso.inputactions` has one keyboard binding and one mouse
-binding, no gamepad paths and no control schemes.
+✅ **SHIPPED. `docs/TODO.md` § 125 is the as-built record and `CLAUDE.md` § 4a is the rule that
+came out of it.** Read those two rather than this section: this was written ahead of the work and
+§ 0.6 is why that matters.
 
-- Control schemes: Keyboard and Mouse, Gamepad, and later Touch. The Input System does this
-  natively and `Rebinding` already exists for the map.
-- Full gamepad bindings for every action, including the spectator context that
-  `Rebinding.SpectatorContext` already names as a separate set.
-- ⚠️ **`E` is contextual and that is the hard part.** Tap picks up, hold 1.25 s shoves, hold 2.5 s
-  as taya resets the lata. A hold on a face button is fine; the on-screen prompt is what needs
-  rebuilding, because it names a key today.
-- **Glyph swapping on every prompt**, driven by the last device used, not by a setting.
-- Rumble on knockdown, tag and can reset.
-- **Full menu navigation on a stick**, which is a bigger job than the gameplay bindings, is the
-  thing that always gets skipped, and is what blocks Phase 15 when it is.
-- **No aim assist. Separate the pools instead**, which is free, exact, and removes the argument.
+**Starting point was zero**, exactly as written below: one keyboard binding and one mouse binding
+per action, no gamepad paths, no control schemes.
+
+| The plan | What shipped |
+|---|---|
+| Control schemes: Keyboard and Mouse, Gamepad, Touch | ✅ All three declared in the asset |
+| Full gamepad bindings for every action, spectator context included | ✅ 26 bindings, generated FROM `InputLayer.InputCatalogue` by `InputAssetSync.Regenerate` rather than hand-written |
+| ⚠️ *"`E` is contextual and that is the hard part"* | ✅ Still ONE control (`buttonWest`), still resolved downstream. The prompt was the real work and it reads the live binding per device now |
+| Glyph swapping driven by the last device used, not a setting | ✅ `InputLayer.LastInputDevice` drives `Hud.KeyLabel`. ⚠️ The labels are WORDS ("BUTTON WEST"), not console face-button glyphs; that needs authored art and is § 125.13 |
+| **Full menu navigation on a stick**, *"the thing that always gets skipped"* | ✅ **Not skipped.** `ScreenFocus` is installed by `MenuKit.BuildCanvas` and `ConvertedScreen.Start`, so every screen gets an explicit, wrapping focus path by construction, and `InputSurfaceProbe` walks it at twelve shapes |
+| Rumble on knockdown, tag and can reset | ❌ **Not done.** § 125.13 |
+| **No aim assist. Separate the pools instead** | ✅ Unchanged. `Matchmaker` already carried `InputDevice` in the pool key and still does |
+
+⚠️⚠️ **AND THE THING THIS PHASE ACTUALLY TURNED ON WAS NOT A BINDING.** `StandaloneInputModule`
+reads the LEGACY input manager, and this project runs `activeInputHandler: 2` (Both), so it ran
+without erroring while no gamepad binding could reach it: a mouse worked, every screen looked
+correct, and a stick moved nothing. `InputLayer.UiInputModule` replaces it and upgrades the five
+scenes that ship an authored EventSystem. **A component that half works is worse than one that
+throws.**
 
 **The prompt for this phase is [§ 19.14](#1914-prompt-for-phase-14).** Every prompt in
 this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
@@ -1525,27 +1533,43 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
-## PHASE 15 · MOBILE
+## PHASE 15 · MOBILE ⚠️ PLAYABLE 2026-09-02, NOT FINISHED, branch `ui-redesign`
 
-**Be honest about the size of this. It is a port, not a feature, and it is the largest item here.**
+⚠️⚠️ **THE HONEST STATUS: THE PORT BUILDS, INSTALLS AND RUNS, AND ITEMS 3 AND 6 BELOW ARE
+UNTOUCHED.** `docs/TODO.md` § 125 is the as-built record. **This section's own opening line was
+right and stays**: it is a port, not a feature, and calling it shipped because an .apk exists would
+be the kind of claim `CLAUDE.md` § 2.2 exists to stop.
 
-**Missing before a line is written:** the Android build module is not installed (only Windows
-Standalone, WebGL and Linux Dedicated Server are). Installing it is free through Unity Hub. iOS
-additionally needs a Mac to build on, which the team does not have, so **Android first and iOS only
-if a Mac appears**.
+**Missing before a line was written**, and all of it now resolved: the Android module was not
+installed **on either laptop** (a handoff said it was missing on the other machine; it was missing
+here too). Installed through the Hub CLI with `--childModules`, which brings its own SDK, NDK and
+OpenJDK. iOS still needs a Mac the team does not have.
 
-1. Install the module and get a build onto a device, however ugly. Nothing else here means anything
-   until that has happened once.
-2. Touch controls: left stick, look drag, buttons for throw, grab, jump, sprint. The contextual `E`
-   hold becomes a long press with a radial fill.
-3. Performance. The toon shader draws an inverted hull per prop, doubling the draw calls on exactly
-   the hardware least able to afford it. **Measure it on device**, then decide whether mobile drops
-   the hull or gets a cheaper one. `docs/TODO.md` § 63 already records what the outline costs.
-4. UI at phone aspect ratios. `AspectRatioProbes` already drives nine resolutions; add the phone
-   ones rather than eyeballing it.
-5. Cross-play with **separate pools**, same reasoning as controller.
-6. Battery, thermals and a 30 FPS cap option.
-7. Account continuity: the same account on phone and PC, which Phase 1 already gives.
+1. ✅ **Module installed and a build put on a device.** `GameBuilder.BuildAndroid`, ARM64 and
+   x86_64. ⚠️ **x86_64 is not optional here**: 🧑 has no Android handset (*"i dont have any nadroid
+   at all"*), so an ARM64-only .apk could not be run by anybody on this team. The emulator AVD is
+   `tumbangpreso` (Pixel 5, Android 14, x86_64).
+2. ✅ **Touch controls**: stick, look drag, and a control per verb generated from
+   `InputLayer.InputCatalogue`, laid out on two arcs around the thumb's rest (§ 125.10).
+   ⚠️ **The contextual key did NOT become a long press with a radial fill** and should not: it is
+   still one control resolved downstream, exactly as on a keyboard, because that is
+   `PlayerInputReader`'s standing rule. A radial fill is a presentation idea and is still open.
+   ➕ **Not in this plan and shipped anyway: a PUBG-style customiser** (opacity, size,
+   drag-to-position), asked for during the work. § 125.11.
+3. ❌ **Performance is UNMEASURED on device.** The inverted-hull outline still draws per prop.
+   `docs/TODO.md` § 63 has what it costs. **Nothing in this batch touched rendering**, so assume
+   the cost is exactly what § 63 says and measure before deciding.
+4. ✅ **UI at phone aspect ratios**, and done the way this item asks rather than by eye:
+   `ProbeResolutions` now carries `2340x1080`, `2400x1080` and his own `1600x680` window alongside
+   the nine, and every layout probe drives all twelve.
+5. ✅ **Crossplay with separate pools.** `NetSession.ProtocolVersion` untouched at 21 and asserted;
+   `Matchmaker` still bands the ranked queue by `InputDevice`. Lobbies, join codes and LAN are
+   cross-device.
+6. ❌ **Battery, thermals and a 30 FPS cap option: not done.**
+7. ✅ **Account continuity** was already Phase 1's and is unchanged.
+
+⚠️ **THE PROTOCOL GATE PARAGRAPH BELOW IS STILL THE MOST IMPORTANT LINE IN THIS SECTION** and is
+now enforced by a test rather than by remembering it.
 
 ⚠️ **THE PROTOCOL VERSION GATE IS AN ASSET HERE.** `NetSession.ProtocolVersion` already refuses
 peers from different builds. Mobile and desktop must ship the same version at the same time or they
