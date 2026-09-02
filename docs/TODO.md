@@ -2531,24 +2531,63 @@ on the court.
 
 ---
 
-### 124.11 OPEN: `LoadoutSurfaceProbe` still looks for a door § 122 moved
+### 124.11 `LoadoutSurfaceProbe` was knocking on a door § 122 moved, and the rewiring found two faults I had just written
 
-Five of its cases fail with **`no button reading 'LOADOUT' on the hub`**, and they were failing
-before this section's work started. § 122.5 moved the loadout off the player hub and onto the
-CHOOSE YOUR HERO stage, on his instruction (**"put loadout here, it makes no sense to be in
-profile"**), and the probe was not moved with it. **Nothing is broken in the game**: the board, the
-chips and every variant work where § 122 put them, and `HeroLoadoutTests` covers the rules core.
-What is broken is the coverage.
+Five of its cases were failing with **`no button reading 'LOADOUT' on the hub`**, and they were
+failing before this section's work started. § 122.5 moved the ability builds off the player hub onto
+the CHOOSE YOUR HERO stage, on his instruction (**"put loadout here, it makes no sense to be in
+profile"**), and the probe was not moved with it. Nothing was broken in the game; the coverage was.
 
-⚠️ **Done looks like**: `LoadoutSurfaceProbe` opens character select rather than the hub, finds the
-`LOADOUT` chip § 122.11 describes, and asserts the same five things it asserts today. It is a probe
-rewiring and not a fix.
+⚠️⚠️ **THAT IS THE THIRD TIME A SHIPPED MOVE HAS LEFT A PROBE POINTING AT THE OLD DOOR.** § 96 is
+the hub's one door nobody could find, § 114 is `PlayerNameplate` no longer installed by any screen
+while `PlayerHubLayoutProbe` still drove it, and this is the same shape. **A green probe for a
+screen nobody can reach is worse than a red one**, and a red one for a screen that works is noise
+that teaches the next reader to skim the results.
 
-⚠️ **AND IT IS THE THIRD TIME A SHIPPED MOVE HAS LEFT A PROBE POINTING AT THE OLD DOOR**, which is
-why it is written down rather than quietly deleted: § 96 records the hub's one door being
-unfindable, § 114 records `PlayerNameplate` no longer being installed by any screen while its probe
-still drove it, and this is the same shape. **A green probe for a screen nobody can reach is worse
-than a red one.**
+**The probe is rewired to the board rather than rewritten from scratch**, deliberately: this file
+has now followed the feature through three screens and its header carries all three moves, which is
+the record that makes the pattern visible at all. The control shape changed with the screen, so the
+cases did too:
+
+| Was, on the hub | Is, on the stage |
+|---|---|
+| a hero stepper plus two `UiRows` skill steppers | the picker's own selection plus four `Variant_*` tiles |
+| "only one hero's two skills are offered" | "every tile on the board belongs to the hero on the stage" |
+| the glyph is on the stepper | the glyph is on the slot HEAD, shared by both readings of that slot |
+| step past a locked row | **press** a locked tile, because every tile has a live `Button` whatever its state |
+| `UiRows.StepperWidth` against the 4:3 value column | every `Text` on every tile against its own tile at nine resolutions |
+
+⚠️⚠️ **IT PRESSES THE REAL DOOR AND MUST KEEP DOING SO.** `ToggleLoadoutBoard` is private and one
+line of reflection away, and a probe that called it would pass on a build where the chip had been
+deleted — which is exactly how this file went stale. `CLAUDE.md` § 6.3: *every destination has a
+visible door, and a door is a thing that looks pressable.* Pressing it is the assertion.
+
+⚠️⚠️ **AND REWIRING IT IMMEDIATELY FOUND TWO FAULTS IN § 124.6, WHICH IS THE ARGUMENT FOR DOING IT
+AT ALL.** The relabelling in that entry rewrote every alternate to name a play rather than a
+percentage. That was the right change and it was authored against nothing, on a card nobody had
+measured:
+
+- **Seven of the twelve descriptions were over budget.** The tile's body is 52 units of
+  `PaperKit.Caption` 16 in a 311-unit band with **`verticalOverflow = Truncate`**, which is two
+  lines and about 78 characters. Long Tremor's was 105. **Truncate drops a whole line in silence**,
+  and § 122.14 caught this same box reading *"The stomp as it is tuned. One heavy shock at"* and
+  stopping, one pass earlier.
+- **Eleven of the twelve trade lines were over budget.** It is one 13 pt `MenuKit.Label` with **no
+  wrapping**, drawing `GainLabel + "   ·   " + CostLabel`, so the seven-character separator comes
+  out of the same ~48 characters. `Wider break, takes them down · They land at your feet, not away`
+  is 67, about 435 units in a 311-unit band. **A `MenuKit.Label` overflows rather than shrinking**,
+  so it draws over its neighbour: § 108's stepper again, one control along.
+
+**The two overflows fail in opposite directions and neither is visible in a code review**, which is
+`CLAUDE.md` § 6.2c stated as a pair. All 24 rows are re-fitted, and the bound is asserted twice:
+`Phase10Tests.EveryVariantRowFitsTheTileItIsDrawnOn` in 40 ms with the arithmetic written out, and
+`EveryTileLabelFitsItsTileAtEveryShippedResolution` against the real rects. ⚠️ **The cheap one
+carries the numbers on purpose**: a bound only a twelve-minute PlayMode run can enforce is a bound
+somebody edits a string past on a Friday.
+
+⚠️ The arithmetic, so the next person does not round it: the board is 1020 wide with 28 of padding,
+so the inner width is 964; the slot head takes 250 and the gap 14, leaving 700; two options at a 14
+gap is a **343-unit tile**, and 16 of padding either side is a **311-unit band**.
 
 ### 124.12 The description ceiling, found by adding four lines to a card that does not truncate
 

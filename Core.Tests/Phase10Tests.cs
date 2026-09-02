@@ -87,6 +87,62 @@ namespace TumbangPreso.Core.Tests
         }
 
         /// <summary>
+        /// Every row has to fit the tile it is drawn on.
+        ///
+        /// ⚠️⚠️ THIS EXISTS BECAUSE THE 2026-09-02 RELABELLING WROTE SENTENCES FOR A CARD NOBODY
+        /// HAD MEASURED. Every alternate was rewritten to name a play rather than a percentage,
+        /// which was the right change and was authored against nothing: seven of the twelve
+        /// descriptions and eleven of the twelve trade lines came out over the budget of the tile
+        /// `ConvertedCharacterSelect.BuildVariantTile` actually draws. `docs/TODO.md` § 122.14
+        /// records the same surface losing a whole line in silence one pass earlier.
+        ///
+        /// ⚠️⚠️ AND NEITHER OVERFLOW IS VISIBLE. The description box sets
+        /// `verticalOverflow = Truncate`, which **drops a whole line without a warning**; the
+        /// trade line is a `MenuKit.Label` with no wrap at all, which OVERFLOWS its box and draws
+        /// over its neighbour. Those are the two failure modes `CLAUDE.md` § 6.2c is written
+        /// about, and both of them look fine in a code review.
+        ///
+        /// ⚠️ THE ARITHMETIC, BECAUSE A NUMBER WITHOUT IT IS A NUMBER THE NEXT PERSON WILL ROUND.
+        /// The board is 1020 wide with 28 of padding, so the inner width is 964. The slot head
+        /// takes 250 and the gap 14, leaving 700 for the tiles; two options at a 14 gap is a
+        /// 343-unit tile, and 16 of padding either side is a **311-unit band**.
+        ///
+        ///  * **Description**: `PaperKit.Caption` is 16 pt, about 8 units a character, so roughly
+        ///    39 characters a line. The box is 52 units, which is two lines with their leading.
+        ///    **78 characters.**
+        ///  * **Trade line**: 13 pt, about 6.5 units a character, one line, and the label is
+        ///    `GainLabel + "   ·   " + CostLabel`, so the seven-character separator comes out of
+        ///    the same budget. **48 characters for the pair.**
+        ///
+        /// ⚠️ IT LIVES IN THE CORE TESTS RATHER THAN IN A LAYOUT PROBE ON PURPOSE. The strings are
+        /// core data, this runs in 40 ms with no editor, and `LoadoutSurfaceProbe` measures the
+        /// real rects on top of it. A bound that only a twelve-minute PlayMode run can enforce is
+        /// a bound somebody edits a string past on a Friday.
+        /// </summary>
+        [Fact]
+        public void EveryVariantRowFitsTheTileItIsDrawnOn()
+        {
+            const int DescriptionBudget = 78;
+            const int TradeBudget = 48;
+
+            foreach (var variant in HeroLoadoutRules.AllVariants)
+            {
+                Assert.True(variant.Description.Length <= DescriptionBudget,
+                    $"'{variant.Id}' has a {variant.Description.Length} character description "
+                    + $"against a budget of {DescriptionBudget}. The tile's body box is two lines "
+                    + "of Caption 16 in a 311 unit band with verticalOverflow = Truncate, so "
+                    + "everything past the second line is dropped and NOTHING SAYS SO.");
+
+                int trade = variant.GainLabel.Length + 7 + variant.CostLabel.Length;
+
+                Assert.True(trade <= TradeBudget,
+                    $"'{variant.Id}' draws a {trade} character trade line against a budget of "
+                    + $"{TradeBudget}. It is one 13 pt MenuKit.Label with no wrapping in a 311 "
+                    + "unit band, so it does not shrink or wrap, it draws over its neighbour.");
+            }
+        }
+
+        /// <summary>
         /// ⚠️ THE GLYPH NAME HAS TO RESOLVE OR THE SCREEN DRAWS A BLANK TILE. The core cannot see
         /// `AbilityGlyph` (`CLAUDE.md` § 4), so the name is checked against the same hero-prefix
         /// shape the enum uses, and `AbilityIconTests` on the Unity side parses it for real.
