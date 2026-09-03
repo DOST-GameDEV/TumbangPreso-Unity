@@ -372,6 +372,23 @@ namespace TumbangPreso.Abilities
             // round charges it the unretrieved-slipper penalty for a fetch it was making.
             HazardVolume.Attach(go, radius, ownerSlot);
 
+            // ⚠️⚠️ THE MOMENT IT FORMS, WHICH THIS ZONE ALSO NEVER HAD. The prism, the walls,
+            // the frost cracks and the mote aura are all the STATE of a frozen patch of road;
+            // nothing said it arrived. `docs/TODO.md` § 131 and `docs/Asset_Sourcing.md` § 3
+            // both name Frost Nova as the formation transient for exactly this reason: *"Frost
+            // Nova is the formation transient. The existing raised sheet receives a dark cracked
+            // rim and restrained ice detail."* The sheet is untouched; this is the arrival.
+            //
+            // ⚠️ IT IS A SIBLING, so the zone's own fade and thaw cannot take it with them.
+            //
+            // ⚠️ 1.5 TIMES THE RADIUS, WHICH IS BIGGER THAN THE ZONE ON PURPOSE AND STILL INSIDE
+            // THE BUDGET. The nova's drawn spikes reach past its own ground ring, so at 1.0 the
+            // ring lands inside the ice and the effect reads as a decoration on top rather than
+            // as the thing that made it. It lives 0.65 s (`VfxSheets.FrostNova.LifeSeconds`),
+            // which is a transient and not a footprint: `docs/VISION.md` § 2 rule 1's 1.8 to
+            // 2.5 m bound is about what a skill leaves on the floor, and this leaves nothing.
+            VfxFlipbook.Play(VfxSheets.FrostNova, position + Vector3.up * 0.03f, radius * 1.5f);
+
             return go;
         }
 
@@ -1593,6 +1610,25 @@ namespace TumbangPreso.Abilities
             cue.Cue = "sfx_magma_cool";
             cue.Seconds = duration;
 
+            // ⚠️⚠️ THE BREAK ITSELF, WHICH THIS EFFECT HAS NEVER HAD. Everything above is the
+            // SCAR: a crust, a hot bed under it and slabs standing out of the rim, and all of it
+            // is simply THERE on frame one. What was missing is the half second where the ground
+            // comes apart, and a stomp is that half second. `docs/TODO.md` § 131 is about
+            // exactly this layer.
+            //
+            // ⚠️ IT IS A SIBLING AND NOT A CHILD, because `VolcanicCooling.SinkDepth` takes this
+            // object under the road at the end of its life and a formation transient that sank
+            // with it would spend its last frames underground.
+            //
+            // ⚠️ 1.6 TIMES THE RADIUS, AND THE NUMBER CAME OFF A RENDER RATHER THAN OUT OF THE
+            // AIR. At 1.0 (`ability_lava_decal_eye_v53.png`) the break stood about 1.3 m wide in
+            // the middle of a 4.4 m scar, because the drawing only reaches about 60 per cent
+            // across its own cell and the rest is margin. 1.6 puts the crust out to the rim of
+            // the ground it actually broke.
+            //
+            // ⚠️ NO FADE. The sheet already ends on dust and nothing; see `VfxFlipbook.FadeFrom`.
+            VfxFlipbook.Play(VfxSheets.Rupture, position + Vector3.up * 0.02f, radius * 1.6f);
+
             return go;
         }
 
@@ -1817,6 +1853,14 @@ namespace TumbangPreso.Abilities
             comp.Radius = radius;
             comp.Duration = duration;
             comp.OwnerSlot = ownerSlot;
+
+            // ⚠️⚠️ NOTHING SOURCED IS DRESSED ONTO THIS ONE, AND IT IS THE ONLY EFFECT IN THE
+            // FILE THAT WAS DELIBERATELY LEFT OUT OF `docs/TODO.md` § 131's PASS.
+            // `SpawnSeanceVoid` is no longer cast by anything: `NemuHeroKit` builds
+            // `SpawnKuroUnbound` and only `AbilityShowcaseProbe` still reaches this, which
+            // `grep -rn SpawnSeanceVoid` says in one line. Devouring Seance's sourced implosion
+            // is in `SpawnKuroUnbound`, where the ultimate actually is. Putting art on a zone
+            // the game cannot produce is § 130.7's dead `MapPreview` with a fresh coat on it.
 
             return go;
         }
@@ -2704,6 +2748,34 @@ namespace TumbangPreso.Abilities
             comp.SlipperPull = 9.0f;
 
             HazardVolume.Attach(go, radius, ownerSlot);
+
+            // ⚠️⚠️ THE MOMENT KURO OPENS, WHICH THE ULTIMATE HAS NEVER HAD.
+            // `docs/Asset_Sourcing.md` § 3 for Devouring Seance: *"Place the implosion inside the
+            // existing dished funnel, then pull a few wisps inward above it. Keep the centre dark
+            // and vertically profiled."* The bite, the maw and the pull are the seven seconds
+            // that follow and none of them move; this is the half second nothing was drawing.
+            //
+            // ⚠️⚠️ AT 0.8 OF THE RADIUS, WHICH IS THIS EFFECT'S OWN HISTORY RATHER THAN A GUESS.
+            // The note on `SpawnSeanceVoid` lists three separate faults and all three were the
+            // MIDDLE of the void being the brightest thing in the frame: a white inner disc, an
+            // opaque core sphere and a 4.5-intensity light over the lot. `void-implosion` has a
+            // lit core of its own, so drawing it out to the rim would put that fault straight
+            // back. Held inside the bite, its bright pixels sit where the geometry is already
+            // darkest and the read stays *this goes down*.
+            //
+            // ⚠️⚠️ ABOVE THE MAW, NOT INSIDE IT, AND THE FIRST ATTEMPT PUT IT INSIDE.
+            // `ability_kuro_unbound_nopet_eye_v53.png` at 1.2 m is a dark purple lump sitting on
+            // a dark purple mouth: two objects of the same colour occupying the same space, which
+            // is `docs/VISION.md` § 2 rule 3's stacking complaint exactly. The maw is the thing
+            // with a mouth; the implosion is what is being pulled INTO it, so it belongs in the
+            // air over the throat where there is nothing else drawn. 2.35 m is head height for a
+            // standing player, which is also where their eye already is.
+            //
+            // ⚠️ IT IS A SIBLING OF THE ZONE, so `Object.Destroy(go, duration)` on the seven
+            // second maw cannot take a half second transient with it, and the probe's own sweep
+            // still collects it: `AbilityShowcaseProbe.Transient` diffs the scene roots.
+            VfxFlipbook.Play(VfxSheets.Implosion, position + Vector3.up * 2.35f, radius * 0.95f);
+
             Object.Destroy(go, duration);
             return go;
         }
@@ -4219,26 +4291,53 @@ namespace TumbangPreso.Abilities
         public static void CreateThunderstrike(Vector3 position, float radius = 7.0f, int sourceSlot = -1)
         {
             // 1. Sky Lightning Bolt Column & Multi-segment Arc
-            SpawnLightningBolt(position + Vector3.up * 24.0f, position, UiTheme.HeroElectricBright, 0.40f);
+            // ⚠️⚠️ 12 m, DOWN FROM 24, AND THE FORKS WITH IT. The reach was chosen when a bolt
+            // was four stretched cylinders, where length costs nothing because a tube has no
+            // detail to lose. `VfxSheets.Bolt` is a DRAWN stroke at 64 x 512, so 24 m of it at a
+            // legible 0.9 m width is a 26 to 1 stretch against the art's own 8 to 1, and
+            // `ability_blast_thunder_eye_v53.png` is the result: three smooth glowing ropes
+            // running off the top of the frame with no lightning in them.
+            //
+            // ⚠️ 12 m IS STILL "OUT OF THE SKY" FROM EVERY SEAT THAT MATTERS. The flyover over
+            // Ilalim ng Tulay is lower than 24 m and a player at eye height cannot see the top of
+            // a bolt that leaves the frame either way. What they can see is whether it is a
+            // stroke or a pipe.
+            SpawnLightningBolt(position + Vector3.up * 12.0f, position, UiTheme.HeroElectricBright, 0.40f);
 
             // 1b. Secondary Branching Fork Lightning Bolts
-            SpawnLightningBolt(position + new Vector3(-1.5f, 18.0f, 1.2f), position + new Vector3(-0.8f, 0, 0.6f), UiTheme.HeroElectricBright, 0.35f);
-            SpawnLightningBolt(position + new Vector3(1.4f, 20.0f, -1.0f), position + new Vector3(0.9f, 0, -0.5f), UiTheme.HeroElectricBright, 0.35f);
+            SpawnLightningBolt(position + new Vector3(-1.5f, 9.0f, 1.2f), position + new Vector3(-0.8f, 0, 0.6f), UiTheme.HeroElectricBright, 0.35f);
+            SpawnLightningBolt(position + new Vector3(1.4f, 10.0f, -1.0f), position + new Vector3(0.9f, 0, -0.5f), UiTheme.HeroElectricBright, 0.35f);
 
-            // 2. Flying electric spark shards
-            for (int i = 0; i < 12; i++)
-            {
-                var spark = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                spark.name = "ThunderSpark";
-                spark.transform.position = position + Vector3.up * 0.5f;
-                spark.transform.localScale = Vector3.one * Random.Range(0.15f, 0.35f);
-
-                VfxMaterial.Ghost(spark.GetComponent<Renderer>(), UiTheme.HeroElectricBright, 1.0f);
-
-                var rb = spark.AddComponent<Rigidbody>();
-                rb.linearVelocity = (Random.insideUnitSphere + Vector3.up * 1.5f) * Random.Range(5.0f, 12.0f);
-                Object.Destroy(spark, 0.5f);
-            }
+            // 2. The impact where the bolt reaches the street.
+            //
+            // ⚠️⚠️ IT WAS TWELVE `PrimitiveType.Cube`s WITH RIGIDBODIES, AND BOTH HALVES OF THAT
+            // WERE WRONG. Twelve lit boxes thrown out of one point is not a spark, it is
+            // confetti, and it is the same construction Nemu's wisps, Cheska's shards and
+            // Dante's rocks all used: `docs/VISION.md` § 2 rule 3, *"the same logic and code was
+            // used to generate all of them"*. The second half is worse and is a gameplay fault
+            // of the kind `VfxMaterial.Ghost` records: **each of those carried a collider**, so
+            // the loudest moment in Zack's kit dropped twelve solid objects on top of whoever it
+            // had just staggered.
+            //
+            // ⚠️ ONE DRAWN IMPACT INSTEAD. `VfxSheets.Spark` is PVFX Foundry's electric impact
+            // on Zack's amber ramp: a hard hot centre, arcs running out along the ground and a
+            // scatter of real sparks, in fourteen frames of drawn art.
+            //
+            // ⚠️⚠️ IT IS THE CONTACT AND NOT THE FOOTPRINT, WHICH IS WHY IT IS CLAMPED RATHER
+            // THAN SCALED. `radius` here is how far the STAGGER reaches (4.5 m in Zack's kit,
+            // 7.0 m in the probe's default), and drawing the art at that size would put an
+            // eleven-metre picture in a fourteen-metre box. The ring at `radius * 1.5` is what
+            // says how far the ultimate went; this says where it landed. The bound is
+            // `docs/VISION.md` § 2 rule 1's own 1.8 to 2.5 m at the bottom and one ultimate's
+            // worth of licence at the top.
+            // ⚠️⚠️ 2.2 TO 3.4 m, AND THE NUMBER MOVED TWICE OFF TWO RENDERS. At 2.0 to 3.6
+            // (v53) the impact's dark storm body covered the ground star and the two fought; at
+            // 1.4 to 2.4 (v54) it was a dark speck in the middle of a large flat yellow star and
+            // the star was still doing all the reading. The arrangement that works is the drawn
+            // impact big enough to BE the middle of the star: the star says how far the ultimate
+            // reached, the impact says what landed there, and neither is standing on the other.
+            float contact = Mathf.Clamp(radius * 0.62f, 2.2f, 3.4f);
+            VfxFlipbook.Play(VfxSheets.Spark, position + Vector3.up * 0.06f, contact);
 
             // ⚠️ ONE SEED FOR BOTH HALVES OF THE STRIKE, declared before either uses it. The
             // ground star and the column above it are the same discharge, so they are generated
@@ -4959,40 +5058,64 @@ namespace TumbangPreso.Abilities
         }
 
         // -------------------------------------------------------------------
-        // PROCEDURAL ZIG-ZAG LIGHTNING BOLT
+        // THE LIGHTNING STROKE
         // -------------------------------------------------------------------
-        public static GameObject SpawnLightningBolt(Vector3 start, Vector3 end, Color color, float duration = 0.25f)
+        /// <summary>
+        /// One bolt from <paramref name="start"/> to <paramref name="end"/>.
+        ///
+        /// ⚠️⚠️ IT WAS FOUR `PrimitiveType.Cylinder`s IN A ROW AND THAT IS EXACTLY WHAT
+        /// `docs/TODO.md` § 131 REPLACES. Four 0.28 m tubes with a jitter between them is a
+        /// drainpipe with a kink in it, and three of them arrive at once on Zack's ultimate:
+        /// twelve lit cylinders standing over a 14 m court. `docs/VISION.md` § 2 rule 3 is the
+        /// argument in one line: *"a slab with walls, a field of broken plates, a swept flame, a
+        /// branching tube and a dished funnel are five things. Five polygons handed to one
+        /// builder are one thing."* A bolt is a DRAWING, and this one is drawn.
+        ///
+        /// ⚠️ THE SOURCE IS CC0 AND RECOLOURED. hdst's lightning texture, cut into eight
+        /// alternative strokes and graded onto `UiTheme.HeroElectric`; `VfxSheets.Bolt` and
+        /// `Assets/TumbangPreso/Resources/Vfx/SOURCES.txt` carry the licence.
+        ///
+        /// ⚠️⚠️ THE STROKE IS CHOSEN FROM THE POSITION AND NOT AT RANDOM, WHICH IS THE SEEDING
+        /// RULE `SpawnVolcanicRockDebris` AND `VfxShapes` BOTH RECORD. Two bolts in one strike
+        /// must not be the same stroke, and one strike must be the same stroke in every capture
+        /// or the probe's renders stop being comparable version to version. `Random` is global
+        /// here, so deriving the cell instead of drawing from it costs nothing and needs no
+        /// save-and-restore.
+        ///
+        /// ⚠️ IT KEEPS THE SIGNATURE, INCLUDING `color`. The sheet is already Zack's amber, so
+        /// the tint is a multiply that leaves a caller passing `HeroElectricBright` with very
+        /// nearly what it asked for, and leaves any future caller able to say otherwise.
+        ///
+        /// ⚠️ THE WIDTH IS DERIVED FROM THE LENGTH AT THE SHEET'S OWN ASPECT AND THEN CLAMPED.
+        /// See the line that computes it. A stroke drawn at any other ratio is a stretched
+        /// drawing, and `ability_blast_thunder_eye_v53.png` is what stretched looks like: three
+        /// smooth ropes with no lightning left in them.
+        /// </summary>
+        public static GameObject SpawnLightningBolt(Vector3 start, Vector3 end, Color color,
+                                                    float duration = 0.25f)
         {
-            var go = new GameObject("LightningBoltHierarchy");
-            int segments = 4;
-            Vector3 prev = start;
+            Vector3 dir = end - start;
+            float length = dir.magnitude;
+            if (length < 0.01f) return null;
 
-            for (int i = 1; i <= segments; i++)
-            {
-                float t = (float)i / segments;
-                Vector3 target = Vector3.Lerp(start, end, t);
-                if (i < segments)
-                {
-                    target += Random.insideUnitSphere * 0.9f;
-                }
+            // The quad is anchored at the bottom of its cell, so it is placed at the END of the
+            // stroke and grown upward. That is also the point a strike is about.
+            int cell = Mathf.Abs(Mathf.RoundToInt((end.x * 7.0f + end.z * 13.0f + start.y) * 31.0f))
+                       % VfxSheets.Bolt.Frames;
 
-                var seg = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                seg.name = $"BoltSeg_{i}";
-                seg.transform.SetParent(go.transform, false);
+            // ⚠️⚠️ THE WIDTH IS DERIVED FROM THE LENGTH AT THE SHEET'S OWN ASPECT, NOT PICKED.
+            // `VfxSheets.Bolt` is 64 x 512, so eight to one: a stroke drawn at any other ratio is
+            // a stretched or squashed drawing, and stretched is what
+            // `ability_blast_thunder_eye_v53.png` shows. Clamped at the bottom so a very short
+            // bolt does not become a thread, and at the top so a long one is still a stroke
+            // rather than a curtain in a fourteen metre box.
+            float width = Mathf.Clamp(length / VfxSheets.Bolt.Aspect, 0.55f, 1.6f);
 
-                Vector3 dir = target - prev;
-                float len = dir.magnitude;
-                seg.transform.position = prev + dir * 0.5f;
-                seg.transform.rotation = Quaternion.FromToRotation(Vector3.up, dir);
-                seg.transform.localScale = new Vector3(0.28f, len * 0.5f, 0.28f);
+            var book = Visual.VfxFlipbook.Still(VfxSheets.Bolt, cell, end, width, duration,
+                                                Visual.VfxFlipbook.Facing.Upright, color,
+                                                height: length);
 
-                VfxMaterial.Ghost(seg.GetComponent<Renderer>(), color, 1.0f);
-
-                prev = target;
-            }
-
-            Object.Destroy(go, duration);
-            return go;
+            return book != null ? book.gameObject : null;
         }
 
         // -------------------------------------------------------------------

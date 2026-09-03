@@ -12,7 +12,7 @@ human judgement ('does this FEEL right', 'is this the art we want') or a credent
 Every item below says **what is already done**, so nobody redoes it, and **what exactly is being
 asked of you**, so it is one sitting rather than a project.
 
-Last reviewed 2026-09-03, branch `ui-redesign`.
+Last reviewed 2026-09-03, branch `abilities-rework`.
 
 ---
 
@@ -160,6 +160,14 @@ Every asset that arrives from the search brief needs its **licence read by a per
 in**, and the credits line written. Free-for-commercial-use is the bar; CC-BY needs the attribution
 line actually added to the credits screen.
 
+⚠️ **THE FIRST BATCH IS IN AND IT IS ENTIRELY CC0, SO THERE IS NOTHING TO ADD TO THE CREDITS
+SCREEN YET.** `Assets/TumbangPreso/Resources/Vfx/SOURCES.txt` carries the licence for all twelve
+ability sheets beside the art, and the twenty-seven replaced sound cues are Kenney CC0. **No CC BY
+asset ships today.** The one that would is the jeepney in § 11.2, and its credit line is written
+and waiting in `Asset_Sourcing.md` § 9. **What is still asked of you is to read the two source
+lines in `SOURCES.txt` and say the derivatives may stay in a public repo**, which is the same
+question § 7.1 asks about the glyphs and is a far easier yes: CC0 is a public domain dedication.
+
 ---
 
 ## 8 · The judgements no probe in this repository can make
@@ -196,3 +204,47 @@ is what it does to a real phone's frame time, temperature and battery over twent
 **What is asked of you:** once the .apk is on the handset, play two ten-minute sessions, one with
 the cap on and one off, and say whether the phone gets hot and whether the battery moves
 differently. A number from the desktop is not that measurement.
+
+---
+
+## 11 · Two downloads that need an account, and neither can be worked around
+
+**`docs/TODO.md` § 131.5 and § 131.6.** The asset pass got everything that is fetchable without a
+login and stopped at the two that are not. Both are named in `docs/Asset_Sourcing.md` and both are
+free; what they need is a person who is signed in.
+
+**Already done, so do not redo it:** every CC0 source in `Asset_Sourcing.md` § 2 and § 5.1 is
+downloading automatically through `tools/fetch_asset_sources.py`, including PVFX Foundry, which
+needed itch.io's three-request name-your-own-price flow reverse engineered. Twelve recoloured VFX
+sheets and twenty-seven replaced sound cues are in and green.
+
+### 11.1 The sixteen Freesound recordings
+
+`Asset_Sourcing.md` § 5.2 lists sixteen CC0 recordings by direct link: the fire whoosh, three ice
+takes, two thunder takes, two earthquake takes, the electric crackle, the dark magic loop and the
+tin can. **Every one of those URLs answers `302` to `https://freesound.org/home/login/`.** They
+are the elemental beds for all eighteen `sfx_cast_*` and all twelve `sfx_var_*` cues, which is why
+those thirty are still synthesised while the twenty-seven physical ones are real.
+
+**What is asked of you:** sign in to Freesound, download the sixteen files in § 5.2, and drop them
+into `scratchpad/asset-src/freesound/`. That folder is gitignored and
+`tools/build_ability_audio.py` is where the mapping goes. They are CC0, so no credit line is
+needed and they may be committed as derivatives.
+
+### 11.2 The jeepney
+
+`Asset_Sourcing.md` § 7 and § 7.1. Maclin Macalindong's CC BY jeepney is the culturally specific
+silhouette meant to replace the distant north `van` on Ilalim ng Tulay. **Sketchfab requires a
+signed-in account to download a model**, and the API needs a token from one.
+
+**What is asked of you:** download the .glb or .fbx and drop it into
+`scratchpad/asset-src/sketchfab/`. It is **74.2K triangles as delivered**, so it does not enter the
+map as it comes: the optimise, material merge and warm recolour are all scriptable and are the
+part that does not need you. **It is CC BY, so the credit line in `Asset_Sourcing.md` § 9 has to
+reach the credits screen in the same commit that ships the model.**
+
+> ⚠️ **Neither of these is a blocker on anything else.** The rest of § 131 is done or open on work
+> that needs no account. If neither download ever happens, the honest fallback is that the thirty
+> elemental cues stay synthesised and Ilalim ng Tulay keeps its generic van, and both should then
+> be written off in `Asset_Sourcing.md` rather than left looking pending.
+

@@ -93,6 +93,48 @@ namespace TumbangPreso.Abilities
                 Visual.AbilityVfx.AttachAura(ctx.Motor.transform,
                                              Visual.AbilityVfx.Aura.FireEmber, Duration);
 
+                // ⚠️⚠️ THE LEADING EDGE, WHICH IS THE HALF OF THIS ABILITY NOTHING DREW.
+                // `docs/Asset_Sourcing.md` § 3 for Flame Rush: *"Ember Jet at the leading edge
+                // and short flame tongues along the swept path. Orient them with movement so
+                // they read as a streak, not circular puddles."* Everything the rush had was
+                // BEHIND Sean: scorch discs on the road and embers falling off his body. The
+                // front of a 17 m/s launch had nothing on it at all.
+                //
+                // ⚠️⚠️ `Facing.Fixed` AND NOT A BILLBOARD, WHICH IS THE WHOLE POINT OF THE
+                // SENTENCE ABOVE. `ember-jet` is drawn travelling LEFT TO RIGHT across its cell,
+                // so a quad that turns to face the camera turns the jet with it and Sean's
+                // direction stops meaning anything. Held square to his heading, the same 96
+                // pixels read as a streak going the way he went, and a defender standing off to
+                // the side sees it edge on, which is exactly what a jet looks like from there.
+                //
+                // ⚠️ IT IS PARENTED TO NOTHING AND SITS AT HIS CHEST. The dash moves him 17 m/s
+                // and the sheet lives 0.7 s, so a jet stuck to his body would still be burning
+                // at the far wall; left in world space it is the flame he came OUT of, which is
+                // where a player looks to work out where he started.
+                //
+                // ⚠️⚠️ THE YAW IS `-90` AND THE SIGN IS NOT COSMETIC. `LookRotation` puts the
+                // quad's local +Z along the heading, which is its NORMAL: that draws the jet
+                // across Sean's path rather than along it. Turning it -90 about Y sends local
+                // +X, which is the direction the art blows, onto the heading. `+90` sends it
+                // onto the heading REVERSED, so the jet fires out of his back.
+                //
+                // ⚠️ THE 0.5 m IS THE PACK'S OWN PIVOT ARITHMETIC. `ember-jet` is drawn with its
+                // nozzle at x = 24 of 96, which is a quarter of the way across, and this quad is
+                // centred on X. Quarter to half is 0.25 of the width, and the width is 2.0 m, so
+                // the centre has to sit half a metre AHEAD for the nozzle to land on his chest.
+                //
+                // ⚠️ 2.0 m WIDE, WHICH IS INSIDE `docs/VISION.md` § 2 RULE 1 AND LEAVES NOTHING
+                // BEHIND. The rule's 1.8 to 2.5 m is about a skill's floor FOOTPRINT; this is a
+                // transient that lives 0.7 s and never touches the deck, and the footprint this
+                // ability actually leaves is still `TrailRadius` and unchanged.
+                Vector3 heading = forward.sqrMagnitude > 0.0001f ? forward.normalized : Vector3.forward;
+                Visual.VfxFlipbook.Play(Visual.VfxSheets.EmberJet,
+                                        ctx.Position + Vector3.up * 0.95f + heading * 0.5f,
+                                        2.0f,
+                                        Visual.VfxFlipbook.Facing.Fixed,
+                                        rotation: Quaternion.LookRotation(heading, Vector3.up)
+                                                  * Quaternion.Euler(0.0f, -90.0f, 0.0f));
+
                 NetCue.Play("hero_sean_grunt", ctx.Position);
             }
 

@@ -130,3 +130,26 @@ Assets/TumbangPreso/Resources/ShaderWarmup.shadervariants.meta
 # `Assets/TumbangPreso/Resources/UI/input/` are committed, and `Attention.md` § 7.1 asks 🧑 to
 # confirm even that. Drop the pack's PNGs in here to rebuild them.
 scratchpad/input-icons/
+
+# The download cache for the CC0 ability art and audio. `tools/build_vfx_sheets.py` and
+# `tools/build_vfx_audio.py` read it and write the small recoloured derivatives that DO get
+# committed, beside their licence.
+# ⚠️ THE RAW PACKS ARE NOT COMMITTED AND THAT IS A SIZE DECISION RATHER THAN A LICENCE ONE.
+# Every source in `docs/Asset_Sourcing.md` section 2 and section 5.1 is CC0, so committing
+# them would be legal; they are also 90 MB of zips against 320 KB of derivatives, and this
+# repository already learned once what a 450 MB accidental commit costs (see the Unity block
+# at the top of this file). `docs/Asset_Sourcing.md` has every URL, so a fresh clone can
+# rebuild the cache.
+scratchpad/asset-src/
+
+# Working images from the asset pass: recolour comparisons, zooms and quad sheets. The ones
+# worth keeping are the versioned renders under `Logs/shots-abilities/`, which is already
+# ignored above, and the committed derivatives themselves.
+scratchpad/*.png
+
+# One-off working notes from a session: commit messages drafted to a file (CLAUDE.md section 3:
+# PowerShell here-strings break on embedded quotes) and document fragments spliced into docs/.
+# The finished text lives in the commit and in the document; the fragment is not a second copy.
+scratchpad/*.txt
+scratchpad/*.md
+!scratchpad/greyscale.py

@@ -14,7 +14,7 @@ is in the archive with its number unchanged.
 
 | § | Open work | Where it bites |
 |---|---|---|
-| **131** | Replace Hero Strike's primitive VFX and the synthesised SFX from the verified source list | `Asset_Sourcing.md` maps all eighteen abilities and the audio cue families. Characters are explicitly out of scope; maps and buildings wait until the ability pass is complete |
+| **131** | Replace Hero Strike's primitive VFX and the synthesised SFX from the verified source list | **Five of the six families are wired and 27 cues are real recordings (§ 131.3, § 131.5).** Open: the other twelve abilities, Phaister's draped plate, and the two downloads behind a login |
 | **130** | Crossplay, the boot ANR and the lobby's missing ink | The architecture was fine; **two phone-side defects and a third camera built without all three passes**. ⚠️ § 130.14 is CLOSED (§ 130.14b): the steering was never wrong, the test buried its own seat in the floor |
 | **126** | The full PlayMode suite, the thumb floor, the move stick, rumble, the device toggle, the .apk | § 126.8 is still the big one and it is **narrower now**: § 126.8b has the cause (the reset reached five fixtures out of sixty), § 126.8c is a `.xml` that says `Passed` with `total="0"`, § 126.8d is a fix that was measured and **withdrawn** for moving eleven suites from one side to the other |
 | **127** | Phase 16.1: the taya's floor marker is a RING, an attacker's a DISC | Needs its greyscale frame before it can close. § 127.3 |
@@ -101,7 +101,7 @@ taht again"*.
 
 ---
 
-## 131 · Replace Hero Strike VFX and synthesised SFX from the licensed source list ⚠️⚠️ OPEN, 2026-09-03, branch `ui-redesign`
+## 131 · Replace Hero Strike VFX and synthesised SFX from the licensed source list ⚠️⚠️ IN PROGRESS, 2026-09-03, branch `abilities-rework`
 
 🧑 asked for an asset hunt because the ability presentation is still the largest visual gap, then
 corrected the scope when it drifted: **the existing Kenney characters stay. The eighteen Hero
@@ -144,6 +144,118 @@ changing collision, range, authority or balance.
   rather than adding to it, remains outside the gameplay walls, passes `MapGeometryCheck`, and is
   added to the reachable credits screen.
 - Other map and building work begins only after the VFX and SFX acceptance above is green.
+
+### 131.3 ✅ THE SOURCED ART IS IN, AND FIVE OF THE SIX FAMILIES ARE WIRED, 2026-09-03, branch `abilities-rework`
+
+**What arrived.** `tools/fetch_asset_sources.py` rebuilds the download cache from
+`Asset_Sourcing.md` § 2 and § 5.1 without an account: Kenney's six CC0 packs off the asset pages,
+seven OpenGameArt attachments, and PVFX Foundry through itch.io's three-request free-download flow
+(the flow is not guessable and the file records it). The cache is gitignored;
+`tools/build_vfx_sheets.py` writes **twelve 320 KB derivatives** into
+`Assets/TumbangPreso/Resources/Vfx/` with their licence beside them in `SOURCES.txt`.
+
+**⚠️⚠️ EVERY SHEET IS RECOLOURED AND THAT IS NOT A PREFERENCE, IT IS `UiTheme`.** The sources
+arrive cobalt blue, cornflower and orange; the heroes are `HeroMagmaCore` amber, `HeroIce` teal,
+`HeroFire` red, `HeroElectric` yellow and `HeroSpirit` purple. Dropping a pack in as delivered
+would put two Zacks in the game, a yellow one in the HUD and a blue one on the floor. The recolour
+is exact-match against a recorded palette per sheet, so a pack update stops the run instead of
+silently restyling six heroes.
+
+**What is wired, one representative per family, each judged from a render rather than from code:**
+
+| Hero | Where | What replaced what |
+|---|---|---|
+| Dante | `SpawnCrackedLavaDecal` | `earth-rupture` at 1.6x the radius. The scar was always there on frame one and nothing drew the half second the road came apart |
+| Cheska | `SpawnIceSheet` | `frost-nova` as the formation transient, 1.5x the radius, a sibling so the thaw cannot take it |
+| Sean | `SeanHeroKit` Flame Rush | `ember-jet` at the leading edge, `Facing.Fixed` and yawed to his heading so it reads as a streak rather than a puddle |
+| Zack | `CreateThunderstrike`, `SpawnLightningBolt` | **twelve `PrimitiveType.Cube` sparks WITH COLLIDERS** and **twelve `Cylinder` bolt segments**, both gone. Drawn `electric-impact` and eight hdst strokes |
+| Nemu | `SpawnKuroUnbound` | `void-implosion` in the air over the maw's throat |
+
+**⚠️ PHAISTER IS REJECTED AFTER AN IN-ENGINE COMPARISON, WHICH § 131.2 ALLOWS, AND THE REASON IS
+`DrapeToGround`.** Her ward is conformed to the road per vertex because 🧑 reported the ultimate's
+circle by name (*"her magic circle doesnt draw over the sidewalk and thats weird af"*), and a four
+vertex quad has nothing to conform with. Her kit is also **the only one in `HeroHazards.cs` with no
+`CreatePrimitive` in it** (`grep -n CreatePrimitive` returns twenty and none are hers), so § 131 has
+no primitive layer here to replace. `tools/build_vfx_sheets.py` carries the argument and the route
+back in, which is a subdivided UV plate rather than a decal. **That route is open work, below.**
+
+### 131.4 Four faults the renders found and no test could
+
+Each of these was invisible in the source and obvious in a frame, which is `CLAUDE.md` § 6.1.
+
+1. ⚠️⚠️ **`Sprites/Default` SILENTLY IGNORES TILING AND OFFSET.** `ability_ice_sheet_eye_v51.png`
+   is Cheska's nova drawn as **five novas in a row**: the whole 5 x 3 sheet on one quad. Unity's
+   sprite shader passes `v.texcoord` to the sampler and never applies `_MainTex_ST`, so
+   `mainTextureScale` did nothing. `Shaders/VfxFlipbook.shader` is forty lines of this
+   repository's own and one `TRANSFORM_TEX`; it is in `GameBuilder.EnsureRuntimeShaders` because
+   the fallback draws the bug rather than magenta.
+2. ⚠️⚠️ **`AbilityShowcaseProbe.Solo` NEVER SWEPT WHAT A SPAWNER MADE BESIDE ITSELF.** Formation
+   transients are siblings on purpose (`VolcanicCooling.SinkDepth` takes a zone under the road at
+   the end of its life). `Object.Destroy(go, t)` never comes due in edit mode, so Cheska's nova
+   survived into Nemu's frame, then the barricade's, then Dante's: **three captures in the v51 set
+   are photographs of somebody else's ability.** `Clear` sweeps to a scene baseline now.
+   `Transient` had solved this for itself in 2026-08-26 and `Solo` had not.
+3. ⚠️⚠️ **RANK-BASED RECOLOUR LOSES VALUE, WHICH IS THE ONE THING PIXEL ART READS BY.**
+   `frost-nova` is 36, 75, 124, 185, 232, 232, 253: three of seven at the bright end. Spreading
+   them evenly across the ramp put the nova's main body at 86 and `ability_ice_sheet_eye_v52.png`
+   is a near-black dome sitting in a hole in Cheska's own ice. The position on the ramp is the
+   source colour's own luminance now.
+4. ⚠️⚠️ **THE DARKEST STOP IS THE ONE THAT KEEPS BEING WRONG.** Every source sheet spends its
+   largest single share of pixels on its own dark ink: 36 per cent for `frost-nova`, 33 for
+   `electric-impact`, 37 for `void-implosion`. That is a shadow inside a bright drawing, and a
+   near-black turns it into a hole in whatever the effect stands on. **Only `earth` and `ash` may
+   go properly dark, because only those two are drawn against nothing but asphalt.**
+
+Two more that the renders settled by measurement rather than argument: Zack's bolts were **24 m of
+a 64 x 512 stroke at 0.9 m wide**, a 26 to 1 stretch against the art's own 8 to 1, and came out as
+smooth ropes; the width is derived from the length at the sheet's aspect now and the reach is 12 m.
+His ground contact moved twice, 3.6 m to 2.4 m to 3.4 m, because at the first it covered the shock
+star and at the second it was a speck inside it.
+
+### 131.5 ✅ Twenty-seven cues are real recordings now, and the rest are a credential
+
+`tools/build_ability_audio.py`. Every output is mono 44.1 kHz WAV, trimmed, tail-faded, capped
+where the recording was longer than the cue it replaces, and **normalised to the peak of the file
+it replaces** so `AudioCues.TrimDb`'s measured mix is not quietly undone one cue at a time.
+
+The one that matters most: **`lata_impact` and `lata_knockdown` are recordings of a tin can.**
+
+⚠️⚠️ **THE ELEMENTAL HALF IS BLOCKED ON AN ACCOUNT AND NOT ON EFFORT.**
+`Asset_Sourcing.md` § 5.2 names sixteen specific CC0 Freesound recordings for fire, ice, thunder,
+rock and dark magic. **Freesound requires a login to download**: every one of those URLs answers
+302 to `/home/login/`. Creating an account is not something this toolchain may do.
+`Attention.md` § 11 is the ask. Until then the eighteen `sfx_cast_*` and twelve `sfx_var_*` keep
+their synthesised placeholders, deliberately: replacing an ELEMENT with impact foley would make six
+heroes sound like one, which is the opposite of the point.
+
+⚠️ **The Kenney jingles are declined rather than missed.** § 5.1 offers them for round win, loss and
+match win; the pack is 8-bit NES, pizzicato, sax and steel. This game is a Filipino street in carved
+wood and warm cream, and a chiptune win sting is a different game's voice. Music is `Attention.md`
+§ 4.
+
+### 131.6 ⚠️ WHAT IS STILL OPEN
+
+- **The other twelve abilities.** Five families are established. Demonic Carapace, Titan Fissure,
+  Ice Barricade, Glacial Nova, Ignition Cannon, Supernova, Bolt Sprint, Magnet, Phantom Veil and
+  Astral Hijack still draw their own transients. `vfx_burst_v1`, `vfx_shrapnel_v1`,
+  `vfx_bolthead_v1`, `vfx_bloom_v1`, `vfx_smoke_v1` and `vfx_dust_v1` are built, committed and
+  **not yet placed**: the sheets exist for exactly these.
+- ⚠️ **Phaister's route back in**, § 131.3. A subdivided, UV-mapped ground plate carrying the
+  sourced circle drapes exactly as `WardCircle` does and would put real authored script where the
+  procedural glyphs are. Mesh work, not import work.
+- ⚠️ **The `ThunderShockRing` is a flat saturated yellow star** and it is the largest single shape
+  in Zack's ultimate. `ability_blast_thunder_eye_v55.png`: the drawn impact reads, and the flat
+  plane under it is still `VISION.md` § 2 rule 3's puddle. It is `VfxShapes.Star`, so it is a
+  silhouette rather than a primitive, which is why it survived this pass.
+- ⚠️ **`SpawnSeanceVoid` is dead code.** `NemuHeroKit` builds `SpawnKuroUnbound`; only
+  `AbilityShowcaseProbe` still reaches the old zone. It is deliberately NOT dressed with sourced
+  art (§ 130.7's `MapPreview` argument), and it should be deleted or the probe should stop
+  photographing it.
+- ⚠️ **The jeepney is blocked the same way the Freesound half is.** Sketchfab requires a login to
+  download the CC BY model in `Asset_Sourcing.md` § 7. `Attention.md` § 11.
+- ⚠️ **`MapGeometryCheck` is red on Eskinita** with nine floating props and one prop 0.79 m from
+  the can spawn. **Not this branch and not this pass**: nothing here touches a map. It is recorded
+  because `Checks.RunAll` now reports it on every run and the next reader will wonder.
 
 ---
 

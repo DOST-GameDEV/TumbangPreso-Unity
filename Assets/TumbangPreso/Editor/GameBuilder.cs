@@ -570,6 +570,15 @@ namespace TumbangPreso.EditorTools
                 // warning is the editor-side guard; this line is the player-side one.
                 "TumbangPreso/NearFade",
 
+                // ⚠️⚠️ THE SOURCED ABILITY SHEETS' ONLY PASS, AND ITS MISS PATH IS A WRONG
+                // PICTURE RATHER THAN A MISSING ONE, WHICH IS WORSE. `VfxFlipbook.NewMaterial`
+                // reaches it through `Shader.Find` and falls back to `Sprites/Default`, which
+                // ignores `_MainTex_ST` entirely: a stripped build would draw every ability's
+                // WHOLE 5 x 3 sprite sheet on one quad, all fifteen frames at once, in the
+                // player only. `Logs/shots-abilities/ability_ice_sheet_eye_v51.png` is what that
+                // looks like. The editor would be correct throughout.
+                "TumbangPreso/VfxFlipbook",
+
                 // ⚠️ DANTE'S GROUND, AND THE FIRST SHADER ANY ABILITY HAS EVER HAD. `VfxMaterial
                 // .Volcanic` reaches it through `Shader.Find` and nothing in any scene references
                 // it, which is exactly the case this list exists for.
