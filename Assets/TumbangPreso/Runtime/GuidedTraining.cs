@@ -919,7 +919,13 @@ namespace TumbangPreso
             for (int i = 0; i < scores.Length; i++) scores[i] = GameServices.Match.ScoreFor(i);
 
             GameServices.Match.ApplySnapshot(scores, roundNumber, true);
-            GameServices.Round.ApplySnapshot(Balance.RoundTime, true, defenderSlot);
+            // WARNING  THE ROUTE READS THE LIVE ROUND LENGTH RATHER THAN THE SHIPPED CONSTANT.
+            // `SceneFlow.StartTraining` resets the whole rule set to defaults, so this is 90 on
+            // every path a player can actually reach; asking the rule set anyway means a test
+            // or a probe that loads the guided arena directly, with a custom rule set already
+            // selected, gets a clock that agrees with `RoundDirector` instead of one that does
+            // not.
+            GameServices.Round.ApplySnapshot(UI.SceneFlow.SelectedRoundSeconds, true, defenderSlot);
         }
 
         private void PrepareDummyInFront(float distance, bool attacker)

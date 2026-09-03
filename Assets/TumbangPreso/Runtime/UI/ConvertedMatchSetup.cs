@@ -332,8 +332,20 @@ namespace TumbangPreso.UI
             _difficulty = Mathf.Clamp(Settings.SettingsStore.Current.AiDifficulty, 0, DifficultyOptionCount - 1);
             AIController.ApplyDifficulty(_difficulty);
 
-            _format = Mathf.Clamp(Settings.SettingsStore.Current.MatchFormat, 0, FormatOptionCount - 1);
-            SceneFlow.SelectedFormat = FormatAt(_format);
+            // ⚠️⚠️ THE WHOLE RULE SET IS RESTORED HERE, NOT THE FORMAT ALONE, AND ONLY WHEN THIS
+            // MACHINE OWNS THE ROOM. `GameSettings.CustomRulesWire` is what this player left the
+            // lobby on; in a networked room the HOST's set arrives over `SyncRules` and
+            // `HandleRulesSynced` adopts it, so a client that restored its own preference here
+            // would spend the moment between opening the lobby and the first broadcast showing
+            // the wrong match. `CustomGameRules.Parse` answers `Defaults` for the empty string
+            // every existing `settings.json` holds, which is the whole migration.
+            if (!SceneFlow.Networked || NetAuthority.IsHost)
+            {
+                SceneFlow.SetSelectedRules(CustomGameRules.Parse(
+                    Settings.SettingsStore.Current.CustomRulesWire, SceneFlow.SelectedMode));
+            }
+
+            _format = Mathf.Clamp((int)SceneFlow.SelectedFormat, 0, FormatOptionCount - 1);
 
             var previewNode = Node("MapPreview");
             if (previewNode != null) _preview = previewNode.GetComponent<MapPreviewSurface>();
@@ -437,6 +449,7 @@ namespace TumbangPreso.UI
             MatchRpc.OnMapChanged += HandleMapSynced;
             MatchRpc.OnDifficultyChanged += HandleDifficultySynced;
             MatchRpc.OnFormatChanged += HandleFormatSynced;
+            MatchRpc.OnRulesChanged += HandleRulesSynced;
             MatchRpc.OnLobbyPicksSynced += HandleLobbyPicksSynced;
             MatchRpc.OnLobbyRosterSynced += HandleLobbyRosterSynced;
             MatchRpc.OnLobbyReadyChanged += HandleLobbyReadyChanged;
@@ -924,6 +937,70 @@ namespace TumbangPreso.UI
 
             _rulesDrop = WoodDropdown.Build(rows, "RULES", Caption, formats, _format,
                                             v => OnFormatCycle(v - _format));
+
+            BuildCustomGameDoor(rows);
+        }
+
+        /// <summary>
+        /// The door into CUSTOM GAME, and it is the fifth row of the same rail.
+        ///
+        /// ⚠️⚠️ ONE DOOR, WHERE THE PLAYER ALREADY IS, AND NOT A SECOND BUTTON SOMEWHERE ELSE.
+        /// `CLAUDE.md` § 6.3: *"NEVER ADD A SECOND DOOR TO FIX A FINDABILITY PROBLEM. That is
+        /// exactly how § 92's six-button panel happened: a button per feature, each in its own
+        /// visual language, each at its own hard-coded offset."* MAP, MODE, BOTS and RULES are
+        /// the four things a player already changes about a match, and the rest of the rule set
+        /// is the fifth: it belongs at the bottom of that list, in the same rail, in the same
+        /// visual language, and nowhere else.
+        ///
+        /// ⚠️⚠️ IT IS A ROW THAT SAYS WHAT IS BEHIND IT, NOT A BUTTON LABELLED "MORE". § 96 is
+        /// an entire entry about a door 🧑 could not find because it read as a status readout,
+        /// and the fix there was the same shape: a door is a thing that LOOKS pressable and says
+        /// where it goes. The value column carries a live summary (`8 rounds, 90s`) so the row is
+        /// also the answer to "what are the rules" for anybody who never opens it.
+        ///
+        /// ⚠️ THE ROW IS PRESENT FOR A CLIENT AND THE SCREEN IS READ-ONLY FOR THEM, rather than
+        /// the row being hidden. Hiding it would be § 96's fault aimed at the three people who
+        /// most need to know what they are about to play; `CustomGameScreen` greys every control
+        /// and says who owns them.
+        /// </summary>
+        private void BuildCustomGameDoor(Transform rows)
+        {
+            // ⚠️ THE RAIL IS A `Transform` AND `UiRows` TAKES A `RectTransform`.
+            // `LobbyChrome.SettingsRows` is declared as a `Transform` because the chrome builds
+            // it and does not care what kind it is; the four rows above go through
+            // `WoodDropdown.Build`, which takes the looser type. A row from `UiRows` needs the
+            // rect, so the cast is here rather than widening a field other call sites read.
+            //
+            // ⚠️ AND A NULL RETURNS QUIETLY, WHICH IS `LobbyChrome`'S OWN PATTERN: `LobbyStyle.
+            // Classic` does not build the rail at all (it is the authored screen, kept working at
+            // every commit, § 68.3), and `BuildSettingsDropdowns` above already returns on a null
+            // `rows` for the same reason. A door that throws on the classic style would take the
+            // whole lobby down with it.
+            var rect = rows as RectTransform;
+            if (rect == null) return;
+
+            _customDoor = UiRows.ButtonRow(rect, "CUSTOM GAME", CustomDoorLabel(), OpenCustomGame,
+                "Round length, score target, tsinelas stock, bots and a private room.");
+        }
+
+        private Button _customDoor;
+
+        /// <summary>
+        /// ⚠️ THE SUMMARY IS THE TWO NUMBERS A PLAYER WOULD ASK ABOUT FIRST, and it is why the
+        /// row is worth having even unopened. `CustomGameScreen`'s headline carries the whole
+        /// sentence; this is the short form, and `UiRows.ButtonRow` caps its control at 260 units
+        /// so a longer one would be cut at 4:3 (`UiRows.Cap`).
+        /// </summary>
+        private static string CustomDoorLabel()
+        {
+            var rules = SceneFlow.SelectedRules;
+            return rules.Rounds + " x " + rules.RoundSeconds + "s";
+        }
+
+        private void OpenCustomGame()
+        {
+            MenuSfx.Click();
+            CustomGameScreen.Ensure().Open();
         }
 
         private WoodDropdown _mapDrop, _modeDrop, _botsDrop, _rulesDrop;
@@ -946,6 +1023,17 @@ namespace TumbangPreso.UI
             {
                 _modeDrop.SetIndex(SceneFlow.SelectedMode == GameMode.HeroStrike ? 1 : 0);
                 _modeDrop.SetInteractable(mayEdit);
+            }
+
+            // ⚠️ THE DOOR STAYS PRESSABLE FOR A CLIENT AND THE SCREEN BEHIND IT IS READ-ONLY.
+            // That is the opposite of the four rows above, and deliberately: a control that
+            // CHANGES the match belongs to the host, and a screen that SAYS what the match is
+            // belongs to everybody about to play it. Greying this row would leave the other three
+            // players with no way to read the rules they are about to be held to.
+            if (_customDoor != null)
+            {
+                var label = _customDoor.GetComponentInChildren<Text>();
+                if (label != null) label.text = CustomDoorLabel();
             }
         }
 
@@ -2602,6 +2690,30 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>
+        /// The host changed the whole rule set, so this machine plays by it.
+        ///
+        /// WARNING  A CLIENT ADOPTS IT AND DOES NOT REMEMBER IT, AND `ApplyFormat` BELOW ALREADY
+        /// RECORDS WHY IN ITS OWN WORDS: *"a peer that saved the host's choice would open its own
+        /// next practice lobby on somebody else's rules."* `SceneFlow.AdoptRemoteRules` is the
+        /// path that writes the session and not `settings.json`; the host uses
+        /// `SetSelectedRules`, which writes both, because on the host it IS this player's choice.
+        ///
+        /// WARNING  THE STRING HAS ALREADY BEEN CLAMPED TWICE by the time it lands here, once by
+        /// the host before it broadcast and once on arrival in `MatchRpc.OnSyncRulesMsg`. This
+        /// parses rather than re-bounding; a third clamp would be a third statement of one rule.
+        /// </summary>
+        private void HandleRulesSynced(string wire)
+        {
+            var rules = CustomGameRules.Parse(wire, SceneFlow.SelectedMode);
+
+            if (SceneFlow.Networked && !NetAuthority.IsHost) SceneFlow.AdoptRemoteRules(rules);
+            else SceneFlow.SetSelectedRules(rules);
+
+            _format = Mathf.Clamp((int)rules.Format, 0, FormatOptionCount - 1);
+            Refresh();
+        }
+
+        /// <summary>
         /// ⚠️ THE SETTING IS WRITTEN HERE AND NOT IN `Refresh`, because `Refresh` runs on every
         /// redraw including one caused by a REMOTE change. A peer that saved the host's choice
         /// would open its own next practice lobby on somebody else's rules.
@@ -3895,6 +4007,7 @@ namespace TumbangPreso.UI
             MatchRpc.OnMapChanged -= HandleMapSynced;
             MatchRpc.OnDifficultyChanged -= HandleDifficultySynced;
             MatchRpc.OnFormatChanged -= HandleFormatSynced;
+            MatchRpc.OnRulesChanged -= HandleRulesSynced;
             MatchRpc.OnLobbyPicksSynced -= HandleLobbyPicksSynced;
             MatchRpc.OnLobbyRosterSynced -= HandleLobbyRosterSynced;
             MatchRpc.OnLobbyReadyChanged -= HandleLobbyReadyChanged;

@@ -301,7 +301,15 @@ namespace TumbangPreso.Net
         /// the .apk are rebuilt from this commit and shipped together**, or they refuse each
         /// other correctly and it reads as a bug. Both were rebuilt in the commit that moved this
         /// number.
-        public const int ProtocolVersion = 22;
+        /// ⚠️⚠️ 22 TO 23 IS CUSTOM GAMES, AND IT IS THE SAME SENTENCE AS EVERY BUMP BEFORE IT.
+        /// The room now agrees on a whole `CustomRules` record rather than on a format alone:
+        /// `MatchRpc`'s `SelectRules` and `SyncRules` replace the `SelectFormat` and `SyncFormat`
+        /// pair, and the round COUNT and the round CLOCK are read from that record by
+        /// `MatchDirector.TotalRounds` and `RoundDirector.RoundLength`. **A peer that has never
+        /// heard of those messages plays the shipped four or eight rounds at ninety seconds while
+        /// the host plays three at sixty**, which is two different games sharing one scoreboard.
+        /// It is a refusal by design rather than a bug, and the refusal is what stops the bug.
+        public const int ProtocolVersion = 23;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

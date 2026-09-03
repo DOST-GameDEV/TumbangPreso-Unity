@@ -309,8 +309,8 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("SelectMode", OnSelectModeMsg);
             cm.RegisterNamedMessageHandler("SyncDiff", OnSyncDiffMsg);
             cm.RegisterNamedMessageHandler("SelectDiff", OnSelectDiffMsg);
-            cm.RegisterNamedMessageHandler("SyncFormat", OnSyncFormatMsg);
-            cm.RegisterNamedMessageHandler("SelectFormat", OnSelectFormatMsg);
+            cm.RegisterNamedMessageHandler("SyncRules", OnSyncRulesMsg);
+            cm.RegisterNamedMessageHandler("SelectRules", OnSelectRulesMsg);
             cm.RegisterNamedMessageHandler("SyncLobbyPicks", OnSyncLobbyPicksMsg);
             cm.RegisterNamedMessageHandler("SelectLobbyPick", OnSelectLobbyPickMsg);
             cm.RegisterNamedMessageHandler("SyncPicks", OnSyncPicksMsg);
@@ -3127,47 +3127,116 @@ namespace TumbangPreso.Net
         /// </summary>
         public static event Action<int> OnFormatChanged;
 
+        /// <summary>
+        /// The whole custom rule set, agreed by the room.
+        ///
+        /// ⚠️⚠️ IT REPLACES THE FORMAT-ONLY PAIR RATHER THAN SITTING BESIDE IT, AND THAT IS
+        /// `docs/TODO.md` § 38.5's RULE. That entry found **three dead protocols and one verb that
+        /// had never travelled at all**, and the cause each time was a second path added beside a
+        /// first one. The format is a FIELD of `CustomRules`, so a message that carried it alone
+        /// would be a second, narrower statement of the same fact, and the two would disagree the
+        /// first time somebody changed the rounds and the format in one press.
+        ///
+        /// ⚠️⚠️ THE PAYLOAD IS `CustomGameRules.ToWire`, WHICH ALREADY EXISTS FOR THIS.
+        /// Its own header says so: *"The compact wire form, so a lobby advert and the approval
+        /// hello can carry a rule set without a second protocol."* Fields are appended and never
+        /// inserted, and a SHORT string is read as defaults, so the record can grow without this
+        /// message changing shape again.
+        ///
+        /// ⚠️ THE PASSWORD IS NOT IN IT AND CANNOT BE. `ToWire` drops it and `Parse` clears it,
+        /// deliberately: a lobby advert is readable by everybody in the pool, so a password in it
+        /// is a lock with the key taped to the door. The host holds it and compares what a joiner
+        /// sends.
+        ///
+        /// ⚠️⚠️ AND IT IS WHAT MOVED `NetSession.ProtocolVersion` TO 23. A peer that has
+        /// never heard of this message plays the SHIPPED round count and the SHIPPED clock while
+        /// the host plays the custom ones, which is *"two different games sharing one
+        /// scoreboard"*, the exact sentence that constant's own note uses. `CLAUDE.md` § 4a's
+        /// consequence follows: **the Windows player and the .apk are rebuilt from one commit and
+        /// shipped together**, or they refuse each other correctly and it reads as a bug.
+        /// </summary>
+        public static event Action<string> OnRulesChanged;
+
+        /// <summary>
+        /// ⚠️ KEPT AS THE NAME EVERY CALLER ALREADY USES, and it now sends the whole set. The
+        /// lobby's RULES dropdown changes one field of a rule set that has eight others, and it
+        /// has no business knowing that the transport takes a string: it hands over the format it
+        /// picked and this builds the message from the live rule set.
+        /// </summary>
         public void SelectFormatServerRpc(int format)
+        {
+            var rules = UI.SceneFlow.SelectedRules.Clone();
+            rules.Format = format >= 0 && format <= (int)MatchFormat.Mirror
+                ? (MatchFormat)format : MatchFormat.Standard;
+
+            SelectRulesServerRpc(Core.CustomGameRules.ToWire(rules));
+        }
+
+        public void SelectRulesServerRpc(string wire)
         {
             if (NetAuthority.IsHost)
             {
-                SyncFormatClientRpc(format);
+                SyncRulesClientRpc(wire);
                 return;
             }
 
             if (_nm == null || _nm.CustomMessagingManager == null) return;
-            using var writer = new FastBufferWriter(16, Allocator.Temp);
-            writer.WriteValueSafe(format);
-            _nm.CustomMessagingManager.SendNamedMessage("SelectFormat", NetworkManager.ServerClientId, writer);
+
+            // ⚠️ 256 RATHER THAN 16. The old payload was one int; this one is nine numbers and
+            // eight separators, about forty characters today and room to grow. A writer sized to
+            // the message it happens to carry is a writer that throws the day a field is appended.
+            using var writer = new FastBufferWriter(256, Allocator.Temp);
+            writer.WriteValueSafe(wire ?? "");
+            _nm.CustomMessagingManager.SendNamedMessage("SelectRules", NetworkManager.ServerClientId, writer);
         }
 
-        private void OnSelectFormatMsg(ulong senderClientId, FastBufferReader reader)
+        private void OnSelectRulesMsg(ulong senderClientId, FastBufferReader reader)
         {
             if (!NetAuthority.IsHost) return;
             if (!SenderMayConfigureLobby(senderClientId)) return;
-            reader.ReadValueSafe(out int format);
-            SyncFormatClientRpc(format);
+            reader.ReadValueSafe(out string wire);
+            SyncRulesClientRpc(wire);
         }
 
-        private void SyncFormatClientRpc(int format)
+        private void SyncRulesClientRpc(string wire)
         {
             if (!NetAuthority.IsHost) return;
+
+            // ⚠️⚠️ THE HOST CLAMPS BEFORE IT BROADCASTS, so what the room agrees on is
+            // already inside every bound. `CustomGameRules`' header: *"EVERY BOUND IN HERE IS A
+            // BOUND ON THE HOST, NOT A SUGGESTION TO IT ... each one is clamped on the way in and
+            // again on the way out of the wire."* This is the way out.
+            var clamped = Core.CustomGameRules.Parse(wire, UI.SceneFlow.SelectedMode);
+            string safe = Core.CustomGameRules.ToWire(clamped);
+
             if (_nm != null && _nm.CustomMessagingManager != null)
             {
-                using var writer = new FastBufferWriter(16, Allocator.Temp);
-                writer.WriteValueSafe(format);
-                _nm.CustomMessagingManager.SendNamedMessageToAll("SyncFormat", writer);
+                using var writer = new FastBufferWriter(256, Allocator.Temp);
+                writer.WriteValueSafe(safe);
+                _nm.CustomMessagingManager.SendNamedMessageToAll("SyncRules", writer);
             }
-            OnFormatChanged?.Invoke(format);
+
+            OnRulesChanged?.Invoke(safe);
+            OnFormatChanged?.Invoke((int)clamped.Format);
         }
 
-        private void OnSyncFormatMsg(ulong senderClientId, FastBufferReader reader)
+        private void OnSyncRulesMsg(ulong senderClientId, FastBufferReader reader)
         {
             // ⚠️ See `OnSyncDiffMsg`: the host is its own client and a broadcast loops back.
             if (NetAuthority.IsHost) return;
 
-            reader.ReadValueSafe(out int format);
-            OnFormatChanged?.Invoke(format);
+            reader.ReadValueSafe(out string wire);
+
+            // ⚠️⚠️ THE CLIENT CLAMPS TOO, AND THAT IS NOT PARANOIA ABOUT THE HOST. It is
+            // the same argument `NetSession.ApproveConnection` makes about the account id: the
+            // host is a PLAYER in this room, on somebody's laptop, and `docs/VISION.md` § 4's
+            // *"the host decides everything that scores"* is a statement about authority rather
+            // than about trust. A 900 second round arriving from a modified host would otherwise
+            // be drawn on this machine's clock.
+            var clamped = Core.CustomGameRules.Parse(wire, UI.SceneFlow.SelectedMode);
+
+            OnRulesChanged?.Invoke(Core.CustomGameRules.ToWire(clamped));
+            OnFormatChanged?.Invoke((int)clamped.Format);
         }
 
         private void OnSyncDiffMsg(ulong senderClientId, FastBufferReader reader)
@@ -3958,7 +4027,13 @@ namespace TumbangPreso.Net
             using var writer = new FastBufferWriter(256, Allocator.Temp);
             writer.WriteValueSafe(match.RoundNumber);
             writer.WriteValueSafe(match.DefenderSlot);
-            writer.WriteValueSafe(round != null ? round.TimeLeft : Balance.RoundTime);
+            // WARNING  THE FALLBACK IS THIS MATCH'S ROUND LENGTH, NOT THE SHIPPED 90.
+            // `RoundDirector.RoundLength` reads `SceneFlow.SelectedRoundSeconds`, so a custom
+            // lobby's clock is what a joining peer is told when there is no live round to read
+            // one off. A literal 90 here would hand a client on a 120 second match a clock
+            // thirty seconds short before the first tick, and it would read as a desync.
+            writer.WriteValueSafe(round != null ? round.TimeLeft
+                                                : UI.SceneFlow.SelectedRoundSeconds);
             writer.WriteValueSafe(scores);
             writer.WriteValueSafe(match.MatchInProgress);
             writer.WriteValueSafe(round != null && round.RoundActive);
@@ -4294,7 +4369,11 @@ namespace TumbangPreso.Net
             for (int i = 0; i < scores.Length; i++) scores[i] = match.ScoreFor(i);
 
             bool roundActive = round != null && round.RoundActive;
-            float timeLeft = round != null ? round.TimeLeft : Balance.RoundTime;
+            // WARNING  SAME FALLBACK AS THE SNAPSHOT WRITER ABOVE AND FOR THE SAME REASON.
+            // Two places answering one question have to answer it the same way; `docs/TODO.md`
+            // section 38.6's audit exists because a writer and a reader that disagree are not an
+            // error, they are silently misread bytes.
+            float timeLeft = round != null ? round.TimeLeft : UI.SceneFlow.SelectedRoundSeconds;
 
             SyncWorldSnapshotClientRpc(match.RoundNumber, match.DefenderSlot, timeLeft, scores,
                                        match.MatchInProgress, roundActive);

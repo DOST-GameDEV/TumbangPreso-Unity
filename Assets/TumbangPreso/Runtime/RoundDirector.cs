@@ -42,7 +42,28 @@ namespace TumbangPreso
         /// counting, which reads as a clock that has already expired and was reported as the
         /// match "starting with no time left".
         /// </summary>
-        public float TimeLeft { get; private set; } = Balance.RoundTime;
+        /// ⚠️ AND IT STARTS AT THE ROUND LENGTH THIS MATCH IS SET TO, NOT AT THE SHIPPED 90. The
+        /// paragraph above is about the ready-up window reading a full clock rather than 00:00;
+        /// on a custom 120 second match the same argument says it must read **02:00** there, and
+        /// `Balance.RoundTime` would have drawn 01:30 for the first thing a player sees.
+        public float TimeLeft { get; private set; } = RoundLength;
+
+        /// <summary>
+        /// How long a round of THIS match lasts.
+        ///
+        /// WARNING  `Balance.RoundTime` IS STILL THE SHIPPED NUMBER AND IS STILL WHAT
+        /// `Design.md` GOVERNS. `CustomGameRules.Defaults` reads it, so a rule set nobody has
+        /// edited answers exactly 90 here and every number in `Design.md` stays true of the
+        /// shipped game. `CLAUDE.md` section 5's rule is about the value the game SHIPS at; a
+        /// custom lobby is explicitly not that, and `CustomGameRules.CanBeRanked` refuses the
+        /// ladder to any match that has moved it.
+        ///
+        /// WARNING  FOUR PLACES USED TO WRITE `Balance.RoundTime` DIRECTLY and all four read
+        /// this now, because a round that STARTS at 120 and is CLAMPED at 90 by the snapshot is
+        /// worse than either number on its own: the host and the client would disagree about the
+        /// clock and it would read as a desync.
+        /// </summary>
+        private static float RoundLength => UI.SceneFlow.SelectedRoundSeconds;
 
         public Lata Lata { get; set; }
 
@@ -92,7 +113,14 @@ namespace TumbangPreso
         public void ApplySnapshot(float timeLeft, bool roundActive, int defenderSlot,
                                   bool matchInProgress = true)
         {
-            TimeLeft = Mathf.Clamp(timeLeft, 0.0f, Balance.RoundTime);
+            // WARNING  THE CEILING IS THE ROUND LENGTH THIS MATCH IS ACTUALLY BEING PLAYED AT,
+            // NOT THE SHIPPED 90. `Balance.RoundTime` is what the game ships and what
+            // `Design.md` governs; a custom lobby may set 30 to 180
+            // (`CustomGameRules.MinRoundSeconds` and `MaxRoundSeconds`). **This clamp is applied
+            // to a number the HOST sent**, so a 120 second round would have arrived correct and
+            // been cut to 90 on every client: the clock would read 01:30 while the host counted
+            // 02:00, and it would look like a desync rather than like a clamp.
+            TimeLeft = Mathf.Clamp(timeLeft, 0.0f, RoundLength);
             RoundActive = roundActive;
 
             // ⚠️⚠️ THE FREE-ROAM WINDOW IS WHY THIS IS NOT SIMPLY `= roundActive`, AND STAMPING
@@ -188,7 +216,7 @@ namespace TumbangPreso
         public void BeginRound()
         {
             RoundActive = true;
-            TimeLeft = Balance.RoundTime;
+            TimeLeft = RoundLength;
             _throwCooldownLeft = 0.0f;
             _defenseTickAccum = 0.0f;
             _tayaCampTimer = 0.0f;
@@ -226,7 +254,7 @@ namespace TumbangPreso
             _players.Clear();
 
             RoundActive = false;
-            TimeLeft = Balance.RoundTime;
+            TimeLeft = RoundLength;
             _throwCooldownLeft = 0.0f;
             _defenseTickAccum = 0.0f;
             _tayaCampTimer = 0.0f;
@@ -254,7 +282,7 @@ namespace TumbangPreso
             // cooldowns, but the lesson must not end halfway through because 90 seconds passed.
             if (GameLaunch.GuidedTutorial)
             {
-                TimeLeft = Balance.RoundTime;
+                TimeLeft = RoundLength;
                 return;
             }
 

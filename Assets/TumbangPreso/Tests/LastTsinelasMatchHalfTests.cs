@@ -132,8 +132,31 @@ namespace TumbangPreso.Tests
             StringAssert.Contains("public void BroadcastTsinelas(int[] stocks, int defenderSlot)", rpc);
             StringAssert.Contains("ApplyNetworkStocks", rpc);
 
-            StringAssert.Contains("ProtocolVersion = 22", session);
-            Assert.AreEqual(22, Net.NetSession.ProtocolVersion,
+            // ⚠️⚠️ AT LEAST 22, NOT EXACTLY 22, AND THE DIFFERENCE IS THE WHOLE POINT OF THIS
+            // ASSERTION. What § 130.13 needed to record is that the stock table's arrival COST a
+            // bump, and 22 is the number it cost. **Pinning the equality made every LATER bump
+            // fail this test**, which happened one day afterwards when custom games moved it to
+            // 23: a test that goes red because somebody correctly bumped a shared constant is a
+            // test that teaches the next reader to edit the number without reading the sentence.
+            //
+            // `ChatAndLobbyChromeTests.TheProtocolCarriesEveryRosterBump` is the tripwire that
+            // owns the exact value, and it carries a paragraph per bump. This one owns a
+            // different claim: *the number had already moved past 21 by the time this feature
+            // shipped.* Those are two different questions and only one of them belongs here.
+            var moved = System.Text.RegularExpressions.Regex.Match(
+                session, @"ProtocolVersion\s*=\s*(\d+)");
+
+            Assert.IsTrue(moved.Success, "NetSession.ProtocolVersion is gone or renamed.");
+            Assert.GreaterOrEqual(int.Parse(moved.Groups[1].Value), 22,
+                "LAST TSINELAS STANDING's match half needed the protocol at 22 or above: a peer " +
+                "that has never heard of the stock table lets an eliminated player go on " +
+                "throwing. docs/TODO.md § 130.13.");
+            // ⚠️ THE SECOND STATEMENT OF THE SAME CLAIM, AND IT IS THE ONE THAT WAS MISSED WHEN
+            // THE FIRST WAS LOOSENED. Two assertions of one fact in one method is exactly the
+            // duplication `docs/TODO.md` § 5's drift rule is about; this one reads the CONSTANT
+            // where the one above reads the SOURCE TEXT, so it stays, and it stays loosened for
+            // the same reason.
+            Assert.GreaterOrEqual(Net.NetSession.ProtocolVersion, 22,
                 "the match half is on the wire, so the protocol must have moved and both " +
                 "players must be rebuilt from the same commit.");
         }

@@ -219,8 +219,108 @@ namespace TumbangPreso.UI
             SelectedMap = Maps[next];
         }
 
+        /// <summary>
+        /// PHASE 12: the whole rule set the next match is played by, and the ONE place any of it
+        /// is stored.
+        ///
+        /// ⚠️⚠️ THE THREE FIELDS BELOW ARE PROPERTIES OVER THIS OBJECT NOW, AND THAT IS THE
+        /// POINT OF THE CHANGE RATHER THAN A TIDY-UP. `SelectedMode`, `SelectedFormat` and
+        /// `SelectedTsinelas` were three independent statics; `CustomGameRules` has carried a
+        /// `CustomRules` record holding those same three facts, with bounds and a wire form and
+        /// `Core.Tests` coverage, since Phase 12 was written. **Two stores for one fact is
+        /// `docs/TODO.md` § 5's drift rule**, and it was already live: `CustomRules.Rounds`
+        /// existed and `MatchDirector.TotalRounds` computed the round count from `SelectedMode`
+        /// instead, so a custom rule set could not have been obeyed even if something had made
+        /// one.
+        ///
+        /// ⚠️ EVERY EXISTING READ AND WRITE STILL COMPILES UNCHANGED, which is why this is worth
+        /// doing at all: `SceneFlow.SelectedMode == GameMode.HeroStrike` appears in about sixty
+        /// places and `SelectedMode = x` in three, and a property serves both. **Nothing outside
+        /// this file had to learn a new name.**
+        ///
+        /// ⚠️⚠️ IT IS A SESSION FACT AND NOT A SETTING, exactly like the three it replaces. What
+        /// a player LEFT the lobby on is `GameSettings.CustomRulesWire`; what the match about to
+        /// run plays by is this. `SceneFlow.BootedThroughSplash` records the same distinction one
+        /// flag over, and collapsing the two would either nag every launch or remember nothing.
+        /// </summary>
+        public static CustomRules SelectedRules { get; private set; }
+            = CustomGameRules.Defaults(GameMode.HeroStrike);
+
+        /// <summary>
+        /// Replace the whole rule set, clamped, and remember it for next time.
+        ///
+        /// ⚠️⚠️ IT CLAMPS ON THE WAY IN AND THE CLAMP IS NOT DEFENSIVE PROGRAMMING.
+        /// `CustomGameRules`' own header: *"EVERY BOUND IN HERE IS A BOUND ON THE HOST, NOT A
+        /// SUGGESTION TO IT. A custom lobby is the one place a player can write a number that
+        /// every other machine then plays by."* This is that door, and it is reached from the
+        /// screen, from `settings.json` and from the wire, so the clamp lives here rather than at
+        /// three call sites that each have to remember.
+        ///
+        /// ⚠️ THE CLAMP GOES THROUGH `Parse(ToWire(...))` RATHER THAN THROUGH A SECOND SET OF
+        /// CLAMPS WRITTEN HERE. `Parse` already bounds every field, it is the code the WIRE path
+        /// uses, and it has `Core.Tests` coverage. A hand-written clamp beside it would be a
+        /// second statement of the same rule, which is the fault this whole property exists to
+        /// remove. ⚠️ **The password is carried across by hand afterwards, because `Parse`
+        /// deliberately drops it** (a lobby advert is readable by everybody in the pool).
+        /// </summary>
+        public static void SetSelectedRules(CustomRules rules)
+        {
+            if (rules == null) return;
+
+            string password = rules.Password ?? "";
+            var clamped = CustomGameRules.Parse(CustomGameRules.ToWire(rules), rules.Mode);
+            clamped.Password = password;
+
+            SelectedRules = clamped;
+
+            // ⚠️ THE PREFERENCE IS WRITTEN HERE AND THE PASSWORD IS NOT PART OF IT. A password
+            // saved to `settings.json` is a password sitting in a plain-text file on a shared
+            // laptop for a lobby that ended last night; `CustomGameRules`' own note is that it
+            // gates a lobby and does not protect an account, and neither statement makes it
+            // worth persisting.
+            var settings = Settings.SettingsStore.Current;
+            if (settings == null) return;
+
+            settings.CustomRulesWire = CustomGameRules.ToWire(clamped);
+            settings.MatchFormat = (int)clamped.Format;
+        }
+
+        /// <summary>
+        /// Take the host's rule set for THIS room, without remembering it as this player's own.
+        ///
+        /// ⚠️⚠️ THE WHOLE DIFFERENCE FROM <see cref="SetSelectedRules"/> IS THAT THIS DOES NOT
+        /// WRITE `settings.json`, AND `ConvertedMatchSetup.ApplyFormat` ALREADY RECORDS WHY IN
+        /// ITS OWN WORDS: *"a peer that saved the host's choice would open its own next practice
+        /// lobby on somebody else's rules."* What arrives from the wire is a fact about the room
+        /// somebody else is running, not a preference this player expressed, and the two are
+        /// stored in different places precisely so they cannot be confused.
+        ///
+        /// ⚠️ THE PASSWORD IS THIS MACHINE'S OWN AND SURVIVES. It never travels
+        /// (`CustomGameRules.ToWire` drops it), so there is nothing arriving to replace it, and
+        /// blanking it here would clear the password a player had typed for the lobby they are
+        /// about to host next.
+        ///
+        /// ⚠️ IT STILL CLAMPS. The caller is a client reading a broadcast from a host who is
+        /// another player on another laptop; `docs/VISION.md` § 4's *"the host decides everything
+        /// that scores"* is a statement about authority rather than about trust.
+        /// </summary>
+        public static void AdoptRemoteRules(CustomRules rules)
+        {
+            if (rules == null) return;
+
+            string mine = SelectedRules.Password ?? "";
+            var clamped = CustomGameRules.Parse(CustomGameRules.ToWire(rules), rules.Mode);
+            clamped.Password = mine;
+
+            SelectedRules = clamped;
+        }
+
         /// <summary>Which game mode the next match loads. Default is Hero Strike.</summary>
-        public static GameMode SelectedMode = GameMode.HeroStrike;
+        public static GameMode SelectedMode
+        {
+            get => SelectedRules.Mode;
+            set => SelectedRules.Mode = value;
+        }
 
         /// <summary>
         /// PHASE 12: which FORMAT the next match plays. Standard is the game as it ships.
@@ -235,7 +335,11 @@ namespace TumbangPreso.UI
         /// MIRROR last night finds it still picked. `MatchRpc.SelectFormatServerRpc` is what makes
         /// every machine in a room agree about it.
         /// </summary>
-        public static MatchFormat SelectedFormat = MatchFormat.Standard;
+        public static MatchFormat SelectedFormat
+        {
+            get => SelectedRules.Format;
+            set => SelectedRules.Format = value;
+        }
 
         /// <summary>
         /// PHASE 12: how many tsinelas each attacker starts a LAST TSINELAS round with.
@@ -247,7 +351,37 @@ namespace TumbangPreso.UI
         /// `LastTsinelasDirector` clamps it again on the host, because this is a session static
         /// and a session static is not a promise.
         /// </summary>
-        public static int SelectedTsinelas = CustomGameRules.StartingTsinelas;
+        /// ⚠️⚠️ AND IT IS WRITTEN BY SOMETHING AT LAST. § 130.13 built LAST TSINELAS STANDING's
+        /// whole match half and left this field *"clamped on the host and written by nothing"*:
+        /// the format shipped, the stock was fixed at three, and there was no control for it
+        /// anywhere in the game. `CustomGameScreen` is that control, and it writes through
+        /// <see cref="SetSelectedRules"/> so the bound is applied on the way in.
+        public static int SelectedTsinelas
+        {
+            get => SelectedRules.Tsinelas;
+            set => SelectedRules.Tsinelas = value;
+        }
+
+        /// <summary>
+        /// How many rounds the next match plays.
+        ///
+        /// ⚠️⚠️ IT IS A CUSTOM RULE NOW AND `MatchRules.RoundCountFor` IS ITS DEFAULT RATHER
+        /// THAN ITS ANSWER. `docs/VISION.md` § 1 fixes the shipped lengths (Classic four rounds,
+        /// Hero Strike eight) and `CustomGameRules.Defaults` sets them from that same function,
+        /// so **a rule set nobody has edited plays exactly what it always did**. What changes is
+        /// that a custom lobby can now say three, and the match obeys.
+        /// </summary>
+        public static int SelectedRoundCount => SelectedRules.Rounds;
+
+        /// <summary>
+        /// How long a round lasts, in seconds.
+        ///
+        /// ⚠️ `Balance.RoundTime` IS STILL THE SHIPPED NUMBER AND IS STILL THE ONE `Design.md`
+        /// GOVERNS. `CustomGameRules.Defaults` reads it, so this answers 90 until somebody
+        /// changes it; `CLAUDE.md` § 5's rule that a number in the code must match a number in
+        /// `Design.md` is about the SHIPPED value, and a custom lobby is explicitly not that.
+        /// </summary>
+        public static float SelectedRoundSeconds => SelectedRules.RoundSeconds;
 
         /// <summary>
         /// A join code the next `MatchSetup` should act on, set by a screen that is not the lobby.
@@ -410,8 +544,14 @@ namespace TumbangPreso.UI
             // ⚠️ THE TUTORIAL IS ALWAYS STANDARD. It teaches the game's own rules, and a player
             // who left MIRROR selected last night would otherwise be taught tumbang preso by four
             // copies of one character.
-            SelectedFormat = MatchFormat.Standard;
-            SelectedTsinelas = CustomGameRules.StartingTsinelas;
+            //
+            // ⚠️⚠️ AND SINCE CUSTOM GAMES SHIPPED IT IS THE WHOLE RULE SET THAT GOES BACK, not
+            // the format alone. The same sentence applies with more force to the rest of it: a
+            // player who left a **30 second, one round, three bot** lobby set up would otherwise
+            // be taught the game in half-minute bursts with the route cut off mid-lesson. The
+            // tutorial is the one place in the game where the rules are not the player's to
+            // choose, because the rules are the thing being explained.
+            SetSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
 
             Go(Eskinita);
         }

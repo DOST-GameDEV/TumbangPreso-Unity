@@ -25,7 +25,48 @@ namespace TumbangPreso
 
         public int RoundNumber { get; private set; }
         public int DefenderSlot => MatchRules.DefenderSlotFor(RoundNumber);
-        public int TotalRounds => MatchRules.RoundCountFor(UI.SceneFlow.SelectedMode);
+        /// <summary>
+        /// How many rounds this match runs.
+        ///
+        /// ⚠️⚠️ IT READS THE RULE SET NOW RATHER THAN COMPUTING FROM THE MODE, AND THE SHIPPED
+        /// ANSWER IS UNCHANGED. `CustomGameRules.Defaults` sets `Rounds` from
+        /// `MatchRules.RoundCountFor` for both modes, which is `docs/VISION.md` § 1's rule
+        /// (Classic plays four rounds, Hero Strike eight) written once instead of twice. **A rule
+        /// set nobody has edited plays exactly what it always did**; what changes is that a custom
+        /// lobby can say three and the match obeys, which is what `CustomRules.Rounds` has meant
+        /// since Phase 12 was written and what nothing read.
+        ///
+        /// ⚠️ THE ROLE SCHEDULE IS UNAFFECTED AND MUST STAY THAT WAY. `DefenderSlotFor` is
+        /// `(round - 1) % 4` and is DERIVED (`CLAUDE.md` § 4), so a three-round match simply
+        /// stops before the fourth seat defends. **"Everybody defends exactly once" is a property
+        /// of the shipped four-round Classic format, not of the rotation**, and a custom lobby
+        /// choosing otherwise is choosing that knowingly.
+        /// </summary>
+        public int TotalRounds => UI.SceneFlow.SelectedRoundCount;
+
+        /// <summary>
+        /// Whether a custom score target has been reached, so this match ends before its last
+        /// round does.
+        ///
+        /// ⚠️⚠️ THE RULE IS IN THE CORE AND ONLY THE QUESTION IS HERE.
+        /// `CustomGameRules.ScoreTargetReached` is engine-free and asserted in about a
+        /// millisecond by `CustomGameScoreTargetTests`; this reads the scoreboard and asks it,
+        /// which is `docs/FUTURE.md` § 19.12's constraint (*"Every new mode adds its rules to
+        /// `Packages/com.tumbangpreso.core/`, never to Unity code"*) kept honestly.
+        ///
+        /// ⚠️ ZERO IS OFF AND THAT IS HOW THE GAME SHIPS, so this answers false for every
+        /// standard match and the two call sites below are unchanged for them.
+        /// </summary>
+        private bool ScoreTargetReached()
+        {
+            int target = UI.SceneFlow.SelectedRules.ScoreTarget;
+            if (target <= 0) return false;
+
+            var scores = new int[Balance.PlayerCount];
+            for (int i = 0; i < scores.Length; i++) scores[i] = _scores[i];
+
+            return CustomGameRules.ScoreTargetReached(scores, target);
+        }
         public bool MatchInProgress { get; private set; }
         public bool IsWarmupBuffer { get; set; }
 
@@ -232,7 +273,12 @@ namespace TumbangPreso
             RoundNumber++;
             IsWarmupBuffer = false;
 
-            if (RoundNumber > TotalRounds)
+            // ⚠️⚠️ THE TARGET IS ASKED BESIDE THE ROUND COUNT, NEVER INSTEAD OF IT. Both
+            // conditions end the match through the same two lines, so a target that nobody
+            // reaches changes nothing and a target that is reached can only ever end a match
+            // EARLIER than the rounds would have. Writing it as an `else` would have made a
+            // custom target able to EXTEND a match past its last round.
+            if (RoundNumber > TotalRounds || ScoreTargetReached())
             {
                 MatchInProgress = false;
                 MatchEnded?.Invoke(_scores.WinningSlot());
@@ -245,7 +291,12 @@ namespace TumbangPreso
         public void BeginIntermission()
         {
             int next = RoundNumber + 1;
-            if (next > TotalRounds)
+
+            // ⚠️ THE SAME PAIR OF CONDITIONS AS `AdvanceRound`, AND BOTH SITES ARE NEEDED. This
+            // is the one that runs at the END of a round, so a target reached on the last award
+            // of round two ends the match here rather than opening an intermission the player
+            // then sits through for a match that is already decided.
+            if (next > TotalRounds || ScoreTargetReached())
             {
                 MatchInProgress = false;
                 IsWarmupBuffer = false;
