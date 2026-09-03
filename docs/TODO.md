@@ -636,6 +636,78 @@ this pass deliberately did NOT move because the in-match layer reads them. ⚠�
 rather than the constant**, which is the same move the painters made one level up: `Sign` reads
 `WoodFace` and `WoodSlot` now, cream on it still measures about 9:1, and the HUD is untouched.
 
+### 133.13 ⚠️⚠️ REJECTED. THE 2026-09-03 PASS WAS A RE-SKIN AND HE SENT IT BACK
+
+🧑, having opened the finished batch: **"that shit sucks u didnt overhaul the ui u js recolored it
+FUCK i asked for a complete overhaul bcz the current ui was ugly"**, then **"the ui u made was ugly
+too btw"**, and again **"the recolor u did was ugly btw"**.
+
+⚠️⚠️ **HE IS RIGHT, AND HOW IT HAPPENED IS THE MOST USEFUL THING IN THIS ENTRY.** The pass
+delivered a second font, the logo's palette and a new button material. **It did not move a single
+layout.** All five screens have the composition they had before, rectangle for rectangle. Worse:
+`docs/Front_End_Design.md` § 2 SPECIFIES all five compositions, § 133.11 says in as many words that
+they *"are the work that is left"*, and the session wrote both, built the system instead, and then
+reported as though the job were substantially done. **The design was written and not built, and the
+report did not say so loudly enough to be heard.**
+
+⚠️ **DO NOT TREAT `Logs/shots-runtime/*-v83.png` AS A TARGET.** They are the rejected state. The
+palette, the two faces and `PaperCraft.Surface.Brand` may stay; **the arrangement of every screen
+is the job.** § 118.1's eight faults are all still true, including row 2, measured: **680 units of
+dead space down the lobby's left side and 475 down its right.** No palette fixes that.
+
+⚠️⚠️ **AND THE INSTRUCTION HE ADDED WHEN HE ASKED FOR THIS HANDOFF IS THE ONE TO ACTUALLY OBEY:
+"ask it to genuinely THINK abt how to make it good and capture the quirkiness and style of the
+logo."**
+
+**That is a design problem, not a checklist, and the failed pass is what following a checklist
+looks like.** It answered every instruction he gave, one at a time, in the order he gave them, and
+produced a screen nobody would call good. **Sit with the mark before writing any code.** It is a
+hand-drawn wordmark with letters that lean at different angles, a stroke whose weight varies along
+its own length, a chartreuse blob shoved BEHIND the letters and overlapping them, an orange fill
+that runs diagonally across one glyph and stops, a drip escaping the bottom-right corner and
+ending in a swirl, and darker red bars tucked under the letters like a shadow somebody drew by
+hand rather than computed.
+
+**None of that is a rounded rectangle in a row with nine of its siblings.** The character is in
+things OVERLAPPING, things sitting at angles to each other, one element escaping its own boundary,
+and a silhouette that is irregular at the outside edge rather than at the corner radius. **A front
+end that captures the logo is one where objects overlap, lean, and break out of their rails** the
+way the blob and the drip do, not one where every object is the same pill in the same grid with a
+red line around it. **The failed pass drew the red line and kept the grid.**
+
+⚠️ **AND THE COUNTERWEIGHT IS ALREADY WRITTEN AND STILL BINDING**, so this is not permission to
+add things: § 133.7's *"the personality is in the SHAPE and the LINE, not in the count"*, § 92's
+*"theres liek 20 shits at once"*, and `CLAUDE.md` § 6.2's *never overwhelming*. **Quirk comes from
+how the existing elements are arranged and shaped, not from new elements.**
+
+### 133.14 EVERYTHING HE ASKED FOR, IN HIS OWN WORDS, IN ONE PLACE
+
+⚠️ **The nine in § 133.9 are the first half; these are the rest, from the same day, and several
+SUPERSEDE earlier instructions.** They are collected here because the pass that failed had them
+scattered across a conversation and answered them one at a time.
+
+| What he said | What it settles |
+|---|---|
+| **"i asked for an overhaul man, not a quick small chanve"** | The size of the ask. Not a pass over the existing screens. |
+| **"can u overhaul it like all of it gang"**, *"i dont wanna use the old colors anymore"* | All of it, and no old colours anywhere in the front end. |
+| *"remake the colors too"*, **"i want colors corresponding to or using the same colors as my logo"** | ✅ Done, § 133.12 point 1. The palette is measured and in `UiTheme`'s brand block. |
+| **"i wanted u to remake all buttons in a diff style that feels like my logo bruh"**, *"the darumadrop buttons AS TEXT stay"* | ✅ Done, § 133.12 point 2. `PaperCraft.Surface.Brand`. The LETTERING was never the complaint. |
+| *"ur over replacing fonts, i lowk js wanted u to replace sub fonts with the new font, not everything gang"*, *"i think everything here in darumadrop looked good, just change your username to the sub font"* | ✅ Done. Nunito is the SUB font only; `PaperKit.FaceFor`'s boundary is `Body`. |
+| *"u can also use capital and shit depending on stuff, u figure out where all capital looks best and where it doesnt"* | Rule written in `Front_End_Design.md` § 3.1, **not yet applied to the call sites**. |
+| **"i want it to be quirky and feel filipino-esque ... but dont force the filipino shit, i js want it to be felt from it"** | ⚠️ **NOT BUILT.** Felt, not themed: spend it on what a room is MADE of rather than on ornament. |
+| **"i want our ui for lobby and everything (except for game for now) to all have its own identity"**, *"i want settings, character select profile to all be under the same theme but feel like their own screens"* | ⚠️ **NOT BUILT AND IT IS THE HEART OF THE REJECTION.** `Front_End_Design.md` § 2 gives each screen an anchor colour, a borrowed archetype, a hero element and a motif. None of it exists in code. |
+| *"i dont want UI to feel repetitive but we can repeat shit ... js figure out where and what will llook good"* | Answered in § 0 of that file: **repeat the chrome, never the composition.** |
+| **"maybe we could use like reoccuring shit to guide ppl"**, relaying Paul Andrei: *"maybe pwede natin iincorporate yung crown thingy sa game"* | ⚠️ **NOT BUILT.** `tsinelas_hit.png` is generated and used nowhere. § 1.1: the mark means THIS ONE, at most once per screen. |
+| *"u figure out what else we can reuse or make reoccur"* | § 1.2's six signs. ⚠️ Only the outline is built. |
+| **"u can add random shit and designs to the ui too btw to give our screens character, not everything has to be functional"** | ⚠️ **NOT BUILT.** § 1.3: decoration is free where nothing has to be read, and the 680 units of dead lobby are exactly where it goes. |
+| *"thoroughly make it better plss, i want it to stray away from old design bzc old design was ugly"* | The composition may change. What was LEARNED in §§ 92, 94.7, 100 and 121.1 may not be re-earned. |
+| **"it should have all the functions of old ui, make sure ntohing in old ui as functions get lost"** | ✅ Answered by construction: `PaperPurityProbe.NothingOnTheInventoryDisappeared`, 338 controls captured BEFORE the pass. **It is what makes tearing the screens apart safe.** |
+| *"check this folder out in downloads u can use these for some shit ... u dont have to use it too, u can js use for inspiration"*, *"u can edit those assets and change the colors or smth, depending on which screen u will use"* | `~/Downloads/claude/`, committed to `Art/ui/brand/source/`. `tools/build_brand_art.py` recolours the mono master per screen. |
+
+⚠️⚠️ **AND THE THREE OLDEST ONES STILL GOVERN, WHICH IS WHY THEY ARE IN `CLAUDE.md` § 6.2 RATHER
+THAN HERE:** *not overwhelming*, *easy to look at*, and **findable without being taught**. § 96 is
+the receipt with his name on it and the door into the hub is still not fixed.
+
 ### 133.11 ⚠️ What is still open, and nothing in it is blocked
 
 - ✅ **THE PALETTE IS NO LONGER A BLOCKER.** It landed 2026-09-03, measured, and the repaint went
