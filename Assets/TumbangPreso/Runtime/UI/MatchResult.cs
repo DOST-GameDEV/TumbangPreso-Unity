@@ -1206,6 +1206,34 @@ namespace TumbangPreso.UI
             // other. It clears itself on the first packet after this host's own match is live.
             Net.MatchRpc.HostBeginningArenaLoad();
 
+            // ⚠️⚠️ PHASE 12: THE REMATCH MOVES TO THE NEXT MAP RATHER THAN REPLAYING THIS ONE.
+            // `FUTURE.md` § 12 bought map rotation to *"buy most of the same freshness"* as a new
+            // map for a fraction of the work, and a rematch is the single moment in the game where
+            // that is worth the most: it is four people who have just agreed to keep playing, and
+            // it was handing them the identical street every time.
+            //
+            // ⚠️ HOST ONLY, ON THE LINE ABOVE'S OWN ARGUMENT. The map is match state, so four
+            // peers each rotating is four different maps; every client takes the host's answer
+            // through the `SelectMap` broadcast that already exists. **No new message and no
+            // `ProtocolVersion` move**, which matters because moving it forces the Windows player
+            // and the .apk to be rebuilt together (`CLAUDE.md` § 4a).
+            //
+            // ⚠️ AND IT ROTATES BEFORE `StartMatch`, not after, because `StartMatch` is what reads
+            // `SceneFlow.SelectedMap` to decide which arena to load. Rotating after it would take
+            // effect one rematch late, which is the kind of off-by-one that reads as "the vote
+            // does not work" rather than as a bug.
+            //
+            // ⚠️ NO BALLOT IS PASSED YET, so this is the rotation half. `MapRotationRules.Decide`
+            // takes the votes when the lobby has a ballot to give it; until then silence falls
+            // through to the cycle, which is the behaviour that entry argues for at length.
+            if (!NetAuthority.IsNetworked || NetAuthority.IsHost)
+            {
+                SceneFlow.AdvanceMapRotation();
+
+                int mapIndex = System.Array.IndexOf(SceneFlow.Maps, SceneFlow.SelectedMap);
+                if (mapIndex >= 0) Net.MatchRpc.Instance?.SelectMapServerRpc(mapIndex);
+            }
+
             // ⚠️ ONLY THE HOST STARTS THE MATCH. Every peer hides its own board and unlocks its
             // own cursor, which is local presentation, but `StartMatch` writes match state and
             // `CLAUDE.md` § 4 keeps that on the host: four peers each starting a match is four

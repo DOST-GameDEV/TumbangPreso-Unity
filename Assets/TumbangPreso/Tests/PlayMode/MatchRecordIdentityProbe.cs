@@ -232,19 +232,14 @@ namespace TumbangPreso.PlayTests
         [Category("Ugs")]
         public IEnumerator TheRecordNeverCarriesTheMachineTokenWhileSignedIn()
         {
-            if (!Unity.Services.Core.UnityServices.State.Equals(
-                    Unity.Services.Core.ServicesInitializationState.Initialized))
-            {
-                var init = Unity.Services.Core.UnityServices.InitializeAsync();
-                while (!init.IsCompleted) yield return null;
-            }
-
-            if (!Unity.Services.Authentication.AuthenticationService.Instance.IsSignedIn)
-            {
-                var signIn = Unity.Services.Authentication.AuthenticationService.Instance
-                    .SignInAnonymouslyAsync();
-                while (!signIn.IsCompleted) yield return null;
-            }
+            // ⚠️⚠️ THROUGH `NetIdentity`, NEVER `SignInAnonymouslyAsync` DIRECTLY. A second
+            // sign-in started beside the boot hook's is refused by UGS with *"The player is
+            // already signing in"*, and then NEITHER has completed, so the assertion below reads
+            // *"not signed in"* instead. Whether the two raced depended on how long the suites
+            // ahead of this one took, which is why this suite moved between two full PlayMode
+            // runs of the same code. `docs/TODO.md` § 126.8 and § 126.11.
+            var signIn = TumbangPreso.Net.NetIdentity.EnsureSignedInAsync();
+            while (!signIn.IsCompleted) yield return null;
 
             Assert.IsTrue(Unity.Services.Authentication.AuthenticationService.Instance.IsSignedIn,
                 "could not sign in, so this test cannot say anything about a signed-in machine");

@@ -155,6 +155,28 @@ namespace TumbangPreso.PlayTests
                     if (string.IsNullOrWhiteSpace(label.text)) continue;
                     if (label.color.a < 0.05f) continue;
 
+                    // ⚠️⚠️ A REGISTERED EXEMPTION IS SKIPPED AND COUNTED, NOT SKIPPED SILENTLY,
+                    // AND THE PROBE'S FLOOR IS UNTOUCHED. `docs/TODO.md` § 126.13 closes with
+                    // **"Do not lower the probe's floor to make it green"**, and offers two ways
+                    // out: widen the box, or write the exemption in by name. This is the second,
+                    // and `MenuKit.Fit` attaches `TightLabel` itself so no caller can claim an
+                    // exemption it did not declare.
+                    //
+                    // ⚠️ THE REPORT LINE IS THE HALF THAT MATTERS. § 126.13 exists because one
+                    // local exemption was copied twice with nothing anywhere able to enumerate
+                    // the set, so the way this stays honest is that every one of them is printed
+                    // with its floor, its settled size and the room it was fighting for. **A
+                    // growing list in this report is the signal that a screen needs more room,
+                    // and a silent skip would hide exactly that.**
+                    var tight = label.GetComponent<TumbangPreso.UI.TightLabel>();
+                    if (tight != null)
+                    {
+                        report.AppendLine(
+                            $"{name,-12} EXEMPT  '{label.name}' settled at {tight.Settled} " +
+                            $"units against a {tight.Floor} floor in {tight.Room:F0} units of room");
+                        continue;
+                    }
+
                     // ⚠️ THE CLAIM IS ABOUT THE AUTHORED SIZE, NOT ABOUT THIS RESOLUTION'S
                     // PIXELS. A physical-pixel floor is the same assertion said badly: it
                     // passes at 1440p and fails at 720p for a label nobody changed, so the
@@ -162,10 +184,29 @@ namespace TumbangPreso.PlayTests
                     // small. The size in reference units is the number a developer actually
                     // wrote, it is the same at every resolution, and MenuKit.MinReadableUnits
                     // carries the arithmetic that turns it into pixels on the worst panel.
+                    // ⚠️⚠️ A LABEL AT EXACTLY `PaperKit.Caption` IS THE ONE OPEN DESIGN QUESTION
+                    // ON THIS SCREEN, AND THE MESSAGE SAYS SO RATHER THAN LEAVING THE NEXT READER
+                    // TO RE-DERIVE IT. `docs/TODO.md` § 121.8: `PaperKit.Caption` is 16,
+                    // `MenuKit.MinReadableUnits` is 18, `PaperKit`'s own header states the
+                    // conflict as a deliberate decision, and that entry says in as many words
+                    // that it is **"settled by looking at the running build and not by either
+                    // file winning on paper"**. It is not settled, so this stays RED.
+                    //
+                    // ⚠️ THE FLOOR IS NOT LOWERED AND THE CAPTION IS NOT EXEMPTED. § 126.13:
+                    // *"Do not lower the probe's floor to make it green."* What changed is that
+                    // after that batch's three `Fit(..., 14)` fixes, **this is the only remaining
+                    // source of red on this screen**, so the probe has been narrowed from "some
+                    // label somewhere is small" to one named constant and one open entry.
+                    string why = label.fontSize == PaperKit.Caption
+                        ? " This is exactly PaperKit.Caption, which is docs/TODO.md " +
+                          "§ 121.8's open question rather than an unnoticed bug: settle that " +
+                          "entry before changing either constant, and do it with a render."
+                        : "";
+
                     Assert.GreaterOrEqual(label.fontSize, MenuKit.MinReadableUnits,
                         $"'{label.name}' is authored at {label.fontSize} units, below the " +
                         $"{MenuKit.MinReadableUnits}-unit floor. At {name} ({w}x{h}) that is " +
-                        $"{label.fontSize * scale:F1} physical pixels.");
+                        $"{label.fontSize * scale:F1} physical pixels.{why}");
                 }
 
                 report.AppendLine($"{name,-12} {w}x{h}  canvas scale {scale:F3}  " +

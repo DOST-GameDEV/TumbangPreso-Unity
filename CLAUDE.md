@@ -333,6 +333,23 @@ namespace and reads as an empty lobby rather than as an error.**
 `Matchmaker` already carries `InputDevice` in the pool key. **Crossplay is for lobbies, join codes
 and LAN; the ranked queue still bands by device.** Both are true at once.
 
+⚠️⚠️ **AND SINCE 2026-09-03 THE CODE ACTUALLY DOES THAT, WHICH IT DID NOT BEFORE.**
+`MatchmakingRules.PoolKey` banded **both** stakes by device and platform, so the sentence above was
+true of this file and false of the game: a phone and a PC could not meet through QUICK MATCH at
+all, only by typing a join code at each other. 🧑 2026-09-03: *"i want a mobile and a pc to be able
+to play tgthr"*. **Casual is one crossplay pool (`v21.Classic.Casual`, three parts) and ranked
+keeps all five.** The argument the banding protects is a LADDER argument, and nobody disputes a
+casual match. `docs/TODO.md` § 130.4.
+
+⚠️⚠️ **AND THE OTHER HALF OF CROSSPLAY WAS NEVER THE NETWORK LAYER.** `ApproveConnection` reads the
+protocol, capacity and the block list, and nothing about a device goes on the wire, so the
+architecture was always right. **What was broken was the phone**, twice, and both are in § 130:
+`NetIdentity` cached a FAILED sign-in for the life of the process (§ 130.2, and on Android the boot
+attempt fires while the handset is still associating with wifi, so one bad moment made every later
+JOIN BY CODE fail with no cure but force-closing the game), and `Shader.WarmupAllShaders()` ANR'd
+the app before it ever reached the menu (§ 130.5). **Check those two before believing a crossplay
+report.**
+
 ---
 
 ## 5 · Design.md and the ledger
@@ -859,8 +876,14 @@ every file in a pre-existing output directory was freshly emitted.
   has holes, or whose furniture stands inside the defender's box. ⚠️ **It found six faults on a
   map whose four showcase renders had already been signed off**, including both pavements
   floating 0.15 m over open air. A render only shows the angles somebody chose.
-- `Checks.RunAll` runs `HeadlessCheck`, `ArenaCheck`, `MapGeometryCheck`, `AudioCueCheck` and
-  `SceneScriptCheck` in ONE editor launch, and runs all five even after one fails. ⚠️ **The
+- `Checks.RunAll` runs `HeadlessCheck`, `ArenaCheck`, `MapGeometryCheck`, `AudioCueCheck`,
+  `SceneScriptCheck`, `InputSurfaceCheck` and `ShaderWarmupCollection` in ONE editor launch, and
+  runs all of them even after one fails. ⚠️ **The last one REGENERATES rather than inspecting**:
+  it rewrites the `ShaderVariantCollection` the loading screen warms a slice per frame out of, and
+  a collection that is checked but not rewritten goes stale the first time somebody adds a material
+  and then warms the wrong shaders while looking exactly like a working one. `GameBuilder` rebuilds
+  it on every build for the same reason `ConfigureSplash` rewrites the splash: **both places or
+  neither** (§ 6.4). `docs/TODO.md` § 130.5. ⚠️ **The
   launches are the cost of a verification pass, not the assertions.** A full pass is three Unity
   launches plus `dotnet test`; it used to be seven. `GameBuilder` still runs `SceneScriptCheck`
   itself, deliberately: a build-time gate must not depend on somebody having run this first.

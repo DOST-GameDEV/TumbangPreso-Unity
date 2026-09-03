@@ -18,6 +18,64 @@ every pointer in the repository, which is a worse trade than a duplicate heading
 
 ---
 
+## 129 · Three faults off the first phone render, and the one that was invisible on a monitor ✅ CLOSED 2026-09-03, branch `ui-redesign`
+
+🧑, reading `Logs/shots-touch/touch-HeroStrike-20-9-phone-v4.png`: **"mobile version kinda blurry
+text is is js me"**, then **"dont show #8826 or the player tag of ppl here bcz it makes it too
+long"** and *"and it overflows"*.
+
+### 129.1 ✅ The in-match HUD was the one canvas in the game that did not snap to pixels
+
+`MenuKit.BuildCanvas` sets `pixelPerfect`, `ConvertedScreen.Start` sets it, `TscnUiImporter` bakes
+it into the converted scenes. **`Hud.Build` constructs its canvas by hand and was missed**, and so
+does `MatchResult`. Both are fixed.
+
+⚠️⚠️ **IT IS WORSE ON A PHONE, AND THAT IS ARITHMETIC RATHER THAN BAD LUCK.** `AspectSafeCanvas`
+matches on HEIGHT against a 1080 reference, so a 1080-tall phone sits at scale **1.0** and a 1440p
+monitor at **1.33**. At 1.0 a half-unit offset is half a physical pixel, which is the worst case
+for resampling; at 1.33 it lands nearer a whole pixel more often. **The build that needed the
+setting most was the one that never had it**, which is why five sessions of desktop renders did not
+catch it and the first phone render did.
+
+⚠️ **Still unset, deliberately, and listed so the next reader does not have to re-derive it:**
+`OffscreenIndicators` (a root canvas, but it draws arrows rather than reading matter) and
+`DebugBar` (no scaler, debug only). `GuidedTraining` and `SpectatorCamera`'s replay canvas both set
+`overrideSorting`, which makes them NESTED, and **`pixelPerfect` is a root-canvas setting that a
+nested canvas ignores**, so setting it there would be cargo cult.
+
+### 129.2 ✅ The YOU card named the account handle, and an account handle has no length bound
+
+The card read `ATTACKI` with `PLAYER#8226` drawn straight through it. **This is the third overflow
+on that one row** and `YouCard` already carries the notes for the first two: `TAYA (DEFENDEDANTE`
+(2026-08-27) and `ATTACKERROCKAFORT`.
+
+⚠️⚠️ **THE FIRST TWO WERE FIXED BY MAKING A STRING SHORTER AND THIS ONE COULD NOT BE.**
+`CharacterMotor.DisplayName()` answers `CharacterName()` for a bot and `_playerName` for a human,
+so every previous fit was measured against the ROSTER, where `PHAISTER` is the longest name at
+eight characters. A real account arrives as `PLAYER#8226` and a custom one can be longer. **Every
+earlier fix moved the number at which the row breaks; naming the character removes the class.**
+
+⚠️ **AND IT LOSES NOTHING.** This is the one card that is about YOU: a player does not need to be
+told their own handle six minutes into a match, and what they can genuinely forget is which of the
+eighteen fighters they picked. The handle is still on the scoreboard, where distinguishing four
+seats is the whole job. `CharacterMotor.CharacterName()` is public for this.
+
+### 129.3 ✅ FIXED 2026-09-03: the row is measured now, not trusted. See § 130.9
+
+The fix above removes the cause that was reported. **It does not change the mechanism**, and
+`YouCard`'s own note names it: the row is a `HorizontalLayoutGroup` with two `flexibleWidth: 1`
+children both set to `HorizontalWrapMode.Overflow`, so **when two strings do not fit they do not
+shrink, they draw over each other.** Three separate reports have now come out of that one
+arrangement.
+
+**Done looks like:** the row measured rather than trusted, the way `MenuKit.Fit` already does it
+elsewhere, so a string that does not fit steps down a point instead of overprinting its neighbour.
+⚠️ **Until then, treat any new string on this card as a fourth report waiting to happen.**
+
+---
+
+---
+
 ## 90 · The impersonation guard, and telemetry ⚠️ 2026-08-30
 
 Two things in one branch because they share a wire bump and a Cloud Code deploy: § 88.1c, which

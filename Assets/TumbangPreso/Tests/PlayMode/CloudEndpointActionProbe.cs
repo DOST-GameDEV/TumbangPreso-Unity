@@ -105,6 +105,13 @@ namespace TumbangPreso.PlayTests
                 auth.SwitchProfile(ProbeProfile);
             }
 
+            // ⚠️ THIS ONE STAYS A DIRECT CALL, AND THE REASON IS THE PROFILE SWITCH ABOVE IT.
+            // `NetIdentity.EnsureSignedInAsync` signs in on the GAME's profile; this probe has
+            // just switched to `ProbeProfile` precisely so its writes cannot land on a real
+            // player, and routing it through the shared path would undo that in the line below.
+            // ⚠️ It is still the only other sign-in in the repository, and it is safe from the
+            // race that took `UgsServicesProbe` down six times because the `SignOut` above
+            // guarantees no attempt is in flight on this profile.
             if (!auth.IsSignedIn) yield return Await(auth.SignInAnonymouslyAsync());
 
             Assert.IsTrue(auth.IsSignedIn, "anonymous sign-in failed on the probe profile");

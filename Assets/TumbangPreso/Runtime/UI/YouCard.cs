@@ -161,6 +161,19 @@ namespace TumbangPreso.UI
             // seats from each other.
             _detail.text = _character.CharacterName();
 
+            // ⚠️⚠️ MEASURED HERE, EVERY REFRESH, RATHER THAN ONCE AT BUILD. `docs/TODO.md`
+            // § 129.3. Both strings above can change mid-match (the role swaps every round, and
+            // the name arrives after the pick does), and the row's own WIDTH changes with the
+            // canvas: `AspectSafeCanvas` scales on the short axis, so the same card is a different
+            // number of units wide on a 4:3 panel and on his short wide window. A fit computed
+            // once at build is a fit for one of those.
+            //
+            // ⚠️ IT IS CHEAP BECAUSE IT SHORT-CIRCUITS. `FitIdentityRow` compares the two strings
+            // and the width against what it last fitted and returns immediately when nothing has
+            // moved, which is the common case: this runs about seven times a second and the role
+            // changes about once every ninety.
+            FitIdentityRow();
+
             Color accent = isDefense ? UiTheme.Defense : UiTheme.Offense;
 
             // ⚠️ WOOD WITH A ROLE-COLOURED BORDER, matching the menu and the rest of the HUD.
@@ -483,15 +496,35 @@ namespace TumbangPreso.UI
             //
             // 170 + 10 + 140 = **320 against 336**, so the row now fits by construction whatever
             // the two strings are, rather than by the arithmetic happening to work out.
+            //
+            // ⚠️⚠️ SINCE 2026-09-03 THESE TWO NUMBERS ARE THE STARTING VALUES ONLY, AND
+            // `FitIdentityRow` OVERWRITES BOTH ON THE FIRST REFRESH THAT HAS A LAID-OUT ROW TO
+            // MEASURE. They are kept because they are what the row uses for the one frame before
+            // any layout has run, and because the arithmetic above is the reasoning the measured
+            // version replaced rather than a number it disagrees with. **The 336 is the part that
+            // was never true everywhere**: `AspectSafeCanvas` scales on the short axis, so this
+            // content box is about 336 units at 4:3 and wider on his window, and a split correct
+            // at one width is `CLAUDE.md` § 6.2c's first row. `docs/TODO.md` § 129.3.
             classLayout.preferredWidth = 170.0f;
 
-            // ⚠ THE ROLE SHRINKS INTO THAT BOUND RATHER THAN BEING CLIPPED BY IT, which is the
-            // half that makes the cap safe. `TAYA` never needs it; `ATTACKER` steps down a point or
-            // two on a narrow card and stays readable, with the same `MenuKit.MinReadableUnits`
-            // floor the name below already uses.
-            _class.resizeTextForBestFit = true;
-            _class.resizeTextMaxSize = 32;
-            _class.resizeTextMinSize = MenuKit.MinReadableUnits;
+            // ⚠⚠ BEST-FIT IS GONE FROM BOTH LABELS AND `MenuKit.Fit` DOES THE WORK, WHICH IS THE
+            // FOURTH TIME THIS ROW HAS BEEN TOUCHED AND THE FIRST TIME THE MECHANISM CHANGED.
+            // `docs/TODO.md` § 129.3.
+            //
+            // `resizeTextForBestFit` looks like a measurement and is not one a caller can read.
+            // When the string still does not fit at `resizeTextMinSize` it does not report that:
+            // it clamps at the floor and then `horizontalOverflow = Overflow` draws the surplus
+            // PAST the box, into the neighbour. **Two `Overflow` labels in one row is the whole
+            // fault**, and every previous fix moved the number at which it triggers rather than
+            // removing it: `TAYA (DEFENDEDANTE` (2026-08-27), `ATTACKERROCKAFORT` (2026-08-29),
+            // *"Overflowing text eg. Attacker Rockafort"* (2026-08-30), `ATTACKI` over
+            // `PLAYER#8226` (2026-09-03).
+            //
+            // ⚠️ `MenuKit.Fit` MEASURES THE SAME THING AND ANSWERS. It shrinks through
+            // `preferredWidth` against a real width and RETURNS whether it succeeded, so
+            // `FitIdentityRow` can act on a failure instead of drawing one. Its own header:
+            // *"a caller that ignores the answer has an overflow it has been told about."*
+            _class.resizeTextForBestFit = false;
 
             _detail = Label(identity.transform, "DetailLabel", 34, UiTheme.Offense,
                             TextAnchor.MiddleRight);
@@ -502,6 +535,14 @@ namespace TumbangPreso.UI
             // ⚠️ AND THE NAME KEEPS A FLOOR, so `ATTACKER` cannot eat the whole row on a wider
             // font or a smaller card. Below this the best-fit below has nothing to work with and
             // the name is clipped instead of shrunk.
+            //
+            // ⚠️⚠️ `FitIdentityRow` SETS THIS TO ZERO, AND THAT IS A REVERSAL WORTH READING
+            // BEFORE PUTTING IT BACK. A `HorizontalLayoutGroup` will not shrink a child below its
+            // `minWidth` and **overflows the container instead**, so a 140-unit floor beside a
+            // 170-unit role is a row that can exceed its own box by construction on a narrow
+            // screen: the floor that was protecting the name was also one of the two things
+            // making the row overrun. The name is the child that gives now, and the role is
+            // capped at half the row so it can never be the one that eats it.
             detailLayout.minWidth = 140.0f;
 
             // ⚠️⚠️ THE NAME SHRINKS RATHER THAN OVERLAPPING THE ROLE, AND SHORTENING THE ROLE
@@ -514,9 +555,7 @@ namespace TumbangPreso.UI
             // ⚠️ THE FLOOR IS `MenuKit.MinReadableUnits`. Below that a label is a smudge on a 4:3
             // panel (see that constant), so a name long enough to need smaller than 18 is left
             // clipped by the row rather than shrunk into illegibility.
-            _detail.resizeTextForBestFit = true;
-            _detail.resizeTextMaxSize = 34;
-            _detail.resizeTextMinSize = MenuKit.MinReadableUnits;
+            _detail.resizeTextForBestFit = false;
 
             // `GuardDashSpacer`, 6 px, straight out of the .tscn. It separates the identity line
             // from the meters by more than the column's own spacing, so the card reads as a name
@@ -535,6 +574,125 @@ namespace TumbangPreso.UI
                 BuildMeter(cardGo.transform, "ResetChannelRow", UiTheme.Defense);
 
             _staminaKey.gameObject.SetActive(false);
+        }
+
+        /// <summary>
+        /// The authored sizes the row starts from every time it is measured.
+        ///
+        /// ⚠️ RE-APPLIED BEFORE EACH FIT RATHER THAN LEFT WHERE THE LAST FIT PUT THEM.
+        /// `MenuKit.Fit` ONLY EVER SHRINKS, by construction (*"so a short string cannot inflate
+        /// and change a row's height from screen to screen"*). Measuring `PHAISTER` after
+        /// `SOMEBODYVERYLONG` had driven the label to 18 would keep the 18 for ever, so the row
+        /// would ratchet smaller over a match and never come back.
+        /// </summary>
+        private const int ClassAuthoredSize = 32;
+        private const int DetailAuthoredSize = 34;
+
+        /// <summary>Set when the strings or the box changed, so the fit is not recomputed on
+        /// every one of the four refreshes a second this card does.</summary>
+        private string _fittedClass;
+        private string _fittedDetail;
+        private float _fittedWidth;
+
+        /// <summary>
+        /// Measure the identity row and shrink into it, rather than trusting that it fits.
+        ///
+        /// ⚠️⚠️ THIS IS `docs/TODO.md` § 129.3, AND THE ENTRY EXISTS BECAUSE THE THREE FIXES
+        /// BEFORE IT ALL CHANGED A STRING AND NONE OF THEM CHANGED THE ARRANGEMENT. The row is a
+        /// `HorizontalLayoutGroup` holding two `HorizontalWrapMode.Overflow` labels, so a pair
+        /// that does not fit does not shrink, **it draws over itself**. § 129.2 removed the
+        /// unbounded input (the account handle) and that was the right fix for the report; it did
+        /// nothing about the mechanism, and the entry's own warning is *"treat any new string on
+        /// this card as a fourth report waiting to happen."*
+        ///
+        /// ⚠️⚠️ THE 170-UNIT ROLE COLUMN WAS THE TRUSTED NUMBER AND IT IS NOW A MEASURED ONE.
+        /// `170 + 10 + 140 = 320 against 336` was correct arithmetic about `ATTACKER` at 32 pt in
+        /// Darumadrop at ONE canvas width, written as a constant. `AspectSafeCanvas` scales on the
+        /// SHORT axis, so this card's content box is not 336 units on every screen —
+        /// `CLAUDE.md` § 6.2c's first row is exactly this: *"a percentage of the window is not a
+        /// size ... size a panel against its CONTENT and state the arithmetic."* The role now asks
+        /// the font what it needs and the name gets everything left over, so the split is right at
+        /// every width instead of at the one it was computed for.
+        ///
+        /// ⚠️ AND THE FLOOR IS STILL `MenuKit.MinReadableUnits`, SO A STRING THAT CANNOT FIT AT 18
+        /// IS CLIPPED RATHER THAN SHRUNK INTO A SMUDGE. That is the same trade `Fit` documents and
+        /// the same one `_detail`'s old note chose. What changes is WHICH failure happens: a
+        /// clipped name loses its own tail, where an overflowing one destroys the label beside it.
+        /// **Half a string is a bad readout; two strings on top of each other is neither.**
+        /// </summary>
+        private void FitIdentityRow()
+        {
+            if (_class == null || _detail == null) return;
+
+            var rowRect = _class.transform.parent as RectTransform;
+            if (rowRect == null) return;
+
+            float room = rowRect.rect.width;
+
+            // ⚠️ A ROW THAT HAS NOT BEEN LAID OUT YET REPORTS 0, and fitting against 0 would drive
+            // both labels to the floor for no reason. Same guard `MenuKit.Fit` carries and
+            // `MenuKit.FitBox`'s header warns about: measure after a layout pass, never in the
+            // frame the row was built.
+            if (room <= 1.0f) return;
+
+            if (_fittedClass == _class.text && _fittedDetail == _detail.text &&
+                Mathf.Approximately(_fittedWidth, room))
+                return;
+
+            _fittedClass = _class.text;
+            _fittedDetail = _detail.text;
+            _fittedWidth = room;
+
+            var classLayout = _class.GetComponent<LayoutElement>();
+            var detailLayout = _detail.GetComponent<LayoutElement>();
+            if (classLayout == null || detailLayout == null) return;
+
+            float spacing = 10.0f;
+            var group = rowRect.GetComponent<HorizontalLayoutGroup>();
+            if (group != null) spacing = group.spacing;
+
+            // ⚠️ THE ROLE IS FITTED FIRST AND AGAINST A CAP, because it is the left-hand label
+            // and the one that overran INTO its neighbour in all four reports. The cap is half the
+            // row: the role is one of two words and the name is the thing a player actually reads
+            // off this card, so the role may never take more than its half however wide the font
+            // renders it.
+            _class.fontSize = ClassAuthoredSize;
+            MenuKit.Fit(_class, (room - spacing) * 0.5f);
+
+            // What the role ACTUALLY needs at the size it settled on, rather than 170.
+            float roleWidth = Mathf.Min(_class.preferredWidth, (room - spacing) * 0.5f);
+            classLayout.preferredWidth = roleWidth;
+            classLayout.minWidth = roleWidth;
+
+            // ⚠️ AND THE NAME GETS EVERY UNIT THE ROLE DID NOT, WITH NO FLOOR OF ITS OWN. The old
+            // `minWidth = 140` was the second half of the overflow: a `HorizontalLayoutGroup`
+            // will not shrink a child below its `minWidth` and **overflows the container
+            // instead**, so a 140-unit floor beside a 170-unit role was a row that could exceed
+            // its own box by construction on a narrow screen. The name has no floor because it is
+            // the child that gives.
+            float nameRoom = Mathf.Max(0.0f, room - roleWidth - spacing);
+            detailLayout.minWidth = 0.0f;
+            detailLayout.preferredWidth = nameRoom;
+
+            _detail.fontSize = DetailAuthoredSize;
+
+            if (!MenuKit.Fit(_detail, nameRoom))
+            {
+                // ⚠️⚠️ THE ONE CASE THAT USED TO OVERPRINT, AND IT NOW CLIPS INSTEAD. `Fit`
+                // returns false when the string will not fit at `MinReadableUnits`, and the
+                // honest options at that point are "draw over the role" or "lose the tail".
+                // `Wrap` breaks the line at the box edge and `Truncate` throws away every line
+                // after the first, which on a one-line rect is exactly a clip. **`Overflow` is
+                // what drew `ATTACKI` through `PLAYER#8226`**, so it is the one thing this row may
+                // not do.
+                _detail.horizontalOverflow = HorizontalWrapMode.Wrap;
+                _detail.verticalOverflow = VerticalWrapMode.Truncate;
+            }
+            else
+            {
+                _detail.horizontalOverflow = HorizontalWrapMode.Overflow;
+                _detail.verticalOverflow = VerticalWrapMode.Overflow;
+            }
         }
 
         /// <summary>

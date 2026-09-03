@@ -4,6 +4,19 @@ using UnityEngine.UI;
 namespace TumbangPreso.UI
 {
     /// <summary>
+    /// ⚠️⚠️ NOTHING CONSTRUCTS THIS CLASS. THE LIVE ONE IS <see cref="MapPreviewSurface"/>, AND
+    /// THIS FILE IS HERE ONLY BECAUSE ITS CAMERA NOTES ARE THE ORIGINAL CONVERSION OF
+    /// `map_preview.gd`. `TscnUiImporter` line 676 attaches `MapPreviewSurface` to the node named
+    /// `MapPreview`, and `ConvertedMatchSetup` reads `MapPreviewSurface` off that node: the two
+    /// classes share a NAME and nothing else.
+    ///
+    /// ⚠️⚠️ EDIT THE OTHER ONE. This matters because the two are not equivalent and the
+    /// difference is invisible from the file name: `MapPreviewSurface` copies the arena's
+    /// ambient, fog, skybox and `MapGrade` onto its camera and installs `ColourGrade` and
+    /// `WorldOutline`; the camera below installs none of that and renders the arena flat. A
+    /// session that "fixed the map preview" here would change nothing a player can see, which is
+    /// the most expensive kind of fix. `docs/TODO.md` § 130.
+    ///
     /// The setup screen's background: the map you actually have selected, live in 3D,
     /// swapping the instant you cycle the picker. Converted from `scripts/ui/map_preview.gd`.
     ///

@@ -1084,14 +1084,42 @@ namespace TumbangPreso.UI
             number.fontStyle = FontStyle.Bold;
             number.raycastTarget = false;
 
+            // ⚠️⚠️ THE NAME GETS THE REST OF THE BOARD, AND THE 180 IT HAD WAS A COLUMN WIDTH
+            // NOTHING WAS COMPETING FOR. `docs/TODO.md` § 126.13 asked for a decision about three
+            // `Fit(..., 14)` floors; this is the second of the three and, like the tile below, it
+            // did not need an exemption. **This row is a glyph and a text column and nothing
+            // else** — no value, no cooldown, no second column — so the 180 was leaving about
+            // seven hundred units of board empty to its right while shrinking a 17-character
+            // ability name to 14 units to fit a box somebody typed.
+            //
+            // THE ARITHMETIC, stated because `CLAUDE.md` § 6.2c asks what a size is measured
+            // AGAINST: `inner` is 964 (1020 board less 2 x 28 pad). The glyph occupies
+            // `left + 6` to `left + 54`, so the text column starts at `left + 60`, which is what
+            // `textX - 90` already was. Ending 30 units short of the inner right edge gives
+            // `left + 934`, so the box is `934 - 60 = 874` wide. `MenuKit.Place` writes against a
+            // CENTRED pivot (§ 122.14), so the centre moves with the width and the LEFT EDGE
+            // stays exactly where it was: the row does not shift, it stops being clipped.
+            //
+            // ⚠️ ONLY THE NAME WIDENS. `SKILL n` and the key label above and below it are short
+            // strings that never needed the room, and moving all three would move the column.
+            const float glyphColumn = 60.0f;
+            const float rightMargin = 30.0f;
+            float nameWidth = inner - glyphColumn - rightMargin;
+            float nameX = left + glyphColumn + (nameWidth * 0.5f);
+
             var name = MenuKit.Label(board, ability != null ? ability.Name : "", PaperKit.Body,
                 UiTheme.PaperInk, new Vector2(0.5f, 1.0f),
-                new Vector2(textX, y - 50.0f),
-                new Vector2(180.0f, 24.0f), TextAnchor.MiddleLeft);
+                new Vector2(nameX, y - 50.0f),
+                new Vector2(nameWidth, 24.0f), TextAnchor.MiddleLeft);
             name.alignment = TextAnchor.MiddleLeft;
             name.fontStyle = FontStyle.Bold;
             name.raycastTarget = false;
-            MenuKit.Fit(name, 180.0f, 14);
+
+            // ⚠️ THE FLOOR IS `MenuKit.MinReadableUnits` NOW RATHER THAN 14, which is § 126.13's
+            // FIRST answer (*"the pills get wider and the floor goes to MenuKit.MinReadableUnits"*)
+            // and the one to prefer wherever the room exists. A label that fits at 18 needs no
+            // exemption, no `TightLabel` marker and no line in the probe's report.
+            MenuKit.Fit(name, nameWidth);
 
             var key = MenuKit.Label(board, Hud.KeyLabelFor(action), PaperKit.Caption,
                 UiTheme.PaperInkSoft, new Vector2(0.5f, 1.0f),
@@ -1202,7 +1230,25 @@ namespace TumbangPreso.UI
             name.alignment = TextAnchor.MiddleLeft;
             name.fontStyle = FontStyle.Bold;
             name.raycastTarget = false;
-            MenuKit.Fit(name, band - 86.0f, 14);
+
+            // ⚠️⚠️ THE 86 UNITS ARE THE `EQUIPPED` MARK'S, AND THEY WERE BEING RESERVED ON EVERY
+            // TILE INCLUDING THE ONES THAT DO NOT DRAW IT. `docs/TODO.md` § 126.13 asked for a
+            // decision about three `Fit(..., 14)` floors, and this one turned out not to need an
+            // exemption at all: the mark below is built inside `if (equipped)`, so an UNEQUIPPED
+            // tile was squeezing its name into `band - 86` to make room for nothing. Most of the
+            // tiles on the screen are unequipped, so most of the shrinking was for nothing.
+            //
+            // ⚠️ **LOOK FOR THE ROOM BEFORE SPENDING AN EXEMPTION.** § 126.13 offers "the pills
+            // get wider" as the first of its two answers and it is the better one wherever it is
+            // available, because a label that fits at 18 needs no exemption, no marker and no
+            // line in the probe's report. `TightLabel`'s header carries the same warning.
+            //
+            // ⚠️ THE FLOOR STAYS 14 FOR THE EQUIPPED CASE, which is the genuinely tight one: an
+            // equipped tile really does have a name and a mark competing for one band, and that
+            // is the argued exemption rather than the accidental one. `MenuKit.Fit` registers it
+            // on the label itself so `AspectRatioProbes` reports it by name instead of failing.
+            const float equippedMarkRoom = 86.0f;
+            MenuKit.Fit(name, equipped ? band - equippedMarkRoom : band, 14);
 
             if (equipped)
             {

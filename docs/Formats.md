@@ -111,3 +111,51 @@ that scores, which is only safe while the host cannot be handed a number that br
 `docs/TODO.md` § 70.7's growing-roster rule applied to a record: an older build reading a newer
 string gets a playable match rather than an exception. `CustomGameTests` truncates the string field
 by field and asserts every prefix still parses into something playable.
+
+---
+
+## 4 · Map rotation and the map vote
+
+**Which map the lobby plays next.** `MapRotationRules`, engine-free, `MapRotationTests` asserts it.
+
+`FUTURE.md` § 12 and § 19.12 both order this **before a fourth map**: *"A map is the most expensive
+content in the game. Map rotation and a map vote are nearly free and buy most of the same
+freshness."*
+
+⚠️⚠️ **THE ROTATION AND THE VOTE ARE ONE FEATURE AND NOT TWO.** A vote answers *"what do these four
+people want"*; a rotation answers *"what happens when nobody says"*. `MapRotationRules.Decide` is
+the whole thing: **the vote decides when there are votes and the rotation decides when there are
+not.**
+
+- **The vote alone** leaves a lobby where four abstentions replay the same map for ever, which is
+  the exact staleness this was bought to remove. And a silent lobby is the COMMON case, not the
+  edge case: four people who have just finished a match are looking at a scoreboard, not a ballot.
+- **The rotation alone** takes the choice away from a room that has one.
+
+| | Rule | Why |
+|---|---|---|
+| **Cycle** | `NextInRotation` is `current + 1`, never a random draw | Random repeats. With three maps a uniform draw replays the same one about a third of the time, and a player cannot tell a repeat from a bug. A cycle visits every map before revisiting any |
+| **Opening map** | `OpeningMap` is derived from the UTC week | So a fresh install and a veteran open on the same map with no service, no stored state and no wire field. `CustomGameRules.MirrorIndex`'s argument exactly, counted from the same `RatingRules.SeasonOneStartUtc` so the two do not drift past each other |
+| **Abstain** | `NoVote` is **-1**, never 0 | 0 is a real map index. A tally that conflates "no answer" with "the first option" hands every silent lobby to Eskinita **and looks exactly like a working vote** |
+| ⚠️⚠️ **Tie-break** | The map you are **not** already on wins | The obvious rule is "lowest index", and it gives a 2-2 split to the CURRENT map half the time, which buys none of the freshness this exists for. **A majority may still keep the map it is on; it just cannot keep it by accident** |
+| **Second tie-break** | Lowest index, and it is arbitrary | Anything cleverer needs state the lobby does not have, and an arbitrary rule every peer computes identically beats a fair one they can disagree about |
+| **Unknown map** | Discarded, never clamped | A clamp turns a peer on a four-map build into a vote for map 2 on a three-map build: a silently wrong answer rather than an absent one |
+| **Window** | `VoteSeconds` 20, or early once every occupied seat has answered | Phase 11's impatience argument one level down. It counts SEATS, not votes, so a room of two does not wait for two seats that can never answer |
+
+⚠️⚠️ **EVERY FUNCTION IS PURE AND DETERMINISTIC, AND THAT IS A NETCODE REQUIREMENT RATHER THAN A
+STYLE.** The host decides (`VISION.md` § 4) but **every peer draws the result**, and a peer that
+computed a different winner from the same ballot would show the wrong map until the next sync
+corrected it.
+
+⚠️⚠️ **THE RUNTIME HALF IS ONE CALL AND IT ADDS NO WIRE MESSAGE.** A **rematch** advances the map:
+that is the moment worth the most, four people who have just agreed to keep playing and were being
+handed the identical street every time. It is host-only and rides the `SelectMap` broadcast that has
+existed since the map picker shipped, so **`NetSession.ProtocolVersion` does not move** — which
+matters, because moving it forces the Windows player and the .apk to be rebuilt and shipped together
+(`CLAUDE.md` § 4a).
+
+⚠️ **The ballot is not wired yet.** `Decide` takes votes when a lobby has a ballot to give it; until
+then silence falls through to the cycle, which is the behaviour above. Collecting votes across the
+wire is a new message and therefore a protocol move, and it should be spent in the same bump as
+LAST TSINELAS's match half rather than on its own. `docs/TODO.md` § 130.12 and § 130.13.
+

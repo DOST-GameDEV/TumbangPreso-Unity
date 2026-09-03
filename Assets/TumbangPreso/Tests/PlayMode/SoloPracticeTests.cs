@@ -25,6 +25,19 @@ namespace TumbangPreso.PlayTests
     {
         private int _savedDifficulty;
 
+        /// <summary>
+        /// ⚠️ THE SCENE HALF, BESIDE THE SETTINGS HALF BELOW. `docs/TODO.md` § 126.8 names this
+        /// suite among the five that went red and then green across two full runs of nearly the
+        /// same code. Its `[TearDown]` already put the DIRECTORS back, which is the finding
+        /// `PlayModeWorld.Reset` now generalises to every fixture; this adds the scene, which is
+        /// the other thing a `LoadSceneMode.Single` load leaves behind.
+        /// </summary>
+        [UnitySetUp]
+        public IEnumerator SetUpWorld() => PlayModeWorld.Reset();
+
+        [UnityTearDown]
+        public IEnumerator TearDownWorld() => PlayModeWorld.Reset();
+
         [SetUp]
         public void SetUp()
         {

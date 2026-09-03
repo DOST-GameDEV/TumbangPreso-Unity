@@ -517,6 +517,33 @@ namespace TumbangPreso.UI
             while (label.fontSize > floorSize && label.preferredWidth > room)
                 label.fontSize -= 1;
 
+            // ⚠️⚠️ A SUB-FLOOR RESULT REGISTERS ITSELF, AND THAT IS WHY THE MARKER IS ATTACHED
+            // HERE RATHER THAN BY THE CALLER. `docs/TODO.md` § 126.13: three calls in
+            // `ConvertedCharacterSelect` passed 14 as `floorSize`, so a label that did not fit was
+            // allowed down to 14, and `AspectRatioProbes` **could not tell that from an authored
+            // 14 that nobody meant** — which made the probe a permanent red that taught the next
+            // reader to skim the results. The entry names the cause as *"a local exemption that
+            // was copied twice and never encoded anywhere a test could see"*.
+            //
+            // ⚠️ THIS IS `CLAUDE.md` § 4a's ARGUMENT: *"the answer is construction, not
+            // discipline."* A marker the caller had to remember to add is a second place to
+            // forget, and forgetting it compiles. `Fit` is the only function in the project that
+            // can produce a label below the floor, so it is the only place that can register one.
+            //
+            // ⚠️ AND IT REGISTERS THE RESULT, NOT THE REQUEST. A caller may pass a floor of 14 and
+            // the string may still fit at 20, which is not an exemption and must not be recorded
+            // as one: the list is meant to be short enough to read, and padding it with labels
+            // that are perfectly legible is how a list stops being read.
+            if (label.fontSize < MinReadableUnits)
+            {
+                var mark = label.GetComponent<TightLabel>();
+                if (mark == null) mark = label.gameObject.AddComponent<TightLabel>();
+
+                mark.Floor = floorSize;
+                mark.Settled = label.fontSize;
+                mark.Room = room;
+            }
+
             return label.preferredWidth <= room;
         }
 

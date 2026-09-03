@@ -185,6 +185,40 @@ namespace TumbangPreso.UI
         /// <summary>Which map the next match loads. Set by the setup screen.</summary>
         public static string SelectedMap = Eskinita;
 
+        /// <summary>
+        /// PHASE 12: move the lobby on to the next map, by vote if there was one and by rotation
+        /// if there was not.
+        ///
+        /// ⚠️⚠️ `FUTURE.md` § 12 AND § 19.12 BOTH SAY TO BUILD THIS BEFORE A FOURTH MAP: *"A map
+        /// is the most expensive content in the game. Map rotation and a map vote are nearly free
+        /// and buy most of the same freshness."* `docs/TODO.md` § 128.2 calls it *"the cheapest
+        /// unbuilt thing in the phase"* and records that **nothing in the repository grepped for
+        /// either** before this.
+        ///
+        /// ⚠️⚠️ HOST ONLY, AND IT WRITES THE SAME FIELD THE SETUP SCREEN DOES SO THE EXISTING
+        /// `SelectMap` SYNC CARRIES IT. That is the entire reason this needed no wire change and
+        /// therefore no `ProtocolVersion` bump: `MatchRpc.SelectMapServerRpc` already broadcasts a
+        /// map index to every peer and has since the map picker shipped. **A new message here
+        /// would have moved the protocol, and moving the protocol means the Windows player and the
+        /// .apk have to be rebuilt and shipped together** (`CLAUDE.md` § 4a), which is a real cost
+        /// to pay for a feature that did not need it.
+        ///
+        /// ⚠️ THE RULES ARE IN THE ENGINE-FREE CORE AND ONLY THE WIRING IS HERE, which is
+        /// § 19.12's stated constraint: *"Every new mode adds its rules to
+        /// `Packages/com.tumbangpreso.core/`, never to Unity code."* `MapRotationRules` carries the
+        /// cycle, the tie-break and the silence fallback, and `MapRotationTests` asserts all three
+        /// without loading a scene.
+        /// </summary>
+        public static void AdvanceMapRotation(System.Collections.Generic.IReadOnlyList<int> votes = null)
+        {
+            int current = System.Array.IndexOf(Maps, SelectedMap);
+            int next = Core.MapRotationRules.Decide(votes, Maps.Length, current);
+
+            if (next < 0 || next >= Maps.Length) return;
+
+            SelectedMap = Maps[next];
+        }
+
         /// <summary>Which game mode the next match loads. Default is Hero Strike.</summary>
         public static GameMode SelectedMode = GameMode.HeroStrike;
 

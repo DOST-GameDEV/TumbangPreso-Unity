@@ -123,6 +123,108 @@ namespace TumbangPreso.Tests
             }
         }
 
+        /// <summary>
+        /// ⚠️⚠️ A TRANSIENT SIGN-IN FAILURE MUST NOT BE PERMANENT, AND THIS IS THE CROSSPLAY
+        /// TEST. `NetIdentity` cached the boot attempt's Task unconditionally, and the boot
+        /// attempt fires from `RuntimeInitializeOnLoadMethod(AfterSceneLoad)` — on Android, while
+        /// the handset is still associating with wifi. One bad moment at boot settled
+        /// `Unreachable`, that failed Task stayed cached, and every JOIN BY CODE for the rest of
+        /// the app's life awaited it. **The only cure a player had was force-closing the game.**
+        /// `docs/TODO.md` § 126.11 records the symptom from the other end: *"the .apk has no UGS
+        /// session on the device"*.
+        /// </summary>
+        [Test]
+        public void AnUnreachableServiceIsRetriedBecauseTheNextMomentMayHaveNetwork()
+        {
+            NetIdentity.ResetForTesting();
+
+            NetIdentity.SettleForTesting(OnlineState.Unreachable, "the wifi was not up yet");
+            Assert.IsTrue(NetIdentity.CanRetrySignIn,
+                "An unreachable service is a property of the moment, not of the build");
+
+            int before = NetIdentity.SignInAttempts;
+            _ = NetIdentity.RetrySignInNowAsync();
+
+            Assert.AreEqual(before + 1, NetIdentity.SignInAttempts,
+                "A player pressing JOIN after the wifi came up must get a fresh attempt");
+        }
+
+        /// <summary>
+        /// ⚠️ THE OTHER SIDE OF THE SAME RULE, AND IT IS THE HALF THAT KEEPS THE CACHE HONEST.
+        /// An unlinked build cannot be made linked by asking again, so retrying it would reprint
+        /// the same sentence per call — which is the 21-identical-warnings fault the cache was
+        /// added to stop in the first place. `CLAUDE.md` § 6.3: a control that does nothing when
+        /// pressed must not look pressable, so `CanRetrySignIn` is false here and no TRY AGAIN
+        /// is offered.
+        /// </summary>
+        [Test]
+        public void AnUnlinkedBuildIsNotRetriedBecauseAskingAgainCannotHelp()
+        {
+            NetIdentity.ResetForTesting();
+
+            NetIdentity.SettleForTesting(OnlineState.NotLinked, "no cloud project id in this build");
+            Assert.IsFalse(NetIdentity.CanRetrySignIn,
+                "Retrying an unlinked build can never produce a session");
+
+            int before = NetIdentity.SignInAttempts;
+            _ = NetIdentity.RetrySignInNowAsync();
+            _ = NetIdentity.EnsureSignedInAsync();
+
+            Assert.AreEqual(before, NetIdentity.SignInAttempts,
+                "A permanent answer must stay cached however many times it is asked for");
+        }
+
+        /// <summary>
+        /// ⚠️ AND A LIVE SESSION IS NEVER THROWN AWAY. `SignedIn` is permanent for the same
+        /// reason `NotLinked` is: asking again cannot improve it, and a second
+        /// `SignInAnonymouslyAsync` beside a live one is what UGS answers with *"The player is
+        /// already signing in"* (`docs/TODO.md` § 126.11's second bullet).
+        /// </summary>
+        [Test]
+        public void ALiveSessionIsNeverReAttempted()
+        {
+            NetIdentity.ResetForTesting();
+
+            NetIdentity.SettleForTesting(OnlineState.SignedIn, "signed in");
+            Assert.IsFalse(NetIdentity.CanRetrySignIn);
+
+            int before = NetIdentity.SignInAttempts;
+            NetIdentity.ExpireRetryCooldownForTesting();
+            _ = NetIdentity.EnsureSignedInAsync();
+            _ = NetIdentity.RetrySignInNowAsync();
+
+            Assert.AreEqual(before, NetIdentity.SignInAttempts,
+                "A live session must not be re-attempted");
+            Assert.IsTrue(NetIdentity.IsOnline, "The live session must survive being asked about");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE RETRY IS RATE LIMITED, WHICH IS WHAT STOPS IT BECOMING THE FAULT IT REPLACED.
+        /// A screen that asks `EnsureSignedInAsync` every frame would otherwise turn one dropped
+        /// connection into a request flood against the one service this game cannot do without.
+        /// Inside the cooldown the previous answer stands; `RetrySignInNowAsync` is the seam for
+        /// a person who actually pressed something.
+        /// </summary>
+        [Test]
+        public void ARetryIsRateLimitedSoAPollingScreenCannotFloodTheService()
+        {
+            NetIdentity.ResetForTesting();
+
+            NetIdentity.SettleForTesting(OnlineState.Unreachable, "service refused");
+
+            int before = NetIdentity.SignInAttempts;
+            for (int i = 0; i < 20; i++) _ = NetIdentity.EnsureSignedInAsync();
+
+            Assert.AreEqual(before, NetIdentity.SignInAttempts,
+                "Twenty polls inside the cooldown must share the settled answer");
+
+            NetIdentity.ExpireRetryCooldownForTesting();
+            _ = NetIdentity.EnsureSignedInAsync();
+
+            Assert.AreEqual(before + 1, NetIdentity.SignInAttempts,
+                "Once the cooldown has elapsed the next caller must actually retry");
+        }
+
         // -------------------------------------------------------------------
         // 2. DEDICATED REFEREE & TOPOLOGY PROBES (N6, N10, N11)
         // -------------------------------------------------------------------

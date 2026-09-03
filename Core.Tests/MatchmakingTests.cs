@@ -132,27 +132,67 @@ namespace TumbangPreso.Core.Tests
         // ------------------------------------------------------------------------------
 
         [Fact]
-        public void PoolsAreSeparatedByModeStakeInputDeviceAndPlatform()
+        public void PoolsAreSeparatedByModeStakeAndProtocol()
         {
-            string desktopKeyboard = MatchmakingRules.PoolKey(
+            string casual = MatchmakingRules.PoolKey(
                 GameMode.Classic, QueueStake.Casual, InputDevice.KeyboardMouse, PlatformFamily.Desktop, 18);
 
-            Assert.NotEqual(desktopKeyboard, MatchmakingRules.PoolKey(
+            Assert.NotEqual(casual, MatchmakingRules.PoolKey(
                 GameMode.HeroStrike, QueueStake.Casual, InputDevice.KeyboardMouse, PlatformFamily.Desktop, 18));
-            Assert.NotEqual(desktopKeyboard, MatchmakingRules.PoolKey(
+            Assert.NotEqual(casual, MatchmakingRules.PoolKey(
                 GameMode.Classic, QueueStake.Ranked, InputDevice.KeyboardMouse, PlatformFamily.Desktop, 18));
-            Assert.NotEqual(desktopKeyboard, MatchmakingRules.PoolKey(
-                GameMode.Classic, QueueStake.Casual, InputDevice.Gamepad, PlatformFamily.Desktop, 18));
-            Assert.NotEqual(desktopKeyboard, MatchmakingRules.PoolKey(
-                GameMode.Classic, QueueStake.Casual, InputDevice.KeyboardMouse, PlatformFamily.Mobile, 18));
 
             // ⚠️ And a build that would be refused at connection approval is never offered.
-            Assert.NotEqual(desktopKeyboard, MatchmakingRules.PoolKey(
+            Assert.NotEqual(casual, MatchmakingRules.PoolKey(
                 GameMode.Classic, QueueStake.Casual, InputDevice.KeyboardMouse, PlatformFamily.Desktop, 17));
 
-            var otherPool = Advert(1400, 1600, 1500, 1500, pool: "v18.HeroStrike.Casual.KeyboardMouse.Desktop");
+            var otherPool = Advert(1400, 1600, 1500, 1500, pool: "v18.HeroStrike.Casual");
             Assert.Equal(JoinRefusal.WrongPool,
-                         MatchmakingRules.Evaluate(otherPool, "me", 1500, 0.0f, desktopKeyboard, null));
+                         MatchmakingRules.Evaluate(otherPool, "me", 1500, 0.0f, casual, null));
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE ONE THE WHOLE CROSSPLAY CLAIM RESTS ON. `CLAUDE.md` § 4a: *"Crossplay is
+        /// for lobbies, join codes and LAN; the ranked queue still bands by device."* Until
+        /// 2026-09-03 the key banded both stakes, so QUICK MATCH could never seat a phone beside a
+        /// PC and the game's stated feature was reachable only by typing a join code.
+        /// </summary>
+        [Fact]
+        public void ACasualQueueSeatsAPhoneBesideAPc()
+        {
+            string pc = MatchmakingRules.PoolKey(
+                GameMode.Classic, QueueStake.Casual, InputDevice.KeyboardMouse, PlatformFamily.Desktop, 21);
+            string phone = MatchmakingRules.PoolKey(
+                GameMode.Classic, QueueStake.Casual, InputDevice.Touch, PlatformFamily.Mobile, 21);
+            string pad = MatchmakingRules.PoolKey(
+                GameMode.Classic, QueueStake.Casual, InputDevice.Gamepad, PlatformFamily.Desktop, 21);
+
+            Assert.Equal(pc, phone);
+            Assert.Equal(pc, pad);
+
+            // The room the phone is advertising is a room the PC's queue will actually take.
+            var phoneRoom = Advert(1400, 1600, 1500, 1500, pool: phone);
+            Assert.Equal(JoinRefusal.None,
+                         MatchmakingRules.Evaluate(phoneRoom, "me", 1500, 0.0f, pc, null));
+        }
+
+        /// <summary>
+        /// ⚠️ THE OTHER HALF, AND IT IS THE HALF `FUTURE.md` § 14's ARGUMENT IS ACTUALLY ABOUT:
+        /// *"No aim assist. Separate the pools instead, which is free, exact, and removes the
+        /// argument."* The argument is about a ladder, so the ladder keeps the banding.
+        /// </summary>
+        [Fact]
+        public void ARankedQueueStillBandsByDeviceAndPlatform()
+        {
+            string pc = MatchmakingRules.PoolKey(
+                GameMode.Classic, QueueStake.Ranked, InputDevice.KeyboardMouse, PlatformFamily.Desktop, 21);
+
+            Assert.NotEqual(pc, MatchmakingRules.PoolKey(
+                GameMode.Classic, QueueStake.Ranked, InputDevice.Touch, PlatformFamily.Mobile, 21));
+            Assert.NotEqual(pc, MatchmakingRules.PoolKey(
+                GameMode.Classic, QueueStake.Ranked, InputDevice.Gamepad, PlatformFamily.Desktop, 21));
+            Assert.NotEqual(pc, MatchmakingRules.PoolKey(
+                GameMode.Classic, QueueStake.Ranked, InputDevice.KeyboardMouse, PlatformFamily.Mobile, 21));
         }
 
         // ------------------------------------------------------------------------------

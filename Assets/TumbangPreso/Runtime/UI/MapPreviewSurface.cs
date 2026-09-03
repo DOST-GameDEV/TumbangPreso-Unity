@@ -884,7 +884,56 @@ namespace TumbangPreso.UI
             // target. Derived from the target rather than assumed.
             _camera.aspect = (float)Width / Height;
 
+            EnsureWorldOutline();
+
             ApplyCamera();
+        }
+
+        /// <summary>
+        /// The ink outline, so the map you are LOOKING at is drawn by the same passes as the map
+        /// you are about to PLAY.
+        ///
+        /// ⚠️⚠️ THIS IS THE THIRD TIME A CAMERA IN THIS PROJECT HAS BEEN BUILT WITHOUT THE FULL
+        /// SET OF PASSES, AND THE SECOND IS WRITTEN DOWN TWENTY LINES INTO `SpectatorCamera`:
+        /// *"`CameraRig.Awake` adds three passes, `ColourGrade`, `PostAntiAlias` and
+        /// `WorldOutline`, and this camera was given the first two and never the third."* This
+        /// camera was given the FIRST only. 🧑 2026-09-03, from a build: *"i noticed the shader
+        /// doesnt show up in map select so the map select or LOBBY look IS COMPLETELY DIFF to the
+        /// actual game"*, and **"can u make sure game and lobby preview looks exactly the same"**.
+        ///
+        /// ⚠️⚠️ AND IT IS THE ONE PASS A GRADE CANNOT STAND IN FOR, WHICH IS WHY THE SCREEN LOOKED
+        /// WRONG RATHER THAN MERELY DIFFERENT. `ApplyEnvironment` already copies the arena's
+        /// ambient, fog, skybox and `MapGrade` onto this camera, so the preview had the right
+        /// COLOUR of the game and none of its LINE. `docs/VISION.md` § 6: *"his UI art is the
+        /// design system ... anything drawn in a different visual language is the thing that looks
+        /// broken"*, and an inked world beside an un-inked one is two visual languages on the two
+        /// screens a player crosses between most.
+        ///
+        /// ⚠️ `PostAntiAlias` IS DELIBERATELY NOT ADDED, AND THAT IS NOT AN OVERSIGHT REPEATED.
+        /// `CameraRig.Awake` names this camera by name when it explains why: *"the character
+        /// portrait and the map preview also carry the grade, and both render into a
+        /// `targetTexture` that is already built with 4 samples; filtering those would soften a
+        /// picture that is not aliased."* Two of the three passes is the correct answer HERE and
+        /// the reason is written down; one of the three was not.
+        ///
+        /// ⚠️ THE ORDER BETWEEN THIS AND `ColourGrade` IS NOT AN ACCIDENT OF WHO CALLED
+        /// `AddComponent` FIRST. `WorldOutline.OnRenderImage` carries `[ImageEffectOpaque]`, which
+        /// runs it after opaque geometry and before every untagged effect on the same camera
+        /// whatever the component order is. Its own header spends a paragraph on this precisely
+        /// because the grade is added from three places at three different times.
+        /// </summary>
+        private void EnsureWorldOutline()
+        {
+            if (_camera == null) return;
+
+            var outline = _camera.GetComponent<Visual.WorldOutline>();
+            if (outline == null) outline = _camera.gameObject.AddComponent<Visual.WorldOutline>();
+
+            // ⚠️ ON, MATCHING `CameraRig` AND `SpectatorCamera`. The component's own default is
+            // false because it is a retry of a reverted pass, and a prototype that defaults on
+            // would ship itself. Every camera that draws the world switches it on explicitly, so
+            // the toggle stays a single edit in three named places rather than a hidden default.
+            outline.PrototypeEnabled = true;
         }
 
         private void Update()

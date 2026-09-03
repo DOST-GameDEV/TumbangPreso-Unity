@@ -8,6 +8,7 @@ using Unity.Services.Core;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
 using Unity.Services.Relay;
+using TumbangPreso.Net;
 using UnityEngine;
 using UnityEngine.TestTools;
 
@@ -57,22 +58,39 @@ namespace TumbangPreso.PlayTests
                 throw task.Exception?.GetBaseException() ?? new Exception("unknown UGS failure");
         }
 
+        /// <summary>
+        /// ⚠️⚠️ IT GOES THROUGH `NetIdentity` RATHER THAN CALLING UGS DIRECTLY, AND THAT IS THE
+        /// FIX FOR SIX RED CASES IN ONE RUN. `docs/TODO.md` § 126.11: this probe went red six
+        /// times in a single full PlayMode run with *"You are not signed in to the Authentication
+        /// Service"* and *"The player is already signing in"*, having passed in the run an hour
+        /// before with nothing changed between them.
+        ///
+        /// **Both messages are the same fault and it is this file's.** `NetIdentity.SignInAtBoot`
+        /// fires one anonymous sign-in from a `RuntimeInitializeOnLoadMethod` hook the moment
+        /// PlayMode starts. This probe then started a SECOND one beside it, and UGS refuses a
+        /// concurrent sign-in with *"already signing in"* — after which neither has completed, so
+        /// the next assertion reads *"not signed in"*. Whether that raced depended on how long the
+        /// suites ahead of this one took, which is exactly why it moved between runs.
+        ///
+        /// ⚠️ `EnsureSignedInAsync` IS THE ONE PLACE IN THE GAME THAT MAY START A SIGN-IN, and
+        /// its whole design is that a caller arriving while an attempt is in flight awaits THAT
+        /// attempt. Nothing else may call `SignInAnonymouslyAsync`, in the game or in a test.
+        /// § 126.8's finding is cross-test lifetime leakage; a shared cloud session is the one
+        /// instance of it that no amount of tearing a scene down can reach.
+        /// </summary>
         private static IEnumerator SignedIn()
         {
             Assert.IsNotEmpty(Application.cloudProjectId,
                 "no cloudProjectId, so there is no project to ask. ProjectSettings.asset line 738.");
 
-            if (UnityServices.State == ServicesInitializationState.Uninitialized)
-                yield return Await(UnityServices.InitializeAsync());
+            yield return Await(NetIdentity.EnsureSignedInAsync());
 
             Assert.AreEqual(ServicesInitializationState.Initialized, UnityServices.State,
                 "the project id resolves but services did not come up");
 
-            if (!AuthenticationService.Instance.IsSignedIn)
-                yield return Await(AuthenticationService.Instance.SignInAnonymouslyAsync());
-
             Assert.IsTrue(AuthenticationService.Instance.IsSignedIn,
-                "anonymous sign-in failed, and every call below authenticates with its token");
+                $"anonymous sign-in failed ({NetIdentity.State}: {NetIdentity.StateReason}), " +
+                "and every call below authenticates with its token");
         }
 
         /// <summary>

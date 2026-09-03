@@ -14,11 +14,11 @@ is in the archive with its number unchanged.
 
 | § | Open work | Where it bites |
 |---|---|---|
+| **130** | Crossplay, the boot ANR and the lobby's missing ink | The architecture was fine; **two phone-side defects and a third camera built without all three passes** |
 | **126** | This session: the full PlayMode suite, the thumb floor, the move stick, rumble, the device toggle, the .apk | § 126.8 is the big one: **the full PlayMode run is not a reliable gate** |
 | **127** | Phase 16.1: the taya's floor marker is a RING, an attacker's a DISC | Needs its greyscale frame before it can close. § 127.3 |
-| **128** | Phases 11 and 12 are almost entirely built | ⚠️ Phase 11 has **nothing** open. Phase 12 owes LAST TSINELAS a match half and a map vote |
-| **129** | Three faults off the first phone render | The blurry HUD and the overflowing YOU card are fixed; § 129.3 is the mechanism behind all three |
-| **126.11** | Crossplay is argued, not demonstrated | Both players exist; nobody has watched them join |
+| **128** | Phases 11 and 12 are almost entirely built | ⚠️ Phase 11 has **nothing** open. **Map rotation is built (§ 130.12)**; Phase 12 still owes LAST TSINELAS a match half, and § 130.13 is what that actually costs |
+| **126.11** | Crossplay is argued, not demonstrated | Both players exist; nobody has watched them join. ⚠️ **The two blockers it named are fixed in § 130.2 and § 130.3** |
 | **93** | A held tsinelas drifts 0.084 m from the hand | Four samples now, all outside the bound. Not a flake |
 | **96** | He has never found the way into the hub | The door, not the layout. `CLAUDE.md` § 6.3 |
 | **95b** | Nothing asserts that a menu label FITS, only that it is legible | Two probes, neither asking the question |
@@ -96,61 +96,400 @@ taht again"*.
 
 ---
 
-## 129 · Three faults off the first phone render, and the one that was invisible on a monitor ⚠️ OPEN, 2026-09-03, branch `ui-redesign`
+## 130 · Crossplay, the boot ANR, and the lobby that was drawn in a different language ⚠️⚠️ OPEN, 2026-09-03, branch `ui-redesign`
 
-🧑, reading `Logs/shots-touch/touch-HeroStrike-20-9-phone-v4.png`: **"mobile version kinda blurry
-text is is js me"**, then **"dont show #8826 or the player tag of ppl here bcz it makes it too
-long"** and *"and it overflows"*.
+🧑 asked three things in one sitting, and two of them turned out to be the same kind of
+fault as each other: **"just wnated to ask as well if crossplay can work? make sure it does"**,
+*"i want a mobile and a pc to be able to play tgthr"*, then **"i noticed the shader doesnt show up
+in map select so the map select or LOBBY look IS COMPLETElY DIFF to the actual game"** and *"can u
+make sure game and lobby preview looks exactly the same"*.
 
-### 129.1 ✅ The in-match HUD was the one canvas in the game that did not snap to pixels
+### 130.1 ✅ The crossplay ARCHITECTURE was already right, and nothing on the wire needed to move
 
-`MenuKit.BuildCanvas` sets `pixelPerfect`, `ConvertedScreen.Start` sets it, `TscnUiImporter` bakes
-it into the converted scenes. **`Hud.Build` constructs its canvas by hand and was missed**, and so
-does `MatchResult`. Both are fixed.
+Checked rather than assumed, which is § 0.6's rule and § 128's lesson about asking what CALLS a
+thing. **`NetSession.ApproveConnection` reads three facts and none of them is a device**: the
+protocol version, capacity, and the host's block list. A pad, a thumb and a keyboard all arrive at
+`InputIntent` and nothing about which device was used goes on the wire, exactly as `CLAUDE.md`
+§ 4a says. `ProtocolVersion` is untouched at **21**.
 
-⚠️⚠️ **IT IS WORSE ON A PHONE, AND THAT IS ARITHMETIC RATHER THAN BAD LUCK.** `AspectSafeCanvas`
-matches on HEIGHT against a 1080 reference, so a 1080-tall phone sits at scale **1.0** and a 1440p
-monitor at **1.33**. At 1.0 a half-unit offset is half a physical pixel, which is the worst case
-for resampling; at 1.33 it lands nearer a whole pixel more often. **The build that needed the
-setting most was the one that never had it**, which is why five sessions of desktop renders did not
-catch it and the first phone render did.
+⚠️ **So "can crossplay work" was never the question. "Why does it not work on the phone" was**,
+and the answer was two defects with nothing to do with the network layer.
 
-⚠️ **Still unset, deliberately, and listed so the next reader does not have to re-derive it:**
-`OffscreenIndicators` (a root canvas, but it draws arrows rather than reading matter) and
-`DebugBar` (no scaler, debug only). `GuidedTraining` and `SpectatorCamera`'s replay canvas both set
-`overrideSorting`, which makes them NESTED, and **`pixelPerfect` is a root-canvas setting that a
-nested canvas ignores**, so setting it there would be cargo cult.
+### 130.2 ⚠️⚠️ A FAILED SIGN-IN WAS CACHED FOR THE LIFE OF THE PROCESS, AND ON A PHONE THAT IS FATAL
 
-### 129.2 ✅ The YOU card named the account handle, and an account handle has no length bound
+`NetIdentity.EnsureSignedInAsync` was one line:
 
-The card read `ATTACKI` with `PLAYER#8226` drawn straight through it. **This is the third overflow
-on that one row** and `YouCard` already carries the notes for the first two: `TAYA (DEFENDEDANTE`
-(2026-08-27) and `ATTACKERROCKAFORT`.
+```csharp
+return _attempt ??= AttemptSignInAsync();
+```
 
-⚠️⚠️ **THE FIRST TWO WERE FIXED BY MAKING A STRING SHORTER AND THIS ONE COULD NOT BE.**
-`CharacterMotor.DisplayName()` answers `CharacterName()` for a bot and `_playerName` for a human,
-so every previous fit was measured against the ROSTER, where `PHAISTER` is the longest name at
-eight characters. A real account arrives as `PLAYER#8226` and a custom one can be longer. **Every
-earlier fix moved the number at which the row breaks; naming the character removes the class.**
+**The `??=` caches the Task whether it succeeded or failed.** The boot attempt fires from
+`[RuntimeInitializeOnLoadMethod(AfterSceneLoad)]`, which on Android runs **while the handset is
+still associating with wifi**. One bad moment at boot settled `OnlineState.Unreachable`, that
+failed Task stayed in `_attempt`, and **every JOIN BY CODE, every relay host and every lobby query
+for the rest of the app's life awaited that same dead answer.**
 
-⚠️ **AND IT LOSES NOTHING.** This is the one card that is about YOU: a player does not need to be
-told their own handle six minutes into a match, and what they can genuinely forget is which of the
-eighteen fighters they picked. The handle is still on the scoreboard, where distinguishing four
-seats is the whole job. `CharacterMotor.CharacterName()` is public for this.
+⚠️⚠️ **AND NOTHING ON SCREEN SAID SO.** `StartRelayClient` aborts on false and reports
+*"could not reach the game"*, which reads as the HOST's fault. **The only cure available to the
+player was force-closing the game.** § 126.11's first bullet is this fault seen from the other end:
+*"the .apk has no UGS session on the device"*.
 
-### 129.3 ⚠️ OPEN: the same row is still two overflowing children in one box
+⚠️ **THE FIX IS A SPLIT BETWEEN REASONS THAT CAN CHANGE AND REASONS THAT CANNOT**, because the
+cache was not wrong to exist. It was added when a session that could not reach UGS paid for
+`UnityServices.InitializeAsync` and logged the same warning **21 times**.
 
-The fix above removes the cause that was reported. **It does not change the mechanism**, and
-`YouCard`'s own note names it: the row is a `HorizontalLayoutGroup` with two `flexibleWidth: 1`
-children both set to `HorizontalWrapMode.Overflow`, so **when two strings do not fit they do not
-shrink, they draw over each other.** Three separate reports have now come out of that one
-arrangement.
+| Settled state | Cached? | Why |
+|---|---|---|
+| `SignedIn` | **for ever** | Asking again cannot improve it, and a second `SignInAnonymouslyAsync` beside a live one is what UGS answers with *"The player is already signing in"* |
+| `NotLinked` | **for ever** | A property of the BUILD. Retrying prints the same sentence per call, which is the 21-warnings fault |
+| batch mode | **for ever** | Same: a property of the run |
+| `Unreachable` | **no**, retried after `RetryCooldownSeconds` = 5 s | A property of the MOMENT, and the next moment is a player pressing JOIN with the wifi up |
 
-**Done looks like:** the row measured rather than trusted, the way `MenuKit.Fit` already does it
-elsewhere, so a string that does not fit steps down a point instead of overprinting its neighbour.
-⚠️ **Until then, treat any new string on this card as a fourth report waiting to happen.**
+- **`NetIdentity.CanRetrySignIn`** is the predicate, so a screen can decide whether to offer a TRY
+  AGAIN at all. `CLAUDE.md` § 6.3: a control that does nothing when pressed must not look
+  pressable, and a TRY AGAIN on an unlinked build is a dead end.
+- **`RetrySignInNowAsync`** ignores the cooldown, for a person who actually pressed something.
+- ⚠️ **THE RATE LIMIT IS THE HALF THAT STOPS THIS BECOMING THE FAULT IT REPLACED.** A screen
+  polling `EnsureSignedInAsync` every frame would otherwise turn one dropped connection into a
+  request flood against the one service this game cannot do without (`FUTURE.md` § 19.7).
+- Four tests in `NetworkMultiProcessProbes`, one per row of that table plus the rate limit.
+
+### 130.3 ✅ The second UGS sign-in in the test suite, which is § 126.11's other bullet AND part of § 126.8
+
+`UgsServicesProbe` went red **six times in one full PlayMode run** with *"You are not signed in to
+the Authentication Service"* and *"The player is already signing in"*, having passed an hour
+earlier with nothing changed.
+
+⚠️⚠️ **BOTH MESSAGES ARE ONE FAULT AND IT WAS THE PROBE'S.** `NetIdentity.SignInAtBoot` fires
+one anonymous sign-in the moment PlayMode starts. The probe then started a **second one beside
+it**; UGS refuses a concurrent sign-in with *"already signing in"*, after which **neither has
+completed**, so the next assertion reads *"not signed in"*. Whether the two raced depended on how
+long the suites ahead of it took, **which is exactly why the suite moved between two runs of the
+same code**. That is § 126.8's cross-test leakage class, in the one place tearing a scene down
+cannot reach: a shared cloud session.
+
+- `UgsServicesProbe` and `MatchRecordIdentityProbe` now go through `NetIdentity.EnsureSignedInAsync`,
+  whose whole design is that a caller arriving mid-attempt awaits THAT attempt.
+- ⚠️ **`CloudEndpointActionProbe` DELIBERATELY STAYS A DIRECT CALL** and now says why: it has
+  just switched to `ProbeProfile` precisely so its writes cannot land on a real player, and the
+  shared path would sign in on the game's profile and undo that.
+
+### 130.4 ⚠️⚠️ CASUAL QUICK MATCH BANDED BY PLATFORM, SO A PHONE AND A PC COULD NEVER MEET THROUGH THE FRONT DOOR
+
+`MatchmakingRules.PoolKey` was `v{protocol}.{mode}.{stake}.{device}.{platform}` for **both**
+stakes. `CLAUDE.md` § 4a has said, in these words, since the crossplay paragraph was written:
+*"Crossplay is for lobbies, join codes and LAN; the **ranked queue** still bands by device."*
+
+⚠️ **THIS IS THE CODE CATCHING UP WITH THE RULE, NOT A NEW DECISION**, and it is the shape
+`CLAUDE.md` § 5 describes: prose and code disagreed and the disagreement is being named rather
+than silently resolved. **The argument the banding protects is a RANKED argument.** `FUTURE.md`
+§ 14: *"No aim assist. Separate the pools instead, which is free, exact, and removes the
+argument."* Nobody disputes a casual match, and a casual queue that refuses to seat the two people
+who own the two devices in the room is protecting nothing and costing the game its stated feature.
+
+- **Casual is `v21.Classic.Casual`, three parts.** Ranked keeps all five.
+- ⚠️ **THE FIELDS ARE DROPPED, NOT SET TO A PLACEHOLDER.** A key reading `.Any.Any` is still a
+  key with two fields in it, and the next person to add one would have to work out which of three
+  spellings of "not banded" this was. Three parts and five parts cannot be confused.
+- `ACasualQueueSeatsAPhoneBesideAPc` and `ARankedQueueStillBandsByDeviceAndPlatform`, both sides.
+
+### 130.5 ✅ `Shader.WarmupAllShaders()` is gone, which is § 126.10's ANR
+
+**It is why the phone never reached the menu, so it was on the crossplay path rather than beside
+it.** One blocking call compiling every variant in the build, in the ONE stage of
+`SplashScreen.PreloadGameAssets` that could not yield, in a routine whose own header says *"IT
+YIELDS BETWEEN EVERY STAGE, DELIBERATELY"*.
+
+- **`ShaderVariantCollection.WarmUpProgressively` is the only incremental warm-up Unity exposes.**
+  `Shader.WarmupAllShaders` and `ShaderVariantCollection.WarmUp` are both all-or-nothing. It needs
+  a collection asset, so the asset is the mechanism rather than a convenience.
+- **`ShaderWarmupCollection` (editor) GENERATES it from every material in the project**, on every
+  build and in `Checks.RunAll`. ⚠️⚠️ **NOT `ShaderUtil.SaveCurrentShaderVariantCollection`**,
+  which saves the variants seen since tracking started: the ones somebody happened to walk past in
+  one play session. **A screen nobody opened contributes nothing**, which is `CLAUDE.md` § 4a's
+  § 96 and § 124.11 fault arriving in the renderer.
+- **10 shaders per frame**, so Android's five-second ANR watchdog never sees a blocked main thread,
+  and the bar moves inside the stage rather than only at its boundaries.
+- ⚠️ **A MISSING COLLECTION WARNS AND DOES NOT FALL BACK TO `WarmupAllShaders`.** Falling back
+  would reinstate the ANR on the one platform that cannot survive it, invisibly, on exactly the
+  build where generation failed. It is a build gate for that reason.
+- ⚠️ **The asset is gitignored**, on `BuildBranch.txt`'s precedent and for its reason: a file whose
+  whole job is to be rewritten by a tool is a merge conflict waiting for whoever builds next.
+  Absent is a safe state and a loud one, and it is never absent in a shipped player.
+
+⚠️⚠️ **AND THE FIRST VERSION OF THE GENERATOR WAS A REGRESSION WEARING THE FIX'S CLOTHES, WHICH IS
+THE PART OF THIS WORTH READING.** It walked MATERIALS, which is the obvious way to enumerate
+shaders, and the measurement was:
+
+| | Shaders | Variants |
+|---|---|---|
+| Material walk only | **5** | 20 |
+| Plus `Shader.Find` literals, plus authored `.shader` assets | **23** | 53 |
+
+**This project has EIGHT `.mat` assets in `Assets/` and builds essentially every material it draws
+with in code** (`GodotTheme.Box`, `PaperCraft`, `WoodCraft`, every VFX builder), while the runtime
+names **nineteen** shaders by string. So the material walk measured the handful of authored
+materials and missed the whole game.
+
+⚠️⚠️ **AND IT WOULD HAVE BEEN INVISIBLE.** The loading bar still moves, the ANR is still gone, and
+the hitch simply comes back later, during a round, which is exactly the fault
+`SplashScreen.PreloadGameAssets`'s own header was written about: *"the work did not disappear, it
+just happened at the worst possible moment."* **The shader count is printed in the log line for
+this reason** — 5 and 23 are very different answers and only one of them was ever on screen.
+
+⚠️ **THE SOURCE OF TRUTH IS THE `Shader.Find` LITERAL, READ AS TEXT**, which is `SceneScriptCheck`
+and `InputSurfaceCheck`'s method for their reason: a shader nothing instantiated during a scan is
+still a shader the player meets. ⚠️ **It also reports a name that does not resolve**, which is a
+pink-material bug in the shipped player rather than a warm-up problem, and this is the only place
+in the project that looks. It is **0** today.
+
+### 130.6 ⚠️⚠️ THE LOBBY AND MAP SELECT WERE DRAWN WITHOUT THE INK OUTLINE, AND THIS IS THE THIRD CAMERA IT HAS HAPPENED TO
+
+🧑's report is exact. `CameraRig.Awake` installs **three** passes: `ColourGrade`,
+`PostAntiAlias` and `WorldOutline`.
+
+| Camera | Got | Missing |
+|---|---|---|
+| `CameraRig` (the match) | all three | — |
+| `SpectatorCamera` | the first two | `WorldOutline`. **Already found and fixed once**, and its header spends twenty lines on why nobody noticed |
+| `MapPreviewSurface` (**the lobby and the map select**) | the FIRST only | `WorldOutline` |
+| `MapPreview` (unreferenced, see § 130.7) | none | all three |
+
+⚠️⚠️ **THE GRADE IS WHY IT LOOKED WRONG RATHER THAN MERELY DIFFERENT.**
+`MapPreviewSurface.ApplyEnvironment` already copies the arena's ambient, fog, skybox and
+`MapGrade` onto the preview camera, **so the preview had the right COLOUR of the game and none of
+its LINE.** `docs/VISION.md` § 6: *"anything drawn in a different visual language is the thing
+that looks broken"*, and an inked world beside an un-inked one is two visual languages on the two
+screens a player crosses between most often.
+
+- ⚠️ **`PostAntiAlias` IS STILL DELIBERATELY ABSENT AND THAT IS NOW ASSERTED.** `CameraRig`
+  names this camera when it explains why: the preview renders into a `targetTexture` already built
+  with 4 samples, so filtering it would soften a picture that is not aliased. **Two of three is the
+  right answer here and the reason is written down; one of three was not.**
+  `ThePreviewDeliberatelySkipsAntiAliasingBecauseItsTargetIsAlreadyMultisampled` encodes the
+  exemption, which is § 126.13's lesson applied before it becomes § 126.13.
+- **`WorldCameraPassParityTests` reads the three sources as TEXT**, for `SceneScriptCheck`'s reason:
+  every runtime probe can only measure a camera that was BUILT during a run, and each of these is
+  built by a screen somebody has to open.
+
+### 130.7 ⚠️ OPEN: `MapPreview.cs` is dead code that looks exactly like the live class
+
+`TscnUiImporter` line 676 attaches **`MapPreviewSurface`** to the node named `MapPreview`, and
+`ConvertedMatchSetup` reads `MapPreviewSurface` off that node. **Nothing constructs
+`MapPreview`.** The two share a name and nothing else, and the difference is invisible from the
+file name: one copies the arena's environment and installs two passes, the other renders the arena
+flat.
+
+**A session that "fixed the map preview" in that file would change nothing a player can see**,
+which is the most expensive kind of fix. Its header now says so in full. **Done looks like** a
+decision to delete it, with its camera notes (the sway-not-orbit argument is the original
+conversion of `map_preview.gd` and is worth keeping somewhere) moved onto `MapPreviewSurface`
+first. ⚠️ **Do not delete it without moving those notes**; `CLAUDE.md` § 3 asks for the reasoning
+to survive the deletion.
+
+### 130.8 ⚠️ NOT DONE: nobody has still watched a phone and a PC join each other
+
+§ 126.11 stands, and this batch removed the two things sitting in front of it rather than doing
+it. ⚠️⚠️ **THE EMULATOR CANNOT ANSWER THE LAN HALF AT ALL** and that is worth writing down
+before somebody spends a session on it: the AVD sits behind a NAT on `10.0.2.x`, so it cannot
+receive the host's LAN broadcast and `LanBeacon` can never see it. **The relay join code is the
+path that can be demonstrated on this machine.** ⚠️ **And a real handset may need a
+`WifiManager.MulticastLock` for the LAN browser to receive broadcasts at all**, which is untested,
+unbuilt, and needs a device rather than a guess.
 
 ---
+
+### 130.9 ✅ § 129.3: the YOU card row is measured now, on its fourth report
+
+The mechanism, not another shorter string. `resizeTextForBestFit` **looks** like a measurement and
+is not one a caller can read: when the text still does not fit at `resizeTextMinSize` it does not
+report that, it clamps at the floor and `horizontalOverflow = Overflow` draws the surplus into the
+neighbour. `MenuKit.Fit` measures the same thing and **answers**, which is what lets
+`FitIdentityRow` act on a failure instead of drawing one.
+
+- **The 170-unit role column was the trusted number and is a measured one now.** `170 + 10 + 140 =
+  320 against 336` was correct arithmetic at ONE canvas width, and `AspectSafeCanvas` scales on the
+  short axis, so 336 was never the number on his window. `CLAUDE.md` § 6.2c row 1.
+- ⚠️ **`detailLayout.minWidth` GOES TO ZERO AND THAT IS A REVERSAL WORTH READING.** A
+  `HorizontalLayoutGroup` will not shrink a child below its `minWidth` and **overflows the
+  container instead**, so the 140-unit floor protecting the name was also one of the two things
+  making the row overrun. The name is the child that gives; the role is capped at half the row.
+- ⚠️ **AND THE LAST-RESORT CASE CLIPS RATHER THAN OVERPRINTS.** When `Fit` returns false the name
+  goes to `Wrap` + `Truncate`, which on a one-line rect is a clip. **Half a string is a bad
+  readout; two strings on top of each other is neither.**
+
+### 130.10 ✅ § 126.8: the five named fixtures tear their world down, and the cause was one line
+
+⚠️⚠️ **THE MECHANISM IS `SceneManager.LoadSceneAsync(name, LoadSceneMode.Single)` IN FOUR FILES,
+AND NOT ONE OF THE FIVE SUITES § 126.8 NAMES BY STACK TRACE HAD A TEARDOWN OF ANY KIND.** A
+single-mode load destroys every object in the previous scene, so the scene a test loaded was still
+active when the next test started, and a load still settling was settling into the next test's
+objects.
+
+**`SteeringTests` is the clearest reading of it.** The failing test builds a bare `Cube` floor and a
+`CharacterMotor` in the ACTIVE scene, waits twenty fixed updates, then reads `go.transform` at line
+177. A single-mode load left in flight by the test before it lands during those twenty frames and
+takes both objects with it. That is the `MissingReferenceException` **inside the test**, and it is
+the same shape at `SettingsWheelProbe.cs:117`, `UiClickProbe.cs:140` and `VolcanicZoneTests.cs:60`.
+*"the arena built no SliceRunner"*, *"No main camera in the arena"* and the rest are the same cause
+seen from the other side: a scene asked for while another load is pending.
+
+- **`PlayModeWorld.Reset`** creates an empty scene, unloads every other loaded scene **including
+  additive ones**, and waits for each `AsyncOperation` to report `isDone`, so nothing is ever in
+  flight when it returns.
+- ⚠️⚠️ **IT ENDS THE LIVE MATCH FIRST, AND THAT IS `SoloPracticeTests`'S OWN FINDING
+  GENERALISED.** Its teardown already recorded the half a scene unload cannot reach: **the
+  directors are `DontDestroyOnLoad`, so a live round outlives the scene**, and the next suite's
+  arena loads underneath a match that is still ticking. *"`LandedHighlightTests` failed exactly
+  that way, twice, and passes alone."* One suite had noticed the class, fixed its own instance, and
+  there was nowhere to put the general version. Now there is.
+- **Both hooks on all five**, not just teardown: until every fixture in the folder has the pair,
+  there is always something ahead of a suite that does not.
+- ⚠️ **This is option 1 of the two § 126.8 offers and deliberately not option 2.** No third
+  category exclusion, no widened bound.
+- ⚠️ **It does not reach `UgsServicesProbe` and the entry says so.** That is § 130.3, and it is a
+  different fix: the probe was starting a second UGS sign-in beside the one `NetIdentity` fires at
+  boot.
+
+⚠️⚠️ **THE HEADING STAYS OPEN UNTIL A FULL RUN SAYS OTHERWISE, WHICH IS THE ENTRY'S OWN
+STANDARD.** § 126.8 exists because a number from one run was quoted as a gate. **The cause is
+identified and the five named suites are fixed; the claim "the suite is a gate again" needs a full
+run to compare against 42 and 41, and that run has not been done on this commit.** Do not close
+§ 126.8 on this entry.
+
+### 130.11 ✅ § 126.13: two of the three `Fit(..., 14)` floors did not need an exemption at all
+
+The entry asked for *"a decision, taken with a render in hand: either the pills get wider and the
+floor goes to `MenuKit.MinReadableUnits`, or the exemption is written into the probe by name"*, and
+closes **"Do not lower the probe's floor to make it green."** All three answers are here and the
+probe's floor is untouched.
+
+| Site | What it turned out to be |
+|---|---|
+| **line 1205, the variant tile** | ⚠️⚠️ **A BUG.** `band - 86` reserved 86 units for the `EQUIPPED` mark, and that mark is built inside `if (equipped)`. **Every unequipped tile was squeezing its name to make room for nothing**, and most tiles on the screen are unequipped. Now `band` when not equipped |
+| **line 1094, the skill board** | ⚠️ **A COLUMN WIDTH NOTHING WAS COMPETING FOR.** The row is a glyph and a text column and nothing else, and `inner` is 964 units, so 180 left about seven hundred units of board empty while shrinking a 17-character ability name to 14. It is `inner - 60 - 30 = 874` now and **the floor is `MenuKit.MinReadableUnits`** |
+| **line 592, the tab rail** | ⚠️ **THE GENUINE EXEMPTION.** `MAKE YOUR OWN` beside `LATA` in cells a `HorizontalLayoutGroup` decides. It keeps its 14 |
+
+⚠️⚠️ **AND THE EXEMPTION IS REGISTERED BY `MenuKit.Fit` ITSELF RATHER THAN BY THE CALLER, WHICH IS
+THE ONLY VERSION THAT CANNOT ROT.** `TightLabel` is attached whenever a fit settles below the
+readable floor, and `AspectRatioProbes` **skips it and prints it** with its floor, its settled size
+and the room it was fighting for. § 126.13's cause was *"a local exemption that was copied twice and
+never encoded anywhere a test could see"*; a marker the caller had to remember is a second place to
+forget, and forgetting it compiles (`CLAUDE.md` § 4a). ⚠️ **It registers the RESULT, not the
+request**: a caller may pass 14 and the string may still fit at 20, and recording that would pad the
+list until it stopped being read.
+
+### 130.12 ✅ Phase 12: map rotation and the map vote, which § 128.2 called the cheapest unbuilt thing
+
+`FUTURE.md` § 12 and § 19.12 both say to build this **before a fourth map**: *"A map is the most
+expensive content in the game. Map rotation and a map vote are nearly free and buy most of the same
+freshness."* § 128.2 recorded that **nothing in the repository grepped for either**.
+
+**`MapRotationRules`, engine-free**, which is § 19.12's stated constraint. Sixteen tests.
+
+- ⚠️⚠️ **THE ROTATION AND THE VOTE ARE ONE FEATURE.** A vote answers "what do these four people
+  want"; a rotation answers "what happens when nobody says". **The vote alone leaves a lobby where
+  four abstentions replay the same map for ever**, which is the exact staleness the feature exists
+  to remove, and a lobby where nobody presses anything is the COMMON case: four people who have
+  just finished a match are looking at a scoreboard, not a ballot. `Decide` is the whole thing.
+- ⚠️⚠️ **THE TIE-BREAK GOES TO THE MAP YOU ARE NOT ON, AND THE OBVIOUS RULE IS WRONG HERE.**
+  "Lowest index wins" hands a 2-2 split to the CURRENT map half the time, which buys none of the
+  freshness this was bought for. A majority can still keep the map it is on; it just cannot keep it
+  by accident.
+- ⚠️ **`NoVote` IS -1 AND NOT 0**, because 0 is a real map index and a tally that conflates "no
+  answer" with "the first option" gives every silent lobby to Eskinita **and looks exactly like a
+  working vote**.
+- ⚠️ **A vote for a map this build does not have is DISCARDED, not clamped.** A clamp turns a peer
+  on a four-map build into a vote for map 2 on a three-map build, which is a silently wrong answer
+  rather than an absent one.
+- ⚠️ **`OpeningMap` is derived from the week**, `MirrorIndex`'s argument exactly, with the same
+  pre-epoch guard: a venue machine with a flat CMOS battery boots in 2000 and C# `%` keeps the sign
+  of the left operand.
+
+**The runtime half: a REMATCH now moves to the next map.** That is the single moment worth the most
+(four people who have just agreed to keep playing, handed the identical street every time), and it
+is host-only over the `SelectMap` broadcast that already exists.
+
+⚠️⚠️ **NO NEW WIRE MESSAGE AND THEREFORE NO `ProtocolVersion` MOVE, AND THAT WAS A DELIBERATE
+CONSTRAINT RATHER THAN LUCK.** Moving the protocol means the Windows player and the .apk must be
+rebuilt and shipped together (`CLAUDE.md` § 4a), and this session's whole other half is 🧑 asking
+for a phone and a PC that can play together. **A feature that did not need the bump did not get
+one.**
+
+### 130.13 ⚠️⚠️ OPEN, AND IT IS A FINDING § 128.2 DID NOT HAVE: LAST TSINELAS'S MATCH HALF COSTS A PROTOCOL BUMP
+
+§ 128.2 says the format *"has rules, tests, a document and no match half"* and lists what the core
+already gives. **What it does not say is what building the match half actually costs**, and that is
+worth writing down before somebody starts it thinking it is an afternoon.
+
+**A Last Tsinelas round ends EARLY and awards points nobody else can compute.** The last attacker
+standing takes `LastStandingPoints`, so:
+
+- the round can end on a condition other than the clock, which every peer's HUD reads;
+- a new `ScoreEvent` is needed for the award, or the toast says the wrong thing;
+- a peer that has never heard of either **is two different games sharing one scoreboard**, which is
+  the exact sentence `NetSession.ProtocolVersion`'s own note uses to justify the move to 21.
+
+⚠️ **21 COVERS "THE PEER KNOWS ABOUT `MatchFormat`", NOT "THE PEER KNOWS HOW TO RUN THIS ONE."**
+Those are different claims and only the first one shipped. So the match half moves the protocol to
+22, and `CLAUDE.md` § 4a's consequence follows: **the Windows player and the .apk are rebuilt from
+the same commit and shipped together, or they refuse each other correctly and it reads as a bug.**
+
+**Done looks like**, in this order: the round logic host-side, the `ScoreEvent`, the bump, both
+players rebuilt together, and only then the format added to `ConvertedMatchSetup.FormatAt`. ⚠️ **It
+stays out of the lobby's format list until the match can run it**, which § 128.2 already says is
+correct: *"a format a player can pick and the match cannot run is worse than one that is not
+offered."*
+
+### 130.14 ⚠️⚠️ OPEN, AND IT IS NEW: `SteeringTests.MouseAimedMovementIsRelativeToTheBody` IS DETERMINISTICALLY RED AND IT IS NOT IN § 126.9'S LIST
+
+**Measured both ways rather than assumed**, because this batch put a teardown into that fixture and
+a red that arrived with a change is the change's until proven otherwise:
+
+| | Result |
+|---|---|
+| Current code, suite run in a group of seven | `moved.x` **1.97339928** against a bound of 2.0246408 |
+| **`SteeringTests.cs` reverted to HEAD, no teardown, run ALONE** | `moved.x` **1.97339928** against 2.0246408 |
+
+⚠️⚠️ **THE SAME NUMBER TO EIGHT SIGNIFICANT FIGURES, SO IT IS PRE-EXISTING, DETERMINISTIC AND NOT A
+FLAKE.** That matters twice over: it is not caused by § 130.10's fixture work, **and it is not the
+§ 126.8 class at all** — a cross-test leak produces a number that moves between runs, and this one
+does not move at all.
+
+**What it says.** A seat facing due east, pressing W for 40 fixed updates, moves `(1.97, 0.00,
+1.08)`. That is **28.7 degrees north of its own forward**, not a rounding error, and the assertion
+is `moved.x > magnitude * 0.9`. The seat is being steered partly in world space, which is exactly
+what the test's own message says and what `CLAUDE.md` § 7.1 records for seat 0 in § 34: *"`Steer` on
+the branch that reads a heading as body-relative and never rotates the body"*.
+
+⚠️ **`AimSource.Mouse` IS THE ARM UNDER TEST** and § 34's fault was the same source on a different
+seat, so read § 34 before starting: that entry cost 224 m against 522 to 556 for the sibling seats
+and was found by a probe rather than by playing. **Done looks like** the cause named in
+`CharacterMotor.Steer` or `CameraRig`, not a widened bound: the sibling test
+`TagSelectionServesEveryEligibleSeatBeforeRepeating` and the movement-aimed case both pass, so the
+two arms disagree and one of them is wrong.
+
+### 130.15 ⚠️ `AspectRatioProbes` IS NARROWED TO ONE OPEN QUESTION NOW, AND IT IS § 121.8
+
+After § 130.11's three fixes the character screen's only remaining red is **`DoorCaption`, authored
+at 16**, which is exactly `PaperKit.Caption`. That is not an unnoticed bug: § 121.8 is the entry
+holding it open, `PaperKit`'s own header states the 16-against-18 conflict as a deliberate decision,
+and that entry says in as many words that it is **"settled by looking at the running build and not
+by either file winning on paper"**.
+
+- ⚠️ **THE FLOOR IS NOT LOWERED AND THE CAPTION IS NOT EXEMPTED.** § 126.13: *"Do not lower the
+  probe's floor to make it green."* Raising `PaperKit.Caption` grows **every caption in the front
+  end** by an eighth, and § 121.8's method is to walk the seven screens that use one and split them
+  into "a caption that restates a value above it" and "a caption that is the only place a fact
+  appears" **before** touching the constant.
+- ✅ **What did change is that the probe now NAMES § 121.8 in its failure message**, so the next
+  reader is told this is an open design question rather than re-deriving it from two constants.
+  **The probe has gone from "some label somewhere on this screen is small" to one constant and one
+  entry**, which is the useful half of narrowing a permanent red.
+- ⚠️ **It is still red and should stay red until § 121.8 is settled**, which needs 🧑's eye on a
+  running build. `CLAUDE.md` § 4a: *"a green probe for a screen nobody can reach is worse than a red
+  one"*, and the inverse holds here — a red that names its own open entry is doing its job.
+
 
 ## 128 · Phases 11 and 12 are almost entirely built, and this entry was wrong about it once ⚠️ OPEN, 2026-09-03, branch `ui-redesign`
 
@@ -200,10 +539,19 @@ that a rule kept by remembering goes stale; this is the reader's version of it, 
   (`ConvertedMatchSetup.FormatAt` maps index 0 to Standard and anything else to Mirror), which is
   correct: **a format a player can pick and the match cannot run is worse than one that is not
   offered.** § 129 is the match half.
-- ⚠️ **Map rotation and a map vote do not exist.** Nothing in the repository greps for either.
-  `FUTURE.md` § 12: *"A map is the most expensive content in the game. Map rotation and a map vote
-  are nearly free and buy most of the same freshness. Build those before building a fourth map."*
-  **This is the cheapest unbuilt thing in the phase** and it is still unbuilt.
+- ✅ **Map rotation and a map vote are BUILT, 2026-09-03. § 130.12 and `docs/Formats.md` § 4.**
+  `MapRotationRules` is engine-free with sixteen tests, and a REMATCH now moves to the next map,
+  host-only, over the `SelectMap` broadcast that already exists — **so the protocol did not move**,
+  which mattered because moving it forces the Windows player and the .apk to be rebuilt together.
+  ⚠️ **The BALLOT is not wired across the wire yet**: `Decide` takes votes when a lobby has some to
+  give it, and until then silence falls through to the cycle. Collecting votes is a new message and
+  therefore a protocol move, and it should be spent in the same bump as the match half below rather
+  than on its own.
+
+- ⚠️⚠️ **AND WHAT THE MATCH HALF ACTUALLY COSTS IS § 130.13, WHICH THIS ENTRY DID NOT KNOW.** A
+  Last Tsinelas round ends EARLY and awards points nobody else can compute, so it needs a new
+  `ScoreEvent` and it moves `ProtocolVersion` to 22. **21 covers "the peer knows about
+  `MatchFormat`", not "the peer knows how to run this one"**, and those are different claims.
 
 ---
 ## 127 · Phase 16.1: the taya is a RING and an attacker is a DISC ⚠️⚠️ OPEN, 2026-09-03, branch `ui-redesign`
@@ -1411,7 +1759,7 @@ needs:
   `InputContractTests.TheInputPassDidNotMoveTheProtocolVersion` is green, so the .apk and the
   Windows player from this commit will accept each other.
 
-### 126.13 ⚠️ OPEN: what this batch did NOT do
+### 126.13 ⚠️ OPEN: what THAT batch did NOT do (the `Fit` floors are resolved in § 130.11)
 
 - ⚠️ **Crossplay is still not demonstrated.** § 126.11 has what the next session needs.
 - ⚠️ **`AspectRatioProbes.TheCharacterScreenSurvivesEveryAspectRatio` is still red**, and the
@@ -3175,6 +3523,7 @@ repository still lands on something**: follow it here, find the number, read it 
 
 | § | What it was |
 |---|---|
+| 129 | Three faults off the first phone render, and the one that was invisible on a monitor ✅ CLOSED 2026-09-03. § 129.3's mechanism is § 130.9 |
 | 90 | The impersonation guard, and telemetry ⚠️ 2026-08-30 |
 | 91 | Phase 4: XP, levels and hero mastery ⚠️⚠️ 2026-08-30 |
 | 92 | The account and career screens, rebuilt ⚠️⚠️ 2026-08-30 |
