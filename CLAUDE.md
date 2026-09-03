@@ -388,6 +388,14 @@ retargeting would re-solve poses that are already correct. If clips start coming
 library instead (Mixamo or similar), **Humanoid becomes the right answer**, and that is the
 single biggest thing Unity buys over Godot here.
 
+⚠️⚠️ **SOURCED SFX ARE PROVISIONAL UNTIL 🧑 HEARS THEM IN PLAY.** He rejected the replacement
+can hit, can down and button hover by name, and their original WAVs are restored. If he asks to
+restore another sound, read [`docs/Asset_Sourcing.md`](docs/Asset_Sourcing.md) § 5.5 and
+[`Attention.md`](Attention.md) § 13 first. The old blobs are at `ee8bced^`; restore only the named
+target, resolve aliases, and move it from `tools/build_ability_audio.py.REPLACEMENTS` to `KEPT` in
+the same commit so the generator cannot put the rejected sound back. **Never roll back the whole
+asset pass to restore one cue.**
+
 ⚠️ **The IKE slipper carries the real Nike wordmark as geometry.** First in the replacement
 queue; `docs/Port_Plan.md` § 8 lists the properties a replacement must preserve.
 

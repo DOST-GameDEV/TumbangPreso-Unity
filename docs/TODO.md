@@ -1346,6 +1346,10 @@ their real files, and a restored cue must move from `build_ability_audio.py.REPL
 `KEPT` in the same commit. Restore named files only. Do not roll the whole source pass back and
 take accepted VFX or audio with it.
 
+⚠️ **THIS LEDGER IS LINKED FROM BOTH MANDATORY ENTRY POINTS NOW.** `CLAUDE.md` § 6 sends every
+session to `Asset_Sourcing.md` § 5.5 before a restore, and `Attention.md` § 13 keeps the listening
+decision on the list of things only 🧑 can settle.
+
 ### 131.8 ⚠️ OPEN: `CustomGameScreenProbe` HAS NOW RUN, AND ONE CASE IS RED AT ONE RESOLUTION
 
 **It had never been executed.** Five cases, nine resolutions, written and never run. It runs now:

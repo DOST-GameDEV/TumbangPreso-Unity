@@ -162,7 +162,8 @@ line actually added to the credits screen.
 
 ⚠️ **THE FIRST BATCH IS IN AND IT IS ENTIRELY CC0, SO THERE IS NOTHING TO ADD TO THE CREDITS
 SCREEN YET.** `Assets/TumbangPreso/Resources/Vfx/SOURCES.txt` carries the licence for all twelve
-ability sheets beside the art, and the twenty-seven replaced sound cues are Kenney CC0. **No CC BY
+ability sheets beside the art, and the twenty-four sourced sound cues that remain are Kenney CC0.
+Three replacements were rejected by ear and their preferred old WAVs are restored (§ 13). **No CC BY
 asset ships today.** The one that would is the jeepney in § 11.2, and its credit line is written
 and waiting in `Asset_Sourcing.md` § 9. **What is still asked of you is to read the two source
 lines in `SOURCES.txt` and say the derivatives may stay in a public repo**, which is the same
@@ -187,8 +188,9 @@ These are standing, not one-off. `CLAUDE.md` § 6.2a: **a green layout probe is 
 ## 9 · Recording that has to be done by people, not sourced
 
 **The six heroes' voice lines.** `AudioCues` reserves `hero_<name>_grunt` and `hero_<name>_ult` for
-DANTE, CHESKA, SEAN, ZACK, NEMU and PHAISTER, plus `sfx_ult_theme_*`. Every one of the 117 sound
-effects in the project is currently **synthesised** by `generate_hero_audio.py` as a placeholder.
+DANTE, CHESKA, SEAN, ZACK, NEMU and PHAISTER, plus `sfx_ult_theme_*`. The asset pass began with 117
+sound effects synthesised by `generate_hero_audio.py`; twenty-four sourced replacements remain
+today, while three were restored to their preferred pre-pass versions after a played comparison.
 
 Most of the 117 can be replaced from free libraries. **The Tagalog callouts cannot**, and they are
 the ones that make the game sound like it is from here. That is a microphone and an afternoon.
@@ -216,7 +218,7 @@ free; what they need is a person who is signed in.
 **Already done, so do not redo it:** every CC0 source in `Asset_Sourcing.md` § 2 and § 5.1 is
 downloading automatically through `tools/fetch_asset_sources.py`, including PVFX Foundry, which
 needed itch.io's three-request name-your-own-price flow reverse engineered. Twelve recoloured VFX
-sheets and twenty-seven replaced sound cues are in and green.
+sheets and twenty-four sourced sound replacements are in; three preferred old cues are restored.
 
 ### 11.1 The sixteen Freesound recordings
 
@@ -224,7 +226,8 @@ sheets and twenty-seven replaced sound cues are in and green.
 takes, two thunder takes, two earthquake takes, the electric crackle, the dark magic loop and the
 tin can. **Every one of those URLs answers `302` to `https://freesound.org/home/login/`.** They
 are the elemental beds for all eighteen `sfx_cast_*` and all twelve `sfx_var_*` cues, which is why
-those thirty are still synthesised while the twenty-seven physical ones are real.
+those thirty are still synthesised while the twenty-four accepted physical/UI replacements are
+sourced recordings.
 
 **What is asked of you:** sign in to Freesound, download the sixteen files in § 5.2, and drop them
 into `scratchpad/asset-src/freesound/`. That folder is gitignored and
@@ -325,3 +328,22 @@ puts it. Whether that works is not something any probe here can decide.
 > select, login), and the brief is *not overwhelming, easy to look at, quirky like the logo*.
 > `docs/Front_End_Design.md` is the whole design written out, including the recurring marks you and
 > Paul Andrei asked for.
+
+---
+
+## 13 · Listen to the remaining sourced SFX and name any that should go back
+
+**`docs/Asset_Sourcing.md` § 5.5 and `docs/TODO.md` § 131.5b.** The source pass changed twenty-seven
+WAV files. After hearing the build, you rejected the can hit (`lata_impact`), can down
+(`lata_knockdown`, also reached by the `can_knockdown` alias) and button hover (`ui_hover`). Their
+old WAVs are restored byte-for-byte and the generator is prevented from replacing them again.
+
+The other twenty-four replacements are **provisional rather than approved as one batch**. The full
+list and alias targets are in `Asset_Sourcing.md` § 5.5, and every pre-pass file remains recoverable
+at `ee8bced^` (`c5b6ff9`).
+
+**What is asked of you:** play normally and name any sound that is worse than the one you remember.
+The cue name is enough if you know it; otherwise say the event, such as "landing", "score", "back
+button" or "slipper bounce". The next session can identify the target and restore only that file.
+Do not ask for or accept a rollback of the whole asset commit, because that would also remove good
+VFX and unrelated accepted audio.
