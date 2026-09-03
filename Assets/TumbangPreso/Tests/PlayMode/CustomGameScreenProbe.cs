@@ -348,6 +348,27 @@ namespace TumbangPreso.PlayTests
             yield return null;
         }
 
+        /// <summary>
+        /// Point the capture camera at a new shape and let the layout actually settle.
+        ///
+        /// ⚠️⚠️ THREE FRAMES WAS NOT ENOUGH AND THE FIRST RUN OF THIS PROBE IS THE RECEIPT.
+        /// `docs/TODO.md` § 131.8: the very first execution failed on ONE row at ONE resolution,
+        /// *"'Label' reading \"No bots · open to anybody with the code\" needs 306 px and
+        /// was given 16"*. **16 px is not a narrow column, it is a rect that has never been laid
+        /// out**: `UiRows.Section`'s shut-group summary is anchored from `ValueColumn` 0.56 to the
+        /// right margin, so on a settled list it is around 368 units and on an unsettled one it
+        /// is whatever the parent was before the resize.
+        ///
+        /// ⚠️ IT IS THE FIRST RESOLUTION IN THE LIST THAT FAILED, WHICH IS THE TELL. The other
+        /// eight passed because by then the scroll rect had been driven for several frames. A
+        /// bound that depends on how many frames have happened to elapse is not a bound.
+        ///
+        /// ⚠️ `Canvas.ForceUpdateCanvases` PLUS A REBUILD ON THE CONTENT, NOT MORE `yield return
+        /// null`. Waiting longer would have hidden this one and left the next person the same
+        /// afternoon: a `ScrollRect` with a `ContentSizeFitter` under an `AspectSafeCanvas`
+        /// settles when it is TOLD to, and the two calls below are what tell it. The frames after
+        /// are for anything that reacts to the rebuild rather than causes it.
+        /// </summary>
         private IEnumerator Resize(int w, int h)
         {
             var next = new RenderTexture(w, h, 24, RenderTextureFormat.ARGB32);
@@ -357,6 +378,18 @@ namespace TumbangPreso.PlayTests
             _target = next;
 
             for (int i = 0; i < 3; i++) yield return null;
+
+            Canvas.ForceUpdateCanvases();
+
+            foreach (var group in Object.FindObjectsByType<UnityEngine.UI.LayoutGroup>(
+                         FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+            {
+                if (group != null && group.transform is RectTransform rt)
+                    UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(rt);
+            }
+
+            Canvas.ForceUpdateCanvases();
+            yield return null;
         }
 
         private static Transform Root(string name)

@@ -443,6 +443,61 @@ namespace TumbangPreso.Abilities
         public string EffectiveCastCue =>
             string.IsNullOrEmpty(VariantCastCue) ? CastCue : VariantCastCue;
 
+        /// <summary>
+        /// What the equipped reading of this slot is called, and what it says it does.
+        ///
+        /// ⚠️⚠️ WITHOUT THESE, A BUILD IS INVISIBLE THE MOMENT THE MATCH STARTS, WHICH IS MOST OF
+        /// WHY THE HEROES FELT INTERCHANGEABLE. 🧑 2026-09-03: *"i dont want the ppl to feel like
+        /// the characters all js do the same shit"*. `docs/VISION.md` § 3 promises three layers
+        /// that stay in step: **Learn** on the character select, **Recall** on the hold key,
+        /// **Play** on the deck. The loadout board and the picker's ability rows already show
+        /// `AbilityVariant.Name`, so LEARN was right; `AbilityInspectPanel` and `StatusStack`
+        /// both drew `HeroAbility.Name`, so a player who equipped **ARC LINE** held the info key
+        /// mid-round and read **BOLT SPRINT** with the wrong sentence under it. The one screen
+        /// that exists to answer *"what did I bring"* answered with what everybody brings.
+        ///
+        /// ⚠️ IT IS `VariantCastCue`'s PATTERN EXACTLY, DELIBERATELY. Same writer
+        /// (`HeroAbilitySystem.ApplyLoadoutToPresentation`), same null-means-default fallback,
+        /// same `internal set`. A default build writes null into all three and every string in
+        /// the game is byte-identical to before this existed.
+        ///
+        /// ⚠️ THE GLYPH IS NOT HERE AND MUST NOT BE. `AbilityVariant.GlyphName` is the SLOT's
+        /// glyph for every reading of it, which is `VISION.md` § 3 rule 1: the icon says what the
+        /// power does to the WORLD, and a sidegrade does not change the job. Two icons for one
+        /// slot would teach the player that the icon means the build.
+        /// </summary>
+        public string VariantName { get; internal set; }
+
+        /// <summary>See <see cref="VariantName"/>.</summary>
+        public string VariantSummary { get; internal set; }
+
+        /// <summary>The name the player should read for this slot, in a match and out of one.</summary>
+        public string EffectiveName =>
+            string.IsNullOrEmpty(VariantName) ? Name : VariantName;
+
+        /// <summary>The one sentence the player should read for this slot.</summary>
+        public string EffectiveSummary =>
+            string.IsNullOrEmpty(VariantSummary) ? Summary : VariantSummary;
+
+        /// <summary>
+        /// The FULL text the hold-key panel should show for this slot.
+        ///
+        /// ⚠️⚠️ IT FALLS BACK TO `Description` AND NOT TO `Summary`, AND THE FIRST VERSION OF
+        /// THIS FELL BACK TO `Summary` AND QUIETLY SHORTENED THE ONE SCREEN THAT IS SUPPOSED TO
+        /// BE LONG. `docs/VISION.md` § 3 gives the RECALL layer *"the same, in full"*, against
+        /// the deck's *"icon, key, name"* and the character select's *"one sentence"*. Swapping
+        /// the panel's body to a one-liner would have made all three layers say the same short
+        /// thing, which is three layers doing one job.
+        ///
+        /// ⚠️ AN `AbilityVariant` HAS ONE STRING AND NOT TWO, so when a variant IS equipped its
+        /// own description is the best text that exists and is used for both. That is a real
+        /// asymmetry rather than an oversight: `Phase10Tests.EveryVariantRowFitsTheTileItIsDrawnOn`
+        /// caps a variant's description at 67 characters because it also has to fit the picker's
+        /// ability row, so there is no long form to fall back to.
+        /// </summary>
+        public string EffectiveDescription =>
+            string.IsNullOrEmpty(VariantSummary) ? Description : VariantSummary;
+
         protected HeroAbility(string id, string name, string description, float cooldown,
                               float duration = 0.0f,
                               UI.AbilityGlyph glyph = UI.AbilityGlyph.Burst,

@@ -122,16 +122,34 @@ namespace TumbangPreso.Core.Tests
         [Fact]
         public void EveryVariantRowFitsTheTileItIsDrawnOn()
         {
-            const int DescriptionBudget = 78;
+            // ⚠️⚠️ 67 AND NOT 78, AND THE NUMBER CAME OFF A RENDER RATHER THAN OFF THE TILE.
+            // 78 is what fits the LOADOUT BOARD's 311-unit band, and it is not the tightest box
+            // this string is drawn in: `ConvertedCharacterSelect` also puts it in the picker's
+            // ability row, which is narrower and sits in a container whose height was sized for a
+            // particular mix of one and two line rows.
+            //
+            // `Logs/shots-runtime/CharacterLoadout-v73.png` is the measurement. On that frame
+            // SEISMIC STOMP's **67 character** description draws on ONE line and fits, and
+            // DEMONIC CARAPACE's 75 wraps to two and **the second line overflows into the row
+            // under it**, which is `MenuKit.Label`'s `verticalOverflow = Overflow`: it does not
+            // clip and it does not report, it draws through its neighbour.
+            //
+            // ⚠️ THE SHIPPED SET WAS ALREADY INSIDE IT BY ACCIDENT. Before 2026-09-03 the longest
+            // row in this table was 68 and the picker only ever drew a DEFAULT, because every
+            // alternate starts locked. Rewriting the twelve defaults to say something (§ 132.1)
+            // is what first pushed a real string through a real row, and this is the bound that
+            // fell out of it.
+            const int DescriptionBudget = 67;
             const int TradeBudget = 48;
 
             foreach (var variant in HeroLoadoutRules.AllVariants)
             {
                 Assert.True(variant.Description.Length <= DescriptionBudget,
                     $"'{variant.Id}' has a {variant.Description.Length} character description "
-                    + $"against a budget of {DescriptionBudget}. The tile's body box is two lines "
-                    + "of Caption 16 in a 311 unit band with verticalOverflow = Truncate, so "
-                    + "everything past the second line is dropped and NOTHING SAYS SO.");
+                    + $"against a budget of {DescriptionBudget}. Two boxes have to hold it and "
+                    + "the tighter one decides: the picker's ability row wraps past 67 and its "
+                    + "second line draws THROUGH the row underneath, and the loadout tile's body "
+                    + "box truncates past two lines and NOTHING SAYS SO.");
 
                 int trade = variant.GainLabel.Length + 7 + variant.CostLabel.Length;
 
@@ -139,6 +157,94 @@ namespace TumbangPreso.Core.Tests
                     $"'{variant.Id}' draws a {trade} character trade line against a budget of "
                     + $"{TradeBudget}. It is one 13 pt MenuKit.Label with no wrapping in a 311 "
                     + "unit band, so it does not shrink or wrap, it draws over its neighbour.");
+            }
+        }
+
+        /// <summary>
+        /// A default is a READING of an ability, not the absence of one.
+        ///
+        /// ⚠️⚠️ ALL TWELVE OF THEM USED TO SAY "AS TUNED" AND THAT IS WHAT
+        /// `Logs/shots-runtime/CharacterLoadout-v72.png` SHOWS. The equipped tile read *"The stomp
+        /// as it is tuned. One heavy shock at the measured radius"*, and the trade line under it
+        /// read `As tuned · As tuned`. 🧑 2026-09-03, about this screen: *"i dont want the ppl to
+        /// feel like the characters all js do the same shit"*. Six heroes, twelve slots, and the
+        /// half of every row that is ALREADY EQUIPPED carried no fact about the character.
+        ///
+        /// ⚠️ THE NUMBERS ARE NOT WHAT THIS CHECKS. `EveryVariantIsBudgetNeutral` already asserts
+        /// that a default's `Gain` and `Cost` are both zero, and they still are. This asserts the
+        /// TEXT: that a default says what it gives you and what it costs, in the same words its
+        /// alternate is described in, so the pair reads as a choice rather than as a thing and a
+        /// variation on the thing.
+        ///
+        /// ⚠️ THE BANNED PHRASES ARE LISTED RATHER THAN INFERRED. A length floor would pass
+        /// "As tuned as tuned"; naming the exact strings that shipped is what stops them coming
+        /// back, and a future default that genuinely wants one of them can argue with this test.
+        /// </summary>
+        [Fact]
+        public void NoDefaultDescribesItselfAsBeingAsTuned()
+        {
+            string[] banned = { "as tuned", "as it is tuned" };
+
+            foreach (var variant in HeroLoadoutRules.AllVariants)
+            {
+                if (!variant.IsDefault) continue;
+
+                foreach (string phrase in banned)
+                {
+                    Assert.False(
+                        variant.Description.ToLowerInvariant().Contains(phrase)
+                        || variant.GainLabel.ToLowerInvariant().Contains(phrase)
+                        || variant.CostLabel.ToLowerInvariant().Contains(phrase),
+                        $"'{variant.Id}' still says '{phrase}'. A default is one of two readings "
+                        + "of an ability and owes the same two facts its alternate owes: what it "
+                        + "gives you, and what it costs. See the note on this test.");
+                }
+
+                Assert.False(string.IsNullOrWhiteSpace(variant.GainLabel),
+                    $"'{variant.Id}' has no gain label, so its tile's trade line is half empty.");
+
+                Assert.False(string.IsNullOrWhiteSpace(variant.CostLabel),
+                    $"'{variant.Id}' has no cost label.");
+            }
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ TWO READINGS OF ONE SLOT MAY NOT SHARE A NAME, A DESCRIPTION OR A TRADE LINE.
+        /// The loadout board draws them side by side and `HeroAbility.EffectiveName` puts the
+        /// equipped one into the match HUD and the hold-key panel, so two rows that read the same
+        /// are a choice the player cannot see they made. This is the cheapest possible guard on
+        /// the sentence 🧑 actually said, and it costs 40 ms.
+        /// </summary>
+        [Fact]
+        public void TheTwoReadingsOfEverySlotAreToldApartByTheirWords()
+        {
+            foreach (string heroId in HeroLoadoutRules.HeroIds)
+            {
+                for (int slot = 1; slot <= 2; slot++)
+                {
+                    var options = HeroLoadoutRules.VariantsFor(heroId, slot);
+                    if (options.Count < 2) continue;
+
+                    for (int i = 0; i < options.Count; i++)
+                    {
+                        for (int j = i + 1; j < options.Count; j++)
+                        {
+                            Assert.False(options[i].Name == options[j].Name,
+                                $"{heroId} slot {slot}: '{options[i].Id}' and '{options[j].Id}' "
+                                + "are both called '" + options[i].Name + "'.");
+
+                            Assert.False(options[i].Description == options[j].Description,
+                                $"{heroId} slot {slot}: '{options[i].Id}' and '{options[j].Id}' "
+                                + "describe themselves identically.");
+
+                            Assert.False(
+                                options[i].GainLabel == options[j].GainLabel
+                                && options[i].CostLabel == options[j].CostLabel,
+                                $"{heroId} slot {slot}: '{options[i].Id}' and '{options[j].Id}' "
+                                + "draw the same trade line, so the tiles offer no visible choice.");
+                        }
+                    }
+                }
             }
         }
 

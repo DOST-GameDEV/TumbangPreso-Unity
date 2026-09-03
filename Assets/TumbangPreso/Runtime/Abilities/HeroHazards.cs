@@ -4816,6 +4816,55 @@ namespace TumbangPreso.Abilities
         {
             ExplosionLook look = LookFor(style);
 
+            // ⚠️⚠️ THE SOURCED BURST FOR THIS STYLE, AND IT IS HOOKED HERE BECAUSE THIS IS THE
+            // ONE PLACE EVERY BLAST IN THE GAME IS DRAWN. `docs/TODO.md` § 131.6 lists six built
+            // and unplaced sheets; four of them land in this single call and reach Sean's
+            // Supernova, Dante's Titan Fissure and his stomp, Cheska's Glacial Nova, the Ignition
+            // Cannon impact and every thrown tsinelas. Hooking the four kits separately would be
+            // four places to forget, which is the argument `ExplosionStyle` itself was created
+            // from: *"one function was drawing four different events."*
+            //
+            // ⚠️⚠️ THE QUAKE GETS DUST AND NOT THE RUPTURE, AND THAT IS NOT AN OVERSIGHT.
+            // `SpawnCrackedLavaDecal` already plays `VfxSheets.Rupture` and Dante's stomp calls
+            // BOTH it and this, so a rupture here would draw the ground breaking twice on one
+            // press. The break is the decal's; what a slam adds is what it throws into the AIR,
+            // which is `landing-dust` on the warm neutral ramp. `docs/VISION.md` § 2 rule 3:
+            // stacking is not detail.
+            //
+            // ⚠️ THE SLIPPER GETS SMOKE AND NOT A FIRE BURST. `ExplosionLook` already calls it
+            // *"deliberately bare. It is a slipper."* A puff of warm dust is the largest thing a
+            // thrown tsinelas is allowed to be, and `Slipper.cs` fires this on every Ignition
+            // Cannon hit, which is the most frequent blast in a Hero Strike round.
+            //
+            // ⚠️ THE WIDTHS ARE FRACTIONS OF THE RADIUS AND UNDER 1.0 ON THREE OF THE FOUR. These
+            // sit ON TOP of a core, a shockwave ring and up to sixteen pieces of debris that all
+            // already reach the full radius; the drawn burst is the middle of the event, not its
+            // extent. `ability_blast_*` in `Logs/shots-abilities` is where that is checked.
+            switch (style)
+            {
+                case ExplosionStyle.Quake:
+                    VfxFlipbook.Play(VfxSheets.Dust, center + Vector3.up * 0.05f, radius * 0.95f);
+                    break;
+
+                case ExplosionStyle.Frost:
+                    VfxFlipbook.Play(VfxSheets.FrostNova, center + Vector3.up * 0.05f, radius * 0.9f);
+                    break;
+
+                case ExplosionStyle.Slipper:
+                    VfxFlipbook.Play(VfxSheets.Smoke, center + Vector3.up * 0.10f, radius * 1.2f);
+                    break;
+
+                default:
+                    // ⚠️ TWO SHEETS FOR SEAN AND ONLY FOR SEAN. `warm-explosion` is the bloom and
+                    // `solar-shrapnel` is what it throws, which is the composition
+                    // `docs/Asset_Sourcing.md` § 3 asks Supernova for by name: *"one main burst
+                    // with shrapnel and sparse embers."* The shrapnel is wider than the burst on
+                    // purpose, because pieces travel further than the flash that launched them.
+                    VfxFlipbook.Play(VfxSheets.Burst, center + Vector3.up * 0.35f, radius * 0.85f);
+                    VfxFlipbook.Play(VfxSheets.Shrapnel, center + Vector3.up * 0.30f, radius * 1.15f);
+                    break;
+            }
+
             // ⚠️ SEEDED OFF POSITION, for the reason `VfxShapes` gives: two blasts in different
             // places differ from each other, but a given blast is identical between captures and
             // `AbilityShowcaseProbe`'s renders stay comparable version to version.

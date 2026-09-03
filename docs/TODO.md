@@ -9,11 +9,13 @@ before inventing a task, and update it in the same commit as the work.
 
 ## What is open right now
 
-Sixteen sections, and this list is the whole of it. Everything else in this repository's history
+Eighteen sections, and this list is the whole of it. Everything else in this repository's history
 is in the archive with its number unchanged.
 
 | § | Open work | Where it bites |
 |---|---|---|
+| **133** | One font is doing every job, and it is a display face | 🧑: *"I think the problem is we use the same font for everything"*. **The next session's brief**: a body face that pairs with Darumadrop, plus the lobby and login overhaul, with a logo he is attaching. § 133 |
+| **132** | The loadout said nothing about the hero, and a build vanished the moment the match started | Twelve defaults read `As tuned · As tuned`, the ultimate was not on the board, the hold-key panel named the SLOT rather than the equipped reading, and the TAB tray printed every ability name twice. § 132 |
 | **131** | Replace Hero Strike's primitive VFX and the synthesised SFX from the verified source list | **Five of the six families are wired and 27 cues are real recordings (§ 131.3, § 131.5).** Open: the other twelve abilities, Phaister's draped plate, and the two downloads behind a login |
 | **130** | Crossplay, the boot ANR and the lobby's missing ink | The architecture was fine; **two phone-side defects and a third camera built without all three passes**. ⚠️ § 130.14 is CLOSED (§ 130.14b): the steering was never wrong, the test buried its own seat in the floor |
 | **126** | The full PlayMode suite, the thumb floor, the move stick, rumble, the device toggle, the .apk | § 126.8 is still the big one and it is **narrower now**: § 126.8b has the cause (the reset reached five fixtures out of sixty), § 126.8c is a `.xml` that says `Passed` with `total="0"`, § 126.8d is a fix that was measured and **withdrawn** for moving eleven suites from one side to the other |
@@ -98,6 +100,341 @@ taht again"*.
    appear more than once. Renumbering would break every pointer in `CLAUDE.md`, `VISION.md`,
    `FUTURE.md` and the code comments, which is a worse trade than a duplicate heading. **Search by
    title as well as by number.**
+
+---
+
+## 133 · ONE FONT IS DOING EVERY JOB, AND IT IS A DISPLAY FACE ⚠️⚠️ OPEN, 2026-09-03, NEXT SESSION'S BRIEF
+
+🧑 2026-09-03, after three rounds of chasing blurry text on the TAB tray: **"I think the problem is
+we use the same font for everything"**, and the direction that follows from it:
+
+> *"I think darumadrop can be our main font, in next chat ask it to use a font that would fit with
+> darumadrop as well as overhaul the ui of everything in lobby as well as login, with this work in
+> progress logo which i will attach"*
+
+⚠️⚠️ **HE IS RIGHT AND § 132.8 IS THE EVIDENCE, ARRIVED AT FROM THE OTHER END.** That entry chased
+"the text seems very blurry" through a stale capture frame, a wrapping row, a clipped box and a
+soft render, and the last thing left standing was this: **`DarumadropOne-Regular.ttf` ships ONE
+WEIGHT**, so every `FontStyle.Bold` in the front end is legacy `Text` drawing each glyph twice at
+an offset. That is a smear rather than a weight, and it is worst at `MenuKit.MinReadableUnits`,
+which is where most of the words in this game are. **Forty sites in
+`Assets/TumbangPreso/Runtime/UI/` alone.**
+
+⚠️ **AND THE DEEPER VERSION OF IT IS THAT A DISPLAY FACE IS DOING BODY-TEXT DUTY.** Darumadrop is a
+rounded, high-personality display font: it is exactly right on `CHOOSE YOUR HERO`, on a pennant, on
+an ability name. It is carrying four-line ability descriptions, settings rows, chat and the sign-in
+form as well, and a face chosen to be looked at is not a face chosen to be read.
+
+### 133.1 What the next session is being asked for
+
+1. **A second font that pairs with Darumadrop**, for body and UI text, leaving Darumadrop as the
+   display face. It needs a real bold so nothing has to be faked. ⚠️ **Licence first**: it goes in
+   a public repo inside a competition entry, so SIL OFL or equivalent, and the licence file ships
+   beside it the way `Resources/Vfx/SOURCES.txt` does.
+2. **The lobby UI, overhauled.** § 118, § 119 and § 121 are the standing entries; § 118.1 lists
+   eight things that still read badly.
+3. **The login screen, overhauled.** § 100 and § 121.4 are its history, including *"This shhit is
+   horrible bro the art is cut off"*.
+4. **The work-in-progress logo.** ⚠️⚠️ **HE SENT IT ON 2026-09-03 AND SAID TWICE THAT IT IS NOT
+   FINISHED**: *"not done yet"*, *"its work in progress"*. It is a hand-drawn `TUMP` wordmark, a
+   thick deep-red outline over pale peach letters, with a chartreuse blob and an orange dripping
+   flourish behind it. **It arrived in the chat and is NOT in this repository.** Nothing can be
+   built against a thumbnail: the first move of § 133 is getting the file committed under
+   `Assets/TumbangPreso/Art/ui/brand/` so it can be sampled and drawn rather than described.
+
+   ⚠️⚠️ **AND IT CAME WITH A PALETTE THAT IS NOT THE ONE `CLAUDE.md` § 6.4 RECORDS.** Two swatch
+   strips ship with the image and the named colours are **Honey Quartz, Chartreuse, Persimmon,
+   Khaki and Army**, plus the deep red the wordmark is outlined in. Persimmon and Honey Quartz sit
+   comfortably beside the existing amber and cream; **Chartreuse and Army are yellow-green and
+   olive, and there is no green in the front end today at all.** § 6.4 bans blue, navy and cold
+   grey and says nothing about either, which means this is a decision rather than a violation.
+
+   ⚠️ **DO NOT SAMPLE THOSE COLOURS OUT OF A CHAT IMAGE AND DO NOT TYPE THEM IN BY EYE.** The
+   swatches carry their own hex labels; read them off the committed file, the way
+   `tools/build_input_glyphs.py` reads a pack's palette rather than guessing at it. And ask
+   whether the five REPLACE the wood set or sit beside it, because *"repaint the whole front end"*
+   and *"add two accents"* are different jobs and only one of them was asked for.
+
+⚠️⚠️ **AND HE ASKED FOR IT TO BE DESIGNED WITH THE `game-ui-design` SKILL RATHER THAN BY EYE.**
+🧑 2026-09-03: *"but ask it to use the game design skill ... to design shit in the same theme and
+vibe and color as our work in progress new logo"*, with the install line
+`npx skills add https://github.com/omer-metin/skills-for-antigravity --skill game-ui-design`.
+**Invoke it before writing the screens, not after.** It is already available in the Claude Code
+session as `game-ui-design`; the `npx` line is how it is added anywhere it is not.
+
+⚠️ **THE SKILL IS A METHOD AND `CLAUDE.md` IS STILL THE LAW.** Where its general game-UI advice
+disagrees with § 6.4's colour ban, § 6.5's `WoodCraft`/`PaperCraft` surfaces, or `VISION.md` § 6's
+*"his UI art is the design system"*, this repository wins. It is being brought in for the thing it
+is good at, which is hierarchy, readability at speed and controller and thumb reachability, on a
+front end that has been rejected three times for exactly those.
+
+### 133.2 What that session must read before touching anything
+
+- `CLAUDE.md` § 6.5, which is why the front end is drawn in his art's own geometry, and
+  `WoodCraft`/`PaperCraft`'s closed lists of surfaces. **A font swap is not licence to redraw a
+  control.**
+- `CLAUDE.md` § 6.4. No blue, no navy, no cold grey, in any layer.
+- § 121.8, still open and still 🧑's call: whether `PaperKit.Caption`'s 16 is too small. **A new
+  body face changes the measurement that question was asked against**, so it should be answered
+  with the new font rather than before it.
+- `MenuKit.MinReadableUnits` is 18 and `AspectRatioProbes` fails anything under it. A face with a
+  larger x-height reads bigger at the same number; **the floor is about physical legibility, not
+  about the number**, so re-measure rather than assume it can drop.
+
+### 133.3 ⚠️ The trap, named in advance
+
+**`MenuKit.Font` is one static and every screen in the game reads it.** Swapping it is a one-line
+change that repaints the entire front end at once, and every layout in this repository was measured
+against Darumadrop's metrics: `UiRows.Cap`, `PaperKit.Caption`, `HeroTaglineHeight`, the 1.35x box
+ratio in `AbilityInspectPanel`, `Phase10Tests`' 67-character description budget and
+`MenuKit.Fit`'s shrink floors are all numbers taken from ONE face. **Two fonts means every one of
+those measurements is now per-font**, and the failures are the silent kind: `MenuKit.Label`
+overflows rather than wrapping, and `verticalOverflow = Truncate` drops a whole line without a
+warning. Render every screen either side, and `AspectRatioProbes` at all nine shapes, before
+calling any of it done.
+
+---
+
+## 132 · The loadout said nothing about the hero, and a build vanished the moment the match started ⚠️ IN PROGRESS, 2026-09-03, branch `abilities-rework`
+
+🧑 2026-09-03, twice in one session and about two different things: *"thoroughly make the loadout
+experience better too, i dont want the ppl to feel like the characters all js do the same shit"*,
+and, on the asset pass beside it, *"make sure ur implementation of sfx and vfx and shit is
+genuinely good and u didnt js slap shit in"*.
+
+⚠️⚠️ **THE SCREEN WAS NOT THE FAULT AND NEITHER WAS THE SIDEGRADE RULE.** Both had already been
+fixed: § 122.5 moved the board onto the fighter picker where he asked for it, § 122.18 gave every
+tile its trade line, its glyph and its progress bar, and `HeroLoadoutTests` asserts all
+twenty-four rows are budget neutral. `Logs/shots-runtime/CharacterLoadout-v72.png` is a clean,
+readable screen. **What it says is the problem.**
+
+### 132.1 ✅ Twelve default readings that said "as tuned"
+
+On that render the equipped tile reads *"The stomp as it is tuned. One heavy shock at the measured
+radius"* and the trade line under it reads **`As tuned · As tuned`**. Six heroes, twelve slots, and
+**the half of every row that is already equipped carried no fact about the character at all**. A
+player opening DANTE and then CHESKA saw the same two words in the same place both times.
+
+⚠️ **A DEFAULT IS ONE OF TWO READINGS OF AN ABILITY, NOT THE ABSENCE OF A READING**, so it owes the
+same two facts its alternate owes: what it gives you and what it costs. All twelve are rewritten,
+each transcribed from its own kit rather than invented (Dante's 2.2 m and two charges are
+`SeismicStompAbility`'s own `telegraphRadius` and `charges`; Cheska's 2.3 m and Phaister's 2.4 m
+the same). SEISMIC STOMP now reads *"A 2.2 m shock at your feet that launches whoever is standing
+in it"*, `Throws them clear · Two uses, then none`, against LONG TREMOR's `Takes them down · They
+stay close`. **That pair is a choice. The old pair was a thing and a variation on the thing.**
+
+⚠️ **THE NUMBERS DID NOT MOVE.** `Gain` and `Cost` are still exactly 0 on every default and
+`Phase10Tests.EveryVariantIsBudgetNeutral` still asserts it. Only text changed.
+
+Two new `Core.Tests` cases, 40 ms, so this cannot come back:
+`NoDefaultDescribesItselfAsBeingAsTuned` names the exact phrases that shipped, and
+`TheTwoReadingsOfEverySlotAreToldApartByTheirWords` fails if two tiles in one slot share a name, a
+description or a trade line. ⚠️ The existing `EveryVariantRowFitsTheTileItIsDrawnOn` caught one of
+the new labels at 57 characters against its 48-character band on the first run, which is exactly
+what that test was written for.
+
+### 132.2 ✅ The ultimate was not on the loadout board at all
+
+The screen is titled `LOADOUT · DANTE` and showed **two of his three powers**. The biggest single
+thing that separates two heroes was the one part of the kit the loadout experience never mentioned.
+
+⚠️⚠️ **IT IS A READ-ONLY ROW AND THAT IS NOT A COMPROMISE, IT IS `AbilityVariant.Slot`'s OWN
+ARGUMENT PUT ON SCREEN**: *"an ultimate is banked once or twice a match and reading which one an
+opponent has is already a skill; two readings of the same ultimate would make the tell unreliable
+rather than deeper."* So the row says that, in one line, where a tile would be. **A rule the player
+can read is a rule they can play around; a rule that is only an absence reads as a screen that
+forgot something.**
+
+It reuses `BuildSlotHead`, so it cannot drift from the two rows above it, and `BuildSlotHead`
+prints `ULTIMATE` for slot 0 rather than inventing a third skill number. `BoardHeight` is stated as
+`388 + UltimateRowHeight + SlotGap` rather than retyped as a round number.
+
+⚠️ `LoadoutSurfaceProbe` went red on the first run for the right reason: it asserted **exactly two**
+slot heads. It asserts **three heads and four tiles** now, and the pair is the assertion: four tiles
+says only the two skills carry readings, three heads says the ultimate is still on the screen.
+Either alone would let the ultimate row silently grow tiles or silently disappear.
+
+### 132.3 ✅ A build was invisible the moment the match started, which is most of why they felt the same
+
+⚠️⚠️ `docs/VISION.md` § 3 PROMISES THREE LAYERS THAT STAY IN STEP AND ONLY ONE OF THEM WAS SHOWING
+THE BUILD.
+
+| Layer | Where | Was |
+|---|---|---|
+| **Learn** | Character select | ✅ already drew `AbilityVariant.Name` (§ 122.5) |
+| **Recall** | Hold the ability-info key | ❌ drew `HeroAbility.Name` and `HeroAbility.Description` |
+| **Play** | The status stack | ❌ drew `HeroAbility.Name` |
+
+**A player who equipped ARC LINE held the info key mid-round and read BOLT SPRINT, with the wrong
+sentence under it.** The one screen that exists to answer *"what did I bring"* answered with what
+everybody brings, and every status row and cooldown row in the HUD named somebody else's power.
+
+`HeroAbility.VariantName`, `VariantSummary`, `EffectiveName` and `EffectiveDescription` are
+`VariantCastCue`'s pattern exactly: same writer (`HeroAbilitySystem.ApplyLoadoutToPresentation`),
+same null-means-default fallback, same `internal set`. **On a default build every string in the
+game is byte-identical to before this existed.**
+
+⚠️ **THE GLYPH DOES NOT MOVE AND MUST NOT.** `VISION.md` § 3 rule 1: the icon says what the power
+does to the WORLD, and a sidegrade does not change the job. Two icons for one slot would teach the
+player that the icon means the build.
+
+⚠️ **THE DECK TILE NEEDS NO CHANGE AND THAT IS ALSO § 3**: *"the in-match HUD carries no
+sentences."* The deck is a glyph, a key and whether it is up, and none of the three is a name.
+
+### 132.4 What was checked and found NOT to be wrong
+
+Recorded so the next reader does not redo it.
+
+- ⚠️ **All twelve alternates do reach the game.** A first pass counted `ctx.GainScale` call sites
+  and concluded three of them did nothing; that was wrong. `sean.2.flare` and `zack.2.discharge`
+  reach it through `Carrier` and `Slipper`, and `phaister.2.stride` through `ScaleLoadout(aimMax:)`
+  into `HeroAbility.AimedRange`. **Do not delete a variant on a grep.**
+- ⚠️ **The twelve `sfx_var_*` cues do play**, despite `AudioCueCheck` reporting all twelve DORMANT.
+  They are assigned to `HeroAbility.VariantCastCue` and reached through `EffectiveCastCue`, which
+  is an indirection the check's text scan cannot see. Its own message says so.
+- **The locked alternates are locked on purpose.** `ChallengesEnforced` is true and the counters
+  tick (2/8, 1/6 on the v72 render), so this is not § 92.1's *"fifteen rows of 0/0"*: it is a
+  Risk of Rain 2 style unlock a player is visibly making progress on, earnable against bots.
+
+### 132.6 ✅ The TAB tray printed every ability's name twice
+
+🧑 2026-09-03: *"make sure that when u click tab the skills are readable and feel good to the eyes
+to read and arent messy af"*. ⚠️ **This is the SECOND complaint about this tray.** The first was
+2026-08-29, *"tab is unreadable and so much fucked of text overflow and format"*, and the fix for
+that one was structural: every label went to `MenuKit.MinReadableUnits`, the name box went to 1.35x
+its type so `DEMONIC CARAPACE` stopped drawing through `62s CD · 4s`, and the body stopped
+truncating. All of that was right and none of it is being undone.
+
+⚠️⚠️ **WHAT WAS STILL WRONG WAS NOT THE LAYOUT, IT WAS THE WORDS, AND
+`Logs/shots-hero/hero_inspect_dante_v1.png` SHOWS IT IN ONE LOOK.** Every card reads:
+
+```
+SEISMIC STOMP                 <- 21 pt bold, Dante's green
+[SEISMIC STOMP] · 2 CHARGES   <- 18 pt bold, Dante's green, and amber
+Slams the ground under you...
+```
+
+**The name, then the name again, in the same colour, one line down.** Eighteen cards across six
+heroes, thirty-six copies of eighteen strings. That is two headings competing for one eye on every
+card in the tray, and it is `CLAUDE.md` § 6.2c's first question with nothing else left to blame:
+*what is the ONE thing on this card.*
+
+⚠️⚠️ **THE CAUSE IS `AbilityIcons.LabelFor` AND IT IS `docs/VISION.md` § 3 RULE 1 BEING OPTED OUT
+OF.** That rule: *"The icon says what the power does to the WORLD, not what element it is made of.
+`AbilityGlyph` is Zone, Wall, Dash, Shield, Burst, Projectile, Phase, Slam, Empower... Two heroes
+with completely different fiction share a glyph when they share a job."* The nine generic glyphs
+return exactly those job words. **The nineteen bespoke per-hero glyphs returned their own ability
+name instead**, so the one line on the card whose job is to say what KIND of power this is said
+nothing a player could compare across heroes.
+
+Every bespoke glyph reports its job now. Three of Sean's, Zack's and Phaister's land on
+`TSINELAS BUFF`, which is the most useful single fact the tray can give about any of them: all
+three change what your NEXT THROW does rather than producing anything of their own. Two of the six
+ultimates are `FROM ABOVE`. **Two abilities sharing a word is the design, not a collision**; the
+drawn icon stays unique per ability and `HeroPresentationTests` still asserts that.
+
+Three changes, all in the card:
+
+1. **The kind word is the job**, not the name. `AbilityIcons.LabelFor`.
+2. **It is `UiTheme.CreamMuted`, not the hero colour.** A caption in the heading's own colour at
+   nearly the heading's weight is a second heading. The name is the one thing on the card.
+3. **The brackets are gone.** They were carrying the separation the colour failed to, and
+   `card.Meta` already opens with a `·`, so the row reads `AREA BURST · 2 CHARGES` as one line of
+   two facts rather than a bracketed aside beside a fragment.
+
+⚠️ **AND THE CARD SHOWS THE EQUIPPED READING NOW**, which is § 132.3: `EffectiveName` and
+`EffectiveDescription`. A player who equipped ARC LINE and held TAB used to read BOLT SPRINT.
+
+### 132.7 ✅ The capture frame had been photographing a third of the tray
+
+⚠️⚠️ **AND FIXING THE FRAME IS WHAT FOUND THE SECOND FAULT.** `HeroUiProbe.TrayHeight` was 300 px
+against a comment reading *"the tray is 1060 x 236"*. That was true when it was written and stopped
+being true on 2026-08-29, when the same complaint that produced the type-size pass made the panel
+taller. `Logs/shots-hero/hero_inspect_zack_v2.png` at 300 is **three card bottoms and a grey
+field**: no header, no glyph tiles, no names, no key chips. Every review of this tray for weeks was
+conducted against a picture of its last three lines. `CLAUDE.md` § 6.2b with the camera wrong
+instead of the screen: the render exists, it is green, and it is of something else. 620 now, and
+deliberately taller than the panel so the next label that grows does not silently walk out of shot.
+
+**What the full frame then showed, and no probe could:**
+`hero_inspect_dante_v3.png`, card 2 reads `PROTECTIO / N` beside `· 62s CD (4s / DURATION)`, and
+card 3 reads `AREA / BURST` beside `· OBJECTIVE / CHARGE`. **The kind and the timing shared one
+`HorizontalLayoutGroup` with `childControlWidth`**, so they split a 266 px column between them and
+both wrapped mid-word into each other.
+
+⚠️ **STACKED RATHER THAN SHORTENED, BECAUSE SHORTENING ONLY MOVES THE THRESHOLD.**
+`TSINELAS BUFF · 2 CHARGES · 10s` is 31 characters and no wording of those two facts fits one
+266 px column at 18 units for every ability in the game. One fact a line always fits, and it reads
+in the order the player asks: what IS this, then how often do I get it. The pair costs 44 px where
+the row cost 24, and the card's body reserves 108 px for four lines that no ability uses.
+
+⚠️ `DURATION` and `OBJECTIVE CHARGE` are gone with it. The picker already prints `62s CD · 4s` and
+`ULTIMATE` for the same two facts, and two spellings of one fact on two screens is `VISION.md` § 3's
+three layers drifting at the seam.
+
+⚠️⚠️ **AND STACKING THEM EXPOSED A THIRD ONE, WHICH IS THE SAME TRAP THE 2026-08-29 PASS RECORDED
+ONE LEVEL UP.** `hero_inspect_dante_v4.png`: the amber timing line drawn straight through the first
+line of the body. `TopSection` was held at 52 px for a stack that now holds 28 + 22 + 22, and a
+`VerticalLayoutGroup` with `childControlHeight` does not resize its own box, so the surplus paints
+over whatever is under it. The old note on `card.Name` says *"a text box sized to its font size is
+not a text box that fits its text"*; **this is a container sized to yesterday's contents.** 74 now.
+
+### 132.8 ✅ The probe was reporting a blur the game does not have
+
+🧑, of `hero_inspect_zack_v5.png`: *"the text seems very blurry"*. ⚠️⚠️ **IT WAS, AND THE GAME IS
+NOT.** The live panel is on `Hud`'s canvas, which is `ScreenSpaceOverlay` with
+`pixelPerfect = true` (`Hud.cs`, and `MenuKit.BuildCanvas` for every menu), so in a player every
+glyph lands on a whole pixel. `HeroUiProbe` has to flip the canvas to `ScreenSpaceCamera` to get it
+into a `RenderTexture`, which is the only way, **and it left `pixelPerfect` at its default of
+false**: every label then sits at a fractional offset and legacy `Text` resamples its atlas across
+two pixels. `tools/shoot_charselect.ps1`'s header records the same trap one screen over and is why
+that tool photographs the built player instead.
+
+⚠️⚠️ **A RENDER THAT REPORTS A FAULT THE CODE DOES NOT HAVE IS THE WORST KIND**, and it is the
+mirror of `CLAUDE.md` § 6.2b: that section is about photographing the wrong screen, and this is
+photographing the right one badly. Both end with somebody arguing about a picture instead of the
+game.
+
+Two fixes. `pixelPerfect` goes on, and the texture is captured at **2x** while the `CanvasScaler`
+reference stays at the tray's own size, so the scale factor becomes 2 and legacy `Text` rasterises
+its glyphs at twice the size rather than being scaled up afterwards. That is a retina screenshot of
+the real layout rather than a magnified one, and **no rect, font size or gap moved**.
+
+⚠️⚠️ **AND THE SHARP CAPTURE THEN SHOWED THAT HALF THE BLUR WAS REAL AND WAS SYNTHETIC BOLD.**
+`hero_inspect_zack_v6.png` at 2x: the BODY is crisp and the two caption lines above it are smeared,
+in the same frame, at the same scale. **DarumadropOne ships one weight.** `FontStyle.Bold` has no
+bold face to reach for, so legacy `Text` fakes it by drawing each glyph again at an offset, and at
+18 units that is a smear rather than a weight. The kind and the timing lines are regular now; the
+name keeps its bold because it is 21 units and it is the one thing on the card. **Bold everywhere
+is bold nowhere.** The two lines were never separated by weight anyway: muted cream for the job,
+amber for the timing, in that order on every card.
+
+⚠️ **FIVE ITERATIONS, FIVE RENDERS, AND ONLY THE RENDER FOUND ANY OF THEM.** v2 was the stale
+frame, v3 was the wrapping, v4 was the overlap, v5 was the clipped descenders, v6 was the synthetic bold, v7 is the tray.
+`CLAUDE.md` § 6.5: *"take the picture, then take it again."*
+
+### 132.5 ⚠️ WHAT IS STILL OPEN
+
+- ⚠️ **Nine of the twelve alternates change numbers and three change behaviour.** `dante.1.tremor`
+  sweeps feet, `dante.2.plating` makes you walk, `nemu.1.fade` is a `HasVariant` branch; the rest
+  scale a radius, a duration or a speed. 🧑 2026-09-02 asked for *"each loadout skill to feel
+  thoroughly unique and actually add value and feel like a niche kit"*, and § 108's own note says a
+  player cannot feel 25 per cent of a knockback. **This is the deepest version of the complaint and
+  it is a balance change**, so it wants `BotBehaviourProbe` runs either side and § 16's arithmetic
+  for how many an arm has to buy, not a Friday afternoon.
+- ⚠️ **`FontStyle.Bold` IS A SMEAR EVERYWHERE IN THIS FRONT END AND ONLY THE TRAY HAS BEEN
+  SWEPT.** § 132.8: DarumadropOne ships one weight, so every `fontStyle = FontStyle.Bold` in the
+  UI is legacy `Text` drawing the glyph twice at an offset. `grep -rn "FontStyle.Bold"
+  Assets/TumbangPreso/Runtime/UI/` is forty sites. It is defensible on a heading and it is a
+  legibility cost on anything at `MenuKit.MinReadableUnits`, which is most of them. **This wants
+  one pass with a render either side, not sixty edits on a hunch.**
+- ⚠️ **`AbilityIcons.LabelFor` now returns a job word and `AbilityDeckHud.GetGlyphLabel` also
+  calls it.** Nothing draws that today (`AbilityDeckHud` is 55 lines of helpers), so the change is
+  inert there, but the next thing that shows a deck label gets the family word rather than the
+  ability name and should want it.
+- ⚠️ **The board has never been photographed with the ultimate row on it.** § 132.2 is asserted by
+  `LoadoutSurfaceProbe` and asserted is not READ: `CLAUDE.md` § 6.2a, a green layout probe is not a
+  good screen. The next render after this entry is the one that answers it.
 
 ---
 
@@ -232,6 +569,40 @@ heroes sound like one, which is the opposite of the point.
 match win; the pack is 8-bit NES, pizzicato, sax and steel. This game is a Filipino street in carved
 wood and warm cream, and a chiptune win sting is a different game's voice. Music is `Attention.md`
 § 4.
+
+### 131.8 ⚠️ OPEN: `CustomGameScreenProbe` HAS NOW RUN, AND ONE CASE IS RED AT ONE RESOLUTION
+
+**It had never been executed.** Five cases, nine resolutions, written and never run. It runs now:
+**four of the five pass**, including the two that press the real door and the two that check the
+ranked line and the conditional rows. The handoff that asked for it predicted *"first-run faults in
+the probe's own text-matching helpers rather than in the screen"*, and the helpers were fine.
+
+**The one red, deterministic, at exactly one shape:**
+
+```
+16:9 720p custom game: 'Label' reading "No bots · open to anybody with the code"
+                       needs 306 px and was given 16.
+```
+
+⚠️⚠️ **16 px IS NOT A NARROW COLUMN, IT IS A RECT THAT HAS NOT RESOLVED.** `UiRows.Section`'s
+shut-group summary is anchored from `ValueColumn` 0.56 to the right margin less `SidePadding` 28,
+so `16 = 0.44 · W - 28` puts the section header's own width at about **100 px**. The list is not
+100 px wide at 720p; the other eight resolutions measure it correctly and pass.
+
+⚠️ **A LAYOUT-SETTLING FIX WAS TRIED AND DID NOT CLEAR IT.** `Resize` now calls
+`Canvas.ForceUpdateCanvases`, rebuilds every `LayoutGroup` immediately and updates again, which is
+strictly more correct than the three `yield return null` it replaced and is kept. The red is
+unchanged, so **this is not a frame-count problem** and the next reader should not spend the
+afternoon adding waits.
+
+**What to do next, in order:** print the section header's rect width and its parent chain at each
+resolution from inside `Measure`, and compare 720p against 900p. It is one of two things and the
+number says which: either the scroll content is genuinely unsized at the first shape the probe
+visits, or the value column is honestly too narrow for a 38-character summary and
+`UiRows.Section` should stack it the way it stacks an OPEN group's subtitle.
+
+⚠️ **THE SENTENCE ITSELF IS NOT THE FAULT AND SHORTENING IT IS NOT THE FIX.** 306 against 16 is a
+factor of nineteen; no wording of *"no bots, open to anybody with the code"* closes that.
 
 ### 131.6 ⚠️ WHAT IS STILL OPEN
 

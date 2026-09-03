@@ -190,25 +190,53 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.Phase: return "EVASION";
                 case AbilityGlyph.Slam: return "FROM ABOVE";
                 case AbilityGlyph.Empower: return "TSINELAS BUFF";
-                case AbilityGlyph.DanteStomp: return "SEISMIC STOMP";
-                case AbilityGlyph.DanteShield: return "CARAPACE";
-                case AbilityGlyph.DanteFissure: return "TITAN FISSURE";
-                case AbilityGlyph.SeanRush: return "FLAME DASH";
-                case AbilityGlyph.SeanIgnite: return "IGNITION THROW";
-                case AbilityGlyph.SeanSupernova: return "SUPERNOVA";
-                case AbilityGlyph.CheskaFrostSheet: return "FROZEN FLOOR";
-                case AbilityGlyph.CheskaBarricade: return "ICE BARRICADE";
-                case AbilityGlyph.CheskaNova: return "GLACIAL BURST";
-                case AbilityGlyph.ZackSprint: return "BOLT SPRINT";
-                case AbilityGlyph.ZackOvercharge: return "MAGNET PULL";
-                case AbilityGlyph.ZackThunderstrike: return "THUNDERSTRIKE";
-                case AbilityGlyph.NemuPhase: return "PHANTOM VEIL";
-                case AbilityGlyph.NemuAstralPet: return "ASTRAL HIJACK";
-                case AbilityGlyph.NemuSeanceVoid: return "DEVOURING SEANCE";
-                case AbilityGlyph.PhaisterHexSigil: return "HEX SIGIL";
-                case AbilityGlyph.PhaisterShadowBlink: return "BLINK";
-                case AbilityGlyph.PhaisterEclipse: return "ECLIPSE";
-                case AbilityGlyph.PhaisterWitchfire: return "WITCHFIRE";
+                // ⚠️⚠️ EVERY BESPOKE GLYPH REPORTS ITS JOB, AND FOR A YEAR IT REPORTED ITS OWN
+                // NAME. `Logs/shots-hero/hero_inspect_dante_v1.png` is what that looked like on
+                // the one screen this string is drawn on: **SEISMIC STOMP in green, then
+                // `[SEISMIC STOMP]` in green underneath it**, on all three cards, for all six
+                // heroes. Eighteen cards printing thirty-six copies of eighteen names. 🧑
+                // 2026-09-03, of the tray: *"make sure that when u click tab the skills are
+                // readable and feel good to the eyes to read and arent messy af"*, and this is
+                // the messiest thing in it: a second heading that says what the first heading
+                // already said, competing with it for the same eye at the same colour.
+                //
+                // ⚠️⚠️ THE JOB WORDS ARE `docs/VISION.md` § 3 RULE 1 PUT BACK.
+                // *"The icon says what the power does to the WORLD, not what element it is made
+                // of... Two heroes with completely different fiction share a glyph when they
+                // share a job."* The nine generic words above ARE that vocabulary, and the
+                // bespoke glyphs opted out of it by naming themselves. A player comparing three
+                // cards can now read MOBILITY, TSINELAS BUFF, FROM ABOVE and know what kind of
+                // kit they are holding; NAME, NAME, NAME told them nothing they could compare.
+                //
+                // ⚠️ THE GLYPHS THEMSELVES DO NOT MOVE AND MUST NOT. Each ability keeps its own
+                // drawn icon, which is the other half of § 3 rule 1 and what
+                // `HeroPresentationTests` asserts is unique per ability. **The picture is
+                // bespoke; the WORD is the family.** Two abilities sharing a word is the point,
+                // not a collision.
+                case AbilityGlyph.DanteStomp: return "AREA BURST";
+                case AbilityGlyph.DanteShield: return "PROTECTION";
+                case AbilityGlyph.DanteFissure: return "AREA BURST";
+                case AbilityGlyph.SeanRush: return "MOBILITY";
+
+                // ⚠️ IGNITION CANNON AND MAGNET ARE BOTH `TSINELAS BUFF` AND NEITHER IS A
+                // PROJECTILE. Both of them change what YOUR NEXT THROW does rather than
+                // producing something of their own, which is exactly what that word is for, and
+                // it is the single most useful thing the tray can tell a player about either.
+                case AbilityGlyph.SeanIgnite: return "TSINELAS BUFF";
+                case AbilityGlyph.SeanSupernova: return "FROM ABOVE";
+                case AbilityGlyph.CheskaFrostSheet: return "GROUND ZONE";
+                case AbilityGlyph.CheskaBarricade: return "BLOCKER";
+                case AbilityGlyph.CheskaNova: return "AREA BURST";
+                case AbilityGlyph.ZackSprint: return "MOBILITY";
+                case AbilityGlyph.ZackOvercharge: return "TSINELAS BUFF";
+                case AbilityGlyph.ZackThunderstrike: return "FROM ABOVE";
+                case AbilityGlyph.NemuPhase: return "EVASION";
+                case AbilityGlyph.NemuAstralPet: return "MOBILITY";
+                case AbilityGlyph.NemuSeanceVoid: return "GROUND ZONE";
+                case AbilityGlyph.PhaisterHexSigil: return "GROUND ZONE";
+                case AbilityGlyph.PhaisterShadowBlink: return "MOBILITY";
+                case AbilityGlyph.PhaisterEclipse: return "GROUND ZONE";
+                case AbilityGlyph.PhaisterWitchfire: return "TSINELAS BUFF";
                 default:
                     return "POWER";
             }

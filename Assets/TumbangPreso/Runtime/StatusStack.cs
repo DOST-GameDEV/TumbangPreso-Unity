@@ -153,11 +153,17 @@ namespace TumbangPreso
             {
                 var kit = abilitySystem.Kit;
 
+                // ⚠️⚠️ `EffectiveName`, NOT `Name`, AND THE DIFFERENCE IS WHETHER A BUILD EXISTS
+                // ONCE THE MATCH STARTS. `HeroAbility.VariantName` carries the argument: a player
+                // who equipped ARC LINE saw BOLT SPRINT in every status row, so the one place the
+                // HUD names their power named somebody else's. On a default build the two strings
+                // are identical and nothing moves.
+
                 // Active Buffs
                 if (kit.Skill1 != null && kit.Skill1.IsActive)
                     into.Add(new StatusRow
                     {
-                        Label = kit.Skill1.Name,
+                        Label = kit.Skill1.EffectiveName,
                         Remaining = kit.Skill1.DurationRemaining,
                         Total = kit.Skill1.Duration,
                         Timed = true,
@@ -166,7 +172,7 @@ namespace TumbangPreso
                 if (kit.Skill2 != null && kit.Skill2.IsActive)
                     into.Add(new StatusRow
                     {
-                        Label = kit.Skill2.Name,
+                        Label = kit.Skill2.EffectiveName,
                         Remaining = kit.Skill2.DurationRemaining,
                         Total = kit.Skill2.Duration,
                         Timed = true,
@@ -175,7 +181,7 @@ namespace TumbangPreso
                 if (kit.Ultimate != null && kit.Ultimate.IsActive)
                     into.Add(new StatusRow
                     {
-                        Label = kit.Ultimate.Name,
+                        Label = kit.Ultimate.EffectiveName,
                         Remaining = kit.Ultimate.DurationRemaining,
                         Total = kit.Ultimate.Duration,
                         Timed = true,
@@ -195,7 +201,7 @@ namespace TumbangPreso
                 if (kit.Skill1 != null && kit.Skill1.CooldownRemaining > 0.0f)
                     into.Add(new StatusRow
                     {
-                        Label = $"{kit.Skill1.Name} CD",
+                        Label = $"{kit.Skill1.EffectiveName} CD",
                         Remaining = kit.Skill1.CooldownRemaining,
                         Total = kit.Skill1.Cooldown,
                         Timed = true,
@@ -204,7 +210,7 @@ namespace TumbangPreso
                 if (kit.Skill2 != null && kit.Skill2.CooldownRemaining > 0.0f)
                     into.Add(new StatusRow
                     {
-                        Label = $"{kit.Skill2.Name} CD",
+                        Label = $"{kit.Skill2.EffectiveName} CD",
                         Remaining = kit.Skill2.CooldownRemaining,
                         Total = kit.Skill2.Cooldown,
                         Timed = true,

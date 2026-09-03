@@ -123,6 +123,32 @@ namespace TumbangPreso.Core
     /// small pool of options per slot, not a ladder of upgrades"*, and § 0.5 rule 11b is the test
     /// for growing it: what the PLAYER has to hold in their head. Two readings of one ability is a
     /// choice; five is a spreadsheet.
+    ///
+    /// ⚠️⚠️ **A DEFAULT SAYS WHAT IT DOES, AND ALL TWELVE OF THEM USED TO SAY "AS TUNED".**
+    /// 🧑 2026-09-03, about the LOADOUT experience specifically: *"i dont want the ppl to feel
+    /// like the characters all js do the same shit"*.
+    /// `Logs/shots-runtime/CharacterLoadout-v72.png` is what he was looking at: the equipped tile
+    /// reads *"The stomp as it is tuned. One heavy shock at the measured radius"* and the trade
+    /// line under it reads **`As tuned · As tuned`**. Twelve tiles, six heroes, and the half of
+    /// every row that is ALREADY EQUIPPED carried no fact about the character at all.
+    ///
+    /// ⚠️⚠️ THE FAULT WAS NOT THE SCREEN AND IT WAS NOT THE SIDEGRADE RULE. `docs/TODO.md`
+    /// § 122.18 fault 4 had already fixed the screen half: the trade line draws on a default now
+    /// precisely so a player can see that the other option is a TRADE rather than an upgrade. It
+    /// then drew `As tuned · As tuned`, which is a label that satisfies the layout and answers
+    /// nothing. **A default is one of two readings of an ability, not the absence of a reading**,
+    /// so it owes the same two facts its alternate owes: what it gives you, and what it costs.
+    ///
+    /// ⚠️ THE NUMBERS DID NOT MOVE AND MUST NOT. `Gain` and `Cost` are still 0 on every default
+    /// and `HeroLoadoutTests` still asserts it through `IsBudgetNeutral`; what changed is
+    /// `Description`, `GainLabel` and `CostLabel`, which are text. A default that acquired a gain
+    /// would make "the option you did not choose" the strictly worse one, which is the whole
+    /// thing PHASE 10 is built to prevent.
+    ///
+    /// ⚠️ EVERY SENTENCE IS TRANSCRIBED FROM THE KIT RATHER THAN INVENTED. Dante's 2.2 m and his
+    /// two charges are `DanteHeroKit.SeismicStompAbility`'s own `telegraphRadius` and `charges`;
+    /// Cheska's 2.3 m and Phaister's 2.4 m are the same. § 108.3 records what happens when this
+    /// table describes a game that does not exist.
     /// </summary>
     public static class HeroLoadoutRules
     {
@@ -146,8 +172,9 @@ namespace TumbangPreso.Core
             // DANTE. SEISMIC STOMP / DEMONIC CARAPACE. `DanteHeroKit`.
             // ---------------------------------------------------------------
             new AbilityVariant("dante.1.stomp", "dante", 1, "SEISMIC STOMP", "DanteStomp",
-                "SEISMIC STOMP", "The stomp as it is tuned. One heavy shock at the measured radius.",
-                0.0f, 0.0f, "As tuned", "As tuned"),
+                "SEISMIC STOMP",
+                "A 2.2 m shock at your feet that launches whoever is standing in it.",
+                0.0f, 0.0f, "Throws them clear", "Two uses, then none"),
 
             // ⚠️⚠️ 25 PER CENT IS THE SMALLEST NUMBER IN THIS TABLE ON PURPOSE. DO NOT RAISE IT.
             // The gain is a RADIUS, so it is already the largest change in the table by the thing
@@ -162,13 +189,14 @@ namespace TumbangPreso.Core
             // a player cannot feel 25 per cent of a knockback. `DanteHeroKit` sweeps feet on this
             // variant as of the same day, so the sentence and the game now say the same thing.
             new AbilityVariant("dante.1.tremor", "dante", 1, "SEISMIC STOMP", "DanteStomp",
-                "LONG TREMOR", "A wider break that sweeps their feet instead of throwing them clear.",
+                "LONG TREMOR", "A wider break that sweeps their feet instead of throwing them.",
                 0.25f, -0.25f, "Takes them down", "They stay close",
                 "Use Seismic Stomp eight times", true, 8),
 
             new AbilityVariant("dante.2.carapace", "dante", 2, "DEMONIC CARAPACE", "DanteShield",
-                "DEMONIC CARAPACE", "The carapace as it is tuned.",
-                0.0f, 0.0f, "As tuned", "As tuned"),
+                "DEMONIC CARAPACE",
+                "Nothing stuns, shoves or slips you, and you keep full speed.",
+                0.0f, 0.0f, "Nothing moves you", "It is over quickly"),
 
             new AbilityVariant("dante.2.plating", "dante", 2, "DEMONIC CARAPACE", "DanteShield",
                 "HEAVY PLATING", "Stays up far longer, but you walk the whole time it is up.",
@@ -179,8 +207,9 @@ namespace TumbangPreso.Core
             // CHESKA. PERMAFROST SHEET / ICE BARRICADE. `CheskaHeroKit`.
             // ---------------------------------------------------------------
             new AbilityVariant("cheska.1.sheet", "cheska", 1, "PERMAFROST SHEET", "CheskaFrostSheet",
-                "PERMAFROST SHEET", "The sheet as it is tuned.",
-                0.0f, 0.0f, "As tuned", "As tuned"),
+                "PERMAFROST SHEET",
+                "A 2.3 m patch where you aim. Whoever crosses it slides and slows.",
+                0.0f, 0.0f, "Covers a doorway", "They can still cross"),
 
             new AbilityVariant("cheska.1.blackice", "cheska", 1, "PERMAFROST SHEET", "CheskaFrostSheet",
                 "BLACK ICE", "Half the patch, and nobody keeps their feet on it.",
@@ -188,8 +217,9 @@ namespace TumbangPreso.Core
                 "Use Permafrost Sheet eight times", true, 8),
 
             new AbilityVariant("cheska.2.barricade", "cheska", 2, "ICE BARRICADE", "CheskaBarricade",
-                "ICE BARRICADE", "The barricade as it is tuned.",
-                0.0f, 0.0f, "As tuned", "As tuned"),
+                "ICE BARRICADE",
+                "One solid wall where you aim. Bodies and tsinelas stop at it.",
+                0.0f, 0.0f, "Nothing gets through", "One wall, one place"),
 
             new AbilityVariant("cheska.2.spires", "cheska", 2, "ICE BARRICADE", "CheskaBarricade",
                 "SPLIT SPIRES", "Two thin pillars set wide. More of the lane, with a gap in it.",
@@ -200,8 +230,9 @@ namespace TumbangPreso.Core
             // SEAN. FLAME RUSH / IGNITION CANNON. `SeanHeroKit`.
             // ---------------------------------------------------------------
             new AbilityVariant("sean.1.rush", "sean", 1, "FLAME RUSH", "SeanRush",
-                "FLAME RUSH", "The rush as it is tuned.",
-                0.0f, 0.0f, "As tuned", "As tuned"),
+                "FLAME RUSH",
+                "A long launch that knocks down what you hit and burns the road.",
+                0.0f, 0.0f, "You cross the court", "The road cools fast"),
 
             new AbilityVariant("sean.1.afterburn", "sean", 1, "FLAME RUSH", "SeanRush",
                 "AFTERBURN", "A short burst that leaves the road burning far longer.",
@@ -209,8 +240,9 @@ namespace TumbangPreso.Core
                 "Use Flame Rush eight times", true, 8),
 
             new AbilityVariant("sean.2.cannon", "sean", 2, "IGNITION CANNON", "SeanIgnite",
-                "IGNITION CANNON", "The cannon as it is tuned.",
-                0.0f, 0.0f, "As tuned", "As tuned"),
+                "IGNITION CANNON",
+                "Your next throw explodes where it lands, on a tsinelas arc.",
+                0.0f, 0.0f, "It still arcs over", "You have to lead it"),
 
             new AbilityVariant("sean.2.flare", "sean", 2, "IGNITION CANNON", "SeanIgnite",
                 "FLARE SHOT", "Flat, fast, and cracks in a tight circle. Made for the lata.",
@@ -221,8 +253,9 @@ namespace TumbangPreso.Core
             // ZACK. BOLT SPRINT / MAGNET. `ZackHeroKit`.
             // ---------------------------------------------------------------
             new AbilityVariant("zack.1.sprint", "zack", 1, "BOLT SPRINT", "ZackSprint",
-                "BOLT SPRINT", "The sprint as it is tuned.",
-                0.0f, 0.0f, "As tuned", "As tuned"),
+                "BOLT SPRINT",
+                "You move faster and leave a wide live lane behind you.",
+                0.0f, 0.0f, "Covers your whole path", "Each shock is brief"),
 
             // ⚠️⚠️ 45 PER CENT, UP FROM 30, AND THE GAIN REACHES TWO NUMBERS RATHER THAN ONE.
             // At 30 per cent this row was the one alternate in the twelve a player could not
@@ -245,8 +278,9 @@ namespace TumbangPreso.Core
             // element on it, and a variant table naming an ability that no longer exists is the
             // exact fault § 108.3 records about `berto`.
             new AbilityVariant("zack.2.charge", "zack", 2, "MAGNET", "ZackOvercharge",
-                "MAGNET", "The pull as it is tuned. One charge, back on a knockdown.",
-                0.0f, 0.0f, "As tuned", "As tuned"),
+                "MAGNET",
+                "Your tsinelas comes back charged, so you never walk in for it.",
+                0.0f, 0.0f, "You never walk in", "One use per knockdown"),
 
             // ⚠️ THE ALTERNATE SELLS THE THROW AND PAYS WITH THE WINDOW, which is the same trade
             // Snap Discharge made and the one row of the old pair that still describes something
@@ -260,8 +294,9 @@ namespace TumbangPreso.Core
             // NEMU. PHANTOM VEIL / ASTRAL HIJACK. `NemuHeroKit`.
             // ---------------------------------------------------------------
             new AbilityVariant("nemu.1.veil", "nemu", 1, "PHANTOM VEIL", "NemuPhase",
-                "PHANTOM VEIL", "The veil as it is tuned.",
-                0.0f, 0.0f, "As tuned", "As tuned"),
+                "PHANTOM VEIL",
+                "You phase forward at full speed and cannot be tagged.",
+                0.0f, 0.0f, "You keep your speed", "It is over quickly"),
 
             new AbilityVariant("nemu.1.fade", "nemu", 1, "PHANTOM VEIL", "NemuPhase",
                 "LONG FADE", "Untouchable for much longer, at a walk. Cross, do not run.",
@@ -269,8 +304,9 @@ namespace TumbangPreso.Core
                 "Use Phantom Veil eight times", true, 8),
 
             new AbilityVariant("nemu.2.hijack", "nemu", 2, "ASTRAL HIJACK", "NemuAstralPet",
-                "ASTRAL HIJACK", "The hijack as it is tuned.",
-                0.0f, 0.0f, "As tuned", "As tuned"),
+                "ASTRAL HIJACK",
+                "You take Kuro over. Recast and you are standing where he is.",
+                0.0f, 0.0f, "A scout and a door", "Your body stands still"),
 
             // ⚠️ THERE IS NO LEASH RADIUS TO SELL, AND THE ROW USED TO PROMISE ONE. Kuro flies
             // free while possessed and the ability ends on its own duration
@@ -287,8 +323,9 @@ namespace TumbangPreso.Core
             // ⚠️ THE HERO THE PREVIOUS TABLE LEFT OUT ENTIRELY.
             // ---------------------------------------------------------------
             new AbilityVariant("phaister.1.hex", "phaister", 1, "HEX", "PhaisterHexSigil",
-                "HEX", "The sigil as it is tuned.",
-                0.0f, 0.0f, "As tuned", "As tuned"),
+                "HEX",
+                "A 2.4 m ward chalked where you aim. Walk into it and you stumble.",
+                0.0f, 0.0f, "Holds a whole lane", "One stumble each"),
 
             // ⚠️ THE GAIN REACHES THREE NUMBERS, for the reason Arc Line's note above gives: a
             // 40 per cent gain on a 0.35 s stagger alone is a tenth of a second and reads as
@@ -301,8 +338,9 @@ namespace TumbangPreso.Core
                 "Use Hex eight times", true, 8),
 
             new AbilityVariant("phaister.2.blink", "phaister", 2, "SHADOW BLINK", "PhaisterShadowBlink",
-                "SHADOW BLINK", "The blink as it is tuned.",
-                0.0f, 0.0f, "As tuned", "As tuned"),
+                "SHADOW BLINK",
+                "Hold to aim, let go to step through. Whoever you left is shoved.",
+                0.0f, 0.0f, "Out of any corner", "The aim is visible"),
 
             new AbilityVariant("phaister.2.stride", "phaister", 2, "SHADOW BLINK", "PhaisterShadowBlink",
                 "LONG STRIDE", "Reaches much further, and takes long enough to aim to be read.",

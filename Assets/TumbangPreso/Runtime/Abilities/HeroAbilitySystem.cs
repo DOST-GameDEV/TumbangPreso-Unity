@@ -143,6 +143,31 @@ namespace TumbangPreso.Abilities
             if (Kit.Skill1 != null) Kit.Skill1.VariantCastCue = VariantCue(_skill1Variant?.Id);
             if (Kit.Skill2 != null) Kit.Skill2.VariantCastCue = VariantCue(_skill2Variant?.Id);
 
+            // ⚠️⚠️ AND THE ALTERNATE'S NAME AND SENTENCE, FOR THE SAME REASON ONE LAYER UP.
+            // `HeroAbility.VariantName` has the whole argument: `AbilityInspectPanel` and
+            // `StatusStack` both drew the SLOT's name, so a player who equipped ARC LINE held the
+            // ability-info key mid-round and read BOLT SPRINT. `docs/VISION.md` § 3's three
+            // layers are Learn, Recall and Play, and only Learn was showing the build.
+            //
+            // ⚠️ A DEFAULT IS NOT SKIPPED HERE THE WAY THE CUE IS, AND THE DIFFERENCE IS REAL.
+            // A default variant has no cue of its own, so `VariantCue` answers null for it; it
+            // very much has a NAME, and since 2026-09-03 it has its own sentence too, which is
+            // the thing that stopped twelve tiles reading "as it is tuned". Writing the default's
+            // own name back is therefore correct rather than redundant: on a default build it is
+            // the same string the kit already carries, and on any other it is the one the player
+            // chose.
+            if (Kit.Skill1 != null)
+            {
+                Kit.Skill1.VariantName = _skill1Variant?.Name;
+                Kit.Skill1.VariantSummary = _skill1Variant?.Description;
+            }
+
+            if (Kit.Skill2 != null)
+            {
+                Kit.Skill2.VariantName = _skill2Variant?.Name;
+                Kit.Skill2.VariantSummary = _skill2Variant?.Description;
+            }
+
             switch (_skill1Variant?.Id)
             {
                 // The break grows, so the ring the player stomps inside grows with it.

@@ -248,3 +248,38 @@ reach the credits screen in the same commit that ships the model.**
 > elemental cues stay synthesised and Ilalim ng Tulay keeps its generic van, and both should then
 > be written off in `Asset_Sourcing.md` rather than left looking pending.
 
+---
+
+## 12 · The work-in-progress logo, and the font call
+
+**`docs/TODO.md` § 133.** 🧑 2026-09-03: *"I think darumadrop can be our main font, in next chat
+ask it to use a font that would fit with darumadrop as well as overhaul the ui of everything in
+lobby as well as login, with this work in progress logo which i will attach"*.
+
+**Already done, so do not redo it:** the diagnosis. `DarumadropOne-Regular.ttf` ships one weight,
+so every `FontStyle.Bold` in the front end is legacy `Text` faking it by drawing each glyph twice
+at an offset, and it is worst at the 18-unit floor where most of the game's words live. § 132.8 has
+the render that proves it: in one 2x frame the non-bold body is crisp and the bold caption above it
+is smeared. The TAB tray is swept; the other forty sites are not.
+
+**What is asked of you, and there are two things:**
+
+1. **Get the logo into the repository.** ⚠️ You sent it on 2026-09-03 and said twice that it is
+   not finished (*"not done yet"*, *"its work in progress"*), so nothing is being built against it
+   yet. It arrived in the chat and **a chat image cannot be sampled, sliced or drawn**: drop the
+   file into `Assets/TumbangPreso/Art/ui/brand/` so § 133 can read its actual pixels rather than a
+   thumbnail. `docs/VISION.md` § 6: *"His UI art is the design system."*
+
+   ⚠️⚠️ **AND SAY WHAT THE FIVE SWATCHES ARE FOR.** The image ships **Honey Quartz, Chartreuse,
+   Persimmon, Khaki and Army** beside the wordmark. Persimmon and Honey Quartz sit beside the
+   amber and cream the front end already uses; **Chartreuse and Army are yellow-green and olive,
+   and there is no green anywhere in the front end today.** Do these five REPLACE the carved-wood
+   set in `CLAUDE.md` § 6.4, or join it as accents? Those are two very different amounts of work
+   and only one of them was asked for.
+2. **Say yes or no to a second font before it is chosen.** The bar it has to clear is a licence
+   one: this repository is public and the game is a competition entry, so it wants SIL OFL or
+   equivalent, with the licence file committed beside the font. Naming the family is a taste call
+   and it is yours; anything proposed will arrive as a render of the same three screens in both
+   faces rather than as a name in a message.
+
+

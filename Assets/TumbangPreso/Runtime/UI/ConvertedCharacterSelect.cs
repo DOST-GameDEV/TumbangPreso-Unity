@@ -1017,13 +1017,82 @@ namespace TumbangPreso.UI
 
                 y -= TileHeight + SlotGap;
             }
+
+            BuildUltimateRow(go.transform, kit.Ultimate, accent, y);
+        }
+
+        /// <summary>
+        /// The ultimate, read only, under the two slots that have options.
+        ///
+        /// ⚠️⚠️ IT WAS NOT ON THIS BOARD AT ALL, AND THE ULTIMATE IS THE BIGGEST SINGLE THING
+        /// THAT SEPARATES TWO HEROES. `Logs/shots-runtime/CharacterLoadout-v72.png`: the screen
+        /// is titled `LOADOUT · DANTE` and shows two of his three powers. 🧑 2026-09-03, about
+        /// this experience: *"i dont want the ppl to feel like the characters all js do the same
+        /// shit"*. A board that stops before TITAN FISSURE is a board that shows a player the two
+        /// parts of the kit that have alternates and hides the part that has a name.
+        ///
+        /// ⚠️⚠️ IT IS DELIBERATELY NOT A THIRD SLOT WITH TILES, AND `AbilityVariant.Slot`'s OWN
+        /// NOTE IS WHY: *"an ultimate is banked once or twice a match and reading which one an
+        /// opponent has is already a skill; two readings of the same ultimate would make the tell
+        /// unreliable rather than deeper."* So the row SAYS that, in one line, where a tile would
+        /// be. **A rule the player can read is a rule they can play around**; a rule that is only
+        /// an absence reads as a screen that forgot something.
+        ///
+        /// ⚠️ IT REUSES `BuildSlotHead`, WHICH IS WHY IT COSTS ALMOST NOTHING. Same glyph, same
+        /// name column, same live key label. The only thing this method adds is the sentence to
+        /// its right, so the ultimate cannot drift out of step with the two rows above it.
+        ///
+        /// ⚠️ `SLOT 3` WOULD BE A LIE. `BuildSlotHead` prints `SKILL n` and this is not skill
+        /// three: the deck, the character select and `HeroKit` all call it the ultimate. It is
+        /// passed 0 and the head prints `ULTIMATE` for it.
+        /// </summary>
+        private void BuildUltimateRow(Transform board, HeroAbility ultimate, Color accent, float y)
+        {
+            if (ultimate == null) return;
+
+            float inner = BoardWidth - (BoardPad * 2.0f);
+
+            BuildSlotHead(board, ultimate, 0, "Ultimate", accent, y);
+
+            // ⚠️ THE SENTENCE SITS WHERE THE TILES SIT, so the row lines up with the two above it
+            // and the eye can run straight down the board. It is the ability's OWN summary, which
+            // is the same string the character select's ability rows and the in-match hold key
+            // draw: `VISION.md` § 3 keeps those three layers in step, and a fourth wording here
+            // would be a fourth place to forget.
+            float textX = -(inner * 0.5f) + SlotHeadWidth + TileGap;
+            float textWidth = inner - SlotHeadWidth - TileGap;
+
+            var what = MenuKit.Label(board, ultimate.Summary, PaperKit.Body, UiTheme.PaperInk,
+                new Vector2(0.5f, 1.0f),
+                new Vector2(textX + (textWidth * 0.5f), y - 30.0f),
+                new Vector2(textWidth, 24.0f), TextAnchor.MiddleLeft);
+            what.alignment = TextAnchor.MiddleLeft;
+            what.raycastTarget = false;
+            MenuKit.Fit(what, textWidth);
+
+            var why = MenuKit.Label(board,
+                "No alternates. Reading which ultimate somebody has banked is the skill.",
+                PaperKit.Caption, UiTheme.PaperInkSoft,
+                new Vector2(0.5f, 1.0f),
+                new Vector2(textX + (textWidth * 0.5f), y - 54.0f),
+                new Vector2(textWidth, 20.0f), TextAnchor.MiddleLeft);
+            why.alignment = TextAnchor.MiddleLeft;
+            why.raycastTarget = false;
         }
 
         /// <summary>How wide and tall the board is, and the pitch of everything on it.
         /// ⚠️ Constants because `BuildLoadoutBoard` runs a cursor down them, and a literal inside
-        /// that loop is a number nobody can find again from a render.</summary>
+        /// that loop is a number nobody can find again from a render.
+        ///
+        /// ⚠️⚠️ `BoardHeight` IS 388 PLUS ONE ULTIMATE ROW. The two slot rows end at
+        /// `-80 - 2 * (TileHeight + SlotGap)`, which is -372 against a 388 board: sixteen units of
+        /// margin. The ultimate row is a head and two lines rather than a tile, so it costs
+        /// `UltimateRowHeight` and not `TileHeight`, and the board grows by exactly that plus the
+        /// gap. **Stating the arithmetic is `CLAUDE.md` § 6.2c question 1**: a height typed as a
+        /// round number is a height that is correct at one font size.</summary>
         private const float BoardWidth = 1020.0f;
-        private const float BoardHeight = 388.0f;
+        private const float UltimateRowHeight = 84.0f;
+        private const float BoardHeight = 388.0f + UltimateRowHeight + SlotGap;
         private const float BoardPad = 28.0f;
 
         /// <summary>The slot head's share of a row: the glyph, the slot number, the ability's own
@@ -1076,7 +1145,11 @@ namespace TumbangPreso.UI
             MenuKit.Place((RectTransform)glyphGo.transform, new Vector2(0.5f, 1.0f),
                           new Vector2(left + 30.0f, y - 44.0f), new Vector2(48.0f, 48.0f));
 
-            var number = MenuKit.Label(board, "SKILL " + slot, PaperKit.Caption,
+            // ⚠️ SLOT 0 IS THE ULTIMATE AND IT IS NOT "SKILL 0". The deck, the character select
+            // and `HeroKit` all call it the ultimate; a board that invented a third skill number
+            // for it would be the only surface in the game that does.
+            var number = MenuKit.Label(board, slot > 0 ? "SKILL " + slot : "ULTIMATE",
+                PaperKit.Caption,
                 UiTheme.PaperInkSoft, new Vector2(0.5f, 1.0f),
                 new Vector2(textX, y - 24.0f),
                 new Vector2(180.0f, 20.0f), TextAnchor.MiddleLeft);

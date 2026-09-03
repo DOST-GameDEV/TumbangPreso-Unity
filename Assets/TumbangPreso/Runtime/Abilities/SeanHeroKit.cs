@@ -260,6 +260,26 @@ namespace TumbangPreso.Abilities
             {
                 _kit.IsIgnitionCannonActive = true;
                 Visual.AbilityVfx.AttachHandVfx(ctx.Motor.transform, Visual.AbilityVfx.Aura.FireEmber, Duration);
+
+                // ⚠️⚠️ THE MOMENT IT IS LOADED, AND THIS ABILITY HAD NO CAST MOMENT AT ALL. It is
+                // the one power in the game whose whole effect happens LATER: nothing goes on the
+                // floor, nothing moves, and the only change is that Sean's next throw will
+                // explode. Until now the entire cast was an ember aura appearing on his hand, and
+                // the three people deciding whether to walk into his lane had nothing to read.
+                //
+                // ⚠️ `magical-projectile` ON HIS RAMP IS THE HEAD OF THE SHOT ITSELF, which is
+                // what `docs/Asset_Sourcing.md` § 3 maps Ignition Cannon to: *"a compact
+                // projectile head, a short ember tail and one small impact burst."* Playing it at
+                // the HAND is the honest half of that mapping: this is the round being chambered.
+                // The impact half already arrives through `ExplosionStyle.Slipper` in
+                // `Slipper.cs`, which is where the shoe actually lands.
+                //
+                // ⚠️ 1.1 m, AT HAND HEIGHT, IN WORLD SPACE. It is the smallest placement in the
+                // kit because it is a thing in a fist rather than an event on the street, and it
+                // must not read as a cast that has already gone off.
+                Visual.VfxFlipbook.Play(Visual.VfxSheets.BoltHead,
+                                        ctx.Position + Vector3.up * 1.15f + ctx.Forward * 0.35f,
+                                        1.1f);
             }
 
             protected override void OnEnd(AbilityContext ctx)
