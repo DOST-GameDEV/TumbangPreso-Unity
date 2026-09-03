@@ -49,18 +49,18 @@ namespace TumbangPreso.UI
         /// with one display face setting four-line ability descriptions in the first place.
         ///
         /// **So the boundary is a number and the number is <see cref="Body"/>.** Everything at
-        /// `Body` and above is Darumadrop; only `Caption` and anything smaller is Nunito. A
+        /// `Body` and above is Darumadrop; only `Caption` and anything smaller is the sub face. A
         /// caller never chooses, so a caller can never choose wrong.
         ///
         /// ⚠️⚠️ THE BOUNDARY WAS `Title` FOR ONE AFTERNOON AND 🧑 MOVED IT, AND HIS REASON IS THE
         /// DEFINITION OF THE SECOND FACE RATHER THAN A PREFERENCE ABOUT IT. At `Title` the split
-        /// put `Body` 20 into Nunito, which is most of the lettering in the game: every settings
+        /// put `Body` 20 into the sub face, which is most of the lettering in the game: every settings
         /// row, every button, every list entry. He looked at it and said **"ur over replacing
         /// fonts, i lowk js wanted u to replace sub fonts with the new font, not everything
         /// gang"**, and of the login screen specifically, *"i think everything here in darumadrop
         /// looked good, just change your username to the sub font"*.
         ///
-        /// **So Nunito is the SUB font and not the body font**, which is a narrower job than
+        /// **So the sub face is a SUB font and not the body font**, which is a narrower job than
         /// § 133 first described: the quiet second line under a row, a hint, a field's caption and
         /// its placeholder, an ability description. Darumadrop keeps everything a player looks AT,
         /// and that is now most of the front end rather than half of it.
@@ -70,7 +70,7 @@ namespace TumbangPreso.UI
         /// unreachable now wherever this lands, because <see cref="MenuKit.Apply"/> clears
         /// `fontStyle` on both sides and bold on Darumadrop is a documented no-op. The prose that
         /// actually needed a reading face, the four-line ability descriptions, is authored at
-        /// `Caption`, so it is still Nunito.
+        /// `Caption`, so it is still the sub face.
         ///
         /// ⚠️ A CALLER THAT GENUINELY NEEDS THE OTHER SIDE CALLS <see cref="MenuKit.Apply"/>
         /// AFTERWARDS AND SAYS WHY IN A COMMENT.
@@ -874,7 +874,7 @@ namespace TumbangPreso.UI
             //
             // ⚠️ IT READS THE AUTHORED SIZE, which is the same input `FaceFor` gets everywhere
             // else, so a converted row and a code-built row of the same size land in the same
-            // face. A screen where half the rows were Darumadrop and half Nunito would be worse
+            // face. A screen where half the rows were Darumadrop and half the sub face would be worse
             // than either face alone.
             var face = PaperKit.FaceFor(text.fontSize);
             bool wasBold = text.fontStyle == FontStyle.Bold

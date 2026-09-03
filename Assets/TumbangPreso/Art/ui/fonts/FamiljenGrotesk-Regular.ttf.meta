@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 98d5a59ec38cbb0f1df2dfafdd65f848
+guid: 8a70ed55949c95e8e350311a6b47183f
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - Nunito
+  - Familjen Grotesk
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0

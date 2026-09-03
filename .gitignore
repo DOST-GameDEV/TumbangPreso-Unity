@@ -166,3 +166,9 @@ scratchpad/*.md
 scratchpad/fontsrc/*.ttf
 scratchpad/fontsrc/*.png
 scratchpad/fontsrc/OFL.txt
+
+# One-shot edit scripts. They are how a batch of edits gets applied without a heredoc
+# (CLAUDE.md section 7: bash heredocs are unreliable here), and they are worthless the
+# moment they have run: the record of WHY a change was made is the comment in the code
+# and the docs/TODO.md entry, never the script that typed it.
+scratchpad/patch_*.py

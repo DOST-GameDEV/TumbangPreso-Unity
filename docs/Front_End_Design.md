@@ -152,6 +152,44 @@ count.
 six above all MEAN something, so a seventh costs a player a seventh thing to learn. Decoration
 means nothing, and that is exactly what makes it cheap.
 
+### 1.5 The avatars, because the identity chip needs a face and a screenshot is not one
+
+🧑 2026-09-03, cropping the first identity chip: **"like tf is that pic doing there"**, and
+the instruction that follows: *"maybe give them an option to pick from a bunch of cute
+profile pics"*.
+
+⚠️ **HE IS RIGHT AND THE PICTURE WAS A SCREENSHOT.** The chip carried a square cut out of
+`docs/Godot_Character_Select_References/`, which are full captures of the OLD Godot character
+screen: a panel, a heading and a model. Cropping one to 70 units gives a picture of a user
+interface, on a user interface.
+
+**There are fifteen drawn avatars now** (`tools/build_avatar_art.py`), and they are DRAWN
+rather than cut out for a reason that is not laziness:
+
+- **Two passes tried to cut the twelve heads out of those sheets.** The knockout is solvable:
+  the ground is the only cold thing in the frame, so blue-greater-than-red is exact at every
+  height of that navy gradient. **The FRAMING is not.** The model stands at a different height
+  and scale in every sheet, so half the set came out cropped at the forehead. **A picker is
+  twelve things seen together, and twelve things that disagree about where the eyes sit is not
+  a set.**
+- **Drawn, they are in the logo's hand by construction**: flat fills, a heavy deep-red stroke,
+  four unequal corner radii, no ramp and no bevel, which is the same rule
+  `PaperCraft.PaintBrand` now draws every button by. So an avatar belongs to this game rather
+  than reading as clip art from a pack.
+- **Every fill is a `UiTheme` brand constant**, so `CLAUDE.md` § 6.4's ban cannot be violated by
+  an avatar, which is not a claim a downloaded icon set could make.
+- ⚠️ **The six skin tones are sampled off the twelve Classic portraits rather than invented.**
+  `docs/VISION.md` § 6: *nobody's skin is a dial*. The picker offers the range of people who are
+  actually in this game.
+- **Three of the fifteen are objects rather than people**: the tsinelas, the lata and a chalk
+  star. They are the game's own subject, and they are what somebody picks who does not want a
+  face.
+- **172 KB in the player** for all fifteen, and no licence line to add to the credits screen.
+
+⚠️ **THE AVATAR IS NOT A SEVENTH SIGN.** § 1.2's list is closed and this is not on it: an
+avatar means "you", it is only ever drawn on the identity chip and in the picker, and it
+carries no meaning a player has to learn.
+
 ### 1.4 How a button is built, because it is not built the way the old ones were
 
 🧑 2026-09-03, after the font pass landed on its own: **"the darumadrop buttons AS TEXT stay, i
@@ -174,6 +212,19 @@ bar tucked inside the bottom of each letter.
 | **The fill** | One flat value, Chartreuse for the one primary and Honey Quartz for every chip | § 4's role table. No ramp, because there is not one in the mark. |
 | **The under-bar** | **5.5 per cent**, in rim red, sitting a unit or two clear of the stroke rather than touching it | It is drawn that way under every letter, and it is the only depth cue the logo has. |
 | **The wobble** | **3 units**, sampled at two frequencies | ⚠️ Small on purpose: the mark's line varies by a few per cent of its own thickness. **What reads as hand-drawn is that the variation is irregular, not that it is large.** |
+
+⚠️⚠️ **THREE MORE PARTS LANDED 2026-09-03 AND ALL THREE ARE THE SAME COMPLAINT ANSWERED:
+"give the buttons a bit more personality and cuter", "i wanted u to remake all buttons".**
+The first version had the right vocabulary and drew it too evenly, so a screen of them still
+read as one button stamped nine times.
+
+| Part | The number | Where the number came from |
+|---|---|---|
+| ⚠️⚠️ **The stroke's weight VARIES along its own length** | ± **26 per cent** of itself, sampled on y at 0.055 | § 133.13 names this in the rejection in as many words. Measuring the deep red perpendicular to its own run around the T and the P, it reads **19 to 33 px** on a mark whose letters are 300 px tall. A constant stroke is a BORDER; a varying one is a line somebody drew, and it is the single most characteristic thing about the mark. |
+| ⚠️⚠️ **Four DIFFERENT corner radii** | each **0.74 to 1.32** of the base 0.22 × height | The mark has no two corners alike: the T's shoulders are near square and its foot is round; the P's bowl is round and its stem is cut flat. `PaperCraft.Depth` folds the rect with `Mathf.Abs`, so it *cannot* tell one corner from another; `Depth4` is the new measurement and the old one is untouched for furniture. |
+| ⚠️⚠️ **Every control family is drawn by its OWN hand** | a stable seed off surface + accent + height | *"the issue with old UI is everything feels repetitive bcz i think u use the same code to generate them all"* answered at the level it was asked. START MATCH, JOIN, CHAT and BACK get four different silhouettes and four different edges, and each gets the SAME one every time. ⚠️ **The seed excludes the POSE**, or a button would change shape under the pointer. |
+| **The bar's ends taper** | full weight **9 units** in | Legal on x where the stroke is not, because only the middle COLUMN of a nine-slice is stretched and the taper lives inside the preserved caps. In the mark the bar is heaviest in the middle and lifts off the page at both ends, because it was one stroke of a marker starting and stopping. |
+| **Hover presses the pen harder** | stroke × **1.12** | On a construction with no ramp and no keyline, a fill lift is the smallest signal the front end has. A stroke that thickens survives a photograph and a colourblind player; a tint does not. The line COLOUR is still untouched: a stroke that changes hue reads as a different control rather than as the same one being pointed at. |
 
 ⚠️⚠️ **THE WOBBLE VARIES WITH Y AND NEVER WITH X, AND THAT IS A SLICING CONSTRAINT RATHER THAN A
 DESIGN ONE.** These sprites are nine-sliced horizontally, so the middle column is STRETCHED to
@@ -302,8 +353,20 @@ he has had to state it six separate times.
 - **Hero element:** the wordmark, large and off-centre, with its chartreuse blob behind it exactly
   as drawn. ⚠️ **This is the ONLY screen where the logo is the hero.** Putting it on all five is
   how a brand stops being noticed.
-- **Motif, the drip:** the orange drip running off the wordmark's corner becomes the top edge of
-  the form card, so the two objects are one drawing rather than a picture with a box next to it.
+- **Motif, the drip.** ⚠️⚠️ **BUILT 2026-09-03, AND IT LANDED ON THE SEAM RATHER THAN ON THE
+  FORM CARD.** This row used to read *"the drip becomes the top edge of the form card"*, and
+  building it found a bigger fault one object over: **the column and the key art met at a
+  perfectly straight vertical line down the middle of the window**
+  (`Logs/shots-runtime/SignInBoot-v83.png`). Every rect fitted its box and every colour was in
+  the palette, and the one edge the player actually looks at was the one edge in the whole design
+  that no hand drew. `BrandMarks.ColumnEdge` is that edge now, torn, and the drip is a **bulge in
+  it** rather than an object beside it.
+- ⚠️ **AND THE DRIP HAD TO BE PART OF THE EDGE, WHICH TOOK TWO RENDERS TO LEARN.** Drawn as its
+  own sprite hung against the seam it came out as a flat-topped bar over a circle: `-v87.png` and
+  `-v88.png` both read it as an **exclamation mark**, because two shapes butted against a third
+  have two seams of their own and the eye finds all three. **In the wordmark the drip is not a
+  blob placed under the letters, it is the OUTLINE running off the corner and gathering at the
+  end**, so one continuous boundary is both the more faithful drawing and the one that reads.
 - **⚠️ Its whole history is a warning and both halves are in `CLAUDE.md` § 6.2c.** § 100: the
   column was 38 per cent of the window around a 420-unit form, which on his window was 860 units
   of surface around a form that never grew. It is 580 now, which is the form plus one margin
@@ -344,6 +407,42 @@ he has had to state it six separate times.
   shape problem and `PaperKit`'s atoms already solve it. Row 5 (BACK competes with the tab row) is
   answered by the spine: BACK is top left and tabs are not. Row 6 (nothing moves) and row 8 (the
   version stamp sits on nothing) are still open.
+
+#### 2.2b The lobby is THREE screens and the tarpaulin is the slot that changes
+
+🧑 2026-09-03, looking at the first composition: *"thoroughy think abt how shit would look
+too for each thing, like lets say u click ranked wtf would show?"*
+
+⚠️⚠️ **THAT QUESTION HAD NO WRITTEN ANSWER AND THE CODE ANSWERED IT BY HIDING THINGS.**
+`LobbyChrome.Parts.SetMode` switches nine objects off and on: the room sign, the chip row,
+the tier plate, the settings chip, the ranked rule line, the whole mode column in practice.
+Nothing said what the screen IS in each mode, so each mode was the custom screen with holes
+in it, and a hole is exactly what § 118.1 row 2 measured as *"four corners and a hole"*.
+
+**The composition does not change between modes. One slot does.** The tarpaulin's middle is
+a single slot carrying THE ONE FACT THAT MODE EXISTS TO PRODUCE, at the same size, in the
+same place, in the display face. That is § 0's rule doing real work: the chrome repeats,
+the content is what differs, and a player who has learned where to look has learned it once.
+
+| | **CUSTOM** | **RANKED** | **PRACTICE** |
+|---|---|---|---|
+| **The tarp's slot** | `ROOM CODE` eyebrow, **GKXB** at Display, `tap to copy` under it | `YOUR TIER` eyebrow, **UNRANKED** at Display, the party rule under it | `PRACTICE` eyebrow, **OFFLINE** at Display, `nothing here is recorded` under it |
+| **The primary** | START MATCH | FIND MATCH | START MATCH |
+| **Chips left of it** | JOIN, CHAT | CHAT only ⚠️ **JOIN goes, because a code cannot be joined in ranked and a control that is present and refuses is `CLAUDE.md` § 6.2's INTUITIVE failure** | neither |
+| **The row above the primary** | MATCH RULES, closed, with its summary | the ranked rule line, which states the party rule BEFORE the press (§ 119.8) | MATCH RULES, closed |
+| **The seats** | four tags, yours wearing the mark | four tags, yours wearing the mark | four tags, three of them BOT |
+| **The mark** | your seat | your seat | your seat |
+
+⚠️ **THE TIER IS NOT A SECOND PLATE AND THAT IS THE WHOLE POINT.** `BuildTierPlate` draws a
+152-unit card in the right-hand column carrying `YOUR TIER / UNRANKED / note`, which is a
+third object in a column that already had two, and its own comment records the note being
+truncated to nothing twice because the card was too short for it. **On the tarp it is the
+same three lines in a slot that is already 170 units tall and already the thing the eye goes
+to**, so the card, its height arithmetic and both of its recorded faults stop existing.
+
+⚠️ **AND NOTHING IS LOST, WHICH IS THE ONE THING THAT MAY NOT HAPPEN HERE.**
+`PaperPurityProbe.NothingOnTheInventoryDisappeared` holds all 338 controls captured before
+the pass; `TierValue` and `TierNote` keep their names and their handlers and move parent.
 
 ### 2.3 CHARACTER SELECT, "the stage"
 

@@ -714,6 +714,18 @@ namespace TumbangPreso.UI
             BuildWelcome(col);
 
             FitCardToContent(rt, col);
+
+            // ⚠️⚠️ LAST, AND AFTER `_formPieces` HAS BEEN CAPTURED, WHICH IS NOT A STYLE CHOICE.
+            // That array is `col`'s children from `formStart` onward and the screen shows and
+            // hides them per state; a seam added before it would be captured as part of the FORM
+            // and would therefore vanish the moment the screen switched to its welcome-back
+            // state. **A decoration that disappears with a mode is a decoration that reads as a
+            // bug**, and `CLAUDE.md` § 6.2b's first row is exactly this class of fault: a screen
+            // with a mode has two layouts and somebody has only looked at one.
+            //
+            // ⚠️ AND AFTER `FitCardToContent`, which measures the column's children to set its
+            // height. The seam is full-height by construction, so measuring it would be circular.
+            BuildSeam(col, ColumnUnits);
         }
 
         /// <summary>
@@ -828,6 +840,50 @@ namespace TumbangPreso.UI
         /// puts the form back and cancels the hold, which is the whole reason the hold cancels on
         /// any press.
         /// </summary>
+        /// <summary>
+        /// The drawn seam between the page and the picture, and the drip escaping it.
+        ///
+        /// ⚠️⚠️ IT IS THE ANSWER TO THE ONE FAULT ON THIS SCREEN THAT SURVIVED EVERY PASS:
+        /// the column and the key art met at a ruler-straight vertical line. `Front_End_Design.md`
+        /// § 2.1 asks for exactly this and names the mechanism: *"the orange drip running off the
+        /// wordmark's corner becomes the top edge of the form card, so the two objects are one
+        /// drawing rather than a picture with a box next to it."*
+        ///
+        /// ⚠️ THE EDGE IS DRAWN OVER THE COLUMN'S OWN RIGHT EDGE RATHER THAN REPLACING IT, so
+        /// `ColumnBleed`, the card's construction and every offset measured against it are
+        /// untouched. This is a mark laid on top, which is the cheapest possible version of the
+        /// change and the one that cannot move a control.
+        ///
+        /// ⚠️ AND THE DRIP IS PART OF THE EDGE RATHER THAN AN OBJECT BESIDE IT.
+        /// § 1.2 gives it one meaning, "there is more below", and on a screen with nothing below
+        /// it is doing its other job: it is the one object that crosses the seam, which is what
+        /// stops the two halves reading as two pictures. It carries no meaning here and it is
+        /// therefore decoration, which § 1.3 permits **outside every content rect** — and the
+        /// picture side of the seam is the largest such place on the screen.
+        /// </summary>
+        private void BuildSeam(Transform col, float columnWidth)
+        {
+            var edgeGo = new GameObject("ColumnSeam", typeof(RectTransform), typeof(Image));
+            edgeGo.transform.SetParent(col, false);
+
+            var edge = edgeGo.GetComponent<Image>();
+            edge.sprite = BrandMarks.ColumnEdge();
+            edge.type = Image.Type.Simple;
+            edge.raycastTarget = false;
+
+            var rect = edge.rectTransform;
+            rect.anchorMin = new Vector2(1.0f, 0.0f);
+            rect.anchorMax = new Vector2(1.0f, 1.0f);
+            rect.pivot = new Vector2(0.0f, 0.5f);
+            // ⚠️ THE RECT REACHES 154 UNITS PAST THE COLUMN, WHICH IS THE DRIP'S OWN WIDTH.
+            // The edge sprite carries the drip now (`BrandMarks.ColumnEdge`), so the rect has to
+            // be wide enough for the bulge to have somewhere to go; the page's own boundary still
+            // sits 22 units inside the column, exactly where it did.
+            rect.offsetMin = new Vector2(-22.0f, 0.0f);
+            rect.offsetMax = new Vector2(154.0f, 0.0f);
+
+        }
+
         private void BuildWelcome(Transform col)
         {
             _welcome = new GameObject("Welcome", typeof(RectTransform));

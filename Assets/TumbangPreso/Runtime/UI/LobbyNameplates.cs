@@ -116,6 +116,48 @@ namespace TumbangPreso.UI
         /// eye is scanning for when four people are getting ready.
         /// </summary>
         private readonly GameObject[] _ticks = new GameObject[Balance.PlayerCount];
+
+        /// <summary>
+        /// The mark, one per seat, and only ever one of them is on.
+        ///
+        /// ⚠️⚠️ IT IS PAUL ANDREI'S CROWN AND 🧑 ASKED FOR IT TWICE. Relaying him: *"maybe pwede
+        /// natin iincorporate yung crown thingy sa game"*, and in his own words, **"i want there
+        /// to be things we reuse or assets we use to showcase the personality of our game, like a
+        /// crown thingy"**. `tsinelas_hit.png` has been generated and used NOWHERE since it was
+        /// committed, which `docs/TODO.md` § 133.14 lists as one of the things the failed pass did
+        /// not build.
+        ///
+        /// ⚠️⚠️ IT MEANS "THIS ONE" AND NOTHING ELSE, AT MOST ONCE PER SCREEN.
+        /// `Front_End_Design.md` § 1.1: the moment it appears twice it stops meaning "this one"
+        /// and becomes a bullet, and a bullet is decoration. On this screen the one thing it may
+        /// mark is YOUR seat.
+        ///
+        /// ⚠️ AND IT IS NOT A SECOND DOOR. § 6.3 forbids adding a door to fix findability, which
+        /// is how § 92's six-button panel happened. The mark is not pressable and never
+        /// navigates; a press lands on the plate under it, because there is nothing else there.
+        ///
+        /// ⚠️ IT IS A SHAPE, WHICH IS WHY IT IS WORTH MORE THAN THE BOLD `YOU` BESIDE IT RATHER
+        /// THAN A DUPLICATE OF IT. `CLAUDE.md` § 6.5: a shape difference survives a photograph
+        /// and a colourblind player where a fill difference does not, and this project has a
+        /// measured colourblind problem (§ 16.1). The word says it to somebody reading the plate;
+        /// the mark says it to somebody glancing at four of them.
+        /// </summary>
+        private readonly GameObject[] _marks = new GameObject[Balance.PlayerCount];
+        /// <summary>
+        /// ⚠️ 54, WHICH IS 1.17x THE PLATE'S OWN HEIGHT. Smaller than the plate and it reads as
+        /// a badge stuck on; much larger and it is a second object above somebody's head rather
+        /// than a mark on their seat. `PlateHeight` is 46.
+        /// </summary>
+        private const float MarkSize = 54.0f;
+
+        /// <summary>
+        /// ⚠️ IT SITS OVER THE PLATE'S LEFT SHOULDER RATHER THAN ITS MIDDLE, and that is about
+        /// the NAME rather than about the mark. Centred, it hangs directly over the first letters
+        /// of a centred name; at 26 units in it clears them on every plate down to
+        /// `PlateMinWidth`, and it is where a thing tossed onto a card would actually land.
+        /// </summary>
+        private const float MarkInset = 26.0f;
+
         private readonly bool[] _shown = new bool[Balance.PlayerCount];
 
         public static LobbyNameplates Attach(RectTransform surfaceRect, MapPreviewSurface surface,
@@ -314,6 +356,33 @@ namespace TumbangPreso.UI
                 _ticks[seat] = tick;
                 tick.SetActive(false);
 
+                // ⚠️ IT HANGS OFF THE PLATE'S TOP EDGE AND OVERLAPS IT, which is the logo's one
+                // structural idea (§ 133.13: *"one element escaping its own boundary"*) and is
+                // also the only place it can go: inside the plate it would be competing with the
+                // name for the same 46 units of height, and above it with a gap it would read as
+                // a separate object floating over somebody's head.
+                var mark = new GameObject($"Mark{seat}");
+                mark.transform.SetParent(plate.transform, false);
+
+                // ⚠️ A `RawImage`, BECAUSE `tsinelas_hit.png` IMPORTS AS A TEXTURE RATHER THAN
+                // AS A SPRITE. See `BrandMarks.Mark`: an `Image` with a null sprite draws a
+                // filled white rectangle, which is exactly what shipped in
+                // `Logs/shots-runtime/Lobby-v84.png`. `SignInScreen.BuildLogo` makes the same
+                // choice for the same file for the same reason.
+                var markImage = mark.AddComponent<RawImage>();
+                markImage.texture = BrandMarks.Mark();
+                markImage.raycastTarget = false;
+
+                var markRect = markImage.rectTransform;
+                markRect.anchorMin = new Vector2(0.0f, 1.0f);
+                markRect.anchorMax = new Vector2(0.0f, 1.0f);
+                markRect.pivot = new Vector2(0.5f, 0.35f);
+                markRect.anchoredPosition = new Vector2(MarkInset, 0.0f);
+                markRect.sizeDelta = new Vector2(MarkSize, MarkSize);
+
+                _marks[seat] = mark;
+                mark.SetActive(false);
+
                 _plates[seat] = plateRect;
                 _plateFills[seat] = fill;
                 _names[seat] = name;
@@ -384,6 +453,10 @@ namespace TumbangPreso.UI
             // ⚠️ THE TICK IS NO LONGER PART OF THE STRING. See `_ticks`: appending it made the
             // plate resize itself every time somebody readied.
             if (_ticks[seat] != null) _ticks[seat].SetActive(ready);
+
+            // ⚠️ ONE SEAT, ALWAYS. Four marks would make it a bullet; zero would leave the
+            // player's own seat identified by a bold word alone, at a glance, in a row of four.
+            if (_marks[seat] != null) _marks[seat].SetActive(you);
 
             // ⚠⚠⚠ `◀` IS NOT IN THE GAME'S FONT EITHER, AND THIS ONE SHIPPED ON THE
             // PLAYER'S OWN NAMEPLATE. U+25C0 is absent from Darumadrop One's 525-glyph cmap

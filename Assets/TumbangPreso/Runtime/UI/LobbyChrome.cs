@@ -205,6 +205,60 @@ namespace TumbangPreso.UI
         private const float TopRailHeight = 68.0f;
 
         /// <summary>
+        /// How tall the tarpaulin is, and it is nearly three times the rail it replaces.
+        ///
+        /// ⚠️⚠️ THE RAIL WAS 68 UNITS OF CREAM HOLDING SIX PILLS OF ONE SIZE IN ONE ROW, AND IT
+        /// IS THE OBJECT `docs/TODO.md` § 133.13 IS ABOUT. *"The failed pass drew the red line
+        /// and kept the grid."* A bar that is exactly as tall as the controls on it cannot hold a
+        /// hierarchy: everything on it is the same size by construction, so the screen's name,
+        /// the fact the screen exists to produce, and three navigation tabs were all 40-unit
+        /// chips in a row.
+        ///
+        /// ⚠️ 196 IS THE ROOM CODE PLUS ITS TWO LINES PLUS THE SAG, MEASURED RATHER THAN CHOSEN:
+        /// a `Caption` eyebrow at 16, the code at `Display` 44 drawn at 1.6x for the one fact the
+        /// screen produces (70), a hint at 16, three 10-unit gaps, and the 11-per-cent dip the
+        /// bottom edge takes in the middle (22). Nothing was rounded to a grid.
+        /// </summary>
+        private const float TarpHeight = 196.0f;
+
+        /// <summary>
+        /// How far the tarpaulin runs off each edge of the screen.
+        ///
+        /// ⚠️⚠️ IT ESCAPES ITS OWN BOUNDARY ON PURPOSE, WHICH IS THE LOGO'S ONE STRUCTURAL IDEA.
+        /// § 133.13: *"the character is in things OVERLAPPING, things sitting at angles to each
+        /// other, one element escaping its own boundary"*, and the drip running off the
+        /// wordmark's corner is where it comes from. It is also just true of a tarp: one strung
+        /// over a street is tied to something outside the picture.
+        ///
+        /// ⚠️ AND IT IS WHY THE OLD RAIL'S OWN NOTE ABOUT BEING AN ISLAND NO LONGER APPLIES. That
+        /// note answered **"be aware of tightness and empty space as well this looks ugly bcz of
+        /// big ass empty sopace"**: a full-bleed CREAM bar carried 660 units of bare paper in two
+        /// gaps no control could fill. The answer then was to shrink the bar to its content. The
+        /// answer now is that the bar is not a container of controls any more, it is a piece of
+        /// the room, and a tarp with clear vinyl either side of its printing is what a tarp
+        /// looks like. **The empty space is the object rather than a gap in it.**
+        /// </summary>
+        private const float TarpOverhang = 90.0f;
+
+        /// <summary>
+        /// How far the three mode tags hang below the tarpaulin, one length each.
+        ///
+        /// ⚠️⚠️ THIS IS WHERE THE QUIRK COMES FROM AND IT ADDS NOTHING TO THE SCREEN. § 133.7:
+        /// *"the personality is in the SHAPE and the LINE, not in the count"*, and § 133.13:
+        /// *"quirk comes from how the existing elements are arranged and shaped, not from new
+        /// elements."* These are the same three tabs that were there before. They hang on cords
+        /// of three different lengths instead of sitting in a row of equal pills, and that is the
+        /// whole change.
+        ///
+        /// ⚠️ THEY ARE NOT ROTATED, AND `Front_End_Design.md` § 1.2 IS EXPLICIT ABOUT WHY: the
+        /// lean is for chrome and **never for type**. Rotated type is unreadable type and
+        /// `AspectRatioProbes` measures what a label needs rather than what it looks like. The
+        /// irregularity is spent on the cord lengths and on `PaperCraft.Hand`, which already
+        /// gives each of the three its own silhouette and its own edge.
+        /// </summary>
+        private static readonly float[] TagDrop = { 30.0f, 14.0f, 38.0f };
+
+        /// <summary>
         /// The bottom rail: the match.
         ///
         /// ⚠️ 184 IS THE TALLEST OF THE THREE COLUMNS PLUS THE PADDING, AND THE TALLEST IS THE
@@ -285,11 +339,35 @@ namespace TumbangPreso.UI
         /// control against its content and state the arithmetic**, `CLAUDE.md` § 6.2c question 1.
         /// The rail is 60 units narrower with it, which is the tightening he asked for twice.
         /// </summary>
-        private const float ActionWidth = 460.0f;
+        private const float ActionWidth = 560.0f;
 
         /// <summary>START MATCH / FIND A RANKED MATCH / START PRACTICE. The one control on this
         /// screen that ends the screen.</summary>
-        private const float ActionHeight = 96.0f;
+        private const float ActionHeight = 132.0f;
+
+        /// <summary>
+        /// How far the burst reaches past the primary, as a multiple of it.
+        ///
+        /// ⚠️⚠️ 🧑 ASKED FOR THIS DIRECTLY: **"i want start match button to have genuine
+        /// emphases and look adn feel good to press"**. The sprite alone cannot answer that.
+        /// `FUTURE.md` § 0.5b's four ordering tools are position, size, weight and colour IN THAT
+        /// ORDER, and this control already had three of them: the corner every console flow uses,
+        /// the largest size on the screen, and the only chartreuse in the palette. **What it did
+        /// not have was anything saying the press MATTERS.**
+        ///
+        /// ⚠️ THE ANSWER IS THE MARK'S OWN BURST, NOT A GLOW. `tsinelas_hit.png` is a slipper
+        /// with an impact drawn behind it, so his own art already answers "what does a hit look
+        /// like in this hand": irregular spokes, flat colour, no blur. A soft radial glow would
+        /// be the one thing in this front end drawn by nobody's hand, and it is also the single
+        /// most common way a button is made to look important by somebody who has run out of
+        /// ideas.
+        ///
+        /// ⚠️ 1.5, WHICH IS 280 UNITS OF REACH ON EACH SIDE OF A 560-UNIT CONTROL. It has to
+        /// clear the button far enough to read as behind it rather than as a halo ON it, and stop
+        /// short of the chips to its left: the action column is 560 wide with a 10-unit gap to
+        /// the chip row, so anything past 1.6 would touch a control that is not this one.
+        /// </summary>
+        private const float BurstReach = 1.9f;
 
         /// <summary>
         /// The two-line MATCH SETTINGS chip: its name over the settings it summarises.
@@ -356,6 +434,32 @@ namespace TumbangPreso.UI
         private const float RoomSignHeight = 82.0f;
 
         /// <summary>
+        /// ⚠️ THE SLOT IS THE PLAQUE PLUS ROOM TO BREATHE INSIDE A 196-UNIT BAND. The tarp's
+        /// usable interior at its centre is the band less the sag, which is about 170; the plaque
+        /// is 96 here rather than `RoomSignHeight` 82 because it is the one fact the screen
+        /// exists to produce and it is now the only thing in the middle of the banner.
+        /// </summary>
+        private const float RoomSlotHeight = 96.0f;
+
+        /// <summary>
+        /// ⚠️ WIDER THAN THE COLUMN IT CAME FROM, BECAUSE THE SPACE IS. In the mode column it was
+        /// `RoomColumnWidth` 380 with chips under it; on the tarp it has the whole middle of the
+        /// screen and only the screen's name and the identity chip either side of it. 420 leaves
+        /// more than 300 units of clear band on each side at 4:3, which is the narrowest shape
+        /// `AspectRatioProbes` drives.
+        /// </summary>
+        private const float RoomSlotWidth = 420.0f;
+
+        /// <summary>
+        /// ⚠️ 46 FROM THE TOP OF THE BAND, WHICH CLEARS THE SCREEN NAME'S BASELINE. `LOBBY` sits
+        /// at -26 with a 50-unit box, so its ink ends at 76; the plaque starts at 46 and is 420
+        /// wide centred, which at every aspect ratio this game runs at leaves the two objects
+        /// hundreds of units apart horizontally. The number is about the VERTICAL band the sag
+        /// gives back, not about the name.
+        /// </summary>
+        private const float RoomSlotTop = 46.0f;
+
+        /// <summary>
         /// How tall the opened settings drawer is.
         ///
         /// ⚠️ THE CONTENT ADDED UP: four <see cref="SettingsRowHeight"/> rows, three 6-unit gaps,
@@ -409,6 +513,32 @@ namespace TumbangPreso.UI
         /// which `ConvertedMatchSetup.RefreshProfileDoor` swaps in for a guest. Sizing against
         /// `PROFILE` would have been sizing against the state nobody starts in.</summary>
         private const float ProfileWidth = 200.0f;
+
+        /// <summary>
+        /// The identity chip: wide enough for a face, a name and a state line.
+        ///
+        /// ⚠️ SIZED AGAINST ITS CONTENT AND THE ARITHMETIC IS STATED, which is `CLAUDE.md`
+        /// § 6.2c question 1 and the fault § 100 records (a column sized as a PERCENTAGE of the
+        /// window, which is two very different widths at two aspect ratios). It is the pad 14,
+        /// the face 72, a 12-unit gap, `Player#8226` set at `Title` 26 in Darumadrop (about 190
+        /// units), a chevron at 34, and the pad again: **334**.
+        /// </summary>
+        private const float IdentityWidth = 334.0f;
+
+        /// <summary>
+        /// ⚠️ THE FACE PLUS ITS TWO INSETS PLUS THE DROP. 72 + 14 + 14 + 6 = 106, and the two
+        /// lines of type inside it come to 26 + 16 + a 6-unit lead = 48, which fits inside the
+        /// face's own height so the chip is sized by the picture rather than by the words.
+        /// </summary>
+        private const float IdentityHeight = 106.0f;
+
+        /// <summary>
+        /// ⚠️ 72, WHICH IS HALF THE 144-UNIT THUMB FLOOR AND THAT IS DELIBERATE. The face is not
+        /// the touch target; the CHIP is, and at 334 by 106 it clears the floor on its short axis
+        /// by construction once `ScreenFocus.MakeRoomForThumbs` has padded it. Sizing the picture
+        /// to the floor instead would have given a 144-unit face on a 68-unit rail.
+        /// </summary>
+        private const float IdentityFace = 72.0f;
 
         /// <summary>
         /// The door to the game's own settings, between the tabs and the account door.
@@ -488,8 +618,10 @@ namespace TumbangPreso.UI
             // dropped into without noticing.
             var mode = isLobby ? LobbyMode.Custom : LobbyMode.Practice;
 
+            BuildGroundMarks(canvasRoot);
             BuildTopRail(canvasRoot, find, left, onMode, parts);
             BuildBottomRail(canvasRoot, find, left, right, parts);
+            HangTheModeSlot(parts);
 
             // ⚠️⚠️ LAST, AND NOT INSIDE `BuildTabs`, BECAUSE THE RIGHT COLUMN DOES NOT EXIST YET
             // WHEN THE TABS ARE BUILT. `SetMode` is what swaps the whole right-hand side, and
@@ -499,6 +631,141 @@ namespace TumbangPreso.UI
             parts.SetMode(mode);
 
             return parts;
+        }
+
+        /// <summary>
+        /// Chalk in the two bottom corners, and it means nothing at all.
+        ///
+        /// ⚠️⚠️ 🧑 ASKED FOR THIS TWICE AND IT IS THE ONE INSTRUCTION THE FAILED PASS DID NOT
+        /// EVEN ATTEMPT: **"u can add random shit and designs to the ui too btw to give our
+        /// screens character, not everything has to be functional"**, and again while this pass
+        /// was running, *"put ranodm designs and drawings too"*. `docs/TODO.md` § 133.14 lists it
+        /// as NOT BUILT.
+        ///
+        /// ⚠️⚠️ IT PULLS AGAINST § 92 AND THE RESOLUTION IS A PLACE RATHER THAN A QUANTITY.
+        /// *"Theres liek 20 shits at once"* was six BUTTONS in six visual languages: every one of
+        /// them was a thing the player had to look at, decide about and dismiss. **A drawing that
+        /// means nothing costs none of that.** `Front_End_Design.md` § 1.3: *decoration is free
+        /// where nothing has to be read, and expensive where something does.*
+        ///
+        /// ⚠️ SO IT GOES IN THE DEAD GROUND, AND § 118.1 ROW 2 MEASURED HOW MUCH THERE IS:
+        /// **680 units of nothing down the lobby's left side and 475 down its right.** That is
+        /// not space that needs protecting, it is space that is already doing nothing. These two
+        /// marks sit in the bottom corners, outside every content rect on the screen.
+        ///
+        /// ⚠️ AND THEY ARE THE FIRST SIBLINGS, so every rail and every control draws over them.
+        /// A decoration that can cover a control is not a decoration; `raycastTarget` is off for
+        /// the same reason one level down, because anything covering the screen is also eating
+        /// clicks and `CLAUDE.md` § 6.2c question 5 records that being nobody's stated job three
+        /// separate times.
+        ///
+        /// ⚠️ 0.16 ALPHA IS UNDER § 1.3'S 1.5:1 CEILING against the asphalt, so it cannot compete
+        /// with anything at `Caption` or larger, all of which measure 5:1 or better. **A drawing
+        /// that fails that ratio is not decoration, it is a seventh sign.**
+        /// </summary>
+        private static void BuildGroundMarks(Transform canvasRoot)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                var go = new GameObject(i == 0 ? "ChalkLeft" : "ChalkRight",
+                                        typeof(RectTransform), typeof(Image));
+                go.transform.SetParent(canvasRoot, false);
+
+                // ⚠️⚠️ LAST, NOT FIRST, AND `Logs/shots-runtime/Lobby-v86.png` IS WHY. As the
+                // first sibling it drew under the scrim and the two tint bands `SoftenScrim` and
+                // `Band` install, which is three multiplications of a mark that was already at a
+                // third of its own alpha. It was not faint, it was absent.
+                //
+                // ⚠️ AND DRAWING LAST IS SAFE HERE FOR TWO REASONS THAT BOTH HAVE TO HOLD. It
+                // sits in a screen CORNER, outside every content rect on the lobby, so there is
+                // nothing for it to cover; and `raycastTarget` is off, so it can never take a
+                // press from anything it happens to overlap. `Front_End_Design.md` § 1.3's rule
+                // is about CONTRAST rather than about z-order, and the alpha below is what keeps
+                // it under the ratio.
+                go.transform.SetAsLastSibling();
+
+                var image = go.GetComponent<Image>();
+                image.sprite = BrandMarks.Chalk(i);
+                image.type = Image.Type.Simple;
+                image.raycastTarget = false;
+                // ⚠️ 0.30, AND IT WAS 0.16 IN `Logs/shots-runtime/Lobby-v85.png`, WHERE IT IS
+                // NOT VISIBLE AT ALL. The number was reasoned from § 1.3's 1.5:1 ceiling and the
+                // reasoning was right; what it missed is that the sprite's own strokes are
+                // ALREADY feathered to an alpha under 1, so the Image tint multiplies a soft mark
+                // rather than a solid one. **A ratio computed against the colour rather than
+                // against the drawn pixel is a ratio nobody measured**, which is the same class
+                // of miss as the chalk rule at 0.55 alpha in `docs/TODO.md` § 117.7: *"a chalk
+                // rule at 0.55 alpha is a quarter-strength mark, because the tint multiplies the
+                // sprite's own"*. Cream at 0.30 on asphalt still measures well under 1.5:1.
+                image.color = new Color(1.0f, 1.0f, 1.0f, 0.34f);
+
+                var rect = (RectTransform)go.transform;
+                rect.anchorMin = new Vector2(i == 0 ? 0.0f : 1.0f, 0.0f);
+                rect.anchorMax = rect.anchorMin;
+                rect.pivot = new Vector2(i == 0 ? 0.0f : 1.0f, 0.0f);
+                rect.anchoredPosition = new Vector2(i == 0 ? 24.0f : -24.0f, 24.0f);
+                rect.sizeDelta = new Vector2(300.0f, 150.0f);
+            }
+        }
+
+        /// <summary>
+        /// Moves the room code onto the tarpaulin, which is the slot each mode fills.
+        ///
+        /// ⚠️⚠️ THE TARP SHIPPED WITH 196 UNITS OF EMPTY BAND AND ONE WORD IN THE CORNER, WHICH
+        /// IS THE FAULT IT WAS BUILT TO FIX ARRIVING FROM THE OTHER SIDE. 🧑 on the old rail:
+        /// **"be aware of tightness and empty space as well this looks ugly bcz of big ass empty
+        /// sopace"**, and, watching this pass, *"be aware of empty space and shit, as well as
+        /// negative space"*. A taller band with nothing in the middle of it is worse than the
+        /// short one, not better.
+        ///
+        /// ⚠️⚠️ AND IT IS THE ANSWER TO *"lets say u click ranked wtf would show?"*
+        /// `Front_End_Design.md` § 2.2b: **the composition does not change between modes, one
+        /// slot does.** The tarp's middle carries the one fact the current mode exists to
+        /// produce, at the same size in the same place, so a player who has learned where to look
+        /// has learned it once. `Parts.SetMode` still decides WHICH fact.
+        ///
+        /// ⚠️ THE AUTHORED NODE IS REPARENTED, NEVER REBUILT. `RoomCodeButton` keeps its name,
+        /// its `Button`, its copy handler and its `PaperSkin`, so
+        /// `PaperPurityProbe.NothingOnTheInventoryDisappeared` still resolves it and the 338
+        /// captured controls are all still there. **That probe is what makes tearing a screen
+        /// apart safe** (`docs/TODO.md` § 133.14) and it only works if things are moved rather
+        /// than replaced.
+        ///
+        /// ⚠️ IT RUNS AFTER BOTH RAILS, because the node does not exist until `BuildBottomRail`
+        /// has made the mode column. Calling it earlier finds nothing and fails silently, which
+        /// is `LobbyChrome.Apply`'s own recorded trap one call up.
+        /// </summary>
+        private static void HangTheModeSlot(Parts parts)
+        {
+            var code = parts.CodeButton;
+            var rail = parts.TopRail;
+            if (code == null || rail == null) return;
+
+            var rect = (RectTransform)code.transform;
+            rect.SetParent(rail, false);
+
+            var element = rect.GetComponent<LayoutElement>();
+            if (element == null) element = rect.gameObject.AddComponent<LayoutElement>();
+            element.ignoreLayout = true;
+
+            // ⚠️ CENTRED ON THE SCREEN, NOT ON THE SPRITE. The tarp runs one `TarpOverhang` off
+            // each edge, so its own middle IS the screen's middle; anchoring to 0.5 of the rail
+            // is therefore correct here and would not be if the overhang were ever asymmetric.
+            // ⚠️⚠️ THE PIVOT IS THE TOP EDGE, AND IT WAS THE BOTTOM ONE IN
+            // `Logs/shots-runtime/Lobby-v85.png`, WHERE THE ROOM CODE IS CUT IN HALF BY THE TOP
+            // OF THE SCREEN. With `pivot.y = 0` the rect grows UPWARD from the anchored point, so
+            // "46 units down from the top of the banner" placed the plaque's BOTTOM there and put
+            // its 96 units of height above the window. **A pivot is not an alignment**, and this
+            // is the one-character version of the fault `CLAUDE.md` § 6.2c question 1 keeps
+            // recording: a number that is correct against a rectangle nobody is measuring.
+            rect.anchorMin = new Vector2(0.5f, 1.0f);
+            rect.anchorMax = new Vector2(0.5f, 1.0f);
+            rect.pivot = new Vector2(0.5f, 1.0f);
+            rect.anchoredPosition = new Vector2(0.0f, -RoomSlotTop);
+            rect.sizeDelta = new Vector2(RoomSlotWidth, RoomSlotHeight);
+
+            var skin = code.GetComponent<PaperSkin>();
+            if (skin != null) skin.Rebuild();
         }
 
         /// <summary>
@@ -538,8 +805,27 @@ namespace TumbangPreso.UI
                                          Transform leftColumn, Action<LobbyMode> onMode,
                                          Parts parts)
         {
-            var rail = PaperKit.Sheet(canvasRoot, "LobbyTopRail");
+            // ⚠️⚠️ BUILT BY HAND RATHER THAN THROUGH `PaperKit.Sheet`, AND THE FIRST VERSION OF
+            // THIS METHOD USED THE KIT AND SHIPPED A BLANK CREAM BAND. `PaperKit.Sheet` attaches
+            // a `PaperSkin`, and `PaperSkin.Update` calls `Rebuild` EVERY FRAME, which writes
+            // `_image.sprite` from `PaperCraft.Slab`. Setting the sprite after the kit built the
+            // node therefore lasted exactly one frame.
+            //
+            // ⚠️⚠️ AND `Object.Destroy(skin)` DOES NOT FIX IT, WHICH IS THE PART WORTH RECORDING.
+            // `Destroy` is deferred to the end of the frame, so the component's `Update` runs at
+            // least once more and repaints a `Sheet` over the tarp.
+            // `Logs/shots-runtime/Lobby-v84.png` is the receipt: a flat `UiTheme.Paper` band with
+            // no sag, no stroke and no ties, which is the OLD rail with a new height. **A
+            // component that paints from `Update` has to be disabled, not destroyed**, and the
+            // honest version is not to create it at all.
+            var railGo = new GameObject("LobbyTopRail", typeof(RectTransform), typeof(Image));
+            railGo.transform.SetParent(canvasRoot, false);
+
+            var rail = railGo.GetComponent<Image>();
             rail.raycastTarget = true;
+            rail.sprite = BrandMarks.Tarpaulin();
+            rail.type = Image.Type.Simple;
+            rail.color = Color.white;
 
             // ⚠️⚠️ AN ISLAND, NOT A FULL-BLEED BAR, AND 🧑 ASKED FOR THIS BY NAME: **"be aware
             // of tightness and empty space as well this looks ugly bcz of big ass empty sopace"**.
@@ -547,18 +833,104 @@ namespace TumbangPreso.UI
             // carried 660 units of bare cream in two gaps that no control could ever fill. A bar
             // sized to what is IN it reads as a designed object; a bar sized to the window reads as
             // a browser toolbar, and it costs the street two corners it does not need to lose.
+            // ⚠️ STRETCHED ON X AND PINNED TO THE TOP, WITH THE OVERHANG IN `sizeDelta`. With
+            // `anchorMin.x = 0` and `anchorMax.x = 1`, `sizeDelta.x` is the amount ADDED to the
+            // parent's width, so the tarp is the canvas plus one overhang each side at every
+            // aspect ratio without a single hard-coded width. `AspectRatioProbes` drives nine.
             var rect = rail.rectTransform;
-            rect.anchorMin = new Vector2(0.5f, 1.0f);
-            rect.anchorMax = new Vector2(0.5f, 1.0f);
+            rect.anchorMin = new Vector2(0.0f, 1.0f);
+            rect.anchorMax = new Vector2(1.0f, 1.0f);
             rect.pivot = new Vector2(0.5f, 1.0f);
-            rect.anchoredPosition = new Vector2(0.0f, -EdgeMargin);
-            rect.sizeDelta = new Vector2(TopRailWidth, TopRailHeight);
+            rect.anchoredPosition = Vector2.zero;
+            rect.sizeDelta = new Vector2(TarpOverhang * 2.0f, TarpHeight);
+
+            parts.TopRail = rail.transform;
+
+            BuildTies(rail.transform);
+            BuildScreenName(rail.transform);
 
             LiftBack(rail.transform, leftColumn);
             BuildTabs(rail.transform, onMode, parts);
             BuildProfileButton(rail.transform, parts);
             BuildSettingsButton(rail.transform, parts);
             LiftVersionStamp(canvasRoot, rail.transform);
+        }
+
+        /// <summary>
+        /// The two eyelets the tarpaulin hangs from.
+        ///
+        /// ⚠️ A SAG WITHOUT A TIE IS A CURVE, NOT A HUNG THING. The bottom edge dipping in the
+        /// middle only reads as weight if something is visibly holding the two ends up; without
+        /// the eyelets the band reads as a shape somebody drew with a wobbly bottom, which is the
+        /// same object the old rail was with a different silhouette. **Two marks, twenty units
+        /// each, and they are the difference between a motif and a decoration.**
+        ///
+        /// ⚠️ THEY ARE SEPARATE SPRITES BECAUSE THE TARP IS STRETCHED RATHER THAN NINE-SLICED
+        /// (see <see cref="BrandMarks.Tarpaulin"/>): an eyelet drawn into that texture would be
+        /// scaled to twice its width on his window and stop being a circle.
+        /// </summary>
+        private static void BuildTies(Transform rail)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                var go = new GameObject(i == 0 ? "TarpTieLeft" : "TarpTieRight",
+                                        typeof(RectTransform), typeof(Image));
+                go.transform.SetParent(rail, false);
+
+                var image = go.GetComponent<Image>();
+                image.sprite = BrandMarks.Tie();
+                image.type = Image.Type.Simple;
+                image.raycastTarget = false;
+
+                var r = (RectTransform)go.transform;
+                r.anchorMin = new Vector2(i == 0 ? 0.10f : 0.90f, 1.0f);
+                r.anchorMax = r.anchorMin;
+                r.pivot = new Vector2(0.5f, 1.0f);
+                r.anchoredPosition = new Vector2(0.0f, 6.0f);
+                r.sizeDelta = new Vector2(30.0f, 48.0f);
+            }
+        }
+
+        /// <summary>
+        /// WHERE AM I, top left, in the display face.
+        ///
+        /// ⚠️⚠️ THE LOBBY HAD NO NAME AT ALL AND THAT IS THE FIRST ROW OF
+        /// `Front_End_Design.md` § 1'S SPINE: *"it is the answer to 'where am I', and a player
+        /// who has to hunt for that has already lost the screen."* Every other screen in this
+        /// front end has a heading; this one had three tabs, and a tab says which mode you picked
+        /// rather than which screen you are on.
+        ///
+        /// ⚠️ THE SUB LINE IS THE SEAT COUNT, WHICH IS THE ONE FACT THAT BELONGS UNDER A ROOM'S
+        /// NAME AND WAS PREVIOUSLY ONLY DERIVABLE BY COUNTING NAMEPLATES. It is set by
+        /// `Parts.SetSeats`; the literal here is what a screen with no session shows.
+        /// </summary>
+        private static void BuildScreenName(Transform rail)
+        {
+            var name = PaperKit.Ink(rail, "LOBBY", PaperKit.Display, TextAnchor.UpperLeft);
+            name.name = "ScreenName";
+            name.raycastTarget = false;
+
+            var r = name.rectTransform;
+            r.anchorMin = new Vector2(0.0f, 1.0f);
+            r.anchorMax = new Vector2(0.0f, 1.0f);
+            r.pivot = new Vector2(0.0f, 1.0f);
+            // ⚠️ THE OVERHANG IS IN THE INSET. The tarp starts one `TarpOverhang` LEFT of the
+            // screen, so a control placed at x = 0 on this rail is off screen entirely. Every
+            // inset on this rail is measured from the screen edge, not from the sprite's.
+            r.anchoredPosition = new Vector2(TarpOverhang + EdgeMargin, -26.0f);
+            r.sizeDelta = new Vector2(420.0f, 50.0f);
+
+            var seats = PaperKit.Ink(rail, "4 in the room", PaperKit.Caption,
+                                     TextAnchor.UpperLeft, soft: true);
+            seats.name = "SeatCount";
+            seats.raycastTarget = false;
+
+            var sr = seats.rectTransform;
+            sr.anchorMin = new Vector2(0.0f, 1.0f);
+            sr.anchorMax = new Vector2(0.0f, 1.0f);
+            sr.pivot = new Vector2(0.0f, 1.0f);
+            sr.anchoredPosition = new Vector2(TarpOverhang + EdgeMargin + 2.0f, -78.0f);
+            sr.sizeDelta = new Vector2(420.0f, 24.0f);
         }
 
         /// <summary>
@@ -577,15 +949,42 @@ namespace TumbangPreso.UI
 
             back.SetParent(rail, false);
 
-            back.anchorMin = new Vector2(0.0f, 0.5f);
-            back.anchorMax = new Vector2(0.0f, 0.5f);
-            back.pivot = new Vector2(0.0f, 0.5f);
+            // ⚠️⚠️ IT HANGS BELOW THE TARPAULIN NOW RATHER THAN SITTING INSIDE A BAR, AND THAT
+            // ANSWERS § 118.1 ROW 5 BY POSITION RATHER THAN BY SIZE. That row is *"BACK competes
+            // with the tab row"*, and it competed because the two were the same object at the
+            // same height on the same rail: a 40-unit pill among four other 40-unit pills, where
+            // the only thing saying "this one is the way out" was the word on it.
+            // `Front_End_Design.md` § 1 pins BACK top left, immediately under the screen's name,
+            // and that is what this is: the name is on the tarp and the way out is directly below
+            // it, which is the arrangement every console flow has used for fifteen years.
+            back.anchorMin = new Vector2(0.0f, 1.0f);
+            back.anchorMax = new Vector2(0.0f, 1.0f);
+            back.pivot = new Vector2(0.0f, 1.0f);
             // ⚠️⚠️ THE INSET IS THE PADDING PLUS THE RAIL OWN CORNER, NOT THE PADDING. 🧑, with a
             // crop of the top rail: **"back is brokenn"**. `PaperCraft` cuts every sheet with an
             // 18-unit radius, so a chip placed `PaperKit.Pad` 14 in from the edge has its left end
             // and its halo sitting ON the curve, which reads as a control falling off the bar.
             // **The first control in a rounded container clears the RADIUS, not the padding.**
-            back.anchoredPosition = new Vector2(PaperKit.Pad + 8.0f, 0.0f);
+            // ⚠️ THE OVERHANG IS IN THE INSET, because the tarp starts one `TarpOverhang` LEFT
+            // of the screen: a control at x = 0 on this rail is off screen. The old note about
+            // clearing the container's own corner radius no longer applies, since the control is
+            // outside the container rather than inside it.
+            // ⚠️⚠️ ON THE TARPAULIN, DIRECTLY UNDER THE SCREEN'S NAME, WHICH IS
+            // `Front_End_Design.md` § 1'S SECOND SPINE ROW WORD FOR WORD: *"BACK — top left,
+            // immediately under the name"*. The first version hung it below the banner with the
+            // mode tags, which was better than the old rail (§ 118.1 row 5, BACK competing with
+            // the tab row) and still not the spine: it put the way OUT in the same band as the
+            // three ways SIDEWAYS.
+            //
+            // ⚠️ AND IT IS ALSO WHAT THE LEFT OF THE BANNER IS FOR. `Logs/shots-runtime/
+            // Lobby-v87.png` carries about 600 units of bare vinyl between the screen's name and
+            // the room code, which is 🧑's *"big ass empty sopace"* arriving on the object built
+            // to fix it. **A tarp has clear vinyl on it and a banner with a hole in it does
+            // not**, and the difference is whether the printing is grouped.
+            //
+            // ⚠️ THE OVERHANG IS IN THE INSET, because the tarp starts one `TarpOverhang` LEFT of
+            // the screen: a control at x = 0 on this rail is off screen entirely.
+            back.anchoredPosition = new Vector2(TarpOverhang + EdgeMargin, -104.0f);
             back.sizeDelta = new Vector2(BackWidth, PaperKit.ChipHeight);
 
             var element = back.GetComponent<LayoutElement>();
@@ -644,9 +1043,9 @@ namespace TumbangPreso.UI
             bar.transform.SetParent(rail, false);
 
             var barRect = (RectTransform)bar.transform;
-            barRect.anchorMin = new Vector2(0.5f, 0.5f);
-            barRect.anchorMax = new Vector2(0.5f, 0.5f);
-            barRect.pivot = new Vector2(0.5f, 0.5f);
+            barRect.anchorMin = new Vector2(0.0f, 0.0f);
+            barRect.anchorMax = new Vector2(0.0f, 0.0f);
+            barRect.pivot = new Vector2(0.0f, 1.0f);
 
             // ⚠️ THE BAR SITS WHERE THE ARITHMETIC PUTS IT, NOT WHERE A NUDGE DOES. The rail is
             // sized to its content now (`TopRailWidth`), so the tabs occupy the exact middle of a
@@ -658,32 +1057,61 @@ namespace TumbangPreso.UI
             // (🧑: **"cann u also add a settings button in lobby?"**), and this arithmetic is what
             // keeps the tab bar in the rail's optical middle rather than its geometric one. Miss
             // this line and the three tabs sit 79 units left of where they look like they should.
-            const float leftBlock = PaperKit.Pad + BackWidth + PaperKit.Gap;
-            const float rightBlock = PaperKit.Gap + SettingsWidth + PaperKit.Gap
-                                     + ProfileWidth + PaperKit.Pad + 8.0f;
-            barRect.anchoredPosition = new Vector2((leftBlock - rightBlock) * 0.5f, 0.0f);
+            // ⚠️⚠️ NO LAYOUT GROUP, AND THAT IS THE WHOLE CHANGE. A `HorizontalLayoutGroup`
+            // with `childForceExpand` on both axes is a machine for producing identical objects
+            // in a row, which is exactly the fault 🧑 named: *"the issue with old UI is
+            // everything feels repetitive bcz i think u use the same code to generate them all"*.
+            // The three tabs are placed by hand at three different DROPS, so they hang the way
+            // things hang off a tarp rather than sitting in a rail.
+            //
+            // ⚠️ THE PLACEMENT IS STILL ARITHMETIC RATHER THAN NUDGES. Each tag's x is the sum of
+            // the ones before it plus one gap, and its y is `TagDrop[i]`; nothing here is a magic
+            // offset tuned against one window, which is `CLAUDE.md` § 6.3's rule about `UiRows`
+            // applied one screen over.
+            barRect.anchoredPosition = new Vector2(
+                TarpOverhang + EdgeMargin + BackWidth + 44.0f, 0.0f);
             barRect.sizeDelta = new Vector2((TabWidth * 3.0f) + (PaperKit.Gap * 2.0f),
-                                            PaperKit.ChipHeight);
+                                            PaperKit.ChipHeight + 44.0f);
 
-            var layout = bar.AddComponent<HorizontalLayoutGroup>();
-            layout.spacing = PaperKit.Gap;
-            layout.childControlWidth = true;
-            layout.childControlHeight = true;
-            layout.childForceExpandWidth = true;
-            layout.childForceExpandHeight = true;
-            layout.childAlignment = TextAnchor.MiddleCenter;
+            string[] names = { "PracticeTab", "RankedTab", "CustomTab" };
+            string[] words = { "PRACTICE", "RANKED", "CUSTOM" };
+            LobbyMode[] order = { LobbyMode.Practice, LobbyMode.Ranked, LobbyMode.Custom };
 
-            parts.Tabs[(int)LobbyMode.Practice] =
-                PaperKit.Chip(bar.transform, "PracticeTab", "PRACTICE");
-            parts.Tabs[(int)LobbyMode.Ranked] =
-                PaperKit.Chip(bar.transform, "RankedTab", "RANKED");
-            parts.Tabs[(int)LobbyMode.Custom] =
-                PaperKit.Chip(bar.transform, "CustomTab", "CUSTOM");
-
-            for (int i = 0; i < parts.Tabs.Length; i++)
+            for (int i = 0; i < 3; i++)
             {
-                var chosen = (LobbyMode)i;
-                parts.Tabs[i].onClick.AddListener(() => onMode?.Invoke(chosen));
+                float x = i * (TabWidth + PaperKit.Gap);
+                float drop = TagDrop[i];
+
+                // the cord. Two units wide, deep red, from the tarp's edge to the tag's top: it
+                // is what makes three chips at three heights read as three things HUNG rather
+                // than as three things somebody failed to align.
+                var cord = new GameObject($"{names[i]}Cord", typeof(RectTransform), typeof(Image));
+                cord.transform.SetParent(bar.transform, false);
+                var cordImage = cord.GetComponent<Image>();
+                cordImage.color = UiTheme.BrandRed;
+                cordImage.raycastTarget = false;
+                var cr = (RectTransform)cord.transform;
+                cr.anchorMin = new Vector2(0.0f, 1.0f);
+                cr.anchorMax = new Vector2(0.0f, 1.0f);
+                cr.pivot = new Vector2(0.5f, 1.0f);
+                cr.anchoredPosition = new Vector2(x + (TabWidth * 0.5f), 4.0f);
+                cr.sizeDelta = new Vector2(4.0f, drop + 6.0f);
+
+                var chip = PaperKit.Chip(bar.transform, names[i], words[i]);
+                var rect = (RectTransform)chip.transform;
+                rect.anchorMin = new Vector2(0.0f, 1.0f);
+                rect.anchorMax = new Vector2(0.0f, 1.0f);
+                rect.pivot = new Vector2(0.0f, 1.0f);
+                rect.anchoredPosition = new Vector2(x, -drop);
+                rect.sizeDelta = new Vector2(TabWidth, PaperKit.ChipHeight);
+
+                var element = chip.GetComponent<LayoutElement>();
+                if (element != null) element.ignoreLayout = true;
+
+                parts.Tabs[(int)order[i]] = chip;
+
+                var chosen = order[i];
+                chip.onClick.AddListener(() => onMode?.Invoke(chosen));
             }
 
             // ⚠️ KEPT FOR THE PROBES AND FOR EVERY CALLER THAT STILL THINKS IN TWO TABS.
@@ -712,20 +1140,77 @@ namespace TumbangPreso.UI
         {
             var button = PaperKit.Chip(rail, "ProfileButton", "ACCOUNT");
 
+            // ⚠️⚠️ IT CARRIES A FACE NOW, AND THAT IS `docs/TODO.md` § 96'S FIX RATHER THAN A
+            // DECORATION. He commissioned the player hub and then could not find the way into it,
+            // because its one door was a corner chip stating a name and a level: **a status
+            // readout, which is a thing people read and not a thing people press.** A face is a
+            // thing people press, and top-right with a face is where Overwatch, Valorant and
+            // Fortnite all put the way into a profile, so it costs no teaching at all
+            // (`Front_End_Design.md` § 1, and § 133.8's *"controls are familliar to them
+            // already"*).
+            //
+            // ⚠️ AND IT IS STILL EXACTLY ONE DOOR. § 6.3 forbids adding a second door to fix a
+            // findability problem, which is how § 92's six-button panel happened. This is the
+            // same door, moved and given a picture.
+            //
+            // ⚠️ IT HANGS OFF THE TARPAULIN'S BOTTOM EDGE, overlapping it, rather than sitting
+            // inside it. The logo's own structural idea is things overlapping and escaping their
+            // boundaries (§ 133.13), and it does a second job here: an object clipped to the
+            // banner reads as attached to the room, where a word printed on the banner would read
+            // as part of the banner's message.
             var rect = (RectTransform)button.transform;
-            rect.anchorMin = new Vector2(1.0f, 0.5f);
-            rect.anchorMax = new Vector2(1.0f, 0.5f);
+            rect.anchorMin = new Vector2(1.0f, 0.0f);
+            rect.anchorMax = new Vector2(1.0f, 0.0f);
             rect.pivot = new Vector2(1.0f, 0.5f);
-            rect.anchoredPosition = new Vector2(-(PaperKit.Pad + 8.0f), 0.0f);
-            rect.sizeDelta = new Vector2(ProfileWidth, PaperKit.ChipHeight);
+            rect.anchoredPosition = new Vector2(-(TarpOverhang + EdgeMargin), 6.0f);
+            rect.sizeDelta = new Vector2(IdentityWidth, IdentityHeight);
+
+            var face = Avatars.Frame(button.transform, "ProfileFace", null);
+            var fr = face.rectTransform;
+            fr.anchorMin = new Vector2(0.0f, 0.5f);
+            fr.anchorMax = new Vector2(0.0f, 0.5f);
+            fr.pivot = new Vector2(0.0f, 0.5f);
+            fr.anchoredPosition = new Vector2(PaperKit.Pad, PaperCraft.Drop * 0.5f);
+            fr.sizeDelta = new Vector2(IdentityFace, IdentityFace);
+            parts.ProfileFace = face;
 
             var label = button.transform.Find("Label")?.GetComponent<Text>();
             if (label != null)
             {
+                // ⚠️ LEFT-ALIGNED BESIDE THE FACE, NOT CENTRED ON THE CHIP. A name centred on a
+                // chip that also holds a picture centres on the chip and therefore sits off
+                // centre against the picture, which is the *"back still isnt centered"* fault one
+                // control over: a box that is centred and lettering that does not look it.
                 label.name = "ProfileValue";
-                label.alignment = TextAnchor.MiddleCenter;
+                label.alignment = TextAnchor.LowerLeft;
+                label.fontSize = PaperKit.Title;
+                MenuKit.Apply(label, PaperKit.FaceFor(label.fontSize));
+                MenuKit.Stretch(label.rectTransform, 0.0f);
+                label.rectTransform.offsetMin =
+                    new Vector2(PaperKit.Pad + IdentityFace + 12.0f, IdentityHeight * 0.44f);
+                label.rectTransform.offsetMax = new Vector2(-34.0f, -PaperKit.Pad);
                 parts.ProfileValue = label;
             }
+
+            // ⚠️ THE SECOND LINE IS THE ACCOUNT STATE AND IT REPLACES A WHOLE TAB. `SECURE
+            // PROGRESS` used to be a fifth pill on the top rail, sitting beside three MODE tabs
+            // as though it were a mode. It is not a place, it is a fact about you, so it belongs
+            // on the thing that says who you are. **That is one fewer object on the screen and
+            // one fewer thing to scan**, which is `CLAUDE.md` § 6.2's third claim.
+            var state = PaperKit.Ink(button.transform, "GUEST · SAVE PROGRESS", PaperKit.Caption,
+                                     TextAnchor.UpperLeft, soft: true);
+            state.name = "ProfileState";
+            state.raycastTarget = false;
+            MenuKit.Read(state, bold: true);
+            MenuKit.Stretch(state.rectTransform, 0.0f);
+            state.rectTransform.offsetMin =
+                new Vector2(PaperKit.Pad + IdentityFace + 12.0f, PaperCraft.Drop + 8.0f);
+            state.rectTransform.offsetMax =
+                new Vector2(-34.0f, -(IdentityHeight * 0.56f));
+            parts.ProfileState = state;
+
+            var chevron = PaperKit.Chevron(button.transform);
+            chevron.raycastTarget = false;
 
             parts.ProfileButton = button;
         }
@@ -760,17 +1245,22 @@ namespace TumbangPreso.UI
             var button = PaperKit.Chip(rail, "GameSettingsButton", "SETTINGS");
 
             var rect = (RectTransform)button.transform;
-            rect.anchorMin = new Vector2(1.0f, 0.5f);
-            rect.anchorMax = new Vector2(1.0f, 0.5f);
-            rect.pivot = new Vector2(1.0f, 0.5f);
 
+            // ⚠️ IT HANGS TO THE LEFT OF THE IDENTITY CHIP, WHICH IS THE SPINE'S RULE FOR A
+            // SECONDARY: chips in a row to the LEFT of the more important thing, never above or
+            // below it (`Front_End_Design.md` § 1). The argument in this method's own note is
+            // unchanged and still holds: both controls are about YOU AND THIS MACHINE, and the
+            // account door is the more important of the two, so the utility sits one step in from
+            // the end.
+            //
             // ⚠️ MEASURED FROM THE RIGHT EDGE THROUGH THE DOOR BESIDE IT, not from a number of
-            // its own. `BuildProfileButton` insets `PaperKit.Pad + 8`; this clears that control's
-            // whole width and one `Gap` more, so the pair cannot overlap however either width
-            // changes and the sum in `TopRailWidth` stays true by construction.
-            rect.anchoredPosition =
-                new Vector2(-(PaperKit.Pad + 8.0f + ProfileWidth + PaperKit.Gap), 0.0f);
-            rect.sizeDelta = new Vector2(SettingsWidth, PaperKit.ChipHeight);
+            // its own, so the pair cannot overlap however either width changes.
+            rect.anchorMin = new Vector2(1.0f, 0.0f);
+            rect.anchorMax = new Vector2(1.0f, 0.0f);
+            rect.pivot = new Vector2(1.0f, 0.5f);
+            rect.anchoredPosition = new Vector2(
+                -(TarpOverhang + EdgeMargin + IdentityWidth + PaperKit.Gap), 6.0f);
+            rect.sizeDelta = new Vector2(SettingsWidth, PaperKit.ChipHeight + 12.0f);
 
             parts.GameSettingsButton = button;
         }
@@ -799,11 +1289,22 @@ namespace TumbangPreso.UI
             // and the BACK chip's vertical centre are the same 18 units of padding apart and the
             // chip is 44 tall. Hanging it below the rail costs nothing, cannot collide with a
             // control, and is where a build number belongs: the quietest corner of the screen.
-            rect.SetParent(rail, false);
+            // ⚠️⚠️ THE SCREEN'S CORNER, NOT THE RAIL'S, AND THE RAIL MOVING IS WHY. This method
+            // hung the stamp under the top rail's bottom-right, which was the quietest corner of
+            // the screen while that rail was a 68-unit bar in the middle of the top edge. The
+            // rail is a full-bleed tarpaulin now and its bottom-right corner is **exactly where
+            // the identity chip hangs**, so the line that avoided a collision with BACK made one
+            // with the account door instead, and the stamp vanished behind it.
+            //
+            // ⚠️ THE INTENT IN THE ORIGINAL NOTE IS WHAT IS KEPT: *"where a build number belongs:
+            // the quietest corner of the screen"*. That corner is measured against the SCREEN now
+            // rather than against a control that has moved twice. § 118.1 row 8 (*"the version
+            // stamp sits on nothing"*) stays answered by the outline this method already gives it.
+            rect.SetParent(canvasRoot, false);
             rect.anchorMin = new Vector2(1.0f, 0.0f);
             rect.anchorMax = new Vector2(1.0f, 0.0f);
-            rect.pivot = new Vector2(1.0f, 1.0f);
-            rect.anchoredPosition = new Vector2(0.0f, -6.0f);
+            rect.pivot = new Vector2(1.0f, 0.0f);
+            rect.anchoredPosition = new Vector2(-EdgeMargin, EdgeMargin * 0.5f);
             rect.sizeDelta = new Vector2(160.0f, 18.0f);
 
             var text = stamp.GetComponent<Text>();
@@ -848,9 +1349,49 @@ namespace TumbangPreso.UI
                                             Transform leftColumn, Transform rightColumn,
                                             Parts parts)
         {
-            var rail = PaperKit.Sheet(canvasRoot, "LobbyBottomRail");
+            // ⚠️⚠️ BUILT BY HAND, BECAUSE `PaperSkin.Rebuild` WRITES `color` AS WELL AS
+            // `sprite` AND DISABLING IT WAS NOT ENOUGH. `Logs/shots-runtime/Lobby-v86.png` still
+            // shows the cream slab after this method set the Image's alpha to zero and switched
+            // the skin off in the same breath: `OnRectTransformDimensionsChange` is not an
+            // Update-family callback and still reaches the component, and its line 38 puts
+            // `Color.white` back. **This is the same lesson the top rail learned one method up**
+            // (there it was `Object.Destroy` being deferred), and the conclusion is the same
+            // both times: a node that must not be repainted should never be given the painter.
+            var railGo = new GameObject("LobbyBottomRail", typeof(RectTransform), typeof(Image));
+            railGo.transform.SetParent(canvasRoot, false);
+
+            var rail = railGo.GetComponent<Image>();
+
+            // ⚠️⚠️ TRANSPARENT AND STILL A RAYCAST TARGET, WHICH IS DELIBERATE AND IS NOT A
+            // CONTRADICTION. uGUI hit-tests a Graphic against its alpha THRESHOLD, which defaults
+            // to zero, so a fully transparent Image still catches presses. The rail has always
+            // eaten clicks that would otherwise fall through to the street behind it, and
+            // `CLAUDE.md` § 6.2c question 5 is explicit that when a full-screen graphic goes you
+            // name its replacement blocker in the same commit. **Here the blocker does not
+            // change; only the paint does.**
+            rail.color = new Color(1.0f, 1.0f, 1.0f, 0.0f);
             rail.raycastTarget = true;
 
+            // ⚠️⚠️ THE RAIL IS INVISIBLE NOW, AND IT IS STILL A RAIL. `Logs/shots-runtime/
+            // Lobby-v85.png`: with the top of the screen rebuilt as a hung tarp, the one object
+            // left reading as a generated container was this one, a flat cream slab across the
+            // bottom third holding three cells in a row. **That is the exact object
+            // `docs/TODO.md` § 133.13 rejects** — *"every object is the same pill in the same
+            // grid with a red line around it"* — and it is the last of it on this screen.
+            //
+            // ⚠️ THE CONTROLS DID NOT NEED IT AND THAT IS WHY THIS IS FREE. Every child of this
+            // rail carries its own opaque paper surface (the fighter card, the build tray, the
+            // primary, the two chips, the room plaque), so nothing on it was relying on the slab
+            // for legibility over the street. The slab was buying separation from a background
+            // that the controls already separate themselves from, which is `CLAUDE.md` § 6.2c
+            // question 3 asked and answered: *"ask what a dimming layer protects before retuning
+            // it"*.
+            //
+            // ⚠️⚠️ AND THE LAYOUT, THE FITTER AND THE CENTRING ALL STAY, which is the whole point
+            // of doing it this way. The rail still measures itself, still re-centres when
+            // practice drops a column, and still owns every offset in this file. **Only the paint
+            // is gone.** Deleting the object instead would have moved three columns' worth of
+            // arithmetic into their callers for a visual change.
             // ⚠️ AN ISLAND, FOR THE REASON THE TOP RAIL IS ONE: its width is the columns that are
             // actually in it, so the gaps 🧑 photographed either side of START MATCH cannot exist.
             //
@@ -879,8 +1420,21 @@ namespace TumbangPreso.UI
             layout.childControlWidth = true;
             layout.childControlHeight = true;
             layout.childForceExpandWidth = false;
-            layout.childForceExpandHeight = true;
-            layout.childAlignment = TextAnchor.MiddleCenter;
+
+            // ⚠️⚠️ THE THREE GROUPS SHARE A BASELINE NOW, AND THEY DID NOT WHILE THERE WAS A
+            // SLAB UNDER THEM TO HIDE IT. `childForceExpandHeight` made every column as tall as
+            // the rail and `MiddleCenter` then centred each one inside that height, so the
+            // fighter card, the primary and the two chips each floated at a different offset.
+            // On a cream slab that reads as padding; on the street, with the slab gone, it reads
+            // as three objects somebody dropped. `Logs/shots-runtime/Lobby-v87.png` is the
+            // receipt: JOIN and CHAT sit level with the TOP of a primary they are secondary to.
+            //
+            // ⚠️ AND A SHARED BASELINE IS THE RULE RATHER THAN A TIDY-UP. `FUTURE.md` § 0.5b's
+            // four ordering tools put POSITION first, and things standing on one line read as
+            // one row of objects on a road, which is what this screen is now: the secondary
+            // chips are visibly smaller than the primary and visibly on the same ground.
+            layout.childForceExpandHeight = false;
+            layout.childAlignment = TextAnchor.LowerCenter;
 
             BuildFighterColumn(rail.transform, find, parts);
             BuildActionColumn(rail.transform, find, leftColumn, parts);
@@ -1393,6 +1947,22 @@ namespace TumbangPreso.UI
                 // heaviest object on its screen**, which is `docs/Front_End_Design.md` § 4's role
                 // table: Chartreuse is the action, one per screen.
                 PaperKit.MakeAction(node.gameObject, PaperCraft.Accent.Green);
+
+                // ⚠️⚠️ THE LETTERING GROWS WITH THE CONTROL, AND WITHOUT THIS LINE IT DOES NOT.
+                // `MakeAction` does not touch `fontSize`, so the label stayed at whatever the
+                // authored Godot button carried while the plate around it went from 460x96 to
+                // 560x132: **a bigger button with the same words on it reads as a button with
+                // more empty space, not as a louder one.** `Display` is the one step in the type
+                // scale reserved for one thing per screen, and this is that thing.
+                var primaryLabel = node.GetComponentInChildren<Text>(true);
+                if (primaryLabel != null)
+                {
+                    primaryLabel.fontSize = PaperKit.Display;
+                    MenuKit.Apply(primaryLabel, PaperKit.FaceFor(primaryLabel.fontSize));
+                    MenuKit.Fit(primaryLabel, ActionWidth - 48.0f, PaperKit.Title);
+                }
+
+                BuildBurst(slot.transform, node);
             }
 
             var status = Descend(leftColumn, "StatusLabel");
@@ -1428,6 +1998,44 @@ namespace TumbangPreso.UI
             }
 
             if (leftColumn != null) leftColumn.gameObject.SetActive(false);
+        }
+
+        /// <summary>
+        /// The impact behind the one action on the screen.
+        ///
+        /// ⚠️⚠️ IT IS INSERTED AS THE FIRST SIBLING, WHICH IS THE ENTIRE MECHANISM. uGUI draws
+        /// in hierarchy order, so a decoration added after the button draws OVER its lettering
+        /// and the control this exists to emphasise becomes the one thing on the screen you
+        /// cannot read. `Front_End_Design.md` § 1.3 names that as a place decoration may never
+        /// go: *"behind or on a control's own lettering"*, which is § 6.4's amber-on-cream
+        /// problem with a picture instead of a colour.
+        ///
+        /// ⚠️ IT IS NOT A RAYCAST TARGET. Anything covering a control is also eating clicks, and
+        /// `CLAUDE.md` § 6.2c question 5 records that block being nobody's stated job three
+        /// times. This one blocks nothing and says so.
+        ///
+        /// ⚠️ AND IT SITS UNDER § 1.3'S RATIO BY CONSTRUCTION. `BrandMarks.Burst` peaks at 0.34
+        /// alpha in Golden and falls to nothing at its rim; on the lit street that is well under
+        /// 1.5:1 against its own ground, so it cannot compete with anything at `Caption` or
+        /// larger. **A drawing that fails that ratio is not decoration, it is a seventh sign.**
+        /// </summary>
+        private static void BuildBurst(Transform slot, RectTransform button)
+        {
+            var go = new GameObject("PrimaryBurst", typeof(RectTransform), typeof(Image));
+            go.transform.SetParent(slot, false);
+            go.transform.SetAsFirstSibling();
+
+            var image = go.GetComponent<Image>();
+            image.sprite = BrandMarks.Burst();
+            image.type = Image.Type.Simple;
+            image.raycastTarget = false;
+
+            var rect = (RectTransform)go.transform;
+            rect.anchorMin = new Vector2(0.5f, 0.5f);
+            rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.anchoredPosition = button != null ? button.anchoredPosition : Vector2.zero;
+            rect.sizeDelta = new Vector2(ActionWidth * BurstReach, ActionHeight * BurstReach);
         }
 
         // -------------------------------------------------------------------------------------
@@ -2416,6 +3024,27 @@ namespace TumbangPreso.UI
         /// </summary>
         public sealed class Parts
         {
+            /// <summary>
+            /// The tarpaulin, so anything that has to hang off it can find it.
+            ///
+            /// ⚠️ IT IS HELD RATHER THAN LOOKED UP BY NAME, because `find("LobbyTopRail")` walks
+            /// the authored scene and this node is built in code: the two namespaces have been
+            /// confused here before (`docs/TODO.md` § 124.11 is a probe knocking on a door that
+            /// had moved).
+            /// </summary>
+            public Transform TopRail;
+
+            /// <summary>The avatar on the identity chip. Set by `RefreshProfileDoor`.</summary>
+            public Image ProfileFace;
+
+            /// <summary>
+            /// The account state under the player's name on the identity chip.
+            ///
+            /// ⚠️ IT IS WHERE `SECURE PROGRESS` WENT. That was a fifth pill on the top rail
+            /// standing beside three MODE tabs as though signing in were a place you could be.
+            /// </summary>
+            public Text ProfileState;
+
             /// <summary>The three mode tabs, indexed by <see cref="LobbyMode"/>.</summary>
             public readonly Button[] Tabs = new Button[3];
 

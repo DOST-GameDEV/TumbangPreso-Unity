@@ -1492,9 +1492,43 @@ namespace TumbangPreso.UI
             // (`docs/TODO.md` § 117.3 is the same fault one control over). `SECURE YOUR PROGRESS`
             // is also 20 characters against a 200-unit chip, which is why it overflowed its own
             // pill in `Logs/shots-runtime/Lobby-v53.png`.
+            // ⚠️⚠️ THE DOOR CARRIES A NAME AND A FACE NOW, AND THE STATE MOVED TO A SECOND
+            // LINE. `docs/TODO.md` § 96: he commissioned the player hub and then could not find
+            // the way into it, because its one door was a corner chip stating a name and a level.
+            // **A level is a status readout and people read those; a face with your own name on
+            // it is a thing people press**, and top-right with a face is where Overwatch,
+            // Valorant and Fortnite all put the way into a profile, so it costs no teaching at
+            // all (`Front_End_Design.md` § 1, and § 133.8's *"controls are familliar to them
+            // already"*).
+            //
+            // ⚠️ THE NAME IS THE ONE THE REST OF THE GAME USES, not a second answer to the same
+            // question. `LocalName()` resolves the account's lobby name and falls back to the
+            // settings store, and it is what `ConfigureClientHello` puts on the wire, so this
+            // chip cannot disagree with the nameplate under the player's own seat.
+            string who = LocalName();
+            Door(label, who);
+
+            if (_chrome.ProfileFace != null)
+            {
+                // ⚠️ DERIVED FROM THE NAME AND NEVER RANDOM. A face that changed per launch
+                // would teach a player that the chip does not mean anything, which is worse than
+                // § 96's unrecognised door rather than better. ⚠️ **The picker that lets somebody
+                // CHOOSE one is not built yet** and is written up in `docs/TODO.md` § 133.15; the
+                // fifteen faces exist and this is the default half of it.
+                _chrome.ProfileFace.sprite = Avatars.Get(Avatars.DefaultFor(who));
+            }
+
+            var state = _chrome.ProfileState;
+            if (state == null) return;
+
+            // ⚠️⚠️ THE STATE LINE REPLACES A WHOLE TAB. `SECURE PROGRESS` was a fifth pill on the
+            // top rail, standing beside three MODE tabs as though signing in were a place you
+            // could be. It is not a place, it is a fact about you, so it belongs on the thing
+            // that says who you are. **That is one fewer object to scan**, which is `CLAUDE.md`
+            // § 6.2's third claim, and one fewer control competing with the primary for the eye.
             if (account != null && account.ShouldOfferUpgrade)
             {
-                Door(label, "SECURE PROGRESS");
+                state.text = "GUEST · SAVE PROGRESS";
                 return;
             }
 
@@ -1503,10 +1537,9 @@ namespace TumbangPreso.UI
 
             if (xp <= 0)
             {
-                // ⚠️ ONE WORD, NOT THREE. `PROFILE · CAREER · MATCHES` was a list of the tabs
-                // behind the door written on the door, which is 190 units of lettering in a chip
-                // sized for a label. The hub's own tab row says what is in it.
-                Door(label, "PROFILE");
+                // ⚠️ ONE PHRASE, NOT THREE. `PROFILE · CAREER · MATCHES` was a list of the tabs
+                // behind the door written on the door. The hub's own tab row says what is in it.
+                state.text = "YOUR PROFILE";
                 return;
             }
 
@@ -1523,7 +1556,7 @@ namespace TumbangPreso.UI
                 line += $"   ·   {tier}";
             }
 
-            Door(label, line);
+            state.text = line;
         }
 
         /// <summary>⚠️ ONE PLACE WRITES THIS LABEL, so the colour and the fit cannot be got right
@@ -1533,8 +1566,14 @@ namespace TumbangPreso.UI
         {
             label.text = text;
             label.color = UiTheme.PaperInk;
-            label.fontSize = PaperKit.Body;
-            MenuKit.Fit(label, 200.0f - 24.0f, 13);
+
+            // ⚠️ THE NAME IS `Title` NOW BECAUSE THE CHIP IS A CARD RATHER THAN A PILL, and the
+            // fit width moved with it rather than staying the old pill's width with a guess
+            // subtracted: 334 less the 14-unit pad, the 72-unit face, the 12-unit gap and the
+            // 34-unit chevron leaves **202 units**, measured through the chip's own contents.
+            label.fontSize = PaperKit.Title;
+            MenuKit.Apply(label, PaperKit.FaceFor(label.fontSize));
+            MenuKit.Fit(label, 202.0f, 15);
         }
 
         /// <summary>

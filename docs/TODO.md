@@ -708,6 +708,151 @@ scattered across a conversation and answered them one at a time.
 THAN HERE:** *not overwhelming*, *easy to look at*, and **findable without being taught**. § 96 is
 the receipt with his name on it and the door into the hub is still not fixed.
 
+### 133.15 ⚠⚠ THE SECOND ATTEMPT AT § 133.13, 2026-09-03, branch `abilities-rework`
+
+🧑 opened the handoff with the instruction that governs this whole entry: **"ask it to
+genuinely THINK abt how to make it good and capture the quirkiness and style of the logo"**,
+then, watching it: *"i want u to really think abt composition and visual harmony"*, *"will this
+be pleasing, intuitive and not overwhelming? is everything placed right"*, *"be aware of empty
+space and shit, as well as negative space and visual hierarchy"*, and **"start building it into
+the game but try to give it even more personality , all buttons"**.
+
+⚠⚠ **THE COMPOSITIONS WERE DRAWN BEFORE ANY CODE WAS WRITTEN, AND THAT IS THE ONE
+PROCEDURAL CHANGE FROM THE PASS THAT FAILED.** § 133.13's diagnosis is that the last session
+*"wrote both, built the system instead, and then reported as though the job were substantially
+done"*. `docs/Front_End_Design.md` § 2 specified five compositions in prose and nothing drew
+them, so nobody could see that they had not been built. A drawing cannot hide that.
+
+#### What landed
+
+**1. The sub font is Familjen Grotesk, and Nunito is gone.** 🧑: *"i think our sub font sucks
+its too ai"*. It is a fair reading and the measurement says why, in
+`Assets/TumbangPreso/Art/ui/fonts/SOURCES.txt`: **x-height alone is the wrong test for a
+pairing.** It answers "does a row shrink when it moves to the sub face" and says nothing about
+whether two faces look related. The measurement that answers that is x-height over CAP height,
+and Darumadrop's is extreme at **0.833** where a text face is nearer 0.70. **Nunito's is 0.694,
+the lowest of every candidate measured**: it had the closest x-height and the worst proportion
+at once, which is what reads as a stock pairing. Familjen Grotesk is **0.769**, less than half
+Nunito's distance, keeps apparent size at **-2.0 per cent**, has a real bold at **+51 per cent**
+stem, is **58 KB a weight against 122**, and is **the only candidate that draws all fifteen
+glyphs this front end asks for** (Nunito was missing the two triangles, the check and the left
+arrow, so four marks in the game were falling through to a fallback face nobody chose).
+`Logs/ui/font-pairing-v1.png` is the specimen; `scratchpad/fontsrc/measure2.py` and `stems.py`
+re-run every column.
+
+⚠ **AND THE FIRST PASS'S STEM COLUMN WAS PARTLY MEASURING A TAIL.** It took the width of a
+lowercase `l`, which in several of these faces carries one. Measured on a plain cap `I` every
+candidate has a real bold, so weight stopped being the differentiator and proportion became it.
+
+**2. `PaperCraft.PaintBrand` draws buttons with three things it did not have**, which is
+*"give the buttons a bit more personality and cuter"* answered where it was asked rather than
+per call site. `docs/Front_End_Design.md` § 1.4 has the table and the measurements.
+
+- ⚠⚠ **The stroke's weight varies along its own length**, ± 26 per cent, sampled on y.
+  § 133.13 names this in the rejection in as many words. A constant stroke is a BORDER; the
+  mark's line reads 19 to 33 px on 300 px letters.
+- ⚠⚠ **Four different corner radii**, via a new `PaperCraft.Depth4`. The old `Depth`
+  folds the rect with `Mathf.Abs` and therefore **cannot** tell one corner from another, so
+  every brand control in the game was symmetric by construction.
+- ⚠⚠ **Every control family is drawn by its own hand**, seeded off surface + accent +
+  height by `PaperCraft.Hand`. This is *"the issue with old UI is everything feels repetitive
+  bcz i think u use the same code to generate them all"* answered at the level it was asked.
+  **The seed deliberately excludes the pose**, or a button would change shape under the pointer.
+- Plus the under-bar's ends taper (legal on x, because only the middle column of a nine-slice
+  stretches), and hover thickens the stroke by a tenth rather than only lifting the fill.
+
+**3. Fifteen drawn avatars**, `tools/build_avatar_art.py`, because 🧑 cropped the identity chip
+and said **"like tf is that pic doing there"**. It was a square cut out of the old Godot
+character screen: a picture of a user interface, on a user interface. `Front_End_Design.md`
+§ 1.5 carries why they are drawn rather than cut out, and it is not laziness: the knockout is
+solvable, the FRAMING is not, because the model stands at a different height in every reference
+sheet and **a picker is twelve things seen together**. 172 KB for all fifteen and no credit line.
+
+**4. `BrandSwatchProbe`**, a new editor probe that photographs every surface at every pose at 3x
+on the real paper ground, nine-slicing by hand. Every recorded button fault in this repository
+was a detail at a scale `UiRuntimeShots` cannot show: § 121.1's grey halo was found by sampling
+a PNG row, and *"its a circle and a sharp shape at the same time"* was 🧑 zooming into his own
+screen.
+
+**5. `docs/Front_End_Design.md` § 2.2b: the lobby is THREE screens and the tarpaulin is the
+slot that changes.** 🧑: *"lets say u click ranked wtf would show?"* ⚠⚠ **That question
+had no written answer and the code answered it by hiding things.** `Parts.SetMode` switches nine
+objects off and on, so each mode was the custom screen with holes in it, and a hole is what
+§ 118.1 row 2 measured as *"four corners and a hole"*. The composition now holds and one slot
+carries the one fact each mode exists to produce.
+
+**6. THE LOBBY'S COMPOSITION IS REBUILT**, which is the first of the five and the one 🧑
+named first. It is not a repaint: every object below moved, changed kind, or stopped existing.
+
+| Was | Is | Why |
+|---|---|---|
+| A 68-unit cream island bar holding **six pills of one size in one row** | A **196-unit tarpaulin** that sags in the middle, leans, and runs off BOTH screen edges | The single clearest instance of *"the failed pass drew the red line and kept the grid"*. It is also the whole of "filipino-esque" on this screen and none of it is labelled as such: a vinyl tarp over a barangay court is a thing the room is MADE of. `BrandMarks.Tarpaulin` |
+| No screen name at all | **LOBBY**, top left, `Display`, with the seat count under it | `Front_End_Design.md` § 1's first spine row: *"the answer to 'where am I'"*. Every other screen had one; this one had three tabs, and a tab says which mode you picked rather than which screen you are on |
+| BACK as a fifth pill **competing with the tab row** (§ 118.1 row 5) | BACK hanging directly under the screen's name | Answered by POSITION rather than by size |
+| Three tabs in a `HorizontalLayoutGroup` with `childForceExpand` on both axes | Three tags **hung on cords of three different lengths** | A force-expanding layout group is a machine for producing identical objects in a row, which is *"u use the same code to generate them all"* in one component. ⚠️ **Not rotated**: § 1.2 is explicit that the lean is for chrome and never for type |
+| `ACCOUNT`, a 200-unit chip stating a level | The **identity chip**: a drawn face, the player's own name at `Title`, the account state under it, a chevron, hanging off the tarp's bottom edge | ⚠️⚠️ **§ 96'S FIX.** A level is a status readout and people read those; a face with your own name on it is a thing people press |
+| `SECURE PROGRESS` as a **fifth tab beside three MODE tabs** | The second line on the identity chip | Signing in is not a place you can be. One fewer object to scan |
+| The room code on a plaque in the bottom-right column | The room code **on the tarpaulin**, centre | `Front_End_Design.md` § 2.2b: the composition holds between modes and ONE SLOT carries the fact each mode exists to produce. This is the written answer to *"lets say u click ranked wtf would show?"* |
+| A 460x96 primary inside a cream bar | A **560x132** primary with the mark's own **impact burst** behind it, lettering at `Display` | *"i want start match button to have genuine emphases and look adn feel good to press"*. The four ordering tools are position, size, weight, colour IN THAT ORDER, and it already had three |
+| A flat cream slab across the bottom third holding three cells | **Nothing.** The rail is transparent and its three groups stand on the street | ⚠️ The layout, the fitter and the self-centring all STAY; only the paint is gone. Every child already carries its own opaque surface, so the slab was buying separation from a background the controls separate themselves from |
+| The tsinelas mark generated and **used nowhere** | On your own seat, once per screen | Paul Andrei's crown. § 1.1: it means THIS ONE, at most once, and it is not pressable so it can never become § 6.3's second door |
+| 680 units of dead ground down one side and 475 down the other | **Chalk**, in both bottom corners, outside every content rect | *"u can add random shit and designs to the ui too btw"*. § 1.3: decoration is free where nothing has to be read |
+
+**7. The login screen's SEAM is drawn.** `Logs/shots-runtime/SignInBoot-v83.png` is a Honey
+Quartz column and a piece of key art meeting at a **perfectly straight vertical line down the
+middle of the window**. Every rect fitted its box and every colour was in the palette, and the
+one edge the player actually looks at was the one edge in the design that no hand drew.
+`BrandMarks.ColumnEdge` replaces it with a torn edge, and the drip escapes across it, which is
+`Front_End_Design.md` § 2.1's own mechanism: *"the two objects are one drawing rather than a
+picture with a box next to it."*
+
+#### ⚠⚠ FOUR FAULTS THE RENDERS FOUND THAT NO TEST COULD, AND ALL FOUR SHIPPED FIRST
+
+**This is the section worth reading.** Every one of these was green in EditMode, drew without a
+warning, and was obvious in a picture.
+
+1. ⚠️⚠️ **`Object.Destroy` ON A COMPONENT THAT PAINTS FROM `Update` DOES NOTHING.**
+   `PaperKit.Sheet` attaches a `PaperSkin`, and `PaperSkin.Update` calls `Rebuild`, which writes
+   `_image.sprite` every frame. `Destroy` is deferred to the end of the frame, so the tarpaulin
+   was overwritten by a plain `Sheet` slab one frame after it was set.
+   `Logs/shots-runtime/Lobby-v84.png` is a flat cream band with no sag, no stroke and no ties:
+   **the old rail with a new height.** A component that paints from `Update` has to be DISABLED,
+   not destroyed, and the honest version is not to create it at all.
+2. ⚠️⚠️ **`tsinelas_hit.png` IMPORTS AS A TEXTURE, NOT A SPRITE**, so
+   `Resources.Load<Sprite>` answers null and the `Image` drew a **filled white rectangle** on the
+   player's own nameplate. ⚠️ **This is the third time in this repository** and
+   `SignInScreen.BuildLogo` already records the other two, with the conclusion followed here: a
+   `.meta` is a file nobody edits by hand and a re-import can reset it, so the CALLER draws a
+   `RawImage`.
+3. ⚠️⚠️ **A PIVOT IS NOT AN ALIGNMENT.** The room code was placed 46 units below the top of the
+   banner with `pivot.y = 0`, so the rect grew UPWARD from that point and 96 units of plaque went
+   off the top of the window. `Logs/shots-runtime/Lobby-v85.png` shows the code cut in half.
+4. ⚠️ **A RATIO COMPUTED AGAINST A COLOUR IS NOT A RATIO AGAINST THE DRAWN PIXEL.** The chalk was
+   tinted to 0.16 alpha off § 1.3's 1.5:1 ceiling, and the sprite's own strokes are already
+   feathered below 1, so the Image tint multiplied a soft mark and produced nothing visible at
+   all. **Identical to § 117.7's *"a chalk rule at 0.55 alpha is a quarter-strength mark, because
+   the tint multiplies the sprite's own"***, found again three months later in a different file.
+
+#### ⚠⚠ What is NOT done, stated plainly because § 133.13 is about a report that was not
+plain enough
+
+- **Three of the five compositions are untouched**: `ConvertedSettingsPanel`,
+  `ConvertedCharacterSelect` and `PlayerHub` still have the arrangement § 118.1 and § 121 list
+  faults against. Settings in particular is still one scrolling wall with no tabs and no
+  collapsing, which is § 92.3b's *"grouping without collapsing does not fix a wall, it aligns
+  it"*, and `Front_End_Design.md` § 2.4 specifies the ledger it should be.
+- **The login screen has its seam and nothing else.** § 2.1's composition (the wordmark as the
+  hero overlapping the art) is not built.
+- **The avatar PICKER does not exist.** The fifteen faces are drawn, installed and used as a
+  stable per-name default; 🧑 asked to be able to CHOOSE one and that half is not built.
+- **The hatch is drawn and used nowhere**, which is the same fault the mark had before this
+  session. `BrandMarks.Hatch` exists; no disabled control routes through it yet.
+- **`Checks.RunAll`, the full PlayMode suite and `AspectRatioProbes` have not been run against
+  any of this.** EditMode is 327/327 and `UiRuntimeShots` renders, and neither of those is the
+  gate § 126.8 and § 131.6 are about.
+- **Nobody has looked at it on his window shape**, which is `CLAUDE.md` § 6.2b's third row and
+  the one that has caught a collapsed layout before.
+
 ### 133.11 ⚠️ What is still open, and nothing in it is blocked
 
 - ✅ **THE PALETTE IS NO LONGER A BLOCKER.** It landed 2026-09-03, measured, and the repaint went

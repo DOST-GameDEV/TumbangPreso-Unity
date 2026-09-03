@@ -55,11 +55,11 @@ namespace TumbangPreso.UI
                 "Kenney kits (Mini Characters, City, Suburban, Fantasy Town, Mini Forest, Food, Furniture, Car) — CC0, kenney.nl. Attribution is courtesy, not required."),
             // ⚠️ TWO FACES SINCE 2026-09-03, AND BOTH ARE NAMED HERE. `docs/TODO.md` § 133:
             // Darumadrop ships one weight, so it was setting four-line ability descriptions and
-            // faking every bold. It is the DISPLAY face now and Nunito carries the reading.
+            // faking every bold. It is the DISPLAY face now and Familjen Grotesk carries the reading.
             // `Assets/TumbangPreso/Art/ui/fonts/SOURCES.txt` has the licences and the
             // measurements; both are SIL OFL and neither is modified.
             new Credit("TYPEFACES",
-                "Darumadrop One (display) — Copyright 2020 The Darumadrop One Project Authors (github.com/ManiackersDesign/darumadrop). Nunito (text) — Copyright 2014 The Nunito Project Authors (github.com/googlefonts/nunito). Both licensed under the SIL Open Font License 1.1."),
+                "Darumadrop One (display) — Copyright 2020 The Darumadrop One Project Authors (github.com/ManiackersDesign/darumadrop). Familjen Grotesk (text) — Copyright 2021 The Familjen Grotesk Project Authors (github.com/Familjen-Sthlm/Familjen-Grotesk). Both licensed under the SIL Open Font License 1.1."),
             new Credit("AUDIO",
                 "All music and sound effects are original. The OST is written by the team; the SFX and ambience beds are synthesised in-house by this project's own tools. No third-party audio ships in this build."),
             new Credit("TSINELAS",

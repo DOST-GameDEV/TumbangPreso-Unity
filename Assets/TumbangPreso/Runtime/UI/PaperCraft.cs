@@ -497,7 +497,7 @@ namespace TumbangPreso.UI
             Sprite made;
             switch (surface)
             {
-                case Surface.Brand: made = PaintBrand(h, pose, key, accent); break;
+                case Surface.Brand: made = PaintBrand(h, pose, key, accent, surface); break;
                 // ⚠️⚠️ EVERY CHIP AND EVERY TAB IS PAINTED IN THE BRAND LANGUAGE TOO, AND
                 // AGAIN IT IS THE PAINTER THAT MOVED RATHER THAN THE SURFACE. `Token` and `Live`
                 // are read by name all over the front end to decide LABEL COLOUR and the tab
@@ -506,8 +506,8 @@ namespace TumbangPreso.UI
                 // line. The accent each one takes is fixed by the surface: a chip is the quiet
                 // fill and a live tab is the dark one, which keeps the 10:1 value inversion
                 // § 118.4 settled.
-                case Surface.Token: made = PaintBrand(h, pose, key, Accent.Wood); break;
-                case Surface.Live: made = PaintBrand(h, pose, key, Accent.Dark); break;
+                case Surface.Token: made = PaintBrand(h, pose, key, Accent.Wood, surface); break;
+                case Surface.Live: made = PaintBrand(h, pose, key, Accent.Dark, surface); break;
                 // ⚠️⚠️ THE PRIMARY IS PAINTED IN THE BRAND LANGUAGE NOW, AND IT IS THE
                 // PAINTER THAT MOVED RATHER THAN THE SURFACE. 🧑 2026-09-03: **"i wanted u to
                 // remake all buttons in a diff style that feels like my logo bruh"**.
@@ -516,7 +516,7 @@ namespace TumbangPreso.UI
                 // `PaperDress`), all of which are about BEHAVIOUR rather than about paint;
                 // repointing the enum would have moved a look and broken a contract in the same
                 // line. Swapping the painter moves exactly the thing he asked about.
-                case Surface.Action: made = PaintBrand(h, pose, key, accent); break;
+                case Surface.Action: made = PaintBrand(h, pose, key, accent, surface); break;
                 case Surface.Tray: made = PaintTray(h, pose, tall, key); break;
                 case Surface.Ghost: made = PaintGhost(h, tall, key); break;
                 case Surface.Sign: made = PaintPlate(h, tall, key, true); break;
@@ -1292,7 +1292,8 @@ namespace TumbangPreso.UI
         /// - **Nothing is lit.** No ramp, no keyline, no bevel, no varnish band. Every fill in
         ///   the logo is one flat value.
         /// </summary>
-        private static Sprite PaintBrand(int h, Pose pose, string key, Accent accent)
+        private static Sprite PaintBrand(int h, Pose pose, string key, Accent accent,
+                                         Surface surface)
         {
             bool pressed = pose == Pose.Press;
             bool off = pose == Pose.Off;
@@ -1305,13 +1306,43 @@ namespace TumbangPreso.UI
             int face = h - drop;
             if (face < 8) { drop = 0; face = h; }
 
-            float corner = face * 0.22f;
+            // NO TWO CORNERS ARE THE SAME AND NO TWO CONTROLS ARE THE SAME, WHICH IS THE
+            // WHOLE OF *"i think u use the same code to generate them all"* ANSWERED AT THE
+            // LEVEL IT WAS ASKED. The base radius is unchanged; what is new is that the four
+            // corners scatter around it and the scatter is keyed to the control FAMILY, so
+            // START MATCH, JOIN, CHAT and BACK are four different drawings of the same object
+            // and each of them is the SAME drawing every time it is painted.
+            //
+            // THE SPREAD IS 0.74 TO 1.32 OF THE BASE, WHICH IS DELIBERATELY NARROW. Wider and
+            // a button stops reading as a rounded rectangle at all; narrower and the eye reads
+            // four equal corners with a rendering error. It is 133.7's rule as a number: the
+            // personality is in the SHAPE, and what makes a shape hand-drawn is that its
+            // variation is irregular rather than large.
+            int hand = Hand(surface, accent, h);
+            float baseCorner = face * 0.22f;
+            float cTL = baseCorner * (0.74f + (((hand >> 2) & 7) * 0.083f));
+            float cTR = baseCorner * (0.74f + (((hand >> 5) & 7) * 0.083f));
+            float cBR = baseCorner * (0.74f + (((hand >> 8) & 7) * 0.083f));
+            float cBL = baseCorner * (0.74f + (((hand >> 11) & 7) * 0.083f));
+            float corner = Mathf.Max(Mathf.Max(cTL, cTR), Mathf.Max(cBR, cBL));
+
+            // this control's own place in the noise field, so its edge is its own edge
+            float handX = ((hand % 97) * 0.41f) + 0.37f;
+            float handY = (((hand / 97) % 89) * 0.53f) + 2.71f;
+
             int cap = Mathf.CeilToInt(corner) + BrandLift + BrandWobble + 6;
             int width = (cap * 2) + 4;
             var pixels = new Color[width * h];
 
             int stroke = Mathf.Max(3, Mathf.RoundToInt(face * 0.085f));
             int bar = Mathf.Max(2, Mathf.RoundToInt(face * 0.055f));
+
+            // THE POINTER PRESSES THE PEN HARDER. Hover was a fill lift alone, which on a flat
+            // construction with no ramp is the smallest signal this front end has; a stroke
+            // that thickens by a tenth is legible at a glance and, unlike a colour change,
+            // survives a photograph and a colourblind player. The LINE COLOUR is still
+            // untouched, for the reason the note below already gives.
+            float strokeScale = pose == Pose.Hover ? 1.12f : 1.0f;
 
             // ⚠️ THE CLOSED LIST IS STILL CLOSED. `CLAUDE.md` § 6.5: pick a role, not a fill.
             // Chartreuse is the ACTION and Honey Quartz is everything else, which is
@@ -1345,26 +1376,68 @@ namespace TumbangPreso.UI
                 // stretched into streaks at whatever width the caller asks for. Sampled at two
                 // frequencies because one produces a regular ripple, which reads as a wave rather
                 // than as a hand.
-                float n1 = Mathf.PerlinNoise(0.37f, y * 0.085f) - 0.5f;
-                float n2 = Mathf.PerlinNoise(7.13f, y * 0.031f) - 0.5f;
-                float wobble = ((n1 * 0.65f) + (n2 * 0.35f)) * BrandWobble * 2.0f;
+                float n1 = Mathf.PerlinNoise(handX, y * 0.085f) - 0.5f;
+                float n2 = Mathf.PerlinNoise(handX + 6.76f, y * 0.031f) - 0.5f;
+
+                // THE THIRD FREQUENCY IS A BOW RATHER THAN A WOBBLE, and it is what the first
+                // version was missing. Two fast frequencies give an edge that is rough but
+                // straight over its length; a hand-drawn line is also not straight. At 0.011
+                // the wavelength is about ninety units, so a tall control bows once and a chip
+                // does not bow at all, which is how a real line behaves.
+                float n3 = Mathf.PerlinNoise(handX + 3.91f, y * 0.011f) - 0.5f;
+                float wobble = ((n1 * 0.52f) + (n2 * 0.30f) + (n3 * 0.18f)) * BrandWobble * 2.0f;
+
+                // THE WOBBLE FADES OUT ACROSS THE CORNERS, AND WITHOUT THIS IT NOTCHES THEM.
+                // It is one offset applied to a whole ROW, which is exactly right along a
+                // straight vertical run: the edge moves left or right by a unit or two and the
+                // rows either side move with it. Across a corner ARC the rows are already
+                // travelling in x, so a per-row offset compounds with the arc's own slope and
+                // the curve comes out stepped. `Logs/ui/brand-swatch-v1.png` shows it as two
+                // notches at the top of the primary, and it reads as a rendering fault rather
+                // than as a hand.
+                //
+                // IT IS ALSO THE HONEST READING OF THE MARK, which is why this is a fix rather
+                // than a compromise: the letters' long verticals wander and their corners are
+                // decided in one confident movement. The four unequal radii are what carry the
+                // corners now, and they carry them better than noise did.
+                int yWob = y - drop;
+                float edge = Mathf.Clamp01(Mathf.Min(yWob, face - 1 - yWob)
+                                           / Mathf.Max(1.0f, corner));
+                wobble *= edge * edge * (3.0f - (2.0f * edge));
+
+                // THE STROKE'S WEIGHT VARIES ALONG ITS OWN LENGTH, AND THIS IS THE SINGLE MOST
+                // CHARACTERISTIC THING ABOUT THE MARK THAT THE FIRST BRAND PASS DID NOT DRAW.
+                // docs/TODO.md 133.13 names it in the rejection: *"a stroke whose weight varies
+                // along its own length"*. The old painter had ONE `stroke` for the whole
+                // silhouette, so it produced a rounded rectangle with a thick even border,
+                // which is a border rather than a line somebody drew.
+                //
+                // IT VARIES WITH Y AND NEVER WITH X, for the slicing reason the surface note
+                // gives, and that is also honest: the mark's horizontals are far steadier than
+                // its verticals.
+                int strokeY = Mathf.Max(2, Mathf.RoundToInt(
+                    stroke * strokeScale
+                    * (1.0f + ((Mathf.PerlinNoise(handY, y * 0.055f) - 0.5f)
+                               * 2.0f * BrandStrokeVary))));
 
                 for (int x = 0; x < width; x++)
                 {
                     int yy = y - drop;
-                    float depth = Depth(x, yy, width, face, corner) + wobble;
+                    float depth = Depth4(x, yy, width, face, cTL, cTR, cBR, cBL) + wobble;
+                    float inset = Mathf.Min(x + 0.5f, width - x - 0.5f);
 
                     Color c;
 
                     if (depth > 0.0f)
                     {
-                        if (depth <= stroke)
+                        if (depth <= strokeY)
                         {
                             c = Fade(line, depth);
                         }
                         else if (!pressed && !off
-                                 && yy >= stroke + 1 && yy < stroke + 1 + bar
-                                 && depth > stroke + 2)
+                                 && yy >= strokeY + 1
+                                 && yy < strokeY + 1 + BarAt(bar, inset, strokeY)
+                                 && depth > strokeY + 2)
                         {
                             // The darker bar tucked inside the bottom edge. It stops short of the
                             // stroke so the two read as two marks rather than as one thick one,
@@ -1406,7 +1479,45 @@ namespace TumbangPreso.UI
         /// IRREGULAR, not that it is large. At 3 units on a 96-unit button it is under the eye's
         /// threshold for "wrong" and over its threshold for "drawn".
         /// </summary>
-        private const int BrandWobble = 3;
+        private const int BrandWobble = 4;
+
+        /// <summary>
+        /// How much the stroke's own weight wanders, as a fraction of itself.
+        ///
+        /// MEASURED, NOT PICKED. Sampling the deep-red line around the T and the P in
+        /// `tump_logo_colour.jpg` perpendicular to its own run, it reads between 19 and 33 px
+        /// on a mark whose letters are about 300 px tall: roughly a quarter either side of its
+        /// mean. At 0.26 a 5-unit stroke on a 56-unit chip runs between 4 and 6, and a 12-unit
+        /// stroke on the primary runs between 9 and 15, which is the proportion the drawing has.
+        /// </summary>
+        private const float BrandStrokeVary = 0.26f;
+
+        /// <summary>
+        /// The under-bar's thickness at a given depth into the shape, so its two ENDS taper.
+        ///
+        /// IT TAPERS ON X, WHICH THE STROKE MAY NOT, AND THE NINE-SLICE IS WHY THAT IS LEGAL
+        /// HERE. Only the middle COLUMN of these sprites is stretched; the left and right caps
+        /// are preserved pixel for pixel at every width, and the taper lives entirely inside
+        /// them. So the bar reaches full weight a few units in and can never streak.
+        ///
+        /// THE ARGUMENT IS THE HORIZONTAL INSET AND THE FIRST VERSION PASSED IT `depth`, WHICH
+        /// IS A DIFFERENT MEASUREMENT AND MADE THE BAR ONE PIXEL TALL EVERYWHERE. `depth` is
+        /// the distance to the NEAREST edge; the bar sits two units above the bottom stroke, so
+        /// along its whole length the nearest edge is the bottom one and the taper factor was
+        /// negative and clamped to nothing. **The bar was invisible on every button in the
+        /// game and no test could see it**, which is the entire argument for
+        /// `BrandSwatchProbe` existing: it is a one-unit detail on a 96-unit control and a
+        /// screen shot of a lobby cannot show it.
+        ///
+        /// AND IT IS WHY THE BAR READS AS DRAWN RATHER THAN AS A RULE. In the mark the bar
+        /// under each letter is heaviest in the middle and lifts off the page at both ends,
+        /// because it was drawn with one stroke of a marker that was starting and stopping.
+        /// </summary>
+        private static int BarAt(int bar, float inset, int stroke)
+        {
+            float into = Mathf.Clamp01((inset - stroke - 2.0f) / 9.0f);
+            return Mathf.RoundToInt(bar * into);
+        }
 
         // -----------------------------------------------------------------------------------
         // TRAY: a thing you read out of, or type into.
@@ -1576,6 +1687,68 @@ namespace TumbangPreso.UI
             float dy = (midY + 0.5f) - Mathf.Abs(y - midY);
 
             return WoodCraft.Depth(dx, dy, corner, chamfer, false);
+        }
+
+        /// <summary>
+        /// The same measurement with FOUR corner radii instead of one.
+        ///
+        /// ⚠️⚠️ THE OVERLOAD ABOVE CANNOT DO THIS AND THE REASON IS ONE LINE OF ITS OWN BODY.
+        /// It folds the rect with <c>Mathf.Abs(x - midX)</c>, which measures the distance to the
+        /// NEAREST edge and therefore cannot tell a top-left corner from a bottom-right one: all
+        /// four are the same shape by construction. That is correct for furniture and it is
+        /// exactly the thing that makes a row of brand buttons read as one button stamped nine
+        /// times.
+        ///
+        /// ⚠️ THE MARK HAS NO TWO CORNERS ALIKE. Sampling `tump_logo_colour.jpg`, the T's
+        /// shoulders are near square and its foot is round, the P's bowl is round and its stem is
+        /// cut flat. A single radius is the one decision that says "computed" out loud, and no
+        /// amount of wobble on the edge between two identical corners takes it back.
+        /// </summary>
+        private static float Depth4(int x, int y, int width, int height,
+                                    float tl, float tr, float br, float bl)
+        {
+            if (y < 0 || y >= height) return -1.0f;
+
+            float dxL = x + 0.5f, dxR = width - x - 0.5f;
+            float dyT = y + 0.5f, dyB = height - y - 0.5f;
+
+            float r = dxL < dxR
+                ? (dyT < dyB ? tl : bl)
+                : (dyT < dyB ? tr : br);
+
+            float ex = Mathf.Min(dxL, dxR);
+            float ey = Mathf.Min(dyT, dyB);
+
+            if (ex >= r || ey >= r) return Mathf.Min(ex, ey);
+
+            float ox = r - ex, oy = r - ey;
+            return r - Mathf.Sqrt((ox * ox) + (oy * oy));
+        }
+
+        /// <summary>
+        /// A stable small integer per control FAMILY, so no two of them are drawn by the same
+        /// hand and every one of them is drawn by the same hand every time.
+        ///
+        /// ⚠️⚠️ IT IS DERIVED FROM THE SURFACE, THE ACCENT AND THE HEIGHT, AND DELIBERATELY NOT
+        /// FROM THE POSE. Seeding off the whole cache key would give a control one silhouette at
+        /// rest and a different one under the pointer, so every button in the game would twitch
+        /// when the mouse crossed it. Rest, hover, press and disabled are four poses of ONE
+        /// object and they have to agree about its outline.
+        ///
+        /// ⚠️ AND IT IS `unchecked` ARITHMETIC ON PURPOSE. It is a hash, not a sum; overflow is
+        /// the mechanism rather than a fault, and the default checked context would throw.
+        /// </summary>
+        private static int Hand(Surface surface, Accent accent, int h)
+        {
+            unchecked
+            {
+                int k = 17;
+                k = (k * 31) + (int)surface;
+                k = (k * 31) + (int)accent;
+                k = (k * 31) + h;
+                k ^= k >> 13;
+                return Mathf.Abs(k);
+            }
         }
 
         /// <summary>
