@@ -883,7 +883,7 @@ namespace TumbangPreso.PlayTests
                 && (text.fontStyle == FontStyle.Bold
                     || text.fontStyle == FontStyle.BoldAndItalic))
             {
-                // ⚠️ THE TEST IS WHETHER THE FILE ITSELF IS A BOLD ONE. Familjen Grotesk ships Bold as a
+                // ⚠️ THE TEST IS WHETHER THE FILE ITSELF IS A BOLD ONE. Work Sans ships Bold as a
                 // separate asset, so a label legitimately in that file and marked Bold is asking
                 // for a weight it already has, which is harmless. Anything else is asking Unity
                 // to invent one.

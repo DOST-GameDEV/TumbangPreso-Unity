@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: e96d6a87dd52542886129dc847d9cbb4
+guid: 7f635ef973206c8021f256ba6a6ff2f2
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - Familjen Grotesk
+  - Work Sans
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0

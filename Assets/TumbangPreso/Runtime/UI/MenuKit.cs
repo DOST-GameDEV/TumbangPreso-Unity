@@ -39,7 +39,7 @@ namespace TumbangPreso.UI
             /// screen, a hero or player name, a big value, a pennant.</summary>
             Display,
 
-            /// <summary>Familjen Grotesk. A word somebody READS: a sentence, a settings row, a
+            /// <summary>Work Sans. A word somebody READS: a sentence, a settings row, a
             /// caption, a chat line, a form field and its hint, a secondary button, a list
             /// row.</summary>
             Body,
@@ -62,13 +62,13 @@ namespace TumbangPreso.UI
             ? _font
             : _font = Load("UI/fonts/DarumadropOne-Regular", "Darumadrop");
 
-        /// <summary>Familjen Grotesk Regular. See <see cref="Face.Body"/>.</summary>
+        /// <summary>Work Sans Regular. See <see cref="Face.Body"/>.</summary>
         public static Font BodyFont => _body != null
             ? _body
-            : _body = Load("UI/fonts/FamiljenGrotesk-Regular", "Familjen Grotesk Regular");
+            : _body = Load("UI/fonts/WorkSans-Regular", "Work Sans Regular");
 
         /// <summary>
-        /// Familjen Grotesk Bold, as a SEPARATE FILE rather than as a font style.
+        /// Work Sans Bold, as a SEPARATE FILE rather than as a font style.
         ///
         /// ⚠️⚠️ THE WHOLE OF § 133 IS ABOUT THIS ONE LINE. Legacy `Text` given
         /// `FontStyle.Bold` on a face that ships no bold does not fail and does not warn: it
@@ -83,7 +83,7 @@ namespace TumbangPreso.UI
         /// </summary>
         public static Font BodyBoldFont => _bodyBold != null
             ? _bodyBold
-            : _bodyBold = Load("UI/fonts/FamiljenGrotesk-Bold", "Familjen Grotesk Bold");
+            : _bodyBold = Load("UI/fonts/WorkSans-Bold", "Work Sans Bold");
 
         private static Font Load(string path, string human)
         {

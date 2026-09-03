@@ -259,6 +259,17 @@ namespace TumbangPreso.UI
         private static readonly float[] TagDrop = { 30.0f, 14.0f, 38.0f };
 
         /// <summary>
+        /// How far the whole hung group is raised into the banner.
+        ///
+        /// ⚠️ 46, WHICH IS ABOUT HALF A TAG. `PaperKit.ChipHeight` is 40 and the tarp's painted
+        /// edge runs between 19 and 60 units above this rail's bottom depending on the sag, so at
+        /// 46 every tag crosses that edge at every point along it: none of the three is fully on
+        /// the vinyl (which would make it a printed word rather than a hung object) and none is
+        /// fully on the street (which is what made them disappear).
+        /// </summary>
+        private const float TagLift = 46.0f;
+
+        /// <summary>
         /// The bottom rail: the match.
         ///
         /// ⚠️ 184 IS THE TALLEST OF THE THREE COLUMNS PLUS THE PADDING, AND THE TALLEST IS THE
@@ -1068,8 +1079,28 @@ namespace TumbangPreso.UI
             // the ones before it plus one gap, and its y is `TagDrop[i]`; nothing here is a magic
             // offset tuned against one window, which is `CLAUDE.md` § 6.3's rule about `UiRows`
             // applied one screen over.
+            // ⚠️⚠️ THE TAGS STRADDLE THE TARPAULIN'S BOTTOM EDGE RATHER THAN HANGING CLEAR OF
+            // IT, AND 🧑 LOST THEM ENTIRELY WHEN THEY DID NOT: **"also where did the gamemodes
+            // go? practice, custom, ranked that shit? i kinda liked those"**, looking at
+            // `Logs/shots-runtime/Lobby-v89.png` where all three are present, wired and drawn.
+            //
+            // ⚠️⚠️ THAT IS `docs/TODO.md` § 96 IN MINIATURE AND IT IS THE MOST IMPORTANT NOTE ON
+            // THIS METHOD. The hub had exactly one door and the person who commissioned it could
+            // not find it, while `PlayerHubLayoutProbe` was green at all nine resolutions. Here
+            // `UiClickProbe` can prove all three tags are reachable and `PaperPurityProbe` can
+            // prove none of them was lost, and **both of those are true of a control nobody
+            // sees.** A pale Honey Quartz chip standing on a sunlit street is a control with no
+            // ground: `PaperKit.Ink`'s own note says the front end is legible because the SHEET
+            // makes it so, and these three were the only paper controls in the game with no sheet
+            // under them.
+            //
+            // ⚠️ SO THEY KEEP THE HUNG ARRANGEMENT AND GET THEIR GROUND BACK. Raised 46 units
+            // each tag is half on the vinyl and half on the street, which is what a tag hung off
+            // a tarp actually looks like, and the half on honey is what makes the lettering
+            // read. **The three different cord lengths, which is where the quirk lives, are
+            // untouched.**
             barRect.anchoredPosition = new Vector2(
-                TarpOverhang + EdgeMargin + BackWidth + 44.0f, 0.0f);
+                TarpOverhang + EdgeMargin + BackWidth + 44.0f, TagLift);
             barRect.sizeDelta = new Vector2((TabWidth * 3.0f) + (PaperKit.Gap * 2.0f),
                                             PaperKit.ChipHeight + 44.0f);
 

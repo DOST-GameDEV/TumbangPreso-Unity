@@ -2,9 +2,9 @@ THE TWO FACES THIS GAME IS SET IN, AND WHAT THEIR LICENCE IS
 
 This repository is public and the game is a competition entry, so every face here is under
 the SIL Open Font License 1.1 and the licence text is committed beside it. Neither font is
-modified in outline: Darumadrop is the upstream release byte for byte, and Familjen Grotesk
-is a static instance cut from the upstream variable font at wght 400 and wght 700 (see the
-note at the bottom, and scratchpad/fontsrc/instance2.py).
+modified in outline: Darumadrop is the upstream release byte for byte, and Work Sans is a
+static instance cut from the upstream variable font at wght 400 and wght 700 (see the note
+at the bottom, and scratchpad/fontsrc/instance.py).
 
 docs/TODO.md section 133 is the work that added the second one, and it says why there are
 two rather than one.
@@ -14,34 +14,36 @@ two rather than one.
    https://github.com/ManiackersDesign/darumadrop
    SIL Open Font License 1.1
 
-   THE DISPLAY FACE. Headings, the Display and Title steps of PaperKit's type scale, the
-   primary action on a screen, hero and player names. It is a rounded high-personality
-   face and it is exactly right on a word somebody LOOKS AT.
+   THE DISPLAY FACE. Headings, the Display, Title and Body steps of PaperKit's type scale,
+   the primary action on a screen, hero and player names, buttons, settings row labels. It
+   is a rounded high-personality face and it is exactly right on a word somebody LOOKS AT.
 
    It ships ONE WEIGHT, which is the whole reason for the face below.
 
-2. Familjen Grotesk, by Familjen Sthlm
-   https://github.com/Familjen-Sthlm/Familjen-Grotesk
-   SIL Open Font License 1.1, OFL-FamiljenGrotesk.txt in this folder
+2. Work Sans, by Wei Huang
+   https://github.com/weiweihuanghuang/Work-Sans
+   SIL Open Font License 1.1, OFL-WorkSans.txt in this folder
    Regular (wght 400) and Bold (wght 700), instanced from the upstream variable font
 
-   THE SUB FACE. Sentences, captions, hints, placeholders, chat, ability descriptions:
-   everything somebody READS rather than looks at. PaperKit.FaceFor's boundary is Caption.
+   THE SUB FACE. Caption and below: every sentence, hint, placeholder, field label,
+   ability description, chat line, empty state. PaperKit.FaceFor's boundary is Caption.
 
 ---------------------------------------------------------------------------
-IT REPLACED NUNITO ON 2026-09-03, AND THE REASON IS THE ONE MEASUREMENT THE FIRST PASS
-DID NOT USE
+THREE FACES HELD THIS SLOT IN ONE DAY, AND THE MEASUREMENT THAT MATTERS CHANGED ONCE
 
-Nunito was chosen on 2026-09-03 for having the x-height closest to Darumadrop's. It shipped
-for one afternoon and was rejected by eye: "i think our sub font sucks its too ai".
+  Nunito         chosen by measurement, shipped for one afternoon, rejected by eye:
+                 "i think our sub font sucks its too ai"
+  Familjen       chosen by a better measurement, shipped, and superseded by the owner
+    Grotesk      picking a different one from the same table
+  Work Sans      "lets do work sans for now", 2026-09-03. Current.
 
-That is a fair reading and the numbers say why. X-HEIGHT ALONE IS THE WRONG TEST FOR A
-PAIRING. It answers "does a row shrink when it moves to the sub face", which matters,
-and says nothing about whether the two faces look related. The measurement that answers
-THAT is the ratio of x-height to cap height, and Darumadrop's is extreme: 0.833, where a
-normal text face is nearer 0.70. Its lowercase is nearly as tall as its capitals.
+X-HEIGHT ALONE IS THE WRONG TEST FOR A PAIRING, WHICH IS WHAT NUNITO COST. It answers
+"does a row shrink when it moves to the sub face", which matters, and says nothing about
+whether the two faces look related. The measurement that answers THAT is the ratio of
+x-height to CAP height, and Darumadrop's is extreme: 0.833, where a normal text face is
+nearer 0.70. Its lowercase is nearly as tall as its capitals.
 
-  Nunito's ratio is 0.694, the LOWEST of every candidate measured. So it had the closest
+  Nunito's ratio is 0.694, the LOWEST of every candidate measured. It had the closest
   x-height and the worst proportion at the same time: small lowercase under towering
   capitals, sitting next to a face built the opposite way. That mismatch is what reads as
   a stock pairing rather than a chosen one.
@@ -51,7 +53,7 @@ normal text face is nearer 0.70. Its lowercase is nearly as tall as its capitals
   Darumadrop One         510       --       0.833       --      342/-    NONE     350      3
   Familjen Grotesk       500     -2.0%      0.769     0.064      93/140  +51%      58      0
   Archivo                526     +3.1%      0.767     0.066      95/149  +57%     118      3
-  Work Sans              500     -2.0%      0.758     0.075      80/172 +115%     188      1
+  WORK SANS              500     -2.0%      0.758     0.075      80/172 +115%     188      1
   Figtree                500     -2.0%      0.714     0.119      85/137  +61%      35      3
   Hanken Grotesk         493     -3.3%      0.707     0.126      88/129  +47%      66      3
   Nunito                 499     -2.2%      0.694     0.139      82/128  +56%     122      4
@@ -59,48 +61,42 @@ normal text face is nearer 0.70. Its lowercase is nearly as tall as its capitals
   Baloo 2                475     -6.9%      0.769     0.064      80/149  +86%     418      1
 
   scratchpad/fontsrc/measure2.py and stems.py re-run every column.
-  Logs/ui/font-pairing-v1.png is the specimen the choice was checked against by eye.
+  Logs/ui/font-pairing-v1.png is the specimen sheet the choice was checked against by eye.
 
-WHY FAMILJEN GROTESK WINS, IN ORDER OF HOW MUCH EACH IS WORTH
+WHAT WORK SANS COSTS AND WHAT IT BUYS, STATED HONESTLY
 
-  - CLOSEST PROPORTION TO DARUMADROP OF ANY FACE THAT IS ALSO A READING FACE. 0.769
-    against 0.833, less than half Nunito's distance. Baloo 2 ties on this number and loses
-    on apparent size by seven per cent, which is the fault section 121.8 is already an open
-    argument about.
+  - IT IS THE SECOND CLOSEST ON THE RATIO THAT MATTERS, 0.758 against Darumadrop's 0.833.
+    Familjen Grotesk is nearer at 0.769, and the difference between them is 0.011, which is
+    about a seventh of the gap either of them has to Nunito. Both are firm grotesques with
+    flat terminals, which is the property that makes the pairing work: two warm ROUNDED
+    faces on one screen do not read as a pairing, they read as one face done twice, and the
+    softer one loses. Darumadrop stays the only soft thing on the screen.
 
-  - APPARENT SIZE IS STILL PRESERVED, which was the first pass's real finding and is kept.
-    Minus 2.0 per cent against Darumadrop, marginally better than Nunito's minus 2.2, so no
-    layout number in this repository moves. Archivo would have grown every caption by 3.1
-    per cent instead.
+  - APPARENT SIZE IS PRESERVED, minus 2.0 per cent against Darumadrop, so no layout number
+    in this repository moves. That was the first pass's real finding and it still holds.
 
-  - IT DRAWS EVERY GLYPH THE FRONT END ASKS FOR, AND IT IS THE ONLY CANDIDATE THAT DOES.
-    Zero missing of the fifteen this repository has recorded as needed. Darumadrop cannot
-    draw the two triangles or the check; Nunito could not draw those three OR the left
-    arrow. Every one of those was falling through to a fallback face, which is a third
-    typeface on screen that nobody chose. The specimen sheet shows it: every other
-    candidate renders tofu boxes on that line.
+  - THE BOLD IS THE STRONGEST IN THE TABLE, plus 115 per cent stem, nearly double the next
+    best. The whole of section 133 exists because Darumadrop has no bold at all and every
+    FontStyle.Bold in the front end was legacy Text drawing each glyph twice at an offset.
 
-  - IT IS NARROWER, WHICH IS FREE SAFETY. MenuKit.Label OVERFLOWS rather than wrapping
-    (section 133.3's named trap), so a sub face that sets the same sentence shorter is
-    margin that costs nothing. In the specimen the ability description fits inside its
-    column in Familjen Grotesk and runs past it in all four of the others.
+  - IT COSTS 188 KB A WEIGHT, which is the highest of any candidate except M PLUS. 376 KB
+    of font in the Android player against Familjen's 116 and Nunito's 250. That is the real
+    cost of this choice and it is not nothing on a phone build.
 
-  - THE BOLD IS REAL, +51 per cent stem. That is the fault section 133 exists for and every
-    candidate clears it; it stopped being the differentiator once the stem was measured on
-    a plain cap I rather than on a tailed lowercase l. The first pass's table measured the
-    l and reported weights that were partly its tail.
+  - IT IS MISSING THE CHECK GLYPH, one of the fifteen this repository has recorded as
+    needed. Familjen Grotesk was the only candidate missing none. So the tick on a readied
+    nameplate still falls through to a fallback face; Darumadrop cannot draw it either, so
+    this is no worse than before the pass and it is worth knowing about.
 
-  - 58 KB A WEIGHT, the smallest of the set and less than half Nunito's. 116 KB of font in
-    the Android player against 250.
+  - IT IS NARROWER THAN NUNITO, which is free safety. MenuKit.Label OVERFLOWS rather than
+    wrapping (section 133.3's named trap), so a sub face that sets the same sentence shorter
+    is margin that costs nothing.
 
-  - AND THE SKELETON IS FIRM WHERE DARUMADROP IS SOFT, WHICH IS THE OPPOSITE OF THE FIRST
-    PASS'S ARGUMENT AND IS WHY THAT ARGUMENT WAS WRONG. Nunito was picked partly for
-    "sharing Darumadrop's family resemblance": rounded terminals, humanist warmth. Two warm
-    rounded faces on one screen do not read as a pairing, they read as one face done twice,
-    and the softer one loses. Familjen Grotesk is a grotesque with flat terminals and a
-    slightly idiosyncratic a and g, so Darumadrop stays the only soft thing on the screen
-    and keeps all of the personality. docs/TODO.md 133.7: "Darumadrop carries the quirk,
-    the body face carries the reading."
+THE STEM COLUMN IS MEASURED ON A CAP I, NOT ON A LOWERCASE l. The first pass measured the
+l, which carries a tail in several of these faces, so it reported weights that were partly
+that tail and made the bolds look far weaker than they are. Measured properly every
+candidate has a real drawn bold, which is why weight stopped being the differentiator and
+proportion became it.
 
 ---------------------------------------------------------------------------
 WHAT IS DRAWN IN WHICH FACE
@@ -109,11 +105,11 @@ The split is not decorative. docs/TODO.md section 133.7, and it is what lets a s
 quirky and calm at the same time. MenuKit.Face is the enum; MenuKit.Apply is the only place
 that assigns either file; PaperKit.FaceFor takes the SIZE so a caller never chooses.
 
-  DISPLAY (Darumadrop)         Screen headings, the Display, Title and Body type steps, the
-                               ONE primary action per screen, player and hero names, big
-                               values, buttons, settings row labels, the pennants.
-  SUB     (Familjen Grotesk)   Caption and below: every sentence, hint, placeholder, field
-                               label, ability description, chat line, empty state.
+  DISPLAY (Darumadrop)   Screen headings, the Display, Title and Body type steps, the ONE
+                         primary action per screen, player and hero names, big values,
+                         buttons, settings row labels, the pennants.
+  SUB     (Work Sans)    Caption and below: every sentence, hint, placeholder, field label,
+                         ability description, chat line, empty state.
 
   A LABEL NEVER SETS FontStyle.Bold. MenuKit.Apply swaps the Bold FILE instead, because
   Unity's synthetic bold is the fault this whole pass exists to remove.
@@ -121,10 +117,9 @@ that assigns either file; PaperKit.FaceFor takes the SIZE so a caller never choo
 ---------------------------------------------------------------------------
 ON THE INSTANCING, BECAUSE "UNMODIFIED" WOULD OTHERWISE BE A CLAIM THIS FILE CANNOT MAKE
 
-Familjen Grotesk ships upstream as a single variable font. Unity's legacy Text takes a
-static face, so the two weights here are instances cut at wght 400 and wght 700 with
-fontTools, with updateFontNames on so the Bold file reports itself as Bold rather than as a
-second Regular. No outline, metric or kern value is edited: an instance at a named axis
-position is the same design the variable font draws at that position. The OFL permits this
-and requires the licence to travel with it, which is OFL-FamiljenGrotesk.txt beside this
-file, and the credits screen carries the attribution (CreditsContent).
+Work Sans ships upstream as a single variable font. Unity's legacy Text takes a static
+face, so the two weights here are instances cut at wght 400 and wght 700 with fontTools.
+No outline, metric or kern value is edited: an instance at a named axis position is the
+same design the variable font draws at that position. The OFL permits this and requires the
+licence to travel with it, which is OFL-WorkSans.txt beside this file, and the credits
+screen carries the attribution (CreditsContent).

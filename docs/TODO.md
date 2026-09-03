@@ -853,6 +853,25 @@ plain enough
 - **Nobody has looked at it on his window shape**, which is `CLAUDE.md` § 6.2b's third row and
   the one that has caught a collapsed layout before.
 
+#### ⚠⚠ 133.16 WHAT HE SAID LOOKING AT THE RENDER, AND ALL THREE ARE THE SAME NOTE
+
+🧑 cropped three objects out of `Logs/shots-runtime/Lobby-v89.png` and said **"u js
+recolored"** again. ⚠️ **The composition DID move and the before/after proves it**
+(`Logs/ui/lobby-before-after.png`), but the three things he cropped are the three things on
+that screen that are still the old object, so his reading of those crops is correct.
+
+| What he cropped | What he said | Why he is right |
+|---|---|---|
+| **The banner's left and middle** | *"i thought ud put shit in that thing at the top too, i didnt expect u would keep it blank"* | ⚠️⚠️ **THE TARP IS 196 UNITS TALL AND ABOUT HALF ITS WIDTH CARRIES NOTHING.** It holds the screen name, BACK, the room code and the identity chip, and between the name and the code there is roughly 500 units of bare honey. That is *"be aware of tightness and empty space as well this looks ugly bcz of big ass empty sopace"* arriving on the object built to answer it. **The fix is not to add controls**: § 1.3 permits DECORATION where nothing has to be read, and a printed tarpaulin is exactly the kind of object that carries a drawing. The seat count, a printed edge, the hung banderitas, the mark faded into the vinyl, the map name: all of it belongs to the tarp rather than to a new row. |
+| **The DANTE card and the build row** | (cropped together) | **Two near-twin paper rows, which is § 118.1 row 4 unfixed.** `Front_End_Design.md` § 2.2's own design says the build is a **sunk tray INSIDE the fighter card**, so the two are one object with two zones rather than two rows of the same shape. `BuildFighterColumn` still stacks them as siblings in a vertical layout. |
+| **The room code plaque** | (cropped alone) | **It moved and it was not redrawn.** It is still `PaperCraft.Surface.Sign`, a dark rounded plate built for a cream RAIL. On a honey tarpaulin the one fact the screen produces should be printed ON the vinyl the way a room code is printed on a tarp, not nailed to it on a separate plate. |
+
+⚠️ **THE PATTERN ACROSS ALL THREE IS THE SAME AND IT IS WORTH NAMING**: this pass moved
+objects and drew new ones, and where it MOVED an object without redrawing it, he can see it
+instantly. **Moving a control to a better place does not make it the right control for that
+place.**
+
+
 ### 133.11 ⚠️ What is still open, and nothing in it is blocked
 
 - ✅ **THE PALETTE IS NO LONGER A BLOCKER.** It landed 2026-09-03, measured, and the repaint went
