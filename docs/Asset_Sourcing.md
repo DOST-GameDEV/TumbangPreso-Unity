@@ -164,6 +164,19 @@ Commercial use, modification and redistribution are allowed without attribution.
 - **Hero voices:** record the six grunts and ultimate callouts in Tagalog in-house. Do not replace
   them with generic English voice packs.
 
+### 5.4 Existing cues that the source pass must preserve
+
+The 2026-09-03 replacement pass changed these three cues and 🧑 rejected the new versions after
+hearing them in the game. Their pre-pass WAV files are restored and
+`tools/build_ability_audio.py` deliberately excludes them:
+
+- `lata_impact`, the can hit.
+- `lata_knockdown`, which is also the file reached by the `can_knockdown` alias.
+- `ui_hover`, the button hover.
+
+Do not bulk-regenerate those files from the Kenney packs. A source label that says tin or hover is
+not better evidence than the sound that was preferred in the game.
+
 ## 6. Common non-ability VFX and SFX
 
 Use the same sources instead of adding another art family:

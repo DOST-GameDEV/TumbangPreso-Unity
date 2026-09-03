@@ -16,7 +16,7 @@ is in the archive with its number unchanged.
 |---|---|---|
 | **133** | One font is doing every job, and it is a display face | 🧑: *"I think the problem is we use the same font for everything"*. **The next session's brief**: a body face that pairs with Darumadrop, plus the lobby and login overhaul, with a logo he is attaching. § 133 |
 | **132** | The loadout said nothing about the hero, and a build vanished the moment the match started | Twelve defaults read `As tuned · As tuned`, the ultimate was not on the board, the hold-key panel named the SLOT rather than the equipped reading, and the TAB tray printed every ability name twice. § 132 |
-| **131** | Replace Hero Strike's primitive VFX and the synthesised SFX from the verified source list | **Five of the six families are wired and 27 cues are real recordings (§ 131.3, § 131.5).** Open: the other twelve abilities, Phaister's draped plate, and the two downloads behind a login |
+| **131** | Replace Hero Strike's primitive VFX and the synthesised SFX from the verified source list | **Five of the six families are wired; 24 sourced cues remain and 3 preferred old cues were restored (§ 131.3, § 131.5b).** Open: the other twelve abilities, Phaister's draped plate, and the two downloads behind a login |
 | **130** | Crossplay, the boot ANR and the lobby's missing ink | The architecture was fine; **two phone-side defects and a third camera built without all three passes**. ⚠️ § 130.14 is CLOSED (§ 130.14b): the steering was never wrong, the test buried its own seat in the floor |
 | **126** | The full PlayMode suite, the thumb floor, the move stick, rumble, the device toggle, the .apk | § 126.8 is still the big one and it is **narrower now**: § 126.8b has the cause (the reset reached five fixtures out of sixty), § 126.8c is a `.xml` that says `Passed` with `total="0"`, § 126.8d is a fix that was measured and **withdrawn** for moving eleven suites from one side to the other |
 | **127** | Phase 16.1: the taya's floor marker is a RING, an attacker's a DISC | Needs its greyscale frame before it can close. § 127.3 |
@@ -1302,13 +1302,15 @@ smooth ropes; the width is derived from the length at the sheet's aspect now and
 His ground contact moved twice, 3.6 m to 2.4 m to 3.4 m, because at the first it covered the shock
 star and at the second it was a speck inside it.
 
-### 131.5 ✅ Twenty-seven cues are real recordings now, and the rest are a credential
+### 131.5 ✅ The source pass changed twenty-seven cues; twenty-four remain, and the rest are a credential
 
 `tools/build_ability_audio.py`. Every output is mono 44.1 kHz WAV, trimmed, tail-faded, capped
 where the recording was longer than the cue it replaces, and **normalised to the peak of the file
 it replaces** so `AudioCues.TrimDb`'s measured mix is not quietly undone one cue at a time.
 
-The one that matters most: **`lata_impact` and `lata_knockdown` are recordings of a tin can.**
+⚠️ **THREE OF THESE WERE LATER RESTORED TO THEIR PREFERRED PRE-PASS FILES.** § 131.5b records the
+played judgement and protects them from the generator. The processing contract here applies to the
+twenty-four sourced replacements that remain.
 
 ⚠️⚠️ **THE ELEMENTAL HALF IS BLOCKED ON AN ACCOUNT AND NOT ON EFFORT.**
 `Asset_Sourcing.md` § 5.2 names sixteen specific CC0 Freesound recordings for fire, ice, thunder,
@@ -1322,6 +1324,20 @@ heroes sound like one, which is the opposite of the point.
 match win; the pack is 8-bit NES, pizzicato, sax and steel. This game is a Filipino street in carved
 wood and warm cream, and a chiptune win sting is a different game's voice. Music is `Attention.md`
 § 4.
+
+### 131.5b ✅ THREE OF THE TWENTY-SEVEN WERE REJECTED BY EAR AND THE OLD CUES ARE BACK
+
+🧑, after playing the sourced-audio build: *"that prompt u gave replaced some good sounds we had
+like can hit sound or the button hover sound or can down sound pls put those sfx back"*.
+
+Those are `lata_impact`, `ui_hover`, and `lata_knockdown`; `AudioCues.Aliases` routes
+`can_knockdown` to the last one. All three WAV files are restored byte-for-byte from the parent of
+the source pass. They are also removed from `build_ability_audio.py.REPLACEMENTS` and recorded in
+its `KEPT` table, so rebuilding the other sourced cues cannot overwrite them again.
+
+⚠️ **THE OTHER TWENTY-FOUR ARE NOT ACCEPTED BY ASSOCIATION.** This report named three sounds, not
+the whole batch. The exact changed list is recoverable from commit `ee8bced`, and every remaining
+cue still needs the same played comparison. A pack name is not evidence that its version is better.
 
 ### 131.8 ⚠️ OPEN: `CustomGameScreenProbe` HAS NOW RUN, AND ONE CASE IS RED AT ONE RESOLUTION
 

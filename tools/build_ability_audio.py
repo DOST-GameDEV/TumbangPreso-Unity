@@ -13,12 +13,12 @@ account to download**: `curl` on any of those sound pages redirects to `/home/lo
 one is not something this toolchain may do, so every cue whose source is in 5.2 is untouched and
 is listed in `Attention.md`. The Kenney packs in 5.1 need no account, so those cues are done.
 
-WARNING  A RECORDING IS NOT AUTOMATICALLY BETTER THAN A SYNTH, AND THE TABLE BELOW ONLY LISTS
-CUES WHERE IT IS. `lata_impact` is the clearest: the lata is a tin can and Kenney's
-`impactTin_medium` is a recording of one being hit, where the placeholder is a filtered click.
-Cues with no honest source in the free packs keep their placeholder rather than getting a
-near-miss, and the REASON is recorded beside them at the bottom of this file. A worse sound that
-came from a pack is still a worse sound.
+WARNING  A RECORDING IS NOT AUTOMATICALLY BETTER THAN AN EXISTING CUE, AND THE TABLE BELOW ONLY
+LISTS CUES WHERE IT IS. The first pass replaced `lata_impact`, `lata_knockdown` and `ui_hover`
+because their source labels looked exact. The played comparison disagreed: 🧑 preferred the old
+can hit, can down and hover sounds. They are protected in `KEPT` now, so rerunning this script
+cannot silently undo that decision. Cues with no honest improvement keep what they have rather
+than getting a near-miss. The REASON is recorded beside them at the bottom of this file.
 
 WARNING  THE JINGLES ARE DELIBERATELY NOT USED. `Asset_Sourcing.md` section 5.1 lists Kenney
 Music Jingles for round win, loss and match win. The pack is 8-bit NES, pizzicato, sax and steel
@@ -86,14 +86,6 @@ RPG = "kenney_rpg-audio/Audio"
 # "impactTin" cannot.
 # ---------------------------------------------------------------------------
 REPLACEMENTS = [
-    # --- The lata. The single most important object in the game. ---
-    ("lata_impact", [f"{IMPACT}/impactTin_medium_000.ogg"], 1.0, 0.00,
-     "the lata is a tin can and this is a recording of one being struck"),
-
-    ("lata_knockdown", [f"{IMPACT}/impactTin_medium_001.ogg",
-                        f"{IMPACT}/impactMetal_light_003.ogg"], 1.0, 0.00,
-     "the can taking the hit and then the can going over, layered"),
-
     # --- Bodies. ---
     ("bump", [f"{IMPACT}/impactSoft_medium_000.ogg"], 1.0, 0.00,
      "shoulder to shoulder, and `hit_body` aliases onto this one"),
@@ -144,8 +136,6 @@ REPLACEMENTS = [
     # --- The front end. ---
     ("ui_click", [f"{INTERFACE}/click_001.ogg"], 1.0, 0.00,
      "a press. `click_002` is 10 ms, which is a tick rather than a button"),
-    ("ui_hover", [f"{INTERFACE}/tick_002.ogg"], 1.0, 0.00,
-     "it fires on every mouse movement across a menu, so it is the quietest thing here"),
     ("ui_back", [f"{INTERFACE}/back_001.ogg"], 1.0, 0.00, "one step out"),
     ("ui_error", [f"{INTERFACE}/error_004.ogg"], 1.0, 0.00, "a refusal"),
 
@@ -168,6 +158,10 @@ REPLACEMENTS = [
 # candidate in the free packs at all.
 # ---------------------------------------------------------------------------
 KEPT = {
+    "lata_impact, lata_knockdown / can_knockdown, ui_hover":
+        "The 2026-09-03 source pass replaced all three, and the played comparison rejected the "
+        "new versions by name. The old can hit, can down and button hover are restored. These "
+        "are protected choices, not missing work.",
     "hero_*_grunt / hero_*_ult":
         "Tagalog, recorded in-house. Attention.md section 9. A generic English grunt pack "
         "would take the one thing that makes this game sound like it is from here.",
