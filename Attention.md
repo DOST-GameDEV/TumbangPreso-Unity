@@ -270,16 +270,22 @@ is smeared. The TAB tray is swept; the other forty sites are not.
    file into `Assets/TumbangPreso/Art/ui/brand/` so § 133 can read its actual pixels rather than a
    thumbnail. `docs/VISION.md` § 6: *"His UI art is the design system."*
 
-   ⚠️⚠️ **AND SAY WHAT THE FIVE SWATCHES ARE FOR.** The image ships **Honey Quartz, Chartreuse,
-   Persimmon, Khaki and Army** beside the wordmark. Persimmon and Honey Quartz sit beside the
-   amber and cream the front end already uses; **Chartreuse and Army are yellow-green and olive,
-   and there is no green anywhere in the front end today.** Do these five REPLACE the carved-wood
-   set in `CLAUDE.md` § 6.4, or join it as accents? Those are two very different amounts of work
-   and only one of them was asked for.
+   ⚠️ **THE PALETTE IS ALREADY ANSWERED AND IS NOT WAITING ON YOU.** You said the colours are
+   final and that the UI uses the logo's: **Honey Quartz, Chartreuse, Persimmon, Khaki and Army**,
+   plus the deep red the wordmark is outlined in. `docs/TODO.md` § 133.1 records that, and that
+   `CLAUDE.md` § 6.4's carved-wood list has to be rewritten in the same commit so the rules file
+   does not keep naming the old set. **The only thing still on you is the file itself**, because
+   the hexes get read off the swatches rather than guessed at.
 2. **Say yes or no to a second font before it is chosen.** The bar it has to clear is a licence
    one: this repository is public and the game is a competition entry, so it wants SIL OFL or
    equivalent, with the licence file committed beside the font. Naming the family is a taste call
    and it is yours; anything proposed will arrive as a render of the same three screens in both
    faces rather than as a name in a message.
+
+> ⚠️ **NOTHING ELSE ABOUT § 133 IS WAITING ON YOU.** The scope is set (front end only, the
+> in-match HUD is not touched), the palette is set, the order is set (lobby, settings, character
+> select, login), and the brief is *not overwhelming, easy to look at, quirky like the logo*. Those
+> are all written down in `docs/TODO.md` § 133.4 to § 133.7 so the next session does not have to
+> ask you again.
 
 

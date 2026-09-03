@@ -142,18 +142,34 @@ form as well, and a face chosen to be looked at is not a face chosen to be read.
    built against a thumbnail: the first move of § 133 is getting the file committed under
    `Assets/TumbangPreso/Art/ui/brand/` so it can be sampled and drawn rather than described.
 
-   ⚠️⚠️ **AND IT CAME WITH A PALETTE THAT IS NOT THE ONE `CLAUDE.md` § 6.4 RECORDS.** Two swatch
+   ⚠️⚠️ **THE COLOURS ARE FINAL AND THEY ARE THE LOGO'S. THIS IS SETTLED, DO NOT RE-OPEN IT.**
+   🧑 2026-09-03: *"the colors are final, ask it to use the same colors as logo"*. Two swatch
    strips ship with the image and the named colours are **Honey Quartz, Chartreuse, Persimmon,
-   Khaki and Army**, plus the deep red the wordmark is outlined in. Persimmon and Honey Quartz sit
-   comfortably beside the existing amber and cream; **Chartreuse and Army are yellow-green and
-   olive, and there is no green in the front end today at all.** § 6.4 bans blue, navy and cold
-   grey and says nothing about either, which means this is a decision rather than a violation.
+   Khaki and Army**, plus the deep red the wordmark is outlined in. **The art is work in progress;
+   the palette is not.**
 
-   ⚠️ **DO NOT SAMPLE THOSE COLOURS OUT OF A CHAT IMAGE AND DO NOT TYPE THEM IN BY EYE.** The
-   swatches carry their own hex labels; read them off the committed file, the way
-   `tools/build_input_glyphs.py` reads a pack's palette rather than guessing at it. And ask
-   whether the five REPLACE the wood set or sit beside it, because *"repaint the whole front end"*
-   and *"add two accents"* are different jobs and only one of them was asked for.
+   ⚠️⚠️ **SO `CLAUDE.md` § 6.4'S PALETTE MOVES, AND IT MOVES IN THE SAME COMMIT AS THE CODE.**
+   That section currently names carved wood `#31190B` `#5A2F14` `#8B5227` `#1D0E06`, cream
+   `#F5E6C8`, amber `#FFBA00` and warm ink `#1C0F06` as **the** palette. After this pass that is
+   the OLD palette, and a rule that names the wrong colours is worse than no rule: it is
+   `docs/TODO.md` § 5's drift, in the one file every session reads first. **Rewrite § 6.4's
+   palette list, keep its ban and keep its receipts.**
+
+   ⚠️ **THE BAN ITSELF IS UNTOUCHED AND THE NEW SET DOES NOT TEST IT.** No blue, no navy, no cold
+   grey, in any layer. Persimmon, Honey Quartz and the deep red are warm; Chartreuse and Army are
+   yellow-green and olive, which are warm-side greens and not cold greys. **Nothing here is a
+   licence to relax § 6.4**, which 🧑 had to state six separate times.
+
+   ⚠️ **READ THE HEXES OFF THE COMMITTED FILE. DO NOT TYPE THEM IN BY EYE AND DO NOT SAMPLE A CHAT
+   THUMBNAIL.** The swatches carry their own hex labels printed on them. This is
+   `tools/build_input_glyphs.py`'s rule: it reads a pack's palette and stops on a colour it has
+   never seen rather than guessing, and that is why the glyph recolour has never silently drifted.
+
+   ⚠️ **AND `UiTheme` IS THE ONE PLACE.** § 6.4's own receipt is `UiTheme.Ink` being a near-black
+   NAVY for the entire life of that file with nobody seeing it, because one constant put navy on
+   every word in the front end. Check the new set the same way it says to:
+   `grep -rnE 'Hex\("[0-9a-f]{6}"\)' Assets/TumbangPreso/Runtime/UI/UiTheme.cs` and read the
+   channels, rather than looking at a screenshot.
 
 ⚠️⚠️ **AND HE ASKED FOR IT TO BE DESIGNED WITH THE `game-ui-design` SKILL RATHER THAN BY EYE.**
 🧑 2026-09-03: *"but ask it to use the game design skill ... to design shit in the same theme and
@@ -193,6 +209,122 @@ overflows rather than wrapping, and `verticalOverflow = Truncate` drops a whole 
 warning. Render every screen either side, and `AspectRatioProbes` at all nine shapes, before
 calling any of it done.
 
+
+### 133.4 ⚠️⚠️ THE SCOPE, AND IT IS A HARD LINE
+
+🧑 2026-09-03, setting it: *"tell it that it cant edit the game ui yet"*, *"i need to see lobby
+settings and char select as well as loging"*, *"basically everything not game, in this new ui
+first"*.
+
+⚠️⚠️ **IF IT IS DRAWN WHILE A ROUND IS LIVE, IT IS OUT OF SCOPE.** Not deferred, not "do it last":
+**do not touch it in this pass.** `Hud`, `AbilityDeckHud`, `AbilityInspectPanel`, `StatusStack`,
+`HudDeclutter`, `OffscreenIndicators`, `PlayerNameplate`, `RoleSwapCard`, `EmoteWheel`,
+`PausePanel` and `ComicPopup` are the in-match layer and they stay exactly as they are.
+
+⚠️ **AND THAT IS A GOOD BOUNDARY RATHER THAN AN ARBITRARY ONE.** The HUD answers to
+`docs/VISION.md` § 3, which is a different contract from the front end's: *"the in-match HUD
+carries no sentences"*, the deck is a glyph and a key and a ready state, and the three layers have
+to stay in step with each other. Repainting it in the same pass as the lobby would put a font
+change, a palette change and a readability contract in one commit with no way to tell which broke
+what. `PaperPurityProbe`'s own header already scopes the HUD out for the same reason.
+
+**THE FOUR HE WANTS TO SEE, AND THIS IS THE ORDER HE NAMED THEM IN:**
+
+| Screen | Where it lives |
+|---|---|
+| **The lobby** | `LobbyChrome`, `LobbyCast`, `LobbyJoinPanel`, `LobbyNameplates`, `LobbyChat`, `YouCard`, `ConvertedMatchSetup` |
+| **Settings** | `ConvertedSettingsPanel`, and `UiRows` is what it is built out of |
+| **Character select** | `ConvertedCharacterSelect`, including the loadout board § 132 just rebuilt |
+| **Login** | `SignInScreen` |
+
+Everything else in the front end follows: `ConvertedMainMenu`, `ConvertedModeSelect`,
+`ConvertedMultiplayerSetup`, `CustomGameScreen`, `CustomCharacterScreen`, `PlayerHub`,
+`ConvertedMatchResult`, `ConvertedCreditsPanel`, `SplashScreen`, `QueueCard`.
+
+### 133.5 ⚠️⚠️ NO LEFTOVER UI, AND THERE IS ALREADY A GATE FOR IT
+
+🧑 2026-09-03: *"ask it to be wary of having leftover ui shit"*. ⚠️ **HE HAS SAID THIS BEFORE, IN
+CAPITALS, ABOUT THE LAST OVERHAUL**, and `PaperPurityProbe` exists because of it:
+
+> **"ALSO BE AWARE THAT UR OVERHAULING THE UI, MAKE SURE U COMPLETELY REPLACE UI BCZ I DOTN WANT
+> LEFTOVER SHIT FROM OLD UI TO STILL BE FRIGGING WITH US"**, and *"MAKE SURE EVERYTHING U REPLACED
+> IS ACCOUNTED FOR AND WE DONT LOSE BUTTONS"*.
+
+**Those are two different worries and that probe answers both. Use it, extend it, and do not write
+a second one.** § 119.6 is its entry and its header lists the four things a screenshot cannot see:
+a surface inside a shut drawer, a surface underneath another surface (`SkinLayers` leaves a `Face`
+and a `Shadow` child behind), a `GodotButton` that only writes its sprite on HOVER so it is correct
+in every screenshot and flips to wood the moment a pointer touches it, and a state the shot pass
+did not happen to open. **§ 117.7 is seven faults that every probe in this repository was green
+through.**
+
+⚠️ **THE INVENTORY IS § 119.3 AND NOTHING ON IT MAY DISAPPEAR.** `EveryLobbyControlSurvived`
+asserts each named control still resolves, is reachable and has a handler. That list covers the
+lobby; **the same list has to be written for settings, character select and login before they are
+rebuilt, not after**, or "we lost a button" is a thing somebody notices in a build.
+
+### 133.6 THE BRIEF ITSELF: BETTER, NOT REARRANGED
+
+🧑: *"ask it to overhaul the entire ui and think of better way to do visual hierarchy"*, and
+*"it can use current as inspiration but i want better one"*.
+
+⚠️⚠️ **"USE IT AS INSPIRATION" IS PERMISSION TO CHANGE THE COMPOSITION, NOT TO IGNORE WHAT WAS
+LEARNED.** The screens are the result of four rejections and every one of them is a receipt, not a
+preference: § 92 *"theres liek 20 shits at once"*, § 94.7 *"its so messy and ugly"*, § 100 the art
+cut off, § 121.1 the wooden primary standing in a row of paper. **A new layout that re-earns any of
+those is worse than the one it replaced however fresh it looks.**
+
+**So the hierarchy question is the actual work, and `CLAUDE.md` § 6.2c is where it is answered per
+rectangle.** For every screen, answer these before drawing it and again before calling it done:
+
+1. **What is the ONE thing on this screen?** Everything else is sized, placed and coloured against
+   it. Two things competing means one of them is decoration. ⚠️ § 132.6 is this exact fault found
+   at the size of a single card: a name and its own name again, same colour, same weight.
+2. **What is the first press, and can the player guess it?**
+3. **What is on screen that they do not need RIGHT NOW?**
+4. **How do they get out, and is it one press?**
+
+⚠️ **AND `FUTURE.md` § 0.5b IS THE METHOD, NOT THIS LIST.** Five questions before writing a screen,
+four ordering tools **in order** (position, size, weight and colour, space), and a table of what
+actually transfers from the games it copies. **A new body font makes "weight" a real tool for the
+first time**, because until now every bold in this front end was a smear (§ 132.8), so the ordering
+tools were three rather than four.
+
+### 133.7 THE FEELING, IN HIS WORDS, AND IT IS TWO THINGS AT ONCE
+
+🧑 2026-09-03: *"i want it so that shit isnt overwhelming and that the game is easy to look at"*,
+and *"i want it to feel quirky like the work in progress logo"*.
+
+⚠️⚠️ **THOSE PULL AGAINST EACH OTHER AND THE WHOLE JOB IS HOLDING BOTH.** It is `VISION.md` § 2's
+argument moved from the arena to the front end: *"more stuff" is the point and "unreadable" is its
+failure mode*. A quirky screen and a calm screen are not opposites, but a screen that answers
+"quirky" by adding things is exactly the one that gets rejected, and this project has the receipts:
+§ 92 *"theres liek 20 shits at once"*, six buttons in six visual languages.
+
+**Where the quirk goes, taken from the logo itself:** it is a hand-drawn wordmark with a thick
+uneven outline, letters that lean, a blob behind them and a drip running off the corner. **The
+personality is in the SHAPE and the LINE, not in the count.** That is the same answer § 6.5 already
+reached from the other direction: *"a chamfer means pressable and a round means furniture"*, and
+*"the issue with old UI is everything feels repetitive bcz i think u use the same code to generate
+them all"*.
+
+**So, concretely, and each of these adds character without adding a single thing to read:**
+
+- **The outline is the motif.** The logo's identity is a heavy irregular stroke. A front end whose
+  surfaces share that stroke is quirky before a single decoration is added.
+- **Let things sit slightly off-square.** A card that leans a degree reads as drawn rather than
+  generated. ⚠️ **Not the text.** Rotated type is unreadable type and `AspectRatioProbes` measures
+  what a label needs, not what it looks like.
+- **Spend the personality on the ONE thing per screen**, which is § 6.2c question 1 and § 133.6.
+  The primary action can be as loud as the wordmark. The nine rows under it cannot.
+- ⚠️ **AND THE QUIET HALF IS THE NEW BODY FONT DOING ITS JOB.** § 133 exists because one display
+  face is setting four-line ability descriptions. **Darumadrop carries the quirk, the body face
+  carries the reading**, and that split is what lets a screen be both at once. It is the single
+  biggest reason this pass is worth doing.
+
+⚠️ **THE TEST FOR ADDING ANYTHING IS WHAT THE PLAYER HAS TO HOLD IN THEIR HEAD**, not what it costs
+to build. `CLAUDE.md` § 6.2, and 🧑's own: *"the cutting shit i want should be focused onn things
+that overcomplicate game for ppl"*.
 ---
 
 ## 132 · The loadout said nothing about the hero, and a build vanished the moment the match started ⚠️ IN PROGRESS, 2026-09-03, branch `abilities-rework`
