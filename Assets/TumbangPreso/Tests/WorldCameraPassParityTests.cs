@@ -17,7 +17,12 @@ namespace TumbangPreso.Tests
     ///     2026-09-03: *"i noticed the shader doesnt show up in map select so the map select or
     ///     LOBBY look IS COMPLETELY DIFF to the actual game"*, and **"can u make sure game and
     ///     lobby preview looks exactly the same"**.
-    ///  3. `MapPreview` (the older, unreferenced class) has none of them at all.
+    ///  3. `MapPreview`, the older unreferenced class that shared the live one's NAME and
+    ///     nothing else, had none of the three. It was deleted on 2026-09-03 (`docs/TODO.md`
+    ///     § 130.7) and its camera notes moved onto `MapPreviewSurface` first. ⚠️ It is kept in
+    ///     this list because it is the reason the list exists: two classes one letter apart in
+    ///     the file browser, one live and one dead, is how a session spends an afternoon fixing
+    ///     a preview that nothing constructs. **Do not reintroduce a second preview class.**
     ///
     /// ⚠️⚠️ AND IT READS THE SOURCE AS TEXT, WHICH IS `SceneScriptCheck` AND `InputSurfaceCheck`'s
     /// ARGUMENT ONE LEVEL UP: every runtime probe can only measure a camera that was BUILT during

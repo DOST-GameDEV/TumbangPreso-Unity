@@ -238,6 +238,18 @@ namespace TumbangPreso.UI
         public static MatchFormat SelectedFormat = MatchFormat.Standard;
 
         /// <summary>
+        /// PHASE 12: how many tsinelas each attacker starts a LAST TSINELAS round with.
+        ///
+        /// ⚠️ IT IS READ ONLY WHEN <see cref="SelectedFormat"/> IS `LastTsinelas` and is
+        /// meaningless otherwise, which is why it is a plain number here rather than a field on
+        /// the format enum. `CustomGameRules.StartingTsinelas` is the shipped answer and
+        /// `MinTsinelas`/`MaxTsinelas` are the bounds a custom lobby may move it between;
+        /// `LastTsinelasDirector` clamps it again on the host, because this is a session static
+        /// and a session static is not a promise.
+        /// </summary>
+        public static int SelectedTsinelas = CustomGameRules.StartingTsinelas;
+
+        /// <summary>
         /// A join code the next `MatchSetup` should act on, set by a screen that is not the lobby.
         ///
         /// ⚠️⚠️ IT EXISTS SO THERE IS ONE JOIN PATH RATHER THAN TWO. `docs/TODO.md` § 102: the
@@ -399,6 +411,7 @@ namespace TumbangPreso.UI
             // who left MIRROR selected last night would otherwise be taught tumbang preso by four
             // copies of one character.
             SelectedFormat = MatchFormat.Standard;
+            SelectedTsinelas = CustomGameRules.StartingTsinelas;
 
             Go(Eskinita);
         }

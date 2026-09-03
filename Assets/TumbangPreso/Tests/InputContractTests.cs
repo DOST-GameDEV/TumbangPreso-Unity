@@ -243,7 +243,7 @@ namespace TumbangPreso.Tests
         [Test]
         public void TheInputPassDidNotMoveTheProtocolVersion()
         {
-            Assert.AreEqual(21, Net.NetSession.ProtocolVersion,
+            Assert.AreEqual(22, Net.NetSession.ProtocolVersion,
                 "ProtocolVersion moved. Input is local and does not travel, so if this changed " +
                 "for an input reason it is wrong. If the match format genuinely changed, update " +
                 "this number AND rebuild the Windows and Android players from the same commit.");

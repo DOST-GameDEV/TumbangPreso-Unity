@@ -29,6 +29,17 @@ namespace TumbangPreso.UI
     /// back of a set, where a sway only ever leaves the tuned angle by a few degrees, so every
     /// frame is one somebody chose.
     ///
+    /// ⚠️⚠️ AND THIS IS THE OPPOSITE OF THE CHARACTER PREVIEW, WHERE THE MODEL TURNS AND THE
+    /// CAMERA HOLDS STILL. DO NOT UNIFY THE TWO. They look like one feature and they are two
+    /// answers to opposite questions: a character is a single object that reads correctly from
+    /// every side, so turning it shows the whole thing, and an arena is a room with a FRONT, so
+    /// turning the camera through it shows the player the back of a set. A shared "preview
+    /// spinner" would have to pick one, and either choice breaks the other screen.
+    ///
+    /// ⚠️ IT REPLACED A BLUEPRINT-GRID PLACEHOLDER THAT HAD OUTLIVED ITS JOB. By the time two
+    /// dressed maps existed, the setup screen was asking the player to choose between two names
+    /// on a backdrop that showed neither.
+    ///
     /// ⚠️ THE PIVOT IS THE PLAY AREA, WHICH IS THE AVERAGE OF THE MAP'S `SpawnPoints`. Every map
     /// carries them (it is how the match places characters), so this finds the court without
     /// knowing anything map-specific. Falling back to the origin is safe: both current maps put
@@ -824,6 +835,14 @@ namespace TumbangPreso.UI
                 SetLayerRecursively(t.GetChild(i), layer);
         }
 
+        /// <summary>
+        /// Strip every audio source before the arena can play a frame of ambience over the menu.
+        ///
+        /// ⚠️ EVERY MAP CARRIES AN AMBIENCE PLAYER SET TO PLAY ON AWAKE, so loading one here
+        /// starts the street bed over the setup screen, and cycling the picker restarts it on
+        /// every press. The sources are stripped BEFORE the scene's roots are ever enabled, so
+        /// the sound never gets a frame to start in.
+        /// </summary>
         private static void Silence(Scene scene)
         {
             if (!scene.IsValid()) return;

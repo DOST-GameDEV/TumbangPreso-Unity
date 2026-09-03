@@ -295,6 +295,77 @@ namespace TumbangPreso.Core.Tests
             Assert.False(CustomGameRules.IsPasswordUsable(new string('x', 17)));
         }
 
+        /// <summary>
+        /// ⚠️⚠️ THE MATCH HALF'S FIRST QUESTION: IS THIS ROUND OVER. `LastAttackerStanding`
+        /// answers -1 for "two still playing" and -1 again for "nobody left", and
+        /// `LastTsinelasDirector` has to do opposite things with those two. `docs/TODO.md`
+        /// § 130.13.
+        /// </summary>
+        [Fact]
+        public void ARoundIsDecidedByOneSurvivorOrByNoneAndNeverByTwo()
+        {
+            // Seat 0 is the taya in round 1, so its stock is 0 and must not be counted.
+            Assert.Equal(3, CustomGameRules.AliveAttackers(new[] { 0, 2, 2, 2 }, 0));
+            Assert.False(CustomGameRules.RoundIsDecided(new[] { 0, 2, 2, 2 }, 0));
+
+            // Two left is a round still being played, which is the case a naive `== 1` and a
+            // naive `<= 1` both get right and a `!= 1` would not.
+            Assert.False(CustomGameRules.RoundIsDecided(new[] { 0, 1, 1, 0 }, 0));
+
+            // One left decides it and names a winner.
+            Assert.True(CustomGameRules.RoundIsDecided(new[] { 0, 0, 1, 0 }, 0));
+            Assert.Equal(2, CustomGameRules.LastAttackerStanding(new[] { 0, 0, 1, 0 }, 0));
+
+            // ⚠️ NOBODY LEFT ALSO DECIDES IT, AND THIS IS THE ASSERTION THE FORMAT'S WORST BUG
+            // WOULD HAVE FAILED: a round with four bodies that cannot act, running to the full
+            // clock, giving no reason. The winner is -1 and the caller pays nobody.
+            Assert.True(CustomGameRules.RoundIsDecided(new[] { 0, 0, 0, 0 }, 0));
+            Assert.Equal(-1, CustomGameRules.LastAttackerStanding(new[] { 0, 0, 0, 0 }, 0));
+
+            // ⚠️ THE TAYA'S OWN STOCK IS NEVER COUNTED, WHICHEVER SEAT IS TAYA THIS ROUND, and
+            // seat 2 here holds a full 9 to prove it is skipped rather than merely zero. Counting
+            // it would make every round undecidable, because the taya never loses a tsinelas.
+            Assert.Equal(1, CustomGameRules.AliveAttackers(new[] { 0, 5, 9, 0 }, 2));
+            Assert.True(CustomGameRules.RoundIsDecided(new[] { 0, 5, 9, 0 }, 2));
+            Assert.Equal(1, CustomGameRules.LastAttackerStanding(new[] { 0, 5, 9, 0 }, 2));
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE AWARD IS PAID IN THE GAME'S OWN UNITS AND `MatchRules.PointsFor` IS WHERE
+        /// THAT IS CHECKED. `CustomGameRules.LastStandingPoints`' note is the argument: a format
+        /// that pays in its own currency is a format whose scores cannot be read beside anybody
+        /// else's, and the risk is a second literal 100 drifting away from this one.
+        /// </summary>
+        [Fact]
+        public void TheLastStandingAwardIsAKnockdownsWorthAndIsReadFromOnePlace()
+        {
+            Assert.Equal(CustomGameRules.LastStandingPoints,
+                         MatchRules.PointsFor(ScoreEvent.LastTsinelasStanding));
+
+            Assert.Equal(Balance.ScoreLataKnocked,
+                         MatchRules.PointsFor(ScoreEvent.LastTsinelasStanding));
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ `ScoreEvent` TRAVELS AS AN INT, SO ITS EXISTING VALUES ARE A WIRE CONTRACT.
+        /// `MatchRpc.BroadcastScore` writes `(int)e` and `OnScoreMsg` reads it back. Inserting a
+        /// value ahead of the shipped ones renumbers `Tag`, `Sabotage` and both penalties, and
+        /// two peers would then disagree about which award produced which toast **while still
+        /// agreeing on the total**, which is the quietest possible way to be wrong. This test is
+        /// what makes that a red line rather than a comment.
+        /// </summary>
+        [Fact]
+        public void TheScoreEventOrdinalsAreAWireContractAndOnlyGrowAtTheEnd()
+        {
+            Assert.Equal(0, (int)ScoreEvent.LataKnocked);
+            Assert.Equal(1, (int)ScoreEvent.Tag);
+            Assert.Equal(2, (int)ScoreEvent.Sabotage);
+            Assert.Equal(3, (int)ScoreEvent.DefenseTick);
+            Assert.Equal(4, (int)ScoreEvent.TayaCampPenalty);
+            Assert.Equal(5, (int)ScoreEvent.UnretrievedSlipperPenalty);
+            Assert.Equal(6, (int)ScoreEvent.LastTsinelasStanding);
+        }
+
         [Fact]
         public void EveryFormatHasAPlayerFacingNameAndOneSentence()
         {

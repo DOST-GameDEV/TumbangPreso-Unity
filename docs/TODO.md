@@ -272,7 +272,7 @@ screens a player crosses between most often.
   every runtime probe can only measure a camera that was BUILT during a run, and each of these is
   built by a screen somebody has to open.
 
-### 130.7 ⚠️ OPEN: `MapPreview.cs` is dead code that looks exactly like the live class
+### 130.7 ✅ `MapPreview.cs` was dead code that looked exactly like the live class, and it is gone
 
 `TscnUiImporter` line 676 attaches **`MapPreviewSurface`** to the node named `MapPreview`, and
 `ConvertedMatchSetup` reads `MapPreviewSurface` off that node. **Nothing constructs
@@ -286,6 +286,28 @@ decision to delete it, with its camera notes (the sway-not-orbit argument is the
 conversion of `map_preview.gd` and is worth keeping somewhere) moved onto `MapPreviewSurface`
 first. ⚠️ **Do not delete it without moving those notes**; `CLAUDE.md` § 3 asks for the reasoning
 to survive the deletion.
+
+**Deleted 2026-09-03, notes first.** Three things moved onto `MapPreviewSurface` before the file
+went, and the first of them was the only copy in the repository:
+
+- ⚠️⚠️ **THE SWAY IS THE OPPOSITE OF THE CHARACTER PREVIEW AND THE TWO MUST NOT BE UNIFIED.**
+  `MapPreviewSurface` already carried the sway-not-orbit argument; what it did not carry is the
+  comparison. A character is one object that reads from every side, so turning the MODEL shows the
+  whole thing; an arena is a room with a front, so turning the CAMERA through it shows the player
+  the back of a set. They look like one feature and a shared "preview spinner" would have to pick
+  one, breaking the other screen. Nothing else in the tree said this.
+- The blueprint-grid placeholder the preview replaced, and why it had outlived its job: by the
+  time two dressed maps existed, the screen was asking the player to choose between two names on a
+  backdrop that showed neither.
+- The ambience note onto `MapPreviewSurface.Silence`, which had the code and not the reason. Every
+  map carries a player set to play on awake, so loading one starts the street bed over the menu
+  and cycling the picker restarts it on every press.
+
+⚠️ **`WorldCameraPassParityTests`' third bullet KEEPS naming it**, deliberately: two classes one
+letter apart in the file browser, one live and one dead, is how a session spends an afternoon
+fixing a preview that nothing constructs. The bullet now says it was deleted and says not to
+reintroduce a second preview class. `WorldOutline`'s far-plane note cited its 400 and no longer
+names it.
 
 ### 130.8 ⚠️ NOT DONE: nobody has still watched a phone and a PC join each other
 
@@ -416,7 +438,7 @@ rebuilt and shipped together (`CLAUDE.md` § 4a), and this session's whole other
 for a phone and a PC that can play together. **A feature that did not need the bump did not get
 one.**
 
-### 130.13 ⚠️⚠️ OPEN, AND IT IS A FINDING § 128.2 DID NOT HAVE: LAST TSINELAS'S MATCH HALF COSTS A PROTOCOL BUMP
+### 130.13 ✅ LAST TSINELAS STANDING HAS A MATCH HALF, AND IT COST THE PROTOCOL BUMP THIS ENTRY PREDICTED
 
 § 128.2 says the format *"has rules, tests, a document and no match half"* and lists what the core
 already gives. **What it does not say is what building the match half actually costs**, and that is
@@ -440,6 +462,79 @@ players rebuilt together, and only then the format added to `ConvertedMatchSetup
 stays out of the lobby's format list until the match can run it**, which § 128.2 already says is
 correct: *"a format a player can pick and the match cannot run is worse than one that is not
 offered."*
+
+**Built 2026-09-03, in that order.** `Runtime/LastTsinelasDirector.cs`, and it is short because
+the rules were already engine-free: `TsinelasLeft`, `IsOut`, `LastAttackerStanding` and the two
+functions added beside them are asserted by `Core.Tests` in about a second, and what is left in
+the runtime is the three things that genuinely need the engine (when a tag happened, which body to
+switch off, and how to tell the other three machines).
+
+- ⚠️⚠️ **EVERY TAG IN THIS GAME IS ALREADY A TAG ON A CARRIER, SO THE LOSS CONDITION NEEDED NO
+  NEW CHECK.** `CustomGameRules.TsinelasLeft`'s note reads *"when the taya tags you while you are
+  carrying it back"*, which looks like a second condition to test on top of the tag.
+  **`CharacterMotor.IsTaggable` returns false unless `HoldingSlipper`**, and `ResolveTag` asks that
+  same function before awarding anything, so a tag and a spent tsinelas are the same event. Testing
+  `HoldingSlipper` again in the director would read the flag one frame after `ApplyTagPenalty` sent
+  the slipper home, and **would silently never fire**.
+- ⚠️⚠️ **AND THE OTHER HALF OF THAT NOTE CANNOT ELIMINATE ANYBODY.** *"A tsinelas is lost when the
+  round ends with it still on the floor"* is true of the format and is not a code path: stock is
+  PER ROUND (`IsOut` says "out for the rest of the round"), so a loss charged at the final whistle
+  is charged to a round that is already over and would fire after the winner had been paid.
+- ⚠️⚠️ **`CustomGameRules.AliveAttackers` AND `RoundIsDecided` ARE NEW, AND THEY EXIST BECAUSE
+  `LastAttackerStanding` ANSWERS -1 FOR TWO OPPOSITE SITUATIONS.** Its own header says so: -1 is
+  "more than one alive" and also "nobody alive". A caller holding only the slot cannot tell "carry
+  on" from "end the round and pay nobody", and **`RoundIsDecided` is `alive <= 1` and not
+  `alive == 1`**: writing the obvious one leaves a round with nobody left in it running the full
+  90 seconds with four bodies that cannot act and no reason on screen. That is the format's worst
+  possible failure and it is one character.
+- ⚠️⚠️ **THE AWARD IS PAID BEFORE `BeginIntermission` AND THE ORDER IS LOAD-BEARING.**
+  `BeginIntermission` sets `IsWarmupBuffer` and `AddScore` returns early on exactly that flag, so
+  the two lines the other way round pay nobody, silently, on the one award the whole format exists
+  to make. `LastTsinelasMatchHalfTests` asserts the ORDER of the two strings in the file, because
+  a test that only asserted both were present would pass on the broken version.
+- ⚠️ **THE TAYA IS PAID NOTHING EXTRA FOR CLEARING THE COURT.** `LastAttackerStanding` says a
+  round with no survivors belongs to the taya; it does not say it is worth 100. They have already
+  banked a `Tag` for each attacker they put out, which is 300, and a fourth award on top would make
+  clearing the court worth more than the format's headline prize.
+- ⚠️ **AN ELIMINATED PLAYER CAN STILL WALK.** `RoundActive` is the switch, not `FreezeForMatchEnd`:
+  `CanAct` reads it (so the throw, the grab and the reset channel stop, and `IsTaggable` goes false
+  so they cannot be charged a tsinelas they do not have) and `CanMove` does not. A player frozen in
+  place for up to a minute with no explanation is `CLAUDE.md` § 6.3's dead end.
+
+**The wire, which is the half that cost the bump.** `MatchRpc.BroadcastTsinelas` sends the WHOLE
+stock table rather than the decrement, on every tag and again on every whistle. ⚠️ A delta that is
+dropped or reordered leaves a peer permanently one tsinelas out with no way to notice; four
+integers on the handful of frames a tag happens costs less than the code to detect that drift.
+`BroadcastScore` next door sends the KIND rather than the delta for the opposite reason, and both
+are the same rule: **send the thing the receiver cannot reconstruct.**
+
+⚠️⚠️ **AND A HUD-ONLY REPLICATION WOULD HAVE LOOKED FINE AND BEEN WORSE THAN NOTHING.** `RoundActive`
+is a local flag. A client that only drew the counter would show an eliminated player a correct
+`OUT · NO TSINELAS LEFT` while their own body still threw, grabbed and charged a reset, every one
+of which the host then ignored. **That is not a wrong number, it is a player being told the game is
+broken.**
+
+**`NetSession.ProtocolVersion` is 22**, and the constant's own note carries the three reasons.
+`ChatAndLobbyChromeTests` and `InputContractTests` both assert the number and both were updated in
+this commit. **Both players were rebuilt from this commit and shipped together**, per `CLAUDE.md`
+§ 4a.
+
+**Only then the lobby row.** `ConvertedMatchSetup.FormatOptionCount` is 3 and `FormatAt` was
+rewritten: ⚠️ it read `index <= 0 ? Standard : Mirror`, which is correct for exactly two options and
+**silently maps a new middle row to `Mirror`**, offering the player a format the picker names
+something else. The row index is the enum value now. ⚠️ **It costs one migration**: `settings.json`
+stores the ROW INDEX, so a player who had MIRROR selected opens the lobby on LAST TSINELAS once.
+
+⚠️ **STILL OPEN AND DELIBERATELY NOT DONE HERE: the custom lobby has no tsinelas stepper.**
+`SceneFlow.SelectedTsinelas` exists, is clamped on the host, and is written by nothing, so every
+match plays the shipped three. `CustomGameRules.MinTsinelas`/`MaxTsinelas` are the bounds a row
+would move it between. That is a custom-games UI row and belongs with § 115's remaining work, not
+with the match half.
+
+⚠️ **AND NOBODY HAS PLAYED A ROUND OF IT.** The rules, the wiring, the wire and the picker are
+asserted; what is not asserted is whether three tsinelas makes a round that ends at a good moment,
+because that is a `BotBehaviourProbe` measurement over several seeded runs (§ 16's noise floor:
+three runs an arm for anything worth 20 per cent). **Do that before tuning any number.**
 
 ### 130.14 ⚠️⚠️ OPEN, AND IT IS NEW: `SteeringTests.MouseAimedMovementIsRelativeToTheBody` IS DETERMINISTICALLY RED AND IT IS NOT IN § 126.9'S LIST
 
@@ -502,6 +597,68 @@ enumerates what today's platforms leave behind, so every platform added later fa
   the .apk on the Desktop kept its old timestamp because nothing had touched it. **Check the
   timestamp, not the exit code**: this run exited **0**.
 
+### 130.18 ✅ § 130.12's ballot, built on a bump somebody else was already paying for
+
+§ 130.12 shipped map rotation over the existing `SelectMap` broadcast **specifically so that it
+would not move `ProtocolVersion`**, and said so: *"a feature that did not need the bump did not get
+one."* That was right on the day. It also left the vote half unbuilt, with `MapRotationRules.
+TallyVote`, the tie-break and `EveryoneHasVoted` written and asserted and nothing on any screen
+able to reach them.
+
+⚠️⚠️ **§ 130.13 MOVED THE PROTOCOL TO 22 IN THIS SAME COMMIT, SO THE BALLOT'S WIRE COST WENT TO
+ZERO, AND THAT IS THE WHOLE REASON IT WAS BUILT NOW RATHER THAN LATER.** The expensive part of a
+new message in this repository has never been the message: it is `CLAUDE.md` § 4a's consequence,
+that the Windows player and the .apk must be rebuilt from one commit and shipped together. That
+bill was already being paid. **The next chance to add a wire message for free is the next bump,
+whenever that is.**
+
+**The ballot is ONE control, and one was a decision rather than a shortcut.** The obvious design is
+a button per map. `MatchResult` already carries a result headline, four standings rows, an XP bar,
+an ADD FRIENDS list, a rematch vote and two actions, on **the one screen a player sees after every
+single match**; three more buttons is § 92's *"theres liek 20 shits at once"* arriving there.
+`CLAUDE.md` § 6.2 question 3 is the test, and for two of three map buttons the answer to *"what is
+on screen that the player does not need right now"* is always "this one".
+
+- **So it is a chip that names the map the next match will play, and pressing it votes for the next
+  map in the list.** A press is a vote AND a preview of what that vote does.
+- ⚠️ **THE CHIP READS `Decide` AND NOT `TallyVote`, SO IT STATES A TRUE FACT BEFORE ANYBODY HAS
+  VOTED.** With an empty table `Decide` returns the rotation's next map, which is exactly what a
+  rematch would load right now. A chip that sat blank until it was used would be a control the
+  player has to discover, which is § 6.2 question 2 failed.
+- ⚠️ **A PRESS CYCLES THIS SEAT'S BALLOT, NOT THE PROJECTION.** Cycling the projection skips a step
+  the moment somebody else's vote changes the answer between two of your presses.
+- ⚠️ **THE TALLY LINE IS EMPTY UNTIL SOMEBODY VOTES**, which is `ShowTally`'s own rule one row
+  down: a count nobody has contributed to yet is not information, and a permanent "0 VOTES" under
+  a chip that already states the answer is a second copy of nothing.
+- ⚠️ **A SPECTATOR SEES THE MAP AND CANNOT VOTE.** `_rematch` hides itself from a spectator; this
+  does not, deliberately, because a rematch button they cannot press is noise and the next map is
+  information they want.
+- ⚠️ **IT SITS ABOVE REMATCH.** A ballot underneath the button that consumes it is a control the
+  player meets after the decision it feeds has been taken.
+
+**The wire** is `SelectMapVote` (peer to host) and `MapVoteTally` (host to all). ⚠️ **The seat is
+resolved on the host from the sender through `TrySenderSeat` and never read out of the payload**: a
+client that could name its own seat could cast three ballots and hand itself the map. ⚠️ **The
+whole table travels rather than the delta**, for `BroadcastTsinelas`' reason.
+
+⚠️⚠️ **AND THE FALLBACK IS UNCHANGED, WHICH IS THE HALF WORTH RE-READING § 130.12 FOR.** The host
+still calls `AdvanceMapRotation` on every rematch and the ballot is only ever an ARGUMENT to it.
+There is no branch for "somebody voted": `Decide` reads an empty table and returns the cycle. **A
+lobby where nobody presses anything is the common case**, and the vote alone would have left four
+abstentions replaying the same street for ever.
+
+⚠️ **NOT DONE: `MapRotationRules.VoteSeconds` (20) IS STILL UNUSED.** The board has no countdown,
+so the ballot is open for as long as the board is up rather than for a fixed window. That matters
+only for a lobby where somebody walks away mid-vote, the rematch already has its own tally gate,
+and a second clock on this card needs the design pass § 6.2a asks for rather than a number.
+
+⚠️⚠️ **AND NOBODY HAS SEEN THIS CARD IN A BUILD.** `CLAUDE.md` § 6.2b: a screen with a new row
+ships with a render, over the real background, at the shape he plays at, with the chrome live.
+**This one has a test and no picture**, which is § 6.2a's *"a green layout probe is not a good
+screen"* with the probe not yet run either. It is the first thing to look at in the next build.
+
+---
+
 ### 130.16 · Verified
 
 - **Core 451/451** (`dotnet test`, 44 ms). 433 plus 2 pool-key tests plus 16 `MapRotationTests`.
@@ -530,6 +687,38 @@ which is § 126.8's own instruction until that entry closes.
 The cause is identified and the five named fixtures are fixed, but *"the suite is a gate again"* is
 a claim only a full run can make, and quoting one would be the exact fault § 126.8 exists to record.
 **Do not close § 126.8 on this entry.**
+
+### 130.19 · Verified, the second batch on this branch
+
+⚠️ **The block above is the FIRST batch's numbers and is left alone.** This one is the commit that
+moved the protocol.
+
+- **Core 454/454** (`dotnet test`, 48 ms). 451 plus `ARoundIsDecidedByOneSurvivorOrByNoneAndNeverByTwo`,
+  `TheLastStandingAwardIsAKnockdownsWorthAndIsReadFromOnePlace` and
+  `TheScoreEventOrdinalsAreAWireContractAndOnlyGrowAtTheEnd`.
+- **EditMode 314/314**. 305 plus 6 `LastTsinelasMatchHalfTests` and 3 `MapBallotWiringTests`.
+- **All seven editor checks pass in one launch**, and `[ShaderWarmup] 23 shaders, 53 variants`
+  with **0 `Shader.Find` names unresolved**, unchanged by this batch.
+- **All three `tools/` audits exit 0**: 49 ability effect sites with **0 ungated on another body**,
+  **57 wire entry points and 0 unreachable** (the two new ballot messages both have callers), and
+  **60 named messages with 0 mismatched** (`Tsinelas` reads 2 and writes 2).
+
+⚠️⚠️ **`NetSession.ProtocolVersion` IS 22 AND THAT IS THE HEADLINE OF THIS COMMIT.** § 130.13 is
+why. **Both players were rebuilt from this commit and shipped together**, per `CLAUDE.md` § 4a: a
+v21 player and a v22 player refuse each other correctly and it reads as a bug.
+
+⚠️ **One test of mine failed first and the failure was the test, not the code.**
+`TheAwardIsCreatedWhereEveryOtherPointIsAndBeforeTheBufferOpens` searched for the bare string
+`BeginIntermission` to prove the award is written before it, and found it in `Decide`'s own doc
+comment several hundred characters ahead of the award. **Every ⚠️ note in this repository names the
+thing it is about, so in this codebase a bare identifier is nearly always a comment before it is
+ever a call.** The test matches `GameServices.Match?.BeginIntermission()` now. Worth remembering
+before writing the next source-as-text assertion.
+
+⚠️⚠️ **THE FULL PLAYMODE SUITE STILL HAS NOT BEEN RUN ON THIS COMMIT AND § 126.8 IS STILL NOT
+CLOSED.** Verification here was `dotnet test`, EditMode, the seven checks, the three audits and a
+targeted `GameplayShots` run for § 127.3's frame. **Do not quote a PlayMode number from this
+entry.**
 
 ### 130.15 ⚠️ `AspectRatioProbes` IS NARROWED TO ONE OPEN QUESTION NOW, AND IT IS § 121.8
 
@@ -686,6 +875,47 @@ cannot defeat it.
   says the code did what it was told; **it does not say a player can read it at eight metres.**
   `scratchpad/greyscale.py` desaturates at Rec. 601, the same weighting `AbilityShowcaseProbe`
   measures luminance with. **Do not close § 127 without it.**
+
+  ⚠️⚠️ **AND `scratchpad/greyscale.py` DID NOT EXIST WHEN THIS ENTRY NAMED IT, WHICH IS WORTH
+  RECORDING RATHER THAN QUIETLY FIXING.** The line above was written as though the tool were on
+  disk and it was not, so every session that read this entry was told the hard half was already
+  done and only the render was owed. **A pointer to a file that is not there is worse than no
+  pointer**, because it makes the work look smaller than it is: this is the same fault class as
+  § 96's probe asserting a plate was on screen, one level down. Written 2026-09-03, Rec. 601, and
+  it refuses to overwrite an existing output because `CLAUDE.md` § 6.1 versions render filenames.
+
+  ⚠️⚠️ **AND `round-witness.png` COULD NEVER HAVE ANSWERED THIS, FOR A REASON WORTH NAMING: THE
+  CAMERA IS AT THE WRONG HEIGHT, NOT IN THE WRONG PLACE.** `GameplayShots.Witness` sits 2.6 m up
+  and looks at 0.9 m, roughly chest height on a standing Person, which frames the CAST. A role
+  marker is painted on the FLOOR, and from a near-level camera a ring and a disc are the same
+  picture. `GameplayShots.RoleMarkers` is a second camera: 8 m away on the ground plane (§ 16.1's
+  own distance, not whatever framed nicely), 4.2 m up, aimed at the taya's FEET, and placed on the
+  line between the taya and the nearest attacker **so both markers are in one shot at similar
+  sizes**. A frame with one marker in it cannot fail the test, because the claim is not "the ring
+  is visible", it is "the taya can be picked out".
+
+  **Taken 2026-09-03**: `Logs/shots-play/role-markers-v1.png` and `role-markers-v1-grey.png`.
+  ⚠️⚠️ **STILL OPEN, BECAUSE THE ANSWER IS A JUDGEMENT AND IT NEEDS 🧑'S EYE**, which was always
+  true of this item. What the frame adds is that the question is now one LOOK rather than one task.
+  Two things were measured off it and both are worth having before that look:
+
+  - ⚠️⚠️ **THE RING IS DRAWN AND IT IS FAINT. 1,909 blue-dominant pixels in a 1920x1080 frame**,
+    at rows 304 to 730 peaking at **row 563**, which is the taya's feet. So the mesh reaches the
+    screen and § 127.3's geometry test was not lying. **In the desaturated frame it does not
+    separate cleanly**: `UiTheme.Defense` `0080e8` is Rec. 601 luminance **101** and Eskinita's
+    asphalt sits near 60, so the ring is about 40 levels of grey over its background, spread over
+    an 8 per cent-thick annulus at eight metres. The SHAPE is the second channel and there is not
+    much of it to see. **That is the thing to judge in the picture.**
+  - ⚠️⚠️ **AND A TRAP FOR WHOEVER TAKES THIS PICTURE NEXT: `CharacterNameplate` SWITCHES THE RING
+    OFF ENTIRELY FOR THE LOCAL FIRST-PERSON BODY** (`_ring.gameObject.SetActive(!mine)`, guarded by
+    `rig.IsLocalFpp && rig.IsFollowing`). It is correct behaviour and it is a floor for a marker
+    nobody can see from inside their own head. **But it means a witness camera framing the local
+    player photographs a body with no marker at all**, and the obvious reading of that frame is
+    "the ring is not being drawn" rather than "the ring is deliberately hidden on this one body".
+    That is half an hour of chasing a bug that is not there.
+
+  ⚠️ **The measurement was made by counting pixels rather than by looking**, because "I cannot see
+  it" and "it is not there" are different findings and only one of them is actionable.
 - ⚠️ **The crosshair and the lata label are still hue-only** (`Hud`: `UiTheme.Offense` /
   `UiTheme.Defense`). Both are small and the lata card has words beside it, so they are a lower
   bar than the ring was, but they are the rest of § 16.1.

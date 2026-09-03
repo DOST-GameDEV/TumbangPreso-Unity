@@ -821,7 +821,13 @@ namespace TumbangPreso.UI
             // ⚠️ SABOTAGE RIDES THE TAG CUE because it is the same gesture from the taya's side:
             // a shove that lands on somebody already tagged. `Rumble` has four cues rather than
             // one per `ScoreEvent`, for the reason its own note gives about the two motors.
-            if (e == ScoreEvent.LataKnocked) InputLayer.Rumble.LataKnocked();
+            // ⚠️ THE LAST TSINELAS AWARD RIDES THE KNOCKDOWN CUE, WHICH IS THE SAME CHOICE THE
+            // NOTE ABOVE MAKES FOR SABOTAGE AND FOR THE SAME REASON: `Rumble` has four cues
+            // rather than one per `ScoreEvent`, and this is the format's biggest moment paying a
+            // knockdown's worth of points. A fifth cue for one award in one format would be a
+            // motor pattern almost no player ever feels twice.
+            if (e == ScoreEvent.LataKnocked || e == ScoreEvent.LastTsinelasStanding)
+                InputLayer.Rumble.LataKnocked();
             else if (e == ScoreEvent.Tag || e == ScoreEvent.Sabotage) InputLayer.Rumble.Tagged();
 
             ShowToast($"{(points > 0 ? "+" : "")}{points}  {LabelOf(e)}", 1.2f);
@@ -836,6 +842,13 @@ namespace TumbangPreso.UI
                 case ScoreEvent.Tag: return "TAG";
                 case ScoreEvent.TayaCampPenalty: return "CAMPING";
                 case ScoreEvent.UnretrievedSlipperPenalty: return "SLIPPER IDLE";
+
+                // ⚠️ "LAST TSINELAS", NOT "LAST TSINELAS STANDING". The toast is read in about a
+                // second beside a number, and the format's full name is already on the lobby
+                // card and the results board. `CustomGameRules.FormatName` is the long form and
+                // is deliberately not reused here.
+                case ScoreEvent.LastTsinelasStanding: return "LAST TSINELAS";
+
                 default: return "DEFENSE";
             }
         }
@@ -1816,7 +1829,38 @@ namespace TumbangPreso.UI
             // the whole reason the card is not just a coloured light.
             string line = "";
 
-            if (lata.IsProtected)
+            // ⚠️⚠️ LAST TSINELAS IS TESTED FIRST AND OUTRANKS EVERY LINE BELOW IT, INCLUDING
+            // "PROTECTED". `docs/TODO.md` § 130.13. Every other branch here answers *what can I
+            // do about the can*, and a player who is OUT can do nothing about anything: telling
+            // them to RETRIEVE A SLIPPER while their body refuses to grab one is `CLAUDE.md`
+            // § 6.2's intuitive claim failed in the most direct way there is, a screen naming a
+            // control that does not work.
+            //
+            // ⚠️ AND THE COUNT IS SHOWN WHILE THEY ARE STILL IN, NOT ONLY WHEN IT REACHES ZERO.
+            // A stock the player cannot see is a rule they discover by losing to it; the whole
+            // tension of the format is knowing you are on your last one BEFORE you go back in.
+            // The taya is skipped: they have no stock and the row would be a permanent zero.
+            var tsinelas = GameServices.Tsinelas;
+            if (tsinelas != null && tsinelas.Live && _local != null && !_local.IsDefender)
+            {
+                int left = tsinelas.StockFor(_local.PlayerSlot);
+
+                if (left <= 0)
+                {
+                    line = "OUT  ·  NO TSINELAS LEFT";
+                }
+                else
+                {
+                    // ⚠️ THE SINGULAR IS WRITTEN OUT RATHER THAN PLURALISED WITH AN "(S)".
+                    // `docs/VISION.md` § 3: a screen that teaches the wrong thing is worse than
+                    // one that teaches none, and "1 TSINELAS(S) LEFT" is the front end admitting
+                    // it did not know what it was saying.
+                    line = left == 1
+                        ? "LAST TSINELAS  ·  DO NOT GET TAGGED"
+                        : $"{left} TSINELAS LEFT";
+                }
+            }
+            else if (lata.IsProtected)
             {
                 line = $"PROTECTED  {lata.ProtectionLeft:0.0}s";
             }

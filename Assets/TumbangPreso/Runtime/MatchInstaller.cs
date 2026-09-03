@@ -459,6 +459,12 @@ namespace TumbangPreso
             GameServices.Match?.ResetForNewMatch();
             GameServices.Round?.ResetForNewMatch();
 
+            // ⚠️ THE FORMAT IS CLEARED HERE TOO, so a Standard match entered after a Last
+            // Tsinelas one cannot inherit a stock table and start switching bodies off at the
+            // first tag. `LastTsinelasDirector` re-reads `SceneFlow.SelectedFormat` on every
+            // whistle, but the stocks live between whistles and nothing else empties them.
+            GameServices.Tsinelas?.ResetForNewMatch();
+
             // ⚠️⚠️ THE SEATS AND THE CAN GO IN IMMEDIATELY, NOT AT `SliceRunner.Begin`, AND THE
             // FREE-ROAM WINDOW IS WHY. `Begin` does not run until the countdown ends, so with the
             // ready gate on, `RoundDirector` knew about nobody and nothing for the whole time the

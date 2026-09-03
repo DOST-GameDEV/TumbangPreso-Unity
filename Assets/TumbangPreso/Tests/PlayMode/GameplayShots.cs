@@ -115,6 +115,10 @@ namespace TumbangPreso.PlayTests
             yield return Eyes("round-eyes");
             yield return Witness("round-witness");
 
+            // § 127.3's owed frame. See `RoleMarkers`: `round-witness` above is the shot that
+            // could not answer this, from a camera 2.6 m up looking at chest height.
+            yield return RoleMarkers("role-markers-v1");
+
             DumpCarry("Logs/carry-live.txt");
             DumpFrame("Logs/fpp-live.txt");
 
@@ -342,6 +346,79 @@ namespace TumbangPreso.PlayTests
         /// only way to see what the BODIES are doing: the shipped rig is first person, so the
         /// local player's own limbs never appear in their own shot.
         /// </summary>
+        /// <summary>
+        /// § 127.3's owed frame: the TAYA'S FEET, from eight metres, at an angle that can
+        /// actually see the ground.
+        ///
+        /// ⚠️⚠️ `Witness` CANNOT ANSWER THIS AND THAT IS WHY THERE IS A SECOND CAMERA. It sits at
+        /// 2.6 m and looks at 0.9 m, roughly chest height on a standing Person, which frames the
+        /// CAST. A role marker is painted on the floor, and from a near-level camera a ring and a
+        /// disc are the same picture: `round-witness.png` is exactly that shot and § 127.3 records
+        /// it failing for exactly that reason (*"the taya's marker was caught only edge-on"*).
+        ///
+        /// ⚠️⚠️ EIGHT METRES IS THE NUMBER § 16.1 ASKS THE QUESTION AT, so it is the distance
+        /// rather than whatever framed nicely: *"it does not say a player can read it at eight
+        /// metres."* The camera is 8 m from the taya on the ground plane and 4.2 m up, which is
+        /// about a 27 degree look-down, and it aims at their FEET rather than their chest.
+        ///
+        /// ⚠️ AN ATTACKER IS PULLED INTO THE FRAME ON PURPOSE. The claim is not "the ring is
+        /// visible", it is "the taya can be picked out", and a shot with one marker in it cannot
+        /// fail. The camera is placed on the line between the taya and the nearest attacker so
+        /// both markers are in shot at similar sizes.
+        /// </summary>
+        private static IEnumerator RoleMarkers(string name)
+        {
+            var match = GameServices.Match;
+            var round = GameServices.Round;
+
+            var taya = round?.PlayerAt(match != null ? match.DefenderSlot : 0);
+            if (taya == null) yield break;
+
+            Vector3 tayaAt = taya.transform.position;
+
+            CharacterMotor nearest = null;
+            float best = float.MaxValue;
+
+            foreach (var m in Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None))
+            {
+                if (m == taya) continue;
+
+                float d = Vector3.Distance(m.transform.position, tayaAt);
+                if (d >= best) continue;
+
+                best = d;
+                nearest = m;
+            }
+
+            // Look along the taya-to-attacker line so both floor marks are in shot. With nobody
+            // else in the arena, fall back to a fixed bearing rather than skipping the frame.
+            Vector3 along = nearest != null
+                ? (tayaAt - nearest.transform.position)
+                : new Vector3(0.0f, 0.0f, -1.0f);
+
+            along.y = 0.0f;
+            if (along.sqrMagnitude < 0.0001f) along = new Vector3(0.0f, 0.0f, -1.0f);
+            along.Normalize();
+
+            var go = new GameObject("RoleMarkerCam");
+            var cam = go.AddComponent<Camera>();
+            cam.fieldOfView = 50.0f;
+            cam.nearClipPlane = 0.05f;
+            cam.farClipPlane = 400.0f;
+
+            cam.transform.position = tayaAt + (along * 8.0f) + new Vector3(0.0f, 4.2f, 0.0f);
+
+            // ⚠️ AIMED AT THE FLOOR, NOT AT THE BODY. The mark is at the taya's feet and a shot
+            // centred on their chest puts it at the bottom edge of the frame where a reader
+            // cannot judge it.
+            cam.transform.LookAt(tayaAt + new Vector3(0.0f, 0.05f, 0.0f));
+
+            Grade(cam);
+            yield return Render(cam, name, flipCanvases: false);
+
+            Object.DestroyImmediate(go);
+        }
+
         private static IEnumerator Witness(string name)
         {
             var go = new GameObject("WitnessCam");

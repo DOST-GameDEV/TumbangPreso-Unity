@@ -186,23 +186,52 @@ namespace TumbangPreso.UI
         private static string FormatDetail(int index)
             => CustomGameRules.FormatName(FormatAt(index)) + " " + CustomGameRules.FormatBlurb(FormatAt(index));
 
+        /// <summary>
+        /// ⚠️⚠️ THE ROW INDEX IS THE ENUM VALUE NOW, AND THAT IS THE POINT OF THE REWRITE RATHER
+        /// THAN A SIDE EFFECT. This used to read `index &lt;= 0 ? Standard : Mirror`, which was
+        /// correct for exactly two options and silently wrong for three: adding a row in the
+        /// middle would have mapped it to `Mirror` and offered the player a format the picker
+        /// named something else. A `switch` on the index with a cast is the same trap one step
+        /// along. Index 0 is `Standard`, 1 is `LastTsinelas`, 2 is `Mirror`, which is the
+        /// declaration order in `MatchFormat` and is now checked rather than remembered.
+        ///
+        /// ⚠️ IT COSTS ONE MIGRATION AND THE MIGRATION IS WORTH IT. `settings.json` stores this
+        /// as a ROW INDEX, so a player who had MIRROR selected before this commit opens the lobby
+        /// on LAST TSINELAS STANDING once. `GameSettings.MatchFormat`'s own note says it is a
+        /// preference rather than the match's answer, it is one press to change, and the
+        /// alternative is keeping the index and the enum permanently out of step.
+        /// </summary>
         private static MatchFormat FormatAt(int index)
-            => index <= 0 ? MatchFormat.Standard : MatchFormat.Mirror;
+        {
+            if (index <= 0) return MatchFormat.Standard;
+            if (index >= FormatOptionCount - 1) return MatchFormat.Mirror;
+            return MatchFormat.LastTsinelas;
+        }
 
         /// <summary>
-        /// ⚠⚠ TWO, NOT THREE, AND LAST TSINELAS STANDING IS THE ONE MISSING. Its RULES are
-        /// written, tested and documented (`CustomGameRules`, `Phase11And12Tests`,
-        /// `docs/Formats.md` § 1) and **its match half is not built**: a tag has to cost a
-        /// tsinelas, a spent attacker has to be out for the round, and the round has to end when
-        /// one is left. Offering it on this row today would be a control that changes the caption
-        /// and nothing else, which is `docs/TODO.md` § 108's EQUIP button with no listener, and
-        /// this project has shipped that fault twice. **It goes in the row the day the match
-        /// obeys it**; `docs/TODO.md` § 115 carries the design and the remaining work.
+        /// ⚠️⚠️ THREE SINCE 2026-09-03, AND THE PARAGRAPH THIS REPLACED IS WORTH KEEPING BECAUSE
+        /// IT IS THE RULE THAT DECIDED WHEN. It read: *"TWO, NOT THREE, AND LAST TSINELAS
+        /// STANDING IS THE ONE MISSING. Its RULES are written, tested and documented and its
+        /// match half is not built: a tag has to cost a tsinelas, a spent attacker has to be out
+        /// for the round, and the round has to end when one is left. Offering it on this row
+        /// today would be a control that changes the caption and nothing else, which is
+        /// `docs/TODO.md` § 108's EQUIP button with no listener, and this project has shipped
+        /// that fault twice. It goes in the row the day the match obeys it."*
+        ///
+        /// **The match obeys it now.** `LastTsinelasDirector` spends a tsinelas on every tag,
+        /// switches an emptied attacker out for the rest of the round, ends the round the moment
+        /// one is left and pays `ScoreEvent.LastTsinelasStanding`; `MatchRpc.BroadcastTsinelas`
+        /// carries the stock table so the other three machines agree about who is out.
+        /// `docs/TODO.md` § 130.13, and it is what moved `NetSession.ProtocolVersion` to 22.
+        ///
+        /// ⚠️ THE ORDER OF THE ROWS IS `MatchFormat`'S OWN DECLARATION ORDER. See `FormatAt`:
+        /// the row index IS the enum value now, which is why adding this one was a row rather
+        /// than a rewrite of every caller.
         ///
         /// ⚠️ MIRROR IS COMPLETE AND SHIPS: `MatchInstaller` overrides every seat's character
         /// from `CustomGameRules.MirrorIndex`, so picking it changes the four people who walk out.
         /// </summary>
-        private const int FormatOptionCount = 2;
+        private const int FormatOptionCount = 3;
 
         private int _format;
 

@@ -215,7 +215,15 @@ namespace TumbangPreso.Tests
             // different games sharing one scoreboard: the peer sees attackers stop throwing for
             // no reason and a round awarded to somebody it cannot account for. Cosmetic mismatch
             // draws a stranger; this one disputes the result, so it is a refusal at approval.
-            Assert.AreEqual(21, NetSession.ProtocolVersion,
+            // ⚠️⚠️ 22 SINCE 2026-09-03: LAST TSINELAS STANDING'S MATCH HALF (`docs/TODO.md`
+            // § 130.13). The paragraph above is the reason this had to move a SECOND time, and it
+            // is worth reading the two together: 21 bought "the peer knows about `MatchFormat`",
+            // which shipped a format the lobby could select and the match could not play. 22 buys
+            // "the peer knows how to run this one": a round that ends before the clock does, a new
+            // `ScoreEvent` an older peer drops rather than casts, and the `Tsinelas` stock table
+            // without which a peer never learns its own player is out and goes on letting them
+            // throw. The first bump agreed on a word; this one agrees on the rules behind it.
+            Assert.AreEqual(22, NetSession.ProtocolVersion,
                 "a message or a replicated roster index has been added or removed. Bump this " +
                 "number and `NetSession.ProtocolVersion` together, in the same commit.");
         }

@@ -346,6 +346,9 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("PlayAction", OnPlayActionMsg);
             cm.RegisterNamedMessageHandler("PlayStyle", OnPlayStyleMsg);
             cm.RegisterNamedMessageHandler("Score", OnScoreMsg);
+            cm.RegisterNamedMessageHandler("Tsinelas", OnTsinelasMsg);
+            cm.RegisterNamedMessageHandler("SelectMapVote", OnSelectMapVoteMsg);
+            cm.RegisterNamedMessageHandler("MapVoteTally", OnMapVoteTallyMsg);
             cm.RegisterNamedMessageHandler("MatchRecord", OnMatchRecordMsg);
             cm.RegisterNamedMessageHandler("Chat", OnChatMsg);
             cm.RegisterNamedMessageHandler("ChatLine", OnChatLineMsg);
@@ -1416,6 +1419,95 @@ namespace TumbangPreso.Net
         {
             if (!NetAuthority.IsHost) return;
             FindFirstObjectByType<UI.MatchResult>()?.HostReceiveVote((int)senderClientId);
+        }
+
+        /// <summary>
+        /// PHASE 12: this peer's ballot for the next map. `docs/TODO.md` § 130.12 and § 130.18.
+        ///
+        /// ⚠️⚠️ IT IS THE HALF § 130.12 DELIBERATELY DID NOT BUILD, AND THE REASON IT COULD BE
+        /// BUILT NOW IS THAT SOMETHING ELSE HAD ALREADY PAID FOR THE BUMP. That entry shipped the
+        /// rotation over the existing `SelectMap` broadcast specifically so it would not move
+        /// `ProtocolVersion`, because moving it forces the Windows player and the .apk to be
+        /// rebuilt and shipped together (`CLAUDE.md` § 4a). LAST TSINELAS's match half moved it to
+        /// 22 in the same commit, so the ballot rides a bump that was already being paid rather
+        /// than costing a second dual rebuild later. **This is the cheap moment and there is not
+        /// another one until the next bump.**
+        ///
+        /// ⚠️ THE SEAT IS RESOLVED ON THE HOST FROM THE SENDER, NEVER TAKEN FROM THE PAYLOAD.
+        /// `TrySenderSeat` is the same guard every other peer-to-host message uses: a client that
+        /// could name its own seat could cast three ballots and hand itself the map.
+        /// </summary>
+        public bool SelectMapVoteServerRpc(int mapIndex)
+        {
+            if (NetAuthority.IsHost)
+            {
+                FindFirstObjectByType<UI.MatchResult>()?.HostReceiveMapVote(NetAuthority.LocalSlot, mapIndex);
+                return true;
+            }
+
+            if (_nm == null || _nm.CustomMessagingManager == null || !_nm.IsConnectedClient)
+                return false;
+
+            using var writer = new FastBufferWriter(8, Allocator.Temp);
+            writer.WriteValueSafe(mapIndex);
+            _nm.CustomMessagingManager.SendNamedMessage("SelectMapVote", NetworkManager.ServerClientId, writer);
+            return true;
+        }
+
+        private void OnSelectMapVoteMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
+            if (!TrySenderSeat(senderClientId, out int seat)) return;
+
+            reader.ReadValueSafe(out int mapIndex);
+            FindFirstObjectByType<UI.MatchResult>()?.HostReceiveMapVote(seat, mapIndex);
+        }
+
+        /// <summary>
+        /// HOST ONLY. The whole ballot, so every board can draw who wants what.
+        ///
+        /// ⚠️ THE WHOLE TABLE TRAVELS FOR `BroadcastTsinelas`' REASON: a "seat 2 voted for map 1"
+        /// delta that is dropped leaves a board permanently one vote out with no way to notice,
+        /// and four integers sent on the handful of frames somebody presses the chip costs less
+        /// than the code to detect that drift.
+        ///
+        /// ⚠️ AND IT IS THE DISPLAY ONLY. `MapRotationRules.Decide` runs on the host and the
+        /// answer reaches every peer through the `SelectMap` broadcast the rotation already used,
+        /// which is `SceneFlow.AdvanceMapRotation`'s own note: four peers each tallying is four
+        /// different maps.
+        /// </summary>
+        public void MapVoteTallyClientRpc(int[] votes)
+        {
+            if (!NetAuthority.IsHost) return;
+            if (_nm == null || _nm.CustomMessagingManager == null || votes == null) return;
+
+            int count = Mathf.Min(votes.Length, Core.Balance.PlayerCount);
+
+            using var writer = new FastBufferWriter(8 + (count * 4), Allocator.Temp);
+            writer.WriteValueSafe(count);
+            for (int i = 0; i < count; i++) writer.WriteValueSafe(votes[i]);
+
+            _nm.CustomMessagingManager.SendNamedMessageToAll("MapVoteTally", writer);
+        }
+
+        private void OnMapVoteTallyMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (NetAuthority.IsHost) return;
+            if (!FromHost(senderClientId)) return;
+
+            reader.ReadValueSafe(out int count);
+            if (count < 0 || count > Core.Balance.PlayerCount) return;
+
+            var votes = new int[Core.Balance.PlayerCount];
+            for (int i = 0; i < votes.Length; i++) votes[i] = Core.MapRotationRules.NoVote;
+
+            for (int i = 0; i < count; i++)
+            {
+                reader.ReadValueSafe(out int vote);
+                votes[i] = vote;
+            }
+
+            FindFirstObjectByType<UI.MatchResult>()?.ApplyNetworkMapVotes(votes);
         }
 
         /// <summary>HOST ONLY. Broadcasts "n of m have voted" so every screen can draw it.</summary>
@@ -2561,6 +2653,41 @@ namespace TumbangPreso.Net
         }
 
         /// <summary>
+        /// PHASE 12: the LAST TSINELAS STANDING stock table, host to every peer.
+        /// `docs/TODO.md` § 130.13, and it is why `NetSession.ProtocolVersion` is 22.
+        ///
+        /// ⚠️⚠️ THE WHOLE TABLE TRAVELS, NOT THE DECREMENT, AND THAT IS THE SAME ARGUMENT
+        /// `SyncWorld` MAKES ABOUT THE SCORE. A "player 2 lost one" message is a delta, and a
+        /// delta that is dropped or reordered leaves a peer permanently one tsinelas out with no
+        /// way to notice; four small integers sent on the handful of frames a tag happens costs
+        /// less than the code to detect that drift. `BroadcastScore` next door sends the KIND
+        /// rather than the delta for the opposite reason, and both are the same rule: send the
+        /// thing the receiver cannot reconstruct.
+        ///
+        /// ⚠️ IT IS SENT ON THE WHISTLE AS WELL AS ON EVERY TAG, so a peer that joined mid-round
+        /// or missed a packet is corrected at the start of the next round rather than staying
+        /// wrong until the match ends.
+        ///
+        /// ⚠️ THE COUNT IS WRITTEN FIRST AND THE READER TRUSTS IT ONLY AS FAR AS `Balance
+        /// .PlayerCount`. This is a `FastBufferWriter` message read field by field in order, which
+        /// is the trap `ProtocolVersion` 16, 17 and § 89.5 all record; a length-prefixed loop that
+        /// clamped nothing would let a malformed packet read off the end of the buffer.
+        /// </summary>
+        public void BroadcastTsinelas(int[] stocks)
+        {
+            if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
+            if (stocks == null) return;
+
+            int count = Mathf.Min(stocks.Length, Core.Balance.PlayerCount);
+
+            using var writer = new FastBufferWriter(8 + (count * 4), Allocator.Temp);
+            writer.WriteValueSafe(count);
+            for (int i = 0; i < count; i++) writer.WriteValueSafe(stocks[i]);
+
+            _nm.CustomMessagingManager.SendNamedMessageToAll("Tsinelas", writer);
+        }
+
+        /// <summary>
         /// Sends the finished match record to every peer, once, at the end of the match.
         ///
         /// ⚠️⚠️ THE HOST IS THE ONLY MACHINE THAT COUNTED THE MATCH, SO WITHOUT THIS A CLIENT
@@ -2639,6 +2766,29 @@ namespace TumbangPreso.Net
             if (!System.Enum.IsDefined(typeof(Core.ScoreEvent), rawEvent)) return;
 
             GameServices.Match?.ApplyNetworkScoreEvent(slot, (Core.ScoreEvent)rawEvent);
+        }
+
+        /// <summary>
+        /// ⚠️ THE HOST IGNORES ITS OWN LOOPBACK, exactly as `OnScoreMsg` above does and for the
+        /// same reason: `SendNamedMessageToAll` comes back to the sender, and re-applying the
+        /// table the host just computed would raise `StocksChanged` twice per tag on one machine.
+        /// </summary>
+        private void OnTsinelasMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (NetAuthority.IsHost) return;
+            if (!FromHost(senderClientId)) return;
+
+            reader.ReadValueSafe(out int count);
+            if (count < 0 || count > Core.Balance.PlayerCount) return;
+
+            var stocks = new int[Core.Balance.PlayerCount];
+            for (int i = 0; i < count; i++)
+            {
+                reader.ReadValueSafe(out int stock);
+                stocks[i] = stock;
+            }
+
+            GameServices.Tsinelas?.ApplyNetworkStocks(stocks);
         }
 
         private void OnPlayStyleMsg(ulong senderClientId, FastBufferReader reader)

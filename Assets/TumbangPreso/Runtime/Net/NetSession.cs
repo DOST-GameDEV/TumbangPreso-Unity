@@ -274,7 +274,34 @@ namespace TumbangPreso.Net
         /// unregistered message name, where a widened `SelectMode` would read a format out of the
         /// bytes it expects a mode in. **The version still moves**, because tolerating the message
         /// is not the same as playing the same game.
-        public const int ProtocolVersion = 21;
+        ///
+        /// ⚠️⚠️ 22 IS LAST TSINELAS STANDING'S MATCH HALF, SINCE 2026-09-03, AND IT IS THE
+        /// SECOND HALF OF THE MOVE 21 ONLY LOOKED LIKE IT HAD MADE. **21 covers "the peer knows
+        /// about `MatchFormat`". It does not cover "the peer knows how to RUN this one",** and
+        /// those are different claims: 21 shipped a format a lobby could select and a match could
+        /// not play, so every peer agreed on a word and none of them had any code behind it.
+        /// `docs/TODO.md` § 130.13.
+        ///
+        /// Three things move at once and no one of them would have been survivable alone:
+        ///
+        ///  1. **A round can now end on a condition other than the clock.** The last attacker
+        ///     standing settles it, which every peer's HUD reads off `RoundDirector.TimeLeft`.
+        ///  2. **`ScoreEvent.LastTsinelasStanding` is a new value on an enum that travels as an
+        ///     int.** `OnScoreMsg` drops an event it cannot name rather than casting it, which is
+        ///     correct and is exactly the problem: a 21 peer would see the round end early, watch
+        ///     the host's winner gain 100 points out of nowhere on the next `SyncWorld`, and have
+        ///     no toast, no sting and no line on the results board saying why.
+        ///  3. **`Tsinelas` is a new message carrying the stock table** (`BroadcastTsinelas`). A
+        ///     peer without the handler never learns that its own player is out, so it goes on
+        ///     letting them throw and grab while the host ignores every request. That is the
+        ///     "two different games sharing one scoreboard" sentence above, on the one machine
+        ///     whose player is being told the game is broken.
+        ///
+        /// ⚠️⚠️ AND `CLAUDE.md` § 4a'S CONSEQUENCE IS NOT OPTIONAL HERE: **the Windows player and
+        /// the .apk are rebuilt from this commit and shipped together**, or they refuse each
+        /// other correctly and it reads as a bug. Both were rebuilt in the commit that moved this
+        /// number.
+        public const int ProtocolVersion = 22;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

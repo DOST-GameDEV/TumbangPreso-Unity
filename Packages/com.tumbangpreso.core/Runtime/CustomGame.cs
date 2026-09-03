@@ -133,6 +133,48 @@ namespace TumbangPreso.Core
         }
 
         /// <summary>
+        /// How many attackers still hold a tsinelas.
+        ///
+        /// ⚠️⚠️ THIS EXISTS BECAUSE <see cref="LastAttackerStanding"/> ANSWERS -1 FOR TWO
+        /// OPPOSITE SITUATIONS AND THE MATCH HALF HAS TO TELL THEM APART. Its own note says so:
+        /// -1 is "more than one alive" (the round is still being played) and also "nobody is
+        /// alive" (everybody went out on the same tick, and the round belongs to the taya). A
+        /// caller that only has the slot cannot distinguish "carry on" from "end the round and
+        /// pay nobody", and guessing wrong either hangs a decided round on the clock or ends a
+        /// live one with two people still playing.
+        ///
+        /// ⚠️ IT IS NOT FOLDED INTO A SINGLE FUNCTION RETURNING A TUPLE, because the winner and
+        /// the count are asked at different moments: the count decides whether the round is over
+        /// and the slot decides who is paid, and only the first is checked every tag.
+        /// </summary>
+        public static int AliveAttackers(IReadOnlyList<int> stocks, int defenderSlot)
+        {
+            if (stocks == null) return 0;
+
+            int alive = 0;
+            for (int i = 0; i < stocks.Count; i++)
+            {
+                if (i == defenderSlot) continue;
+                if (stocks[i] > 0) alive++;
+            }
+
+            return alive;
+        }
+
+        /// <summary>
+        /// Whether a Last Tsinelas round has been settled and should end before the clock does.
+        ///
+        /// ⚠️⚠️ ONE SURVIVOR **OR ZERO**, AND THE ZERO CASE IS THE ONE THAT WOULD HAVE BEEN
+        /// MISSED. Writing this as `alive == 1` reads correctly and leaves a round with nobody
+        /// left in it running to the full 90 seconds with four bodies that cannot act, which is
+        /// the format's worst possible failure: a minute of nothing, on a screen that gives no
+        /// reason. A round-end sweep taking the last two attackers on the same tick is rare and
+        /// real, so this asks `alive &lt;= 1`.
+        /// </summary>
+        public static bool RoundIsDecided(IReadOnlyList<int> stocks, int defenderSlot)
+            => AliveAttackers(stocks, defenderSlot) <= 1;
+
+        /// <summary>
         /// What the last attacker standing is paid.
         ///
         /// ⚠️ IT IS A KNOCKDOWN'S WORTH, NOT A NEW ECONOMY. `MatchRules.PointsFor` pays 100 for a
