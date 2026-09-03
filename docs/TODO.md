@@ -325,6 +325,58 @@ them all"*.
 ⚠️ **THE TEST FOR ADDING ANYTHING IS WHAT THE PLAYER HAS TO HOLD IN THEIR HEAD**, not what it costs
 to build. `CLAUDE.md` § 6.2, and 🧑's own: *"the cutting shit i want should be focused onn things
 that overcomplicate game for ppl"*.
+
+### 133.8 ⚠️⚠️ AND IT HAS TO BE FINDABLE WITHOUT BEING TAUGHT
+
+🧑 2026-09-03: *"i want it to feel intuitive to use as well, in a way that a user would be able to
+find everything on their own bcz these controls are familliar to them already"*.
+
+⚠️⚠️ **THE SECOND HALF OF THAT SENTENCE IS THE INSTRUCTION AND IT IS NOT THE SAME AS "MAKE IT
+CLEAR".** He is asking the new UI to spend other games' teaching: a control shaped like one the
+player has already used somewhere else needs no discovery at all. **Invention is the expensive
+option, and this front end has paid for it twice.**
+
+⚠️ **HE HAS ASKED FOR THIS THREE TIMES NOW AND `CLAUDE.md` § 6.2 AND § 6.3 ARE BOTH ALREADY HIS
+WORDS**: *"i want the user experience of movinng around the game to feel intuitive"*, *"i wwant the
+user experience for the UI of this app to feel intuitive and easy to navigate and not
+overwhelming"*, and *"lets say im a player and i want to do something or find something, make sure
+that entire experience feels great"*. **A fourth statement of it means the first three were not
+delivered**, and § 96 is the receipt with his name on it: he commissioned the player hub and then
+could not find the way into it, while `PlayerHubLayoutProbe` was green at all nine resolutions the
+whole time.
+
+**What that asks of this pass, concretely:**
+
+- ⚠️⚠️ **WALK EVERY JOURNEY OUT LOUD BEFORE BUILDING ANY OF IT**, which is § 6.3: *"I want to X"*
+  to *"X is done"*, naming every press. **More than three presses, or one press that has to be
+  discovered rather than read, and the flow is the bug.** Do this for at least: change my
+  character, change my loadout, host a game with my rules, join my friend's code, find my profile,
+  change my keybinds, sign out.
+- ⚠️ **EVERY DESTINATION HAS A VISIBLE DOOR, AND A DOOR IS A THING THAT LOOKS PRESSABLE.** § 96's
+  hub had exactly one, a corner chip reading a name and a level, which read as a status readout.
+  ⚠️ **AND NEVER ADD A SECOND DOOR TO FIX A FINDABILITY PROBLEM** — that is exactly how § 92's
+  six-button panel happened. **Fix the door or move it.**
+- **Borrow the layout players already know for each job.** § 118.3 and `FUTURE.md` § 0.5b already
+  carry a table of what transfers from the games he named by name, and it is worth more here than
+  anywhere else in the project. A settings screen that looks like a settings screen is not
+  unimaginative, it is finished.
+- **Escape backs out on every screen, always, innermost layer first.** `ConvertedScreen
+  .CancelTarget` exists because three screens shipped with a dead Escape. **A player who learns
+  Escape is reliable and then meets one screen where it is not has learned that it is unreliable.**
+- ⚠️ **A control that does something reacts to the pointer; one that does nothing must not look
+  pressable.** And a dead end is a bug: a button that dismisses to nothing is worse than no button.
+
+⚠️⚠️ **THE ONE THING NO PROBE IN THIS REPOSITORY CAN ANSWER IS WHETHER HE FINDS IT.**
+`UiClickProbe.EveryButtonIsReachable` has caught new chrome covering a screen three times and it
+**cannot** tell anybody that a door nobody looks at is a door nobody finds. `Attention.md` § 5.1 is
+the standing ask: launch it, and without being told where it is, get to your profile. **Ship the
+pass with that question queued rather than answered**, and do not read a green probe as an answer
+to it.
+
+⚠️ **AND `CLAUDE.md` § 4a STILL APPLIES TO EVERY SCREEN THIS PASS TOUCHES.** Three devices, every
+time. Build through `MenuKit` or `ConvertedScreen` and the focus path and the thumb targets come
+for free; reach for a bare `Canvas` and you have shipped a screen a pad and a thumb cannot use.
+`InputSurfaceCheck` refuses the build either way, which is the point of it.
 ---
 
 ## 132 · The loadout said nothing about the hero, and a build vanished the moment the match started ⚠️ IN PROGRESS, 2026-09-03, branch `abilities-rework`
