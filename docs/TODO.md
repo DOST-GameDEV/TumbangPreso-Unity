@@ -9,11 +9,12 @@ before inventing a task, and update it in the same commit as the work.
 
 ## What is open right now
 
-Fifteen sections, and this list is the whole of it. Everything else in this repository's history
+Sixteen sections, and this list is the whole of it. Everything else in this repository's history
 is in the archive with its number unchanged.
 
 | § | Open work | Where it bites |
 |---|---|---|
+| **131** | Replace Hero Strike's primitive VFX and the synthesised SFX from the verified source list | `Asset_Sourcing.md` maps all eighteen abilities and the audio cue families. Characters are explicitly out of scope; maps and buildings wait until the ability pass is complete |
 | **130** | Crossplay, the boot ANR and the lobby's missing ink | The architecture was fine; **two phone-side defects and a third camera built without all three passes**. ⚠️ § 130.14 is CLOSED (§ 130.14b): the steering was never wrong, the test buried its own seat in the floor |
 | **126** | The full PlayMode suite, the thumb floor, the move stick, rumble, the device toggle, the .apk | § 126.8 is still the big one and it is **narrower now**: § 126.8b has the cause (the reset reached five fixtures out of sixty), § 126.8c is a `.xml` that says `Passed` with `total="0"`, § 126.8d is a fix that was measured and **withdrawn** for moving eleven suites from one side to the other |
 | **127** | Phase 16.1: the taya's floor marker is a RING, an attacker's a DISC | Needs its greyscale frame before it can close. § 127.3 |
@@ -97,6 +98,52 @@ taht again"*.
    appear more than once. Renumbering would break every pointer in `CLAUDE.md`, `VISION.md`,
    `FUTURE.md` and the code comments, which is a worse trade than a duplicate heading. **Search by
    title as well as by number.**
+
+---
+
+## 131 · Replace Hero Strike VFX and synthesised SFX from the licensed source list ⚠️⚠️ OPEN, 2026-09-03, branch `ui-redesign`
+
+🧑 asked for an asset hunt because the ability presentation is still the largest visual gap, then
+corrected the scope when it drifted: **the existing Kenney characters stay. The eighteen Hero
+Strike abilities and their sound cues are the focus.** Map and building candidates may be kept for
+later, but they may not displace the ability pass.
+
+[`Asset_Sourcing.md`](Asset_Sourcing.md) is the verified source list. It maps each ability to a
+specific free source effect, lists the CC0 audio recordings and pack sources, separates public-repo
+safe art from compiled-game-only libraries, carries the credit lines, and preserves later map art
+without recommending character replacement.
+
+### 131.1 The style is the game's, not the downloaded pack's
+
+⚠️⚠️ **NO PREFAB ARRIVES WITH AUTHORITY OVER THE LOOK.** Keep `Toon.shader`,
+`ToonTransparent.shader`, `WorldOutline.shader`, the warm palette and `VISION.md` § 2's readability
+budget. Imported PBR, Shader Graph, VFX Graph, photographic smoke, realistic elemental simulation,
+distortion, bloom-dependent effects and large white flashes do not ship. Source art is repacked
+into shared atlases and materials so six heroes still look like one game.
+
+The existing slab, wall, fissure, funnel and corridor geometry carries gameplay shape. Flipbooks,
+small meshes and particles replace the primitive-looking surface and transient layers without
+changing collision, range, authority or balance.
+
+### 131.2 Done looks like
+
+- All eighteen abilities use the mappings in `Asset_Sourcing.md` or record why a sourced piece was
+  rejected after an in-engine comparison.
+- Seismic Stomp, Permafrost Sheet, Flame Rush, Thunderstrike, Devouring Seance and Hex establish
+  the six family looks before their siblings are converted.
+- Every replaced cue is a short, dry 44.1 or 48 kHz asset, mono when positional, and no generated
+  placeholder remains for a cue the pass claims complete.
+- `AbilityShowcaseProbe` passes and every frame is inspected at the gameplay camera. The lata,
+  chalk and players remain readable, and no effect exceeds 12 percent white.
+- `AudioCueCheck` reports no fileless or unreachable cue introduced by the replacement.
+- Every imported source carries its licence beside it. CC BY assets that ship are added to the
+  reachable credits screen. Asset Store and Sonniss source libraries never enter public Git.
+- The existing Kenney characters are untouched.
+- Ilalim ng Tulay replaces the distant north boundary van at `(-2.8, RoadTop, 30.0)` with an
+  optimised, warm-toon jeepney from the CC BY source in `Asset_Sourcing.md`. It replaces traffic
+  rather than adding to it, remains outside the gameplay walls, passes `MapGeometryCheck`, and is
+  added to the reachable credits screen.
+- Other map and building work begins only after the VFX and SFX acceptance above is green.
 
 ---
 
