@@ -454,6 +454,450 @@ namespace TumbangPreso.PlayTests
             }
         }
 
+        // =================================================================================
+        // THE INVENTORY: "make sure nothing in old ui as functions get lost"
+        // =================================================================================
+
+        /// <summary>
+        /// Where the inventory of every front-end control is kept between passes.
+        ///
+        /// ⚠️⚠️ IT IS CAPTURED, NOT TYPED, AND THAT IS THE WHOLE POINT. <see cref="LobbyControls"/>
+        /// above is a hand-written list and it works because somebody sat down with § 119.3 and
+        /// wrote it out. `docs/TODO.md` § 133.5 asks for the same list for settings, character
+        /// select and login **before** they are rebuilt, and 🧑 restated the worry in his own words
+        /// while this pass was running: *"it should have all the functions of old ui, make sure
+        /// ntohing in old ui as functions get lost"*.
+        ///
+        /// **A hand-written list of a 40-row settings screen would be wrong on the day it was
+        /// written.** So this walks the shipped screens and writes down what it finds, once, and
+        /// every later run compares against that file. A control cannot be left off the list by
+        /// somebody not noticing it, which is `CLAUDE.md` § 4a's *"the answer is construction, not
+        /// discipline"* applied to an inventory.
+        ///
+        /// ⚠️ ADDITIONS PASS, REMOVALS FAIL. The pass is meant to ADD to these screens, and a
+        /// gate that went red for a new control would be a gate somebody deletes. The only claim
+        /// is that nothing that used to be here has gone.
+        ///
+        /// ⚠️ AND IT RECORDS THE LETTERING AS WELL AS THE NODE NAME, because `MenuKit.WoodButton`
+        /// leaves the default GameObject name on some controls and the only thing identifying one
+        /// is the word on it. `UiRuntimeShots.HubTab` already finds the hub tabs that way, and the
+        /// word is also the only handle the PLAYER has, so a rename that keeps the node and
+        /// changes the word is a change worth seeing.
+        /// </summary>
+        private const string BaselinePath =
+            "Assets/TumbangPreso/Tests/PlayMode/control-inventory-baseline.txt";
+
+        private const string InventoryLog = "Logs/control-inventory.txt";
+
+        /// <summary>One line of the inventory: what kind of control, where it lives, what it
+        /// says.</summary>
+        private static void Catalogue(Transform t, string screen, SortedSet<string> into)
+        {
+            // ⚠️ THE IN-MATCH LAYER IS SKIPPED HERE FOR THE SAME REASON `Walk` SKIPS IT.
+            // `docs/TODO.md` § 133.4 scopes it out of this whole pass, so an inventory that
+            // included it would go red the first time somebody legitimately touches the HUD.
+            if (t.name == "HudCanvas") return;
+
+            string kind = null;
+
+            // ⚠️ ORDER MATTERS: a Dropdown and a Scrollbar both carry a Selectable, and a
+            // Slider's handle carries a Button-like hit pad. The most specific wins, so a
+            // control is counted once and under the name a player would give it.
+            if (t.GetComponent<Dropdown>() != null) kind = "dropdown";
+            else if (t.GetComponent<InputField>() != null) kind = "field";
+            else if (t.GetComponent<Slider>() != null) kind = "slider";
+            else if (t.GetComponent<Toggle>() != null) kind = "toggle";
+            else if (t.GetComponent<Scrollbar>() != null) kind = "scrollbar";
+            else if (t.GetComponent<Button>() != null) kind = "button";
+
+            if (kind != null)
+            {
+                // ⚠️ THE FIRST NON-EMPTY STRING UNDER THE CONTROL, and inactive children count.
+                // A drawer that is shut still owns its lettering, and a control whose word is
+                // only written when the drawer opens would otherwise record as nameless and then
+                // change identity the first time somebody opened it.
+                string says = "";
+                foreach (var text in t.GetComponentsInChildren<Text>(true))
+                {
+                    if (string.IsNullOrWhiteSpace(text.text)) continue;
+                    says = text.text.Trim().Replace("\n", " ");
+                    break;
+                }
+
+                // ⚠️ THE PLACEHOLDER IS NOT THE VALUE. A field that a probe has typed into would
+                // otherwise record whatever the last test left in it, and the inventory would
+                // differ run to run for a reason that is nobody's fault.
+                if (kind == "field") says = "";
+
+                into.Add($"{screen}\t{kind}\t{t.name}\t{says}");
+            }
+
+            for (int i = 0; i < t.childCount; i++) Catalogue(t.GetChild(i), screen, into);
+        }
+
+        private static void CatalogueScene(string screen, SortedSet<string> into)
+        {
+            foreach (var root in SceneManager.GetActiveScene().GetRootGameObjects())
+                Catalogue(root.transform, screen, into);
+        }
+
+        /// <summary>
+        /// Walks every front-end screen and asserts that nothing which used to be on one has
+        /// gone.
+        ///
+        /// ⚠️⚠️ THE FIRST RUN WRITES THE BASELINE AND PASSES, WHICH IS DELIBERATE AND IS THE ONLY
+        /// WAY THIS CAN BE HONEST. `docs/TODO.md` § 133.5: the list has to be written **before**
+        /// the screens are rebuilt, not after, or it records the rebuild rather than what the
+        /// rebuild owed. So this is run once against the shipped screens, the file it writes is
+        /// committed, and from then on it is a gate rather than a camera.
+        ///
+        /// ⚠️ IT LOADS TWO SCENES, because the front end is not in one. `SettingsPanel` and
+        /// `SignInScreen` live on `MainMenu`; the lobby, the fighter picker, the loadout board and
+        /// the player hub live on `MatchSetup`. `UiRuntimeShots.TheSettingsPanelDraws` carries the
+        /// same note and the same reason.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator NothingOnTheInventoryDisappeared()
+        {
+            Screen.SetResolution(Width, Height, false);
+            for (int i = 0; i < 10; i++) yield return null;
+
+            var found = new SortedSet<string>(System.StringComparer.Ordinal);
+
+            // ---- MainMenu: the settings panel and the login screen ----
+            var menu = SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Single);
+            yield return ProbeWait.Done(menu, "MainMenu load");
+            for (int i = 0; i < SettleFrames; i++) yield return null;
+
+            var settings = Find("SettingsPanel");
+            if (settings != null)
+            {
+                settings.SetActive(true);
+                for (int i = 0; i < SettleFrames; i++) yield return null;
+                Canvas.ForceUpdateCanvases();
+
+                // ⚠️⚠️ EVERY TAB, NOT THE ONE IT OPENS ON. A settings screen is a tabbed screen
+                // and the rows of a tab nobody pressed are not built, so a walk of the default
+                // tab is an inventory of about a fifth of the controls. This is the drawer rule
+                // from `NoWoodenSurfaceSurvivesOnTheLobby` one level up.
+                foreach (var tab in settings.GetComponentsInChildren<Button>(true))
+                {
+                    var skin = tab.GetComponent<GodotButton>();
+                    bool isTab = skin != null && skin.Variation != null
+                                 && skin.Variation.Contains("Tab");
+                    if (!isTab) continue;
+
+                    tab.onClick.Invoke();
+                    for (int i = 0; i < 20; i++) yield return null;
+                    Canvas.ForceUpdateCanvases();
+                    CatalogueScene("settings", found);
+                }
+
+                CatalogueScene("settings", found);
+                settings.SetActive(false);
+            }
+
+            var owner = Object.FindFirstObjectByType<ConvertedMainMenu>();
+            if (owner != null)
+            {
+                var signIn = owner.GetComponent<SignInScreen>();
+                if (signIn == null) signIn = owner.gameObject.AddComponent<SignInScreen>();
+                signIn.Install();
+
+                // ⚠️⚠️ ALL THREE STATES, WHICH IS `CLAUDE.md` § 6.2b'S FIRST ROW AS A LOOP.
+                // *"The sign-in screen was shot only as Open(). It ships as OpenAtBoot() too,
+                // which hides BACK, renames a button and has no hub behind it."* A control that
+                // only exists in the boot state is exactly the kind a rebuild drops silently.
+                signIn.Open();
+                for (int i = 0; i < 20; i++) yield return null;
+                CatalogueScene("login", found);
+
+                signIn.OpenForUpgrade();
+                for (int i = 0; i < 20; i++) yield return null;
+                CatalogueScene("login", found);
+
+                signIn.OpenAtBoot();
+                for (int i = 0; i < 20; i++) yield return null;
+                CatalogueScene("login", found);
+            }
+
+            // ---- MatchSetup: the lobby and everything it opens ----
+            bool previousNetworked = SceneFlow.Networked;
+            SceneFlow.Networked = true;
+
+            var lobby = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
+            yield return ProbeWait.Done(lobby, "MatchSetup load");
+            for (int i = 0; i < SettleFrames; i++) yield return null;
+            Canvas.ForceUpdateCanvases();
+
+            CatalogueScene("lobby", found);
+
+            foreach (string chip in new[] { "SettingsDrawerToggle", "JoinChip", "ChatChip" })
+            {
+                var button = Find(chip)?.GetComponent<Button>();
+                if (button == null) continue;
+
+                button.onClick.Invoke();
+                for (int i = 0; i < 10; i++) yield return null;
+                Canvas.ForceUpdateCanvases();
+                CatalogueScene("lobby", found);
+            }
+
+            foreach (string door in new[] { "CharacterButton", "LoadoutButton", "ProfileButton" })
+            {
+                var open = Find(door)?.GetComponent<Button>();
+                if (open == null) continue;
+
+                open.onClick.Invoke();
+                for (int i = 0; i < 40; i++) yield return null;
+                Canvas.ForceUpdateCanvases();
+                CatalogueScene(door == "ProfileButton" ? "profile" : "character", found);
+            }
+
+            SceneFlow.Networked = previousNetworked;
+            var session = Net.NetSession.Instance;
+            if (session != null) session.Stop();
+
+            System.IO.Directory.CreateDirectory("Logs");
+            System.IO.File.WriteAllLines(InventoryLog, found);
+
+            if (!System.IO.File.Exists(BaselinePath))
+            {
+                System.IO.File.WriteAllLines(BaselinePath, found);
+                Assert.Ignore(
+                    $"no inventory baseline existed, so this run WROTE one with {found.Count} "
+                    + $"controls to {BaselinePath}. Commit it: from here on it is the gate that "
+                    + "says a rebuild did not lose a button. docs/TODO.md § 133.5.");
+                yield break;
+            }
+
+            var baseline = new SortedSet<string>(System.IO.File.ReadAllLines(BaselinePath),
+                                                 System.StringComparer.Ordinal);
+
+            var lost = new List<string>();
+            foreach (string row in baseline)
+            {
+                if (found.Contains(row)) continue;
+
+                // ⚠️ A CONTROL THAT KEPT ITS NODE AND CHANGED ITS WORD IS REPORTED SEPARATELY
+                // RATHER THAN AS A LOSS. Renaming CONTINUE to NEXT is a design decision somebody
+                // made on purpose; deleting the button is not, and a gate that cannot tell them
+                // apart gets its output skimmed, which is § 124.11's lesson.
+                var parts = row.Split('\t');
+                string stem = parts.Length >= 3
+                    ? $"{parts[0]}\t{parts[1]}\t{parts[2]}\t"
+                    : row;
+
+                bool nodeSurvived = false;
+                foreach (string live in found)
+                    if (live.StartsWith(stem, System.StringComparison.Ordinal))
+                        nodeSurvived = true;
+
+                if (!nodeSurvived) lost.Add(row.Replace("\t", "  |  "));
+            }
+
+            Assert.IsEmpty(lost,
+                "these front-end controls were on the screens before this pass and are not on "
+                + "them now, so the rebuild lost them. 🧑 asked for this by name: \"it should have "
+                + "all the functions of old ui, make sure ntohing in old ui as functions get "
+                + "lost\". docs/TODO.md § 133.5, and " + InventoryLog + " is the full live walk:\n  "
+                + string.Join("\n  ", lost));
+        }
+
+        /// <summary>
+        /// No label in the front end is faking a weight the face does not have.
+        ///
+        /// ⚠️⚠️ THIS IS THE REGRESSION GATE FOR THE WHOLE OF `docs/TODO.md` § 133, and it exists
+        /// because the fault it guards is INVISIBLE in a code review and nearly invisible in a
+        /// screenshot. Legacy `Text` given `FontStyle.Bold` on a face that ships one weight does
+        /// not fail and does not warn: it draws every glyph twice at an offset. § 132.8 chased
+        /// that through a stale capture, a wrapping row, a clipped box and a soft render before
+        /// anybody thought to ask what the font actually contained.
+        ///
+        /// ⚠️ IT ASKS ABOUT THE FONT, NOT ABOUT THE SOURCE. A grep for `FontStyle.Bold` would
+        /// pass a screen that set it through a converted `.tscn`, and those are most of this front
+        /// end. What is asserted here is the only thing that matters at the pixel: a label is
+        /// either in a file that HAS this weight, or it is not asking for one.
+        ///
+        /// ⚠️ AND THE IN-MATCH LAYER IS OUT OF SCOPE, so it is skipped by canvas name exactly as
+        /// <see cref="Walk"/> skips it. `Hud`, `AbilityInspectPanel` and `ComicPopup` still carry
+        /// synthetic bolds on purpose: § 133.4 draws the line at "is it drawn while a round is
+        /// live", and moving them in this pass would put a font change and a readability contract
+        /// in one commit with no way to tell which broke what.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator NoLabelFakesItsWeight()
+        {
+            Screen.SetResolution(Width, Height, false);
+            for (int i = 0; i < 10; i++) yield return null;
+
+            bool previousNetworked = SceneFlow.Networked;
+            SceneFlow.Networked = true;
+
+            var load = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
+            yield return ProbeWait.Done(load, "scene load");
+
+            for (int i = 0; i < SettleFrames; i++) yield return null;
+
+            foreach (string chip in new[] { "SettingsDrawerToggle", "JoinChip", "ChatChip" })
+            {
+                var button = Find(chip)?.GetComponent<Button>();
+                if (button == null) continue;
+                button.onClick.Invoke();
+                for (int i = 0; i < 6; i++) yield return null;
+            }
+
+            foreach (string door in new[] { "CharacterButton", "ProfileButton" })
+            {
+                var open = Find(door)?.GetComponent<Button>();
+                if (open == null) continue;
+                open.onClick.Invoke();
+                for (int i = 0; i < 30; i++) yield return null;
+            }
+
+            Canvas.ForceUpdateCanvases();
+
+            var faked = new List<string>();
+            foreach (var root in SceneManager.GetActiveScene().GetRootGameObjects())
+                WalkWeight(root.transform, faked);
+
+            SceneFlow.Networked = previousNetworked;
+            var session = Net.NetSession.Instance;
+            if (session != null) session.Stop();
+
+            Assert.IsEmpty(faked,
+                "these labels ask Unity to synthesise a weight their font does not ship, which "
+                + "draws each glyph twice at an offset and is a smear rather than a bold. It is "
+                + "worst at MenuKit.MinReadableUnits, which is where most of the words in this "
+                + "game live. Use MenuKit.Apply(label, PaperKit.FaceFor(label.fontSize), "
+                + "bold: true) instead; docs/TODO.md § 133 and § 132.8:\n  "
+                + string.Join("\n  ", faked));
+        }
+
+        /// <summary>
+        /// No text field highlights selected text in Unity's default blue.
+        ///
+        /// ⚠️⚠️ THIS SHIPPED, ON ALL FOUR FIELDS, FOR THE WHOLE LIFE OF THE PROJECT.
+        /// `InputField.selectionColor` defaults to `a8ceff`, and `grep -rn selectionColor` over
+        /// the entire repository returned nothing: no site had ever assigned it. `CLAUDE.md`
+        /// § 6.4's own test is *"if a hex has more blue in it than red, it does not belong in a
+        /// menu"*, and that colour is 87 levels more blue than red.
+        ///
+        /// ⚠️⚠️ AND IT IS INVISIBLE TO EVERY OTHER GATE IN THIS REPOSITORY, WHICH IS THE REASON
+        /// FOR THE TEST. A selection highlight only exists while text is selected, so it appears
+        /// in no render, no layout probe and no screenshot review. § 6.4 says to find this class
+        /// of fault by GREPPING rather than by looking, and its receipt is `UiTheme.Ink` sitting
+        /// navy for the life of the file because a near-black navy reads as black in a diff.
+        ///
+        /// ⚠️ BOTH SCENES, because the four fields are split across them: the join code and the
+        /// chat line are on `MatchSetup`, the settings username and the sign-in fields are on
+        /// `MainMenu`.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator NoFieldHighlightsInBlue()
+        {
+            Screen.SetResolution(Width, Height, false);
+            for (int i = 0; i < 10; i++) yield return null;
+
+            var offenders = new List<string>();
+
+            var menu = SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Single);
+            yield return ProbeWait.Done(menu, "MainMenu load");
+            for (int i = 0; i < SettleFrames; i++) yield return null;
+
+            var settings = Find("SettingsPanel");
+            if (settings != null)
+            {
+                settings.SetActive(true);
+                for (int i = 0; i < 30; i++) yield return null;
+            }
+
+            var owner = Object.FindFirstObjectByType<ConvertedMainMenu>();
+            if (owner != null)
+            {
+                var signIn = owner.GetComponent<SignInScreen>();
+                if (signIn == null) signIn = owner.gameObject.AddComponent<SignInScreen>();
+                signIn.Install();
+                signIn.Open();
+                for (int i = 0; i < 30; i++) yield return null;
+            }
+
+            CollectBlueFields(offenders);
+
+            bool previousNetworked = SceneFlow.Networked;
+            SceneFlow.Networked = true;
+
+            var lobby = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
+            yield return ProbeWait.Done(lobby, "MatchSetup load");
+            for (int i = 0; i < SettleFrames; i++) yield return null;
+
+            foreach (string chip in new[] { "JoinChip", "ChatChip" })
+            {
+                var button = Find(chip)?.GetComponent<Button>();
+                if (button == null) continue;
+                button.onClick.Invoke();
+                for (int i = 0; i < 10; i++) yield return null;
+            }
+
+            CollectBlueFields(offenders);
+
+            SceneFlow.Networked = previousNetworked;
+            var session = Net.NetSession.Instance;
+            if (session != null) session.Stop();
+
+            Assert.IsEmpty(offenders,
+                "these text fields highlight selected text in a colour with more blue in it than "
+                + "red, which CLAUDE.md § 6.4 forbids in any UI layer. Unity's default is a8ceff "
+                + "and no site had ever assigned it. Call MenuKit.Dress(field) where the field is "
+                + "built:\n  " + string.Join("\n  ", offenders));
+        }
+
+        private static void CollectBlueFields(List<string> offenders)
+        {
+            foreach (var root in SceneManager.GetActiveScene().GetRootGameObjects())
+            {
+                foreach (var field in root.GetComponentsInChildren<InputField>(true))
+                {
+                    var c = field.selectionColor;
+
+                    // ⚠️ § 6.4'S OWN TEST, VERBATIM: "if a hex has more blue in it than red, it
+                    // does not belong in a menu". A tolerance is allowed because a warm sand at
+                    // partial alpha can carry a point or two more blue than red and still be
+                    // unmistakably warm; a8ceff is 0.34 over, which is nowhere near it.
+                    if (c.b <= c.r + 0.02f) continue;
+
+                    offenders.Add($"{Path(field.transform)} selectionColor is "
+                                  + $"#{ColorUtility.ToHtmlStringRGB(c)} "
+                                  + $"(blue {c.b:F2} over red {c.r:F2})");
+                }
+            }
+        }
+
+        private static void WalkWeight(Transform t, List<string> faked)
+        {
+            if (t.name == "HudCanvas" || t.name == "MainMenuRoot") return;
+
+            var text = t.GetComponent<Text>();
+
+            if (text != null && text.font != null
+                && (text.fontStyle == FontStyle.Bold
+                    || text.fontStyle == FontStyle.BoldAndItalic))
+            {
+                // ⚠️ THE TEST IS WHETHER THE FILE ITSELF IS A BOLD ONE. Nunito ships Bold as a
+                // separate asset, so a label legitimately in that file and marked Bold is asking
+                // for a weight it already has, which is harmless. Anything else is asking Unity
+                // to invent one.
+                bool inABoldFile = text.font.name.IndexOf("bold",
+                    System.StringComparison.OrdinalIgnoreCase) >= 0;
+
+                if (!inABoldFile)
+                    faked.Add($"{Path(t)} is {text.font.name} at {text.fontSize} with "
+                              + $"FontStyle.{text.fontStyle}: \"{text.text}\"");
+            }
+
+            for (int i = 0; i < t.childCount; i++) WalkWeight(t.GetChild(i), faked);
+        }
+
         private static string Path(Transform t)
         {
             var sb = new StringBuilder(t.name);

@@ -735,7 +735,7 @@ namespace TumbangPreso.UI
                                          TextAnchor.MiddleLeft);
             heading.raycastTarget = false;
             heading.color = UiTheme.Amber;
-            heading.fontStyle = FontStyle.Bold;
+            MenuKit.Apply(heading, PaperKit.FaceFor(heading.fontSize), bold: true);
             heading.gameObject.AddComponent<LayoutElement>().preferredHeight = 26.0f;
 
             string blurb = Rebinding.BlurbFor(title);

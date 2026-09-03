@@ -211,7 +211,7 @@ namespace TumbangPreso.UI
             var head = MenuKit.Label(_root.transform, "CUSTOM GAME", UiRows.HeadingUnits + 8,
                 UiTheme.PaperInk, new Vector2(0.0f, 1.0f), new Vector2(80.0f, -70.0f),
                 new Vector2(700.0f, 56.0f), TextAnchor.MiddleLeft);
-            head.fontStyle = FontStyle.Bold;
+            MenuKit.Apply(head, PaperKit.FaceFor(head.fontSize), bold: true);
 
             // ⚠️⚠️ THE SUMMARY IS THE ONE THING ON THIS SCREEN AND IT IS A SENTENCE RATHER THAN A
             // BADGE. `docs/FUTURE.md` § 0.5b's per-phase table answers question 1 for Phase 12 as

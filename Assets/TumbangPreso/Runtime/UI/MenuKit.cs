@@ -19,25 +19,165 @@ namespace TumbangPreso.UI
     /// </summary>
     public static class MenuKit
     {
-        private static Font _font;
-
-        public static Font Font
+        /// <summary>
+        /// Which job a string is doing, which is the only thing that decides its face.
+        ///
+        /// ⚠️⚠️ THIS EXISTS BECAUSE ONE DISPLAY FACE WAS SETTING FOUR-LINE ABILITY DESCRIPTIONS.
+        /// `docs/TODO.md` § 133 opens on 🧑's own diagnosis: **"I think the problem is we use the
+        /// same font for everything"**, and § 132.8 is the render that proves it, arrived at from
+        /// the other end after three rounds of chasing blurry text on the TAB tray.
+        ///
+        /// ⚠️ IT IS A ROLE, NOT A FONT, FOR `WoodCraft.Surface`'S REASON. § 6.5: *"pick a role,
+        /// not a fill"*, and the failure that rule replaced was a screen of twelve plates that
+        /// were one call with a different parameter. A caller that could pass a `Font` could pass
+        /// the wrong one; a caller that passes a ROLE cannot.
+        /// </summary>
+        public enum Face
         {
-            get
-            {
-                if (_font != null) return _font;
+            /// <summary>Darumadrop. A word somebody LOOKS AT: a screen heading, the `Display` and
+            /// `Title` steps of <see cref="PaperKit"/>'s scale, the one primary action on a
+            /// screen, a hero or player name, a big value, a pennant.</summary>
+            Display,
 
-                _font = Resources.Load<Font>("UI/fonts/DarumadropOne-Regular");
+            /// <summary>Nunito. A word somebody READS: a sentence, a settings row, a caption, a
+            /// chat line, a form field and its hint, a secondary button, a list row.</summary>
+            Body,
+        }
 
-                if (_font == null)
-                {
-                    Debug.LogWarning("[UI] Darumadrop is missing from Resources/UI/fonts; " +
-                                     "the menus will draw in the wrong face.");
-                    _font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-                }
+        private static Font _font;
+        private static Font _body;
+        private static Font _bodyBold;
 
-                return _font;
-            }
+        /// <summary>
+        /// The display face.
+        ///
+        /// ⚠️ IT KEEPS THE NAME `Font` RATHER THAN BECOMING `DisplayFont`, and that is deliberate
+        /// rather than lazy: every screen in the game reads this one static (§ 133.3 names it as
+        /// the trap of this whole pass), so renaming it would have put a mechanical rename through
+        /// forty files in the same commit as a palette change and a layout change, with no way to
+        /// tell afterwards which of the three broke what.
+        /// </summary>
+        public static Font Font => _font != null
+            ? _font
+            : _font = Load("UI/fonts/DarumadropOne-Regular", "Darumadrop");
+
+        /// <summary>Nunito Regular. See <see cref="Face.Body"/>.</summary>
+        public static Font BodyFont => _body != null
+            ? _body
+            : _body = Load("UI/fonts/Nunito-Regular", "Nunito Regular");
+
+        /// <summary>
+        /// Nunito Bold, as a SEPARATE FILE rather than as a font style.
+        ///
+        /// ⚠️⚠️ THE WHOLE OF § 133 IS ABOUT THIS ONE LINE. Legacy `Text` given
+        /// `FontStyle.Bold` on a face that ships no bold does not fail and does not warn: it
+        /// draws every glyph twice at an offset, which is a SMEAR rather than a weight, and it
+        /// is worst at <see cref="MinReadableUnits"/>, which is where most of the words in this
+        /// game live. There were **42 of those** across the project when this landed.
+        ///
+        /// ⚠️ SO THE BOLD IS A FONT, NOT A STYLE, AND <see cref="Apply"/> IS THE ONLY CALLER.
+        /// `CLAUDE.md` § 4a's argument: *"the answer is construction, not discipline."* A rule
+        /// saying "do not write FontStyle.Bold" is a rule somebody forgets, and forgetting it
+        /// compiles and even looks approximately right in a screenshot.
+        /// </summary>
+        public static Font BodyBoldFont => _bodyBold != null
+            ? _bodyBold
+            : _bodyBold = Load("UI/fonts/Nunito-Bold", "Nunito Bold");
+
+        private static Font Load(string path, string human)
+        {
+            var loaded = Resources.Load<Font>(path);
+
+            if (loaded != null) return loaded;
+
+            // ⚠️ LOUD, BECAUSE THE FALLBACK IS SURVIVABLE AND WRONG. A missing face draws every
+            // menu in `LegacyRuntime`, which is legible enough that it has shipped unnoticed
+            // before: `SplashScreen`'s own note records the one line a player reads before
+            // anything else being in the wrong face for exactly that reason.
+            Debug.LogWarning($"[UI] {human} is missing from Resources/{path}; " +
+                             "the menus will draw in the wrong face.");
+
+            return Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        }
+
+        /// <summary>
+        /// Puts a label in the face its JOB asks for, and returns it so it can be chained.
+        ///
+        /// ⚠️⚠️ IT ALWAYS CLEARS `fontStyle`, AND THAT IS THE POINT OF THE FUNCTION. A caller
+        /// asking for bold gets the bold FILE; a caller that had set `FontStyle.Bold` before this
+        /// runs has it undone. There is no path through here that leaves Unity synthesising a
+        /// weight, which is what makes the fault unreachable rather than merely fixed.
+        ///
+        /// ⚠️⚠️ AND BOLD ON <see cref="Face.Display"/> IS A DELIBERATE NO-OP RATHER THAN AN
+        /// ERROR. Darumadrop ships one weight and there is nothing to reach for, so the honest
+        /// answer is the regular face: it is already the heaviest thing on any screen it appears
+        /// on. Throwing here would turn a cosmetic request into a crash on a screen that was
+        /// drawing fine, and silently setting `FontStyle.Bold` is the exact bug this replaces.
+        /// **If a display word needs more weight, it needs more SIZE**, which is what the type
+        /// scale is for.
+        ///
+        /// ⚠️ IT DOES NOT TOUCH SIZE, COLOUR OR ALIGNMENT. Those are the caller's, and a helper
+        /// that quietly restyled three properties when asked about one is how a shared kit stops
+        /// being usable.
+        /// </summary>
+        public static Text Apply(Text label, Face face, bool bold = false)
+        {
+            if (label == null) return null;
+
+            label.font = face == Face.Body
+                ? (bold ? BodyBoldFont : BodyFont)
+                : Font;
+
+            label.fontStyle = FontStyle.Normal;
+
+            return label;
+        }
+
+        /// <summary>
+        /// <see cref="Apply"/> for the common case: a label that is being read rather than
+        /// looked at.
+        /// </summary>
+        public static Text Read(Text label, bool bold = false) => Apply(label, Face.Body, bold);
+
+        /// <summary>
+        /// Takes the BLUE out of a text field's selection highlight and caret.
+        ///
+        /// ⚠️⚠️ EVERY `InputField` IN THIS GAME HIGHLIGHTED SELECTED TEXT IN LIGHT BLUE, AND IT
+        /// HAD DONE SINCE THE FIRST ONE WAS BUILT. Unity's `InputField.selectionColor` defaults
+        /// to `(168, 206, 255)`, which is `a8ceff`: more blue than red by 87 levels, and
+        /// `CLAUDE.md` § 6.4's test is *"if a hex has more blue in it than red, it does not belong
+        /// in a menu"*. Nothing in the project had ever assigned it, so the default shipped on the
+        /// username row, the join-code box, the chat line and every sign-in field.
+        ///
+        /// ⚠️⚠️ AND IT IS EXACTLY THE FAULT CLASS § 6.4 SAYS TO GREP FOR RATHER THAN LOOK FOR.
+        /// A selection highlight is only on screen while text is selected, so it appears in no
+        /// render, no layout probe and no code review: `grep -rn selectionColor` returned NOTHING
+        /// across the whole project, which is what found it. That section's own receipt is
+        /// `UiTheme.Ink` being a near-black navy for the entire life of the file because nobody
+        /// looked at the third channel.
+        ///
+        /// ⚠️ IT IS A FUNCTION RATHER THAN A LINE AT EACH OF THE FOUR SITES, for `CLAUDE.md`
+        /// § 4a's reason: a fifth field added next month inherits the fix instead of inheriting
+        /// the default. `PaperPurityProbe.NoFieldHighlightsInBlue` asserts it for the ones that
+        /// exist.
+        /// </summary>
+        public static InputField Dress(InputField field)
+        {
+            if (field == null) return null;
+
+            // ⚠️ PaperSunk AT PARTIAL ALPHA, which is the same sand a pressed paper control
+            // darkens into. A selection is a temporary press on a run of words, so it reads as
+            // one, and it stays under the ink rather than competing with it.
+            var sand = UiTheme.PaperSunk;
+            field.selectionColor = new Color(sand.r, sand.g, sand.b, 0.75f);
+
+            // ⚠️ THE CARET HAS TO BE ASKED FOR EXPLICITLY. `caretColor` is ignored entirely
+            // unless `customCaretColor` is true, so assigning it alone is a silent no-op and the
+            // caret keeps drawing in the text colour.
+            field.customCaretColor = true;
+            field.caretColor = UiTheme.PaperInk;
+
+            return field;
         }
 
         public static Canvas BuildCanvas(Transform parent, string name)

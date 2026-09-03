@@ -801,7 +801,7 @@ namespace TumbangPreso.UI
 
             var label = PaperKit.Ink(go.transform, verb, PaperKit.Body, TextAnchor.LowerCenter);
             label.name = "Label";
-            label.fontStyle = FontStyle.Bold;
+            MenuKit.Apply(label, PaperKit.FaceFor(label.fontSize), bold: true);
             label.color = dark ? UiTheme.Cream : UiTheme.PaperInk;
             label.raycastTarget = false;
             label.rectTransform.anchorMin = new Vector2(0.0f, 0.44f);
@@ -974,7 +974,7 @@ namespace TumbangPreso.UI
                 "LOADOUT   ·   " + HeroDisplayName(heroId), PaperKit.Title, UiTheme.PaperInk,
                 new Vector2(0.5f, 1.0f), new Vector2(0.0f, -34.0f),
                 new Vector2(inner, 30.0f), TextAnchor.MiddleLeft);
-            header.fontStyle = FontStyle.Bold;
+            MenuKit.Apply(header, PaperKit.FaceFor(header.fontSize), bold: true);
             header.alignment = TextAnchor.MiddleLeft;
             header.raycastTarget = false;
 
@@ -1154,7 +1154,7 @@ namespace TumbangPreso.UI
                 new Vector2(textX, y - 24.0f),
                 new Vector2(180.0f, 20.0f), TextAnchor.MiddleLeft);
             number.alignment = TextAnchor.MiddleLeft;
-            number.fontStyle = FontStyle.Bold;
+            MenuKit.Apply(number, PaperKit.FaceFor(number.fontSize), bold: true);
             number.raycastTarget = false;
 
             // ⚠️⚠️ THE NAME GETS THE REST OF THE BOARD, AND THE 180 IT HAD WAS A COLUMN WIDTH
@@ -1185,7 +1185,7 @@ namespace TumbangPreso.UI
                 new Vector2(nameX, y - 50.0f),
                 new Vector2(nameWidth, 24.0f), TextAnchor.MiddleLeft);
             name.alignment = TextAnchor.MiddleLeft;
-            name.fontStyle = FontStyle.Bold;
+            MenuKit.Apply(name, PaperKit.FaceFor(name.fontSize), bold: true);
             name.raycastTarget = false;
 
             // ⚠️ THE FLOOR IS `MenuKit.MinReadableUnits` NOW RATHER THAN 14, which is § 126.13's
@@ -1301,7 +1301,7 @@ namespace TumbangPreso.UI
                 new Vector2(0.5f, 0.5f), new Vector2(0.0f, top - 26.0f),
                 new Vector2(band, 24.0f), TextAnchor.MiddleLeft);
             name.alignment = TextAnchor.MiddleLeft;
-            name.fontStyle = FontStyle.Bold;
+            MenuKit.Apply(name, PaperKit.FaceFor(name.fontSize), bold: true);
             name.raycastTarget = false;
 
             // ⚠️⚠️ THE 86 UNITS ARE THE `EQUIPPED` MARK'S, AND THEY WERE BEING RESERVED ON EVERY
@@ -1329,7 +1329,7 @@ namespace TumbangPreso.UI
                     new Vector2(0.5f, 0.5f), new Vector2(0.0f, top - 26.0f),
                     new Vector2(band, 24.0f), TextAnchor.MiddleRight);
                 mark.alignment = TextAnchor.MiddleRight;
-                mark.fontStyle = FontStyle.Bold;
+                MenuKit.Apply(mark, PaperKit.FaceFor(mark.fontSize), bold: true);
                 mark.raycastTarget = false;
             }
             else if (!unlocked)
@@ -1338,7 +1338,7 @@ namespace TumbangPreso.UI
                     new Vector2(0.5f, 0.5f), new Vector2(0.0f, top - 26.0f),
                     new Vector2(band, 24.0f), TextAnchor.MiddleRight);
                 mark.alignment = TextAnchor.MiddleRight;
-                mark.fontStyle = FontStyle.Bold;
+                MenuKit.Apply(mark, PaperKit.FaceFor(mark.fontSize), bold: true);
                 mark.raycastTarget = false;
             }
 
@@ -1596,7 +1596,7 @@ namespace TumbangPreso.UI
                     // the marker is the one LIGHT thing. On cream it would be 1.7:1 and wrong,
                     // which is what § 119.10 measured and why the pips moved the other way.
                     if (!paper) label.color = active ? UiTheme.Amber : UiTheme.Cream;
-                    label.fontStyle = FontStyle.Bold;
+                    MenuKit.Apply(label, PaperKit.FaceFor(label.fontSize), bold: true);
                 }
             }
 
@@ -2055,7 +2055,7 @@ namespace TumbangPreso.UI
                 var keyLabel = MenuKit.Label(chipGo.transform, Hud.KeyLabelFor(item.action), 13,
                     accent,
                     Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleCenter);
-                keyLabel.fontStyle = FontStyle.Bold;
+                MenuKit.Apply(keyLabel, PaperKit.FaceFor(keyLabel.fontSize), bold: true);
                 keyLabel.raycastTarget = false;
                 MenuKit.Stretch(keyLabel.rectTransform);
 
@@ -2071,7 +2071,7 @@ namespace TumbangPreso.UI
                 var nameLbl = MenuKit.Label(header.transform, abilityName, MenuKit.MinReadableUnits,
                     accent,
                     Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleLeft);
-                nameLbl.fontStyle = FontStyle.Bold;
+                MenuKit.Apply(nameLbl, PaperKit.FaceFor(nameLbl.fontSize), bold: true);
                 nameLbl.raycastTarget = false;
                 nameLbl.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1.0f;
 
@@ -2125,7 +2125,7 @@ namespace TumbangPreso.UI
                 var timingLbl = MenuKit.Label(header.transform, timing, MenuKit.MinReadableUnits,
                     BoardInk,
                     Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleRight);
-                timingLbl.fontStyle = FontStyle.Bold;
+                MenuKit.Apply(timingLbl, PaperKit.FaceFor(timingLbl.fontSize), bold: true);
                 timingLbl.raycastTarget = false;
 
                 // ⚠️ WIDE ENOUGH FOR THE LONGEST STRING THIS CAN PRODUCE, which is now
@@ -2405,7 +2405,7 @@ namespace TumbangPreso.UI
             if (value != null)
             {
                 value.fontSize = choosingHero ? 32 : 30;
-                value.fontStyle = FontStyle.Bold;
+                MenuKit.Apply(value, PaperKit.FaceFor(value.fontSize), bold: true);
                 // ⚠️ `BoardInk` ON THE CLASSIC TAB, which is cream again with the board. The
                 // hero accent stays either way: it is a gameplay tell rather than decoration.
                 value.color = choosingHero

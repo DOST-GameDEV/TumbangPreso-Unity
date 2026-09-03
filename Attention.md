@@ -262,30 +262,58 @@ at an offset, and it is worst at the 18-unit floor where most of the game's word
 the render that proves it: in one 2x frame the non-bold body is crisp and the bold caption above it
 is smeared. The TAB tray is swept; the other forty sites are not.
 
-**What is asked of you, and there are two things:**
+✅ **BOTH OF THE THINGS THIS SECTION USED TO ASK FOR ARE DONE, 2026-09-03.**
 
-1. **Get the logo into the repository.** ⚠️ You sent it on 2026-09-03 and said twice that it is
-   not finished (*"not done yet"*, *"its work in progress"*), so nothing is being built against it
-   yet. It arrived in the chat and **a chat image cannot be sampled, sliced or drawn**: drop the
-   file into `Assets/TumbangPreso/Art/ui/brand/` so § 133 can read its actual pixels rather than a
-   thumbnail. `docs/VISION.md` § 6: *"His UI art is the design system."*
+1. ✅ **The logo is in the repository.** You dropped four files in `~/Downloads/claude/` and they
+   are committed unchanged under `Assets/TumbangPreso/Art/ui/brand/source/`: the colour logo, the
+   mono wordmark, the textured mono wordmark, and the tsinelas-with-a-hit mark.
+   `tools/build_brand_art.py` keys the white page to alpha and recolours the mono master per
+   screen; `tools/read_brand_palette.py` read the palette straight out of the pixels.
+2. ✅ **The font call was delegated and made.** *"u figure out as well what secondary font to
+   use"*. It is **Nunito**, SIL OFL 1.1, Regular and Bold.
+   `Assets/TumbangPreso/Art/ui/fonts/SOURCES.txt` carries the licence, the three faces that were
+   rejected, and the measurements that decided it.
 
-   ⚠️ **THE PALETTE IS ALREADY ANSWERED AND IS NOT WAITING ON YOU.** You said the colours are
-   final and that the UI uses the logo's: **Honey Quartz, Chartreuse, Persimmon, Khaki and Army**,
-   plus the deep red the wordmark is outlined in. `docs/TODO.md` § 133.1 records that, and that
-   `CLAUDE.md` § 6.4's carved-wood list has to be rewritten in the same commit so the rules file
-   does not keep naming the old set. **The only thing still on you is the file itself**, because
-   the hexes get read off the swatches rather than guessed at.
-2. **Say yes or no to a second font before it is chosen.** The bar it has to clear is a licence
-   one: this repository is public and the game is a competition entry, so it wants SIL OFL or
-   equivalent, with the licence file committed beside the font. Naming the family is a taste call
-   and it is yours; anything proposed will arrive as a render of the same three screens in both
-   faces rather than as a name in a message.
+---
 
-> ⚠️ **NOTHING ELSE ABOUT § 133 IS WAITING ON YOU.** The scope is set (front end only, the
-> in-match HUD is not touched), the palette is set, the order is set (lobby, settings, character
-> select, login), and the brief is *not overwhelming, easy to look at, quirky like the logo*. Those
-> are all written down in `docs/TODO.md` § 133.4 to § 133.7 so the next session does not have to
-> ask you again.
+**What is asked of you now: one small decision and two looks.**
 
+### 12.1 Confirm one colour, because it is the only one that was not measured
 
+**Khaki.** Your five named swatches are Honey Quartz, Chartreuse, Persimmon, Khaki and Army, and
+**four of the five appear as actual fills in the artwork**, so those four were read straight off
+the pixels and cross-checked against a second drawing. Khaki appears in neither, because the logo
+never needed a quiet mid-tone.
+
+It is `#E8C77E` today, which is Honey Quartz mixed 72:28 toward Army, the two swatches it sits
+between on your own strip. Ink measures 9.2:1 on it, so it works. It may simply not be your colour.
+
+**What is asked of you:** the FIRST logo you sent had two swatch strips beside it with the hexes
+printed on them. **Drop that image into `Assets/TumbangPreso/Art/ui/brand/source/`** and the real
+value gets read off it in one command. If you would rather not bother, say so and `#E8C77E` stands.
+
+> ⚠️ **Nothing is blocked on this.** It is one constant, `UiTheme.BrandKhaki`, and every surface
+> that uses it names the constant rather than the hex.
+
+### 12.2 Look at the two faces together and say whether 16 is still too small
+
+**`docs/TODO.md` § 121.8, which is also § 3 of this file.** It could not be answered until the font
+changed, because `PaperKit.Caption`'s 16 and `MenuKit.MinReadableUnits`' 18 were both measured
+against Darumadrop. Nunito's x-height is within 2.2 per cent of Darumadrop's so the sizes should
+hold, **but that is arithmetic and you have eyes.**
+
+**What is asked of you:** open a build, find a caption that is the only carrier of its fact (the
+door captions on the character screen are clearest), and say whether 16 is too small now.
+
+### 12.3 And the standing one: launch it and try to find your profile
+
+**§ 5.1 of this file and `docs/TODO.md` § 96.** § 133.8 says to ship this pass with the question
+**queued rather than answered**, and not to read a green probe as an answer to it. The design moves
+the door to an identity chip in the TOP RIGHT carrying your face, which is where every live game
+puts it. Whether that works is not something any probe here can decide.
+
+> ⚠️ **NOTHING ELSE ABOUT § 133 IS WAITING ON YOU.** The scope is set (front end only, the in-match
+> HUD untouched), the palette is set and now measured, the order is set (lobby, settings, character
+> select, login), and the brief is *not overwhelming, easy to look at, quirky like the logo*.
+> `docs/Front_End_Design.md` is the whole design written out, including the recurring marks you and
+> Paul Andrei asked for.

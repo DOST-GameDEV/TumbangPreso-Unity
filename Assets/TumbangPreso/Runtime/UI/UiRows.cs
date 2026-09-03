@@ -610,6 +610,9 @@ namespace TumbangPreso.UI
             skin.Apply();
 
             var input = go.AddComponent<InputField>();
+            // ⚠️ TAKES UNITY'S BLUE SELECTION HIGHLIGHT OFF THIS FIELD. See
+            // MenuKit.Dress: the default is `a8ceff` and CLAUDE.md § 6.4 forbids it.
+            MenuKit.Dress(input);
             input.targetGraphic = image;
             input.characterLimit = limit;
             input.lineType = InputField.LineType.SingleLine;

@@ -340,6 +340,9 @@ namespace TumbangPreso.UI
             Inset(typed.rectTransform);
 
             _field = _fieldRow.AddComponent<InputField>();
+            // ⚠️ TAKES UNITY'S BLUE SELECTION HIGHLIGHT OFF THIS FIELD. See
+            // MenuKit.Dress: the default is `a8ceff` and CLAUDE.md § 6.4 forbids it.
+            MenuKit.Dress(_field);
             _field.textComponent = typed;
             _field.placeholder = placeholder;
             _field.targetGraphic = image;

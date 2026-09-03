@@ -358,7 +358,7 @@ namespace TumbangPreso.UI
             // ---- the headline: the ONE thing, and it is the biggest text on the card ----
             _headline = Row(column.transform, "SEARCHING FOR A MATCH", PaperKit.Title,
                             UiTheme.PaperInk, 34);
-            _headline.fontStyle = FontStyle.Bold;
+            MenuKit.Apply(_headline, PaperKit.FaceFor(_headline.fontSize), bold: true);
 
             // ---- the band, which is the widening made into words ------------------------
             _band = Row(column.transform, "", PaperKit.Body, UiTheme.PaperInk, 26);

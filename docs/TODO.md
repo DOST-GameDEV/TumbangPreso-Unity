@@ -377,6 +377,181 @@ to it.
 time. Build through `MenuKit` or `ConvertedScreen` and the focus path and the thumb targets come
 for free; reach for a bare `Canvas` and you have shipped a screen a pad and a thumb cannot use.
 `InputSurfaceCheck` refuses the build either way, which is the point of it.
+
+### 133.9 What he added while the pass was running, 2026-09-03
+
+Six more sentences arrived during the session, and **five of them are constraints rather than
+preferences**. They are recorded here because § 133.4 to § 133.8 were written before any of them.
+
+| His words | What it settles |
+|---|---|
+| *"i dont want UI to feel repetitive but we can repeat shit ... js figure out where and what will llook good"* | Repetition is ALLOWED and the placement is the designer's call. `Front_End_Design.md` § 0 answers it: **repeat the chrome, never the composition**, and the test is whether a player has to LEARN the thing. |
+| *"i want our ui for lobby and everything (except for game for now) to all have its own identity"*, then *"i want settings, character select profile to all be under the same theme but feel like their own screens"* | ⚠️⚠️ **PROFILE IS NAMED EXPLICITLY NOW**, where § 133.4 had it in the "everything else follows" list. Five screens each get an anchor colour, a borrowed archetype, a hero element and one motif; `Front_End_Design.md` § 2 is the table. |
+| *"i want it to be quirky and feel filipino-esque ... but dont force the filipino shit, i js want it to be felt from it"* | ⚠️ **FELT, NOT THEMED.** It is spent on the things a room is MADE of rather than on decoration: the lobby's top band is a tarpaulin strung between two points, so it sags. Nothing is labelled as Filipino and no ornament is added. |
+| *"thoroughly make it better plss, i want it to stray away from old design bzc old design was ugly"* | § 133.6's *"better, not rearranged"* restated harder. The composition may change; what was LEARNED in §§ 92, 94.7, 100 and 121.1 may not be re-earned. |
+| *"it should have all the functions of old ui, make sure ntohing in old ui as functions get lost"* | § 133.5's second worry, restated. ✅ **Answered by construction**, see § 133.10. |
+| *"u figure out as well what secondary font to use ... use font principles or some shit to do this well"*, and later *"u can also use capital and shit depending on stuff, u figure out where all capital looks best and where it doesnt"* | ⚠️ **THE FONT CALL IS DELEGATED**, which closes half of `Attention.md` § 12. The caps question is answered with a measurement rather than a taste, in `Front_End_Design.md` § 3.1. |
+
+### 133.10 ✅ What landed 2026-09-03, and the two numbers worth keeping
+
+**1. The body face is Nunito, and it was chosen by measurement.** Four candidates were rendered at
+the sizes the game actually draws at, including the 4:3 1024x768 worst case where one canvas unit
+is 0.533 physical pixels. `Assets/TumbangPreso/Art/ui/fonts/SOURCES.txt` carries the table and the
+licences; `scratchpad/fontsrc/` carries the scripts and the specimen sheets.
+
+⚠️⚠️ **THE MEASUREMENT THAT DECIDED IT WAS X-HEIGHT, NOT TASTE.** Every layout number in this
+repository was taken against Darumadrop's metrics, and what a label LOOKS like at a given
+`fontSize` is driven by x-height rather than by em size. Nunito's is **499 per mille against
+Darumadrop's 510, a difference of 2.2 per cent**, so moving a row to the body face does not
+silently shrink it. Baloo 2 would have cost **6.9 per cent** on every caption in the game, under a
+floor § 121.8 is already an open argument about. Nunito's Bold is a drawn weight, 56 per cent more
+stem than its Regular, against Darumadrop's none at all. It is 125 KB a weight against M PLUS
+Rounded 1c's 3.4 MB, which is 8,201 glyphs for a game set in Latin.
+
+**2. ⚠️⚠️ ALL-CAPS COSTS 10 TO 17 PER CENT OF WIDTH AND LOWERCASE COSTS 2, AND THAT IS § 133.3'S
+SILENT FAILURE WITH A NUMBER ON IT.** Darumadrop's caps are unusually narrow against its own
+lowercase (x-height over cap height is **0.833**, where a text face is nearer 0.70), so the same
+string set in Nunito grows **only in capitals**: `Master volume` +1.9%, `MASTER VOLUME` +12.1%,
+`PRESS START TO HOST A GAME` +14.4%, a 60-character sentence +2.8%. `MenuKit.Label` overflows
+rather than wrapping, so a capitalised body row that grew simply draws over its neighbour.
+`scratchpad/fontsrc/widths.py` re-runs it. **The design answer and the safety answer turned out to
+be the same answer**, and `Front_End_Design.md` § 3.1 is the rule: capitals stay where Darumadrop
+draws them, plus letterspaced eyebrows and buttons of 12 characters or fewer.
+
+**3. The face split is decided by the type STEP, not by the caller.** `PaperKit.FaceFor` returns
+Display at or above `Title` (26) and Body below it, and `PaperKit.Ink`, `Marker`, `Chip` and
+`PaperDress.Type` all route through it. ⚠️ **`PaperDress.Type` is worth as much as every hand edit
+put together**: settings, character select and match setup are `.tscn` conversions whose labels
+have no C# call site, and every one of them passes through that one function when the screen is
+papered.
+
+**4. ⚠️ THE SYNTHETIC BOLD IS UNREACHABLE RATHER THAN MERELY REMOVED.** `MenuKit.Apply` swaps the
+bold FILE and always clears `fontStyle`, and bold on the display face is a documented no-op
+because Darumadrop has nothing to reach for. **28 sites swept** across the nine front-end files;
+the 10 in `Hud`, `AbilityInspectPanel`, `ComicPopup`, `EmoteWheel` and `GuidedTraining` are
+deliberately untouched, because § 133.4 scopes the in-match layer out.
+`PaperPurityProbe.NoLabelFakesItsWeight` is the gate and it asks about the FONT rather than about
+the source, so it catches a converted `.tscn` that a grep never would.
+
+**5. ✅ THE CONTROL INVENTORY IS CAPTURED, NOT TYPED, AND IT IS 338 CONTROLS.**
+`PaperPurityProbe.NothingOnTheInventoryDisappeared` walks all five screens, every settings tab,
+every lobby drawer and all three login states, and writes
+`Assets/TumbangPreso/Tests/PlayMode/control-inventory-baseline.txt`: **lobby 70, character 75,
+profile 79, login 62, settings 52.** ⚠️⚠️ **§ 133.5 ASKED FOR THIS LIST BEFORE THE SCREENS ARE
+REBUILT AND IT WAS TAKEN BEFORE THEY WERE.** A hand-written list of a 40-row settings screen would
+have been wrong on the day it was written; a captured one cannot miss a control because nobody
+noticed it. Additions pass and removals fail, and a control that kept its node and changed its
+lettering is reported as a rename rather than as a loss.
+
+**6. ⚠️⚠️ EVERY TEXT FIELD IN THE GAME HIGHLIGHTED SELECTED TEXT IN BLUE, AND HAD SINCE THE FIRST
+ONE WAS BUILT.** `InputField.selectionColor` defaults to `a8ceff`, which is **87 levels more blue
+than red**, and `grep -rn selectionColor` over the whole repository returned **nothing**: no site
+had ever assigned it. `CLAUDE.md` § 6.4's own test is *"if a hex has more blue in it than red, it
+does not belong in a menu"*, and he has had to state that rule six times.
+
+⚠️⚠️ **IT IS INVISIBLE TO EVERY OTHER GATE HERE, WHICH IS WHY IT SURVIVED.** A selection highlight
+only exists while text is selected, so it is in no render, no layout probe and no screenshot
+review. **It was found in a render by accident** (`Settings-v76.png` happened to catch the username
+row with its text selected) and then confirmed by grep, which is § 6.4's own instruction:
+*"check it by grepping, not by looking"*. `MenuKit.Dress` is the fix, called at the four places the
+game builds a field in code and from both halves of the paper conversion;
+`PaperPurityProbe.NoFieldHighlightsInBlue` is the gate, and **it immediately caught a fifth field
+the four code sites could not reach**, the settings panel's converted `PlayerNameField`. That is
+§ 120.4's lesson one component across: a thing set outside the components the conversion knows
+about is a thing the conversion is blind to.
+
+**7. ✅ THE PALETTE IS IN, AND IT WAS READ RATHER THAN TYPED.** He dropped four files in
+`~/Downloads/claude/` on 2026-09-03: the colour logo, a mono wordmark, a textured mono wordmark and
+a tsinelas-with-a-hit mark. All four are committed unchanged under
+`Assets/TumbangPreso/Art/ui/brand/source/`. `tools/read_brand_palette.py` clusters the flat fills,
+and it **agreed with itself across two independently drawn files**, which is why these are trusted
+rather than sampled: deep red `#980715` (34.3 per cent of the logo), Honey Quartz `#FCD39F` (23.1),
+Chartreuse `#D6CE01` (17.0), Persimmon `#FD8041` (5.7), golden `#F5B521` (4.2), rim red `#C32E0D`
+(3.8), Army `#B3A828` (1.4). ⚠️ **It reads the ARTWORK rather than the printed swatch labels**,
+because four-pixel-tall type through OCR is a guess wearing a lab coat, and the drawing is flat
+filled so a histogram returns the fills exactly. ⚠️ **It merges values within 14 levels first**:
+the files are JPEG, and its first pass reported the outline as EIGHT colours.
+
+⚠️ **KHAKI IS THE ONE COLOUR THAT IS DERIVED RATHER THAN MEASURED**, because the drawing never
+needed a quiet mid-tone. It is Honey Quartz mixed 72:28 toward Army, `#E8C77E`, and
+`Attention.md` § 12.1 carries the ask to confirm it against his swatch strip. **Nothing is blocked
+on it**: it is one named constant and no surface inlines the hex.
+
+**8. ⚠️⚠️ `UiTheme.Amber` WAS CHANGED TO THE LOGO'S GOLD AND THEN CHANGED BACK, ON PURPOSE.** It is
+read **15 times in `Hud.cs`** and again in `AbilityInspectPanel`, `PlayerNameplate` and
+`RoleSwapCard`, and § 133.4 scopes the in-match layer out in as many words. **A one-line palette
+edit would have repainted the HUD**, which is the same class of accident § 6.4 records
+`UiTheme.Ink` causing in the other direction: one constant reaching further than the person
+editing it realised. The front end uses `BrandGolden`; the two live side by side until the HUD is
+repainted deliberately.
+
+**9. The paper ramp is one colour at four tints, and the ink is measured.** `Paper` `#FEEBD4`,
+`PaperWarm` `#FDDFBA`, `PaperEdge` `#FCD39F` and `PaperSunk` `#DEBA8C` are Honey Quartz at four
+tints, which is § 6.5's *"one base colour generates a whole control"* moved up a level. ⚠️ **The
+ink is a MIX of the two darkest brand colours rather than pure red**, because red text means
+"something is wrong" in every convention a player owns: `#55290F` measures **10.5:1** on the page
+and `#97491B` measures **5.5:1**, against the old ink's 10.4 and 5.2, so both land on the targets
+the old palette was argued to rather than near them. `scratchpad/fontsrc/ramp.py` computes them.
+
+**10. `tools/build_brand_art.py` keys the page to alpha and recolours the wordmark per screen.**
+The masters arrive as JPEG on a white page and both halves are fatal in a UI: an opaque white
+rectangle behind a logo is a white rectangle, and JPEG rings every hard edge, so a single-threshold
+key leaves a grey halo. It keys on LUMINANCE so the ringing goes with the page, trims to the
+drawing (§ 6.2c: *"is this image fitted to the region it is SEEN in"*), and paints the mono master
+per screen. ⚠️ **That is § 6.5's own mechanism one level up**: *"`JOIN BUTTON.png` is `BUTTON
+LONG.png` with one colour swapped, so one base colour generates a whole control"*. He asked for it
+by name: *"u can edit those assets and change the colors or smth, depending on which screen u will
+use"*.
+
+### 133.11 ⚠️ What is still open, and nothing in it is blocked
+
+- ✅ **THE PALETTE IS NO LONGER A BLOCKER.** It landed 2026-09-03, measured, and the repaint went
+  through `UiTheme` alone: **every surface in the front end names a semantic constant rather than a
+  hex**, so one file moved all five screens at once. That is § 6.4's own receipt used forwards, one
+  constant having put navy on every word in the front end.
+- ⚠️⚠️ **THE FIVE COMPOSITIONS ARE THE WORK THAT IS LEFT, AND THEY ARE THE BULK OF § 133.**
+  `docs/Front_End_Design.md` § 2 is the design and the code is not written. **What landed is the
+  system, not the screens**: the palette, both faces, the recurring marks, the inventory gate and
+  the three new probes. The lobby renders in the new palette and the new faces, and it is still
+  the composition § 118.1 lists eight faults against.
+  The order he named is lobby, settings, character select, login, then profile and the rest, and
+  the named work per screen is:
+  - **The spine** (`Front_End_Design.md` § 1), which is one piece of code used by all five: the
+    screen name top left, BACK under it, **the identity chip TOP RIGHT carrying the player's face**
+    (this is § 96's fix and the single most-requested unfixed thing in the repository), the one
+    primary bottom right, secondary chips to its left.
+  - **The mark** (§ 1.1), Paul Andrei's crown, drawn at most once per screen on the thing that is
+    currently chosen. `tsinelas_hit.png` is built and unused so far.
+  - **The other five recurring signs** (§ 1.2): the heavy outline meaning pressable, the drip
+    meaning more below, the hatch meaning unavailable, the chevron, the lean.
+  - **The case pass**: § 3.1's rule is written and NOT yet applied to the call sites. Body-step
+    labels of 13 characters or more are still in capitals and are the +14 per cent overflow risk.
+- ✅ **`CLAUDE.md` § 6.4's palette list is rewritten**, in the same commit as the hexes, with its
+  ban and its receipts kept and the carved wood retained and labelled as the OLD palette.
+- **§ 121.8**, still 🧑's call, and `Attention.md` § 3 says to answer it against the NEW body face
+  rather than before it. A face with a different x-height changes the measurement the question was
+  asked against.
+- ✅ **`AspectRatioProbes` WAS RUN FOR THE FONT CHANGE, WHICH IS § 133.3'S NAMED TRAP, AND THE
+  FONT DID NOT MOVE IT.** It comes back **1 passed, 1 failed**, and the failure was verified as
+  pre-existing rather than assumed to be: the tracked changes were stashed, the probe was re-run
+  against clean HEAD, and it returned the **byte-identical message**. So two fonts did not break
+  a single layout at any of the nine shapes, which is the x-height measurement in § 133.10 point 1
+  paying off exactly where it was supposed to.
+
+  ⚠️⚠️ **AND § 130.15 IS NOW STALE, WHICH IS WORTH MORE THAN THE RESULT.** That entry says the
+  character screen's *"only remaining red is `DoorCaption`, authored at 16, which is exactly
+  `PaperKit.Caption`"*, and points at § 121.8 as the thing holding it open. **The actual first
+  failure is a label called `Label` authored at 13**, and it is 13 on clean HEAD too.
+  `AspectRatioProbes` asserts inside a loop, so NUnit stops at the FIRST failing label and every
+  later one is invisible: the caption at 16 may well still be red behind it, and nobody can tell
+  from the report. **`Attention.md` § 3 has therefore been asking 🧑 to settle a question that is
+  not what is failing.** The three 13-unit labels are `EQUIPPED`, `LOCKED` and the loadout board's
+  key chip in `ConvertedCharacterSelect`, all authored at 13 rather than shrunk to it.
+  ⚠️ **Do not lower the floor** (§ 126.13). Either those three earn a written exemption the way
+  `MenuKit.Fit` registers one, or they go up to 18; and the probe should collect every failure
+  and report them together rather than throwing on the first, or this will happen again.
+- **Render every screen either side of the composition work.** The font-and-palette renders are
+  taken (`Logs/shots-runtime/*-v76.png`, `UiRuntimeShots` 9/9); the compositions do not exist yet.
 ---
 
 ## 132 · The loadout said nothing about the hero, and a build vanished the moment the match started ⚠️ IN PROGRESS, 2026-09-03, branch `abilities-rework`

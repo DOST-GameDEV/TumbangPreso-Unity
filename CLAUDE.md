@@ -572,9 +572,41 @@ one of them passed a reading of the narrow rule:
 - **The rule, stated wide:** no blue, no navy, no cold grey, in any UI colour, in any layer.
   Outlines, fills, panel backgrounds, scrims, rings, gradients, glyph tints, disabled states.
   **If a hex has more blue in it than red, it does not belong in a menu.**
-- **The palette:** carved wood (`#31190B` deep, `#5A2F14` mid, `#8B5227` edge, `#1D0E06` dark),
-  cream paper and chalk (`#F5E6C8`), amber gold (`#FFBA00`), warm ink (`#1C0F06`). Geometry comes
-  from warm tone-on-tone bevels and borderless shapes.
+- ⚠️⚠️ **THE PALETTE, AND IT MOVED ON 2026-09-03. IT IS THE LOGO'S NOW.** 🧑: *"the colors are
+  final, ask it to use the same colors as logo"*. `docs/TODO.md` § 133.1 is the entry and
+  `docs/Front_End_Design.md` § 4 is the role table.
+
+  | Name | Hex | Share of the logo | Its ONE role |
+  |---|---|---|---|
+  | **Deep red** | `#980715` | 34.3% | The **outline**, everywhere, plus the one destructive control. Never a ground. |
+  | **Honey Quartz** | `#FCD39F` | 23.1% | The **ground** of every light screen, and the base the paper ramp is tinted from. |
+  | **Chartreuse** | `#D6CE01` | 17.0% | The **action**. One per screen, the primary only. |
+  | **Persimmon** | `#FD8041` | 5.7% | The **marker**: the one value or selection that matters. |
+  | **Golden** | `#F5B521` | 4.2% | The front end's gold. ⚠️ **`UiTheme.Amber` is still `#FFBA00`** because the HUD reads it 15 times and the HUD is out of scope. |
+  | **Rim red** | `#C32E0D` | 3.8% | The lit state of the deep red, drawn as exactly that in the mark. |
+  | **Army** | `#B3A828` | 1.4% | The **dark ground**, and the only one: the fighter picker's stage. |
+  | **Khaki** | `#E8C77E` | derived | The quiet mid-tone. ⚠️ **The one colour here that is derived rather than measured**, because the drawing never needed one; `Attention.md` § 12 carries the ask to confirm it against his swatch strip. |
+
+  ⚠️⚠️ **EVERY ONE OF THOSE WAS MEASURED BY A SCRIPT, NOT PICKED.** `tools/read_brand_palette.py`
+  clusters the committed artwork's flat fills; the percentages are its output, and it **agreed
+  with itself across two independently drawn files** (`tump_logo_colour.jpg` and
+  `tsinelas_hit.jpg`). ⚠️ **Re-run it rather than eyeballing a new logo**: the masters arrive as
+  JPEG, and its first pass reported the outline as EIGHT different colours before it learned to
+  merge chroma-subsampled values.
+
+  ⚠️ **The paper ramp is ONE colour at four tints** (`Paper` `#FEEBD4`, `PaperWarm` `#FDDFBA`,
+  `PaperEdge` `#FCD39F`, `PaperSunk` `#DEBA8C`), all derived from Honey Quartz, which is § 6.5's
+  *"one base colour generates a whole control"* moved up a level. The ink is a MIX of the two
+  darkest brand colours rather than pure red, because red text means "something is wrong" in
+  every convention a player owns; `#55290F` measures **10.5:1** on the page and `#97491B`
+  measures **5.5:1**, both computed by `scratchpad/fontsrc/ramp.py` rather than judged.
+
+- ⚠️ **THE CARVED WOOD IS THE OLD PALETTE AND IS KEPT RATHER THAN DELETED**: `#31190B` deep,
+  `#5A2F14` mid, `#8B5227` edge, `#1D0E06` dark, cream `#F5E6C8`, amber `#FFBA00`, warm ink
+  `#1C0F06`. Two reasons, neither sentiment: **`PaperPurityProbe.WoodFills` lists those exact
+  hexes to DETECT a leftover** from the old front end, so deleting them blinds the gate that
+  proves the overhaul finished, and **the in-match HUD is still drawn in them on purpose**
+  (§ 133.4). Geometry still comes from warm tone-on-tone bevels and borderless shapes.
 - ⚠️⚠️ **THE ONE EXEMPTION, AND IT IS A GAMEPLAY FACT RATHER THAN A STYLE: `UiTheme.Defense`
   (`0080e8`) MEANS "THE TAYA".** It is the defending side's colour in the match, opposite
   `Offense` orange, and it is the only blue in the project that may be drawn. **It may never

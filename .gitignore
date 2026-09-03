@@ -153,3 +153,16 @@ scratchpad/*.png
 scratchpad/*.txt
 scratchpad/*.md
 !scratchpad/greyscale.py
+
+# The candidate faces downloaded for docs/TODO.md section 133's font comparison, and the
+# specimen sheets rendered from them.
+# ⚠️ THE SCRIPTS ARE COMMITTED AND THE BINARIES ARE NOT, which is the same split as the two
+# blocks above. `measure.py`, `widths.py`, `ramp.py` and `specimen.py` are cited by name in
+# `Assets/TumbangPreso/Art/ui/fonts/SOURCES.txt`, in `CLAUDE.md` section 6.4 and in
+# `docs/Front_End_Design.md`, so a reader has to be able to re-run them and get the same
+# numbers. What they READ is 8.3 MB of TTFs: three rejected families plus a second copy of the
+# two that shipped, every one a one-line fetch from Google Fonts with the URL in SOURCES.txt.
+# The two that ship are committed properly under Art/ui/fonts/ with their licence.
+scratchpad/fontsrc/*.ttf
+scratchpad/fontsrc/*.png
+scratchpad/fontsrc/OFL.txt

@@ -1,0 +1,80 @@
+THE TWO FACES THIS GAME IS SET IN, AND WHAT THEIR LICENCE IS
+
+This repository is public and the game is a competition entry, so every face here is under
+the SIL Open Font License 1.1 and the licence text is committed beside it. Neither font is
+modified: both are the upstream release, byte for byte.
+
+docs/TODO.md section 133 is the work that added the second one, and it says why there are
+two rather than one.
+
+---------------------------------------------------------------------------
+1. Darumadrop One, by Maniackers Design
+   https://github.com/ManiackersDesign/darumadrop
+   SIL Open Font License 1.1
+
+   THE DISPLAY FACE. Headings, the Display and Title steps of PaperKit's type scale, the
+   primary action on a screen, hero and player names. It is a rounded high-personality
+   face and it is exactly right on a word somebody LOOKS AT.
+
+   It ships ONE WEIGHT, which is the whole reason for the face below.
+
+2. Nunito, by Vernon Adams, Cyreal and Jacques Le Bailly
+   https://github.com/googlefonts/nunito
+   SIL Open Font License 1.1, OFL-Nunito.txt in this folder
+   Regular (usWeightClass 400) and Bold (700), from Google Fonts v32
+
+   THE BODY FACE. Sentences, settings rows, chat, form fields, captions, hints: everything
+   somebody READS rather than looks at.
+
+---------------------------------------------------------------------------
+WHY NUNITO AND NOT ONE OF THE OTHER THREE THAT WERE MEASURED
+
+Four candidates were rendered at the sizes this game actually draws at, including the 4:3
+1024x768 worst case where one canvas unit is 0.533 physical pixels. scratchpad/fontsrc/
+holds the measurement script and the specimen sheets. The numbers that decided it:
+
+                        x-height   x-height   stem 'I'   stem 'I'   file per
+                        per-mille  vs Daruma  regular    bold       weight
+  Darumadrop One          510         --         82        NONE      359 KB
+  Nunito                  499       -2.2%        82        128       125 KB
+  M PLUS Rounded 1c       520       +2.0%        86        154      3400 KB
+  Figtree                 500       -2.0%        85        137       36 KB
+  Baloo 2                 475       -6.9%        81        152      418 KB
+
+  - APPARENT SIZE IS PRESERVED, which is the one measurement that mattered most. Every
+    layout number in this repository was taken against Darumadrop's metrics, and what a
+    label LOOKS like at a given fontSize is driven by x-height rather than by em size.
+    Nunito's x-height is within 2.2 per cent of Darumadrop's, so moving a row to the body
+    face does not silently shrink it. Baloo 2 would have cost seven per cent on every
+    caption in the game, under a floor that is already being argued about in section 121.8.
+
+  - THE BOLD IS REAL. Darumadrop has no bold face at all, so every FontStyle.Bold in this
+    front end was legacy Text drawing each glyph twice at an offset: a smear rather than a
+    weight, worst at the 18-unit floor where most of the game's words live. Nunito's Bold
+    is a drawn weight, 56 per cent more stem than its Regular.
+
+  - THE SKELETON MATCHES AND THE PERSONALITY DOES NOT. Nunito is a humanist sans with
+    rounded terminals and open apertures. It shares Darumadrop's family resemblance, which
+    is what stops the pairing reading as two games, and drops the wobble, which is what
+    lets it carry a four-line ability description. M PLUS Rounded 1c is the same rounded
+    lineage and was the runner-up on every count except the last two.
+
+  - 125 KB AGAINST 3.4 MB. M PLUS Rounded 1c carries 8,201 glyphs because it covers kana
+    and kanji, and this game is set in Latin. Two Nunito weights cost 250 KB in the
+    Android player; two M PLUS weights would have cost 6.8 MB for glyphs nothing draws.
+
+---------------------------------------------------------------------------
+WHAT IS DRAWN IN WHICH FACE
+
+The split is not decorative. docs/TODO.md section 133.7: "Darumadrop carries the quirk, the
+body face carries the reading", and that split is what lets a screen be quirky and calm at
+the same time. MenuKit.Face is the enum; MenuKit.Apply is the only place that assigns
+either file.
+
+  DISPLAY (Darumadrop)   Screen headings, the Display and Title type steps, the ONE primary
+                         action per screen, player and hero names, big values, the pennants.
+  BODY    (Nunito)       Every sentence, settings rows, captions, chat, form fields and
+                         their hints, secondary and tertiary buttons, list rows, tooltips.
+
+  A LABEL NEVER SETS FontStyle.Bold. MenuKit.Apply swaps the Bold FILE instead, because
+  Unity's synthetic bold is the fault this whole pass exists to remove.

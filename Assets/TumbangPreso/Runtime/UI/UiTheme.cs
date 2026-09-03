@@ -82,7 +82,94 @@ namespace TumbangPreso.UI
         public static Color InkMuted => new Color(Ink.r, Ink.g, Ink.b, 0.62f);
 
         // -------------------------------------------------------------------
-        // THE WOOD SET. The in-match HUD panels and the menu chrome.
+        // THE BRAND SET, 2026-09-03. READ OUT OF THE LOGO, NOT PICKED.
+        //
+        // ⚠️⚠️ THIS IS THE PALETTE NOW, AND THE WOOD SET BELOW IS THE OLD ONE.
+        // 🧑 2026-09-03: *"the colors are final, ask it to use the same colors as logo"*, and
+        // separately *"the colors are final"* again. `docs/TODO.md` § 133.1 records that the art
+        // is work in progress and the palette is not.
+        //
+        // ⚠️⚠️ EVERY HEX IN THIS BLOCK WAS MEASURED BY A SCRIPT AND NONE WAS TYPED BY EYE, which
+        // is § 133.1's instruction in as many words: *"READ THE HEXES OFF THE COMMITTED FILE. DO
+        // NOT TYPE THEM IN BY EYE AND DO NOT SAMPLE A CHAT THUMBNAIL."*
+        // `tools/read_brand_palette.py` clusters the committed artwork's flat fills and prints
+        // each one's share of the drawing; the percentages below are its output.
+        //
+        // ⚠️ IT AGREED WITH ITSELF ACROSS TWO INDEPENDENT FILES, which is why these are trusted.
+        // `tump_logo_colour.jpg` and `tsinelas_hit.jpg` were drawn separately and return the same
+        // six colours within one or two levels on every channel. A palette that reproduces across
+        // two drawings is a palette; one read off a single file is a sample.
+        //
+        // ⚠️ THE FILES ARRIVE AS JPEG, so the reader merges values within 14 levels before
+        // counting. Its first run reported the outline EIGHT times (970617, 980716, 980613,
+        // 960514, 970615, 980515, 960516, 9d0710) because chroma subsampling smeared one flat
+        // fill, and eight rows for one colour is exactly the guess that script exists to remove.
+        // -------------------------------------------------------------------
+
+        /// <summary>The outline every shape in the mark is held in, and **34.3 per cent of the
+        /// drawing**: the single largest area in the logo.
+        ///
+        /// ⚠️⚠️ IT IS THE OUTLINE ROLE AND NOT A GROUND, WHICH IS WHY NO SCREEN USES IT AS A
+        /// FIELD. In the mark it is what holds every other colour in, so in the front end it is
+        /// the stroke on the one primary action, the selection frame, and the one destructive
+        /// control. `docs/Front_End_Design.md` § 4 is the role table.</summary>
+        public static readonly Color BrandRed = Hex("980715");
+
+        /// <summary>Honey Quartz: the fill inside the letters, **23.1 per cent**. The front end's
+        /// ground, and the base every paper tone below is derived from.</summary>
+        public static readonly Color BrandHoney = Hex("fcd39f");
+
+        /// <summary>Chartreuse: the blob behind the wordmark, **17.0 per cent**. ⚠️ **THE ACTION
+        /// COLOUR, and it REPLACES <see cref="MenuGreen"/>'s role rather than joining it.** His
+        /// authored `JOIN BUTTON.png` and the PLAY pennant are already green and `CLAUDE.md`
+        /// § 6.5 names green as his primary, so this is the same role moving to the settled
+        /// palette rather than a new hue arriving.</summary>
+        public static readonly Color BrandChartreuse = Hex("d6ce01");
+
+        /// <summary>Persimmon: the diagonal fill on the `1`, **5.7 per cent**. The MARKER: the one
+        /// value or selection on a screen that matters.</summary>
+        public static readonly Color BrandPersimmon = Hex("fd8041");
+
+        /// <summary>The swirl in the drip, **4.2 per cent**. ⚠️ This is what <see cref="Amber"/>
+        /// becomes: it is the logo's own gold and it is two thirds of a step warmer than the
+        /// `ffba00` it replaces.</summary>
+        public static readonly Color BrandGolden = Hex("f5b521");
+
+        /// <summary>The brighter rim marks under the letters, **3.8 per cent**. The lit state of
+        /// <see cref="BrandRed"/>, and it was drawn as exactly that.</summary>
+        public static readonly Color BrandRimRed = Hex("c32e0d");
+
+        /// <summary>Army: the shading strokes across the blob, **1.4 per cent**. The dark ground,
+        /// and the only one. `docs/Front_End_Design.md` § 2.3: the fighter picker is the one dark
+        /// screen in the front end and 🧑 asked for that by name.</summary>
+        public static readonly Color BrandArmy = Hex("b3a828");
+
+        /// <summary>
+        /// Khaki: the quiet ground, for a tray or a sunk row on a screen that is already Honey.
+        ///
+        /// ⚠️⚠️ THIS IS THE ONE COLOUR IN THIS BLOCK THAT IS DERIVED RATHER THAN MEASURED, AND
+        /// SAYING SO IS THE POINT. The five named swatches are Honey Quartz, Chartreuse,
+        /// Persimmon, Khaki and Army; the first, second, third and fifth all appear as fills in
+        /// the artwork and this one does not, because the drawing never needed a quiet mid-tone.
+        /// It is **Honey Quartz mixed 72:28 toward Army**, which is the two neighbours it sits
+        /// between on his own swatch strip, and ink measures **9.2:1** on it.
+        ///
+        /// ⚠️ `Attention.md` § 12 CARRIES THE ASK TO CONFIRM IT. The swatch strip that shipped
+        /// with the first version of the logo has the real value printed on it, and that image is
+        /// still only in the chat. **If it disagrees, this constant is the only thing that
+        /// changes**, which is the whole reason the palette is named rather than inlined.
+        /// </summary>
+        public static readonly Color BrandKhaki = Hex("e8c77e");
+
+        // -------------------------------------------------------------------
+        // THE WOOD SET. ⚠️⚠️ THIS IS THE **OLD** PALETTE AS OF 2026-09-03.
+        //
+        // ⚠️ IT IS KEPT RATHER THAN DELETED FOR TWO REASONS, AND NEITHER IS SENTIMENT.
+        // `PaperPurityProbe.WoodFills` lists these exact hexes to DETECT a leftover from the
+        // old front end, so deleting them would blind the gate that proves the overhaul
+        // finished; and the in-match HUD is out of scope for `docs/TODO.md` § 133 and is still
+        // drawn in them on purpose.
+        //
         // ⚠️ This is the look the pitch deck and the sponsorship proposals were both
         // designed from, so it is effectively the team's brand and not only a UI skin.
         // -------------------------------------------------------------------
@@ -92,6 +179,19 @@ namespace TumbangPreso.UI
         public static readonly Color WoodDark = Hex("1d0e06");
         public static readonly Color WoodEdge = Hex("8b5227");
         public static readonly Color Cream = Hex("f5e6c8");
+        /// <summary>
+        /// ⚠️⚠️ IT IS STILL `ffba00` AND IT WAS DELIBERATELY NOT MOVED TO THE BRAND GOLD.
+        /// This constant is read **15 times in `Hud.cs`** and again in `AbilityInspectPanel`,
+        /// `PlayerNameplate` and `RoleSwapCard`, all of which are the in-match layer that
+        /// `docs/TODO.md` § 133.4 scopes out of this pass in as many words: *"if it is drawn while
+        /// a round is live, it is out of scope. Not deferred, not do it last."*
+        ///
+        /// **A one-line palette edit here would have repainted the HUD**, which is exactly the
+        /// class of accident § 6.4 records `UiTheme.Ink` causing in the other direction: one
+        /// constant reaching further than the person editing it realised. The front end uses
+        /// <see cref="BrandGolden"/>, which is the logo's own gold and is two thirds of a step
+        /// warmer than this; the two live side by side until the HUD is repainted on purpose.
+        /// </summary>
         public static readonly Color Amber = Hex("ffba00");
 
         /// <summary>
@@ -196,23 +296,36 @@ namespace TumbangPreso.UI
         // -------------------------------------------------------------------
 
         /// <summary>
-        /// The lighter of his two swatches, and the front end's primary surface.
+        /// The front end's primary surface.
         ///
-        /// ⚠️ IT IS THE LOGO'S OWN GROUND. `Art/ui/TUMP.png` is white lettering with a sand halo
-        /// on a linen field; sampling the linen gives `f2ead9`, which is this within a point on
-        /// every channel. The palette was already on screen in the game's own mark.
+        /// ⚠️⚠️ IT IS <see cref="BrandHoney"/> LIGHTENED 55 PER CENT TOWARD WHITE, AND THE WHOLE
+        /// RAMP BELOW IS ONE COLOUR AT FOUR TINTS. That is `CLAUDE.md` § 6.5's own mechanism
+        /// moved up a level: *"`JOIN BUTTON.png` is `BUTTON LONG.png` with one colour swapped,
+        /// keyline to floor, so one base colour generates a whole control"*. Four tints of one
+        /// brand colour cannot drift apart the way four separately chosen creams did.
+        ///
+        /// ⚠️ IT IS A TINT RATHER THAN THE MEASURED `fcd39f` ITSELF, AND THAT IS A DECISION WITH
+        /// A REASON. Honey Quartz at full strength is the fill inside the LETTERS, which is a
+        /// shape a few hundred units wide; the same value across an entire 1920-unit screen is a
+        /// different amount of colour entirely. The brand tone is kept as
+        /// <see cref="PaperEdge"/>, where it does the job it does in the mark: the band around
+        /// the outside of a cut-out.
+        ///
+        /// ⚠️ IT WAS `f4ecdd` UNTIL 2026-09-03, which was sampled off the OLD `TUMP.png`.
+        /// `docs/TODO.md` § 133.1 replaced that mark.
         /// </summary>
-        public static readonly Color Paper = Hex("f4ecdd");
+        public static readonly Color Paper = Hex("feebd4");
 
         /// <summary>
         /// The warmer of his two swatches: anything RECESSED into <see cref="Paper"/>.
         ///
+        /// ⚠️ IT IS <see cref="BrandHoney"/> LIGHTENED 28 PER CENT, one step down the same ramp.
         /// ⚠️ THE TWO ARE ONLY 4 PER CENT APART IN VALUE AND THAT IS THE POINT. A tray cut into a
         /// sheet is the same paper under less light, so the difference has to be small enough to
         /// read as shading and large enough to find. Anything wider turns a form into a set of
         /// stripes, which is what the zebra bands in § 92 were.
         /// </summary>
-        public static readonly Color PaperWarm = Hex("efdabe");
+        public static readonly Color PaperWarm = Hex("fddfba");
 
         /// <summary>
         /// The die-cut halo: the band of sand a sticker keeps around its own artwork.
@@ -223,23 +336,31 @@ namespace TumbangPreso.UI
         /// puts that band OUTSIDE the fill rather than inside it, which is why a cream panel here
         /// does not read as a cream rectangle with a line round it.
         /// </summary>
-        public static readonly Color PaperEdge = Hex("dcc19a");
+        public static readonly Color PaperEdge = Hex("fcd39f");
 
         /// <summary>The sand under a paper control that is pressed, and the lip along its bottom.
-        /// ⚠️ Sampled a step below <see cref="PaperEdge"/> so a pressed token darkens INTO its own
+        /// ⚠️ <see cref="BrandHoney"/> DARKENED 12 PER CENT, so a pressed token darkens INTO its own
         /// halo rather than picking up a second colour.</summary>
-        public static readonly Color PaperSunk = Hex("cbac83");
+        public static readonly Color PaperSunk = Hex("deba8c");
 
         /// <summary>
         /// Ink on paper: the type colour for every word drawn on <see cref="Paper"/>.
         ///
-        /// ⚠️ IT IS <see cref="WoodMid"/>'S DARKNESS, NOT <see cref="Ink"/>'S. Near-black on cream
-        /// is a contrast ratio of about 17:1, which reads as a printed form and is the opposite of
-        /// the calm 🧑 asked for (*"ur goal is to make it ... calming"*). `3b2415` on `f4ecdd` is
-        /// 10.4:1, still far above the 4.5:1 floor `game-ui-design`'s `validations.md` sets for
-        /// body copy, and it is the colour his own wood already is.
+        /// ⚠️⚠️ IT IS A MIX OF THE TWO DARKEST BRAND COLOURS RATHER THAN EITHER OF THEM, AND THE
+        /// REASON IS THAT PURE DEEP RED READS AS AN ERROR. <see cref="BrandRed"/> darkened is still
+        /// unmistakably RED at body size, and red text means something wrong in every UI
+        /// convention a player has ever met. This is `BrandRed` mixed 55:45 with
+        /// <see cref="BrandArmy"/> and darkened 48 per cent, which lands warm and dark and belongs
+        /// to the palette without claiming a state.
+        ///
+        /// ⚠️ IT HITS THE SAME TARGET THE OLD INK WAS ARGUED TO, WHICH IS WHY THIS NUMBER AND NOT A
+        /// DARKER ONE. Near-black on paper is about 17:1 and reads as a printed form, which is the
+        /// opposite of the calm 🧑 asked for (*"ur goal is to make it ... calming"*). `55290f` on
+        /// `feebd4` measures **10.5:1** and 9.6 on `PaperWarm`, against the old `3b2415`'s 10.4;
+        /// both are far above the 4.5:1 floor `game-ui-design`'s `validations.md` sets for body
+        /// copy. `scratchpad/fontsrc/ramp.py` computes it rather than anybody eyeballing it.
         /// </summary>
-        public static readonly Color PaperInk = Hex("3b2415");
+        public static readonly Color PaperInk = Hex("55290f");
 
         /// <summary>
         /// Secondary type on paper: captions, hints, the second line of a row.
@@ -253,10 +374,12 @@ namespace TumbangPreso.UI
         /// settings summary under the chip, `tap to copy`, the seat plates' second line. Computing
         /// the ratio rather than eyeballing it is the whole lesson of `CLAUDE.md` § 6.4, where a
         /// near-black navy looked black in a code review for the entire life of the file.
-        /// `7a5c40` measures **5.2:1** on `f4ecdd` and 4.9 on `efdabe`, and is still visibly a
-        /// quieter voice than <see cref="PaperInk"/> at 12.1.
+        /// ⚠️ IT IS THE SAME BRAND MIX AS <see cref="PaperInk"/>, DARKENED ONLY 8 PER CENT INSTEAD OF
+        /// 48, so the two are one voice at two strengths rather than two colours. `97491b` measures
+        /// **5.5:1** on `feebd4` and **5.0:1** on `fddfba`, both over the floor, against the old
+        /// `7a5c40`'s 5.2 and 4.9. `scratchpad/fontsrc/ramp.py` computes it.
         /// </summary>
-        public static readonly Color PaperInkSoft = Hex("7a5c40");
+        public static readonly Color PaperInkSoft = Hex("97491b");
 
         public static Font Font => MenuKit.Font;
 

@@ -607,7 +607,7 @@ namespace TumbangPreso.UI
                 label.name = "Label";
                 label.fontSize = PaperKit.Body;
                 label.color = UiTheme.PaperInk;
-                label.fontStyle = FontStyle.Bold;
+                MenuKit.Apply(label, PaperKit.FaceFor(label.fontSize), bold: true);
                 label.alignment = TextAnchor.MiddleCenter;
 
                 // ⚠️⚠️ AND IT WAS SIX UNITS LOW ON TOP OF THAT, IN THE OTHER DIRECTION FROM EVERY
@@ -963,7 +963,7 @@ namespace TumbangPreso.UI
             var name = PaperKit.Ink(node, "", PaperKit.Title, TextAnchor.LowerCenter);
             name.name = "CharacterName";
             name.raycastTarget = false;
-            name.fontStyle = FontStyle.Bold;
+            MenuKit.Apply(name, PaperKit.FaceFor(name.fontSize), bold: true);
             name.rectTransform.anchorMin = new Vector2(0.0f, 0.44f);
             name.rectTransform.anchorMax = Vector2.one;
             name.rectTransform.offsetMin = new Vector2(34.0f, 0.0f);
@@ -1060,7 +1060,7 @@ namespace TumbangPreso.UI
             var label = PaperKit.Ink(go.transform, "", PaperKit.Title, TextAnchor.LowerCenter);
             label.name = "LoadoutValue";
             label.raycastTarget = false;
-            label.fontStyle = FontStyle.Bold;
+            MenuKit.Apply(label, PaperKit.FaceFor(label.fontSize), bold: true);
             label.rectTransform.anchorMin = new Vector2(0.0f, 0.44f);
             label.rectTransform.anchorMax = Vector2.one;
             label.rectTransform.offsetMin = new Vector2(34.0f, 0.0f);
@@ -1158,7 +1158,7 @@ namespace TumbangPreso.UI
                                      TextAnchor.LowerCenter);
             title.name = "Label";
             title.raycastTarget = false;
-            title.fontStyle = FontStyle.Bold;
+            MenuKit.Apply(title, PaperKit.FaceFor(title.fontSize), bold: true);
             title.rectTransform.anchorMin = new Vector2(0.0f, 0.48f);
             title.rectTransform.anchorMax = Vector2.one;
             title.rectTransform.offsetMin = new Vector2(44.0f, 0.0f);
@@ -1236,7 +1236,7 @@ namespace TumbangPreso.UI
             var title = PaperKit.Ink(go.transform, "HERO STRIKE  ·  LADDER RULES", PaperKit.Body,
                                      TextAnchor.LowerCenter);
             title.raycastTarget = false;
-            title.fontStyle = FontStyle.Bold;
+            MenuKit.Apply(title, PaperKit.FaceFor(title.fontSize), bold: true);
             title.rectTransform.anchorMin = new Vector2(0.0f, 0.48f);
             title.rectTransform.anchorMax = Vector2.one;
             title.rectTransform.offsetMin = new Vector2(PaperKit.Pad, 0.0f);
@@ -1549,7 +1549,7 @@ namespace TumbangPreso.UI
             // string the one the component acts on. Nothing looks any of these three up by name,
             // so this is safe: `parts` holds the references.
             label.name = "Label";
-            label.fontStyle = FontStyle.Bold;
+            MenuKit.Apply(label, PaperKit.FaceFor(label.fontSize), bold: true);
             label.raycastTarget = false;
             label.alignment = TextAnchor.MiddleCenter;
             label.rectTransform.anchorMin = new Vector2(0.0f, 0.0f);
@@ -2709,7 +2709,7 @@ namespace TumbangPreso.UI
                 // inversion and the fill-against-outline silhouette are still the two signals
                 // saying which tab is live; this changes only how legible the one you are NOT on
                 // is, and recede was never meant to mean unreadable.
-                label.fontStyle = FontStyle.Bold;
+                MenuKit.Apply(label, PaperKit.FaceFor(label.fontSize), bold: true);
                 label.color = active ? UiTheme.Cream : UiTheme.PaperInk;
             }
         }

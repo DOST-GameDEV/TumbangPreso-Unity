@@ -241,7 +241,7 @@ namespace TumbangPreso.UI
                 var tagLabel = MenuKit.Label(tag.transform, "", TagSize, UiTheme.Cream,
                                              Vector2.zero, Vector2.zero, Vector2.zero,
                                              TextAnchor.MiddleCenter);
-                tagLabel.fontStyle = FontStyle.Bold;
+                MenuKit.Apply(tagLabel, PaperKit.FaceFor(tagLabel.fontSize), bold: true);
                 tagLabel.raycastTarget = false;
                 MenuKit.Stretch(tagLabel.rectTransform, 0.0f);
 

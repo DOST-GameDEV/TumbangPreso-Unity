@@ -151,7 +151,7 @@ namespace TumbangPreso.UI
             var title = Heading(column.transform, "JOIN A GAME", PaperKit.Title,
                                 UiTheme.PaperInk, 34);
             title.alignment = TextAnchor.MiddleLeft;
-            title.fontStyle = FontStyle.Bold;
+            MenuKit.Apply(title, PaperKit.FaceFor(title.fontSize), bold: true);
 
             var hint = Heading(column.transform,
                                "Type a four-character code or an address, or pick a game below.",
@@ -288,7 +288,7 @@ namespace TumbangPreso.UI
             var label = chip.transform.Find("Label")?.GetComponent<Text>();
             if (label == null) return;
 
-            label.fontStyle = on ? FontStyle.Bold : FontStyle.Normal;
+            MenuKit.Apply(label, PaperKit.FaceFor(label.fontSize), bold: on);
         }
 
         private static Text Heading(Transform parent, string text, int size, Color colour, float height)
@@ -358,6 +358,9 @@ namespace TumbangPreso.UI
             Inset(typed.rectTransform);
 
             _entry = fieldGo.AddComponent<InputField>();
+            // ⚠️ TAKES UNITY'S BLUE SELECTION HIGHLIGHT OFF THIS FIELD. See
+            // MenuKit.Dress: the default is `a8ceff` and CLAUDE.md § 6.4 forbids it.
+            MenuKit.Dress(_entry);
             _entry.textComponent = typed;
             _entry.placeholder = placeholder;
             _entry.targetGraphic = fieldImg;
@@ -506,7 +509,7 @@ namespace TumbangPreso.UI
             {
                 leaveLabel.name = "Label";
                 leaveLabel.color = UiTheme.MenuRed;
-                leaveLabel.fontStyle = FontStyle.Bold;
+                MenuKit.Apply(leaveLabel, PaperKit.FaceFor(leaveLabel.fontSize), bold: true);
             }
 
             // ⚠️ AFTER THE LABEL, AND WITH `KeepLabelColour` SET. `PaperButton.Awake` captures the

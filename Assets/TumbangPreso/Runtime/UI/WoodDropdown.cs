@@ -459,7 +459,8 @@ namespace TumbangPreso.UI
                 }
 
                 var text = _optionButtons[i].GetComponentInChildren<Text>();
-                if (text != null) text.fontStyle = chosen ? FontStyle.Bold : FontStyle.Normal;
+                if (text != null)
+                    MenuKit.Apply(text, PaperKit.FaceFor(text.fontSize), bold: chosen);
             }
         }
 

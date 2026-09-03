@@ -1,0 +1,338 @@
+character	button	BackButton	BACK
+character	button	BackButton	‹ BACK
+character	button	BackButton	◀  BACK
+character	button	BrowserRow0	CHECKING ONLINE SERVERS…
+character	button	BrowserRow0	SEARCHING YOUR NETWORK…
+character	button	BrowserRow1	AVAILABLE GAMES APPEAR HERE
+character	button	BrowserRow2	AVAILABLE GAMES APPEAR HERE
+character	button	BrowserRow3	AVAILABLE GAMES APPEAR HERE
+character	button	Button_ACCOUNT	ACCOUNT
+character	button	Button_BACK	BACK
+character	button	Button_CAREER	CAREER
+character	button	Button_CLOSE	CLOSE
+character	button	Button_CONTINUE	CONTINUE
+character	button	Button_COPY	COPY
+character	button	Button_FRIENDS	FRIENDS
+character	button	Button_HERO	HERO
+character	button	Button_LATA	LATA
+character	button	Button_MATCHES	MATCHES
+character	button	Button_PROFILE	PROFILE
+character	button	Button_SAVE	SAVE
+character	button	Button_SIGN IN	SIGN IN
+character	button	Button_TSINELAS	TSINELAS
+character	button	CancelQueueButton	CANCEL
+character	button	CharNextButton	
+character	button	CharPrevButton	
+character	button	CharacterButton	CHOOSE  ▸
+character	button	ChatChip	CHAT
+character	button	CloseJoinButton	BACK TO LOBBY
+character	button	ConfirmButton	CHOOSE
+character	button	CreateTab	CREATE
+character	button	CustomDoor	MAKE YOUR OWN
+character	button	CustomTab	CUSTOM
+character	button	DifficultyNextButton	
+character	button	DifficultyPrevButton	
+character	button	FormatNextButton	
+character	button	FormatPrevButton	
+character	button	GameSettingsButton	SETTINGS
+character	button	GoOnlineButton	START SERVER
+character	button	GuestButton	PLAY AS GUEST
+character	button	HubClose	CLOSE
+character	button	JoinButton	JOIN
+character	button	JoinChip	JOIN A GAME
+character	button	LeaveGameButton	LEAVE GAME
+character	button	LoadoutButton	Standard Build
+character	button	LoadoutDoor	LOADOUT
+character	button	MapNextButton	
+character	button	MapPrevButton	
+character	button	ModeNextButton	
+character	button	ModePrevButton	
+character	button	NearbyChip	ON YOUR NETWORK
+character	button	OnlineChip	ONLINE
+character	button	OpenJoinButton	JOIN A GAME
+character	button	OtherAccountButton	SIGN IN AS SOMEBODY ELSE
+character	button	Plate0	Player#8226   <b>YOU</b>
+character	button	Plate1	BOT
+character	button	Plate2	BOT
+character	button	Plate3	BOT
+character	button	PracticeTab	PRACTICE
+character	button	PrimaryButton	CONNECTING...
+character	button	ProfileButton	SECURE PROGRESS
+character	button	RankedTab	RANKED
+character	button	RoomCodeButton	ROOM CODE
+character	button	SeatButton0	P1  ·  TAYA FIRST   YOU
+character	button	SeatButton1	P2   · BOT
+character	button	SeatButton2	P3   · BOT
+character	button	SeatButton3	P4   · BOT
+character	button	SettingsDrawerToggle	MATCH SETTINGS
+character	button	SignInTab	SIGN IN
+character	button	SpectateButton	SPECTATE
+character	button	StartButton	START MATCH
+character	button	StartWithBotsButton	START WITH 3 BOTS
+character	field	ChatField	
+character	field	Field_PASSWORD	
+character	field	Field_USERNAME	
+character	field	JoinAddressEdit	
+lobby	button	BackButton	BACK
+lobby	button	BackButton	‹ BACK
+lobby	button	BackButton	◀  BACK
+lobby	button	BrowserRow0	CHECKING ONLINE SERVERS…
+lobby	button	BrowserRow0	SEARCHING YOUR NETWORK…
+lobby	button	BrowserRow1	AVAILABLE GAMES APPEAR HERE
+lobby	button	BrowserRow2	AVAILABLE GAMES APPEAR HERE
+lobby	button	BrowserRow3	AVAILABLE GAMES APPEAR HERE
+lobby	button	Button_ACCOUNT	ACCOUNT
+lobby	button	Button_BACK	BACK
+lobby	button	Button_CAREER	CAREER
+lobby	button	Button_CLOSE	CLOSE
+lobby	button	Button_CONTINUE	CONTINUE
+lobby	button	Button_COPY	COPY
+lobby	button	Button_FRIENDS	FRIENDS
+lobby	button	Button_MATCHES	MATCHES
+lobby	button	Button_PROFILE	PROFILE
+lobby	button	Button_SAVE	SAVE
+lobby	button	Button_SIGN IN	SIGN IN
+lobby	button	CancelQueueButton	CANCEL
+lobby	button	CharNextButton	
+lobby	button	CharPrevButton	
+lobby	button	CharacterButton	CHOOSE  ▸
+lobby	button	ChatChip	CHAT
+lobby	button	CloseJoinButton	BACK TO LOBBY
+lobby	button	ConfirmButton	CHOOSE
+lobby	button	CreateTab	CREATE
+lobby	button	CustomTab	CUSTOM
+lobby	button	DifficultyNextButton	
+lobby	button	DifficultyPrevButton	
+lobby	button	FormatNextButton	
+lobby	button	FormatPrevButton	
+lobby	button	GameSettingsButton	SETTINGS
+lobby	button	GoOnlineButton	START SERVER
+lobby	button	GuestButton	PLAY AS GUEST
+lobby	button	HubClose	CLOSE
+lobby	button	JoinButton	JOIN
+lobby	button	JoinChip	JOIN A GAME
+lobby	button	LeaveGameButton	LEAVE GAME
+lobby	button	LoadoutButton	Standard Build
+lobby	button	MapNextButton	
+lobby	button	MapPrevButton	
+lobby	button	ModeNextButton	
+lobby	button	ModePrevButton	
+lobby	button	NearbyChip	ON YOUR NETWORK
+lobby	button	OnlineChip	ONLINE
+lobby	button	OpenJoinButton	JOIN A GAME
+lobby	button	OtherAccountButton	SIGN IN AS SOMEBODY ELSE
+lobby	button	Plate0	Player#8226   <b>YOU</b>
+lobby	button	Plate1	BOT
+lobby	button	Plate2	BOT
+lobby	button	Plate3	BOT
+lobby	button	PracticeTab	PRACTICE
+lobby	button	PrimaryButton	CONNECTING...
+lobby	button	ProfileButton	SECURE PROGRESS
+lobby	button	RankedTab	RANKED
+lobby	button	RoomCodeButton	ROOM CODE
+lobby	button	SeatButton0	P1  ·  TAYA FIRST   YOU
+lobby	button	SeatButton1	P2   · BOT
+lobby	button	SeatButton2	P3   · BOT
+lobby	button	SeatButton3	P4   · BOT
+lobby	button	SettingsDrawerToggle	MATCH SETTINGS
+lobby	button	SignInTab	SIGN IN
+lobby	button	SpectateButton	SPECTATE
+lobby	button	StartButton	START MATCH
+lobby	button	StartWithBotsButton	START WITH 3 BOTS
+lobby	field	ChatField	
+lobby	field	Field_PASSWORD	
+lobby	field	Field_USERNAME	
+lobby	field	JoinAddressEdit	
+login	button	ApplyButton	APPLY CHANGES
+login	button	BackButton	BACK
+login	button	BackButton	◀  BACK
+login	button	Button_A	A
+login	button	Button_B	B
+login	button	Button_C	C
+login	button	Button_CONTINUE	CONTINUE
+login	button	Button_CUSTOMISE	CUSTOMISE
+login	button	Button_D	D
+login	button	Button_E	E
+login	button	Button_F	F
+login	button	Button_F11	F11
+login	button	Button_GAMEPAD	GAMEPAD
+login	button	Button_H	H
+login	button	Button_K	K
+login	button	Button_KEYBOARD	KEYBOARD
+login	button	Button_Left Button	Left Button
+login	button	Button_Left Control	Left Control
+login	button	Button_Left Shift	Left Shift
+login	button	Button_N	N
+login	button	Button_ON	ON
+login	button	Button_P	P
+login	button	Button_Q	Q
+login	button	Button_R	R
+login	button	Button_RESET	RESET
+login	button	Button_Right Button	Right Button
+login	button	Button_S	S
+login	button	Button_SIGN IN	CREATE ACCOUNT
+login	button	Button_Space	Space
+login	button	Button_Tab	Tab
+login	button	Button_V	V
+login	button	Button_W	W
+login	button	Button_X	X
+login	button	Button_Y	Y
+login	button	Button_Z	Z
+login	button	CreateTab	CREATE
+login	button	CreditsButton	CREDITS
+login	button	GuestButton	CONTINUE AS GUEST
+login	button	GuestButton	PLAY AS GUEST
+login	button	OtherAccountButton	SIGN IN AS SOMEBODY ELSE
+login	button	QuitButton	QUIT
+login	button	ResetAllButton	RESET ALL
+login	button	SettingsButton	SETTINGS
+login	button	SignInTab	SIGN IN
+login	button	StartButton	PLAY
+login	button	TutorialButton	TUTORIAL
+login	dropdown	SwatchDropdown	MSAA 4x + FXAA
+login	dropdown	SwatchDropdown	ON
+login	dropdown	SwatchDropdown	Off
+login	dropdown	SwatchDropdown	On
+login	dropdown	SwatchDropdown	Toon (Ink Outlines)
+login	field	Field_PASSWORD	
+login	field	Field_USERNAME	
+login	field	PlayerNameField	
+login	scrollbar	VerticalScrollbar	
+login	slider	MasterVolumeSlider	
+login	slider	MusicVolumeSlider	
+login	slider	SensitivitySlider	
+login	slider	SfxVolumeSlider	
+login	toggle	FullscreenCheck	Fullscreen
+login	toggle	InvertYCheck	Invert Y (mouse look)
+login	toggle	Item	
+profile	button	BackButton	BACK
+profile	button	BackButton	‹ BACK
+profile	button	BackButton	◀  BACK
+profile	button	BrowserRow0	CHECKING ONLINE SERVERS…
+profile	button	BrowserRow0	SEARCHING YOUR NETWORK…
+profile	button	BrowserRow1	AVAILABLE GAMES APPEAR HERE
+profile	button	BrowserRow2	AVAILABLE GAMES APPEAR HERE
+profile	button	BrowserRow3	AVAILABLE GAMES APPEAR HERE
+profile	button	Button_ACCOUNT	ACCOUNT
+profile	button	Button_BACK	BACK
+profile	button	Button_CAREER	CAREER
+profile	button	Button_CLOSE	CLOSE
+profile	button	Button_CONTINUE	CONTINUE
+profile	button	Button_COPY	COPY
+profile	button	Button_FRIENDS	FRIENDS
+profile	button	Button_HERO	HERO
+profile	button	Button_LATA	LATA
+profile	button	Button_MATCHES	MATCHES
+profile	button	Button_PROFILE	PROFILE
+profile	button	Button_SAVE	SAVE
+profile	button	Button_SIGN IN	SIGN IN
+profile	button	Button_TSINELAS	TSINELAS
+profile	button	CancelQueueButton	CANCEL
+profile	button	CharNextButton	
+profile	button	CharPrevButton	
+profile	button	CharacterButton	CHOOSE  ▸
+profile	button	ChatChip	CHAT
+profile	button	CloseJoinButton	BACK TO LOBBY
+profile	button	ConfirmButton	CHOOSE
+profile	button	CreateTab	CREATE
+profile	button	CustomDoor	MAKE YOUR OWN
+profile	button	CustomTab	CUSTOM
+profile	button	DifficultyNextButton	
+profile	button	DifficultyPrevButton	
+profile	button	FormatNextButton	
+profile	button	FormatPrevButton	
+profile	button	GameSettingsButton	SETTINGS
+profile	button	GoOnlineButton	START SERVER
+profile	button	GuestButton	PLAY AS GUEST
+profile	button	HubClose	CLOSE
+profile	button	JoinButton	JOIN
+profile	button	JoinChip	JOIN A GAME
+profile	button	LeaveGameButton	LEAVE GAME
+profile	button	LoadoutButton	Standard Build
+profile	button	LoadoutDoor	LOADOUT
+profile	button	MapNextButton	
+profile	button	MapPrevButton	
+profile	button	ModeNextButton	
+profile	button	ModePrevButton	
+profile	button	NearbyChip	ON YOUR NETWORK
+profile	button	OnlineChip	ONLINE
+profile	button	OpenJoinButton	JOIN A GAME
+profile	button	OtherAccountButton	SIGN IN AS SOMEBODY ELSE
+profile	button	Plate0	Player#8226   <b>YOU</b>
+profile	button	Plate1	BOT
+profile	button	Plate2	BOT
+profile	button	Plate3	BOT
+profile	button	PracticeTab	PRACTICE
+profile	button	PrimaryButton	CONNECTING...
+profile	button	ProfileButton	SECURE PROGRESS
+profile	button	RankedTab	RANKED
+profile	button	RoomCodeButton	ROOM CODE
+profile	button	SeatButton0	P1  ·  TAYA FIRST   YOU
+profile	button	SeatButton1	P2   · BOT
+profile	button	SeatButton2	P3   · BOT
+profile	button	SeatButton3	P4   · BOT
+profile	button	Section_Banner	+  BANNER
+profile	button	Section_Identity	-  IDENTITY
+profile	button	Section_Optional details	+  OPTIONAL DETAILS
+profile	button	SettingsDrawerToggle	MATCH SETTINGS
+profile	button	SignInTab	SIGN IN
+profile	button	SpectateButton	SPECTATE
+profile	button	StartButton	START MATCH
+profile	button	StartWithBotsButton	START WITH 3 BOTS
+profile	field	ChatField	
+profile	field	Field_PASSWORD	
+profile	field	Field_USERNAME	
+profile	field	JoinAddressEdit	
+profile	field	PlayerNameEdit	
+settings	button	ApplyButton	APPLY CHANGES
+settings	button	BackButton	◀  BACK
+settings	button	Button_A	A
+settings	button	Button_B	B
+settings	button	Button_C	C
+settings	button	Button_CUSTOMISE	CUSTOMISE
+settings	button	Button_D	D
+settings	button	Button_E	E
+settings	button	Button_F	F
+settings	button	Button_F11	F11
+settings	button	Button_GAMEPAD	GAMEPAD
+settings	button	Button_H	H
+settings	button	Button_K	K
+settings	button	Button_KEYBOARD	KEYBOARD
+settings	button	Button_Left Button	Left Button
+settings	button	Button_Left Control	Left Control
+settings	button	Button_Left Shift	Left Shift
+settings	button	Button_N	N
+settings	button	Button_ON	ON
+settings	button	Button_P	P
+settings	button	Button_Q	Q
+settings	button	Button_R	R
+settings	button	Button_RESET	RESET
+settings	button	Button_Right Button	Right Button
+settings	button	Button_S	S
+settings	button	Button_Space	Space
+settings	button	Button_Tab	Tab
+settings	button	Button_V	V
+settings	button	Button_W	W
+settings	button	Button_X	X
+settings	button	Button_Y	Y
+settings	button	Button_Z	Z
+settings	button	CreditsButton	CREDITS
+settings	button	QuitButton	QUIT
+settings	button	ResetAllButton	RESET ALL
+settings	button	SettingsButton	SETTINGS
+settings	button	StartButton	PLAY
+settings	button	TutorialButton	TUTORIAL
+settings	dropdown	SwatchDropdown	MSAA 4x + FXAA
+settings	dropdown	SwatchDropdown	ON
+settings	dropdown	SwatchDropdown	Off
+settings	dropdown	SwatchDropdown	On
+settings	dropdown	SwatchDropdown	Toon (Ink Outlines)
+settings	field	PlayerNameField	
+settings	scrollbar	VerticalScrollbar	
+settings	slider	MasterVolumeSlider	
+settings	slider	MusicVolumeSlider	
+settings	slider	SensitivitySlider	
+settings	slider	SfxVolumeSlider	
+settings	toggle	FullscreenCheck	Fullscreen
+settings	toggle	InvertYCheck	Invert Y (mouse look)
+settings	toggle	Item	

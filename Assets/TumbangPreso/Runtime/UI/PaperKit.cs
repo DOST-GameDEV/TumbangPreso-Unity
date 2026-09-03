@@ -38,6 +38,36 @@ namespace TumbangPreso.UI
         public const int Caption = 16;
 
         /// <summary>
+        /// Which face a step of the scale is set in, and it is decided by the STEP rather than by
+        /// the caller.
+        ///
+        /// ⚠️⚠️ THE SPLIT IS MECHANICAL ON PURPOSE, AND THAT IS `CLAUDE.md` § 4a'S ARGUMENT
+        /// APPLIED TO TYPE: *"the answer is construction, not discipline."* `docs/TODO.md` § 133
+        /// asks for two faces doing two jobs, and the obvious way to build that is a `Face`
+        /// parameter on every text call. **That is a second place to forget**, and forgetting it
+        /// compiles, renders and looks approximately right, which is how the front end ended up
+        /// with one display face setting four-line ability descriptions in the first place.
+        ///
+        /// **So the boundary is a number and the number is <see cref="Title"/>.** The two big
+        /// steps are things a player LOOKS AT and they stay Darumadrop; the two small steps are
+        /// things a player READS and they are Nunito. A caller never chooses, so a caller can
+        /// never choose wrong.
+        ///
+        /// ⚠️ AND THE BOUNDARY IS WHERE IT IS BECAUSE OF WHERE THE SMEAR WAS. § 132.8 measured
+        /// the synthetic bold as worst at `MenuKit.MinReadableUnits`, which is 18: between
+        /// `Caption` and `Body`. Both of those are now in a face with a drawn bold. At `Title`
+        /// and above, Darumadrop is legible without help and is the whole personality of the
+        /// game, so nothing is gained by moving it.
+        ///
+        /// ⚠️ A CALLER THAT GENUINELY NEEDS THE OTHER SIDE CALLS <see cref="MenuKit.Apply"/>
+        /// AFTERWARDS AND SAYS WHY IN A COMMENT. There is one legitimate case and it is prose set
+        /// large for emphasis rather than for hierarchy; there were none of those when this
+        /// landed.
+        /// </summary>
+        public static MenuKit.Face FaceFor(int size)
+            => size >= Title ? MenuKit.Face.Display : MenuKit.Face.Body;
+
+        /// <summary>
         /// The one gap. Every space between two things on a paper screen is this or a multiple.
         ///
         /// ⚠️⚠️ IT IS NOT NEGOTIABLE PER SCREEN. `docs/TODO.md` § 118.1 and the harmony block in
@@ -116,6 +146,12 @@ namespace TumbangPreso.UI
                                   soft ? UiTheme.PaperInkSoft : UiTheme.PaperInk,
                                   Vector2.zero, Vector2.zero, Vector2.zero, align);
             t.name = soft ? "InkSoft" : "Ink";
+
+            // ⚠️ EVERY WORD ON A PAPER SCREEN GOES THROUGH HERE, so this one line is what moves
+            // the front end's reading matter onto the body face. See `FaceFor` for why the step
+            // decides rather than the caller.
+            MenuKit.Apply(t, FaceFor(size));
+
             return t;
         }
 
@@ -129,7 +165,12 @@ namespace TumbangPreso.UI
             var t = MenuKit.Label(parent, text, size, UiTheme.PaperInk,
                                   Vector2.zero, Vector2.zero, Vector2.zero, align);
             t.name = "Marker";
-            t.fontStyle = FontStyle.Bold;
+
+            // ⚠️ THE BOLD FILE, NOT `FontStyle.Bold`. At `Body` and `Caption` this is a drawn
+            // weight; at `Title` and above it resolves to Darumadrop, which has no bold and
+            // needs none. `MenuKit.Apply` is where that decision is written down.
+            MenuKit.Apply(t, FaceFor(size), bold: true);
+
             return t;
         }
 
@@ -157,7 +198,7 @@ namespace TumbangPreso.UI
 
             var label = Ink(go.transform, text, size, TextAnchor.MiddleCenter);
             label.name = "Label";
-            label.fontStyle = FontStyle.Bold;
+            MenuKit.Apply(label, FaceFor(size), bold: true);
             MenuKit.Stretch(label.rectTransform, -Pad);
 
             // ⚠️⚠️ THE LETTERING IS CENTRED ON THE FACE, NOT ON THE RECT, AND THE DIFFERENCE IS
@@ -270,6 +311,18 @@ namespace TumbangPreso.UI
         public static void Paperise(GameObject target, PaperCraft.Surface surface)
         {
             if (target == null) return;
+
+            // ⚠️⚠️ A CONVERTED TEXT FIELD LOSES UNITY'S BLUE SELECTION HIGHLIGHT HERE, AND THIS
+            // IS THE PER-NODE HALF OF THE FIX IN `PaperDress.Screen`. Both are needed because
+            // both paths exist: `ConvertedSettingsPanel.WireNameField` paperises the ONE node
+            // rather than the screen, so a walk that only ran over a whole root would miss the
+            // exact field `PaperPurityProbe.NoFieldHighlightsInBlue` caught.
+            //
+            // ⚠️ `a8ceff` IS 87 LEVELS MORE BLUE THAN RED and `CLAUDE.md` § 6.4 bans it in any
+            // layer. Nothing in the project had ever assigned `selectionColor`, so every field in
+            // the game shipped with it.
+            foreach (var field in target.GetComponentsInChildren<InputField>(true))
+                MenuKit.Dress(field);
 
             var skin = target.GetComponent<GodotButton>();
             if (skin != null) skin.enabled = false;
@@ -603,6 +656,20 @@ namespace TumbangPreso.UI
             foreach (var text in root.GetComponentsInChildren<Text>(true))
                 Type(text);
 
+            // ⚠️⚠️ AND EVERY CONVERTED TEXT FIELD LOSES UNITY'S BLUE SELECTION HIGHLIGHT HERE,
+            // BECAUSE A CONVERTED FIELD HAS NO `AddComponent<InputField>` SITE TO FIX.
+            // `MenuKit.Dress` was called at all four places the game BUILDS a field in code, and
+            // `PaperPurityProbe.NoFieldHighlightsInBlue` immediately found a FIFTH: the settings
+            // panel's `PlayerNameField`, which comes out of a `.tscn` and so was reached by none
+            // of them. That is `docs/TODO.md` § 120.4's lesson exactly, one component across:
+            // **a thing set outside the components the conversion knows about is a thing the
+            // conversion is blind to.**
+            //
+            // ⚠️ IT IS IN THE WALK RATHER THAN AT THE ONE SITE, so a converted field added later
+            // cannot miss it. `CLAUDE.md` § 4a: the answer is construction, not discipline.
+            foreach (var field in root.GetComponentsInChildren<InputField>(true))
+                MenuKit.Dress(field);
+
             // ⚠️⚠️ LAST, AND THE ORDER IS THE POINT. `Type` remaps `UiTheme.Cream` to ink because
             // on a paper sheet cream lettering is invisible, and the lettering on a `Live` pill is
             // the one place in this front end where cream is CORRECT: the pill is wood-dark and
@@ -766,11 +833,32 @@ namespace TumbangPreso.UI
             var outline = text.GetComponent<GodotOutline>();
             if (outline != null) outline.enabled = false;
 
+            // ⚠️⚠️ THIS IS THE ONE LINE THAT MOVES THE CONVERTED SCREENS ONTO THE BODY FACE, and
+            // it is worth as much as every hand edit in `docs/TODO.md` § 133 put together. Settings,
+            // character select and match setup are `.tscn` conversions: their labels are built by
+            // `TscnUiImporter` from an authored scene, so no C# call site exists to change. Every
+            // one of them passes through here, once, when the screen is papered.
+            //
+            // ⚠️ IT READS THE AUTHORED SIZE, which is the same input `FaceFor` gets everywhere
+            // else, so a converted row and a code-built row of the same size land in the same
+            // face. A screen where half the rows were Darumadrop and half Nunito would be worse
+            // than either face alone.
+            var face = PaperKit.FaceFor(text.fontSize);
+            bool wasBold = text.fontStyle == FontStyle.Bold
+                           || text.fontStyle == FontStyle.BoldAndItalic;
+
+            MenuKit.Apply(text, face, wasBold);
+
             if (Near(text.color, UiTheme.Amber) || Near(text.color, UiTheme.Highlight))
             {
                 text.color = UiTheme.PaperInk;
-                text.fontStyle = text.fontStyle == FontStyle.Italic
-                    ? FontStyle.BoldAndItalic : FontStyle.Bold;
+
+                // ⚠️ WEIGHT REPLACES THE ACCENT, and now there is a weight to replace it WITH.
+                // Amber on cream paper is 1.7:1 and invisible, so this row has always traded the
+                // colour for emphasis; until § 133 that emphasis was Unity's synthetic bold on a
+                // face with no bold, so it bought a smear rather than a weight and the accent was
+                // spent for nothing.
+                MenuKit.Apply(text, face, bold: true);
                 return;
             }
 

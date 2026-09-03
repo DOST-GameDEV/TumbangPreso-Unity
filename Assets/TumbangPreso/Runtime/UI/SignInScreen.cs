@@ -1299,6 +1299,9 @@ namespace TumbangPreso.UI
             PaperSkin.Apply(go, PaperCraft.Surface.Tray);
 
             var input = go.AddComponent<InputField>();
+            // ⚠️ TAKES UNITY'S BLUE SELECTION HIGHLIGHT OFF THIS FIELD. See
+            // MenuKit.Dress: the default is `a8ceff` and CLAUDE.md § 6.4 forbids it.
+            MenuKit.Dress(input);
             input.targetGraphic = image;
             input.characterLimit = limit;
             input.lineType = InputField.LineType.SingleLine;
@@ -1688,7 +1691,7 @@ namespace TumbangPreso.UI
             // twice over, structurally: eight units of height and a 10:1 plate inversion. Spending
             // legibility on a third signal buys nothing the render can see and costs the one thing
             // a player has to do with a tab, which is read it.
-            label.fontStyle = FontStyle.Bold;
+            MenuKit.Apply(label, PaperKit.FaceFor(label.fontSize), bold: true);
             label.color = on ? UiTheme.Cream : UiTheme.PaperInk;
         }
 
