@@ -554,8 +554,19 @@ namespace TumbangPreso.UI
             int face = h - Drop;
             int lip = Mathf.Max(2, Mathf.RoundToInt(face * 0.04f));
 
-            Color fill = sign ? UiTheme.WoodMid : UiTheme.Paper;
-            Color ring = sign ? UiTheme.WoodDeep : UiTheme.PaperEdge;
+            // ⚠️⚠️ THE SIGN'S DARK IS THE BRAND'S DARK NOW, NOT THE SHARED WOOD. It read
+            // `WoodMid` over `WoodDeep`, which are two of the seven constants this pass
+            // deliberately did NOT move because the in-match layer reads them and § 133.4 scopes
+            // the HUD out. The result was that the ROOM CODE plate and the seat tags were the
+            // last brown objects on an otherwise repainted lobby
+            // (`Logs/shots-runtime/Lobby-v82.png`).
+            //
+            // ⚠️ SO THE POINTER MOVED RATHER THAN THE CONSTANT, which is the same move the
+            // painters made one level up. `WoodFace` is Army darkened and is already the front
+            // end's dark tone; cream on it measures about 9:1, so the plaque keeps the value
+            // inversion `Surface.Sign` exists for and loses the brown.
+            Color fill = sign ? UiTheme.WoodFace : UiTheme.Paper;
+            Color ring = sign ? UiTheme.WoodSlot : UiTheme.PaperEdge;
 
             for (int y = 0; y < h; y++)
                 for (int x = 0; x < width; x++)
@@ -583,7 +594,7 @@ namespace TumbangPreso.UI
                         // somewhere. Two units, because on cream a bright edge is visible long
                         // before it is loud.
                         if (!tall && faceDepth > Halo && downFromTop < lip)
-                            c = Color.Lerp(c, sign ? UiTheme.WoodEdge : Color.white,
+                            c = Color.Lerp(c, sign ? UiTheme.BrandArmy : Color.white,
                                            sign ? 0.85f : 0.55f);
                     }
                     else if (shadowDepth > 0.0f && !tall)

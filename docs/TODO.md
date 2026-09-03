@@ -568,7 +568,9 @@ with the old bright green primary `21a131`, the old brown tabs and the old amber
 palette pass that repaints the ground and not the objects reads as no palette pass at all**, because
 the objects are what the eye goes to.
 
-**Three things had to move, and only the first was a colour.**
+**Five things moved, and only the first was a colour.** The last two came out of the RENDERS
+rather than out of a review, which is § 6.2a's whole argument: *a green layout probe is not a
+good screen.*
 
 **1. Twelve front-end constants moved onto the logo's palette.** Verified front-end-only first, by
 counting how many of the eleven in-match files read each one, because § 133.4 scopes the HUD out:
@@ -615,6 +617,25 @@ ran on them and they stayed in the display face while every other caption moved.
 bypasses the kit bypasses the rule**, which is the same class of miss as the converted `InputField`
 that kept Unity's blue selection highlight.
 
+**4. Two contrast defects came out of the RENDERS rather than out of a review, and both are the
+same shape.** Cream lettering on Chartreuse measures **1.2:1** where ink on it measures **9.1:1**,
+so the screen's one primary was in a colour nobody could read. The cause was `PaperButton._darkFace`
+asking the SURFACE: for the whole life of that property an `Action`'s fill was a dark slab, so the
+surface alone answered the question, and under `Surface.Brand` **both of its fills are light**. It
+asks the accent now. ⚠️ **That is `CLAUDE.md` § 6.4's lesson on the other axis**: a colour that was
+correct against the surface it was chosen for is not a colour, it is a PAIRING, and moving the
+surface without moving its partner is how a label goes quietly unreadable.
+
+The second was the lobby still requesting `Accent.Wood` for START MATCH, which he chose by name
+when it meant brown and which now means Honey Quartz: **the screen's one primary was drawing honey
+on a honey rail with no presence at all.** It is Chartreuse, which is § 4's role table.
+
+**5. And the last brown objects on the lobby were the ROOM CODE plate and the seat tags.** They are
+`PaperCraft.Surface.Sign`, which painted from `WoodMid` over `WoodDeep`: two of the seven constants
+this pass deliberately did NOT move because the in-match layer reads them. ⚠️ **The pointer moved
+rather than the constant**, which is the same move the painters made one level up: `Sign` reads
+`WoodFace` and `WoodSlot` now, cream on it still measures about 9:1, and the HUD is untouched.
+
 ### 133.11 ⚠️ What is still open, and nothing in it is blocked
 
 - ✅ **THE PALETTE IS NO LONGER A BLOCKER.** It landed 2026-09-03, measured, and the repaint went
@@ -636,8 +657,13 @@ that kept Unity's blue selection highlight.
     currently chosen. `tsinelas_hit.png` is built and unused so far.
   - **The other five recurring signs** (§ 1.2): the heavy outline meaning pressable, the drip
     meaning more below, the hatch meaning unavailable, the chevron, the lean.
-  - **The case pass**: § 3.1's rule is written and NOT yet applied to the call sites. Body-step
-    labels of 13 characters or more are still in capitals and are the +14 per cent overflow risk.
+  - **The case pass**: § 3.1's rule is written and not yet applied to the call sites. ⚠️ **It is a
+    typography job now rather than an overflow one**: since the face boundary moved to `Body`, the
+    only step that changed face is `Caption`, so no button and no settings row grew by a unit. 81
+    ALL-CAPS literals of 13 characters or more are in the front end, and the ones that matter are
+    the SENTENCES (a 90-character penalty line in `MatchResult`, the empty states in
+    `ConvertedMultiplayerSetup` and `LobbyJoinPanel`), not the buttons, which he confirmed by eye:
+    *"i think everything here in darumadrop looked good"*.
 - ✅ **`CLAUDE.md` § 6.4's palette list is rewritten**, in the same commit as the hexes, with its
   ban and its receipts kept and the carved wood retained and labelled as the OLD palette.
 - **§ 121.8**, still 🧑's call, and `Attention.md` § 3 says to answer it against the NEW body face
@@ -657,9 +683,18 @@ that kept Unity's blue selection highlight.
   `AspectRatioProbes` asserts inside a loop, so NUnit stops at the FIRST failing label and every
   later one is invisible: the caption at 16 may well still be red behind it, and nobody can tell
   from the report. **`Attention.md` § 3 has therefore been asking 🧑 to settle a question that is
-  not what is failing.** The three 13-unit labels are `EQUIPPED`, `LOCKED` and the loadout board's
-  key chip in `ConvertedCharacterSelect`, all authored at 13 rather than shrunk to it.
-  ⚠️ **Do not lower the floor** (§ 126.13). Either those three earn a written exemption the way
+  not what is failing.**
+
+  ✅ **RESOLVED THE SAME SESSION, ONCE THE PROBE WAS MADE TO REPORT ALL FIVE WITH THEIR WORDS.**
+  `MenuKit.Label` names every label it makes `Label`, so `'Label' at 13` named the fault without
+  naming which of five call sites it was. With the lettering in the report the answer was the
+  ability **KEYCAPS**, `"Q"`, `"E"` and `"F"`, at 8.7 physical pixels at 720p on the one label that
+  is pure instruction (`docs/VISION.md` § 3: *a screen that teaches the wrong key is worse than one
+  that teaches none*). One character, so § 126.13's three options collapsed to one and **the box
+  grew**: the chip went 26x18 to 34x26, which matches the ability glyph beside it so the row height
+  did not move. **What is left is the two door captions at exactly `PaperKit.Caption`**, which is
+  § 121.8 and his to settle, so the probe now says what § 130.15 always claimed it said.
+  ⚠️ **Do not lower the floor** (§ 126.13). Either a label earns a written exemption the way
   `MenuKit.Fit` registers one, or they go up to 18; and the probe should collect every failure
   and report them together rather than throwing on the first, or this will happen again.
 - **Render every screen either side of the composition work.** The font-and-palette renders are

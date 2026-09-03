@@ -295,7 +295,15 @@ value gets read off it in one command. If you would rather not bother, say so an
 > ⚠️ **Nothing is blocked on this.** It is one constant, `UiTheme.BrandKhaki`, and every surface
 > that uses it names the constant rather than the hex.
 
-### 12.2 Look at the two faces together and say whether 16 is still too small
+### 12.2 Say whether 16 is still too small, because it is now the ONLY thing red
+
+⚠️⚠️ **AND IT ACTUALLY IS NOW, WHICH IT WAS NOT WHEN THIS WAS LAST WRITTEN.** `docs/TODO.md`
+§ 130.15 has claimed for a while that the character screen's only remaining red is the caption at
+16. **It was five labels**, and the probe could only ever name one of them because it asserted
+inside a loop and NUnit stops at the first failure. Made to report all five with their lettering,
+it turned out three were the ability KEYCAPS authored at 13, which is 8.7 physical pixels at 720p
+on the one label in the game that is pure instruction. Those are fixed. **So the question below is
+finally the only thing standing between `AspectRatioProbes` and green.**
 
 **`docs/TODO.md` § 121.8, which is also § 3 of this file.** It could not be answered until the font
 changed, because `PaperKit.Caption`'s 16 and `MenuKit.MinReadableUnits`' 18 were both measured
