@@ -129,7 +129,7 @@ namespace TumbangPreso.Tests
             string session = Read("Net/NetSession.cs");
 
             StringAssert.Contains("RegisterNamedMessageHandler(\"Tsinelas\", OnTsinelasMsg)", rpc);
-            StringAssert.Contains("public void BroadcastTsinelas(int[] stocks)", rpc);
+            StringAssert.Contains("public void BroadcastTsinelas(int[] stocks, int defenderSlot)", rpc);
             StringAssert.Contains("ApplyNetworkStocks", rpc);
 
             StringAssert.Contains("ProtocolVersion = 22", session);
@@ -160,6 +160,59 @@ namespace TumbangPreso.Tests
                 "LastTsinelasDirector.OnEnable subscribes to Match.RoundStarted and Round.Tagged, " +
                 "and AddComponent runs OnEnable immediately. Built first, it subscribes to nulls " +
                 "and the format silently never counts a tag.");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE ELIMINATION HAS TO SURVIVE THE 5 Hz SNAPSHOT, AND IT DID NOT.
+        /// `docs/TODO.md` § 130.13. `RoundDirector.ApplySnapshot` stamps `RoundActive` onto all
+        /// four bodies on every replicated packet, so for the whole of a live round it put the
+        /// flag straight back up on an eliminated attacker within 200 ms. **The elimination and
+        /// the re-enable are in two different files, both correct on their own**, and nothing but
+        /// a client in a live round puts them together.
+        ///
+        /// ⚠️ IT IS ASSERTED AS TEXT FOR EXACTLY THAT REASON: the state needs a host, a client,
+        /// four bodies and a round in progress, which is a PlayMode fixture in the group
+        /// `CLAUDE.md` § 7 says is not a gate. The GUARD is visible in the source either way.
+        /// </summary>
+        [Test]
+        public void TheSnapshotDoesNotPutAnEliminatedAttackerBackOnTheirFeet()
+        {
+            string round = Read("RoundDirector.cs");
+
+            StringAssert.Contains("tsinelas.IsOut(player.PlayerSlot)", round,
+                "ApplySnapshot is stamping RoundActive onto every body without asking whether " +
+                "Last Tsinelas has put one of them out. On a client the elimination is undone " +
+                "5 times a second and the player throws while the host ignores them.");
+
+            // ⚠️ AND ONLY EVER DOWNWARD. The guard must sit inside the `roundActive` branch, so
+            // that when the round ends everybody stops, out or not.
+            StringAssert.Contains("if (roundActive && tsinelas != null", round,
+                "the out-guard is not conditioned on the round being active, so it can hold a " +
+                "body down after the whistle when everything should stop together.");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE TAYA'S SLOT TRAVELS WITH THE STOCK TABLE RATHER THAN BEING DERIVED ON THE
+        /// PEER. The taya's stock is 0 by definition, so a receiver that worked the slot out for
+        /// itself and lost the race would read the real taya as an eliminated attacker and switch
+        /// their body off. `MatchDirector.DefenderSlot` comes from a round number that arrives in
+        /// a different message at 5 Hz, so on every whistle there is a window where this packet
+        /// has the new round's stocks and the peer still holds the old round's number.
+        /// </summary>
+        [Test]
+        public void TheTayaSlotIsSentWithTheStocksAndNotInferredOnThePeer()
+        {
+            string rpc = Read("Net/MatchRpc.cs");
+            string director = Read("LastTsinelasDirector.cs");
+
+            StringAssert.Contains("BroadcastTsinelas(int[] stocks, int defenderSlot)", rpc);
+            StringAssert.Contains("ApplyNetworkStocks(stocks, defenderSlot)", rpc);
+            StringAssert.Contains("ApplyNetworkStocks(int[] stocks, int defenderSlot)", director);
+
+            Assert.IsFalse(
+                director.Contains("_defenderSlot = GameServices.Match != null"),
+                "ApplyNetworkStocks is deriving the taya's slot from the replicated round " +
+                "number again, which loses a race on every whistle.");
         }
 
         /// <summary>

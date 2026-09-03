@@ -438,6 +438,14 @@ rebuilt and shipped together (`CLAUDE.md` § 4a), and this session's whole other
 for a phone and a PC that can play together. **A feature that did not need the bump did not get
 one.**
 
+⚠️⚠️ **AND THE BALLOT IS BUILT NOW, ON A BUMP SOMEBODY ELSE PAID FOR: § 130.18.** The sentence
+above is still the right rule and it is worth reading beside what happened next. § 130.13 moved
+`ProtocolVersion` to 22 for LAST TSINELAS's match half **in the very next commit**, so the ballot's
+two messages cost nothing extra: the dual rebuild was already being done. **The rule is not "never
+add a message", it is "never add one that has to buy its own rebuild"**, and the corollary is that
+a bump is the cheap moment to spend everything that has been waiting for one. This had been waiting
+about two hours.
+
 ### 130.13 ✅ LAST TSINELAS STANDING HAS A MATCH HALF, AND IT COST THE PROTOCOL BUMP THIS ENTRY PREDICTED
 
 § 128.2 says the format *"has rules, tests, a document and no match half"* and lists what the core
@@ -501,8 +509,35 @@ switch off, and how to tell the other three machines).
   so they cannot be charged a tsinelas they do not have) and `CanMove` does not. A player frozen in
   place for up to a minute with no explanation is `CLAUDE.md` § 6.3's dead end.
 
+⚠️⚠️ **TWO DEFECTS IN THIS FEATURE WERE FOUND AFTER THE FIRST BUILD AND BOTH WERE CLIENT-ONLY, SO
+NEITHER WOULD HAVE SHOWN UP ON THIS MACHINE.** They are worth reading before adding anything else
+that switches a body off, because the shape is the same both times: **two files that are each
+correct on their own, and only a client in a live round puts them together.**
+
+1. ⚠️⚠️ **`RoundDirector.ApplySnapshot` UNDID THE WHOLE FORMAT AT 5 Hz.** "Out" is
+   `RoundActive = false` on the body, and that method stamps `RoundActive` onto **all four**
+   bodies on every replicated packet while a match is in progress. So an eliminated attacker on a
+   client got the flag back within 200 ms and carried on throwing, grabbing and charging resets
+   while the host ignored every request. **The host is immune by construction** (`HostSyncPeer`
+   hands it its own snapshot), which is exactly why single-machine testing could never see it.
+   `ApplySnapshot` asks `LastTsinelasDirector.IsOut` now, and ⚠️ **only ever to hold a body DOWN,
+   never to raise one**: the guard is inside the `roundActive` branch so that when the round ends
+   everybody stops together, out or not.
+2. ⚠️⚠️ **THE TAYA'S SLOT WAS DERIVED ON THE PEER AND LOST A RACE ON EVERY WHISTLE.**
+   `ApplyNetworkStocks` read `MatchDirector.DefenderSlot`, which is derived from the round NUMBER,
+   which arrives in `SyncWorld` at 5 Hz. So there is a window where the stock packet carries the
+   new round's table and the peer still holds the old round's number. **The taya's stock is 0 by
+   definition**, so a peer that guessed the wrong slot reads the real taya as an eliminated
+   attacker and switches their body off for the round. The slot travels in the message now, which
+   is four bytes and removes the race outright rather than narrowing it.
+
+⚠️ **The first build was thrown away for these.** The Windows player had already been built and the
+`.apk` was about twenty minutes into IL2CPP; both were rebuilt from the corrected commit, because
+`CLAUDE.md` § 2.2's *"a build is a claim that there is something worth looking at"* is not true of
+a build whose headline feature does not work for three of the four players.
+
 **The wire, which is the half that cost the bump.** `MatchRpc.BroadcastTsinelas` sends the WHOLE
-stock table rather than the decrement, on every tag and again on every whistle. ⚠️ A delta that is
+stock table and the taya's slot rather than the decrement, on every tag and again on every whistle. ⚠️ A delta that is
 dropped or reordered leaves a peer permanently one tsinelas out with no way to notice; four
 integers on the handful of frames a tag happens costs less than the code to detect that drift.
 `BroadcastScore` next door sends the KIND rather than the delta for the opposite reason, and both
@@ -702,6 +737,13 @@ moved the protocol.
 - **All three `tools/` audits exit 0**: 49 ability effect sites with **0 ungated on another body**,
   **57 wire entry points and 0 unreachable** (the two new ballot messages both have callers), and
   **60 named messages with 0 mismatched** (`Tsinelas` reads 2 and writes 2).
+- **`[Build] SUCCEEDED. 770 MB, 66s`** to `C:\Users\Matthew\Desktop\TumbangPreso-Unity\TumbangPreso.exe`,
+  timestamps from this run, with `[ShaderWarmup] 23 shaders, 53 variants` and **0 unresolved
+  `Shader.Find` names** regenerated inside the build.
+- **The `.apk` was rebuilt from the same commit**, which is not optional at a protocol bump.
+  ⚠️ § 130.17 is why that is worth stating rather than assuming: `PurgeOutputDirectory` aborted
+  every Android rebuild for weeks, silently, at exit 0 with an unchanged timestamp. **Check the
+  timestamp, not the exit code.**
 
 ⚠️⚠️ **`NetSession.ProtocolVersion` IS 22 AND THAT IS THE HEADLINE OF THIS COMMIT.** § 130.13 is
 why. **Both players were rebuilt from this commit and shipped together**, per `CLAUDE.md` § 4a: a
@@ -2408,6 +2450,58 @@ not. **Walk every screen that uses one** (sign in, the queue card, the hub, matc
 picker, the maker, the lobby drawers) and split them into those two groups before changing a
 constant, because raising the constant grows every caption in the front end by an eighth and
 `MenuKit.Fit` cannot rescue an overflow below the same floor.
+
+**The walk this entry asks for, done 2026-09-03. `PaperKit.Caption` has 33 call sites across seven
+files**, and splitting them the way this entry says to changes the shape of the question.
+
+⚠️⚠️ **THE ANSWER IS NOT 16 OR 18. ONE CONSTANT IS DOING TWO JOBS, AND THAT IS WHY NEITHER NUMBER
+IS RIGHT EVERYWHERE.** This is `CLAUDE.md` § 6.5's *"pick a role, not a fill"* one subsystem over:
+`WoodCraft.Surface` is a closed list precisely because a screen of twelve plates that were all one
+call with a different parameter is what it replaced. `PaperKit.Caption` is that parameter, for type.
+
+**Group A, the caption is a RESTATEMENT** and 16 is defensible: it sits beside or under a value
+that already carries the fact, so the small size is what makes it read as a label rather than
+competing with the thing it names.
+
+| Where | The caption | The value beside it |
+|---|---|---|
+| `ConvertedMatchSetup:838` | `CODE` | the join code |
+| `LobbyChrome:1495` | `ROOM CODE` | the room code |
+| `LobbyChrome:1655` | `YOUR TIER` | the tier |
+| `LobbyChrome:1069` | `Skill loadout` | the loadout summary under it |
+| `SignInScreen:1273` | the field caption | the field |
+| `WoodDropdown:144` | the row caption | the row's value |
+
+**Group B, the caption is the ONLY PLACE THE FACT APPEARS**, and every one of these is a sentence
+a player has to be able to read or the screen has failed at something this repository already has
+a rule about:
+
+| Where | What it carries | Why it is not a label |
+|---|---|---|
+| ⚠️⚠️ `SignInScreen:608` `_error` | **why the sign-in failed** | It is the entire explanation. A sign-in that refuses you in type you cannot read is `CLAUDE.md` § 6.3's dead end with a reason printed too small to use. **The strongest case in the list.** |
+| ⚠️⚠️ `ConvertedCharacterSelect:1124` | **`Hud.KeyLabelFor(action)`, the live binding** | § 4a: *"prompts read the live binding ... never a literal"*, and `docs/VISION.md` § 3: *"a screen that teaches the wrong key is worse than one that teaches none."* A key printed illegibly teaches none. |
+| ⚠️⚠️ `LobbyChrome:1167`, `:1206`, `:1992` | **the one-line summary on a collapsed group's header** | § 6.2 rule 3 states the dependency outright: *"a group closed by default with a one-line summary on its header beats the same rows always open, and the summary is what makes it worth opening."* If the summary cannot be read, the collapse is a hidden feature. |
+| `ConvertedCharacterSelect:1280` | an option's description or its unlock challenge | The only place either sentence appears. ⚠️ § 121 already measured this one overflowing at two lines. |
+| `QueueCard:423` `_fillCaveat` | the bot-fill caveat | A rule about the match you are about to be put in. |
+| `QueueCard:368` `_elapsed` | queue time | The only clock on that card. |
+| `ConvertedMatchSetup:3192` `_addressText` | the join address | Nothing else prints it. |
+| `LobbyChrome:1679`, `:1845`, `:2596` | note, detail, character loadout | Each is a sole carrier on its own row. |
+
+⚠️⚠️ **SO THE CHEAP CHANGE IS THE WRONG ONE. RAISING `PaperKit.Caption` TO 18 GROWS ALL 33 BY AN
+EIGHTH TO FIX 11**, including the six in Group A where the whole point of the size is that the
+label does not compete with its value, and § 121.10 row 4 is what that costs: 22 units overflowed
+two cells in the picker's tab rail and the fix was to come back DOWN and re-fit. **The Group A
+captions are the ones with the least room around them.**
+
+⚠️ **The measurable half is unchanged and still fine**: `PaperInkSoft` on `Paper` is 5.21:1 and
+`PaperInk` on `Paper` is 12.34:1.
+
+⚠️⚠️ **STILL OPEN AND STILL 🧑'S CALL, WHICH IS WHAT THIS ENTRY SAYS AND HAS NOT CHANGED.** The
+walk narrows it to one question with two answers rather than a constant with two numbers: **does
+Group B get its own size (a second `PaperKit` constant at the 18-unit floor, eleven call sites,
+Group A untouched), or does 16 hold everywhere because he can read it at the size he plays at?**
+The first is the recommendation. ⚠️ **Neither is settled from this file**, and `AspectRatioProbes`
+stays red on `DoorCaption` until it is (§ 130.15).
 
 ---
 

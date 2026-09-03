@@ -200,7 +200,7 @@ namespace TumbangPreso
             GameServices.Match?.BeginIntermission();
         }
 
-        private void Broadcast() => Net.MatchRpc.Instance?.BroadcastTsinelas(_stocks);
+        private void Broadcast() => Net.MatchRpc.Instance?.BroadcastTsinelas(_stocks, _defenderSlot);
 
         /// <summary>
         /// A stock table the HOST computed, applied on this peer.
@@ -216,12 +216,20 @@ namespace TumbangPreso
         /// raised the flag back up would resurrect an eliminated attacker on any packet that
         /// arrived out of order.
         /// </summary>
-        public void ApplyNetworkStocks(int[] stocks)
+        public void ApplyNetworkStocks(int[] stocks, int defenderSlot)
         {
             if (stocks == null) return;
 
             _live = true;
-            _defenderSlot = GameServices.Match != null ? GameServices.Match.DefenderSlot : -1;
+
+            // ⚠️⚠️ THE HOST'S SLOT, NOT `MatchDirector.DefenderSlot`. That property is derived
+            // from the round NUMBER, which reaches this peer in `SyncWorld` at 5 Hz, so reading
+            // it here loses a race on every whistle: this packet carries the new round's stocks
+            // while the peer still holds the old round's number, and the two disagree about which
+            // seat is the taya. **The taya's stock is 0 by definition**, so a peer that guessed
+            // the wrong slot would read the real taya as an eliminated attacker and switch their
+            // body off for the round. `MatchRpc.OnTsinelasMsg` is where it comes from.
+            _defenderSlot = defenderSlot;
 
             for (int slot = 0; slot < _stocks.Length && slot < stocks.Length; slot++)
             {

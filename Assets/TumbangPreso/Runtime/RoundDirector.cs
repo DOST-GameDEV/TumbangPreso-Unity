@@ -122,11 +122,39 @@ namespace TumbangPreso
             // leave the default true and everybody can free-roam; in a round, both are true;
             // during an intermission `EndRound` set the host's bodies false and this sets the
             // client's; after the match, `MatchEnded` reaches `EndRound` on both (§ 57.1).
+            // ⚠️⚠️ AND SINCE 2026-09-03 IT ASKS `LastTsinelasDirector` FIRST, BECAUSE THIS LOOP
+            // SILENTLY UNDID THAT WHOLE FORMAT ON EVERY CLIENT. `docs/TODO.md` § 130.13.
+            //
+            // A Last Tsinelas attacker who has lost their last tsinelas is out for the rest of
+            // the round, and "out" is `RoundActive = false` on their body. **This line runs at
+            // 5 Hz with `roundActive` true for the whole round**, so it put the flag straight
+            // back up within 200 ms and the eliminated player carried on throwing, grabbing and
+            // charging resets while the host ignored every request. The host was immune, because
+            // `MatchRpc.HostSyncPeer` hands it its own snapshot and nothing else writes here.
+            //
+            // ⚠️ IT WAS FOUND BY READING THIS METHOD RATHER THAN BY PLAYING, AND IT WOULD NOT
+            // HAVE SHOWN UP IN ANY TEST WE HAVE: the elimination and the re-enable are in two
+            // different files, both correct on their own, and the only thing that puts them
+            // together is a client in a live round.
+            //
+            // ⚠️ THE DIRECTOR IS ASKED RATHER THAN THE FLAG BEING PROTECTED, so there is exactly
+            // one answer to "is this seat out" and it is the same one the HUD draws.
             if (matchInProgress)
             {
+                var tsinelas = GameServices.Tsinelas;
+
                 foreach (var player in _players)
                 {
                     if (player == null) continue;
+
+                    // ⚠️ ONLY EVER TO HOLD ONE DOWN, NEVER TO RAISE ONE. When the round is over
+                    // `roundActive` is false and everybody stops, out or not.
+                    if (roundActive && tsinelas != null && tsinelas.IsOut(player.PlayerSlot))
+                    {
+                        player.RoundActive = false;
+                        continue;
+                    }
+
                     player.RoundActive = roundActive;
                 }
             }

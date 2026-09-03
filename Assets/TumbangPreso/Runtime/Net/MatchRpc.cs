@@ -2673,14 +2673,15 @@ namespace TumbangPreso.Net
         /// is the trap `ProtocolVersion` 16, 17 and § 89.5 all record; a length-prefixed loop that
         /// clamped nothing would let a malformed packet read off the end of the buffer.
         /// </summary>
-        public void BroadcastTsinelas(int[] stocks)
+        public void BroadcastTsinelas(int[] stocks, int defenderSlot)
         {
             if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
             if (stocks == null) return;
 
             int count = Mathf.Min(stocks.Length, Core.Balance.PlayerCount);
 
-            using var writer = new FastBufferWriter(8 + (count * 4), Allocator.Temp);
+            using var writer = new FastBufferWriter(12 + (count * 4), Allocator.Temp);
+            writer.WriteValueSafe(defenderSlot);
             writer.WriteValueSafe(count);
             for (int i = 0; i < count; i++) writer.WriteValueSafe(stocks[i]);
 
@@ -2778,6 +2779,14 @@ namespace TumbangPreso.Net
             if (NetAuthority.IsHost) return;
             if (!FromHost(senderClientId)) return;
 
+            // ⚠️⚠️ THE TAYA'S SLOT TRAVELS WITH THE TABLE AND IS NOT INFERRED ON THIS PEER.
+            // `docs/TODO.md` § 130.13. The taya's stock is 0 by definition, so a receiver that
+            // worked out the slot for itself and got it wrong would read the real taya as an
+            // eliminated attacker and switch their body off. `MatchDirector.DefenderSlot` is
+            // derived from a round number that arrives in a DIFFERENT message at 5 Hz, so on the
+            // whistle there is a window where this packet has the new round's stocks and the peer
+            // still has the old round's number. Four bytes removes the race outright.
+            reader.ReadValueSafe(out int defenderSlot);
             reader.ReadValueSafe(out int count);
             if (count < 0 || count > Core.Balance.PlayerCount) return;
 
@@ -2788,7 +2797,7 @@ namespace TumbangPreso.Net
                 stocks[i] = stock;
             }
 
-            GameServices.Tsinelas?.ApplyNetworkStocks(stocks);
+            GameServices.Tsinelas?.ApplyNetworkStocks(stocks, defenderSlot);
         }
 
         private void OnPlayStyleMsg(ulong senderClientId, FastBufferReader reader)
