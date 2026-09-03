@@ -171,6 +171,20 @@ def main():
     # between screens is the ground it is holding. Each of these is the wordmark as that screen
     # would draw it, so the login screen's hero and the lobby's small mark are the same object
     # in two costumes rather than two files that can drift apart.
+    # !! A RECOLOUR ONLY WORKS ON A GROUND THAT IS FAR FROM ITS FILL, and the first render of
+    # the login screen is the receipt. The master is a SINGLE-FILL drawing: the letters, the blob
+    # behind them and the drip are all one white counter, so every recolour paints the three the
+    # same colour and they collapse into one silhouette. tump_wordmark_login.png is deep red on
+    # Honey Quartz and the login column IS Honey Quartz, so on SignInBoot-v77.png only the
+    # outline read and the game's name arrived as an empty wire frame.
+    #
+    # So: use a variant where the ground contrasts (the stage one is honey on Army and reads),
+    # and use tump_logo.png, the colour master, anywhere the logo is the hero on a light ground.
+    # That is also the more faithful answer per VISION.md section 6.
+    #
+    # A per-region recolour would need the master separated into layers the way SkinLayers
+    # separates a control. That is a request to the artist, not something this script can infer
+    # from one flat fill.
     variants = [
         ("tump_wordmark_login.png",  DEEP_RED, HONEY,      PERSIMMON),
         ("tump_wordmark_lobby.png",  DEEP_RED, CHARTREUSE, GOLDEN),

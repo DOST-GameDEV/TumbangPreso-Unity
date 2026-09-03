@@ -14,7 +14,7 @@ answers to `VISION.md` § 3, which is a different contract from this one.
 
 ---
 
-## 0 · The brief, in his own words, because all six sentences pull at once
+## 0 · The brief, in his own words, because all nine sentences pull at once
 
 | What he asked for | Where it came from |
 |---|---|
@@ -25,6 +25,9 @@ answers to `VISION.md` § 3, which is a different contract from this one.
 | *"i want our ui for lobby and everything (except for game for now) to all have its own identity"*, and *"i want settings, character select profile to all be under the same theme but feel like their own screens"* | 2026-09-03, this session |
 | *"i want it to be quirky and feel filipino-esque ... but dont force the filipino shit, i js want it to be felt from it"* | 2026-09-03, this session |
 | *"it should have all the functions of old ui, make sure ntohing in old ui as functions get lost"* | 2026-09-03, this session, and § 133.5 already |
+| *"maybe we could use like reoccuring shit to guide ppl"*, relaying Paul Andrei: *"maybe pwede natin iincorporate yung crown thingy sa game"* | 2026-09-03, this session. § 1.1 and § 1.2 |
+| *"u can add random shit and designs to the ui too btw to give our screens character, not everything has to be functional"* | 2026-09-03, this session. § 1.3 |
+| *"u can also use capital and shit depending on stuff, u figure out where all capital looks best and where it doesnt"* | 2026-09-03, this session. § 3.1 |
 
 ⚠️⚠️ **THE FIRST TWO AND THE MIDDLE TWO ARE THE SAME TENSION TWICE, AND RESOLVING IT IS THE WHOLE
 JOB.** A screen that answers "quirky" by adding things gets rejected (§ 92, *"theres liek 20 shits
@@ -144,6 +147,105 @@ greyscale, at a glance, to everybody.
 a drop shadow.** Each would be a seventh thing to learn, none answers a question the six do not,
 and § 133.7 is explicit that the personality is in the shape and the line rather than in the
 count.
+
+⚠️⚠️ **THAT PARAGRAPH IS ABOUT SIGNS AND NOT ABOUT ORNAMENT, AND § 1.3 IS THE DIFFERENCE.** The
+six above all MEAN something, so a seventh costs a player a seventh thing to learn. Decoration
+means nothing, and that is exactly what makes it cheap.
+
+### 1.4 How a button is built, because it is not built the way the old ones were
+
+🧑 2026-09-03, after the font pass landed on its own: **"the darumadrop buttons AS TEXT stay, i
+wanted u to remake all buttons in a diff style that feels like my logo bruh"**, and before that
+*"can u overhaul it like all of it gang, i dont wanna use the old colors anymore"*.
+
+⚠️⚠️ **THE LETTERING WAS NEVER THE COMPLAINT. THE SURFACE WAS.** Every pressable thing in this
+front end was a LIT SOLID: a value ramp down its face, a bright keyline outside a dark rim, a
+cast shadow under it. That vocabulary is `WoodCraft`'s, it came from sampling his own
+`BUTTON LONG.png`, and it is faithful to that art. **His logo is drawn by completely different
+rules.** There is no ramp anywhere in the mark, no bevel and no lit edge; every shape is a flat
+colour held inside a heavy irregular line, and the only depth in the whole drawing is a darker red
+bar tucked inside the bottom of each letter.
+
+**So `PaperCraft.Surface.Brand` is four things and none of them is a gradient:**
+
+| Part | The number | Where the number came from |
+|---|---|---|
+| **The stroke** | **8.5 per cent** of the button's height, in deep red | The mark's line measured against its letter height. Deep red is **34.3 per cent of the whole drawing**, more area than any fill: the line IS the object and the colour inside it is the hole. |
+| **The fill** | One flat value, Chartreuse for the one primary and Honey Quartz for every chip | § 4's role table. No ramp, because there is not one in the mark. |
+| **The under-bar** | **5.5 per cent**, in rim red, sitting a unit or two clear of the stroke rather than touching it | It is drawn that way under every letter, and it is the only depth cue the logo has. |
+| **The wobble** | **3 units**, sampled at two frequencies | ⚠️ Small on purpose: the mark's line varies by a few per cent of its own thickness. **What reads as hand-drawn is that the variation is irregular, not that it is large.** |
+
+⚠️⚠️ **THE WOBBLE VARIES WITH Y AND NEVER WITH X, AND THAT IS A SLICING CONSTRAINT RATHER THAN A
+DESIGN ONE.** These sprites are nine-sliced horizontally, so the middle column is STRETCHED to
+whatever width the caller asks for: anything that varied along x would smear into streaks. Varying
+with y makes the left and right edges hand-drawn and leaves the top and bottom steady, which is
+also how the mark itself reads, its horizontals being far steadier than its verticals.
+
+⚠️ **THE PRESS IS THE OBJECT SITTING DOWN ONTO ITS OWN UNDER-BAR.** There is no highlight to move
+and no ramp to shift, so the bar going away IS the press. That is also the honest reading of the
+mark, where the bar is what holds each letter up off the page.
+
+⚠️ **AND THE LIT-SOLID PAINTER IS KEPT, NOT DELETED.** `PaperCraft.PaintAction` still holds every
+number measured off `BUTTON LONG.png` and the three rejections that tuned them (*"i js wanted u to
+make it mroe 3d"*, *"i prefer the old sharper edges on it"*, *"ugly shadows and edges"*). Nothing
+dispatches to it. **He has reversed a look before**, by name, on the character select screen; if
+the slab is ever wanted again it is there intact with its receipts, and rebuilding it from the
+comments would lose the measurements.
+
+### 1.3 Decoration: allowed, and here is where it goes
+
+🧑 2026-09-03: **"u can add random shit and designs to the ui too btw to give our screens
+character, not everything has to be functional"**.
+
+⚠️⚠️ **THAT PULLS AGAINST § 92 AND THE RESOLUTION IS NOT A COMPROMISE, IT IS A PLACE.** *"Theres
+liek 20 shits at once"* was six BUTTONS in six visual languages: every one of them was a thing the
+player had to look at, decide about and dismiss. **A drawing that means nothing costs none of
+that.** So the rule is not "how much" but "where":
+
+> **Decoration is free where nothing has to be read, and expensive where something does.**
+
+**Where it goes, in order of how much it buys:**
+
+1. ⚠️⚠️ **EMPTY STATES, WHICH ARE THE BEST PLACE IN THE WHOLE FRONT END.** An empty chat, a
+   server list with nothing in it, a fresh career: by definition there is nothing to read, so a
+   drawing there costs exactly zero legibility. `FUTURE.md` § 0.5b question 3 already says the
+   empty state is *"the state most players see first and it is the one that gets designed last"*,
+   and § 118.1 row 1 is the receipt: the lobby chat is *"the only surface on the lobby that looks
+   unfinished rather than quiet"*. **An empty box with a drawing in it reads as made; an empty box
+   reads as broken.**
+2. ⚠️⚠️ **THE DEAD GROUND, AND § 118.1 ROW 2 SAYS EXACTLY HOW MUCH OF IT THERE IS.** *"The screen
+   is four corners and a hole"*: **680 units of nothing** down the lobby's left side and **475**
+   down its right, measured. That is not space that needs protecting, it is space that is already
+   doing nothing.
+3. **The margins and the corners**, outside every content rect.
+4. **The edges of surfaces**: the drip running off a card's bottom, the ties at each end of the
+   lobby's banner, a torn corner. These are part of the object rather than things beside it.
+5. **Loading and transitions**, where waiting is the only thing happening.
+
+**Where it may never go, and every one of these is a receipt:**
+
+- ⚠️ **Between rows in a list.** § 92.3b: grouping without collapsing does not fix a wall, it
+  aligns it, and an ornament between rows makes the wall taller.
+- ⚠️ **Beside a value.** § 94.7 is seven readability faults at once with every probe green,
+  including a value drawn 1600 px from its own label.
+- ⚠️ **Behind or on a control's own lettering.** That is the § 6.4 amber-on-cream problem with a
+  picture instead of a colour.
+- ⚠️ **Anywhere that raises the count of things a player has to SCAN to find what they came for.**
+  That is the actual test, and it is `CLAUDE.md` § 6.2's third claim: *never overwhelming*.
+
+**And one number, so this is checkable rather than a matter of taste:**
+
+⚠️⚠️ **AN ORNAMENT SITS UNDER 1.5:1 AGAINST ITS OWN GROUND, OR IT IS OUTSIDE EVERY CONTENT RECT.**
+Below that ratio it cannot compete with anything at `Caption` or larger, which all measure 5:1 or
+better; outside the content rects it is not competing at all. **A drawing that satisfies neither
+is not decoration, it is a seventh sign**, and it belongs in § 1.2 with a meaning attached or
+nowhere.
+
+**What to draw, since the vocabulary already exists:** the tsinelas mark faded into a ground, the
+hatch at low contrast, chalk scribbles on the settings ledger (this game is chalk on asphalt), the
+drip, a hand-drawn corner flourish on the login card, the banner's ties. ⚠️ **All of it is the
+logo's hand**, which is what makes it character rather than clip art, and none of it is a new
+element to learn.
 
 ---
 
@@ -323,11 +425,31 @@ three faces that were rejected.** This is only the design rule.
 |---|---|---|---|
 | `Display` | 44 | **Darumadrop** | One per screen. The wordmark's neighbour, the room code. |
 | `Title` | 26 | **Darumadrop** | The name of a thing: a heading, a player, a hero. |
-| `Body` | 20 | **Nunito** | A sentence, a row, a button's lettering. |
-| `Caption` | 16 | **Nunito** | The quiet second line, never the only place a fact appears. |
+| `Body` | 20 | **Darumadrop** | A row, a button's lettering, a list entry. |
+| `Caption` | 16 | **Nunito** | The SUB line: a hint, a placeholder, a field's label, an ability description, the quiet second line under a row. |
 
 `PaperKit.FaceFor` is the whole rule and it takes the SIZE, so a caller never chooses and
 therefore can never choose wrong. `CLAUDE.md` § 4a: the answer is construction, not discipline.
+
+⚠️⚠️ **THE BOUNDARY WAS AT `Title` FOR ONE AFTERNOON AND 🧑 MOVED IT, AND HIS REASON DEFINES WHAT
+THE SECOND FACE IS FOR.** At `Title` the split put `Body` 20 into Nunito, which is most of the
+lettering in the game: every settings row, every button, every list entry. He looked at it and
+said **"ur over replacing fonts, i lowk js wanted u to replace sub fonts with the new font, not
+everything gang"**, and of the login screen, *"i think everything here in darumadrop looked good,
+just change your username to the sub font"*.
+
+**So Nunito is the SUB font, not the body font.** Darumadrop keeps everything a player looks AT,
+which is most of the front end; Nunito takes the things a player reads underneath it. ⚠️ **The
+fault § 133 exists for is still fixed either way**, because that fault was the SMEAR:
+`FontStyle.Bold` on a face with one weight, which `MenuKit.Apply` makes unreachable on both sides
+of the boundary. And the prose that genuinely needed a reading face, the four-line ability
+descriptions, is authored at `Caption`, so it is still Nunito.
+
+⚠️ **A LABEL THAT BYPASSES THE KIT BYPASSES THE RULE.** The login screen's USERNAME and PASSWORD
+captions are built through `MenuKit.Label` rather than `PaperKit.Ink`, so `FaceFor` never ran on
+them and they stayed in the display face while every other caption moved. He spotted it in a
+render. Same class of miss as the converted `InputField` that kept Unity's blue selection
+highlight: **the kit is only a guarantee for the callers that go through it.**
 
 ⚠️⚠️ **AND ALL-CAPS IS NOW A DISPLAY DEVICE RATHER THAN A DEFAULT, WHICH IS A MEASUREMENT AND NOT
 A TASTE.** Darumadrop's caps are unusually narrow against its own lowercase (x-height over cap
@@ -370,17 +492,17 @@ threshold underneath it so the rule cannot be argued with.
 |---|---|---|---|
 | A screen heading, a hero or player name, the room code | **ALL CAPS** | Darumadrop, `Title` or `Display` | Darumadrop draws these, so capitals cost nothing in width, and a display face set in lowercase is a display face doing nothing. This is **HARRY**. |
 | An eyebrow: a short label directly above or below a name | **ALL CAPS, letterspaced** | Nunito Bold, `Caption` | This is **GOMEZ**. Two words at most. Letterspacing is what makes short capitals read as a label rather than as shouting, and at that length the width cost is a handful of units. |
-| A chip or button's lettering, **12 characters or fewer** | **ALL CAPS** | Nunito Bold, `Body` | BACK, JOIN, READY, APPLY, CLOSE, START MATCH. A button's lettering is a label, and +13 per cent of a 12-character string is small enough to sit inside the padding `MenuKit.ButtonLabelPadding` already reserves. |
-| A chip or button's lettering, **13 characters or more** | **Sentence case** | Nunito Bold, `Body` | This is where the 14 per cent actually bites. `SIGN IN AS SOMEBODY ELSE` is 24 characters and is the exact shape that overflows silently. |
-| A settings row label | **Sentence case** | Nunito, `Body` | ⚠️ **A settings screen is a long list that is SCANNED**, and lowercase word-shapes are most of what makes a list scannable. `Master volume` reads faster than `MASTER VOLUME` and is 10 per cent narrower. |
-| Any sentence: a hint, a blurb, an ability description, chat, an empty state | **Sentence case** | Nunito, `Body` or `Caption` | Capitals destroy word-shape reading, which is the entire job of the body face. These are also the longest strings in the game, so they carry the whole width risk. |
+| A chip or button's lettering | **ALL CAPS** | Darumadrop, `Body` | BACK, JOIN, READY, APPLY, START MATCH. ⚠️ **The width table does not apply here any more**: the button step stayed in Darumadrop, so nothing grew. 🧑 confirmed these by eye: *"i think everything here in darumadrop looked good"*. |
+| A settings row label | **Sentence case** | Darumadrop, `Body` | ⚠️ **A settings screen is a long list that is SCANNED**, and lowercase word-shapes are most of what makes a list scannable. `Master volume` reads faster than `MASTER VOLUME`, and this is a case-only change with no face change under it. |
+| Any sentence: a hint, a blurb, an ability description, chat, an empty state | **Sentence case** | Nunito, `Caption` | Capitals destroy word-shape reading, which is the entire job of the sub face. These are also the longest strings in the game, so they carry the whole width risk, and they are the step that actually changed face. |
 | Lettering inside an already-loud container | **Sentence case** | Nunito | ⚠️ Capitals on a chartreuse primary with a deep-red stroke is three emphases spent on one thing. § 6.2c question 1: if two things are competing, one of them is decoration. |
 
-⚠️ **THE 12-CHARACTER LINE IS MEASURED, NOT PICKED.** At `Body` 20 units a 12-character capitalised
-string grows by about 13 per cent of roughly 7 em widths, which is under one em, and
-`ButtonLabelPadding` is 14 units either side. Past that the growth exceeds the padding and
-`MenuKit.Fit` starts shrinking type to compensate, which is the wrong trade on a control whose
-whole job is to be read at a glance.
+⚠️⚠️ **THE WIDTH TABLE ABOVE IS NOW A REASON RATHER THAN A CONSTRAINT, AND SAYING SO MATTERS.**
+It was measured when `Body` was going to be Nunito, and it is what made the caps question worth
+asking at all. Since the boundary moved to `Body`, **the only step that changed face is
+`Caption`**, and captions are short. So no button and no settings row grew by a single unit, and
+the rule above is kept because it is still the right typography, not because anything would
+overflow without it.
 
 ⚠️⚠️ **AND CAPITALS ARE NOW A DEVICE RATHER THAN A DEFAULT, WHICH IS THE POINT.** The old front
 end shouted everything, so nothing was louder than anything else. Capitals used on names, on
@@ -391,20 +513,31 @@ which is the same argument `CLAUDE.md` § 6.4 makes about spending the accent on
 
 ## 4 · Colour: five slots, and where each is spent
 
-⚠️⚠️ **THE HEXES ARE NOT IN THIS FILE AND MUST NOT BE GUESSED INTO IT.** § 133.1: *"READ THE HEXES
-OFF THE COMMITTED FILE. DO NOT TYPE THEM IN BY EYE AND DO NOT SAMPLE A CHAT THUMBNAIL."* The
-swatch strips carry their own printed hex labels and the logo is not in the repository yet
-(`Attention.md` § 12). `UiTheme` is the one place they land, and `CLAUDE.md` § 6.4's carved-wood
-list is rewritten in the same commit that lands them.
+✅ **THE HEXES ARE IN, AND THEY WERE READ RATHER THAN TYPED.** § 133.1: *"READ THE HEXES OFF THE
+COMMITTED FILE. DO NOT TYPE THEM IN BY EYE AND DO NOT SAMPLE A CHAT THUMBNAIL."*
+`tools/read_brand_palette.py` clusters the committed artwork's flat fills, and it **agreed with
+itself across two independently drawn files**, which is what makes them a palette rather than a
+sample. `UiTheme`'s brand block is the one place they live and `CLAUDE.md` § 6.4's list moved in
+the same commit.
 
-| Slot | Role in the logo | Role in the front end | Spent on |
-|---|---|---|---|
-| **Honey Quartz** | The pale peach the letters are filled with | The paper. The ground of every light screen. | Login, lobby chrome, settings, profile |
-| **Chartreuse** | The blob behind the wordmark | The ACTION. One per screen, the primary only. | Every screen's one primary |
-| **Persimmon** | The orange drip and the diagonal fill | The MARKER. The one value or selection that matters. | Character select's selection, profile's accent |
-| **Khaki** | The pale sand swatch | The quiet ground: a tray, a sunk row, a disabled face | Settings' ruled ground |
-| **Army** | The olive swatch | The dark ground, and the only one | Character select's stage |
-| **Deep red** | The wordmark's outline | The OUTLINE, everywhere, and the destructive control | Primary stroke, selection frame, RESET ALL |
+| Slot | Hex | Share of the logo | Role in the front end | Spent on |
+|---|---|---|---|---|
+| **Honey Quartz** | `#FCD39F` | 23.1% | The paper. The ground of every light screen, and the quiet button fill. | Login, lobby chrome, settings, profile, every secondary chip |
+| **Chartreuse** | `#D6CE01` | 17.0% | The ACTION. One per screen, the primary only. | Every screen's one primary |
+| **Persimmon** | `#FD8041` | 5.7% | The MARKER. The one value or selection that matters. | Character select's selection, profile's accent |
+| **Golden** | `#F5B521` | 4.2% | The front end's gold, replacing amber. ⚠️ `UiTheme.Amber` stays `ffba00` because the HUD reads it 15 times. | A value, a highlight |
+| **Rim red** | `#C32E0D` | 3.8% | The under-bar on every button, and the lit state of the outline. | Every brand surface |
+| **Khaki** | `#E8C77E` | derived | The quiet ground: a tray, a sunk row, a disabled face | Settings' ruled ground |
+| **Army** | `#B3A828` | 1.4% | The dark ground, and the only one | Character select's stage |
+| **Deep red** | `#980715` | 34.3% | The OUTLINE, everywhere, and the destructive control | Every button's stroke, the selection frame, RESET ALL |
+
+⚠️⚠️ **THE OUTLINE IS THE BIGGEST AREA IN THE LOGO AND IT IS NOW THE BIGGEST AREA IN THE FRONT
+END, WHICH IS WHY THE BUTTONS HAD TO BE REDRAWN RATHER THAN RETINTED.** Deep red is **34.3 per
+cent of the mark**: more of it than any fill. That is the single measurement that says the logo is
+a DRAWING rather than a set of shapes, and a button repainted in the palette but still built as a
+lit slab with a ramp and a keyline reads as a different object beside it. `PaperCraft.Surface.Brand`
+is the answer, and 🧑 asked for it in as many words: *"i wanted u to remake all buttons in a diff
+style that feels like my logo bruh"*.
 
 ⚠️ **ONE ROLE, ONE COLOUR, AND THE ROLES ARE THE SAME ON ALL FIVE SCREENS.** That is what makes
 five different-looking screens read as one game: a player learns that chartreuse means "this is

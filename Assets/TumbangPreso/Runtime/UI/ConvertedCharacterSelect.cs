@@ -2046,13 +2046,27 @@ namespace TumbangPreso.UI
                 chip.type = Image.Type.Sliced;
                 chip.raycastTarget = false;
 
+                // ⚠️⚠️ 34 x 26 AND NOT 26 x 18, BECAUSE THE KEYCAP WAS THE ONE LABEL ON THIS
+                // SCREEN THAT IS PURE INSTRUCTION AND IT WAS THE SMALLEST THING ON IT.
+                // `AspectRatioProbes` named it once the probe was made to report every failure
+                // instead of throwing on the first: **"Q", "E" and "F" authored at 13 units,
+                // which is 8.7 physical pixels at 720p.** `docs/VISION.md` § 3 is explicit that
+                // *"a screen that teaches the wrong key is worse than one that teaches none"*,
+                // and a key nobody can read teaches none.
+                //
+                // ⚠️ THE BOX GREW RATHER THAN THE FLOOR DROPPING, WHICH IS § 126.13's FIRST
+                // OPTION of the three (*"widen the box, cut the words, or register the
+                // exemption"*). There are no words to cut: it is one character. 26 tall matches
+                // the ability glyph beside it exactly, so the row's height is unchanged and only
+                // this chip moved.
                 var chipLe = chipGo.AddComponent<LayoutElement>();
-                chipLe.minWidth = 26;
-                chipLe.preferredWidth = 26;
-                chipLe.minHeight = 18;
-                chipLe.preferredHeight = 18;
+                chipLe.minWidth = 34;
+                chipLe.preferredWidth = 34;
+                chipLe.minHeight = 26;
+                chipLe.preferredHeight = 26;
 
-                var keyLabel = MenuKit.Label(chipGo.transform, Hud.KeyLabelFor(item.action), 13,
+                var keyLabel = MenuKit.Label(chipGo.transform, Hud.KeyLabelFor(item.action),
+                    MenuKit.MinReadableUnits,
                     accent,
                     Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleCenter);
                 MenuKit.Apply(keyLabel, PaperKit.FaceFor(keyLabel.fontSize), bold: true);

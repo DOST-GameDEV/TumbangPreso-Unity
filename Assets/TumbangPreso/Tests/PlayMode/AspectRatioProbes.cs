@@ -118,6 +118,12 @@ namespace TumbangPreso.PlayTests
             RenderTexture target = null;
             var report = new StringBuilder();
 
+            // Every label under the floor, deduped by name and size, collected across all nine
+            // shapes and asserted ONCE at the end. See the note at the collection site for why
+            // that matters more than it looks.
+            var tooSmall = new HashSet<string>();
+            var tooSmallRows = new List<string>();
+
             foreach (var (w, h, name) in Resolutions)
             {
                 var next = new RenderTexture(w, h, 24, RenderTextureFormat.ARGB32);
@@ -215,10 +221,47 @@ namespace TumbangPreso.PlayTests
                           "entry before changing either constant, and do it with a render."
                         : "";
 
-                    Assert.GreaterOrEqual(label.fontSize, MenuKit.MinReadableUnits,
-                        $"'{label.name}' is authored at {label.fontSize} units, below the " +
-                        $"{MenuKit.MinReadableUnits}-unit floor. At {name} ({w}x{h}) that is " +
-                        $"{label.fontSize * scale:F1} physical pixels.{why}");
+                    // ⚠️⚠️ COLLECTED AND ASSERTED ONCE AT THE END, NOT THROWN HERE, AND THAT
+                    // CHANGE IS WORTH MORE THAN IT LOOKS. `Assert` throws on the FIRST failing
+                    // label, so every label after it in the walk is invisible and the report
+                    // names one problem however many there are. **`docs/TODO.md` § 130.15 went
+                    // stale exactly this way**: it records the character screen's only red as
+                    // `DoorCaption` at 16, which is § 121.8's open question, and the first
+                    // failure is actually a label authored at **13**. So § 121.8 has been the
+                    // entry blocking a probe that was failing on something else entirely, and
+                    // `Attention.md` § 3 has been asking 🧑 to settle a question that is not what
+                    // is red.
+                    //
+                    // ⚠️ THE FLOOR IS UNTOUCHED AND NOTHING IS EXEMPTED HERE. § 126.13: *"Do not
+                    // lower the probe's floor to make it green."* This only changes how many of
+                    // the failures a reader gets to see per run, which is the difference between
+                    // a worklist and a whack-a-mole.
+                    if (label.fontSize < MenuKit.MinReadableUnits)
+                    {
+                        // ⚠️⚠️ THE LETTERING IS IN THE REPORT, NOT JUST THE NODE NAME, AND THE
+                        // FIRST RUN OF THIS IS WHY. `MenuKit.Label` leaves every label it makes
+                        // called "Label", and `ConvertedCharacterSelect` has FIVE at 13 units
+                        // (EQUIPPED, LOCKED, the gain/cost line, the progress count and the key
+                        // chip). They all reported as `'Label' at 13`, which names the fault
+                        // without naming which of the five it is: a worklist nobody can act on.
+                        // **The words are the only thing that tells them apart**, and they are
+                        // also what the reader would search the source for.
+                        string words = label.text.Trim().Replace("\n", " ");
+                        if (words.Length > 40) words = words.Substring(0, 37) + "...";
+
+                        string row = $"'{label.name}' (\"{words}\") is authored at "
+                                     + $"{label.fontSize} units, below the "
+                                     + $"{MenuKit.MinReadableUnits}-unit floor. At {name} "
+                                     + $"({w}x{h}) that is {label.fontSize * scale:F1} physical "
+                                     + $"pixels.{why}";
+
+                        // ⚠️ DEDUPED ON THE WORDS AND THE SIZE, because the walk runs once per
+                        // resolution and the authored size is the same at all nine. Without a
+                        // dedupe one small label reports nine times and the list stops being
+                        // readable, which is the fault this whole change exists to fix.
+                        string key = $"{label.name}|{words}|{label.fontSize}";
+                        if (tooSmall.Add(key)) tooSmallRows.Add(row);
+                    }
                 }
 
                 report.AppendLine($"{name,-12} {w}x{h}  canvas scale {scale:F3}  " +
@@ -229,6 +272,15 @@ namespace TumbangPreso.PlayTests
             if (target != null) target.Release();
 
             Debug.Log("[Aspect] character screen\n" + report);
+
+            // ⚠️ ONE ASSERTION FOR EVERY LABEL UNDER THE FLOOR, so the failure is the whole
+            // worklist rather than whichever one the walk happened to reach first.
+            Assert.IsEmpty(tooSmallRows,
+                $"{tooSmallRows.Count} label(s) on the character screen are authored below "
+                + $"MenuKit.MinReadableUnits ({MenuKit.MinReadableUnits}). Do NOT lower the floor "
+                + "to make this green: docs/TODO.md § 126.13. Widen the box, cut the words, or "
+                + "register the exemption through MenuKit.Fit so it is counted rather than "
+                + "hidden:\n  " + string.Join("\n  ", tooSmallRows));
 
             foreach (var c in canvases)
             {

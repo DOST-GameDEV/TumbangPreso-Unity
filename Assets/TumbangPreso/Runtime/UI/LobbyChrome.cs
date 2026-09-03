@@ -1379,7 +1379,20 @@ namespace TumbangPreso.UI
                 // did not follow the control, in a colour that measures **1.46:1** on `Paper`. The
                 // hover is said by the pose now, which is what a hover is for; the ring stays on
                 // the controls that have no other focus state (see `FocusRing`).
-                PaperKit.MakeAction(node.gameObject, PaperCraft.Accent.Wood);
+                // ⚠️⚠️ CHARTREUSE, NOT THE BROWN, AND THE INSTRUCTION THAT PUT BROWN HERE HAS
+                // BEEN SUPERSEDED BY A LATER ONE. 🧑 chose brown for this control by name once
+                // (*"u can also still use the brown color ... start match lowk looks good"*),
+                // and on 2026-09-03 said **"i dont wanna use the old colors anymore"** and
+                // *"i want colors corresponding to or using the same colors as my logo"*.
+                //
+                // ⚠️ AND `Accent.Wood` NO LONGER MEANS WHAT IT MEANT WHEN THAT LINE WAS WRITTEN.
+                // Under `PaperCraft.Surface.Brand` it is Honey Quartz, which is the QUIET fill:
+                // on the honey rail this control sits on, the screen's one primary was drawing
+                // honey on honey and had no presence at all (`Logs/shots-runtime/Lobby-v79.png`,
+                // where START MATCH is the palest thing in the frame). **A primary must be the
+                // heaviest object on its screen**, which is `docs/Front_End_Design.md` § 4's role
+                // table: Chartreuse is the action, one per screen.
+                PaperKit.MakeAction(node.gameObject, PaperCraft.Accent.Green);
             }
 
             var status = Descend(leftColumn, "StatusLabel");

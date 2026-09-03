@@ -58,11 +58,11 @@ namespace TumbangPreso.UI
         /// and `CLAUDE.md` § 6.4: the rule is the whole palette, not only outlines, and a grey
         /// with a blue cast next to `8b5227` wood reads as blue rather than as neutral.
         /// </summary>
-        public static readonly Color Panel = Hex("e9e1d4");
+        public static readonly Color Panel = Hex("fddfba");
 
         /// <summary>Slightly lighter: raised card and control fill. ⚠️ Was `f5f7fa`, same
         /// reason as <see cref="Panel"/>.</summary>
-        public static readonly Color Card = Hex("f7f1e4");
+        public static readonly Color Card = Hex("feebd4");
 
         /// <summary>⚠️ MEANS "ATTACKING SIDE". Never reuse it decoratively.</summary>
         public static readonly Color Offense = Hex("f87020");
@@ -209,7 +209,7 @@ namespace TumbangPreso.UI
         /// wrong by enough to see: `WoodMid` is a fifth darker than his face and `WoodEdge` is his
         /// KEYLINE colour, so a button filled with it came out the colour of its own outline.
         /// </summary>
-        public static readonly Color WoodFace = Hex("793e1f");
+        public static readonly Color WoodFace = Hex("3f3a0e");
 
         /// <summary>
         /// The face of a wooden PANEL, off `SETTINGS CONFIG PANEL.png` and `MAP MODE DISPLAY.png`.
@@ -220,7 +220,7 @@ namespace TumbangPreso.UI
         /// row of buttons legible against the card they are in. Keeping the two constants apart
         /// means a future palette change cannot accidentally flatten them together.
         /// </summary>
-        public static readonly Color WoodPanelFace = Hex("783e1f");
+        public static readonly Color WoodPanelFace = Hex("3f3a0e");
 
         /// <summary>
         /// The face of a wooden SLOT you type into, off `TEXT FIELD.png`.
@@ -237,7 +237,7 @@ namespace TumbangPreso.UI
         /// recess is the one in shadow, so a slot is lit from below and a board is lit from above.
         /// `WoodCraft.PaintWood` flips it on this surface and on no other.
         /// </summary>
-        public static readonly Color WoodFieldFace = Hex("4e2211");
+        public static readonly Color WoodFieldFace = Hex("2a2709");
 
         /// <summary>
         /// The darkest wooden face: an unselected tab, and anything that has to sit clearly
@@ -255,7 +255,7 @@ namespace TumbangPreso.UI
         /// THE CONSTANTS. A palette diff says these two are far apart; the picture said they were
         /// not, because what a gradient actually shows a reader is its highlight.
         /// </summary>
-        public static readonly Color WoodSlot = Hex("36180c");
+        public static readonly Color WoodSlot = Hex("242109");
 
         /// <summary>
         /// The road, for a UI well: a log, a list, anything chalk is drawn on.
@@ -269,7 +269,7 @@ namespace TumbangPreso.UI
         /// ⚠️ IT IS A WARM NEAR-BLACK ONE STEP OFF <see cref="WoodDark"/>, so a slate well inside
         /// a wooden card reads as a hole in the wood rather than as a foreign panel laid on it.
         /// </summary>
-        public static readonly Color Asphalt = Hex("2f2118");
+        public static readonly Color Asphalt = Hex("322f0b");
 
         // -------------------------------------------------------------------
         // THE PAPER SET. The front end's DOMINANT surface as of 2026-09-01.
@@ -385,8 +385,8 @@ namespace TumbangPreso.UI
 
         public static Color CreamMuted => new Color(Cream.r, Cream.g, Cream.b, 0.68f);
 
-        public static readonly Color MenuGreen = Hex("21a131");
-        public static readonly Color MenuGreenLit = Hex("69e548");
+        public static readonly Color MenuGreen = Hex("a09b01");
+        public static readonly Color MenuGreenLit = Hex("e8e14a");
 
         /// <summary>
         /// The face of the PRIMARY action, measured off 🧑's own `JOIN BUTTON.png`.
@@ -408,9 +408,9 @@ namespace TumbangPreso.UI
         /// cannot be read as a role. That constraint is `Art_Direction.md` § 1 and it is the only
         /// thing that limits which hues a control may take.
         /// </summary>
-        public static readonly Color MenuGreenFace = Hex("51dd38");
-        public static readonly Color MenuRed = Hex("ed2136");
-        public static readonly Color MenuRedLit = Hex("fa7653");
+        public static readonly Color MenuGreenFace = Hex("d6ce01");
+        public static readonly Color MenuRed = Hex("980715");
+        public static readonly Color MenuRedLit = Hex("c32e0d");
 
         // -------------------------------------------------------------------
         // ENVIRONMENT. Deliberately desaturated so the props read against it.

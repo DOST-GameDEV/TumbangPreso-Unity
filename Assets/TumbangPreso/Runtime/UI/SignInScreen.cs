@@ -576,11 +576,15 @@ namespace TumbangPreso.UI
             // everything below the tabs already looks good and the actions block is measured
             // against itself.
             // ⚠️ 343 AND NOT 330, AND IT IS THE PLAQUE GROWING RATHER THAN A RETUNE. See
-            // `LogoMarkWidth`: the sign is 146 units tall now against 120, so holding the old
+            // `LogoMarkHeight`: the mark is 150 units tall now against 96.5, so holding the old
             // centre would have closed the gap under it from 36 units to 23 and put the identity
             // block back on top of the form block, which is the *"this part looks too tight"* he
             // reported on the tab row. The underside stays at 270 by construction.
-            const float Logo = 343.0f;
+            // ⚠️ 352 AGAINST 343, because the mark is 150 tall now rather than 96.5
+            // (`LogoMarkHeight`) and it is centred on this number. Raising it by 9 keeps
+            // 43 units of air over the tab row instead of 34, which is more than the 36
+            // § 119.10 bought after *"this part looks too tight"*.
+            const float Logo = 352.0f;
             const float Tabs = 200.0f;
             const float UserField = 30.0f;
             const float PassField = -82.0f;
@@ -916,7 +920,37 @@ namespace TumbangPreso.UI
             // reset. ⚠️ The boot screen used to make it a third time in
             // `SplashScreen.BuildSplashArt`, which is deleted (`docs/TODO.md` § 114.3); this
             // screen is the only place `UI/splash_art` is drawn now.
-            var logo = Resources.Load<Texture2D>("UI/main-menu/TUMP");
+            // ⚠️⚠️ THE NEW WORDMARK, AND THE LOGIN SCREEN IS THE ONE PLACE IT IS THE HERO.
+            // `docs/Front_End_Design.md` § 2.1: this is the only screen where the logo is the
+            // thing the screen is built around, because putting it on all five is how a brand
+            // stops being noticed. `tools/build_brand_art.py` recolours the mono master per
+            // screen out of the palette; this is the login variant, deep-red line on Honey
+            // Quartz, which is the ground this column already is.
+            //
+            // ⚠️ IT FALLS BACK TO THE OLD MARK RATHER THAN TO THE WORD. `TUMP.png` is still
+            // committed and is still what the main menu draws, so a missing brand file gets a
+            // real wordmark instead of a label. Two fallbacks deep, and the label below is the
+            // third, because this screen ships at boot and a hole where the name goes is the
+            // worst thing on it.
+            // ⚠️⚠️ THE COLOUR MASTER, NOT THE RECOLOURED VARIANT, AND THE FIRST RENDER OF THIS
+            // IS WHY. `tump_wordmark_login.png` is the mono master painted deep-red line on Honey
+            // Quartz fill, and this column IS Honey Quartz: on `SignInBoot-v77.png` the letters
+            // and the page were the same colour and **only the outline read**, so the game's name
+            // arrived as an empty wire frame.
+            //
+            // ⚠️ THE CAUSE IS THE MASTER, NOT THE CHOICE OF FILL. `new tump text.jpg` is a
+            // single-fill drawing: the letters, the blob behind them and the drip are all one
+            // white counter, so ANY recolour paints them the same colour and the three shapes
+            // collapse into one silhouette. The variants are still right where the ground is far
+            // from the fill (`tump_wordmark_stage.png` is honey on Army and reads well), and
+            // wrong wherever the ground is the fill.
+            //
+            // ⚠️⚠️ AND THE COLOUR MASTER IS THE MORE FAITHFUL ANSWER ANYWAY. `docs/VISION.md` § 6
+            // and `CLAUDE.md` § 6.4: his art is the design system and it is not to be repainted.
+            // This draws the file he actually drew, at `Color.white`, on the ground it was drawn
+            // against.
+            var logo = Resources.Load<Texture2D>("UI/brand/tump_logo")
+                       ?? Resources.Load<Texture2D>("UI/main-menu/TUMP");
 
             if (logo == null)
             {
@@ -977,13 +1011,34 @@ namespace TumbangPreso.UI
             // wood; § 122.3 then put a 16-unit frame back round it. A logo with a frame drawn
             // round it is a logo somebody was not confident in. **The column is the ground.**
             //
-            // ⚠️ `LogoPlaqueWidth` AND `LogoPlaqueHeight` ARE KEPT AND STILL SIZE THE SLOT, so the
-            // mark is exactly the width it was and the gap under it is still the 36 units he asked
-            // for in § 119.10 (*"this part looks too tight"*). Only the Image is gone.
+            // ⚠️ THOSE TWO CONSTANTS ARE GONE NOW. They outlived the plaque by a whole pass:
+            // nothing read them, and this comment claiming they "still size the slot" was true of
+            // the version before the box was deleted. The gap under the mark is still the 36
+            // units he asked for in § 119.10 (*"this part looks too tight"*), and it is now
+            // 43: see `LogoMarkHeight` for the arithmetic.
+            // ⚠️⚠️ THE HEIGHT IS THE AUTHORED NUMBER NOW AND THE WIDTH FOLLOWS, WHICH IS THE
+            // REVERSE OF WHAT THIS METHOD DID FOR ITS WHOLE LIFE. It is the only ordering that
+            // survives a new logo. **Height is the dimension that moves the form**: the column is
+            // a stack, so a mark that grows downward pushes the tabs, the fields and the primary
+            // with it, while a mark that grows sideways costs nothing until it hits the column
+            // edge. Sizing by WIDTH meant the layout below depended on the aspect of whatever
+            // file was loaded, and the two marks are nowhere near the same shape: the old
+            // `TUMP.png` is 3.48:1 and the new one is about 1.52:1, because the new one contains
+            // the blob and the drip as well as the letters. **At the old 336 width the new mark
+            // would have drawn 221 units tall against 96.5 and landed on top of the tab row.**
+            //
+            // ⚠️ AND THE ASPECT IS READ OFF THE TEXTURE RATHER THAN WRITTEN DOWN. The old
+            // `LogoAspect` was the literal `1835.0f / 527.0f` with a note saying a re-export is
+            // "a one-line correction with the source visible", which is exactly the drift
+            // `CLAUDE.md` § 5 is about: a number describing a file, kept beside the file, that
+            // nobody updates when the file changes. He is iterating on this logo right now and
+            // has sent two versions in one day. `logo.width / logo.height` cannot go stale.
+            float aspect = logo.height > 0 ? (float)logo.width / logo.height : 1.0f;
+
             var box = new GameObject("LogoBox", typeof(RectTransform));
             box.transform.SetParent(col, false);
             MenuKit.Place((RectTransform)box.transform, Centre,
-                new Vector2(0.0f, y), new Vector2(LogoMarkWidth, LogoMarkWidth / LogoAspect));
+                new Vector2(0.0f, y), new Vector2(LogoMarkHeight * aspect, LogoMarkHeight));
 
             var image = Engraved(box.transform, logo, "Logo", 0.0f, Color.white);
             image.raycastTarget = false;
@@ -1028,16 +1083,50 @@ namespace TumbangPreso.UI
         /// block and the form block would have stopped reading as two blocks. See `BuildColumn`,
         /// where the 36 is the number he asked for after *"this part looks too tight"*.
         /// </summary>
-        private const float LogoMarkWidth = 336.0f;
+        /// <summary>
+        /// The wordmark's DRAWN HEIGHT, and every other number about it follows.
+        ///
+        /// ⚠️⚠️ IT REPLACED `LogoMarkWidth`, AND WHICH DIMENSION IS AUTHORED IS THE WHOLE POINT.
+        /// See the note in <see cref="BuildLogo"/>: height is the dimension that moves the form,
+        /// so authoring the height means a new logo of any shape cannot push the tabs, the
+        /// fields or the primary down the column. Width is free until it reaches the column edge,
+        /// and at 1.52:1 this is about 228 units inside a 580-unit column.
+        ///
+        /// ⚠️ 150 AGAINST THE OLD MARK'S 96.5, WHICH IS THE "IMPACT" § 121.2c WAS AFTER AND
+        /// COULD NOT BUY. That entry grew the mark by deleting empty wood from around it and got
+        /// 336 x 96.5; the room under it was 60 units of column doing nothing. **This spends that
+        /// slack on the mark rather than on air**, and it is the one screen where doing so is
+        /// right: `docs/Front_End_Design.md` § 2.1 makes the wordmark this screen's hero element.
+        ///
+        /// ⚠️ IT MUST LEAVE THE TAB ROW ALONE, and that is the constraint that caps it. The box
+        /// is centred on `Logo`, so its underside is `Logo - (this / 2)`; the live tab's top is
+        /// about 234, and § 119.10's *"this part looks too tight"* bought a 36-unit gap that may
+        /// not be spent again. At `Logo` 352 and 150 tall the underside is **277**, which is 43
+        /// units of air.
+        /// </summary>
+        private const float LogoMarkHeight = 150.0f;
 
-        /// <summary>`TUMP.png` is 1835x527. ⚠️ Written as the division so a re-export that changes
-        /// the file's shape is a one-line correction with the source visible.</summary>
-        private const float LogoAspect = 1835.0f / 527.0f;
+        /// <summary>
+        /// ⚠️⚠️ `LogoAspect` IS DELETED AND THE SHAPE IS READ OFF THE TEXTURE IN
+        /// <see cref="BuildLogo"/>. It was the literal `1835.0f / 527.0f` with a note calling a
+        /// re-export "a one-line correction with the source visible", which is `CLAUDE.md` § 5's
+        /// drift in miniature: a number describing a file, kept beside the file, that nobody
+        /// updates when the file changes. 🧑 sent two versions of this logo on one day.
+        /// </summary>
 
-        private const float LogoInset = 22.0f;
-        private const float LogoPlaqueWidth = LogoMarkWidth + (LogoInset * 2.0f);
-        private const float LogoPlaqueHeight =
-            (LogoMarkWidth / LogoAspect) + (LogoInset * 2.0f) + PaperCraft.Drop;
+        /// <summary>
+        /// ⚠️⚠️ `LogoInset`, `LogoPlaqueWidth` AND `LogoPlaqueHeight` ARE DELETED, AND THEY WERE
+        /// ALREADY DEAD BEFORE THIS PASS TOUCHED THEM. The plaque itself went when 🧑 asked
+        /// **"this looks very ugly i dont get why tump is in a box"**; the three constants that
+        /// sized it were left behind, declared, computed and read by nothing. The comment in
+        /// `BuildLogo` still claimed they "are kept and still size the slot", which was true of
+        /// the version before that one.
+        ///
+        /// **Nothing referenced them, so removing them changes no pixel**, and leaving them would
+        /// have meant two constants that no longer compile against a `LogoAspect` that is now
+        /// read off the texture. This is `CLAUDE.md` § 3's rule about recording deletions rather
+        /// than only changes.
+        /// </summary>
 
         /// <summary>
         /// One layer of the carved wordmark: the texture, fitted, tinted and nudged.
@@ -1270,10 +1359,18 @@ namespace TumbangPreso.UI
             // alignment without copying the column's would be copying the look and not the rule.
             // `FUTURE.md` § 0.5b: **name the mechanism, then check whether this game's content
             // has the shape the mechanism assumes.**
+            // ⚠️ THE FIELD CAPTION IS THE SUB FONT, AND 🧑 ASKED FOR EXACTLY THIS ONE LABEL BY
+            // NAME: *"i think everything here in darumadrop looked good, just change your username
+            // to the sub font"*. It is built through `MenuKit.Label` rather than `PaperKit.Ink`,
+            // so `FaceFor` never ran on it and it stayed in the display face while every other
+            // caption in the front end moved. **A label that bypasses the kit bypasses the rule**,
+            // which is the same class of miss as the converted `InputField` that kept Unity's blue
+            // selection highlight.
             var captionLabel = MenuKit.Label(col, caption, PaperKit.Caption,
                 UiTheme.PaperInkSoft,
                 Centre, new Vector2(0.0f, y + 44.0f), new Vector2(420.0f, 24.0f),
                 TextAnchor.MiddleLeft);
+            MenuKit.Apply(captionLabel, PaperKit.FaceFor(PaperKit.Caption), bold: true);
             captionLabel.raycastTarget = false;
 
             var go = new GameObject($"Field_{caption}", typeof(RectTransform), typeof(Image));

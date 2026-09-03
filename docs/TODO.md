@@ -503,6 +503,118 @@ LONG.png` with one colour swapped, so one base colour generates a whole control"
 by name: *"u can edit those assets and change the colors or smth, depending on which screen u will
 use"*.
 
+**11. ⚠️⚠️ `AspectRatioProbes` NOW REPORTS EVERY FAILING LABEL INSTEAD OF THROWING ON THE FIRST,
+AND THAT ALONE CHANGED WHAT THE PROBE IS SAYING.** `Assert` inside a walk stops at the first
+failure, so the probe named ONE label however many were red, and § 130.15 recorded that one as
+*"the only remaining red"*. **It is five.** With the words in the report as well as the node name,
+which matters because `MenuKit.Label` calls every label it makes `Label`:
+
+| The label | Size | What it is |
+|---|---|---|
+| `"Q"`, `"E"`, `"F"` | **13** | The ability KEYCAPS on the loadout board, three of them |
+| `"build a character"`, `"your two skills"` | **16** | The two door captions, which ARE `PaperKit.Caption` and § 121.8's open question |
+
+⚠️ **THE KEYCAPS ARE FIXED AND THE CAPTIONS ARE NOT, AND THAT SPLIT IS THE POINT.** A keycap is
+pure instruction: `docs/VISION.md` § 3 says *"a screen that teaches the wrong key is worse than one
+that teaches none"*, and at 13 units it is **8.7 physical pixels at 720p**, which teaches none. It
+is also ONE CHARACTER, so § 126.13's three options collapse to one: there are no words to cut and
+no exemption to argue, so **the box grew**. The chip goes 26x18 to 34x26, which matches the ability
+glyph beside it exactly so the row's height does not move, and the label goes to
+`MenuKit.MinReadableUnits`. **The two captions stay red on purpose**: they are 🧑's call, and
+`Attention.md` § 12.2 asks for it against the new face.
+
+**12. The login screen draws the NEW wordmark, and the slot is authored by HEIGHT now.**
+⚠️⚠️ **WHICH DIMENSION IS AUTHORED WAS THE ACTUAL BUG WAITING TO HAPPEN.** `BuildLogo` sized the
+mark by WIDTH for its whole life, so the height of the game's name depended on the aspect of
+whatever file was loaded, and the column below it is a stack. The old `TUMP.png` is **3.48:1** and
+the new mark is **1.52:1**, because the new one carries the blob and the drip as well as the
+letters: **at the old 336-unit width it would have drawn 221 units tall against 96.5 and landed on
+top of the tab row.** `LogoMarkHeight` is 150 and the width follows, so a logo of any shape can
+never push the form down again. ⚠️ **And the aspect is read off the texture** rather than written
+as `1835.0f / 527.0f` with a note calling a re-export "a one-line correction": that is § 5's drift
+in miniature, and he sent two versions of this logo in one day.
+
+⚠️ **`LogoInset`, `LogoPlaqueWidth` and `LogoPlaqueHeight` are deleted and were already dead.**
+The plaque went when 🧑 asked *"this looks very ugly i dont get why tump is in a box"*; the three
+constants that sized it survived, computed and read by nothing, and `BuildLogo`'s comment still
+claimed they *"are kept and still size the slot"*.
+
+**13. ⚠️⚠️ THE MONO MASTER IS A SINGLE-FILL DRAWING, SO A RECOLOUR ONLY WORKS ON A CONTRASTING
+GROUND, AND THE FIRST RENDER OF THE LOGIN SCREEN FOUND IT.** `new tump text.jpg` draws the
+letters, the blob behind them and the drip as ONE white counter, so any recolour paints all three
+the same colour and the shapes collapse into one silhouette. `tump_wordmark_login.png` is deep-red
+line on Honey Quartz fill and the login column IS Honey Quartz: on `SignInBoot-v77.png` **only the
+outline read**, and the game's name arrived as an empty wire frame.
+
+⚠️ **So the variants are right where the ground is far from the fill and wrong where it is the
+fill.** `tump_wordmark_stage.png` is honey on Army and reads well, which is the character screen.
+**The login screen draws the COLOUR master instead**, which is also the more faithful answer:
+`docs/VISION.md` § 6 and `CLAUDE.md` § 6.4 say his art is the design system and is not to be
+repainted, and `tump_logo.png` is the file he actually drew, drawn at `Color.white` on the ground
+it was drawn against. ⚠️ **A per-region recolour would need the master separated into layers**
+(letters, blob, drip) the way `SkinLayers` separates a control, and that is a request to him
+rather than something a script can infer from one flat fill.
+
+### 133.12 ⚠️⚠️ THE SECOND BATCH: HE LOOKED AT THE FONT PASS AND ASKED FOR THE ACTUAL OVERHAUL
+
+🧑 2026-09-03, sent the login render from the first batch: **"yea this shti sucks hahaha, can u
+overhaul it like all of it gang, i dont wanna use the old colors anymore"**, then *"remake the
+colors too"*, *"i want colors corresponding to or using the same colors as my logo"*, and
+**"i asked for an overhaul man, not a quick small chanve"**.
+
+⚠️⚠️ **HE WAS RIGHT AND THE DIAGNOSIS IS WORTH KEEPING.** The first batch moved the PAPER onto the
+logo's palette and left every ACTION colour where it was, so what he opened was a warm cream screen
+with the old bright green primary `21a131`, the old brown tabs and the old amber still on it. **A
+palette pass that repaints the ground and not the objects reads as no palette pass at all**, because
+the objects are what the eye goes to.
+
+**Three things had to move, and only the first was a colour.**
+
+**1. Twelve front-end constants moved onto the logo's palette.** Verified front-end-only first, by
+counting how many of the eleven in-match files read each one, because § 133.4 scopes the HUD out:
+`MenuGreen` `21a131` to `a09b01`, `MenuGreenLit` to `e8e14a`, `MenuGreenFace` `51dd38` to
+**`d6ce01`** (Chartreuse, the action), `MenuRed` `ed2136` to **`980715`**, `MenuRedLit` to
+`c32e0d`, `WoodFace` and `WoodPanelFace` `793e1f` to `3f3a0e` (Army darkened), `WoodFieldFace` to
+`2a2709`, `WoodSlot` to `242109`, `Asphalt` to `322f0b`, `Panel` to `fddfba`, `Card` to `feebd4`.
+⚠️ **`Cream`, `CreamMuted`, `WoodDeep`, `WoodMid`, `WoodDark`, `WoodEdge` and `Highlight` are NOT
+in that list** and were left alone: every one of them is read by the in-match layer.
+
+**2. ⚠️⚠️ THE BUTTONS WERE REDRAWN, NOT RETINTED, AND THAT IS THE HALF THAT MATTERED.** 🧑:
+**"the darumadrop buttons AS TEXT stay, i wanted u to remake all buttons in a diff style that feels
+like my logo bruh"**. Every pressable surface in the front end was a LIT SOLID: a value ramp down
+its face, a bright keyline outside a dark rim, a cast shadow under it. That vocabulary is
+`WoodCraft`'s, sampled off his own `BUTTON LONG.png`, and it is faithful to that art. **The logo is
+drawn by different rules entirely**: no ramp anywhere, no bevel, no lit edge, every shape a flat
+colour inside a heavy irregular line, and the only depth in the mark a darker red bar tucked inside
+the bottom of each letter. `PaperCraft.Surface.Brand` is that construction, and
+`docs/Front_End_Design.md` § 1.4 carries the four measurements.
+
+⚠️ **THE PAINTERS MOVED AND THE SURFACES DID NOT, WHICH IS THE ONLY REASON THIS WAS SAFE.**
+`Surface.Action`, `Token` and `Live` are read BY NAME in about eight places to decide label colour,
+the tab inversion and which children to silence (`PaperKit.MakeAction`, `PaperButton.Restyle`,
+`PaperKit.MarkLive`, `PlayerHub.Highlight`, two guards in `PaperDress`). Repointing the enum would
+have moved a look and broken a contract in the same line; swapping which painter each dispatches to
+moved exactly what he asked about and touched no contract.
+
+⚠️ **`PaintAction` is kept, unused, with its receipts.** Every number in it was measured off
+`BUTTON LONG.png` and tuned against three of his own rejections. **He has reversed a look before by
+name** (the character select going back to brown), and rebuilding that painter from its comments
+would lose the measurements. Same argument as `GameVersion`'s branch machinery in `CLAUDE.md` § 7.
+
+**3. The face split moved, because the first threshold was too greedy.** 🧑: **"ur over replacing
+fonts, i lowk js wanted u to replace sub fonts with the new font, not everything gang"**, and
+*"i think everything here in darumadrop looked good, just change your username to the sub font"*.
+`PaperKit.FaceFor`'s boundary went from `Title` (26) to `Body` (20), so **Nunito is the SUB font**:
+captions, hints, placeholders, the quiet second line and the ability descriptions, and nothing
+else. ⚠️ **The fault § 133 exists for is still fixed**, because the smear was
+`FontStyle.Bold` on a one-weight face and `MenuKit.Apply` makes that unreachable on both sides.
+
+⚠️ **AND ONE LABEL HAD TO BE FIXED BY HAND, WHICH IS THE LESSON.** The login screen's USERNAME and
+PASSWORD captions are built through `MenuKit.Label` rather than `PaperKit.Ink`, so `FaceFor` never
+ran on them and they stayed in the display face while every other caption moved. **A label that
+bypasses the kit bypasses the rule**, which is the same class of miss as the converted `InputField`
+that kept Unity's blue selection highlight.
+
 ### 133.11 ⚠️ What is still open, and nothing in it is blocked
 
 - ✅ **THE PALETTE IS NO LONGER A BLOCKER.** It landed 2026-09-03, measured, and the repaint went
