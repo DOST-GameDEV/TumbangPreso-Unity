@@ -177,6 +177,27 @@ hearing them in the game. Their pre-pass WAV files are restored and
 Do not bulk-regenerate those files from the Kenney packs. A source label that says tin or hover is
 not better evidence than the sound that was preferred in the game.
 
+### 5.5 Rollback ledger for the remaining sourced cues
+
+🧑 may reject more of the sourced replacements after hearing them in play. Treat the remaining
+twenty-four as provisional, not approved as a group. The replacement commit is `ee8bced`; the
+exact pre-pass WAV for any cue is the same path at `ee8bced^` (`c5b6ff9`). Restore only the named
+cue, then remove its row from `tools/build_ability_audio.py.REPLACEMENTS` and record it in `KEPT`
+in the same commit. Otherwise the next generator run will silently put the rejected sound back.
+
+The provisional files are:
+
+- Body/contact: `bump`, `tag`, `downed`, `guard_block`, `sfx_hitmarker`.
+- Movement/tsinelas: `land`, `slipper_land`, `slipper_bounce`, `grab`, `throw_whoosh`, `dash`.
+- Ability/feedback: `sfx_quake_slam`, `sfx_ice_shatter`, `sfx_stun_break`, `sfx_super_ready`,
+  `stamina_empty`.
+- UI/match: `ui_click`, `ui_back`, `ui_error`, `countdown_tick`, `countdown_go`, `score_award`,
+  `reset_channel_start`, `reset_channel_complete`.
+
+Aliases follow their target file: `hit_body` uses `bump`, `pickup` uses `grab`, `throw_release`
+uses `throw_whoosh`, `bump_swing` uses `dash`, and `reset_complete` uses
+`reset_channel_complete`. A request to restore an alias means restoring and protecting its target.
+
 ## 6. Common non-ability VFX and SFX
 
 Use the same sources instead of adding another art family:

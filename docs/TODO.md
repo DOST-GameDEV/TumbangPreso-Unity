@@ -1339,6 +1339,13 @@ its `KEPT` table, so rebuilding the other sourced cues cannot overwrite them aga
 the whole batch. The exact changed list is recoverable from commit `ee8bced`, and every remaining
 cue still needs the same played comparison. A pack name is not evidence that its version is better.
 
+🧑, after the first three were restored: *"i might want to revert some so get ready for it next
+time but for now thats good enough"*. `Asset_Sourcing.md` § 5.5 is the rollback ledger: the old
+blobs are at `ee8bced^`, all twenty-four provisional targets are named, aliases are resolved to
+their real files, and a restored cue must move from `build_ability_audio.py.REPLACEMENTS` to
+`KEPT` in the same commit. Restore named files only. Do not roll the whole source pass back and
+take accepted VFX or audio with it.
+
 ### 131.8 ⚠️ OPEN: `CustomGameScreenProbe` HAS NOW RUN, AND ONE CASE IS RED AT ONE RESOLUTION
 
 **It had never been executed.** Five cases, nine resolutions, written and never run. It runs now:
