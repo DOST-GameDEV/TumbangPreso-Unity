@@ -1385,7 +1385,8 @@ does not exist. Classic and Hero Strike are the game. These two are the whole ar
 
 **Maps:** three exist and one has a design document. A map is the most expensive content in the
 game. **Map rotation and a map vote are nearly free and buy most of the same freshness.** Build
-those before building a fourth map.
+those before building a fourth map. ✅ **Both are built as of 2026-09-03**, rotation wired and the
+ballot's rules written and tested ahead of the wire: `docs/Formats.md` § 4.
 
 **Custom games** are the multiplier on all of it: private lobby, password, round length, score
 target, character and tsinelas restrictions, bot count, item toggles. Community formats come out of
@@ -2431,8 +2432,13 @@ exist.**
 >    restrictions, bot count, rule toggles. Everything else in this phase gets cheaper afterwards,
 >    and it is also the tournament tool for Phase 17.
 > 2. ⚠️ **Not the daily seed.** It was cut on 2026-08-31 and `INSPIRATION.md` § 2.9 records why.
-> 3. Map rotation and a map vote. **Do these before building a fourth map**: voting buys most of
->    the same freshness for a fraction of the work.
+> 3. ✅ **BUILT 2026-09-03.** Map rotation and a map vote. `MapRotationRules` (engine-free,
+>    16 tests), `docs/Formats.md` § 4, `docs/TODO.md` § 130.12. A REMATCH moves to the next map,
+>    host-only, over the `SelectMap` broadcast that already existed, so **the protocol did not
+>    move**. ⚠️ **The BALLOT is not across the wire yet**: `Decide` takes votes when a lobby has
+>    some to give it, and until then silence falls through to the cycle. Collecting votes is a new
+>    message and therefore a protocol move, and it should be spent in the same bump as LAST
+>    TSINELAS's match half (`docs/TODO.md` § 130.13) rather than on its own.
 >
 > **Constraints.** Every new mode adds its rules to `Packages/com.tumbangpreso.core/`, never to
 > Unity code. ⚠️ **A new mode is a new mode, never a change to Classic.** `docs/Design.md` governs

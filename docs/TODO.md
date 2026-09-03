@@ -469,6 +469,68 @@ and was found by a probe rather than by playing. **Done looks like** the cause n
 `TagSelectionServesEveryEligibleSeatBeforeRepeating` and the movement-aimed case both pass, so the
 two arms disagree and one of them is wrong.
 
+### 130.17 ✅ EVERY ANDROID REBUILD ON THIS MACHINE FAILED, AND IT IS THE SAME GUARD BEING TOO NARROW FOR THE THIRD TIME
+
+Found by trying to ship the .apk this session's own crossplay fixes need, which is the only way it
+could have been found: the FIRST Android build ever made (§ 126.10) wrote into an empty folder and
+passed.
+
+```
+[Build] output 'C:\Users\Matthew\Desktop\TumbangPreso-Android' exists but does not look like a
+previous player (no UnityPlayer.dll, no TumbangPreso_Data, no .app). Refusing to delete it.
+```
+
+**`GameBuilder.PurgeOutputDirectory` recognises a previous DESKTOP player and nothing else.** An
+Android build writes a single `.apk` plus a `*_BurstDebugInformation_DoNotShip` folder and none of
+the three markers it looks for, so from the second build onward the guard refused the folder and
+the build aborted. ⚠️ **It aborts AFTER switching build target and running the whole scene check**,
+which is several minutes in and reads like a real build failure rather than a path guard.
+
+⚠️⚠️ **THE COMMENT DIRECTLY ABOVE THE TEST ALREADY RECORDS THE macOS INSTANCE OF THIS EXACT
+FAULT**: *"BuildMac writes a bundle rather than an .exe beside a _Data folder, so a Windows-only
+check refused to purge a perfectly ordinary previous macOS build and failed the build instead."*
+**Android is the third platform to meet it and the note did not stop it**, because the note
+described one platform's fix rather than the shape of the mistake. The shape is: *this test
+enumerates what today's platforms leave behind, so every platform added later fails it once.*
+
+- ✅ **`.apk` and `.aab` join the recognised set.** ⚠️ **The guard's INTENT is unchanged**: it still
+  refuses a drive root, a directory holding a `.git`, and anything that does not already look like
+  a build. **What widened is the definition of "looks like a build", not the willingness to
+  delete**, and `-buildOutput` still takes an arbitrary path from the command line.
+- ⚠️ **This is why `CLAUDE.md` § 7's rebuild procedure could not have caught it.** That procedure
+  is about a STALE output looking fresh; this is a fresh output that never gets written at all, and
+  the .apk on the Desktop kept its old timestamp because nothing had touched it. **Check the
+  timestamp, not the exit code**: this run exited **0**.
+
+### 130.16 · Verified
+
+- **Core 451/451** (`dotnet test`, 44 ms). 433 plus 2 pool-key tests plus 16 `MapRotationTests`.
+- **EditMode 305/305** (4 s). 297 plus 4 `NetIdentity` retry tests plus 4
+  `WorldCameraPassParityTests`.
+- **All seven editor checks pass in one launch**: headless, arena, map geometry, audio cues, scene
+  scripts, input surface, and the new shader warmup. ⚠️ The last one REGENERATES rather than
+  inspecting, which is why it is a check rather than a test.
+- **`[Build] SUCCEEDED. 770 MB, 52s`** to `C:\Users\Matthew\Desktop\TumbangPreso-Unity\TumbangPreso.exe`,
+  timestamps from this run. The build log carries `[ShaderWarmup] 23 shaders, 53 variants` and
+  **`0 Shader.Find name(s) did not resolve`**, so the collection in the shipped player is the
+  regenerated one rather than a stale asset.
+- ⚠️ **`NetSession.ProtocolVersion` is untouched at 21**, read from the file. Nothing in this batch
+  went near the wire: the map rotation rides the existing `SelectMap` broadcast and the pool key is
+  not a wire message, it is a string two peers compare.
+
+**Targeted PlayMode, the seven suites this batch touched: 11 of 13.** ⚠️ Targeted rather than full,
+which is § 126.8's own instruction until that entry closes.
+
+| | |
+|---|---|
+| `SteeringTests.MouseAimedMovementIsRelativeToTheBody` | **§ 130.14. Pre-existing, deterministic, measured at HEAD without this batch's teardown and identical to eight significant figures** |
+| `AspectRatioProbes.TheCharacterScreenSurvivesEveryAspectRatio` | **§ 130.15. `PaperKit.Caption` at 16, which is § 121.8's open design question** |
+
+⚠️⚠️ **AND THE HONEST LIMIT ON THE § 126.8 CLAIM: THE FULL SUITE HAS NOT BEEN RUN ON THIS COMMIT.**
+The cause is identified and the five named fixtures are fixed, but *"the suite is a gate again"* is
+a claim only a full run can make, and quoting one would be the exact fault § 126.8 exists to record.
+**Do not close § 126.8 on this entry.**
+
 ### 130.15 ⚠️ `AspectRatioProbes` IS NARROWED TO ONE OPEN QUESTION NOW, AND IT IS § 121.8
 
 After § 130.11's three fixes the character screen's only remaining red is **`DoorCaption`, authored

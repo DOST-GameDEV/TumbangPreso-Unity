@@ -557,18 +557,41 @@ namespace TumbangPreso.EditorTools
             // The .app entry is the macOS half of the same test. BuildMac writes a bundle
             // rather than an .exe beside a _Data folder, so a Windows-only check refused to
             // purge a perfectly ordinary previous macOS build and failed the build instead.
+            //
+            // ⚠️⚠️ AND THE `.apk` ENTRY IS THE ANDROID HALF, WHICH IS THE **THIRD** TIME THIS ONE
+            // TEST HAS BEEN TOO NARROW FOR A PLATFORM SOMEBODY ADDED AFTERWARDS. The paragraph
+            // above records the macOS instance in its own words; this is the same sentence with a
+            // different extension, and it had the same symptom:
+            //
+            //     [Build] output 'C:\Users\Matthew\Desktop\TumbangPreso-Android' exists but does
+            //     not look like a previous player (no UnityPlayer.dll, no TumbangPreso_Data, no
+            //     .app). Refusing to delete it.
+            //
+            // ⚠️⚠️ **SO EVERY ANDROID REBUILD ON THIS MACHINE FAILED THE MOMENT ONE .apk EXISTED**,
+            // and it failed AFTER switching build target and running the whole scene check, which
+            // is several minutes in. `docs/TODO.md` § 130.17. An Android build writes a single
+            // `.apk` (or `.aab`) plus a `*_BurstDebugInformation_DoNotShip` folder and none of the
+            // three desktop markers, so the guard was correct about what it saw and wrong about
+            // what it meant.
+            //
+            // ⚠️ THE GUARD'S INTENT IS UNCHANGED AND MUST STAY: `-buildOutput` takes an arbitrary
+            // path, so this still refuses a drive root, a directory holding a `.git`, and anything
+            // that does not already look like a build. **What widened is the definition of "looks
+            // like a build", not the willingness to delete.**
             bool looksLikeAPlayer =
                 File.Exists(Path.Combine(info.FullName, "UnityPlayer.dll")) ||
                 Directory.Exists(Path.Combine(info.FullName, "TumbangPreso_Data")) ||
                 Directory.GetDirectories(info.FullName, "*.app").Length > 0 ||
+                Directory.GetFiles(info.FullName, "*.apk").Length > 0 ||
+                Directory.GetFiles(info.FullName, "*.aab").Length > 0 ||
                 info.GetFileSystemInfos().Length == 0;
 
             if (!looksLikeAPlayer)
             {
                 Debug.LogError($"[Build] output '{dir}' exists but does not look like a previous " +
-                               "player (no UnityPlayer.dll, no TumbangPreso_Data, no .app). " +
-                               "Refusing to delete it. Move it aside or point -buildOutput " +
-                               "somewhere else.");
+                               "player (no UnityPlayer.dll, no TumbangPreso_Data, no .app, no " +
+                               ".apk or .aab). Refusing to delete it. Move it aside or point " +
+                               "-buildOutput somewhere else.");
                 return false;
             }
 
