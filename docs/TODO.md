@@ -731,19 +731,26 @@ moved the protocol.
 - **Core 454/454** (`dotnet test`, 48 ms). 451 plus `ARoundIsDecidedByOneSurvivorOrByNoneAndNeverByTwo`,
   `TheLastStandingAwardIsAKnockdownsWorthAndIsReadFromOnePlace` and
   `TheScoreEventOrdinalsAreAWireContractAndOnlyGrowAtTheEnd`.
-- **EditMode 314/314**. 305 plus 6 `LastTsinelasMatchHalfTests` and 3 `MapBallotWiringTests`.
+- **EditMode 316/316**. 305 plus 8 `LastTsinelasMatchHalfTests` and 3 `MapBallotWiringTests`.
+  ⚠️ Two of the eight are the client-only defects above and were written after the first build,
+  which is why this number is 316 and not the 314 the first pass reported.
 - **All seven editor checks pass in one launch**, and `[ShaderWarmup] 23 shaders, 53 variants`
   with **0 `Shader.Find` names unresolved**, unchanged by this batch.
 - **All three `tools/` audits exit 0**: 49 ability effect sites with **0 ungated on another body**,
   **57 wire entry points and 0 unreachable** (the two new ballot messages both have callers), and
-  **60 named messages with 0 mismatched** (`Tsinelas` reads 2 and writes 2).
-- **`[Build] SUCCEEDED. 770 MB, 66s`** to `C:\Users\Matthew\Desktop\TumbangPreso-Unity\TumbangPreso.exe`,
-  timestamps from this run, with `[ShaderWarmup] 23 shaders, 53 variants` and **0 unresolved
-  `Shader.Find` names** regenerated inside the build.
-- **The `.apk` was rebuilt from the same commit**, which is not optional at a protocol bump.
-  ⚠️ § 130.17 is why that is worth stating rather than assuming: `PurgeOutputDirectory` aborted
-  every Android rebuild for weeks, silently, at exit 0 with an unchanged timestamp. **Check the
-  timestamp, not the exit code.**
+  **60 named messages with 0 mismatched** (`Tsinelas` reads 3 and writes 3).
+- **`[Build] SUCCEEDED. 770 MB, 66s`** to `C:\Users\Matthew\Desktop\TumbangPreso-Unity\TumbangPreso.exe`
+  and **`[Build] SUCCEEDED. 1900 MB, 154s`** to
+  `C:\Users\Matthew\Desktop\TumbangPreso-Android\TumbangPreso.apk`, **both from `bb72232`**, four
+  minutes apart, timestamps from those runs. `[ShaderWarmup] 23 shaders, 53 variants` with **0
+  unresolved `Shader.Find` names** regenerated inside the build.
+- ⚠️⚠️ **SHIPPING THEM TOGETHER IS THE POINT AND NOT A FORMALITY AT THIS COMMIT**, because
+  `ProtocolVersion` moved: a v21 phone and a v22 PC refuse each other correctly and it reads as a
+  bug (`CLAUDE.md` § 4a).
+- ⚠️ § 130.17 is why the `.apk` timestamp is quoted rather than the exit code:
+  `PurgeOutputDirectory` aborted every Android rebuild for weeks, silently, at exit 0 with an
+  unchanged timestamp. **The purge ran and the old file was gone before IL2CPP started**, checked
+  by hand this time.
 
 ⚠️⚠️ **`NetSession.ProtocolVersion` IS 22 AND THAT IS THE HEADLINE OF THIS COMMIT.** § 130.13 is
 why. **Both players were rebuilt from this commit and shipped together**, per `CLAUDE.md` § 4a: a
