@@ -121,3 +121,12 @@ Assets/Resources/PerformanceTestRunSettings.json.meta
 # `GameBuilder.BuildWindows` rebuilds it before every build.
 Assets/TumbangPreso/Resources/ShaderWarmup.shadervariants
 Assets/TumbangPreso/Resources/ShaderWarmup.shadervariants.meta
+
+# The bought control-icon pack, unpacked so `tools/build_input_glyphs.py` can be re-run.
+# ⚠️ THE SOURCE SHEETS ARE NOT COMMITTED AND THAT IS A LICENCE DECISION RATHER THAN TIDINESS.
+# vryell's "Controllers and Keyboard" is a purchased pack, this repository is on GitHub, and
+# shipping an asset inside a compiled player is a different permission from redistributing its
+# source PNGs. Only the RECOLOURED derivatives under
+# `Assets/TumbangPreso/Resources/UI/input/` are committed, and `Attention.md` § 7.1 asks 🧑 to
+# confirm even that. Drop the pack's PNGs in here to rebuild them.
+scratchpad/input-icons/

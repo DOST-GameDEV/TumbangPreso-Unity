@@ -26,9 +26,20 @@ namespace TumbangPreso.PlayTests
     /// three calls from the one context that is allowed to make them.
     ///
     /// ⚠️ IT IS DELIBERATELY NOT A CATEGORY-FREE TEST. It talks to a live service, so it is slow,
-    /// it needs a network, and it spends real free-tier quota. `[Category("Ugs")]` keeps it out of
-    /// the default PlayMode run for the same reason `WallClock` keeps `AiDiagnosticProbe` out.
-    /// Run it on purpose, after a relink or when online play is suspected:
+    /// it needs a network, and it spends real free-tier quota. `[Category("Ugs")]` names it so it
+    /// can be run on purpose.
+    ///
+    /// ⚠️⚠️ THIS PARAGRAPH USED TO CLAIM THE CATEGORY *"keeps it out of the default PlayMode run
+    /// for the same reason `WallClock` keeps `AiDiagnosticProbe` out"*, AND THAT WAS NEVER TRUE.
+    /// `CLAUDE.md` § 7's command is `-testCategory "!WallClock;!ThumbFloor"` and has never carried
+    /// `!Ugs`, so all eight cases have run in every full suite since the category was added. The
+    /// exclusion existed in this comment and nowhere else, which is `docs/TODO.md` § 5's drift
+    /// rule inside a test file. **The guard is now in the code instead** (see `SignedIn`): in
+    /// batch mode the suite reports SKIPPED with its reason, which is true in any runner and does
+    /// not depend on anybody remembering a command-line flag.
+    ///
+    /// Run it on purpose, after a relink or when online play is suspected, from a runner that is
+    /// not batch mode (the editor's Test Runner window):
     ///
     ///   Unity.exe -batchmode -runTests -projectPath . -testPlatform PlayMode
     ///             -testCategory "Ugs" -testResults Logs/ugs.xml -logFile Logs/ugs.log
@@ -40,6 +51,18 @@ namespace TumbangPreso.PlayTests
     [Category("Ugs")]
     public class UgsServicesProbe
     {
+        /// <summary>
+        /// ⚠️⚠️ THE PAIR THAT MAKES A FULL-SUITE RESULT MEAN ANYTHING. `docs/TODO.md` § 126.8:
+        /// the full PlayMode run came back 42, 41 and then 56 red with the red set moving, and a
+        /// gate whose red set moves is not measuring the code. `PlayModeWorld.Reset` has the
+        /// mechanism and why BOTH hooks are needed rather than one.
+        /// </summary>
+        [UnitySetUp]
+        public IEnumerator ResetWorldBefore() => PlayModeWorld.Reset();
+
+        [UnityTearDown]
+        public IEnumerator ResetWorldAfter() => PlayModeWorld.Reset();
+
         /// <summary>
         /// ⚠️ AWAITED BY POLLING RATHER THAN BY `.Wait()`. The UGS calls post their continuations
         /// to Unity's synchronisation context, which only advances while frames are being pumped,
@@ -80,6 +103,32 @@ namespace TumbangPreso.PlayTests
         /// </summary>
         private static IEnumerator SignedIn()
         {
+            // ⚠️⚠️ IN BATCH MODE THIS PROBE CANNOT ANSWER ITS OWN QUESTION, AND SAYING SO IS NOT
+            // THE SAME AS WIDENING A BOUND. `NetIdentity.AttemptSignInAsync` refuses outright
+            // when `Application.isBatchMode` and settles `Unreachable` with the sentence below;
+            // that is a deliberate property of the BUILD, added because a headless run has no
+            // Hub session token and no display. So every assertion after this line was asserting
+            // that a guard the game ships does not exist, and **all eight cases in this class
+            // went red in the 2026-09-03 full run for that one reason**, with the same message
+            // eight times.
+            //
+            // ⚠️ IGNORED, NOT PASSED, AND THE DIFFERENCE IS THE WHOLE POINT. A pass here would
+            // claim the live services answered when nothing was asked. `Assert.Ignore` reports
+            // the case as SKIPPED with the reason attached, so the `.xml` says "nobody asked"
+            // rather than "it works" or "it is broken", and `CLAUDE.md` § 7's rule about
+            // asserting on the xml still gets a true answer.
+            //
+            // ⚠️ THIS IS NOT `docs/TODO.md` § 126.8'S FORBIDDEN THIRD CATEGORY. That entry bans a
+            // category meaning *"these tests do not work next to each other"*, which would hide a
+            // cross-test leak. This is one suite declining to measure a service the build it is
+            // running in has switched off, and it names the switch.
+            if (Application.isBatchMode)
+                Assert.Ignore(
+                    "UGS sign-in is disabled in batch mode (NetIdentity.AttemptSignInAsync), so " +
+                    "there is no session for these calls to authenticate with. Run this suite " +
+                    "from the editor's Test Runner, or with a non-batch player, when a relink " +
+                    "or an online-play report needs checking.");
+
             Assert.IsNotEmpty(Application.cloudProjectId,
                 "no cloudProjectId, so there is no project to ask. ProjectSettings.asset line 738.");
 

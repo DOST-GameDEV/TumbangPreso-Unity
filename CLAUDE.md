@@ -727,7 +727,12 @@ passed on immediate re-runs with nothing changed. `docs/TODO.md` § 6 carries th
 ⚠️ `[Explicit]` does NOT do this in batch mode; it was tried and the tests still ran.
 Run them on purpose with `-testCategory "WallClock"`.
 
-**All five editor checks, in one launch:**
+**All SEVEN editor checks, in one launch.** ⚠️ This line said *"all five"* until 2026-09-03, and
+§ 7.1 four hundred lines down has listed seven since `InputSurfaceCheck` and
+`ShaderWarmupCollection` joined: `HeadlessCheck`, `ArenaCheck`, `MapGeometryCheck`,
+`AudioCueCheck`, `SceneScriptCheck`, `InputSurfaceCheck`, `ShaderWarmupCollection`. **A count in
+one place and a list in another is § 5's drift rule inside this file**, and the count is the copy
+that goes stale.
 
 ```bash
 "/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -projectPath . -executeMethod TumbangPreso.EditorTools.Checks.RunAll -logFile Logs/checks.log
@@ -743,6 +748,27 @@ and **still exits 0**.
 
 ⚠️⚠️ **Always assert on the `.xml`, never on the exit code.** Both that crash and a genuine
 failure come back as 0.
+
+⚠️⚠️ **AND THERE IS A THIRD STATE, FOUND 2026-09-03, WHICH IS WORSE THAN THE CRASH: A `.xml` THAT
+SAYS `result="Passed"` AND `total="0"`.** A crash writes no file at all and is at least visibly
+absent. This one is present, well formed, and green:
+
+```xml
+<test-run id="2" testcasecount="0" result="Passed" total="0" failed="0" duration="0.4359008">
+```
+
+**So read `total` and `failed`, not `result`.** `docs/TODO.md` § 126.8c has both causes, and they
+produce byte-identical files from thirteen minutes apart:
+
+- **Something destroyed the runner's own objects mid-run.** Every test still executes; there is
+  simply nothing left to write the results down. `PlayModeWorld.NeverTouch` is the guard.
+- ⚠️⚠️ **`-testFilter` IS SEMICOLON-SEPARATED, NOT COMMA-SEPARATED.** A comma-joined list of
+  fixture names is read as one impossible name, matches nothing, and produces exactly the same
+  file in thirteen seconds.
+
+```bash
+"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -projectPath . -testPlatform PlayMode -testCategory "!WallClock;!ThumbFloor" -testFilter "TumbangPreso.PlayTests.SteeringTests;TumbangPreso.PlayTests.CarryTests" -testResults Logs/targeted.xml -logFile Logs/targeted.log
+```
 
 ⚠️ **`-batchmode -quit` exits before compiling scripts** and still returns 0. Use
 `-executeMethod` or `-runTests` when you need an actual compile.

@@ -1530,6 +1530,22 @@ namespace TumbangPreso
         private const string QuitKeyLabel = "BACKSPACE";
 
         /// <summary>
+        /// How big an authored control glyph is drawn on this card.
+        ///
+        /// ⚠️ 38, WHICH IS THE TEXT CAP'S 34 PLUS ITS PADDING, MEASURED RATHER THAN PICKED. The
+        /// word cap below is `preferredHeight = 34` inside a 42-unit footer row, and a glyph that
+        /// matched 34 exactly read smaller than the words beside it because the cap's plate has a
+        /// border and the glyph is edge to edge. **The two have to LOOK the same height, not BE
+        /// the same height**, which is the same argument `PaperKit.MakeAction` makes about a
+        /// chamfer beside a round.
+        ///
+        /// ⚠️ AND IT IS SQUARE. The sheets are 16 by 16 cells with the artwork inset, so a
+        /// non-square box either letterboxes the cap or stretches it, and `preserveAspect` turns
+        /// the second into the first silently.
+        /// </summary>
+        private const float GlyphSize = 38.0f;
+
+        /// <summary>
         /// One control: the key, then what it does, tight enough together to read as a unit.
         /// </summary>
         private static void ControlPair(Transform parent, string key, string action)
@@ -1626,11 +1642,52 @@ namespace TumbangPreso
             Chip(_keyRow, trimmed, role);
         }
 
-        /// <summary>A control, drawn as a key on a keyboard rather than as a word in brackets.</summary>
+        /// <summary>
+        /// A control, drawn as a key on a keyboard rather than as a word in brackets.
+        ///
+        /// ⚠️⚠️ IT DRAWS THE AUTHORED GLYPH WHEN THERE IS ONE, AND THE WORD WHEN THERE IS NOT.
+        /// `docs/TODO.md` § 126.9 and § 125.13 both leave the authored-glyph gap open, and the
+        /// tutorial is where it costs most: on a pad `Hud.KeyLabelFor` returns `BUTTON WEST`,
+        /// which is not written on any controller ever made, and § 126.9 records the same string
+        /// overflowing the hero picker's 26-unit chip. `InputGlyphs` carries the sheets and the
+        /// reasoning.
+        ///
+        /// ⚠️ THE TEXT PATH IS UNCHANGED AND IS THE FALLBACK, not a legacy branch. A control with
+        /// no cell draws exactly what it drew before, so this can improve a prompt and can never
+        /// blank one. `docs/VISION.md` § 3: a screen that teaches the wrong key is worse than one
+        /// that teaches none, **and a glyph that is missing is not a glyph that is wrong**.
+        ///
+        /// ⚠️⚠️ `onDark: true`, AND THE GROUND IS NOT A STYLE CHOICE. This card is drawn over the
+        /// street: `GuidedTrainingHud` is in-match chrome, so the cap that reads here is the one
+        /// with the cream keyline round it. The same sprite on a cream paper screen would lose
+        /// its edge entirely, which is `CLAUDE.md` § 6.2b's *"over the real background, never an
+        /// empty scene"* arriving as a parameter rather than as a review note.
+        /// </summary>
         private static void KeyCap(Transform parent, string key)
         {
             var go = new GameObject($"Key_{key}");
             go.transform.SetParent(parent, false);
+
+            var glyph = UI.InputGlyphs.For(key, onDark: true);
+
+            if (glyph != null)
+            {
+                var picture = go.AddComponent<Image>();
+                picture.sprite = glyph;
+                picture.preserveAspect = true;
+                picture.raycastTarget = false;
+
+                // ⚠️⚠️ A SQUARE, AND NOT THE STRING-WIDTH BOX BELOW. The text branch sizes itself
+                // off `key.Length` because `BACKSPACE` and `Q` share a row; a glyph is 16 by 16
+                // whatever it says, and running it through the same arithmetic would stretch
+                // `LEFT SHIFT`'s picture to nine characters wide. **The sheets already solve the
+                // long-name problem**, which is most of why they are worth having.
+                var square = go.AddComponent<LayoutElement>();
+                square.preferredWidth = GlyphSize;
+                square.preferredHeight = GlyphSize;
+                square.minHeight = GlyphSize;
+                return;
+            }
 
             var plate = go.AddComponent<Image>();
             plate.sprite = GodotTheme.Box(UiTheme.Cream, UiTheme.Amber, 3, 6);

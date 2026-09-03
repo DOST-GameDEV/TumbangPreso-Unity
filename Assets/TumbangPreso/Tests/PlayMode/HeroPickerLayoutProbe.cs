@@ -31,6 +31,18 @@ namespace TumbangPreso.PlayTests
     public class HeroPickerLayoutProbe
     {
         /// <summary>
+        /// ⚠️⚠️ THE PAIR THAT MAKES A FULL-SUITE RESULT MEAN ANYTHING. `docs/TODO.md` § 126.8:
+        /// the full PlayMode run came back 42, 41 and then 56 red with the red set moving, and a
+        /// gate whose red set moves is not measuring the code. `PlayModeWorld.Reset` has the
+        /// mechanism and why BOTH hooks are needed rather than one.
+        /// </summary>
+        [UnitySetUp]
+        public IEnumerator ResetWorldBefore() => PlayModeWorld.Reset();
+
+        [UnityTearDown]
+        public IEnumerator ResetWorldAfter() => PlayModeWorld.Reset();
+
+        /// <summary>
         /// The most wood that may sit between the description and the first power.
         ///
         /// ⚠️ IT IS THE COLUMN'S OWN SPACING PLUS A LINE OF SLACK, NOT A ROUND NUMBER. `Rows` in

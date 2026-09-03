@@ -41,6 +41,18 @@ namespace TumbangPreso.PlayTests
     public class PlayerHubLayoutProbe
     {
         /// <summary>
+        /// ⚠️⚠️ THE SETUP HALF OF `docs/TODO.md` § 126.8'S FIX, AND THIS FIXTURE GETS ONLY THE
+        /// SETUP HALF ON PURPOSE. `PlayModeWorld`'s header asks for both hooks; this class
+        /// already owns a `[UnityTearDown]` doing its own cleanup, and NUnit does not define an
+        /// order between two teardowns of the same kind. **The setup reset is the half that
+        /// protects THIS fixture**: it guarantees the world is empty and settled when the test
+        /// below starts, whatever ran before it. With every fixture in the folder carrying it,
+        /// no test can inherit a world at all, which is the property the entry actually wants.
+        /// </summary>
+        [UnitySetUp]
+        public IEnumerator ResetWorldBefore() => PlayModeWorld.Reset();
+
+        /// <summary>
         /// ⚠️ ONE FILE PER CASE. The first version wrote all three to one path and the last
         /// test to finish silently overwrote the other two, so the evidence on disk described one
         /// of the three runs and nothing said which. A report that can be overwritten by a

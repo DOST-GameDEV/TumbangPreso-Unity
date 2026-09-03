@@ -22,6 +22,18 @@ namespace TumbangPreso.PlayTests
     /// </summary>
     public class HudPerformanceProbe
     {
+        /// <summary>
+        /// ⚠️⚠️ THE PAIR THAT MAKES A FULL-SUITE RESULT MEAN ANYTHING. `docs/TODO.md` § 126.8:
+        /// the full PlayMode run came back 42, 41 and then 56 red with the red set moving, and a
+        /// gate whose red set moves is not measuring the code. `PlayModeWorld.Reset` has the
+        /// mechanism and why BOTH hooks are needed rather than one.
+        /// </summary>
+        [UnitySetUp]
+        public IEnumerator ResetWorldBefore() => PlayModeWorld.Reset();
+
+        [UnityTearDown]
+        public IEnumerator ResetWorldAfter() => PlayModeWorld.Reset();
+
         private const int WarmupFrames = 60;
         private const int SampleFrames = 180;
         private const string OutPath = "Logs/hud-frame-cost.txt";

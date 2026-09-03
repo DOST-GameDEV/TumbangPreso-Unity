@@ -250,6 +250,49 @@ namespace TumbangPreso.Core
         public const int MinPasswordLength = 4;
         public const int MaxPasswordLength = 16;
 
+        /// <summary>
+        /// Whether a custom match's score target has been reached, and therefore whether the
+        /// match should end before its last round does.
+        ///
+        /// ⚠️⚠️ IT IS IN THE CORE AND NOT IN `MatchDirector`, WHICH IS `docs/FUTURE.md` § 19.12'S
+        /// STATED CONSTRAINT: *"Every new mode adds its rules to
+        /// `Packages/com.tumbangpreso.core/`, never to Unity code."* A win condition written
+        /// inside a `MonoBehaviour` needs a scene, a frame and a twelve-minute PlayMode run to
+        /// assert; this one is asserted in about a millisecond, which is the whole argument for
+        /// the engine-free package.
+        ///
+        /// ⚠️⚠️ ZERO MEANS OFF AND THAT IS THE FIRST THING THIS FUNCTION CHECKS.
+        /// <see cref="CustomRules.ScoreTarget"/>'s own note is *"0 means play every round, which
+        /// is how the game ships"*, and `Defaults` sets it to 0 for both modes. **A version of
+        /// this that read 0 as "already reached" would end every standard match on its first
+        /// tick**, which would be a change to Classic (`docs/VISION.md` § 1.1 forbids exactly
+        /// that) arriving through a feature Classic never opted into.
+        ///
+        /// ⚠️ AT OR ABOVE, NEVER EQUAL. `MatchRules.PointsFor` pays in blocks of 100 and 300, so
+        /// a seat on 400 that lands a tag goes to 700 and never equals a 500 target. An equality
+        /// test would let the match run for ever and the failure would look like the setting
+        /// doing nothing.
+        ///
+        /// ⚠️ IT CAN ONLY EVER END A MATCH EARLIER. `MatchDirector` still ends one when the
+        /// rounds run out; this is a second condition beside that one and never a replacement,
+        /// so a target nobody reaches changes nothing at all.
+        ///
+        /// ⚠️ A NULL SCOREBOARD IS ANSWERED RATHER THAN THROWN ON, the same shape
+        /// <see cref="LastAttackerStanding"/> and <see cref="AliveAttackers"/> both take: the
+        /// caller is a host in the middle of a round, and an exception there ends the match for
+        /// four people.
+        /// </summary>
+        public static bool ScoreTargetReached(IReadOnlyList<int> scores, int target)
+        {
+            if (target <= 0) return false;
+            if (scores == null) return false;
+
+            for (int i = 0; i < scores.Count; i++)
+                if (scores[i] >= target) return true;
+
+            return false;
+        }
+
         public static bool IsPasswordUsable(string password)
         {
             if (string.IsNullOrEmpty(password)) return true;

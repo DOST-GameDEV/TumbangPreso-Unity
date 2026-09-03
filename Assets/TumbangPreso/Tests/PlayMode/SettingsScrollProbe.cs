@@ -32,6 +32,18 @@ namespace TumbangPreso.PlayTests
     public class SettingsScrollProbe
     {
         /// <summary>
+        /// ⚠️⚠️ THE PAIR THAT MAKES A FULL-SUITE RESULT MEAN ANYTHING. `docs/TODO.md` § 126.8:
+        /// the full PlayMode run came back 42, 41 and then 56 red with the red set moving, and a
+        /// gate whose red set moves is not measuring the code. `PlayModeWorld.Reset` has the
+        /// mechanism and why BOTH hooks are needed rather than one.
+        /// </summary>
+        [UnitySetUp]
+        public IEnumerator ResetWorldBefore() => PlayModeWorld.Reset();
+
+        [UnityTearDown]
+        public IEnumerator ResetWorldAfter() => PlayModeWorld.Reset();
+
+        /// <summary>
         /// ⚠️ THE SAME NINE `AspectRatioProbes` USES, and deliberately its list rather than a
         /// second one: 4:3 and 16:10 are where a fixed-width panel in a scaled canvas goes wrong,
         /// 1280x720 is the floor the readable-text bound is solved against, and 2560x1080 is the

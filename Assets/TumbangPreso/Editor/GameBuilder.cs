@@ -51,6 +51,112 @@ namespace TumbangPreso.EditorTools
             EditorApplication.Exit(ok ? 0 : 1);
         }
 
+        /// <summary>
+        /// The browser build. `docs/FUTURE.md` Phase 18: *"A WebGL build in the browser. The
+        /// module is already installed. One click from a link converts far better than a download,
+        /// and this game is small enough to actually work there."*
+        ///
+        /// ⚠️⚠️ THE TARGET IS SWITCHED BEFORE THE BUILD, FOR `BuildAndroidPlayer`'S REASON AND
+        /// NOT AS A COPY OF IT. Switching is what re-evaluates the platform defines, and this
+        /// project branches on them in `Matchmaker.LocalPlatform`, `Matchmaker.LocalInputDevice`
+        /// and `TouchHud.ShouldShow`. A player built without the switch compiles those three for
+        /// the EDITOR's platform and nothing errors.
+        ///
+        /// ⚠️⚠️ AND WEBGL IS A DIFFERENT GAME FROM THE OTHER THREE IN ONE RESPECT THAT HAS TO BE
+        /// SAID OUT LOUD RATHER THAN DISCOVERED: **the browser has no UDP sockets.** `LanBeacon`
+        /// broadcasts over UDP and `UnityTransport` uses it for the LAN path, so **LAN hosting
+        /// and LAN join cannot work in a browser build and never will**. The relay path is the
+        /// one that works there, which is the same conclusion `Attention.md` § 1 reaches about
+        /// the Android emulator from a completely different direction. A WebGL build is therefore
+        /// a **shop window**, not a tournament client, and `docs/FUTURE.md` Phase 17's unplugged
+        /// LAN requirement is a claim about the DESKTOP player.
+        ///
+        /// ⚠️ IT IS NOT WIRED INTO ANY GATE AND MUST NOT BE. A WebGL player takes far longer to
+        /// link than a desktop one, and `CLAUDE.md` § 2.2's shape is WORK then BUILD: this is a
+        /// distribution build, run on purpose when there is something to show.
+        /// </summary>
+        [MenuItem("Tumbang Preso/Build WebGL Player")]
+        public static void BuildWebGlFromMenu() => BuildWebGlPlayer(DefaultWebGlOutput());
+
+        public static void BuildWebGl()
+        {
+            bool ok = BuildWebGlPlayer(CommandLineOutput() ?? DefaultWebGlOutput());
+            EditorApplication.Exit(ok ? 0 : 1);
+        }
+
+        /// <summary>
+        /// ⚠️ A FOLDER, NOT A FILE, WHICH IS THE THIRD OUTPUT SHAPE IN THIS CLASS. Windows writes
+        /// an .exe beside a `_Data` folder, macOS writes a bundle, Android writes a single .apk,
+        /// and WebGL writes a DIRECTORY containing `index.html`, `Build/` and `TemplateData/`.
+        /// `BuildPipeline.BuildPlayer` takes the directory itself as the "location" for WebGL,
+        /// so there is no file name to append and `PurgeOutputDirectory` is handed exactly the
+        /// folder it is about to fill.
+        ///
+        /// ⚠️ IT GOES UNDER `Builds/` RATHER THAN ON THE DESKTOP, unlike Windows and Android.
+        /// Those two are opened by hand and belong where 🧑 can double-click them; a WebGL build
+        /// is uploaded rather than run, and a folder of ten thousand files on somebody's Desktop
+        /// is a nuisance. `DefaultMacOutput` already made this choice for the same reason.
+        /// </summary>
+        public static string DefaultWebGlOutput()
+            => Path.Combine(Directory.GetCurrentDirectory(), "Builds", "WebGL");
+
+        private static bool BuildWebGlPlayer(string outputPath)
+        {
+            if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.WebGL)
+            {
+                if (!EditorUserBuildSettings.SwitchActiveBuildTarget(
+                        NamedBuildTarget.WebGL, BuildTarget.WebGL))
+                {
+                    Debug.LogError("[Build] could not switch to the WebGL target. Is the WebGL " +
+                                   "module installed for this editor? Check " +
+                                   "Editor/Data/PlaybackEngines for WebGLSupport.");
+                    return false;
+                }
+            }
+
+            ConfigureWebGl();
+
+            return Execute(outputPath, BuildTarget.WebGL);
+        }
+
+        /// <summary>
+        /// The WebGL player settings, argued rather than defaulted.
+        ///
+        /// ⚠️⚠️ **BROTLI IS THE DEFAULT AND IT IS THE WRONG ONE FOR itch.io.** Brotli needs the
+        /// host to send `Content-Encoding: br`, and itch.io's static hosting does not, so a
+        /// Brotli build downloads and then fails to decompress with a console error most players
+        /// will read as "the game is broken". **Gzip is served correctly by every static host**
+        /// and costs about fifteen per cent more download. `docs/FUTURE.md` Phase 18 names itch.io
+        /// as the first destination, so that is the host this is tuned for.
+        ///
+        /// ⚠️ AND THE DECOMPRESSION FALLBACK IS ON, which is the belt for the same braces: with
+        /// it, a host that sends no encoding header at all still works, at the cost of a small
+        /// JavaScript decompressor in the loader.
+        ///
+        /// ⚠️⚠️ **EXCEPTIONS ARE `ExplicitlyThrownExceptionsOnly`, NOT `None`.** `None` is faster
+        /// and smaller and it also means a null reference silently corrupts the heap instead of
+        /// throwing, which in a browser presents as the game freezing with no message. This
+        /// project's whole verification strategy is that a failure says what it was
+        /// (`CLAUDE.md` § 7.1), and a build that cannot report its own exceptions cannot be
+        /// debugged by anybody who is not sitting at this machine.
+        ///
+        /// ⚠️ THE MEMORY SIZE IS LEFT AT UNITY 6'S DEFAULT ON PURPOSE. Unity 6 grows the WASM
+        /// heap dynamically and the old fixed `memorySize` knob is deprecated; pinning it is how
+        /// a build that ran fine on a desktop browser dies on a Chromebook.
+        /// </summary>
+        private static void ConfigureWebGl()
+        {
+            PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Gzip;
+            PlayerSettings.WebGL.decompressionFallback = true;
+            PlayerSettings.WebGL.exceptionSupport = WebGLExceptionSupport.ExplicitlyThrownExceptionsOnly;
+
+            // ⚠️ NO DATA CACHING. It stores the whole data file in IndexedDB, which makes a second
+            // visit fast and makes the FIRST visit fail on a browser with a small storage quota,
+            // silently, after the download has already happened. A shop window is judged on the
+            // first visit.
+            PlayerSettings.WebGL.dataCaching = false;
+        }
+
         [MenuItem("Tumbang Preso/Build Android Player")]
         public static void BuildAndroidFromMenu() => BuildAndroidPlayer(DefaultAndroidOutput());
 
@@ -578,19 +684,50 @@ namespace TumbangPreso.EditorTools
             // path, so this still refuses a drive root, a directory holding a `.git`, and anything
             // that does not already look like a build. **What widened is the definition of "looks
             // like a build", not the willingness to delete.**
+            // ⚠️⚠️ AND ON 2026-09-03 IT WAS REWRITTEN TO NAME THE SHAPE OF THE MISTAKE RATHER
+            // THAN A FOURTH PLATFORM, BECAUSE § 130.17 ALREADY SAID WHAT THE SHAPE WAS AND THE
+            // NEXT PLATFORM WOULD OTHERWISE HAVE BEEN THE FOURTH TIME. That entry's own words:
+            // *"this test enumerates what today's platforms leave behind, so every platform added
+            // later fails it once."* WebGL is that platform: it writes `index.html`, `Build/` and
+            // `TemplateData/` and **not one of the five markers above**, so the first WebGL
+            // rebuild on any machine would have failed exactly as Android's did, several minutes
+            // in, after the target switch, with an error about a missing `UnityPlayer.dll`.
+            //
+            // ⚠️⚠️ `*_BurstDebugInformation_DoNotShip` IS THE GENERAL MARKER AND IT IS WHY THIS
+            // SHOULD NOT NEED A FIFTH VISIT. Unity emits that folder beside the player on **every
+            // IL2CPP target**, desktop, mobile and console alike, so it identifies a build
+            // directory without knowing which platform wrote it. The named markers stay because
+            // a Mono build does not emit it and because naming them is what makes the error
+            // message useful, but the general one is what catches a platform nobody has added
+            // yet.
+            //
+            // ⚠️ `TumbangPreso_Data` BECAME `*_Data`, WHICH IS THE SAME LESSON ONE SIZE DOWN.
+            // `PlayerSettings.productName` is written by `Execute` a few lines below and could be
+            // changed for a demo build or a jam entry; the guard would then stop recognising this
+            // project's own output. A wildcard costs nothing and removes the coupling.
+            //
+            // ⚠️ THE GUARD'S INTENT IS STILL UNCHANGED, for the third time: it refuses a drive
+            // root, a directory holding a `.git`, and anything that does not already look like a
+            // build. **What keeps widening is the definition of "looks like a build", never the
+            // willingness to delete.**
             bool looksLikeAPlayer =
                 File.Exists(Path.Combine(info.FullName, "UnityPlayer.dll")) ||
-                Directory.Exists(Path.Combine(info.FullName, "TumbangPreso_Data")) ||
+                Directory.GetDirectories(info.FullName, "*_Data").Length > 0 ||
                 Directory.GetDirectories(info.FullName, "*.app").Length > 0 ||
                 Directory.GetFiles(info.FullName, "*.apk").Length > 0 ||
                 Directory.GetFiles(info.FullName, "*.aab").Length > 0 ||
+                Directory.GetDirectories(info.FullName,
+                                         "*_BurstDebugInformation_DoNotShip").Length > 0 ||
+                (File.Exists(Path.Combine(info.FullName, "index.html")) &&
+                 Directory.Exists(Path.Combine(info.FullName, "Build"))) ||
                 info.GetFileSystemInfos().Length == 0;
 
             if (!looksLikeAPlayer)
             {
                 Debug.LogError($"[Build] output '{dir}' exists but does not look like a previous " +
-                               "player (no UnityPlayer.dll, no TumbangPreso_Data, no .app, no " +
-                               ".apk or .aab). Refusing to delete it. Move it aside or point " +
+                               "player: no UnityPlayer.dll, no *_Data folder, no .app, no .apk " +
+                               "or .aab, no Burst debug folder, and no index.html beside a " +
+                               "Build/ folder. Refusing to delete it. Move it aside or point " +
                                "-buildOutput somewhere else.");
                 return false;
             }
@@ -658,7 +795,23 @@ namespace TumbangPreso.EditorTools
                 return false;
             }
 
-            string dir = Path.GetDirectoryName(outputPath);
+            // ⚠️⚠️ WEBGL'S "LOCATION" IS THE DIRECTORY ITSELF, NOT A FILE INSIDE ONE, AND TAKING
+            // `GetDirectoryName` OF IT WOULD HAVE AIMED THE PURGE ONE LEVEL TOO HIGH.
+            // `DefaultWebGlOutput` is `Builds/WebGL`, so the old line would have handed
+            // `PurgeOutputDirectory` the whole `Builds/` folder, **which also holds the macOS
+            // build**. It fails safe rather than dangerously (a folder holding only other build
+            // folders matches none of the markers, so the guard refuses and the build stops), but
+            // "safe" here means every WebGL build fails several minutes in, after the target
+            // switch, which is § 130.17's symptom exactly and is the fourth time this class of
+            // path assumption would have bitten.
+            //
+            // ⚠️ THE TARGET DECIDES, NOT THE STRING. Sniffing for a trailing extension would be a
+            // guess about a path a caller may write however they like (`-buildOutput` takes an
+            // arbitrary one); the build target is the fact that actually determines the shape.
+            string dir = target == BuildTarget.WebGL
+                ? outputPath
+                : Path.GetDirectoryName(outputPath);
+
             if (!PurgeOutputDirectory(dir)) return false;
             if (!string.IsNullOrEmpty(dir)) Directory.CreateDirectory(dir);
 

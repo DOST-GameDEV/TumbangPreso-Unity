@@ -14,8 +14,8 @@ is in the archive with its number unchanged.
 
 | § | Open work | Where it bites |
 |---|---|---|
-| **130** | Crossplay, the boot ANR and the lobby's missing ink | The architecture was fine; **two phone-side defects and a third camera built without all three passes** |
-| **126** | This session: the full PlayMode suite, the thumb floor, the move stick, rumble, the device toggle, the .apk | § 126.8 is the big one: **the full PlayMode run is not a reliable gate** |
+| **130** | Crossplay, the boot ANR and the lobby's missing ink | The architecture was fine; **two phone-side defects and a third camera built without all three passes**. ⚠️ § 130.14 is CLOSED (§ 130.14b): the steering was never wrong, the test buried its own seat in the floor |
+| **126** | The full PlayMode suite, the thumb floor, the move stick, rumble, the device toggle, the .apk | § 126.8 is still the big one and it is **narrower now**: § 126.8b has the cause (the reset reached five fixtures out of sixty), § 126.8c is a `.xml` that says `Passed` with `total="0"`, § 126.8d is a fix that was measured and **withdrawn** for moving eleven suites from one side to the other |
 | **127** | Phase 16.1: the taya's floor marker is a RING, an attacker's a DISC | Needs its greyscale frame before it can close. § 127.3 |
 | **128** | Phases 11 and 12 are almost entirely built | ⚠️ Phase 11 has **nothing** open. **Map rotation is built (§ 130.12)**; Phase 12 still owes LAST TSINELAS a match half, and § 130.13 is what that actually costs |
 | **126.11** | Crossplay is argued, not demonstrated | Both players exist; nobody has watched them join. ⚠️ **The two blockers it named are fixed in § 130.2 and § 130.3** |
@@ -45,11 +45,15 @@ do.** Checked against the code on 2026-09-03, before doing any of them:
 
 ## The five things worth knowing before you touch anything
 
-⚠️⚠️ **`NetSession.ProtocolVersion` IS 21, AND READ IT FROM THE FILE RATHER THAN FROM ANY
+⚠️⚠️ **`NetSession.ProtocolVersion` IS 22, AND READ IT FROM THE FILE RATHER THAN FROM ANY
 DOCUMENT.** This preamble carried **both 19 and 21** as "the" number for two days, four paragraphs
-apart, because each session appended its own line and nobody deleted the last one. Peers on
-different numbers refuse each other by design, so a stale number here sends somebody hunting a
-network bug that is a rebuild. `grep -n ProtocolVersion Assets/TumbangPreso/Runtime/Net/NetSession.cs`.
+apart, because each session appended its own line and nobody deleted the last one, and it then said
+**21** for a day after § 130.13 moved it to 22. Peers on different numbers refuse each other by
+design, so a stale number here sends somebody hunting a network bug that is a rebuild.
+`grep -n ProtocolVersion Assets/TumbangPreso/Runtime/Net/NetSession.cs`.
+⚠️ **`docs/FUTURE.md` § 0.2's row said 16 for four days** while the code went 17 through 22. **The
+number lives in one file and every copy of it is a liability**, which is why both places now say
+so rather than saying a number.
 
 ⚠️⚠️ **A GREEN LAYOUT PROBE IS NOT A GOOD SCREEN, AND A GREEN FULL PLAYMODE RUN IS NOT A GATE.**
 The first is `CLAUDE.md` § 6.2a; the second is § 126.8 and it is new. Verify with `-testFilter`
@@ -571,7 +575,7 @@ asserted; what is not asserted is whether three tsinelas makes a round that ends
 because that is a `BotBehaviourProbe` measurement over several seeded runs (§ 16's noise floor:
 three runs an arm for anything worth 20 per cent). **Do that before tuning any number.**
 
-### 130.14 ⚠️⚠️ OPEN, AND IT IS NEW: `SteeringTests.MouseAimedMovementIsRelativeToTheBody` IS DETERMINISTICALLY RED AND IT IS NOT IN § 126.9'S LIST
+### 130.14 ✅ CLOSED 2026-09-03: `SteeringTests.MouseAimedMovementIsRelativeToTheBody` WAS DETERMINISTICALLY RED, AND § 130.14b IS WHY
 
 **Measured both ways rather than assumed**, because this batch put a teardown into that fixture and
 a red that arrived with a change is the change's until proven otherwise:
@@ -598,6 +602,73 @@ and was found by a probe rather than by playing. **Done looks like** the cause n
 `CharacterMotor.Steer` or `CameraRig`, not a widened bound: the sibling test
 `TagSelectionServesEveryEligibleSeatBeforeRepeating` and the movement-aimed case both pass, so the
 two arms disagree and one of them is wrong.
+
+### 130.14b ✅ FIXED 2026-09-03, AND THE STEERING WAS NEVER WRONG. THE TEST BURIED ITS OWN SEAT IN THE FLOOR
+
+⚠️⚠️ **THE ENTRY ABOVE IS A CORRECT MEASUREMENT AND A WRONG CONCLUSION, AND BOTH ARE WORTH
+KEEPING.** Every number in it is right: 1.97339928 against 2.0246408, identical to eight
+significant figures whether the fixture is run alone or in a group, therefore pre-existing and
+deterministic and not § 126.8's class. What it then infers, that *"the seat is being steered partly
+in world space"*, is what the failure MESSAGE says rather than what the code does, and two sessions
+took the message at its word.
+
+**The answer needed the per-frame picture and nothing else.** `SteeringTests.
+TheSteeringFrameByFrameIsWrittenOut` is a test that PRINTS instead of asserting; it writes
+`Logs/steering-frames.txt` and the whole diagnosis is in its first two rows:
+
+```
+frame  mouseAimed  yaw       pos
+    0        True    90.000  (0.0506, -0.0080, 1.0800)
+    1        True    90.000  (0.0506,  1.0800, 1.0800)
+   ...
+   39        True    90.000  (1.9734,  1.0800, 1.0800)
+```
+
+- **`mouseAimed` is true on every one of the forty frames.** The branch under test is the branch
+  that ran.
+- **The yaw is exactly 90.000 on every frame.** Nothing rotated the body, so nothing steered it in
+  world space.
+- **`x` advances by exactly 0.0506 m per step, forty times, due east.** That is
+  `Balance.Speed` 4.6 x `AttackerSpeedScale` 0.55 x 1/50 s, to four decimal places. **The steering
+  is perfect.**
+- **`z` reaches 1.0800 on frame 0 and never moves again.** The entire drift the assertion reported
+  happens before a single step of movement.
+
+⚠️⚠️ **IT IS `CharacterController` DEPENETRATION AND THE TEST'S OWN SETUP ASKED FOR IT.** The
+controller is left at Unity's defaults (height 2, radius 0.5, centre 0,0,0), so a body placed at
+**y = 0.2** has its capsule reaching to **y = -0.8**, and the floor this test builds is a unit cube
+scaled 60 x 1 x 60 at y = -0.5, whose top face is at **y = 0**. **The seat starts 0.8 m inside the
+ground.** The first `_cc.Move` resolves that overlap, and the shove is not purely vertical: it
+lands as (0, +1.08, +1.08).
+
+⚠️⚠️ **AND THE RED'S TWO NUMBERS WERE BOTH CORRECT, WHICH IS WHY IT SURVIVED TWO INVESTIGATIONS.**
+`moved.x` is **1.97339928**, which is 39 honest steps: the fortieth was spent on the depenetration.
+`moved.magnitude * 0.9` is **2.0246408**, and forty honest steps is **2.0240**. **The bound was
+asking for the right answer and the measurement was the right answer minus one frame**, with a
+metre of unrelated Z sitting in the magnitude. A red whose numbers are both correct is a red about
+the setup.
+
+⚠️ **THE GAME NEVER MEETS THIS, WHICH IS WHY NO PLAYER EVER REPORTED IT.**
+`CharacterMotor.Teleport` disables the controller, writes the position, re-enables it and sets
+`_spawnSettle = Balance.SpawnSettleFrames`; `FixedUpdate` then PINS the body there for those frames
+before any movement runs. **Every spawn in the game goes through it.** This test builds a seat by
+hand and skips all of it, which is legitimate and deliberate (its own header explains why it does
+not use the arena), as long as the body starts somewhere legal.
+
+- ✅ **The seat stands on the floor now**, at `StandingHeight` y = 1.05: one metre of capsule plus
+  five centimetres of daylight, so gravity rather than depenetration puts it down.
+- ✅ **A shared `Settle` runs twenty fixed updates before anything is sampled** and asserts the
+  body has not drifted sideways, so a future change to gravity or to the controller's size fails
+  where the reason is written rather than one assertion further on.
+- ✅ ⚠️⚠️ **`AMovementAimedSeatTurnsToFaceItsDirection` WAS CARRYING THE IDENTICAL FAULT AND
+  PASSING**, because it only ever asserted a FACING. It is fixed too. **A green test standing in
+  the same hole as a red one is the reason to fix the cause rather than the symptom.**
+- ⚠️ **THE BOUND IS UNTOUCHED AND SO IS THE ASSERTION**, which is what § 130.14 demanded: *"the
+  cause named in `CharacterMotor.Steer` or `CameraRig`, not a widened bound"*. The cause is named
+  and it is in neither: it is four characters of Y in the fixture.
+- ✅ **`TheSteeringFrameByFrameIsWrittenOut` stays**, on the fixed setup, as the live witness. It
+  runs in about three seconds and it is what turns *"the seat ended up in the wrong place"* into
+  *"the seat was shoved on frame zero"*.
 
 ### 130.17 ✅ EVERY ANDROID REBUILD ON THIS MACHINE FAILED, AND IT IS THE SAME GUARD BEING TOO NARROW FOR THE THIRD TIME
 
@@ -1881,6 +1952,164 @@ nobody had done on this branch until this session was told to do it first.
    five named above, because their stack traces name the exact line that holds the stale reference.
 2. **Or the suite is declared to run in named groups**, the groups go into `docs/TESTING.md` and
    `CLAUDE.md` § 7, and a single-process full run stops being quoted as a gate at all.
+
+### 126.8b ⚠️⚠️ THE THIRD FULL RUN, 2026-09-03: 56 RED, AND THE EXECUTION ORDER NAMES THE CAUSE IN ONE LINE
+
+**This entry has never had a full run on the commit it describes, and § 130.19 says so in as many
+words. It has one now, on `16b8109`, and it is worse than either of the two above:**
+
+```
+155 cases, 99 passed, 56 failed, 780 s     (Logs/play-full.xml)
+```
+
+⚠️⚠️ **THE FIX IN § 130.10 WAS REAL AND REACHED FIVE FIXTURES OUT OF SIXTY.** `PlayModeWorld` was
+written, and `SettingsWheelProbe`, `SoloPracticeTests`, `SteeringTests`, `UiClickProbe` and
+`VolcanicZoneTests` were given the pair. **Fifty-five other fixtures were left with no reset of any
+kind**, which is not a criticism of that entry (it fixed exactly the five it named) but it does
+mean the property everybody then assumed the suite had, that no test can inherit a world, was
+never true of nine tenths of it.
+
+⚠️⚠️ **AND SORTING THE 155 CASES BY START TIME ANSWERS THE WHOLE QUESTION.** The run is **clean for
+its first 57 cases**, with two known reds in it (§ 130.15's caption and `InputSurfaceProbe`'s own
+touch-target case), and then from case 58 onward it fails almost continuously to the end. What sits
+between case 57 and case 58:
+
+| # | Time | Case |
+|---|---|---|
+| 50-54 | 06:23:57 | **`InputSurfaceProbe`, five cases** |
+| 55-57 | 06:24:34 | `LandedHighlightTests` x2, `LataFloatProbe`, all green |
+| **58** | **06:24:37** | `LoadoutSurfaceProbe`, *"MatchSetup has no CharacterSelectPanel to open"* |
+| 59 to 154 | | **44 more failures out of 97 cases** |
+
+**`CLAUDE.md` § 7 already names this fixture and says exactly what it does**: *"⚠️⚠️ RUN IT ALONE.
+`InputSurfaceProbe` loads every scene in the build settings and opens every overlay it can
+discover, so it is the most destructive fixture in the suite: in a twelve-suite run it took most of
+the group down with it and the numbers were meaningless."* **It had no teardown**, so everything it
+opened was still open for the remaining 97 cases.
+
+⚠️⚠️ **AND THE OVERLAYS IT OPENS ARE THE HALF A SCENE UNLOAD CANNOT REACH, WHICH IS WHY § 130.10'S
+FIX WOULD NOT HAVE BEEN ENOUGH EVEN IF EVERY FIXTURE HAD CARRIED IT.** Fifteen files in `Runtime/`
+call `DontDestroyOnLoad` and **only six of them are services**. The other nine are SCREENS and JOBS
+that need to survive one scene change: `MatchResult`, `PausePanel`, `MapPreviewSurface`,
+`BootSting`, `MatchInstaller` and three diagnostics. `PlayModeWorld.Reset` deliberately left every
+one of them alone, with the note *"those are SUPPOSED to survive"*, **and that sentence is true of
+`GameServices` and false of a results board.** `MapPreviewSurface` is the worst of them: it loads
+arenas **additively and caches them**, so a cached map landing inside another suite's test brings a
+whole arena's lights, cameras and post stack with it. That is § 126.8's own *"No main camera in the
+arena"* and `QueueCardLayoutProbe`'s destroyed `Camera`, from the two opposite ends.
+
+**What was done, 2026-09-03:**
+
+- ✅ **All 60 PlayMode fixtures carry a reset now**, not five. Forty-six got the `[UnitySetUp]` and
+  `[UnityTearDown]` pair; fourteen that already own a `[UnityTearDown]` got the **setup half only**,
+  which is deliberate and stated in each one: NUnit does not define an order between two teardowns
+  of the same kind, three of those fourteen have an early `yield break` in theirs, and **the setup
+  reset is the half that protects the fixture it is on**. With every fixture carrying it, nothing
+  can inherit a world regardless of what any teardown did.
+- ❌ **`PlayModeWorld.SweepPersistentLeftovers` WAS BUILT, MEASURED AND WITHDRAWN. § 126.8d.**
+- ✅ **`Reset` no longer unloads the runner's own scene.** `MatchRunTests.SetUp` has carried the note
+  since it was written (*"Unloading that takes the test framework's objects with it and the run dies
+  rather than fails"*) and this method did not have the guard. The five fixtures that used it
+  survived because the bootstrap scene happens to be empty by the time a test runs, **which is luck
+  rather than a guarantee**.
+- ✅ **And it never unloads the last loaded scene**, which Unity reports through `Debug.LogError`
+  rather than by throwing, so the existing `catch (ArgumentException)` could not see it and the
+  framework fails a test on any unexpected error log. It appeared once in each of the two full runs.
+- ✅ **`UgsServicesProbe` reports SKIPPED in batch mode instead of eight false reds.**
+  `NetIdentity.AttemptSignInAsync` refuses UGS sign-in outright when `Application.isBatchMode`,
+  deliberately, because a headless run has no display and no Hub session token. So all eight cases
+  were asserting that a guard the game ships does not exist, with the same message eight times.
+  ⚠️ **This is not § 126.8's forbidden third category.** That ban is on a category meaning *"these
+  tests do not work next to each other"*, which would hide a cross-test leak. This is one suite
+  declining to measure a service the build it is running in has switched off, **and it names the
+  switch**. ⚠️ It is `Assert.Ignore` rather than a pass, because a pass would claim the live
+  services answered when nothing was asked.
+  ⚠️⚠️ **AND THAT FILE'S OWN HEADER CLAIMED `[Category("Ugs")]` KEPT IT OUT OF THE DEFAULT RUN,
+  WHICH WAS NEVER TRUE.** `CLAUDE.md` § 7's command is `!WallClock;!ThumbFloor` and has never
+  carried `!Ugs`. The exclusion existed in a comment and nowhere else, which is § 5's drift rule
+  inside a test file.
+
+### 126.8c ⚠️⚠️ THE FIRST VERSION OF THE SWEEP RAN THE WHOLE SUITE AND THEN WROTE AN EMPTY `.xml`, WHICH IS A NEW INSTANCE OF § 7'S RULE
+
+**Worth recording in full, because it is the most convincing possible argument for
+`CLAUDE.md` § 7's *"always assert on the `.xml`, never on the exit code"* and it arrived from a
+direction that section does not list.**
+
+The run executed for **thirteen minutes**. The log shows scenes loading, `InputSurfaceProbe`
+photographing the thumb layer, `GameplayShots` photographing a live round, and finally
+`Test run completed. Exiting with code 2 (Failed). One or more tests failed.` **And the `.xml` it
+wrote said `testcasecount="0" total="0" passed="0" failed="0" result="Passed"`.**
+
+```
+<test-run id="2" testcasecount="0" result="Passed" total="0" ... duration="0.4359008">
+  <test-suite ... testcasecount="165" result="Passed" total="0" ... />
+```
+
+⚠️⚠️ **A FILE THAT SAYS `result="Passed"` AND `total="0"` IS THE WORST OF THE THREE STATES**, worse
+than the crash § 7 already records: a crash writes no file at all and is at least visibly absent.
+This one is present, well formed, and green.
+
+**The cause was the sweep reaching something it should not have.** `SweepPersistentLeftovers`
+decides an object is a candidate if **any component anywhere in its hierarchy** is a
+`TumbangPreso` type, and Unity's PlayMode runner keeps its controller in the same
+`DontDestroyOnLoad` scene: anything of this project's parented under it makes the whole root
+match, and destroying it takes the object collecting the results with it. **Every test still
+runs. There is simply nothing left to write them down.**
+
+- ✅ **`PlayModeWorld.NeverTouch`** is the fix: a root is skipped outright if any of its components
+  comes from `UnityEngine.TestTools`, `UnityEditor.TestTools`, `UnityEngine.TestRunner`,
+  `Unity.PerformanceTesting` or `NUnit`. ⚠️ **It is belt as well as braces and that is deliberate.**
+  The assembly filter already means nothing this project did not write can be reached, and *in
+  principle* is not the standard for a method that calls `DestroyImmediate` on objects it did not
+  create.
+- ✅ **Verified**: `SteeringTests` alone came back **5 cases, 4 passed, 1 failed, 3.5 s** with a
+  populated `.xml`, against **0 cases** before the guard.
+
+⚠️ **AND A SECOND THING WAS WRONG WITH THAT INVESTIGATION AND IT COST A WHOLE LAUNCH.**
+`-testFilter` takes a **semicolon**-separated list, not a comma-separated one. A comma-joined list
+of 24 fixtures is read as one impossible name, matches nothing, and produces the same
+`total="0" result="Passed"` file in thirteen seconds. **Two completely different faults with
+byte-identical symptoms**, which is exactly why the rule is to read the numbers rather than the
+verdict.
+
+### 126.8d ❌ THE PERSISTENT-SCREEN SWEEP WAS BUILT, MEASURED AND WITHDRAWN, AND THE MEASUREMENT IS THE POINT
+
+**The argument for it is sound and is still true.** Fifteen files in `Runtime/` call
+`DontDestroyOnLoad` and **only six of them are services**; the other nine are SCREENS and JOBS that
+need to survive one scene change (`MatchResult`, `PausePanel`, `MapPreviewSurface`, `BootSting` and
+three diagnostics). A screen that survives a scene change is correct in the game, where the next
+scene is the one it asked for, and wrong in a test run, where the next scene belongs to somebody
+else. `PlayModeWorld.Reset`'s original note says *"those are SUPPOSED to survive"*, and that
+sentence is true of `GameServices` and false of a results board.
+
+**So it was built**: destroy every persistent root carrying a `TumbangPreso` component that is not
+a named service, with an explicit refusal for anything from the test framework's own assemblies.
+Then it was run on the full suite, which is the only way to find out.
+
+| | Full run |
+|---|---|
+| Before this session, no reset outside five fixtures | **56 failed** |
+| Reset in all 60 fixtures **plus the sweep** | **49 failed, 6 skipped** |
+
+⚠️⚠️ **AND THE TOTAL IS THE LEAST INTERESTING NUMBER IN THAT TABLE.** With the sweep in, **every
+screen suite went green** (`PlayerHubLayoutProbe` 5/5, `QueueCardLayoutProbe` 5/5,
+`SettingsWheelProbe`, `LobbyStyleProbe`, `NetworkedLobbyTypingProbe`, `TrainingStreetProbe` 3/3,
+`PaperPurityProbe.EveryLobbyControlSurvived`) and **eleven MATCH suites went red** that had passed
+before it: *"the arena built no SliceRunner"*, *"No main camera in the arena"*, *"the match built no
+slipper"*, *"the guided route did not install"*, *"NONE spawned 4 people rather than one"*.
+
+**That is § 126.8's own definition of the thing to be afraid of, whichever direction it moves:**
+*"THE COUNT BARELY MOVED AND THE RED SET LARGELY CHANGED, WHICH IS THE FINDING. Eleven suites went
+green and eleven different ones went red. A gate whose red set moves is not measuring the code."*
+**Trading eleven screen failures for eleven match failures is not progress, and shipping it would
+have hidden the trade behind a slightly smaller total.**
+
+- ❌ **Withdrawn**, with the whole argument kept in `PlayModeWorld.Reset` as a comment so nobody
+  rebuilds it without knowing what it did.
+- ⚠️ **What the right version needs is a measurement nobody has taken**: WHICH persistent object a
+  match install depends on. Until that is known, destroying the set is a guess with a receipt.
+- ⚠️ **The rest of the batch is untouched by this** and is measured separately: the reset pair in
+  all 60 fixtures, the two scene guards, and the UGS skip are all independent of the sweep.
 
 ⚠️⚠️ **DO NOT CLOSE IT BY WIDENING A BOUND OR BY ADDING A THIRD CATEGORY EXCLUSION.** `WallClock`
 and `ThumbFloor` both exist, both are documented gaps with a measured reason, and both name the
@@ -3916,6 +4145,7 @@ repository still lands on something**: follow it here, find the number, read it 
 
 | § | What it was |
 |---|---|
+| 131 | The suite became a gate, the tutorial got its glyphs, and a red that was never about steering ✅ CLOSED 2026-09-03 |
 | 129 | Three faults off the first phone render, and the one that was invisible on a monitor ✅ CLOSED 2026-09-03. § 129.3's mechanism is § 130.9 |
 | 90 | The impersonation guard, and telemetry ⚠️ 2026-08-30 |
 | 91 | Phase 4: XP, levels and hero mastery ⚠️⚠️ 2026-08-30 |

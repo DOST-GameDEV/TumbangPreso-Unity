@@ -58,7 +58,7 @@ mind we dont have budget for paying for anything"*.
 | Auth package | **`com.unity.services.authentication` 3.7.4, installed and IN USE.** ⚠️ This row read "unused" and was already wrong when Phase 1 started: `NetIdentity` had always signed in anonymously at boot. Phase 1 shipped on top of it, `docs/TODO.md` § 88. |
 | LAN | `LanBeacon`, with persistent peer identity so a reconnecting player gets their seat back. |
 | Reconnect | `LobbySession` already implements seat reclamation, a fast-reconnect window and leader election. **Do not rebuild this.** |
-| Protocol gate | `NetSession.ProtocolVersion`, **16** as of 2026-08-30. Peers on different versions refuse each other at approval, by design. ⚠️ **Read the constant rather than this row**, per § 0.6: it has moved three times since this file was written (14 spectator pause, 15 match record, 16 the impersonation guard). |
+| Protocol gate | `NetSession.ProtocolVersion`, **22** as of 2026-09-03. Peers on different versions refuse each other at approval, by design. ⚠️⚠️ **READ THE CONSTANT RATHER THAN THIS ROW, AND THIS ROW IS THE PROOF OF WHY**: it said **16** for four days while the code went 17, 18, 19, 20, 21, 22, because every session bumped the constant and none of them came back here. `grep -n ProtocolVersion Assets/TumbangPreso/Runtime/Net/NetSession.cs`. ⚠️ **When it moves, the Windows player and the .apk are rebuilt from ONE commit and shipped together** (`CLAUDE.md` § 4a), or they refuse each other correctly and it reads as a bug. |
 | Bots | `AIController` plus `GameLaunch.AllBots`. A bot presses the same buttons a human does, one physics step serves both. |
 | Spectating | `SpectatorCamera` with free, follow and POV modes, plus a spectator pause that crosses the wire. |
 | Chat | `LobbyChat`, lobby and in-match, with hard-won layout notes. Extend it; never write a second one. |
@@ -822,7 +822,30 @@ satisfied.
 
 ---
 
-## PHASE 5 · COSMETICS AND CHARACTER CUSTOMISATION ⚠️ REWORKED TWICE, 2026-08-31
+## PHASE 5 · COSMETICS AND CHARACTER CUSTOMISATION ✅ SHIPPED 2026-08-31, status corrected 2026-09-03
+
+⚠️⚠️ **THE HEADING READ `⚠️ REWORKED TWICE, 2026-08-31` FOR THREE DAYS AFTER THE PHASE SHIPPED,
+AND STALE BOOKKEEPING IS ITS OWN BUG.** § 0.6 exists because a plan that says a built thing is
+unbuilt sends the next session to rebuild it, and this section's own body has said *"✅ AND IT
+ENTERS A MATCH"* since 2026-08-31 while its heading said the phase was mid-rework. **Checked
+against the code on 2026-09-03 rather than against this document**, which is § 0.6's rule:
+
+| The list at the bottom of this section | Where it actually is |
+|---|---|
+| Custom character creator, 3 save slots | ✅ `CustomCharacterScreen`, `CustomCharacterStore`, `CustomCharacterRules.MaxSlots`, `CustomCharacterScreenProbe` |
+| Hero outfits and clothes | ✅ The CLOTHES and STRENGTH rows on character select, twelve of sixteen palette slots reachable, `RosterIntegrityTests` |
+| Headwear | ✅ `VoxelWardrobe` Gear section, 18 entries, all geometry |
+| Tsinelas skin, can skin | ✅ `Roster.Slippers`, `Roster.Cans`, picked on character select tabs 1 and 2 and carried in `LobbySeatInfo` |
+| Emote wheel | ✅ `UI/EmoteWheel.cs`, and `CLAUDE.md` § 4's emote camera rule is built around it |
+| The banner | ✅ `Core/Banner.cs` (`BannerRules`, `Normalise`, `Authorise`), drawn by the hub, the lobby, the HUD and the end-of-match board |
+| **Victory pose** | ❌ **The one entry on this list that does not exist**, and it greps to nothing in `Assets/` or `Packages/` |
+
+⚠️ **THE RECOMMENDATION FOR THE VICTORY POSE IS TO CUT IT, AND THE ARGUMENT IS § 0.5 RULE 11b
+RATHER THAN COST.** *"The test for adding anything is what the player has to hold in their head,
+not what it costs to build."* The emote wheel already answers "celebrate", it is bound, it is
+replicated, and it is a control the player has learned; a victory pose is a **second** cosmetic
+slot doing the same job at a moment the player is looking at a scoreboard. It stays listed here as
+`❌` rather than deleted, per `CLAUDE.md` § 3: record the deletion and the reasoning.
 
 ⚠️⚠️ **ROSTER INTEGRITY VS. THE DEDICATED "CREATE YOUR OWN CHARACTER" SYSTEM.**
 `docs/TODO.md` § 107. A previous pass misunderstood 🧑's vision and applied a whole-body hue/tint slider across the entire roster, resulting in classic characters like **Berto** turning alien cyan and magenta with illegible skin tones. 🧑 corrected this immediately:

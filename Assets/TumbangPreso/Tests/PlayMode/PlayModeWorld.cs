@@ -127,6 +127,29 @@ namespace TumbangPreso.PlayTests
                 // error rather than ignoring it, which would fail the test that called this.
                 if (!scene.isLoaded) continue;
 
+                // ⚠️⚠️ NEVER THE RUNNER'S OWN SCENE, AND THIS WAS MISSING UNTIL 2026-09-03.
+                // `MatchRunTests.SetUp` has carried the note since it was written: *"Unloading
+                // that takes the test framework's objects with it and the run dies rather than
+                // fails."* This method was unloading everything that was not its own clean
+                // scene, `InitTestScene` included, on every one of the two hooks in every
+                // fixture. The five fixtures that had it survived because the bootstrap scene
+                // happens to be empty by the time a test runs; **that is luck rather than a
+                // guarantee**, and a full suite that dies has no `.xml` at all, which
+                // `CLAUDE.md` § 7 says is indistinguishable from a crash that exits 0.
+                if (scene.name != null &&
+                    scene.name.Contains("InitTestScene")) continue;
+
+                // ⚠️⚠️ AND NEVER THE LAST ONE LEFT, WHICH IS A LOGGED ERROR RATHER THAN AN
+                // EXCEPTION AND SO SLIPS PAST THE `catch` BELOW. Unity answers
+                // *"Unloading the last loaded scene ... is not supported"* through `Debug.LogError`,
+                // and the test framework fails a test on any unexpected error log, so the reset
+                // would fail the test it was cleaning up after. It appeared once in each of the
+                // two full runs on 2026-09-03, both times on `Eskinita`, which means `clean`
+                // above was not counted at that instant. **The count is re-read every iteration
+                // rather than trusted from the top of the loop**, because scenes are being
+                // removed inside it.
+                if (SceneManager.sceneCount <= 1) break;
+
                 AsyncOperation unload = null;
                 try
                 {
@@ -143,15 +166,30 @@ namespace TumbangPreso.PlayTests
                 while (!unload.isDone) yield return null;
             }
 
-            // ⚠️ AND THE STRAYS THAT ARE IN NO SCENE AT ALL. `Object.DontDestroyOnLoad` moves an
-            // object into a scene `sceneCount` does not include, and this project puts
-            // `GameServices`, the netcode manager and the audio director there. Those are
-            // SUPPOSED to survive, so they are deliberately not touched: what is destroyed here is
-            // only what a test parented to nothing in a scene that has now gone.
+            // ⚠️⚠️ THE PERSISTENT SCREENS ARE DELIBERATELY LEFT ALONE, AND A SWEEP THAT REMOVED
+            // THEM WAS BUILT, MEASURED AND WITHDRAWN ON 2026-09-03. `docs/TODO.md` § 126.8d has
+            // the numbers. The argument for it was sound and is still true: nine of the fifteen
+            // `DontDestroyOnLoad` call sites in `Runtime/` are SCREENS and JOBS rather than
+            // services, and an unloaded scene does not take them with it. **What the measurement
+            // said is that removing them costs more than it buys.** With the sweep in, every
+            // screen suite went green and eleven MATCH suites went red with *"the arena built no
+            // SliceRunner"*, *"No main camera in the arena"*, *"the match built no slipper"* and
+            // *"the guided route did not install"*.
+            //
+            // ⚠️ **A CHANGE THAT MOVES ELEVEN SUITES FROM ONE SIDE TO THE OTHER IS THE THING
+            // § 126.8 EXISTS TO WARN ABOUT**, whichever direction it moves them: *"a gate whose
+            // red set moves is not measuring the code."* Trading eleven screen failures for
+            // eleven match failures is not progress, and shipping it would have hidden the trade
+            // behind a slightly smaller total.
+            //
+            // ⚠️ IT IS RECORDED RATHER THAN DELETED SO NOBODY REBUILDS IT WITHOUT KNOWING. The
+            // right version of this idea needs to know WHICH persistent object a match install
+            // depends on, and that is a measurement nobody has taken yet.
             yield return null;
 
             Resources.UnloadUnusedAssets();
             yield return null;
         }
+
     }
 }

@@ -18,6 +18,127 @@ every pointer in the repository, which is a worse trade than a duplicate heading
 
 ---
 
+## 131 · The suite became a gate, the tutorial got its glyphs, and a red that was never about steering ✅ CLOSED 2026-09-03, branch `ui-redesign`
+
+**Written as a batch report and archived in the same commit, per `CLAUDE.md` § 2.3: a session
+report is not an open item.** The open work this batch touched stays in
+[`TODO.md`](TODO.md) under its own numbers (§ 126.8, § 130.14, § 130.17).
+
+### 131.1 What was asked
+
+🧑, in one sitting: *"pls finish all tasks that can be coded make sure to thoroughly refine
+everything and that shit is working end to end"*, then *"can we also use the control asssets here
+for tutorial? to make it prettier"* with a bought icon pack, then *"put all human shit u cant do in
+Attention.md in the main folder"* and *"do eveyrthing u can do without me"*.
+
+### 131.2 The full PlayMode suite, which is § 126.8 and was the first thing on the list
+
+**The handoff into this session was blunt that nobody had run it on this commit and that no number
+from it could be quoted. It was run first, before anything was touched.** 155 cases, 99 passed,
+**56 failed**, 780 s. That is worse than the 42 and 41 the entry already records.
+
+**Sorting the 155 cases by start time answered it in one line**, and § 126.8b in `TODO.md` has
+the table: the run is clean for its first 57 cases and collapses immediately after
+`InputSurfaceProbe`, which `CLAUDE.md` § 7 already calls *"the most destructive fixture in the
+suite"* and which had no teardown. § 130.10 had written `PlayModeWorld` and given the pair to
+**five fixtures out of sixty**.
+
+- All 60 fixtures carry a reset now. 46 got both hooks; 14 that already own a `[UnityTearDown]`
+  got the setup half only, deliberately and with the reason stated in each.
+- Two safety guards the original did not have: never the runner's own scene, never the last
+  loaded scene.
+- `UgsServicesProbe` reports SKIPPED in batch mode with its reason instead of eight false reds.
+- ❌ **A sweep of the persistent SCREENS was built, measured on the full suite, and WITHDRAWN.**
+  § 126.8d has the table. It moved **every screen suite to green and eleven match suites to red**,
+  which is § 126.8's own definition of the thing to be afraid of: *"a gate whose red set moves is
+  not measuring the code"*, and the direction it moves them in does not change that. **Trading
+  eleven failures for eleven different ones is not progress**, and a slightly smaller total would
+  have hidden the trade. The argument for it is kept in `PlayModeWorld` so nobody rebuilds it
+  blind.
+
+⚠️⚠️ **AND THE FIRST VERSION OF THE SWEEP PRODUCED THE MOST CONVINCING ARGUMENT FOR
+`CLAUDE.md` § 7 THIS REPOSITORY HAS.** It ran the whole suite for thirteen minutes and then wrote
+a `.xml` reading `testcasecount="0" total="0" result="Passed"`. § 126.8c has it in full: **a file
+that says Passed and total zero is worse than the crash § 7 already records**, because a crash
+writes no file at all.
+
+### 131.3 § 130.14, the deterministic `SteeringTests` red, and it was never about steering
+
+**Two sessions measured it as pre-existing and deterministic to eight significant figures and
+stopped there.** The entry's own "done looks like" asks for a cause named in `CharacterMotor.Steer`
+or `CameraRig`. **It is in neither.**
+
+A test that PRINTS rather than asserts (`TheSteeringFrameByFrameIsWrittenOut`, three seconds) gave
+the answer in two rows: `mouseAimed` true on every frame, yaw exactly 90.000 on every frame, x
+advancing by exactly 0.0506 m per step due east forty times. **The steering is perfect.** The whole
+1.08 m of drift lands on frame 0, before any movement: the test spawned its seat at y = 0.2 with a
+default `CharacterController` capsule reaching to y = -0.8, **0.8 m inside its own floor**, and the
+first `Move` shoved it out diagonally. § 130.14b has the arithmetic, including why both of the
+failure's numbers were correct.
+
+⚠️ **The bound and the assertion are untouched.** What changed is that the seat stands on the
+floor. Its sibling `AMovementAimedSeatTurnsToFaceItsDirection` was in the same hole and passing,
+because it only asserted a facing.
+
+### 131.4 The control glyphs, which 🧑 asked for and which close § 126.9's authored-glyph gap
+
+`Hud.KeyLabelFor` returns `BUTTON WEST` on a pad, which is written on no controller ever made, and
+§ 126.9 records the same string overflowing the hero picker's 26-unit chip.
+
+- `tools/build_input_glyphs.py` recolours the bought pack. ⚠️⚠️ **It ships in navy**
+  (`14182e`, `2b2b45`, `3a3f5e`, `404973`, `4c6885`, `686f99`, `a3a7c2`, `dfe0e8`: every one has
+  more blue in it than red, which is § 6.4's own test) and dropping it in as bought would have put
+  navy keycaps on the screen a new player reads first. The nine-step ramp maps onto wood and cream;
+  the pad's four face-button hues collapse to amber, because **the letter names the button and a
+  distinction carried by hue alone is one some players do not have** (`FUTURE.md` § 16.1).
+- **The colour rule is enforced on the MAP rather than on a render**, which is § 6.4's *"check it
+  by grepping, not by looking"*. Measured after the fact: **11 distinct colours across all four
+  sheets, all from the sanctioned palette, and zero pixels with more blue than red.**
+- `InputGlyphs` is keyed on the label `Hud` already resolved, not on a second read of the binding,
+  so a rebind moves the glyph with it and there is no second resolver to keep in step.
+- `InputGlyphTests` walks the **shipped input asset** rather than a list, on both devices, so a
+  binding added tomorrow without a glyph fails. ⚠️ **It caught a real fault on its first run**:
+  Unity's default `npotScale = ToNearest` was importing the 256x416 key sheet as 256x512 and the
+  96x160 mouse sheet as **128x128**, so the bottom rows resolved to negative Y and came back as
+  silent nulls.
+- Four tests, all green. The text path is untouched and is the fallback.
+
+### 131.5 § 130.17 for the fourth time, before it could happen a fourth time
+
+`PurgeOutputDirectory` has been too narrow for Windows-only, then macOS, then Android.
+**WebGL writes `index.html`, `Build/` and `TemplateData/` and none of the five markers**, so the
+first WebGL rebuild would have failed identically. The guard now names the SHAPE:
+`*_BurstDebugInformation_DoNotShip` identifies a Unity build directory on **every IL2CPP target
+without knowing which one wrote it**, `TumbangPreso_Data` became `*_Data`, and the WebGL pair is
+named explicitly. The intent is unchanged for the third time: it still refuses a drive root, a
+`.git`, and anything that does not already look like a build.
+
+⚠️⚠️ **AND A FIFTH INSTANCE WAS FOUND WRITING `BuildWebGl` RATHER THAN AFTER SHIPPING IT.**
+WebGL's build "location" is the DIRECTORY, not a file inside one, so `Path.GetDirectoryName` would
+have handed the purge the whole `Builds/` folder, **which also holds the macOS build**. `Execute`
+branches on the build target now rather than on the shape of the string.
+
+### 131.6 `Attention.md`
+
+🧑 asked for it by name and by location. Ten items, each carrying **what is already done so
+nobody redoes it** and **what exactly is being asked**. ⚠️ It is not a handoff prompt and does not
+become one: `CLAUDE.md` § 2.4 forbids committing one of those and this is a standing list of
+human-only work, which is the opposite kind of document.
+
+### 131.7 Phase 5's status pass
+
+`FUTURE.md`'s heading read `⚠️ REWORKED TWICE, 2026-08-31` for three days after the phase shipped,
+while its own body said *"✅ AND IT ENTERS A MATCH"*. Checked against the code rather than against
+the document: every item on its slot list exists **except the victory pose**, which greps to
+nothing and is recommended for cutting on § 0.5 rule 11b (the emote wheel already answers
+"celebrate", and a second slot for the same job is one more thing to hold in the head).
+
+⚠️ **`FUTURE.md` § 0.2's protocol row said 16 while the code went 17 through 22**, and `TODO.md`'s
+preamble said 21 after § 130.13 moved it. Both now say to read the constant instead of carrying a
+copy.
+
+---
+
 ## 129 · Three faults off the first phone render, and the one that was invisible on a monitor ✅ CLOSED 2026-09-03, branch `ui-redesign`
 
 🧑, reading `Logs/shots-touch/touch-HeroStrike-20-9-phone-v4.png`: **"mobile version kinda blurry
