@@ -1,64 +1,57 @@
-"""Draw the controller line art the CONTROLLER MAP screen labels, and its anchor table.
+"""Recolour the CC0 controller art the CONTROLLER MAP labels, and emit its anchor table.
 
 WHY THIS EXISTS
 ---------------
-`docs/TODO.md` section 138 is the write-up of how a pad reaches this game, and section 139
-records 🧑 asking for the controller half of settings to be *"prettier"* and rebindable. Both
-were answered with LISTS: a column of action names against a column of control names. A list
-is the wrong shape for this one question, because the question a player actually asks is
-never "what is LUNGE bound to", it is **"what does this button under my thumb do"**, and a
-list cannot be read that way round without knowing the answer first.
+`docs/TODO.md` section 142.3 is the CONTROLLER MAP screen: a picture of the pad with every job
+written around it and a leader line from each label to the control it names. This file makes
+the picture and the table of where each control sits, in ONE pass, so a line cannot end on bare
+plastic when the drawing changes.
 
-So the map is a PICTURE of the pad with the jobs written around it, which is the shape 🧑
-handed over as the reference: a line drawing in the middle, callouts ringing it, a leader
-line from each callout to the control it names.
+WHAT CHANGED ON 2026-09-04, AND WHY
+-----------------------------------
+The first version DREW the pad from primitives: rounded rectangles for the body, an ellipse per
+stick, a polygon for the d-pad. It read as a controller and it read as programmer art, which is
+what it was. It now starts from a real illustration.
 
-WHAT THIS FILE OWNS, AND WHAT IT DELIBERATELY DOES NOT
-------------------------------------------------------
-It owns the DRAWING and the ANCHORS, and it emits both from one pass so they cannot drift.
+    tools/assets/ps3_gamepad_cc0_2400.png
 
-    Assets/TumbangPreso/Resources/UI/input/pad_diagram_v1.png
-    Assets/TumbangPreso/Resources/UI/input/pad_diagram_v1.txt
+WARNING  THE ART IS CC0 AND ITS LICENCE IS COMMITTED BESIDE IT.
+`tools/assets/ps3_gamepad_cc0.LICENSE.txt`. It is Grumbel's PlayStation 3 gamepad from the Open
+Clip Art Library via Wikimedia Commons, CC0 1.0. `docs/Asset_Sourcing.md` section 1 rule 8 is
+what permits it to live in a public repository at all, and rule 1 is why it had to be CC0
+rather than the first image a search returns: paid, non-commercial and share-alike art is
+excluded from this project by a rule written long before this screen existed.
 
-WARNING  THE ANCHORS ARE EMITTED RATHER THAN COPIED, AND THAT IS THE WHOLE REASON THE TABLE
-IS A FILE INSTEAD OF A C# CONSTANT BLOCK. A leader line has to end ON the control it names.
-If the picture is drawn here and the arrow-heads are typed into `ControllerMapScreen.cs`, then
-moving the d-pad two hundred pixels left is a change to one file that silently makes four
-leader lines in another file point at bare plastic, and nothing in the repository can notice.
-This is the same fault `Settings.Rebinding`'s class note records for its own two tables:
-*"a stale row in either table is not cosmetic ... a missing action silently produces a dead
-row instead, which is worse, because nobody notices."* One generator, one pass, two outputs.
+WARNING  IT IS RECOLOURED ON THE WAY IN AND MUST NEVER BE USED AS BOUGHT.
+The source is near-black with GREEN, MAGENTA, RED and PURPLE face buttons. `CLAUDE.md` section
+6.4 bans blue, navy and cold grey in any UI layer, stated as wide as it goes, and section 139.4
+records a magenta tick shipping in the settings panel as a defect worth its own table row. Two
+of those four hues are illegal here outright and the other two belong to other jobs. This is
+the same decision `tools/build_input_glyphs.py` took about the bought glyph sheets, in its own
+words: a pack dropped in as bought puts colours nobody chose on the one screen a player reads.
 
-WARNING  IT DOES NOT DECIDE WHAT ANY BUTTON DOES. The bindings are `InputCatalogue` and
-`ScreenInputCatalogue`, they are read live through `Settings.Rebinding`, and this script has
-never heard of a verb. A picture that hard-coded "THROW" beside the right trigger would be a
-screen that teaches the wrong control the moment somebody rebinds one, which
-`docs/VISION.md` section 3 calls worse than teaching none.
+WARNING  THE FACE BUTTONS KEEP THEIR SHAPE AND LOSE THEIR HUE.
+A triangle, a square, a circle and a cross survive a photograph, a recolour and a colourblind
+player; four hues do not. `docs/FUTURE.md` section 16.1 is the rule and `build_input_glyphs.py`
+already applied it to the same four buttons one screen over.
 
-THE PALETTE
+THE ANCHORS
 -----------
-WARNING  INK AND HONEY QUARTZ, AND NOT ONE COLD PIXEL. `CLAUDE.md` section 6.4, stated as
-wide as it goes: *"no blue, no navy, no cold grey, in any UI colour, in any layer"*, and the
-reference drawing 🧑 handed over is a black-on-white photocopy whose face buttons are the
-PlayStation cyan, pink and blue. Those are three separate bans in one picture. The line art
-is `#55290F`, which `scratchpad/fontsrc/ramp.py` measured at 10.5:1 on the paper ground, and
-the face buttons are told apart by their SHAPE, which is how the real pad tells them apart
-too and is `docs/FUTURE.md` section 16.1's rule: a distinction carried by hue alone is a
-distinction some players do not have.
+WARNING  THEY ARE MEASURED IN THE COMMITTED RASTER'S OWN PIXELS, AND THE RASTER IS THE CONTRACT.
+The four face buttons are FOUND, by their source hues, before the recolour throws those hues
+away: that is four anchors this file cannot get wrong. The other fourteen were measured by hand
+off a coordinate grid laid over the same file, which is why `SOURCE_SIZE` is asserted below. A
+different rasterisation of the same SVG is a different set of pixels, and every leader line
+would move without anything failing.
 
-WARNING  THE SILHOUETTE IS ONE OUTLINE, NOT A PILE OF STROKED SHAPES, AND THAT IS WHY THE
-BODY IS BUILT AS A MASK. Drawing the grips and the body as three stroked rounded rectangles
-leaves the seams where they overlap visible as lines THROUGH the pad, which reads as three
-objects rather than one. The union is rasterised first and the outline is taken as the
-difference between the mask and its own erosion, so the body has exactly one edge.
+WARNING  THE CROP HAPPENS AFTER THE MEASUREMENT AND CARRIES THE ANCHORS WITH IT.
+Trimming the transparent margin changes what "normalised" means. `docs/TODO.md` section 142.3
+records the render where that was got wrong: a 640-unit controller in a 980-unit hole, and then
+eighteen arrow-heads pointing at nothing.
 
 USAGE
 -----
     python tools/build_controller_diagram.py [--out DIR] [--preview]
-
-`--preview` also writes a versioned review render under `Logs/renders/`, which is
-`CLAUDE.md` section 6.1's rule: every model iteration gets a picture and every picture gets a
-new filename.
 """
 
 import argparse
@@ -67,270 +60,200 @@ import sys
 
 try:
     import numpy as np
-    from PIL import Image, ImageDraw, ImageFilter
+    from PIL import Image, ImageDraw
 except ImportError:  # pragma: no cover - report rather than crash, like the audits
     print("build_controller_diagram: Pillow and numpy are required")
     sys.exit(2)
 
 
+SOURCE = os.path.join("tools", "assets", "ps3_gamepad_cc0_2400.png")
+
+# WARNING  ASSERTED, NOT ASSUMED. Every hand-measured anchor below is in these pixels. See the
+# header: a re-render of the SVG by a different engine is a different picture with the same name.
+SOURCE_SIZE = (1960, 1240)
+
+
 # ---------------------------------------------------------------------------------------
-# The canvas.
+# § THE PALETTE
 #
-# WARNING  4x SUPERSAMPLED, BECAUSE EVERY LINE IN THIS DRAWING IS A CURVE. Pillow has no
-# antialiased stroking: an ellipse outline at final size comes out as a staircase, and a
-# staircase beside Darumadrop's smooth lettering reads as a placeholder rather than as art.
-# Drawing at 4x and reducing with LANCZOS is the cheapest fix and costs one second.
+# WARNING  A LUMINANCE RAMP, NOT A COLOUR SWAP, AND THAT IS WHAT KEEPS THE ILLUSTRATION'S
+# MODELLING. The source draws its form with about seven values of grey: the body, the recessed
+# button wells, the rim highlights, the moulded d-pad. Mapping each named colour to a chosen
+# replacement (which is what `build_input_glyphs.py` does, correctly, for a nine-colour pixel
+# ramp) would need a table of 750 entries here and would flatten anything it missed. Sampling a
+# warm ramp by luminance keeps every one of those values and moves the whole object into the
+# palette at once.
+#
+# WARNING  THE RAMP IS DARK AT THE BOTTOM ON PURPOSE. The screen is Honey Quartz paper, and the
+# controller drawn for its first version was cream on cream and nearly vanished. `CLAUDE.md`
+# section 6.2 question 1 asks what the ONE thing on the screen is; here it is the pad, so the pad
+# is the darkest object in the frame and everything else stays light.
 # ---------------------------------------------------------------------------------------
-WIDTH = 1024
-HEIGHT = 620
-SS = 4
+RAMP = [
+    (0x24, 0x11, 0x06),   # warm near-black, the outline and the deepest shadow
+    (0x3A, 0x1C, 0x08),
+    (0x55, 0x29, 0x0F),   # UiTheme.PaperInk, the body
+    (0x7A, 0x3F, 0x18),
+    (0x8B, 0x52, 0x27),   # the wood edge, the moulded wells
+    (0xC8, 0x94, 0x5A),
+    (0xE8, 0xC7, 0x7E),   # Khaki, the rim highlights
+    (0xFC, 0xD3, 0x9F),   # Honey Quartz, the brightest lettering
+]
 
-INK = (0x55, 0x29, 0x0F, 255)
-FILL = (0xFE, 0xEB, 0xD4, 255)        # UiTheme.Paper, so the body reads as a solid object
-SUNK = (0xDE, 0xBA, 0x8C, 255)        # UiTheme.PaperSunk, for the recessed touchpad
-
-STROKE = 5                            # final pixels; multiplied by SS while drawing
-
-
-def px(v):
-    """A final-resolution number in supersampled space."""
-    return int(round(v * SS))
-
-
-class Pad:
-    """The drawing, and the anchor each control's leader line ends on."""
-
-    def __init__(self):
-        self.image = Image.new("RGBA", (WIDTH * SS, HEIGHT * SS), (0, 0, 0, 0))
-        self.draw = ImageDraw.Draw(self.image)
-        self.anchors = {}
-
-    def anchor(self, name, x, y):
-        """Record a control's centre in NORMALISED coordinates.
-
-        WARNING  NORMALISED, NOT PIXELS, AND FOR `TouchMetrics`' OWN REASON. The screen
-        draws this picture into whatever rectangle the aspect-safe canvas leaves it, which is
-        never 1024 units wide; a pixel anchor would be correct at exactly one window size,
-        which is `CLAUDE.md` section 6.2c's first question about every rect in this game.
-        Y is measured DOWN from the top, which is the picture's own direction; the C# flips
-        it once, at the one place it turns an anchor into a `RectTransform` position.
-        """
-        self.anchors[name] = (x / float(WIDTH), y / float(HEIGHT))
+# The four glyphs on the face buttons, and the power LED. Both are flat marks rather than
+# modelled surfaces, so both are assigned rather than ramped.
+GLYPH = (0xFC, 0xD3, 0x9F)      # Honey Quartz: a light mark on a dark button
+LED = (0xC3, 0x2E, 0x0D)        # Rim red, which section 6.4 allows and calls the lit deep red
 
 
-def rounded(mask_draw, box, radius):
-    mask_draw.rounded_rectangle(box, radius=radius, fill=255)
+# ---------------------------------------------------------------------------------------
+# § WHERE EACH CONTROL IS, IN THE SOURCE RASTER'S PIXELS
+#
+# WARNING  THE FOUR FACE BUTTONS ARE NOT IN THIS TABLE. They are found by their source hues in
+# `find_face_buttons`, before the recolour destroys those hues, which makes them the four anchors
+# nobody can mistype. Everything below was measured by hand off a coordinate grid.
+#
+# WARNING  L1 AND L2 ARE TWO POINTS ON ONE BLOCK AND THAT IS DELIBERATE. The illustration draws
+# the shoulder as a single moulded nub with the bumper in front of the trigger, which is what a
+# real pad looks like from above. Anchoring both to its centre would draw two lines to one point
+# and claim there is one control there; the far edge is the trigger and the near edge is the
+# bumper, which is the ordering `docs/TODO.md` section 142.3's ring already relies on.
+# ---------------------------------------------------------------------------------------
+HAND_MEASURED = {
+    "leftTrigger": (395, 55),
+    "leftShoulder": (395, 140),
+    "rightTrigger": (1540, 55),
+    "rightShoulder": (1540, 140),
+
+    "dpad/up": (395, 330),
+    "dpad/left": (275, 440),
+    "dpad/right": (515, 440),
+    "dpad/down": (395, 555),
+
+    "select": (795, 478),
+    "start": (1142, 478),
+
+    # WARNING  THE STICK AND ITS CLICK ARE THE SAME POINT, AND HERE THAT IS CORRECT WHERE IT WAS
+    # WRONG FOR THE SHOULDERS. Pushing the stick and pressing it down are two controls on one
+    # lump of plastic; two anchors an inch apart would draw a pad with four sticks on it.
+    "leftStick": (700, 745),
+    "leftStickPress": (700, 745),
+    "rightStick": (1245, 745),
+    "rightStickPress": (1245, 745),
+}
 
 
-def build_body_mask():
-    """The union of body and grips, as a single-channel mask at supersampled size.
+def load_source():
+    if not os.path.exists(SOURCE):
+        print(f"build_controller_diagram: {SOURCE} is missing. See its LICENSE.txt.")
+        sys.exit(2)
 
-    WARNING  THE GRIPS ARE ROTATED RECTANGLES PASTED IN, NOT POLYGONS TYPED OUT BY HAND. A
-    hand-written eight-point polygon per grip is eight numbers that have to stay mirror images
-    of eight others, and the first version of this drawing had a left grip four pixels longer
-    than the right one. Rotating one shape twice cannot be asymmetric.
+    image = Image.open(SOURCE).convert("RGBA")
 
-    WARNING  AND THE RESULT IS THRESHOLDED BACK TO BLACK AND WHITE, WHICH IS NOT TIDINESS.
-    `Image.rotate` with a bicubic filter returns a mask with a soft edge, and `outline_of`
-    takes its outline with `MinFilter`, which reads any non-zero pixel as inside. A soft edge
-    therefore produces a SECOND faint outline a few pixels out from the real one, and the
-    first render of this file had exactly that: two grey arcs across the top of the pad that
-    looked like seams where three shapes had been welded together.
+    if image.size != SOURCE_SIZE:
+        print(f"build_controller_diagram: {SOURCE} is {image.size}, and every anchor in this "
+              f"file was measured against {SOURCE_SIZE}. Re-measure or re-render.")
+        sys.exit(2)
+
+    return image
+
+
+def find_face_buttons(pixels):
+    """The four face buttons, located by the hues the recolour is about to remove.
+
+    WARNING  THE RIGHT-HAND CLUSTER ONLY, BECAUSE THE POWER LED IS ALSO RED. The first version of
+    this search caught a four-pixel LED at the top of the pad in the same mask as the circle
+    button and put the EAST anchor eight hundred pixels off, in the middle of the body.
+    Restricting to the cluster's own side is cheaper than a connected-components pass and says
+    out loud which ambiguity it is resolving.
     """
-    mask = Image.new("L", (WIDTH * SS, HEIGHT * SS), 0)
-    md = ImageDraw.Draw(mask)
+    red, green, blue, alpha = (pixels[:, :, i].astype(int) for i in range(4))
 
-    # The central slab the sticks, the d-pad and the face buttons all sit on.
-    rounded(md, (px(250), px(150), px(774), px(410)), px(62))
+    rgb = pixels[:, :, :3].astype(int)
+    saturation = rgb.max(2) - rgb.min(2)
+    strong = (saturation > 70) & (alpha > 128)
 
-    # The shoulder shelf: a shallower block behind the top edge, so L1 and R1 have somewhere
-    # to sit that is part of the same object rather than floating beside it.
-    rounded(md, (px(268), px(132), px(756), px(240)), px(48))
+    columns = np.arange(pixels.shape[1])[None, :].repeat(pixels.shape[0], 0)
+    strong = strong & (columns > 1250)
 
-    # WARNING  THE CHIN IS AN ELLIPSE AND IT IS WHAT STOPS A STRAIGHT LINE RUNNING BETWEEN THE
-    # TWO STICKS. The slab's bottom edge is horizontal, the sticks sit on it, and the first
-    # render of this geometry drew that edge straight through the gap between them: a ruled
-    # line across the belly of a shape whose every other edge is a curve, which reads as a
-    # mistake rather than as a pad. The ellipse pushes the silhouette below the sticks and
-    # meets both grips, so the whole lower edge is one continuous curve.
-    md.ellipse((px(252), px(170), px(772), px(430)), fill=255)
+    masks = {
+        "buttonNorth": strong & (green > red) & (green > blue),
+        "buttonWest": strong & (red > 150) & (blue > 150) & (green < 120),
+        "buttonEast": strong & (red > 150) & (green < 90) & (blue < 90),
+        "buttonSouth": strong & (blue > 200) & (red < 190) & (green < 110),
+    }
 
-    for sign in (-1, 1):
-        grip = Image.new("L", (px(158), px(272)), 0)
-        gd = ImageDraw.Draw(grip)
-        gd.rounded_rectangle((0, 0, px(158) - 1, px(272) - 1), radius=px(74), fill=255)
-        grip = grip.rotate(sign * 17.0, resample=Image.BICUBIC, expand=True)
+    found = {}
 
-        cx = px(512) + sign * px(188)
-        mask.paste(grip, (cx - grip.width // 2, px(248)), grip)
+    for name, mask in masks.items():
+        rows, cols = np.nonzero(mask)
 
-    # See the second warning above: anything the rotation left grey becomes solid or nothing.
-    return mask.point(lambda v: 255 if v > 127 else 0)
+        if len(cols) == 0:
+            print(f"build_controller_diagram: could not find {name} in the source art.")
+            sys.exit(2)
+
+        found[name] = (float(cols.mean()), float(rows.mean()))
+
+    return found
 
 
-def outline_of(mask, weight):
-    """The edge of a mask, as a mask: the shape minus its own erosion.
+def recolour(image):
+    """Every pixel onto the warm ramp, with the four glyphs and the LED assigned.
 
-    WARNING  `MinFilter` IS THE EROSION AND ITS SIZE MUST BE ODD. An even size silently
-    shifts the result half a pixel in each axis, which puts the outline off-centre on two
-    sides of the pad and nowhere else, and it looks exactly like a badly drawn shape.
+    WARNING  THE GLYPHS ARE PICKED OUT BEFORE THE RAMP RUNS, or they would be ramped by their own
+    luminance and come out as four different browns: the green triangle is bright and the purple
+    cross is dark, so the pad would look like two of its four buttons were greyed out. They are
+    one colour on purpose, and the shape is what names them.
     """
-    size = weight if weight % 2 == 1 else weight + 1
-    inner = mask.filter(ImageFilter.MinFilter(size))
-    return Image.fromarray(np.maximum(
-        np.asarray(mask, dtype=np.int16) - np.asarray(inner, dtype=np.int16), 0
-    ).astype(np.uint8))
+    pixels = np.asarray(image).astype(int)
+    red, green, blue, alpha = (pixels[:, :, i] for i in range(4))
 
+    rgb = pixels[:, :, :3]
+    saturation = rgb.max(2) - rgb.min(2)
+    coloured = (saturation > 70) & (alpha > 8)
 
-def ring(pad, box, weight=STROKE):
-    pad.draw.ellipse(box, outline=INK, width=px(weight))
+    # WARNING  THE WHITE PAGE BEHIND THE DRAWING BECOMES TRANSPARENT. The SVG has no background
+    # of its own; the white is the rasteriser's. Keeping it would draw a white card behind the
+    # pad on a cream screen, which is the first thing a photograph of that screen would show.
+    page = (red > 245) & (green > 245) & (blue > 245)
 
+    # Rec. 709 luminance, so the ramp follows what the eye reads as light rather than the numeric
+    # average, which would make the source's mid greys jump a step.
+    luma = (0.2126 * red + 0.7152 * green + 0.0722 * blue) / 255.0
 
-def build():
-    pad = Pad()
-    d = pad.draw
+    steps = len(RAMP) - 1
+    index = np.clip(np.round(luma * steps).astype(int), 0, steps)
 
-    body = build_body_mask()
+    out = np.array(RAMP, dtype=int)[index]
+    out[coloured] = GLYPH
 
-    # The face first, then its edge on top, so the stroke is never half-covered by the fill.
-    pad.image.paste(Image.new("RGBA", pad.image.size, FILL), (0, 0), body)
-    pad.image.paste(Image.new("RGBA", pad.image.size, INK), (0, 0),
-                    outline_of(body, px(STROKE)))
+    # WARNING  THE POWER LED KEEPS A HUE AND THE CIRCLE BUTTON MUST NOT, AND THE FIRST RENDER GOT
+    # THAT BACKWARDS. Both are pure red in the source, so a test on colour alone painted the EAST
+    # face button in rim red while its three neighbours went honey: one of four buttons looking
+    # lit, which is precisely the "greyed out" reading the paragraph above is written to avoid.
+    # The LED is a four-pixel mark in the status strip along the top, so the ambiguity is
+    # resolved by WHERE it is, the same way `find_face_buttons` resolves the same clash.
+    rows = np.arange(pixels.shape[0])[:, None].repeat(pixels.shape[1], 1)
+    strip = rows < 260
 
-    # ---- the shoulders and triggers ---------------------------------------------------
-    #
-    # WARNING  THE TRIGGERS ARE DRAWN ABOVE THE BUMPERS AND BOTH OVERLAP THE SHELF, WHICH IS
-    # THE ONE CUE THAT SAYS WHICH IS WHICH. On every pad ever made L2 is the far one and L1 is
-    # the near one, and a diagram that draws them side by side makes the player guess. The
-    # overlap matters too: the first render had all four floating clear of the body with a gap
-    # of bare paper between, and four detached tabs read as four separate objects.
-    for sign in (-1, 1):
-        cx = 512 + sign * 210
+    out[coloured & strip & (red > 200) & (green < 60) & (blue < 60)] = LED
 
-        # L2 / R2: a tab peeking over the top edge.
-        d.rounded_rectangle((px(cx - 58), px(74), px(cx + 58), px(146)),
-                            radius=px(24), fill=FILL, outline=INK, width=px(STROKE))
-        pad.anchor("leftTrigger" if sign < 0 else "rightTrigger", cx, 100)
+    result = np.dstack([out, alpha]).astype(np.uint8)
+    result[page] = (0, 0, 0, 0)
 
-        # L1 / R1: a slimmer bar on the shelf itself.
-        d.rounded_rectangle((px(cx - 68), px(136), px(cx + 68), px(182)),
-                            radius=px(20), fill=FILL, outline=INK, width=px(STROKE))
-        pad.anchor("leftShoulder" if sign < 0 else "rightShoulder", cx, 159)
-
-    # ---- the touchpad ------------------------------------------------------------------
-    #
-    # The reference pad has one and it is what makes the silhouette readable as a controller
-    # rather than as a bone. It carries no binding, so it gets no anchor.
-    d.rounded_rectangle((px(446), px(196), px(578), px(300)),
-                        radius=px(14), fill=SUNK, outline=INK, width=px(STROKE))
-
-    # ---- start and select ---------------------------------------------------------------
-    #
-    # Flanking the touchpad, which is where the reference drawing puts them, and clear of both
-    # thumb clusters: SELECT sits between the d-pad and the pad, START between the pad and the
-    # face buttons.
-    for sign, name in ((-1, "select"), (1, "start")):
-        cx = 512 + sign * 96
-        d.rounded_rectangle((px(cx - 13), px(196), px(cx + 13), px(240)),
-                            radius=px(11), fill=FILL, outline=INK, width=px(STROKE))
-        pad.anchor(name, cx, 218)
-
-    # ---- the d-pad -----------------------------------------------------------------------
-    #
-    # WARNING  FOUR SEPARATE ANCHORS, NOT ONE. Four different actions bind to the four
-    # directions (`InputCatalogue`: EMOTE up, and `ScreenInputCatalogue`: HIDE HUD down, the
-    # two pektus curves left and right), and one anchor on the middle of the cross would draw
-    # four leader lines converging on a point that means "the d-pad generally", which teaches
-    # a player that all four are the same button. `UI.InputGlyphs` records the same decision
-    # for the same reason on the glyph sheet.
-    dx, dy, arm, half = 338, 282, 46, 22
-    d.polygon([
-        (px(dx - half), px(dy - arm)), (px(dx + half), px(dy - arm)),
-        (px(dx + half), px(dy - half)), (px(dx + arm), px(dy - half)),
-        (px(dx + arm), px(dy + half)), (px(dx + half), px(dy + half)),
-        (px(dx + half), px(dy + arm)), (px(dx - half), px(dy + arm)),
-        (px(dx - half), px(dy + half)), (px(dx - arm), px(dy + half)),
-        (px(dx - arm), px(dy - half)), (px(dx - half), px(dy - half)),
-    ], fill=FILL, outline=INK, width=px(STROKE))
-
-    pad.anchor("dpad/up", dx, dy - arm + 13)
-    pad.anchor("dpad/down", dx, dy + arm - 13)
-    pad.anchor("dpad/left", dx - arm + 13, dy)
-    pad.anchor("dpad/right", dx + arm - 13, dy)
-
-    # ---- the face buttons -----------------------------------------------------------------
-    #
-    # WARNING  THE SHAPE IS THE NAME, WHICH IS WHY THEY ARE NOT FOUR IDENTICAL CIRCLES WITH
-    # LETTERS IN. The reference drawing tells them apart by hue and two of those hues are
-    # banned here (section 6.4); a triangle, a square, a circle and a cross survive both the
-    # ban and a colourblind player. The four positions are the compass names the Input System
-    # uses, so `buttonNorth` really is the top one on every pad it matches.
-    fx, fy, spread, r = 676, 282, 50, 23
-
-    ring(pad, (px(fx - r), px(fy - spread - r), px(fx + r), px(fy - spread + r)))
-    d.polygon([(px(fx), px(fy - spread - 12)),
-               (px(fx + 12), px(fy - spread + 9)),
-               (px(fx - 12), px(fy - spread + 9))], outline=INK, width=px(3))
-    pad.anchor("buttonNorth", fx, fy - spread)
-
-    ring(pad, (px(fx - spread - r), px(fy - r), px(fx - spread + r), px(fy + r)))
-    d.rectangle((px(fx - spread - 10), px(fy - 10), px(fx - spread + 10), px(fy + 10)),
-                outline=INK, width=px(3))
-    pad.anchor("buttonWest", fx - spread, fy)
-
-    ring(pad, (px(fx + spread - r), px(fy - r), px(fx + spread + r), px(fy + r)))
-    ring(pad, (px(fx + spread - 10), px(fy - 10), px(fx + spread + 10), px(fy + 10)), weight=3)
-    pad.anchor("buttonEast", fx + spread, fy)
-
-    ring(pad, (px(fx - r), px(fy + spread - r), px(fx + r), px(fy + spread + r)))
-    d.line([(px(fx - 10), px(fy + spread - 10)), (px(fx + 10), px(fy + spread + 10))],
-           fill=INK, width=px(3))
-    d.line([(px(fx + 10), px(fy + spread - 10)), (px(fx - 10), px(fy + spread + 10))],
-           fill=INK, width=px(3))
-    pad.anchor("buttonSouth", fx, fy + spread)
-
-    # ---- the sticks ------------------------------------------------------------------------
-    #
-    # WARNING  ONE STICK CARRIES TWO ANCHORS AND THEY ARE THE SAME POINT ON PURPOSE. Pushing
-    # the stick and CLICKING it are two controls (`<Gamepad>/leftStick` moves, and
-    # `<Gamepad>/leftStickPress` is SPRINT), and they are the same lump of plastic. Two
-    # anchors a centimetre apart would be a drawing that claims there are two objects there.
-    for sign, stick, press in ((-1, "leftStick", "leftStickPress"),
-                               (1, "rightStick", "rightStickPress")):
-        sx, sy = 512 + sign * 104, 378
-
-        ring(pad, (px(sx - 48), px(sy - 48), px(sx + 48), px(sy + 48)))
-        d.ellipse((px(sx - 33), px(sy - 33), px(sx + 33), px(sy + 33)),
-                  fill=FILL, outline=INK, width=px(STROKE))
-
-        pad.anchor(stick, sx, sy)
-        pad.anchor(press, sx, sy)
-
-    return pad
+    return Image.fromarray(result, "RGBA")
 
 
 def crop_to_ink(flat, anchors):
-    """Trim the transparent margin, and carry the anchors through the same transform.
+    """Trim the transparent margin, carrying the anchors through the same transform.
 
-    WARNING  THE UNCROPPED PNG SHRANK INSIDE ITS OWN BOX ON THE SCREEN, AND THE FIRST RENDER OF
-    `ControllerMapScreen` IS THE RECEIPT. The drawing occupies about 65 per cent of the 1024 px
-    canvas and the rest is transparent margin, so a `UnityEngine.UI.Image` with `preserveAspect`
-    fitted the WHOLE canvas into the 980-unit rect and the pad came out about 640 units wide
-    with 170 units of nothing either side. That is `CLAUDE.md` section 6.2c's second question
-    exactly: *"Is this image fitted to the region it is SEEN in, or to the whole screen?"* The
-    answer has to be baked into the file, because the C# cannot know where the ink is.
-
-    WARNING  THE ANCHORS ARE REMAPPED IN THE SAME PASS OR EVERY LEADER LINE MOVES. They are
-    normalised against the canvas, and cropping changes what "normalised" means. Doing the crop
-    in an image editor later and leaving the manifest alone would put all eighteen arrow-heads
-    somewhere off the pad, which is the drift this whole one-generator arrangement exists to
-    prevent.
+    WARNING  THE ANCHORS ARE REMAPPED HERE OR EVERY LEADER LINE MOVES. They are normalised
+    against the canvas and cropping changes what normalised means.
     """
     box = flat.getbbox()
     if box is None:
-        return flat, anchors
+        return flat, {name: (0.5, 0.5) for name in anchors}
 
-    # A few pixels of air, so the outline's own antialiasing is not clipped.
     margin = 6
     x0 = max(0, box[0] - margin)
     y0 = max(0, box[1] - margin)
@@ -343,57 +266,78 @@ def crop_to_ink(flat, anchors):
 
     moved = {}
 
-    for name, (nx, ny) in anchors.items():
-        moved[name] = ((nx * flat.width - x0) / width, (ny * flat.height - y0) / height)
+    for name, (px, py) in anchors.items():
+        moved[name] = ((px - x0) / width, (py - y0) / height)
 
     return cropped, moved
 
 
-def write(pad, out_dir, preview):
+# WARNING  THE SHIPPED PNG IS RESAMPLED DOWN AND THE SOURCE RASTER IS NOT, BECAUSE THEY ARE
+# ANSWERING TWO DIFFERENT QUESTIONS. The 1960 px input exists so the hand-measured anchors have
+# somewhere precise to be measured; the OUTPUT only ever draws at about 980 canvas units, which
+# is roughly 1300 device pixels on a 1440p monitor. `EditorTools.InputGlyphImport` keeps this
+# folder UNCOMPRESSED (flat fills inside hard outlines are what block compression ruins), so
+# every pixel here is four bytes in memory plus a third for mips: shipping the full 1942 x 1214
+# would be about 12.6 MB of texture for one menu illustration, and 1400 wide is 6.5 MB for a
+# picture nobody can tell apart. The anchors are normalised, so a resize costs them nothing.
+SHIPPED_WIDTH = 1400
+
+
+def write(out_dir, art, anchors, preview):
     os.makedirs(out_dir, exist_ok=True)
 
-    flat = pad.image.resize((WIDTH, HEIGHT), Image.LANCZOS)
-    flat, anchors = crop_to_ink(flat, pad.anchors)
+    if art.width > SHIPPED_WIDTH:
+        height = max(1, round(art.height * SHIPPED_WIDTH / art.width))
+        art = art.resize((SHIPPED_WIDTH, height), Image.LANCZOS)
 
     png = os.path.join(out_dir, "pad_diagram_v1.png")
-    flat.save(png)
+    art.save(png)
 
-    # WARNING  THE MANIFEST IS PLAIN `name x y` LINES AND NOT JSON, because Unity loads it as a
-    # `TextAsset` from `Resources` and `JsonUtility` cannot deserialise a dictionary. A
-    # three-token line needs no parser at all and no package reference.
-    #
-    # WARNING  AND ITS BASENAME MUST DIFFER FROM THE PNG'S, WHICH COST THE FIRST RENDER ALL
-    # EIGHTEEN OF ITS LEADER LINES. It was `pad_diagram_v1.txt` beside `pad_diagram_v1.png`, and
-    # `Resources.Load<TextAsset>("UI/input/pad_diagram_v1")` resolved the PNG for that name and
-    # answered **null** for the text asset: no error, no log, and a screen that drew the pad and
-    # the callouts perfectly with nothing joining them. `Resources.Load` matches on the PATH
-    # first and the type second.
+    # WARNING  A DIFFERENT BASENAME FROM THE PNG, AND IT COST A WHOLE RENDER ONCE. It was
+    # `pad_diagram_v1.txt` beside `pad_diagram_v1.png`, and
+    # `Resources.Load<TextAsset>("UI/input/pad_diagram_v1")` resolved the PNG for that path and
+    # answered null: no error, no log, and a screen that drew the pad and every callout with
+    # nothing joining them. `Resources.Load` matches the path first and the type second.
     manifest = os.path.join(out_dir, "pad_diagram_v1_anchors.txt")
 
     with open(manifest, "w", encoding="utf-8") as handle:
         handle.write("# generated by tools/build_controller_diagram.py - do not hand-edit\n")
+        handle.write("# source: tools/assets/ps3_gamepad_cc0_2400.png, CC0, see its LICENSE\n")
         handle.write("# control  x  y   (normalised, y measured DOWN from the top)\n")
 
         for name in sorted(anchors):
             x, y = anchors[name]
             handle.write(f"{name} {x:.5f} {y:.5f}\n")
 
-    print(f"wrote {png} ({flat.width}x{flat.height})")
+    print(f"wrote {png} ({art.width}x{art.height})")
     print(f"wrote {manifest} ({len(anchors)} anchors)")
 
-    if preview:
-        # A review render gets a light ground under it, because the screen it ships on is cream
-        # paper and a transparent PNG viewed on white is a picture of a different thing.
-        # `CLAUDE.md` section 6.2b: over the real background, never an empty scene.
-        renders = os.path.join("Logs", "renders")
-        os.makedirs(renders, exist_ok=True)
+    if not preview:
+        return
 
-        ground = Image.new("RGBA", flat.size, (0xFC, 0xD3, 0x9F, 255))
-        ground.alpha_composite(flat)
+    # WARNING  OVER THE REAL GROUND, NEVER AN EMPTY SCENE, which is `CLAUDE.md` section 6.2b's
+    # second row. A transparent PNG viewed on white is a picture of a different object, and this
+    # one ships on Honey Quartz paper.
+    renders = os.path.join("Logs", "renders")
+    os.makedirs(renders, exist_ok=True)
 
-        shot = os.path.join(renders, "pad_diagram_v3.png")
-        ground.convert("RGB").save(shot)
-        print(f"wrote {shot}")
+    ground = Image.new("RGBA", art.size, (0xFC, 0xD3, 0x9F, 255))
+    ground.alpha_composite(art)
+    ground.convert("RGB").save(os.path.join(renders, "pad_diagram_v4.png"))
+
+    # WARNING  AND A SECOND RENDER WITH THE ANCHORS DRAWN ON, because an anchor three per cent out
+    # is invisible in the art and obvious the moment a ring is drawn where the line will end.
+    # This is the picture to look at when a leader points at the wrong button.
+    marked = ground.copy()
+    draw = ImageDraw.Draw(marked)
+
+    for _, (nx, ny) in anchors.items():
+        x = nx * art.width
+        y = ny * art.height
+        draw.ellipse((x - 10, y - 10, x + 10, y + 10), outline=(0xC3, 0x2E, 0x0D), width=4)
+
+    marked.convert("RGB").save(os.path.join(renders, "pad_diagram_v4_anchors.png"))
+    print(f"wrote {renders}/pad_diagram_v4.png and its anchor overlay")
 
 
 def main():
@@ -403,7 +347,14 @@ def main():
     parser.add_argument("--preview", action="store_true")
     args = parser.parse_args()
 
-    write(build(), args.out, args.preview)
+    source = load_source()
+
+    anchors = dict(HAND_MEASURED)
+    anchors.update(find_face_buttons(np.asarray(source)))
+
+    art, normalised = crop_to_ink(recolour(source), anchors)
+    write(args.out, art, normalised, args.preview)
+
     return 0
 
 

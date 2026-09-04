@@ -89,9 +89,15 @@ namespace TumbangPreso.InputLayer
 
         /// <summary>
         /// How tall the ring of callouts is, which is the band everything else is measured in.
-        /// Nine rows a side, so `Ring.Length / 2` gaps less the one that hangs off the end.
+        /// Nine rows a side, so half the table's length in gaps, less the one that hangs off
+        /// the end.
         /// </summary>
-        private static float BandHeight => Ring.Length / 2 * (RowHeight + RowGap) - RowGap;
+        /// ⚠️⚠️ IT COUNTS `Declared`, NOT `Ring`, AND SWAPPING THE TWO IS A NULL REFERENCE IN A
+        /// STATIC INITIALISER. `Ring` is built by `BuildRing`, which calls `Uncross`, which needs
+        /// this number to know where the rows are: reading `Ring` here would read the field that
+        /// is in the middle of being assigned. The two lists always hold the same controls, so
+        /// the count is the same fact from the side that already exists.
+        private static float BandHeight => Declared.Length / 2 * (RowHeight + RowGap) - RowGap;
 
         /// <summary>
         /// The drawing's size, fitted to the band rather than to the leftover width.
@@ -208,9 +214,11 @@ namespace TumbangPreso.InputLayer
 
                 column.Sort((a, b) =>
                 {
-                    int byHeight = HeightOf(a).CompareTo(HeightOf(b));
-                    return byHeight != 0 ? byHeight : a.Order.CompareTo(b.Order);
+                    int byFan = FanKey(a).CompareTo(FanKey(b));
+                    return byFan != 0 ? byFan : a.Order.CompareTo(b.Order);
                 });
+
+                Uncross(column, side);
 
                 for (int i = 0; i < column.Count; i++) ring.Add(column[i].WithOrder(i));
             }
@@ -218,9 +226,123 @@ namespace TumbangPreso.InputLayer
             return ring.ToArray();
         }
 
-        /// <summary>How far down the drawing a control sits, or its declared rank when unknown.</summary>
-        private static float HeightOf(Slot slot)
-            => PadDiagram.TryAnchor(slot.Control, out var anchor) ? anchor.y : slot.Order;
+        /// <summary>
+        /// Swaps neighbouring rows until no two leader lines in this column cross.
+        ///
+        /// ⚠️⚠️ THE ANGULAR SORT IS AN APPROXIMATION AND THIS IS THE EXACT ANSWER, AND BOTH ARE
+        /// HERE BECAUSE THE APPROXIMATION GOT ONE PAIR WRONG IN THE FIRST RENDER WITH THE REAL
+        /// ARTWORK. Sorting a fan by angle cannot produce a crossing when every line starts at ONE
+        /// point; these start spread over the whole 750-unit gutter, so for two targets at nearly
+        /// the same angle the order can still come out inverted. It did: HIDE HUD's line ended
+        /// exactly on the point ABILITY INFO's line passed through.
+        ///
+        /// ⚠️ IT TESTS THE ACTUAL SEGMENTS RATHER THAN A PROXY FOR THEM, so the claim the whole
+        /// diagram rests on — that a reader never has to trace a line with a finger — is a
+        /// property of the output instead of a promise in a comment. `docs/TODO.md` § 142.3
+        /// records the version of this table that carried the promise and not the property.
+        ///
+        /// ⚠️ ADJACENT SWAPS ONLY, AND BOUNDED. A full crossing-minimal assignment is a
+        /// quadratic-cost problem for a nine-row column that is already nearly right; bubbling
+        /// adjacent pairs fixes exactly the local inversions the angular sort leaves and cannot
+        /// run away. The bound is the column length, which is the most passes a bubble sort can
+        /// need.
+        /// </summary>
+        private static void Uncross(List<Slot> column, Side side)
+        {
+            var size = DiagramSize;
+            float top = BoardCentreY + BandHeight * 0.5f;
+            float startX = (int)side * (size.x * 0.5f + Gutter);
+
+            for (int pass = 0; pass < column.Count; pass++)
+            {
+                bool swapped = false;
+
+                for (int i = 0; i + 1 < column.Count; i++)
+                {
+                    var upper = new Vector2(startX, top - i * (RowHeight + RowGap));
+                    var lower = new Vector2(startX, top - (i + 1) * (RowHeight + RowGap));
+
+                    if (!TryTarget(column[i], size, out var a)) continue;
+                    if (!TryTarget(column[i + 1], size, out var b)) continue;
+
+                    if (!Crosses(upper, a, lower, b)) continue;
+
+                    (column[i], column[i + 1]) = (column[i + 1], column[i]);
+                    swapped = true;
+                }
+
+                if (!swapped) return;
+            }
+        }
+
+        /// <summary>Where a control's leader line ends, in the same space the callouts live in.</summary>
+        private static bool TryTarget(Slot slot, Vector2 size, out Vector2 target)
+        {
+            target = Vector2.zero;
+            if (!PadDiagram.TryAnchor(slot.Control, out var anchor)) return false;
+
+            target = new Vector2((anchor.x - 0.5f) * size.x,
+                                 BoardCentreY + (0.5f - anchor.y) * size.y);
+            return true;
+        }
+
+        /// <summary>
+        /// Whether two segments properly cross.
+        ///
+        /// ⚠️ THE ORIENTATION TEST, NOT AN INTERSECTION POINT. Solving for the point needs a
+        /// divide and a parallel case; four cross products answer the only question asked here
+        /// and cannot divide by zero. ⚠️ **Touching counts as crossing**, which is deliberate:
+        /// the pair that started this was two lines meeting exactly at one of their endpoints,
+        /// and on screen that reads as a crossing whatever the strict definition says.
+        /// </summary>
+        private static bool Crosses(Vector2 a1, Vector2 a2, Vector2 b1, Vector2 b2)
+        {
+            float d1 = Cross(b2 - b1, a1 - b1);
+            float d2 = Cross(b2 - b1, a2 - b1);
+            float d3 = Cross(a2 - a1, b1 - a1);
+            float d4 = Cross(a2 - a1, b2 - a1);
+
+            return d1 * d2 <= 0.0f && d3 * d4 <= 0.0f;
+        }
+
+        private static float Cross(Vector2 u, Vector2 v) => u.x * v.y - u.y * v.x;
+
+        /// <summary>
+        /// The angle a control sits at, seen from this column, which is the order that cannot
+        /// cross.
+        ///
+        /// ⚠️⚠️ IT WAS THE ANCHOR'S PLAIN Y UNTIL THE REAL ARTWORK LANDED, AND Y IS ONLY RIGHT
+        /// WHEN EVERY TARGET IS THE SAME DISTANCE AWAY. The drawn pad had its controls in two
+        /// tidy vertical bands, so "sort by height" and "sort by angle" agreed. The photographed
+        /// one does not: **SELECT and START sit near the CENTRE of the pad**, much further from
+        /// their columns than the d-pad or the sticks, and a far target sandwiched between two
+        /// near ones by height forces its line to cut across both of them. The first render with
+        /// this art had four crossings and all four were those two labels.
+        ///
+        /// ⚠️ SORTING A FAN BY ANGLE FROM ONE ORIGIN CANNOT PRODUCE A CROSSING, which is the
+        /// whole reason to spend a trigonometric call here rather than tune the table by eye.
+        /// The origin is a point out beyond this column's own side at mid height, so it stands in
+        /// for "where the labels are"; the callouts are not literally all at that point, but the
+        /// gutter they start from is short next to the distance across the drawing, and the
+        /// approximation is what makes the result stable when the art moves again.
+        ///
+        /// ⚠️ A CONTROL THE DRAWING DOES NOT HAVE FALLS BACK TO ITS DECLARED RANK, scaled to sit
+        /// in the same range as an angle so the two orderings do not interleave arbitrarily.
+        /// `PadDiagram` comes back empty on a checkout with no generated art.
+        /// </summary>
+        private static float FanKey(Slot slot)
+        {
+            if (!PadDiagram.TryAnchor(slot.Control, out var anchor))
+                return slot.Order * 0.01f;
+
+            // The virtual eye, out past the callout column on this control's own side.
+            float originX = slot.Side == Side.Left ? -0.35f : 1.35f;
+
+            float dx = Mathf.Abs(anchor.x - originX);
+            float dy = anchor.y - 0.5f;
+
+            return Mathf.Atan2(dy, dx);
+        }
 
         /// <summary>
         /// Every control the map has a callout for, in ring order.

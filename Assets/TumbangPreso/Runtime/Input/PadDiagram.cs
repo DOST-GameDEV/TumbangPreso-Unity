@@ -44,7 +44,7 @@ namespace TumbangPreso.InputLayer
         /// constant that disagrees with the art is `CLAUDE.md` § 5's drift rule in miniature, and
         /// the fallback exists for the no-art case above rather than as the answer.
         /// </summary>
-        public const float FallbackAspect = 1024.0f / 620.0f;
+        public const float FallbackAspect = 1400.0f / 875.0f;
 
         private static bool _loaded;
         private static Sprite _art;

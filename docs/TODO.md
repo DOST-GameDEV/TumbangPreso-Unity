@@ -265,6 +265,54 @@ it was shaped for was never wired in.
 mouse ACCUMULATES into it, and a player who nudges the stick and then moves the mouse gets the
 mouse's answer rather than a fight between the two.
 
+### 142.3c ⚠️⚠️ THE PAD IS A REAL ILLUSTRATION NOW, AND IT IS CC0 RATHER THAN "OFF GOOGLE"
+
+🧑 2026-09-04, of the first version: *"change the assets for controller map ... change also how
+the controller looks like"*, and *"download it off of google"*.
+
+**The first pad was drawn from primitives** — rounded rectangles, an ellipse per stick, a polygon
+for the d-pad. It read as a controller and it read as programmer art, which is what it was. It is
+now [Grumbel's PlayStation 3 gamepad](https://commons.wikimedia.org/wiki/File:PlayStation_3_gamepad.svg)
+from the Open Clip Art Library via Wikimedia Commons.
+
+⚠️⚠️ **CC0, AND THE SEARCH WAS RESTRICTED TO CC0 SOURCES ON PURPOSE.** The ask was to take art off
+the web; **`docs/Asset_Sourcing.md` § 1 rule 1 is what decided WHICH art**, because an arbitrary
+image result is almost always somebody's copyright and this repository is public. Rule 8 is what
+permits it to be committed at all: *"CC0 and CC BY source may live in this public repository with
+the proper licence."* The licence is `tools/assets/ps3_gamepad_cc0.LICENSE.txt`, the entry is
+`Asset_Sourcing.md` § 8.1, and **no credits line is owed** because CC0 requires none.
+
+⚠️⚠️ **IT IS RECOLOURED ON THE WAY IN AND THE RAW ART NEVER SHIPS.** The source is near-black with
+**green, magenta, red and purple** face buttons: magenta is the exact fault § 139.4 records
+shipping in the settings panel, and the other three each belong to another job in this palette.
+`build_controller_diagram.py` maps every pixel onto the warm ramp **by luminance**, which keeps all
+seven values of the illustration's modelling instead of flattening it, and forces the four face
+glyphs to Honey Quartz so they are told apart by SHAPE. Same call, same reasoning, as
+`tools/build_input_glyphs.py` made about the bought glyph sheets.
+
+⚠️ **THE ANCHORS SURVIVED THE SWAP BECAUSE FOUR OF THEM ARE FOUND RATHER THAN TYPED.** The
+generator locates the four face buttons **by their source hues, before the recolour destroys
+them**. The other fourteen were measured by hand off a coordinate grid, which is why the tool
+asserts the source raster's exact size: a re-render by a different SVG engine is a different set
+of pixels and every leader line would move with nothing failing.
+
+⚠️⚠️ **AND THE REAL ART BROKE THE ROW ORDER, WHICH IS THE INTERESTING PART.** § 142.3 had just
+replaced a typed-in order with a SORT by each anchor's Y. That was right for the drawn pad,
+whose controls sat in two tidy vertical bands, and **wrong the moment the photographed one
+arrived**: SELECT and START sit near the CENTRE, much further from their columns than the d-pad
+or the sticks, and a far target sandwiched between two near ones by height forces its line to cut
+across both. Four crossings, all four those two labels. **The order is the target's ANGLE seen
+from its own column now**, because a fan sorted by angle from one origin cannot cross.
+
+⚠️⚠️ **AND THE ANGLE ALONE WAS STILL NOT ENOUGH, WHICH IS WORTH THE EXTRA PARAGRAPH.** That
+theorem holds for lines leaving ONE point; these leave a column spread over the whole 750-unit
+gutter, so for two targets at nearly the same angle the order can still come out inverted. It
+did, on the very next render: HIDE HUD's leader ended exactly on the point ABILITY INFO's leader
+passed through. `ControllerMapScreen.Uncross` now bubbles adjacent rows while an actual
+**segment-intersection test** says their two lines cross, so *"no reader has to trace a line with
+a finger"* is a property of the output rather than a promise in a comment. The angular sort stays
+in front of it, because it leaves the pass almost nothing to do.
+
 ### 142.4 ⚠️ AN UNRECOGNISED PAD IS DRIVEN NOW: § 138.4 STEPS 2 AND 3, BY A ROUTE § 138 DID NOT EXPECT
 
 § 138.4 step 2 asks for a registered fallback LAYOUT. ⚠️⚠️ **THAT ROUTE IS SHUT AND IT IS WORTH
