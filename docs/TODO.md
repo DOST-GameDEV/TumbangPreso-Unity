@@ -1038,6 +1038,15 @@ saying `result="Passed" total="0"`.
 | `Checks.RunAll`, all seven | **OK**, one launch. `headless`, `arena`, `map geometry`, `audio cues`, `scene scripts`, `input surface`, `shader warmup` |
 | `MapGeometryCheck`, Eskinita | **findings 0**, down from **10**. Bayan Plaza 0, Ilalim ng Tulay 0 |
 | PlayMode, targeted | 27 cases, **23 passed, 4 failed**, all four pre-existing. See below |
+| PlayMode, `NationalsShowcaseProbe` | **1 passed**, 177 frames written and verified on disk |
+| PlayMode, `AiDiagnosticProbe` | **2 passed**, Classic and Hero Strike, with the sabotage ledger |
+| PlayMode, the touch photograph | **1 passed**, `Logs/shots-touch/*-v4.png` |
+| Windows player | **SUCCEEDED**, 793 MB, 54 s, `C:\Users\Matthew\Desktop\TumbangPreso-Unity\TumbangPreso.exe` |
+| Android player | **SUCCEEDED**, 228 MB .apk (1928 MB staged), 483 s, `C:\Users\Matthew\Desktop\TumbangPreso-Android\TumbangPreso.apk` |
+
+⚠️ **BOTH PLATFORMS ARE FROM THE SAME COMMIT**, which `CLAUDE.md` § 4a requires whenever shared
+runtime code moves. `NetSession.ProtocolVersion` did **not** move (it is 23 and
+`InputContractTests` asserts it), but the camera, the HUD, the input layer and the AI all did.
 
 ⚠️⚠️ **THE FOUR PLAYMODE FAILURES ARE PRE-EXISTING AND DOCUMENTED, AND THIS PASS TOUCHES NONE OF
 THE FILES THEY MEASURE.**
