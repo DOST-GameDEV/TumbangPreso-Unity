@@ -340,6 +340,9 @@ namespace TumbangPreso.UI
             Inset(typed.rectTransform);
 
             _field = _fieldRow.AddComponent<InputField>();
+            // ⚠️ TAKES UNITY'S BLUE SELECTION HIGHLIGHT OFF THIS FIELD. See
+            // MenuKit.Dress: the default is `a8ceff` and CLAUDE.md § 6.4 forbids it.
+            MenuKit.Dress(_field);
             _field.textComponent = typed;
             _field.placeholder = placeholder;
             _field.targetGraphic = image;
@@ -896,6 +899,15 @@ namespace TumbangPreso.UI
             ownCanvas.overrideSorting = true;
             ownCanvas.sortingOrder = 90;
             _historyPanel.AddComponent<GraphicRaycaster>();
+
+            // ⚠️ THE OPENED LOG IS A SCREEN INSIDE THE LOBBY, so it owns its own focus path
+            // rather than being chained into the lobby's. `ScreenFocus.Owns` is what keeps the
+            // two apart: without a `ScreenFocus` here the lobby's would swallow the log's rows,
+            // and pressing DOWN inside an open chat log would walk out of it into the seat list
+            // behind. ⚠️ Chat is also its own INPUT context (`PlayerInputReader` and
+            // `CLAUDE.md` § 4): a player who is typing has no verbs.
+            InputLayer.UiInputModule.Ensure();
+            InputLayer.ScreenFocus.Install(_historyPanel);
 
             var box = new GameObject("Panel");
             box.transform.SetParent(_historyPanel.transform, false);

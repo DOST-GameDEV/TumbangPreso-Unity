@@ -21,7 +21,22 @@ for dirpath, _, filenames in os.walk(ROOT):
         gates = []
         for i, line in enumerate(lines):
             stripped = line.strip()
-            if "ShouldResolve()" in line and "return" in line:
+            is_comment = (stripped.startswith("//") or stripped.startswith("*")
+                          or stripped.startswith("/*"))
+
+            # A GATE IN A COMMENT IS NOT A GATE, and this audit was the only one of the
+            # three that believed it was. `audit_ability_authority.py` strips comments
+            # before looking for a gate and `audit_presentation_reach.py` does the same;
+            # this loop tested the raw line, so a doc comment containing the words
+            # "ShouldResolve()" and "return" registered a gate at its own brace depth and
+            # then covered every method below it in the file.
+            #
+            # It reported 5 HOST-ONLY sites and all five were false, including the three
+            # in NetCue itself: the class that EXISTS to stop a cue being host-only was
+            # reported as host-only, because its own header explains the gate it replaces.
+            # MatchRpc's two cue relays were the same, from three comments there. A reader
+            # trusting that output goes hunting for a bug in the fix.
+            if "ShouldResolve()" in line and "return" in line and not is_comment:
                 gates.append(depth)
             if ("GameServices.Audio" in line
                     and not stripped.startswith("//")

@@ -37,6 +37,18 @@ namespace TumbangPreso.PlayTests
     /// </summary>
     public class ArenaBoundsProbe
     {
+        /// <summary>
+        /// ⚠️⚠️ THE PAIR THAT MAKES A FULL-SUITE RESULT MEAN ANYTHING. `docs/TODO.md` § 126.8:
+        /// the full PlayMode run came back 42, 41 and then 56 red with the red set moving, and a
+        /// gate whose red set moves is not measuring the code. `PlayModeWorld.Reset` has the
+        /// mechanism and why BOTH hooks are needed rather than one.
+        /// </summary>
+        [UnitySetUp]
+        public IEnumerator ResetWorldBefore() => PlayModeWorld.Reset();
+
+        [UnityTearDown]
+        public IEnumerator ResetWorldAfter() => PlayModeWorld.Reset();
+
         private const string OutPath = "Logs/arena-bounds.txt";
 
         private static readonly string[] Arenas = { "Eskinita", "BayanPlaza", "IlalimNgTulay" };

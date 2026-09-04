@@ -436,6 +436,72 @@ namespace TumbangPreso
             return true;
         }
 
+        // -------------------------------------------------------------------
+        // § THE REFUSAL, WHICH IS THE OTHER HALF OF A PREDICTED VERB
+        //
+        // ⚠️⚠️ A CLIENT PAYS FOR ALL THREE OF THESE BEFORE IT ASKS, AND THE HOST USED TO REFUSE
+        // IN SILENCE. `StepPunch` stamps `_punchCooldown`, `ReleaseLunge` stamps `_lungeCooldown`
+        // and `_lungeActiveLeft` and applies its own impulse, and `StepShove` spends
+        // `Balance.ShoveStaminaCost` AND stamps `_shoveCooldown`, every one of them before the
+        // `ShouldRequest()` branch sends anything. Each of the three `HostResolve` methods above
+        // returns false on a refusal and `MatchRpc` threw that answer away.
+        //
+        // This is the same defect `HostDenyAbilityCast` was built for one file away, and it was
+        // found by walking every request handler in `MatchRpc` against that shape rather than by
+        // playing. `docs/TODO.md` § 135.2 has the table of all eight handlers and which three
+        // have it.
+        //
+        // ⚠️⚠️ AND IT IS WORSE HERE THAN IT IS FOR AN ABILITY, FOR TWO REASONS THAT BOTH HAD TO
+        // BE CHECKED RATHER THAN ASSUMED.
+        //   1. An ability had a 5 Hz `SyncAbility` writing the host's cooldown over the client's,
+        //      so much so that § 71 had to build `mayLower` to STOP a refused cast healing
+        //      itself. **These three cooldowns are on no wire at all.**
+        //   2. The stamina does not heal either, which is the part that looks wrong until you
+        //      read `CharacterMotor.StepNetworkTransform`: `SyncUnit` DOES carry
+        //      `Stamina.Current`, but it is only broadcast for a body the host actually drives
+        //      (`HostDrivesThisBody`), and a remote human's seat is deliberately not
+        //      re-broadcast because echoing it back fights the 50 Hz stream its owner is
+        //      sending. **The one seat that can be refused is the one seat no snapshot corrects.**
+        //
+        // ⚠️ THE LUNGE IMPULSE IS NOT TAKEN BACK, AND THAT IS DELIBERATE. A refused lunge has
+        // already moved the body a few centimetres, and `SubmitMove` reconciles a position every
+        // physics step anyway. Yanking the velocity to zero here would make a refusal look like
+        // running into a wall, which is a worse lie than a short slide.
+        // -------------------------------------------------------------------
+
+        /// <summary>Gives back what a verb the host refused had already charged this peer.</summary>
+        public void RollBackRefusedVerb(Net.MatchRpc.DeniedVerb verb)
+        {
+            switch (verb)
+            {
+                case Net.MatchRpc.DeniedVerb.Punch:
+                    _punchCooldown = 0.0f;
+                    break;
+
+                case Net.MatchRpc.DeniedVerb.Lunge:
+                    _lungeCooldown = 0.0f;
+
+                    // ⚠️⚠️ THE ACTIVE WINDOW GOES TOO, AND IT IS THE HALF THAT IS NOT ABOUT
+                    // FAIRNESS TO THE REFUSED PLAYER. `_lungeActiveLeft` is the only gate on
+                    // `SweepLungeTag`, which hands out tags. Returning the cooldown and leaving
+                    // the window open would let a dash the host never ran keep hunting for a
+                    // victim on this screen for `Balance.LungeActiveTime`, and a tag is scored
+                    // host-side, so the two peers would disagree about a POINT.
+                    _lungeActiveLeft = 0.0f;
+                    break;
+
+                case Net.MatchRpc.DeniedVerb.Shove:
+                    _shoveCooldown = 0.0f;
+
+                    // ⚠️ THE BAR IS THE HALF THAT MATTERS. `CLAUDE.md` § 4: the real price of a
+                    // shove is the sprint it costs, so a refusal that returned only the cooldown
+                    // would still have taken the escape distance and the player would never know
+                    // why they could not get out of the box.
+                    _motor.Stamina.Refund(Balance.ShoveStaminaCost);
+                    break;
+            }
+        }
+
         /// <summary>
         /// `Time.time` of the last shove that actually moved somebody, or a large negative
         /// number if this seat has never landed one.

@@ -68,6 +68,25 @@ namespace TumbangPreso.UI
         private Text _xpDetail;
         private readonly List<Text[]> _rows = new List<Text[]>();
         private Button _rematch;
+
+        /// <summary>
+        /// PHASE 12's map ballot: one chip naming the map the next match will play, and pressing
+        /// it casts this seat's vote for the next map in the list. `docs/TODO.md` § 130.18.
+        /// </summary>
+        private Button _mapVote;
+
+        private Text _mapVoteTally;
+
+        /// <summary>
+        /// One ballot per seat, `MapRotationRules.NoVote` for a seat that has not answered.
+        ///
+        /// ⚠️⚠️ `NoVote` IS -1 AND NOT 0, WHICH `MapRotationRules` MAKES THE CASE FOR AND IS
+        /// WORTH REPEATING WHERE THE ARRAY LIVES: 0 is a real map index, so a table initialised
+        /// to zeroes is a table in which four silent seats have all voted for Eskinita, and it
+        /// **looks exactly like a working vote**. `Array.Clear` is therefore wrong here and
+        /// `ClearMapVotes` exists to stop somebody reaching for it.
+        /// </summary>
+        private readonly int[] _mapVotes = new int[Core.Balance.PlayerCount];
         private Button _menu;
 
         /// <summary>Peers that have voted for a rematch. ⚠️ The rules live in
@@ -183,6 +202,12 @@ namespace TumbangPreso.UI
             _rematchVotes.Clear();
             _rematch.gameObject.SetActive(!IsSpectator);
             _rematch.interactable = true;
+
+            // ⚠️ THE BALLOT IS CLEARED ON EVERY BOARD, INCLUDING A REMATCH'S. Votes are for the
+            // match that is about to be played, and a table carried over from the last one is
+            // three people voting again without being asked.
+            ClearMapVotes();
+            RefreshMapVote();
 
             // ⚠️ THE TALLY STARTS EMPTY RATHER THAN AT "0 / n". A count nobody has contributed
             // to yet is not information, and the line is shared with the broadcast message.
@@ -567,6 +592,12 @@ namespace TumbangPreso.UI
 
             _canvas = canvasGo.AddComponent<Canvas>();
             _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+
+            // ⚠️ SNAPPED TO PIXELS, for the reason `Hud.Build` records at length: this is a root
+            // `ScreenSpaceOverlay` canvas built by hand rather than through `MenuKit.BuildCanvas`,
+            // so it never inherited the setting every other surface in the game has. It is the
+            // screen a match ends on and it is nothing but reading matter.
+            _canvas.pixelPerfect = true;
             _canvas.sortingOrder = 100;   // over the HUD
 
             var scaler = canvasGo.AddComponent<CanvasScaler>();
@@ -574,6 +605,15 @@ namespace TumbangPreso.UI
             scaler.referenceResolution = new Vector2(1920, 1080);
             AspectSafeCanvas.Apply(scaler);
             canvasGo.AddComponent<GraphicRaycaster>();
+
+            // ⚠️⚠️ THIS CANVAS IS BUILT BY HAND RATHER THAN BY `MenuKit.BuildCanvas`, ON PURPOSE:
+            // it parents itself under `Hud.CleanFeedRoot` so the clean feed takes it, and
+            // `BuildCanvas` DETACHES a canvas whose parent is inside another one. So it opts into
+            // the two things the kit would otherwise have given it. `InputSurfaceCheck` is what
+            // noticed the gap, and it is the end-of-match board: the one screen every player
+            // reaches, with REMATCH and LEAVE on it and no way for a pad to press either.
+            InputLayer.UiInputModule.Ensure();
+            InputLayer.ScreenFocus.Install(canvasGo);
 
             // ⚠️ THE BACKDROP IS THE INK NAVY AT 0.72, NOT BLACK AT 0.55. `MatchResult.tscn`
             // authors `Color(0.015686, 0.031373, 0.219608, 0.72)`, the same colour the
@@ -640,6 +680,32 @@ namespace TumbangPreso.UI
             // straight off the .tscn, which puts `RematchButton` above `MenuButton` in the same
             // VBox. Two 280-wide buttons in a row do not fit a 600-wide card at all, which is
             // the kind of thing an oversized card hides.
+            // ⚠️⚠️ ONE CONTROL, ABOVE REMATCH, AND IT IS ONE CONTROL ON PURPOSE. `docs/TODO.md`
+            // § 130.18. The obvious ballot is a button per map, and three buttons on THIS card is
+            // § 92's *"theres liek 20 shits at once"* arriving on the one screen a player sees
+            // after every single match: it already carries a result, four standings rows, an XP
+            // bar, an ADD FRIENDS list, a rematch vote and two actions. `CLAUDE.md` § 6.2 question
+            // 3 is what to ask here, *"what is on screen that the player does not need RIGHT
+            // NOW"*, and the answer for two of the three map buttons is always "this one".
+            //
+            // ⚠️ SO IT CYCLES, LIKE THE LOBBY'S OWN MAP ROW, AND `CLAUDE.md` § 6.2 QUESTION 2 IS
+            // WHY THAT IS READABLE: the first press is guessable because the chip states the map
+            // it will play and looks pressable, which is the difference between this and § 96's
+            // corner chip that read as a status. A press is a vote AND a preview of what that
+            // vote does.
+            //
+            // ⚠️⚠️ AND IT IS ABOVE REMATCH RATHER THAN BELOW IT BECAUSE REMATCH IS STILL THE
+            // PRIMARY ACTION AND ENDS THE SCREEN. A ballot underneath the button that consumes it
+            // is a control the player meets after the decision it feeds has been taken, which is
+            // `RefreshAddFriends`' own ordering argument (*"the result, then who they played, then
+            // what to do next"*) applied one row along: the map is part of "what to do next" and
+            // has to be readable before the press that acts on it.
+            _mapVote = StackedButton(card, "NEXT MAP", OnMapVotePressed);
+
+            _mapVoteTally = CardLabel(card, "MapVoteTally", 18, UiTheme.CreamMuted, 24,
+                                      TextAnchor.MiddleCenter);
+            _mapVoteTally.text = "";
+
             _rematch = StackedButton(card, "REMATCH", OnRematchPressed);
 
             // ⚠️ UNDER THE BUTTON IT DESCRIBES, at the broadcast line's size rather than the
@@ -1177,6 +1243,160 @@ namespace TumbangPreso.UI
         /// <summary>Every playing peer agreed, or this is single player. Start.</summary>
         public void BeginRematchLocally() => BeginRematchNow();
 
+        // -------------------------------------------------------------------
+        // § THE MAP BALLOT
+        //
+        // ⚠️⚠️ THE ROTATION AND THE VOTE ARE ONE FEATURE AND `MapRotationRules.Decide` IS THE
+        // WHOLE THING. `docs/TODO.md` § 130.12 makes the argument at length and it is the reason
+        // this screen may ship a ballot that most lobbies will ignore: a vote answers "what do
+        // these four people want" and a rotation answers "what happens when nobody says", and a
+        // lobby where nobody presses anything is the COMMON case. Four people who have just
+        // finished a match are looking at a scoreboard, not a ballot. **The vote alone would leave
+        // four abstentions replaying the same map for ever**, which is the exact staleness the
+        // feature was bought to remove.
+        //
+        // ⚠️ SO THE HOST ALWAYS CALLS `AdvanceMapRotation` AND THE BALLOT IS ONLY EVER AN
+        // ARGUMENT TO IT. There is no branch here for "somebody voted"; `Decide` reads the table,
+        // finds it empty, and falls through to the cycle.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// ⚠️ NOT `Array.Clear`. `MapRotationRules.NoVote` is -1 because 0 is a real map index,
+        /// and a table of zeroes is four silent seats all voting for Eskinita while looking
+        /// exactly like a working vote. See `_mapVotes`.
+        /// </summary>
+        private void ClearMapVotes()
+        {
+            for (int i = 0; i < _mapVotes.Length; i++) _mapVotes[i] = Core.MapRotationRules.NoVote;
+        }
+
+        /// <summary>
+        /// The map the next match will play if nothing else changes, which is what the chip says.
+        ///
+        /// ⚠️⚠️ IT IS `Decide` AND NOT `TallyVote`, SO THE CHIP READS CORRECTLY BEFORE ANYBODY HAS
+        /// VOTED. With an empty table `Decide` returns the next map in the rotation, which is
+        /// exactly what a rematch would load right now, so the control states a true fact from the
+        /// moment the board opens rather than sitting blank until somebody presses it. A chip that
+        /// said nothing until it was used would be a control the player has to discover, which is
+        /// `CLAUDE.md` § 6.2 question 2 failed.
+        /// </summary>
+        private int ProjectedNextMap()
+        {
+            int current = System.Array.IndexOf(SceneFlow.Maps, SceneFlow.SelectedMap);
+            return Core.MapRotationRules.Decide(_mapVotes, SceneFlow.Maps.Length, current);
+        }
+
+        private void RefreshMapVote()
+        {
+            if (_mapVote == null) return;
+
+            // ⚠️ ONE MAP MEANS NO BALLOT AT ALL. A vote between one option is a control that
+            // cannot change anything, which is `CLAUDE.md` § 6.3's dead end, and it would still
+            // be drawn on a card that is already full. This cannot happen with the three shipped
+            // maps and costs one comparison to be right if a build ever ships with one.
+            if (SceneFlow.Maps.Length < 2)
+            {
+                _mapVote.gameObject.SetActive(false);
+                if (_mapVoteTally != null) _mapVoteTally.text = "";
+                return;
+            }
+
+            int next = ProjectedNextMap();
+            if (next < 0 || next >= SceneFlow.Maps.Length) next = 0;
+
+            _mapVote.gameObject.SetActive(true);
+
+            // ⚠️ A SPECTATOR SEES THE MAP AND CANNOT VOTE, which is the same split `_rematch`
+            // makes one row down by hiding itself. The difference is deliberate: a rematch button
+            // a spectator cannot press is noise, and the NEXT MAP line is information they want.
+            _mapVote.interactable = !IsSpectator;
+
+            var label = _mapVote.GetComponentInChildren<Text>();
+            if (label != null)
+                label.text = $"NEXT MAP  ·  {SceneFlow.PreviewFor(SceneFlow.Maps[next]).Name}";
+
+            if (_mapVoteTally == null) return;
+
+            int cast = 0;
+            for (int i = 0; i < _mapVotes.Length; i++)
+                if (_mapVotes[i] != Core.MapRotationRules.NoVote) cast++;
+
+            // ⚠️ THE LINE IS EMPTY UNTIL SOMEBODY VOTES, WHICH IS `ShowTally`'S OWN RULE ONE ROW
+            // DOWN: *"a count nobody has contributed to yet is not information"*. A permanent
+            // "0 VOTES" under a chip that already states the answer is a second copy of nothing.
+            _mapVoteTally.text = cast == 0
+                ? ""
+                : cast == 1 ? "1 VOTE" : $"{cast} VOTES";
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ A PRESS CYCLES **THIS SEAT'S BALLOT**, NOT THE MAP. The chip shows where the
+        /// rotation currently points, so the first press has to move away from that and every
+        /// press after it moves one more, which is why the cycle starts from this seat's own
+        /// standing vote and falls back to the projection only when there is not one yet.
+        /// Cycling the PROJECTION instead would skip a step the moment somebody else's vote
+        /// changed the answer between two of your presses.
+        /// </summary>
+        private void OnMapVotePressed()
+        {
+            if (IsSpectator || SceneFlow.Maps.Length < 2) return;
+
+            int seat = NetAuthority.LocalSlot;
+            if (seat < 0 || seat >= _mapVotes.Length) return;
+
+            int from = _mapVotes[seat] != Core.MapRotationRules.NoVote
+                ? _mapVotes[seat]
+                : ProjectedNextMap();
+
+            if (from < 0 || from >= SceneFlow.Maps.Length) from = 0;
+
+            int choice = Core.MapRotationRules.NextInRotation(from, SceneFlow.Maps.Length);
+
+            // ⚠️ THE LOCAL BOARD IS UPDATED FIRST AND THE HOST CORRECTS IT. A chip that waited
+            // for a round trip before changing its own label is a control that feels broken on
+            // any connection worse than a LAN, and the host's tally overwrites this within a
+            // frame or two on a good one. `HostReceiveMapVote` is the authority either way.
+            _mapVotes[seat] = choice;
+            RefreshMapVote();
+
+            if (NetAuthority.IsNetworked) Net.MatchRpc.Instance?.SelectMapVoteServerRpc(choice);
+        }
+
+        /// <summary>
+        /// HOST ONLY. One peer's ballot, recorded and rebroadcast.
+        ///
+        /// ⚠️ THE SEAT COMES FROM `MatchRpc.TrySenderSeat` AND NEVER FROM THE PAYLOAD, which is
+        /// the same guard every other peer-to-host message uses: a client that could name its own
+        /// seat could cast three ballots and hand itself the map.
+        ///
+        /// ⚠️ AND A VOTE FOR A MAP THIS BUILD DOES NOT HAVE IS DISCARDED RATHER THAN CLAMPED,
+        /// which is `MapRotationRules`' own rule: a clamp turns a peer on a four-map build into a
+        /// vote for map 2 on a three-map build, **a silently wrong answer rather than an absent
+        /// one**. `TallyVote` discards it a second time, deliberately, because this method is not
+        /// the only way a number can reach that table.
+        /// </summary>
+        public void HostReceiveMapVote(int seat, int mapIndex)
+        {
+            if (!NetAuthority.IsHost && NetAuthority.IsNetworked) return;
+            if (seat < 0 || seat >= _mapVotes.Length) return;
+            if (mapIndex < 0 || mapIndex >= SceneFlow.Maps.Length) return;
+
+            _mapVotes[seat] = mapIndex;
+
+            Net.MatchRpc.Instance?.MapVoteTallyClientRpc(_mapVotes);
+            RefreshMapVote();
+        }
+
+        /// <summary>The host's ballot table, for this peer's display only. See `MapVoteTallyClientRpc`.</summary>
+        public void ApplyNetworkMapVotes(int[] votes)
+        {
+            if (votes == null) return;
+
+            for (int i = 0; i < _mapVotes.Length && i < votes.Length; i++) _mapVotes[i] = votes[i];
+
+            RefreshMapVote();
+        }
+
         private void BeginRematchNow()
         {
             _canvas.gameObject.SetActive(false);
@@ -1190,6 +1410,41 @@ namespace TumbangPreso.UI
             // latch set only there would be correct for the first match of a session and for no
             // other. It clears itself on the first packet after this host's own match is live.
             Net.MatchRpc.HostBeginningArenaLoad();
+
+            // ⚠️⚠️ PHASE 12: THE REMATCH MOVES TO THE NEXT MAP RATHER THAN REPLAYING THIS ONE.
+            // `FUTURE.md` § 12 bought map rotation to *"buy most of the same freshness"* as a new
+            // map for a fraction of the work, and a rematch is the single moment in the game where
+            // that is worth the most: it is four people who have just agreed to keep playing, and
+            // it was handing them the identical street every time.
+            //
+            // ⚠️ HOST ONLY, ON THE LINE ABOVE'S OWN ARGUMENT. The map is match state, so four
+            // peers each rotating is four different maps; every client takes the host's answer
+            // through the `SelectMap` broadcast that already exists. **No new message and no
+            // `ProtocolVersion` move**, which matters because moving it forces the Windows player
+            // and the .apk to be rebuilt together (`CLAUDE.md` § 4a).
+            //
+            // ⚠️ AND IT ROTATES BEFORE `StartMatch`, not after, because `StartMatch` is what reads
+            // `SceneFlow.SelectedMap` to decide which arena to load. Rotating after it would take
+            // effect one rematch late, which is the kind of off-by-one that reads as "the vote
+            // does not work" rather than as a bug.
+            //
+            // ⚠️⚠️ THE BALLOT IS PASSED NOW, AND THE LINE THIS REPLACED IS WORTH KEEPING BECAUSE
+            // IT NAMED THE MISSING HALF: *"NO BALLOT IS PASSED YET, so this is the rotation half.
+            // `MapRotationRules.Decide` takes the votes when the lobby has a ballot to give it;
+            // until then silence falls through to the cycle."* The ballot is § 130.18's chip above
+            // REMATCH, and **the fallback is unchanged**: `Decide` reads an empty table and
+            // returns the next map in the cycle, which is what most boards will hand it.
+            //
+            // ⚠️ THE HOST'S TABLE IS THE ONE THAT COUNTS. A client's `_mapVotes` is a replicated
+            // copy for drawing, so tallying on four machines would be four different maps, which
+            // is `SceneFlow.AdvanceMapRotation`'s own note and `CLAUDE.md` § 4's first rule.
+            if (!NetAuthority.IsNetworked || NetAuthority.IsHost)
+            {
+                SceneFlow.AdvanceMapRotation(_mapVotes);
+
+                int mapIndex = System.Array.IndexOf(SceneFlow.Maps, SceneFlow.SelectedMap);
+                if (mapIndex >= 0) Net.MatchRpc.Instance?.SelectMapServerRpc(mapIndex);
+            }
 
             // ⚠️ ONLY THE HOST STARTS THE MATCH. Every peer hides its own board and unlocks its
             // own cursor, which is local presentation, but `StartMatch` writes match state and

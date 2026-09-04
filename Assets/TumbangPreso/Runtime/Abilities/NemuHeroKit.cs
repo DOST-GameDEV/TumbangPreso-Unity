@@ -93,6 +93,24 @@ namespace TumbangPreso.Abilities
                 // `OnEnd` has to remember it, which is where the previous aura leak came from.
                 Visual.AbilityVfx.AttachAura(ctx.Motor.transform,
                                              Visual.AbilityVfx.Aura.VoidWisp, Duration);
+
+                // ⚠️⚠️ THE MOMENT SHE GOES, WHICH IS THE HALF THE AURA CANNOT SAY.
+                // `docs/Asset_Sourcing.md` § 3 for Phantom Veil: *"one small bloom at activation
+                // and deactivation"*. The wisps are a STATE, and a state has no beginning: the
+                // three players she is running from need one frame that says *she just became
+                // untaggable*, and until now the only thing marking it was her body starting to
+                // shed motes, which is exactly as visible as her body already was.
+                //
+                // ⚠️ 1.4 m AND AT CHEST HEIGHT, WHICH IS A PERSON AND NOT A FOOTPRINT. This is
+                // the smallest sheet placement in the game on purpose: it belongs to a body, it
+                // leaves nothing on the floor, and `docs/VISION.md` § 2 rule 1's 1.8 to 2.5 m is
+                // about what a skill puts on the ground.
+                //
+                // ⚠️ IT IS SPAWNED IN WORLD SPACE RATHER THAN PARENTED TO HER. She phases FORWARD
+                // at speed; a bloom stuck to her chest would travel with her and say nothing about
+                // where she went, where one left behind marks where she disappeared from.
+                Visual.VfxFlipbook.Play(Visual.VfxSheets.Bloom,
+                                        ctx.Position + Vector3.up * 1.0f, 1.4f);
             }
 
             protected override void OnTick(AbilityContext ctx, float dt)
@@ -122,6 +140,19 @@ namespace TumbangPreso.Abilities
                     UnityEngine.Object.Destroy(_phantomLightGo);
                     _phantomLightGo = null;
                 }
+
+                // ⚠️ AND THE MOMENT SHE COMES BACK. `Asset_Sourcing.md` asks for a bloom at
+                // activation AND deactivation, and the second one is the more useful of the two:
+                // the end of the veil is when she becomes taggable again, which is the frame the
+                // taya is waiting for. Same sheet, same size, so the pair reads as one gesture
+                // opening and closing rather than as two effects.
+                //
+                // ⚠️ IT FIRES ON THE BREAK PATH TOO, AND THAT IS CORRECT. `OnTick` ends the veil
+                // early by zeroing `DurationRemaining` when she picks a tsinelas up, and
+                // `HeroAbility` routes every ending through `OnEnd`. A veil broken by a pickup is
+                // still a veil that stopped.
+                Visual.VfxFlipbook.Play(Visual.VfxSheets.Bloom,
+                                        ctx.Position + Vector3.up * 1.0f, 1.4f);
             }
         }
 

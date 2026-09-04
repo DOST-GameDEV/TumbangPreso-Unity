@@ -312,10 +312,40 @@ namespace TumbangPreso.Core
         /// connection approval must not be offered each other by the queue first: the player would
         /// watch a queue find a match and then bounce off it with a version message. Handing the
         /// version in rather than reading it keeps this file engine-free.
+        ///
+        /// ⚠️⚠️ CASUAL IS ONE CROSSPLAY POOL AND RANKED BANDS BY DEVICE AND PLATFORM. THIS
+        /// REVERSES WHAT THE CODE DID UNTIL 2026-09-03, AND IT IS THE CODE CATCHING UP WITH THE
+        /// RULE RATHER THAN A NEW DECISION. `CLAUDE.md` § 4a has said, in these words, since the
+        /// crossplay paragraph was written: *"Crossplay is for lobbies, join codes and LAN; the
+        /// **ranked queue** still bands by device."* The key banded BOTH stakes, so a phone and a
+        /// PC could not meet through the front door of the game at all, only by typing a code at
+        /// each other.
+        ///
+        /// ⚠️⚠️ AND THE ARGUMENT THE BANDING PROTECTS IS A RANKED ARGUMENT, WHICH IS WHY IT
+        /// SURVIVES INTACT ON THE HALF THAT KEEPS IT. `FUTURE.md` § 14: *"No aim assist. Separate
+        /// the pools instead, which is free, exact, and removes the argument."* **The argument is
+        /// about a ladder.** Nobody disputes a casual match, and a casual queue that refuses to
+        /// seat the two people who own the two devices in the room is not protecting a ladder, it
+        /// is protecting nothing and costing the game its stated feature. 🧑 2026-09-03: *"i want a
+        /// mobile and a pc to be able to play tgthr"*.
+        ///
+        /// ⚠️ THE FIELDS ARE DROPPED FROM THE CASUAL KEY, NOT SET TO A PLACEHOLDER. A key reading
+        /// `.Any.Any` would still be a key with two fields in it, and the next person to add a
+        /// field would have to work out which of the three spellings of "not banded" this one was.
+        /// A casual key has three parts and a ranked key has five, and the shapes cannot be
+        /// confused for each other.
+        ///
+        /// ⚠️ TWO BUILDS ON ONE PROTOCOL THAT DISAGREE ABOUT THIS DO NOT MATCH, AND THAT IS THE
+        /// SAFE FAILURE THIS METHOD'S SECOND PARAGRAPH ALREADY CHOSE: *"a string that stops
+        /// matching simply stops matching."* The Windows player and the .apk ship from one commit
+        /// (`CLAUDE.md` § 4a), so they agree by construction.
         /// </summary>
         public static string PoolKey(GameMode mode, QueueStake stake, InputDevice device,
                                      PlatformFamily platform, int protocolVersion)
         {
+            if (stake != QueueStake.Ranked)
+                return $"v{protocolVersion}.{mode}.{stake}";
+
             return $"v{protocolVersion}.{mode}.{stake}.{device}.{platform}";
         }
 

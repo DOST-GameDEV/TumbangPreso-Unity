@@ -30,6 +30,18 @@ namespace TumbangPreso.PlayTests
     public class AiDiagnosticProbe
     {
         /// <summary>
+        /// ⚠️⚠️ THE PAIR THAT MAKES A FULL-SUITE RESULT MEAN ANYTHING. `docs/TODO.md` § 126.8:
+        /// the full PlayMode run came back 42, 41 and then 56 red with the red set moving, and a
+        /// gate whose red set moves is not measuring the code. `PlayModeWorld.Reset` has the
+        /// mechanism and why BOTH hooks are needed rather than one.
+        /// </summary>
+        [UnitySetUp]
+        public IEnumerator ResetWorldBefore() => PlayModeWorld.Reset();
+
+        [UnityTearDown]
+        public IEnumerator ResetWorldAfter() => PlayModeWorld.Reset();
+
+        /// <summary>
         /// The category that keeps this class out of the default PlayMode run.
         ///
         /// ⚠️⚠️ THIS IS `docs/TODO.md` § 6 BEING DECIDED RATHER THAN RE-DIAGNOSED, AND THE
@@ -241,6 +253,87 @@ namespace TumbangPreso.PlayTests
             foreach (var kvp in planTime)
                 log.AppendLine($"  {kvp.Key,-24} {kvp.Value:F1}s");
 
+            // -------------------------------------------------------------------
+            // § THE SABOTAGE LEDGER
+            //
+            // ⚠️⚠️ THE MEASUREMENT 🧑 ASKED FOR IS NOT "BOTS SHOVED LESS". His words, 2026-09-03:
+            // the bots *"follow players around only to push them, even when the shove has no
+            // meaningful effect on the game"*, and the brief that followed says the important
+            // number is *"every shove they chose had an intelligible objective reason"*. A count
+            // that went down could just as easily mean the rule got tighter than the game.
+            //
+            // ⚠️⚠️ SO THE THREE COLUMNS THAT MATTER ARE THE PURSUIT ONES. `SabotageRules
+            // .MaxPursuitSeconds` is 1.90 s and `MaxApproachRange` is 3.20 m, both derived rather
+            // than typed (`docs/TODO.md` § 134.2). **If the longest pursuit in a whole round is
+            // under the cap and the plans entered are close to the shoves attempted, the bot is
+            // taking opportunities rather than manufacturing them**, which is the whole claim.
+            //
+            // ⚠️ AND THE VETO DISTRIBUTION IS WHY A LOW COUNT IS TRUSTWORTHY. `SabotageVeto`
+            // names every refusal, so a run reporting mostly `OutOfApproachRange` is a bot that
+            // simply was not near anybody, while one reporting mostly `EndpointStaysSafe` is the
+            // projection doing its job.
+            // -------------------------------------------------------------------
+            log.AppendLine();
+            log.AppendLine("sabotage ledger:");
+
+            int plans = 0, attempts = 0;
+            float longestPursuit = 0.0f, totalPursuit = 0.0f;
+
+            foreach (var bot in bots)
+            {
+                if (bot == null) continue;
+
+                plans += bot.SabotagePlansEntered;
+                attempts += bot.SabotageShovesAttempted;
+                totalPursuit += bot.TotalSabotagePursuitSeconds;
+                longestPursuit = Mathf.Max(longestPursuit, bot.LongestSabotagePursuit);
+
+                log.AppendLine(
+                    $"  seat {bot.GetComponent<CharacterMotor>()?.PlayerSlot}  "
+                    + $"plans {bot.SabotagePlansEntered}  shoves {bot.SabotageShovesAttempted}  "
+                    + $"longest pursuit {bot.LongestSabotagePursuit:F2}s  "
+                    + $"time pursuing {bot.TotalSabotagePursuitSeconds:F1}s  "
+                    + $"last veto {bot.LastSabotageProjection.Veto}");
+            }
+
+            log.AppendLine($"  TOTAL  plans {plans}  shoves {attempts}  "
+                           + $"longest pursuit {longestPursuit:F2}s  "
+                           + $"time pursuing {totalPursuit:F1}s");
+            log.AppendLine($"  bounds: max pursuit {SabotageRules.MaxPursuitSeconds:F2}s  "
+                           + $"max approach {SabotageRules.MaxApproachRange:F2}m  "
+                           + $"danger radius {SabotageRules.DangerRadius:F2}m  "
+                           + $"min closure {SabotageRules.MinClosure:F2}m");
+
+            // ⚠️⚠️ THE VETO DISTRIBUTION IS WHAT MAKES A LOW COUNT READABLE. Without it a run
+            // reporting zero shoves is indistinguishable from a rule that refuses everything, and
+            // the rule this replaced carried a comment recording exactly that reading as a
+            // symptom. See `AIController.SabotageVetoes`.
+            var vetoNames = (SabotageVeto[])System.Enum.GetValues(typeof(SabotageVeto));
+            var vetoTotals = new int[vetoNames.Length];
+            int projections = 0;
+
+            foreach (var bot in bots)
+            {
+                if (bot == null) continue;
+
+                projections += bot.SabotageProjectionsMade;
+                for (int i = 0; i < vetoNames.Length && i < bot.SabotageVetoes.Length; i++)
+                    vetoTotals[i] += bot.SabotageVetoes[i];
+            }
+
+            log.AppendLine($"  candidate shoves projected: {projections}");
+
+            for (int i = 0; i < vetoNames.Length; i++)
+            {
+                if (vetoTotals[i] == 0) continue;
+                log.AppendLine($"    {vetoNames[i],-22} {vetoTotals[i]}");
+            }
+
+            if (projections == 0)
+                log.AppendLine("    (nothing was ever projected: no rival came within "
+                               + $"{SabotageRules.MaxApproachRange:F2} m while a shove was "
+                               + "affordable and off cooldown)");
+
             Directory.CreateDirectory("Logs");
             File.WriteAllText($"Logs/ai-diagnostic-{mode}.txt", log.ToString());
             Debug.Log(log.ToString());
@@ -248,6 +341,15 @@ namespace TumbangPreso.PlayTests
             UI.SceneFlow.SelectedMode = previousMode;
 
             Assert.Greater(bots.Length, 0, "The arena seated no bots.");
+
+            // ⚠️⚠️ THE PURSUIT CEILING IS ASSERTED, NOT ONLY PRINTED, AND IT IS THE ONE NUMBER
+            // THAT DIRECTLY ANSWERS THE REPORT. 🧑 watched bots TAIL players; a pursuit that ran
+            // longer than `SabotageRules.MaxPursuitSeconds` would mean the clock in
+            // `AIController.StepSabotageClocks` is not being stepped, and the behaviour is back
+            // whatever the counts say. A small tolerance covers one think tick of overshoot.
+            Assert.LessOrEqual(longestPursuit, SabotageRules.MaxPursuitSeconds + 0.25f,
+                $"a bot pursued a sabotage target for {longestPursuit:F2}s against a "
+                + $"{SabotageRules.MaxPursuitSeconds:F2}s cap. See `docs/TODO.md` § 134.2.");
 
             // ⚠️ THE 1x READING IS A DIFFERENT CLAIM FROM THE MATCH PROBE'S. `BotBehaviourProbe`
             // runs at 6x, where the AI gets fewer decisions per simulated second, so it can only

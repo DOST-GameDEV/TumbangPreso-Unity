@@ -95,7 +95,7 @@ namespace TumbangPreso.Settings
         ///
         /// ⚠️ AND IT IS 0 ON PURPOSE, WHICH IS THE ONE CASE WHERE THAT IS SAFE. Every other index
         /// setting in <see cref="GameSettings"/> deliberately does NOT default to its row 0
-        /// (<see cref="AntiAliasModes.Default"/> is 3, <see cref="SlipperHighlights.Default"/> is
+        /// (<see cref="AntiAliasModes.Default"/> is 1, <see cref="SlipperHighlights.Default"/> is
         /// not Off), because `JsonUtility` fills an absent field with the field initialiser and a
         /// silent 0 would turn a feature off for everybody upgrading. Here 0 IS the shipped
         /// behaviour, so an older `settings.json` with no `RenderStyle` line lands on exactly what

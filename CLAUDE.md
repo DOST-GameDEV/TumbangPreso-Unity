@@ -130,8 +130,26 @@ is how work survives being handed between sessions and tools. Specifically:
 
 - **Check it before inventing a task.** The thing you are about to do may already be written
   up with its cause and its acceptance test.
-- **Tick items off as you finish them.** Move them to **Closed** with one line on how it was
-  verified, not just "done".
+- ⚠️⚠️ **TICK IT OFF BY MOVING IT TO [`docs/TODO_Archive.md`](docs/TODO_Archive.md), IN THE SAME
+  COMMIT, KEEPING ITS NUMBER.** `docs/TODO.md` is the OPEN worklist and nothing else. **It reached
+  22,930 lines and 134 sections on 2026-09-03 and had stopped doing the one job it has**, which is
+  to be read: 🧑, *"todo md so long can u clean that shit up"*, *"its not supposed to be that
+  long"*. It is about 3,000 lines now and the archive holds the rest, whole.
+  - **A section lives in `TODO.md` while its HEADING says `OPEN`, `IN PROGRESS` or `NOT DONE`.**
+    Status goes in the heading, never buried in the prose. Prose status is exactly what made 134
+    sections impossible to sort, and it is why the split had to be done by hand.
+  - ⚠️⚠️ **A SESSION REPORT IS NOT AN OPEN ITEM. WRITE IT, THEN ARCHIVE IT IN THE SAME COMMIT.**
+    *"The 2026-08-29 evening batch"* was 525 lines and *"the 2026-08-29 balance-and-controls
+    batch"* was 973, and neither was ever open work. **Twelve of the twenty biggest sections in
+    that file were dated batch reports** that nobody archived because nobody had told them to.
+  - ⚠️ **NEVER DELETE ONE AND NEVER SUMMARISE IT AWAY.** The reasoning is the part that stays
+    valuable and every ⚠️ in this repository was written because something went wrong once. The
+    archive keeps whole bodies and unchanged numbers, and `TODO.md` keeps a one-line index row for
+    each, **so every `docs/TODO.md` § N pointer in this file, in `VISION.md`, in `FUTURE.md` and in
+    the code comments still lands on something that says where to look.**
+  - ⚠️ **The section numbers are not unique** (§ 53, § 63, § 64 and § 65 each appear more than
+    once) and that is not being fixed: renumbering would break every pointer in the repository.
+    **Search by title as well as by number.**
 - **Add anything you find and do not fix.** A bug noticed and not written down is a bug
   rediscovered from scratch by somebody else in three weeks. Give it the same shape as the
   other entries: what is wrong, where it lives, what done looks like.
@@ -219,6 +237,14 @@ is the one nobody runs the tests against.
   `Rebinding.SpectatorContext` names the set, `SpectatorBindingTests` asserts the narrowing from
   both sides, and `docs/TODO.md` § 35.3 has the reasoning. **Two actions inside one context
   sharing a key is still a defect.**
+  ⚠️⚠️ **AND SINCE 2026-09-02 THE RULE IS CHECKED PER DEVICE AS WELL AS PER CONTEXT, WHICH ADDED
+  NO NEW CONCEPT.** A control PATH already carries its device, so `<Keyboard>/f` and
+  `<Gamepad>/buttonNorth` are different controls and no press produces both. **What did change is
+  that `FindDuplicateBindings` used to read only each action's FIRST binding**, which was the
+  keyboard one: adding a pad binding beside every key would have doubled the map while halving
+  what the rule checked, silently. `Rebinding.ResolveBindingIndices` returns all of them now, and
+  `TryRebind` writes an override onto the binding for **the device the player just pressed** —
+  targeting index 0 wrote the pad's path over the KEY, and Reset All was the only way back.
 
 ⚠️ **The camera is FPP *and* TPP. Do not "simplify" it to one.** A Person is always FPP, a
 Prop is always TPP, derived from `is_person` and asserted. Emotes swing to TPP and back,
@@ -231,6 +257,98 @@ narrower: an *overhead follow* camera that matched none of the four.
 timer and no clip-finished stop. `EmotePlayer.Stop()` is reached by movement, a verb, or
 losing the right to act, and that is the single path the camera's `EndEmoteView` hangs off. If
 a clip-finished path is ever wanted, route it through `Stop()`.
+
+---
+
+## 4a · ⚠️⚠️ THREE DEVICES, EVERY TIME. MOUSE AND KEYBOARD, CONTROLLER, AND TOUCH
+
+🧑 asked for this twice, and the second time was stronger than the first: *"make that shit future
+proof and to update mobile and controller version every time we change ui or some shit"*, then
+**"anytime we add a feature, make sure all controller and mobile is considered"**. The second
+sentence is the rule: **not just UI. Any feature.**
+
+⚠️⚠️ **AND THE REASON IT IS BUILT INTO THE CODE RATHER THAN WRITTEN AS A CHECKLIST IS THAT A
+CHECKLIST IS EXACTLY WHAT FAILED HERE THREE TIMES.** Every one of these was a rule somebody was
+supposed to remember, and a move that nobody updated:
+
+| | What went stale | What it cost |
+|---|---|---|
+| `docs/TODO.md` **§ 96** | The hub had one door, a corner chip, and **the person who commissioned the hub never found it.** `PlayerHubLayoutProbe` was green at all nine resolutions the whole time. | The probe asserted the plate was on screen. That is not the same claim as "somebody can reach it". |
+| **§ 114** | `PlayerNameplate` was no longer installed by any screen, and `PlayerHubLayoutProbe` still drove it. | A probe measuring a control the game no longer builds. |
+| **§ 124.11** | `LoadoutSurfaceProbe` was knocking on a door § 122 had moved, and had been failing before that session started. | *"A green probe for a screen nobody can reach is worse than a red one"*, and a red one for a screen that works teaches the next reader to skim the results. |
+
+**So the answer is construction, not discipline.** Four things now make forgetting impossible, and
+each replaced a place where remembering was the only protection:
+
+- ⚠️⚠️ **A NEW `Verb` DOES NOT COMPILE UNTIL IT HAS A PAD BINDING AND A THUMB TARGET.**
+  `InputLayer.InputCatalogue.For` is a switch expression with **no discard arm**, and
+  `Assets/TumbangPreso/Runtime/csc.rsp` turns the resulting CS8509 into an error. Every field of
+  `VerbInput` is a constructor parameter with no default, so there is no way to half-answer.
+  This is `HeroAbility.Glyph` and `TelegraphRadius`'s argument applied to input: *a lookup table
+  keyed by id is a second place to forget, and forgetting it compiles.* **Do not add a `_ =>` arm
+  to that switch, and do not delete that `.rsp`.**
+- ⚠️⚠️ **A NEW SCREEN GETS A FOCUS PATH AND THUMB-SIZED HIT AREAS BY CONSTRUCTION.**
+  `MenuKit.BuildCanvas` and `ConvertedScreen.Start` both install `InputLayer.ScreenFocus`, and
+  those two are every screen in the game. `ConvertedScreen` already made this argument for the
+  mouse cursor in its own words: *"doing it in the base class means a screen added later cannot
+  forget."*
+- ⚠️⚠️ **AND `InputSurfaceCheck` REFUSES A BUILD WHOSE SOURCE BUILDS A CANVAS OUTSIDE THE KIT.**
+  It reads the runtime sources as TEXT, for `SceneScriptCheck`'s reason one level up: every other
+  check can only see a screen that was OPENED, so a screen nobody opens during a test run has no
+  coverage at all, which is § 96 and § 124.11 in one sentence. It is in `Checks.RunAll`.
+- ⚠️ **`InputSurfaceProbe` DISCOVERS SCREENS INSTEAD OF LISTING THEM**, from the build settings
+  and from the assembly, at the nine desktop shapes **and two phone shapes and his own short wide
+  window** (`ProbeResolutions`). ⚠️⚠️ **`UiClickProbe` still carries a hard-coded list of five
+  screens and is the § 124.11 fault pre-installed.** Leave it, but never copy it.
+
+**What this asks of you, concretely, for anything you add:**
+
+1. **A new verb**: the compiler stops you. Answer the pad and the thumb, then run
+   `InputAssetSync.Regenerate` so the `.inputactions` asset catches up. `InputContractTests` fails
+   until you do.
+2. **A new non-verb action** (a round action, a spectator key): add a row to
+   `ScreenInputCatalogue`. ⚠️ **A `null` pad path is a legal answer and a written-down one**;
+   silence is not. `ToggleFullscreen` is the example: a phone has no window.
+3. **A new screen**: build it through `MenuKit` or `ConvertedScreen` and you are done. If you
+   think you need a bare `Canvas`, you are about to ship a screen a pad and a thumb cannot use.
+4. **A new feature that is not a screen or a verb**: ask the three questions out loud before you
+   call it done. *How is this reached on a pad? What does a thumb press? What does the prompt say
+   on each?* ⚠️ **Prompts read the live binding through `Rebinding.DisplayNameFor(asset, action,
+   device)`, never a literal** — `docs/VISION.md` § 3: *a screen that teaches the wrong key is
+   worse than one that teaches none.*
+
+⚠️⚠️ **CROSSPLAY IS A SEPARATE CLAIM AND INPUT MUST NEVER TOUCH IT.** `NetSession.ProtocolVersion`
+is the match FORMAT, and peers on different numbers refuse each other **by design**. A pad, a
+thumb and a keyboard all arrive at `InputIntent` and **nothing about which device was used goes on
+the wire**, so an input change may never move that constant.
+`InputContractTests.TheInputPassDidNotMoveTheProtocolVersion` asserts the number, so a legitimate
+bump is a deliberate act. ⚠️ **When it does move, the Windows and Android players must be rebuilt
+from the same commit and shipped together**, or they refuse each other correctly and it reads as a
+bug (`docs/FUTURE.md` § 15). The UGS project is `dcf0831e-a5f4-43b4-832e-b687f13a3569`, org
+`matthewtlabrador`: **a machine on a different project resolves a join code in a different
+namespace and reads as an empty lobby rather than as an error.**
+
+⚠️ **THE MATCHMAKING POOLS STAY SEPARATE AND THAT IS NOT A CONTRADICTION.** `FUTURE.md` § 14:
+*"No aim assist. Separate the pools instead, which is free, exact, and removes the argument."*
+`Matchmaker` already carries `InputDevice` in the pool key. **Crossplay is for lobbies, join codes
+and LAN; the ranked queue still bands by device.** Both are true at once.
+
+⚠️⚠️ **AND SINCE 2026-09-03 THE CODE ACTUALLY DOES THAT, WHICH IT DID NOT BEFORE.**
+`MatchmakingRules.PoolKey` banded **both** stakes by device and platform, so the sentence above was
+true of this file and false of the game: a phone and a PC could not meet through QUICK MATCH at
+all, only by typing a join code at each other. 🧑 2026-09-03: *"i want a mobile and a pc to be able
+to play tgthr"*. **Casual is one crossplay pool (`v21.Classic.Casual`, three parts) and ranked
+keeps all five.** The argument the banding protects is a LADDER argument, and nobody disputes a
+casual match. `docs/TODO.md` § 130.4.
+
+⚠️⚠️ **AND THE OTHER HALF OF CROSSPLAY WAS NEVER THE NETWORK LAYER.** `ApproveConnection` reads the
+protocol, capacity and the block list, and nothing about a device goes on the wire, so the
+architecture was always right. **What was broken was the phone**, twice, and both are in § 130:
+`NetIdentity` cached a FAILED sign-in for the life of the process (§ 130.2, and on Android the boot
+attempt fires while the handset is still associating with wifi, so one bad moment made every later
+JOIN BY CODE fail with no cure but force-closing the game), and `Shader.WarmupAllShaders()` ANR'd
+the app before it ever reached the menu (§ 130.5). **Check those two before believing a crossplay
+report.**
 
 ---
 
@@ -269,6 +387,14 @@ Ask which pieces are final before treating any of it as disposable.
 retargeting would re-solve poses that are already correct. If clips start coming from a
 library instead (Mixamo or similar), **Humanoid becomes the right answer**, and that is the
 single biggest thing Unity buys over Godot here.
+
+⚠️⚠️ **SOURCED SFX ARE PROVISIONAL UNTIL 🧑 HEARS THEM IN PLAY.** He rejected the replacement
+can hit, can down and button hover by name, and their original WAVs are restored. If he asks to
+restore another sound, read [`docs/Asset_Sourcing.md`](docs/Asset_Sourcing.md) § 5.5 and
+[`Attention.md`](Attention.md) § 13 first. The old blobs are at `ee8bced^`; restore only the named
+target, resolve aliases, and move it from `tools/build_ability_audio.py.REPLACEMENTS` to `KEPT` in
+the same commit so the generator cannot put the rejected sound back. **Never roll back the whole
+asset pass to restore one cue.**
 
 ⚠️ **The IKE slipper carries the real Nike wordmark as geometry.** First in the replacement
 queue; `docs/Port_Plan.md` § 8 lists the properties a replacement must preserve.
@@ -454,9 +580,41 @@ one of them passed a reading of the narrow rule:
 - **The rule, stated wide:** no blue, no navy, no cold grey, in any UI colour, in any layer.
   Outlines, fills, panel backgrounds, scrims, rings, gradients, glyph tints, disabled states.
   **If a hex has more blue in it than red, it does not belong in a menu.**
-- **The palette:** carved wood (`#31190B` deep, `#5A2F14` mid, `#8B5227` edge, `#1D0E06` dark),
-  cream paper and chalk (`#F5E6C8`), amber gold (`#FFBA00`), warm ink (`#1C0F06`). Geometry comes
-  from warm tone-on-tone bevels and borderless shapes.
+- ⚠️⚠️ **THE PALETTE, AND IT MOVED ON 2026-09-03. IT IS THE LOGO'S NOW.** 🧑: *"the colors are
+  final, ask it to use the same colors as logo"*. `docs/TODO.md` § 133.1 is the entry and
+  `docs/Front_End_Design.md` § 4 is the role table.
+
+  | Name | Hex | Share of the logo | Its ONE role |
+  |---|---|---|---|
+  | **Deep red** | `#980715` | 34.3% | The **outline**, everywhere, plus the one destructive control. Never a ground. |
+  | **Honey Quartz** | `#FCD39F` | 23.1% | The **ground** of every light screen, and the base the paper ramp is tinted from. |
+  | **Chartreuse** | `#D6CE01` | 17.0% | The **action**. One per screen, the primary only. |
+  | **Persimmon** | `#FD8041` | 5.7% | The **marker**: the one value or selection that matters. |
+  | **Golden** | `#F5B521` | 4.2% | The front end's gold. ⚠️ **`UiTheme.Amber` is still `#FFBA00`** because the HUD reads it 15 times and the HUD is out of scope. |
+  | **Rim red** | `#C32E0D` | 3.8% | The lit state of the deep red, drawn as exactly that in the mark. |
+  | **Army** | `#B3A828` | 1.4% | The **dark ground**, and the only one: the fighter picker's stage. |
+  | **Khaki** | `#E8C77E` | derived | The quiet mid-tone. ⚠️ **The one colour here that is derived rather than measured**, because the drawing never needed one; `Attention.md` § 12 carries the ask to confirm it against his swatch strip. |
+
+  ⚠️⚠️ **EVERY ONE OF THOSE WAS MEASURED BY A SCRIPT, NOT PICKED.** `tools/read_brand_palette.py`
+  clusters the committed artwork's flat fills; the percentages are its output, and it **agreed
+  with itself across two independently drawn files** (`tump_logo_colour.jpg` and
+  `tsinelas_hit.jpg`). ⚠️ **Re-run it rather than eyeballing a new logo**: the masters arrive as
+  JPEG, and its first pass reported the outline as EIGHT different colours before it learned to
+  merge chroma-subsampled values.
+
+  ⚠️ **The paper ramp is ONE colour at four tints** (`Paper` `#FEEBD4`, `PaperWarm` `#FDDFBA`,
+  `PaperEdge` `#FCD39F`, `PaperSunk` `#DEBA8C`), all derived from Honey Quartz, which is § 6.5's
+  *"one base colour generates a whole control"* moved up a level. The ink is a MIX of the two
+  darkest brand colours rather than pure red, because red text means "something is wrong" in
+  every convention a player owns; `#55290F` measures **10.5:1** on the page and `#97491B`
+  measures **5.5:1**, both computed by `scratchpad/fontsrc/ramp.py` rather than judged.
+
+- ⚠️ **THE CARVED WOOD IS THE OLD PALETTE AND IS KEPT RATHER THAN DELETED**: `#31190B` deep,
+  `#5A2F14` mid, `#8B5227` edge, `#1D0E06` dark, cream `#F5E6C8`, amber `#FFBA00`, warm ink
+  `#1C0F06`. Two reasons, neither sentiment: **`PaperPurityProbe.WoodFills` lists those exact
+  hexes to DETECT a leftover** from the old front end, so deleting them blinds the gate that
+  proves the overhaul finished, and **the in-match HUD is still drawn in them on purpose**
+  (§ 133.4). Geometry still comes from warm tone-on-tone bevels and borderless shapes.
 - ⚠️⚠️ **THE ONE EXEMPTION, AND IT IS A GAMEPLAY FACT RATHER THAN A STYLE: `UiTheme.Defense`
   (`0080e8`) MEANS "THE TAYA".** It is the defending side's colour in the match, opposite
   `Offense` orange, and it is the only blue in the project that may be drawn. **It may never
@@ -577,8 +735,30 @@ dotnet test Core.Tests/TumbangPreso.Core.Tests.csproj
 ```
 
 ```bash
-"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -projectPath . -testPlatform PlayMode -testCategory "!WallClock" -testResults Logs/play.xml -logFile Logs/play.log
+"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -projectPath . -testPlatform PlayMode -testCategory "!WallClock;!ThumbFloor" -testResults Logs/play.xml -logFile Logs/play.log
 ```
+
+⚠️⚠️ **`!ThumbFloor` IS THE SECOND EXCLUSION AND IT IS A SHRINKING GAP RATHER THAN A FLAKE.**
+`InputSurfaceProbe.TheFrontEndMeetsTheThumbFloor` measures every menu control against the
+144-unit touch target floor. It read **1519 measurements under it across 12 shapes** until
+2026-09-03 and reads **50** now, all near misses (`docs/TODO.md` § 126.2 and § 126.12).
+
+⚠️⚠️ **THE CAUSE WAS NOT "NOT ENOUGH PADDING", IT WAS "NOWHERE TO PAD INTO", AND EVERY ONE OF THE
+1519 SAID SO.** Each reported a size exactly equal to the control's own artwork, which means the
+pad had grown by ZERO units: `ScreenFocus.ApplyTouchTargets` takes half the gap to a neighbour and
+these rows are stacked with no gap at all. `ScreenFocus.MakeRoomForThumbs` now raises the layout
+row a group actually owns, forces a rebuild, and pads after, so the growth has somewhere to go.
+⚠️ **The half that matters is that `EveryScreenHasAFocusPathAndReachableTouchTargets` still
+passes**: that is the check that a press at a control's centre lands on that control, and it is
+what caught the padding bug in § 125.4. Making forty rows taller stole no presses.
+
+⚠️⚠️ **RUN IT ALONE.** `InputSurfaceProbe` loads every scene in the build settings and opens every
+overlay it can discover, so it is the most destructive fixture in the suite: in a twelve-suite run
+it took most of the group down with it and the numbers were meaningless. See § 126.8.
+
+Run it on purpose with `-testCategory "ThumbFloor"`; the failure message is the worklist, and
+`Logs/input-surface.txt` carries the whole sweep including the scrollbars it exempts and any note
+that the camera was replaced part way through, which means fewer shapes were measured.
 
 ⚠️⚠️ **`-testCategory "!WallClock"` IS PART OF THE COMMAND, NOT AN OPTIMISATION.**
 `AiDiagnosticProbe` runs a round at 1x for about 80 real seconds by design, so its result depends
@@ -587,7 +767,12 @@ passed on immediate re-runs with nothing changed. `docs/TODO.md` § 6 carries th
 ⚠️ `[Explicit]` does NOT do this in batch mode; it was tried and the tests still ran.
 Run them on purpose with `-testCategory "WallClock"`.
 
-**All five editor checks, in one launch:**
+**All SEVEN editor checks, in one launch.** ⚠️ This line said *"all five"* until 2026-09-03, and
+§ 7.1 four hundred lines down has listed seven since `InputSurfaceCheck` and
+`ShaderWarmupCollection` joined: `HeadlessCheck`, `ArenaCheck`, `MapGeometryCheck`,
+`AudioCueCheck`, `SceneScriptCheck`, `InputSurfaceCheck`, `ShaderWarmupCollection`. **A count in
+one place and a list in another is § 5's drift rule inside this file**, and the count is the copy
+that goes stale.
 
 ```bash
 "/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -projectPath . -executeMethod TumbangPreso.EditorTools.Checks.RunAll -logFile Logs/checks.log
@@ -603,6 +788,27 @@ and **still exits 0**.
 
 ⚠️⚠️ **Always assert on the `.xml`, never on the exit code.** Both that crash and a genuine
 failure come back as 0.
+
+⚠️⚠️ **AND THERE IS A THIRD STATE, FOUND 2026-09-03, WHICH IS WORSE THAN THE CRASH: A `.xml` THAT
+SAYS `result="Passed"` AND `total="0"`.** A crash writes no file at all and is at least visibly
+absent. This one is present, well formed, and green:
+
+```xml
+<test-run id="2" testcasecount="0" result="Passed" total="0" failed="0" duration="0.4359008">
+```
+
+**So read `total` and `failed`, not `result`.** `docs/TODO.md` § 126.8c has both causes, and they
+produce byte-identical files from thirteen minutes apart:
+
+- **Something destroyed the runner's own objects mid-run.** Every test still executes; there is
+  simply nothing left to write the results down. `PlayModeWorld.NeverTouch` is the guard.
+- ⚠️⚠️ **`-testFilter` IS SEMICOLON-SEPARATED, NOT COMMA-SEPARATED.** A comma-joined list of
+  fixture names is read as one impossible name, matches nothing, and produces exactly the same
+  file in thirteen seconds.
+
+```bash
+"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -projectPath . -testPlatform PlayMode -testCategory "!WallClock;!ThumbFloor" -testFilter "TumbangPreso.PlayTests.SteeringTests;TumbangPreso.PlayTests.CarryTests" -testResults Logs/targeted.xml -logFile Logs/targeted.log
+```
 
 ⚠️ **`-batchmode -quit` exits before compiling scripts** and still returns 0. Use
 `-executeMethod` or `-runTests` when you need an actual compile.
@@ -736,8 +942,14 @@ every file in a pre-existing output directory was freshly emitted.
   has holes, or whose furniture stands inside the defender's box. ⚠️ **It found six faults on a
   map whose four showcase renders had already been signed off**, including both pavements
   floating 0.15 m over open air. A render only shows the angles somebody chose.
-- `Checks.RunAll` runs `HeadlessCheck`, `ArenaCheck`, `MapGeometryCheck`, `AudioCueCheck` and
-  `SceneScriptCheck` in ONE editor launch, and runs all five even after one fails. ⚠️ **The
+- `Checks.RunAll` runs `HeadlessCheck`, `ArenaCheck`, `MapGeometryCheck`, `AudioCueCheck`,
+  `SceneScriptCheck`, `InputSurfaceCheck` and `ShaderWarmupCollection` in ONE editor launch, and
+  runs all of them even after one fails. ⚠️ **The last one REGENERATES rather than inspecting**:
+  it rewrites the `ShaderVariantCollection` the loading screen warms a slice per frame out of, and
+  a collection that is checked but not rewritten goes stale the first time somebody adds a material
+  and then warms the wrong shaders while looking exactly like a working one. `GameBuilder` rebuilds
+  it on every build for the same reason `ConfigureSplash` rewrites the splash: **both places or
+  neither** (§ 6.4). `docs/TODO.md` § 130.5. ⚠️ **The
   launches are the cost of a verification pass, not the assertions.** A full pass is three Unity
   launches plus `dotnet test`; it used to be seven. `GameBuilder` still runs `SceneScriptCheck`
   itself, deliberately: a build-time gate must not depend on somebody having run this first.
@@ -745,9 +957,17 @@ every file in a pre-existing output directory was freshly emitted.
   **fails a run where one blows more than 12 per cent of the frame to white**. That bound is
   `docs/VISION.md` § 2 rule 5 as a number, and the first run of it found Zack's ultimate at
   **62.8 per cent** against 8.3 for the worst of everything else.
-- **Three `tools/` audits read the source as TEXT and answer questions no test can.** They need
+- **The `tools/` audits read the source as TEXT and answer questions no test can.** They need
   `python` (not on PATH; `%LOCALAPPDATA%\Programs\Python\Python312\python.exe`) and they exit
-  non-zero, so they gate a verification pass:
+  non-zero, so they gate a verification pass.
+  ⚠️⚠️ **THIS LINE SAID "THREE" WHILE THE FOLDER HELD SIX, WHICH IS § 5'S DRIFT RULE CAUGHT IN THIS
+  FILE FOR THE SECOND TIME** (the first was "all five editor checks" against a list of seven, three
+  hundred lines down). **The list below is the authority and there is deliberately no number**: a
+  count is the copy that goes stale, every time, because the person adding the seventh audit edits
+  the list and not the sentence above it. `ls tools/audit_*.py`.
+  ⚠️ **AND `PYTHONIOENCODING=utf-8` IS REQUIRED ON THIS MACHINE**, or `audit_audio_reach.py` dies
+  on a `UnicodeEncodeError` part way through its own output, which looks like a crash in the thing
+  it is auditing.
   - `audit_ability_authority.py` walks every ability call that moves a body or writes score and
     reports whether a `NetAuthority.ShouldResolve()` gate is open at that brace depth. ⚠️ **Every
     `other` row must read HOST-ONLY.** It is currently 44 sites, 29 gated, **0 ungated on another
@@ -759,6 +979,24 @@ every file in a pre-existing output directory was freshly emitted.
   - `audit_wire_payloads.py` compares each named message's writer and reader field by field.
     Netcode does not check that the two halves agree, and a field added to one is not an error, it
     is silently misread bytes (§ 38.6).
+  - `audit_audio_reach.py` and `audit_presentation_reach.py` ask whether a cue or an effect
+    reaches every peer or only the host. ⚠️ **The first one LIED for its whole life until
+    2026-09-04**: it was the only audit that did not strip comments before looking for a gate, so
+    `NetCue`'s own header explaining the gate it replaces registered as a gate and reported
+    `NetCue.Play` itself as host-only. A reader trusting that goes hunting for a bug in the fix.
+  - `audit_cue_relay.py` answers the other half: which cues are relayed AND played locally, and
+    therefore double-fire. ⚠️⚠️ **READ ITS HEADER BEFORE TOUCHING IT.** The first version was wrong
+    about 42 of 48 rows because **the gate is usually in the CALLER**, so gatedness is propagated
+    to a fixed point. It carries two allowlists, `WRAPPED` and `OWNER_DRIVEN`, and both **assert
+    the line that makes their claim true still exists**, so deleting one fails here rather than
+    going quiet in a match.
+- **`tools/net_link.py` and `tools/net_matrix.py` put two real players on a link this machine
+  controls**, which is how the disconnect matrix and the bad-wifi table in `docs/TODO.md` § 137
+  were measured. ⚠️⚠️ **DO NOT REACH FOR `UnityTransport.SetDebugSimulatorParameters` INSTEAD.**
+  It and `DebugSimulator` are both `[Obsolete]` **with no effect** in netcode 2.13.1, and the
+  simulator pipeline stage is only configured under `UNITY_MP_TOOLS_NETSIM_IMPLEMENTATION_ENABLED`,
+  a define from `com.unity.multiplayer.tools`, which is not in the manifest. **A table built on it
+  compiles, runs, and measures a perfect link.**
 - `tools/` also holds player-side capture scripts.
 
 Three faults from one session that no amount of playing would have found: a HUD string rebuilt

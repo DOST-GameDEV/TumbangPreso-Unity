@@ -42,6 +42,18 @@ namespace TumbangPreso.PlayTests
     /// </summary>
     public class LoadoutSurfaceProbe
     {
+        /// <summary>
+        /// ⚠️⚠️ THE SETUP HALF OF `docs/TODO.md` § 126.8'S FIX, AND THIS FIXTURE GETS ONLY THE
+        /// SETUP HALF ON PURPOSE. `PlayModeWorld`'s header asks for both hooks; this class
+        /// already owns a `[UnityTearDown]` doing its own cleanup, and NUnit does not define an
+        /// order between two teardowns of the same kind. **The setup reset is the half that
+        /// protects THIS fixture**: it guarantees the world is empty and settled when the test
+        /// below starts, whatever ran before it. With every fixture in the folder carrying it,
+        /// no test can inherit a world at all, which is the property the entry actually wants.
+        /// </summary>
+        [UnitySetUp]
+        public IEnumerator ResetWorldBefore() => PlayModeWorld.Reset();
+
         private static readonly (int W, int H, string Name)[] Resolutions =
         {
             (1280,  720, "16:9 720p"),
@@ -134,9 +146,19 @@ namespace TumbangPreso.PlayTests
                     + "the picker is showing, or the board is a flat list of everybody's builds "
                     + "again.");
 
-            Assert.AreEqual(2, Glyphs().Count,
-                "the board drew something other than two slot heads, so it is not showing one "
-                + "hero's two skills.");
+            // ⚠️⚠️ THREE HEADS AND FOUR TILES, WHICH IS NOT A CONTRADICTION AND IS THE WHOLE
+            // POINT OF THE THIRD ONE. `docs/TODO.md` § 131.7: the board showed two of a hero's
+            // three powers, so a screen titled `LOADOUT · DANTE` never mentioned TITAN FISSURE.
+            // The ultimate row has a head and no tiles **on purpose**, because
+            // `AbilityVariant.Slot` refuses it options: *"an ultimate is banked once or twice a
+            // match and reading which one an opponent has is already a skill"*.
+            //
+            // ⚠️ SO THE TWO COUNTS ARE THE ASSERTION. Four tiles says only the two skills carry
+            // readings; three heads says the ultimate is still on the screen. Asserting either
+            // alone would let the ultimate row silently grow tiles or silently disappear.
+            Assert.AreEqual(3, Glyphs().Count,
+                "the board drew something other than three slot heads, so it is not showing one "
+                + "hero's two skills AND their ultimate. docs/TODO.md § 131.7.");
         }
 
         /// <summary>
@@ -150,6 +172,12 @@ namespace TumbangPreso.PlayTests
         /// in the world; a second icon would say they were different powers. That is why the
         /// glyph is on the slot HEAD here rather than on each tile, which is the same rule the
         /// hub's version enforced one control shape earlier.
+        ///
+        /// ⚠️⚠️ THE ULTIMATE'S HEAD IS CHECKED BY THE SAME LOOP AND THAT IS WHY IT REUSES
+        /// `BuildSlotHead`. It has no tiles, so nothing else on this screen would ever ask
+        /// whether `AbilityIcons.For` answers for a hero's ULTIMATE glyph, and a blank square in
+        /// the one row that names TITAN FISSURE, GLACIAL NOVA or GRAND COVEN would be the most
+        /// visible missing icon in the game.
         /// </summary>
         [UnityTest]
         public IEnumerator BothSlotHeadsCarryTheAbilitysOwnGlyph()
@@ -157,7 +185,8 @@ namespace TumbangPreso.PlayTests
             yield return OpenBoard();
 
             var glyphs = Glyphs();
-            Assert.AreEqual(2, glyphs.Count, "the board has no pair of slot heads to check.");
+            Assert.AreEqual(3, glyphs.Count,
+                "the board has no set of three slot heads to check: two skills and the ultimate.");
 
             foreach (var glyph in glyphs)
             {

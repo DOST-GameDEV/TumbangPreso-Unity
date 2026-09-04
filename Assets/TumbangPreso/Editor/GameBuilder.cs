@@ -51,6 +51,249 @@ namespace TumbangPreso.EditorTools
             EditorApplication.Exit(ok ? 0 : 1);
         }
 
+        /// <summary>
+        /// The browser build. `docs/FUTURE.md` Phase 18: *"A WebGL build in the browser. The
+        /// module is already installed. One click from a link converts far better than a download,
+        /// and this game is small enough to actually work there."*
+        ///
+        /// ⚠️⚠️ THE TARGET IS SWITCHED BEFORE THE BUILD, FOR `BuildAndroidPlayer`'S REASON AND
+        /// NOT AS A COPY OF IT. Switching is what re-evaluates the platform defines, and this
+        /// project branches on them in `Matchmaker.LocalPlatform`, `Matchmaker.LocalInputDevice`
+        /// and `TouchHud.ShouldShow`. A player built without the switch compiles those three for
+        /// the EDITOR's platform and nothing errors.
+        ///
+        /// ⚠️⚠️ AND WEBGL IS A DIFFERENT GAME FROM THE OTHER THREE IN ONE RESPECT THAT HAS TO BE
+        /// SAID OUT LOUD RATHER THAN DISCOVERED: **the browser has no UDP sockets.** `LanBeacon`
+        /// broadcasts over UDP and `UnityTransport` uses it for the LAN path, so **LAN hosting
+        /// and LAN join cannot work in a browser build and never will**. The relay path is the
+        /// one that works there, which is the same conclusion `Attention.md` § 1 reaches about
+        /// the Android emulator from a completely different direction. A WebGL build is therefore
+        /// a **shop window**, not a tournament client, and `docs/FUTURE.md` Phase 17's unplugged
+        /// LAN requirement is a claim about the DESKTOP player.
+        ///
+        /// ⚠️ IT IS NOT WIRED INTO ANY GATE AND MUST NOT BE. A WebGL player takes far longer to
+        /// link than a desktop one, and `CLAUDE.md` § 2.2's shape is WORK then BUILD: this is a
+        /// distribution build, run on purpose when there is something to show.
+        /// </summary>
+        [MenuItem("Tumbang Preso/Build WebGL Player")]
+        public static void BuildWebGlFromMenu() => BuildWebGlPlayer(DefaultWebGlOutput());
+
+        public static void BuildWebGl()
+        {
+            bool ok = BuildWebGlPlayer(CommandLineOutput() ?? DefaultWebGlOutput());
+            EditorApplication.Exit(ok ? 0 : 1);
+        }
+
+        /// <summary>
+        /// ⚠️ A FOLDER, NOT A FILE, WHICH IS THE THIRD OUTPUT SHAPE IN THIS CLASS. Windows writes
+        /// an .exe beside a `_Data` folder, macOS writes a bundle, Android writes a single .apk,
+        /// and WebGL writes a DIRECTORY containing `index.html`, `Build/` and `TemplateData/`.
+        /// `BuildPipeline.BuildPlayer` takes the directory itself as the "location" for WebGL,
+        /// so there is no file name to append and `PurgeOutputDirectory` is handed exactly the
+        /// folder it is about to fill.
+        ///
+        /// ⚠️ IT GOES UNDER `Builds/` RATHER THAN ON THE DESKTOP, unlike Windows and Android.
+        /// Those two are opened by hand and belong where 🧑 can double-click them; a WebGL build
+        /// is uploaded rather than run, and a folder of ten thousand files on somebody's Desktop
+        /// is a nuisance. `DefaultMacOutput` already made this choice for the same reason.
+        /// </summary>
+        public static string DefaultWebGlOutput()
+            => Path.Combine(Directory.GetCurrentDirectory(), "Builds", "WebGL");
+
+        private static bool BuildWebGlPlayer(string outputPath)
+        {
+            if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.WebGL)
+            {
+                if (!EditorUserBuildSettings.SwitchActiveBuildTarget(
+                        NamedBuildTarget.WebGL, BuildTarget.WebGL))
+                {
+                    Debug.LogError("[Build] could not switch to the WebGL target. Is the WebGL " +
+                                   "module installed for this editor? Check " +
+                                   "Editor/Data/PlaybackEngines for WebGLSupport.");
+                    return false;
+                }
+            }
+
+            ConfigureWebGl();
+
+            return Execute(outputPath, BuildTarget.WebGL);
+        }
+
+        /// <summary>
+        /// The WebGL player settings, argued rather than defaulted.
+        ///
+        /// ⚠️⚠️ **BROTLI IS THE DEFAULT AND IT IS THE WRONG ONE FOR itch.io.** Brotli needs the
+        /// host to send `Content-Encoding: br`, and itch.io's static hosting does not, so a
+        /// Brotli build downloads and then fails to decompress with a console error most players
+        /// will read as "the game is broken". **Gzip is served correctly by every static host**
+        /// and costs about fifteen per cent more download. `docs/FUTURE.md` Phase 18 names itch.io
+        /// as the first destination, so that is the host this is tuned for.
+        ///
+        /// ⚠️ AND THE DECOMPRESSION FALLBACK IS ON, which is the belt for the same braces: with
+        /// it, a host that sends no encoding header at all still works, at the cost of a small
+        /// JavaScript decompressor in the loader.
+        ///
+        /// ⚠️⚠️ **EXCEPTIONS ARE `ExplicitlyThrownExceptionsOnly`, NOT `None`.** `None` is faster
+        /// and smaller and it also means a null reference silently corrupts the heap instead of
+        /// throwing, which in a browser presents as the game freezing with no message. This
+        /// project's whole verification strategy is that a failure says what it was
+        /// (`CLAUDE.md` § 7.1), and a build that cannot report its own exceptions cannot be
+        /// debugged by anybody who is not sitting at this machine.
+        ///
+        /// ⚠️ THE MEMORY SIZE IS LEFT AT UNITY 6'S DEFAULT ON PURPOSE. Unity 6 grows the WASM
+        /// heap dynamically and the old fixed `memorySize` knob is deprecated; pinning it is how
+        /// a build that ran fine on a desktop browser dies on a Chromebook.
+        /// </summary>
+        private static void ConfigureWebGl()
+        {
+            PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Gzip;
+            PlayerSettings.WebGL.decompressionFallback = true;
+            PlayerSettings.WebGL.exceptionSupport = WebGLExceptionSupport.ExplicitlyThrownExceptionsOnly;
+
+            // ⚠️ NO DATA CACHING. It stores the whole data file in IndexedDB, which makes a second
+            // visit fast and makes the FIRST visit fail on a browser with a small storage quota,
+            // silently, after the download has already happened. A shop window is judged on the
+            // first visit.
+            PlayerSettings.WebGL.dataCaching = false;
+        }
+
+        [MenuItem("Tumbang Preso/Build Android Player")]
+        public static void BuildAndroidFromMenu() => BuildAndroidPlayer(DefaultAndroidOutput());
+
+        public static void BuildAndroid()
+        {
+            bool ok = BuildAndroidPlayer(CommandLineOutput() ?? DefaultAndroidOutput());
+            EditorApplication.Exit(ok ? 0 : 1);
+        }
+
+        /// <summary>
+        /// The .apk, beside the Windows player on the same Desktop.
+        ///
+        /// ⚠️ ONE FILE, NOT A FOLDER, WHICH `PurgeOutputDirectory` HAS TO BE TOLD ABOUT. The
+        /// Windows player is a directory it can delete wholesale; an .apk is a single file in a
+        /// directory that may hold other things. It gets its OWN directory for exactly that
+        /// reason, so the purge rule that protects the Windows build protects this one unchanged.
+        /// </summary>
+        public static string DefaultAndroidOutput()
+        {
+            string desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            return Path.Combine(desktop, "TumbangPreso-Android", "TumbangPreso.apk");
+        }
+
+        private static bool BuildAndroidPlayer(string outputPath)
+        {
+            if (!ConfigureAndroid()) return false;
+
+            // ⚠️⚠️ THE TARGET IS SWITCHED BEFORE THE BUILD, NOT LEFT TO `BuildPlayer`. Switching
+            // is what re-evaluates `UNITY_ANDROID`, and this project branches on it in
+            // `Matchmaker.LocalPlatform`, `Matchmaker.LocalInputDevice` and
+            // `TouchHud.ShouldShow`. A player built without the switch compiles those three
+            // branches for the EDITOR's platform, so the .apk would report itself as a desktop
+            // peer and ship with no touch controls, and nothing would error.
+            if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.Android)
+            {
+                if (!EditorUserBuildSettings.SwitchActiveBuildTarget(
+                        NamedBuildTarget.Android, BuildTarget.Android))
+                {
+                    Debug.LogError("[Build] could not switch to the Android target. Is the " +
+                                   "Android module installed for this editor? Check " +
+                                   "Editor/Data/PlaybackEngines for AndroidPlayer.");
+                    return false;
+                }
+            }
+
+            return Execute(outputPath, BuildTarget.Android);
+        }
+
+        /// <summary>
+        /// The Android player settings, all of them argued rather than defaulted.
+        ///
+        /// ⚠️⚠️ THIS ASKS FOR `ARM64 | X86_64` AND THE .apk COMES OUT ARM64-ONLY. MEASURED, NOT
+        /// GUESSED, ON THE FIRST BUILD THIS PROJECT EVER MADE (2026-09-03): unzipping the shipped
+        /// file lists **`lib/arm64-v8a` and nothing else**, 7 files and 119.9 MB. Unity 6 does not
+        /// emit an x86_64 Android slice, and it does not error about being asked to; the flag is
+        /// simply ignored. **A setting the engine declines is not a setting**, which is
+        /// `CLAUDE.md` § 6.4's `ConfigureSplash` lesson arriving from the other direction, and
+        /// `minSdkVersion` below is the third instance in this one method.
+        ///
+        /// ⚠️⚠️ AND THE PARAGRAPH THIS REPLACES WAS WRONG IN BOTH DIRECTIONS AT ONCE, WHICH IS WHY
+        /// NOBODY CAUGHT IT. It read: *"An ARM64-only .apk installs on neither emulator and can
+        /// only be verified by somebody with a handset, and there is not one on this team."*
+        /// **The .apk IS ARM64-only and it installed and ran on the emulator anyway.** The Android
+        /// 14 x86_64 system image translates arm64, so `adb install` succeeded and the player
+        /// logged `Scripting Backend 'il2cpp', CPU 'arm64-v8a'` on a device whose
+        /// `ro.product.cpu.abi` is `x86_64`. A false premise and a false conclusion cancelled out
+        /// and the file read as correct for a day.
+        ///
+        /// ⚠️ THE REQUEST IS KEPT RATHER THAN DELETED, and that is a decision. Writing
+        /// `ARM64` alone would be tidier and would also delete the record of what was asked for;
+        /// if a future editor emits the slice, this picks it up. **What must not survive is the
+        /// COMMENT claiming the slice is there.** `docs/TODO.md` § 126.10 has the measurement.
+        ///
+        /// ⚠️ AND THE TESTABILITY ARGUMENT STILL HOLDS, THROUGH A DIFFERENT MECHANISM. 🧑 has no
+        /// handset (2026-09-02: *"i dont have any nadroid at all"*), so the emulator is the only
+        /// device this game can be checked on, and it works because of TRANSLATION rather than
+        /// because of a second slice. That is slower than native and it is not a performance
+        /// measurement (§ 126.10), but it is a real run on a real Android.
+        ///
+        /// ⚠️ X86_64 FORCES IL2CPP. Mono only emits ARMv7 and x86 on Android, so the scripting
+        /// backend is not a free choice here; it follows from wanting to run the thing.
+        ///
+        /// ⚠️ LANDSCAPE, LOCKED. The arena is 14 m by 14 m read across the screen and the whole
+        /// front end is authored against a 1920x1080 canvas matched on HEIGHT; a portrait phone
+        /// would crop it to a 9:16 slice, which is `AspectSafeCanvas`'s failure mode rather than
+        /// a layout to design. `InputSurfaceProbe` drives the two landscape phone shapes.
+        /// </summary>
+        private static bool ConfigureAndroid()
+        {
+            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android,
+                                                    "com.bhstudios.tumbangpreso");
+
+            PlayerSettings.SetScriptingBackend(NamedBuildTarget.Android, ScriptingImplementation.IL2CPP);
+            PlayerSettings.Android.targetArchitectures =
+                AndroidArchitecture.ARM64 | AndroidArchitecture.X86_64;
+
+            // ⚠️⚠️ 26, AND IT WAS 24 UNTIL THE FIRST BUILD ACTUALLY RAN. Unity 6 REFUSES the older
+            // value: the very first `BuildAndroid` printed
+            //
+            //     Minimum supported Android API level is 26 (Android 8.0 Oreo).
+            //     Please use AndroidApiLevel26 or higher.
+            //
+            // as a `Debug.LogError` out of this exact line, and then carried on and built a player
+            // whose manifest said something this file did not. **A setting the engine declines is
+            // not a setting**, which is `CLAUDE.md` § 6.4's `ConfigureSplash` lesson (*"a colour
+            // set in `ProjectSettings.asset` is not set"*) arriving from the other direction: the
+            // write is here, in code, on every build, and it still did not take.
+            //
+            // ⚠️ THE ORIGINAL REASONING IS KEPT BECAUSE IT WAS SOUND AND ONLY THE NUMBER WAS
+            // WRONG: *"API 24 is Android 7.0: it is what the Input System's touch stack and
+            // Netcode's transport both assume, and it is old enough to cover the phones this game
+            // is actually aimed at in Metro Manila."* Android 8.0 is 2017 hardware, so the floor
+            // moved by one year of phones and the argument survives it. **If this ever needs to go
+            // lower, the blocker is the editor and not this file.**
+            PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel26;
+            PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevelAuto;
+
+            PlayerSettings.defaultInterfaceOrientation = UIOrientation.LandscapeLeft;
+            PlayerSettings.allowedAutorotateToPortrait = false;
+            PlayerSettings.allowedAutorotateToPortraitUpsideDown = false;
+            PlayerSettings.allowedAutorotateToLandscapeLeft = true;
+            PlayerSettings.allowedAutorotateToLandscapeRight = true;
+
+            // ⚠️⚠️ THE INTERNET PERMISSION IS REQUIRED OR CROSSPLAY IS DEAD ON ARRIVAL, AND THE
+            // FAILURE IS SILENT. Without it every UGS call and every Netcode connection fails at
+            // runtime with a socket error, which reads exactly like "the lobby is empty" rather
+            // than like a missing manifest line. `forceInternetPermission` is the one-line answer
+            // and it costs a desktop build nothing.
+            PlayerSettings.Android.forceInternetPermission = true;
+
+            // A phone throttles hard. 30 is a floor the thermals can hold; the desktop build is
+            // untouched, because this is an Android-only player setting.
+            PlayerSettings.Android.startInFullscreen = true;
+
+            return true;
+        }
+
         private static string CommandLineOutput()
         {
             string[] args = Environment.GetCommandLineArgs();
@@ -327,6 +570,15 @@ namespace TumbangPreso.EditorTools
                 // warning is the editor-side guard; this line is the player-side one.
                 "TumbangPreso/NearFade",
 
+                // ⚠️⚠️ THE SOURCED ABILITY SHEETS' ONLY PASS, AND ITS MISS PATH IS A WRONG
+                // PICTURE RATHER THAN A MISSING ONE, WHICH IS WORSE. `VfxFlipbook.NewMaterial`
+                // reaches it through `Shader.Find` and falls back to `Sprites/Default`, which
+                // ignores `_MainTex_ST` entirely: a stripped build would draw every ability's
+                // WHOLE 5 x 3 sprite sheet on one quad, all fifteen frames at once, in the
+                // player only. `Logs/shots-abilities/ability_ice_sheet_eye_v51.png` is what that
+                // looks like. The editor would be correct throughout.
+                "TumbangPreso/VfxFlipbook",
+
                 // ⚠️ DANTE'S GROUND, AND THE FIRST SHADER ANY ABILITY HAS EVER HAD. `VfxMaterial
                 // .Volcanic` reaches it through `Shader.Find` and nothing in any scene references
                 // it, which is exactly the case this list exists for.
@@ -420,18 +672,72 @@ namespace TumbangPreso.EditorTools
             // The .app entry is the macOS half of the same test. BuildMac writes a bundle
             // rather than an .exe beside a _Data folder, so a Windows-only check refused to
             // purge a perfectly ordinary previous macOS build and failed the build instead.
+            //
+            // ⚠️⚠️ AND THE `.apk` ENTRY IS THE ANDROID HALF, WHICH IS THE **THIRD** TIME THIS ONE
+            // TEST HAS BEEN TOO NARROW FOR A PLATFORM SOMEBODY ADDED AFTERWARDS. The paragraph
+            // above records the macOS instance in its own words; this is the same sentence with a
+            // different extension, and it had the same symptom:
+            //
+            //     [Build] output 'C:\Users\Matthew\Desktop\TumbangPreso-Android' exists but does
+            //     not look like a previous player (no UnityPlayer.dll, no TumbangPreso_Data, no
+            //     .app). Refusing to delete it.
+            //
+            // ⚠️⚠️ **SO EVERY ANDROID REBUILD ON THIS MACHINE FAILED THE MOMENT ONE .apk EXISTED**,
+            // and it failed AFTER switching build target and running the whole scene check, which
+            // is several minutes in. `docs/TODO.md` § 130.17. An Android build writes a single
+            // `.apk` (or `.aab`) plus a `*_BurstDebugInformation_DoNotShip` folder and none of the
+            // three desktop markers, so the guard was correct about what it saw and wrong about
+            // what it meant.
+            //
+            // ⚠️ THE GUARD'S INTENT IS UNCHANGED AND MUST STAY: `-buildOutput` takes an arbitrary
+            // path, so this still refuses a drive root, a directory holding a `.git`, and anything
+            // that does not already look like a build. **What widened is the definition of "looks
+            // like a build", not the willingness to delete.**
+            // ⚠️⚠️ AND ON 2026-09-03 IT WAS REWRITTEN TO NAME THE SHAPE OF THE MISTAKE RATHER
+            // THAN A FOURTH PLATFORM, BECAUSE § 130.17 ALREADY SAID WHAT THE SHAPE WAS AND THE
+            // NEXT PLATFORM WOULD OTHERWISE HAVE BEEN THE FOURTH TIME. That entry's own words:
+            // *"this test enumerates what today's platforms leave behind, so every platform added
+            // later fails it once."* WebGL is that platform: it writes `index.html`, `Build/` and
+            // `TemplateData/` and **not one of the five markers above**, so the first WebGL
+            // rebuild on any machine would have failed exactly as Android's did, several minutes
+            // in, after the target switch, with an error about a missing `UnityPlayer.dll`.
+            //
+            // ⚠️⚠️ `*_BurstDebugInformation_DoNotShip` IS THE GENERAL MARKER AND IT IS WHY THIS
+            // SHOULD NOT NEED A FIFTH VISIT. Unity emits that folder beside the player on **every
+            // IL2CPP target**, desktop, mobile and console alike, so it identifies a build
+            // directory without knowing which platform wrote it. The named markers stay because
+            // a Mono build does not emit it and because naming them is what makes the error
+            // message useful, but the general one is what catches a platform nobody has added
+            // yet.
+            //
+            // ⚠️ `TumbangPreso_Data` BECAME `*_Data`, WHICH IS THE SAME LESSON ONE SIZE DOWN.
+            // `PlayerSettings.productName` is written by `Execute` a few lines below and could be
+            // changed for a demo build or a jam entry; the guard would then stop recognising this
+            // project's own output. A wildcard costs nothing and removes the coupling.
+            //
+            // ⚠️ THE GUARD'S INTENT IS STILL UNCHANGED, for the third time: it refuses a drive
+            // root, a directory holding a `.git`, and anything that does not already look like a
+            // build. **What keeps widening is the definition of "looks like a build", never the
+            // willingness to delete.**
             bool looksLikeAPlayer =
                 File.Exists(Path.Combine(info.FullName, "UnityPlayer.dll")) ||
-                Directory.Exists(Path.Combine(info.FullName, "TumbangPreso_Data")) ||
+                Directory.GetDirectories(info.FullName, "*_Data").Length > 0 ||
                 Directory.GetDirectories(info.FullName, "*.app").Length > 0 ||
+                Directory.GetFiles(info.FullName, "*.apk").Length > 0 ||
+                Directory.GetFiles(info.FullName, "*.aab").Length > 0 ||
+                Directory.GetDirectories(info.FullName,
+                                         "*_BurstDebugInformation_DoNotShip").Length > 0 ||
+                (File.Exists(Path.Combine(info.FullName, "index.html")) &&
+                 Directory.Exists(Path.Combine(info.FullName, "Build"))) ||
                 info.GetFileSystemInfos().Length == 0;
 
             if (!looksLikeAPlayer)
             {
                 Debug.LogError($"[Build] output '{dir}' exists but does not look like a previous " +
-                               "player (no UnityPlayer.dll, no TumbangPreso_Data, no .app). " +
-                               "Refusing to delete it. Move it aside or point -buildOutput " +
-                               "somewhere else.");
+                               "player: no UnityPlayer.dll, no *_Data folder, no .app, no .apk " +
+                               "or .aab, no Burst debug folder, and no index.html beside a " +
+                               "Build/ folder. Refusing to delete it. Move it aside or point " +
+                               "-buildOutput somewhere else.");
                 return false;
             }
 
@@ -498,7 +804,23 @@ namespace TumbangPreso.EditorTools
                 return false;
             }
 
-            string dir = Path.GetDirectoryName(outputPath);
+            // ⚠️⚠️ WEBGL'S "LOCATION" IS THE DIRECTORY ITSELF, NOT A FILE INSIDE ONE, AND TAKING
+            // `GetDirectoryName` OF IT WOULD HAVE AIMED THE PURGE ONE LEVEL TOO HIGH.
+            // `DefaultWebGlOutput` is `Builds/WebGL`, so the old line would have handed
+            // `PurgeOutputDirectory` the whole `Builds/` folder, **which also holds the macOS
+            // build**. It fails safe rather than dangerously (a folder holding only other build
+            // folders matches none of the markers, so the guard refuses and the build stops), but
+            // "safe" here means every WebGL build fails several minutes in, after the target
+            // switch, which is § 130.17's symptom exactly and is the fourth time this class of
+            // path assumption would have bitten.
+            //
+            // ⚠️ THE TARGET DECIDES, NOT THE STRING. Sniffing for a trailing extension would be a
+            // guess about a path a caller may write however they like (`-buildOutput` takes an
+            // arbitrary one); the build target is the fact that actually determines the shape.
+            string dir = target == BuildTarget.WebGL
+                ? outputPath
+                : Path.GetDirectoryName(outputPath);
+
             if (!PurgeOutputDirectory(dir)) return false;
             if (!string.IsNullOrEmpty(dir)) Directory.CreateDirectory(dir);
 
@@ -508,6 +830,15 @@ namespace TumbangPreso.EditorTools
             ConfigureSplash();
             ConfigureIcon();
             EnsureRuntimeShaders();
+
+            // ⚠️⚠️ REGENERATED ON EVERY BUILD, FOR `ConfigureSplash`'s OWN REASON ONE LINE UP.
+            // The loading screen warms shaders a slice per frame out of this collection
+            // (`docs/TODO.md` § 126.10, the Android ANR), and a collection generated by hand goes
+            // stale the first time somebody adds a material. A stale one warms the wrong shaders
+            // and looks exactly like a working one, which is the failure `CLAUDE.md` § 6.4's
+            // splash paragraph is about: **both places or neither.**
+            ShaderWarmupCollection.Rebuild(true);
+
             StampBuildBranch();
 
             // Ship at the monitor's native resolution in borderless fullscreen. Starting the

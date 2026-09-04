@@ -30,6 +30,26 @@ namespace TumbangPreso.Core
 
         /// <summary>Penalty for Attacker failing to retrieve loose slipper.</summary>
         UnretrievedSlipperPenalty,
+
+        /// <summary>
+        /// PHASE 12, LAST TSINELAS STANDING: the last attacker still holding a tsinelas takes
+        /// the round. To that attacker, once, at the moment the round is decided.
+        ///
+        /// ⚠️⚠️ IT IS APPENDED AND NOT INSERTED, AND THE REASON IS THE WIRE RATHER THAN TASTE.
+        /// `MatchRpc.BroadcastScore` writes `(int)e` and `OnScoreMsg` reads it back as an int, so
+        /// every value above is a number two builds have agreed on. Inserting anything ahead of
+        /// this line renumbers `Tag`, `Sabotage` and both penalties, and two peers would then
+        /// disagree about which award produced which toast **while still agreeing on the total**,
+        /// which is the quietest possible way to be wrong. `docs/TODO.md` § 70.7's rule about a
+        /// roster that only grows, applied to an enum that travels.
+        ///
+        /// ⚠️⚠️ AND ADDING IT AT ALL IS WHY `NetSession.ProtocolVersion` MOVED TO 22. A peer on
+        /// 21 reaches `OnScoreMsg`, fails `Enum.IsDefined`, and DROPS the award: the round would
+        /// end early on every screen, the winner's total would rise by 100 on the host and by
+        /// nothing anywhere else, and the scoreboard a client showed at the end of the match
+        /// would be a different match's. `docs/TODO.md` § 130.13.
+        /// </summary>
+        LastTsinelasStanding,
     }
 
     /// <summary>
@@ -73,6 +93,13 @@ namespace TumbangPreso.Core
                 case ScoreEvent.DefenseTick: return Balance.ScoreDefensePerTick;
                 case ScoreEvent.TayaCampPenalty: return Balance.ScoreTayaCampPenalty;
                 case ScoreEvent.UnretrievedSlipperPenalty: return Balance.ScoreUnretrievedPenalty;
+
+                // ⚠️ IT IS A KNOCKDOWN'S WORTH AND IT IS READ FROM `CustomGameRules`, NOT
+                // COPIED. That file's own note is the argument: a format that pays in its own
+                // currency is a format whose scores cannot be read beside anybody else's, and a
+                // second literal 100 in this switch is the first step towards the two drifting.
+                case ScoreEvent.LastTsinelasStanding: return CustomGameRules.LastStandingPoints;
+
                 default: return 0;
             }
         }

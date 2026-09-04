@@ -38,6 +38,18 @@ namespace TumbangPreso.PlayTests
     public class LobbyStyleProbe
     {
         /// <summary>
+        /// ⚠️⚠️ THE PAIR THAT MAKES A FULL-SUITE RESULT MEAN ANYTHING. `docs/TODO.md` § 126.8:
+        /// the full PlayMode run came back 42, 41 and then 56 red with the red set moving, and a
+        /// gate whose red set moves is not measuring the code. `PlayModeWorld.Reset` has the
+        /// mechanism and why BOTH hooks are needed rather than one.
+        /// </summary>
+        [UnitySetUp]
+        public IEnumerator ResetWorldBefore() => PlayModeWorld.Reset();
+
+        [UnityTearDown]
+        public IEnumerator ResetWorldAfter() => PlayModeWorld.Reset();
+
+        /// <summary>
         /// ⚠️ THE SHIPPED WINDOWED SIZE, NOT THE BATCH RUNNER'S 640x480. `UiClickProbe` carries
         /// the same line and the same reason: at 4:3 the right-hand column sits outside the
         /// viewport and every control in it reports as broken, which is a truthful statement

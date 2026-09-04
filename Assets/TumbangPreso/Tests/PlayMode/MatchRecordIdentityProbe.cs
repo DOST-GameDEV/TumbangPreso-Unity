@@ -37,6 +37,18 @@ namespace TumbangPreso.PlayTests
     /// </summary>
     public class MatchRecordIdentityProbe
     {
+        /// <summary>
+        /// ⚠️⚠️ THE SETUP HALF OF `docs/TODO.md` § 126.8'S FIX, AND THIS FIXTURE GETS ONLY THE
+        /// SETUP HALF ON PURPOSE. `PlayModeWorld`'s header asks for both hooks; this class
+        /// already owns a `[UnityTearDown]` doing its own cleanup, and NUnit does not define an
+        /// order between two teardowns of the same kind. **The setup reset is the half that
+        /// protects THIS fixture**: it guarantees the world is empty and settled when the test
+        /// below starts, whatever ran before it. With every fixture in the folder carrying it,
+        /// no test can inherit a world at all, which is the property the entry actually wants.
+        /// </summary>
+        [UnitySetUp]
+        public IEnumerator ResetWorldBefore() => PlayModeWorld.Reset();
+
         private const int ProbeSeat = 1;
 
         private GameMode _savedMode;
@@ -232,19 +244,14 @@ namespace TumbangPreso.PlayTests
         [Category("Ugs")]
         public IEnumerator TheRecordNeverCarriesTheMachineTokenWhileSignedIn()
         {
-            if (!Unity.Services.Core.UnityServices.State.Equals(
-                    Unity.Services.Core.ServicesInitializationState.Initialized))
-            {
-                var init = Unity.Services.Core.UnityServices.InitializeAsync();
-                while (!init.IsCompleted) yield return null;
-            }
-
-            if (!Unity.Services.Authentication.AuthenticationService.Instance.IsSignedIn)
-            {
-                var signIn = Unity.Services.Authentication.AuthenticationService.Instance
-                    .SignInAnonymouslyAsync();
-                while (!signIn.IsCompleted) yield return null;
-            }
+            // ⚠️⚠️ THROUGH `NetIdentity`, NEVER `SignInAnonymouslyAsync` DIRECTLY. A second
+            // sign-in started beside the boot hook's is refused by UGS with *"The player is
+            // already signing in"*, and then NEITHER has completed, so the assertion below reads
+            // *"not signed in"* instead. Whether the two raced depended on how long the suites
+            // ahead of this one took, which is why this suite moved between two full PlayMode
+            // runs of the same code. `docs/TODO.md` § 126.8 and § 126.11.
+            var signIn = TumbangPreso.Net.NetIdentity.EnsureSignedInAsync();
+            while (!signIn.IsCompleted) yield return null;
 
             Assert.IsTrue(Unity.Services.Authentication.AuthenticationService.Instance.IsSignedIn,
                 "could not sign in, so this test cannot say anything about a signed-in machine");

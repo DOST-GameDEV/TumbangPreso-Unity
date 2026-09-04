@@ -295,7 +295,23 @@ namespace TumbangPreso
                 var motor = round?.PlayerAt(slot);
 
                 line.IsBot = motor == null || motor.IsBot;
-                line.Handle = motor != null ? motor.DisplayName() : $"P{slot + 1}";
+
+                // ⚠️⚠️ THE RECORD KEEPS THE FULL HANDLE WHILE THE SCREEN DROPS THE TAG, AND THESE
+                // ARE TWO DIFFERENT QUESTIONS. `CharacterMotor.DisplayName` stopped including the
+                // `#0000` on 2026-09-04 because 🧑 asked for it off the scoreboard: *"just the
+                // player name is enough here"*. That is right for a label on four seats a player
+                // is looking at, and wrong for a stored row: a match history listing strangers
+                // has nothing else to tell two players called PLAYER apart, and this row outlives
+                // the match it was written in.
+                //
+                // ⚠️ `PlayerId` IS STILL THE IDENTITY AND THIS IS STILL ONLY A LABEL. The cloud
+                // code finds a submitter with `p.PlayerId === context.playerId` and never reads
+                // this field; the local seat has its handle overwritten from the account below
+                // anyway. This keeps a REMOTE seat's row as informative as it was.
+                line.Handle = motor == null ? $"P{slot + 1}"
+                            : !motor.IsBot && !string.IsNullOrEmpty(motor.PlayerName)
+                                ? motor.PlayerName
+                                : motor.DisplayName();
                 line.CharacterId = CharacterIdFor(motor);
                 line.SlipperId = slipperIds[slot];
 

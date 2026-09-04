@@ -42,7 +42,28 @@ namespace TumbangPreso
         /// counting, which reads as a clock that has already expired and was reported as the
         /// match "starting with no time left".
         /// </summary>
-        public float TimeLeft { get; private set; } = Balance.RoundTime;
+        /// ⚠️ AND IT STARTS AT THE ROUND LENGTH THIS MATCH IS SET TO, NOT AT THE SHIPPED 90. The
+        /// paragraph above is about the ready-up window reading a full clock rather than 00:00;
+        /// on a custom 120 second match the same argument says it must read **02:00** there, and
+        /// `Balance.RoundTime` would have drawn 01:30 for the first thing a player sees.
+        public float TimeLeft { get; private set; } = RoundLength;
+
+        /// <summary>
+        /// How long a round of THIS match lasts.
+        ///
+        /// WARNING  `Balance.RoundTime` IS STILL THE SHIPPED NUMBER AND IS STILL WHAT
+        /// `Design.md` GOVERNS. `CustomGameRules.Defaults` reads it, so a rule set nobody has
+        /// edited answers exactly 90 here and every number in `Design.md` stays true of the
+        /// shipped game. `CLAUDE.md` section 5's rule is about the value the game SHIPS at; a
+        /// custom lobby is explicitly not that, and `CustomGameRules.CanBeRanked` refuses the
+        /// ladder to any match that has moved it.
+        ///
+        /// WARNING  FOUR PLACES USED TO WRITE `Balance.RoundTime` DIRECTLY and all four read
+        /// this now, because a round that STARTS at 120 and is CLAMPED at 90 by the snapshot is
+        /// worse than either number on its own: the host and the client would disagree about the
+        /// clock and it would read as a desync.
+        /// </summary>
+        private static float RoundLength => UI.SceneFlow.SelectedRoundSeconds;
 
         public Lata Lata { get; set; }
 
@@ -92,7 +113,14 @@ namespace TumbangPreso
         public void ApplySnapshot(float timeLeft, bool roundActive, int defenderSlot,
                                   bool matchInProgress = true)
         {
-            TimeLeft = Mathf.Clamp(timeLeft, 0.0f, Balance.RoundTime);
+            // WARNING  THE CEILING IS THE ROUND LENGTH THIS MATCH IS ACTUALLY BEING PLAYED AT,
+            // NOT THE SHIPPED 90. `Balance.RoundTime` is what the game ships and what
+            // `Design.md` governs; a custom lobby may set 30 to 180
+            // (`CustomGameRules.MinRoundSeconds` and `MaxRoundSeconds`). **This clamp is applied
+            // to a number the HOST sent**, so a 120 second round would have arrived correct and
+            // been cut to 90 on every client: the clock would read 01:30 while the host counted
+            // 02:00, and it would look like a desync rather than like a clamp.
+            TimeLeft = Mathf.Clamp(timeLeft, 0.0f, RoundLength);
             RoundActive = roundActive;
 
             // ⚠️⚠️ THE FREE-ROAM WINDOW IS WHY THIS IS NOT SIMPLY `= roundActive`, AND STAMPING
@@ -122,11 +150,39 @@ namespace TumbangPreso
             // leave the default true and everybody can free-roam; in a round, both are true;
             // during an intermission `EndRound` set the host's bodies false and this sets the
             // client's; after the match, `MatchEnded` reaches `EndRound` on both (§ 57.1).
+            // ⚠️⚠️ AND SINCE 2026-09-03 IT ASKS `LastTsinelasDirector` FIRST, BECAUSE THIS LOOP
+            // SILENTLY UNDID THAT WHOLE FORMAT ON EVERY CLIENT. `docs/TODO.md` § 130.13.
+            //
+            // A Last Tsinelas attacker who has lost their last tsinelas is out for the rest of
+            // the round, and "out" is `RoundActive = false` on their body. **This line runs at
+            // 5 Hz with `roundActive` true for the whole round**, so it put the flag straight
+            // back up within 200 ms and the eliminated player carried on throwing, grabbing and
+            // charging resets while the host ignored every request. The host was immune, because
+            // `MatchRpc.HostSyncPeer` hands it its own snapshot and nothing else writes here.
+            //
+            // ⚠️ IT WAS FOUND BY READING THIS METHOD RATHER THAN BY PLAYING, AND IT WOULD NOT
+            // HAVE SHOWN UP IN ANY TEST WE HAVE: the elimination and the re-enable are in two
+            // different files, both correct on their own, and the only thing that puts them
+            // together is a client in a live round.
+            //
+            // ⚠️ THE DIRECTOR IS ASKED RATHER THAN THE FLAG BEING PROTECTED, so there is exactly
+            // one answer to "is this seat out" and it is the same one the HUD draws.
             if (matchInProgress)
             {
+                var tsinelas = GameServices.Tsinelas;
+
                 foreach (var player in _players)
                 {
                     if (player == null) continue;
+
+                    // ⚠️ ONLY EVER TO HOLD ONE DOWN, NEVER TO RAISE ONE. When the round is over
+                    // `roundActive` is false and everybody stops, out or not.
+                    if (roundActive && tsinelas != null && tsinelas.IsOut(player.PlayerSlot))
+                    {
+                        player.RoundActive = false;
+                        continue;
+                    }
+
                     player.RoundActive = roundActive;
                 }
             }
@@ -160,7 +216,7 @@ namespace TumbangPreso
         public void BeginRound()
         {
             RoundActive = true;
-            TimeLeft = Balance.RoundTime;
+            TimeLeft = RoundLength;
             _throwCooldownLeft = 0.0f;
             _defenseTickAccum = 0.0f;
             _tayaCampTimer = 0.0f;
@@ -198,7 +254,7 @@ namespace TumbangPreso
             _players.Clear();
 
             RoundActive = false;
-            TimeLeft = Balance.RoundTime;
+            TimeLeft = RoundLength;
             _throwCooldownLeft = 0.0f;
             _defenseTickAccum = 0.0f;
             _tayaCampTimer = 0.0f;
@@ -226,7 +282,7 @@ namespace TumbangPreso
             // cooldowns, but the lesson must not end halfway through because 90 seconds passed.
             if (GameLaunch.GuidedTutorial)
             {
-                TimeLeft = Balance.RoundTime;
+                TimeLeft = RoundLength;
                 return;
             }
 

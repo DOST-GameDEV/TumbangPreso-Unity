@@ -44,6 +44,32 @@ namespace TumbangPreso
 
         public Vector2 Move { get; set; }
 
+        /// <summary>
+        /// This frame's look delta, in the same units a mouse reports.
+        ///
+        /// ⚠️⚠️ IT LIVES HERE BECAUSE THE CAMERA WAS THE SECOND PLACE THAT READ HARDWARE, AND
+        /// `PlayerInputReader`'s OWN CLASS NOTE SAYS THERE IS ONLY ONE. `CameraRig.StepLook`,
+        /// `StepCompanionLook` and `StepEmoteLook` each called `Input.GetAxisRaw("Mouse X")`
+        /// directly, which is the exact divergence that note forbids: a pad stick and a phone
+        /// drag had nowhere to arrive, and every fix for them would have been a fourth and fifth
+        /// hardware read inside the camera. One producer writes this; the rig reads it.
+        ///
+        /// ⚠️ A BOT NEVER WRITES IT, AND THAT IS CORRECT RATHER THAN AN OMISSION. Bots steer
+        /// with <see cref="Move"/> and <see cref="AimPoint"/>; they have no camera to turn. The
+        /// field is simply zero for them, which is what the rig already does with no mouse.
+        ///
+        /// ⚠️⚠️ <see cref="Clear"/> ZEROES IT, AND LEAVING IT OUT WOULD SPIN THE CAMERA FOR
+        /// EVER. This is a per-frame quantity its producer overwrites every frame, so a producer
+        /// that STOPS writing (chat opens, the reader is disabled, the unit is parked) leaves the
+        /// last non-zero delta standing and the rig keeps applying it on every frame after. It is
+        /// the same fault `Parked`'s own note records for a held verb, one field along: the exit
+        /// has to publish a release, not merely stop talking.
+        /// </summary>
+        public Vector2 LookDelta { get; set; }
+
+        /// <summary>The look delta, or zero while this unit's input is parked.</summary>
+        public Vector2 LookAxis => Parked ? Vector2.zero : LookDelta;
+
         /// <summary>Lateral throw spin for Pektus curve shots (-1.0 left to +1.0 right).</summary>
         public float SpinInput { get; set; }
 
@@ -103,6 +129,7 @@ namespace TumbangPreso
         {
             _held.Clear();
             Move = Vector2.zero;
+            LookDelta = Vector2.zero;
             SpinInput = 0.0f;
             HasAimPoint = false;
             FaceAimPoint = false;

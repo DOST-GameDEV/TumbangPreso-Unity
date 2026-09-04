@@ -36,6 +36,14 @@ namespace TumbangPreso
         public static AudioDirector Audio { get; private set; }
         public static MatchDirector Match { get; private set; }
         public static RoundDirector Round { get; private set; }
+
+        /// <summary>
+        /// PHASE 12's LAST TSINELAS STANDING match half. Present in every match and inert in
+        /// every format but its own, which is why it is a service rather than something the
+        /// arena installs: `SliceRunner` and `MatchBootstrap` are two runners and a rule that
+        /// only one of them installed would be a rule the other silently lacks.
+        /// </summary>
+        public static LastTsinelasDirector Tsinelas { get; private set; }
         public static Audio.MusicDirector Music { get; private set; }
         public static Net.PlayerAccount Account { get; private set; }
 
@@ -128,6 +136,13 @@ namespace TumbangPreso
             Audio = _root.AddComponent<AudioDirector>();
             Match = _root.AddComponent<MatchDirector>();
             Round = _root.AddComponent<RoundDirector>();
+
+            // ⚠️ AFTER BOTH DIRECTORS, because `LastTsinelasDirector.OnEnable` subscribes to
+            // `Match.RoundStarted` and `Round.Tagged`, and `AddComponent` runs `OnEnable`
+            // immediately. Reversing these lines gives it two nulls to subscribe to and the
+            // format silently never counts a tag. Same hazard and same answer as `Career` below.
+            Tsinelas = _root.AddComponent<LastTsinelasDirector>();
+
             Music = _root.AddComponent<Audio.MusicDirector>();
             Voice = _root.AddComponent<Audio.VoiceDirector>();
             Account = _root.AddComponent<Net.PlayerAccount>();
@@ -169,6 +184,7 @@ namespace TumbangPreso
             Audio = null;
             Match = null;
             Round = null;
+            Tsinelas = null;
             Music = null;
             Account = null;
             Career = null;

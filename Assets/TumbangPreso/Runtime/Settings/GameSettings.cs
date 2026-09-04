@@ -296,6 +296,23 @@ namespace TumbangPreso.Settings
         public bool Fullscreen = true;
 
         /// <summary>
+        /// Whether the pad rumbles on a knockdown, a tag, being tagged, and the can going back up.
+        ///
+        /// ⚠️⚠️ A `bool` WHOSE INITIALISER IS `true`, WHICH IS THE SAFE SHAPE HERE AND IS WORTH
+        /// SAYING OUT LOUD. <see cref="RenderStyle"/> carries the rule this obeys: `JsonUtility`
+        /// constructs the object before it overwrites the fields the file carries, so a
+        /// `settings.json` written by an older build inherits the field initialiser. For an INDEX
+        /// that means a default of row 0 silently turns a feature off for everybody upgrading; for
+        /// a bool it means the initialiser IS the upgrade behaviour, and `true` is the one that
+        /// matches what a player would expect the first time they plug a pad in.
+        ///
+        /// ⚠️ IT IS A SETTING RATHER THAN ALWAYS-ON BECAUSE `docs/FUTURE.md` § 16.2 IS AN
+        /// ACCESSIBILITY LIST AND A HAPTIC NOBODY CAN TURN OFF IS ON IT. See
+        /// <see cref="InputLayer.Rumble"/> for the four cues and why they are four rather than one.
+        /// </summary>
+        public bool Rumble = true;
+
+        /// <summary>
         /// Which anti-aliasing mode to render at, as an index into
         /// <see cref="AntiAliasModes.All"/>. 0 is Off.
         ///
@@ -388,6 +405,34 @@ namespace TumbangPreso.Settings
         /// </summary>
         public int MatchFormat;
 
+        /// <summary>
+        /// PHASE 12: the whole custom rule set the lobby was last left on, in
+        /// `CustomGameRules.ToWire` form.
+        ///
+        /// ⚠️⚠️ ONE STRING RATHER THAN NINE FIELDS, AND THE REASON IS THE SAME ONE
+        /// `CustomCharacterWires` gives: this file is read back by builds whose record may have
+        /// grown a field, and `CustomGameRules.Parse` **fills anything missing from `Defaults`**
+        /// rather than throwing. Nine separate ints here would each need their own migration and
+        /// their own clamp, and § 70.7's rule about a list that only grows would have to be
+        /// remembered nine times.
+        ///
+        /// ⚠️ EMPTY IS A LEGITIMATE VALUE AND IS WHAT EVERY EXISTING `settings.json` HOLDS.
+        /// `Parse("")` answers the shipped defaults, so a player upgrading into this build opens
+        /// the lobby on exactly the rules they had, which is the migration.
+        ///
+        /// ⚠️⚠️ THE PASSWORD IS NOT IN IT AND MUST NEVER BE. `ToWire` drops it by design (a lobby
+        /// advert is readable by everybody in the pool), and a password written into a plain-text
+        /// file on a shared laptop, for a lobby that ended last night, is worth even less than one
+        /// on the wire. `SceneFlow.SetSelectedRules` is where that decision is enforced.
+        ///
+        /// ⚠️ <see cref="MatchFormat"/> ABOVE IS NOW A DUPLICATE OF ONE FIELD IN THIS STRING AND
+        /// IS KEPT ON PURPOSE. It is what the lobby's RULES dropdown reads to pick its starting
+        /// row, it is an int the row index maps onto directly, and deleting it would mean parsing
+        /// a wire string to draw a dropdown. **They are written together in one place**
+        /// (`SetSelectedRules`), which is what stops them drifting.
+        /// </summary>
+        public string CustomRulesWire = "";
+
         // -------------------------------------------------------------------
         // PICKS. Carried into a match by GameLaunch.
         // -------------------------------------------------------------------
@@ -462,6 +507,11 @@ namespace TumbangPreso.Settings
             VSyncModes.Apply(VSyncMode);
             RenderStyles.Apply(RenderStyle);
             AIController.ApplyDifficulty(AiDifficulty);
+
+            // ⚠️ PUSHED RATHER THAN POLLED, exactly as `AntiAliasModes.FxaaActive` is. The rumble
+            // calls sit in the middle of a scoring event, and the first read of
+            // `SettingsStore.Current` loads and validates this whole file off disk.
+            InputLayer.Rumble.Enabled = Rumble;
         }
 
         /// <summary>
@@ -518,6 +568,11 @@ namespace TumbangPreso.Settings
             AntiAliasMode = Mathf.Clamp(AntiAliasMode, 0, AntiAliasModes.All.Length - 1);
             VSyncMode = Mathf.Clamp(VSyncMode, 0, VSyncModes.All.Length - 1);
             RenderStyle = Mathf.Clamp(RenderStyle, 0, RenderStyles.All.Length - 1);
+
+            // ⚠️ A NULL WIRE STRING IS A FILE WRITTEN BEFORE THIS FIELD EXISTED, which is every
+            // `settings.json` on every machine today. `CustomGameRules.Parse` answers `Defaults`
+            // for an empty string, so this needs no migration beyond not being null.
+            CustomRulesWire ??= "";
 
             CharacterLoadouts ??= new List<CharacterLoadout>();
             HeroBuilds ??= new List<HeroBuild>();

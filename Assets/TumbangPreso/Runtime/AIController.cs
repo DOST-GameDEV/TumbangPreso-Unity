@@ -435,6 +435,15 @@ namespace TumbangPreso
             System.Array.Clear(_tagAssignments, 0, _tagAssignments.Length);
             _tagTieCursor = (roundNumber + _motor.PlayerSlot) % Balance.PlayerCount;
 
+            // ⚠️⚠️ THE ROLES ROTATE EVERY ROUND, SO EVERY SABOTAGE PLAN IS STALE THE INSTANT THIS
+            // FIRES. `MatchRules.DefenderSlotFor` is `(round - 1) % 4`, so the victim a bot was
+            // lining up may now BE the taya, or the bot itself may be. Cancelling on role change
+            // is in the brief by name, and this is the one event that carries it; the cooldowns
+            // go with it because a victim held over from a round nobody is playing any more is a
+            // rule refusing a play for a reason that no longer exists.
+            AbandonSabotage(cool: false);
+            _sabotageCooldown.Clear();
+
             RollRoundAppetite();
         }
 
@@ -768,6 +777,13 @@ namespace TumbangPreso
             StepLapse(dt);
             StepSprintKey(dt);
             StepUnstick(dt);
+
+            // ⚠️⚠️ THE PURSUIT CLOCK IS STEPPED HERE, NOT ON THE THINK TICK, AND THAT ORDERING IS
+            // THE WHOLE OF "PURSUIT EXPIRES". `Me.Think` can be a fifth of a second, so an expiry
+            // that only fired when the bot happened to re-plan would overrun by up to that much,
+            // on every bot, every time, and the thing being bounded is exactly the behaviour 🧑
+            // reported. See § SABOTAGE IS AN OPPORTUNITY, NOT A CHASE PLAN.
+            StepSabotageClocks(dt);
 
             // ⚠️⚠️ THE SOCIAL LAYER RUNS BEFORE THE PLANNER AND CAN TAKE THE WHOLE FRAME. A bot
             // standing still to emote has genuinely stopped playing for a beat, and letting the
@@ -1266,81 +1282,344 @@ namespace TumbangPreso
             return Reacted("lunge", winding, dt);
         }
 
+        // -------------------------------------------------------------------
+        // § SABOTAGE IS AN OPPORTUNITY, NOT A CHASE PLAN
+        //
+        // ⚠️⚠️ 🧑 2026-09-03, OFF A PLAYED BUILD: the bots *"follow players around only to push
+        // them, even when the shove has no meaningful effect on the game"*. Every word of that
+        // was true and the code above it had said the opposite since it was written: the header
+        // read *"a rival worth shoving into the taya's reach"* while the body never asked where
+        // the shove would put anybody.
+        //
+        // ⚠️⚠️ FOUR SEPARATE FAULTS PRODUCED ONE BEHAVIOUR, and fixing any three of them alone
+        // would have left it looking the same:
+        //
+        //   1. **`aim > 0`.** A dot product of 0.01 is a shove 89.4 degrees off the line to the
+        //      taya: two and a half metres of body moved for four centimetres of closure. The
+        //      comment beside it argued for the loose bar on the grounds that a cone *"would take
+        //      it back to zero"* sabotages a match, which was a real measurement of a DIFFERENT
+        //      problem (the search radius) being answered in the wrong place.
+        //   2. **Carrying a tsinelas was a `+1.0` on a score.** `IsTaggable` requires one, so an
+        //      empty-handed victim cannot be tagged at all: this was a preference for the only
+        //      thing that makes the play work.
+        //   3. **The search radius was `4.16 * Sabotage` against a `ShoveRange` of 1.6 m.** Two
+        //      and a half shove-lengths of arena the bot would walk across to set up a press it
+        //      had not earned. That walk IS the following 🧑 saw.
+        //   4. **Nothing projected the outcome.** Direction was scored; the endpoint was never
+        //      computed, so "toward the taya" and "into the taya's reach" were never told apart.
+        //
+        // ⚠️⚠️ THE RULE ITSELF LIVES IN `TumbangPreso.Core.SabotageRules`, NOT HERE, AND THAT IS
+        // THE HALF THAT KEEPS IT HONEST. `CLAUDE.md` § 4: the engine-free package holds *"every
+        // number arrived at by measurement rather than taste"*, and every bound in it is derived
+        // from `ShoveSpeed`, `Friction`, `LungeSpeed`, `ShoveStun` and `ShoveRange` rather than
+        // typed in. The old rule was only observable by watching a match; `SabotageTests` answers
+        // all eighteen cases in 27 ms. **Do not reintroduce a threshold in this file.**
+        //
+        // ⚠️ THE DIFFICULTY DIAL STILL DOES SOMETHING AND IT IS NO LONGER A REACH. `Me.Sabotage`
+        // now gates how quickly a bot NOTICES a legal opportunity (`Reacted`), which is the one
+        // axis a weaker bot may be worse on: a low-quality bot that took meaningless shoves
+        // faster would be exactly the behaviour this replaces, at a lower rank.
+        // -------------------------------------------------------------------
+
+        /// <summary>The victim this bot is currently working an opportunity on, or null.</summary>
+        private CharacterMotor _sabotageVictim;
+
         /// <summary>
-        /// A rival worth shoving into the taya's reach.
+        /// What is left of the pursuit clock, in seconds. Zero means no plan in hand.
         ///
-        /// ⚠️ THE KNOB IS A REACH, NOT A COIN FLIP. Measured over a whole match at Normal:
-        /// ZERO sabotages, because willingness was only ever read as "> 0" against a fixed
-        /// 4.16 m radius — while `Spacing` is deliberately pushing the three attackers apart,
-        /// so two of them are rarely that close. A willingness dial that changes nothing is
-        /// the same defect as a control that does nothing, so the value scales the radius.
+        /// ⚠️ A PURSUIT WITH NO CLOCK IS A TAIL HOWEVER GOOD ITS ENTRY CONDITION IS. This is the
+        /// bound that makes "may adjust, may not follow" true by construction rather than by the
+        /// entry test happening to stop being satisfied.
+        /// </summary>
+        private float _sabotagePursuitLeft;
+
+        /// <summary>How long each recently abandoned victim is left alone, keyed by seat.</summary>
+        private readonly Dictionary<int, float> _sabotageCooldown = new Dictionary<int, float>();
+
+        /// <summary>The last projection this bot computed, for `AiDiagnosticProbe`.</summary>
+        public SabotageProjection LastSabotageProjection { get; private set; }
+
+        /// <summary>
+        /// How many times each veto has refused a candidate shove, indexed by
+        /// <see cref="SabotageVeto"/>.
+        ///
+        /// ⚠️⚠️ THE FIRST DIAGNOSTIC RUN REPORTED `plans 0  shoves 0  last veto None` AND THAT
+        /// LINE COULD NOT BE READ. `default(SabotageProjection)` has `Veto = None`, which is the
+        /// value that means *the shove was worth taking*, so a bot that had never projected
+        /// anything and a bot whose last projection was perfect printed the same word. **A
+        /// measurement that cannot tell "never considered" from "considered and fine" is not a
+        /// measurement**, and zero shoves is exactly the reading that needed explaining: the rule
+        /// this replaced had a comment recording *"ZERO sabotages over a whole match"* as the
+        /// symptom of a bound being wrong.
+        ///
+        /// ⚠️ SO THE DISTRIBUTION IS COUNTED RATHER THAN THE LAST ONE REMEMBERED. A run reporting
+        /// mostly `OutOfApproachRange` is a bot that was never near anybody, which is a fact about
+        /// the match; one reporting mostly `EndpointStaysSafe` is the projection doing its job;
+        /// one reporting `VictimNotVulnerable` is three attackers who were not carrying. Those are
+        /// three different games and the old output called all of them "0".
+        /// </summary>
+        public readonly int[] SabotageVetoes =
+            new int[System.Enum.GetValues(typeof(SabotageVeto)).Length];
+
+        /// <summary>How many candidate shoves this bot has actually projected.</summary>
+        public int SabotageProjectionsMade { get; private set; }
+
+        /// <summary>Counters the diagnostic match reports. See `docs/TODO.md` § 134.</summary>
+        public int SabotagePlansEntered { get; private set; }
+        public int SabotageShovesAttempted { get; private set; }
+        public float LongestSabotagePursuit { get; private set; }
+        public float TotalSabotagePursuitSeconds { get; private set; }
+
+        /// <summary>
+        /// Bleeds the pursuit clock and the per-victim cooldowns.
+        ///
+        /// ⚠️ IT RUNS EVERY FRAME AND NOT ON THE THINK TICK. `Me.Think` can be a fifth of a
+        /// second, and an expiry that only fires when the bot happens to re-plan is an expiry
+        /// that overruns by up to that much on every bot in the match.
+        /// </summary>
+        private void StepSabotageClocks(float dt)
+        {
+            if (_sabotagePursuitLeft > 0.0f)
+            {
+                _sabotagePursuitLeft -= dt;
+                TotalSabotagePursuitSeconds += dt;
+
+                float spent = SabotageRules.MaxPursuitSeconds - _sabotagePursuitLeft;
+                if (spent > LongestSabotagePursuit) LongestSabotagePursuit = spent;
+
+                if (_sabotagePursuitLeft <= 0.0f) AbandonSabotage(cool: true);
+            }
+
+            if (_sabotageCooldown.Count == 0) return;
+
+            // ⚠️ THE KEYS ARE COPIED BEFORE THE WALK. Writing into a dictionary while
+            // enumerating it throws, and four seats is small enough that the allocation is
+            // nothing beside being correct.
+            _sabotageCooldownScratch.Clear();
+            foreach (var pair in _sabotageCooldown) _sabotageCooldownScratch.Add(pair.Key);
+
+            foreach (int slot in _sabotageCooldownScratch)
+            {
+                float left = _sabotageCooldown[slot] - dt;
+                if (left <= 0.0f) _sabotageCooldown.Remove(slot);
+                else _sabotageCooldown[slot] = left;
+            }
+        }
+
+        private readonly List<int> _sabotageCooldownScratch = new List<int>(4);
+
+        /// <summary>
+        /// Drops the opportunity and, when it was abandoned rather than spent, leaves that victim
+        /// alone for a beat.
+        ///
+        /// ⚠️⚠️ THE COOLDOWN AFTER A *FIRED* SHOVE IS THE ONE THAT MATTERS MOST. Without it the
+        /// bot re-enters the identical plan on the frame after the swing, walks back in, and the
+        /// whole thing reads as the tail again with a 7.5 s stutter in it.
+        /// </summary>
+        private void AbandonSabotage(bool cool)
+        {
+            if (cool && _sabotageVictim != null)
+                _sabotageCooldown[_sabotageVictim.PlayerSlot] = SabotageRules.TargetCooldownSeconds;
+
+            _sabotageVictim = null;
+            _sabotagePursuitLeft = 0.0f;
+        }
+
+        /// <summary>
+        /// A rival whose projected shove endpoint puts them in immediate danger, or null.
+        ///
+        /// ⚠️⚠️ IT IS ASKED THREE TIMES PER PLAN TICK BY `PlanAttacker` AND MUST STAY CHEAP AND
+        /// SIDE-EFFECT FREE EXCEPT FOR THE PURSUIT LATCH. The original .gd checks the opportunity
+        /// at three points because it is fleeting; that is kept, so this may not roll dice, may
+        /// not start clocks it does not finish, and may not raycast for candidates it has already
+        /// refused on arithmetic.
         /// </summary>
         private CharacterMotor SabotageTarget(CharacterMotor taya)
         {
-            if (Me.Sabotage <= 0.0f || taya == null) return null;
-            if (GameServices.Round == null) return null;
+            if (Me.Sabotage <= 0.0f) return null;
 
+            var round = GameServices.Round;
+            if (round == null) { AbandonSabotage(cool: false); return null; }
+
+            // ⚠️ THE VERB'S OWN GATES FIRST. A shove on cooldown or one the bar cannot pay for is
+            // not an opportunity, it is a walk toward a press that will not fire.
             var myVerbs = GetComponent<CombatVerbs>();
-            if (myVerbs != null && myVerbs.ShoveCooldownLeft > 0.0f) return null;
-
-            // A shove you cannot pay for is not an option.
-            if (_motor.Stamina.Current < Balance.ShoveStaminaCost + 2.0f) return null;
-
-            float reach = 4.16f * Me.Sabotage;
-            CharacterMotor best = null;
-            float bestScore = float.NegativeInfinity;
-
-            Vector3 tayaAt = At(taya);
-
-            foreach (var who in GameServices.Round.Players)
+            if (myVerbs != null && myVerbs.ShoveCooldownLeft > 0.0f)
             {
-                if (who == null || who == _motor || who.IsDefender) continue;
+                AbandonSabotage(cool: false);
+                return null;
+            }
 
-                Vector3 victimAt = At(who);
+            if (_motor.Stamina.Current < Balance.ShoveStaminaCost + 2.0f)
+            {
+                AbandonSabotage(cool: false);
+                return null;
+            }
 
-                float d = Flat(transform.position, victimAt);
-                if (d > reach || d < 0.05f) continue;
+            // ⚠️⚠️ THE PLAN IN HAND IS RE-PROVED, NOT TRUSTED. The brief's cancellation list is
+            // every way the world can move under a committed pursuit: the victim drops or
+            // retrieves their tsinelas, the roles swap, the taya goes down, a wall arrives
+            // between them. Re-projecting the held victim first is what makes all of those one
+            // rule instead of four watchers.
+            if (_sabotageVictim != null && _sabotagePursuitLeft > 0.0f)
+            {
+                var held = ProjectSabotage(_sabotageVictim, taya);
+                LastSabotageProjection = held;
 
-                // ⚠️⚠️ WHICH WAY THE SHOVE PUSHES THEM, WHICH NOTHING HERE USED TO ASK.
-                // `CombatVerbs.HostResolveShove` pushes along `victim - shover`, so the only
-                // rival worth spending a shove and 25 stamina on is one the push moves TOWARD the
-                // taya. This picked the nearest rival in any direction, and the header above has
-                // said *"a rival worth shoving into the taya's reach"* the whole time: half of
-                // every sabotage was shoving somebody to SAFETY, which is worse than not casting
-                // it, and the other half was luck.
-                Vector3 push = victimAt - transform.position;
-                push.y = 0.0f;
+                if (held.Meaningful) return _sabotageVictim;
 
-                Vector3 toTaya = tayaAt - victimAt;
-                toTaya.y = 0.0f;
+                AbandonSabotage(cool: true);
+            }
 
-                if (push.sqrMagnitude < 0.0001f || toTaya.sqrMagnitude < 0.0001f) continue;
+            CharacterMotor best = null;
+            var bestPlan = default(SabotageProjection);
+            float bestQuality = float.NegativeInfinity;
 
-                float aim = Vector3.Dot(push.normalized, toTaya.normalized);
+            foreach (var who in round.Players)
+            {
+                if (who == null || who == _motor) continue;
+                if (_sabotageCooldown.ContainsKey(who.PlayerSlot)) continue;
 
-                // ⚠️ THE BAR IS "NOT COUNTERPRODUCTIVE", NOT A TIGHT CONE, and that is the whole
-                // of the trade. `Spacing` is deliberately pushing the three attackers apart, so
-                // the opportunities are already rare: `SabotageTarget`'s own note records the
-                // willingness dial reading ZERO sabotages over a whole match before the reach was
-                // scaled by it. A cone here would take it back to zero, and a dial that changes
-                // nothing is the defect that note exists about. Anything that closes on the taya
-                // at all is admitted; `aim` then decides between them.
-                if (aim <= 0.0f) continue;
+                var plan = ProjectSabotage(who, taya);
+                if (!plan.Meaningful) { LastSabotageProjection = plan; continue; }
 
-                // ⚠️ A RIVAL CARRYING IS THE ONE A SHOVE CAN ACTUALLY COST SOMETHING. Being
-                // taggable needs a tsinelas in hand and a body inside the chalk, so shoving an
-                // empty-handed rival at the taya sets up nothing at all.
-                float score = aim * 2.0f - AiTuning.TagDistanceWeight * d;
-                if (who.HoldingSlipper) score += 1.0f;
+                if (plan.Quality <= bestQuality) continue;
 
-                if (score <= bestScore) continue;
-
-                bestScore = score;
+                bestQuality = plan.Quality;
+                bestPlan = plan;
                 best = who;
+            }
+
+            if (best == null) return null;
+
+            LastSabotageProjection = bestPlan;
+
+            // ⚠️⚠️ THE DIFFICULTY DIAL LANDS HERE AND NOWHERE ELSE. `Reacted` is how long this
+            // bot must have SEEN a legal opportunity before it believes it, so a weaker bot is
+            // slower to spot a good shove rather than willing to take a bad one. That is the
+            // brief's rule stated in code: *"difficulty must not let low-quality bots perform
+            // meaningless shoves."*
+            //
+            // ⚠️ THE GATE IS KEYED ON THE SEAT, so noticing one victim does not pre-charge the
+            // reaction to a different one who walks past a frame later.
+            if (!Reacted("sabotage" + best.PlayerSlot, true, Time.deltaTime)) return null;
+
+            if (best != _sabotageVictim)
+            {
+                _sabotageVictim = best;
+                _sabotagePursuitLeft = SabotageRules.MaxPursuitSeconds;
+                SabotagePlansEntered++;
             }
 
             return best;
         }
+
+        /// <summary>
+        /// This bot's belief about what shoving <paramref name="who"/> would do.
+        ///
+        /// ⚠️ IT PROJECTS FROM `At()`, THE BOT'S OWN BELIEF, NOT FROM THE TRUTH. Every other
+        /// decision in this file reads the tracked position so a bot can be wrong the way a
+        /// player is wrong, and a sabotage that solved off ground truth would be the one plan in
+        /// the game with perfect information.
+        /// </summary>
+        private SabotageProjection ProjectSabotage(CharacterMotor who, CharacterMotor taya)
+        {
+            Vector3 me = transform.position;
+            Vector3 victimAt = At(who);
+            Vector3 tayaAt = taya != null ? At(taya) : Vector3.zero;
+
+            bool tayaCanAct = taya != null && taya.CanAct() && !taya.IsTripped;
+
+            // ⚠️⚠️ THE RAYCAST IS DEFERRED UNTIL THE ARITHMETIC HAS AGREED, and that ordering is
+            // load-bearing rather than tidy. This runs for every rival on every think tick for
+            // every bot; casting first would put three physics queries per bot per tick into the
+            // one function `PlanAttacker` calls three times. `SabotageRules.Project` takes the
+            // answer as a parameter precisely so the caller can decide when to pay for it.
+            var dry = SabotageRules.Project(
+                !_motor.IsDefender, me.x, me.z,
+                who.IsDefender, who.HoldingSlipper, victimAt.x, victimAt.z,
+                taya != null, tayaCanAct, tayaAt.x, tayaAt.z,
+                routeBlocked: false);
+
+            SabotageProjectionsMade++;
+
+            if (!dry.Meaningful)
+            {
+                Tally(dry.Veto);
+                return dry;
+            }
+
+            if (!ShoveRouteIsClear(victimAt, dry.EndpointX, dry.EndpointZ))
+            {
+                var blocked = dry.Blocked();
+                Tally(blocked.Veto);
+                return blocked;
+            }
+
+            Tally(SabotageVeto.None);
+            return dry;
+        }
+
+        private void Tally(SabotageVeto veto)
+        {
+            int i = (int)veto;
+            if (i >= 0 && i < SabotageVetoes.Length) SabotageVetoes[i]++;
+        }
+
+        /// <summary>
+        /// Can a shoved body actually travel from here to there?
+        ///
+        /// ⚠️ AT CHEST HEIGHT, NOT AT THE FLOOR. A ray along the ground catches every kerb, chalk
+        /// decal and pavement lip on both maps and would refuse most of the arena; the shove
+        /// carries a `ShoveLift` of 2.2 anyway, so what stops it is a wall, a pillar, a stall or a
+        /// vehicle, all of which are tall.
+        ///
+        /// ⚠️⚠️ IT FILTERS BY COMPONENT RATHER THAN BY LAYER, AND THAT IS THE PROJECT'S SHAPE
+        /// RATHER THAN A SHORTCUT. `ProjectSettings/TagManager.asset` has no custom layers at
+        /// all: every body, prop, wall and slipper in this game is on `Default`, so a mask is not
+        /// available to ask the question with. `Slipper.ResolveFlight` solves the identical
+        /// problem the identical way, casting against `~0` and rejecting the hits it knows are
+        /// not scenery. **A player, a slipper or the lata standing in the path is not an
+        /// obstruction**: bodies are shoved through each other, and a tsinelas on the road stops
+        /// nothing.
+        /// </summary>
+        private bool ShoveRouteIsClear(Vector3 from, float toX, float toZ)
+        {
+            Vector3 a = from + Vector3.up * ShoveRouteProbeHeight;
+            Vector3 b = new Vector3(toX, from.y + ShoveRouteProbeHeight, toZ);
+
+            Vector3 delta = b - a;
+            float length = delta.magnitude;
+            if (length < 0.05f) return true;
+
+            var hits = Physics.RaycastAll(a, delta / length, length, ~0,
+                                          QueryTriggerInteraction.Ignore);
+
+            foreach (var hit in hits)
+            {
+                var collider = hit.collider;
+                if (collider == null) continue;
+
+                // Anything that is itself a moving part of the play is not scenery.
+                if (collider.GetComponentInParent<CharacterMotor>() != null) continue;
+                if (collider.GetComponentInParent<Slipper>() != null) continue;
+                if (collider.GetComponentInParent<Lata>() != null) continue;
+
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// How high off the victim's feet the route is probed, in metres.
+        ///
+        /// ⚠️ CHEST HEIGHT, NOT THE FLOOR. A ray along the ground catches every kerb, chalk decal
+        /// and pavement lip on both maps and would refuse most of the arena. The shove carries a
+        /// `Balance.ShoveLift` of 2.2 anyway, so what actually stops a shoved body is a wall, a
+        /// pillar, a stall or a vehicle, and all four of those are tall.
+        /// </summary>
+        private const float ShoveRouteProbeHeight = 0.9f;
 
         /// <summary>
         /// MY slipper — including one I threw that is still in the air.
@@ -2140,28 +2419,76 @@ namespace TumbangPreso
             Press(intent, Verb.Grab, false);
         }
 
+        /// <summary>
+        /// Walk to the launch side and press, once.
+        ///
+        /// ⚠️⚠️ IT MOVES TO THE LAUNCH POINT, NOT TO THE VICTIM, AND THAT IS THE HALF OF THE FIX
+        /// THAT LIVES IN THE VERB RATHER THAN IN THE DECISION. `CombatVerbs.HostResolveShove`
+        /// pushes along `victim - shover`, so the bot cannot AIM a shove: the only thing it
+        /// controls is where it is standing when it presses. Walking at the victim's centre
+        /// arrives beside them facing wherever the approach happened to end, fires into an
+        /// arbitrary quadrant, and then starts another approach on the next tick. **That loop is
+        /// what 🧑 was watching when he said the bots follow people around to push them.**
+        /// `SabotageRules.LaunchPoint` puts the bot on the far side of the victim as seen from
+        /// the taya, where the same press produces the shove the plan was chosen for.
+        ///
+        /// ⚠️⚠️ AND THE SHOVE ENDS THE PLAN WHETHER OR NOT IT LANDED. `AbandonSabotage(cool)`
+        /// puts the victim on a 3 s cooldown on the way out, so there is no state in which the
+        /// bot re-enters the identical pursuit on the frame after its own swing. Without that,
+        /// every other bound here is just a stutter in the tail.
+        ///
+        /// ⚠️ IT STILL DRIVES RATHER THAN PARKING ON ARRIVAL, which is the one thing kept
+        /// unchanged from the old body and for its recorded reason: the body only turns on a
+        /// frame it walks, and the shove tests a 70 degree arc off the facing, so a bot that
+        /// stops on its mark freezes its facing at whatever the walk ended on.
+        /// </summary>
         private void DoSabotage(InputIntent intent)
         {
             var round = GameServices.Round;
-            var victim = SabotageTarget(round != null ? DefenderOf(round) : null);
+            var taya = round != null ? DefenderOf(round) : null;
+            var victim = SabotageTarget(taya);
 
-            if (victim == null) { Stop(intent); return; }
+            if (victim == null || taya == null)
+            {
+                // ⚠️ NOT `Stop`. `PlanAttacker` re-decides on the next think tick and will pick
+                // Fetch, Position, Stalk or Withdraw; standing still until it does is a visible
+                // hitch in the middle of the arena. Loitering keeps the body alive and moving
+                // for the fraction of a second the re-plan takes.
+                AbandonSabotage(cool: false);
+                Loiter(intent);
+                return;
+            }
 
-            // ⚠️ IT DRIVES ALL THE WAY IN AND NEVER PARKS, for the same reason the hunt does:
-            // the body only turns on a frame it walks, and the shove tests a 70 degree arc off
-            // the facing. Arriving and stopping freezes the facing at whatever the approach
-            // happened to end on, and the shove then fires into the wrong quadrant.
-            float distance = Flat(transform.position, victim.transform.position);
-            Vector3 toward = victim.transform.position - transform.position;
+            Vector3 victimAt = At(victim);
+            Vector3 tayaAt = At(taya);
+
+            SabotageRules.LaunchPoint(victimAt.x, victimAt.z, tayaAt.x, tayaAt.z,
+                                      out float standX, out float standZ);
+
+            var stand = new Vector3(standX, transform.position.y, standZ);
+
+            Vector3 toward = stand - transform.position;
             toward.y = 0.0f;
 
-            Drive(intent, toward, distance > 3.0f);
+            float toStand = toward.magnitude;
+            float toVictim = Flat(transform.position, victimAt);
 
-            if (distance <= Balance.ShoveRange * 0.9f
+            // ⚠️ ONCE ON THE MARK, THE HEADING TURNS TO THE VICTIM. The last stride has to point
+            // the body along the push, and the mark is behind the victim, so driving at the mark
+            // all the way in would leave the bot facing away at the moment it presses.
+            Drive(intent, toStand > AiTuning.ArriveSlop ? toward : victimAt - transform.position,
+                  toVictim > Balance.ShoveRange * 1.5f);
+
+            if (toVictim <= Balance.ShoveRange * 0.9f
                 && Facing(victim, Balance.ShoveArcDeg * 0.6f))
+            {
                 Tap(intent, Verb.Grab);
-            else
-                Press(intent, Verb.Grab, false);
+                SabotageShovesAttempted++;
+                AbandonSabotage(cool: true);
+                return;
+            }
+
+            Press(intent, Verb.Grab, false);
         }
 
         private void DoIdle(InputIntent intent) => Loiter(intent);

@@ -459,6 +459,12 @@ namespace TumbangPreso
             GameServices.Match?.ResetForNewMatch();
             GameServices.Round?.ResetForNewMatch();
 
+            // ⚠️ THE FORMAT IS CLEARED HERE TOO, so a Standard match entered after a Last
+            // Tsinelas one cannot inherit a stock table and start switching bodies off at the
+            // first tag. `LastTsinelasDirector` re-reads `SceneFlow.SelectedFormat` on every
+            // whistle, but the stocks live between whistles and nothing else empties them.
+            GameServices.Tsinelas?.ResetForNewMatch();
+
             // ⚠️⚠️ THE SEATS AND THE CAN GO IN IMMEDIATELY, NOT AT `SliceRunner.Begin`, AND THE
             // FREE-ROAM WINDOW IS WHY. `Begin` does not run until the countdown ends, so with the
             // ready gate on, `RoundDirector` knew about nobody and nothing for the whole time the
@@ -1078,7 +1084,24 @@ namespace TumbangPreso
             var stale = UnityEngine.Object.FindFirstObjectByType<CameraSystem.SpectatorCamera>();
             if (stale != null) stale.enabled = false;
 
-            UnityEngine.Object.FindFirstObjectByType<UI.Hud>()?.Bind(local);
+            var seatedHud = UnityEngine.Object.FindFirstObjectByType<UI.Hud>();
+
+            // ⚠️⚠️ AND THE HUD COMES BACK WITH IT, WHICH IS THE HALF THAT WAS MISSING AND THE
+            // BUG 🧑 PHOTOGRAPHED ON 2026-09-04. The three lines above put the CAMERA away and
+            // nothing put the SCREEN back: `EnterSpectatorMode` had no inverse, so a rebind
+            // arriving after a spectator window re-enabled the gameplay rig and re-followed the
+            // seat while the HUD stayed stripped and the spectator controls overlay stayed
+            // drawn. He photographed a first-person tsinelas in hand, WASD moving a character,
+            // and `FREE FLIGHT · 3.6 m/s` over the top of it: **"IF IT isnt spectator why do i
+            // see spectator hud"**. `docs/TODO.md` § 141.
+            //
+            // ⚠️ BEFORE `Bind`, because `Bind` is what points the HUD at the new body and every
+            // per-frame gate it drives reads `_spectating`. Rebinding first and clearing the
+            // flag second would spend one frame drawing a seated HUD that still believes it is
+            // watching, which is the state this whole entry is about.
+            seatedHud?.ExitSpectatorMode();
+
+            seatedHud?.Bind(local);
 
             var gate = UnityEngine.Object.FindFirstObjectByType<ReadyGate>();
             if (gate != null)
@@ -1360,6 +1383,27 @@ namespace TumbangPreso
             var hud = hudGo.AddComponent<UI.Hud>();
             hud.Bind(local);
 
+            // ⚠️⚠️ THE THUMB LAYER IS A SEPARATE CANVAS AND IS INSTALLED HERE, NOT INSIDE `Hud`.
+            // The HUD strips itself for a spectator and hides entirely for `CleanFeed`; the
+            // controls must survive both, because a player who hid the HUD still has to be able
+            // to throw. `TouchHud.Install` returns null on a device with no touchscreen, so this
+            // line costs a desktop match one null check.
+            //
+            // ⚠️ IT ASKS THE MODE EVERY MATCH. The skill rail is Hero Strike only per
+            // `VISION.md` § 1.1, and the layer outlives a single match: a Classic match started
+            // after a Hero Strike one would otherwise keep three buttons that do nothing.
+            var touch = InputLayer.TouchHud.Install();
+
+            if (touch != null)
+            {
+                // ⚠️ THE SAME SEAT THE HUD IS BOUND TO, ON THE LINE ABOVE. `TouchHud` hides
+                // itself whenever that seat cannot act, which is how the controls stay off the
+                // pause menu and off every screen a player opens mid-match. 🧑, seeing them over
+                // a lobby: *"yo why the buttons here"*.
+                touch.Bind(local);
+                touch.ApplyModeVisibility();
+            }
+
             // The HUD STRIPS for a watcher rather than being replaced: the clock and the
             // scoreboard are facts about the match and are what somebody watching wants.
             if (_spectating) hud.EnterSpectatorMode();
@@ -1380,7 +1424,24 @@ namespace TumbangPreso
                 {
                     hud.SetDownedFlash(!up);
 
-                    if (up) { hud.ShowToast("LATA IS BACK UP", 1.2f); return; }
+                    // ⚠️⚠️ THE CAN-RESET RUMBLE IS HERE RATHER THAN IN THE HUD, BECAUSE THIS
+                    // LAMBDA IS THE ONE OWNER OF THIS EDGE AND THE FILE SAYS SO. `Hud`'s
+                    // `TrySubscribeRound` carries the receipt: it used to subscribe to the same
+                    // event and toast the same string, so *"one event, two subscriptions, two
+                    // identical calls, and a toast timer restarted mid-fade"*. A second
+                    // subscription for the haptic would be that fault rebuilt, and it would be
+                    // invisible from here, which is exactly how the first one survived.
+                    //
+                    // ⚠️ IT IS THE SOFTEST OF THE FOUR CUES AND THE ONLY ONE EVERY SEAT FEELS.
+                    // `Rumble`'s other three are the local player's own events; a reset changes
+                    // what everybody on the court may do next, so it is a note rather than a
+                    // thump. `docs/FUTURE.md` § 14 lists it beside the other two.
+                    if (up)
+                    {
+                        InputLayer.Rumble.CanReset();
+                        hud.ShowToast("LATA IS BACK UP", 1.2f);
+                        return;
+                    }
 
                     // ⚠️⚠️ THE KNOCKDOWN GETS NO TOAST, AND IT IS THE ONLY EVENT HERE THAT DOES
                     // NOT. 🧑, 2026-08-27: *"repetitive lata down"*. Every other toast on this

@@ -89,7 +89,7 @@ namespace TumbangPreso.EditorTools.MapKit
         private static bool _gateBlowout;
 
         /// <summary>Bump on every capture. See the class note.</summary>
-        private const string Version = "v50";
+        private const string Version = "v56";
 
         [MenuItem("Tumbang Preso/Capture Ability Showcase")]
         public static void RunFromMenu() => Execute();
@@ -108,6 +108,12 @@ namespace TumbangPreso.EditorTools.MapKit
             {
                 pass.Apply();
             }
+
+            // ⚠️ TAKEN AFTER THE SCENE IS OPEN AND ITS COLOUR PASSES HAVE RUN, AND BEFORE ANY
+            // EFFECT EXISTS. Everything not in here is something this probe made, and `Clear`
+            // sweeps to it. See the field's own note for the three frames that needed it.
+            _baseline = new System.Collections.Generic.HashSet<GameObject>(
+                UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects());
 
             var spawned = new System.Collections.Generic.List<GameObject>();
 
@@ -340,6 +346,12 @@ namespace TumbangPreso.EditorTools.MapKit
             finally
             {
                 Clear(spawned);
+
+                // ⚠️ DROPPED SO A SECOND RUN IN ONE EDITOR SESSION RE-TAKES IT. A stale baseline
+                // from a previous scene load would name objects that no longer exist and spare
+                // every effect this run spawned, which is the fault it was added to fix, one
+                // level up.
+                _baseline = null;
             }
         }
 
@@ -567,12 +579,41 @@ namespace TumbangPreso.EditorTools.MapKit
             return over / (float)pixels.Length;
         }
 
+        /// <summary>
+        /// Everything the loaded map had before this probe spawned anything.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE A LIST OF RETURN VALUES IS NOT A LIST OF WHAT A SPAWNER MADE,
+        /// AND `Logs/shots-abilities/ability_lava_decal_eye_v51.png` IS THE RECEIPT. Since
+        /// `docs/TODO.md` § 131, several `HeroHazards` spawners also drop a sourced formation
+        /// flipbook as a SIBLING rather than a child, deliberately: `VolcanicCooling.SinkDepth`
+        /// takes a zone under the road at the end of its life, and a transient parented to it
+        /// would spend its last frames underground.
+        ///
+        /// A sibling is invisible to `live`, and `Object.Destroy(go, t)` never comes due in edit
+        /// mode. So Cheska's formation nova survived into Nemu's frame, then the barricade's,
+        /// then Dante's: **three captures in the v51 set are photographs of somebody else's
+        /// ability**, and each one reads as the effect being wrong rather than as the sweep being
+        /// incomplete. `Transient` had solved this for itself in 2026-08-26 and `Solo` never had.
+        /// </summary>
+        private static System.Collections.Generic.HashSet<GameObject> _baseline;
+
+        /// <summary>
+        /// ⚠️ IT SWEEPS TO THE BASELINE RATHER THAN JUST EMPTYING THE LIST. See `_baseline`. The
+        /// list is kept because it is what a caller reads to keep an object alive ACROSS a clear,
+        /// and because destroying a named root is clearer in a stack trace than a diff is.
+        /// </summary>
         private static void Clear(System.Collections.Generic.List<GameObject> live)
         {
             foreach (var go in live)
                 if (go != null) Object.DestroyImmediate(go);
 
             live.Clear();
+
+            if (_baseline == null) return;
+
+            var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+            foreach (var root in scene.GetRootGameObjects())
+                if (!_baseline.Contains(root)) Object.DestroyImmediate(root);
         }
 
         private static void Shot(string name, Vector3 pos, Quaternion rot, float fov)

@@ -227,6 +227,17 @@ namespace TumbangPreso.UI
         private string _inspectHintText;
 
         /// <summary>
+        /// The device revision `_inspectHintText` was built for.
+        ///
+        /// ⚠️ WITHOUT IT THE HINT IS BUILT ONCE AND KEPT FOREVER, which is a stale key label for
+        /// anybody who changes device mid-match and, on a phone, a keyboard key for the whole
+        /// session: the first frame at boot is a keyboard frame. `KeyLabel` already carries this
+        /// exact invalidation for its own cache and this string bypassed it by caching the
+        /// finished sentence.
+        /// </summary>
+        private int _inspectHintDevice = -1;
+
+        /// <summary>
         /// How many notches the ultimate meter is cut into.
         ///
         /// ⚠⚠ THE SEGMENTS ARE THE WHOLE POINT OF THE ULT CARD, NOT DECORATION. A cooldown
@@ -419,18 +430,62 @@ namespace TumbangPreso.UI
         {
             if (_sandboxToggle == null) return;
 
+            // ⚠️⚠️ F7, AND IT WAS F1 UNTIL 2026-09-04, WHICH IS THE `CLAUDE.md` § 4 RULE BROKEN
+            // IN THE ONE PLACE THE RULE CANNOT SEE. "One control, one action, per context" is
+            // asserted by `InputMapAndAbilityTests` over the INPUT MAP, and all three readers of
+            // F1 were literal `Keyboard.current` reads outside the map entirely, so nothing in
+            // the repository could notice. That is the same hole § 35.3 records for the nine
+            // spectator keys.
+            //
+            // ⚠️⚠️ WHAT IT ACTUALLY COST. 🧑 2026-09-04, in practice: *"clicking f1 rn makes it
+            // so that my abiliites are unli use yes but i cant move at all and my character js
+            // keeps going left on its own"*, then *"i cant click anything now tf"*. Three
+            // separate things read F1 on the same frame:
+            //   * this line, toggling the sandbox,
+            //   * `DebugPlayerSwitcher.Update`, which reads F1 as "drive seat 0",
+            //   * `SpectatorCamera`, which reads F1 as "player 0 POV".
+            // `GameLaunch.SoloSeat` defaults to 1, so pressing F1 for unlimited cooldowns ALSO
+            // tore the player out of their own body and into seat 0. The abilities did go
+            // unlimited, which is why it looked like a movement bug rather than a key collision.
+            //
+            // ⚠️ F7 RATHER THAN ANY FREE KEY. `DebugPlayerSwitcher` owns F1 to F4 (seats), F5
+            // (cycle) and F6 (default), so F7 is the first key past that block and keeps the
+            // developer switches contiguous. Nothing else in the runtime reads it.
             var keyboard = Keyboard.current;
-            if (keyboard != null && keyboard.f1Key.wasPressedThisFrame && PracticeSandbox.Allowed)
+            if (keyboard != null && keyboard.f7Key.wasPressedThisFrame && PracticeSandbox.Allowed)
                 PracticeSandbox.Toggle();
 
             bool on = PracticeSandbox.Active;
-            bool show = PracticeSandbox.Allowed && (on || _readyWindowOpen);
+
+            // ⚠️⚠️ HIDDEN ON TOUCH, BECAUSE THERE IS NO F1 AND NO WAY TO PRESS ONE. This row
+            // reads `[F1]  NO COOLDOWNS: OFF` and the only way to change it is the F1 key: on a
+            // phone it is a status readout for a switch the player cannot reach, sitting in the
+            // middle of the screen during practice. 🧑 photographed it on 2026-09-03 among the
+            // keybinds leaking onto the touch layer.
+            //
+            // ⚠️ HIDDEN RATHER THAN MADE PRESSABLE, AND THE REASON IS TWO LINES DOWN IN `Build`:
+            // this canvas has no `GraphicsRaycaster` (`docs/TODO.md` § 113), so a uGUI button
+            // here *"would draw correctly, raycast nothing and read as a dead control"*.
+            //
+            // ✅ AND THE TOUCH HALF EXISTS NOW, SO THIS ROW STAYING HIDDEN IS THE WHOLE ANSWER
+            // RATHER THAN HALF OF ONE. `TouchHud.BuildSandboxToggle` puts the switch on the
+            // thumb layer's own canvas, which comes with a raycaster because it is built through
+            // `MenuKit.BuildCanvas`. The objection this note used to carry, *"a tenth thumb
+            // control for a developer switch"*, is answered there and is worth repeating here:
+            // `PracticeSandbox.Allowed` is `!NetAuthority.IsNetworked`, so the control does not
+            // exist in a networked match at all and costs a player in one nothing to hold in
+            // their head (`CLAUDE.md` § 6.2). `docs/TODO.md` §§ 134.9 and 136.4 are closed by it.
+            //
+            // ⚠️ THE TWO SURFACES STAY MUTUALLY EXCLUSIVE, which is why `!OnTouch` remains. One
+            // switch drawn twice on one screen is two controls for one state, and the pair would
+            // drift the first time either is retuned.
+            bool show = PracticeSandbox.Allowed && !OnTouch && (on || _readyWindowOpen);
 
             _sandboxToggle.enabled = show;
             if (_sandboxPlate != null) _sandboxPlate.enabled = show;
             if (!show) return;
 
-            _sandboxToggle.text = on ? "[F1]  NO COOLDOWNS: ON" : "[F1]  NO COOLDOWNS: OFF";
+            _sandboxToggle.text = on ? "[F7]  NO COOLDOWNS: ON" : "[F7]  NO COOLDOWNS: OFF";
 
             // ⚠️ THE LIT STATE IS AMBER, NOT `UiTheme.Defense`. Blue means the taya and nothing
             // else, which `CLAUDE.md` § 6.4 states as a rule after it had to be said six times.
@@ -450,7 +505,7 @@ namespace TumbangPreso.UI
                 // ⚠️ THE KEY IS READ, NOT SPELLED. A rebound ready key used to leave this
                 // line telling the player to press R, which is the one instruction on screen
                 // they cannot ignore and cannot follow.
-                string ready = "[" + KeyLabel("ReadyUp") + "]";
+                string ready = OnTouch ? "READY" : "[" + KeyLabel("ReadyUp") + "]";
 
                 // ⚠️⚠️ SENTENCE CASE AND ONE CLAUSE OF CONTEXT, NOT FOUR IN CAPITALS. The old
                 // line was "PRACTICE TIME  ·  SCORES PAUSED  ·  TEST YOUR POWERS  ·  Press [R]
@@ -465,8 +520,11 @@ namespace TumbangPreso.UI
                 // which is what "warm up" covers and what the free-roam window is for; the
                 // second clause names the one thing that is not.
                 _readyPrompt.text = SceneFlow.SelectedMode == GameMode.HeroStrike
-                    ? $"Warm up freely, powers start with the round. Press {ready} when ready."
-                    : $"Warm up freely, scores are paused. Press {ready} when ready.";
+                    // ⚠️ "TAP" ON A PHONE, NOT "PRESS", and `ready` is already the word rather
+                    // than a key cap there (see its assignment). "Press [R]" on a touchscreen is
+                    // two instructions the player cannot follow in one sentence.
+                    ? $"Warm up freely, powers start with the round. {(OnTouch ? "Tap" : "Press")} {ready} when ready."
+                    : $"Warm up freely, scores are paused. {(OnTouch ? "Tap" : "Press")} {ready} when ready.";
                 _readyPrompt.enabled = show;
                 if (_readyPromptPlate != null) _readyPromptPlate.enabled = show;
             }
@@ -749,8 +807,17 @@ namespace TumbangPreso.UI
             // their screen that explains why they are suddenly somewhere else and cannot move.
             // The `TAGGED!` callout spawns at their own position, which in first person is inside
             // their own head.
-            if (_local.PlayerSlot == victimSlot)
-                ShowToast("TAGGED  ·  BACK TO THE SAFE ZONE", 2.0f);
+            if (_local.PlayerSlot != victimSlot) return;
+
+            // ⚠️⚠️ THE STRONGEST OF THE FOUR CUES, ON THE ONE EVENT THAT PAYS THE PLAYER NOTHING.
+            // The paragraph above is why: being tagged awards the victim no points, so
+            // `OnScored` says nothing to them at all and this toast is *"the only thing on their
+            // screen that explains why they are suddenly somewhere else and cannot move"* -- and
+            // in first person it spawns inside their own head. **The moment a player most needs
+            // telling is the moment the score system has nothing to say to them.** See `Rumble`.
+            InputLayer.Rumble.WasTagged();
+
+            ShowToast("TAGGED  ·  BACK TO THE SAFE ZONE", 2.0f);
         }
 
         /// <summary>
@@ -801,6 +868,26 @@ namespace TumbangPreso.UI
 
             if (_local == null || _local.PlayerSlot != slot) return;
 
+            // ⚠️⚠️ THE PAD FEELS EXACTLY WHAT THIS METHOD DECIDED TO SAY, AND IT IS BELOW THE
+            // LOCAL CHECK ON PURPOSE. The rule is already written two paragraphs up for the
+            // sound: *"the TOAST is only for the local player's own award, because a floater
+            // about somebody else's points is noise on your screen. The SOUND is the match
+            // reacting."* A haptic is not the match reacting, it is something happening in the
+            // player's hands, so it belongs on the toast's side of that line. In a four-player
+            // match a pad that buzzed on every award would never stop.
+            //
+            // ⚠️ SABOTAGE RIDES THE TAG CUE because it is the same gesture from the taya's side:
+            // a shove that lands on somebody already tagged. `Rumble` has four cues rather than
+            // one per `ScoreEvent`, for the reason its own note gives about the two motors.
+            // ⚠️ THE LAST TSINELAS AWARD RIDES THE KNOCKDOWN CUE, WHICH IS THE SAME CHOICE THE
+            // NOTE ABOVE MAKES FOR SABOTAGE AND FOR THE SAME REASON: `Rumble` has four cues
+            // rather than one per `ScoreEvent`, and this is the format's biggest moment paying a
+            // knockdown's worth of points. A fifth cue for one award in one format would be a
+            // motor pattern almost no player ever feels twice.
+            if (e == ScoreEvent.LataKnocked || e == ScoreEvent.LastTsinelasStanding)
+                InputLayer.Rumble.LataKnocked();
+            else if (e == ScoreEvent.Tag || e == ScoreEvent.Sabotage) InputLayer.Rumble.Tagged();
+
             ShowToast($"{(points > 0 ? "+" : "")}{points}  {LabelOf(e)}", 1.2f);
         }
 
@@ -813,6 +900,13 @@ namespace TumbangPreso.UI
                 case ScoreEvent.Tag: return "TAG";
                 case ScoreEvent.TayaCampPenalty: return "CAMPING";
                 case ScoreEvent.UnretrievedSlipperPenalty: return "SLIPPER IDLE";
+
+                // ⚠️ "LAST TSINELAS", NOT "LAST TSINELAS STANDING". The toast is read in about a
+                // second beside a number, and the format's full name is already on the lobby
+                // card and the results board. `CustomGameRules.FormatName` is the long form and
+                // is deliberately not reused here.
+                case ScoreEvent.LastTsinelasStanding: return "LAST TSINELAS";
+
                 default: return "DEFENSE";
             }
         }
@@ -837,6 +931,28 @@ namespace TumbangPreso.UI
         public void EnterSpectatorMode()
         {
             _spectating = true;
+
+            // ⚠️⚠️ THE SCOREBOARD GROWS BY THE WIDTH OF THE CASTER CELL, AND THE FIRST CAPTURE IS
+            // WHY. `Logs/shots-showcase/showcase_0000_Quiet.png` shows the rail CLIPPED at the
+            // card edge: the second row reads `T-` where it should read `T..`. The card is 520
+            // units and the row already held a role rail, a worst-case name cell, a 132-unit role
+            // badge, a 64-unit score and four 14-unit gaps; adding 44 more pushed the last cell
+            // past the wood.
+            //
+            // ⚠️⚠️ IT IS WIDENED HERE RATHER THAN AT BUILD TIME BECAUSE THE CELL IS SPECTATOR
+            // ONLY. A player never draws it, so a player's board must not grow to leave room for
+            // something they will not see. `docs/FUTURE.md` section 17: *"a spectator has no body
+            // and no seat, so their HUD is a different screen, not the same one with pieces
+            // hidden"* - and a different screen may be a different width.
+            //
+            // ⚠️ THE ARITHMETIC IS THE CELL PLUS ONE ROW GAP, stated rather than rounded, so
+            // moving `CasterStateWidth` moves this with it.
+            if (_scoreboardRt != null)
+            {
+                var size = _scoreboardRt.sizeDelta;
+                _scoreboardRt.sizeDelta =
+                    new Vector2(size.x + CasterStateWidth + ScoreRowSpacing, size.y);
+            }
 
             // Every gameplay element on this HUD describes a character and a spectator has
             // none, so they would draw nothing and read as a broken HUD rather than a
@@ -908,6 +1024,99 @@ namespace TumbangPreso.UI
             }
 
             BuildSpectatorReadout();
+            SetSpectatorReadoutEnabled(true);
+        }
+
+        /// <summary>
+        /// Puts a watcher back in a body.
+        ///
+        /// ⚠️⚠️ THIS DID NOT EXIST, AND ITS ABSENCE IS THE BUG 🧑 PHOTOGRAPHED ON 2026-09-04:
+        /// *"dude is this shti spectator?"*, *"if this is spectator why tf can i move the
+        /// character by doing wasd"*, **"IF IT isnt spectator why do i see spectator hud"**. He
+        /// had a first-person tsinelas in hand, WASD moving a character, and the spectator
+        /// controls overlay and `FREE FLIGHT · 3.6 m/s` drawn over the top of it.
+        ///
+        /// ⚠️⚠️ THE PATH IS `MatchInstaller.RebindLocalSeat` AND IT IS HALF-WRITTEN RATHER THAN
+        /// MISSING. Its non-watching branch re-enables the gameplay rig, re-follows the seat and
+        /// puts the watcher camera away with `stale.enabled = false`, under a note that says
+        /// *"a rebind can also arrive after a spectator window, so the watcher camera is put away
+        /// rather than left running beside the rig."* **It puts the CAMERA away and nothing puts
+        /// the HUD back**, because there was nothing to call. So every re-seat after a spectator
+        /// window left this screen stripped and the readout drawn.
+        ///
+        /// ⚠️⚠️ AND THE READOUT IS THE HALF THAT SURVIVES A `_spectating` FLAG ALONE. Clearing
+        /// the flag stops `UpdateSpectatorReadout` RUNNING, which is not the same as hiding
+        /// anything: `BuildSpectatorReadout` creates four `Text` objects and sets
+        /// `_spectatorHint.enabled = true` once, and the legend's key list is written at build
+        /// time and never rewritten. They simply keep drawing whatever they last said, for the
+        /// rest of the match. That is why this method disables them explicitly rather than
+        /// trusting the flag.
+        ///
+        /// ⚠️ IT IS THE MIRROR OF `EnterSpectatorMode`, IN THE SAME ORDER, ON PURPOSE. The one
+        /// thing that method does which is not a visibility write is widening the scoreboard by
+        /// the caster cell, and a mirror that forgets it leaves the board permanently wide with
+        /// an empty column where the rail used to be.
+        /// </summary>
+        public void ExitSpectatorMode()
+        {
+            if (!_spectating) return;
+
+            _spectating = false;
+
+            // The caster cell's width, given back by the same arithmetic that took it. See
+            // `EnterSpectatorMode`: stated rather than rounded so moving `CasterStateWidth`
+            // moves both halves together.
+            if (_scoreboardRt != null)
+            {
+                var size = _scoreboardRt.sizeDelta;
+                _scoreboardRt.sizeDelta =
+                    new Vector2(size.x - CasterStateWidth - ScoreRowSpacing, size.y);
+            }
+
+            SetSpectatorReadoutEnabled(false);
+
+            // ⚠️ SWITCHED BACK ON RATHER THAN LEFT TO THE PER-FRAME LOGIC, because these were
+            // `SetActive(false)` and a deactivated object runs none of the code that would show
+            // it again. The per-frame gates then hide whichever of them should not be up: the
+            // hero deck is Hero Strike only (`isHeroMode`), and the training chrome has its own
+            // rule. Turning them on here is what gives that logic something to decide about.
+            if (_stackLeft != null) _stackLeft.gameObject.SetActive(true);
+            if (_stackRight != null) _stackRight.gameObject.SetActive(true);
+            if (_indicators != null) _indicators.gameObject.SetActive(true);
+
+            // ⚠️ THE TWO CARDS ARE SWEPT BY TYPE, exactly as `EnterSpectatorMode` sweeps them:
+            // this HUD does not own either object, and giving it a reference to two things it
+            // did not create is a second lifetime to keep in step. `SetCleanFeed`'s own
+            // `&& !_spectating` guard is why this is safe to do unconditionally now.
+            foreach (var card in FindObjectsByType<YouCard>(FindObjectsInactive.Include,
+                                                            FindObjectsSortMode.None))
+            {
+                card.gameObject.SetActive(true);
+            }
+
+            // ⚠️ THE ROLE SWAP CARD IS **NOT** TURNED BACK ON, and that is not an omission. It
+            // is a transient that shows itself when a role actually swaps; forcing it visible
+            // here would put a stale swap announcement on screen at the moment a player is
+            // handed a seat, which is exactly when it would be believed.
+        }
+
+        /// <summary>
+        /// The four labels the watcher's screen owns, shown and hidden together.
+        ///
+        /// ⚠️ THEY ARE BUILT ONCE AND KEPT. `BuildSpectatorReadout` early-returns when the
+        /// legend already exists, so a player who watches, is seated, and watches again reuses
+        /// these four rather than growing a second set each time.
+        /// </summary>
+        private void SetSpectatorReadoutEnabled(bool on)
+        {
+            if (_spectatorStatus != null) _spectatorStatus.enabled = on;
+            if (_spectatorLegend != null) _spectatorLegend.enabled = on;
+            if (_spectatorHint != null) _spectatorHint.enabled = on;
+
+            // ⚠️ THE LIVE BUG IS NEVER TURNED ON HERE. Its own note says the corner starts empty
+            // because "LIVE" is the state that says nothing; it is driven by the broadcast state
+            // and this method only ever has the right to take it away.
+            if (!on && _spectatorLiveBug != null) _spectatorLiveBug.enabled = false;
         }
 
         private Text _spectatorLegend;
@@ -1042,6 +1251,19 @@ namespace TumbangPreso.UI
         public Transform CleanFeedRoot => _canvas != null ? _canvas.transform : transform;
 
         private bool _spectating;
+
+        /// <summary>
+        /// Is this HUD drawn for somebody with no body?
+        ///
+        /// ⚠️ EXPOSED SO ANOTHER SCREEN CAN ASK THE SAME QUESTION RATHER THAN RE-DERIVING IT.
+        /// `UltimatePresentationDirector` gives a spectator a wider card held a little longer,
+        /// and the alternative was to work it out from `SpectatorCamera` being alive, which is a
+        /// second definition of spectating that would drift. `CLAUDE.md` § 4: a spectator has no
+        /// body, no seat and no `CharacterMotor`, and this flag is where this canvas records
+        /// that it already knows.
+        /// </summary>
+        public bool Spectating => _spectating;
+
         private bool _cleanFeed;
 
         /// <summary>
@@ -1252,7 +1474,9 @@ namespace TumbangPreso.UI
                 if (lata != null && !lata.IsUpright)
                 {
                     _crosshair.fontSize = 22;
-                    _crosshair.text = "+\nHOLD " + KeyLabel("Grab") + " AT THE LATA";
+                    _crosshair.text = OnTouch
+                        ? "+\nHOLD AT THE LATA TO RESET"
+                        : "+\nHOLD " + KeyLabel("Grab") + " AT THE LATA";
                     _crosshair.color = UiTheme.Defense;
                 }
                 else
@@ -1379,11 +1603,13 @@ namespace TumbangPreso.UI
                 // widget. `docs/TODO.md` § 45 took five ambient sines and three copies of "LATA
                 // DOWN" off this HUD; a new box for two numbers that live for fifteen seconds
                 // would be putting one of them straight back. See `BufferSkipVote`.
+                string skip = OnTouch ? "READY TO SKIP" : $"[{KeyLabel("ReadyUp")}] SKIP";
+
                 _round.text = BufferSkipVote.Showing && BufferSkipVote.VotesNeeded > 1
-                    ? $"{WarmupLine}   ·   [{KeyLabel("ReadyUp")}] SKIP  " +
+                    ? $"{WarmupLine}   ·   {skip}  " +
                       $"{BufferSkipVote.Votes}/{BufferSkipVote.VotesNeeded}"
                     : BufferSkipVote.Showing
-                        ? $"{WarmupLine}   ·   [{KeyLabel("ReadyUp")}] SKIP"
+                        ? $"{WarmupLine}   ·   {skip}"
                         : WarmupLine;
 
                 // ⚠️⚠️ THE ROUND-LINE CACHE IS DROPPED HERE, and forgetting this is how a guard
@@ -1517,11 +1743,54 @@ namespace TumbangPreso.UI
         /// on screen that explains why one player is behaving completely differently from the
         /// other three.
         /// </summary>
+        /// <summary>
+        /// Hands the four seats to <see cref="CharacterMotor.ResolveDuplicateLabels"/>.
+        ///
+        /// ⚠️ THE BUFFER IS REUSED RATHER THAN ALLOCATED. This runs once a frame and
+        /// `UpdateScores`'s own header records a 952 B/frame allocation that had to be hunted
+        /// down with `HudPerformanceProbe`; a new four-element list per frame would be the same
+        /// mistake with a different name on it.
+        /// </summary>
+        private readonly List<CharacterMotor> _seatLabelBuffer = new List<CharacterMotor>(4);
+
+        private void ResolveSeatLabels()
+        {
+            var round = GameServices.Round;
+            if (round == null) return;
+
+            _seatLabelBuffer.Clear();
+
+            for (int slot = 0; slot < Balance.PlayerCount; slot++)
+                _seatLabelBuffer.Add(round.PlayerAt(slot));
+
+            CharacterMotor.ResolveDuplicateLabels(_seatLabelBuffer);
+        }
+
         private void UpdateScores()
         {
             if (_trainingChrome) return;
 
             var m = GameServices.Match;
+
+            // ⚠️⚠️ TWO SEATS MUST NEVER READ THE SAME, AND THIS IS THE ONE PLACE THAT CAN SEE ALL
+            // FOUR. 🧑 2026-09-04 asked about **offline tournaments**: *"in tournmanets PPL might
+            // have same #?"*, *"make it so that they all have a diff #"*. The `#0000` is a local
+            // FNV-1a hash of a machine's own player id, so nothing about it can be globally
+            // unique; four seats compared against each other can be. `Eskinita.png` shows the
+            // version of this that needs no tournament at all: **ZACK, PLAYER, ZACK, PHAISTER**,
+            // two bots on one character and a board that cannot say which is the taya.
+            // `CharacterMotor.ResolveDuplicateLabels` carries the whole argument.
+            //
+            // ⚠️ HERE RATHER THAN AT SEATING, BECAUSE A NAME ARRIVES LATE. A joining peer's name
+            // lands through `MatchRpc` after the arena is built, and a seat changes hands
+            // mid-match; resolving once at install would be right until the first of those.
+            //
+            // ⚠️ IT IS SIXTEEN STRING COMPARES AND IT RUNS BEFORE THE STAMP BELOW, deliberately:
+            // the stamp includes the names, so resolving after it would show a duplicate for one
+            // frame and then correct itself, which is a flicker on the row a player is reading.
+            // It writes nothing when the labels are already unique, which is every ordinary
+            // match, so `DisplayName`'s cache is untouched on the common path.
+            ResolveSeatLabels();
 
             // ⚠️⚠️ COMPARE THE VALUES BEFORE FORMATTING ANYTHING. This used to allocate a new
             // `StringBuilder` and a new stamp string on every frame, then compare that string and
@@ -1605,6 +1874,27 @@ namespace TumbangPreso.UI
                 // 2026-08-02: *"the arrow makes the names of the characters not aligned"*.
                 _scoreMarks[i].text = isTaya ? "DEFENDER" : "ATTACKER";
                 _scoreValues[i].text = scoreNow.ToString();
+
+                // ⚠️⚠️ THE CASTER RAIL: THREE CHARACTERS, SPECTATOR ONLY, AND FROZEN DURING A
+                // REPLAY. See `CasterStateFor`. The freeze is the half that is easy to miss and
+                // the brief names it: *"during replay, freeze or clearly label values so live
+                // cooldowns do not appear to describe recorded footage."* The clip covers the
+                // whole screen, so nothing on this board is visible while one runs; what matters
+                // is that it is not still ticking underneath and does not flicker to a new state
+                // on the frame the replay ends. Holding the last live reading is the cheapest
+                // honest answer, and it costs one bool.
+                if (_scoreStates[i] != null)
+                {
+                    bool show = _spectating;
+
+                    if (_scoreStates[i].enabled != show) _scoreStates[i].enabled = show;
+
+                    if (show && !ReplayCoveringScreen)
+                    {
+                        string state = CasterStateFor(occupant);
+                        if (_scoreStates[i].text != state) _scoreStates[i].text = state;
+                    }
+                }
 
                 // ⚠️ NO LEADING BULLET — THE COLOUR IS THE MARK. 🧑 2026-08-02: *"the arrow
                 // makes the names of the characters not aligned"*. The prefix was one character
@@ -1793,7 +2083,38 @@ namespace TumbangPreso.UI
             // the whole reason the card is not just a coloured light.
             string line = "";
 
-            if (lata.IsProtected)
+            // ⚠️⚠️ LAST TSINELAS IS TESTED FIRST AND OUTRANKS EVERY LINE BELOW IT, INCLUDING
+            // "PROTECTED". `docs/TODO.md` § 130.13. Every other branch here answers *what can I
+            // do about the can*, and a player who is OUT can do nothing about anything: telling
+            // them to RETRIEVE A SLIPPER while their body refuses to grab one is `CLAUDE.md`
+            // § 6.2's intuitive claim failed in the most direct way there is, a screen naming a
+            // control that does not work.
+            //
+            // ⚠️ AND THE COUNT IS SHOWN WHILE THEY ARE STILL IN, NOT ONLY WHEN IT REACHES ZERO.
+            // A stock the player cannot see is a rule they discover by losing to it; the whole
+            // tension of the format is knowing you are on your last one BEFORE you go back in.
+            // The taya is skipped: they have no stock and the row would be a permanent zero.
+            var tsinelas = GameServices.Tsinelas;
+            if (tsinelas != null && tsinelas.Live && _local != null && !_local.IsDefender)
+            {
+                int left = tsinelas.StockFor(_local.PlayerSlot);
+
+                if (left <= 0)
+                {
+                    line = "OUT  ·  NO TSINELAS LEFT";
+                }
+                else
+                {
+                    // ⚠️ THE SINGULAR IS WRITTEN OUT RATHER THAN PLURALISED WITH AN "(S)".
+                    // `docs/VISION.md` § 3: a screen that teaches the wrong thing is worse than
+                    // one that teaches none, and "1 TSINELAS(S) LEFT" is the front end admitting
+                    // it did not know what it was saying.
+                    line = left == 1
+                        ? "LAST TSINELAS  ·  DO NOT GET TAGGED"
+                        : $"{left} TSINELAS LEFT";
+                }
+            }
+            else if (lata.IsProtected)
             {
                 line = $"PROTECTED  {lata.ProtectionLeft:0.0}s";
             }
@@ -2199,8 +2520,10 @@ namespace TumbangPreso.UI
             // player that mashing does not work.
             bool buying = _local.CanMashUp;
 
+            if (OnTouch && buying) InputLayer.TouchHud.Emphasise(Verb.Jump);
+
             string text = buying
-                ? "MASH [" + KeyLabel("Jump") + "] TO GET UP"
+                ? MashVerb("Jump") + " TO GET UP"
                 : "GETTING UP";
 
             // ⚠️ THE STRING IS ONLY REBUILT WHEN IT CHANGES. A HUD string rebuilt every frame
@@ -2379,6 +2702,27 @@ namespace TumbangPreso.UI
 
             _canvas = canvasGo.AddComponent<Canvas>();
             _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+
+            // ⚠️⚠️ THE IN-MATCH HUD WAS THE ONE CANVAS IN THE GAME THAT DID NOT SNAP TO PIXELS,
+            // AND IT IS THE ONE A PLAYER LOOKS AT LONGEST. `MenuKit.BuildCanvas` sets this,
+            // `ConvertedScreen.Start` sets it, `TscnUiImporter` bakes it in, and this canvas is
+            // built by hand right here and was missed. 🧑 2026-09-03, off the phone render:
+            // **"mobile version kinda blurry text is is js me"**. It was not just him: the
+            // scoreboard, the round line and the toast were all soft while the menus were crisp.
+            //
+            // ⚠️ LEGACY `Text` IS RASTERISED AT ITS FINAL TRANSFORM, so a glyph landing on a
+            // fractional canvas pixel is resampled, and Darumadrop's edges are exactly where that
+            // shows. `ConvertedScreen` records the same fact in its own words: *"Godot snaps this
+            // UI to physical pixels; do the same for every converted screen from the shared base
+            // so one panel cannot regress."* **This canvas is not a converted screen, which is
+            // precisely why the shared base never reached it.**
+            //
+            // ⚠️ IT IS WORSE ON A PHONE AND THAT IS ARITHMETIC RATHER THAN BAD LUCK.
+            // `AspectSafeCanvas` matches on HEIGHT against a 1080 reference, so a 1080-tall phone
+            // sits at scale 1.0 and a 1440p monitor at 1.33: at 1.0 a half-unit offset is half a
+            // physical pixel, which is the worst case for resampling, and at 1.33 it lands nearer
+            // a whole one more often. **The build that needed this most was the one without it.**
+            _canvas.pixelPerfect = true;
 
             var scaler = canvasGo.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
@@ -2703,7 +3047,7 @@ namespace TumbangPreso.UI
                 // ⚠️ 14, THE .tscn's `theme_override_constants/separation` ON EVERY SCORE ROW.
                 // The 8 here was invented and it is most of why the port's board reads tighter
                 // than the Godot build's at the same font size.
-                row.spacing = 14.0f;
+                row.spacing = ScoreRowSpacing;
 
                 rowGo.AddComponent<LayoutElement>().preferredHeight = 30.0f;
                 _scoreRows[i] = rowGo.GetComponent<RectTransform>();
@@ -2746,10 +3090,109 @@ namespace TumbangPreso.UI
                                      TextAnchor.MiddleRight, ScoreOutline);
                 score.gameObject.AddComponent<LayoutElement>().preferredWidth = 64.0f;
 
+                // -------------------------------------------------------------------
+                // § THE CASTER RAIL, AND IT IS A CELL ON THIS ROW RATHER THAN A SECOND PANEL
+                //
+                // ⚠️⚠️ THE BRIEF ASKED FOR A SPECTATOR RAIL SHOWING FOUR NAMES, SCORES, THE
+                // CURRENT TAYA, TSINELAS STATE, ULTIMATE READINESS AND DOWNED STATE, AND THIS
+                // BOARD ALREADY CARRIED THE FIRST THREE. Building a separate rail would have put
+                // four names and four scores on screen twice, which is the *"do not reproduce the
+                // player HUD four times"* the same brief forbids two lines later. **Three
+                // characters per row is the whole addition.**
+                //
+                // ⚠️ IT IS ONE LABEL AND NOT THREE, so it costs one layout cell rather than
+                // three, and a row that is empty for a seat holding nothing draws spaces instead
+                // of collapsing. `mark` above records why that matters: a cell that hides itself
+                // lets the score column stop being a column.
+                //
+                // ⚠️⚠️ AND IT IS ONLY BUILT FOR A SPECTATOR, WHICH IS `docs/FUTURE.md` § 17'S OWN
+                // RULE: *"a spectator has no body and no seat, so their HUD is a different
+                // screen, not the same one with pieces hidden."* A player already reads their own
+                // tsinelas and their own ultimate meter off the deck at the bottom of the screen,
+                // in far more detail than three characters; putting it on the scoreboard as well
+                // would be the redundancy 🧑 asked to be rid of across this whole HUD.
+                var state = HudLabel(rowGo.transform, "CasterState", 18,
+                                     UiTheme.CreamMuted, TextAnchor.MiddleRight, ScoreOutline);
+                state.gameObject.AddComponent<LayoutElement>().preferredWidth = CasterStateWidth;
+                state.enabled = false;
+                _scoreStates[i] = state;
+
                 _scoreNames[i] = name;
                 _scoreMarks[i] = mark;
                 _scoreValues[i] = score;
             }
+        }
+
+        /// <summary>
+        /// How wide the caster state cell is, in canvas units.
+        ///
+        /// ⚠️ SIZED FOR THREE GLYPHS AT 18 pt, WHICH IS WHAT IT EVER HOLDS. `CasterStateFor`
+        /// returns exactly three characters, always, so this is the string's own width rather
+        /// than a fraction of anything. `CLAUDE.md` § 6.2c: *"size a panel against its CONTENT
+        /// and state the arithmetic."*
+        /// </summary>
+        private const float CasterStateWidth = 44.0f;
+
+        /// <summary>
+        /// The gap between cells on a score row.
+        ///
+        /// ⚠️ 14 IS THE `.tscn`'s OWN `theme_override_constants/separation`, and it was a
+        /// literal in `BuildScoreboard` until the caster cell needed to know it too. A number
+        /// that two places have to agree on is a number that belongs in one place: `CLAUDE.md`
+        /// section 5's drift rule, one scale down.
+        /// </summary>
+        private const float ScoreRowSpacing = 14.0f;
+
+        private readonly Text[] _scoreStates = new Text[Balance.PlayerCount];
+
+        /// <summary>
+        /// Is an instant replay covering the screen right now?
+        ///
+        /// ⚠️ ASKED OF THE CAMERA RATHER THAN TRACKED HERE. `SpectatorCamera` owns the replay and
+        /// is the only thing that knows; a second flag on this class would be a copy that goes
+        /// stale the first time somebody adds a way out of a replay, which is exactly what
+        /// `CLAUDE.md` § 5's drift rule is about.
+        /// </summary>
+        private bool ReplayCoveringScreen
+        {
+            get
+            {
+                if (_spectatorCamera == null)
+                    _spectatorCamera = FindFirstObjectByType<CameraSystem.SpectatorCamera>();
+
+                return _spectatorCamera != null && _spectatorCamera.Replaying;
+            }
+        }
+
+        /// <summary>
+        /// Three characters describing a seat, for somebody casting the match.
+        ///
+        /// ⚠️⚠️ GLYPHS RATHER THAN WORDS, BECAUSE FOUR ROWS OF WORDS IS A PARAGRAPH. A caster
+        /// scans this board between plays; `TSINELAS · ULT READY · DOWN` on four rows is 90
+        /// characters of chrome over a live match, and `CLAUDE.md` § 6.2's third question asks
+        /// what is on screen that nobody needs right now.
+        ///
+        ///   * position 1, the tsinelas: `T` carrying, `·` not.
+        ///   * position 2, the ultimate: `U` banked and ready, `·` not.
+        ///   * position 3, the body: `X` down or stunned, `·` upright.
+        ///
+        /// ⚠️ THE ORDER IS FIXED AND EVERY POSITION ALWAYS PRINTS SOMETHING, so the three columns
+        /// line up down the board and a caster reads a COLUMN rather than four strings. A layout
+        /// that only draws the letters that apply is unreadable at a glance for exactly the
+        /// reason the score cell is a fixed width.
+        /// </summary>
+        private static string CasterStateFor(CharacterMotor unit)
+        {
+            if (unit == null) return "   ";
+
+            char slipper = unit.HoldingSlipper ? 'T' : '·';
+
+            var kit = unit.AbilitySystem != null ? unit.AbilitySystem.Kit : null;
+            char ultimate = kit != null && kit.IsUltimateReady ? 'U' : '·';
+
+            char down = unit.IsStunned || unit.IsTripped ? 'X' : '·';
+
+            return $"{slipper}{ultimate}{down}";
         }
 
         /// <summary>
@@ -3417,8 +3860,10 @@ namespace TumbangPreso.UI
             // ⚠️ THE VERB IS THE ELEMENTS, WHICH IS WHY `StunCoat` CARRIES ONE. "BREAK FREE"
             // over a body encased in ice says less than "SHATTER THE ICE", and the element is
             // already being tracked through the stun for the coat, so naming it costs nothing.
+            if (OnTouch && buying) InputLayer.TouchHud.Emphasise(Verb.Jump);
+
             string text = buying
-                ? coat.Verb + "  [" + KeyLabel("Jump") + "]"
+                ? (OnTouch ? coat.Verb : coat.Verb + "  [" + KeyLabel("Jump") + "]")
                 : "BREAKING FREE";
 
             // ⚠️ ONLY REBUILT WHEN IT CHANGES. A HUD string rebuilt every frame once cost the
@@ -3686,7 +4131,7 @@ namespace TumbangPreso.UI
                                       TextAnchor.MiddleCenter);
             Place(_sandboxToggle.rectTransform, new Vector2(0.5f, 0.0f),
                   new Vector2(0, PromptY + 38.0f), new Vector2(260, 26));
-            _sandboxToggle.text = "[F1]  NO COOLDOWNS: OFF";
+            _sandboxToggle.text = "[F7]  NO COOLDOWNS: OFF";
             _sandboxToggle.enabled = false;
 
             // ⚠️ A HOLD KEY NOBODY IS TOLD ABOUT IS A KEY NOBODY PRESSES. One quiet line
@@ -3840,7 +4285,13 @@ namespace TumbangPreso.UI
             if (_pickupPrompt.enabled != inReach) _pickupPrompt.enabled = inReach;
             if (!inReach) return;
 
-            string text = "[" + KeyLabel("Grab") + "]  PICK UP";
+            // ⚠️⚠️ THE BUTTON SAYS WHICH BUTTON, BECAUSE THE PROMPT NO LONGER CAN. On a
+            // keyboard this line reads `[X]  PICK UP` and the key names itself; on touch the cap
+            // is gone (`PressCue`) and the GRAB control pulses instead. Asked for every frame the
+            // prompt is up, cleared by `TouchHud` on the frame it is not.
+            if (OnTouch) InputLayer.TouchHud.Emphasise(Verb.Grab);
+
+            string text = PressCue("Grab") + "PICK UP";
 
             if (text != _pickupPromptShown)
             {
@@ -4394,7 +4845,12 @@ namespace TumbangPreso.UI
                                 new Color(UiTheme.Cream.r, UiTheme.Cream.g, UiTheme.Cream.b, 0.90f),
                                 TextAnchor.MiddleCenter, 2);
             card.Key.fontStyle = FontStyle.Bold;
-            card.Key.text = KeyLabel(actionName);
+            // ⚠️⚠️ NO KEY CAP ON A PHONE. This row exists to teach a key ONCE while
+            // learning, and on touch there is no key to learn: the tile already carries the
+            // ability's own icon and the thumb control beside it now carries the SAME icon, so
+            // the player maps the two by picture rather than by a letter neither surface has.
+            // Leaving it wrote `Q` and `E` under two deck tiles on a device with no Q and no E.
+            card.Key.text = OnTouch ? string.Empty : KeyLabel(actionName);
             Place(card.Key.rectTransform, new Vector2(0.5f, 1.0f),
                   new Vector2(0, -(TileSize + KeyGap)), new Vector2(width, 15));
 
@@ -4444,6 +4900,55 @@ namespace TumbangPreso.UI
         /// <summary>The key bound to an action, for anything outside this class that draws one.</summary>
         public static string KeyLabelFor(string action) => KeyLabel(action);
 
+        // -------------------------------------------------------------------
+        // § A PROMPT ON A PHONE NAMES THE ACTION, NEVER THE KEY
+        //
+        // ⚠️⚠️ 🧑 2026-09-03, WITH A SCREENSHOT OF THE ANDROID BUILD: *"why the fuck does it have
+        // keybinds theres no keys in mobile"*. The frame carried `[X]  PICK UP` over a tsinelas,
+        // `[F1] NO COOLDOWNS: OFF` in the corner, and `PRESS F1 when ready` under the round line,
+        // on a device with no X and no F1. Every one of them came through `KeyLabel`, which
+        // deliberately answered the KEYBOARD string on touch on the recorded grounds that it was
+        // *"the harmless one"*. It is not harmless: it is the only instruction on screen and the
+        // player cannot follow it.
+        //
+        // ⚠️⚠️ THE FIX IS TO DROP THE CAP, NOT TO SWAP ITS CONTENTS. Substituting the control's
+        // name would print `[GRAB] PICK UP`, and since 2026-09-03 the touch buttons draw ICONS
+        // rather than words, so "GRAB" is a string that appears nowhere on the screen it is
+        // pointing at. A phone prompt states what will happen; `TouchHud.Emphasise` pulses the
+        // button that makes it happen, which is also correct for a player who has dragged their
+        // controls somewhere else with the customiser (`docs/TODO.md` § 125.11).
+        //
+        // ⚠️ EVERY PROMPT THAT NAMES A CONTROL GOES THROUGH `PressCue` OR `MashVerb`, AND THAT IS
+        // WHAT STOPS THE NEXT ONE LEAKING. A literal `"[" + KeyLabel(x) + "]"` at a call site is
+        // the shape of the bug; `InputSurfaceCheck` reads the runtime sources as TEXT for exactly
+        // this class of fault one level up, and `HudTouchPromptTests` asserts the eight sites.
+        // -------------------------------------------------------------------
+
+        /// <summary>True while the player is driving this with a thumb.</summary>
+        public static bool OnTouch =>
+            InputLayer.LastInputDevice.Current == InputLayer.InputDeviceKind.Touch;
+
+        /// <summary>
+        /// The bracketed key cap a prompt puts in front of an instruction, or nothing on touch.
+        ///
+        /// ⚠️ IT CARRIES ITS OWN TRAILING SPACING so a call site can write
+        /// `PressCue("Grab") + "PICK UP"` and get `"[X]  PICK UP"` on a keyboard and
+        /// `"PICK UP"` on a phone, with no second branch and no double space to trim.
+        /// </summary>
+        public static string PressCue(string action)
+            => OnTouch ? string.Empty : "[" + KeyLabel(action) + "]  ";
+
+        /// <summary>
+        /// How a prompt tells the player to hammer a control: `MASH [SPACE]` or `TAP`.
+        ///
+        /// ⚠️ "TAP", NOT "MASH", ON A PHONE. `Combat.MashRecover` caps accepted presses at 10 Hz
+        /// whatever the device, and a finger on glass cannot reach that: telling somebody to mash
+        /// a touchscreen is telling them to do something the screen will not report and the rule
+        /// would throw away anyway. The instruction has to be the one that works.
+        /// </summary>
+        public static string MashVerb(string action)
+            => OnTouch ? "TAP" : "MASH [" + KeyLabel(action) + "]";
+
         /// <summary>
         /// ⚠️⚠️ THE ANSWER IS CACHED UNTIL A BINDING ACTUALLY MOVES, AND THAT IS A MEASUREMENT
         /// RATHER THAN A TIDY-UP. Resolving one label is `FindActionMap`, `FindAction`,
@@ -4467,6 +4972,9 @@ namespace TumbangPreso.UI
 
         private static int _keyLabelsRevision = -1;
 
+        /// <summary>Which device the cached labels were resolved for. See `KeyLabel`.</summary>
+        private static int _keyLabelsDevice = -1;
+
         private static string KeyLabel(string action)
         {
             if (_bindingAsset == null)
@@ -4477,9 +4985,22 @@ namespace TumbangPreso.UI
 
             if (_bindingAsset == null) return action == "Ultimate" ? "F" : action == "Skill2" ? "E" : "Q";
 
-            if (_keyLabelsRevision != Settings.Rebinding.Revision)
+            // ⚠️⚠️ THE CACHE IS KEYED ON THE DEVICE AS WELL AS ON THE BINDING REVISION SINCE
+            // 2026-09-02, AND WITHOUT THAT A PAD PLAYER IS TAUGHT KEYS THEY DO NOT HAVE. This
+            // resolved binding 0, which is always the KEYBOARD one, so a controller player was
+            // told to press X to pick up a slipper while holding a device with no X on it.
+            // `docs/VISION.md` § 3 calls that out in the same breath as a literal: *"a screen
+            // that teaches the wrong key is worse than one that teaches none."*
+            //
+            // ⚠️ ONE COUNTER PER REASON, BOTH CHECKED. `Rebinding.Revision` moves when a binding
+            // moves; `LastInputDevice.Revision` moves when the player picks up a different
+            // device. A cache keyed on only one of the two goes stale on the other, and the
+            // staleness is invisible: a label that is merely WRONG still draws perfectly.
+            if (_keyLabelsRevision != Settings.Rebinding.Revision
+                || _keyLabelsDevice != InputLayer.LastInputDevice.Revision)
             {
                 _keyLabelsRevision = Settings.Rebinding.Revision;
+                _keyLabelsDevice = InputLayer.LastInputDevice.Revision;
                 _keyLabels.Clear();
             }
 
@@ -4497,6 +5018,42 @@ namespace TumbangPreso.UI
 
             if (act == null || act.bindings.Count == 0)
                 return action == "Ultimate" ? "F" : action == "Skill2" ? "E" : "Q";
+
+            // ⚠️⚠️ THE PAD'S OWN BINDING FIRST, WHEN THE PLAYER IS ON A PAD. `Rebinding` resolves
+            // per device and returns "-" rather than falling back, which is right for the
+            // settings panel and wrong here: a prompt must always say SOMETHING, and an action
+            // with no pad binding at all (`ToggleFullscreen`) still has a key worth naming. So
+            // this ASKS for the pad label and keeps the keyboard answer when there is none.
+            //
+            // ⚠️⚠️ TOUCH IS NOT ASKED FOR, AND THE PARAGRAPH THAT USED TO BE HERE WAS WRONG IN A
+            // WAY THAT SHIPPED. It read: *"a thumb control carries its own label painted on it
+            // (`InputCatalogue`'s `TouchLabel`), so a prompt telling a phone player to 'press
+            // THROW' is naming a button they are already looking at. On touch the keyboard answer
+            // is the harmless one."* **The keyboard answer is not harmless.** It produced
+            // `[X]  PICK UP` on a phone, which 🧑 photographed on 2026-09-03 along with the rest
+            // of the keyboard leaking onto the touch layer: *"why the fuck does it have keybinds
+            // theres no keys in mobile"*. A key cap on a device with no keys is not a redundant
+            // instruction, it is an instruction the player cannot follow.
+            //
+            // ⚠️⚠️ AND THE ARGUMENT AGAINST NAMING THE CONTROL SURVIVED, WHICH IS WHY THE ANSWER
+            // IS NOT "RETURN THE TOUCH LABEL HERE". The buttons draw ICONS now, so a prompt that
+            // said "press GRAB" would be naming a word that appears nowhere on screen. The fix is
+            // one level up: `PressCue` returns nothing at all on touch, so the prompt states the
+            // ACTION, and `TouchHud.Emphasise` pulses the button the prompt is about. That is how
+            // every mobile game answers "which button", and it survives a player who has moved
+            // their controls with the customiser.
+            //
+            // ⚠️ THIS FUNCTION STILL ANSWERS THE KEYBOARD STRING ON TOUCH, and nothing draws it.
+            // Making it return an empty string here would put an empty key cap into the settings
+            // panel and the rebinding rows, which are keyboard surfaces whatever the player last
+            // touched.
+            if (InputLayer.LastInputDevice.Current == InputLayer.InputDeviceKind.Gamepad)
+            {
+                string pad = Settings.Rebinding.DisplayNameFor(
+                    _bindingAsset, action, Settings.Rebinding.GamepadDevice);
+
+                if (!string.IsNullOrEmpty(pad) && pad != "-") return pad.ToUpperInvariant();
+            }
 
             // ⚠️⚠️ A COMPOSITE'S HEAD IS NOT A KEY, AND PRINTING IT IS HOW THE TUTORIAL CAME TO
             // TEACH `[2DVECTOR(MODE:2)]`. 🧑, off the played build: *"wtf is 2d vector modee?"*.
@@ -4623,8 +5180,19 @@ namespace TumbangPreso.UI
 
             if (_inspectHint != null)
             {
-                if (_inspectHintText == null)
-                    _inspectHintText = "HOLD [" + KeyLabel("AbilityInfo") + "] FOR POWER DETAILS";
+                // ⚠️⚠️ THE CACHE IS KEYED ON THE DEVICE NOW, AND IT WAS A `== null`
+                // GUARD. `KeyLabel` already invalidates on `LastInputDevice.Revision`; this
+                // string did not, so a player who picked up a pad mid-match kept being told the
+                // keyboard key for the rest of the session, and on a phone the touch branch
+                // below would never have taken effect after one keyboard frame at boot.
+                if (_inspectHintText == null
+                    || _inspectHintDevice != InputLayer.LastInputDevice.Revision)
+                {
+                    _inspectHintDevice = InputLayer.LastInputDevice.Revision;
+                    _inspectHintText = OnTouch
+                        ? "HOLD THE INFO CHIP FOR POWER DETAILS"
+                        : "HOLD [" + KeyLabel("AbilityInfo") + "] FOR POWER DETAILS";
+                }
 
                 if (_inspectHint.text != _inspectHintText) _inspectHint.text = _inspectHintText;
             }

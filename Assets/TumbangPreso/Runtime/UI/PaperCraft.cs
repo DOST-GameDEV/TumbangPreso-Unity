@@ -130,6 +130,39 @@ namespace TumbangPreso.UI
         /// </summary>
         public enum Surface
         {
+            /// <summary>
+            /// A button drawn the way the LOGO is drawn: a flat fill inside a thick uneven
+            /// deep-red stroke, with a darker bar sitting inside the bottom edge.
+            ///
+            /// ⚠️⚠️ 🧑 ASKED FOR THIS IN AS MANY WORDS, 2026-09-03, AFTER SEEING THE FONT PASS ON
+            /// ITS OWN: **"the darumadrop buttons AS TEXT stay, i wanted u to remake all buttons
+            /// in a diff style that feels like my logo bruh"**, and before that *"can u overhaul
+            /// it like all of it gang, i dont wanna use the old colors anymore"*. The lettering
+            /// was never the complaint. **The SURFACE was.**
+            ///
+            /// ⚠️⚠️ IT IS A DIFFERENT CONSTRUCTION FROM EVERY OTHER SURFACE IN THIS FILE, WHICH IS
+            /// THE WHOLE POINT RATHER THAN AN INCONSISTENCY. `Token`, `Live`, `Action` and `Tray`
+            /// are all LIT SOLIDS: a value ramp down the face, a keyline, a rim, a cast shadow.
+            /// That vocabulary came from sampling his `BUTTON LONG.png`, and it is faithful to
+            /// that art. **His logo is drawn by completely different rules**: there is no ramp
+            /// anywhere in it, no bevel and no lit edge. Every shape is a FLAT colour held inside
+            /// a heavy irregular line, and the only depth in the whole mark is a darker red bar
+            /// tucked inside the bottom of each letter. Painting a button in that language means
+            /// throwing the ramp away, not softening it.
+            ///
+            /// ⚠️ THE STROKE WOBBLES ON Y AND NOT ON X, AND THAT IS A SLICING CONSTRAINT RATHER
+            /// than a design one. These sprites are nine-sliced horizontally, so the middle column
+            /// is STRETCHED: any variation along x would smear into streaks at whatever width the
+            /// caller happens to be. Varying the silhouette with y makes the left and right edges
+            /// hand-drawn and leaves the top and bottom straight, which is also how the mark
+            /// itself reads, its horizontals being much steadier than its verticals.
+            ///
+            /// ⚠️ AND `CLAUDE.md` § 6.5'S RULE SURVIVES: pick a ROLE, not a fill. This is a role,
+            /// the closed `Accent` list still decides the one authored colour, and no caller may
+            /// pass an arbitrary hue.
+            /// </summary>
+            Brand,
+
             /// <summary>Furniture: a rail, a card, a panel.</summary>
             Sheet,
 
@@ -271,8 +304,32 @@ namespace TumbangPreso.UI
             /// it, which `docs/VISION.md` section 6.5 calls evidence rather than taste.</summary>
             Green,
 
-            /// <summary>The lobby's brown, kept because he asked for it on that screen.</summary>
+            /// <summary>The lobby's brown, kept because he asked for it on that screen.
+            ///
+            /// ⚠️ ON <see cref="Surface.Brand"/> THIS IS HONEY QUARTZ AND NOT BROWN. The enum is
+            /// a closed list of two, and what the two MEAN is decided by the surface reading them:
+            /// on `Action` they are his authored green and his authored brown, and on `Brand` they
+            /// are the logo's action colour and its quiet one. The name is kept rather than
+            /// widened because renaming it would touch every call site in the front end for no
+            /// behaviour, and `docs/TODO.md` § 133 already has a font change and a palette change
+            /// in it.
+            /// </summary>
             Wood,
+
+            /// <summary>
+            /// The dark side of the inversion, for a LIVE tab.
+            ///
+            /// ⚠️⚠️ A TAB ROW NEEDS A PAIR AND THE PAIR MAY NOT BE TWO HUES. `docs/TODO.md`
+            /// § 118.4 and `ConvertedCharacterSelect`'s own note both settle it: the difference
+            /// between the tab you are on and the tab you are not is a **value inversion of about
+            /// 10:1**, which is the one difference that survives a photograph in greyscale and a
+            /// colourblind player. Marking a live tab with Chartreuse instead would make it the
+            /// same colour as the screen's one primary, and there is only ever one of those.
+            ///
+            /// ⚠️ IT IS THE PALETTE'S OWN DARK, not a brown: Army darkened, which is the only
+            /// dark tone in the logo that is not the outline red.
+            /// </summary>
+            Dark,
         }
 
         /// <summary>
@@ -421,16 +478,17 @@ namespace TumbangPreso.UI
             // because a rail lies almost flat. The lobby's primary is 96 units, which is exactly
             // at that boundary, so the one control on the screen that most needs to stand up was
             // the one being drawn as furniture. It is pinned to the raised construction here.
-            bool tall = surface != Surface.Action && height > WoodCraft.TallSurface;
+            bool tall = surface != Surface.Action && surface != Surface.Brand
+                       && height > WoodCraft.TallSurface;
 
-            int h = surface == Surface.Action
-                ? Mathf.Clamp(Mathf.RoundToInt(height / 4.0f) * 4, 40, 160)
+            int h = surface == Surface.Action || surface == Surface.Brand
+                ? Mathf.Clamp(Mathf.RoundToInt(height / 4.0f) * 4, 24, 160)
                 : tall ? 96
                 : Mathf.Clamp(Mathf.RoundToInt(height / 4.0f) * 4, 20, WoodCraft.TallSurface);
 
             // ⚠️ THE ACCENT IS IN THE KEY ONLY FOR AN ACTION. Every other surface ignores it, and
             // putting it in their keys would double a cache that is already keyed on four things.
-            string key = surface == Surface.Action
+            string key = surface == Surface.Action || surface == Surface.Brand
                 ? $"pc_{surface}_{accent}_{pose}_{h}"
                 : $"pc_{surface}_{pose}_{h}_{tall}";
 
@@ -439,9 +497,26 @@ namespace TumbangPreso.UI
             Sprite made;
             switch (surface)
             {
-                case Surface.Token: made = PaintRaised(h, pose, tall, key, false); break;
-                case Surface.Live: made = PaintRaised(h, pose, tall, key, true); break;
-                case Surface.Action: made = PaintAction(h, pose, key, accent); break;
+                case Surface.Brand: made = PaintBrand(h, pose, key, accent, surface); break;
+                // ⚠️⚠️ EVERY CHIP AND EVERY TAB IS PAINTED IN THE BRAND LANGUAGE TOO, AND
+                // AGAIN IT IS THE PAINTER THAT MOVED RATHER THAN THE SURFACE. `Token` and `Live`
+                // are read by name all over the front end to decide LABEL COLOUR and the tab
+                // inversion (`PaperButton.Restyle`, `PaperKit.MarkLive`, `PlayerHub.Highlight`),
+                // so repointing the enum would have changed a look and broken a contract in one
+                // line. The accent each one takes is fixed by the surface: a chip is the quiet
+                // fill and a live tab is the dark one, which keeps the 10:1 value inversion
+                // § 118.4 settled.
+                case Surface.Token: made = PaintBrand(h, pose, key, Accent.Wood, surface); break;
+                case Surface.Live: made = PaintBrand(h, pose, key, Accent.Dark, surface); break;
+                // ⚠️⚠️ THE PRIMARY IS PAINTED IN THE BRAND LANGUAGE NOW, AND IT IS THE
+                // PAINTER THAT MOVED RATHER THAN THE SURFACE. 🧑 2026-09-03: **"i wanted u to
+                // remake all buttons in a diff style that feels like my logo bruh"**.
+                // `Surface.Action` is read by name in five places (`PaperKit.MakeAction`,
+                // `PaperButton`'s label handling and its hover rule, and two guards in
+                // `PaperDress`), all of which are about BEHAVIOUR rather than about paint;
+                // repointing the enum would have moved a look and broken a contract in the same
+                // line. Swapping the painter moves exactly the thing he asked about.
+                case Surface.Action: made = PaintBrand(h, pose, key, accent, surface); break;
                 case Surface.Tray: made = PaintTray(h, pose, tall, key); break;
                 case Surface.Ghost: made = PaintGhost(h, tall, key); break;
                 case Surface.Sign: made = PaintPlate(h, tall, key, true); break;
@@ -479,8 +554,19 @@ namespace TumbangPreso.UI
             int face = h - Drop;
             int lip = Mathf.Max(2, Mathf.RoundToInt(face * 0.04f));
 
-            Color fill = sign ? UiTheme.WoodMid : UiTheme.Paper;
-            Color ring = sign ? UiTheme.WoodDeep : UiTheme.PaperEdge;
+            // ⚠️⚠️ THE SIGN'S DARK IS THE BRAND'S DARK NOW, NOT THE SHARED WOOD. It read
+            // `WoodMid` over `WoodDeep`, which are two of the seven constants this pass
+            // deliberately did NOT move because the in-match layer reads them and § 133.4 scopes
+            // the HUD out. The result was that the ROOM CODE plate and the seat tags were the
+            // last brown objects on an otherwise repainted lobby
+            // (`Logs/shots-runtime/Lobby-v82.png`).
+            //
+            // ⚠️ SO THE POINTER MOVED RATHER THAN THE CONSTANT, which is the same move the
+            // painters made one level up. `WoodFace` is Army darkened and is already the front
+            // end's dark tone; cream on it measures about 9:1, so the plaque keeps the value
+            // inversion `Surface.Sign` exists for and loses the brown.
+            Color fill = sign ? UiTheme.WoodFace : UiTheme.Paper;
+            Color ring = sign ? UiTheme.WoodSlot : UiTheme.PaperEdge;
 
             for (int y = 0; y < h; y++)
                 for (int x = 0; x < width; x++)
@@ -508,7 +594,7 @@ namespace TumbangPreso.UI
                         // somewhere. Two units, because on cream a bright edge is visible long
                         // before it is loud.
                         if (!tall && faceDepth > Halo && downFromTop < lip)
-                            c = Color.Lerp(c, sign ? UiTheme.WoodEdge : Color.white,
+                            c = Color.Lerp(c, sign ? UiTheme.BrandArmy : Color.white,
                                            sign ? 0.85f : 0.55f);
                     }
                     else if (shadowDepth > 0.0f && !tall)
@@ -979,6 +1065,20 @@ namespace TumbangPreso.UI
         /// sheet and keeps its shape, because a primary that goes grey is the one control a player
         /// reads as broken rather than as unavailable.
         /// </summary>
+        /// ⚠️⚠️ SUPERSEDED 2026-09-03 AND KEPT RATHER THAN DELETED. Nothing dispatches to this
+        /// any more: `Surface.Action` is painted by <see cref="PaintBrand"/>, because 🧑 asked for
+        /// every button to be redrawn in the logo's language and the logo has no lit solids in it.
+        ///
+        /// **It is kept because the decision it encodes is his and he has reversed one like it
+        /// before.** Every number in the body below was measured off `BUTTON LONG.png` and tuned
+        /// against three of his own rejections (*"i js wanted u to make it mroe 3d"*, *"i prefer
+        /// the old sharper edges on it"*, *"ugly shadows and edges"*), and the character select
+        /// screen is already a case where he asked for an older look to come back by name. If the
+        /// lit slab is ever wanted again, this is it, intact, with its receipts; rebuilding it
+        /// from the comments would take an afternoon and lose the measurements.
+        ///
+        /// ⚠️ `GameVersion`'s branch-stamping machinery is kept for exactly this reason and says
+        /// so in `CLAUDE.md` § 7. Do not delete either without asking.
         private static Sprite PaintAction(int h, Pose pose, string key, Accent accent)
         {
             bool pressed = pose == Pose.Press;
@@ -1173,6 +1273,253 @@ namespace TumbangPreso.UI
         }
 
         // -----------------------------------------------------------------------------------
+        // BRAND: a button drawn the way the logo is drawn.
+        // -----------------------------------------------------------------------------------
+
+        /// <summary>
+        /// A flat fill inside a thick uneven deep-red stroke, with a darker bar inside its bottom
+        /// edge. See <see cref="Surface.Brand"/> for who asked and why it throws the ramp away.
+        ///
+        /// **The three measurements, taken off `tump_logo_colour.jpg` rather than chosen:**
+        ///
+        /// - **The stroke is about 8.5 per cent of the letter height.** In the mark it is the
+        ///   single largest area, 34.3 per cent of the whole drawing, which is why the logo reads
+        ///   as drawn rather than as filled: the LINE is the object and the colour inside it is
+        ///   the hole.
+        /// - **The under-bar is about 5.5 per cent**, sits a pixel or two clear of the stroke
+        ///   rather than touching it, and is the rim red rather than a shade of the fill. It is
+        ///   the only depth cue anywhere in the mark.
+        /// - **Nothing is lit.** No ramp, no keyline, no bevel, no varnish band. Every fill in
+        ///   the logo is one flat value.
+        /// </summary>
+        private static Sprite PaintBrand(int h, Pose pose, string key, Accent accent,
+                                         Surface surface)
+        {
+            bool pressed = pose == Pose.Press;
+            bool off = pose == Pose.Off;
+
+            // ⚠️ THE PRESS IS THE WHOLE OBJECT SITTING DOWN ONTO ITS OWN UNDER-BAR, which is the
+            // only animation this construction can afford: there is no highlight to move and no
+            // ramp to shift, so the bar going away IS the press. It is also the honest reading of
+            // the mark, where the bar is what holds each letter up off the page.
+            int drop = pressed ? 0 : BrandLift;
+            int face = h - drop;
+            if (face < 8) { drop = 0; face = h; }
+
+            // NO TWO CORNERS ARE THE SAME AND NO TWO CONTROLS ARE THE SAME, WHICH IS THE
+            // WHOLE OF *"i think u use the same code to generate them all"* ANSWERED AT THE
+            // LEVEL IT WAS ASKED. The base radius is unchanged; what is new is that the four
+            // corners scatter around it and the scatter is keyed to the control FAMILY, so
+            // START MATCH, JOIN, CHAT and BACK are four different drawings of the same object
+            // and each of them is the SAME drawing every time it is painted.
+            //
+            // THE SPREAD IS 0.74 TO 1.32 OF THE BASE, WHICH IS DELIBERATELY NARROW. Wider and
+            // a button stops reading as a rounded rectangle at all; narrower and the eye reads
+            // four equal corners with a rendering error. It is 133.7's rule as a number: the
+            // personality is in the SHAPE, and what makes a shape hand-drawn is that its
+            // variation is irregular rather than large.
+            int hand = Hand(surface, accent, h);
+            float baseCorner = face * 0.22f;
+            float cTL = baseCorner * (0.74f + (((hand >> 2) & 7) * 0.083f));
+            float cTR = baseCorner * (0.74f + (((hand >> 5) & 7) * 0.083f));
+            float cBR = baseCorner * (0.74f + (((hand >> 8) & 7) * 0.083f));
+            float cBL = baseCorner * (0.74f + (((hand >> 11) & 7) * 0.083f));
+            float corner = Mathf.Max(Mathf.Max(cTL, cTR), Mathf.Max(cBR, cBL));
+
+            // this control's own place in the noise field, so its edge is its own edge
+            float handX = ((hand % 97) * 0.41f) + 0.37f;
+            float handY = (((hand / 97) % 89) * 0.53f) + 2.71f;
+
+            int cap = Mathf.CeilToInt(corner) + BrandLift + BrandWobble + 6;
+            int width = (cap * 2) + 4;
+            var pixels = new Color[width * h];
+
+            int stroke = Mathf.Max(3, Mathf.RoundToInt(face * 0.085f));
+            int bar = Mathf.Max(2, Mathf.RoundToInt(face * 0.055f));
+
+            // THE POINTER PRESSES THE PEN HARDER. Hover was a fill lift alone, which on a flat
+            // construction with no ramp is the smallest signal this front end has; a stroke
+            // that thickens by a tenth is legible at a glance and, unlike a colour change,
+            // survives a photograph and a colourblind player. The LINE COLOUR is still
+            // untouched, for the reason the note below already gives.
+            float strokeScale = pose == Pose.Hover ? 1.12f : 1.0f;
+
+            // ⚠️ THE CLOSED LIST IS STILL CLOSED. `CLAUDE.md` § 6.5: pick a role, not a fill.
+            // Chartreuse is the ACTION and Honey Quartz is everything else, which is
+            // `docs/Front_End_Design.md` § 4's role table and not a choice made here.
+            Color fill = accent == Accent.Green ? UiTheme.BrandChartreuse
+                       : accent == Accent.Dark ? UiTheme.WoodFace
+                       : UiTheme.BrandHoney;
+            Color line = UiTheme.BrandRed;
+            Color under = UiTheme.BrandRimRed;
+
+            // ⚠️ DISABLED DESATURATES THE FILL AND LEAVES THE LINE ALONE, so the control keeps its
+            // silhouette and loses its voice. `game-ui-design`'s Color-Only Information
+            // anti-pattern is why the shape may not change: a control distinguishable only by
+            // colour is not distinguishable. `PaperButton` takes the bar off as well.
+            if (off)
+            {
+                fill = WoodCraft.Shift(fill, 0.88f, 0.30f);
+                line = WoodCraft.Shift(line, 1.25f, 0.35f);
+                under = line;
+            }
+
+            // ⚠️ HOVER LIFTS THE FILL ONLY. The line is the identity of the object and a stroke
+            // that brightens under the pointer reads as a different control rather than as the
+            // same one being pointed at.
+            if (pose == Pose.Hover) fill = WoodCraft.Shift(fill, 1.10f, 0.96f);
+
+            for (int y = 0; y < h; y++)
+            {
+                // ⚠️⚠️ THE WOBBLE IS A FUNCTION OF Y ALONE AND THE SURFACE NOTE SAYS WHY: these
+                // sprites are nine-sliced horizontally, so anything that varies along x is
+                // stretched into streaks at whatever width the caller asks for. Sampled at two
+                // frequencies because one produces a regular ripple, which reads as a wave rather
+                // than as a hand.
+                float n1 = Mathf.PerlinNoise(handX, y * 0.085f) - 0.5f;
+                float n2 = Mathf.PerlinNoise(handX + 6.76f, y * 0.031f) - 0.5f;
+
+                // THE THIRD FREQUENCY IS A BOW RATHER THAN A WOBBLE, and it is what the first
+                // version was missing. Two fast frequencies give an edge that is rough but
+                // straight over its length; a hand-drawn line is also not straight. At 0.011
+                // the wavelength is about ninety units, so a tall control bows once and a chip
+                // does not bow at all, which is how a real line behaves.
+                float n3 = Mathf.PerlinNoise(handX + 3.91f, y * 0.011f) - 0.5f;
+                float wobble = ((n1 * 0.52f) + (n2 * 0.30f) + (n3 * 0.18f)) * BrandWobble * 2.0f;
+
+                // THE WOBBLE FADES OUT ACROSS THE CORNERS, AND WITHOUT THIS IT NOTCHES THEM.
+                // It is one offset applied to a whole ROW, which is exactly right along a
+                // straight vertical run: the edge moves left or right by a unit or two and the
+                // rows either side move with it. Across a corner ARC the rows are already
+                // travelling in x, so a per-row offset compounds with the arc's own slope and
+                // the curve comes out stepped. `Logs/ui/brand-swatch-v1.png` shows it as two
+                // notches at the top of the primary, and it reads as a rendering fault rather
+                // than as a hand.
+                //
+                // IT IS ALSO THE HONEST READING OF THE MARK, which is why this is a fix rather
+                // than a compromise: the letters' long verticals wander and their corners are
+                // decided in one confident movement. The four unequal radii are what carry the
+                // corners now, and they carry them better than noise did.
+                int yWob = y - drop;
+                float edge = Mathf.Clamp01(Mathf.Min(yWob, face - 1 - yWob)
+                                           / Mathf.Max(1.0f, corner));
+                wobble *= edge * edge * (3.0f - (2.0f * edge));
+
+                // THE STROKE'S WEIGHT VARIES ALONG ITS OWN LENGTH, AND THIS IS THE SINGLE MOST
+                // CHARACTERISTIC THING ABOUT THE MARK THAT THE FIRST BRAND PASS DID NOT DRAW.
+                // docs/TODO.md 133.13 names it in the rejection: *"a stroke whose weight varies
+                // along its own length"*. The old painter had ONE `stroke` for the whole
+                // silhouette, so it produced a rounded rectangle with a thick even border,
+                // which is a border rather than a line somebody drew.
+                //
+                // IT VARIES WITH Y AND NEVER WITH X, for the slicing reason the surface note
+                // gives, and that is also honest: the mark's horizontals are far steadier than
+                // its verticals.
+                int strokeY = Mathf.Max(2, Mathf.RoundToInt(
+                    stroke * strokeScale
+                    * (1.0f + ((Mathf.PerlinNoise(handY, y * 0.055f) - 0.5f)
+                               * 2.0f * BrandStrokeVary))));
+
+                for (int x = 0; x < width; x++)
+                {
+                    int yy = y - drop;
+                    float depth = Depth4(x, yy, width, face, cTL, cTR, cBR, cBL) + wobble;
+                    float inset = Mathf.Min(x + 0.5f, width - x - 0.5f);
+
+                    Color c;
+
+                    if (depth > 0.0f)
+                    {
+                        if (depth <= strokeY)
+                        {
+                            c = Fade(line, depth);
+                        }
+                        else if (!pressed && !off
+                                 && yy >= strokeY + 1
+                                 && yy < strokeY + 1 + BarAt(bar, inset, strokeY)
+                                 && depth > strokeY + 2)
+                        {
+                            // The darker bar tucked inside the bottom edge. It stops short of the
+                            // stroke so the two read as two marks rather than as one thick one,
+                            // which is exactly how it is drawn under the letters.
+                            c = under;
+                        }
+                        else
+                        {
+                            c = fill;
+                        }
+                    }
+                    else if (drop > 0)
+                    {
+                        // ⚠️ NO CAST SHADOW, AND THAT IS DELIBERATE RATHER THAN UNFINISHED. There
+                        // is not one anywhere in the logo: the mark sits ON the page. The band
+                        // under the face is the page showing through, and the under-bar is what
+                        // gives the object its thickness instead.
+                        c = Color.clear;
+                    }
+                    else
+                    {
+                        c = Color.clear;
+                    }
+
+                    pixels[(y * width) + x] = c;
+                }
+            }
+
+            return WoodCraft.Finish(pixels, width, h, cap, false, key);
+        }
+
+        /// <summary>How far a brand button stands off its own under-bar.</summary>
+        private const int BrandLift = 5;
+
+        /// <summary>
+        /// How far the stroke may wander, in units.
+        /// ⚠️ SMALL ON PURPOSE. The mark's line varies by a few per cent of its own thickness, not
+        /// by a visible amount: what makes it read as hand-drawn is that the variation is
+        /// IRREGULAR, not that it is large. At 3 units on a 96-unit button it is under the eye's
+        /// threshold for "wrong" and over its threshold for "drawn".
+        /// </summary>
+        private const int BrandWobble = 4;
+
+        /// <summary>
+        /// How much the stroke's own weight wanders, as a fraction of itself.
+        ///
+        /// MEASURED, NOT PICKED. Sampling the deep-red line around the T and the P in
+        /// `tump_logo_colour.jpg` perpendicular to its own run, it reads between 19 and 33 px
+        /// on a mark whose letters are about 300 px tall: roughly a quarter either side of its
+        /// mean. At 0.26 a 5-unit stroke on a 56-unit chip runs between 4 and 6, and a 12-unit
+        /// stroke on the primary runs between 9 and 15, which is the proportion the drawing has.
+        /// </summary>
+        private const float BrandStrokeVary = 0.26f;
+
+        /// <summary>
+        /// The under-bar's thickness at a given depth into the shape, so its two ENDS taper.
+        ///
+        /// IT TAPERS ON X, WHICH THE STROKE MAY NOT, AND THE NINE-SLICE IS WHY THAT IS LEGAL
+        /// HERE. Only the middle COLUMN of these sprites is stretched; the left and right caps
+        /// are preserved pixel for pixel at every width, and the taper lives entirely inside
+        /// them. So the bar reaches full weight a few units in and can never streak.
+        ///
+        /// THE ARGUMENT IS THE HORIZONTAL INSET AND THE FIRST VERSION PASSED IT `depth`, WHICH
+        /// IS A DIFFERENT MEASUREMENT AND MADE THE BAR ONE PIXEL TALL EVERYWHERE. `depth` is
+        /// the distance to the NEAREST edge; the bar sits two units above the bottom stroke, so
+        /// along its whole length the nearest edge is the bottom one and the taper factor was
+        /// negative and clamped to nothing. **The bar was invisible on every button in the
+        /// game and no test could see it**, which is the entire argument for
+        /// `BrandSwatchProbe` existing: it is a one-unit detail on a 96-unit control and a
+        /// screen shot of a lobby cannot show it.
+        ///
+        /// AND IT IS WHY THE BAR READS AS DRAWN RATHER THAN AS A RULE. In the mark the bar
+        /// under each letter is heaviest in the middle and lifts off the page at both ends,
+        /// because it was drawn with one stroke of a marker that was starting and stopping.
+        /// </summary>
+        private static int BarAt(int bar, float inset, int stroke)
+        {
+            float into = Mathf.Clamp01((inset - stroke - 2.0f) / 9.0f);
+            return Mathf.RoundToInt(bar * into);
+        }
+
+        // -----------------------------------------------------------------------------------
         // TRAY: a thing you read out of, or type into.
         // -----------------------------------------------------------------------------------
 
@@ -1340,6 +1687,68 @@ namespace TumbangPreso.UI
             float dy = (midY + 0.5f) - Mathf.Abs(y - midY);
 
             return WoodCraft.Depth(dx, dy, corner, chamfer, false);
+        }
+
+        /// <summary>
+        /// The same measurement with FOUR corner radii instead of one.
+        ///
+        /// ⚠️⚠️ THE OVERLOAD ABOVE CANNOT DO THIS AND THE REASON IS ONE LINE OF ITS OWN BODY.
+        /// It folds the rect with <c>Mathf.Abs(x - midX)</c>, which measures the distance to the
+        /// NEAREST edge and therefore cannot tell a top-left corner from a bottom-right one: all
+        /// four are the same shape by construction. That is correct for furniture and it is
+        /// exactly the thing that makes a row of brand buttons read as one button stamped nine
+        /// times.
+        ///
+        /// ⚠️ THE MARK HAS NO TWO CORNERS ALIKE. Sampling `tump_logo_colour.jpg`, the T's
+        /// shoulders are near square and its foot is round, the P's bowl is round and its stem is
+        /// cut flat. A single radius is the one decision that says "computed" out loud, and no
+        /// amount of wobble on the edge between two identical corners takes it back.
+        /// </summary>
+        private static float Depth4(int x, int y, int width, int height,
+                                    float tl, float tr, float br, float bl)
+        {
+            if (y < 0 || y >= height) return -1.0f;
+
+            float dxL = x + 0.5f, dxR = width - x - 0.5f;
+            float dyT = y + 0.5f, dyB = height - y - 0.5f;
+
+            float r = dxL < dxR
+                ? (dyT < dyB ? tl : bl)
+                : (dyT < dyB ? tr : br);
+
+            float ex = Mathf.Min(dxL, dxR);
+            float ey = Mathf.Min(dyT, dyB);
+
+            if (ex >= r || ey >= r) return Mathf.Min(ex, ey);
+
+            float ox = r - ex, oy = r - ey;
+            return r - Mathf.Sqrt((ox * ox) + (oy * oy));
+        }
+
+        /// <summary>
+        /// A stable small integer per control FAMILY, so no two of them are drawn by the same
+        /// hand and every one of them is drawn by the same hand every time.
+        ///
+        /// ⚠️⚠️ IT IS DERIVED FROM THE SURFACE, THE ACCENT AND THE HEIGHT, AND DELIBERATELY NOT
+        /// FROM THE POSE. Seeding off the whole cache key would give a control one silhouette at
+        /// rest and a different one under the pointer, so every button in the game would twitch
+        /// when the mouse crossed it. Rest, hover, press and disabled are four poses of ONE
+        /// object and they have to agree about its outline.
+        ///
+        /// ⚠️ AND IT IS `unchecked` ARITHMETIC ON PURPOSE. It is a hash, not a sum; overflow is
+        /// the mechanism rather than a fault, and the default checked context would throw.
+        /// </summary>
+        private static int Hand(Surface surface, Accent accent, int h)
+        {
+            unchecked
+            {
+                int k = 17;
+                k = (k * 31) + (int)surface;
+                k = (k * 31) + (int)accent;
+                k = (k * 31) + h;
+                k ^= k >> 13;
+                return Mathf.Abs(k);
+            }
         }
 
         /// <summary>

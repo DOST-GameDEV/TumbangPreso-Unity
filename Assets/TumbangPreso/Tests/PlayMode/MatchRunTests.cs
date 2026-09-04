@@ -113,6 +113,14 @@ namespace TumbangPreso.PlayTests
         [UnitySetUp]
         public IEnumerator SetUp()
         {
+            // ⚠️⚠️ THE SHARED RESET RUNS FIRST AND THE SCENE WORK BELOW IS STILL HERE.
+            // `PlayModeWorld.Reset` does the general half of what this method was written to do
+            // by hand (the arena the last suite loaded, the directors that outlive it) plus the
+            // half it cannot see: `docs/TODO.md` § 126.8's persistent SCREENS, which no scene
+            // unload reaches. What stays below is this suite's own: a NAMED clean scene it holds
+            // in `_clean` so its teardown can take exactly that one away again.
+            yield return PlayModeWorld.Reset();
+
             Hitstop.End();
             Time.timeScale = 1.0f;
 
@@ -167,6 +175,11 @@ namespace TumbangPreso.PlayTests
                 var unload = SceneManager.UnloadSceneAsync(_clean);
                 yield return ProbeWait.Done(unload, "scene unload");
             }
+
+            // ⚠️ AND THE SHARED RESET LAST, so the suite after this one inherits nothing. See
+            // `SetUp` above for the split: that call is what protects THIS class, this one is
+            // what protects the next.
+            yield return PlayModeWorld.Reset();
 
             yield return null;
         }

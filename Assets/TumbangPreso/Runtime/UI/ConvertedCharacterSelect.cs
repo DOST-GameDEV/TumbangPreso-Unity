@@ -801,7 +801,7 @@ namespace TumbangPreso.UI
 
             var label = PaperKit.Ink(go.transform, verb, PaperKit.Body, TextAnchor.LowerCenter);
             label.name = "Label";
-            label.fontStyle = FontStyle.Bold;
+            MenuKit.Apply(label, PaperKit.FaceFor(label.fontSize), bold: true);
             label.color = dark ? UiTheme.Cream : UiTheme.PaperInk;
             label.raycastTarget = false;
             label.rectTransform.anchorMin = new Vector2(0.0f, 0.44f);
@@ -974,7 +974,7 @@ namespace TumbangPreso.UI
                 "LOADOUT   ·   " + HeroDisplayName(heroId), PaperKit.Title, UiTheme.PaperInk,
                 new Vector2(0.5f, 1.0f), new Vector2(0.0f, -34.0f),
                 new Vector2(inner, 30.0f), TextAnchor.MiddleLeft);
-            header.fontStyle = FontStyle.Bold;
+            MenuKit.Apply(header, PaperKit.FaceFor(header.fontSize), bold: true);
             header.alignment = TextAnchor.MiddleLeft;
             header.raycastTarget = false;
 
@@ -1017,13 +1017,82 @@ namespace TumbangPreso.UI
 
                 y -= TileHeight + SlotGap;
             }
+
+            BuildUltimateRow(go.transform, kit.Ultimate, accent, y);
+        }
+
+        /// <summary>
+        /// The ultimate, read only, under the two slots that have options.
+        ///
+        /// ⚠️⚠️ IT WAS NOT ON THIS BOARD AT ALL, AND THE ULTIMATE IS THE BIGGEST SINGLE THING
+        /// THAT SEPARATES TWO HEROES. `Logs/shots-runtime/CharacterLoadout-v72.png`: the screen
+        /// is titled `LOADOUT · DANTE` and shows two of his three powers. 🧑 2026-09-03, about
+        /// this experience: *"i dont want the ppl to feel like the characters all js do the same
+        /// shit"*. A board that stops before TITAN FISSURE is a board that shows a player the two
+        /// parts of the kit that have alternates and hides the part that has a name.
+        ///
+        /// ⚠️⚠️ IT IS DELIBERATELY NOT A THIRD SLOT WITH TILES, AND `AbilityVariant.Slot`'s OWN
+        /// NOTE IS WHY: *"an ultimate is banked once or twice a match and reading which one an
+        /// opponent has is already a skill; two readings of the same ultimate would make the tell
+        /// unreliable rather than deeper."* So the row SAYS that, in one line, where a tile would
+        /// be. **A rule the player can read is a rule they can play around**; a rule that is only
+        /// an absence reads as a screen that forgot something.
+        ///
+        /// ⚠️ IT REUSES `BuildSlotHead`, WHICH IS WHY IT COSTS ALMOST NOTHING. Same glyph, same
+        /// name column, same live key label. The only thing this method adds is the sentence to
+        /// its right, so the ultimate cannot drift out of step with the two rows above it.
+        ///
+        /// ⚠️ `SLOT 3` WOULD BE A LIE. `BuildSlotHead` prints `SKILL n` and this is not skill
+        /// three: the deck, the character select and `HeroKit` all call it the ultimate. It is
+        /// passed 0 and the head prints `ULTIMATE` for it.
+        /// </summary>
+        private void BuildUltimateRow(Transform board, HeroAbility ultimate, Color accent, float y)
+        {
+            if (ultimate == null) return;
+
+            float inner = BoardWidth - (BoardPad * 2.0f);
+
+            BuildSlotHead(board, ultimate, 0, "Ultimate", accent, y);
+
+            // ⚠️ THE SENTENCE SITS WHERE THE TILES SIT, so the row lines up with the two above it
+            // and the eye can run straight down the board. It is the ability's OWN summary, which
+            // is the same string the character select's ability rows and the in-match hold key
+            // draw: `VISION.md` § 3 keeps those three layers in step, and a fourth wording here
+            // would be a fourth place to forget.
+            float textX = -(inner * 0.5f) + SlotHeadWidth + TileGap;
+            float textWidth = inner - SlotHeadWidth - TileGap;
+
+            var what = MenuKit.Label(board, ultimate.Summary, PaperKit.Body, UiTheme.PaperInk,
+                new Vector2(0.5f, 1.0f),
+                new Vector2(textX + (textWidth * 0.5f), y - 30.0f),
+                new Vector2(textWidth, 24.0f), TextAnchor.MiddleLeft);
+            what.alignment = TextAnchor.MiddleLeft;
+            what.raycastTarget = false;
+            MenuKit.Fit(what, textWidth);
+
+            var why = MenuKit.Label(board,
+                "No alternates. Reading which ultimate somebody has banked is the skill.",
+                PaperKit.Caption, UiTheme.PaperInkSoft,
+                new Vector2(0.5f, 1.0f),
+                new Vector2(textX + (textWidth * 0.5f), y - 54.0f),
+                new Vector2(textWidth, 20.0f), TextAnchor.MiddleLeft);
+            why.alignment = TextAnchor.MiddleLeft;
+            why.raycastTarget = false;
         }
 
         /// <summary>How wide and tall the board is, and the pitch of everything on it.
         /// ⚠️ Constants because `BuildLoadoutBoard` runs a cursor down them, and a literal inside
-        /// that loop is a number nobody can find again from a render.</summary>
+        /// that loop is a number nobody can find again from a render.
+        ///
+        /// ⚠️⚠️ `BoardHeight` IS 388 PLUS ONE ULTIMATE ROW. The two slot rows end at
+        /// `-80 - 2 * (TileHeight + SlotGap)`, which is -372 against a 388 board: sixteen units of
+        /// margin. The ultimate row is a head and two lines rather than a tile, so it costs
+        /// `UltimateRowHeight` and not `TileHeight`, and the board grows by exactly that plus the
+        /// gap. **Stating the arithmetic is `CLAUDE.md` § 6.2c question 1**: a height typed as a
+        /// round number is a height that is correct at one font size.</summary>
         private const float BoardWidth = 1020.0f;
-        private const float BoardHeight = 388.0f;
+        private const float UltimateRowHeight = 84.0f;
+        private const float BoardHeight = 388.0f + UltimateRowHeight + SlotGap;
         private const float BoardPad = 28.0f;
 
         /// <summary>The slot head's share of a row: the glyph, the slot number, the ability's own
@@ -1076,22 +1145,54 @@ namespace TumbangPreso.UI
             MenuKit.Place((RectTransform)glyphGo.transform, new Vector2(0.5f, 1.0f),
                           new Vector2(left + 30.0f, y - 44.0f), new Vector2(48.0f, 48.0f));
 
-            var number = MenuKit.Label(board, "SKILL " + slot, PaperKit.Caption,
+            // ⚠️ SLOT 0 IS THE ULTIMATE AND IT IS NOT "SKILL 0". The deck, the character select
+            // and `HeroKit` all call it the ultimate; a board that invented a third skill number
+            // for it would be the only surface in the game that does.
+            var number = MenuKit.Label(board, slot > 0 ? "SKILL " + slot : "ULTIMATE",
+                PaperKit.Caption,
                 UiTheme.PaperInkSoft, new Vector2(0.5f, 1.0f),
                 new Vector2(textX, y - 24.0f),
                 new Vector2(180.0f, 20.0f), TextAnchor.MiddleLeft);
             number.alignment = TextAnchor.MiddleLeft;
-            number.fontStyle = FontStyle.Bold;
+            MenuKit.Apply(number, PaperKit.FaceFor(number.fontSize), bold: true);
             number.raycastTarget = false;
+
+            // ⚠️⚠️ THE NAME GETS THE REST OF THE BOARD, AND THE 180 IT HAD WAS A COLUMN WIDTH
+            // NOTHING WAS COMPETING FOR. `docs/TODO.md` § 126.13 asked for a decision about three
+            // `Fit(..., 14)` floors; this is the second of the three and, like the tile below, it
+            // did not need an exemption. **This row is a glyph and a text column and nothing
+            // else** — no value, no cooldown, no second column — so the 180 was leaving about
+            // seven hundred units of board empty to its right while shrinking a 17-character
+            // ability name to 14 units to fit a box somebody typed.
+            //
+            // THE ARITHMETIC, stated because `CLAUDE.md` § 6.2c asks what a size is measured
+            // AGAINST: `inner` is 964 (1020 board less 2 x 28 pad). The glyph occupies
+            // `left + 6` to `left + 54`, so the text column starts at `left + 60`, which is what
+            // `textX - 90` already was. Ending 30 units short of the inner right edge gives
+            // `left + 934`, so the box is `934 - 60 = 874` wide. `MenuKit.Place` writes against a
+            // CENTRED pivot (§ 122.14), so the centre moves with the width and the LEFT EDGE
+            // stays exactly where it was: the row does not shift, it stops being clipped.
+            //
+            // ⚠️ ONLY THE NAME WIDENS. `SKILL n` and the key label above and below it are short
+            // strings that never needed the room, and moving all three would move the column.
+            const float glyphColumn = 60.0f;
+            const float rightMargin = 30.0f;
+            float nameWidth = inner - glyphColumn - rightMargin;
+            float nameX = left + glyphColumn + (nameWidth * 0.5f);
 
             var name = MenuKit.Label(board, ability != null ? ability.Name : "", PaperKit.Body,
                 UiTheme.PaperInk, new Vector2(0.5f, 1.0f),
-                new Vector2(textX, y - 50.0f),
-                new Vector2(180.0f, 24.0f), TextAnchor.MiddleLeft);
+                new Vector2(nameX, y - 50.0f),
+                new Vector2(nameWidth, 24.0f), TextAnchor.MiddleLeft);
             name.alignment = TextAnchor.MiddleLeft;
-            name.fontStyle = FontStyle.Bold;
+            MenuKit.Apply(name, PaperKit.FaceFor(name.fontSize), bold: true);
             name.raycastTarget = false;
-            MenuKit.Fit(name, 180.0f, 14);
+
+            // ⚠️ THE FLOOR IS `MenuKit.MinReadableUnits` NOW RATHER THAN 14, which is § 126.13's
+            // FIRST answer (*"the pills get wider and the floor goes to MenuKit.MinReadableUnits"*)
+            // and the one to prefer wherever the room exists. A label that fits at 18 needs no
+            // exemption, no `TightLabel` marker and no line in the probe's report.
+            MenuKit.Fit(name, nameWidth);
 
             var key = MenuKit.Label(board, Hud.KeyLabelFor(action), PaperKit.Caption,
                 UiTheme.PaperInkSoft, new Vector2(0.5f, 1.0f),
@@ -1200,9 +1301,27 @@ namespace TumbangPreso.UI
                 new Vector2(0.5f, 0.5f), new Vector2(0.0f, top - 26.0f),
                 new Vector2(band, 24.0f), TextAnchor.MiddleLeft);
             name.alignment = TextAnchor.MiddleLeft;
-            name.fontStyle = FontStyle.Bold;
+            MenuKit.Apply(name, PaperKit.FaceFor(name.fontSize), bold: true);
             name.raycastTarget = false;
-            MenuKit.Fit(name, band - 86.0f, 14);
+
+            // ⚠️⚠️ THE 86 UNITS ARE THE `EQUIPPED` MARK'S, AND THEY WERE BEING RESERVED ON EVERY
+            // TILE INCLUDING THE ONES THAT DO NOT DRAW IT. `docs/TODO.md` § 126.13 asked for a
+            // decision about three `Fit(..., 14)` floors, and this one turned out not to need an
+            // exemption at all: the mark below is built inside `if (equipped)`, so an UNEQUIPPED
+            // tile was squeezing its name into `band - 86` to make room for nothing. Most of the
+            // tiles on the screen are unequipped, so most of the shrinking was for nothing.
+            //
+            // ⚠️ **LOOK FOR THE ROOM BEFORE SPENDING AN EXEMPTION.** § 126.13 offers "the pills
+            // get wider" as the first of its two answers and it is the better one wherever it is
+            // available, because a label that fits at 18 needs no exemption, no marker and no
+            // line in the probe's report. `TightLabel`'s header carries the same warning.
+            //
+            // ⚠️ THE FLOOR STAYS 14 FOR THE EQUIPPED CASE, which is the genuinely tight one: an
+            // equipped tile really does have a name and a mark competing for one band, and that
+            // is the argued exemption rather than the accidental one. `MenuKit.Fit` registers it
+            // on the label itself so `AspectRatioProbes` reports it by name instead of failing.
+            const float equippedMarkRoom = 86.0f;
+            MenuKit.Fit(name, equipped ? band - equippedMarkRoom : band, 14);
 
             if (equipped)
             {
@@ -1210,7 +1329,7 @@ namespace TumbangPreso.UI
                     new Vector2(0.5f, 0.5f), new Vector2(0.0f, top - 26.0f),
                     new Vector2(band, 24.0f), TextAnchor.MiddleRight);
                 mark.alignment = TextAnchor.MiddleRight;
-                mark.fontStyle = FontStyle.Bold;
+                MenuKit.Apply(mark, PaperKit.FaceFor(mark.fontSize), bold: true);
                 mark.raycastTarget = false;
             }
             else if (!unlocked)
@@ -1219,7 +1338,7 @@ namespace TumbangPreso.UI
                     new Vector2(0.5f, 0.5f), new Vector2(0.0f, top - 26.0f),
                     new Vector2(band, 24.0f), TextAnchor.MiddleRight);
                 mark.alignment = TextAnchor.MiddleRight;
-                mark.fontStyle = FontStyle.Bold;
+                MenuKit.Apply(mark, PaperKit.FaceFor(mark.fontSize), bold: true);
                 mark.raycastTarget = false;
             }
 
@@ -1477,7 +1596,7 @@ namespace TumbangPreso.UI
                     // the marker is the one LIGHT thing. On cream it would be 1.7:1 and wrong,
                     // which is what § 119.10 measured and why the pips moved the other way.
                     if (!paper) label.color = active ? UiTheme.Amber : UiTheme.Cream;
-                    label.fontStyle = FontStyle.Bold;
+                    MenuKit.Apply(label, PaperKit.FaceFor(label.fontSize), bold: true);
                 }
             }
 
@@ -1927,16 +2046,30 @@ namespace TumbangPreso.UI
                 chip.type = Image.Type.Sliced;
                 chip.raycastTarget = false;
 
+                // ⚠️⚠️ 34 x 26 AND NOT 26 x 18, BECAUSE THE KEYCAP WAS THE ONE LABEL ON THIS
+                // SCREEN THAT IS PURE INSTRUCTION AND IT WAS THE SMALLEST THING ON IT.
+                // `AspectRatioProbes` named it once the probe was made to report every failure
+                // instead of throwing on the first: **"Q", "E" and "F" authored at 13 units,
+                // which is 8.7 physical pixels at 720p.** `docs/VISION.md` § 3 is explicit that
+                // *"a screen that teaches the wrong key is worse than one that teaches none"*,
+                // and a key nobody can read teaches none.
+                //
+                // ⚠️ THE BOX GREW RATHER THAN THE FLOOR DROPPING, WHICH IS § 126.13's FIRST
+                // OPTION of the three (*"widen the box, cut the words, or register the
+                // exemption"*). There are no words to cut: it is one character. 26 tall matches
+                // the ability glyph beside it exactly, so the row's height is unchanged and only
+                // this chip moved.
                 var chipLe = chipGo.AddComponent<LayoutElement>();
-                chipLe.minWidth = 26;
-                chipLe.preferredWidth = 26;
-                chipLe.minHeight = 18;
-                chipLe.preferredHeight = 18;
+                chipLe.minWidth = 34;
+                chipLe.preferredWidth = 34;
+                chipLe.minHeight = 26;
+                chipLe.preferredHeight = 26;
 
-                var keyLabel = MenuKit.Label(chipGo.transform, Hud.KeyLabelFor(item.action), 13,
+                var keyLabel = MenuKit.Label(chipGo.transform, Hud.KeyLabelFor(item.action),
+                    MenuKit.MinReadableUnits,
                     accent,
                     Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleCenter);
-                keyLabel.fontStyle = FontStyle.Bold;
+                MenuKit.Apply(keyLabel, PaperKit.FaceFor(keyLabel.fontSize), bold: true);
                 keyLabel.raycastTarget = false;
                 MenuKit.Stretch(keyLabel.rectTransform);
 
@@ -1952,7 +2085,7 @@ namespace TumbangPreso.UI
                 var nameLbl = MenuKit.Label(header.transform, abilityName, MenuKit.MinReadableUnits,
                     accent,
                     Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleLeft);
-                nameLbl.fontStyle = FontStyle.Bold;
+                MenuKit.Apply(nameLbl, PaperKit.FaceFor(nameLbl.fontSize), bold: true);
                 nameLbl.raycastTarget = false;
                 nameLbl.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1.0f;
 
@@ -1994,10 +2127,19 @@ namespace TumbangPreso.UI
                 // ⚠️ CREAM AT FULL ALPHA, NOT 0.75. 🧑: *"shit down there is small and cant be
                 // seent"*. This sat at 13 pt and three quarters opacity on a dark plate, which
                 // is the least readable thing on the screen carrying the only NUMBERS on it.
-                var timingLbl = MenuKit.Label(header.transform, timing, 14,
+                //
+                // ⚠️⚠️ AND 18 RATHER THAN 14, BECAUSE THE FIX FOR THAT COMPLAINT DID NOT GO FAR
+                // ENOUGH AND A PROBE HAS BEEN SAYING SO EVER SINCE. `MenuKit.MinReadableUnits` is
+                // 18 and `AspectRatioProbes.TheCharacterScreenSurvivesEveryAspectRatio` fails
+                // anything under it: *"'Label' is authored at 14 units, below the 18-unit floor.
+                // At 16:9 720p (1280x720) that is 9.3 physical pixels."* **13 to 14 answered
+                // "make it bigger" with one unit**, on the one label on this screen carrying
+                // numbers, and `UiRows`'s own header records the Godot original getting the same
+                // answer three times in a row (*"text still small"*). One unit is not an answer.
+                var timingLbl = MenuKit.Label(header.transform, timing, MenuKit.MinReadableUnits,
                     BoardInk,
                     Vector2.zero, Vector2.zero, Vector2.zero, TextAnchor.MiddleRight);
-                timingLbl.fontStyle = FontStyle.Bold;
+                MenuKit.Apply(timingLbl, PaperKit.FaceFor(timingLbl.fontSize), bold: true);
                 timingLbl.raycastTarget = false;
 
                 // ⚠️ WIDE ENOUGH FOR THE LONGEST STRING THIS CAN PRODUCE, which is now
@@ -2005,7 +2147,15 @@ namespace TumbangPreso.UI
                 // `MenuKit.Label` does not wrap, so the extra characters would have pushed the
                 // ability NAME along instead of overflowing visibly, which is worse: it looks
                 // like a layout choice rather than a bug.
-                timingLbl.gameObject.AddComponent<LayoutElement>().minWidth = 116.0f;
+                //
+                // ⚠️⚠️ AND IT GREW WITH THE TYPE, WHICH IS THE HALF THAT IS EASY TO FORGET.
+                // 116 was measured against 14-unit type; the label is `MenuKit.MinReadableUnits`
+                // now, so the same string needs 18/14 of the room: 116 x 1.286 = 149, rounded up
+                // to 150. **A box sized for one font size is a box that overflows silently at the
+                // next one**, and `MenuKit.Label` is set to Overflow, so nothing would have
+                // reported it: it would simply have drawn through the ability's name. That is the
+                // exact trap `ConvertedScreen.SetHeadline` and `GameVersion.ApplyTo` both record.
+                timingLbl.gameObject.AddComponent<LayoutElement>().minWidth = 150.0f;
 
                 // ⚠️⚠️ THE BUILD MARKER THAT LIVED HERE IS GONE WITH THE PRESSABLE ROW. It read
                 // `1/2 ›` and was the affordance for a control this row no longer has. What stays
@@ -2269,7 +2419,7 @@ namespace TumbangPreso.UI
             if (value != null)
             {
                 value.fontSize = choosingHero ? 32 : 30;
-                value.fontStyle = FontStyle.Bold;
+                MenuKit.Apply(value, PaperKit.FaceFor(value.fontSize), bold: true);
                 // ⚠️ `BoardInk` ON THE CLASSIC TAB, which is cream again with the board. The
                 // hero accent stays either way: it is a gameplay tell rather than decoration.
                 value.color = choosingHero

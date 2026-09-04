@@ -133,6 +133,48 @@ namespace TumbangPreso.Core
         }
 
         /// <summary>
+        /// How many attackers still hold a tsinelas.
+        ///
+        /// ⚠️⚠️ THIS EXISTS BECAUSE <see cref="LastAttackerStanding"/> ANSWERS -1 FOR TWO
+        /// OPPOSITE SITUATIONS AND THE MATCH HALF HAS TO TELL THEM APART. Its own note says so:
+        /// -1 is "more than one alive" (the round is still being played) and also "nobody is
+        /// alive" (everybody went out on the same tick, and the round belongs to the taya). A
+        /// caller that only has the slot cannot distinguish "carry on" from "end the round and
+        /// pay nobody", and guessing wrong either hangs a decided round on the clock or ends a
+        /// live one with two people still playing.
+        ///
+        /// ⚠️ IT IS NOT FOLDED INTO A SINGLE FUNCTION RETURNING A TUPLE, because the winner and
+        /// the count are asked at different moments: the count decides whether the round is over
+        /// and the slot decides who is paid, and only the first is checked every tag.
+        /// </summary>
+        public static int AliveAttackers(IReadOnlyList<int> stocks, int defenderSlot)
+        {
+            if (stocks == null) return 0;
+
+            int alive = 0;
+            for (int i = 0; i < stocks.Count; i++)
+            {
+                if (i == defenderSlot) continue;
+                if (stocks[i] > 0) alive++;
+            }
+
+            return alive;
+        }
+
+        /// <summary>
+        /// Whether a Last Tsinelas round has been settled and should end before the clock does.
+        ///
+        /// ⚠️⚠️ ONE SURVIVOR **OR ZERO**, AND THE ZERO CASE IS THE ONE THAT WOULD HAVE BEEN
+        /// MISSED. Writing this as `alive == 1` reads correctly and leaves a round with nobody
+        /// left in it running to the full 90 seconds with four bodies that cannot act, which is
+        /// the format's worst possible failure: a minute of nothing, on a screen that gives no
+        /// reason. A round-end sweep taking the last two attackers on the same tick is rare and
+        /// real, so this asks `alive &lt;= 1`.
+        /// </summary>
+        public static bool RoundIsDecided(IReadOnlyList<int> stocks, int defenderSlot)
+            => AliveAttackers(stocks, defenderSlot) <= 1;
+
+        /// <summary>
         /// What the last attacker standing is paid.
         ///
         /// ⚠️ IT IS A KNOCKDOWN'S WORTH, NOT A NEW ECONOMY. `MatchRules.PointsFor` pays 100 for a
@@ -207,6 +249,49 @@ namespace TumbangPreso.Core
         /// </summary>
         public const int MinPasswordLength = 4;
         public const int MaxPasswordLength = 16;
+
+        /// <summary>
+        /// Whether a custom match's score target has been reached, and therefore whether the
+        /// match should end before its last round does.
+        ///
+        /// ⚠️⚠️ IT IS IN THE CORE AND NOT IN `MatchDirector`, WHICH IS `docs/FUTURE.md` § 19.12'S
+        /// STATED CONSTRAINT: *"Every new mode adds its rules to
+        /// `Packages/com.tumbangpreso.core/`, never to Unity code."* A win condition written
+        /// inside a `MonoBehaviour` needs a scene, a frame and a twelve-minute PlayMode run to
+        /// assert; this one is asserted in about a millisecond, which is the whole argument for
+        /// the engine-free package.
+        ///
+        /// ⚠️⚠️ ZERO MEANS OFF AND THAT IS THE FIRST THING THIS FUNCTION CHECKS.
+        /// <see cref="CustomRules.ScoreTarget"/>'s own note is *"0 means play every round, which
+        /// is how the game ships"*, and `Defaults` sets it to 0 for both modes. **A version of
+        /// this that read 0 as "already reached" would end every standard match on its first
+        /// tick**, which would be a change to Classic (`docs/VISION.md` § 1.1 forbids exactly
+        /// that) arriving through a feature Classic never opted into.
+        ///
+        /// ⚠️ AT OR ABOVE, NEVER EQUAL. `MatchRules.PointsFor` pays in blocks of 100 and 300, so
+        /// a seat on 400 that lands a tag goes to 700 and never equals a 500 target. An equality
+        /// test would let the match run for ever and the failure would look like the setting
+        /// doing nothing.
+        ///
+        /// ⚠️ IT CAN ONLY EVER END A MATCH EARLIER. `MatchDirector` still ends one when the
+        /// rounds run out; this is a second condition beside that one and never a replacement,
+        /// so a target nobody reaches changes nothing at all.
+        ///
+        /// ⚠️ A NULL SCOREBOARD IS ANSWERED RATHER THAN THROWN ON, the same shape
+        /// <see cref="LastAttackerStanding"/> and <see cref="AliveAttackers"/> both take: the
+        /// caller is a host in the middle of a round, and an exception there ends the match for
+        /// four people.
+        /// </summary>
+        public static bool ScoreTargetReached(IReadOnlyList<int> scores, int target)
+        {
+            if (target <= 0) return false;
+            if (scores == null) return false;
+
+            for (int i = 0; i < scores.Count; i++)
+                if (scores[i] >= target) return true;
+
+            return false;
+        }
 
         public static bool IsPasswordUsable(string password)
         {

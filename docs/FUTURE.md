@@ -58,15 +58,15 @@ mind we dont have budget for paying for anything"*.
 | Auth package | **`com.unity.services.authentication` 3.7.4, installed and IN USE.** ⚠️ This row read "unused" and was already wrong when Phase 1 started: `NetIdentity` had always signed in anonymously at boot. Phase 1 shipped on top of it, `docs/TODO.md` § 88. |
 | LAN | `LanBeacon`, with persistent peer identity so a reconnecting player gets their seat back. |
 | Reconnect | `LobbySession` already implements seat reclamation, a fast-reconnect window and leader election. **Do not rebuild this.** |
-| Protocol gate | `NetSession.ProtocolVersion`, **16** as of 2026-08-30. Peers on different versions refuse each other at approval, by design. ⚠️ **Read the constant rather than this row**, per § 0.6: it has moved three times since this file was written (14 spectator pause, 15 match record, 16 the impersonation guard). |
+| Protocol gate | `NetSession.ProtocolVersion`, **22** as of 2026-09-03. Peers on different versions refuse each other at approval, by design. ⚠️⚠️ **READ THE CONSTANT RATHER THAN THIS ROW, AND THIS ROW IS THE PROOF OF WHY**: it said **16** for four days while the code went 17, 18, 19, 20, 21, 22, because every session bumped the constant and none of them came back here. `grep -n ProtocolVersion Assets/TumbangPreso/Runtime/Net/NetSession.cs`. ⚠️ **When it moves, the Windows player and the .apk are rebuilt from ONE commit and shipped together** (`CLAUDE.md` § 4a), or they refuse each other correctly and it reads as a bug. |
 | Bots | `AIController` plus `GameLaunch.AllBots`. A bot presses the same buttons a human does, one physics step serves both. |
 | Spectating | `SpectatorCamera` with free, follow and POV modes, plus a spectator pause that crosses the wire. |
 | Chat | `LobbyChat`, lobby and in-match, with hard-won layout notes. Extend it; never write a second one. |
 | Content | 18 characters, 6 heroes, 6 lata, 10 tsinelas, 3 maps, `RosterBook` resolving id to model and palette. |
 | Recolouring | `ToonSkin`'s 16-slot palette remap, per renderer, cached. **A colour variant of any character is already nearly free.** |
 | Settings | `Settings.SettingsStore` for persistence, `Rebinding` for the input map. |
-| Input | `TumbangPreso.inputactions`: **Keyboard and Mouse only.** Zero gamepad bindings, zero touch bindings, no control schemes. |
-| Build targets | Windows Standalone, WebGL, Linux Dedicated Server. **No Android, no iOS.** |
+| Input | ⚠️ **REVERSED 2026-09-02.** Read `docs/TODO.md` § 125 and `CLAUDE.md` § 4a. This row said *"Keyboard and Mouse only. Zero gamepad bindings, zero touch bindings, no control schemes."* It is now **three control schemes, 26 gamepad bindings and a generated on-screen touch layer**, and a new `Verb` does not COMPILE without a pad binding and a thumb target. |
+| Build targets | ⚠️ **Windows Standalone, WebGL, Linux Dedicated Server AND ANDROID**, as of 2026-09-02. Still **no iOS**: it needs a Mac the team does not have. |
 | Localisation | **None, and it stays none.** English only, § 16.3. |
 | Accessibility | **None beyond rebinding.** No colourblind mode, no UI scale, no subtitle system. |
 
@@ -351,8 +351,8 @@ THIS IS TRUE.** The prose about design intent ages well. The claims about the co
 | A claimed lobby handle is verified | `grep -n VerifiedArrivalHandle Packages/com.tumbangpreso.core/Runtime/AccountRules.cs` | The impersonation guard is built, `docs/TODO.md` § 90.1. ⚠️ § 88.1c's prescribed fix is NOT what shipped and that entry says so; read § 90.1. |
 | Every Cloud Code call goes through one helper | `grep -rn "cloud-code.services.api.unity.com" Assets` returns exactly `Net/CloudCode.cs` | A second hand-written request has appeared. `docs/TODO.md` § 89.5 records why that is the shape where the probe passes and the game fails. |
 | Discovery is UGS Lobby, connection is UGS Relay | Read the header of `Assets/TumbangPreso/Runtime/Net/ServerQuery.cs` | The whole of §§ 0.3, 7 and 8 assumes UGS. Re-cost them. |
-| The input map has no gamepad or touch bindings | `grep -c Gamepad Assets/TumbangPreso/Resources/TumbangPreso.inputactions` | Phases 14 and 15 shrink a lot. |
-| Build targets are Windows, WebGL, Linux server only | `ls "/c/Program Files/Unity/Hub/Editor/*/Editor/Data/PlaybackEngines/"` | Phase 15 step 1 may already be done. |
+| ⚠️ **STALE SINCE 2026-09-02:** the input map has no gamepad or touch bindings | `grep -c Gamepad Assets/TumbangPreso/Resources/TumbangPreso.inputactions` returns **26**, not 0 | Phase 14 is SHIPPED and Phase 15 is playable. This row is kept because it is the check that proves it, and because it is the exact form § 0.6 asks for: read the code, not the prose. |
+| ⚠️ **STALE SINCE 2026-09-02:** build targets are Windows, WebGL, Linux server only | `ls "/c/Program Files/Unity/Hub/Editor/*/Editor/Data/PlaybackEngines/"` shows **AndroidPlayer** | Phase 15 step 1 is done. ⚠️ **It is per MACHINE, not per repo**: the module is an editor install, so a fresh laptop shows the old answer and has to install it again. |
 | There is no colourblind support and no UI scale | `grep -rn "colourblind|colorblind|UiScale" --include=*.cs Assets` | Phase 16 shrinks. |
 | Progression exists, and XP is awarded server-side | `grep -rn ProgressionRules Packages/com.tumbangpreso.core`, then `grep -n award ugs/cloud-code/match-record.js` | Phase 4 has shipped. Read `docs/TODO.md` § 91 before touching a rate, and § 91.5 before moving the award to a second call site. |
 | The account and career screens are `PlayerHub` | `grep -rn "class PlayerHub" Assets` | `AccountOverlay` and `ProfileOverlay` are DELETED, not deactivated. `docs/TODO.md` § 92. Build new settings-shaped screens out of `UiRows`, never out of hand-written Y offsets. |
@@ -360,6 +360,8 @@ THIS IS TRUE.** The prose about design intent ages well. The claims about the co
 | Scoring is one host-side writer | `grep -n AddScore Assets/TumbangPreso/Runtime/MatchDirector.cs` | § 8's corroboration design may no longer be the right shape. |
 | `NetSession.ProtocolVersion` is a gate between builds | `grep -n ProtocolVersion Assets/TumbangPreso/Runtime/Net/NetSession.cs` | Read the current number rather than quoting one from here. |
 | The free tiers named in § 0.3 still exist at those shapes | Check the service's own pricing page | ⚠️ **Vendor free tiers change without notice. Never quote a specific quota from this file to anybody.** |
+| ⚠️⚠️ **A GREEN FULL PLAYMODE RUN IS A GATE** | Run it twice and diff the failure sets | **It is not, as of 2026-09-03.** `docs/TODO.md` § 126.8: two runs of nearly the same code came back 42 red and 41 red **with eleven suites swapping sides**. Nine suites gave ~20 failures in the full run and **2** on their own. Verify with `-testFilter` over what you touched, which is what § 0.5 rule 9 already says, and treat the full run as a survey until § 126.8 is closed. |
+| ⚠️ **The .apk has never been built and nothing has run on a device** | `ls ~/Desktop/TumbangPreso-Android/`, then `Logs/shots-android/` | **Done 2026-09-03**, `docs/TODO.md` § 126.10. ⚠️ The .apk is **arm64-only**: Unity 6 ignores the x86_64 request, and the emulator runs it by translation. Performance on that emulator is not a measurement (1 core, GPU off, translating). |
 | Passive defence pays 900 a round against 100 for a knockdown | `docs/Design.md` and `Balance.cs` | Arguments in `INSPIRATION.md` §§ 2.15 and 4.2 rest on this. |
 
 ⚠️ **AND THE NUMBERS IN THESE FILES ARE ILLUSTRATIONS, NOT BALANCE.** Every rating step, XP curve,
@@ -820,7 +822,30 @@ satisfied.
 
 ---
 
-## PHASE 5 · COSMETICS AND CHARACTER CUSTOMISATION ⚠️ REWORKED TWICE, 2026-08-31
+## PHASE 5 · COSMETICS AND CHARACTER CUSTOMISATION ✅ SHIPPED 2026-08-31, status corrected 2026-09-03
+
+⚠️⚠️ **THE HEADING READ `⚠️ REWORKED TWICE, 2026-08-31` FOR THREE DAYS AFTER THE PHASE SHIPPED,
+AND STALE BOOKKEEPING IS ITS OWN BUG.** § 0.6 exists because a plan that says a built thing is
+unbuilt sends the next session to rebuild it, and this section's own body has said *"✅ AND IT
+ENTERS A MATCH"* since 2026-08-31 while its heading said the phase was mid-rework. **Checked
+against the code on 2026-09-03 rather than against this document**, which is § 0.6's rule:
+
+| The list at the bottom of this section | Where it actually is |
+|---|---|
+| Custom character creator, 3 save slots | ✅ `CustomCharacterScreen`, `CustomCharacterStore`, `CustomCharacterRules.MaxSlots`, `CustomCharacterScreenProbe` |
+| Hero outfits and clothes | ✅ The CLOTHES and STRENGTH rows on character select, twelve of sixteen palette slots reachable, `RosterIntegrityTests` |
+| Headwear | ✅ `VoxelWardrobe` Gear section, 18 entries, all geometry |
+| Tsinelas skin, can skin | ✅ `Roster.Slippers`, `Roster.Cans`, picked on character select tabs 1 and 2 and carried in `LobbySeatInfo` |
+| Emote wheel | ✅ `UI/EmoteWheel.cs`, and `CLAUDE.md` § 4's emote camera rule is built around it |
+| The banner | ✅ `Core/Banner.cs` (`BannerRules`, `Normalise`, `Authorise`), drawn by the hub, the lobby, the HUD and the end-of-match board |
+| **Victory pose** | ❌ **The one entry on this list that does not exist**, and it greps to nothing in `Assets/` or `Packages/` |
+
+⚠️ **THE RECOMMENDATION FOR THE VICTORY POSE IS TO CUT IT, AND THE ARGUMENT IS § 0.5 RULE 11b
+RATHER THAN COST.** *"The test for adding anything is what the player has to hold in their head,
+not what it costs to build."* The emote wheel already answers "celebrate", it is bound, it is
+replicated, and it is a control the player has learned; a victory pose is a **second** cosmetic
+slot doing the same job at a moment the player is looking at a scoreboard. It stays listed here as
+`❌` rather than deleted, per `CLAUDE.md` § 3: record the deletion and the reasoning.
 
 ⚠️⚠️ **ROSTER INTEGRITY VS. THE DEDICATED "CREATE YOUR OWN CHARACTER" SYSTEM.**
 `docs/TODO.md` § 107. A previous pass misunderstood 🧑's vision and applied a whole-body hue/tint slider across the entire roster, resulting in classic characters like **Berto** turning alien cyan and magenta with illegible skin tones. 🧑 corrected this immediately:
@@ -1293,8 +1318,16 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 does not.** A 4-player game with 30 concurrent players has a queue problem that no amount of
 ranked polish fixes, and the fastest way to make a competitive game feel dead is an empty queue.
 
-- **Difficulty tiers for bots**, exposed in Practice and in custom games. `AIController` exists and
-  the bots already press the same buttons a human does, so this is tuning, not architecture.
+- ✅ **Difficulty tiers for bots: ALREADY BUILT, verified 2026-09-03 against the code.** This is
+  § 0.6 earning its keep: the bullet read as unstarted work and the whole thing is shipped.
+  `AIController.Difficulty` is a three-tier enum, `AiTuning.For(tier)` carries the personality per
+  tier, `ApplyDifficulty(savedIndex)` reads the saved setting, `ApplyDifficultyFromSettings` is
+  called by `MatchInstaller` on every match, and the settings panel has the row. ⚠️ **`NoBotsIndex`
+  is a fourth option meaning NONE**, asked for by name (*"make it so that in practice mode theres
+  an option to turn off all bots"*), and it is an absence of SEATS rather than a parked brain.
+  ⚠️ **The tier still clamps to 0..2 when NONE is selected**, deliberately, so an out-of-range cast
+  can never reach `AiTuning.For`. **Do not rebuild any of this.** What is genuinely open below is
+  the QUEUE half, not the bot half.
 - ❌ **Bot backfill of an abandoned seat. CUT 2026-08-30, on 🧑's instruction:** *"we dont want
   bot backfill"*. A seat that empties mid-match stays empty. ⚠️ **This is a narrower cut than it
   looks and the code already does the narrow half**: `MatchRpc.HostPeerLeft` installs an
@@ -1323,8 +1356,16 @@ ranked polish fixes, and the fastest way to make a competitive game feel dead is
 - ❌ **No named practice ladder. CUT 2026-08-31.** A separate progression track against bots is a
   fourth bot feature and a fifth progression system, and Practice plus `GuidedTraining` already
   give a new player somewhere to learn.
-- ⚠️ **Bots must be visibly labelled.** A player who thinks they beat a person and did not will be
-  angrier when they find out than they would have been to know.
+- ✅ **Bots must be visibly labelled: DONE**, verified 2026-09-03. `BotFillRules.BotTag` is one
+  string in the core and the lobby writes it. A player who thinks they beat a person and did not
+  will be angrier when they find out than they would have been to know.
+- ✅ **AND SO IS EVERYTHING ELSE IN THIS PHASE, INCLUDING THE PART THAT LOOKS HARDEST.**
+  `BotFillRules` carries the 45-second casual threshold, the 150-second ranked one, and
+  `Weight(humans, seats)`: **every human seat past the first is a quarter of the result**, so four
+  humans is 1.0 and a solo human against three bots is 0.0. `RatingRules.Blend` applies it to
+  rating, deviation AND volatility, and `ugs/cloud-code/match-record.js` computes the same weight
+  from `IsBot` server-side. ⚠️ **Rule 1 above is therefore satisfied**, and `Phase11And12Tests`
+  asserts both halves against one table. **Phase 11 has nothing open.** `docs/TODO.md` § 128.
 
 ⚠️ **AND THE HARD PART IS THAT THE BOTS ARE A BALANCE INSTRUMENT TOO.** `BotBehaviourProbe`'s
 numbers are liveness floors, never comparisons at n=1, and `docs/TODO.md` § 16 carries the noise
@@ -1367,7 +1408,8 @@ does not exist. Classic and Hero Strike are the game. These two are the whole ar
 
 **Maps:** three exist and one has a design document. A map is the most expensive content in the
 game. **Map rotation and a map vote are nearly free and buy most of the same freshness.** Build
-those before building a fourth map.
+those before building a fourth map. ✅ **Both are built as of 2026-09-03**, rotation wired and the
+ballot's rules written and tested ahead of the wire: `docs/Formats.md` § 4.
 
 **Custom games** are the multiplier on all of it: private lobby, password, round length, score
 target, character and tsinelas restrictions, bot count, item toggles. Community formats come out of
@@ -1501,23 +1543,31 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
-## PHASE 14 · CONTROLLER SUPPORT
+## PHASE 14 · CONTROLLER SUPPORT ✅ SHIPPED 2026-09-02, branch `ui-redesign`
 
-**Starting point: zero.** `TumbangPreso.inputactions` has one keyboard binding and one mouse
-binding, no gamepad paths and no control schemes.
+✅ **SHIPPED. `docs/TODO.md` § 125 is the as-built record and `CLAUDE.md` § 4a is the rule that
+came out of it.** Read those two rather than this section: this was written ahead of the work and
+§ 0.6 is why that matters.
 
-- Control schemes: Keyboard and Mouse, Gamepad, and later Touch. The Input System does this
-  natively and `Rebinding` already exists for the map.
-- Full gamepad bindings for every action, including the spectator context that
-  `Rebinding.SpectatorContext` already names as a separate set.
-- ⚠️ **`E` is contextual and that is the hard part.** Tap picks up, hold 1.25 s shoves, hold 2.5 s
-  as taya resets the lata. A hold on a face button is fine; the on-screen prompt is what needs
-  rebuilding, because it names a key today.
-- **Glyph swapping on every prompt**, driven by the last device used, not by a setting.
-- Rumble on knockdown, tag and can reset.
-- **Full menu navigation on a stick**, which is a bigger job than the gameplay bindings, is the
-  thing that always gets skipped, and is what blocks Phase 15 when it is.
-- **No aim assist. Separate the pools instead**, which is free, exact, and removes the argument.
+**Starting point was zero**, exactly as written below: one keyboard binding and one mouse binding
+per action, no gamepad paths, no control schemes.
+
+| The plan | What shipped |
+|---|---|
+| Control schemes: Keyboard and Mouse, Gamepad, Touch | ✅ All three declared in the asset |
+| Full gamepad bindings for every action, spectator context included | ✅ 26 bindings, generated FROM `InputLayer.InputCatalogue` by `InputAssetSync.Regenerate` rather than hand-written |
+| ⚠️ *"`E` is contextual and that is the hard part"* | ✅ Still ONE control (`buttonWest`), still resolved downstream. The prompt was the real work and it reads the live binding per device now |
+| Glyph swapping driven by the last device used, not a setting | ✅ `InputLayer.LastInputDevice` drives `Hud.KeyLabel`. ⚠️ The labels are WORDS ("BUTTON WEST"), not console face-button glyphs; that needs authored art and is § 125.13 |
+| **Full menu navigation on a stick**, *"the thing that always gets skipped"* | ✅ **Not skipped.** `ScreenFocus` is installed by `MenuKit.BuildCanvas` and `ConvertedScreen.Start`, so every screen gets an explicit, wrapping focus path by construction, and `InputSurfaceProbe` walks it at twelve shapes |
+| Rumble on knockdown, tag and can reset | ✅ **Done 2026-09-03**, `docs/TODO.md` § 126.7. Four cues, not three: BEING TAGGED is the strongest and is not on this list, because it is the one event that pays the player nothing and therefore the one the score system says nothing about. Two motors, `Max()` never sum, an off switch in the CONTROLS list, and `Rumble.Stop` on every exit path because a motor left running outlives the process |
+| **No aim assist. Separate the pools instead** | ✅ Unchanged. `Matchmaker` already carried `InputDevice` in the pool key and still does |
+
+⚠️⚠️ **AND THE THING THIS PHASE ACTUALLY TURNED ON WAS NOT A BINDING.** `StandaloneInputModule`
+reads the LEGACY input manager, and this project runs `activeInputHandler: 2` (Both), so it ran
+without erroring while no gamepad binding could reach it: a mouse worked, every screen looked
+correct, and a stick moved nothing. `InputLayer.UiInputModule` replaces it and upgrades the five
+scenes that ship an authored EventSystem. **A component that half works is worse than one that
+throws.**
 
 **The prompt for this phase is [§ 19.14](#1914-prompt-for-phase-14).** Every prompt in
 this file lives in § 19 so there is one place to copy from. § 0.5 is the standing preamble each
@@ -1525,27 +1575,57 @@ one inherits and § 0.6 is what to re-verify before trusting any of them.
 
 ---
 
-## PHASE 15 · MOBILE
+## PHASE 15 · MOBILE ⚠️ PLAYABLE 2026-09-02, NOT FINISHED, branch `ui-redesign`
 
-**Be honest about the size of this. It is a port, not a feature, and it is the largest item here.**
+⚠️⚠️ **THE HONEST STATUS: THE PORT BUILDS, INSTALLS AND RUNS, AND ITEMS 3 AND 6 BELOW ARE
+UNTOUCHED.** `docs/TODO.md` § 125 is the as-built record. **This section's own opening line was
+right and stays**: it is a port, not a feature, and calling it shipped because an .apk exists would
+be the kind of claim `CLAUDE.md` § 2.2 exists to stop.
 
-**Missing before a line is written:** the Android build module is not installed (only Windows
-Standalone, WebGL and Linux Dedicated Server are). Installing it is free through Unity Hub. iOS
-additionally needs a Mac to build on, which the team does not have, so **Android first and iOS only
-if a Mac appears**.
+⚠️⚠️ **AND THAT SENTENCE WAS WRITTEN BEFORE IT WAS TRUE, WHICH IS EXACTLY WHAT § 0.6 IS ABOUT.**
+On 2026-09-02 this section said the port *"builds, installs and runs"* and ticked item 1, while
+`docs/TODO.md` § 125.13 said, in the same commit, **"THE .apk WAS NEVER BUILT OR INSTALLED, AND
+NOTHING HAS RUN ON A DEVICE."** Two documents in one repository, one commit apart, flatly
+contradicting each other about whether the headline deliverable existed. The TODO was the correct
+one, which is § 0.5 rule 2's ordering (*"where this document and the code disagree, the code is
+right"*) coming out exactly as written.
 
-1. Install the module and get a build onto a device, however ugly. Nothing else here means anything
-   until that has happened once.
-2. Touch controls: left stick, look drag, buttons for throw, grab, jump, sprint. The contextual `E`
-   hold becomes a long press with a radial fill.
-3. Performance. The toon shader draws an inverted hull per prop, doubling the draw calls on exactly
-   the hardware least able to afford it. **Measure it on device**, then decide whether mobile drops
-   the hull or gets a cheaper one. `docs/TODO.md` § 63 already records what the outline costs.
-4. UI at phone aspect ratios. `AspectRatioProbes` already drives nine resolutions; add the phone
-   ones rather than eyeballing it.
-5. Cross-play with **separate pools**, same reasoning as controller.
-6. Battery, thermals and a 30 FPS cap option.
-7. Account continuity: the same account on phone and PC, which Phase 1 already gives.
+✅ **It is true as of 2026-09-03**, and `docs/TODO.md` § 126.10 is the receipt: the build line, the
+install, the logcat, and two screencaps in `Logs/shots-android/`. ⚠️ **Reading that log found two
+settings in `GameBuilder.ConfigureAndroid` that the engine had been silently refusing all along**,
+one of which is the very claim item 1 makes below about x86_64. **A tick in this file is a plan,
+not a measurement. Only `docs/TODO.md` records what was actually run.**
+
+**Missing before a line was written**, and all of it now resolved: the Android module was not
+installed **on either laptop** (a handoff said it was missing on the other machine; it was missing
+here too). Installed through the Hub CLI with `--childModules`, which brings its own SDK, NDK and
+OpenJDK. iOS still needs a Mac the team does not have.
+
+1. ✅ **Module installed and a build put on a device.** `GameBuilder.BuildAndroid`, ARM64 and
+   x86_64. ⚠️ **x86_64 is not optional here**: 🧑 has no Android handset (*"i dont have any nadroid
+   at all"*), so an ARM64-only .apk could not be run by anybody on this team. The emulator AVD is
+   `tumbangpreso` (Pixel 5, Android 14, x86_64).
+2. ✅ **Touch controls**: stick, look drag, and a control per verb generated from
+   `InputLayer.InputCatalogue`, laid out on two arcs around the thumb's rest (§ 125.10).
+   ⚠️ **The contextual key did NOT become a long press with a radial fill** and should not: it is
+   still one control resolved downstream, exactly as on a keyboard, because that is
+   `PlayerInputReader`'s standing rule. A radial fill is a presentation idea and is still open.
+   ➕ **Not in this plan and shipped anyway: a PUBG-style customiser** (opacity, size,
+   drag-to-position), asked for during the work. § 125.11.
+3. ❌ **Performance is UNMEASURED on device.** The inverted-hull outline still draws per prop.
+   `docs/TODO.md` § 63 has what it costs. **Nothing in this batch touched rendering**, so assume
+   the cost is exactly what § 63 says and measure before deciding.
+4. ✅ **UI at phone aspect ratios**, and done the way this item asks rather than by eye:
+   `ProbeResolutions` now carries `2340x1080`, `2400x1080` and his own `1600x680` window alongside
+   the nine, and every layout probe drives all twelve.
+5. ✅ **Crossplay with separate pools.** `NetSession.ProtocolVersion` untouched at 21 and asserted;
+   `Matchmaker` still bands the ranked queue by `InputDevice`. Lobbies, join codes and LAN are
+   cross-device.
+6. ❌ **Battery, thermals and a 30 FPS cap option: not done.**
+7. ✅ **Account continuity** was already Phase 1's and is unchanged.
+
+⚠️ **THE PROTOCOL GATE PARAGRAPH BELOW IS STILL THE MOST IMPORTANT LINE IN THIS SECTION** and is
+now enforced by a test rather than by remembering it.
 
 ⚠️ **THE PROTOCOL VERSION GATE IS AN ASSET HERE.** `NetSession.ProtocolVersion` already refuses
 peers from different builds. Mobile and desktop must ship the same version at the same time or they
@@ -1576,6 +1656,15 @@ cheap phone screen all produce the same failure: you cannot tell the taya from t
 well as hue. A shape on the nameplate, an icon on the marker, a different outline weight. Then add
 palettes for deuteranopia, protanopia and tritanopia that keep the two roles maximally separated in
 whatever the player actually sees.
+
+⚠️⚠️ **STARTED 2026-09-03, AND CHECKING THE CLAIM FIRST CHANGED THE WORK. `docs/TODO.md` § 127.**
+Two of the three surfaces named above already carried a second channel and nobody had noticed: the
+scoreboard prints `DEFENDER` / `ATTACKER` as a word, and the floating tag writes `· TAYA` on the
+defender alone. **The FLOOR RING was the hue-only one**, and it is the one that decides a fight,
+because the tag fades out at twelve metres in a fourteen-metre box. The taya's ring is an annulus
+now and an attacker's is still a disc, which is a shape rather than a colour and **spends less of
+§ 2's area budget rather than more**. ⚠️ **The crosshair and the lata label are still hue-only**,
+and the acceptance test, a greyscale frame, has not been run yet. § 127.3 has both.
 
 ### 16.2 The rest of the accessibility list
 
@@ -1637,6 +1726,20 @@ that, and § 88 is the phase to re-test after.
 the wire, a HUD that already knows how to draw a broadcast clock, and `LobbySession`'s reconnect.
 **This phase is closer to done than any other here.**
 
+⚠️⚠️ **AND MORE OF IT EXISTS SINCE 2026-09-04 THAN THIS SECTION USED TO SAY.** `docs/TODO.md`
+§ 134 is the pass; what it added that this phase was going to have to build:
+
+| Phase 17 wanted | State after § 134 |
+|---|---|
+| **Highlight detection off the events already raised** | ✅ **Built.** Every replay frame carries an event type, the responsible seat and a timestamp; six kinds are marked, including two that score nothing and were therefore invisible to `MatchDirector.Scored` (a retrieval under pressure and an ultimate impact) |
+| **A caster overlay laid out for a stream rather than for a player** | ⚠️ **Partly.** The spectator scoreboard carries tsinelas state, ultimate readiness and downed state as three characters per row, and freezes during a replay. Four stamina bars are still not on it |
+| **Clip export, "save the last 30 seconds"** | ⚠️ **Much cheaper than it was.** The buffer is 10.0 s of 640x360 RGB565 with per-frame timestamps and markers, so the remaining work is a longer ring and an encoder rather than a capture system |
+| Spectator delay, tournament mode, bracket page, organiser checklist | Not started |
+
+⚠️ **THE REPLAY IS PIXELS, NOT A REWIND, AND THAT IS DELIBERATE.** It cannot move a live player,
+a lata or a slipper and it never needs `Time.timeScale = 0`. **The input-stream replay in item 2
+below is a different feature**, not an upgrade of this one, and both can ship.
+
 - **Tournament mode:** lobby password, fixed roster, fixed map, no matchmaking, spectator slots
   that do not consume a seat, and a match that can be restarted by an organiser.
 - **Replays: record the input stream and the seed, not the frames.** The match is deterministic
@@ -1648,8 +1751,8 @@ the wire, a HUD that already knows how to draw a broadcast clock, and `LobbySess
 - **Caster overlay:** four scores, four stamina bars, ultimate charge, nameplates, laid out for a
   stream rather than for a player.
 - **Spectator delay**, configurable, so a stream cannot be sniped in a tournament.
-- **Highlight detection** off the events already raised, so the clip worth posting can be found
-  without watching the whole match.
+- ✅ **Highlight detection** off the events already raised, so the clip worth posting can be found
+  without watching the whole match. **Built 2026-09-04**, `docs/TODO.md` § 134.6.
 - **A bracket page**, which can be a static site and needs no service.
 - **An organiser's checklist document**, because the thing that loses a tournament is a build
   mismatch: `NetSession.ProtocolVersion` refuses peers from different branches by design, so every
@@ -2366,8 +2469,13 @@ exist.**
 >    restrictions, bot count, rule toggles. Everything else in this phase gets cheaper afterwards,
 >    and it is also the tournament tool for Phase 17.
 > 2. ⚠️ **Not the daily seed.** It was cut on 2026-08-31 and `INSPIRATION.md` § 2.9 records why.
-> 3. Map rotation and a map vote. **Do these before building a fourth map**: voting buys most of
->    the same freshness for a fraction of the work.
+> 3. ✅ **BUILT 2026-09-03.** Map rotation and a map vote. `MapRotationRules` (engine-free,
+>    16 tests), `docs/Formats.md` § 4, `docs/TODO.md` § 130.12. A REMATCH moves to the next map,
+>    host-only, over the `SelectMap` broadcast that already existed, so **the protocol did not
+>    move**. ⚠️ **The BALLOT is not across the wire yet**: `Decide` takes votes when a lobby has
+>    some to give it, and until then silence falls through to the cycle. Collecting votes is a new
+>    message and therefore a protocol move, and it should be spent in the same bump as LAST
+>    TSINELAS's match half (`docs/TODO.md` § 130.13) rather than on its own.
 >
 > **Constraints.** Every new mode adds its rules to `Packages/com.tumbangpreso.core/`, never to
 > Unity code. ⚠️ **A new mode is a new mode, never a change to Classic.** `docs/Design.md` governs

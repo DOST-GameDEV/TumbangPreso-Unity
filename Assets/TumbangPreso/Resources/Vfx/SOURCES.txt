@@ -1,0 +1,53 @@
+ABILITY EFFECT SHEETS: WHERE THEY CAME FROM AND WHAT THEIR LICENCE IS
+
+Every file in this folder is a DERIVATIVE. None of them is the artist's file as downloaded:
+tools/build_vfx_sheets.py recolours each one into this game's hero families, because the
+sources arrive in cobalt blue, cornflower and orange and the heroes here are amber, teal, red,
+yellow and purple. The cell grid, the frame order and the drawing itself are untouched.
+
+docs/Asset_Sourcing.md is the full source list and the rules that decide what may ship.
+docs/TODO.md section 131 is the work.
+
+---------------------------------------------------------------------------
+1. PVFX Foundry, by Pixel VFX Studio
+   https://nerijs.itch.io/pvfx-foundry
+   CC0 1.0 Universal (public domain dedication)
+   https://creativecommons.org/publicdomain/zero/1.0/
+
+   Commercial use, modification and redistribution allowed. No credit required; the pack
+   suggests one and it is given here anyway.
+
+   Eleven of the twelve sheets here are recoloured PVFX Foundry effects, 96 x 96 at 20 FPS:
+
+     vfx_rupture_v1     earth-rupture        vfx_bloom_v1       spectral-bloom
+     vfx_frostnova_v1   frost-nova           vfx_bolthead_v1    magical-projectile
+     vfx_emberjet_v1    ember-jet            vfx_smoke_v1       smoke-puff
+     vfx_spark_v1       electric-impact      vfx_dust_v1        landing-dust
+     vfx_implosion_v1   void-implosion       vfx_shrapnel_v1    solar-shrapnel
+     vfx_burst_v1       warm-explosion
+
+---------------------------------------------------------------------------
+2. Lightnings, by hdst
+   https://opengameart.org/content/lightnings
+   CC0 1.0 Universal (public domain dedication)
+
+   vfx_bolt_v1 is one 512 x 512 texture cut into eight 64 px columns and graded onto Zack's
+   amber ramp. Each column is one alternative stroke; a strike chooses one rather than
+   playing them in order.
+
+---------------------------------------------------------------------------
+NOT USED, AND RECORDED SO NOBODY HUNTS FOR IT: the CC0 Four Summoning Circles by Luke.RUSTLTD
+(https://opengameart.org/content/4-summoning-circles) is the source docs/Asset_Sourcing.md
+maps to Phaister's Hex, and it is deliberately absent. Her ward is conformed to the road by
+VfxShapes.DrapeToGround because a circle that ignored the kerb was reported by name, and a
+four vertex quad has nothing to conform with. tools/build_vfx_sheets.py carries the full
+argument and the route back in.
+
+NO ATTRIBUTION IS LEGALLY REQUIRED FOR EITHER OF THE TWO SOURCES ABOVE. It is recorded because
+a licence that lives only in a commit message is a licence nobody can find, and because
+Attention.md section 7.2 asks for every sourced asset's licence to be readable by a person
+before it ships.
+
+NOTHING FROM A UNITY ASSET STORE PACKAGE OR A SONNISS LIBRARY IS IN THIS FOLDER. Those may
+ship inside a compiled player but their raw files may not enter a public repository, and this
+repository is public. docs/Asset_Sourcing.md rule 8.

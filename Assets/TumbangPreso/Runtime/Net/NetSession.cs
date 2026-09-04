@@ -274,7 +274,42 @@ namespace TumbangPreso.Net
         /// unregistered message name, where a widened `SelectMode` would read a format out of the
         /// bytes it expects a mode in. **The version still moves**, because tolerating the message
         /// is not the same as playing the same game.
-        public const int ProtocolVersion = 21;
+        ///
+        /// ⚠️⚠️ 22 IS LAST TSINELAS STANDING'S MATCH HALF, SINCE 2026-09-03, AND IT IS THE
+        /// SECOND HALF OF THE MOVE 21 ONLY LOOKED LIKE IT HAD MADE. **21 covers "the peer knows
+        /// about `MatchFormat`". It does not cover "the peer knows how to RUN this one",** and
+        /// those are different claims: 21 shipped a format a lobby could select and a match could
+        /// not play, so every peer agreed on a word and none of them had any code behind it.
+        /// `docs/TODO.md` § 130.13.
+        ///
+        /// Three things move at once and no one of them would have been survivable alone:
+        ///
+        ///  1. **A round can now end on a condition other than the clock.** The last attacker
+        ///     standing settles it, which every peer's HUD reads off `RoundDirector.TimeLeft`.
+        ///  2. **`ScoreEvent.LastTsinelasStanding` is a new value on an enum that travels as an
+        ///     int.** `OnScoreMsg` drops an event it cannot name rather than casting it, which is
+        ///     correct and is exactly the problem: a 21 peer would see the round end early, watch
+        ///     the host's winner gain 100 points out of nowhere on the next `SyncWorld`, and have
+        ///     no toast, no sting and no line on the results board saying why.
+        ///  3. **`Tsinelas` is a new message carrying the stock table** (`BroadcastTsinelas`). A
+        ///     peer without the handler never learns that its own player is out, so it goes on
+        ///     letting them throw and grab while the host ignores every request. That is the
+        ///     "two different games sharing one scoreboard" sentence above, on the one machine
+        ///     whose player is being told the game is broken.
+        ///
+        /// ⚠️⚠️ AND `CLAUDE.md` § 4a'S CONSEQUENCE IS NOT OPTIONAL HERE: **the Windows player and
+        /// the .apk are rebuilt from this commit and shipped together**, or they refuse each
+        /// other correctly and it reads as a bug. Both were rebuilt in the commit that moved this
+        /// number.
+        /// ⚠️⚠️ 22 TO 23 IS CUSTOM GAMES, AND IT IS THE SAME SENTENCE AS EVERY BUMP BEFORE IT.
+        /// The room now agrees on a whole `CustomRules` record rather than on a format alone:
+        /// `MatchRpc`'s `SelectRules` and `SyncRules` replace the `SelectFormat` and `SyncFormat`
+        /// pair, and the round COUNT and the round CLOCK are read from that record by
+        /// `MatchDirector.TotalRounds` and `RoundDirector.RoundLength`. **A peer that has never
+        /// heard of those messages plays the shipped four or eight rounds at ninety seconds while
+        /// the host plays three at sixty**, which is two different games sharing one scoreboard.
+        /// It is a refusal by design rather than a bug, and the refusal is what stops the bug.
+        public const int ProtocolVersion = 23;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
@@ -531,8 +566,123 @@ namespace TumbangPreso.Net
             return ok;
         }
 
+        // -------------------------------------------------------------------
+        // § HOW GOOD IS THE LINK, WHICH NOTHING IN THIS GAME COULD ANSWER
+        //
+        // ⚠️⚠️ THERE WAS NO CONNECTION READOUT OF ANY KIND. No ping, no RTT, no "reconnecting",
+        // nothing. Grepping the whole runtime for `Rtt`, `ping`, `latency` and `reconnect` on
+        // 2026-09-04 found one comment about audio latency and nothing else. For a game whose
+        // brief is *"make the network layer infallible for a tournament room. Bad wifi, a mix of
+        // phones and PCs, no second chance"*, the player could not tell a bad link from a bad
+        // opponent, and neither could anybody standing behind them.
+        //
+        // ⚠️⚠️ AND `ConfigureTimeouts` MAKES THAT AN EIGHT SECOND HOLE. `DisconnectTimeoutMS` is
+        // 8000, so a peer whose link dies keeps a perfectly normal-looking arena in front of it
+        // for eight seconds before anything happens at all. `docs/TODO.md` § 137.5 measured both
+        // sides of that: a five second outage is survived with three seconds to spare, and a
+        // permanent one drops at the timer. **Those eight seconds are the ones a tournament
+        // referee needs to see**, and they were the emptiest part of the whole stack.
+        //
+        // ⚠️ THIS IS THE MEASURABLE HALF ONLY, AND THE SCREEN IS § 140. It samples and it logs
+        // on a state CHANGE, which is what `tools/net_matrix.py` can read off `Player.log` and
+        // therefore what can be asserted. A HUD indicator is the other half and is written up
+        // rather than built, for `CLAUDE.md` § 4a's reason: a new always-on screen element has to
+        // answer the pad and the thumb before it ships, and that is a design pass rather than a
+        // field.
+        //
+        // ⚠️ ON A STATE CHANGE, NOT ON A SAMPLE. A line per second per peer would be noise in
+        // exactly the log somebody is reading to find out what went wrong.
+        // -------------------------------------------------------------------
+
+        /// <summary>How the link reads right now. `Unknown` when there is no transport.</summary>
+        public enum LinkState { Unknown = 0, Good = 1, Poor = 2, Bad = 3 }
+
+        /// <summary>
+        /// ⚠️ THE BOUNDS ARE THE BAD-WIFI TABLE'S OWN ROWS RATHER THAN PICKED NUMBERS.
+        /// `docs/TODO.md` § 137.5 drove real peers at 150, 300 and 600 ms round trip and wrote
+        /// down what each looked like: 150 was *"indistinguishable from the clean row"*, 300 was
+        /// *"playable ... remote bodies lag"*, and 600 was *"degraded but connected"* and is the
+        /// row where `PlausibleIntentPose` is expected to start refusing verbs (§ 135.3). So Poor
+        /// begins above the round trip nobody could see and Bad begins at the one that changes
+        /// how the game plays.
+        /// </summary>
+        private const long PoorRttMs = 200;
+        private const long BadRttMs = 450;
+
+        private const float LinkSampleSeconds = 1.0f;
+
+        /// <summary>The last sampled round trip in milliseconds, or 0 when there is no link.</summary>
+        public static long LinkRttMs { get; private set; }
+
+        /// <summary>What <see cref="LinkRttMs"/> means, for anything that wants to draw it.</summary>
+        public static LinkState Link { get; private set; } = LinkState.Unknown;
+
+        private float _linkSampleLeft;
+        private LinkState _lastReportedLink = LinkState.Unknown;
+
+        /// <summary>
+        /// ⚠️ THE HOST REPORTS ITS WORST PEER, NOT AN AVERAGE. A host with three good clients and
+        /// one on a dying phone has a problem, and an average of four hides exactly the one peer
+        /// anybody needs to know about. A client has one link and reports that.
+        /// </summary>
+        private void SampleLink()
+        {
+            if (_utp == null || _nm == null || !_nm.IsListening)
+            {
+                LinkRttMs = 0;
+                Link = LinkState.Unknown;
+                _lastReportedLink = LinkState.Unknown;
+                return;
+            }
+
+            _linkSampleLeft -= Time.unscaledDeltaTime;
+            if (_linkSampleLeft > 0.0f) return;
+
+            _linkSampleLeft = LinkSampleSeconds;
+
+            long worst = 0;
+
+            if (_nm.IsServer)
+            {
+                foreach (var client in _nm.ConnectedClientsIds)
+                {
+                    // The host's own id is in that list and its round trip to itself is
+                    // meaningless, so it is skipped rather than measured as a perfect link.
+                    if (client == _nm.LocalClientId) continue;
+
+                    long rtt = (long)_utp.GetCurrentRtt(client);
+                    if (rtt > worst) worst = rtt;
+                }
+            }
+            else
+            {
+                worst = (long)_utp.GetCurrentRtt(NetworkManager.ServerClientId);
+            }
+
+            LinkRttMs = worst;
+
+            // ⚠️ NO PEERS IS NOT A BAD LINK. A host sitting alone in a lobby has nothing to
+            // measure, and reporting that as `Bad` would light a warning on the one screen where
+            // nothing is wrong.
+            Link = worst <= 0 ? LinkState.Unknown
+                 : worst >= BadRttMs ? LinkState.Bad
+                 : worst >= PoorRttMs ? LinkState.Poor
+                 : LinkState.Good;
+
+            if (Link == _lastReportedLink) return;
+
+            _lastReportedLink = Link;
+            Debug.Log($"[Link] {Link} at {LinkRttMs} ms round trip " +
+                      $"({(_nm.IsServer ? "host, worst peer" : "client")}).");
+        }
+
         private void Update()
         {
+            // ⚠️ BEFORE THE SERVER-ONLY RETURN BELOW, AND THAT IS THE WHOLE POINT. A client is
+            // the peer that suffers a bad link and the one whose player needs telling, so
+            // sampling only on the host would measure the machine least likely to be the problem.
+            SampleLink();
+
 #if MULTIPLAY_SDK
             if (_serverQueryHandler != null)
             {

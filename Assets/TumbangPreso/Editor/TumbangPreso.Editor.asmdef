@@ -4,6 +4,7 @@
     "references": [
         "TumbangPreso.Core",
         "TumbangPreso.Runtime",
+        "Unity.InputSystem",
         "Unity.Services.Core",
         "Unity.Services.Authentication",
         "Unity.Services.Multiplayer"

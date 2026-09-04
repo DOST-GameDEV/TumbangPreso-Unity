@@ -309,8 +309,8 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("SelectMode", OnSelectModeMsg);
             cm.RegisterNamedMessageHandler("SyncDiff", OnSyncDiffMsg);
             cm.RegisterNamedMessageHandler("SelectDiff", OnSelectDiffMsg);
-            cm.RegisterNamedMessageHandler("SyncFormat", OnSyncFormatMsg);
-            cm.RegisterNamedMessageHandler("SelectFormat", OnSelectFormatMsg);
+            cm.RegisterNamedMessageHandler("SyncRules", OnSyncRulesMsg);
+            cm.RegisterNamedMessageHandler("SelectRules", OnSelectRulesMsg);
             cm.RegisterNamedMessageHandler("SyncLobbyPicks", OnSyncLobbyPicksMsg);
             cm.RegisterNamedMessageHandler("SelectLobbyPick", OnSelectLobbyPickMsg);
             cm.RegisterNamedMessageHandler("SyncPicks", OnSyncPicksMsg);
@@ -340,12 +340,16 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("ReqAbility", OnReqAbilityMsg);
             cm.RegisterNamedMessageHandler("PlayAbility", OnPlayAbilityMsg);
             cm.RegisterNamedMessageHandler("CastDenied", OnCastDeniedMsg);
+            cm.RegisterNamedMessageHandler("VerbDenied", OnVerbDeniedMsg);
             cm.RegisterNamedMessageHandler("ReqMash", OnReqMashMsg);
             cm.RegisterNamedMessageHandler("ThrowCharge", OnThrowChargeMsg);
             cm.RegisterNamedMessageHandler("ReqThrowCharge", OnReqThrowChargeMsg);
             cm.RegisterNamedMessageHandler("PlayAction", OnPlayActionMsg);
             cm.RegisterNamedMessageHandler("PlayStyle", OnPlayStyleMsg);
             cm.RegisterNamedMessageHandler("Score", OnScoreMsg);
+            cm.RegisterNamedMessageHandler("Tsinelas", OnTsinelasMsg);
+            cm.RegisterNamedMessageHandler("SelectMapVote", OnSelectMapVoteMsg);
+            cm.RegisterNamedMessageHandler("MapVoteTally", OnMapVoteTallyMsg);
             cm.RegisterNamedMessageHandler("MatchRecord", OnMatchRecordMsg);
             cm.RegisterNamedMessageHandler("Chat", OnChatMsg);
             cm.RegisterNamedMessageHandler("ChatLine", OnChatLineMsg);
@@ -1418,6 +1422,95 @@ namespace TumbangPreso.Net
             FindFirstObjectByType<UI.MatchResult>()?.HostReceiveVote((int)senderClientId);
         }
 
+        /// <summary>
+        /// PHASE 12: this peer's ballot for the next map. `docs/TODO.md` § 130.12 and § 130.18.
+        ///
+        /// ⚠️⚠️ IT IS THE HALF § 130.12 DELIBERATELY DID NOT BUILD, AND THE REASON IT COULD BE
+        /// BUILT NOW IS THAT SOMETHING ELSE HAD ALREADY PAID FOR THE BUMP. That entry shipped the
+        /// rotation over the existing `SelectMap` broadcast specifically so it would not move
+        /// `ProtocolVersion`, because moving it forces the Windows player and the .apk to be
+        /// rebuilt and shipped together (`CLAUDE.md` § 4a). LAST TSINELAS's match half moved it to
+        /// 22 in the same commit, so the ballot rides a bump that was already being paid rather
+        /// than costing a second dual rebuild later. **This is the cheap moment and there is not
+        /// another one until the next bump.**
+        ///
+        /// ⚠️ THE SEAT IS RESOLVED ON THE HOST FROM THE SENDER, NEVER TAKEN FROM THE PAYLOAD.
+        /// `TrySenderSeat` is the same guard every other peer-to-host message uses: a client that
+        /// could name its own seat could cast three ballots and hand itself the map.
+        /// </summary>
+        public bool SelectMapVoteServerRpc(int mapIndex)
+        {
+            if (NetAuthority.IsHost)
+            {
+                FindFirstObjectByType<UI.MatchResult>()?.HostReceiveMapVote(NetAuthority.LocalSlot, mapIndex);
+                return true;
+            }
+
+            if (_nm == null || _nm.CustomMessagingManager == null || !_nm.IsConnectedClient)
+                return false;
+
+            using var writer = new FastBufferWriter(8, Allocator.Temp);
+            writer.WriteValueSafe(mapIndex);
+            _nm.CustomMessagingManager.SendNamedMessage("SelectMapVote", NetworkManager.ServerClientId, writer);
+            return true;
+        }
+
+        private void OnSelectMapVoteMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
+            if (!TrySenderSeat(senderClientId, out int seat)) return;
+
+            reader.ReadValueSafe(out int mapIndex);
+            FindFirstObjectByType<UI.MatchResult>()?.HostReceiveMapVote(seat, mapIndex);
+        }
+
+        /// <summary>
+        /// HOST ONLY. The whole ballot, so every board can draw who wants what.
+        ///
+        /// ⚠️ THE WHOLE TABLE TRAVELS FOR `BroadcastTsinelas`' REASON: a "seat 2 voted for map 1"
+        /// delta that is dropped leaves a board permanently one vote out with no way to notice,
+        /// and four integers sent on the handful of frames somebody presses the chip costs less
+        /// than the code to detect that drift.
+        ///
+        /// ⚠️ AND IT IS THE DISPLAY ONLY. `MapRotationRules.Decide` runs on the host and the
+        /// answer reaches every peer through the `SelectMap` broadcast the rotation already used,
+        /// which is `SceneFlow.AdvanceMapRotation`'s own note: four peers each tallying is four
+        /// different maps.
+        /// </summary>
+        public void MapVoteTallyClientRpc(int[] votes)
+        {
+            if (!NetAuthority.IsHost) return;
+            if (_nm == null || _nm.CustomMessagingManager == null || votes == null) return;
+
+            int count = Mathf.Min(votes.Length, Core.Balance.PlayerCount);
+
+            using var writer = new FastBufferWriter(8 + (count * 4), Allocator.Temp);
+            writer.WriteValueSafe(count);
+            for (int i = 0; i < count; i++) writer.WriteValueSafe(votes[i]);
+
+            _nm.CustomMessagingManager.SendNamedMessageToAll("MapVoteTally", writer);
+        }
+
+        private void OnMapVoteTallyMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (NetAuthority.IsHost) return;
+            if (!FromHost(senderClientId)) return;
+
+            reader.ReadValueSafe(out int count);
+            if (count < 0 || count > Core.Balance.PlayerCount) return;
+
+            var votes = new int[Core.Balance.PlayerCount];
+            for (int i = 0; i < votes.Length; i++) votes[i] = Core.MapRotationRules.NoVote;
+
+            for (int i = 0; i < count; i++)
+            {
+                reader.ReadValueSafe(out int vote);
+                votes[i] = vote;
+            }
+
+            FindFirstObjectByType<UI.MatchResult>()?.ApplyNetworkMapVotes(votes);
+        }
+
         /// <summary>HOST ONLY. Broadcasts "n of m have voted" so every screen can draw it.</summary>
         public void RematchTallyClientRpc(int votes, int expected)
         {
@@ -1624,13 +1717,19 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out Vector3 from);
             reader.ReadValueSafe(out Vector3 facing);
 
+            // ⚠️ ABOVE THIS LINE A BARE RETURN IS CORRECT, BELOW IT IT IS NOT. The seat claim
+            // is what separates a refusal from a forgery; see the § note on `HostDenyVerb`.
             if (!SenderOwnsClaimedSeat(senderClientId, slot, out var who)) return;
-            if (!PlausibleIntentPose(who, from) || !Finite(facing)) return;
-            if (who != null && who.IsDefender)
+
+            if (!PlausibleIntentPose(who, from) || !Finite(facing) ||
+                who == null || !who.IsDefender ||
+                who.GetComponent<CombatVerbs>()?.HostResolvePunch(from, facing) != true)
             {
-                if (who.GetComponent<CombatVerbs>()?.HostResolvePunch(from, facing) == true)
-                    BroadcastAction(slot, "punch", senderClientId);
+                HostDenyVerb(senderClientId, slot, DeniedVerb.Punch);
+                return;
             }
+
+            BroadcastAction(slot, "punch", senderClientId);
         }
 
         public void RequestLungeServerRpc(int slot, Vector3 from, Vector3 facing, float power)
@@ -1662,14 +1761,28 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out Vector3 facing);
             reader.ReadValueSafe(out float power);
 
+            // Same split as the punch above.
             if (!SenderOwnsClaimedSeat(senderClientId, slot, out var who)) return;
-            if (!PlausibleIntentPose(who, from) || !Finite(facing) || !Finite(power)) return;
-            power = Mathf.Clamp(power, Balance.LungeMinPower, 1.0f);
-            if (who != null && who.IsDefender)
+
+            if (!PlausibleIntentPose(who, from) || !Finite(facing) || !Finite(power))
             {
-                if (who.GetComponent<CombatVerbs>()?.HostResolveLunge(from, facing, power) == true)
-                    BroadcastAction(slot, "lunge", senderClientId);
+                HostDenyVerb(senderClientId, slot, DeniedVerb.Lunge);
+                return;
             }
+
+            // ⚠️ THE CLAMP STAYS ON THE ACCEPTING PATH. A power outside the range is a number
+            // this host will not act on rather than a request it refuses: the sender still gets
+            // its dash, at a legal strength, which is what it would have got had it not lied.
+            power = Mathf.Clamp(power, Balance.LungeMinPower, 1.0f);
+
+            if (who == null || !who.IsDefender ||
+                who.GetComponent<CombatVerbs>()?.HostResolveLunge(from, facing, power) != true)
+            {
+                HostDenyVerb(senderClientId, slot, DeniedVerb.Lunge);
+                return;
+            }
+
+            BroadcastAction(slot, "lunge", senderClientId);
         }
 
         public void RequestShoveServerRpc(int slot, Vector3 from, Vector3 facing)
@@ -1699,13 +1812,18 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out Vector3 from);
             reader.ReadValueSafe(out Vector3 facing);
 
+            // Same split as the punch above.
             if (!SenderOwnsClaimedSeat(senderClientId, slot, out var who)) return;
-            if (!PlausibleIntentPose(who, from) || !Finite(facing)) return;
-            if (who != null && !who.IsDefender)
+
+            if (!PlausibleIntentPose(who, from) || !Finite(facing) ||
+                who == null || who.IsDefender ||
+                who.GetComponent<CombatVerbs>()?.HostResolveShove(from, facing) != true)
             {
-                if (who.GetComponent<CombatVerbs>()?.HostResolveShove(from, facing) == true)
-                    BroadcastAction(slot, "shove", senderClientId);
+                HostDenyVerb(senderClientId, slot, DeniedVerb.Shove);
+                return;
             }
+
+            BroadcastAction(slot, "shove", senderClientId);
         }
 
         // ⚠️⚠️ `LungeCharge` AND `ShoveCharge` ARE DELETED, NOT MOVED. They were a second
@@ -2430,6 +2548,124 @@ namespace TumbangPreso.Net
                 (Abilities.HeroAbilitySystem.Slot)abilitySlot);
         }
 
+        // -------------------------------------------------------------------
+        // § THE SAME REFUSAL, FOR THE THREE COMBAT VERBS
+        //
+        // ⚠️⚠️ EVERYTHING THE § NOTE ABOVE `HostDenyAbilityCast` ARGUES IS TRUE OF PUNCH,
+        // LUNGE AND SHOVE TOO, AND NOBODY HAD LOOKED. A client pays for all three before it asks:
+        // `StepPunch` stamps `_punchCooldown`, `ReleaseLunge` stamps `_lungeCooldown` and
+        // `_lungeActiveLeft`, and `StepShove` spends `Balance.ShoveStaminaCost` as well as
+        // stamping `_shoveCooldown`. Every refusal in the three handlers above was a bare
+        // `return`, so a refused verb left this peer holding a charge the host never made.
+        // `docs/TODO.md` § 135.2 walks all eight request handlers and says which three have the
+        // shape and which five are correct as written.
+        //
+        // ⚠️⚠️ AND IT IS WORSE THAN THE ABILITY CASE BECAUSE NOTHING HEALS IT. A refused
+        // cast at least met a 5 Hz `SyncAbility` (§ 71 had to build `mayLower` to stop it
+        // self-healing). The three verb cooldowns are on no wire, and `SyncUnit` carries stamina
+        // but is only broadcast for a body the host DRIVES, which a remote human's seat is not.
+        // See `CombatVerbs.RollBackRefusedVerb`.
+        //
+        // ⚠️⚠️ IT DOES NOT MOVE `NetSession.ProtocolVersion`, AND THE TEST FOR THAT IS
+        // WRITTEN ON THE CONSTANT ITSELF. v23's note says a peer that has never heard of the new
+        // messages *"plays the shipped four or eight rounds at ninety seconds while the host
+        // plays three at sixty, which is two different games sharing one scoreboard"*. Apply that
+        // test here: a peer that has never heard of `VerbDenied` keeps a cooldown it already
+        // keeps today and plays the exact game the host is refereeing, because the host's
+        // resolution is unchanged and only the LOSER's local bookkeeping is corrected. Ignorance
+        // of this message is degraded, not divergent, so refusing such a peer would cost
+        // crossplay and buy nothing. `docs/TODO.md` § 135.4.
+        //
+        // ⚠️ ONE MESSAGE FOR THREE VERBS, CARRYING WHICH. The ability refusal can omit its
+        // reason because the answer to all six of its guards is the same rollback; here the three
+        // verbs charge different things, so the VERB has to travel even though the REASON still
+        // does not.
+        //
+        // ⚠️ SENT ONLY TO THE PEER THAT ASKED, for `HostDenyAbilityCast`'s reason: nobody else
+        // predicted anything, so nobody else has anything to take back.
+        // -------------------------------------------------------------------
+
+        /// <summary>Which verb a refusal is taking back. Travels as a byte.</summary>
+        public enum DeniedVerb : byte { Punch = 0, Lunge = 1, Shove = 2 }
+
+        /// <summary>Tells one client the verb it predicted was refused, so it can take it back.</summary>
+        public void HostDenyVerb(ulong clientId, int slot, DeniedVerb verb)
+        {
+            if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
+
+            // ⚠️ THE HOST NEVER DENIES ITSELF, exactly as `HostDenyAbilityCast` does not. Its own
+            // verbs never travel as a request: `RequestPunchServerRpc` and its two siblings
+            // resolve in their `IsHost` branch, so a refusal there is the local `HostResolve`
+            // saying no to the same body that asked, and there is one copy of the cooldown.
+            if (clientId == _nm.LocalClientId) return;
+
+            using var writer = new FastBufferWriter(16, Allocator.Temp);
+            writer.WriteValueSafe(slot);
+            writer.WriteValueSafe((byte)verb);
+            _nm.CustomMessagingManager.SendNamedMessage("VerbDenied", clientId, writer);
+
+            CountDenial(_denialsSent, "sent", slot, verb);
+        }
+
+        // -------------------------------------------------------------------
+        // § HOW OFTEN A VERB IS REFUSED, WHICH NOTHING COULD ANSWER
+        //
+        // ⚠️⚠️ THE REFUSAL PATH WAS BUILT AND THEN COULD NOT BE OBSERVED, WHICH IS THE SAME
+        // SHAPE OF FAULT § 135 EXISTS TO FIX ONE LEVEL UP. `docs/TODO.md` § 135.3 predicts that
+        // `PlausibleIntentPose` is the reachable guard and that *"every millisecond of round trip
+        // widens that gap"*, so the refusal rate under latency is the number that says whether
+        // that prediction is right. `tools/net_matrix.py` put two peers on a 600 ms link and
+        // found no divergence in discrete state, which is the correct result and is NOT the same
+        // claim: a verb refused and correctly rolled back leaves no trace in a state report.
+        // Without this, "the host refused 40 shoves" and "the host refused none" produce
+        // byte-identical logs, which is § 68.18.10's argument about chat applied to refusals.
+        //
+        // ⚠️ FIRST, THEN EVERY 25TH, RATHER THAN EVERY ONE. These handlers sit under a 60 Hz
+        // request path and a per-refusal line would flood `Player.log` on a bad link, which is
+        // exactly the run where the rest of the log matters most. The first line proves the path
+        // is live and the running total gives the rate.
+        // -------------------------------------------------------------------
+
+        private const int DenialLogEvery = 25;
+        private readonly int[] _denialsSent = new int[3];
+        private readonly int[] _denialsTaken = new int[3];
+
+        private static void CountDenial(int[] tally, string direction, int slot, DeniedVerb verb)
+        {
+            int index = (int)verb;
+            if (index < 0 || index >= tally.Length) return;
+
+            tally[index]++;
+            if (tally[index] != 1 && tally[index] % DenialLogEvery != 0) return;
+
+            Debug.Log($"[VerbDenied] {direction} {verb} seat {slot}: {tally[index]} so far.");
+        }
+
+        private void OnVerbDeniedMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            // The two guards `OnCastDeniedMsg` carries, for the same two reasons: a listen host
+            // must not roll back authoritative state, and only the host may refuse.
+            if (NetAuthority.IsHost || !FromHost(senderClientId)) return;
+
+            reader.ReadValueSafe(out int slot);
+            reader.ReadValueSafe(out byte verb);
+
+            if (!ValidSlot(slot) || verb > (byte)DeniedVerb.Shove) return;
+
+            // ⚠️ ONLY THIS PEER'S OWN SEAT. The other three bodies are replicas that never
+            // predicted a verb, so a refusal naming one of them is a message with nothing to act
+            // on. `OnCastDeniedMsg` checks the identical thing.
+            if (slot != NetAuthority.LocalSlot) return;
+
+            Unit(slot)?.GetComponent<CombatVerbs>()?.RollBackRefusedVerb((DeniedVerb)verb);
+
+            // ⚠️ COUNTED ON BOTH ENDS ON PURPOSE. The host's tally says how many it refused and
+            // this one says how many were taken back, and the pair is what separates "the host
+            // never refused" from "the refusal never arrived". A message that is sent and lost
+            // is exactly the failure a bad link produces, and one counter cannot see it.
+            CountDenial(_denialsTaken, "taken", slot, (DeniedVerb)verb);
+        }
+
         /// <summary>One client mash press; the host decides which active state it answers.</summary>
         public void RequestMashServerRpc(int claimedSlot)
         {
@@ -2482,6 +2718,10 @@ namespace TumbangPreso.Net
 
         private void BroadcastThrowCharge(int slot, bool active, ulong? except)
         {
+            // The guard `SetThrowCharge` carries. It mattered less while both callers were
+            // presses, and it matters now that `HostPeerLeft` reaches this during a teardown.
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+
             foreach (ulong clientId in _nm.ConnectedClientsIds)
             {
                 if (clientId == _nm.LocalClientId || (except.HasValue && clientId == except.Value))
@@ -2558,6 +2798,42 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(slot);
             writer.WriteValueSafe((int)e);
             _nm.CustomMessagingManager.SendNamedMessageToAll("Score", writer);
+        }
+
+        /// <summary>
+        /// PHASE 12: the LAST TSINELAS STANDING stock table, host to every peer.
+        /// `docs/TODO.md` § 130.13, and it is why `NetSession.ProtocolVersion` is 22.
+        ///
+        /// ⚠️⚠️ THE WHOLE TABLE TRAVELS, NOT THE DECREMENT, AND THAT IS THE SAME ARGUMENT
+        /// `SyncWorld` MAKES ABOUT THE SCORE. A "player 2 lost one" message is a delta, and a
+        /// delta that is dropped or reordered leaves a peer permanently one tsinelas out with no
+        /// way to notice; four small integers sent on the handful of frames a tag happens costs
+        /// less than the code to detect that drift. `BroadcastScore` next door sends the KIND
+        /// rather than the delta for the opposite reason, and both are the same rule: send the
+        /// thing the receiver cannot reconstruct.
+        ///
+        /// ⚠️ IT IS SENT ON THE WHISTLE AS WELL AS ON EVERY TAG, so a peer that joined mid-round
+        /// or missed a packet is corrected at the start of the next round rather than staying
+        /// wrong until the match ends.
+        ///
+        /// ⚠️ THE COUNT IS WRITTEN FIRST AND THE READER TRUSTS IT ONLY AS FAR AS `Balance
+        /// .PlayerCount`. This is a `FastBufferWriter` message read field by field in order, which
+        /// is the trap `ProtocolVersion` 16, 17 and § 89.5 all record; a length-prefixed loop that
+        /// clamped nothing would let a malformed packet read off the end of the buffer.
+        /// </summary>
+        public void BroadcastTsinelas(int[] stocks, int defenderSlot)
+        {
+            if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
+            if (stocks == null) return;
+
+            int count = Mathf.Min(stocks.Length, Core.Balance.PlayerCount);
+
+            using var writer = new FastBufferWriter(12 + (count * 4), Allocator.Temp);
+            writer.WriteValueSafe(defenderSlot);
+            writer.WriteValueSafe(count);
+            for (int i = 0; i < count; i++) writer.WriteValueSafe(stocks[i]);
+
+            _nm.CustomMessagingManager.SendNamedMessageToAll("Tsinelas", writer);
         }
 
         /// <summary>
@@ -2639,6 +2915,37 @@ namespace TumbangPreso.Net
             if (!System.Enum.IsDefined(typeof(Core.ScoreEvent), rawEvent)) return;
 
             GameServices.Match?.ApplyNetworkScoreEvent(slot, (Core.ScoreEvent)rawEvent);
+        }
+
+        /// <summary>
+        /// ⚠️ THE HOST IGNORES ITS OWN LOOPBACK, exactly as `OnScoreMsg` above does and for the
+        /// same reason: `SendNamedMessageToAll` comes back to the sender, and re-applying the
+        /// table the host just computed would raise `StocksChanged` twice per tag on one machine.
+        /// </summary>
+        private void OnTsinelasMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (NetAuthority.IsHost) return;
+            if (!FromHost(senderClientId)) return;
+
+            // ⚠️⚠️ THE TAYA'S SLOT TRAVELS WITH THE TABLE AND IS NOT INFERRED ON THIS PEER.
+            // `docs/TODO.md` § 130.13. The taya's stock is 0 by definition, so a receiver that
+            // worked out the slot for itself and got it wrong would read the real taya as an
+            // eliminated attacker and switch their body off. `MatchDirector.DefenderSlot` is
+            // derived from a round number that arrives in a DIFFERENT message at 5 Hz, so on the
+            // whistle there is a window where this packet has the new round's stocks and the peer
+            // still has the old round's number. Four bytes removes the race outright.
+            reader.ReadValueSafe(out int defenderSlot);
+            reader.ReadValueSafe(out int count);
+            if (count < 0 || count > Core.Balance.PlayerCount) return;
+
+            var stocks = new int[Core.Balance.PlayerCount];
+            for (int i = 0; i < count; i++)
+            {
+                reader.ReadValueSafe(out int stock);
+                stocks[i] = stock;
+            }
+
+            GameServices.Tsinelas?.ApplyNetworkStocks(stocks, defenderSlot);
         }
 
         private void OnPlayStyleMsg(ulong senderClientId, FastBufferReader reader)
@@ -2968,47 +3275,116 @@ namespace TumbangPreso.Net
         /// </summary>
         public static event Action<int> OnFormatChanged;
 
+        /// <summary>
+        /// The whole custom rule set, agreed by the room.
+        ///
+        /// ⚠️⚠️ IT REPLACES THE FORMAT-ONLY PAIR RATHER THAN SITTING BESIDE IT, AND THAT IS
+        /// `docs/TODO.md` § 38.5's RULE. That entry found **three dead protocols and one verb that
+        /// had never travelled at all**, and the cause each time was a second path added beside a
+        /// first one. The format is a FIELD of `CustomRules`, so a message that carried it alone
+        /// would be a second, narrower statement of the same fact, and the two would disagree the
+        /// first time somebody changed the rounds and the format in one press.
+        ///
+        /// ⚠️⚠️ THE PAYLOAD IS `CustomGameRules.ToWire`, WHICH ALREADY EXISTS FOR THIS.
+        /// Its own header says so: *"The compact wire form, so a lobby advert and the approval
+        /// hello can carry a rule set without a second protocol."* Fields are appended and never
+        /// inserted, and a SHORT string is read as defaults, so the record can grow without this
+        /// message changing shape again.
+        ///
+        /// ⚠️ THE PASSWORD IS NOT IN IT AND CANNOT BE. `ToWire` drops it and `Parse` clears it,
+        /// deliberately: a lobby advert is readable by everybody in the pool, so a password in it
+        /// is a lock with the key taped to the door. The host holds it and compares what a joiner
+        /// sends.
+        ///
+        /// ⚠️⚠️ AND IT IS WHAT MOVED `NetSession.ProtocolVersion` TO 23. A peer that has
+        /// never heard of this message plays the SHIPPED round count and the SHIPPED clock while
+        /// the host plays the custom ones, which is *"two different games sharing one
+        /// scoreboard"*, the exact sentence that constant's own note uses. `CLAUDE.md` § 4a's
+        /// consequence follows: **the Windows player and the .apk are rebuilt from one commit and
+        /// shipped together**, or they refuse each other correctly and it reads as a bug.
+        /// </summary>
+        public static event Action<string> OnRulesChanged;
+
+        /// <summary>
+        /// ⚠️ KEPT AS THE NAME EVERY CALLER ALREADY USES, and it now sends the whole set. The
+        /// lobby's RULES dropdown changes one field of a rule set that has eight others, and it
+        /// has no business knowing that the transport takes a string: it hands over the format it
+        /// picked and this builds the message from the live rule set.
+        /// </summary>
         public void SelectFormatServerRpc(int format)
+        {
+            var rules = UI.SceneFlow.SelectedRules.Clone();
+            rules.Format = format >= 0 && format <= (int)MatchFormat.Mirror
+                ? (MatchFormat)format : MatchFormat.Standard;
+
+            SelectRulesServerRpc(Core.CustomGameRules.ToWire(rules));
+        }
+
+        public void SelectRulesServerRpc(string wire)
         {
             if (NetAuthority.IsHost)
             {
-                SyncFormatClientRpc(format);
+                SyncRulesClientRpc(wire);
                 return;
             }
 
             if (_nm == null || _nm.CustomMessagingManager == null) return;
-            using var writer = new FastBufferWriter(16, Allocator.Temp);
-            writer.WriteValueSafe(format);
-            _nm.CustomMessagingManager.SendNamedMessage("SelectFormat", NetworkManager.ServerClientId, writer);
+
+            // ⚠️ 256 RATHER THAN 16. The old payload was one int; this one is nine numbers and
+            // eight separators, about forty characters today and room to grow. A writer sized to
+            // the message it happens to carry is a writer that throws the day a field is appended.
+            using var writer = new FastBufferWriter(256, Allocator.Temp);
+            writer.WriteValueSafe(wire ?? "");
+            _nm.CustomMessagingManager.SendNamedMessage("SelectRules", NetworkManager.ServerClientId, writer);
         }
 
-        private void OnSelectFormatMsg(ulong senderClientId, FastBufferReader reader)
+        private void OnSelectRulesMsg(ulong senderClientId, FastBufferReader reader)
         {
             if (!NetAuthority.IsHost) return;
             if (!SenderMayConfigureLobby(senderClientId)) return;
-            reader.ReadValueSafe(out int format);
-            SyncFormatClientRpc(format);
+            reader.ReadValueSafe(out string wire);
+            SyncRulesClientRpc(wire);
         }
 
-        private void SyncFormatClientRpc(int format)
+        private void SyncRulesClientRpc(string wire)
         {
             if (!NetAuthority.IsHost) return;
+
+            // ⚠️⚠️ THE HOST CLAMPS BEFORE IT BROADCASTS, so what the room agrees on is
+            // already inside every bound. `CustomGameRules`' header: *"EVERY BOUND IN HERE IS A
+            // BOUND ON THE HOST, NOT A SUGGESTION TO IT ... each one is clamped on the way in and
+            // again on the way out of the wire."* This is the way out.
+            var clamped = Core.CustomGameRules.Parse(wire, UI.SceneFlow.SelectedMode);
+            string safe = Core.CustomGameRules.ToWire(clamped);
+
             if (_nm != null && _nm.CustomMessagingManager != null)
             {
-                using var writer = new FastBufferWriter(16, Allocator.Temp);
-                writer.WriteValueSafe(format);
-                _nm.CustomMessagingManager.SendNamedMessageToAll("SyncFormat", writer);
+                using var writer = new FastBufferWriter(256, Allocator.Temp);
+                writer.WriteValueSafe(safe);
+                _nm.CustomMessagingManager.SendNamedMessageToAll("SyncRules", writer);
             }
-            OnFormatChanged?.Invoke(format);
+
+            OnRulesChanged?.Invoke(safe);
+            OnFormatChanged?.Invoke((int)clamped.Format);
         }
 
-        private void OnSyncFormatMsg(ulong senderClientId, FastBufferReader reader)
+        private void OnSyncRulesMsg(ulong senderClientId, FastBufferReader reader)
         {
             // ⚠️ See `OnSyncDiffMsg`: the host is its own client and a broadcast loops back.
             if (NetAuthority.IsHost) return;
 
-            reader.ReadValueSafe(out int format);
-            OnFormatChanged?.Invoke(format);
+            reader.ReadValueSafe(out string wire);
+
+            // ⚠️⚠️ THE CLIENT CLAMPS TOO, AND THAT IS NOT PARANOIA ABOUT THE HOST. It is
+            // the same argument `NetSession.ApproveConnection` makes about the account id: the
+            // host is a PLAYER in this room, on somebody's laptop, and `docs/VISION.md` § 4's
+            // *"the host decides everything that scores"* is a statement about authority rather
+            // than about trust. A 900 second round arriving from a modified host would otherwise
+            // be drawn on this machine's clock.
+            var clamped = Core.CustomGameRules.Parse(wire, UI.SceneFlow.SelectedMode);
+
+            OnRulesChanged?.Invoke(Core.CustomGameRules.ToWire(clamped));
+            OnFormatChanged?.Invoke((int)clamped.Format);
         }
 
         private void OnSyncDiffMsg(ulong senderClientId, FastBufferReader reader)
@@ -3799,7 +4175,13 @@ namespace TumbangPreso.Net
             using var writer = new FastBufferWriter(256, Allocator.Temp);
             writer.WriteValueSafe(match.RoundNumber);
             writer.WriteValueSafe(match.DefenderSlot);
-            writer.WriteValueSafe(round != null ? round.TimeLeft : Balance.RoundTime);
+            // WARNING  THE FALLBACK IS THIS MATCH'S ROUND LENGTH, NOT THE SHIPPED 90.
+            // `RoundDirector.RoundLength` reads `SceneFlow.SelectedRoundSeconds`, so a custom
+            // lobby's clock is what a joining peer is told when there is no live round to read
+            // one off. A literal 90 here would hand a client on a 120 second match a clock
+            // thirty seconds short before the first tick, and it would read as a desync.
+            writer.WriteValueSafe(round != null ? round.TimeLeft
+                                                : UI.SceneFlow.SelectedRoundSeconds);
             writer.WriteValueSafe(scores);
             writer.WriteValueSafe(match.MatchInProgress);
             writer.WriteValueSafe(round != null && round.RoundActive);
@@ -4135,7 +4517,11 @@ namespace TumbangPreso.Net
             for (int i = 0; i < scores.Length; i++) scores[i] = match.ScoreFor(i);
 
             bool roundActive = round != null && round.RoundActive;
-            float timeLeft = round != null ? round.TimeLeft : Balance.RoundTime;
+            // WARNING  SAME FALLBACK AS THE SNAPSHOT WRITER ABOVE AND FOR THE SAME REASON.
+            // Two places answering one question have to answer it the same way; `docs/TODO.md`
+            // section 38.6's audit exists because a writer and a reader that disagree are not an
+            // error, they are silently misread bytes.
+            float timeLeft = round != null ? round.TimeLeft : UI.SceneFlow.SelectedRoundSeconds;
 
             SyncWorldSnapshotClientRpc(match.RoundNumber, match.DefenderSlot, timeLeft, scores,
                                        match.MatchInProgress, roundActive);
@@ -4613,6 +4999,29 @@ namespace TumbangPreso.Net
                     // left over from the peer that dropped would be applied to its replacement.
                     _resetChannelStart.Remove(seat);
                     _lastAcceptedMoveAt.Remove(seat);
+
+                    // ⚠️⚠️ AND THE WIND-UP IS CANCELLED ON EVERYBODY ELSE'S SCREEN, WHICH
+                    // NOTHING DID UNTIL 2026-09-04. `Carrier._observedCharge` is set by a
+                    // `ThrowCharge` message and cleared by exactly one thing: a later
+                    // `ThrowCharge` carrying false, sent by `CancelCharge` or by the throw
+                    // completing ON THE OWNING PEER. **A peer that drops mid-charge never sends
+                    // it**, so every remaining player was left looking at a throw wind-up that
+                    // could never finish, for the rest of the match, on a seat a bot had by then
+                    // taken over. Nothing else clears it: it is on no snapshot, and no round
+                    // boundary touches it.
+                    //
+                    // ⚠️ IT IS A LIE ABOUT COUNTERPLAY RATHER THAN A COSMETIC LEAK, which is why
+                    // it is fixed rather than noted. `SetThrowCharge`'s own summary calls the
+                    // wind-up *"counterplay rather than decoration"*: an attacker reads it to
+                    // decide whether to close or to break the line, so a permanent false one
+                    // trains three players to ignore the real thing.
+                    //
+                    // ⚠️ SENT EVEN WHEN NO BOT TAKES OVER. The picture is wrong on the observers
+                    // either way, and `BroadcastThrowCharge` is idempotent on a seat that was
+                    // never charging: `ApplyObservedCharge(false)` writes the resting -1.
+                    // Found by walking the disconnect paths in `docs/TODO.md` § 135.5.
+                    BroadcastThrowCharge(seat, false, null);
+                    Unit(seat)?.GetComponent<Carrier>()?.ApplyObservedCharge(false);
 
                     var unit = Unit(seat);
                     if (unit != null)

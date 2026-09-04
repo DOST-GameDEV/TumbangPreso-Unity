@@ -195,7 +195,22 @@ namespace TumbangPreso.UI
             topHlg.childForceExpandHeight = true;
             topHlg.childForceExpandWidth = false;
             topHlg.spacing = 8.0f;
-            Height(topSection, 52);
+            // ⚠️⚠️ 78, AND IT WAS 52 FOR A STACK THAT NOW HOLDS THREE LINES.
+            // `Logs/shots-hero/hero_inspect_dante_v4.png` is what the mismatch looks like: the
+            // amber timing line drawn straight through the first line of the body. `NameStack`
+            // holds the name at 28, the kind at 22 and the timing at 22, which is 72 plus two
+            // 1 px gaps; a parent held at 52 simply lets the surplus paint over whatever is under
+            // it, because `nameCol` has `childControlHeight` and does not resize its own box.
+            //
+            // ⚠️ THIS IS THE SAME TRAP `card.Name`'s NOTE BELOW RECORDS, ONE LEVEL UP. That one
+            // was a LABEL in a box sized to its font size; this is a GROUP in a box sized to the
+            // stack it used to hold. **A container sized to yesterday's contents is not a
+            // container that fits today's.**
+            //
+            // ⚠️ THE GLYPH TILE IS STILL 50 AND DOES NOT GROW WITH IT. It is a square by
+            // construction and `topHlg` aligns it to the top of the row, so a taller text column
+            // puts the tile beside the name rather than in the middle of three lines.
+            Height(topSection, 78);
 
             // Icon tile with key badge
             var tileGo = new GameObject("Tile");
@@ -272,25 +287,43 @@ namespace TumbangPreso.UI
             card.Name.fontStyle = FontStyle.Bold;
             Height(card.Name.gameObject, 28);
 
-            var metaRow = new GameObject("MetaRow", typeof(RectTransform));
-            metaRow.transform.SetParent(nameStack.transform, false);
-            var metaHlg = metaRow.AddComponent<HorizontalLayoutGroup>();
-            metaHlg.childControlHeight = true;
-            metaHlg.childControlWidth = true;
-            metaHlg.childForceExpandHeight = true;
-            metaHlg.childForceExpandWidth = false;
-            metaHlg.spacing = 6.0f;
-            // ⚠️ 24, NOT 18, FOR THE REASON ON `card.Name` DIRECTLY ABOVE: an 18-unit label in an
-            // 18 px box paints its descenders over whatever is under it.
-            Height(metaRow, 24);
+            // ⚠️⚠️ TWO ROWS, NOT ONE ROW OF TWO LABELS, AND `Fill`'s NOTE ON `card.Meta` HAS THE
+            // FRAME THAT FORCED IT. A `HorizontalLayoutGroup` with `childControlWidth` splits the
+            // room between its children, and there is not enough of it: both labels wrapped
+            // mid-word and drew into each other.
+            //
+            // ⚠️⚠️ 24 EACH, WHICH IS THE NUMBER THE ROW THEY REPLACE ALREADY USED, AND 22 WAS
+            // TRIED FIRST AND CLIPPED. `Logs/shots-hero/hero_inspect_zack_v5.png`: the amber
+            // `46s CD · 2.5s` loses the bottom of its descenders against the body line under it.
+            // The note on `card.Name` below is the rule and it does not get cheaper by being
+            // applied twice: **legacy `Text` draws at its font's LINE HEIGHT, which is taller
+            // than the point size**, so 18 units needs 24 and needed it the last two times
+            // somebody checked.
+            // ⚠️⚠️ NEITHER OF THESE IS BOLD ANY MORE, AND SYNTHETIC BOLD IS WHAT "BLURRY"
+            // ACTUALLY WAS. 🧑 2026-09-03, of `hero_inspect_zack_v5.png`: *"the text seems very
+            // blurry"*. Half of that was the capture (`HeroUiProbe.TrayScale`) and half was this:
+            // **DarumadropOne ships one weight**, so `FontStyle.Bold` has no bold face to reach
+            // for and legacy `Text` fakes it by drawing the glyph again at an offset. At 18 units
+            // that is a smear rather than a weight, and the 2x capture makes it obvious: the
+            // BODY, which is not bold, is crisp in the same frame.
+            //
+            // ⚠️ THE NAME KEEPS ITS BOLD, AND THAT IS THE WHOLE POINT OF KEEPING IT ANYWHERE. It
+            // is 21 units and it is the one thing on the card, so it can carry the smear and is
+            // the only label that gains anything from it. **Bold everywhere is bold nowhere**,
+            // which is the same argument `CLAUDE.md` § 6.2c makes about size and colour.
+            //
+            // ⚠️ THE TWO ARE STILL TOLD APART, BY COLOUR AND BY ORDER. Muted cream for the job,
+            // amber `UiTheme.Highlight` for the timing, in that order on every card. Weight was
+            // never what separated them.
+            card.Kind = Label(nameStack.transform, "Kind", MenuKit.MinReadableUnits,
+                              UiTheme.CreamMuted, TextAnchor.MiddleLeft);
+            card.Kind.horizontalOverflow = HorizontalWrapMode.Overflow;
+            Height(card.Kind.gameObject, 24);
 
-            card.Kind = Label(metaRow.transform, "Kind", MenuKit.MinReadableUnits, UiTheme.Amber,
-                              TextAnchor.MiddleLeft);
-            card.Kind.fontStyle = FontStyle.Bold;
-
-            card.Meta = Label(metaRow.transform, "Meta", MenuKit.MinReadableUnits, UiTheme.Highlight,
-                              TextAnchor.MiddleLeft);
-            card.Meta.fontStyle = FontStyle.Bold;
+            card.Meta = Label(nameStack.transform, "Meta", MenuKit.MinReadableUnits,
+                              UiTheme.Highlight, TextAnchor.MiddleLeft);
+            card.Meta.horizontalOverflow = HorizontalWrapMode.Overflow;
+            Height(card.Meta.gameObject, 24);
 
             // ⚠️⚠️ EVERY LABEL ON THIS PANEL IS AT `MenuKit.MinReadableUnits` OR ABOVE AS OF
             // 2026-08-29, AND FIVE OF THEM WERE BELOW IT. 🧑: *"mahirap basahin yung text sa
@@ -378,25 +411,79 @@ namespace TumbangPreso.UI
             card.Glyph.sprite = AbilityIcons.For(ability.Glyph);
             card.Glyph.color = hero;
             card.Key.text = Hud.KeyLabelFor(action);
-            card.Name.text = ability.Name;
+            // ⚠️⚠️ `EffectiveName` AND `EffectiveSummary`, WHICH IS `VISION.md` § 3's RECALL
+            // LAYER FINALLY SHOWING THE BUILD. This panel IS the hold-key layer that section
+            // promises, and it drew the SLOT's name and the SLOT's description: a player who
+            // equipped ARC LINE held the key and read BOLT SPRINT with the wrong sentence under
+            // it. Learn showed the variant, Recall did not, and § 3's whole demand is that the
+            // three layers stay in step. `HeroAbility.VariantName` has the full note.
+            //
+            // ⚠️ THE GLYPH AND THE KIND LABEL DO NOT MOVE, AND THAT IS RULE 1 OF THE SAME
+            // SECTION: the icon says what the power does to the WORLD, and a sidegrade does not
+            // change the job. Chalk Perimeter is still a zone. Two icons for one slot would teach
+            // the player that the icon means the build.
+            card.Name.text = ability.EffectiveName;
             card.Name.color = hero;
-            card.Kind.text = $"[{AbilityIcons.LabelFor(ability.Glyph)}]";
-            card.Kind.color = hero;
-            card.Body.text = ability.Description;
 
+            // ⚠️⚠️ THE KIND WORD IS MUTED CREAM AND IT WAS THE HERO COLOUR, WHICH GAVE EVERY CARD
+            // TWO HEADINGS THE SAME SIZE AND THE SAME COLOUR. `Logs/shots-hero/
+            // hero_inspect_dante_v1.png`: SEISMIC STOMP in green, `[SEISMIC STOMP]` in green
+            // under it, three times across the tray. `CLAUDE.md` § 6.2c question 1 is *"what is
+            // this size measured against"* and its sibling is the one that bites here: **what is
+            // the ONE thing on this card.** The name is. Everything else is sized, placed and
+            // coloured against it, and a second green bold line is a competitor rather than a
+            // caption.
+            //
+            // ⚠️ THE BRACKETS ARE GONE WITH IT. They were carrying the separation the colour
+            // failed to, and `card.Meta` already opens with a `·`, so `AREA BURST · 2 CHARGES`
+            // reads as one line of two facts instead of a bracketed aside beside a fragment.
+            //
+            // ⚠️ AND THE WORD ITSELF CHANGED, WHICH IS THE HALF THAT MATTERS.
+            // `AbilityIcons.LabelFor` returned the ability's own NAME for every bespoke glyph;
+            // it returns the JOB now (`docs/VISION.md` § 3 rule 1). That file has the argument.
+            card.Kind.text = AbilityIcons.LabelFor(ability.Glyph);
+            card.Kind.color = UiTheme.CreamMuted;
+
+            // ⚠️⚠️ `EffectiveDescription` AND NOT `EffectiveSummary`. This is `VISION.md` § 3's
+            // RECALL layer, which is promised *"the same, in full"*: on a default build it is the
+            // ability's own long description, byte for byte what it has always been, and only a
+            // player who has equipped an alternate sees that alternate's sentence instead.
+            // Falling back to `Summary` here would have shortened the one screen in the game that
+            // exists to be long. See `HeroAbility.EffectiveDescription`.
+            card.Body.text = ability.EffectiveDescription;
+
+            // ⚠️⚠️ THE TIMING IS ON ITS OWN LINE NOW AND IT USED TO SHARE ONE WITH THE KIND
+            // WORD, WHICH IS THE MESS `Logs/shots-hero/hero_inspect_dante_v3.png` SHOWS.
+            // Two labels in a `HorizontalLayoutGroup` with `childControlWidth` split whatever
+            // room the card has, and a card is about 350 px wide with a 60 px glyph tile in it.
+            // `PROTECTION · 62s CD (4s DURATION)` does not fit in what is left, so BOTH labels
+            // wrapped and interleaved: the frame reads `PROTECTIO / N` beside `· 62s CD (4s /
+            // DURATION)`, and Titan Fissure's reads `AREA / BURST` beside `· OBJECTIVE /
+            // CHARGE`. 🧑 2026-09-03: *"arent messy af"*.
+            //
+            // ⚠️ STACKED RATHER THAN SHORTENED, BECAUSE SHORTENING ONLY MOVES THE THRESHOLD.
+            // `TSINELAS BUFF · 2 CHARGES · 10s` is 31 characters and there is no wording of those
+            // two facts that fits one 266 px column at 18 units for every ability in the game.
+            // One fact a line always fits, and it also reads in the order a player asks the
+            // questions in: what IS this, then how often do I get it.
+            //
+            // ⚠️ `DURATION` AND `OBJECTIVE CHARGE` ARE GONE, AND THE WORDING NOW MATCHES THE
+            // PICKER'S. `ConvertedCharacterSelect` prints `62s CD · 4s` and `ULTIMATE` for the
+            // same two facts, and two spellings of one fact on two screens is `docs/VISION.md`
+            // § 3's three layers drifting at the seam.
             if (ability.Cooldown > 0.0f)
             {
                 card.Meta.text = ability.Duration > 0.0f
-                    ? $"· {ability.Cooldown:0.#}s CD ({ability.Duration:0.#}s DURATION)"
-                    : $"· {ability.Cooldown:0.#}s CD";
+                    ? $"{ability.Cooldown:0.#}s CD · {ability.Duration:0.#}s"
+                    : $"{ability.Cooldown:0.#}s CD";
             }
             else if (ability.UsesCharges)
             {
-                card.Meta.text = ability.MaxCharges == 1 ? "· 1 CHARGE" : $"· {ability.MaxCharges} CHARGES";
+                card.Meta.text = ability.MaxCharges == 1 ? "1 USE" : $"{ability.MaxCharges} USES";
             }
             else
             {
-                card.Meta.text = "· OBJECTIVE CHARGE";
+                card.Meta.text = "ULTIMATE";
             }
         }
 

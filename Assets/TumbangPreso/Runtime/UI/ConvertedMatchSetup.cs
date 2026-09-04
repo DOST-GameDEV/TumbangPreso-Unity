@@ -186,23 +186,52 @@ namespace TumbangPreso.UI
         private static string FormatDetail(int index)
             => CustomGameRules.FormatName(FormatAt(index)) + " " + CustomGameRules.FormatBlurb(FormatAt(index));
 
+        /// <summary>
+        /// ⚠️⚠️ THE ROW INDEX IS THE ENUM VALUE NOW, AND THAT IS THE POINT OF THE REWRITE RATHER
+        /// THAN A SIDE EFFECT. This used to read `index &lt;= 0 ? Standard : Mirror`, which was
+        /// correct for exactly two options and silently wrong for three: adding a row in the
+        /// middle would have mapped it to `Mirror` and offered the player a format the picker
+        /// named something else. A `switch` on the index with a cast is the same trap one step
+        /// along. Index 0 is `Standard`, 1 is `LastTsinelas`, 2 is `Mirror`, which is the
+        /// declaration order in `MatchFormat` and is now checked rather than remembered.
+        ///
+        /// ⚠️ IT COSTS ONE MIGRATION AND THE MIGRATION IS WORTH IT. `settings.json` stores this
+        /// as a ROW INDEX, so a player who had MIRROR selected before this commit opens the lobby
+        /// on LAST TSINELAS STANDING once. `GameSettings.MatchFormat`'s own note says it is a
+        /// preference rather than the match's answer, it is one press to change, and the
+        /// alternative is keeping the index and the enum permanently out of step.
+        /// </summary>
         private static MatchFormat FormatAt(int index)
-            => index <= 0 ? MatchFormat.Standard : MatchFormat.Mirror;
+        {
+            if (index <= 0) return MatchFormat.Standard;
+            if (index >= FormatOptionCount - 1) return MatchFormat.Mirror;
+            return MatchFormat.LastTsinelas;
+        }
 
         /// <summary>
-        /// ⚠⚠ TWO, NOT THREE, AND LAST TSINELAS STANDING IS THE ONE MISSING. Its RULES are
-        /// written, tested and documented (`CustomGameRules`, `Phase11And12Tests`,
-        /// `docs/Formats.md` § 1) and **its match half is not built**: a tag has to cost a
-        /// tsinelas, a spent attacker has to be out for the round, and the round has to end when
-        /// one is left. Offering it on this row today would be a control that changes the caption
-        /// and nothing else, which is `docs/TODO.md` § 108's EQUIP button with no listener, and
-        /// this project has shipped that fault twice. **It goes in the row the day the match
-        /// obeys it**; `docs/TODO.md` § 115 carries the design and the remaining work.
+        /// ⚠️⚠️ THREE SINCE 2026-09-03, AND THE PARAGRAPH THIS REPLACED IS WORTH KEEPING BECAUSE
+        /// IT IS THE RULE THAT DECIDED WHEN. It read: *"TWO, NOT THREE, AND LAST TSINELAS
+        /// STANDING IS THE ONE MISSING. Its RULES are written, tested and documented and its
+        /// match half is not built: a tag has to cost a tsinelas, a spent attacker has to be out
+        /// for the round, and the round has to end when one is left. Offering it on this row
+        /// today would be a control that changes the caption and nothing else, which is
+        /// `docs/TODO.md` § 108's EQUIP button with no listener, and this project has shipped
+        /// that fault twice. It goes in the row the day the match obeys it."*
+        ///
+        /// **The match obeys it now.** `LastTsinelasDirector` spends a tsinelas on every tag,
+        /// switches an emptied attacker out for the rest of the round, ends the round the moment
+        /// one is left and pays `ScoreEvent.LastTsinelasStanding`; `MatchRpc.BroadcastTsinelas`
+        /// carries the stock table so the other three machines agree about who is out.
+        /// `docs/TODO.md` § 130.13, and it is what moved `NetSession.ProtocolVersion` to 22.
+        ///
+        /// ⚠️ THE ORDER OF THE ROWS IS `MatchFormat`'S OWN DECLARATION ORDER. See `FormatAt`:
+        /// the row index IS the enum value now, which is why adding this one was a row rather
+        /// than a rewrite of every caller.
         ///
         /// ⚠️ MIRROR IS COMPLETE AND SHIPS: `MatchInstaller` overrides every seat's character
         /// from `CustomGameRules.MirrorIndex`, so picking it changes the four people who walk out.
         /// </summary>
-        private const int FormatOptionCount = 2;
+        private const int FormatOptionCount = 3;
 
         private int _format;
 
@@ -303,8 +332,20 @@ namespace TumbangPreso.UI
             _difficulty = Mathf.Clamp(Settings.SettingsStore.Current.AiDifficulty, 0, DifficultyOptionCount - 1);
             AIController.ApplyDifficulty(_difficulty);
 
-            _format = Mathf.Clamp(Settings.SettingsStore.Current.MatchFormat, 0, FormatOptionCount - 1);
-            SceneFlow.SelectedFormat = FormatAt(_format);
+            // ⚠️⚠️ THE WHOLE RULE SET IS RESTORED HERE, NOT THE FORMAT ALONE, AND ONLY WHEN THIS
+            // MACHINE OWNS THE ROOM. `GameSettings.CustomRulesWire` is what this player left the
+            // lobby on; in a networked room the HOST's set arrives over `SyncRules` and
+            // `HandleRulesSynced` adopts it, so a client that restored its own preference here
+            // would spend the moment between opening the lobby and the first broadcast showing
+            // the wrong match. `CustomGameRules.Parse` answers `Defaults` for the empty string
+            // every existing `settings.json` holds, which is the whole migration.
+            if (!SceneFlow.Networked || NetAuthority.IsHost)
+            {
+                SceneFlow.SetSelectedRules(CustomGameRules.Parse(
+                    Settings.SettingsStore.Current.CustomRulesWire, SceneFlow.SelectedMode));
+            }
+
+            _format = Mathf.Clamp((int)SceneFlow.SelectedFormat, 0, FormatOptionCount - 1);
 
             var previewNode = Node("MapPreview");
             if (previewNode != null) _preview = previewNode.GetComponent<MapPreviewSurface>();
@@ -408,6 +449,7 @@ namespace TumbangPreso.UI
             MatchRpc.OnMapChanged += HandleMapSynced;
             MatchRpc.OnDifficultyChanged += HandleDifficultySynced;
             MatchRpc.OnFormatChanged += HandleFormatSynced;
+            MatchRpc.OnRulesChanged += HandleRulesSynced;
             MatchRpc.OnLobbyPicksSynced += HandleLobbyPicksSynced;
             MatchRpc.OnLobbyRosterSynced += HandleLobbyRosterSynced;
             MatchRpc.OnLobbyReadyChanged += HandleLobbyReadyChanged;
@@ -895,6 +937,70 @@ namespace TumbangPreso.UI
 
             _rulesDrop = WoodDropdown.Build(rows, "RULES", Caption, formats, _format,
                                             v => OnFormatCycle(v - _format));
+
+            BuildCustomGameDoor(rows);
+        }
+
+        /// <summary>
+        /// The door into CUSTOM GAME, and it is the fifth row of the same rail.
+        ///
+        /// ⚠️⚠️ ONE DOOR, WHERE THE PLAYER ALREADY IS, AND NOT A SECOND BUTTON SOMEWHERE ELSE.
+        /// `CLAUDE.md` § 6.3: *"NEVER ADD A SECOND DOOR TO FIX A FINDABILITY PROBLEM. That is
+        /// exactly how § 92's six-button panel happened: a button per feature, each in its own
+        /// visual language, each at its own hard-coded offset."* MAP, MODE, BOTS and RULES are
+        /// the four things a player already changes about a match, and the rest of the rule set
+        /// is the fifth: it belongs at the bottom of that list, in the same rail, in the same
+        /// visual language, and nowhere else.
+        ///
+        /// ⚠️⚠️ IT IS A ROW THAT SAYS WHAT IS BEHIND IT, NOT A BUTTON LABELLED "MORE". § 96 is
+        /// an entire entry about a door 🧑 could not find because it read as a status readout,
+        /// and the fix there was the same shape: a door is a thing that LOOKS pressable and says
+        /// where it goes. The value column carries a live summary (`8 rounds, 90s`) so the row is
+        /// also the answer to "what are the rules" for anybody who never opens it.
+        ///
+        /// ⚠️ THE ROW IS PRESENT FOR A CLIENT AND THE SCREEN IS READ-ONLY FOR THEM, rather than
+        /// the row being hidden. Hiding it would be § 96's fault aimed at the three people who
+        /// most need to know what they are about to play; `CustomGameScreen` greys every control
+        /// and says who owns them.
+        /// </summary>
+        private void BuildCustomGameDoor(Transform rows)
+        {
+            // ⚠️ THE RAIL IS A `Transform` AND `UiRows` TAKES A `RectTransform`.
+            // `LobbyChrome.SettingsRows` is declared as a `Transform` because the chrome builds
+            // it and does not care what kind it is; the four rows above go through
+            // `WoodDropdown.Build`, which takes the looser type. A row from `UiRows` needs the
+            // rect, so the cast is here rather than widening a field other call sites read.
+            //
+            // ⚠️ AND A NULL RETURNS QUIETLY, WHICH IS `LobbyChrome`'S OWN PATTERN: `LobbyStyle.
+            // Classic` does not build the rail at all (it is the authored screen, kept working at
+            // every commit, § 68.3), and `BuildSettingsDropdowns` above already returns on a null
+            // `rows` for the same reason. A door that throws on the classic style would take the
+            // whole lobby down with it.
+            var rect = rows as RectTransform;
+            if (rect == null) return;
+
+            _customDoor = UiRows.ButtonRow(rect, "CUSTOM GAME", CustomDoorLabel(), OpenCustomGame,
+                "Round length, score target, tsinelas stock, bots and a private room.");
+        }
+
+        private Button _customDoor;
+
+        /// <summary>
+        /// ⚠️ THE SUMMARY IS THE TWO NUMBERS A PLAYER WOULD ASK ABOUT FIRST, and it is why the
+        /// row is worth having even unopened. `CustomGameScreen`'s headline carries the whole
+        /// sentence; this is the short form, and `UiRows.ButtonRow` caps its control at 260 units
+        /// so a longer one would be cut at 4:3 (`UiRows.Cap`).
+        /// </summary>
+        private static string CustomDoorLabel()
+        {
+            var rules = SceneFlow.SelectedRules;
+            return rules.Rounds + " x " + rules.RoundSeconds + "s";
+        }
+
+        private void OpenCustomGame()
+        {
+            MenuSfx.Click();
+            CustomGameScreen.Ensure().Open();
         }
 
         private WoodDropdown _mapDrop, _modeDrop, _botsDrop, _rulesDrop;
@@ -917,6 +1023,17 @@ namespace TumbangPreso.UI
             {
                 _modeDrop.SetIndex(SceneFlow.SelectedMode == GameMode.HeroStrike ? 1 : 0);
                 _modeDrop.SetInteractable(mayEdit);
+            }
+
+            // ⚠️ THE DOOR STAYS PRESSABLE FOR A CLIENT AND THE SCREEN BEHIND IT IS READ-ONLY.
+            // That is the opposite of the four rows above, and deliberately: a control that
+            // CHANGES the match belongs to the host, and a screen that SAYS what the match is
+            // belongs to everybody about to play it. Greying this row would leave the other three
+            // players with no way to read the rules they are about to be held to.
+            if (_customDoor != null)
+            {
+                var label = _customDoor.GetComponentInChildren<Text>();
+                if (label != null) label.text = CustomDoorLabel();
             }
         }
 
@@ -1375,9 +1492,43 @@ namespace TumbangPreso.UI
             // (`docs/TODO.md` § 117.3 is the same fault one control over). `SECURE YOUR PROGRESS`
             // is also 20 characters against a 200-unit chip, which is why it overflowed its own
             // pill in `Logs/shots-runtime/Lobby-v53.png`.
+            // ⚠️⚠️ THE DOOR CARRIES A NAME AND A FACE NOW, AND THE STATE MOVED TO A SECOND
+            // LINE. `docs/TODO.md` § 96: he commissioned the player hub and then could not find
+            // the way into it, because its one door was a corner chip stating a name and a level.
+            // **A level is a status readout and people read those; a face with your own name on
+            // it is a thing people press**, and top-right with a face is where Overwatch,
+            // Valorant and Fortnite all put the way into a profile, so it costs no teaching at
+            // all (`Front_End_Design.md` § 1, and § 133.8's *"controls are familliar to them
+            // already"*).
+            //
+            // ⚠️ THE NAME IS THE ONE THE REST OF THE GAME USES, not a second answer to the same
+            // question. `LocalName()` resolves the account's lobby name and falls back to the
+            // settings store, and it is what `ConfigureClientHello` puts on the wire, so this
+            // chip cannot disagree with the nameplate under the player's own seat.
+            string who = LocalName();
+            Door(label, who);
+
+            if (_chrome.ProfileFace != null)
+            {
+                // ⚠️ DERIVED FROM THE NAME AND NEVER RANDOM. A face that changed per launch
+                // would teach a player that the chip does not mean anything, which is worse than
+                // § 96's unrecognised door rather than better. ⚠️ **The picker that lets somebody
+                // CHOOSE one is not built yet** and is written up in `docs/TODO.md` § 133.15; the
+                // fifteen faces exist and this is the default half of it.
+                _chrome.ProfileFace.sprite = Avatars.Get(Avatars.DefaultFor(who));
+            }
+
+            var state = _chrome.ProfileState;
+            if (state == null) return;
+
+            // ⚠️⚠️ THE STATE LINE REPLACES A WHOLE TAB. `SECURE PROGRESS` was a fifth pill on the
+            // top rail, standing beside three MODE tabs as though signing in were a place you
+            // could be. It is not a place, it is a fact about you, so it belongs on the thing
+            // that says who you are. **That is one fewer object to scan**, which is `CLAUDE.md`
+            // § 6.2's third claim, and one fewer control competing with the primary for the eye.
             if (account != null && account.ShouldOfferUpgrade)
             {
-                Door(label, "SECURE PROGRESS");
+                state.text = "GUEST · SAVE PROGRESS";
                 return;
             }
 
@@ -1386,10 +1537,9 @@ namespace TumbangPreso.UI
 
             if (xp <= 0)
             {
-                // ⚠️ ONE WORD, NOT THREE. `PROFILE · CAREER · MATCHES` was a list of the tabs
-                // behind the door written on the door, which is 190 units of lettering in a chip
-                // sized for a label. The hub's own tab row says what is in it.
-                Door(label, "PROFILE");
+                // ⚠️ ONE PHRASE, NOT THREE. `PROFILE · CAREER · MATCHES` was a list of the tabs
+                // behind the door written on the door. The hub's own tab row says what is in it.
+                state.text = "YOUR PROFILE";
                 return;
             }
 
@@ -1406,7 +1556,7 @@ namespace TumbangPreso.UI
                 line += $"   ·   {tier}";
             }
 
-            Door(label, line);
+            state.text = line;
         }
 
         /// <summary>⚠️ ONE PLACE WRITES THIS LABEL, so the colour and the fit cannot be got right
@@ -1416,8 +1566,14 @@ namespace TumbangPreso.UI
         {
             label.text = text;
             label.color = UiTheme.PaperInk;
-            label.fontSize = PaperKit.Body;
-            MenuKit.Fit(label, 200.0f - 24.0f, 13);
+
+            // ⚠️ THE NAME IS `Title` NOW BECAUSE THE CHIP IS A CARD RATHER THAN A PILL, and the
+            // fit width moved with it rather than staying the old pill's width with a guess
+            // subtracted: 334 less the 14-unit pad, the 72-unit face, the 12-unit gap and the
+            // 34-unit chevron leaves **202 units**, measured through the chip's own contents.
+            label.fontSize = PaperKit.Title;
+            MenuKit.Apply(label, PaperKit.FaceFor(label.fontSize));
+            MenuKit.Fit(label, 202.0f, 15);
         }
 
         /// <summary>
@@ -2569,6 +2725,30 @@ namespace TumbangPreso.UI
         {
             _format = Mathf.Clamp(format, 0, FormatOptionCount - 1);
             ApplyFormat();
+            Refresh();
+        }
+
+        /// <summary>
+        /// The host changed the whole rule set, so this machine plays by it.
+        ///
+        /// WARNING  A CLIENT ADOPTS IT AND DOES NOT REMEMBER IT, AND `ApplyFormat` BELOW ALREADY
+        /// RECORDS WHY IN ITS OWN WORDS: *"a peer that saved the host's choice would open its own
+        /// next practice lobby on somebody else's rules."* `SceneFlow.AdoptRemoteRules` is the
+        /// path that writes the session and not `settings.json`; the host uses
+        /// `SetSelectedRules`, which writes both, because on the host it IS this player's choice.
+        ///
+        /// WARNING  THE STRING HAS ALREADY BEEN CLAMPED TWICE by the time it lands here, once by
+        /// the host before it broadcast and once on arrival in `MatchRpc.OnSyncRulesMsg`. This
+        /// parses rather than re-bounding; a third clamp would be a third statement of one rule.
+        /// </summary>
+        private void HandleRulesSynced(string wire)
+        {
+            var rules = CustomGameRules.Parse(wire, SceneFlow.SelectedMode);
+
+            if (SceneFlow.Networked && !NetAuthority.IsHost) SceneFlow.AdoptRemoteRules(rules);
+            else SceneFlow.SetSelectedRules(rules);
+
+            _format = Mathf.Clamp((int)rules.Format, 0, FormatOptionCount - 1);
             Refresh();
         }
 
@@ -3866,6 +4046,7 @@ namespace TumbangPreso.UI
             MatchRpc.OnMapChanged -= HandleMapSynced;
             MatchRpc.OnDifficultyChanged -= HandleDifficultySynced;
             MatchRpc.OnFormatChanged -= HandleFormatSynced;
+            MatchRpc.OnRulesChanged -= HandleRulesSynced;
             MatchRpc.OnLobbyPicksSynced -= HandleLobbyPicksSynced;
             MatchRpc.OnLobbyRosterSynced -= HandleLobbyRosterSynced;
             MatchRpc.OnLobbyReadyChanged -= HandleLobbyReadyChanged;

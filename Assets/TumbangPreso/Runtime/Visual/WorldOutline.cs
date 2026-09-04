@@ -119,8 +119,8 @@ namespace TumbangPreso.Visual
         // length and further, and runs out when the camera is pressed against a surface.
         //
         // ⚠️ THE FIX IS NOT A BIGGER DEADZONE, IT IS A SHORTER FRUSTUM. Both arenas are tens of
-        // metres across: `SpectatorCamera` sets its own far plane, `MapPreview` uses 400, and
-        // every probe in this repo picks something between 40 and 260. A match camera at 1000 m
+        // metres across: `SpectatorCamera` sets its own far plane and every probe in this repo
+        // picks something between 40 and 260. A match camera at 1000 m
         // is spending 95 percent of a 16-bit depth range on empty space beyond the map. Dropping
         // it to 200 divides every number above by five and costs nothing else. That is a change
         // to `CameraRig`, which this prototype has no business making, so it is recorded here.

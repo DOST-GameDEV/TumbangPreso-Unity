@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using TumbangPreso.Core;
 using UnityEngine;
 
@@ -93,23 +95,177 @@ namespace TumbangPreso
                 _displayNameCharacter != _characterIndex ||
                 _displayNameSlot != _playerSlot ||
                 _displayNameMode != Mode ||
+                _displayNameSuffix != _labelSuffix ||
                 _displayNameFrom != _playerName)
             {
                 _displayNameBot = _isBot;
                 _displayNameCharacter = _characterIndex;
                 _displayNameSlot = _playerSlot;
                 _displayNameMode = Mode;
+                _displayNameSuffix = _labelSuffix;
                 _displayNameFrom = _playerName;
 
-                _displayName = _isBot ? CharacterName().ToUpperInvariant()
-                             : _playerName != "" ? _playerName.ToUpperInvariant()
-                             : $"P{_playerSlot + 1}";
+                // ⚠️ THE SUFFIX IS EMPTY ON EVERY ORDINARY SEAT. `ResolveDuplicateLabels` only
+                // writes one when another seat would read the same, so the common case is the
+                // bare name and nothing else. See that method for why a match is the only place
+                // this question can be answered.
+                _displayName = BareLabel() + _labelSuffix;
             }
 
             return _displayName;
         }
 
+        /// <summary>
+        /// The player's name with the `#0000` taken off, for a label inside a match.
+        ///
+        /// ⚠️⚠️ THE SCOREBOARD READ `PLAYER#7645` AND 🧑 ASKED FOR IT GONE, 2026-09-04:
+        /// *"no need to show # number in the thing gang"*, *"just the player name is enough
+        /// here"*. `MatchInstaller` seats a human with `GameServices.Account.LobbyName`, which is
+        /// `AccountRules.Handle(DisplayName, Discriminator)`, so the tag rode all the way into
+        /// the arena on the scoreboard, the nameplate over each body and the YOU card.
+        ///
+        /// ⚠️⚠️ STRIPPED AT THE LABEL, NEVER AT THE SOURCE, AND THAT IS THE WHOLE CARE IN THIS
+        /// CHANGE. The discriminator is what makes two players called PLAYER different people:
+        /// `LobbySession` keys by it, `AccountRules.Handle` builds it, and the lobby and the wire
+        /// need it. Editing `MatchInstaller` to seat the bare name instead would have thrown that
+        /// away everywhere for the sake of one row. **`DisplayName` is the in-match label and
+        /// nothing else reads it**, so this is exactly as wide as the request.
+        ///
+        /// ⚠️ FOUR SEATS ON ONE SCREEN CANNOT COLLIDE THE WAY A LOBBY LIST CAN, which is why the
+        /// tag is not load-bearing here: the rows carry a role badge and a colour, the body
+        /// carries a nameplate in the world, and there are four of them. A lobby browser lists
+        /// strangers and still shows the full handle.
+        ///
+        /// ⚠️ IT FALLS BACK TO THE WHOLE STRING. `TrySplitHandle` refuses anything that is not
+        /// `name#0000`, and a name that never went through `Handle` (an offline profile, a name
+        /// typed into the settings field) has no tag to take off and must survive untouched.
+        /// </summary>
+        private static string NameWithoutTag(string playerName)
+        {
+            if (Core.AccountRules.TrySplitHandle(playerName, out string bare, out _)
+                && !string.IsNullOrEmpty(bare))
+                return bare.ToUpperInvariant();
+
+            return playerName.ToUpperInvariant();
+        }
+
+        /// <summary>
+        /// Added to this seat's label when another seat would otherwise read the same.
+        ///
+        /// ⚠️ IT IS PART OF THE `DisplayName` CACHE KEY, so setting it re-renders the label on
+        /// the next read and setting it to what it already is costs nothing.
+        /// </summary>
+        public string LabelSuffix
+        {
+            get => _labelSuffix;
+            set => _labelSuffix = value ?? "";
+        }
+
+        private string _labelSuffix = "";
+
+        /// <summary>
+        /// Makes every seat's label different from every other seat's.
+        ///
+        /// ⚠️⚠️ 🧑 2026-09-04, ON TOURNAMENTS: *"oh yea in tournmanets PPL might have same #?"*,
+        /// *"idk how it was coded but make it so that they all have a diff #"*, and then the
+        /// case that matters: **"offline tournaments"**. He is right, and it is worse than he
+        /// thinks, in two independent ways.
+        ///
+        /// ⚠️⚠️ FIRST, THE TAG IS A LOCAL HASH AND GUARANTEES NOTHING. `AccountRules.Discriminator`
+        /// is FNV-1a over the stable player id, `% 10000`. **Nothing checks it against the other
+        /// people in the room**, because nothing can: it is computed on each machine from that
+        /// machine's own id. Two accounts sharing a display name collide on the tag about one
+        /// time in ten thousand per pair, which sounds safe and is not once a bracket defaults
+        /// to the same name: `Handle` falls back to the literal `"Player"` for anything that
+        /// fails `TryDisplayName`, so a room of people who never set a name are all PLAYER and
+        /// are drawing from 10,000 tags. Thirty-two of them collide about five per cent of the
+        /// time.
+        ///
+        /// ⚠️⚠️ SECOND, AND THIS IS THE ONE ON SCREEN TODAY: TWO SEATS CAN SHARE A LABEL WITH NO
+        /// ACCOUNTS INVOLVED AT ALL. `Logs/shots-runtime/Eskinita.png` reads **ZACK, PLAYER,
+        /// ZACK, PHAISTER**: two bots picked the same character, so two rows carry the same name
+        /// and the scoreboard cannot tell you which one is the taya. That is the same defect as
+        /// the duplicate 🧑 photographed, and it needs no tournament to reproduce.
+        ///
+        /// ⚠️ SO THE FIX IS AT THE MATCH, WHICH IS THE ONLY PLACE THAT SEES EVERYBODY. A per
+        /// machine hash cannot be made globally unique by better hashing; four seats compared
+        /// against each other can be made unique by construction, which is what this does:
+        ///
+        ///   1. Labels that are already unique are left completely alone. **The common case is
+        ///      untouched**, which is what keeps 🧑's *"just the player name is enough here"*
+        ///      true for every ordinary match.
+        ///   2. A colliding pair gets its `#tag` back, because that is the real distinction
+        ///      between two accounts and is the thing he expected to be different.
+        ///   3. If the tags collide too, or there are none (two bots on one character), the seat
+        ///      number is appended. **That cannot collide**: there are four seats and they are
+        ///      numbered.
+        ///
+        /// ⚠️ IT IS RUN OVER THE WHOLE SEAT LIST RATHER THAN PER SEAT, because "is this name
+        /// unique" is not a question a body can answer about itself.
+        /// </summary>
+        public static void ResolveDuplicateLabels(IReadOnlyList<CharacterMotor> seats)
+        {
+            if (seats == null) return;
+
+            for (int i = 0; i < seats.Count; i++)
+            {
+                var unit = seats[i];
+                if (unit == null) continue;
+
+                bool clash = false;
+
+                for (int j = 0; j < seats.Count; j++)
+                {
+                    if (i == j || seats[j] == null) continue;
+                    if (!string.Equals(unit.BareLabel(), seats[j].BareLabel(),
+                                       StringComparison.Ordinal))
+                        continue;
+
+                    clash = true;
+                    break;
+                }
+
+                if (!clash)
+                {
+                    unit.LabelSuffix = "";
+                    continue;
+                }
+
+                // The tag, when this seat has one and it actually distinguishes it.
+                string tag = "";
+                if (Core.AccountRules.TrySplitHandle(unit._playerName, out _, out string mine))
+                    tag = mine;
+
+                bool tagHelps = tag != "";
+
+                if (tagHelps)
+                {
+                    for (int j = 0; j < seats.Count && tagHelps; j++)
+                    {
+                        if (i == j || seats[j] == null) continue;
+                        if (!string.Equals(unit.BareLabel(), seats[j].BareLabel(),
+                                           StringComparison.Ordinal))
+                            continue;
+
+                        if (Core.AccountRules.TrySplitHandle(seats[j]._playerName, out _,
+                                                            out string theirs)
+                            && theirs == tag)
+                            tagHelps = false;
+                    }
+                }
+
+                unit.LabelSuffix = tagHelps ? $" #{tag}" : $" P{unit._playerSlot + 1}";
+            }
+        }
+
+        /// <summary>This seat's label before any duplicate-breaking suffix.</summary>
+        private string BareLabel()
+            => _isBot ? CharacterName().ToUpperInvariant()
+             : _playerName != "" ? NameWithoutTag(_playerName)
+             : $"P{_playerSlot + 1}";
+
         private string _displayName;
+        private string _displayNameSuffix;
         private string _displayNameFrom;
         private bool _displayNameBot;
         private int _displayNameCharacter;
@@ -125,7 +281,11 @@ namespace TumbangPreso
 
         /// <summary>The roster pick's name, falling back to the seat number.
         /// CharacterIndex is -1 until a pick arrives.</summary>
-        private string CharacterName()
+        /// ⚠️ PUBLIC SINCE 2026-09-03, FOR `YouCard`. It needs the character rather than the
+        /// account handle, because a handle has no length bound and that row has overflowed three
+        /// times. `DisplayName` still prefers the handle for a human, which is right everywhere
+        /// the question is "which of these four seats is that".
+        public string CharacterName()
         {
             // ⚠️ THE CORE ROSTER, NOT RosterBook. RosterBook maps an index to a model; the
             // NAME is balance-layer data and lives in the engine-free package, so a headless

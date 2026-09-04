@@ -215,7 +215,36 @@ namespace TumbangPreso.Tests
             // different games sharing one scoreboard: the peer sees attackers stop throwing for
             // no reason and a round awarded to somebody it cannot account for. Cosmetic mismatch
             // draws a stranger; this one disputes the result, so it is a refusal at approval.
-            Assert.AreEqual(21, NetSession.ProtocolVersion,
+            // ⚠️⚠️ 22 SINCE 2026-09-03: LAST TSINELAS STANDING'S MATCH HALF (`docs/TODO.md`
+            // § 130.13). The paragraph above is the reason this had to move a SECOND time, and it
+            // is worth reading the two together: 21 bought "the peer knows about `MatchFormat`",
+            // which shipped a format the lobby could select and the match could not play. 22 buys
+            // "the peer knows how to run this one": a round that ends before the clock does, a new
+            // `ScoreEvent` an older peer drops rather than casts, and the `Tsinelas` stock table
+            // without which a peer never learns its own player is out and goes on letting them
+            // throw. The first bump agreed on a word; this one agrees on the rules behind it.
+            // ⚠️⚠️ 23 SINCE 2026-09-03: CUSTOM GAMES (`docs/FUTURE.md` § 12 and § 19.12). The
+            // `SelectFormat` / `SyncFormat` pair 21 bought is GONE, replaced by `SelectRules` /
+            // `SyncRules` carrying a whole `CustomGameRules.ToWire` record. **It is a replacement
+            // rather than an addition, and that is deliberate**: the format is one field of that
+            // record, so a message carrying it alone would be a second, narrower statement of the
+            // same fact, and `docs/TODO.md` § 38.5 found three dead protocols that each began as
+            // exactly that.
+            //
+            // ⚠️⚠️ AND IT IS THE FOURTH ENTRY THAT DECIDES A GAMEPLAY THING, AND THE FIRST THAT
+            // DECIDES HOW LONG THE GAME IS. `MatchDirector.TotalRounds` and
+            // `RoundDirector.RoundLength` read the rule set now, so a peer that has never heard
+            // of `SyncRules` plays the shipped four or eight rounds at ninety seconds while the
+            // host plays three at sixty. **Nothing errors.** The peer's clock simply reads
+            // 01:30 against the host's 01:00, and the match ends on a round it was not expecting,
+            // which is the same "two different games sharing one scoreboard" the 21 and 22
+            // paragraphs above describe, arriving through the clock instead of the win condition.
+            //
+            // ⚠️ THE OLD NAMES ARE NOT KEPT AS A COMPATIBILITY SHIM AND MUST NOT BE. A peer on 22
+            // that could still hear `SyncFormat` would agree about the FORMAT and disagree about
+            // the rounds and the clock, which is a worse failure than a clean refusal: it looks
+            // like it works.
+            Assert.AreEqual(23, NetSession.ProtocolVersion,
                 "a message or a replicated roster index has been added or removed. Bump this " +
                 "number and `NetSession.ProtocolVersion` together, in the same commit.");
         }

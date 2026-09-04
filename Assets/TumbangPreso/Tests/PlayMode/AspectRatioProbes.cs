@@ -30,21 +30,27 @@ namespace TumbangPreso.PlayTests
     public class AspectRatioProbes
     {
         /// <summary>
-        /// The list the handoff asks for: 16:9 from 720p to 1440p, the common laptop panel,
-        /// 16:10, both ultrawides, and 4:3.
+        /// ⚠️⚠️ THE PAIR THAT MAKES A FULL-SUITE RESULT MEAN ANYTHING. `docs/TODO.md` § 126.8:
+        /// the full PlayMode run came back 42, 41 and then 56 red with the red set moving, and a
+        /// gate whose red set moves is not measuring the code. `PlayModeWorld.Reset` has the
+        /// mechanism and why BOTH hooks are needed rather than one.
         /// </summary>
-        private static readonly (int W, int H, string Name)[] Resolutions =
-        {
-            (1280,  720, "16:9 720p"),
-            (1600,  900, "16:9 900p"),
-            (1920, 1080, "16:9 1080p"),
-            (2560, 1440, "16:9 1440p"),
-            (1366,  768, "16:9 laptop"),
-            (1920, 1200, "16:10"),
-            (2560, 1080, "21:9"),
-            (3440, 1440, "21:9 1440p"),
-            (1024,  768, "4:3"),
-        };
+        [UnitySetUp]
+        public IEnumerator ResetWorldBefore() => PlayModeWorld.Reset();
+
+        [UnityTearDown]
+        public IEnumerator ResetWorldAfter() => PlayModeWorld.Reset();
+
+        /// <summary>
+        /// The nine desktop shapes plus the phones, from <see cref="ProbeResolutions"/>.
+        ///
+        /// ⚠️⚠️ THE LIST MOVED OUT OF THIS FILE ON 2026-09-02 AND GAINED THE PHONE SHAPES WITH
+        /// THE MOVE. It was private here and `InputSurfaceProbe` needed the same nine; a copy is
+        /// two lists that agree until somebody edits one, which is `docs/TODO.md` § 124.11's
+        /// fault in a different costume. Adding a resolution now reaches every layout probe in
+        /// the project at once, which is the point.
+        /// </summary>
+        private static readonly (int W, int H, string Name)[] Resolutions = ProbeResolutions.All();
 
         /// <summary>
         /// ⚠️ THE ARITHMETIC, ASSERTED SEPARATELY FROM THE SCENE. If this one fails the scaler
@@ -112,6 +118,12 @@ namespace TumbangPreso.PlayTests
             RenderTexture target = null;
             var report = new StringBuilder();
 
+            // Every label under the floor, deduped by name and size, collected across all nine
+            // shapes and asserted ONCE at the end. See the note at the collection site for why
+            // that matters more than it looks.
+            var tooSmall = new HashSet<string>();
+            var tooSmallRows = new List<string>();
+
             foreach (var (w, h, name) in Resolutions)
             {
                 var next = new RenderTexture(w, h, 24, RenderTextureFormat.ARGB32);
@@ -161,6 +173,28 @@ namespace TumbangPreso.PlayTests
                     if (string.IsNullOrWhiteSpace(label.text)) continue;
                     if (label.color.a < 0.05f) continue;
 
+                    // ⚠️⚠️ A REGISTERED EXEMPTION IS SKIPPED AND COUNTED, NOT SKIPPED SILENTLY,
+                    // AND THE PROBE'S FLOOR IS UNTOUCHED. `docs/TODO.md` § 126.13 closes with
+                    // **"Do not lower the probe's floor to make it green"**, and offers two ways
+                    // out: widen the box, or write the exemption in by name. This is the second,
+                    // and `MenuKit.Fit` attaches `TightLabel` itself so no caller can claim an
+                    // exemption it did not declare.
+                    //
+                    // ⚠️ THE REPORT LINE IS THE HALF THAT MATTERS. § 126.13 exists because one
+                    // local exemption was copied twice with nothing anywhere able to enumerate
+                    // the set, so the way this stays honest is that every one of them is printed
+                    // with its floor, its settled size and the room it was fighting for. **A
+                    // growing list in this report is the signal that a screen needs more room,
+                    // and a silent skip would hide exactly that.**
+                    var tight = label.GetComponent<TumbangPreso.UI.TightLabel>();
+                    if (tight != null)
+                    {
+                        report.AppendLine(
+                            $"{name,-12} EXEMPT  '{label.name}' settled at {tight.Settled} " +
+                            $"units against a {tight.Floor} floor in {tight.Room:F0} units of room");
+                        continue;
+                    }
+
                     // ⚠️ THE CLAIM IS ABOUT THE AUTHORED SIZE, NOT ABOUT THIS RESOLUTION'S
                     // PIXELS. A physical-pixel floor is the same assertion said badly: it
                     // passes at 1440p and fails at 720p for a label nobody changed, so the
@@ -168,10 +202,66 @@ namespace TumbangPreso.PlayTests
                     // small. The size in reference units is the number a developer actually
                     // wrote, it is the same at every resolution, and MenuKit.MinReadableUnits
                     // carries the arithmetic that turns it into pixels on the worst panel.
-                    Assert.GreaterOrEqual(label.fontSize, MenuKit.MinReadableUnits,
-                        $"'{label.name}' is authored at {label.fontSize} units, below the " +
-                        $"{MenuKit.MinReadableUnits}-unit floor. At {name} ({w}x{h}) that is " +
-                        $"{label.fontSize * scale:F1} physical pixels.");
+                    // ⚠️⚠️ A LABEL AT EXACTLY `PaperKit.Caption` IS THE ONE OPEN DESIGN QUESTION
+                    // ON THIS SCREEN, AND THE MESSAGE SAYS SO RATHER THAN LEAVING THE NEXT READER
+                    // TO RE-DERIVE IT. `docs/TODO.md` § 121.8: `PaperKit.Caption` is 16,
+                    // `MenuKit.MinReadableUnits` is 18, `PaperKit`'s own header states the
+                    // conflict as a deliberate decision, and that entry says in as many words
+                    // that it is **"settled by looking at the running build and not by either
+                    // file winning on paper"**. It is not settled, so this stays RED.
+                    //
+                    // ⚠️ THE FLOOR IS NOT LOWERED AND THE CAPTION IS NOT EXEMPTED. § 126.13:
+                    // *"Do not lower the probe's floor to make it green."* What changed is that
+                    // after that batch's three `Fit(..., 14)` fixes, **this is the only remaining
+                    // source of red on this screen**, so the probe has been narrowed from "some
+                    // label somewhere is small" to one named constant and one open entry.
+                    string why = label.fontSize == PaperKit.Caption
+                        ? " This is exactly PaperKit.Caption, which is docs/TODO.md " +
+                          "§ 121.8's open question rather than an unnoticed bug: settle that " +
+                          "entry before changing either constant, and do it with a render."
+                        : "";
+
+                    // ⚠️⚠️ COLLECTED AND ASSERTED ONCE AT THE END, NOT THROWN HERE, AND THAT
+                    // CHANGE IS WORTH MORE THAN IT LOOKS. `Assert` throws on the FIRST failing
+                    // label, so every label after it in the walk is invisible and the report
+                    // names one problem however many there are. **`docs/TODO.md` § 130.15 went
+                    // stale exactly this way**: it records the character screen's only red as
+                    // `DoorCaption` at 16, which is § 121.8's open question, and the first
+                    // failure is actually a label authored at **13**. So § 121.8 has been the
+                    // entry blocking a probe that was failing on something else entirely, and
+                    // `Attention.md` § 3 has been asking 🧑 to settle a question that is not what
+                    // is red.
+                    //
+                    // ⚠️ THE FLOOR IS UNTOUCHED AND NOTHING IS EXEMPTED HERE. § 126.13: *"Do not
+                    // lower the probe's floor to make it green."* This only changes how many of
+                    // the failures a reader gets to see per run, which is the difference between
+                    // a worklist and a whack-a-mole.
+                    if (label.fontSize < MenuKit.MinReadableUnits)
+                    {
+                        // ⚠️⚠️ THE LETTERING IS IN THE REPORT, NOT JUST THE NODE NAME, AND THE
+                        // FIRST RUN OF THIS IS WHY. `MenuKit.Label` leaves every label it makes
+                        // called "Label", and `ConvertedCharacterSelect` has FIVE at 13 units
+                        // (EQUIPPED, LOCKED, the gain/cost line, the progress count and the key
+                        // chip). They all reported as `'Label' at 13`, which names the fault
+                        // without naming which of the five it is: a worklist nobody can act on.
+                        // **The words are the only thing that tells them apart**, and they are
+                        // also what the reader would search the source for.
+                        string words = label.text.Trim().Replace("\n", " ");
+                        if (words.Length > 40) words = words.Substring(0, 37) + "...";
+
+                        string row = $"'{label.name}' (\"{words}\") is authored at "
+                                     + $"{label.fontSize} units, below the "
+                                     + $"{MenuKit.MinReadableUnits}-unit floor. At {name} "
+                                     + $"({w}x{h}) that is {label.fontSize * scale:F1} physical "
+                                     + $"pixels.{why}";
+
+                        // ⚠️ DEDUPED ON THE WORDS AND THE SIZE, because the walk runs once per
+                        // resolution and the authored size is the same at all nine. Without a
+                        // dedupe one small label reports nine times and the list stops being
+                        // readable, which is the fault this whole change exists to fix.
+                        string key = $"{label.name}|{words}|{label.fontSize}";
+                        if (tooSmall.Add(key)) tooSmallRows.Add(row);
+                    }
                 }
 
                 report.AppendLine($"{name,-12} {w}x{h}  canvas scale {scale:F3}  " +
@@ -182,6 +272,15 @@ namespace TumbangPreso.PlayTests
             if (target != null) target.Release();
 
             Debug.Log("[Aspect] character screen\n" + report);
+
+            // ⚠️ ONE ASSERTION FOR EVERY LABEL UNDER THE FLOOR, so the failure is the whole
+            // worklist rather than whichever one the walk happened to reach first.
+            Assert.IsEmpty(tooSmallRows,
+                $"{tooSmallRows.Count} label(s) on the character screen are authored below "
+                + $"MenuKit.MinReadableUnits ({MenuKit.MinReadableUnits}). Do NOT lower the floor "
+                + "to make this green: docs/TODO.md § 126.13. Widen the box, cut the words, or "
+                + "register the exemption through MenuKit.Fit so it is counted rather than "
+                + "hidden:\n  " + string.Join("\n  ", tooSmallRows));
 
             foreach (var c in canvases)
             {

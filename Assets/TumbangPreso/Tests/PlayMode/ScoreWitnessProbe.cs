@@ -34,6 +34,18 @@ namespace TumbangPreso.PlayTests
     /// </summary>
     public class ScoreWitnessProbe
     {
+        /// <summary>
+        /// ⚠️⚠️ THE SETUP HALF OF `docs/TODO.md` § 126.8'S FIX, AND THIS FIXTURE GETS ONLY THE
+        /// SETUP HALF ON PURPOSE. `PlayModeWorld`'s header asks for both hooks; this class
+        /// already owns a `[UnityTearDown]` doing its own cleanup, and NUnit does not define an
+        /// order between two teardowns of the same kind. **The setup reset is the half that
+        /// protects THIS fixture**: it guarantees the world is empty and settled when the test
+        /// below starts, whatever ran before it. With every fixture in the folder carrying it,
+        /// no test can inherit a world at all, which is the property the entry actually wants.
+        /// </summary>
+        [UnitySetUp]
+        public IEnumerator ResetWorldBefore() => PlayModeWorld.Reset();
+
         private const int ProbeSeat = 1;
 
         private GameMode _savedMode;

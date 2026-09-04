@@ -33,6 +33,18 @@ namespace TumbangPreso.PlayTests
     public class LobbyChatStripProbe
     {
         /// <summary>
+        /// ⚠️⚠️ THE PAIR THAT MAKES A FULL-SUITE RESULT MEAN ANYTHING. `docs/TODO.md` § 126.8:
+        /// the full PlayMode run came back 42, 41 and then 56 red with the red set moving, and a
+        /// gate whose red set moves is not measuring the code. `PlayModeWorld.Reset` has the
+        /// mechanism and why BOTH hooks are needed rather than one.
+        /// </summary>
+        [UnitySetUp]
+        public IEnumerator ResetWorldBefore() => PlayModeWorld.Reset();
+
+        [UnityTearDown]
+        public IEnumerator ResetWorldAfter() => PlayModeWorld.Reset();
+
+        /// <summary>
         /// ⚠️ REAL SENTENCES AT A REAL LENGTH. `MatchRpc.MaxChatLength` is 120 and § 79.3's
         /// sibling note records 120 characters at the minimum readable size wrapping to three
         /// lines in this panel, so a probe that pushes "hi" would miss the fault entirely.

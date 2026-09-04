@@ -302,12 +302,86 @@ namespace TumbangPreso.UI
         /// baked or compiled the first time it is used belongs in this list. The rule for
         /// deciding: if it can hitch, it warms here.
         /// </summary>
+        /// <summary>The generated collection in `Resources`, written by
+        /// `TumbangPreso.EditorTools.ShaderWarmupCollection` on every build.</summary>
+        private const string ShaderWarmupResource = "ShaderWarmup";
+
+        /// <summary>
+        /// How many shaders are compiled between two frames.
+        ///
+        /// ⚠️ SMALL ON PURPOSE. The whole point is that the main thread comes back between
+        /// slices, and the target device is a cheap handset rather than this desktop. Ten
+        /// shaders is a slice short enough that Android's five-second ANR watchdog never sees a
+        /// blocked main thread, and the collection is a few hundred shaders, so the stage costs
+        /// a few dozen frames of a screen that is already playing a video.
+        /// </summary>
+        private const int ShaderWarmupSlice = 10;
+
         private IEnumerator PreloadGameAssets()
         {
-            // 1. Warm up shaders across all materials
+            // 1. Warm up shaders across all materials, A SLICE PER FRAME.
+            //
+            // ⚠️⚠️ THIS WAS `Shader.WarmupAllShaders()` AND IT ANR'D A PHONE AT BOOT, TWICE.
+            // `docs/TODO.md` § 126.10: the .apk never got past this exact bar in two separate
+            // launches, several minutes each, and Android raised its "isn't responding" dialog
+            // over the loading screen both times. That call compiles every variant in the build
+            // in ONE blocking call, and it was **the only stage in this routine that could not
+            // yield**, in a routine whose own header three paragraphs up says *"IT YIELDS BETWEEN
+            // EVERY STAGE, DELIBERATELY"* and whose every other stage was broken up per character
+            // for exactly this reason (§ 114.4). It was left whole because on a desktop it costs
+            // a few seconds.
+            //
+            // ⚠️⚠️ AND IT IS NOT ONLY AN EMULATOR PROBLEM. A cheap Metro Manila handset is the
+            // target (`GameBuilder.ConfigureAndroid`'s own note) and it pays a version of this
+            // cost on every cold boot, on the one screen where the player has nothing to look at
+            // but a bar that is not moving. **An ANR at boot is the worst place to have one,
+            // because Android offers the player a button that closes the game.**
+            //
+            // ⚠️ `WarmUpProgressively` IS THE ONLY INCREMENTAL WARM-UP UNITY EXPOSES.
+            // `Shader.WarmupAllShaders` and `ShaderVariantCollection.WarmUp` are both
+            // all-or-nothing. `ShaderWarmupCollection` (editor) generates the asset from every
+            // material in the project on every build, so the coverage is a fact about the build
+            // rather than about whichever screens somebody walked past while recording.
             SetLoadingStage("preparing shaders", 0.04f);
             yield return null;
-            Shader.WarmupAllShaders();
+
+            var warmup = Resources.Load<ShaderVariantCollection>(ShaderWarmupResource);
+            if (warmup == null)
+            {
+                // ⚠️ NAMED RATHER THAN SILENTLY SKIPPED, AND IT DOES NOT FALL BACK TO
+                // `WarmupAllShaders`. Falling back would reinstate the ANR on the one platform
+                // that cannot survive it, and would do so invisibly on the build where the asset
+                // failed to generate. `ShaderWarmupCollection.Execute` is a build gate for this
+                // reason: a missing collection is a build problem, not a runtime decision.
+                Debug.LogWarning($"[Splash] no '{ShaderWarmupResource}' variant collection, so " +
+                                 "shaders will compile at first use. Run " +
+                                 "TumbangPreso.EditorTools.ShaderWarmupCollection.RebuildForBuild.");
+            }
+            else
+            {
+                // ⚠️⚠️ THE LOOP IS BOUNDED BY THE SHADER COUNT AS WELL AS BY THE RETURN VALUE,
+                // AND THE BOUND IS THE HALF THAT MATTERS. `WarmUpProgressively` answers "is there
+                // more to do", and a warm-up that misreads that answer once would spin on the
+                // loading screen for ever: the failure this replaced is a frozen boot, so a fix
+                // whose worst case is also a frozen boot is not a fix. The count cannot be wrong
+                // because the collection knows it.
+                int slices = Mathf.CeilToInt(Mathf.Max(1, warmup.shaderCount) /
+                                             (float)ShaderWarmupSlice);
+
+                for (int i = 0; i < slices; i++)
+                {
+                    bool more = warmup.WarmUpProgressively(ShaderWarmupSlice);
+
+                    // The bar moves inside the stage rather than only at its boundaries, so the
+                    // stage that used to look frozen is now the one that visibly counts down.
+                    SetLoadingStage("preparing shaders",
+                                    Mathf.Lerp(0.04f, 0.09f, (i + 1) / (float)slices));
+                    yield return null;
+
+                    if (!more) break;
+                }
+            }
+
             yield return null;
 
             // 2. Pre-load RosterBook (models, rigs, materials, clips, pets)

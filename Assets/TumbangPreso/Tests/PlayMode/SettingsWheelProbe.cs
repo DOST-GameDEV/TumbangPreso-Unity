@@ -29,6 +29,19 @@ namespace TumbangPreso.PlayTests
     /// </summary>
     public class SettingsWheelProbe
     {
+        /// <summary>
+        /// ⚠️⚠️ THE PAIR THAT MAKES THIS SUITE'S RESULT MEAN SOMETHING IN A FULL RUN.
+        /// `docs/TODO.md` § 126.8: this fixture is one of the five named by stack trace in two
+        /// full PlayMode runs that came back 42 red and 41 red **with eleven suites swapping
+        /// sides**, and it had no teardown of any kind. `PlayModeWorld.Reset` has the mechanism
+        /// and why both hooks are needed rather than one.
+        /// </summary>
+        [UnitySetUp]
+        public IEnumerator SetUpWorld() => PlayModeWorld.Reset();
+
+        [UnityTearDown]
+        public IEnumerator TearDownWorld() => PlayModeWorld.Reset();
+
         /// <summary>Points across the panel, in normalised panel space.</summary>
         private const int GridX = 5;
         private const int GridY = 9;

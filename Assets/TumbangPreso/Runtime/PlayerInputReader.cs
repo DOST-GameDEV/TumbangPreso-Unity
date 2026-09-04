@@ -69,6 +69,34 @@ namespace TumbangPreso
         /// </summary>
         private InputAction _curveLeft, _curveRight;
 
+        /// <summary>
+        /// The pad's right stick. There is no keyboard binding on it: a mouse reports a DELTA and
+        /// a stick reports a POSITION, so the two are combined in <see cref="ReadLookDelta"/>
+        /// rather than bound to one action.
+        /// </summary>
+        private InputAction _look;
+
+        /// <summary>
+        /// Full stick deflection, expressed in the units a mouse reports per second.
+        ///
+        /// ⚠️ THE ARITHMETIC, so the next person does not re-guess it. `CameraRig.StepLook` turns
+        /// a raw delta into degrees as `raw * BaseSensitivity(0.15) * MouseSensitivity * 10`, so at
+        /// sensitivity 1.0 one raw unit is 1.5 degrees. 150 units per second is therefore
+        /// **225 degrees per second** at full deflection, which is a three-quarter turn in one
+        /// second: fast enough to spin and face a taya coming from behind, slow enough that the
+        /// stick is not the reason a throw misses. It rides the player's own sensitivity slider
+        /// because it is expressed in the same units the slider already scales.
+        /// </summary>
+        private const float StickLookUnitsPerSecond = 150.0f;
+
+        /// <summary>
+        /// ⚠️ THE STICK IS SQUARED BEFORE IT IS SCALED, AND A LINEAR STICK IS WHY AIMING ON A PAD
+        /// FEELS BAD. Half deflection becomes a quarter speed, so the first half of the stick's
+        /// travel buys fine aim at a distant lata and the last quarter buys the fast turn. The
+        /// sign is restored afterwards; squaring a negative would turn every left into a right.
+        /// </summary>
+        private const float StickDeadzone = 0.16f;
+
         private void Awake()
         {
             if (_motor == null) _motor = GetComponent<CharacterMotor>();
@@ -114,6 +142,11 @@ namespace TumbangPreso
             _curveLeft = map.FindAction("CurveLeft", false);
             _curveRight = map.FindAction("CurveRight", false);
 
+            // ⚠️ OPTIONAL, LIKE THE HERO ACTIONS ABOVE IT. A project whose asset predates the
+            // gamepad pass has no Look action, and a null here must degrade to "mouse only"
+            // rather than throwing on every seat in every match.
+            _look = map.FindAction("Look", false);
+
             map.Enable();
         }
 
@@ -121,6 +154,12 @@ namespace TumbangPreso
 
         private void Update()
         {
+            // ⚠️ SAMPLED BEFORE EVERY EARLY RETURN BELOW, AND THAT IS DELIBERATE. A player typing
+            // in chat or driving Kuro is still holding a device, and the prompts on screen still
+            // have to name the right control for it. Putting this after the chat guard would
+            // freeze every glyph for as long as a message was being written.
+            InputLayer.LastInputDevice.Sample();
+
             if (_motor == null) return;
 
             var intent = _motor.Intent;
@@ -151,23 +190,53 @@ namespace TumbangPreso
             var visual = _motor.GetComponent<Visual.CharacterVisual>();
             if (visual != null && visual.Companion != null && visual.Companion.IsPossessed)
             {
-                // Human controls Kuro the companion pet
-                visual.Companion.SetPlayerInput(_move.ReadValue<Vector2>());
+                // Human controls Kuro the companion pet.
+                //
+                // ⚠️ THE THUMB STICK AND THE LOOK DELTA REACH KURO TOO. This branch returns
+                // before the ordinary read, so every device added below has to be added here as
+                // well or possession is the one place in the game that is keyboard-only.
+                // `StepCompanionLook` reads the same `Intent.LookAxis` the main rig does.
+                var petMove = _move.ReadValue<Vector2>();
+                if (InputLayer.TouchInput.Active && InputLayer.TouchInput.Move.sqrMagnitude > 0.0001f)
+                    petMove = InputLayer.TouchInput.Move;
+
+                visual.Companion.SetPlayerInput(petMove);
+                intent.LookDelta = ReadLookDelta();
+
                 // Allow skill2 recast to teleport and end possession
-                if (_skill2 != null) intent.Set(Verb.Skill2, _skill2.IsPressed());
+                if (_skill2 != null)
+                    intent.Set(Verb.Skill2, _skill2.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Skill2));
+
                 return;
             }
 
-            intent.Move = _move.ReadValue<Vector2>();
-            intent.Set(Verb.Sprint, _sprint.IsPressed());
-            intent.Set(Verb.Jump, _jump.IsPressed());
-            intent.Set(Verb.SpecialAbility, _special.IsPressed());
-            intent.Set(Verb.Grab, _grab.IsPressed());
-            intent.Set(Verb.Lunge, _lunge.IsPressed());
-            intent.Set(Verb.EmoteWheel, _emote.IsPressed());
-            if (_skill1 != null) intent.Set(Verb.Skill1, _skill1.IsPressed());
-            if (_skill2 != null) intent.Set(Verb.Skill2, _skill2.IsPressed());
-            if (_ultimate != null) intent.Set(Verb.Ultimate, _ultimate.IsPressed());
+            // ⚠️⚠️ THE THUMB LAYER IS OR-ED IN HERE, WHICH IS THE ONE PLACE IT MAY BE. A touch
+            // button is a third device beside the keyboard and the pad, and every argument in
+            // this class's note applies to it unchanged: it arrives as HELD state, the edges are
+            // derived downstream, and nothing past this line can tell which device produced the
+            // press. That is what lets `docs/TODO.md` § 124.1's five hold-to-aim powers work on a
+            // finger with no ability-side code at all.
+            //
+            // ⚠️ OR, NOT REPLACE. An Android device can have a physical pad paired, and a desktop
+            // player can be on a touchscreen laptop. Whichever is pressed wins; neither switches
+            // the other off. `TouchInput.Active` is false on a build with no layer drawn, so this
+            // costs a desktop seat one bool per verb per frame.
+            var move = _move.ReadValue<Vector2>();
+            if (InputLayer.TouchInput.Active && InputLayer.TouchInput.Move.sqrMagnitude > 0.0001f)
+                move = InputLayer.TouchInput.Move;
+
+            intent.Move = move;
+            intent.Set(Verb.Sprint, _sprint.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Sprint));
+            intent.Set(Verb.Jump, _jump.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Jump));
+            intent.Set(Verb.SpecialAbility, _special.IsPressed() || InputLayer.TouchInput.Pressed(Verb.SpecialAbility));
+            intent.Set(Verb.Grab, _grab.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Grab));
+            intent.Set(Verb.Lunge, _lunge.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Lunge));
+            intent.Set(Verb.EmoteWheel, _emote.IsPressed() || InputLayer.TouchInput.Pressed(Verb.EmoteWheel));
+            if (_skill1 != null) intent.Set(Verb.Skill1, _skill1.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Skill1));
+            if (_skill2 != null) intent.Set(Verb.Skill2, _skill2.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Skill2));
+            if (_ultimate != null) intent.Set(Verb.Ultimate, _ultimate.IsPressed() || InputLayer.TouchInput.Pressed(Verb.Ultimate));
+
+            intent.LookDelta = ReadLookDelta();
 
             // Pektus (Curve Spin) control: Independent of WASD movement!
             // Controlled via Mouse Wheel Up/Down (or Left/Right arrow keys) while charging throw.
@@ -215,6 +284,58 @@ namespace TumbangPreso
             //
             // `CharacterMotor.FixedUpdate` takes it, at the end of the authoritative step. See
             // the note there.
+        }
+
+        /// <summary>
+        /// This frame's look delta, from whichever of the three devices moved.
+        ///
+        /// ⚠️⚠️ THE CAMERA USED TO COMPUTE THIS ITSELF, IN THREE PLACES, AND THAT BROKE THIS
+        /// CLASS'S ONE RULE. `CameraRig.StepLook`, `StepCompanionLook` and `StepEmoteLook` each
+        /// called `Input.GetAxisRaw("Mouse X")` directly. The note at the top of this file says
+        /// hardware is read HERE and nowhere else, and the cost of the exception was exactly what
+        /// it warns about: a pad stick and a phone drag had no way in, and adding them would have
+        /// meant a fourth and a fifth hardware read inside the camera, each with its own copy of
+        /// the deadzone, the curve and the invert-Y check. The rig reads `Intent.LookAxis` now and
+        /// this is the only producer.
+        ///
+        /// ⚠️ THE THREE SOURCES ADD RATHER THAN OVERRIDE. A pad can be paired to a phone and a
+        /// touchscreen laptop still has a mouse; whichever moved contributes, and the two that did
+        /// not contribute zero. There is no "current device" to get wrong.
+        ///
+        /// ⚠️ INVERT-Y IS NOT APPLIED HERE. `CameraRig` owns it, applies it once, and applies it
+        /// to all three sources for free by virtue of them arriving as one number.
+        /// </summary>
+        private Vector2 ReadLookDelta()
+        {
+            // The mouse, in the raw units every sensitivity number in this game is written
+            // against. Legacy axes are live because `activeInputHandler` is Both.
+            var delta = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
+
+            if (_look != null)
+            {
+                Vector2 stick = _look.ReadValue<Vector2>();
+
+                // ⚠️ THE DEADZONE IS ON THE VECTOR'S LENGTH, NOT PER AXIS. A per-axis deadzone
+                // makes a stick pushed diagonally snap to whichever axis cleared first, which is
+                // the classic "the camera will only move in eight directions" complaint.
+                if (stick.sqrMagnitude > StickDeadzone * StickDeadzone)
+                {
+                    // Squared response, sign preserved. See `StickDeadzone`'s note.
+                    stick = new Vector2(stick.x * Mathf.Abs(stick.x), stick.y * Mathf.Abs(stick.y));
+                    delta += stick * (StickLookUnitsPerSecond * Time.deltaTime);
+                }
+            }
+
+            // ⚠️ THE DRAG IS CONSUMED, NOT SAMPLED. `TouchInput.LookDelta` accumulates what the
+            // finger moved since the last read; leaving it standing would apply the same drag on
+            // every frame after the finger stopped, which is a camera that never settles.
+            if (InputLayer.TouchInput.Active)
+            {
+                delta += InputLayer.TouchInput.LookDelta;
+                InputLayer.TouchInput.LookDelta = Vector2.zero;
+            }
+
+            return delta;
         }
 
         /// <summary>

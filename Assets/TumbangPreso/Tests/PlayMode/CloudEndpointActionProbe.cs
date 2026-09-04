@@ -60,6 +60,18 @@ namespace TumbangPreso.PlayTests
     [Category("Ugs")]
     public class CloudEndpointActionProbe
     {
+        /// <summary>
+        /// ⚠️⚠️ THE SETUP HALF OF `docs/TODO.md` § 126.8'S FIX, AND THIS FIXTURE GETS ONLY THE
+        /// SETUP HALF ON PURPOSE. `PlayModeWorld`'s header asks for both hooks; this class
+        /// already owns a `[UnityTearDown]` doing its own cleanup, and NUnit does not define an
+        /// order between two teardowns of the same kind. **The setup reset is the half that
+        /// protects THIS fixture**: it guarantees the world is empty and settled when the test
+        /// below starts, whatever ran before it. With every fixture in the folder carrying it,
+        /// no test can inherit a world at all, which is the property the entry actually wants.
+        /// </summary>
+        [UnitySetUp]
+        public IEnumerator ResetWorldBefore() => PlayModeWorld.Reset();
+
         private const string ProbeProfile = "qa45";
 
         /// <summary>The name this probe writes, so a leaked profile is identifiable at a glance.</summary>
@@ -105,6 +117,13 @@ namespace TumbangPreso.PlayTests
                 auth.SwitchProfile(ProbeProfile);
             }
 
+            // ⚠️ THIS ONE STAYS A DIRECT CALL, AND THE REASON IS THE PROFILE SWITCH ABOVE IT.
+            // `NetIdentity.EnsureSignedInAsync` signs in on the GAME's profile; this probe has
+            // just switched to `ProbeProfile` precisely so its writes cannot land on a real
+            // player, and routing it through the shared path would undo that in the line below.
+            // ⚠️ It is still the only other sign-in in the repository, and it is safe from the
+            // race that took `UgsServicesProbe` down six times because the `SignOut` above
+            // guarantees no attempt is in flight on this profile.
             if (!auth.IsSignedIn) yield return Await(auth.SignInAnonymouslyAsync());
 
             Assert.IsTrue(auth.IsSignedIn, "anonymous sign-in failed on the probe profile");

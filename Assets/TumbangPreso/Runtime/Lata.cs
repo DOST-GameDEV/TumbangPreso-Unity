@@ -266,6 +266,31 @@ namespace TumbangPreso
         /// </summary>
         public void HostRestore()
         {
+            // ⚠️⚠️ THIS GATE WAS MISSING AND THREE COMMENTS IN TWO FILES SAID IT WAS HERE.
+            // `SetUpright`'s note and `AnnounceUprightChange`'s summary both claimed this method
+            // and `HostKnockDown` "both open with `NetAuthority.ShouldResolve()`", and
+            // `NetCue`'s header repeated it. Only `HostKnockDown` did. `tools/audit_cue_relay.py`
+            // found it by propagating gatedness from the callers and reporting the two cue lines
+            // in `SetUpright` as UNGATED; `docs/TODO.md` § 135.6 recorded that it could not be
+            // proven either way from reading.
+            //
+            // ⚠️ IT IS A NO-OP TODAY AND IS STILL WORTH WRITING, which is the whole argument for
+            // it. Every path a client can currently take is closed somewhere else: `Carrier`
+            // returns at `ShouldRequest()` before reaching the restore (its own note explains
+            // that a client righting the can locally is a bug they already fixed once),
+            // `MatchRpc.HostApplyResetPhase` checks `IsHost`, `GuidedTraining` is offline where
+            // `ShouldResolve()` is true, and `MatchBootstrap.ResetWorld` hangs off
+            // `MatchDirector.RoundStarted`, which `ApplySnapshot` DELIBERATELY DOES NOT RAISE on
+            // a client (see its own ⚠️⚠️ note: raising it would give every client a second
+            // authority over the round number). So the protection is against the NEXT caller,
+            // and the cost of not having it is that the one method in this file that stands the
+            // objective back up trusts four other files to remember.
+            //
+            // ⚠️ AND IT CHANGES NOTHING OFFLINE. `ShouldResolve()` is `IsHost`, and the solo
+            // provider answers true, which is why every host-side path runs unchanged in single
+            // player and in the tutorial.
+            if (!NetAuthority.ShouldResolve()) return;
+
             transform.position = _mark;
             transform.rotation = Quaternion.identity;
 

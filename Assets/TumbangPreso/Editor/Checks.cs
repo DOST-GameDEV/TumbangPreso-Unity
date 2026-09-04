@@ -79,6 +79,22 @@ namespace TumbangPreso.EditorTools
 
                 new Check("scene scripts", () => SceneScriptCheck.Execute(true),
                           "Logs/scene-script-check.txt"),
+
+                // ⚠️⚠️ IT IS IN THE GATE RATHER THAN BEING A TEST BECAUSE IT IS THE ONLY CHECK
+                // THAT CAN SEE A SCREEN NOBODY OPENED. Every runtime probe measures screens that
+                // got loaded; this one reads the source, so a screen added on a branch and not
+                // yet wired to a door is still caught. That is the same argument
+                // `SceneScriptCheck` makes one line above, and `docs/TODO.md` § 96, § 114 and
+                // § 124.11 are the three times an unreached screen went unmeasured.
+                new Check("input surface", () => InputSurfaceCheck.Execute(true),
+                          "Logs/input-surface-check.txt"),
+
+                // ⚠️⚠️ IT REGENERATES THE COLLECTION RATHER THAN INSPECTING IT, which is the
+                // `CLAUDE.md` § 4a argument: a warm-up list that is checked but not rewritten
+                // goes stale the first time somebody adds a material, and a stale one warms the
+                // wrong shaders while looking exactly like a working one. `docs/TODO.md`
+                // § 126.10 is the ANR it replaced.
+                new Check("shader warmup", ShaderWarmupCollection.Execute, ""),
             };
 
             var failed = new List<string>();
