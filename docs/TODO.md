@@ -37,6 +37,7 @@ either of those.
 |---|---|---|---|
 | **OWNED** | 142, 138 | ⚠️⚠️ **CONTROLLER SUPPORT HAS AN OWNER AND IS NOT THIS QUEUE'S WORK. DO NOT PICK IT UP.** It is live on `controller-mapping`: `GenericPadBridge`, the CONTROLLER MAP screen, `MenuNav`, and a pad that can back out of a screen. | Nothing here. Read § 142 for what landed; leave the code to the person working on it. |
 | **P1** | 145.6 | **A real multi-seed sweep has still not been RUN.** The harness is built and verified on synthetic arms; nothing has measured the shipped game across seeds since the numbers `CLAUDE.md` § 7.1 quotes | 5 to 8 Unity launches an arm, a `docs/reports/bot-sweep-*.md`, and the retrieval slide (§ 146) as the first thing compared against a pre-slide sweep. ⚠️ It is the only way to know whether § 146 changed the game |
+| **P1** | 145.4b | **Three peers report three different rosters of who is human.** `IsBot` is derived per peer from its own view of the lobby, and it is on the wire, in `IntegrityRules.Digest`, and in the weight `BotFillRules` puts on a rating | ⚠️ **One measurement first, not a fix**: the same three processes WITHOUT `-tp-allbots`, to separate the harness from the game. § 145.4b has the table and the numbers |
 | **P2** | 147.3 | **The game records its own good moments and nothing draws them.** Markers exist, are deterministic, are deduplicated and name a replay window | One reader. § 147.3 lists the three cheapest in order, and `CLAUDE.md` § 6.2's four questions come first |
 | **P2** | 146.6 | **The retrieval slide plays the LUNGE clip**, because both are a body-led dash and the rig has one | A slide of its own, which is art work rather than code work. ⚠️ The FEEL of the numbers is `Attention.md` § 17.2 and not this row |
 | **P2** | 141 | **The duplicate name on the scoreboard.** The invariant model can express both ownership faults now (§ 141.7) and the cause of the spectator overlay is fixed | The scoreboard cannot draw one person twice, with a test that could fail. ⚠️ His eye on the fix is `Attention.md` |
@@ -1118,6 +1119,49 @@ distribution read `no change measured` on every metric; an arm with a real +66 p
 read `MOVED` at |t| 10.4. ⚠️ **A real sweep is 5 to 8 Unity launches a side and was not run in this
 pass**; the harness is the deliverable and § 16 is the standing argument for using it.
 
+### 145.4b ⚠️⚠️ OPEN: THE STRENGTHENED VERIFIER FOUND THREE PEERS WITH THREE DIFFERENT ROSTERS OF WHO IS HUMAN
+
+**First run after the rewrite, `87346b8`, one referee and two clients on loopback for 45 s:**
+
+```
+referee   : slot -1  proto 24  round 1  active True  defender 0  struct FC4251A5
+client1   : slot  1  proto 24  round 1  active True  defender 0  struct B05920F1
+client2   : slot  2  proto 24  round 1  active True  defender 0  struct AFC81248
+
+referee   : seats 0[c0 bot TAYA]  1[c3 bot]  2[c0 bot]  3[c3 bot]
+client1   : seats 0[c0 bot TAYA]  1[c3 hum]  2[c0 hum]  3[c3 bot]
+client2   : seats 0[c0 bot TAYA]  1[c3 bot]  2[c0 hum]  3[c3 bot]
+```
+
+**Everything the old verdict checked passed**: the referee is seatless, both clients hold distinct
+seats, all three reached round 1, the protocol, the mode, the map, the characters and the derived
+taya all agree, and no score went backwards. **The three new findings are all the same fact:**
+
+| Seat | referee | client1 | client2 |
+|---|---|---|---|
+| 1 | bot | **human** | bot |
+| 2 | bot | **human** | **human** |
+
+⚠️⚠️ **EACH PEER CALLS ITS OWN SEAT HUMAN AND DISAGREES ABOUT EVERYBODY ELSE'S.** Client1 knows
+both peers; client2 knows only itself; the referee, which holds no seat, calls all four bots. That
+is `IsBot` being DERIVED per peer from that peer's own view of the lobby roster rather than agreed.
+
+⚠️ **AND IT IS NOT COSMETIC.** `IsBot` is on the wire and in `IntegrityRules.Digest`, and
+`BotFillRules.Weight` scales a rating by how many seats were people. Three peers holding three
+human counts for one match submit three different weights for it, and § 144.7's whole handover
+ruling rests on the same flag.
+
+⚠️⚠️ **DO NOT FIX THIS FROM THIS ENTRY. THE FIRST STEP IS ONE MORE RUN.** `-tp-allbots` puts an AI
+on every seat on every peer, including each client's own, so part of what is printed above is the
+HARNESS rather than the game, and guessing which part is how § 144.8 got handed on with a warning
+against retuning before measuring. **Run the same three processes without `-tp-allbots`, with the
+clients idle**, and compare: if the rosters still disagree it is the game, and if they agree it is
+the switch and the verifier needs to know that.
+
+**Done looks like:** three peers agreeing on which seats are people, or a written reason why a
+seatless referee legitimately cannot know, with the verifier taught that reason rather than having
+the check removed.
+
 ### 145.5 ⚠️ OPEN: `qualify.py` STILL HAS TO RUN ON A WINDOWS MACHINE FOR A NATIONALS CANDIDATE
 
 Its Unity and dotnet paths resolve per platform now, and `BUILD_TARGET` follows the machine
@@ -1515,6 +1559,20 @@ Two fixes, and the second is the one worth reading.
    round became active"* is a claim about the GAME. Every assertion the old step made was the
    first one, printed under the second one's name.
 
+**MEASURED on `87346b8`**, `python tools/cold_start.py --seconds 50` against a player built from
+that commit:
+
+```
+| launches and identifies itself      | PASS |  2.8 | clean |
+| reaches the arena and exits cleanly | PASS | 51.2 | clean |
+| a real round became active          | PASS |  0.0 | round 1, active, 4 seats driving, 50.0 s |
+```
+
+and the capture underneath it now reads `round: 1` / `round active: True` with a scoreboard on it
+(1370 points, six lata flips, all four seats between 56 and 94 m travelled) where § 143.15's green
+run read `round: 0` / `round active: False`. **That is the difference the switch makes**, and it
+was invisible for as long as the step asserted only that the process came back.
+
 **What the new step asserts:** the report exists, `round >= 1`, `round active` is True, the
 session was networked (the gate the switch presses only exists on one), and **at least two seats
 travelled more than a metre**, because "a round is active" and "anybody is playing" are also two
@@ -1529,6 +1587,39 @@ the stamp under `Contents/Resources/Data/StreamingAssets`) and
 
 ⚠️⚠️ **`--clean-profile` MOVES A DIRECTORY, SO GUESSING ITS PATH WRONG IS DESTRUCTIVE**, which is
 why the three platform layouts are written out rather than derived from one pattern.
+
+⚠️⚠️⚠️ **AND THE RUN AFTER THAT DELETED A REAL PROFILE DIRECTORY, WHICH IS THE MOST IMPORTANT
+THING IN THIS SECTION.** The new step bound its per-seat list to a local called `moved`:
+
+```python
+moved = [s for s in state.get("seats", []) if s["travelled"] > 1.0]
+```
+
+`moved` is the `finally` block's handle for *"a profile directory was set aside and has to be put
+back"*. With a list bound to it, that block read "a backup exists", ran **`shutil.rmtree(profile)`
+on a profile it had never moved**, and only THEN failed trying to restore a Python list. The run
+was not even given `--clean-profile`. `~/Library/Application Support/BH Studios/Tumbang Preso` was
+destroyed.
+
+⚠️⚠️ **THE DESTRUCTIVE HALF RAN FIRST, AND THAT IS THE PROPERTY TO LEARN FROM RATHER THAN THE
+TYPO.** An unguarded `rmtree` inside a `finally`, conditioned on a FLAG about a backup rather than
+on the backup, is a bad shape however careful the surrounding code is: any path that leaves that
+flag truthy deletes first and discovers the mistake afterwards. So the condition is now the thing
+itself: a real `pathlib.Path`, equal to the name this function chose, that exists on disk. Anything
+else prints `REFUSED to restore` and deletes nothing. **Verified by binding the exact
+list that caused the loss and watching the guard fire with the file intact.**
+
+⚠️ **AND THE RENAME TO `driving` ONLY FIXES THE INSTANCE.** The guard is what fixes the class,
+which is `CLAUDE.md` § 4a's construction argument applied to a destructive operation.
+
+⚠️⚠️ **AND THE FIRST CROSS-PLATFORM RUN STILL REFUSED, ON A NAME.** The binary inside a `.app` is
+named after `productName`, not after the bundle: `ProjectSettings.asset` says
+`productName: Tumbang Preso`, **with a space**, so the executable is
+`Contents/MacOS/Tumbang Preso` inside `TumbangPreso.app`. The harness looked for
+`Contents/MacOS/TumbangPreso` and reported *"there is no shipped player on this machine"* at a
+player that had just built successfully. **It globs the bundle now**, so a `productName` change
+cannot break it, which is `InputSurfaceProbe`'s discover-rather-than-list argument applied to a
+path.
 
 ---
 

@@ -599,3 +599,24 @@ now and names its build target in the report rather than assuming `Win64` (§ 14
 - `NetSession.ProtocolVersion` moved to **24** on 2026-09-05 (the seat handover's rating,
   § 144.7), so `CLAUDE.md` § 4a applies: **both players are rebuilt from that commit and shipped
   together**, or they refuse each other correctly and it reads as a bug.
+
+### 17.5 ⚠️⚠️ I DELETED YOUR LOCAL GAME PROFILE ON THIS MAC. HERE IS EXACTLY WHAT AND WHY
+
+While running `tools/cold_start.py` on 2026-09-05, a shadowed variable in that script's own
+`finally` block ran `shutil.rmtree` on
+**`~/Library/Application Support/BH Studios/Tumbang Preso`**. The run had not been given
+`--clean-profile` and had set nothing aside, so there is **no backup**. `docs/TODO.md` § 143.15b
+has the mechanism and the guard that now makes it impossible.
+
+**What that directory holds** is Unity's `persistentDataPath` for the Mac player: `settings.json`
+(including the `Fullscreen: false` short wide window `CLAUDE.md` § 6.2b keeps warning about),
+saved rebinds, the local career and social caches, and the touch layout.
+
+⚠️ **IT IS THE MAC PLAYER'S PROFILE ONLY.** Nothing on Windows, nothing on a phone, nothing in the
+repository and nothing on the account service was touched: the career and the ladder live on UGS
+and come back on sign-in. If this Mac had never been used to play, the loss is nothing at all,
+and the directory's timestamp suggests it was created by this session's own runs.
+
+**What to check:** launch the Mac player once and see whether your window size, your rebinds and
+your touch layout are the ones you expect. If they are the shipped defaults, that is what was
+lost and it is a few minutes in SETTINGS rather than anything that cannot be redone.

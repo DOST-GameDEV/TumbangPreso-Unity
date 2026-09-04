@@ -46,6 +46,23 @@ sys.path.insert(0, HERE)
 
 from net_matrix import parse_report, DEFAULT_EXE  # noqa: E402
 
+
+def default_exe():
+    """
+    The shipped player on THIS machine.
+
+    WARNING: `net_matrix.DEFAULT_EXE` IS A WINDOWS DESKTOP PATH AND THAT IS THE ONLY THING THAT
+    STOPPED THIS RUNNING ON THE MAC. `CLAUDE.md` section 7 keeps a table of three machines and
+    warns in its own words that "a note that is true on one machine and written as a fact about
+    'here' sends whoever is on another one hunting"; a hard-coded path in a harness is that note
+    as code. `tools/cold_start.py` learned the same lesson one file over, including that the
+    binary inside a .app is named after `productName` rather than after the bundle.
+    """
+    import cold_start  # noqa: E402
+
+    found = cold_start.player_path()
+    return str(found) if found is not None else DEFAULT_EXE
+
 PORT = 8930
 
 # How long the referee gets to boot, open its transport and reach the arena before a client is
@@ -377,15 +394,19 @@ def as_float(value):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--exe", default=DEFAULT_EXE)
+    ap.add_argument("--exe", default=None)
     ap.add_argument("--seconds", type=float, default=45.0)
     ap.add_argument("--out", default=os.path.join(REPO, "Logs", "referee"))
     args = ap.parse_args()
 
-    if not os.path.isfile(args.exe):
-        print("referee_run: no player at " + args.exe)
-        print("             Build one with GameBuilder.BuildWindows first.")
+    exe = args.exe or default_exe()
+
+    if not os.path.isfile(exe):
+        print("referee_run: no player at " + str(exe))
+        print("             Build one first: GameBuilder.BuildMac or GameBuilder.BuildWindows.")
         return 2
+
+    args.exe = exe
 
     print("referee_run: " + args.exe)
     print("             a seatless referee on port %d and two clients, %.0f s"

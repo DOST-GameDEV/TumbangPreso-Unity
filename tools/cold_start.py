@@ -110,15 +110,44 @@ def player_path():
     root = pathlib.Path(__file__).resolve().parent.parent
 
     windows = home / "Desktop" / "TumbangPreso-Unity" / "TumbangPreso.exe"
-    mac = root / "Builds" / "macOS" / "TumbangPreso.app" / "Contents" / "MacOS" / "TumbangPreso"
-    mac_desktop = (home / "Desktop" / "TumbangPreso.app" / "Contents" / "MacOS" / "TumbangPreso")
+    bundles = [root / "Builds" / "macOS" / "TumbangPreso.app",
+               home / "Desktop" / "TumbangPreso.app"]
 
-    candidates = ([mac, mac_desktop, windows] if sys.platform == "darwin"
-                  else [windows, mac, mac_desktop])
+    def in_bundle(app):
+        """
+        ⚠️⚠️ THE BINARY INSIDE A .app IS NAMED AFTER `productName`, NOT AFTER THE BUNDLE, AND
+        GUESSING IT IS WHAT MADE THE FIRST CROSS-PLATFORM RUN REFUSE. `ProjectSettings.asset`
+        says `productName: Tumbang Preso`, **with a space**, so the executable is
+        `Contents/MacOS/Tumbang Preso` while the bundle is `TumbangPreso.app`. The harness looked
+        for `Contents/MacOS/TumbangPreso`, found nothing, and reported "there is no shipped player
+        on this machine" at a player that had just been built successfully.
 
-    for exe in candidates:
-        if exe.exists():
-            return exe
+        ⚠️ SO IT IS GLOBBED RATHER THAN NAMED. A rename of `productName` cannot break this, which
+        is the same argument `InputSurfaceProbe` makes about discovering screens instead of listing
+        them (`CLAUDE.md` § 4a).
+        """
+        binaries = sorted((app / "Contents" / "MacOS").glob("*")) if app.exists() else []
+        for binary in binaries:
+            if binary.is_file() and os.access(binary, os.X_OK):
+                return binary
+
+        return None
+
+    if sys.platform == "darwin":
+        for app in bundles:
+            found = in_bundle(app)
+            if found is not None:
+                return found
+
+        return windows if windows.exists() else None
+
+    if windows.exists():
+        return windows
+
+    for app in bundles:
+        found = in_bundle(app)
+        if found is not None:
+            return found
 
     return None
 
@@ -359,15 +388,22 @@ def main():
                 reasons.append(f"networked is {state.get('networked')}: the ready gate this "
                                f"switch presses through only exists on a networked session")
 
-            moved = [s for s in state.get("seats", []) if s["travelled"] > 1.0]
-            if len(moved) < 2:
-                reasons.append(f"only {len(moved)} seat(s) travelled more than a metre, so the "
+            # ⚠️⚠️ NOT `moved`. THAT NAME BELONGS TO THE PROFILE BACKUP AND SHADOWING IT DELETED
+            # SOMEBODY'S SETTINGS. `moved` is the `finally` block's flag for "a profile directory
+            # was set aside and has to be put back"; a list of seats bound to it made that block
+            # think a backup existed, so it ran `shutil.rmtree(profile)` on a profile it had never
+            # moved and then failed trying to restore a Python list. **The destructive half ran
+            # first.** See the guard in the `finally` below, which is what makes the class of
+            # fault impossible rather than this rename, which only fixes the instance.
+            driving = [s for s in state.get("seats", []) if s["travelled"] > 1.0]
+            if len(driving) < 2:
+                reasons.append(f"only {len(driving)} seat(s) travelled more than a metre, so the "
                                f"bots were not driving")
 
             match_step["ok"] = not reasons
             match_step["detail"] = "; ".join(reasons) if reasons else (
                 f"round {state['round']}, active, "
-                f"{len(moved)} seats driving, {state.get('sampled')} s sampled")
+                f"{len(driving)} seats driving, {state.get('sampled')} s sampled")
 
         steps.append(match_step)
 
@@ -379,7 +415,26 @@ def main():
         # ⚠️⚠️ RESTORED IN A `finally`, ALWAYS. A crash between the move and the restore would
         # otherwise leave somebody's settings, rebinds and career sitting under a `.backup` name
         # they have no reason to look for.
-        if moved is not None:
+        #
+        # ⚠️⚠️ AND IT PROVES IT IS LOOKING AT THE BACKUP IT MADE BEFORE IT DELETES ANYTHING, WHICH
+        # IS NOT PARANOIA: A SHADOWED VARIABLE MADE THIS BLOCK DESTROY A REAL PROFILE. A later
+        # step bound a list of seat rows to `moved`, this block read that as "a backup exists",
+        # ran `rmtree` on a profile it had never set aside, and only THEN failed trying to restore
+        # a Python list. **The destructive half ran first**, which is the property that makes an
+        # unguarded `rmtree` in a `finally` a bad shape however careful the surrounding code is.
+        #
+        # ⚠️ SO THE CONDITION IS THE THING ITSELF RATHER THAN A FLAG ABOUT IT: a real path, with
+        # the name this function chose, that exists on disk. Nothing else can satisfy it, and a
+        # `rmtree` guarded on the SOURCE existing cannot destroy a destination it cannot replace.
+        expected = profile.with_name(profile.name + ".coldstart-backup")
+        restorable = (isinstance(moved, pathlib.Path)
+                      and moved == expected
+                      and moved.exists())
+
+        if moved is not None and not restorable:
+            print(f"REFUSED to restore: the backup handle is {moved!r}, which is not "
+                  f"{expected}. Nothing was deleted.", file=sys.stderr)
+        elif restorable:
             if profile.exists():
                 shutil.rmtree(profile)
             shutil.move(str(moved), str(profile))
