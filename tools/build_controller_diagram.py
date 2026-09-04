@@ -66,11 +66,11 @@ except ImportError:  # pragma: no cover - report rather than crash, like the aud
     sys.exit(2)
 
 
-SOURCE = os.path.join("tools", "assets", "ps3_gamepad_cc0_2400.png")
+SOURCE = os.path.join("tools", "assets", "ds4_gamepad_ccby_2400.png")
 
 # WARNING  ASSERTED, NOT ASSUMED. Every hand-measured anchor below is in these pixels. See the
 # header: a re-render of the SVG by a different engine is a different picture with the same name.
-SOURCE_SIZE = (1960, 1240)
+SOURCE_SIZE = (2216, 1382)
 
 
 # ---------------------------------------------------------------------------------------
@@ -90,20 +90,19 @@ SOURCE_SIZE = (1960, 1240)
 # is the darkest object in the frame and everything else stays light.
 # ---------------------------------------------------------------------------------------
 RAMP = [
-    (0x24, 0x11, 0x06),   # warm near-black, the outline and the deepest shadow
-    (0x3A, 0x1C, 0x08),
-    (0x55, 0x29, 0x0F),   # UiTheme.PaperInk, the body
+    (0x3A, 0x1C, 0x08),   # the linework
+    (0x55, 0x29, 0x0F),   # UiTheme.PaperInk
     (0x7A, 0x3F, 0x18),
-    (0x8B, 0x52, 0x27),   # the wood edge, the moulded wells
-    (0xC8, 0x94, 0x5A),
-    (0xE8, 0xC7, 0x7E),   # Khaki, the rim highlights
-    (0xFC, 0xD3, 0x9F),   # Honey Quartz, the brightest lettering
+    (0xA8, 0x70, 0x3A),
+    (0xDE, 0xBA, 0x8C),   # PaperSunk, the moulded shading inside the sticks
+    (0xFE, 0xEB, 0xD4),   # UiTheme.Paper, the body
+    (0xFF, 0xF3, 0xE2),
+    (0xFF, 0xF9, 0xEF),   # the brightest highlight
 ]
 
-# The four glyphs on the face buttons, and the power LED. Both are flat marks rather than
-# modelled surfaces, so both are assigned rather than ramped.
-GLYPH = (0xFC, 0xD3, 0x9F)      # Honey Quartz: a light mark on a dark button
-LED = (0xC3, 0x2E, 0x0D)        # Rim red, which section 6.4 allows and calls the lit deep red
+# ⚠️ THERE IS NO GLYPH OR LED COLOUR HERE ANY MORE. The previous source drew its face buttons in
+# four saturated hues and its power light in red, so both needed assigning past the ramp. This
+# drawing is linework throughout, so the ramp is the whole palette. See `recolour`.
 
 
 # ---------------------------------------------------------------------------------------
@@ -120,27 +119,60 @@ LED = (0xC3, 0x2E, 0x0D)        # Rim red, which section 6.4 allows and calls th
 # bumper, which is the ordering `docs/TODO.md` section 142.3's ring already relies on.
 # ---------------------------------------------------------------------------------------
 HAND_MEASURED = {
-    "leftTrigger": (395, 55),
-    "leftShoulder": (395, 140),
-    "rightTrigger": (1540, 55),
-    "rightShoulder": (1540, 140),
+    # ⚠️⚠️ THE SHOULDERS SIT SIDE BY SIDE ALONG ONE BAR, WHICH IS A COMPROMISE THIS DRAWING
+    # FORCES AND IS WORTH NAMING. It is a FRONT view, so L2 is directly behind L1 and the
+    # illustration draws one visible tab for both. Anchoring them to the same point would put two
+    # leader lines on one spot and claim there is one control there; stacking them a few pixels
+    # apart is the same claim with extra steps. Spreading them along the bar, trigger outboard
+    # and bumper inboard, is the only reading that gives each label somewhere of its own to point
+    # at, and the labels themselves say which is which.
+    "leftTrigger": (370, 42),
+    "leftShoulder": (520, 42),
+    "rightTrigger": (1846, 42),
+    "rightShoulder": (1696, 42),
 
-    "dpad/up": (395, 330),
-    "dpad/left": (275, 440),
-    "dpad/right": (515, 440),
-    "dpad/down": (395, 555),
+    "dpad/up": (440, 261),
+    "dpad/left": (293, 388),
+    "dpad/right": (582, 388),
+    "dpad/down": (440, 510),
 
-    "select": (795, 478),
-    "start": (1142, 478),
+    # SHARE and OPTIONS, which are what this generation calls select and start.
+    "select": (657, 187),
+    "start": (1559, 187),
 
     # WARNING  THE STICK AND ITS CLICK ARE THE SAME POINT, AND HERE THAT IS CORRECT WHERE IT WAS
-    # WRONG FOR THE SHOULDERS. Pushing the stick and pressing it down are two controls on one
-    # lump of plastic; two anchors an inch apart would draw a pad with four sticks on it.
-    "leftStick": (700, 745),
-    "leftStickPress": (700, 745),
-    "rightStick": (1245, 745),
-    "rightStickPress": (1245, 745),
+    # A COMPROMISE FOR THE SHOULDERS. Pushing the stick and pressing it down are two controls on
+    # one lump of plastic; two anchors an inch apart would draw a pad with four sticks on it.
+    "leftStick": (757, 704),
+    "leftStickPress": (757, 704),
+    "rightStick": (1464, 704),
+    "rightStickPress": (1464, 704),
+
+    # ⚠️ THE FOUR FACE BUTTONS ARE HAND-MEASURED NOW AND WERE FOUND AUTOMATICALLY BEFORE, WHICH IS
+    # A REAL LOSS AND IS WRITTEN DOWN RATHER THAN GLOSSED. The previous source drew them in four
+    # saturated hues, so the generator could locate them and could not mistype them. This one
+    # draws them as black outlines like everything else, so there is nothing to search for.
+    # `check_anchors_land_on_the_pad` is the guard that replaces it, and it is weaker: it catches
+    # an anchor off the drawing, not an anchor on the wrong button.
+    #
+    # ⚠️⚠️ SO THE `--preview` OVERLAY IS NOT OPTIONAL FOR THIS FILE, IT IS THE MEASUREMENT. The
+    # first set of numbers here was read off a coordinate grid by eye and every one of them was
+    # forty to a hundred pixels out, which the drawing hid completely and the overlay showed in
+    # one glance. Change an anchor, run `--preview`, look at the rings.
+    "buttonNorth": (1796, 210),
+    "buttonWest": (1638, 380),
+    "buttonEast": (1958, 385),
+    "buttonSouth": (1798, 551),
 }
+
+# ⚠️⚠️ SONY'S MARK, AND IT IS ERASED BEFORE ANYTHING ELSE HAPPENS. A licence to reuse somebody's
+# DRAWING is not a licence to the trademark inside it, and this repository already carries one
+# open item of exactly that shape: `docs/Port_Plan.md` § 8 lists the IKE slipper first in the
+# replacement queue because it "carries the real Nike wordmark as geometry". The roundel between
+# the sticks is filled with the body colour, so the mark is in no shipped file.
+#
+# ⚠️ THE SHARE AND OPTIONS LETTERING STAYS. Those are ordinary English words naming a button.
+TRADEMARK_DISC = (1108, 704, 66)      # centre x, centre y, radius
 
 
 def load_source():
@@ -158,59 +190,63 @@ def load_source():
     return image
 
 
-def find_face_buttons(pixels):
-    """The four face buttons, located by the hues the recolour is about to remove.
+def erase_trademark(image):
+    """Fill Sony's roundel with the body colour. See `TRADEMARK_DISC` for why.
 
-    WARNING  THE RIGHT-HAND CLUSTER ONLY, BECAUSE THE POWER LED IS ALSO RED. The first version of
-    this search caught a four-pixel LED at the top of the pad in the same mask as the circle
-    button and put the EAST anchor eight hundred pixels off, in the middle of the body.
-    Restricting to the cluster's own side is cheaper than a connected-components pass and says
-    out loud which ambiguity it is resolving.
+    WARNING  IT SAMPLES THE FILL RATHER THAN NAMING A COLOUR, so it keeps working if the source
+    art is ever re-rendered at a different grey. The sample is taken a little outside the disc,
+    on the same flat body panel the mark sits on.
     """
-    red, green, blue, alpha = (pixels[:, :, i].astype(int) for i in range(4))
+    cx, cy, radius = TRADEMARK_DISC
 
-    rgb = pixels[:, :, :3].astype(int)
-    saturation = rgb.max(2) - rgb.min(2)
-    strong = (saturation > 70) & (alpha > 128)
+    patch = image.getpixel((cx + radius + 30, cy))
+    ImageDraw.Draw(image).ellipse(
+        (cx - radius, cy - radius, cx + radius, cy + radius), fill=patch)
 
-    columns = np.arange(pixels.shape[1])[None, :].repeat(pixels.shape[0], 0)
-    strong = strong & (columns > 1250)
+    return image
 
-    masks = {
-        "buttonNorth": strong & (green > red) & (green > blue),
-        "buttonWest": strong & (red > 150) & (blue > 150) & (green < 120),
-        "buttonEast": strong & (red > 150) & (green < 90) & (blue < 90),
-        "buttonSouth": strong & (blue > 200) & (red < 190) & (green < 110),
-    }
 
-    found = {}
+def check_anchors_land_on_the_pad(art, anchors):
+    """Every anchor has to be ON the drawing, not beside it.
 
-    for name, mask in masks.items():
-        rows, cols = np.nonzero(mask)
+    WARNING  THIS IS THE WEAKER GUARD THAT REPLACED A STRONGER ONE, AND SAYING SO IS THE POINT.
+    The previous source drew its face buttons in four saturated hues, so the generator FOUND them
+    and could not mistype them. This drawing has no hues to find, so all eighteen anchors are
+    typed, and a typo puts a leader line on bare paper with nothing failing. Checking that each
+    one lands on an opaque pixel catches the gross version of that mistake: an anchor off the pad
+    entirely, or one left behind when the source art is swapped again.
 
-        if len(cols) == 0:
-            print(f"build_controller_diagram: could not find {name} in the source art.")
-            sys.exit(2)
+    ⚠️ IT CANNOT CATCH AN ANCHOR ON THE WRONG BUTTON, which is the failure it would most like to
+    catch. `--preview` writes an overlay with a ring drawn at every anchor; that picture is the
+    real check and it takes five seconds to read.
+    """
+    stray = []
 
-        found[name] = (float(cols.mean()), float(rows.mean()))
+    for name, (px, py) in anchors.items():
+        if not (0 <= px < art.width and 0 <= py < art.height):
+            stray.append(f"{name} is outside the image")
+            continue
 
-    return found
+        if art.getpixel((int(px), int(py)))[3] < 8:
+            stray.append(f"{name} is on transparent background")
+
+    if stray:
+        print("build_controller_diagram: " + "; ".join(stray))
+        sys.exit(2)
 
 
 def recolour(image):
-    """Every pixel onto the warm ramp, with the four glyphs and the LED assigned.
+    """Every pixel onto the warm paper ramp.
 
-    WARNING  THE GLYPHS ARE PICKED OUT BEFORE THE RAMP RUNS, or they would be ramped by their own
-    luminance and come out as four different browns: the green triangle is bright and the purple
-    cross is dark, so the pad would look like two of its four buttons were greyed out. They are
-    one colour on purpose, and the shape is what names them.
+    WARNING  THE BODY LANDS ON `UiTheme.Paper`, WHICH IS LIGHTER THAN THE SCREEN IT SITS ON, AND
+    THAT IS THE WHOLE COLOUR DECISION. The source body is a mid grey at about 0.78 luminance,
+    which a ramp spread evenly to Honey Quartz would map onto the page's own ground and make the
+    pad vanish into it. The top of the ramp is pushed up to `Paper` and beyond so the controller
+    reads as an object lying ON the page rather than a hole cut in it, and the linework carries
+    the shape. It is the opposite treatment from the pad this replaced, which was a dark solid.
     """
     pixels = np.asarray(image).astype(int)
     red, green, blue, alpha = (pixels[:, :, i] for i in range(4))
-
-    rgb = pixels[:, :, :3]
-    saturation = rgb.max(2) - rgb.min(2)
-    coloured = (saturation > 70) & (alpha > 8)
 
     # WARNING  THE WHITE PAGE BEHIND THE DRAWING BECOMES TRANSPARENT. The SVG has no background
     # of its own; the white is the rasteriser's. Keeping it would draw a white card behind the
@@ -225,18 +261,12 @@ def recolour(image):
     index = np.clip(np.round(luma * steps).astype(int), 0, steps)
 
     out = np.array(RAMP, dtype=int)[index]
-    out[coloured] = GLYPH
 
-    # WARNING  THE POWER LED KEEPS A HUE AND THE CIRCLE BUTTON MUST NOT, AND THE FIRST RENDER GOT
-    # THAT BACKWARDS. Both are pure red in the source, so a test on colour alone painted the EAST
-    # face button in rim red while its three neighbours went honey: one of four buttons looking
-    # lit, which is precisely the "greyed out" reading the paragraph above is written to avoid.
-    # The LED is a four-pixel mark in the status strip along the top, so the ambiguity is
-    # resolved by WHERE it is, the same way `find_face_buttons` resolves the same clash.
-    rows = np.arange(pixels.shape[0])[:, None].repeat(pixels.shape[1], 1)
-    strip = rows < 260
-
-    out[coloured & strip & (red > 200) & (green < 60) & (blue < 60)] = LED
+    # ⚠️ NO COLOURED-GLYPH OVERRIDE ANY MORE, AND ITS ABSENCE IS DELIBERATE. The previous source
+    # drew its four face buttons in green, magenta, red and purple and they had to be forced to
+    # one colour so the pad did not look like two of its buttons were greyed out. This drawing
+    # already draws all four as plain outlines, so the ramp is the whole answer and a special
+    # case here would be code with nothing to do.
 
     result = np.dstack([out, alpha]).astype(np.uint8)
     result[page] = (0, 0, 0, 0)
@@ -347,12 +377,13 @@ def main():
     parser.add_argument("--preview", action="store_true")
     args = parser.parse_args()
 
-    source = load_source()
-
+    source = erase_trademark(load_source())
     anchors = dict(HAND_MEASURED)
-    anchors.update(find_face_buttons(np.asarray(source)))
 
-    art, normalised = crop_to_ink(recolour(source), anchors)
+    art = recolour(source)
+    check_anchors_land_on_the_pad(art, anchors)
+
+    art, normalised = crop_to_ink(art, anchors)
     write(args.out, art, normalised, args.preview)
 
     return 0

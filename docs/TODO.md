@@ -313,6 +313,64 @@ passed through. `ControllerMapScreen.Uncross` now bubbles adjacent rows while an
 a finger"* is a property of the output rather than a promise in a comment. The angular sort stays
 in front of it, because it leaves the pass almost nothing to do.
 
+### 142.3d ⚠️⚠️ THE PAD IS THE DUALSHOCK 4 LAYOUT NOW, AND THE LEADERS BEND
+
+🧑 2026-09-04, with two reference pictures: *"use the first pic instead of creating your own
+controller model for the mapping"*, and *"fix the lines pointed to the buttons so it's not
+straight."*
+
+**The art.** The reference is a modern pad with a touchpad and a slab body, and the CC0 PlayStation
+3 drawing § 142.3c had just landed was neither. It is
+[Tokyoship's Dualshock 4 Layout](https://commons.wikimedia.org/wiki/File:Dualshock_4_Layout.svg)
+now: same generation as the reference, same touchpad, same silhouette, and a LINE drawing rather
+than a solid, which is what the reference is.
+
+- ⚠️⚠️ **IT IS CC BY 3.0, NOT CC0, AND THAT IS A BILL RATHER THAN A DETAIL.** Rule 1 excludes
+  paid, non-commercial and **CC BY-SA**; it does not exclude CC BY. What CC BY costs is a CREDIT,
+  and `Asset_Sourcing.md` § 9 is explicit that a line goes in only when the asset actually ships.
+  This one ships. **Removing the credit and keeping the picture is a licence breach, not a
+  tidy-up.**
+- ⚠️ **A CC0 DUALSENSE DOES NOT EXIST TO FIND.** Commons has no DualSense SVG at all and its one
+  PS5 render is CC BY-SA, which rule 1 excludes outright. This is the closest freely licensed
+  drawing to the picture handed over.
+- ⚠️⚠️ **THE PLAYSTATION ROUNDEL IS ERASED ON THE WAY IN.** A licence to reuse somebody's DRAWING
+  is not a licence to the trademark inside it, and this repository already carries one open item
+  of that exact shape: `docs/Port_Plan.md` § 8 lists the IKE slipper first in the replacement queue
+  because it *"carries the real Nike wordmark as geometry"*. SHARE and OPTIONS stay; they are
+  ordinary words naming a button.
+- ✅ **THE CREDIT IS IN THE GAME**, in `CreditsContent.CcByCredits` beside the three slippers,
+  which are the same deal. `Asset_Sourcing.md` § 8.1 and § 9 carry it too.
+- ⚠️ **THE RAMP INVERTED WITH THE ART.** The PS3 pad was a dark solid and its ramp bottomed out
+  near black so it would read on honey paper. This one is linework on a light body, so the top of
+  the ramp is pushed to `UiTheme.Paper`, **lighter than the page**, and the pad reads as an object
+  lying on the paper rather than a hole cut in it.
+
+⚠️⚠️ **AND THE AUTOMATIC FACE-BUTTON SEARCH DIED WITH THE OLD ART, WHICH IS A REAL LOSS AND IS
+WRITTEN DOWN RATHER THAN GLOSSED.** The PS3 drawing coloured its four face buttons, so the
+generator FOUND them and could not mistype them. This one draws them as outlines like everything
+else, so all eighteen anchors are typed. Two things replace it, and neither is as good:
+`check_anchors_land_on_the_pad` fails the build when an anchor is off the drawing, and `--preview`
+writes an **overlay with a ring at every anchor**. ⚠️ **That overlay is not a nicety, it is the
+measurement**: the first eighteen numbers were read off a coordinate grid by eye and every one was
+forty to a hundred pixels out, which the drawing hid completely and the overlay showed at a glance.
+
+**The lines.** They were single diagonals; they are **elbows** now, a long run level with the
+label and a 45-degree tip into the control, which is what the Xbox diagram he attached does and
+what every technical drawing does. The reason is not taste: a straight diagonal arrives at
+whatever angle the two points happen to make, so eighteen of them arrive at eighteen angles and
+the eye reads a starburst. With the long part of every line parallel, each label owns one line.
+
+- ⚠️ **`PathsCross` TESTS THE ELBOWED PATH, NOT THE CHORD.** The uncrossing pass added in § 142.3
+  compared straight lines, which WERE the leaders then. A bend moves a line by up to its own drop,
+  so two leaders whose chords miss can have elbows that meet, and a pass still testing chords
+  would call that clean.
+- ⚠️⚠️ **AND THE ROW HEIGHT AND THE DIAGRAM WIDTH ARE ONE DECISION, WHICH THE FIRST RENDER OF THIS
+  ART PROVED.** `DiagramSize` fits the pad inside the callout band, so a band much taller than the
+  pad leaves the top and bottom rows level with bare paper and their leaders travelling the whole
+  height of the picture to reach anything. The DualShock's 1.6 aspect gave a 610-unit pad in a
+  748-unit band and **four long diagonals straight across the drawing**. Matched at 685 against
+  676, every tip is short.
+
 ### 142.4 ⚠️ AN UNRECOGNISED PAD IS DRIVEN NOW: § 138.4 STEPS 2 AND 3, BY A ROUTE § 138 DID NOT EXPECT
 
 § 138.4 step 2 asks for a registered fallback LAYOUT. ⚠️⚠️ **THAT ROUTE IS SHUT AND IT IS WORTH

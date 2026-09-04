@@ -45,6 +45,15 @@ namespace TumbangPreso.UI
                 "This work is based on \"Pink Slipper\" (sketchfab.com/3d-models/pink-slipper-af5b6388d4f240389591a4ac09fedf06) by The Withered Rose (sketchfab.com/TheWitheredRose), licensed under CC-BY-4.0 (creativecommons.org/licenses/by/4.0)."),
             new Credit("IKE",
                 "This work is based on \"Low Poly Nike Sandals\" (sketchfab.com/3d-models/low-poly-nike-sandals-8e77c949319148afb9134ba13f64046f) by les03 (sketchfab.com/les03official), licensed under CC-BY-4.0 (creativecommons.org/licenses/by/4.0)."),
+
+            // ⚠️⚠️ THIS ONE IS THE PRICE OF THE CONTROLLER MAP'S PICTURE AND MUST NOT BE REMOVED
+            // WHILE THAT PICTURE SHIPS. `Asset_Sourcing.md` § 8.1 and
+            // `tools/assets/ds4_gamepad_ccby.LICENSE.txt`: the pad on SETTINGS, CONTROLS,
+            // CONTROLLER MAP is Tokyoship's drawing under CC BY 3.0, and CC BY's single condition
+            // is the credit. Deleting this line and keeping the art is a licence breach rather
+            // than a tidy-up. The three above are the same deal for the three slippers.
+            new Credit("CONTROLLER MAP",
+                "This work is based on \"Dualshock 4 Layout\" (commons.wikimedia.org/wiki/File:Dualshock_4_Layout.svg) by Tokyoship, licensed under CC-BY-3.0 (creativecommons.org/licenses/by/3.0)."),
         };
 
         /// <summary>Courtesy credits — none of these REQUIRE attribution (CC0 / in-house),

@@ -64,19 +64,29 @@ namespace TumbangPreso.InputLayer
         // -------------------------------------------------------------------------------------
 
         /// <summary>How wide one callout is. See the note above for why this is not a fraction.</summary>
-        private const float CalloutWidth = 380.0f;
+        private const float CalloutWidth = 340.0f;
 
         /// <summary>The room between the drawing and a callout, where the leader lines run.</summary>
-        private const float Gutter = 72.0f;
+        private const float Gutter = 64.0f;
 
         /// <summary>
-        /// The widest the drawing may be. ⚠️ THE ARITHMETIC, RATHER THAN A NUMBER THAT LOOKED
-        /// RIGHT: 1920 less two callouts and two gutters is 1016, and 980 leaves 18 units of
-        /// margin either side so the drawing never touches the edge of a 4:3 screen.
+        /// The widest the drawing may be.
+        ///
+        /// ⚠️ THE ARITHMETIC, RATHER THAN A NUMBER THAT LOOKED RIGHT: 1920 less two 340-unit
+        /// callouts and two 64-unit gutters is 1112, and 1100 leaves six units of margin either
+        /// side so the drawing never touches the edge of a 4:3 screen.
+        ///
+        /// ⚠️⚠️ IT WENT UP FROM 980 AND THE ROW HEIGHT CAME DOWN FROM 76, TOGETHER, BECAUSE THE
+        /// TWO NUMBERS ARE ONE DECISION. `DiagramSize` fits the pad inside the CALLOUT BAND, so
+        /// when the band is much taller than the pad, the top and bottom rows sit level with bare
+        /// paper and their leaders have to travel the whole way down the picture to reach
+        /// anything. With the DualShock's 1.6 aspect the old pair gave a 610-unit pad in a
+        /// 748-unit band, and the four outermost labels drew long diagonals straight across the
+        /// drawing. Matched (a 685-unit pad in a 676-unit band) every tip is short.
         /// </summary>
-        private const float DiagramMaxWidth = 980.0f;
+        private const float DiagramMaxWidth = 1100.0f;
 
-        private const float RowHeight = 76.0f;
+        private const float RowHeight = 68.0f;
         private const float RowGap = 8.0f;
 
         /// <summary>
@@ -265,7 +275,7 @@ namespace TumbangPreso.InputLayer
                     if (!TryTarget(column[i], size, out var a)) continue;
                     if (!TryTarget(column[i + 1], size, out var b)) continue;
 
-                    if (!Crosses(upper, a, lower, b)) continue;
+                    if (!PathsCross(upper, a, lower, b, side)) continue;
 
                     (column[i], column[i + 1]) = (column[i + 1], column[i]);
                     swapped = true;
@@ -284,6 +294,31 @@ namespace TumbangPreso.InputLayer
             target = new Vector2((anchor.x - 0.5f) * size.x,
                                  BoardCentreY + (0.5f - anchor.y) * size.y);
             return true;
+        }
+
+        /// <summary>
+        /// Whether two LEADERS cross, testing the elbowed paths rather than the straight chords.
+        ///
+        /// ⚠️⚠️ IT HAS TO BE THE REAL PATH OR THE PASS IS CHECKING A LINE THAT IS NOT DRAWN. When
+        /// the leaders were single diagonals, chord and path were the same thing; they bend now
+        /// (🧑: *"fix the lines pointed to the buttons so it's not straight"*), and a bend moves
+        /// the line by up to its own drop. Two leaders whose chords miss can have elbows that
+        /// meet, and the version of this that kept testing chords would have called that clean.
+        ///
+        /// ⚠️ FOUR SEGMENT TESTS, WHICH IS THE WHOLE COST. Each path is a run and a tip, so a
+        /// pair is two by two. At nine rows a column and a bubble bound of nine passes that is
+        /// under three hundred cross products, once, at static-init.
+        /// </summary>
+        private static bool PathsCross(Vector2 startA, Vector2 targetA,
+                                       Vector2 startB, Vector2 targetB, Side side)
+        {
+            var elbowA = ElbowFor(startA, targetA, side);
+            var elbowB = ElbowFor(startB, targetB, side);
+
+            return Crosses(startA, elbowA, startB, elbowB)
+                   || Crosses(startA, elbowA, elbowB, targetB)
+                   || Crosses(elbowA, targetA, startB, elbowB)
+                   || Crosses(elbowA, targetA, elbowB, targetB);
         }
 
         /// <summary>
@@ -733,28 +768,69 @@ namespace TumbangPreso.InputLayer
         private void BuildLeader(RectTransform root, Slot slot, Vector2 callout, Vector2 size)
         {
             if (PadDiagram.Art == null) return;
-            if (!PadDiagram.TryAnchor(slot.Control, out var normalised)) return;
+            if (!TryTarget(slot, size, out var target)) return;
 
-            // ⚠️ THE Y FLIP HAPPENS HERE AND NOWHERE ELSE. The manifest measures DOWN from the
-            // top of the picture, the way an image is addressed; a `RectTransform` measures UP.
-            // Doing it in two places is how every line ends up mirrored on one axis.
-            var target = new Vector2((normalised.x - 0.5f) * size.x,
-                                     BoardCentreY + (0.5f - normalised.y) * size.y);
+            var start = StartOf(slot, size, callout.y);
+            var elbow = ElbowFor(start, target, slot.Side);
 
-            var start = new Vector2((int)slot.Side * (size.x * 0.5f + Gutter), callout.y);
+            Segment(root, slot.Control + "_run", start, elbow);
+            Segment(root, slot.Control + "_tip", elbow, target);
+        }
 
-            var delta = target - start;
+        /// <summary>Where a column's leader lines leave, level with their own callout.</summary>
+        private static Vector2 StartOf(Slot slot, Vector2 size, float rowY)
+            => new Vector2((int)slot.Side * (size.x * 0.5f + Gutter), rowY);
+
+        /// <summary>
+        /// The bend, which is what makes these read as callouts rather than as string.
+        ///
+        /// ⚠️⚠️ 🧑 ASKED FOR THIS BY NAME, 2026-09-04: *"fix the lines pointed to the buttons so
+        /// it's not straight"*, with a labelled Xbox diagram as the example. He is right, and the
+        /// reason is worth writing down rather than treating as taste. **A single diagonal from a
+        /// label to a button crosses the drawing at whatever angle the two happen to make**, so
+        /// eighteen of them arrive at eighteen different angles and the eye reads a starburst.
+        /// A callout that runs LEVEL with its own label and only bends near its target reads as
+        /// one line per label, because the long part of every line is parallel to every other.
+        ///
+        /// ⚠️ THE BEND IS 45 DEGREES AND IT IS CLAMPED, which is what every technical drawing
+        /// does. The run is as long as the drop, so the tip leaves at a constant angle no matter
+        /// how far the label is from its control; the clamp stops a label at the far end of the
+        /// column from bending before it has left the gutter, which would put the diagonal across
+        /// the other labels' lines instead of across bare paper.
+        /// </summary>
+        private static Vector2 ElbowFor(Vector2 start, Vector2 target, Side side)
+        {
+            float drop = Mathf.Abs(target.y - start.y);
+            float span = Mathf.Abs(target.x - start.x);
+
+            float run = Mathf.Min(drop, span * 0.6f);
+
+            return new Vector2(target.x + (int)side * run, start.y);
+        }
+
+        /// <summary>One straight piece of a leader, drawn as a rotated hairline.</summary>
+        private void Segment(RectTransform root, string name, Vector2 from, Vector2 to)
+        {
+            var delta = to - from;
             float length = delta.magnitude;
+
+            // ⚠️ A ZERO-LENGTH PIECE IS SKIPPED RATHER THAN DRAWN. A control level with its own
+            // label has no drop, so its elbow lands exactly on its target and the tip has nothing
+            // to cover; a zero-width `Image` still costs a draw call and a rotation of NaN.
             if (length < 1.0f) return;
 
-            var go = new GameObject("Leader_" + slot.Control, typeof(RectTransform), typeof(Image));
+            var go = new GameObject("Leader_" + name, typeof(RectTransform), typeof(Image));
             go.transform.SetParent(_leaders != null ? _leaders : root, false);
 
             var rt = (RectTransform)go.transform;
             rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
             rt.pivot = new Vector2(0.0f, 0.5f);
-            rt.anchoredPosition = start;
-            rt.sizeDelta = new Vector2(length, 2.0f);
+            rt.anchoredPosition = from;
+
+            // ⚠️ ONE UNIT LONGER THAN THE GAP IT SPANS, so the two pieces of an elbow overlap at
+            // the corner. Two hairlines meeting exactly leave a single transparent pixel at the
+            // join at most rotations, and eighteen of those read as eighteen broken lines.
+            rt.sizeDelta = new Vector2(length + 1.0f, 2.0f);
             rt.localRotation = Quaternion.Euler(0.0f, 0.0f,
                                                 Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg);
 
