@@ -134,9 +134,14 @@ namespace TumbangPreso.Tests
             var expected = new (string Path, int W, int H)[]
             {
                 ("UI/input/glyphs_key_v1", 256, 416),
-                ("UI/input/glyphs_pad_v1", 112, 432),
                 ("UI/input/glyphs_mouse_v1", 96, 160),
-                ("UI/input/glyphs_stick_v1", 96, 192),
+
+                // ⚠️⚠️ 1216 WIDE, AND THE WIDTH IS THE WHOLE POINT OF ASSERTING IT. `InputGlyphs`
+                // slices this by `column * 64`, and `EditorTools.InputGlyphImport` caps everything
+                // else in that folder at 512: without its own exception Unity would halve this
+                // sheet twice, silently, and every glyph past the second would come from the wrong
+                // cell or off the end. Nineteen controls at 64 px, two grounds.
+                ("UI/input/glyphs_pad_v2", 1216, 128),
             };
 
             foreach (var (path, w, h) in expected)

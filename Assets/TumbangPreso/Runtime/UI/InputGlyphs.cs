@@ -65,7 +65,7 @@ namespace TumbangPreso.UI
             }
         }
 
-        private enum Sheet { Key, Pad, Mouse, Stick }
+        private enum Sheet { Key, Mouse }
 
         public const int CellPixels = 16;
 
@@ -86,8 +86,6 @@ namespace TumbangPreso.UI
         /// </summary>
         private const int KeyVariantOnDark = 1;
         private const int KeyVariantOnLight = 2;
-        private const int PadVariantOnDark = 3;
-        private const int PadVariantOnLight = 0;
 
         // -------------------------------------------------------------------
         // § THE TABLE
@@ -181,68 +179,110 @@ namespace TumbangPreso.UI
             table["RMB"] = new Cell(Sheet.Mouse, 1, 6);
             table["MMB"] = new Cell(Sheet.Mouse, 0, 8);
 
-            // ⚠️⚠️ THE PAD ROWS ARE THE **DARK** ROW OF EACH PAIR, WHICH IS THE ONE WITH THE
-            // AMBER LETTER ON IT. The sheet alternates dark cap / light cap down the whole face
-            // block (Y, Y, X, X, A, A, B, B), and the light rows carry a DIM letter meant for a
-            // pressed state. Picking the wrong one of a pair is invisible in the source and
-            // reads on screen as a greyed-out prompt.
-            table["BUTTON NORTH"] = new Cell(Sheet.Pad, 0, 0);   // Y
-            table["BUTTON WEST"] = new Cell(Sheet.Pad, 0, 2);    // X
-            table["BUTTON SOUTH"] = new Cell(Sheet.Pad, 0, 4);   // A
-            table["BUTTON EAST"] = new Cell(Sheet.Pad, 0, 6);    // B
-
-            // ⚠️ THE D-PAD'S FOUR DIRECTIONS ARE FOUR DIFFERENT CELLS AND SHARING ONE CROSS WOULD
-            // BE WORSE THAN THE TEXT IT REPLACES. Four actions bind to the four directions
-            // (`EmoteWheel` up, `CleanFeed` down, `CurveLeft` left, `CurveRight` right), so one
-            // generic cross would teach a player that all four are the same button.
-            table["D-PAD"] = new Cell(Sheet.Pad, 0, 8);
-            table["D-PAD/UP"] = new Cell(Sheet.Pad, 0, 8);
-            table["D-PAD/LEFT"] = new Cell(Sheet.Pad, 0, 8);
-            table["D-PAD/DOWN"] = new Cell(Sheet.Pad, 0, 8);
-            table["D-PAD/RIGHT"] = new Cell(Sheet.Pad, 0, 8);
-
-            table["LEFT SHOULDER"] = new Cell(Sheet.Pad, 0, 16);
-            table["RIGHT SHOULDER"] = new Cell(Sheet.Pad, 0, 22);
-            table["LEFT TRIGGER"] = new Cell(Sheet.Pad, 0, 19);
-            table["RIGHT TRIGGER"] = new Cell(Sheet.Pad, 0, 25);
-            table["START"] = new Cell(Sheet.Pad, 0, 11);
-            table["SELECT"] = new Cell(Sheet.Pad, 0, 13);
-
-            // ⚠️ THE STICKS ARE THEIR OWN SHEET AND HAVE NO KEYLINE VARIANT, so both grounds get
-            // the same cell. A stick is a silhouette rather than a cap: it already reads against
-            // asphalt and against paper, which is why the pack draws it once.
-            table["LEFT STICK"] = new Cell(Sheet.Stick, 0, 3);
-            table["RIGHT STICK"] = new Cell(Sheet.Stick, 0, 7);
-            table["LEFT STICK PRESS"] = new Cell(Sheet.Stick, 3, 10);
-            table["RIGHT STICK PRESS"] = new Cell(Sheet.Stick, 2, 10);
+            // ⚠️⚠️ THE PAD ROWS USED TO BE HERE AND ARE NOW A SHEET OF THEIR OWN. Every gamepad
+            // control resolves through `PadColumns` below, off Kenney's PS4 prompts, and this
+            // table is the KEYBOARD and MOUSE only. 🧑 2026-09-04: *"change the control icons to
+            // these"*, with a sheet of PlayStation glyphs, then *"it should be the ps4 icons"*.
+            //
+            // ⚠️ WHAT WENT WITH THEM, AND IT IS ALL COMPLEXITY THE BOUGHT SHEET'S LAYOUT FORCED:
+            // the dark/light row pairing, the `PadVariantOnDark` / `PadVariantOnLight` column
+            // offsets, and `DPadColumn` / `DPadRow`, whose own note had to explain that *"the same
+            // direction is at column 2 on one and column 1 on the other"* because the bare row
+            // carried an extra all-lit cell the outlined row did not. The new sheet is generated
+            // by `tools/build_pad_prompt_icons.py`, so its grid is a plain
+            // `column = control, row = ground` and needs none of it.
 
             return table;
         }
 
-        /// <summary>
-        /// ⚠️⚠️ THE FOUR D-PAD DIRECTIONS ARE RESOLVED BY A COLUMN OFFSET RATHER THAN BY A ROW,
-        /// AND THE OFFSET IS DIFFERENT ON THE TWO GROUNDS. The sheet's row 8 is
-        /// `[bare, all-lit, up, left, down, right]` and row 9 is
-        /// `[all-outlined, up, left, down, right]`: **the bare row carries an extra "all lit"
-        /// column that the outlined row does not**, so the same direction is at column 2 on one
-        /// and column 1 on the other. Sharing one number here would put LEFT where UP belongs on
-        /// exactly one of the two backgrounds, which is the kind of fault that ships.
-        /// </summary>
-        private static int DPadColumn(string label, bool onDark)
-        {
-            int first = onDark ? 1 : 2;
+        // -------------------------------------------------------------------
+        // § THE PAD SHEET
+        //
+        // ⚠️⚠️ EVERY GAMEPAD CONTROL COMES FROM HERE AND NOT FROM `Table`, AND IT IS A SEPARATE
+        // PATH BECAUSE IT IS A SEPARATE PACK WITH A DIFFERENT GRID. `tools/build_pad_prompt_icons.py`
+        // recolours Kenney's PS4 prompts (CC0) into a sheet whose layout this game chose rather
+        // than inherited: one COLUMN per control, one ROW per ground, 64 px cells. That is why
+        // there is no variant arithmetic on this side, where the keyboard sheet still needs it.
+        //
+        // ⚠️⚠️ THE COLUMN ORDER IS READ FROM A MANIFEST THE GENERATOR EMITS, NOT TYPED HERE. The
+        // sheet and the index come out of one pass, so a control added or moved cannot leave this
+        // file pointing at the wrong cell — the same arrangement `InputLayer.PadDiagram` uses for
+        // the controller map's anchors, and for the same reason.
+        // -------------------------------------------------------------------
 
-            switch (label)
+        private const string PadSheetPath = "UI/input/glyphs_pad_v2";
+        private const string PadIndexPath = "UI/input/glyphs_pad_v2_index";
+        private const int PadCellPixels = 64;
+
+        private static Dictionary<string, int> _padColumns;
+
+        private static Dictionary<string, int> PadColumns
+        {
+            get
             {
-                case "D-PAD/UP": return first;
-                case "D-PAD/LEFT": return first + 1;
-                case "D-PAD/DOWN": return first + 2;
-                case "D-PAD/RIGHT": return first + 3;
-                default: return onDark ? 0 : 0;
+                if (_padColumns != null) return _padColumns;
+
+                _padColumns = new Dictionary<string, int>(24);
+
+                var manifest = Resources.Load<TextAsset>(PadIndexPath);
+                if (manifest == null) return _padColumns;
+
+                foreach (string raw in manifest.text.Split('\n'))
+                {
+                    string line = raw.Trim();
+                    if (line.Length == 0 || line[0] == '#') continue;
+
+                    // ⚠️ SPLIT ON `|`, NOT ON A SPACE. Half these labels contain one: `BUTTON
+                    // NORTH`, `LEFT STICK PRESS`. A space-separated manifest would key the table
+                    // on `BUTTON` and lose every multi-word control, which is most of them.
+                    int bar = line.IndexOf('|');
+                    if (bar <= 0) continue;
+
+                    if (int.TryParse(line.Substring(bar + 1), out int column))
+                        _padColumns[line.Substring(0, bar)] = column;
+                }
+
+                return _padColumns;
             }
         }
 
-        private static int DPadRow(bool onDark) => onDark ? 9 : 8;
+        /// <summary>
+        /// ⚠️ ROW 1 IS THE DARK-GROUND TINT AND ROW 0 THE LIGHT ONE, which is the order the
+        /// generator writes and says so in the manifest's own header. Both are baked because
+        /// `For`'s callers set `Image.sprite` and never `Image.color`.
+        /// </summary>
+        private static Sprite PadSprite(int column, bool onDark)
+        {
+            string id = "pad:" + column + ":" + (onDark ? 1 : 0);
+            if (Sprites.TryGetValue(id, out var made)) return made;
+
+            var texture = Resources.Load<Texture2D>(PadSheetPath);
+
+            if (texture == null)
+            {
+                Sprites[id] = null;
+                return null;
+            }
+
+            int x = column * PadCellPixels;
+            int y = texture.height - ((onDark ? 1 : 0) + 1) * PadCellPixels;
+
+            if (x < 0 || y < 0
+                || x + PadCellPixels > texture.width || y + PadCellPixels > texture.height)
+            {
+                Sprites[id] = null;
+                return null;
+            }
+
+            var sprite = Sprite.Create(texture,
+                                       new Rect(x, y, PadCellPixels, PadCellPixels),
+                                       new Vector2(0.5f, 0.5f),
+                                       PadCellPixels);
+            sprite.name = "glyph_" + id;
+
+            Sprites[id] = sprite;
+            return sprite;
+        }
 
         // -------------------------------------------------------------------
         // § THE SHEETS
@@ -255,9 +295,7 @@ namespace TumbangPreso.UI
         {
             switch (sheet)
             {
-                case Sheet.Pad: return "UI/input/glyphs_pad_v1";
                 case Sheet.Mouse: return "UI/input/glyphs_mouse_v1";
-                case Sheet.Stick: return "UI/input/glyphs_stick_v1";
                 default: return "UI/input/glyphs_key_v1";
             }
         }
@@ -290,6 +328,12 @@ namespace TumbangPreso.UI
             if (string.IsNullOrEmpty(label)) return null;
 
             string key = label.Trim().ToUpperInvariant();
+
+            // ⚠️ THE PAD IS ASKED FIRST. Nothing is in both tables today, and if a keyboard row
+            // is ever added whose name collides with a controller one, the controller answer is
+            // the one a player holding a controller wants.
+            if (PadColumns.TryGetValue(key, out int padColumn)) return PadSprite(padColumn, onDark);
+
             if (!Table.TryGetValue(key, out var cell)) return null;
 
             int column = cell.Column;
@@ -299,18 +343,6 @@ namespace TumbangPreso.UI
             {
                 case Sheet.Key:
                     column += onDark ? KeyVariantOnDark : KeyVariantOnLight;
-                    break;
-
-                case Sheet.Pad:
-                    if (row == 8)
-                    {
-                        column = DPadColumn(key, onDark);
-                        row = DPadRow(onDark);
-                    }
-                    else
-                    {
-                        column += onDark ? PadVariantOnDark : PadVariantOnLight;
-                    }
                     break;
 
                 case Sheet.Mouse:
@@ -360,12 +392,21 @@ namespace TumbangPreso.UI
         /// `For(...)` twice would build the sprite, throw it away and build it again.
         /// </summary>
         public static bool Has(string label)
-            => !string.IsNullOrEmpty(label) && Table.ContainsKey(label.Trim().ToUpperInvariant());
+        {
+            if (string.IsNullOrEmpty(label)) return false;
+
+            string key = label.Trim().ToUpperInvariant();
+            return PadColumns.ContainsKey(key) || Table.ContainsKey(key);
+        }
 
         /// <summary>
         /// Every label this table can draw, for the test that asserts the tutorial's prompts are
         /// covered.
         /// </summary>
-        public static IEnumerable<string> KnownLabels() => Table.Keys;
+        public static IEnumerable<string> KnownLabels()
+        {
+            foreach (string key in Table.Keys) yield return key;
+            foreach (string key in PadColumns.Keys) yield return key;
+        }
     }
 }

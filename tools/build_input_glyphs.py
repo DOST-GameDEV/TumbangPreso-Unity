@@ -64,11 +64,18 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # same pixels as `kb_light_all` in other arrangements, and the switch/ps pads are a brand
 # swap this game does not offer yet, so importing them would be four unused textures in the
 # player. They stay in the pack folder.
+# WARNING  THE PAD AND STICK SHEETS ARE GONE FROM THIS LIST SINCE 2026-09-04, AND THE RUNTIME NO
+# LONGER HAS ANYTHING TO LOAD THEM WITH. `UI.InputGlyphs` resolves every GAMEPAD control through
+# `glyphs_pad_v2`, which is Kenney's PS4 prompts recoloured by `tools/build_pad_prompt_icons.py`;
+# `Sheet.Pad` and `Sheet.Stick` no longer exist. 🧑 asked for PlayStation icons and this pack's
+# controller half is Xbox, which is why it went rather than being retinted.
+#
+# WARNING  THE KEYBOARD AND MOUSE SHEETS STAY AND THIS TOOL IS STILL THE ONLY THING THAT MAKES
+# THEM. Everything the header above says about the recolour, the ramp and the exact-match table
+# still applies to those two. Do not delete this file because two of its four outputs left.
 SHEETS = {
     "kb_light_all.png": "glyphs_key_v1.png",
-    "controller_xbox.png": "glyphs_pad_v1.png",
     "mouse.png": "glyphs_mouse_v1.png",
-    "sticks.png": "glyphs_stick_v1.png",
 }
 
 OUT_DIR = os.path.join(REPO, "Assets", "TumbangPreso", "Resources", "UI", "input")

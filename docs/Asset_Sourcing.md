@@ -289,6 +289,34 @@ generation, same touchpad, same slab body.
 legally simpler and it was the wrong picture. Recoverable from history if the attribution above
 ever becomes inconvenient.
 
+### 8.2 Shipped: the gamepad prompt glyphs
+
+⚠️ **Also IN the game**, and it replaced a bought pack rather than filling a gap.
+
+| | |
+|---|---|
+| Asset | [Input Prompts 1.5](https://kenney.nl/assets/input-prompts) by Kenney, the **PlayStation Series / Default** set |
+| Licence | **CC0 1.0**, verbatim in `tools/assets/kenney_ps4/Kenney_License.txt`. Kenney's own words: *"Support by crediting 'Kenney' or 'www.kenney.nl' (this is not a requirement)"* |
+| Where | The nineteen source PNGs in `tools/assets/kenney_ps4/` |
+| Ships as | `Assets/TumbangPreso/Resources/UI/input/glyphs_pad_v2.png` plus its index, from `tools/build_pad_prompt_icons.py` |
+| Attribution | Not required. Kenney is already credited in `CreditsContent.CourtesyCredits` for the environment kits |
+
+⚠️⚠️ **IT IS THE PS4 SET, AND ONLY TWO OF THE NINETEEN FILES ARE ACTUALLY PS4-SPECIFIC.** Kenney
+draws the four shapes, the four triggers, the two stick clicks, the two sticks and the d-pad once
+for every PlayStation generation. **SHARE and OPTIONS are the pair that changes**, and those are
+the PS4 files, because the pad the CONTROLLER MAP draws is a DualShock 4. Moving the diagram to a
+DualSense means swapping those two and nothing else.
+
+⚠️ **WHY IT REPLACED WHAT WAS THERE.** The pad glyphs were the Xbox half of vryell's pack, so the
+map drew a DualShock and labelled it `Y`, `B`, `A`, `X`: two vocabularies for one device on one
+screen. 🧑 2026-09-04: *"change the control icons to these"*, with a sheet of PlayStation prompts.
+
+⚠️ **THE ART IS TINTED, NOT USED AS SHIPPED.** Kenney's prompts are pure white on transparent, so
+the generator bakes two rows — ink for paper screens, cream for the in-match HUD — because
+`UI.InputGlyphs.For` promises its callers a sprite that is already the right colour. ⚠️ **The
+d-pad's highlighted arm keeps a colour of its own** (Persimmon, § 6.4's "marker"), or all four
+directions collapse into the same picture.
+
 ## 9. Credits block for the attribution-required options
 
 Only add a line if that asset actually ships.

@@ -93,8 +93,29 @@ namespace TumbangPreso.EditorTools
             // ⚠️ IT KEEPS `npotScale = None` AND `Uncompressed` FROM ABOVE. 1024 x 620 rescaled
             // "to nearest" would be 1024 x 512, which squashes the pad, and block compression on
             // flat cream inside a hard dark outline is exactly the case DXT ruins.
-            if (System.IO.Path.GetFileName(assetPath).StartsWith("pad_diagram",
-                                                                 System.StringComparison.Ordinal))
+            string file = System.IO.Path.GetFileName(assetPath);
+
+            if (file.StartsWith("pad_diagram", System.StringComparison.Ordinal))
+            {
+                importer.filterMode = FilterMode.Bilinear;
+                importer.mipmapEnabled = true;
+                importer.maxTextureSize = 2048;
+            }
+
+            // ⚠️⚠️ THE PS4 PROMPT SHEET IS THE OTHER EXCEPTION AND IT NEEDS BOTH SETTINGS FOR
+            // DIFFERENT REASONS, ONE OF WHICH WOULD HAVE BEEN A SILENT DISASTER.
+            //
+            // * **`maxTextureSize`**: the sheet is **1216 px wide** and the folder rule above caps
+            //   at 512. Unity would have halved it TWICE with no error, and `InputGlyphs` slices
+            //   by `column * 64`, so every glyph past the second would have come from the wrong
+            //   place or off the end. That is exactly the fault the `npotScale` note above
+            //   records, one setting over.
+            // * **`filterMode`**: the old pad sheet was 16 px cells drawn at 34 units, an UPSCALE,
+            //   where Point is right and bilinear smears. These are 64 px cells drawn at about 46,
+            //   a DOWNSCALE, where Point drops every other pixel and turns a smooth circle into a
+            //   staircase. Same folder, opposite answer, because the direction of the scale is
+            //   what decides it.
+            if (file.StartsWith("glyphs_pad_v2", System.StringComparison.Ordinal))
             {
                 importer.filterMode = FilterMode.Bilinear;
                 importer.mipmapEnabled = true;
@@ -109,6 +130,6 @@ namespace TumbangPreso.EditorTools
         /// settings. That is invisible on this machine and a fresh clone gets it right, which is
         /// the worst possible split.
         /// </summary>
-        public override uint GetVersion() => 3;
+        public override uint GetVersion() => 4;
     }
 }
