@@ -417,45 +417,58 @@ nothing has to distinguish them.
 
 ---
 
-## 16 · Two follow-ups the rejoin ruling creates, and neither can be inferred
+## 16 · The rejoin follow-ups ✅ ANSWERED 2026-09-04
 
-**These are new, and they exist BECAUSE of § 15.2 rather than being leftovers from it. Everything
-deterministic around both is being hardened either way; what is missing is the ruling.**
+### 16.1 ✅ A BOT AT THE ABSENT PLAYER'S SKILL LEVEL TAKES THE SEAT
 
-### 16.1 What happens to a seat while its player is away?
+🧑: *"let ai on same skill level as them take over"*.
 
-A seat with nobody driving it is a body standing still in the arena, and that is not neutral:
+**So it is the bot option, with the difficulty matched to the player rather than to the lobby.**
+`AIController.ApplyDifficulty` and the `Difficulty` tiers already exist, and `BotFill` already
+drives an unfilled seat, so the seat-filling half is built. What is not built is the MATCHING: the
+game has no notion of "this player's skill level" to hand the bot, and `Rating` is a ladder number
+rather than a difficulty tier.
 
-- **If the absent player was the TAYA**, the attackers have a free round: nobody guards the can,
-  and the defence tick keeps paying the empty seat 10 a second (`Balance.ScoreDefensePerTick`).
-- **If the absent player was an ATTACKER**, they cannot be tagged while holding nothing, so they
-  stop being a target, and their tsinelas sits unretrieved racking up penalties.
+⚠️⚠️ **AND ONE THING FALLS OUT OF THIS THAT NOBODY ASKED FOR AND SOMEBODY WILL NOTICE: a bot can
+lose you points you would not have lost, or win you points you did not earn.** `MatchRecord.IsBot`
+already marks a bot seat, but a seat that was HUMAN and then became a bot part way through is
+neither, and the career line for that match currently has no way to say so. **A rating that counts
+a bot's stretch as the player's own is a ladder nobody trusts**, which is the same argument
+`docs/TODO.md` § 128 makes about the rating not reading the bot flag. Decide that when the seat
+handover is built, not before.
 
-**Three answers, and they are materially different games:**
+### 16.2 ⚠️ OPEN, AND REFRAMED: HOST LOSS IS AN ARCHITECTURE QUESTION, NOT A RULING
 
-| | What it means |
-|---|---|
-| **Freeze the seat** | The body stands there. Simplest, and the taya case above is a free round for the other side |
-| **A bot drives it until they return** | The match stays a real 4-player match. `AIController` already exists and `BotFill` already does this for an unfilled seat |
-| **Pause the match** | Fairest, and it hands any player a way to stop a round they are losing by pulling their cable |
+🧑: *"thats a real problem, is there any other way to structure lan network matches? host sided
+shit might be shitty (maybe if we will rework host logic or replace it lets work on a new branch
+called lan rework"*.
 
-⚠️ **The bot option is the cheapest to build and the least obviously correct**, because a bot
-playing your seat can lose you points you would not have lost, or win you points you did not earn.
+**Agreed that it is the real problem, and the answer may already be half built rather than a
+rewrite.**
 
-### 16.2 What happens if the HOST leaves?
+⚠️⚠️ **`NetAuthority.IsSeatlessReferee` ALREADY EXISTS AND IS DOCUMENTED AS NOT A CORNER CASE.**
+Its own note: *"A DEDICATED SERVER IS A REFEREE WITH NO SEAT, and that is not a corner case for the
+supported Linux server build."* Every host-authoritative path in the game asks `ShouldResolve()`
+rather than "am I player 1", and **every point in the game is created in one function**
+(`MatchDirector.AddScore`), so a refereeing process that holds no seat needs no new authority
+model. That is the whole reason the seam was written that way.
 
-⚠️⚠️ **"REJOIN" CANNOT ANSWER THIS ONE, WHICH IS WHY IT IS SEPARATE.** There is nothing left to
-rejoin: the host is the machine that decides every point (`MatchDirector.AddScore` is the only
-place a point can be created), so when it goes, the match is over on every other screen. Host
-migration is deliberately unsupported.
+**What that buys at a venue:** the operator's laptop referees the bracket. **No player is the
+host, so no player leaving can end a match**, and § 16.1's bot handover covers the seat. The
+ruling this section was asking for stops being needed, which is the best kind of answer to a
+ruling.
 
-**What is asked of you: one sentence.**
+**What it costs, honestly:**
 
-| | |
-|---|---|
-| **The match is void and replayed** | Cleanest to rule, costs the players the whole match |
-| **The standing score at that moment counts** | Nobody replays, and it rewards a losing host who quits |
+- A fifth process on the LAN, and something has to launch and point players at it.
+- ⚠️ **Nobody has ever run one.** `CLAUDE.md` § 4a records the Linux server build as supported and
+  `FUTURE.md` notes there is no active deployment, so "it compiles" is the whole of what is known.
+- ⚠️ The referee becomes the single point of failure instead of the host. That is **strictly
+  better** (it is a machine nobody is playing on, sitting still, on mains power, not being
+  alt-tabbed) but it is not zero.
 
-> ⚠️ **Nothing is blocked on either.** What a drop does to score, round, taya, ownership and the
-> winner has to be one outcome on every peer whichever way these go, and that half is code. What
-> these decide is what the ORGANISER does next, and no amount of testing can derive it.
+⚠️ **THE BRANCH IS `lan-rework` AND NOTHING SHOULD LAND ON `main` FOR THIS.** Before any code:
+**measure whether a seatless referee actually starts and runs a match today**, because the
+architecture claims it can and nothing has ever checked. If it does, this is configuration and a
+launch path rather than a rework. If it does not, the measurement says what is missing.
+
