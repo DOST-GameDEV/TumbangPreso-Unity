@@ -5245,8 +5245,16 @@ number measured off a render rather than an adjective.
 ⚠️ **`tools/sample_png.js` IS NEW AND IT IS WHY THE NUMBERS EXIST.** Every colour argument in
 this file (§ 119.1's road sampling, § 119.10's 1.7:1, § 120.6's channel split of `TUMP.png`) was
 produced by a tool that was not in this repository, so no reader could re-run one. It decodes a
-PNG with `zlib` and nothing else, because `python` is not on PATH here, and it prints pixels,
-scan lines, the commonest colours in a box, and the WCAG ratio between two hexes.
+PNG with `zlib` and nothing else, because `python` was not on PATH on the machine it was written
+on, and it prints pixels, scan lines, the commonest colours in a box, and the WCAG ratio between
+two hexes.
+
+⚠️ **THAT REASON IS PROFILE-SPECIFIC AND WAS WRITTEN AS THOUGH IT WERE UNIVERSAL.** On the
+`Matthew` profile `python` IS on PATH (checked 2026-09-04: both `Python312\` and its `Scripts\` are
+in the USER Path, and `python --version` answers from PowerShell and from bash). There are two
+laptops with two profiles, `CLAUDE.md` § 7.1 now says so rather than asserting either, and **the
+tool stays regardless**: a Node decoder that needs nothing installed is the more portable answer
+across two machines, which is a better argument for it than the one originally given.
 
 ---
 
