@@ -82,9 +82,13 @@ namespace TumbangPreso.InputLayer
             // ⚠️ ESCAPE BACKS OUT, LIKE EVERY OTHER SCREEN. `CLAUDE.md` § 6.3: *"a player who
             // learns Escape is reliable and then meets one screen where it is not has learned
             // that it is unreliable."*
-            if (UnityEngine.InputSystem.Keyboard.current != null
-                && UnityEngine.InputSystem.Keyboard.current.escapeKey.wasPressedThisFrame)
-                Close();
+            //
+            // ⚠️⚠️ AND IT WENT THROUGH `Keyboard.current`, WHICH ON THIS SCREEN OF ALL SCREENS
+            // WAS THE WRONG READ. Unity reports **Android's hardware BACK button** through the
+            // legacy manager as `KeyCode.Escape` and does not surface it as a `Keyboard` key at
+            // all, so the one screen that exists because the player has no keyboard was the one
+            // screen a phone could not leave. `MenuNav` reads both, plus the pad's B.
+            if (MenuNav.CancelPressed) Close();
         }
 
         public void Close()

@@ -12,7 +12,7 @@ human judgement ('does this FEEL right', 'is this the art we want') or a credent
 Every item below says **what is already done**, so nobody redoes it, and **what exactly is being
 asked of you**, so it is one sitting rather than a project.
 
-Last reviewed 2026-09-03, branch `abilities-rework`.
+Last reviewed 2026-09-04, branch `abilities-rework`.
 
 ---
 
@@ -347,3 +347,44 @@ The cue name is enough if you know it; otherwise say the event, such as "landing
 button" or "slipper bounce". The next session can identify the target and restore only that file.
 Do not ask for or accept a rollback of the whole asset commit, because that would also remove good
 VFX and unrelated accepted audio.
+
+
+---
+
+## 14 · Plug in every controller you can find, and say what happened
+
+**`docs/TODO.md` § 138.4 step 4 and § 142.5.** This is the last open step of the controller work
+and it is the only one that cannot be done from a command line: **nobody has held a pad against
+this project except the one on this desk.** § 138.3 has been blunt about that since it was written,
+and the fallback shipped on 2026-09-04 makes it matter more rather than less.
+
+**What is already done, so none of it needs repeating:**
+
+- **A pad Unity recognises works everywhere**, and now includes backing out of a screen (B), the
+  pause menu (Start) and the whole front end's focus and prompts.
+- **A pad Unity does NOT recognise is no longer dead.** `InputLayer.GenericPadBridge` drives it
+  through a guessed button order, and the guess is drawn and rebindable on the new
+  **SETTINGS, CONTROLS, CONTROLLER MAP** screen.
+- **The guess is asserted in EditMode against a synthetic joystick**, which proves the wiring and
+  says nothing at all about whether the button order is right for any real device.
+
+**What is asked of you:** for each controller you can lay hands on, including the cheap ones and
+anything with an X/D switch, plug it in, open SETTINGS, CONTROLS, CONTROLLER MAP and answer three
+things.
+
+1. **Does the map name your pad, or does it say the game does not recognise it?** The line under
+   the drawing says which.
+2. **Press each button in turn and say which callouts are wrong.** On a recognised pad they should
+   all be right; on an unrecognised one the face buttons are the likely ones, because the
+   PlayStation-style families report them in a different order from the Xbox-style ones.
+3. **Say what the pad is**, in whatever detail is easy: the name on the box, or the manufacturer
+   and product strings the log prints when it is not recognised (search the player log for
+   `[Controller]`).
+
+⚠️ **A pad that works is worth reporting too.** One tested pad written down beats four assumed
+ones, and the list of what has actually been tried is the whole deliverable here.
+
+⚠️ **If a wheel, a flight stick or an arcade stick makes the game act possessed**, that is the
+known cost of the fallback and there is a switch for it: SETTINGS, CONTROLS, **Unrecognised
+controllers**, which only appears when such a device is attached. Say if you hit it, because it
+means the row needs to be easier to find.

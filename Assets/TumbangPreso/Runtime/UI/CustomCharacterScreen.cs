@@ -248,7 +248,7 @@ namespace TumbangPreso.UI
         private void Update()
         {
             if (!IsOpen) return;
-            if (!Input.GetKeyDown(KeyCode.Escape)) return;
+            if (!InputLayer.MenuNav.CancelPressed) return;
 
             // ⚠️ THE PRESS IS SPENT HERE, so the converted screen underneath cannot also back out
             // on it. See `ScreenTakeover.ConsumeEscape`: that is exactly what happened, and it

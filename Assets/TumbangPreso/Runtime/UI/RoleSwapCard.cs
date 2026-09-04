@@ -79,7 +79,18 @@ namespace TumbangPreso.UI
                     _bufferPrompt.text = $"WARMUP / PRACTICE BUFFER: {Mathf.CeilToInt(_bufferRemaining)}s\n[SPACE] / [CLICK] TO DISMISS SCORES & PRACTICE NOW";
                 }
 
-                if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Escape) || Input.GetMouseButtonDown(0))
+                // ⚠️ THE PAD IS THE FOURTH WAY IN AND IT WAS MISSING. This card is shown
+                // during a match, so it is not focusable and has no button to move to: a pad
+                // player could read `[SPACE] / [CLICK] TO DISMISS` while holding a device with
+                // neither. See `InputLayer.MenuNav.PadSubmitPressed`.
+                // ⚠️ ESCAPE IS INSIDE `MenuNav.CancelPressed` RATHER THAN BESIDE IT, so this file
+                // holds no keyboard literal of its own. That is what lets
+                // `ControllerSupportTests` guard the whole runtime by reading it as text: a
+                // twelfth screen added next month with its own `GetKeyDown(KeyCode.Escape)` is
+                // exactly as silent as the eleven were, so the check has to be on the shape.
+                if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)
+                    || InputLayer.MenuNav.PadSubmitPressed
+                    || InputLayer.MenuNav.CancelPressed)
                 {
                     DismissAndPractice();
                 }

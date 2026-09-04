@@ -81,6 +81,25 @@ namespace TumbangPreso.EditorTools
             // trusting the file on disk. A sheet is 256 x 416 in Explorer and 256 x 512 in the
             // engine, and nothing anywhere says so.
             importer.npotScale = TextureImporterNPOTScale.None;
+
+            // ⚠️⚠️ THE CONTROLLER DIAGRAM LIVES IN THIS FOLDER AND IS THE OPPOSITE KIND OF
+            // PICTURE, SO IT TAKES THE OPPOSITE SETTINGS. Everything above is tuned for a 16 px
+            // cell sliced out of a sheet: point filtering, no mips, max 512. `pad_diagram_v1` is
+            // a 1024 px line drawing scaled to roughly 960 canvas units, which on a 1440p monitor
+            // is an UPSCALE of about 1.33, and point-filtering a curved 5 px stroke through that
+            // is a staircase. It is drawn 4x supersampled by
+            // `tools/build_controller_diagram.py` precisely so it can be filtered smoothly.
+            //
+            // ⚠️ IT KEEPS `npotScale = None` AND `Uncompressed` FROM ABOVE. 1024 x 620 rescaled
+            // "to nearest" would be 1024 x 512, which squashes the pad, and block compression on
+            // flat cream inside a hard dark outline is exactly the case DXT ruins.
+            if (System.IO.Path.GetFileName(assetPath).StartsWith("pad_diagram",
+                                                                 System.StringComparison.Ordinal))
+            {
+                importer.filterMode = FilterMode.Bilinear;
+                importer.mipmapEnabled = true;
+                importer.maxTextureSize = 2048;
+            }
         }
 
         /// <summary>
@@ -90,6 +109,6 @@ namespace TumbangPreso.EditorTools
         /// settings. That is invisible on this machine and a fresh clone gets it right, which is
         /// the worst possible split.
         /// </summary>
-        public override uint GetVersion() => 2;
+        public override uint GetVersion() => 3;
     }
 }

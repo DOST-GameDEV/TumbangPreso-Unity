@@ -291,7 +291,7 @@ namespace TumbangPreso.PlayTests
         /// overwriting a shot leaves the previous one on screen and the whole review is conducted
         /// against an image that is no longer on disk. Bump `ShotVersion` on every iteration.
         /// </summary>
-        private const string ShotVersion = "v94";
+        private const string ShotVersion = "v95";
 
         /// <summary>
         /// The three screens the lobby opens: the fighter picker, the maker behind it, and the
@@ -430,6 +430,43 @@ namespace TumbangPreso.PlayTests
         /// render gets a new filename: four captures overwriting `Settings-vN.png` would leave
         /// one file and a review conducted against an image that no longer exists on disk.
         /// </summary>
+        /// <summary>
+        /// CONTROLLER MAP, at 16:9 and at the short wide window he actually plays in.
+        ///
+        /// ⚠️⚠️ TWO SHAPES, AND THE SECOND ONE IS THE POINT. `CLAUDE.md` § 6.2b: *"A screen that
+        /// only exists at 16:9 is a screen nobody in this room has seen."* This screen is the
+        /// densest thing in the front end — a 980-unit drawing with nine callouts down each side
+        /// — so it is exactly the layout a shorter window breaks first, and 1920x820 is roughly
+        /// what an unmaximised window on a 1080p monitor gives.
+        ///
+        /// ⚠️ IT IS OPENED THROUGH `Open()` RATHER THAN BUILT BY HAND, so what is photographed is
+        /// what the settings row opens. `docs/TODO.md` § 124.11: *"a green probe for a screen
+        /// nobody can reach is worse than a red one."*
+        /// </summary>
+        [UnityTest]
+        public IEnumerator TheControllerMapDraws()
+        {
+            Directory.CreateDirectory(OutDir);
+
+            var load = SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Single);
+            yield return ProbeWait.Done(load, "scene load");
+
+            yield return new WaitForSecondsRealtime(2.0f);
+
+            var map = InputLayer.ControllerMapScreen.Open();
+            Assert.IsNotNull(map, "the controller map must open.");
+
+            yield return new WaitForSecondsRealtime(0.8f);
+
+            Assert.IsTrue(map.IsOpen, "the controller map built no canvas.");
+
+            yield return Capture($"ControllerMap-{ShotVersion}");
+            yield return Capture($"ControllerMap-{ShotVersion}-ShortWide", 1920, 820);
+
+            map.Close();
+            yield return null;
+        }
+
         [UnityTest]
         public IEnumerator TheSettingsPanelDraws()
         {
@@ -841,7 +878,17 @@ namespace TumbangPreso.PlayTests
             return null;
         }
 
-        private static IEnumerator Capture(string name)
+        private static IEnumerator Capture(string name) => Capture(name, Width, Height);
+
+        /// <summary>
+        /// ⚠️⚠️ THE SIZE IS A PARAMETER SINCE 2026-09-04, BECAUSE `CLAUDE.md` § 6.2b's THIRD ROW
+        /// IS THE ONE THIS REPOSITORY GETS WRONG MOST OFTEN: *"AT THE SHAPE HE ACTUALLY PLAYS AT.
+        /// `Fullscreen` is false in his `settings.json`. He plays in a short wide window, and all
+        /// nine probe resolutions are taller than it... A screen that only exists at 16:9 is a
+        /// screen nobody in this room has seen."* Every call still defaults to 1920x1080, so
+        /// nothing that already had a picture changed shape.
+        /// </summary>
+        private static IEnumerator Capture(string name, int width, int height)
         {
             var cam = UnityEngine.Camera.main;
             if (cam == null)
@@ -860,7 +907,7 @@ namespace TumbangPreso.PlayTests
             // that is a 1.33x horizontal stretch applied to the picture and to nothing else, and
             // it was read off the capture twice as a fault in `ModelPreview`. Measured: the
             // subject's head came out 1.31x wide against the same model on the toon bench.
-            var rt = new RenderTexture(Width, Height, 24, RenderTextureFormat.ARGB32);
+            var rt = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
             var prev = cam.targetTexture;
 
             cam.targetTexture = rt;
@@ -902,8 +949,8 @@ namespace TumbangPreso.PlayTests
             cam.Render();
 
             RenderTexture.active = rt;
-            var tex = new Texture2D(Width, Height, TextureFormat.RGB24, false);
-            tex.ReadPixels(new Rect(0, 0, Width, Height), 0, 0);
+            var tex = new Texture2D(width, height, TextureFormat.RGB24, false);
+            tex.ReadPixels(new Rect(0, 0, width, height), 0, 0);
             tex.Apply();
 
             RenderTexture.active = null;

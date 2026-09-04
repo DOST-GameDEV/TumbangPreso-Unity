@@ -9,7 +9,7 @@ before inventing a task, and update it in the same commit as the work.
 
 ## What is open right now
 
-Twenty-three sections, and this list is the whole of it. Everything else in this repository's history
+Twenty-four sections, and this list is the whole of it. Everything else in this repository's history
 is in the archive with its number unchanged.
 
 ⚠️ **§ 135 and § 136 CLOSED on 2026-09-04 and are in the archive.** § 137 is the pass that closed
@@ -20,10 +20,11 @@ Android thermals need a handset, and a phone joining a PC needs a person to watc
 
 | § | Open work | Where it bites |
 |---|---|---|
+| **142** | Controller support: a picture of the pad you can rebind from, a pad that can leave a screen, and an unrecognised pad that works | 🧑, with a labelled DualShock drawing: *"we will now be implementing controller support. create a menu for controller mapping and ensure controller support works in the game."* ⚠️⚠️ **The map is built and so are the three faults nobody had looked for: EVERY back-out in the game was a keyboard-only `Input.GetKeyDown(KeyCode.Escape)`, so a pad could reach every screen and leave none of them; there was no pause on a pad at all; and the emote wheel opened on the d-pad and could not be steered by one.** § 138 steps 2 and 3 are closed by the same pass. Open: 🧑's eye on it, and a written list of real pads. § 142 |
 | **141** | Spectator and a driven seat were on screen at the same time, and F1-F4 have two readers | 🧑, with a screenshot: **“IF IT isnt spectator why do i see spectator hud”**. ✅ **Cause found and fixed: `Hud.EnterSpectatorMode` had no inverse**, so every re-seat after a spectator window left the HUD stripped and the overlay drawn. The F1-F4 double-read is fixed too, and § 141.2 breaks the premise `CLAUDE.md` § 4 exempts the nine spectator keys on. ⚠️ **Open: the duplicate name on the scoreboard, and his eye on the fix.** § 141 |
 | **140** | The player cannot see the network, and the timeout gives them eight blind seconds | ⚠️⚠️ **The biggest open network item, and it was found by measuring.** There is no ping, no bars, no "reconnecting" anywhere in the game, and `DisconnectTimeoutMS` is 8000, so a peer whose wifi dies keeps a normal-looking arena for eight seconds. **The sampler is built (§ 140.3); the screen is designed and not built (§ 140.4).** § 140.5 is the one that needs a decision rather than code. § 140 |
 | **139** | Settings is four pages now, and the renders found three faults older than the pass | 🧑: *"we have too many settings now"*, *"add tabs or some shit so that they dont have to scroll that much"*. **Done and rendered; it is open because he has not looked at it.** The renders also found blue slider fills and a magenta tick that had shipped the whole port below the fold. § 139 |
-| **138** | A controller Unity does not recognise is invisible to this whole game | 🧑: *"idk how extensive controller support is"*, *"maybe add to todo that it can work for fake controllers and shit too"*. Every controller path reads `Gamepad.current` or a `<Gamepad>/` path, and an unmatched pad is a `Joystick` that none of them see. ✅ **It is no longer SILENT (`ControllerWatch`, § 138.4 step 1): it warns in the log and says so on the settings CONTROLS tab.** Open: the fallback layout that would make such a pad actually work, and a list of pads anybody has really tested. § 138 |
+| **138** | A controller Unity does not recognise is invisible to this whole game | 🧑: *"idk how extensive controller support is"*, *"maybe add to todo that it can work for fake controllers and shit too"*. Every controller path reads `Gamepad.current` or a `<Gamepad>/` path, and an unmatched pad is a `Joystick` that none of them see. ✅ **Steps 1, 2 and 3 are DONE.** It warns (`ControllerWatch`), it is DRIVEN through a guessed mapping (`GenericPadBridge`), and the guess is visible and rebindable (`ControllerMapScreen`). ⚠️ Open: **step 4, a written list of pads anybody has really tested**, which needs hardware rather than code. § 138, § 142 |
 | **134** | The broadcast pass: autopilot, replay, ultimate introductions, the shove that meant nothing, and the keyboard on the phone | 🧑: *"why the fuck does it have keybinds theres no keys in mobile"*, and bots that *"follow players around only to push them"*. **The touch layer, the AI shove, the autopilot, the replay, the six ultimate introductions and Eskinita are done and captured; § 134.10, § 134.12, § 134.15 and § 134.16 are what is left open.** ⚠️ § 134.9 is CLOSED by § 137. § 134 |
 | **133** | One font is doing every job, and it is a display face | 🧑: *"I think the problem is we use the same font for everything"*. **The next session's brief**: a body face that pairs with Darumadrop, plus the lobby and login overhaul, with a logo he is attaching. § 133 |
 | **132** | The loadout said nothing about the hero, and a build vanished the moment the match started | Twelve defaults read `As tuned · As tuned`, the ultimate was not on the board, the hold-key panel named the SLOT rather than the equipped reading, and the TAB tray printed every ability name twice. § 132 |
@@ -115,6 +116,263 @@ taht again"*.
    appear more than once. Renumbering would break every pointer in `CLAUDE.md`, `VISION.md`,
    `FUTURE.md` and the code comments, which is a worse trade than a duplicate heading. **Search by
    title as well as by number.**
+
+---
+
+## 142 · CONTROLLER SUPPORT: A PICTURE OF THE PAD, A PAD THAT CAN LEAVE A SCREEN, AND AN UNRECOGNISED PAD THAT WORKS ⚠️⚠️ OPEN, 2026-09-04, branch `controller-support`
+
+🧑 2026-09-04, with a labelled line drawing of a DualShock attached: *"we will now be
+implementing controller support. create a menu for controller mapping and ensure controller
+support works in the game. use the picture as reference."*
+
+⚠️⚠️ **HALF OF "CONTROLLER SUPPORT" WAS ALREADY BUILT AND SAYING SO MATTERS, BECAUSE THE OTHER
+HALF WAS NOT WHERE ANYBODY WAS LOOKING.** § 139.2 makes the same point about per-device
+rebinding: *"None of that needed building."* Before this pass the pad already had a binding for
+every verb (`InputCatalogue`'s compile gate guarantees it), menu focus and thumb targets on every
+screen (`ScreenFocus`), glyph-swapping prompts (`LastInputDevice`), per-device rebinding
+(§ 125.13), rumble, and a warning for an unmatched device (§ 138.4 step 1).
+
+**What it did not have was a way out of anything, a pause, or a pad that Unity does not know.**
+
+---
+
+### 142.1 ⚠️⚠️ EVERY BACK-OUT IN THE GAME WAS KEYBOARD-ONLY, SO A PAD COULD REACH EVERY SCREEN AND LEAVE NONE OF THEM
+
+**Eleven call sites, all of them `Input.GetKeyDown(KeyCode.Escape)`:** `ConvertedScreen.Update`
+(which is every converted screen in the game at once), `PlayerHub`, `SignInScreen`,
+`CustomCharacterScreen`, `CustomGameScreen`, `WoodDropdown`, `LobbyChat` twice, `RoleSwapCard`,
+`ConvertedSettingsPanel` twice, and `TouchLayoutScreen` through `Keyboard.current` instead.
+
+⚠️⚠️ **`docs/TODO.md` § 138.2'S TABLE MISSED THIS AND THE REASON IS WORTH KEEPING.** That audit
+walked every `<Gamepad>` binding path and every `Gamepad.current` read, which is the right sweep
+for the question it was asking and **cannot see a literal keyboard read**, because a literal has
+no binding to find. The same hole is § 35.3's (nine spectator keys outside the map) and
+`Hud.EnsureSandboxToggle`'s F1 collision (three readers, none of them in the map). **A rule
+asserted over the input asset cannot see a control that never reached the input asset.**
+
+⚠️ **AND IT IS `CLAUDE.md` § 6.3 FAILING ON A WHOLE DEVICE AT ONCE:** *"Escape backs out on every
+screen, always, innermost layer first... A player who learns Escape is reliable and then meets one
+screen where it is not has learned that it is unreliable."* A pad player never got to learn it.
+The same section calls a dead end a bug, and this was every screen in the front end.
+
+✅ **`InputLayer.MenuNav` is the one place that answers it now**, and all eleven go through it.
+It is Escape **or** the UI map's own Cancel, which is B on a pad.
+
+- ⚠️⚠️ **IT IS NOT A NEW BINDING AND MUST NOT BECOME ONE.** B is `ReadyUp` in the PLAYER map.
+  Backing out of a screen is the UI map's `Cancel`, which `UiInputModule` already keeps separate
+  on purpose: *"Two maps, two contexts, exactly as `CLAUDE.md` § 4 describes for the spectator
+  set."* Nothing was added to `Rebinding.RebindableActions` for this.
+- ⚠️⚠️ **THE LEGACY `Input.GetKeyDown` SURVIVES INSIDE IT AND IS NOT A LEFTOVER.** Unity reports
+  **Android's hardware BACK button** as `KeyCode.Escape` through the old manager and does not
+  surface it as a `Keyboard` key at all. Swapping it for `Keyboard.current.escapeKey` would
+  compile, read better, and silently take the back button away from every phone player.
+  **`TouchLayoutScreen` had exactly that fault**: the one screen that exists because the player
+  has no keyboard was the one screen a phone could not leave.
+- ⚠️ **ONE CALL SITE IS DELIBERATELY LEFT ON ESCAPE**: `ConvertedSettingsPanel.Update`'s
+  cancel-a-pad-rebind branch. The rebind operation already cancels through `<Gamepad>/buttonEast`
+  itself, so routing that line through `MenuNav` would run `CancelRebind` twice on one press of B,
+  with two `MenuSfx.Back()`. The comment there says so.
+- ⚠️ **`RoleSwapCard` TAKES SUBMIT AS WELL.** The warmup buffer card taught
+  `[SPACE] / [CLICK] TO DISMISS`, is shown DURING a match so it is not focusable and has no
+  button to move to, and a pad player could only sit and wait it out.
+
+### 142.2 ⚠️⚠️ THERE WAS NO PAUSE ON A PAD, AND `SpectatorPause` HAD TO MOVE FOR THERE TO BE ONE
+
+`PauseWatcher` read `Input.GetKeyDown(KeyCode.Escape)` and nothing else, so **a controller player
+could not leave a running match**: not resume, not settings, not quit to menu.
+
+✅ **`Pause` is a real action now**, `<Keyboard>/escape` and `<Gamepad>/start`, in
+`Rebinding.RebindableActions` under ROUND AND SCREEN, answered for in `ScreenInputCatalogue`, and
+checked by `FindDuplicateBindings` like everything else. That is § 35.3's lesson applied a second
+time: those nine spectator keys were *"not rebindable, not visible in the panel, and not checked by
+anything"*, and this was the tenth.
+
+⚠️⚠️ **`SpectatorPause` MOVED OFF START TO `<Gamepad>/buttonSouth`, AND THE TWO COULD NOT SHARE IT
+EVEN THOUGH THE CONTEXT RULE LOOKS LIKE IT ALLOWS IT.** `PausePanel.OnOpened` renames its own card
+to BROADCAST MENU when `GameLaunch.Spectator` is set, so **`PauseWatcher` serves a spectator too**
+and both readers of Start would have been live on the same frame for the same person. That is
+precisely the R collision `Settings.Rebinding`'s class note records (*"both sides of it are live in
+the same context"*), not the legal kind its `SpectatorContext` set describes. Which one moves is
+also written down there: *"when two must part, the one with fewer readers moves."* Every player
+reaches the pause menu; the tactical pause is an operator key.
+
+### 142.3 THE MENU HE ASKED FOR: `InputLayer.ControllerMapScreen`
+
+⚠️⚠️ **A PICTURE, NOT A BETTER LIST, AND THE REASON IS THE QUESTION.** The settings GAMEPAD page is
+a column of action names against a column of control names, and it answers *"what is LUNGE bound
+to"*. **Nobody has that question.** The question a player holding a pad has is *"what does this
+button under my thumb do"*, and a list can only be read that way round by somebody who already
+knows the answer. The reference 🧑 attached is a labelled diagram for exactly that reason.
+
+**What it is:** the controller in the middle, nine callouts down each side, a leader line from each
+callout to the control it names, and **every callout is a rebind button**.
+
+- **`tools/build_controller_diagram.py` draws it**, in `#55290F` ink on `UiTheme.Paper` with a
+  `PaperSunk` touchpad. ⚠️ The reference is a photocopy whose face buttons are PlayStation cyan,
+  pink and blue, which is three separate § 6.4 bans in one picture; **the four faces are told apart
+  by SHAPE**, which is how the real pad does it and is `FUTURE.md` § 16.1's rule.
+- ⚠️⚠️ **THE PICTURE AND THE ANCHOR TABLE COME OUT OF ONE PASS, AND THAT IS THE WHOLE REASON A
+  LEADER LINE CAN BE TRUSTED.** If the drawing were generated and the arrow-heads typed into C#,
+  moving the d-pad two hundred pixels left would be a change to one file that silently makes four
+  lines in another point at bare plastic. `PadDiagram` reads the emitted manifest.
+- ⚠️⚠️ **NOTHING ON IT IS A LITERAL.** Every label is resolved live, backwards, from the asset:
+  the screen walks the actions and asks each for its **`effectivePath`** on the pad, so a rebind
+  made on the settings page moves a label here and one made here shows there. A diagram with THROW
+  painted beside the right trigger would be `VISION.md` § 3's *"screen that teaches the wrong key"*
+  in the most convincing possible costume.
+- ⚠️ **THE TWO STICKS ARE SHOWN AND NOT PRESSABLE.** `Move` and `Look` are not in
+  `RebindableActions` and `ResolveBindingIndices` deliberately refuses to hand the stick to any
+  direction, but a pad diagram with both sticks blank is a diagram of a pad nobody is holding.
+  They read as jobs and refuse the press, which is § 6.3's *"a control that does nothing must not
+  look pressable"*.
+- ⚠️ **THE SPECTATOR SET IS DELIBERATELY ABSENT AND A FOOTNOTE SAYS SO.** Nine of these controls
+  carry a second job while watching; drawing both would put two labels on most of the pad, which is
+  § 6.2's third claim on the one screen that exists to be scanned.
+- ⚠️ **ONE DOOR**, a row in the settings CONTROLS list beside the touch rows. § 6.3: *"NEVER ADD A
+  SECOND DOOR TO FIX A FINDABILITY PROBLEM. That is exactly how § 92's six-button panel happened."*
+
+⚠️⚠️ **AND THE RENDER FOUND FOUR FAULTS THE SOURCE COULD NOT, WHICH IS `CLAUDE.md` § 6.1 EARNING
+ITS PLACE AGAIN.** Every one of them looked completely fine in the code:
+
+| What the picture showed | The cause |
+|---|---|
+| **No leader lines at all**, on a screen whose whole point is leader lines | `Resources.Load<TextAsset>("UI/input/pad_diagram_v1")` resolved the **PNG** of the same basename and answered **null**. No error, no log. The manifest is `pad_diagram_v1_anchors.txt` now. **`Resources.Load` matches the path first and the type second** |
+| **Still no leader lines** after that was fixed | `SetAsFirstSibling` was meant to put a line under the callout it starts from, and put all eighteen **under the opaque full-screen ground**. "First sibling" is not "under the callouts", it is under everything. They have a named layer between the drawing and the callouts now |
+| **A 640-unit controller in a 980-unit hole** | The generated PNG had 35 per cent transparent margin, so `preserveAspect` fitted the CANVAS rather than the pad. § 6.2c's second question: *"is this image fitted to the region it is SEEN in?"* The generator crops to its own ink and remaps the anchors in the same pass |
+| ⚠️⚠️ **Two lines running diagonally across the drawing and crossing four others** | The ring's order was typed in **under a comment claiming it was sorted by where each control sits on the pad**, and it was not: SELECT and START were at the bottom of their columns and their anchors are near the top. **A comment asserting a property the data does not have.** The order is now SORTED by the anchor's own Y, so the claim is arithmetic |
+
+⚠️⚠️ **AND THE REBIND ITSELF IS `Settings.RebindSession` NOW, SHARED WITH THE SETTINGS PANEL.**
+`ConvertedSettingsPanel.BeginRebind` was the only rebind in the game and carried **eight ⚠️ notes,
+every one of them a fault somebody hit**: the target index must be the page's device or the
+operation quietly edits the keyboard (§ 125.6), the candidates must be restricted or a keyboard
+press on the pad page silently rewrites a key, the action must be disabled or the captured press
+also fires the verb, the applied override must be REMOVED before the conflict check or a refusal
+leaves two verbs sharing a control. **A copy would have had seven of them the next time somebody
+found the ninth.** § 38.5's three dead protocols are what a second path costs here.
+
+### 142.3b ⚠️⚠️ THE EMOTE WHEEL OPENED ON A PAD AND COULD NOT BE STEERED BY ONE
+
+`EmoteWheel.Update` reads `Mouse.current.delta` and returns early on `Mouse.current == null`, so
+on a controller the wheel **opened on the d-pad and then sat there**: no slice could be
+highlighted, and releasing always played nothing. Its own class note is the sharpest part of it,
+because it describes the fix while not having it: *"The wheel accumulates deltas into a stick-like
+vector **exactly as a controller would drive it**."* The abstraction was right and the one device
+it was shaped for was never wired in.
+
+⚠️ **AND THE PAD IS NOT A DELTA.** A mouse reports motion and a stick reports a POSITION, which is
+`InputAssetSync.LookAction`'s note one screen over: *"binding both to one action would make
+`ReadValue<Vector2>` mean two different physical quantities."* So the stick SETS the vector and the
+mouse ACCUMULATES into it, and a player who nudges the stick and then moves the mouse gets the
+mouse's answer rather than a fight between the two.
+
+### 142.4 ⚠️ AN UNRECOGNISED PAD IS DRIVEN NOW: § 138.4 STEPS 2 AND 3, BY A ROUTE § 138 DID NOT EXPECT
+
+§ 138.4 step 2 asks for a registered fallback LAYOUT. ⚠️⚠️ **THAT ROUTE IS SHUT AND IT IS WORTH
+WRITING DOWN SO NOBODY SPENDS A DAY REDISCOVERING IT.** Unity's HID support hangs off
+`InputSystem.onFindLayoutForDevice`, and `InputManager` takes the **FIRST** callback that answers
+(`if (!string.IsNullOrEmpty(newLayout) && !haveOverriddenLayoutName)`). HID's callback is registered
+during the Input System's own static initialisation, which is triggered by the first touch of
+`InputSystem` — **including the touch that would register ours** — so there is no order in which
+this game's callback runs first. Out-scoring it with `RegisterLayoutMatcher` instead means beating a
+matcher HID builds per device from the vendor id, the product id and the usage, at runtime.
+
+✅ **So `InputLayer.GenericPadBridge` leaves the joystick where it is and creates a `Gamepad`
+beside it**, copying one into the other from `InputSystem.onAfterUpdate`. That buys step 3 for
+nothing, which is § 138.4's own argument: *"once a pad is a `Gamepad`-derived device the existing
+GAMEPAD page already works."* **Nothing else in the repository learns a new concept**:
+`LastInputDevice`, `ScreenFocus`, `Rumble`, every `<Gamepad>/` binding, both settings pages and the
+new map all just work.
+
+- ⚠️ **THE COST IS ONE FRAME.** A state event queued from `onAfterUpdate` is processed by the next
+  update. A pad that is one frame late is a pad; a pad that is dead is a broken game.
+- ⚠️⚠️ **AN EVENT IS QUEUED ONLY WHEN SOMETHING CHANGED**, and that is what keeps `Gamepad.current`
+  honest. `current` is whichever pad last received an event, so a bridge pumping sixty identical
+  events a second would steal it from a real controller plugged in beside it and hold it for ever,
+  and would flip `LastInputDevice` to pad glyphs with nobody touching the thing.
+- ⚠️ **`onAfterUpdate` RATHER THAN A `MonoBehaviour`.** The one component that already ticks input
+  every frame is `PlayerInputReader`, which only exists on a seat inside a match. A pad has to work
+  in the MENUS, which is where the player plugs it in and where they go looking when it does
+  nothing.
+- ⚠️⚠️ **THE MAPPING IS A GUESS AND THE MAP SCREEN IS ITS CURE**, which is the deal § 138.4 already
+  struck: *"it will be wrong for some pads and right for many, and a wrong mapping the player can
+  SEE beats a dead pad they cannot."* The order is the XInput-style DirectInput one (A, B, X, Y,
+  two bumpers, two triggers, SELECT, START, two stick clicks); **the PlayStation-style families
+  disagree and come out rotated**, and the fix is two presses on the map.
+- ⚠️⚠️ **IT CAN BE SWITCHED OFF, AND THAT IS NOT HEDGING.** A flight stick or a racing wheel is
+  also an unmatched `Joystick`, and bridging one puts a throttle axis on the movement stick and
+  holds a verb down for the whole match. Nothing in the descriptor tells the two apart, so the
+  answer is a switch the player can find: a row in the settings CONTROLS list, drawn **only** when
+  an unrecognised device is actually attached.
+- ⚠️ **`ControllerWatch.StatusLine` CHANGED WITH IT.** It read *"so it will not work"*, which was
+  true in the morning and false by the afternoon. **A screen that tells a player their working
+  controller is broken sends them to unplug it.**
+
+### 142.4b ⚠️ HOW THIS PASS WAS VERIFIED, AND THE ONE SUITE THAT COULD NOT BE
+
+- **EditMode: 355 tests, 1 failure**, and that one is the Mac's own `QualitySettings` churn (see
+  § 142.5). The seven new assertions live in `ControllerSupportTests`.
+- ⚠️⚠️ **THE INTERESTING ONE IS `EveryScreenBacksOutThroughTheOneReaderRatherThanAKeyboardLiteral`,
+  WHICH READS THE RUNTIME SOURCES AS TEXT.** `InputSurfaceCheck`'s reason applies exactly: no
+  running test can see a screen nobody opened, so a twelfth `GetKeyDown(KeyCode.Escape)` added next
+  month would be as silent as the eleven were. ⚠️ **Its first version failed on two COMMENTS** that
+  name the literal in order to explain why it is gone — which is `tools/audit_audio_reach.py`'s
+  lifelong bug (*"the only audit that did not strip comments before looking for a gate"*) reproduced
+  within an hour of reading about it. It strips line comments now.
+- **`Checks.RunAll`: all 7 green in one launch**, including `InputSurfaceCheck`, which is what
+  proves the new screen goes through `MenuKit` rather than building a bare canvas.
+- **Renders: `Logs/shots-runtime/ControllerMap-v95.png` and `-ShortWide.png`**, the second at
+  1920x820 because § 6.2b's third row is the one this repository gets wrong most often.
+  `UiRuntimeShots.Capture` takes a size now; every existing call keeps 1920x1080.
+- ⚠️⚠️ **AND ONE LAUNCH ON THIS MAC SIMPLY HUNG, WHICH IS WORTH THE THREE LINES IT TAKES TO
+  RECOGNISE.** It logged `[UnityConnect] An error occurred` after a `cdn.cloud.unity3d.com` HTTP
+  299, wrote **956 log lines and then nothing for fifteen minutes**, while `ps` showed the process
+  at 160 per cent CPU. That reads exactly like a long import and is not one: `sample` on the pid
+  put the **main thread parked in `ReceiveNextEventCommon`**, the Cocoa event loop, with the CPU
+  all on worker threads. **A batchmode Unity whose main thread is idle is finished or stuck, never
+  busy.** Killing it, clearing `Temp/UnityLockfile` (`CLAUDE.md` § 7) and relaunching was enough.
+
+- ⚠️⚠️ **THE FULL PLAYMODE SUITE COULD NOT BE RUN AND THAT IS § 126.8 RATHER THAN THIS PASS.** It
+  came back `total="0"` with a `MissingReferenceException` inside `QueueCardLayoutProbe.Measure` on
+  a destroyed `RectTransform`: **the whole run died on one fixture's polluted world**, which is the
+  third state `CLAUDE.md` § 7 warns about and § 126.8's exact signature. This file's own header
+  already prescribes the way round it — *"Verify with `-testFilter` over the suites you touched"* —
+  and that is what was done.
+
+### 142.5 ⚠️ WHAT IS STILL OPEN
+
+- ⚠️⚠️ **🧑 HAS NOT LOOKED AT IT, AND THAT IS THE ACCEPTANCE TEST.** `CLAUDE.md` § 6.2 is his three
+  claims and none of the three is visible to any probe in this repository. **This entry stays OPEN
+  until he has opened a build, held a pad, and said the map is right.**
+- ⚠️⚠️ **AND NOBODY HAS HELD AN UNRECOGNISED PAD AGAINST `GenericPadBridge`.** § 138.3 was already
+  blunt about this (*"NOBODY HAS TESTED ANY PAD ON THIS PROJECT EXCEPT THE ONE ON THIS DESK"*) and
+  it is still true. The bridge is asserted in EditMode against a synthetic joystick, which proves
+  the wiring and not the guess. **§ 138.4 step 4, a written list of real pads with vendor and
+  product ids in [`../Attention.md`](../Attention.md), is the open half and it needs hardware.**
+- **The four face buttons are drawn as PlayStation shapes and named by compass position.** That is
+  honest on both families and slightly foreign to each. If it reads wrong to him, the drawing is
+  one Python function.
+- ⚠️⚠️ **AND ONE TRAP THAT IS THE MACHINE RATHER THAN THE CODE, WRITTEN DOWN BECAUSE IT WILL BITE
+  THE NEXT SESSION ON THIS LAPTOP.** Every `-batchmode -runTests -nographics` EditMode run on the
+  **Mac** editor rewrites `ProjectSettings/QualitySettings.asset`, dropping quality level 5
+  (Ultra, the Standalone default) from `antiAliasing: 4` to `0`, and
+  `QualitySettingsAssetTests.EveryStoredAntiAliasLevelMatchesTheDocumentedTable` then fails **on
+  the run that caused it**. It is not a code defect: `git show HEAD:` has 4, the committed value
+  is right, and that test's own message describes the mechanism (*"writing
+  `QualitySettings.antiAliasing` during PLAY writes through to this asset"*). **`git checkout --
+  ProjectSettings/QualitySettings.asset` after a run**, and do not commit the change or chase the
+  red.
+
+- ⚠️⚠️ **AND THE WINDOWS PLAYER WAS NOT BUILT FOR THIS PASS, BECAUSE THIS MACHINE CANNOT BUILD
+  ONE.** The work was done on the **Mac** (`/Applications/Unity/Hub/Editor/6000.5.8f1`), whose
+  installed playback engines are **MacStandaloneSupport and WebGLSupport only**: there is no
+  Windows Standalone module, so `GameBuilder.BuildWindows` has no target to write. `CLAUDE.md`
+  § 7's table describes the Windows laptop and is still right about it. **A Mac player was built
+  and verified instead**; the Windows one has to come off the other machine, from this commit.
+
+- ⚠️ **THE CALLOUTS ARE 76 UNITS TALL, UNDER THE 144-UNIT THUMB FLOOR**, and are padded out by
+  `ScreenFocus.MakeRoomForThumbs` like the touch customiser's bar. Eighteen rows at 144 do not fit
+  a 1080-unit canvas, and this screen exists for a device that has no thumbs on the glass. It will
+  show up in the `ThumbFloor` sweep; see § 126.2 for why that number is a worklist and not a gate.
 
 ---
 
@@ -521,7 +779,12 @@ so nothing is overwritten.
 
 ---
 
-## 138 · A CONTROLLER UNITY DOES NOT RECOGNISE IS INVISIBLE TO THIS WHOLE GAME ⚠️⚠️ OPEN, 2026-09-04, branch `abilities-rework`
+## 138 · A CONTROLLER UNITY DOES NOT RECOGNISE IS INVISIBLE TO THIS WHOLE GAME ⚠️ OPEN, 2026-09-04, branch `abilities-rework`
+
+⚠️⚠️ **STEPS 1, 2 AND 3 OF § 138.4 ARE DONE AS OF 2026-09-04 AND § 142 IS THE PASS THAT DID THEM.**
+This entry stays open for **step 4 only**, which needs hardware rather than code. Everything below
+is still the reference for how a pad reaches a Unity game; the step list at the bottom says what
+landed.
 
 🧑 2026-09-04: *"idk how extensive controller support is"*, *"maybe add to todo that it can work
 for fake controllers and shit too? haha or other brands"*, *"idk how controllers work so u figure
@@ -597,16 +860,26 @@ wins are about telling the truth and about a fallback, in this order:
    their pad is not working.
    ⚠️ **A WARNING RATHER THAN AN ERROR**: nothing in the game is broken, and an error would fail
    every test run on a machine with a flight stick attached.
-2. **A generic fallback layout.** `InputSystem.RegisterLayoutOverride` / a layout deriving from
-   `Gamepad` matched against a broad HID description, mapping the first four buttons and two
-   sticks by convention. It will be wrong for some pads and right for many, and a wrong mapping the
-   player can SEE beats a dead pad they cannot.
-3. **Let the fallback be rebound.** Once a pad is a `Gamepad`-derived device the existing GAMEPAD
-   page already works, which is the argument for making the fallback a `Gamepad` rather than
-   teaching the whole game about `Joystick`. ⚠️ **`BeginRebind` restricts candidate paths to the
-   page's own device**, so this needs no change there if the fallback reports as a pad.
-4. **A written list of what has actually been tested**, with vendor and product ids, in
-   `Attention.md`. One tested pad written down beats four assumed ones.
+2. ✅ **DONE 2026-09-04, BY A DIFFERENT ROUTE, AND THE ROUTE THIS STEP ASKED FOR IS SHUT.**
+   Registering a layout means winning `InputSystem.onFindLayoutForDevice`, and `InputManager` takes
+   the **FIRST** callback that answers; Unity's own HID callback is registered during the Input
+   System's static initialisation, which is triggered by the first touch of `InputSystem`,
+   **including the touch that would register ours**. There is no order in which this game goes
+   first, and out-scoring it with `RegisterLayoutMatcher` means beating a matcher HID builds per
+   device from the vendor id, the product id and the usage.
+   **`InputLayer.GenericPadBridge` therefore leaves the joystick alone and creates a `Gamepad`
+   beside it**, pumped from `InputSystem.onAfterUpdate`. § 142.4 has the whole argument, the
+   button order it guesses, the one-frame cost, and why it can be switched off.
+3. ✅ **DONE, AND IT CAME FREE WITH STEP 2 EXACTLY AS THIS LINE PREDICTED.** The bridged device IS
+   a `Gamepad`, so the GAMEPAD page, `LastInputDevice`, `ScreenFocus`, `Rumble`, every
+   `<Gamepad>/` binding and the new `ControllerMapScreen` all work on it with no change anywhere.
+   ⚠️ **The map is the better answer than the rebind page here**: a guessed order is wrong in a
+   way a player has to SEE to fix, and § 142.3 is the screen that shows it.
+4. ⚠️⚠️ **STILL OPEN, AND IT IS THE ONLY STEP THAT NEEDS A HUMAN.** A written list of what has
+   actually been tested, with vendor and product ids, in [`../Attention.md`](../Attention.md) —
+   **§ 14 of that file is the ask, written 2026-09-04**. One tested pad written down beats four
+   assumed ones, and the bridge makes this matter more rather than less: it is asserted against a
+   synthetic joystick, which proves the wiring and says nothing about the guess.
 
 ⚠️ **WHAT NOT TO DO: do not widen the `<Gamepad>` binding paths to `<HID>` in the input asset.**
 `CLAUDE.md` § 4a's compile gate exists so a verb cannot ship without a pad answer, and a second

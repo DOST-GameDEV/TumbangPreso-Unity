@@ -277,8 +277,12 @@ supposed to remember, and a move that nobody updated:
 | **§ 114** | `PlayerNameplate` was no longer installed by any screen, and `PlayerHubLayoutProbe` still drove it. | A probe measuring a control the game no longer builds. |
 | **§ 124.11** | `LoadoutSurfaceProbe` was knocking on a door § 122 had moved, and had been failing before that session started. | *"A green probe for a screen nobody can reach is worse than a red one"*, and a red one for a screen that works teaches the next reader to skim the results. |
 
-**So the answer is construction, not discipline.** Four things now make forgetting impossible, and
-each replaced a place where remembering was the only protection:
+**So the answer is construction, not discipline.** The list below is what now makes forgetting
+impossible, and each item replaced a place where remembering was the only protection.
+⚠️ **THERE IS NO COUNT IN THIS SENTENCE ON PURPOSE**, because this file has already been caught
+twice with a number that outlived its list (*"all five editor checks"* against a list of seven,
+*"three audits"* against a folder of six). **The list is the authority; whoever adds the next item
+edits the list and not the sentence above it.**
 
 - ⚠️⚠️ **A NEW `Verb` DOES NOT COMPILE UNTIL IT HAS A PAD BINDING AND A THUMB TARGET.**
   `InputLayer.InputCatalogue.For` is a switch expression with **no discard arm**, and
@@ -296,6 +300,21 @@ each replaced a place where remembering was the only protection:
   It reads the runtime sources as TEXT, for `SceneScriptCheck`'s reason one level up: every other
   check can only see a screen that was OPENED, so a screen nobody opens during a test run has no
   coverage at all, which is § 96 and § 124.11 in one sentence. It is in `Checks.RunAll`.
+- ⚠️⚠️ **A SCREEN BACKS OUT THROUGH `InputLayer.MenuNav`, AND A KEYBOARD LITERAL IS NOW A TEST
+  FAILURE.** Until 2026-09-04 **every back-out in the game was `Input.GetKeyDown(KeyCode.Escape)`**
+  — eleven call sites, including `ConvertedScreen.Update`, which is every converted screen at once
+  — so **a pad could reach every screen in the front end and leave none of them, and there was no
+  pause on a pad at all.** ⚠️ **No audit here could see it**: they sweep `<Gamepad>` binding paths
+  and `Gamepad.current` reads, and a literal has neither. That is § 35.3's hole (nine spectator
+  keys outside the map) and `Hud`'s F1 collision (three readers, none in the map) for the third
+  time. `ControllerSupportTests.EveryScreenBacksOutThroughTheOneReaderRatherThanAKeyboardLiteral`
+  reads the runtime sources as TEXT, for `InputSurfaceCheck`'s reason: a twelfth screen added next
+  month is exactly as silent as the eleven were. **Three files may still read it and each says
+  why in a comment.** ⚠️ **`MenuNav` keeps the legacy call inside itself deliberately**: Unity
+  reports **Android's hardware BACK button** as `KeyCode.Escape` through the old manager and never
+  as a `Keyboard` key, so "tidying" it to `Keyboard.current.escapeKey` takes the back button away
+  from every phone player. `docs/TODO.md` § 142.1.
+
 - ⚠️ **`InputSurfaceProbe` DISCOVERS SCREENS INSTEAD OF LISTING THEM**, from the build settings
   and from the assembly, at the nine desktop shapes **and two phone shapes and his own short wide
   window** (`ProbeResolutions`). ⚠️⚠️ **`UiClickProbe` still carries a hard-coded list of five
@@ -313,7 +332,9 @@ each replaced a place where remembering was the only protection:
    think you need a bare `Canvas`, you are about to ship a screen a pad and a thumb cannot use.
 4. **A new feature that is not a screen or a verb**: ask the three questions out loud before you
    call it done. *How is this reached on a pad? What does a thumb press? What does the prompt say
-   on each?* ⚠️ **Prompts read the live binding through `Rebinding.DisplayNameFor(asset, action,
+   on each?* ⚠️ **And the fourth, because it is the one that was missed for the whole port: how is
+   it LEFT on a pad?** B backs out of any screen through `MenuNav` and Start opens the pause menu;
+   a feature that traps a controller player is § 6.3's dead end with no keyboard to escape it. ⚠️ **Prompts read the live binding through `Rebinding.DisplayNameFor(asset, action,
    device)`, never a literal** — `docs/VISION.md` § 3: *a screen that teaches the wrong key is
    worse than one that teaches none.*
 
@@ -725,6 +746,21 @@ in it disagrees with this file, this file wins here.
 | Modules | Windows Standalone, WebGL, Linux Dedicated Server |
 | dotnet | `C:\Program Files\dotnet\dotnet.exe`, SDK 9.0.317 |
 | RAM | 16 GB. It read 8 GB until a boot-time cap was cleared, so re-check before blaming Unity |
+
+⚠️⚠️ **AND SINCE 2026-09-04 THERE IS A THIRD MACHINE, A MAC, ON WHICH EVERY PATH IN THAT TABLE IS
+WRONG AND TWO OF ITS CAPABILITIES ARE ABSENT.** This section already records that
+`GameBuilder.BuildWindows` resolves to `C:\Users\matth\Desktop` on one Windows profile and
+`C:\Users\Matthew\Desktop` on the other, and § 7.1 records the same lesson about `python`:
+**a note that is true on one machine and written as a fact about "here" sends whoever is on
+another one hunting.** So:
+
+| | On the Mac |
+|---|---|
+| Unity | `/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity` |
+| Modules | ⚠️⚠️ **MacStandaloneSupport and WebGLSupport ONLY.** There is **no Windows Standalone**, so `GameBuilder.BuildWindows` has no target to write and `BuildMac` is the build here. A Windows player for a commit worked on here has to come off a Windows machine |
+| dotnet | ⚠️⚠️ **NOT INSTALLED.** `dotnet test Core.Tests/...` — the cheapest signal in the repo and the one § 2.1b tells you to run freely — **cannot run at all**. The same numbers are still asserted by the EditMode suite, which is a three-minute launch rather than 40 ms |
+| python | `python3`, 3.14. ⚠️ **`python` alone is not on PATH**, which is the other half of § 7.1's warning |
+
 
 ```bash
 dotnet test Core.Tests/TumbangPreso.Core.Tests.csproj
