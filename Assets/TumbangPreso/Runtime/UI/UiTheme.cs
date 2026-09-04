@@ -145,21 +145,31 @@ namespace TumbangPreso.UI
         public static readonly Color BrandArmy = Hex("b3a828");
 
         /// <summary>
-        /// Khaki: the quiet ground, for a tray or a sunk row on a screen that is already Honey.
+        /// ⚠️⚠️ KHAKI IS DELETED AND THIS NOTE IS WHAT REPLACES IT, SO NOBODY REINTRODUCES IT.
+        /// It was the one colour in the palette that was DERIVED rather than measured: Honey
+        /// Quartz mixed 72:28 toward Army, invented because the drawing "never needed a quiet
+        /// mid-tone". `Attention.md` § 12.1 carried the ask to confirm it against the artwork.
         ///
-        /// ⚠️⚠️ THIS IS THE ONE COLOUR IN THIS BLOCK THAT IS DERIVED RATHER THAN MEASURED, AND
-        /// SAYING SO IS THE POINT. The five named swatches are Honey Quartz, Chartreuse,
-        /// Persimmon, Khaki and Army; the first, second, third and fifth all appear as fills in
-        /// the artwork and this one does not, because the drawing never needed a quiet mid-tone.
-        /// It is **Honey Quartz mixed 72:28 toward Army**, which is the two neighbours it sits
-        /// between on his own swatch strip, and ink measures **9.2:1** on it.
+        /// ✅ **CONFIRMED 2026-09-04, AND THE ANSWER WAS THAT IT IS NOT IN THE LOGO AT ALL.**
+        /// 🧑 supplied `logo.jpg` and said *"this dont look khaki"*. Re-measuring its flat fills
+        /// agrees: the artwork holds six colours and every one of them is already a constant
+        /// here.
         ///
-        /// ⚠️ `Attention.md` § 12 CARRIES THE ASK TO CONFIRM IT. The swatch strip that shipped
-        /// with the first version of the logo has the real value printed on it, and that image is
-        /// still only in the chat. **If it disagrees, this constant is the only thing that
-        /// changes**, which is the whole reason the palette is named rather than inlined.
+        /// | Measured | Share | Constant |
+        /// |---|---|---|
+        /// | `#980010` | 9.5% | `BrandDeepRed` `#980715` |
+        /// | `#F8D098` | 7.6% | `BrandHoneyQuartz` `#FCD39F` |
+        /// | `#D0C800` | 5.6% | `BrandChartreuse` `#D6CE01` |
+        /// | `#F88040` | 1.6% | `BrandPersimmon` `#FD8041` |
+        /// | `#F0B020` | 1.1% | `BrandGolden` `#F5B521` |
+        /// | `#C02808` | 1.1% | `BrandRimRed` `#C32E0D` |
+        ///
+        /// ⚠️ **AND IT WAS DRAWING NOTHING.** `BrandKhaki` had exactly one mention in the whole
+        /// repository, which was its own definition: zero call sites. A constant that is invented
+        /// rather than measured AND used nowhere is not a palette entry, it is a decision waiting
+        /// to be made wrongly by whoever reaches for it first. **If a quiet mid-tone is ever
+        /// needed, measure one or derive it AT the call site with the arithmetic written down.**
         /// </summary>
-        public static readonly Color BrandKhaki = Hex("e8c77e");
 
         // -------------------------------------------------------------------
         // THE WOOD SET. ⚠️⚠️ THIS IS THE **OLD** PALETTE AS OF 2026-09-03.

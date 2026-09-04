@@ -614,7 +614,7 @@ one of them passed a reading of the narrow rule:
   | **Golden** | `#F5B521` | 4.2% | The front end's gold. ⚠️ **`UiTheme.Amber` is still `#FFBA00`** because the HUD reads it 15 times and the HUD is out of scope. |
   | **Rim red** | `#C32E0D` | 3.8% | The lit state of the deep red, drawn as exactly that in the mark. |
   | **Army** | `#B3A828` | 1.4% | The **dark ground**, and the only one: the fighter picker's stage. |
-  | **Khaki** | `#E8C77E` | derived | The quiet mid-tone. ⚠️ **The one colour here that is derived rather than measured**, because the drawing never needed one; `Attention.md` § 12 carries the ask to confirm it against his swatch strip. |
+  | ~~Khaki~~ | ~~`#E8C77E`~~ | **not in the artwork** | ⚠️⚠️ **DELETED 2026-09-04. It was the one colour here that was DERIVED rather than measured, and re-measuring the logo settled it: the artwork holds six colours and every one is already a constant.** 🧑, handing over `logo.jpg`: *"this dont look khaki"*. It also had zero call sites. If a quiet mid-tone is ever needed, measure one or derive it AT the call site with the arithmetic written down. |
 
   ⚠️⚠️ **EVERY ONE OF THOSE WAS MEASURED BY A SCRIPT, NOT PICKED.** `tools/read_brand_palette.py`
   clusters the committed artwork's flat fills; the percentages are its output, and it **agreed

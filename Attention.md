@@ -148,7 +148,7 @@ Keyboard"**, which you bought. The sheets are recoloured into this game's warm p
 in (`tools/build_input_glyphs.py`), because the pack ships in blue and navy and `CLAUDE.md` § 6.4
 forbids both in any UI layer.
 
-**What is asked of you:** decide whether the recoloured sheets may be committed to this repository.
+✅ **ANSWERED 2026-09-04: YES.** The recoloured sheets may be committed to this public repository. They already were (`Resources/UI/input/glyphs_key_v1.png` and its siblings), so nothing moves; what changes is that it is a decision on the record rather than an assumption. ⚠️ **The raw pack stays uncommitted** (`scratchpad/input-icons/` is gitignored): the answer was about the derivatives.
 `DOST-GameDEV/TumbangPreso-Unity` is on GitHub, and a bought pack's art in a public repo is a
 redistribution question rather than a use question. Shipping them inside the compiled player is
 certainly fine; committing the source PNGs may not be. **The raw pack is deliberately NOT
@@ -165,9 +165,8 @@ SCREEN YET.** `Assets/TumbangPreso/Resources/Vfx/SOURCES.txt` carries the licenc
 ability sheets beside the art, and the twenty-four sourced sound cues that remain are Kenney CC0.
 Three replacements were rejected by ear and their preferred old WAVs are restored (§ 13). **No CC BY
 asset ships today.** The one that would is the jeepney in § 11.2, and its credit line is written
-and waiting in `Asset_Sourcing.md` § 9. **What is still asked of you is to read the two source
-lines in `SOURCES.txt` and say the derivatives may stay in a public repo**, which is the same
-question § 7.1 asks about the glyphs and is a far easier yes: CC0 is a public domain dedication.
+and waiting in `Asset_Sourcing.md` § 9. ✅ **ANSWERED 2026-09-04: YES.** The CC0 derivatives may stay in the public repository. CC0 is a
+public domain dedication, so there is nothing to add to the credits screen for them.
 
 ---
 
@@ -209,7 +208,17 @@ differently. A number from the desktop is not that measurement.
 
 ---
 
-## 11 · Two downloads that need an account, and neither can be worked around
+## 11 · Two downloads ⚠️ 🧑 IS DOING THESE HIMSELF
+
+⚠️⚠️ **2026-09-04: 🧑 will sign in to Freesound in a browser and upload the jeepney himself.** A
+session must NOT try to fetch either, and must NOT report them as blocked work. **Check the two
+folders below: if the files are there, do the wiring. If they are not, leave them alone.**
+
+| What | Where it lands | What to do once it is there |
+|---|---|---|
+| The 16 Freesound recordings | `scratchpad/asset-src/freesound/` (gitignored) | `tools/build_ability_audio.py` holds the mapping. They are the elemental beds for all 18 `sfx_cast_*` and 12 `sfx_var_*` cues, which is why those 30 are still synthesised. CC0, no credit line. |
+| The jeepney | `scratchpad/asset-src/sketchfab/` (gitignored) | 74.2K triangles as delivered; the optimise, material merge and warm recolour are scriptable. ⚠️⚠️ **CC BY: the credit line in `Asset_Sourcing.md` § 9 must reach the credits screen IN THE SAME COMMIT that ships the model.** |
+
 
 **`docs/TODO.md` § 131.5 and § 131.6.** The asset pass got everything that is fetchable without a
 login and stopped at the two that are not. Both are named in `docs/Asset_Sourcing.md` and both are
@@ -281,22 +290,24 @@ is smeared. The TAB tray is swept; the other forty sites are not.
 
 **What is asked of you now: one small decision and two looks.**
 
-### 12.1 Confirm one colour, because it is the only one that was not measured
+### 12.1 ✅ ANSWERED 2026-09-04: KHAKI IS NOT IN THE ARTWORK AND IS DELETED
 
-**Khaki.** Your five named swatches are Honey Quartz, Chartreuse, Persimmon, Khaki and Army, and
-**four of the five appear as actual fills in the artwork**, so those four were read straight off
-the pixels and cross-checked against a second drawing. Khaki appears in neither, because the logo
-never needed a quiet mid-tone.
+🧑 supplied `logo.jpg` and said *"this dont look khaki"*. Re-measuring its flat fills agrees: the
+logo holds **six** colours and every one was already a constant.
 
-It is `#E8C77E` today, which is Honey Quartz mixed 72:28 toward Army, the two swatches it sits
-between on your own strip. Ink measures 9.2:1 on it, so it works. It may simply not be your colour.
+| Measured | Share | Constant it confirms |
+|---|---|---|
+| `#980010` | 9.5% | Deep red `#980715` |
+| `#F8D098` | 7.6% | Honey Quartz `#FCD39F` |
+| `#D0C800` | 5.6% | Chartreuse `#D6CE01` |
+| `#F88040` | 1.6% | Persimmon `#FD8041` |
+| `#F0B020` | 1.1% | Golden `#F5B521` |
+| `#C02808` | 1.1% | Rim red `#C32E0D` |
 
-**What is asked of you:** the FIRST logo you sent had two swatch strips beside it with the hexes
-printed on them. **Drop that image into `Assets/TumbangPreso/Art/ui/brand/source/`** and the real
-value gets read off it in one command. If you would rather not bother, say so and `#E8C77E` stands.
-
-> ⚠️ **Nothing is blocked on this.** It is one constant, `UiTheme.BrandKhaki`, and every surface
-> that uses it names the constant rather than the hex.
+⚠️ **`BrandKhaki` also had zero call sites**: one mention in the repository, its own definition. A
+colour that is invented rather than measured AND draws nothing is a decision waiting to be made
+wrongly by whoever reaches for it first, so it is gone. `UiTheme` carries the measurement where the
+constant used to be.
 
 ### 12.2 Say whether 16 is still too small, because it is now the ONLY thing red
 
