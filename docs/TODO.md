@@ -192,7 +192,7 @@ taht again"*.
 
 ---
 
-## 142 · CONTROLLER SUPPORT: A PICTURE OF THE PAD, A PAD THAT CAN LEAVE A SCREEN, AND AN UNRECOGNISED PAD THAT WORKS ⚠️⚠️ OPEN, 2026-09-04, branch `controller-support`
+## 142 · CONTROLLER SUPPORT: A PICTURE OF THE PAD, A PAD THAT CAN LEAVE A SCREEN, AND AN UNRECOGNISED PAD THAT WORKS ⚠️⚠️ OPEN, 2026-09-04, merged to `main`
 
 🧑 2026-09-04, with a labelled line drawing of a DualShock attached: *"we will now be
 implementing controller support. create a menu for controller mapping and ensure controller
