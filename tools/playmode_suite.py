@@ -58,6 +58,7 @@ USAGE
 import argparse
 import datetime
 import json
+import os
 import pathlib
 import re
 import subprocess
@@ -80,7 +81,27 @@ TESTS = ROOT / "Assets" / "TumbangPreso" / "Tests" / "PlayMode"
 LOGS = ROOT / "Logs"
 OUT = LOGS / "playmode-suite"
 
-UNITY = pathlib.Path(r"C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Unity.exe")
+# ⚠️⚠️ RESOLVED PER MACHINE. `CLAUDE.md` § 7 has three machines in its table and two of them are
+# not Windows, and its own warning applies to this line as written: *"a note that is true on one
+# machine and written as a fact about 'here' sends whoever is on another one hunting."* As a
+# Windows literal this gate could not run at all on the Mac, and every group reported the launch
+# failure as the GROUP failing, which is § 143.1's whole complaint about a suite whose red set
+# is not about the code.
+UNITY_VERSION = "6000.5.8f1"
+
+UNITY = next(
+    (pathlib.Path(c) for c in (
+        rf"C:\Program Files\Unity\Hub\Editor\{UNITY_VERSION}\Editor\Unity.exe",
+        f"/Applications/Unity/Hub/Editor/{UNITY_VERSION}/Unity.app/Contents/MacOS/Unity",
+        os.path.expanduser(
+            f"~/Applications/Unity/Hub/Editor/{UNITY_VERSION}/Unity.app/Contents/MacOS/Unity"),
+    ) if pathlib.Path(c).exists()),
+    pathlib.Path("Unity"))
+
+# ⚠️ THE TARGET FOLLOWS THE MACHINE AND IS STILL ALWAYS STATED. `run_group`'s note is right that a
+# silent launch inherits whatever the last build left the editor under; what was wrong was
+# stating Win64 as a constant on a machine with no Windows Standalone module to switch to.
+BUILD_TARGET = "OSXUniversal" if sys.platform == "darwin" else "Win64"
 NAMESPACE = "TumbangPreso.PlayTests"
 
 CATEGORIES = "!WallClock;!ThumbFloor"
@@ -131,6 +152,7 @@ GROUPS = [
      """, [
         "AiLaneTests", "ArenaBoundsProbe", "BotMotionProbe", "CarriedSlipperSelfHideProbe",
         "CarryTests", "EmoteCameraProbe", "EmoteLifecycleProbe", "FppFrameProbe",
+        "RetrievalSlideTests",
         "FppOccluderProbe", "LandedHighlightTests", "LataFloatProbe", "MatchRunTests",
         "MultiplayerModelSwapSelfHideProbe", "ScoreWitnessProbe", "SeatAnnouncementTests",
         "SessionRestartTests", "SoloPracticeTests", "SteeringTests", "StunFrostTests",
@@ -147,6 +169,7 @@ GROUPS = [
         "AntiAliasStateProbe", "CosmeticSurfaceProbe", "GameplayShots", "ModelFacingProbe",
         "MsaaResolveProbe", "NationalsShowcaseProbe", "NearFadeProbe", "ToneSweep",
         "WorldOutlineCoverageProbe", "MatchFrameRateProbe", "HudPerformanceProbe",
+        "ReplayCaptureProbe",
     ]),
 
     ("services", """
@@ -358,7 +381,7 @@ def run_group(group, members, log_suffix=""):
     test_filter = ";".join(f"{NAMESPACE}.{m}" for m in members)
 
     cmd = [str(UNITY), "-batchmode", "-runTests", "-projectPath", str(ROOT),
-           "-buildTarget", "Win64", "-testPlatform", "PlayMode",
+           "-buildTarget", BUILD_TARGET, "-testPlatform", "PlayMode",
            "-testCategory", CATEGORIES, "-testFilter", test_filter,
            "-testResults", str(xml), "-logFile", str(log)]
 

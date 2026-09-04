@@ -239,8 +239,28 @@ namespace TumbangPreso
             // FOR EVERYBODY. 🧑 2026-08-29: *"make sure that all host sided shit is seen by
             // everyone and not js host"*. See `Visual.MatchFlair` and
             // `tools/audit_presentation_reach.py`, which is what found this one.
+            // ⚠️⚠️ THE DISTANCE RIDES IN `strength`, WHICH `LataDown` WAS NOT USING, so the
+            // highlight layer can tell a knockdown from across the street apart from one at the
+            // thrower's feet without a new field on the wire. `docs/TODO.md` § 147.
+            //
+            // ⚠️ IT IS THE THROWER'S POSITION NOW AND NOT THE THROW'S ORIGIN, AND THE DIFFERENCE
+            // IS STATED RATHER THAN HIDDEN. Nothing on `Slipper` records where it left a hand, and
+            // adding that would be state to replicate for a caption. A tsinelas crosses the box in
+            // well under a second at `Balance.LaunchSpeed`, and an attacker moves at 2.53 m/s, so
+            // the two differ by about a metre at the very worst. The claim the marker makes is
+            // "this was a long one", and a metre does not change it.
+            var thrower = GameServices.Round != null
+                ? GameServices.Round.PlayerAt(throwerSlot)
+                : null;
+
+            float metres = thrower != null
+                ? Vector3.Distance(
+                      new Vector3(thrower.transform.position.x, 0.0f, thrower.transform.position.z),
+                      new Vector3(transform.position.x, 0.0f, transform.position.z))
+                : 0.0f;
+
             Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.LataDown,
-                                       throwerSlot, -1, transform.position);
+                                       throwerSlot, -1, transform.position, metres);
 
             // ⚠️⚠️ THE CAN USED TO REACH INTO `AIController` AND START AN EMOTE FROM HERE, AND
             // THAT CALL IS GONE ON PURPOSE. It was a second path into the celebration: it skipped

@@ -62,7 +62,73 @@ namespace TumbangPreso
             public string ugsProject = "";
             public string ugsEnvironment = "";
             public string builtAt = "";
+
+            /// <summary>
+            /// True unless the tree was PROVEN clean.
+            ///
+            /// ⚠️⚠️ IT IS "NOT PROVEN CLEAN" AND NOT "PROVEN DIRTY", AND THE ASYMMETRY IS THE
+            /// WHOLE FIX. Until 2026-09-05 this was set from an mtime comparison between
+            /// `.git/index` and the branch ref, which cannot see an ordinary unstaged edit at
+            /// all, since editing a file does not rewrite the index, and it answered false outright
+            /// whenever the ref was packed, which is exactly the state a freshly cloned build
+            /// machine is in. So the two commonest situations both stamped `dirty: false`, and a
+            /// flag that says "clean" when it means "I could not tell" is worse than no flag:
+            /// somebody at a venue reads it and stops looking.
+            ///
+            /// ⚠️ READ <see cref="treeState"/> FOR THE THREE-WAY ANSWER. This stays a bool because
+            /// it is on a serialised record that shipped players already carry, and because every
+            /// reader of it wants "may I trust the SHA", which is exactly this question.
+            /// </summary>
             public bool dirty;
+
+            /// <summary>
+            /// `clean`, `dirty` or `unknown`.
+            ///
+            /// ⚠️⚠️ `unknown` IS A REAL ANSWER AND MUST NEVER BE COLLAPSED INTO EITHER OF THE
+            /// OTHER TWO. A build machine with no `git` on PATH, a source export with no
+            /// repository and a `git` that timed out are all states this can genuinely be in, and
+            /// `docs/TODO.md` § 145.2's brief is explicit: *"Do not turn 'cannot determine' into
+            /// 'clean'."* `tools/qualify.py` refuses to certify one, which is the point of saying
+            /// so out loud rather than guessing.
+            ///
+            /// ⚠️ EMPTY MEANS THE STAMP PREDATES THIS FIELD. A player built before 2026-09-05
+            /// carries `dirty` and nothing else; readers treat an empty string as `unknown`
+            /// rather than believing the old flag.
+            /// </summary>
+            public string treeState = "";
+        }
+
+        /// <summary>What a working tree was, when the artifact was stamped.</summary>
+        public enum TreeState
+        {
+            /// <summary>Nothing could be established. ⚠️ NOT THE SAME AS CLEAN.</summary>
+            Unknown = 0,
+
+            /// <summary>`git status --porcelain` was empty.</summary>
+            Clean = 1,
+
+            /// <summary>`git status --porcelain` had tracked changes in it.</summary>
+            Dirty = 2,
+        }
+
+        /// <summary>
+        /// The three-way answer for a record, with an old stamp reading Unknown.
+        ///
+        /// ⚠️ A PRE-2026-09-05 STAMP CANNOT BE UPGRADED BY GUESSING. Its `dirty` flag came from
+        /// the mtime heuristic, which could not see an unstaged edit; reading `false` there as
+        /// `Clean` would carry that heuristic's blind spot forward into the gate built to replace
+        /// it. An old build is one whose tree state nobody knows, and that is what it says.
+        /// </summary>
+        public static TreeState StateOf(Record record)
+        {
+            if (record == null) return TreeState.Unknown;
+
+            switch ((record.treeState ?? "").Trim().ToLowerInvariant())
+            {
+                case "clean": return TreeState.Clean;
+                case "dirty": return TreeState.Dirty;
+                default: return TreeState.Unknown;
+            }
         }
 
         private static Record _cached;
@@ -106,8 +172,12 @@ namespace TumbangPreso
         public static string OneLine()
         {
             var r = Current;
+            string tree = StateOf(r) == TreeState.Clean
+                ? ""
+                : StateOf(r) == TreeState.Dirty ? "+dirty" : "+unverified";
+
             return $"TUMBANG PRESO {r.appVersion} | {(string.IsNullOrEmpty(ShortSha) ? "no-sha" : ShortSha)}" +
-                   $"{(r.dirty ? "+dirty" : "")} | protocol {r.protocol} | {r.target}";
+                   $"{tree} | protocol {r.protocol} | {r.target}";
         }
 
         /// <summary>The whole record, for a diagnostic screen or a failure bundle.</summary>
@@ -116,8 +186,13 @@ namespace TumbangPreso
             var r = Current;
             var sb = new StringBuilder();
             sb.AppendLine("BUILD IDENTITY");
-            sb.AppendLine($"  commit        {(string.IsNullOrEmpty(r.sha) ? "(unstamped)" : r.sha)}" +
-                          (r.dirty ? "  ⚠ built from a dirty working tree" : ""));
+            sb.AppendLine($"  commit        {(string.IsNullOrEmpty(r.sha) ? "(unstamped)" : r.sha)}");
+            sb.AppendLine($"  working tree  {StateOf(r).ToString().ToLowerInvariant()}" +
+                          (StateOf(r) == TreeState.Dirty
+                              ? "  ⚠ built with uncommitted changes; the commit above is not what ran"
+                              : StateOf(r) == TreeState.Unknown
+                                  ? "  ⚠ could not be established at build time"
+                                  : ""));
             sb.AppendLine($"  branch        {(string.IsNullOrEmpty(r.branch) ? "(none)" : r.branch)}");
             sb.AppendLine($"  protocol      {r.protocol}");
             sb.AppendLine($"  target        {r.target}");

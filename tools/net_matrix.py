@@ -153,6 +153,16 @@ def parse_report(path):
             ("round", r"round\s*:\s*(-?\d+)"),
             ("active", r"round active\s*:\s*(\S+)"),
             ("defender", r"defender\s*:\s*(-?\d+)"),
+            ("mode", r"mode\s*:\s*(\S+)"),
+            ("map", r"map\s*:\s*(\S+)"),
+
+            # ⚠️⚠️ TWO HASHES AND THEY ARE NOT INTERCHANGEABLE. `structural` covers only what
+            # cannot change while a match runs (who is in which seat, which seats are bots, the
+            # protocol) and IS an equality gate between peers. `discrete` folds in the score and
+            # the slipper states, which move, and two reports stop at two different instants by
+            # construction, so comparing it is a coin toss on a working link.
+            # `NetStateReport.StructuralHash` carries the whole argument.
+            ("structural", r"structural state hash\s*:\s*(\S+)"),
             ("hash", r"discrete state hash\s*:\s*(\S+)")):
         m = re.search(pattern, text)
         out[key] = m.group(1) if m else None

@@ -761,11 +761,19 @@ namespace TumbangPreso
 
             _wasFatigued = fatigued;
 
+            // ⚠️⚠️ THE COMMITMENT IS SPENT ON THE STEERING AND NOT ON THE IMPULSE, which is what
+            // makes a retrieval slide read as a slide rather than as a slow walk. The dash lives
+            // in `_externalVelocity` and decays against `Friction` untouched; what this narrows is
+            // how much the player may add to it, so the body keeps going the way it committed and
+            // the taya can read where it is going to come out. `docs/TODO.md` § 146.
+            if (CommitLeft > 0.0f) CommitLeft = Mathf.Max(0.0f, CommitLeft - dt);
+
             float speed = Balance.Speed
                           * Stamina.RoleSpeedScale(_isDefender)
                           * Roster.PersonSpeedScale(_characterIndex, Mode)
                           * sprint
-                          * Stamina.SpeedZones.Value;
+                          * Stamina.SpeedZones.Value
+                          * (CommitLeft > 0.0f ? Balance.SlideSteerScale : 1.0f);
 
             if (canSteer)
             {
@@ -1298,6 +1306,42 @@ namespace TumbangPreso
 
         public bool CanAct() => RoundActive && !IsStunned;
 
+        // -------------------------------------------------------------------
+        // § COMMITMENT
+        //
+        // ⚠️⚠️ IT IS NOT A STUN AND MUST NOT BECOME ONE. A stun is something done TO a body and
+        // it stops it acting; a commitment is something the player chose and it only narrows
+        // where they can steer. `CanAct()` is deliberately untouched by it, so an attacker
+        // mid-slide can still grab, still throw and still be tagged, which is what makes the
+        // slide a decision rather than an animation they have to sit through.
+        //
+        // ⚠️ IT OVERLAPS BY `Max`, LIKE EVERY STUN IN THIS GAME (`CLAUDE.md` § 4). Additive
+        // commitment would let two sources trap a body for their sum, which is the exact bound
+        // that rule exists to keep.
+        // -------------------------------------------------------------------
+
+        /// <summary>Seconds of committed movement left, or 0.</summary>
+        public float CommitLeft { get; private set; }
+
+        /// <summary>True while this body is steering at reduced authority by its own choice.</summary>
+        public bool IsCommitted => CommitLeft > 0.0f;
+
+        /// <summary>
+        /// Commit this body's steering for <paramref name="seconds"/>.
+        ///
+        /// ⚠️ THE SCALE RIDES WITH THE DURATION rather than being a second parameter, because the
+        /// only caller is the retrieval slide and a per-call scale would be a knob nobody can
+        /// state a reason for. `Balance.SlideSteerScale` carries the argument.
+        /// </summary>
+        public void Commit(float seconds)
+        {
+            if (seconds <= 0.0f) return;
+            CommitLeft = Mathf.Max(CommitLeft, seconds);
+        }
+
+        /// <summary>Ends a commitment early. The tag does this: a stunned body is not committed.</summary>
+        public void ReleaseCommitment() => CommitLeft = 0.0f;
+
         /// <summary>
         /// May this body WALK right now? A different question from <see cref="CanAct"/>, and
         /// keeping the two apart is 🧑 2026-08-28: *"cant move during buffer time"*.
@@ -1592,6 +1636,13 @@ namespace TumbangPreso
             if (duration <= Balance.MinStunDown) element = StunElement.None;
 
             bool wins = duration >= _stunLeft;
+
+            // ⚠️⚠️ A STAGGERED BODY IS NOT A COMMITTED ONE, AND WITHOUT THIS THE SLIDE WOULD BE
+            // A PUNISH THAT PUNISHES TWICE. `CommitLeft` narrows steering by choice; a stagger
+            // takes it away outright, so leaving the commitment running would mean the attacker
+            // came out of the stun still at `Balance.SlideSteerScale` for whatever was left of it.
+            // Stuns already overlap by `Max` rather than adding for exactly this reason.
+            ReleaseCommitment();
 
             _stunLeft = Combat.ApplyStagger(_stunLeft, duration);
 

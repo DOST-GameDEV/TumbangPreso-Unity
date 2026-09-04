@@ -73,6 +73,30 @@ namespace TumbangPreso.Net
 
         /// <summary>The checked Hero Strike build, never the peer's raw claim.</summary>
         public string Build = "";
+
+        /// <summary>
+        /// The ladder rating this peer arrived carrying, or 0 when it did not say.
+        ///
+        /// ⚠️⚠️ IT EXISTS FOR EXACTLY ONE READER: `MatchRpc.RatingForDepartedPeer`, which turns it
+        /// into a bot tier through `SeatHandover.TierFor` when this chair is handed over.
+        /// `Attention.md` § 16.1 ruled *"let ai on same skill level as them take over"* and then
+        /// named the missing piece: *"the game has no notion of 'this player's skill level' to
+        /// hand the bot"*. This is that number, and until `docs/TODO.md` § 144.7 it did not exist
+        /// anywhere on the host.
+        ///
+        /// ⚠️⚠️ IT IS A CLAIM AND NOT AN AUTHORITY, AND NOTHING MAY PAY OUT ON IT. A peer types
+        /// the number it sends, so a liar can ask for an Astig bot in the seat they are about to
+        /// abandon. That is the entire attack surface and it buys nothing: the ladder already
+        /// refuses to move a handed-over seat at all (`SeatHandover.RatingMovesFor`), so the worst
+        /// a lie can do is choose which of three difficulties finishes somebody else's match.
+        /// **Do not widen this into anything the rating maths reads.** The authoritative rating
+        /// lives on the account service and comes back through `CareerStore`.
+        ///
+        /// ⚠️ 0 MEANS "DID NOT SAY", NOT "UNRANKED". `RatingForDepartedPeer` returns it unchanged
+        /// and the caller leaves the lobby's tier alone, which is what the seat did before the
+        /// field existed.
+        /// </summary>
+        public int Rating;
     }
 
     /// <summary>
@@ -309,6 +333,14 @@ namespace TumbangPreso.Net
                 record.CharacterPick = replaced.CharacterPick;
                 record.CanPick = replaced.CanPick;
                 record.SlipperPick = replaced.SlipperPick;
+
+                // ⚠️⚠️ THE RATING IS CARRIED OVER OR IT IS LOST ON THE SECOND ARRIVAL. A peer
+                // reaches `Admit` twice: once from the approval hello (which is the only message
+                // that carries a rating) and again from `MatchRpc.HandleIdentify`. The second call
+                // builds a fresh record, so anything not copied here is silently zeroed by the
+                // peer's own introduction, and the field would read 0 for every peer that ever
+                // completed a join. `docs/TODO.md` § 144.7.
+                record.Rating = replaced.Rating;
                 _peers.Remove(replaced.PeerId);
 
                 if (LeaderPeerId == replaced.PeerId)
@@ -476,6 +508,18 @@ namespace TumbangPreso.Net
             => _peers.TryGetValue(peerId, out var peer) ? peer : null;
 
         public bool IsSeatOccupied(int seat) => PeerInSeat(seat) != null || _heldSeats.ContainsKey(seat);
+
+        /// <summary>
+        /// Every seat this lobby is holding for somebody who left, as (seat, token) pairs.
+        ///
+        /// ⚠️ READ-ONLY AND FOR THE INVARIANT CHECKER. `MatchInvariants.CheckSeatClaims` has to be
+        /// able to tell a HELD chair from a DRIVEN one, because the reconnect window deliberately
+        /// produces a seat with a claimant who is driving nothing and reporting that would be
+        /// reporting the feature. Without this the checker would either miss the claim entirely or
+        /// have to infer it, and § 143.9's brief is explicit that a comment may not claim an
+        /// invariant the data cannot express.
+        /// </summary>
+        public IEnumerable<KeyValuePair<int, string>> HeldSeats => _heldSeats;
 
         /// <summary>
         /// A peer asking to move chairs, or asking to leave the table altogether.

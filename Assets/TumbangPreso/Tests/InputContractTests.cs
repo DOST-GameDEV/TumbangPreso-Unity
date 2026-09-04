@@ -310,7 +310,11 @@ namespace TumbangPreso.Tests
         [Test]
         public void TheInputPassDidNotMoveTheProtocolVersion()
         {
-            Assert.AreEqual(23, Net.NetSession.ProtocolVersion,
+            // ⚠️ 24 SINCE 2026-09-05, AND THE MOVE WAS NOT AN INPUT CHANGE. `ConnectionHello`
+            // gained the ladder rating the seat handover needs (`docs/TODO.md` § 144.7). This
+            // assertion's job is unchanged: a bump has to be a deliberate act somebody edited a
+            // test for, and the sentence below is what they read while doing it.
+            Assert.AreEqual(24, Net.NetSession.ProtocolVersion,
                 "ProtocolVersion moved. Input is local and does not travel, so if this changed " +
                 "for an input reason it is wrong. If the match format genuinely changed, update " +
                 "this number AND rebuild the Windows and Android players from the same commit.");

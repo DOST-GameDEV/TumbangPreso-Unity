@@ -513,8 +513,10 @@ namespace TumbangPreso.EditorTools
         ///
         /// ⚠️ A DIRTY WORKING TREE IS RECORDED RATHER THAN REFUSED. A build made with uncommitted
         /// edits is a legitimate thing to do at a venue at 8 a.m.; a build that SILENTLY claims to
-        /// be a commit it is not is what loses an afternoon. The flag rides in the record and the
-        /// qualification report prints it.
+        /// be a commit it is not is what loses an afternoon. The flag rides in the record, and
+        /// `tools/qualify.py --nationals` is where it becomes a refusal: **strictness belongs in
+        /// the certification path and not in the build**, which is `docs/TODO.md` § 145.1's
+        /// ruling in one sentence.
         /// </summary>
         private static void StampBuildIdentity(BuildTarget target, string outputPath)
         {
@@ -530,8 +532,16 @@ namespace TumbangPreso.EditorTools
                 ugsProject = UgsProjectId(),
                 ugsEnvironment = "production",
                 builtAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-                dirty = WorkingTreeIsDirty(root),
             };
+
+            // ⚠️⚠️ `dirty` IS "NOT PROVEN CLEAN", WHICH IS NOT THE SAME AS "PROVEN DIRTY", and
+            // writing it this way round is the whole of `docs/TODO.md` § 145.2. Every existing
+            // reader of the bool is asking "may I trust the SHA above", and the honest answer to
+            // that under an Unknown is no. The three-way answer rides beside it in `treeState`
+            // for anything that needs to tell the two apart, and `tools/qualify.py` does.
+            var tree = WorkingTreeState(root);
+            record.treeState = tree.ToString().ToLowerInvariant();
+            record.dirty = tree != BuildIdentity.TreeState.Clean;
 
             string json = JsonUtility.ToJson(record, true);
 
@@ -555,7 +565,7 @@ namespace TumbangPreso.EditorTools
                 BuildIdentity.Forget();
 
                 Debug.Log($"[Build] identity {(string.IsNullOrEmpty(record.sha) ? "(no sha)" : record.sha)}" +
-                          $"{(record.dirty ? " +dirty" : "")}, protocol {record.protocol}, " +
+                          $", tree {record.treeState}, protocol {record.protocol}, " +
                           $"{record.target}");
             }
             catch (Exception e)
@@ -604,63 +614,95 @@ namespace TumbangPreso.EditorTools
         }
 
         /// <summary>
-        /// Whether anything is uncommitted, without shelling out to git.
+        /// What the working tree was when this build was stamped: clean, dirty, or unknown.
         ///
-        /// ⚠️ IT IS A CHEAP APPROXIMATION AND SAYS SO. Running `git status` from a build would
-        /// need a process launch on a machine that may not have git on PATH (`CLAUDE.md` § 7.1
-        /// records the same being true of `python` on one of the two profiles here). The index
-        /// file's write time against the last commit's is enough to answer "has anybody touched
-        /// this checkout since it was committed", which is the question worth flagging, and it
-        /// errs towards saying dirty rather than towards claiming clean.
+        /// ⚠️⚠️ IT ASKS GIT NOW, AND THE HEURISTIC IT REPLACED COULD NOT SEE AN ORDINARY EDIT.
+        /// The old body compared `.git/index`'s write time against the branch ref's, on the
+        /// reasoning that a build must not launch a process. Two things were wrong with it, and
+        /// both fail in the direction that makes the stamp worse than useless:
+        ///
+        ///  1. **Editing a tracked file does not rewrite `.git/index`.** `git add` does. So the
+        ///     single commonest way a tree becomes dirty, open a `.cs`, change a number, build 
+        ///     left the index untouched and the stamp read `dirty: false`.
+        ///  2. **A packed ref has no loose file**, and the old body returned `false` outright when
+        ///     it could not find one. A freshly cloned or garbage-collected repository is exactly
+        ///     that, which is the state a clean build machine is in, so the one configuration this
+        ///     flag exists for was also the one it could not answer.
+        ///
+        /// **A flag that says "clean" when it means "I could not tell" is worse than no flag**,
+        /// because it is read by somebody at a venue deciding whether two machines match, and it
+        /// stops them looking. `docs/TODO.md` § 145.2.
+        ///
+        /// ⚠️⚠️ SO IT SHELLS OUT AND ANSWERS UNKNOWN WHEN IT CANNOT. `CLAUDE.md` § 7.1 records
+        /// that even `python` is not on PATH on one of the two Windows profiles here, so "git is
+        /// always available" is exactly the assumption this repository has been burned by; the
+        /// answer is not to avoid asking, it is to say so when the asking fails. A build is not
+        /// refused over it, 🧑 building at 8 a.m. at a venue with uncommitted changes is a
+        /// legitimate thing to do, and `tools/qualify.py` is where strictness belongs.
+        ///
+        /// ⚠️ TRACKED CHANGES ONLY. `--porcelain` without `--untracked-files=all` still lists
+        /// untracked files as `??`, and a stray `Logs/` artefact or an editor scratch file is not
+        /// a difference in what was BUILT. Those rows are dropped; anything else is dirty.
+        ///
+        /// ⚠️ AND IT IS BOUNDED. A `git status` on a cold 5 GB checkout can take seconds and a
+        /// hung one would hang the build, so it gets ten and then answers Unknown, which is
+        /// exactly what it is.
         /// </summary>
-        private static bool WorkingTreeIsDirty(string repoRoot)
+        private static BuildIdentity.TreeState WorkingTreeState(string repoRoot)
         {
+            if (string.IsNullOrEmpty(repoRoot) || !Directory.Exists(repoRoot))
+                return BuildIdentity.TreeState.Unknown;
+
             try
             {
-                if (string.IsNullOrEmpty(repoRoot)) return false;
-
-                string dotGit = Path.Combine(repoRoot, ".git");
-                if (File.Exists(dotGit))
+                var info = new System.Diagnostics.ProcessStartInfo
                 {
-                    string pointer = BuildBranch.GitDirFromPointer(File.ReadAllText(dotGit));
-                    if (string.IsNullOrEmpty(pointer)) return false;
-                    dotGit = Path.IsPathRooted(pointer) ? pointer : Path.Combine(repoRoot, pointer);
+                    FileName = "git",
+                    Arguments = "status --porcelain",
+                    WorkingDirectory = repoRoot,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true,
+                };
+
+                using var process = System.Diagnostics.Process.Start(info);
+                if (process == null) return BuildIdentity.TreeState.Unknown;
+
+                string output = process.StandardOutput.ReadToEnd();
+
+                if (!process.WaitForExit(10000))
+                {
+                    try { process.Kill(); } catch { /* it is already going */ }
+                    Debug.LogWarning("[Build] git status did not answer in ten seconds; the " +
+                                     "working tree state is UNKNOWN rather than clean.");
+                    return BuildIdentity.TreeState.Unknown;
                 }
 
-                string index = Path.Combine(dotGit, "index");
-                string headFile = Path.Combine(dotGit, "HEAD");
-                if (!File.Exists(index) || !File.Exists(headFile)) return false;
+                if (process.ExitCode != 0) return BuildIdentity.TreeState.Unknown;
 
-                // ⚠️⚠️ AGAINST THE REF HEAD POINTS AT, NOT AGAINST `HEAD` ITSELF, AND THE FIRST
-                // VERSION GOT THIS WRONG IN THE DIRECTION THAT MAKES THE STAMP USELESS.
-                // `.git/HEAD` holds the line `ref: refs/heads/main` and is only rewritten when
-                // the BRANCH changes, so on a checkout that has been on one branch all day its
-                // mtime is hours old and every build stamps `dirty: true` on a clean tree. **A
-                // flag that is always set is a flag nobody reads**, and this one exists to tell
-                // somebody at a venue that a player is not the commit it claims.
-                string head = File.ReadAllText(headFile).Trim();
-                string commitFile = headFile;
-
-                if (head.StartsWith("ref:", StringComparison.Ordinal))
+                foreach (string line in output.Split('\n'))
                 {
-                    string refName = head.Substring(4).Trim();
-                    string loose = Path.Combine(dotGit,
-                        refName.Replace('/', Path.DirectorySeparatorChar));
+                    string row = line.TrimEnd('\r');
+                    if (row.Length == 0) continue;
 
-                    // ⚠️ A PACKED REF HAS NO LOOSE FILE, and a repository that has just been
-                    // garbage collected or freshly cloned is exactly that. There is nothing to
-                    // compare against then, so the honest answer is "cannot tell" rather than a
-                    // guess in either direction.
-                    if (!File.Exists(loose)) return false;
-                    commitFile = loose;
+                    // ⚠️ `??` IS UNTRACKED AND IS NOT A DIFFERENCE IN WHAT WAS BUILT. `Logs/`,
+                    // `Library/` and a scratch file are all normal on a machine somebody works on.
+                    if (row.StartsWith("??", StringComparison.Ordinal)) continue;
+
+                    return BuildIdentity.TreeState.Dirty;
                 }
 
-                return File.GetLastWriteTimeUtc(index) >
-                       File.GetLastWriteTimeUtc(commitFile).AddMinutes(1);
+                return BuildIdentity.TreeState.Clean;
             }
-            catch
+            catch (Exception e)
             {
-                return false;
+                // ⚠️ NO GIT ON PATH LANDS HERE AND IS A LEGITIMATE STATE. A source export, a
+                // build container without git, a locked-down machine: none of them is a dirty
+                // tree and none of them is a clean one.
+                Debug.Log($"[Build] could not ask git about the working tree " +
+                          $"({e.GetType().Name}); it is UNKNOWN rather than clean.");
+                return BuildIdentity.TreeState.Unknown;
             }
         }
 
@@ -730,7 +772,7 @@ namespace TumbangPreso.EditorTools
                 // ⚠️ THE DANGER VIGNETTE, AND ITS MISS PATH IS A REGRESSION RATHER THAN AN
                 // ABSENCE. `Hud.BuildDangerFlash` warns and falls back to a flat `Image` when
                 // the lookup fails, which is exactly the uniform full-screen red the vignette
-                // was added to replace: so a build that strips this ships the bug back while
+                // was added to replace, so a build that strips this ships the bug back while
                 // the editor stays fixed.
                 "TumbangPreso/DownedVignette",
 

@@ -495,6 +495,26 @@ namespace TumbangPreso
             _velocity = Vector3.zero;
 
             who.GetComponent<Carrier>()?.NotifyHolding(this);
+
+            // ⚠️⚠️ THE RETRIEVAL IS RECORDED HERE BECAUSE THIS IS THE ONE PLACE ONE HAPPENS.
+            // `docs/VISION.md` § 0: *"the tension is the retrieval, not the throw"*, and until
+            // `docs/TODO.md` § 147 nothing in the game wrote down that the most important moment
+            // in its own design had occurred. A walk-up pickup and the committed slide both reach
+            // this method, so both are recorded and neither needs to remember to.
+            //
+            // ⚠️ IT AWARDS NOTHING AND IS HOST-SIDE ONLY, which is a known and accepted asymmetry
+            // rather than an oversight: every other producer of a marker runs on every peer
+            // through `MatchFlair`, and a pickup has no flair event to ride. A client's own log
+            // therefore has one kind fewer in it. Adding a wire message for a caption would cost
+            // a protocol field for something no rule reads. `MatchHighlights`' class note carries
+            // the general form of the argument.
+            Diagnostics.MatchHighlights.NoteRetrieval(
+                who.PlayerSlot,
+                Diagnostics.HighlightWatch.MetresFromTaya(transform.position),
+                GameServices.Round != null && GameServices.Round.RoundActive
+                    ? GameServices.Round.TimeLeft
+                    : -1.0f);
+
             return true;
         }
 

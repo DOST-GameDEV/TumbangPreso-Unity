@@ -323,6 +323,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("SyncUnit", OnSyncUnitMsg);
             cm.RegisterNamedMessageHandler("ReqPunch", OnReqPunchMsg);
             cm.RegisterNamedMessageHandler("ReqLunge", OnReqLungeMsg);
+            cm.RegisterNamedMessageHandler("ReqSlide", OnReqSlideMsg);
             cm.RegisterNamedMessageHandler("ReqShove", OnReqShoveMsg);
             cm.RegisterNamedMessageHandler("ReqGrab", OnReqGrabMsg);
             cm.RegisterNamedMessageHandler("ReqThrow", OnReqThrowMsg);
@@ -1785,6 +1786,68 @@ namespace TumbangPreso.Net
             BroadcastAction(slot, "lunge", senderClientId);
         }
 
+        /// <summary>
+        /// An attacker asking to commit to a retrieval slide.
+        ///
+        /// ⚠️⚠️ IT CARRIES AN INTENT AND NEVER A RESULT, which is `NetAuthority`'s rule stated in
+        /// its own words: *"A client that could say 'I tagged P3' is a client that can award
+        /// itself 100 points."* This says where the body stood and which way it faced. **Which
+        /// tsinelas it collects is not in the payload at all** and is decided entirely by the
+        /// host's own sweep, so a modified client cannot name somebody else's shoe.
+        ///
+        /// ⚠️ THERE IS NO POWER FIELD, UNLIKE THE LUNGE. The slide has no charge (see
+        /// `CombatVerbs.StepSlide`: a wind-up aimed at an object lying still is a tell that buys
+        /// the attacker nothing), so there is no strength for a client to lie about.
+        /// </summary>
+        public void RequestSlideServerRpc(int slot, Vector3 from, Vector3 facing)
+        {
+            if (NetAuthority.IsHost)
+            {
+                var who = Unit(slot);
+                if (who != null && !who.IsDefender)
+                {
+                    who.GetComponent<CombatVerbs>()?.HostResolveSlide(from, facing);
+                }
+                return;
+            }
+
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+            using var writer = new FastBufferWriter(64, Allocator.Temp);
+            writer.WriteValueSafe(slot);
+            writer.WriteValueSafe(from);
+            writer.WriteValueSafe(facing);
+            _nm.CustomMessagingManager.SendNamedMessage("ReqSlide", NetworkManager.ServerClientId, writer);
+        }
+
+        private void OnReqSlideMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            if (!NetAuthority.IsHost) return;
+            reader.ReadValueSafe(out int slot);
+            reader.ReadValueSafe(out Vector3 from);
+            reader.ReadValueSafe(out Vector3 facing);
+
+            if (!SenderOwnsClaimedSeat(senderClientId, slot, out var who)) return;
+
+            if (!PlausibleIntentPose(who, from) || !Finite(facing))
+            {
+                HostDenyVerb(senderClientId, slot, DeniedVerb.Slide);
+                return;
+            }
+
+            if (who == null || who.IsDefender ||
+                who.GetComponent<CombatVerbs>()?.HostResolveSlide(from, facing) != true)
+            {
+                HostDenyVerb(senderClientId, slot, DeniedVerb.Slide);
+                return;
+            }
+
+            // ⚠️ THE LUNGE'S CLIP, DELIBERATELY. `CharacterAnimator.PlayAction` and
+            // `ViewmodelArms.PlayAction` both resolve by name and neither knows a "slide"; both
+            // moves are a body-led dash, so a shared clip that reads correctly beats a name that
+            // resolves to nothing. `docs/TODO.md` § 146 carries the art note.
+            BroadcastAction(slot, "lunge", senderClientId);
+        }
+
         public void RequestShoveServerRpc(int slot, Vector3 from, Vector3 facing)
         {
             if (NetAuthority.IsHost)
@@ -2586,7 +2649,10 @@ namespace TumbangPreso.Net
         // -------------------------------------------------------------------
 
         /// <summary>Which verb a refusal is taking back. Travels as a byte.</summary>
-        public enum DeniedVerb : byte { Punch = 0, Lunge = 1, Shove = 2 }
+        /// ⚠️ THE VALUES TRAVEL, so appending is free and reordering is a protocol break.
+        /// `Slide` is the attacker's retrieval commitment (`docs/TODO.md` § 146) and was added
+        /// alongside the connection hello's rating in the same `ProtocolVersion` 24 bump.
+        public enum DeniedVerb : byte { Punch = 0, Lunge = 1, Shove = 2, Slide = 3 }
 
         /// <summary>Tells one client the verb it predicted was refused, so it can take it back.</summary>
         public void HostDenyVerb(ulong clientId, int slot, DeniedVerb verb)
@@ -2627,7 +2693,10 @@ namespace TumbangPreso.Net
         // -------------------------------------------------------------------
 
         private const int DenialLogEvery = 25;
-        private readonly int[] _denialsSent = new int[3];
+        // ⚠️ ONE SLOT PER `DeniedVerb` VALUE, AND IT WAS A LITERAL 3 UNTIL `Slide` WAS ADDED.
+        // `CountDenial` returns early on an index past the end, so a stale length is a whole verb
+        // whose refusals are counted nowhere and whose absence reads as "it is never refused".
+        private readonly int[] _denialsSent = new int[System.Enum.GetValues(typeof(DeniedVerb)).Length];
         private readonly int[] _denialsTaken = new int[3];
 
         private static void CountDenial(int[] tally, string direction, int slot, DeniedVerb verb)
@@ -4957,21 +5026,29 @@ namespace TumbangPreso.Net
         }
 
         /// <summary>
-        /// The departing player's ladder rating, or 0 when this peer does not know it.
+        /// The departing player's ladder rating, or 0 when this peer never said.
         ///
-        /// ⚠️⚠️ IT IS ALWAYS 0 TODAY AND THAT IS THE HONEST ANSWER RATHER THAN A STUB. A rating
-        /// reaches this process only if it travels, and nothing on `ConnectionHello` or
-        /// `LobbySession.PeerRecord` carries one. `Attention.md` § 16.1 names this as the
-        /// missing piece of the ruling it recorded: *"the game has no notion of 'this player's
-        /// skill level' to hand the bot, and `Rating` is a ladder number rather than a
-        /// difficulty tier."* The tier half is built (`SeatHandover.TierFor`); this is the half
-        /// that needs a wire field.
+        /// ⚠️⚠️ IT ANSWERED 0 FOR EVERY PEER UNTIL `NetSession.ProtocolVersion` 24, AND THE 0 WAS
+        /// HONEST RATHER THAN A STUB. `Attention.md` § 16.1 ruled *"let ai on same skill level as
+        /// them take over"* and named the gap in the same breath: *"the game has no notion of
+        /// 'this player's skill level' to hand the bot"*. The tier half shipped on 2026-09-04
+        /// (`SeatHandover.TierFor`); the number had nowhere to travel until the hello carried it.
         ///
-        /// ⚠️ ONE FUNCTION SO THERE IS ONE PLACE TO FIX. A caller that inlined "we do not know"
-        /// would be a caller that silently keeps not knowing after somebody adds the field.
-        /// `docs/TODO.md` § 144.7 carries what it costs, which is a protocol bump.
+        /// ⚠️⚠️ IT TAKES THE DEPARTED RECORD, NOT A PEER ID, AND THAT IS NOT A SIGNATURE TIDY-UP.
+        /// `LobbySession.Depart` REMOVES the peer and returns the record it removed, the note on
+        /// its one call site records what happened the last time somebody looked a departed peer
+        /// up a second time, which is that the lookup found nothing, the seat read -1 and the bot
+        /// takeover never ran. A rating fetched by id here would be exactly that bug again, one
+        /// field along: it would compile, return 0, and the seat would silently keep the lobby's
+        /// tier forever.
+        ///
+        /// ⚠️ 0 STILL MEANS "LEAVE THE TIER ALONE" and the caller still checks. A peer from an
+        /// older build cannot exist in the room (peers on different protocols refuse each other),
+        /// but a peer that has never had a career, a LAN guest and a dedicated referee all
+        /// legitimately arrive with nothing to say.
         /// </summary>
-        private static int RatingForDepartedPeer(int peerId) => 0;
+        private static int RatingForDepartedPeer(PeerRecord departed)
+            => departed != null && departed.Rating > 0 ? departed.Rating : 0;
 
         public void HostPeerLeft(int peerId)
         {
@@ -5058,25 +5135,27 @@ namespace TumbangPreso.Net
                             var brain = unit.GetComponent<AIController>();
                             if (brain == null) brain = unit.gameObject.AddComponent<AIController>();
 
-                            // ⚠️⚠️ THE TIER IS THE RULING AND THE RATING IS THE MISSING HALF.
-                            // 🧑's answer was *"let ai on same skill level as them take over"*,
-                            // and `SeatHandover.TierFor` turns a ladder number into one of the
-                            // three tiers `AiTuning` actually has. **What the host does not have
-                            // is the number.** Nothing on `ConnectionHello` or `PeerRecord`
-                            // carries a rating: § 16.1 says so in as many words (*"the game has
-                            // no notion of 'this player's skill level' to hand the bot"*) and
-                            // the peer table confirms it.
+                            // ⚠️⚠️ THE TIER IS THE RULING AND THE RATING IS THE HALF THAT HAD TO
+                            // TRAVEL. 🧑's answer was *"let ai on same skill level as them take
+                            // over"*, and `SeatHandover.TierFor` turns a ladder number into one of
+                            // the three tiers `AiTuning` actually has. **The host did not have the
+                            // number** until `NetSession.ProtocolVersion` 24 put it on the
+                            // connection hello, so this line read the lobby's setting for every
+                            // seat and § 16.1's ruling was built everywhere except where it lands.
                             //
-                            // ⚠️ SO THE SEAT KEEPS THE LOBBY'S TIER FOR NOW, WHICH IS EXACTLY
-                            // WHAT IT DID BEFORE, and the one line that changes when the rating
-                            // arrives is here. Putting the rating on the wire is a
-                            // `NetSession.ProtocolVersion` bump, and `CLAUDE.md` § 4 requires the
-                            // Windows and Android players to be rebuilt from the same commit and
-                            // shipped together when that number moves: it is a deliberate act
-                            // rather than something to slip into a session's last build.
+                            // ⚠️ A 0 STILL LEAVES THE LOBBY'S TIER ALONE, which is what a LAN
+                            // guest with no career and a peer that never signed in both produce.
+                            // The tier a seat gets when nobody knows anything about it is the one
+                            // it has always had, and that is the right default rather than a
+                            // guess at the middle of a ladder the player may not be on.
                             // `docs/TODO.md` § 144.7 is the entry.
-                            int rating = RatingForDepartedPeer(peerId);
-                            if (rating > 0) brain.SeatDifficulty = SeatHandover.TierFor(rating);
+                            int rating = RatingForDepartedPeer(departed);
+                            if (rating > 0)
+                            {
+                                brain.SeatDifficulty = SeatHandover.TierFor(rating);
+                                Debug.Log($"[Handover] seat {seat} was rated {rating}; a " +
+                                          $"{brain.SeatDifficulty} bot is finishing it.");
+                            }
                         }
                         else
                         {

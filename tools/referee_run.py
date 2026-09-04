@@ -136,9 +136,34 @@ def verdict(parsed, work):
     WARNING: EVERY CLAIM HERE IS ONE A FAILING RUN COULD ALSO MAKE FALSE. A verdict that can
     only come out green is not a measurement, which is `net_matrix`'s `expect` rule applied one
     level up.
+
+    WARNING: AND IT USED TO PRINT MORE THAN IT GATED, WHICH IS THE SAME FAULT ONE STEP SUBTLER.
+    The table carried the protocol, the round, the seat roster, the characters and the scores;
+    the verdict asked about the referee's own slot, each client's slot, each client's role, the
+    defender and the per-seat character and taya flags **between the two clients only**. So the
+    REFEREE could disagree with both of them about every seat in the game and the run came back
+    green, and a reader looking at the printed table would have to notice by eye. `docs/TODO.md`
+    section 145.4.
+
+    WARNING: WHAT IS COMPARED AS AN EQUALITY AND WHAT IS NOT IS A DECISION PER FIELD, AND
+    GETTING IT WRONG IN EITHER DIRECTION IS A USELESS GATE. The referee outlives both clients by
+    design (see `run`), so the three reports are written seconds apart:
+
+      * **Constant for the match** - the protocol, the mode, the map, the character in each seat,
+        which seats are bots, the structural hash. These are hard equalities. A disagreement is
+        real whenever you look.
+      * **Monotonic** - the round number and the scores. A peer that stopped later may
+        legitimately have more of both. What is refused is a peer that stopped LATER holding
+        LESS, which cannot happen and needs no timing tolerance to say so.
+      * **Derived** - the defender. `MatchRules.DefenderSlotFor(round)` on each peer's OWN round
+        is the check, plus equality only where the rounds agree. Comparing the raw value between
+        peers on different rounds would fail on a correct game.
+      * **Sampled** - the discrete hash, the slipper states, the travelled distances. Printed,
+        never gated. The discrete hash folds in the score, so it is a clock in disguise.
     """
     lines = []
     findings = []
+    notes = []
 
     ref = parsed.get("referee")
     c1 = parsed.get("client1")
@@ -151,26 +176,31 @@ def verdict(parsed, work):
             lines.append("%-9s : NO REPORT" % tag)
             continue
         lines.append(
-            "%-9s : role %s  networked %s  slot %s  round %s  active %s  defender %s  "
-            "sampled %s s  hash %s"
-            % (tag, r["role"], r["networked"], r["slot"], r["round"], r["active"],
-               r["defender"], r["sampled"], r["hash"]))
+            "%-9s : role %s  networked %s  slot %s  proto %s  round %s  active %s  defender %s  "
+            "sampled %s s  struct %s  discrete %s"
+            % (tag, r["role"], r["networked"], r["slot"], r["protocol"], r["round"], r["active"],
+               r["defender"], r["sampled"], r["structural"], r["hash"]))
 
-    if ref is not None:
-        # THE CLAIM: a referee holds no seat. `MatchInstaller` answers -1 for one.
-        if ref["slot"] != "-1":
-            findings.append(
-                "the referee reported local slot %s, so it is holding a seat and is not seatless"
-                % ref["slot"])
+    present = [(tag, r) for tag, r in
+               (("referee", ref), ("client1", c1), ("client2", c2)) if r is not None]
 
-    # THE CLAIM: a round actually ran. Two peers agreeing nothing happened is not evidence.
+    if len(present) < 3:
+        return lines, findings
+
+    for tag, r in present:
+        lines.append("%-9s : seats %s" % (tag, describe_seats(r)))
+
+    # ---- the referee is seatless -------------------------------------------
+    #
+    # THE CLAIM: a referee holds no seat. `MatchInstaller` answers -1 for one.
+    if ref["slot"] != "-1":
+        findings.append(
+            "the referee reported local slot %s, so it is holding a seat and is not seatless"
+            % ref["slot"])
+
+    # ---- the clients hold seats, and different ones ------------------------
+    seats_held = {}
     for tag, r in (("client1", c1), ("client2", c2)):
-        if r is None:
-            continue
-        if r["active"] != "True":
-            findings.append(
-                "%s never reached a live round (round active %s)" % (tag, r["active"]))
-
         # WARNING: THIS CHECK WAS MISSING ON THE FIRST RUN AND THE FIRST RUN IS WHAT IT WOULD
         # HAVE CAUGHT. The verdict asserted that the REFEREE held no seat and never asked
         # whether the CLIENTS held one, so a client reporting `local slot: -1` printed in the
@@ -181,35 +211,138 @@ def verdict(parsed, work):
             findings.append(
                 "%s reported local slot -1, which is the REFEREE's value. A client holding no "
                 "seat owns no body and its own abilities stop resolving on it." % tag)
+            continue
 
+        if r["slot"] in seats_held:
+            findings.append(
+                "%s and %s both report local slot %s. One gameplay seat with two owners is the "
+                "reconnect fault: both peers believe they are driving it and the host is "
+                "accepting movement and verbs from both."
+                % (seats_held[r["slot"]], tag, r["slot"]))
+        else:
+            seats_held[r["slot"]] = tag
+
+    for tag, r in (("client1", c1), ("client2", c2)):
         if r["role"] != "CLIENT":
             findings.append(
                 "%s reported role %s: it fell back to its own lobby and auto-hosted rather than "
                 "staying joined" % (tag, r["role"]))
 
-    # THE CLAIM: the referee and both clients agree about the discrete state that decides points.
-    if ref is not None and c1 is not None:
-        if ref["defender"] != c1["defender"]:
+    # ---- a round actually ran ----------------------------------------------
+    #
+    # THE CLAIM: two peers agreeing that nothing happened is not evidence, and neither is one.
+    for tag, r in present:
+        round_number = as_int(r["round"])
+        if round_number is None or round_number < 1:
+            findings.append("%s never reached round 1 (round %s), so no match played on it"
+                            % (tag, r["round"]))
+
+    for tag, r in (("client1", c1), ("client2", c2)):
+        if r["active"] != "True":
             findings.append(
-                "defender: referee %s vs client1 %s" % (ref["defender"], c1["defender"]))
-    if c1 is not None and c2 is not None:
-        if c1["defender"] != c2["defender"]:
+                "%s never reached a live round (round active %s)" % (tag, r["active"]))
+
+    # ---- constant for the match: hard equalities ----------------------------
+    for field, why in (
+            ("protocol", "peers on different protocol numbers refuse each other by design, so "
+                         "two that connected and disagree here means one of them is misreporting"),
+            ("mode", "Classic and Hero Strike are four rounds and eight, with and without kits"),
+            ("map", "two peers in different arenas are two matches"),
+            ("structural", "the character in each seat, which seats are bots, and the protocol. "
+                           "NetStateReport.StructuralHash covers only what cannot change while a "
+                           "match runs, so a disagreement is real at any instant")):
+        values = {tag: r[field] for tag, r in present}
+        if len(set(values.values())) > 1:
+            findings.append("%s: %s" % (field, ", ".join(
+                "%s %s" % (tag, value) for tag, value in values.items())))
+
+    # ---- the seat roster, all three ways round -----------------------------
+    #
+    # WARNING: AGAINST THE REFEREE AS WELL AS BETWEEN THE CLIENTS. Comparing only the two
+    # clients is what let a referee disagree with both of them and still come back green: two
+    # peers that were told the same wrong thing agree perfectly.
+    by_seat = {}
+    for tag, r in present:
+        for seat in r["seats"]:
+            by_seat.setdefault(seat["seat"], {})[tag] = seat
+
+    for seat_number in sorted(by_seat):
+        rows = by_seat[seat_number]
+
+        if len(rows) < len(present):
+            findings.append("seat %d is missing from %s"
+                            % (seat_number,
+                               ", ".join(t for t, _ in present if t not in rows)))
+            continue
+
+        for field, why in (("char", "which character is in the chair"),
+                           ("bot", "whether a person or an AI is driving it")):
+            values = {tag: row[field] for tag, row in rows.items()}
+            if len(set(values.values())) > 1:
+                findings.append("seat %d %s (%s): %s" % (
+                    seat_number, field, why,
+                    ", ".join("%s %s" % (tag, value) for tag, value in values.items())))
+
+    # ---- derived: the taya --------------------------------------------------
+    #
+    # WARNING: THE DEFENDER IS NOT COMPARED RAW ACROSS PEERS AND MUST NOT BE. It is derived from
+    # the round number (`docs/VISION.md` section 4), and the referee stops later than its
+    # clients, so two peers on different rounds hold different defenders CORRECTLY. What is
+    # checked is that each peer's own defender matches its own round, plus equality where the
+    # rounds agree.
+    for tag, r in present:
+        round_number = as_int(r["round"])
+        defender = as_int(r["defender"])
+        if round_number is None or defender is None or round_number < 1:
+            continue
+
+        derived = (round_number - 1) % 4
+        if defender != derived:
             findings.append(
-                "defender: client1 %s vs client2 %s" % (c1["defender"], c2["defender"]))
-        by_seat = dict((s["seat"], s) for s in c2["seats"])
-        for a in c1["seats"]:
-            b = by_seat.get(a["seat"])
-            if b is None:
-                findings.append("seat %d missing on client2" % a["seat"])
+                "%s is on round %d and calls seat %d the taya; the schedule derives seat %d. "
+                "The role is a pure function of the round and is never accumulated."
+                % (tag, round_number, defender, derived))
+
+    rounds = {tag: as_int(r["round"]) for tag, r in present}
+    if len({v for v in rounds.values() if v is not None}) > 1:
+        notes.append("the peers stopped on different rounds (%s), which is expected: the "
+                     "referee outlives its clients on purpose. Only the derived-taya check "
+                     "applies across that gap." % ", ".join(
+                         "%s r%s" % (t, v) for t, v in rounds.items()))
+    else:
+        defenders = {tag: r["defender"] for tag, r in present}
+        if len(set(defenders.values())) > 1:
+            findings.append("defender on one round: %s" % ", ".join(
+                "%s %s" % (t, v) for t, v in defenders.items()))
+
+    # ---- monotonic: the scores ---------------------------------------------
+    #
+    # WARNING: NOT AN EQUALITY. A peer sampled later can legitimately hold more points. What
+    # cannot happen is a peer that stopped LATER holding FEWER, and that needs no tolerance.
+    order = sorted(present, key=lambda item: as_float(item[1]["sampled"]) or 0.0)
+    for i in range(len(order) - 1):
+        (early_tag, early), (late_tag, late) = order[i], order[i + 1]
+        early_by_seat = {s["seat"]: s for s in early["seats"]}
+
+        for seat in late["seats"]:
+            was = early_by_seat.get(seat["seat"])
+            if was is None:
                 continue
-            if a["char"] != b["char"]:
+
+            if seat["score"] < was["score"]:
                 findings.append(
-                    "seat %d character %d vs %d between the clients"
-                    % (a["seat"], a["char"], b["char"]))
-            if a["taya"] != b["taya"]:
-                findings.append(
-                    "seat %d taya %s vs %s between the clients"
-                    % (a["seat"], a["taya"], b["taya"]))
+                    "seat %d scored %d on %s (%s s) and %d on %s (%s s). A score cannot go "
+                    "backwards, so the later peer lost an award the earlier one had."
+                    % (seat["seat"], was["score"], early_tag, early["sampled"],
+                       seat["score"], late_tag, late["sampled"]))
+
+    # ---- printed, never gated ------------------------------------------------
+    discretes = {tag: r["hash"] for tag, r in present}
+    if len(set(discretes.values())) > 1:
+        notes.append("the discrete hashes differ (%s), which is NOT a finding: it folds in the "
+                     "score and the slipper states, and the three reports are written seconds "
+                     "apart by design. The structural hash is the one that gates."
+                     % ", ".join("%s %s" % (t, v) for t, v in discretes.items()))
 
     listening = log_says(work, "referee", "[NetBoot] host requested")
     if listening:
@@ -217,7 +350,29 @@ def verdict(parsed, work):
         if "FAILED" in listening:
             findings.append("the referee never opened its transport")
 
-    return lines, findings
+    return lines + ["note      : " + n for n in notes], findings
+
+
+def describe_seats(report):
+    """One short row per seat, so the table shows what the verdict is actually comparing."""
+    return "  ".join(
+        "%d[c%s %s %s %d]" % (s["seat"], s["char"], "bot" if s["bot"] else "hum",
+                              "TAYA" if s["taya"] else "atk", s["score"])
+        for s in sorted(report["seats"], key=lambda s: s["seat"]))
+
+
+def as_int(value):
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def as_float(value):
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
 
 
 def main():

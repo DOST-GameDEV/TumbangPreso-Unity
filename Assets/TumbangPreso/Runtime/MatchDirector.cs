@@ -250,6 +250,13 @@ namespace TumbangPreso
             MatchInProgress = true;
             IsWarmupBuffer = false;
 
+            // ⚠️⚠️ THE HIGHLIGHT LOG IS ZEROED WITH THE SCOREBOARD, AND FOR THE SAME REASON THE
+            // LINE ABOVE IT EXISTS. `docs/TODO.md` § 143.5 found a real cross-match leak in this
+            // process, and a marker that survived into the next match would put somebody else's
+            // best moment on this match's reel with a timestamp that lands nowhere. It is also
+            // where the match clock every marker is stamped against begins.
+            Diagnostics.MatchHighlights.BeginMatch();
+
             // ⚠️ CLEARED HERE AND ONLY HERE. A rematch runs this again on every peer, and the
             // host reloads its arena on the same race the first match does, so a flag left
             // standing from the PREVIOUS match would let the stale packet through second time

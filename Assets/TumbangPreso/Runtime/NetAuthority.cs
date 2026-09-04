@@ -75,8 +75,24 @@ namespace TumbangPreso
         /// <summary>
         /// The guard every host-authoritative method opens with. Reads as a sentence at the
         /// call site, which is the point: `if (!NetAuthority.ShouldResolve()) return;`
+        ///
+        /// ⚠️⚠️ IT IS NOT `IsHost` ANY MORE, AND THE EXTRA CLAUSE IS `docs/TODO.md` § 143.9.
+        /// `NetSession.IsHost` is <c>_nm == null || !_nm.IsListening || _nm.IsServer</c>, so a
+        /// CLIENT whose host has just vanished satisfies the middle clause and starts answering
+        /// TRUE. Without this, the peer that was obeying a referee one frame ago is a referee the
+        /// next: it resolves its own tags, awards its own points and advances its own rounds, in
+        /// an arena nobody else is in. Four clients losing one host became four different matches.
+        ///
+        /// ⚠️ `MatchAbandon` IS ASKED HERE RATHER THAN AT FORTY CALL SITES, which is this method's
+        /// whole reason for existing: `INetProvider`'s note says what is abstracted is "only the
+        /// QUESTION every verb has to ask before it acts", and "am I still entitled to decide" is
+        /// part of that question rather than a second one.
+        ///
+        /// ⚠️ IT COSTS THE SOLO GAME NOTHING. The latch is armed only by a session ENDING under
+        /// this peer and is disarmed on the next single scene load, so an offline match, the
+        /// tutorial and every probe read exactly `IsHost` as before.
         /// </summary>
-        public static bool ShouldResolve() => IsHost;
+        public static bool ShouldResolve() => IsHost && !MatchAbandon.AuthorityRevoked;
 
         /// <summary>
         /// True when this peer should ASK the host rather than resolving locally. The exact

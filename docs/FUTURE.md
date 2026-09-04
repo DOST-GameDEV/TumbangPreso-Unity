@@ -1411,6 +1411,62 @@ game. **Map rotation and a map vote are nearly free and buy most of the same fre
 those before building a fourth map. ✅ **Both are built as of 2026-09-03**, rotation wired and the
 ballot's rules written and tested ahead of the wire: `docs/Formats.md` § 4.
 
+### 12.1 ⚠️ NOT STARTED: GIVE THE MAPS WE HAVE MECHANICAL IDENTITY
+
+**Three maps exist and they are three backdrops.** The rules, the box, the verbs and the numbers
+are identical on all of them, so choosing a map changes what a match LOOKS like and nothing about
+what anybody DOES. That is a whole axis of freshness the game already paid for and is not
+spending, and it is the cheapest thing on this page after rotation and the vote.
+
+**The goal is that a map changes DECISIONS through GEOMETRY, with the same rules and the same
+controls.** A player should be able to say what a map asks of them:
+
+- **One naturally creates bank-shot angles.** Hard vertical surfaces at usable angles from the
+  common throwing arcs, so `MatchFlair.Kind.BankShot` is a play somebody aims for rather than an
+  accident. `docs/VISION.md` § 1.1: Street Hype already *"names skilled curves, banks, close calls
+  and blocks without changing a single point"*: a map that rewards the bank is that sentence
+  given somewhere to happen.
+- **One favours long throws and open chases.** Clear sightlines to the lata from outside
+  `Balance.ConfinementRadius`, and few short covered routes back in, so the retrieval is a run
+  rather than a dodge.
+- **One has tight retrieval routes and juke geometry.** Corners, pillars and doorways at roughly
+  the taya's reach apart, so the retrieval is read-and-counter-read at close quarters.
+
+⚠️⚠️ **WHAT THIS MUST NOT BECOME, AND EVERY ONE OF THESE HAS BEEN CUT ONCE ALREADY:**
+
+- ❌ **No random hazards.** `docs/VISION.md` § 4: *"Nothing may reward waiting"*, and a hazard
+  nobody chose is a coin flip on a competitive ladder.
+- ❌ **No map-exclusive powers.** § 1.2 records an entire ability layer being deleted for exactly
+  this reason, and Hero Strike is a MODE the player opts into rather than a place they stand in.
+- ❌ **No different ruleset per map.** The taya rotation, the round clock and the scoring are
+  shared or the ladder means nothing.
+- ❌ **No gimmick to memorise.** `CLAUDE.md` § 6.2: the test for adding anything is what the player
+  has to hold in their head. **Geometry is legible by looking at it**; a rule that only applies
+  here is not.
+
+⚠️⚠️ **AND IT NEEDS MEASUREMENT BEFORE ANY GEOMETRY BECOMES PERMANENT, WHICH IS THE PART THAT
+MAKES THIS A PHASE ITEM RATHER THAN AN AFTERNOON.** Every map in this game has been signed off
+from renders and `MapGeometryCheck` still found six faults on one of them, *"including both
+pavements floating 0.15 m over open air"* (`CLAUDE.md` § 7.1). A shape that is meant to change
+BEHAVIOUR cannot be judged by looking at all.
+
+**So the order of work is fixed:**
+
+1. **Measure what the three maps do NOW.** `tools/bot_sweep.py --compare` exists for exactly this
+   question and answers it per metric with the noise floor attached: run a sweep per map at the
+   same config digest and read the differences. **If the three are already inside the noise of
+   each other, that is the finding** and it is the baseline every later change is judged against.
+2. **Change one map's geometry, one axis at a time.** Two changes at once cannot be attributed.
+3. **Re-sweep, and require the intended metric to read `MOVED`** while the others do not.
+4. ⚠️ **Then a person plays it**, because *"does this FEEL different"* is `CLAUDE.md` § 2.1's
+   *"human judgement"* and no probe in this repository can answer it.
+5. `MapGeometryCheck` gates the result, as it does every map.
+
+⚠️ **`AiTuning.HazardAvoidMaxRadius` IS THE CANARY HERE TOO.** `docs/VISION.md` § 2: *"the bots
+are a canary for whether a human can read the floor."* A geometry change that the bots cannot path
+through is one a human will find annoying rather than interesting, and `BotBehaviourProbe`'s
+per-seat travel distances say so before anybody plays it.
+
 **Custom games** are the multiplier on all of it: private lobby, password, round length, score
 target, character and tsinelas restrictions, bot count, item toggles. Community formats come out of
 custom games for free, and it is also the tournament tool from Phase 17.

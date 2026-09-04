@@ -388,6 +388,118 @@ namespace TumbangPreso.Core
         public const float LungeCooldown = 1.5f;
         public const float LungeMinPower = 0.35f;
 
+        // -------------------------------------------------------------------
+        // THE ATTACKER'S RETRIEVAL SLIDE, `docs/TODO.md` § 146
+        //
+        // ⚠️⚠️ IT IS THE SAME PRESS AS THE TAYA'S LUNGE AND THAT IS THE WHOLE DESIGN. `Verb.Lunge`
+        // already has a key, a pad binding and a thumb target (`InputLayer.InputCatalogue`), and
+        // on an ATTACKER it did nothing at all: `CombatVerbs.Update` only reaches `StepLunge`
+        // behind `if (_motor.IsDefender)`, so three of the four players in every round had a dead
+        // control under their right hand and a dead button on the touch layer. `docs/VISION.md`
+        // § 1.1 asks for Classic's depth to come from somewhere other than powers, and
+        // `CLAUDE.md` § 6.2 asks what the player has to hold in their head: reusing a press they
+        // already have costs them nothing to learn.
+        //
+        // ⚠️⚠️ EVERY NUMBER BELOW IS SOLVED FROM ONE ALREADY IN THIS FILE. `CLAUDE.md` § 4:
+        // *"Write the distance you want and solve for the speed; never hard-code a distance
+        // beside a speed."* The distance wanted is `PickupRadius`, because the thing the slide
+        // buys is the LAST APPROACH: an attacker who is already inside the pickup radius can
+        // simply press grab, so the ground worth converting into a commitment is exactly the
+        // ground between "in reach" and "not in reach".
+        //
+        //   walking that 1.75 m at `Speed * AttackerSpeedScale` (2.53 m/s)  =  0.69 s
+        //   sliding it, decelerating against `Friction` from `SlideSpeed`   =  0.34 s
+        //
+        // **So the slide buys about 0.35 s.** That is what makes it worth pressing and what
+        // bounds it: `PunchCooldown` is 0.9 s and `LungeChargeTime` is 0.5 s, so a third of a
+        // second is less than one taya decision. The attacker cannot outrun a read; they can beat
+        // a taya who committed late.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// How far a committed retrieval slide carries an attacker.
+        ///
+        /// ⚠️ IT IS `PickupRadius` AND NOT A NUMBER OF ITS OWN. The slide converts the last
+        /// approach into a commitment, and the last approach is by definition the distance at
+        /// which a pickup starts working. Tying them means a retune of the pickup radius cannot
+        /// leave the slide reaching further than a pickup can.
+        /// </summary>
+        public const float SlideDistance = PickupRadius;
+
+        /// <summary>
+        /// The impulse a slide leaves with, solved from <see cref="SlideDistance"/>.
+        ///
+        /// ⚠️⚠️ COMPUTED RATHER THAN TYPED, WHICH `LungeSpeed` IS NOT AND SHOULD PROBABLY BE.
+        /// `CLAUDE.md` § 4 requires `v = sqrt(2 * Friction * d)` and 7.746 is that solve for a
+        /// 1.0 m lunge; it is a literal, so a `Friction` change would silently move the lunge's
+        /// distance and nothing would say so. This one cannot drift.
+        /// </summary>
+        public static readonly float SlideSpeed =
+            (float)System.Math.Sqrt(2.0 * Friction * SlideDistance);
+
+        /// <summary>
+        /// How long the slide is live, in seconds: `SlideSpeed / Friction`, which is exactly how
+        /// long the impulse takes to decay to nothing.
+        ///
+        /// ⚠️ THE SWEEP RUNS FOR THE WHOLE OF IT, for `CombatVerbs.SweepLungeTag`'s reason: a
+        /// dash sampled only at its end tunnels straight past whatever it passed through, and
+        /// the tsinelas this exists to collect is usually somewhere in the middle.
+        /// </summary>
+        public static readonly float SlideActiveTime = SlideSpeed / Friction;
+
+        /// <summary>
+        /// How long after the slide the attacker steers at reduced authority.
+        ///
+        /// ⚠️⚠️ IT IS SIZED AGAINST THE TAYA'S WHOLE PUNISH CYCLE AND NOT AGAINST FEEL. A taya
+        /// who reads the commitment has to charge (`LungeChargeTime`, 0.5 s) and then dash
+        /// (`LungeActiveTime`, 0.45 s), which is 0.95 s of their own. If the attacker's
+        /// commitment were shorter than that, a perfect read could not be cashed in and the
+        /// slide would be a free mobility buff, which is the failure the brief names by name.
+        /// So the committed window is that number: the slide's own 0.34 s plus this.
+        /// </summary>
+        public static readonly float SlideRecoveryTime =
+            (LungeChargeTime + LungeActiveTime) - SlideActiveTime;
+
+        /// <summary>
+        /// How much of their steering an attacker keeps while committed.
+        ///
+        /// ⚠️ 0.35 IS `LungeMinPower`, WHICH IS THE GAME'S EXISTING ANSWER TO "HOW MUCH OF A
+        /// COMMITTED MOVE IS STILL YOURS". It is not a coincidence worth pretending is one: both
+        /// numbers say the same thing about the same feeling, and a second constant here would be
+        /// a number that can disagree with it.
+        ///
+        /// ⚠️ IT IS NOT ZERO ON PURPOSE. A slide with no steering at all is a dead body flying in
+        /// a straight line, and `docs/VISION.md` § 0 is that the tension is the retrieval: the
+        /// player has to be able to adjust into the shoe or the verb is a coin flip rather than a
+        /// read.
+        /// </summary>
+        public const float SlideSteerScale = LungeMinPower;
+
+        /// <summary>
+        /// How long before an attacker may slide again.
+        ///
+        /// ⚠️⚠️ IT IS THE TAYA'S ENTIRE PUNISH CYCLE PLUS THEIR COOLDOWN, so an attacker who
+        /// slides into a lunge cannot simply slide back out of the consequence: by the time the
+        /// second slide is available the taya who spent a lunge on the first one has theirs back.
+        /// `LungeChargeTime + LungeActiveTime + LungeCooldown` = 2.45 s. A number picked for feel
+        /// would have no such property, and "cannot instantly chain another lunge" is exactly what
+        /// the brief asks the commitment to cost.
+        /// </summary>
+        public static readonly float SlideCooldown =
+            LungeChargeTime + LungeActiveTime + LungeCooldown;
+
+        /// <summary>
+        /// What a slide costs in stamina.
+        ///
+        /// ⚠️⚠️ IT IS `ShoveStaminaCost`, WHICH IS THE ATTACKER'S OTHER COMMITTED VERB, and the
+        /// parity is the point rather than laziness. `docs/VISION.md` § 1.1 forbids Classic
+        /// another resource bar and `CLAUDE.md` § 6.2 forbids another thing to hold in the head;
+        /// pricing this against a bar the player already watches means the decision is one they
+        /// already know how to make. It also makes the slide compete with SPRINTING AWAY, which is
+        /// the counterplay the taya gets for free: an attacker who slid cannot also run.
+        /// </summary>
+        public const float SlideStaminaCost = ShoveStaminaCost;
+
         public const float PunchRange = 1.7f;
         public const float PunchArcDeg = 75.0f;
         public const float PunchCooldown = 0.9f;

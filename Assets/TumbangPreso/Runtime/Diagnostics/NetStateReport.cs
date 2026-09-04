@@ -266,11 +266,22 @@ namespace TumbangPreso.Diagnostics
             }
 
             sb.AppendLine();
+            sb.AppendLine($"structural state hash : {StructuralHash(round)}");
             sb.AppendLine($"discrete state hash : {DiscreteHash(round, match)}");
             sb.AppendLine();
-            sb.AppendLine("⚠️ THE HASH COVERS ONLY DISCRETE STATE. Two peers cannot agree bit for bit");
-            sb.AppendLine("on a position or a clock; they must agree on who is who, who is taya, what");
-            sb.AppendLine("each tsinelas is doing and what the score is.");
+            sb.AppendLine("⚠️ THE DISCRETE HASH COVERS ONLY DISCRETE STATE. Two peers cannot agree bit");
+            sb.AppendLine("for bit on a position or a clock; they must agree on who is who, who is");
+            sb.AppendLine("taya, what each tsinelas is doing and what the score is.");
+            sb.AppendLine();
+            sb.AppendLine("⚠️⚠️ AND IT IS NOT AN EQUALITY GATE ACROSS PEERS, WHICH THE STRUCTURAL HASH");
+            sb.AppendLine("IS. Discrete is not the same as CONSTANT: the score, the slipper states and");
+            sb.AppendLine("the defender all move during a match, and two reports stop at two different");
+            sb.AppendLine("instants by construction (a referee has to outlive its clients). Comparing");
+            sb.AppendLine("the discrete hash between peers therefore fails on a working link roughly");
+            sb.AppendLine("whenever anything happens. The structural hash covers only what CANNOT");
+            sb.AppendLine("change while a match runs: which character sits in which seat, which seats");
+            sb.AppendLine("are bots, and the protocol. Two peers disagreeing on that are playing two");
+            sb.AppendLine("different matches, whenever you look.");
 
             try
             {
@@ -286,6 +297,42 @@ namespace TumbangPreso.Diagnostics
             }
 
             Debug.Log(sb.ToString());
+        }
+
+        /// <summary>
+        /// The part of the state that cannot change while a match is running.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE `DiscreteHash` WAS BEING READ AS AN EQUALITY GATE AND CANNOT BE
+        /// ONE. `docs/TODO.md` § 145.4: a verifier that hard-compares a field which legitimately
+        /// differs because two reports stopped at different timestamps is a verifier that goes red
+        /// on a working link. Every peer's discrete hash folds in the SCORE and the slipper
+        /// states, and `referee_run.py` gives the referee its clients' head start back plus a
+        /// margin on purpose, so the two are sampled seconds apart. **Discrete is not constant.**
+        ///
+        /// ⚠️ WHAT IS IN IT: the character index and the bot flag per seat, plus the protocol.
+        /// Those are decided at seating and are the same on every peer for the whole match, so a
+        /// disagreement is a real one at any instant. `MatchRpc.HostPeerLeft` can flip a bot flag
+        /// mid-match when a chair is handed over, which is a legitimate divergence between a peer
+        /// that saw the departure and one that had already stopped: the verifier says so rather
+        /// than pretending it cannot happen.
+        ///
+        /// ⚠️ THE DEFENDER IS DELIBERATELY NOT IN IT. It is derived from the round number
+        /// (`docs/VISION.md` § 4), so two peers on different rounds hold different defenders
+        /// CORRECTLY, and a hash that folded it in would be a clock in disguise.
+        /// </summary>
+        private string StructuralHash(RoundDirector round)
+        {
+            var sb = new StringBuilder();
+            sb.Append(Net.NetSession.ProtocolVersion).Append('|');
+
+            for (int slot = 0; slot < Balance.PlayerCount; slot++)
+            {
+                var unit = round != null ? round.PlayerAt(slot) : null;
+                sb.Append(unit != null ? unit.CharacterIndex : -1).Append(':');
+                sb.Append(unit != null && unit.IsBot ? 1 : 0).Append('/');
+            }
+
+            return Fnv(sb.ToString());
         }
 
         private string DiscreteHash(RoundDirector round, MatchDirector match)
@@ -307,10 +354,17 @@ namespace TumbangPreso.Diagnostics
 
             sb.Append(_lastLataUpright ? 1 : 0);
 
+            return Fnv(sb.ToString());
+        }
+
+        /// <summary>⚠️ ONE HASH FUNCTION FOR BOTH, so two hashes of the same string are the same
+        /// number and a reader comparing them across reports is comparing like with like.</summary>
+        private static string Fnv(string text)
+        {
             unchecked
             {
                 uint hash = 2166136261u;
-                foreach (char c in sb.ToString())
+                foreach (char c in text)
                 {
                     hash ^= c;
                     hash *= 16777619u;

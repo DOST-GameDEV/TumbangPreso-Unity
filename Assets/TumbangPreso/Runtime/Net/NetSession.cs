@@ -116,6 +116,18 @@ namespace TumbangPreso.Net
             // every service in the project. A peer-hosted game means the host is a stranger.
             public string AccountPlayerId;
             public string HandleProof;
+
+            // ⚠️⚠️ THE LADDER RATING, AND IT IS WHAT MOVED THE PROTOCOL TO 24. `Attention.md`
+            // § 16.1 ruled that a departing player's chair is finished by a bot "on same skill
+            // level as them", and `SeatHandover.TierFor` has turned a rating into one of the three
+            // tiers since 2026-09-04. **The host had no rating to turn.** Nothing else on this
+            // payload or on `PeerRecord` carried one, so `MatchRpc.RatingForDepartedPeer` answered
+            // 0 and the seat kept the lobby's difficulty.
+            //
+            // ⚠️ IT IS A CLAIM. See `PeerRecord.Rating`: nothing that pays out reads
+            // it, and the only thing a lie can buy is which of three bots finishes a match the
+            // liar has already left.
+            public int Rating;
         }
 
         /// <summary>
@@ -309,7 +321,23 @@ namespace TumbangPreso.Net
         /// heard of those messages plays the shipped four or eight rounds at ninety seconds while
         /// the host plays three at sixty**, which is two different games sharing one scoreboard.
         /// It is a refusal by design rather than a bug, and the refusal is what stops the bug.
-        public const int ProtocolVersion = 23;
+        ///
+        /// ⚠️⚠️ 23 TO 24 IS THE SEAT HANDOVER'S RATING, AND IT IS THE SMALLEST BUMP IN THIS LIST
+        /// AND STILL A REAL ONE. `ConnectionHello` gains one `int`, and `JsonUtility` reading a
+        /// payload without it answers 0, which is the honest "did not say" this whole feature
+        /// falls back to. **So why move the number at all?** Because a 23 peer and a 24 peer would
+        /// then disagree about something a match can be decided by: when the 23 peer's player
+        /// leaves, its chair is finished by a bot at the lobby's difficulty, and when the 24
+        /// peer's player leaves, theirs is finished by a bot matched to their ladder. Two seats in
+        /// one match handed over by two different rules is the "two different games sharing one
+        /// scoreboard" sentence again, one field smaller. `Attention.md` § 16.1 ruled it; a room
+        /// that half obeys the ruling is worse than one that does not obey it at all, because
+        /// nobody can tell which half they were in.
+        ///
+        /// ⚠️⚠️ AND `CLAUDE.md` § 4a'S CONSEQUENCE IS NOT OPTIONAL: **the Windows player and the
+        /// .apk are rebuilt from this commit and shipped together**, or they refuse each other
+        /// correctly and it reads as a bug. `docs/TODO.md` § 144.7.
+        public const int ProtocolVersion = 24;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
@@ -1172,6 +1200,11 @@ namespace TumbangPreso.Net
             _utp.DisconnectTimeoutMS = 8000;
             _utp.ConnectTimeoutMS = 2000;
             _utp.MaxConnectAttempts = 12;
+
+            // ⚠️ EVERY START PATH AND `Stop` REACH THIS METHOD, which is what makes it the one
+            // place a new session can forget the last one's ending. A latch that survived into a
+            // fresh lobby would be a peer that cannot resolve its own solo practice match.
+            MatchAbandon.Forget();
         }
 
         /// <summary>
@@ -1286,6 +1319,14 @@ namespace TumbangPreso.Net
                 // on the relay paths, before this; empty here is a normal, playable state.
                 AccountPlayerId = account != null && account.IsSignedIn ? account.PlayerId : "",
                 HandleProof = account?.HandleProof ?? "",
+
+                // ⚠️ THE SAME DERIVATION THE QUEUE USES, ASKED ONCE. `Matchmaker.LocalLadderRating`
+                // is the one place that turns a career profile into a ladder number, and a second
+                // copy of that expression here would be a second answer to "what am I rated"
+                // (`docs/TODO.md` § 94.1). A player with no career answers the start rating, which
+                // is `SeatHandover.TierFor`'s middle band and exactly the tier an unfilled seat
+                // gets today.
+                Rating = Matchmaker.LocalLadderRating(),
             };
 
             _nm.NetworkConfig.ConnectionData = Encoding.UTF8.GetBytes(JsonUtility.ToJson(hello));
@@ -1337,16 +1378,14 @@ namespace TumbangPreso.Net
         /// string. If one of those sentences is reworded, this reads `other` rather than lying,
         /// which is the right way round for a number nobody is watching.
         /// </summary>
+        /// ⚠️⚠️ THE BUCKETS COME OUT OF `Core.SessionEndRules` NOW, AND THE MOVE IS NOT A TIDY-UP.
+        /// Three readers were deriving a meaning from the same host-authored string: this, the
+        /// player-facing line below, and (once `docs/TODO.md` § 143.9 landed) the authority latch
+        /// that decides whether this peer may still resolve anything. Three independent readings
+        /// of one string is § 94.1's fault, and the one that matters most is the one that would
+        /// have been written last.
         private static string ClassifyDisconnect(string reason, bool wasLocal)
-        {
-            if (wasLocal) return "local";
-            if (string.IsNullOrWhiteSpace(reason)) return "dropped";
-            if (reason.Contains("protocol") || reason.Contains("version")) return "version";
-            if (reason.Contains("full")) return "full";
-            if (reason.Contains("Replaced")) return "replaced";
-            if (reason.Contains("identity")) return "identity";
-            return "other";
-        }
+            => Core.SessionEndRules.TelemetryLabel(Core.SessionEndRules.Classify(reason, wasLocal));
 
         /// <summary>
         /// The entry point for the other arrival path. `MatchRpc.HandleIdentify` admits a peer
@@ -1610,7 +1649,13 @@ namespace TumbangPreso.Net
                 hello = new ConnectionHello
                 {
                     Token = GameServices.Account?.ConnectionToken ?? NetIdentity.Token,
-                    Name = LocalLobbyName()
+                    Name = LocalLobbyName(),
+
+                    // ⚠️ THE HOST NEVER SENDS ITSELF A HELLO, so this is the only path on which
+                    // its own rating is ever recorded. It is the same argument the picks and the
+                    // cosmetics make forty lines down: without it the one seat that cannot fail to
+                    // be there is the one seat with no rating on it.
+                    Rating = Matchmaker.LocalLadderRating(),
                 };
             }
             else if (!_helloByClient.TryGetValue(clientId, out hello))
@@ -1622,6 +1667,14 @@ namespace TumbangPreso.Net
 
             var record = Lobby.Admit((int)clientId, hello.Token, hello.Name,
                                      out int replacedPeerId);
+
+            // ⚠️ AFTER `Admit`, NOT THROUGH IT. `Admit` has five callers and a widened signature
+            // would make four of them pass a number they do not have; a rating is known only on
+            // this path, which is the only one that has seen an approval payload. `Admit` copies
+            // the field forward when the same token re-arrives, so the peer's own `Identify` does
+            // not zero it.
+            if (hello.Rating > 0) record.Rating = hello.Rating;
+
             SendSeatAssignment(clientId, record.Seat);
 
             // ⚠️ AFTER THE SEAT, NOT BEFORE IT. The peer is playing by the end of this method;
@@ -1717,6 +1770,12 @@ namespace TumbangPreso.Net
             // well takes the player out of a lobby they are still arriving in.
             if (wasLocal || !wasConnected) return;
 
+            // ⚠️⚠️ THE LATCH IS ARMED BEFORE THE EVENT IS RAISED, AND THE ORDER IS THE POINT.
+            // `MatchRpc.HandleClientDisconnected` is a subscriber and it starts a scene load; a
+            // latch armed after that has already lost the frames in which this peer was standing
+            // in an arena answering `IsHost == true`. `docs/TODO.md` § 143.9.
+            MatchAbandon.Note(reason, wasLocal: false);
+
             LastDisconnectReason = PlayerFacingDisconnectReason(reason);
             ClientDisconnected?.Invoke(LastDisconnectReason);
             return;
@@ -1737,16 +1796,27 @@ namespace TumbangPreso.Net
         /// a version mismatch is a thing the player CAN fix, and it is the likeliest failure
         /// whenever two machines were built from different commits.
         /// </summary>
+        /// ⚠️⚠️ AND SINCE `docs/TODO.md` § 143.9 IT NAMES HOST LOSS RATHER THAN SAYING "LOST
+        /// CONNECTION". Those are different claims and only one of them is actionable: a player
+        /// told they lost connection goes to check their own wifi, and a player told the host left
+        /// goes back to the lobby. The classification is `Core.SessionEndRules.Classify`, which is
+        /// the same answer `MatchAbandon` latches and the telemetry bucket counts.
         private static string PlayerFacingDisconnectReason(string raw)
         {
-            if (string.IsNullOrWhiteSpace(raw)) return "Lost connection to the host.";
+            var cause = Core.SessionEndRules.Classify(raw, wasLocal: false);
 
-            raw = raw.Trim();
+            // ⚠️ THE HOST'S OWN SENTENCE STILL WINS WHERE IT IS ONE. `ApproveConnection` writes
+            // "Game version mismatch (network protocol 24)" with the actual number in it, and
+            // that is more use to somebody than a generic line about versions.
+            if (!string.IsNullOrWhiteSpace(raw))
+            {
+                string trimmed = raw.Trim();
+                if (trimmed.Length > 0 && trimmed[0] != '[' &&
+                    cause != Core.SessionEndCause.HostLost)
+                    return trimmed;
+            }
 
-            // Netcode wraps its own transport events in brackets. Nothing the host authors does.
-            if (raw.StartsWith("[")) return "Lost connection to the host.";
-
-            return raw;
+            return Core.SessionEndRules.PlayerLine(cause);
         }
 
         public void SetStatus(string s)

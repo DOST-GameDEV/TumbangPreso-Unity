@@ -494,6 +494,18 @@ namespace TumbangPreso
 
             if (UseReadyGate && !guided) BuildReadyGate(seats[human], runner);
 
+            // ⚠️⚠️ THE HIGHLIGHT WATCHER IS INSTALLED WITH THE ARENA, ON EVERY PEER, AND IT IS THE
+            // ONLY PIECE OF `docs/TODO.md` § 147 THAT NEEDS A FRAME. Every other marker rides an
+            // event that already exists; a close call is a tag that did NOT happen, which has no
+            // call site and can only be seen by watching two positions. It writes nothing
+            // authoritative, so a client running it is a client keeping its own reel.
+            //
+            // ⚠️ ON THIS OBJECT rather than on a seat: it outlives a body being rebuilt mid-match
+            // (a model swap, a rejoin), which is exactly when a run of escapes is most likely to
+            // be in progress.
+            if (GetComponent<Diagnostics.HighlightWatch>() == null)
+                gameObject.AddComponent<Diagnostics.HighlightWatch>();
+
             // ⚠️ PRINTED ONCE PER ARENA, because the seat may already be right by the time this
             // runs and then no `SeatingChanged` ever fires to report it. A client that cannot
             // move needs this line whether or not anything changed after the build.

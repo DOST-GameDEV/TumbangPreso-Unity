@@ -113,14 +113,24 @@ namespace TumbangPreso.Net
         /// against the people nearest them, which is the best guess anybody can make about
         /// somebody who has never played.
         /// </summary>
-        public int LocalRating
+        public int LocalRating => LocalLadderRating();
+
+        /// <summary>
+        /// The same number, without a `Matchmaker` in the scene.
+        ///
+        /// ⚠️⚠️ IT IS STATIC BECAUSE THE SECOND CALLER CANNOT HAVE ONE. `NetSession
+        /// .ConfigureClientHello` runs inside every start path including the two LAN ones, and a
+        /// LAN match may never depend on a queue existing (`FUTURE.md` § 0.5 rule 7). Copying the
+        /// two lines above into that file instead would be a second answer to "what am I rated",
+        /// and `docs/TODO.md` § 94.1 is what happens when a derived fact has more than one
+        /// derivation: four copies all agreed on the wrong value because each was free to compute
+        /// it again.
+        /// </summary>
+        public static int LocalLadderRating()
         {
-            get
-            {
-                var profile = GameServices.Career?.Profile;
-                if (profile?.Rank == null) return (int)RatingRules.StartRating;
-                return (int)Math.Round(profile.Rank.Rating);
-            }
+            var profile = GameServices.Career?.Profile;
+            if (profile?.Rank == null) return (int)RatingRules.StartRating;
+            return (int)Math.Round(profile.Rank.Rating);
         }
 
         /// <summary>

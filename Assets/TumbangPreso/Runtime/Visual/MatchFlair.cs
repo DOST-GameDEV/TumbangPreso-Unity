@@ -129,6 +129,18 @@ namespace TumbangPreso.Visual
         public static void Play(Kind kind, int actor, int subject, Vector3 at,
                                 float strength = 0.0f)
         {
+            // ⚠️⚠️ THE MOMENT IS RECORDED HERE AND THAT IS WHY IT IS HERE RATHER THAN AT THE
+            // FORTY CALL SITES THAT RAISE THESE. `MatchFlair` is already the one place every
+            // notable event in the game passes through on EVERY peer, which is exactly what a
+            // highlight record needs and exactly what the forty resolution sites are not: each of
+            // those runs behind `NetAuthority.ShouldResolve()`, so a record written there would be
+            // the host's alone and three players' replays would have nothing in them.
+            // `docs/TODO.md` § 147.
+            //
+            // ⚠️ IT AWARDS NOTHING. `Diagnostics.MatchHighlights` cannot reach `AddScore` and no
+            // caller of it can either, which is `docs/VISION.md` § 4 kept rather than restated.
+            RecordHighlight(kind, actor, subject, at, strength);
+
             switch (kind)
             {
                 case Kind.Tag:
@@ -196,6 +208,46 @@ namespace TumbangPreso.Visual
 
                 case Kind.Thunder:
                     ComicPopup.Zap(at);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Turns a flair event into a highlight marker where one is justified.
+        ///
+        /// ⚠️⚠️ NOT EVERY FLAIR IS A HIGHLIGHT AND THE LIST IS SHORT ON PURPOSE. `Kind` has
+        /// sixteen values and most of them are a hero power landing on a body, which happens
+        /// several times a round in Hero Strike and is the thing `docs/VISION.md` § 2 already
+        /// calls unreadable when there is too much of it. A highlight reel of every stagger is a
+        /// reel nobody watches. `docs/TODO.md` § 147: *"detect events that can be established
+        /// reliably"*, which is a statement about confidence and about scarcity at once.
+        ///
+        /// ⚠️ THE KNOCKDOWN CARRIES ITS DISTANCE IN `strength`, which the wire already has room
+        /// for and which nothing else on `LataDown` was using. Measuring it here from the actor's
+        /// CURRENT position would be measuring where the thrower has run to since.
+        /// </summary>
+        private static void RecordHighlight(Kind kind, int actor, int subject, Vector3 at,
+                                            float strength)
+        {
+            var round = GameServices.Round;
+            float secondsLeft = round != null && round.RoundActive ? round.TimeLeft : -1.0f;
+
+            switch (kind)
+            {
+                case Kind.BankShot:
+                    Diagnostics.MatchHighlights.Note(Core.HighlightKind.BankShot, actor);
+                    break;
+
+                case Kind.Block:
+                    Diagnostics.MatchHighlights.Note(Core.HighlightKind.Block, subject, actor);
+                    break;
+
+                case Kind.Tag:
+                    Diagnostics.MatchHighlights.Note(Core.HighlightKind.Tag, actor, subject);
+                    break;
+
+                case Kind.LataDown:
+                    Diagnostics.MatchHighlights.NoteKnockdown(actor, strength, secondsLeft);
                     break;
             }
         }

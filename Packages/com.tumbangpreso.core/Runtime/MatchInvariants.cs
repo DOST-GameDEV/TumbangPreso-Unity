@@ -31,8 +31,39 @@ namespace TumbangPreso.Core
         /// </summary>
         public readonly string[] SeatOwners;
 
+        /// <summary>
+        /// Every CLAIM on a seat, rather than one answer per seat.
+        ///
+        /// ⚠️⚠️ THE SHAPE IS THE POINT AND <see cref="SeatOwners"/> COULD NOT EXPRESS HALF THE
+        /// RULE IT WAS CHECKED AGAINST. `CheckSeatOwnership`'s own note claims both directions:
+        /// *"Two seats with one owner is the spectator-and-a-driven-seat fault (§ 141) ... One
+        /// seat with two owners is the reconnect fault: a peer whose slot was reused comes back
+        /// and both believe they are driving it."* The first is findable in an owner-per-seat
+        /// array. **The second is not representable in one**: an array indexed by seat holds
+        /// exactly one owner per seat, so by the time the snapshot exists the second claimant has
+        /// already been overwritten by the first, or the first by the second, and the checker is
+        /// asking a question the data structure answered for it.
+        ///
+        /// ⚠️ SO A CLAIM IS A ROW, NOT A CELL. Two peers claiming seat 2 is two rows with the
+        /// same `Seat`; one peer holding two seats is two rows with the same `Owner`. Both are
+        /// ordinary list contents, and neither can be silently collapsed on the way in.
+        ///
+        /// ⚠️ NULL IS LEGAL AND MEANS "THIS OBSERVER ONLY KNOWS THE OWNER ARRAY". The seven
+        /// argument constructor derives a row per occupied seat, so every existing caller keeps
+        /// exactly the coverage it had.
+        /// </summary>
+        public readonly SeatClaim[] SeatClaims;
+
         public MatchSnapshot(int roundNumber, int totalRounds, int defenderSlot, bool inProgress,
                              bool isWarmupBuffer, int[] scores, string[] seatOwners)
+            : this(roundNumber, totalRounds, defenderSlot, inProgress, isWarmupBuffer, scores,
+                   seatOwners, ClaimsFrom(seatOwners))
+        {
+        }
+
+        public MatchSnapshot(int roundNumber, int totalRounds, int defenderSlot, bool inProgress,
+                             bool isWarmupBuffer, int[] scores, string[] seatOwners,
+                             SeatClaim[] seatClaims)
         {
             RoundNumber = roundNumber;
             TotalRounds = totalRounds;
@@ -41,7 +72,83 @@ namespace TumbangPreso.Core
             IsWarmupBuffer = isWarmupBuffer;
             Scores = scores;
             SeatOwners = seatOwners;
+            SeatClaims = seatClaims;
         }
+
+        /// <summary>
+        /// One row per occupied seat, for an observer that only has the array.
+        ///
+        /// ⚠️ EVERY DERIVED ROW IS `Driving` AND NOT A SPECTATOR, which is exactly what an owner
+        /// array asserts and no more. Deriving anything richer would be inventing evidence.
+        /// </summary>
+        private static SeatClaim[] ClaimsFrom(string[] owners)
+        {
+            if (owners == null) return null;
+
+            int occupied = 0;
+            for (int i = 0; i < owners.Length; i++)
+                if (!string.IsNullOrEmpty(owners[i])) occupied++;
+
+            var claims = new SeatClaim[occupied];
+            int at = 0;
+            for (int i = 0; i < owners.Length; i++)
+            {
+                if (string.IsNullOrEmpty(owners[i])) continue;
+                claims[at++] = new SeatClaim(owners[i], i, driving: true, spectating: false);
+            }
+
+            return claims;
+        }
+    }
+
+    /// <summary>
+    /// One peer's claim on one seat.
+    ///
+    /// ⚠️⚠️ AN OWNER IS A TOKEN AND NOT A SEAT AND NOT A PEER ID. `NetAuthority.LocalPeerId`
+    /// carries the whole argument: seats are 0-3 and always four of them, peer ids are handed out
+    /// by the transport and are reused across a reconnect, and a set keyed by "whichever of the
+    /// two was to hand" collapses two peers into one entry. The durable connection token is the
+    /// namespace that survives a seat being vacated and reused, which is the only namespace in
+    /// which "the same person is in two chairs" is a statement about a person.
+    /// </summary>
+    public readonly struct SeatClaim
+    {
+        /// <summary>The durable owner token. Empty is not a claim.</summary>
+        public readonly string Owner;
+
+        /// <summary>The seat claimed, or -1 for a peer that holds none.</summary>
+        public readonly int Seat;
+
+        /// <summary>
+        /// Whether this claimant is actually driving a body in that seat.
+        ///
+        /// ⚠️ A HELD SEAT IS NOT A DRIVEN ONE. `LobbySession.Depart` holds a chair against a
+        /// durable token so a returning player gets their own back, and for that window the seat
+        /// legitimately has a claimant who is driving nothing. Counting that as a second driver
+        /// would report the reconnect feature as a fault every time it worked.
+        /// </summary>
+        public readonly bool Driving;
+
+        /// <summary>
+        /// Whether this claimant is spectating.
+        ///
+        /// ⚠️⚠️ A SPECTATOR HOLDING A DRIVEN SEAT IS `docs/TODO.md` § 141 EXACTLY, and it is the
+        /// one fault that needs both flags to be sayable at once: 🧑, with a screenshot, **"IF IT
+        /// isnt spectator why do i see spectator hud"**. A model with one string per seat cannot
+        /// state it at all, so the entry was closed on a cause rather than on an invariant.
+        /// </summary>
+        public readonly bool Spectating;
+
+        public SeatClaim(string owner, int seat, bool driving, bool spectating)
+        {
+            Owner = owner ?? "";
+            Seat = seat;
+            Driving = driving;
+            Spectating = spectating;
+        }
+
+        public override string ToString()
+            => $"'{Owner}' seat {Seat}{(Driving ? " driving" : "")}{(Spectating ? " spectating" : "")}";
     }
 
     /// <summary>
@@ -135,6 +242,7 @@ namespace TumbangPreso.Core
 
             // ---- seat ownership --------------------------------------------
             faults.AddRange(CheckSeatOwnership(s.SeatOwners));
+            faults.AddRange(CheckSeatClaims(s.SeatClaims));
 
             return faults;
         }
@@ -148,6 +256,13 @@ namespace TumbangPreso.Core
         /// with two owners is the reconnect fault: a peer whose slot was reused comes back and
         /// both believe they are driving it.
         /// </summary>
+        /// ⚠️⚠️ AND ONLY THE FIRST HALF IS FINDABLE HERE, WHICH IS WHY <see cref="CheckSeatClaims"/>
+        /// EXISTS. An array indexed by seat holds exactly one owner per seat, so "two peers claim
+        /// seat 2" is not a state this parameter can be IN: whichever of the two wrote the cell
+        /// last is the only one the checker will ever see. The note above claimed both directions
+        /// for months and the data could only carry one of them, which is the exact shape
+        /// `docs/TODO.md` § 143.9's brief warns about, *"do not make comments claim an invariant
+        /// is covered unless the data model can express its violation."*
         public static List<string> CheckSeatOwnership(string[] owners)
         {
             var faults = new List<string>();
@@ -169,6 +284,100 @@ namespace TumbangPreso.Core
             }
 
             return faults;
+        }
+
+        /// <summary>
+        /// The same two rules stated over CLAIMS, where both of them are representable, plus the
+        /// one § 141 is about.
+        ///
+        /// ⚠️⚠️ THREE FAULTS, AND EACH ONE HAS A RECEIPT IN THIS REPOSITORY:
+        ///
+        ///  1. **One owner driving two seats.** `docs/TODO.md` § 141: somebody re-seats without the
+        ///     previous seat letting go and the scoreboard carries the same name twice. 🧑 reported
+        ///     it as a duplicate name he could see.
+        ///  2. **Two owners driving one seat.** The reconnect fault: `LobbySession.Admit` replaces
+        ///     a transport whose durable token matches, and `NetSession.OnClientConnected`
+        ///     disconnects the stale socket *after* the new one takes the chair, "without it, it
+        ///     can keep submitting movement and verbs for the same player". That window is exactly
+        ///     this state, and nothing could ask about it.
+        ///  3. **A spectator driving a seat.** § 141's headline, in 🧑's words: **"IF IT isnt
+        ///     spectator why do i see spectator hud"**. `Hud.EnterSpectatorMode` had no inverse.
+        ///
+        /// ⚠️ A HELD SEAT IS NOT A DRIVEN ONE and rule 2 only counts drivers. The reconnect window
+        /// deliberately leaves a chair claimed by somebody who is driving nothing, and reporting
+        /// that would be reporting the feature.
+        /// </summary>
+        public static List<string> CheckSeatClaims(SeatClaim[] claims)
+        {
+            var faults = new List<string>();
+            if (claims == null) return faults;
+
+            var drivenSeatFor = new Dictionary<string, int>(StringComparer.Ordinal);
+            var driverOfSeat = new Dictionary<int, string>();
+
+            for (int i = 0; i < claims.Length; i++)
+            {
+                var claim = claims[i];
+                if (string.IsNullOrEmpty(claim.Owner)) continue;
+
+                // ⚠️ RULE 3 IS ASKED OF EVERY ROW AND NOT ONLY OF DRIVERS' ROWS, because the
+                // whole fault is that the two flags disagree: a body that is being driven while
+                // its owner believes it is spectating is precisely what § 141 photographed.
+                if (claim.Spectating && claim.Driving && claim.Seat >= 0)
+                    faults.Add($"'{claim.Owner}' is spectating and driving seat {claim.Seat} at " +
+                               $"once. A spectator has no body");
+
+                if (!claim.Driving || claim.Seat < 0) continue;
+
+                if (claim.Seat >= Balance.PlayerCount)
+                {
+                    faults.Add($"'{claim.Owner}' drives seat {claim.Seat}, which is outside the " +
+                               $"{Balance.PlayerCount} seats");
+                    continue;
+                }
+
+                if (drivenSeatFor.TryGetValue(claim.Owner, out int already))
+                    faults.Add($"'{claim.Owner}' drives seat {already} and seat {claim.Seat}. " +
+                               $"A player holds one seat");
+                else
+                    drivenSeatFor[claim.Owner] = claim.Seat;
+
+                if (driverOfSeat.TryGetValue(claim.Seat, out string other))
+                {
+                    if (!string.Equals(other, claim.Owner, StringComparison.Ordinal))
+                        faults.Add($"seat {claim.Seat} is driven by '{other}' and by " +
+                                   $"'{claim.Owner}'. One seat has one driver");
+                }
+                else
+                {
+                    driverOfSeat[claim.Seat] = claim.Owner;
+                }
+            }
+
+            return faults;
+        }
+
+        /// <summary>
+        /// Who drives each seat, for an observer that wants the old array shape back.
+        ///
+        /// ⚠️ IT IS LOSSY BY CONSTRUCTION AND THAT IS WHY IT IS NOT WHAT ANYTHING CHECKS. Two
+        /// drivers of one seat collapse into whichever came first, which is the exact information
+        /// loss `SeatClaims` exists to avoid. It is here so a REPORT can print four tidy rows
+        /// after the checker has already asked its questions of the claims.
+        /// </summary>
+        public static string[] DrivenSeats(SeatClaim[] claims)
+        {
+            var owners = new string[Balance.PlayerCount];
+            if (claims == null) return owners;
+
+            for (int i = 0; i < claims.Length; i++)
+            {
+                var c = claims[i];
+                if (!c.Driving || c.Seat < 0 || c.Seat >= owners.Length) continue;
+                if (string.IsNullOrEmpty(owners[c.Seat])) owners[c.Seat] = c.Owner;
+            }
+
+            return owners;
         }
 
         /// <summary>
@@ -341,6 +550,60 @@ namespace TumbangPreso.Core
             if (winnerA != winnerB)
                 faults.Add($"{aName} has winner {winnerA} and {bName} has winner {winnerB}. " +
                            $"Two peers cannot end one match differently");
+
+            // ---- and who is in which chair ---------------------------------
+            //
+            // ⚠️⚠️ OWNERSHIP WAS MISSING FROM THIS METHOD AND ITS OWN HEADER SAID IT SHOULD NOT
+            // BE: *"§ 141 is the seat"*. It compared the round, the taya, the progress flag, the
+            // scores and the winner, and every one of those can be identical on two peers that
+            // disagree about WHO seat 2 is. That disagreement is not cosmetic in this game: the
+            // seat decides whose tsinelas is whose, who the tag lands on and which line of the
+            // scoreboard a point is written to, so two peers that agree on four numbers and
+            // disagree about a chair are describing two different matches with one result.
+            faults.AddRange(CompareSeats(aName, a, bName, b));
+
+            return faults;
+        }
+
+        /// <summary>
+        /// Whether two peers agree about who is sitting where.
+        ///
+        /// ⚠️ IT READS THE DRIVEN SEATS RATHER THAN THE RAW CLAIMS, because a claim list is one
+        /// peer's own bookkeeping and legitimately differs: a host holds a departed player's chair
+        /// against their token and a client has never heard of that. **What must agree is who is
+        /// DRIVING**, which is the only part of the claim that reaches the arena.
+        /// </summary>
+        private static List<string> CompareSeats(string aName, MatchSnapshot a,
+                                                 string bName, MatchSnapshot b)
+        {
+            var faults = new List<string>();
+
+            string[] left = a.SeatClaims != null ? DrivenSeats(a.SeatClaims) : a.SeatOwners;
+            string[] right = b.SeatClaims != null ? DrivenSeats(b.SeatClaims) : b.SeatOwners;
+
+            if (left == null || right == null) return faults;
+            if (left.Length != right.Length)
+            {
+                faults.Add($"{aName} describes {left.Length} seats and {bName} describes " +
+                           $"{right.Length}");
+                return faults;
+            }
+
+            for (int i = 0; i < left.Length; i++)
+            {
+                string one = left[i] ?? "";
+                string two = right[i] ?? "";
+
+                // ⚠️ AN EMPTY SEAT ON ONE SIDE ONLY IS NOT A DISAGREEMENT WORTH FAILING ON. A
+                // client is routinely mid-build (`docs/TODO.md` § 82.1) and a bot-filled chair has
+                // no owner token at all; the fault worth naming is two peers naming DIFFERENT
+                // people, which is the one that decides points wrongly.
+                if (one.Length == 0 || two.Length == 0) continue;
+
+                if (!string.Equals(one, two, StringComparison.Ordinal))
+                    faults.Add($"seat {i}: {aName} says '{one}' and {bName} says '{two}'. " +
+                               $"A seat decides whose tsinelas is whose");
+            }
 
             return faults;
         }

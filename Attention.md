@@ -523,3 +523,79 @@ untouched by any of it because a listen host is not `IsDedicated`.
 one), and a referee surviving a client dropping and rejoining mid-match. Both are
 `tools/referee_run.py` plus a scenario, not new code.
 
+
+---
+
+## 17 · The 2026-09-05 nationals pass: three rulings and one thing to feel
+
+Everything else in that pass is code, is tested and is in `docs/TODO.md` §§ 145, 146 and 147.
+These four cannot be settled by a probe, and each one is written here rather than in the queue for
+the reason `docs/TODO.md` says out loud: **a human-only row in the implementation queue is how the
+queue stops being read.**
+
+### 17.1 ⚠️⚠️ THE RECONNECT-OR-FORFEIT RULING, WHICH IS STILL NOT TAKEN
+
+`docs/TODO.md` § 143.9 built every piece of deterministic software behaviour around host loss:
+the failure is one named path on every peer, a peer that loses its host **stops being able to
+decide anything** (`MatchAbandon.AuthorityRevoked`, which closed a real hole where four clients
+losing one host became four referees), the reason names host loss rather than "disconnected", and
+the player reaches a screen they can act from.
+
+**What no amount of code can answer is what the BRACKET does about it.** § 140.5 already records
+that a drop and a quit are the same event on the wire, so this is not a detection problem:
+
+- A match whose HOST drops at round 3 of 4: **replayed from the start, resumed from the score, or
+  forfeited?**
+- A PLAYER dropping and coming back: the seat is held and a bot at their rating finishes it
+  (§ 144.7, built). **Does the returning player get their chair back mid-match, or is the match
+  theirs to lose?**
+- Is there a time limit on either?
+
+⚠️ **THE CODE DOES NOT PRESUME AN ANSWER AND MUST NOT START.** `SeatHandover.RatingMovesFor`
+already refuses to move a ladder on a match somebody was not present for, which is the one part of
+this that is a fairness rule rather than a tournament ruling.
+
+⚠️⚠️ **AND THE OPERATOR'S LAPTOP CAN REFEREE**, which changes the shape of the question rather
+than answering it: § 16.2 above measured a `-tp-dedicated` process running a real match with two
+clients. **On a refereed bracket, no player leaving can end a match at all.** That may make the
+ruling above nearly moot for the nationals, and it is a venue decision (one more laptop per
+station) rather than a code one.
+
+### 17.2 ⚠️⚠️ THE RETRIEVAL SLIDE HAS TO BE FELT, AND THE NUMBERS ARE DERIVED RATHER THAN FINAL
+
+`docs/TODO.md` § 146. The attacker's right click did **nothing at all** before this, the key, the
+pad's left trigger and the touch layer's LUNGE button were inert for three of the four players in
+every round, and it is now a committed slide into your own tsinelas.
+
+**Every number is solved from one the game already had** and the arithmetic is in § 146.2: it buys
+about **a third of a second** over walking, which is less than one taya decision, and it commits
+the body for **exactly the taya's whole punish cycle** so a perfect read can always be cashed in.
+Bots use it and the seeded sweep can measure whether it changed anything.
+
+⚠️ **WHAT THAT CANNOT SETTLE IS 🧑'S OWN TEST:** *"I can safely approach and pick this up
+normally, OR I can commit to the fast retrieval because I think I can get away with it."* If it
+turns out nobody uses it, the recovery is too long; if normal retrieval stops happening, the
+commitment is too cheap. **Both are one constant and both are `Attention.md`'s call, not a
+probe's.** Play a Classic round as an attacker and say which it is.
+
+⚠️ **IT PLAYS THE LUNGE CLIP** because both moves are a body-led dash and the rig has one. A slide
+of its own is art work.
+
+### 17.3 ⚠️ THE `ui_*` DC OFFSET IS STILL YOUR CALL AND IS OFF THE QUEUE
+
+Carried over from § 144.3 rather than new. `ui_click` sits at a DC offset of **-0.121**, which is
+a thump on every press of the three most-heard sounds in the game, and the fix is one line that
+subtracts the mean. ⚠️ **It rewrites files you asked for back BY NAME** (`CLAUDE.md` § 6), so it
+needs your yes and not a commit. It was in the implementation queue and should not have been.
+
+### 17.4 ⚠️ A NATIONALS CERTIFICATION HAS TO BE RUN FROM THE WINDOWS MACHINE
+
+Not a defect and not fixable from here. `tools/qualify.py` resolves Unity and dotnet per machine
+now and names its build target in the report rather than assuming `Win64` (§ 145.5), but
+`CLAUDE.md` § 7's Mac has **no Windows Standalone module and no dotnet**, so:
+
+- `GameBuilder.BuildWindows` has no target to write there. **The Windows player and the .apk for
+  a nationals candidate come off the Windows laptop.**
+- `NetSession.ProtocolVersion` moved to **24** on 2026-09-05 (the seat handover's rating,
+  § 144.7), so `CLAUDE.md` § 4a applies: **both players are rebuilt from that commit and shipped
+  together**, or they refuse each other correctly and it reads as a bug.

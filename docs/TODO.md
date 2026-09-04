@@ -35,20 +35,25 @@ either of those.
 
 | P | § | What is open | Done looks like |
 |---|---|---|---|
-| **P1** | 143.9 | **Host loss is not proven deterministic.** `DisconnectTimeoutMS` is **8000**, so a peer whose wifi dies keeps a normal-looking arena for eight seconds (§ 140). Migration is deliberately unsupported; the failure must still be one outcome on every peer. | Tests proving host and client cannot disagree about score, round, taya, ownership, winner or disconnect state, and that host loss reaches a clean shutdown with a stated reason rather than a half-alive match. ⚠️ The reconnect/forfeit RULING is `Attention.md`, not this row. |
 | **OWNED** | 142, 138 | ⚠️⚠️ **CONTROLLER SUPPORT HAS AN OWNER AND IS NOT THIS QUEUE'S WORK. DO NOT PICK IT UP.** It is live on `controller-mapping`: `GenericPadBridge`, the CONTROLLER MAP screen, `MenuNav`, and a pad that can back out of a screen. | Nothing here. Read § 142 for what landed; leave the code to the person working on it. |
-| **P1** | 134.12 | **Replay capture is a synchronous GPU stall**: `Texture2D.ReadPixels` at ~10 Hz into a ~46 MB buffer. A 90 s round is 900 captures; four rounds is 3,600. | `AsyncGPUReadback` or equivalent, bounded memory, no runaway queue, disposal proven, no capture after the session is gone, and a before/after measurement. |
-| **P2** | 16 | **One bot run is not balance evidence.** Eight matches at shipped settings spread **58 to 100 throws**, about 20 per cent. | A multi-seed sweep recording SHA, seed, config,each run, mean, median and spread, so no threshold is set against noise. |
-| **P2** | 143.15b | ✅ **The cold start passes, and the run exposed a gap in the harness rather than in the game.** Its report reads `round: 0`, `round active: False` beside a step that says *"hosts a match with four bots and finishes: PASS"* | The step asserts a ROUND ran, not merely that the process hosted and exited. `net_matrix` records the same trap by name: without `-tp-autostart` the ready gate is never pressed and two peers agree that nothing happened. § 143.15 |
-| **P2** | 141 | Spectator and seat ownership: the duplicate scoreboard name, and regression cover for repeated F1-F4 transitions | § 141 |
+| **P1** | 145.6 | **A real multi-seed sweep has still not been RUN.** The harness is built and verified on synthetic arms; nothing has measured the shipped game across seeds since the numbers `CLAUDE.md` § 7.1 quotes | 5 to 8 Unity launches an arm, a `docs/reports/bot-sweep-*.md`, and the retrieval slide (§ 146) as the first thing compared against a pre-slide sweep. ⚠️ It is the only way to know whether § 146 changed the game |
+| **P2** | 147.3 | **The game records its own good moments and nothing draws them.** Markers exist, are deterministic, are deduplicated and name a replay window | One reader. § 147.3 lists the three cheapest in order, and `CLAUDE.md` § 6.2's four questions come first |
+| **P2** | 146.6 | **The retrieval slide plays the LUNGE clip**, because both are a body-led dash and the rig has one | A slide of its own, which is art work rather than code work. ⚠️ The FEEL of the numbers is `Attention.md` § 17.2 and not this row |
+| **P2** | 141 | **The duplicate name on the scoreboard.** The invariant model can express both ownership faults now (§ 141.7) and the cause of the spectator overlay is fixed | The scoreboard cannot draw one person twice, with a test that could fail. ⚠️ His eye on the fix is `Attention.md` |
 | **P2** | 93 | A held tsinelas drifts **0.084 m** from the hand, and the isolated `match` group reports exactly that (the full run said 7.945 m, on a SETTINGS test) | § 93 |
 | **P2** | 127 | The taya ring and attacker disc need their non-colour distinction finished | § 127.3 |
-| **P1** | 144.7 | **The seat handover is built except for the rating, which does not travel.** `SeatHandover` maps a rating to a tier and the ladder already refuses to pay a handed-over seat; the host has no rating to map | A rating on the connection hello, `MatchRpc.RatingForDepartedPeer` reading it, and a test that 2400 gets Astig and 700 gets Bata. ⚠️ It moves `ProtocolVersion`, so both players rebuild together. Start a session with it |
-| **P2** | 144.3 | **Three of the six cues the audio audit still flags are the PROTECTED `ui_*` files.** `ui_click` sits at a DC offset of -0.121, which is a thump on every press of the three most-heard sounds in the game | 🧑's yes, then one line to subtract the mean. ⚠️ It rewrites files he asked for back BY NAME (`CLAUDE.md` § 6), so it is his call and not a commit |
 | **P2** | 144.3 | **`Art/audio/sfx` is a 117-file duplicate that nothing loads and nothing writes.** Both audio gates were reading it instead of `Resources/Sfx`; they were moved, and the folder is still there | A decision: it is the authored master and something copies it, or it is dead and goes. ⚠️ Not deleted on an inference |
 | **P2** | 144.8 | **The jeepney's metal finish does not show.** The per-surface selection is checked and sound; the body still renders flat white. 🧑 handed this to another session | ⚠️ **One measurement first, not a retune**: print the material name, the SHADER name and the live `_Metallic`/`_Smoothness` for each renderer on the placed prop. § 144.8 lists the four causes and which fix each needs |
 
+⚠️⚠️ **THE ROWS THAT NEED A PERSON ARE NOT HERE AND NEVER WERE.** 🧑's ear on the `ui_*` DC offset
+(§ 144.3), his eye on the spectator fix and on the settings tabs, the reconnect-or-forfeit ruling
+behind § 143.9, and the list of real pads behind § 138 are all in
+[`../Attention.md`](../Attention.md). **Adding one back here is how this queue stops being read**,
+which is the whole reason the split exists.
+
 ✅ **Closed by the 2026-09-04 hardening pass and no longer listed here: § 143.1, § 143.2, § 143.3, § 143.4, § 143.5, § 143.6, § 143.7, § 143.8, § 143.10, § 143.11, § 143.12, § 143.13, § 143.14, § 143.16, § 143.18.** Each one keeps its own subsection under § 143 with the measurement that closed it. **A done row is a row every future session reads and skips**, which is how an execution index turns back into the 22,930-line file this queue exists to replace.
+
+✅ **Closed by the 2026-09-05 pass: § 134.12, § 143.9, § 143.15b, § 144.7, § 145.1, § 145.2, § 145.3, § 145.4.** Same rule: each keeps its subsection with the measurement, and its row is out of the queue above. ⚠️ **§ 145.5, § 146.6 and § 147.3 are the halves that stayed open**, and each says what it is waiting for.
 
 ### The reds that are about the game rather than the suite
 
@@ -87,6 +92,9 @@ Android thermals need a handset, and a phone joining a PC needs a person to watc
 
 | § | Open work | Where it bites |
 |---|---|---|
+| **147** | The game records its own good moments and nothing draws them | Markers exist, are deduplicated, are deterministic and name a replay window. **No screen reads them.** § 147.3 lists the three cheapest readers, in order |
+| **146** | The retrieval slide is built, derived and tested; nobody has FELT it | 🧑's own test is *"I can safely approach and pick this up normally, OR I can commit"*. Nobody uses it means the recovery is too long; normal retrieval stopping means it is too cheap. Both are one constant and both are `Attention.md` § 17.2 |
+| **145** | Four gates that could come out green while proving less than they printed | Three closed. ⚠️ **§ 145.5 is a machine fact**: a nationals certification comes off the Windows laptop, because this Mac has no Windows Standalone module and no dotnet |
 | **142** | Controller support: a picture of the pad you can rebind from, a pad that can leave a screen, and an unrecognised pad that works | 🧑, with a labelled DualShock drawing: *"we will now be implementing controller support. create a menu for controller mapping and ensure controller support works in the game."* ⚠️⚠️ **The map is built and so are the three faults nobody had looked for: EVERY back-out in the game was a keyboard-only `Input.GetKeyDown(KeyCode.Escape)`, so a pad could reach every screen and leave none of them; there was no pause on a pad at all; and the emote wheel opened on the d-pad and could not be steered by one.** § 138 steps 2 and 3 are closed by the same pass. Open: 🧑's eye on it, and a written list of real pads. § 142 |
 | **141** | Spectator and a driven seat were on screen at the same time, and F1-F4 have two readers | 🧑, with a screenshot: **“IF IT isnt spectator why do i see spectator hud”**. ✅ **Cause found and fixed: `Hud.EnterSpectatorMode` had no inverse**, so every re-seat after a spectator window left the HUD stripped and the overlay drawn. The F1-F4 double-read is fixed too, and § 141.2 breaks the premise `CLAUDE.md` § 4 exempts the nine spectator keys on. ⚠️ **Open: the duplicate name on the scoreboard, and his eye on the fix.** § 141 |
 | **140** | The player cannot see the network, and the timeout gives them eight blind seconds | ⚠️⚠️ **The biggest open network item, and it was found by measuring.** There is no ping, no bars, no "reconnecting" anywhere in the game, and `DisconnectTimeoutMS` is 8000, so a peer whose wifi dies keeps a normal-looking arena for eight seconds. **The sampler is built (§ 140.3); the screen is designed and not built (§ 140.4).** § 140.5 is the one that needs a decision rather than code. § 140 |
@@ -127,16 +135,26 @@ do.** Checked against the code on 2026-09-03, before doing any of them:
 
 ## The five things worth knowing before you touch anything
 
-⚠️⚠️ **`NetSession.ProtocolVersion` IS 23, AND READ IT FROM THE FILE RATHER THAN FROM ANY
-DOCUMENT.** ⚠️ **This paragraph said 22 until 2026-09-04 while the code read 23**, which is the
-fourth time this number has gone stale in the one place that exists to warn about it going stale.
-The 2026-09-04 pass did NOT move it: `InputContractTests
-.TheInputPassDidNotMoveTheProtocolVersion` asserts the constant and `git diff` on
-`NetSession.cs` is empty for that batch. This preamble carried **both 19 and 21** as "the" number for two days, four paragraphs
-apart, because each session appended its own line and nobody deleted the last one, and it then said
-**21** for a day after § 130.13 moved it to 22. Peers on different numbers refuse each other by
-design, so a stale number here sends somebody hunting a network bug that is a rebuild.
-`grep -n ProtocolVersion Assets/TumbangPreso/Runtime/Net/NetSession.cs`.
+⚠️⚠️ **DO NOT READ `NetSession.ProtocolVersion` OFF THIS PARAGRAPH. READ IT OFF THE FILE.**
+
+```bash
+grep -n "public const int ProtocolVersion" Assets/TumbangPreso/Runtime/Net/NetSession.cs
+```
+
+⚠️⚠️ **THIS LINE HELD A NUMBER FOR ITS WHOLE LIFE AND THE NUMBER WAS WRONG FIVE TIMES.** It said
+22 while the code said 23; before that it carried **both 19 and 21** as "the" number for two days,
+four paragraphs apart, because each session appended its own line and nobody deleted the last one;
+and it said **21** for a day after § 130.13 moved it to 22. **It said 23 until the 2026-09-05 pass
+moved it to 24** (the seat handover's rating, § 144.7), which is the fifth time. Peers on different
+numbers refuse each other by design, so a stale number here sends somebody hunting a network bug
+that is a rebuild.
+
+**So it names no number at all now.** The command above is two seconds and cannot be wrong, and
+the two tests that own the exact value, `InputContractTests
+.TheInputPassDidNotMoveTheProtocolVersion` and `ChatAndLobbyChromeTests
+.TheProtocolCarriesEveryRosterBump`, go red when it moves, which is what makes a bump a
+deliberate act rather than something to notice later.
+
 ⚠️ **`docs/FUTURE.md` § 0.2's row said 16 for four days** while the code went 17 through 23. **The
 number lives in one file and every copy of it is a liability**, which is why both places now say
 so rather than saying a number.
@@ -696,6 +714,422 @@ new map all just work.
 
 ---
 
+## 148 · THE 2026-09-05 NATIONALS BATCH ✅ CLOSED, and archived in the commit that wrote it
+
+⚠️ **A SESSION REPORT IS NOT AN OPEN ITEM** (`CLAUDE.md` § 2.3). This is the index row; the
+reasoning lives in §§ 134.12, 141.7, 143.9, 143.15b, 144.7, 145, 146 and 147, each of which keeps
+its own measurement.
+
+**What moved:**
+
+| § | What |
+|---|---|
+| 143.9 | Host loss is one outcome on every peer. `SessionEndRules`, `MatchAbandon`, and `ShouldResolve` no longer handing a client authority the instant its transport stops |
+| 144.7 | The seat handover's rating travels. `ProtocolVersion` **23 to 24** |
+| 134.12 | The replay capture is asynchronous, bounded, pooled and measured: **0.734 ms to 0.035 ms per call**, worst call **2.066 to 0.158** |
+| 141.7 | The invariant model can express both ownership faults, and peer agreement compares seats |
+| 143.15b | The cold start asserts a round RAN, and runs on this machine |
+| 145.6 | The bot sweep can compare two arms against the noise floor, with a config digest |
+| 145.1-145.4 | Four gates that could still come out green while proving less than they printed |
+| 146 | The attacker's committed retrieval slide, on a control that did nothing |
+| 147 | Structured highlight markers, joined to the replay, awarding nothing |
+| FUTURE 12.1 | Map mechanical identity, written as a future item and not started |
+
+⚠️⚠️ **THREE THINGS WENT WRONG IN THIS PASS AND EACH IS WRITTEN WHERE IT HAPPENED**, because they
+are the parts that generalise:
+
+1. **§ 146.4c: a test that waits in frames measures the machine's frame rate.** Sixty frames is
+   0.03 s in batch mode. It read as the feature being broken for two runs, and what found it was
+   a failure message carrying numbers.
+2. **§ 134.12: a warm-up that spun frames warmed the renderer and not the thing under test.** The
+   first `AsyncGPUReadback` request cost 147.7 ms once and stood as the path's "worst call".
+3. **§ 146.4b: `tools/audit_presentation_reach.py` caught a double award on the run it was
+   written**, which is the whole argument for having audits that read the source as text.
+
+**Verification on `eae4e96` + this batch, on the Mac** (`CLAUDE.md` § 7): EditMode **409 cases,
+408 passed**; PlayMode `match` **81/81**, `capture` **10/10**, the eight retrieval-slide cases
+**8/8**, `ReplayCaptureProbe` green; **all 8 editor checks**; every source audit clean except
+`audit_cue_audio.py` (the six `ui_*` DC offsets, `Attention.md` § 17.3) and, before it was fixed,
+`audit_presentation_reach.py`. ⚠️ **`dotnet test Core.Tests` could not be run here at all**, which
+is a machine fact (§ 145.5) and not a skipped step: the rules this batch added are asserted in the
+EditMode suite for exactly that reason.
+
+⚠️ **AND ONE THING THAT DID NOT MOVE AND SHOULD BE LEFT ALONE:** every `-batchmode` run on the Mac
+editor rewrites `ProjectSettings/QualitySettings.asset` (Ultra's `antiAliasing` 4 to 0) and
+`QualitySettingsAssetTests` fails on the run that caused it. § 142 already records it and the
+remedy: `git checkout -- ProjectSettings/QualitySettings.asset`, and do not chase the red.
+
+---
+
+## 147 · THE GAME NOTICES ITS OWN GOOD MOMENTS AND WRITES THEM DOWN ⚠️ IN PROGRESS, 2026-09-05, branch `main`
+
+**Classic already recognises skilled play and throws it away.** `Hud.ReportStyle` names a bank, a
+curve, a snatch and a block while they are happening, pays a cosmetic bar, and then it is gone;
+`MatchFlair` replicates sixteen kinds of event to every peer and each one draws a popup and
+forgets it. **Nothing in the game could answer "what happened in this match, and when."**
+
+⚠️⚠️ **THAT ABSENCE HAS ALREADY COST THIS REPOSITORY A FEATURE ONCE.**
+`SpectatorCamera.QueueHighlight`'s own note: *"nothing in the buffer knew WHEN the tag was, so the
+clip was still the last five and a half seconds whenever the key happened to be pressed. The title
+and the footage were two independent claims."* That was fixed inside the replay ring by stamping
+the marker onto the captured frame, and the fix expires with the frame: **ten seconds of pixels.**
+
+### 147.1 ✅ WHAT LANDED
+
+- **`Packages/com.tumbangpreso.core/Runtime/Highlights.cs`**, engine-free. `HighlightKind` (ten
+  values, every one establishable from state the game already holds), `HighlightMarker` (kind,
+  match time, round, actor, subject, one measurement, importance), `HighlightRules` (thresholds,
+  the dedupe rule, the caption) and `HighlightLog` (a bounded ring with the dedupe inside `Add`).
+- **Every threshold is a number the game already had an argument for**, which is the half worth
+  reading: a close call is `Balance.LungeTagRadius`, because that is the distance at which the
+  taya's dash actually catches somebody; a long knockdown is `Balance.ConfinementRadius`, because
+  that is the edge of the danger zone; last-second is `Balance.ChargeFullTime`, because inside it
+  nothing started now can still land; an evasion window is `Balance.TagStunTime`, because that is
+  what one mistake costs.
+- **`Diagnostics.MatchHighlights`** records from `MatchFlair.Play`, which runs on **every peer**
+  with the same event data. That is one line and no new bytes on the wire: recording host-side and
+  broadcasting would be a message carrying something every machine already knows.
+- **`Diagnostics.HighlightWatch`**, installed by `MatchInstaller` with the arena, for the two
+  kinds that are the ABSENCE of something. A close call is a tag that did not happen and has no
+  call site.
+- **The replay join**: `SpectatorCamera.LastClipMarker` reports the most important marker inside
+  the window a clip actually covers. § 147's brief says the first useful version is *"gameplay
+  event -> structured marker -> replay can identify that time window"* and explicitly not a
+  broadcast director, so that is exactly what it is.
+
+⚠️⚠️ **IT CHANGES NO SCORE AND A TEST READS THE SOURCE TO PROVE IT.**
+`NationalsHardeningTests.NothingInTheHighlightLayerCanAwardAPoint` fails if either file names
+`AddScore` or `ReportStyle`, and if the core file names `UnityEngine`. ⚠️ **It strips comments
+first**, which it did not on the first run and which is `tools/audit_audio_reach.py`'s fault
+exactly: `CLAUDE.md` § 7.1 records that audit lying for its whole life because it read a header
+explaining a gate as a gate.
+
+### 147.2 ⚠️ THE DEDUPE RULE IS THE PART WITH TEETH
+
+One gameplay event reaches this layer several times. A knockdown arrives from `MatchFlair
+.LataDown`, from the score watcher and, on a bank, from the bank detector. `SpectatorCamera`'s own
+header records what that cost when nothing folded them: *"a knockdown, a tag and a sabotage are
+three separate triggers, and `PollHighlights` adds a fourth"*, which produced the replay spam 🧑
+reported and got a whole trigger deleted rather than fixed.
+
+`HighlightRules.SameEventSeconds` is **1.5 s**, and it is bounded from both sides rather than
+picked: longer than any chain one gameplay event produces (those arrive inside one physics step,
+or one 5 Hz snapshot at the outside) and no longer than `Balance.LungeCooldown`, so **no genuine
+second event can be swallowed**, the taya cannot tag twice inside it. Asserted both ways.
+
+### 147.3 ⚠️ OPEN: NOTHING DRAWS IT YET
+
+The markers exist, are deterministic, are deduplicated and are joined to a replay clip. **No
+screen reads them.** The obvious next users, in order of how cheap they are:
+
+1. **The end-of-match board.** Three lines under the scoreboard, off `HighlightLog.Report()`.
+   ⚠️ `CLAUDE.md` § 6.2 first: what is the ONE thing on that screen, and is this it.
+2. **A spectator ticker.** `SpectatorCamera` already draws an overlay and already knows the
+   captions.
+3. **An export.** `LastClipMarker` plus the clip is enough to name a file.
+
+⚠️ **A CLIENT'S LOG IS ONE KIND SHORT AND THAT IS WRITTEN DOWN RATHER THAN FIXED.** The retrieval
+is recorded in `Slipper.HostGrab`, which is host-side; every other producer rides `MatchFlair` and
+reaches every peer. Adding a wire message for a caption would cost a protocol field for something
+no rule reads. `MatchHighlights`' class note carries the argument.
+
+---
+
+## 146 · CLASSIC'S DEPTH COMES FROM MOVEMENT: THE COMMITTED RETRIEVAL SLIDE ⚠️ IN PROGRESS, 2026-09-05, branch `main`
+
+`docs/VISION.md` § 1.1: *"CLASSIC IS NOT 'HERO STRIKE WITH THE POWERS TURNED OFF'. Do not add a
+power to it ... Give Classic its own depth; do not give it powers."* And § 0: **the tension is the
+retrieval, not the throw.**
+
+**So the decision this adds is one sentence long:** *I can walk up and pick this up safely, or I
+can commit and get there a third of a second sooner.*
+
+### 146.1 ✅ IT ADDS NO BUTTON, AND THE ONE IT USES WAS DEAD
+
+⚠️⚠️ **`Verb.Lunge` DID NOTHING AT ALL FOR THREE OF THE FOUR PLAYERS IN EVERY ROUND.**
+`CombatVerbs.Update` reaches `StepLunge` only behind `if (_motor.IsDefender)`, so on an attacker
+the key, the pad's left trigger and the touch layer's LUNGE button were all inert, **a dead
+control on the thumb surface that exists because there is no keyboard.**
+
+That is why this needs no `CLAUDE.md` § 4a work: no new `Verb`, so no pad answer, no thumb target,
+no `InputAssetSync.Regenerate`. `NationalsHardeningTests
+.TheSlideAddsNoNewVerbAndReusesADeadControl` asserts both halves.
+
+### 146.2 ✅ EVERY NUMBER IS SOLVED FROM ONE THE GAME ALREADY HAD
+
+`CLAUDE.md` § 4: *"Write the distance you want and solve for the speed; never hard-code a distance
+beside a speed."*
+
+| Constant | Value | Solved from |
+|---|---|---|
+| `SlideDistance` | **1.75 m** | `PickupRadius`. The slide converts the LAST APPROACH into a commitment, and the last approach is by definition where a pickup starts working |
+| `SlideSpeed` | **10.247 m/s** | `sqrt(2 · Friction · SlideDistance)`. ⚠️ **Computed, not typed**, unlike `LungeSpeed` which is a literal 7.746 and would silently lie if `Friction` moved |
+| `SlideActiveTime` | **0.342 s** | `SlideSpeed / Friction`: exactly how long the impulse takes to decay |
+| `SlideRecoveryTime` | **0.608 s** | `(LungeChargeTime + LungeActiveTime) − SlideActiveTime` |
+| `SlideCooldown` | **2.45 s** | `LungeChargeTime + LungeActiveTime + LungeCooldown` |
+| `SlideSteerScale` | **0.35** | `LungeMinPower`, which is the game's existing answer to "how much of a committed move is still yours" |
+| `SlideStaminaCost` | **25** | `ShoveStaminaCost`, the attacker's other committed verb |
+
+**What it buys, measured:** walking 1.75 m at `Speed · AttackerSpeedScale` (2.53 m/s) is **0.69 s**;
+sliding it is **0.34 s**. ⚠️ **So the advantage is about a third of a second, and it is bounded by
+being less than one taya decision**: `PunchCooldown` is 0.9 s and `LungeChargeTime` is 0.5 s. The
+attacker cannot outrun a read; they can beat a taya who committed late.
+
+**What it costs:** the committed window is **exactly the taya's whole punish cycle** (0.95 s), so
+a perfect read can always be cashed in, that is the arithmetic that stops this being a free
+mobility buff. The cooldown carries the taya's own cooldown on top, so an attacker cannot slide
+back out of the consequence the first slide invited.
+
+### 146.3 ✅ THE PUNISHMENT IS COMMITMENT, NOT A STATUS EFFECT
+
+`CharacterMotor.Commit(seconds)` narrows steering to `SlideSteerScale` and **leaves `CanAct()`
+alone**. A committed attacker can still grab, still throw, and is still taggable: what they cannot
+do is turn. A taya reading it knows where the body is coming out.
+
+⚠️ **IT OVERLAPS BY `Max`, LIKE EVERY STUN** (`CLAUDE.md` § 4), and `ApplyStagger` releases it 
+a staggered body is not a committed one, and leaving both running would be a punish that punishes
+twice.
+
+### 146.4 ✅ HOST-AUTHORITATIVE, AND THE PICKUP RULE IS NOT RESTATED
+
+`Slipper.CanBeGrabbedBy` decides eligibility and `Slipper.HostGrab` performs it, exactly as a
+walk-up does, so a slide cannot collect anything a walk-up could not. `MatchRpc
+.RequestSlideServerRpc` carries a pose and a facing and **never names a tsinelas**, so a modified
+client cannot ask for somebody else's.
+
+⚠️⚠️ **IT RAYCASTS AND THE TAG SWEEP DOES NOT, WHICH IS NOT AN INCONSISTENCY.** Two bodies are
+both pushed out of geometry by the physics engine, so a segment between them is a segment through
+open street. A tsinelas comes to rest wherever it lands, including hard against the far side of a
+wall, and a radius around a segment cannot see one. `RetrievalSlideTests
+.ASlideCannotCollectThroughAWall` is the receipt.
+
+### 146.4b ✅ AND AN AUDIT CAUGHT A DOUBLE AWARD ON THE RUN IT WAS WRITTEN
+
+`SweepSlideRetrieval` fired its own `Hud.ReportStyle(..., "SIPA RESCUE!")` for one day.
+`tools/audit_presentation_reach.py` reported it as **the only HOST-ONLY presentation call site in
+the whole game** (98 sites, 97 reachable), and it was right twice over:
+
+1. **The pickup already reports style.** `Slipper.HostGrab` calls `Carrier.NotifyHolding`, which
+   fires `ReportStyle` on EVERY peer for every pickup however it happened. A second award here is
+   one retrieval paid twice, which is § 57.3's fault arriving in the cosmetic bar.
+2. **A call inside a `ShouldResolve()` gate is one player's.** `Hud.ReportStyle` does relay by
+   default, so it would in fact have reached the seat's owner, but an audit that has to know
+   that about every call site is an audit nobody can read.
+
+**The callout still names the slide** and the award did not change: `NotifyHolding` picks
+`"SIPA RESCUE!"` or `"SNATCH!"` off `CharacterMotor.IsCommitted`. One award, one funnel, and the
+word says which retrieval it was. ⚠️ **Paying it more would be `docs/VISION.md` § 1.1's *"do not
+give Classic powers"* arriving through the hype bar.**
+
+Reading after: **97 sites, 97 reachable, 0 host-only.**
+
+### 146.4c ⚠️ AND THE FIXTURE'S OWN FIRST RED WAS A TRAP WORTH WRITING DOWN
+
+`RetrievalSlideTests` waited in FRAMES: `for (int i = 0; i < 60; i++) yield return null;`, on the
+reasonable-sounding assumption that sixty frames is about a second. **In a `-batchmode` PlayMode
+run there is nothing to present**, so the loop spins at thousands of frames a second and sixty of
+them measured **0.03 s of game time**. The slide needs `SlideActiveTime`, 0.34 s, to decay its
+impulse and cover its 1.75 m.
+
+⚠️⚠️ **AND IT READ AS THE FEATURE BEING BROKEN FOR TWO RUNS**, because a bare `Assert.IsNotNull`
+tells you nothing. The fix that found it was a failure message that names numbers, which is
+`CLAUDE.md` § 2.3 applied to an assertion:
+
+```
+  the body travelled 0.197 m against a designed 1.75
+  it ended 2.482 m from the tsinelas in 3D, against a CanBeGrabbedBy radius of 1.75
+  slide cooldown left 2.42 (non-zero means the press WAS taken)
+```
+
+**0.197 m is one physics step at `SlideSpeed` exactly** (10.247 × 0.02), and the non-zero cooldown
+said the press had been taken, so the two lines together ruled out every hypothesis about the verb
+and left only the clock. ⚠️ **Two earlier guesses had already been spent on the wrong thing**: the
+confinement box (only the DEFENDER is confined, so it never applied to an attacker) and the seat
+lanes. **A number in the message would have skipped both.**
+
+`Seconds()` and `SlideToFinish()` wait on `Time.deltaTime` now, and the second is derived from
+`Balance.SlideActiveTime` so a retune cannot leave the fixture waiting for less than the move it
+measures.
+
+### 146.5 ✅ THE BOT IS TAUGHT IT, DELIBERATELY, AND ONLY WHERE A PERSON WOULD
+
+`AIController.StepSlideIntent`, in `DoFetch`. An attacker bot could not have found this verb by
+accident, `Verb.Lunge` is cleared for every plan that does not touch it and only `Hunt` (the
+taya's) does, which is the safe default and is also why **nothing would ever have measured it**:
+`BotBehaviourProbe` is the only thing in the repository that plays a whole match.
+
+⚠️ **THE GATE IS THE SAME SENTENCE `DoFetch` ALREADY SPRINTS ON**: the shoe is inside a slide and
+outside a walk-up, the run is contested or already late, the bot is facing it, and the bar is not
+empty. A bot that slid whenever it could would arrive at every tsinelas with no stamina, which is
+a worse retrieval than walking, and the probe would report the feature making the game worse.
+
+### 146.6 ⚠️ OPEN: THE ART, AND THE NUMBERS AFTER A HUMAN HAS FELT THEM
+
+- **It plays the lunge clip.** Both moves are a body-led dash and the rig has one; a slide of its
+  own is art work rather than code work. A shared clip that reads correctly beats a wrong one.
+- ⚠️⚠️ **THE FEEL IS `Attention.md`'S AND NOT THIS QUEUE'S.** Every number above is derived and
+  every derivation is written down, and *"do NOT make the punishment so severe that nobody uses
+  it, do NOT make it so safe that normal retrieval becomes obsolete"* is a judgement a probe
+  cannot make. The multi-seed sweep (§ 16) is how a retune gets evidence; a person deciding it
+  feels right is what the retune is for.
+
+---
+
+## 145 · THE HARDENING THAT COULD STILL PRODUCE FALSE CONFIDENCE ⚠️ IN PROGRESS, 2026-09-05, branch `main`
+
+The 2026-09-04 pass (§ 143) built a great deal of gate. **Four pieces of it could still come out
+green while proving less than they printed**, which is the same class of fault § 143 exists to fix,
+one level in.
+
+### 145.1 ✅ A QUALIFICATION MAY NOT CERTIFY A TREE IT CANNOT TIE TO A COMMIT
+
+`tools/qualify.py` printed *"⚠️ Working tree was DIRTY at report time, N paths"* and then wrote
+**QUALIFIED** underneath it. A note somebody has to read is not a gate, and every ⚠️ in this
+repository exists because a note was not read once.
+
+**The tree is a STAGE now**, first in the table, and there are three verdicts rather than two:
+
+| Tree | Verdict |
+|---|---|
+| `clean` | the stages decide |
+| `dirty` (tracked changes) | **NOT QUALIFIED**, whatever the stages say |
+| cannot be established | **NON-QUALIFIABLE** when every stage passed |
+
+⚠️⚠️ **`NON-QUALIFIABLE` IS NOT A FAILURE AND FOLDING IT EITHER WAY IS WRONG.** Calling it NOT
+QUALIFIED says a test failed when none did; calling it QUALIFIED is the fault above. No `git` on
+PATH, a source export and a failed `git status` are all states this can genuinely be in.
+
+⚠️ **UNTRACKED FILES DO NOT FAIL IT.** `Logs/`, `Builds/` and a scratch file are not differences
+in the source that was tested, and a gate that failed on those is a gate every developer learns to
+pass with a flag.
+
+⚠️ **NOTHING STOPS A LOCAL DIRTY BUILD.** `GameBuilder` records the tree state and builds anyway,
+deliberately: building with uncommitted changes at a venue at 8 a.m. is a legitimate thing to do.
+**The strictness belongs in the certification path.**
+
+### 145.2 ✅ THE BUILD-SIDE DIRTY FLAG WAS A HEURISTIC THAT COULD NOT SEE AN ORDINARY EDIT
+
+`GameBuilder.WorkingTreeIsDirty` compared `.git/index`'s write time against the branch ref's, to
+avoid launching a process. **Two things were wrong with it and both failed towards "clean":**
+
+1. ⚠️⚠️ **EDITING A TRACKED FILE DOES NOT REWRITE `.git/index`.** `git add` does. So the single
+   commonest way a tree becomes dirty, open a `.cs`, change a number, build, left the index
+   untouched and the stamp read `dirty: false`.
+2. ⚠️⚠️ **A PACKED REF HAS NO LOOSE FILE** and the old body returned `false` outright when it
+   could not find one, which is exactly the state a freshly cloned build machine is in.
+
+**It asks `git status --porcelain` now**, with a ten-second bound, and answers **clean / dirty /
+unknown**. `BuildIdentity.Record.treeState` carries the three-way answer and `dirty` becomes "not
+proven clean", so every existing reader errs safe.
+
+⚠️ **A PRE-2026-09-05 STAMP READS `unknown`, NOT `clean`.** Its `dirty: false` came from the
+heuristic above, and believing it would carry that blind spot forward into the gate built to
+replace it. `NationalsHardeningTests.AnUnknownWorkingTreeIsNeverReadAsClean`.
+
+### 145.3 ✅ THE TOURNAMENT AUDIT COULD NOT SEE SWITCH NUMBER NINE
+
+`audit_tournament_defaults.py` proved `TournamentPreset.Modifiers` and `TournamentGuard` agreed
+with each other, in both directions. **A static added tomorrow to NEITHER file satisfies every one
+of those checks**: it is not on the roster, so no case is missing, and it has no accessor, so no
+accessor is dead. The whole failure mode that roster exists for lives exactly in that blind spot.
+
+**So the audit DISCOVERS candidates now** and requires each to be declared or dismissed:
+
+- Every **settable** `public`/`internal static bool` in `Assets/TumbangPreso/Runtime`.
+- Every `-tp-` launch switch the runtime reads.
+- `TournamentPreset.NotModifiers` is where one is dismissed, **with a written reason**, and
+  `LaunchSwitchModifier` says which static a launch switch leaves set (or that it leaves none).
+
+⚠️⚠️ **"SETTABLE" IS WHAT KEEPS THIS FROM BEING THE NOISY GATE THE BRIEF WARNS AGAINST.** There
+are **41** static bools in the runtime and **13** are settable; the other 28 are derived
+properties (`NetAuthority.IsHost`, `Panel.AnyOpen`, `PracticeSandbox.Active`) that nothing outside
+can write, so nothing can LEAVE one set, which is the entire hazard.
+
+**Current reading:** 8 modifiers, 20 exemptions with reasons, 8 read cases, 8 write cases, 19
+launch switches discovered, **0 findings**. ⚠️ **Proven by adding one**: a throwaway
+`public static bool SwitchNumberNine;` in the runtime made the audit exit 1 naming the file.
+
+`NationalsHardeningTests.EverySettableStaticSwitchIsEitherAModifierOrWrittenDownAsNotOne` asserts
+the same property from inside Unity.
+
+### 145.4 ✅ THE REFEREE VERIFIER PRINTED MORE THAN IT GATED
+
+`referee_run.py`'s table carried the protocol, the round, the seat roster, the characters and the
+scores. **Its verdict asked about the referee's own slot, each client's slot and role, and the
+per-seat character and taya flags between the two clients only.** So the REFEREE could disagree
+with both clients about every seat in the game and the run came back green.
+
+⚠️⚠️ **AND THE DISCRETE HASH WAS NEVER USABLE AS AN EQUALITY GATE, WHICH IS WHY IT WAS NOT ONE.**
+`NetStateReport`'s own note says it is *"for the eye, not for an assertion"*, and the reason is
+sharper than "peers cannot agree bit for bit": **discrete is not the same as constant.** The score,
+the slipper states and the defender all move, and the referee outlives its clients by design, so
+the three reports are written seconds apart. Comparing it would go red on a working link.
+
+**So `NetStateReport` gained a STRUCTURAL hash** covering only what cannot change while a match
+runs, the character in each seat, which seats are bots, and the protocol. The verifier sorts
+every field into four kinds:
+
+| Kind | Fields | How it is checked |
+|---|---|---|
+| **Constant** | protocol, mode, map, per-seat character, per-seat bot flag, structural hash | hard equality, all three peers |
+| **Monotonic** | round, score | a peer that stopped LATER may not hold LESS |
+| **Derived** | defender | `(round − 1) % 4` on each peer's OWN round, plus equality where the rounds agree |
+| **Sampled** | discrete hash, slipper states, distances | printed, never gated, and a differing discrete hash prints as a NOTE saying why it is not a finding |
+
+**New findings it can now make:** two clients reporting the same seat, any peer never reaching
+round 1, a peer whose defender disagrees with its own round, a score that went backwards between
+an earlier and a later sample, and the referee disagreeing with either client about any seat.
+
+### 145.6 ✅ THE BOT SWEEP CAN ANSWER "DID THIS CHANGE MOVE ANYTHING", WHICH IT COULD NOT
+
+`tools/bot_sweep.py` already ran the probe across fixed seeds and reported min, max, mean, median,
+stdev and spread. **What it could not do was compare two of those**, which is the question anybody
+actually has, and the join between the spread and the decision was a person doing arithmetic in
+their head, which is exactly where *"58 to 100 throws"* gets read as *"the change made it worse"*.
+
+`--compare BEFORE.json AFTER.json` reports, per metric:
+
+- **Welch's t**, not a percentage. ⚠️ **A 20 per cent move on a metric whose own spread is 20 per
+  cent is nothing; the same move on one that never varies is everything**, and a percentage cannot
+  tell those apart. Welch's form is the one that does not assume the two arms share a variance,
+  which is the whole point of comparing a retuned game against a shipped one.
+- **Three verdicts, not a boolean.** `MOVED`, `no change measured`, and **`UNDER-SAMPLED`**, which
+  is what two runs an arm earns: § 16's own answer is three for anything worth 20 per cent, and a
+  t-test on n = 2 is arithmetic performed on nothing.
+- ⚠️ **No SciPy and no table.** |t| >= 2.0 is roughly the two-sided 5 per cent point at these
+  degrees of freedom, and **the statistic is printed beside the verdict** so a reader who wants a
+  real threshold has the number to apply it to. Importing a stats package into a repository whose
+  gate is `python` on a venue laptop is a trade this file will not make.
+
+⚠️⚠️ **AND A SWEEP CARRIES A CONFIG DIGEST NOW, NOT ONLY A SHA.** A docs commit moves the SHA and
+changes nothing about the game, so two sweeps at two SHAs could be measuring one game or two and
+nothing said which. The digest is `Balance.cs`, `AiTuning.cs`, `MatchRules.cs` and `ThrowRules.cs`
+hashed as TEXT: two sweeps with the same digest were measuring the same game, and the comparison
+says so out loud (*"any difference below is the noise floor being measured twice"*).
+
+⚠️ **`MOVED` IS NOT `WORSE` AND THE TOOL SAYS SO.** Whether more throws and fewer tags is the game
+anybody wants is a design judgement; `docs/VISION.md` § 2 is where that argument is had.
+
+⚠️ **AND `no change measured` IS NOT `NO CHANGE`.** With five seeds an arm it cannot see a move
+smaller than roughly the spread. Buy more seeds before concluding a change did nothing.
+
+**Verified on synthetic sweeps before spending Unity launches on it**: two arms drawn from the same
+distribution read `no change measured` on every metric; an arm with a real +66 per cent on throws
+read `MOVED` at |t| 10.4. ⚠️ **A real sweep is 5 to 8 Unity launches a side and was not run in this
+pass**; the harness is the deliverable and § 16 is the standing argument for using it.
+
+### 145.5 ⚠️ OPEN: `qualify.py` STILL HAS TO RUN ON A WINDOWS MACHINE FOR A NATIONALS CANDIDATE
+
+Its Unity and dotnet paths resolve per platform now, and `BUILD_TARGET` follows the machine
+(`OSXUniversal` here, `Win64` there) and is **named in the report** rather than assumed. ⚠️ **The
+report says out loud when the target is not the nationals one.**
+
+**What is still true and is a machine fact rather than a defect:** `CLAUDE.md` § 7's Mac has no
+Windows Standalone module and no dotnet, so a certification run for the shipped Windows player has
+to happen on a Windows machine. `--stage core` reports that honestly now instead of failing.
+
+---
+
 ## 144 · THE TWO ACCOUNT-GATED DOWNLOADS LANDED, AND THE AUDIO GATE WAS GRADING A COPY THE GAME CANNOT LOAD ⚠️ IN PROGRESS, 2026-09-04, branch `main`
 
 🧑 signed in to Freesound in the session's browser and asked for the sixteen recordings to be
@@ -905,7 +1339,7 @@ to be.
 
 ---
 
-### 144.7 ⚠️⚠️ OPEN: THE SEAT HANDOVER IS BUILT EXCEPT FOR THE ONE NUMBER THAT HAS TO TRAVEL
+### 144.7 ✅ CLOSED 2026-09-05: THE SEAT HANDOVER'S RATING TRAVELS, AND IT COST `ProtocolVersion` 24
 
 `Attention.md` § 16.1 was ruled and not built: *"let ai on same skill level as them take over"*.
 Most of it is built now and the remainder is one wire field.
@@ -942,6 +1376,30 @@ it did before, and **one line changes when the number arrives.**
 
 **Done looks like:** a rating on the connection hello, `RatingForDepartedPeer` reading it, and a
 test that a handed-over seat at 2400 gets Astig while one at 700 gets Bata.
+
+✅ **ALL THREE, 2026-09-05.** `ConnectionHello.Rating` carries it, `PeerRecord.Rating` stores it,
+`MatchRpc.RatingForDepartedPeer` reads it and `SeatHandover.TierFor` maps it.
+`NationalsHardeningTests.ARatingOf2400GetsAstigAnd700GetsBata` is the acceptance test in its own
+numbers.
+
+⚠️⚠️ **THE ONE THING THAT WAS NOT OBVIOUS, AND IT WOULD HAVE MADE THE FIELD READ 0 FOR EVERY PEER
+THAT EVER COMPLETED A JOIN.** A peer reaches `LobbySession.Admit` **twice**: once from the approval
+hello, which is the only message carrying a rating, and again from `MatchRpc.HandleIdentify`. The
+second call builds a FRESH `PeerRecord`, so anything `Admit` does not copy forward from the
+replaced one is silently zeroed by the peer introducing itself. `Seat`, `Spectator` and the three
+picks were already copied; `Rating` had to join them.
+`ARatingSurvivesThePeerIntroducingItselfASecondTime` is the regression test, and without it this
+whole entry would have shipped looking finished and doing nothing.
+
+⚠️ **IT IS A CLAIM AND NOTHING THAT PAYS OUT READS IT.** A peer types the number it sends, so a
+liar can ask for an Astig bot in the seat they are about to abandon. That buys nothing: the ladder
+already refuses to move a handed-over seat at all (`SeatHandover.RatingMovesFor`), so the worst a
+lie can do is choose which of three difficulties finishes somebody else's match. **Do not widen it
+into anything the rating maths reads.**
+
+⚠️ **0 STILL MEANS "DID NOT SAY" AND LEAVES THE LOBBY'S TIER ALONE**, which is what a LAN guest
+with no career and a peer that never signed in both produce. Inventing a mid-ladder guess for them
+would hand a stranger's chair a bot matched to a number nobody measured.
 
 ⚠️⚠️ **AND IT COSTS A PROTOCOL BUMP, WHICH IS WHY IT WAS NOT SLIPPED INTO THIS SESSION'S BUILD.**
 A field on the hello moves `NetSession.ProtocolVersion`, and `CLAUDE.md` § 4 is explicit about
@@ -1042,6 +1500,35 @@ and one assertion on `round active`. § 143.15b in the queue.
 
 ⚠️ **A truly clean MACHINE is still `Attention.md`.** This clears a profile; it cannot clear a
 driver, a firewall rule or a runtime that this machine has and a borrowed one does not.
+
+### 143.15b ✅ CLOSED 2026-09-05: THE STEP ASSERTS A ROUND RAN, AND IT IS A SEPARATE ROW NOW
+
+Two fixes, and the second is the one worth reading.
+
+1. **`-tp-autostart 1`.** `MatchInstaller.BuildReadyGate` opens a ready gate on any NETWORKED
+   session and nothing presses through it without the switch, which is the trap `net_matrix`
+   already records in capitals. The count is **1** rather than 2 because
+   `LobbySession.PlayingPeerCount` counts SEATED peers and a solo all-bots host is one of them.
+2. ⚠️⚠️ **THE REPORT NOW HAS TWO ROWS WHERE IT HAD ONE, AND CONFLATING THEM WAS THE WHOLE FAULT.**
+   *"Reaches the arena and exits cleanly"* is a claim about the PROCESS: it launched from a
+   cleared profile, identified itself, loaded a map, installed four bots and came back. *"A real
+   round became active"* is a claim about the GAME. Every assertion the old step made was the
+   first one, printed under the second one's name.
+
+**What the new step asserts:** the report exists, `round >= 1`, `round active` is True, the
+session was networked (the gate the switch presses only exists on one), and **at least two seats
+travelled more than a metre**, because "a round is active" and "anybody is playing" are also two
+claims, and four seats standing still inside a live round is `-tp-allbots` not having taken.
+
+⚠️ **AND THE HARNESS RUNS ON THIS MACHINE NOW.** It was Windows-only, `TumbangPreso.exe` on the
+Desktop, `AppData/LocalLow` for the profile, so on the Mac in `CLAUDE.md` § 7's table it could
+only ever refuse, which is that section's own *"true on one machine and written as a fact about
+'here'"* warning landing on a tool. It finds the macOS bundle (`Contents/MacOS/TumbangPreso`, and
+the stamp under `Contents/Resources/Data/StreamingAssets`) and
+`~/Library/Application Support/BH Studios/Tumbang Preso`.
+
+⚠️⚠️ **`--clean-profile` MOVES A DIRECTORY, SO GUESSING ITS PATH WRONG IS DESTRUCTIVE**, which is
+why the three platform layouts are written out rather than derived from one pattern.
 
 ---
 
@@ -1375,10 +1862,57 @@ lands in the qualification report. ⚠️ `PYTHONIOENCODING=utf-8` is set by the
 being remembered, because `audit_audio_reach.py` dies on a `UnicodeEncodeError` without it and the
 crash looks like a fault in the thing it is auditing.
 
-### 143.9 ⚠️ OPEN: HOST LOSS
+### 143.9 ✅ CLOSED 2026-09-05: HOST LOSS IS ONE OUTCOME ON EVERY PEER, AND ONE EXPRESSION WAS THE HOLE
 
 `_utp.DisconnectTimeoutMS = 8000` (`NetSession.cs:1172`), so a peer whose wifi dies keeps a
 normal-looking arena for eight seconds. § 140 is the player-facing half and is still open.
+
+⚠️⚠️ **AND THE EIGHT SECONDS WERE NEVER THE DANGEROUS PART. THIS WAS:**
+
+```csharp
+public bool IsHost => _nm == null || !_nm.IsListening || _nm.IsServer;
+```
+
+Every clause is right for the case it was written for, no transport is the offline game, a server
+is a host. The state it does **not** describe is a CLIENT whose transport has just stopped,
+which satisfies the middle clause. `NetAuthority.ShouldResolve()` was exactly `IsHost`. **So the
+moment a host disappears, every client in the room starts answering "I decide outcomes":** it
+resolves its own tags, awards its own points and advances its own rounds, in an arena nobody else
+is in. Four peers that were obeying one referee become four referees.
+
+⚠️ **IT WAS ALREADY WRITTEN DOWN FROM THE OTHER DIRECTION AND NOBODY JOINED THE TWO.**
+`MatchRpc.HandleClientDisconnected` carries a capitalised note saying an `IsHost` guard there broke
+the handler because *"it answers TRUE the moment the transport stops listening, which is precisely
+the state a peer is in while it is being disconnected."* That is this defect, observed, one file
+away, months earlier.
+
+**What landed:**
+
+- `Core/SessionEnd.cs`: one closed set of causes, one classifier, and `RevokesAuthority`.
+  ⚠️ **Wide on purpose**: everything except a local quit revokes, because a peer removed by the
+  host, one refused for its protocol and one whose host vanished are in **identical local state**
+  and any of them resolving a tag is the same defect.
+- `MatchAbandon`: the latch, plus the reason, the round it stopped on and the diagnostic.
+  ⚠️ **It revokes DECIDING, not drawing.** Bodies keep interpolating; what stops is awarding.
+  Two peers that both lost the host therefore stop at the state they last agreed on.
+- `NetAuthority.ShouldResolve() => IsHost && !MatchAbandon.AuthorityRevoked`, asked in ONE place
+  rather than at forty call sites, which is what that method exists for.
+- ⚠️⚠️ **THE DISARM IS A SCENE SUBSCRIPTION AND NOT A CALL SITE.** A latch that outlived its match
+  would take the SOLO game down with it, since `ShouldResolve()` is what runs single player, and
+  `CLAUDE.md` § 4a is blunt about what happens to rules somebody has to remember. Leaving the arena
+  is the signal, it cannot be forgotten, and `MatchRpc.HandleClientDisconnected` already causes it.
+- The three readers of the raw disconnect string, the telemetry bucket, the player line and now
+  the latch: all ask `SessionEndRules.Classify` instead of each deriving their own meaning
+  (§ 94.1).
+- **The player line names host loss** rather than "lost connection", because a player told only
+  that they were disconnected goes looking for a fault in their own wifi.
+
+`NationalsHardeningTests` asserts the revocation table, every reason string this game can actually
+produce, the diagnostic naming the round, and that the latch clears without wiping the reason.
+
+⚠️⚠️ **THE RECONNECT-OR-FORFEIT RULING IS STILL NOT TAKEN AND IS NOT CODE.** `Attention.md` § 17.1,
+which also records that a refereed bracket may make the question nearly moot: on a
+`-tp-dedicated` server no player leaving can end a match at all.
 
 ⚠️ **Host migration is deliberately unsupported and that is not the problem.** The requirement is
 that the failure is ONE outcome on every peer: no score corruption, no frozen authoritative state
@@ -1684,6 +2218,51 @@ no tag to take off.
 silently. A stored match row outlives the match and a history listing strangers has nothing else to
 tell two players called PLAYER apart; the local seat was already overwritten from the account, and
 this keeps a REMOTE seat's row as informative as it was.
+
+### 141.7 ✅ 2026-09-05: THE INVARIANT MODEL CAN NOW EXPRESS BOTH FAULTS, WHICH IT COULD NOT
+
+`MatchInvariants.CheckSeatOwnership`'s own note claimed both directions:
+
+> *"Two seats with one owner is the spectator-and-a-driven-seat fault (§ 141) ... One seat with two
+> owners is the reconnect fault: a peer whose slot was reused comes back and both believe they are
+> driving it."*
+
+⚠️⚠️ **THE FIRST IS FINDABLE IN AN OWNER-PER-SEAT ARRAY. THE SECOND IS NOT REPRESENTABLE IN ONE.**
+`MatchSnapshot.SeatOwners` is a `string[]` indexed by slot, so "two peers claim seat 2" is not a
+state it can be IN: whichever wrote the cell last is the only one a checker will ever see, and the
+question was answered by the data structure before the checker was asked. **A comment claiming an
+invariant the data cannot express is worse than no comment**, because it is read as coverage.
+
+**So a claim is a ROW now, not a cell.** `SeatClaim` carries an owner token, a seat, whether it is
+DRIVING and whether it is SPECTATING, and `CheckSeatClaims` finds three faults, each with a receipt
+in this repository:
+
+1. **One owner driving two seats**, § 141, the duplicate name 🧑 photographed.
+2. **Two owners driving one seat**, the reconnect window. `NetSession.OnClientConnected`
+   disconnects the stale socket *after* the new one takes the chair and warns that otherwise *"it
+   can keep submitting movement and verbs for the same player"*. That window is exactly this state
+   and nothing could ask about it.
+3. **A spectator driving a seat**, § 141's headline: **"IF IT isnt spectator why do i see
+   spectator hud"**.
+
+⚠️ **A HELD CHAIR IS A CLAIM THAT IS NOT A DRIVER**, and only drivers are counted for rule 2. The
+reconnect feature deliberately produces a seat whose claimant is driving nothing, and reporting it
+would be reporting the feature every time it worked.
+
+⚠️⚠️ **AND `CheckPeersAgree` NOW COMPARES OWNERSHIP, WHICH ITS OWN HEADER SAID IT SHOULD** (*"§ 141
+is the seat"*) and which it did not do. It compared the round, the taya, the progress flag, the
+scores and the winner, **every one of which can be identical on two peers that disagree about who
+seat 2 is**, and the seat decides whose tsinelas is whose, who a tag lands on and which line a
+point is written to. ⚠️ An empty chair on one side only is not a disagreement: a client is
+routinely mid-build (§ 82.1) and a bot seat has no owner token.
+
+⚠️⚠️ **AND THE PRODUCER MADE THE CHECK UNFALSIFIABLE.** `FailureBundle` built its owner array as
+`owners[slot] = "seat" + slot`, so every entry was distinct BY CONSTRUCTION and the duplicate rule
+could not fire in any state the game could reach, § 96's fault one layer down, a green light wired
+to nothing. `Diagnostics.SeatOwnership.Claims()` reads the real durable tokens off the lobby and
+the bodies.
+
+**Still open:** the duplicate name on the scoreboard, and 🧑's eye on the fix.
 
 ### 141.6 ✅ AND NO TWO SEATS CAN READ THE SAME, WHICH IS THE TOURNAMENT QUESTION
 
@@ -2662,7 +3241,7 @@ read by `AbilityVfx`, `SkyEvent`, `Hitstop` and this card together.
 
 ---
 
-### 134.12 ⚠️ OPEN: THE REPLAY CAPTURE IS STILL A SYNCHRONOUS GPU STALL
+### 134.12 ✅ CLOSED 2026-09-05: THE REPLAY CAPTURE IS ASYNCHRONOUS, BOUNDED AND POOLED
 
 `CaptureReplayFrame` calls `Texture2D.ReadPixels` **ten times a second for the whole match**,
 whether or not anybody ever presses replay, and a `ReadPixels` blocks the render thread until the
@@ -2683,6 +3262,80 @@ and without it on a phone.
 ⚠️ **AND THE CAPTURE ONLY RUNS FOR A SPECTATOR.** It is on `SpectatorCamera`, so a player never
 pays for it. The cost lands on the machine running the stream, which at the nationals is the one
 machine that most needs its frame rate.
+
+✅ **DONE 2026-09-05, AND THE ORDERING WORRY ABOVE WAS THE RIGHT ONE TO HAVE.** The answer is not
+to resolve the marker against `CapturedAt` afterwards; it is that **the ring slot is reserved at
+REQUEST time and only the picture arrives late.** A callback that APPENDED its frame would order
+the buffer by whenever the driver got round to it, stamp it with a completion time, and hand the
+marker to whichever frame happened to land next, three separate corruptions of a clip whose whole
+value is that it contains the play. Reserving the slot keeps the capture time, the sequence and the
+marker exactly where the synchronous version put them.
+
+**What that needed:**
+
+- ⚠️ **A `Pending` flag on the frame.** A pending frame is IN the ring (or the order and the
+  timestamps are the driver's) and is NOT in a clip (its texture holds the previous tenant's tenth
+  of a second). `ReadyFrameCount` is the difference, and "the buffer is still warming up" is now an
+  honest answer on a machine that is behind.
+- ⚠️⚠️ **A CAP ON OUTSTANDING REQUESTS.** `MaxOutstandingReadbacks` is **4**, sized off the sample
+  rate and the pipeline depth rather than picked: a readback lands two to three frames after the
+  request and `ReplaySampleInterval` is six frames at 60 Hz, so one is outstanding at a time on a
+  healthy machine. Past four, the honest reading is that the GPU cannot keep up and the requests
+  are a queue rather than a buffer. **Exceeding it drops the capture** rather than deferring it,
+  because a replay is a moving picture watched once at 0.82x and one missing tenth of a second is
+  invisible.
+- ⚠️⚠️ **A GENERATION COUNTER, WHICH IS THE WHOLE OF "NO CAPTURE AFTER THE SESSION IS GONE."** A
+  readback callback is a closure the driver invokes on a later frame, and `Destroy` on a
+  `Texture2D` is deferred to the end of a frame, so "the camera is gone" and "the callback has
+  stopped arriving" are separated by however far behind the GPU is. `OnDestroy` bumps the counter
+  **before** anything is destroyed and then calls `WaitAllRequests`; every callback in flight
+  compares unequal and returns having touched nothing.
+- ⚠️ **A TEXTURE POOL.** The old path allocated a `Texture2D` per capture and destroyed it per
+  eviction: **3,600 native allocations and 3,600 frees in a four-round Classic set**, all of the
+  same 460,800 bytes. The pool is bounded by the ring, so the memory ceiling is exactly what
+  § THE REPLAY BUFFER already states.
+- ⚠️ **THE MEMORY DID NOT MOVE, AND THAT NEEDED THE SCRATCH TARGET RATHER THAN THE READBACK.** A
+  `RenderTextureFormat.RGB565` blit converts on the GPU for free, so the bytes coming back are
+  already two per pixel. Reading ARGB32 back and packing it here would have traded a GPU stall for
+  a 230,400-iteration CPU loop ten times a second, which is not obviously the better deal.
+- ⚠️ **THE SYNCHRONOUS PATH SURVIVES AS THE FALLBACK.** `SystemInfo.supportsAsyncGPUReadback` is
+  false on some older Android drivers and Android is a shipping platform here (§ 130.5 is the last
+  thing that ANR'd it), so a replay that silently stopped working there would be a feature deleted
+  for a whole platform in the name of a frame time nobody had measured on it.
+
+**MEASURED, `ReplayCaptureProbe` on `eae4e96`, macOS/Metal, 120 calls each at the shipped
+640 x 360 RGB565:**
+
+| path | mean | p95 | p99 | worst | over 2 ms |
+|---|---|---|---|---|---|
+| `ReadPixels` (before) | **0.734 ms** | 1.750 | 1.750 | **2.066 ms** | 1 |
+| `AsyncGPUReadback` (after) | **0.035 ms** | 0.250 | 0.250 | **0.158 ms** | **0** |
+
+**21x cheaper on the mean, 7x on the percentiles, 13x on the worst call**, and the once-per-session
+first call went from **7.2 ms to 0.5 ms**. Priced over a match: a four-round Classic set is 3,600
+captures, so **2.64 s of CPU spent on the render thread becomes 0.13 s**, and the frames that used
+to carry a 2 ms stall carry none over 2 ms at all. 120 readbacks landed, 0 failed.
+
+⚠️ **THE NUMBERS ARE THIS MACHINE'S AND THE RATIO IS THE FINDING.** `CLAUDE.md` § 7: a wall-clock
+result depends on how busy the machine is, which is why the assertion in the probe is a floor a
+broken build crosses (the async worst call must beat the synchronous one) rather than a bound tuned
+to a laptop.
+
+⚠️⚠️ **AND THE PROBE'S OWN FIRST RUN MEASURED THE WRONG THING, WHICH IS WORTH THE PARAGRAPH.**
+It reported the async path's worst call as **147.7 ms** against `ReadPixels`' 4.6, while its p95
+and p99 were **0.250 ms against 0.750**. The 147 ms was the FIRST `AsyncGPUReadback.Request` of
+the session allocating its readback buffers, once, and the warm-up loop only spun frames rather
+than making real calls, so it warmed the renderer and not the thing under test. **A one-time
+initialisation cost standing as a path's "worst call" is a measurement of initialisation wearing a
+per-call statistic's name.** Both paths get five untimed calls now, and **the warm-up cost is still
+printed on its own line**, because a hitch on the first capture of a match is a real thing that
+happens once and hiding it would be the opposite fault.
+
+**The measurement is `ReplayCaptureProbe`** (`Logs/replay-capture.txt`), which performs both calls
+at the shipped resolution and format and reports mean, p95, p99, worst and long-call counts for
+each. ⚠️ **It measures the two CALLS rather than toggling the shipped component**, deliberately: a
+switch on `SpectatorCamera` would be a settable static that survives a scene change, which is
+exactly what § 145.3's roster exists to catch, added for a test's convenience.
 
 ---
 

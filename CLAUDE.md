@@ -789,6 +789,21 @@ another one hunting.** So:
 | dotnet | ⚠️⚠️ **NOT INSTALLED.** `dotnet test Core.Tests/...` — the cheapest signal in the repo and the one § 2.1b tells you to run freely — **cannot run at all**. The same numbers are still asserted by the EditMode suite, which is a three-minute launch rather than 40 ms |
 | python | `python3`, 3.14. ⚠️ **`python` alone is not on PATH**, which is the other half of § 7.1's warning |
 
+⚠️⚠️ **AND THE PYTHON HARNESSES FIND UNITY THEMSELVES NOW, WHICH THEY DID NOT UNTIL 2026-09-05.**
+`tools/qualify.py`, `tools/playmode_suite.py` and `tools/bot_sweep.py` each held
+`C:\Program Files\Unity\...` as a literal, so on this Mac **the gate could not run at all** and,
+worse than that, every group reported the missing launcher as the GROUP failing, which is § 143.1's
+whole complaint about a suite whose red set is not about the code. All three resolve the editor per
+machine and pick their own `-buildTarget` (`OSXUniversal` here, `Win64` there). ⚠️ **`qualify.py`
+prints the target it used and says out loud when it is not the nationals one**, and `--stage core`
+reports "dotnet is not installed on this machine" instead of failing, because a missing toolchain
+read as a failing stage sends somebody hunting a broken test.
+
+⚠️ **`tools/cold_start.py` FINDS THE PLAYER AND THE PROFILE PER PLATFORM TOO**, including the
+macOS bundle layout (`Contents/MacOS/TumbangPreso`, `Contents/Resources/Data/StreamingAssets`) and
+`~/Library/Application Support/BH Studios/Tumbang Preso`. It was Windows-only and could therefore
+only ever refuse here.
+
 
 ```bash
 dotnet test Core.Tests/TumbangPreso.Core.Tests.csproj

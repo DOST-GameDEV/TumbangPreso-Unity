@@ -2141,6 +2141,71 @@ namespace TumbangPreso
             // radius cannot leave the AI reaching for the old one.
             if (distance <= Balance.PickupRadius) Tap(intent, Verb.Grab);
             else Press(intent, Verb.Grab, false);
+
+            StepSlideIntent(intent, mine, distance);
+        }
+
+        /// <summary>
+        /// Whether to commit to the retrieval slide, and pressing the same button a human does.
+        ///
+        /// ⚠️⚠️ THE BOT IS TAUGHT THIS ON PURPOSE AND WOULD OTHERWISE NEVER DO IT. `Verb.Lunge`
+        /// is cleared for every plan that does not touch it (see the sweep at the bottom of
+        /// `StepPlan`), and the only plan that touches it is `Hunt`, which is the taya's. So an
+        /// attacker bot could not have found this verb by accident, which is the safe default and
+        /// is also why nothing would ever have measured it: `BotBehaviourProbe` is the only thing
+        /// in this repository that plays a whole match, and a feature no bot presses is a feature
+        /// with no numbers. `docs/TODO.md` § 146.
+        ///
+        /// ⚠️⚠️ IT COMMITS ONLY WHERE A HUMAN WOULD, WHICH IS THE POINT OF THE GATE RATHER THAN
+        /// CAUTION. The slide costs `Balance.SlideStaminaCost` out of the same bar the sprint
+        /// comes from, and `DoFetch`'s own note says the whole bar is 1.25 s of sprint spent on
+        /// *"the only moment an attacker is taggable"*. A bot that slid whenever it could would
+        /// arrive at every tsinelas with no stamina, which is a worse retrieval than walking, and
+        /// the probe would report a feature that makes the game measurably worse.
+        ///
+        /// ⚠️ SO IT ASKS FOR A REASON: the shoe is inside a slide and outside a walk-up, and the
+        /// run is one the bot has already decided is worth hurrying (`MineIsExposed`, or the
+        /// anti-stall clock is running). That is the same sentence a person would say out loud.
+        ///
+        /// ⚠️ A TAP, NOT A HOLD. `CombatVerbs.StepSlide` reads `JustPressed`, for the reason the
+        /// pickup above records: a held button produces exactly one edge in a lifetime.
+        /// </summary>
+        private void StepSlideIntent(InputIntent intent, Slipper mine, float distance)
+        {
+            if (mine == null || _motor.IsDefender) return;
+
+            var verbs = GetComponent<CombatVerbs>();
+            if (verbs == null || verbs.SlideCooldownLeft > 0.0f) return;
+
+            // ⚠️ ALREADY IN REACH MEANS WALK. Sliding into a shoe you could simply pick up spends
+            // a quarter of the bar and a 0.61 s recovery for nothing, and hands the taya a
+            // commitment to read at the one moment the bot is standing in the box.
+            if (distance <= Balance.PickupRadius) return;
+            if (distance > Balance.PickupRadius + Balance.SlideDistance) return;
+
+            if (_motor.Stamina.IsFatigued) return;
+
+            // ⚠️ THE SAME TWO REASONS `DoFetch` SPRINTS FOR, and no third one. A commitment is
+            // worth making when the run is contested or already late; anywhere else the cheap,
+            // reliable option is the right one and a bot that cannot tell the difference is not
+            // demonstrating the feature, it is spamming it.
+            var round = GameServices.Round;
+            bool late = round != null
+                        && round.AttackerIdleSeconds(_motor.PlayerSlot)
+                           >= Balance.SlipperUnretrievedWarningTime * 0.5f;
+
+            if (!late && !MineIsExposed(mine)) return;
+
+            // ⚠️ FACING IS NOT OPTIONAL: the impulse fires along the body's forward and the body
+            // only turns on a frame it walks (`DoHunt`'s note records a taya that stood still
+            // firing lunges into whatever direction it last walked in). A slide launched sideways
+            // is the bar spent on a dash away from the shoe.
+            Vector3 toward = mine.transform.position - transform.position;
+            toward.y = 0.0f;
+            if (toward.sqrMagnitude < 0.0001f) return;
+            if (Vector3.Angle(transform.forward, toward) > AiTuning.LungeConeFloor) return;
+
+            Tap(intent, Verb.Lunge);
         }
 
         /// <summary>True while the slipper is somewhere the taya can contest. Decides a sprint

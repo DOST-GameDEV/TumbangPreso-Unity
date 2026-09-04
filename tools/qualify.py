@@ -28,6 +28,23 @@ WHAT IT REFUSES
   zero discovered tests, a run whose HEAD moved underneath it, and a
   PlayMode pass that only ran once when a nationals candidate was asked for.
 
+⚠️⚠️ AND SINCE 2026-09-05 IT REFUSES A DIRTY TREE, WHICH IT USED TO WARN ABOUT AND
+CERTIFY ANYWAY. `docs/TODO.md` § 145.1: a report saying **QUALIFIED at SHA X** must mean
+the tested source IS SHA X, and a printed line saying "the working tree was dirty" over
+the word QUALIFIED is a note somebody has to read rather than a gate. Tracked changes
+fail; untracked files (`Logs/`, `Builds/`, a scratch file) do not, because those are not
+differences in the source that was tested.
+
+⚠️⚠️ A THIRD VERDICT EXISTS AND IT IS NOT A FAILURE: **NON-QUALIFIABLE**, for a run where
+every stage passed and the checkout state could not be established at all, no `git` on
+PATH, a source export, a `git status` that failed. Calling that NOT QUALIFIED would say a
+test failed when none did; calling it QUALIFIED is the fault above.
+
+⚠️ NOTHING HERE STOPS A LOCAL DIRTY BUILD. `GameBuilder` records the tree state and builds
+anyway, deliberately: building with uncommitted changes at a venue at 8 a.m. is a
+legitimate thing to do. **The strictness belongs in the certification path**, which is
+this file.
+
 USAGE
 -----
   python tools/qualify.py --stage core
@@ -50,6 +67,7 @@ import json
 import os
 import pathlib
 import re
+import shutil
 import subprocess
 import sys
 import xml.etree.ElementTree as ET
@@ -71,8 +89,44 @@ LOGS = ROOT / "Logs"
 OUT = LOGS / "qualify"
 REPORTS = ROOT / "docs" / "reports"
 
-UNITY = pathlib.Path(r"C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Unity.exe")
-DOTNET = pathlib.Path(r"C:\Program Files\dotnet\dotnet.exe")
+# ⚠️⚠️ RESOLVED PER MACHINE, BECAUSE THERE ARE THREE OF THEM AND TWO ARE NOT WINDOWS.
+# `CLAUDE.md` § 7 carries the whole table and the warning that goes with it: *"a note that is
+# true on one machine and written as a fact about 'here' sends whoever is on another one
+# hunting."* These were two Windows literals, so on the Mac in that table every stage of this
+# gate launched a path that does not exist and reported the failure as the STAGE failing.
+UNITY_VERSION = "6000.5.8f1"
+
+
+def _first_existing(*candidates):
+    for c in candidates:
+        if c and pathlib.Path(c).exists():
+            return pathlib.Path(c)
+    return pathlib.Path(candidates[0]) if candidates else None
+
+
+UNITY = _first_existing(
+    rf"C:\Program Files\Unity\Hub\Editor\{UNITY_VERSION}\Editor\Unity.exe",
+    f"/Applications/Unity/Hub/Editor/{UNITY_VERSION}/Unity.app/Contents/MacOS/Unity",
+    os.path.expanduser(
+        f"~/Applications/Unity/Hub/Editor/{UNITY_VERSION}/Unity.app/Contents/MacOS/Unity"),
+)
+
+DOTNET = _first_existing(
+    r"C:\Program Files\dotnet\dotnet.exe",
+    "/usr/local/share/dotnet/dotnet",
+    "/opt/homebrew/bin/dotnet",
+    shutil.which("dotnet") or "",
+)
+
+# ⚠️⚠️ THE BUILD TARGET FOLLOWS THE MACHINE, AND IT IS NAMED IN THE REPORT RATHER THAN ASSUMED.
+# `unity()`'s note is right that a target has to be stated: an Android build leaves the editor
+# under UNITY_ANDROID and the next silent launch measures a platform nobody ships at nationals.
+# What was wrong is that Win64 was stated as a CONSTANT: `CLAUDE.md` § 7's Mac has no Windows
+# Standalone module at all, so every launch there asked for a target the editor cannot switch to.
+#
+# ⚠️ A QUALIFICATION RUN FOR THE NATIONALS PLAYER STILL HAPPENS ON A WINDOWS MACHINE, and the
+# report says which target it ran under so a reader can tell the two apart rather than assuming.
+BUILD_TARGET = "OSXUniversal" if sys.platform == "darwin" else "Win64"
 
 # The default PlayMode exclusions, and both are decisions rather than convenience.
 #   WallClock  - AiDiagnosticProbe runs a round at 1x for ~80 real seconds, so its
@@ -101,9 +155,41 @@ def head_branch():
     return r.stdout.strip() if r.returncode == 0 else "UNKNOWN"
 
 
-def working_tree_dirty():
+def working_tree():
+    """
+    Whether the checkout matches the commit this report is about to certify.
+
+    ⚠️⚠️ THE VERDICT IS THE POINT AND IT USED TO BE A WARNING. This function answered a LIST and
+    `stage_report` printed a line saying the tree was dirty, and then went on to write
+    **QUALIFIED** underneath it. `docs/TODO.md` § 145.1: *"A release report saying QUALIFIED at
+    SHA X must mean the tested source actually corresponds to SHA X."* A note somebody has to
+    read is not a gate; every ⚠️ in this repository exists because a note was not read once.
+
+    ⚠️⚠️ AND "CANNOT TELL" IS ITS OWN ANSWER. `git` not being on PATH, a source export with no
+    repository and a `git` that fails are all states this can genuinely be in, and every one of
+    them means the SHA at the top of the report is unverifiable. `GameBuilder.WorkingTreeState`
+    makes the same three-way distinction for the same reason, and the brief for both is the same
+    sentence: **do not turn "cannot determine" into "clean"**.
+
+    ⚠️ TRACKED CHANGES ONLY. `--porcelain` lists untracked files as `??`, and `Logs/`,
+    `Builds/` and an editor scratch file are not differences in the SOURCE that was tested. A
+    gate that failed on those would be a gate every developer learns to pass with a flag.
+
+    Returns (state, rows) where state is "clean", "dirty" or "unknown".
+    """
     r = run(["git", "status", "--porcelain"])
-    return [ln for ln in r.stdout.splitlines() if ln.strip()]
+    if r.returncode != 0:
+        return "unknown", [(r.stderr or "git status failed").strip()[:200]]
+
+    rows = [ln for ln in r.stdout.splitlines()
+            if ln.strip() and not ln.startswith("??")]
+
+    return ("dirty" if rows else "clean"), rows
+
+
+def working_tree_dirty():
+    """⚠️ KEPT AS THE OLD SHAPE FOR THE JSON SUMMARY, which records a list of paths."""
+    return working_tree()[1]
 
 
 def now():
@@ -219,6 +305,19 @@ def stage_core():
         trx.unlink()
     LOGS.mkdir(exist_ok=True)
 
+    # ⚠️⚠️ dotnet IS NOT INSTALLED ON EVERY MACHINE THIS RUNS ON AND SAYING SO IS THE ANSWER.
+    # `CLAUDE.md` § 7's Mac table: *"NOT INSTALLED. `dotnet test Core.Tests/...`, the cheapest
+    # signal in the repo and the one § 2.1b tells you to run freely, cannot run at all"*. A
+    # missing toolchain reported as a failing stage sends somebody hunting a broken test; a
+    # missing toolchain reported as green is `docs/TODO.md` § 145.1's fault one stage along.
+    if DOTNET is None or not DOTNET.exists():
+        return write_stage("core", {
+            "ok": False, "started": now(), "unavailable": True,
+            "reason": f"dotnet is not installed on this machine ({sys.platform}), so the "
+                      f"engine-free rules cannot be run here. The same numbers are asserted by "
+                      f"the EditMode suite, which is a several-minute launch rather than 40 ms. "
+                      f"A nationals certification has to come off a machine with dotnet."})
+
     r = run([str(DOTNET), "test", "Core.Tests/TumbangPreso.Core.Tests.csproj",
              "--logger", f"trx;LogFileName={trx}"])
     text = r.stdout + r.stderr
@@ -250,7 +349,7 @@ def unity(args, logfile, timeout=None):
     shipping to at nationals, and it does it silently.
     """
     cmd = [str(UNITY), "-batchmode", "-projectPath", str(ROOT),
-           "-buildTarget", "Win64", "-logFile", str(logfile)] + args
+           "-buildTarget", BUILD_TARGET, "-logFile", str(logfile)] + args
     return subprocess.run(cmd, cwd=str(ROOT), capture_output=True, text=True,
                           errors="replace", timeout=timeout)
 
@@ -601,7 +700,7 @@ def stage_report(nationals=False):
     is ordinary and is reported as a note rather than as a failure.
     """
     branch = head_branch()
-    dirty = working_tree_dirty()
+    tree_state, dirty = working_tree()
 
     stages = {name: read_stage(name) for name in ORDER}
 
@@ -620,7 +719,11 @@ def stage_report(nationals=False):
     lines.append(f"- **Commit** `{sha}`")
     lines.append(f"- **Branch** `{branch}`")
     lines.append(f"- **Generated** {now()}")
-    lines.append(f"- **Build target for every validation launch** `Win64`")
+    lines.append(f"- **Build target for every validation launch** `{BUILD_TARGET}`"
+                 + ("" if BUILD_TARGET == "Win64" else
+                    " ⚠️ **NOT the nationals target.** `CLAUDE.md` § 7: this machine has no "
+                    "Windows Standalone module, so the shipped player has to be validated and "
+                    "built on one that does."))
     lines.append(f"- **Gate** {'NATIONALS CANDIDATE (PlayMode twice)' if nationals else 'standard pass'}")
     if len(shas) > 1:
         lines.append(f"- ⚠️⚠️ **THE STAGES DO NOT AGREE ON A COMMIT**: {', '.join(x[:12] for x in shas)}. "
@@ -629,15 +732,33 @@ def stage_report(nationals=False):
         lines.append(f"- HEAD has since moved to `{moved[:12]}`, which is ordinary: recording a "
                      f"qualification is itself a commit. The stages above all ran on the commit "
                      f"named at the top.")
-    if dirty:
-        lines.append(f"- ⚠️ **Working tree was DIRTY at report time**, {len(dirty)} paths. "
-                     f"A qualification is a claim about a commit; uncommitted edits mean the "
-                     f"results describe something not in the history.")
+    lines.append(f"- **Working tree** `{tree_state}`"
+                 + (f", {len(dirty)} tracked path(s)" if dirty else ""))
     lines.append("")
 
     verdicts = []
     lines.append("| Stage | Verdict | Detail |")
     lines.append("|---|---|---|")
+
+    # ⚠️⚠️ THE TREE IS A STAGE NOW AND NOT A NOTE, WHICH IS THE WHOLE OF `docs/TODO.md` § 145.1.
+    # It sits FIRST because it is the claim every other row rests on: a green PlayMode suite on a
+    # tree that is not the commit above proves something about source nobody can check out.
+    if tree_state == "clean":
+        verdicts.append(True)
+        lines.append("| Working tree | PASS | `git status --porcelain` is empty of tracked "
+                     "changes, so the source tested IS the commit above |")
+    elif tree_state == "dirty":
+        verdicts.append(False)
+        lines.append(f"| Working tree | **DIRTY** | {len(dirty)} tracked path(s) differ from "
+                     f"`{sha[:12]}`: {', '.join(d[3:] for d in dirty[:6])}"
+                     f"{' ...' if len(dirty) > 6 else ''}. **The results below describe source "
+                     f"that is not in the history.** |")
+    else:
+        verdicts.append(False)
+        lines.append(f"| Working tree | **UNKNOWN** | the checkout state could not be "
+                     f"established ({dirty[0] if dirty else 'no reason given'}). Not the same as "
+                     f"clean, and not certifiable. |")
+
     for name in required:
         s = stages.get(name)
         if s is None:
@@ -660,9 +781,37 @@ def stage_report(nationals=False):
 
     lines.append("")
     ok_all = all(verdicts)
-    lines.append(f"## Verdict: {'QUALIFIED' if ok_all else 'NOT QUALIFIED'}")
+
+    # ⚠️⚠️ THREE VERDICTS RATHER THAN TWO, AND THE THIRD IS THE ONE THAT USED TO BE SILENT.
+    # `NON-QUALIFIABLE` is what a report says when it could not establish the thing it is
+    # certifying. Folding it into NOT QUALIFIED would tell somebody a test failed when none did,
+    # and folding it into QUALIFIED is the fault § 145.1 is about.
+    if ok_all:
+        verdict = "QUALIFIED"
+    elif tree_state == "unknown" and all(verdicts[1:]):
+        verdict = "NON-QUALIFIABLE"
+    else:
+        verdict = "NOT QUALIFIED"
+
+    lines.append(f"## Verdict: {verdict}")
     lines.append("")
-    if not ok_all:
+
+    if verdict == "NON-QUALIFIABLE":
+        lines.append("⚠️⚠️ **EVERY STAGE PASSED AND THE SOURCE COULD NOT BE TIED TO A COMMIT.** "
+                     "That is not a test failure and it is not a certification either: the "
+                     "results are real and there is no way to say what they are results ABOUT. "
+                     "Run this on a machine with `git` on PATH, in a checkout rather than an "
+                     "export.")
+        lines.append("")
+    elif tree_state == "dirty":
+        lines.append("⚠️⚠️ **THE WORKING TREE IS DIRTY, SO THIS IS NOT A CERTIFICATION HOWEVER "
+                     "GREEN THE STAGES ARE.** A local dirty BUILD is a legitimate thing to make "
+                     "at a venue at 8 a.m. and nothing stops you (`GameBuilder` records the "
+                     "state and builds anyway). What cannot happen is a report claiming a commit "
+                     "for source that is not in it. Commit or stash, then re-run.")
+        lines.append("")
+
+    if not ok_all and verdict == "NOT QUALIFIED":
         lines.append("A stage above is red or missing. **A green subset is not a release "
                      "certification**: the full PlayMode suite has been 42 red and then 56 red "
                      "on commits where every targeted run anybody had bothered with was green.")
@@ -733,7 +882,8 @@ def stage_report(nationals=False):
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / "summary.json").write_text(json.dumps({
         "sha": sha, "branch": branch, "generated": now(), "nationals": nationals,
-        "qualified": ok_all, "dirty": dirty,
+        "verdict": verdict, "qualified": ok_all,
+        "tree_state": tree_state, "dirty": dirty,
         "stages": {n: {"ok": bool((stages.get(n) or {}).get("ok")),
                        "ran": stages.get(n) is not None,
                        "sha": (stages.get(n) or {}).get("sha")} for n in ORDER},

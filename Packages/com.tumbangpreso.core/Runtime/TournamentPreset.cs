@@ -186,5 +186,164 @@ namespace TumbangPreso.Core
 
         /// <summary>The safe value for a modifier. Everything is false except the one row that says so.</summary>
         public static bool SafeValue(string name) => name == "AIController.BotsEnabled";
+
+        // -------------------------------------------------------------------
+        // § THE OTHER LIST, AND WHY THERE HAS TO BE ONE
+        //
+        // ⚠️⚠️ THE AUDIT ABOVE PROVED TWO LISTS AGREED WITH EACH OTHER AND COULD NOT SEE SWITCH
+        // NUMBER NINE. `tools/audit_tournament_defaults.py` checked that every name in
+        // `Modifiers` had a case in `TournamentGuard`, and that every case was a listed name.
+        // Both directions, both green, and a settable static added tomorrow to neither file is
+        // invisible to both of them: it is not on the roster, so no case is missing, and it has no
+        // accessor, so no accessor is dead. **The whole failure mode that roster exists for lives
+        // exactly in that blind spot.** `docs/TODO.md` § 145.3.
+        //
+        // ⚠️⚠️ SO THE AUDIT DISCOVERS CANDIDATES AND THIS IS WHERE ONE IS DISMISSED. It sweeps
+        // `Assets/TumbangPreso/Runtime` for every SETTABLE public or internal `static bool` and
+        // every `-tp-` launch switch, and requires each to be on `Modifiers` or on this list. A
+        // new one on neither fails the audit, which is `CLAUDE.md` § 4a's construction argument:
+        // *"a lookup table keyed by id is a second place to forget, and forgetting it compiles."*
+        // Here forgetting it does not compile a build past the gate.
+        //
+        // ⚠️ SETTABLE IS THE FILTER AND IT IS WHAT KEEPS THIS SHORT RATHER THAN NOISY. There are
+        // forty-one static bools in the runtime and twenty-eight of them are derived properties
+        // (`NetAuthority.IsHost`, `Panel.AnyOpen`, `PracticeSandbox.Active`): nothing outside can
+        // write one, so nothing can LEAVE one set, which is the entire hazard. A gate that listed
+        // all forty-one would be the *"giant noisy regex gate developers learn to ignore"* the
+        // brief warns against.
+        //
+        // ⚠️ AND A REASON IS REQUIRED, LIKE EVERY ROW ON `Modifiers`. "It is fine" is how a row
+        // gets deleted in a tidy-up by somebody who cannot tell whether it was ever thought about.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// A switch the audit will find and that a tournament match does not care about, with the
+        /// reason it does not.
+        /// </summary>
+        public static readonly Modifier[] NotModifiers =
+        {
+            new Modifier("SceneFlow.Networked",
+                "Not a modifier, a fact: whether this process is in a networked session. It is " +
+                "written by the start paths and read by the lobby to decide whether it is a lobby " +
+                "at all. Clearing it before a tournament match would put an online room on the " +
+                "PRACTICE tab."),
+
+            new Modifier("SceneFlow.BootedThroughSplash",
+                "Boot bookkeeping. It stops the splash playing a second time when the player " +
+                "returns to the title, and has no effect on a match in any state."),
+
+            new Modifier("SceneFlow.LoginStepOffered",
+                "Boot bookkeeping. It records that the sign-in screen has already been offered " +
+                "once this session, so a player who declined is not asked again. Resetting it " +
+                "would put an account prompt in front of an operator mid-bracket."),
+
+            new Modifier("TouchInput.Active",
+                "A DEVICE FACT rather than a setting: it is true when the thumb layer is driving, " +
+                "which is decided by what the player last touched. Forcing it either way in a " +
+                "tournament would take the controls off a phone or paint them onto a desktop. " +
+                "`TouchHud.ForceVisible` is the developer override and IS on the modifier list."),
+
+            new Modifier("Rumble.Enabled",
+                "A player's own accessibility and comfort setting, restored from their settings " +
+                "file every launch. A tournament that reset it would be overriding a preference " +
+                "somebody set for a reason, and it cannot change what happens in a match."),
+
+            new Modifier("-tp-host",
+                "A launch route rather than a modifier: it hosts on a port. An operator station " +
+                "launched this way is doing exactly what it was told to."),
+
+            new Modifier("-tp-join",
+                "A launch route: joins an address. Same argument as -tp-host."),
+
+            new Modifier("-tp-dedicated",
+                "A launch route: starts a seatless referee. `Attention.md` § 16.2 is the entry " +
+                "and a referee is a legitimate tournament configuration rather than a leftover."),
+
+            new Modifier("-tp-lobby",
+                "A launch route: opens a relay lobby. Same argument as -tp-host."),
+
+            new Modifier("-tp-lobbyjoin",
+                "A launch route: joins a relay lobby by code. Same argument as -tp-host."),
+
+            new Modifier("-tp-lobbyport",
+                "A parameter of the two lobby routes above, not a switch of its own."),
+
+            new Modifier("-tp-lobbychat",
+                "A diagnostic that prints lobby chat traffic. It reads state and writes none."),
+
+            new Modifier("-tp-profile",
+                "Names which settings and career folder to use, so two processes on one machine " +
+                "do not fight. It cannot change a rule."),
+
+            new Modifier("-tp-identity",
+                "Prints `BuildIdentity` and quits. It never reaches a match, which is the point " +
+                "of it: an operator at a venue asking what a build is."),
+
+            new Modifier("-tp-netreport",
+                "Writes `NetStateReport` to a file after a delay. It observes and then quits."),
+
+            new Modifier("-tp-netseconds",
+                "How long -tp-netreport waits. A parameter of the row above."),
+
+            new Modifier("-tp-report",
+                "Writes a diagnostic report to a file. Observation only."),
+
+            new Modifier("-tp-bundle",
+                "Writes a failure bundle to a file. Observation only, and `FailureBundle` is " +
+                "explicit that it carries no secrets."),
+
+            new Modifier("-tp-framecap",
+                "Sets the frame cap. It changes how fast the picture updates and not what the " +
+                "rules do; a venue machine capped for a capture card is a legitimate setup."),
+
+            new Modifier("-tp-map",
+                "Chooses the arena to load. Which map a bracket match is played on is an " +
+                "operator's decision and a lobby setting, not a developer override."),
+        };
+
+        /// <summary>
+        /// Every switch the tournament audit knows about, in either direction.
+        ///
+        /// ⚠️ THE AUDIT READS THIS TO ANSWER "HAS ANYBODY THOUGHT ABOUT THIS ONE". A name on
+        /// neither list has not been, which is the finding.
+        /// </summary>
+        public static bool IsAccountedFor(string name)
+        {
+            foreach (var m in Modifiers) if (m.Name == name) return true;
+            foreach (var m in NotModifiers) if (m.Name == name) return true;
+            return false;
+        }
+
+        // ⚠️⚠️ THE LAUNCH SWITCHES THAT **ARE** MODIFIERS ARE ON `Modifiers` THROUGH THE STATIC
+        // THEY SET, NOT BY THEIR OWN NAME, and that is deliberate: `-tp-allbots` sets
+        // `GameLaunch.AllBots`, `-tp-botmatch` sets it too, and `-tp-autostart` and
+        // `-tp-autorematch` drive gates rather than leaving a flag behind. Listing a switch AND
+        // the static it writes would be two rows for one hazard, which is how a roster starts
+        // disagreeing with itself. `LaunchSwitchModifier` maps the ones that do.
+
+        /// <summary>
+        /// The static a gameplay-affecting launch switch leaves set, or "" when it leaves nothing.
+        ///
+        /// ⚠️ A SWITCH THAT LEAVES NOTHING BEHIND IS STILL ACCOUNTED FOR, through
+        /// <see cref="NotModifiers"/> or through this map answering a listed static. What the
+        /// audit refuses is a switch nobody has said either sentence about.
+        /// </summary>
+        public static string LaunchSwitchModifier(string switchName)
+        {
+            switch (switchName)
+            {
+                case "-tp-allbots": return "GameLaunch.AllBots";
+                case "-tp-botmatch": return "GameLaunch.AllBots";
+
+                // ⚠️⚠️ THESE TWO PRESS A BUTTON AND LEAVE NO FLAG, WHICH IS WHY THEY ARE HERE
+                // RATHER THAN ON `NotModifiers`. `-tp-autostart` presses through the ready gate
+                // and `-tp-autorematch` presses the rematch vote; both are one-shot actions taken
+                // at a moment rather than state a later match inherits. They are named so that
+                // adding a THIRD automation switch has to be a decision.
+                case "-tp-autostart": return "";
+                case "-tp-autorematch": return "";
+                default: return null;
+            }
+        }
     }
 }

@@ -197,13 +197,19 @@ namespace TumbangPreso.Diagnostics
             // ⚠️⚠️ THE INVARIANTS ARE RUN AS PART OF THE BUNDLE, which is the difference between
             // a dump and a diagnosis. If the match state is illegal, the bundle says which rule
             // it broke rather than leaving somebody to read four numbers and notice.
-            var owners = new string[Balance.PlayerCount];
-            for (int slot = 0; slot < owners.Length; slot++)
-                owners[slot] = GameServices.Round?.PlayerAt(slot) != null ? $"seat{slot}" : null;
+            // ⚠️⚠️ THE OWNERS USED TO BE `"seat" + slot`, WHICH MADE HALF THIS CHECK A NO-OP.
+            // Every entry was distinct by construction, so `CheckSeatOwnership`'s duplicate rule
+            // could not fire in any state the game could reach. `SeatOwnership.Claims` reads the
+            // real durable tokens off the lobby and the bodies, so the two ownership faults
+            // `docs/TODO.md` § 141 is about are now findable from a bundle rather than only from
+            // a screenshot.
+            var claims = SeatOwnership.Claims();
+            var owners = MatchInvariants.DrivenSeats(claims);
+            sb.AppendLine($"  seats         {string.Join(", ", DescribeClaims(claims))}");
 
             var snapshot = new MatchSnapshot(match.RoundNumber, match.TotalRounds,
                                              match.DefenderSlot, match.MatchInProgress,
-                                             match.IsWarmupBuffer, scores, owners);
+                                             match.IsWarmupBuffer, scores, owners, claims);
 
             var faults = MatchInvariants.Check(snapshot);
             sb.AppendLine(faults.Count == 0
@@ -212,6 +218,28 @@ namespace TumbangPreso.Diagnostics
                   string.Join("\n                ", faults));
 
             return sb.ToString().TrimEnd();
+        }
+
+        /// <summary>
+        /// The claims as short readable rows.
+        ///
+        /// ⚠️ THE TOKEN IS CLIPPED. It is a durable reconnect identity rather than a secret, and
+        /// `BuildIdentity`'s own note sets the rule this bundle follows: no secrets, ever. Twelve
+        /// characters is enough to tell two claimants apart, which is all a reader needs.
+        /// </summary>
+        private static IEnumerable<string> DescribeClaims(SeatClaim[] claims)
+        {
+            if (claims == null || claims.Length == 0) return new[] { "(none)" };
+
+            var rows = new List<string>(claims.Length);
+            foreach (var c in claims)
+            {
+                string token = c.Owner ?? "";
+                if (token.Length > 12) token = token.Substring(0, 12);
+                rows.Add($"{token}->{c.Seat}{(c.Driving ? "*" : "")}{(c.Spectating ? "~" : "")}");
+            }
+
+            return rows;
         }
 
         private static string ErrorSummary()

@@ -317,7 +317,22 @@ namespace TumbangPreso
             // reaches the first-person arm through the same call. See CharacterAnimator.PlayAction.
             GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("grab");
             GetComponentInChildren<Visual.CharacterSquashStretch>()?.Squash(0.13f);
-            UI.Hud.ReportStyle(_motor.PlayerSlot, 14.0f, "SNATCH!");
+            // ⚠️⚠️ THE CALLOUT NAMES WHICH RETRIEVAL IT WAS, AND THE AWARD DOES NOT CHANGE.
+            // `docs/TODO.md` § 146: a committed slide is harder than a walk-up and deserves its
+            // own word; paying it more would be `docs/VISION.md` § 1.1's *"do not give Classic
+            // powers"* arriving through the cosmetic bar. **This is the one funnel every pickup
+            // reaches** (`HostPickUp`, the proximity grab and `Slipper.HostGrab` all land here,
+            // and the guard above makes it idempotent), which is why the slide has no award of
+            // its own: `CombatVerbs.SweepSlideRetrieval` had one for a day and
+            // `tools/audit_presentation_reach.py` reported it as the only host-only presentation
+            // call site in the game.
+            //
+            // ⚠️ `IsCommitted` IS LOCAL STATE AND THAT IS CORRECT HERE. `Hud.ApplyStyle` draws
+            // only for the LOCAL seat, and both peers that can reach this for a given body, the
+            // owner, which predicted the slide, and the host, which resolved it, have the
+            // commitment running. Every other peer computes a string it will not draw.
+            UI.Hud.ReportStyle(_motor.PlayerSlot, 14.0f,
+                               _motor.IsCommitted ? "SIPA RESCUE!" : "SNATCH!");
 
             // ⚠️⚠️ THE RETRIEVAL PAYS THE HERO ECONOMY, AND IT IS WIRED HERE BECAUSE THIS IS THE
             // ONE FUNNEL EVERY PICKUP GOES THROUGH. `HostPickUp`, the proximity grab and

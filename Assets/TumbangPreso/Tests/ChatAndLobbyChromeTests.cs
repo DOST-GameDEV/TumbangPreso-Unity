@@ -244,9 +244,18 @@ namespace TumbangPreso.Tests
             // that could still hear `SyncFormat` would agree about the FORMAT and disagree about
             // the rounds and the clock, which is a worse failure than a clean refusal: it looks
             // like it works.
-            Assert.AreEqual(23, NetSession.ProtocolVersion,
-                "a message or a replicated roster index has been added or removed. Bump this " +
-                "number and `NetSession.ProtocolVersion` together, in the same commit.");
+            //
+            // ⚠️⚠️ 23 TO 24 IS THE SEAT HANDOVER'S RATING, 2026-09-05, AND IT IS A FIELD RATHER
+            // THAN A MESSAGE. `ConnectionHello` gains one `int` and `JsonUtility` reads a payload
+            // without it as 0, so nothing breaks in the sense of throwing. What breaks is the
+            // RULING: `Attention.md` § 16.1 says a departing player's chair is finished by a bot
+            // at their own skill level, and a 23 peer cannot say what that is. A room with one of
+            // each hands two abandoned seats over by two different rules, and nobody in it can
+            // tell which rule they got. `docs/TODO.md` § 144.7.
+            Assert.AreEqual(24, NetSession.ProtocolVersion,
+                "a message, a replicated roster index or a connection-hello field has been added " +
+                "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
+                "same commit.");
         }
     }
 }

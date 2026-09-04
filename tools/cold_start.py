@@ -26,6 +26,29 @@ processes on a link and compare what each believed:
 stands still, and a process that survived doing nothing is not evidence. With it all four
 seats play, so the distances, the casts and the props in the report are real numbers.
 
+⚠️⚠️ AND `-tp-autostart` IS WHAT MAKES A MATCH HAPPEN, WHICH THE FIRST GREEN RUN OF THIS
+HARNESS DID NOT DO. `docs/TODO.md` § 143.15: the run passed, its step said *"hosts a match
+with four bots and finishes: PASS"*, and the state it captured said
+
+    round           : 0
+    round active    : False
+
+**No round ever started.** The bodies moved, so the arena installed and the bots were
+driving, and every assertion the harness made was about the process rather than about the
+game. `tools/net_matrix.py` records this exact trap in its own source, in capitals:
+*"`-tp-autostart 2` IS NOT OPTIONAL AND ITS ABSENCE IS SILENT. `-tp-host` loads the arena,
+but `MatchInstaller.BuildReadyGate` opens a ready gate on any NETWORKED session, and nothing
+presses through it without this switch."* One peer agreeing with itself that nothing happened
+is not evidence either.
+
+⚠️ IT IS `-tp-autostart 1` HERE AND NOT 2. The switch counts SEATED peers
+(`LobbySession.PlayingPeerCount`), and a solo all-bots host is one of them.
+
+⚠️⚠️ SO THE REPORT NOW SEPARATES TWO CLAIMS THAT USED TO BE ONE ROW. "The process launched,
+reached the arena and exited cleanly" and "a match played" are different findings, and the
+first was being printed under the second's name. Both are asserted; only the second one is
+what a cold start is for.
+
 ⚠️⚠️ THE PROFILE IS NOT WIPED BY DEFAULT AND THAT IS DELIBERATE. Clearing
 `persistentDataPath` destroys the settings, rebinds and career of whoever runs this, and on
 this machine that is a person whose `Fullscreen` is false because he plays in a short wide
@@ -70,15 +93,54 @@ def head_sha():
 
 
 def player_path():
-    desktop = pathlib.Path(os.path.expanduser("~")) / "Desktop"
-    exe = desktop / "TumbangPreso-Unity" / "TumbangPreso.exe"
-    return exe if exe.exists() else None
+    """
+    The shipped player on THIS machine, whichever platform it is.
+
+    ⚠️⚠️ IT WAS WINDOWS-ONLY AND THAT IS EXACTLY THE FAULT `CLAUDE.md` § 7 WARNS ABOUT IN ITS
+    OWN WORDS: *"a note that is true on one machine and written as a fact about 'here' sends
+    whoever is on another one hunting."* The Mac in that table has **no Windows Standalone
+    module at all**, so `GameBuilder.BuildWindows` has no target to write there and this
+    harness could only ever refuse. A cold start that cannot run on the machine somebody is
+    sitting at is a cold start nobody runs.
+
+    ⚠️ THE ORDER IS THE PLATFORM'S OWN FIRST. A machine with both a Desktop .exe and a Builds
+    .app has built both, and the one worth starting is the one that runs here.
+    """
+    home = pathlib.Path(os.path.expanduser("~"))
+    root = pathlib.Path(__file__).resolve().parent.parent
+
+    windows = home / "Desktop" / "TumbangPreso-Unity" / "TumbangPreso.exe"
+    mac = root / "Builds" / "macOS" / "TumbangPreso.app" / "Contents" / "MacOS" / "TumbangPreso"
+    mac_desktop = (home / "Desktop" / "TumbangPreso.app" / "Contents" / "MacOS" / "TumbangPreso")
+
+    candidates = ([mac, mac_desktop, windows] if sys.platform == "darwin"
+                  else [windows, mac, mac_desktop])
+
+    for exe in candidates:
+        if exe.exists():
+            return exe
+
+    return None
 
 
 def profile_dir():
-    """Where the player keeps settings, career and social. Unity's persistentDataPath."""
-    local_low = pathlib.Path(os.path.expanduser("~")) / "AppData" / "LocalLow"
-    return local_low / COMPANY / PRODUCT
+    """
+    Where the player keeps settings, career and social. Unity's persistentDataPath.
+
+    ⚠️ THREE PLATFORMS, THREE ANSWERS, AND GUESSING WRONG IS DESTRUCTIVE HERE. `--clean-profile`
+    MOVES this directory aside, so a path that resolves to the wrong place either does nothing
+    (and the run is not cold) or moves somebody else's folder. Unity's own documented layouts
+    are the authority: `%USERPROFILE%/AppData/LocalLow/<company>/<product>` on Windows,
+    `~/Library/Application Support/<company>/<product>` on macOS.
+    """
+    home = pathlib.Path(os.path.expanduser("~"))
+
+    if sys.platform == "darwin":
+        return home / "Library" / "Application Support" / COMPANY / PRODUCT
+    if os.name == "nt":
+        return home / "AppData" / "LocalLow" / COMPANY / PRODUCT
+
+    return home / ".config" / "unity3d" / COMPANY / PRODUCT
 
 
 def artifact_identity(exe):
@@ -88,8 +150,18 @@ def artifact_identity(exe):
     ⚠️ A COLD START OF THE WRONG BUILD PROVES NOTHING, so this refuses before spending
     minutes launching a player from a commit nobody asked about.
     """
-    stamp = exe.parent / "TumbangPreso_Data" / "StreamingAssets" / "build-identity.json"
-    if not stamp.exists():
+    # ⚠️ TWO LAYOUTS. A Windows player keeps StreamingAssets under `TumbangPreso_Data`; a macOS
+    # bundle keeps it under `Contents/Resources/Data`. Reading only the first is why this
+    # refused every Mac build with "the player carries no build-identity.json", which reads as
+    # a missing stamp rather than as a harness that does not know where to look.
+    stamp = None
+    for candidate in (exe.parent / "TumbangPreso_Data" / "StreamingAssets" / "build-identity.json",
+                      exe.parent.parent / "Resources" / "Data" / "StreamingAssets" / "build-identity.json"):
+        if candidate.exists():
+            stamp = candidate
+            break
+
+    if stamp is None:
         return None
     try:
         return json.loads(stamp.read_text(encoding="utf-8"))
@@ -114,6 +186,53 @@ def run_player(exe, args, timeout, log):
 
     return {"seconds": round(time.time() - started, 1), "exit": code,
             "log": str(log), "log_bytes": log.stat().st_size if log.exists() else 0}
+
+
+def read_state(report):
+    """
+    What the player believed at exit, out of its own `NetStateReport`.
+
+    ⚠️⚠️ IT READS `round` AND `round active` BECAUSE THOSE ARE THE TWO FIELDS THE FIRST GREEN
+    RUN CONTRADICTED ITSELF ON. `docs/TODO.md` § 143.15: the step claimed a match was hosted
+    and finished, and the capture beside it read `round: 0` / `round active: False`. Parsing
+    the report the harness was already writing is all that was ever needed; nothing read it.
+
+    ⚠️ AND THE PER-SEAT DISTANCES, because "a round is active" and "anybody is playing" are
+    also two claims. Four seats standing still inside a live round is `-tp-allbots` not having
+    taken, which the report can see and a duration cannot.
+    """
+    if report is None or not report.exists():
+        return None
+
+    text = report.read_text(encoding="utf-8", errors="replace")
+    out = {}
+
+    for key, pattern in (("role", r"role\s*:\s*(\S+)"),
+                         ("networked", r"networked\s*:\s*(\S+)"),
+                         ("protocol", r"protocol\s*:\s*(\d+)"),
+                         ("map", r"map\s*:\s*(\S+)"),
+                         ("sampled", r"sampled\s*:\s*([\d.]+)"),
+                         ("active", r"round active\s*:\s*(\S+)"),
+                         ("defender", r"defender\s*:\s*(-?\d+)")):
+        m = re.search(pattern, text)
+        out[key] = m.group(1) if m else None
+
+    m = re.search(r"^round\s*:\s*(-?\d+)", text, re.MULTILINE)
+    out["round"] = int(m.group(1)) if m else None
+
+    out["seats"] = []
+    for m in re.finditer(
+            r"^(\d)\s+(-?\d+)\s+(True|False)\s+(True|False)\s+(-?\d+)\s+([\d.]+)\s+(\d+)\s+(\d+)\s*$",
+            text, re.MULTILINE):
+        out["seats"].append({
+            "seat": int(m.group(1)),
+            "bot": m.group(3) == "True",
+            "taya": m.group(4) == "True",
+            "score": int(m.group(5)),
+            "travelled": float(m.group(6)),
+        })
+
+    return out
 
 
 def read_log_faults(log):
@@ -144,8 +263,9 @@ def main():
     LOGS.mkdir(exist_ok=True)
 
     if exe is None:
-        print("REFUSED: there is no Windows player on the Desktop to cold start.\n"
-              "         Build one first: GameBuilder.BuildWindows.", file=sys.stderr)
+        builder = "GameBuilder.BuildMac" if sys.platform == "darwin" else "GameBuilder.BuildWindows"
+        print("REFUSED: there is no shipped player on this machine to cold start.\n"
+              f"         Build one first: {builder}.", file=sys.stderr)
         return 2
 
     identity = artifact_identity(exe)
@@ -186,20 +306,74 @@ def main():
         if report.exists():
             report.unlink()
 
+        # ⚠️⚠️ `-tp-autostart 1` IS NOT OPTIONAL AND ITS ABSENCE IS SILENT. See the header:
+        # without it `MatchInstaller.BuildReadyGate` opens a gate on this networked session and
+        # nothing presses through it, so the process loads the arena, installs four bots that
+        # wander, holds for the full duration and exits cleanly having played nothing.
+        #
+        # ⚠️ THE COUNT IS 1 BECAUSE `LobbySession.PlayingPeerCount` COUNTS SEATED PEERS AND
+        # THERE IS ONE PROCESS. `net_matrix` passes 2 because it has two.
         step = run_player(exe, ["-tp-host", "8910", "-tp-profile", "coldstart", "-tp-allbots",
+                                "-tp-autostart", "1",
                                 "-tp-netreport", str(report),
                                 "-tp-netseconds", str(args.seconds)],
                           timeout=args.seconds + 240,
                           log=LOGS / "coldstart-match.log")
-        step["name"] = "hosts a match with four bots and finishes"
+        step["name"] = "reaches the arena and exits cleanly"
         step["faults"] = read_log_faults(pathlib.Path(step["log"]))
         step["report_written"] = report.exists()
         step["ok"] = report.exists() and not step["faults"]
+        step["detail"] = ("clean" if step["ok"]
+                          else "; ".join(step["faults"][:3]) or "no report written")
+        steps.append(step)
+
+        # ---- 3. did a match actually PLAY --------------------------------
+        #
+        # ⚠️⚠️ THIS IS A SEPARATE STEP BECAUSE IT IS A SEPARATE CLAIM, AND CONFLATING THE TWO IS
+        # THE WHOLE OF `docs/TODO.md` § 143.15. The first green run of this harness printed
+        # "hosts a match with four bots and finishes: PASS" beside a capture reading `round: 0`
+        # and `round active: False`, and every assertion it made was about the PROCESS. A row
+        # that can only be green is not a measurement.
+        state = read_state(report)
+        match_step = {
+            "name": "a real round became active",
+            "seconds": 0.0,
+            "faults": [],
+            "state": state,
+        }
+
+        if state is None:
+            match_step["ok"] = False
+            match_step["detail"] = ("no NetStateReport was written at all, so nothing is known "
+                                    "about what the match did")
+        else:
+            reasons = []
+
+            if state.get("round") is None or state["round"] < 1:
+                reasons.append(f"round is {state.get('round')}, so no round ever started")
+
+            if state.get("active") != "True":
+                reasons.append(f"round active is {state.get('active')} at exit")
+
+            if state.get("networked") != "True":
+                reasons.append(f"networked is {state.get('networked')}: the ready gate this "
+                               f"switch presses through only exists on a networked session")
+
+            moved = [s for s in state.get("seats", []) if s["travelled"] > 1.0]
+            if len(moved) < 2:
+                reasons.append(f"only {len(moved)} seat(s) travelled more than a metre, so the "
+                               f"bots were not driving")
+
+            match_step["ok"] = not reasons
+            match_step["detail"] = "; ".join(reasons) if reasons else (
+                f"round {state['round']}, active, "
+                f"{len(moved)} seats driving, {state.get('sampled')} s sampled")
+
+        steps.append(match_step)
 
         if report.exists():
-            step["report_head"] = "\n".join(
+            steps[1]["report_head"] = "\n".join(
                 report.read_text(encoding="utf-8", errors="replace").splitlines()[:20])
-        steps.append(step)
 
     finally:
         # ⚠️⚠️ RESTORED IN A `finally`, ALWAYS. A crash between the move and the restore would
@@ -228,7 +402,9 @@ def main():
     lines.append("| Step | Verdict | Seconds | Detail |")
     lines.append("|---|---|---|---|")
     for s in steps:
-        detail = "clean" if s["ok"] else "; ".join(s["faults"][:3]) or "no report written"
+        detail = s.get("detail")
+        if detail is None:
+            detail = "clean" if s["ok"] else "; ".join(s["faults"][:3]) or "no report written"
         lines.append(f"| {s['name']} | {'PASS' if s['ok'] else '**FAIL**'} | {s['seconds']} | {detail} |")
     lines.append("")
 
@@ -241,6 +417,13 @@ def main():
             lines.append("```")
             lines.append("")
 
+    lines.append("⚠️⚠️ **THE LAST TWO ROWS ARE DIFFERENT CLAIMS AND USED TO BE ONE.** *\"Reaches "
+                 "the arena and exits cleanly\"* is about the PROCESS: it launched from a cleared "
+                 "profile, identified itself, loaded a map, installed four bots and came back. "
+                 "*\"A real round became active\"* is about the GAME. `docs/TODO.md` § 143.15 is "
+                 "a green run of the first printed under the second's name, with `round: 0` in "
+                 "its own capture.")
+    lines.append("")
     lines.append("⚠️ **A truly clean MACHINE is still a human test.** This clears the profile at "
                  "most; it cannot clear a driver, a firewall rule, a codec or a Visual C++ "
                  "runtime that this machine has and a borrowed one does not. `Attention.md`.")

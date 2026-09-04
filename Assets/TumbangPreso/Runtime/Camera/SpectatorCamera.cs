@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using TumbangPreso.Core;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 namespace TumbangPreso.CameraSystem
@@ -231,16 +232,68 @@ namespace TumbangPreso.CameraSystem
         // | Capacity | 70 frames = 7.0 s | **100 frames = 10.0 s** |
         // | **Buffer at capacity** | **86.1 MB** | **46.1 MB** |
         //
-        // ⚠️ THE SYNCHRONOUS `ReadPixels` IS STILL THERE AND IS STILL A STALL, ten times a second
-        // for the whole match, whether or not anybody presses replay. It is 2.7x cheaper than it
-        // was because the frame is 2.7x smaller, and `AsyncGPUReadback` is the real answer.
-        // `docs/TODO.md` § 134.12 carries it as open rather than pretending it is solved.
+        // ⚠️⚠️ THE SYNCHRONOUS `ReadPixels` IS GONE, 2026-09-05, AND WHAT IT COST WAS A STALL AND
+        // NOT A COPY. `Texture2D.ReadPixels` blocks the CPU until the GPU has finished everything
+        // queued ahead of it and handed the pixels back, ten times a second, for the whole match,
+        // whether or not anybody ever presses replay. On a tournament machine that is a hitch
+        // landing wherever the pipeline happens to be deepest, which is during the effects: 3,600
+        // of them in a four-round Classic set and 7,200 in an eight-round Hero Strike one.
+        // `FrameRateHistogram.MaxSeconds` exists because "tournament pain is a hitch, not a low
+        // average", and this was a hitch the average could not see.
+        //
+        // ⚠️⚠️ `AsyncGPUReadback` INSTEAD, AND THE RING SLOT IS RESERVED AT REQUEST TIME RATHER
+        // THAN FILLED ON COMPLETION. That is the part worth reading twice. A callback that
+        // APPENDS its frame would order the buffer by whenever the driver got round to it, stamp
+        // it with a completion time, and give a marker to whichever frame happened to land next:
+        // three separate corruptions of a clip whose whole value is that it contains the play.
+        // Reserving the slot keeps the capture TIME, the sequence and the marker exactly where
+        // the synchronous version put them, and the only thing that arrives late is the picture.
+        //
+        // ⚠️⚠️ AND THE OUTSTANDING REQUESTS ARE CAPPED. A machine whose GPU is a frame or two
+        // behind will not answer at 10 Hz, and an uncapped requester keeps asking anyway: that is
+        // a queue that grows for the length of a match, holding a texture per entry, on exactly
+        // the hardware least able to afford it. `MaxOutstandingReadbacks` is 4 and a capture that
+        // would exceed it is DROPPED rather than deferred, because a replay is a moving picture
+        // and one missing tenth of a second in it is invisible.
+        //
+        // ⚠️ THE FORMAT IS STILL RGB565 AND THE MEMORY IS STILL 46 MB, which needed the scratch
+        // target to move rather than the readback: a `RenderTextureFormat.RGB565` blit converts
+        // on the GPU for free, so the bytes coming back are already two per pixel and land in the
+        // texture with no CPU pass at all. Reading ARGB32 back and packing it here would have
+        // traded a GPU stall for a 230,400-iteration loop, which is not obviously the better deal.
+        //
+        // ⚠️ THERE IS STILL A SYNCHRONOUS PATH AND IT IS THE FALLBACK, not the default.
+        // `SystemInfo.supportsAsyncGPUReadback` is false on some older Android drivers, which is
+        // a shipping platform here; a replay that silently stops working there is worse than one
+        // that costs what it used to. `docs/TODO.md` § 134.12.
         // -------------------------------------------------------------------
 
         private const float ReplaySampleInterval = 0.10f;
         private const int ReplayFrameCapacity = 100;
         private const int ReplayWidth = 640;
         private const int ReplayHeight = 360;
+
+        /// <summary>
+        /// How many readbacks may be in flight at once.
+        ///
+        /// ⚠️⚠️ IT IS SIZED OFF THE SAMPLE RATE AND THE PIPELINE DEPTH, NOT PICKED. A readback
+        /// normally lands two to three frames after it is asked for, and `ReplaySampleInterval` is
+        /// 0.10 s, which is six frames at 60 Hz: one request is outstanding at a time on a healthy
+        /// machine and this is never reached. Four is what a machine running at 20 Hz with a
+        /// three-frame pipeline needs, and past that the honest reading is that the GPU cannot
+        /// keep up and the requests are a queue rather than a buffer.
+        ///
+        /// ⚠️ EXCEEDING IT DROPS THE CAPTURE RATHER THAN DEFERRING IT. A replay is a moving
+        /// picture watched once at 0.82x and one missing tenth of a second in it is invisible; a
+        /// deferred capture is the unbounded queue this number exists to prevent.
+        /// </summary>
+        private const int MaxOutstandingReadbacks = 4;
+
+        /// <summary>
+        /// ⚠️ THE SCRATCH TARGET IS RGB565 SO THE READBACK IS TWO BYTES A PIXEL. `Graphics.Blit`
+        /// converts on the GPU for free; converting on the way back would be a per-pixel CPU loop.
+        /// </summary>
+        private const RenderTextureFormat ReplayScratchFormat = RenderTextureFormat.RGB565;
 
         /// <summary>
         /// How long a clip runs when there is no marked event to centre on, in seconds.
@@ -288,6 +341,17 @@ namespace TumbangPreso.CameraSystem
         {
             public Texture2D Image;
 
+            /// <summary>
+            /// True until the readback has landed in <see cref="Image"/>.
+            ///
+            /// ⚠️⚠️ A PENDING FRAME IS IN THE RING AND IS NOT IN A CLIP. It has to be in the ring
+            /// or the order and the timestamps are decided by the driver rather than by the
+            /// capture; it must not be in a clip because its texture holds whatever the last
+            /// tenant left in it. `ReadyCount` and `FirstReadyIndex` are the two places that
+            /// difference is spent.
+            /// </summary>
+            public bool Pending;
+
             /// <summary>`Time.unscaledTime` at capture.</summary>
             public float CapturedAt;
 
@@ -312,6 +376,35 @@ namespace TumbangPreso.CameraSystem
         private float _replayRecordAccum;
         private bool _captureReplayFrame;
         private bool _replaying;
+
+        private int _outstandingReadbacks;
+        private int _droppedCaptures;
+        private int _failedReadbacks;
+
+        /// <summary>
+        /// Bumped by <see cref="OnDestroy"/>, compared by every readback callback.
+        ///
+        /// ⚠️⚠️ IT IS THE ONLY THING BETWEEN A LATE CALLBACK AND A DESTROYED TEXTURE. A closure
+        /// handed to the driver outlives whatever it captured, and `Destroy` on a `Texture2D` is
+        /// deferred to the end of a frame, so "the camera is gone" and "the callback has stopped
+        /// arriving" are separated by however far behind the GPU is. Comparing an int captured by
+        /// value is the cheapest possible statement of "this belongs to a session that has ended".
+        ///
+        /// ⚠️ IT IS AN INSTANCE FIELD AND NOT A STATIC, so two spectator cameras in one process
+        /// (a probe replacing the rig mid-run does exactly this) cannot revoke each other's
+        /// captures.
+        /// </summary>
+        private int _captureGeneration;
+
+        /// <summary>
+        /// Whether this device can read a frame back without stalling.
+        ///
+        /// ⚠️ ASKED ONCE, IN `Awake`, RATHER THAN PER CAPTURE. Both halves have to be true: the
+        /// device supports asynchronous readback at all, and it can render the RGB565 scratch
+        /// target the two-byte path depends on. A device failing either falls back to the old
+        /// synchronous copy, which is slower and correct.
+        /// </summary>
+        private bool _asyncReadbackWorks;
 
         /// <summary>
         /// True while a clip is covering the screen.
@@ -425,6 +518,19 @@ namespace TumbangPreso.CameraSystem
             outline.PrototypeEnabled = true;
 
             BindActions();
+
+            // ⚠️⚠️ THE CAPABILITY IS ASKED ONCE, HERE, AND BOTH HALVES OF IT ARE REQUIRED. A
+            // device that cannot do an asynchronous readback keeps the synchronous copy, and so
+            // does one that cannot render the RGB565 scratch target the two-byte path depends on:
+            // falling back to ARGB32 would quietly double the buffer from 46 MB to 92 MB on the
+            // platform least able to afford it, which is the opposite of what § 134.12 asked for.
+            // Asking per capture would be a `SystemInfo` call ten times a second forever.
+            _asyncReadbackWorks = SystemInfo.supportsAsyncGPUReadback &&
+                                  SystemInfo.SupportsRenderTextureFormat(ReplayScratchFormat);
+
+            if (!_asyncReadbackWorks)
+                Debug.Log("[Replay] this device has no asynchronous readback; the capture is the " +
+                          "old synchronous copy, which is slower and correct.");
 
             // Start above and behind the base circle, looking at it. The circle is at the
             // world origin on every map (`Art_Direction.md` §3), so this is map-independent
@@ -918,6 +1024,91 @@ namespace TumbangPreso.CameraSystem
             if (!_captureReplayFrame) return;
             _captureReplayFrame = false;
 
+            // ⚠️ THE CAP IS CHECKED BEFORE ANYTHING IS ALLOCATED. A machine that cannot answer at
+            // 10 Hz must cost nothing extra for trying, which means no scratch target, no texture
+            // and no ring entry for a capture that is going to be dropped.
+            if (_outstandingReadbacks >= MaxOutstandingReadbacks)
+            {
+                _droppedCaptures++;
+                return;
+            }
+
+            var frame = ReserveFrame();
+            if (frame == null) return;
+
+            if (!_asyncReadbackWorks)
+            {
+                CaptureSynchronously(source, frame);
+                return;
+            }
+
+            // ⚠️⚠️ AN RGB565 SCRATCH TARGET, WHICH IS WHAT KEEPS THE READBACK TWO BYTES A PIXEL.
+            // `Graphics.Blit` converts on the GPU at no cost, so the bytes that come back already
+            // match `TextureFormat.RGB565` and `LoadRawTextureData` is a straight memcpy. Asking
+            // for an ARGB32 readback and packing it here would be a 230,400-iteration CPU loop
+            // ten times a second, which is a different tax rather than a smaller one.
+            var scratch = RenderTexture.GetTemporary(ReplayWidth, ReplayHeight, 0,
+                                                      ReplayScratchFormat);
+            Graphics.Blit(source, scratch);
+
+            // ⚠️⚠️ THE GENERATION IS CAPTURED BY VALUE AND IS THE WHOLE OF THE LIFETIME STORY. A
+            // readback callback is a closure the driver invokes on a later frame, and by then this
+            // camera may have been destroyed, the spectator seat given up, or the whole session
+            // ended: writing into `frame.Image` then is writing into a `Texture2D` that
+            // `OnDestroy` has already destroyed. `OnDestroy` bumps `_captureGeneration`, so every
+            // callback in flight compares unequal and returns having touched nothing.
+            int generation = _captureGeneration;
+            _outstandingReadbacks++;
+
+            AsyncGPUReadback.Request(scratch, 0, request =>
+            {
+                RenderTexture.ReleaseTemporary(scratch);
+
+                if (generation != _captureGeneration) return;
+
+                _outstandingReadbacks--;
+
+                // ⚠️ A FAILED READBACK DROPS ITS FRAME AND NOTHING ELSE. `hasError` is a device
+                // reset, a lost context or an alt-tab on some drivers, and the honest response is
+                // one missing tenth of a second in a clip nobody may ever ask for. Retrying would
+                // be the runaway queue this cap exists to prevent, wearing a different name.
+                if (request.hasError)
+                {
+                    _failedReadbacks++;
+                    Forget(frame);
+                    return;
+                }
+
+                // ⚠️ THE FRAME MAY HAVE LEFT THE RING WHILE THE DRIVER WAS THINKING. Ten seconds
+                // of buffer at 10 Hz is a hundred frames, so this only happens on a machine that
+                // is seconds behind, and the frame's texture has already been recycled by then.
+                if (!_replayFrames.Contains(frame)) return;
+
+                var data = request.GetData<byte>();
+                if (frame.Image == null || data.Length != frame.Image.width * frame.Image.height * 2)
+                {
+                    _failedReadbacks++;
+                    Forget(frame);
+                    return;
+                }
+
+                frame.Image.LoadRawTextureData(data);
+                frame.Image.Apply(updateMipmaps: false, makeNoLongerReadable: false);
+                frame.Pending = false;
+            });
+        }
+
+        /// <summary>
+        /// The old path, kept for a device that cannot do a readback at all.
+        ///
+        /// ⚠️⚠️ IT IS A FALLBACK AND NOT A CHOICE. `SystemInfo.supportsAsyncGPUReadback` is false
+        /// on some older Android drivers and Android is a shipping platform for this build
+        /// (`docs/TODO.md` § 130.5 is the last thing that ANR'd it), so a replay that silently
+        /// stopped working there would be a feature deleted for a whole platform in the name of a
+        /// frame time nobody had measured on it.
+        /// </summary>
+        private void CaptureSynchronously(RenderTexture source, ReplayFrame frame)
+        {
             var scratch = RenderTexture.GetTemporary(ReplayWidth, ReplayHeight, 0,
                                                       RenderTextureFormat.ARGB32);
             var previous = RenderTexture.active;
@@ -927,57 +1118,125 @@ namespace TumbangPreso.CameraSystem
                 Graphics.Blit(source, scratch);
                 RenderTexture.active = scratch;
 
-                // ⚠️ RGB565 AND NOT RGB24. See § THE REPLAY BUFFER, AND WHAT IT COSTS: two bytes
-                // a pixel instead of three takes the buffer from 86 MB to 46 MB while holding a
-                // window half again as long, and the banding is invisible on a moving toon-shaded
-                // picture watched once at 0.82x.
-                var texture = new Texture2D(ReplayWidth, ReplayHeight, TextureFormat.RGB565,
-                                            mipChain: false)
-                {
-                    name = "SpectatorReplayFrame",
-                    filterMode = FilterMode.Bilinear,
-                    wrapMode = TextureWrapMode.Clamp,
-                };
-                texture.ReadPixels(new Rect(0, 0, ReplayWidth, ReplayHeight), 0, 0, false);
-                texture.Apply(updateMipmaps: false, makeNoLongerReadable: false);
-
-                var frame = new ReplayFrame
-                {
-                    Image = texture,
-                    CapturedAt = Time.unscaledTime,
-                    Sequence = _replaySequence++,
-                    Slot = -1,
-                };
-
-                // ⚠️⚠️ THE MARKER IS STAMPED ONTO THE FRAME AT CAPTURE, NOT SEARCHED FOR LATER,
-                // AND THAT IS WHAT MAKES EXPIRY FREE. A marker held in a separate list has to be
-                // aged out by hand against a ring that is dropping its oldest frame ten times a
-                // second, and the two go out of step the first time anybody changes the capacity.
-                // A marker that lives ON the frame it describes cannot outlive it: when the
-                // frame is destroyed the marker is gone, which is the brief's *"expire markers
-                // when their frames leave the buffer"* made structural.
-                if (_pendingMarkAt > 0.0f
-                    && Time.unscaledTime - _pendingMarkAt <= ReplaySampleInterval * 2.0f)
-                {
-                    frame.Highlight = true;
-                    frame.Reason = _pendingMarkReason;
-                    frame.Slot = _pendingMarkSlot;
-                    frame.EventAt = _pendingMarkAt;
-                    _pendingMarkAt = -1.0f;
-                }
-
-                _replayFrames.Add(frame);
-                while (_replayFrames.Count > ReplayFrameCapacity)
-                {
-                    DestroyFrame(_replayFrames[0]);
-                    _replayFrames.RemoveAt(0);
-                }
+                frame.Image.ReadPixels(new Rect(0, 0, ReplayWidth, ReplayHeight), 0, 0, false);
+                frame.Image.Apply(updateMipmaps: false, makeNoLongerReadable: false);
+                frame.Pending = false;
             }
             finally
             {
                 RenderTexture.active = previous;
                 RenderTexture.ReleaseTemporary(scratch);
             }
+        }
+
+        /// <summary>
+        /// Takes the ring slot, stamps the time, the sequence and any pending marker, and hands
+        /// back a frame whose picture has not arrived yet.
+        ///
+        /// ⚠️⚠️ EVERYTHING EXCEPT THE PIXELS IS DECIDED HERE, ON THE FRAME THE CAPTURE HAPPENED
+        /// ON. That is what makes an asynchronous readback safe for a clip: order, timestamp and
+        /// marker are all properties of WHEN the shutter opened, and a callback that decided any
+        /// of them would be describing when the driver replied.
+        /// </summary>
+        private ReplayFrame ReserveFrame()
+        {
+            var frame = new ReplayFrame
+            {
+                Image = TakeTexture(),
+                CapturedAt = Time.unscaledTime,
+                Sequence = _replaySequence++,
+                Slot = -1,
+                Pending = true,
+            };
+
+            if (frame.Image == null) return null;
+
+            // ⚠️⚠️ THE MARKER IS STAMPED ONTO THE FRAME AT CAPTURE, NOT SEARCHED FOR LATER,
+            // AND THAT IS WHAT MAKES EXPIRY FREE. A marker held in a separate list has to be
+            // aged out by hand against a ring that is dropping its oldest frame ten times a
+            // second, and the two go out of step the first time anybody changes the capacity.
+            // A marker that lives ON the frame it describes cannot outlive it: when the
+            // frame is destroyed the marker is gone, which is the brief's *"expire markers
+            // when their frames leave the buffer"* made structural.
+            if (_pendingMarkAt > 0.0f
+                && Time.unscaledTime - _pendingMarkAt <= ReplaySampleInterval * 2.0f)
+            {
+                frame.Highlight = true;
+                frame.Reason = _pendingMarkReason;
+                frame.Slot = _pendingMarkSlot;
+                frame.EventAt = _pendingMarkAt;
+                _pendingMarkAt = -1.0f;
+            }
+
+            _replayFrames.Add(frame);
+            while (_replayFrames.Count > ReplayFrameCapacity)
+            {
+                RecycleFrame(_replayFrames[0]);
+                _replayFrames.RemoveAt(0);
+            }
+
+            return frame;
+        }
+
+        /// <summary>Drops a frame whose readback failed, without disturbing the rest of the ring.</summary>
+        private void Forget(ReplayFrame frame)
+        {
+            if (frame == null) return;
+
+            int at = _replayFrames.IndexOf(frame);
+            if (at < 0) return;
+
+            _replayFrames.RemoveAt(at);
+            RecycleFrame(frame);
+        }
+
+        // -------------------------------------------------------------------
+        // § THE TEXTURE POOL
+        //
+        // ⚠️⚠️ THE OLD PATH ALLOCATED A `Texture2D` PER CAPTURE AND DESTROYED IT PER EVICTION,
+        // which is 3,600 native allocations and 3,600 destroys in a four-round Classic set, all
+        // of them the same 460,800 bytes. `Destroy` on a texture is deferred to the end of the
+        // frame, so at 10 Hz the driver is being handed a create and a free of an identically
+        // shaped resource forever, and the brief's *"no unbounded allocation growth"* is only
+        // half of what that costs: the other half is fragmentation on the platform least able to
+        // afford it.
+        //
+        // ⚠️ THE POOL IS BOUNDED BY THE RING, so the memory ceiling is exactly what § THE REPLAY
+        // BUFFER, AND WHAT IT COSTS states: capacity plus the clip that is playing, and nothing
+        // else can exist. `TakeTexture` never creates one when the pool has any.
+        // -------------------------------------------------------------------
+
+        private readonly Stack<Texture2D> _texturePool = new Stack<Texture2D>();
+
+        private Texture2D TakeTexture()
+        {
+            while (_texturePool.Count > 0)
+            {
+                var pooled = _texturePool.Pop();
+                if (pooled != null) return pooled;
+            }
+
+            return new Texture2D(ReplayWidth, ReplayHeight, TextureFormat.RGB565,
+                                 mipChain: false)
+            {
+                name = "SpectatorReplayFrame",
+                filterMode = FilterMode.Bilinear,
+                wrapMode = TextureWrapMode.Clamp,
+            };
+        }
+
+        private void RecycleFrame(ReplayFrame frame)
+        {
+            if (frame == null || frame.Image == null) return;
+
+            // ⚠️ A PENDING FRAME'S TEXTURE GOES BACK IN THE POOL AND ITS CALLBACK IS ALREADY
+            // GUARDED. The callback checks `_replayFrames.Contains(frame)` before writing, and
+            // this is the only place a frame leaves that list, so a late readback finds nothing
+            // to write into rather than scribbling on a texture the ring has re-let.
+            if (_texturePool.Count < ReplayFrameCapacity + 8) _texturePool.Push(frame.Image);
+            else Destroy(frame.Image);
+
+            frame.Image = null;
         }
 
         /// <summary>
@@ -1012,7 +1271,12 @@ namespace TumbangPreso.CameraSystem
                 return;
             }
 
-            if (_replayFrames.Count < 12)
+            // ⚠️⚠️ READY FRAMES, NOT FRAMES. Since the readback became asynchronous the newest
+            // entries in the ring are reservations whose picture has not landed yet, and a clip
+            // built out of those would play whatever the texture pool's previous tenant left in
+            // them. On a healthy machine that is the last one or two; on a struggling one it is
+            // more, and the honest answer on both is "the buffer is still warming up".
+            if (ReadyFrameCount() < 12)
             {
                 UI.Hud.Instance?.ShowToast("REPLAY BUFFER IS STILL WARMING UP", 1.2f);
                 return;
@@ -1065,19 +1329,43 @@ namespace TumbangPreso.CameraSystem
             // every replay and a second replay was impossible for ten seconds. Only the frames
             // BEFORE the clip are dropped now; everything after it stays live, and the ring keeps
             // filling behind the overlay.
-            for (int i = 0; i < first; i++) DestroyFrame(_replayFrames[i]);
+            for (int i = 0; i < first; i++) RecycleFrame(_replayFrames[i]);
 
             _replayClip.Clear();
-            for (int i = first; i <= last; i++) _replayClip.Add(_replayFrames[i]);
+            for (int i = first; i <= last; i++)
+            {
+                // ⚠️ A PENDING FRAME IS SKIPPED RATHER THAN SHOWN OR WAITED FOR. Its texture is a
+                // recycled one holding somebody else's tenth of a second, and waiting for it would
+                // be the synchronous stall this whole change removed, arriving at the one moment
+                // an operator is watching.
+                if (_replayFrames[i].Pending) continue;
+                _replayClip.Add(_replayFrames[i]);
+            }
 
             // The clip's frames are now owned by the clip. Everything after `last` stays in the
             // live ring; everything up to and including `last` leaves it.
+            //
+            // ⚠️ THE PENDING ONES INSIDE THE WINDOW LEAVE THE RING TOO, and their textures go
+            // back to the pool here rather than in `EndReplay`, because the clip never took them.
+            for (int i = first; i <= last; i++)
+                if (_replayFrames[i].Pending) RecycleFrame(_replayFrames[i]);
+
             _replayFrames.RemoveRange(0, last + 1);
+
+            if (_replayClip.Count < 4)
+            {
+                UI.Hud.Instance?.ShowToast("NOTHING TO REPLAY YET", 1.2f);
+                foreach (var frame in _replayClip) RecycleFrame(frame);
+                _replayClip.Clear();
+                return;
+            }
 
             _replayClock = 0.0f;
             _replaying = true;
             _replayReason = string.IsNullOrEmpty(title) ? "LAST PLAY" : title;
             _replaySlot = slot;
+
+            NoteClipWindow();
 
             if (_replayCanvas != null) _replayCanvas.enabled = true;
             RefreshReplayLabels();
@@ -1097,6 +1385,83 @@ namespace TumbangPreso.CameraSystem
                 if (_replayFrames[i].Highlight) return i;
 
             return -1;
+        }
+
+        /// <summary>
+        /// The recorded moment this clip actually contains, or a default one when there is none.
+        ///
+        /// ⚠️⚠️ THIS IS THE JOIN `docs/TODO.md` § 147 ASKS FOR AND IT IS DELIBERATELY THE WHOLE
+        /// OF IT: *"the first useful version is gameplay event -> structured marker -> replay can
+        /// identify that time window"*, and the same entry says not to attempt a broadcast
+        /// director. The clip is still chosen by the FRAMES, exactly as `StartReplay`'s own note
+        /// insists; this only asks the highlight log what it knows about the window those frames
+        /// cover, so an export, a caster overlay or a post-match reel has a structured record of
+        /// the moment rather than a title string.
+        ///
+        /// ⚠️ THE RING'S MARKER AND THE LOG'S MARKER ARE TWO RECORDS OF ONE EVENT AND NEITHER IS
+        /// REDUNDANT. The frame's marker is what CUT the clip and dies with the ten seconds of
+        /// pixels; the log's marker carries the measurement, the round and the importance and
+        /// outlives the whole match. They are matched by time here rather than merged, because
+        /// merging them would put a `Texture2D`'s lifetime on a record meant to survive it.
+        /// </summary>
+        public Core.HighlightMarker LastClipMarker { get; private set; }
+
+        /// <summary>True when <see cref="LastClipMarker"/> describes something real.</summary>
+        public bool LastClipWasMarked { get; private set; }
+
+        private void NoteClipWindow()
+        {
+            LastClipWasMarked = false;
+            LastClipMarker = default;
+
+            if (_replayClip.Count == 0) return;
+
+            // ⚠️ THE WINDOW IS THE CLIP'S OWN, IN MATCH TIME. The frames are stamped with
+            // `Time.unscaledTime` and the markers with seconds since the match began, so the two
+            // are compared through `MatchHighlights.Now`, which is the same clock one subtraction
+            // apart. Comparing raw `unscaledTime` against a marker would be comparing a process
+            // uptime against a match clock.
+            float now = Time.unscaledTime;
+            float matchNow = Diagnostics.MatchHighlights.Now;
+
+            float from = matchNow - (now - _replayClip[0].CapturedAt);
+            float to = matchNow - (now - _replayClip[_replayClip.Count - 1].CapturedAt);
+
+            float best = float.MaxValue;
+            foreach (var marker in Diagnostics.MatchHighlights.Log.Markers)
+            {
+                if (marker.AtSeconds < from || marker.AtSeconds > to) continue;
+
+                // ⚠️ THE MOST IMPORTANT ONE IN THE WINDOW, NOT THE NEWEST. A five second clip
+                // routinely contains a tag and the block that led to it, and the reel wants the
+                // one a person would have picked.
+                float rank = 1.0f - marker.Importance;
+                if (rank >= best) continue;
+
+                best = rank;
+                LastClipMarker = marker;
+                LastClipWasMarked = true;
+            }
+
+            if (LastClipWasMarked)
+                Debug.Log($"[Replay] clip covers {Core.HighlightRules.Describe(LastClipMarker)} " +
+                          $"at {LastClipMarker.AtSeconds:F1}s of the match.");
+        }
+
+        /// <summary>
+        /// How many frames in the ring have a picture in them.
+        ///
+        /// ⚠️ IT IS NOT `_replayFrames.Count`, AND THE DIFFERENCE IS THE READBACK LATENCY. On a
+        /// machine answering promptly it is one or two behind; on one that is not, it is the
+        /// honest measure of how much footage actually exists.
+        /// </summary>
+        private int ReadyFrameCount()
+        {
+            int ready = 0;
+            for (int i = 0; i < _replayFrames.Count; i++)
+                if (!_replayFrames[i].Pending) ready++;
+
+            return ready;
         }
 
         private int IndexAtOrAfter(float when)
@@ -1273,7 +1638,11 @@ namespace TumbangPreso.CameraSystem
 
             _replaySlot = -1;
 
-            foreach (var frame in _replayClip) DestroyFrame(frame);
+            // ⚠️ RECYCLED RATHER THAN DESTROYED. A clip is up to fifty textures of exactly the
+            // shape the ring is about to want back; destroying them means fifty native frees now
+            // and fifty allocations over the next five seconds, which is the churn the pool exists
+            // to remove.
+            foreach (var frame in _replayClip) RecycleFrame(frame);
             _replayClip.Clear();
 
             if (showLiveToast) UI.Hud.Instance?.ShowToast("LIVE", 0.8f);
@@ -1679,13 +2048,42 @@ namespace TumbangPreso.CameraSystem
             if (frame != null && frame.Image != null) Destroy(frame.Image);
         }
 
+        /// <summary>
+        /// ⚠️⚠️ THE GENERATION IS BUMPED FIRST AND EVERY OTHER LINE DEPENDS ON IT. A readback in
+        /// flight holds a closure over a `ReplayFrame` whose `Texture2D` is about to be destroyed,
+        /// and `Destroy` is deferred to the end of the frame, so between here and then a driver
+        /// callback would write into a texture Unity has already scheduled for release. Bumping
+        /// the counter before anything is destroyed makes every callback in flight compare unequal
+        /// and return having touched nothing, which is the whole of "no capture after the session
+        /// is gone".
+        ///
+        /// ⚠️ AND THEN IT WAITS. `WaitAllRequests` is a stall, and this is the one place a stall
+        /// is correct: it is a teardown rather than a frame, and returning without it would leave
+        /// native buffers alive with nothing left to answer them.
+        /// </summary>
         private void OnDestroy()
         {
+            _captureGeneration++;
+
             UnhookHighlights();
+
+            if (_asyncReadbackWorks) AsyncGPUReadback.WaitAllRequests();
+            _outstandingReadbacks = 0;
+
             foreach (var frame in _replayFrames) DestroyFrame(frame);
             foreach (var frame in _replayClip) DestroyFrame(frame);
             _replayFrames.Clear();
             _replayClip.Clear();
+
+            while (_texturePool.Count > 0)
+            {
+                var pooled = _texturePool.Pop();
+                if (pooled != null) Destroy(pooled);
+            }
+
+            if (_droppedCaptures > 0 || _failedReadbacks > 0)
+                Debug.Log($"[Replay] {_droppedCaptures} captures dropped for a full readback " +
+                          $"queue, {_failedReadbacks} readbacks failed.");
         }
 
         private void SyncAnglesFromTransform()
