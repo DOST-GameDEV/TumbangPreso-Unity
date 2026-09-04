@@ -9,7 +9,7 @@ before inventing a task, and update it in the same commit as the work.
 
 ## What is open right now
 
-Twenty-two sections, and this list is the whole of it. Everything else in this repository's history
+Twenty-three sections, and this list is the whole of it. Everything else in this repository's history
 is in the archive with its number unchanged.
 
 ⚠️ **§ 135 and § 136 CLOSED on 2026-09-04 and are in the archive.** § 137 is the pass that closed
@@ -20,6 +20,7 @@ Android thermals need a handset, and a phone joining a PC needs a person to watc
 
 | § | Open work | Where it bites |
 |---|---|---|
+| **141** | Spectator and a driven seat were on screen at the same time, and F1-F4 have two readers | 🧑, with a screenshot: **“IF IT isnt spectator why do i see spectator hud”**. ⚠️⚠️ **The F1-F4 double-read is VERIFIED; the entry path is NOT, and § 141.3 says do not guess.** § 141.2 also breaks the premise `CLAUDE.md` § 4 exempts the nine spectator keys on. § 141 |
 | **140** | The player cannot see the network, and the timeout gives them eight blind seconds | ⚠️⚠️ **The biggest open network item, and it was found by measuring.** There is no ping, no bars, no "reconnecting" anywhere in the game, and `DisconnectTimeoutMS` is 8000, so a peer whose wifi dies keeps a normal-looking arena for eight seconds. **The sampler is built (§ 140.3); the screen is designed and not built (§ 140.4).** § 140.5 is the one that needs a decision rather than code. § 140 |
 | **139** | Settings is four pages now, and the renders found three faults older than the pass | 🧑: *"we have too many settings now"*, *"add tabs or some shit so that they dont have to scroll that much"*. **Done and rendered; it is open because he has not looked at it.** The renders also found blue slider fills and a magenta tick that had shipped the whole port below the fold. § 139 |
 | **138** | A controller Unity does not recognise is invisible to this whole game | 🧑: *"idk how extensive controller support is"*, *"maybe add to todo that it can work for fake controllers and shit too"*. Every controller path reads `Gamepad.current` or a `<Gamepad>/` path, and an unmatched pad is a `Joystick` that none of them see. **The failure is completely silent.** § 138.4 step 1 is the cheap half and needs no pad to build. § 138 |
@@ -114,6 +115,95 @@ taht again"*.
    appear more than once. Renumbering would break every pointer in `CLAUDE.md`, `VISION.md`,
    `FUTURE.md` and the code comments, which is a worse trade than a duplicate heading. **Search by
    title as well as by number.**
+
+---
+
+## 141 · SPECTATOR AND A DRIVEN SEAT WERE ON SCREEN AT THE SAME TIME, AND F1-F4 HAVE TWO READERS ⚠️⚠️ OPEN, 2026-09-04, branch `abilities-rework`
+
+🧑 2026-09-04, with a screenshot: *"dude is this shti spectator?"*, *"if this is spectator why tf
+can i move the character by doing wasd"*, **"IF IT isnt spectator why do i see spectator hud"**.
+
+**He is reading it correctly. Both halves are genuinely live at once**, which is the same sentence
+§ 130's predecessor recorded in his own words on 2026-08-27: *"for some reason im in spectator but
+im also defender"*, *"its so weird bcz spectator has skills and defender UI"*. That one was fixed
+by making the HUD follow the camera rather than the switch (`MatchInstaller` around line 1290).
+**This is a different route into the same broken state.**
+
+### 141.1 WHAT THE SCREENSHOT SHOWS
+
+| On screen | Which system owns it |
+|---|---|
+| A first-person hand holding a tsinelas | `CameraSystem.ViewmodelArms`, on the **gameplay rig** |
+| WASD moves a character | `PlayerInputReader` on a **driven seat** |
+| `FREE FLIGHT · 3.6 m/s` | `SpectatorCamera.StatusText`, so the spectator camera is **in free mode** |
+| `SPECTATOR  F1-F4 player POV · TAB follow · V POV/chase ...` | `SpectatorCamera.ControlsText` via `Hud.BuildSpectatorReadout` |
+| `[C] CONTROLS OVERLAY` | `Hud._spectatorHint` |
+| **`PLAYER#7645` twice in the scoreboard**, once DEFENDER 280 and once ATTACKER 0 | two seats carrying the local player's name |
+
+⚠️ **THE DUPLICATE NAME IS THE PART THAT SAYS "A SEAT WAS SEIZED".** One human name on two rows is
+what a seat handover looks like when the old row was never given back.
+
+### 141.2 ✅ VERIFIED: F1, F2, F3 AND F4 EACH HAVE TWO READERS
+
+Read from the source on 2026-09-04:
+
+| Reader | What it does |
+|---|---|
+| `DebugPlayerSwitcher.Update:114-117` | `Assign(0)` / `Assign(1)` / `Assign(2)` / `Assign(3)`: **seizes that seat**, un-parks it and gives it the input reader |
+| `SpectatorCamera.Update:782-785` | `SelectPlayerPov(0..3)`: puts the spectator camera in that seat's POV |
+
+**One press does both.** That is `CLAUDE.md` § 4's *"one control, one action, per context"* broken,
+and it is the SAME hole § 136.1 found six hours earlier on F1 and did not finish closing.
+
+⚠️⚠️ **§ 136.1 LOOKED STRAIGHT AT THIS AND MISSED IT, AND THE REASON IS WORTH KEEPING.** It found
+three readers of F1, moved the sandbox toggle to F7, and justified the choice with *"F7 is the
+first key past the block `DebugPlayerSwitcher` owns (F1-F4 seats, F5 cycle, F6 default)"*. **It
+treated F1-F4 as belonging to the switcher and never asked whether anything else was also reading
+them.** It was fixing the odd one out rather than auditing the block, and `SpectatorCamera` was
+the reader it walked past.
+
+⚠️⚠️ **AND THIS BREAKS THE PREMISE § 35.3'S EXEMPTION RESTS ON.** `CLAUDE.md` § 4 allows the
+spectator set to reuse gameplay keys for one stated reason: *"a spectator has no body, no seat and
+no `CharacterMotor`, so while watching every gameplay action is inert and while playing none of the
+spectator set is reachable: they can never both fire."* **`DebugPlayerSwitcher` can hand a
+spectator a body**, so there is a state in which both ARE reachable, and the exemption's own
+sentence stops being true. That is a bigger finding than the key clash: **the rule that makes
+nine spectator keys legal has a counter-example.**
+
+### 141.3 ⚠️ WHAT IS NOT YET PROVEN: HOW HE GOT THERE
+
+**Stated plainly rather than guessed at, because the fix depends on it and a wrong one makes this
+worse.** The obvious reconstruction does not survive reading:
+
+- A `SpectatorCamera` only exists when `MatchInstaller` saw `HumanSeat < 0` (`GameLaunch.Spectator`,
+  `GameLaunch.AllBots`, or the authored `_allBots`), and in that branch it also calls
+  `rig.SetActive(false)`.
+- **With the gameplay rig off there should be no first-person arms**, and the screenshot has them.
+- `DebugPlayerSwitcher.ApplySlots` re-follows through `Camera.main.GetComponent<CameraRig>()`, and
+  in that state `Camera.main` is the spectator's own object, which has no `CameraRig`, so that call
+  finds null and does nothing.
+
+**So something re-enabled the gameplay rig, or the spectator camera was created on a path that did
+not disable it.** ⚠️ **DO NOT FIX THIS BY GUESSING.** The next session should ask him which keys he
+pressed and from which screen (practice, tutorial, or a bot match), or reproduce it with
+`-tp-allbots` and F1 through F4, before changing a line.
+
+### 141.4 WHAT DONE LOOKS LIKE
+
+1. **Find the entry path first** (§ 141.3), then fix that.
+2. **Seizing a seat must leave spectating**, whichever path created it: destroy the
+   `SpectatorCamera`, re-enable the gameplay rig, and un-strip the HUD. ⚠️ **`Hud.EnterSpectatorMode`
+   has no inverse today** and *"STRIPS RATHER THAN HIDES"* by design, so this needs one built or
+   the HUD rebuilt.
+3. ⚠️ **The two F1-F4 readers must stop overlapping**, and moving the spectator's POV keys is the
+   cheaper half: the switcher's F1-F4 are the older claim and are what `DebugBar.KeysText`
+   advertises.
+4. ⚠️⚠️ **AND THE `DebugKeys` CATALOGUE IS NOW OVERDUE.** § 136.1 called it *"the real fix"* and
+   left it undone; this entry is the second collision inside that same block in one day, found by
+   a person rather than by a test, because every one of these keys is a literal `Keyboard.current`
+   read outside the input map where `InputMapAndAbilityTests` cannot see it. **Until it exists,
+   grep `Keyboard.current` before binding any literal key** — and that grep is exactly what would
+   have caught this one.
 
 ---
 
