@@ -49,16 +49,26 @@ either of those.
 
 ### The reds that are about the game rather than the suite
 
-⚠️ **These survive in isolation and are the ones worth fixing.** Everything else in the 50 is
-§ 143.1. Do not fix a contamination failure by editing the code it happened to land on.
+⚠️⚠️ **THIS TABLE WAS WRITTEN FROM THE SINGLE-PROCESS RUN AND HALF OF IT WAS WRONG, WHICH IS
+§ 143.1 DEMONSTRATED ON THIS FILE'S OWN CONTENTS.** Both `MatchRunTests` rows **pass in
+isolation**: *"seat 1 never defended: the rotation is broken"* was another fixture's leaked world,
+not a broken rotation, and a gate that reports the taya rotation broken for four runs running when
+it is not is why nobody believed the suite. `PaperPurityProbe.NoFieldHighlightsInBlue` passes too.
+
+**What actually survives isolation, on `64718d3`, after this pass fixed six of the twelve:**
 
 | Case | What it says |
 |---|---|
-| `CarryTests.AHeldSlipperStaysOnTheArm` | 0.092 m against a 0.05 m bound. § 93, fifth sample |
-| `AspectRatioProbes.TheCharacterScreenSurvivesEveryAspectRatio` | 2 labels under the 18-unit floor. ⚠️ **Do not lower the floor**; § 126.13 and `Attention.md` § 12.2 |
-| `MatchRunTests.AWholeMatchRunsAndRotatesTheTaya` | *"seat 1 never defended: the rotation is broken"* |
-| `MatchRunTests.RestoredLataRejectsAnAlreadyAirborneFollowUp` | *"restore protection never expired"* |
-| `PaperPurityProbe.NoFieldHighlightsInBlue` | Unity's default selection colour `a8ceff`. `CLAUDE.md` § 6.4 |
+| `SteeringTests`, three cases | **1.079 m sideways with no input**, the same value every run. § 143.20 |
+| `CarryTests.AHeldSlipperStaysOnTheArm` | **0.084 m** against a 0.05 m bound. § 93, and the isolated number is the real one: the full run reported 7.945 m, on a SETTINGS test |
+| `AspectRatioProbes.TheCharacterScreenSurvivesEveryAspectRatio` | 1 label under the 18-unit floor. ⚠️ **Do not lower the floor**; § 126.13 and `Attention.md` § 12.2 |
+| `PaperPurityProbe.NothingOnTheInventoryDisappeared` | Controls that were on the screens before the paper pass and are not now |
+| `CustomGameScreenProbe`, `PhaseSurfaceLayoutProbe`, `PlayerHubLayoutProbe` | Three labels wider than their boxes at 16:9 720p. `MenuKit.Label` overflows rather than wrapping, so each draws over its neighbour |
+| `InputSurfaceProbe.EveryScreenHasAFocusPathAndReachableTouchTargets` | A press at the centre of Eskinita's `Button_NEXT MAP` lands on something else |
+
+⚠️ **Do not fix a contamination failure by editing the code it happened to land on.** The way to
+tell which is which is `python tools/playmode_suite.py --group <name>`, and it costs about two
+minutes.
 
 ---
 
