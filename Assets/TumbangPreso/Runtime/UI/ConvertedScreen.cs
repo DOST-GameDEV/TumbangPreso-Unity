@@ -123,7 +123,7 @@ namespace TumbangPreso.UI
 
         protected virtual void Update()
         {
-            if (!Input.GetKeyDown(KeyCode.Escape)) return;
+            if (!InputLayer.MenuNav.CancelPressed) return;
 
             // ⚠️⚠️ A SCREEN COVERED BY A TAKEOVER DOES NOT GET THE KEY, AND UNTIL 2026-09-01 IT
             // TOOK IT ANYWAY. `ScreenTakeover.EscapeIsSpoken` carries the receipt in full: one

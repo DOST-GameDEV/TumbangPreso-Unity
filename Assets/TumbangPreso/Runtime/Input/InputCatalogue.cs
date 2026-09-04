@@ -272,6 +272,16 @@ namespace TumbangPreso.InputLayer
             ("CurveRight", "<Gamepad>/dpad/right", "the throw hand is on the trigger"),
 
             ("ReadyUp", "<Gamepad>/buttonEast", "B is the ready in every lobby on a console"),
+
+            // ⚠️⚠️ START, WHICH IS WHAT START HAS MEANT SINCE 1985, AND `SpectatorPause` MOVED
+            // OFF IT RATHER THAN SHARING IT. The two are NOT separable by context: `PausePanel`
+            // opens for a spectator too and renames itself BROADCAST MENU, so one press of Start
+            // would have opened the menu AND fired the tactical pause underneath it, which is
+            // the exact shape of the R collision `Settings.Rebinding`'s class note records
+            // (*"both sides of it are live in the same context"*). That note also says which one
+            // moves: *"when two must part, the one with fewer readers moves."* Every player in
+            // the game reaches the pause menu; the tactical pause is an operator key.
+            ("Pause", "<Gamepad>/start", "start has opened the menu since 1985"),
             ("CleanFeed", "<Gamepad>/dpad/down", "pressed once, between rounds"),
             ("AbilityInfo", "<Gamepad>/select", "held to read, never in a fight"),
 
@@ -291,7 +301,10 @@ namespace TumbangPreso.InputLayer
             ("SpectatorDown", "<Gamepad>/leftTrigger", "spectator context"),
             ("SpectatorMark", "<Gamepad>/dpad/up", "spectator context"),
             ("SpectatorRecall", "<Gamepad>/dpad/down", "spectator context"),
-            ("SpectatorPause", "<Gamepad>/start", "spectator context"),
+            // ⚠️ A, BECAUSE IT WAS START UNTIL 2026-09-04 AND START IS THE PAUSE MENU NOW.
+            // See the `Pause` row above for why the two could not share it. A is free in the
+            // spectator context and is the one button an operator's thumb is already resting on.
+            ("SpectatorPause", "<Gamepad>/buttonSouth", "spectator context"),
             ("SpectatorReplay", "<Gamepad>/dpad/left", "spectator context"),
             ("SpectatorControls", "<Gamepad>/dpad/right", "spectator context"),
         };

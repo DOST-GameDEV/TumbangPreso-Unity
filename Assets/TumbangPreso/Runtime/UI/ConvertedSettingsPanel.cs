@@ -29,7 +29,7 @@ namespace TumbangPreso.UI
         private InputActionAsset _actions;
         private readonly Dictionary<string, Button> _rebindButtons = new Dictionary<string, Button>();
         private string _listening = "";
-        private InputActionRebindingExtensions.RebindingOperation _rebindOp;
+        private RebindSession _rebindOp;
 
         private string _snapshot;
         private bool _backArmed;
@@ -474,8 +474,77 @@ namespace TumbangPreso.UI
                 foreach (var action in group.Actions) BuildRebindRow(list, action);
             }
 
+            BuildControllerRows(list);
             BuildTouchLayoutRows(list);
             BuildRumbleRow(list);
+        }
+
+        /// <summary>
+        /// The door into `InputLayer.ControllerMapScreen`, and the switch for the generic pad.
+        ///
+        /// ⚠️⚠️ THIS IS THE VISIBLE DOOR `CLAUDE.md` § 6.3 DEMANDS, AND `BuildTouchLayoutRows`
+        /// TWENTY LINES DOWN IS THE SAME ARGUMENT FOR THE SAME REASON. Without a row here the map
+        /// is `docs/TODO.md` § 96 again: a whole screen reachable only by somebody who already
+        /// knows it exists. **A labelled row in the controls list, in the same place every other
+        /// control lives, is where a player looking for controls will look.**
+        ///
+        /// ⚠️⚠️ AND IT IS ONE DOOR, NOT ONE PER PLACE SOMEBODY MIGHT WANT IT. § 6.3: *"NEVER ADD A
+        /// SECOND DOOR TO FIX A FINDABILITY PROBLEM. That is exactly how § 92's six-button panel
+        /// happened."* The map is not also on the pause menu, not also on the title screen and
+        /// not also on the hub.
+        ///
+        /// ⚠️ THE ROWS ARE HERE ON EVERY PLATFORM AND ARE NOT HIDDEN BEHIND "IS A PAD PLUGGED
+        /// IN". `BuildTouchLayoutRows` records the same decision in its own words: *"a row that
+        /// appears only on Android is a row nobody can test on the machine this game is built
+        /// on."* The reverse is worse here, because the player most likely to go looking for this
+        /// screen is the one whose controller is NOT being detected.
+        /// </summary>
+        private void BuildControllerRows(Transform list)
+        {
+            BuildGroupHeading(list, "CONTROLLER");
+
+            BuildActionRow(list, "ControllerMapRow", "Controller map", "OPEN",
+                           () => InputLayer.ControllerMapScreen.Open());
+
+            // ⚠️⚠️ THE SWITCH IS ONLY DRAWN WHEN THERE IS SOMETHING FOR IT TO DO, AND THAT IS THE
+            // ONE PLACE THIS FILE HIDES A ROW ON PURPOSE. § 6.2's third claim is about what the
+            // player has to hold in their head; "generic controller mapping" is a sentence that
+            // means nothing at all to somebody whose Xbox pad works, and it would sit in the list
+            // for every one of them. `ControllerWatch.HasUnrecognised` is false unless an
+            // unmatched controller-shaped device is actually attached.
+            //
+            // ⚠️ IT IS A SWITCH RATHER THAN ALWAYS-ON BECAUSE A FLIGHT STICK IS ALSO AN UNMATCHED
+            // JOYSTICK. `InputLayer.GenericPadBridge.Enabled` carries the reasoning: bridging a
+            // throttle axis onto the movement stick holds a verb down for a whole match, and
+            // nothing in the descriptor tells the two apart.
+            if (!InputLayer.ControllerWatch.HasUnrecognised) return;
+
+            _genericPadButton = BuildActionRow(
+                list, "GenericPadRow", "Unrecognised controllers",
+                InputLayer.GenericPadBridge.Enabled ? "ON" : "OFF",
+                () =>
+                {
+                    InputLayer.GenericPadBridge.Enabled = !InputLayer.GenericPadBridge.Enabled;
+                    SetLabelOf(_genericPadButton,
+                               InputLayer.GenericPadBridge.Enabled ? "ON" : "OFF");
+                    SetText("SettingsStatusLabel", InputLayer.ControllerWatch.StatusLine());
+                    MenuSfx.Click();
+                });
+        }
+
+        private Button _genericPadButton;
+
+        /// <summary>
+        /// ⚠️ THE LABEL IS A CHILD `Text`, NOT THE BUTTON'S OWN, so a caller cannot just assign a
+        /// string. `MenuKit.WoodButton` builds the lettering as a child for the reason
+        /// `PaperKit.Chip` gives: the pose has to tint the word without touching the surface.
+        /// </summary>
+        private static void SetLabelOf(Button button, string text)
+        {
+            if (button == null) return;
+
+            var label = button.GetComponentInChildren<Text>(true);
+            if (label != null) label.text = text;
         }
 
         // -------------------------------------------------------------------
@@ -1595,32 +1664,26 @@ namespace TumbangPreso.UI
             RefreshApplyState();
         }
 
+        /// <summary>
+        /// ⚠️⚠️ THE OPERATION ITSELF MOVED TO `Settings.RebindSession` ON 2026-09-04 AND THIS IS
+        /// NOW ONLY THE PANEL'S HALF OF IT. Every ⚠️ note that used to live here lives there, in
+        /// full: the target index, the candidate restriction, the disabled action, the undone
+        /// override before the conflict check. **It moved because there are two rebinding screens
+        /// now** — this one and `InputLayer.ControllerMapScreen` — and a copy of eight
+        /// hard-earned notes is a copy that has seven of them the next time somebody finds the
+        /// ninth. `docs/TODO.md` § 38.5 is what a second path costs in this repository.
+        /// </summary>
         private void BeginRebind(string action)
         {
             if (_rebindOp != null) return;   // one at a time
 
             bool pad = _bindingDevice == InputDeviceKind.Gamepad;
 
-            // ⚠️⚠️ REFUSED BEFORE IT STARTS WHEN THIS ACTION HAS NOTHING ON THIS DEVICE, AND
-            // § 125.6 IS WHY THAT MATTERS RATHER THAN BEING TIDY. `ScreenInputCatalogue` records a
-            // `null` pad path as a written-down answer (`ToggleFullscreen`: a phone has no window
-            // and a pad player is not the player who alt-tabs). Listening on such a row would hand
-            // `TryRebind` a pad control for an action with no pad binding, and the fallback that
-            // used to sit there wrote it over the KEYBOARD binding: *"the row then read Button
-            // South, the key stopped working, and Reset All was the only way back."* `TryRebind`
-            // refuses that now too; this is the half that explains it to the player instead of
-            // making them press a button to find out.
-            if (!Rebinding.HasBindingFor(_actions, action, _bindingDevice))
+            string refusal = RebindSession.RefusalFor(_actions, action, _bindingDevice);
+
+            if (refusal != null)
             {
-                // ⚠️ THE MOVEMENT ROWS GET THEIR OWN SENTENCE, because the generic one would
-                // contradict what the row is showing. On a pad they read "Left Stick", which is
-                // true, and "has no gamepad control" beside it is not the explanation a player
-                // needs: the stick does all four and no direction of it is separately bindable.
-                SetText("SettingsStatusLabel",
-                        pad && Rebinding.IsMovePart(action)
-                            ? "Movement is one control on a pad. The stick does all four."
-                            : $"\"{Rebinding.LabelFor(action)}\" has no " +
-                              $"{(pad ? "gamepad" : "keyboard or mouse")} control to rebind.");
+                SetText("SettingsStatusLabel", refusal);
                 MenuSfx.Error();
                 return;
             }
@@ -1634,94 +1697,53 @@ namespace TumbangPreso.UI
 
             SetButtonText(action, "…");
 
-            // ⚠️⚠️ THE TARGET IS THIS PAGE'S BINDING INDEX, NOT `ResolveActionAndBindingIndex`'S.
-            // That one calls `FirstKeyboardBinding` and always answers the key, which was correct
-            // when an action had one binding. A rebind started from the gamepad page has to write
-            // its override onto the PAD's index or the operation quietly edits the keyboard.
-            if (!Rebinding.ResolveBindingIndexFor(_actions, action, _bindingDevice,
-                                                  out var target, out int targetIndex))
+            _rebindOp = RebindSession.Begin(_actions, action, _bindingDevice, (outcome, conflict) =>
             {
-                CancelRebind();
-                return;
-            }
+                _rebindOp = null;
 
-            // The action must be disabled while it is being rebound, or the press being captured
-            // also fires the verb it is bound to.
-            target.Disable();
-
-            // ⚠️⚠️ THE CANDIDATES ARE RESTRICTED TO THE PAGE'S OWN DEVICE, AND WITHOUT THAT THE
-            // PAGE IS A LIE. On the gamepad page a keyboard press would otherwise be accepted,
-            // and `TryRebind` writes the override onto the binding for the device that was
-            // PRESSED: the player would be looking at a pad row, press a key, and have their
-            // KEYBOARD binding silently changed while the row in front of them did not move.
-            //
-            // ⚠️ TWO `WithControlsHavingToMatchPath` CALLS, BECAUSE "KEYBOARD AND MOUSE" IS TWO
-            // DEVICES AND ONE PAGE. The call is additive and a control matching ANY listed path
-            // is accepted, so the desktop page takes a key or a mouse button; the pad page names
-            // `<Gamepad>` twice, which costs nothing and keeps this a single chain.
-            // `Rebinding.PathIsFor` carries the same grouping on the reading side.
-            //
-            // ⚠️ THE CANCEL IS THE PAD'S OWN B ON THE PAD PAGE, because a pad player must be able
-            // to abort without reaching for a keyboard (`CLAUDE.md` § 4a: *how is this reached on
-            // a pad?*). Escape still works there as well: `Update`'s guard hands it to
-            // `CancelRebind` on this page rather than returning, so § 6.3's rule holds and Escape
-            // backs out the innermost layer on every screen.
-            _rebindOp = target.PerformInteractiveRebinding()
-                .WithTargetBinding(targetIndex)
-                .WithControlsExcluding("<Mouse>/position")
-                .WithControlsExcluding("<Mouse>/delta")
-                .WithControlsHavingToMatchPath(pad ? "<Gamepad>" : "<Keyboard>")
-                .WithControlsHavingToMatchPath(pad ? "<Gamepad>" : "<Mouse>")
-                .WithCancelingThrough(pad ? "<Gamepad>/buttonEast" : "<Keyboard>/escape")
-                .OnCancel(op =>
+                switch (outcome)
                 {
-                    target.Enable();
-                    MenuSfx.Back();
-                    CancelRebind();
-                })
-                .OnComplete(op =>
-                {
-                    var control = op.selectedControl;
-                    op.Dispose();
-                    _rebindOp = null;
-                    target.Enable();
-
-                    // The override the operation already applied is undone first, because the
-                    // conflict check has to run against the other actions and report a refusal
-                    // rather than leave two verbs sharing one key.
-                    target.RemoveBindingOverride(targetIndex);
-
-                    // ⚠️ THE LINE ABOVE IS A BINDING CHANGE TOO, even though it is undoing one,
-                    // and `Rebinding.Revision` is what lets a screen cache a key label. The net
-                    // effect is zero only when `TryRebind` goes on to accept; on a refusal this
-                    // is the write that restores the original key.
-                    Rebinding.Invalidate();
-
-                    string conflict = Rebinding.TryRebind(_actions, action, control);
-
-                    if (conflict == null)
-                    {
+                    case RebindOutcome.Bound:
                         SetText("SettingsStatusLabel", $"\"{Rebinding.LabelFor(action)}\" rebound.");
                         MenuSfx.Click();
-                    }
-                    else
-                    {
+                        break;
+
+                    case RebindOutcome.Conflict:
                         SetText("SettingsStatusLabel",
                                 $"That key is already \"{conflict}\". Choose a different key.");
                         MenuSfx.Error();
-                    }
+                        break;
 
-                    RefreshBindingLabels();
-                    _listening = "";
-                    RefreshApplyState();
-                })
-                .Start();
+                    default:
+                        MenuSfx.Back();
+                        SetText("SettingsStatusLabel", "Rebind cancelled.");
+                        break;
+                }
+
+                RefreshBindingLabels();
+                _listening = "";
+                RefreshApplyState();
+            });
+
+            if (_rebindOp == null) CancelRebind();
         }
 
+        /// <summary>
+        /// ⚠️⚠️ `Dispose` RATHER THAN `Cancel`, AND THE DIFFERENCE IS ONE SOUND PLAYED TWICE.
+        /// `RebindSession.Cancel` reports `Cancelled` through the callback, which plays
+        /// `MenuSfx.Back()` and writes the status line; **this method's two callers already do
+        /// both** (`Update`'s Escape branch plays Back and then calls here). `Dispose` still
+        /// re-enables the disabled action, which is the half that matters: a session abandoned
+        /// without it leaves a verb switched off for the rest of the run, and the symptom is one
+        /// control that has quietly stopped working in a match nobody connects to a closed menu.
+        /// </summary>
         private void CancelRebind()
         {
-            _rebindOp?.Dispose();
+            var session = _rebindOp;
             _rebindOp = null;
+
+            session?.Dispose();
+
             _listening = "";
             SetText("SettingsStatusLabel", "Rebind cancelled.");
             RefreshBindingLabels();
@@ -2198,6 +2220,14 @@ namespace TumbangPreso.UI
             if (_rebindOp != null || _listening != "")
             {
                 if (_bindingDevice != InputDeviceKind.Gamepad) return;
+
+                // ⚠️⚠️ ESCAPE ONLY, AND THIS IS THE ONE PLACE IN THE FRONT END THAT MUST NOT GO
+                // THROUGH `InputLayer.MenuNav`. `MenuNav.CancelPressed` is Escape OR the pad's
+                // B, and the rebind operation four hundred lines up already cancels through
+                // `<Gamepad>/buttonEast` itself. Routing this line through it would make one
+                // press of B run `CancelRebind` twice: once from the operation's `OnCancel` and
+                // once from here, with a second `MenuSfx.Back()` on top of it. The pad's own
+                // cancel is not missing here, it is handled one layer down.
                 if (!Input.GetKeyDown(KeyCode.Escape)) return;
 
                 MenuSfx.Back();
@@ -2205,7 +2235,16 @@ namespace TumbangPreso.UI
                 return;
             }
 
-            if (!Input.GetKeyDown(KeyCode.Escape)) return;
+            if (!InputLayer.MenuNav.CancelPressed) return;
+
+            // ⚠️⚠️ A TAKEOVER OVER THIS PANEL GETS THE PRESS, NOT THIS PANEL, AND THIS OVERRIDE
+            // NEVER ASKED. `ConvertedScreen.Update` carries the check and its receipt in full
+            // (*"one press closed the character maker AND backed the screen underneath it out to
+            // the main menu"*), and this method overrides it without calling base. That cost
+            // nothing while no takeover ever opened over settings — and `ControllerMapScreen`
+            // opens from a row in this very list. Without this line, one Escape on the map closes
+            // the map AND the panel behind it. `CLAUDE.md` § 6.3: innermost layer first.
+            if (ScreenTakeover.EscapeIsSpoken) return;
 
             MenuSfx.Back();
             Back();

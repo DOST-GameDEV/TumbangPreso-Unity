@@ -469,7 +469,7 @@ namespace TumbangPreso.UI
                 // innermost open thing: with the log up it closes the log, and only after that
                 // does it leave the screen. `CLOSE` on the overlay is the same call.
                 if (_historyPanel != null && _historyPanel.activeSelf &&
-                    Input.GetKeyDown(KeyCode.Escape))
+                    InputLayer.MenuNav.CancelPressed)
                 {
                     _historyPanel.SetActive(false);
                 }
@@ -478,7 +478,7 @@ namespace TumbangPreso.UI
 
             if (Typing)
             {
-                if (Input.GetKeyDown(KeyCode.Escape)) Close();
+                if (InputLayer.MenuNav.CancelPressed) Close();
                 return;
             }
 

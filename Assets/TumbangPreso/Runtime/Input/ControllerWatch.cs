@@ -95,10 +95,11 @@ namespace TumbangPreso.InputLayer
             // not understand has been attached. An error here would fail every test run on a
             // machine that happens to have a flight stick plugged in.
             Debug.LogWarning(
-                "[Controller] A controller was found that this game does not recognise, so it " +
-                "will not work: " + line + ". It is a Joystick rather than a Gamepad, which " +
-                "means Unity matched no layout for it and every <Gamepad> binding in the game " +
-                "resolves to nothing on it. See docs/TODO.md section 138.");
+                "[Controller] A controller was found that this game does not recognise: " + line +
+                ". It is a Joystick rather than a Gamepad, which means Unity matched no layout " +
+                "for it and every <Gamepad> binding in the game resolves to nothing on it. " +
+                "InputLayer.GenericPadBridge will drive it through a guessed mapping unless the " +
+                "player has switched that off. See docs/TODO.md section 138.");
         }
 
         /// <summary>
@@ -112,9 +113,24 @@ namespace TumbangPreso.InputLayer
         {
             if (Seen.Count == 0) return "";
 
+            // ⚠️⚠️ THE SENTENCE CHANGED WHEN `GenericPadBridge` LANDED AND LEAVING THE OLD ONE
+            // WOULD HAVE BEEN WORSE THAN SAYING NOTHING. It read *"so it will not work"*, which
+            // was true on 2026-09-04 in the morning and false by the afternoon: § 138.4 step 2
+            // now drives an unmatched pad through a guessed mapping. A screen that tells a player
+            // their working controller is broken sends them to unplug it, which is
+            // `docs/VISION.md` § 3's rule about teaching the wrong thing in its widest form.
+            if (!GenericPadBridge.Enabled)
+                return Seen.Count == 1
+                    ? "A controller was found that this game does not recognise, and the generic "
+                      + "mapping is switched off, so it will not work."
+                    : $"{Seen.Count} controllers were found that this game does not recognise, "
+                      + "and the generic mapping is switched off.";
+
             return Seen.Count == 1
-                ? "A controller was found that this game does not recognise, so it will not work."
-                : $"{Seen.Count} controllers were found that this game does not recognise.";
+                ? "A controller was found that this game does not recognise. It is being driven "
+                  + "by a guessed mapping: open CONTROLLER MAP to check it."
+                : $"{Seen.Count} controllers were found that this game does not recognise. They "
+                  + "are being driven by a guessed mapping: open CONTROLLER MAP to check it.";
         }
     }
 }

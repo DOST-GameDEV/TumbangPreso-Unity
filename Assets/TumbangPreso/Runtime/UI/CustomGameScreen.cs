@@ -123,7 +123,7 @@ namespace TumbangPreso.UI
         private void Update()
         {
             if (!IsOpen) return;
-            if (!Input.GetKeyDown(KeyCode.Escape)) return;
+            if (!InputLayer.MenuNav.CancelPressed) return;
 
             ScreenTakeover.ConsumeEscape();
             MenuSfx.Back();
