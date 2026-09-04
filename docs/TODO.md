@@ -7,6 +7,66 @@ before inventing a task, and update it in the same commit as the work.
 
 ---
 
+## CURRENT IMPLEMENTATION QUEUE
+
+⚠️⚠️ **START HERE, AFTER `CLAUDE.md` AND `VISION.md`. THIS IS AN EXECUTION INDEX AND NOT A
+REPLACEMENT FOR THE REASONING BELOW IT.** Each row is work a coding session can pick up and finish
+on its own. **Use the detailed numbered sections further down for the evidence, the measurements
+and the acceptance criteria**; they are why each row is worded the way it is, and a row summarised
+away from its section loses the receipt that made it a task.
+
+⚠️ **Do not resurrect archived work unless current code, a current test, or a row in this queue
+gives a concrete reason.** [`TODO_Archive.md`](TODO_Archive.md) holds closed sections whole, with
+their numbers, because the reasoning stays valuable. It is not a backlog.
+
+⚠️ **Work that needs a person, a handset, an eye or a ruling is NOT here.** It is in
+[`../Attention.md`](../Attention.md), which exists so this queue stays actionable. Adding a
+human-only item here is how the queue stops being read.
+
+**Nationals is the deadline this queue is ordered against.** P0 is "a match could be lost or a
+build could ship wrong"; P1 is "this will cost an hour at the venue"; P2 is real work that is not
+either of those.
+
+| P | § | What is open | Done looks like |
+|---|---|---|---|
+| **P0** | 142.1 | **The full PlayMode suite is not a release gate and running it twice would only reproduce that twice.** Measured again on `e85b0fc`: **165 cases, 107 passed, 50 failed**. The red set is overwhelmingly cross-fixture contamination, not 50 bugs: a *settings* case fails carrying `CarryTests`' slipper message, twelve fixtures die on `MissingReferenceException`, and nine report a screen or arena that "was never built". § 126.8 proved the same thing three times and named the fix it did not build. | `tools/playmode_suite.py --gate` green **twice back to back**, with every discovered fixture appearing in exactly one group and in the aggregated results. **Coverage is asserted, so a group that silently ran nothing is a failure rather than a pass.** |
+| **P0** | 142.2 | **A build cannot say what it is.** Nothing in a shipped player carries the commit, and `NetSession.ProtocolVersion` is only readable by trying to join something. Two artifacts from different commits refuse each other correctly and read as a bug. | `build-identity.json` written by `GameBuilder` into both players, carrying SHA, protocol, target, app version, UGS project and timestamp; a diagnostic route in the game that prints it; `tools/qualify.py --stage identity` refusing a Windows/Android pair that disagree. |
+| **P0** | 142.3 | **Nothing defines what a tournament match IS**, so "mostly tournament" is reachable by inheriting one static from the previous match. ✅ The rules half is built and asserted (`TournamentPreset`, 525 Core tests). **Open: the Unity half** that reads the eight live modifiers and refuses. | `TournamentPreset.Apply()` clears every named modifier, a check reports the live value of each against `TournamentPreset.Modifiers`, and a test proves a tournament match cannot start with one set. |
+| **P0** | 142.4 | **No soak coverage at all.** Every measurement in this repository is of a FIRST match. A game that works once and degrades by match five is not nationals ready, and nothing here would notice. | A harness that runs `launch → lobby → match → results → rematch → lobby → match` for enough iterations to expose accumulated state, watching exceptions, duplicate callbacks, growing object counts, stuck rounds and score duplication, and writing a machine-readable summary tied to the SHA. |
+| **P0** | 142.5 | **89 event subscriptions in `Runtime/` and no audit that each is paired with an unsubscribe.** § 126.8's whole finding is objects outliving the thing that made them; this is the same class one level up, and it is what makes match five different from match one. | An audit that pairs every `+=` with a `-=` on the same target and reports the orphans, gating in `qualify.py`; the real orphans fixed. |
+| **P1** | 142.6 | **Nothing validates a tournament scene's dependencies before a human opens the build.** `SceneScriptCheck` catches a component the player cannot bind; it does not catch a missing prefab, spawn point or camera reference. | A check that instantiates every tournament-relevant scene and asserts its required references exist, in `Checks.RunAll`, failing qualification. |
+| **P1** | 142.7 | **Duplicate, stale and reordered requests are not tested against the authoritative paths.** The architecture is right (49 authority sites, 0 ungated on another body) and that is an argument, not a test. | Tests proving a replayed score-causing request, a doubled ability activation and an ownership change in flight cannot award twice, cast twice or corrupt round state. |
+| **P1** | 142.8 | **The eight source audits only run when somebody remembers.** Current: 49 authority sites / 30 gated / **0 ungated on another body**; 59 wire entries / **0 unreachable**; 61 payloads / **0 mismatched**. | ✅ `tools/qualify.py --stage audits` runs all of them and fails the gate on any finding. Open: the four new audits it lists are written and clean. |
+| **P1** | 142.9 | **Host loss is not proven deterministic.** `DisconnectTimeoutMS` is **8000**, so a peer whose wifi dies keeps a normal-looking arena for eight seconds (§ 140). Migration is deliberately unsupported; the failure must still be one outcome on every peer. | Tests proving host and client cannot disagree about score, round, taya, ownership, winner or disconnect state, and that host loss reaches a clean shutdown with a stated reason rather than a half-alive match. ⚠️ The reconnect/forfeit RULING is `Attention.md`, not this row. |
+| **P1** | 138 | **A controller Unity does not recognise is invisible to the whole game.** ✅ It warns now (`ControllerWatch`). Open: the fallback that makes such a pad actually play. | A generic `Joystick` fallback covering movement, look and the primary verbs, with synthetic-device tests; **no double input when one physical pad is seen by both paths**; `Gamepad` behaviour unchanged. ⚠️ The hardware matrix is `Attention.md`. |
+| **P1** | 134.12 | **Replay capture is a synchronous GPU stall**: `Texture2D.ReadPixels` at ~10 Hz into a ~46 MB buffer. A 90 s round is 900 captures; four rounds is 3,600. | `AsyncGPUReadback` or equivalent, bounded memory, no runaway queue, disposal proven, no capture after the session is gone, and a before/after measurement. |
+| **P2** | 142.10 | **`VISION.md` § 2 rule 1 contradicts itself**: "1.8 to 2.5 m of radius, which is 3 to 8 per cent" of 196 m². 1.8 m is **5.19%** and 2.5 m is **10.02%**; 3% and 8% are **1.37 m** and **2.23 m**. | One coherent statement, reached by reading the abilities rather than by picking a side. |
+| **P2** | 142.11 | **Every ability footprint number in the repository predates the current implementations.** The 81.9% worst frame and Zack's 27.2% corridor were measured on code that has since been retuned twice. | A generated, SHA-stamped measurement of instantaneous and persistent footprint, live instance count, overlap and worst credible frame, with regression bounds from VISION where they are valid. |
+| **P2** | 142.12 | **Ability comments state cooldowns the constructors disagree with.** Confirmed on `e85b0fc`: Zack's Bolt Sprint comment says **30 s** and the constructor is **46.0f**; Sean's Flame Rush says **34 s** and is **50.0f**, and its comment also calls Zack's "30". | The drift fixed, and an audit that stops an authoritative-looking number in a comment from silently becoming false. |
+| **P2** | 16 | **One bot run is not balance evidence.** Eight matches at shipped settings spread **58 to 100 throws**, about 20 per cent. | A multi-seed sweep recording SHA, seed, config,each run, mean, median and spread, so no threshold is set against noise. |
+| **P2** | 142.13 | **Storage failures are not handled.** Profile, replay, log and save writes assume the directory exists and the disk accepts. | A missing directory, denied access, full disk or corrupt file degrades safely and never stops a match starting or finishing unless the data is genuinely required. |
+| **P2** | 142.14 | **Gameplay timing is not audited for wall-clock dependence.** 14 `DateTime` reads in `Runtime/`. Changing the system clock mid-match must not corrupt it. | An audit separating persistent timestamps (wall clock, correct) from gameplay timing (monotonic, required), and any real misuse fixed. |
+| **P2** | 142.15 | **There is no cold-start test.** Every run here inherits an editor, a `Library` and a previous session's files. | A clean-state run of the real artifact through launch → playable → host/join → finish a Classic match → rematch, verifying no dependence on developer state. |
+| **P2** | 142.16 | **No crash or failure bundle.** At the venue, evidence lives in five directories. | One command that gathers log, recent exceptions, SHA, protocol, platform, version and recent match state, with no credentials in it. |
+| **P2** | 141 | Spectator and seat ownership: the duplicate scoreboard name, and regression cover for repeated F1-F4 transitions | § 141 |
+| **P2** | 93 | A held tsinelas drifts **0.084 m** from the hand, four samples, not a flake | § 93 |
+| **P2** | 127 | The taya ring and attacker disc need their non-colour distinction finished | § 127.3 |
+
+### The reds that are about the game rather than the suite
+
+⚠️ **These survive in isolation and are the ones worth fixing.** Everything else in the 50 is
+§ 142.1. Do not fix a contamination failure by editing the code it happened to land on.
+
+| Case | What it says |
+|---|---|
+| `CarryTests.AHeldSlipperStaysOnTheArm` | 0.092 m against a 0.05 m bound. § 93, fifth sample |
+| `AspectRatioProbes.TheCharacterScreenSurvivesEveryAspectRatio` | 2 labels under the 18-unit floor. ⚠️ **Do not lower the floor**; § 126.13 and `Attention.md` § 12.2 |
+| `MatchRunTests.AWholeMatchRunsAndRotatesTheTaya` | *"seat 1 never defended: the rotation is broken"* |
+| `MatchRunTests.RestoredLataRejectsAnAlreadyAirborneFollowUp` | *"restore protection never expired"* |
+| `PaperPurityProbe.NoFieldHighlightsInBlue` | Unity's default selection colour `a8ceff`. `CLAUDE.md` § 6.4 |
+
+---
+
 ## What is open right now
 
 Twenty-three sections, and this list is the whole of it. Everything else in this repository's history
@@ -111,10 +171,223 @@ taht again"*.
    *"the 2026-08-29 balance-and-controls batch"* was 973, and neither was ever open work: they were
    records of a day. **Write the batch report, then archive it in the same commit.** Twelve of the
    twenty biggest sections in this file were dated batch reports.
-4. **The numbers are not unique and that is not being fixed.** § 53, § 63, § 64 and § 65 each
+4. ⚠️⚠️ **THE QUEUE AT THE TOP IS AN INDEX AND THE NUMBERED SECTIONS ARE THE EVIDENCE.** Start a
+   session with `CURRENT IMPLEMENTATION QUEUE`; use the detailed section each row points at for the
+   measurements and the acceptance criteria. **Do not resurrect archived work unless current code,
+   a current test, or a row in the queue gives a concrete reason.** When something closes, take its
+   row OUT of the queue in the same commit that archives its section, or the index starts lying in
+   the one direction nobody checks.
+5. **The numbers are not unique and that is not being fixed.** § 53, § 63, § 64 and § 65 each
    appear more than once. Renumbering would break every pointer in `CLAUDE.md`, `VISION.md`,
    `FUTURE.md` and the code comments, which is a worse trade than a duplicate heading. **Search by
    title as well as by number.**
+
+---
+
+## 142 · THE NATIONALS HARDENING PASS: A QUALIFICATION THAT CANNOT LIE ⚠️⚠️ IN PROGRESS, 2026-09-04, branch `main`
+
+**Nationals is about three months out. This entry is not a bug list; it is the pass that makes the
+game hard to break, hard to ship wrongly, and easy to diagnose in a hall.** Every subsection below
+carries its own measurement taken on `e85b0fc`, because the thing this pass is mostly fighting is
+numbers quoted from a run nobody can tie to a commit.
+
+⚠️⚠️ **THE ORGANISING FINDING, AND IT IS THE SAME ONE § 126.8 FOUND THREE TIMES: A GREEN SUBSET IS
+NOT A RELEASE CERTIFICATION.** Every PlayMode number quoted in every handoff in this file came from
+a targeted run. The full suite has been 42 red, then 41, then 56, and now 50, and the RED SET MOVES
+between runs on unchanged code. A gate whose red set moves is not measuring the code.
+
+### 142.1 ⚠️⚠️ OPEN: THE BASELINE ON `e85b0fc`, AND WHY "RUN IT TWICE" WOULD NOT HAVE HELPED
+
+**One full PlayMode run, `-buildTarget Win64`, the shipped exclusions, `Logs/play-baseline.xml`:**
+
+```
+165 cases, 107 passed, 50 failed, 8 skipped, 619 s
+```
+
+⚠️⚠️ **THE HANDOFF THAT COMMISSIONED THIS PASS ASKED FOR THE FULL SUITE TO PASS TWICE BACK TO BACK
+AS A NATIONALS GATE. THAT WOULD HAVE BEEN THE WRONG GATE, AND THE EVIDENCE IS IN THE RUN ITSELF.**
+Two things in the failure list settle it:
+
+1. **`SettingsScrollProbe.TheSettingsListScrollsAndItsBarCoversNothing` failed with the message
+   *"a held slipper drifted 7.945 m from the hand while its carrier walked"*.** That is
+   `CarryTests`' assertion, reported against a settings test. **A suite that attributes one
+   fixture's failure to another fixture is not measuring either of them.** (It is also a 7.945 m
+   drift against a 0.05 m bound, where § 93's real, isolated samples are 0.084 to 0.092 m: the
+   number itself is a leaked object, not a carry bug.)
+2. **Twelve fixtures died on `MissingReferenceException: the object has been destroyed`**, and nine
+   more reported that a screen or an arena *"was never built"*: *"MatchSetup has no
+   CharacterSelectPanel to open"* (7 cases), *"the arena built no SliceRunner"* (2), *"the lobby
+   must have a LobbyChat"*, *"no EventSystem"*, *"the sign-in screen: nothing was built, so this
+   proves nothing"*.
+
+**Running that twice produces the same contamination twice and calls it reproducible.**
+
+⚠️ **§ 126.8 ALREADY NAMED THE TWO WAYS OUT AND BUILT NEITHER**: every fixture tears its world down
+(attempted; § 126.8d measured it moving eleven failures from one side to the other and **withdrew**
+it), or **the suite is declared to run in named groups and a single-process full run stops being
+quoted as a gate at all.** This pass takes the second, because § 126.8d's own measurement is the
+argument against the first: *"what the right version needs is a measurement nobody has taken: WHICH
+persistent object a match install depends on."* Grouping does not need that measurement. It removes
+the question.
+
+**Done looks like** `tools/playmode_suite.py --gate`: fixtures partitioned into groups that cannot
+reach each other, one Unity launch per group, results aggregated into one verdict, **and coverage
+asserted so a group that silently ran nothing fails instead of passing.** Green twice.
+
+⚠️⚠️ **AND IT MUST NOT BECOME A THIRD CATEGORY EXCLUSION.** § 126.8d bans that explicitly: a
+category meaning *"these tests do not work next to each other"* hides this finding rather than
+recording it. **A group is an isolation boundary, not an exemption: every fixture still runs, in
+exactly one group, and the aggregate is the number quoted.**
+
+### 142.2 ⚠️ OPEN: A BUILD CANNOT SAY WHAT IT IS
+
+`GameVersion.DisplayString` prints `v1.00` in the corner and `BuildBranch` stamps the branch, and
+neither answers the question an operator actually has at a venue, which is **"are these two
+machines running the same game"**.
+
+- `NetSession.ProtocolVersion` is **23** on this commit, read from
+  `Assets/TumbangPreso/Runtime/Net/NetSession.cs`. ⚠️ **It is read from source by
+  `tools/qualify.py` and copied into no document**; this line is a measurement with a date on it,
+  not a second source of truth. The preamble to this file has gone stale on this number four times.
+- **Peers on different protocol numbers refuse each other by design.** A Windows player and an
+  .apk built from different commits therefore fail in a way that reads exactly like a network bug,
+  and `Attention.md` § 1 already warns a human about it in prose. Prose is not a gate.
+
+**Done looks like** a `build-identity.json` emitted into both players by `GameBuilder`, a
+diagnostic route that prints it without opening source, and `tools/qualify.py --stage identity`
+refusing a pair that disagree on SHA or protocol.
+
+### 142.3 ⚠️ IN PROGRESS: THE TOURNAMENT PRESET
+
+✅ **The rules half landed 2026-09-04.** `Packages/com.tumbangpreso.core/Runtime/TournamentPreset.cs`
+is the single answer to "what is a nationals match", and it copies no number: `Rounds` asks
+`MatchRules.RoundCountFor`, `RoundSeconds` asks `Balance.RoundTime`, `Tsinelas` asks
+`CustomGameRules.StartingTsinelas`. `docs/VISION.md` § 1.1's *"CLASSIC IS THE TOURNAMENT RULESET"*
+is a constant now, so changing the ruling fails a test rather than being an argument.
+
+⚠️⚠️ **THE HAZARD IT REMOVES IS REAL AND IS ASSERTED: `new CustomRules()` IS HERO STRIKE, EIGHT
+ROUNDS.** The field initialisers say so, correctly for that class, and any start path that builds a
+bare rule set is therefore a Hero Strike match wearing a Classic tournament's name.
+`TournamentPresetTests.ABareCustomRulesIsNotATournamentMatchAndThatIsWhyThePresetExists`.
+
+**`TournamentPreset.Modifiers` is the deliverable half**: eight named switches, each with the reason
+it is on the list, because the NAME is what gets forgotten when somebody invents switch number nine.
+⚠️ **One row's safe value is `true`** (`AIController.BotsEnabled`): turning bots off does not make a
+match more human, it makes unfilled seats inert.
+
+⚠️ **The stale claim is confirmed stale.** `PracticeSandbox` has no `const bool NoCooldowns = true`
+and never reaches a networked match: `Allowed => !NetAuthority.IsNetworked` is asked every frame
+rather than latched, so a sandbox left on in a solo match stops answering true the moment a session
+exists. **It is on the modifier list anyway**, because the guard is the thing under test and because
+a lit NO COOLDOWNS toggle in a tournament room is a HUD disagreeing with the game.
+
+**Open: the Unity half**, which reads the eight live values and refuses.
+
+### 142.4 ⚠️⚠️ OPEN: EVERY MEASUREMENT IN THIS REPOSITORY IS OF A FIRST MATCH
+
+`BotBehaviourProbe` runs a match. `MatchRunTests` runs a match. `GameplayShots` photographs a match.
+**Nothing anywhere runs the fifth match after the fourth rematch**, which is the shape of a
+tournament afternoon and the shape of every accumulated-state defect.
+
+**Done looks like** a soak harness cycling `launch → lobby → match → results → rematch → lobby →
+match`, watching exceptions, assertion failures, memory growth, GC pressure, stuck rounds and
+timers, duplicate scores, duplicate event callbacks, seat ownership corruption, replay buffer
+growth, static leakage and host/client divergence, writing a machine-readable summary tied to the
+SHA.
+
+### 142.5 ⚠️ OPEN: 89 SUBSCRIPTIONS, NO AUDIT
+
+`grep` counts **89** event subscriptions in `Assets/TumbangPreso/Runtime/`. § 126.8's entire finding
+is objects outliving what made them; a handler that outlives its match is the same class one level
+up, and it is the difference between match one and match five. **Nothing pairs them today.**
+
+### 142.6 ⚠️ OPEN: SCENE AND BOOTSTRAP DEPENDENCIES ARE NOT VALIDATED
+
+`SceneScriptCheck` reads scenes as TEXT and catches a component the PLAYER cannot bind, which is a
+class no other check can see and which once shipped a crash with everything else green. **It does
+not catch a missing prefab, a missing spawn point, a null camera reference or an absent service.**
+Those are exactly the faults a human finds by opening the build.
+
+### 142.7 ⚠️ OPEN: THE AUTHORITATIVE PATHS ARE ARGUED, NOT TESTED, AGAINST DUPLICATES
+
+The architecture is right and the audits say so on this commit:
+
+| Audit | Reading on `e85b0fc` |
+|---|---|
+| `audit_ability_authority.py` | **49** effect call sites, 30 host-gated, **0 ungated on another body**, 19 ungated on the caster |
+| `audit_request_call_sites.py` | **59** wire entry points, **0 unreachable** |
+| `audit_wire_payloads.py` | **61** named messages, **0 mismatched** |
+
+⚠️ **That is an argument about shape, and a duplicate is not a shape problem.** A replayed
+`SubmitScoreServerRpc`-shaped request is well formed, correctly gated, from a legitimate peer, and
+awards twice. Nothing tests that.
+
+✅ **The engine-free half landed 2026-09-04.** `MatchInvariants.IsReachableDelta` states the rule:
+the only legal score movements are sums of at most two `ScoreEvent` values, **so 300 where the
+event pays 100 is not a bigger award, it is three awards.**
+
+### 142.8 ✅ THE AUDITS ARE A GATE NOW
+
+`tools/qualify.py --stage audits` runs all of them, exits non-zero on any finding, and the verdict
+lands in the qualification report. ⚠️ `PYTHONIOENCODING=utf-8` is set by the runner rather than
+being remembered, because `audit_audio_reach.py` dies on a `UnicodeEncodeError` without it and the
+crash looks like a fault in the thing it is auditing.
+
+### 142.9 ⚠️ OPEN: HOST LOSS
+
+`_utp.DisconnectTimeoutMS = 8000` (`NetSession.cs:1172`), so a peer whose wifi dies keeps a
+normal-looking arena for eight seconds. § 140 is the player-facing half and is still open.
+
+⚠️ **Host migration is deliberately unsupported and that is not the problem.** The requirement is
+that the failure is ONE outcome on every peer: no score corruption, no frozen authoritative state
+pretending the match continues, a stated reason, and a working way back.
+
+⚠️⚠️ **THE RECONNECT AND FORFEIT RULING IS NOT A CODE DECISION AND IS NOT IN THIS QUEUE.** § 140.5
+says a drop and a quit are the same event on the wire; whether a bracket match is replayed,
+resumed or forfeited is `Attention.md`.
+
+### 142.10 ⚠️ OPEN: `VISION.md` § 2 RULE 1 CONTRADICTS ITSELF
+
+The arena is `CONFINEMENT_RADIUS` 7.0, so 14 m by 14 m = **196 m²**. Rule 1 reads *"about 1.8 to
+2.5 m of radius, which is 3 to 8 per cent of the box"*. Both halves cannot be true:
+
+| Radius | Area | Share of 196 m² |
+|---|---|---|
+| 1.8 m | 10.18 m² | **5.19%** |
+| 2.5 m | 19.63 m² | **10.02%** |
+| **1.37 m** | 5.88 m² | 3% |
+| **2.23 m** | 15.68 m² | 8% |
+
+⚠️ **Do not settle it by editing whichever half is easier.** The radii name Sean's Fire Trail and
+Zack's Shock Trail as the reference *"and nobody has ever complained about them"*, so the RADII are
+the observed thing and the percentages are the arithmetic that was never done. **Read the abilities
+first**: rule 1's own text also says these two are measured as discs and played as corridors, which
+is § 142.11.
+
+### 142.11 ⚠️ OPEN: EVERY FOOTPRINT NUMBER PREDATES THE CURRENT ABILITIES
+
+`Hero_Strike_Balance.md` and `VISION.md` § 2 carry a **81.9%** worst credible frame and a **27.2%**
+Zack corridor. Both were measured before the ability retune that put Bolt Sprint on 46 s and Flame
+Rush on 50 s, and before Thunderstrike became aimed. **They are history, not measurements of this
+commit**, and nothing regenerates them.
+
+### 142.12 ⚠️ OPEN: ABILITY COMMENTS DISAGREE WITH THEIR OWN CONSTRUCTORS
+
+Confirmed by reading both on `e85b0fc`:
+
+| Where | The comment says | The constructor passes |
+|---|---|---|
+| `ZackHeroKit.cs:86` vs `:102` | *"30 s, UP FROM 6.0"* | **46.0f** |
+| `SeanHeroKit.cs:58` vs `:64` | *"34 s, UP FROM 6.5"* | **50.0f** |
+
+⚠️ **And the second one repeats the first**: Sean's note reads *"Longer than Zack's 30"*, so one
+stale number has already propagated into a second file as a comparison. That is the whole argument
+for an audit rather than a correction.
+
+### 142.13 to 142.16
+
+Storage failure hardening, the gameplay clock audit, the cold-start test and the crash bundle. Each
+is stated with its acceptance criteria in the CURRENT IMPLEMENTATION QUEUE at the top of this file.
 
 ---
 
