@@ -371,62 +371,32 @@ the eye reads a starburst. With the long part of every line parallel, each label
   748-unit band and **four long diagonals straight across the drawing**. Matched at 685 against
   676, every tip is short.
 
-### 142.3e ⚠️⚠️ THE PAD IS TILTED NOW, AND THE TILT IS WHAT GIVES L1 AND L2 THEIR OWN POINTS
+### 142.3e ⚠️ A TILTED PAD WAS BUILT AND REVERTED, AND THIS IS THE RECORD SO NOBODY REDOES THE HUNT
 
-🧑 2026-09-04, with the PS5 reference again: *"we're getting there. find one that is tilted like
-this ps5 controller."*
+🧑 2026-09-04 asked for a pad *"tilted like this ps5 controller"*, then for it to be white, then:
+*"just revert changes to this"*, pointing at the flat drawing above. **It is his call and the
+flat one is what ships.** The two commits are reverted rather than deleted, so everything below is
+recoverable with `git show`.
 
-**The art is the "Dualshock 4" sheet from TheHoodieGuy02's
-[8th Gen Console Vector Gamepad Collection](https://opengameart.org/content/8th-gen-console-vector-gamepad-collection),
-CC0.** Third source in one day and the right one.
+**What was built** (`ba1934b`, then `11ed878`, both reverted by this entry's commit):
 
-⚠️⚠️ **THE TILT IS NOT DECORATION AND THAT IS WORTH SAYING, BECAUSE IT FIXES A COMPROMISE § 142.3d
-HAD TO WRITE DOWN AS A DEFECT.** On a flat front view **the shoulder buttons are edge-on**, so L1
-and L2 are one visible bar; that entry's own table note admits it was *"spreading them along the
-bar"* because there was nowhere else to point. This drawing shows the TOP FACE of each shoulder as
-a stacked pair, so the far band is the trigger and the near one is the bumper, exactly as they sit
-under a finger. **Four labels, four objects.** The author drew it for that reason, in a readme
-committed beside the art: *"what I found on the web doesn't have back trigger buttons visible."*
+- The art was TheHoodieGuy02's Dualshock 4 sheet from the
+  [8th Gen Console Vector Gamepad Collection](https://opengameart.org/content/8th-gen-console-vector-gamepad-collection),
+  **CC0**, drawn with the shoulder buttons' top faces visible.
+- ⚠️⚠️ **THE ONE THING THE TILT BOUGHT THAT THE FLAT DRAWING CANNOT**: on a front view the
+  shoulders are edge-on, so **L1 and L2 are one visible bar** and § 142.3d's anchor table has to
+  spread two labels along it and say so. The tilted art gives each its own point. If that
+  compromise ever reads wrong on screen, this is the fix and it is one commit away.
+- It was CC0, so it **removed** the CC BY credit obligation the current art carries. Reverting
+  brings that obligation back, and the line is back in `CreditsContent.CcByCredits` where it
+  belongs. ⚠️ **The current pad is CC BY 3.0 and owes that credit for as long as it ships.**
 
-⚠️ **AND IT IS CC0, SO THE CREDIT OBLIGATION § 142.3d TOOK ON IS GONE.** Tokyoship's drawing was
-CC BY 3.0 and owed a line in `CreditsContent.CcByCredits`. This one owes nothing. **The line moved
-to `CourtesyCredits` rather than being deleted**, because the author asked for a shoutout and that
-costs one row. ⚠️ If the art is ever swapped back to something CC BY, that row has to move back UP,
-where it is a requirement rather than a courtesy.
-
-⚠️ **THERE IS ALSO NO TRADEMARK IN THIS ONE.** Both previous sources drew Sony's mark and the
-generator carried a disc-erase step for it; this drawing's centre button is a plain circle, so the
-step is gone. **If the art is swapped again, look for a mark before assuming there is none** —
-that is now twice in a row it was there.
-
-⚠️ **THE RAMP INVERTED BACK.** This source is a dark body with WHITE keylines, where § 142.3d's was
-linework on a light body. Dark body, honey keylines, which lands on `CLAUDE.md` § 6.5's own
-description of 🧑's authored surfaces: *"a bright keyline outside a dark rim."*
-
-### 142.3f ⚠️⚠️ THE PAD IS WHITE, AND INVERTING THE LUMINANCE WAS THE OBVIOUS ANSWER AND WAS WRONG
-
-🧑 2026-09-04, pointing at the previous, light-bodied render: *"make it white like this."*
-
-§ 142.3e's tilted source is built the opposite way round from the flat one it replaced — a FILLED
-drawing with a mid-grey body, black outlines, black button wells and WHITE keylines — so the
-straight luminance ramp that suited a line drawing gave a dark object with cream keylines.
-
-⚠️⚠️ **THE FIRST FIX WAS TO INVERT THE LUMINANCE, AND IT DESTROYED THE SILHOUETTE.** Inversion
-cannot tell an outline from a recess, because in this source **both are the same black**: it sent
-the pad's entire outer edge to near-white and the shape dissolved into the honey page. The render
-is what caught it; nothing in the numbers says "the outline went missing".
-
-✅ **The tones are mapped by ROLE instead**, which is only possible because this drawing uses three
-flat values and nothing between them: black is always an edge or a recess, the single grey is
-always body, white is always a keyline. Black to ink, grey to `UiTheme.Paper`, and the white
-keylines brought DOWN to a tan that reads on paper. ⚠️ **That curve rises steeply and then falls,
-so it is written out stop by stop rather than interpolated**, with a note saying a future source
-with real shading needs a different treatment rather than a nudge to these numbers.
-
-⚠️ **THE SOURCE'S OWN SHARE AND OPTIONS LETTERING COMES OUT QUIET, AND THAT IS RIGHT.** It is white
-in the source and shares a ramp stop with the keylines, so it cannot be darkened without dimming
-them. It should be quiet: **our own callouts already name those two buttons**, and § 6.2's third
-question asks what is on screen that the player does not need right now.
+⚠️⚠️ **AND ONE FINDING FROM IT IS WORTH KEEPING EVEN THOUGH THE CODE IS GONE, BECAUSE THE NEXT
+SOURCE SWAP WILL MEET IT.** Making that art light by **inverting the luminance destroyed the
+silhouette**: it was a filled drawing whose outlines and whose button recesses were both pure
+black, and inversion cannot tell those apart, so the pad's outer edge went to near-white and the
+shape dissolved into the page. **A filled source has to be mapped by ROLE, not by an inverted
+ramp**, and only a render says so.
 
 ### 142.4 ⚠️ AN UNRECOGNISED PAD IS DRIVEN NOW: § 138.4 STEPS 2 AND 3, BY A ROUTE § 138 DID NOT EXPECT
 

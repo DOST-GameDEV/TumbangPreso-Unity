@@ -1,0 +1,66 @@
+SOURCE ART FOR THE CONTROLLER MAP
+=================================
+
+File            ds4_gamepad_ccby.svg
+                ds4_gamepad_ccby_2400.png   (a 2400 px rasterisation, cropped to the drawing)
+
+Title           Dualshock 4 Layout
+Author          Tokyoship
+Via             Wikimedia Commons
+Page            https://commons.wikimedia.org/wiki/File:Dualshock_4_Layout.svg
+Direct          https://upload.wikimedia.org/wikipedia/commons/e/e8/Dualshock_4_Layout.svg
+Licence         Creative Commons Attribution 3.0 Unported (CC BY 3.0)
+                https://creativecommons.org/licenses/by/3.0/
+Attribution     REQUIRED. See below.
+Retrieved       2026-09-04
+
+WARNING  THIS ONE IS CC BY, NOT CC0, AND THAT IS A BILL RATHER THAN A DETAIL.
+`docs/Asset_Sourcing.md` section 1 rule 1 excludes paid, subscription, trial, non-commercial,
+GPL and CC BY-SA assets. It does NOT exclude CC BY, and rule 8 says CC0 and CC BY source may
+live in this public repository with the proper licence. What CC BY costs is a credit, and
+section 9 of that file is explicit: "Only add a line if that asset actually ships." This one
+ships, so the line is in the game's credits and must stay there for as long as the art does.
+Removing the credit and keeping the picture is a licence breach, not a tidy-up.
+
+The exact line, as it appears in `Runtime/UI/CreditsContent.cs`:
+
+    "Dualshock 4 Layout" by Tokyoship, licensed under Creative Commons Attribution 3.0, via
+    Wikimedia Commons.
+    https://commons.wikimedia.org/wiki/File:Dualshock_4_Layout.svg
+    https://creativecommons.org/licenses/by/3.0/
+
+WARNING  THE PLAYSTATION ROUNDEL IS ERASED ON THE WAY IN, AND THAT IS A TRADEMARK CALL RATHER
+THAN AN ARTISTIC ONE. The source draws Sony's "PS" mark between the sticks. A licence to reuse
+somebody's DRAWING is not a licence to use the trademark inside it, and this repository already
+carries one open item of exactly that shape: `docs/Port_Plan.md` section 8 lists the IKE slipper
+as first in the replacement queue because it "carries the real Nike wordmark as geometry".
+`build_controller_diagram.py` fills that disc with the body colour before anything else happens,
+so the mark is in no shipped file. The SHARE and OPTIONS lettering stays: those are ordinary
+English words naming a button, not a mark.
+
+WARNING  IT IS ALSO RECOLOURED, LIKE EVERYTHING ELSE SOURCED INTO THIS PROJECT.
+The source is neutral grey with black linework. `CLAUDE.md` section 6.4 bans cold grey in any UI
+layer as flatly as it bans navy, and `tools/build_input_glyphs.py` records what a pack dropped
+in as bought costs. Every pixel is mapped onto the warm paper ramp by luminance, which keeps the
+line drawing's weight and moves it into the palette at once.
+
+WARNING  THE COMMITTED PNG IS AN INPUT, NOT A CONVENIENCE.
+`build_controller_diagram.py` reads the PNG rather than the SVG, and the SVG is kept beside it
+for provenance only. Every leader line on the CONTROLLER MAP screen is measured in the
+coordinates of THIS rasterisation; re-rendering the SVG with a different engine moves sub-pixel
+edges and may crop the canvas differently, which would silently shift all eighteen anchors. The
+raster is the contract, and the tool refuses to run if its size changes.
+
+The PNG was produced on macOS with
+
+    qlmanage -t -s 2400 -o . ds4_gamepad_ccby.svg
+
+and then cropped to the drawing's own bounding box plus eight pixels, which is 2216 x 1382.
+
+WHAT THIS REPLACED
+------------------
+Grumbel's "PlayStation 3 gamepad" (Open Clip Art Library via Wikimedia Commons, CC0 1.0), used
+from 2026-09-04 morning to 2026-09-04 evening. It was legally simpler and it was the wrong
+picture: the reference handed over is a modern pad with a touchpad and a slab body, and the PS3
+drawing is neither. It is recoverable from this repository's history if the attribution
+requirement here ever becomes inconvenient.
