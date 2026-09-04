@@ -66,11 +66,11 @@ except ImportError:  # pragma: no cover - report rather than crash, like the aud
     sys.exit(2)
 
 
-SOURCE = os.path.join("tools", "assets", "ds4_gamepad_ccby_2400.png")
+SOURCE = os.path.join("tools", "assets", "gamepad_cc0_2048.png")
 
 # WARNING  ASSERTED, NOT ASSUMED. Every hand-measured anchor below is in these pixels. See the
 # header: a re-render of the SVG by a different engine is a different picture with the same name.
-SOURCE_SIZE = (2216, 1382)
+SOURCE_SIZE = (1698, 1078)
 
 
 # ---------------------------------------------------------------------------------------
@@ -90,19 +90,23 @@ SOURCE_SIZE = (2216, 1382)
 # is the darkest object in the frame and everything else stays light.
 # ---------------------------------------------------------------------------------------
 RAMP = [
-    (0x3A, 0x1C, 0x08),   # the linework
-    (0x55, 0x29, 0x0F),   # UiTheme.PaperInk
-    (0x7A, 0x3F, 0x18),
-    (0xA8, 0x70, 0x3A),
-    (0xDE, 0xBA, 0x8C),   # PaperSunk, the moulded shading inside the sticks
-    (0xFE, 0xEB, 0xD4),   # UiTheme.Paper, the body
-    (0xFF, 0xF3, 0xE2),
-    (0xFF, 0xF9, 0xEF),   # the brightest highlight
+    (0x1D, 0x0E, 0x06),   # the black button wells and the touchpad
+    (0x2E, 0x16, 0x07),
+    (0x4A, 0x24, 0x0D),   # the body
+    (0x6B, 0x36, 0x14),
+    (0x8B, 0x52, 0x27),   # the wood edge, the raised shoulder faces
+    (0xC8, 0x94, 0x5A),
+    (0xE8, 0xC7, 0x7E),   # Khaki
+    (0xFE, 0xEB, 0xD4),   # UiTheme.Paper, the keylines
 ]
 
-# ⚠️ THERE IS NO GLYPH OR LED COLOUR HERE ANY MORE. The previous source drew its face buttons in
-# four saturated hues and its power light in red, so both needed assigning past the ramp. This
-# drawing is linework throughout, so the ramp is the whole palette. See `recolour`.
+# ⚠️⚠️ THE SATURATED MARKS ARE FLATTENED TO ONE HONEY. The source draws its face glyphs in cyan,
+# pink, red and blue and its light bar in blue: two of those are `CLAUDE.md` § 6.4 bans outright
+# and the other two belong to other jobs in this palette. Ramping them by luminance instead would
+# come out as four different browns, so the pad would look like two of its four buttons were
+# greyed out. One colour, and the SHAPE is what names them (`docs/FUTURE.md` § 16.1).
+GLYPH = (0xFC, 0xD3, 0x9F)
+
 
 
 # ---------------------------------------------------------------------------------------
@@ -119,60 +123,49 @@ RAMP = [
 # bumper, which is the ordering `docs/TODO.md` section 142.3's ring already relies on.
 # ---------------------------------------------------------------------------------------
 HAND_MEASURED = {
-    # ⚠️⚠️ THE SHOULDERS SIT SIDE BY SIDE ALONG ONE BAR, WHICH IS A COMPROMISE THIS DRAWING
-    # FORCES AND IS WORTH NAMING. It is a FRONT view, so L2 is directly behind L1 and the
-    # illustration draws one visible tab for both. Anchoring them to the same point would put two
-    # leader lines on one spot and claim there is one control there; stacking them a few pixels
-    # apart is the same claim with extra steps. Spreading them along the bar, trigger outboard
-    # and bumper inboard, is the only reading that gives each label somewhere of its own to point
-    # at, and the labels themselves say which is which.
-    "leftTrigger": (370, 42),
-    "leftShoulder": (520, 42),
-    "rightTrigger": (1846, 42),
-    "rightShoulder": (1696, 42),
+    # ⚠️⚠️ L1 AND L2 HAVE THEIR OWN POINTS AT LAST, WHICH IS THE WHOLE REASON FOR THE TILT. On a
+    # flat front view the shoulders are edge-on, so both labels had to point at one visible bar
+    # and the map claimed there was one control there. 🧑 asked for a pad *"tilted like this ps5
+    # controller"*, and this drawing shows the TOP FACE of each shoulder as a stacked pair: the
+    # far band is the trigger, the near one is the bumper, exactly as they sit under a finger.
+    "leftTrigger": (330, 55),
+    "leftShoulder": (335, 100),
+    "rightTrigger": (1368, 55),
+    "rightShoulder": (1363, 100),
 
-    "dpad/up": (440, 261),
-    "dpad/left": (293, 388),
-    "dpad/right": (582, 388),
-    "dpad/down": (440, 510),
+    "dpad/up": (322, 335),
+    "dpad/left": (242, 415),
+    "dpad/right": (405, 415),
+    "dpad/down": (322, 512),
 
     # SHARE and OPTIONS, which are what this generation calls select and start.
-    "select": (657, 187),
-    "start": (1559, 187),
+    "select": (512, 255),
+    "start": (1185, 255),
 
-    # WARNING  THE STICK AND ITS CLICK ARE THE SAME POINT, AND HERE THAT IS CORRECT WHERE IT WAS
-    # A COMPROMISE FOR THE SHOULDERS. Pushing the stick and pressing it down are two controls on
-    # one lump of plastic; two anchors an inch apart would draw a pad with four sticks on it.
-    "leftStick": (757, 704),
-    "leftStickPress": (757, 704),
-    "rightStick": (1464, 704),
-    "rightStickPress": (1464, 704),
+    # WARNING  THE STICK AND ITS CLICK ARE THE SAME POINT, AND HERE THAT IS CORRECT WHERE IT WAS A
+    # COMPROMISE FOR THE SHOULDERS. Pushing the stick and pressing it down are two controls on one
+    # lump of plastic; two anchors an inch apart would draw a pad with four sticks on it.
+    "leftStick": (565, 640),
+    "leftStickPress": (565, 640),
+    "rightStick": (1095, 640),
+    "rightStickPress": (1095, 640),
 
-    # ⚠️ THE FOUR FACE BUTTONS ARE HAND-MEASURED NOW AND WERE FOUND AUTOMATICALLY BEFORE, WHICH IS
-    # A REAL LOSS AND IS WRITTEN DOWN RATHER THAN GLOSSED. The previous source drew them in four
-    # saturated hues, so the generator could locate them and could not mistype them. This one
-    # draws them as black outlines like everything else, so there is nothing to search for.
-    # `check_anchors_land_on_the_pad` is the guard that replaces it, and it is weaker: it catches
-    # an anchor off the drawing, not an anchor on the wrong button.
-    #
-    # ⚠️⚠️ SO THE `--preview` OVERLAY IS NOT OPTIONAL FOR THIS FILE, IT IS THE MEASUREMENT. The
-    # first set of numbers here was read off a coordinate grid by eye and every one of them was
-    # forty to a hundred pixels out, which the drawing hid completely and the overlay showed in
-    # one glance. Change an anchor, run `--preview`, look at the rings.
-    "buttonNorth": (1796, 210),
-    "buttonWest": (1638, 380),
-    "buttonEast": (1958, 385),
-    "buttonSouth": (1798, 551),
+    # ⚠️⚠️ THE `--preview` OVERLAY IS NOT OPTIONAL FOR THIS FILE, IT IS THE MEASUREMENT. Every
+    # anchor here is typed, and a typo puts a leader line on bare plastic with nothing failing.
+    # An earlier set of these was read off a coordinate grid by eye and every one was forty to a
+    # hundred pixels out, which the drawing hid completely and the ring overlay showed at a
+    # glance. Change an anchor, run `--preview`, look at the rings.
+    "buttonNorth": (1377, 292),
+    "buttonWest": (1260, 420),
+    "buttonEast": (1495, 420),
+    "buttonSouth": (1376, 541),
 }
 
-# ⚠️⚠️ SONY'S MARK, AND IT IS ERASED BEFORE ANYTHING ELSE HAPPENS. A licence to reuse somebody's
-# DRAWING is not a licence to the trademark inside it, and this repository already carries one
-# open item of exactly that shape: `docs/Port_Plan.md` § 8 lists the IKE slipper first in the
-# replacement queue because it "carries the real Nike wordmark as geometry". The roundel between
-# the sticks is filled with the body colour, so the mark is in no shipped file.
-#
-# ⚠️ THE SHARE AND OPTIONS LETTERING STAYS. Those are ordinary English words naming a button.
-TRADEMARK_DISC = (1108, 704, 66)      # centre x, centre y, radius
+# ⚠️⚠️ THERE IS NO TRADEMARK TO ERASE IN THIS SOURCE, AND BOTH PREVIOUS ONES HAD ONE. They drew
+# Sony's mark between the sticks and this file carried a disc-erase step to remove it, because a
+# licence to reuse a DRAWING is not a licence to the trademark inside it (`docs/Port_Plan.md` § 8
+# records the same open item for the IKE slipper's Nike wordmark). This drawing's centre button is
+# a plain circle. **If the art is swapped again, look for a mark before assuming there is none.**
 
 
 def load_source():
@@ -186,22 +179,6 @@ def load_source():
         print(f"build_controller_diagram: {SOURCE} is {image.size}, and every anchor in this "
               f"file was measured against {SOURCE_SIZE}. Re-measure or re-render.")
         sys.exit(2)
-
-    return image
-
-
-def erase_trademark(image):
-    """Fill Sony's roundel with the body colour. See `TRADEMARK_DISC` for why.
-
-    WARNING  IT SAMPLES THE FILL RATHER THAN NAMING A COLOUR, so it keeps working if the source
-    art is ever re-rendered at a different grey. The sample is taken a little outside the disc,
-    on the same flat body panel the mark sits on.
-    """
-    cx, cy, radius = TRADEMARK_DISC
-
-    patch = image.getpixel((cx + radius + 30, cy))
-    ImageDraw.Draw(image).ellipse(
-        (cx - radius, cy - radius, cx + radius, cy + radius), fill=patch)
 
     return image
 
@@ -255,6 +232,10 @@ def recolour(image):
 
     # Rec. 709 luminance, so the ramp follows what the eye reads as light rather than the numeric
     # average, which would make the source's mid greys jump a step.
+    rgb = pixels[:, :, :3]
+    saturation = rgb.max(2) - rgb.min(2)
+    coloured = (saturation > 60) & (alpha > 8)
+
     luma = (0.2126 * red + 0.7152 * green + 0.0722 * blue) / 255.0
 
     steps = len(RAMP) - 1
@@ -262,11 +243,9 @@ def recolour(image):
 
     out = np.array(RAMP, dtype=int)[index]
 
-    # ⚠️ NO COLOURED-GLYPH OVERRIDE ANY MORE, AND ITS ABSENCE IS DELIBERATE. The previous source
-    # drew its four face buttons in green, magenta, red and purple and they had to be forced to
-    # one colour so the pad did not look like two of its buttons were greyed out. This drawing
-    # already draws all four as plain outlines, so the ramp is the whole answer and a special
-    # case here would be code with nothing to do.
+    # See `GLYPH`: the face marks and the light bar are the only coloured things in the source,
+    # and they all become one honey so shape is what tells the four buttons apart.
+    out[coloured] = GLYPH
 
     result = np.dstack([out, alpha]).astype(np.uint8)
     result[page] = (0, 0, 0, 0)
@@ -332,7 +311,10 @@ def write(out_dir, art, anchors, preview):
 
     with open(manifest, "w", encoding="utf-8") as handle:
         handle.write("# generated by tools/build_controller_diagram.py - do not hand-edit\n")
-        handle.write("# source: tools/assets/ps3_gamepad_cc0_2400.png, CC0, see its LICENSE\n")
+        # ⚠️ THE SOURCE PATH IS DERIVED, NOT TYPED. It was a literal, and it still named the
+        # PS3 art two source swaps later: a generated file whose own header lies about where it
+        # came from is worse than one with no header. `CLAUDE.md` § 5's drift rule, in a comment.
+        handle.write(f"# source: {SOURCE.replace(os.sep, '/')}, see its LICENSE beside it\n")
         handle.write("# control  x  y   (normalised, y measured DOWN from the top)\n")
 
         for name in sorted(anchors):
@@ -377,7 +359,7 @@ def main():
     parser.add_argument("--preview", action="store_true")
     args = parser.parse_args()
 
-    source = erase_trademark(load_source())
+    source = load_source()
     anchors = dict(HAND_MEASURED)
 
     art = recolour(source)

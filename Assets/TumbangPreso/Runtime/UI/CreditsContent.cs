@@ -46,14 +46,6 @@ namespace TumbangPreso.UI
             new Credit("IKE",
                 "This work is based on \"Low Poly Nike Sandals\" (sketchfab.com/3d-models/low-poly-nike-sandals-8e77c949319148afb9134ba13f64046f) by les03 (sketchfab.com/les03official), licensed under CC-BY-4.0 (creativecommons.org/licenses/by/4.0)."),
 
-            // ⚠️⚠️ THIS ONE IS THE PRICE OF THE CONTROLLER MAP'S PICTURE AND MUST NOT BE REMOVED
-            // WHILE THAT PICTURE SHIPS. `Asset_Sourcing.md` § 8.1 and
-            // `tools/assets/ds4_gamepad_ccby.LICENSE.txt`: the pad on SETTINGS, CONTROLS,
-            // CONTROLLER MAP is Tokyoship's drawing under CC BY 3.0, and CC BY's single condition
-            // is the credit. Deleting this line and keeping the art is a licence breach rather
-            // than a tidy-up. The three above are the same deal for the three slippers.
-            new Credit("CONTROLLER MAP",
-                "This work is based on \"Dualshock 4 Layout\" (commons.wikimedia.org/wiki/File:Dualshock_4_Layout.svg) by Tokyoship, licensed under CC-BY-3.0 (creativecommons.org/licenses/by/3.0)."),
         };
 
         /// <summary>Courtesy credits — none of these REQUIRE attribution (CC0 / in-house),
@@ -73,6 +65,16 @@ namespace TumbangPreso.UI
                 "All music and sound effects are original. The OST is written by the team; the SFX and ambience beds are synthesised in-house by this project's own tools. No third-party audio ships in this build."),
             new Credit("TSINELAS",
                 "This project's own mesh, generated procedurally — not a sourced asset."),
+            // ⚠️⚠️ IT IS IN THE COURTESY TABLE AND NOT THE CC-BY ONE, AND IT MOVED HERE RATHER
+            // THAN BEING WRITTEN HERE. The CONTROLLER MAP's pad was Tokyoship's CC BY 3.0 drawing
+            // for part of 2026-09-04, which OWED this line; the CC0 replacement owes nothing.
+            // **The line stayed anyway**, because the author asked for a shoutout in their readme
+            // and that costs one row. `tools/assets/gamepad_cc0.LICENSE.txt` has the whole story,
+            // and `Asset_Sourcing.md` § 8.1 is the entry. ⚠️ If the art is ever swapped back to
+            // something CC BY, this row has to move UP into `CcByCredits`, where it is a
+            // requirement rather than a courtesy.
+            new Credit("CONTROLLER MAP",
+                "The controller illustration is from the \"8th Gen Console Vector Gamepad Collection\" by TheHoodieGuy02 (opengameart.org/content/8th-gen-console-vector-gamepad-collection), CC0. Recoloured and relabelled for this game. Attribution is courtesy, not required."),
             new Credit("DEVELOPMENT TOOLS",
                 "Claude Code (Anthropic) was used as a coding assistant during development — programming, debugging, testing and documentation. It helped write the bot AI that drives the computer-controlled players, wrote the procedural code that generates the lata meshes, this project's own tsinelas mesh and the map geometry, repurposed sourced assets into this game's formats, and wrote the tools that synthesise the SFX and ambience beds. Every skin, texture and drawing is the team's own, and the team wrote the soundtrack. All game logic, mechanics and design decisions are the team's own, and the team takes full responsibility for the code submitted. No generative-AI image, music or video service was used."),
         };

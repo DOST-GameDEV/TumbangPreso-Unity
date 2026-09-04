@@ -371,6 +371,38 @@ the eye reads a starburst. With the long part of every line parallel, each label
   748-unit band and **four long diagonals straight across the drawing**. Matched at 685 against
   676, every tip is short.
 
+### 142.3e ⚠️⚠️ THE PAD IS TILTED NOW, AND THE TILT IS WHAT GIVES L1 AND L2 THEIR OWN POINTS
+
+🧑 2026-09-04, with the PS5 reference again: *"we're getting there. find one that is tilted like
+this ps5 controller."*
+
+**The art is the "Dualshock 4" sheet from TheHoodieGuy02's
+[8th Gen Console Vector Gamepad Collection](https://opengameart.org/content/8th-gen-console-vector-gamepad-collection),
+CC0.** Third source in one day and the right one.
+
+⚠️⚠️ **THE TILT IS NOT DECORATION AND THAT IS WORTH SAYING, BECAUSE IT FIXES A COMPROMISE § 142.3d
+HAD TO WRITE DOWN AS A DEFECT.** On a flat front view **the shoulder buttons are edge-on**, so L1
+and L2 are one visible bar; that entry's own table note admits it was *"spreading them along the
+bar"* because there was nowhere else to point. This drawing shows the TOP FACE of each shoulder as
+a stacked pair, so the far band is the trigger and the near one is the bumper, exactly as they sit
+under a finger. **Four labels, four objects.** The author drew it for that reason, in a readme
+committed beside the art: *"what I found on the web doesn't have back trigger buttons visible."*
+
+⚠️ **AND IT IS CC0, SO THE CREDIT OBLIGATION § 142.3d TOOK ON IS GONE.** Tokyoship's drawing was
+CC BY 3.0 and owed a line in `CreditsContent.CcByCredits`. This one owes nothing. **The line moved
+to `CourtesyCredits` rather than being deleted**, because the author asked for a shoutout and that
+costs one row. ⚠️ If the art is ever swapped back to something CC BY, that row has to move back UP,
+where it is a requirement rather than a courtesy.
+
+⚠️ **THERE IS ALSO NO TRADEMARK IN THIS ONE.** Both previous sources drew Sony's mark and the
+generator carried a disc-erase step for it; this drawing's centre button is a plain circle, so the
+step is gone. **If the art is swapped again, look for a mark before assuming there is none** —
+that is now twice in a row it was there.
+
+⚠️ **THE RAMP INVERTED BACK.** This source is a dark body with WHITE keylines, where § 142.3d's was
+linework on a light body. Dark body, honey keylines, which lands on `CLAUDE.md` § 6.5's own
+description of 🧑's authored surfaces: *"a bright keyline outside a dark rim."*
+
 ### 142.4 ⚠️ AN UNRECOGNISED PAD IS DRIVEN NOW: § 138.4 STEPS 2 AND 3, BY A ROUTE § 138 DID NOT EXPECT
 
 § 138.4 step 2 asks for a registered fallback LAYOUT. ⚠️⚠️ **THAT ROUTE IS SHUT AND IT IS WORTH
