@@ -403,6 +403,31 @@ that is now twice in a row it was there.
 linework on a light body. Dark body, honey keylines, which lands on `CLAUDE.md` § 6.5's own
 description of 🧑's authored surfaces: *"a bright keyline outside a dark rim."*
 
+### 142.3f ⚠️⚠️ THE PAD IS WHITE, AND INVERTING THE LUMINANCE WAS THE OBVIOUS ANSWER AND WAS WRONG
+
+🧑 2026-09-04, pointing at the previous, light-bodied render: *"make it white like this."*
+
+§ 142.3e's tilted source is built the opposite way round from the flat one it replaced — a FILLED
+drawing with a mid-grey body, black outlines, black button wells and WHITE keylines — so the
+straight luminance ramp that suited a line drawing gave a dark object with cream keylines.
+
+⚠️⚠️ **THE FIRST FIX WAS TO INVERT THE LUMINANCE, AND IT DESTROYED THE SILHOUETTE.** Inversion
+cannot tell an outline from a recess, because in this source **both are the same black**: it sent
+the pad's entire outer edge to near-white and the shape dissolved into the honey page. The render
+is what caught it; nothing in the numbers says "the outline went missing".
+
+✅ **The tones are mapped by ROLE instead**, which is only possible because this drawing uses three
+flat values and nothing between them: black is always an edge or a recess, the single grey is
+always body, white is always a keyline. Black to ink, grey to `UiTheme.Paper`, and the white
+keylines brought DOWN to a tan that reads on paper. ⚠️ **That curve rises steeply and then falls,
+so it is written out stop by stop rather than interpolated**, with a note saying a future source
+with real shading needs a different treatment rather than a nudge to these numbers.
+
+⚠️ **THE SOURCE'S OWN SHARE AND OPTIONS LETTERING COMES OUT QUIET, AND THAT IS RIGHT.** It is white
+in the source and shares a ramp stop with the keylines, so it cannot be darkened without dimming
+them. It should be quiet: **our own callouts already name those two buttons**, and § 6.2's third
+question asks what is on screen that the player does not need right now.
+
 ### 142.4 ⚠️ AN UNRECOGNISED PAD IS DRIVEN NOW: § 138.4 STEPS 2 AND 3, BY A ROUTE § 138 DID NOT EXPECT
 
 § 138.4 step 2 asks for a registered fallback LAYOUT. ⚠️⚠️ **THAT ROUTE IS SHUT AND IT IS WORTH

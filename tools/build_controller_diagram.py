@@ -89,25 +89,37 @@ SOURCE_SIZE = (1698, 1078)
 # section 6.2 question 1 asks what the ONE thing on the screen is; here it is the pad, so the pad
 # is the darkest object in the frame and everything else stays light.
 # ---------------------------------------------------------------------------------------
+# ⚠️⚠️ THIS RAMP IS NOT A GRADIENT AND MUST NOT BE "TIDIED" INTO ONE. 🧑 2026-09-04: *"make it
+# white like this"*, pointing at the previous, light-bodied pad. Getting there took two goes and
+# the failed one is the instructive half:
+#
+#   * **Inverting the luminance was the obvious answer and it is wrong.** The source is a FILLED
+#     drawing — mid-grey body, BLACK outlines, BLACK button wells, WHITE keylines — and inversion
+#     cannot tell the outlines from the wells, because both are the same black. It sent the whole
+#     silhouette to near-white and the pad lost its edge against the honey page entirely.
+#   * **The tones are mapped by ROLE instead**, which is only possible because this drawing uses
+#     three flat values and nothing in between: black is always an edge or a recess, the one grey
+#     is always body, white is always a keyline. So black goes to ink, the body's grey goes to
+#     paper, and the white keylines come DOWN to a tan that reads on paper.
+#
+# That makes the curve rise steeply and then fall, which is why it is written out stop by stop
+# rather than interpolated. A future source with real shading needs a different treatment, not a
+# nudge to these numbers.
 RAMP = [
-    (0x1D, 0x0E, 0x06),   # the black button wells and the touchpad
-    (0x2E, 0x16, 0x07),
-    (0x4A, 0x24, 0x0D),   # the body
-    (0x6B, 0x36, 0x14),
-    (0x8B, 0x52, 0x27),   # the wood edge, the raised shoulder faces
-    (0xC8, 0x94, 0x5A),
-    (0xE8, 0xC7, 0x7E),   # Khaki
-    (0xFE, 0xEB, 0xD4),   # UiTheme.Paper, the keylines
+    (0x55, 0x29, 0x0F),   # 0.00  black: every outline and every recess. UiTheme.PaperInk
+    (0x7A, 0x3F, 0x18),   #       the touchpad's own dotted texture
+    (0xFE, 0xEB, 0xD4),   # 0.29  the body. UiTheme.Paper, lighter than the page it sits on
+    (0xFE, 0xEB, 0xD4),
+    (0xFD, 0xE7, 0xCB),
+    (0xF0, 0xD2, 0xA8),
+    (0xE8, 0xC7, 0x7E),   #       Khaki
+    (0xDE, 0xBA, 0x8C),   # 1.00  white: the keylines, brought DOWN so they read on paper
 ]
 
-# ⚠️⚠️ THE SATURATED MARKS ARE FLATTENED TO ONE HONEY. The source draws its face glyphs in cyan,
-# pink, red and blue and its light bar in blue: two of those are `CLAUDE.md` § 6.4 bans outright
-# and the other two belong to other jobs in this palette. Ramping them by luminance instead would
-# come out as four different browns, so the pad would look like two of its four buttons were
-# greyed out. One colour, and the SHAPE is what names them (`docs/FUTURE.md` § 16.1).
-GLYPH = (0xFC, 0xD3, 0x9F)
-
-
+# ⚠️ THE GLYPHS FOLLOW THE BUTTON, NOT THE BODY. The face buttons' wells are black in the source
+# and land on ink above, so a light mark is the readable way round on them even though the pad
+# around them is pale. The SHAPE is still what tells the four apart (`docs/FUTURE.md` § 16.1).
+GLYPH = (0xFE, 0xEB, 0xD4)
 
 # ---------------------------------------------------------------------------------------
 # § WHERE EACH CONTROL IS, IN THE SOURCE RASTER'S PIXELS
