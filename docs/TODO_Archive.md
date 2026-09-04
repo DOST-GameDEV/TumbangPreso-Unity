@@ -20820,3 +20820,194 @@ block. Every other number in it is worthless if that reads 1 where 4 was asked f
   `AudioCueCheck`, `MapGeometryCheck` at 0 findings including every elevated join, eight v14
   in-engine renders in `Logs/shots-ilalim/`, idempotent palette/logo/sign generators, the model
   island checker, and a clean Windows player build smoke-launched from the Desktop.
+
+---
+
+### 143.20 ✅ CLOSED 2026-09-04: `SteeringTests` DRIFTED 1.079 m SIDEWAYS WHILE SETTLING, AND IT WAS A COLLIDER THE PHYSICS WORLD HAD NOT BEEN TOLD ABOUT
+
+**Three cases, one message, the same number every time:**
+
+```
+AMovementAimedSeatTurnsToFaceItsDirection
+MouseAimedMovementIsRelativeToTheBody
+TheSteeringFrameByFrameIsWrittenOut
+
+  "the seat drifted sideways while settling, so it is not standing on the floor this
+   test built. See docs/TODO.md § 130.14."
+   Expected: less than 0.00999999978f   But was: 1.07999992f
+```
+
+⚠️ **PRE-EXISTING AND NOT FROM THIS PASS.** It is red on `e85b0fc` in the full single-process run
+and red in the isolated `match` group afterwards, with the same value. **The isolation is what
+makes it worth acting on**: in the full run one of the three failed instead on a
+`MissingReferenceException` from another fixture's leaked object, so the set was never three
+identical failures and never looked deterministic.
+
+**What is known:**
+
+- The seat is built at `StandingHeight` = `(0, 1.05, 0)` over a 60x1x60 cube floor whose top
+  surface is y = 0, with a `CharacterController` and a `CharacterMotor`, and **no input is
+  applied before the assertion**. `Settle` waits 20 fixed updates and then asserts the body has
+  not moved in x or z.
+- **1.079 m is far too specific to be jitter**, and it repeats exactly across three cases and
+  across runs, so it is something pushing the body once rather than drift accumulating.
+- § 130.14b closed the earlier version of this (*"the steering was never wrong. The test buried
+  its own seat in the floor"*) and `Settle` is the fix that entry added. **This is a different
+  failure of the same setup**: the seat is no longer buried, it is displaced.
+
+⚠️ **DO NOT WIDEN THE 0.01 BOUND.** `Settle`'s own note says why it asserts the seat is actually
+down rather than trusting a frame count: *"a change to gravity or to the controller's size fails
+here, where the reason is written, instead of one assertion further on where it is not."* A body
+that moves a metre with no input is either the confinement clamp, a spawn placement, or a
+collision with something the test did not build, and all three are worth knowing about.
+
+**Next step is one measurement, not a fix**: log the position every fixed update through `Settle`
+and find the frame it jumps on. A single frame means a teleport or a clamp; a ramp means a force.
+
+
+---
+
+**✅ CLOSED 2026-09-04. The next step was written as a measurement and the measurement answered
+it in one line.** `Settle` now logs the position, the collision flags, `_spawnSettle`,
+`_spawnSettleAt` and `_velocity` every fixed update, and writes `Logs/settle-<case>.txt`.
+
+**What the trace said, on the first run:**
+
+```
+controller  height 2.000  radius 0.500  centre (0.00, 0.00, 0.00)  skin 0.0800
+start       (0.00, 1.05, 0.00)
+frame  grounded  flags   pos                       step
+    0      True  Below   (0.0000, 0.0000, 1.0800)  (0.0000, -1.0500, 1.0800)
+    1      True  Below   (0.0000, 1.0800, 1.0800)  (0.0000,  1.0800, 0.0000)
+    2      True  Below   (0.0000, 1.0800, 1.0800)  (0.0000,  0.0000, 0.0000)
+```
+
+**One frame, so a teleport or a clamp rather than a force**, which is exactly the fork this
+entry predicted. `_spawnSettle` was 0, so nothing was pinning the body, and `_velocity` was
+(0, -0.40, 0) with `dt` = 0.02, so the motion the motor ASKED for that step was **eight
+millimetres downward**. It moved 1.05 m down and 1.08 m sideways.
+
+⚠️⚠️ **THE FIRST FIX WAS WRONG AND SAYING SO IS THE POINT.** § 130.14b's arithmetic
+(*"one metre of capsule plus five centimetres of daylight"*) omits `skinWidth`, which is 0.08,
+so the capsule plus skin reached y = **-0.03** and the seat was still three centimetres inside
+the floor. `StandUp` now derives the height from the controller instead of stating it. **It made
+no difference at all**: starting at 1.13, with the capsule provably clear, frame 0 still landed
+on (0, 0.0000, 1.0800). **A fault that is not sensitive to the seat's height is not a burial**,
+and that should have ruled out both earlier readings.
+
+**The answer came from logging what else was in the world:**
+
+```
+overlapping Cube [BoxCollider] at (0.00, 0.00, 0.00) extents (0.50, 0.50, 0.50)
+```
+
+**A one-metre cube at the origin, while `BuildFloor` had already scaled that same cube to
+60 x 1 x 60 and moved it to y = -0.5.** `GameObject.CreatePrimitive` registers a unit box at the
+world origin with the physics engine, and the two lines that follow it are TRANSFORM writes:
+with `Physics.autoSyncTransforms` off, which is Unity's default, the collider world still holds
+the unscaled box until something syncs it. **The seat was built five centimetres above a floor
+the physics engine did not have yet, standing inside a cube that it did.**
+
+⚠️⚠️ **AND 1.079 IS THAT CUBE'S ARITHMETIC, WHICH IS WHY IT WAS THE SAME NUMBER EVERY RUN.**
+Ejecting a capsule sideways out of a unit cube is **half the cube plus the capsule radius plus
+the skin**: 0.5 + 0.5 + 0.08 = **1.08**. Two sessions read that number as a steering bug and one
+as a burial depth; it was a measurement of the wrong cube.
+
+**The fix is one call. `Physics.SyncTransforms()` after the floor is placed, and after the seat
+is placed, each with the reason written above it.**
+
+```
+6 cases, 6 passed, 0 failed          (Logs/steering-143-20-sync.xml)
+
+frame  grounded  flags   pos                       step
+    0     False  None    (0.0000, 1.1220, 0.0000)  (0.0000, -0.0080, 0.0000)
+    1     False  None    (0.0000, 1.1060, 0.0000)  (0.0000, -0.0160, 0.0000)
+    2     False  None    (0.0000, 1.0820, 0.0000)  (0.0000, -0.0240, 0.0000)
+```
+
+**The body falls in eight, sixteen and twenty-four millimetre steps and lands.** `overlapping`
+reads `nothing`.
+
+⚠️ **THE 0.01 BOUND WAS NEVER TOUCHED**, which this entry forbids in as many words, and neither
+was the assertion. What changed is that the test's own floor is where the test says it is.
+
+⚠️ **THE PER-FRAME TRACE IS KEPT RATHER THAN REMOVED.** It is what turned a number three
+sessions had stared at into a one-line answer, it costs twenty lines of a text file per case,
+and it rides the FAILURE MESSAGE as well as the log so a run on another machine, or through the
+grouped gate, still hands back the picture rather than just the endpoint.
+
+---
+
+### 143.21 ✅ CLOSED 2026-09-04: ON A DEDICATED SERVER THE FIRST PLAYER TO JOIN WAS GIVEN NO SEAT, AND SEVEN TESTS HELD THE FAULT IN PLACE
+
+**Found by running the thing nobody had ever run.** `Attention.md` § 16.2 asks for one
+measurement before any code: *"measure whether a seatless referee actually starts and runs a
+match today, because the architecture claims it can and nothing has ever checked."*
+`tools/referee_run.py` is that measurement. One `-tp-dedicated` process and two `-tp-join`
+clients, 40 s, on `64718d3`:
+
+```
+referee   : role HOST    networked True  slot -1  round 1  active True  defender 0  hash 4570D8E8
+client1   : role CLIENT  networked True  slot -1  round 1  active True  defender 0  hash 85208A38
+client2   : role CLIENT  networked True  slot  0  round 1  active True  defender 0  hash 85208A38
+```
+
+⚠️⚠️ **THE HEADLINE IS THAT IT WORKS: A SEATLESS REFEREE STARTS, RUNS A LIVE ROUND AND BOTH
+CLIENTS AGREE WITH IT AND WITH EACH OTHER** (identical discrete hash, same defender, same
+roster, same taya). § 16.2's own conclusion therefore holds: **host loss at a venue is
+configuration and a launch path rather than a rework.** The operator's laptop referees, no
+player is the host, and no player leaving can end a match.
+
+⚠️⚠️ **AND `client1` CAME BACK HOLDING `local slot: -1`, WHICH IS THE REFEREE'S OWN VALUE.**
+The first player to join a dedicated server was admitted as a **spectator with no seat**, while
+standing in the arena watching four bodies move and owning none of them.
+
+**The cause is one off-by-one, in three places, each with a correct comment over a wrong
+number.** `LobbySession` asked `IsDedicated && peerId == 1` with `// the server itself` beside
+it. NGO gives the server `NetworkManager.ServerClientId`, which is **0**, and peer **1** is the
+first client to connect. `NetSession.LocalPeerId`, in the same folder, has said so in writing
+the whole time: *"NGO gives the listen host and a dedicated referee
+`NetworkManager.ServerClientId`, which is 0, and that 0 is a real identity rather than a
+placeholder."*
+
+⚠️⚠️ **IT HAD ALREADY BEEN HALF-FIXED ONCE, WITH THE SAME WRONG CONSTANT, WHICH IS WHY IT WAS
+STILL HERE.** `Admit`'s own comment records the symptom being found and answered at that one call
+site: *"on a dedicated host the server process took seat 0 and the first real player was handed
+seat 1. A four player match then had three human seats and a referee holding the fourth."* The
+answer used `peerId == 1` again, so the fault **moved** rather than going away: the server
+stopped taking a seat, and the first player stopped getting one.
+
+⚠️ **A SEAT OF -1 IS NOT AN INERT NUMBER.** `HeroHazards` asks
+`p.PlayerSlot == NetAuthority.LocalSlot` in six places to decide whether an effect applies to the
+local body; -1 matches no player, so that client's own abilities stop resolving on itself. It is
+also excluded from `PlayingPeerCount`, so on a three-player dedicated match the ready gate waits
+for a press one of them can never make, and it can never be elected leader.
+
+⚠️⚠️ **SEVEN EXISTING TESTS ASSERTED THE FAULT, AND THAT IS THE PART WORTH KEEPING.**
+`ADedicatedRefereeCannotTakeAChairByAsking`, `ADedicatedServerNeverBecomesTheLeader`,
+`DedicatedRefereePeerHoldsNoSeatAndNeverLeads`, `DedicatedServerInitializesSeatlessAndLocksLeader`,
+`PlayingPeerCountExcludesSpectatorsAndDedicatedServer`, `LobbyGalleryTests.TheRefereeIsNotInTheGallery`
+and `NetworkMultiProcessProbes.DedicatedServerTopologyPreservesRefereeInvariants` all admitted
+the referee as peer 1, several with the comment *"Peer 1 is the dedicated referee"*. **They were
+written against the implementation rather than against the transport, so they agreed with it and
+could only ever agree with it.** One of them even carries the correct fact two lines above the
+wrong one: *"netcode hands out client id 0, so the old sentinel was also a legal peer."*
+
+**What landed:**
+
+- `LobbySession.RefereePeerId = 0`, a constant, replacing the literal at all three sites. It
+  went wrong three times identically because nothing tied the three together.
+- The seven tests corrected to the transport's answer, plus `DedicatedRefereeTests`, five cases
+  that assert it from the outside: the referee holds no seat, **the first player does**, the
+  referee never leads, it is not counted by the ready gate, and a LAN listen host is untouched.
+- `tools/referee_run.py`, the harness, with the finding folded back into its verdict: it
+  reported the referee's slot and never asked about the clients', so the first run PASSED while
+  printing `slot -1` on a client. A verdict that cannot fail is not a measurement.
+
+⚠️⚠️ **LAN IS UNTOUCHED AND THAT IS BY CONSTRUCTION, NOT BY LUCK.** `IsDedicated` is set true
+only by `NetSession.StartHostAsync(port, dedicated: true)`, which is `-tp-dedicated`; the two
+other writers set it false. A player hosting from their own machine is a LISTEN host, which is
+peer 0 **and** holds a seat, so none of these branches is entered at all.
+`ALanListenHostIsNeverTreatedAsARefereeAndKeepsItsSeat` asserts exactly that from both sides,
+because the failure mode if this ever inverts is that the person who started the match has no
+body in it.

@@ -234,8 +234,9 @@ namespace TumbangPreso.Tests
         {
             var lobby = NewLobby(dedicated: true);
 
-            lobby.Admit(1, "server", "SERVER");
-            Assert.IsFalse(lobby.IsLeader(1), "the referee must not lead a lobby it cannot play in");
+            lobby.Admit(LobbySession.RefereePeerId, "server", "SERVER");
+            Assert.IsFalse(lobby.IsLeader(LobbySession.RefereePeerId),
+                "the referee must not lead a lobby it cannot play in");
 
             lobby.Admit(101, "alice", "ALICE");
             Assert.IsTrue(lobby.IsLeader(101));
@@ -1189,10 +1190,11 @@ namespace TumbangPreso.Tests
             var lobby = new LobbySession { IsDedicated = true };
             lobby.OpenLobby(new System.Random(42));
 
-            var referee = lobby.Admit(1, "token-referee", "Referee");
+            var referee = lobby.Admit(LobbySession.RefereePeerId, "token-referee", "Referee");
             Assert.AreEqual(-1, referee.Seat);
 
-            Assert.IsFalse(lobby.TryTakeSeat(1, 0), "the server referees, it does not play");
+            Assert.IsFalse(lobby.TryTakeSeat(LobbySession.RefereePeerId, 0),
+                "the server referees, it does not play");
             Assert.AreEqual(-1, referee.Seat);
             Assert.IsFalse(lobby.IsSeatOccupied(0));
         }
@@ -1228,18 +1230,21 @@ namespace TumbangPreso.Tests
             var lobby = new LobbySession { IsDedicated = true };
             lobby.OpenLobby(new System.Random(42));
 
-            // Peer 1 is the dedicated referee
-            var refPeer = lobby.Admit(1, "token-dedicated-ref", "Referee");
+            // ⚠️ PEER 0 IS THE DEDICATED REFEREE. This read "Peer 1" and peer 1 is the first
+            // player to join; see LobbySession.RefereePeerId for the measurement that found it.
+            var refPeer = lobby.Admit(LobbySession.RefereePeerId, "token-dedicated-ref", "Referee");
             Assert.AreEqual(-1, refPeer.Seat, "Dedicated server must not hold a physical seat");
             Assert.IsTrue(refPeer.Spectator);
-            Assert.IsTrue(lobby.IsSeatlessReferee(1));
-            Assert.AreNotEqual(1, lobby.LeaderPeerId, "Dedicated server referee must never be leader");
+            Assert.IsTrue(lobby.IsSeatlessReferee(LobbySession.RefereePeerId));
+            Assert.AreNotEqual(LobbySession.RefereePeerId, lobby.LeaderPeerId,
+                "Dedicated server referee must never be leader");
 
-            // Human player joins
-            var human = lobby.Admit(2, "token-human-host", "Human Host");
+            // Human player joins. Peer 1 is what the transport hands the first joiner, and
+            // this is the case that was broken: it was being admitted as the referee.
+            var human = lobby.Admit(1, "token-human-host", "Human Host");
             Assert.AreEqual(0, human.Seat);
             Assert.IsFalse(human.Spectator);
-            Assert.AreEqual(2, lobby.LeaderPeerId, "First human peer should be leader");
+            Assert.AreEqual(1, lobby.LeaderPeerId, "First human peer should be leader");
         }
 
         // -------------------------------------------------------------------
@@ -1252,8 +1257,8 @@ namespace TumbangPreso.Tests
             var lobby = new LobbySession { IsDedicated = true };
             lobby.OpenLobby(new System.Random(42));
 
-            // Dedicated referee (peer 1) does not count towards ready quorum
-            lobby.Admit(1, "ref-token", "Referee");
+            // Dedicated referee (peer 0) does not count towards ready quorum
+            lobby.Admit(LobbySession.RefereePeerId, "ref-token", "Referee");
             Assert.AreEqual(1, lobby.PlayingPeerCount(), "Floored at 1 when no human players are seated");
 
             // Human player 1 (host)
@@ -1492,8 +1497,8 @@ namespace TumbangPreso.Tests
             // thing it represents. `LobbySession.LeaderPeerId` carries the note.
             Assert.AreEqual(-1, lobby.LeaderPeerId, "no leader is -1, because 0 is a real peer");
 
-            // Server referee joins as peer 1
-            var refPeer = lobby.Admit(1, "server-token", "DedicatedServer");
+            // Server referee joins as peer 0, which is what NGO calls the server.
+            var refPeer = lobby.Admit(LobbySession.RefereePeerId, "server-token", "DedicatedServer");
             Assert.AreEqual(-1, refPeer.Seat);
             Assert.IsTrue(refPeer.Spectator);
             Assert.AreEqual(-1, lobby.LeaderPeerId, "Dedicated referee must never be leader");

@@ -41,9 +41,11 @@ either of those.
 | **P2** | 16 | **One bot run is not balance evidence.** Eight matches at shipped settings spread **58 to 100 throws**, about 20 per cent. | A multi-seed sweep recording SHA, seed, config,each run, mean, median and spread, so no threshold is set against noise. |
 | **P2** | 143.15 | **The cold-start harness is written and has never been run against a stamped artifact.** `tools/cold_start.py` drives the real .exe through `-tp-host -tp-allbots -tp-netreport`, and refuses outright if the player carries no identity or came from another commit. | One green run of `python tools/cold_start.py --clean-profile` against a build from HEAD. ⚠️ A clean MACHINE is still `Attention.md`. |
 | **P2** | 141 | Spectator and seat ownership: the duplicate scoreboard name, and regression cover for repeated F1-F4 transitions | § 141 |
-| **P1** | 143.20 | **`SteeringTests` drifts 1.079 m sideways with no input**, three cases, the same value every run. Pre-existing, and only legible now that isolation stopped one of the three failing on another fixture's leak | The frame it jumps on, found by logging the position through `Settle`. ⚠️ Do not widen the 0.01 bound |
 | **P2** | 93 | A held tsinelas drifts **0.084 m** from the hand, and the isolated `match` group reports exactly that (the full run said 7.945 m, on a SETTINGS test) | § 93 |
 | **P2** | 127 | The taya ring and attacker disc need their non-colour distinction finished | § 127.3 |
+| **P1** | 144.7 | **The seat handover is built except for the rating, which does not travel.** `SeatHandover` maps a rating to a tier and the ladder already refuses to pay a handed-over seat; the host has no rating to map | A rating on the connection hello, `MatchRpc.RatingForDepartedPeer` reading it, and a test that 2400 gets Astig and 700 gets Bata. ⚠️ It moves `ProtocolVersion`, so both players rebuild together. Start a session with it |
+| **P2** | 144.3 | **Three of the six cues the audio audit still flags are the PROTECTED `ui_*` files.** `ui_click` sits at a DC offset of -0.121, which is a thump on every press of the three most-heard sounds in the game | 🧑's yes, then one line to subtract the mean. ⚠️ It rewrites files he asked for back BY NAME (`CLAUDE.md` § 6), so it is his call and not a commit |
+| **P2** | 144.3 | **`Art/audio/sfx` is a 117-file duplicate that nothing loads and nothing writes.** Both audio gates were reading it instead of `Resources/Sfx`; they were moved, and the folder is still there | A decision: it is the authored master and something copies it, or it is dead and goes. ⚠️ Not deleted on an inference |
 
 ✅ **Closed by the 2026-09-04 hardening pass and no longer listed here: § 143.1, § 143.2, § 143.3, § 143.4, § 143.5, § 143.6, § 143.7, § 143.8, § 143.10, § 143.11, § 143.12, § 143.13, § 143.14, § 143.16, § 143.18.** Each one keeps its own subsection under § 143 with the measurement that closed it. **A done row is a row every future session reads and skips**, which is how an execution index turns back into the 22,930-line file this queue exists to replace.
 
@@ -59,7 +61,6 @@ it is not is why nobody believed the suite. `PaperPurityProbe.NoFieldHighlightsI
 
 | Case | What it says |
 |---|---|
-| `SteeringTests`, three cases | **1.079 m sideways with no input**, the same value every run. § 143.20 |
 | `CarryTests.AHeldSlipperStaysOnTheArm` | **0.084 m** against a 0.05 m bound. § 93, and the isolated number is the real one: the full run reported 7.945 m, on a SETTINGS test |
 | `AspectRatioProbes.TheCharacterScreenSurvivesEveryAspectRatio` | 1 label under the 18-unit floor. ⚠️ **Do not lower the floor**; § 126.13 and `Attention.md` § 12.2 |
 | `PaperPurityProbe.NothingOnTheInventoryDisappeared` | Controls that were on the screens before the paper pass and are not now |
@@ -492,6 +493,262 @@ new map all just work.
   `ScreenFocus.MakeRoomForThumbs` like the touch customiser's bar. Eighteen rows at 144 do not fit
   a 1080-unit canvas, and this screen exists for a device that has no thumbs on the glass. It will
   show up in the `ThumbFloor` sweep; see § 126.2 for why that number is a worklist and not a gate.
+
+---
+
+## 144 · THE TWO ACCOUNT-GATED DOWNLOADS LANDED, AND THE AUDIO GATE WAS GRADING A COPY THE GAME CANNOT LOAD ⚠️ IN PROGRESS, 2026-09-04, branch `main`
+
+🧑 signed in to Freesound in the session's browser and asked for the sixteen recordings to be
+fetched from there, and uploaded the jeepney himself. `Attention.md` § 11 had both as
+person-only work; both are done and that section now records the RULE rather than the task.
+
+### 144.1 ✅ THE SIXTEEN RECORDINGS, AND 42 CUES THAT WERE SYNTHESISED ARE SOURCED
+
+All sixteen `Asset_Sourcing.md` § 5.2 files are in `scratchpad/asset-src/freesound/`, verified
+against the format and duration stated in their own rows to three decimal places. **42 cues
+re-sourced**: all 18 `sfx_cast_*`, all 12 `sfx_var_*`, and `sfx_fire_whoosh`, `sfx_ice_form`,
+`sfx_ice_freeze`, `sfx_ice_shatter`, `sfx_barricade_raise`, `sfx_thunder_impact`,
+`sfx_lightning_strike`, `sfx_hex_cast`, `sfx_hex_afflict`, `sfx_blink_arrive`, `sfx_quake_slam`
+and `lata_seal`.
+
+⚠️⚠️ **THIRTEEN OF THE SIXTEEN ARE USED AND THE THREE THAT ARE NOT EACH CARRY A REASON.** The
+tin can is the one worth knowing: § 5.2 names it for `lata_impact` and `lata_knockdown`, and
+§ 5.4 records those exact cues being **rejected by ear** on 2026-09-03 and restored. **A source
+table written before a listening test does not overrule the listening test.** The basketball and
+the crowd cheer have no cue to go to: there is no plaza-ambience cue and no crowd-bed cue in
+`Resources/Sfx`, and wiring them would mean inventing a cue nobody asked for.
+
+⚠️ **`Slice(src, rank=n)` IS HOW SIX HEROES AVOID SOUNDING LIKE ONE.** § 5.3 says *"Do not reuse
+one full cue for all three powers"* and *"Do not give all three abilities the same witch sound"*,
+against thirteen usable recordings for thirty cues. A slice takes the **rank-th loudest
+non-overlapping window** of a recording, so "the third loudest 1.1 s of the earthquake take" is
+reproducible, is different material from the first, and cannot land on silence the way a typed
+start time can. ⚠️ **Non-overlapping is the half that matters**: ranking every sample offset
+returns rank 0, 1 and 2 all sitting on the same transient a millisecond apart.
+
+⚠️⚠️ **AND EVERY ONE OF THE 42 IS PROVISIONAL.** `CLAUDE.md` § 6: sourced SFX are provisional
+until 🧑 hears them in play. `Asset_Sourcing.md` § 5.5 lists them.
+
+### 144.2 ✅ THE GENERATOR DECAYED A CUE BY ITS OWN GAIN ON EVERY RE-RUN
+
+⚠️⚠️ **FOUND BY RUNNING IT TWICE, WHICH NOBODY HAD DONE.** `peak_of` read the peak of the file it
+was about to OVERWRITE and the row's `gain` was multiplied onto it, so a second run multiplied
+the gain again. `tag` at gain 0.9 goes **0.850, 0.765, 0.688, 0.620**, and the sixth run is half
+the level `AudioCues.TrimDb`'s clipping measurement was taken at. Nothing warns, every row prints
+a plausible number, and the only symptom is that the game gets quieter in patches.
+
+✅ `tools/assets/cue_reference_peaks.json` holds the FINAL target per cue, written once, seeded
+from the shipped mix for the 21 rows that already carried their gain. A second run is now a
+byte-for-byte no-op, and that is asserted by running it twice and diffing.
+
+⚠️ **THE FIRST ATTEMPT AT THIS LEDGER STORED THE PRE-GAIN REFERENCE AND DECAYED EXACTLY AS
+BEFORE.** What has to be stable across runs is the number the file ENDS UP at, so that is the
+number written down.
+
+### 144.3 ⚠️⚠️ OPEN: BOTH AUDIO GATES WERE READING A DIRECTORY THE GAME CANNOT LOAD FROM
+
+**This is the big one and it is `docs/TODO.md` § 114's fault on a whole subsystem.**
+
+`AudioDirector` reaches every cue through `Resources.Load<AudioClip>($"Sfx/{stem}")`, and
+`Resources.Load` can only resolve inside a folder literally named `Resources`. The cues the game
+plays are `Assets/TumbangPreso/Resources/Sfx/`. **Both gates pointed at
+`Assets/TumbangPreso/Art/audio/sfx/`, which is not under a `Resources` folder and is therefore
+unreachable at runtime:**
+
+- `tools/audit_cue_audio.py`, whose whole job is *"Does each cue file actually contain an
+  audible, unclipped sound?"*
+- `AudioCueCheck`, which is one of the eight editor checks in `Checks.RunAll` and gates a build.
+
+⚠️⚠️ **AND THE TWO COPIES HAD ALREADY DRIFTED BEFORE THIS PASS: 21 of 117 cues differed**, which
+is the 2026-09-03 source pass writing to `Resources/Sfx` while both gates went on grading the
+untouched originals. Every DC-offset flag the audit was reporting was against a file the player
+has never heard.
+
+✅ **Both moved to `Resources/Sfx`.** The audit's flag count went **11 to 6**, and the six are all
+pre-existing and none of them is from this pass.
+
+⚠️⚠️ **OPEN, AND IT NEEDS HIS EAR RATHER THAN A COMMIT: THREE OF THE SIX ARE THE PROTECTED
+`ui_*` FILES.** `ui_click` sits at a DC offset of **-0.121**, `ui_back` at -0.109 and `ui_hover`
+at -0.101, which is a thump on every press of the three most-heard sounds in the game. They are
+the originals he asked for back by name (§ 5.4, `CLAUDE.md` § 6), so **removing the offset means
+rewriting his preferred files.** It is a one-line change to subtract the mean and it does not
+alter the character of the sound at all; it removes a click. **Ask before doing it.** The other
+three are `boot_sting`, `match_win` and `round_win`, which no generator owns.
+
+⚠️ **AND `Art/audio/sfx` IS NOW A 117-FILE DUPLICATE THAT NOTHING LOADS AND NOTHING WRITES**
+except `tools/generate_hero_audio.py`. It is left in place rather than deleted, because deleting
+117 audio files on an inference is exactly the kind of move this repository writes ⚠️ notes
+about. **Decide what it is for, or delete it, but do not leave two copies with two different
+answers.**
+
+### 144.4 ✅ THE JEEPNEY SHIPS AS DELIVERED, AND § 6.0 EXISTS BECAUSE THE FIRST ATTEMPT DID NOT
+
+Maclin Macalindong's CC BY jeepney replaces the distant north `van` on Ilalim ng Tulay, exactly
+as `Asset_Sourcing.md` § 7.1 asks. **74,170 triangles, 17 materials, its own colours, unmodified.**
+
+⚠️⚠️ **THE FIRST BUILD FOLLOWED § 7.1'S "DECIMATE, MERGE MATERIALS" INSTRUCTION AND WAS REJECTED
+ON SIGHT.** 3,000 triangles, one material, UVs rewritten onto the kit's nine-swatch palette atlas
+so `tumbang-warm-c` would recolour it like a van. 🧑: *"ew what is that jeep wtf did u do"*,
+**"u ate all its colors and design wtf"**, then *"no need to lower triangles or compress dont
+worry it wont lag"* and *"make that a rule in claude md"*. **`CLAUDE.md` § 6.0 is that rule.**
+Every step was defensible alone; the model was there for its silhouette AND its livery and the
+optimisation deleted both, against a frame cost nobody had measured.
+
+- **Placement is still ours**: the model is 24.35 units long as authored, a van is 2.75 drawn at
+  1.35, and a jeepney is about 6.0 m against a van's 4.5, so it is drawn at `4.95 / 24.3526`.
+  The vehicle table carries a per-row scale now instead of one shared literal.
+- **The palette is `""`**, which `InstantiateKitProp` reads as "keep what the author shipped". A
+  MISSING atlas still warns, because that is a defect and this is a request.
+- ⚠️⚠️ **THE CC BY CREDIT IS ENFORCED RATHER THAN REMEMBERED.** `tools/build_jeepney.py` refuses
+  to copy the model unless `CreditsContent.CcByCredits` already names the author, and it reads
+  that name out of the .glb's own metadata rather than a constant.
+
+⚠️⚠️ **AND A TRAP WORTH THE LINE: `IlalimNgTulayBuilder.Build` IS A STEP, NOT THE PIPELINE.**
+Rebuilding the map through it directly leaves the scene with **no `AsphaltSurface`**, because
+that is a separate stage `IlalimNgTulayPipeline` runs after the builder. Nothing says so at the
+call site; what says so is `MapSurfaceTests.IlalimUsesOneContinuousAsphaltSkinAndNoPatchSlabs`
+going red with *"Expected: 1, But was: 0"*, three Unity launches later. **Use
+`IlalimNgTulayPipeline.Run`**, which authors the fascia, builds, lays the asphalt, measures with
+`MapGeometryCheck` and captures the showcase in one launch.
+
+**Three more things came off his eye on the renders, and all three are placement rather than
+mesh, which is § 6.0's line:**
+
+- ⚠️⚠️ **IT IMPORTS STANDING ON ITS NOSE.** Sketchfab's glTF is authored Z-up with its long axis
+  on local +Y, so glTFast brings it in 24 units TALL with its wheels down one side. The vehicle
+  row carries a `tilt` of -90 beside its `yaw`, which is the same kind of number the `yaw` column
+  already was.
+- ⚠️⚠️ **6.0 m WAS TOO SMALL IN THE PICTURE AND RIGHT ON PAPER.** 🧑: *"can u make that bigger
+  bcz dude it looks so small compared to cars"*. **The Kenney vehicles are stylised SHORT for
+  their width**, so matching real-world proportions against them under-reads. It is 7.5 m now,
+  the top of a real jeepney's range, on a street that runs at 0.825 units to the metre.
+- ⚠️⚠️ **AND THE METAL FINISH IS PER SURFACE, BECAUSE ONE VALUE FOR EVERYTHING WAS THE FIRST
+  ANSWER AND HE NAMED IT: "dont js spam it"**, *"make the white replacement contextual depending
+  on which surface of the jeep is affected"*, and *"make sure the parts u paint to look metallic
+  make sense"*. **A jeepney's white is at least three materials**: the chrome bumper and grille,
+  the painted steel body, and the vinyl bench seats. One 0.70 metal value made the seats look
+  like a bumper.
+
+  **The author's own material names are the evidence and the table reads them**, which beats
+  guessing from a colour: `silver_shader4Silver_SG` is chrome (0.95 / 0.80),
+  `mi_car_paint_phen_x2SG` is a clearcoat over flake and only half metallic (0.40 / 0.65), any
+  other bare achromatic panel is a duller 0.55 / 0.35, and `maya_sofa_skin_shadermay` — the
+  bench seats, **exactly as white and exactly as untextured as the bodywork** — is refused by
+  name along with glass, rubber and plastic. ⚠️ **A TEXTURED material is refused outright**: six
+  of the eleven white materials carry the livery under a white base colour, and a sheen on the
+  destination boards would be a gloss on the artwork the model is here for. ⚠️ **Anything the
+  table does not recognise keeps the material the author shipped**, which is the narrowest thing
+  that can be done and the only one that cannot be wrong.
+
+---
+
+### 144.5 ✅ THE LOBBY'S CHARACTERS AND MAP WERE ONE 960 x 540 TEXTURE STRETCHED ACROSS THE SCREEN
+
+🧑 2026-09-04: *"lobby looks so pixelated can u try to fix that too"*, and when asked which part,
+**"i meant the characters and stuff"**, *"and the map in lobby"*.
+
+⚠️⚠️ **THOSE ARE NOT TWO FAULTS. THE LOBBY CHARACTER SHOT AND THE MAP SHOT ARE THE SAME
+SURFACE**, told apart only by `MapPreviewSurface._lobbyShot`, so one undersized target made both
+soft at once. It was a fixed `960 x 540`, with **no anti-aliasing and no filter mode set**, drawn
+full-bleed behind the lobby: on a 1440p screen that is a 2.7x upscale of a point-sampled image of
+a scene made almost entirely of hard ink outlines.
+
+**The old comment was the whole story:** *"Half the screen is enough behind a scrim, and it halves
+the cost."* True of the map shot, which does sit behind a scrim. **The lobby character shot does
+not**, and it is the one with faces in it. A number chosen for one caller and inherited by a
+second is `CLAUDE.md` § 6.2c's *"what is this size measured AGAINST"* asked about a render target
+instead of a rect.
+
+✅ **Fixed, and the framing is provably untouched.** The aspect is now a named constant at 16:9
+and the RESOLUTION follows the display between 960 and 2048 wide:
+
+- ⚠️⚠️ **THE ASPECT IS THE FRAMING AND THE RESOLUTION IS NOT.** Every map's `Distance` and
+  `Height` was tuned against a 16:9 frame at 58 degrees, and this file already warned that
+  changing that ratio *"would silently re-frame all three arenas on the practice screen"*.
+  Changing how many pixels the same frame is drawn with re-frames nothing.
+- `antiAliasing = 4`, which `ModelPreview` has always asked for and this surface never did.
+  `docs/TODO.md` § 63 is the same subject one surface over: the world outline was aliased
+  *"because MSAA was never able to see it"*.
+- `filterMode = FilterMode.Bilinear`. An unset filter mode takes the project default, and an
+  upscaled point-sampled target is the literal definition of the word he used.
+- ⚠️ **The camera lets go of the texture before it is released** on a resize. Releasing one a
+  camera still points at is a black flash for a frame rather than a crash, which is exactly the
+  kind of thing nobody reports precisely.
+
+⚠️ **`ModelPreview` WAS ALREADY CORRECT AND IS THE REFERENCE**: it sizes to its rect, caps at
+2048, sets four samples and bilinear, and re-derives the camera aspect. The two files now answer
+the same question the same way.
+
+### 144.6 ✅ THE LOGO IS ALREADY THE LOGO, AND THE FILE HE SENT IS BYTE-IDENTICAL TO THE ONE IN THE REPO
+
+🧑 2026-09-04, attaching `logo.jpg`: *"use this as the updated logo for builds (not sure if this
+is in repo already)"*, *"make sure its sized correctly and is a png and looks great"*, and
+**"dont remake it use the actual photo i have"**.
+
+**It is in the repo, and it is the same file**: `md5 0e46f966…` matches
+`Art/ui/brand/source/tump_logo_colour.jpg` exactly. Nothing was regenerated and nothing needed
+to be.
+
+- **It is already a PNG where it ships.** `tools/build_brand_art.py` keys the white page to
+  alpha and trims the margin: `Art/ui/brand/tump_logo.png` and
+  `Resources/UI/brand/tump_logo.png`, **1895 x 1246 RGBA**. ⚠️ **The drawing is untouched** —
+  `key_page` and `trim` only remove the paper and the whitespace; `recolour_mono` is a different
+  output and does not run on this one.
+- **It is used as the hero art on the sign-in/boot screen**, `SignInScreen` loading
+  `UI/brand/tump_logo`, and it is what `tools/read_brand_palette.py` measured the whole § 6.4
+  palette off.
+- ⚠️ **THE BUILD SPLASH CARRIES NO LOGO ON PURPOSE AND THAT IS NOT THIS.**
+  `GameBuilder.ConfigureSplash` sets `logos` to an EMPTY array deliberately, and its own note
+  says the lookup *"is deleted with the logo"*; the studio mark is shown by `BootSting` in-game
+  instead. The `.exe` icon is `app_icon.png`, the tansan. **If either of those should become the
+  wordmark, that is a decision rather than a fix**, and nothing here has changed them.
+
+---
+
+### 144.7 ⚠️⚠️ OPEN: THE SEAT HANDOVER IS BUILT EXCEPT FOR THE ONE NUMBER THAT HAS TO TRAVEL
+
+`Attention.md` § 16.1 was ruled and not built: *"let ai on same skill level as them take over"*.
+Most of it is built now and the remainder is one wire field.
+
+**What landed:**
+
+- `Core/SeatHandover.cs`, engine-free, ten `Core.Tests` cases. `TierFor(rating)` maps a ladder
+  number onto the three tiers `AiTuning` actually has, ⚠️ **with both band edges DERIVED**
+  (`RatingRules.StartRating` ± `MatchmakingRules.MaxHalfWidth`, so 1000 and 2000) rather than
+  picked. That constant already carries the argument in its own words: 500 is *"where banding
+  stops meaning anything ... a queue that has widened this far has already said 'skill matching
+  has failed'"*. **The distance at which the game refuses to call two players comparable is the
+  distance at which it should stop handing their seats the same bot.**
+- `SeatOrigin` — `Human`, `Bot`, `HandedToBot` — on `CharacterMotor` and on
+  `PlayerMatchStats`, beside `IsBot` rather than replacing it. ⚠️ `IsBot` is on the wire and in
+  `IntegrityRules.Digest`; moving it would be a protocol change for a career field.
+- **The ladder rule, which is the half with teeth.** § 16.1: *"a bot can lose you points you
+  would not have lost, or win you points you did not earn"*, and **"a rating that counts a bot's
+  stretch as the player's own is a ladder nobody trusts."** `SeatHandover.RatingWeightFor` is one
+  function because it is one rule: my own seat being handed over zeroes my weight, and **somebody
+  else's** seat being handed over reduces it, because the match I finished had fewer people in it
+  than the one I started. A caller that remembered the first and forgot the second would pay
+  three players a four-human result for a match they finished against an AI.
+- `AIController.SeatDifficulty`, a per-instance tier defaulting to the lobby's. The difficulty
+  was a single static, so **every bot in the game played at one tier** and a handed-over seat
+  could only be given the lobby's setting.
+
+⚠️⚠️ **WHAT IS MISSING IS THE RATING, AND § 16.1 SAID SO BEFORE ANY OF THIS WAS WRITTEN:** *"the
+game has no notion of 'this player's skill level' to hand the bot"*. Confirmed against the code:
+**nothing on `ConnectionHello` or `LobbySession.PeerRecord` carries a rating**, so the host does
+not know what tier to ask for. `MatchRpc.RatingForDepartedPeer` is the seam and it answers 0
+today, which is the honest answer rather than a stub: the seat keeps the lobby's tier, exactly as
+it did before, and **one line changes when the number arrives.**
+
+**Done looks like:** a rating on the connection hello, `RatingForDepartedPeer` reading it, and a
+test that a handed-over seat at 2400 gets Astig while one at 700 gets Bata.
+
+⚠️⚠️ **AND IT COSTS A PROTOCOL BUMP, WHICH IS WHY IT WAS NOT SLIPPED INTO THIS SESSION'S BUILD.**
+A field on the hello moves `NetSession.ProtocolVersion`, and `CLAUDE.md` § 4 is explicit about
+what follows: *"the Windows and Android players must be rebuilt from the same commit and shipped
+together, or they refuse each other correctly and it reads as a bug"*.
+`InputContractTests.TheInputPassDidNotMoveTheProtocolVersion` asserts the constant so that a
+legitimate bump is a deliberate act. **Do it at the start of a session, not at the end of one.**
 
 ---
 
@@ -990,47 +1247,6 @@ the three-layer answer collapsing into two.
 which is what the note always intended. ⚠️ **The two strings are still different and that is left
 alone deliberately**: making them equal would be a content decision about how Seismic Stomp is
 described, and the screens now each show the one they were designed for.
-
-### 143.20 ⚠️⚠️ OPEN: `SteeringTests` DRIFTS 1.079 m SIDEWAYS WHILE SETTLING, DETERMINISTICALLY, AND § 130.14b CLOSED THIS ONCE
-
-**Three cases, one message, the same number every time:**
-
-```
-AMovementAimedSeatTurnsToFaceItsDirection
-MouseAimedMovementIsRelativeToTheBody
-TheSteeringFrameByFrameIsWrittenOut
-
-  "the seat drifted sideways while settling, so it is not standing on the floor this
-   test built. See docs/TODO.md § 130.14."
-   Expected: less than 0.00999999978f   But was: 1.07999992f
-```
-
-⚠️ **PRE-EXISTING AND NOT FROM THIS PASS.** It is red on `e85b0fc` in the full single-process run
-and red in the isolated `match` group afterwards, with the same value. **The isolation is what
-makes it worth acting on**: in the full run one of the three failed instead on a
-`MissingReferenceException` from another fixture's leaked object, so the set was never three
-identical failures and never looked deterministic.
-
-**What is known:**
-
-- The seat is built at `StandingHeight` = `(0, 1.05, 0)` over a 60x1x60 cube floor whose top
-  surface is y = 0, with a `CharacterController` and a `CharacterMotor`, and **no input is
-  applied before the assertion**. `Settle` waits 20 fixed updates and then asserts the body has
-  not moved in x or z.
-- **1.079 m is far too specific to be jitter**, and it repeats exactly across three cases and
-  across runs, so it is something pushing the body once rather than drift accumulating.
-- § 130.14b closed the earlier version of this (*"the steering was never wrong. The test buried
-  its own seat in the floor"*) and `Settle` is the fix that entry added. **This is a different
-  failure of the same setup**: the seat is no longer buried, it is displaced.
-
-⚠️ **DO NOT WIDEN THE 0.01 BOUND.** `Settle`'s own note says why it asserts the seat is actually
-down rather than trusting a frame count: *"a change to gravity or to the controller's size fails
-here, where the reason is written, instead of one assertion further on where it is not."* A body
-that moves a metre with no input is either the confinement clamp, a spawn placement, or a
-collision with something the test did not build, and all three are worth knowing about.
-
-**Next step is one measurement, not a fix**: log the position every fixed update through `Settle`
-and find the frame it jumps on. A single frame means a teleport or a clamp; a ramp means a force.
 
 ### 143.17 ⚠️ OPEN: TWO DEFECTS THAT WERE INVISIBLE UNTIL THE SUITE WAS ISOLATED
 

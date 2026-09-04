@@ -208,11 +208,23 @@ differently. A number from the desktop is not that measurement.
 
 ---
 
-## 11 · Two downloads ⚠️ 🧑 IS DOING THESE HIMSELF
+## 11 · ✅ DONE 2026-09-04: the two downloads landed and are wired
 
-⚠️⚠️ **2026-09-04: 🧑 will sign in to Freesound in a browser and upload the jeepney himself.** A
-session must NOT try to fetch either, and must NOT report them as blocked work. **Check the two
-folders below: if the files are there, do the wiring. If they are not, leave them alone.**
+⚠️⚠️ **BOTH ARRIVED AND BOTH ARE IN THE GAME. NOTHING HERE IS OUTSTANDING.** 🧑 signed in to
+Freesound in the session's browser and asked for the sixteen to be fetched from there
+(*"i will login to freesound in ur browser and u download everything"*), and uploaded the
+jeepney himself. **This section is kept rather than deleted because the credential rule that
+produced it has not changed**: a session may not create an account, and the next asset behind a
+login is blocked in exactly the same way until a person signs in.
+
+| What | Where it is | State |
+|---|---|---|
+| The 16 Freesound recordings | `scratchpad/asset-src/freesound/` (gitignored) | ✅ All sixteen, verified against § 5.2's stated format and duration to three decimal places. **42 cues re-sourced** by `tools/build_ability_audio.py`: all 18 `sfx_cast_*`, all 12 `sfx_var_*`, and 12 named elemental cues. Three recordings are downloaded and deliberately unused, each with its reason in that file's `KEPT` |
+| The jeepney | `scratchpad/asset-src/sketchfab/jeepney.glb` (gitignored) | ✅ **In the map as delivered**: 74,170 triangles, 17 materials, its own colours. It replaces the distant north `van` on Ilalim ng Tulay exactly as § 7.1 asks. ⚠️ **The first version was decimated to 3,000 and recoloured onto the map palette and was rejected on sight** (*"u ate all its colors and design"*); `CLAUDE.md` § 6.0 is the rule that came out of it. `tools/build_jeepney.py` REFUSES to copy the model unless the CC BY credit is already in `CreditsContent` |
+
+⚠️ **THE OLD INSTRUCTION, KEPT SO THE RULE SURVIVES THE TASK:** a session must not try to fetch
+an account-gated download on its own, and must not report one as blocked work. Check the folders;
+if the files are there, do the wiring, and if they are not, leave them alone.
 
 | What | Where it lands | What to do once it is there |
 |---|---|---|
@@ -448,7 +460,7 @@ a bot's stretch as the player's own is a ladder nobody trusts**, which is the sa
 `docs/TODO.md` § 128 makes about the rating not reading the bot flag. Decide that when the seat
 handover is built, not before.
 
-### 16.2 ⚠️ OPEN, AND REFRAMED: HOST LOSS IS AN ARCHITECTURE QUESTION, NOT A RULING
+### 16.2 ✅ MEASURED 2026-09-04: A SEATLESS REFEREE RUNS A MATCH TODAY, AND RUNNING ONE FOUND A BUG
 
 🧑: *"thats a real problem, is there any other way to structure lan network matches? host sided
 shit might be shitty (maybe if we will rework host logic or replace it lets work on a new branch
@@ -478,8 +490,36 @@ ruling.
   better** (it is a machine nobody is playing on, sitting still, on mains power, not being
   alt-tabbed) but it is not zero.
 
-⚠️ **THE BRANCH IS `lan-rework` AND NOTHING SHOULD LAND ON `main` FOR THIS.** Before any code:
-**measure whether a seatless referee actually starts and runs a match today**, because the
-architecture claims it can and nothing has ever checked. If it does, this is configuration and a
-launch path rather than a rework. If it does not, the measurement says what is missing.
+⚠️ **THE BRANCH WAS TO BE `lan-rework` AND IT IS NOT NEEDED.** The instruction was: before any
+code, **measure whether a seatless referee actually starts and runs a match today**, because the
+architecture claims it can and nothing has ever checked. *"If it does, this is configuration and
+a launch path rather than a rework."*
+
+✅ **IT DOES.** `tools/referee_run.py` puts one `-tp-dedicated` process and two `-tp-join`
+clients on a real link and compares all three `NetStateReport` files. On `64718d3`:
+
+```
+referee   : role HOST    networked True  slot -1  round 1  active True  defender 0  hash 4570D8E8
+client1   : role CLIENT  networked True  slot -1  round 1  active True  defender 0  hash 85208A38
+client2   : role CLIENT  networked True  slot  0  round 1  active True  defender 0  hash 85208A38
+```
+
+**The referee refereed a live round and both clients agreed with it and with each other**: same
+defender, same roster, same taya, identical discrete-state hash. So the answer to this section is
+the good one: **the operator's laptop referees the bracket, no player is the host, and no player
+leaving can end a match.** 🧑 2026-09-04: *"no need to make lan rework branch if it works"*,
+*"js push it to main"*, so it did.
+
+⚠️⚠️ **AND THE FIRST RUN FOUND A REAL DEFECT, WHICH IS THE ARGUMENT FOR MEASURING FIRST.**
+`client1` came back holding `local slot: -1`, the referee's own value: **the first player to join
+a dedicated server was admitted as a spectator with no seat.** `LobbySession` treated peer 1 as
+"the server itself" in three places, and NGO's server is peer **0**; peer 1 is the first client.
+Seven existing tests asserted the wrong number and so could never have caught it.
+`docs/TODO_Archive.md` § 143.21 has the whole thing. `LobbySession.RefereePeerId` is the constant
+now, and `ALanListenHostIsNeverTreatedAsARefereeAndKeepsItsSeat` guards the LAN case, which is
+untouched by any of it because a listen host is not `IsDedicated`.
+
+⚠️ **WHAT IS STILL NOT MEASURED:** a referee on a SECOND machine (this run was three processes on
+one), and a referee surviving a client dropping and rejoining mid-match. Both are
+`tools/referee_run.py` plus a scenario, not new code.
 

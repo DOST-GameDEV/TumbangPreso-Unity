@@ -548,7 +548,7 @@ namespace TumbangPreso.Net
         private void ClaimLeaderIfVacant(int peerId)
         {
             if (LeaderPeerId >= 0) return;
-            if (IsDedicated && peerId == 1) return; // the server itself
+            if (IsSeatlessReferee(peerId)) return; // the server itself
 
             LeaderPeerId = peerId;
             LeaderChanged?.Invoke(peerId);
@@ -561,7 +561,7 @@ namespace TumbangPreso.Net
             foreach (var p in _peers.Values)
             {
                 if (p.Spectator || p.Seat < 0) continue;
-                if (IsDedicated && p.PeerId == 1) continue;
+                if (IsSeatlessReferee(p.PeerId)) continue;
 
                 LeaderPeerId = p.PeerId;
                 break;
@@ -596,9 +596,47 @@ namespace TumbangPreso.Net
         }
 
         /// <summary>
+        /// The referee's transport id on a dedicated server.
+        ///
+        /// ⚠️⚠️ THIS WAS `1` UNTIL 2026-09-04 AND `1` IS THE FIRST PLAYER TO JOIN, NOT THE
+        /// SERVER. `NetSession.LocalPeerId`'s own note has said the opposite in this same folder
+        /// since it was written: *"NGO gives the listen host and a dedicated referee
+        /// `NetworkManager.ServerClientId`, which is 0, and that 0 is a real identity rather
+        /// than a placeholder."* Three call sites here read `peerId == 1` with the comment
+        /// `// the server itself` beside them, so on a dedicated server the game excluded the
+        /// wrong peer from every seat rule it has and included the referee in all of them.
+        ///
+        /// ⚠️⚠️ WHAT IT COST, MEASURED RATHER THAN REASONED. `tools/referee_run.py` put a
+        /// `-tp-dedicated` referee and two clients on a real link for the first time
+        /// (`Attention.md` § 16.2: *"Nobody has ever run one"*). The referee refereed and both
+        /// clients agreed with it about the roster, the taya and the defender, and **the first
+        /// client to join came back with `local slot: -1`** — the value that means "I hold no
+        /// seat". It was in the arena, watching four bodies move, owning none of them.
+        ///
+        /// ⚠️ AND -1 IS NOT AN INERT NUMBER. `HeroHazards` asks
+        /// `p.PlayerSlot == NetAuthority.LocalSlot` in six places to decide whether an effect
+        /// applies to the local body; a seat of -1 matches no player, so that client's own
+        /// abilities stop resolving on itself while everything still looks connected. It also
+        /// cannot be elected leader and is not counted by the ready gate, so on a three-player
+        /// dedicated match the gate waits for a press one of them can never make.
+        ///
+        /// ⚠️ IT IS A CONSTANT NOW RATHER THAN A LITERAL IN THREE PLACES, which is why it went
+        /// wrong three times identically: the comment was correct and the number under it was
+        /// not, in each of them, and nothing tied them together.
+        ///
+        /// ⚠️⚠️ A LISTEN HOST IS UNTOUCHED BY THIS AND THAT IS THE POINT OF `IsDedicated`.
+        /// `NetSession.StartHostAsync` sets it only for `-tp-dedicated`, and the two other
+        /// writers set it false, so LAN play (a player hosting from their own machine) never
+        /// enters any of these branches at all. This fix cannot reach the configuration every
+        /// match so far has been played on.
+        /// </summary>
+        public const int RefereePeerId = 0;
+
+        /// <summary>
         /// A dedicated server's own peer holds no seat and plays nothing — it referees.
         /// </summary>
-        public bool IsSeatlessReferee(int peerId) => IsDedicated && peerId == 1;
+        public bool IsSeatlessReferee(int peerId) =>
+            IsDedicated && peerId == RefereePeerId;
 
         /// <summary>
         /// How many READY presses the host is waiting for: one per connected HUMAN peer.

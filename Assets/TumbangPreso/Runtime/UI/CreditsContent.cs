@@ -45,6 +45,16 @@ namespace TumbangPreso.UI
                 "This work is based on \"Pink Slipper\" (sketchfab.com/3d-models/pink-slipper-af5b6388d4f240389591a4ac09fedf06) by The Withered Rose (sketchfab.com/TheWitheredRose), licensed under CC-BY-4.0 (creativecommons.org/licenses/by/4.0)."),
             new Credit("IKE",
                 "This work is based on \"Low Poly Nike Sandals\" (sketchfab.com/3d-models/low-poly-nike-sandals-8e77c949319148afb9134ba13f64046f) by les03 (sketchfab.com/les03official), licensed under CC-BY-4.0 (creativecommons.org/licenses/by/4.0)."),
+
+            // ⚠️⚠️ THIS LINE AND THE MODEL SHIP IN THE SAME COMMIT, WHICH IS A LICENCE CONDITION
+            // AND NOT A HOUSE RULE. `Attention.md` § 11.2 states it and
+            // `tools/build_jeepney.py` ENFORCES it: that script refuses to write
+            // `Art/models/kits/car/jeepney.glb` at all unless this array already names Maclin
+            // Macalindong. A credit that is "added next time" is a CC BY breach in every build
+            // between the two commits, and the ordering is the only part of it anybody can get
+            // wrong by accident.
+            new Credit("JEEPNEY",
+                "This work is based on \"Jeepney\" (sketchfab.com/3d-models/jeepney-0b8bcde5df19458da9fa5606989b1e7d) by Maclin Macalindong (sketchfab.com/maclinmacalindong), licensed under CC-BY-4.0 (creativecommons.org/licenses/by/4.0)."),
         };
 
         /// <summary>Courtesy credits — none of these REQUIRE attribution (CC0 / in-house),

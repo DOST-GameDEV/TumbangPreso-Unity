@@ -31,6 +31,27 @@ namespace TumbangPreso.Core
 
         public bool IsBot;
 
+        /// <summary>
+        /// What this seat was for the whole match: a person, a bot, or a person who left and a
+        /// bot that finished for them.
+        ///
+        /// ⚠️⚠️ IT DOES NOT REPLACE <see cref="IsBot"/> AND MUST NOT. That flag is on the wire,
+        /// in the digest (`IntegrityRules.Digest` writes `b`/`h` per seat) and in
+        /// `ugs/cloud-code/match-record.js`, and moving it would be a protocol change for a
+        /// career field. `Origin` is the FINER answer beside it: `Bot` implies `IsBot`, `Human`
+        /// and `HandedToBot` do not, and `SeatHandoverTests` asserts the pair cannot disagree.
+        ///
+        /// ⚠️⚠️ AND `HandedToBot` IS WHY IT EXISTS AT ALL. `Attention.md` § 16.1: *"a seat that
+        /// was HUMAN and then became a bot part way through is neither, and the career line for
+        /// that match currently has no way to say so."* A boolean has to lie in one direction or
+        /// the other, and both lies reach the ladder.
+        ///
+        /// ⚠️ DEFAULTS TO `Human`, WHICH IS THE SAME DEFAULT `IsBot = false` ALREADY GIVES, so a
+        /// record written by an older build or by a path that has not been taught about handovers
+        /// reads exactly as it did before rather than as an unknown third thing.
+        /// </summary>
+        public SeatOrigin Origin = SeatOrigin.Human;
+
         /// <summary>`Roster` ids, never indices. See the ⚠️ on <see cref="MatchRecordRules"/>.</summary>
         public string CharacterId = "";
         public string SlipperId = "";

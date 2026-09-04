@@ -420,6 +420,34 @@ asset pass to restore one cue.**
 ⚠️ **The IKE slipper carries the real Nike wordmark as geometry.** First in the replacement
 queue; `docs/Port_Plan.md` § 8 lists the properties a replacement must preserve.
 
+### 6.0 ⚠️⚠️ DO NOT DECIMATE, COMPRESS OR RECOLOUR SOURCED ART TO SAVE PERFORMANCE. IT SHIPS AS DELIVERED
+
+🧑 2026-09-04, opening a render of the sourced jeepney: *"ew what is that jeep wtf did u do"*,
+**"u ate all its colors and design wtf"**, then the rule in his own words: *"no need to lower
+triangles wtf"*, **"no need to lower triangles or compress dont worry it wont lag"**, and
+*"make that a rule in claude md"*.
+
+**What was done to earn that, so nobody repeats it:** a 74,170 triangle CC BY jeepney was
+decimated to **3,000**, its **17 materials collapsed to 1**, and its UVs rewritten onto the map's
+nine-swatch palette atlas so `tumbang-warm-c` would recolour it like a Kenney van. Every step was
+defensible on its own and the result was a pink slab. **The model was in that map for its
+silhouette and its livery, and the optimisation deleted both.**
+
+- ⚠️⚠️ **THE BUDGET IS NOT THE CONSTRAINT AND HE HAS SAID SO.** This machine and the target
+  hardware run the game fine; a background prop at 74K triangles is not what will cost a frame.
+  **If a performance claim is ever made about sourced art, it gets MEASURED first** (`FrameRateHistogram`
+  has `MaxSeconds` and `LongFrames`) and quoted with the number, exactly like every other number
+  in this repository. An unmeasured optimisation that destroys the art is a pure loss.
+- ⚠️⚠️ **AND IT IS NOT A LICENCE TO RESKIN SOMEBODY'S MODEL EITHER.** § 6.4's palette rules are
+  about **colours chosen in code** — the UI, the surfaces this project draws itself. They are not
+  permission to repaint an authored asset, which is the same line § 6.4 already draws around
+  🧑's own pennant art: *"Do not repaint his art to satisfy this rule."*
+- ⚠️ **WHAT IS STILL FAIR GAME:** the import settings, the shader it is drawn with, where it is
+  placed, and how big it is. **What is not: the vertex count, the texture resolution, the
+  material count and the colours.**
+- ⚠️ **`docs/Asset_Sourcing.md` § 7.1 SAID TO DECIMATE IT AND THAT SENTENCE IS NOW WRONG.** It was
+  written before anybody had the model. This rule wins; the entry records the reversal.
+
 ### 6.1 Every model iteration gets a picture, and every picture gets a new filename
 
 ⚠️⚠️ **SHOW, DO NOT DESCRIBE. A model change with no render attached cannot be judged**, and

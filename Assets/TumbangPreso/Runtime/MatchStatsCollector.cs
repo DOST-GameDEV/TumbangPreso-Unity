@@ -296,6 +296,14 @@ namespace TumbangPreso
 
                 line.IsBot = motor == null || motor.IsBot;
 
+                // ⚠️⚠️ AND THE FINER ANSWER BESIDE IT. `IsBot` is on the wire and in the digest
+                // and does not move; `Origin` is what lets the ladder tell a chair somebody left
+                // apart from one nobody ever sat in. A seat with no motor at all is a plain bot:
+                // there is nobody to have left it.
+                line.Origin = motor == null
+                    ? Core.SeatOrigin.Bot
+                    : motor.SeatOrigin;
+
                 // ⚠️⚠️ THE RECORD KEEPS THE FULL HANDLE WHILE THE SCREEN DROPS THE TAG, AND THESE
                 // ARE TWO DIFFERENT QUESTIONS. `CharacterMotor.DisplayName` stopped including the
                 // `#0000` on 2026-09-04 because 🧑 asked for it off the scoreboard: *"just the

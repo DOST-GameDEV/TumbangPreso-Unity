@@ -423,6 +423,36 @@ namespace TumbangPreso
         /// spawn; the kill plane is the only thing that reads it today.</summary>
         public Vector3 SpawnPosition { get; set; }
 
+        /// <summary>
+        /// What this seat has been for the whole match: a person, a bot, or a person who left
+        /// and a bot that finished for them.
+        ///
+        /// ⚠️⚠️ `IsBot` CANNOT SAY THE THIRD THING AND THE LADDER NEEDS IT SAID. `Attention.md`
+        /// § 16.1: *"a seat that was HUMAN and then became a bot part way through is neither, and
+        /// the career line for that match currently has no way to say so"*, and the consequence
+        /// it names is the one with teeth: **"a rating that counts a bot's stretch as the
+        /// player's own is a ladder nobody trusts."** `MatchRpc.HostPeerLeft` sets `IsBot = true`
+        /// on a departing player's body, and from that moment the record cannot tell that chair
+        /// apart from one that was filled by `BotFill` before anybody sat down.
+        ///
+        /// ⚠️ IT ONLY EVER MOVES FORWARD. A seat that has been handed over stays handed over for
+        /// the rest of the match even if the player reconnects into it, because the bot's stretch
+        /// happened and the result is no longer wholly theirs. `SeatHandover.RatingMovesFor` is
+        /// what reads it.
+        /// </summary>
+        public Core.SeatOrigin SeatOrigin { get; private set; } = Core.SeatOrigin.Human;
+
+        /// <summary>Record that a bot has taken this chair, and from what.</summary>
+        public void NoteSeatOrigin(Core.SeatOrigin origin)
+        {
+            // Human is the default and never an update; HandedToBot outranks Bot, because a
+            // chair somebody sat in is not a chair nobody sat in.
+            if (origin == Core.SeatOrigin.Human) return;
+            if (SeatOrigin == Core.SeatOrigin.HandedToBot) return;
+
+            SeatOrigin = origin;
+        }
+
         // -------------------------------------------------------------------
         // SPEED ZONES — hazard slows, from character_base.gd:1556.
         //
