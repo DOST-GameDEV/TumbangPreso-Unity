@@ -214,9 +214,15 @@ namespace TumbangPreso.Net
 
             try
             {
-                if (File.Exists(Path))
+                // ⚠️ THE BACKUP IS TRIED BEFORE "STARTING EMPTY", which is the half that makes
+                // the atomic write worth having. Starting empty is the correct LAST resort and a
+                // terrible first one: a career is the one player file nothing can regenerate.
+                string json = SafeStore.Read(Path,
+                    text => JsonUtility.FromJson<Cache>(text) != null);
+
+                if (json != null)
                 {
-                    var loaded = JsonUtility.FromJson<Cache>(File.ReadAllText(Path));
+                    var loaded = JsonUtility.FromJson<Cache>(json);
                     if (loaded != null) _cache = loaded;
                 }
             }
@@ -241,14 +247,9 @@ namespace TumbangPreso.Net
 
         private void Save()
         {
-            try
-            {
-                File.WriteAllText(Path, JsonUtility.ToJson(_cache));
-            }
-            catch (Exception e)
-            {
-                Debug.LogWarning($"[Career] could not write {Path}: {e.Message}");
-            }
+            // ⚠️ SEE `SafeStore`. A career file is the one player file that cannot be
+            // regenerated from anything, so a truncated save costs a real history.
+            SafeStore.Write(Path, JsonUtility.ToJson(_cache));
         }
 
         private void OnAccountChanged()

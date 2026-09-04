@@ -34,8 +34,8 @@ either of those.
 | **P0** | 142.3 | **Nothing defines what a tournament match IS**, so "mostly tournament" is reachable by inheriting one static from the previous match. ✅ The rules half is built and asserted (`TournamentPreset`, 525 Core tests). **Open: the Unity half** that reads the eight live modifiers and refuses. | `TournamentPreset.Apply()` clears every named modifier, a check reports the live value of each against `TournamentPreset.Modifiers`, and a test proves a tournament match cannot start with one set. |
 | ~~P0~~ | 142.4 | ✅ **DONE.** `MatchSoakProbe`: 6 matches alternating Classic and Hero Strike, 0 exceptions, 0 invariant violations, 0 leaked motors, +0.19 MB. `-tp-soak-iterations N` buys the long run. | ✅ |
 | ~~P0~~ | 142.5 | ✅ **DONE.** The audit is built and gating, and it found a real one: `MatchBootstrap` leaked four handlers per match into a `DontDestroyOnLoad` director, so match five ran `ResetWorld` five times. 85 subscriptions, 0 unpaired now. | ✅ |
-| **P1** | 142.6 | **Nothing validates a tournament scene's dependencies before a human opens the build.** `SceneScriptCheck` catches a component the player cannot bind; it does not catch a missing prefab, spawn point or camera reference. | A check that instantiates every tournament-relevant scene and asserts its required references exist, in `Checks.RunAll`, failing qualification. |
-| **P1** | 142.7 | **Duplicate, stale and reordered requests are not tested against the authoritative paths.** The architecture is right (49 authority sites, 0 ungated on another body) and that is an argument, not a test. | Tests proving a replayed score-causing request, a doubled ability activation and an ownership change in flight cannot award twice, cast twice or corrupt round state. |
+| ~~P1~~ | 142.6 | ✅ **DONE.** `SceneDependencyCheck` opens every build scene and asserts its references resolve: 9 scenes, 11,536 components, 0 findings. `Checks.RunAll` is eight checks now. | ✅ |
+| ~~P1~~ | 142.7 | ✅ **DONE.** `ScoreIdempotencyTests`, 8 cases green: a replayed knockdown, tag and restore each pay once; a taya is not paid for their own can; nothing lands outside a live round or during the buffer; and a peer that is not the host cannot create a point. | ✅ |
 | **P1** | 142.8 | **The eight source audits only run when somebody remembers.** Current: 49 authority sites / 30 gated / **0 ungated on another body**; 59 wire entries / **0 unreachable**; 61 payloads / **0 mismatched**. | ✅ `tools/qualify.py --stage audits` runs all of them and fails the gate on any finding. Open: the four new audits it lists are written and clean. |
 | **P1** | 142.9 | **Host loss is not proven deterministic.** `DisconnectTimeoutMS` is **8000**, so a peer whose wifi dies keeps a normal-looking arena for eight seconds (§ 140). Migration is deliberately unsupported; the failure must still be one outcome on every peer. | Tests proving host and client cannot disagree about score, round, taya, ownership, winner or disconnect state, and that host loss reaches a clean shutdown with a stated reason rather than a half-alive match. ⚠️ The reconnect/forfeit RULING is `Attention.md`, not this row. |
 | **P1** | 138 | **A controller Unity does not recognise is invisible to the whole game.** ✅ It warns now (`ControllerWatch`). Open: the fallback that makes such a pad actually play. | A generic `Joystick` fallback covering movement, look and the primary verbs, with synthetic-device tests; **no double input when one physical pad is seen by both paths**; `Gamepad` behaviour unchanged. ⚠️ The hardware matrix is `Attention.md`. |
@@ -44,10 +44,10 @@ either of those.
 | ~~P2~~ | 142.11 | ✅ **DONE.** `tools/measure_ability_footprint.py` generates the whole table from source into `docs/reports/ability-footprint-<sha>.md`. Ultimates measure 32% to 37%; normal skills 4.1% to 8.5%. | ✅ |
 | ~~P2~~ | 142.12 | ✅ **DONE.** Five drifted cooldowns, not two (Zack, Sean, Dante, Nemu, Phaister), plus four wrong casts-a-round figures and three stale cross-references. `audit_ability_stat_drift.py` gates it. | ✅ |
 | **P2** | 16 | **One bot run is not balance evidence.** Eight matches at shipped settings spread **58 to 100 throws**, about 20 per cent. | A multi-seed sweep recording SHA, seed, config,each run, mean, median and spread, so no threshold is set against noise. |
-| **P2** | 142.13 | **Storage failures are not handled.** Profile, replay, log and save writes assume the directory exists and the disk accepts. | A missing directory, denied access, full disk or corrupt file degrades safely and never stops a match starting or finishing unless the data is genuinely required. |
+| ~~P2~~ | 142.13 | ✅ **DONE.** `SafeStore` writes through a temp file and keeps the previous version; settings, career and social read the backup before falling back to defaults. 9 tests. | ✅ |
 | ~~P2~~ | 142.14 | ✅ **DONE, and it found no defect**, which is the result worth gating: all 14 `DateTime` reads are persistent timestamps or calendar facts, and every gameplay timer already runs on game time. `audit_gameplay_clocks.py` keeps it that way. | ✅ |
 | **P2** | 142.15 | **There is no cold-start test.** Every run here inherits an editor, a `Library` and a previous session's files. | A clean-state run of the real artifact through launch → playable → host/join → finish a Classic match → rematch, verifying no dependence on developer state. |
-| **P2** | 142.16 | **No crash or failure bundle.** At the venue, evidence lives in five directories. | One command that gathers log, recent exceptions, SHA, protocol, platform, version and recent match state, with no credentials in it. |
+| ~~P2~~ | 142.16 | ✅ **DONE.** `FailureBundle` collects errors from load; `-tp-bundle` writes build identity, system, tournament readiness, network, match state, a live invariant check and the log path. No credentials. | ✅ |
 | **P1** | 142.17 | **Two real defects unmasked by isolating the suite**: no `LoadoutDoor` on the character select stage (5 cases), and the Hero picker showing Classic's `SPEED POWER GRIT` strip instead of naming Dante's skills | Both fixed, both green in the `screens` group |
 | **P2** | 141 | Spectator and seat ownership: the duplicate scoreboard name, and regression cover for repeated F1-F4 transitions | § 141 |
 | **P2** | 93 | A held tsinelas drifts **0.084 m** from the hand, four samples, not a flake | § 93 |
@@ -384,12 +384,39 @@ ARE RECORDED IN THE FILE.** Its first run reported 76 findings, about sixty of w
 pattern rather than sloppiness.** An audit that punishes the correct pattern is an audit somebody
 switches off.
 
-### 142.6 ⚠️ OPEN: SCENE AND BOOTSTRAP DEPENDENCIES ARE NOT VALIDATED
+### 142.6 ✅ CLOSED 2026-09-04: `SceneDependencyCheck`, THE OPPOSITE TECHNIQUE TO `SceneScriptCheck`
 
-`SceneScriptCheck` reads scenes as TEXT and catches a component the PLAYER cannot bind, which is a
-class no other check can see and which once shipped a crash with everything else green. **It does
-not catch a missing prefab, a missing spawn point, a null camera reference or an absent service.**
-Those are exactly the faults a human finds by opening the build.
+`SceneScriptCheck` reads scenes as TEXT **on purpose**, because the fault it hunts is one the
+editor resolves by class name and the player cannot, so opening the scene is what hides it. The
+faults a human finds by opening a build are the mirror image: a reference pointing at a deleted
+object, a component whose script is gone, a scene that will not open at all. **Neither technique
+can see the other's defect**, so this is a second check rather than an extension of the first, and
+`Checks.RunAll` is eight checks now.
+
+```
+9 build scenes, 11536 components, 0 findings      (Logs/scene-dependency-check.txt)
+```
+
+⚠️ **The missing-reference test is `objectReferenceValue == null` AND a non-zero entity id**, and
+that distinction is what gives it no false positives: a never-assigned field is ordinary and an
+optional hook is ordinary, while a field pointing at an id that no longer resolves is never
+correct. ⚠️ `objectReferenceInstanceIDValue` is **obsolete as an ERROR** in Unity 6, not merely
+deprecated; the editor assembly refuses to compile against it.
+
+⚠️⚠️ **AND THE TWO REQUIREMENTS THIS CHECK ORIGINALLY SHIPPED WERE BOTH WRONG, WHICH IS RECORDED
+IN THE FILE RATHER THAN QUIETLY FIXED.** Both looked obviously right and both asserted something
+the code does not do:
+
+- **A camera in every arena.** All three maps failed. A map authors no camera because
+  `MatchInstaller` BUILDS the rig at runtime, per seat, and `CLAUDE.md` § 4 is why (FPP for a
+  Person, TPP for a Prop, which cannot be authored before anybody is sitting anywhere).
+- **`Spawn0` to `Spawn3`, and `Floor`.** The maps do author spawn markers, and **nothing reads
+  them**: every seat is placed from `Confinement.AttackerSpawnRing()`. The floor is called `Floor`
+  on two maps and `AsphaltSurface` on Ilalim ng Tulay, and `MapGeometryCheck` already owns the
+  real property (holes, floating props, furniture inside the box).
+
+**A check that asserts a convention rather than a contract goes red on correct work, and a check
+that goes red on correct work gets deleted along with whatever it was protecting.**
 
 ### 142.7 ⚠️ OPEN: THE AUTHORITATIVE PATHS ARE ARGUED, NOT TESTED, AGAINST DUPLICATES
 

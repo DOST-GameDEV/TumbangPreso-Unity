@@ -637,9 +637,14 @@ namespace TumbangPreso.Settings
 
             try
             {
-                if (File.Exists(Path))
+                // ⚠️ THE PREDICATE IS THE CALLER'S, because "corrupt" means something different
+                // per file. Here it is exactly the test the next line makes anyway: a settings
+                // file is usable when `JsonUtility` gets a real object out of it.
+                string json = SafeStore.Read(Path,
+                    text => JsonUtility.FromJson<GameSettings>(text) != null);
+
+                if (json != null)
                 {
-                    string json = File.ReadAllText(Path);
                     var loaded = JsonUtility.FromJson<GameSettings>(json);
                     if (loaded != null) _current = loaded;
                 }
@@ -853,14 +858,11 @@ namespace TumbangPreso.Settings
             if (_current == null) return;
             _current.Validate();
 
-            try
-            {
-                File.WriteAllText(Path, JsonUtility.ToJson(_current, prettyPrint: true));
-            }
-            catch (Exception e)
-            {
-                Debug.LogWarning($"[Settings] could not write {Path}: {e.Message}");
-            }
+            // ⚠️ THROUGH `SafeStore`, WHICH KEEPS THE PREVIOUS VERSION. A `WriteAllText` straight
+            // onto the live file truncates it first, so a crash mid-save left a fragment that
+            // `Load` correctly rejected and the player lost every rebind they had ever set. The
+            // fallback below was always right; what was missing was a second copy to fall back TO.
+            SafeStore.Write(Path, JsonUtility.ToJson(_current, prettyPrint: true));
         }
 
         /// <summary>Test seam, so a suite does not read or write the real user file.</summary>
