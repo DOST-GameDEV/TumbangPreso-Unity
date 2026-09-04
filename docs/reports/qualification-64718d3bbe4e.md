@@ -2,16 +2,18 @@
 
 - **Commit** `64718d3bbe4ec0a3cbe91880a271421c05274a8e`
 - **Branch** `main`
-- **Generated** 2026-09-04T22:16:13
+- **Generated** 2026-09-04T22:17:11
 - **Build target for every validation launch** `Win64`
-- **Gate** standard pass
-- ⚠️ **Working tree was DIRTY at report time**, 2 paths. A qualification is a claim about a commit; uncommitted edits mean the results describe something not in the history.
+- **Gate** NATIONALS CANDIDATE (PlayMode twice)
+- HEAD has since moved to `f9ec3d6bacc3`, which is ordinary: recording a qualification is itself a commit. The stages above all ran on the commit named at the top.
+- ⚠️ **Working tree was DIRTY at report time**, 1 paths. A qualification is a claim about a commit; uncommitted edits mean the results describe something not in the history.
 
 | Stage | Verdict | Detail |
 |---|---|---|
 | Core.Tests (engine-free rules) | PASS | 532 passed of 532. |
 | Unity EditMode | PASS | total 376, passed 376, failed 0, skipped 0. 376 passed of 376. |
 | PlayMode, isolated groups, pass 1 of 2 | **FAIL** | total 175, passed 155, failed 11, skipped 9. 155 passed of 175 across 6 isolated groups, 63 of 70 fixtures. 11 failed. |
+| PlayMode, isolated groups, pass 2 of 2 | **FAIL** | total 175, passed 156, failed 10, skipped 9. 156 passed of 175 across 6 isolated groups, 63 of 70 fixtures. 10 failed. |
 | Checks.RunAll (every editor check, one launch) | PASS | all checks passed in one launch |
 | Source audits | PASS | all audits clean |
 | Release artifact identity | PASS | identity consistent |
@@ -32,6 +34,19 @@ A stage above is red or missing. **A green subset is not a release certification
 
 - `[destroyer] TumbangPreso.PlayTests.InputSurfaceProbe.EveryScreenHasAFocusPathAndReachableTouchTargets`  screens a controller cannot walk, or where a press lands on the wrong control: Eskinita/ResultCanvas @ 16:9 720p (1280x720): a press at the centre of 'HUD/HudCanvas/ResultCanvas/Card/Button_NEXT MAP' lands on 'TouchControlsCanvas/LookArea' instead. Eskinita/ResultCanvas @ 16:9 720p (1280x720): a pre
 - `[destroyer] TumbangPreso.PlayTests.InputSurfaceProbe.PhotographTheThumbLayerOverTheRealStreet`  UnityEngine.MissingReferenceException : The object of type 'UnityEngine.Camera' has been destroyed but you are still trying to access it. Your script should either check if it is null or you should not destroy the object.
+- `[screens] TumbangPreso.PlayTests.AspectRatioProbes.TheCharacterScreenSurvivesEveryAspectRatio`  1 label(s) on the character screen are authored below MenuKit.MinReadableUnits (18). Do NOT lower the floor to make this green: docs/TODO.md § 126.13. Widen the box, cut the words, or register the exemption through MenuKit.Fit so it is counted rather than hidden: 'DoorCaption' ("build a character") 
+- `[screens] TumbangPreso.PlayTests.CustomGameScreenProbe.EveryRowFitsItsBoxAtEveryShippedResolution`  16:9 720p custom game: 'Label' reading "No bots · open to anybody with the code" needs 306 px and was given 16. Expected: less than or equal to 17.0f But was: 306.0f
+- `[screens] TumbangPreso.PlayTests.PaperPurityProbe.NothingOnTheInventoryDisappeared`  these front-end controls were on the screens before this pass and are not on them now, so the rebuild lost them. 🧑 asked for this by name: "it should have all the functions of old ui, make sure ntohing in old ui as functions get lost". docs/TODO.md § 133.5, and Logs/control-inventory.txt is the full
+- `[screens] TumbangPreso.PlayTests.PhaseSurfaceLayoutProbe.TheTelemetryRowFitsItsBoxAtEveryShippedResolution`  16:9 720p settings/telemetry-row: 'MainMenuCanvas/SettingsPanel/Card/Margin/Layout/Scroll/Content/TelemetryRow/Label' reading "Share Anonymous Stats" needs 212 px and was given 100. MenuKit.Label sets Overflow, so it draws straight over its neighbour and nothing errors. Expected: less than or equal 
+- `[screens] TumbangPreso.PlayTests.PlayerHubLayoutProbe.EveryTabFitsItsBoxAtEveryShippedResolution`  16:9 720p hub/PROFILE: 'Label' needs 584 units for "None of this is required and all of it is public on your career page." and was given 567. It does not wrap and does not shrink, so it draws over whatever is beside it. Expected: less than or equal to 567.880005f But was: 583.5f
+- `[match] TumbangPreso.PlayTests.CarryTests.AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor`  a held slipper drifted 0.092 m from the hand while its carrier walked. The carry has to run in LateUpdate: Unity evaluates the Animator between Update and LateUpdate, so a bone read in Update is the PREVIOUS frame's pose and the slipper trails the hand by one frame of animation. Expected: less than 
+- `[match] TumbangPreso.PlayTests.SteeringTests.AMovementAimedSeatTurnsToFaceItsDirection`  the seat drifted sideways while settling, so it is not standing on the floor this test built. See docs/TODO.md § 130.14. Expected: less than 0.00999999978f But was: 1.07999992f
+- `[match] TumbangPreso.PlayTests.SteeringTests.MouseAimedMovementIsRelativeToTheBody`  the seat drifted sideways while settling, so it is not standing on the floor this test built. See docs/TODO.md § 130.14. Expected: less than 0.00999999978f But was: 1.07999992f
+- `[match] TumbangPreso.PlayTests.SteeringTests.TheSteeringFrameByFrameIsWrittenOut`  the seat drifted sideways while settling, so it is not standing on the floor this test built. See docs/TODO.md § 130.14. Expected: less than 0.00999999978f But was: 1.07999992f
+
+### PlayMode, isolated groups, pass 2 of 2: 10 failing
+
+- `[destroyer] TumbangPreso.PlayTests.InputSurfaceProbe.EveryScreenHasAFocusPathAndReachableTouchTargets`  screens a controller cannot walk, or where a press lands on the wrong control: Eskinita/ResultCanvas @ 16:9 720p (1280x720): a press at the centre of 'HUD/HudCanvas/ResultCanvas/Card/Button_NEXT MAP' lands on 'TouchControlsCanvas/LookArea' instead. Eskinita/ResultCanvas @ 16:9 720p (1280x720): a pre
 - `[screens] TumbangPreso.PlayTests.AspectRatioProbes.TheCharacterScreenSurvivesEveryAspectRatio`  1 label(s) on the character screen are authored below MenuKit.MinReadableUnits (18). Do NOT lower the floor to make this green: docs/TODO.md § 126.13. Widen the box, cut the words, or register the exemption through MenuKit.Fit so it is counted rather than hidden: 'DoorCaption' ("build a character") 
 - `[screens] TumbangPreso.PlayTests.CustomGameScreenProbe.EveryRowFitsItsBoxAtEveryShippedResolution`  16:9 720p custom game: 'Label' reading "No bots · open to anybody with the code" needs 306 px and was given 16. Expected: less than or equal to 17.0f But was: 306.0f
 - `[screens] TumbangPreso.PlayTests.PaperPurityProbe.NothingOnTheInventoryDisappeared`  these front-end controls were on the screens before this pass and are not on them now, so the rebuild lost them. 🧑 asked for this by name: "it should have all the functions of old ui, make sure ntohing in old ui as functions get lost". docs/TODO.md § 133.5, and Logs/control-inventory.txt is the full

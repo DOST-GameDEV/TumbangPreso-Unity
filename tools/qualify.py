@@ -590,11 +590,25 @@ LABEL = {
 
 
 def stage_report(nationals=False):
-    sha = head_sha()
+    """
+    ⚠️⚠️ THE REPORT IS KEYED TO THE COMMIT THE STAGES RAN ON, NOT TO CURRENT HEAD, AND THE
+    FIRST VERSION HAD THIS BACKWARDS IN A WAY THAT MADE THE TOOL UNUSABLE. It compared every
+    stage against `git rev-parse HEAD`, so **committing the report voided the report**: the
+    act of recording a qualification moved HEAD past the commit it described, and the next
+    regeneration marked all seven stages WRONG COMMIT.
+    ⚠️ THE CHECK THAT MATTERS IS THAT THE STAGES AGREE WITH EACH OTHER. Results stitched
+    together from two different commits are the thing worth refusing; HEAD moving afterwards
+    is ordinary and is reported as a note rather than as a failure.
+    """
     branch = head_branch()
     dirty = working_tree_dirty()
 
     stages = {name: read_stage(name) for name in ORDER}
+
+    ran = [s for s in stages.values() if s and s.get("sha")]
+    shas = sorted({s["sha"] for s in ran})
+    sha = shas[0] if len(shas) == 1 else head_sha()
+    moved = head_sha() if (len(shas) == 1 and shas[0] != head_sha()) else None
 
     required = list(ORDER)
     if not nationals:
@@ -608,6 +622,13 @@ def stage_report(nationals=False):
     lines.append(f"- **Generated** {now()}")
     lines.append(f"- **Build target for every validation launch** `Win64`")
     lines.append(f"- **Gate** {'NATIONALS CANDIDATE (PlayMode twice)' if nationals else 'standard pass'}")
+    if len(shas) > 1:
+        lines.append(f"- ⚠️⚠️ **THE STAGES DO NOT AGREE ON A COMMIT**: {', '.join(x[:12] for x in shas)}. "
+                     f"A qualification stitched from two commits describes neither.")
+    if moved:
+        lines.append(f"- HEAD has since moved to `{moved[:12]}`, which is ordinary: recording a "
+                     f"qualification is itself a commit. The stages above all ran on the commit "
+                     f"named at the top.")
     if dirty:
         lines.append(f"- ⚠️ **Working tree was DIRTY at report time**, {len(dirty)} paths. "
                      f"A qualification is a claim about a commit; uncommitted edits mean the "
