@@ -16,7 +16,7 @@ is listed in `Attention.md`. The Kenney packs in 5.1 need no account, so those c
 WARNING  A RECORDING IS NOT AUTOMATICALLY BETTER THAN AN EXISTING CUE, AND THE TABLE BELOW ONLY
 LISTS CUES WHERE IT IS. The first pass replaced `lata_impact`, `lata_knockdown` and `ui_hover`
 because their source labels looked exact. The played comparison disagreed: 🧑 preferred the old
-can hit, can down and hover sounds. They are protected in `KEPT` now, so rerunning this script
+can hit, can down, and the whole ui_* press family. They are protected in `KEPT` now, so rerunning this script
 cannot silently undo that decision. Cues with no honest improvement keep what they have rather
 than getting a near-miss. The REASON is recorded beside them at the bottom of this file.
 
@@ -134,11 +134,9 @@ REPLACEMENTS = [
      "a body moving fast is fabric, and `bump_swing` aliases onto this"),
 
     # --- The front end. ---
-    ("ui_click", [f"{INTERFACE}/click_001.ogg"], 1.0, 0.00,
-     "a press. `click_002` is 10 ms, which is a tick rather than a button"),
-    ("ui_back", [f"{INTERFACE}/back_001.ogg"], 1.0, 0.00, "one step out"),
-    ("ui_error", [f"{INTERFACE}/error_004.ogg"], 1.0, 0.00, "a refusal"),
-
+    # ⚠️⚠️ EVERY `ui_*` CUE HAS LEFT THIS LIST. See KEPT: the whole family was rejected by
+    # ear on 2026-09-04. What remains below is MATCH audio that happens to be sourced from
+    # the same interface pack, not front-end chrome, and none of it was judged.
     ("countdown_tick", [f"{INTERFACE}/tick_004.ogg"], 1.0, 0.00, "three of these then the go"),
     ("countdown_go", [f"{INTERFACE}/confirmation_001.ogg"], 1.0, 0.00, "the round starting"),
     ("score_award", [f"{INTERFACE}/pluck_001.ogg"], 1.0, 0.00, "a point landing"),
@@ -158,10 +156,32 @@ REPLACEMENTS = [
 # candidate in the free packs at all.
 # ---------------------------------------------------------------------------
 KEPT = {
-    "lata_impact, lata_knockdown / can_knockdown, ui_hover":
+    "lata_impact, lata_knockdown / can_knockdown":
         "The 2026-09-03 source pass replaced all three, and the played comparison rejected the "
-        "new versions by name. The old can hit, can down and button hover are restored. These "
-        "are protected choices, not missing work.",
+        "new versions by name. The old can hit and can down are restored. These are protected "
+        "choices, not missing work.",
+
+    # ⚠️⚠️ THE WHOLE `ui_*` FAMILY, AND IT IS ONE DECISION RATHER THAN FOUR.
+    # ui_hover went back on 2026-09-03. ui_click, ui_back and ui_error went back on
+    # 2026-09-04: "i want to return old click sound bcz now it sounds weird", then
+    # "replace all ui sfx changes with old", then "only ui sound effect changes".
+    #
+    # ⚠️ THE SCOPE IS THE `ui_*` PREFIX AND NOTHING ELSE. countdown_tick, countdown_go,
+    # score_award, sfx_super_ready, stamina_empty and the two reset_channel cues are also
+    # built from the Kenney interface pack and are MATCH audio, not front-end chrome. They
+    # were deliberately left as they are, because the ask was "only ui sound effect changes"
+    # and rolling them back too would have been the whole-batch rollback Attention.md
+    # section 13 says not to do.
+    #
+    # ⚠️ THESE FOUR ARE THE MOST-HEARD SOUNDS IN THE GAME. ConvertedScreen, GodotButton and
+    # MenuSfx route every press, every hover and every back through them, so they are heard
+    # more often than any gameplay cue and a small wrongness in one costs more than a large
+    # one anywhere else.
+    "ui_click, ui_hover, ui_back, ui_error":
+        "The entire front-end press family, rejected by ear and restored from ee8bced^ byte "
+        "for byte: ui_click 8866 -> 4874, ui_back 5162 -> 10610, ui_error 9102 -> 17660, and "
+        "ui_hover on 2026-09-03. Protected choices, not missing work. A future pass may not "
+        "put a sourced press back without playing it to him first.",
     "hero_*_grunt / hero_*_ult":
         "Tagalog, recorded in-house. Attention.md section 9. A generic English grunt pack "
         "would take the one thing that makes this game sound like it is from here.",

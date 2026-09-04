@@ -209,6 +209,46 @@ namespace TumbangPreso.Core
         }
 
         /// <summary>
+        /// Give back a cost that was paid and then refused, and reverse the fatigue that paying
+        /// it started.
+        ///
+        /// ⚠️⚠️ THIS IS THE EXACT REVERSE OF <see cref="Spend"/> AND IT IS NOT A GENERAL "ADD
+        /// STAMINA". It has one caller: a client predicted a verb, paid for it, and the host
+        /// refused it, so this peer is holding a charge the authoritative simulation never made.
+        /// `docs/TODO.md` § 135.2 is the entry. Calling it on any other event would be a way to
+        /// buy escape distance for free, and escape distance is what the bar IS
+        /// (`CLAUDE.md` § 4: the real price of a shove is the sprint, not the points).
+        ///
+        /// ⚠️⚠️ THE FATIGUE LOCKOUT GOES WITH IT, AND WORKING OUT WHY IT IS SAFE TO CLEAR IS THE
+        /// WHOLE REASON THIS IS NOT A ONE-LINE ADD. `Spend` calls `EnterFatigue` when a cost
+        /// empties the bar, so a refund that returned the points and left the lockout running
+        /// would give back the cheap half of the price and keep the expensive one. It is only
+        /// ever the reversed spend's lockout: `Spend` refuses outright while `_fatigueLeft` is
+        /// live, so this peer was NOT fatigued when it paid, and a bar sitting at zero cannot be
+        /// drained to zero a second time during the round trip. There is no other event in that
+        /// window that could have started one.
+        ///
+        /// ⚠️ IT IS CLAMPED TO THE MAX RATHER THAN ASSERTED. A refund that arrives after the bar
+        /// has regenerated is a normal race on a slow link, not a caller bug, and the answer to
+        /// it is a full bar.
+        /// </summary>
+        public void Refund(float amount)
+        {
+            if (amount <= 0.0f) return;
+
+            bool wasEmptied = _current <= 0.0f;
+
+            _current += amount;
+            if (_current > Balance.StaminaMax) _current = Balance.StaminaMax;
+
+            if (wasEmptied && _current > 0.0f && _fatigueLeft > 0.0f)
+            {
+                _speedZones.Exit(Balance.FatigueSpeedScale);
+                _fatigueLeft = 0.0f;
+            }
+        }
+
+        /// <summary>
         /// ⚠️⚠️ A TAG CLEANSES. The moment an attacker is most likely to be tagged is the
         /// moment they are most likely to be EMPTY: they sprinted in, grabbed, and were
         /// caught on the way out. Stacking a 5 s stun, a spent bar and a live fatigue

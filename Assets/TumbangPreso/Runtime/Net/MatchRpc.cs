@@ -340,6 +340,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("ReqAbility", OnReqAbilityMsg);
             cm.RegisterNamedMessageHandler("PlayAbility", OnPlayAbilityMsg);
             cm.RegisterNamedMessageHandler("CastDenied", OnCastDeniedMsg);
+            cm.RegisterNamedMessageHandler("VerbDenied", OnVerbDeniedMsg);
             cm.RegisterNamedMessageHandler("ReqMash", OnReqMashMsg);
             cm.RegisterNamedMessageHandler("ThrowCharge", OnThrowChargeMsg);
             cm.RegisterNamedMessageHandler("ReqThrowCharge", OnReqThrowChargeMsg);
@@ -1716,13 +1717,19 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out Vector3 from);
             reader.ReadValueSafe(out Vector3 facing);
 
+            // ⚠️ ABOVE THIS LINE A BARE RETURN IS CORRECT, BELOW IT IT IS NOT. The seat claim
+            // is what separates a refusal from a forgery; see the § note on `HostDenyVerb`.
             if (!SenderOwnsClaimedSeat(senderClientId, slot, out var who)) return;
-            if (!PlausibleIntentPose(who, from) || !Finite(facing)) return;
-            if (who != null && who.IsDefender)
+
+            if (!PlausibleIntentPose(who, from) || !Finite(facing) ||
+                who == null || !who.IsDefender ||
+                who.GetComponent<CombatVerbs>()?.HostResolvePunch(from, facing) != true)
             {
-                if (who.GetComponent<CombatVerbs>()?.HostResolvePunch(from, facing) == true)
-                    BroadcastAction(slot, "punch", senderClientId);
+                HostDenyVerb(senderClientId, slot, DeniedVerb.Punch);
+                return;
             }
+
+            BroadcastAction(slot, "punch", senderClientId);
         }
 
         public void RequestLungeServerRpc(int slot, Vector3 from, Vector3 facing, float power)
@@ -1754,14 +1761,28 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out Vector3 facing);
             reader.ReadValueSafe(out float power);
 
+            // Same split as the punch above.
             if (!SenderOwnsClaimedSeat(senderClientId, slot, out var who)) return;
-            if (!PlausibleIntentPose(who, from) || !Finite(facing) || !Finite(power)) return;
-            power = Mathf.Clamp(power, Balance.LungeMinPower, 1.0f);
-            if (who != null && who.IsDefender)
+
+            if (!PlausibleIntentPose(who, from) || !Finite(facing) || !Finite(power))
             {
-                if (who.GetComponent<CombatVerbs>()?.HostResolveLunge(from, facing, power) == true)
-                    BroadcastAction(slot, "lunge", senderClientId);
+                HostDenyVerb(senderClientId, slot, DeniedVerb.Lunge);
+                return;
             }
+
+            // ⚠️ THE CLAMP STAYS ON THE ACCEPTING PATH. A power outside the range is a number
+            // this host will not act on rather than a request it refuses: the sender still gets
+            // its dash, at a legal strength, which is what it would have got had it not lied.
+            power = Mathf.Clamp(power, Balance.LungeMinPower, 1.0f);
+
+            if (who == null || !who.IsDefender ||
+                who.GetComponent<CombatVerbs>()?.HostResolveLunge(from, facing, power) != true)
+            {
+                HostDenyVerb(senderClientId, slot, DeniedVerb.Lunge);
+                return;
+            }
+
+            BroadcastAction(slot, "lunge", senderClientId);
         }
 
         public void RequestShoveServerRpc(int slot, Vector3 from, Vector3 facing)
@@ -1791,13 +1812,18 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out Vector3 from);
             reader.ReadValueSafe(out Vector3 facing);
 
+            // Same split as the punch above.
             if (!SenderOwnsClaimedSeat(senderClientId, slot, out var who)) return;
-            if (!PlausibleIntentPose(who, from) || !Finite(facing)) return;
-            if (who != null && !who.IsDefender)
+
+            if (!PlausibleIntentPose(who, from) || !Finite(facing) ||
+                who == null || who.IsDefender ||
+                who.GetComponent<CombatVerbs>()?.HostResolveShove(from, facing) != true)
             {
-                if (who.GetComponent<CombatVerbs>()?.HostResolveShove(from, facing) == true)
-                    BroadcastAction(slot, "shove", senderClientId);
+                HostDenyVerb(senderClientId, slot, DeniedVerb.Shove);
+                return;
             }
+
+            BroadcastAction(slot, "shove", senderClientId);
         }
 
         // ⚠️⚠️ `LungeCharge` AND `ShoveCharge` ARE DELETED, NOT MOVED. They were a second
@@ -2522,6 +2548,82 @@ namespace TumbangPreso.Net
                 (Abilities.HeroAbilitySystem.Slot)abilitySlot);
         }
 
+        // -------------------------------------------------------------------
+        // § THE SAME REFUSAL, FOR THE THREE COMBAT VERBS
+        //
+        // ⚠️⚠️ EVERYTHING THE § NOTE ABOVE `HostDenyAbilityCast` ARGUES IS TRUE OF PUNCH,
+        // LUNGE AND SHOVE TOO, AND NOBODY HAD LOOKED. A client pays for all three before it asks:
+        // `StepPunch` stamps `_punchCooldown`, `ReleaseLunge` stamps `_lungeCooldown` and
+        // `_lungeActiveLeft`, and `StepShove` spends `Balance.ShoveStaminaCost` as well as
+        // stamping `_shoveCooldown`. Every refusal in the three handlers above was a bare
+        // `return`, so a refused verb left this peer holding a charge the host never made.
+        // `docs/TODO.md` § 135.2 walks all eight request handlers and says which three have the
+        // shape and which five are correct as written.
+        //
+        // ⚠️⚠️ AND IT IS WORSE THAN THE ABILITY CASE BECAUSE NOTHING HEALS IT. A refused
+        // cast at least met a 5 Hz `SyncAbility` (§ 71 had to build `mayLower` to stop it
+        // self-healing). The three verb cooldowns are on no wire, and `SyncUnit` carries stamina
+        // but is only broadcast for a body the host DRIVES, which a remote human's seat is not.
+        // See `CombatVerbs.RollBackRefusedVerb`.
+        //
+        // ⚠️⚠️ IT DOES NOT MOVE `NetSession.ProtocolVersion`, AND THE TEST FOR THAT IS
+        // WRITTEN ON THE CONSTANT ITSELF. v23's note says a peer that has never heard of the new
+        // messages *"plays the shipped four or eight rounds at ninety seconds while the host
+        // plays three at sixty, which is two different games sharing one scoreboard"*. Apply that
+        // test here: a peer that has never heard of `VerbDenied` keeps a cooldown it already
+        // keeps today and plays the exact game the host is refereeing, because the host's
+        // resolution is unchanged and only the LOSER's local bookkeeping is corrected. Ignorance
+        // of this message is degraded, not divergent, so refusing such a peer would cost
+        // crossplay and buy nothing. `docs/TODO.md` § 135.4.
+        //
+        // ⚠️ ONE MESSAGE FOR THREE VERBS, CARRYING WHICH. The ability refusal can omit its
+        // reason because the answer to all six of its guards is the same rollback; here the three
+        // verbs charge different things, so the VERB has to travel even though the REASON still
+        // does not.
+        //
+        // ⚠️ SENT ONLY TO THE PEER THAT ASKED, for `HostDenyAbilityCast`'s reason: nobody else
+        // predicted anything, so nobody else has anything to take back.
+        // -------------------------------------------------------------------
+
+        /// <summary>Which verb a refusal is taking back. Travels as a byte.</summary>
+        public enum DeniedVerb : byte { Punch = 0, Lunge = 1, Shove = 2 }
+
+        /// <summary>Tells one client the verb it predicted was refused, so it can take it back.</summary>
+        public void HostDenyVerb(ulong clientId, int slot, DeniedVerb verb)
+        {
+            if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
+
+            // ⚠️ THE HOST NEVER DENIES ITSELF, exactly as `HostDenyAbilityCast` does not. Its own
+            // verbs never travel as a request: `RequestPunchServerRpc` and its two siblings
+            // resolve in their `IsHost` branch, so a refusal there is the local `HostResolve`
+            // saying no to the same body that asked, and there is one copy of the cooldown.
+            if (clientId == _nm.LocalClientId) return;
+
+            using var writer = new FastBufferWriter(16, Allocator.Temp);
+            writer.WriteValueSafe(slot);
+            writer.WriteValueSafe((byte)verb);
+            _nm.CustomMessagingManager.SendNamedMessage("VerbDenied", clientId, writer);
+        }
+
+        private void OnVerbDeniedMsg(ulong senderClientId, FastBufferReader reader)
+        {
+            // The two guards `OnCastDeniedMsg` carries, for the same two reasons: a listen host
+            // must not roll back authoritative state, and only the host may refuse.
+            if (NetAuthority.IsHost || !FromHost(senderClientId)) return;
+
+            reader.ReadValueSafe(out int slot);
+            reader.ReadValueSafe(out byte verb);
+
+            if (!ValidSlot(slot) || verb > (byte)DeniedVerb.Shove) return;
+
+            // ⚠️ ONLY THIS PEER'S OWN SEAT. The other three bodies are replicas that never
+            // predicted a verb, so a refusal naming one of them is a message with nothing to act
+            // on. `OnCastDeniedMsg` checks the identical thing.
+            if (slot != NetAuthority.LocalSlot) return;
+
+            Unit(slot)?.GetComponent<CombatVerbs>()?.RollBackRefusedVerb((DeniedVerb)verb);
+        }
+
         /// <summary>One client mash press; the host decides which active state it answers.</summary>
         public void RequestMashServerRpc(int claimedSlot)
         {
@@ -2574,6 +2676,10 @@ namespace TumbangPreso.Net
 
         private void BroadcastThrowCharge(int slot, bool active, ulong? except)
         {
+            // The guard `SetThrowCharge` carries. It mattered less while both callers were
+            // presses, and it matters now that `HostPeerLeft` reaches this during a teardown.
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+
             foreach (ulong clientId in _nm.ConnectedClientsIds)
             {
                 if (clientId == _nm.LocalClientId || (except.HasValue && clientId == except.Value))
@@ -4851,6 +4957,29 @@ namespace TumbangPreso.Net
                     // left over from the peer that dropped would be applied to its replacement.
                     _resetChannelStart.Remove(seat);
                     _lastAcceptedMoveAt.Remove(seat);
+
+                    // ⚠️⚠️ AND THE WIND-UP IS CANCELLED ON EVERYBODY ELSE'S SCREEN, WHICH
+                    // NOTHING DID UNTIL 2026-09-04. `Carrier._observedCharge` is set by a
+                    // `ThrowCharge` message and cleared by exactly one thing: a later
+                    // `ThrowCharge` carrying false, sent by `CancelCharge` or by the throw
+                    // completing ON THE OWNING PEER. **A peer that drops mid-charge never sends
+                    // it**, so every remaining player was left looking at a throw wind-up that
+                    // could never finish, for the rest of the match, on a seat a bot had by then
+                    // taken over. Nothing else clears it: it is on no snapshot, and no round
+                    // boundary touches it.
+                    //
+                    // ⚠️ IT IS A LIE ABOUT COUNTERPLAY RATHER THAN A COSMETIC LEAK, which is why
+                    // it is fixed rather than noted. `SetThrowCharge`'s own summary calls the
+                    // wind-up *"counterplay rather than decoration"*: an attacker reads it to
+                    // decide whether to close or to break the line, so a permanent false one
+                    // trains three players to ignore the real thing.
+                    //
+                    // ⚠️ SENT EVEN WHEN NO BOT TAKES OVER. The picture is wrong on the observers
+                    // either way, and `BroadcastThrowCharge` is idempotent on a seat that was
+                    // never charging: `ApplyObservedCharge(false)` writes the resting -1.
+                    // Found by walking the disconnect paths in `docs/TODO.md` § 135.5.
+                    BroadcastThrowCharge(seat, false, null);
+                    Unit(seat)?.GetComponent<Carrier>()?.ApplyObservedCharge(false);
 
                     var unit = Unit(seat);
                     if (unit != null)

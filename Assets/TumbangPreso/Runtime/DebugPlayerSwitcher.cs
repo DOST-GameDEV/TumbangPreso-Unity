@@ -151,6 +151,23 @@ namespace TumbangPreso
                 bool driven = unit.PlayerSlot == DrivenSlot;
                 if (driven) claimed = unit;
 
+                // ⚠️⚠️ PARKING IS NOT RELEASING, AND THAT IS THE OTHER HALF OF THE 2026-09-04
+                // REPORT: *"my character js keeps going left on its own"*. `Parked` stops new
+                // input being READ; it does not clear what is already held. A player pressing a
+                // seat key while walking left therefore left a body behind with left still down,
+                // and an `AIController` was then re-enabled on top of a stale human intent.
+                // `MatchRpc.HostPeerLeft` already does exactly this pair for the same reason
+                // when a peer drops mid-key, and this is that fix applied to the local handover.
+                //
+                // ⚠️ `CommitFrame` AS WELL AS `Clear`, because the intent is double-buffered:
+                // clearing the live half without committing leaves the previous frame's presses
+                // readable for one more step, which is one step of a body walking itself.
+                if (!driven && unit.Intent.Parked == false)
+                {
+                    unit.Intent.Clear();
+                    unit.Intent.CommitFrame();
+                }
+
                 unit.Intent.Parked = !driven;
 
                 var ai = unit.GetComponent<AIController>();

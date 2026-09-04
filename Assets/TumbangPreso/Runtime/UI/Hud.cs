@@ -430,8 +430,29 @@ namespace TumbangPreso.UI
         {
             if (_sandboxToggle == null) return;
 
+            // ⚠️⚠️ F7, AND IT WAS F1 UNTIL 2026-09-04, WHICH IS THE `CLAUDE.md` § 4 RULE BROKEN
+            // IN THE ONE PLACE THE RULE CANNOT SEE. "One control, one action, per context" is
+            // asserted by `InputMapAndAbilityTests` over the INPUT MAP, and all three readers of
+            // F1 were literal `Keyboard.current` reads outside the map entirely, so nothing in
+            // the repository could notice. That is the same hole § 35.3 records for the nine
+            // spectator keys.
+            //
+            // ⚠️⚠️ WHAT IT ACTUALLY COST. 🧑 2026-09-04, in practice: *"clicking f1 rn makes it
+            // so that my abiliites are unli use yes but i cant move at all and my character js
+            // keeps going left on its own"*, then *"i cant click anything now tf"*. Three
+            // separate things read F1 on the same frame:
+            //   * this line, toggling the sandbox,
+            //   * `DebugPlayerSwitcher.Update`, which reads F1 as "drive seat 0",
+            //   * `SpectatorCamera`, which reads F1 as "player 0 POV".
+            // `GameLaunch.SoloSeat` defaults to 1, so pressing F1 for unlimited cooldowns ALSO
+            // tore the player out of their own body and into seat 0. The abilities did go
+            // unlimited, which is why it looked like a movement bug rather than a key collision.
+            //
+            // ⚠️ F7 RATHER THAN ANY FREE KEY. `DebugPlayerSwitcher` owns F1 to F4 (seats), F5
+            // (cycle) and F6 (default), so F7 is the first key past that block and keeps the
+            // developer switches contiguous. Nothing else in the runtime reads it.
             var keyboard = Keyboard.current;
-            if (keyboard != null && keyboard.f1Key.wasPressedThisFrame && PracticeSandbox.Allowed)
+            if (keyboard != null && keyboard.f7Key.wasPressedThisFrame && PracticeSandbox.Allowed)
                 PracticeSandbox.Toggle();
 
             bool on = PracticeSandbox.Active;
@@ -456,7 +477,7 @@ namespace TumbangPreso.UI
             if (_sandboxPlate != null) _sandboxPlate.enabled = show;
             if (!show) return;
 
-            _sandboxToggle.text = on ? "[F1]  NO COOLDOWNS: ON" : "[F1]  NO COOLDOWNS: OFF";
+            _sandboxToggle.text = on ? "[F7]  NO COOLDOWNS: ON" : "[F7]  NO COOLDOWNS: OFF";
 
             // ⚠️ THE LIT STATE IS AMBER, NOT `UiTheme.Defense`. Blue means the taya and nothing
             // else, which `CLAUDE.md` § 6.4 states as a rule after it had to be said six times.
@@ -3966,7 +3987,7 @@ namespace TumbangPreso.UI
                                       TextAnchor.MiddleCenter);
             Place(_sandboxToggle.rectTransform, new Vector2(0.5f, 0.0f),
                   new Vector2(0, PromptY + 38.0f), new Vector2(260, 26));
-            _sandboxToggle.text = "[F1]  NO COOLDOWNS: OFF";
+            _sandboxToggle.text = "[F7]  NO COOLDOWNS: OFF";
             _sandboxToggle.enabled = false;
 
             // ⚠️ A HOLD KEY NOBODY IS TOLD ABOUT IS A KEY NOBODY PRESSES. One quiet line
