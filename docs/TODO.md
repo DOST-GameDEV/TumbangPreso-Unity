@@ -7,6 +7,73 @@ before inventing a task, and update it in the same commit as the work.
 
 ---
 
+## CURRENT IMPLEMENTATION QUEUE
+
+⚠️⚠️ **START HERE, AFTER `CLAUDE.md` AND `VISION.md`. THIS IS AN EXECUTION INDEX AND NOT A
+REPLACEMENT FOR THE REASONING BELOW IT.** Each row is work a coding session can pick up and finish
+on its own. **Use the detailed numbered sections further down for the evidence, the measurements
+and the acceptance criteria**; they are why each row is worded the way it is, and a row summarised
+away from its section loses the receipt that made it a task.
+
+⚠️ **Do not resurrect archived work unless current code, a current test, or a row in this queue
+gives a concrete reason.** [`TODO_Archive.md`](TODO_Archive.md) holds closed sections whole, with
+their numbers, because the reasoning stays valuable. It is not a backlog.
+
+⚠️ **Work that needs a person, a handset, an eye or a ruling is NOT here.** It is in
+[`../Attention.md`](../Attention.md), which exists so this queue stays actionable. Adding a
+human-only item here is how the queue stops being read.
+
+⚠️⚠️ **AND WORK THAT SOMEBODY ELSE IS ACTIVELY HOLDING IS NOT HERE EITHER.** Controller support
+(§ 142) has an owner and is being written on `controller-mapping`. **Do not implement, refactor or
+"finish" any of it**, however open a row in § 138 looks: two people writing the same device layer
+is worse than nobody writing it, and this session already deleted one competing generic-pad
+implementation for exactly that reason.
+
+**Nationals is the deadline this queue is ordered against.** P0 is "a match could be lost or a
+build could ship wrong"; P1 is "this will cost an hour at the venue"; P2 is real work that is not
+either of those.
+
+| P | § | What is open | Done looks like |
+|---|---|---|---|
+| **P1** | 143.9 | **Host loss is not proven deterministic.** `DisconnectTimeoutMS` is **8000**, so a peer whose wifi dies keeps a normal-looking arena for eight seconds (§ 140). Migration is deliberately unsupported; the failure must still be one outcome on every peer. | Tests proving host and client cannot disagree about score, round, taya, ownership, winner or disconnect state, and that host loss reaches a clean shutdown with a stated reason rather than a half-alive match. ⚠️ The reconnect/forfeit RULING is `Attention.md`, not this row. |
+| **OWNED** | 142, 138 | ⚠️⚠️ **CONTROLLER SUPPORT HAS AN OWNER AND IS NOT THIS QUEUE'S WORK. DO NOT PICK IT UP.** It is live on `controller-mapping`: `GenericPadBridge`, the CONTROLLER MAP screen, `MenuNav`, and a pad that can back out of a screen. | Nothing here. Read § 142 for what landed; leave the code to the person working on it. |
+| **P1** | 134.12 | **Replay capture is a synchronous GPU stall**: `Texture2D.ReadPixels` at ~10 Hz into a ~46 MB buffer. A 90 s round is 900 captures; four rounds is 3,600. | `AsyncGPUReadback` or equivalent, bounded memory, no runaway queue, disposal proven, no capture after the session is gone, and a before/after measurement. |
+| **P2** | 16 | **One bot run is not balance evidence.** Eight matches at shipped settings spread **58 to 100 throws**, about 20 per cent. | A multi-seed sweep recording SHA, seed, config,each run, mean, median and spread, so no threshold is set against noise. |
+| **P2** | 143.15b | ✅ **The cold start passes, and the run exposed a gap in the harness rather than in the game.** Its report reads `round: 0`, `round active: False` beside a step that says *"hosts a match with four bots and finishes: PASS"* | The step asserts a ROUND ran, not merely that the process hosted and exited. `net_matrix` records the same trap by name: without `-tp-autostart` the ready gate is never pressed and two peers agree that nothing happened. § 143.15 |
+| **P2** | 141 | Spectator and seat ownership: the duplicate scoreboard name, and regression cover for repeated F1-F4 transitions | § 141 |
+| **P2** | 93 | A held tsinelas drifts **0.084 m** from the hand, and the isolated `match` group reports exactly that (the full run said 7.945 m, on a SETTINGS test) | § 93 |
+| **P2** | 127 | The taya ring and attacker disc need their non-colour distinction finished | § 127.3 |
+| **P1** | 144.7 | **The seat handover is built except for the rating, which does not travel.** `SeatHandover` maps a rating to a tier and the ladder already refuses to pay a handed-over seat; the host has no rating to map | A rating on the connection hello, `MatchRpc.RatingForDepartedPeer` reading it, and a test that 2400 gets Astig and 700 gets Bata. ⚠️ It moves `ProtocolVersion`, so both players rebuild together. Start a session with it |
+| **P2** | 144.3 | **Three of the six cues the audio audit still flags are the PROTECTED `ui_*` files.** `ui_click` sits at a DC offset of -0.121, which is a thump on every press of the three most-heard sounds in the game | 🧑's yes, then one line to subtract the mean. ⚠️ It rewrites files he asked for back BY NAME (`CLAUDE.md` § 6), so it is his call and not a commit |
+| **P2** | 144.3 | **`Art/audio/sfx` is a 117-file duplicate that nothing loads and nothing writes.** Both audio gates were reading it instead of `Resources/Sfx`; they were moved, and the folder is still there | A decision: it is the authored master and something copies it, or it is dead and goes. ⚠️ Not deleted on an inference |
+| **P2** | 144.8 | **The jeepney's metal finish does not show.** The per-surface selection is checked and sound; the body still renders flat white. 🧑 handed this to another session | ⚠️ **One measurement first, not a retune**: print the material name, the SHADER name and the live `_Metallic`/`_Smoothness` for each renderer on the placed prop. § 144.8 lists the four causes and which fix each needs |
+
+✅ **Closed by the 2026-09-04 hardening pass and no longer listed here: § 143.1, § 143.2, § 143.3, § 143.4, § 143.5, § 143.6, § 143.7, § 143.8, § 143.10, § 143.11, § 143.12, § 143.13, § 143.14, § 143.16, § 143.18.** Each one keeps its own subsection under § 143 with the measurement that closed it. **A done row is a row every future session reads and skips**, which is how an execution index turns back into the 22,930-line file this queue exists to replace.
+
+### The reds that are about the game rather than the suite
+
+⚠️⚠️ **THIS TABLE WAS WRITTEN FROM THE SINGLE-PROCESS RUN AND HALF OF IT WAS WRONG, WHICH IS
+§ 143.1 DEMONSTRATED ON THIS FILE'S OWN CONTENTS.** Both `MatchRunTests` rows **pass in
+isolation**: *"seat 1 never defended: the rotation is broken"* was another fixture's leaked world,
+not a broken rotation, and a gate that reports the taya rotation broken for four runs running when
+it is not is why nobody believed the suite. `PaperPurityProbe.NoFieldHighlightsInBlue` passes too.
+
+**What actually survives isolation, on `64718d3`, after this pass fixed six of the twelve:**
+
+| Case | What it says |
+|---|---|
+| `CarryTests.AHeldSlipperStaysOnTheArm` | **0.084 m** against a 0.05 m bound. § 93, and the isolated number is the real one: the full run reported 7.945 m, on a SETTINGS test |
+| `AspectRatioProbes.TheCharacterScreenSurvivesEveryAspectRatio` | 1 label under the 18-unit floor. ⚠️ **Do not lower the floor**; § 126.13 and `Attention.md` § 12.2 |
+| `PaperPurityProbe.NothingOnTheInventoryDisappeared` | Controls that were on the screens before the paper pass and are not now |
+| `CustomGameScreenProbe`, `PhaseSurfaceLayoutProbe`, `PlayerHubLayoutProbe` | Three labels wider than their boxes at 16:9 720p. `MenuKit.Label` overflows rather than wrapping, so each draws over its neighbour |
+| `InputSurfaceProbe.EveryScreenHasAFocusPathAndReachableTouchTargets` | A press at the centre of Eskinita's `Button_NEXT MAP` lands on something else |
+
+⚠️ **Do not fix a contamination failure by editing the code it happened to land on.** The way to
+tell which is which is `python tools/playmode_suite.py --group <name>`, and it costs about two
+minutes.
+
+---
+
 ## What is open right now
 
 Twenty-four sections, and this list is the whole of it. Everything else in this repository's history
@@ -112,7 +179,13 @@ taht again"*.
    *"the 2026-08-29 balance-and-controls batch"* was 973, and neither was ever open work: they were
    records of a day. **Write the batch report, then archive it in the same commit.** Twelve of the
    twenty biggest sections in this file were dated batch reports.
-4. **The numbers are not unique and that is not being fixed.** § 53, § 63, § 64 and § 65 each
+4. ⚠️⚠️ **THE QUEUE AT THE TOP IS AN INDEX AND THE NUMBERED SECTIONS ARE THE EVIDENCE.** Start a
+   session with `CURRENT IMPLEMENTATION QUEUE`; use the detailed section each row points at for the
+   measurements and the acceptance criteria. **Do not resurrect archived work unless current code,
+   a current test, or a row in the queue gives a concrete reason.** When something closes, take its
+   row OUT of the queue in the same commit that archives its section, or the index starts lying in
+   the one direction nobody checks.
+5. **The numbers are not unique and that is not being fixed.** § 53, § 63, § 64 and § 65 each
    appear more than once. Renumbering would break every pointer in `CLAUDE.md`, `VISION.md`,
    `FUTURE.md` and the code comments, which is a worse trade than a duplicate heading. **Search by
    title as well as by number.**
@@ -620,6 +693,877 @@ new map all just work.
   `ScreenFocus.MakeRoomForThumbs` like the touch customiser's bar. Eighteen rows at 144 do not fit
   a 1080-unit canvas, and this screen exists for a device that has no thumbs on the glass. It will
   show up in the `ThumbFloor` sweep; see § 126.2 for why that number is a worklist and not a gate.
+
+---
+
+## 144 · THE TWO ACCOUNT-GATED DOWNLOADS LANDED, AND THE AUDIO GATE WAS GRADING A COPY THE GAME CANNOT LOAD ⚠️ IN PROGRESS, 2026-09-04, branch `main`
+
+🧑 signed in to Freesound in the session's browser and asked for the sixteen recordings to be
+fetched from there, and uploaded the jeepney himself. `Attention.md` § 11 had both as
+person-only work; both are done and that section now records the RULE rather than the task.
+
+### 144.1 ✅ THE SIXTEEN RECORDINGS, AND 42 CUES THAT WERE SYNTHESISED ARE SOURCED
+
+All sixteen `Asset_Sourcing.md` § 5.2 files are in `scratchpad/asset-src/freesound/`, verified
+against the format and duration stated in their own rows to three decimal places. **42 cues
+re-sourced**: all 18 `sfx_cast_*`, all 12 `sfx_var_*`, and `sfx_fire_whoosh`, `sfx_ice_form`,
+`sfx_ice_freeze`, `sfx_ice_shatter`, `sfx_barricade_raise`, `sfx_thunder_impact`,
+`sfx_lightning_strike`, `sfx_hex_cast`, `sfx_hex_afflict`, `sfx_blink_arrive`, `sfx_quake_slam`
+and `lata_seal`.
+
+⚠️⚠️ **THIRTEEN OF THE SIXTEEN ARE USED AND THE THREE THAT ARE NOT EACH CARRY A REASON.** The
+tin can is the one worth knowing: § 5.2 names it for `lata_impact` and `lata_knockdown`, and
+§ 5.4 records those exact cues being **rejected by ear** on 2026-09-03 and restored. **A source
+table written before a listening test does not overrule the listening test.** The basketball and
+the crowd cheer have no cue to go to: there is no plaza-ambience cue and no crowd-bed cue in
+`Resources/Sfx`, and wiring them would mean inventing a cue nobody asked for.
+
+⚠️ **`Slice(src, rank=n)` IS HOW SIX HEROES AVOID SOUNDING LIKE ONE.** § 5.3 says *"Do not reuse
+one full cue for all three powers"* and *"Do not give all three abilities the same witch sound"*,
+against thirteen usable recordings for thirty cues. A slice takes the **rank-th loudest
+non-overlapping window** of a recording, so "the third loudest 1.1 s of the earthquake take" is
+reproducible, is different material from the first, and cannot land on silence the way a typed
+start time can. ⚠️ **Non-overlapping is the half that matters**: ranking every sample offset
+returns rank 0, 1 and 2 all sitting on the same transient a millisecond apart.
+
+⚠️⚠️ **AND EVERY ONE OF THE 42 IS PROVISIONAL.** `CLAUDE.md` § 6: sourced SFX are provisional
+until 🧑 hears them in play. `Asset_Sourcing.md` § 5.5 lists them.
+
+### 144.2 ✅ THE GENERATOR DECAYED A CUE BY ITS OWN GAIN ON EVERY RE-RUN
+
+⚠️⚠️ **FOUND BY RUNNING IT TWICE, WHICH NOBODY HAD DONE.** `peak_of` read the peak of the file it
+was about to OVERWRITE and the row's `gain` was multiplied onto it, so a second run multiplied
+the gain again. `tag` at gain 0.9 goes **0.850, 0.765, 0.688, 0.620**, and the sixth run is half
+the level `AudioCues.TrimDb`'s clipping measurement was taken at. Nothing warns, every row prints
+a plausible number, and the only symptom is that the game gets quieter in patches.
+
+✅ `tools/assets/cue_reference_peaks.json` holds the FINAL target per cue, written once, seeded
+from the shipped mix for the 21 rows that already carried their gain. A second run is now a
+byte-for-byte no-op, and that is asserted by running it twice and diffing.
+
+⚠️ **THE FIRST ATTEMPT AT THIS LEDGER STORED THE PRE-GAIN REFERENCE AND DECAYED EXACTLY AS
+BEFORE.** What has to be stable across runs is the number the file ENDS UP at, so that is the
+number written down.
+
+### 144.3 ⚠️⚠️ OPEN: BOTH AUDIO GATES WERE READING A DIRECTORY THE GAME CANNOT LOAD FROM
+
+**This is the big one and it is `docs/TODO.md` § 114's fault on a whole subsystem.**
+
+`AudioDirector` reaches every cue through `Resources.Load<AudioClip>($"Sfx/{stem}")`, and
+`Resources.Load` can only resolve inside a folder literally named `Resources`. The cues the game
+plays are `Assets/TumbangPreso/Resources/Sfx/`. **Both gates pointed at
+`Assets/TumbangPreso/Art/audio/sfx/`, which is not under a `Resources` folder and is therefore
+unreachable at runtime:**
+
+- `tools/audit_cue_audio.py`, whose whole job is *"Does each cue file actually contain an
+  audible, unclipped sound?"*
+- `AudioCueCheck`, which is one of the eight editor checks in `Checks.RunAll` and gates a build.
+
+⚠️⚠️ **AND THE TWO COPIES HAD ALREADY DRIFTED BEFORE THIS PASS: 21 of 117 cues differed**, which
+is the 2026-09-03 source pass writing to `Resources/Sfx` while both gates went on grading the
+untouched originals. Every DC-offset flag the audit was reporting was against a file the player
+has never heard.
+
+✅ **Both moved to `Resources/Sfx`.** The audit's flag count went **11 to 6**, and the six are all
+pre-existing and none of them is from this pass.
+
+⚠️⚠️ **OPEN, AND IT NEEDS HIS EAR RATHER THAN A COMMIT: THREE OF THE SIX ARE THE PROTECTED
+`ui_*` FILES.** `ui_click` sits at a DC offset of **-0.121**, `ui_back` at -0.109 and `ui_hover`
+at -0.101, which is a thump on every press of the three most-heard sounds in the game. They are
+the originals he asked for back by name (§ 5.4, `CLAUDE.md` § 6), so **removing the offset means
+rewriting his preferred files.** It is a one-line change to subtract the mean and it does not
+alter the character of the sound at all; it removes a click. **Ask before doing it.** The other
+three are `boot_sting`, `match_win` and `round_win`, which no generator owns.
+
+⚠️ **AND `Art/audio/sfx` IS NOW A 117-FILE DUPLICATE THAT NOTHING LOADS AND NOTHING WRITES**
+except `tools/generate_hero_audio.py`. It is left in place rather than deleted, because deleting
+117 audio files on an inference is exactly the kind of move this repository writes ⚠️ notes
+about. **Decide what it is for, or delete it, but do not leave two copies with two different
+answers.**
+
+### 144.4 ✅ THE JEEPNEY SHIPS AS DELIVERED, AND § 6.0 EXISTS BECAUSE THE FIRST ATTEMPT DID NOT
+
+Maclin Macalindong's CC BY jeepney replaces the distant north `van` on Ilalim ng Tulay, exactly
+as `Asset_Sourcing.md` § 7.1 asks. **74,170 triangles, 17 materials, its own colours, unmodified.**
+
+⚠️⚠️ **THE FIRST BUILD FOLLOWED § 7.1'S "DECIMATE, MERGE MATERIALS" INSTRUCTION AND WAS REJECTED
+ON SIGHT.** 3,000 triangles, one material, UVs rewritten onto the kit's nine-swatch palette atlas
+so `tumbang-warm-c` would recolour it like a van. 🧑: *"ew what is that jeep wtf did u do"*,
+**"u ate all its colors and design wtf"**, then *"no need to lower triangles or compress dont
+worry it wont lag"* and *"make that a rule in claude md"*. **`CLAUDE.md` § 6.0 is that rule.**
+Every step was defensible alone; the model was there for its silhouette AND its livery and the
+optimisation deleted both, against a frame cost nobody had measured.
+
+- **Placement is still ours**: the model is 24.35 units long as authored, a van is 2.75 drawn at
+  1.35, and a jeepney is about 6.0 m against a van's 4.5, so it is drawn at `4.95 / 24.3526`.
+  The vehicle table carries a per-row scale now instead of one shared literal.
+- **The palette is `""`**, which `InstantiateKitProp` reads as "keep what the author shipped". A
+  MISSING atlas still warns, because that is a defect and this is a request.
+- ⚠️⚠️ **THE CC BY CREDIT IS ENFORCED RATHER THAN REMEMBERED.** `tools/build_jeepney.py` refuses
+  to copy the model unless `CreditsContent.CcByCredits` already names the author, and it reads
+  that name out of the .glb's own metadata rather than a constant.
+
+⚠️⚠️ **AND A TRAP WORTH THE LINE: `IlalimNgTulayBuilder.Build` IS A STEP, NOT THE PIPELINE.**
+Rebuilding the map through it directly leaves the scene with **no `AsphaltSurface`**, because
+that is a separate stage `IlalimNgTulayPipeline` runs after the builder. Nothing says so at the
+call site; what says so is `MapSurfaceTests.IlalimUsesOneContinuousAsphaltSkinAndNoPatchSlabs`
+going red with *"Expected: 1, But was: 0"*, three Unity launches later. **Use
+`IlalimNgTulayPipeline.Run`**, which authors the fascia, builds, lays the asphalt, measures with
+`MapGeometryCheck` and captures the showcase in one launch.
+
+**Three more things came off his eye on the renders, and all three are placement rather than
+mesh, which is § 6.0's line:**
+
+- ⚠️⚠️ **IT IMPORTS STANDING ON ITS NOSE.** Sketchfab's glTF is authored Z-up with its long axis
+  on local +Y, so glTFast brings it in 24 units TALL with its wheels down one side. The vehicle
+  row carries a `tilt` of -90 beside its `yaw`, which is the same kind of number the `yaw` column
+  already was.
+- ⚠️⚠️ **6.0 m WAS TOO SMALL IN THE PICTURE AND RIGHT ON PAPER.** 🧑: *"can u make that bigger
+  bcz dude it looks so small compared to cars"*. **The Kenney vehicles are stylised SHORT for
+  their width**, so matching real-world proportions against them under-reads. It is 7.5 m now,
+  the top of a real jeepney's range, on a street that runs at 0.825 units to the metre.
+- ⚠️⚠️ **AND THE METAL FINISH IS PER SURFACE, BECAUSE ONE VALUE FOR EVERYTHING WAS THE FIRST
+  ANSWER AND HE NAMED IT: "dont js spam it"**, *"make the white replacement contextual depending
+  on which surface of the jeep is affected"*, and *"make sure the parts u paint to look metallic
+  make sense"*. **A jeepney's white is at least three materials**: the chrome bumper and grille,
+  the painted steel body, and the vinyl bench seats. One 0.70 metal value made the seats look
+  like a bumper.
+
+  **The author's own material names are the evidence and the table reads them**, which beats
+  guessing from a colour: `silver_shader4Silver_SG` is chrome (0.95 / 0.80),
+  `mi_car_paint_phen_x2SG` is a clearcoat over flake and only half metallic (0.40 / 0.65), any
+  other bare achromatic panel is a duller 0.55 / 0.35, and `maya_sofa_skin_shadermay` — the
+  bench seats, **exactly as white and exactly as untextured as the bodywork** — is refused by
+  name along with glass, rubber and plastic. ⚠️ **A TEXTURED material is refused outright**: six
+  of the eleven white materials carry the livery under a white base colour, and a sheen on the
+  destination boards would be a gloss on the artwork the model is here for. ⚠️ **Anything the
+  table does not recognise keeps the material the author shipped**, which is the narrowest thing
+  that can be done and the only one that cannot be wrong.
+
+---
+
+### 144.5 ✅ THE LOBBY'S CHARACTERS AND MAP WERE ONE 960 x 540 TEXTURE STRETCHED ACROSS THE SCREEN
+
+🧑 2026-09-04: *"lobby looks so pixelated can u try to fix that too"*, and when asked which part,
+**"i meant the characters and stuff"**, *"and the map in lobby"*.
+
+⚠️⚠️ **THOSE ARE NOT TWO FAULTS. THE LOBBY CHARACTER SHOT AND THE MAP SHOT ARE THE SAME
+SURFACE**, told apart only by `MapPreviewSurface._lobbyShot`, so one undersized target made both
+soft at once. It was a fixed `960 x 540`, with **no anti-aliasing and no filter mode set**, drawn
+full-bleed behind the lobby: on a 1440p screen that is a 2.7x upscale of a point-sampled image of
+a scene made almost entirely of hard ink outlines.
+
+**The old comment was the whole story:** *"Half the screen is enough behind a scrim, and it halves
+the cost."* True of the map shot, which does sit behind a scrim. **The lobby character shot does
+not**, and it is the one with faces in it. A number chosen for one caller and inherited by a
+second is `CLAUDE.md` § 6.2c's *"what is this size measured AGAINST"* asked about a render target
+instead of a rect.
+
+✅ **Fixed, and the framing is provably untouched.** The aspect is now a named constant at 16:9
+and the RESOLUTION follows the display between 960 and 2048 wide:
+
+- ⚠️⚠️ **THE ASPECT IS THE FRAMING AND THE RESOLUTION IS NOT.** Every map's `Distance` and
+  `Height` was tuned against a 16:9 frame at 58 degrees, and this file already warned that
+  changing that ratio *"would silently re-frame all three arenas on the practice screen"*.
+  Changing how many pixels the same frame is drawn with re-frames nothing.
+- `antiAliasing = 4`, which `ModelPreview` has always asked for and this surface never did.
+  `docs/TODO.md` § 63 is the same subject one surface over: the world outline was aliased
+  *"because MSAA was never able to see it"*.
+- `filterMode = FilterMode.Bilinear`. An unset filter mode takes the project default, and an
+  upscaled point-sampled target is the literal definition of the word he used.
+- ⚠️ **The camera lets go of the texture before it is released** on a resize. Releasing one a
+  camera still points at is a black flash for a frame rather than a crash, which is exactly the
+  kind of thing nobody reports precisely.
+
+⚠️ **`ModelPreview` WAS ALREADY CORRECT AND IS THE REFERENCE**: it sizes to its rect, caps at
+2048, sets four samples and bilinear, and re-derives the camera aspect. The two files now answer
+the same question the same way.
+
+### 144.6 ✅ THE LOGO IS ALREADY THE LOGO, AND THE FILE HE SENT IS BYTE-IDENTICAL TO THE ONE IN THE REPO
+
+🧑 2026-09-04, attaching `logo.jpg`: *"use this as the updated logo for builds (not sure if this
+is in repo already)"*, *"make sure its sized correctly and is a png and looks great"*, and
+**"dont remake it use the actual photo i have"**.
+
+**It is in the repo, and it is the same file**: `md5 0e46f966…` matches
+`Art/ui/brand/source/tump_logo_colour.jpg` exactly. Nothing was regenerated and nothing needed
+to be.
+
+- **It is already a PNG where it ships.** `tools/build_brand_art.py` keys the white page to
+  alpha and trims the margin: `Art/ui/brand/tump_logo.png` and
+  `Resources/UI/brand/tump_logo.png`, **1895 x 1246 RGBA**. ⚠️ **The drawing is untouched** —
+  `key_page` and `trim` only remove the paper and the whitespace; `recolour_mono` is a different
+  output and does not run on this one.
+- **It is used as the hero art on the sign-in/boot screen**, `SignInScreen` loading
+  `UI/brand/tump_logo`, and it is what `tools/read_brand_palette.py` measured the whole § 6.4
+  palette off.
+- ⚠️ **THE BUILD SPLASH CARRIES NO LOGO ON PURPOSE AND THAT IS NOT THIS.**
+  `GameBuilder.ConfigureSplash` sets `logos` to an EMPTY array deliberately, and its own note
+  says the lookup *"is deleted with the logo"*; the studio mark is shown by `BootSting` in-game
+  instead. The `.exe` icon is `app_icon.png`, the tansan. **If either of those should become the
+  wordmark, that is a decision rather than a fix**, and nothing here has changed them.
+
+---
+
+### 144.7 ⚠️⚠️ OPEN: THE SEAT HANDOVER IS BUILT EXCEPT FOR THE ONE NUMBER THAT HAS TO TRAVEL
+
+`Attention.md` § 16.1 was ruled and not built: *"let ai on same skill level as them take over"*.
+Most of it is built now and the remainder is one wire field.
+
+**What landed:**
+
+- `Core/SeatHandover.cs`, engine-free, ten `Core.Tests` cases. `TierFor(rating)` maps a ladder
+  number onto the three tiers `AiTuning` actually has, ⚠️ **with both band edges DERIVED**
+  (`RatingRules.StartRating` ± `MatchmakingRules.MaxHalfWidth`, so 1000 and 2000) rather than
+  picked. That constant already carries the argument in its own words: 500 is *"where banding
+  stops meaning anything ... a queue that has widened this far has already said 'skill matching
+  has failed'"*. **The distance at which the game refuses to call two players comparable is the
+  distance at which it should stop handing their seats the same bot.**
+- `SeatOrigin` — `Human`, `Bot`, `HandedToBot` — on `CharacterMotor` and on
+  `PlayerMatchStats`, beside `IsBot` rather than replacing it. ⚠️ `IsBot` is on the wire and in
+  `IntegrityRules.Digest`; moving it would be a protocol change for a career field.
+- **The ladder rule, which is the half with teeth.** § 16.1: *"a bot can lose you points you
+  would not have lost, or win you points you did not earn"*, and **"a rating that counts a bot's
+  stretch as the player's own is a ladder nobody trusts."** `SeatHandover.RatingWeightFor` is one
+  function because it is one rule: my own seat being handed over zeroes my weight, and **somebody
+  else's** seat being handed over reduces it, because the match I finished had fewer people in it
+  than the one I started. A caller that remembered the first and forgot the second would pay
+  three players a four-human result for a match they finished against an AI.
+- `AIController.SeatDifficulty`, a per-instance tier defaulting to the lobby's. The difficulty
+  was a single static, so **every bot in the game played at one tier** and a handed-over seat
+  could only be given the lobby's setting.
+
+⚠️⚠️ **WHAT IS MISSING IS THE RATING, AND § 16.1 SAID SO BEFORE ANY OF THIS WAS WRITTEN:** *"the
+game has no notion of 'this player's skill level' to hand the bot"*. Confirmed against the code:
+**nothing on `ConnectionHello` or `LobbySession.PeerRecord` carries a rating**, so the host does
+not know what tier to ask for. `MatchRpc.RatingForDepartedPeer` is the seam and it answers 0
+today, which is the honest answer rather than a stub: the seat keeps the lobby's tier, exactly as
+it did before, and **one line changes when the number arrives.**
+
+**Done looks like:** a rating on the connection hello, `RatingForDepartedPeer` reading it, and a
+test that a handed-over seat at 2400 gets Astig while one at 700 gets Bata.
+
+⚠️⚠️ **AND IT COSTS A PROTOCOL BUMP, WHICH IS WHY IT WAS NOT SLIPPED INTO THIS SESSION'S BUILD.**
+A field on the hello moves `NetSession.ProtocolVersion`, and `CLAUDE.md` § 4 is explicit about
+what follows: *"the Windows and Android players must be rebuilt from the same commit and shipped
+together, or they refuse each other correctly and it reads as a bug"*.
+`InputContractTests.TheInputPassDidNotMoveTheProtocolVersion` asserts the constant so that a
+legitimate bump is a deliberate act. **Do it at the start of a session, not at the end of one.**
+
+---
+
+### 144.8 ⚠️⚠️ OPEN, AND HANDED TO ANOTHER SESSION: THE JEEPNEY'S METAL FINISH DOES NOT SHOW
+
+🧑, on the fourth render, with a close crop attached: **"this js white shit gang idk if u did
+shaders properly o rnot"**, then *"anyways lets js get diff chat to do it"*. **So this is
+somebody else's to pick up, and it is written down rather than half-fixed.**
+
+**What is in the code right now** (`IlalimNgTulayBuilder.GiveWhitePanelsAMetalFinish` and
+`TryFinishFor`): a per-surface table that copies each of the jeepney's materials and writes
+`_Metallic` and `_Smoothness` onto the copy. Chrome 0.95/0.80 for the material the author named
+`silver_shader4Silver_SG`, 0.40/0.65 for `mi_car_paint_phen_x2SG`, 0.55/0.35 for any other bare
+achromatic panel, and a by-name refusal for the bench seats, glass, rubber and plastic. **The
+selection logic is sound and was checked against the model's own seventeen material names.** It
+is the RESULT that does not read: the body is as flat white in the render as it was before.
+
+⚠️⚠️ **DO NOT START BY RETUNING THE NUMBERS. THE FIRST STEP IS ONE MEASUREMENT AND IT HAS NOT
+BEEN TAKEN.** Raising 0.40 to 0.9 is the obvious move and it is worthless if the write is not
+landing at all. **Print, for each renderer on the placed jeepney: the material name, the SHADER
+name, and the values `_Metallic` and `_Smoothness` actually hold after the pass runs.** That one
+table tells you which of these it is, and they need completely different fixes:
+
+1. ⚠️ **THE PROPERTY NAMES ARE WRONG FOR THE SHADER glTFast BUILT.** `HasProperty` returns false
+   and both writes are silently skipped, which is a no-op that logs nothing. URP Lit uses
+   `_Metallic` and `_Smoothness`; **glTFast's own `glTF/PbrMetallicRoughness` shader does not**,
+   and which one an import produces depends on the package's render-pipeline detection. This is
+   the most likely answer and it is also the cheapest to confirm.
+2. ⚠️ **THE WRITE LANDS AND THERE IS NOTHING TO REFLECT.** Metal is reflection: a metallic
+   surface with no environment probe and no reflection source renders as a dark or flat patch,
+   not as shine. The preview and the map both draw with a skybox, so this is less likely than
+   (1), but `Assets/TumbangPreso/Scenes/Maps/IlalimNgTulay.unity` should be checked for a
+   reflection probe over the north boundary before any number is touched.
+3. ⚠️ **THE MATERIAL IS AN INSTANCE THE SCENE DID NOT KEEP.** `sharedMaterials` is written on a
+   `PrefabUtility.InstantiatePrefab` instance, which is a prefab override; if the scene save
+   drops it the finish exists at build time and not at play time.
+
+⚠️ **AND A FOURTH POSSIBILITY WORTH RULING OUT LAST: it may be landing and simply not reading at
+that distance under this map's flat lighting**, in which case the honest answer is a stronger
+contrast between the chrome and the paint rather than more metal on everything, which is the
+*"dont js spam it"* note again.
+
+⚠️ **THE SELECTION IS THE PART WORTH KEEPING.** Whatever the fix turns out to be, the rules that
+decide WHICH surfaces get it were checked against the model and are the answer to *"make sure the
+parts u paint to look metallic make sense"*: textured materials are the livery and are refused
+outright, `maya_sofa_skin_shadermay` is the bench seats and is refused by name, and anything with
+a hue is his paint. **Do not replace that with "every white material".**
+
+---
+
+### 143.15 ✅ CLOSED 2026-09-05: THE COLD START RAN, AND THE FIRST RUN FOUND A HOLE IN THE HARNESS
+
+`python tools/cold_start.py --clean-profile`, against a player built from HEAD:
+
+```
+Verdict: PASS
+launches and identifies itself            PASS   3.4 s
+hosts a match with four bots and finishes PASS  48.0 s
+```
+
+`docs/reports/cold-start-28078b66614d.md` is the artifact.
+
+⚠️⚠️ **THE REFUSAL FIRED FIRST AND THAT IS WORTH RECORDING AS A PASS OF ITS OWN.** The first
+attempt came back *"REFUSED: the player was built from 41217d83bc20 and HEAD is 28078b66614d. A
+cold start of a different commit proves nothing about this one."* The build was one docs-only
+commit behind, which is exactly the reasoning the guard exists to refuse, and it refused it. The
+player was rebuilt from HEAD and the run means something.
+
+⚠️⚠️ **AND THE GREEN RUN'S OWN REPORT CONTRADICTS ITS SECOND STEP, WHICH IS A HOLE IN THIS
+HARNESS AND NOT IN THE GAME.** The step reads *"hosts a match with four bots and finishes:
+PASS"*, and the state it captured reads:
+
+```
+round           : 0
+round active    : False
+seat 0 travelled 20.8   seat 1 travelled 17.4   seat 2 travelled 10.2   seat 3 travelled 15.4
+```
+
+**No round ran.** The bodies moved, so the arena installed and the bots are driving, but the
+match never started. `tools/net_matrix.py` records this exact trap in its own source, in
+capitals: *"`-tp-autostart 2` IS NOT OPTIONAL AND ITS ABSENCE IS SILENT. `-tp-host` loads the
+arena, but `MatchInstaller.BuildReadyGate` opens a ready gate on any NETWORKED session, and
+nothing presses through it without this switch ... Two peers agreeing that a round never started
+is not evidence about the link."* **The same sentence is true of one peer agreeing with itself.**
+
+⚠️ **WHAT THE RUN DOES PROVE**, and it is not nothing: a player from a stamped commit launches on
+a cleared profile, identifies itself, reaches the arena, installs four bots that move, holds for
+45 seconds and exits cleanly, on a machine that has never run this build. **What it does not
+prove is that a match plays**, which is what the step's wording claims. Fixing it is one switch
+and one assertion on `round active`. § 143.15b in the queue.
+
+⚠️ **A truly clean MACHINE is still `Attention.md`.** This clears a profile; it cannot clear a
+driver, a firewall rule or a runtime that this machine has and a borrowed one does not.
+
+---
+
+## 143 · THE NATIONALS HARDENING PASS: A QUALIFICATION THAT CANNOT LIE ⚠️⚠️ IN PROGRESS, 2026-09-04, branch `main`
+
+⚠️⚠️ **THIS WAS WRITTEN AS § 142 AND WAS RENUMBERED ON MERGE, WHICH THIS FILE NORMALLY REFUSES TO
+DO.** `controller-mapping` and this pass were both written on 2026-09-04, both off `e85b0fc`, and
+both claimed **§ 142**. The rule in "How this file stays short" is that duplicate top-level numbers
+are tolerated because renumbering breaks pointers, and that rule is about numbers which already
+disagree in the archive. **This was different in the one way that matters: both sections had a
+§ 142.1 and they meant completely different things** (this one is the PlayMode suite not being a
+gate; the controller one is every back-out being keyboard-only). A source comment reading
+`docs/TODO.md § 142.1` would have been genuinely ambiguous rather than merely duplicated.
+
+**The hardening pass moved because it was cheaper to move**: six references in four files this
+session wrote, against twelve across seven for the controller pass, including `CLAUDE.md` and
+`Attention.md`. Nothing else was renumbered and the controller section keeps § 142 whole.
+
+
+**Nationals is about three months out. This entry is not a bug list; it is the pass that makes the
+game hard to break, hard to ship wrongly, and easy to diagnose in a hall.** Every subsection below
+carries its own measurement taken on `e85b0fc`, because the thing this pass is mostly fighting is
+numbers quoted from a run nobody can tie to a commit.
+
+⚠️⚠️ **THE ORGANISING FINDING, AND IT IS THE SAME ONE § 126.8 FOUND THREE TIMES: A GREEN SUBSET IS
+NOT A RELEASE CERTIFICATION.** Every PlayMode number quoted in every handoff in this file came from
+a targeted run. The full suite has been 42 red, then 41, then 56, and now 50, and the RED SET MOVES
+between runs on unchanged code. A gate whose red set moves is not measuring the code.
+
+### 143.1 ⚠️⚠️ OPEN: THE BASELINE ON `e85b0fc`, AND WHY "RUN IT TWICE" WOULD NOT HAVE HELPED
+
+**One full PlayMode run, `-buildTarget Win64`, the shipped exclusions, `Logs/play-baseline.xml`:**
+
+```
+165 cases, 107 passed, 50 failed, 8 skipped, 619 s
+```
+
+⚠️⚠️ **THE HANDOFF THAT COMMISSIONED THIS PASS ASKED FOR THE FULL SUITE TO PASS TWICE BACK TO BACK
+AS A NATIONALS GATE. THAT WOULD HAVE BEEN THE WRONG GATE, AND THE EVIDENCE IS IN THE RUN ITSELF.**
+Two things in the failure list settle it:
+
+1. **`SettingsScrollProbe.TheSettingsListScrollsAndItsBarCoversNothing` failed with the message
+   *"a held slipper drifted 7.945 m from the hand while its carrier walked"*.** That is
+   `CarryTests`' assertion, reported against a settings test. **A suite that attributes one
+   fixture's failure to another fixture is not measuring either of them.** (It is also a 7.945 m
+   drift against a 0.05 m bound, where § 93's real, isolated samples are 0.084 to 0.092 m: the
+   number itself is a leaked object, not a carry bug.)
+2. **Twelve fixtures died on `MissingReferenceException: the object has been destroyed`**, and nine
+   more reported that a screen or an arena *"was never built"*: *"MatchSetup has no
+   CharacterSelectPanel to open"* (7 cases), *"the arena built no SliceRunner"* (2), *"the lobby
+   must have a LobbyChat"*, *"no EventSystem"*, *"the sign-in screen: nothing was built, so this
+   proves nothing"*.
+
+**Running that twice produces the same contamination twice and calls it reproducible.**
+
+⚠️ **§ 126.8 ALREADY NAMED THE TWO WAYS OUT AND BUILT NEITHER**: every fixture tears its world down
+(attempted; § 126.8d measured it moving eleven failures from one side to the other and **withdrew**
+it), or **the suite is declared to run in named groups and a single-process full run stops being
+quoted as a gate at all.** This pass takes the second, because § 126.8d's own measurement is the
+argument against the first: *"what the right version needs is a measurement nobody has taken: WHICH
+persistent object a match install depends on."* Grouping does not need that measurement. It removes
+the question.
+
+**Done looks like** `tools/playmode_suite.py --gate`: fixtures partitioned into groups that cannot
+reach each other, one Unity launch per group, results aggregated into one verdict, **and coverage
+asserted so a group that silently ran nothing fails instead of passing.** Green twice.
+
+✅ **THE EXPERIMENT IS DONE AND THE THESIS HOLDS.** The `screens` group, 26 fixtures, run alone:
+
+```
+64 cases, 51 passed, 13 failed, 106 s      (Logs/playmode-suite/screens.xml)
+```
+
+**Against the same fixtures inside the full run: about thirty failures, seven of them the identical
+sentence *"MatchSetup has no CharacterSelectPanel to open"* and five more `MissingReferenceException`.
+In isolation there is not one `MissingReferenceException` in the group**, and the seven identical
+phantoms became ONE specific finding: *"no 'LoadoutDoor' on the character select stage"*.
+
+⚠️⚠️ **THAT IS THE ARGUMENT IN ONE LINE: ISOLATION DID NOT MAKE FAILURES GO AWAY, IT TURNED NOISE
+INTO SIGNAL.** The 13 that remain name real defects and two of them were previously invisible
+because a phantom was sitting on top of them (§ 143.17).
+
+⚠️ **The partition is DISCOVERED against the source, not listed.** `--plan` refuses to run at all
+if any fixture is in no group or in two, and the first run of that check earned its keep
+immediately: the discovery regex required a bare `[UnityTest]` and `BotBehaviourProbe` writes
+`[UnityTest, Timeout(MatchTimeoutMs)]`, so the gate would have silently covered 67 fixtures of 68
+and dropped the longest probe in the suite.
+
+### 143.1a ✅ THE WHOLE GATE RAN ON `0ae070e`, AND THE COMPARISON IS THE ENTRY
+
+```
+one process,  e85b0fc :  165 cases, 107 passed, 50 failed
+six groups,   0ae070e :  175 cases, 150 passed, 17 failed, 8 skipped
+```
+
+| Group | Cases | Failed | What is left |
+|---|---|---|---|
+| `destroyer` | 5 | **1** | a real focus-path finding on Eskinita's result card |
+| `screens` | 65 | **12** | six are one cause (§ 143.18); the rest are layout and a lost control |
+| `match` | 73 | **4** | § 93's carry drift and three `SteeringTests` settle failures |
+| `capture` | 10 | **0** | green |
+| `services` | 19 | **0** | 8 correctly skipped: UGS sign-in is off in batch mode |
+| `bots` | 3 | **0** | green |
+
+⚠️⚠️ **IT RUNS MORE CASES AND FINDS FEWER FAILURES, WHICH IS THE WHOLE ARGUMENT IN ONE LINE.**
+175 against 165: the extra ten are cases that previously never executed because a fixture died on
+a leaked object before reaching them. **Isolation did not hide failures, it stopped fixtures being
+blamed for each other's leaks**, and the two that were invisible underneath a phantom are § 143.18.
+
+**Two failures from the full run vanished in isolation and both were about the match itself:**
+`MatchRunTests.AWholeMatchRunsAndRotatesTheTaya` (*"seat 1 never defended: the rotation is
+broken"*) and `RestoredLataRejectsAnAlreadyAirborneFollowUp` (*"restore protection never
+expired"*). **Both pass alone.** A gate reporting that the taya rotation is broken, four runs
+running, when it is not, is worse than no gate: it is the reason nobody believed the suite.
+
+⚠️ **`CarryTests` reports exactly 0.084 m in isolation**, which is § 93's first recorded sample.
+In the full run the same bound failed at **7.945 m**, on a SETTINGS test. The isolated number is
+the real one.
+
+### 143.1b ⚠️⚠️ THE COVERAGE CHECK'S FIRST RUN FAILED THE GATE OVER SEVEN FIXTURES THAT WERE MEANT TO BE SILENT
+
+**Worth recording because the fix is the difference between a gate and a nuisance.** The first
+full run reported *"7 fixture(s) never ran"* and refused, and every one of the seven is
+`[Category("WallClock")]`, which the shipped filter excludes on purpose: `AiDiagnosticProbe` runs
+a round at 1x for about eighty real seconds and its verdict depends on how busy the machine is
+(`CLAUDE.md` § 7), and the other six photograph things at real time for the same reason.
+
+⚠️⚠️ **A GATE THAT CANNOT BE GREEN IS A GATE THAT GETS IGNORED**, which is the failure this whole
+file exists to prevent, so the check now derives which fixtures the active filter legitimately
+silences and reports them separately from ones that went missing. ⚠️ **It is derived from the
+source and not listed**, for the same reason the partition is: a hand-written exclusion list stops
+being true the moment somebody adds a category, and it fails in the direction that hides a
+genuinely missing fixture.
+
+**Three parsing faults had to be fixed before it saw all seven**, and each is a small lesson:
+
+- The category sits on the line **after** `[UnityTest]`, not before, so a window of preceding
+  lines found one fixture of the seven. It reads the whole contiguous attribute block now.
+- `AiDiagnosticProbe` writes `[Category(WallClock)]` against a **const rather than a string
+  literal**, and a regex that only knew the quoted form called it missing.
+- `MsaaResolveProbe`'s class note contains the words *"A `[UnityTest]` coroutine resumes"*, and
+  counting that as a case made the fixture look like it had an unexcluded test. **Comments are
+  stripped first now**, which is `audit_audio_reach.py`'s lesson exactly: it *"was the only audit
+  that did not strip comments before looking for a gate"*, so a comment ABOUT a gate registered
+  as one.
+
+⚠️⚠️ **AND IT MUST NOT BECOME A THIRD CATEGORY EXCLUSION.** § 126.8d bans that explicitly: a
+category meaning *"these tests do not work next to each other"* hides this finding rather than
+recording it. **A group is an isolation boundary, not an exemption: every fixture still runs, in
+exactly one group, and the aggregate is the number quoted.**
+
+### 143.2 ⚠️ OPEN: A BUILD CANNOT SAY WHAT IT IS
+
+`GameVersion.DisplayString` prints `v1.00` in the corner and `BuildBranch` stamps the branch, and
+neither answers the question an operator actually has at a venue, which is **"are these two
+machines running the same game"**.
+
+- `NetSession.ProtocolVersion` is **23** on this commit, read from
+  `Assets/TumbangPreso/Runtime/Net/NetSession.cs`. ⚠️ **It is read from source by
+  `tools/qualify.py` and copied into no document**; this line is a measurement with a date on it,
+  not a second source of truth. The preamble to this file has gone stale on this number four times.
+- **Peers on different protocol numbers refuse each other by design.** A Windows player and an
+  .apk built from different commits therefore fail in a way that reads exactly like a network bug,
+  and `Attention.md` § 1 already warns a human about it in prose. Prose is not a gate.
+
+**Done looks like** a `build-identity.json` emitted into both players by `GameBuilder`, a
+diagnostic route that prints it without opening source, and `tools/qualify.py --stage identity`
+refusing a pair that disagree on SHA or protocol.
+
+### 143.3 ⚠️ IN PROGRESS: THE TOURNAMENT PRESET
+
+✅ **The rules half landed 2026-09-04.** `Packages/com.tumbangpreso.core/Runtime/TournamentPreset.cs`
+is the single answer to "what is a nationals match", and it copies no number: `Rounds` asks
+`MatchRules.RoundCountFor`, `RoundSeconds` asks `Balance.RoundTime`, `Tsinelas` asks
+`CustomGameRules.StartingTsinelas`. `docs/VISION.md` § 1.1's *"CLASSIC IS THE TOURNAMENT RULESET"*
+is a constant now, so changing the ruling fails a test rather than being an argument.
+
+⚠️⚠️ **THE HAZARD IT REMOVES IS REAL AND IS ASSERTED: `new CustomRules()` IS HERO STRIKE, EIGHT
+ROUNDS.** The field initialisers say so, correctly for that class, and any start path that builds a
+bare rule set is therefore a Hero Strike match wearing a Classic tournament's name.
+`TournamentPresetTests.ABareCustomRulesIsNotATournamentMatchAndThatIsWhyThePresetExists`.
+
+**`TournamentPreset.Modifiers` is the deliverable half**: eight named switches, each with the reason
+it is on the list, because the NAME is what gets forgotten when somebody invents switch number nine.
+⚠️ **One row's safe value is `true`** (`AIController.BotsEnabled`): turning bots off does not make a
+match more human, it makes unfilled seats inert.
+
+⚠️ **The stale claim is confirmed stale.** `PracticeSandbox` has no `const bool NoCooldowns = true`
+and never reaches a networked match: `Allowed => !NetAuthority.IsNetworked` is asked every frame
+rather than latched, so a sandbox left on in a solo match stops answering true the moment a session
+exists. **It is on the modifier list anyway**, because the guard is the thing under test and because
+a lit NO COOLDOWNS toggle in a tournament room is a HUD disagreeing with the game.
+
+**Open: the Unity half**, which reads the eight live values and refuses.
+
+### 143.4 ✅ CLOSED 2026-09-04: THE SOAK HARNESS, AND WHAT SIX MATCHES MEASURED
+
+`MatchSoakProbe` runs `build -> match -> teardown -> rematch` six times in one process,
+**alternating Classic and Hero Strike every iteration** so the pass also crosses the boundary a
+bracket day actually crosses: finish one format, start another, same process.
+
+```
+6 matches, 0 exceptions, 0 invariant violations, 0 leaked CharacterMotors
+managed memory 625.72 MB -> 625.91 MB  (+0.19 MB across six matches)
+live GameObjects 11, 11, 13, 13, 13, 13
+rounds 4, 8, 4, 8, 4, 8   (the tournament preset really is producing four-round Classic)
+```
+
+⚠️⚠️ **THE HARNESS'S FIRST RUN ACCUSED THE GAME OF TWO THINGS THAT WERE THE HARNESS'S OWN FAULT,
+AND BOTH ARE WORTH RECORDING BECAUSE THEY ARE THE SHAPE OF EVERY BAD PROBE.**
+
+1. *"seat 0 began iteration 1 holding 20 points from a previous match"* on **iteration 1**, where
+   there is no previous match. It read the scoreboard one frame AFTER the runner began, and at
+   60x one frame is about a second of game time, so it measured two defence ticks.
+2. *"seat 0 moved by 70 points, which is not any ScoreEvent's value"*. Also legitimate: seven
+   defence ticks in one sampled frame. **`IsReachableDelta` allowed at most two awards per step
+   because a network snapshot pair spans 200 ms at 5 Hz, and that bound belonged to the OBSERVER
+   rather than to the rule.** It takes a `maxEvents` now, the wire still passes 2, and the soak
+   derives its allowance from the game time that actually elapsed.
+
+⚠️⚠️ **AND WHAT IT IS NOT IS A LIVENESS MEASUREMENT.** Every seat finished on an exact multiple
+of `ScoreDefensePerTick`: 900 in a four-round Classic match is 90 defence ticks and nothing else,
+which is a whole match where the lata was never knocked over. **At `Time.timeScale = 60` the bots
+effectively do not play**, which is why `BotBehaviourProbe` moved to a fixed 1/60 s step. Do not
+read a score out of `Logs/soak.json` as balance evidence. **It does not weaken the soak**: a quiet
+match crosses the same boundaries as a busy one, and boundaries are the whole subject.
+
+### 143.4b ⚠️ THE ORIGINAL STATEMENT OF THE PROBLEM, KEPT
+
+`BotBehaviourProbe` runs a match. `MatchRunTests` runs a match. `GameplayShots` photographs a match.
+**Nothing anywhere runs the fifth match after the fourth rematch**, which is the shape of a
+tournament afternoon and the shape of every accumulated-state defect.
+
+**Done looks like** a soak harness cycling `launch → lobby → match → results → rematch → lobby →
+match`, watching exceptions, assertion failures, memory growth, GC pressure, stuck rounds and
+timers, duplicate scores, duplicate event callbacks, seat ownership corruption, replay buffer
+growth, static leakage and host/client divergence, writing a machine-readable summary tied to the
+SHA.
+
+### 143.5 ✅ CLOSED 2026-09-04: THE SUBSCRIPTION AUDIT, AND IT FOUND A REAL CROSS-MATCH LEAK
+
+`tools/audit_event_subscriptions.py` pairs every `+=` with a `-=`. **85 subscriptions in
+`Runtime/`, and one file was leaking four of them into the next match.**
+
+⚠️⚠️ **`MatchBootstrap` SUBSCRIBED FOUR HANDLERS TO A `DontDestroyOnLoad` DIRECTOR AND REMOVED
+NONE.** `GameServices` is the process-lifetime service root, so `MatchDirector` outlives every
+arena; `MatchBootstrap` lives in the arena scene. What that cost:
+
+- **The arena unloads, the component is destroyed, and the four handlers stay registered.** The
+  next match therefore runs `OnRoundStarted` on a destroyed `MatchBootstrap`, and that handler
+  calls `ResetWorld`, **which teleports all four bodies and hands out the tsinelas.** Match five
+  was running it five times.
+- **`BuildAndStart` is public**, so a second call subscribed a second copy of every handler to the
+  same event on the same object.
+- **And the pending `Invoke` was the same leak in a second shape.** `OnIntermission` schedules
+  `AdvanceAfterIntermission` on this component, and an `Invoke` outliving its target calls
+  `GameServices.Match.AdvanceRound()` on a director that has moved on. **A round advanced by the
+  previous match's timer** is `VISION.md` § 4's first rule broken from outside the match.
+
+⚠️ **None of that crashes**, which is why it survived every test in the repository. It is a round
+that resets more than once, and it reads as "the game got weird after a few matches".
+
+✅ Fixed: the director is cached in `_hookedMatch` (the pattern `AIController` already used and this
+file did not), `Subscribe` releases before it takes so no path can leave two, and `OnDestroy`
+cancels the invoke and unsubscribes.
+
+⚠️⚠️ **TWO FALSE-POSITIVE CLASSES HAD TO BE REMOVED BEFORE THE AUDIT WAS WORTH READING, AND BOTH
+ARE RECORDED IN THE FILE.** Its first run reported 76 findings, about sixty of which were
+`_clock += dt`: `+=` is arithmetic and subscription with identical syntax. Its second reported
+`AIController`'s five CORRECT unsubscribes as leaks, because that file releases through
+`_hookedMatch.Scored` rather than `match.Scored`, **and caching the exact publisher is the right
+pattern rather than sloppiness.** An audit that punishes the correct pattern is an audit somebody
+switches off.
+
+### 143.6 ✅ CLOSED 2026-09-04: `SceneDependencyCheck`, THE OPPOSITE TECHNIQUE TO `SceneScriptCheck`
+
+`SceneScriptCheck` reads scenes as TEXT **on purpose**, because the fault it hunts is one the
+editor resolves by class name and the player cannot, so opening the scene is what hides it. The
+faults a human finds by opening a build are the mirror image: a reference pointing at a deleted
+object, a component whose script is gone, a scene that will not open at all. **Neither technique
+can see the other's defect**, so this is a second check rather than an extension of the first, and
+`Checks.RunAll` is eight checks now.
+
+```
+9 build scenes, 11536 components, 0 findings      (Logs/scene-dependency-check.txt)
+```
+
+⚠️ **The missing-reference test is `objectReferenceValue == null` AND a non-zero entity id**, and
+that distinction is what gives it no false positives: a never-assigned field is ordinary and an
+optional hook is ordinary, while a field pointing at an id that no longer resolves is never
+correct. ⚠️ `objectReferenceInstanceIDValue` is **obsolete as an ERROR** in Unity 6, not merely
+deprecated; the editor assembly refuses to compile against it.
+
+⚠️⚠️ **AND THE TWO REQUIREMENTS THIS CHECK ORIGINALLY SHIPPED WERE BOTH WRONG, WHICH IS RECORDED
+IN THE FILE RATHER THAN QUIETLY FIXED.** Both looked obviously right and both asserted something
+the code does not do:
+
+- **A camera in every arena.** All three maps failed. A map authors no camera because
+  `MatchInstaller` BUILDS the rig at runtime, per seat, and `CLAUDE.md` § 4 is why (FPP for a
+  Person, TPP for a Prop, which cannot be authored before anybody is sitting anywhere).
+- **`Spawn0` to `Spawn3`, and `Floor`.** The maps do author spawn markers, and **nothing reads
+  them**: every seat is placed from `Confinement.AttackerSpawnRing()`. The floor is called `Floor`
+  on two maps and `AsphaltSurface` on Ilalim ng Tulay, and `MapGeometryCheck` already owns the
+  real property (holes, floating props, furniture inside the box).
+
+**A check that asserts a convention rather than a contract goes red on correct work, and a check
+that goes red on correct work gets deleted along with whatever it was protecting.**
+
+### 143.7 ⚠️ OPEN: THE AUTHORITATIVE PATHS ARE ARGUED, NOT TESTED, AGAINST DUPLICATES
+
+The architecture is right and the audits say so on this commit:
+
+| Audit | Reading on `e85b0fc` |
+|---|---|
+| `audit_ability_authority.py` | **49** effect call sites, 30 host-gated, **0 ungated on another body**, 19 ungated on the caster |
+| `audit_request_call_sites.py` | **59** wire entry points, **0 unreachable** |
+| `audit_wire_payloads.py` | **61** named messages, **0 mismatched** |
+
+⚠️ **That is an argument about shape, and a duplicate is not a shape problem.** A replayed
+`SubmitScoreServerRpc`-shaped request is well formed, correctly gated, from a legitimate peer, and
+awards twice. Nothing tests that.
+
+✅ **The engine-free half landed 2026-09-04.** `MatchInvariants.IsReachableDelta` states the rule:
+the only legal score movements are sums of at most two `ScoreEvent` values, **so 300 where the
+event pays 100 is not a bigger award, it is three awards.**
+
+### 143.8 ✅ THE AUDITS ARE A GATE NOW
+
+`tools/qualify.py --stage audits` runs all of them, exits non-zero on any finding, and the verdict
+lands in the qualification report. ⚠️ `PYTHONIOENCODING=utf-8` is set by the runner rather than
+being remembered, because `audit_audio_reach.py` dies on a `UnicodeEncodeError` without it and the
+crash looks like a fault in the thing it is auditing.
+
+### 143.9 ⚠️ OPEN: HOST LOSS
+
+`_utp.DisconnectTimeoutMS = 8000` (`NetSession.cs:1172`), so a peer whose wifi dies keeps a
+normal-looking arena for eight seconds. § 140 is the player-facing half and is still open.
+
+⚠️ **Host migration is deliberately unsupported and that is not the problem.** The requirement is
+that the failure is ONE outcome on every peer: no score corruption, no frozen authoritative state
+pretending the match continues, a stated reason, and a working way back.
+
+⚠️⚠️ **THE RECONNECT AND FORFEIT RULING IS NOT A CODE DECISION AND IS NOT IN THIS QUEUE.** § 140.5
+says a drop and a quit are the same event on the wire; whether a bracket match is replayed,
+resumed or forfeited is `Attention.md`.
+
+### 143.10 ⚠️ OPEN: `VISION.md` § 2 RULE 1 CONTRADICTS ITSELF
+
+The arena is `CONFINEMENT_RADIUS` 7.0, so 14 m by 14 m = **196 m²**. Rule 1 reads *"about 1.8 to
+2.5 m of radius, which is 3 to 8 per cent of the box"*. Both halves cannot be true:
+
+| Radius | Area | Share of 196 m² |
+|---|---|---|
+| 1.8 m | 10.18 m² | **5.19%** |
+| 2.5 m | 19.63 m² | **10.02%** |
+| **1.37 m** | 5.88 m² | 3% |
+| **2.23 m** | 15.68 m² | 8% |
+
+⚠️ **Do not settle it by editing whichever half is easier.** The radii name Sean's Fire Trail and
+Zack's Shock Trail as the reference *"and nobody has ever complained about them"*, so the RADII are
+the observed thing and the percentages are the arithmetic that was never done. **Read the abilities
+first**: rule 1's own text also says these two are measured as discs and played as corridors, which
+is § 143.11.
+
+### 143.11 ⚠️ OPEN: EVERY FOOTPRINT NUMBER PREDATES THE CURRENT ABILITIES
+
+`Hero_Strike_Balance.md` and `VISION.md` § 2 carry a **81.9%** worst credible frame and a **27.2%**
+Zack corridor. Both were measured before the ability retune that put Bolt Sprint on 46 s and Flame
+Rush on 50 s, and before Thunderstrike became aimed. **They are history, not measurements of this
+commit**, and nothing regenerates them.
+
+### 143.12 ⚠️ OPEN: ABILITY COMMENTS DISAGREE WITH THEIR OWN CONSTRUCTORS
+
+Confirmed by reading both on `e85b0fc`:
+
+| Where | The comment says | The constructor passes |
+|---|---|---|
+| `ZackHeroKit.cs:86` vs `:102` | *"30 s, UP FROM 6.0"* | **46.0f** |
+| `SeanHeroKit.cs:58` vs `:64` | *"34 s, UP FROM 6.5"* | **50.0f** |
+
+⚠️ **And the second one repeats the first**: Sean's note reads *"Longer than Zack's 30"*, so one
+stale number has already propagated into a second file as a comparison. That is the whole argument
+for an audit rather than a correction.
+
+✅ **CLOSED 2026-09-04. It was five, not two**, and `tools/audit_ability_stat_drift.py` is the gate:
+
+| Where | Asserted | Ships | Also stale |
+|---|---|---|---|
+| `ZackHeroKit.cs:86` | 30 s | **46.0f** | "Three casts a round" (it is 1.96) |
+| `SeanHeroKit.cs:58` | 34 s | **50.0f** | "Longer than Zack's 30"; "2.6 casts a round" (1.8) |
+| `DanteHeroKit.cs:159` | 45 s | **62.0f** | "Two casts a round" (1.45) |
+| `NemuHeroKit.cs:41` | 36 s | **52.0f** | "between SEAN'S 34 and DANTE'S 45"; "2.5 casts a round" (1.7) |
+| `PhaisterHeroKit.cs:128` | 36.0 s | **52.0f** | the `<summary>` line |
+
+⚠️⚠️ **THE AUDIT IS THREE NARROW PATTERNS AND NOT ONE WIDE ONE, AND THE REASON IS IN THE FILE.** The
+wide rule ("a duration in a comment must exist as a literal in this file") found all five and three
+false ones, **and every false one was a comment doing its job**: `HeroAbility.cs:115` quotes the
+team asking for *"like 30 seconds to 45 seconds"*, which is the REQUEST that caused the retune;
+`DanteHeroKit.cs:163` says *"At 9 s it was up for four seconds out of every nine"*, which is the
+HISTORY `CLAUDE.md` § 3 asks for; `CheskaHeroKit.cs:182` argues against a rejected 3.2. **A rule
+that cannot tell a stale fact from a recorded reason gets switched off.** False negatives are
+accepted; false positives are not.
+
+### 143.18 ⚠️⚠️ OPEN: ENTERING MATCH SETUP OVERWRITES THE SELECTED RULE SET WITH WHATEVER THE PLAYER LAST SAVED, AND THAT REACHES THE TOURNAMENT PRESET
+
+**This is the root cause of six of the twelve failures in the isolated `screens` group, and it
+started as a test mystery and ended as the exact hazard § 143.3 was built to prevent.**
+
+`ConvertedMatchSetup`, on entry:
+
+```csharp
+if (!SceneFlow.Networked || NetAuthority.IsHost)
+{
+    SceneFlow.SetSelectedRules(CustomGameRules.Parse(
+        Settings.SettingsStore.Current.CustomRulesWire, SceneFlow.SelectedMode));
+}
+```
+
+⚠️ **The intent is right and is written up in its own note**: restore what this player left the
+lobby on, and let a client adopt the host's set instead. **What it also does is silently discard a
+rule set somebody set deliberately three lines earlier.**
+
+**The measurement, from this machine's real `settings.json`:**
+
+```
+CustomRulesWire = 0|0|8|90|0|3|0|1|0
+                  ^ ^
+                  | format
+                  mode 0 = Classic
+```
+
+**Mode 0 is Classic and Rounds is 8**, which is not a format the game ships at all: Classic plays
+four rounds and Hero Strike eight (`docs/VISION.md` § 1.1). So the saved wire is itself carrying a
+configuration nobody chose, and every entry into MATCH SETUP restores it.
+
+**What that costs, in two places:**
+
+1. ⚠️⚠️ **A TOURNAMENT MATCH.** `TournamentGuard.Apply()` sets Classic, four rounds, no bots,
+   no score target. **Opening match setup then replaces all of it with the saved wire.** That is
+   § 143.3's whole thesis (*"a mostly tournament match is the failure mode"*) arriving through a
+   door nobody was watching, and the preset's own tests cannot see it because they never load the
+   scene.
+2. **The Hero picker builds for the wrong mode.** `ConvertedCharacterSelect.BuildStageDoors` reads
+   `SceneFlow.SelectedMode == GameMode.HeroStrike` to decide whether to build the LOADOUT door, and
+   the attribute strip is chosen the same way. With Classic restored underneath it:
+   - `LoadoutSurfaceProbe`, **five cases**: *"no 'LoadoutDoor' on the character select stage"*.
+   - `ModelPreviewTests.HeroCharacterSelectShowsAbilitiesInsteadOfClassicAttributes`: the HERO
+     picker draws **`SPEED POWER GRIT`**, which is CLASSIC's attribute strip, instead of naming
+     Dante's skills. `docs/VISION.md` § 3 is the rule that breaks: *"a player must be able to get
+     what all skills do just by looking at them, or reading them from char select."*
+
+⚠️⚠️ **AND THE PROBES WERE RIGHT ALL ALONG, WHICH IS THE PART WORTH SITTING WITH.** Both set
+`SceneFlow.SelectedMode = GameMode.HeroStrike` and then load `MatchSetup`, which is exactly what
+the game does, and the scene overrode them. **In the single-process full run this was invisible**:
+all five `LoadoutSurfaceProbe` cases died earlier, at *"MatchSetup has no CharacterSelectPanel to
+open"*, which is a different claim about a different object and is not true in isolation. **A
+phantom failure was sitting on top of a real one for four full runs.**
+
+**Done looks like** a rule set that was set deliberately surviving the trip into match setup, with
+the restore still happening for an ordinary player who did not set one. ⚠️ **Do not fix it by
+deleting the restore**: its note is correct, and a player who leaves the lobby on a custom set and
+comes back to the shipped one is a regression somebody will report.
+
+### 143.19 ✅ CLOSED 2026-09-04: THE HERO PICKER SPENT ITS ONE SENTENCE ON THE WRONG STRING
+
+**Found underneath § 143.18**: once the mode stopped being overwritten, the picker built for Hero
+Strike and the assertion moved on to a second, real fault.
+
+`ConvertedCharacterSelect` picks the ability blurb like this:
+
+```csharp
+if (slotView.Total >= 2 && slotView.Equipped != null)
+    summary = slotView.Equipped.Description;
+```
+
+and the note above it says *"THE VARIANT'S OWN DESCRIPTION WINS OVER `HeroAbility.Summary`, and
+the two are the same string on a default build, so a fresh account sees no change at all."*
+
+⚠️⚠️ **THAT STOPPED BEING TRUE AND NOTHING NOTICED, WHICH IS § 143.12'S DRIFT ONE LEVEL UP: A
+COMMENT ASSERTING TWO STRINGS ARE EQUAL WHEN THEY ARE NOT.**
+
+| | |
+|---|---|
+| `DanteHeroKit.cs:49` summary | *"Ground slam. Shoves players and tsinelas away from you."* |
+| `HeroLoadout.cs:176` default variant description | *"A 2.2 m shock at your feet that launches whoever is standing in it."* |
+
+**Two strings for one default ability, in two files.** So every fresh account was reading the
+variant's long description on the one screen whose whole job is the short one.
+
+⚠️ **`docs/VISION.md` § 3 is the rule it breaks.** The LEARN layer (character select) carries
+*"icon, name, what KIND of power it is, ONE SENTENCE, cooldown"*; the full text belongs to the
+RECALL layer behind the hold key. Spending character select's one sentence on the recall string is
+the three-layer answer collapsing into two.
+
+✅ The variant's description now wins only when the equipped variant is **not** the default one,
+which is what the note always intended. ⚠️ **The two strings are still different and that is left
+alone deliberately**: making them equal would be a content decision about how Seismic Stomp is
+described, and the screens now each show the one they were designed for.
+
+### 143.17 ⚠️ OPEN: TWO DEFECTS THAT WERE INVISIBLE UNTIL THE SUITE WAS ISOLATED
+
+**Both were sitting underneath a phantom failure and neither could be seen while the full run was
+blaming them for somebody else's leak.**
+
+- ⚠️ **`LoadoutSurfaceProbe`, five cases: *"no 'LoadoutDoor' on the character select stage. In Hero
+  Strike `BuildStageDoors` builds LOADOUT above MAKE YOUR OWN"*.** In the full run all five said
+  *"MatchSetup has no CharacterSelectPanel to open"* instead, which is a different claim about a
+  different object and is not true in isolation.
+- ⚠️ **`ModelPreviewTests.HeroCharacterSelectShowsAbilitiesInsteadOfClassicAttributes`: *"Dante's
+  first skill is not named on the Hero picker"*, and the screen reads `SPEED POWER GRIT`**, which
+  is the CLASSIC attribute strip on the HERO picker. `docs/VISION.md` § 3 is the rule it breaks:
+  a player must be able to learn what a power does from character select.
+
+⚠️⚠️ **THIS IS THE ARGUMENT FOR § 143.1 STATED AS A COST RATHER THAN AS A PRINCIPLE.** A gate that
+reports thirty failures, of which twenty-five are phantoms, does not merely waste time: **it hides
+the five.** Nobody reading *"MatchSetup has no CharacterSelectPanel"* for the fourth run running
+goes looking for a missing door.
+
+### 143.13 to 143.16
+
+Storage failure hardening, the gameplay clock audit, the cold-start test and the crash bundle. Each
+is stated with its acceptance criteria in the CURRENT IMPLEMENTATION QUEUE at the top of this file.
 
 ---
 

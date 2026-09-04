@@ -96,8 +96,11 @@ namespace TumbangPreso.Net
         {
             try
             {
-                if (File.Exists(Path))
-                    _cache = JsonUtility.FromJson<Cache>(File.ReadAllText(Path)) ?? new Cache();
+                string json = SafeStore.Read(Path,
+                    text => JsonUtility.FromJson<Cache>(text) != null);
+
+                if (json != null)
+                    _cache = JsonUtility.FromJson<Cache>(json) ?? new Cache();
             }
             catch (Exception e)
             {
@@ -121,7 +124,7 @@ namespace TumbangPreso.Net
             {
                 _cache.OwnerId = CareerStore.LocalPlayerId;
                 _cache.List = SocialRules.Normalise(_cache.List);
-                File.WriteAllText(Path, JsonUtility.ToJson(_cache, prettyPrint: true));
+                SafeStore.Write(Path, JsonUtility.ToJson(_cache, prettyPrint: true));
             }
             catch (Exception e)
             {

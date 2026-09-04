@@ -492,6 +492,178 @@ namespace TumbangPreso.EditorTools
             }
         }
 
+        /// <summary>
+        /// Write what this build IS into the player, in two places, on every build.
+        ///
+        /// ⚠️⚠️ TWO PLACES BECAUSE TWO DIFFERENT READERS, AND NEITHER CAN READ THE OTHER'S.
+        /// `Resources/BuildIdentity.json` is compiled into `resources.assets`, which is the only
+        /// form the GAME can read cheaply on every platform including Android. A tool standing
+        /// outside the artifact cannot open that at all, so the same record also goes to
+        /// `StreamingAssets/build-identity.json`, which stays a real file in the Windows output
+        /// and a plain entry under `assets/` inside an .apk. `tools/qualify.py --stage identity`
+        /// reads the second one and is what refuses a Windows and an Android build that disagree.
+        ///
+        /// ⚠️ **BOTH PLACES OR NEITHER**, which is `CLAUDE.md` § 6.4's splash rule and
+        /// `ShaderWarmupCollection`'s rule one method up. One of the two going stale is worse than
+        /// having neither, because a stamp that exists is a stamp that gets believed.
+        ///
+        /// ⚠️⚠️ IT IS WRITTEN ON EVERY BUILD RATHER THAN BY HAND, for `StampBuildBranch`'s reason:
+        /// a step run manually before a build is the step skipped on the build that mattered. The
+        /// whole value of an identity is that it is true without anybody having maintained it.
+        ///
+        /// ⚠️ A DIRTY WORKING TREE IS RECORDED RATHER THAN REFUSED. A build made with uncommitted
+        /// edits is a legitimate thing to do at a venue at 8 a.m.; a build that SILENTLY claims to
+        /// be a commit it is not is what loses an afternoon. The flag rides in the record and the
+        /// qualification report prints it.
+        /// </summary>
+        private static void StampBuildIdentity(BuildTarget target, string outputPath)
+        {
+            string root = Path.GetDirectoryName(Application.dataPath);
+
+            var record = new BuildIdentity.Record
+            {
+                sha = BuildIdentity.HeadSha(root) ?? "",
+                branch = BuildBranch.FromGit(root) ?? "",
+                protocol = Net.NetSession.ProtocolVersion,
+                target = target.ToString(),
+                appVersion = PlayerSettings.bundleVersion,
+                ugsProject = UgsProjectId(),
+                ugsEnvironment = "production",
+                builtAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                dirty = WorkingTreeIsDirty(root),
+            };
+
+            string json = JsonUtility.ToJson(record, true);
+
+            try
+            {
+                string resources = Path.Combine(Application.dataPath, "TumbangPreso/Resources");
+                Directory.CreateDirectory(resources);
+                File.WriteAllText(Path.Combine(resources, BuildIdentity.ResourceName + ".json"), json);
+
+                AssetDatabase.ImportAsset("Assets/TumbangPreso/Resources/" +
+                                          BuildIdentity.ResourceName + ".json",
+                                          ImportAssetOptions.ForceUpdate);
+
+                string streaming = Path.Combine(Application.dataPath, "StreamingAssets");
+                Directory.CreateDirectory(streaming);
+                File.WriteAllText(Path.Combine(streaming, "build-identity.json"), json);
+                AssetDatabase.ImportAsset("Assets/StreamingAssets/build-identity.json",
+                                          ImportAssetOptions.ForceUpdate);
+
+                // The editor may have resolved an identity already, on another commit.
+                BuildIdentity.Forget();
+
+                Debug.Log($"[Build] identity {(string.IsNullOrEmpty(record.sha) ? "(no sha)" : record.sha)}" +
+                          $"{(record.dirty ? " +dirty" : "")}, protocol {record.protocol}, " +
+                          $"{record.target}");
+            }
+            catch (Exception e)
+            {
+                // ⚠️ NOT FATAL, for `StampBuildBranch`'s reason. A build that cannot say what it
+                // is costs a diagnosis later; refusing to build costs the build now.
+                Debug.LogWarning($"[Build] could not write the identity stamp: {e.Message}");
+            }
+        }
+
+        /// <summary>
+        /// The UGS project this build resolves join codes in.
+        ///
+        /// ⚠️⚠️ `CloudProjectSettings.projectId` ANSWERS EMPTY IN BATCH MODE, WHICH IS WHERE
+        /// EVERY BUILD THAT MATTERS IS MADE. The first stamped player carried `"ugsProject": ""`
+        /// for exactly that reason, and an empty field is worse than a missing one here: the
+        /// whole point of recording it is that **a machine on a different project resolves a join
+        /// code in a different namespace and reads as an empty lobby rather than as an error**
+        /// (`CLAUDE.md` § 4a). A blank looks like agreement.
+        ///
+        /// ⚠️ SO IT FALLS BACK TO `ProjectSettings.asset`, which is the file the editor writes
+        /// the id into and is readable with no services running.
+        /// </summary>
+        private static string UgsProjectId()
+        {
+            string live = CloudProjectSettings.projectId ?? "";
+            if (!string.IsNullOrEmpty(live)) return live;
+
+            try
+            {
+                string path = Path.Combine(Path.GetDirectoryName(Application.dataPath),
+                                           "ProjectSettings", "ProjectSettings.asset");
+                foreach (string line in File.ReadAllLines(path))
+                {
+                    string trimmed = line.Trim();
+                    if (!trimmed.StartsWith("cloudProjectId:", StringComparison.Ordinal)) continue;
+                    return trimmed.Substring("cloudProjectId:".Length).Trim();
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[Build] could not read the UGS project id: {e.Message}");
+            }
+
+            return "";
+        }
+
+        /// <summary>
+        /// Whether anything is uncommitted, without shelling out to git.
+        ///
+        /// ⚠️ IT IS A CHEAP APPROXIMATION AND SAYS SO. Running `git status` from a build would
+        /// need a process launch on a machine that may not have git on PATH (`CLAUDE.md` § 7.1
+        /// records the same being true of `python` on one of the two profiles here). The index
+        /// file's write time against the last commit's is enough to answer "has anybody touched
+        /// this checkout since it was committed", which is the question worth flagging, and it
+        /// errs towards saying dirty rather than towards claiming clean.
+        /// </summary>
+        private static bool WorkingTreeIsDirty(string repoRoot)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(repoRoot)) return false;
+
+                string dotGit = Path.Combine(repoRoot, ".git");
+                if (File.Exists(dotGit))
+                {
+                    string pointer = BuildBranch.GitDirFromPointer(File.ReadAllText(dotGit));
+                    if (string.IsNullOrEmpty(pointer)) return false;
+                    dotGit = Path.IsPathRooted(pointer) ? pointer : Path.Combine(repoRoot, pointer);
+                }
+
+                string index = Path.Combine(dotGit, "index");
+                string headFile = Path.Combine(dotGit, "HEAD");
+                if (!File.Exists(index) || !File.Exists(headFile)) return false;
+
+                // ⚠️⚠️ AGAINST THE REF HEAD POINTS AT, NOT AGAINST `HEAD` ITSELF, AND THE FIRST
+                // VERSION GOT THIS WRONG IN THE DIRECTION THAT MAKES THE STAMP USELESS.
+                // `.git/HEAD` holds the line `ref: refs/heads/main` and is only rewritten when
+                // the BRANCH changes, so on a checkout that has been on one branch all day its
+                // mtime is hours old and every build stamps `dirty: true` on a clean tree. **A
+                // flag that is always set is a flag nobody reads**, and this one exists to tell
+                // somebody at a venue that a player is not the commit it claims.
+                string head = File.ReadAllText(headFile).Trim();
+                string commitFile = headFile;
+
+                if (head.StartsWith("ref:", StringComparison.Ordinal))
+                {
+                    string refName = head.Substring(4).Trim();
+                    string loose = Path.Combine(dotGit,
+                        refName.Replace('/', Path.DirectorySeparatorChar));
+
+                    // ⚠️ A PACKED REF HAS NO LOOSE FILE, and a repository that has just been
+                    // garbage collected or freshly cloned is exactly that. There is nothing to
+                    // compare against then, so the honest answer is "cannot tell" rather than a
+                    // guess in either direction.
+                    if (!File.Exists(loose)) return false;
+                    commitFile = loose;
+                }
+
+                return File.GetLastWriteTimeUtc(index) >
+                       File.GetLastWriteTimeUtc(commitFile).AddMinutes(1);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         private static void EnsureRuntimeShaders()
         {
             string[] wanted =
@@ -840,6 +1012,7 @@ namespace TumbangPreso.EditorTools
             ShaderWarmupCollection.Rebuild(true);
 
             StampBuildBranch();
+            StampBuildIdentity(target, outputPath);
 
             // Ship at the monitor's native resolution in borderless fullscreen. Starting the
             // player in a fixed 1600x900 window made a normal build look like a test harness;

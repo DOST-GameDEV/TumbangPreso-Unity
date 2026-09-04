@@ -71,6 +71,48 @@ namespace TumbangPreso.Core
             _buckets[bucket]++;
             Frames++;
             Seconds += seconds;
+
+            // ⚠️⚠️ THE WORST FRAME IS KEPT EXACTLY, NOT READ BACK OUT OF A BUCKET, BECAUSE THE
+            // TOP BUCKET HAS NO CEILING. `FpsForBucket` reads the last bucket at its FLOOR and
+            // says so, which is the honest answer for a percentile and useless for "how bad was
+            // the worst hitch": every frame from 0.5 s to two seconds reads the same. A single
+            // double is what turns "something spiked" into a number somebody can act on.
+            if (seconds > MaxSeconds) MaxSeconds = seconds;
+        }
+
+        /// <summary>
+        /// The longest single frame counted, in seconds. Zero when nothing has been counted.
+        ///
+        /// ⚠️⚠️ TOURNAMENT PAIN IS A HITCH, NOT A LOW AVERAGE, AND THIS IS THE STATISTIC THAT
+        /// SEES ONE. An average frame rate is the one number that cannot: a match that runs at a
+        /// steady 90 FPS and drops two 200 ms frames at the moment somebody throws still averages
+        /// about 89, and the player who lost the throw is the only one who knows. The percentiles
+        /// above narrow it and a single worst frame names it.
+        /// </summary>
+        public double MaxSeconds { get; private set; }
+
+        /// <summary>
+        /// How many frames took at least <paramref name="thresholdSeconds"/>.
+        ///
+        /// ⚠️ A COUNT AND NOT A RATIO, because one 250 ms stall in a round is a thing that
+        /// happened and 0.02 per cent is a number that reads as noise. `docs/TODO.md` § 143 asks
+        /// for "long-frame count above useful thresholds" in exactly those words.
+        ///
+        /// ⚠️ IT IS BUCKET-RESOLUTION AND SAYS SO. The histogram is the storage, so this counts
+        /// every frame in a bucket whose FLOOR is at or above the threshold; a threshold falling
+        /// inside a bucket is rounded up to that bucket's edge rather than being interpolated,
+        /// which keeps the answer a fact about frames rather than an estimate.
+        /// </summary>
+        public long LongFrames(double thresholdSeconds)
+        {
+            if (thresholdSeconds <= 0.0) return Frames;
+
+            int first = (int)System.Math.Ceiling(thresholdSeconds / BucketSeconds);
+            if (first < 0) first = 0;
+
+            long count = 0;
+            for (int bucket = first; bucket < BucketCount; bucket++) count += _buckets[bucket];
+            return count;
         }
 
         public void Clear()
@@ -78,6 +120,7 @@ namespace TumbangPreso.Core
             Array.Clear(_buckets, 0, _buckets.Length);
             Frames = 0;
             Seconds = 0.0;
+            MaxSeconds = 0.0;
         }
 
         /// <summary>

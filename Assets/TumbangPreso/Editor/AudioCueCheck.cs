@@ -31,7 +31,23 @@ namespace TumbangPreso.EditorTools
     /// </summary>
     public static class AudioCueCheck
     {
-        private const string SfxDir = "Assets/TumbangPreso/Art/audio/sfx";
+        /// <summary>
+        /// ⚠️⚠️ THE FOLDER THE GAME LOADS FROM, AND IT WAS `Art/audio/sfx` UNTIL 2026-09-04.
+        /// `AudioDirector` reaches every cue through `Resources.Load<AudioClip>($"Sfx/{stem}")`,
+        /// and `Resources.Load` can only resolve inside a folder literally named `Resources`.
+        /// `Art/audio/sfx` is not under one, so **every file this build gate graded was
+        /// unreachable by the running game.**
+        ///
+        /// ⚠️⚠️ AND THE TWO COPIES HAD DRIFTED: 21 of 117 cues differed before the 2026-09-04
+        /// pass, because the 2026-09-03 source pass wrote to `Resources/Sfx` while this went on
+        /// checking the untouched originals. A cue could have gone missing, silent or clipped in
+        /// the shipped folder and this check would have passed on the other copy.
+        ///
+        /// ⚠️ `tools/audit_cue_audio.py` CARRIED THE SAME CONSTANT AND MOVED IN THE SAME COMMIT.
+        /// Two gates on one subsystem both pointing at the wrong copy is why neither noticed the
+        /// other. `docs/TODO.md` § 144.3.
+        /// </summary>
+        private const string SfxDir = "Assets/TumbangPreso/Resources/Sfx";
         private const string RuntimeRoot = "Assets/TumbangPreso/Runtime";
 
         /// <summary>Every way the runtime asks for a cue by name.

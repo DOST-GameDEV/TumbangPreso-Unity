@@ -2204,7 +2204,21 @@ namespace TumbangPreso.UI
                 // is `CLAUDE.md` § 6.2's NEVER OVERWHELMING failure at the size of one label.**
                 // The unlock belongs to the OTHER reading, so it belongs on the board that shows
                 // both readings: `LoadoutBoard`.
-                if (slotView.Total >= 2 && slotView.Equipped != null)
+                // ⚠️⚠️ AND ONLY WHEN THE EQUIPPED VARIANT IS NOT THE DEFAULT ONE, WHICH THE
+                // NOTE ABOVE ASSUMED RATHER THAN CHECKED. Its claim was that "the two are the
+                // same string on a default build, so a fresh account sees no change at all", and
+                // that stopped being true: `DanteHeroKit` summarises Seismic Stomp as *"Ground
+                // slam. Shoves players and tsinelas away from you."* while the default variant in
+                // `HeroLoadout` describes it as *"A 2.2 m shock at your feet that launches whoever
+                // is standing in it."* Two strings for one default ability, in two files, with a
+                // comment asserting they were identical.
+                //
+                // ⚠️ THE SUMMARY IS THE ONE CHARACTER SELECT IS FOR. `docs/VISION.md` § 3's table
+                // gives the LEARN layer "icon, name, what KIND of power it is, ONE SENTENCE, and
+                // cooldown", and the long description belongs to the RECALL layer behind the hold
+                // key. Showing the variant's description for the default reading spends the
+                // screen's one sentence on the wrong one.
+                if (slotView.Total >= 2 && slotView.Equipped != null && !slotView.Equipped.IsDefault)
                     summary = slotView.Equipped.Description;
 
                 var descLbl = MenuKit.Label(rowGo.transform, summary, MenuKit.MinReadableUnits,

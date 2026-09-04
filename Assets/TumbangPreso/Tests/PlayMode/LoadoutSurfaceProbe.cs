@@ -104,6 +104,10 @@ namespace TumbangPreso.PlayTests
                 _challenges = null;
             }
 
+            // ⚠️ THE PIN IS RELEASED HERE OR EVERY SUITE AFTER THIS ONE INHERITS IT.
+            // `SceneFlow.RulesPinned` is process state, which is the same class of leak
+            // `docs/TODO.md` § 126.8 is entirely about.
+            SceneFlow.UnpinSelectedRules();
             SceneFlow.SelectedMode = _mode;
             _panel = null;
             yield return null;
@@ -411,7 +415,14 @@ namespace TumbangPreso.PlayTests
             settings.HeroBuilds = new List<HeroBuild>();
             settings.AbilityChallenges = new List<AbilityChallengeProgress>();
 
-            SceneFlow.SelectedMode = GameMode.HeroStrike;
+            // ⚠️⚠️ PINNED, BECAUSE SETTING THE MODE WAS NOT ENOUGH AND THIS PROBE SPENT FOUR
+            // FULL RUNS BEING BLAMED FOR IT. `ConvertedMatchSetup` restores
+            // `GameSettings.CustomRulesWire` when it opens, so a mode chosen before the scene
+            // load was silently replaced by whatever this machine last saved: here that wire read
+            // `0|0|8|90|...`, Classic with eight rounds, and Classic builds no LOADOUT door.
+            // **The probe was right and the product was wrong**; `docs/TODO.md` § 143.18 is the
+            // defect and `SceneFlow.PinSelectedRules` is what a deliberate choice uses now.
+            SceneFlow.PinSelectedRules(Core.CustomGameRules.Defaults(GameMode.HeroStrike));
 
             var load = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
             yield return ProbeWait.Done(load, "scene load");

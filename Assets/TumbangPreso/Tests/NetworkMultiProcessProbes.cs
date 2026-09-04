@@ -235,25 +235,27 @@ namespace TumbangPreso.Tests
             var lobby = new LobbySession { IsDedicated = true };
             lobby.OpenLobby(new System.Random(42));
 
-            // Dedicated server registers as peer 1
-            var refPeer = lobby.Admit(1, "ref-token", "DedicatedRef");
+            // ⚠️ THE DEDICATED SERVER REGISTERS AS PEER 0, NOT 1. This said 1, and so did the
+            // code it was checking; peer 1 is the first player to join and it was the one being
+            // refused a seat. LobbySession.RefereePeerId carries the measurement.
+            var refPeer = lobby.Admit(LobbySession.RefereePeerId, "ref-token", "DedicatedRef");
             Assert.AreEqual(-1, refPeer.Seat, "Dedicated referee must never hold a player seat");
             Assert.IsTrue(refPeer.Spectator);
-            Assert.IsTrue(lobby.IsSeatlessReferee(1));
+            Assert.IsTrue(lobby.IsSeatlessReferee(LobbySession.RefereePeerId));
             // ⚠️ -1 IS "NOBODY", AND IT USED TO BE 0. See `LobbySession.LeaderPeerId`: netcode
             // hands out client id 0, so the old sentinel was also a legal peer.
             Assert.AreEqual(-1, lobby.LeaderPeerId, "Dedicated referee must not be appointed leader");
 
             // Client 1 (Human host/leader)
-            var p1 = lobby.Admit(2, "human-p1", "Leader Player");
+            var p1 = lobby.Admit(1, "human-p1", "Leader Player");
             Assert.AreEqual(0, p1.Seat);
             Assert.IsFalse(p1.Spectator);
-            Assert.AreEqual(2, lobby.LeaderPeerId, "First human must be appointed leader");
+            Assert.AreEqual(1, lobby.LeaderPeerId, "First human must be appointed leader");
 
             // Client 2, 3, 4
-            var p2 = lobby.Admit(3, "human-p2", "Player Two");
-            var p3 = lobby.Admit(4, "human-p3", "Player Three");
-            var p4 = lobby.Admit(5, "human-p4", "Player Four");
+            var p2 = lobby.Admit(2, "human-p2", "Player Two");
+            var p3 = lobby.Admit(3, "human-p3", "Player Three");
+            var p4 = lobby.Admit(4, "human-p4", "Player Four");
 
             Assert.AreEqual(1, p2.Seat);
             Assert.AreEqual(2, p3.Seat);

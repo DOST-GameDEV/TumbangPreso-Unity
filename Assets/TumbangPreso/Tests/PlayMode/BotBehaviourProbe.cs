@@ -138,6 +138,34 @@ namespace TumbangPreso.PlayTests
         /// `Logs/bot-behaviour-*.txt` was measured on, so it stays the default and a second map
         /// is an addition rather than a replacement.
         /// </summary>
+        /// <summary>
+        /// The shipped seed, unless the command line names another one.
+        ///
+        /// ⚠️⚠️ THE DEFAULT DOES NOT MOVE AND THE NOTE ABOVE STILL STANDS: *"a seed picked to
+        /// make a red run green is a measurement of nothing."* Nothing about the gate changes;
+        /// an ordinary run measures exactly what it measured yesterday.
+        ///
+        /// ⚠️ WHAT THE SWITCH BUYS IS THE ONE THING A SINGLE SEED CANNOT GIVE, WHICH IS A SPREAD.
+        /// `CLAUDE.md` § 7.1 records eight matches at the shipped settings spreading from **58 to
+        /// 100 throws**, and `docs/TODO.md` § 16 carries the arithmetic for how many runs an arm
+        /// of an A/B has to buy before its answer means anything. `tools/bot_sweep.py` passes
+        /// `-tp-bot-seed` per run and reports min, max, mean, median and spread, so a balance
+        /// argument can finally cite something other than one run of a probe whose own header
+        /// says its numbers are never comparisons at n = 1.
+        ///
+        /// ⚠️ VARYING THE SEED TO MEASURE NOISE AND VARYING IT TO MAKE A NUMBER LOOK BETTER ARE
+        /// OPPOSITE ACTS. Only the first one has a tool.
+        /// </summary>
+        private static int Seed()
+        {
+            var args = System.Environment.GetCommandLineArgs();
+            for (int i = 0; i < args.Length - 1; i++)
+                if (args[i] == "-tp-bot-seed" && int.TryParse(args[i + 1], out int seed))
+                    return seed;
+
+            return 20260823;
+        }
+
         private const string DefaultMap = "Eskinita";
 
         [UnityTest, Timeout(MatchTimeoutMs)]
@@ -429,7 +457,7 @@ namespace TumbangPreso.PlayTests
             // regression lands, change the CODE. That was true when the numbers were noisy and
             // it is more true now that they are not: a seed picked to make a red run green is a
             // measurement of nothing.
-            UnityEngine.Random.InitState(20260823);
+            UnityEngine.Random.InitState(Seed());
 
             Hitstop.End();
             Time.timeScale = 1.0f;
@@ -476,7 +504,7 @@ namespace TumbangPreso.PlayTests
             // ⚠️ IT DOES NOT PIN THE CAST, which is picked during the load, and that is why the
             // report prints every seat's hero and model below. A difference there is visible
             // instead of being an unexplained difference in the counts.
-            UnityEngine.Random.InitState(20260823);
+            UnityEngine.Random.InitState(Seed());
 
             // ⚠️⚠️ THE STEP IS SET AFTER THE SCENE HAS SETTLED, NOT BEFORE. The 25 warm-up
             // frames above run at whatever rate the editor gives them, and pinning the step

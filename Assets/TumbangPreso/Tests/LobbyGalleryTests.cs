@@ -166,10 +166,11 @@ namespace TumbangPreso.Tests
             var lobby = NewLobby();
             lobby.IsDedicated = true;
 
-            lobby.Admit(1, "server", "Server");
-            lobby.Admit(2, "player", "Player");
+            lobby.Admit(LobbySession.RefereePeerId, "server", "Server");
+            lobby.Admit(1, "player", "Player");
 
-            Assert.IsTrue(lobby.PeerById(1).Spectator, "the server holds no chair");
+            Assert.IsTrue(lobby.PeerById(LobbySession.RefereePeerId).Spectator,
+                "the server holds no chair");
             Assert.AreEqual(0, lobby.SpectatorCount(),
                 "it is a referee, and the gallery is people who are watching");
             Assert.AreEqual(1, lobby.ConnectedHumanCount());

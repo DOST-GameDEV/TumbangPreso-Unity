@@ -41,6 +41,15 @@ namespace TumbangPreso.EditorTools.MapKit
         private const string ModelsDir = "Assets/TumbangPreso/Art/models";
         private const string KitsDir = ModelsDir + "/kits";
 
+        /// <summary>
+        /// How large a Kenney kit vehicle is drawn in this street.
+        ///
+        /// ⚠️ ONE NUMBER FOR THE FIVE THAT SHARE AN AUTHORING SCALE, and a per-row override for
+        /// anything that does not. It was a literal `1.35f` at the one call site until a
+        /// downloaded model joined the table at its author's own scale.
+        /// </summary>
+        private const float KitVehicleScale = 1.35f;
+
         private static readonly Dictionary<(Material, Texture2D), Material> KitMaterials =
             new Dictionary<(Material, Texture2D), Material>();
 
@@ -2156,28 +2165,84 @@ namespace TumbangPreso.EditorTools.MapKit
         private static void BuildBoundaryTraffic(Transform parent)
         {
             var traffic = Group(parent, "BoundaryTraffic");
-            (string model, float x, float z, float yaw, string palette)[] vehicles =
+
+            // ⚠️⚠️ THE SCALE IS PER ROW NOW, AND IT IS NOT A REFACTOR. Every Kenney vehicle is
+            // authored at the same size, so one shared 1.35 was right for all five. The jeepney
+            // is a downloaded model at its own author's scale: 24.35 units long against the
+            // van's 2.75. `CLAUDE.md` § 6.0 forbids rescaling the MODEL to fit the kit, and
+            // placement is explicitly the half that is still ours, so the number lives at the
+            // placement site where it can be read beside the position it belongs to.
+            (string model, float x, float z, float yaw, string palette, float scale,
+             float tilt)[] vehicles =
             {
-                ("delivery", -3.8f, 19.0f, 180.0f, "tumbang-warm-a"),
-                ("sedan", 2.6f, 18.45f, 0.0f, "tumbang-warm-c"),
-                ("truck", -2.7f, -18.70f, 180.0f, "tumbang-warm-b"),
-                ("van", 3.5f, -18.55f, 0.0f, "tumbang-warm-a"),
-                ("taxi", 0.2f, 22.1f, 180.0f, "tumbang-warm-b"),
-                ("van", -2.8f, 30.0f, 180.0f, "tumbang-warm-c"),
-                ("truck", 3.1f, 35.0f, 0.0f, "tumbang-warm-a"),
-                ("taxi", -3.0f, -28.5f, 0.0f, "tumbang-warm-b"),
-                ("delivery", 3.0f, -33.5f, 180.0f, "tumbang-warm-c"),
+                ("delivery", -3.8f, 19.0f, 180.0f, "tumbang-warm-a", KitVehicleScale, 0.0f),
+                ("sedan", 2.6f, 18.45f, 0.0f, "tumbang-warm-c", KitVehicleScale, 0.0f),
+                ("truck", -2.7f, -18.70f, 180.0f, "tumbang-warm-b", KitVehicleScale, 0.0f),
+                ("van", 3.5f, -18.55f, 0.0f, "tumbang-warm-a", KitVehicleScale, 0.0f),
+                ("taxi", 0.2f, 22.1f, 180.0f, "tumbang-warm-b", KitVehicleScale, 0.0f),
+
+                // ⚠️⚠️ THE ONE CULTURALLY SPECIFIC SILHOUETTE ON THE BOUNDARY, AND IT REPLACES A
+                // VEHICLE RATHER THAN JOINING THEM. `docs/Asset_Sourcing.md` § 7.1 names this
+                // exact row: *"Replace one existing generic boundary vehicle rather than adding
+                // more traffic. The first target is the distant north `van` at
+                // (-2.8, RoadTop, 30.0)."* Adding a tenth vehicle would change the traffic
+                // count, and the count is a readability number rather than a decoration one.
+                //
+                // ⚠️⚠️ IT SHIPS AS DELIVERED: 74,170 TRIANGLES, 17 MATERIALS, ITS OWN COLOURS.
+                // `CLAUDE.md` § 6.0, and that section exists because of THIS PROP. The first
+                // version of this row was an optimised copy: decimated to 3,000 triangles, its
+                // materials collapsed to one, and its UVs rewritten onto the kit's palette atlas
+                // so `tumbang-warm-c` would recolour it like a van. 🧑, opening the render:
+                // *"ew what is that jeep wtf did u do"*, **"u ate all its colors and design"**,
+                // *"no need to lower triangles or compress dont worry it wont lag"*. The model
+                // is here for its livery as much as its shape and the optimisation deleted both.
+                //
+                // ⚠️⚠️ SO THE PALETTE IS EMPTY, AND THAT IS THE WHOLE MECHANISM. Every other row
+                // hands `InstantiateKitProp` a `tumbang-warm-*` atlas to swap onto the model's
+                // material; "" means keep what the author shipped. See that method.
+                //
+                // ⚠️ THE SCALE IS PLACEMENT AND PLACEMENT IS STILL OURS. The model is 24.35
+                // units long as authored; the van is 2.75 and is drawn at 1.35, so it stands
+                // 3.71 units long in the street. That is 4.5 m of vehicle, so this street runs
+                // at 0.825 units to the metre, and every size below is metres times that.
+                //
+                // ⚠️⚠️ 7.5 m, NOT 6.0, AND THE FIRST ANSWER WAS TOO SMALL IN THE PICTURE RATHER
+                // THAN ON PAPER. 6.0 m is a fair number for a jeepney and it rendered next to
+                // the Kenney traffic looking like a van: 🧑, on the first upright frame,
+                // *"can u make that bigger bcz dude it looks so small compared to cars"*. The
+                // Kenney vehicles are stylised SHORT for their width, so matching real-world
+                // proportions against them under-reads. **A real jeepney runs 6.5 to 7.5 m**, so
+                // this takes the top of that range and is honest as well as bigger.
+                // Nothing about the mesh is touched to get it.
+                //
+                // ⚠️⚠️ AND THE TILT IS THE SAME BARGAIN: THE MODEL IMPORTS STANDING ON ITS NOSE.
+                // Sketchfab's glTF is authored Z-up and its long axis is local +Y, so glTFast
+                // brings it in 24 units TALL with its wheels down one side. `CLAUDE.md` § 6.0
+                // forbids editing the mesh to fix that, and it does not need editing: a rotation
+                // at the placement site is placement, and it is exactly what the `yaw` column
+                // beside it already is. The five kit vehicles are authored upright and take 0.
+                ("jeepney", -2.8f, 30.0f, 180.0f, "", 6.19f / 24.3526f, -90.0f),
+                ("truck", 3.1f, 35.0f, 0.0f, "tumbang-warm-a", KitVehicleScale, 0.0f),
+                ("taxi", -3.0f, -28.5f, 0.0f, "tumbang-warm-b", KitVehicleScale, 0.0f),
+                ("delivery", 3.0f, -33.5f, 180.0f, "tumbang-warm-c", KitVehicleScale, 0.0f),
             };
 
             for (int i = 0; i < vehicles.Length; i++)
             {
                 var spec = vehicles[i];
                 var vehicle = InstantiateKitProp("car", spec.model,
-                    new Vector3(spec.x, RoadTop, spec.z), Quaternion.Euler(0.0f, spec.yaw, 0.0f),
-                    Vector3.one * 1.35f, traffic, spec.palette);
+                    new Vector3(spec.x, RoadTop, spec.z),
+                    Quaternion.Euler(spec.tilt, spec.yaw, 0.0f),
+                    Vector3.one * spec.scale, traffic, spec.palette);
                 if (vehicle == null) continue;
 
                 vehicle.name = $"BoundaryVehicle_{i}_{spec.model}";
+
+                // ⚠️ ONE PROP, BY NAME, AND NOTHING ELSE IN THE STREET IS TOUCHED. 🧑 asked for
+                // it on the jeepney specifically: *"can u apply a shader to only its white
+                // stuff"*, *"make it look more metallic or smth"*, and then **"make sure this
+                // doesnt affect anything else"**. See `GiveWhitePanelsAMetalFinish`.
+                if (spec.model == "jeepney") GiveWhitePanelsAMetalFinish(vehicle);
 
                 // ⚠⚠ THE EXCUSE THAT USED TO BE ON THIS LINE WAS COVERING A BUG, NOT A
                 // DESIGN. Kenney cars import with their prefab root below the visible tyres, so
@@ -3132,6 +3197,18 @@ namespace TumbangPreso.EditorTools.MapKit
             instance.transform.localRotation = rotation;
             instance.transform.localScale = scale;
 
+            // ⚠️⚠️ AN EMPTY PALETTE MEANS "KEEP WHAT THE AUTHOR SHIPPED", AND IT IS A REQUEST
+            // RATHER THAN A FALLBACK. `CLAUDE.md` § 6.0: sourced art is not repainted to satisfy
+            // this project's palette, which is the same line § 6.4 already draws around 🧑's own
+            // pennant art (*"Do not repaint his art to satisfy this rule"*). The jeepney is the
+            // caller that needs it and the reason is written at that row.
+            //
+            // ⚠️ IT IS SPELT AS AN EMPTY STRING RATHER THAN A MISSING FILE ON PURPOSE. Returning
+            // early on `atlas == null` would treat "I meant to recolour this and the atlas is
+            // gone" and "do not recolour this" as the same event, and the first of those is a
+            // defect that should still be shouted about. The warning below survives for it.
+            if (string.IsNullOrEmpty(palette)) return instance;
+
             string texturePath = $"{KitsDir}/{kit}/Textures/{palette}.png";
             var atlas = AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath);
 
@@ -3173,6 +3250,187 @@ namespace TumbangPreso.EditorTools.MapKit
 
             return instance;
         }
+
+        /// <summary>
+        /// The jeepney's bare surfaces, each given the finish that surface actually has.
+        ///
+        /// 🧑 2026-09-04: *"can u apply a shader to only its white stuff"*, *"make it look more
+        /// metallic or smth"*, **"make sure this doesnt affect anything else"**, then, on the
+        /// first version: **"dont js spam it"**, *"make the white replacement contextual
+        /// depending on which surface of the jeep is affected"*.
+        ///
+        /// ⚠️⚠️ THE FIRST VERSION PUT ONE METAL VALUE ON EVERY BARE WHITE MATERIAL AND THAT IS
+        /// THE SPAM. A jeepney's white is at least three different materials: the chrome bumper
+        /// and grille bars, the painted steel of the body, and the vinyl of the bench seats.
+        /// Giving all three 0.70 metal makes the seats look like a bumper, and *"more metallic"*
+        /// stops meaning anything when everything is equally so.
+        ///
+        /// ⚠️⚠️ THE AUTHOR ALREADY NAMED THEM AND THAT IS THE EVIDENCE THIS TABLE USES. The
+        /// model ships seventeen materials and their names are not decoration:
+        /// `silver_shader4Silver_SG`, `mi_car_paint_phen_x2SG` and `maya_sofa_skin_shadermay`
+        /// each say what they are. **Reading them beats guessing from a colour**, which is how
+        /// the seats ended up shiny: they are the same white as the bodywork and nothing about
+        /// the pixel says otherwise.
+        ///
+        /// ⚠️ AND THE FURNITURE IS LEFT ALONE RATHER THAN MADE MATTE. Anything this table does
+        /// not recognise as metal keeps exactly the material the author shipped, which is the
+        /// narrowest thing that can be done and the only one that cannot be wrong.
+        ///
+        /// ⚠️⚠️ IT WRITES ONTO A COPY, NEVER ONTO THE IMPORTED MATERIAL. `AssetDatabase` hands
+        /// back the shared material that belongs to the .glb, and editing that would follow the
+        /// asset into every future user of it and into the next person's git diff.
+        /// `InstantiateKitProp`'s palette swap makes the same copy for the same reason.
+        ///
+        /// ⚠️ AND IT IS THE PROP'S OWN SHADER, NOT A NEW ONE. `TumbangPreso/Toon` is explicitly
+        /// forbidden here — its own header says *"THE WORLD IS NOT ALLOWED TO WEAR THIS.
+        /// Characters and props only"* — and the URP Lit material the importer already built has
+        /// `_Metallic` and `_Smoothness`. Reaching for a second shader to get a property the
+        /// first one has is how a street ends up drawn by three pipelines.
+        ///
+        /// ⚠️ NOTHING HERE REACHES A PRINTED PANEL. Six of the eleven white materials carry the
+        /// livery as a TEXTURE under a white base colour, and a textured material is refused
+        /// outright: a sheen on the destination boards and the sunburst would be a gloss on the
+        /// artwork the model is here for.
+        /// </summary>
+        private static void GiveWhitePanelsAMetalFinish(GameObject vehicle)
+        {
+            if (vehicle == null) return;
+
+            foreach (var renderer in vehicle.GetComponentsInChildren<Renderer>(includeInactive: true))
+            {
+                var shared = renderer.sharedMaterials;
+                if (shared == null) continue;
+
+                var replaced = new Material[shared.Length];
+                bool touched = false;
+
+                for (int i = 0; i < shared.Length; i++)
+                {
+                    var source = shared[i];
+                    replaced[i] = source;
+
+                    if (source == null) continue;
+                    if (!TryFinishFor(source, out float metallic, out float smoothness)) continue;
+
+                    if (!JeepneyMetals.TryGetValue(source, out var metal) || metal == null)
+                    {
+                        metal = new Material(source) { name = $"{source.name}_finish" };
+
+                        if (metal.HasProperty(MetallicId)) metal.SetFloat(MetallicId, metallic);
+                        if (metal.HasProperty(SmoothnessId)) metal.SetFloat(SmoothnessId, smoothness);
+
+                        // URP Lit ignores `_Metallic` entirely while a metallic-gloss MAP is
+                        // bound, and reads the map instead. None of these materials has one, and
+                        // this is what keeps that true if the importer ever starts adding them.
+                        metal.DisableKeyword("_METALLICSPECGLOSSMAP");
+
+                        JeepneyMetals[source] = metal;
+                    }
+
+                    replaced[i] = metal;
+                    touched = true;
+                }
+
+                if (touched) renderer.sharedMaterials = replaced;
+            }
+        }
+
+        /// <summary>
+        /// The finish for one of the jeepney's materials, or false to leave it exactly as it is.
+        ///
+        /// ⚠️ THE ORDER MATTERS AND THE REFUSALS COME FIRST. A textured material is the livery
+        /// and a named soft surface is furniture; both are ruled out before anything is measured,
+        /// because the colour test cannot tell either of them from a bare panel.
+        /// </summary>
+        private static bool TryFinishFor(Material material, out float metallic, out float smoothness)
+        {
+            metallic = 0.0f;
+            smoothness = 0.0f;
+
+            // 1. THE LIVERY. A base texture is the printed artwork, whatever the base colour says.
+            if (material.HasProperty(BaseMapId) && material.GetTexture(BaseMapId) != null) return false;
+            if (material.HasProperty(MainTexId) && material.GetTexture(MainTexId) != null) return false;
+
+            string name = (material.name ?? "").ToLowerInvariant();
+
+            // 2. THE SOFT FURNISHINGS AND THE GLAZING, by the author's own names. A jeepney's
+            // bench seats are vinyl and its windows are glass; neither is a bumper, and both are
+            // the same white as the panels beside them.
+            foreach (string soft in NeverMetal)
+            {
+                if (name.Contains(soft)) return false;
+            }
+
+            Color c = Color.white;
+            if (material.HasProperty(BaseColorId)) c = material.GetColor(BaseColorId);
+            else if (material.HasProperty(ColorId)) c = material.GetColor(ColorId);
+
+            float high = Mathf.Max(c.r, Mathf.Max(c.g, c.b));
+            float low = Mathf.Min(c.r, Mathf.Min(c.g, c.b));
+
+            // 3. A HUE IS PAINT. More than five per cent of range between the largest and
+            // smallest channel is the red, the orange or the blue, and those are the author's
+            // colours rather than anything metal.
+            if (high - low > 0.05f) return false;
+
+            // 4. AND BLACK TRIM STAYS MATTE. A gloss on the tyres and the window rubber is the
+            // opposite of the request.
+            if (high < 0.45f) return false;
+
+            // 5. THE SURFACES, in the author's words.
+            //
+            // ⚠️ CHROME IS THE ONLY ONE ALLOWED TO BE BRIGHT, AND IT IS ONE MATERIAL. The bumper,
+            // the grille bars and the mirror arms are what a jeepney is photographed for. 0.95 at
+            // 0.80 is polished steel; a full 1.0 at 0.9 is a mirror, and a mirror on a background
+            // prop picks up the skybox and reads as a hole in the street (`VISION.md` § 2 rule 5:
+            // a background landmark may not out-shout the box).
+            if (name.Contains("silver"))
+            {
+                metallic = 0.95f;
+                smoothness = 0.80f;
+                return true;
+            }
+
+            // ⚠️ CAR PAINT IS NOT BARE METAL. It is a clearcoat over a flake, so it is GLOSSY and
+            // only half metallic; giving it the bumper's numbers turns the whole body into a
+            // bumper, which is the complaint this table answers.
+            if (name.Contains("car_paint") || name.Contains("carpaint"))
+            {
+                metallic = 0.40f;
+                smoothness = 0.65f;
+                return true;
+            }
+
+            // ⚠️ AND EVERYTHING ELSE BARE IS A PANEL: the roof edge, the step, the sills. Duller
+            // than the paint and much duller than the chrome, because it is the surface nobody
+            // polishes.
+            metallic = 0.55f;
+            smoothness = 0.35f;
+            return true;
+        }
+
+        /// <summary>
+        /// Material-name fragments that are never metal, whatever colour they are.
+        ///
+        /// ⚠️ IT IS A LIST OF WORDS AN ARTIST USES, not a list of this model's materials. The
+        /// one that caught the fault is `maya_sofa_skin_shadermay`, the bench seats, which are
+        /// exactly as white and exactly as untextured as the bodywork.
+        /// </summary>
+        private static readonly string[] NeverMetal =
+        {
+            "sofa", "skin", "seat", "cloth", "fabric", "leather", "vinyl",
+            "glass", "window", "rubber", "tyre", "tire", "plastic",
+        };
+
+        private static readonly Dictionary<Material, Material> JeepneyMetals =
+            new Dictionary<Material, Material>();
+
+        private static readonly int MetallicId = Shader.PropertyToID("_Metallic");
+        private static readonly int SmoothnessId = Shader.PropertyToID("_Smoothness");
+        private static readonly int BaseMapId = Shader.PropertyToID("_BaseMap");
+        private static readonly int MainTexId = Shader.PropertyToID("_MainTex");
+        private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
+        private static readonly int ColorId = Shader.PropertyToID("_Color");
 
         private static Bounds RenderBounds(GameObject root)
         {

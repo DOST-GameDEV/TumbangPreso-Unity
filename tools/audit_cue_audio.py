@@ -27,7 +27,21 @@ import wave
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
-SFX = os.path.join(ROOT, "Assets", "TumbangPreso", "Art", "audio", "sfx")
+# ⚠️⚠️ THE DIRECTORY THE GAME ACTUALLY LOADS, AND IT WAS THE OTHER ONE UNTIL 2026-09-04.
+# `AudioDirector` reaches every cue through `Resources.Load<AudioClip>($"Sfx/{stem}")`, which
+# can only resolve inside a folder literally named `Resources`. This audit was reading
+# `Art/audio/sfx`, which is not under one, so **not a single file it measured was reachable by
+# the running game.**
+#
+# ⚠️⚠️ AND THE TWO COPIES HAD ALREADY DRIFTED: 21 of 117 cues differed before this pass, which
+# is the 2026-09-03 source pass writing to `Resources/Sfx` while the gate went on grading the
+# untouched originals. The DC-offset flags it was reporting were all against files the player
+# has never heard. `docs/TODO.md` § 114 is the same fault one subsystem over: *"a probe
+# measuring a control the game no longer builds"*.
+#
+# ⚠️ `AudioCueCheck` HAD THE SAME CONSTANT AND WAS MOVED IN THE SAME COMMIT. Two gates on one
+# subsystem both pointed at the wrong copy, which is why nothing noticed either of them.
+SFX = os.path.join(ROOT, "Assets", "TumbangPreso", "Resources", "Sfx")
 
 # A cue quieter than this is one nobody will hear over a match.
 QUIET_PEAK = 0.02

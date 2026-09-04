@@ -99,6 +99,15 @@ Assets/InitTestScene*.unity.meta
 Assets/TumbangPreso/Resources/BuildBranch.txt
 Assets/TumbangPreso/Resources/BuildBranch.txt.meta
 
+# The build identity stamps, for exactly BuildBranch.txt's reason one line up: they are
+# rewritten on EVERY build, so committing them is a one-line diff per build and a conflict
+# per merge over a file whose whole job is to be regenerated. Absent means "unstamped",
+# which tools/qualify.py already refuses for a nationals candidate.
+Assets/TumbangPreso/Resources/BuildIdentity.json
+Assets/TumbangPreso/Resources/BuildIdentity.json.meta
+Assets/StreamingAssets/build-identity.json
+Assets/StreamingAssets/build-identity.json.meta
+
 # Unity's Performance Testing package writes these into Assets/ on every test run, so they
 # appear as untracked files after any EditMode or PlayMode launch and are regenerated the next
 # time. Same reasoning as the stamp above: a file whose whole job is to be rewritten by a tool

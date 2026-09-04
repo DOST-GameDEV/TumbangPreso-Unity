@@ -122,9 +122,40 @@ namespace TumbangPreso.UI
         /// </summary>
         private const float LobbyFieldOfView = 32.0f;
 
-        /// <summary>Half the screen is enough behind a scrim, and it halves the cost.</summary>
-        private const int Width = 960;
-        private const int Height = 540;
+        /// <summary>
+        /// The shape of the preview, which is the half that may never change.
+        ///
+        /// ⚠️⚠️ THE ASPECT IS THE FRAMING AND THE RESOLUTION IS NOT. Every map's `Distance` and
+        /// `Height` was tuned against a 16:9 frame at 58 degrees (see `LobbyFieldOfView` above),
+        /// so changing this ratio silently re-frames all three arenas on the practice screen.
+        /// Changing how many PIXELS that same frame is drawn with re-frames nothing at all, and
+        /// that is the whole of the fix below.
+        /// </summary>
+        private const float PreviewAspect = 16.0f / 9.0f;
+
+        /// <summary>
+        /// The floor, and it is what this surface used to be pinned at.
+        ///
+        /// ⚠️⚠️ IT WAS A FIXED 960 x 540 WITH NO ANTI-ALIASING AND NO FILTER MODE, AND 🧑 SAW IT:
+        /// *"lobby looks so pixelated can u try to fix that too"*, then, when asked what part,
+        /// **"i meant the characters and stuff"** and *"and the map in lobby"*. Those are not two
+        /// faults. **The lobby character shot and the map shot are the same surface**, told apart
+        /// by `_lobbyShot`, so one undersized texture made both of them soft at once.
+        ///
+        /// ⚠️ THE OLD COMMENT WAS *"Half the screen is enough behind a scrim, and it halves the
+        /// cost."* It was true of the map shot, which does sit behind a scrim. **The lobby
+        /// character shot does not**, and it is the one with faces in it. A number chosen for one
+        /// caller and inherited by a second is `CLAUDE.md` § 6.2c's *"what is this size measured
+        /// AGAINST"* asked about a render target instead of a rect.
+        /// </summary>
+        private const int MinWidth = 960;
+
+        /// <summary>
+        /// The cap, and it is `ModelPreview.EnsureTexture`'s number for the same reason: a
+        /// preview on a 4K display is still a preview, and an uncapped target is memory nobody
+        /// asked for. That file's own note carries the measurement.
+        /// </summary>
+        private const int MaxWidth = 2048;
 
         /// <summary>
         /// ⚠️⚠️ THE PREVIEW ARENA MUST BE ON ITS OWN LAYER, AND ITS ABSENCE IS THE FULL-WIDTH
@@ -861,9 +892,43 @@ namespace TumbangPreso.UI
 
         private void EnsureCamera()
         {
+            // ⚠️⚠️ SIZED AGAINST THE DISPLAY, AT A FIXED ASPECT. The framing comes from the
+            // aspect and the sharpness comes from the pixel count, so this can follow the screen
+            // without moving a single map's composition. `Screen.width` rather than the rect,
+            // because this surface is drawn full-bleed behind the lobby rather than into a panel
+            // the way `ModelPreview` is.
+            int width = Mathf.Clamp(Screen.width, MinWidth, MaxWidth);
+            int height = Mathf.Max(1, Mathf.RoundToInt(width / PreviewAspect));
+
+            if (_target != null && (_target.width != width || _target.height != height))
+            {
+                // ⚠️ THE CAMERA LETS GO FIRST. Releasing a texture a camera still points at
+                // leaves that camera rendering into freed memory for a frame, which is a black
+                // flash on a resize rather than a crash, and therefore the kind of thing nobody
+                // reports precisely.
+                if (_camera != null) _camera.targetTexture = null;
+                _target.Release();
+                _target = null;
+            }
+
             if (_target == null)
             {
-                _target = new RenderTexture(Width, Height, 24) { name = "MapPreview" };
+                _target = new RenderTexture(width, height, 24)
+                {
+                    name = "MapPreview",
+
+                    // ⚠️⚠️ FOUR SAMPLES, WHICH IS WHAT `ModelPreview` ALREADY ASKED FOR AND THIS
+                    // SURFACE NEVER DID. The whole front end is drawn with an ink outline and a
+                    // toon ramp: hard edges everywhere, which is exactly the content that shows
+                    // aliasing worst. `docs/TODO.md` § 63 records the world outline being aliased
+                    // *"because MSAA was never able to see it"* — same subject, one surface over.
+                    antiAliasing = 4,
+
+                    // ⚠️ AND POINT SAMPLING WAS THE OTHER HALF. A texture with no filter mode set
+                    // takes the project default, and an upscaled point-sampled 960 px target is
+                    // the literal definition of the word he used.
+                    filterMode = FilterMode.Bilinear,
+                };
                 _target.Create();
             }
 
@@ -901,7 +966,7 @@ namespace TumbangPreso.UI
             // `ModelPreview.EnsureTexture` carries a note about: a camera that has already
             // rendered keeps the aspect it cached, so the arena came out stretched into a 16:9
             // target. Derived from the target rather than assumed.
-            _camera.aspect = (float)Width / Height;
+            _camera.aspect = (float)_target.width / _target.height;
 
             EnsureWorldOutline();
 

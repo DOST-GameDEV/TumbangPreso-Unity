@@ -147,6 +147,14 @@ spatialisation and headroom, so do not bake in long reverb.
 All individual recordings in this table are [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/).
 Commercial use, modification and redistribution are allowed without attribution.
 
+✅ **ALL SIXTEEN WERE DOWNLOADED ON 2026-09-04** into `scratchpad/asset-src/freesound/`, which is
+gitignored, and each was verified against the format and duration stated in its row above to three
+decimal places. **Thirteen of the sixteen are wired**; the three that are not are the tin can, the
+basketball and the crowd cheer, each with its reason in `tools/build_ability_audio.py`'s `KEPT`.
+The tin can is the one worth knowing about: this table names it for `lata_impact` and
+`lata_knockdown`, and **§ 5.4 records those exact cues being rejected by ear**. A source table
+written before a listening test does not overrule the listening test.
+
 ### 5.3 Cue-family assignment
 
 - **Dante:** earthquake/wood/metal recordings for the body, Kenney impacts for the transient, and
@@ -184,6 +192,21 @@ twenty-four as provisional, not approved as a group. The replacement commit is `
 exact pre-pass WAV for any cue is the same path at `ee8bced^` (`c5b6ff9`). Restore only the named
 cue, then remove its row from `tools/build_ability_audio.py.REPLACEMENTS` and record it in `KEPT`
 in the same commit. Otherwise the next generator run will silently put the rejected sound back.
+
+⚠️⚠️ **AND THE 2026-09-04 ELEMENTAL PASS ADDED 42 MORE PROVISIONAL CUES, WHICH IS MOST OF THE
+ABILITY LAYER.** All 18 `sfx_cast_*`, all 12 `sfx_var_*`, and `sfx_fire_whoosh`, `sfx_ice_form`,
+`sfx_ice_freeze`, `sfx_ice_shatter`, `sfx_barricade_raise`, `sfx_thunder_impact`,
+`sfx_lightning_strike`, `sfx_hex_cast`, `sfx_hex_afflict`, `sfx_blink_arrive`, `sfx_quake_slam`
+and `lata_seal`. **None of them has been heard in play**, so `CLAUDE.md` § 6's rule applies to
+every one: provisional until 🧑 hears them. The pre-pass file for any of them is the same path at
+the commit before the elemental pass.
+
+⚠️⚠️ **THE GENERATOR IS IDEMPOTENT NOW AND IT WAS NOT BEFORE, WHICH IS ITS OWN SMALL LEDGER.**
+`peak_of` read the peak of the file it was about to OVERWRITE and multiplied the row's `gain`
+onto it, so every re-run multiplied the gain again: `tag` at gain 0.9 goes 0.850, 0.765, 0.688,
+0.620, and the sixth run is half the level `AudioCues.TrimDb`'s clipping measurement was taken
+at. Nothing warned and every row still printed a plausible number. `tools/assets/cue_reference_peaks.json`
+holds the final target per cue, written once, and a second run is now a byte-for-byte no-op.
 
 The provisional files are:
 
@@ -225,10 +248,47 @@ These are not part of the first implementation pass. They are retained for later
 | Quaternius Furniture Pack | [Source](https://quaternius.com/packs/furniture.html) | 23 beds, chairs and tables | FBX/OBJ/Blend, simple mobile-friendly meshes | CC0, fully free pack, public-repo safe |
 | Quaternius Ultimate Nature Pack | [Source](https://quaternius.com/packs/ultimatenature.html) | 150 trees, grass, rocks and bushes | Flat warm greens and browns, minimal alpha foliage | CC0, fully free pack, public-repo safe |
 | Plastic Monobloc Chair 01 by Kuutti Siitonen | [Source](https://polyhaven.com/a/plastic_monobloc_chair_01) | Exact Filipino street-chair silhouette | About 3K triangles. Discard PBR textures and use one flat Toon material | CC0, public-repo safe |
-| Jeepney by Maclin Macalindong | [Source](https://sketchfab.com/3d-models/jeepney-0b8bcde5df19458da9fa5606989b1e7d) | Static Philippine background landmark | 74.2K triangles as delivered. Decimate, merge materials and keep out of the playable centre | CC BY, commercial use allowed with credit |
+| Jeepney by Maclin Macalindong ✅ SHIPPED | [Source](https://sketchfab.com/3d-models/jeepney-0b8bcde5df19458da9fa5606989b1e7d) | Static Philippine background landmark | 74.2K triangles, and it ships at 74.2K. ⚠️ **Do NOT decimate or merge materials**, `CLAUDE.md` § 6.0 and § 7.1 below. Keep out of the playable centre | CC BY, commercial use allowed with credit |
 | Manila Street by Kevin Luce | [Source](https://freesound.org/people/kevp888/sounds/464557/) | Authentic traffic, motorcycles, jeepneys, horns and voices | 44.1 kHz stereo WAV, edit around foreground events and make a clean loop | CC BY 4.0, commercial use allowed with credit |
 
-### 7.1 Jeepney placement on Ilalim ng Tulay
+### 7.1 ✅ SHIPPED 2026-09-04: jeepney placement on Ilalim ng Tulay, AS DELIVERED
+
+✅ **IT IS IN THE MAP, UNMODIFIED.** 74,170 triangles, 17 materials, 5 textures, its own colours.
+It replaces the north `van` at `(-2.8, RoadTop, 30.0)` exactly as the paragraph below asks.
+`tools/build_jeepney.py` copies it and checks the licence; it changes nothing about the mesh.
+
+⚠️⚠️ **THE "DECIMATE, MERGE MATERIALS" SENTENCE BELOW IS REVERSED AND IT IS KEPT SO THE REVERSAL
+IS FINDABLE.** It was written before anybody had the model. The first build followed it: 74,170
+triangles down to **3,000**, seventeen materials collapsed to **one**, UVs rewritten onto the
+kit's nine-swatch palette atlas so `tumbang-warm-c` would recolour it like a van. 🧑, opening the
+render: *"ew what is that jeep wtf did u do"*, **"u ate all its colors and design wtf"**, and then
+the rule: *"no need to lower triangles wtf"*, **"no need to lower triangles or compress dont worry
+it wont lag"**, *"make that a rule in claude md"*. **`CLAUDE.md` § 6.0 is that rule and this prop
+is why it exists.**
+
+**What was actually wrong with the optimised version, stated so the lesson survives:** the model
+is on that boundary for its **silhouette and its livery**, which is the whole of what "culturally
+specific" means in the sentence below, and every one of the three steps removed some of it. The
+budget was never the constraint: nothing had measured a frame cost, and a background prop at 74K
+triangles is not what will cost one.
+
+⚠️ **PLACEMENT IS STILL OURS AND THAT IS THE LINE.** The model is 24.35 units long as authored
+against the van's 2.75, so the vehicle row carries its own scale: a van draws at 1.35 and stands
+3.71 units long, a jeepney is about 6.0 m against a van's 4.5, so 4.95 units is proportionate and
+`4.95 / 24.3526` is the number. **Nothing about the mesh is touched to get it.**
+
+⚠️⚠️ **AND IT IS PLACED WITH AN EMPTY PALETTE, WHICH IS A REQUEST RATHER THAN A FALLBACK.**
+`InstantiateKitProp` swaps a `tumbang-warm-*` atlas onto every other vehicle's material; `""`
+means keep what the author shipped. A missing atlas still warns, because "I meant to recolour
+this and the file is gone" is a defect and "do not recolour this" is not.
+
+⚠️⚠️ **THE CC BY CREDIT IS ENFORCED RATHER THAN REMEMBERED.** `build_jeepney.py` refuses to copy
+the model at all unless `CreditsContent.CcByCredits` already names the author, and it reads that
+name out of the .glb's own metadata rather than a constant, so a different author on that
+Sketchfab id fails loudly instead of approving a credit for the wrong person. A credit that is
+"added next time" is a licence breach in every build between the two commits.
+
+⚠️ **THE ORIGINAL BRIEF, KEPT, because the reversal above is only legible beside it:**
 
 Replace one existing generic boundary vehicle rather than adding more traffic. The first target is
 the distant north `van` at `(-2.8, RoadTop, 30.0)` in
@@ -326,6 +386,11 @@ directions collapse into the same picture.
 ## 9. Credits block for the attribution-required options
 
 Only add a line if that asset actually ships.
+
+✅ **THE JEEPNEY LINE IS LIVE.** It is in `CreditsContent.CcByCredits` under the chip `JEEPNEY`,
+alongside CROCS, PANTULOG and IKE, and it shipped in the same commit as the model.
+⚠️ **The Manila Street line below has NOT shipped**, because that recording is not in the game:
+`sfx_sky_*` and `sfx_lrt_pass` are still the placeholders. Do not add its credit until it is.
 
 ```text
 "LS_34209_PH_ManilaStreet.wav" by Kevin Luce (kevp888), licensed under Creative Commons Attribution 4.0, via Freesound.

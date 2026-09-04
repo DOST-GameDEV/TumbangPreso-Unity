@@ -35,8 +35,17 @@ namespace TumbangPreso.PlayTests
         [UnitySetUp]
         public IEnumerator ResetWorldBefore() => PlayModeWorld.Reset();
 
+        /// <summary>
+        /// ⚠️ THE RULE PIN IS RELEASED HERE OR EVERY SUITE AFTER THIS ONE INHERITS IT.
+        /// SceneFlow.RulesPinned is process state, and process state outliving the fixture
+        /// that set it is the whole of docs/TODO.md § 126.8.
+        /// </summary>
         [UnityTearDown]
-        public IEnumerator ResetWorldAfter() => PlayModeWorld.Reset();
+        public IEnumerator ResetWorldAfter()
+        {
+            UI.SceneFlow.UnpinSelectedRules();
+            yield return PlayModeWorld.Reset();
+        }
 
         private const string OutDir = "Logs/shots-preview";
 
@@ -327,7 +336,7 @@ namespace TumbangPreso.PlayTests
         {
             Directory.CreateDirectory(OutDir);
             Settings.SettingsStore.Current.CharacterPick = 0;
-            UI.SceneFlow.SelectedMode = Core.GameMode.Classic;
+            UI.SceneFlow.PinSelectedRules(Core.CustomGameRules.Defaults(Core.GameMode.Classic));
 
             var load = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
             yield return ProbeWait.Done(load, "scene load");
@@ -354,14 +363,14 @@ namespace TumbangPreso.PlayTests
                 "The Godot slate-to-midnight gradient was flattened to a solid colour.");
 
             Capture("character-classic-godot");
-            UI.SceneFlow.SelectedMode = Core.GameMode.HeroStrike;
+            UI.SceneFlow.PinSelectedRules(Core.CustomGameRules.Defaults(Core.GameMode.HeroStrike));
         }
 
         [UnityTest]
         public IEnumerator HeroCharacterSelectShowsAbilitiesInsteadOfClassicAttributes()
         {
             Settings.SettingsStore.Current.CharacterPick = 0;
-            UI.SceneFlow.SelectedMode = Core.GameMode.HeroStrike;
+            UI.SceneFlow.PinSelectedRules(Core.CustomGameRules.Defaults(Core.GameMode.HeroStrike));
 
             var load = SceneManager.LoadSceneAsync("MatchSetup", LoadSceneMode.Single);
             yield return ProbeWait.Done(load, "scene load");

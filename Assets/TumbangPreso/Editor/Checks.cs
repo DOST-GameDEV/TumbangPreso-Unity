@@ -89,6 +89,15 @@ namespace TumbangPreso.EditorTools
                 new Check("input surface", () => InputSurfaceCheck.Execute(true),
                           "Logs/input-surface-check.txt"),
 
+                // ⚠️⚠️ IT OPENS THE SCENES, WHICH IS THE ONE THING `SceneScriptCheck` REFUSES TO
+                // DO, AND THAT IS WHY BOTH ARE HERE. Reading a scene as text finds a component
+                // whose script the PLAYER cannot bind; opening it finds a reference that points
+                // at a deleted asset, a missing camera and a missing script. Neither technique
+                // can see the other's defect. ⚠️ It never SAVES a scene, because saving would
+                // rewrite the very stubs the text check exists to find.
+                new Check("scene dependencies", () => SceneDependencyCheck.Execute(true),
+                          "Logs/scene-dependency-check.txt"),
+
                 // ⚠️⚠️ IT REGENERATES THE COLLECTION RATHER THAN INSPECTING IT, which is the
                 // `CLAUDE.md` § 4a argument: a warm-up list that is checked but not rewritten
                 // goes stale the first time somebody adds a material, and a stale one warms the

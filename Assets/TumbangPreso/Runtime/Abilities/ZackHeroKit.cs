@@ -83,15 +83,22 @@ namespace TumbangPreso.Abilities
             private readonly Queue<GameObject> _live = new Queue<GameObject>();
 
             public StaticRailGrindAbility(ZackHeroKit kit)
-                // ⚠️⚠️ 30 s, UP FROM 6.0, AND IT IS THE SHORTEST OF THE FOUR LONG COOLDOWNS ON
+                // ⚠️⚠️ 46 s, UP FROM 6.0, AND IT IS THE SHORTEST OF THE FOUR LONG COOLDOWNS ON
                 // PURPOSE. Escape and chase is what Zack is FOR, so he gets the most of it.
+                //
+                // ⚠️ THIS PARAGRAPH SAID 30 s UNTIL 2026-09-04 WHILE THE CONSTRUCTOR PASSED 46.0f,
+                // and the stale number had already been quoted in `SeanHeroKit` as this hero's
+                // cooldown, which is how one wrong comment became two. A
+                // comment that is wrong is worse than a missing one: it reads as measured, so the
+                // next reader prices a new ability against it. `tools/audit_ability_stat_drift.py`
+                // is why it cannot happen quietly again.
                 //
                 // At 6.0 s this cast 15 times a round. Four seats casting two skills each was
                 // 44 to 56 casts per 90 s round, one every 1.8 seconds, and nothing at that
                 // rate is a decision. 🧑 2026-08-25: *"game feels awkward when theres 20
                 // abilities at once and i think the fix to this is making the abilities timers
                 // longer? It forces users to think thoroughly abt how to use abilities"*.
-                // Three casts a round is a plan.
+                // Just under two casts a round is a plan.
                 //
                 // ⚠️ A COOLDOWN AND NOT CHARGES, and the rule is written up on
                 // `HeroAbility.MaxCharges`: this moves your own body, and a player holding

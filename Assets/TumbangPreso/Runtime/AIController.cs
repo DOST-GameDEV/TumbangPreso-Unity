@@ -113,7 +113,32 @@ namespace TumbangPreso
         public static void ApplyDifficultyFromSettings()
             => ApplyDifficulty(Settings.SettingsStore.Current.AiDifficulty);
 
-        private AiPersonality Me => AiTuning.For(ActiveDifficulty);
+        /// <summary>
+        /// This bot's own tier, when it is not simply playing at the lobby's setting.
+        ///
+        /// ⚠️⚠️ `Attention.md` § 16.1: *"let ai on same skill level as them take over"*. The
+        /// difficulty was a single STATIC for the whole match, so every bot in the game played at
+        /// one tier and a seat handed over by a departing player could only be given the lobby's
+        /// setting. An Astig player's chair handed to a Bata bot loses their side the match, and
+        /// a Bata player's chair handed to an Astig bot wins one they were losing: **the handover
+        /// changes the result in a direction nobody chose.**
+        ///
+        /// ⚠️ NULL MEANS "THE LOBBY'S SETTING", WHICH IS WHAT EVERY BOT THAT WAS NEVER A PERSON
+        /// WANTS. `BotFill`'s pre-match seats are not a handover and must not start answering a
+        /// per-seat question; only `MatchRpc.HostPeerLeft` sets this.
+        ///
+        /// ⚠️⚠️ AND `BotsEnabled` STILL WINS. A bots-off lobby installs no `AIController` at all
+        /// (see that field's note: it is an ABSENCE OF SEATS, not a parked brain), so nothing
+        /// here can put a driver in a chair the lobby said should stay empty.
+        /// </summary>
+        public Difficulty? SeatDifficulty;
+
+        /// <summary>
+        /// ⚠️ THE SEAT'S OWN TIER IF IT HAS ONE, THE LOBBY'S OTHERWISE. Every read of the
+        /// personality goes through here, so a seat that was handed over is a different opponent
+        /// in every decision it makes rather than only in the ones somebody remembered.
+        /// </summary>
+        private AiPersonality Me => AiTuning.For(SeatDifficulty ?? ActiveDifficulty);
 
         /// <summary>
         /// This bot's own jitter on top of the tier, seeded from its SEAT so two runs of the

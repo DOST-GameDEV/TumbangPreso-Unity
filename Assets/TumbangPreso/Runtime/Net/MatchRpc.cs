@@ -4956,6 +4956,23 @@ namespace TumbangPreso.Net
             FindFirstObjectByType<BufferSkipVote>()?.HostCastVote((int)senderClientId);
         }
 
+        /// <summary>
+        /// The departing player's ladder rating, or 0 when this peer does not know it.
+        ///
+        /// ⚠️⚠️ IT IS ALWAYS 0 TODAY AND THAT IS THE HONEST ANSWER RATHER THAN A STUB. A rating
+        /// reaches this process only if it travels, and nothing on `ConnectionHello` or
+        /// `LobbySession.PeerRecord` carries one. `Attention.md` § 16.1 names this as the
+        /// missing piece of the ruling it recorded: *"the game has no notion of 'this player's
+        /// skill level' to hand the bot, and `Rating` is a ladder number rather than a
+        /// difficulty tier."* The tier half is built (`SeatHandover.TierFor`); this is the half
+        /// that needs a wire field.
+        ///
+        /// ⚠️ ONE FUNCTION SO THERE IS ONE PLACE TO FIX. A caller that inlined "we do not know"
+        /// would be a caller that silently keeps not knowing after somebody adds the field.
+        /// `docs/TODO.md` § 144.7 carries what it costs, which is a protocol bump.
+        /// </summary>
+        private static int RatingForDepartedPeer(int peerId) => 0;
+
         public void HostPeerLeft(int peerId)
         {
             if (!NetAuthority.IsHost) return;
@@ -5029,8 +5046,37 @@ namespace TumbangPreso.Net
                         if (AIController.BotsEnabled)
                         {
                             unit.IsBot = true;
-                            if (unit.GetComponent<AIController>() == null)
-                                unit.gameObject.AddComponent<AIController>();
+
+                            // ⚠️⚠️ AND THE RECORD REMEMBERS THAT THIS CHAIR HAD SOMEBODY IN IT.
+                            // `Attention.md` § 16.1: a seat that was human and became a bot is
+                            // neither, and until this line the career line for the match could
+                            // not tell it apart from one `BotFill` filled before anybody sat
+                            // down. `SeatHandover.RatingMovesFor` is what stops a bot's stretch
+                            // moving the departed player's rating, and it needs this to be true.
+                            unit.NoteSeatOrigin(Core.SeatOrigin.HandedToBot);
+
+                            var brain = unit.GetComponent<AIController>();
+                            if (brain == null) brain = unit.gameObject.AddComponent<AIController>();
+
+                            // ⚠️⚠️ THE TIER IS THE RULING AND THE RATING IS THE MISSING HALF.
+                            // 🧑's answer was *"let ai on same skill level as them take over"*,
+                            // and `SeatHandover.TierFor` turns a ladder number into one of the
+                            // three tiers `AiTuning` actually has. **What the host does not have
+                            // is the number.** Nothing on `ConnectionHello` or `PeerRecord`
+                            // carries a rating: § 16.1 says so in as many words (*"the game has
+                            // no notion of 'this player's skill level' to hand the bot"*) and
+                            // the peer table confirms it.
+                            //
+                            // ⚠️ SO THE SEAT KEEPS THE LOBBY'S TIER FOR NOW, WHICH IS EXACTLY
+                            // WHAT IT DID BEFORE, and the one line that changes when the rating
+                            // arrives is here. Putting the rating on the wire is a
+                            // `NetSession.ProtocolVersion` bump, and `CLAUDE.md` § 4 requires the
+                            // Windows and Android players to be rebuilt from the same commit and
+                            // shipped together when that number moves: it is a deliberate act
+                            // rather than something to slip into a session's last build.
+                            // `docs/TODO.md` § 144.7 is the entry.
+                            int rating = RatingForDepartedPeer(peerId);
+                            if (rating > 0) brain.SeatDifficulty = SeatHandover.TierFor(rating);
                         }
                         else
                         {

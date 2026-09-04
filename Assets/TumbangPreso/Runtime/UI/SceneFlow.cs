@@ -267,6 +267,11 @@ namespace TumbangPreso.UI
         {
             if (rules == null) return;
 
+            // ⚠️ AN EXPLICIT CHOICE UNPINS. This method is reached from the custom game screen
+            // and from `settings.json`, and both mean "this player has expressed a preference",
+            // which is exactly the thing a pin exists to be overridden by.
+            RulesPinned = false;
+
             string password = rules.Password ?? "";
             var clamped = CustomGameRules.Parse(CustomGameRules.ToWire(rules), rules.Mode);
             clamped.Password = password;
@@ -284,6 +289,54 @@ namespace TumbangPreso.UI
             settings.CustomRulesWire = CustomGameRules.ToWire(clamped);
             settings.MatchFormat = (int)clamped.Format;
         }
+
+        /// <summary>
+        /// Whether the current rule set was set deliberately and must survive a screen change.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE ENTERING MATCH SETUP SILENTLY DISCARDED A RULE SET SOMEBODY
+        /// HAD JUST CHOSEN. `ConvertedMatchSetup` restores `GameSettings.CustomRulesWire` on
+        /// entry, which is correct for an ordinary player returning to a lobby they left on a
+        /// custom set, and wrong for anything that configured the match on purpose first. On this
+        /// machine the saved wire read `0|0|8|90|...`: **Classic with EIGHT rounds**, a format
+        /// the game does not ship (Classic plays four, `docs/VISION.md` § 1.1), and every entry
+        /// into that screen restored it.
+        ///
+        /// **What it cost was two things at once.** A tournament match configured by
+        /// `TournamentGuard.Apply()` lost its whole rule set on the way into the screen an
+        /// operator sets the match up in, which is § 143.3's thesis arriving through a door
+        /// nobody was watching. And the Hero picker built for the restored mode rather than the
+        /// chosen one, so it had no LOADOUT door and drew Classic's `SPEED POWER GRIT` strip on
+        /// the HERO screen: six of the twelve failures in the isolated `screens` group, one
+        /// cause. `docs/TODO.md` § 143.18.
+        ///
+        /// ⚠️ THE RESTORE IS NOT DELETED AND MUST NOT BE. Its own note is right: a player who
+        /// leaves the lobby on a custom set and comes back to the shipped one is a regression
+        /// somebody will report. The pin narrows it rather than removing it.
+        /// </summary>
+        public static bool RulesPinned { get; private set; }
+
+        /// <summary>
+        /// Set the rule set deliberately, so a screen cannot restore over it.
+        ///
+        /// ⚠️⚠️ IT DOES NOT WRITE `settings.json`, AND THAT IS THE SECOND HALF OF THE FIX.
+        /// `SetSelectedRules` persists, so `TournamentGuard.Apply()` calling it would have
+        /// written the tournament preset into the PLAYER'S saved preference: an operator running
+        /// one bracket match on a shared laptop would have silently replaced whatever that player
+        /// last chose for their own custom games. `AdoptRemoteRules` already made this exact
+        /// distinction for a rule set arriving from a host (*"a fact about the room somebody else
+        /// is running, not a preference this player expressed"*), and a tournament preset is the
+        /// same kind of fact.
+        /// </summary>
+        public static void PinSelectedRules(CustomRules rules)
+        {
+            if (rules == null) return;
+
+            AdoptRemoteRules(rules);
+            RulesPinned = true;
+        }
+
+        /// <summary>Release the pin, so the ordinary restore applies again.</summary>
+        public static void UnpinSelectedRules() => RulesPinned = false;
 
         /// <summary>
         /// Take the host's rule set for THIS room, without remembering it as this player's own.

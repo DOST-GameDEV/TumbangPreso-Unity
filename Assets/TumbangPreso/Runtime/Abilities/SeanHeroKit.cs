@@ -55,9 +55,9 @@ namespace TumbangPreso.Abilities
             private readonly Queue<GameObject> _live = new Queue<GameObject>();
 
             public RocketBurnDashAbility()
-                // ⚠️⚠️ 34 s, UP FROM 6.5. Longer than Zack's 30 because this dash also KNOCKS
+                // ⚠️⚠️ 50 s, UP FROM 6.5. Longer than Zack's 46 because this dash also KNOCKS
                 // DOWN everyone it passes through, so it is a mobility skill and an opener at
-                // once. 2.6 casts a round. See Zack's `StaticRailGrindAbility` for the reasoning
+                // once. 1.8 casts a round. See Zack's `StaticRailGrindAbility` for the reasoning
                 // behind the whole retune and `docs/Hero_Strike_Balance.md` § 3.1 for the table.
                 : base("sean_skill1", "FLAME RUSH",
                        "Rushes you forward in a line of fire. Anyone you run through is knocked down, and the trail burns whoever follows.",

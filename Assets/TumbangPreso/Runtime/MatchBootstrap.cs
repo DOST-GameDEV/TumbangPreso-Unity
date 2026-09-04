@@ -66,12 +66,77 @@ namespace TumbangPreso
                 _slippers[slot] = s;
             }
 
-            GameServices.Match.RoundStarted += OnRoundStarted;
-            GameServices.Match.IntermissionStarted += OnIntermission;
-            GameServices.Match.BufferSkipRequested += OnBufferSkipped;
-            GameServices.Match.MatchEnded += OnMatchEnded;
+            Subscribe(GameServices.Match);
 
             GameServices.Match.StartMatch();
+        }
+
+        /// <summary>
+        /// The director this instance is hooked to, or null.
+        ///
+        /// ⚠️⚠️ THE OBJECT IS CACHED RATHER THAN RE-ASKED, WHICH IS THE ONLY WAY AN UNSUBSCRIBE
+        /// CAN BE CORRECT. `GameServices.Match` is a property, and letting go by writing
+        /// `GameServices.Match.RoundStarted -= OnRoundStarted` unsubscribes from **whichever
+        /// director is current at teardown time**, which is not necessarily the one that was
+        /// current when this subscribed. `AIController` already does it this way through
+        /// `_hookedMatch` and its comment says so; this file did not.
+        /// </summary>
+        private MatchDirector _hookedMatch;
+
+        /// <summary>
+        /// ⚠️⚠️ THIS COMPONENT LIVES IN THE ARENA SCENE AND THE DIRECTOR IT SUBSCRIBES TO DOES
+        /// NOT. `GameServices` is `DontDestroyOnLoad` (its own header: "a scene at build index 0
+        /// holding the managers"), so `MatchDirector` outlives every arena. Until 2026-09-04 this
+        /// file added four handlers and removed none, which cost two different things:
+        ///
+        ///  1. **Across matches.** The arena unloads, this component is destroyed, and the four
+        ///     handlers stay registered on the surviving director. The next match therefore runs
+        ///     `OnRoundStarted` on a DESTROYED `MatchBootstrap`, and `OnRoundStarted` calls
+        ///     `ResetWorld`, which teleports all four bodies and hands out the tsinelas. Match
+        ///     five was running it five times. This is `docs/TODO.md` § 126.8's leak class as the
+        ///     PLAYER meets it rather than as a test suite does, and it does not crash: it is a
+        ///     round that resets more than once, which reads as "the game got weird".
+        ///  2. **Within one match.** `BuildAndStart` is public and the guard below is why that is
+        ///     safe. A second call subscribed a second copy of every handler to the same event on
+        ///     the same object.
+        ///
+        /// ⚠️ IT IS IDEMPOTENT IN BOTH DIRECTIONS. Subscribing releases the previous hook first,
+        /// so no path can leave two, and `Unsubscribe` on a null hook is a no-op.
+        /// </summary>
+        private void Subscribe(MatchDirector match)
+        {
+            Unsubscribe();
+            if (match == null) return;
+
+            _hookedMatch = match;
+            _hookedMatch.RoundStarted += OnRoundStarted;
+            _hookedMatch.IntermissionStarted += OnIntermission;
+            _hookedMatch.BufferSkipRequested += OnBufferSkipped;
+            _hookedMatch.MatchEnded += OnMatchEnded;
+        }
+
+        private void Unsubscribe()
+        {
+            if (_hookedMatch == null) return;
+
+            _hookedMatch.RoundStarted -= OnRoundStarted;
+            _hookedMatch.IntermissionStarted -= OnIntermission;
+            _hookedMatch.BufferSkipRequested -= OnBufferSkipped;
+            _hookedMatch.MatchEnded -= OnMatchEnded;
+            _hookedMatch = null;
+        }
+
+        /// <summary>
+        /// ⚠️ THE PENDING `Invoke` GOES TOO, AND IT IS A SECOND LEAK IN THE SAME SHAPE.
+        /// `OnIntermission` schedules `AdvanceAfterIntermission` on this component, and an
+        /// `Invoke` outliving the object it targets calls `GameServices.Match.AdvanceRound()`
+        /// on a director that has moved on to another match. A round advanced by the previous
+        /// match's timer is `VISION.md` § 4's first rule broken from the outside.
+        /// </summary>
+        private void OnDestroy()
+        {
+            CancelInvoke();
+            Unsubscribe();
         }
 
         private void OnRoundStarted(int roundNumber, int defenderSlot)

@@ -34,7 +34,7 @@ namespace TumbangPreso.EditorTools.MapKit
         private const int ShotHeight = 720;
 
         /// <summary>Bump on every capture. See the class note.</summary>
-        private const string Version = "v24";
+        private const string Version = "v32";
 
         [MenuItem("Tumbang Preso/Capture Ilalim Ng Tulay Showcase")]
         public static void RunFromMenu() => Execute();
@@ -138,12 +138,23 @@ namespace TumbangPreso.EditorTools.MapKit
 
             // 14 and 15. The background on its own terms, from inside the walls, which is where
             // a player actually sees it from. Repetition and bare ground both show here first.
+            // ⚠️⚠️ THE JEEPNEY GETS ITS OWN FRAME BECAUSE IT IS THE ONE PROP ON THIS MAP THAT
+            // HAS TO BE RECOGNISED RATHER THAN JUST FIT. `docs/Asset_Sourcing.md` § 7.1 put it
+            // here for its SILHOUETTE — *"the culturally specific silhouette where it can be
+            // read without competing with the lata"* — and a 74,170 triangle model decimated to
+            // 3,000 either still reads as a jeepney or the budget was wrong. Neither
+            // `MapGeometryCheck` nor any layout probe can answer that; `CLAUDE.md` § 6.1 can.
+            // It is framed from inside the walls, three-quarter on, because that is the angle a
+            // player throwing north actually sees it from.
+            Shot("jeepney", new Vector3(2.6f, 2.3f, 23.5f),
+                 Quaternion.Euler(-1.0f, -41.0f, 0.0f), 60.0f);
+
             Shot("background_north", new Vector3(-4.0f, 2.4f, 14.0f),
                  Quaternion.Euler(-2.0f, 24.0f, 0.0f), 76.0f);
             Shot("background_south", new Vector3(5.0f, 2.4f, -14.0f),
                  Quaternion.Euler(-2.0f, 200.0f, 0.0f), 76.0f);
 
-            Debug.Log($"[IlalimNgTulayShowcaseProbe] captured 15 shots ({Version}) into {OutDir}. " +
+            Debug.Log($"[IlalimNgTulayShowcaseProbe] captured 16 shots ({Version}) into {OutDir}. " +
                       $"chalk r={r:F2}, throwing line={line:F2}, spawn ring={ring:F2}");
             return true;
         }

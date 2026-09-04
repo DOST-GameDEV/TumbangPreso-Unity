@@ -765,6 +765,11 @@ namespace TumbangPreso
             // ⚠️ ONLY HUMAN PEERS ARE HUMANS; UNOCCUPIED SLOTS ARE BOTS.
             motor.IsBot = !isHumanPlayer;
 
+            // ⚠️ A SEAT NOBODY EVER SAT IN IS A PLAIN BOT, and saying so here is what makes
+            // `HandedToBot` mean something later: the third state is only legible against a
+            // second one that was set at install time rather than inferred at the end.
+            motor.NoteSeatOrigin(isHumanPlayer ? Core.SeatOrigin.Human : Core.SeatOrigin.Bot);
+
             if (isLocalHuman)
             {
                 motor.PlayerName = GameServices.Account?.LobbyName ?? Settings.SettingsStore.Current.PlayerName;
