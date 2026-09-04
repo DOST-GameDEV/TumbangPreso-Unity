@@ -46,6 +46,7 @@ either of those.
 | **P1** | 144.7 | **The seat handover is built except for the rating, which does not travel.** `SeatHandover` maps a rating to a tier and the ladder already refuses to pay a handed-over seat; the host has no rating to map | A rating on the connection hello, `MatchRpc.RatingForDepartedPeer` reading it, and a test that 2400 gets Astig and 700 gets Bata. ⚠️ It moves `ProtocolVersion`, so both players rebuild together. Start a session with it |
 | **P2** | 144.3 | **Three of the six cues the audio audit still flags are the PROTECTED `ui_*` files.** `ui_click` sits at a DC offset of -0.121, which is a thump on every press of the three most-heard sounds in the game | 🧑's yes, then one line to subtract the mean. ⚠️ It rewrites files he asked for back BY NAME (`CLAUDE.md` § 6), so it is his call and not a commit |
 | **P2** | 144.3 | **`Art/audio/sfx` is a 117-file duplicate that nothing loads and nothing writes.** Both audio gates were reading it instead of `Resources/Sfx`; they were moved, and the folder is still there | A decision: it is the authored master and something copies it, or it is dead and goes. ⚠️ Not deleted on an inference |
+| **P2** | 144.8 | **The jeepney's metal finish does not show.** The per-surface selection is checked and sound; the body still renders flat white. 🧑 handed this to another session | ⚠️ **One measurement first, not a retune**: print the material name, the SHADER name and the live `_Metallic`/`_Smoothness` for each renderer on the placed prop. § 144.8 lists the four causes and which fix each needs |
 
 ✅ **Closed by the 2026-09-04 hardening pass and no longer listed here: § 143.1, § 143.2, § 143.3, § 143.4, § 143.5, § 143.6, § 143.7, § 143.8, § 143.10, § 143.11, § 143.12, § 143.13, § 143.14, § 143.16, § 143.18.** Each one keeps its own subsection under § 143 with the measurement that closed it. **A done row is a row every future session reads and skips**, which is how an execution index turns back into the 22,930-line file this queue exists to replace.
 
@@ -749,6 +750,53 @@ what follows: *"the Windows and Android players must be rebuilt from the same co
 together, or they refuse each other correctly and it reads as a bug"*.
 `InputContractTests.TheInputPassDidNotMoveTheProtocolVersion` asserts the constant so that a
 legitimate bump is a deliberate act. **Do it at the start of a session, not at the end of one.**
+
+---
+
+### 144.8 ⚠️⚠️ OPEN, AND HANDED TO ANOTHER SESSION: THE JEEPNEY'S METAL FINISH DOES NOT SHOW
+
+🧑, on the fourth render, with a close crop attached: **"this js white shit gang idk if u did
+shaders properly o rnot"**, then *"anyways lets js get diff chat to do it"*. **So this is
+somebody else's to pick up, and it is written down rather than half-fixed.**
+
+**What is in the code right now** (`IlalimNgTulayBuilder.GiveWhitePanelsAMetalFinish` and
+`TryFinishFor`): a per-surface table that copies each of the jeepney's materials and writes
+`_Metallic` and `_Smoothness` onto the copy. Chrome 0.95/0.80 for the material the author named
+`silver_shader4Silver_SG`, 0.40/0.65 for `mi_car_paint_phen_x2SG`, 0.55/0.35 for any other bare
+achromatic panel, and a by-name refusal for the bench seats, glass, rubber and plastic. **The
+selection logic is sound and was checked against the model's own seventeen material names.** It
+is the RESULT that does not read: the body is as flat white in the render as it was before.
+
+⚠️⚠️ **DO NOT START BY RETUNING THE NUMBERS. THE FIRST STEP IS ONE MEASUREMENT AND IT HAS NOT
+BEEN TAKEN.** Raising 0.40 to 0.9 is the obvious move and it is worthless if the write is not
+landing at all. **Print, for each renderer on the placed jeepney: the material name, the SHADER
+name, and the values `_Metallic` and `_Smoothness` actually hold after the pass runs.** That one
+table tells you which of these it is, and they need completely different fixes:
+
+1. ⚠️ **THE PROPERTY NAMES ARE WRONG FOR THE SHADER glTFast BUILT.** `HasProperty` returns false
+   and both writes are silently skipped, which is a no-op that logs nothing. URP Lit uses
+   `_Metallic` and `_Smoothness`; **glTFast's own `glTF/PbrMetallicRoughness` shader does not**,
+   and which one an import produces depends on the package's render-pipeline detection. This is
+   the most likely answer and it is also the cheapest to confirm.
+2. ⚠️ **THE WRITE LANDS AND THERE IS NOTHING TO REFLECT.** Metal is reflection: a metallic
+   surface with no environment probe and no reflection source renders as a dark or flat patch,
+   not as shine. The preview and the map both draw with a skybox, so this is less likely than
+   (1), but `Assets/TumbangPreso/Scenes/Maps/IlalimNgTulay.unity` should be checked for a
+   reflection probe over the north boundary before any number is touched.
+3. ⚠️ **THE MATERIAL IS AN INSTANCE THE SCENE DID NOT KEEP.** `sharedMaterials` is written on a
+   `PrefabUtility.InstantiatePrefab` instance, which is a prefab override; if the scene save
+   drops it the finish exists at build time and not at play time.
+
+⚠️ **AND A FOURTH POSSIBILITY WORTH RULING OUT LAST: it may be landing and simply not reading at
+that distance under this map's flat lighting**, in which case the honest answer is a stronger
+contrast between the chrome and the paint rather than more metal on everything, which is the
+*"dont js spam it"* note again.
+
+⚠️ **THE SELECTION IS THE PART WORTH KEEPING.** Whatever the fix turns out to be, the rules that
+decide WHICH surfaces get it were checked against the model and are the answer to *"make sure the
+parts u paint to look metallic make sense"*: textured materials are the livery and are refused
+outright, `maya_sofa_skin_shadermay` is the bench seats and is refused by name, and anything with
+a hue is his paint. **Do not replace that with "every white material".**
 
 ---
 
