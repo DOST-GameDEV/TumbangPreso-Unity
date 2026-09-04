@@ -705,7 +705,14 @@ namespace TumbangPreso.InputLayer
             // out why a second resolver would rot. ⚠️ `onDark: false`: this is a cream paper
             // screen, and its note is blunt that the same cap has two variants because *"the
             // sprite is not correct on its own, only against the thing it is drawn on."*
-            var sprite = InputGlyphs.For(name, onDark: false);
+            // ⚠️⚠️ THE FAMILY IS FORCED TO PLAYSTATION HERE AND NOWHERE ELSE, BECAUSE THIS SCREEN
+            // LABELS ITS OWN PICTURE. The drawing is a DualShock 4: a triangle glyph beside a
+            // drawn triangle is coherent, and an Xbox `Y` beside it is the two-vocabularies fault
+            // this whole pass exists to remove, just pointing the other way. Every other prompt in
+            // the game follows the pad the player is actually holding, which is
+            // `InputGlyphs.CurrentFamily` and is what omitting this argument gets you.
+            var sprite = InputGlyphs.For(name, onDark: false,
+                                         family: InputGlyphs.PadFamily.PlayStation);
 
             if (sprite != null)
             {

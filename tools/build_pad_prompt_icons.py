@@ -1,4 +1,4 @@
-"""Recolour Kenney's PS4 input prompts into this game's palette and pack them into one sheet.
+"""Recolour Kenney's PS4 and Xbox input prompts into this palette and pack them into one sheet.
 
 WHY THIS EXISTS
 ---------------
@@ -11,9 +11,15 @@ CONTROLLER MAP saw a DualShock drawing with `Y`, `B`, `A` and `X` beside it. Tha
 vocabularies for one device on one screen, which is the fault `docs/VISION.md` § 3 names about
 prompts generally: the screen should teach the control the player is holding.
 
-    Source:  Kenney, "Input Prompts" 1.5, the PlayStation Series / Default set
-    Licence: CC0 1.0 (see tools/assets/kenney_ps4/Kenney_License.txt, verbatim from the pack)
+    Source:  Kenney, "Input Prompts" 1.5, the PlayStation Series and Xbox Series Default sets
+    Licence: CC0 1.0 (Kenney_License.txt sits in both source folders, verbatim from the pack)
     Page:    https://kenney.nl/assets/input-prompts
+
+WARNING  BOTH FAMILIES SHIP AND THE GAME PICKS BETWEEN THEM AT RUNTIME. `UI.InputGlyphs` asks the
+Input System what is actually plugged in: a `DualShockGamepad` gets the PlayStation rows and
+everything else gets Xbox, which is the safe default because XInput is what an unrecognised pad
+is bridged to. Showing a cross to somebody holding an Xbox pad is the same fault as showing `Y` to
+somebody holding a DualShock, which is what this file was written to fix in the first place.
 
 WARNING  THE PS4 SET IS MOSTLY THE SHARED PLAYSTATION SET, AND ONLY TWO FILES ARE PS4-SPECIFIC.
 The four shapes, the four triggers, the two stick clicks, the two sticks and the d-pad are drawn
@@ -26,8 +32,8 @@ WARNING  THE SOURCE ART IS PURE WHITE ON TRANSPARENT AND IS TINTED HERE RATHER T
 `UI.InputGlyphs.For` takes an `onDark` flag and returns a sprite that is already the right colour,
 because its callers set `Image.sprite` and never touch `Image.color`. Two tinted rows keeps that
 contract intact; tinting at runtime would mean auditing every call site for a colour it does not
-currently set. Row 0 is ink for a paper screen, row 1 is cream for the in-match HUD, which is the
-same split the pack this replaces used and the same one its note explains.
+currently set. The light rows are ink for a paper screen and the dark ones cream for the in-match
+HUD, which is the same split the pack this replaces used and the same one its note explains.
 
 WARNING  THE D-PAD'S HIGHLIGHTED ARM KEEPS A COLOUR OF ITS OWN, AND THAT IS THE ONE THING THAT
 MUST NOT BE FLATTENED. Kenney draws the four directions as the same cross with ONE arm in red;
@@ -53,7 +59,15 @@ except ImportError:  # pragma: no cover - report rather than crash, like the aud
     sys.exit(2)
 
 
-SOURCE_DIR = os.path.join("tools", "assets", "kenney_ps4")
+# ⚠️⚠️ TWO FAMILIES, ONE SHEET, ONE COLUMN TABLE. A player on an Xbox pad was being shown
+# PlayStation glyphs, which is `docs/VISION.md` § 3's fault with extra steps: the screen teaching a
+# control the player is not holding. Both sets are packed here rather than into two files so the
+# COLUMN ORDER is physically shared — two sheets built by two passes are two orders that can drift,
+# and the whole point of the emitted index is that nothing downstream has to be told twice.
+FAMILY_DIRS = {
+    "ps": os.path.join("tools", "assets", "kenney_ps4"),
+    "xbox": os.path.join("tools", "assets", "kenney_xbox"),
+}
 
 CELL = 64
 
@@ -85,33 +99,47 @@ SOURCE_MARKER = (231, 50, 70)
 # leave the C# pointing at the wrong cell. This is `tools/build_controller_diagram.py`'s anchor
 # manifest, one file over, for the same reason.
 # ---------------------------------------------------------------------------------------
+# ⚠️ EACH ROW IS (LABEL, PLAYSTATION FILE, XBOX FILE). The label is what the sheet is looked up by
+# and belongs to neither family: it is the Input System's own control name, so `BUTTON SOUTH` is
+# the cross on one pad and the A button on the other, which is exactly the abstraction that lets
+# one binding serve both.
 COLUMNS = [
-    ("BUTTON NORTH", "playstation_button_triangle"),
-    ("BUTTON EAST", "playstation_button_circle"),
-    ("BUTTON SOUTH", "playstation_button_cross"),
-    ("BUTTON WEST", "playstation_button_square"),
+    ("BUTTON NORTH", "playstation_button_triangle", "xbox_button_y"),
+    ("BUTTON EAST", "playstation_button_circle", "xbox_button_b"),
+    ("BUTTON SOUTH", "playstation_button_cross", "xbox_button_a"),
+    ("BUTTON WEST", "playstation_button_square", "xbox_button_x"),
 
-    ("LEFT SHOULDER", "playstation_trigger_l1"),
-    ("RIGHT SHOULDER", "playstation_trigger_r1"),
-    ("LEFT TRIGGER", "playstation_trigger_l2"),
-    ("RIGHT TRIGGER", "playstation_trigger_r2"),
+    ("LEFT SHOULDER", "playstation_trigger_l1", "xbox_lb"),
+    ("RIGHT SHOULDER", "playstation_trigger_r1", "xbox_rb"),
+    ("LEFT TRIGGER", "playstation_trigger_l2", "xbox_lt"),
+    ("RIGHT TRIGGER", "playstation_trigger_r2", "xbox_rt"),
 
-    ("LEFT STICK PRESS", "playstation_button_l3"),
-    ("RIGHT STICK PRESS", "playstation_button_r3"),
-    ("LEFT STICK", "playstation_stick_l"),
-    ("RIGHT STICK", "playstation_stick_r"),
+    ("LEFT STICK PRESS", "playstation_button_l3", "xbox_ls"),
+    ("RIGHT STICK PRESS", "playstation_button_r3", "xbox_rs"),
+    ("LEFT STICK", "playstation_stick_l", "xbox_stick_l"),
+    ("RIGHT STICK", "playstation_stick_r", "xbox_stick_r"),
 
-    ("D-PAD", "playstation_dpad"),
-    ("D-PAD/UP", "playstation_dpad_up"),
-    ("D-PAD/DOWN", "playstation_dpad_down"),
-    ("D-PAD/LEFT", "playstation_dpad_left"),
-    ("D-PAD/RIGHT", "playstation_dpad_right"),
+    ("D-PAD", "playstation_dpad", "xbox_dpad"),
+    ("D-PAD/UP", "playstation_dpad_up", "xbox_dpad_up"),
+    ("D-PAD/DOWN", "playstation_dpad_down", "xbox_dpad_down"),
+    ("D-PAD/LEFT", "playstation_dpad_left", "xbox_dpad_left"),
+    ("D-PAD/RIGHT", "playstation_dpad_right", "xbox_dpad_right"),
 
-    # ⚠️ THE TWO PS4-SPECIFIC FILES. The Input System calls these controls `select` and `start`;
-    # a DualShock 4 calls them SHARE and OPTIONS and draws them as two different little shapes.
-    # The NAME stays the Input System's, because that is what the label lookup is keyed on.
-    ("SELECT", "playstation4_button_share"),
-    ("START", "playstation4_button_options"),
+    # ⚠️ THE TWO THAT ARE GENERATION-SPECIFIC ON BOTH SIDES. The Input System calls these `select`
+    # and `start`; a DualShock 4 calls them SHARE and OPTIONS, an Xbox pad VIEW and MENU. The NAME
+    # stays the Input System's, because that is what the lookup is keyed on.
+    ("SELECT", "playstation4_button_share", "xbox_button_view"),
+    ("START", "playstation4_button_options", "xbox_button_menu"),
+]
+
+# ⚠️⚠️ FOUR ROWS, AND THE ORDER IS A CONTRACT `UI.InputGlyphs` COMPUTES AGAINST:
+# `row = (xbox ? 2 : 0) + (onDark ? 1 : 0)`. Reordering these silently puts Xbox glyphs on a
+# PlayStation pad, or cream ones on a cream screen, and nothing fails.
+ROWS = [
+    ("ps", False),
+    ("ps", True),
+    ("xbox", False),
+    ("xbox", True),
 ]
 
 
@@ -144,30 +172,31 @@ def tint(image, base):
 
 
 def build():
-    sheet = Image.new("RGBA", (CELL * len(COLUMNS), CELL * 2), (0, 0, 0, 0))
+    sheet = Image.new("RGBA", (CELL * len(COLUMNS), CELL * len(ROWS)), (0, 0, 0, 0))
     missing = []
 
-    for column, (_, filename) in enumerate(COLUMNS):
-        path = os.path.join(SOURCE_DIR, filename + ".png")
+    for row, (family, on_dark) in enumerate(ROWS):
+        base = ON_DARK if on_dark else ON_LIGHT
 
-        if not os.path.exists(path):
-            missing.append(filename)
-            continue
+        for column, entry in enumerate(COLUMNS):
+            filename = entry[1] if family == "ps" else entry[2]
+            path = os.path.join(FAMILY_DIRS[family], filename + ".png")
 
-        icon = Image.open(path).convert("RGBA")
+            if not os.path.exists(path):
+                missing.append(f"{family}/{filename}")
+                continue
 
-        if icon.size != (CELL, CELL):
-            print(f"build_pad_prompt_icons: {filename} is {icon.size}, expected {CELL} square.")
-            sys.exit(2)
+            icon = Image.open(path).convert("RGBA")
 
-        # ⚠️ ROW 0 IS THE LIGHT-GROUND VARIANT AND ROW 1 THE DARK ONE, WHICH IS THE ORDER
-        # `InputGlyphs` READS AS `onDark ? 1 : 0`. Swapping them is invisible in the sheet and
-        # puts cream glyphs on the cream settings screen.
-        sheet.paste(tint(icon, ON_LIGHT), (column * CELL, 0))
-        sheet.paste(tint(icon, ON_DARK), (column * CELL, CELL))
+            if icon.size != (CELL, CELL):
+                print(f"build_pad_prompt_icons: {filename} is {icon.size}, "
+                      f"expected {CELL} square.")
+                sys.exit(2)
+
+            sheet.paste(tint(icon, base), (column * CELL, row * CELL))
 
     if missing:
-        print("build_pad_prompt_icons: missing source icons: " + ", ".join(missing))
+        print("build_pad_prompt_icons: missing source icons: " + ", ".join(sorted(set(missing))))
         sys.exit(2)
 
     return sheet
@@ -183,12 +212,13 @@ def write(sheet, out_dir, preview):
 
     with open(index, "w", encoding="utf-8") as handle:
         handle.write("# generated by tools/build_pad_prompt_icons.py - do not hand-edit\n")
-        handle.write("# source: Kenney Input Prompts 1.5, PlayStation Series, CC0\n")
-        handle.write(f"# cell {CELL}px; row 0 is the light-ground tint, row 1 the dark-ground one\n")
+        handle.write("# source: Kenney Input Prompts 1.5, PlayStation and Xbox Series, CC0\n")
+        handle.write(f"# cell {CELL}px. rows: 0 ps light, 1 ps dark, 2 xbox light, 3 xbox dark\n")
+        handle.write("# InputGlyphs computes row = (xbox ? 2 : 0) + (onDark ? 1 : 0)\n")
         handle.write("# label|column\n")
 
-        for column, (label, _) in enumerate(COLUMNS):
-            handle.write(f"{label}|{column}\n")
+        for column, entry in enumerate(COLUMNS):
+            handle.write(f"{entry[0]}|{column}\n")
 
     print(f"wrote {png} ({sheet.width}x{sheet.height}, {len(COLUMNS)} controls)")
     print(f"wrote {index}")
@@ -201,9 +231,12 @@ def write(sheet, out_dir, preview):
 
     # ⚠️ EACH ROW OVER THE GROUND IT IS FOR, because a tint is only correct against the thing it
     # is drawn on. `CLAUDE.md` § 6.2b: over the real background, never an empty scene.
-    strip = Image.new("RGBA", (sheet.width, CELL * 2), (0, 0, 0, 255))
-    strip.paste(Image.new("RGBA", (sheet.width, CELL), (0xFC, 0xD3, 0x9F, 255)), (0, 0))
-    strip.paste(Image.new("RGBA", (sheet.width, CELL), (0x31, 0x19, 0x0B, 255)), (0, CELL))
+    strip = Image.new("RGBA", (sheet.width, CELL * len(ROWS)), (0, 0, 0, 255))
+
+    for row, (_, on_dark) in enumerate(ROWS):
+        ground = (0x31, 0x19, 0x0B, 255) if on_dark else (0xFC, 0xD3, 0x9F, 255)
+        strip.paste(Image.new("RGBA", (sheet.width, CELL), ground), (0, row * CELL))
+
     strip.alpha_composite(sheet)
 
     shot = os.path.join(renders, "pad_prompts_v1.png")

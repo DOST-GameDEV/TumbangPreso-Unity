@@ -74,7 +74,33 @@ namespace TumbangPreso.InputLayer
         };
 
         /// <summary>
-        /// Called once a frame by <see cref="PlayerInputReader"/>.
+        /// ⚠️⚠️ INSTALLED HERE RATHER THAN CALLED BY A COMPONENT, BECAUSE THE ONLY COMPONENT THAT
+        /// CALLED IT DOES NOT EXIST IN THE MENUS. `PlayerInputReader.Update` was the single caller
+        /// of <see cref="Sample"/>, and that component only exists on a locally-driven seat INSIDE
+        /// A MATCH. So in the whole front end nothing ever moved `Current`: it stayed on whatever
+        /// <see cref="Seed"/> chose at boot, or on whatever the last match happened to leave.
+        ///
+        /// ⚠️⚠️ WHAT THAT COST, AND IT IS THE FEATURE'S OWN HEADLINE CLAIM. This class exists so a
+        /// prompt names the control the player is actually holding, *"driven by the last device
+        /// used, not by a setting"*. **Before a player's first match it was driven by neither.**
+        /// A pad player opening SETTINGS got the KEYBOARD page, because
+        /// `ConvertedSettingsPanel` asks this exact question to choose one; every menu prompt that
+        /// branches on device answered for a device nobody was holding.
+        ///
+        /// ⚠️ `onAfterUpdate` IS THE SAME HOOK `GenericPadBridge` REACHED FOR AND FOR THE SAME
+        /// REASON, which its own note spells out: the one component that already ticks input every
+        /// frame only exists in a match, and a pad has to work in the menus, *"which is where the
+        /// player plugs it in and where they go looking when it does nothing."*
+        ///
+        /// ⚠️ IT IS STILL CHEAP. The work is three `wasUpdatedThisFrame` reads and, at most, one
+        /// walk of a pad's buttons; that was acceptable once per frame in a match and is
+        /// acceptable once per input update in a menu.
+        /// </summary>
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        private static void Install() => InputSystem.onAfterUpdate += Sample;
+
+        /// <summary>
+        /// Called once per input update by <see cref="Install"/>.
         ///
         /// ⚠️⚠️ THE GAMEPAD TEST IS `wasUpdatedThisFrame` PLUS AN ACTUATION CHECK, AND THE
         /// ACTUATION CHECK IS LOAD-BEARING. A connected pad reports a state update on most frames

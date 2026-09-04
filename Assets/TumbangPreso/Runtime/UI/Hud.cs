@@ -271,6 +271,26 @@ namespace TumbangPreso.UI
             public Image Glyph;
             public Image CooldownSweep;
             public Text Key;
+
+            /// <summary>
+            /// The PICTURE of the key, when there is one, drawn over the same rect as
+            /// <see cref="Key"/>.
+            ///
+            /// ⚠️⚠️ IT EXISTS BECAUSE THE WORD DOES NOT FIT ON A PAD AND `docs/TODO.md` § 126.9
+            /// SAID SO BEFORE THERE WAS ANY ART TO FIX IT: the chip is *"sized for `Q`"* and
+            /// `BUTTON WEST` in it is *"trading one overflow for a worse one"*. A 22-unit square
+            /// with a cross on it says the same thing in the space the letter had.
+            ///
+            /// ⚠️ THE TEXT IS NOT DELETED, IT IS THE FALLBACK. `UI.InputGlyphs` has no picture
+            /// for most keyboard keys' obscure corners and none at all if the generated sheets
+            /// are missing from a checkout, and its own note is firm about it: *"a glyph that is
+            /// missing is not a glyph that is wrong."* Exactly one of the two is ever visible.
+            /// </summary>
+            public Image KeyGlyph;
+
+            /// <summary>The action this card teaches, so the cap can be re-resolved.</summary>
+            public string KeyAction;
+
             public Text State;
             public Image Fill;
             public Image[] Segments;
@@ -4850,9 +4870,25 @@ namespace TumbangPreso.UI
             // ability's own icon and the thumb control beside it now carries the SAME icon, so
             // the player maps the two by picture rather than by a letter neither surface has.
             // Leaving it wrote `Q` and `E` under two deck tiles on a device with no Q and no E.
-            card.Key.text = OnTouch ? string.Empty : KeyLabel(actionName);
+            card.KeyAction = actionName;
             Place(card.Key.rectTransform, new Vector2(0.5f, 1.0f),
                   new Vector2(0, -(TileSize + KeyGap)), new Vector2(width, 15));
+
+            // ⚠️ THE PICTURE SITS ON THE SAME LINE AS THE WORD AND EXACTLY ONE IS EVER SHOWN.
+            // See `AbilityCard.KeyGlyph`. It is square rather than the row's full width, because
+            // a glyph stretched to a 60-unit card is a button the size of the ability icon above
+            // it, competing with the thing the card is actually about.
+            var keyGlyphGo = new GameObject("KeyGlyph", typeof(RectTransform), typeof(Image));
+            keyGlyphGo.transform.SetParent(cardGo.transform, false);
+
+            card.KeyGlyph = keyGlyphGo.GetComponent<Image>();
+            card.KeyGlyph.preserveAspect = true;
+            card.KeyGlyph.raycastTarget = false;
+
+            Place(card.KeyGlyph.rectTransform, new Vector2(0.5f, 1.0f),
+                  new Vector2(0, -(TileSize + KeyGap) + 2.0f), new Vector2(20.0f, 20.0f));
+
+            PaintKeyCap(card);
 
             if (segmented)
             {
@@ -5161,6 +5197,74 @@ namespace TumbangPreso.UI
 
         private static UnityEngine.InputSystem.InputActionAsset _bindingAsset;
 
+        /// <summary>
+        /// Puts either the picture of the key or its name on one deck card, never both.
+        ///
+        /// ⚠️⚠️ THE DECK'S KEY WAS WRITTEN ONCE AT BUILD AND NEVER AGAIN, so a player who picked
+        /// up a pad mid-match kept reading `Q` under a tile for the rest of the round. That is the
+        /// same fault `UpdateHeroDeck` records fixing for `_inspectHint` — *"this string did not
+        /// [invalidate], so a player who picked up a pad mid-match kept being told the keyboard
+        /// key for the rest of the session"* — surviving one line away from the fix, because only
+        /// the COLOUR of this label was touched per frame.
+        ///
+        /// ⚠️ IT IS BLANK ON TOUCH AND THAT IS DELIBERATE, AND UNCHANGED. The note at the build
+        /// site has the argument: on a phone there is no key to learn, and the thumb control
+        /// already carries the same icon the tile does.
+        /// </summary>
+        private static void PaintKeyCap(AbilityCard card)
+        {
+            if (card == null || card.Key == null) return;
+
+            if (OnTouch || string.IsNullOrEmpty(card.KeyAction))
+            {
+                card.Key.text = string.Empty;
+                if (card.KeyGlyph != null) card.KeyGlyph.enabled = false;
+                return;
+            }
+
+            string label = KeyLabel(card.KeyAction);
+
+            // ⚠️ `onDark: true`. The deck is drawn over the street, which is what that flag means:
+            // `InputGlyphs`' own note is that a sprite *"is not correct on its own, only against
+            // the thing it is drawn on."*
+            var sprite = InputGlyphs.For(label, onDark: true);
+
+            if (sprite != null && card.KeyGlyph != null)
+            {
+                card.KeyGlyph.sprite = sprite;
+                card.KeyGlyph.enabled = true;
+                card.Key.text = string.Empty;
+                return;
+            }
+
+            if (card.KeyGlyph != null) card.KeyGlyph.enabled = false;
+            card.Key.text = label;
+        }
+
+        /// <summary>
+        /// ⚠️ ONE REVISION PAIR FOR THE WHOLE DECK, WHICH IS THE PATTERN `_inspectHintDevice` AND
+        /// `KeyLabel` ALREADY USE. Re-resolving three labels and three sprites every frame would
+        /// be three dictionary lookups and three `ToHumanReadableString` calls for a value that
+        /// changes when somebody rebinds a key or picks up a pad, and `CLAUDE.md` § 7.1 records
+        /// what per-frame string work costs this project.
+        /// </summary>
+        private int _keyCapBindings = -1;
+        private int _keyCapDevice = -1;
+
+        private void RefreshKeyCaps()
+        {
+            if (_keyCapBindings == Settings.Rebinding.Revision
+                && _keyCapDevice == InputLayer.LastInputDevice.Revision)
+                return;
+
+            _keyCapBindings = Settings.Rebinding.Revision;
+            _keyCapDevice = InputLayer.LastInputDevice.Revision;
+
+            PaintKeyCap(_skill1Card);
+            PaintKeyCap(_skill2Card);
+            PaintKeyCap(_ultCard);
+        }
+
         private void UpdateHeroDeck()
         {
             if (_heroDeck == null) return;
@@ -5177,6 +5281,8 @@ namespace TumbangPreso.UI
                 _heroDeck.SetActive(false);
                 return;
             }
+
+            RefreshKeyCaps();
 
             if (_inspectHint != null)
             {

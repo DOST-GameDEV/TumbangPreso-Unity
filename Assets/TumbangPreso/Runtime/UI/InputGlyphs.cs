@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace TumbangPreso.UI
 {
@@ -246,14 +247,55 @@ namespace TumbangPreso.UI
             }
         }
 
-        /// <summary>
-        /// ⚠️ ROW 1 IS THE DARK-GROUND TINT AND ROW 0 THE LIGHT ONE, which is the order the
-        /// generator writes and says so in the manifest's own header. Both are baked because
-        /// `For`'s callers set `Image.sprite` and never `Image.color`.
-        /// </summary>
-        private static Sprite PadSprite(int column, bool onDark)
+        /// <summary>Which family of button names the pad in the player's hands uses.</summary>
+        public enum PadFamily
         {
-            string id = "pad:" + column + ":" + (onDark ? 1 : 0);
+            PlayStation,
+            Xbox,
+        }
+
+        /// <summary>
+        /// The family to draw, from the pad that is actually attached.
+        ///
+        /// ⚠️⚠️ A PLAYER ON AN XBOX PAD WAS BEING SHOWN A CROSS AND A TRIANGLE, WHICH IS THE SAME
+        /// FAULT THE PLAYSTATION SHEET WAS ADDED TO FIX, POINTING THE OTHER WAY. `docs/VISION.md`
+        /// § 3: a screen that teaches the wrong control is worse than one that teaches none. The
+        /// Input System already knows the answer, so nothing here has to guess.
+        ///
+        /// ⚠️ XBOX IS THE DEFAULT AND PLAYSTATION IS THE SPECIAL CASE, WHICH IS THE RIGHT WAY
+        /// ROUND FOR THIS GAME. `DualShockGamepad` covers the DualShock 3, 4 and the DualSense;
+        /// everything else Unity matches, plus **every pad `InputLayer.GenericPadBridge` stands in
+        /// for**, presents as an XInput-shaped device. Guessing PlayStation would put a cross on
+        /// the no-name pads that bridge, which are the ones least likely to be a DualShock.
+        /// </summary>
+        public static PadFamily FamilyOf(Gamepad pad)
+            => pad is UnityEngine.InputSystem.DualShock.DualShockGamepad
+                ? PadFamily.PlayStation
+                : PadFamily.Xbox;
+
+        /// <summary>
+        /// ⚠️ NO PAD MEANS PLAYSTATION, AND THAT IS A DECISION ABOUT ONE SCREEN. The only surface
+        /// that draws pad glyphs with nothing plugged in is `InputLayer.ControllerMapScreen`, whose
+        /// drawing IS a DualShock 4: a triangle beside a picture of a triangle is coherent, and an
+        /// Xbox `Y` beside it is the two-vocabularies fault this whole pass is about. Everywhere
+        /// else, no pad means no pad prompt is being drawn at all.
+        /// </summary>
+        public static PadFamily CurrentFamily
+            => Gamepad.current != null ? FamilyOf(Gamepad.current) : PadFamily.PlayStation;
+
+        /// <summary>
+        /// ⚠️⚠️ THE ROW ARITHMETIC IS A CONTRACT WITH `tools/build_pad_prompt_icons.py`, WHICH
+        /// STATES IT IN THE MANIFEST IT WRITES: rows are ps-light, ps-dark, xbox-light, xbox-dark,
+        /// so `row = (xbox ? 2 : 0) + (onDark ? 1 : 0)`. Reordering the generator's `ROWS` puts
+        /// Xbox glyphs on a DualShock, or cream ones on a cream screen, and nothing fails.
+        ///
+        /// ⚠️ BOTH TINTS ARE BAKED because `For`'s callers set `Image.sprite` and never
+        /// `Image.color`.
+        /// </summary>
+        private static Sprite PadSprite(int column, bool onDark, PadFamily family)
+        {
+            int row = (family == PadFamily.Xbox ? 2 : 0) + (onDark ? 1 : 0);
+            string id = "pad:" + column + ":" + row;
             if (Sprites.TryGetValue(id, out var made)) return made;
 
             var texture = Resources.Load<Texture2D>(PadSheetPath);
@@ -265,7 +307,7 @@ namespace TumbangPreso.UI
             }
 
             int x = column * PadCellPixels;
-            int y = texture.height - ((onDark ? 1 : 0) + 1) * PadCellPixels;
+            int y = texture.height - (row + 1) * PadCellPixels;
 
             if (x < 0 || y < 0
                 || x + PadCellPixels > texture.width || y + PadCellPixels > texture.height)
@@ -323,7 +365,13 @@ namespace TumbangPreso.UI
         /// street, the in-match HUD or the training card; false on a cream paper screen. See
         /// <see cref="KeyVariantOnDark"/> for why one sprite cannot serve both.
         /// </summary>
-        public static Sprite For(string label, bool onDark)
+        /// <summary>
+        /// ⚠️ `family` OVERRIDES THE ATTACHED PAD AND ONLY ONE CALLER PASSES IT.
+        /// `ControllerMapScreen` draws a DualShock and labels its own picture, so its glyphs
+        /// follow the DRAWING rather than the hardware; everywhere else the player's own pad
+        /// decides. Leaving it null is the normal answer.
+        /// </summary>
+        public static Sprite For(string label, bool onDark, PadFamily? family = null)
         {
             if (string.IsNullOrEmpty(label)) return null;
 
@@ -332,7 +380,8 @@ namespace TumbangPreso.UI
             // ⚠️ THE PAD IS ASKED FIRST. Nothing is in both tables today, and if a keyboard row
             // is ever added whose name collides with a controller one, the controller answer is
             // the one a player holding a controller wants.
-            if (PadColumns.TryGetValue(key, out int padColumn)) return PadSprite(padColumn, onDark);
+            if (PadColumns.TryGetValue(key, out int padColumn))
+                return PadSprite(padColumn, onDark, family ?? CurrentFamily);
 
             if (!Table.TryGetValue(key, out var cell)) return null;
 

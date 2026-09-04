@@ -295,9 +295,9 @@ ever becomes inconvenient.
 
 | | |
 |---|---|
-| Asset | [Input Prompts 1.5](https://kenney.nl/assets/input-prompts) by Kenney, the **PlayStation Series / Default** set |
+| Asset | [Input Prompts 1.5](https://kenney.nl/assets/input-prompts) by Kenney, the **PlayStation Series** and **Xbox Series** Default sets |
 | Licence | **CC0 1.0**, verbatim in `tools/assets/kenney_ps4/Kenney_License.txt`. Kenney's own words: *"Support by crediting 'Kenney' or 'www.kenney.nl' (this is not a requirement)"* |
-| Where | The nineteen source PNGs in `tools/assets/kenney_ps4/` |
+| Where | Nineteen source PNGs each in `tools/assets/kenney_ps4/` and `tools/assets/kenney_xbox/` |
 | Ships as | `Assets/TumbangPreso/Resources/UI/input/glyphs_pad_v2.png` plus its index, from `tools/build_pad_prompt_icons.py` |
 | Attribution | Not required. Kenney is already credited in `CreditsContent.CourtesyCredits` for the environment kits |
 
@@ -310,6 +310,12 @@ DualSense means swapping those two and nothing else.
 ⚠️ **WHY IT REPLACED WHAT WAS THERE.** The pad glyphs were the Xbox half of vryell's pack, so the
 map drew a DualShock and labelled it `Y`, `B`, `A`, `X`: two vocabularies for one device on one
 screen. 🧑 2026-09-04: *"change the control icons to these"*, with a sheet of PlayStation prompts.
+
+⚠️⚠️ **BOTH FAMILIES SHIP AND THE GAME PICKS AT RUNTIME**, in one sheet of four rows built from one
+column table, so the two orders cannot drift. `UI.InputGlyphs.FamilyOf` asks whether the attached
+pad is a `DualShockGamepad`; **Xbox is the default** because everything else Unity matches, and
+every pad `GenericPadBridge` stands in for, is XInput-shaped. Showing a cross to somebody holding
+an Xbox pad is the same fault as showing `Y` to somebody holding a DualShock.
 
 ⚠️ **THE ART IS TINTED, NOT USED AS SHIPPED.** Kenney's prompts are pure white on transparent, so
 the generator bakes two rows — ink for paper screens, cream for the in-match HUD — because

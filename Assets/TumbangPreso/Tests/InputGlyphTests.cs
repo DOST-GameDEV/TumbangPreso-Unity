@@ -140,8 +140,14 @@ namespace TumbangPreso.Tests
                 // slices this by `column * 64`, and `EditorTools.InputGlyphImport` caps everything
                 // else in that folder at 512: without its own exception Unity would halve this
                 // sheet twice, silently, and every glyph past the second would come from the wrong
-                // cell or off the end. Nineteen controls at 64 px, two grounds.
-                ("UI/input/glyphs_pad_v2", 1216, 128),
+                // cell or off the end.
+                //
+                // ⚠️ AND THE HEIGHT IS FOUR ROWS, NOT TWO: PlayStation light, PlayStation dark,
+                // Xbox light, Xbox dark. `InputGlyphs.PadSprite` computes
+                // `row = (xbox ? 2 : 0) + (onDark ? 1 : 0)` against exactly that order, so a sheet
+                // that came back two rows tall would read the Xbox pair off the end of the
+                // texture and answer null for every Xbox glyph. Nineteen controls at 64 px.
+                ("UI/input/glyphs_pad_v2", 1216, 256),
             };
 
             foreach (var (path, w, h) in expected)

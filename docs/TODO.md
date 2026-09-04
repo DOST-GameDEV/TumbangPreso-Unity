@@ -452,6 +452,66 @@ attached (`Gamepad.current` is an `XInputController` or a `DualShockGamepad`), s
 sheet by device is a small, well-defined follow-up rather than a redesign. It was not done because
 it was not asked for.
 
+### 142.3g ⚠️⚠️ THE DEVICE SWAP WAS ONLY HALF WIRED, AND ANSWERING "DOES IT WORK" FOUND THREE HOLES
+
+🧑 2026-09-04 asked whether the game switches icons automatically between keyboard and pad.
+**Tracing it rather than assuming found three gaps, and all three are fixed.**
+
+**What already worked:** `LastInputDevice.Sample` polls touch, then pad with an actuation check,
+then keyboard; `Hud.KeyLabel` branches on it and returns the GAMEPAD binding's name, cached and
+invalidated on `LastInputDevice.Revision`. So the text prompts did swap.
+
+#### 142.3g.1 ⚠️⚠️ THE DETECTION NEVER RAN IN THE MENUS
+
+`LastInputDevice.Sample()` had **exactly one caller**: `PlayerInputReader.Update`, a component that
+only exists on a locally-driven seat **inside a match**. In the entire front end nothing moved
+`Current`: it sat on whatever `Seed()` chose at boot or whatever the last match left behind.
+
+⚠️ **THAT IS THE FEATURE'S OWN HEADLINE CLAIM FAILING.** `docs/FUTURE.md` § 14 asks for glyphs
+*"driven by the last device used, not by a setting"*; before a player's first match it was driven
+by neither. A pad player opening SETTINGS got the KEYBOARD page, because `ConvertedSettingsPanel`
+asks this exact question to choose one.
+
+✅ **`LastInputDevice` installs itself on `InputSystem.onAfterUpdate` now**, which is the hook
+`GenericPadBridge` reached for two entries ago **for the identical reason**, stated in its own
+note: the only component that ticks input every frame lives in a match, and a pad has to work in
+the menus. The `PlayerInputReader` call is deleted rather than left beside it.
+
+#### 142.3g.2 ⚠️ THE ICONS ONLY SWAPPED IN THE TUTORIAL
+
+`InputGlyphs.For` had two callers: `GuidedTraining.KeyCap` and the controller map. Everywhere else
+the HUD draws the label as **text in brackets**, so `[SPACE]` became `[BUTTON SOUTH]` and no
+picture switched.
+
+✅ **The ability deck's key chip draws a glyph now**, which closes a complaint § 126.9 filed before
+there was any art to fix it: the chip is *"sized for `Q`"* and `BUTTON WEST` in it is *"trading one
+overflow for a worse one"*. ⚠️⚠️ **And it turned out not to refresh at all**: the text was written
+ONCE at build and only its colour was touched per frame, so a player who picked up a pad mid-match
+read `Q` under the tile for the rest of the round. That is the same fault `UpdateHeroDeck` records
+fixing for `_inspectHint`, surviving one line away from its own fix. `RefreshKeyCaps` keys on
+`Rebinding.Revision` and `LastInputDevice.Revision`, like everything else that caches a label.
+
+⚠️ **THE MID-SENTENCE PROMPTS ARE STILL TEXT AND THAT IS A CONSTRAINT, NOT A CHOICE.**
+`"MASH [" + KeyLabel(action) + "]"` builds a STRING, and this front end draws legacy
+`UnityEngine.UI.Text`, which cannot inline a sprite. Giving those a picture means rebuilding each
+one as a layout of image-plus-label, screen by screen. **The discrete key caps are done; the
+sentences are not, and they are the ones a player reads once.**
+
+#### 142.3g.3 ⚠️ AN XBOX PAD WAS SHOWN PLAYSTATION GLYPHS
+
+Fixed by shipping both families in one sheet and picking at runtime:
+`InputGlyphs.FamilyOf` asks whether the attached pad is a `DualShockGamepad`.
+
+- ⚠️ **XBOX IS THE DEFAULT AND PLAYSTATION IS THE SPECIAL CASE**, which is the right way round
+  here: everything Unity matches that is not a DualShock, **plus every pad `GenericPadBridge`
+  stands in for**, presents as XInput-shaped. Guessing PlayStation would put a cross on exactly
+  the no-name pads least likely to be one.
+- ⚠️ **THE CONTROLLER MAP PINS ITSELF TO PLAYSTATION**, and it is the only caller that overrides
+  the hardware. That screen labels its own picture, and the picture is a DualShock 4: a triangle
+  beside a drawn triangle is coherent, an Xbox `Y` beside it is not.
+- ⚠️ **BOTH FAMILIES COME OUT OF ONE GENERATOR PASS AND ONE COLUMN TABLE**, so the two orders are
+  physically the same list. Two sheets from two passes are two orders that can drift.
+
 ### 142.4 ⚠️ AN UNRECOGNISED PAD IS DRIVEN NOW: § 138.4 STEPS 2 AND 3, BY A ROUTE § 138 DID NOT EXPECT
 
 § 138.4 step 2 asks for a registered fallback LAYOUT. ⚠️⚠️ **THAT ROUTE IS SHUT AND IT IS WORTH

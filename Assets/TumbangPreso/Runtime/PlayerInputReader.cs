@@ -158,7 +158,10 @@ namespace TumbangPreso
             // in chat or driving Kuro is still holding a device, and the prompts on screen still
             // have to name the right control for it. Putting this after the chat guard would
             // freeze every glyph for as long as a message was being written.
-            InputLayer.LastInputDevice.Sample();
+            // ⚠️ `LastInputDevice` SAMPLES ITSELF NOW, from `InputSystem.onAfterUpdate`, because
+            // this component only exists on a seat inside a match and the front end needs the
+            // answer too. The call that used to be here is gone rather than kept alongside:
+            // sampling twice in a frame is harmless but it hides which one is the real one.
 
             if (_motor == null) return;
 
