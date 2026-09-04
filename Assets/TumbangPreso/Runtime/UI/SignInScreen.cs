@@ -171,7 +171,7 @@ namespace TumbangPreso.UI
             }
 
             if (_atBoot) return;
-            if (!Input.GetKeyDown(KeyCode.Escape)) return;
+            if (!InputLayer.MenuNav.CancelPressed) return;
 
             // ⚠️ SPENT, so the screen underneath does not back out on the same press. See
             // `ScreenTakeover.ConsumeEscape`.

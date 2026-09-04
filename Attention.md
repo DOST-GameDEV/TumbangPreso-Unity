@@ -12,7 +12,7 @@ human judgement ('does this FEEL right', 'is this the art we want') or a credent
 Every item below says **what is already done**, so nobody redoes it, and **what exactly is being
 asked of you**, so it is one sitting rather than a project.
 
-Last reviewed 2026-09-03, branch `abilities-rework`.
+Last reviewed 2026-09-04, branch `abilities-rework`.
 
 ---
 
@@ -347,3 +347,88 @@ The cue name is enough if you know it; otherwise say the event, such as "landing
 button" or "slipper bounce". The next session can identify the target and restore only that file.
 Do not ask for or accept a rollback of the whole asset commit, because that would also remove good
 VFX and unrelated accepted audio.
+
+
+---
+
+## 14 · Plug in every controller you can find, and say what happened
+
+**`docs/TODO.md` § 138.4 step 4 and § 142.5.** This is the last open step of the controller work
+and it is the only one that cannot be done from a command line: **nobody has held a pad against
+this project except the one on this desk.** § 138.3 has been blunt about that since it was written,
+and the fallback shipped on 2026-09-04 makes it matter more rather than less.
+
+**What is already done, so none of it needs repeating:**
+
+- **A pad Unity recognises works everywhere**, and now includes backing out of a screen (B), the
+  pause menu (Start) and the whole front end's focus and prompts.
+- **A pad Unity does NOT recognise is no longer dead.** `InputLayer.GenericPadBridge` drives it
+  through a guessed button order, and the guess is drawn and rebindable on the new
+  **SETTINGS, CONTROLS, CONTROLLER MAP** screen.
+- **The guess is asserted in EditMode against a synthetic joystick**, which proves the wiring and
+  says nothing at all about whether the button order is right for any real device.
+
+**What is asked of you:** for each controller you can lay hands on, including the cheap ones and
+anything with an X/D switch, plug it in, open SETTINGS, CONTROLS, CONTROLLER MAP and answer three
+things.
+
+1. **Does the map name your pad, or does it say the game does not recognise it?** The line under
+   the drawing says which.
+2. **Press each button in turn and say which callouts are wrong.** On a recognised pad they should
+   all be right; on an unrecognised one the face buttons are the likely ones, because the
+   PlayStation-style families report them in a different order from the Xbox-style ones.
+3. **Say what the pad is**, in whatever detail is easy: the name on the box, or the manufacturer
+   and product strings the log prints when it is not recognised (search the player log for
+   `[Controller]`).
+
+⚠️ **A pad that works is worth reporting too.** One tested pad written down beats four assumed
+ones, and the list of what has actually been tried is the whole deliverable here.
+
+⚠️ **If a wheel, a flight stick or an arcade stick makes the game act possessed**, that is the
+known cost of the fallback and there is a switch for it: SETTINGS, CONTROLS, **Unrecognised
+controllers**, which only appears when such a device is attached. Say if you hit it, because it
+means the row needs to be easier to find.
+
+---
+
+## 15 · Two tournament rulings, and only you can take them
+
+**`docs/TODO.md` § 143.3 and § 143.9. Everything around both is built; these two are decisions
+rather than code, which is why they are here and not in the queue.**
+
+**Already done, so do not redo it:** `TournamentPreset` is the single canonical answer to what a
+nationals match is, it copies no number from anywhere (rounds ask `MatchRules.RoundCountFor`,
+seconds ask `Balance.RoundTime`), `TournamentGuard.Apply()` clears all eight practice and developer
+switches and reports what it cleared, and a test proves a match cannot start with one set.
+`docs/VISION.md` § 1.1's *"Classic is the tournament ruleset"* is a constant now, so changing it
+fails a test rather than being an argument somebody has in a hall.
+
+### 15.1 Is a bracket match password-locked?
+
+`CustomRules.Private` is **false** in the preset today, which is the shipped default, and that is a
+placeholder rather than an answer. It is a venue question: one laptop per station in a room where
+nobody else can reach the lobby is a different answer from a shared network with spectators on it.
+
+**What is asked of you:** say whether a tournament lobby should be private with a password. It is
+one field, `TournamentPreset.Rules()` sets it, and the test that pins the preset will be updated in
+the same commit.
+
+### 15.2 What happens when somebody drops mid-match?
+
+⚠️⚠️ **THIS IS THE ONE THAT CANNOT BE GUESSED, AND § 140.5 IS WHY: A DROP AND A QUIT ARE THE SAME
+EVENT ON THE WIRE.** The game cannot tell a player whose wifi died from a player who alt-F4'd, so
+"reconnect if it was an accident" is not implementable as stated. `_utp.DisconnectTimeoutMS` is
+**8000**, so a peer whose connection dies keeps a normal-looking arena for eight seconds either way.
+
+**What is asked of you:** one sentence per row.
+
+| Case | The options |
+|---|---|
+| A player drops and comes back within the timeout | resume where the match is, or replay the round |
+| A player drops and does not come back | forfeit the match, forfeit the round, or replay with a substitute |
+| The HOST drops | the match is void and replayed, or the standing score at that moment counts |
+
+> ⚠️ **Nothing else is blocked on this.** The deterministic half is being hardened regardless: what
+> a drop does to score, round, taya, ownership and the winner has to be one outcome on every peer
+> whichever ruling you take. What the ruling decides is what the ORGANISER does next, and that
+> cannot be inferred from the code.

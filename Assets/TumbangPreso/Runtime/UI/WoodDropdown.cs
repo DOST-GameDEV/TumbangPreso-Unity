@@ -470,7 +470,7 @@ namespace TumbangPreso.UI
         private void Update()
         {
             if (_list == null || !_list.activeSelf) return;
-            if (!Input.GetKeyDown(KeyCode.Escape)) return;
+            if (!InputLayer.MenuNav.CancelPressed) return;
 
             ScreenTakeover.ConsumeEscape();
             Close();

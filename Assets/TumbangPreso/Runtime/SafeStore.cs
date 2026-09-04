@@ -35,7 +35,7 @@ namespace TumbangPreso
     /// half that turns this from a nicety into a fix: without it, the extra file is written and
     /// never used.
     ///
-    /// ⚠️ NOTHING HERE MAY REFUSE A MATCH. `docs/TODO.md` § 142.13: a replay, log or profile
+    /// ⚠️ NOTHING HERE MAY REFUSE A MATCH. `docs/TODO.md` § 143.13: a replay, log or profile
     /// write failing must not stop a tournament match starting or finishing unless the data is
     /// genuinely required. Every method returns a value rather than throwing, and the callers
     /// keep their existing "use defaults" behaviour.

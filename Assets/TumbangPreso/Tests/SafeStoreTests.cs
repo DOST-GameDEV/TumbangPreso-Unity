@@ -133,7 +133,7 @@ namespace TumbangPreso.Tests
         [Test]
         public void AWriteThatCannotSucceedReturnsFalseAndDoesNotThrow()
         {
-            // ⚠️ A FAILED SAVE MUST NEVER INTERRUPT A MATCH. `docs/TODO.md` § 142.13: a replay,
+            // ⚠️ A FAILED SAVE MUST NEVER INTERRUPT A MATCH. `docs/TODO.md` § 143.13: a replay,
             // log or profile write failing may not stop a tournament match starting or finishing.
             // The path below is a directory, so writing a file at it cannot work.
             string path = Path_("adirectory");

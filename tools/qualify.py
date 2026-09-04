@@ -334,7 +334,7 @@ def stage_audits():
     The source audits, promoted from "somebody remembered to run them" to a gate.
 
     ⚠️ THEY EXIT NON-ZERO ON A FINDING, which is the whole reason they can gate. An
-    audit that only prints is an audit that goes unread; `docs/TODO.md` § 142.3.
+    audit that only prints is an audit that goes unread; `docs/TODO.md` § 143.3.
     """
     env = dict(os.environ)
     env["PYTHONIOENCODING"] = "utf-8"   # audit_audio_reach dies on a UnicodeEncodeError without it

@@ -190,6 +190,12 @@ namespace TumbangPreso.EditorTools
 
                 if (!HasBinding(action, entry.GamepadPath))
                     gaps.Add($"{entry.Verb}: '{entry.Action}' has no binding on {entry.GamepadPath}");
+
+                string stale = StaleGamepadBinding(action, entry.GamepadPath);
+
+                if (stale.Length > 0)
+                    gaps.Add($"{entry.Verb}: '{entry.Action}' still carries {stale}, which the " +
+                             "catalogue no longer names");
             }
 
             foreach (var row in ScreenInputCatalogue.Rows)
@@ -206,6 +212,12 @@ namespace TumbangPreso.EditorTools
 
                 if (!HasBinding(action, row.GamepadPath))
                     gaps.Add($"'{row.Action}' has no binding on {row.GamepadPath}");
+
+                string stale = StaleGamepadBinding(action, row.GamepadPath);
+
+                if (stale.Length > 0)
+                    gaps.Add($"'{row.Action}' still carries {stale}, which the catalogue no " +
+                             "longer names");
             }
 
             var look = map.FindAction(LookAction, throwIfNotFound: false);
@@ -229,14 +241,80 @@ namespace TumbangPreso.EditorTools
             return false;
         }
 
+        /// <summary>
+        /// A pad binding on this action that the catalogue does not name, or "" when it is clean.
+        ///
+        /// ⚠️⚠️ WITHOUT THIS, `Missing` REPORTED "THE TWO AGREE" ABOUT AN ASSET CARRYING A DEAD
+        /// CONTROL. Its own note says it *"is the verifier the test uses"*, and a verifier that
+        /// only asks whether the RIGHT binding is present cannot see a WRONG one beside it. That
+        /// is how `SpectatorPause` ended up on Start and buttonSouth at once with
+        /// `InputContractTests` green. **The check has to be "exactly this", not "at least this".**
+        /// </summary>
+        private static string StaleGamepadBinding(InputAction action, string path)
+        {
+            foreach (var binding in action.bindings)
+            {
+                if (binding.isComposite || binding.isPartOfComposite) continue;
+                if (string.IsNullOrEmpty(binding.path)) continue;
+                if (!binding.path.StartsWith(GamepadPrefix, System.StringComparison.Ordinal))
+                    continue;
+
+                if (binding.path != path) return binding.path;
+            }
+
+            return "";
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ IT ALSO REMOVES A PAD BINDING THE CATALOGUE NO LONGER NAMES, AND IT DID NOT UNTIL
+        /// 2026-09-04, WHICH IS THIS FILE'S OWN HEADER WARNING COMING TRUE. That header quotes
+        /// `Settings.Rebinding`: *"a stale row in either table is not cosmetic ... a missing
+        /// action silently produces a dead row instead, which is worse, because nobody notices."*
+        /// **A generator that only ever ADDS has exactly that failure one level down.**
+        ///
+        /// ⚠️⚠️ IT WAS FOUND BY MOVING ONE. `SpectatorPause` went from `&lt;Gamepad&gt;/start` to
+        /// `&lt;Gamepad&gt;/buttonSouth` so the new `Pause` action could have Start (`docs/TODO.md`
+        /// § 142.2), and this method dutifully added the new binding and left the old one in
+        /// place. The asset then had **`Pause` on Start and `SpectatorPause` on Start**, which
+        /// `FindDuplicateBindings` passes because they are in different contexts, and which means
+        /// one press of Start opens the broadcast menu AND fires the tactical pause under it. The
+        /// diff said "43 insertions, 0 deletions" and looked completely fine.
+        ///
+        /// ⚠️ THE KEYBOARD HALF IS STILL LEFT ALONE, WHICH IS THE FILE'S STANDING RULE. Only
+        /// bindings carrying the gamepad path prefix are considered for removal, so 🧑's own key
+        /// choices cannot be touched by a catalogue edit.
+        /// </summary>
         private static int EnsureBinding(InputAction action, string path, StringBuilder log)
         {
-            if (HasBinding(action, path)) return 0;
+            int changes = 0;
+
+            // ⚠️ BACKWARDS, BECAUSE `ChangeBinding(i).Erase()` RESHUFFLES THE INDICES BELOW IT.
+            // Forwards, erasing binding 2 of 4 makes the old 3 into the new 2 and the loop skips
+            // it, which is the one stale binding surviving in an action that had two.
+            for (int i = action.bindings.Count - 1; i >= 0; i--)
+            {
+                var binding = action.bindings[i];
+                if (binding.isComposite || binding.isPartOfComposite) continue;
+
+                string existing = binding.path;
+                if (string.IsNullOrEmpty(existing)) continue;
+                if (!existing.StartsWith(GamepadPrefix, System.StringComparison.Ordinal)) continue;
+                if (existing == path) continue;
+
+                action.ChangeBinding(i).Erase();
+                log.AppendLine($"  - {action.name} -> {existing} (moved)");
+                changes++;
+            }
+
+            if (HasBinding(action, path)) return changes;
 
             action.AddBinding(path, groups: GamepadScheme);
             log.AppendLine($"  + {action.name} -> {path}");
-            return 1;
+            return changes + 1;
         }
+
+        /// <summary>The prefix that marks a binding as this generator's business.</summary>
+        private const string GamepadPrefix = "<Gamepad>/";
 
         private static int EnsureScheme(InputActionAsset asset, string name, string[] devices,
                                         StringBuilder log)

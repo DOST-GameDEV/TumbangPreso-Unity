@@ -91,6 +91,9 @@ PERSISTENT_OK = [
     ("PlayerAccount.cs", "an account proof expiry, which is agreed with a server and has "
                          "to be the same clock the server used."),
     ("PlayerHub.cs", "displaying a date to a person."),
+    ('FailureBundle.cs', 'when the bundle was written, and the timestamp in its filename. A '
+                         'crash report whose time is game time is a crash report nobody can '
+                         'line up against a log or against what somebody remembers happening.'),
 ]
 
 

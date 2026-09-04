@@ -263,7 +263,7 @@ namespace TumbangPreso.UI
         {
             if (_root == null || !_root.activeSelf) return;
             if (_signIn != null && _signIn.IsOpen) return;
-            if (!Input.GetKeyDown(KeyCode.Escape)) return;
+            if (!InputLayer.MenuNav.CancelPressed) return;
 
             // ⚠️ THE PRESS IS SPENT BEFORE ANYTHING UNDER THIS SCREEN CAN READ IT. See
             // `ScreenTakeover.ConsumeEscape`: `Input.GetKeyDown` is a fact about the frame, so

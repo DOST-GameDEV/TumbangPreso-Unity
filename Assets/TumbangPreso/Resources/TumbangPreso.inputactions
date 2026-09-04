@@ -275,6 +275,16 @@
                     "interactions": "",
                     "initialStateCheck": true,
                     "priority": 0
+                },
+                {
+                    "name": "Pause",
+                    "type": "Button",
+                    "id": "6f1a2b30-0000-4000-8000-000000000090",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
                 }
             ],
             "bindings": [
@@ -863,17 +873,6 @@
                 },
                 {
                     "name": "",
-                    "id": "94537c26-d002-4e38-958b-d498b0996cb7",
-                    "path": "<Gamepad>/start",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Gamepad",
-                    "action": "SpectatorPause",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "6d59f1e0-7607-488a-83a2-3e75ea2fcf21",
                     "path": "<Gamepad>/dpad/left",
                     "interactions": "",
@@ -891,6 +890,39 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "SpectatorControls",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6f1a2b30-0002-4000-8000-000000000090",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9911e993-19a7-45ab-82c8-ee42ce728684",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2742049f-8988-4cf9-8042-fbf496e12bea",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "SpectatorPause",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -22,7 +22,7 @@ namespace TumbangPreso.PlayTests
     /// the `DontDestroyOnLoad` `MatchDirector` and removed none, so a destroyed component went on
     /// answering `RoundStarted` in later matches, and that handler calls `ResetWorld`, which
     /// teleports all four bodies and re-hands the tsinelas. **Match five was running it five
-    /// times, and nothing crashed.** `docs/TODO.md` § 142.5.
+    /// times, and nothing crashed.** `docs/TODO.md` § 143.5.
     ///
     /// ⚠️ SO WHAT THIS WATCHES IS GROWTH AND REPETITION, NOT CORRECTNESS-IN-ONE-MATCH. A single
     /// iteration passing proves nothing this suite is for; the assertions are all about the

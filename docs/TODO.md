@@ -23,32 +23,38 @@ their numbers, because the reasoning stays valuable. It is not a backlog.
 [`../Attention.md`](../Attention.md), which exists so this queue stays actionable. Adding a
 human-only item here is how the queue stops being read.
 
+⚠️⚠️ **AND WORK THAT SOMEBODY ELSE IS ACTIVELY HOLDING IS NOT HERE EITHER.** Controller support
+(§ 142) has an owner and is being written on `controller-mapping`. **Do not implement, refactor or
+"finish" any of it**, however open a row in § 138 looks: two people writing the same device layer
+is worse than nobody writing it, and this session already deleted one competing generic-pad
+implementation for exactly that reason.
+
 **Nationals is the deadline this queue is ordered against.** P0 is "a match could be lost or a
 build could ship wrong"; P1 is "this will cost an hour at the venue"; P2 is real work that is not
 either of those.
 
 | P | § | What is open | Done looks like |
 |---|---|---|---|
-| **P0** | 142.1 | **The full PlayMode suite is not a release gate and running it twice would only reproduce that twice.** Measured again on `e85b0fc`: **165 cases, 107 passed, 50 failed**. The red set is overwhelmingly cross-fixture contamination, not 50 bugs: a *settings* case fails carrying `CarryTests`' slipper message, twelve fixtures die on `MissingReferenceException`, and nine report a screen or arena that "was never built". § 126.8 proved the same thing three times and named the fix it did not build. | `tools/playmode_suite.py --gate` green **twice back to back**, with every discovered fixture appearing in exactly one group and in the aggregated results. **Coverage is asserted, so a group that silently ran nothing is a failure rather than a pass.** |
-| **P0** | 142.2 | **A build cannot say what it is.** Nothing in a shipped player carries the commit, and `NetSession.ProtocolVersion` is only readable by trying to join something. Two artifacts from different commits refuse each other correctly and read as a bug. | `build-identity.json` written by `GameBuilder` into both players, carrying SHA, protocol, target, app version, UGS project and timestamp; a diagnostic route in the game that prints it; `tools/qualify.py --stage identity` refusing a Windows/Android pair that disagree. |
-| **P0** | 142.3 | **Nothing defines what a tournament match IS**, so "mostly tournament" is reachable by inheriting one static from the previous match. ✅ The rules half is built and asserted (`TournamentPreset`, 525 Core tests). **Open: the Unity half** that reads the eight live modifiers and refuses. | `TournamentPreset.Apply()` clears every named modifier, a check reports the live value of each against `TournamentPreset.Modifiers`, and a test proves a tournament match cannot start with one set. |
-| ~~P0~~ | 142.4 | ✅ **DONE.** `MatchSoakProbe`: 6 matches alternating Classic and Hero Strike, 0 exceptions, 0 invariant violations, 0 leaked motors, +0.19 MB. `-tp-soak-iterations N` buys the long run. | ✅ |
-| ~~P0~~ | 142.5 | ✅ **DONE.** The audit is built and gating, and it found a real one: `MatchBootstrap` leaked four handlers per match into a `DontDestroyOnLoad` director, so match five ran `ResetWorld` five times. 85 subscriptions, 0 unpaired now. | ✅ |
-| ~~P1~~ | 142.6 | ✅ **DONE.** `SceneDependencyCheck` opens every build scene and asserts its references resolve: 9 scenes, 11,536 components, 0 findings. `Checks.RunAll` is eight checks now. | ✅ |
-| ~~P1~~ | 142.7 | ✅ **DONE.** `ScoreIdempotencyTests`, 8 cases green: a replayed knockdown, tag and restore each pay once; a taya is not paid for their own can; nothing lands outside a live round or during the buffer; and a peer that is not the host cannot create a point. | ✅ |
-| **P1** | 142.8 | **The eight source audits only run when somebody remembers.** Current: 49 authority sites / 30 gated / **0 ungated on another body**; 59 wire entries / **0 unreachable**; 61 payloads / **0 mismatched**. | ✅ `tools/qualify.py --stage audits` runs all of them and fails the gate on any finding. Open: the four new audits it lists are written and clean. |
-| **P1** | 142.9 | **Host loss is not proven deterministic.** `DisconnectTimeoutMS` is **8000**, so a peer whose wifi dies keeps a normal-looking arena for eight seconds (§ 140). Migration is deliberately unsupported; the failure must still be one outcome on every peer. | Tests proving host and client cannot disagree about score, round, taya, ownership, winner or disconnect state, and that host loss reaches a clean shutdown with a stated reason rather than a half-alive match. ⚠️ The reconnect/forfeit RULING is `Attention.md`, not this row. |
-| **P1** | 138 | **A controller Unity does not recognise is invisible to the whole game.** ✅ It warns now (`ControllerWatch`). Open: the fallback that makes such a pad actually play. | A generic `Joystick` fallback covering movement, look and the primary verbs, with synthetic-device tests; **no double input when one physical pad is seen by both paths**; `Gamepad` behaviour unchanged. ⚠️ The hardware matrix is `Attention.md`. |
+| **P0** | 143.1 | **The full PlayMode suite is not a release gate and running it twice would only reproduce that twice.** Measured again on `e85b0fc`: **165 cases, 107 passed, 50 failed**. The red set is overwhelmingly cross-fixture contamination, not 50 bugs: a *settings* case fails carrying `CarryTests`' slipper message, twelve fixtures die on `MissingReferenceException`, and nine report a screen or arena that "was never built". § 126.8 proved the same thing three times and named the fix it did not build. | `tools/playmode_suite.py --gate` green **twice back to back**, with every discovered fixture appearing in exactly one group and in the aggregated results. **Coverage is asserted, so a group that silently ran nothing is a failure rather than a pass.** |
+| **P0** | 143.2 | **A build cannot say what it is.** Nothing in a shipped player carries the commit, and `NetSession.ProtocolVersion` is only readable by trying to join something. Two artifacts from different commits refuse each other correctly and read as a bug. | `build-identity.json` written by `GameBuilder` into both players, carrying SHA, protocol, target, app version, UGS project and timestamp; a diagnostic route in the game that prints it; `tools/qualify.py --stage identity` refusing a Windows/Android pair that disagree. |
+| **P0** | 143.3 | **Nothing defines what a tournament match IS**, so "mostly tournament" is reachable by inheriting one static from the previous match. ✅ The rules half is built and asserted (`TournamentPreset`, 525 Core tests). **Open: the Unity half** that reads the eight live modifiers and refuses. | `TournamentPreset.Apply()` clears every named modifier, a check reports the live value of each against `TournamentPreset.Modifiers`, and a test proves a tournament match cannot start with one set. |
+| ~~P0~~ | 143.4 | ✅ **DONE.** `MatchSoakProbe`: 6 matches alternating Classic and Hero Strike, 0 exceptions, 0 invariant violations, 0 leaked motors, +0.19 MB. `-tp-soak-iterations N` buys the long run. | ✅ |
+| ~~P0~~ | 143.5 | ✅ **DONE.** The audit is built and gating, and it found a real one: `MatchBootstrap` leaked four handlers per match into a `DontDestroyOnLoad` director, so match five ran `ResetWorld` five times. 85 subscriptions, 0 unpaired now. | ✅ |
+| ~~P1~~ | 143.6 | ✅ **DONE.** `SceneDependencyCheck` opens every build scene and asserts its references resolve: 9 scenes, 11,536 components, 0 findings. `Checks.RunAll` is eight checks now. | ✅ |
+| ~~P1~~ | 143.7 | ✅ **DONE.** `ScoreIdempotencyTests`, 8 cases green: a replayed knockdown, tag and restore each pay once; a taya is not paid for their own can; nothing lands outside a live round or during the buffer; and a peer that is not the host cannot create a point. | ✅ |
+| **P1** | 143.8 | **The eight source audits only run when somebody remembers.** Current: 49 authority sites / 30 gated / **0 ungated on another body**; 59 wire entries / **0 unreachable**; 61 payloads / **0 mismatched**. | ✅ `tools/qualify.py --stage audits` runs all of them and fails the gate on any finding. Open: the four new audits it lists are written and clean. |
+| **P1** | 143.9 | **Host loss is not proven deterministic.** `DisconnectTimeoutMS` is **8000**, so a peer whose wifi dies keeps a normal-looking arena for eight seconds (§ 140). Migration is deliberately unsupported; the failure must still be one outcome on every peer. | Tests proving host and client cannot disagree about score, round, taya, ownership, winner or disconnect state, and that host loss reaches a clean shutdown with a stated reason rather than a half-alive match. ⚠️ The reconnect/forfeit RULING is `Attention.md`, not this row. |
+| **OWNED** | 142, 138 | ⚠️⚠️ **CONTROLLER SUPPORT HAS AN OWNER AND IS NOT THIS QUEUE'S WORK. DO NOT PICK IT UP.** It is live on `controller-mapping`: `GenericPadBridge`, the CONTROLLER MAP screen, `MenuNav`, and a pad that can back out of a screen. | Nothing here. Read § 142 for what landed; leave the code to the person working on it. |
 | **P1** | 134.12 | **Replay capture is a synchronous GPU stall**: `Texture2D.ReadPixels` at ~10 Hz into a ~46 MB buffer. A 90 s round is 900 captures; four rounds is 3,600. | `AsyncGPUReadback` or equivalent, bounded memory, no runaway queue, disposal proven, no capture after the session is gone, and a before/after measurement. |
-| ~~P2~~ | 142.10 | ✅ **DONE.** Both halves were stale. Measured from source, the normal skills sit at **1.6 to 2.3 m (4.1% to 8.5%)** and the trails are capped rather than sized (1.0 m discs, 6 live, **9.62%** ceiling). The radius is authoritative now and the percentage is derived. | ✅ |
-| ~~P2~~ | 142.11 | ✅ **DONE.** `tools/measure_ability_footprint.py` generates the whole table from source into `docs/reports/ability-footprint-<sha>.md`. Ultimates measure 32% to 37%; normal skills 4.1% to 8.5%. | ✅ |
-| ~~P2~~ | 142.12 | ✅ **DONE.** Five drifted cooldowns, not two (Zack, Sean, Dante, Nemu, Phaister), plus four wrong casts-a-round figures and three stale cross-references. `audit_ability_stat_drift.py` gates it. | ✅ |
+| ~~P2~~ | 143.10 | ✅ **DONE.** Both halves were stale. Measured from source, the normal skills sit at **1.6 to 2.3 m (4.1% to 8.5%)** and the trails are capped rather than sized (1.0 m discs, 6 live, **9.62%** ceiling). The radius is authoritative now and the percentage is derived. | ✅ |
+| ~~P2~~ | 143.11 | ✅ **DONE.** `tools/measure_ability_footprint.py` generates the whole table from source into `docs/reports/ability-footprint-<sha>.md`. Ultimates measure 32% to 37%; normal skills 4.1% to 8.5%. | ✅ |
+| ~~P2~~ | 143.12 | ✅ **DONE.** Five drifted cooldowns, not two (Zack, Sean, Dante, Nemu, Phaister), plus four wrong casts-a-round figures and three stale cross-references. `audit_ability_stat_drift.py` gates it. | ✅ |
 | **P2** | 16 | **One bot run is not balance evidence.** Eight matches at shipped settings spread **58 to 100 throws**, about 20 per cent. | A multi-seed sweep recording SHA, seed, config,each run, mean, median and spread, so no threshold is set against noise. |
-| ~~P2~~ | 142.13 | ✅ **DONE.** `SafeStore` writes through a temp file and keeps the previous version; settings, career and social read the backup before falling back to defaults. 9 tests. | ✅ |
-| ~~P2~~ | 142.14 | ✅ **DONE, and it found no defect**, which is the result worth gating: all 14 `DateTime` reads are persistent timestamps or calendar facts, and every gameplay timer already runs on game time. `audit_gameplay_clocks.py` keeps it that way. | ✅ |
-| **P2** | 142.15 | **There is no cold-start test.** Every run here inherits an editor, a `Library` and a previous session's files. | A clean-state run of the real artifact through launch → playable → host/join → finish a Classic match → rematch, verifying no dependence on developer state. |
-| ~~P2~~ | 142.16 | ✅ **DONE.** `FailureBundle` collects errors from load; `-tp-bundle` writes build identity, system, tournament readiness, network, match state, a live invariant check and the log path. No credentials. | ✅ |
-| **P1** | 142.17 | **Two real defects unmasked by isolating the suite**: no `LoadoutDoor` on the character select stage (5 cases), and the Hero picker showing Classic's `SPEED POWER GRIT` strip instead of naming Dante's skills | Both fixed, both green in the `screens` group |
+| ~~P2~~ | 143.13 | ✅ **DONE.** `SafeStore` writes through a temp file and keeps the previous version; settings, career and social read the backup before falling back to defaults. 9 tests. | ✅ |
+| ~~P2~~ | 143.14 | ✅ **DONE, and it found no defect**, which is the result worth gating: all 14 `DateTime` reads are persistent timestamps or calendar facts, and every gameplay timer already runs on game time. `audit_gameplay_clocks.py` keeps it that way. | ✅ |
+| **P2** | 143.15 | **There is no cold-start test.** Every run here inherits an editor, a `Library` and a previous session's files. | A clean-state run of the real artifact through launch → playable → host/join → finish a Classic match → rematch, verifying no dependence on developer state. |
+| ~~P2~~ | 143.16 | ✅ **DONE.** `FailureBundle` collects errors from load; `-tp-bundle` writes build identity, system, tournament readiness, network, match state, a live invariant check and the log path. No credentials. | ✅ |
+| **P1** | 143.17 | **Two real defects unmasked by isolating the suite**: no `LoadoutDoor` on the character select stage (5 cases), and the Hero picker showing Classic's `SPEED POWER GRIT` strip instead of naming Dante's skills | Both fixed, both green in the `screens` group |
 | **P2** | 141 | Spectator and seat ownership: the duplicate scoreboard name, and regression cover for repeated F1-F4 transitions | § 141 |
 | **P2** | 93 | A held tsinelas drifts **0.084 m** from the hand, four samples, not a flake | § 93 |
 | **P2** | 127 | The taya ring and attacker disc need their non-colour distinction finished | § 127.3 |
@@ -56,7 +62,7 @@ either of those.
 ### The reds that are about the game rather than the suite
 
 ⚠️ **These survive in isolation and are the ones worth fixing.** Everything else in the 50 is
-§ 142.1. Do not fix a contamination failure by editing the code it happened to land on.
+§ 143.1. Do not fix a contamination failure by editing the code it happened to land on.
 
 | Case | What it says |
 |---|---|
@@ -70,7 +76,7 @@ either of those.
 
 ## What is open right now
 
-Twenty-three sections, and this list is the whole of it. Everything else in this repository's history
+Twenty-four sections, and this list is the whole of it. Everything else in this repository's history
 is in the archive with its number unchanged.
 
 ⚠️ **§ 135 and § 136 CLOSED on 2026-09-04 and are in the archive.** § 137 is the pass that closed
@@ -81,10 +87,11 @@ Android thermals need a handset, and a phone joining a PC needs a person to watc
 
 | § | Open work | Where it bites |
 |---|---|---|
+| **142** | Controller support: a picture of the pad you can rebind from, a pad that can leave a screen, and an unrecognised pad that works | 🧑, with a labelled DualShock drawing: *"we will now be implementing controller support. create a menu for controller mapping and ensure controller support works in the game."* ⚠️⚠️ **The map is built and so are the three faults nobody had looked for: EVERY back-out in the game was a keyboard-only `Input.GetKeyDown(KeyCode.Escape)`, so a pad could reach every screen and leave none of them; there was no pause on a pad at all; and the emote wheel opened on the d-pad and could not be steered by one.** § 138 steps 2 and 3 are closed by the same pass. Open: 🧑's eye on it, and a written list of real pads. § 142 |
 | **141** | Spectator and a driven seat were on screen at the same time, and F1-F4 have two readers | 🧑, with a screenshot: **“IF IT isnt spectator why do i see spectator hud”**. ✅ **Cause found and fixed: `Hud.EnterSpectatorMode` had no inverse**, so every re-seat after a spectator window left the HUD stripped and the overlay drawn. The F1-F4 double-read is fixed too, and § 141.2 breaks the premise `CLAUDE.md` § 4 exempts the nine spectator keys on. ⚠️ **Open: the duplicate name on the scoreboard, and his eye on the fix.** § 141 |
 | **140** | The player cannot see the network, and the timeout gives them eight blind seconds | ⚠️⚠️ **The biggest open network item, and it was found by measuring.** There is no ping, no bars, no "reconnecting" anywhere in the game, and `DisconnectTimeoutMS` is 8000, so a peer whose wifi dies keeps a normal-looking arena for eight seconds. **The sampler is built (§ 140.3); the screen is designed and not built (§ 140.4).** § 140.5 is the one that needs a decision rather than code. § 140 |
 | **139** | Settings is four pages now, and the renders found three faults older than the pass | 🧑: *"we have too many settings now"*, *"add tabs or some shit so that they dont have to scroll that much"*. **Done and rendered; it is open because he has not looked at it.** The renders also found blue slider fills and a magenta tick that had shipped the whole port below the fold. § 139 |
-| **138** | A controller Unity does not recognise is invisible to this whole game | 🧑: *"idk how extensive controller support is"*, *"maybe add to todo that it can work for fake controllers and shit too"*. Every controller path reads `Gamepad.current` or a `<Gamepad>/` path, and an unmatched pad is a `Joystick` that none of them see. ✅ **It is no longer SILENT (`ControllerWatch`, § 138.4 step 1): it warns in the log and says so on the settings CONTROLS tab.** Open: the fallback layout that would make such a pad actually work, and a list of pads anybody has really tested. § 138 |
+| **138** | A controller Unity does not recognise is invisible to this whole game | 🧑: *"idk how extensive controller support is"*, *"maybe add to todo that it can work for fake controllers and shit too"*. Every controller path reads `Gamepad.current` or a `<Gamepad>/` path, and an unmatched pad is a `Joystick` that none of them see. ✅ **Steps 1, 2 and 3 are DONE.** It warns (`ControllerWatch`), it is DRIVEN through a guessed mapping (`GenericPadBridge`), and the guess is visible and rebindable (`ControllerMapScreen`). ⚠️ Open: **step 4, a written list of pads anybody has really tested**, which needs hardware rather than code. § 138, § 142 |
 | **134** | The broadcast pass: autopilot, replay, ultimate introductions, the shove that meant nothing, and the keyboard on the phone | 🧑: *"why the fuck does it have keybinds theres no keys in mobile"*, and bots that *"follow players around only to push them"*. **The touch layer, the AI shove, the autopilot, the replay, the six ultimate introductions and Eskinita are done and captured; § 134.10, § 134.12, § 134.15 and § 134.16 are what is left open.** ⚠️ § 134.9 is CLOSED by § 137. § 134 |
 | **133** | One font is doing every job, and it is a display face | 🧑: *"I think the problem is we use the same font for everything"*. **The next session's brief**: a body face that pairs with Darumadrop, plus the lobby and login overhaul, with a logo he is attaching. § 133 |
 | **132** | The loadout said nothing about the hero, and a build vanished the moment the match started | Twelve defaults read `As tuned · As tuned`, the ultimate was not on the board, the hold-key panel named the SLOT rather than the equipped reading, and the TAB tray printed every ability name twice. § 132 |
@@ -185,7 +192,326 @@ taht again"*.
 
 ---
 
-## 142 · THE NATIONALS HARDENING PASS: A QUALIFICATION THAT CANNOT LIE ⚠️⚠️ IN PROGRESS, 2026-09-04, branch `main`
+## 142 · CONTROLLER SUPPORT: A PICTURE OF THE PAD, A PAD THAT CAN LEAVE A SCREEN, AND AN UNRECOGNISED PAD THAT WORKS ⚠️⚠️ OPEN, 2026-09-04, branch `controller-support`
+
+🧑 2026-09-04, with a labelled line drawing of a DualShock attached: *"we will now be
+implementing controller support. create a menu for controller mapping and ensure controller
+support works in the game. use the picture as reference."*
+
+⚠️⚠️ **HALF OF "CONTROLLER SUPPORT" WAS ALREADY BUILT AND SAYING SO MATTERS, BECAUSE THE OTHER
+HALF WAS NOT WHERE ANYBODY WAS LOOKING.** § 139.2 makes the same point about per-device
+rebinding: *"None of that needed building."* Before this pass the pad already had a binding for
+every verb (`InputCatalogue`'s compile gate guarantees it), menu focus and thumb targets on every
+screen (`ScreenFocus`), glyph-swapping prompts (`LastInputDevice`), per-device rebinding
+(§ 125.13), rumble, and a warning for an unmatched device (§ 138.4 step 1).
+
+**What it did not have was a way out of anything, a pause, or a pad that Unity does not know.**
+
+---
+
+### 142.1 ⚠️⚠️ EVERY BACK-OUT IN THE GAME WAS KEYBOARD-ONLY, SO A PAD COULD REACH EVERY SCREEN AND LEAVE NONE OF THEM
+
+**Eleven call sites, all of them `Input.GetKeyDown(KeyCode.Escape)`:** `ConvertedScreen.Update`
+(which is every converted screen in the game at once), `PlayerHub`, `SignInScreen`,
+`CustomCharacterScreen`, `CustomGameScreen`, `WoodDropdown`, `LobbyChat` twice, `RoleSwapCard`,
+`ConvertedSettingsPanel` twice, and `TouchLayoutScreen` through `Keyboard.current` instead.
+
+⚠️⚠️ **`docs/TODO.md` § 138.2'S TABLE MISSED THIS AND THE REASON IS WORTH KEEPING.** That audit
+walked every `<Gamepad>` binding path and every `Gamepad.current` read, which is the right sweep
+for the question it was asking and **cannot see a literal keyboard read**, because a literal has
+no binding to find. The same hole is § 35.3's (nine spectator keys outside the map) and
+`Hud.EnsureSandboxToggle`'s F1 collision (three readers, none of them in the map). **A rule
+asserted over the input asset cannot see a control that never reached the input asset.**
+
+⚠️ **AND IT IS `CLAUDE.md` § 6.3 FAILING ON A WHOLE DEVICE AT ONCE:** *"Escape backs out on every
+screen, always, innermost layer first... A player who learns Escape is reliable and then meets one
+screen where it is not has learned that it is unreliable."* A pad player never got to learn it.
+The same section calls a dead end a bug, and this was every screen in the front end.
+
+✅ **`InputLayer.MenuNav` is the one place that answers it now**, and all eleven go through it.
+It is Escape **or** the UI map's own Cancel, which is B on a pad.
+
+- ⚠️⚠️ **IT IS NOT A NEW BINDING AND MUST NOT BECOME ONE.** B is `ReadyUp` in the PLAYER map.
+  Backing out of a screen is the UI map's `Cancel`, which `UiInputModule` already keeps separate
+  on purpose: *"Two maps, two contexts, exactly as `CLAUDE.md` § 4 describes for the spectator
+  set."* Nothing was added to `Rebinding.RebindableActions` for this.
+- ⚠️⚠️ **THE LEGACY `Input.GetKeyDown` SURVIVES INSIDE IT AND IS NOT A LEFTOVER.** Unity reports
+  **Android's hardware BACK button** as `KeyCode.Escape` through the old manager and does not
+  surface it as a `Keyboard` key at all. Swapping it for `Keyboard.current.escapeKey` would
+  compile, read better, and silently take the back button away from every phone player.
+  **`TouchLayoutScreen` had exactly that fault**: the one screen that exists because the player
+  has no keyboard was the one screen a phone could not leave.
+- ⚠️ **ONE CALL SITE IS DELIBERATELY LEFT ON ESCAPE**: `ConvertedSettingsPanel.Update`'s
+  cancel-a-pad-rebind branch. The rebind operation already cancels through `<Gamepad>/buttonEast`
+  itself, so routing that line through `MenuNav` would run `CancelRebind` twice on one press of B,
+  with two `MenuSfx.Back()`. The comment there says so.
+- ⚠️ **`RoleSwapCard` TAKES SUBMIT AS WELL.** The warmup buffer card taught
+  `[SPACE] / [CLICK] TO DISMISS`, is shown DURING a match so it is not focusable and has no
+  button to move to, and a pad player could only sit and wait it out.
+
+### 142.2 ⚠️⚠️ THERE WAS NO PAUSE ON A PAD, AND `SpectatorPause` HAD TO MOVE FOR THERE TO BE ONE
+
+`PauseWatcher` read `Input.GetKeyDown(KeyCode.Escape)` and nothing else, so **a controller player
+could not leave a running match**: not resume, not settings, not quit to menu.
+
+✅ **`Pause` is a real action now**, `<Keyboard>/escape` and `<Gamepad>/start`, in
+`Rebinding.RebindableActions` under ROUND AND SCREEN, answered for in `ScreenInputCatalogue`, and
+checked by `FindDuplicateBindings` like everything else. That is § 35.3's lesson applied a second
+time: those nine spectator keys were *"not rebindable, not visible in the panel, and not checked by
+anything"*, and this was the tenth.
+
+⚠️⚠️ **`SpectatorPause` MOVED OFF START TO `<Gamepad>/buttonSouth`, AND THE TWO COULD NOT SHARE IT
+EVEN THOUGH THE CONTEXT RULE LOOKS LIKE IT ALLOWS IT.** `PausePanel.OnOpened` renames its own card
+to BROADCAST MENU when `GameLaunch.Spectator` is set, so **`PauseWatcher` serves a spectator too**
+and both readers of Start would have been live on the same frame for the same person. That is
+precisely the R collision `Settings.Rebinding`'s class note records (*"both sides of it are live in
+the same context"*), not the legal kind its `SpectatorContext` set describes. Which one moves is
+also written down there: *"when two must part, the one with fewer readers moves."* Every player
+reaches the pause menu; the tactical pause is an operator key.
+
+### 142.3 THE MENU HE ASKED FOR: `InputLayer.ControllerMapScreen`
+
+⚠️⚠️ **A PICTURE, NOT A BETTER LIST, AND THE REASON IS THE QUESTION.** The settings GAMEPAD page is
+a column of action names against a column of control names, and it answers *"what is LUNGE bound
+to"*. **Nobody has that question.** The question a player holding a pad has is *"what does this
+button under my thumb do"*, and a list can only be read that way round by somebody who already
+knows the answer. The reference 🧑 attached is a labelled diagram for exactly that reason.
+
+**What it is:** the controller in the middle, nine callouts down each side, a leader line from each
+callout to the control it names, and **every callout is a rebind button**.
+
+- **`tools/build_controller_diagram.py` draws it**, in `#55290F` ink on `UiTheme.Paper` with a
+  `PaperSunk` touchpad. ⚠️ The reference is a photocopy whose face buttons are PlayStation cyan,
+  pink and blue, which is three separate § 6.4 bans in one picture; **the four faces are told apart
+  by SHAPE**, which is how the real pad does it and is `FUTURE.md` § 16.1's rule.
+- ⚠️⚠️ **THE PICTURE AND THE ANCHOR TABLE COME OUT OF ONE PASS, AND THAT IS THE WHOLE REASON A
+  LEADER LINE CAN BE TRUSTED.** If the drawing were generated and the arrow-heads typed into C#,
+  moving the d-pad two hundred pixels left would be a change to one file that silently makes four
+  lines in another point at bare plastic. `PadDiagram` reads the emitted manifest.
+- ⚠️⚠️ **NOTHING ON IT IS A LITERAL.** Every label is resolved live, backwards, from the asset:
+  the screen walks the actions and asks each for its **`effectivePath`** on the pad, so a rebind
+  made on the settings page moves a label here and one made here shows there. A diagram with THROW
+  painted beside the right trigger would be `VISION.md` § 3's *"screen that teaches the wrong key"*
+  in the most convincing possible costume.
+- ⚠️ **THE TWO STICKS ARE SHOWN AND NOT PRESSABLE.** `Move` and `Look` are not in
+  `RebindableActions` and `ResolveBindingIndices` deliberately refuses to hand the stick to any
+  direction, but a pad diagram with both sticks blank is a diagram of a pad nobody is holding.
+  They read as jobs and refuse the press, which is § 6.3's *"a control that does nothing must not
+  look pressable"*.
+- ⚠️ **THE SPECTATOR SET IS DELIBERATELY ABSENT AND A FOOTNOTE SAYS SO.** Nine of these controls
+  carry a second job while watching; drawing both would put two labels on most of the pad, which is
+  § 6.2's third claim on the one screen that exists to be scanned.
+- ⚠️ **ONE DOOR**, a row in the settings CONTROLS list beside the touch rows. § 6.3: *"NEVER ADD A
+  SECOND DOOR TO FIX A FINDABILITY PROBLEM. That is exactly how § 92's six-button panel happened."*
+
+⚠️⚠️ **AND THE RENDER FOUND FOUR FAULTS THE SOURCE COULD NOT, WHICH IS `CLAUDE.md` § 6.1 EARNING
+ITS PLACE AGAIN.** Every one of them looked completely fine in the code:
+
+| What the picture showed | The cause |
+|---|---|
+| **No leader lines at all**, on a screen whose whole point is leader lines | `Resources.Load<TextAsset>("UI/input/pad_diagram_v1")` resolved the **PNG** of the same basename and answered **null**. No error, no log. The manifest is `pad_diagram_v1_anchors.txt` now. **`Resources.Load` matches the path first and the type second** |
+| **Still no leader lines** after that was fixed | `SetAsFirstSibling` was meant to put a line under the callout it starts from, and put all eighteen **under the opaque full-screen ground**. "First sibling" is not "under the callouts", it is under everything. They have a named layer between the drawing and the callouts now |
+| **A 640-unit controller in a 980-unit hole** | The generated PNG had 35 per cent transparent margin, so `preserveAspect` fitted the CANVAS rather than the pad. § 6.2c's second question: *"is this image fitted to the region it is SEEN in?"* The generator crops to its own ink and remaps the anchors in the same pass |
+| ⚠️⚠️ **Two lines running diagonally across the drawing and crossing four others** | The ring's order was typed in **under a comment claiming it was sorted by where each control sits on the pad**, and it was not: SELECT and START were at the bottom of their columns and their anchors are near the top. **A comment asserting a property the data does not have.** The order is now SORTED by the anchor's own Y, so the claim is arithmetic |
+
+⚠️⚠️ **AND THE REBIND ITSELF IS `Settings.RebindSession` NOW, SHARED WITH THE SETTINGS PANEL.**
+`ConvertedSettingsPanel.BeginRebind` was the only rebind in the game and carried **eight ⚠️ notes,
+every one of them a fault somebody hit**: the target index must be the page's device or the
+operation quietly edits the keyboard (§ 125.6), the candidates must be restricted or a keyboard
+press on the pad page silently rewrites a key, the action must be disabled or the captured press
+also fires the verb, the applied override must be REMOVED before the conflict check or a refusal
+leaves two verbs sharing a control. **A copy would have had seven of them the next time somebody
+found the ninth.** § 38.5's three dead protocols are what a second path costs here.
+
+### 142.3b ⚠️⚠️ THE EMOTE WHEEL OPENED ON A PAD AND COULD NOT BE STEERED BY ONE
+
+`EmoteWheel.Update` reads `Mouse.current.delta` and returns early on `Mouse.current == null`, so
+on a controller the wheel **opened on the d-pad and then sat there**: no slice could be
+highlighted, and releasing always played nothing. Its own class note is the sharpest part of it,
+because it describes the fix while not having it: *"The wheel accumulates deltas into a stick-like
+vector **exactly as a controller would drive it**."* The abstraction was right and the one device
+it was shaped for was never wired in.
+
+⚠️ **AND THE PAD IS NOT A DELTA.** A mouse reports motion and a stick reports a POSITION, which is
+`InputAssetSync.LookAction`'s note one screen over: *"binding both to one action would make
+`ReadValue<Vector2>` mean two different physical quantities."* So the stick SETS the vector and the
+mouse ACCUMULATES into it, and a player who nudges the stick and then moves the mouse gets the
+mouse's answer rather than a fight between the two.
+
+### 142.3c ⚠️⚠️ THE PAD IS A REAL ILLUSTRATION NOW, AND IT IS CC0 RATHER THAN "OFF GOOGLE"
+
+🧑 2026-09-04, of the first version: *"change the assets for controller map ... change also how
+the controller looks like"*, and *"download it off of google"*.
+
+**The first pad was drawn from primitives** — rounded rectangles, an ellipse per stick, a polygon
+for the d-pad. It read as a controller and it read as programmer art, which is what it was. It is
+now [Grumbel's PlayStation 3 gamepad](https://commons.wikimedia.org/wiki/File:PlayStation_3_gamepad.svg)
+from the Open Clip Art Library via Wikimedia Commons.
+
+⚠️⚠️ **CC0, AND THE SEARCH WAS RESTRICTED TO CC0 SOURCES ON PURPOSE.** The ask was to take art off
+the web; **`docs/Asset_Sourcing.md` § 1 rule 1 is what decided WHICH art**, because an arbitrary
+image result is almost always somebody's copyright and this repository is public. Rule 8 is what
+permits it to be committed at all: *"CC0 and CC BY source may live in this public repository with
+the proper licence."* The licence is `tools/assets/ps3_gamepad_cc0.LICENSE.txt`, the entry is
+`Asset_Sourcing.md` § 8.1, and **no credits line is owed** because CC0 requires none.
+
+⚠️⚠️ **IT IS RECOLOURED ON THE WAY IN AND THE RAW ART NEVER SHIPS.** The source is near-black with
+**green, magenta, red and purple** face buttons: magenta is the exact fault § 139.4 records
+shipping in the settings panel, and the other three each belong to another job in this palette.
+`build_controller_diagram.py` maps every pixel onto the warm ramp **by luminance**, which keeps all
+seven values of the illustration's modelling instead of flattening it, and forces the four face
+glyphs to Honey Quartz so they are told apart by SHAPE. Same call, same reasoning, as
+`tools/build_input_glyphs.py` made about the bought glyph sheets.
+
+⚠️ **THE ANCHORS SURVIVED THE SWAP BECAUSE FOUR OF THEM ARE FOUND RATHER THAN TYPED.** The
+generator locates the four face buttons **by their source hues, before the recolour destroys
+them**. The other fourteen were measured by hand off a coordinate grid, which is why the tool
+asserts the source raster's exact size: a re-render by a different SVG engine is a different set
+of pixels and every leader line would move with nothing failing.
+
+⚠️⚠️ **AND THE REAL ART BROKE THE ROW ORDER, WHICH IS THE INTERESTING PART.** § 142.3 had just
+replaced a typed-in order with a SORT by each anchor's Y. That was right for the drawn pad,
+whose controls sat in two tidy vertical bands, and **wrong the moment the photographed one
+arrived**: SELECT and START sit near the CENTRE, much further from their columns than the d-pad
+or the sticks, and a far target sandwiched between two near ones by height forces its line to cut
+across both. Four crossings, all four those two labels. **The order is the target's ANGLE seen
+from its own column now**, because a fan sorted by angle from one origin cannot cross.
+
+⚠️⚠️ **AND THE ANGLE ALONE WAS STILL NOT ENOUGH, WHICH IS WORTH THE EXTRA PARAGRAPH.** That
+theorem holds for lines leaving ONE point; these leave a column spread over the whole 750-unit
+gutter, so for two targets at nearly the same angle the order can still come out inverted. It
+did, on the very next render: HIDE HUD's leader ended exactly on the point ABILITY INFO's leader
+passed through. `ControllerMapScreen.Uncross` now bubbles adjacent rows while an actual
+**segment-intersection test** says their two lines cross, so *"no reader has to trace a line with
+a finger"* is a property of the output rather than a promise in a comment. The angular sort stays
+in front of it, because it leaves the pass almost nothing to do.
+
+### 142.4 ⚠️ AN UNRECOGNISED PAD IS DRIVEN NOW: § 138.4 STEPS 2 AND 3, BY A ROUTE § 138 DID NOT EXPECT
+
+§ 138.4 step 2 asks for a registered fallback LAYOUT. ⚠️⚠️ **THAT ROUTE IS SHUT AND IT IS WORTH
+WRITING DOWN SO NOBODY SPENDS A DAY REDISCOVERING IT.** Unity's HID support hangs off
+`InputSystem.onFindLayoutForDevice`, and `InputManager` takes the **FIRST** callback that answers
+(`if (!string.IsNullOrEmpty(newLayout) && !haveOverriddenLayoutName)`). HID's callback is registered
+during the Input System's own static initialisation, which is triggered by the first touch of
+`InputSystem` — **including the touch that would register ours** — so there is no order in which
+this game's callback runs first. Out-scoring it with `RegisterLayoutMatcher` instead means beating a
+matcher HID builds per device from the vendor id, the product id and the usage, at runtime.
+
+✅ **So `InputLayer.GenericPadBridge` leaves the joystick where it is and creates a `Gamepad`
+beside it**, copying one into the other from `InputSystem.onAfterUpdate`. That buys step 3 for
+nothing, which is § 138.4's own argument: *"once a pad is a `Gamepad`-derived device the existing
+GAMEPAD page already works."* **Nothing else in the repository learns a new concept**:
+`LastInputDevice`, `ScreenFocus`, `Rumble`, every `<Gamepad>/` binding, both settings pages and the
+new map all just work.
+
+- ⚠️ **THE COST IS ONE FRAME.** A state event queued from `onAfterUpdate` is processed by the next
+  update. A pad that is one frame late is a pad; a pad that is dead is a broken game.
+- ⚠️⚠️ **AN EVENT IS QUEUED ONLY WHEN SOMETHING CHANGED**, and that is what keeps `Gamepad.current`
+  honest. `current` is whichever pad last received an event, so a bridge pumping sixty identical
+  events a second would steal it from a real controller plugged in beside it and hold it for ever,
+  and would flip `LastInputDevice` to pad glyphs with nobody touching the thing.
+- ⚠️ **`onAfterUpdate` RATHER THAN A `MonoBehaviour`.** The one component that already ticks input
+  every frame is `PlayerInputReader`, which only exists on a seat inside a match. A pad has to work
+  in the MENUS, which is where the player plugs it in and where they go looking when it does
+  nothing.
+- ⚠️⚠️ **THE MAPPING IS A GUESS AND THE MAP SCREEN IS ITS CURE**, which is the deal § 138.4 already
+  struck: *"it will be wrong for some pads and right for many, and a wrong mapping the player can
+  SEE beats a dead pad they cannot."* The order is the XInput-style DirectInput one (A, B, X, Y,
+  two bumpers, two triggers, SELECT, START, two stick clicks); **the PlayStation-style families
+  disagree and come out rotated**, and the fix is two presses on the map.
+- ⚠️⚠️ **IT CAN BE SWITCHED OFF, AND THAT IS NOT HEDGING.** A flight stick or a racing wheel is
+  also an unmatched `Joystick`, and bridging one puts a throttle axis on the movement stick and
+  holds a verb down for the whole match. Nothing in the descriptor tells the two apart, so the
+  answer is a switch the player can find: a row in the settings CONTROLS list, drawn **only** when
+  an unrecognised device is actually attached.
+- ⚠️ **`ControllerWatch.StatusLine` CHANGED WITH IT.** It read *"so it will not work"*, which was
+  true in the morning and false by the afternoon. **A screen that tells a player their working
+  controller is broken sends them to unplug it.**
+
+### 142.4b ⚠️ HOW THIS PASS WAS VERIFIED, AND THE ONE SUITE THAT COULD NOT BE
+
+- **EditMode: 355 tests, 1 failure**, and that one is the Mac's own `QualitySettings` churn (see
+  § 142.5). The seven new assertions live in `ControllerSupportTests`.
+- ⚠️⚠️ **THE INTERESTING ONE IS `EveryScreenBacksOutThroughTheOneReaderRatherThanAKeyboardLiteral`,
+  WHICH READS THE RUNTIME SOURCES AS TEXT.** `InputSurfaceCheck`'s reason applies exactly: no
+  running test can see a screen nobody opened, so a twelfth `GetKeyDown(KeyCode.Escape)` added next
+  month would be as silent as the eleven were. ⚠️ **Its first version failed on two COMMENTS** that
+  name the literal in order to explain why it is gone — which is `tools/audit_audio_reach.py`'s
+  lifelong bug (*"the only audit that did not strip comments before looking for a gate"*) reproduced
+  within an hour of reading about it. It strips line comments now.
+- **`Checks.RunAll`: all 7 green in one launch**, including `InputSurfaceCheck`, which is what
+  proves the new screen goes through `MenuKit` rather than building a bare canvas.
+- **Renders: `Logs/shots-runtime/ControllerMap-v95.png` and `-ShortWide.png`**, the second at
+  1920x820 because § 6.2b's third row is the one this repository gets wrong most often.
+  `UiRuntimeShots.Capture` takes a size now; every existing call keeps 1920x1080.
+- ⚠️⚠️ **AND ONE LAUNCH ON THIS MAC SIMPLY HUNG, WHICH IS WORTH THE THREE LINES IT TAKES TO
+  RECOGNISE.** It logged `[UnityConnect] An error occurred` after a `cdn.cloud.unity3d.com` HTTP
+  299, wrote **956 log lines and then nothing for fifteen minutes**, while `ps` showed the process
+  at 160 per cent CPU. That reads exactly like a long import and is not one: `sample` on the pid
+  put the **main thread parked in `ReceiveNextEventCommon`**, the Cocoa event loop, with the CPU
+  all on worker threads. **A batchmode Unity whose main thread is idle is finished or stuck, never
+  busy.** Killing it, clearing `Temp/UnityLockfile` (`CLAUDE.md` § 7) and relaunching was enough.
+
+- ⚠️⚠️ **THE FULL PLAYMODE SUITE COULD NOT BE RUN AND THAT IS § 126.8 RATHER THAN THIS PASS.** It
+  came back `total="0"` with a `MissingReferenceException` inside `QueueCardLayoutProbe.Measure` on
+  a destroyed `RectTransform`: **the whole run died on one fixture's polluted world**, which is the
+  third state `CLAUDE.md` § 7 warns about and § 126.8's exact signature. This file's own header
+  already prescribes the way round it — *"Verify with `-testFilter` over the suites you touched"* —
+  and that is what was done.
+
+### 142.5 ⚠️ WHAT IS STILL OPEN
+
+- ⚠️⚠️ **🧑 HAS NOT LOOKED AT IT, AND THAT IS THE ACCEPTANCE TEST.** `CLAUDE.md` § 6.2 is his three
+  claims and none of the three is visible to any probe in this repository. **This entry stays OPEN
+  until he has opened a build, held a pad, and said the map is right.**
+- ⚠️⚠️ **AND NOBODY HAS HELD AN UNRECOGNISED PAD AGAINST `GenericPadBridge`.** § 138.3 was already
+  blunt about this (*"NOBODY HAS TESTED ANY PAD ON THIS PROJECT EXCEPT THE ONE ON THIS DESK"*) and
+  it is still true. The bridge is asserted in EditMode against a synthetic joystick, which proves
+  the wiring and not the guess. **§ 138.4 step 4, a written list of real pads with vendor and
+  product ids in [`../Attention.md`](../Attention.md), is the open half and it needs hardware.**
+- **The four face buttons are drawn as PlayStation shapes and named by compass position.** That is
+  honest on both families and slightly foreign to each. If it reads wrong to him, the drawing is
+  one Python function.
+- ⚠️⚠️ **AND ONE TRAP THAT IS THE MACHINE RATHER THAN THE CODE, WRITTEN DOWN BECAUSE IT WILL BITE
+  THE NEXT SESSION ON THIS LAPTOP.** Every `-batchmode -runTests -nographics` EditMode run on the
+  **Mac** editor rewrites `ProjectSettings/QualitySettings.asset`, dropping quality level 5
+  (Ultra, the Standalone default) from `antiAliasing: 4` to `0`, and
+  `QualitySettingsAssetTests.EveryStoredAntiAliasLevelMatchesTheDocumentedTable` then fails **on
+  the run that caused it**. It is not a code defect: `git show HEAD:` has 4, the committed value
+  is right, and that test's own message describes the mechanism (*"writing
+  `QualitySettings.antiAliasing` during PLAY writes through to this asset"*). **`git checkout --
+  ProjectSettings/QualitySettings.asset` after a run**, and do not commit the change or chase the
+  red.
+
+- ⚠️⚠️ **AND THE WINDOWS PLAYER WAS NOT BUILT FOR THIS PASS, BECAUSE THIS MACHINE CANNOT BUILD
+  ONE.** The work was done on the **Mac** (`/Applications/Unity/Hub/Editor/6000.5.8f1`), whose
+  installed playback engines are **MacStandaloneSupport and WebGLSupport only**: there is no
+  Windows Standalone module, so `GameBuilder.BuildWindows` has no target to write. `CLAUDE.md`
+  § 7's table describes the Windows laptop and is still right about it. **A Mac player was built
+  and verified instead**; the Windows one has to come off the other machine, from this commit.
+
+- ⚠️ **THE CALLOUTS ARE 76 UNITS TALL, UNDER THE 144-UNIT THUMB FLOOR**, and are padded out by
+  `ScreenFocus.MakeRoomForThumbs` like the touch customiser's bar. Eighteen rows at 144 do not fit
+  a 1080-unit canvas, and this screen exists for a device that has no thumbs on the glass. It will
+  show up in the `ThumbFloor` sweep; see § 126.2 for why that number is a worklist and not a gate.
+
+---
+
+## 143 · THE NATIONALS HARDENING PASS: A QUALIFICATION THAT CANNOT LIE ⚠️⚠️ IN PROGRESS, 2026-09-04, branch `main`
+
+⚠️⚠️ **THIS WAS WRITTEN AS § 142 AND WAS RENUMBERED ON MERGE, WHICH THIS FILE NORMALLY REFUSES TO
+DO.** `controller-mapping` and this pass were both written on 2026-09-04, both off `e85b0fc`, and
+both claimed **§ 142**. The rule in "How this file stays short" is that duplicate top-level numbers
+are tolerated because renumbering breaks pointers, and that rule is about numbers which already
+disagree in the archive. **This was different in the one way that matters: both sections had a
+§ 142.1 and they meant completely different things** (this one is the PlayMode suite not being a
+gate; the controller one is every back-out being keyboard-only). A source comment reading
+`docs/TODO.md § 142.1` would have been genuinely ambiguous rather than merely duplicated.
+
+**The hardening pass moved because it was cheaper to move**: six references in four files this
+session wrote, against twelve across seven for the controller pass, including `CLAUDE.md` and
+`Attention.md`. Nothing else was renumbered and the controller section keeps § 142 whole.
+
 
 **Nationals is about three months out. This entry is not a bug list; it is the pass that makes the
 game hard to break, hard to ship wrongly, and easy to diagnose in a hall.** Every subsection below
@@ -197,7 +523,7 @@ NOT A RELEASE CERTIFICATION.** Every PlayMode number quoted in every handoff in 
 a targeted run. The full suite has been 42 red, then 41, then 56, and now 50, and the RED SET MOVES
 between runs on unchanged code. A gate whose red set moves is not measuring the code.
 
-### 142.1 ⚠️⚠️ OPEN: THE BASELINE ON `e85b0fc`, AND WHY "RUN IT TWICE" WOULD NOT HAVE HELPED
+### 143.1 ⚠️⚠️ OPEN: THE BASELINE ON `e85b0fc`, AND WHY "RUN IT TWICE" WOULD NOT HAVE HELPED
 
 **One full PlayMode run, `-buildTarget Win64`, the shipped exclusions, `Logs/play-baseline.xml`:**
 
@@ -248,7 +574,7 @@ phantoms became ONE specific finding: *"no 'LoadoutDoor' on the character select
 
 ⚠️⚠️ **THAT IS THE ARGUMENT IN ONE LINE: ISOLATION DID NOT MAKE FAILURES GO AWAY, IT TURNED NOISE
 INTO SIGNAL.** The 13 that remain name real defects and two of them were previously invisible
-because a phantom was sitting on top of them (§ 142.17).
+because a phantom was sitting on top of them (§ 143.17).
 
 ⚠️ **The partition is DISCOVERED against the source, not listed.** `--plan` refuses to run at all
 if any fixture is in no group or in two, and the first run of that check earned its keep
@@ -261,7 +587,7 @@ category meaning *"these tests do not work next to each other"* hides this findi
 recording it. **A group is an isolation boundary, not an exemption: every fixture still runs, in
 exactly one group, and the aggregate is the number quoted.**
 
-### 142.2 ⚠️ OPEN: A BUILD CANNOT SAY WHAT IT IS
+### 143.2 ⚠️ OPEN: A BUILD CANNOT SAY WHAT IT IS
 
 `GameVersion.DisplayString` prints `v1.00` in the corner and `BuildBranch` stamps the branch, and
 neither answers the question an operator actually has at a venue, which is **"are these two
@@ -279,7 +605,7 @@ machines running the same game"**.
 diagnostic route that prints it without opening source, and `tools/qualify.py --stage identity`
 refusing a pair that disagree on SHA or protocol.
 
-### 142.3 ⚠️ IN PROGRESS: THE TOURNAMENT PRESET
+### 143.3 ⚠️ IN PROGRESS: THE TOURNAMENT PRESET
 
 ✅ **The rules half landed 2026-09-04.** `Packages/com.tumbangpreso.core/Runtime/TournamentPreset.cs`
 is the single answer to "what is a nationals match", and it copies no number: `Rounds` asks
@@ -305,7 +631,7 @@ a lit NO COOLDOWNS toggle in a tournament room is a HUD disagreeing with the gam
 
 **Open: the Unity half**, which reads the eight live values and refuses.
 
-### 142.4 ✅ CLOSED 2026-09-04: THE SOAK HARNESS, AND WHAT SIX MATCHES MEASURED
+### 143.4 ✅ CLOSED 2026-09-04: THE SOAK HARNESS, AND WHAT SIX MATCHES MEASURED
 
 `MatchSoakProbe` runs `build -> match -> teardown -> rematch` six times in one process,
 **alternating Classic and Hero Strike every iteration** so the pass also crosses the boundary a
@@ -337,7 +663,7 @@ effectively do not play**, which is why `BotBehaviourProbe` moved to a fixed 1/6
 read a score out of `Logs/soak.json` as balance evidence. **It does not weaken the soak**: a quiet
 match crosses the same boundaries as a busy one, and boundaries are the whole subject.
 
-### 142.4b ⚠️ THE ORIGINAL STATEMENT OF THE PROBLEM, KEPT
+### 143.4b ⚠️ THE ORIGINAL STATEMENT OF THE PROBLEM, KEPT
 
 `BotBehaviourProbe` runs a match. `MatchRunTests` runs a match. `GameplayShots` photographs a match.
 **Nothing anywhere runs the fifth match after the fourth rematch**, which is the shape of a
@@ -349,7 +675,7 @@ timers, duplicate scores, duplicate event callbacks, seat ownership corruption, 
 growth, static leakage and host/client divergence, writing a machine-readable summary tied to the
 SHA.
 
-### 142.5 ✅ CLOSED 2026-09-04: THE SUBSCRIPTION AUDIT, AND IT FOUND A REAL CROSS-MATCH LEAK
+### 143.5 ✅ CLOSED 2026-09-04: THE SUBSCRIPTION AUDIT, AND IT FOUND A REAL CROSS-MATCH LEAK
 
 `tools/audit_event_subscriptions.py` pairs every `+=` with a `-=`. **85 subscriptions in
 `Runtime/`, and one file was leaking four of them into the next match.**
@@ -384,7 +710,7 @@ ARE RECORDED IN THE FILE.** Its first run reported 76 findings, about sixty of w
 pattern rather than sloppiness.** An audit that punishes the correct pattern is an audit somebody
 switches off.
 
-### 142.6 ✅ CLOSED 2026-09-04: `SceneDependencyCheck`, THE OPPOSITE TECHNIQUE TO `SceneScriptCheck`
+### 143.6 ✅ CLOSED 2026-09-04: `SceneDependencyCheck`, THE OPPOSITE TECHNIQUE TO `SceneScriptCheck`
 
 `SceneScriptCheck` reads scenes as TEXT **on purpose**, because the fault it hunts is one the
 editor resolves by class name and the player cannot, so opening the scene is what hides it. The
@@ -418,7 +744,7 @@ the code does not do:
 **A check that asserts a convention rather than a contract goes red on correct work, and a check
 that goes red on correct work gets deleted along with whatever it was protecting.**
 
-### 142.7 ⚠️ OPEN: THE AUTHORITATIVE PATHS ARE ARGUED, NOT TESTED, AGAINST DUPLICATES
+### 143.7 ⚠️ OPEN: THE AUTHORITATIVE PATHS ARE ARGUED, NOT TESTED, AGAINST DUPLICATES
 
 The architecture is right and the audits say so on this commit:
 
@@ -436,14 +762,14 @@ awards twice. Nothing tests that.
 the only legal score movements are sums of at most two `ScoreEvent` values, **so 300 where the
 event pays 100 is not a bigger award, it is three awards.**
 
-### 142.8 ✅ THE AUDITS ARE A GATE NOW
+### 143.8 ✅ THE AUDITS ARE A GATE NOW
 
 `tools/qualify.py --stage audits` runs all of them, exits non-zero on any finding, and the verdict
 lands in the qualification report. ⚠️ `PYTHONIOENCODING=utf-8` is set by the runner rather than
 being remembered, because `audit_audio_reach.py` dies on a `UnicodeEncodeError` without it and the
 crash looks like a fault in the thing it is auditing.
 
-### 142.9 ⚠️ OPEN: HOST LOSS
+### 143.9 ⚠️ OPEN: HOST LOSS
 
 `_utp.DisconnectTimeoutMS = 8000` (`NetSession.cs:1172`), so a peer whose wifi dies keeps a
 normal-looking arena for eight seconds. § 140 is the player-facing half and is still open.
@@ -456,7 +782,7 @@ pretending the match continues, a stated reason, and a working way back.
 says a drop and a quit are the same event on the wire; whether a bracket match is replayed,
 resumed or forfeited is `Attention.md`.
 
-### 142.10 ⚠️ OPEN: `VISION.md` § 2 RULE 1 CONTRADICTS ITSELF
+### 143.10 ⚠️ OPEN: `VISION.md` § 2 RULE 1 CONTRADICTS ITSELF
 
 The arena is `CONFINEMENT_RADIUS` 7.0, so 14 m by 14 m = **196 m²**. Rule 1 reads *"about 1.8 to
 2.5 m of radius, which is 3 to 8 per cent of the box"*. Both halves cannot be true:
@@ -472,16 +798,16 @@ The arena is `CONFINEMENT_RADIUS` 7.0, so 14 m by 14 m = **196 m²**. Rule 1 rea
 Zack's Shock Trail as the reference *"and nobody has ever complained about them"*, so the RADII are
 the observed thing and the percentages are the arithmetic that was never done. **Read the abilities
 first**: rule 1's own text also says these two are measured as discs and played as corridors, which
-is § 142.11.
+is § 143.11.
 
-### 142.11 ⚠️ OPEN: EVERY FOOTPRINT NUMBER PREDATES THE CURRENT ABILITIES
+### 143.11 ⚠️ OPEN: EVERY FOOTPRINT NUMBER PREDATES THE CURRENT ABILITIES
 
 `Hero_Strike_Balance.md` and `VISION.md` § 2 carry a **81.9%** worst credible frame and a **27.2%**
 Zack corridor. Both were measured before the ability retune that put Bolt Sprint on 46 s and Flame
 Rush on 50 s, and before Thunderstrike became aimed. **They are history, not measurements of this
 commit**, and nothing regenerates them.
 
-### 142.12 ⚠️ OPEN: ABILITY COMMENTS DISAGREE WITH THEIR OWN CONSTRUCTORS
+### 143.12 ⚠️ OPEN: ABILITY COMMENTS DISAGREE WITH THEIR OWN CONSTRUCTORS
 
 Confirmed by reading both on `e85b0fc`:
 
@@ -513,7 +839,7 @@ HISTORY `CLAUDE.md` § 3 asks for; `CheskaHeroKit.cs:182` argues against a rejec
 that cannot tell a stale fact from a recorded reason gets switched off.** False negatives are
 accepted; false positives are not.
 
-### 142.17 ⚠️ OPEN: TWO DEFECTS THAT WERE INVISIBLE UNTIL THE SUITE WAS ISOLATED
+### 143.17 ⚠️ OPEN: TWO DEFECTS THAT WERE INVISIBLE UNTIL THE SUITE WAS ISOLATED
 
 **Both were sitting underneath a phantom failure and neither could be seen while the full run was
 blaming them for somebody else's leak.**
@@ -527,12 +853,12 @@ blaming them for somebody else's leak.**
   is the CLASSIC attribute strip on the HERO picker. `docs/VISION.md` § 3 is the rule it breaks:
   a player must be able to learn what a power does from character select.
 
-⚠️⚠️ **THIS IS THE ARGUMENT FOR § 142.1 STATED AS A COST RATHER THAN AS A PRINCIPLE.** A gate that
+⚠️⚠️ **THIS IS THE ARGUMENT FOR § 143.1 STATED AS A COST RATHER THAN AS A PRINCIPLE.** A gate that
 reports thirty failures, of which twenty-five are phantoms, does not merely waste time: **it hides
 the five.** Nobody reading *"MatchSetup has no CharacterSelectPanel"* for the fourth run running
 goes looking for a missing door.
 
-### 142.13 to 142.16
+### 143.13 to 143.16
 
 Storage failure hardening, the gameplay clock audit, the cold-start test and the crash bundle. Each
 is stated with its acceptance criteria in the CURRENT IMPLEMENTATION QUEUE at the top of this file.
@@ -942,7 +1268,12 @@ so nothing is overwritten.
 
 ---
 
-## 138 · A CONTROLLER UNITY DOES NOT RECOGNISE IS INVISIBLE TO THIS WHOLE GAME ⚠️⚠️ OPEN, 2026-09-04, branch `abilities-rework`
+## 138 · A CONTROLLER UNITY DOES NOT RECOGNISE IS INVISIBLE TO THIS WHOLE GAME ⚠️ OPEN, 2026-09-04, branch `abilities-rework`
+
+⚠️⚠️ **STEPS 1, 2 AND 3 OF § 138.4 ARE DONE AS OF 2026-09-04 AND § 142 IS THE PASS THAT DID THEM.**
+This entry stays open for **step 4 only**, which needs hardware rather than code. Everything below
+is still the reference for how a pad reaches a Unity game; the step list at the bottom says what
+landed.
 
 🧑 2026-09-04: *"idk how extensive controller support is"*, *"maybe add to todo that it can work
 for fake controllers and shit too? haha or other brands"*, *"idk how controllers work so u figure
@@ -1018,16 +1349,26 @@ wins are about telling the truth and about a fallback, in this order:
    their pad is not working.
    ⚠️ **A WARNING RATHER THAN AN ERROR**: nothing in the game is broken, and an error would fail
    every test run on a machine with a flight stick attached.
-2. **A generic fallback layout.** `InputSystem.RegisterLayoutOverride` / a layout deriving from
-   `Gamepad` matched against a broad HID description, mapping the first four buttons and two
-   sticks by convention. It will be wrong for some pads and right for many, and a wrong mapping the
-   player can SEE beats a dead pad they cannot.
-3. **Let the fallback be rebound.** Once a pad is a `Gamepad`-derived device the existing GAMEPAD
-   page already works, which is the argument for making the fallback a `Gamepad` rather than
-   teaching the whole game about `Joystick`. ⚠️ **`BeginRebind` restricts candidate paths to the
-   page's own device**, so this needs no change there if the fallback reports as a pad.
-4. **A written list of what has actually been tested**, with vendor and product ids, in
-   `Attention.md`. One tested pad written down beats four assumed ones.
+2. ✅ **DONE 2026-09-04, BY A DIFFERENT ROUTE, AND THE ROUTE THIS STEP ASKED FOR IS SHUT.**
+   Registering a layout means winning `InputSystem.onFindLayoutForDevice`, and `InputManager` takes
+   the **FIRST** callback that answers; Unity's own HID callback is registered during the Input
+   System's static initialisation, which is triggered by the first touch of `InputSystem`,
+   **including the touch that would register ours**. There is no order in which this game goes
+   first, and out-scoring it with `RegisterLayoutMatcher` means beating a matcher HID builds per
+   device from the vendor id, the product id and the usage.
+   **`InputLayer.GenericPadBridge` therefore leaves the joystick alone and creates a `Gamepad`
+   beside it**, pumped from `InputSystem.onAfterUpdate`. § 142.4 has the whole argument, the
+   button order it guesses, the one-frame cost, and why it can be switched off.
+3. ✅ **DONE, AND IT CAME FREE WITH STEP 2 EXACTLY AS THIS LINE PREDICTED.** The bridged device IS
+   a `Gamepad`, so the GAMEPAD page, `LastInputDevice`, `ScreenFocus`, `Rumble`, every
+   `<Gamepad>/` binding and the new `ControllerMapScreen` all work on it with no change anywhere.
+   ⚠️ **The map is the better answer than the rebind page here**: a guessed order is wrong in a
+   way a player has to SEE to fix, and § 142.3 is the screen that shows it.
+4. ⚠️⚠️ **STILL OPEN, AND IT IS THE ONLY STEP THAT NEEDS A HUMAN.** A written list of what has
+   actually been tested, with vendor and product ids, in [`../Attention.md`](../Attention.md) —
+   **§ 14 of that file is the ask, written 2026-09-04**. One tested pad written down beats four
+   assumed ones, and the bridge makes this matter more rather than less: it is asserted against a
+   synthetic joystick, which proves the wiring and says nothing about the guess.
 
 ⚠️ **WHAT NOT TO DO: do not widen the `<Gamepad>` binding paths to `<HID>` in the input asset.**
 `CLAUDE.md` § 4a's compile gate exists so a verb cannot ship without a pad answer, and a second

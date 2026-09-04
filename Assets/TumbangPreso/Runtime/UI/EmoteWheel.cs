@@ -13,8 +13,8 @@ namespace TumbangPreso.UI
     /// and *"dont let us change emotes anymore, dunno where to put it anwyays"* — so the set
     /// is fixed in code and there is no locker, no loadout, nothing to configure.
     ///
-    /// Hold the emote key to open, steer with the mouse, release to play the highlighted
-    /// slice. Releasing near the centre plays nothing, which is the escape hatch for someone
+    /// Hold the emote key to open, steer with the mouse or the right stick, release to play
+    /// the highlighted slice. Releasing near the centre plays nothing, which is the escape hatch for someone
     /// who opened it by accident.
     ///
     /// ⚠️⚠️ IT READS RELATIVE MOUSE MOTION, NOT THE CURSOR POSITION. The mouse is LOCKED
@@ -145,16 +145,70 @@ namespace TumbangPreso.UI
                 else if (_emoteAction.WasReleasedThisFrame()) Close(true);
             }
 
-            if (!_open || Mouse.current == null) return;
+            if (!_open) return;
+
+            Steer();
+            UpdateSelection();
+            Redraw();
+        }
+
+        /// <summary>
+        /// Moves the wheel's pointer, from whichever device the player is actually holding.
+        ///
+        /// ⚠️⚠️ THE PAD COULD OPEN THIS WHEEL AND NEVER STEER IT, WHICH MADE THE ONE CONTROL A
+        /// CONTROLLER PLAYER MOST WANTS INTO A CONTROL THAT DID NOTHING. `EmoteWheel` is bound to
+        /// the d-pad in `InputCatalogue`, so it opened; then `Update` read `Mouse.current.delta`
+        /// and returned early on `Mouse.current == null`, so no slice ever highlighted and every
+        /// release played nothing. **The class note above described the fix while not having
+        /// it**: *"The wheel accumulates deltas into a stick-like vector exactly as a controller
+        /// would drive it."* The abstraction was already the right shape and the one device it
+        /// was shaped for was never wired in. `docs/TODO.md` § 142.3b.
+        ///
+        /// ⚠️⚠️ THE STICK SETS THE VECTOR AND THE MOUSE ADDS TO IT, AND THAT ASYMMETRY IS THE
+        /// WHOLE POINT RATHER THAN AN INCONSISTENCY. A mouse reports MOTION and a stick reports a
+        /// POSITION; `InputAssetSync.LookAction` makes the same argument one screen over about
+        /// why the two cannot share an action at all (*"binding both to one action would make
+        /// `ReadValue&lt;Vector2&gt;` mean two different physical quantities"*). Accumulating a
+        /// held stick would run the pointer to the clamp in a third of a second and pin the
+        /// selection to whichever slice the thumb first leaned at.
+        ///
+        /// ⚠️ THE STICK WINS ONLY WHILE IT IS PUSHED. Past the deadzone it takes the wheel; inside
+        /// it, the mouse still works. A player with both plugged in never has to think about which
+        /// one this screen believes, which is `LastInputDevice`'s argument (*"a player who picks up
+        /// a pad mid-match has told you which glyph they want by picking it up"*) applied to a
+        /// control rather than to a label.
+        ///
+        /// ⚠️ THE RIGHT STICK, NOT THE LEFT. The left one is moving the body, and a player emoting
+        /// mid-round is still walking. It is also the stick this game already calls "look", which
+        /// is the same thumb doing the same job: aiming something.
+        /// </summary>
+        private void Steer()
+        {
+            var pad = Gamepad.current;
+
+            if (pad != null)
+            {
+                Vector2 aim = pad.rightStick.ReadValue();
+
+                // ⚠️ THE DEADZONE IS THE WHEEL'S OWN, EXPRESSED BACK IN STICK UNITS. Reusing
+                // `DeadZone` (40 of 220) rather than inventing a second number means the throw at
+                // which a slice lights up is the same fact on both devices, and
+                // `LastInputDevice.IsActuated`'s note records what two numbers for one question
+                // cost the last time.
+                if (aim.sqrMagnitude > (DeadZone / StickClamp) * (DeadZone / StickClamp))
+                {
+                    _stick = aim * StickClamp;
+                    return;
+                }
+            }
+
+            if (Mouse.current == null) return;
 
             Vector2 delta = Mouse.current.delta.ReadValue();
 
             // Screen Y is down, stick Y is up.
             _stick += new Vector2(delta.x, delta.y) * StickGain;
             _stick = Vector2.ClampMagnitude(_stick, StickClamp);
-
-            UpdateSelection();
-            Redraw();
         }
 
         private void UpdateSelection()

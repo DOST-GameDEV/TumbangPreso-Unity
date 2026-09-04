@@ -76,6 +76,7 @@ namespace TumbangPreso.Settings
             "Skill1", "Skill2", "Ultimate",
             "ReadyUp", "CleanFeed", "AbilityInfo",
             "EmoteWheel",
+            "Pause",
             "ToggleFullscreen",
 
             // § SPECTATOR AND BROADCAST. See `SpectatorContext` for why these may share a key
@@ -154,6 +155,7 @@ namespace TumbangPreso.Settings
             { "CleanFeed", "Hide HUD" },
             { "AbilityInfo", "Hold: Ability Info" },
             { "EmoteWheel", "Emote Wheel" },
+            { "Pause", "Pause / Match Menu" },
             { "SpectatorDown", "Fly Down" },
             { "ToggleFullscreen", "Fullscreen" },
             { "SpectatorAutopilot", "Autopilot On / Off" },
@@ -195,7 +197,7 @@ namespace TumbangPreso.Settings
             ("PLAYING THE GAME", new[] { "SpecialAbility", "Grab", "Lunge",
                                          "CurveLeft", "CurveRight" }),
             ("HERO POWERS", new[] { "Skill1", "Skill2", "Ultimate", "AbilityInfo" }),
-            ("ROUND AND SCREEN", new[] { "ReadyUp", "EmoteWheel", "CleanFeed",
+            ("ROUND AND SCREEN", new[] { "ReadyUp", "EmoteWheel", "CleanFeed", "Pause",
                                          "ToggleFullscreen" }),
             ("SPECTATOR CAMERA", new[] { "SpectatorAutopilot", "SpectatorCycleTarget",
                                          "SpectatorFreeFly", "SpectatorPov", "SpectatorDown",
@@ -490,6 +492,62 @@ namespace TumbangPreso.Settings
             }
 
             return "-";
+        }
+
+        /// <summary>
+        /// The raw control PATH <paramref name="action"/> resolves to on
+        /// <paramref name="device"/>, or "" when it has none there.
+        ///
+        /// ⚠️⚠️ THE PATH, NOT THE DISPLAY NAME, AND THE DIFFERENCE IS WHAT MAKES A DIAGRAM
+        /// POSSIBLE. `DisplayNameFor` runs `InputControlPath.ToHumanReadableString`, which is a
+        /// LOSSY, LOCALISED, LAYOUT-DEPENDENT string: on a DualSense the same binding comes back
+        /// as "Cross" and on an Xbox pad as "A". `InputLayer.ControllerMapScreen` has to know
+        /// which lump of plastic in its picture to draw a line to, and only the path says that.
+        ///
+        /// ⚠️ IT IS THE `effectivePath`, SO IT FOLLOWS A REBIND. A screen built on
+        /// `bindings[i].path` would draw the shipped default for ever and be wrong for exactly
+        /// the players who went looking for the screen.
+        /// </summary>
+        public static string PathFor(InputActionAsset asset, string action, InputDeviceKind device)
+        {
+            var indices = ResolveBindingIndices(asset, action, out var a);
+            if (a == null) return "";
+
+            foreach (int index in indices)
+            {
+                string path = a.bindings[index].effectivePath;
+                if (PathIsFor(path, device)) return path;
+            }
+
+            return "";
+        }
+
+        /// <summary>
+        /// The path of the ONE plain binding on <paramref name="actionName"/> for this device,
+        /// ignoring composites, for the two analogue actions no direction owns.
+        ///
+        /// ⚠️ `Move` AND `Look` ARE NOT IN `RebindableActions` AND STILL HAVE TO BE DRAWN. They
+        /// are the two most important controls on a pad and `PathFor` cannot reach them: `Move`'s
+        /// stick is *"correctly nobody's"* by `ResolveBindingIndices`' own note, and `Look` has no
+        /// rebind row at all. A controller diagram that left both sticks blank would be a diagram
+        /// of a pad the player is not holding.
+        /// </summary>
+        public static string PlainPathFor(InputActionAsset asset, string actionName,
+                                          InputDeviceKind device)
+        {
+            var action = Find(asset, actionName);
+            if (action == null) return "";
+
+            for (int i = 0; i < action.bindings.Count; i++)
+            {
+                var b = action.bindings[i];
+                if (b.isComposite || b.isPartOfComposite) continue;
+                if (!PathIsFor(b.effectivePath, device)) continue;
+
+                return b.effectivePath;
+            }
+
+            return "";
         }
 
         /// <summary>The four rows that are parts of the WASD composite rather than actions.</summary>
