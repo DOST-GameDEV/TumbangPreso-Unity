@@ -9,7 +9,7 @@ before inventing a task, and update it in the same commit as the work.
 
 ## What is open right now
 
-Nineteen sections, and this list is the whole of it. Everything else in this repository's history
+Twenty-two sections, and this list is the whole of it. Everything else in this repository's history
 is in the archive with its number unchanged.
 
 ⚠️ **§ 135 and § 136 CLOSED on 2026-09-04 and are in the archive.** § 137 is the pass that closed
@@ -20,6 +20,9 @@ Android thermals need a handset, and a phone joining a PC needs a person to watc
 
 | § | Open work | Where it bites |
 |---|---|---|
+| **140** | The player cannot see the network, and the timeout gives them eight blind seconds | ⚠️⚠️ **The biggest open network item, and it was found by measuring.** There is no ping, no bars, no "reconnecting" anywhere in the game, and `DisconnectTimeoutMS` is 8000, so a peer whose wifi dies keeps a normal-looking arena for eight seconds. **The sampler is built (§ 140.3); the screen is designed and not built (§ 140.4).** § 140.5 is the one that needs a decision rather than code. § 140 |
+| **139** | Settings is four pages now, and the renders found three faults older than the pass | 🧑: *"we have too many settings now"*, *"add tabs or some shit so that they dont have to scroll that much"*. **Done and rendered; it is open because he has not looked at it.** The renders also found blue slider fills and a magenta tick that had shipped the whole port below the fold. § 139 |
+| **138** | A controller Unity does not recognise is invisible to this whole game | 🧑: *"idk how extensive controller support is"*, *"maybe add to todo that it can work for fake controllers and shit too"*. Every controller path reads `Gamepad.current` or a `<Gamepad>/` path, and an unmatched pad is a `Joystick` that none of them see. **The failure is completely silent.** § 138.4 step 1 is the cheap half and needs no pad to build. § 138 |
 | **134** | The broadcast pass: autopilot, replay, ultimate introductions, the shove that meant nothing, and the keyboard on the phone | 🧑: *"why the fuck does it have keybinds theres no keys in mobile"*, and bots that *"follow players around only to push them"*. **The touch layer, the AI shove, the autopilot, the replay, the six ultimate introductions and Eskinita are done and captured; § 134.10, § 134.12, § 134.15 and § 134.16 are what is left open.** ⚠️ § 134.9 is CLOSED by § 137. § 134 |
 | **133** | One font is doing every job, and it is a display face | 🧑: *"I think the problem is we use the same font for everything"*. **The next session's brief**: a body face that pairs with Darumadrop, plus the lobby and login overhaul, with a logo he is attaching. § 133 |
 | **132** | The loadout said nothing about the hero, and a build vanished the moment the match started | Twelve defaults read `As tuned · As tuned`, the ultimate was not on the board, the hold-key panel named the SLOT rather than the equipped reading, and the TAB tray printed every ability name twice. § 132 |
@@ -111,6 +114,333 @@ taht again"*.
    appear more than once. Renumbering would break every pointer in `CLAUDE.md`, `VISION.md`,
    `FUTURE.md` and the code comments, which is a worse trade than a duplicate heading. **Search by
    title as well as by number.**
+
+---
+
+## 140 · THE PLAYER CANNOT SEE THE NETWORK, AND THE TIMEOUT GIVES THEM EIGHT BLIND SECONDS ⚠️⚠️ OPEN, 2026-09-04, branch `abilities-rework`
+
+🧑 2026-09-04: *"thoroughly check if u broke network or if theres shit we can imrpvoe in network
+and crossplay"*. Nothing was broken (§ 140.1). **This is the biggest thing that can be improved,
+and it was found by measuring rather than by reading.**
+
+### 140.1 FIRST, THE CHECK: NOTHING WAS BROKEN
+
+The settings and touch work touched no file under `Runtime/Net/`. Re-run after it, on the same
+commit as the tab overhaul:
+
+| | Reading |
+|---|---|
+| `Core.Tests` | 489 passed, 0 failed |
+| `audit_ability_authority.py` | 49 sites, 30 gated, **0 ungated on another body** |
+| `audit_request_call_sites.py` | **59 wire entry points, 0 unreachable** |
+| `audit_wire_payloads.py` | **61 named messages, 0 mismatched** |
+| `audit_audio_reach.py` | 42 sites, **0 host-only** |
+| `audit_presentation_reach.py` | 96 sites, 96 reachable, **0 host-only** |
+| `audit_cue_relay.py` | 48 sites, **0 UNGATED** |
+| `NetSession.ProtocolVersion` | **23, unmoved** |
+
+### 140.2 ⚠️⚠️ THE GAP: THERE IS NO CONNECTION READOUT OF ANY KIND
+
+Grepping the whole runtime for `Rtt`, `ping`, `latency`, `Unstable` and `reconnect` on 2026-09-04
+returns **one comment about audio latency and nothing else.** No ping number, no bars, no
+"reconnecting", no "connection lost" on any screen in the game.
+
+⚠️⚠️ **AND `ConfigureTimeouts` TURNS THAT INTO AN EIGHT SECOND HOLE.** `DisconnectTimeoutMS` is
+**8000**, chosen deliberately and reasoned in its own note: *"eight seconds of complete silence on
+either is a machine that has gone, not a machine that is late."* § 137.5 measured both sides of
+that number for the first time:
+
+| Outage | What happened |
+|---|---|
+| 5 s | **Survived.** No disconnect logged at all; both peers still agreed on every discrete field |
+| permanent | Dropped at the timer, client fell back to its own lobby |
+
+**So a peer whose wifi dies keeps a completely normal-looking arena in front of it for eight
+seconds.** Bodies keep interpolating, the HUD keeps drawing, the clock keeps running, and nothing
+anywhere says the machine has stopped hearing from the referee. For a brief that is explicitly
+*"a tournament room, bad wifi, no second chance"*, those eight seconds are the emptiest part of
+the whole stack, and they are exactly the ones somebody standing behind the player needs to read.
+
+### 140.3 ✅ THE MEASURABLE HALF IS BUILT
+
+`NetSession.SampleLink` samples `UnityTransport.GetCurrentRtt` once a second on **both** peers and
+publishes `NetSession.LinkRttMs` and `NetSession.Link` (`Unknown` / `Good` / `Poor` / `Bad`).
+
+- ⚠️ **ON THE CLIENT TOO, AND THAT IS THE POINT.** `NetSession.Update` returns early unless
+  `IsServer` for everything else it does; the client is the peer that suffers a bad link and the
+  one whose player needs telling, so sampling only on the host would measure the machine least
+  likely to be the problem.
+- ⚠️ **THE HOST REPORTS ITS WORST PEER, NOT AN AVERAGE.** A host with three good clients and one
+  on a dying phone has a problem, and a mean of four hides the one peer anybody cares about.
+- ⚠️ **THE BOUNDS ARE § 137.5'S OWN ROWS RATHER THAN PICKED NUMBERS.** Poor at 200 ms, because 150
+  measured *"indistinguishable from the clean row"*; Bad at 450, because 600 measured *"degraded
+  but connected"* and is where `PlausibleIntentPose` is expected to start refusing verbs (§ 135.3).
+- **It logs on a state CHANGE, never on a sample**, which is what `tools/net_matrix.py` can read
+  off `Player.log` and therefore what can be asserted. A line per second per peer would be noise
+  in exactly the log somebody is reading to find out what went wrong.
+- ⚠️ **NO PEERS IS `Unknown`, NOT `Bad`.** A host alone in a lobby has nothing to measure, and
+  reporting that as a bad link would light a warning on the one screen where nothing is wrong.
+
+### 140.4 ⚠️ WHAT IS NOT BUILT: THE SCREEN
+
+**Deliberately not built, because a new always-on HUD element is a design pass and not a field.**
+`CLAUDE.md` § 4a rule 4 asks three questions of anything that is not a screen or a verb, and § 6.2
+asks what the ONE thing on the screen is. An indicator that is on all the time is a permanent tax
+on the readability budget `docs/VISION.md` § 2 sets in a 14 by 14 metre box.
+
+**The design, so the next session does not start from a blank page:**
+
+1. ⚠️⚠️ **IT APPEARS ONLY WHEN IT IS NOT `Good`.** A ping number in the corner of every match is a
+   number the player has to learn to ignore. The whole value is in the transition, so the control
+   that is invisible at `Good` is the one that means something when it is not.
+2. **Three states, not a number.** `Poor` and `Bad` are the two the player can act on (wait, or
+   tell the room); the millisecond count belongs in the log, not on the arena. `docs/VISION.md`
+   § 3's rule about the HUD carrying no sentences applies.
+3. ⚠️ **AND THE COUNTDOWN IS THE PART THAT IS ACTUALLY NEW.** Above about four seconds of silence
+   the honest thing to draw is how long is left of the eight, because that is a fact the player
+   can do something with and it is the one thing no other game element can imply.
+4. **On the HUD canvas**, which means top centre or top right, in the carved wood palette
+   (§ 133.4 keeps the HUD in the old colours on purpose). ⚠️ **Not `TouchHud`'s canvas**: this one
+   is a readout rather than a control, so it does not need a raycaster and must not steal a press.
+5. **Three devices**: it is not interactive, so the pad and thumb answers are both "nothing to
+   press". That is a written answer rather than silence, which is what § 4a asks for.
+6. **The host also needs the per-peer version**, because the host is the one who has to decide
+   whether to wait. A row on the pause menu naming which seat is struggling is the cheap shape.
+
+### 140.5 ⚠️⚠️ AND THE ONE NOBODY CAN FIX WITHOUT DECIDING SOMETHING: A DROP AND A QUIT ARE THE SAME EVENT
+
+§ 137.6's third row measured this on purpose. **"The peer went away" and "the network went away"
+are the same event to the transport**, both end at the same 8 second timer, and both produce the
+same bot in the same seat. In a tournament room those are two different sentences to say out loud,
+and the game currently cannot say either.
+
+⚠️ **THIS IS A PRODUCT DECISION BEFORE IT IS AN ENGINEERING ONE.** An orderly quit already sends a
+real `DisconnectClient` (`ConfigureTimeouts`'s note says so), so the two ARE distinguishable at the
+transport: a clean disconnect versus a timeout. **Nothing reads that difference and nothing shows
+it.** Answering it is worth more to a bracket than any latency work, because it decides whether a
+round is replayed.
+
+---
+
+## 139 · SETTINGS IS FOUR PAGES NOW, AND THE RENDERS FOUND THREE FAULTS THAT HAD SHIPPED FOR THE WHOLE PORT ⚠️ OPEN, 2026-09-04, branch `abilities-rework`
+
+🧑 2026-09-04, three asks in one message: *"make controller settings in settings look prettier
+too"*, *"make it rebindable in controller"*, and *"can u overhaul how settings is organized? maybe
+add tabs or some shit so that they dont have to scroll that much"*, *"we have too many settings
+now"*.
+
+### 139.1 THE BASELINE, AND ALL THREE COMPLAINTS ARE VISIBLE IN ONE PICTURE
+
+`Logs/shots-runtime/Settings-v91.png`, taken 2026-09-03, before any of this. Everything in the
+panel was in ONE `ScrollRect`: the visible page was the username, the device pair and six MOVEMENT
+rows, and the scrollbar handle was about a sixth of its track. Below the fold, unseen, were the
+mouse sensitivity, invert Y, fullscreen, render style, vertical sync, anti-aliasing, the slipper
+highlight, three volume sliders, the telemetry picker and its privacy disclosure.
+
+⚠️ **SO "TOO MANY SETTINGS" IS EXACTLY RIGHT AND IT IS NOT A COUNT PROBLEM.** `CLAUDE.md` § 6.2's
+third claim names this failure mode: *"everything the feature can do is on screen at once, in one
+flat list, with nothing saying what matters."* A player looking for the music volume had no way to
+know it existed.
+
+### 139.2 ⚠️⚠️ "MAKE IT REBINDABLE IN CONTROLLER" WAS ALREADY BUILT, AND SAYING SO MATTERS
+
+**Per-device rebinding shipped on 2026-09-02** (§ 125.13, § 126.6). `Rebinding.ResolveBindingIndices`
+returns every binding for an action, `TryRebind` writes the override onto the binding for the device
+the player just pressed, `BeginRebind` restricts the candidate paths to the page's own device, and
+the pad page cancels on the pad's own B. **None of that needed building.**
+
+⚠️ **WHAT WAS WRONG WAS THAT NOBODY COULD FIND IT, WHICH IS § 96 AGAIN.** The KEYBOARD / GAMEPAD
+pair was a row inside the scroll, behind a `MenuBody` label reading **"Showing"**, drawn at
+`BindingControlSize` (170 by 46), which is the exact size and shape of the keycaps under it. So the
+one control that reinterprets every row on the page was drawn as a settings row with a value, in
+the 260-unit column that means "the name of a control you can rebind", under a word that is not a
+noun anybody would search for. **A feature nobody can find is not a feature**, and the fix is
+presentation rather than plumbing.
+
+### 139.3 WHAT LANDED
+
+- **Four section tabs** above the scroll and outside it: CONTROLS, AUDIO, VIDEO, PLAYER.
+  ⚠️ **OUTSIDE THE SCROLL IS THE POINT**: a strip that scrolls away with the rows it selects is a
+  control the player loses the moment they use the list.
+- **The three headings the tabs made redundant are hidden**, not deleted: `BindingsHeading`,
+  `AudioHeading` and `DisplayHeading` each repeated the tab above them. `MouseHeading` stays,
+  because that one is a sub-section inside CONTROLS rather than a name for the page.
+- **The device pair is a full-width rail of two** directly under the section strip, at 52 units
+  against the strip's 56 and a row's 46. ⚠️ **THE HEIGHT IS THE HIERARCHY SAID OUT LOUD**: the
+  strip switches the section, this pair switches every row in one section, a row is a row. The
+  word "Showing" is gone rather than reworded.
+- **`HintLabel` is per tab and follows the device page.** It read *"Click a key to rebind it, then
+  press any key on your keyboard"* on a panel that also carries a gamepad page, three volume
+  sliders and a privacy disclosure, so it was telling a pad player to press a key.
+  `docs/VISION.md` § 3: *a screen that teaches the wrong key is worse than one that teaches none.*
+- **The username moved out of `BindingsList`.** It was a child of the rebind list under a heading
+  saying CONTROLS, and `BuildRebindRows` carried a `if (child.name == "PlayerNameRow") continue;`
+  to avoid destroying it while clearing the list, which is the shape of a row in the wrong parent.
+- **The scrollbar hides on a page with nothing to scroll**, and only the bar: the wheel and the
+  drag stay live so the behaviour does not change under the player between pages.
+
+### 139.4 ⚠️⚠️ THREE FAULTS THE RENDERS FOUND, ALL THREE OLDER THAN THIS PASS, ALL THREE INVISIBLE UNTIL NOW
+
+**This is `CLAUDE.md` § 6.2b working exactly as written, and the mechanism is worth stating: the
+tabs did not cause any of these, they PHOTOGRAPHED them.** Every one of these rows was below the
+fold of a single scroll that opened on MOVEMENT, so no render of this screen ever taken, `v57`
+through `v91`, had reached them.
+
+| What | Where | The rule it broke |
+|---|---|---|
+| ⚠️⚠️ **The three volume slider fills were BRIGHT BLUE** | `MasterVolumeSlider`, `SfxVolumeSlider`, `MusicVolumeSlider`, authored in the `.tscn` | `CLAUDE.md` § 6.4, stated as wide as it goes: *"no blue, no navy, no cold grey, in any UI colour, in any layer ... fills"*. 🧑 has said this six times. **`AUDIO` is now a page you land on and they were the first thing on it** |
+| ⚠️⚠️ **The FULLSCREEN tick was MAGENTA** (`UiTheme.Impact`, `f468a8`) | `FullscreenCheck` | `Impact` is a HUD colour for a gameplay event. § 6.4's palette is the eight measured logo colours and magenta is not one of them |
+| ⚠️ **The telemetry note drew ABOVE the row it explains** | `BuildTelemetryNote` | Its own comment claimed the opposite and contradicted itself in two sentences. Every row inserts at `FullscreenCheck` + 1, so last in is highest on screen, so inserting the note after the row put the explanation above the control |
+
+✅ **Both colours are `UiTheme.BrandPersimmon` now, and that is a ROLE rather than a pick.** § 6.4's
+table gives `#FD8041` exactly one job: *"the MARKER: the one value or selection that matters"*. A
+slider fill and a ticked box are the same statement, so they are the same colour. The slider track
+is `PaperSunk` and the handle is `Paper`, which are the paper ramp's own two surfaces.
+
+### 139.5 ⚠️⚠️ AND ONE FAULT THE TEST FOUND, WHICH IS THE HALF A RENDER COULD NOT HAVE
+
+The first version of the strip looked up its rows with `ConvertedScreen.Node`. **That reads
+`_byName`, an index built by walking the tree ONCE before `Wire` runs**, and seven of the rows the
+strip owns do not exist at that moment: `RenderStyleRow`, `AntiAliasRow`, `VSyncRow`,
+`SlipperHighlightRow`, `TelemetryRow` and `TelemetryNote` are created DURING `Wire`, and
+`PlayerNameRow` is reparented during it.
+
+**So six rows would have been visible on all four tabs at once**, while `Node` logged an error for
+each one. `TabNode` scans the scroll content's own children instead.
+
+⚠️ **`MissingTabNodes` AND ITS ASSERTION IN `TheSettingsPanelDraws` ARE THE PART THAT STAYS.** A
+stale tab node name is otherwise silent: `ShowTab` skips a null, so the row is simply never shown
+on any page and nothing says so. The check needs a BUILT panel, which is why it lives in the shot
+test rather than in EditMode.
+
+### 139.6 THE RENDERS
+
+⚠️ **FOUR FILES, ONE PER TAB, AND THAT IS NOW THE RULE FOR THIS SCREEN.** `CLAUDE.md` § 6.2b:
+*"EVERY STATE, not the one you built first. A screen with a mode has two layouts and you have
+looked at one."* This screen has four, so a single `Settings-vN.png` is a picture of a quarter of
+it. `TheSettingsPanelDraws` drives `ShowTab` and captures each, with the page name in the filename
+so nothing is overwritten.
+
+`Logs/shots-runtime/Settings-v93-CONTROLS.png`, `-AUDIO.png`, `-VIDEO.png`, `-PLAYER.png`.
+
+### 139.7 ⚠️ WHAT IS STILL OPEN
+
+- ⚠️⚠️ **🧑 HAS NOT LOOKED AT IT YET, AND THAT IS THE ACCEPTANCE TEST.** `CLAUDE.md` § 6.2 is his
+  three claims and none of the three is visible to any probe in this repository. **This entry
+  stays OPEN until he has opened a build and said the pages are right.**
+- **The four groupings are a judgement and the fourth is the softest.** PLAYER holds the username,
+  the slipper highlight and telemetry on the argument that all three are about YOU rather than
+  about the game's picture or its sound. If any of them reads as misfiled, moving it is one line
+  in `Tabs`.
+- ⚠️ **A SHORT PAGE IS MOSTLY EMPTY, AND NOTHING WAS DONE ABOUT IT.** The panel is a fixed height
+  because CONTROLS needs it, so AUDIO's three rows sit above a lot of paper. The honest options are
+  a shorter card on short pages, or accepting it; **it was not measured against his window**, which
+  is § 6.2b's third row and the one this repository gets wrong most often.
+- **The blue and magenta were found by looking, not by grepping**, which § 6.4 explicitly says is
+  the wrong way round: *"CHECK IT BY GREPPING, NOT BY LOOKING."* That rule names `UiTheme.cs`, and
+  both of these were authored in a `.tscn` and converted, so the grep it describes would not have
+  found either. **Nothing yet greps the converted prefabs for a cold fill**, and that is a real gap
+  now that two have been found this way.
+
+---
+
+## 138 · A CONTROLLER UNITY DOES NOT RECOGNISE IS INVISIBLE TO THIS WHOLE GAME ⚠️⚠️ OPEN, 2026-09-04, branch `abilities-rework`
+
+🧑 2026-09-04: *"idk how extensive controller support is"*, *"maybe add to todo that it can work
+for fake controllers and shit too? haha or other brands"*, *"idk how controllers work so u figure
+out how to do that"*.
+
+**So this entry is the answer to "how do controllers work", written down once, plus what this
+repository actually does today and what it costs.**
+
+### 138.1 HOW A PAD REACHES A UNITY GAME, IN FOUR STEPS
+
+1. **The pad enumerates as a USB HID device** carrying a vendor id, a product id and a report
+   descriptor saying which axes and buttons it has.
+2. **Unity's Input System matches that against its LAYOUT table.** There are hand-written layouts
+   for the pads Unity knows: `XInputController` (every Xbox pad and anything in XInput mode on
+   Windows), `DualShockGamepad` and `DualSenseGamepadHID` (PlayStation), `SwitchProControllerHID`.
+   A match produces a device deriving from **`Gamepad`**, with `buttonSouth`, `leftStick`,
+   `rightTrigger` and the rest in known places.
+3. **A pad it does NOT know still gets a device**, auto-generated from the HID descriptor. ⚠️⚠️
+   **THAT DEVICE DERIVES FROM `Joystick`, NOT FROM `Gamepad`.** It has axes and buttons with
+   generic names (`trigger`, `stick`, `button3`) and no idea which button is "south".
+4. **`Gamepad.current` only ever returns a step-2 device.** A step-3 device is never in it.
+
+### 138.2 ⚠️⚠️ WHAT THAT MEANS HERE, AND IT IS EVERY CONTROLLER PATH AT ONCE
+
+**Checked 2026-09-04: this repository contains no `InputSystem.RegisterLayout`, no `Joystick`
+reference, and no input settings asset**, so it is entirely on Unity's default matching. Every
+controller path in the game reads either `Gamepad.current` or a `<Gamepad>/...` binding path:
+
+| Path | What it does with an unmatched pad |
+|---|---|
+| `LastInputDevice.Sample` | `Gamepad.current` is null, so `InputDeviceKind.Gamepad` is never set. **Every prompt in the game keeps showing keyboard keys** while the player holds a pad |
+| `InputCatalogue` / `ScreenInputCatalogue` pad paths | `<Gamepad>/buttonSouth` and friends resolve to nothing. **No verb fires. The pad does nothing at all** |
+| `ScreenFocus` menu navigation | same: the pad cannot move focus, so the front end is unusable |
+| `Rumble` | returns at its `Gamepad.current == null` guard. Correct, and silent |
+| The settings panel's **GAMEPAD** page | lists every action with `-` and rebinding cannot capture a press, because `PerformInteractiveRebinding` is restricted to `<Gamepad>` paths (`BeginRebind`'s own note). **The page is a list of controls that can never be bound** |
+
+⚠️ **AND THE FAILURE IS COMPLETELY SILENT.** Nothing logs, nothing warns, no screen says
+"controller not recognised". From the player's side the pad is simply dead, which is
+indistinguishable from a broken cable or a broken game.
+
+### 138.3 ⚠️ HOW BIG IS THIS ACTUALLY, BECAUSE THE ANSWER IS "SMALLER THAN IT SOUNDS ON WINDOWS"
+
+**Most cheap third-party pads sold for PC ship in XInput mode**, or carry a physical X/D switch,
+and in XInput mode Windows presents them as an Xbox pad and Unity matches them at step 2. So the
+common case already works and this is not a claim that the game has no controller support.
+
+**The ones that fall through are real and are exactly the ones in this room:**
+
+- DirectInput-only pads, including a lot of no-name USB pads and older PC gamepads.
+- USB adapters for original PlayStation, Saturn and Nintendo pads.
+- Some Switch Pro clones and third-party arcade sticks.
+- ⚠️ **On ANDROID the matching is different and weaker**, which matters because that platform ships
+  too. Android reports pads through its own input API and Unity's Android backend maps common ones,
+  but a Bluetooth pad from a market stall is a coin toss.
+
+⚠️⚠️ **NOBODY HAS TESTED ANY PAD ON THIS PROJECT EXCEPT THE ONE ON THIS DESK.** That is the honest
+state, and it is why this entry exists rather than a fix: the first job is finding out, not coding.
+
+### 138.4 WHAT DONE LOOKS LIKE, IN THE ORDER THAT PAYS
+
+⚠️ **NOT "WRITE LAYOUTS FOR EVERY PAD". That is a treadmill and Unity already lost it.** The cheap
+wins are about telling the truth and about a fallback, in this order:
+
+1. ⚠️⚠️ **SAY SOMETHING. A device that is plugged in and unmatched must not be silent.**
+   `InputSystem.onDeviceChange` fires for every added device. When one arrives that is a `Joystick`
+   or an unrecognised HID with a gamepad usage, log it with its vendor and product id and show a
+   line in the settings CONTROLS tab: *"A controller was found that this game does not recognise."*
+   **This is the whole of `CLAUDE.md` § 6.2's INTUITIVE row**: the player presses something and
+   nothing happens, and today the game agrees with them that nothing happened.
+   **This is cheap, needs no pad to build, and turns an invisible failure into a report we can act
+   on.** It is also how the vendor and product ids of the pads people actually own get collected.
+2. **A generic fallback layout.** `InputSystem.RegisterLayoutOverride` / a layout deriving from
+   `Gamepad` matched against a broad HID description, mapping the first four buttons and two
+   sticks by convention. It will be wrong for some pads and right for many, and a wrong mapping the
+   player can SEE beats a dead pad they cannot.
+3. **Let the fallback be rebound.** Once a pad is a `Gamepad`-derived device the existing GAMEPAD
+   page already works, which is the argument for making the fallback a `Gamepad` rather than
+   teaching the whole game about `Joystick`. ⚠️ **`BeginRebind` restricts candidate paths to the
+   page's own device**, so this needs no change there if the fallback reports as a pad.
+4. **A written list of what has actually been tested**, with vendor and product ids, in
+   `Attention.md`. One tested pad written down beats four assumed ones.
+
+⚠️ **WHAT NOT TO DO: do not widen the `<Gamepad>` binding paths to `<HID>` in the input asset.**
+`CLAUDE.md` § 4a's compile gate exists so a verb cannot ship without a pad answer, and a second
+family of paths per action doubles the map while halving what `FindDuplicateBindings` checks,
+which is the exact fault § 4a records `ResolveBindingIndices` fixing. **The fallback belongs in the
+device layer, where one registration serves every existing binding.**
+
+### 138.5 ⚠️ AND CROSSPLAY IS NOT AFFECTED, WHICH IS WORTH SAYING BEFORE SOMEBODY WORRIES
+
+`CLAUDE.md` § 4a: **nothing about which device was used goes on the wire.** A pad, a thumb and a
+keyboard all arrive at `InputIntent`, so a fallback layout is a purely local concern and **may not
+move `NetSession.ProtocolVersion`**. The one place a device is a first-class fact is
+`MatchmakingRules.PoolKey`, which bands the RANKED queue by device; an unrecognised pad reporting
+as a keyboard player would put them in the wrong ranked band, which is a fairness argument for
+fixing step 1 rather than a reason to touch the wire.
 
 ---
 
