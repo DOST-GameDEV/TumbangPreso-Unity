@@ -527,7 +527,7 @@ namespace TumbangPreso.EditorTools
                 protocol = Net.NetSession.ProtocolVersion,
                 target = target.ToString(),
                 appVersion = PlayerSettings.bundleVersion,
-                ugsProject = CloudProjectSettings.projectId ?? "",
+                ugsProject = UgsProjectId(),
                 ugsEnvironment = "production",
                 builtAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                 dirty = WorkingTreeIsDirty(root),
@@ -564,6 +564,43 @@ namespace TumbangPreso.EditorTools
                 // is costs a diagnosis later; refusing to build costs the build now.
                 Debug.LogWarning($"[Build] could not write the identity stamp: {e.Message}");
             }
+        }
+
+        /// <summary>
+        /// The UGS project this build resolves join codes in.
+        ///
+        /// ⚠️⚠️ `CloudProjectSettings.projectId` ANSWERS EMPTY IN BATCH MODE, WHICH IS WHERE
+        /// EVERY BUILD THAT MATTERS IS MADE. The first stamped player carried `"ugsProject": ""`
+        /// for exactly that reason, and an empty field is worse than a missing one here: the
+        /// whole point of recording it is that **a machine on a different project resolves a join
+        /// code in a different namespace and reads as an empty lobby rather than as an error**
+        /// (`CLAUDE.md` § 4a). A blank looks like agreement.
+        ///
+        /// ⚠️ SO IT FALLS BACK TO `ProjectSettings.asset`, which is the file the editor writes
+        /// the id into and is readable with no services running.
+        /// </summary>
+        private static string UgsProjectId()
+        {
+            string live = CloudProjectSettings.projectId ?? "";
+            if (!string.IsNullOrEmpty(live)) return live;
+
+            try
+            {
+                string path = Path.Combine(Path.GetDirectoryName(Application.dataPath),
+                                           "ProjectSettings", "ProjectSettings.asset");
+                foreach (string line in File.ReadAllLines(path))
+                {
+                    string trimmed = line.Trim();
+                    if (!trimmed.StartsWith("cloudProjectId:", StringComparison.Ordinal)) continue;
+                    return trimmed.Substring("cloudProjectId:".Length).Trim();
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[Build] could not read the UGS project id: {e.Message}");
+            }
+
+            return "";
         }
 
         /// <summary>
