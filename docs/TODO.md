@@ -33,7 +33,7 @@ either of those.
 | **P0** | 142.2 | **A build cannot say what it is.** Nothing in a shipped player carries the commit, and `NetSession.ProtocolVersion` is only readable by trying to join something. Two artifacts from different commits refuse each other correctly and read as a bug. | `build-identity.json` written by `GameBuilder` into both players, carrying SHA, protocol, target, app version, UGS project and timestamp; a diagnostic route in the game that prints it; `tools/qualify.py --stage identity` refusing a Windows/Android pair that disagree. |
 | **P0** | 142.3 | **Nothing defines what a tournament match IS**, so "mostly tournament" is reachable by inheriting one static from the previous match. ✅ The rules half is built and asserted (`TournamentPreset`, 525 Core tests). **Open: the Unity half** that reads the eight live modifiers and refuses. | `TournamentPreset.Apply()` clears every named modifier, a check reports the live value of each against `TournamentPreset.Modifiers`, and a test proves a tournament match cannot start with one set. |
 | **P0** | 142.4 | **No soak coverage at all.** Every measurement in this repository is of a FIRST match. A game that works once and degrades by match five is not nationals ready, and nothing here would notice. | A harness that runs `launch → lobby → match → results → rematch → lobby → match` for enough iterations to expose accumulated state, watching exceptions, duplicate callbacks, growing object counts, stuck rounds and score duplication, and writing a machine-readable summary tied to the SHA. |
-| **P0** | 142.5 | **89 event subscriptions in `Runtime/` and no audit that each is paired with an unsubscribe.** § 126.8's whole finding is objects outliving the thing that made them; this is the same class one level up, and it is what makes match five different from match one. | An audit that pairs every `+=` with a `-=` on the same target and reports the orphans, gating in `qualify.py`; the real orphans fixed. |
+| ~~P0~~ | 142.5 | ✅ **DONE.** The audit is built and gating, and it found a real one: `MatchBootstrap` leaked four handlers per match into a `DontDestroyOnLoad` director, so match five ran `ResetWorld` five times. 85 subscriptions, 0 unpaired now. | ✅ |
 | **P1** | 142.6 | **Nothing validates a tournament scene's dependencies before a human opens the build.** `SceneScriptCheck` catches a component the player cannot bind; it does not catch a missing prefab, spawn point or camera reference. | A check that instantiates every tournament-relevant scene and asserts its required references exist, in `Checks.RunAll`, failing qualification. |
 | **P1** | 142.7 | **Duplicate, stale and reordered requests are not tested against the authoritative paths.** The architecture is right (49 authority sites, 0 ungated on another body) and that is an argument, not a test. | Tests proving a replayed score-causing request, a doubled ability activation and an ownership change in flight cannot award twice, cast twice or corrupt round state. |
 | **P1** | 142.8 | **The eight source audits only run when somebody remembers.** Current: 49 authority sites / 30 gated / **0 ungated on another body**; 59 wire entries / **0 unreachable**; 61 payloads / **0 mismatched**. | ✅ `tools/qualify.py --stage audits` runs all of them and fails the gate on any finding. Open: the four new audits it lists are written and clean. |
@@ -42,12 +42,13 @@ either of those.
 | **P1** | 134.12 | **Replay capture is a synchronous GPU stall**: `Texture2D.ReadPixels` at ~10 Hz into a ~46 MB buffer. A 90 s round is 900 captures; four rounds is 3,600. | `AsyncGPUReadback` or equivalent, bounded memory, no runaway queue, disposal proven, no capture after the session is gone, and a before/after measurement. |
 | **P2** | 142.10 | **`VISION.md` § 2 rule 1 contradicts itself**: "1.8 to 2.5 m of radius, which is 3 to 8 per cent" of 196 m². 1.8 m is **5.19%** and 2.5 m is **10.02%**; 3% and 8% are **1.37 m** and **2.23 m**. | One coherent statement, reached by reading the abilities rather than by picking a side. |
 | **P2** | 142.11 | **Every ability footprint number in the repository predates the current implementations.** The 81.9% worst frame and Zack's 27.2% corridor were measured on code that has since been retuned twice. | A generated, SHA-stamped measurement of instantaneous and persistent footprint, live instance count, overlap and worst credible frame, with regression bounds from VISION where they are valid. |
-| **P2** | 142.12 | **Ability comments state cooldowns the constructors disagree with.** Confirmed on `e85b0fc`: Zack's Bolt Sprint comment says **30 s** and the constructor is **46.0f**; Sean's Flame Rush says **34 s** and is **50.0f**, and its comment also calls Zack's "30". | The drift fixed, and an audit that stops an authoritative-looking number in a comment from silently becoming false. |
+| ~~P2~~ | 142.12 | ✅ **DONE.** Five drifted cooldowns, not two (Zack, Sean, Dante, Nemu, Phaister), plus four wrong casts-a-round figures and three stale cross-references. `audit_ability_stat_drift.py` gates it. | ✅ |
 | **P2** | 16 | **One bot run is not balance evidence.** Eight matches at shipped settings spread **58 to 100 throws**, about 20 per cent. | A multi-seed sweep recording SHA, seed, config,each run, mean, median and spread, so no threshold is set against noise. |
 | **P2** | 142.13 | **Storage failures are not handled.** Profile, replay, log and save writes assume the directory exists and the disk accepts. | A missing directory, denied access, full disk or corrupt file degrades safely and never stops a match starting or finishing unless the data is genuinely required. |
 | **P2** | 142.14 | **Gameplay timing is not audited for wall-clock dependence.** 14 `DateTime` reads in `Runtime/`. Changing the system clock mid-match must not corrupt it. | An audit separating persistent timestamps (wall clock, correct) from gameplay timing (monotonic, required), and any real misuse fixed. |
 | **P2** | 142.15 | **There is no cold-start test.** Every run here inherits an editor, a `Library` and a previous session's files. | A clean-state run of the real artifact through launch → playable → host/join → finish a Classic match → rematch, verifying no dependence on developer state. |
 | **P2** | 142.16 | **No crash or failure bundle.** At the venue, evidence lives in five directories. | One command that gathers log, recent exceptions, SHA, protocol, platform, version and recent match state, with no credentials in it. |
+| **P1** | 142.17 | **Two real defects unmasked by isolating the suite**: no `LoadoutDoor` on the character select stage (5 cases), and the Hero picker showing Classic's `SPEED POWER GRIT` strip instead of naming Dante's skills | Both fixed, both green in the `screens` group |
 | **P2** | 141 | Spectator and seat ownership: the duplicate scoreboard name, and regression cover for repeated F1-F4 transitions | § 141 |
 | **P2** | 93 | A held tsinelas drifts **0.084 m** from the hand, four samples, not a flake | § 93 |
 | **P2** | 127 | The taya ring and attacker disc need their non-colour distinction finished | § 127.3 |
@@ -234,6 +235,27 @@ the question.
 reach each other, one Unity launch per group, results aggregated into one verdict, **and coverage
 asserted so a group that silently ran nothing fails instead of passing.** Green twice.
 
+✅ **THE EXPERIMENT IS DONE AND THE THESIS HOLDS.** The `screens` group, 26 fixtures, run alone:
+
+```
+64 cases, 51 passed, 13 failed, 106 s      (Logs/playmode-suite/screens.xml)
+```
+
+**Against the same fixtures inside the full run: about thirty failures, seven of them the identical
+sentence *"MatchSetup has no CharacterSelectPanel to open"* and five more `MissingReferenceException`.
+In isolation there is not one `MissingReferenceException` in the group**, and the seven identical
+phantoms became ONE specific finding: *"no 'LoadoutDoor' on the character select stage"*.
+
+⚠️⚠️ **THAT IS THE ARGUMENT IN ONE LINE: ISOLATION DID NOT MAKE FAILURES GO AWAY, IT TURNED NOISE
+INTO SIGNAL.** The 13 that remain name real defects and two of them were previously invisible
+because a phantom was sitting on top of them (§ 142.17).
+
+⚠️ **The partition is DISCOVERED against the source, not listed.** `--plan` refuses to run at all
+if any fixture is in no group or in two, and the first run of that check earned its keep
+immediately: the discovery regex required a bare `[UnityTest]` and `BotBehaviourProbe` writes
+`[UnityTest, Timeout(MatchTimeoutMs)]`, so the gate would have silently covered 67 fixtures of 68
+and dropped the longest probe in the suite.
+
 ⚠️⚠️ **AND IT MUST NOT BECOME A THIRD CATEGORY EXCLUSION.** § 126.8d bans that explicitly: a
 category meaning *"these tests do not work next to each other"* hides this finding rather than
 recording it. **A group is an isolation boundary, not an exemption: every fixture still runs, in
@@ -295,11 +317,40 @@ timers, duplicate scores, duplicate event callbacks, seat ownership corruption, 
 growth, static leakage and host/client divergence, writing a machine-readable summary tied to the
 SHA.
 
-### 142.5 ⚠️ OPEN: 89 SUBSCRIPTIONS, NO AUDIT
+### 142.5 ✅ CLOSED 2026-09-04: THE SUBSCRIPTION AUDIT, AND IT FOUND A REAL CROSS-MATCH LEAK
 
-`grep` counts **89** event subscriptions in `Assets/TumbangPreso/Runtime/`. § 126.8's entire finding
-is objects outliving what made them; a handler that outlives its match is the same class one level
-up, and it is the difference between match one and match five. **Nothing pairs them today.**
+`tools/audit_event_subscriptions.py` pairs every `+=` with a `-=`. **85 subscriptions in
+`Runtime/`, and one file was leaking four of them into the next match.**
+
+⚠️⚠️ **`MatchBootstrap` SUBSCRIBED FOUR HANDLERS TO A `DontDestroyOnLoad` DIRECTOR AND REMOVED
+NONE.** `GameServices` is the process-lifetime service root, so `MatchDirector` outlives every
+arena; `MatchBootstrap` lives in the arena scene. What that cost:
+
+- **The arena unloads, the component is destroyed, and the four handlers stay registered.** The
+  next match therefore runs `OnRoundStarted` on a destroyed `MatchBootstrap`, and that handler
+  calls `ResetWorld`, **which teleports all four bodies and hands out the tsinelas.** Match five
+  was running it five times.
+- **`BuildAndStart` is public**, so a second call subscribed a second copy of every handler to the
+  same event on the same object.
+- **And the pending `Invoke` was the same leak in a second shape.** `OnIntermission` schedules
+  `AdvanceAfterIntermission` on this component, and an `Invoke` outliving its target calls
+  `GameServices.Match.AdvanceRound()` on a director that has moved on. **A round advanced by the
+  previous match's timer** is `VISION.md` § 4's first rule broken from outside the match.
+
+⚠️ **None of that crashes**, which is why it survived every test in the repository. It is a round
+that resets more than once, and it reads as "the game got weird after a few matches".
+
+✅ Fixed: the director is cached in `_hookedMatch` (the pattern `AIController` already used and this
+file did not), `Subscribe` releases before it takes so no path can leave two, and `OnDestroy`
+cancels the invoke and unsubscribes.
+
+⚠️⚠️ **TWO FALSE-POSITIVE CLASSES HAD TO BE REMOVED BEFORE THE AUDIT WAS WORTH READING, AND BOTH
+ARE RECORDED IN THE FILE.** Its first run reported 76 findings, about sixty of which were
+`_clock += dt`: `+=` is arithmetic and subscription with identical syntax. Its second reported
+`AIController`'s five CORRECT unsubscribes as leaks, because that file releases through
+`_hookedMatch.Scored` rather than `match.Scored`, **and caching the exact publisher is the right
+pattern rather than sloppiness.** An audit that punishes the correct pattern is an audit somebody
+switches off.
 
 ### 142.6 ⚠️ OPEN: SCENE AND BOOTSTRAP DEPENDENCIES ARE NOT VALIDATED
 
@@ -383,6 +434,44 @@ Confirmed by reading both on `e85b0fc`:
 ⚠️ **And the second one repeats the first**: Sean's note reads *"Longer than Zack's 30"*, so one
 stale number has already propagated into a second file as a comparison. That is the whole argument
 for an audit rather than a correction.
+
+✅ **CLOSED 2026-09-04. It was five, not two**, and `tools/audit_ability_stat_drift.py` is the gate:
+
+| Where | Asserted | Ships | Also stale |
+|---|---|---|---|
+| `ZackHeroKit.cs:86` | 30 s | **46.0f** | "Three casts a round" (it is 1.96) |
+| `SeanHeroKit.cs:58` | 34 s | **50.0f** | "Longer than Zack's 30"; "2.6 casts a round" (1.8) |
+| `DanteHeroKit.cs:159` | 45 s | **62.0f** | "Two casts a round" (1.45) |
+| `NemuHeroKit.cs:41` | 36 s | **52.0f** | "between SEAN'S 34 and DANTE'S 45"; "2.5 casts a round" (1.7) |
+| `PhaisterHeroKit.cs:128` | 36.0 s | **52.0f** | the `<summary>` line |
+
+⚠️⚠️ **THE AUDIT IS THREE NARROW PATTERNS AND NOT ONE WIDE ONE, AND THE REASON IS IN THE FILE.** The
+wide rule ("a duration in a comment must exist as a literal in this file") found all five and three
+false ones, **and every false one was a comment doing its job**: `HeroAbility.cs:115` quotes the
+team asking for *"like 30 seconds to 45 seconds"*, which is the REQUEST that caused the retune;
+`DanteHeroKit.cs:163` says *"At 9 s it was up for four seconds out of every nine"*, which is the
+HISTORY `CLAUDE.md` § 3 asks for; `CheskaHeroKit.cs:182` argues against a rejected 3.2. **A rule
+that cannot tell a stale fact from a recorded reason gets switched off.** False negatives are
+accepted; false positives are not.
+
+### 142.17 ⚠️ OPEN: TWO DEFECTS THAT WERE INVISIBLE UNTIL THE SUITE WAS ISOLATED
+
+**Both were sitting underneath a phantom failure and neither could be seen while the full run was
+blaming them for somebody else's leak.**
+
+- ⚠️ **`LoadoutSurfaceProbe`, five cases: *"no 'LoadoutDoor' on the character select stage. In Hero
+  Strike `BuildStageDoors` builds LOADOUT above MAKE YOUR OWN"*.** In the full run all five said
+  *"MatchSetup has no CharacterSelectPanel to open"* instead, which is a different claim about a
+  different object and is not true in isolation.
+- ⚠️ **`ModelPreviewTests.HeroCharacterSelectShowsAbilitiesInsteadOfClassicAttributes`: *"Dante's
+  first skill is not named on the Hero picker"*, and the screen reads `SPEED POWER GRIT`**, which
+  is the CLASSIC attribute strip on the HERO picker. `docs/VISION.md` § 3 is the rule it breaks:
+  a player must be able to learn what a power does from character select.
+
+⚠️⚠️ **THIS IS THE ARGUMENT FOR § 142.1 STATED AS A COST RATHER THAN AS A PRINCIPLE.** A gate that
+reports thirty failures, of which twenty-five are phantoms, does not merely waste time: **it hides
+the five.** Nobody reading *"MatchSetup has no CharacterSelectPanel"* for the fourth run running
+goes looking for a missing door.
 
 ### 142.13 to 142.16
 

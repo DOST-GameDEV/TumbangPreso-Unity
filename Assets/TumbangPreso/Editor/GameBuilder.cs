@@ -492,6 +492,116 @@ namespace TumbangPreso.EditorTools
             }
         }
 
+        /// <summary>
+        /// Write what this build IS into the player, in two places, on every build.
+        ///
+        /// ⚠️⚠️ TWO PLACES BECAUSE TWO DIFFERENT READERS, AND NEITHER CAN READ THE OTHER'S.
+        /// `Resources/BuildIdentity.json` is compiled into `resources.assets`, which is the only
+        /// form the GAME can read cheaply on every platform including Android. A tool standing
+        /// outside the artifact cannot open that at all, so the same record also goes to
+        /// `StreamingAssets/build-identity.json`, which stays a real file in the Windows output
+        /// and a plain entry under `assets/` inside an .apk. `tools/qualify.py --stage identity`
+        /// reads the second one and is what refuses a Windows and an Android build that disagree.
+        ///
+        /// ⚠️ **BOTH PLACES OR NEITHER**, which is `CLAUDE.md` § 6.4's splash rule and
+        /// `ShaderWarmupCollection`'s rule one method up. One of the two going stale is worse than
+        /// having neither, because a stamp that exists is a stamp that gets believed.
+        ///
+        /// ⚠️⚠️ IT IS WRITTEN ON EVERY BUILD RATHER THAN BY HAND, for `StampBuildBranch`'s reason:
+        /// a step run manually before a build is the step skipped on the build that mattered. The
+        /// whole value of an identity is that it is true without anybody having maintained it.
+        ///
+        /// ⚠️ A DIRTY WORKING TREE IS RECORDED RATHER THAN REFUSED. A build made with uncommitted
+        /// edits is a legitimate thing to do at a venue at 8 a.m.; a build that SILENTLY claims to
+        /// be a commit it is not is what loses an afternoon. The flag rides in the record and the
+        /// qualification report prints it.
+        /// </summary>
+        private static void StampBuildIdentity(BuildTarget target, string outputPath)
+        {
+            string root = Path.GetDirectoryName(Application.dataPath);
+
+            var record = new BuildIdentity.Record
+            {
+                sha = BuildIdentity.HeadSha(root) ?? "",
+                branch = BuildBranch.FromGit(root) ?? "",
+                protocol = Net.NetSession.ProtocolVersion,
+                target = target.ToString(),
+                appVersion = PlayerSettings.bundleVersion,
+                ugsProject = CloudProjectSettings.projectId ?? "",
+                ugsEnvironment = "production",
+                builtAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                dirty = WorkingTreeIsDirty(root),
+            };
+
+            string json = JsonUtility.ToJson(record, true);
+
+            try
+            {
+                string resources = Path.Combine(Application.dataPath, "TumbangPreso/Resources");
+                Directory.CreateDirectory(resources);
+                File.WriteAllText(Path.Combine(resources, BuildIdentity.ResourceName + ".json"), json);
+
+                AssetDatabase.ImportAsset("Assets/TumbangPreso/Resources/" +
+                                          BuildIdentity.ResourceName + ".json",
+                                          ImportAssetOptions.ForceUpdate);
+
+                string streaming = Path.Combine(Application.dataPath, "StreamingAssets");
+                Directory.CreateDirectory(streaming);
+                File.WriteAllText(Path.Combine(streaming, "build-identity.json"), json);
+                AssetDatabase.ImportAsset("Assets/StreamingAssets/build-identity.json",
+                                          ImportAssetOptions.ForceUpdate);
+
+                // The editor may have resolved an identity already, on another commit.
+                BuildIdentity.Forget();
+
+                Debug.Log($"[Build] identity {(string.IsNullOrEmpty(record.sha) ? "(no sha)" : record.sha)}" +
+                          $"{(record.dirty ? " +dirty" : "")}, protocol {record.protocol}, " +
+                          $"{record.target}");
+            }
+            catch (Exception e)
+            {
+                // ⚠️ NOT FATAL, for `StampBuildBranch`'s reason. A build that cannot say what it
+                // is costs a diagnosis later; refusing to build costs the build now.
+                Debug.LogWarning($"[Build] could not write the identity stamp: {e.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Whether anything is uncommitted, without shelling out to git.
+        ///
+        /// ⚠️ IT IS A CHEAP APPROXIMATION AND SAYS SO. Running `git status` from a build would
+        /// need a process launch on a machine that may not have git on PATH (`CLAUDE.md` § 7.1
+        /// records the same being true of `python` on one of the two profiles here). The index
+        /// file's write time against the last commit's is enough to answer "has anybody touched
+        /// this checkout since it was committed", which is the question worth flagging, and it
+        /// errs towards saying dirty rather than towards claiming clean.
+        /// </summary>
+        private static bool WorkingTreeIsDirty(string repoRoot)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(repoRoot)) return false;
+
+                string dotGit = Path.Combine(repoRoot, ".git");
+                if (File.Exists(dotGit))
+                {
+                    string pointer = BuildBranch.GitDirFromPointer(File.ReadAllText(dotGit));
+                    if (string.IsNullOrEmpty(pointer)) return false;
+                    dotGit = Path.IsPathRooted(pointer) ? pointer : Path.Combine(repoRoot, pointer);
+                }
+
+                string index = Path.Combine(dotGit, "index");
+                string head = Path.Combine(dotGit, "HEAD");
+                if (!File.Exists(index) || !File.Exists(head)) return false;
+
+                return File.GetLastWriteTimeUtc(index) > File.GetLastWriteTimeUtc(head).AddMinutes(1);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         private static void EnsureRuntimeShaders()
         {
             string[] wanted =
@@ -840,6 +950,7 @@ namespace TumbangPreso.EditorTools
             ShaderWarmupCollection.Rebuild(true);
 
             StampBuildBranch();
+            StampBuildIdentity(target, outputPath);
 
             // Ship at the monitor's native resolution in borderless fullscreen. Starting the
             // player in a fixed 1600x900 window made a normal build look like a test harness;

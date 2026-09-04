@@ -38,11 +38,11 @@ namespace TumbangPreso.Abilities
             private bool _longFadeSlow;
 
             public PhantomPhaseAbility()
-                // ⚠️⚠️ 36 s, UP FROM 8.0, AND IT SITS BETWEEN SEAN'S 34 AND DANTE'S 45. Tag
+                // ⚠️⚠️ 52 s, UP FROM 8.0, AND IT SITS BETWEEN SEAN'S 50 AND DANTE'S 62. Tag
                 // immunity is the strongest defensive verb in the game: for 2.5 s the taya
                 // simply cannot do their job. It is priced under Carapace only because picking
                 // up a tsinelas cancels it, so it cannot be used to complete the retrieval it
-                // makes possible. 2.5 casts a round.
+                // makes possible. 1.7 casts a round.
                 //
                 // ⚠️ A COOLDOWN AND NOT CHARGES: it moves and protects her own body and puts
                 // nothing on the floor. `HeroAbility.MaxCharges` carries the rule.

@@ -156,13 +156,13 @@ namespace TumbangPreso.Abilities
             // nothing on the ground; drawing a ring under a self-buff would tell the player
             // there is an area to stand in or out of when there is not.
             public DemonicCarapaceAbility()
-                // ⚠️⚠️ 45 s, UP FROM 9.0, AND IT IS THE LONGEST COOLDOWN IN THE GAME. Four
+                // ⚠️⚠️ 62 s, UP FROM 9.0, AND IT IS THE LONGEST COOLDOWN IN THE GAME. Four
                 // seconds of immunity to stun, shove and slip is a free retrieval, and a free
                 // retrieval is a point: `docs/VISION.md` § 0 says the run back in for your
                 // tsinelas is the only moment you can be caught, and this is the one power that
                 // deletes that moment outright. At 9 s it was up for four seconds out of every
-                // nine. Two casts a round is the right number for a power that ignores the
-                // game's central risk.
+                // nine. Not quite one and a half casts a round is the right number for a power
+                // that ignores the game's central risk.
                 //
                 // ⚠️ A COOLDOWN AND NOT CHARGES: it protects your own body, so the rule on
                 // `HeroAbility.MaxCharges` applies. It also puts nothing on the floor, which is

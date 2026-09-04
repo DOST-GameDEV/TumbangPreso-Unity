@@ -125,7 +125,7 @@ namespace TumbangPreso.Abilities
         }
 
         /// <summary>
-        /// Skill 2: SHADOW BLINK (36.0 s cooldown). HOLD to aim, release to go.
+        /// Skill 2: SHADOW BLINK (52.0 s cooldown). HOLD to aim, release to go.
         ///
         /// ⚠️⚠️ IT WAS NEVER A TELEPORT AND THE EFFECT SAID IT WAS. The old `OnActivate`
         /// computed `endPos = startPos + forward * 4.2` **only to feed the visual**, and then

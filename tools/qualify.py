@@ -50,6 +50,18 @@ import re
 import subprocess
 import sys
 import xml.etree.ElementTree as ET
+import zipfile
+
+# ⚠️⚠️ THE CONSOLE HERE IS cp1252 AND THIS FILE PRINTS THE REPOSITORY'S OWN ⚠ MARKS.
+# `CLAUDE.md` § 7.1 records `audit_audio_reach.py` dying on a UnicodeEncodeError part way
+# through its own output, "which looks like a crash in the thing it is auditing", and the
+# remedy written down there is to remember to set PYTHONIOENCODING. Remembering is not a
+# mechanism: the script sets its own stream up instead, so it cannot be run wrongly.
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 LOGS = ROOT / "Logs"
@@ -414,12 +426,31 @@ def artifact_identity():
         found["windows"] = row
 
     for apk in sorted(ROOT.glob("build/**/*.apk")) + sorted(desktop.glob("*.apk")):
-        found["android"] = {
+        row = {
             "path": str(apk),
             "written": datetime.datetime.fromtimestamp(apk.stat().st_mtime)
                                 .isoformat(timespec="seconds"),
             "bytes": apk.stat().st_size,
         }
+
+        # ⚠️ AN .apk IS A ZIP AND `StreamingAssets` LANDS UNDER `assets/`. That is the whole
+        # reason `GameBuilder.StampBuildIdentity` writes the record to StreamingAssets as well
+        # as to Resources: a Resources asset is compiled into `resources.assets` and cannot be
+        # read from outside the artifact at all, so a tool comparing two platforms would have
+        # nothing to compare.
+        try:
+            with zipfile.ZipFile(apk) as z:
+                for name in ("assets/build-identity.json", "assets/bin/Data/build-identity.json"):
+                    if name in z.namelist():
+                        row["identity"] = json.loads(z.read(name).decode("utf-8"))
+                        break
+                else:
+                    row["identity"] = None
+        except Exception as e:
+            row["identity"] = None
+            row["identity_error"] = str(e)
+
+        found["android"] = row
         break
 
     return found
@@ -452,6 +483,17 @@ def stage_identity():
         else:
             problems.append("one or both artifacts carry no build-identity.json, so they "
                             "cannot be compared. Rebuild through GameBuilder.")
+
+    # ⚠️⚠️ AN UNSTAMPED ARTIFACT IS A STALE ARTIFACT UNTIL PROVEN OTHERWISE, and for a nationals
+    # candidate that is the whole question. `GameBuilder` has stamped every build since
+    # `StampBuildIdentity` landed, so a player with no `build-identity.json` predates it and
+    # cannot be tied to any commit at all. Treating "no stamp" as "probably fine" is exactly the
+    # reasoning that ships the 14:34 build while believing it is the 15:03 one.
+    if "windows" in arts and not (arts["windows"].get("identity")):
+        problems.append("the Windows artifact carries no build-identity.json, so it predates the "
+                        "stamp and cannot be tied to a commit. Rebuild through GameBuilder.")
+    if "android" in arts and not (arts["android"].get("identity")):
+        problems.append("the Android artifact carries no build-identity.json. Rebuild it.")
 
     if win and d["protocol_version"] is not None and win.get("protocol") != d["protocol_version"]:
         problems.append(f"the Windows artifact was built at protocol {win.get('protocol')} "
