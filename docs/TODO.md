@@ -166,6 +166,33 @@ verb cannot reach a phone again without somebody deciding what it looks like.
 phone prompt states the action, because the player already knows the game and only needs to know
 what will happen. A tutorial is the opposite situation: it exists to teach which control does what.
 
+#### ⚠️⚠️ AND THE FIX HAD A HOLE THAT ONLY THE CAPTURE SHOWED: THE FIRST FRAMES ON A PHONE
+
+`Logs/shots-touch/touch-HeroStrike-short-wide-window-v4.png` has every button drawn as a picture
+and **still shows `[F1] NO COOLDOWNS: OFF` and `Press [R] when ready`** in the middle of the
+screen.
+
+**The cause is `LastInputDevice.Current`, which defaulted to `KeyboardMouse`.** Its own comment
+said why that was safe: *"on Android the first touch corrects it before anything is drawn."*
+**The first touch is not before anything is drawn.** A phone player boots into the warmup window
+and reads the round line, the ready prompt and the sandbox row for however long it takes them to
+reach for the screen.
+
+⚠️⚠️ **NOTHING DEPENDED ON THAT VALUE UNTIL THIS PASS, WHICH IS WHY THE COMMENT SURVIVED.**
+`Hud.PressCue`, `Hud.MashVerb` and `GuidedTraining.Key` all branch on it now, so a keyboard
+default means the first thing a phone player sees is exactly the defect 🧑 reported, in the one
+window where those prompts are largest.
+
+**It is seeded from `TouchHud.ShouldShow`**, which already answers the question honestly: the
+platform define on Android and iOS, `Touchscreen.current != null` elsewhere. ⚠️ **A seed, not a
+lock**: the next keyboard or pad press still moves it, so a phone with a Bluetooth keyboard
+behaves and a touchscreen laptop still boots on keyboard.
+
+⚠️ **THE PROBE CAPTURE CANNOT SHOW THE FIX**, because `InputSurfaceProbe` forces the layer on with
+`TouchHud.ForceVisible` on a desktop editor where `Touchscreen.current` is null, so the seed
+correctly stays on keyboard there. **This one needs the .apk on a handset to confirm**, and it is
+in the handoff.
+
 **Asserted by** `InputContractTests.NoTwoVerbsDrawTheSameTouchGlyph` and
 `.NoTouchControlIsNamedAfterAKeyboardKey`. The second is a text rule (a label under three
 characters, or one carrying brackets, is a key cap) rather than a list of forbidden strings, because
@@ -949,6 +976,51 @@ across the whole frame. That is `HeroAbilitySystem`'s existing *"weight of the p
 🧑 asked for by name (*"i want all ults to feel like they hit harder"*) and which scales by
 `falloff` from the CAMERA. **A spectator camera is not a player camera**, and this pass did not
 touch that scaling. `docs/VISION.md` § 2 rule 5 is the standard it should be judged against.
+
+---
+
+### 134.20 ⚠️ NOT DONE: THE REPLAY OVERLAY IS NOT IN THE CAPTURE, AND BATCH MODE IS WHY
+
+The showcase run writes fourteen frames named `showcase_*_replay.png` and **every one of them is
+live gameplay**. The replay never started.
+
+⚠️⚠️ **THE CAUSE IS THE HARNESS, NOT THE FEATURE.** `SpectatorReplayCapture.OnRenderImage` is
+where a frame enters the ring, and an image effect only runs when its camera actually renders. In
+`-batchmode` there is no game view being drawn, so the spectator camera renders **only when the
+probe explicitly calls `cam.Render()`**, which is about three times a second rather than the ten
+`ReplaySampleInterval` asks for. `StartReplay` refuses below twelve frames and says so, so the
+press was consumed and answered with a toast.
+
+⚠️ **THE SHIPPING PATH IS UNAFFECTED AND THAT IS WORTH STATING PLAINLY.** In a real player the
+camera renders every frame, `OnRenderImage` fires every frame, and the `_captureReplayFrame` flag
+gates it to 10 Hz exactly as it always has. **This pass changed the frame FORMAT, the frame SIZE
+and the METADATA, not the mechanism that fills the ring.**
+
+**What IS verified about the replay, and how:**
+
+| Claim | Evidence |
+|---|---|
+| the buffer holds the window plus reaction time | `BroadcastPassTests.TheReplayBufferHoldsTheWholeWindowPlusAnOperatorsReactionTime`, arithmetic off the constants |
+| it stays under 50 MB | `.TheReplayBufferStaysUnderFiftyMegabytes`, 43.9 MB computed |
+| exactly one trigger, and it is a key | `.ReplayHasExactlyOneTriggerAndItIsAKeyPress`, one call site |
+| the autopilot cannot reach it | `.TheAutopilotCannotReplayPauseOrChangeTime`, source text |
+
+**What is NOT verified: the overlay itself.** Nobody has seen `REPLAY · TAG · ZACK`, the progress
+bar, or the exit line on a screen. ⚠️ `CLAUDE.md` § 6.2a is exactly about this gap: *"a green
+layout probe is not a good screen ... the probe asks whether the screen is a screen; the picture
+asks whether it can be read."*
+
+**Done looks like** one of:
+
+1. **A human presses the replay key in the Windows build** and looks at it. One minute, and it is
+   the honest test.
+2. **The probe drives the camera at capture rate**, calling `cam.Render()` on the same 0.10 s
+   cadence the ring wants for a couple of seconds before pressing. That makes the batch harness
+   fill the ring the way a player would, at the cost of a slower capture.
+
+⚠️ **DO NOT "FIX" IT BY LOWERING THE TWELVE-FRAME FLOOR.** That floor is what stops a replay
+playing three frames of nothing, and lowering it to make a probe pass would ship a worse feature
+to make a test green.
 
 ---
 
