@@ -56,7 +56,8 @@ either of those.
 | ~~P2~~ | 143.16 | ✅ **DONE.** `FailureBundle` collects errors from load; `-tp-bundle` writes build identity, system, tournament readiness, network, match state, a live invariant check and the log path. No credentials. | ✅ |
 | **P0** | 143.18 | ⚠️⚠️ **ENTERING MATCH SETUP DISCARDS THE SELECTED RULE SET**, restoring `CustomRulesWire` over it. This machine's saved wire is `0\|0\|8\|90\|...`: **Classic with 8 rounds**, a format the game does not ship. **It overwrites `TournamentGuard.Apply()`**, and it is why the Hero picker has no LOADOUT door and draws Classic's `SPEED POWER GRIT` strip (6 of the 12 `screens` failures, one cause) | ✅ **DONE.** `SceneFlow.PinSelectedRules` narrows the restore instead of deleting it, `TournamentGuard.Apply` pins and no longer writes the preset into the player's own preference, and the `screens` group went 12 failures to 7. |
 | **P2** | 141 | Spectator and seat ownership: the duplicate scoreboard name, and regression cover for repeated F1-F4 transitions | § 141 |
-| **P2** | 93 | A held tsinelas drifts **0.084 m** from the hand, four samples, not a flake | § 93 |
+| **P1** | 143.20 | **`SteeringTests` drifts 1.079 m sideways with no input**, three cases, the same value every run. Pre-existing, and only legible now that isolation stopped one of the three failing on another fixture's leak | The frame it jumps on, found by logging the position through `Settle`. ⚠️ Do not widen the 0.01 bound |
+| **P2** | 93 | A held tsinelas drifts **0.084 m** from the hand, and the isolated `match` group reports exactly that (the full run said 7.945 m, on a SETTINGS test) | § 93 |
 | **P2** | 127 | The taya ring and attacker disc need their non-colour distinction finished | § 127.3 |
 
 ### The reds that are about the game rather than the suite
@@ -992,6 +993,47 @@ the three-layer answer collapsing into two.
 which is what the note always intended. ⚠️ **The two strings are still different and that is left
 alone deliberately**: making them equal would be a content decision about how Seismic Stomp is
 described, and the screens now each show the one they were designed for.
+
+### 143.20 ⚠️⚠️ OPEN: `SteeringTests` DRIFTS 1.079 m SIDEWAYS WHILE SETTLING, DETERMINISTICALLY, AND § 130.14b CLOSED THIS ONCE
+
+**Three cases, one message, the same number every time:**
+
+```
+AMovementAimedSeatTurnsToFaceItsDirection
+MouseAimedMovementIsRelativeToTheBody
+TheSteeringFrameByFrameIsWrittenOut
+
+  "the seat drifted sideways while settling, so it is not standing on the floor this
+   test built. See docs/TODO.md § 130.14."
+   Expected: less than 0.00999999978f   But was: 1.07999992f
+```
+
+⚠️ **PRE-EXISTING AND NOT FROM THIS PASS.** It is red on `e85b0fc` in the full single-process run
+and red in the isolated `match` group afterwards, with the same value. **The isolation is what
+makes it worth acting on**: in the full run one of the three failed instead on a
+`MissingReferenceException` from another fixture's leaked object, so the set was never three
+identical failures and never looked deterministic.
+
+**What is known:**
+
+- The seat is built at `StandingHeight` = `(0, 1.05, 0)` over a 60x1x60 cube floor whose top
+  surface is y = 0, with a `CharacterController` and a `CharacterMotor`, and **no input is
+  applied before the assertion**. `Settle` waits 20 fixed updates and then asserts the body has
+  not moved in x or z.
+- **1.079 m is far too specific to be jitter**, and it repeats exactly across three cases and
+  across runs, so it is something pushing the body once rather than drift accumulating.
+- § 130.14b closed the earlier version of this (*"the steering was never wrong. The test buried
+  its own seat in the floor"*) and `Settle` is the fix that entry added. **This is a different
+  failure of the same setup**: the seat is no longer buried, it is displaced.
+
+⚠️ **DO NOT WIDEN THE 0.01 BOUND.** `Settle`'s own note says why it asserts the seat is actually
+down rather than trusting a frame count: *"a change to gravity or to the controller's size fails
+here, where the reason is written, instead of one assertion further on where it is not."* A body
+that moves a metre with no input is either the confinement clamp, a spawn placement, or a
+collision with something the test did not build, and all three are worth knowing about.
+
+**Next step is one measurement, not a fix**: log the position every fixed update through `Settle`
+and find the frame it jumps on. A single frame means a teleport or a clamp; a ramp means a force.
 
 ### 143.17 ⚠️ OPEN: TWO DEFECTS THAT WERE INVISIBLE UNTIL THE SUITE WAS ISOLATED
 
