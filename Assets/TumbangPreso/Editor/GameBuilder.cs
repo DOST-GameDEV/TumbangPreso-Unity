@@ -628,10 +628,35 @@ namespace TumbangPreso.EditorTools
                 }
 
                 string index = Path.Combine(dotGit, "index");
-                string head = Path.Combine(dotGit, "HEAD");
-                if (!File.Exists(index) || !File.Exists(head)) return false;
+                string headFile = Path.Combine(dotGit, "HEAD");
+                if (!File.Exists(index) || !File.Exists(headFile)) return false;
 
-                return File.GetLastWriteTimeUtc(index) > File.GetLastWriteTimeUtc(head).AddMinutes(1);
+                // ⚠️⚠️ AGAINST THE REF HEAD POINTS AT, NOT AGAINST `HEAD` ITSELF, AND THE FIRST
+                // VERSION GOT THIS WRONG IN THE DIRECTION THAT MAKES THE STAMP USELESS.
+                // `.git/HEAD` holds the line `ref: refs/heads/main` and is only rewritten when
+                // the BRANCH changes, so on a checkout that has been on one branch all day its
+                // mtime is hours old and every build stamps `dirty: true` on a clean tree. **A
+                // flag that is always set is a flag nobody reads**, and this one exists to tell
+                // somebody at a venue that a player is not the commit it claims.
+                string head = File.ReadAllText(headFile).Trim();
+                string commitFile = headFile;
+
+                if (head.StartsWith("ref:", StringComparison.Ordinal))
+                {
+                    string refName = head.Substring(4).Trim();
+                    string loose = Path.Combine(dotGit,
+                        refName.Replace('/', Path.DirectorySeparatorChar));
+
+                    // ⚠️ A PACKED REF HAS NO LOOSE FILE, and a repository that has just been
+                    // garbage collected or freshly cloned is exactly that. There is nothing to
+                    // compare against then, so the honest answer is "cannot tell" rather than a
+                    // guess in either direction.
+                    if (!File.Exists(loose)) return false;
+                    commitFile = loose;
+                }
+
+                return File.GetLastWriteTimeUtc(index) >
+                       File.GetLastWriteTimeUtc(commitFile).AddMinutes(1);
             }
             catch
             {
