@@ -208,11 +208,37 @@ namespace TumbangPreso
             // WHO is looked through, never HOW.
             if (claimed != null)
             {
-                var rig = UnityEngine.Camera.main != null
-                    ? UnityEngine.Camera.main.GetComponent<CameraSystem.CameraRig>()
-                    : null;
+                // ⚠️⚠️ `Camera.main` IS THE SPECTATOR'S OWN OBJECT WHENEVER ONE IS UP, AND THAT
+                // IS WHY THE RIG IS LOOKED UP BY TYPE NOW. `MatchInstaller` tags the
+                // `SpectatorCamera` it builds as `MainCamera`, so on any run that started with
+                // nobody driving a seat (`-tp-allbots`, an authored all-bots scene, or a
+                // spectator window) `Camera.main.GetComponent<CameraRig>()` answers **null** and
+                // this whole block did nothing: the seat changed hands and the view stayed where
+                // it was, which is the exact symptom the note above says this code exists to
+                // prevent. Finding the rig by type cannot be fooled by which camera holds the tag.
+                var rig = UnityEngine.Object.FindFirstObjectByType<CameraSystem.CameraRig>();
 
-                if (rig != null) rig.Follow(claimed);
+                if (rig != null)
+                {
+                    // ⚠️ AND IT IS SWITCHED BACK ON, because the branch that built the spectator
+                    // camera also called `rig.SetActive(false)`. Following a disabled rig is a
+                    // no-op that looks like a fix.
+                    rig.SetActive(true);
+                    rig.Follow(claimed);
+                }
+
+                // ⚠️⚠️ TAKING A SEAT ENDS SPECTATING, AND NOTHING SAID SO. This is the local
+                // half of `docs/TODO.md` § 141: a body that is driven by a keyboard is not a
+                // body being watched, so the watcher camera and the stripped HUD both have to
+                // go. Without this the switcher hands the player a seat while the spectator
+                // overlay keeps drawing over it, which is what 🧑 photographed:
+                // **"IF IT isnt spectator why do i see spectator hud"**.
+                var spectator =
+                    UnityEngine.Object.FindFirstObjectByType<CameraSystem.SpectatorCamera>();
+
+                if (spectator != null) spectator.enabled = false;
+
+                UnityEngine.Object.FindFirstObjectByType<UI.Hud>()?.ExitSpectatorMode();
             }
         }
 

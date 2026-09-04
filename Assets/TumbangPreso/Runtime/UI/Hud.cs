@@ -1024,6 +1024,99 @@ namespace TumbangPreso.UI
             }
 
             BuildSpectatorReadout();
+            SetSpectatorReadoutEnabled(true);
+        }
+
+        /// <summary>
+        /// Puts a watcher back in a body.
+        ///
+        /// ⚠️⚠️ THIS DID NOT EXIST, AND ITS ABSENCE IS THE BUG 🧑 PHOTOGRAPHED ON 2026-09-04:
+        /// *"dude is this shti spectator?"*, *"if this is spectator why tf can i move the
+        /// character by doing wasd"*, **"IF IT isnt spectator why do i see spectator hud"**. He
+        /// had a first-person tsinelas in hand, WASD moving a character, and the spectator
+        /// controls overlay and `FREE FLIGHT · 3.6 m/s` drawn over the top of it.
+        ///
+        /// ⚠️⚠️ THE PATH IS `MatchInstaller.RebindLocalSeat` AND IT IS HALF-WRITTEN RATHER THAN
+        /// MISSING. Its non-watching branch re-enables the gameplay rig, re-follows the seat and
+        /// puts the watcher camera away with `stale.enabled = false`, under a note that says
+        /// *"a rebind can also arrive after a spectator window, so the watcher camera is put away
+        /// rather than left running beside the rig."* **It puts the CAMERA away and nothing puts
+        /// the HUD back**, because there was nothing to call. So every re-seat after a spectator
+        /// window left this screen stripped and the readout drawn.
+        ///
+        /// ⚠️⚠️ AND THE READOUT IS THE HALF THAT SURVIVES A `_spectating` FLAG ALONE. Clearing
+        /// the flag stops `UpdateSpectatorReadout` RUNNING, which is not the same as hiding
+        /// anything: `BuildSpectatorReadout` creates four `Text` objects and sets
+        /// `_spectatorHint.enabled = true` once, and the legend's key list is written at build
+        /// time and never rewritten. They simply keep drawing whatever they last said, for the
+        /// rest of the match. That is why this method disables them explicitly rather than
+        /// trusting the flag.
+        ///
+        /// ⚠️ IT IS THE MIRROR OF `EnterSpectatorMode`, IN THE SAME ORDER, ON PURPOSE. The one
+        /// thing that method does which is not a visibility write is widening the scoreboard by
+        /// the caster cell, and a mirror that forgets it leaves the board permanently wide with
+        /// an empty column where the rail used to be.
+        /// </summary>
+        public void ExitSpectatorMode()
+        {
+            if (!_spectating) return;
+
+            _spectating = false;
+
+            // The caster cell's width, given back by the same arithmetic that took it. See
+            // `EnterSpectatorMode`: stated rather than rounded so moving `CasterStateWidth`
+            // moves both halves together.
+            if (_scoreboardRt != null)
+            {
+                var size = _scoreboardRt.sizeDelta;
+                _scoreboardRt.sizeDelta =
+                    new Vector2(size.x - CasterStateWidth - ScoreRowSpacing, size.y);
+            }
+
+            SetSpectatorReadoutEnabled(false);
+
+            // ⚠️ SWITCHED BACK ON RATHER THAN LEFT TO THE PER-FRAME LOGIC, because these were
+            // `SetActive(false)` and a deactivated object runs none of the code that would show
+            // it again. The per-frame gates then hide whichever of them should not be up: the
+            // hero deck is Hero Strike only (`isHeroMode`), and the training chrome has its own
+            // rule. Turning them on here is what gives that logic something to decide about.
+            if (_stackLeft != null) _stackLeft.gameObject.SetActive(true);
+            if (_stackRight != null) _stackRight.gameObject.SetActive(true);
+            if (_indicators != null) _indicators.gameObject.SetActive(true);
+
+            // ⚠️ THE TWO CARDS ARE SWEPT BY TYPE, exactly as `EnterSpectatorMode` sweeps them:
+            // this HUD does not own either object, and giving it a reference to two things it
+            // did not create is a second lifetime to keep in step. `SetCleanFeed`'s own
+            // `&& !_spectating` guard is why this is safe to do unconditionally now.
+            foreach (var card in FindObjectsByType<YouCard>(FindObjectsInactive.Include,
+                                                            FindObjectsSortMode.None))
+            {
+                card.gameObject.SetActive(true);
+            }
+
+            // ⚠️ THE ROLE SWAP CARD IS **NOT** TURNED BACK ON, and that is not an omission. It
+            // is a transient that shows itself when a role actually swaps; forcing it visible
+            // here would put a stale swap announcement on screen at the moment a player is
+            // handed a seat, which is exactly when it would be believed.
+        }
+
+        /// <summary>
+        /// The four labels the watcher's screen owns, shown and hidden together.
+        ///
+        /// ⚠️ THEY ARE BUILT ONCE AND KEPT. `BuildSpectatorReadout` early-returns when the
+        /// legend already exists, so a player who watches, is seated, and watches again reuses
+        /// these four rather than growing a second set each time.
+        /// </summary>
+        private void SetSpectatorReadoutEnabled(bool on)
+        {
+            if (_spectatorStatus != null) _spectatorStatus.enabled = on;
+            if (_spectatorLegend != null) _spectatorLegend.enabled = on;
+            if (_spectatorHint != null) _spectatorHint.enabled = on;
+
+            // ⚠️ THE LIVE BUG IS NEVER TURNED ON HERE. Its own note says the corner starts empty
+            // because "LIVE" is the state that says nothing; it is driven by the broadcast state
+            // and this method only ever has the right to take it away.
+            if (!on && _spectatorLiveBug != null) _spectatorLiveBug.enabled = false;
         }
 
         private Text _spectatorLegend;

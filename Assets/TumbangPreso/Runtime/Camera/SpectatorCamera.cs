@@ -779,10 +779,36 @@ namespace TumbangPreso.CameraSystem
                 UI.Hud.Instance?.ShowToast("CAMERA MARK RECALLED", 0.9f);
             }
 
-            if (kb.f1Key.wasPressedThisFrame) SelectPlayerPov(0);
-            if (kb.f2Key.wasPressedThisFrame) SelectPlayerPov(1);
-            if (kb.f3Key.wasPressedThisFrame) SelectPlayerPov(2);
-            if (kb.f4Key.wasPressedThisFrame) SelectPlayerPov(3);
+            // ⚠️⚠️ F1 TO F4 ARE READ BY TWO COMPONENTS AND `DebugPlayerSwitcher` HAS THE OLDER
+            // CLAIM, SO IT WINS OFFLINE. `DebugPlayerSwitcher.Update` maps the same four keys to
+            // `Assign(0..3)`, which SEIZES that seat: it un-parks the body, enables its
+            // `PlayerInputReader` and moves the player's name onto it. One press therefore did
+            // both, and the result is the screen 🧑 photographed on 2026-09-04, a driven body
+            // under a spectator overlay: **"IF IT isnt spectator why do i see spectator hud"**.
+            // `docs/TODO.md` § 141.
+            //
+            // ⚠️⚠️ AND THIS IS THE COUNTER-EXAMPLE TO THE RULE THAT MAKES THE SPECTATOR KEY SET
+            // LEGAL. `CLAUDE.md` § 4 exempts nine spectator controls from "one control, one
+            // action" on one stated ground: *"a spectator has no body, no seat and no
+            // `CharacterMotor`, so ... they can never both fire."* The debug switcher can hand a
+            // spectator a body, so offline that sentence is false and the exemption does not
+            // cover these four.
+            //
+            // ⚠️ NETWORKED IS THE OTHER WAY ROUND AND IS LEFT ALONE. `DebugPlayerSwitcher.Update`
+            // returns on its first line in a networked session (seizing a seat locally would
+            // desync every peer), so there is no second reader there and a real spectator keeps
+            // its POV keys. **The gate is who else is listening, not which mode we are in.**
+            bool switcherOwnsTheFKeys =
+                !NetAuthority.IsNetworked
+                && UnityEngine.Object.FindFirstObjectByType<DebugPlayerSwitcher>() != null;
+
+            if (!switcherOwnsTheFKeys)
+            {
+                if (kb.f1Key.wasPressedThisFrame) SelectPlayerPov(0);
+                if (kb.f2Key.wasPressedThisFrame) SelectPlayerPov(1);
+                if (kb.f3Key.wasPressedThisFrame) SelectPlayerPov(2);
+                if (kb.f4Key.wasPressedThisFrame) SelectPlayerPov(3);
+            }
 
             // ⚠️ THE THREE SPEED DIGITS STAY LITERAL AND THAT IS DELIBERATE. They are a
             // NUMBERED SET (quarter, half, three quarter speed) the way F1 to F4 are a POSITIONAL

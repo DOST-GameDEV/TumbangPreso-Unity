@@ -629,6 +629,17 @@ namespace TumbangPreso.UI
                     return "Your name, your colours, and what leaves this machine.";
             }
 
+            // ⚠️⚠️ AN UNUSABLE CONTROLLER IS SAID OUT LOUD HERE, AND IT OUTRANKS THE REBIND
+            // SENTENCE. `docs/TODO.md` § 138: a pad Unity could not match is a `Joystick` rather
+            // than a `Gamepad`, so every `<Gamepad>` binding in the game resolves to nothing on
+            // it and **the pad is simply dead with no message anywhere**. The GAMEPAD page is
+            // exactly where somebody goes when their controller is not working, so it is the one
+            // screen where this sentence is worth more than the instructions.
+            //
+            // ⚠️ THE CONTROLS TAB ONLY. It is a fact about the controls, and putting it on all
+            // four pages would be a warning following the player around the settings screen.
+            if (ControllerWatch.HasUnrecognised) return ControllerWatch.StatusLine();
+
             return _bindingDevice == InputDeviceKind.Gamepad
                 ? "Pick a row, then press a button on your pad. B cancels."
                 : "Pick a row, then press a key or a mouse button. Escape cancels.";

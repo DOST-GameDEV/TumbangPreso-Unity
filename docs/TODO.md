@@ -20,10 +20,10 @@ Android thermals need a handset, and a phone joining a PC needs a person to watc
 
 | § | Open work | Where it bites |
 |---|---|---|
-| **141** | Spectator and a driven seat were on screen at the same time, and F1-F4 have two readers | 🧑, with a screenshot: **“IF IT isnt spectator why do i see spectator hud”**. ⚠️⚠️ **The F1-F4 double-read is VERIFIED; the entry path is NOT, and § 141.3 says do not guess.** § 141.2 also breaks the premise `CLAUDE.md` § 4 exempts the nine spectator keys on. § 141 |
+| **141** | Spectator and a driven seat were on screen at the same time, and F1-F4 have two readers | 🧑, with a screenshot: **“IF IT isnt spectator why do i see spectator hud”**. ✅ **Cause found and fixed: `Hud.EnterSpectatorMode` had no inverse**, so every re-seat after a spectator window left the HUD stripped and the overlay drawn. The F1-F4 double-read is fixed too, and § 141.2 breaks the premise `CLAUDE.md` § 4 exempts the nine spectator keys on. ⚠️ **Open: the duplicate name on the scoreboard, and his eye on the fix.** § 141 |
 | **140** | The player cannot see the network, and the timeout gives them eight blind seconds | ⚠️⚠️ **The biggest open network item, and it was found by measuring.** There is no ping, no bars, no "reconnecting" anywhere in the game, and `DisconnectTimeoutMS` is 8000, so a peer whose wifi dies keeps a normal-looking arena for eight seconds. **The sampler is built (§ 140.3); the screen is designed and not built (§ 140.4).** § 140.5 is the one that needs a decision rather than code. § 140 |
 | **139** | Settings is four pages now, and the renders found three faults older than the pass | 🧑: *"we have too many settings now"*, *"add tabs or some shit so that they dont have to scroll that much"*. **Done and rendered; it is open because he has not looked at it.** The renders also found blue slider fills and a magenta tick that had shipped the whole port below the fold. § 139 |
-| **138** | A controller Unity does not recognise is invisible to this whole game | 🧑: *"idk how extensive controller support is"*, *"maybe add to todo that it can work for fake controllers and shit too"*. Every controller path reads `Gamepad.current` or a `<Gamepad>/` path, and an unmatched pad is a `Joystick` that none of them see. **The failure is completely silent.** § 138.4 step 1 is the cheap half and needs no pad to build. § 138 |
+| **138** | A controller Unity does not recognise is invisible to this whole game | 🧑: *"idk how extensive controller support is"*, *"maybe add to todo that it can work for fake controllers and shit too"*. Every controller path reads `Gamepad.current` or a `<Gamepad>/` path, and an unmatched pad is a `Joystick` that none of them see. ✅ **It is no longer SILENT (`ControllerWatch`, § 138.4 step 1): it warns in the log and says so on the settings CONTROLS tab.** Open: the fallback layout that would make such a pad actually work, and a list of pads anybody has really tested. § 138 |
 | **134** | The broadcast pass: autopilot, replay, ultimate introductions, the shove that meant nothing, and the keyboard on the phone | 🧑: *"why the fuck does it have keybinds theres no keys in mobile"*, and bots that *"follow players around only to push them"*. **The touch layer, the AI shove, the autopilot, the replay, the six ultimate introductions and Eskinita are done and captured; § 134.10, § 134.12, § 134.15 and § 134.16 are what is left open.** ⚠️ § 134.9 is CLOSED by § 137. § 134 |
 | **133** | One font is doing every job, and it is a display face | 🧑: *"I think the problem is we use the same font for everything"*. **The next session's brief**: a body face that pairs with Darumadrop, plus the lobby and login overhaul, with a logo he is attaching. § 133 |
 | **132** | The loadout said nothing about the hero, and a build vanished the moment the match started | Twelve defaults read `As tuned · As tuned`, the ultimate was not on the board, the hold-key panel named the SLOT rather than the equipped reading, and the TAB tray printed every ability name twice. § 132 |
@@ -170,40 +170,62 @@ spectator a body**, so there is a state in which both ARE reachable, and the exe
 sentence stops being true. That is a bigger finding than the key clash: **the rule that makes
 nine spectator keys legal has a counter-example.**
 
-### 141.3 ⚠️ WHAT IS NOT YET PROVEN: HOW HE GOT THERE
+### 141.3 ✅ THE CAUSE, AND IT IS NOT THE KEY COLLISION
 
-**Stated plainly rather than guessed at, because the fix depends on it and a wrong one makes this
-worse.** The obvious reconstruction does not survive reading:
+⚠️⚠️ **`Hud.EnterSpectatorMode` HAD NO INVERSE, AND `MatchInstaller.RebindLocalSeat` IS
+HALF-WRITTEN BECAUSE OF IT.** Its non-watching branch re-enables the gameplay rig, re-follows the
+seat, and puts the watcher camera away, under a note that says exactly what it is doing:
 
-- A `SpectatorCamera` only exists when `MatchInstaller` saw `HumanSeat < 0` (`GameLaunch.Spectator`,
-  `GameLaunch.AllBots`, or the authored `_allBots`), and in that branch it also calls
-  `rig.SetActive(false)`.
-- **With the gameplay rig off there should be no first-person arms**, and the screenshot has them.
-- `DebugPlayerSwitcher.ApplySlots` re-follows through `Camera.main.GetComponent<CameraRig>()`, and
-  in that state `Camera.main` is the spectator's own object, which has no `CameraRig`, so that call
-  finds null and does nothing.
+> ⚠️ A REBIND CAN ALSO ARRIVE AFTER A SPECTATOR WINDOW, so the watcher camera is put away rather
+> than left running beside the rig.
 
-**So something re-enabled the gameplay rig, or the spectator camera was created on a path that did
-not disable it.** ⚠️ **DO NOT FIX THIS BY GUESSING.** The next session should ask him which keys he
-pressed and from which screen (practice, tutorial, or a bot match), or reproduce it with
-`-tp-allbots` and F1 through F4, before changing a line.
+**It puts the CAMERA away and nothing puts the SCREEN back**, because there was nothing to call.
+So every re-seat after a spectator window leaves the HUD stripped and the controls overlay drawn
+over a body the player is driving. That is the screenshot, and the first-person arms that made the
+first reading fail are simply the rig being correctly re-enabled on the line above.
 
-### 141.4 WHAT DONE LOOKS LIKE
+⚠️⚠️ **AND THE READOUT SURVIVES A `_spectating` FLAG ALONE, WHICH IS WHY CLEARING ONE WOULD NOT
+HAVE BEEN ENOUGH.** `_spectating` gates whether `UpdateSpectatorReadout` RUNS. It does not hide
+anything: `BuildSpectatorReadout` creates four `Text` objects, sets `_spectatorHint.enabled = true`
+once, and writes the legend's key list at build time and never again. **They keep drawing whatever
+they last said for the rest of the match.**
 
-1. **Find the entry path first** (§ 141.3), then fix that.
-2. **Seizing a seat must leave spectating**, whichever path created it: destroy the
-   `SpectatorCamera`, re-enable the gameplay rig, and un-strip the HUD. ⚠️ **`Hud.EnterSpectatorMode`
-   has no inverse today** and *"STRIPS RATHER THAN HIDES"* by design, so this needs one built or
-   the HUD rebuilt.
-3. ⚠️ **The two F1-F4 readers must stop overlapping**, and moving the spectator's POV keys is the
-   cheaper half: the switcher's F1-F4 are the older claim and are what `DebugBar.KeysText`
-   advertises.
-4. ⚠️⚠️ **AND THE `DebugKeys` CATALOGUE IS NOW OVERDUE.** § 136.1 called it *"the real fix"* and
-   left it undone; this entry is the second collision inside that same block in one day, found by
-   a person rather than by a test, because every one of these keys is a literal `Keyboard.current`
-   read outside the input map where `InputMapAndAbilityTests` cannot see it. **Until it exists,
-   grep `Keyboard.current` before binding any literal key** — and that grep is exactly what would
-   have caught this one.
+✅ **Fixed**, and in the three places that can seat somebody:
+
+| | |
+|---|---|
+| `Hud.ExitSpectatorMode` | New. The mirror of `EnterSpectatorMode` in the same order: gives back the caster cell's width, disables the four readout labels, and re-activates the stacks, the indicators and the YOU card. ⚠️ **It does NOT re-show `RoleSwapCard`**, which is a transient that shows itself; forcing it would put a stale swap announcement on screen at the moment somebody is handed a seat |
+| `MatchInstaller.RebindLocalSeat` | Calls it **before** `Bind`, so no frame is spent drawing a seated HUD that still believes it is watching |
+| `MatchHost.ExitSpectatorMode` | Calls it too. Re-activating the HUD GameObject is not undoing a strip that was applied by a different component |
+| `DebugPlayerSwitcher.ApplySlots` | Disables the spectator camera and calls it, because a body driven by a keyboard is not a body being watched |
+
+⚠️⚠️ **AND `ApplySlots` HAD A SECOND BUG THE SAME LINE OF READING FOUND: IT LOOKED THE RIG UP
+THROUGH `Camera.main`.** `MatchInstaller` tags the `SpectatorCamera` it builds as `MainCamera`, so
+on any run that started with nobody driving a seat, `Camera.main.GetComponent<CameraRig>()`
+answered **null** and the whole camera handover silently did nothing: the seat changed hands and
+the view stayed where it was. That is the exact symptom the note above it says the block exists to
+prevent, *"indistinguishable from Tab doing nothing"*. It is found by type now, and switched back
+on, because the same branch that built the spectator camera had disabled it.
+
+### 141.4 ✅ THE KEY COLLISION, AND WHAT IS STILL OPEN
+
+✅ **`SpectatorCamera` no longer reads F1-F4 when a `DebugPlayerSwitcher` is present offline.** The
+switcher has the older claim, is what `DebugBar.KeysText` advertises, and is the one that seizes a
+seat. ⚠️ **Networked is untouched and is the other way round**: the switcher returns on its first
+line in a networked session, so there is no second reader and a real spectator keeps its POV keys.
+**The gate is who else is listening, not which mode we are in.**
+
+⚠️ **STILL OPEN: the duplicate `PLAYER#7645` on the scoreboard.** Both rows carry the local name,
+one DEFENDER and one ATTACKER. `ApplySlots` sets `IsBot = !driven` and `DisplayName` branches on
+exactly that, so a vacated seat should fall back to its character name. **It did not, and this pass
+did not establish why.** It is a separate fault from the overlay and is not fixed.
+
+⚠️⚠️ **AND THE `DebugKeys` CATALOGUE IS NOW OVERDUE.** § 136.1 called it *"the real fix"* and left
+it undone; this entry is the second collision inside that same block in one day, found by a person
+rather than by a test, because every one of these keys is a literal `Keyboard.current` read outside
+the input map where `InputMapAndAbilityTests` cannot see it. **Until it exists, grep
+`Keyboard.current` before binding any literal key** — that grep is exactly what would have caught
+this one.
 
 ---
 
@@ -498,14 +520,18 @@ state, and it is why this entry exists rather than a fix: the first job is findi
 ⚠️ **NOT "WRITE LAYOUTS FOR EVERY PAD". That is a treadmill and Unity already lost it.** The cheap
 wins are about telling the truth and about a fallback, in this order:
 
-1. ⚠️⚠️ **SAY SOMETHING. A device that is plugged in and unmatched must not be silent.**
-   `InputSystem.onDeviceChange` fires for every added device. When one arrives that is a `Joystick`
-   or an unrecognised HID with a gamepad usage, log it with its vendor and product id and show a
-   line in the settings CONTROLS tab: *"A controller was found that this game does not recognise."*
-   **This is the whole of `CLAUDE.md` § 6.2's INTUITIVE row**: the player presses something and
-   nothing happens, and today the game agrees with them that nothing happened.
-   **This is cheap, needs no pad to build, and turns an invisible failure into a report we can act
-   on.** It is also how the vendor and product ids of the pads people actually own get collected.
+1. ✅ **DONE 2026-09-04: `InputLayer.ControllerWatch`.** A device that is plugged in and unmatched
+   is no longer silent. It hooks `InputSystem.onDeviceChange` **and sweeps `InputSystem.devices` at
+   startup**, because a pad plugged in before the game started never raises a change and is
+   exactly the case nobody notices. A `Joystick` is the signature: that is what Unity's HID
+   support produces for a device that declared a gamepad usage and matched no layout, and it is
+   narrow enough not to report the keyboard and the mouse. It logs a warning with the
+   manufacturer, product and interface, and `ConvertedSettingsPanel.HintFor` puts
+   *"A controller was found that this game does not recognise, so it will not work."* on the
+   **CONTROLS tab**, above the rebind sentence, because that is the screen somebody opens when
+   their pad is not working.
+   ⚠️ **A WARNING RATHER THAN AN ERROR**: nothing in the game is broken, and an error would fail
+   every test run on a machine with a flight stick attached.
 2. **A generic fallback layout.** `InputSystem.RegisterLayoutOverride` / a layout deriving from
    `Gamepad` matched against a broad HID description, mapping the first four buttons and two
    sticks by convention. It will be wrong for some pads and right for many, and a wrong mapping the

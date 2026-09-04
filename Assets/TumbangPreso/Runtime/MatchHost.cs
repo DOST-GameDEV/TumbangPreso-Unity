@@ -108,7 +108,20 @@ namespace TumbangPreso
             GameLaunch.Spectator = false;
 
             var hud = FindFirstObjectByType<UI.Hud>();
-            if (hud != null) hud.gameObject.SetActive(true);
+
+            if (hud != null)
+            {
+                hud.gameObject.SetActive(true);
+
+                // ⚠️ RE-ACTIVATING THE OBJECT IS NOT UNDOING THE STRIP. This method hides the
+                // whole HUD and shows it again, which is right for the spectator IT creates; but
+                // `MatchInstaller` can have put the same HUD into spectator mode separately
+                // (`RebindLocalSeat`), and that strips individual pieces and leaves the
+                // controls overlay drawn. Switching the parent back on restores none of it.
+                // `ExitSpectatorMode` early-returns when it was never entered, so this costs a
+                // branch on the ordinary path. `docs/TODO.md` § 141.
+                hud.ExitSpectatorMode();
+            }
 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;

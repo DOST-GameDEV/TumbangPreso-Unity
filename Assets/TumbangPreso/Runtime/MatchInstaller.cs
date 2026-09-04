@@ -1084,7 +1084,24 @@ namespace TumbangPreso
             var stale = UnityEngine.Object.FindFirstObjectByType<CameraSystem.SpectatorCamera>();
             if (stale != null) stale.enabled = false;
 
-            UnityEngine.Object.FindFirstObjectByType<UI.Hud>()?.Bind(local);
+            var seatedHud = UnityEngine.Object.FindFirstObjectByType<UI.Hud>();
+
+            // ⚠️⚠️ AND THE HUD COMES BACK WITH IT, WHICH IS THE HALF THAT WAS MISSING AND THE
+            // BUG 🧑 PHOTOGRAPHED ON 2026-09-04. The three lines above put the CAMERA away and
+            // nothing put the SCREEN back: `EnterSpectatorMode` had no inverse, so a rebind
+            // arriving after a spectator window re-enabled the gameplay rig and re-followed the
+            // seat while the HUD stayed stripped and the spectator controls overlay stayed
+            // drawn. He photographed a first-person tsinelas in hand, WASD moving a character,
+            // and `FREE FLIGHT · 3.6 m/s` over the top of it: **"IF IT isnt spectator why do i
+            // see spectator hud"**. `docs/TODO.md` § 141.
+            //
+            // ⚠️ BEFORE `Bind`, because `Bind` is what points the HUD at the new body and every
+            // per-frame gate it drives reads `_spectating`. Rebinding first and clearing the
+            // flag second would spend one frame drawing a seated HUD that still believes it is
+            // watching, which is the state this whole entry is about.
+            seatedHud?.ExitSpectatorMode();
+
+            seatedHud?.Bind(local);
 
             var gate = UnityEngine.Object.FindFirstObjectByType<ReadyGate>();
             if (gate != null)
