@@ -958,8 +958,16 @@ every file in a pre-existing output directory was freshly emitted.
   `docs/VISION.md` § 2 rule 5 as a number, and the first run of it found Zack's ultimate at
   **62.8 per cent** against 8.3 for the worst of everything else.
 - **The `tools/` audits read the source as TEXT and answer questions no test can.** They need
-  `python` (not on PATH; `%LOCALAPPDATA%\Programs\Python\Python312\python.exe`) and they exit
-  non-zero, so they gate a verification pass.
+  `python` and they exit non-zero, so they gate a verification pass.
+  ⚠️⚠️ **AND WHETHER `python` IS ON PATH DEPENDS ON WHICH LAPTOP YOU ARE ON, WHICH IS WHY THIS NO
+  LONGER ASSERTS EITHER.** This line read *"not on PATH"* flatly until 2026-09-04, and on the
+  `Matthew` profile that is simply false: `Python312\` and its `Scripts\` are both in the USER Path
+  and `python --version` answers 3.12.10 from PowerShell and from bash. **There are two machines
+  with two profiles** (`CLAUDE.md` § 7 already records `GameBuilder.BuildWindows` resolving to
+  `C:\Users\matth\Desktop` on one and `C:\Users\Matthew\Desktop` on the other), and a note that is
+  true on one of them and stated as a fact about "here" sends whoever is on the other one hunting.
+  **Try `python` first; fall back to `%LOCALAPPDATA%\Programs\Python\Python312\python.exe` if the
+  bare command is not found.** Both work on this profile.
   ⚠️⚠️ **THIS LINE SAID "THREE" WHILE THE FOLDER HELD SIX, WHICH IS § 5'S DRIFT RULE CAUGHT IN THIS
   FILE FOR THE SECOND TIME** (the first was "all five editor checks" against a list of seven, three
   hundred lines down). **The list below is the authority and there is deliberately no number**: a
