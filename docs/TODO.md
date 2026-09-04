@@ -39,7 +39,7 @@ either of those.
 | **OWNED** | 142, 138 | ⚠️⚠️ **CONTROLLER SUPPORT HAS AN OWNER AND IS NOT THIS QUEUE'S WORK. DO NOT PICK IT UP.** It is live on `controller-mapping`: `GenericPadBridge`, the CONTROLLER MAP screen, `MenuNav`, and a pad that can back out of a screen. | Nothing here. Read § 142 for what landed; leave the code to the person working on it. |
 | **P1** | 134.12 | **Replay capture is a synchronous GPU stall**: `Texture2D.ReadPixels` at ~10 Hz into a ~46 MB buffer. A 90 s round is 900 captures; four rounds is 3,600. | `AsyncGPUReadback` or equivalent, bounded memory, no runaway queue, disposal proven, no capture after the session is gone, and a before/after measurement. |
 | **P2** | 16 | **One bot run is not balance evidence.** Eight matches at shipped settings spread **58 to 100 throws**, about 20 per cent. | A multi-seed sweep recording SHA, seed, config,each run, mean, median and spread, so no threshold is set against noise. |
-| **P2** | 143.15 | **The cold-start harness is written and has never been run against a stamped artifact.** `tools/cold_start.py` drives the real .exe through `-tp-host -tp-allbots -tp-netreport`, and refuses outright if the player carries no identity or came from another commit. | One green run of `python tools/cold_start.py --clean-profile` against a build from HEAD. ⚠️ A clean MACHINE is still `Attention.md`. |
+| **P2** | 143.15b | ✅ **The cold start passes, and the run exposed a gap in the harness rather than in the game.** Its report reads `round: 0`, `round active: False` beside a step that says *"hosts a match with four bots and finishes: PASS"* | The step asserts a ROUND ran, not merely that the process hosted and exited. `net_matrix` records the same trap by name: without `-tp-autostart` the ready gate is never pressed and two peers agree that nothing happened. § 143.15 |
 | **P2** | 141 | Spectator and seat ownership: the duplicate scoreboard name, and regression cover for repeated F1-F4 transitions | § 141 |
 | **P2** | 93 | A held tsinelas drifts **0.084 m** from the hand, and the isolated `match` group reports exactly that (the full run said 7.945 m, on a SETTINGS test) | § 93 |
 | **P2** | 127 | The taya ring and attacker disc need their non-colour distinction finished | § 127.3 |
@@ -797,6 +797,52 @@ decide WHICH surfaces get it were checked against the model and are the answer t
 parts u paint to look metallic make sense"*: textured materials are the livery and are refused
 outright, `maya_sofa_skin_shadermay` is the bench seats and is refused by name, and anything with
 a hue is his paint. **Do not replace that with "every white material".**
+
+---
+
+### 143.15 ✅ CLOSED 2026-09-05: THE COLD START RAN, AND THE FIRST RUN FOUND A HOLE IN THE HARNESS
+
+`python tools/cold_start.py --clean-profile`, against a player built from HEAD:
+
+```
+Verdict: PASS
+launches and identifies itself            PASS   3.4 s
+hosts a match with four bots and finishes PASS  48.0 s
+```
+
+`docs/reports/cold-start-28078b66614d.md` is the artifact.
+
+⚠️⚠️ **THE REFUSAL FIRED FIRST AND THAT IS WORTH RECORDING AS A PASS OF ITS OWN.** The first
+attempt came back *"REFUSED: the player was built from 41217d83bc20 and HEAD is 28078b66614d. A
+cold start of a different commit proves nothing about this one."* The build was one docs-only
+commit behind, which is exactly the reasoning the guard exists to refuse, and it refused it. The
+player was rebuilt from HEAD and the run means something.
+
+⚠️⚠️ **AND THE GREEN RUN'S OWN REPORT CONTRADICTS ITS SECOND STEP, WHICH IS A HOLE IN THIS
+HARNESS AND NOT IN THE GAME.** The step reads *"hosts a match with four bots and finishes:
+PASS"*, and the state it captured reads:
+
+```
+round           : 0
+round active    : False
+seat 0 travelled 20.8   seat 1 travelled 17.4   seat 2 travelled 10.2   seat 3 travelled 15.4
+```
+
+**No round ran.** The bodies moved, so the arena installed and the bots are driving, but the
+match never started. `tools/net_matrix.py` records this exact trap in its own source, in
+capitals: *"`-tp-autostart 2` IS NOT OPTIONAL AND ITS ABSENCE IS SILENT. `-tp-host` loads the
+arena, but `MatchInstaller.BuildReadyGate` opens a ready gate on any NETWORKED session, and
+nothing presses through it without this switch ... Two peers agreeing that a round never started
+is not evidence about the link."* **The same sentence is true of one peer agreeing with itself.**
+
+⚠️ **WHAT THE RUN DOES PROVE**, and it is not nothing: a player from a stamped commit launches on
+a cleared profile, identifies itself, reaches the arena, installs four bots that move, holds for
+45 seconds and exits cleanly, on a machine that has never run this build. **What it does not
+prove is that a match plays**, which is what the step's wording claims. Fixing it is one switch
+and one assertion on `round active`. § 143.15b in the queue.
+
+⚠️ **A truly clean MACHINE is still `Attention.md`.** This clears a profile; it cannot clear a
+driver, a firewall rule or a runtime that this machine has and a borrowed one does not.
 
 ---
 
