@@ -339,7 +339,14 @@ namespace TumbangPreso.UI
             // would spend the moment between opening the lobby and the first broadcast showing
             // the wrong match. `CustomGameRules.Parse` answers `Defaults` for the empty string
             // every existing `settings.json` holds, which is the whole migration.
-            if (!SceneFlow.Networked || NetAuthority.IsHost)
+            // ⚠️⚠️ AND NOT OVER A RULE SET SOMEBODY PINNED, WHICH IS `docs/TODO.md` § 143.18.
+            // This restore is correct for a player returning to a lobby and wrong for anything
+            // that configured the match on purpose first: `TournamentGuard.Apply()` sets Classic
+            // and four rounds, and this line put the saved wire back over it, in the one screen
+            // an operator uses to set a bracket match up. The saved wire on the machine where
+            // this was found read `0|0|8|90|...`, which is Classic with EIGHT rounds, a format
+            // the game does not ship.
+            if ((!SceneFlow.Networked || NetAuthority.IsHost) && !SceneFlow.RulesPinned)
             {
                 SceneFlow.SetSelectedRules(CustomGameRules.Parse(
                     Settings.SettingsStore.Current.CustomRulesWire, SceneFlow.SelectedMode));

@@ -206,6 +206,108 @@ def discover_fixtures():
     return found
 
 
+EXCLUDED_CATEGORIES = {"WallClock", "ThumbFloor"}
+
+
+def strip_comments_cs(text):
+    """C# with its comments blanked in place, so line numbers survive."""
+    out, i, n = [], 0, len(text)
+    while i < n:
+        if text[i] == '"':
+            out.append(text[i]); i += 1
+            while i < n:
+                if text[i] == "\\":
+                    out.append("  "); i += 2; continue
+                out.append(text[i])
+                if text[i] == '"':
+                    i += 1; break
+                i += 1
+            continue
+        if text.startswith("//", i):
+            j = text.find("\n", i); j = n if j < 0 else j
+            out.append(" " * (j - i)); i = j; continue
+        if text.startswith("/*", i):
+            j = text.find("*/", i); j = n if j < 0 else j + 2
+            out.append(" " * (j - i)); i = j; continue
+        out.append(text[i]); i += 1
+    return "".join(out)
+
+TEST_ATTRIBUTE = re.compile(r"\[\s*(?:Test|UnityTest)\b[^\]]*\]")
+# ⚠️ BOTH SPELLINGS. `AiDiagnosticProbe` writes `[Category(WallClock)]` against a const
+# rather than a string literal, and a regex that only knew the quoted form reported it
+# as a fixture that went missing.
+CATEGORY = re.compile(r'Category\(\s*"?(\w+)"?\s*\)')
+
+
+def fixtures_silenced_by_category():
+    """
+    Fixtures whose every case is excluded by `CATEGORIES`, and which must therefore report
+    nothing.
+
+    ⚠️⚠️ WITHOUT THIS THE COVERAGE CHECK CAN NEVER GO GREEN, AND THE FIRST FULL GATE RUN
+    PROVED IT: seven fixtures were reported as "never ran" and all seven are
+    `[Category("WallClock")]`, which the shipped filter excludes on purpose.
+    `AiDiagnosticProbe` runs a round at 1x for about eighty real seconds and its verdict
+    depends on how busy the machine is (`CLAUDE.md` § 7); the other six photograph things
+    at real time for the same reason.
+
+    **A gate that cannot be green is a gate that gets ignored**, which is the failure this
+    whole file exists to prevent, so the check has to know the difference between a fixture
+    that was silenced deliberately and one that went missing.
+
+    ⚠️ IT IS DERIVED FROM THE SOURCE AND NOT LISTED, for `discover_fixtures`' reason: a
+    hand-written list of exclusions stops being true the moment somebody adds or removes a
+    category, and it fails in the direction that hides a missing fixture.
+    """
+    silenced = {}
+
+    for path in sorted(TESTS.glob("*.cs")):
+        # ⚠️⚠️ COMMENTS STRIPPED FIRST. `MsaaResolveProbe`'s class note contains the words
+        # "A `[UnityTest]` coroutine resumes", and counting that as a case made the fixture
+        # look like it had one unexcluded test and therefore should have run. This is
+        # `audit_audio_reach.py`'s lesson exactly: it "was the only audit that did not strip
+        # comments before looking for a gate", so a comment ABOUT a gate registered as one.
+        text = strip_comments_cs(path.read_text(encoding="utf-8", errors="replace"))
+        lines = text.splitlines()
+
+        # A category on the CLASS applies to every case in it.
+        class_wide = set()
+        for m in re.finditer(r"^\s*(?:public\s+)?(?:sealed\s+|partial\s+)*class\s+(\w+)",
+                             text, re.M):
+            line_no = text[:m.start()].count("\n")
+            window = "\n".join(lines[max(0, line_no - 6):line_no])
+            class_wide.update(CATEGORY.findall(window))
+
+        cases = 0
+        excluded = 0
+        for m in TEST_ATTRIBUTE.finditer(text):
+            cases += 1
+            line_no = text[:m.start()].count("\n")
+            # ⚠️ THE WHOLE CONTIGUOUS ATTRIBUTE BLOCK, IN BOTH DIRECTIONS. A window of
+            # PRECEDING lines found one fixture of the seven: this codebase writes
+            # `[UnityTest]` and then `[Category("WallClock")]` on the NEXT line, so the
+            # category that silences a case sits after the attribute that names it.
+            first = line_no
+            while first > 0 and lines[first - 1].strip().startswith("["):
+                first -= 1
+            last = line_no
+            while last + 1 < len(lines) and lines[last + 1].strip().startswith("["):
+                last += 1
+
+            window = "\n".join(lines[first:last + 1])
+            found = set(CATEGORY.findall(window)) | class_wide
+            if found & EXCLUDED_CATEGORIES:
+                excluded += 1
+
+        if cases > 0 and excluded == cases:
+            for m in re.finditer(r"^\s*(?:public\s+)?(?:sealed\s+|partial\s+)*class\s+(\w+)",
+                                 text, re.M):
+                silenced[m.group(1)] = sorted(class_wide | EXCLUDED_CATEGORIES & set(
+                    CATEGORY.findall(text)))
+
+    return silenced
+
+
 def partition_problems(fixtures):
     """Every way the plan can be wrong, checked before a single launch is paid for."""
     problems = []
@@ -315,8 +417,10 @@ def read_group_xml(group, xml, started, members, exit_code):
     # that makes a group honest: a filter typo, a renamed fixture or a fixture whose cases were
     # all excluded by category produces a green run over less than it claimed, and nothing else
     # in the pipeline would notice. § 126.8c is the same fault one level down.
-    missing = [m for m in sorted(members) if m not in ran]
+    silenced = fixtures_silenced_by_category()
+    missing = [m for m in sorted(members) if m not in ran and m not in silenced]
     row["missing_fixtures"] = missing
+    row["silenced_fixtures"] = [m for m in sorted(members) if m in silenced]
 
     if row["total"] in (None, 0):
         row["ok"] = False
@@ -347,13 +451,16 @@ def aggregate(rows, fixtures):
     for r in rows:
         ran.update(r.get("ran_fixtures") or [])
 
-    never_ran = sorted(f for f in fixtures if f not in ran)
+    silenced = fixtures_silenced_by_category()
+    never_ran = sorted(f for f in fixtures if f not in ran and f not in silenced)
 
     ok = all(r.get("ok") for r in rows) and not never_ran and total > 0
     return {
         "total": total, "passed": passed, "failed": failed, "skipped": skipped,
         "groups": rows, "fixtures_discovered": len(fixtures),
-        "fixtures_ran": len(ran), "fixtures_never_ran": never_ran, "ok": ok,
+        "fixtures_ran": len(ran), "fixtures_never_ran": never_ran,
+        "fixtures_silenced_by_category": sorted(silenced),
+        "ok": ok,
     }
 
 
@@ -367,12 +474,18 @@ def print_summary(agg, label=""):
     print()
     print(f"PLAYMODE GATE {label}".rstrip())
     print(f"  commit            {head_sha()}")
-    print(f"  fixtures          {agg['fixtures_ran']} ran of {agg['fixtures_discovered']} discovered")
+    silenced = agg.get("fixtures_silenced_by_category") or []
+    print(f"  fixtures          {agg['fixtures_ran']} ran of {agg['fixtures_discovered']} "
+          f"discovered, {len(silenced)} silenced by category")
     print(f"  cases             {agg['total']} total, {agg['passed']} passed, "
           f"{agg['failed']} failed, {agg['skipped']} skipped")
     print()
     for r in agg["groups"]:
         print(f"  {'OK  ' if r.get('ok') else 'FAIL'}  {r['group']:<10} {r.get('reason', '')}")
+    if silenced:
+        print()
+        print(f"  excluded by {'/'.join(sorted(EXCLUDED_CATEGORIES))} on purpose, so reporting "
+              f"nothing is correct: {', '.join(silenced)}")
     if agg["fixtures_never_ran"]:
         print()
         print(f"  ⚠️  {len(agg['fixtures_never_ran'])} fixture(s) never ran: "

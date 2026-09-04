@@ -562,7 +562,7 @@ LABEL = {
     "editmode": "Unity EditMode",
     "playmode1": "PlayMode, isolated groups, pass 1 of 2",
     "playmode2": "PlayMode, isolated groups, pass 2 of 2",
-    "checks": "Checks.RunAll (seven editor checks, one launch)",
+    "checks": "Checks.RunAll (every editor check, one launch)",
     "audits": "Source audits",
     "identity": "Release artifact identity",
 }

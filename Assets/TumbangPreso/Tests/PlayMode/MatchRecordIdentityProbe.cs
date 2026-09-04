@@ -244,6 +244,27 @@ namespace TumbangPreso.PlayTests
         [Category("Ugs")]
         public IEnumerator TheRecordNeverCarriesTheMachineTokenWhileSignedIn()
         {
+            // ⚠️⚠️ SKIPPED IN BATCH MODE, THE WAY `UgsServicesProbe` IS, AND FOR THE SAME
+            // MEASURED REASON. `NetIdentity.AttemptSignInAsync` refuses UGS sign-in outright when
+            // `Application.isBatchMode` (no display, no Hub session token), so this case reached
+            // `AuthenticationService.Instance` with nothing initialised and threw
+            // `ServicesInitializationException` on every headless run.
+            //
+            // ⚠️⚠️ AND THIS FILE'S OWN `[Category("Ugs")]` NEVER KEPT IT OUT OF THE DEFAULT RUN,
+            // WHICH IS THE TRAP `docs/TODO.md` § 126.8b ALREADY RECORDED ONE FILE OVER: the
+            // shipped filter is `!WallClock;!ThumbFloor` and has never carried `!Ugs`, so the
+            // exclusion existed in an attribute and nowhere else. That is § 5's drift rule inside
+            // a test file, for the second time.
+            //
+            // ⚠️ IGNORED RATHER THAN PASSED. A pass would claim the live service answered when
+            // nothing was asked; `Assert.Ignore` puts SKIPPED and the reason in the `.xml`, so
+            // `CLAUDE.md` § 7's rule about asserting on the xml still gets a true answer.
+            if (Application.isBatchMode)
+                Assert.Ignore(
+                    "UGS sign-in is disabled in batch mode (NetIdentity.AttemptSignInAsync), so " +
+                    "there is no session to check an account id against. Run this case from the " +
+                    "editor's Test Runner when a relink or an online-play report needs checking.");
+
             // ⚠️⚠️ THROUGH `NetIdentity`, NEVER `SignInAnonymouslyAsync` DIRECTLY. A second
             // sign-in started beside the boot hook's is refused by UGS with *"The player is
             // already signing in"*, and then NEITHER has completed, so the assertion below reads

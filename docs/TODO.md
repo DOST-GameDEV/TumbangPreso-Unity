@@ -54,7 +54,7 @@ either of those.
 | ~~P2~~ | 143.14 | ✅ **DONE, and it found no defect**, which is the result worth gating: all 14 `DateTime` reads are persistent timestamps or calendar facts, and every gameplay timer already runs on game time. `audit_gameplay_clocks.py` keeps it that way. | ✅ |
 | **P2** | 143.15 | **There is no cold-start test.** Every run here inherits an editor, a `Library` and a previous session's files. | A clean-state run of the real artifact through launch → playable → host/join → finish a Classic match → rematch, verifying no dependence on developer state. |
 | ~~P2~~ | 143.16 | ✅ **DONE.** `FailureBundle` collects errors from load; `-tp-bundle` writes build identity, system, tournament readiness, network, match state, a live invariant check and the log path. No credentials. | ✅ |
-| **P0** | 143.18 | ⚠️⚠️ **ENTERING MATCH SETUP DISCARDS THE SELECTED RULE SET**, restoring `CustomRulesWire` over it. This machine's saved wire is `0\|0\|8\|90\|...`: **Classic with 8 rounds**, a format the game does not ship. **It overwrites `TournamentGuard.Apply()`**, and it is why the Hero picker has no LOADOUT door and draws Classic's `SPEED POWER GRIT` strip (6 of the 12 `screens` failures, one cause) | A deliberately-set rule set survives into match setup; the restore still happens for a player who set none. ⚠️ Do not delete the restore |
+| **P0** | 143.18 | ⚠️⚠️ **ENTERING MATCH SETUP DISCARDS THE SELECTED RULE SET**, restoring `CustomRulesWire` over it. This machine's saved wire is `0\|0\|8\|90\|...`: **Classic with 8 rounds**, a format the game does not ship. **It overwrites `TournamentGuard.Apply()`**, and it is why the Hero picker has no LOADOUT door and draws Classic's `SPEED POWER GRIT` strip (6 of the 12 `screens` failures, one cause) | ✅ **DONE.** `SceneFlow.PinSelectedRules` narrows the restore instead of deleting it, `TournamentGuard.Apply` pins and no longer writes the preset into the player's own preference, and the `screens` group went 12 failures to 7. |
 | **P2** | 141 | Spectator and seat ownership: the duplicate scoreboard name, and regression cover for repeated F1-F4 transitions | § 141 |
 | **P2** | 93 | A held tsinelas drifts **0.084 m** from the hand, four samples, not a flake | § 93 |
 | **P2** | 127 | The taya ring and attacker disc need their non-colour distinction finished | § 127.3 |
@@ -582,6 +582,64 @@ immediately: the discovery regex required a bare `[UnityTest]` and `BotBehaviour
 `[UnityTest, Timeout(MatchTimeoutMs)]`, so the gate would have silently covered 67 fixtures of 68
 and dropped the longest probe in the suite.
 
+### 143.1a ✅ THE WHOLE GATE RAN ON `0ae070e`, AND THE COMPARISON IS THE ENTRY
+
+```
+one process,  e85b0fc :  165 cases, 107 passed, 50 failed
+six groups,   0ae070e :  175 cases, 150 passed, 17 failed, 8 skipped
+```
+
+| Group | Cases | Failed | What is left |
+|---|---|---|---|
+| `destroyer` | 5 | **1** | a real focus-path finding on Eskinita's result card |
+| `screens` | 65 | **12** | six are one cause (§ 143.18); the rest are layout and a lost control |
+| `match` | 73 | **4** | § 93's carry drift and three `SteeringTests` settle failures |
+| `capture` | 10 | **0** | green |
+| `services` | 19 | **0** | 8 correctly skipped: UGS sign-in is off in batch mode |
+| `bots` | 3 | **0** | green |
+
+⚠️⚠️ **IT RUNS MORE CASES AND FINDS FEWER FAILURES, WHICH IS THE WHOLE ARGUMENT IN ONE LINE.**
+175 against 165: the extra ten are cases that previously never executed because a fixture died on
+a leaked object before reaching them. **Isolation did not hide failures, it stopped fixtures being
+blamed for each other's leaks**, and the two that were invisible underneath a phantom are § 143.18.
+
+**Two failures from the full run vanished in isolation and both were about the match itself:**
+`MatchRunTests.AWholeMatchRunsAndRotatesTheTaya` (*"seat 1 never defended: the rotation is
+broken"*) and `RestoredLataRejectsAnAlreadyAirborneFollowUp` (*"restore protection never
+expired"*). **Both pass alone.** A gate reporting that the taya rotation is broken, four runs
+running, when it is not, is worse than no gate: it is the reason nobody believed the suite.
+
+⚠️ **`CarryTests` reports exactly 0.084 m in isolation**, which is § 93's first recorded sample.
+In the full run the same bound failed at **7.945 m**, on a SETTINGS test. The isolated number is
+the real one.
+
+### 143.1b ⚠️⚠️ THE COVERAGE CHECK'S FIRST RUN FAILED THE GATE OVER SEVEN FIXTURES THAT WERE MEANT TO BE SILENT
+
+**Worth recording because the fix is the difference between a gate and a nuisance.** The first
+full run reported *"7 fixture(s) never ran"* and refused, and every one of the seven is
+`[Category("WallClock")]`, which the shipped filter excludes on purpose: `AiDiagnosticProbe` runs
+a round at 1x for about eighty real seconds and its verdict depends on how busy the machine is
+(`CLAUDE.md` § 7), and the other six photograph things at real time for the same reason.
+
+⚠️⚠️ **A GATE THAT CANNOT BE GREEN IS A GATE THAT GETS IGNORED**, which is the failure this whole
+file exists to prevent, so the check now derives which fixtures the active filter legitimately
+silences and reports them separately from ones that went missing. ⚠️ **It is derived from the
+source and not listed**, for the same reason the partition is: a hand-written exclusion list stops
+being true the moment somebody adds a category, and it fails in the direction that hides a
+genuinely missing fixture.
+
+**Three parsing faults had to be fixed before it saw all seven**, and each is a small lesson:
+
+- The category sits on the line **after** `[UnityTest]`, not before, so a window of preceding
+  lines found one fixture of the seven. It reads the whole contiguous attribute block now.
+- `AiDiagnosticProbe` writes `[Category(WallClock)]` against a **const rather than a string
+  literal**, and a regex that only knew the quoted form called it missing.
+- `MsaaResolveProbe`'s class note contains the words *"A `[UnityTest]` coroutine resumes"*, and
+  counting that as a case made the fixture look like it had an unexcluded test. **Comments are
+  stripped first now**, which is `audit_audio_reach.py`'s lesson exactly: it *"was the only audit
+  that did not strip comments before looking for a gate"*, so a comment ABOUT a gate registered
+  as one.
+
 ⚠️⚠️ **AND IT MUST NOT BECOME A THIRD CATEGORY EXCLUSION.** § 126.8d bans that explicitly: a
 category meaning *"these tests do not work next to each other"* hides this finding rather than
 recording it. **A group is an isolation boundary, not an exemption: every fixture still runs, in
@@ -898,6 +956,42 @@ phantom failure was sitting on top of a real one for four full runs.**
 the restore still happening for an ordinary player who did not set one. ⚠️ **Do not fix it by
 deleting the restore**: its note is correct, and a player who leaves the lobby on a custom set and
 comes back to the shipped one is a regression somebody will report.
+
+### 143.19 ✅ CLOSED 2026-09-04: THE HERO PICKER SPENT ITS ONE SENTENCE ON THE WRONG STRING
+
+**Found underneath § 143.18**: once the mode stopped being overwritten, the picker built for Hero
+Strike and the assertion moved on to a second, real fault.
+
+`ConvertedCharacterSelect` picks the ability blurb like this:
+
+```csharp
+if (slotView.Total >= 2 && slotView.Equipped != null)
+    summary = slotView.Equipped.Description;
+```
+
+and the note above it says *"THE VARIANT'S OWN DESCRIPTION WINS OVER `HeroAbility.Summary`, and
+the two are the same string on a default build, so a fresh account sees no change at all."*
+
+⚠️⚠️ **THAT STOPPED BEING TRUE AND NOTHING NOTICED, WHICH IS § 143.12'S DRIFT ONE LEVEL UP: A
+COMMENT ASSERTING TWO STRINGS ARE EQUAL WHEN THEY ARE NOT.**
+
+| | |
+|---|---|
+| `DanteHeroKit.cs:49` summary | *"Ground slam. Shoves players and tsinelas away from you."* |
+| `HeroLoadout.cs:176` default variant description | *"A 2.2 m shock at your feet that launches whoever is standing in it."* |
+
+**Two strings for one default ability, in two files.** So every fresh account was reading the
+variant's long description on the one screen whose whole job is the short one.
+
+⚠️ **`docs/VISION.md` § 3 is the rule it breaks.** The LEARN layer (character select) carries
+*"icon, name, what KIND of power it is, ONE SENTENCE, cooldown"*; the full text belongs to the
+RECALL layer behind the hold key. Spending character select's one sentence on the recall string is
+the three-layer answer collapsing into two.
+
+✅ The variant's description now wins only when the equipped variant is **not** the default one,
+which is what the note always intended. ⚠️ **The two strings are still different and that is left
+alone deliberately**: making them equal would be a content decision about how Seismic Stomp is
+described, and the screens now each show the one they were designed for.
 
 ### 143.17 ⚠️ OPEN: TWO DEFECTS THAT WERE INVISIBLE UNTIL THE SUITE WAS ISOLATED
 

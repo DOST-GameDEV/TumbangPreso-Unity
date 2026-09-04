@@ -175,11 +175,18 @@ namespace TumbangPreso
                 changed.Add($"{r.Name}: {(r.Value ? "ON" : "OFF")} -> {(r.Safe ? "ON" : "OFF")}");
             }
 
-            // ⚠️ THE RULES GO THROUGH `SetSelectedRules` RATHER THAN BEING ASSIGNED, so the
-            // clamping and the side effects that path owns happen exactly as they do for a lobby.
-            // A tournament preset that bypassed the setter would be a second way to configure a
-            // match, which is the shape of the problem rather than the fix.
-            UI.SceneFlow.SetSelectedRules(TournamentPreset.Rules());
+            // ⚠️⚠️ PINNED, AND DELIBERATELY NOT PERSISTED. `SetSelectedRules` does two things
+            // this must not: it writes the set into `GameSettings.CustomRulesWire` as the
+            // PLAYER'S preference, so one bracket match on a shared laptop would silently replace
+            // whatever that player last chose for their own custom games; and it leaves the set
+            // open to being restored over on the way into MATCH SETUP, which is the screen an
+            // operator actually configures a bracket match in. `docs/TODO.md` § 143.18 is the
+            // measurement: the saved wire on the machine where this was found read
+            // `0|0|8|90|...`, Classic with EIGHT rounds, and it won.
+            //
+            // ⚠️ IT STILL CLAMPS. `PinSelectedRules` goes through `AdoptRemoteRules`, which is
+            // the same clamp every other entry point uses.
+            UI.SceneFlow.PinSelectedRules(TournamentPreset.Rules());
 
             if (changed.Count > 0)
                 Debug.Log("[Tournament] cleared before starting: " + string.Join(", ", changed));

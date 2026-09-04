@@ -132,6 +132,59 @@ namespace TumbangPreso.Tests
         }
 
         [Test]
+        public void ApplyPinsTheRulesSoAScreenCannotRestoreOverThem()
+        {
+            // docs/TODO.md 143.18: ConvertedMatchSetup restores GameSettings.CustomRulesWire when
+            // it opens, which is correct for a player returning to a lobby and wrong for a match
+            // somebody configured on purpose. Without the pin, the screen an operator sets a
+            // bracket match up in silently replaced the whole tournament rule set.
+            ResetAll();
+            UI.SceneFlow.UnpinSelectedRules();
+
+            TournamentGuard.Apply();
+
+            Assert.IsTrue(UI.SceneFlow.RulesPinned,
+                          "Apply did not pin the rules, so match setup will restore over them");
+        }
+
+        [Test]
+        public void ApplyDoesNotWriteTheTournamentPresetIntoThePlayersOwnPreference()
+        {
+            // A tournament preset is a fact about the room being run, not a preference this
+            // player expressed. AdoptRemoteRules already draws that distinction for a rule set
+            // arriving from a host, and one bracket match on a shared laptop must not replace
+            // whatever that player last chose for their own custom games.
+            ResetAll();
+
+            var settings = Settings.SettingsStore.Current;
+            Assume.That(settings, Is.Not.Null);
+
+            settings.CustomRulesWire = "1|0|8|90|0|3|0|1|0";
+
+            TournamentGuard.Apply();
+
+            Assert.AreEqual("1|0|8|90|0|3|0|1|0", settings.CustomRulesWire,
+                            "Apply overwrote the player's saved custom rules with the "
+                            + "tournament preset");
+        }
+
+        [Test]
+        public void AnExplicitChoiceReleasesThePin()
+        {
+            // The pin narrows the restore rather than removing it: a player who deliberately
+            // sets a rule set has expressed the preference the restore exists to honour.
+            ResetAll();
+            TournamentGuard.Apply();
+            Assume.That(UI.SceneFlow.RulesPinned, Is.True);
+
+            UI.SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
+
+            Assert.IsFalse(UI.SceneFlow.RulesPinned,
+                           "an explicit SetSelectedRules did not release the pin, so a player "
+                           + "could not change the rules after a tournament match");
+        }
+
+        [Test]
         public void ApplyIsQuietWhenThereWasNothingToClear()
         {
             ResetAll();
