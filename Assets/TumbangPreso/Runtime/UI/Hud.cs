@@ -465,12 +465,20 @@ namespace TumbangPreso.UI
             //
             // ⚠️ HIDDEN RATHER THAN MADE PRESSABLE, AND THE REASON IS TWO LINES DOWN IN `Build`:
             // this canvas has no `GraphicsRaycaster` (`docs/TODO.md` § 113), so a uGUI button
-            // here *"would draw correctly, raycast nothing and read as a dead control"*. Putting
-            // the toggle on `TouchHud`'s canvas instead would mean a tenth thumb control for a
-            // developer switch that cannot exist in a networked session, which is exactly the
-            // kind of addition `CLAUDE.md` § 6.2 asks to be weighed by what the player has to
-            // hold in their head. **`docs/TODO.md` § 134.9 carries it as open**: a phone in
-            // practice cannot turn cooldowns off, and that is a gap rather than a fix.
+            // here *"would draw correctly, raycast nothing and read as a dead control"*.
+            //
+            // ✅ AND THE TOUCH HALF EXISTS NOW, SO THIS ROW STAYING HIDDEN IS THE WHOLE ANSWER
+            // RATHER THAN HALF OF ONE. `TouchHud.BuildSandboxToggle` puts the switch on the
+            // thumb layer's own canvas, which comes with a raycaster because it is built through
+            // `MenuKit.BuildCanvas`. The objection this note used to carry, *"a tenth thumb
+            // control for a developer switch"*, is answered there and is worth repeating here:
+            // `PracticeSandbox.Allowed` is `!NetAuthority.IsNetworked`, so the control does not
+            // exist in a networked match at all and costs a player in one nothing to hold in
+            // their head (`CLAUDE.md` § 6.2). `docs/TODO.md` §§ 134.9 and 136.4 are closed by it.
+            //
+            // ⚠️ THE TWO SURFACES STAY MUTUALLY EXCLUSIVE, which is why `!OnTouch` remains. One
+            // switch drawn twice on one screen is two controls for one state, and the pair would
+            // drift the first time either is retuned.
             bool show = PracticeSandbox.Allowed && !OnTouch && (on || _readyWindowOpen);
 
             _sandboxToggle.enabled = show;

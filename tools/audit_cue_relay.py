@@ -67,6 +67,32 @@ WRAPPED = [
     "using (NetCue.SuppressRelay()) ability.RollBackPredictedCast(_context);",
 ]
 
+# ⚠️⚠️ THE FOURTH CORRECT SHAPE, AND IT IS THE ONE THIS TOOL CANNOT SEE FOR ITSELF.
+# A line reached only from a LOCAL INPUT read runs on exactly one peer, for a reason that
+# has nothing to do with an authority gate: a remote body has no input reader, and the
+# host's copy of a seat a client owns has neither a reader nor an `AIController`. So the
+# press happens once, in one process, and `NetCue.Play` relaying from there is correct and
+# is in fact the only way the other three peers hear it at all.
+#
+# ⚠️ IT IS A NAMED LIST RATHER THAN A PATTERN, AND THAT IS DELIBERATE. "Somewhere above this
+# line there is an `Intent` read" is exactly the kind of inference that made the first
+# version of this tool wrong about 42 of 48 rows. Each row below names the file, the cue and
+# the GUARD LINE that makes the claim true, and the guard is asserted to still exist, so
+# deleting it fails here rather than going quiet in a match. That is `WRAPPED`'s contract
+# applied to the other half of the problem.
+#
+# `docs/TODO.md` § 135.6 carried this row as open work needing "an OWNER-DRIVEN verdict the
+# tool cannot currently express".
+OWNER_DRIVEN = [
+    {
+        "file": "CombatVerbs.cs",
+        "cue": "bump_swing",
+        "guard": "if (!_motor.Intent.JustPressed(Verb.Grab)) return;",
+        "why": "StepShove runs only on the peer whose input filled Intent, so the swing is "
+               "played once and relayed once.",
+    },
+]
+
 
 def strip_comment(line):
     s = line.strip()
@@ -177,6 +203,14 @@ def propagate(methods, key):
     return methods
 
 
+def owner_driven(site):
+    """True when this exact file and cue is on the OWNER_DRIVEN list."""
+    for rule in OWNER_DRIVEN:
+        if site["path"].endswith("/" + rule["file"]) and site["cue"] == rule["cue"]:
+            return True
+    return False
+
+
 def main():
     files = []
     for dirpath, _, filenames in os.walk(ROOT):
@@ -204,11 +238,16 @@ def main():
                 verdict = "KIT"
             elif s["gated_here"] or info["gated"]:
                 verdict = "HOST-ONLY"
+            elif owner_driven(s):
+                # ⚠️ CHECKED AFTER THE GATES, NEVER BEFORE THEM. A row that is ALSO host-gated
+                # should read HOST-ONLY, because that is the stronger claim and the one a
+                # reader can verify from the source without consulting this list.
+                verdict = "OWNER-DRIVEN"
             else:
                 verdict = "UNGATED"
             rows.append((verdict, s))
 
-    order = {"UNGATED": 0, "SUPPRESSED": 1, "KIT": 2, "HOST-ONLY": 3}
+    order = {"UNGATED": 0, "OWNER-DRIVEN": 1, "SUPPRESSED": 2, "KIT": 3, "HOST-ONLY": 4}
     rows.sort(key=lambda r: (order[r[0]], r[1]["path"], r[1]["line"]))
 
     for verdict, s in rows:
@@ -219,11 +258,22 @@ def main():
     text = open(system, encoding="utf-8", errors="replace").read()
     missing = [w for w in WRAPPED if w not in text]
 
+    # ⚠️ THE OWNER-DRIVEN GUARDS ARE ASSERTED FOR `WRAPPED`'S REASON. An OWNER-DRIVEN verdict
+    # is a claim that one specific line keeps the cue on one peer. If that line is edited
+    # away, the verdict silently becomes a lie and the row goes on reading green, which is
+    # worse than never having claimed it.
+    lost = []
+    for rule in OWNER_DRIVEN:
+        hit = [t for p, t, _ in files if p.endswith("/" + rule["file"])]
+        if not hit or rule["guard"] not in hit[0]:
+            lost.append("%s: %s" % (rule["file"], rule["guard"]))
+
     counts = {k: len([r for r in rows if r[0] == k]) for k in order}
     print()
-    print("%d NetCue call sites: %d host-only, %d suppressed, %d inside a kit, %d UNGATED."
+    print("%d NetCue call sites: %d host-only, %d suppressed, %d inside a kit, "
+          "%d owner-driven, %d UNGATED."
           % (len(rows), counts["HOST-ONLY"], counts["SUPPRESSED"],
-             counts["KIT"], counts["UNGATED"]))
+             counts["KIT"], counts["OWNER-DRIVEN"], counts["UNGATED"]))
 
     if missing:
         print()
@@ -231,7 +281,13 @@ def main():
         for w in missing:
             print("   " + w)
 
-    return 1 if (counts["UNGATED"] or missing) else 0
+    if lost:
+        print()
+        print("AN OWNER-DRIVEN GUARD IS GONE, so its row is claiming a peer count nobody checks:")
+        for w in lost:
+            print("   " + w)
+
+    return 1 if (counts["UNGATED"] or missing or lost) else 0
 
 
 if __name__ == "__main__":

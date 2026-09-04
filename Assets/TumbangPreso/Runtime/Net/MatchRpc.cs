@@ -2603,6 +2603,42 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(slot);
             writer.WriteValueSafe((byte)verb);
             _nm.CustomMessagingManager.SendNamedMessage("VerbDenied", clientId, writer);
+
+            CountDenial(_denialsSent, "sent", slot, verb);
+        }
+
+        // -------------------------------------------------------------------
+        // § HOW OFTEN A VERB IS REFUSED, WHICH NOTHING COULD ANSWER
+        //
+        // ⚠️⚠️ THE REFUSAL PATH WAS BUILT AND THEN COULD NOT BE OBSERVED, WHICH IS THE SAME
+        // SHAPE OF FAULT § 135 EXISTS TO FIX ONE LEVEL UP. `docs/TODO.md` § 135.3 predicts that
+        // `PlausibleIntentPose` is the reachable guard and that *"every millisecond of round trip
+        // widens that gap"*, so the refusal rate under latency is the number that says whether
+        // that prediction is right. `tools/net_matrix.py` put two peers on a 600 ms link and
+        // found no divergence in discrete state, which is the correct result and is NOT the same
+        // claim: a verb refused and correctly rolled back leaves no trace in a state report.
+        // Without this, "the host refused 40 shoves" and "the host refused none" produce
+        // byte-identical logs, which is § 68.18.10's argument about chat applied to refusals.
+        //
+        // ⚠️ FIRST, THEN EVERY 25TH, RATHER THAN EVERY ONE. These handlers sit under a 60 Hz
+        // request path and a per-refusal line would flood `Player.log` on a bad link, which is
+        // exactly the run where the rest of the log matters most. The first line proves the path
+        // is live and the running total gives the rate.
+        // -------------------------------------------------------------------
+
+        private const int DenialLogEvery = 25;
+        private readonly int[] _denialsSent = new int[3];
+        private readonly int[] _denialsTaken = new int[3];
+
+        private static void CountDenial(int[] tally, string direction, int slot, DeniedVerb verb)
+        {
+            int index = (int)verb;
+            if (index < 0 || index >= tally.Length) return;
+
+            tally[index]++;
+            if (tally[index] != 1 && tally[index] % DenialLogEvery != 0) return;
+
+            Debug.Log($"[VerbDenied] {direction} {verb} seat {slot}: {tally[index]} so far.");
         }
 
         private void OnVerbDeniedMsg(ulong senderClientId, FastBufferReader reader)
@@ -2622,6 +2658,12 @@ namespace TumbangPreso.Net
             if (slot != NetAuthority.LocalSlot) return;
 
             Unit(slot)?.GetComponent<CombatVerbs>()?.RollBackRefusedVerb((DeniedVerb)verb);
+
+            // ⚠️ COUNTED ON BOTH ENDS ON PURPOSE. The host's tally says how many it refused and
+            // this one says how many were taken back, and the pair is what separates "the host
+            // never refused" from "the refusal never arrived". A message that is sent and lost
+            // is exactly the failure a bad link produces, and one counter cannot see it.
+            CountDenial(_denialsTaken, "taken", slot, (DeniedVerb)verb);
         }
 
         /// <summary>One client mash press; the host decides which active state it answers.</summary>

@@ -957,9 +957,17 @@ every file in a pre-existing output directory was freshly emitted.
   **fails a run where one blows more than 12 per cent of the frame to white**. That bound is
   `docs/VISION.md` § 2 rule 5 as a number, and the first run of it found Zack's ultimate at
   **62.8 per cent** against 8.3 for the worst of everything else.
-- **Three `tools/` audits read the source as TEXT and answer questions no test can.** They need
+- **The `tools/` audits read the source as TEXT and answer questions no test can.** They need
   `python` (not on PATH; `%LOCALAPPDATA%\Programs\Python\Python312\python.exe`) and they exit
-  non-zero, so they gate a verification pass:
+  non-zero, so they gate a verification pass.
+  ⚠️⚠️ **THIS LINE SAID "THREE" WHILE THE FOLDER HELD SIX, WHICH IS § 5'S DRIFT RULE CAUGHT IN THIS
+  FILE FOR THE SECOND TIME** (the first was "all five editor checks" against a list of seven, three
+  hundred lines down). **The list below is the authority and there is deliberately no number**: a
+  count is the copy that goes stale, every time, because the person adding the seventh audit edits
+  the list and not the sentence above it. `ls tools/audit_*.py`.
+  ⚠️ **AND `PYTHONIOENCODING=utf-8` IS REQUIRED ON THIS MACHINE**, or `audit_audio_reach.py` dies
+  on a `UnicodeEncodeError` part way through its own output, which looks like a crash in the thing
+  it is auditing.
   - `audit_ability_authority.py` walks every ability call that moves a body or writes score and
     reports whether a `NetAuthority.ShouldResolve()` gate is open at that brace depth. ⚠️ **Every
     `other` row must read HOST-ONLY.** It is currently 44 sites, 29 gated, **0 ungated on another
@@ -971,6 +979,24 @@ every file in a pre-existing output directory was freshly emitted.
   - `audit_wire_payloads.py` compares each named message's writer and reader field by field.
     Netcode does not check that the two halves agree, and a field added to one is not an error, it
     is silently misread bytes (§ 38.6).
+  - `audit_audio_reach.py` and `audit_presentation_reach.py` ask whether a cue or an effect
+    reaches every peer or only the host. ⚠️ **The first one LIED for its whole life until
+    2026-09-04**: it was the only audit that did not strip comments before looking for a gate, so
+    `NetCue`'s own header explaining the gate it replaces registered as a gate and reported
+    `NetCue.Play` itself as host-only. A reader trusting that goes hunting for a bug in the fix.
+  - `audit_cue_relay.py` answers the other half: which cues are relayed AND played locally, and
+    therefore double-fire. ⚠️⚠️ **READ ITS HEADER BEFORE TOUCHING IT.** The first version was wrong
+    about 42 of 48 rows because **the gate is usually in the CALLER**, so gatedness is propagated
+    to a fixed point. It carries two allowlists, `WRAPPED` and `OWNER_DRIVEN`, and both **assert
+    the line that makes their claim true still exists**, so deleting one fails here rather than
+    going quiet in a match.
+- **`tools/net_link.py` and `tools/net_matrix.py` put two real players on a link this machine
+  controls**, which is how the disconnect matrix and the bad-wifi table in `docs/TODO.md` § 137
+  were measured. ⚠️⚠️ **DO NOT REACH FOR `UnityTransport.SetDebugSimulatorParameters` INSTEAD.**
+  It and `DebugSimulator` are both `[Obsolete]` **with no effect** in netcode 2.13.1, and the
+  simulator pipeline stage is only configured under `UNITY_MP_TOOLS_NETSIM_IMPLEMENTATION_ENABLED`,
+  a define from `com.unity.multiplayer.tools`, which is not in the manifest. **A table built on it
+  compiles, runs, and measures a perfect link.**
 - `tools/` also holds player-side capture scripts.
 
 Three faults from one session that no amount of playing would have found: a HUD string rebuilt

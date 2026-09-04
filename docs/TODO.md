@@ -9,14 +9,18 @@ before inventing a task, and update it in the same commit as the work.
 
 ## What is open right now
 
-Twenty-one sections, and this list is the whole of it. Everything else in this repository's history
+Nineteen sections, and this list is the whole of it. Everything else in this repository's history
 is in the archive with its number unchanged.
+
+⚠️ **§ 135 and § 136 CLOSED on 2026-09-04 and are in the archive.** § 137 is the pass that closed
+them: the two-process harness § 135.7 said did not exist, the bad-wifi table and disconnect matrix
+it was blocking, the three UNGATED cue rows of § 135.6, and § 136.4's touch control. **What § 135.7
+listed as needing a HUMAN is still open and is in [`../Attention.md`](../Attention.md)**, not here:
+Android thermals need a handset, and a phone joining a PC needs a person to watch it.
 
 | § | Open work | Where it bites |
 |---|---|---|
-| **136** | F1 did three things at once in practice, and the whole `ui_*` sound family went back | 🧑: *"clicking f1 rn makes it so that my abiliites are unli use yes but i cant move at all"*. **Fixed; § 136.4 is what is left open**, which is that a phone still cannot turn cooldowns off. § 136 |
-| **135** | The tournament network pass: the baseline, and the three verbs that refuse in silence | Punch, lunge and shove charged a client and the host refused them in silence, and nothing heals a verb cooldown. **§ 135.6 and § 135.7 are what is left open**: three UNGATED cue rows, and the fact that no harness in this repo can put two peers on a link. § 135 |
-| **134** | The broadcast pass: autopilot, replay, ultimate introductions, the shove that meant nothing, and the keyboard on the phone | 🧑: *"why the fuck does it have keybinds theres no keys in mobile"*, and bots that *"follow players around only to push them"*. **The touch layer, the AI shove, the autopilot, the replay, the six ultimate introductions and Eskinita are done and captured; § 134.9, § 134.10, § 134.12, § 134.15 and § 134.16 are what is left open.** § 134 |
+| **134** | The broadcast pass: autopilot, replay, ultimate introductions, the shove that meant nothing, and the keyboard on the phone | 🧑: *"why the fuck does it have keybinds theres no keys in mobile"*, and bots that *"follow players around only to push them"*. **The touch layer, the AI shove, the autopilot, the replay, the six ultimate introductions and Eskinita are done and captured; § 134.10, § 134.12, § 134.15 and § 134.16 are what is left open.** ⚠️ § 134.9 is CLOSED by § 137. § 134 |
 | **133** | One font is doing every job, and it is a display face | 🧑: *"I think the problem is we use the same font for everything"*. **The next session's brief**: a body face that pairs with Darumadrop, plus the lobby and login overhaul, with a logo he is attaching. § 133 |
 | **132** | The loadout said nothing about the hero, and a build vanished the moment the match started | Twelve defaults read `As tuned · As tuned`, the ultimate was not on the board, the hold-key panel named the SLOT rather than the equipped reading, and the TAB tray printed every ability name twice. § 132 |
 | **131** | Replace Hero Strike's primitive VFX and the synthesised SFX from the verified source list | **Five of the six families are wired; 24 sourced cues remain and 3 preferred old cues were restored (§ 131.3, § 131.5b).** Open: the other twelve abilities, Phaister's draped plate, and the two downloads behind a login |
@@ -110,293 +114,6 @@ taht again"*.
 
 ---
 
-## 135 · THE TOURNAMENT NETWORK PASS: THE BASELINE, AND THE THREE VERBS THAT REFUSE IN SILENCE ⚠️⚠️ IN PROGRESS, 2026-09-04, branch `abilities-rework`
-
-**The brief:** make the network layer infallible for a tournament room. Bad wifi, a mix of phones
-and PCs, no second chance. Reconnect, seat reclamation and LAN discovery already exist and are not
-being rebuilt.
-
-### 135.1 The baseline, measured before anything was changed
-
-⚠️ **THIS IS THE ROW THE REST OF THE SECTION IS COMPARED AGAINST.** Every number below was read at
-`8d5d815`, on a clean tree, before a line was edited. The handoff that opened this session quoted
-the ability audit as **44 sites, 29 gated**; it reads 49 and 30 now, which is the ultimate
-introduction work landing between the two readings and not a regression.
-
-| Measurement | Reading at `8d5d815` | How |
-|---|---|---|
-| `audit_ability_authority.py` | **49 effect call sites, 30 host-gated, 0 ungated on another body**, 19 ungated on the caster | every `other` row reads HOST-ONLY, which is the bound that matters |
-| `audit_request_call_sites.py` | **58 wire entry points, 0 unreachable** | tests deliberately do not count as a call site |
-| `audit_wire_payloads.py` | **60 named messages, 0 mismatched** | writer and reader agree field for field |
-| `Core.Tests` | **483 passed, 0 failed**, 73 ms | `dotnet test` |
-| EditMode, whole suite | **total="344" failed="0"**, 7.1 s | read off `Logs/baseline-edit.xml`, never the exit code |
-| `NetSession.ProtocolVersion` | **23** | `NetSession.cs:312`, read from the file |
-
-⚠️ **The three audits are green and they were green before this session too.** They are the floor,
-not the finding. The finding below is a class of bug none of the three can see, because all three
-ask about a call site or a payload and this one is about a **refusal that sends nothing**.
-
-### 135.2 ⚠️⚠️ THREE REQUEST HANDLERS HAVE THE `OnReqAbilityMsg` SHAPE, AND NOBODY HAD LOOKED
-
-The handoff asked for exactly this: `MatchRpc.OnReqAbilityMsg` has six ways to refuse a request,
-they used to be bare `return`s, and refusing without telling anybody is what left a client running
-a match the host was not refereeing. **The guards are right. The silence was the bug.** § 71 and
-the `HostDenyAbilityCast` note carry the whole argument.
-
-**Every other request handler in `MatchRpc.cs` was read against that shape. Three of them have it.**
-
-The shape has two halves and BOTH must be true before a silent refusal is a defect:
-
-1. **The sender is the verified owner of the seat.** Above `SenderOwnsClaimedSeat` the message is
-   malformed or hostile, this peer cannot know what the sender predicted, and a bare return is
-   correct. That exemption is already written down above `HostDenyAbilityCast` and it still holds.
-2. **The client has already spent something locally before asking.** If the client predicted
-   nothing, a silent refusal costs nothing and there is nothing to give back.
-
-| Handler | Predicts locally before asking? | Silent refusal? | Verdict |
-|---|---|---|---|
-| `OnReqPunchMsg` | ⚠️ **`_punchCooldown = Balance.PunchCooldown`**, set at the press, before the `ShouldRequest()` branch | pose, finite, role, and `HostResolvePunch` returning false | ⚠️⚠️ **DEFECT** |
-| `OnReqLungeMsg` | ⚠️ **`_lungeCooldown`, `_lungeActiveLeft` and a self-impulse**, all in `ReleaseLunge` before the request | pose, finite, role, and `HostResolveLunge` returning false | ⚠️⚠️ **DEFECT** |
-| `OnReqShoveMsg` | ⚠️⚠️ **`Stamina.Spend(Balance.ShoveStaminaCost)` AND `_shoveCooldown`**, both before the request | pose, finite, role, and `HostResolveShove` returning false | ⚠️⚠️ **DEFECT, and the worst of the three** |
-| `OnReqGrabMsg` | **No.** `TryPickup` returns immediately after sending and never calls `NotifyHolding` | yes, but nothing was spent | correct as written |
-| `OnReqThrowMsg` | **Presentation only, on purpose.** `PredictThrowPresentation` plays the arm and the stretch and the note says outright it does not clear `Held` | yes, but nothing was spent | correct as written |
-| `OnReqResetMsg` | **No.** The host stamps its own clock at START and measures the hold itself | yes, and deliberately: a number in a payload is a number the sender chose | correct as written |
-| `OnReqMashMsg` | **No.** | **It always answers**, with `SyncUnitTransformClientRpc`, refusal or not | correct as written |
-| `OnReqThrowChargeMsg` | **No.** A wind-up flag, relayed | yes, but nothing was spent | correct as written |
-
-⚠️⚠️ **AND THE ONE THING THAT MAKES THIS WORSE THAN THE ABILITY CASE: NOTHING HEALS A VERB
-COOLDOWN.** An ability at least had a 5 Hz `SyncAbility` writing the host's copy over the client's,
-which is why § 71's `mayLower` guard had to be built to STOP it healing. **The three verb cooldowns
-are on no wire at all.** `SyncUnit` carries `Stamina.Current`, `Stamina.IdleSeconds` and
-`Stamina.FatigueLeft` (`MatchRpc.cs:1645`), so a refused shove's stamina does come back on the next
-snapshot; `_punchCooldown`, `_lungeCooldown` and `_shoveCooldown` come back only by ticking down.
-**The player pressed, paid, saw the swing, and the host never ran it.**
-
-### 135.3 ⚠️ WHICH OF THE REFUSALS IS ACTUALLY REACHABLE, BECAUSE MOST OF THEM ARE NOT
-
-**Do not fix a guard that cannot fire.** Walking the four refusal paths for each verb:
-
-- **Host cooldown still up** (`_punchCooldown > 0.0f` inside `HostResolvePunch`): **not reachable
-  by a legitimate client.** Both peers use the same constant and the client stamps its copy at the
-  press, so the client's cooldown is always AHEAD of the host's. A client whose cooldown has
-  expired is asking a host whose cooldown expired earlier.
-- **Role disagreement** (`_motor.IsDefender`): **reachable, rarely.** The taya role is derived as
-  `(round - 1) % 4` and changes at a round boundary; a press inside the swap window is a real
-  disagreement.
-- **`!CanAct()`**: **reachable.** The client gates on it too (`CombatVerbs.cs:99`), so this fires
-  when a stun landed on the host between the press and the request. That is a round trip of
-  disagreement, which is exactly the thing latency makes bigger.
-- ⚠️⚠️ **`PlausibleIntentPose` failing: REACHABLE, AND IT IS THE BAD-WIFI CASE.** The host checks
-  the reported position against where it believes the body is. Every millisecond of round trip
-  widens that gap. **This is the guard that turns Part 4's latency table into Part 2's silent
-  refusal**, and it is why the two halves of this brief are one bug.
-
-**So the fix is worth building, and it is worth building on the reachable paths rather than all
-four.** The answer already exists one file away: `HostDenyAbilityCast` sends to the one peer that
-asked, carries no reason on purpose, and is not sent when the seat claim is unverified.
-
----
-
-### 135.4 The fix, and why it does NOT move the protocol version
-
-`MatchRpc.HostDenyVerb` and `CombatVerbs.RollBackRefusedVerb`, modelled line for line on
-`HostDenyAbilityCast`. One new named message, `VerbDenied`, carrying the slot and a verb byte,
-sent only to the peer that asked. The punch returns its cooldown, the lunge returns its cooldown
-AND its active window, the shove returns its cooldown and refunds `Balance.ShoveStaminaCost`.
-
-⚠️⚠️ **THE LUNGE'S ACTIVE WINDOW IS THE HALF THAT IS NOT ABOUT FAIRNESS.** `_lungeActiveLeft` is
-the only gate on `SweepLungeTag`, which hands out tags. Returning the cooldown and leaving the
-window open would let a dash the host never ran keep hunting for a victim on that screen, and a
-tag is scored host-side, so the two peers would disagree about a POINT.
-
-⚠️⚠️ **`NetSession.ProtocolVersion` STAYS AT 23, AND THE TEST FOR THAT IS WRITTEN ON THE CONSTANT
-ITSELF.** v23's own note says the bar is whether a peer that has never heard of the new message
-*"plays the shipped four or eight rounds at ninety seconds while the host plays three at sixty,
-which is two different games sharing one scoreboard"*. Apply it here: a peer ignorant of
-`VerbDenied` keeps a cooldown it already keeps today, and plays the exact game the host is
-refereeing, because the host's resolution is unchanged and only the refused peer's own bookkeeping
-is corrected. **Ignorance of this message is degraded, not divergent.** Refusing such a peer would
-cost crossplay and buy nothing. `InputContractTests.TheInputPassDidNotMoveTheProtocolVersion` still
-passes, and it was read from `NetSession.cs:312` rather than from any document.
-
-**Six new `Core.Tests` on `Stamina.Refund`**, which is where the subtle half lives: `Spend` calls
-`EnterFatigue` when a cost empties the bar, so a refund that returned the points and left the
-lockout running gives back the cheap half of the price and keeps the expensive one. The refund is
-safe to clear that lockout because `Spend` refuses outright while fatigued, so the peer was not
-fatigued when it paid, and a bar at zero cannot be drained to zero again during the round trip.
-Core is 483 to **489**.
-
-### 135.5 ⚠️⚠️ A PEER THAT DROPS MID-THROW-CHARGE LEAVES A WIND-UP ON EVERY OTHER SCREEN FOREVER
-
-**Found by walking the disconnect paths rather than by playing, and it is a lie about counterplay
-rather than a cosmetic leak.**
-
-`Carrier._observedCharge` is raised by a `ThrowCharge` message and cleared by exactly one thing: a
-later `ThrowCharge` carrying false, sent by `CancelCharge` or by the throw completing **on the
-owning peer**. A peer that drops mid-charge never sends it. Nothing else clears it: it is on no
-snapshot, and no round boundary touches it. `HostPeerLeft` then installs a bot on the seat, so the
-picture never corrects itself for the rest of the match.
-
-`SetThrowCharge`'s own summary calls the wind-up *"counterplay rather than decoration"*: an
-attacker reads it to decide whether to close or break the line. **A permanent false one trains
-three players to ignore the real thing.**
-
-✅ **Fixed:** `HostPeerLeft` broadcasts `ThrowCharge(seat, false)` and clears the host's own copy,
-in the same block that already drops the reset channel and the movement rate window for a seat
-changing hands. It is sent whether or not a bot takes over, because the picture is wrong on the
-observers either way, and it is idempotent on a seat that was never charging.
-
-### 135.6 The audits: one was lying, one did not exist, and both are fixed
-
-⚠️⚠️ **`audit_audio_reach.py` REPORTED 5 HOST-ONLY SITES AND ALL FIVE WERE FALSE, INCLUDING THE
-CLASS THAT EXISTS TO PREVENT HOST-ONLY CUES.** It was the only one of the three that did not strip
-comments before looking for a gate, so a doc comment containing the words `ShouldResolve()` and
-`return` registered a gate at its own brace depth and covered every method below it in the file.
-`NetCue.Play`, `PlayVaried` and `PlayImpact` were all reported host-only **because `NetCue`'s own
-header explains the gate it replaces**, and `MatchRpc`'s two cue relays the same way from three
-comments there. A reader trusting that output goes hunting for a bug in the fix.
-✅ **Fixed. It reads 42 call sites, 0 host-only.**
-
-✅ **`audit_presentation_reach.py` was already green: 96 presentation call sites, 96 reachable by
-every peer, 0 HOST-ONLY.** So the first half of the VFX and SFX brief is answered and the answer is
-zero: **nothing is spawned on one peer that never reaches the others.**
-
-🆕 **`tools/audit_cue_relay.py` is new and answers the OTHER half**, which nothing asked before:
-which cues are relayed AND played locally, and therefore double-fire. `NetCue.Play` plays locally
-and relays on one line, so a call site is correct in two shapes (HOST-ONLY, or SUPPRESSED under
-`NetCue.SuppressRelay`) and wrong in a third (UNGATED on a path every peer reaches, which is one
-copy per peer a few tens of milliseconds apart).
-
-⚠️⚠️ **THE FIRST VERSION OF IT WAS WRONG ABOUT 42 OF 48 ROWS AND THE REASON IS WORTH KEEPING: THE
-GATE IS USUALLY IN THE CALLER.** `Slipper.Land` plays `slipper_land` with no gate of its own and is
-reached only from a `FixedUpdate` that opens with `ShouldResolve()`. So gatedness is **propagated**
-to a fixed point: a method with no gate of its own is host-only when every call to it inside its own
-file is. Kits are handled the same way, since every entry into a `HeroKit` runs inside a scope
-opened in `HeroAbilitySystem`, and those three wrapping statements are asserted by the tool so that
-deleting one fails here rather than going quiet in a match.
-
-**Current reading: 48 NetCue call sites, 19 host-only, 1 suppressed, 25 inside a kit, 3 UNGATED.**
-
-⚠️ **THE THREE UNGATED ROWS ARE OPEN WORK AND ARE NOT ALL BUGS.** They are:
-
-| Row | What it is | Assessment |
-|---|---|---|
-| `CombatVerbs.cs:171` `bump_swing` | inside `StepShove`, driven by `Intent.JustPressed` | **Believed correct.** A remote body has no local input and the host's copy of a remote seat has neither reader nor AI, so exactly one peer reaches it. The audit cannot see "input-driven means one peer" and needs an OWNER-DRIVEN verdict. |
-| `Lata.cs:322` `reset_complete` | `SetUpright(true)` | ⚠️ **Needs a person.** `HostKnockDown` opens with `ShouldResolve()`; **`HostRestore` has NO gate of its own**, and the comment inside `SetUpright` claims *"both open with `NetAuthority.ShouldResolve()`"*, which is false as written. Every caller found so far is gated by other means (`Carrier` returns early on `ShouldRequest`, `MatchRpc.HostApplyResetPhase` checks `IsHost`, `MatchBootstrap` is round setup), and `SetUpright` early-outs when the state has not changed, so it may be unreachable on a client. **It was not proven either way.** |
-| `Lata.cs:324` `can_knockdown` | the same line, other branch | Same. |
-
-### 135.7 ⚠️⚠️ WHAT COULD NOT BE DONE, AND THE HANDOFF'S PREMISE THAT TURNED OUT TO BE WRONG
-
-⚠️⚠️ **`NetworkMultiProcessProbes.cs` DOES NOT DRIVE TWO PROCESSES. IT DRIVES NONE.** The handoff
-that opened this session said *"`NetworkMultiProcessProbes.cs` already drives two processes, extend
-it, do not write a second harness"*. It is 13 `[Test]` methods in the EditMode assembly with no
-`UnityTest`, no `IEnumerator`, no `NetworkManager` and no socket anywhere in the file: it asserts
-topology and seat RULES (`NetIdentity`, `LobbySession`) and calls that a multi-process probe. The
-name is the whole of the claim.
-
-**So the following are NOT done and were not attempted dishonestly:**
-
-- **Part 4, the bad-wifi table.** 150/300/600 ms, 2% and 10% loss and a five second outage all need
-  two live peers. The only PlayMode test that starts a real transport is `SessionRestartTests`, and
-  it starts a HOST alone. **There is no harness in this repository that can put two peers on a
-  simulated link**, and writing one is the prerequisite rather than a detail of the task.
-- **Part 2's disconnect matrix as executed tests.** The paths were walked by READING, which is how
-  § 135.5 was found, and that is worth something; it is not the same as pulling the cable.
-- **Part 5, Android thermals.** Needs a handset. `Attention.md` § 10.
-- **Part 6, a phone and a PC joining, and `UgsServicesProbe` from a signed-in editor.** Needs a
-  person. `Attention.md` §§ 1 and 6.
-
-⚠️ **The honest next step for Parts 2 and 4 is one piece of work, not two:** a two-process harness
-that launches a second player, joins it by code, and exposes Unity Transport's simulator parameters.
-Everything else in those two parts is a row in a table that harness would fill in.
-
----
-
-## 136 · F1 DID THREE THINGS AT ONCE IN PRACTICE, AND THE WHOLE ui_* SOUND FAMILY WENT BACK ⚠️⚠️ OPEN, 2026-09-04, branch `abilities-rework`
-
-Both raised by 🧑 mid-session while the network pass was running, and both are fixed.
-
-### 136.1 ⚠️⚠️ THREE SEPARATE THINGS READ F1 ON THE SAME FRAME
-
-🧑, in practice: *"clicking f1 rn makes it so that my abiliites are unli use yes but i cant move at
-all and my character js keeps going left on its own"*, then *"i cant click anything now tf"*.
-
-**F1 had three readers and every one of them fired on the same press:**
-
-| Reader | What it did |
-|---|---|
-| `Hud.UpdateSandboxToggle` | toggled the practice sandbox (this part worked, which is why it read as a movement bug) |
-| `DebugPlayerSwitcher.Update` | **`Assign(0)`: took seat 0** |
-| `SpectatorCamera` | `SelectPlayerPov(0)` |
-
-⚠️⚠️ **`GameLaunch.SoloSeat` DEFAULTS TO 1, SO PRESSING F1 FOR UNLIMITED COOLDOWNS ALSO TORE THE
-PLAYER OUT OF THEIR OWN BODY AND INTO SEAT 0.** The camera followed, the input reader moved, and
-the abilities did go unlimited, which is exactly why it looked like movement had broken rather than
-like a key collision.
-
-⚠️⚠️ **AND `CLAUDE.md` § 4's "ONE CONTROL, ONE ACTION, PER CONTEXT" COULD NOT SEE ANY OF IT.**
-`InputMapAndAbilityTests` asserts that rule over the INPUT MAP, and all three of these are literal
-`Keyboard.current` reads outside the map entirely. **This is the same hole § 35.3 records for the
-nine spectator keys**, one layer down: the rule is enforced on the asset, and a literal key read is
-not in the asset. A `DebugKeys` catalogue that a test could walk is the real fix and is NOT done.
-
-✅ **Fixed:** the sandbox toggle is **F7**, which is the first key past the block
-`DebugPlayerSwitcher` owns (F1-F4 seats, F5 cycle, F6 default) and is read by nothing else. Both
-HUD labels and `DebugBar.KeysText` say so, and `KeysText` was stale in its own right: it still
-advertised *"Tab cycle"* after the cycle moved to F5 on 2026-08-23.
-
-### 136.2 ⚠️ AND THE SECOND HALF: PARKING A BODY DOES NOT RELEASE ITS KEYS
-
-*"my character js keeps going left on its own"* is a separate defect and would have survived the key
-move. `DebugPlayerSwitcher.ApplySlots` sets `unit.Intent.Parked = !driven`, and **`Parked` stops new
-input being READ without clearing what is already held.** A player pressing a seat key while walking
-left left a body behind with left still down, and an `AIController` was then re-enabled on top of a
-stale human intent.
-
-✅ **Fixed:** the vacated body gets `Intent.Clear()` and `Intent.CommitFrame()` on the transition
-into parked. `MatchRpc.HostPeerLeft` already does exactly that pair when a peer drops mid-key; this
-is the same fix applied to the local handover. **`CommitFrame` as well as `Clear`**, because the
-intent is double-buffered and clearing the live half alone leaves the previous frame's presses
-readable for one more step.
-
-### 136.3 The whole `ui_*` sound family is restored
-
-🧑: *"i want to return old click sound bcz now it sounds weird"*, then *"replace all ui sfx changes
-with old"*, then *"only ui sound effect changes"*.
-
-All four restored from `ee8bced^` byte for byte, following the § 6 procedure rather than rolling back
-the pass: `ui_click` 8866 to **4874**, `ui_back` 5162 to **10610**, `ui_error` 9102 to **17660**, and
-`ui_hover` already done on 2026-09-03 in `65744cf`.
-
-⚠️ **THE SCOPE IS THE `ui_*` PREFIX AND NOTHING ELSE, BECAUSE HE NARROWED IT HIMSELF.**
-`countdown_tick`, `countdown_go`, `score_award`, `sfx_super_ready`, `stamina_empty` and the two
-`reset_channel` cues are also built from the same Kenney interface pack, and they are MATCH audio
-rather than front-end chrome. They are deliberately untouched: rolling them back too would have been
-the whole-batch rollback `Attention.md` § 13 says not to do.
-
-✅ All four are in `tools/build_ability_audio.py`'s `KEPT` with the reason and the byte counts, so a
-rerun of the generator cannot put the rejected presses back. **Twenty-one of the original
-twenty-seven replacements are still provisional**; `Attention.md` § 13 is still the open ask.
-
-### 136.4 ⚠️ NOT DONE: A PHONE IN PRACTICE STILL CANNOT TURN COOLDOWNS OFF
-
-§ 134.9 stays **open**. The desktop switch works and is now on a key that does not steal a seat, but
-`Hud.UpdateSandboxToggle` still hides the row on touch and there is no touch control for it, so
-testing abilities on the handset still means waiting out every cooldown.
-
-**The design was worked out and not built**, so the next session does not start from a blank page:
-build it on `TouchHud`'s canvas rather than the HUD's, because the HUD canvas has no
-`GraphicsRaycaster` (§ 113) and a button there *"would draw correctly, raycast nothing and read as a
-dead control"*. `TouchHud.Build` goes through `MenuKit.BuildCanvas`, which brings the raycaster, the
-aspect-safe scaler and the focus path. ⚠️ **The objection in `Hud`'s own note is answerable rather
-than fatal**: it argued against *"a tenth thumb control for a developer switch"*, and the answer is
-that `PracticeSandbox.Allowed` is `!NetAuthority.IsNetworked`, so the control is only ever active
-offline and a player in a real match never sees it. Top left is the one corner no thumb rests in,
-and it must be polled rather than set once at build, because a session becomes networked after the
-canvas exists.
-
----
-
 ## 134 · THE BROADCAST PASS: AUTOPILOT, REPLAY, ULTIMATE INTRODUCTIONS, THE SHOVE THAT MEANT NOTHING, AND THE KEYBOARD ON THE PHONE ⚠️⚠️ OPEN, 2026-09-04, branch `abilities-rework`
 
 🧑 2026-09-03, going into the nationals in General Santos City, asked for four things and then
@@ -448,7 +165,7 @@ verb cannot reach a phone again without somebody deciding what it looks like.
 | `Hud.PressCue` / `Hud.MashVerb` | New. A key cap on a keyboard or a pad, **nothing at all on touch**. Eight prompt sites rewritten through them. |
 | `TouchHud.Emphasise` / `TouchButton.SetHinted` | New. With the key cap gone, the prompt states the ACTION and **the button says which button**, by pulsing 9% at 1.6 Hz. A scale pulse rather than a colour one, because colour already means "you are pressing this". |
 | `Hud` deck key caps | Empty on touch. The deck tile carries the ability icon and the thumb control now carries the same one, so the player maps them by picture. |
-| `Hud` sandbox toggle | **Hidden on touch.** It reads `[F1] NO COOLDOWNS: OFF` and the only way to change it is F1: on a phone it was a status readout for a switch nobody can reach. See § 134.9 for the gap this leaves. |
+| `Hud` sandbox toggle | **Hidden on touch**, and it now has a touch equivalent rather than a gap. It reads `[F7] NO COOLDOWNS: OFF` (F1 until § 136.1) and the only way to change it is the key: on a phone it was a status readout for a switch nobody can reach. `TouchHud.BuildSandboxToggle` is the thumb half, on the layer's own canvas. § 134.9, closed by § 137. |
 | `GuidedTraining.Key` | Names the CONTROL on touch, which is the one screen in the game where a word for a control is the content rather than noise. Sixteen lessons stopped teaching keys the device does not have. |
 
 ⚠️ **THE ONE PLACE A WORD SURVIVED IS THE TUTORIAL, AND THAT IS DELIBERATE.** Everywhere else a
@@ -906,7 +623,7 @@ shake all already fire from `HeroAbilitySystem` and are untouched.
 
 ---
 
-### 134.9 ⚠️ OPEN: A PHONE IN PRACTICE CANNOT TURN COOLDOWNS OFF
+### 134.9 ✅ CLOSED 2026-09-04: A PHONE IN PRACTICE CAN TURN COOLDOWNS OFF
 
 The `[F1] NO COOLDOWNS` row is hidden on touch (§ 134.1) because F1 is the only way to change it
 and a phone has no F1. **That removes a keybind leak and leaves a genuine gap**: a mobile player in
@@ -917,6 +634,33 @@ practice cannot use the sandbox.
 control"*. The honest options are a tenth control on `TouchHud`'s canvas (rejected, § 134.8) or a
 row in the pause menu, which is a screen that already raycasts. **Done looks like**: a mobile
 player in practice can toggle the sandbox from a surface that already exists.
+
+✅ **BUILT 2026-09-04 as `TouchHud.BuildSandboxToggle`, and § 134.8's rejection was reversed on its
+own terms rather than ignored.** That entry rejected *"a tenth thumb control for a developer
+switch"*, and the answer is that it is not a tenth control in a match: `PracticeSandbox.Allowed` is
+`!NetAuthority.IsNetworked`, so the control **does not exist** in any networked session and costs a
+player in a real match nothing to hold in their head, which is the test `CLAUDE.md` § 6.2 asks for.
+The pause-menu option was the other candidate and is worse: it puts a switch two presses deep
+behind a screen that stops the world, for a thing the player wants to flip WHILE trying a power.
+
+- **On `TouchHud`'s canvas, which is the half that makes it work at all.** `TouchHud.Build` goes
+  through `MenuKit.BuildCanvas`, so the raycaster, the aspect-safe scaler and the focus path arrive
+  with it. This is the § 113 objection answered rather than dodged.
+- **Top left**, the one corner no thumb rests in: the stick owns the bottom left, the verb arcs the
+  right, and the look area is the right-hand 55 per cent.
+- **236 by 148**, so it clears the 144-unit thumb floor on its SHORT axis. `CLAUDE.md` § 7's 1519
+  failures were all controls sized against their own artwork.
+- ⚠️ **POLLED EVERY FRAME, NOT SET AT BUILD**, because a session becomes networked after the canvas
+  exists: the layer is installed per match and a player can host from a lobby it was already built
+  under. `RefreshSandbox` runs before `Update`'s layout early-returns for the same reason, so the
+  switch cannot show a stale ON in the first frames of a multiplayer match. 🧑: *"make sure this
+  doesnt leak into actual game or shti"*.
+- ⚠️ **A WORD RATHER THAN A GLYPH, AND THAT IS NOT § 134.1 REPEATING ITSELF.** That fault was
+  painting KEY NAMES on a device with no keys. `VerbGlyph` is a closed list of what a power does to
+  the world (`VISION.md` § 3) and there is no glyph for "suspend the cooldown rules"; inventing one
+  for a developer switch would be the lookup-table-to-forget that `CLAUDE.md` § 4a exists to stop.
+- **The desktop row stays hidden on touch.** One switch drawn twice is two controls for one state,
+  and the pair drifts the first time either is retuned.
 
 ---
 
@@ -6761,6 +6505,9 @@ repository still lands on something**: follow it here, find the number, read it 
 
 | § | What it was |
 |---|---|
+| 137 | The two-process harness § 135.7 said did not exist, and the tables it was blocking ✅ CLOSED 2026-09-04. ⚠️ Read § 137.2 before reaching for `UnityTransport`'s simulator: it is `[Obsolete]` with no effect here. Closes § 135.6, § 135.7's buildable half, § 136.4 and § 134.9 |
+| 136 | F1 did three things at once in practice, and the whole `ui_*` sound family went back ✅ CLOSED 2026-09-04. § 136.4's touch control is built in § 137 |
+| 135 | The tournament network pass: the baseline, and the three verbs that refuse in silence ✅ CLOSED 2026-09-04. ⚠️ § 135.7's premise about the harness is corrected in § 137.1; its two HUMAN-blocked parts are in `Attention.md`, not here |
 | 131 | The suite became a gate, the tutorial got its glyphs, and a red that was never about steering ✅ CLOSED 2026-09-03 |
 | 129 | Three faults off the first phone render, and the one that was invisible on a monitor ✅ CLOSED 2026-09-03. § 129.3's mechanism is § 130.9 |
 | 90 | The impersonation guard, and telemetry ⚠️ 2026-08-30 |

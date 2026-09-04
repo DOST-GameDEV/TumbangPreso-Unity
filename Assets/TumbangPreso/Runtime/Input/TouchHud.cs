@@ -173,6 +173,18 @@ namespace TumbangPreso.InputLayer
         private const float ChipStepY = -180.0f;
         private const float ChipX = -160.0f;
 
+        // § THE PRACTICE SANDBOX SWITCH. See `BuildSandboxToggle` for why it is on this canvas
+        // and in this corner. The height is the 144-unit thumb floor plus a little, so the
+        // control clears it on its SHORT axis rather than only on its long one.
+        private const float SandboxWidth = 236.0f;
+        private const float SandboxHeight = 148.0f;
+        private const float SandboxMargin = 26.0f;
+        private const string SandboxOnText = "NO COOLDOWNS\nON";
+        private const string SandboxOffText = "NO COOLDOWNS\nOFF";
+
+        private GameObject _sandboxRoot;
+        private Text _sandboxLabel;
+
         private Canvas _canvas;
         private readonly List<TouchButton> _buttons = new List<TouchButton>();
         private TouchStick _stick;
@@ -251,6 +263,7 @@ namespace TumbangPreso.InputLayer
 
             BuildLookArea(root);
             BuildStick(root);
+            BuildSandboxToggle(root);
 
             foreach (var entry in InputCatalogue.All) BuildButton(root, entry);
 
@@ -258,6 +271,113 @@ namespace TumbangPreso.InputLayer
 
             // The player's own opacity, size and positions, over the designed layout.
             ApplyLayout();
+        }
+
+        /// <summary>
+        /// The practice sandbox switch, for a thumb.
+        ///
+        /// ⚠️⚠️ IT IS HERE AND NOT ON THE HUD'S CANVAS, AND THAT IS THE WHOLE REASON THIS IS A
+        /// SEPARATE CONTROL RATHER THAN ONE MORE LABEL IN `Hud`. `docs/TODO.md` § 113: the HUD
+        /// canvas carries no `GraphicsRaycaster`, so a button built there *"would draw correctly,
+        /// raycast nothing and read as a dead control"*, which is `CLAUDE.md` § 6.2's INTUITIVE
+        /// row exactly (§ 108's EQUIP button with no listener). `TouchHud.Build` goes through
+        /// `MenuKit.BuildCanvas`, which brings the raycaster, the aspect-safe scaler and the
+        /// focus path with it.
+        ///
+        /// ⚠️⚠️ AND `Hud.UpdateSandboxToggle` HIDES ITS OWN ROW ON TOUCH (`!OnTouch`), so before
+        /// this there was no way to reach the switch from a handset at all. 🧑 2026-09-02 asked
+        /// for it by name on the WAIT tile: *"i wanna be able to test shit too so pls add option
+        /// or button to remove cooldowns in practice mode"*. The desktop half has worked since
+        /// then, on F1 and then on F7 (§ 136.1); the phone half is this. `CLAUDE.md` § 4a:
+        /// **"anytime we add a feature, make sure all controller and mobile is considered"**.
+        ///
+        /// ⚠️ THE OBJECTION IN `Hud`'s OWN NOTE IS ANSWERED RATHER THAN IGNORED. It argued
+        /// against *"a tenth thumb control for a developer switch"*. `PracticeSandbox.Allowed`
+        /// is `!NetAuthority.IsNetworked`, so this control is only ever alive OFFLINE and a
+        /// player in a real match never sees it. It is not a tenth control in a match; it is a
+        /// control that does not exist in one.
+        ///
+        /// ⚠️⚠️ TOP LEFT, WHICH IS THE ONE CORNER NO THUMB RESTS IN. The stick owns the bottom
+        /// left, the verb arcs own the right, and the look area is the right-hand 55 per cent.
+        /// A switch anywhere a thumb lives would be pressed by accident during a fight, and this
+        /// one changes the rules of the match it is pressed in.
+        ///
+        /// ⚠️ 236 BY 148, WHICH CLEARS THE 144-UNIT THUMB FLOOR ON THE SHORT AXIS RATHER THAN
+        /// ON THE LONG ONE. `InputSurfaceProbe.TheFrontEndMeetsTheThumbFloor` measures both, and
+        /// `CLAUDE.md` § 7 records 1519 controls that failed it by being sized against their own
+        /// artwork. This one is sized against the floor and holds its text inside that.
+        /// </summary>
+        private void BuildSandboxToggle(RectTransform root)
+        {
+            var go = new GameObject("SandboxToggle", typeof(RectTransform));
+            go.transform.SetParent(root, false);
+
+            var rt = (RectTransform)go.transform;
+            rt.anchorMin = rt.anchorMax = new Vector2(0.0f, 1.0f);
+            rt.pivot = new Vector2(0.0f, 1.0f);
+            rt.anchoredPosition = new Vector2(SandboxMargin, -SandboxMargin);
+            rt.sizeDelta = new Vector2(SandboxWidth, SandboxHeight);
+
+            var image = go.AddComponent<Image>();
+            image.raycastTarget = true;
+
+            // ⚠️ `Button` RATHER THAN `Action`, WHICH IS `CLAUDE.md` § 6.5's ROLE SPLIT. The
+            // primary on this surface is THROW, and there is one per screen. A developer switch
+            // that painted itself as the action would be telling the player it is the thing to
+            // press.
+            WoodSkin.Apply(go, WoodCraft.Surface.Button);
+
+            // ⚠️ A WORD RATHER THAN A GLYPH, AND IT IS THE ONE PLACE ON THIS LAYER THAT IS
+            // CORRECT. Every verb button carries a picture because § 134.1's fault was painting
+            // KEY NAMES on a device with no keys, and the argument there was that a verb has a
+            // shape a player already knows. This has no such shape: `VerbGlyph` is a closed list
+            // of what a power does to the WORLD (`docs/VISION.md` § 3), and there is no glyph
+            // for "suspend the cooldown rules", nor should one be invented for a switch only a
+            // developer presses. The state has to be readable at a glance, so the word carries it.
+            _sandboxLabel = MenuKit.Label(rt, SandboxOffText, 26, UiTheme.CreamMuted,
+                                          new Vector2(0.5f, 0.5f), Vector2.zero,
+                                          new Vector2(SandboxWidth - 24.0f, SandboxHeight - 24.0f));
+            _sandboxLabel.raycastTarget = false;
+
+            var button = go.AddComponent<Button>();
+            button.targetGraphic = image;
+
+            // ⚠️ `Toggle()` REFUSES TO TURN ON WHERE IT IS NOT ALLOWED, so the press is safe even
+            // on the frame a session becomes networked between the poll below and the tap.
+            button.onClick.AddListener(() =>
+            {
+                PracticeSandbox.Toggle();
+                RefreshSandbox();
+            });
+
+            _sandboxRoot = go;
+            RefreshSandbox();
+        }
+
+        /// <summary>
+        /// Paints the switch and decides whether it exists at all.
+        ///
+        /// ⚠️⚠️ POLLED EVERY FRAME RATHER THAN SET ONCE AT BUILD, BECAUSE A SESSION BECOMES
+        /// NETWORKED AFTER THIS CANVAS EXISTS. The layer is installed per match by
+        /// `MatchInstaller`, and a player can host or join from a lobby the layer has already
+        /// been built under. Deciding visibility at build time would leave a live cooldown
+        /// switch on screen in a multiplayer match, which is the exact thing 🧑 asked not to
+        /// happen: *"make sure this doesnt leak into actual game or shti"*. `PracticeSandbox`
+        /// makes that safe on the rules side by re-asking on every read; this is the same
+        /// discipline on the surface that draws it.
+        /// </summary>
+        private void RefreshSandbox()
+        {
+            if (_sandboxRoot == null) return;
+
+            bool allowed = PracticeSandbox.Allowed;
+            if (_sandboxRoot.activeSelf != allowed) _sandboxRoot.SetActive(allowed);
+
+            if (!allowed || _sandboxLabel == null) return;
+
+            bool on = PracticeSandbox.Active;
+            _sandboxLabel.text = on ? SandboxOnText : SandboxOffText;
+            _sandboxLabel.color = on ? UiTheme.Amber : UiTheme.CreamMuted;
         }
 
         /// <summary>
@@ -516,6 +636,12 @@ namespace TumbangPreso.InputLayer
             // `Hud` sets it on the frames a prompt about that verb is on screen and never has to
             // remember to unset it: a prompt that stops being true simply stops asking, and the
             // pulse eases out on its own. See `Emphasise`.
+            // ⚠️ BEFORE THE EARLY RETURNS BELOW. The layout guards further down return out of
+            // this method on any frame the layout is re-applied or the canvas resizes, and a
+            // switch that stopped repainting on those frames would show a stale ON in the first
+            // frames of a networked match, which is the one state it must never show.
+            RefreshSandbox();
+
             Verb? hint = _hintVerb;
             _hintVerb = null;
 
