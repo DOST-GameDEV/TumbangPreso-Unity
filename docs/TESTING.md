@@ -27,8 +27,56 @@ dotnet test Core.Tests/TumbangPreso.Core.Tests.csproj --nologo
 **FULL GATE. Anything touching gameplay, and before every build.** The fast gate plus:
 
 ```bash
+python tools/playmode_suite.py --gate
+```
+
+⚠️⚠️ **THAT IS THE GATE, AND THE ONE-PROCESS PlayMode COMMAND BELOW IS NOT.** It has been measured
+four times, on four commits, and the red set moves between runs on unchanged code:
+
+| Commit | Result |
+|---|---|
+| `550ba0f` | 155 cases, **42 failed** |
+| the same commit, three fixes later | 155 cases, **41 failed**, eleven suites swapped sides |
+| `16b8109` | 155 cases, **56 failed** |
+| `e85b0fc` | 165 cases, **50 failed** |
+
+What it is measuring is fixtures inheriting each other's objects, scenes and overlays, not the
+code. The plainest evidence: on `e85b0fc` a **settings** test failed carrying `CarryTests`'
+assertion message about a slipper drifting 7.945 m, where that fixture's real isolated samples are
+0.084 to 0.092 m. **A suite that blames one fixture for another's leak is not measuring either.**
+
+**Isolation turns noise into signal rather than making failures disappear.** `--gate` runs the
+suite in isolated groups, one Unity launch per group, and aggregates. Every fixture runs, in
+exactly one group; the partition is discovered from the source; and each group's results are
+checked against what it claimed, so a filter typo fails instead of quietly shrinking the run.
+
+```bash
+python tools/playmode_suite.py --plan            # the partition, run nothing
+python tools/playmode_suite.py --group match     # one group
+python tools/playmode_suite.py --gate --twice    # the nationals gate
+```
+
+**The whole qualification, tied to a commit, with a readable report:**
+
+```bash
+python tools/qualify.py --nationals
+```
+
+It refuses every false green this repository has actually met: a missing `.xml`, a well formed one
+saying `result="Passed"` with `total="0"`, a stale one from another commit, a stage that never ran,
+and a run whose HEAD moved underneath it. `docs/TODO.md` § 143.1.
+
+<details>
+<summary>The raw one-process command, kept because it is still the right tool for a targeted run</summary>
+
+```bash
 "/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -projectPath . -testPlatform PlayMode -testCategory "!WallClock;!ThumbFloor" -testResults Logs/play.xml -logFile Logs/play.log
 ```
+
+⚠️ Use it with `-testFilter` on the suites you touched. ⚠️⚠️ **`-testFilter` is SEMICOLON
+separated**; a comma-joined list matches nothing and writes a green `total="0"` file in thirteen
+seconds.
+</details>
 
 ⚠️⚠️ **PlayMode has NO `-nographics` and adding it CRASHES the editor**, not the tests. Unity
 selects `NullGfxDevice` and the first offscreen camera dies inside it; the run writes no `.xml`

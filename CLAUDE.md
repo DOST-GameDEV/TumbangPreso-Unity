@@ -774,6 +774,45 @@ dotnet test Core.Tests/TumbangPreso.Core.Tests.csproj
 "/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -runTests -projectPath . -testPlatform PlayMode -testCategory "!WallClock;!ThumbFloor" -testResults Logs/play.xml -logFile Logs/play.log
 ```
 
+⚠️⚠️⚠️ **THAT COMMAND IS NOT THE GATE AND HAS NEVER BEEN ONE. RUN `tools/playmode_suite.py --gate`
+INSTEAD, AND QUOTE ITS NUMBER.**
+
+```bash
+python tools/playmode_suite.py --gate            # every group, one aggregated verdict
+python tools/playmode_suite.py --gate --twice    # the nationals gate: green twice, same shape
+python tools/playmode_suite.py --plan            # print the partition, run nothing
+```
+
+**The single-process run above has been measured four times and it does not measure the code:**
+
+| | Result |
+|---|---|
+| `550ba0f` | 155 cases, 113 passed, **42 failed** |
+| the same commit, after three fixes | 155 cases, 114 passed, **41 failed**, and **eleven suites swapped sides** |
+| `16b8109` | 155 cases, 99 passed, **56 failed** |
+| `e85b0fc` | 165 cases, 107 passed, **50 failed** |
+
+⚠️⚠️ **THE COUNT BARELY MOVES AND THE RED SET LARGELY CHANGES, WHICH IS THE FINDING.** The cause is
+cross-fixture lifetime leakage: objects, scenes, overlays and one cloud session outliving the test
+that made them. The clearest single piece of evidence is from the fourth run, where a SETTINGS case
+failed carrying `CarryTests`' assertion message (*"a held slipper drifted 7.945 m from the hand"*)
+against a 0.05 m bound, while `CarryTests`' real isolated samples are 0.084 to 0.092 m. **That
+number is a leaked object, not a carry bug**, and a suite that attributes one fixture's failure to
+another is not measuring either of them.
+
+**Isolation does not make failures go away, it turns noise into signal.** The `screens` group alone
+is 64 cases with 13 failures and **not one `MissingReferenceException`**, against roughly thirty for
+the same fixtures inside the full run, and seven identical *"MatchSetup has no CharacterSelectPanel"*
+phantoms collapse into one specific finding about a missing door. Two real defects were invisible
+underneath those phantoms (`docs/TODO.md` § 143.17).
+
+⚠️ **A GROUP IS AN ISOLATION BOUNDARY, NOT AN EXEMPTION**, and `docs/TODO.md` § 126.8d bans the
+alternative by name: a category meaning *"these tests do not work next to each other"* hides the
+finding rather than recording it. **Every fixture runs, in exactly one group**, the partition is
+DISCOVERED from the source rather than listed, `--plan` refuses to run if any fixture is in none or
+in two, and each group's results are checked against the fixtures it claimed so a filter typo fails
+instead of passing quietly. § 143.1 has the whole argument.
+
 ⚠️⚠️ **`!ThumbFloor` IS THE SECOND EXCLUSION AND IT IS A SHRINKING GAP RATHER THAN A FLAKE.**
 `InputSurfaceProbe.TheFrontEndMeetsTheThumbFloor` measures every menu control against the
 144-unit touch target floor. It read **1519 measurements under it across 12 shapes** until
@@ -803,8 +842,13 @@ passed on immediate re-runs with nothing changed. `docs/TODO.md` § 6 carries th
 ⚠️ `[Explicit]` does NOT do this in batch mode; it was tried and the tests still ran.
 Run them on purpose with `-testCategory "WallClock"`.
 
-**All SEVEN editor checks, in one launch.** ⚠️ This line said *"all five"* until 2026-09-03, and
-§ 7.1 four hundred lines down has listed seven since `InputSurfaceCheck` and
+**All EIGHT editor checks, in one launch.** ⚠️⚠️ **THIS IS THE THIRD TIME THIS COUNT HAS GONE
+STALE AND IT IS BEING WRITTEN DIFFERENTLY BECAUSE OF IT.** It said *"all five"* until 2026-09-03
+and *"all seven"* until 2026-09-04, and both times the person who added a check edited the LIST in
+§ 7.1 and not the sentence here. **The list is the authority; treat any number in this line as
+suspect and count `Checks.Execute`'s own array if it matters.** `SceneDependencyCheck` is the
+eighth, added 2026-09-04, and it is the one that OPENS each build scene (`docs/TODO.md` § 143.6);
+§ 7.1 four hundred lines down has listed the previous seven since `InputSurfaceCheck` and
 `ShaderWarmupCollection` joined: `HeadlessCheck`, `ArenaCheck`, `MapGeometryCheck`,
 `AudioCueCheck`, `SceneScriptCheck`, `InputSurfaceCheck`, `ShaderWarmupCollection`. **A count in
 one place and a list in another is § 5's drift rule inside this file**, and the count is the copy
@@ -978,9 +1022,17 @@ every file in a pre-existing output directory was freshly emitted.
   has holes, or whose furniture stands inside the defender's box. ⚠️ **It found six faults on a
   map whose four showcase renders had already been signed off**, including both pavements
   floating 0.15 m over open air. A render only shows the angles somebody chose.
+- `SceneDependencyCheck` OPENS every build scene and asserts its references resolve: no field
+  pointing at a deleted object, no component whose script is gone, and a camera on every UI scene.
+  ⚠️⚠️ **IT IS THE OPPOSITE TECHNIQUE TO `SceneScriptCheck` AND THE TWO MUST NOT BE MERGED.** That
+  one reads scenes as TEXT precisely because opening a scene HIDES the fault it hunts (the editor
+  resolves a broken `m_Script` by class name and the player cannot). This one can only see its
+  faults by opening. **Neither can find the other's defect.** ⚠️ It never SAVES a scene, because
+  saving would rewrite the stubs the text check exists to find. On `54924fc`: 9 scenes, 11,536
+  components, 0 findings.
 - `Checks.RunAll` runs `HeadlessCheck`, `ArenaCheck`, `MapGeometryCheck`, `AudioCueCheck`,
-  `SceneScriptCheck`, `InputSurfaceCheck` and `ShaderWarmupCollection` in ONE editor launch, and
-  runs all of them even after one fails. ⚠️ **The last one REGENERATES rather than inspecting**:
+  `SceneScriptCheck`, `InputSurfaceCheck`, `SceneDependencyCheck` and `ShaderWarmupCollection` in
+  ONE editor launch, and runs all of them even after one fails. ⚠️ **The last one REGENERATES rather than inspecting**:
   it rewrites the `ShaderVariantCollection` the loading screen warms a slice per frame out of, and
   a collection that is checked but not rewritten goes stale the first time somebody adds a material
   and then warms the wrong shaders while looking exactly like a working one. `GameBuilder` rebuilds

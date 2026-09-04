@@ -260,7 +260,7 @@ has been wrong repeatedly and expensively:
   passed on immediate re-runs. `docs/TODO.md` § 6.
 - `AbilityShowcaseProbe` photographs every ability, including the TRANSIENTS, and fails a run
   where one blows more than 12 per cent of a frame to white. That is rule 5 above as a number.
-- `Checks.RunAll` runs all **seven** editor checks in ONE Unity launch. ⚠️ This said *"five"* until
+- `Checks.RunAll` runs all **eight** editor checks in ONE Unity launch. ⚠️ This said *"five"* until
   2026-09-03, and so did `CLAUDE.md` § 7's heading, while § 7.1's LIST has named seven since
   `InputSurfaceCheck` and `ShaderWarmupCollection` joined. **A count in one file and a list in
   another is § 5's drift rule, and the count is always the copy that goes stale.** The launches

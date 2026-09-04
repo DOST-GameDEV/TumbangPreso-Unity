@@ -54,7 +54,7 @@ either of those.
 | ~~P2~~ | 143.14 | ✅ **DONE, and it found no defect**, which is the result worth gating: all 14 `DateTime` reads are persistent timestamps or calendar facts, and every gameplay timer already runs on game time. `audit_gameplay_clocks.py` keeps it that way. | ✅ |
 | **P2** | 143.15 | **There is no cold-start test.** Every run here inherits an editor, a `Library` and a previous session's files. | A clean-state run of the real artifact through launch → playable → host/join → finish a Classic match → rematch, verifying no dependence on developer state. |
 | ~~P2~~ | 143.16 | ✅ **DONE.** `FailureBundle` collects errors from load; `-tp-bundle` writes build identity, system, tournament readiness, network, match state, a live invariant check and the log path. No credentials. | ✅ |
-| **P1** | 143.17 | **Two real defects unmasked by isolating the suite**: no `LoadoutDoor` on the character select stage (5 cases), and the Hero picker showing Classic's `SPEED POWER GRIT` strip instead of naming Dante's skills | Both fixed, both green in the `screens` group |
+| **P0** | 143.18 | ⚠️⚠️ **ENTERING MATCH SETUP DISCARDS THE SELECTED RULE SET**, restoring `CustomRulesWire` over it. This machine's saved wire is `0\|0\|8\|90\|...`: **Classic with 8 rounds**, a format the game does not ship. **It overwrites `TournamentGuard.Apply()`**, and it is why the Hero picker has no LOADOUT door and draws Classic's `SPEED POWER GRIT` strip (6 of the 12 `screens` failures, one cause) | A deliberately-set rule set survives into match setup; the restore still happens for a player who set none. ⚠️ Do not delete the restore |
 | **P2** | 141 | Spectator and seat ownership: the duplicate scoreboard name, and regression cover for repeated F1-F4 transitions | § 141 |
 | **P2** | 93 | A held tsinelas drifts **0.084 m** from the hand, four samples, not a flake | § 93 |
 | **P2** | 127 | The taya ring and attacker disc need their non-colour distinction finished | § 127.3 |
@@ -838,6 +838,66 @@ team asking for *"like 30 seconds to 45 seconds"*, which is the REQUEST that cau
 HISTORY `CLAUDE.md` § 3 asks for; `CheskaHeroKit.cs:182` argues against a rejected 3.2. **A rule
 that cannot tell a stale fact from a recorded reason gets switched off.** False negatives are
 accepted; false positives are not.
+
+### 143.18 ⚠️⚠️ OPEN: ENTERING MATCH SETUP OVERWRITES THE SELECTED RULE SET WITH WHATEVER THE PLAYER LAST SAVED, AND THAT REACHES THE TOURNAMENT PRESET
+
+**This is the root cause of six of the twelve failures in the isolated `screens` group, and it
+started as a test mystery and ended as the exact hazard § 143.3 was built to prevent.**
+
+`ConvertedMatchSetup`, on entry:
+
+```csharp
+if (!SceneFlow.Networked || NetAuthority.IsHost)
+{
+    SceneFlow.SetSelectedRules(CustomGameRules.Parse(
+        Settings.SettingsStore.Current.CustomRulesWire, SceneFlow.SelectedMode));
+}
+```
+
+⚠️ **The intent is right and is written up in its own note**: restore what this player left the
+lobby on, and let a client adopt the host's set instead. **What it also does is silently discard a
+rule set somebody set deliberately three lines earlier.**
+
+**The measurement, from this machine's real `settings.json`:**
+
+```
+CustomRulesWire = 0|0|8|90|0|3|0|1|0
+                  ^ ^
+                  | format
+                  mode 0 = Classic
+```
+
+**Mode 0 is Classic and Rounds is 8**, which is not a format the game ships at all: Classic plays
+four rounds and Hero Strike eight (`docs/VISION.md` § 1.1). So the saved wire is itself carrying a
+configuration nobody chose, and every entry into MATCH SETUP restores it.
+
+**What that costs, in two places:**
+
+1. ⚠️⚠️ **A TOURNAMENT MATCH.** `TournamentGuard.Apply()` sets Classic, four rounds, no bots,
+   no score target. **Opening match setup then replaces all of it with the saved wire.** That is
+   § 143.3's whole thesis (*"a mostly tournament match is the failure mode"*) arriving through a
+   door nobody was watching, and the preset's own tests cannot see it because they never load the
+   scene.
+2. **The Hero picker builds for the wrong mode.** `ConvertedCharacterSelect.BuildStageDoors` reads
+   `SceneFlow.SelectedMode == GameMode.HeroStrike` to decide whether to build the LOADOUT door, and
+   the attribute strip is chosen the same way. With Classic restored underneath it:
+   - `LoadoutSurfaceProbe`, **five cases**: *"no 'LoadoutDoor' on the character select stage"*.
+   - `ModelPreviewTests.HeroCharacterSelectShowsAbilitiesInsteadOfClassicAttributes`: the HERO
+     picker draws **`SPEED POWER GRIT`**, which is CLASSIC's attribute strip, instead of naming
+     Dante's skills. `docs/VISION.md` § 3 is the rule that breaks: *"a player must be able to get
+     what all skills do just by looking at them, or reading them from char select."*
+
+⚠️⚠️ **AND THE PROBES WERE RIGHT ALL ALONG, WHICH IS THE PART WORTH SITTING WITH.** Both set
+`SceneFlow.SelectedMode = GameMode.HeroStrike` and then load `MatchSetup`, which is exactly what
+the game does, and the scene overrode them. **In the single-process full run this was invisible**:
+all five `LoadoutSurfaceProbe` cases died earlier, at *"MatchSetup has no CharacterSelectPanel to
+open"*, which is a different claim about a different object and is not true in isolation. **A
+phantom failure was sitting on top of a real one for four full runs.**
+
+**Done looks like** a rule set that was set deliberately surviving the trip into match setup, with
+the restore still happening for an ordinary player who did not set one. ⚠️ **Do not fix it by
+deleting the restore**: its note is correct, and a player who leaves the lobby on a custom set and
+comes back to the shipped one is a regression somebody will report.
 
 ### 143.17 ⚠️ OPEN: TWO DEFECTS THAT WERE INVISIBLE UNTIL THE SUITE WAS ISOLATED
 

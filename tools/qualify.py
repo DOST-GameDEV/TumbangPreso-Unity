@@ -9,6 +9,9 @@ Unity PlayMode, the editor checks) plus eight source audits, and every one of th
 has its own way of looking green while proving nothing:
 
   - PlayMode with `-nographics` CRASHES, writes no `.xml`, and still exits 0.
+  - The full PlayMode suite in ONE process has been 42, 41, 56 and 50 red on four
+    commits, with the red set moving each time: it measures cross-fixture leakage
+    rather than the code, so this runs it in isolated groups instead.
   - A run whose objects were destroyed mid-flight writes a WELL FORMED `.xml` that
     says `result="Passed"` and `total="0"`.
   - `-testFilter` is semicolon separated; a comma-joined list matches nothing and
@@ -268,24 +271,64 @@ def stage_editmode():
 
 def stage_playmode(pass_number=1):
     """
-    NO -nographics HERE, AND ADDING IT CRASHES THE EDITOR RATHER THAN THE TESTS.
-    Unity selects NullGfxDevice and the first offscreen camera dies inside it. The
-    run writes no xml and still exits 0, which the gate above catches.
+    PlayMode, through `tools/playmode_suite.py` and NEVER as one process.
+
+    ⚠️⚠️ THE SINGLE-PROCESS FULL RUN IS NOT A GATE AND THIS STAGE USED TO BE ONE. It has been
+    measured four times (42, 41, 56 and 50 failures) and the RED SET MOVES between runs on
+    unchanged code, because fixtures inherit each other's objects, scenes and overlays. A
+    stage that ran it would have made this whole script an authoritative wrapper around a
+    number that does not describe the commit. `docs/TODO.md` § 143.1 and § 126.8.
+
+    So the suite runs in isolated groups, one Unity launch each, and the aggregate is the
+    verdict. **Coverage is asserted against the results**: every discovered fixture must
+    appear in exactly one group AND report a case, so a filter typo or a renamed fixture
+    fails instead of quietly shrinking what "green" covers.
     """
     started = datetime.datetime.now().timestamp()
-    xml = LOGS / f"qualify-playmode-{pass_number}.xml"
-    if xml.exists():
-        xml.unlink()
-    r = unity(["-runTests", "-testPlatform", "PlayMode",
-               "-testCategory", PLAYMODE_CATEGORIES,
-               "-testResults", str(xml)], LOGS / f"qualify-playmode-{pass_number}.log")
-    ok, detail = read_nunit_xml(xml, started)
-    detail["exit"] = r.returncode
-    detail["started"] = now()
-    detail["ok"] = ok
-    detail["pass_number"] = pass_number
-    detail["categories"] = PLAYMODE_CATEGORIES
-    return write_stage(f"playmode{pass_number}", detail)
+    suffix = f"-pass{pass_number}" if pass_number > 1 else ""
+
+    r = subprocess.run([sys.executable, str(ROOT / "tools" / "playmode_suite.py"), "--gate"],
+                       cwd=str(ROOT), capture_output=True, text=True, errors="replace")
+
+    summary_path = LOGS / "playmode-suite" / f"summary{suffix}.json"
+    if not summary_path.exists():
+        summary_path = LOGS / "playmode-suite" / "summary.json"
+
+    d = {"started": now(), "pass_number": pass_number, "exit": r.returncode,
+         "categories": PLAYMODE_CATEGORIES, "failures": []}
+
+    if not summary_path.exists():
+        d["ok"] = False
+        d["reason"] = ("the grouped suite wrote no summary, so it did not finish. Run "
+                       "`python tools/playmode_suite.py --gate` and read its output.")
+        return write_stage(f"playmode{pass_number}", d)
+
+    if summary_path.stat().st_mtime < started - 1:
+        d["ok"] = False
+        d["reason"] = "STALE summary, written before this run started."
+        return write_stage(f"playmode{pass_number}", d)
+
+    agg = json.loads(summary_path.read_text(encoding="utf-8"))
+
+    d.update(total=agg.get("total"), passed=agg.get("passed"),
+             failed=agg.get("failed"), skipped=agg.get("skipped"),
+             fixtures_discovered=agg.get("fixtures_discovered"),
+             fixtures_ran=agg.get("fixtures_ran"),
+             fixtures_never_ran=agg.get("fixtures_never_ran"),
+             groups=[{"group": g["group"], "ok": g.get("ok"), "reason": g.get("reason")}
+                     for g in agg.get("groups", [])])
+
+    for group in agg.get("groups", []):
+        for f in group.get("failures", []):
+            d["failures"].append({"name": f"[{group['group']}] {f['name']}",
+                                  "message": f.get("message", "")})
+
+    d["ok"] = bool(agg.get("ok"))
+    d["reason"] = (f"{d['passed']} passed of {d['total']} across "
+                   f"{len(agg.get('groups', []))} isolated groups, "
+                   f"{d['fixtures_ran']} of {d['fixtures_discovered']} fixtures. "
+                   + ("" if d["ok"] else f"{d['failed']} failed."))
+    return write_stage(f"playmode{pass_number}", d)
 
 
 def stage_checks():
@@ -517,8 +560,8 @@ ORDER = ["core", "editmode", "playmode1", "playmode2", "checks", "audits", "iden
 LABEL = {
     "core": "Core.Tests (engine-free rules)",
     "editmode": "Unity EditMode",
-    "playmode1": "Unity PlayMode, pass 1 of 2",
-    "playmode2": "Unity PlayMode, pass 2 of 2",
+    "playmode1": "PlayMode, isolated groups, pass 1 of 2",
+    "playmode2": "PlayMode, isolated groups, pass 2 of 2",
     "checks": "Checks.RunAll (seven editor checks, one launch)",
     "audits": "Source audits",
     "identity": "Release artifact identity",

@@ -391,44 +391,71 @@ means the row needs to be easier to find.
 
 ---
 
-## 15 · Two tournament rulings, and only you can take them
+## 15 · The tournament rulings ✅ TAKEN 2026-09-04, and the two they created
 
-**`docs/TODO.md` § 143.3 and § 143.9. Everything around both is built; these two are decisions
-rather than code, which is why they are here and not in the queue.**
+**`docs/TODO.md` § 143.3 and § 143.9.**
 
-**Already done, so do not redo it:** `TournamentPreset` is the single canonical answer to what a
-nationals match is, it copies no number from anywhere (rounds ask `MatchRules.RoundCountFor`,
-seconds ask `Balance.RoundTime`), `TournamentGuard.Apply()` clears all eight practice and developer
-switches and reports what it cleared, and a test proves a match cannot start with one set.
-`docs/VISION.md` § 1.1's *"Classic is the tournament ruleset"* is a constant now, so changing it
-fails a test rather than being an argument somebody has in a hall.
+### 15.1 ✅ A BRACKET LOBBY IS NOT PASSWORD-LOCKED
 
-### 15.1 Is a bracket match password-locked?
+🧑 2026-09-04: *"bracket lobby isnt password locked bcz u should be able to join wtv lobby in
+tournaments (yes we host tournaments)"*.
 
-`CustomRules.Private` is **false** in the preset today, which is the shipped default, and that is a
-placeholder rather than an answer. It is a venue question: one laptop per station in a room where
-nobody else can reach the lobby is a different answer from a shared network with spectators on it.
+`TournamentPreset.Rules()` sets `Private = false` and an empty password, which is what it already
+did. **The difference is that it is now a decision with a reason attached rather than a
+placeholder inheriting the shipped default**, and the reason is that an open lobby is how a
+bracket is actually run: an operator moves players between stations and nobody should be stopped
+by a password nobody wrote down.
 
-**What is asked of you:** say whether a tournament lobby should be private with a password. It is
-one field, `TournamentPreset.Rules()` sets it, and the test that pins the preset will be updated in
-the same commit.
+### 15.2 ✅ A PLAYER WHO LEAVES MAY REJOIN
 
-### 15.2 What happens when somebody drops mid-match?
+🧑 2026-09-04: *"let someone rejoin if they leave"*.
 
-⚠️⚠️ **THIS IS THE ONE THAT CANNOT BE GUESSED, AND § 140.5 IS WHY: A DROP AND A QUIT ARE THE SAME
-EVENT ON THE WIRE.** The game cannot tell a player whose wifi died from a player who alt-F4'd, so
-"reconnect if it was an accident" is not implementable as stated. `_utp.DisconnectTimeoutMS` is
-**8000**, so a peer whose connection dies keeps a normal-looking arena for eight seconds either way.
+So the ruling is **reconnect, not forfeit**. ⚠️ That settles the question § 140.5 could not answer
+from the code (a drop and a quit are the same event on the wire, so the game cannot tell an
+accident from an alt-F4) **by making them the same case on purpose**: both may come back, and
+nothing has to distinguish them.
 
-**What is asked of you:** one sentence per row.
+---
 
-| Case | The options |
+## 16 · Two follow-ups the rejoin ruling creates, and neither can be inferred
+
+**These are new, and they exist BECAUSE of § 15.2 rather than being leftovers from it. Everything
+deterministic around both is being hardened either way; what is missing is the ruling.**
+
+### 16.1 What happens to a seat while its player is away?
+
+A seat with nobody driving it is a body standing still in the arena, and that is not neutral:
+
+- **If the absent player was the TAYA**, the attackers have a free round: nobody guards the can,
+  and the defence tick keeps paying the empty seat 10 a second (`Balance.ScoreDefensePerTick`).
+- **If the absent player was an ATTACKER**, they cannot be tagged while holding nothing, so they
+  stop being a target, and their tsinelas sits unretrieved racking up penalties.
+
+**Three answers, and they are materially different games:**
+
+| | What it means |
 |---|---|
-| A player drops and comes back within the timeout | resume where the match is, or replay the round |
-| A player drops and does not come back | forfeit the match, forfeit the round, or replay with a substitute |
-| The HOST drops | the match is void and replayed, or the standing score at that moment counts |
+| **Freeze the seat** | The body stands there. Simplest, and the taya case above is a free round for the other side |
+| **A bot drives it until they return** | The match stays a real 4-player match. `AIController` already exists and `BotFill` already does this for an unfilled seat |
+| **Pause the match** | Fairest, and it hands any player a way to stop a round they are losing by pulling their cable |
 
-> ⚠️ **Nothing else is blocked on this.** The deterministic half is being hardened regardless: what
-> a drop does to score, round, taya, ownership and the winner has to be one outcome on every peer
-> whichever ruling you take. What the ruling decides is what the ORGANISER does next, and that
-> cannot be inferred from the code.
+⚠️ **The bot option is the cheapest to build and the least obviously correct**, because a bot
+playing your seat can lose you points you would not have lost, or win you points you did not earn.
+
+### 16.2 What happens if the HOST leaves?
+
+⚠️⚠️ **"REJOIN" CANNOT ANSWER THIS ONE, WHICH IS WHY IT IS SEPARATE.** There is nothing left to
+rejoin: the host is the machine that decides every point (`MatchDirector.AddScore` is the only
+place a point can be created), so when it goes, the match is over on every other screen. Host
+migration is deliberately unsupported.
+
+**What is asked of you: one sentence.**
+
+| | |
+|---|---|
+| **The match is void and replayed** | Cleanest to rule, costs the players the whole match |
+| **The standing score at that moment counts** | Nobody replays, and it rewards a losing host who quits |
+
+> ⚠️ **Nothing is blocked on either.** What a drop does to score, round, taya, ownership and the
+> winner has to be one outcome on every peer whichever way these go, and that half is code. What
+> these decide is what the ORGANISER does next, and no amount of testing can derive it.
