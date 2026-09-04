@@ -179,7 +179,7 @@ namespace TumbangPreso.Core
         /// only checks states would miss every one of them.
         /// </summary>
         public static List<string> CheckTransition(MatchSnapshot before, MatchSnapshot after,
-                                                   bool restarted = false)
+                                                   bool restarted = false, int maxEvents = 2)
         {
             var faults = new List<string>();
 
@@ -228,7 +228,7 @@ namespace TumbangPreso.Core
                     // for one gameplay event: 200 where the event pays 100 is not a bigger award,
                     // it is two awards. It is stated as "reachable in one event" rather than as an
                     // exact value because a 5 Hz snapshot can legitimately carry two events.
-                    if (!IsReachableDelta(delta))
+                    if (!IsReachableDelta(delta, maxEvents))
                         faults.Add($"seat {i} moved by {delta} points, which is not any " +
                                    $"ScoreEvent's value. Something wrote the scoreboard directly");
                 }
@@ -245,25 +245,45 @@ namespace TumbangPreso.Core
         }
 
         /// <summary>
-        /// Whether a score delta is a sum of one or two score events.
+        /// Whether a score delta could be the sum of at most <paramref name="maxEvents"/> awards.
         ///
-        /// ⚠️ TWO, NOT ANY NUMBER, AND THE BOUND IS DELIBERATE. `MatchRpc` writes `SyncWorld` at
-        /// 5 Hz, so a snapshot pair spans 200 ms; a defence tick and a tag inside one window is
-        /// ordinary and three separate awards is not. Allowing an unbounded sum would make this
-        /// check accept any number at all, which is the same as not having it.
+        /// ⚠️⚠️ THE BOUND IS THE OBSERVER'S SAMPLE RATE AND IT IS AN ARGUMENT THE CALLER HAS TO
+        /// MAKE. `MatchRpc` writes `SyncWorld` at 5 Hz, so a network snapshot pair spans 200 ms:
+        /// a defence tick and a tag inside one window is ordinary and three separate awards is
+        /// not, which is why 2 is the default and the only value the wire needs.
+        ///
+        /// ⚠️⚠️ AND THE SOAK HARNESS BROKE THAT ASSUMPTION ON ITS FIRST RUN, CORRECTLY. It steps
+        /// at `Time.timeScale = 60`, so a single frame covers about a second of game time and the
+        /// defence tick pays every `Balance.DefenseTickInterval`. Seat 0 legitimately moved by 70
+        /// in one observed step, which is seven ticks, and the check called it a direct write.
+        /// **The check was not wrong and the observer was not wrong; the bound belonged to the
+        /// observer and was hard-coded in the rule.** A checker that cannot be told how long it
+        /// looked away is a checker that can only be used at one sample rate.
+        ///
+        /// ⚠️ AN UNBOUNDED VERSION WOULD ACCEPT EVERY NUMBER, which is the same as not having the
+        /// check, so the answer is a parameter rather than removing the limit.
         /// </summary>
-        public static bool IsReachableDelta(int delta)
+        public static bool IsReachableDelta(int delta, int maxEvents = 2)
         {
+            if (maxEvents < 1) maxEvents = 1;
+
             var values = ScoreEventValues();
 
-            foreach (int a in values)
+            // Reachable sums, breadth first, capped at `maxEvents` terms.
+            var reachable = new HashSet<int> { 0 };
+
+            for (int step = 0; step < maxEvents; step++)
             {
-                if (a == delta) return true;
-                foreach (int b in values)
-                    if (a + b == delta) return true;
+                var next = new HashSet<int>(reachable);
+                foreach (int sum in reachable)
+                    foreach (int value in values)
+                        next.Add(sum + value);
+                reachable = next;
+
+                if (reachable.Contains(delta)) return true;
             }
 
-            return false;
+            return reachable.Contains(delta);
         }
 
         private static int[] ScoreEventValues()

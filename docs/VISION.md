@@ -88,9 +88,35 @@ big"*.
 
 The working rules that came out of that:
 
-1. **A skill's floor footprint should be about 1.8 to 2.5 m of radius**, which is 3 to 8 per
-   cent of the box. Sean's Fire Trail and Zack's Shock Trail already sit there and nobody has
-   ever complained about them. They are the reference, not the exception.
+1. **A normal skill's floor footprint is 1.6 to 2.3 m of radius, which is 4.1 to 8.5 per cent
+   of the box.** Cheska's Ice Barricade is the small end and her Permafrost Sheet the large one;
+   Dante's Seismic Stomp sits between them at 2.2 m. Nobody has ever complained about any of
+   the three. They are the reference, not the exception.
+
+   ⚠️⚠️ **THIS RULE CONTRADICTED ITSELF FOR MONTHS AND BOTH HALVES WERE STALE, WHICH IS WHY IT
+   NOW STATES ONE UNIT AND DERIVES THE OTHER.** It read *"about 1.8 to 2.5 m of radius, which is
+   3 to 8 per cent of the box"*, and those are not the same claim: on 196 m², **1.8 m is 5.19 per
+   cent and 2.5 m is 10.02 per cent**, while 3 and 8 per cent are **1.37 m and 2.23 m**. A reader
+   sizing a new ability got a different answer depending on which half they used, and both
+   answers were wrong anyway, because the abilities were retuned twice afterwards and nothing
+   regenerated the numbers.
+
+   ⚠️ **THE RADIUS IS THE AUTHORITATIVE HALF AND THE PERCENTAGE IS ARITHMETIC**, because a radius
+   is what the code actually authors (`telegraphRadius: 2.3f`, `TrailRadius = 1.0f`) and a
+   percentage is what nobody ever types. Stating the derived number as if it were a second rule is
+   what let the two drift apart in the first place. `tools/measure_ability_footprint.py`
+   regenerates the whole table from source and stamps it with the commit;
+   **`docs/reports/ability-footprint-<sha>.md` is the current answer and this paragraph is the
+   intent.**
+
+   ⚠️⚠️ **AND THE TRAILS ARE NO LONGER THE REFERENCE, WHICH IS THE OTHER HALF OF WHAT WENT
+   STALE.** This rule used to name Sean's Fire Trail and Zack's Shock Trail as the abilities it
+   was set from, and their discs are **1.0 m** now: 1.60 per cent each, below the floor above. A
+   trail is not measured per disc, it is measured by its **live cap**: both drop 1.0 m discs and
+   hold at most **6**, so a whole corridor cannot exceed **9.62 per cent** even with no overlap at
+   all, and along a real dash the discs overlap and it is less. That cap is the rule for a trail,
+   and it is why the old *"27.2 per cent corridor"* measurement below is history rather than a
+   bound anybody has to design around.
 2. **An ultimate may be big. One at a time.** A single cast should not paint the floor twice.
 3. **Spend the budget on DETAIL, not on AREA.** A flat coloured plane at 40 per cent of the
    arena reads as a puddle. The same silhouette at 2.2 m with a cracked edge, a rim, depth and
@@ -129,15 +155,25 @@ for whether a human can read the floor.
 This line pointed at `docs/TODO.md` § 1 until 2026-08-25, and by then § 1 had become peer rematch
 voting, so the most important page in this file pointed at nothing. Nothing held the table at all.
 
-Two findings from writing it that change how this section should be read:
+Two findings from writing it changed how this section should be read, and **both have since been
+acted on. They are kept because the reasoning is what stays valuable, and because the numbers in
+them are the clearest possible warning about quoting a measurement without a commit beside it.**
 
-- **The trails are measured as discs and played as corridors.** Rule 1 above names Sean's Fire
-  Trail and Zack's Shock Trail as the reference the budget is set from. That measures ONE DISC,
-  and neither ability places one disc: both drop a disc on a timer for the whole cast, each
-  living longer than the cast. Zack's Bolt Sprint corridor is **27.2 per cent of the box off a
-  6.0 s cooldown**, which is more floor than any ultimate in the game.
-- **The worst credible frame today paints 81.9 per cent of the box**, before props, tsinelas and
-  nameplates. Rule 5 cannot pass against it, and no amount of better rendering fixes 82 per cent.
+- **The trails are measured as discs and played as corridors.** Neither ability places one disc:
+  both drop a disc on a timer for the whole cast, each living longer than the cast.
+  ✅ **The answer was a live cap rather than a smaller disc.** Both hold at most 6 discs of 1.0 m,
+  so a corridor is bounded at **9.62 per cent** by construction.
+  ⚠️ The **27.2 per cent off a 6.0 s cooldown** this used to record was measured before that cap
+  and before the cooldown retune; Bolt Sprint is **46 s** now, not 6.0.
+- **The worst credible frame was measured at 81.9 per cent of the box.**
+  ⚠️⚠️ **THAT NUMBER IS FROM A GAME THAT NO LONGER EXISTS AND MUST NOT BE QUOTED AS CURRENT.**
+  It predates the trail cap, the 1.0 m disc, and a cooldown pass that roughly octupled every
+  first skill. **Re-measure with `tools/measure_ability_footprint.py` rather than repeating it**;
+  `docs/TODO.md` § 142.11 is the entry.
+- ⚠️ **AND THE AREA BUDGET IS NOT THE READABILITY TEST, IT IS ONE INPUT TO IT.**
+  `AbilityShowcaseProbe` is what actually gates rule 5: it photographs the transients and fails a
+  run where one blows more than **12 per cent** of the frame to white. An ability can sit inside
+  its area budget and still be unreadable, and only the picture can say so.
 
 ---
 

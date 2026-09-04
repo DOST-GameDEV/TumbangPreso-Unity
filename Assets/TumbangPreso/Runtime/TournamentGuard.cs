@@ -78,7 +78,6 @@ namespace TumbangPreso
                 case "GameLaunch.GuidedTutorial": return GameLaunch.GuidedTutorial;
                 case "MatchInstaller.PreviewOnly": return MatchInstaller.PreviewOnly;
                 case "AIController.BotsEnabled": return AIController.BotsEnabled;
-                case "Input.TouchHud.ForceVisible":
                 case "TouchHud.ForceVisible": return InputLayer.TouchHud.ForceVisible;
                 case "SpectatorCamera.ProbeReplayRequest": return CameraSystem.SpectatorCamera.ProbeReplayRequest;
             }
@@ -98,7 +97,6 @@ namespace TumbangPreso
                 case "GameLaunch.GuidedTutorial": GameLaunch.GuidedTutorial = value; break;
                 case "MatchInstaller.PreviewOnly": MatchInstaller.PreviewOnly = value; break;
                 case "AIController.BotsEnabled": AIController.BotsEnabled = value; break;
-                case "Input.TouchHud.ForceVisible":
                 case "TouchHud.ForceVisible": InputLayer.TouchHud.ForceVisible = value; break;
                 case "SpectatorCamera.ProbeReplayRequest":
                     CameraSystem.SpectatorCamera.ProbeReplayRequest = value; break;

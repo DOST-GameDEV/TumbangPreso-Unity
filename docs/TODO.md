@@ -32,7 +32,7 @@ either of those.
 | **P0** | 142.1 | **The full PlayMode suite is not a release gate and running it twice would only reproduce that twice.** Measured again on `e85b0fc`: **165 cases, 107 passed, 50 failed**. The red set is overwhelmingly cross-fixture contamination, not 50 bugs: a *settings* case fails carrying `CarryTests`' slipper message, twelve fixtures die on `MissingReferenceException`, and nine report a screen or arena that "was never built". § 126.8 proved the same thing three times and named the fix it did not build. | `tools/playmode_suite.py --gate` green **twice back to back**, with every discovered fixture appearing in exactly one group and in the aggregated results. **Coverage is asserted, so a group that silently ran nothing is a failure rather than a pass.** |
 | **P0** | 142.2 | **A build cannot say what it is.** Nothing in a shipped player carries the commit, and `NetSession.ProtocolVersion` is only readable by trying to join something. Two artifacts from different commits refuse each other correctly and read as a bug. | `build-identity.json` written by `GameBuilder` into both players, carrying SHA, protocol, target, app version, UGS project and timestamp; a diagnostic route in the game that prints it; `tools/qualify.py --stage identity` refusing a Windows/Android pair that disagree. |
 | **P0** | 142.3 | **Nothing defines what a tournament match IS**, so "mostly tournament" is reachable by inheriting one static from the previous match. ✅ The rules half is built and asserted (`TournamentPreset`, 525 Core tests). **Open: the Unity half** that reads the eight live modifiers and refuses. | `TournamentPreset.Apply()` clears every named modifier, a check reports the live value of each against `TournamentPreset.Modifiers`, and a test proves a tournament match cannot start with one set. |
-| **P0** | 142.4 | **No soak coverage at all.** Every measurement in this repository is of a FIRST match. A game that works once and degrades by match five is not nationals ready, and nothing here would notice. | A harness that runs `launch → lobby → match → results → rematch → lobby → match` for enough iterations to expose accumulated state, watching exceptions, duplicate callbacks, growing object counts, stuck rounds and score duplication, and writing a machine-readable summary tied to the SHA. |
+| ~~P0~~ | 142.4 | ✅ **DONE.** `MatchSoakProbe`: 6 matches alternating Classic and Hero Strike, 0 exceptions, 0 invariant violations, 0 leaked motors, +0.19 MB. `-tp-soak-iterations N` buys the long run. | ✅ |
 | ~~P0~~ | 142.5 | ✅ **DONE.** The audit is built and gating, and it found a real one: `MatchBootstrap` leaked four handlers per match into a `DontDestroyOnLoad` director, so match five ran `ResetWorld` five times. 85 subscriptions, 0 unpaired now. | ✅ |
 | **P1** | 142.6 | **Nothing validates a tournament scene's dependencies before a human opens the build.** `SceneScriptCheck` catches a component the player cannot bind; it does not catch a missing prefab, spawn point or camera reference. | A check that instantiates every tournament-relevant scene and asserts its required references exist, in `Checks.RunAll`, failing qualification. |
 | **P1** | 142.7 | **Duplicate, stale and reordered requests are not tested against the authoritative paths.** The architecture is right (49 authority sites, 0 ungated on another body) and that is an argument, not a test. | Tests proving a replayed score-causing request, a doubled ability activation and an ownership change in flight cannot award twice, cast twice or corrupt round state. |
@@ -40,12 +40,12 @@ either of those.
 | **P1** | 142.9 | **Host loss is not proven deterministic.** `DisconnectTimeoutMS` is **8000**, so a peer whose wifi dies keeps a normal-looking arena for eight seconds (§ 140). Migration is deliberately unsupported; the failure must still be one outcome on every peer. | Tests proving host and client cannot disagree about score, round, taya, ownership, winner or disconnect state, and that host loss reaches a clean shutdown with a stated reason rather than a half-alive match. ⚠️ The reconnect/forfeit RULING is `Attention.md`, not this row. |
 | **P1** | 138 | **A controller Unity does not recognise is invisible to the whole game.** ✅ It warns now (`ControllerWatch`). Open: the fallback that makes such a pad actually play. | A generic `Joystick` fallback covering movement, look and the primary verbs, with synthetic-device tests; **no double input when one physical pad is seen by both paths**; `Gamepad` behaviour unchanged. ⚠️ The hardware matrix is `Attention.md`. |
 | **P1** | 134.12 | **Replay capture is a synchronous GPU stall**: `Texture2D.ReadPixels` at ~10 Hz into a ~46 MB buffer. A 90 s round is 900 captures; four rounds is 3,600. | `AsyncGPUReadback` or equivalent, bounded memory, no runaway queue, disposal proven, no capture after the session is gone, and a before/after measurement. |
-| **P2** | 142.10 | **`VISION.md` § 2 rule 1 contradicts itself**: "1.8 to 2.5 m of radius, which is 3 to 8 per cent" of 196 m². 1.8 m is **5.19%** and 2.5 m is **10.02%**; 3% and 8% are **1.37 m** and **2.23 m**. | One coherent statement, reached by reading the abilities rather than by picking a side. |
-| **P2** | 142.11 | **Every ability footprint number in the repository predates the current implementations.** The 81.9% worst frame and Zack's 27.2% corridor were measured on code that has since been retuned twice. | A generated, SHA-stamped measurement of instantaneous and persistent footprint, live instance count, overlap and worst credible frame, with regression bounds from VISION where they are valid. |
+| ~~P2~~ | 142.10 | ✅ **DONE.** Both halves were stale. Measured from source, the normal skills sit at **1.6 to 2.3 m (4.1% to 8.5%)** and the trails are capped rather than sized (1.0 m discs, 6 live, **9.62%** ceiling). The radius is authoritative now and the percentage is derived. | ✅ |
+| ~~P2~~ | 142.11 | ✅ **DONE.** `tools/measure_ability_footprint.py` generates the whole table from source into `docs/reports/ability-footprint-<sha>.md`. Ultimates measure 32% to 37%; normal skills 4.1% to 8.5%. | ✅ |
 | ~~P2~~ | 142.12 | ✅ **DONE.** Five drifted cooldowns, not two (Zack, Sean, Dante, Nemu, Phaister), plus four wrong casts-a-round figures and three stale cross-references. `audit_ability_stat_drift.py` gates it. | ✅ |
 | **P2** | 16 | **One bot run is not balance evidence.** Eight matches at shipped settings spread **58 to 100 throws**, about 20 per cent. | A multi-seed sweep recording SHA, seed, config,each run, mean, median and spread, so no threshold is set against noise. |
 | **P2** | 142.13 | **Storage failures are not handled.** Profile, replay, log and save writes assume the directory exists and the disk accepts. | A missing directory, denied access, full disk or corrupt file degrades safely and never stops a match starting or finishing unless the data is genuinely required. |
-| **P2** | 142.14 | **Gameplay timing is not audited for wall-clock dependence.** 14 `DateTime` reads in `Runtime/`. Changing the system clock mid-match must not corrupt it. | An audit separating persistent timestamps (wall clock, correct) from gameplay timing (monotonic, required), and any real misuse fixed. |
+| ~~P2~~ | 142.14 | ✅ **DONE, and it found no defect**, which is the result worth gating: all 14 `DateTime` reads are persistent timestamps or calendar facts, and every gameplay timer already runs on game time. `audit_gameplay_clocks.py` keeps it that way. | ✅ |
 | **P2** | 142.15 | **There is no cold-start test.** Every run here inherits an editor, a `Library` and a previous session's files. | A clean-state run of the real artifact through launch → playable → host/join → finish a Classic match → rematch, verifying no dependence on developer state. |
 | **P2** | 142.16 | **No crash or failure bundle.** At the venue, evidence lives in five directories. | One command that gathers log, recent exceptions, SHA, protocol, platform, version and recent match state, with no credentials in it. |
 | **P1** | 142.17 | **Two real defects unmasked by isolating the suite**: no `LoadoutDoor` on the character select stage (5 cases), and the Hero picker showing Classic's `SPEED POWER GRIT` strip instead of naming Dante's skills | Both fixed, both green in the `screens` group |
@@ -305,7 +305,39 @@ a lit NO COOLDOWNS toggle in a tournament room is a HUD disagreeing with the gam
 
 **Open: the Unity half**, which reads the eight live values and refuses.
 
-### 142.4 ⚠️⚠️ OPEN: EVERY MEASUREMENT IN THIS REPOSITORY IS OF A FIRST MATCH
+### 142.4 ✅ CLOSED 2026-09-04: THE SOAK HARNESS, AND WHAT SIX MATCHES MEASURED
+
+`MatchSoakProbe` runs `build -> match -> teardown -> rematch` six times in one process,
+**alternating Classic and Hero Strike every iteration** so the pass also crosses the boundary a
+bracket day actually crosses: finish one format, start another, same process.
+
+```
+6 matches, 0 exceptions, 0 invariant violations, 0 leaked CharacterMotors
+managed memory 625.72 MB -> 625.91 MB  (+0.19 MB across six matches)
+live GameObjects 11, 11, 13, 13, 13, 13
+rounds 4, 8, 4, 8, 4, 8   (the tournament preset really is producing four-round Classic)
+```
+
+⚠️⚠️ **THE HARNESS'S FIRST RUN ACCUSED THE GAME OF TWO THINGS THAT WERE THE HARNESS'S OWN FAULT,
+AND BOTH ARE WORTH RECORDING BECAUSE THEY ARE THE SHAPE OF EVERY BAD PROBE.**
+
+1. *"seat 0 began iteration 1 holding 20 points from a previous match"* on **iteration 1**, where
+   there is no previous match. It read the scoreboard one frame AFTER the runner began, and at
+   60x one frame is about a second of game time, so it measured two defence ticks.
+2. *"seat 0 moved by 70 points, which is not any ScoreEvent's value"*. Also legitimate: seven
+   defence ticks in one sampled frame. **`IsReachableDelta` allowed at most two awards per step
+   because a network snapshot pair spans 200 ms at 5 Hz, and that bound belonged to the OBSERVER
+   rather than to the rule.** It takes a `maxEvents` now, the wire still passes 2, and the soak
+   derives its allowance from the game time that actually elapsed.
+
+⚠️⚠️ **AND WHAT IT IS NOT IS A LIVENESS MEASUREMENT.** Every seat finished on an exact multiple
+of `ScoreDefensePerTick`: 900 in a four-round Classic match is 90 defence ticks and nothing else,
+which is a whole match where the lata was never knocked over. **At `Time.timeScale = 60` the bots
+effectively do not play**, which is why `BotBehaviourProbe` moved to a fixed 1/60 s step. Do not
+read a score out of `Logs/soak.json` as balance evidence. **It does not weaken the soak**: a quiet
+match crosses the same boundaries as a busy one, and boundaries are the whole subject.
+
+### 142.4b ⚠️ THE ORIGINAL STATEMENT OF THE PROBLEM, KEPT
 
 `BotBehaviourProbe` runs a match. `MatchRunTests` runs a match. `GameplayShots` photographs a match.
 **Nothing anywhere runs the fifth match after the fourth rematch**, which is the shape of a

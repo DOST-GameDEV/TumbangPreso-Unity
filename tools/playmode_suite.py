@@ -135,7 +135,7 @@ GROUPS = [
         "MultiplayerModelSwapSelfHideProbe", "ScoreWitnessProbe", "SeatAnnouncementTests",
         "SessionRestartTests", "SoloPracticeTests", "SteeringTests", "StunFrostTests",
         "TrainingStreetProbe", "TutorialDefenderProbe", "TutorialLessonHonestyProbe",
-        "VolcanicZoneTests", "InputEdgeTests", "InputReaderTests",
+        "VolcanicZoneTests", "InputEdgeTests", "InputReaderTests", "MatchSoakProbe",
     ]),
 
     ("capture", """
