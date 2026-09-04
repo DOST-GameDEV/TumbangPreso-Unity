@@ -215,10 +215,75 @@ seat. ⚠️ **Networked is untouched and is the other way round**: the switcher
 line in a networked session, so there is no second reader and a real spectator keeps its POV keys.
 **The gate is who else is listening, not which mode we are in.**
 
-⚠️ **STILL OPEN: the duplicate `PLAYER#7645` on the scoreboard.** Both rows carry the local name,
-one DEFENDER and one ATTACKER. `ApplySlots` sets `IsBot = !driven` and `DisplayName` branches on
-exactly that, so a vacated seat should fall back to its character name. **It did not, and this pass
-did not establish why.** It is a separate fault from the overlay and is not fixed.
+### 141.5 ✅ THE `#7645` IS OFF THE IN-MATCH LABEL
+
+🧑, with a crop of the four rows: *"no need to show # number in the thing gang"*, *"just the player
+name is enough here"*.
+
+`MatchInstaller` seats a human with `GameServices.Account.LobbyName`, which is
+`AccountRules.Handle(DisplayName, Discriminator)`, so the tag rode into the arena on the
+scoreboard, the nameplate over each body, the YOU card and the spectator's follow line.
+
+✅ **Stripped in `CharacterMotor.DisplayName` and nowhere else**, through the `TrySplitHandle` that
+already existed. ⚠️ **AT THE LABEL, NEVER AT THE SOURCE**: the discriminator is what makes two
+players called PLAYER different people, and `LobbySession`, the lobby list and the wire all need
+it. `DisplayName` is the in-match label and nothing else reads it, so this is exactly as wide as
+the request. It falls back to the whole string, because a name that never went through `Handle` has
+no tag to take off.
+
+⚠️ **AND `MatchStatsCollector` KEEPS THE FULL HANDLE**, which is the half that would have been lost
+silently. A stored match row outlives the match and a history listing strangers has nothing else to
+tell two players called PLAYER apart; the local seat was already overwritten from the account, and
+this keeps a REMOTE seat's row as informative as it was.
+
+### 141.6 ✅ AND NO TWO SEATS CAN READ THE SAME, WHICH IS THE TOURNAMENT QUESTION
+
+🧑, immediately after: *"oh yea in tournmanets PPL might have same #?"*, *"idk how it was coded but
+make it so that they all have a diff #"*, and then the case that matters: **"offline
+tournaments"**.
+
+⚠️⚠️ **HE IS RIGHT, AND IT IS WORSE THAN THE QUESTION ASSUMES, IN TWO INDEPENDENT WAYS.**
+
+**One: the tag guarantees nothing and cannot.** `AccountRules.Discriminator` is FNV-1a over the
+stable player id, `% 10000`, computed **on each machine from that machine's own id**. Nothing
+checks it against the other people in the room because nothing can. Two accounts sharing a display
+name collide about one time in ten thousand per pair, which sounds safe until a bracket defaults to
+the same name: `Handle` falls back to the literal `"Player"` for anything that fails
+`TryDisplayName`, so a room of people who never set a name are all PLAYER drawing from 10,000 tags.
+**Thirty-two of them collide about five per cent of the time.**
+
+**Two, and this is the one that was already on screen: two seats can share a label with no accounts
+involved at all.** `Logs/shots-runtime/Eskinita.png` read **ZACK, PLAYER, ZACK, PHAISTER**: two
+bots picked the same character, so two rows carried the same name and the board could not say which
+one was the taya. That needs no tournament to reproduce and is the same defect as the duplicate he
+photographed.
+
+✅ **`CharacterMotor.ResolveDuplicateLabels`, run from `Hud.UpdateScores`**, which is the one place
+that sees all four seats at once. A per-machine hash cannot be made globally unique by better
+hashing; four seats compared against each other can be made unique by construction:
+
+1. **Labels that are already unique are left completely alone**, so *"just the player name is
+   enough here"* stays true for every ordinary match.
+2. A colliding pair gets its `#tag` back, which is the real distinction between two accounts and
+   the thing he expected to differ.
+3. If the tags collide too, or there are none, **the seat number is appended, and that cannot
+   collide**: there are four seats and they are numbered.
+
+**Measured on the next render:** `ZACK P1 · PLAYER · ZACK P3 · PHAISTER`, and the round line under
+the clock follows it (`DEFENDER: ZACK P1`). The two unique names carry no suffix.
+
+⚠️ **IT RUNS PER FRAME RATHER THAN AT SEATING, AND THAT IS NOT LAZINESS.** A joining peer's name
+lands through `MatchRpc` after the arena is built and a seat can change hands mid-match, so
+resolving once at install would be right until the first of those. It is sixteen string compares,
+it runs before the score stamp so a duplicate cannot show for one frame and then correct itself,
+and it writes nothing when the labels are already unique, which leaves `DisplayName`'s cache
+untouched on the common path.
+
+⚠️ **STILL NOT ESTABLISHED: why TWO SEATS carried the local player's name** in his screenshot.
+`ApplySlots` sets `IsBot = !driven` and `DisplayName` branches on exactly that, so a vacated seat
+should fall back to its character name. **The label is now always distinguishable either way**, so
+this is no longer something a player can be confused by, but the underlying seat bookkeeping was
+not proven correct.
 
 ⚠️⚠️ **AND THE `DebugKeys` CATALOGUE IS NOW OVERDUE.** § 136.1 called it *"the real fix"* and left
 it undone; this entry is the second collision inside that same block in one day, found by a person
@@ -1094,6 +1159,13 @@ behind a screen that stops the world, for a thing the player wants to flip WHILE
   with it. This is the § 113 objection answered rather than dodged.
 - **Top left**, the one corner no thumb rests in: the stick owns the bottom left, the verb arcs the
   right, and the look area is the right-hand 55 per cent.
+  ⚠️⚠️ **BUT 268 UNITS DOWN, NOT IN THE CORNER, AND THE FIRST VERSION DREW STRAIGHT ACROSS THE
+  SCOREBOARD.** `Logs/shots-runtime/Eskinita.png` caught it: NO COOLDOWNS OFF over the top two
+  rows of the SCORES panel, hiding a seat's name and role. *"No thumb rests here"* and *"nothing
+  is drawn here"* are different questions and only the second one was asked. This is `CLAUDE.md`
+  § 6.2b's fourth row, **the fourth time a piece of chrome has had to be taught about something
+  added after it**, and the first across two different canvases: `TouchHud` and `Hud` are separate
+  canvases, so nothing either owns could have noticed.
 - **236 by 148**, so it clears the 144-unit thumb floor on its SHORT axis. `CLAUDE.md` § 7's 1519
   failures were all controls sized against their own artwork.
 - ⚠️ **POLLED EVERY FRAME, NOT SET AT BUILD**, because a session becomes networked after the canvas

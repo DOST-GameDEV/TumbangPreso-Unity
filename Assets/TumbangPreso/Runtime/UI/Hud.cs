@@ -1743,11 +1743,54 @@ namespace TumbangPreso.UI
         /// on screen that explains why one player is behaving completely differently from the
         /// other three.
         /// </summary>
+        /// <summary>
+        /// Hands the four seats to <see cref="CharacterMotor.ResolveDuplicateLabels"/>.
+        ///
+        /// ⚠️ THE BUFFER IS REUSED RATHER THAN ALLOCATED. This runs once a frame and
+        /// `UpdateScores`'s own header records a 952 B/frame allocation that had to be hunted
+        /// down with `HudPerformanceProbe`; a new four-element list per frame would be the same
+        /// mistake with a different name on it.
+        /// </summary>
+        private readonly List<CharacterMotor> _seatLabelBuffer = new List<CharacterMotor>(4);
+
+        private void ResolveSeatLabels()
+        {
+            var round = GameServices.Round;
+            if (round == null) return;
+
+            _seatLabelBuffer.Clear();
+
+            for (int slot = 0; slot < Balance.PlayerCount; slot++)
+                _seatLabelBuffer.Add(round.PlayerAt(slot));
+
+            CharacterMotor.ResolveDuplicateLabels(_seatLabelBuffer);
+        }
+
         private void UpdateScores()
         {
             if (_trainingChrome) return;
 
             var m = GameServices.Match;
+
+            // ⚠️⚠️ TWO SEATS MUST NEVER READ THE SAME, AND THIS IS THE ONE PLACE THAT CAN SEE ALL
+            // FOUR. 🧑 2026-09-04 asked about **offline tournaments**: *"in tournmanets PPL might
+            // have same #?"*, *"make it so that they all have a diff #"*. The `#0000` is a local
+            // FNV-1a hash of a machine's own player id, so nothing about it can be globally
+            // unique; four seats compared against each other can be. `Eskinita.png` shows the
+            // version of this that needs no tournament at all: **ZACK, PLAYER, ZACK, PHAISTER**,
+            // two bots on one character and a board that cannot say which is the taya.
+            // `CharacterMotor.ResolveDuplicateLabels` carries the whole argument.
+            //
+            // ⚠️ HERE RATHER THAN AT SEATING, BECAUSE A NAME ARRIVES LATE. A joining peer's name
+            // lands through `MatchRpc` after the arena is built, and a seat changes hands
+            // mid-match; resolving once at install would be right until the first of those.
+            //
+            // ⚠️ IT IS SIXTEEN STRING COMPARES AND IT RUNS BEFORE THE STAMP BELOW, deliberately:
+            // the stamp includes the names, so resolving after it would show a duplicate for one
+            // frame and then correct itself, which is a flicker on the row a player is reading.
+            // It writes nothing when the labels are already unique, which is every ordinary
+            // match, so `DisplayName`'s cache is untouched on the common path.
+            ResolveSeatLabels();
 
             // ⚠️⚠️ COMPARE THE VALUES BEFORE FORMATTING ANYTHING. This used to allocate a new
             // `StringBuilder` and a new stamp string on every frame, then compare that string and

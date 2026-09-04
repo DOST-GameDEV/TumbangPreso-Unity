@@ -179,6 +179,30 @@ namespace TumbangPreso.InputLayer
         private const float SandboxWidth = 236.0f;
         private const float SandboxHeight = 148.0f;
         private const float SandboxMargin = 26.0f;
+
+        /// <summary>
+        /// How far below the top the switch starts, so it clears the scoreboard.
+        ///
+        /// ⚠️⚠️ THE FIRST VERSION SAT ON TOP OF THE SCORES PANEL AND ONLY A RENDER SHOWED IT.
+        /// `Logs/shots-runtime/Eskinita.png` has NO COOLDOWNS OFF drawn straight across the top
+        /// two rows of the scoreboard, hiding one seat's name and role entirely. The control was
+        /// placed at `(margin, -margin)` on the reasoning that top left is *"the one corner no
+        /// thumb rests in"*, which is true and is not the same question as *"what is already
+        /// drawn there"*.
+        ///
+        /// ⚠️ THIS IS `CLAUDE.md` § 6.2b's FOURTH ROW, WHICH NAMES THIS EXACT MISTAKE: *"WITH
+        /// EVERY ALWAYS-ON PIECE OF CHROME STILL LIVE. Chrome does not know about a screen added
+        /// after it."* Its receipt is `PlayerNameplate` drawing across the account form, and the
+        /// note there says it is *"the third time that method has had to be taught about a new
+        /// screen"*. This is the fourth, one canvas over: `TouchHud` and `Hud` are separate
+        /// canvases, so nothing either of them owns could have noticed the overlap.
+        ///
+        /// ⚠️ THE SCOREBOARD IS FOUR ROWS PLUS ITS FRAME AND IT IS THE THING THAT CANNOT MOVE,
+        /// because a spectator's board is wider still (`Hud.EnterSpectatorMode` adds the caster
+        /// cell). Measured off that render at the 1080-unit short axis: the panel's bottom edge
+        /// sits about 215 units down, so this clears it by a margin rather than sitting flush.
+        /// </summary>
+        private const float SandboxTopInset = 268.0f;
         private const string SandboxOnText = "NO COOLDOWNS\nON";
         private const string SandboxOffText = "NO COOLDOWNS\nOFF";
 
@@ -302,6 +326,10 @@ namespace TumbangPreso.InputLayer
         /// A switch anywhere a thumb lives would be pressed by accident during a fight, and this
         /// one changes the rules of the match it is pressed in.
         ///
+        /// ⚠️⚠️ BUT BELOW THE SCOREBOARD, NOT IN THE CORNER, AND THE FIRST VERSION GOT THAT
+        /// WRONG. See <see cref="SandboxTopInset"/>: "no thumb rests here" and "nothing is drawn
+        /// here" are two different questions, and the HUD's SCORES panel answers the second one.
+        ///
         /// ⚠️ 236 BY 148, WHICH CLEARS THE 144-UNIT THUMB FLOOR ON THE SHORT AXIS RATHER THAN
         /// ON THE LONG ONE. `InputSurfaceProbe.TheFrontEndMeetsTheThumbFloor` measures both, and
         /// `CLAUDE.md` § 7 records 1519 controls that failed it by being sized against their own
@@ -315,7 +343,7 @@ namespace TumbangPreso.InputLayer
             var rt = (RectTransform)go.transform;
             rt.anchorMin = rt.anchorMax = new Vector2(0.0f, 1.0f);
             rt.pivot = new Vector2(0.0f, 1.0f);
-            rt.anchoredPosition = new Vector2(SandboxMargin, -SandboxMargin);
+            rt.anchoredPosition = new Vector2(SandboxMargin, -SandboxTopInset);
             rt.sizeDelta = new Vector2(SandboxWidth, SandboxHeight);
 
             var image = go.AddComponent<Image>();
