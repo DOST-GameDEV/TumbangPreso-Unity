@@ -39,7 +39,7 @@ namespace TumbangPreso.InputLayer
     ///
     /// ⚠️⚠️ EVERY FIELD IS A CONSTRUCTOR PARAMETER WITH NO DEFAULT, WHICH IS THE WHOLE POINT.
     /// A verb cannot be given a keyboard binding and left without a thumb or a pad, because the
-    /// only way to build one of these is to answer all seven questions. This is
+    /// only way to build one of these is to answer all EIGHT questions. This is
     /// <see cref="Abilities.HeroAbility.Glyph"/>'s argument applied to input: a lookup table
     /// keyed by verb is a second place to forget, and forgetting it compiles.
     /// </summary>
@@ -60,11 +60,43 @@ namespace TumbangPreso.InputLayer
 
         public readonly TouchSize Size;
 
-        /// <summary>What the touch button says. Short: it is drawn inside the target.</summary>
+        /// <summary>
+        /// What this control NAMES itself, for the layout customiser and the settings panel.
+        ///
+        /// ⚠️⚠️ IT IS NO LONGER WHAT THE BUTTON DRAWS, AND THAT WAS THE WHOLE BUG. 🧑 2026-09-03,
+        /// off the Android build: *"why the fuck does it have keybinds theres no keys in mobile"*,
+        /// *"ive never seen a mobile game say GRAB or lunge, usually it has an intuitive icon for
+        /// it or the skill icon"*. Three of these strings were `"Q"`, `"E"` and `"ULT"`: the
+        /// names of keys on a keyboard the device does not have, painted on the one surface in
+        /// the game that exists BECAUSE there is no keyboard. See <see cref="Glyph"/>.
+        ///
+        /// ⚠️ IT IS KEPT RATHER THAN DELETED BECAUSE A WORD IS RIGHT IN THE ONE PLACE A PICTURE
+        /// is not: `TouchLayoutScreen` is a customiser where the player drags controls around and
+        /// has to know which one they are holding, and `docs/TODO.md` § 125.11 records that screen
+        /// as something he asked for by name.
+        /// </summary>
         public readonly string TouchLabel;
 
+        /// <summary>
+        /// What the touch button DRAWS.
+        ///
+        /// ⚠️⚠️ A CONSTRUCTOR PARAMETER WITH NO DEFAULT, LIKE EVERY OTHER FIELD HERE, AND FOR THE
+        /// REASON THE CLASS NOTE BELOW GIVES. A verb that reached a phone without somebody
+        /// deciding what it looks like is exactly what shipped: the type could only hold a
+        /// string, so the answer was always going to be a word, and for the hero slots the word
+        /// was the keyboard key. **The type is the fix.** `UI.VerbIcons` bakes them.
+        ///
+        /// ⚠️ THE SKILL RAIL PREFERS THE ABILITY'S OWN ICON OVER THIS. `TouchHud` resolves the
+        /// live `HeroKit` and draws `AbilityIcons.For(ability.Glyph)`, so a phone shows the same
+        /// eighteen bespoke pictures the deck and character select show (`docs/VISION.md` § 3's
+        /// three layers, which *"must stay in step"*). The glyph here is what a seat with no kit
+        /// falls back to.
+        /// </summary>
+        public readonly UI.VerbGlyph Glyph;
+
         public VerbInput(Verb verb, string action, string gamepadPath,
-                         TouchZone zone, int slot, TouchSize size, string touchLabel)
+                         TouchZone zone, int slot, TouchSize size, string touchLabel,
+                         UI.VerbGlyph glyph)
         {
             Verb = verb;
             Action = action;
@@ -73,6 +105,7 @@ namespace TumbangPreso.InputLayer
             Slot = slot;
             Size = size;
             TouchLabel = touchLabel;
+            Glyph = glyph;
         }
     }
 
@@ -110,7 +143,7 @@ namespace TumbangPreso.InputLayer
             // ---- the left thumb, and what rides beside it -------------------------------
             Verb.Sprint => new VerbInput(
                 Verb.Sprint, "Sprint", "<Gamepad>/leftStickPress",
-                TouchZone.MoveStick, 0, TouchSize.Small, "RUN"),
+                TouchZone.MoveStick, 0, TouchSize.Small, "RUN", UI.VerbGlyph.Sprint),
 
             // ---- the right thumb's constant cluster --------------------------------------
             //
@@ -120,7 +153,7 @@ namespace TumbangPreso.InputLayer
             // would work and would put the charge on the thumb that also steers the camera.
             Verb.SpecialAbility => new VerbInput(
                 Verb.SpecialAbility, "SpecialAbility", "<Gamepad>/rightTrigger",
-                TouchZone.ActionCluster, 0, TouchSize.Large, "THROW"),
+                TouchZone.ActionCluster, 0, TouchSize.Large, "THROW", UI.VerbGlyph.ThrowSlipper),
 
             // ⚠️ GRAB IS CONTEXTUAL AND STAYS ONE CONTROL. Tap picks up, tap with nothing in
             // reach shoves, hold as the taya runs the lata reset. `PlayerInputReader`'s note is
@@ -128,35 +161,35 @@ namespace TumbangPreso.InputLayer
             // world. A second touch button per job would be three controls for one verb.
             Verb.Grab => new VerbInput(
                 Verb.Grab, "Grab", "<Gamepad>/buttonWest",
-                TouchZone.ActionCluster, 1, TouchSize.Medium, "GRAB"),
+                TouchZone.ActionCluster, 1, TouchSize.Medium, "GRAB", UI.VerbGlyph.Hand),
 
             Verb.Jump => new VerbInput(
                 Verb.Jump, "Jump", "<Gamepad>/buttonSouth",
-                TouchZone.ActionCluster, 2, TouchSize.Medium, "JUMP"),
+                TouchZone.ActionCluster, 2, TouchSize.Medium, "JUMP", UI.VerbGlyph.Jump),
 
             // ⚠️ THE TAYA'S ONLY SCORING VERB GETS THE OTHER TRIGGER, so the two verbs that
             // decide a round sit under the two fingers that are not steering.
             Verb.Lunge => new VerbInput(
                 Verb.Lunge, "Lunge", "<Gamepad>/leftTrigger",
-                TouchZone.ActionCluster, 3, TouchSize.Medium, "LUNGE"),
+                TouchZone.ActionCluster, 3, TouchSize.Medium, "LUNGE", UI.VerbGlyph.Lunge),
 
             // ---- Hero Strike only. The rail hides itself in Classic ----------------------
             Verb.Skill1 => new VerbInput(
                 Verb.Skill1, "Skill1", "<Gamepad>/leftShoulder",
-                TouchZone.SkillRail, 0, TouchSize.Medium, "Q"),
+                TouchZone.SkillRail, 0, TouchSize.Medium, "SKILL 1", UI.VerbGlyph.SkillPrimary),
 
             Verb.Skill2 => new VerbInput(
                 Verb.Skill2, "Skill2", "<Gamepad>/rightShoulder",
-                TouchZone.SkillRail, 1, TouchSize.Medium, "E"),
+                TouchZone.SkillRail, 1, TouchSize.Medium, "SKILL 2", UI.VerbGlyph.SkillSecondary),
 
             Verb.Ultimate => new VerbInput(
                 Verb.Ultimate, "Ultimate", "<Gamepad>/buttonNorth",
-                TouchZone.SkillRail, 2, TouchSize.Medium, "ULT"),
+                TouchZone.SkillRail, 2, TouchSize.Medium, "ULTIMATE", UI.VerbGlyph.Ultimate),
 
             // ---- pressed between rounds, out of the thumbs' way --------------------------
             Verb.EmoteWheel => new VerbInput(
                 Verb.EmoteWheel, "EmoteWheel", "<Gamepad>/dpad/up",
-                TouchZone.UtilityChip, 0, TouchSize.Small, "EMOTE"),
+                TouchZone.UtilityChip, 0, TouchSize.Small, "EMOTE", UI.VerbGlyph.Emote),
         };
 
         /// <summary>Every verb's entry, in enum order.</summary>

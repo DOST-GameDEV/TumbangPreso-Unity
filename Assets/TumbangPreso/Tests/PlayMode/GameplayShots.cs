@@ -629,7 +629,20 @@ namespace TumbangPreso.PlayTests
             grade.AdoptFromScene();
         }
 
-        private static IEnumerator Render(Camera cam, string name, bool flipCanvases)
+        /// <summary>
+        /// ⚠️⚠️ `internal` AND TAKING A DIRECTORY SINCE 2026-09-04, SO `NationalsShowcaseProbe`
+        /// CAN USE IT INSTEAD OF WRITING A SECOND CAPTURE PATH. That probe first tried
+        /// `ScreenCapture.CaptureScreenshot`, which is three lines and **writes nothing at all in
+        /// batch mode**: there is no swap chain to capture, the call fails silently, and the run
+        /// reported success over an empty folder. This method is the one that works, and every
+        /// paragraph in it is a fault somebody already paid for: the HDR resolve, the separate
+        /// ungraded UI camera, the target created before the layout pass, and the layer restore.
+        ///
+        /// ⚠️ NOTHING ELSE ABOUT IT MOVED. The default keeps `GameplayShots`' own output folder,
+        /// so every existing caller behaves exactly as it did.
+        /// </summary>
+        internal static IEnumerator Render(Camera cam, string name, bool flipCanvases,
+                                           string outDir = null)
         {
             // ⚠️⚠️ AN HDR TARGET, AND THE LDR ONE MADE THESE SHOTS LIE ABOUT THE ONE THING THEY
             // WERE BEING USED TO JUDGE. `ColourGrade` runs an ACES roll-off in `OnRenderImage`,
@@ -787,7 +800,9 @@ namespace TumbangPreso.PlayTests
 
             if (uiCam != null) Object.DestroyImmediate(uiCam.gameObject);
 
-            File.WriteAllBytes($"{OutDir}/{name}.png", tex.EncodeToPNG());
+            string dir = string.IsNullOrEmpty(outDir) ? OutDir : outDir;
+            Directory.CreateDirectory(dir);
+            File.WriteAllBytes($"{dir}/{name}.png", tex.EncodeToPNG());
 
             Object.DestroyImmediate(tex);
 
@@ -796,7 +811,7 @@ namespace TumbangPreso.PlayTests
             rt.Release();
             Object.DestroyImmediate(rt);
 
-            Debug.Log($"[Play] wrote {OutDir}/{name}.png");
+            Debug.Log($"[Play] wrote {dir}/{name}.png");
         }
     }
 }

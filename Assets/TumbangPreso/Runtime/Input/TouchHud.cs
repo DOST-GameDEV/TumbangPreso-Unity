@@ -156,6 +156,18 @@ namespace TumbangPreso.InputLayer
         /// moment something measured it, which is `CLAUDE.md` § 6.5's closing line about the
         /// render.
         /// </summary>
+        /// <summary>
+        /// How much of a touch target its icon fills.
+        ///
+        /// ⚠️⚠️ MEASURED AGAINST THE FACE, NOT AGAINST THE TARGET, WHICH IS `CLAUDE.md` § 6.2c'S
+        /// FIRST QUESTION. `WoodCraft`'s slab is a bright keyline outside a dark rim outside a
+        /// face, sampled off 🧑's own `BUTTON LONG.png`; the three together take about a fifth of
+        /// the width. An icon sized at, say, 0.8 of the TARGET therefore draws across its own
+        /// bevel and the control stops reading as a pressable object at all. 0.54 leaves the
+        /// keyline and the rim clear on every one of the three sizes.
+        /// </summary>
+        private const float IconShare = 0.54f;
+
         private const float ChipTopY = -120.0f;
 
         private const float ChipStepY = -180.0f;
@@ -446,6 +458,27 @@ namespace TumbangPreso.InputLayer
         public void Bind(CharacterMotor local) => _local = local;
 
         /// <summary>
+        /// Ask the control for <paramref name="verb"/> to draw attention to itself this frame.
+        ///
+        /// ⚠️⚠️ THIS IS THE OTHER HALF OF DROPPING THE KEY CAP ON A PHONE. `Hud.PressCue` prints
+        /// nothing on touch, so `PICK UP` arrives with no statement of which control does it;
+        /// this is that statement, made by the control rather than about it. See
+        /// `TouchButton.SetHinted`.
+        ///
+        /// ⚠️ STATIC, AND CALLED EVERY FRAME THE PROMPT IS TRUE. `Hud` has no reference to this
+        /// component and must not acquire one: the two canvases are deliberately separate
+        /// (see this class's header), and a HUD holding a `TouchHud` field would be a lifetime
+        /// dependency between them for the sake of one hint. A static that is set and consumed
+        /// in the same frame carries no state to go stale.
+        ///
+        /// ⚠️ IT IS SAFE WITH NO LAYER PRESENT. On a desktop nothing reads it and the write is
+        /// one field assignment, so the HUD does not need to ask whether it is on a phone.
+        /// </summary>
+        public static void Emphasise(Verb verb) => _hintVerb = verb;
+
+        private static Verb? _hintVerb;
+
+        /// <summary>
         /// Whether the controls should be on screen right now.
         ///
         /// ⚠️⚠️ THE LAYER HIDES WHENEVER THE PLAYER CANNOT ACT, AND THE FIRST VERSION DID NOT.
@@ -478,6 +511,25 @@ namespace TumbangPreso.InputLayer
             // raycasting, and leaves the held table alone.
             if (_canvas != null && _canvas.enabled != ShouldBeOnScreen)
                 _canvas.enabled = ShouldBeOnScreen;
+
+            // ⚠️⚠️ THE HINT IS CONSUMED HERE AND CLEARED, WHICH IS WHAT MAKES IT SELF-EXPIRING.
+            // `Hud` sets it on the frames a prompt about that verb is on screen and never has to
+            // remember to unset it: a prompt that stops being true simply stops asking, and the
+            // pulse eases out on its own. See `Emphasise`.
+            Verb? hint = _hintVerb;
+            _hintVerb = null;
+
+            foreach (var button in _buttons)
+                if (button != null)
+                    button.SetHinted(hint.HasValue && button.Entry.Verb == hint.Value);
+
+            // ⚠️⚠️ THE THREE HERO CONTROLS TAKE THE LIVE ABILITY'S OWN ICON. See
+            // `TouchButton.RefreshIcon`: the hero can change between rounds and the debug
+            // switcher can re-seat a player mid-match, so the picture on SKILL 1 has to follow
+            // the kit rather than being decided once at build time. It early-outs on an
+            // unchanged ability id, so this is a reference compare per control per frame.
+            foreach (var button in _buttons)
+                if (button != null) button.RefreshIcon(_local);
 
             // ⚠️ POLLED ON A COUNTER, NOT SUBSCRIBED. The customise screen may not exist (a
             // layout imported with an account, a reset from the settings panel), and a static
@@ -544,20 +596,49 @@ namespace TumbangPreso.InputLayer
             // player actually means by "make the controls fainter".
             var group = go.AddComponent<CanvasGroup>();
 
-            // ⚠️ THE LABEL IS THE VERB'S OWN, FROM THE CATALOGUE. A glyph table keyed by verb
-            // would be the third forgettable list in this feature.
+            // ⚠️⚠️ A PICTURE, NOT A WORD, AND THIS LINE USED TO BE THE BUG 🧑 PHOTOGRAPHED.
+            // It read `MenuKit.Label(rt, entry.TouchLabel, 34, ...)`, and three of those labels
+            // were `"Q"`, `"E"` and `"ULT"`: the names of keys on a keyboard the device does not
+            // have, painted on the one surface in the game that exists BECAUSE there is no
+            // keyboard. 🧑 2026-09-03, off the Android build: *"why the fuck does it have
+            // keybinds theres no keys in mobile"*, and *"ive never seen a mobile game say GRAB or
+            // lunge, usually it has an intuitive icon for it or the skill icon"*.
             //
-            // ⚠️ AND IT IS NOT A RAYCAST TARGET. A label over the middle of a button is exactly
-            // where a thumb lands, and a raycastable one would take the press for itself: the
-            // button under it would never see a pointer-down and the verb would simply not fire.
-            // Same fault `MenuKit.EnsureHitArea` records from the other side.
-            var label = MenuKit.Label(rt, entry.TouchLabel, 34, TouchSkin.Ink,
-                                      new Vector2(0.5f, 0.5f), Vector2.zero,
-                                      new Vector2(size, size));
-            label.raycastTarget = false;
+            // ⚠️⚠️ THE CAUSE WAS THE TYPE, NOT THE VALUES, WHICH IS WHY THE FIX IS NOT A BETTER
+            // SET OF STRINGS. `VerbInput` could only hold a string for this, so whoever filled
+            // the table in wrote what each control was CALLED, and for the hero slots what they
+            // were called was their key. `VerbInput.Glyph` is a constructor parameter with no
+            // default now, so a verb cannot reach a phone again without somebody deciding what it
+            // looks like. `CLAUDE.md` § 4a: *"the answer is construction, not discipline."*
+            //
+            // ⚠️ IT IS NOT A RAYCAST TARGET, for the reason the label was not. Anything drawn
+            // over the middle of a button is exactly where a thumb lands, and a raycastable one
+            // takes the press for itself: the button under it never sees a pointer-down and the
+            // verb simply does not fire. Same fault `MenuKit.EnsureHitArea` records from the
+            // other side.
+            var iconGo = new GameObject("Icon", typeof(RectTransform));
+            iconGo.transform.SetParent(rt, false);
+
+            var icon = iconGo.AddComponent<Image>();
+            icon.sprite = VerbIcons.For(entry.Glyph);
+            icon.color = TouchSkin.Ink;
+            icon.raycastTarget = false;
+            icon.preserveAspect = true;
+
+            // ⚠️ 54 PER CENT OF THE TARGET, WHICH IS THE ART'S OWN PROPORTION RATHER THAN A
+            // GUESS. `WoodCraft`'s slab carries a keyline and a rim outside a face, so an icon
+            // sized against the TARGET rather than against the FACE draws over its own bevel.
+            // This is `CLAUDE.md` § 6.2c's first question ("what is this size measured against")
+            // answered on the surface it is drawn on.
+            var iconRt = (RectTransform)iconGo.transform;
+            iconRt.anchorMin = iconRt.anchorMax = new Vector2(0.5f, 0.5f);
+            iconRt.pivot = new Vector2(0.5f, 0.5f);
+            iconRt.anchoredPosition = Vector2.zero;
+            iconRt.sizeDelta = new Vector2(size * IconShare, size * IconShare);
 
             var button = go.AddComponent<TouchButton>();
             button.Bind(entry, group, surface);
+            button.BindIcon(icon);
             _buttons.Add(button);
         }
 

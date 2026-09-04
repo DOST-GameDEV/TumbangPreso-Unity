@@ -999,7 +999,39 @@ namespace TumbangPreso
             return kit.Ultimate;
         }
 
-        private static string Key(string action) => "[" + Hud.KeyLabelFor(action) + "]";
+        /// <summary>
+        /// The control a lesson is teaching, named the way the player's own device names it.
+        ///
+        /// ⚠️⚠️ ON TOUCH IT NAMES THE CONTROL, WHICH IS THE ONE SCREEN IN THE GAME WHERE THAT IS
+        /// RIGHT. Everywhere else a phone prompt states the ACTION and `TouchHud.Emphasise`
+        /// pulses the button (`Hud.PressCue`'s note), because the player already knows the game
+        /// and only needs to know what will happen. **A tutorial is the opposite situation**: it
+        /// exists to teach which control does what, so it is the one place a word for the control
+        /// is the content rather than noise. `TouchLabel` is exactly that word, and
+        /// `TouchLayoutScreen` prints the same one.
+        ///
+        /// ⚠️ IT USED TO PRINT `[X]`, `[Q]` AND `[E]` ON A PHONE, unconditionally, which taught
+        /// sixteen lessons about keys the device does not have. 🧑 2026-09-03: *"why the fuck
+        /// does it have keybinds theres no keys in mobile"*.
+        ///
+        /// ⚠️ MOVE HAS NO VERB AND FALLS BACK, deliberately. It is a composite on a keyboard, a
+        /// stick on a pad and the touch stick on a phone, and `InputCatalogue` has no row for it
+        /// because it is not a `Verb`; the stick is the only control on the layer nobody has to
+        /// be taught.
+        /// </summary>
+        private static string Key(string action)
+        {
+            if (Hud.OnTouch)
+            {
+                var verb = InputLayer.InputCatalogue.VerbForAction(action);
+                if (verb.HasValue)
+                    return "[" + InputLayer.InputCatalogue.For(verb.Value).TouchLabel + "]";
+
+                return action == "Move" ? "[STICK]" : "[TAP]";
+            }
+
+            return "[" + Hud.KeyLabelFor(action) + "]";
+        }
 
         private void ExitTraining()
         {

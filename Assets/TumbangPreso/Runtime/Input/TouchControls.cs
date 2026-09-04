@@ -216,6 +216,80 @@ namespace TumbangPreso.InputLayer
         }
 
         /// <summary>
+        /// The picture this control draws. See <see cref="RefreshIcon"/>.
+        /// </summary>
+        public void BindIcon(Image icon)
+        {
+            _icon = icon;
+            _iconGlyphShown = null;
+            RefreshIcon();
+        }
+
+        private Image _icon;
+
+        /// <summary>
+        /// The ability id currently drawn on this control, or null when the fallback is drawn.
+        ///
+        /// ⚠️ IT IS COMPARED RATHER THAN THE SPRITE, because `AbilityIcons.For` caches and a
+        /// reference comparison would be true the moment two abilities happened to share a
+        /// glyph. Comparing the id is what makes the swap fire on a hero change and never
+        /// otherwise.
+        /// </summary>
+        private string _iconGlyphShown;
+
+        /// <summary>
+        /// Puts the LIVE ability's own icon on the three hero controls.
+        ///
+        /// ⚠️⚠️ THE THREE SKILL BUTTONS DRAW THE SAME EIGHTEEN PICTURES THE DECK AND CHARACTER
+        /// SELECT DRAW, AND THAT IS `docs/VISION.md` § 3 RATHER THAN A FLOURISH. That section
+        /// names three layers (learn, recall, play) and says they *"must stay in step"*. The
+        /// touch layer is a fourth surface for the same three powers, and 🧑 asked for exactly
+        /// this by name: *"usually it has an intuitive icon for it or the skill icon"*. A phone
+        /// drawing its own private symbols for GLACIAL NOVA would teach a player a fourth
+        /// vocabulary for a power they have already learned twice.
+        ///
+        /// ⚠️ IT FALLS BACK TO `VerbInput.Glyph` RATHER THAN TO A BLANK. A seat with no kit is
+        /// Classic, where `TouchHud` hides the rail entirely, and the one frame between the
+        /// layer being built and the kit arriving in Hero Strike. Neither may draw an empty
+        /// plate.
+        ///
+        /// ⚠️ POLLED FROM `TouchHud.Update` RATHER THAN SUBSCRIBED. A hero can change between
+        /// rounds and a seat can be re-bound by the debug switcher, and a static event with a
+        /// `MonoBehaviour` subscriber is the leak `TouchHud` already refuses for the layout
+        /// revision, in this same file, for this same reason.
+        /// </summary>
+        public void RefreshIcon(CharacterMotor local = null)
+        {
+            if (_icon == null) return;
+
+            var ability = AbilityForSlot(local);
+            string id = ability != null ? ability.Id : null;
+
+            if (id == _iconGlyphShown) return;
+
+            _iconGlyphShown = id;
+            _icon.sprite = ability != null
+                ? AbilityIcons.For(ability.Glyph)
+                : VerbIcons.For(Entry.Glyph);
+        }
+
+        private Abilities.HeroAbility AbilityForSlot(CharacterMotor local)
+        {
+            if (local == null) return null;
+
+            var kit = local.AbilitySystem != null ? local.AbilitySystem.Kit : null;
+            if (kit == null) return null;
+
+            switch (Entry.Verb)
+            {
+                case Verb.Skill1: return kit.Skill1;
+                case Verb.Skill2: return kit.Skill2;
+                case Verb.Ultimate: return kit.Ultimate;
+                default: return null;
+            }
+        }
+
+        /// <summary>
         /// The player's chosen opacity for this control.
         ///
         /// ⚠️ HELD SEPARATELY FROM THE PRESS COLOUR, because the press has to remain VISIBLE at
@@ -287,6 +361,56 @@ namespace TumbangPreso.InputLayer
         }
 
         private void OnDisable() => SetHeld(false);
+
+        /// <summary>
+        /// Draw attention to this control, because a prompt somewhere is about it.
+        ///
+        /// ⚠️⚠️ THIS IS WHAT REPLACED THE KEY CAP ON A PHONE. A keyboard prompt can say
+        /// `[X]  PICK UP` and point at a key the player can find by feel; a phone has no such
+        /// name, so `Hud.PressCue` prints the ACTION only and the button the action belongs to
+        /// says "me" by moving. That is how every mobile game answers "which one do I press",
+        /// and it is the only answer that stays correct after a player has dragged their
+        /// controls somewhere else with the customiser (`docs/TODO.md` § 125.11).
+        ///
+        /// ⚠️ A SCALE PULSE, NOT A COLOUR ONE. The pressed state already owns colour
+        /// (`Repaint` tints the skin amber), and a second colour meaning on the same control
+        /// would make "the game wants you to press this" and "you are pressing this"
+        /// indistinguishable at a glance. Size is the free channel, and it survives a control
+        /// the player has faded to 15 per cent opacity.
+        ///
+        /// ⚠️ IT IS SET EVERY FRAME BY THE CALLER AND DECAYS ON ITS OWN, so a prompt that stops
+        /// being true stops the pulse without anybody having to remember to clear it.
+        /// </summary>
+        public void SetHinted(bool hinted) => _hinted = hinted;
+
+        private bool _hinted;
+        private float _hintPhase;
+
+        /// <summary>The proportion this control grows by at the top of a hint pulse.</summary>
+        private const float HintSwell = 0.09f;
+
+        /// <summary>Pulses per second while hinted. Slow enough to read as breathing.</summary>
+        private const float HintHertz = 1.6f;
+
+        private void Update()
+        {
+            // ⚠️ THE PHASE RUNS DOWN AS WELL AS UP, so the control eases back to its exact
+            // authored size rather than snapping there the frame a prompt goes away. A control
+            // that changes size in one frame reads as a layout bug.
+            _hintPhase = Mathf.MoveTowards(_hintPhase, _hinted ? 1.0f : 0.0f,
+                                           Time.unscaledDeltaTime * 4.0f);
+
+            if (_hintPhase <= 0.0f)
+            {
+                if (transform.localScale != Vector3.one) transform.localScale = Vector3.one;
+                return;
+            }
+
+            float swell = 1.0f + HintSwell * _hintPhase
+                          * (0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * HintHertz * Mathf.PI * 2.0f));
+
+            transform.localScale = new Vector3(swell, swell, 1.0f);
+        }
 
         /// <summary>Presses this control exactly as a finger does. The probe's only entry point.</summary>
         public void SetHeld(bool held)

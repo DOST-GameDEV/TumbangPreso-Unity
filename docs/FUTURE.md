@@ -1726,6 +1726,20 @@ that, and § 88 is the phase to re-test after.
 the wire, a HUD that already knows how to draw a broadcast clock, and `LobbySession`'s reconnect.
 **This phase is closer to done than any other here.**
 
+⚠️⚠️ **AND MORE OF IT EXISTS SINCE 2026-09-04 THAN THIS SECTION USED TO SAY.** `docs/TODO.md`
+§ 134 is the pass; what it added that this phase was going to have to build:
+
+| Phase 17 wanted | State after § 134 |
+|---|---|
+| **Highlight detection off the events already raised** | ✅ **Built.** Every replay frame carries an event type, the responsible seat and a timestamp; six kinds are marked, including two that score nothing and were therefore invisible to `MatchDirector.Scored` (a retrieval under pressure and an ultimate impact) |
+| **A caster overlay laid out for a stream rather than for a player** | ⚠️ **Partly.** The spectator scoreboard carries tsinelas state, ultimate readiness and downed state as three characters per row, and freezes during a replay. Four stamina bars are still not on it |
+| **Clip export, "save the last 30 seconds"** | ⚠️ **Much cheaper than it was.** The buffer is 10.0 s of 640x360 RGB565 with per-frame timestamps and markers, so the remaining work is a longer ring and an encoder rather than a capture system |
+| Spectator delay, tournament mode, bracket page, organiser checklist | Not started |
+
+⚠️ **THE REPLAY IS PIXELS, NOT A REWIND, AND THAT IS DELIBERATE.** It cannot move a live player,
+a lata or a slipper and it never needs `Time.timeScale = 0`. **The input-stream replay in item 2
+below is a different feature**, not an upgrade of this one, and both can ship.
+
 - **Tournament mode:** lobby password, fixed roster, fixed map, no matchmaking, spectator slots
   that do not consume a seat, and a match that can be restarted by an organiser.
 - **Replays: record the input stream and the seed, not the frames.** The match is deterministic
@@ -1737,8 +1751,8 @@ the wire, a HUD that already knows how to draw a broadcast clock, and `LobbySess
 - **Caster overlay:** four scores, four stamina bars, ultimate charge, nameplates, laid out for a
   stream rather than for a player.
 - **Spectator delay**, configurable, so a stream cannot be sniped in a tournament.
-- **Highlight detection** off the events already raised, so the clip worth posting can be found
-  without watching the whole match.
+- ✅ **Highlight detection** off the events already raised, so the clip worth posting can be found
+  without watching the whole match. **Built 2026-09-04**, `docs/TODO.md` § 134.6.
 - **A bracket page**, which can be a static site and needs no service.
 - **An organiser's checklist document**, because the thing that loses a tournament is a build
   mismatch: `NetSession.ProtocolVersion` refuses peers from different branches by design, so every

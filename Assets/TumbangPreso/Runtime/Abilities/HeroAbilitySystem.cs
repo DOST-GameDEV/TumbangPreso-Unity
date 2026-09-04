@@ -885,8 +885,40 @@ namespace TumbangPreso.Abilities
             }
         }
 
+        /// <summary>
+        /// Raised on every peer, exactly once, the moment an ultimate genuinely starts.
+        ///
+        /// ⚠️⚠️ THIS IS THE ONE PLACE AN INTRODUCTION MAY FIRE FROM, AND THE BRIEF THAT ASKED FOR
+        /// ONE SAID SO: *"create one presentation owner ... do not build six unrelated screen
+        /// systems inside the hero kits."* <see cref="UI.UltimatePresentationDirector"/> is the
+        /// only subscriber, and the six kits know nothing about it.
+        ///
+        /// ⚠️⚠️ IT IS RAISED FROM `PlayUltimatePresentation` BECAUSE THAT IS ALREADY THE FUNNEL
+        /// EVERY CAST PASSES THROUGH EXACTLY ONCE PER PEER, AND ANYWHERE ELSE WOULD DOUBLE OR
+        /// MISS. `PlayCastConfirm` is called on the caster by `ServiceBuffer` and on every
+        /// observer by `ApplyNetworkCast`, and `MatchRpc.BroadcastAbilityCast` skips
+        /// `_nm.LocalClientId`, so the host never receives its own announcement. **A press that
+        /// was refused never reaches here at all**: `Cast` returns `Refused`, `Cooling`,
+        /// `NotCharged`, `CannotAct` or `Missing`, and only `CastOutcome.Cast` calls this method.
+        /// That is the brief's *"must not fire from previews, rejected casts, or unavailable
+        /// presses"* satisfied by where the hook is rather than by a check inside it.
+        ///
+        /// ⚠️ THE SUBSCRIBER STILL DEDUPES, and that is not a contradiction. A client that
+        /// predicts a cast and then has it confirmed can run the presentation twice inside a
+        /// frame or two on a bad connection, which is a network property rather than a call-site
+        /// one. See `UltimatePresentationDirector.DuplicateWindow`.
+        /// </summary>
+        public static event System.Action<CharacterMotor, HeroKit, HeroAbility> UltimateStarted;
+
         private void PlayUltimatePresentation()
         {
+            // ⚠️ FIRST, AND OUTSIDE EVERY EARLY RETURN BELOW. The camera work in this method
+            // returns early when `Camera.main` is null (a headless probe) and when the caster is
+            // too far away to be felt; the introduction is a screen element and is owed to a
+            // player watching from anywhere, including a spectator with no rig of their own.
+            if (Kit != null && Kit.Ultimate != null)
+                UltimateStarted?.Invoke(_motor, Kit, Kit.Ultimate);
+
             // ⚠️⚠️ THE COLUMN IS THE PART THE OTHER THREE PLAYERS SEE, AND IT IS DRAWN BEFORE
             // ANY OF THE CAMERA WORK BELOW BECAUSE IT IS THE ONLY PIECE THAT IS NOT LOCAL.
             //

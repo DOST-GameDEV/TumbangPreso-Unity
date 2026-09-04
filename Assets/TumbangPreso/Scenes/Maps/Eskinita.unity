@@ -5184,13 +5184,35 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0e24e517c9fc2b74e90e849ac443f47d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 563090111}
   m_SourcePrefab: {fileID: 100100000, guid: 0e24e517c9fc2b74e90e849ac443f47d, type: 3}
 --- !u!4 &563090109 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 0e24e517c9fc2b74e90e849ac443f47d, type: 3}
   m_PrefabInstance: {fileID: 563090108}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &563090110 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 0e24e517c9fc2b74e90e849ac443f47d, type: 3}
+  m_PrefabInstance: {fileID: 563090108}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &563090111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 563090110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Washing line strung between two poles across the eskinita, 2.5 m up. It
+    hangs by construction and nothing walks into it.
 --- !u!1001 &573632343
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6189,7 +6211,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5805871749719531809, guid: c47e0fd5c03bbd44d80050d5b1108eef, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.1
+      value: -0.16249996
       objectReference: {fileID: 0}
     - target: {fileID: 5805871749719531809, guid: c47e0fd5c03bbd44d80050d5b1108eef, type: 3}
       propertyPath: m_LocalPosition.z
@@ -9167,13 +9189,35 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0e24e517c9fc2b74e90e849ac443f47d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 942746112}
   m_SourcePrefab: {fileID: 100100000, guid: 0e24e517c9fc2b74e90e849ac443f47d, type: 3}
 --- !u!4 &942746110 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 0e24e517c9fc2b74e90e849ac443f47d, type: 3}
   m_PrefabInstance: {fileID: 942746109}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &942746111 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 0e24e517c9fc2b74e90e849ac443f47d, type: 3}
+  m_PrefabInstance: {fileID: 942746109}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &942746112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 942746111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Washing line strung between two poles across the eskinita, 2.5 m up. It
+    hangs by construction and nothing walks into it.
 --- !u!1001 &973133562
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11392,7 +11436,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 625684381084129345, guid: 72cbee694c0db104883eb42a7c078a73, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.1
+      value: -0.16250008
       objectReference: {fileID: 0}
     - target: {fileID: 625684381084129345, guid: 72cbee694c0db104883eb42a7c078a73, type: 3}
       propertyPath: m_LocalPosition.z
@@ -13672,6 +13716,7 @@ GameObject:
   - component: {fileID: 1467617119}
   - component: {fileID: 1467617118}
   - component: {fileID: 1467617117}
+  - component: {fileID: 1467617120}
   m_Layer: 0
   m_Name: Quad (1)
   m_TagString: Untagged
@@ -13773,6 +13818,20 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1467617115}
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1467617120
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1467617115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Backdrop plane, 60 by 75 m, standing behind the street rather than resting
+    on it.
 --- !u!1001 &1471664966
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15453,6 +15512,7 @@ GameObject:
   - component: {fileID: 1688938491}
   - component: {fileID: 1688938490}
   - component: {fileID: 1688938489}
+  - component: {fileID: 1688938492}
   m_Layer: 0
   m_Name: Quad
   m_TagString: Untagged
@@ -15554,6 +15614,20 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1688938487}
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1688938492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1688938487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee98eb3bfe2ae284fa123018402b72f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.AirborneByDesign
+  Reason: Backdrop plane, 18 by 94 m, standing behind the street rather than resting
+    on it.
 --- !u!1001 &1727166671
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17440,7 +17514,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -5224274235162006634, guid: 8c0b0350cebfe25489269b27741a2f51, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.1
+      value: -0.16250008
       objectReference: {fileID: 0}
     - target: {fileID: -5224274235162006634, guid: 8c0b0350cebfe25489269b27741a2f51, type: 3}
       propertyPath: m_LocalPosition.z
@@ -18401,7 +18475,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8570866982451324560, guid: 36d89b852f233d14b93496d603df9b26, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.1
+      value: -0.16250008
       objectReference: {fileID: 0}
     - target: {fileID: 8570866982451324560, guid: 36d89b852f233d14b93496d603df9b26, type: 3}
       propertyPath: m_LocalPosition.z

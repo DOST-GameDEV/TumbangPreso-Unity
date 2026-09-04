@@ -9,11 +9,12 @@ before inventing a task, and update it in the same commit as the work.
 
 ## What is open right now
 
-Eighteen sections, and this list is the whole of it. Everything else in this repository's history
+Nineteen sections, and this list is the whole of it. Everything else in this repository's history
 is in the archive with its number unchanged.
 
 | § | Open work | Where it bites |
 |---|---|---|
+| **134** | The broadcast pass: autopilot, replay, ultimate introductions, the shove that meant nothing, and the keyboard on the phone | 🧑: *"why the fuck does it have keybinds theres no keys in mobile"*, and bots that *"follow players around only to push them"*. **The touch layer, the AI shove, the autopilot, the replay, the six ultimate introductions and Eskinita are done and captured; § 134.9, § 134.10, § 134.12, § 134.15 and § 134.16 are what is left open.** § 134 |
 | **133** | One font is doing every job, and it is a display face | 🧑: *"I think the problem is we use the same font for everything"*. **The next session's brief**: a body face that pairs with Darumadrop, plus the lobby and login overhaul, with a logo he is attaching. § 133 |
 | **132** | The loadout said nothing about the hero, and a build vanished the moment the match started | Twelve defaults read `As tuned · As tuned`, the ultimate was not on the board, the hold-key panel named the SLOT rather than the equipped reading, and the TAB tray printed every ability name twice. § 132 |
 | **131** | Replace Hero Strike's primitive VFX and the synthesised SFX from the verified source list | **Five of the six families are wired; 24 sourced cues remain and 3 preferred old cues were restored (§ 131.3, § 131.5b).** Open: the other twelve abilities, Phaister's draped plate, and the two downloads behind a login |
@@ -48,13 +49,17 @@ do.** Checked against the code on 2026-09-03, before doing any of them:
 
 ## The five things worth knowing before you touch anything
 
-⚠️⚠️ **`NetSession.ProtocolVersion` IS 22, AND READ IT FROM THE FILE RATHER THAN FROM ANY
-DOCUMENT.** This preamble carried **both 19 and 21** as "the" number for two days, four paragraphs
+⚠️⚠️ **`NetSession.ProtocolVersion` IS 23, AND READ IT FROM THE FILE RATHER THAN FROM ANY
+DOCUMENT.** ⚠️ **This paragraph said 22 until 2026-09-04 while the code read 23**, which is the
+fourth time this number has gone stale in the one place that exists to warn about it going stale.
+The 2026-09-04 pass did NOT move it: `InputContractTests
+.TheInputPassDidNotMoveTheProtocolVersion` asserts the constant and `git diff` on
+`NetSession.cs` is empty for that batch. This preamble carried **both 19 and 21** as "the" number for two days, four paragraphs
 apart, because each session appended its own line and nobody deleted the last one, and it then said
 **21** for a day after § 130.13 moved it to 22. Peers on different numbers refuse each other by
 design, so a stale number here sends somebody hunting a network bug that is a rebuild.
 `grep -n ProtocolVersion Assets/TumbangPreso/Runtime/Net/NetSession.cs`.
-⚠️ **`docs/FUTURE.md` § 0.2's row said 16 for four days** while the code went 17 through 22. **The
+⚠️ **`docs/FUTURE.md` § 0.2's row said 16 for four days** while the code went 17 through 23. **The
 number lives in one file and every copy of it is a liability**, which is why both places now say
 so rather than saying a number.
 
@@ -100,6 +105,937 @@ taht again"*.
    appear more than once. Renumbering would break every pointer in `CLAUDE.md`, `VISION.md`,
    `FUTURE.md` and the code comments, which is a worse trade than a duplicate heading. **Search by
    title as well as by number.**
+
+---
+
+## 134 · THE BROADCAST PASS: AUTOPILOT, REPLAY, ULTIMATE INTRODUCTIONS, THE SHOVE THAT MEANT NOTHING, AND THE KEYBOARD ON THE PHONE ⚠️⚠️ OPEN, 2026-09-04, branch `abilities-rework`
+
+🧑 2026-09-03, going into the nationals in General Santos City, asked for four things and then
+added a fifth off a screenshot of the Android build:
+
+1. Spectator autopilot that looks **intentionally directed** rather than merely automatic.
+2. Manual instant replay that shows **the actual decisive event**, cleanly.
+3. Six **distinctive non-verbal ultimate introductions**.
+4. Attacker AI that stops **following players around to shove them** with no objective effect.
+5. **"why the fuck does it have keybinds theres no keys in mobile"**, and
+   *"ive never seen a mobile game say GRAB or lunge, usually it has an intuitive icon for it or
+   the skill icon"*.
+
+⚠️⚠️ **THE FIFTH IS THE ONE THAT WAS ALREADY SHIPPED AND WRONG, AND IT IS FIRST HERE FOR THAT
+REASON.** The other four are work; that one was a defect a player met on a device. § 134.1.
+
+---
+
+### 134.1 ⚠️⚠️ THE TOUCH LAYER WAS PAINTING KEYBOARD KEYS, AND THE CAUSE WAS A FIELD TYPE
+
+**What he saw.** An Android frame with `RUN`, `THROW`, `GRAB`, `JUMP`, `LUNGE`, `EMOTE` written on
+six thumb controls, **`Q` and `E` on two more**, `ULT` on the ninth, `[X] PICK UP` over a tsinelas,
+`[F1] NO COOLDOWNS: OFF` in the middle of the screen, and `PRESS F1 when ready` under the round
+line. Two of those name keys on a keyboard the device does not have, on the one surface in the
+game that exists **because** there is no keyboard.
+
+⚠️⚠️ **THE CAUSE WAS NOT A BAD SET OF STRINGS. IT WAS THAT THE ONLY AVAILABLE ANSWER WAS A
+STRING.** `InputCatalogue.VerbInput` carried a single `TouchLabel` field and `TouchHud.BuildButton`
+drew it with `MenuKit.Label`. A field whose type cannot express a picture gets filled with a word
+every time, and for the three Hero Strike slots the word each control was called by was its
+keyboard key. This is `HeroAbility.Glyph`'s own argument one layer down: *"a lookup table keyed by
+id is a second place to forget, and forgetting it compiles."*
+
+⚠️⚠️ **AND `CLAUDE.md` § 4a'S COMPILE GATE WAS WORKING PERFECTLY THE WHOLE TIME.** *"A new `Verb`
+does not compile until it has a pad binding and a thumb target."* It did have a thumb target. The
+gate asked whether every verb was **reachable** on a phone and never whether it was
+**intelligible** on one, and that gap is the whole of this defect. **The gate is now eight
+questions rather than seven**: `VerbInput.Glyph` is a constructor parameter with no default, so a
+verb cannot reach a phone again without somebody deciding what it looks like.
+
+**What changed.**
+
+| | |
+|---|---|
+| `UI/VerbIcons.cs` | New. Nine procedural glyphs baked the way `AbilityIcons` bakes the ability set: SDF coverage in a -1..1 square, white on transparent, tinted at the use site. Speed lines, a tsinelas on an arc, an open hand, a lift chevron, a forward thrust, a face, two skill plates and a star. |
+| `InputCatalogue.VerbInput` | `Glyph` added as a constructor parameter with no default. `TouchLabel` **kept** and repurposed: it names the control in `TouchLayoutScreen` and in `GuidedTraining`, and is drawn on no button. `"Q"`, `"E"` and `"ULT"` became `"SKILL 1"`, `"SKILL 2"` and `"ULTIMATE"`. |
+| `TouchHud.BuildButton` | Draws an `Image` at 54% of the target instead of a 34 pt label. The share is measured against `WoodCraft`'s keyline-rim-face construction, not picked. |
+| `TouchButton.RefreshIcon` | ⚠️⚠️ **The three hero controls draw the LIVE ability's own icon**, not anything in `VerbIcons`. `docs/VISION.md` § 3 names three layers that *"must stay in step"*; the touch layer is a fourth surface for the same three powers and 🧑 asked for exactly this: *"or the skill icon"*. The `VerbGlyph` is the fallback for a seat with no kit. |
+| `Hud.PressCue` / `Hud.MashVerb` | New. A key cap on a keyboard or a pad, **nothing at all on touch**. Eight prompt sites rewritten through them. |
+| `TouchHud.Emphasise` / `TouchButton.SetHinted` | New. With the key cap gone, the prompt states the ACTION and **the button says which button**, by pulsing 9% at 1.6 Hz. A scale pulse rather than a colour one, because colour already means "you are pressing this". |
+| `Hud` deck key caps | Empty on touch. The deck tile carries the ability icon and the thumb control now carries the same one, so the player maps them by picture. |
+| `Hud` sandbox toggle | **Hidden on touch.** It reads `[F1] NO COOLDOWNS: OFF` and the only way to change it is F1: on a phone it was a status readout for a switch nobody can reach. See § 134.9 for the gap this leaves. |
+| `GuidedTraining.Key` | Names the CONTROL on touch, which is the one screen in the game where a word for a control is the content rather than noise. Sixteen lessons stopped teaching keys the device does not have. |
+
+⚠️ **THE ONE PLACE A WORD SURVIVED IS THE TUTORIAL, AND THAT IS DELIBERATE.** Everywhere else a
+phone prompt states the action, because the player already knows the game and only needs to know
+what will happen. A tutorial is the opposite situation: it exists to teach which control does what.
+
+**Asserted by** `InputContractTests.NoTwoVerbsDrawTheSameTouchGlyph` and
+`.NoTouchControlIsNamedAfterAKeyboardKey`. The second is a text rule (a label under three
+characters, or one carrying brackets, is a key cap) rather than a list of forbidden strings, because
+the next one to leak will be whatever key the next verb happens to be bound to.
+
+---
+
+### 134.2 ⚠️⚠️ THE ATTACKER SHOVE: FOUR FAULTS THAT PRODUCED ONE BEHAVIOUR
+
+**Reproduced from the code before any change.** `AIController.SabotageTarget` at `71eeaf4`:
+
+```csharp
+float reach = 4.16f * Me.Sabotage;      // up to 4.16 m
+...
+float aim = Vector3.Dot(push.normalized, toTaya.normalized);
+if (aim <= 0.0f) continue;              // 89.9 degrees is admitted
+float score = aim * 2.0f - AiTuning.TagDistanceWeight * d;
+if (who.HoldingSlipper) score += 1.0f;  // a bonus, not a requirement
+```
+
+| # | The fault | The number | What it looked like |
+|---|---|---|---|
+| 1 | **`aim > 0` is a direction test with no magnitude** | admits **89.9 degrees** off the line to the taya | A body moved 2.5 m for **4 cm** of closure |
+| 2 | **Carrying a tsinelas was a `+1.0` score bonus** | — | `IsTaggable` REQUIRES one, so half of every sabotage set up nothing that could be punished |
+| 3 | **The search radius was 2.6x the verb's reach** | **4.16 m** against `Balance.ShoveRange` **1.6 m** | The bot WALKS two and a half shove-lengths to set up a press it has not earned. **This walk is the following he reported.** |
+| 4 | **Nothing projected the outcome** | — | "Toward the taya" and "into the taya's reach" were never told apart |
+
+⚠️⚠️ **AND THE HEADER ABOVE THAT FUNCTION HAD SAID *"a rival worth shoving into the taya's
+reach"* THE WHOLE TIME.** The comment described the intended rule and the body implemented a
+proximity check with a sign test. That gap is why this read as *"meaningful sabotage"* in review
+and as random harassment in play.
+
+⚠️ **THE LOOSE BAR WAS ARGUED FOR, AND THE ARGUMENT WAS SOUND ABOUT THE WRONG THING.** The
+comment beside `aim <= 0` reasoned that a cone *"would take it back to zero"* sabotages a match,
+citing a real measurement: willingness read as `> 0` against a fixed radius produced **zero
+sabotages over a whole match at Normal**. That measurement was about the SEARCH RADIUS being too
+small for `Spacing`'s attacker separation, and it was answered by loosening the DIRECTION test.
+Widening the radius to 4.16 m and keeping `aim > 0` bought opportunities by admitting bad ones.
+
+#### The rule that replaced it
+
+⚠️⚠️ **IT LIVES IN `Packages/com.tumbangpreso.core/Runtime/Sabotage.cs`, NOT IN `AIController`.**
+`CLAUDE.md` § 4: the engine-free package holds *"every number arrived at by measurement rather
+than taste"*, and engine-free is what lets them be *"asserted in a second instead of playtested
+for an afternoon."* The old rule was observable only by watching a match. `SabotageTests` answers
+eighteen cases in **27 ms**.
+
+**Every bound is derived from the constants that resolve the shove. Nothing is typed in.**
+
+| Quantity | Expression | At shipping constants |
+|---|---|---|
+| Shove travel | `Combat.ShoveDistance()` = `ShoveSpeed²/(2·Friction)` | **2.50 m** |
+| Actionable reach | `max(Combat.LungeReach(), Balance.PunchRange)` | **2.30 m** |
+| Taya response share | half of `Balance.ShoveStun` | **0.625 s** |
+| **Danger radius** | reach + `Speed·DefenderSpeedScale·ShoveStun·0.5` | **5.46 m** |
+| **Minimum closure** | `ShoveTravel × 0.60` | **1.50 m** |
+| **Max approach** | `Balance.ShoveRange × 2` | **3.20 m** |
+| **Max pursuit** | `MaxApproach / (Speed·AttackerSpeedScale) × 1.5` | **1.90 s** |
+| Target cooldown | stated | **3.00 s** |
+
+⚠️⚠️ **THE RESPONSE SHARE IS A HALF AND SPENDING THE WHOLE STUN WOULD HAVE MADE THE GATE
+MEANINGLESS.** A taya moves at 5.06 m/s and the shove stun is 1.25 s, so the full window is
+**6.33 m of closing** on a 14 m box: a danger radius of 8.6 m admits two thirds of the arena and
+filters nothing. Half is the honest reading, because a taya spends the first half noticing and
+turning, and `AiTuning`'s whole reaction model exists because this game refuses to ship a defender
+with perfect information.
+
+**A shove is taken only when ALL of these hold**, each with its own named veto so a diagnostic run
+can print the distribution: the bot is an attacker; the target is another attacker; the target is
+carrying; a taya exists and can act; the projected endpoint closes at least 1.50 m; the projected
+endpoint lands inside 5.46 m of the taya; and no wall stands on the route.
+
+⚠️ **THE GEOMETRY CHECK FILTERS BY COMPONENT, NOT BY LAYER, AND THAT IS THE PROJECT'S SHAPE.**
+`ProjectSettings/TagManager.asset` has **no custom layers at all**: every body, prop, wall and
+slipper is on `Default`. `Slipper.ResolveFlight` solves the same problem the same way. A player, a
+slipper or the lata in the path is not an obstruction.
+
+#### Pursuit, which is the other half of the complaint
+
+- **A 1.90 s clock**, stepped every frame rather than on the think tick. `Me.Think` can be a fifth
+  of a second, so an expiry that only fired on a re-plan would overrun by that much on every bot.
+- **The bot walks to `SabotageRules.LaunchPoint`**, on the far side of the victim as seen from the
+  taya, not at the victim's centre. ⚠️⚠️ **Walking at the centre is what made the loop**: it
+  arrives beside them facing wherever the walk ended, fires into an arbitrary quadrant, and starts
+  another approach.
+- **The shove ends the plan whether or not it landed**, and puts that victim on a 3 s cooldown.
+  Without this, every other bound is a stutter in the tail rather than an end to it.
+- **Role change cancels everything.** `MatchRules.DefenderSlotFor` is `(round - 1) % 4`, so on
+  `RoundStarted` the victim may now BE the taya. Cooldowns clear with it.
+- **The plan in hand is re-projected, never trusted**, which makes the brief's whole cancellation
+  list one rule: dropped tsinelas, retrieved tsinelas, taya knocked down, a wall arriving.
+
+⚠️ **THE DIFFICULTY DIAL MOVED FROM A REACH TO A REACTION.** `Me.Sabotage` used to scale the
+search radius, which is what let a weaker bot take a WORSE shove. It now gates `Reacted`, so a
+weaker bot is slower to SPOT a legal opportunity. The brief's rule stated in code: difficulty must
+not let low-quality bots perform meaningless shoves.
+
+**Defender audit.** `PlanDefender` returns only `Idle`, `Reset`, `Intercept`, `Hunt`, `Cover` and
+`Guard`; no defender path presses a shove, and `Combat`'s own note records why (*"the defender can
+neither shove nor be shoved"*). `SabotageTests.ADefenderNeverReachesTheAttackerSabotageRule` holds
+it from the other side. **Nothing about the tag, the punch or the lunge was touched.**
+
+---
+
+### 134.3 ⚠️ BASELINE: WHAT THE SPECTATOR AUTOPILOT ACTUALLY DID BEFORE THIS PASS
+
+Read from `SpectatorDirector.cs` at `71eeaf4`, 573 lines, before any change.
+
+**What it is.** A continuous per-frame score over four bodies (`ScoreSubject`), a `MinShotSeconds`
+hold, and one camera solve: an orbit bearing around a focus point, at a distance driven by the
+spread between the subject and one secondary. **Every shot in the game is that same solve at a
+different bearing and distance.**
+
+| Baseline failure | Where it comes from |
+|---|---|
+| **One shot vocabulary.** A retrieval, an ultimate, a knockdown and a quiet beat are the same orbit at different radii | `ComputeShot` is the only pose function |
+| **No event model at all.** The score is recomputed every frame from live state | `ScoreSubject` has no notion of an event STARTING or ENDING |
+| **Commitment is to a SUBJECT, never to an EVENT** | `MinShotSeconds` 2.4 s holds the person; nothing holds the play. A retrieval that runs 4 s can be cut away from at 2.4 |
+| **No occlusion test whatsoever.** The only spatial guard is a box clamp | `ComputeShot` clamps x and z to `PlayableHalfX/Z + 1.5` and never asks whether anything is between the lens and the subject |
+| **The camera can sit inside geometry.** Both maps are enclosed (house facades, viaduct pillars) | Same clamp. A bearing that lands on a pillar is taken |
+| **An ultimate can begin off-screen.** It scores +5.0, which the retrieval's +6.0 plus the 1.25 switch margin can outrank | `ScoreSubject` |
+| **The lata is only ever a secondary, and only when the subject is NOT taggable** | `FocusPoint`: a retriever is framed with the taya INSTEAD of the can, so the objective leaves the frame in the one shot the whole game is about |
+| **Framing is centred, always.** Nothing leads except a 0.42 s velocity nudge on the focus point | `FocusPoint` |
+| **Nothing re-establishes the axis after a cut.** The bearing alternates shoulders, which crosses the action line every other cut | `NewShot` |
+
+⚠️ **THE THREE THINGS IT GETS RIGHT AND WHICH MUST SURVIVE**, all recorded in its header with
+their reasoning: it CUTS rather than whip-panning past 6.0 m; it COMMITS rather than following a
+continuous leader; and it is never completely still (`DriftDegPerSecond` 3.4). Those are kept
+unchanged.
+
+⚠️ **AND ONE THING THE BRIEF ASKS TO REVERSE, WHICH WAS A DELIBERATE DECISION WITH A REASON.**
+`ManualTakeover` deliberately EXCLUDES the broadcast keys, and says why: *"pause, replay, mark and
+recall are the operator working the GALLERY, not the camera, and a director should not be thrown
+out for calling a replay of the shot it just covered."* The brief asks for mark, recall, replay and
+pause to disengage autopilot. **Reversed as asked, and recorded here so the next session reads the
+argument rather than rediscovering it.**
+
+---
+
+### 134.4 ⚠️ BASELINE: WHAT MANUAL REPLAY ACTUALLY SHOWED
+
+Read from `SpectatorCamera.cs` at `71eeaf4` before any change.
+
+**What it is.** A ring of `Texture2D` frames captured post-render at 854x480, one every 0.10 s, capped
+at 70. Pressing the replay key takes the **newest 55 frames** and plays them once at 0.82x over the
+whole screen, titled with whatever `PollHighlights` last saw.
+
+| Measurement | Value |
+|---|---|
+| Sample interval | 0.10 s |
+| Ring capacity | 70 frames = **7.0 s** |
+| Clip length | `ReplaySeconds` 5.5 s = 55 frames, played at 0.82x = **6.7 s of screen time** |
+| Frame size | 854 x 480 RGB24 |
+| **Bytes per frame** | 854 × 480 × 3 = **1,229,760 B** |
+| **Ring at capacity** | 70 × 1.23 MB = **86.1 MB of `Texture2D`** |
+| Readback | one `ReadPixels` per 0.10 s, synchronous |
+
+| Baseline failure | Why |
+|---|---|
+| ⚠️⚠️ **The clip is the last 5.5 seconds, NOT the last EVENT.** | `StartReplay` takes `_replayFrames.Count - wanted` from the END of the ring. Press it 4 s after a tag and the tag is 40 frames back with 15 frames of aftermath: the decisive moment is at the **start** of the clip or already gone |
+| **The title can name a play the clip does not contain** | `RecentHighlightReason` expires against `ReplaySeconds`, so a reason 5.4 s old titles a clip whose first frame is 5.5 s old. One tenth of a second of honesty |
+| **No frame carries anything.** `ReplayFrame` is one field: `Image` | No timestamp, no sequence, no marker, no reason, no slot |
+| **86 MB of textures on a phone** | Android is the target platform this pass also has to ship. Nothing measured this before |
+| **A synchronous `ReadPixels` every 0.10 s** | It is a GPU stall on the render thread, ten times a second, for the whole match, whether or not anybody ever presses replay |
+
+⚠️ **THE THINGS IT GETS RIGHT.** It plays once and never loops (the *"loop every second"* report
+was four triggers, not a loop). It is manual-only since 2026-08-27 and `DeadFeatureAudit` greps
+this file for the names of the two deleted auto-replay constants. It covers the whole screen
+because 🧑 asked: *"i want it to cover whole screen if i click it"*. **All three are kept.**
+
+---
+
+### 134.5 THE SHOT VOCABULARY, THE EVENT INTEREST MODEL AND WHAT THE AUTOPILOT DOES NOW
+
+**Two files.** `Camera/SpectatorInterest.cs` is new and answers *what is the match about right
+now*; `Camera/SpectatorDirector.cs` is rewritten in place and answers *where does the lens go*.
+⚠️ **There is still exactly one autopilot and one spectator camera.** The brief forbids a second
+version and `SpectatorCamera`'s header has forbidden it since it was written.
+
+#### The event interest model
+
+⚠️⚠️ **AN ORDERED ENUM OF NAMED BEATS, NOT A CONTINUOUS SCORE, AND THAT IS THE WHOLE CHANGE.**
+`ScoreSubject` summed six live terms over four bodies every frame, so the leader moved several
+times a second and the only thing holding the camera still was a 2.4 s lock on the SUBJECT. **A
+hold on a person is not a hold on a play.** An event has a beginning, a duration and an outcome,
+so it can be committed to; a score has none of the three.
+
+| # | Beat | Expected | Commit | Shot |
+|---|---|---|---|---|
+| 1 | **Retrieval** with the taya closing | 4.2 s | 2.4 s | Chase inside 9 m, else retrieval two-shot |
+| 2 | **Ultimate** winding up or active | 3.4 s floor, plus while `IsActive` | 2.4 s | Wide if footprint ≥ 3 m, else hero shot |
+| 3 | **Lata hit** or knockdown | 2.6 s | 1.8 s | Objective |
+| 4 | **Tag** landed, or a lunge charging | 2.8 s | 2.4 s | Recovery / chase |
+| 5 | **Slipper landed** within 4 m of the can | 2.0 s | 1.8 s | Objective |
+| 6 | **Downed** or stunned | 2.6 s | 2.4 s | Recovery |
+| 7 | **Reset** channel | 2.4 s | 2.4 s | Defender |
+| 8 | **Throw prep** | 2.5 s | 2.4 s | Objective |
+| 9 | **Quiet** | 5.0 s | 2.4 s | Establishing |
+
+⚠️ **EVERY DURATION IS MEASURED AGAINST SOMETHING AND SAYS WHAT.** The retrieval is a sprinting
+crossing of the 14 m box at `Speed × AttackerSpeedScale` = 2.53 m/s plus a beat; the reset is the
+longest can (`Combat.ResetChannelFor` is 1.79 s on BOYBEN) plus the stand-up; the throw is
+`Balance.ChargeFullTime`. **A duration picked by feel is one the next person retunes by feel.**
+
+⚠️⚠️ **`OutcomeGrace` IS 1.15 s AND IT IS THE "DO NOT LEAVE DURING THE OUTCOME FRAME" RULE.** A
+retrieval stops being true on exactly the frame it resolves, which is the frame the viewer has
+been waiting for. A condition-driven camera cuts on that frame and shows the run while hiding the
+result. The beat stays true for a beat after it stops.
+
+⚠️ **THE EVENTS COME OFF THE GAME'S OWN SIGNALS**, as the brief requires: `Lata.UprightChanged`,
+`MatchDirector.Scored`, `RoundDirector.Tagged`, `HeroAbilitySystem.UltimateStarted`,
+`Carrier.IsCharging` and `Carrier.ChannelRatio`, `CombatVerbs.ObservedLungeCharge`. **The one
+thing with no event is a tsinelas coming to rest**, so it is polled on a 0.20 s scan, which is
+what `Hud.UpdatePickupPrompt` already does for the identical problem.
+
+#### The nine compositions
+
+⚠️⚠️ **EACH IS A DIFFERENT PLACE TO STAND, NOT A DIFFERENT RADIUS.** `BaseBearingFor` decides the
+angle from the geometry of the play and `Solve` decides the distance and the height per shot type.
+
+| Shot | Bearing | Distance | Height |
+|---|---|---|---|
+| **Retrieval two-shot / Chase** | 90° off the axis between the runner and the chaser | 5.5 + spread × 0.70 | 2.35 m |
+| **Objective** | from behind the can, looking back at the person | 4.2 + spread × 0.55, capped 9 | **1.25 m** (near can height) |
+| **Ultimate wide** | 118° off the caster's facing | 9.5 + spread × 0.8 | **6.4 m** |
+| **Ultimate hero** | 118° off the caster's facing | 4.5 | **1.55 m** (looking up) |
+| **Defender** | from the can out through the taya | spread-driven | 3.1 m |
+| **Recovery** | 70° off the axis between the body and the threat | 4.6 + spread × 0.55 | 1.85 m |
+| **Quiet establish** | along the map's LONG axis | 13.5 | **7.2 m** |
+
+⚠️⚠️ **THE HERO-SPECIFIC ULTIMATE FRAMING IS ONE RULE, NOT SIX.** Dante's brief asks the camera
+out of the fissure path, Zack's asks for vertical room, Sean's asks not to stare at empty ground,
+Nemu's asks not to shoot straight down. **All four are "stand off the axis the power travels
+along"**, which is the caster's own facing, and the wide-versus-hero choice comes from
+`HeroAbility.TelegraphRadius`, the authored answer to "how much floor does this cover". A per-hero
+table would be six places to forget, which is `HeroAbility.Glyph`'s argument.
+
+⚠️ **THE QUIET SHOT LOOKS DOWN THE LONG AXIS BECAUSE THE BOX IS 8.6 BY 13.0.** A shot down the 13
+is a street; a shot across the 8.6 is a wall.
+
+#### Composition rules that are now enforced rather than hoped for
+
+- **The lata is in the retrieval frame.** The old `FocusPoint` framed a retriever with the taya
+  INSTEAD of the can. A two-shot now pulls toward the midpoint of the chaser and the objective, so
+  all three are in the picture.
+- **`Headroom` 0.35 m.** A camera aimed exactly at a chest puts the head against the top of the
+  frame at close distances.
+- **Off centre by construction.** Aiming past the subject toward what the shot is also about
+  places the subject off centre and the objective in frame in one operation.
+- **Lead 0.42 s** off `CharacterMotor.Velocity`, unchanged, so a shove or a dash is in it.
+- **The shoulder flips on a re-frame and holds across a cut.** Alternating on every cut crosses
+  the action line every other time; holding it across a cut to a new beat lets the new geometry
+  re-establish the axis.
+
+#### Pose validation, which did not exist at all before
+
+`ValidatePose` refuses a candidate that is inside geometry (`OverlapSphereNonAlloc`, 0.45 m
+clearance) or that cannot see the main subject and the secondary or objective (`RaycastAll`).
+**Six bearings are tried at 60° apart before falling back**, and the fallback is 11 m over the
+focus looking down, which is safe by construction because nothing in either map is up there.
+
+⚠️ **A PLAYER CROSSING THE LENS IS NOT AN OCCLUSION.** The filter drops `CharacterMotor`,
+`Slipper` and `Lata` hits, the same way `Slipper.ResolveFlight` and `AIController
+.ShoveRouteIsClear` do, because every layer in this project is `Default` and bodies move.
+
+⚠️ **RE-SOLVING BEATS ABANDONING.** Occlusion is a property of a POSE, not of a play: a retrieval
+does not stop being the most interesting thing in the match because one bearing looks at a house.
+
+**Counters for the capture log:** `OccludedPoseRejections`, `SafePoseFallbacks`, `Cuts`, and
+`Diagnostic`, which is the model's own sentence about the last decision.
+
+---
+
+### 134.6 THE REPLAY MARKERS AND THE EVENT WINDOW
+
+**Replay stays manual.** Nothing added a trigger. `StepBroadcastKeys` still routes the one bound
+key, the autopilot has no hands, and `DeadFeatureAudit` still greps this file for the two deleted
+auto-replay constants.
+
+#### Every frame carries what it is
+
+`ReplayFrame` was one field, `Texture2D Image`. It now carries `CapturedAt`, `Sequence`,
+`Highlight`, `Reason`, `Slot` and `EventAt`.
+
+⚠️⚠️ **THE MARKER IS STAMPED ON THE FRAME AT CAPTURE, AND THAT IS WHAT MAKES EXPIRY FREE.** A
+marker in a side list has to be aged against a ring that drops its oldest frame ten times a
+second, and the two go out of step the first time anybody changes the capacity. **A marker that
+lives on the frame it describes cannot outlive it**, which is the brief's *"expire markers when
+their frames leave the buffer"* made structural rather than remembered.
+
+#### What gets marked
+
+| Event | Source |
+|---|---|
+| Lata knockdown | `MatchDirector.Scored` / `Lata.UprightChanged` |
+| Tag | `MatchDirector.Scored` |
+| Sabotage | `MatchDirector.Scored` |
+| **Retrieval under pressure** | polled edge: taggable attacker inside `ChaseGap` 9.0 m of the taya |
+| **Ultimate impact** | `HeroAbilitySystem.UltimateStarted`, titled with the ultimate's own name |
+| Decisive score event | `MatchDirector.Scored` |
+
+⚠️⚠️ **TWO OF THE SIX SCORE NOTHING, WHICH IS WHY NEITHER WAS EVER MARKABLE.** A retrieval made
+under a closing taya and an ultimate landing award no points, so `MatchDirector.Scored` never
+mentioned them, and they are among the best clips the game produces: getting a tsinelas out from
+under a closing taya is the play `docs/VISION.md` opens by calling the whole point of the sport.
+
+⚠️ **THE PRESSURE MARKER FIRES ON THE EDGE ONLY.** A retrieval is true for seconds; a marker per
+frame would fill the buffer with a hundred markers describing one play, and `NewestHighlightIndex`
+would pick its last frame every time.
+
+⚠️ **THE SEAT IS CARRIED SO THE OVERLAY CAN NAME WHO.** Both `Scored` and `Tagged` knew it and it
+was being thrown away.
+
+#### The window
+
+**3.5 s before the marked frame, 1.3 s after it.** The lead-in is measured: an attacker crosses
+the box at 2.53 m/s so the run into a tag is about three seconds, and `Balance.ChargeFullTime` is
+2.5 s, so a full charge fits too. ⚠️ **A replay that starts at the impact shows the result and
+hides the decision**, and the decision is what is worth watching twice.
+
+⚠️ **THE FALLBACK IS THE NEWEST 5.0 s AND IT IS NEVER EMPTY.** With no marker in the buffer the
+clip is the last interval; under twelve frames it refuses and says so; under four frames of window
+it refuses and says so.
+
+⚠️⚠️ **THE FRAMES AFTER THE CLIP ARE KEPT NOW, WHICH IS A BUG FIX NOBODY HAD REPORTED.** The old
+body called `_replayFrames.Clear()`, emptying the whole ring, so **the buffer restarted cold after
+every replay and a second replay was impossible for ten seconds.** Only the frames before the clip
+are dropped; everything after it stays live and the ring keeps filling behind the overlay.
+
+#### Buffer cost, measured
+
+| | before | after |
+|---|---|---|
+| Frame | 854 x 480 RGB24 | **640 x 360 RGB565** |
+| Bytes per frame | 1,229,760 | **460,800** |
+| Capacity | 70 frames = 7.0 s | **100 frames = 10.0 s** |
+| **Held at capacity** | **86.1 MB** | **46.1 MB** |
+
+⚠️ **THE WINDOW HAD TO GROW AND THE MEMORY HAD TO SHRINK AT THE SAME TIME.** 3.5 s of lead-in plus
+1.3 s of lead-out plus however long the operator takes to press is more than 7.0 s of history, and
+Android is a shipping platform for this build. 640 x 360 is exactly half of 720p; RGB565 is two
+bytes a pixel instead of three and the banding is invisible on a moving toon-shaded picture watched
+once at 0.82x.
+
+#### The overlay
+
+It said `INSTANT REPLAY · TAG` and nothing else. It now carries **REPLAY**, the event, the
+responsible player when known, a progress bar along the bottom edge, and one line reading
+`LIVE PLAY CONTINUES · <key> OR ESC TO RETURN`.
+
+⚠️⚠️ **THE EXIT IS THE ONE THAT MATTERS MOST, BECAUSE THE CLIP COVERS THE WHOLE SCREEN.** 🧑 asked
+for full screen in 2026-08-27 and that is right; a spectator who does not know Escape works is
+watching a box they cannot leave, on a broadcast. `CLAUDE.md` § 6.2's fourth question is exactly
+this. ⚠️ **The player is named only when the marker carries a seat**, because inventing a name for
+the fallback interval would be `docs/VISION.md` § 3's *"a screen that teaches the wrong key"*
+applied to a scoreboard.
+
+**It plays once, never loops, refuses a restart while playing, exits on the replay key or Escape,
+alters no gameplay time, no scoring and no network state, and is unreachable from the autopilot.**
+
+---
+
+### 134.7 THE ULTIMATE INTRODUCTIONS
+
+**One owner: `UI/UltimatePresentationDirector.cs`.** It subscribes to
+`HeroAbilitySystem.UltimateStarted`, which is raised from `PlayUltimatePresentation` — already the
+one funnel every cast passes through **exactly once per peer**.
+
+⚠️⚠️ **"MUST NOT FIRE FROM PREVIEWS, REJECTED CASTS OR UNAVAILABLE PRESSES" IS SATISFIED BY WHERE
+THE HOOK IS, NOT BY A CHECK INSIDE IT.** `Cast` returns `Refused`, `Cooling`, `NotCharged`,
+`CannotAct` or `Missing` on every path that is not a real cast, and only `CastOutcome.Cast` reaches
+`PlayCastConfirm`. `MatchRpc.BroadcastAbilityCast` skips `_nm.LocalClientId`, so the host never
+receives its own announcement.
+
+⚠️ **THE DUPLICATE WINDOW IS STILL NEEDED AND IT IS A NETWORK PROPERTY.** A client that predicted
+a cast and then received the host's confirmation runs `ApplyNetworkCast`'s non-authoritative
+branch, which forces the effect through **on purpose** (*"a host-approved effect must never vanish
+merely because one screen counted a timer a frame differently"*). Right for the effect, wrong for a
+title card. 0.35 s, keyed on the seat.
+
+**What the player gets.** A compact bottom-left card, **0.78 s**, sliding in over 0.14 s and out
+over 0.18 s: hero name in the hero's accent, ultimate name at 34 pt, the ultimate's own
+`AbilityIcons` glyph, and a hero-specific motif strip. **No camera cut, no time change, no input
+lock, no crosshair hidden, nothing over the target, `blocksRaycasts` off.**
+
+⚠️ **0.78 s IS PICKED AGAINST `HeroAbility.Windup`, WHICH IS 0.4 s.** A card shorter than the
+wind-up names the caster and leaves before an opponent can act on it; one much longer is still on
+screen while the payload lands, competing with the thing it announced.
+
+⚠️ **BOTTOM-LEFT AND 560 UNITS WIDE, BOTH MEASURED.** The width is `DEVOURING SEANCE` at 34 pt
+(~340 units) plus a 92-unit icon plus three 22-unit margins. **A fraction of the window would not
+be a size**: `AspectSafeCanvas` scales on the short axis, so a percentage is 1920 units at 4:3 and
+2250 on his own short wide window, which is what § 100 cost the sign-in screen. Bottom-LEFT keeps
+it out of the ability deck's column at every aspect ratio, and the deck is the one thing a player
+reads while deciding what to answer an ultimate with.
+
+**The six motifs, and why a shape rather than a tint.** `CLAUDE.md` § 6.5: *"a shape difference
+survives a photograph and a colourblind player; a fill difference does not."* Six cards differing
+only in accent are one card. Dante a fault line, Cheska a crystal ridge, Sean a rising flame, Zack
+a bolt staircase, Nemu a funnel trough, Phaister a coven ring.
+
+**The six names are read off the kits**, never out of a table in the presentation file: `TITAN
+FISSURE`, `GLACIAL NOVA`, `SUPERNOVA`, `THUNDERSTRIKE`, `DEVOURING SEANCE`, `GRAND COVEN`.
+
+**No new audio and no new VFX.** The cast cue, the hero theme, the column, the weather and the
+shake all already fire from `HeroAbilitySystem` and are untouched.
+
+---
+
+### 134.8 ⚠️ REJECTED APPROACHES, AND WHY
+
+| Rejected | Why |
+|---|---|
+| **Returning the touch label from `Hud.KeyLabel` on touch** | It would print `[GRAB] PICK UP`, and since this pass the buttons draw ICONS: "GRAB" is a string that appears nowhere on the screen it points at. The cap is dropped and the button pulses instead |
+| **A tenth thumb control for the sandbox toggle** | A developer switch that cannot exist in a networked session, bought with permanent screen space. `CLAUDE.md` § 6.2: weigh an addition by what the player has to hold in their head |
+| **Folding `VerbGlyph` into `AbilityGlyph`** | `AbilityIcons.LabelFor` reports a JOB vocabulary that `HeroPresentationTests` asserts is unique per ability. JUMP is not a job an ability has |
+| **Sharing `AbilityIcons`' SDF primitives instead of transcribing them** | They are `private` and its `Size` and `Stroke` are its own. Exporting them makes one file's feathering constant part of another file's contract, and the next person retuning an ability icon silently retunes every thumb control |
+| **A hard-coded shove distance beside the combat constants** | `Combat`'s own header forbids it for impulses; a stale DECISION constant is worse than a stale distance because it produces a bot that looks stupid rather than a wrong number |
+| **Spending the whole shove stun in the danger radius** | 8.6 m on a 14 m box. Arithmetically defensible, useless as a filter, and it assumes a taya with perfect information |
+| **Queueing ultimate introductions** | Two ultimates inside a second is a real Hero Strike moment; a queue titles the second one after it has finished. `docs/VISION.md` § 2 rule 2 already says one at a time |
+| **`DontDestroyOnLoad` for the introduction canvas** | Every screen-space canvas that outlives a scene is a candidate for § 6.2b's fourth trap, which is what `PlayerNameplate` drawing across the account form actually cost |
+
+---
+
+### 134.9 ⚠️ OPEN: A PHONE IN PRACTICE CANNOT TURN COOLDOWNS OFF
+
+The `[F1] NO COOLDOWNS` row is hidden on touch (§ 134.1) because F1 is the only way to change it
+and a phone has no F1. **That removes a keybind leak and leaves a genuine gap**: a mobile player in
+practice cannot use the sandbox.
+
+⚠️ **IT IS NOT FIXED BY MAKING THE PLATE PRESSABLE.** The HUD canvas has no `GraphicsRaycaster`
+(§ 113), so a uGUI button there *"would draw correctly, raycast nothing and read as a dead
+control"*. The honest options are a tenth control on `TouchHud`'s canvas (rejected, § 134.8) or a
+row in the pause menu, which is a screen that already raycasts. **Done looks like**: a mobile
+player in practice can toggle the sandbox from a surface that already exists.
+
+---
+
+### 134.10 ⚠️ OPEN: THERE IS NO REDUCED-EFFECTS OR FLASH-REDUCTION SETTING TO RESPECT
+
+The brief asks the ultimate introduction to respect reduced-effects and flash-reduction settings.
+**`GameSettings` has neither.** It carries volume, sensitivity, invert-Y, fullscreen, rumble,
+anti-alias, v-sync, render style, slipper highlight, AI difficulty and match format, and nothing
+about photosensitivity.
+
+**So it was answered by construction instead**: the introduction has no full-screen layer, no
+strobe and no white frame, so there is nothing for such a setting to reduce. ⚠️ **That is not the
+same as the feature existing.** `docs/FUTURE.md` Phase 16 is where an accessibility pass belongs,
+and the loudest thing in this game is not this card: `AbilityShowcaseProbe` exists because Zack's
+Thunderstrike once blew **62.8 per cent** of a frame to white. **Done looks like**: one setting,
+read by `AbilityVfx`, `SkyEvent`, `Hitstop` and this card together.
+
+---
+
+### 134.12 ⚠️ OPEN: THE REPLAY CAPTURE IS STILL A SYNCHRONOUS GPU STALL
+
+`CaptureReplayFrame` calls `Texture2D.ReadPixels` **ten times a second for the whole match**,
+whether or not anybody ever presses replay, and a `ReadPixels` blocks the render thread until the
+GPU catches up.
+
+**It is 2.7x cheaper than it was** because the frame went from 854 x 480 RGB24 to 640 x 360
+RGB565 (1,229,760 B to 460,800 B), and that is a real reduction rather than a rounding. **It is
+not a fix.** `AsyncGPUReadback` is the right answer: the request is queued, the callback arrives a
+frame or two later, and the ring is written from the callback instead of from the render loop.
+
+⚠️ **IT WAS NOT DONE IN THIS PASS ON PURPOSE.** An async readback changes the ORDER frames arrive
+in relative to the marker stamping in `CaptureReplayFrame`, and getting that wrong produces a
+clip whose marker is on the wrong frame, which is silent and is exactly the class of fault
+§ 134.4 was written about. **Done looks like**: `AsyncGPUReadback` with the marker resolved
+against `CapturedAt` rather than against arrival order, and a measurement of the frame time with
+and without it on a phone.
+
+⚠️ **AND THE CAPTURE ONLY RUNS FOR A SPECTATOR.** It is on `SpectatorCamera`, so a player never
+pays for it. The cost lands on the machine running the stream, which at the nationals is the one
+machine that most needs its frame rate.
+
+---
+
+### 134.13 ✅ THE CASTER RAIL IS THREE CHARACTERS ON A ROW THAT ALREADY EXISTED
+
+The brief asked for a spectator rail carrying four names, scores, the current taya, tsinelas
+state, ultimate readiness and downed state. **The scoreboard already carried the first three**,
+and it is drawn for a spectator by `Hud.EnterSpectatorMode`, whose own note explains why: *"the
+timer and the scoreboard stay: those are facts about the MATCH, and they are exactly what
+somebody watching wants."*
+
+⚠️⚠️ **SO A SECOND PANEL WOULD HAVE PUT FOUR NAMES AND FOUR SCORES ON SCREEN TWICE**, which is
+the *"do not reproduce the player HUD four times"* the same brief forbids two lines later. The
+addition is one cell on each existing row, three characters wide:
+
+| position | means | glyph |
+|---|---|---|
+| 1 | carrying a tsinelas | `T` or `·` |
+| 2 | ultimate banked and ready | `U` or `·` |
+| 3 | down or stunned | `X` or `·` |
+
+⚠️ **EVERY POSITION ALWAYS PRINTS SOMETHING**, so the three columns line up down the board and a
+caster reads a COLUMN rather than four strings. A cell that only drew the letters that applied
+would be unreadable at a glance, for the same reason `_scoreMarks` is a fixed width: *"a cell
+that hides itself lets the score column stop being a column."*
+
+⚠️ **SPECTATOR ONLY.** A player already reads their own tsinelas and their own ultimate meter off
+the deck, in far more detail than three characters.
+
+⚠️⚠️ **AND IT FREEZES DURING A REPLAY**, which the brief names: *"during replay, freeze or clearly
+label values so live cooldowns do not appear to describe recorded footage."* `Hud` asks
+`SpectatorCamera.Replaying` rather than tracking its own flag, so there is one answer to the
+question and it cannot drift.
+
+---
+
+### 134.14 ✅ ESKINITA WAS THE ONLY MAP THE GEOMETRY CHECK DID NOT GATE, AND IT HAD TEN FINDINGS
+
+**Bayan Plaza reports 0 findings and Ilalim ng Tulay reports 0. Eskinita reported ten**, as
+`(informational)`, and had done for long enough that nobody read them. That is `docs/TODO.md`
+§ 124.11's rule in a different colour: a permanently amber map teaches every reader to skim the
+map report.
+
+⚠️ **ESKINITA IS ALSO THE MAP THE TOURNAMENT PLAYS ON.**
+
+| Finding | What it actually was | Answer |
+|---|---|---|
+| Four `Sasakyan_*` bodies floating **0.263 m** over `Kalsada` | parked cars hovering a hand's width above the road | set down |
+| `Sasakyan_2_W/door` floating 0.195 m | a child of one of those cars | followed its parent |
+| Two `Sampay_*` floating 1.66 m and 2.47 m | washing lines strung between poles | `AirborneByDesign`, with a reason |
+| Two `Quad`s floating 0.898 m | 18 x 94 m and 60 x 75 m backdrop planes | `AirborneByDesign`, with a reason |
+| `Sampay_0` standing **0.79 m** from the can spawn | the same washing line, flattened to two dimensions | resolved by the excuse |
+
+⚠️⚠️ **THE LAST ROW LOOKED LIKE THE ONLY GAMEPLAY FAULT AND IS NOT ONE.** `CheckLataIsClear`
+opens with `if (p.Airborne) continue;`, so excusing the washing line clears it from that check as
+well — and that is the correct reading rather than a silencing. The rule exists because *"Ilalim
+ng Tulay had a trip hazard centred on"* the can; **a wire strung 2.47 m overhead is not something
+a retriever can walk into.**
+
+⚠️⚠️ **AND THE FIXER'S FIRST RUN IS WORTH RECORDING, BECAUSE IT REPORTED SUCCESS AND CHANGED
+NOTHING.** Measuring each car's gap from the whole object's renderer bounds returned *"already
+resting (gap 0.000 m)"* on all four while the check went on reporting 0.263 m, because the
+parent's bounds also contain **a ground-level contact shadow sitting flat on the road**. The
+shadow was resting and the car was not. It solves from the `body` child now, which is the piece
+the check names.
+
+⚠️ **NOTHING HERE TOUCHED GAMEPLAY GEOMETRY.** The cars are `Dressing`, outside the chalk, and
+the check reports `box  0 solid object(s) inside the chalk` before and after.
+
+⚠️ **`EskinitaRestingFix` IS A SCRIPT AND NOT A HAND EDIT**, for `BayanPlazaMonumentFix`'s reason:
+the scene is an imported `.tscn`, so a hand edit is a diff nobody can review and a re-import
+undoes. It is idempotent and it refuses rather than guesses.
+
+---
+
+### 134.15 ⚠️ OPEN: THE MAP SOURCES IN `Asset_Sourcing.md` § 7 ARE NOT IN THE REPOSITORY
+
+🧑 asked to *"refine maps a bit more with the new assets we have"* and to confirm where they are
+written up. **They are `docs/Asset_Sourcing.md` § 7, and none of them are downloaded.**
+
+| Source | State |
+|---|---|
+| Quaternius Ultimate Buildings / Modular Streets / House Interior / Furniture / Nature | CC0, **not fetched**. `tools/fetch_asset_sources.py` does not cover them |
+| Plastic Monobloc Chair (Poly Haven) | CC0, **not fetched**. ⚠️ The map already places an `env_monobloc_chair`, so this is a QUALITY replacement rather than a missing prop |
+| Jeepney (Sketchfab) | CC BY, **needs a signed-in account**. `Attention.md` § 11.2 |
+| Manila Street ambience (Freesound) | CC BY, **needs a signed-in account**. `Attention.md` § 11.1 |
+
+⚠️⚠️ **WHAT IS IN THE REPOSITORY IS THE KENNEY LIBRARY, AND IT IS 583 MODELS.**
+`Assets/TumbangPreso/Art/models/kits/` holds `roads`, `city`, `commercial`, `industrial`, `town`,
+`forest`, `graveyard`, `train`, `factory`, `car`, `food` and `footwear`. **That is what "the new
+assets we have" actually means today**, and § 134.14 is a pass over what the maps built from it
+already have wrong rather than a pass adding more of it.
+
+**Done looks like**: either the two logins in `Attention.md` § 11 happen and the jeepney replaces
+the distant north `van` per `Asset_Sourcing.md` § 7.1, or both are written off there rather than
+left looking pending.
+
+---
+
+### 134.16 ⚠️ THE CONTROLLED DIAGNOSTIC RAN AND REPORTED ZERO SHOVES, AND THE FIRST READING OF THAT WAS UNREADABLE
+
+`AiDiagnosticProbe` at 1x, Normal difficulty, one round each in Classic and Hero Strike, three
+bots per round:
+
+```
+sabotage ledger:
+  seat 3  plans 0  shoves 0  longest pursuit 0.00s  time pursuing 0.0s  last veto None
+  seat 2  plans 0  shoves 0  longest pursuit 0.00s  time pursuing 0.0s  last veto None
+  seat 0  plans 0  shoves 0  longest pursuit 0.00s  time pursuing 0.0s  last veto None
+  TOTAL  plans 0  shoves 0  longest pursuit 0.00s  time pursuing 0.0s
+  bounds: max pursuit 1.90s  max approach 3.20m  danger radius 5.46m  min closure 1.50m
+```
+
+⚠️⚠️ **`last veto None` COULD NOT BE READ, AND THAT WAS THE PROBE'S FAULT RATHER THAN THE
+RULE'S.** `default(SabotageProjection)` has `Veto = None`, which is the value that means *the
+shove was worth taking*, so **a bot that never projected anything and a bot whose last projection
+was perfect printed the same word.** A measurement that cannot tell "never considered" from
+"considered and fine" is not a measurement, and zero shoves is exactly the reading that needed
+explaining: the rule this pass replaced carried a comment recording *"ZERO sabotages over a whole
+match"* as the symptom of a bound being wrong.
+
+**So the probe now counts the veto distribution and the number of candidates projected**
+(`AIController.SabotageVetoes`, `SabotageProjectionsMade`). A run reporting mostly
+`OutOfApproachRange` is a bot that was never near anybody, which is a fact about the match; one
+reporting mostly `EndpointStaysSafe` is the projection doing its job; one reporting
+`VictimNotVulnerable` is three attackers who were not carrying. **The old output called all three
+of those "0".**
+
+⚠️⚠️ **AND THE NEW APPROACH RANGE IS WIDER AT NORMAL THAN THE OLD ONE WAS, WHICH IS THE OPPOSITE
+OF WHAT "ZERO SHOVES" SUGGESTS.** The old radius was `4.16 * Me.Sabotage`, and `Me.Sabotage` is
+**0.35 at Normal**, so the old search radius was **1.46 m** there: *below* `Balance.ShoveRange`
+1.6. The new one is a flat **3.20 m**. This pass tightened the DIRECTION and the OUTCOME and
+loosened the RANGE at the difficulty the diagnostic runs at.
+
+⚠️ **WHAT ZERO PROBABLY IS.** The conjunction a shove needs is genuinely uncommon: another
+attacker **carrying**, within 3.2 m, positioned so the push closes 1.5 m, landing inside 5.46 m
+of a taya who can act. An attacker who has just picked their tsinelas up is running OUT of the
+box while the taya is near the can, so the shover has to be further out than the victim and
+crossing them. That happens a few times a match, not a few times a round.
+
+#### The second run, with the distribution, and what it actually says
+
+```
+  candidate shoves projected: 0
+    (nothing was ever projected: no rival came within 3.20 m while a shove was
+     affordable and off cooldown)
+```
+
+⚠️⚠️ **SO THE RULE WAS NEVER EXERCISED IN PLAY AT ALL, AND THAT IS A DIFFERENT FACT FROM "THE
+RULE REFUSED EVERYTHING".** Not one candidate reached `SabotageRules.Project` in two 40 second
+rounds. The vetoes are all zero because nothing got as far as being vetoed: no second attacker
+came within 3.20 m during a frame when this bot's shove was off cooldown and it had 27 stamina.
+
+**That is a fact about the match, not about the projection**, and it is consistent with three
+things that were already true before this pass:
+
+* `AiTuning`'s `Spacing` is **0.60 at Normal** and its whole job is to push the three attackers
+  apart, which the old code's own comment named as the reason sabotage was rare.
+* An attacker who has just picked their tsinelas up is running OUT of the box while the taya is
+  near the can, so the shover has to be further out than the victim AND crossing them.
+* Attackers sprint constantly, and `Balance.ShoveStaminaCost` is 25 of a 60 bar.
+
+⚠️ **THE THREE GATES ARE STILL CONFLATED IN ONE LINE.** The message names range, affordability
+and cooldown together because they are three early returns before any projection. **Done looks
+like** three counters instead of one sentence, over a full eight round match at Astig
+(`Me.Sabotage` 0.85) rather than two rounds at Normal (0.35), so the zero can be attributed to
+one of them rather than to all three.
+
+⚠️⚠️ **AND THE UNIT TESTS ARE WHAT PROVE THE RULE FIRES**, which is the right division of labour:
+`SabotageTests` has eighteen cases in 27 ms including
+`SabotageIsSelectedWhenACarryingVictimWillBePushedIntoReach`, `AnAngledShoveIsTakenWhenItStill
+ClosesMeaningfully` and `StandingOnTheLaunchPointProducesAMeaningfulShove`. **A behaviour that
+happens a few times a match cannot be measured by a forty second round**, and that is exactly why
+`CLAUDE.md` § 4 puts the rule in the engine-free core where it can be asserted instead.
+
+⚠️ **WHAT THIS DOES NOT SHOW IS ALSO WORTH STATING PLAINLY: nobody has yet watched a bot take a
+good shove in a live match.** The tail behaviour 🧑 reported is gone by construction (there is a
+1.90 s pursuit clock stepped every frame, and the approach radius is half what it was), but the
+positive case is proven by test and not yet by observation.
+
+---
+
+### 134.17 ⚠️⚠️ THE CAPTURE PROBE HUNG THE RUN AND WOULD HAVE GONE GREEN OVER AN EMPTY FOLDER
+
+`NationalsShowcaseProbe.Frame` was written as the obvious three lines:
+
+```csharp
+yield return new WaitForEndOfFrame();
+ScreenCapture.CaptureScreenshot($"{dir}/{name}.png");
+```
+
+**Both of them are wrong in `-batchmode`, independently, and neither says so.**
+
+1. ⚠️⚠️ **`WaitForEndOfFrame` NEVER RESUMES.** There is no rendering loop to reach the end of, so
+   the coroutine parks forever. The run sat with a static log for several minutes and had to be
+   killed; the log's last line was an ordinary round-start message and nothing in the output
+   pointed at the capture.
+2. ⚠️⚠️ **`ScreenCapture.CaptureScreenshot` WRITES NOTHING.** There is no swap chain to capture.
+   It fails silently, so even without the hang the run would have finished with an empty folder.
+
+⚠️⚠️ **AND THE PROBE'S OWN ASSERTION WOULD NOT HAVE CAUGHT IT.** It read
+`Assert.Greater(shot, 100)`, and `shot` is a loop counter that increments whether or not a file
+appears. **A capture probe that counts its own intentions is `docs/TODO.md` § 96 and § 124.11 with
+pictures**: green about something it was not doing. It counts
+`Directory.GetFiles(OutDir, "showcase_*.png")` now.
+
+⚠️⚠️ **THE FIX WAS TO USE THE PATH THAT ALREADY WORKS RATHER THAN TO REPAIR THIS ONE.**
+`GameplayShots.Render` is `internal` and takes an output directory as of this pass, and every
+paragraph in it is a fault somebody already paid for:
+
+| What it does | What skipping it costs |
+|---|---|
+| resolves the HDR target through an sRGB one | every shot a stop and a half too dark |
+| draws the UI with a SECOND, ungraded camera | the scoreboard photographs as **pure black** (measured: Godot (49, 25, 11), this harness (0, 0, 0)) |
+| creates the render target BEFORE the layout pass | every font rasterised small and then enlarged. 🧑: *"why do ur fonts look blurry in ur pics?"* |
+| restores every layer it moved | the next shot in the run is of a differently-layered scene |
+
+**Writing a second capture path would have been writing all four of those bugs again.**
+
+---
+
+### 134.18 ⚠️⚠️ WHAT THE FIRST REAL CAPTURE FOUND, AND ALL FOUR WERE INVISIBLE IN THE SOURCE
+
+`CLAUDE.md` § 6.1: *"show, do not describe."* § 6.2a: *"a green layout probe is not a good
+screen."* **The suite was 344 green and all seven checks passed while every fault below was
+live.** The run wrote 219 frames and a decision log; four things came out of looking at them.
+
+| # | What the capture showed | Cause |
+|---|---|---|
+| 1 | The caster rail **clipped at the card edge**: row two read `T-` where it should read `T··` | The scoreboard card is 520 units and the row already held a rail, a worst-case name cell, a 132-unit badge, a 64-unit score and four 14-unit gaps. Adding 44 more pushed the last cell past the wood |
+| 2 | `beat Ultimate  NOT SEEN` in the coverage report, on the one run that **forces all six** | The probe wrote `Intent.Set(Verb.Ultimate, true)` onto a seat `AIController.Update` rewrites every frame. **Not one ultimate cast.** The eight frames named `ult_dante` were eight frames of ordinary play |
+| 3 | **53 cuts across 77 seconds**, a cut every 1.45 s against a 2.4 s minimum | `ValidatePose` ran every frame. It found the held bearing occluded, swung 60 degrees, `FlyToShot` saw a pose that had moved further than `CutDistance` and cut, then `DriftDegPerSecond` walked the bearing back into the obstruction. **28 occluded poses re-solved and 53 cuts are the same number**: the camera was cutting because it was arguing with itself |
+| 4 | `shot Defender  NOT SEEN`, `beat Reset  NOT SEEN` | Honest: the taya never channelled a reset in the covered window. Not a fault, and the report says so rather than hiding it |
+
+**Fixed:**
+
+1. `EnterSpectatorMode` widens the scoreboard by `CasterStateWidth + ScoreRowSpacing`. ⚠️ Widened
+   THERE rather than at build time, because a player never draws the cell and their board must
+   not grow to leave room for something they will not see.
+2. The probe disables the seat's `AIController` before pressing, and holds the verb for four
+   frames rather than one. ⚠️ **Disabling the bot is the honest hook**: `CLAUDE.md` § 4 says a bot
+   presses the same buttons a human does and there is no second path, so taking the seat over and
+   pressing IS the human path, while reaching into `HeroKit.CastUltimate` would be the second
+   path that invariant forbids. The press is held for four frames because
+   `HeroAbilitySystem.Aim` reads an EDGE and `CharacterMotor.FixedUpdate` samples on the physics
+   step, so a one-frame press can fall between two steps.
+3. `SpectatorDirector.RevalidateSeconds` is 0.4 s. ⚠️ **A camera does not need 60 Hz occlusion**:
+   bodies move at 2.5 to 5 m/s and walls do not move at all, so two and a half checks a second is
+   well inside the rate at which the answer can change, and it costs a fifth of the raycasts.
+4. The coverage report samples the beat INSIDE the ultimate frame loop. The first version
+   recorded it once, after all eight frames and the settle, by which point a 0.4 s wind-up was
+   long over: it would have printed `NOT SEEN` even on a run where the camera covered it
+   perfectly.
+
+⚠️⚠️ **AND THE PROBE'S OWN ASSERTION CAUGHT NUMBER 2**, which is the point of writing one:
+`Assert.IsTrue(beatsSeen.Contains(SpectatorBeat.Ultimate), "the autopilot never recognised an
+ultimate, which is the one beat this run forces and therefore cannot legitimately miss.")`
+
+---
+
+### 134.19 · THE CAPTURE, AND WHAT FOUR RUNS OF IT MEASURED
+
+`Logs/shots-showcase/` holds **177 frames and a decision log** from the final run, one Hero Strike
+match on Eskinita under the autopilot, all six ultimates forced, a manual replay called on a
+marked event.
+
+| | run 1 | run 2 | run 3 | run 4 |
+|---|---|---|---|---|
+| **cuts** | 53 | 47 | 35 | **33** |
+| seconds per cut | 1.45 | 1.6 | 2.2 | **2.3** |
+| **safe-pose fallbacks** | 0 | 10 | 0 | **0** |
+| occluded poses re-solved | 28 | 23 | 13 | **15** |
+| ultimates that cast | 0 | 6 | 6 | **6** |
+| frames written | 219 | 219 | 219 | **177** |
+
+⚠️⚠️ **2.3 SECONDS PER CUT IS THE BROADCAST MINIMUM, WHICH IS THE NUMBER THIS WAS AIMING AT.**
+`MinShotSeconds` is 2.4 s and the reasoning is in its own doc comment: *"under about two seconds a
+viewer has not finished reading the frame before it changes, and a director who cuts faster than
+that is editing rather than covering."* Run 1 was cutting at 1.45 s, which is **editing**.
+
+**Coverage on the final run:** 8 of 9 beats and 5 of 9 shots.
+
+| Not seen | Why |
+|---|---|
+| `beat Reset` | The taya never channelled the can back onto its mark inside the covered window. Honest, and the report says so rather than hiding it |
+| `shot Defender` | Follows from the above: it is the reset beat's composition |
+| `shot RetrievalTwoShot` | Every retrieval in this run had the taya inside `ChaseGap` 9.0 m, so all of them composed as `Chase`. **That is the model working**, not a gap |
+| `shot UltimateHero` | All six forced ultimates carry a telegraph radius at or above 3.0 m, so all six chose `UltimateWide`. The hero shot is for a tight-footprint ultimate and the roster does not currently have one |
+| `shot Pov` | Deliberately never emitted by the autopilot. See `ShotType.Pov` |
+
+⚠️ **THREE OF THOSE FIVE ARE THE SYSTEM CHOOSING CORRECTLY AND ONE IS THE MATCH NOT PRODUCING THE
+EVENT.** Only `Reset` and `Defender` are genuinely uncovered, and they are the same beat.
+
+**What the frames show, checked by eye rather than asserted:**
+
+* the quiet establishing shot looks down the long axis of the street with the whole arena in frame
+* the caster rail reads `·U·`, `TUX` and so on, three characters, unclipped, on every row
+* the ultimate card reads **SEAN** in his own red above **SUPERNOVA** at 34 pt, with the starburst
+  motif, clear of the controls overlay
+* the autopilot status line names the play rather than the mode: `AUTOPILOT · retrieval · DANTE ·
+  move to take over`
+
+⚠️ **ONE THING WORTH A SECOND LOOK BY A PERSON, AND IT IS NOT NEW.** The ultimate impact's
+chromatic aberration is very strong at spectator range: `showcase_0130_ult_sean.png` is fringed
+across the whole frame. That is `HeroAbilitySystem`'s existing *"weight of the press"* pass, which
+🧑 asked for by name (*"i want all ults to feel like they hit harder"*) and which scales by
+`falloff` from the CAMERA. **A spectator camera is not a player camera**, and this pass did not
+touch that scaling. `docs/VISION.md` § 2 rule 5 is the standard it should be judged against.
+
+---
+
+### 134.11 · VERIFIED
+
+**Every number below is off a run on this machine on 2026-09-04, at the HEAD this section ships
+with.** ⚠️ `CLAUDE.md` § 7: read `total` and `failed` out of the `.xml`, never the exit code,
+because a crash and a green run both come back as 0 and a third state writes a well-formed file
+saying `result="Passed" total="0"`.
+
+| Suite | Result |
+|---|---|
+| `dotnet test Core.Tests` | **483 passed, 0 failed**, 266 ms. Includes the 18 new `SabotageTests`, which answer on their own in 27 ms |
+| EditMode, whole suite | **344 passed, 0 failed**, `Logs/tests-134f.xml`. Was 329 before this pass; the 15 new ones are `BroadcastPassTests` (13) and `InputContractTests` (2) |
+| `Checks.RunAll`, all seven | **OK**, one launch. `headless`, `arena`, `map geometry`, `audio cues`, `scene scripts`, `input surface`, `shader warmup` |
+| `MapGeometryCheck`, Eskinita | **findings 0**, down from **10**. Bayan Plaza 0, Ilalim ng Tulay 0 |
+| PlayMode, targeted | 27 cases, **23 passed, 4 failed**, all four pre-existing. See below |
+
+⚠️⚠️ **THE FOUR PLAYMODE FAILURES ARE PRE-EXISTING AND DOCUMENTED, AND THIS PASS TOUCHES NONE OF
+THE FILES THEY MEASURE.**
+
+| Failure | Why it is not this batch |
+|---|---|
+| `CarryTests.AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor` | § 93, on its fourth sample, all outside the bound. *"Not a flake"* |
+| `SteeringTests.MouseAimedMovementIsRelativeToTheBody` | § 130.14, *"pre-existing, deterministic, measured at HEAD without this batch's teardown and identical to eight significant figures"* |
+| `SteeringTests.AMovementAimedSeatTurnsToFaceItsDirection` | same fixture, same cause |
+| `SteeringTests.TheSteeringFrameByFrameIsWrittenOut` | same fixture; it is the per-frame writeout § 130.14b added to diagnose the other two |
+
+⚠️ **`git diff HEAD` IS EMPTY FOR `CharacterMotor.cs`, `Carrier.cs`, `PlayerInputReader.cs` AND
+`Slipper.cs`**, which are the four files those two fixtures exercise. ⚠️ **They were not re-run at
+HEAD for this batch**, so that is an argument from the diff and from § 93 and § 130.14 rather than
+a fresh measurement.
+
+#### What the new tests actually hold
+
+| Test | The claim |
+|---|---|
+| `TheAutopilotCannotReplayPauseOrChangeTime` | neither autopilot file names `StartReplay`, `ToggleBroadcastPause`, `SetBroadcastScale`, `RequestBroadcastScale`, `ProbeReplayRequest`, `Time.timeScale` or `Hitstop.` |
+| `TheAutopilotTouchesNoGameplayState` | nor `InputIntent`, `AddScore`, `MatchRpc`, `ServerRpc`, `HostResolve` or a collider |
+| `ReplayHasExactlyOneTriggerAndItIsAKeyPress` | exactly one call site into `StartReplay` |
+| `TheRetrievalOutranksEveryOtherBeat` | the nine beats are ordered as `docs/VISION.md` § 0 requires |
+| `ThereAreNineDistinctShotCompositions` | nine shot types, and each is branched on in the solver |
+| `TheReplayBufferHoldsTheWholeWindowPlusAnOperatorsReactionTime` | buffer 10.0 s against a 4.8 s window, three seconds of headroom |
+| `TheReplayBufferStaysUnderFiftyMegabytes` | 43.9 MB, computed from the constants and the texture format |
+| `AllSixHeroesHaveTheirOwnNamedUltimate` | the six names, read off the kits, unique |
+| `EveryHeroHasItsOwnUltimateMotif` | six distinct silhouettes |
+| `TheUltimateIntroductionNeverInterruptsPlay` | the card names no camera, no timescale, no cursor lock, and does not block raycasts |
+| `TheIntroductionPlaysNoAudioOfItsOwn` | no `NetCue`, no `AudioSource`, no `AudioCues` |
+| `NoTwoVerbsDrawTheSameTouchGlyph` | nine controls, nine pictures |
+| `NoTouchControlIsNamedAfterAKeyboardKey` | no touch label under three characters and none carrying brackets |
+
+⚠️⚠️ **`TheUltimateIntroductionNeverInterruptsPlay` FAILED ON ITS FIRST RUN AND THE FAILURE WAS THE
+TEST'S**, which is worth recording because the fix went the other way. It forbade the string
+`enabled = false` and caught **the director switching off its own canvas when the card finishes**,
+which is the one thing that method exists to do. A rule that catches correct behaviour is a rule
+the next person deletes rather than reads, so it forbids `Camera` instead: the brief's hard line is
+*"do not cut the gameplay camera"*, and a class that never names the type cannot cut one.
+
+⚠️ **AND THE SOURCE-TEXT CHECKS NEEDED A COMMENT STRIPPER BEFORE ANY OF THEM WERE HONEST.**
+`CLAUDE.md` § 3 asks for the reasoning in prose above the code, so `SpectatorDirector`'s header
+*states* that nothing in the file calls `ToggleBroadcastPause`, `StartReplay` or
+`SetBroadcastScale`. A naive `Contains` on the raw file sees all three names and fails the file for
+documenting the rule it obeys. `BroadcastPassTests.Code` strips comments first.
+
+#### The touch pass, measured
+
+| | before | after |
+|---|---|---|
+| Thumb controls drawing a WORD | **9 of 9** | 0 |
+| Thumb controls drawing a keyboard KEY | **3** (`Q`, `E`, `ULT`) | 0 |
+| Prompts printing a key cap on touch | **8** | 0 |
+| Deck tiles printing a key cap on touch | 3 | 0 |
+| Hero controls drawing the live ability icon | 0 | **3** |
+
+#### The AI pass, measured
+
+| Bound | Expression | Value |
+|---|---|---|
+| Shove travel | `Combat.ShoveDistance()` | 2.50 m |
+| Actionable reach | `max(LungeReach, PunchRange)` | 2.30 m |
+| Danger radius | reach + half a stun of closing | 5.46 m |
+| Minimum closure | 60% of travel | 1.50 m |
+| Max approach | `2 x ShoveRange` | 3.20 m (was up to **4.16**) |
+| Max pursuit | one approach at attacker speed, plus a turn | 1.90 s (was **unbounded**) |
+| Target cooldown | stated | 3.00 s |
+
+
 
 ---
 

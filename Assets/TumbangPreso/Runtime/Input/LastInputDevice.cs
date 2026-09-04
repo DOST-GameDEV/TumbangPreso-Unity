@@ -37,9 +37,30 @@ namespace TumbangPreso.InputLayer
         /// <summary>
         /// ⚠️ IT STARTS ON KEYBOARD AND MOUSE RATHER THAN ON "UNKNOWN". There is no honest
         /// prompt for an unknown device, and the desktop build is the overwhelmingly common
-        /// first frame. On Android the first touch corrects it before anything is drawn.
+        /// first frame.
+        ///
+        /// ⚠️⚠️ AND THE SENTENCE THAT USED TO FINISH THAT PARAGRAPH WAS WRONG, WHICH ONLY BECAME
+        /// VISIBLE ONCE PROMPTS STARTED BRANCHING ON IT. It read: *"on Android the first touch
+        /// corrects it before anything is drawn."* **The first touch is not before anything is
+        /// drawn.** A phone player boots into the warmup window and reads the round line, the
+        /// ready prompt and the sandbox row for however long it takes them to reach for the
+        /// screen, and until 2026-09-04 nothing depended on this value so nobody noticed. Now
+        /// `Hud.PressCue`, `Hud.MashVerb` and `GuidedTraining.Key` all branch on it, so a
+        /// keyboard default means **the first thing a phone player sees is `[X] PICK UP`,
+        /// `[F1] NO COOLDOWNS` and `Press [R] when ready`** — which is the exact defect 🧑
+        /// reported (*"why the fuck does it have keybinds theres no keys in mobile"*) surviving
+        /// the fix for it, in the one window where those prompts are largest.
+        ///
+        /// ⚠️ SEEDED FROM `TouchHud.ShouldShow`, WHICH ALREADY ANSWERS THIS QUESTION HONESTLY:
+        /// the platform define on Android and iOS, and `Touchscreen.current != null` elsewhere,
+        /// so a touchscreen laptop still boots on keyboard and a phone boots on touch. It is a
+        /// SEED and not a lock: the very next keyboard or pad press moves it, which is what makes
+        /// a phone with a Bluetooth keyboard behave.
         /// </summary>
-        public static InputDeviceKind Current { get; private set; } = InputDeviceKind.KeyboardMouse;
+        public static InputDeviceKind Current { get; private set; } = Seed();
+
+        private static InputDeviceKind Seed()
+            => TouchHud.ShouldShow ? InputDeviceKind.Touch : InputDeviceKind.KeyboardMouse;
 
         /// <summary>Bumped whenever <see cref="Current"/> changes, for label caches to key on.</summary>
         public static int Revision { get; private set; }

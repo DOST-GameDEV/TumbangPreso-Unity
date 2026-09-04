@@ -201,18 +201,110 @@ namespace TumbangPreso.CameraSystem
 
         private InputAction _move, _jump, _sprint, _down;
 
-        private const float ReplaySeconds = 5.5f;
+        // -------------------------------------------------------------------
+        // § THE REPLAY BUFFER, AND WHAT IT COSTS
+        //
+        // ⚠️⚠️ THE OLD BUFFER SHOWED THE LAST 5.5 SECONDS, NOT THE LAST EVENT, AND THOSE ARE
+        // DIFFERENT CLIPS. `StartReplay` took `Count - wanted` frames from the END of the ring,
+        // so pressing replay four seconds after a tag produced a clip with the tag 40 frames back
+        // and fifteen frames of aftermath: the decisive moment was at the very start of the clip
+        // or already gone. `docs/TODO.md` § 134.4 is the baseline. **A replay that does not
+        // contain the play is worse than no replay**, because the operator has spent the moment
+        // and got nothing.
+        //
+        // ⚠️⚠️ THE FRAME SIZE AND FORMAT BOTH MOVED, AND THE ARITHMETIC IS THE REASON.
+        // At 854 x 480 RGB24 a frame is 854 x 480 x 3 = **1,229,760 B**, and 70 of them is
+        // **86.1 MB of `Texture2D`** held for the whole match. Android is a shipping platform for
+        // this build and nothing had ever measured that. Holding a longer window at that size was
+        // not an option, and the window HAD to get longer: 3.5 s before an event plus 1.5 s after
+        // plus however long the operator takes to press the key is more than 7.0 s of history.
+        //
+        //   * **640 x 360** is exactly half of 720p and still reads a play at full screen.
+        //   * **RGB565** is two bytes a pixel instead of three. A replay is a moving picture of a
+        //     toon-shaded street watched once; the banding is invisible at 0.82x and the saving
+        //     is a third of everything.
+        //
+        // | | old | new |
+        // |---|---|---|
+        // | Frame | 854 x 480 RGB24 | 640 x 360 RGB565 |
+        // | Bytes per frame | 1,229,760 | **460,800** |
+        // | Capacity | 70 frames = 7.0 s | **100 frames = 10.0 s** |
+        // | **Buffer at capacity** | **86.1 MB** | **46.1 MB** |
+        //
+        // ⚠️ THE SYNCHRONOUS `ReadPixels` IS STILL THERE AND IS STILL A STALL, ten times a second
+        // for the whole match, whether or not anybody presses replay. It is 2.7x cheaper than it
+        // was because the frame is 2.7x smaller, and `AsyncGPUReadback` is the real answer.
+        // `docs/TODO.md` § 134.12 carries it as open rather than pretending it is solved.
+        // -------------------------------------------------------------------
+
         private const float ReplaySampleInterval = 0.10f;
-        private const int ReplayFrameCapacity = 70;
-        private const int ReplayWidth = 854;
-        private const int ReplayHeight = 480;
+        private const int ReplayFrameCapacity = 100;
+        private const int ReplayWidth = 640;
+        private const int ReplayHeight = 360;
+
+        /// <summary>
+        /// How long a clip runs when there is no marked event to centre on, in seconds.
+        ///
+        /// ⚠️ THE FALLBACK, NOT THE RULE. A marked clip is `LeadInSeconds + LeadOutSeconds` long
+        /// and is positioned by its event; this is what "show me the last few seconds" means when
+        /// nothing in the buffer is marked.
+        /// </summary>
+        private const float ReplaySeconds = 5.0f;
+
+        /// <summary>
+        /// How long before the marked moment a clip starts, in seconds.
+        ///
+        /// ⚠️⚠️ 3.5 s IS THE APPROACH, AND IT IS MEASURED AGAINST THE PLAY RATHER THAN PICKED.
+        /// An attacker crosses the 14 m box at `Speed * AttackerSpeedScale` = 2.53 m/s, so the
+        /// run into a tag is about three seconds; `Balance.ChargeFullTime` is 2.5 s, so a full
+        /// throw charge is under it too. **A replay that starts at the impact shows the result
+        /// and hides the decision**, and the decision is the thing worth watching twice.
+        /// </summary>
+        private const float LeadInSeconds = 3.5f;
+
+        /// <summary>
+        /// How long after the marked moment a clip runs, in seconds.
+        ///
+        /// ⚠️ THE OUTCOME NEEDS A BEAT AND NOT A SCENE. The can has to finish falling, the tagged
+        /// body has to hit the floor. `SpectatorInterestModel.OutcomeGrace` is 1.15 s for exactly
+        /// the same reason on the live camera.
+        /// </summary>
+        private const float LeadOutSeconds = 1.3f;
+
         // ⚠️ THE ROLL-IN DELAY AND THE FLOOR BETWEEN TWO SELF-STARTED REPLAYS ARE BOTH DELETED,
         // because nothing starts a replay but a key now. `DeadFeatureAudit` greps this file for
         // their names, so do not reintroduce either one even as a comment.
 
+        /// <summary>
+        /// One captured frame and everything that has to be true of it for a clip to be chosen.
+        ///
+        /// ⚠️⚠️ IT USED TO BE ONE FIELD: `Texture2D Image`. Every failure in `docs/TODO.md`
+        /// § 134.4 follows from that. With no timestamp there is no way to ask "which frames are
+        /// within 3.5 s of the tag"; with no marker there is no way to ask "was there a tag"; with
+        /// no slot there is no way to say WHO on the overlay. **The buffer could only ever answer
+        /// "the last N frames", so that is what the feature did.**
+        /// </summary>
         private sealed class ReplayFrame
         {
             public Texture2D Image;
+
+            /// <summary>`Time.unscaledTime` at capture.</summary>
+            public float CapturedAt;
+
+            /// <summary>Monotonic, so ordering survives a ring that has wrapped.</summary>
+            public int Sequence;
+
+            /// <summary>True when a marked event landed on or near this frame.</summary>
+            public bool Highlight;
+
+            /// <summary>What the event was, e.g. `TAG`. Null when not a highlight.</summary>
+            public string Reason;
+
+            /// <summary>The seat responsible, or -1.</summary>
+            public int Slot;
+
+            /// <summary>`Time.unscaledTime` the event itself happened.</summary>
+            public float EventAt;
         }
 
         private readonly List<ReplayFrame> _replayFrames = new List<ReplayFrame>(ReplayFrameCapacity);
@@ -220,6 +312,15 @@ namespace TumbangPreso.CameraSystem
         private float _replayRecordAccum;
         private bool _captureReplayFrame;
         private bool _replaying;
+
+        /// <summary>
+        /// True while a clip is covering the screen.
+        ///
+        /// ⚠️ EXPOSED SO THE CASTER RAIL CAN FREEZE. `docs/TODO.md` § 134.6: live cooldowns
+        /// ticking under recorded footage describe a moment that is not on screen. `Hud` asks
+        /// this rather than tracking its own flag, so there is one answer to the question.
+        /// </summary>
+        public bool Replaying => _replaying;
         private float _replayClock;
         private string _replayReason = "LAST PLAY";
         private Canvas _replayCanvas;
@@ -466,6 +567,13 @@ namespace TumbangPreso.CameraSystem
             // replay now has exactly one trigger, which is a human pressing the key, and the
             // autopilot has no hands.
             PollHighlights();
+
+            // ⚠️⚠️ THE TWO HIGHLIGHTS THAT SCORE NOTHING. A knockdown, a tag and a
+            // sabotage all arrive on `MatchDirector.Scored`; a retrieval made under a closing
+            // taya and an ultimate landing award no points at all, so neither was ever
+            // markable and both are among the best clips this game produces. See
+            // `PollPlayHighlights`.
+            PollPlayHighlights();
 
             // The replay covers the screen while it runs. The match keeps advancing behind it
             // and the operator keeps the wheel, rather than the camera returning early and
@@ -718,7 +826,8 @@ namespace TumbangPreso.CameraSystem
             // ⚠️ THE ONE AND ONLY TRIGGER. See § THE REPLAY NEVER STARTS ITSELF ANY MORE. The
             // reason is looked up rather than passed so the clip is titled after the play it
             // actually contains.
-            if (Fired(_replayKey)) StartReplay(RecentHighlightReason());
+            if (Fired(_replayKey) || ConsumeProbeReplayRequest())
+                StartReplay(RecentHighlightReason());
             if (kb.digit1Key.wasPressedThisFrame) SetBroadcastScale(0.25f);
             if (kb.digit2Key.wasPressedThisFrame) SetBroadcastScale(0.50f);
             if (kb.digit3Key.wasPressedThisFrame) SetBroadcastScale(1.00f);
@@ -792,7 +901,11 @@ namespace TumbangPreso.CameraSystem
                 Graphics.Blit(source, scratch);
                 RenderTexture.active = scratch;
 
-                var texture = new Texture2D(ReplayWidth, ReplayHeight, TextureFormat.RGB24,
+                // ⚠️ RGB565 AND NOT RGB24. See § THE REPLAY BUFFER, AND WHAT IT COSTS: two bytes
+                // a pixel instead of three takes the buffer from 86 MB to 46 MB while holding a
+                // window half again as long, and the banding is invisible on a moving toon-shaded
+                // picture watched once at 0.82x.
+                var texture = new Texture2D(ReplayWidth, ReplayHeight, TextureFormat.RGB565,
                                             mipChain: false)
                 {
                     name = "SpectatorReplayFrame",
@@ -802,7 +915,32 @@ namespace TumbangPreso.CameraSystem
                 texture.ReadPixels(new Rect(0, 0, ReplayWidth, ReplayHeight), 0, 0, false);
                 texture.Apply(updateMipmaps: false, makeNoLongerReadable: false);
 
-                _replayFrames.Add(new ReplayFrame { Image = texture });
+                var frame = new ReplayFrame
+                {
+                    Image = texture,
+                    CapturedAt = Time.unscaledTime,
+                    Sequence = _replaySequence++,
+                    Slot = -1,
+                };
+
+                // ⚠️⚠️ THE MARKER IS STAMPED ONTO THE FRAME AT CAPTURE, NOT SEARCHED FOR LATER,
+                // AND THAT IS WHAT MAKES EXPIRY FREE. A marker held in a separate list has to be
+                // aged out by hand against a ring that is dropping its oldest frame ten times a
+                // second, and the two go out of step the first time anybody changes the capacity.
+                // A marker that lives ON the frame it describes cannot outlive it: when the
+                // frame is destroyed the marker is gone, which is the brief's *"expire markers
+                // when their frames leave the buffer"* made structural.
+                if (_pendingMarkAt > 0.0f
+                    && Time.unscaledTime - _pendingMarkAt <= ReplaySampleInterval * 2.0f)
+                {
+                    frame.Highlight = true;
+                    frame.Reason = _pendingMarkReason;
+                    frame.Slot = _pendingMarkSlot;
+                    frame.EventAt = _pendingMarkAt;
+                    _pendingMarkAt = -1.0f;
+                }
+
+                _replayFrames.Add(frame);
                 while (_replayFrames.Count > ReplayFrameCapacity)
                 {
                     DestroyFrame(_replayFrames[0]);
@@ -816,44 +954,250 @@ namespace TumbangPreso.CameraSystem
             }
         }
 
+        /// <summary>
+        /// Builds and starts a clip centred on the newest marked event in the buffer.
+        ///
+        /// ⚠️⚠️ IT CHOOSES A WINDOW, IT DOES NOT TAKE A TAIL. The old body took the last
+        /// `ReplaySeconds` of frames and titled them with whatever `PollHighlights` last saw,
+        /// which meant the title and the footage were two independent claims that happened to
+        /// agree when the operator pressed quickly. Now the FRAMES decide: the newest highlighted
+        /// frame names the event, and the clip is cut `LeadInSeconds` before it and
+        /// `LeadOutSeconds` after it. **The overlay reports the event the clip actually
+        /// contains**, because it reads it off the frame it was built around.
+        ///
+        /// ⚠️ THE FALLBACK IS THE NEWEST INTERVAL AND IT IS NEVER EMPTY. With no marker in the
+        /// buffer the clip is the last `ReplaySeconds`, exactly as before; with fewer than twelve
+        /// frames it refuses and says so rather than playing three frames of nothing.
+        ///
+        /// ⚠️⚠️ IT IGNORES A PRESS WHILE ALREADY PLAYING, WHICH IS A CHANGE. The old body called
+        /// `EndReplay` and started again, so a second press restarted the clip; the brief asks
+        /// for a replay to *"ignore new highlight triggers during playback"* and for a press to
+        /// EXIT. `StepBroadcastKeys` routes a press to `EndReplay` while `_replaying`, so this is
+        /// only reachable when nothing is playing, and the guard is here as well because a
+        /// restart from any other path would be the same bug.
+        /// </summary>
         private void StartReplay(string reason)
         {
+            if (_replaying) return;
+
             if (_broadcastPaused)
             {
                 UI.Hud.Instance?.ShowToast("RESUME LIVE PLAY BEFORE REPLAY", 1.2f);
                 return;
             }
 
-            int wanted = Mathf.CeilToInt(ReplaySeconds / ReplaySampleInterval);
-            if (_replayFrames.Count < Mathf.Min(12, wanted))
+            if (_replayFrames.Count < 12)
             {
                 UI.Hud.Instance?.ShowToast("REPLAY BUFFER IS STILL WARMING UP", 1.2f);
                 return;
             }
 
-            if (_replaying) EndReplay(showLiveToast: false);
+            int first, last;
+            string title;
+            int slot;
 
-            int first = Mathf.Max(0, _replayFrames.Count - wanted);
+            int marked = NewestHighlightIndex();
+
+            if (marked >= 0)
+            {
+                float at = _replayFrames[marked].EventAt > 0.0f
+                    ? _replayFrames[marked].EventAt
+                    : _replayFrames[marked].CapturedAt;
+
+                first = IndexAtOrAfter(at - LeadInSeconds);
+                last = IndexAtOrBefore(at + LeadOutSeconds);
+
+                title = _replayFrames[marked].Reason;
+                slot = _replayFrames[marked].Slot;
+
+                // ⚠️ A MARKER AT THE VERY END OF THE BUFFER HAS NO AFTERMATH YET, which is what
+                // pressing replay the instant something happens produces. Taking what exists is
+                // right; refusing would punish the fastest operator in the room.
+                if (last <= first) last = _replayFrames.Count - 1;
+            }
+            else
+            {
+                int wanted = Mathf.CeilToInt(ReplaySeconds / ReplaySampleInterval);
+                first = Mathf.Max(0, _replayFrames.Count - wanted);
+                last = _replayFrames.Count - 1;
+
+                title = string.IsNullOrEmpty(reason) ? "LAST PLAY" : reason;
+                slot = -1;
+            }
+
+            first = Mathf.Clamp(first, 0, _replayFrames.Count - 1);
+            last = Mathf.Clamp(last, first, _replayFrames.Count - 1);
+
+            if (last - first < 4)
+            {
+                UI.Hud.Instance?.ShowToast("NOTHING TO REPLAY YET", 1.2f);
+                return;
+            }
+
+            // ⚠️⚠️ THE FRAMES AFTER THE CLIP ARE KEPT, WHICH THE OLD BODY DID NOT DO. It called
+            // `_replayFrames.Clear()` and emptied the ring, so the buffer restarted cold after
+            // every replay and a second replay was impossible for ten seconds. Only the frames
+            // BEFORE the clip are dropped now; everything after it stays live, and the ring keeps
+            // filling behind the overlay.
             for (int i = 0; i < first; i++) DestroyFrame(_replayFrames[i]);
 
             _replayClip.Clear();
-            for (int i = first; i < _replayFrames.Count; i++)
-                _replayClip.Add(_replayFrames[i]);
-            _replayFrames.Clear();
+            for (int i = first; i <= last; i++) _replayClip.Add(_replayFrames[i]);
+
+            // The clip's frames are now owned by the clip. Everything after `last` stays in the
+            // live ring; everything up to and including `last` leaves it.
+            _replayFrames.RemoveRange(0, last + 1);
 
             _replayClock = 0.0f;
             _replaying = true;
-            _replayReason = string.IsNullOrEmpty(reason) ? "LAST PLAY" : reason;
+            _replayReason = string.IsNullOrEmpty(title) ? "LAST PLAY" : title;
+            _replaySlot = slot;
 
             if (_replayCanvas != null) _replayCanvas.enabled = true;
-            if (_replayLabel != null) _replayLabel.text = "INSTANT REPLAY  ·  " + _replayReason;
+            RefreshReplayLabels();
+
             if (_replayImage != null && _replayClip.Count > 0)
                 _replayImage.texture = _replayClip[0].Image;
 
-            // ⚠️ NO TOAST. The overlay now covers the screen and titles itself in 30 pt across the
+            // ⚠️ NO TOAST. The overlay covers the screen and titles itself in 30 pt across the
             // top; a line underneath it saying the same words is the redundancy 🧑 asked to be rid
             // of across the whole HUD on 2026-08-27.
         }
+
+        /// <summary>The newest frame carrying a marker, or -1.</summary>
+        private int NewestHighlightIndex()
+        {
+            for (int i = _replayFrames.Count - 1; i >= 0; i--)
+                if (_replayFrames[i].Highlight) return i;
+
+            return -1;
+        }
+
+        private int IndexAtOrAfter(float when)
+        {
+            for (int i = 0; i < _replayFrames.Count; i++)
+                if (_replayFrames[i].CapturedAt >= when) return i;
+
+            return _replayFrames.Count - 1;
+        }
+
+        private int IndexAtOrBefore(float when)
+        {
+            for (int i = _replayFrames.Count - 1; i >= 0; i--)
+                if (_replayFrames[i].CapturedAt <= when) return i;
+
+            return 0;
+        }
+
+        /// <summary>
+        /// Writes the two overlay lines: what this is, and how to get out of it.
+        ///
+        /// ⚠️⚠️ THE OVERLAY OWES FIVE THINGS AND USED TO SAY ONE. It said
+        /// `INSTANT REPLAY · TAG` and nothing else: no progress, no responsible player, no
+        /// statement that the match is still running underneath, and no way out. The last of
+        /// those is the one that matters most, because the clip covers the entire screen and a
+        /// spectator who does not know Escape works is watching a black box for six seconds.
+        ///
+        /// ⚠️ THE PLAYER IS NAMED ONLY WHEN IT IS KNOWN. A marker carries a seat for a tag, a
+        /// knockdown or a sabotage and carries -1 for the fallback interval, and inventing a name
+        /// for the fallback would be `docs/VISION.md` § 3's *"a screen that teaches the wrong key
+        /// is worse than one that teaches none"* applied to a scoreboard.
+        /// </summary>
+        private void RefreshReplayLabels()
+        {
+            if (_replayLabel != null)
+            {
+                string who = NameForSlot(_replaySlot);
+
+                _replayLabel.text = string.IsNullOrEmpty(who)
+                    ? "REPLAY  ·  " + _replayReason
+                    : "REPLAY  ·  " + _replayReason + "  ·  " + who;
+            }
+
+            if (_replayExitLabel != null)
+            {
+                // ⚠️ THE LIVE STATEMENT AND THE EXIT ARE ONE LINE, NOT TWO. `CLAUDE.md` § 6.2:
+                // *"what is on screen that the player does not need RIGHT NOW"*. Both facts are
+                // one sentence and the sentence is short.
+                _replayExitLabel.text = OnTouchDevice
+                    ? "LIVE PLAY CONTINUES  ·  TAP TO RETURN"
+                    : "LIVE PLAY CONTINUES  ·  " + BoundKey("SpectatorReplay")
+                      + " OR ESC TO RETURN";
+            }
+        }
+
+        private static bool OnTouchDevice
+            => InputLayer.LastInputDevice.Current == InputLayer.InputDeviceKind.Touch;
+
+        /// <summary>
+        /// The key currently bound to a spectator action, upper case.
+        ///
+        /// ⚠️ THE LIVE BINDING, NEVER A LITERAL. `docs/VISION.md` § 3: *"a screen that teaches
+        /// the wrong key is worse than one that teaches none."* `ControlsText` has an identical
+        /// local function; this is the class-level one so the replay overlay does not have to
+        /// load the asset a second time per rebuild.
+        /// </summary>
+        private static string BoundKey(string action)
+        {
+            var asset = Resources.Load<InputActionAsset>("TumbangPreso");
+            if (asset == null) return "?";
+
+            string label = Settings.Rebinding.DisplayNameFor(asset, action);
+            return string.IsNullOrEmpty(label) ? "?" : label.ToUpperInvariant();
+        }
+
+        private static string NameForSlot(int slot)
+        {
+            if (slot < 0) return null;
+
+            var round = GameServices.Round;
+            if (round == null) return null;
+
+            foreach (var p in round.Players)
+                if (p != null && p.PlayerSlot == slot) return p.DisplayName();
+
+            return null;
+        }
+
+        // -------------------------------------------------------------------
+        // § THE ONE WAY A PROBE CAN ASK FOR A REPLAY
+        //
+        // ⚠️⚠️ IT IS CONSUMED IN THE SAME LINE THE KEY IS READ, WHICH IS THE WHOLE DESIGN.
+        // `NationalsShowcaseProbe` has to produce a capture containing a manual replay centred on
+        // a marked event, and driving the Input System's keyboard from a PlayMode test is a
+        // fixture's worth of machinery. The obvious shortcut, a public `TriggerReplay()`, would
+        // be a SECOND call site into `StartReplay`, and a second call site is exactly how the
+        // 2026-08-27 spam came back once already. `BroadcastPassTests
+        // .ReplayHasExactlyOneTriggerAndItIsAKeyPress` asserts there is one, and this keeps that
+        // true: the probe raises a flag, and the same `if` that reads the key reads the flag.
+        //
+        // ⚠️⚠️ THE AUTOPILOT CANNOT REACH IT, AND THAT IS ASSERTED RATHER THAN INTENDED.
+        // `BroadcastPassTests.TheAutopilotCannotReplayPauseOrChangeTime` reads
+        // `SpectatorDirector.cs` and `SpectatorInterest.cs` as text and fails if either names
+        // `ProbeReplayRequest`, alongside `StartReplay` and the pause controls. 🧑 2026-08-27:
+        // *"dont let autopilot spectator pause or replay thats for human only"*.
+        //
+        // ⚠️ IT IS A ONE-SHOT. Consuming clears it, so a probe that sets it once gets one replay
+        // rather than one per frame for the rest of the run.
+        // -------------------------------------------------------------------
+
+        /// <summary>Set by a capture probe to press the replay control exactly once.</summary>
+        public static bool ProbeReplayRequest;
+
+        private static bool ConsumeProbeReplayRequest()
+        {
+            if (!ProbeReplayRequest) return false;
+
+            ProbeReplayRequest = false;
+            return true;
+        }
+
+        private int _replaySlot = -1;
+        private int _replaySequence;
+
+        private float _pendingMarkAt = -1.0f;
+        private string _pendingMarkReason;
+        private int _pendingMarkSlot = -1;
 
         private void StepReplay()
         {
@@ -866,6 +1210,9 @@ namespace TumbangPreso.CameraSystem
             float sample = _replayClock / ReplaySampleInterval;
             int localIndex = Mathf.Clamp(Mathf.FloorToInt(sample), 0, available - 1);
 
+            // ⚠️ IT PLAYS ONCE AND ENDS. It has never looped, and the *"loop every second"*
+            // report of 2026-08-27 was four independent triggers rather than a loop. Keeping the
+            // end condition here rather than clamping the index is what makes that true.
             if (sample >= available)
             {
                 EndReplay();
@@ -873,7 +1220,16 @@ namespace TumbangPreso.CameraSystem
             }
 
             if (_replayImage != null) _replayImage.texture = _replayClip[localIndex].Image;
+
+            if (_replayProgress != null)
+            {
+                var rt = _replayProgress.rectTransform;
+                rt.anchorMax = new Vector2(Mathf.Clamp01(sample / available), 1.0f);
+            }
         }
+
+        private Text _replayExitLabel;
+        private Image _replayProgress;
 
         private void EndReplay(bool showLiveToast = true)
         {
@@ -882,6 +1238,14 @@ namespace TumbangPreso.CameraSystem
             _replaying = false;
             if (_replayCanvas != null) _replayCanvas.enabled = false;
             if (_replayImage != null) _replayImage.texture = null;
+
+            // ⚠️ THE BAR IS RESET ON THE WAY OUT, NOT ON THE WAY IN. A replay started while the
+            // previous bar was still full would show a finished progress bar for its first frame,
+            // which is a small thing that reads as the overlay being broken.
+            if (_replayProgress != null)
+                _replayProgress.rectTransform.anchorMax = new Vector2(0.0f, 1.0f);
+
+            _replaySlot = -1;
 
             foreach (var frame in _replayClip) DestroyFrame(frame);
             _replayClip.Clear();
@@ -981,6 +1345,78 @@ namespace TumbangPreso.CameraSystem
             labelRt.offsetMin = new Vector2(24.0f, -56.0f);
             labelRt.offsetMax = new Vector2(-24.0f, -10.0f);
 
+            // -------------------------------------------------------------------
+            // § THE THREE THINGS THE OVERLAY OWED AND DID NOT SAY
+            //
+            // ⚠️⚠️ IT SAID `INSTANT REPLAY · TAG` AND NOTHING ELSE. The brief asks it to
+            // communicate five things: that this is a replay, what the event was, who was
+            // responsible, how far through it is, whether live gameplay is continuing, and how to
+            // get out. It carried two.
+            //
+            // ⚠️⚠️ THE EXIT IS THE ONE THAT MATTERS MOST, because the clip covers the ENTIRE
+            // screen. 🧑 asked for that in 2026-08-27 (*"i want it to cover whole screen if i
+            // click it"*) and it is right, but a spectator who does not know Escape works is
+            // watching a box they cannot leave for six seconds, on a broadcast. `CLAUDE.md`
+            // § 6.2's fourth question is exactly this: *"how do they get out, and is it one
+            // press?"*
+            //
+            // ⚠️ THE PROGRESS BAR IS A BAR AND NOT A COUNTDOWN NUMBER. A replay is watched, not
+            // read: a viewer needs to know how much is left at a glance and a digit costs them a
+            // fixation on the one thing that is not the picture.
+            // -------------------------------------------------------------------
+
+            var exitGo = new GameObject("ReplayExitHint");
+            exitGo.transform.SetParent(panelGo.transform, false);
+            _replayExitLabel = exitGo.AddComponent<Text>();
+            _replayExitLabel.font = UI.MenuKit.Font;
+            _replayExitLabel.fontSize = 20;
+            _replayExitLabel.alignment = TextAnchor.MiddleRight;
+            _replayExitLabel.color = UI.UiTheme.CreamMuted;
+            _replayExitLabel.raycastTarget = false;
+            _replayExitLabel.horizontalOverflow = HorizontalWrapMode.Overflow;
+            _replayExitLabel.text = "LIVE PLAY CONTINUES";
+
+            var exitOutline = exitGo.AddComponent<Outline>();
+            exitOutline.effectColor = UI.UiTheme.Ink;
+            exitOutline.effectDistance = new Vector2(2.0f, -2.0f);
+
+            var exitRt = _replayExitLabel.rectTransform;
+            exitRt.anchorMin = new Vector2(0.0f, 0.0f);
+            exitRt.anchorMax = new Vector2(1.0f, 0.0f);
+            exitRt.pivot = new Vector2(0.5f, 0.0f);
+            exitRt.offsetMin = new Vector2(24.0f, 16.0f);
+            exitRt.offsetMax = new Vector2(-24.0f, 44.0f);
+
+            // The progress bar: a track along the very bottom edge with an amber fill.
+            var trackGo = new GameObject("ReplayProgressTrack");
+            trackGo.transform.SetParent(panelGo.transform, false);
+            var track = trackGo.AddComponent<Image>();
+            track.color = new Color(UI.UiTheme.Ink.r, UI.UiTheme.Ink.g, UI.UiTheme.Ink.b, 0.55f);
+            track.raycastTarget = false;
+
+            var trackRt = track.rectTransform;
+            trackRt.anchorMin = new Vector2(0.0f, 0.0f);
+            trackRt.anchorMax = new Vector2(1.0f, 0.0f);
+            trackRt.pivot = new Vector2(0.5f, 0.0f);
+            trackRt.offsetMin = new Vector2(0.0f, 0.0f);
+            trackRt.offsetMax = new Vector2(0.0f, 6.0f);
+
+            var fillGo = new GameObject("ReplayProgressFill");
+            fillGo.transform.SetParent(trackGo.transform, false);
+            _replayProgress = fillGo.AddComponent<Image>();
+            _replayProgress.color = UI.UiTheme.Amber;
+            _replayProgress.raycastTarget = false;
+
+            // ⚠️ ANCHORED LEFT AND DRIVEN BY `anchorMax.x`, NOT BY A WIDTH. A width would be
+            // correct at exactly one screen size; an anchor is a fraction of whatever the panel
+            // turns out to be, which is `UiRows`' whole argument about hand-written offsets.
+            var fillRt = _replayProgress.rectTransform;
+            fillRt.anchorMin = new Vector2(0.0f, 0.0f);
+            fillRt.anchorMax = new Vector2(0.0f, 1.0f);
+            fillRt.pivot = new Vector2(0.0f, 0.5f);
+            fillRt.offsetMin = Vector2.zero;
+            fillRt.offsetMax = Vector2.zero;
+
             _replayCanvas.enabled = false;
         }
 
@@ -1038,11 +1474,19 @@ namespace TumbangPreso.CameraSystem
             UnhookHighlights();
             _highlightMatch = match;
             if (_highlightMatch != null) _highlightMatch.Scored += OnHighlightScored;
+
+            // ⚠️ UNSUBSCRIBED FIRST, because this method is reached every time the match
+            // director changes and a static event with a `MonoBehaviour` subscriber doubles
+            // silently. `UltimatePresentationDirector.Hook` carries the same guard for the
+            // same event and the same reason.
+            Abilities.HeroAbilitySystem.UltimateStarted -= OnUltimateForReplay;
+            Abilities.HeroAbilitySystem.UltimateStarted += OnUltimateForReplay;
         }
 
         private void UnhookHighlights()
         {
             if (_highlightMatch != null) _highlightMatch.Scored -= OnHighlightScored;
+            Abilities.HeroAbilitySystem.UltimateStarted -= OnUltimateForReplay;
             _highlightMatch = null;
         }
 
@@ -1051,15 +1495,88 @@ namespace TumbangPreso.CameraSystem
             switch (scoreEvent)
             {
                 case ScoreEvent.LataKnocked:
-                    QueueHighlight("LATA KNOCKDOWN");
+                    QueueHighlight("LATA KNOCKDOWN", slot);
                     break;
                 case ScoreEvent.Tag:
-                    QueueHighlight("TAG");
+                    QueueHighlight("TAG", slot);
                     break;
                 case ScoreEvent.Sabotage:
-                    QueueHighlight("SABOTAGE");
+                    QueueHighlight("SABOTAGE", slot);
                     break;
             }
+        }
+
+        /// <summary>
+        /// Marks a retrieval that was made under real pressure, and an ultimate that landed.
+        ///
+        /// ⚠️⚠️ THE BRIEF NAMES SIX THINGS TO MARK AND THE SCORE EVENTS ONLY CARRY FOUR.
+        /// A knockdown, a tag, a sabotage and a decisive score all arrive on
+        /// `MatchDirector.Scored`. **A retrieval under pressure and an ultimate impact score
+        /// nothing at all**, so neither was ever markable, and both are among the best clips the
+        /// game produces: getting a tsinelas out from under a closing taya is the play
+        /// `docs/VISION.md` opens by calling the whole point of the sport.
+        ///
+        /// ⚠️ IT REUSES THE LIVE CAMERA'S OWN DEFINITION OF PRESSURE RATHER THAN INVENTING
+        /// ONE. `SpectatorInterestModel.ChaseGap` is 9.0 m and carries the reasoning: *"a taya
+        /// six metres behind a retriever is a chase; one on the far side of the arena is two
+        /// unrelated people."* One number, two features.
+        ///
+        /// ⚠️ AND IT ONLY FIRES ON THE EDGE. A retrieval is true for seconds at a time; a
+        /// marker per frame would fill the buffer with a hundred markers describing one play and
+        /// `NewestHighlightIndex` would pick the last frame of it every time.
+        /// </summary>
+        private void PollPlayHighlights()
+        {
+            var round = GameServices.Round;
+            if (round == null) return;
+
+            CharacterMotor taya = null;
+            foreach (var p in round.Players)
+                if (p != null && p.IsDefender) { taya = p; break; }
+
+            bool pressured = false;
+            int who = -1;
+
+            if (taya != null)
+            {
+                foreach (var p in round.Players)
+                {
+                    if (p == null || p == taya || !p.RoundActive) continue;
+                    if (!p.IsTaggable()) continue;
+
+                    Vector3 a = p.transform.position;
+                    Vector3 b = taya.transform.position;
+                    a.y = 0.0f;
+                    b.y = 0.0f;
+
+                    if (Vector3.Distance(a, b) > SpectatorInterestModel.ChaseGap)
+                        continue;
+
+                    pressured = true;
+                    who = p.PlayerSlot;
+                    break;
+                }
+            }
+
+            if (pressured && !_underPressure) QueueHighlight("RETRIEVAL UNDER PRESSURE", who);
+            _underPressure = pressured;
+        }
+
+        private bool _underPressure;
+
+        /// <summary>
+        /// An ultimate has started. Mark it, and remember who for the overlay.
+        ///
+        /// ⚠️ IT IS THE SAME EVENT THE INTRODUCTION CARD AND THE AUTOPILOT BOTH HANG OFF, so a
+        /// replay of an ultimate, the lower third that announced it and the shot that covered it
+        /// can never disagree about whose it was.
+        /// </summary>
+        private void OnUltimateForReplay(CharacterMotor caster, Abilities.HeroKit kit,
+                                         Abilities.HeroAbility ultimate)
+        {
+            if (caster == null || ultimate == null) return;
+
+            QueueHighlight(ultimate.Name, caster.PlayerSlot);
         }
 
         // -------------------------------------------------------------------
@@ -1090,10 +1607,30 @@ namespace TumbangPreso.CameraSystem
         // the only part of the highlight reel that was ever earning its place.
         // -------------------------------------------------------------------
 
-        private void QueueHighlight(string reason)
+        private void QueueHighlight(string reason) => QueueHighlight(reason, -1);
+
+        /// <summary>
+        /// Records that something worth replaying just happened, and marks the next frame.
+        ///
+        /// ⚠️⚠️ THIS USED TO ONLY SET A TITLE. `_pendingHighlight` named the last notable play
+        /// so a manual replay could be called `INSTANT REPLAY - TAG` rather than `LAST PLAY`,
+        /// and that was all it did: nothing in the buffer knew WHEN the tag was, so the clip was
+        /// still the last five and a half seconds whenever the key happened to be pressed. The
+        /// title and the footage were two independent claims. `_pendingMarkAt` is what makes them
+        /// one: the next captured frame carries the marker, and `StartReplay` cuts the clip
+        /// around the frame rather than around the press.
+        ///
+        /// ⚠️ THE SEAT IS CARRIED SO THE OVERLAY CAN NAME WHO. `MatchDirector.Scored` and
+        /// `RoundDirector.Tagged` both know it and it was being thrown away.
+        /// </summary>
+        private void QueueHighlight(string reason, int slot)
         {
             _pendingHighlight = reason;
             _pendingHighlightAt = Time.unscaledTime;
+
+            _pendingMarkAt = Time.unscaledTime;
+            _pendingMarkReason = reason;
+            _pendingMarkSlot = slot;
         }
 
         /// <summary>
@@ -1194,9 +1731,35 @@ namespace TumbangPreso.CameraSystem
             if (_jump != null && _jump.IsPressed()) return true;
             if (_down != null && _down.IsPressed()) return true;
 
-            var kb = Keyboard.current;
-            if (kb != null && (kb.tabKey.wasPressedThisFrame || kb.fKey.wasPressedThisFrame
-                               || kb.vKey.wasPressedThisFrame))
+            // ⚠️⚠️ THE CAMERA KEYS READ THROUGH THE INPUT ASSET, NOT OFF THE KEYBOARD.
+            // `CLAUDE.md` § 4 put the nine spectator controls into the map as their own context
+            // in 2026-08-27 precisely so they could be rebound and checked, and this function was
+            // still reading `kb.tabKey`, `kb.fKey` and `kb.vKey` as literals. A spectator who
+            // rebound their follow key could not take the camera back with it.
+            if (Fired(_cycleTarget) || Fired(_freeFly) || Fired(_povToggle)) return true;
+
+            // -------------------------------------------------------------------
+            // ⚠️⚠️ THE BROADCAST KEYS DISENGAGE THE AUTOPILOT NOW, AND THIS IS A REVERSAL OF A
+            // DELIBERATE DECISION. THE ARGUMENT IT REVERSES IS WORTH KEEPING.
+            //
+            // This function used to exclude them on purpose, and said why: *"pause, replay, mark
+            // and recall are the operator working the GALLERY, not the camera, and a director
+            // should not be thrown out for calling a replay of the shot it just covered."* That
+            // is a real distinction and it is a good one.
+            //
+            // ⚠️ 🧑'S 2026-09-03 BRIEF ASKS FOR THE OPPOSITE, BY NAME: *"any look, fly, target,
+            // POV, free-camera, mark, recall, replay, or pause input immediately disengages
+            // autopilot"*, under *"any meaningful manual camera input immediately disengages
+            // autopilot"*. The reasoning behind the ask is the nationals: an operator who has
+            // touched ANY control has decided to drive, and a camera that keeps flying itself
+            // after somebody reached for the desk is the failure that reads worst on a stream.
+            //
+            // ⚠️ THE COST IS REAL AND IS ACCEPTED: calling a replay of the autopilot's own shot
+            // now hands the camera back, so an operator who wants the autopilot afterwards
+            // presses the toggle again. `docs/TODO.md` § 134.3 records both halves so the next
+            // session reads the argument rather than rediscovering it.
+            // -------------------------------------------------------------------
+            if (Fired(_replayKey) || Fired(_pauseKey) || Fired(_mark) || Fired(_recall))
                 return true;
 
             if (Mouse.current != null

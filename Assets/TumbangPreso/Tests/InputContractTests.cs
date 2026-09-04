@@ -62,6 +62,73 @@ namespace TumbangPreso.Tests
             }
         }
 
+        // -------------------------------------------------------------------
+        // § THE TOUCH LAYER MAY NOT TEACH A KEY
+        //
+        // ⚠️⚠️ 🧑 2026-09-03, WITH A SCREENSHOT OF THE ANDROID BUILD: *"why the fuck does it have
+        // keybinds theres no keys in mobile"*, and *"ive never seen a mobile game say GRAB or
+        // lunge, usually it has an intuitive icon for it or the skill icon"*. Two of the nine
+        // thumb controls were painted `Q` and `E` and a third `ULT`, because `VerbInput` could
+        // only hold a STRING for what a button draws, so whoever filled the table in wrote what
+        // each control was called and for the hero slots that was its keyboard key.
+        //
+        // ⚠️⚠️ THE COMPILE GATE ALREADY STOPS A VERB SHIPPING WITHOUT A PICTURE (`VerbInput.Glyph`
+        // is a constructor parameter with no default). **These two tests stop it shipping with the
+        // WRONG one**, which is the half a type cannot check: nothing about `VerbGlyph.Jump`
+        // prevents somebody giving it to LUNGE as well, and two controls with one picture is the
+        // same defect as two with one word.
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// ⚠️ EVERY THUMB CONTROL DRAWS A DIFFERENT PICTURE. `AbilityGlyph`'s rule, one layer
+        /// down: *"a wrong icon is worse than a generic one, because the player trusts it once
+        /// and then stops trusting all of them."* Two controls sharing a glyph is a player
+        /// pressing the wrong one and learning that the icons do not mean anything.
+        /// </summary>
+        [Test]
+        public void NoTwoVerbsDrawTheSameTouchGlyph()
+        {
+            var owners = new Dictionary<UI.VerbGlyph, Verb>();
+
+            foreach (var entry in InputCatalogue.All)
+            {
+                Assert.IsFalse(owners.ContainsKey(entry.Glyph),
+                    $"{entry.Verb} and {owners.GetValueOrDefault(entry.Glyph)} both draw " +
+                    $"{entry.Glyph} on the touch layer.");
+
+                owners[entry.Glyph] = entry.Verb;
+
+                Assert.IsNotNull(UI.VerbIcons.For(entry.Glyph),
+                    $"{entry.Verb}'s glyph {entry.Glyph} bakes to nothing.");
+            }
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE REGRESSION GUARD FOR THE REPORTED BUG. A touch label that is one or two
+        /// characters is a key cap, not a name: `Q`, `E`, `F`, `LMB`. This is a text rule rather
+        /// than a list of forbidden strings on purpose, because the next one to leak will be
+        /// whatever key the next verb happens to be bound to.
+        ///
+        /// ⚠️ IT CHECKS THE LABEL EVEN THOUGH NOTHING DRAWS IT ON A BUTTON ANY MORE. The label
+        /// still reaches the player through `TouchLayoutScreen` and through `GuidedTraining`'s
+        /// touch branch, and both of those are places a bare `Q` would be exactly as wrong.
+        /// </summary>
+        [Test]
+        public void NoTouchControlIsNamedAfterAKeyboardKey()
+        {
+            foreach (var entry in InputCatalogue.All)
+            {
+                Assert.GreaterOrEqual(entry.TouchLabel.Length, 3,
+                    $"{entry.Verb}'s touch label is '{entry.TouchLabel}', which is a key cap " +
+                    "rather than a name. A phone has no keys: see § THE TOUCH LAYER MAY NOT " +
+                    "TEACH A KEY.");
+
+                foreach (char c in entry.TouchLabel)
+                    Assert.IsFalse(c == '[' || c == ']',
+                        $"{entry.Verb}'s touch label '{entry.TouchLabel}' is drawn as a key cap.");
+            }
+        }
+
         /// <summary>
         /// ⚠️ ONE CONTROL, ONE ACTION, PER CONTEXT: the verbs all share the gameplay context, so
         /// two of them on one pad button is the plain form of `CLAUDE.md` § 4's rule.
