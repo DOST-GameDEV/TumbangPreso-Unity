@@ -1744,11 +1744,14 @@ namespace TumbangPreso.UI
         /// reason `DisplayName()` is one function: a seat cannot be called two different things
         /// on two rows of one screen.
         /// </summary>
-        private static string SeatName(int slot)
-        {
-            var who = GameServices.Round?.PlayerAt(slot);
-            return who != null ? who.DisplayName() : $"P{slot + 1}";
-        }
+        /// <summary>
+        /// The plain name, for the sentence that says who the taya is.
+        ///
+        /// ⚠️ THE BOARD USES `SeatLabel.ForBoard` INSTEAD, which adds the seat when another seat
+        /// answers the same name. A row in a list needs to be distinguishable; a sentence does
+        /// not, and "BATA · P2 IS THE TAYA" reads as a machine talking. `docs/TODO.md` § 141.
+        /// </summary>
+        private static string SeatName(int slot) => SeatLabel.Raw(slot);
 
         private readonly int[] _scoreStampScores = new int[Balance.PlayerCount];
         private readonly string[] _scoreStampNames = new string[Balance.PlayerCount];
@@ -1882,7 +1885,16 @@ namespace TumbangPreso.UI
                 }
                 _lastScoreBySlot[slot] = scoreNow;
 
-                _scoreNames[i].text = SeatName(slot);
+                // ⚠️⚠️ THE BOARD, NOT THE SENTENCE. 🧑 photographed one person on two rows
+                // (`docs/TODO.md` § 141) and this line was `SeatName`, which answers what a BODY
+                // is called and cannot know another seat answers the same. Every guest arrives
+                // under the same handle until somebody types one, so four rows reading BATA is an
+                // ordinary Saturday and a player cannot tell which row is theirs.
+                //
+                // ⚠️ IT DOES NOT HIDE THE OTHER CAUSE. One person genuinely DRIVING two seats is
+                // § 141's real fault and `MatchInvariants.CheckSeatClaims` is what reports it;
+                // `SeatLabel`'s header keeps the two apart deliberately.
+                _scoreNames[i].text = SeatLabel.ForBoard(slot);
                 bool isMine = slot == mine;
                 // ⚠️⚠️ NO "· YOU" SUFFIX. 🧑, 2026-08-26, off a gameplay frame:
                 // *"attacker dot you is ugly"*. He is right, and it was doing a job three other

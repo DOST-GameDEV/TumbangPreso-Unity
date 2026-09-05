@@ -226,20 +226,53 @@ def parse_report(path):
         m = re.search(pattern, text)
         out[key] = m.group(1) if m else None
 
-    # seat char bot taya score travelled skills ults
+    # seat char bot origin taya score travelled skills ults
+    #
+    # WARNING: `origin` IS A COLUMN ADDED ON 2026-09-05 AND A PLAYER FROM BEFORE THAT DOES NOT
+    # PRINT IT, so both shapes are read and the older one answers `origin: None`. Reading a
+    # missing column as agreement is how a gate ends up proving less than it printed; the
+    # verifiers say "this player predates the column" instead. `docs/TODO.md` section 145.4b.
     for m in re.finditer(
-            r"^(\d)\s+(-?\d+)\s+(True|False)\s+(True|False)\s+(-?\d+)\s+([\d.]+)\s+(\d+)\s+(\d+)\s*$",
+            r"^(\d)\s+(-?\d+)\s+(True|False)\s+(\w+)\s+(True|False)\s+(-?\d+)\s+([\d.]+)\s+(\d+)\s+(\d+)\s*$",
             text, re.MULTILINE):
         out["seats"].append({
             "seat": int(m.group(1)),
             "char": int(m.group(2)),
             "bot": m.group(3) == "True",
-            "taya": m.group(4) == "True",
-            "score": int(m.group(5)),
-            "travelled": float(m.group(6)),
+            "origin": m.group(4),
+            "taya": m.group(5) == "True",
+            "score": int(m.group(6)),
+            "travelled": float(m.group(7)),
         })
 
+    if not out["seats"]:
+        for m in re.finditer(
+                r"^(\d)\s+(-?\d+)\s+(True|False)\s+(True|False)\s+(-?\d+)\s+([\d.]+)\s+(\d+)\s+(\d+)\s*$",
+                text, re.MULTILINE):
+            out["seats"].append({
+                "seat": int(m.group(1)),
+                "char": int(m.group(2)),
+                "bot": m.group(3) == "True",
+                "origin": None,
+                "taya": m.group(4) == "True",
+                "score": int(m.group(5)),
+                "travelled": float(m.group(6)),
+            })
+
     return out
+
+
+def person_sat_here(seat):
+    """Whether a person EVER sat in this chair, or None when the report predates the column.
+
+    WARNING: THIS IS THE ONLY THING ABOUT A SEAT'S DRIVER THAT IS CONSTANT FOR A MATCH.
+    `Core.SeatHandover.APersonSatHere` is the same rule on the game's side; `Bot` means nobody
+    ever sat there and both `Human` and `HandedToBot` mean somebody did.
+    """
+    origin = seat.get("origin")
+    if not origin:
+        return None
+    return origin != "Bot"
 
 
 def compare(host, client):
@@ -274,11 +307,22 @@ def compare(host, client):
             hard.append(f"seat {h['seat']} character {h['char']} vs {c['char']}")
         if h["taya"] != c["taya"]:
             hard.append(f"seat {h['seat']} taya {h['taya']} vs {c['taya']}")
+        # WARNING: `bot` IS WHO IS DRIVING RIGHT NOW AND `origin` IS WHAT THE CHAIR HAS BEEN.
+        # Only the second can be compared between two reports written at different instants: a
+        # peer that saw a departure and one that had already stopped legitimately disagree about
+        # the flag, and `MatchRpc.HostPeerLeft` flips it the moment somebody quits. The persistent
+        # question, "did a person ever sit here", cannot move in either direction and IS a hard
+        # divergence when the two answers differ. `docs/TODO.md` section 145.4b.
+        if person_sat_here(h) is not None and person_sat_here(h) != person_sat_here(c):
+            hard.append(f"seat {h['seat']} origin {h['origin']} vs {c['origin']}: one peer says "
+                        f"a person sat in this chair and the other says nobody ever did")
+
         if h["bot"] != c["bot"]:
             # A seat the client believes is a bot and the host believes is a person is a real
             # fault, but it is also what a mid-run handover legitimately looks like for a frame,
             # so it is reported separately rather than as a divergence.
-            soft.append(f"seat {h['seat']} bot {h['bot']} vs {c['bot']}")
+            soft.append(f"seat {h['seat']} bot {h['bot']} vs {c['bot']} "
+                        f"(origin {h.get('origin')} / {c.get('origin')})")
         if h["score"] != c["score"]:
             soft.append(f"seat {h['seat']} score {h['score']} vs {c['score']}")
 

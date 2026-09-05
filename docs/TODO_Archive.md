@@ -21011,3 +21011,85 @@ peer 0 **and** holds a seat, so none of these branches is entered at all.
 `ALanListenHostIsNeverTreatedAsARefereeAndKeepsItsSeat` asserts exactly that from both sides,
 because the failure mode if this ever inverts is that the person who started the match has no
 body in it.
+
+---
+
+## 93 · ✅ CLOSED 2026-09-05: THE TEST SUBTRACTED ONE OF THE CARRY'S TWO TERMS
+
+**Found 2026-08-30 by the first full `-testCategory "!WallClock"` run this branch has had.**
+
+```
+CarryTests.AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor
+a held slipper drifted 0.084 m from the hand while its carrier walked
+  Expected: less than 0.05
+  But was:  0.0837778747
+```
+
+⚠️⚠️ **IT IS NOT THE UI WORK AND IT IS NOT PHASE 4.** Nothing in either touches `Carrier`,
+`CharacterMotor`, the animator, or anything in `LateUpdate`. The only gameplay file this branch
+edited is `MatchStatsCollector`, which added one float accumulation to `SampleDistance` and
+cannot move a mesh. `git log` on `CarryTests.cs` and `Carrier.cs` ends at § 78's carry-lift work
+and at Phase 2's record commit; neither is from this session.
+
+⚠️ **THE TEST'S OWN MESSAGE NAMES THE CAUSE IT WAS WRITTEN FOR:** *"The carry has to run in
+LateUpdate: Unity evaluates the Animator between Update and LateUpdate, so a bone read in Update
+is the PREVIOUS frame's pose and the slipper trails the hand by one frame of animation."* The
+measured 0.084 m is **1.7 times** the 0.05 m bound, which is the size of one frame of arm swing
+rather than of a rounding error, so the shape fits that cause exactly.
+
+**What is not known and has to be measured before anything is changed:**
+
+1. **Whether it is a regression or has been red for a while.** Nobody has run a full PlayMode
+   sweep on `profile-stats`; every run before this one was `-testFilter`ed to the suite being
+   worked on, which is what § 90.8 and § 90.6 record doing. **Bisect it before fixing it**, or the
+   fix will be aimed at whichever commit is convenient.
+2. **Whether it is timing-sensitive.** `CLAUDE.md` § 7 records `AiDiagnosticProbe` failing at
+   21.6 s, 29.9 s and 37.6 s against one bound on an unchanged build. Run it three times before
+   believing one number, per § 16's arithmetic.
+   ⚠️ **UPDATE 2026-08-30, AND IT ARGUES AGAINST TIMING:** a second full sweep measured
+   **0.092 m** where the first measured **0.084 m**, both against 0.05 m. Two samples 1.7x and
+   1.8x over the bound is not the shape of a flake, and both sit close to one frame of arm swing,
+   which is the cause the test's own message names. **Question 2 is close to answered; question 1
+   is not, and is still the one to spend a bisect on.**
+
+⚠️ **DO NOT WIDEN THE BOUND TO MAKE IT PASS.** 0.05 m is a fifth of a hand and the whole point
+of the test; `BotBehaviourProbe`'s header has the standing rule about this and it applies here.
+
+### 93.1 ✅ IT WAS NEVER A CARRY REGRESSION, AND QUESTION 1 NEVER NEEDED THE BISECT
+
+`Carrier.RideAnchor` writes **two** terms:
+
+```csharp
+Held.transform.position = hand.position + hand.up * Held.RestHeight - Held.DrawnCentreOffset;
+```
+
+`CarryTests` measured `Distance(slipper.transform.position, anchor.position)` and subtracted
+**`RestHeight` alone**. The second term is not slack, it is the carry doing its job.
+
+⚠️⚠️ **`DrawnCentreOffset` LANDED IN § 80.5 AND THE TEST WAS NEVER TOLD.** It is
+`renderer.bounds.center - transform.position`, and it exists because § 70.2 fixes every slipper
+mesh as seated on Z = 0: **the ORIGIN is on the sole at one END of the shoe**, so putting the
+origin on the hand hangs the shoe off it by however far its author put the origin from its middle,
+a different amount for each of the nine skins. 🧑 2026-08-29: *"slipper floats for everyone
+including bots, it isnt on their arms ... it floats for all poses"*. `RideAnchor` puts the DRAWN
+CENTRE on the hand, deliberately, and the test kept grading the origin.
+
+**So 0.084 m and 0.092 m are the size of half a shoe**, which is why two samples 1.7x and 1.8x over
+the bound *"is not the shape of a flake"* and also was not the shape of one frame of arm swing:
+both readings are stable because the offset is a constant of the mesh.
+
+⚠️⚠️ **AND `Carrier`'S OWN NOTE CLAIMED THE OPPOSITE, WHICH IS WHY NOBODY LOOKED HERE.** It reads
+*"⚠️ `CarryTests` CANNOT SEE THIS AND STILL CANNOT. It asserts on the ORIGIN's distance from the
+anchor, **which this still satisfies**"*. It did not satisfy it, and had not since the day that
+sentence was written. `docs/TODO.md` § 92.7 is the same shape: a note crediting a fix that cannot
+have been the fix.
+
+**The test measures the drawn centre now**, which is the point `RideAnchor` actually places and the
+point a player sees. ⚠️ **The bound is unchanged at 0.05 m** and both readings are in the failure
+message, so a future failure says whether the shoe came off the arm or merely sits where its own
+mesh puts it.
+
+⚠️ **QUESTION 1 IS ANSWERED WITHOUT A BISECT.** It was red from § 80.5, on every branch, for every
+run that was not `-testFilter`ed away from it. There is no regression to find.
+
+---

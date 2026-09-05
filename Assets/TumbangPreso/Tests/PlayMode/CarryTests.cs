@@ -155,6 +155,7 @@ namespace TumbangPreso.PlayTests
             carrier.Intent.Move = new Vector2(0.0f, 1.0f);
 
             float worst = 0.0f;
+            float worstOrigin = 0.0f;
 
             for (int i = 0; i < 60; i++)
             {
@@ -169,16 +170,50 @@ namespace TumbangPreso.PlayTests
                 // ⚠️ NO `* anchor.lossyScale.y` — see AHeldSlipperSitsOnTheHandNotFloatingAboveIt.
                 // `RideAnchor` no longer scales the lift a second time, and this had to match or
                 // it would silently keep grading the fixed code against the bug's own formula.
+                //
+                // ⚠️⚠️ AND IT MEASURES THE DRAWN CENTRE, NOT THE ORIGIN, WHICH IS THE WHOLE OF
+                // `docs/TODO.md` § 93. This read `slipper.transform.position` and subtracted the
+                // lift alone, and `Carrier.RideAnchor` applies TWO terms:
+                //
+                //     position = hand.position + hand.up * RestHeight - DrawnCentreOffset
+                //
+                // The second one landed in § 80.5, for 🧑's *"slipper floats for everyone
+                // including bots, it isnt on their arms"*: § 70.2 fixes every slipper mesh as
+                // seated on Z = 0, so the ORIGIN is on the sole at one END of the shoe and the
+                // drawn middle is somewhere else, by a different amount for each of the nine
+                // skins. `RideAnchor` puts the DRAWN CENTRE on the hand, deliberately.
+                //
+                // So this measured the deliberate offset and called it drift: **0.084 m and
+                // 0.092 m on two full sweeps**, both about the size of half a shoe, both filed as
+                // a carry regression nobody could bisect. ⚠️ `Carrier`'s own note claims *"
+                // `CarryTests` CANNOT SEE THIS AND STILL CANNOT ... which this still satisfies"*,
+                // and that sentence was wrong the day it was written.
+                //
+                // ⚠️ THE BOUND IS UNCHANGED AT 0.05 m. This corrects WHICH POINT is measured, not
+                // how far it is allowed to be: `BotBehaviourProbe`'s standing rule about not
+                // moving a number to make a run pass applies with full force here.
                 float lift = slipper.RestHeight;
-                float slack = Vector3.Distance(slipper.transform.position, anchor.position) - lift;
+                Vector3 drawn = slipper.transform.position + slipper.DrawnCentreOffset;
+
+                float slack = Vector3.Distance(drawn, anchor.position) - lift;
+                float originSlack =
+                    Vector3.Distance(slipper.transform.position, anchor.position) - lift;
 
                 worst = Mathf.Max(worst, Mathf.Abs(slack));
+                worstOrigin = Mathf.Max(worstOrigin, Mathf.Abs(originSlack));
             }
 
             carrier.Intent.Move = Vector2.zero;
 
+            // ⚠️ BOTH READINGS ARE IN THE MESSAGE, which is `CLAUDE.md` § 2.3 applied to an
+            // assertion: § 93 cost two sweeps and an unfinished bisect because "drifted 0.084 m"
+            // named no number anybody could act on. If the drawn centre is on the hand and the
+            // ORIGIN is far from it, that is the deliberate per-skin offset and not a fault; if
+            // both have moved, the carry really has come off the arm.
             Assert.Less(worst, 0.05f,
-                $"a held slipper drifted {worst:0.000} m from the hand while its carrier walked. " +
+                $"a held slipper's DRAWN CENTRE drifted {worst:0.000} m from the hand while its " +
+                $"carrier walked (its origin sat {worstOrigin:0.000} m out, which is the " +
+                $"deliberate per-skin DrawnCentreOffset and is not this bound). " +
                 "The carry has to run in LateUpdate: Unity evaluates the Animator between Update " +
                 "and LateUpdate, so a bone read in Update is the PREVIOUS frame's pose and the " +
                 "slipper trails the hand by one frame of animation.");

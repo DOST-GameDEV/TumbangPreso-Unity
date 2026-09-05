@@ -44,8 +44,6 @@ either of those.
 | **P2** | 149.7 | **The test suite's own value.** Source-text assertions that duplicate behavioural coverage, and a protocol floor checked twice | ⚠️ **For every test removed, name the stronger test that now owns that invariant.** Never delete a failing one to green the suite. § 149.7 |
 | **P2** | 147.3 | **The game records its own good moments and nothing draws them.** Markers exist, are deterministic, are deduplicated and name a replay window | One reader. § 147.3 lists the three cheapest in order, and `CLAUDE.md` § 6.2's four questions come first |
 | **P2** | 146.6 | **The retrieval slide plays the LUNGE clip**, because both are a body-led dash and the rig has one | A slide of its own, which is art work rather than code work. ⚠️ The FEEL of the numbers is `Attention.md` § 17.2 and not this row |
-| **P2** | 141 | **The duplicate name on the scoreboard.** The invariant model can express both ownership faults now (§ 141.7) and the cause of the spectator overlay is fixed | The scoreboard cannot draw one person twice, with a test that could fail. ⚠️ His eye on the fix is `Attention.md` |
-| **P2** | 93 | A held tsinelas drifts **0.084 m** from the hand, and the isolated `match` group reports exactly that (the full run said 7.945 m, on a SETTINGS test) | § 93 |
 | **P2** | 127 | The taya ring and attacker disc need their non-colour distinction finished | § 127.3 |
 | **P2** | 144.3 | **`Art/audio/sfx` is a 117-file duplicate that nothing loads and nothing writes.** Both audio gates were reading it instead of `Resources/Sfx`; they were moved, and the folder is still there | A decision: it is the authored master and something copies it, or it is dead and goes. ⚠️ Not deleted on an inference |
 | **P2** | 144.8 | **The jeepney's metal finish does not show.** The per-surface selection is checked and sound; the body still renders flat white. 🧑 handed this to another session | ⚠️ **One measurement first, not a retune**: print the material name, the SHADER name and the live `_Metallic`/`_Smoothness` for each renderer on the placed prop. § 144.8 lists the four causes and which fix each needs |
@@ -83,7 +81,7 @@ it is not is why nobody believed the suite. `PaperPurityProbe.NoFieldHighlightsI
 
 | Case | What it says |
 |---|---|
-| `CarryTests.AHeldSlipperStaysOnTheArm` | **0.084 m** against a 0.05 m bound. § 93, and the isolated number is the real one: the full run reported 7.945 m, on a SETTINGS test |
+| ~~`CarryTests.AHeldSlipperStaysOnTheArm`~~ | ✅ **CLOSED, § 93 in the archive.** The 0.084 m was the deliberate `DrawnCentreOffset`, not slack: the test subtracted one of the carry's two terms. The bound is unchanged |
 | `AspectRatioProbes.TheCharacterScreenSurvivesEveryAspectRatio` | 1 label under the 18-unit floor. ⚠️ **Do not lower the floor**; § 126.13 and `Attention.md` § 12.2 |
 | `PaperPurityProbe.NothingOnTheInventoryDisappeared` | Controls that were on the screens before the paper pass and are not now |
 | `CustomGameScreenProbe`, `PhaseSurfaceLayoutProbe`, `PlayerHubLayoutProbe` | Three labels wider than their boxes at 16:9 720p. `MenuKit.Label` overflows rather than wrapping, so each draws over its neighbour |
@@ -113,7 +111,7 @@ Android thermals need a handset, and a phone joining a PC needs a person to watc
 | **146** | The retrieval slide is built, derived and tested; nobody has FELT it | 🧑's own test is *"I can safely approach and pick this up normally, OR I can commit"*. Nobody uses it means the recovery is too long; normal retrieval stopping means it is too cheap. Both are one constant and both are `Attention.md` § 17.2 |
 | **145** | Four gates that could come out green while proving less than they printed | Three closed. ⚠️ **§ 145.5 is a machine fact**: a nationals certification comes off the Windows laptop, because this Mac has no Windows Standalone module and no dotnet |
 | **142** | Controller support: a picture of the pad you can rebind from, a pad that can leave a screen, and an unrecognised pad that works | 🧑, with a labelled DualShock drawing: *"we will now be implementing controller support. create a menu for controller mapping and ensure controller support works in the game."* ⚠️⚠️ **The map is built and so are the three faults nobody had looked for: EVERY back-out in the game was a keyboard-only `Input.GetKeyDown(KeyCode.Escape)`, so a pad could reach every screen and leave none of them; there was no pause on a pad at all; and the emote wheel opened on the d-pad and could not be steered by one.** § 138 steps 2 and 3 are closed by the same pass. Open: 🧑's eye on it, and a written list of real pads. § 142 |
-| **141** | Spectator and a driven seat were on screen at the same time, and F1-F4 have two readers | 🧑, with a screenshot: **“IF IT isnt spectator why do i see spectator hud”**. ✅ **Cause found and fixed: `Hud.EnterSpectatorMode` had no inverse**, so every re-seat after a spectator window left the HUD stripped and the overlay drawn. The F1-F4 double-read is fixed too, and § 141.2 breaks the premise `CLAUDE.md` § 4 exempts the nine spectator keys on. ⚠️ **Open: the duplicate name on the scoreboard, and his eye on the fix.** § 141 |
+| **141** | Spectator and a driven seat were on screen at the same time, and F1-F4 have two readers | 🧑, with a screenshot: **“IF IT isnt spectator why do i see spectator hud”**. ✅ **Cause found and fixed: `Hud.EnterSpectatorMode` had no inverse**, so every re-seat after a spectator window left the HUD stripped and the overlay drawn. The F1-F4 double-read is fixed too, and § 141.2 breaks the premise `CLAUDE.md` § 4 exempts the nine spectator keys on. ✅ **The duplicate name is closed by § 141.8**: `Core.BoardNames` names the seat when two share one, and `MatchInvariants.CheckSeatClaims` is still what reports one person driving two chairs. ⚠️ **Open: only 🧑's eye on the fix, which is in `Attention.md`.** § 141 |
 | **140** | The player cannot see the network, and the timeout gives them eight blind seconds | ⚠️⚠️ **The biggest open network item, and it was found by measuring.** There is no ping, no bars, no "reconnecting" anywhere in the game, and `DisconnectTimeoutMS` is 8000, so a peer whose wifi dies keeps a normal-looking arena for eight seconds. **The sampler is built (§ 140.3); the screen is designed and not built (§ 140.4).** § 140.5 is the one that needs a decision rather than code. § 140 |
 | **139** | Settings is four pages now, and the renders found three faults older than the pass | 🧑: *"we have too many settings now"*, *"add tabs or some shit so that they dont have to scroll that much"*. **Done and rendered; it is open because he has not looked at it.** The renders also found blue slider fills and a magenta tick that had shipped the whole port below the fold. § 139 |
 | **138** | A controller Unity does not recognise is invisible to this whole game | 🧑: *"idk how extensive controller support is"*, *"maybe add to todo that it can work for fake controllers and shit too"*. Every controller path reads `Gamepad.current` or a `<Gamepad>/` path, and an unmatched pad is a `Joystick` that none of them see. ✅ **Steps 1, 2 and 3 are DONE.** It warns (`ControllerWatch`), it is DRIVEN through a guessed mapping (`GenericPadBridge`), and the guess is visible and rebindable (`ControllerMapScreen`). ⚠️ Open: **step 4, a written list of pads anybody has really tested**, which needs hardware rather than code. § 138, § 142 |
@@ -126,7 +124,6 @@ Android thermals need a handset, and a phone joining a PC needs a person to watc
 | **127** | Phase 16.1: the taya's floor marker is a RING, an attacker's a DISC | Needs its greyscale frame before it can close. § 127.3 |
 | **128** | Phases 11 and 12 are almost entirely built | ⚠️ Phase 11 has **nothing** open. **Map rotation is built (§ 130.12)**; Phase 12 still owes LAST TSINELAS a match half, and § 130.13 is what that actually costs |
 | **126.11** | Crossplay is argued, not demonstrated | Both players exist; nobody has watched them join. ⚠️ **The two blockers it named are fixed in § 130.2 and § 130.3** |
-| **93** | A held tsinelas drifts 0.084 m from the hand | Four samples now, all outside the bound. Not a flake |
 | **96** | He has never found the way into the hub | The door, not the layout. `CLAUDE.md` § 6.3 |
 | **95b** | Nothing asserts that a menu label FITS, only that it is legible | Two probes, neither asking the question |
 | **72** | Two lobby controls reported dead that every headless check says are alive | Reported by a person, green in every test |
@@ -3123,7 +3120,47 @@ could not fire in any state the game could reach, § 96's fault one layer down, 
 to nothing. `Diagnostics.SeatOwnership.Claims()` reads the real durable tokens off the lobby and
 the bodies.
 
-**Still open:** the duplicate name on the scoreboard, and 🧑's eye on the fix.
+**Still open:** 🧑's eye on the fix.
+
+### 141.8 ✅ 2026-09-05: THE DUPLICATE NAME, AND WHY IT IS NOT ONE FAULT
+
+Two boards draw the four seats, `Hud`'s live one and `MatchResult`'s end-of-match one, and both
+resolved a seat through **their own copy** of the same four-line helper:
+
+```csharp
+var who = GameServices.Round?.PlayerAt(slot);
+return who != null ? who.DisplayName() : $"P{slot + 1}";
+```
+
+`CharacterMotor.DisplayName` answers what that BODY is called. It cannot know another seat answers
+the same, and it is not its job to.
+
+⚠️⚠️ **TWO IDENTICAL ROWS ARE TWO DIFFERENT FAULTS WEARING ONE APPEARANCE, AND THE FIX KEEPS THEM
+APART BECAUSE THE BRIEF FOR THIS REFUSES TO HIDE EITHER:**
+
+1. **Two different people sharing a name.** Every guest account arrives under the same handle until
+   somebody types one, so four rows reading BATA is an ordinary Saturday. **Nothing is wrong with
+   the game and everything is wrong with the board**: a player cannot tell which row is theirs.
+   `SeatLabel.ForBoard` names the SEAT as well when a name collides — on **both** rows, because
+   marking only the later duplicate makes the first look like the real one and there is no such
+   thing.
+2. **One person genuinely driving two seats**, which is § 141's real fault and a state the game
+   must not be in. **`MatchInvariants.CheckSeatClaims` is what reports that** (§ 141.7 rebuilt the
+   model so it could), and disambiguating the text would bury it.
+
+So the invariant and the presentation agree without either doing the other's job: the board always
+draws four distinguishable rows, and the checker is still the thing that says whether two of them
+share a PERSON. A reader who sees `BATA · P2` and `BATA · P3` learns that two seats share a name;
+a failure bundle is what says whether they share an owner.
+
+⚠️ **ONE RULE, TWO CALLERS.** § 94.1 records four hand-written copies of *"which line in a record
+is mine"*, all agreeing on the wrong value, as the reason nothing on the machine could see the
+fault. `Hud.SeatName` and `MatchResult.NameFor` were two copies of this one, and
+`BothBoardsAskTheOneNamingRule` fails if a third appears.
+
+⚠️ **THE TAYA SENTENCE KEEPS THE PLAIN NAME.** `SeatLabel.Raw` is what `Hud`'s round line asks:
+a row in a list has to be distinguishable and a sentence does not, and *"BATA · P2 IS THE TAYA"*
+reads as a machine talking.
 
 ### 141.6 ✅ AND NO TWO SEATS CAN READ THE SAME, WHICH IS THE TOURNAMENT QUESTION
 
@@ -7421,49 +7458,6 @@ exactly the pair nobody would notice missing. They are in the list proper now an
 
 ---
 
-## 93 · OPEN: a held tsinelas drifts 0.084 m from the hand, and it is not this branch ⚠️⚠️
-
-**Found 2026-08-30 by the first full `-testCategory "!WallClock"` run this branch has had.**
-
-```
-CarryTests.AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor
-a held slipper drifted 0.084 m from the hand while its carrier walked
-  Expected: less than 0.05
-  But was:  0.0837778747
-```
-
-⚠️⚠️ **IT IS NOT THE UI WORK AND IT IS NOT PHASE 4.** Nothing in either touches `Carrier`,
-`CharacterMotor`, the animator, or anything in `LateUpdate`. The only gameplay file this branch
-edited is `MatchStatsCollector`, which added one float accumulation to `SampleDistance` and
-cannot move a mesh. `git log` on `CarryTests.cs` and `Carrier.cs` ends at § 78's carry-lift work
-and at Phase 2's record commit; neither is from this session.
-
-⚠️ **THE TEST'S OWN MESSAGE NAMES THE CAUSE IT WAS WRITTEN FOR:** *"The carry has to run in
-LateUpdate: Unity evaluates the Animator between Update and LateUpdate, so a bone read in Update
-is the PREVIOUS frame's pose and the slipper trails the hand by one frame of animation."* The
-measured 0.084 m is **1.7 times** the 0.05 m bound, which is the size of one frame of arm swing
-rather than of a rounding error, so the shape fits that cause exactly.
-
-**What is not known and has to be measured before anything is changed:**
-
-1. **Whether it is a regression or has been red for a while.** Nobody has run a full PlayMode
-   sweep on `profile-stats`; every run before this one was `-testFilter`ed to the suite being
-   worked on, which is what § 90.8 and § 90.6 record doing. **Bisect it before fixing it**, or the
-   fix will be aimed at whichever commit is convenient.
-2. **Whether it is timing-sensitive.** `CLAUDE.md` § 7 records `AiDiagnosticProbe` failing at
-   21.6 s, 29.9 s and 37.6 s against one bound on an unchanged build. Run it three times before
-   believing one number, per § 16's arithmetic.
-   ⚠️ **UPDATE 2026-08-30, AND IT ARGUES AGAINST TIMING:** a second full sweep measured
-   **0.092 m** where the first measured **0.084 m**, both against 0.05 m. Two samples 1.7x and
-   1.8x over the bound is not the shape of a flake, and both sit close to one frame of arm swing,
-   which is the cause the test's own message names. **Question 2 is close to answered; question 1
-   is not, and is still the one to spend a bisect on.**
-
-⚠️ **DO NOT WIDEN THE BOUND TO MAKE IT PASS.** 0.05 m is a fifth of a hand and the whole point
-of the test; `BotBehaviourProbe`'s header has the standing rule about this and it applies here.
-
----
-
 ## 126 · The full PlayMode suite had never been run on this commit, and it was 42 red ⚠️⚠️ 2026-09-03, branch `ui-redesign`
 
 The handoff into this session said it in its own words: *"A full PlayMode suite was never run on
@@ -10009,6 +10003,7 @@ repository still lands on something**: follow it here, find the number, read it 
 
 | § | What it was |
 |---|---|
+| 93 | A held tsinelas "drifted" 0.084 m from the hand ✅ CLOSED 2026-09-05. ⚠️ It was never a carry regression: `CarryTests` subtracted `RestHeight` and not the `DrawnCentreOffset` that `RideAnchor` also applies, so it measured half a shoe and called it slack. The bound is unchanged at 0.05 m |
 | 137 | The two-process harness § 135.7 said did not exist, and the tables it was blocking ✅ CLOSED 2026-09-04. ⚠️ Read § 137.2 before reaching for `UnityTransport`'s simulator: it is `[Obsolete]` with no effect here. Closes § 135.6, § 135.7's buildable half, § 136.4 and § 134.9 |
 | 136 | F1 did three things at once in practice, and the whole `ui_*` sound family went back ✅ CLOSED 2026-09-04. § 136.4's touch control is built in § 137 |
 | 135 | The tournament network pass: the baseline, and the three verbs that refuse in silence ✅ CLOSED 2026-09-04. ⚠️ § 135.7's premise about the harness is corrected in § 137.1; its two HUMAN-blocked parts are in `Attention.md`, not here |

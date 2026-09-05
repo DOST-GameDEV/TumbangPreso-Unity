@@ -5540,6 +5540,21 @@ namespace TumbangPreso.Net
                     unit.IsBot = false;
                     unit.PlayerName = playerName;
 
+                    // ⚠️⚠️ AND THE PERSISTENT RECORD, WHICH IS THE HALF THE SEAT ASSIGNMENT USED TO
+                    // LEAVE BEHIND. `MatchInstaller.BuildSeat` writes `SeatOrigin` from the roster
+                    // it holds when the arena opens, and on a client that is BEFORE this message:
+                    // `HumanSeat` is still its default 0, so a client that is later given seat 1
+                    // has its own chair recorded as a bot's for the whole match.
+                    // `ApplyRosterToLiveSeats` cannot correct it either, because it skips
+                    // `NetAuthority.LocalSlot` on purpose (this method owns the local seat).
+                    //
+                    // ⚠️ MEASURED, NOT REASONED. `tools/referee_run.py --no-allbots` on
+                    // `ec44867e`: the referee and the client that happened to be given seat 0
+                    // agreed on the structural hash and the client given seat 1 did not, and its
+                    // own report read `1  3 False  Bot` — not a bot, recorded as one.
+                    // `docs/TODO.md` § 145.4b.
+                    unit.NoteSeatClaimedByAPerson(MatchIsUnderway());
+
                     var ai = unit.GetComponent<AIController>();
                     if (ai != null)
                     {

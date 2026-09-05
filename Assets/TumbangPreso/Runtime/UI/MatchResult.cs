@@ -523,11 +523,15 @@ namespace TumbangPreso.UI
             return detail;
         }
 
-        private static string NameFor(int slot)
-        {
-            var who = GameServices.Round?.PlayerAt(slot);
-            return who != null ? who.DisplayName() : $"P{slot + 1}";
-        }
+        /// <summary>
+        /// ⚠️ ONE RULE, SHARED WITH THE LIVE SCOREBOARD. This was a copy of `Hud.SeatName` and
+        /// carried the same fault: two seats whose people share a display name drew two identical
+        /// rows and a player could not tell which was theirs. `SeatLabel.ForBoard` names the seat
+        /// as well when that happens, and its header is explicit that it does NOT hide the other
+        /// cause of a duplicate row, which is one person genuinely driving two seats
+        /// (`MatchInvariants.CheckSeatClaims`, `docs/TODO.md` § 141).
+        /// </summary>
+        private static string NameFor(int slot) => SeatLabel.ForBoard(slot);
 
         /// <summary>
         /// The banner title this seat is wearing, as a label anybody can read.

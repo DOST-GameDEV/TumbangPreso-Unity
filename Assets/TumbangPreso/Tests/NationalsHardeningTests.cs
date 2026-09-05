@@ -1242,6 +1242,47 @@ namespace TumbangPreso.Tests
         }
 
         // -------------------------------------------------------------------
+        // § 141  THE SCOREBOARD CANNOT DRAW ONE STRING TWICE
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// ⚠️⚠️ 🧑 PHOTOGRAPHED ONE PERSON ON TWO ROWS, `docs/TODO.md` § 141, AND THE RULE THAT
+        /// FIXES IT IS ASSERTED IN `Core.Tests/BoardNamesTests.cs` RATHER THAN HERE.
+        ///
+        /// The behavioural version of this test was written in EditMode first and **could not
+        /// run**: it needs a live `RoundDirector`, `GameServices.Ensure()` is how you get one,
+        /// and that calls `DontDestroyOnLoad`, which throws outright in an editor script
+        /// (*"can only be used in play mode"*). Pushing the collision rule into
+        /// `Core.BoardNames` turned a test that could not run into six that cost a millisecond,
+        /// which is `CLAUDE.md` § 4's argument arriving from the other direction.
+        ///
+        /// ⚠️ WHAT IS LEFT HERE IS THE HALF THE CORE CANNOT SEE: that both boards actually ASK
+        /// the rule. A perfect rule nothing calls is § 96's fault with better arithmetic.
+        ///
+        /// ⚠️ ONE RULE, TWO CALLERS. `docs/TODO.md` § 94.1 records four hand-written copies of
+        /// "which line in a record is mine", all agreeing on the wrong value, as the reason
+        /// nothing on the machine could see the fault. These two were the same shape.
+        /// </summary>
+        [Test]
+        public void BothBoardsAskTheOneNamingRule()
+        {
+            string root = Path.GetDirectoryName(Application.dataPath);
+
+            foreach (string file in new[] { "Hud.cs", "MatchResult.cs" })
+            {
+                string text = File.ReadAllText(Path.Combine(
+                    root, "Assets", "TumbangPreso", "Runtime", "UI", file));
+
+                StringAssert.Contains("SeatLabel.", text,
+                    $"{file} draws a board and has to name its seats through SeatLabel, or the "
+                    + "two boards can disagree about who is who.");
+
+                StringAssert.DoesNotContain("who.DisplayName() : $\"P{slot + 1}\"", text,
+                    $"{file} still carries its own copy of the naming helper.");
+            }
+        }
+
+        // -------------------------------------------------------------------
         // § 149.8  WHAT A MATCH MAY NOT LEAVE BEHIND
         // -------------------------------------------------------------------
 
