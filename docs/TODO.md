@@ -45,7 +45,7 @@ either of those.
 | **P2** | 147.3 | **The game records its own good moments and nothing draws them.** Markers exist, are deterministic, are deduplicated and name a replay window | One reader. § 147.3 lists the three cheapest in order, and `CLAUDE.md` § 6.2's four questions come first |
 | **P2** | 146.6 | **The retrieval slide plays the LUNGE clip**, because both are a body-led dash and the rig has one | A slide of its own, which is art work rather than code work. ⚠️ The FEEL of the numbers is `Attention.md` § 17.2 and not this row |
 | **P2** | 127 | The taya ring and attacker disc need their non-colour distinction finished | § 127.3 |
-| **P2** | 144.3 | **`Art/audio/sfx` is a 117-file duplicate that nothing loads and nothing writes.** Both audio gates were reading it instead of `Resources/Sfx`; they were moved, and the folder is still there | A decision: it is the authored master and something copies it, or it is dead and goes. ⚠️ Not deleted on an inference |
+| **HUMAN** | 144.3 | ⚠️ **MEASURED AND ANSWERED (§ 144.3b): it is a mirror, three generators were feeding it, and 61 of its 117 files differ from what ships.** It is no longer written to. **What is left is 🧑's**: it holds the pre-replacement sound for those 61 cues, and `CLAUDE.md` § 6 makes the sourced ones provisional until he has heard them | Deleting it is one commit once he says the sourced cues are keepers. Not autonomous work. `Attention.md` § 13 |
 | **P2** | 144.8 | **The jeepney's metal finish does not show.** The per-surface selection is checked and sound; the body still renders flat white. 🧑 handed this to another session | ⚠️ **One measurement first, not a retune**: print the material name, the SHADER name and the live `_Metallic`/`_Smoothness` for each renderer on the placed prop. § 144.8 lists the four causes and which fix each needs |
 
 ⚠️⚠️ **THE ROWS THAT NEED A PERSON ARE NOT HERE AND NEVER WERE.** 🧑's ear on the `ui_*` DC offset
@@ -1071,6 +1071,50 @@ INVARIANT.** Never delete a failing test to green the suite, never trade coverag
 qualification, and never drop an integration test because a unit test looks similar without first
 checking whether the lifecycle or the network behaviour differs.
 
+#### THE ONE THE BRIEF NAMED, REMOVED, 2026-09-05
+
+`LastTsinelasMatchHalfTests.TheEliminationTravelsAndThePeersAgreeOnTheStockTable` asserted one
+claim twice in one method:
+
+```csharp
+var moved = Regex.Match(session, @"ProtocolVersion\s*=\s*(\d+)");
+Assert.IsTrue(moved.Success, "NetSession.ProtocolVersion is gone or renamed.");
+Assert.GreaterOrEqual(int.Parse(moved.Groups[1].Value), 22, ...);
+// ⚠️ THE SECOND STATEMENT OF THE SAME CLAIM ... so it stays
+Assert.GreaterOrEqual(Net.NetSession.ProtocolVersion, 22, ...);
+```
+
+**The stronger test that owns it now is the compiler.** The only thing the regex added over the
+compiled assertion was *"ProtocolVersion is gone or renamed"*, and
+`Net.NetSession.ProtocolVersion` on the next line **does not compile** if that happens: a build
+failure rather than a test failure, and one no `-testFilter` can skip. A source assertion that is
+strictly weaker than the compiler is a second place to edit when somebody moves the number, and
+nothing else.
+
+⚠️ **THE LOOSE `>= 22` STAYS LOOSE.** `ChatAndLobbyChromeTests.TheProtocolCarriesEveryRosterBump`
+owns the EXACT value with a paragraph per bump; this one owns *"the number had already moved past
+21 by the time this feature shipped"*, and pinning it would go red every time somebody correctly
+bumped a shared constant. Two different questions, one each.
+
+#### WHAT WAS LOOKED AT AND DELIBERATELY KEPT
+
+⚠️⚠️ **NOT EVERY SOURCE-TEXT ASSERTION IS A DUPLICATE, AND THE DIFFERENCE IS WHETHER THE COMPILER
+COULD HAVE ANSWERED.** Three kinds were checked and only the first is redundant:
+
+| Kind | Verdict |
+|---|---|
+| A constant read out of source AND asserted as a compiled value | **Redundant.** The compiler proves the name and the value harder than the regex does |
+| A CROSS-LANGUAGE contract (`WorkingTreeRules` in C# and `qualify.py` in Python; `IntegrityRules.Digest` and `match-record.js`) | **Kept.** Nothing compiles both sides, which is precisely why `tools/check_digest_contract.js` exists |
+| A CALL-SITE claim (*"every screen backs out through `MenuNav`"*, *"both boards ask `SeatLabel`"*, *"`HandleIdentify` pins the approved token"*) | **Kept.** The compiler cannot see that something is NOT called, and `CLAUDE.md` § 4a records three faults that were invisible to every other check |
+
+⚠️ **AND THE EXPENSIVE PROBES WERE NOT TOUCHED.** `InputSurfaceProbe`, `BotBehaviourProbe` and
+`AbilityShowcaseProbe` are minutes each and every one of them tests integration, lifecycle or a
+picture that no cheaper coverage reaches. § 149.7's own rule says an integration test is not
+replaced by a unit test that looks similar.
+
+**Still open:** the rest of the sweep. This closed the case the brief named and set the rule for
+the next one; nobody has walked the whole suite.
+
 ### 149.8 ⚠️⚠️ P1 CONFIRMED AND FIXED: THE SINGLE EXIT FROM A MATCH CLEARED NOTHING
 
 The remaining lifecycle risk is not the first launch, it is process-wide state surviving into
@@ -1737,6 +1781,49 @@ four bot seats and moved nobody's rating.
 that genuinely disagree about whether a person ever sat in a chair are still a finding at any
 instant, and the old check could not survive a legitimate departure at all.
 
+#### THE VERIFICATION, `94c8fb54`, THREE PROCESSES, NO `-tp-allbots`
+
+```
+referee   : slot -1  proto 24  round 1  active True  defender 0  sampled 60.0 s  struct 8FC5A151
+client1   : slot  0  proto 24  round 1  active True  defender 0  sampled 45.1 s  struct 8FC5A151
+client2   : slot  1  proto 24  round 1  active True  defender 0  sampled 45.0 s  struct 8FC5A151
+
+referee   : seats 0[c0 bot TAYA 70]  1[c3 bot atk   0]  2[c0 bot atk 100]  3[c3 bot atk 100]
+client1   : seats 0[c0 hum TAYA 30]  1[c3 hum atk   0]  2[c0 bot atk   0]  3[c3 bot atk 100]
+client2   : seats 0[c0 bot TAYA 30]  1[c3 hum atk   0]  2[c0 bot atk   0]  3[c3 bot atk 100]
+
+referee_run: 0 finding(s)
+```
+
+⚠️⚠️ **ALL THREE STRUCTURAL HASHES ARE `8FC5A151`.** That is the acceptance criterion this entry
+was opened with: *"three peers agreeing on which seats are people"*. The referee, which holds no
+seat and outlives both clients, now agrees with both of them about the persistent human/bot meaning
+of every chair.
+
+⚠️ **AND THE LIVE FLAGS STILL DIFFER, WITH THE REASON PRINTED BESIDE THEM**, which is the finding
+this entry actually produced:
+
+```
+note : seat 0 is driven by different things on different peers (referee bot, client1 hum,
+       client2 bot), with origins referee HandedToBot, client1 Human, client2 Human. That is
+       a handover or a roster arriving late, not a disagreement: only the origins above are gated.
+```
+
+The referee reads `HandedToBot` because by 60 s both players had quit and their chairs had
+correctly been handed over; the clients read `Human` because at 45 s they were still in them.
+**Both are true and they are the same fact at two instants.**
+
+#### AND THE FIX HAD A SECOND HALF THE FIRST RUN FOUND
+
+The run at `ec44867e` had the referee and ONE client agreeing and the other not, and that client's
+own report read `1  3 False  Bot`: a seat it was driving, recorded as a bot's.
+`MatchInstaller.BuildSeat` writes `SeatOrigin` from the roster it holds when the arena opens, and
+on a client that is **before the seat assignment arrives**, so `HumanSeat` is still its default 0
+and only the client that happened to be given seat 0 came out right.
+`ApplyRosterToLiveSeats` cannot correct it either, because it skips `NetAuthority.LocalSlot` on
+purpose. **`ApplyRebindLocalSeat` owns that chair and records the claim now**, which is the third
+of the three call sites and the one that could only be found by running it.
+
 ### 145.7 ✅ `net_matrix.py` PRINTED `DIVERGED` AND EXITED 0
 
 Every scenario carried an `expect` string that said what the run was supposed to show. **Nothing
@@ -1797,6 +1884,40 @@ modifier would be § 145.3's hole one level up.
 
 ⚠️ **THE SMOKE PATH IS KEPT AND IS NOT REDUNDANT.** It is the only row that exercises four DRIVEN
 seats, and `-tp-allbots` is what gets a fourth body moving.
+
+#### THE RUN, `94c8fb54`, WINDOWS, `docs/reports/cold-start-94c8fb54c369.md`
+
+```
+## Verdict: PASS
+
+| the artifact is a nationals candidate        | PASS | SHA 94c8fb54c369, tree clean,
+|                                              |      | protocol 24, StandaloneWindows64,
+|                                              |      | UGS dcf0831e-…/production
+| launches and identifies itself               | PASS | clean
+| reaches the arena and exits cleanly          | PASS | clean
+| a real CLASSIC tournament round became active| PASS | round 1, active, 3 seats driving
+
+mode                 : Classic
+tournament ruleset   : OK
+tournament modifiers : none
+build identity       : TUMBANG PRESO 1.0.0 | 94c8fb54c369 | protocol 24 | StandaloneWindows64
+
+seat   char   bot      origin  taya   score  travelled
+0         0 False       Human  True      30        0.5     <- the person, standing still
+1         3  True         Bot False     100       37.2
+2         6  True         Bot False       0       31.3
+3         9  True         Bot False       0       36.2
+```
+
+⚠️⚠️ **AND IT FAILED FIRST, FOR A REASON OF ITS OWN INVENTION, WHICH IS WORTH RECORDING BECAUSE IT
+IS THIS SESSION'S OWN FAULT CLASS ARRIVING FROM THE OTHER SIDE.** The first run reported
+*"only 0 seat(s) travelled more than a metre, so the bots were not driving"* against the capture
+above, which says three of them travelled thirty-plus metres. `NetStateReport` gained an `origin`
+column that day and `cold_start.read_state`'s seat regex had not been told; it matched nothing, so
+the count was zero. `tools/referee_run.py` had the identical fault in the identical hour.
+**A gate that fails for a reason it made up is the same defect as one that passes for one**, and
+`tools/audit_harness_contracts.py` now drives both parsers over a real report shape and over a
+pre-column one, 152 checks.
 
 ### 145.9 ✅ AN UNTRACKED SOURCE FILE WAS NOT A DIRTY TREE
 
@@ -2019,6 +2140,49 @@ the originals he asked for back by name (§ 5.4, `CLAUDE.md` § 6), so **removin
 rewriting his preferred files.** It is a one-line change to subtract the mean and it does not
 alter the character of the sound at all; it removes a click. **Ask before doing it.** The other
 three are `boot_sting`, `match_win` and `round_win`, which no generator owns.
+
+### 144.3b ✅ MEASURED 2026-09-05: IT IS A MIRROR, THREE GENERATORS WERE STILL FEEDING IT, AND IT HAS DRIFTED
+
+**The row asked for a decision and refused to accept an inference. Here is the measurement.**
+
+| | |
+|---|---|
+| Files each side | **117 and 117**, none missing from either |
+| Byte-identical | **56** |
+| **Differing content** | **61** |
+| Written by | `generate_hero_audio.py`, `generate_ability_audio.py`, `generate_skill_audio.py`, all three through an `OUT_DIRS` list naming BOTH folders |
+| Written by (the sourced pass) | `build_ability_audio.py`, whose `SFX_DIR` is **`Resources/Sfx` alone** |
+| Read by the game | **nothing.** `Resources.Load` can only reach a folder called `Resources` |
+
+⚠️⚠️ **SO THE ROW'S OWN PREMISE WAS HALF WRONG: IT IS NOT TRUE THAT "NOTHING WRITES" IT.** Three
+generators did, and each carried the same comment: *"The two places the game reads sfx from.
+`AudioCueCheck` validates cues against files in both directions"*. **Both halves of that sentence
+had stopped being true**: the game never read it, and `AudioCueCheck` and `audit_cue_audio.py` were
+moved to `Resources/Sfx` on 2026-09-04 precisely because grading that folder was grading files no
+player can hear.
+
+⚠️⚠️ **AND THE 61 DIFFERING FILES SAY WHAT IT ACTUALLY IS.** The 2026-09-03 sourced pass writes only
+`Resources/Sfx`, so `Art/audio/sfx` holds the **synthesised originals** of the cues that pass
+replaced. It is neither an authored master (nothing authors into it that does not also write
+`Resources/Sfx`) nor a copy (it disagrees on more than half its contents). It is a mirror that was
+still being fed by the older generators and abandoned by the newer one.
+
+#### THE DECISION
+
+1. ✅ **It is no longer fed.** All three `OUT_DIRS` lists name `Resources/Sfx` alone, and the false
+   comment is replaced with the measurement in `generate_hero_audio.py`.
+2. ⚠️ **It is NOT deleted, and that is 🧑's call rather than caution.** `CLAUDE.md` § 6:
+   **sourced SFX are provisional until he hears them in play**, twenty-four are still awaiting
+   exactly that judgement (`Attention.md` § 13), and this folder is the convenient A/B against
+   them: it is the pre-replacement sound for 61 cues, on disk, one file open away. The canonical
+   restore point is git at `ee8bced^`, which `CLAUDE.md` § 6 already names, so nothing is lost by
+   deleting it either. **What was actually costing something was feeding it**, because a folder
+   being written to looks authoritative, and that is fixed.
+
+**Done looks like:** 🧑 says the sourced cues are keepers, and then the folder goes in one commit.
+Until then it is inert rather than misleading.
+
+---
 
 ⚠️ **AND `Art/audio/sfx` IS NOW A 117-FILE DUPLICATE THAT NOTHING LOADS AND NOTHING WRITES**
 except `tools/generate_hero_audio.py`. It is left in place rather than deleted, because deleting

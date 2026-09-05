@@ -130,6 +130,73 @@ def audit_untracked_rule():
           "and --exclude-standard is what makes .gitignore the first filter")
 
 
+def audit_seat_row_parsers():
+    """Both harnesses read `NetStateReport`'s seat table, and both got it wrong on the same day.
+
+    WARNING: THE `origin` COLUMN LANDED AND TWO PARSERS MISSED IT, ONE OF THEM AFTER THE OTHER
+    HAD ALREADY BEEN FIXED. `tools/referee_run.py` printed `seats ` with nothing after it and
+    reported seven findings about a run that was fine; `tools/cold_start.py` reported *"the bots
+    were not driving"* about a report whose own text says three seats travelled 37.2, 31.3 and
+    36.2 m. **A gate that fails for a reason of its own invention is the same fault as one that
+    passes for one**, and this session is about the second half of that sentence.
+
+    So the parsers are driven over a real report shape here, both the current one and the one a
+    player built before the column exists, because "reads absence as agreement" is the failure
+    that would put the tournament assertions to sleep.
+    """
+    current = (
+        "seat   char   bot      origin  taya   score  travelled  skills  ults\n"
+        "--------------------------------------------------------------------------\n"
+        "0         0 False       Human  True      30        0.5       0     0\n"
+        "1         3  True         Bot False     100       37.2       0     0\n"
+        "2         0  True HandedToBot False       0       31.3       0     0\n"
+        "3         9  True         Bot False       0       36.2      10     0\n")
+
+    legacy = (
+        "seat   char   bot  taya   score  travelled  skills  ults\n"
+        "--------------------------------------------------------------\n"
+        "0         0 False  True      30        0.5       0     0\n"
+        "1         3  True False     100       37.2       0     0\n")
+
+    import tempfile
+
+    with tempfile.TemporaryDirectory() as tmp:
+        now = pathlib.Path(tmp) / "now.txt"
+        old = pathlib.Path(tmp) / "old.txt"
+        now.write_text("round           : 1\n" + current, encoding="utf-8")
+        old.write_text("round           : 1\n" + legacy, encoding="utf-8")
+
+        for label, reader in (("net_matrix.parse_report", net_matrix.parse_report),
+                              ("cold_start.read_state", cold_start.read_state)):
+            seats = (reader(str(now)) if label.startswith("net_matrix")
+                     else reader(now))["seats"]
+
+            check(len(seats) == 4,
+                  f"{label} read {len(seats)} seat rows out of a four-seat report. A parser that "
+                  f"matches nothing makes every seat assertion vacuous and every count zero.")
+
+            if len(seats) == 4:
+                check([s["travelled"] for s in seats] == [0.5, 37.2, 31.3, 36.2],
+                      f"{label} read the wrong column for `travelled`: {[s['travelled'] for s in seats]}")
+                check([s["origin"] for s in seats]
+                      == ["Human", "Bot", "HandedToBot", "Bot"],
+                      f"{label} read the wrong column for `origin`: {[s['origin'] for s in seats]}")
+                check(seats[0]["bot"] is False and seats[1]["bot"] is True,
+                      f"{label} read the wrong column for `bot`")
+                check(seats[0]["taya"] is True and seats[1]["taya"] is False,
+                      f"{label} read the wrong column for `taya`")
+
+            legacy_seats = (reader(str(old)) if label.startswith("net_matrix")
+                            else reader(old))["seats"]
+
+            check(len(legacy_seats) == 2,
+                  f"{label} cannot read a player built before the origin column: "
+                  f"{len(legacy_seats)} rows. That player is a real thing to point a harness at.")
+            check(all(s["origin"] is None for s in legacy_seats),
+                  f"{label} invented an origin for a report that carries none. ⚠️ Absence is not "
+                  f"agreement: the verifiers say 'this peer predates the column' instead.")
+
+
 def audit_tree_rule_contract():
     """The C# and Python copies of the non-source roots have to be the same list.
 
@@ -522,6 +589,7 @@ def audit_candidate_rules():
 
 def main():
     audit_untracked_rule()
+    audit_seat_row_parsers()
     audit_tree_rule_contract()
     audit_net_matrix_verdicts()
     audit_profile_vault()

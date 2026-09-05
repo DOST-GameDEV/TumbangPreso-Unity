@@ -307,13 +307,59 @@ def verdict(parsed, work):
                                ", ".join(t for t, _ in present if t not in rows)))
             continue
 
+        # WARNING: `char` IS CONSTANT AND `bot` IS NOT, AND GATING THE SECOND ONE IS THE FAULT
+        # section 145.4b WAS OPENED FOR. `MatchRpc.HostPeerLeft` flips the live flag the moment
+        # somebody quits, and `run` gives the referee its clients' head start back plus a margin
+        # ON PURPOSE, so the referee samples AFTER both of them have gone and their chairs have
+        # correctly been handed to bots. The first run of the strengthened verifier reported that
+        # as three findings and the game was right in all three.
+        #
+        # WARNING: SO THE PERSISTENT FACT IS WHAT IS GATED, AND IT IS A STRICTLY STRONGER CHECK.
+        # `origin` is `Core.SeatOrigin`: `Bot` means nobody ever sat there, and `Human` and
+        # `HandedToBot` both mean somebody did. A chair somebody sat in never becomes a chair
+        # nobody sat in, whoever is driving it at the instant a report is written, so two peers
+        # disagreeing about THAT are a real finding at any moment, which is exactly what the live
+        # flag could never be.
         for field, why in (("char", "which character is in the chair"),
-                           ("bot", "whether a person or an AI is driving it")):
-            values = {tag: row[field] for tag, row in rows.items()}
+                           ("origin", "whether a PERSON ever sat in it, which is the half that "
+                                      "cannot change while a match runs")):
+            values = {tag: row.get(field) for tag, row in rows.items()}
+
+            if field == "origin":
+                if any(v is None for v in values.values()):
+                    notes.append("seat %d: at least one peer predates the `origin` column, so "
+                                 "the persistent roster could not be compared. Rebuild both."
+                                 % seat_number)
+                    continue
+
+                # Human and HandedToBot are the same answer to "did a person sit here".
+                values = {tag: (v != "Bot") for tag, v in values.items()}
+                if len(set(values.values())) > 1:
+                    findings.append("seat %d %s: %s" % (
+                        seat_number, why,
+                        ", ".join("%s %s" % (tag, rows[tag].get("origin"))
+                                  for tag in values)))
+                continue
+
             if len(set(values.values())) > 1:
                 findings.append("seat %d %s (%s): %s" % (
                     seat_number, field, why,
                     ", ".join("%s %s" % (tag, value) for tag, value in values.items())))
+
+        # WARNING: THE LIVE FLAG IS STILL PRINTED, AS A NOTE, BECAUSE IT IS INFORMATION AND NOT A
+        # VERDICT. Reporting it as a finding was wrong; dropping it silently would be the other
+        # half of the same mistake, and the `origin` beside it is what says whether a difference
+        # is a departure or a disagreement.
+        live = {tag: row.get("bot") for tag, row in rows.items()}
+        if len(set(live.values())) > 1:
+            notes.append("seat %d is driven by different things on different peers (%s), with "
+                         "origins %s. That is a handover or a roster arriving late, not a "
+                         "disagreement: only the origins above are gated."
+                         % (seat_number,
+                            ", ".join("%s %s" % (t, "bot" if v else "hum")
+                                      for t, v in live.items()),
+                            ", ".join("%s %s" % (t, rows[t].get("origin"))
+                                      for t in rows)))
 
     # ---- derived: the taya --------------------------------------------------
     #

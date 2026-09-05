@@ -41,10 +41,27 @@ SAMPLE_RATE = 44100
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 
-# The two places the game reads sfx from. `AudioCueCheck` validates cues against files in both
-# directions, so a file written to only one of these is a failing check rather than a new sound.
+# WARNING: THIS SAID "THE TWO PLACES THE GAME READS SFX FROM" AND ONE OF THEM WAS NEVER ONE.
+# `Resources.Load` can only reach a folder called `Resources`, and `Art/audio/sfx` is not under
+# one, so **the game has never loaded a single file from it**. `AudioCueCheck` and
+# `audit_cue_audio.py` were both grading that folder until 2026-09-04 and were therefore grading
+# files no player can hear; both were moved and this comment was not. `docs/TODO.md` section 144.3.
+#
+# WARNING: AND THE MIRROR HAS DRIFTED, WHICH IS THE MEASUREMENT THAT SETTLES WHAT IT IS.
+# Compared 2026-09-05: 117 files each side, none missing from either, and **61 of the 117 differ
+# byte for byte**. `tools/build_ability_audio.py` writes only `Resources/Sfx` (`SFX_DIR`), so the
+# 2026-09-03 sourced pass replaced those 61 cues in the folder that ships and left this one
+# holding the synthesised originals. So it is neither a master (nothing authors into it that does
+# not also write `Resources/Sfx`) nor a copy (it disagrees on more than half its contents).
+#
+# WARNING: SO IT IS NOT FED ANY MORE, AND IT IS NOT DELETED EITHER. Writing to it produced a
+# folder that looks authoritative and is not, which is the state that cost this entry its life;
+# deleting 117 files the week of the nationals is a separate decision and `CLAUDE.md` section 6
+# is why it is 🧑's: **sourced SFX are provisional until he hears them in play**, twenty-four are
+# still awaiting exactly that judgement (`Attention.md` section 13), and this folder is the
+# convenient A/B against them. The canonical restore point is git at `ee8bced^`, which
+# `CLAUDE.md` section 6 already names.
 OUT_DIRS = [
-    os.path.join(ROOT, "Assets", "TumbangPreso", "Art", "audio", "sfx"),
     os.path.join(ROOT, "Assets", "TumbangPreso", "Resources", "Sfx"),
 ]
 

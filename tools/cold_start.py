@@ -453,17 +453,45 @@ def read_state(report):
     m = re.search(r"^round\s*:\s*(-?\d+)", text, re.MULTILINE)
     out["round"] = int(m.group(1)) if m else None
 
+    # seat char bot origin taya score travelled skills ults
+    #
+    # WARNING: THE `origin` COLUMN LANDED ON 2026-09-05 AND THIS PARSER MISSED IT, WHICH COST A
+    # FALSE FAIL ON THE FIRST NATIONALS COLD START. The run was perfect (Classic, tournament
+    # ruleset OK, no modifiers, round 1 active, three bots at 37.2, 31.3 and 36.2 m) and this
+    # method matched nothing, so `driving` was empty and the harness reported *"the bots were not
+    # driving"* about a report that says in plain text that they were. **A gate that fails for a
+    # reason of its own invention is the same fault as one that passes for one**, and this whole
+    # session is about the second half of that sentence.
+    #
+    # WARNING: SO BOTH SHAPES ARE READ AND THE OLDER ONE ANSWERS `origin: None`. A player built
+    # before the column exists is a real thing to point this at, and reading its absence as
+    # agreement is how the tournament assertions would go quiet.
     out["seats"] = []
+
     for m in re.finditer(
-            r"^(\d)\s+(-?\d+)\s+(True|False)\s+(True|False)\s+(-?\d+)\s+([\d.]+)\s+(\d+)\s+(\d+)\s*$",
+            r"^(\d)\s+(-?\d+)\s+(True|False)\s+(\w+)\s+(True|False)\s+(-?\d+)\s+([\d.]+)\s+(\d+)\s+(\d+)\s*$",
             text, re.MULTILINE):
         out["seats"].append({
             "seat": int(m.group(1)),
             "bot": m.group(3) == "True",
-            "taya": m.group(4) == "True",
-            "score": int(m.group(5)),
-            "travelled": float(m.group(6)),
+            "origin": m.group(4),
+            "taya": m.group(5) == "True",
+            "score": int(m.group(6)),
+            "travelled": float(m.group(7)),
         })
+
+    if not out["seats"]:
+        for m in re.finditer(
+                r"^(\d)\s+(-?\d+)\s+(True|False)\s+(True|False)\s+(-?\d+)\s+([\d.]+)\s+(\d+)\s+(\d+)\s*$",
+                text, re.MULTILINE):
+            out["seats"].append({
+                "seat": int(m.group(1)),
+                "bot": m.group(3) == "True",
+                "origin": None,
+                "taya": m.group(4) == "True",
+                "score": int(m.group(5)),
+                "travelled": float(m.group(6)),
+            })
 
     return out
 

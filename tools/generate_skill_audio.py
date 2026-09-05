@@ -65,10 +65,12 @@ sys.path.insert(0, HERE)
 
 from generate_hero_audio import SAMPLE_RATE, write_wav  # noqa: E402
 
-# The two places the game reads sfx from. `AudioCueCheck` validates cues against files in both
-# directions, so a file written to only one of these is a failing check rather than a new sound.
+# WARNING: `Art/audio/sfx` IS NOT ONE OF THE PLACES THE GAME READS SFX FROM AND NEVER WAS.
+# `Resources.Load` can only reach a folder called `Resources`. `tools/generate_hero_audio.py`
+# carries the whole measurement and the decision; the short version is that the two folders now
+# disagree on **61 of their 117 files**, because the sourced pass writes only `Resources/Sfx`.
+# `docs/TODO.md` section 144.3.
 OUT_DIRS = [
-    os.path.join(ROOT, "Assets", "TumbangPreso", "Art", "audio", "sfx"),
     os.path.join(ROOT, "Assets", "TumbangPreso", "Resources", "Sfx"),
 ]
 
