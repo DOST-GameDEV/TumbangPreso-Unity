@@ -59,6 +59,29 @@ RUNTIME = ROOT / "Assets" / "TumbangPreso" / "Runtime"
 SUBSCRIBE = re.compile(r"(?<![+\-*/=!<>])\b([\w\.\[\]]+?)\s*\+=\s*([\w\.]+)\s*;")
 UNSUBSCRIBE = re.compile(r"(?<![+\-*/=!<>])\b([\w\.\[\]]+?)\s*-=\s*([\w\.]+)\s*;")
 
+# ⚠️⚠️ THE ONE SHAPE THAT CAN NEVER BE UNSUBSCRIBED WAS THE ONE SHAPE THIS AUDIT COULD NOT
+# SEE, AND IT REPORTED "0 WITH NO MATCHING UNSUBSCRIBE" FOR ITS WHOLE LIFE WHILE THIRTEEN
+# OF THEM EXISTED.
+#
+# `SUBSCRIBE` requires a NAMED handler (`([\w\.]+)\s*;`), because keying the pair on a name
+# is what makes the `-=` lookup possible at all. An anonymous delegate has no name, matches
+# nothing, and therefore was neither paired nor flagged: it fell out of the count entirely.
+#
+# ⚠️ AND IT IS EXACTLY BACKWARDS AS A RISK ORDERING. A named handler with no `-=` MIGHT
+# leak; an anonymous one **provably cannot be released**, because there is no reference to
+# hand to `-=`. So the shape with the strongest guarantee of leaking was the shape with no
+# coverage, which is `audit_audio_reach.py`'s fault one file over (`CLAUDE.md` § 7.1: it
+# "LIED for its whole life" because it alone did not strip comments) and
+# `InputSurfaceProbe`'s argument for discovering rather than listing.
+#
+# ⚠️ SO THE ONLY LEGAL OUTCOME FOR AN ANONYMOUS SUBSCRIPTION IS A WRITTEN REASON.
+# `ANONYMOUS_FOREVER` below carries one per site, and the stale-row check applies to it too:
+# an exemption covering nothing is an exemption that will one day cover something new by
+# accident.
+ANONYMOUS = re.compile(
+    r"(?<![+\-*/=!<>])\b([\w\.\[\]]+?)\s*\+=\s*"
+    r"(\([^;{=]*?\)\s*=>|\w+\s*=>|delegate\s*\()")
+
 # ⚠️⚠️ TELLING A SUBSCRIPTION FROM AN ACCUMULATOR IS THE WHOLE PROBLEM, AND `+=` LOOKS
 # IDENTICAL IN BOTH. The first run of this audit reported 76 findings and about sixty of
 # them were `_clock += dt`, `_elapsed += Time.deltaTime` and `line.DistanceTravelled +=
@@ -82,8 +105,123 @@ def is_member(expression):
     """Whether an expression ends in a PascalCase member, which an event and a handler both do."""
     return bool(PASCAL_TAIL.search(expression.replace("[", " ").replace("]", " ").strip()))
 
+
+# ⚠️⚠️ UNITY'S OWN EVENTS ARE camelCase, SO THE PascalCase RULE ABOVE EXCLUDED THE EXACT
+# PUBLISHERS MOST LIKELY TO LEAK. `SceneManager.sceneLoaded`, `SceneManager.sceneUnloaded`
+# and `InputSystem.onDeviceChange` are engine statics that live for the whole process, which
+# is the worst thing a per-scene or per-match subscriber can attach itself to, and every one
+# of them failed `is_member(target)` and was skipped without being counted. Three real
+# subscriptions in `MatchAbandon.cs` and `OutlineNormals.cs` were never checked by this audit
+# at all; both happen to release correctly, which is luck rather than coverage.
+#
+# ⚠️ THE WIDENING IS DELIBERATELY NARROW, BECAUSE THE PascalCase RULE IS EARNING ITS KEEP.
+# Its own note records the first run reporting 76 findings of which about sixty were
+# `_clock += dt`. So a camelCase TARGET is accepted only when it is a member access (it
+# contains a dot) AND the handler side is still PascalCase: `SceneManager.sceneLoaded +=
+# OnSceneLoaded` passes, and `total += Count`, a real accumulator with a PascalCase
+# right-hand side, does not, because it has no dot.
+CAMEL_EVENT_TAIL = re.compile(r"(?:^|\.)([a-z]\w*[A-Z]\w*)\s*$")
+
+
+def is_event_target(expression):
+    cleaned = expression.replace("[", " ").replace("]", " ").strip()
+
+    if is_member(cleaned):
+        return True
+
+    # ⚠️ camelCase IS ACCEPTED ONLY WHEN IT LOOKS LIKE AN EVENT NAME, AND THE FIRST VERSION
+    # OF THIS WIDENING WAS TOO LOOSE. Accepting any target containing a dot let in
+    # `palm.y += HandTopLift` from `CharacterVisual`, which is a vector accumulator with a
+    # PascalCase constant on the right: exactly the noise the PascalCase rule was written to
+    # stop, readmitted through the back door. An engine event name is multi-word camelCase
+    # (`sceneLoaded`, `onDeviceChange`, `onAfterUpdate`, `logMessageReceived`), so it always
+    # carries an internal capital; a component or a field like `.y`, `.x` or `.magnitude`
+    # never does.
+    return bool(CAMEL_EVENT_TAIL.search(cleaned))
+
+# ⚠️⚠️ ONE ROW PER ANONYMOUS SUBSCRIPTION, AND THE REASON IS THE POINT OF THE ROW. There is
+# no `-=` available for any of these, so "it is released later" is never the answer. Only two
+# answers are valid and each row says which it is using:
+#
+#   (a) THE SUBSCRIBER IS PROCESS-LIFETIME AND SO IS THE PUBLISHER, and the subscriber is
+#       constructed exactly once. Nothing accumulates because nothing is ever built twice.
+#   (b) THE PUBLISHER CANNOT OUTLIVE THE SUBSCRIBER, which is `KNOWN_SAME_LIFETIME`'s
+#       argument: the object raising the event is owned by the object listening to it.
+#
+# ⚠️ MEASURED 2026-09-05: thirteen sites, all thirteen safe, none of them previously counted.
+ANONYMOUS_FOREVER = [
+    # -- (a) process-lifetime both ends -------------------------------------------------
+    ("AudioDirector.cs", "sceneLoaded",
+     "(a) `GameServices.Ensure` opens `if (_root != null) return;` over a DontDestroyOnLoad "
+     "+ HideAndDontSave root, so exactly one AudioDirector is constructed per process and "
+     "its handler is added once. `SecondMatchLifecycleProbe"
+     ".TheAudioDirectorIsBuiltOnceForTheProcessSoItsSceneHandlerCannotAccumulate` asserts "
+     "that singleton across a match boundary by IDENTITY, because the root is "
+     "HideAndDontSave and FindObjectsByType cannot see it to count it."),
+    ("ControllerWatch.cs", "onDeviceChange",
+     "(a) A static class whose only subscriber is a "
+     "[RuntimeInitializeOnLoadMethod(AfterSceneLoad)] hook, which Unity runs ONCE per "
+     "process. The lambda captures no instance, and `InputSystem.onDeviceChange` is itself "
+     "process-lifetime, so publisher and subscriber die together at process exit."),
+    ("GenericPadBridge.cs", "onDeviceChange",
+     "(a) Identical to ControllerWatch above and for the same reason: static class, one "
+     "[RuntimeInitializeOnLoadMethod] hook, no captured instance. ⚠️ § 142 OWNS THIS FILE "
+     "(`docs/TODO.md`'s queue: controller support has an owner). This row records that the "
+     "site was audited and is safe; it is not a licence to edit it."),
+    ("FrameCapProbe.cs", "Scored",
+     "(a) The probe is a DontDestroyOnLoad object built once from a "
+     "[RuntimeInitializeOnLoadMethod(BeforeSceneLoad)] hook that RETURNS UNLESS a `-tp-` "
+     "switch is on the command line, so it does not exist at all in a player. Its `Tally` is "
+     "constructed once and `Subscribe()` opens `if (_subscribed) return;`."),
+
+    # -- (b) the publisher is owned by the subscriber ------------------------------------
+    ("MatchInstaller.cs", "gate.",
+     "(b) Same claim KNOWN_SAME_LIFETIME already makes for this file's named handlers: "
+     "BuildReadyGate does `gameObject.AddComponent<ReadyGate>()`, so the gate is a component "
+     "on the installer's OWN object and the arena unload destroys both in the same frame."),
+    ("MatchInstaller.cs", "lata.",
+     "(b) The lata is built by this installer (`BuildLata`) and belongs to the arena, so the "
+     "scene unload takes the publisher and the subscriber together."),
+    ("MatchInstaller.cs", "wheel.",
+     "(b) The emote wheel is built by this installer and parented under the match's own "
+     "chrome; it cannot outlive the arena that made it."),
+    ("ConvertedMatchSetup.cs", "_joinPanel.",
+     "(b) The join panel is built by this screen and parented under it, so it dies with the "
+     "screen. Same shape as the `_queueCard.` row above."),
+    ("ConvertedSettingsPanel.cs", "gate.",
+     "(b) The gate is created by this panel and lives under it."),
+    ("PlayerHub.cs", "_signIn.",
+     "(b) The sign-in screen is built by the hub and parented under it."),
+    ("PlayerNameplate.cs", "_hub.",
+     "(b) The nameplate is built by the hub it subscribes to and is destroyed with it; a "
+     "nameplate that outlived its hub is the § 114 fault, which is a nameplate no screen "
+     "installs rather than a stale handler."),
+]
+
 KNOWN_SAME_LIFETIME = [
     # (file, target fragment, why the publisher cannot outlive the subscriber)
+
+    # ⚠️⚠️ THESE THREE WERE INVISIBLE UNTIL `is_event_target` LEARNED camelCase, 2026-09-05,
+    # AND ALL THREE ARE SAFE. They are the reverse of this list's usual argument: the
+    # publisher is an ENGINE STATIC that outlives everything, and what makes that fine is
+    # that the subscriber is process-lifetime too. Every one is a static class whose only
+    # subscribing method is a [RuntimeInitializeOnLoadMethod] hook, which Unity runs exactly
+    # once per process, attaching a static handler. There is no instance to strand and no
+    # second attach to accumulate.
+    ("FailureBundle.cs", "logMessageReceived",
+     "A static class. `Install` is [RuntimeInitializeOnLoadMethod(BeforeSceneLoad)] and "
+     "opens `if (_hooked) return; _hooked = true;`, so the handler is added at most once "
+     "per process even if the hook were ever run twice. `OnLog` is static."),
+    ("LastInputDevice.cs", "onAfterUpdate",
+     "A static class whose whole body is `[RuntimeInitializeOnLoadMethod(AfterSceneLoad)] "
+     "private static void Install() => InputSystem.onAfterUpdate += Sample;`. One hook, one "
+     "process, one static handler."),
+    ("GenericPadBridge.cs", "onAfterUpdate",
+     "A static class, one [RuntimeInitializeOnLoadMethod(AfterSceneLoad)] hook, `Pump` "
+     "static. Its own note explains why it is on `onAfterUpdate` rather than a MonoBehaviour "
+     "at all: a pad has to work in the MENUS, and the only component that ticks input every "
+     "frame exists on a seat inside a match. ⚠️ § 142 OWNS THIS FILE; this row records that "
+     "the site was audited and is safe, and is not a licence to edit it."),
     ("MatchInstaller.cs", "gate.",
      "BuildReadyGate does `gameObject.AddComponent<ReadyGate>()`, so the gate is a "
      "component on the installer's OWN object and the arena unload destroys both in the "
@@ -129,10 +267,20 @@ def allowed(path_name, target, handler):
     return False
 
 
+def anonymous_reason(path_name, target):
+    """The written reason this un-releasable subscription is safe, or None."""
+    for f, fragment, why in ANONYMOUS_FOREVER:
+        if f == path_name and fragment in target:
+            return why
+    return None
+
+
 def main():
     subs = 0
+    anon = 0
     findings = []
     allowlist_hits = {f: 0 for f, frag, _w in KNOWN_SAME_LIFETIME if frag}
+    anon_hits = {(f, frag): 0 for f, frag, _w in ANONYMOUS_FOREVER}
 
     for path in sorted(RUNTIME.rglob("*.cs")):
         code = strip_comments(path.read_text(encoding="utf-8", errors="replace"))
@@ -152,7 +300,7 @@ def main():
         for m in SUBSCRIBE.finditer(code):
             target, handler = m.group(1), m.group(2)
 
-            if not is_member(target) or not is_member(handler):
+            if not is_event_target(target) or not is_member(handler):
                 continue
 
             subs += 1
@@ -170,6 +318,33 @@ def main():
             findings.append(f"{path.relative_to(RUNTIME)}:{line}  "
                             f"{target} += {handler}  has no matching -= in this file")
 
+        # ⚠️⚠️ THE ANONYMOUS PASS, WHICH `SUBSCRIBE` STRUCTURALLY CANNOT DO. See the note on
+        # `ANONYMOUS`: there is no name to pair a `-=` against, so the question is never
+        # "was it released" and always "why is it safe never to release it".
+        for m in ANONYMOUS.finditer(code):
+            target = m.group(1)
+
+            # ⚠️ NO PascalCase FILTER HERE, AND NONE IS NEEDED. That heuristic exists to tell a
+            # subscription from an accumulator, and a lambda on the right-hand side already
+            # settles it: `_clock += (a, b) => ...` does not compile. Filtering here is what
+            # hid `sceneLoaded` and `onDeviceChange`, which are the whole point of this pass.
+            anon += 1
+
+            why = anonymous_reason(path.name, target)
+            if why is not None:
+                for f, frag, _w in ANONYMOUS_FOREVER:
+                    if f == path.name and frag in target:
+                        anon_hits[(f, frag)] = anon_hits.get((f, frag), 0) + 1
+                continue
+
+            line = code[:m.start()].count("\n") + 1
+            findings.append(
+                f"{path.relative_to(RUNTIME)}:{line}  {target} += <anonymous>  is an "
+                f"ANONYMOUS subscription and can never be unsubscribed: there is no "
+                f"reference to hand to `-=`. Either give it a named handler and release it, "
+                f"or add a row to ANONYMOUS_FOREVER saying why the subscriber and the "
+                f"publisher share a lifetime.")
+
     for f in findings:
         print(f)
 
@@ -179,11 +354,21 @@ def main():
               f"Remove the entry, or the exemption is covering nothing and will one day "
               f"cover something new by accident.")
 
-    print()
-    print(f"{subs} subscriptions in Runtime/, {len(findings)} with no matching unsubscribe, "
-          f"{len(stale)} stale allowlist entr{'y' if len(stale) == 1 else 'ies'}.")
+    # ⚠️ THE SAME STALE RULE APPLIES TO THE ANONYMOUS ROWS, for `audit_cue_relay.py`'s
+    # reason: an allowlist row asserts that the line making its claim true still exists, so
+    # deleting that line fails here rather than going quiet in a match.
+    anon_stale = [f"{f} ({frag})" for (f, frag), hits in anon_hits.items() if hits == 0]
+    for f in anon_stale:
+        print(f"ANONYMOUS ALLOWLIST STALE: {f} is exempted and no longer subscribes "
+              f"anonymously. Remove the entry.")
 
-    return 1 if (findings or stale) else 0
+    print()
+    print(f"{subs} named subscriptions in Runtime/, {anon} anonymous, "
+          f"{len(findings)} finding(s), "
+          f"{len(stale) + len(anon_stale)} stale allowlist "
+          f"entr{'y' if len(stale) + len(anon_stale) == 1 else 'ies'}.")
+
+    return 1 if (findings or stale or anon_stale) else 0
 
 
 if __name__ == "__main__":

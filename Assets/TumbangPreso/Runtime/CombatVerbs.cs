@@ -535,10 +535,13 @@ namespace TumbangPreso
             // only for the dash would be committing for the part that is already an advantage.
             _motor.Commit(Balance.SlideActiveTime + Balance.SlideRecoveryTime);
 
-            // ⚠️ ITS OWN CLIP IS THE LUNGE'S, DELIBERATELY. Both are a body-led dash and the rig
-            // has one; `docs/TODO.md` § 146 carries the note that a slide of its own is art work
-            // rather than code work, and a shared clip that reads correctly beats a wrong one.
-            Animator?.PlayAction("lunge");
+            // ⚠️ IT ASKS FOR ITS OWN ACTION AND STILL GETS THE LUNGE'S CLIP, WHICH IS THE SAME
+            // DELIBERATE ANSWER ONE INDIRECTION LATER. Both are a body-led dash and the rig has
+            // one, so `CharacterAnimator`'s `"slide"` chain falls through to exactly the clip
+            // this line used to name. What the name buys is that `docs/TODO.md` § 146.6's art
+            // work is now a clip drop with no code change, instead of a hunt for which two of the
+            // four `PlayAction("lunge")` calls in this file belong to the slide. `ASTRA.md` § 3.
+            Animator?.PlayAction("slide");
             Rig?.ViewmodelKick(Vector3.forward, 1.1f);
 
             Vector3 forward = transform.forward;
@@ -750,7 +753,10 @@ namespace TumbangPreso
             if (flat.sqrMagnitude < 0.0001f) flat = transform.forward;
 
             _motor.ApplyImpulse(flat.normalized * Balance.SlideSpeed);
-            Animator?.PlayAction("lunge");
+
+            // ⚠️ THE SLIDE'S OWN ACTION NAME, MATCHING `ReleaseSlide`. See that method for why
+            // the clip behind it is still the lunge's today and what changes when it is not.
+            Animator?.PlayAction("slide");
             return true;
         }
 

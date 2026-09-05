@@ -147,6 +147,23 @@ namespace TumbangPreso.Visual
             { "lunge", new[] { "attack-kick-right", "attack-melee-right", Interact } },
             { "punch", new[] { "attack-melee-right", "attack-kick-left", Interact } },
 
+            // ⚠️⚠️ THE RETRIEVAL SLIDE HAS ITS OWN ACTION NAME AND DELIBERATELY NO CLIP OF ITS
+            // OWN YET, WHICH CHANGES NOTHING TODAY AND IS THE POINT. `docs/TODO.md` § 146.6:
+            // *"the retrieval slide plays the LUNGE clip, because both are a body-led dash and
+            // the rig has one. A slide of its own, which is art work rather than code work."*
+            // The verb's two call sites in `CombatVerbs` (`ReleaseSlide` and `HostResolveSlide`)
+            // asked for `"lunge"` by name, so the day a real slide clip landed somebody would
+            // have had to find both of them and know which two of the four `PlayAction("lunge")`
+            // calls were the slide's.
+            //
+            // ⚠️ THE FALLBACK IS BYTE-IDENTICAL TO WHAT `"lunge"` RESOLVES TO, on purpose: no
+            // `slide` clip exists on the CC0 rig, so `Play` walks past it to `attack-kick-right`
+            // exactly as before. **This is a rename with a hook in it, not a behaviour change.**
+            // It is the same argument the `hero-*` block below makes for its own first slots:
+            // when the team's own clip lands it drops in by name with no code change, which is
+            // the entire reason these are chains. `ASTRA.md` task 3 is the clip.
+            { "slide", new[] { "slide", "attack-kick-right", "attack-melee-right", Interact } },
+
             // -------------------------------------------------------------------
             // § THE HERO CASTS
             //

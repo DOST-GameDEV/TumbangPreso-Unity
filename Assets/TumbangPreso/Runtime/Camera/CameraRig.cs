@@ -438,6 +438,18 @@ namespace TumbangPreso.CameraSystem
             // to swing again for the next fall on this body.
             _fallView = false;
 
+            // ⚠️⚠️ THE HITSTOP BELONGS TO THE BODY THAT TOOK THE HIT, AND CLEARING IT HERE IS
+            // REQUIRED RATHER THAN TIDY. `StepHold` anchors the camera to the pose it froze at,
+            // so a hold still running across a seat change would pin the new seat's view to the
+            // OLD body's position for the rest of the freeze. It is the same argument as the
+            // `_fallView` line above and as `docs/TODO.md` § 149.8: state whose meaning came from
+            // a body it no longer follows.
+            _holdLeft = 0.0f;
+            _holding = false;
+            _impactPunchLeft = 0.0f;
+            _shakeLeft = 0.0f;
+            _shakeStrength = 0.0f;
+
             _character = character;
             _mode = CameraMode.Fpp;
 
@@ -1095,16 +1107,55 @@ namespace TumbangPreso.CameraSystem
 
         private float _holdLeft;
 
+        // ⚠️⚠️ THE ANCHOR IS WHAT MAKES THE HOLD A HOLD, AND WITHOUT IT THE FREEZE WAS A DRIFT.
+        // `StepShake` writes `transform.position += ...`, which is correct on a normal frame
+        // because `ApplyFpp`/`ApplyTpp` have just written the position ABSOLUTELY and the offset
+        // is therefore discarded and re-applied every frame. A held frame skips that write by
+        // design, so the same `+=` had nothing to be relative TO and compounded instead.
+        private bool _holding;
+        private Vector3 _holdAnchor;
+
         /// <summary>
         /// ⚠️ THE SHAKE AND THE PUNCH ARE STILL STEPPED WHILE HELD, AND THAT IS NOT AN
         /// OVERSIGHT. Their timers have to keep draining or the punch that started with the hit
         /// would begin only after the freeze released, which reads as two separate events
         /// instead of one. What is suspended is the FOLLOW: the rig does not re-derive its
         /// position from the character it is tracking.
+        ///
+        /// ⚠️⚠️ AND BECAUSE THE FOLLOW IS WHAT SUPPLIED THE BASELINE, THE HOLD HAS TO SUPPLY ONE
+        /// ITSELF. MEASURED 2026-09-05 on the shipped weights, `HitFeel.Weight.Ultimate`: a
+        /// 0.11 s hold with a 0.28 m punch offset accumulated **1.14 m at 60 Hz and 2.83 m at
+        /// 144 Hz** by arithmetic, and `HitFreezeProbe` run against this restore commented out
+        /// measured **11.890 m against a 0.45 m ceiling** in batch mode, where the frame rate is
+        /// uncapped. Every held frame added another `offset * punchRatio` on top of the last one,
+        /// and then the follow resumed and snapped it back. That is a camera crossing most of a
+        /// 14 m box during the one beat that is supposed to read as a dead stop, and it got WORSE
+        /// on a better machine, which is the tell: a hold is a DURATION, so a shorter frame buys
+        /// more frames and every frame is another addend. `Hitstop`'s own header records what an
+        /// unbounded timer on a camera costs; this is the same shape one level down.
+        ///
+        /// So the pose the hold froze at is captured once, on the first held frame, and restored
+        /// before the shake each frame after it. The shake and the punch then read exactly as
+        /// they do on a normal frame: an offset from a stable baseline, bounded by their own
+        /// amplitude and independent of the frame rate.
         /// </summary>
         private bool StepHold()
         {
-            if (_holdLeft <= 0.0f) return false;
+            if (_holdLeft <= 0.0f)
+            {
+                _holding = false;
+                return false;
+            }
+
+            if (!_holding)
+            {
+                _holding = true;
+                _holdAnchor = transform.position;
+            }
+
+            // ⚠️ RESTORED BEFORE `StepShake`, NEVER AFTER IT. Assigning afterwards would erase
+            // the punch and the shake, which is the opposite bug: a hitstop with no impact in it.
+            transform.position = _holdAnchor;
 
             _holdLeft -= Time.unscaledDeltaTime;
             StepShake();

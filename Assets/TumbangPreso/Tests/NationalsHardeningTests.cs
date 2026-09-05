@@ -1490,5 +1490,91 @@ namespace TumbangPreso.Tests
                 "docs/VISION.md § 1.1. If this ever moves it is a tournament ruling and this "
                 + "assertion is what makes it a deliberate one.");
         }
+
+        // -------------------------------------------------------------------
+        // § HIT FEEDBACK: THE BEARING
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// ⚠️⚠️ EVERY HIT SAYS WHERE IT CAME FROM, AND A DROPPED ARGUMENT IS HOW IT STOPPED.
+        ///
+        /// `HitFeel.Land(victim, weight, accent, from)` takes the attack origin as its FOURTH
+        /// argument, and its own header states the job: *"so the hit has a bearing and not just a
+        /// magnitude. A player who knows WHERE it came from can turn."* The argument is
+        /// **optional**, and omitting it is not a missing effect but a wrong one: `from` defaults
+        /// to `Vector3.zero`, `Land` reads that as "no direction" and punches the camera along
+        /// `-victim.transform.forward` instead, so a player turning to face the hit turns away
+        /// from it.
+        ///
+        /// **Found 2026-09-05:** the two ultimates that call `Land` directly (`CheskaHeroKit`,
+        /// `DanteHeroKit`) both passed `ctx.Position` and were correct the whole time.
+        /// `MatchFlair` passed nothing, from two places, and between them they carry **every
+        /// skill-weight hero hit in the game**: `PlayHeroHit` is the tail of five call sites and
+        /// already had the caster in hand for `AccentOf`, and `PlayZap` already had the hazard's
+        /// own origin in `at`.
+        ///
+        /// ⚠️⚠️ THIS IS A CALL-SITE CLAIM AND THE COMPILER CANNOT MAKE IT, which is exactly the
+        /// category `docs/TODO.md` § 149.7 says to keep rather than delete: *"The compiler cannot
+        /// see that something is NOT called."* An optional argument nobody passes compiles
+        /// perfectly and ships the wrong feedback, and `CLAUDE.md` § 4a records three faults of
+        /// this shape that were invisible to every other check.
+        /// </summary>
+        [Test]
+        public void EveryHitFeelCallSitePassesTheBearingItWasGiven()
+        {
+            string runtime = Path.Combine(Application.dataPath, "TumbangPreso", "Runtime");
+
+            var thin = new List<string>();
+            int sites = 0;
+
+            foreach (string file in Directory.GetFiles(runtime, "*.cs", SearchOption.AllDirectories))
+            {
+                string code = CodeOnly(File.ReadAllText(file));
+
+                foreach (Match m in Regex.Matches(code, @"HitFeel\s*\.\s*Land\s*\("))
+                {
+                    sites++;
+
+                    if (TopLevelArgumentCount(code, m.Index + m.Length) >= 4) continue;
+
+                    thin.Add($"{Path.GetFileName(file)} near offset {m.Index}");
+                }
+            }
+
+            Assert.Greater(sites, 0,
+                "no HitFeel.Land call sites found at all, so this test is measuring nothing. "
+                + "It was renamed or moved; point it at the new name rather than deleting it.");
+
+            Assert.IsEmpty(thin,
+                "these HitFeel.Land call sites pass no `from`, so the camera punch they produce "
+                + "points along -victim.forward instead of at the attacker, and a player turning "
+                + "toward the hit turns away from it: " + string.Join(", ", thin)
+                + ". Pass the caster's position for a direct attack, or the effect's own origin "
+                + "for a zone or a hazard, as CheskaHeroKit and DanteHeroKit already do.");
+        }
+
+        /// <summary>
+        /// How many top-level arguments the call starting just after an open bracket has.
+        ///
+        /// ⚠️ COMMAS AT DEPTH ZERO ONLY. `Land(p, w, UiTheme.BrightForHero(id), ctx.Position)` is
+        /// four arguments and not five, and a nested call is the normal way the accent is written
+        /// at these sites, so counting every comma would have passed the exact bug this hunts.
+        /// </summary>
+        private static int TopLevelArgumentCount(string code, int afterOpenBracket)
+        {
+            int depth = 0, args = 1;
+
+            for (int i = afterOpenBracket; i < code.Length; i++)
+            {
+                char c = code[i];
+
+                if (c == '(' || c == '[') depth++;
+                else if (c == ')' && depth == 0) return args;
+                else if (c == ')' || c == ']') depth--;
+                else if (c == ',' && depth == 0) args++;
+            }
+
+            return args;
+        }
     }
 }

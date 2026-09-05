@@ -276,7 +276,30 @@ namespace TumbangPreso.Visual
             if (!string.IsNullOrEmpty(word))
                 ComicPopup.Spawn(victim.transform.position + Vector3.up * 1.2f, word, accent, 1.0f);
 
-            HitFeel.Land(victim, weight, accent);
+            // ⚠️⚠️ THE BEARING IS THE CASTER'S BODY, AND LEAVING IT OUT DISABLED HALF OF
+            // `HitFeel`. `Land`'s fourth argument is where the hit came FROM, and its own header
+            // says why it is there: *"so the hit has a bearing and not just a magnitude. A player
+            // who knows WHERE it came from can turn."* Omitted, `from` defaults to
+            // `Vector3.zero`, `Land` reads that as "no direction" and punches along
+            // `-victim.transform.forward` instead: **every hero skill in the game shoved the
+            // victim's camera straight backwards regardless of where the attack actually came
+            // from**, which is not a missing effect but a WRONG one, and a player turning to face
+            // it turned away. The two ultimates that call `Land` directly
+            // (`CheskaHeroKit`, `DanteHeroKit`) always passed `ctx.Position` and were correct;
+            // this method routes all five of the skill-weight hits and passed nothing.
+            //
+            // ⚠️ THE CASTER WAS ALREADY IN HAND: `AccentOf(caster)` on the line above is the
+            // same body, looked up for the same reason (being able to tell WHO hit you).
+            //
+            // ⚠️ NULL IS A LEGAL ANSWER AND MEANS "NO BEARING". `Seat(actor)` returns null for a
+            // caster this peer has no body for, exactly as `AccentOf` handles; `default` is what
+            // `Land` already documents as "there is nothing to turn toward".
+            //
+            // ⚠️ IT LEAKS NOTHING. `Land` returns immediately unless the rig is following the
+            // VICTIM, so this runs on the victim's machine about a hit they have just taken. The
+            // attacker's screen is not touched, which is the rule `HitFeel`'s header states.
+            HitFeel.Land(victim, weight, accent,
+                         caster != null ? caster.transform.position : default);
         }
 
         private static void PlayCursed(CharacterMotor victim, float seconds)
@@ -386,7 +409,13 @@ namespace TumbangPreso.Visual
             if (jolted == null) return;
 
             DizzyStars.Attach(jolted.transform, 1.5f, UI.UiTheme.HeroElectricBright);
-            HitFeel.Land(jolted, HitFeel.Weight.Jolt, UI.UiTheme.HeroElectricBright);
+
+            // ⚠️ `at` IS THE ZAP'S OWN ORIGIN AND IS THE RIGHT BEARING HERE, not a caster. This
+            // is a hazard tick rather than a swing, so what the victim needs to turn toward is
+            // where the electricity is, which is the same choice `CheskaHeroKit` and
+            // `DanteHeroKit` make by passing `ctx.Position`. Without it the punch fell back to
+            // `-victim.transform.forward` and pointed at nothing. See `PlayHeroHit`.
+            HitFeel.Land(jolted, HitFeel.Weight.Jolt, UI.UiTheme.HeroElectricBright, at);
         }
 
         /// <summary>The body in a seat, on THIS peer, or null. -1 means "nobody".</summary>

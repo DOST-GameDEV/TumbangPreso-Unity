@@ -37,16 +37,15 @@ either of those.
 |---|---|---|---|
 | **OWNED** | 142, 138 | ⚠️⚠️ **CONTROLLER SUPPORT HAS AN OWNER AND IS NOT THIS QUEUE'S WORK. DO NOT PICK IT UP.** It is live on `controller-mapping`: `GenericPadBridge`, the CONTROLLER MAP screen, `MenuNav`, and a pad that can back out of a screen. | Nothing here. Read § 142 for what landed; leave the code to the person working on it. |
 | **P1** | 145.6 | **A real multi-seed sweep has still not been RUN.** The harness is built and verified on synthetic arms; nothing has measured the shipped game across seeds since the numbers `CLAUDE.md` § 7.1 quotes | 5 to 8 Unity launches an arm, a `docs/reports/bot-sweep-*.md`, and the retrieval slide (§ 146) as the first thing compared against a pre-slide sweep. ⚠️ It is the only way to know whether § 146 changed the game |
-| **P1** | 149.8 | **Nothing tests a SECOND match in one process.** The remaining lifecycle risk is not the first launch, it is `GameLaunch`, `SceneFlow`, the preview and practice switches, spectator and replay state, the installer's registries, static events, cached seat identity, authority revocation, the format, the mode, the tournament preset and bot fill surviving into the next match | Two sequential matches with meaningfully different settings (Hero Strike with bots and a spectator, then Classic with a real player) and nothing leaking between them. § 149.8 |
-| **P2** | 149.4 | **The one-shot / duplicate / replayable request sweep.** Three of its class are closed (§ 149.1, § 149.2, § 149.3); the rest of the list has not been walked | Concrete reachable bugs with focused tests, and no generalised framework. § 149.4 |
-| **P2** | 149.5 | **Repeated scene lookups in network hot paths.** Seat to `CharacterMotor`, seat to `Slipper`, the current `Lata` | ⚠️ **Measure first**: the exact APIs, the real call frequency, and whether the path is per packet or per frame. If it is negligible, record the number and leave the code alone. § 149.5 |
-| **P2** | 149.6 | **Practice sandbox teardown contract drift.** A comment claims the sandbox stays denied through disconnect teardown because the session is still networked, while `NetSession.IsNetworked` is tied to `IsListening`, which goes false during teardown | Either a corrected comment plus a lifecycle test, or a fixed predicate. Both outcomes are work. § 149.6 |
+| **P1** | 150.7 | ⚠️⚠️ **THERE IS NO AUDIO LISTENER AT THE PLAYER.** The game's only `AudioListener` sits on `~GameServices` at world origin and never moves, while every pooled voice is `spatialBlend = 1.0`. So distance and **pan are computed from the arena's centre rather than from the player's ears**: a cue 10 m in front of a player at `(-5,0,0)` pans right because it is world `+X`. Measured, with the arithmetic | Two halves, and the second is mandatory: the listener follows the active camera, **and** the seven non-diegetic cues fired at `Vector3.zero` get an explicit 2D path, or they break the same day. ⚠️ **Then an ear**, and what to judge is written down. § 150.7 |
+| **P2** | 149.4 | **The one-shot / duplicate / replayable request sweep.** Three of its class are closed (§ 149.1, § 149.2, § 149.3). ⚠️ **The vote and reset paths were walked in § 150.9 and are idempotent by construction**; the rest of the list has not been | Concrete reachable bugs with focused tests, and no generalised framework. § 149.4, and § 150.9 for what has already been cleared |
+| **P2** | 149.5 | **Repeated scene lookups in network hot paths.** Seat to `CharacterMotor`, seat to `Slipper`, the current `Lata` | ⚠️ **Measure first**: the exact APIs, the real call frequency, and whether the path is per packet or per frame. If it is negligible, record the number and leave the code alone. § 149.5. ⚠️ The two the row names first are **already caches, not scene searches**; the live surface is the AI and the combat sweep |
 | **P2** | 149.7 | **The test suite's own value.** Source-text assertions that duplicate behavioural coverage, and a protocol floor checked twice | ⚠️ **For every test removed, name the stronger test that now owns that invariant.** Never delete a failing one to green the suite. § 149.7 |
 | **P2** | 147.3 | **The game records its own good moments and nothing draws them.** Markers exist, are deterministic, are deduplicated and name a replay window | One reader. § 147.3 lists the three cheapest in order, and `CLAUDE.md` § 6.2's four questions come first |
-| **P2** | 146.6 | **The retrieval slide plays the LUNGE clip**, because both are a body-led dash and the rig has one | A slide of its own, which is art work rather than code work. ⚠️ The FEEL of the numbers is `Attention.md` § 17.2 and not this row |
+| **ASTRA** | 146.6 | ⚠️⚠️ **THE RETRIEVAL SLIDE'S CLIP, THE HERO CASTS AND THE ULTIMATE CINEMATICS ARE ANIMATION WORK AND ARE NOT THIS QUEUE'S.** They are owned by Astra and queued in [`../ASTRA.md`](../ASTRA.md), one task per session. Same split as § 142 above | Nothing here. ⚠️ **The CODE side of § 146.6 is done**: both call sites ask for `"slide"` and the chain falls through to the lunge clip until a real one lands, so the clip drops in by name with no code change (§ 150.8). ⚠️ The FEEL of the numbers is `Attention.md` § 17.2 |
 | **P2** | 127 | The taya ring and attacker disc need their non-colour distinction finished | § 127.3 |
 | **HUMAN** | 144.3 | ⚠️ **MEASURED AND ANSWERED (§ 144.3b): it is a mirror, three generators were feeding it, and 61 of its 117 files differ from what ships.** It is no longer written to. **What is left is 🧑's**: it holds the pre-replacement sound for those 61 cues, and `CLAUDE.md` § 6 makes the sourced ones provisional until he has heard them | Deleting it is one commit once he says the sourced cues are keepers. Not autonomous work. `Attention.md` § 13 |
-| **P2** | 144.8 | **The jeepney's metal finish does not show.** The per-surface selection is checked and sound; the body still renders flat white. 🧑 handed this to another session | ⚠️ **One measurement first, not a retune**: print the material name, the SHADER name and the live `_Metallic`/`_Smoothness` for each renderer on the placed prop. § 144.8 lists the four causes and which fix each needs |
+| **P2** | 144.8 | ⚠️ **MEASURED AND ANSWERED: it is causes 1 AND 2 together.** `JeepneyFinishProbe` had been in the repo since `e49bd2b` and never run. All 17 materials are `glTF/PbrMetallicRoughness` and `HasProperty("_Metallic")` is **False on every one**, so both writes were silently skipped; the scene also has **0 reflection probes**. Cause 3 is ruled out (every material carries `_finish`) | Write **`metallicFactor`** and **`roughnessFactor`**, the names the probe read off the shader. ⚠️⚠️ **Roughness is the INVERSE of smoothness**: 0.80 smoothness is 0.20 roughness, so do not transcribe the table. ⚠️ **And add a reflection probe**, or metal still renders flat. § 144.8 |
 
 ⚠️⚠️ **THE ROWS THAT NEED A PERSON ARE NOT HERE AND NEVER WERE.** 🧑's ear on the `ui_*` DC offset
 (§ 144.3), his eye on the spectator fix and on the settings tabs, the reconnect-or-forfeit ruling
@@ -106,6 +105,7 @@ Android thermals need a handset, and a phone joining a PC needs a person to watc
 
 | § | Open work | Where it bites |
 |---|---|---|
+| **150** | The camera/feel/lifecycle pass: a hitstop that drifted 11.9 m, a bearing nobody passed, and an audit blind to its own worst case | ⚠️⚠️ **Three confirmed defects, all closed with a regression each**: the hit freeze accumulated its punch every held frame (**11.890 m measured** against a 0.45 m ceiling, and it got WORSE at a higher frame rate); every hero skill hit punched the camera along `-victim.forward` because five call sites dropped `HitFeel.Land`'s optional `from`; and `audit_event_subscriptions.py` could see neither anonymous delegates nor Unity's camelCase events, which are the two shapes most likely to leak. § 149.8's two-match run is built. ⚠️ **§ 150.7 is the open one and it needs an ear.** ⚠️ The animation half of that brief is `ASTRA.md`, not here |
 | **149** | The fresh-audit follow-up: movement budget, re-admission, the one-shot requests | ⚠️⚠️ **Six confirmed defects, five of them competitive or release-integrity, all closed with a regression each.** § 149.4 to § 149.8 are what is left, and § 149 carries the brief as well as the record |
 | **147** | The game records its own good moments and nothing draws them | Markers exist, are deduplicated, are deterministic and name a replay window. **No screen reads them.** § 147.3 lists the three cheapest readers, in order |
 | **146** | The retrieval slide is built, derived and tested; nobody has FELT it | 🧑's own test is *"I can safely approach and pick this up normally, OR I can commit"*. Nobody uses it means the recovery is too long; normal retrieval stopping means it is too cheap. Both are one constant and both are `Attention.md` § 17.2 |
@@ -725,6 +725,274 @@ new map all just work.
   `ScreenFocus.MakeRoomForThumbs` like the touch customiser's bar. Eighteen rows at 144 do not fit
   a 1080-unit canvas, and this screen exists for a device that has no thumbs on the glass. It will
   show up in the `ThumbFloor` sweep; see § 126.2 for why that number is a worklist and not a gate.
+
+---
+
+## 150 · THE CAMERA/FEEL/LIFECYCLE PASS: A HITSTOP THAT DRIFTED 11.9 m, A BEARING NOBODY PASSED, AND AN AUDIT THAT COULD NOT SEE ITS OWN WORST CASE ⚠️ IN PROGRESS, 2026-09-05, branch `main`
+
+⚠️⚠️ **THE ANIMATION HALF OF THIS BRIEF IS NOT IN THIS FILE AND MUST NOT BE PICKED UP FROM IT.**
+Hero cast animations, the ultimate comic-book cinematics and the retrieval slide's own clip are
+owned by **Astra** and queued in [`../ASTRA.md`](../ASTRA.md), which carries the one-task-per-session
+rule that queue runs under. This is the same split this file's own queue already applies to
+controller support (§ 142, OWNED): **two people writing the same layer is worse than nobody
+writing it.**
+
+### 150.1 ⚠️⚠️ P1 CONFIRMED AND FIXED: THE HIT FREEZE WAS A RANDOM WALK, AND IT GOT WORSE ON A BETTER MACHINE
+
+**The lead**, from the brief: normal follow resets the camera pose every frame, `StepShake()` adds
+its punch with `transform.position += ...`, and `HoldFrame()` skips the follow while the shake
+keeps running, so the offsets may accumulate instead of staying relative to a stable baseline.
+
+**Confirmed exactly as stated.** `CameraRig.LateUpdate` calls `StepHold()` above everything that
+writes the transform; a held frame returns before `ApplyFpp`/`ApplyTpp`, which are the absolute
+writes the `+=` depends on. So on a held frame the punch had nothing to be relative to.
+
+**The arithmetic, on the shipped weights** (`HitFeel.Weight.Ultimate`: a 0.11 s hold, and
+`ImpactPunch` at `0.20 * 1.40 = 0.28 m` decaying over 0.16 s):
+
+| | Frames inside the hold | Sum of `punchRatio` | Accumulated drift |
+|---|---|---|---|
+| 60 Hz | 7 | 4.08 | **1.14 m** |
+| 144 Hz | 16 | 10.1 | **2.83 m** |
+
+⚠️⚠️ **AND THE MEASURED NUMBER IS WORSE THAN THE ARITHMETIC, WHICH IS THE PROOF THAT THE CAUSE IS
+THE FRAME RATE AND NOT THE WEIGHTS.** `HitFreezeProbe`, run in batch mode where the frame rate is
+uncapped, measured **11.890 m against a 0.45 m ceiling**. A hold is a DURATION, so a shorter frame
+buys more frames and every frame is another addend: **the better the machine, the further the
+camera walked**, during the one beat whose entire job is to read as a dead stop, in a 14 m box
+(`docs/VISION.md` § 2).
+
+**The fix is the smallest one that restores the documented intent.** `HoldFrame`'s own header
+already claims the view *"sticks where it was while the world carries on simulating underneath
+it"*, and that was true of everything except the shake. `StepHold` now captures the pose on the
+first held frame and restores it **before** `StepShake` each frame after. The punch and the shake
+then behave exactly as they do on a normal frame: an offset from a stable baseline, bounded by
+their own amplitude, independent of the frame rate.
+
+⚠️ **RESTORED BEFORE THE SHAKE, NEVER AFTER IT.** Assigning the anchor afterwards would erase the
+punch and produce the opposite bug, a hitstop with no impact in it. `HitFreezeProbe` asserts a
+**band** rather than a ceiling for exactly that reason, so the wrong fix fails too.
+
+⚠️ **AND `Follow()` NOW CLEARS THE HOLD, WHICH THE ANCHOR MADE MANDATORY RATHER THAN TIDY.** A
+freeze still running across a seat change would pin the new seat's view to the OLD body's frozen
+pose for the rest of it. Same argument as the `_fallView` line beside it and as § 149.8: state
+whose meaning came from a body it no longer follows. `HitFreezeProbe
+.AFreezeDoesNotSurviveOntoTheNextSeat` is the second case.
+
+**Proved able to fail:** the probe was run against the fix commented out and reported **11.890 m**
+before it was run against the fix and passed. A regression that has not been seen red is not a
+regression.
+
+### 150.2 ⚠️⚠️ P1 CONFIRMED AND FIXED: EVERY HERO SKILL HIT PUNCHED THE CAMERA THE WRONG WAY
+
+`HitFeel.Land(victim, weight, accent, from)` takes the attack origin as its **fourth and optional**
+argument, and its header states the job: *"so the hit has a bearing and not just a magnitude. A
+player who knows WHERE it came from can turn."*
+
+⚠️⚠️ **OMITTING IT IS NOT A MISSING EFFECT, IT IS A WRONG ONE.** `from` defaults to
+`Vector3.zero`, `Land` reads that as "no direction" and punches along `-victim.transform.forward`
+instead. **So the camera was shoved straight backwards relative to the victim's own facing on
+every hit that did not pass an origin, and a player turning toward the hit turned away from it.**
+
+**What the audit found, and the split is the interesting part:**
+
+| Call site | Verdict |
+|---|---|
+| `CheskaHeroKit` (Glacial Nova), `DanteHeroKit` (Titan Fissure) | ✅ **Both passed `ctx.Position` and were correct the whole time.** |
+| `MatchFlair.PlayHeroHit` | ⚠️⚠️ **Passed nothing, and it is the tail of FIVE call sites**, which between them are every skill-weight hero hit in the game. The caster was already in hand on the line above: `AccentOf(caster)` looks up the same body so the victim can tell WHO hit them. |
+| `MatchFlair.PlayZap` | ⚠️ Passed nothing, and already had `at`, the hazard's own origin, as a parameter. |
+
+**Fixed by passing what each site already had**: the caster's position for the direct hits, `at`
+for the zone tick. ⚠️ **A null caster is a legal answer and stays `default`**, which `Land` already
+documents as "there is nothing to turn toward"; `Seat(actor)` returns null for a caster this peer
+has no body for, exactly as `AccentOf` handles.
+
+⚠️ **IT LEAKS NOTHING, AND THAT WAS CHECKED RATHER THAN ASSUMED.** `Land` returns immediately
+unless the rig is following the VICTIM, so this runs on the victim's machine about a hit they have
+just taken. The attacker's screen is not touched, which is the rule `HitFeel`'s own header states
+and the reason it exists.
+
+**The regression is a CALL-SITE claim**, `NationalsHardeningTests
+.EveryHitFeelCallSitePassesTheBearingItWasGiven`, which walks every `HitFeel.Land(` in `Runtime/`
+and counts **top-level** commas (a nested `UiTheme.BrightForHero(id)` is the normal way the accent
+is written at these sites, so counting every comma would have passed the exact bug). ⚠️ § 149.7's
+rule says to KEEP this category: *"The compiler cannot see that something is NOT called"*, and an
+optional argument nobody passes compiles perfectly and ships the wrong feedback.
+
+### 150.3 ✅ § 149.8's OPEN HALF IS BUILT: THE SECOND MATCH IN ONE PROCESS
+
+§ 149.8 fixed the defect (the single exit called `GameLaunch.Reset()` from nowhere) and closed
+saying *"what is still open is the two-match integration run itself"*. `SecondMatchLifecycleProbe`
+is it, four cases, and it drives **`SceneFlow.LeaveMatchToMainMenu`** rather than `GameLaunch.Reset`
+directly. ⚠️ **That is the whole point**: the defect was never that `Reset` did the wrong thing, it
+was that the exit never called it, so a test calling `Reset` itself passes against the bug. Same
+lesson as `SessionRestartTests`' *"it asserts the second start, not the first"*.
+
+| Case | What it holds |
+|---|---|
+| `LeavingAMatchClearsTheLaunchBlockAndKeepsTheProcessSwitch` | `Spectator`, `GuidedTutorial`, `PendingAction`, `PendingJoinAddress`, `SeatTokens` and `PracticeSandbox.Wanted` are all clear after the real exit, **and `GameLaunch.AllBots` is still set**, so somebody "tidying" it into `Reset()` fails here rather than silently making every multi-match harness measure three parked bodies |
+| `AfterSpectatingOneMatchTheNextOneHasSomebodyInTheSeat` | The flag's EFFECT, not the flag: a fresh `MatchInstaller.HumanSeat` answers a real seat. ⚠️ `AllBots` is deliberately turned OFF for this one, because that switch legitimately answers -1 too and leaving it set would pass for the wrong reason |
+| `TheAudioDirectorIsBuiltOnceForTheProcessSoItsSceneHandlerCannotAccumulate` | § 150.4 |
+| `BotDifficultyIsReDerivedForEachMatchRatherThanInheritedFromTheLastOne` | § 150.5 |
+
+⚠️ **THE FIRST RUN FAILED ON THE HARNESS AND NOT THE GAME, AND IT IS WRITTEN DOWN BECAUSE
+`MatchSoakProbe` ALREADY LEARNED IT.** The seat probe built its `GameObject` **before** calling the
+exit, and the exit LOADS A SCENE, so the object was destroyed and `AddComponent` threw
+`MissingReferenceException` from the test rather than failing the assertion. *"A check whose first
+run accuses the game of the harness's mistake teaches everybody to distrust the harness."*
+
+### 150.4 ✅ MEASURED, NOT A BUG: THE `AudioDirector` ANONYMOUS `sceneLoaded` SUBSCRIPTION
+
+The brief asked whether the owning object truly persists for the process or whether stale
+subscriptions can accumulate. **It persists, and the claim is now asserted rather than argued.**
+
+`AudioDirector.Awake` does `SceneManager.sceneLoaded += (_, __) => KeepOneListener();`, an
+anonymous delegate that **can never be unsubscribed**. That is safe if and only if exactly one
+`AudioDirector` is ever constructed, and it is: `GameServices.Ensure()` opens
+`if (_root != null) return;` over a `DontDestroyOnLoad` + `HideAndDontSave` root.
+
+⚠️ **THE TEST ASSERTS IDENTITY, NOT A COUNT, AND THAT IS FORCED.** The root is `HideAndDontSave`,
+so `FindObjectsByType` **cannot see it**: `AudioDirector.Awake`'s own header records two enabled
+listeners coexisting unseen for a whole session for exactly that reason, so a count would measure
+zero and pass no matter what was true.
+
+### 150.5 ✅ MEASURED, NOT A BUG: BOT DIFFICULTY IS RE-DERIVED RATHER THAN INHERITED
+
+`AIController.ActiveDifficulty` and `AIController.BotsEnabled` are process statics and are **not**
+in `GameLaunch.Reset()`. They are safe because **`MatchInstaller.Start` calls
+`ApplyDifficultyFromSettings()` before it builds a single seat**, and every screen that chooses a
+difficulty writes the saved setting first (`CustomGameScreen.SetBots` saves and then applies). So
+the second match reads the setting rather than the leftover, and the lobby's choice is not
+overwritten either.
+
+⚠️ **IT IS WORTH A TEST ANYWAY**, per § 149's standing rule that a false positive closes with the
+proof that it is one. If somebody removes that call from the installer, a NONE-bots practice match
+would leak an empty arena into the next real one.
+
+### 150.6 ⚠️⚠️ P1 CONFIRMED AND FIXED: THE SUBSCRIPTION AUDIT WAS BLIND TO THE ONE SHAPE THAT CANNOT BE RELEASED
+
+`tools/audit_event_subscriptions.py` printed **"85 subscriptions in Runtime/, 0 with no matching
+unsubscribe"** and had done for its whole life. Two independent blind spots, and the risk ordering
+was exactly backwards in both.
+
+**Blind spot 1: anonymous delegates.** `SUBSCRIBE` requires a NAMED handler, because keying the
+pair on a name is what makes the `-=` lookup possible. An anonymous delegate has no name, matched
+nothing, and **fell out of the count entirely**. ⚠️⚠️ **A named handler with no `-=` MIGHT leak; an
+anonymous one provably cannot be released, because there is no reference to hand to `-=`.** So the
+shape with the strongest guarantee of leaking had no coverage at all. That is
+`audit_audio_reach.py`'s fault one file over (`CLAUDE.md` § 7.1: it *"LIED for its whole life"*).
+
+**Blind spot 2: Unity's own events are camelCase.** The `PASCAL_TAIL` heuristic that tells a
+subscription from an accumulator required BOTH sides to end in PascalCase, and
+`SceneManager.sceneLoaded`, `InputSystem.onDeviceChange`, `InputSystem.onAfterUpdate` and
+`Application.logMessageReceived` are not. ⚠️⚠️ **Those are engine statics that live for the whole
+process, which is the worst possible publisher for a per-scene subscriber**, and every one was
+skipped without being counted. Three real subscriptions in `MatchAbandon.cs` and `OutlineNormals.cs`
+were never checked at all; both happen to release correctly, which is luck rather than coverage.
+
+**The audit now reads 90 named subscriptions, 13 anonymous, 0 findings**, up from 85 and 0.
+⚠️ **All thirteen anonymous sites were audited individually and all thirteen are safe**, each with
+a written row in `ANONYMOUS_FOREVER` saying which of the two valid answers it uses: (a) subscriber
+and publisher are both process-lifetime and the subscriber is constructed once, or (b) the
+publisher is owned by the subscriber. The stale-row rule applies to that list too.
+
+⚠️ **THE camelCase WIDENING WAS TOO LOOSE ON ITS FIRST TRY AND THE PascalCase RULE EARNED ITS
+KEEP.** Accepting any dotted target readmitted `palm.y += HandTopLift` from `CharacterVisual`, a
+vector accumulator with a PascalCase constant on the right, which is precisely the noise that rule
+was written to stop. It is narrowed to targets whose final segment is **multi-word camelCase**: an
+engine event name always carries an internal capital (`sceneLoaded`, `onAfterUpdate`), a component
+like `.y` or `.magnitude` never does.
+
+**Proved able to fail:** breaking one `ANONYMOUS_FOREVER` row produced both the finding and the
+stale-row error.
+
+### 150.7 ⚠️⚠️ OPEN, AND IT NEEDS AN EAR: THERE IS NO AUDIO LISTENER AT THE PLAYER
+
+⚠️⚠️ **THE ONLY `AudioListener` IN THE GAME IS ON `~GameServices`, WHICH IS CREATED AT WORLD
+ORIGIN AND NEVER MOVED, NEVER PARENTED AND NEVER ROTATED.** `AudioDirector.Awake` adds it, and
+`KeepOneListener` actively **disables** any listener a scene brings, including one on an arena
+camera. Nothing follows the camera and there is no `Update` that moves it.
+
+**Meanwhile every pooled voice is fully 3D**: `spatialBlend = 1.0`, `AudioRolloffMode.Linear`,
+`minDistance = 2.0`, `maxDistance = 32.0`. So the game computes distance and pan **from the arena's
+origin rather than from the player's ears.**
+
+**The arithmetic.** `Balance.ConfinementRadius` is 7.0, so a far corner of the danger zone is
+`sqrt(7^2 + 7^2) = 9.9 m` from origin. Linear rolloff gives `1 - (9.9 - 2) / (32 - 2) = 0.74`.
+
+| | |
+|---|---|
+| **Attenuation** | across the whole box, **1.00 at the centre to 0.74 at a corner**: audible, modest, and NOT the main cost |
+| ⚠️⚠️ **Panning** | **this is the real one.** A 3D source pans by its direction from the listener's transform, and the listener is a fixed, unrotated object at the centre of the map. A player at `(-5, 0, 0)` hears a slipper land at `(+5, 0, 0)`, 10 m directly in front of them, panned **right**, because it is world `+X` of the origin. A cue behind them at `(-7, 0, 0)` pans **left**. Left/right and front/back are anchored to the WORLD and not to the head, so for every player except one standing exactly on the origin the stereo image is telling them something that is not true |
+
+⚠️ **THIS IS THE SAME SHAPE AS § 150.2 ONE SYSTEM OVER**: a directional cue that is computed,
+delivered, and points at nothing. `docs/VISION.md` § 0 is why it matters here specifically: the
+whole tension is the run back in for your slipper, and hearing where the taya is coming from is
+part of that read.
+
+⚠️⚠️ **IT IS NOT FIXED IN THIS PASS, AND THE REASON IS A REAL COUPLING RATHER THAN CAUTION.**
+Moving the listener to the camera **breaks every UI cue in the game on the same day**. Seven cues
+are deliberately fired at `Vector3.zero` (`score_award`, `match_win`, `round_end`, `MenuSfx`, the
+hitmarker), and today that works precisely BECAUSE the listener never moves: a cue at the origin is
+a cue at the listener, so it plays centred at full volume. With a listener that follows the player,
+those become 3D sounds sitting at world origin, attenuating and panning as the player walks.
+
+**So the fix is two halves and the second one is the mandatory half:**
+
+1. The listener follows the active camera (`CameraRig`, and the spectator rig, which is a fourth
+   rig entirely, `CLAUDE.md` § 4).
+2. **Non-diegetic cues get a 2D path**, either `spatialBlend = 0` on a dedicated UI voice or a
+   `PlayUi(id)` entry point. ⚠️ Today `AudioDirector` has **no** non-positional API at all, which
+   is a genuine strength (a 2D world cue is impossible by construction), so this must be added as
+   an explicit, named, non-diegetic route rather than by relaxing the existing one.
+
+⚠️⚠️ **AND THEN A HUMAN HAS TO HEAR IT.** `CLAUDE.md` § 6 makes sourced SFX provisional until 🧑
+has heard them in play, and this changes the spatial image of **every** cue at once. **What needs
+judging, specifically:** whether a slipper landing behind you now reads as behind you; whether the
+taya's footsteps read as approaching; and whether the UI cues still sit flat and centred rather
+than drifting. It is in [`../Attention.md`](../Attention.md).
+
+### 150.8 ✅ THE SLIDE HAS ITS OWN ACTION NAME, WHICH CHANGES NOTHING TODAY
+
+§ 146.6 wants a retrieval-slide clip and calls it art work. Both call sites (`CombatVerbs
+.ReleaseSlide` and `.HostResolveSlide`) asked for `"lunge"` **by name**, so the day the clip landed
+somebody would have had to find them among the four `PlayAction("lunge")` calls in that file and
+know which two were the slide's.
+
+They ask for `"slide"` now, and `CharacterAnimator` carries
+`{ "slide", new[] { "slide", "attack-kick-right", ... } }`. ⚠️ **The fallback is byte-identical to
+what `"lunge"` resolves to**: no `slide` clip exists on the CC0 rig, so `Play` walks past it to
+`attack-kick-right` exactly as before. **This is a rename with a hook in it, not a behaviour
+change**, and it is the same argument the `hero-*` chains already make. `ASTRA.md` task 3 is the
+clip itself.
+
+### 150.9 ⚠️ WHAT WAS AUDITED AND FOUND ALREADY CORRECT
+
+⚠️ **§ 149's standing rule: a lead that turns out to be a false positive closes with the proof that
+it is one, and is not written up as a bug that was fixed.**
+
+| Brief item | Finding |
+|---|---|
+| **Practice sandbox teardown contract** (§ 149.6) | ✅ **Already correct and already tested.** `PracticeSandbox.Allowed` is `!NetAuthority.IsNetworked && !MatchAbandon.AuthorityRevoked`, the second clause being the existing canonical latch that covers the window where `IsListening` has gone false but the arena has not. `NationalsHardeningTests` already asserts both directions, including that a LOCAL quit does not revoke. **Nothing to do; documented and closed.** |
+| **Duplicate / replay request sweep** (§ 149.4) | The vote paths were the most likely remaining class and **both are idempotent by construction**: `MatchResult.HostReceiveVote` is a SET keyed on peer id (`if (!_rematchVotes.Add(peerId)) return;`, commented *"idempotent, like the ready set"*), and `HostReceiveMapVote` is an assignment into a per-seat slot, bounds-checked on both seat and map. `OnReqResetMsg` bounds its phase byte and goes through `SenderOwnsClaimedSeat`. **All 14 `tools/audit_*.py` gates pass with 0 findings**, including `audit_wire_payloads` (62 messages, 0 mismatched), `audit_wire_finite` (62 handlers, 0), `audit_request_call_sites` (60 entry points, 0 unreachable) and `audit_cue_relay` (48 sites, 0 ungated). |
+| **Network hot-path lookups** (§ 149.5) | ⚠️ **Unchanged, and § 149.5's own survey is why.** The two paths the brief named first are already NOT scene searches: `MatchRpc.Unit(slot)` is a four-element list scan and `MatchRpc.SlipperFor` is a validated per-seat cache whose header records the fault it was written for. The remaining surface is the AI and the combat sweep, which is a different question, and § 149.5 records the specific reason not to build a `Slipper` registry in nationals week: the taya's parked tsinelas is `SetActive(false)` and the sixteen call sites split deliberately between `FindObjectsInactive.Exclude` and `Include`. **The row stays P2 and this pass did not touch it.** |
+| **Audio coverage** | The system is stronger than the brief assumed in three of its four asks. `PlayAt`/`PlayAtVaried`/`PlayImpact` all REQUIRE a position and **there is no non-positional entry point at all**, so a stationary 2D world cue cannot be written; `PlayAtVaried` is the pitch-window path (18 call sites); `PlayImpact` is the two-layer path (6 sites); and `TryGetClip` exists for sounds that MOVE, with the LRT consist as its one caller and 🧑's *"make it feel like its getting farther"* as its reason. ⚠️ **The one real defect is § 150.7 and it is upstream of all of it.** |
+
+### 150.10 ⚠️ WHAT IS STILL OPEN
+
+- **§ 150.7**, the listener. It is the largest open item in this section and it needs the two-half
+  fix and then an ear.
+- **The jeepney (§ 144.8)** is **diagnosed but not fixed**, which is what that entry asked for.
+  `JeepneyFinishProbe`, added by `e49bd2b` and never actually RUN, was run: all 17 materials are
+  `glTF/PbrMetallicRoughness`, `HasProperty("_Metallic")` is **False on every one** (cause 1), and
+  the scene holds **0 reflection probes** (cause 2). The probe now also prints the names the shader
+  really declares, **`metallicFactor`** and **`roughnessFactor`**. ⚠️ Both causes have to be fixed
+  before the fourth possibility can even be asked, and roughness is the inverse of smoothness.
+- **The multi-seed bot sweep (§ 145.6)** was not run in this pass. It is 5 to 8 Unity launches an
+  arm and the retrieval slide is what it has to be pointed at first.
+- **A maximum-effects VFX stress measurement** was not taken. `MatchFrameRateProbe` and
+  `HudPerformanceProbe` exist and are in the `capture` group; the brief's question is specifically
+  about overlapping Hero Strike abilities, which neither drives.
 
 ---
 
@@ -2429,6 +2697,57 @@ decide WHICH surfaces get it were checked against the model and are the answer t
 parts u paint to look metallic make sense"*: textured materials are the livery and are refused
 outright, `maya_sofa_skin_shadermay` is the bench seats and is refused by name, and anything with
 a hue is his paint. **Do not replace that with "every white material".**
+
+#### ✅ THE MEASUREMENT WAS TAKEN, 2026-09-05, AND IT IS CAUSES 1 AND 2 TOGETHER
+
+⚠️⚠️ **`JeepneyFinishProbe` WAS ADDED BY `e49bd2b` AND HAD NEVER BEEN RUN.** It is exactly the
+table this entry demands and it was sitting in the repository unexecuted, which is why this row
+still read *"the first step is one measurement and it has not been taken"*. `Logs/jeepney-finish.txt`
+is the output.
+
+**Cause 1: CONFIRMED, and it is the whole of the "nothing happened" half.**
+
+| | |
+|---|---|
+| Materials on the placed prop | **17**, every one named `..._finish` |
+| Shader, on all 17 | **`glTF/PbrMetallicRoughness`** |
+| `HasProperty("_Metallic")` | **False on all 17** |
+| `HasProperty("_Smoothness")` | **False on all 17** |
+
+**So both writes were silently skipped on every surface**, exactly as this entry predicted was
+most likely. ⚠️ **Cause 3 is RULED OUT by the same table**: the `_finish` suffix on all 17 says the
+pass ran, made its copies, and the scene kept them. The selection logic was never the problem and
+the numbers were never the problem.
+
+⚠️⚠️ **AND THE PROBE NOW PRINTS WHAT TO WRITE INSTEAD, BECAUSE "THE NAMES ARE WRONG" DOES NOT SAY
+WHAT THE RIGHT ONES ARE AND GUESSING THEM IS THE THING THIS PROBE EXISTS TO REPLACE.** glTFast's
+property names have moved across versions of that package, so the shader is asked. It declares:
+
+```
+roughnessFactor       Range
+metallicFactor        Range
+baseColorFactor       Color
+```
+
+⚠️⚠️ **`roughnessFactor` IS THE INVERSE OF SMOOTHNESS AND THE NUMBERS MUST NOT BE TRANSCRIBED.**
+The chrome's authored 0.80 smoothness is **0.20 roughness**; copying the existing table across
+would make the shiniest surface on the jeepney the dullest one.
+
+**Cause 2: ALSO CONFIRMED, and it is the "still will not show" half.**
+
+> `reflection probes in the scene: 0`
+
+⚠️⚠️ **SO FIXING THE PROPERTY NAMES ALONE WILL NOT FINISH THIS.** Metal is reflection: a metallic
+surface with nothing to reflect renders as a flat or dark patch whatever `metallicFactor` says.
+This entry guessed cause 2 was *"less likely than (1)"* because the map draws with a skybox; the
+measurement says **both are true at once**, and a skybox alone gives a mirror-flat ambient rather
+than the body panel and window shapes that read as chrome. `IlalimNgTulay.unity` needs a
+reflection probe over the north boundary before the finish can be judged at all.
+
+⚠️ **THE FOURTH POSSIBILITY IS STILL UNJUDGED AND IS STILL LAST.** Whether it READS at that
+distance under this map's flat lighting is a question for a render and an eye, and it cannot be
+asked until 1 and 2 are both fixed. **Do not retune a number before then**, which is what this
+entry has said from the start.
 
 ---
 

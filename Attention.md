@@ -620,3 +620,44 @@ and the directory's timestamp suggests it was created by this session's own runs
 **What to check:** launch the Mac player once and see whether your window size, your rebinds and
 your touch layout are the ones you expect. If they are the shipped defaults, that is what was
 lost and it is a few minutes in SETTINGS rather than anything that cannot be redone.
+
+---
+
+## 18 · The spatial audio has no listener at the player, and fixing it needs your ear
+
+**Found by measurement 2026-09-05, written up in full as `docs/TODO.md` § 150.7.** This is a
+finding rather than a change: **nothing about the audio has been altered yet**, because the fix
+touches the spatial image of every cue in the game at once and `CLAUDE.md` § 6 makes sound
+provisional until you have heard it in play.
+
+**What is actually true right now.** The only `AudioListener` in the game sits on the
+`~GameServices` object, which is created at world origin and never moves, never rotates and is
+never parented to anything. `AudioDirector.KeepOneListener` actively disables any listener a scene
+brings, including one on the arena camera. Every pooled voice is fully 3D
+(`spatialBlend = 1.0`).
+
+**So the game computes distance and stereo pan from the middle of the map rather than from your
+ears.** Standing on the left of the arena, a slipper landing straight in front of you is panned to
+the right, because it is on the right-hand side of the ARENA. A sound behind you pans left. The
+attenuation is the smaller half of it (1.00 at the centre falling to 0.74 at a corner); **the
+panning is the part that is telling you something untrue.**
+
+⚠️ **THE FIX HAS A SECOND HALF THAT IS NOT OPTIONAL.** Seven cues are deliberately fired at the
+world origin (`score_award`, `match_win`, `round_end`, the menu clicks, the hitmarker) and they
+sound right today **only because** the listener happens to sit there too. The moment the listener
+follows you, those become 3D sounds parked at the centre of the map. They need an explicit 2D path
+in the same change.
+
+**What we need you to judge, once it is built:**
+
+1. **Does a slipper landing behind you read as behind you?** That is the whole point of the change.
+2. **Do the taya's footsteps read as approaching**, and from the right side?
+3. **Do the UI and score sounds still sit flat and centred**, at the same loudness wherever you are
+   standing? If any menu click starts drifting or getting quieter as you walk, the second half is
+   wrong.
+4. **Is anything now too quiet at the far corner?** The rolloff was tuned against a listener that
+   never moved, so the numbers may want a second look once the listener is in the right place.
+
+⚠️ **It is not urgent for the nationals** unless you think the audio is actively misleading you in
+play. It has been this way for the whole port, so it is a real improvement rather than a
+regression to repair.

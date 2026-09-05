@@ -104,6 +104,20 @@ namespace TumbangPreso.EditorTools
 
             sb.AppendLine();
             sb.AppendLine($"  {rows} distinct material(s) on the placed prop.");
+
+            // ⚠️⚠️ THE SECOND HALF OF THE MEASUREMENT, ADDED AFTER THE FIRST RUN ANSWERED
+            // § 144.8 CAUSE 1. Every material came back `has_M False, has_S False` on
+            // `glTF/PbrMetallicRoughness`, which says the two writes are being skipped and says
+            // NOTHING about what to write instead. Naming the replacement properties from memory
+            // is exactly the guess this probe exists to replace, and glTFast's property names
+            // have changed across versions of that package. So the shader is asked what it
+            // actually declares, and the answer goes in the report next to the failure.
+            //
+            // ⚠️ ROUGHNESS IS NOT SMOOTHNESS AND THE NEXT READER MUST NOT TRANSCRIBE THE NUMBER.
+            // glTF authors ROUGHNESS, URP authors SMOOTHNESS, and they are inverses: the chrome's
+            // 0.80 smoothness is 0.20 roughness. A straight copy of the existing table would make
+            // the shiniest surface the dullest one.
+            DumpShaderProperties(sb, seen);
             sb.AppendLine();
             sb.AppendLine("⚠️ READ `has_M` FIRST. False on a material the finish pass targets is");
             sb.AppendLine("   § 144.8 cause 1, the cheapest and most likely: the property names do");
@@ -119,6 +133,43 @@ namespace TumbangPreso.EditorTools
 
         private static string Trim(string s, int n) =>
             string.IsNullOrEmpty(s) ? "" : (s.Length <= n ? s : s.Substring(0, n - 1) + "…");
+
+        /// <summary>
+        /// Every float and colour property each distinct SHADER on the prop actually declares.
+        ///
+        /// ⚠️ ONE BLOCK PER SHADER, NOT PER MATERIAL. Seventeen materials shared one shader in the
+        /// first run, so a per-material dump would print the same list seventeen times and bury
+        /// the answer it exists to give.
+        /// </summary>
+        private static void DumpShaderProperties(StringBuilder sb, HashSet<Material> materials)
+        {
+            var shaders = new HashSet<Shader>();
+            foreach (var m in materials)
+                if (m != null && m.shader != null) shaders.Add(m.shader);
+
+            foreach (var shader in shaders)
+            {
+                sb.AppendLine();
+                sb.AppendLine($"  SHADER PROPERTIES: {shader.name}");
+
+                int count = shader.GetPropertyCount();
+                for (int i = 0; i < count; i++)
+                {
+                    var kind = shader.GetPropertyType(i);
+                    if (kind != UnityEngine.Rendering.ShaderPropertyType.Float &&
+                        kind != UnityEngine.Rendering.ShaderPropertyType.Range &&
+                        kind != UnityEngine.Rendering.ShaderPropertyType.Color)
+                        continue;
+
+                    sb.AppendLine($"    {shader.GetPropertyName(i),-34} {kind}");
+                }
+            }
+
+            sb.AppendLine();
+            sb.AppendLine("  ⚠️ THE METAL AND THE ROUGHNESS NAMES IN THAT LIST ARE WHAT THE FINISH");
+            sb.AppendLine("     PASS HAS TO WRITE. ⚠️ ROUGHNESS IS THE INVERSE OF SMOOTHNESS:");
+            sb.AppendLine("     0.80 smoothness is 0.20 roughness. Do not transcribe the numbers.");
+        }
 
         private static void Finish(StringBuilder sb)
         {
