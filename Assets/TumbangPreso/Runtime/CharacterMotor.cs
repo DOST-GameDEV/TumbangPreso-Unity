@@ -453,6 +453,38 @@ namespace TumbangPreso
             SeatOrigin = origin;
         }
 
+        /// <summary>
+        /// Record that a real person now holds this chair, correcting an install-time guess.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE A HOST THAT OPENS THE ARENA BEFORE ITS PEERS ARRIVE RECORDED
+        /// EVERY PLAYER'S CHAIR AS A BOT'S, FOR THE WHOLE MATCH. `MatchInstaller.BuildSeat` asks
+        /// the lobby who is sitting where and writes <see cref="Core.SeatOrigin"/> once; a
+        /// seatless referee (`-tp-dedicated`) and any host started with `-tp-autostart` load the
+        /// arena at boot, so the answer at that instant is "nobody", and `NoteSeatOrigin(Human)`
+        /// was a deliberate no-op that could never correct it. `MatchRpc.HostTakeSeatBackFromBot`
+        /// already stopped the AI driving the chair and set `IsBot = false`, and the PERSISTENT
+        /// record beside it stayed `Bot`.
+        ///
+        /// ⚠️⚠️ AND IT IS NOT COSMETIC: `SeatHandover.RatingMovesFor` refuses to move a ladder
+        /// for a seat whose origin is not `Human`, and `SeatHandover.HumanSeats` scales everybody
+        /// else's result by how many chairs held people. A referee-hosted bracket match would
+        /// have submitted four bot seats and moved nothing. `docs/TODO.md` § 145.4b.
+        ///
+        /// ⚠️⚠️ IT STILL ONLY MOVES FORWARD, WHICH IS WHY THE MATCH STATE IS A PARAMETER RATHER
+        /// THAN AN ASSUMPTION. Before the whistle a chair changing hands is the roster settling
+        /// and the honest answer is `Human`. After it, a bot has already played part of the
+        /// match in that chair, so the honest answer is `HandedToBot`, which is the same reading
+        /// the departure case gets and for the same reason: the bot's stretch happened.
+        /// **A `HandedToBot` seat is never walked back**, whoever sits down afterwards.
+        /// </summary>
+        public void NoteSeatClaimedByAPerson(bool midMatch)
+        {
+            if (SeatOrigin == Core.SeatOrigin.HandedToBot) return;
+            if (SeatOrigin == Core.SeatOrigin.Human) return;
+
+            SeatOrigin = midMatch ? Core.SeatOrigin.HandedToBot : Core.SeatOrigin.Human;
+        }
+
         // -------------------------------------------------------------------
         // SPEED ZONES — hazard slows, from character_base.gd:1556.
         //

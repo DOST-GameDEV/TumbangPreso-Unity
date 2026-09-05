@@ -111,6 +111,30 @@ namespace TumbangPreso.Core
         public static bool RatingMovesFor(SeatOrigin origin) => origin == SeatOrigin.Human;
 
         /// <summary>
+        /// Whether a PERSON ever sat in this chair, at any point in the match.
+        ///
+        /// ⚠️⚠️ IT IS THE ONLY THING ABOUT A SEAT'S DRIVER THAT IS CONSTANT FOR A WHOLE MATCH,
+        /// AND THAT IS WHY IT EXISTS. `CharacterMotor.IsBot` answers "who is driving right now"
+        /// and moves the instant somebody disconnects; `SeatOrigin` itself moves once, from
+        /// <see cref="SeatOrigin.Human"/> to <see cref="SeatOrigin.HandedToBot"/>, when they do.
+        /// **Neither can be compared between two peers that stopped sampling at different
+        /// moments**, and `NetStateReport.StructuralHash` was folding in `IsBot` while its own
+        /// comment claimed to cover "only what cannot change while a match runs".
+        ///
+        /// ⚠️⚠️ THE MEASUREMENT THAT FOUND THIS IS `docs/TODO.md` § 145.4b's SECOND RUN. A
+        /// seatless referee and two idle clients, without `-tp-allbots`: the two clients agreed
+        /// with each other exactly, and the referee, which outlives them on purpose, called every
+        /// seat a bot because by the time it sampled both players had quit and their chairs had
+        /// been handed over. The verifier reported three findings and the game was right.
+        ///
+        /// ⚠️ A CHAIR SOMEBODY SAT IN NEVER BECOMES A CHAIR NOBODY SAT IN, and a chair nobody sat
+        /// in never becomes one somebody did. That is what makes this safe to gate as a hard
+        /// equality across peers, and it is a strictly stronger check than comparing a flag that
+        /// legitimately differs.
+        /// </summary>
+        public static bool APersonSatHere(SeatOrigin origin) => origin != SeatOrigin.Bot;
+
+        /// <summary>
         /// How many of these seats count as people for <see cref="BotFillRules.Weight"/>.
         ///
         /// ⚠️⚠️ A HANDED-OVER SEAT COUNTS AS A BOT SEAT FOR EVERYBODY ELSE'S RATING, WHICH IS THE

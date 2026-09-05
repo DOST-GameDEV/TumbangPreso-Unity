@@ -124,14 +124,27 @@ namespace TumbangPreso.Settings
         /// default, because <see cref="Apply"/> overwrites the active level at boot from the
         /// player's own setting: **the stored number is never what the game renders with.**
         ///
-        /// ⚠️ MEASURED RATHER THAN ASSUMED, 2026-09-03: a full batchmode PlayMode suite, 155
-        /// tests and eighteen minutes of play, left `ProjectSettings/QualitySettings.asset`
-        /// completely clean. The write-through the header warns about is an INTERACTIVE editor
-        /// behaviour, so it is real and it is not something a test run reproduces. If this test
-        /// ever goes red on a machine where nobody edited the asset, that is the write-through,
-        /// and the level it changed names which platform the editor was targeting:
-        /// `m_PerPlatformDefaultQuality` puts Standalone on 5 (Ultra) and **Android on 2
-        /// (Medium)**, so switching the build target to build an .apk moves which row is at risk.
+        /// ⚠️⚠️ AND THE MEASUREMENT THAT USED TO SIT HERE IS FALSIFIED, WHICH IS WORTH KEEPING
+        /// RATHER THAN QUIETLY REPLACING. It read: *"MEASURED RATHER THAN ASSUMED, 2026-09-03: a
+        /// full batchmode PlayMode suite, 155 tests and eighteen minutes of play, left
+        /// `ProjectSettings/QualitySettings.asset` completely clean. The write-through the header
+        /// warns about is an INTERACTIVE editor behaviour."* **It is not interactive.**
+        /// `GameSettings.Apply` calls <see cref="Apply"/> at boot in batch mode too, and in the
+        /// editor `QualitySettings.antiAliasing` IS the serialized asset, so writing the live
+        /// value writes the file. Re-measured 2026-09-05 on `837eb0a`: a plain
+        /// `-batchmode -runTests -testPlatform EditMode` launch moved Ultra from 4 to 0, twice in
+        /// a row, on a clean checkout.
+        ///
+        /// ⚠️⚠️ THAT STOPPED BEING COSMETIC THE DAY THE QUALIFICATION STARTED REFUSING A DIRTY
+        /// TREE. `docs/TODO.md` § 145.1 and § 149.11: a gate that rewrites a tracked file while it
+        /// runs is a gate that can never come out QUALIFIED, however green every test is.
+        /// `QualityLevelStamp` regenerates the asset from THIS TABLE at editor load and at quit,
+        /// which is `GameBuilder.ConfigureSplash`'s and `ShaderWarmupCollection`'s shape:
+        /// **both places or neither**, resolved by making one of the two generate the other.
+        ///
+        /// ⚠️ THE LEVEL AT RISK IS STILL WHICHEVER `m_PerPlatformDefaultQuality` SELECTS FOR THE
+        /// CURRENT BUILD TARGET: Standalone is 5 (Ultra) and **Android is 2 (Medium)**, so
+        /// switching the target to build an .apk moves which row gets rewritten.
         /// </summary>
         public static readonly int[] QualityLevelSamples = { 0, 2, 2, 4, 4, 4 };
 
@@ -232,6 +245,31 @@ namespace TumbangPreso.Settings
             FxaaActive = entry.Fxaa;
 
             QualitySettings.antiAliasing = entry.Samples;
+
+            // ⚠️⚠️ IN THE EDITOR THAT LINE ABOVE IS A FILE WRITE, AND IT MADE EVERY UNITY RUN
+            // LEAVE THE WORKING TREE DIRTY. `QualitySettings.antiAliasing` is the serialized
+            // project asset in the editor, so applying the player's own setting at boot rewrites
+            // `ProjectSettings/QualitySettings.asset` on the quality level the current build
+            // target selects. Cosmetic until `tools/qualify.py` started refusing a dirty tree
+            // (`docs/TODO.md` § 145.1); after that it is a gate that **cannot come out QUALIFIED
+            // however green every test is**, because running it dirties the thing it certifies.
+            // § 149.11.
+            //
+            // ⚠️ THE EVENT IS THE SEAM AND `QualityLevelStamp` IS THE ONE SUBSCRIBER. This
+            // assembly may not reference `UnityEditor`, and the fix is an editor operation
+            // (`EditorUtility.ClearDirty`): the live value stays applied, which is what the frame
+            // needs, and the object stops being marked for saving, which is what the repository
+            // needs. Nothing about what the game RENDERS changes.
+            AppliedInEditor?.Invoke();
         }
+
+        /// <summary>
+        /// Raised after every <see cref="Apply"/>, for the editor to undo the side effect.
+        ///
+        /// ⚠️ IT IS RAISED IN PLAYERS TOO AND NOTHING SUBSCRIBES THERE. A `#if UNITY_EDITOR`
+        /// around the raise would put a compile-time branch in the one method whose behaviour has
+        /// to be identical on both sides; an event with no subscribers is free.
+        /// </summary>
+        public static event System.Action AppliedInEditor;
     }
 }

@@ -299,6 +299,14 @@ namespace TumbangPreso.Core
             new Modifier("-tp-map",
                 "Chooses the arena to load. Which map a bracket match is played on is an " +
                 "operator's decision and a lobby setting, not a developer override."),
+
+            new Modifier("-tp-tournament",
+                "It APPLIES this preset rather than departing from it: TournamentGuard.Apply " +
+                "only ever writes a switch back to its safe value and pins the tournament rule " +
+                "set, so a process launched with it reads clean to this audit and to " +
+                "TournamentGuard.Refusal alike. It is the one launch switch that can only make " +
+                "a machine more tournament-legal, and tools/cold_start.py --tournament is what " +
+                "uses it. docs/TODO.md section 145.8."),
         };
 
         /// <summary>

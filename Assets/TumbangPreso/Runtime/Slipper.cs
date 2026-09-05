@@ -449,11 +449,32 @@ namespace TumbangPreso
             carrier?.NotifyHolding(null);
         }
 
-        public bool CanBeGrabbedBy(CharacterMotor who)
+        /// <summary>
+        /// Everything <see cref="CanBeGrabbedBy"/> asks EXCEPT where the body is standing.
+        ///
+        /// ⚠️⚠️ IT EXISTS SO THE RETRIEVAL SLIDE CAN WIDEN THE REACH WITHOUT RESTATING THE RULE,
+        /// AND RESTATING IT IS EXACTLY WHAT WENT WRONG. `CombatVerbs.AnySlideTargetAhead` tested
+        /// `s.State == SlipperState.Loose` by hand and nothing else, so its idea of an eligible
+        /// tsinelas and this file's idea of one were two rules that happened to agree on one
+        /// clause. `docs/TODO.md` § 94.1's whole finding is what a second answer to "whose shoe
+        /// is this" costs, and § 146.4's own note says the pickup rule must not be restated.
+        ///
+        /// ⚠️ THE REACH IS THE ONLY THING A SLIDE RELAXES, and it relaxes it to a SEGMENT rather
+        /// than a bigger circle: the ground the body actually covers. Everything else on this
+        /// method applies to a slide exactly as it applies to a walk-up.
+        /// </summary>
+        public bool IsGrabbableIgnoringReach(CharacterMotor who)
         {
             if (State != SlipperState.Loose || who == null) return false;
             if (who.IsDefender) return false;   // the taya has the tag, not the ammunition
             if (!who.CanAct()) return false;
+
+            return true;
+        }
+
+        public bool CanBeGrabbedBy(CharacterMotor who)
+        {
+            if (!IsGrabbableIgnoringReach(who)) return false;
 
             float d = Vector3.Distance(who.transform.position, transform.position);
             return d <= Balance.PickupRadius;

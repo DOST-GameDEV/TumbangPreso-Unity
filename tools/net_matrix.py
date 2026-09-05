@@ -26,6 +26,18 @@ which is the class of fault the disconnect rows are about.
 WARNING: A ROW WITH NO WRITTEN EXPECTED OUTCOME IS NOT A TEST. Every scenario below carries an
 `expect` string that says what the run is supposed to show BEFORE it is run. A number with no
 prediction beside it is a number nobody can be wrong about.
+
+WARNING: AND UNTIL 2026-09-05 THAT PREDICTION WAS PROSE THAT NOTHING READ, SO THIS SCRIPT COULD
+PRINT `DIVERGED: ...` AND EXIT 0. `docs/TODO.md` section 145.7. Three things are now separate:
+`describe()` says what happened, `evaluate()` says whether that is what the row predicted, and
+the process exit code is the OR of every row's evaluation. `--summarise` gates on the stored
+evidence for the same reason, because re-reading a red measurement must not answer green.
+
+WARNING: A DELIBERATE KILL IS NOT A FAILURE AND THAT IS WHY THE EXPECTATION IS PER PEER RATHER
+THAN ONE BOOLEAN. "The client wrote no report" is the correct outcome of the row that kills the
+client and a hang on every other row. "The client fell back to hosting" is the defined correct
+end of the host-loss row and the worst possible result of the 600 ms row. Each scenario names
+what it expects of the host and of the client, and the pair is what is checked.
 """
 
 import argparse
@@ -51,11 +63,42 @@ LINK_PORT = 8911
 SETTLE = 7.0
 
 
+# ---------------------------------------------------------------------------
+# WHAT A ROW IS ALLOWED TO END UP AS
+#
+# WARNING: THE `expect` PROSE WAS NEVER MACHINE-CHECKED AND THIS SCRIPT PRINTED "DIVERGED: ..."
+# AND THEN EXITED 0. `docs/TODO.md` section 145.7. Every gate in this repository has been caught
+# once being green while proving less than it printed, and this one was green while printing the
+# opposite of green: a reader who ran it in a shell and looked at `$?` was told the disconnect
+# matrix passed. Three things were tangled into one function and are now three:
+#
+#   describe()  what happened, in a sentence, for the table a person reads
+#   evaluate()  whether that is what this row was supposed to show
+#   main()      the process verdict, which is the OR of every row's evaluation
+#
+# WARNING: AND A DELIBERATE KILL IS NOT A FAILURE, WHICH IS THE REASON THIS COULD NOT BE ONE
+# BOOLEAN. "The client wrote no report" is the CORRECT outcome of the row that kills the client
+# and a fault in every other row; "the client fell back to hosting" is the correct end of the
+# host-loss row and the worst possible result of the 600 ms row. So each scenario names what it
+# expects of EACH PEER, and the pair is what gets checked.
+# ---------------------------------------------------------------------------
+
+# What the host has to have done by the end of the row.
+HOST_REFEREES = "referees"      # alive, on a live round, and still refereeing when it sampled
+HOST_GONE = "gone"              # killed on purpose; a report here means the kill did not take
+
+# What the client has to have done by the end of the row.
+CLIENT_JOINED = "joined"        # still a CLIENT, on a live round, having written its report
+CLIENT_GONE = "gone"            # killed on purpose
+CLIENT_TERMINAL = "terminal"    # lost its referee and stopped believing it was in a live match
+
+
 class Scenario:
     def __init__(self, name, expect, seconds=45,
                  delay=0.0, jitter=0.0, loss=0.0,
                  outage_at=0.0, outage_for=0.0,
-                 kill=None, kill_at=0.0, direct=False):
+                 kill=None, kill_at=0.0, direct=False,
+                 host=HOST_REFEREES, client=CLIENT_JOINED, agree=True):
         self.name = name
         self.expect = expect
         self.seconds = seconds
@@ -70,6 +113,16 @@ class Scenario:
         # A clean row does not need the proxy at all, and running without it separates
         # "the link did this" from "the proxy did this".
         self.direct = direct
+
+        # WARNING: THESE THREE ARE THE `expect` PROSE IN A FORM A PROCESS CAN FAIL ON. The prose
+        # stays because it carries the reasoning; a sentence nothing reads is what let this
+        # script print DIVERGED under a zero exit code for its whole life.
+        self.host = host
+        self.client = client
+
+        # Whether the two reports have to agree on the discrete state. False on any row where a
+        # peer is deliberately taken away, because there is then only one report to compare.
+        self.agree = agree
 
 
 # The one-way delay is HALF the round trip the row is named after. A "300 ms" row is a player
@@ -113,24 +166,30 @@ WIFI = [
              delay=25.0, jitter=5.0, outage_at=20.0, outage_for=5.0),
 ]
 
+# WARNING: EVERY ROW ABOVE LEAVES BOTH PEERS ALIVE, so all of them take the defaults
+# (`HOST_REFEREES`, `CLIENT_JOINED`, `agree=True`). The three below do not, and each says so.
+
 DISCONNECT = [
     Scenario("client quits mid-match",
              "Host keeps refereeing. The vacated seat becomes a bot on the host's report "
              "(`bot` true), the score is retained, and per section 135.5 no throw wind-up is "
              "left behind. The client writes no report because it is gone, so this row is read "
              "off the host's file alone.",
-             kill="client", kill_at=22.0),
+             kill="client", kill_at=22.0,
+             host=HOST_REFEREES, client=CLIENT_GONE, agree=False),
     Scenario("host quits mid-match",
              "The client must not hang. It has no referee, so the honest outcome is a clean "
              "disconnect rather than a frozen arena. WARNING: a client that keeps playing "
              "against a host that is gone is the worst result this row can produce, because it "
              "looks fine on screen.",
-             kill="host", kill_at=22.0),
+             kill="host", kill_at=22.0,
+             host=HOST_GONE, client=CLIENT_TERMINAL, agree=False),
     Scenario("link dies permanently",
              "Both processes are alive and cannot reach each other. This separates 'the peer "
              "went away' from 'the network went away', which are the same event to the "
              "transport and very different to a player in a tournament room.",
-             outage_at=20.0, outage_for=600.0),
+             outage_at=20.0, outage_for=600.0,
+             host=HOST_REFEREES, client=CLIENT_TERMINAL, agree=False),
 ]
 
 
@@ -411,11 +470,148 @@ def describe(result):
     return note
 
 
+def as_int(value):
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def as_float(value):
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def disturbed_at(scenario):
+    """The second at which this row deliberately breaks something, or None.
+
+    Used to ask whether a peer kept going PAST the disturbance rather than merely surviving to
+    the point of it, which is `describe`'s own warning about a frozen process looking identical
+    to a working one in a process list.
+    """
+    marks = []
+    if scenario.kill:
+        marks.append(scenario.kill_at)
+    if scenario.outage_for:
+        marks.append(scenario.outage_at)
+    return min(marks) if marks else None
+
+
+def judge_host(scenario, host):
+    """Whether the host did what this row needs it to have done. Returns a fault or None."""
+    if scenario.host == HOST_GONE:
+        if host is not None:
+            return ("the host wrote a report, so the deliberate kill at %.0f s did not take and "
+                    "this row measured nothing" % scenario.kill_at)
+        return None
+
+    if host is None:
+        return "the host wrote no report at all: it hung, crashed, or died with its peer"
+
+    round_number = as_int(host["round"])
+    if round_number is None or round_number < 1:
+        return ("the host never reached round 1 (round %s). Two peers agreeing that nothing "
+                "happened is not evidence about a link" % host["round"])
+
+    if host["active"] != "True":
+        return ("the host stopped refereeing before it sampled (round active %s). A host that "
+                "freezes when a peer leaves is exactly what this row is looking for"
+                % host["active"])
+
+    # WARNING: "STILL ALIVE" IS NOT THE CLAIM AND `describe` ALREADY SAYS SO IN CAPITALS. A
+    # process frozen on a dead round looks identical in a process list, so the row asks for
+    # sampling PAST the disturbance rather than merely up to it.
+    mark = disturbed_at(scenario)
+    sampled = as_float(host["sampled"])
+    if mark is not None and sampled is not None and sampled < mark + 5.0:
+        return ("the host sampled at %.0f s and this row disturbs the link at %.0f s, so its "
+                "report says nothing about what happened afterwards" % (sampled, mark))
+
+    if not any(s["travelled"] > 1.0 for s in host["seats"]):
+        return "no seat on the host travelled a metre, so nobody was playing"
+
+    return None
+
+
+def judge_client(scenario, client):
+    """Whether the client did what this row needs it to have done. Returns a fault or None."""
+    if scenario.client == CLIENT_GONE:
+        if client is not None:
+            return ("the client wrote a report, so the deliberate kill at %.0f s did not take"
+                    % scenario.kill_at)
+        return None
+
+    if client is None:
+        return ("the client wrote no report at all. On this row it was supposed to %s, so this "
+                "is a hang or a crash rather than the outcome the row predicts"
+                % ("stay joined and report" if scenario.client == CLIENT_JOINED
+                   else "survive its host and report"))
+
+    if scenario.client == CLIENT_JOINED:
+        # WARNING: `role: HOST` ON A CLIENT IS THE MOST MISLEADING FILE THIS HARNESS PRODUCES.
+        # It is well formed, says `networked: True`, and describes a session of one. On a row
+        # where the client was supposed to stay joined it is a FAILURE, and it used to print in
+        # the table as a sentence under a zero exit code.
+        if client["role"] == "HOST":
+            return ("the client fell back to hosting its own lobby: it lost the connection and "
+                    "this row expected it to stay joined for the whole run")
+
+        round_number = as_int(client["round"])
+        if round_number is None or round_number < 1:
+            return "the client never reached round 1 (round %s)" % client["round"]
+
+        if client["active"] != "True":
+            return "the client was not in a live round at exit (round active %s)" % client["active"]
+
+        return None
+
+    # CLIENT_TERMINAL: it lost its referee on purpose, and the only wrong answer is carrying on.
+    #
+    # WARNING: THE WORST RESULT THIS ROW CAN PRODUCE IS THE ONE THAT LOOKS FINE. A client still
+    # reporting `role: CLIENT` on a live round after its host is gone is simulating a match with
+    # nobody refereeing it, and every score on that screen is invented locally. Falling back to
+    # its own lobby is the DEFINED correct end and is what `describe` has always called it.
+    if client["role"] == "CLIENT" and client["active"] == "True":
+        return ("the client is still a CLIENT on a live round with no host: it kept playing "
+                "against a referee that is gone, which is the outcome this row exists to catch")
+
+    return None
+
+
+def evaluate(result):
+    """
+    Whether a row showed what it said it would. Returns (ok, faults).
+
+    WARNING: THIS IS SEPARATE FROM `describe` ON PURPOSE AND MERGING THEM AGAIN IS THE
+    REGRESSION. A description is what happened; a verdict is whether that was allowed. The two
+    were one function, the function returned a string, and a string cannot fail a process.
+    """
+    s = result["scenario"]
+    faults = []
+
+    fault = judge_host(s, result["host"])
+    if fault:
+        faults.append("host: " + fault)
+
+    fault = judge_client(s, result["client"])
+    if fault:
+        faults.append("client: " + fault)
+
+    if s.agree and not faults:
+        hard, _ = compare(result["host"], result["client"])
+        if hard:
+            faults.append("diverged: " + "; ".join(hard))
+
+    return (not faults), faults
+
+
 def emit(results):
     """Prints the table in the shape `docs/TODO.md` wants to carry it."""
     print()
-    print("| row | link | expected | observed |")
-    print("|---|---|---|---|")
+    print("| row | link | expected | observed | verdict |")
+    print("|---|---|---|---|---|")
 
     for r in results:
         s = r["scenario"]
@@ -434,13 +630,34 @@ def emit(results):
             link.append(f"kill {s.kill} at {s.kill_at:.0f}s")
 
         expected = s.expect.replace("\n", " ")
-        print(f"| {s.name} | {', '.join(link) or 'clean'} | {expected} | {describe(r)} |")
+        ok, faults = evaluate(r)
+        verdict = "PASS" if ok else "**FAIL**"
+        print(f"| {s.name} | {', '.join(link) or 'clean'} | {expected} | {describe(r)} | {verdict} |")
 
     print()
     for r in results:
         line = link_summary(r["work"])
         if line:
             print(f"{r['scenario'].name}: {line}")
+
+    # WARNING: THE FAULTS ARE PRINTED IN FULL UNDER THE TABLE RATHER THAN TRIMMED INTO IT. The
+    # brief for this change was explicit that the output must not get LESS informative to gain an
+    # exit code, and a verdict column with no reason beside it is exactly that trade.
+    failed = [(r, faults) for r in results for ok, faults in [evaluate(r)] if not ok]
+
+    if failed:
+        print()
+        print("FAILING ROWS")
+        for r, faults in failed:
+            print(f"  {r['scenario'].name}")
+            for f in faults:
+                print(f"    - {f}")
+
+    print()
+    print(f"net_matrix: {len(results) - len(failed)} of {len(results)} row(s) matched their "
+          f"written expectation.")
+
+    return len(failed)
 
 
 def main():
@@ -489,8 +706,12 @@ def main():
                 "host": parse_report(os.path.join(work, "host.txt")),
                 "client": parse_report(os.path.join(work, "client.txt")),
             })
-        emit(results)
-        return 0
+
+        # WARNING: `--summarise` GATES TOO, AND IT USED TO BE THE QUIETEST WAY TO GET A GREEN
+        # SHELL OUT OF A RED MEASUREMENT. It re-reads reports that are already on disk, so a run
+        # whose rows failed answers 0 forever afterwards if this returns a constant. The stored
+        # evidence is the same evidence; the verdict has to be the same verdict.
+        return 1 if emit(results) else 0
 
     for i, (group, s) in enumerate(chosen, 1):
         print(f"[{i}/{len(chosen)}] {group}: {s.name}", flush=True)
@@ -499,10 +720,12 @@ def main():
         r["group"] = group
         r["wall"] = time.monotonic() - started
         results.append(r)
-        print(f"    {describe(r)}  ({r['wall']:.0f} s)", flush=True)
+        ok, faults = evaluate(r)
+        print(f"    {describe(r)}  ({r['wall']:.0f} s)  {'PASS' if ok else 'FAIL'}", flush=True)
+        for f in faults:
+            print(f"      - {f}", flush=True)
 
-    emit(results)
-    return 0
+    return 1 if emit(results) else 0
 
 
 if __name__ == "__main__":

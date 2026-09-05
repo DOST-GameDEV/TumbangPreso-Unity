@@ -662,6 +662,29 @@ namespace TumbangPreso.UI
 
             Net.NetSession.Instance?.Stop();
 
+            // ⚠️⚠️ THE LAUNCH BLOCK IS CLEARED HERE BECAUSE THIS IS THE SINGLE EXIT, AND IT WAS
+            // NOT. `docs/TODO.md` § 149.8: the remaining lifecycle risk is not the first launch,
+            // it is process-wide state surviving into the NEXT match. `GameLaunch.Reset()` was
+            // reached only by `StartTraining`, so everything in that block outlived a match that
+            // was left rather than finished, and the one with teeth is
+            // **`GameLaunch.Spectator`**: `MatchInstaller.HumanSeat` answers -1 while it is set,
+            // so a player who spectated one match and then started a solo one got an arena in
+            // which **nobody was driving their seat**. `ConvertedMatchSetup` clears it on the way
+            // into the lobby, which covers the lobby route and not the ones that skip it.
+            //
+            // ⚠️ IT IS SAFE HERE PRECISELY BECAUSE OF WHAT THIS METHOD IS. `PendingAction` and
+            // `PendingJoinAddress` have already been consumed by the arena that is being left,
+            // and `SeatTokens` is the reconnect claim on a match this player is walking out of.
+            // Somebody returning to the main menu is giving all three up by definition.
+            //
+            // ⚠️ `GameLaunch.AllBots` IS DELIBERATELY NOT IN `Reset()` AND MUST NOT BE ADDED. It
+            // is written by `-tp-allbots` on the command line and belongs to the PROCESS rather
+            // than to a match: a harness that asked for a driven session expects the second match
+            // to be driven too, and clearing it here would make every multi-match probe measure
+            // three parked bodies. `TournamentGuard` is what clears it for a bracket match, which
+            // is the one place it must not be set.
+            GameLaunch.Reset();
+
             Networked = false;
             Go(MainMenu);
         }

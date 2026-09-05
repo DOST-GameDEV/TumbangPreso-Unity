@@ -1,6 +1,8 @@
+using System.Collections.Generic;
+using System.IO;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 using TumbangPreso.Settings;
-using UnityEditor;
 using UnityEngine;
 
 namespace TumbangPreso.Tests
@@ -21,10 +23,19 @@ namespace TumbangPreso.Tests
     ///
     /// ⚠️⚠️ IT READS THE ASSET RATHER THAN CALLING `QualitySettings.SetQualityLevel`, AND THAT IS
     /// THE WHOLE POINT OF IT BEING CHEAP. Walking the levels to read them would SELECT each one,
-    /// which is a write, on the exact field this test exists to protect. A `SerializedObject`
-    /// over the settings asset answers the question without touching anything, needs no play
-    /// session, and runs in EditMode in milliseconds, which is the bound `docs/TODO.md` § 124.11
-    /// says belongs in the forty-millisecond test rather than in a twelve-minute one.
+    /// which is a write, on the exact field this test exists to protect. Reading the settings
+    /// answers the question without touching anything, needs no play session, and runs in EditMode
+    /// in milliseconds, which is the bound `docs/TODO.md` § 124.11 says belongs in the
+    /// forty-millisecond test rather than in a twelve-minute one.
+    ///
+    /// ⚠️⚠️ AND IT READS THE FILE ON DISK RATHER THAN THE LOADED OBJECT, WHICH IS A CORRECTION
+    /// AND NOT A REFACTOR. `AssetDatabase.LoadAllAssetsAtPath` answers the LIVE settings
+    /// singleton, and `GameSettings.Apply` writes the player's own anti-alias choice into it at
+    /// boot, in batch mode as well. So in any session where the game has booted, a
+    /// `SerializedObject` over that object reports **what the last player setting applied**, not
+    /// what the project stores: this test read 0 on a checkout whose file says 4, and called it
+    /// drift. `docs/TODO.md` § 149.11. Reading the YAML is the only way to measure the claim in
+    /// the summary above, which is about the **stored** intent.
     /// </summary>
     public sealed class QualitySettingsAssetTests
     {
@@ -58,35 +69,26 @@ namespace TumbangPreso.Tests
         [Test]
         public void EveryStoredAntiAliasLevelMatchesTheDocumentedTable()
         {
-            var serialized = LoadSettings();
-            var levels = serialized.FindProperty("m_QualitySettings");
+            var stored = StoredAntiAliasLevels();
 
-            Assert.IsNotNull(levels,
-                             $"{AssetPath} has no 'm_QualitySettings' array. Unity has changed " +
-                             "the shape of this asset and this test needs rewriting rather than " +
-                             "deleting: the drift it guards is real (docs/TODO.md 125.14).");
+            Assert.AreEqual(AntiAliasModes.QualityLevelSamples.Length, stored.Count,
+                            $"{AssetPath} holds {stored.Count} antiAliasing rows and " +
+                            "AntiAliasModes.QualityLevelSamples describes " +
+                            $"{AntiAliasModes.QualityLevelSamples.Length}. Unity has changed the " +
+                            "shape of this asset and this test needs rewriting rather than " +
+                            "deleting: the drift it guards is real (docs/TODO.md 125.14).");
 
-            Assert.AreEqual(AntiAliasModes.QualityLevelSamples.Length, levels.arraySize,
-                            "the asset holds a different number of quality levels than " +
-                            "AntiAliasModes.QualityLevelSamples describes.");
-
-            for (int i = 0; i < levels.arraySize; i++)
+            for (int i = 0; i < stored.Count; i++)
             {
-                var stored = levels.GetArrayElementAtIndex(i).FindPropertyRelative("antiAliasing");
-
-                Assert.IsNotNull(stored, $"level {i} has no 'antiAliasing' field.");
-
                 Assert.AreEqual(
-                    AntiAliasModes.QualityLevelSamples[i], stored.intValue,
+                    AntiAliasModes.QualityLevelSamples[i], stored[i],
                     $"quality level {i} ('{ExpectedNames[i]}') stores antiAliasing " +
-                    $"{stored.intValue}, and AntiAliasModes.QualityLevelSamples says " +
-                    $"{AntiAliasModes.QualityLevelSamples[i]}. Read that field's note before " +
-                    "changing either: in the editor, writing QualitySettings.antiAliasing during " +
-                    "PLAY writes through to this asset, so a level whose stored count differs " +
-                    "from what the boot mode applies is re-dirtied by every play session. The " +
-                    "level at risk is whichever m_PerPlatformDefaultQuality selects for the " +
-                    "editor's CURRENT build target: Standalone is 5 (Ultra), Android is 2 " +
-                    "(Medium).");
+                    $"{stored[i]} ON DISK, and AntiAliasModes.QualityLevelSamples says " +
+                    $"{AntiAliasModes.QualityLevelSamples[i]}. The table is the source and the " +
+                    "asset is generated from it by QualityLevelStamp, so this failing means the " +
+                    "stamp has not run since somebody hand-edited the file. Run " +
+                    "Tumbang Preso/Checks/Restore stored quality levels, or edit the TABLE if " +
+                    "the intent is what changed. docs/TODO.md 125.14 and 149.11.");
             }
         }
 
@@ -111,14 +113,31 @@ namespace TumbangPreso.Tests
                         "AntiAliasModes.Default is not a row in AntiAliasModes.All.");
         }
 
-        private static SerializedObject LoadSettings()
+        /// <summary>
+        /// The `antiAliasing` value stored for each quality level, read out of the YAML.
+        ///
+        /// ⚠️ ONE VALUE PER LEVEL, IN FILE ORDER, AND THE COUNT IS ASSERTED BY THE CALLER. The
+        /// asset writes the six levels in the order `QualitySettings.names` reports them, and the
+        /// key appears exactly once inside each, so a regex over the file is a complete reading
+        /// rather than a sample. If Unity ever changes the shape of this file the count stops
+        /// matching and the caller says so, which is the loud failure rather than the quiet one.
+        /// </summary>
+        private static List<int> StoredAntiAliasLevels()
         {
-            var assets = AssetDatabase.LoadAllAssetsAtPath(AssetPath);
+            string root = Path.GetDirectoryName(Application.dataPath);
+            string path = Path.Combine(root, AssetPath.Replace('/', Path.DirectorySeparatorChar));
 
-            Assert.IsNotNull(assets, $"could not open {AssetPath}.");
-            Assert.IsNotEmpty(assets, $"{AssetPath} loaded no objects.");
+            Assert.IsTrue(File.Exists(path), $"could not find {AssetPath} at {path}.");
 
-            return new SerializedObject(assets[0]);
+            var found = new List<int>();
+            foreach (Match m in Regex.Matches(File.ReadAllText(path),
+                                              @"^\s*antiAliasing:\s*(?<n>\d+)\s*$",
+                                              RegexOptions.Multiline))
+            {
+                found.Add(int.Parse(m.Groups["n"].Value));
+            }
+
+            return found;
         }
     }
 }

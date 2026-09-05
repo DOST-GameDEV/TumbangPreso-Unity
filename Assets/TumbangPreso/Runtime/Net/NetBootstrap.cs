@@ -69,6 +69,18 @@ namespace TumbangPreso.Net
         public const string MapSwitch = "-tp-map";
         public const string ProfileSwitch = "-tp-profile";
 
+        /// <summary>
+        /// Start this process in the canonical tournament state: Classic, the tournament rule
+        /// set pinned, and every practice or debug modifier cleared.
+        ///
+        /// ⚠️ IT LEAVES NO STATIC SET, WHICH IS WHY IT IS NOT ITSELF A TOURNAMENT MODIFIER.
+        /// `TournamentGuard.Apply` only ever writes switches back to their SAFE value, so a
+        /// process launched with this reads clean to `audit_tournament_defaults.py` and to
+        /// `TournamentGuard.Refusal` alike. `TournamentPreset.LaunchSwitchModifier` is where a
+        /// switch that DID leave one would have to say so.
+        /// </summary>
+        public const string TournamentSwitch = "-tp-tournament";
+
         /// <summary>True when the command line asked for a session, so the menus are skipped.</summary>
         public static bool Requested { get; private set; }
 
@@ -99,6 +111,30 @@ namespace TumbangPreso.Net
             if (Has(args, "-tp-allbots") || Has(args, "-allbots"))
             {
                 GameLaunch.AllBots = true;
+            }
+
+            // ⚠️⚠️ `-tp-tournament` IS WHAT LETS A COLD START ASSERT THE PRESET RATHER THAN
+            // "SOME MATCH RAN". `docs/TODO.md` § 145.8: the recorded green cold start at
+            // `87346b8` is a macOS player playing HERO STRIKE, and `docs/VISION.md` § 1.1 says
+            // CLASSIC is the tournament ruleset, so that run says nothing about the path a
+            // bracket match takes. This puts the process into the state `TournamentGuard.Apply`
+            // defines, which is the same call the operator's route into a bracket match makes.
+            //
+            // ⚠️ IT IS READ BEFORE `-tp-map` AND BEFORE THE HOST BRANCH, because
+            // `PinSelectedRules` sets the MODE and the round count, and a launch that picked a
+            // map first would already have committed to the shipped default (Hero Strike).
+            //
+            // ⚠️⚠️ AND IT IS DELIBERATELY INCOMPATIBLE WITH `-tp-allbots`, WHICH IS NOT A BUG TO
+            // FIX. `GameLaunch.AllBots` is one of the switches `TournamentPreset.Modifiers`
+            // forbids, so `Apply` clears it and says so in the log. A harness that wanted both
+            // would be asking for a tournament match with a modifier set, which is the exact
+            // thing the preset exists to refuse.
+            if (Has(args, TournamentSwitch))
+            {
+                var cleared = TournamentGuard.Apply();
+                Debug.Log($"[NetBoot] tournament preset applied: {Core.TournamentPreset.Mode}, " +
+                          $"{UI.SceneFlow.SelectedRoundCount} rounds" +
+                          (cleared.Count > 0 ? "; cleared " + string.Join(", ", cleared) : ""));
             }
 
             string map = Value(args, MapSwitch) ?? UI.SceneFlow.Eskinita;

@@ -514,5 +514,312 @@ namespace TumbangPreso.PlayTests
             Assert.GreaterOrEqual(Diagnostics.MatchHighlights.Log.Recorded, markersBefore,
                 "The log went backwards, which means something cleared it mid-match.");
         }
+
+        // -------------------------------------------------------------------
+        // § 145.11  THE AUTHORITATIVE PATH, WHICH IS THE ONE A MODIFIED CLIENT REACHES
+        //
+        // ⚠️⚠️ THESE CALL `HostResolveSlide` DIRECTLY AND THAT IS NOT A BREACH OF THE FIXTURE'S
+        // OWN RULE, IT IS THE POINT OF THEM. The header above says a test that called a method
+        // would be testing a method rather than a press, and that is right about the LOCAL path:
+        // every refusal a person can meet lives in `StepSlide` on the press side. The network
+        // path is different. `MatchRpc.OnReqSlideMsg` reads a slot, a pose and a facing off the
+        // wire and calls exactly this method, so **a method call IS the press for a remote
+        // peer**, and a modified client is a peer that sends the message without having run
+        // `StepSlide` at all.
+        //
+        // ⚠️⚠️ AND THAT IS THE HOLE THESE WERE WRITTEN FOR. `HostResolveSlide` checked the role,
+        // the cooldown, the hand, the fatigue and the bar, and never asked whether there was
+        // anything to retrieve. The local path could not dash for free and the wire could:
+        // 1.75 m of host-authoritative mobility, applied on request, with nothing to collect.
+        // `docs/VISION.md` § 1.1 forbids Classic a power, and a networked-only free dash is a
+        // power only a cheat has.
+        // -------------------------------------------------------------------
+
+        /// <summary>Puts a solid wall between a body and a point that far ahead of it.</summary>
+        private GameObject WallInFrontOf(CharacterMotor who, float metresAhead)
+        {
+            var wall = Track(GameObject.CreatePrimitive(PrimitiveType.Cube));
+            wall.name = "SlideTestWall";
+            wall.transform.position = who.transform.position
+                                      + (who.transform.forward * metresAhead);
+            wall.transform.rotation = Quaternion.LookRotation(who.transform.forward);
+            wall.transform.localScale = new Vector3(8.0f, 4.0f, 0.4f);
+            Physics.SyncTransforms();
+            return wall;
+        }
+
+        /// <summary>Everything a refused slide must have left untouched, in one assertion.</summary>
+        private static void AssertNothingWasSpent(CharacterMotor who, float staminaBefore,
+                                                  Vector3 posBefore, string what)
+        {
+            var verbs = who.GetComponent<CombatVerbs>();
+
+            Assert.AreEqual(0.0f, verbs.SlideCooldownLeft, 0.0001f,
+                $"{what}: a refused slide left a cooldown behind, so the player cannot use the " +
+                $"verb for {Balance.SlideCooldown:0.00} s for something that never happened.");
+
+            Assert.IsFalse(verbs.SlideActive,
+                $"{what}: the sweep window is open on a slide the host refused, and that window " +
+                $"is the only gate on collecting a tsinelas.");
+
+            Assert.AreEqual(staminaBefore, who.Stamina.Current, 0.001f,
+                $"{what}: {Balance.SlideStaminaCost} stamina was taken for a refused verb. " +
+                $"`CLAUDE.md` § 4: the real price of a committed move is the sprint it costs.");
+
+            Assert.IsFalse(who.IsCommitted,
+                $"{what}: the body is still committed, so the player is wading through steering " +
+                $"narrowed to {Balance.SlideSteerScale} for a move they were told they never made.");
+
+            Assert.AreEqual(0.0f, Vector3.Distance(posBefore, who.transform.position), 0.05f,
+                $"{what}: the body moved. A refused slide must not survive as a host-authoritative " +
+                $"impulse, which is the whole difference between a retrieval and a dash.");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE ONE THIS WHOLE SECTION EXISTS FOR: A SLIDE REQUEST WITH NOTHING TO RETRIEVE.
+        /// It is the generic-dash exploit stated as a test. Before the shared predicate the host
+        /// answered true here and applied `SlideSpeed` down the requested facing.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator TheHostRefusesASlideRequestWithNoTsinelasToRetrieve()
+        {
+            yield return OpenRound();
+
+            var who = Attacker(1);
+            var verbs = who.GetComponent<CombatVerbs>();
+            float stamina = who.Stamina.Current;
+            Vector3 at = who.transform.position;
+
+            Assert.IsFalse(verbs.HostResolveSlide(at, who.transform.forward),
+                "The host granted a retrieval slide with no tsinelas anywhere in the arena. " +
+                "That is 1.75 m of free mobility available only over the wire.");
+
+            yield return null;
+            AssertNothingWasSpent(who, stamina, at, "no tsinelas at all");
+        }
+
+        /// <summary>⚠️ AND WITH ONE IN THE ARENA BUT NOT ALONG THE SLIDE.</summary>
+        [UnityTest]
+        public IEnumerator TheHostRefusesASlideAimedAwayFromEveryTsinelas()
+        {
+            yield return OpenRound();
+
+            var who = Attacker(1);
+            var shoe = BuildSlipper(1);
+            Place(shoe, who, Balance.PickupRadius + 0.4f);
+            yield return null;
+
+            float stamina = who.Stamina.Current;
+            Vector3 at = who.transform.position;
+
+            Assert.IsFalse(verbsOf(who).HostResolveSlide(at, -who.transform.forward),
+                "The shoe is behind the body and the slide was aimed forward-negative, so there " +
+                "is nothing along it. A facing a client chooses cannot be a way to buy a dash.");
+
+            yield return null;
+            AssertNothingWasSpent(who, stamina, at, "aimed away from the tsinelas");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE PREDICATE AND THE SWEEP DISAGREED ABOUT A WALL AND THAT WAS ITS OWN FAULT.
+        /// `SweepSlideRetrieval` raycasts and `AnySlideTargetAhead` did not, so a player on the
+        /// wrong side of a jeepney predicted a slide, spent the stamina, narrowed their own
+        /// steering for most of a second and collected nothing. That is not a fairness bug, it is
+        /// the verb feeling broken: the local path promised what the host was always going to
+        /// refuse.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator NeitherPathStartsASlideAtATsinelasBehindAWall()
+        {
+            yield return OpenRound();
+
+            var who = Attacker(1);
+            var shoe = BuildSlipper(1);
+
+            float ahead = Balance.PickupRadius + 0.4f;
+            Place(shoe, who, ahead);
+            WallInFrontOf(who, ahead * 0.55f);
+            yield return null;
+
+            float stamina = who.Stamina.Current;
+            Vector3 at = who.transform.position;
+
+            Assert.IsFalse(verbsOf(who).SlideMayStartFrom(at, who.transform.forward, out _),
+                "The local prediction still offers a slide through a wall, so a legitimate " +
+                "player spends the press and the host refuses it every time.");
+
+            Assert.IsFalse(verbsOf(who).HostResolveSlide(at, who.transform.forward),
+                "And the host granted it, which is the same wall from the other side.");
+
+            yield return null;
+            AssertNothingWasSpent(who, stamina, at, "a tsinelas behind a wall");
+        }
+
+        /// <summary>⚠️ THE ACCEPTING CASE, so none of the refusals above is vacuous.</summary>
+        [UnityTest]
+        public IEnumerator TheHostGrantsASlideAtALegalLooseTsinelasAhead()
+        {
+            yield return OpenRound();
+
+            var who = Attacker(1);
+            var shoe = BuildSlipper(1);
+            Place(shoe, who, Balance.PickupRadius + (Balance.SlideDistance * 0.4f));
+            yield return null;
+
+            Assert.IsTrue(verbsOf(who).SlideMayStartFrom(who.transform.position,
+                                                         who.transform.forward, out var target),
+                "A loose tsinelas directly ahead, inside PickupRadius + SlideDistance, is the " +
+                "case this verb exists for.");
+            Assert.AreEqual(shoe, target);
+
+            Assert.IsTrue(verbsOf(who).HostResolveSlide(who.transform.position,
+                                                        who.transform.forward),
+                "And the host has to grant the same one, or a legitimate player is refused.");
+
+            yield return SlideToFinish();
+            Assert.AreEqual(shoe, who.GetComponent<Carrier>().Held);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE ELIGIBILITY RULE IS `Slipper.IsGrabbableIgnoringReach`'S AND THE SLIDE MAY
+        /// NOT RESTATE IT. `AnySlideTargetAhead` used to test `State == Loose` by hand, which is
+        /// one clause of a four-clause rule that happened to agree. A held or in-flight tsinelas
+        /// is not a retrieval target for a walk-up and must not become one for a slide.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator AnIneligibleTsinelasIsNotASlideTarget()
+        {
+            yield return OpenRound();
+
+            var who = Attacker(1);
+            var other = Attacker(2);
+            var shoe = BuildSlipper(1);
+
+            float ahead = Balance.PickupRadius + 0.4f;
+            Place(shoe, who, ahead);
+            yield return null;
+
+            Assert.IsTrue(verbsOf(who).SlideMayStartFrom(who.transform.position,
+                                                         who.transform.forward, out _),
+                "Loose and ahead: the control case for the two below.");
+
+            // Somebody else is holding it. ⚠️ THE OTHER BODY HAS TO BE STANDING AT THE SHOE
+            // FIRST: `HostGrab` re-asks `CanBeGrabbedBy`, which measures a real distance, so a
+            // grab from the next lane would fail and the test would pass for the wrong reason.
+            other.transform.position = new Vector3(shoe.transform.position.x,
+                                                   other.transform.position.y,
+                                                   shoe.transform.position.z);
+            Physics.SyncTransforms();
+            yield return null;
+
+            Assert.IsTrue(shoe.HostGrab(other), "The fixture needs the grab to have taken.");
+            yield return null;
+
+            Assert.AreNotEqual(SlipperState.Loose, shoe.State);
+            Assert.IsFalse(verbsOf(who).SlideMayStartFrom(who.transform.position,
+                                                         who.transform.forward, out _),
+                "A slide offered a tsinelas out of somebody else's hand. 🧑 already reported " +
+                "this shape once as *\"i can pick up slippers from ppl's hands wtf?\"*.");
+
+            float stamina = who.Stamina.Current;
+            Vector3 at = who.transform.position;
+            Assert.IsFalse(verbsOf(who).HostResolveSlide(at, who.transform.forward));
+
+            yield return null;
+            AssertNothingWasSpent(who, stamina, at, "a tsinelas in somebody else's hand");
+        }
+
+        /// <summary>
+        /// ⚠️ THE TAYA HAS THE TAG, NEVER THE AMMUNITION, AND THE HOST HAS TO SAY SO TOO. The
+        /// local path refused a defender before this pass; so did the host, and the test is here
+        /// because both halves of a rule need a test that could fail.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator TheHostRefusesADefendersSlideRequest()
+        {
+            yield return OpenRound();
+
+            var taya = Attacker(MatchRules.DefenderSlotFor(1));
+            Assert.IsTrue(taya.IsDefender);
+
+            var shoe = BuildSlipper(taya.PlayerSlot);
+            Place(shoe, taya, Balance.PickupRadius + 0.4f);
+            yield return null;
+
+            float stamina = taya.Stamina.Current;
+            Vector3 at = taya.transform.position;
+
+            Assert.IsFalse(verbsOf(taya).HostResolveSlide(at, taya.transform.forward));
+            yield return null;
+            AssertNothingWasSpent(taya, stamina, at, "the taya asking for a slide");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE REFUSAL PATH ITSELF, AND IT WAS UNREACHABLE FOR THE SLIDE'S WHOLE LIFE.
+        /// `MatchRpc.OnVerbDeniedMsg` bounded the verb byte at `DeniedVerb.Shove`, which is 2,
+        /// and `Slide` is 3, so every refusal the host sent was discarded before it could reach
+        /// `RollBackRefusedVerb`. The arm below existed and nothing could run it.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator ARefusedSlideHandsBackTheCooldownTheStaminaAndTheCommitment()
+        {
+            yield return OpenRound();
+
+            var who = Attacker(1);
+            var shoe = BuildSlipper(1);
+            Place(shoe, who, Balance.PickupRadius + (Balance.SlideDistance * 0.4f));
+            yield return null;
+
+            float stamina = who.Stamina.Current;
+            var verbs = verbsOf(who);
+
+            yield return Press(who, Verb.Lunge);
+
+            Assert.Greater(verbs.SlideCooldownLeft, 0.0f, "The press has to have been taken.");
+            Assert.IsTrue(who.IsCommitted, "And the commitment applied, or there is nothing to " +
+                                           "hand back.");
+            Assert.Less(who.Stamina.Current, stamina, "And the bar spent.");
+
+            verbs.RollBackRefusedVerb(Net.MatchRpc.DeniedVerb.Slide);
+
+            Assert.AreEqual(0.0f, verbs.SlideCooldownLeft, 0.0001f);
+            Assert.IsFalse(verbs.SlideActive,
+                "⚠️ THE ACTIVE WINDOW IS THE HALF THAT IS NOT ABOUT FAIRNESS TO THE REFUSED " +
+                "PLAYER. It is the only gate on the retrieval sweep, so leaving it open lets a " +
+                "slide the host never ran keep collecting on this screen.");
+            Assert.AreEqual(stamina, who.Stamina.Current, 0.001f);
+            Assert.IsFalse(who.IsCommitted);
+        }
+
+        /// <summary>
+        /// ⚠️ CLASSIC GAINS NO POWER SEMANTICS FROM THIS, AND THE SLIDE IS AVAILABLE IN IT. The
+        /// verb is movement with a commitment attached; it grants no status, charges no meter and
+        /// reads no `HeroAbilitySystem`. `docs/VISION.md` § 1.1.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator TheSlideIsPlainMovementWithNoAbilitySemantics()
+        {
+            yield return OpenRound();
+
+            var who = Attacker(1);
+            var shoe = BuildSlipper(1);
+            Place(shoe, who, Balance.PickupRadius + (Balance.SlideDistance * 0.4f));
+            yield return null;
+
+            Assert.IsNull(who.GetComponent<Abilities.HeroAbilitySystem>(),
+                "The fixture builds a Classic body. If a kit ever arrives on it by default, the " +
+                "next assertion stops meaning what it says.");
+
+            yield return Press(who, Verb.Lunge);
+            yield return SlideToFinish();
+
+            Assert.AreEqual(shoe, who.GetComponent<Carrier>().Held);
+            Assert.AreEqual(StunElement.None, who.StunElement,
+                "A commitment is not a status effect. `CharacterMotor.Commit` narrows steering " +
+                "and leaves `CanAct()` alone, which is what a taya can read and a stun is not.");
+            Assert.IsFalse(who.IsTripped);
+        }
+
+        private static CombatVerbs verbsOf(CharacterMotor who) => who.GetComponent<CombatVerbs>();
     }
 }

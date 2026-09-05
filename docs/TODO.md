@@ -37,7 +37,11 @@ either of those.
 |---|---|---|---|
 | **OWNED** | 142, 138 | ⚠️⚠️ **CONTROLLER SUPPORT HAS AN OWNER AND IS NOT THIS QUEUE'S WORK. DO NOT PICK IT UP.** It is live on `controller-mapping`: `GenericPadBridge`, the CONTROLLER MAP screen, `MenuNav`, and a pad that can back out of a screen. | Nothing here. Read § 142 for what landed; leave the code to the person working on it. |
 | **P1** | 145.6 | **A real multi-seed sweep has still not been RUN.** The harness is built and verified on synthetic arms; nothing has measured the shipped game across seeds since the numbers `CLAUDE.md` § 7.1 quotes | 5 to 8 Unity launches an arm, a `docs/reports/bot-sweep-*.md`, and the retrieval slide (§ 146) as the first thing compared against a pre-slide sweep. ⚠️ It is the only way to know whether § 146 changed the game |
-| **P1** | 145.4b | **Three peers report three different rosters of who is human.** `IsBot` is derived per peer from its own view of the lobby, and it is on the wire, in `IntegrityRules.Digest`, and in the weight `BotFillRules` puts on a rating | ⚠️ **One measurement first, not a fix**: the same three processes WITHOUT `-tp-allbots`, to separate the harness from the game. § 145.4b has the table and the numbers |
+| **P1** | 149.8 | **Nothing tests a SECOND match in one process.** The remaining lifecycle risk is not the first launch, it is `GameLaunch`, `SceneFlow`, the preview and practice switches, spectator and replay state, the installer's registries, static events, cached seat identity, authority revocation, the format, the mode, the tournament preset and bot fill surviving into the next match | Two sequential matches with meaningfully different settings (Hero Strike with bots and a spectator, then Classic with a real player) and nothing leaking between them. § 149.8 |
+| **P2** | 149.4 | **The one-shot / duplicate / replayable request sweep.** Three of its class are closed (§ 149.1, § 149.2, § 149.3); the rest of the list has not been walked | Concrete reachable bugs with focused tests, and no generalised framework. § 149.4 |
+| **P2** | 149.5 | **Repeated scene lookups in network hot paths.** Seat to `CharacterMotor`, seat to `Slipper`, the current `Lata` | ⚠️ **Measure first**: the exact APIs, the real call frequency, and whether the path is per packet or per frame. If it is negligible, record the number and leave the code alone. § 149.5 |
+| **P2** | 149.6 | **Practice sandbox teardown contract drift.** A comment claims the sandbox stays denied through disconnect teardown because the session is still networked, while `NetSession.IsNetworked` is tied to `IsListening`, which goes false during teardown | Either a corrected comment plus a lifecycle test, or a fixed predicate. Both outcomes are work. § 149.6 |
+| **P2** | 149.7 | **The test suite's own value.** Source-text assertions that duplicate behavioural coverage, and a protocol floor checked twice | ⚠️ **For every test removed, name the stronger test that now owns that invariant.** Never delete a failing one to green the suite. § 149.7 |
 | **P2** | 147.3 | **The game records its own good moments and nothing draws them.** Markers exist, are deterministic, are deduplicated and name a replay window | One reader. § 147.3 lists the three cheapest in order, and `CLAUDE.md` § 6.2's four questions come first |
 | **P2** | 146.6 | **The retrieval slide plays the LUNGE clip**, because both are a body-led dash and the rig has one | A slide of its own, which is art work rather than code work. ⚠️ The FEEL of the numbers is `Attention.md` § 17.2 and not this row |
 | **P2** | 141 | **The duplicate name on the scoreboard.** The invariant model can express both ownership faults now (§ 141.7) and the cause of the spectator overlay is fixed | The scoreboard cannot draw one person twice, with a test that could fail. ⚠️ His eye on the fix is `Attention.md` |
@@ -55,6 +59,17 @@ which is the whole reason the split exists.
 ✅ **Closed by the 2026-09-04 hardening pass and no longer listed here: § 143.1, § 143.2, § 143.3, § 143.4, § 143.5, § 143.6, § 143.7, § 143.8, § 143.10, § 143.11, § 143.12, § 143.13, § 143.14, § 143.16, § 143.18.** Each one keeps its own subsection under § 143 with the measurement that closed it. **A done row is a row every future session reads and skips**, which is how an execution index turns back into the 22,930-line file this queue exists to replace.
 
 ✅ **Closed by the 2026-09-05 pass: § 134.12, § 143.9, § 143.15b, § 144.7, § 145.1, § 145.2, § 145.3, § 145.4.** Same rule: each keeps its subsection with the measurement, and its row is out of the queue above. ⚠️ **§ 145.5, § 146.6 and § 147.3 are the halves that stayed open**, and each says what it is waiting for.
+
+✅ **Closed by the 2026-09-05 FOLLOW-UP pass: § 145.4b, § 145.7, § 145.8, § 145.9, § 145.10, § 145.11, § 145.12, § 145.13, § 145.14, § 149.1, § 149.2, § 149.3, § 149.9, § 149.11.** Four of those are competitive or release-integrity defects that were REACHABLE and are now closed with a regression each:
+
+| § | What it was |
+|---|---|
+| **145.11** | the retrieval slide was a **free 1.75 m dash over the wire**: the host never asked whether there was anything to retrieve |
+| **145.12** | and every refusal of it was **discarded before the rollback**, because the verb byte was bounded at `Shove` (2) and `Slide` is 3 |
+| **149.1** | **packet frequency bought distance**. One second of server time was worth 70 m at 50 Hz and **4278 m at 5 kHz**, in a 14 m arena |
+| **149.2** | the identity message **re-admitted a live connection under a token the client chose**, so a peer could take another's chair or move itself, and every repeat re-ran a room-wide broadcast fan-out |
+| **149.9** | a spectator could set `Time.timeScale` to **NaN** on the host and every peer: `Mathf.Clamp` handles both infinities and passes NaN through |
+| **149.11** | **every Unity run dirtied a tracked file**, so the qualification gate could never come out QUALIFIED however green the tests were |
 
 ### The reds that are about the game rather than the suite
 
@@ -93,6 +108,7 @@ Android thermals need a handset, and a phone joining a PC needs a person to watc
 
 | § | Open work | Where it bites |
 |---|---|---|
+| **149** | The fresh-audit follow-up: movement budget, re-admission, the one-shot requests | ⚠️⚠️ **Six confirmed defects, five of them competitive or release-integrity, all closed with a regression each.** § 149.4 to § 149.8 are what is left, and § 149 carries the brief as well as the record |
 | **147** | The game records its own good moments and nothing draws them | Markers exist, are deduplicated, are deterministic and name a replay window. **No screen reads them.** § 147.3 lists the three cheapest readers, in order |
 | **146** | The retrieval slide is built, derived and tested; nobody has FELT it | 🧑's own test is *"I can safely approach and pick this up normally, OR I can commit"*. Nobody uses it means the recovery is too long; normal retrieval stopping means it is too cheap. Both are one constant and both are `Attention.md` § 17.2 |
 | **145** | Four gates that could come out green while proving less than they printed | Three closed. ⚠️ **§ 145.5 is a machine fact**: a nationals certification comes off the Windows laptop, because this Mac has no Windows Standalone module and no dotnet |
@@ -715,6 +731,501 @@ new map all just work.
 
 ---
 
+## 149 · THE FRESH-AUDIT FOLLOW-UP: MOVEMENT BUDGET, RE-ADMISSION, AND THE ONE-SHOT REQUESTS ⚠️⚠️ IN PROGRESS, 2026-09-05, branch `main`
+
+⚠️⚠️ **THIS SECTION IS THE BRIEF AS WELL AS THE RECORD, ON PURPOSE.** It was handed over mid
+session and every item in it is either a confirmed competitive defect or a lead that has to be
+proved or disproved with a reproduction rather than patched on suspicion. **The queue rows at the
+top of this file point here; this is where the reasoning and the acceptance criteria live.**
+
+⚠️ **THE STANDING RULE FOR EVERY ITEM BELOW: BUILD THE REPRODUCTION FIRST.** A suspicious-looking
+guard that turns out to be safe is worth a test and a corrected comment, not a rewrite. A guard
+that turns out to be exploitable is worth a deterministic regression that fails against the old
+behaviour. Both outcomes get written down here.
+
+⚠️⚠️ **LAST TSINELAS IS OUT OF SCOPE FOR THIS BATCH AND ITS HISTORY IS NOT COLLATERAL.** 🧑 was
+explicit: this is an audit and hardening pass, not feature work. `LastTsinelasMatchHalfTests` and
+`LastTsinelasDirector` stay exactly as they are; nothing here is a reason to delete either. § 128
+still owns that feature's open half.
+
+### 149.1 ⚠️⚠️ P0 CONFIRMED AND FIXED: PACKET FREQUENCY BOUGHT DISTANCE
+
+**The lead.** `MatchRpc.AcceptMove` grants a movement allowance per PACKET:
+
+```csharp
+double dt = _lastAcceptedMoveAt.TryGetValue(slot, out double previous)
+    ? Math.Max(0.0, Math.Min(2.0, now - previous))
+    : Time.fixedDeltaTime;
+float allowance = MoveBaseLeeway + MoveMaxMetresPerSecond * (float)dt;
+```
+
+`MoveBaseLeeway` is **0.85 m** and it is added to EVERY accepted packet, whatever the interval.
+So the budget is not a rate, it is a rate plus a per-packet constant, and a client chooses how
+many packets to send.
+
+**The invariant this has to satisfy:** *packet frequency must not increase the total physical
+distance a client can authoritatively travel over a given amount of authoritative elapsed time.*
+
+**Required work:** trace the authoritative path on current `main`, build a deterministic
+reproduction that sends N packets and 10N packets over the same server-elapsed time and compares
+the total distance each is allowed, then fix with an elapsed-time budget rather than a packet-rate
+limit. A rate limit answers "how often" and the question is "how far".
+
+**Cases that have to be covered:** the expected cadence, a very high frequency, many tiny moves
+followed by a big one, zero and near-zero distance packets, duplicates, rejected packets, a burst
+after silence, delayed and reordered packets, round transitions, respawn and reposition, stun and
+commitment, reconnect and seat transitions, and legitimate host corrections.
+
+⚠️ **AND A REJECTED REQUEST MUST NOT REFRESH THE ALLOWANCE A LATER ONE SPENDS**, unless that is
+explicitly intended and proven safe.
+
+#### THE REPRODUCTION, BEFORE THE FIX
+
+The old formula replayed over one second of server time, at the rates a client chooses:
+
+| Submit rate | Per-packet allowance | Distance bought in one second | Arena widths |
+|---|---|---|---|
+| 50 Hz (the physics rate) | 0.85 + 28 x 0.020 = **1.410 m** | **70.5 m** | 5.0 |
+| 60 Hz | 1.317 m | 79.0 m | 5.6 |
+| 120 Hz | 1.083 m | 130.0 m | 9.3 |
+| 500 Hz | 0.906 m | **453.0 m** | 32.4 |
+| 1000 Hz | 0.878 m | 878.0 m | 62.7 |
+| 5000 Hz | 0.856 m | **4278.0 m** | **305.6** |
+
+**The arena is 14 m across.** Every individual step in the 5 kHz row is 0.856 m, which is well
+inside a plausible physics step, so nothing in the old guard could see it. The client picks the row.
+
+⚠️ **AND SILENCE WAS ITS OWN LEVER.** `Math.Min(2.0, now - previous)` bounded the RATE term and
+nothing bounded the total, so **one packet after two seconds of quiet bought 56.85 m**, four arenas,
+in a single step.
+
+#### THE INVARIANT, AFTER THE FIX
+
+> Over any interval of authoritative elapsed time T, the total distance a seat can have accepted is
+> at most `MoveBudget.Ceiling + MoveBudget.MetresPerSecond x T`, **whatever the packet count**.
+
+`Core.MoveBudget` is a balance of METRES that accrues with the host's own monotonic clock and is
+spent by accepted movement. `MatchRpc.AcceptMove` debits it last, after the finite check, the arena
+bounds and the velocity bound, so **a message refused for any other reason costs nothing** — which
+is § 149.1's second requirement, and it falls out of the shape rather than needing its own rule.
+
+⚠️⚠️ **IT IS NOT A PACKET-RATE LIMIT AND THAT WAS A DELIBERATE CHOICE.** A rate limit answers "how
+often may you speak" and the question is "how far may you have gone": one tuned for 50 Hz refuses a
+client that legitimately submits at 144, and a loose one still multiplies the budget by its own
+slack.
+
+| Constant | Value | Why |
+|---|---|---|
+| `MetresPerSecond` | **28.0** | unchanged. `Balance.LungeSpeed` is 7.746 m/s and that is the fastest impulse in the game, so this is 3.6x the fastest legitimate movement |
+| `BurstMetres` | **0.85** | unchanged, and it is the term that used to renew per packet. One physics step of slack, spent and refilled by the clock rather than gifted per message |
+| `CatchUpSeconds` | **1.0** | new, and it is what makes "a burst after silence" safe. The old equivalent was 2.0 s of RATE with no cap, worth 56.85 m; the ceiling is **28.85 m** now |
+
+**Deterministic regression, `Core.Tests/MoveBudgetTests.cs`, 11 cases in 38 ms**: the same second at
+50 / 500 / 5000 Hz buys the same distance and all three sit under the bound; a thousand tiny steps
+bank nothing; a thousand REFUSALS leave a seat with exactly the credit a silent seat has; zero-
+distance packets are free; duplicates are charged twice; silence banks at most the ceiling; a
+one-second stall is still forgiven; NaN, both infinities and every negative are refused **and poison
+nothing**; a backwards clock subtracts nothing; a forgotten seat starts the next owner on the burst
+and not on the ceiling; and 500 honest steps at lunge speed are all accepted.
+
+⚠️ **THE ADVERSARIAL CASES COST 40 ms BECAUSE THE RULE IS ENGINE-FREE.** The same sequences through
+a real transport are two built players, a shaped link and fifteen minutes.
+
+⚠️ **A HOST TELEPORT NEEDS NO RESET AND THAT IS MEASURED RATHER THAN ASSUMED.** After a respawn or
+a round start the host has already moved its own copy, so the client's first stale packet is a big
+delta and is refused once, costing nothing, and the correction it receives makes the next one small.
+`Forget()` is called only where the CHAIR changes hands (`HostTakeSeatBackFromBot`, `HostPeerLeft`),
+where the new owner must inherit neither a drained budget nor a bank.
+
+### 149.2 ⚠️⚠️ P0 CONFIRMED AND FIXED: IT COULD, UNDER A TOKEN THE CLIENT CHOSE
+
+**The lead.** The identity/hello message may be accepted again after admission has already
+completed for that transport connection.
+
+**Trace the whole path:** transport connection, identity, approval, the player/session record,
+seat assignment, reconnect, spectator transitions, disconnect and seat hold, re-admission.
+
+**Adversarial sequences to drive:** identity twice on one connection, repeatedly, an immediate
+replay after a successful admission, a duplicated packet, the same logical player from a SECOND
+connection while the first is live, a retry during join, during reconnect, during a spectator
+transition, a stale identity during seat handover, and a stale identity after a newer session
+already owns the seat.
+
+**What to look for:** admission firing twice, duplicate session objects, duplicated callbacks or
+subscriptions, duplicate spawning, player-count corruption, **duplicate scoreboard identity
+(§ 141)**, seat reassignment, stale seat reclamation, taya corruption, state resurrection, two
+transports claiming one logical player, and any score or state exploit that duplication opens.
+
+**The invariant:** *initial transport identity admission happens once per live transport session.
+Any valid retry is idempotent. Reconnect and reclamation follow their explicit state machine
+rather than silently re-running first-admission behaviour.*
+
+#### WHAT THE TRACE FOUND
+
+`NetSession.ApproveConnection` reads the durable token out of the connection payload **once** and
+stores it in `_helloByClient`; `OnClientConnected` seats the peer with it. The `Identify` RPC that
+follows carried **its own copy of the token**, and `MatchRpc.HandleIdentify` passed that copy
+straight to `LobbySession.Admit`, which was never told the two could differ.
+
+`Admit` treats a matching token as a fast reconnect **by design**: it copies that record's seat,
+spectator flag, picks and rating onto the sender and removes the matched record from `_peers`. So:
+
+| Sequence | What happened |
+|---|---|
+| `Identify` with ANOTHER live peer's token | the sender takes the victim's chair. ⚠️ **The victim is not disconnected**, so its socket keeps submitting movement and verbs for a seat the lobby now says belongs to somebody else. Two transports, one logical player |
+| `Identify` with a token nobody holds | no match in `_peers`, so `RuleOnArrival` runs afresh: with a free seat the sender **moves itself to a different chair** while `MatchInstaller` still drives its old body, and with none it turns itself into a **spectator mid-match** |
+| `Identify` repeatedly | the whole arrival fan-out re-ran every time: three ClientRpcs, the ready tally, the lobby picks, the seat picks **and a full world snapshot**, all broadcast to every peer, plus a live account-endpoint call through `VerifyArrivalAsync`. A client can send this message as fast as it likes |
+
+⚠️⚠️ **HONEST ABOUT REACH.** The first row needs the victim's durable token, and that token **never
+crosses the wire** (`LobbySeatInfo` does not carry it and nothing in `MatchRpc` writes it), so it is
+a shared-machine or leaked-`settings.json` attack rather than a remote one. **The second and third
+rows need nothing but the ability to send the message the client already sends**, and the invariant
+break underneath all three is not conditional on anything.
+
+#### WHAT SHIPPED
+
+1. **The token is the one this host approved, never the one in the message.**
+   `NetSession.ApprovedTokenFor(clientId)` answers from `_helloByClient`, and answers the host's own
+   token for the local client. ⚠️ It falls back to the message's token only when this host approved
+   no connection for that id, which is the solo and LAN-host path where `IdentifyServerRpc` calls
+   straight through with `peerId` 0 and there was no approval step to pin anything.
+2. **Admission is once per transport session and a repeat is a RETRY.** `_identified` is a set of
+   peer ids, cleared by `HostPeerLeft` because a transport that left and came back is a new session.
+   A repeat still updates the picks and the authorised cosmetics and still re-sends the SENDER its
+   own mode, map, difficulty and seating, which is exactly what a peer resending because it thinks
+   the first was lost needs. **The four room-wide broadcasts and the endpoint call are first-time
+   only.**
+3. **`HostLateJoin` still runs on every identify** and must keep doing so: its own header records
+   that gating it left the host's AI driving a chair a re-identifying player had already taken.
+
+⚠️ **`_identified` IS ITS OWN SET AND NOT `_spawned`.** That one means "has been sent the world
+snapshot", and its header records what happened the last time somebody reused it for a second
+question. One set, one meaning.
+
+### 149.3 ✅ P1 CONFIRMED AND FIXED: THE BUFFER-SKIP VOTE HAD A JOIN RACE
+
+`NetworkManager.IsListening` becomes true before a client has finished approval, and this
+repository's own networking notes say so. The other one-shot request paths use the stronger
+connected-client condition; the buffer-skip vote appears to gate on `IsListening`. A player who
+presses skip inside the join window has the press consumed with no route to deliver it.
+
+**Done looks like:** the same readiness invariant the other one-shot paths use, a focused
+regression over not-listening / listening-but-not-admitted / connected / host / client /
+teardown, and a sweep of the neighbouring one-shot methods for the same copy/paste.
+
+⚠️ **DO NOT MOVE LONG-LIVED REPLICATION PATHS ONTO THE STRONGER GATE.** A snapshot stream and a
+one-shot command are different problems, and tightening the first would break a listen host.
+
+#### CONFIRMED, AND IT IS A COPY OF THE NOTE RATHER THAN OF THE CODE
+
+`MatchRpc.RequestSkipBufferServerRpc`'s own summary said the right thing, in as many words:
+
+> *"It returns whether the vote reached the wire, like `DeclareReadyServerRpc` and for the same
+> reason: `IsListening` is true from `StartClient` and not from approval, so a press made during the
+> join window has nowhere to go and the caller has to know that rather than believe it voted."*
+
+and the line under it read `if (_nm == null || !_nm.IsListening || ...) return false;`. So the
+method returned **true** for a message that went nowhere, and `BufferSkipVote` cleared
+`_sendPending` believing it had voted. The retry machinery was already correct and was never
+reached.
+
+**Fixed to `!_nm.IsConnectedClient`.**
+
+#### THE SWEEP OF THE NEIGHBOURS
+
+Every client-to-host request that RETURNS whether it was delivered, which is the whole class where
+a silently consumed press is possible:
+
+| Method | Gate | |
+|---|---|---|
+| `DeclareReadyServerRpc` | `IsConnectedClient` | correct already |
+| `SendChatServerRpc` | `IsConnectedClient` | correct already |
+| `VoteRematchServerRpc` | `IsConnectedClient` | correct already |
+| `SelectMapVoteServerRpc` | `IsConnectedClient` | correct already |
+| `RequestSkipBufferServerRpc` | ~~`IsListening`~~ -> `IsConnectedClient` | **the one** |
+
+⚠️ **THE VOID-RETURNING REQUESTS WERE LEFT ALONE, DELIBERATELY.** `ReqPunch`, `ReqLunge`,
+`ReqSlide`, `ReqShove`, `ReqGrab`, `ReqThrow` and the rest check only that the transport exists,
+and that is right for them: they carry no "it was delivered" claim to be wrong about, and a
+gameplay verb pressed during the join window is a verb pressed before the player has a body.
+
+### 149.4 ⚠️ P1: THE ONE-SHOT / DUPLICATE / REPLAYABLE REQUEST SWEEP
+
+Concrete classes to look for on the competitive paths, in order of what would actually cost a
+match: a rejected packet refreshing a timer, a duplicate RPC granting an effect twice, a stale
+RPC applying after ownership changed, an old session's packet reaching a new session, repeated
+ready/start/rematch, repeated spectator transitions, a repeated reconnect claim, a duplicate
+throw, grab, shove, punch, lunge or retrieval slide, a cooldown or resource deducted twice,
+prediction rollback that does not match the authoritative refusal, and a missing sequence number
+or session epoch where one is genuinely needed.
+
+⚠️ **NO GENERALISED FRAMEWORK.** Concrete reachable bugs with focused tests, and nothing bigger
+unless the architecture actually demands it.
+
+### 149.5 ⚠️ P2: REPEATED SCENE LOOKUPS IN NETWORK HOT PATHS
+
+Seat to `CharacterMotor`, seat or origin to `Slipper`, and the current `Lata` are resolved by
+runtime discovery in replicated and request-processing code. `MatchRpc.SlipperFor` already
+learned this once and carries the note.
+
+⚠️⚠️ **MEASURE FIRST.** Identify the exact APIs and the real call frequency, decide whether the
+path is per packet, per snapshot or per frame, and instrument representative four-player traffic.
+If it is material, add the smallest safe match-local registry owned by an existing lifecycle
+owner, with no stale reference after teardown, no static leaking into a second match, correct
+behaviour across seat handover and reconnect, and tests over the registry's lifecycle. **If the
+searches are negligible, record the number and leave the stable code alone.**
+
+#### THE CALL-SITE SURVEY, 2026-09-05
+
+`grep -rn "FindObjectsByType\|FindFirstObjectByType\|FindAnyObjectByType" Assets/TumbangPreso/Runtime`
+is **134 lines**, of which the ones on a per-frame or per-decision path are:
+
+| Where | Sites | Frequency |
+|---|---|---|
+| `AIController` | **12** `FindObjectsByType<Slipper>` | per bot per decision, four bots |
+| `CombatVerbs` | 2 | one per `Verb.Lunge` press (an edge), one **per frame while a slide is live** (0.34 s) |
+| `Carrier` | 1 | per pickup attempt |
+| the four hero kits and `HeroHazards` | 4 | per cast |
+| `SpectatorCamera`, `SpectatorInterest` | 3 | ⚠️ `SpectatorInterest` already caches, with the note *"rather than every frame"* |
+
+⚠️⚠️ **AND THE TWO THE BRIEF NAMED FIRST ARE ALREADY NOT SCENE SEARCHES.** `MatchRpc.Unit(slot)`
+goes to `RoundDirector.PlayerAt`, which is **a four-element list scan**, and `MatchRpc.SlipperFor`
+is a validated per-seat cache whose header already records the fault it was written for (*"a host
+paid four scene-wide type scans and four fresh arrays fifty times a second"*). **The request and
+snapshot paths the row was worried about are clean.**
+
+**So the remaining surface is the AI and the combat sweep, not the network layer**, and that is a
+different question from the one this row was opened with.
+
+⚠️⚠️ **NOT REFACTORED THIS SESSION, ON PURPOSE, AND THE REASON IS SPECIFIC RATHER THAN CAUTION.**
+The obvious fix is a `Slipper` registry maintained by `OnEnable`/`OnDisable`, and the taya's parked
+tsinelas is `SetActive(false)`: call sites split between `FindObjectsInactive.Exclude` (most) and
+`Include` (`NetStateReport.FindSlipper`, deliberately, because *"switched off is exactly the state
+this report has to be able to show"*). A registry that answered one of those two questions for all
+sixteen call sites would silently change which slippers a bot, a cast or a diagnostic can see, and
+**the taya's shoe is the object this game is most careful about** (§ 78.1's `OwnerSlot` fault is
+exactly that object read through the wrong index). That is a change worth making with a measurement
+in front of it and a day that is not the week of the nationals.
+
+**Done looks like:** a PlayMode measurement of `FindObjectsByType<Slipper>` cost against the real
+arena's component count, and either a registry with both visibilities modelled explicitly, or the
+number written down and the code left alone. The row stays P2.
+
+---
+
+
+### 149.6 ✅ P2 MEASURED: THE COMMENT WAS FALSE, AND THE PREDICATE IS CORRECTED ANYWAY
+
+A comment claims the sandbox stays denied through disconnect teardown because the session is
+still networked, while `NetSession.IsNetworked` is tied to `NetworkManager.IsListening`, which
+goes false during teardown. Either the comment is stale or there is a reachable window.
+
+**Both outcomes are work.** If authority revocation already blocks gameplay first, correct the
+comment and add a lifecycle test so nothing later relies on the false assumption. If practice
+behaviour can actually switch on mid-teardown, fix the predicate, and do it by reading the
+existing canonical latch rather than by keeping a second copy of authority state.
+
+#### THE ANSWER IS A, AND THE PREDICATE IS FIXED ANYWAY
+
+**The claim, in `PracticeSandbox`'s own header:** *"`!NetAuthority.IsNetworked`, which is false for
+a host, false for a client, false in a Relay match and false in a LAN one — **including the frame a
+session is being torn down, because the provider is what answers**."*
+
+**The provider:** `NetSession.IsNetworked => _nm != null && _nm.IsListening`. `IsListening` goes
+FALSE the moment `Shutdown()` runs, and `NetSession.IsHost`'s own note in `MatchAbandon` records the
+same fact from the other side: *"`_nm == null || !_nm.IsListening || _nm.IsServer`, so a CLIENT
+whose transport has just stopped satisfies the middle clause"*. **So the clause is false**: through
+a teardown this predicate says "offline" while the arena, the bodies and the ability systems are
+all still on screen.
+
+**Why nothing could reach it, which is not the same as it being true:**
+
+| | |
+|---|---|
+| `Toggle()` | `Wanted = !Wanted && Allowed`, so the switch **cannot be armed while networked** at all |
+| `GameLaunch.Reset` | calls `PracticeSandbox.Clear()` on the way into every match, so `Wanted` is false entering a networked one |
+| `MatchAbandon.AuthorityRevoked` | § 143.9's latch stops `ShouldResolve()` the moment a host is lost, so nothing authoritative resolves in that window regardless |
+| `TournamentGuard` | names `PracticeSandbox.Wanted` as a tournament modifier and clears it before a bracket match |
+
+⚠️⚠️ **THE COMMENT IS THE DEFECT AND IT IS A REAL ONE.** `TournamentPreset.Modifiers` quotes this
+guard by name as one of the eight things a bracket match depends on, so its written reason is load
+bearing: **a guard whose stated reason is wrong is a guard the next person builds on.** That is
+`docs/TODO.md` § 92.7's fault (a note crediting the wrong fix) and `CLAUDE.md` § 5's drift rule.
+
+**Corrected in place rather than deleted**, with the false clause quoted, and the predicate is
+`!NetAuthority.IsNetworked && !MatchAbandon.AuthorityRevoked` now. ⚠️ **That is the EXISTING
+canonical latch and not a second copy of authority state**, which is what the brief asked for: it
+is set by `MatchAbandon.Note` on host loss, removal, a version refusal and a full lobby, and
+cleared by `MatchAbandon.Forget` when the next match begins, so the sandbox is denied for exactly
+the window in which "offline" is a lie. ⚠️ A LOCAL quit deliberately does not revoke and does not
+need to: a player who pressed QUIT really is offline afterwards, and denying them their own solo
+sandbox would be the fix causing the bug.
+
+### 149.7 ⚠️ P2: THE TEST SUITE'S OWN VALUE
+
+**The goal is not fewer tests.** It is removing assertions that carry no unique failure signal:
+source-text assertions that duplicate behavioural coverage, tests that regex a constant out of a
+file and then assert the same compiled constant, assertions about comments rather than behaviour,
+historical hardening tests whose failure a stronger central invariant has since made impossible,
+and expensive Unity probes that only repeat something cheaper coverage already proves.
+
+⚠️⚠️ **THE RULE: FOR EVERY TEST REMOVED OR MERGED, NAME THE STRONGER TEST THAT NOW OWNS THAT
+INVARIANT.** Never delete a failing test to green the suite, never trade coverage for a faster
+qualification, and never drop an integration test because a unit test looks similar without first
+checking whether the lifecycle or the network behaviour differs.
+
+### 149.8 ⚠️⚠️ P1 CONFIRMED AND FIXED: THE SINGLE EXIT FROM A MATCH CLEARED NOTHING
+
+The remaining lifecycle risk is not the first launch, it is process-wide state surviving into
+another match: host, play, results, leave, then create or join a DIFFERENT match without
+restarting the player.
+
+Audit `GameLaunch`, `SceneFlow`, the preview flags, the practice and debug switches, spectator
+state, replay state, the match installer's registries, static events, cached seat identity,
+authority revocation, format, mode, the tournament preset, bot fill, and every
+`DontDestroyOnLoad` object.
+
+**Test two sequential matches with meaningfully different settings**: Hero Strike with bots and a
+spectator, then Classic with a different seat composition and a real player. Nothing from the
+first may leak into the second: not the mode, the format, the bot state, a preview or practice
+switch, seat ownership, the taya, a score, a cooldown, a replay marker, an event subscription or
+a network role.
+
+#### WHAT THE AUDIT FOUND
+
+**`GameLaunch.Reset()` had exactly one caller: `SceneFlow.StartTraining`.** So
+`SceneFlow.LeaveMatchToMainMenu`, whose own header calls it *"the one way out of a match, and the
+only one that ends the session as well as the scene"* and which the pause panel, the results board
+and both result screens all come through, cleared **none** of the launch block.
+
+⚠️⚠️ **THE FIELD WITH TEETH IS `GameLaunch.Spectator`.** `MatchInstaller.HumanSeat` answers **-1**
+while it is set, and `MatchInstaller` reads that to decide who gets a `PlayerInputReader` and which
+seats get an `AIController`. So a player who spectated one match and then started a solo one got an
+arena in which **nobody was driving their seat**. `ConvertedMatchSetup` clears it on the way into
+the lobby, which covers the lobby route and not the ones that skip it.
+
+**Fixed by calling `GameLaunch.Reset()` from the single exit**, which is safe precisely because of
+what that method is: `PendingAction` and `PendingJoinAddress` have already been consumed by the
+arena being left, and `SeatTokens` is a reconnect claim on a match the player is walking out of.
+
+#### WHAT WAS CHECKED AND IS ALREADY CORRECT
+
+| State | Where it is cleared | |
+|---|---|---|
+| `MatchAbandon.AuthorityRevoked` | `NetSession.ConfigureTimeouts`, which *"every start path and `Stop` reach"* | ✅ and now asserted, because a latch surviving into a second match is a peer that cannot resolve anything in it |
+| `GameLaunch.GuidedTutorial` | `GuidedTraining.OnDestroy`, so a scene unload clears it however the player left | ✅ and `Reset()` is now a second belt |
+| `MatchInstaller.PreviewOnly` | `MapPreviewSurface` sets it true and false in a matched pair | ✅ |
+| `PracticeSandbox.Wanted` | `GameLaunch.Reset()`, and `Toggle` cannot arm it while networked | ✅, and now reached from the exit as well |
+| `SceneFlow.SelectedRules` | pinned by `TournamentGuard.Apply` and NOT persisted, deliberately (§ 143.18) | ✅ |
+
+⚠️⚠️ **`GameLaunch.AllBots` IS DELIBERATELY NOT IN `Reset()` AND MUST NOT BE ADDED.** It is written
+by `-tp-allbots` on the command line and belongs to the PROCESS rather than to a match: a harness
+that asked for a driven session expects the second match to be driven too, and clearing it on every
+exit would make `tools/net_matrix.py` and `tools/referee_run.py` measure three parked bodies from
+their second match onwards. `TournamentGuard` is what clears it for a bracket match, which is the
+one place it must not be set. **The test asserts that it survives**, so somebody "tidying" it into
+`Reset()` fails rather than silently breaking every multi-match harness.
+
+⚠️ **WHAT IS STILL OPEN IS THE TWO-MATCH INTEGRATION RUN ITSELF**, host/play/results/leave then a
+different match in one process. The state audit above is the cheap half and it found the defect;
+the expensive half is a PlayMode probe and is what the row in the queue still points at.
+
+### 149.9 ⚠️⚠️ P1 CONFIRMED AND FIXED: A SPECTATOR COULD SET `Time.timeScale` TO NaN
+
+Every client-supplied float, vector and rotation used for authoritative validation has to be
+proved hostile-safe: NaN, both infinities, absurd but finite coordinates, an unnormalisable
+direction, a zero vector where normalisation is assumed, and invalid angles.
+
+⚠️⚠️ **A RANGE COMPARISON DOES NOT REJECT NaN.** In C# every ordinary comparison against NaN is
+false, so `if (x > limit) return false;` PASSES a NaN through, and that is the shape most of these
+guards are written in.
+
+Paths to inspect by name: movement, throw, the retrieval slide, grab, punch, shove, pose updates,
+and any spectator position that reaches an authoritative decision.
+
+#### THE ONE THAT WAS REACHABLE
+
+`MatchRpc.HostSetTimeScale` clamped the requested scale to 0..1 and assigned it to
+`Time.timeScale`. `Mathf.Clamp` is exactly `if (v < min) v = min; else if (v > max) v = max;
+return v;`, so **both infinities were handled correctly (they DO compare) and NaN fell through both
+branches unchanged**. `OnReqTimeMsg` checked that the sender was a spectator and never checked the
+NUMBER, and `docs/TODO.md` records the ruling that put that button there: 🧑, *"give spectators the
+authority to pause, all of them can pause"*. So **any spectator in a live match could freeze the
+host and, through the `SyncTime` broadcast, every peer.**
+
+**Refused rather than clamped to a guess.** A NaN is a malformed request, not a big number to bring
+into range, and picking 1.0 for it would un-pause a match somebody had deliberately paused.
+
+#### THE SWEEP, AND WHAT ELSE GOT A GUARD
+
+Every client-to-host request path already checked `Finite` before it clamped, which is the ordering
+that matters: `PlausibleIntentPose` opens with it, and the lunge's `power` and the throw's `charge`
+and `spin` are finite-checked before `Mathf.Clamp` sees them. `OnSubmitMoveMsg` delegates to
+`AcceptMove`, which validates all three of its fields and then spends `Core.MoveBudget`, which
+refuses NaN a second time by construction.
+
+The HOST-to-client direction was unguarded throughout, and that is a robustness fault rather than an
+integrity one, but a cheap and visible one: **a non-finite `Vector3` or `Quaternion` assigned to a
+`Transform` is REFUSED by Unity, logged once per frame, and the object is left wherever it last
+was.** A tsinelas that stops replicating, with nothing in the log but a repeating engine warning, is
+a venue failure that reads as "the game broke". Guards went onto `OnSyncTimeMsg`, `OnSyncUnitMsg`
+(pose and the stamina/stun floats), `OnPlayAbilityMsg`, `OnSyncAbilityMsg`, `OnSyncWorldMsg`,
+`OnSyncLataMsg`, `OnSyncSlipperMsg`, `OnLataPoseMsg` and `OnSlipperPoseMsg`.
+
+⚠️ **A NaN IN A BAR OR A COOLDOWN IS SILENT AND PERMANENT.** Every `>= 0` against it is false, so a
+NaN stamina is a body that can never spend and never regenerate, and a NaN cooldown is an ability
+that reads READY for ever on that peer while the host refuses every cast.
+
+#### THE AUDIT THAT KEEPS IT
+
+`tools/audit_wire_finite.py` is new and gating. It discovers every named-message handler by
+signature (rather than from a list, for `InputSurfaceProbe`'s reason) and requires every
+`ReadValueSafe(out float/double/Vector3/Quaternion/Vector2 ...)` to be reached by a `Finite(...)`
+call on that variable, by `PlausibleIntentPose`, or by a **named delegate that validates on its
+behalf** (`AcceptMove`, `PlausibleIntentPose`, `HostSetTimeScale`), each with its reason written
+beside it. **Current reading: 62 wire handlers, 62 numeric fields, 0 findings**, and it was proved
+able to fail by deleting one guard.
+
+⚠️ **A `Quaternion` OVERLOAD OF `Finite` DID NOT EXIST AND NOW DOES.** A rotation needs the check as
+much as a position and there was no way to write it.
+
+### 149.11 ⚠️⚠️ FOUND WHILE VERIFYING: EVERY UNITY RUN DIRTIED A TRACKED FILE, SO THE GATE COULD NEVER PASS
+
+Not on the brief, found by running it. **A plain `-batchmode -runTests -testPlatform EditMode`
+launch rewrites `ProjectSettings/QualitySettings.asset`**, moving Ultra's `antiAliasing` from 4 to
+0. Measured twice in a row on `837eb0a` from a clean checkout.
+
+That was cosmetic until § 145.1 made a dirty tree a refusal. It is not cosmetic now: **the
+qualification rewrites a tracked file while it runs, so the report stage reads a dirty tree and the
+verdict is NOT QUALIFIED with every test green.** A gate that fails because it ran is worse than no
+gate, because the first thing anybody does with it is pass a flag.
+
+⚠️⚠️ **AND `AntiAliasModes`'S OWN NOTE SAID THIS COULD NOT HAPPEN.** *"MEASURED RATHER THAN
+ASSUMED, 2026-09-03: a full batchmode PlayMode suite ... left it completely clean. The write-through
+the header warns about is an INTERACTIVE editor behaviour."* It is not interactive: `GameSettings
+.Apply` calls `AntiAliasModes.Apply` at boot in batch mode as well, and in the editor
+`QualitySettings.antiAliasing` **is** the serialized asset, so writing the live value writes the
+file. The note is corrected in place rather than deleted, because a falsified measurement is the
+clearest possible warning about quoting one without re-running it.
+
+**`QualityLevelStamp` regenerates the asset from `AntiAliasModes.QualityLevelSamples`** at editor
+load, at editor quit (which fires in `-batchmode`) and on leaving play mode. It writes only the
+`antiAliasing` field and only when it differs. That is `GameBuilder.ConfigureSplash`'s and
+`ShaderWarmupCollection`'s shape and `CLAUDE.md` § 6.4's rule: **both places or neither**, resolved
+by making one of the two generate the other.
+
+⚠️ **`QualitySettingsAssetTests` IS KEPT AND IS NOT VACUOUS.** It still catches a hand edit the
+stamp has not yet corrected, and it is the thing that would notice if the stamp stopped running.
+
+### 149.10 ✅ THE ACCEPTANCE BAR FOR THIS SECTION
+
+Each numbered item above closes only when it carries, in its own subsection: what was measured,
+whether it was real, the reproduction, the invariant now in force, and the test that would fail if
+somebody undid it. **A lead that turned out to be a false positive closes with the proof that it
+is one and the test that keeps it that way**, and is not written up as a bug that was fixed.
+
+---
+
 ## 148 · THE 2026-09-05 NATIONALS BATCH ✅ CLOSED, and archived in the commit that wrote it
 
 ⚠️ **A SESSION REPORT IS NOT AN OPEN ITEM** (`CLAUDE.md` § 2.3). This is the index row; the
@@ -1119,7 +1630,7 @@ distribution read `no change measured` on every metric; an arm with a real +66 p
 read `MOVED` at |t| 10.4. ⚠️ **A real sweep is 5 to 8 Unity launches a side and was not run in this
 pass**; the harness is the deliverable and § 16 is the standing argument for using it.
 
-### 145.4b ⚠️⚠️ OPEN: THE STRENGTHENED VERIFIER FOUND THREE PEERS WITH THREE DIFFERENT ROSTERS OF WHO IS HUMAN
+### 145.4b ✅ MEASURED AND FIXED: THE ROSTERS AGREED; `IsBot` WAS BEING GATED AS IF IT WERE CONSTANT
 
 **First run after the rewrite, `87346b8`, one referee and two clients on loopback for 45 s:**
 
@@ -1161,6 +1672,265 @@ the switch and the verifier needs to know that.
 **Done looks like:** three peers agreeing on which seats are people, or a written reason why a
 seatless referee legitimately cannot know, with the verifier taught that reason rather than having
 the check removed.
+
+#### The second run, 2026-09-05, `837eb0a` + this session's harness change
+
+`python tools/referee_run.py --seconds 45 --no-allbots`, one referee and two clients on loopback,
+the clients holding their own seats and standing still:
+
+```
+referee   : slot -1  proto 24  round 1  active True  defender 0  sampled 60.0 s  struct FC4251A5
+client1   : slot  1  proto 24  round 1  active True  defender 0  sampled 45.2 s  struct 2408EEE1
+client2   : slot  0  proto 24  round 1  active True  defender 0  sampled 45.0 s  struct 2408EEE1
+
+referee   : seats 0[c0 bot TAYA 330]  1[c3 bot atk 100]  2[c0 bot atk 200]  3[c3 bot atk 0]
+client1   : seats 0[c0 hum TAYA  30]  1[c3 hum atk   0]  2[c0 bot atk 100]  3[c3 bot atk 0]
+client2   : seats 0[c0 hum TAYA  30]  1[c3 hum atk   0]  2[c0 bot atk 100]  3[c3 bot atk 0]
+```
+
+⚠️⚠️ **THE TWO CLIENTS AGREE EXACTLY, DOWN TO THE STRUCTURAL HASH.** The `-tp-allbots` run's
+three-way disagreement was the SWITCH: it makes `MatchInstaller.HumanSeat` answer -1, so a peer
+running it calls its own seat a bot as well as everybody else's, and half of what that table
+printed was the harness. § 145.4b was right to refuse to fix anything from it.
+
+⚠️⚠️ **AND THE REFEREE'S DISAGREEMENT IS A CLOCK, NOT A ROSTER.** Its own log:
+
+```
+1790: arena installed: LocalSlot=-1 host=True allBots=False | s0..s3 all bot
+1828: [Net] 2 connected, seat 0
+8741: [Net] 2 connected, seat 1
+17386: [Slice] round 1 begins, taya is seat 0
+17397: [Handover] seat 0 was rated 1500; a Normal bot is finishing it.
+19127: [Handover] seat 1 was rated 1500; a Normal bot is finishing it.
+```
+
+The referee outlives its clients **by design** (`referee_run.run` gives it their head start back
+plus a margin, because a referee that quits first tears the transport down under them). Both
+clients wrote at 45 s and quit; the referee sampled at 60 s, by which time both chairs had been
+correctly handed to bots. **Every one of the three findings was the verifier gating a field that
+is not constant.**
+
+⚠️ **`NetStateReport.StructuralHash`'s OWN NOTE ALREADY SAID SO AND IT HASHED THE FLAG ANYWAY**:
+*"`MatchRpc.HostPeerLeft` can flip a bot flag mid-match when a chair is handed over"*, in a method
+whose summary is "the part of the state that cannot change while a match is running".
+
+#### And one real defect came out of it
+
+⚠️⚠️ **A HOST THAT OPENS THE ARENA BEFORE ITS PEERS ARRIVE RECORDED EVERY PLAYER'S CHAIR AS A
+BOT'S, FOR THE WHOLE MATCH.** Line 1790 above is the referee installing four seats before line
+1828's first connection: `MatchInstaller.BuildSeat` asks the lobby who is sitting where, the answer
+at boot is "nobody", and `CharacterMotor.NoteSeatOrigin(Human)` is a deliberate no-op, so
+`SeatOrigin` stayed `Bot` even after `HostTakeSeatBackFromBot` cleared `IsBot`. That is **every
+`-tp-dedicated` referee and every `-tp-autostart` host**, and `SeatHandover.RatingMovesFor` and
+`SeatHandover.HumanSeats` both read that field: a referee-hosted bracket match would have submitted
+four bot seats and moved nobody's rating.
+
+#### What shipped
+
+| | |
+|---|---|
+| `Core.SeatHandover.APersonSatHere` | the one thing about a seat's driver that IS constant for a match. `Bot` means nobody ever sat there; `Human` and `HandedToBot` both mean somebody did, and a chair somebody sat in never becomes one nobody sat in |
+| `CharacterMotor.NoteSeatClaimedByAPerson(midMatch)` | corrects an install-time guess. Before the whistle a chair changing hands is the roster settling, so it is `Human`; after it a bot has already played part of the match in that chair, so it is `HandedToBot`. ⚠️ **A handover is never walked back** |
+| `MatchRpc.HostTakeSeatBackFromBot` | calls it, so the host's own copy is corrected on the join it already handles |
+| `MatchRpc.ApplyRosterToLiveSeats` | calls it, so a client that joined before the fourth player corrects its copy from the same broadcast roster. **One authoritative source, applied on every peer** |
+| `NetStateReport` | prints an `origin` column beside `bot`, and the STRUCTURAL hash folds in `APersonSatHere` instead of the live flag |
+| `referee_run.py`, `net_matrix.py` | gate the persistent fact and report the live flag as drift, with the origin printed beside it |
+
+⚠️ **THE VERIFIER WAS NOT WEAKENED.** It gates a strictly stronger property than before: two peers
+that genuinely disagree about whether a person ever sat in a chair are still a finding at any
+instant, and the old check could not survive a legitimate departure at all.
+
+### 145.7 ✅ `net_matrix.py` PRINTED `DIVERGED` AND EXITED 0
+
+Every scenario carried an `expect` string that said what the run was supposed to show. **Nothing
+read it.** `describe()` returned a sentence, `emit()` printed it, and `main()` returned 0 whatever
+was in it, so a shell running the disconnect matrix was told the whole table passed while the
+table said otherwise.
+
+Three things are separate now and were one:
+
+| | |
+|---|---|
+| `describe()` | what happened, for the column a person reads |
+| `evaluate()` | whether that is what the row predicted. Returns `(ok, faults)` |
+| `main()` | the process verdict, which is the OR of every row |
+
+⚠️⚠️ **A DELIBERATE KILL IS NOT A FAILURE, WHICH IS WHY THE EXPECTATION IS PER PEER RATHER THAN ONE
+BOOLEAN.** *"The client wrote no report"* is the CORRECT outcome of the row that kills the client
+and a hang on every other row. *"The client fell back to hosting"* is the defined correct end of
+the host-loss row and the **worst possible result** of the 600 ms row. So each scenario names
+`host` (`referees` / `gone`) and `client` (`joined` / `gone` / `terminal`), and the pair is checked.
+
+⚠️ **"STILL ALIVE" IS NOT THE CLAIM AND `describe` ALREADY SAID SO IN CAPITALS.** A host frozen on
+a dead round looks identical in a process list, so `HOST_REFEREES` requires sampling **past** the
+disturbance, a live round, and at least one seat that travelled a metre.
+
+⚠️ **`--summarise` GATES TOO.** It re-reads reports already on disk, so a constant return there was
+the quietest possible way to get a green shell out of a red measurement.
+
+⚠️ **THE OUTPUT DID NOT GET SMALLER.** The verdict is a new column and every failing row's faults
+are printed in full underneath the table.
+
+### 145.8 ✅ THE COLD START PROVED HERO STRIKE ON macOS, NOT CLASSIC ON WINDOWS
+
+The recorded green run at `87346b8` is real and is good coverage: a shipped player launched,
+reached round 1, moved four seats and scored. It is also **a macOS player playing HERO STRIKE**,
+and `docs/VISION.md` § 1.1 says in as many words that **Classic is the tournament ruleset**. So it
+says nothing about the path a bracket match takes.
+
+**What shipped:**
+
+- `-tp-tournament` (`NetBootstrap.TournamentSwitch`) applies `TournamentGuard.Apply()` before the
+  map is chosen, which pins the tournament rule set and clears every practice or debug modifier.
+  ⚠️ It is on `TournamentPreset.NotModifiers` with its reason: it is the one launch switch that
+  can only make a machine **more** tournament-legal.
+- `NetStateReport` prints `tournament ruleset` (`OK` or the refusal sentence, flattened to one
+  line), `tournament modifiers` (the names not at their safe value, or `none`) and
+  `build identity`. **A harness cannot assert what it cannot read.**
+- `tools/cold_start.py --tournament` drives that, and `--nationals` adds the artifact gates: the
+  release build target, a `clean` stamped tree, the protocol this source reads, and a UGS project
+  that matches `ProjectSettings.asset`.
+
+⚠️⚠️ **`--tournament` DROPS `-tp-allbots` ON PURPOSE AND THAT IS THE POINT OF IT.**
+`GameLaunch.AllBots` is one of the switches the preset forbids, so a "tournament" cold start that
+set it would be asserting the preset while breaking it. Without it seat 0 is a person standing
+still and the other three are bots that drive: a live round with every modifier at its safe value
+at once. `TOURNAMENT_ALLOWED_MODIFIERS` is the **empty set**, because a gate that forgave its own
+modifier would be § 145.3's hole one level up.
+
+⚠️ **THE SMOKE PATH IS KEPT AND IS NOT REDUNDANT.** It is the only row that exercises four DRIVEN
+seats, and `-tp-allbots` is what gets a fourth body moving.
+
+### 145.9 ✅ AN UNTRACKED SOURCE FILE WAS NOT A DIRTY TREE
+
+§ 145.1 made the tree a stage and then wrote, as a reason: *"⚠️ UNTRACKED FILES DO NOT FAIL IT.
+`Logs/`, `Builds/` and a scratch file are not differences in the source that was tested."* True of
+those three and **false of the general case, in a Unity project especially**:
+
+- an untracked `.cs` anywhere under `Assets/` or `Packages/` **compiles**;
+- an untracked `.shader`, `.prefab`, `.unity`, `.mat` or anything under `Resources/` or
+  `StreamingAssets/` **ships inside the player**;
+- `ProjectSettings/` decides the splash, the app version, the build target and **the UGS project a
+  join code is resolved in**.
+
+Every one of those changes the artifact while HEAD points at a commit that does not contain it, and
+the report printed `SHA X / tree clean` over the top.
+
+⚠️⚠️ **THE RULE IS DEFAULT-DENY AND THAT IS THE WHOLE DESIGN.** The obvious shape is a list of
+directories that ARE source, and it is the brittle one: somebody adds `Assets/NewThing/` next year,
+nobody edits the list, and the gate goes quiet in the one direction nobody checks. Under
+default-deny a path nobody has thought about is DIRTY, which is loud, and the only way to make the
+gate quieter is to add a root **with a written reason**.
+
+⚠️ **`.gitignore` STILL DOES THE BULK OF IT.** `--porcelain` does not list ignored files at all, so
+`Library/`, `Temp/`, `Logs/`, `Builds/`, both build stamps and the shader-variant collection never
+reach the classifier.
+
+⚠️ **`docs/reports/` IS THE ONE NON-OBVIOUS EXEMPTION AND IT HAS TO BE THERE.** `qualify.py` writes
+`docs/reports/qualification-<sha>.md` as its own last act, so without that row the first run leaves
+the tree non-certifiable and every run afterwards fails on the evidence the previous one produced.
+
+**Both sides share one rule.** `Core.WorkingTreeRules` is the C# copy (used by
+`GameBuilder.WorkingTreeState`), `qualify.py` holds the Python one, and
+`tools/audit_harness_contracts.py` plus `NationalsHardeningTests
+.ThePythonQualificationSharesTheOneWorkingTreeRule` assert the two lists are identical.
+⚠️ `IntegrityRules.Digest` is the precedent: a rule written twice with nothing comparing the two is
+a rule that silently disagrees with itself.
+
+### 145.10 ✅ A DIRTY ARTIFACT COULD QUALIFY, AND UGS IDENTITY WAS NOT PART OF CROSSPLAY
+
+**The scenario the gate could not see:** HEAD is X, edit a tracked gameplay `.cs`, build, revert the
+edit, run the qualification. The tree is clean, the artifact's stamp says X, every SHA comparison
+in the gate passes, and the player on disk contains code that is in no commit. `treeState` is the
+only field that can refuse it and nothing read it.
+
+`qualify.candidate_faults` refuses an artifact for any of: no stamp at all, a missing or blank
+required field (`sha`, `protocol`, `target`, `appVersion`, `ugsProject`, `ugsEnvironment`,
+`builtAt`, `treeState`), `treeState` dirty, `treeState` unknown or absent, `treeState clean` beside
+`dirty true` (which means something other than `GameBuilder` wrote the record), a SHA that is not
+the candidate's, or a protocol the source has moved past. `--nationals` adds the release target.
+
+⚠️⚠️ **AND CROSSPLAY IS FIVE FIELDS RATHER THAN TWO.** Two artifacts on one commit and one protocol
+can still be two games: peers that resolve Relay and Lobby against **different UGS identities do
+not refuse each other, they never find each other's rooms**, and `CLAUDE.md` § 4a records that this
+reads as an EMPTY LOBBY rather than as an error. `CROSSPLAY_FIELDS` is `sha`, `protocol`,
+`ugsProject`, `ugsEnvironment`, `appVersion`, and for a candidate a blank on either side is a
+finding of its own, because **a blank looks like agreement**.
+
+### 145.11 ⚠️⚠️ P0 CLOSED: THE RETRIEVAL SLIDE WAS A FREE DASH OVER THE WIRE
+
+`StepSlide` refused a press with no retrievable tsinelas ahead. `HostResolveSlide` checked the
+role, the cooldown, the hand, the fatigue and the bar, and **never asked whether there was anything
+to retrieve at all**. So the local path could not dash for free and a modified client asking over
+the wire could: the host applied `SlideSpeed` down the requested facing on request, which is 1.75 m
+of host-authoritative mobility with nothing to collect. `docs/VISION.md` § 1.1 forbids Classic a
+power, and a networked-only free dash is a power only a cheat has.
+
+**One rule now, `CombatVerbs.SlideMayStartFrom(from, facing, out target)`**, called by the press and
+by the host. It asks: cooldown clear, attacker, `CanAct()`, not fatigued, hand empty, and a legally
+retrievable tsinelas along the projected slide **that is not behind world geometry**.
+
+⚠️⚠️ **AND THE PREDICATE NOW RAYCASTS, WHICH IT DID NOT.** The sweep checked line of sight and the
+press predicate did not, so a player on the wrong side of a jeepney predicted a slide, spent 25
+stamina, narrowed their own steering to 0.35 for most of a second and collected nothing. That is
+not a fairness bug, it is the verb feeling broken: the local path promised what the host was always
+going to refuse.
+
+⚠️ **THE PICKUP RULE IS STILL NOT RESTATED.** `Slipper.IsGrabbableIgnoringReach` is
+`CanBeGrabbedBy` with the distance clause taken out, and `CanBeGrabbedBy` is now defined in terms
+of it, so there is one owner of "whose shoe is this" and the slide widens only the REACH, from a
+radius around the body to the same radius around the ground it covers. `AnySlideTargetAhead` used to
+test `State == Loose` by hand, which is one clause of a four-clause rule that happened to agree.
+
+### 145.12 ⚠️⚠️ P0 CLOSED: THE SLIDE'S REFUSAL COULD NEVER BE ROLLED BACK
+
+`MatchRpc.OnVerbDeniedMsg` bounded the incoming verb byte at `DeniedVerb.Shove`, which is **2**,
+and `Slide` is **3**. Every slide refusal the host sent was discarded by the client one function
+before `RollBackRefusedVerb`, so the whole `case DeniedVerb.Slide` arm, which returns a 2.45 s
+cooldown, 25 stamina and a commitment that narrows steering for most of a second, **was unreachable
+code from the day it was written**.
+
+⚠️ **AND `_denialsTaken` WAS `new int[3]` ON THE LINE UNDER THE COMMENT WARNING ABOUT A LITERAL 3.**
+`CountDenial` returns early past the end of the array, so a slide refusal a client DID take back
+was counted nowhere, and the absence read as "the slide is never refused". Both are the enum's own
+length now.
+
+### 145.13 ✅ `cold_start --clean-profile` COULD DELETE THE ONLY BACKUP
+
+The shadowed-variable fault that destroyed a real Mac profile was already repaired. **The path it
+left behind was still unsafe:** the backup directory was a CONSTANT, and the restore ran
+`rmtree` on whatever was already sitting on it. A pre-existing `<profile>.coldstart-backup` is not
+junk. It is what a previous crash, an interrupted restore, a power cut or a half-finished manual
+recovery leaves behind, and in every one of those cases **it is the only copy of somebody's
+settings, rebinds and career there is.**
+
+`ProfileVault` has two properties and neither of them is "be careful":
+
+1. **A backup directory is unique per run**, timestamp plus a GUID, so nothing it creates can
+   collide with anything anybody left behind and a stale backup is never touched again. It writes
+   `.coldstart-restore.json` inside itself naming the path it came from.
+2. **`rmtree` is never pointed at the live profile or at a backup.** The live profile is MOVED to a
+   discard path and deleted only after the restore has already succeeded, so a failure at any point
+   leaves two recoverable copies on disk and an error naming both.
+
+`tools/audit_harness_contracts.py` drives it over temporary directories: no profile, the ordinary
+round trip, a pre-existing backup, an exception in the run body, three shapes of malformed handle,
+and a restore that fails half way. It also asserts there is exactly one `rmtree` CALL in the file
+and that it targets a discard path.
+
+### 145.14 ✅ THE AUDIT OF THE GRADERS
+
+`tools/audit_harness_contracts.py` is new and gating. The other `audit_*.py` files read the GAME's
+source; this one reads the harnesses that grade it, because three of them were caught doing exactly
+what the game's own gates were caught doing. **138 checks.**
+
+⚠️ **NONE OF IT COULD BE ASSERTED BY RUNNING THE HARNESS.** A net matrix row is fifteen minutes of
+two game processes and a cold start is a minute of a real player and a real profile directory. Both
+are graded by pure functions over a parsed report or a path, so the verdicts are driven over
+synthetic inputs in milliseconds. `tools/bot_sweep.py`'s comparison was verified the same way before
+a single Unity launch was spent on it.
+
+---
 
 ### 145.5 ⚠️ OPEN: `qualify.py` STILL HAS TO RUN ON A WINDOWS MACHINE FOR A NATIONALS CANDIDATE
 

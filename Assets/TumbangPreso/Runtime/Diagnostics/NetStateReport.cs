@@ -230,19 +230,46 @@ namespace TumbangPreso.Diagnostics
             sb.AppendLine($"defender        : {(match != null ? match.DefenderSlot : -1)}");
             sb.AppendLine($"round active    : {(round != null && round.RoundActive)}");
             sb.AppendLine($"lata upright    : {_lastLataUpright}   flips: {_lataFlips}");
+
+            // ⚠️⚠️ THE PRESET, NOT MERELY "A MATCH HAPPENED". `docs/TODO.md` § 145.8: the recorded
+            // green cold start at `87346b8` proved a shipped player reached round 1, moved four
+            // seats and scored, and it is a **macOS player playing HERO STRIKE**, while
+            // `docs/VISION.md` § 1.1 says CLASSIC is the tournament ruleset. A harness cannot
+            // assert what it cannot read, so the two sentences a bracket match rests on are
+            // printed here: is this the tournament RULE SET, and is any practice or debug
+            // modifier still set.
+            //
+            // ⚠️ ONE LINE EACH, AND `OK` / `none` ARE THE PASSING VALUES. `TournamentGuard
+            // .Refusal` answers a paragraph on purpose (an operator has to act on it), and a
+            // harness parsing a paragraph out of a report is a parser nobody can trust, so it is
+            // flattened onto one line here and printed in full in the player's own log.
+            string refusal = TournamentGuard.Refusal().Replace("\r", "").Replace("\n", " / ");
+            sb.AppendLine($"tournament ruleset : {(string.IsNullOrEmpty(refusal) ? "OK" : refusal)}");
+            sb.AppendLine($"tournament modifiers : {ModifiersLeftSet()}");
+            sb.AppendLine($"build identity  : {BuildIdentity.OneLine()}");
             sb.AppendLine();
 
-            sb.AppendLine($"{"seat",-5} {"char",5} {"bot",5} {"taya",5} {"score",7} " +
+            // ⚠️⚠️ `origin` IS A NEW COLUMN AND IT IS THE ONE THAT CAN BE COMPARED BETWEEN
+            // PEERS. `bot` says who is driving the chair RIGHT NOW and moves the moment somebody
+            // disconnects; `origin` says what the chair has been for the match, which is
+            // `Core.SeatOrigin` and only ever moves forward. `docs/TODO.md` § 145.4b.
+            //
+            // ⚠️ THE COLUMN GOES AFTER `bot` AND NOT INSTEAD OF IT. The verifier needs both: the
+            // live flag is what a departure changes and the origin is what explains it, and a
+            // table with only one of them cannot tell a handover from a disagreement.
+            sb.AppendLine($"{"seat",-5} {"char",5} {"bot",5} {"origin",11} {"taya",5} {"score",7} " +
                           $"{"travelled",10} {"skills",7} {"ults",5}");
-            sb.AppendLine(new string('-', 62));
+            sb.AppendLine(new string('-', 74));
 
             for (int slot = 0; slot < Balance.PlayerCount; slot++)
             {
                 var unit = round != null ? round.PlayerAt(slot) : null;
                 int score = match != null ? match.ScoreFor(slot) : 0;
+                string origin = unit != null ? unit.SeatOrigin.ToString() : "Unknown";
 
                 sb.AppendLine($"{slot,-5} {(unit != null ? unit.CharacterIndex : -1),5} " +
-                              $"{(unit != null && unit.IsBot),5} {(unit != null && unit.IsDefender),5} " +
+                              $"{(unit != null && unit.IsBot),5} {origin,11} " +
+                              $"{(unit != null && unit.IsDefender),5} " +
                               $"{score,7} {_travelled[slot],10:F1} " +
                               $"{_skillCasts[slot],7} {_ultimateCasts[slot],5}");
             }
@@ -309,12 +336,23 @@ namespace TumbangPreso.Diagnostics
         /// states, and `referee_run.py` gives the referee its clients' head start back plus a
         /// margin on purpose, so the two are sampled seconds apart. **Discrete is not constant.**
         ///
-        /// ⚠️ WHAT IS IN IT: the character index and the bot flag per seat, plus the protocol.
-        /// Those are decided at seating and are the same on every peer for the whole match, so a
-        /// disagreement is a real one at any instant. `MatchRpc.HostPeerLeft` can flip a bot flag
-        /// mid-match when a chair is handed over, which is a legitimate divergence between a peer
-        /// that saw the departure and one that had already stopped: the verifier says so rather
-        /// than pretending it cannot happen.
+        /// ⚠️⚠️ AND IT USED TO FOLD IN `IsBot`, WHICH IS NOT CONSTANT EITHER, SO THIS HASH MADE
+        /// EXACTLY THE CLAIM ITS OWN COMMENT WARNED ABOUT. The note under it already said
+        /// *"`MatchRpc.HostPeerLeft` can flip a bot flag mid-match"* and then hashed the flag
+        /// anyway. `docs/TODO.md` § 145.4b is the measurement: a seatless referee and two idle
+        /// clients, no `-tp-allbots`, and the two clients agreed with each other perfectly while
+        /// the referee, which outlives them by design, called every chair a bot **because by the
+        /// time it sampled both players had quit and their chairs had been handed over**. Three
+        /// findings, and the game was right in all three.
+        ///
+        /// ⚠️ SO IT FOLDS IN THE PERSISTENT FACT INSTEAD: `SeatHandover.APersonSatHere`, which is
+        /// whether a person EVER sat in this chair. A chair somebody sat in never becomes a chair
+        /// nobody sat in, whoever is driving it at the instant a report is written, so this is a
+        /// hard equality that holds across a departure. The live `bot` flag is still printed in
+        /// the seat table beside the origin, where a reader can see both.
+        ///
+        /// ⚠️ WHAT IS IN IT: the character index and whether a person ever sat there, per seat,
+        /// plus the protocol. All three are decided at seating and none of them moves again.
         ///
         /// ⚠️ THE DEFENDER IS DELIBERATELY NOT IN IT. It is derived from the round number
         /// (`docs/VISION.md` § 4), so two peers on different rounds hold different defenders
@@ -329,10 +367,35 @@ namespace TumbangPreso.Diagnostics
             {
                 var unit = round != null ? round.PlayerAt(slot) : null;
                 sb.Append(unit != null ? unit.CharacterIndex : -1).Append(':');
-                sb.Append(unit != null && unit.IsBot ? 1 : 0).Append('/');
+                sb.Append(unit != null && Core.SeatHandover.APersonSatHere(unit.SeatOrigin) ? 1 : 0)
+                  .Append('/');
             }
 
             return Fnv(sb.ToString());
+        }
+
+        /// <summary>
+        /// The tournament modifiers that are NOT at their safe value, comma separated, or "none".
+        ///
+        /// ⚠️ NAMES RATHER THAN A COUNT. A harness asserting "no modifiers" against a number
+        /// cannot say WHICH one is set, and the whole value of `TournamentPreset.Modifiers` is
+        /// that each row names a switch and the reason it matters.
+        ///
+        /// ⚠️ AN UNREADABLE MODIFIER COUNTS AS SET. `TournamentGuard.Read` answers
+        /// `known: false` for a name this build cannot resolve, and reading that as "off" is the
+        /// fail-open half of exactly the hole `docs/TODO.md` § 145.3 closed.
+        /// </summary>
+        private static string ModifiersLeftSet()
+        {
+            var names = new List<string>();
+
+            foreach (var reading in TournamentGuard.LiveModifiers())
+            {
+                if (reading.IsSafe) continue;
+                names.Add(reading.Known ? reading.Name : reading.Name + "(UNREADABLE)");
+            }
+
+            return names.Count == 0 ? "none" : string.Join(", ", names);
         }
 
         private string DiscreteHash(RoundDirector round, MatchDirector match)

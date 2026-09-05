@@ -1394,6 +1394,43 @@ namespace TumbangPreso.Net
         public void VerifyArrival(int peerId, string accountPlayerId, string proof)
             => VerifyArrivalAsync(peerId, accountPlayerId, proof);
 
+        /// <summary>
+        /// The durable token THIS HOST approved for that connection, or null when it approved
+        /// none.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE `MatchRpc.HandleIdentify` WAS RE-ADMITTING A LIVE CONNECTION
+        /// UNDER A TOKEN THE CLIENT CHOSE. `ApproveConnection` reads the token out of the
+        /// connection payload once, stores it here, and `OnClientConnected` seats the peer with
+        /// it; the `Identify` RPC that follows carried its OWN copy of the token and
+        /// `LobbySession.Admit` believed it. Two things fell out of that, both reachable:
+        ///
+        ///   1. **A peer could re-identify under ANOTHER peer's token.** `Admit` treats a
+        ///      matching token as a fast reconnect: it copies that record's seat, spectator flag,
+        ///      picks and rating onto the sender and REMOVES the victim from `_peers`. The victim
+        ///      is not disconnected, so its socket keeps submitting movement for a chair the
+        ///      lobby now says belongs to somebody else. ⚠️ It needs the victim's token, which
+        ///      never crosses the wire, so it is a shared-machine or leaked-`settings.json`
+        ///      attack rather than a remote one. The invariant break underneath it is not
+        ///      conditional on anything.
+        ///   2. **A peer could re-identify under a token nobody holds and MOVE ITSELF.** No match
+        ///      in `_peers`, so `RuleOnArrival` runs afresh: with a free seat the sender takes a
+        ///      different chair while `MatchInstaller` still drives its old body, and with none
+        ///      it turns itself into a spectator mid-match. That one needs nothing but the
+        ///      ability to send the message it already sends.
+        ///
+        /// ⚠️ THE HOST'S OWN CONNECTION HAS NO STORED HELLO, because a host never sends itself
+        /// one, so its own token is answered directly. A host cannot impersonate itself.
+        ///
+        /// `docs/TODO.md` § 149.2.
+        /// </summary>
+        public string ApprovedTokenFor(ulong clientId)
+        {
+            if (_nm != null && clientId == _nm.LocalClientId)
+                return GameServices.Account?.ConnectionToken ?? NetIdentity.Token;
+
+            return _helloByClient.TryGetValue(clientId, out var hello) ? hello.Token : null;
+        }
+
         private async void VerifyArrivalAsync(int peerId, string accountPlayerId, string proof)
         {
             if (!IsHost || string.IsNullOrEmpty(accountPlayerId) || string.IsNullOrEmpty(proof))

@@ -418,57 +418,109 @@ namespace TumbangPreso
             // instead of before it.
             if (!_motor.Intent.JustPressed(Verb.Lunge)) return;
 
+            // ⚠⚠ THE PREDICATE IS THE HOST'S OWN, ASKED FROM THIS BODY'S CURRENT POSE. Every
+            // reason a slide may not start lives in one method now (`SlideMayStartFrom`), so the
+            // local prediction and the authoritative resolution cannot answer differently. Until
+            // 2026-09-05 they were two lists and the host's was the shorter one.
+            //
             // ⚠️ NOTHING TO FETCH MEANS NOTHING HAPPENS, AND THE PRESS IS NOT SPENT. A slide with
             // no tsinelas in front of it is a free 1.75 m dash, which is the mobility buff this
             // verb must not be. `CLAUDE.md` § 6.3: a control that does nothing must not look
             // pressable, and the HUD prompt is what says when it will work.
-            if (_carrier != null && _carrier.Held != null) return;
-            if (!AnySlideTargetAhead()) return;
+            //
+            // ⚠️ FATIGUE REFUSES IT, LIKE THE SHOVE, and that clause is inside the shared rule
+            // too. `HostResolveShove` opens with `_motor.Stamina.IsFatigued` for the same reason:
+            // a bar that has bottomed out is the one moment the game already says you have
+            // overcommitted, and letting a commitment verb through it would make the bar advisory.
+            if (!SlideMayStartFrom(transform.position, transform.forward, out _)) return;
 
-            // ⚠️ FATIGUE REFUSES IT, LIKE THE SHOVE. `HostResolveShove` opens with
-            // `_motor.Stamina.IsFatigued` for the same reason: a bar that has bottomed out is the
-            // one moment the game already says you have overcommitted, and letting a commitment
-            // verb through it would make the bar advisory.
-            if (_motor.Stamina.IsFatigued) return;
             if (!_motor.Stamina.Spend(Balance.SlideStaminaCost)) return;
 
             ReleaseSlide();
         }
 
         /// <summary>
-        /// Whether there is a tsinelas this attacker could legally take within a slide of here.
+        /// THE one rule for whether a retrieval slide may start, from a given pose.
         ///
-        /// ⚠️⚠️ IT ASKS THE SAME QUESTION `Carrier.TryPickup` ASKS, ONE RADIUS FURTHER OUT, AND
-        /// IT MUST KEEP DOING SO. `Slipper.CanBeGrabbedBy` already tests the state, the role and
-        /// the reach; this widens only the reach, by exactly the ground the slide covers. A second
-        /// eligibility rule here would be a second answer to "whose shoe is this", which is the
-        /// fault `docs/TODO.md` § 94.1 is about.
+        /// ⚠⚠ IT IS ONE RULE BECAUSE TWO OF THEM WAS A COMPETITIVE HOLE, AND THE HOST HELD THE
+        /// SHORTER LIST. `StepSlide` refused a press with no retrievable tsinelas ahead;
+        /// `HostResolveSlide` checked the role, the cooldown, the stamina, the fatigue and the
+        /// hand, and **never asked whether there was anything to retrieve at all**. So the local
+        /// path could not dash for free and a modified client asking over the wire could: the
+        /// host applied `SlideSpeed` down the requested facing on request, which is 1.75 m of
+        /// host-authoritative mobility with nothing to collect. `docs/VISION.md` § 1.1 forbids
+        /// Classic a power, and a networked-only free dash is a power that only cheats have.
+        /// `docs/TODO.md` § 145.11.
         ///
-        /// ⚠️ IT IS A LOCAL PREDICATE AND NOT AN AUTHORITY. A client uses it to decide whether to
-        /// spend the press; the host re-asks everything when the sweep runs.
+        /// ⚠⚠ IT DOES NOT RESTATE THE PICKUP RULE AND MUST NOT START.
+        /// `Slipper.IsGrabbableIgnoringReach` owns the state, the role and the ability to act;
+        /// this widens ONLY the reach, from a radius around the body to the same radius around
+        /// the ground the slide covers. `Slipper.HostGrab` still performs the pickup and
+        /// re-checks `CanBeGrabbedBy` when the sweep lands, so a slide can never collect
+        /// something a walk-up could not. `docs/TODO.md` § 94.1 is what a second answer to
+        /// "whose shoe is this" costs.
+        ///
+        /// ⚠⚠ AND LINE OF SIGHT IS IN THE PREDICATE, WHICH IT WAS NOT. The sweep raycasted and
+        /// the predicate did not, so a player standing on the wrong side of a jeepney predicted a
+        /// slide, spent the stamina, narrowed their own steering for most of a second and
+        /// collected nothing. That is not a fairness bug, it is the verb feeling broken: the
+        /// local path promised something the host was always going to refuse.
+        ///
+        /// ⚠️ THE POSE IS A PARAMETER RATHER THAN `transform`. The host has to ask this question
+        /// about the pose the CLIENT claimed, which `PlausibleIntentPose` has already bounded, and
+        /// asking it about the host's own copy of the body would answer a different question by a
+        /// round trip.
         /// </summary>
-        private bool AnySlideTargetAhead()
+        public bool SlideMayStartFrom(Vector3 from, Vector3 facing, out Slipper target)
         {
-            var round = GameServices.Round;
-            if (round == null) return false;
+            target = null;
 
-            Vector3 from = Flat(transform.position);
-            Vector3 forward = transform.forward;
+            if (_slideCooldown > 0.0f) return false;
+            if (_motor == null || _motor.IsDefender || !_motor.CanAct()) return false;
+            if (_motor.Stamina.IsFatigued) return false;
+            if (_carrier != null && _carrier.Held != null) return false;
+
+            target = FindSlideTarget(from, facing);
+            return target != null;
+        }
+
+        /// <summary>
+        /// The tsinelas a slide from here would legally reach, or null.
+        ///
+        /// ⚠️ IT PROJECTS THE SEGMENT THE SLIDE WOULD COVER; `SweepSlideRetrieval` measures the
+        /// one it ACTUALLY covered. The two are deliberately different: this decides whether to
+        /// commit and that decides what was collected, and a body that is blocked passes the
+        /// first and correctly fails the second.
+        /// </summary>
+        private Slipper FindSlideTarget(Vector3 from, Vector3 facing)
+        {
+            if (GameServices.Round == null) return null;
+
+            Vector3 forward = facing;
             forward.y = 0.0f;
-            if (forward.sqrMagnitude < 0.0001f) return false;
+            if (forward.sqrMagnitude < 0.0001f) forward = transform.forward;
+            forward.y = 0.0f;
+            if (forward.sqrMagnitude < 0.0001f) return null;
 
-            Vector3 to = from + forward.normalized * Balance.SlideDistance;
+            Vector3 a = Flat(from);
+            Vector3 b = a + forward.normalized * Balance.SlideDistance;
+
+            Slipper best = null;
+            float bestDistance = float.MaxValue;
 
             foreach (var s in FindObjectsByType<Slipper>(FindObjectsSortMode.None))
             {
-                if (s == null || s.State != SlipperState.Loose) continue;
-                if (DistanceToSegment(Flat(s.transform.position), from, to) > Balance.PickupRadius)
-                    continue;
+                if (s == null || !s.IsGrabbableIgnoringReach(_motor)) continue;
 
-                return true;
+                float d = DistanceToSegment(Flat(s.transform.position), a, b);
+                if (d > Balance.PickupRadius || d >= bestDistance) continue;
+                if (!ReachableThroughTheStreet(from, s.transform.position)) continue;
+
+                bestDistance = d;
+                best = s;
             }
 
-            return false;
+            return best;
         }
 
         private void ReleaseSlide()
@@ -545,12 +597,12 @@ namespace TumbangPreso
                 // the slide relaxes is WHERE the attacker has to be standing, so the radius test
                 // is re-done against the segment below and everything else in that method still
                 // applies exactly as it does to a walk-up.
-                if (s.State != SlipperState.Loose || !_motor.CanAct() || _motor.IsDefender) continue;
+                if (!s.IsGrabbableIgnoringReach(_motor)) continue;
 
                 Vector3 at = Flat(s.transform.position);
                 float d = DistanceToSegment(at, a, b);
                 if (d > Balance.PickupRadius || d >= bestDistance) continue;
-                if (!ReachableThroughTheStreet(s.transform.position)) continue;
+                if (!ReachableThroughTheStreet(transform.position, s.transform.position)) continue;
 
                 bestDistance = d;
                 best = s;
@@ -590,10 +642,15 @@ namespace TumbangPreso
         ///
         /// ⚠️ IT IGNORES TRIGGERS AND THE BODIES. A player standing between an attacker and their
         /// tsinelas is not a wall, and a hazard zone is not either; the shoe under a jeepney is.
+        ///
+        /// ⚠⚠ THE ORIGIN IS A PARAMETER AND IT USED TO BE `transform.position`, WHICH MADE THE
+        /// PREDICATE AND THE HOST ASK DIFFERENT QUESTIONS. The host resolves a slide from the
+        /// pose the CLIENT claimed; casting from the host's own copy of the body would answer
+        /// about a position up to `IntentPoseLeeway` away from the one being asked about.
         /// </summary>
-        private bool ReachableThroughTheStreet(Vector3 target)
+        private bool ReachableThroughTheStreet(Vector3 from, Vector3 target)
         {
-            Vector3 eye = transform.position + Vector3.up * 0.5f;
+            Vector3 eye = from + Vector3.up * 0.5f;
             Vector3 toward = (target + Vector3.up * 0.1f) - eye;
 
             float distance = toward.magnitude;
@@ -668,10 +725,19 @@ namespace TumbangPreso
         /// </summary>
         public bool HostResolveSlide(Vector3 from, Vector3 facing)
         {
-            if (!NetAuthority.ShouldResolve() || _slideCooldown > 0.0f ||
-                _motor.IsDefender || !_motor.CanAct() || _motor.Stamina.IsFatigued ||
-                (_carrier != null && _carrier.Held != null) ||
-                !_motor.Stamina.Spend(Balance.SlideStaminaCost)) return false;
+            // ⚠⚠ THE SAME PREDICATE THE PRESS USED, AND ITS ABSENCE HERE WAS THE HOLE. This
+            // guard used to list the role, the cooldown, the hand, the fatigue and the bar and
+            // stop, so the one thing that makes this verb a RETRIEVAL rather than a dash, that
+            // there is something ahead to retrieve, was checked only on the peer that could
+            // choose not to check it. See `SlideMayStartFrom`.
+            //
+            // ⚠️ THE STAMINA IS SPENT AFTER THE PREDICATE AND THE ORDER IS LOAD-BEARING. A
+            // refusal must cost nothing, because `RollBackRefusedVerb` is what hands a refused
+            // prediction back and there is nothing on the wire that would correct a bar the host
+            // took for a verb it never ran.
+            if (!NetAuthority.ShouldResolve()) return false;
+            if (!SlideMayStartFrom(from, facing, out _)) return false;
+            if (!_motor.Stamina.Spend(Balance.SlideStaminaCost)) return false;
 
             _slideCooldown = Balance.SlideCooldown;
             _slideActiveLeft = Balance.SlideActiveTime;

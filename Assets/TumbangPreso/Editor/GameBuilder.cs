@@ -640,9 +640,17 @@ namespace TumbangPreso.EditorTools
         /// refused over it, 🧑 building at 8 a.m. at a venue with uncommitted changes is a
         /// legitimate thing to do, and `tools/qualify.py` is where strictness belongs.
         ///
-        /// ⚠️ TRACKED CHANGES ONLY. `--porcelain` without `--untracked-files=all` still lists
-        /// untracked files as `??`, and a stray `Logs/` artefact or an editor scratch file is not
-        /// a difference in what was BUILT. Those rows are dropped; anything else is dirty.
+        /// ⚠️⚠️ AND UNTRACKED **SOURCE** IS DIRTY, WHICH IT WAS NOT UNTIL 2026-09-05. This note
+        /// used to read "tracked changes only ... those rows are dropped", and in a Unity project
+        /// that is unsafe: an untracked `.cs` under `Assets/` compiles into this player, an
+        /// untracked `.shader`, `.prefab`, `.unity` or `Resources/` asset ships inside it, and
+        /// `ProjectSettings/` decides the target and the UGS project. All of them change the
+        /// artifact while the SHA stamped beside them names a commit that does not contain them.
+        /// `Core.WorkingTreeRules` is the rule, `tools/qualify.py` holds the same one in Python,
+        /// and `tools/audit_harness_contracts.py` asserts the two agree. `docs/TODO.md` § 145.9.
+        ///
+        /// ⚠️ `.gitignore` STILL DOES THE BULK OF IT. `--porcelain` does not list ignored files,
+        /// so `Logs/`, `Library/`, `Builds/` and the build stamps never reach the classifier.
         ///
         /// ⚠️ AND IT IS BOUNDED. A `git status` on a cold 5 GB checkout can take seconds and a
         /// hung one would hang the build, so it gets ten and then answers Unknown, which is
@@ -655,41 +663,44 @@ namespace TumbangPreso.EditorTools
 
             try
             {
-                var info = new System.Diagnostics.ProcessStartInfo
+                // ⚠️⚠️ TWO CONTENT QUESTIONS RATHER THAN ONE STAT QUESTION, AND
+                // `git status --porcelain` IS THE STAT ONE. On this Windows machine
+                // `core.autocrlf` is true and the repository stores Unity's YAML with LF, so
+                // every launch that rewrites a tracked `.asset` leaves it reported as MODIFIED
+                // while being **byte-identical to HEAD**: `git hash-object` and
+                // `git rev-parse HEAD:<path>` agree, `git diff` prints nothing, and
+                // `git diff-index` answers `M` with a zero destination hash, which is git saying
+                // it has not compared contents. `git update-index --refresh` does not clear it.
+                // A build stamped `dirty` for a file nobody edited is a stamp nobody believes.
+                // `tools/qualify.py` asks the same two questions for the same reason.
+                // `docs/TODO.md` § 149.11.
+                string edited = Git(repoRoot, "diff --name-only HEAD", out bool editedOk);
+                if (!editedOk) return BuildIdentity.TreeState.Unknown;
+
+                foreach (string line in edited.Split('\n'))
                 {
-                    FileName = "git",
-                    Arguments = "status --porcelain",
-                    WorkingDirectory = repoRoot,
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true,
-                };
-
-                using var process = System.Diagnostics.Process.Start(info);
-                if (process == null) return BuildIdentity.TreeState.Unknown;
-
-                string output = process.StandardOutput.ReadToEnd();
-
-                if (!process.WaitForExit(10000))
-                {
-                    try { process.Kill(); } catch { /* it is already going */ }
-                    Debug.LogWarning("[Build] git status did not answer in ten seconds; the " +
-                                     "working tree state is UNKNOWN rather than clean.");
-                    return BuildIdentity.TreeState.Unknown;
-                }
-
-                if (process.ExitCode != 0) return BuildIdentity.TreeState.Unknown;
-
-                foreach (string line in output.Split('\n'))
-                {
-                    string row = line.TrimEnd('\r');
+                    string row = line.Trim();
                     if (row.Length == 0) continue;
 
-                    // ⚠️ `??` IS UNTRACKED AND IS NOT A DIFFERENCE IN WHAT WAS BUILT. `Logs/`,
-                    // `Library/` and a scratch file are all normal on a machine somebody works on.
-                    if (row.StartsWith("??", StringComparison.Ordinal)) continue;
+                    Debug.Log($"[Build] the working tree is DIRTY: edited {row}");
+                    return BuildIdentity.TreeState.Dirty;
+                }
 
+                // ⚠️ `--exclude-standard` IS WHAT MAKES `.gitignore` THE FIRST FILTER, so
+                // `Library/`, `Logs/` and both build stamps never reach the classifier.
+                string others = Git(repoRoot, "ls-files --others --exclude-standard",
+                                    out bool othersOk);
+                if (!othersOk) return BuildIdentity.TreeState.Unknown;
+
+                foreach (string line in others.Split('\n'))
+                {
+                    // ⚠️ ONE RULE, SHARED WITH THE PYTHON SIDE.
+                    // `Core.WorkingTreeRules.IsSourceSensitive` is default-deny, so an untracked
+                    // path nobody has thought about counts as source.
+                    string row = line.Trim();
+                    if (row.Length == 0 || !Core.WorkingTreeRules.IsSourceSensitive(row)) continue;
+
+                    Debug.Log($"[Build] the working tree is DIRTY: untracked source {row}");
                     return BuildIdentity.TreeState.Dirty;
                 }
 
@@ -704,6 +715,49 @@ namespace TumbangPreso.EditorTools
                           $"({e.GetType().Name}); it is UNKNOWN rather than clean.");
                 return BuildIdentity.TreeState.Unknown;
             }
+        }
+
+        /// <summary>
+        /// One bounded `git` call. Answers its stdout, and false when anything went wrong.
+        ///
+        /// ⚠️ THE TEN-SECOND BOUND IS THE POINT OF IT BEING HERE RATHER THAN INLINE TWICE. A
+        /// `git` on a cold 5 GB checkout can take seconds and a hung one would hang the build;
+        /// two copies of that timeout is one copy that gets forgotten when somebody edits the
+        /// other.
+        /// </summary>
+        private static string Git(string repoRoot, string arguments, out bool ok)
+        {
+            ok = false;
+
+            var info = new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = "git",
+                Arguments = arguments,
+                WorkingDirectory = repoRoot,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true,
+            };
+
+            using var process = System.Diagnostics.Process.Start(info);
+            if (process == null) return "";
+
+            string output = process.StandardOutput.ReadToEnd();
+
+            if (!process.WaitForExit(10000))
+            {
+                try { process.Kill(); } catch { /* it is already going */ }
+                Debug.LogWarning($"[Build] `git {arguments}` did not answer in ten " +
+                                             $"seconds; the working tree state is UNKNOWN rather " +
+                                             $"than clean.");
+                return "";
+            }
+
+            if (process.ExitCode != 0) return "";
+
+            ok = true;
+            return output;
         }
 
         private static void EnsureRuntimeShaders()

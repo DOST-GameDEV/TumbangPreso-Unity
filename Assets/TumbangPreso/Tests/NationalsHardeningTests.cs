@@ -750,5 +750,704 @@ namespace TumbangPreso.Tests
             Assert.IsFalse(string.IsNullOrEmpty(lunge.TouchLabel),
                 "And a thumb, which is the button that used to do nothing for an attacker.");
         }
+
+        // -------------------------------------------------------------------
+        // § 145.9  AN UNTRACKED SOURCE FILE IS NOT A CLEAN TREE
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// ⚠️⚠️ THE GATE DROPPED EVERY `??` ROW AND IN A UNITY PROJECT THAT IS UNSAFE. An
+        /// untracked `.cs` compiles, an untracked `.shader`, `.prefab`, `.unity` or `Resources/`
+        /// asset ships, and `ProjectSettings/` decides the build target and the UGS project.
+        /// The report said **SHA X / tree clean** over the top of all three.
+        /// </summary>
+        [Test]
+        public void UntrackedSourceMakesTheTreeDirtyAndUntrackedOutputDoesNot()
+        {
+            string[] source =
+            {
+                "Assets/TumbangPreso/Runtime/SecretVerb.cs",
+                "Assets/TumbangPreso/Runtime/SecretVerb.cs.meta",
+                "Assets/TumbangPreso/Art/shaders/Toon2.shader",
+                "Assets/TumbangPreso/Resources/UI/new_art.png",
+                "Assets/Scenes/Eskinita2.unity",
+                "Assets/StreamingAssets/rules.json",
+                "Packages/com.tumbangpreso.core/Runtime/NewRule.cs",
+                "Core/Extra.cs",
+                "Core.Tests/ExtraTests.cs",
+                "ProjectSettings/ProjectSettings.asset",
+                "tools/qualify.py",
+                "ugs/cloud-code/match-record.js",
+            };
+
+            foreach (string path in source)
+            {
+                Assert.IsTrue(WorkingTreeRules.IsSourceSensitive(path),
+                    $"{path} is untracked source. It compiles or ships, so a report calling the " +
+                    $"tree clean is certifying a commit that does not contain it.");
+            }
+
+            string[] output =
+            {
+                "Logs/play.xml",
+                "Logs/ui/character-select.png",
+                "Library/ArtifactDB",
+                "Temp/UnityLockfile",
+                "Builds/macOS/TumbangPreso.app",
+                "build/apk/tumbangpreso.apk",
+                "obj/Debug/x.dll",
+                "scratchpad/patch_thing.py",
+                "docs/reports/qualification-abc123456789.md",
+            };
+
+            foreach (string path in output)
+            {
+                Assert.IsFalse(WorkingTreeRules.IsSourceSensitive(path),
+                    $"{path} cannot reach a build, and a gate that failed on it is a gate every " +
+                    $"developer learns to pass with a flag.");
+            }
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ DEFAULT-DENY IS THE WHOLE DESIGN AND THIS IS THE TEST THAT SAYS SO. The brittle
+        /// shape is an allowlist of source directories: somebody adds one next year, nobody edits
+        /// the list, and the gate goes quiet in the direction nobody checks. A directory nobody
+        /// has thought about has to be DIRTY.
+        /// </summary>
+        [Test]
+        public void ADirectoryNobodyHasThoughtAboutIsSourceRatherThanForgiven()
+        {
+            Assert.IsTrue(WorkingTreeRules.IsSourceSensitive("Assets/BrandNewFolder/Thing.cs"));
+            Assert.IsTrue(WorkingTreeRules.IsSourceSensitive("SomeFolderInventedIn2027/thing.txt"));
+            Assert.IsTrue(WorkingTreeRules.IsSourceSensitive("shaders/"),
+                "Git collapses an untracked DIRECTORY into one row, so refusing to judge one "
+                + "would be a hole the size of a folder.");
+
+            Assert.IsFalse(WorkingTreeRules.IsSourceSensitive(""));
+            Assert.IsFalse(WorkingTreeRules.IsSourceSensitive("   "));
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ GIT QUOTES A PATH WITH A SPACE IN IT AND `git ls-files --others` IS WHERE THOSE
+        /// ARRIVE FROM. The surrounding quotes are stripped; the C-escapes inside one are not
+        /// decoded, and that is safe **because the rule is default-deny**: a path the parser
+        /// mangles is still classified as source and still makes the tree dirty. Every parsing
+        /// mistake fails towards refusing to certify.
+        /// </summary>
+        [Test]
+        public void AQuotedPathIsClassifiedByWhatIsInsideTheQuotes()
+        {
+            Assert.IsTrue(WorkingTreeRules.IsSourceSensitive("\"Assets/Space Name.cs\""));
+            Assert.IsFalse(WorkingTreeRules.IsSourceSensitive("\"Logs/a b.log\""));
+            Assert.IsTrue(WorkingTreeRules.IsSourceSensitive("Assets\\Windows\\Path.cs"),
+                "A backslash separator is the same path. Both callers run on Windows as often as "
+                + "not.");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ BOTH SIDES OF THIS GATE HAVE TO MEAN THE SAME THING, AND ONE OF THEM IS PYTHON.
+        /// `IntegrityRules.Digest` set the precedent for what a rule written twice costs, and
+        /// `tools/check_digest_contract.js` is the answer that was built for it. This asserts the
+        /// Unity half against the file `tools/qualify.py` reads its own list out of, so a root
+        /// added on one side and not the other fails here rather than going quiet in a release.
+        /// </summary>
+        [Test]
+        public void ThePythonQualificationSharesTheOneWorkingTreeRule()
+        {
+            string root = Path.GetDirectoryName(Application.dataPath);
+            string qualify = Path.Combine(root, "tools", "qualify.py");
+            Assert.IsTrue(File.Exists(qualify), "tools/qualify.py is the gate. It has to exist.");
+
+            string text = File.ReadAllText(qualify);
+            var block = Regex.Match(text,
+                @"NON_SOURCE_UNTRACKED_ROOTS\s*=\s*\((?<body>.*?)\)", RegexOptions.Singleline);
+            Assert.IsTrue(block.Success,
+                "tools/qualify.py must carry NON_SOURCE_UNTRACKED_ROOTS. If it was renamed, this "
+                + "test is the thing that has to be updated with it.");
+
+            // ⚠️⚠️ THE `#` COMMENTS ARE STRIPPED FIRST AND THE FIRST RUN OF THIS TEST PROVED WHY.
+            // Every root in that tuple carries a written reason beside it, and one of those
+            // reasons QUOTES `.gitignore`: *"they are worthless the moment they have run"*. A
+            // naive sweep for quoted strings reads that sentence as a seventeenth root and the
+            // test fails on its own parser rather than on any drift. `tools/audit_harness_
+            // contracts.py` strips `//` from the C# side for the same reason, in the same shape.
+            string body = Regex.Replace(block.Groups["body"].Value, "#[^\n]*", "");
+
+            var python = new List<string>();
+            foreach (Match m in Regex.Matches(body, "\"(?<root>[^\"]+)\""))
+                python.Add(m.Groups["root"].Value);
+
+            CollectionAssert.AreEquivalent(WorkingTreeRules.NonSourceUntrackedRoots, python,
+                "The C# and the Python copies of the non-source roots have drifted. A build "
+                + "stamp saying `clean` and a qualification saying `dirty` about one tree is "
+                + "worse than either being wrong on its own, because each looks authoritative.");
+        }
+
+        // -------------------------------------------------------------------
+        // § 145.10  A DIRTY OR UNKNOWN ARTIFACT IS NOT A CANDIDATE
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// ⚠️⚠️ THE EXACT SCENARIO: HEAD X, EDIT A TRACKED `.cs`, BUILD, REVERT, QUALIFY. The
+        /// artifact's SHA is X and its contents are not, the working tree is clean, and every
+        /// SHA comparison in the gate passes. `treeState` is the only field that can refuse it.
+        /// </summary>
+        [Test]
+        public void ADirtyArtifactIsNotACandidateEvenAtTheRightSha()
+        {
+            var record = new BuildIdentity.Record
+            {
+                sha = "837eb0a321b08fea03c75916a312e6001a11413a",
+                protocol = Net.NetSession.ProtocolVersion,
+                treeState = "dirty",
+                dirty = true,
+            };
+
+            Assert.AreEqual(BuildIdentity.TreeState.Dirty, BuildIdentity.StateOf(record));
+            Assert.AreNotEqual(BuildIdentity.TreeState.Clean, BuildIdentity.StateOf(record),
+                "Reverting the working tree afterwards does not change what is inside the "
+                + "artifact. The SHA it names is not what ran.");
+        }
+
+        /// <summary>⚠️ EMPTY IS `unknown`, WHICH IS THE STATE EVERY PRE-2026-09-05 STAMP IS IN.</summary>
+        [Test]
+        public void AStampWithNoTreeStateIsUnknownAndTheOneLineSaysSo()
+        {
+            var legacy = new BuildIdentity.Record { sha = "abcdef1234567890", treeState = "" };
+            Assert.AreEqual(BuildIdentity.TreeState.Unknown, BuildIdentity.StateOf(legacy));
+
+            var nonsense = new BuildIdentity.Record { treeState = "probably fine" };
+            Assert.AreEqual(BuildIdentity.TreeState.Unknown, BuildIdentity.StateOf(nonsense),
+                "A value this build does not recognise is unknown, not clean. Fail closed.");
+
+            Assert.AreEqual(BuildIdentity.TreeState.Clean,
+                BuildIdentity.StateOf(new BuildIdentity.Record { treeState = "CLEAN" }),
+                "The reader is case insensitive; the writer is `ToString().ToLowerInvariant()`.");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ TWO ARTIFACTS ON ONE COMMIT AND ONE PROTOCOL CAN STILL NOT PLAY TOGETHER, AND
+        /// THIS IS THE FIELD THAT DECIDES IT. `CLAUDE.md` § 4a: a machine on a different UGS
+        /// project resolves a join code in a different namespace, **so the room is simply not
+        /// there and it reads as an EMPTY LOBBY rather than as an error.** Nothing refuses, so
+        /// nothing logs, so nobody can debug it at a venue.
+        /// </summary>
+        [Test]
+        public void TheUgsIdentityIsPartOfWhetherTwoArtifactsAreOneRelease()
+        {
+            string root = Path.GetDirectoryName(Application.dataPath);
+            string qualify = File.ReadAllText(Path.Combine(root, "tools", "qualify.py"));
+
+            foreach (string field in new[] { "sha", "protocol", "ugsProject",
+                                             "ugsEnvironment", "appVersion" })
+            {
+                StringAssert.Contains($"(\"{field}\"", qualify,
+                    $"{field} must be one of the fields two candidate artifacts are compared on. "
+                    + $"Dropping one is how two builds that cannot see each other pass a gate.");
+            }
+
+            // ⚠️ AND THE BUILD ACTUALLY STAMPS THEM, which is the half a Python-side list cannot
+            // assert. A comparison of a field nothing writes compares two blanks and passes.
+            var stamped = new BuildIdentity.Record();
+            Assert.IsNotNull(stamped.ugsProject);
+            Assert.IsNotNull(stamped.ugsEnvironment);
+            Assert.IsNotNull(stamped.appVersion);
+            Assert.IsNotNull(stamped.target);
+        }
+
+        // -------------------------------------------------------------------
+        // § 145.12  THE SLIDE'S REFUSAL COULD NEVER BE ROLLED BACK
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// ⚠️⚠️ `OnVerbDeniedMsg` BOUNDED THE VERB BYTE AT `DeniedVerb.Shove`, WHICH IS 2, AND
+        /// `Slide` IS 3. Every slide refusal the host sent was discarded by the client one
+        /// function before `RollBackRefusedVerb`, so the whole `case DeniedVerb.Slide` arm, which
+        /// returns a 2.45 s cooldown, 25 stamina and a commitment that narrows steering to 0.35,
+        /// was unreachable code from the day it was written.
+        /// </summary>
+        [Test]
+        public void EveryDeniedVerbValueCanTravelAndBeRolledBack()
+        {
+            string root = Path.GetDirectoryName(Application.dataPath);
+            string rpc = File.ReadAllText(Path.Combine(
+                root, "Assets", "TumbangPreso", "Runtime", "Net", "MatchRpc.cs"));
+
+            StringAssert.DoesNotContain("verb > (byte)DeniedVerb.Shove", rpc,
+                "A bound named after the last verb somebody remembered is a bound that drops the "
+                + "next one. It is the enum's own length now.");
+
+            string combat = File.ReadAllText(Path.Combine(
+                root, "Assets", "TumbangPreso", "Runtime", "CombatVerbs.cs"));
+
+            foreach (string name in System.Enum.GetNames(typeof(Net.MatchRpc.DeniedVerb)))
+            {
+                StringAssert.Contains($"case Net.MatchRpc.DeniedVerb.{name}:", combat,
+                    $"{name} can be refused, so it needs an arm in RollBackRefusedVerb. A verb "
+                    + $"the host can refuse and the client cannot take back leaves a player "
+                    + $"paying for something that never happened.");
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // § 145.4b  WHO EVER SAT IN A SEAT IS THE PERSISTENT FACT
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// ⚠️⚠️ `IsBot` IS NOT CONSTANT FOR A MATCH AND THE STRUCTURAL HASH WAS TREATING IT AS
+        /// IF IT WERE. The measurement is `docs/TODO.md` § 145.4b's second run: a seatless
+        /// referee and two idle clients, no `-tp-allbots`. The clients agreed with each other
+        /// exactly and the referee called every chair a bot, because it outlives them on purpose
+        /// and by the time it sampled both players had quit and their chairs had been handed
+        /// over. Three findings, and the game was right in all three.
+        /// </summary>
+        [Test]
+        public void WhetherAPersonEverSatInASeatSurvivesThemLeaving()
+        {
+            Assert.IsTrue(SeatHandover.APersonSatHere(SeatOrigin.Human));
+            Assert.IsTrue(SeatHandover.APersonSatHere(SeatOrigin.HandedToBot),
+                "A chair somebody sat in and left is still a chair somebody sat in. That is the "
+                + "whole reason this can be compared between peers that stopped at different "
+                + "moments and `IsBot` cannot.");
+            Assert.IsFalse(SeatHandover.APersonSatHere(SeatOrigin.Bot));
+
+            Assert.IsFalse(SeatHandover.RatingMovesFor(SeatOrigin.HandedToBot),
+                "And it is a different question from whether the ladder moves, which is still "
+                + "Human only. Collapsing the two would pay a player for a bot's stretch.");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ A HOST THAT OPENS THE ARENA BEFORE ITS PEERS ARRIVE RECORDED EVERY PLAYER'S CHAIR
+        /// AS A BOT'S FOR THE WHOLE MATCH. That is every `-tp-dedicated` referee and every
+        /// `-tp-autostart` host: `MatchInstaller.BuildSeat` asks the lobby who is sitting where
+        /// and the answer at boot is "nobody", and `NoteSeatOrigin(Human)` is a deliberate no-op.
+        /// `SeatHandover.RatingMovesFor` reads that field, so a referee-hosted bracket match
+        /// would have submitted four bot seats and moved nothing.
+        /// </summary>
+        [Test]
+        public void ASeatInstalledAsABotBecomesHumanWhenARealPeerClaimsIt()
+        {
+            var go = new GameObject("SeatOriginProbe", typeof(CharacterController));
+            try
+            {
+                var motor = go.AddComponent<CharacterMotor>();
+
+                motor.NoteSeatOrigin(SeatOrigin.Bot);
+                Assert.AreEqual(SeatOrigin.Bot, motor.SeatOrigin);
+
+                motor.NoteSeatClaimedByAPerson(midMatch: false);
+                Assert.AreEqual(SeatOrigin.Human, motor.SeatOrigin,
+                    "Before the whistle a chair changing hands is the roster settling.");
+
+                motor.NoteSeatOrigin(SeatOrigin.HandedToBot);
+                Assert.AreEqual(SeatOrigin.HandedToBot, motor.SeatOrigin);
+
+                motor.NoteSeatClaimedByAPerson(midMatch: false);
+                Assert.AreEqual(SeatOrigin.HandedToBot, motor.SeatOrigin,
+                    "⚠️ A HANDOVER IS NEVER WALKED BACK. The bot's stretch happened, so a "
+                    + "reconnecting player may not have the whole result credited to them.");
+            }
+            finally
+            {
+                Object.DestroyImmediate(go);
+            }
+        }
+
+        /// <summary>
+        /// ⚠️ AFTER THE WHISTLE, A BOT HAS ALREADY PLAYED PART OF THE MATCH IN THAT CHAIR, so a
+        /// person arriving into it is `HandedToBot` and not `Human`. Calling it Human would pay
+        /// somebody in full for a match they joined half way through.
+        /// </summary>
+        [Test]
+        public void APersonTakingABotsChairMidMatchIsAHandover()
+        {
+            var go = new GameObject("SeatOriginMidMatchProbe", typeof(CharacterController));
+            try
+            {
+                var motor = go.AddComponent<CharacterMotor>();
+                motor.NoteSeatOrigin(SeatOrigin.Bot);
+
+                motor.NoteSeatClaimedByAPerson(midMatch: true);
+                Assert.AreEqual(SeatOrigin.HandedToBot, motor.SeatOrigin);
+                Assert.IsTrue(SeatHandover.APersonSatHere(motor.SeatOrigin));
+                Assert.IsFalse(SeatHandover.RatingMovesFor(motor.SeatOrigin));
+            }
+            finally
+            {
+                Object.DestroyImmediate(go);
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // § 145.8  THE TOURNAMENT COLD START
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// ⚠️⚠️ THE COLD START HAS TO BE ABLE TO ASSERT THE PRESET AND NOT MERELY THAT A MATCH
+        /// HAPPENED. The recorded green run at `87346b8` is a macOS player playing HERO STRIKE,
+        /// and `docs/VISION.md` § 1.1 says CLASSIC is the tournament ruleset. A harness cannot
+        /// assert what it cannot read, so the report has to carry both sentences.
+        /// </summary>
+        [Test]
+        public void TheStateReportCarriesTheTournamentPresetAndTheModifiersLeftSet()
+        {
+            string root = Path.GetDirectoryName(Application.dataPath);
+            string report = File.ReadAllText(Path.Combine(
+                root, "Assets", "TumbangPreso", "Runtime", "Diagnostics", "NetStateReport.cs"));
+
+            StringAssert.Contains("tournament ruleset", report);
+            StringAssert.Contains("tournament modifiers", report);
+            StringAssert.Contains("build identity", report);
+
+            // ⚠️ AND THE HARNESS PARSES EXACTLY THOSE THREE. A field printed under a name nothing
+            // reads is `docs/TODO.md` § 143.15 with a longer report.
+            string cold = File.ReadAllText(Path.Combine(root, "tools", "cold_start.py"));
+            StringAssert.Contains("tournament ruleset", cold);
+            StringAssert.Contains("tournament modifiers", cold);
+            StringAssert.Contains(Net.NetBootstrap.TournamentSwitch, cold);
+        }
+
+        // -------------------------------------------------------------------
+        // § 149.2  ADMISSION HAPPENS ONCE, UNDER THE TOKEN THE HOST APPROVED
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// ⚠️⚠️ THE REPRODUCTION, DRIVEN THROUGH `LobbySession` ITSELF. This is what
+        /// `MatchRpc.HandleIdentify` used to hand a CLIENT-CHOSEN token to: `Admit` treats a
+        /// matching token as a fast reconnect, so a second live peer arriving with the first
+        /// one's token **takes its chair and removes it from the lobby**, with no disconnect, so
+        /// the victim's socket keeps submitting movement for a seat that is no longer theirs.
+        ///
+        /// ⚠️ THE BEHAVIOUR ITSELF IS CORRECT AND MUST NOT CHANGE. It is the fast-reconnect path
+        /// and `NetSession.ApproveConnection` disconnects the stale transport straight after it.
+        /// What was wrong is that `Identify` could reach it with a token the host never approved.
+        /// `docs/TODO.md` § 149.2.
+        /// </summary>
+        [Test]
+        public void AdmittingASecondPeerUnderTheSameTokenTakesTheFirstOnesChair()
+        {
+            var lobby = new Net.LobbySession { IsDedicated = false };
+
+            var first = lobby.Admit(1, "durable-token-of-the-victim", "VICTIM");
+            Assert.GreaterOrEqual(first.Seat, 0, "the fixture needs the first peer seated.");
+            int stolen = first.Seat;
+
+            var second = lobby.Admit(2, "durable-token-of-the-victim", "ATTACKER",
+                                     out int replacedPeerId);
+
+            Assert.AreEqual(stolen, second.Seat,
+                "This IS the fast-reconnect rule and it is right: the same durable token means "
+                + "the same player, so the chair moves to the new transport.");
+            Assert.AreEqual(1, replacedPeerId,
+                "And it reports the transport it replaced, which is what "
+                + "NetSession.ApproveConnection disconnects. A caller that discards this leaves "
+                + "two sockets driving one seat.");
+            Assert.IsNull(lobby.PeerById(1),
+                "The victim's record is GONE. That is why the token reaching this method may "
+                + "never be one a client typed.");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ AND A TOKEN NOBODY HOLDS RE-SEATS THE SENDER, which needs no stolen secret at
+        /// all: no match in `_peers`, so `RuleOnArrival` runs afresh and hands out whatever is
+        /// free. With a seat free the peer MOVES; with none it turns itself into a spectator
+        /// mid-match.
+        /// </summary>
+        [Test]
+        public void AdmittingTheSamePeerUnderAFreshTokenMovesItToADifferentChair()
+        {
+            var lobby = new Net.LobbySession { IsDedicated = false };
+
+            var one = lobby.Admit(1, "token-one", "P1");
+            var two = lobby.Admit(2, "token-two", "P2");
+            Assert.AreNotEqual(one.Seat, two.Seat, "the fixture needs two distinct seats.");
+
+            var moved = lobby.Admit(2, "a-token-nobody-holds", "P2");
+
+            Assert.AreNotEqual(two.Seat, moved.Seat,
+                "Re-admitting one peer under a new token handed it a different chair. That is "
+                + "reachable with nothing but the message a client already sends, which is why "
+                + "MatchRpc.HandleIdentify pins the token the host approved.");
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE FIX, ASSERTED AT THE ONE PLACE A CLIENT-SUPPLIED TOKEN COULD REACH `Admit`.
+        /// This is a source assertion and it is the honest tool here: the behaviour needs a live
+        /// `NetworkManager`, an approved connection and a second transport, which is two built
+        /// players and a link (`tools/net_matrix.py`), and the property being protected is a
+        /// single substitution in one method.
+        /// </summary>
+        [Test]
+        public void TheIdentifyHandlerUsesTheApprovedTokenAndAdmitsOncePerSession()
+        {
+            string rpc = File.ReadAllText(Path.Combine(
+                Path.GetDirectoryName(Application.dataPath),
+                "Assets", "TumbangPreso", "Runtime", "Net", "MatchRpc.cs"));
+
+            StringAssert.Contains("ApprovedTokenFor(senderClientId)", rpc,
+                "HandleIdentify must replace the message's token with the one this host approved "
+                + "before it reaches LobbySession.Admit.");
+
+            StringAssert.Contains("_identified.Add(peerId)", rpc,
+                "Admission is once per transport session; a repeat is a retry.");
+
+            StringAssert.Contains("if (!firstIdentify) return;", rpc,
+                "And the retry must stop before the room-wide broadcasts. A client can send "
+                + "Identify as fast as it likes, and the arrival fan-out is three ClientRpcs, a "
+                + "ready tally, the lobby picks, the seat picks and a WORLD SNAPSHOT.");
+
+            StringAssert.Contains("_identified.Remove(peerId)", rpc,
+                "A transport that left and came back is a new session and gets the full arrival "
+                + "again, or it stands in an arena nobody told it about.");
+        }
+
+        // -------------------------------------------------------------------
+        // § 149.3  A ONE-SHOT PRESS IS NOT CONSUMED BEFORE IT CAN BE DELIVERED
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// ⚠️⚠️ `IsListening` IS TRUE FROM `StartClient` AND NOT FROM APPROVAL, so a request sent
+        /// in the join window goes to a transport with no route, `SendNamedMessage` reports
+        /// nothing, and a method that answered TRUE let its caller throw the press away.
+        /// `RequestSkipBufferServerRpc` said the right thing in its summary and did the wrong
+        /// thing on the next line. `docs/TODO.md` § 149.3.
+        ///
+        /// ⚠️ THE SWEEP IS OVER THE WHOLE CLASS, not just the one that was wrong: every request
+        /// that RETURNS whether it was delivered is one where a silently consumed press is
+        /// possible, and there are five of them.
+        /// </summary>
+        [Test]
+        public void EveryRequestThatReportsDeliveryWaitsForARealConnection()
+        {
+            string rpc = File.ReadAllText(Path.Combine(
+                Path.GetDirectoryName(Application.dataPath),
+                "Assets", "TumbangPreso", "Runtime", "Net", "MatchRpc.cs"));
+
+            foreach (Match m in Regex.Matches(
+                         rpc, @"public bool (?<name>\w+ServerRpc)\([^)]*\)\s*\{(?<body>.*?)\n        \}",
+                         RegexOptions.Singleline))
+            {
+                string name = m.Groups["name"].Value;
+                string body = m.Groups["body"].Value;
+
+                StringAssert.DoesNotContain("!_nm.IsListening", body,
+                    $"{name} reports whether the press reached the wire and gates on " +
+                    $"IsListening, which is true before approval finishes. The press is thrown " +
+                    $"away by a caller that believes it was sent.");
+
+                StringAssert.Contains("_nm.IsConnectedClient", body,
+                    $"{name} returns a delivery answer, so it has to wait for a connection that " +
+                    $"can carry one.");
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // § 149.8  WHAT A MATCH MAY NOT LEAVE BEHIND
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// ⚠️⚠️ THE LAUNCH BLOCK OUTLIVED A MATCH THAT WAS LEFT RATHER THAN FINISHED, AND ONE
+        /// FIELD IN IT HAS TEETH. `GameLaunch.Reset()` was reached only by `SceneFlow
+        /// .StartTraining`, so `SceneFlow.LeaveMatchToMainMenu` — which the pause panel, the
+        /// results board and both result screens all come through, and whose own header calls it
+        /// *"the single exit"* — cleared none of it.
+        ///
+        /// **`GameLaunch.Spectator` is the one that costs a match.** `MatchInstaller.HumanSeat`
+        /// answers -1 while it is set, so a player who spectated one match and then started a
+        /// solo one got an arena where **nobody was driving their seat**. `ConvertedMatchSetup`
+        /// clears it on the way into the lobby, which covers the lobby route and not the ones
+        /// that skip it. `docs/TODO.md` § 149.8.
+        /// </summary>
+        [Test]
+        public void TheLaunchBlockDoesNotSurviveAMatch()
+        {
+            string flow = File.ReadAllText(Path.Combine(
+                Path.GetDirectoryName(Application.dataPath),
+                "Assets", "TumbangPreso", "Runtime", "UI", "SceneFlow.cs"));
+
+            var exit = Regex.Match(flow,
+                @"public static void LeaveMatchToMainMenu\(\)\s*\{(?<body>.*?)\n        \}",
+                RegexOptions.Singleline);
+
+            Assert.IsTrue(exit.Success,
+                "LeaveMatchToMainMenu is the single exit from a match. If it was renamed, this "
+                + "test is what has to move with it.");
+
+            StringAssert.Contains("GameLaunch.Reset();", exit.Groups["body"].Value,
+                "The single exit from a match has to clear the launch block, or a spectator flag "
+                + "set for one match reaches the next one and MatchInstaller.HumanSeat answers "
+                + "-1 for a player who is trying to play.");
+        }
+
+        /// <summary>
+        /// ⚠️ AND `Reset()` HAS TO ACTUALLY CLEAR THE THREE THAT DECIDE WHO DRIVES. This is the
+        /// behaviour behind the source assertion above: a test that only checked the call site
+        /// would pass if somebody emptied the method.
+        /// </summary>
+        [Test]
+        public void ResettingTheLaunchBlockClearsWhoDrivesAndWhatIsBeingTaught()
+        {
+            bool spectator = GameLaunch.Spectator;
+            bool tutorial = GameLaunch.GuidedTutorial;
+            string action = GameLaunch.PendingAction;
+            bool sandbox = PracticeSandbox.Wanted;
+            bool allBots = GameLaunch.AllBots;
+
+            try
+            {
+                GameLaunch.Spectator = true;
+                GameLaunch.GuidedTutorial = true;
+                GameLaunch.PendingAction = "join";
+                PracticeSandbox.Wanted = true;
+                GameLaunch.AllBots = true;
+
+                GameLaunch.Reset();
+
+                Assert.IsFalse(GameLaunch.Spectator,
+                    "A spectator flag reaching the next match is a player with no body.");
+                Assert.IsFalse(GameLaunch.GuidedTutorial,
+                    "And a tutorial flag reaching it is the guided route installed over a real "
+                    + "match.");
+                Assert.AreEqual("", GameLaunch.PendingAction,
+                    "A pending action is consumed by the arena that read it; carrying it forward "
+                    + "makes the next launch try to join something.");
+                Assert.IsFalse(PracticeSandbox.Wanted,
+                    "The sandbox BUTTON must not read ON in a room it can never apply to, which "
+                    + "is a HUD disagreeing with the game.");
+
+                // ⚠️⚠️ AND THIS ONE IS DELIBERATELY LEFT ALONE. `-tp-allbots` belongs to the
+                // PROCESS, not to a match: a harness that asked for a driven session expects the
+                // second match to be driven too, and clearing it here would make every
+                // multi-match probe measure three parked bodies. `TournamentGuard` is what
+                // clears it for a bracket match, which is the one place it must not be set.
+                Assert.IsTrue(GameLaunch.AllBots,
+                    "GameLaunch.AllBots is a launch switch and survives a match on purpose. If "
+                    + "this ever changes, tools/net_matrix.py and tools/referee_run.py stop "
+                    + "measuring anything after their first match.");
+            }
+            finally
+            {
+                GameLaunch.Spectator = spectator;
+                GameLaunch.GuidedTutorial = tutorial;
+                GameLaunch.PendingAction = action;
+                PracticeSandbox.Wanted = sandbox;
+                GameLaunch.AllBots = allBots;
+            }
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE AUTHORITY LATCH MUST NOT SURVIVE INTO A SECOND MATCH EITHER, and the thing
+        /// that clears it is not obvious from any call site. `MatchAbandon.Forget()` lives inside
+        /// `NetSession.ConfigureTimeouts`, whose own note says *"every start path and `Stop`
+        /// reach this method, which is what makes it the one place a new session can forget the
+        /// last one's ending"*. This asserts that placement, because a latch that survived would
+        /// be a peer that cannot resolve its own next match, and since § 149.6 it would also be
+        /// a peer whose practice sandbox never comes back.
+        /// </summary>
+        [Test]
+        public void ForgettingTheAbandonLatchIsOnTheOneMethodEveryStartAndStopReaches()
+        {
+            string session = File.ReadAllText(Path.Combine(
+                Path.GetDirectoryName(Application.dataPath),
+                "Assets", "TumbangPreso", "Runtime", "Net", "NetSession.cs"));
+
+            var configure = Regex.Match(session,
+                @"private void ConfigureTimeouts\(\)\s*\{(?<body>.*?)\n        \}",
+                RegexOptions.Singleline);
+
+            Assert.IsTrue(configure.Success, "NetSession.ConfigureTimeouts has moved or gone.");
+            StringAssert.Contains("MatchAbandon.Forget();", configure.Groups["body"].Value,
+                "A revoked authority latch reaching a second match is a peer that cannot resolve "
+                + "anything in it, with nothing in the log to say why.");
+        }
+
+        // -------------------------------------------------------------------
+        // § 149.6  THE PRACTICE SANDBOX THROUGH A TEARDOWN
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// ⚠️⚠️ THE COMMENT CLAIMED THIS AND THE CODE DID NOT DO IT. `PracticeSandbox`'s header
+        /// said the guard is false *"including the frame a session is being torn down, because
+        /// the provider is what answers"*, and the provider answers
+        /// `_nm != null && _nm.IsListening`, which goes FALSE the moment `Shutdown()` runs. So
+        /// through a teardown the predicate said "offline" while the arena was still on screen.
+        ///
+        /// ⚠️ THE SECOND CLAUSE IS THE EXISTING LATCH RATHER THAN A SECOND COPY OF AUTHORITY
+        /// STATE. `MatchAbandon.AuthorityRevoked` was built for exactly this window (§ 143.9).
+        /// </summary>
+        [Test]
+        public void ThePracticeSandboxIsDeniedThroughAHostLossTeardown()
+        {
+            bool wanted = PracticeSandbox.Wanted;
+            try
+            {
+                MatchAbandon.Forget();
+                PracticeSandbox.Wanted = true;
+
+                Assert.IsTrue(PracticeSandbox.Allowed,
+                    "Offline with nothing revoked is the case the sandbox exists for.");
+                Assert.IsTrue(PracticeSandbox.Active);
+
+                MatchAbandon.Note("[Disconnect Event] transport shutdown", wasLocal: false);
+
+                Assert.IsFalse(PracticeSandbox.Allowed,
+                    "A peer whose host vanished still has an arena, bodies and ability systems "
+                    + "on screen. `IsNetworked` alone answers 'offline' there, which is the "
+                    + "false claim this replaces.");
+                Assert.IsFalse(PracticeSandbox.Active);
+
+                MatchAbandon.Forget();
+                Assert.IsTrue(PracticeSandbox.Allowed,
+                    "And it comes back when the next match begins, or the fix has taken the solo "
+                    + "sandbox away permanently.");
+            }
+            finally
+            {
+                PracticeSandbox.Wanted = wanted;
+                MatchAbandon.Forget();
+            }
+        }
+
+        /// <summary>
+        /// ⚠️ A LOCAL QUIT DELIBERATELY DOES NOT REVOKE AND MUST NOT DENY THE SANDBOX. A player
+        /// who pressed QUIT really is offline afterwards, and refusing them their own practice
+        /// bench would be the fix causing the bug.
+        /// </summary>
+        [Test]
+        public void LeavingOnPurposeDoesNotTakeTheSandboxAway()
+        {
+            bool wanted = PracticeSandbox.Wanted;
+            try
+            {
+                MatchAbandon.Forget();
+                PracticeSandbox.Wanted = true;
+
+                MatchAbandon.Note("shutting down", wasLocal: true);
+
+                Assert.IsTrue(PracticeSandbox.Allowed);
+                Assert.IsTrue(PracticeSandbox.Active);
+            }
+            finally
+            {
+                PracticeSandbox.Wanted = wanted;
+                MatchAbandon.Forget();
+            }
+        }
+
+        /// <summary>
+        /// ⚠️ THE SWITCH THAT APPLIES THE PRESET IS ITSELF ON THE ROSTER, because
+        /// `audit_tournament_defaults.py` refuses a `-tp-` switch nobody has said either sentence
+        /// about, and "it only makes the machine more tournament-legal" is a sentence.
+        /// </summary>
+        [Test]
+        public void TheTournamentLaunchSwitchIsAccountedForLikeEveryOtherOne()
+        {
+            Assert.IsTrue(TournamentPreset.IsAccountedFor(Net.NetBootstrap.TournamentSwitch),
+                "A -tp- switch on neither roster is the blind spot § 145.3 closed.");
+
+            Assert.AreEqual(GameMode.Classic, TournamentPreset.Mode,
+                "docs/VISION.md § 1.1. If this ever moves it is a tournament ruling and this "
+                + "assertion is what makes it a deliberate one.");
+        }
     }
 }

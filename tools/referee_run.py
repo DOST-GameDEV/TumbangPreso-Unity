@@ -88,7 +88,20 @@ def log_says(work, tag, needle):
     return None
 
 
-def run(exe, seconds, work):
+def run(exe, seconds, work, allbots=True):
+    """
+    WARNING: `--no-allbots` IS A DIFFERENT MEASUREMENT AND NOT A TIDIER ONE.
+
+    `-tp-allbots` makes `MatchInstaller.HumanSeat` answer -1, so a peer running it calls its OWN
+    seat a bot as well as everybody else's. That is what a driven match needs and it is exactly
+    the wrong switch for asking who the peers think the PEOPLE are: half of what the seat table
+    prints under it is the harness. `docs/TODO.md` section 145.4b found three peers reporting
+    three different human rosters and refused to fix it from that run for this reason.
+
+    Without it each client holds its own seat as a human and simply stands there, and the seats
+    nobody is sitting in are bots that drive. So the round still runs, the roster is the game's
+    own, and the disagreement is either still there or it was the switch.
+    """
     os.makedirs(work, exist_ok=True)
 
     reports = {
@@ -114,8 +127,10 @@ def run(exe, seconds, work):
     # `LobbySession.PlayingPeerCount` skips `IsSeatlessReferee`, so "2" here means the two
     # clients and not one client plus the server. If that exclusion were wrong the run would
     # start a round with one client seated, which is itself a finding rather than a hang.
+    drive = ["-tp-allbots"] if allbots else []
+
     procs["referee"] = spawn(exe, work, "referee", [
-        "-tp-dedicated", str(PORT), "-tp-profile", "refsrv", "-tp-allbots",
+        "-tp-dedicated", str(PORT), "-tp-profile", "refsrv"] + drive + [
         "-tp-autostart", "2",
         "-tp-netreport", reports["referee"], "-tp-netseconds", str(referee_seconds),
         "-screen-width", "640", "-screen-height", "400", "-screen-fullscreen", "0"])
@@ -124,7 +139,7 @@ def run(exe, seconds, work):
 
     for tag, profile in (("client1", "refc1"), ("client2", "refc2")):
         procs[tag] = spawn(exe, work, tag, [
-            "-tp-join", "127.0.0.1", str(PORT), "-tp-profile", profile, "-tp-allbots",
+            "-tp-join", "127.0.0.1", str(PORT), "-tp-profile", profile] + drive + [
             "-tp-autostart", "2",
             "-tp-netreport", reports[tag], "-tp-netseconds", str(seconds),
             "-screen-width", "640", "-screen-height", "400", "-screen-fullscreen", "0"])
@@ -397,6 +412,12 @@ def main():
     ap.add_argument("--exe", default=None)
     ap.add_argument("--seconds", type=float, default=45.0)
     ap.add_argument("--out", default=os.path.join(REPO, "Logs", "referee"))
+    ap.add_argument("--no-allbots", dest="allbots", action="store_false",
+                    help="drop -tp-allbots, so each client holds its own seat as a HUMAN and "
+                         "stands still. This is the topology that separates a roster the game "
+                         "disagrees about from a roster the harness flattened. docs/TODO.md "
+                         "section 145.4b")
+    ap.set_defaults(allbots=True)
     args = ap.parse_args()
 
     exe = args.exe or default_exe()
@@ -409,11 +430,11 @@ def main():
     args.exe = exe
 
     print("referee_run: " + args.exe)
-    print("             a seatless referee on port %d and two clients, %.0f s"
-          % (PORT, args.seconds))
+    print("             a seatless referee on port %d and two clients, %.0f s%s"
+          % (PORT, args.seconds, "" if args.allbots else ", clients idle (no -tp-allbots)"))
     print()
 
-    parsed = run(args.exe, args.seconds, args.out)
+    parsed = run(args.exe, args.seconds, args.out, allbots=args.allbots)
     lines, findings = verdict(parsed, args.out)
 
     for line in lines:

@@ -380,6 +380,54 @@ namespace TumbangPreso.CameraSystem
         private int _outstandingReadbacks;
         private int _droppedCaptures;
         private int _failedReadbacks;
+        private int _outstandingHighWater;
+        private int _landedReadbacks;
+        private bool _readbackPrewarmed;
+        private float _prewarmAskedAt;
+        private float _prewarmLandedAt;
+
+        // -------------------------------------------------------------------
+        // § THE COUNTERS, READ BY `ReplayCaptureProbe` AND BY NOTHING ELSE
+        //
+        // ⚠️⚠️ THEY ARE PUBLIC BECAUSE THE PREVIOUS PERFORMANCE CLAIM MEASURED THE WRONG
+        // BOUNDARY AND NOTHING COULD SEE THE RIGHT ONE. `docs/TODO.md` § 145.15: the benchmark
+        // stopped its stopwatch after `AsyncGPUReadback.Request(...)`, and the work that costs a
+        // frame, `GetData`, `LoadRawTextureData` and `Texture2D.Apply`, happens in a callback two
+        // or three frames later. So the recorded number proved **submission became cheap** and
+        // said nothing about whether replay still produces frame spikes. A frame-level
+        // measurement needs to know how many callbacks actually landed inside the window it
+        // measured, and there was no way to ask.
+        //
+        // ⚠️ READ-ONLY, AND NOTHING IN THE GAME BRANCHES ON THEM. A counter a probe reads is a
+        // diagnostic; a counter gameplay reads is state, and this class already has enough.
+        // -------------------------------------------------------------------
+
+        /// <summary>Captures refused because the outstanding cap was already full.</summary>
+        public int DroppedCaptures => _droppedCaptures;
+
+        /// <summary>Readbacks the driver returned an error for, or whose frame had moved on.</summary>
+        public int FailedReadbacks => _failedReadbacks;
+
+        /// <summary>The most readbacks that were ever in flight at once.</summary>
+        public int OutstandingHighWater => _outstandingHighWater;
+
+        /// <summary>Readbacks whose pixels reached a ring frame.</summary>
+        public int LandedReadbacks => _landedReadbacks;
+
+        /// <summary>Whether this device is on the asynchronous path at all.</summary>
+        public bool AsyncReadbackWorks => _asyncReadbackWorks;
+
+        /// <summary>
+        /// Seconds between the warm-up request being asked for and its callback landing, or -1
+        /// when it has not landed (or this device has no asynchronous readback).
+        ///
+        /// ⚠️ IT IS THE NUMBER § 145.16 EXISTS FOR. The probe measured a first request at about
+        /// 147 ms on one run against microseconds for the steady state, and that cost is driver
+        /// and allocator setup rather than the picture: paying it before gameplay is live is free,
+        /// and paying it on the first captured moment of a match is a visible hitch.
+        /// </summary>
+        public float PrewarmSeconds =>
+            _prewarmLandedAt > 0.0f ? _prewarmLandedAt - _prewarmAskedAt : -1.0f;
 
         /// <summary>
         /// Bumped by <see cref="OnDestroy"/>, compared by every readback callback.
@@ -531,6 +579,8 @@ namespace TumbangPreso.CameraSystem
             if (!_asyncReadbackWorks)
                 Debug.Log("[Replay] this device has no asynchronous readback; the capture is the " +
                           "old synchronous copy, which is slower and correct.");
+
+            PrewarmAsyncReadback();
 
             // Start above and behind the base circle, looking at it. The circle is at the
             // world origin on every map (`Art_Direction.md` §3), so this is map-independent
@@ -1003,6 +1053,59 @@ namespace TumbangPreso.CameraSystem
                 : "BROADCAST SPEED  ·  LIVE", 1.1f);
         }
 
+        /// <summary>
+        /// Pay the driver's first-readback cost here, where nobody is playing yet.
+        ///
+        /// ⚠️⚠️ THE FIRST `AsyncGPUReadback.Request` IS NOT THE PRICE OF THE ONES AFTER IT.
+        /// `ReplayCaptureProbe` measured a first request at about **147 ms** on one run while the
+        /// steady state was microseconds: the driver builds its readback plumbing, the allocator
+        /// takes its first native buffer, and on some backends a shader is compiled. This class
+        /// detected support and then let the first REAL captured moment of a match pay for it.
+        /// `docs/TODO.md` § 145.16.
+        ///
+        /// ⚠️⚠️ IT IS 8x8 AND IT TOUCHES NOTHING THE REPLAY OWNS. Five things it must not do, and
+        /// each is a line here:
+        ///   - **no ring slot**: `ReserveFrame` is never called, so nothing enters the playable
+        ///     buffer and no replay marker is created;
+        ///   - **no leaked target**: the temporary is released in the callback on EVERY path,
+        ///     including the one where the generation has moved on;
+        ///   - **no callback touching a destroyed camera**: the generation is captured by value,
+        ///     exactly as the real capture does, and `OnDestroy` bumps it;
+        ///   - **no effect on the cap**: it is deliberately NOT counted in `_outstandingReadbacks`,
+        ///     because counting it would let a warm-up frame nobody will ever watch refuse a real
+        ///     capture;
+        ///   - **no stall**: nothing here waits, and `WaitAllRequests` is still only reached on
+        ///     the one path that already documents itself as a deliberate stall.
+        ///
+        /// ⚠️ AND IT RUNS ONCE. `_readbackPrewarmed` is an instance field, so a second spectator
+        /// camera in a later match warms its own driver state and this one cannot leak across a
+        /// scene load as a static would.
+        /// </summary>
+        private void PrewarmAsyncReadback()
+        {
+            if (_readbackPrewarmed || !_asyncReadbackWorks) return;
+            _readbackPrewarmed = true;
+
+            _prewarmAskedAt = Time.realtimeSinceStartup;
+
+            int generation = _captureGeneration;
+            var scratch = RenderTexture.GetTemporary(8, 8, 0, ReplayScratchFormat);
+
+            AsyncGPUReadback.Request(scratch, 0, request =>
+            {
+                RenderTexture.ReleaseTemporary(scratch);
+
+                if (generation != _captureGeneration) return;
+
+                _prewarmLandedAt = Time.realtimeSinceStartup;
+
+                Debug.Log($"[Replay] readback warm-up landed in " +
+                          $"{(_prewarmLandedAt - _prewarmAskedAt) * 1000.0f:0.0} ms" +
+                          (request.hasError ? " (the driver reported an error, which is still a " +
+                                              "warm-up: the plumbing was built either way)" : ""));
+            });
+        }
+
         private void RecordReplayFrame()
         {
             if (_broadcastPaused) return;
@@ -1059,6 +1162,8 @@ namespace TumbangPreso.CameraSystem
             // callback in flight compares unequal and returns having touched nothing.
             int generation = _captureGeneration;
             _outstandingReadbacks++;
+            if (_outstandingReadbacks > _outstandingHighWater)
+                _outstandingHighWater = _outstandingReadbacks;
 
             AsyncGPUReadback.Request(scratch, 0, request =>
             {
@@ -1095,6 +1200,12 @@ namespace TumbangPreso.CameraSystem
                 frame.Image.LoadRawTextureData(data);
                 frame.Image.Apply(updateMipmaps: false, makeNoLongerReadable: false);
                 frame.Pending = false;
+
+                // ⚠️ COUNTED WHERE THE WORK ACTUALLY HAPPENS. `LoadRawTextureData` plus `Apply`
+                // is the part that costs a frame, and it runs HERE rather than at the request, so
+                // a frame-level measurement has to know how many of these landed inside its
+                // window. § 145.15.
+                _landedReadbacks++;
             });
         }
 

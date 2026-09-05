@@ -60,11 +60,21 @@ namespace TumbangPreso.Net
         private Unity.Netcode.CustomMessagingManager _handlersOn;
         private bool _snapshotRequestStarted;
         private float _matchSyncLeft;
-        private readonly Dictionary<int, double> _lastAcceptedMoveAt = new Dictionary<int, double>();
+        // ⚠️⚠️ ONE BUDGET PER SEAT, AND IT IS A QUANTITY OF METRES RATHER THAN A TIMESTAMP.
+        // This was `Dictionary<int, double> _lastAcceptedMoveAt`, and the allowance derived from
+        // it renewed a 0.85 m constant on EVERY accepted packet, so a client that submitted its
+        // transform in a tight loop bought distance by sending more messages: 70 m of travel per
+        // second at the physics rate against **4278 m** at 5 kHz, measured. `Core.MoveBudget`
+        // carries the arithmetic and `docs/TODO.md` § 149.1 is the entry.
+        private readonly Dictionary<int, Core.MoveBudget> _moveBudgets =
+            new Dictionary<int, Core.MoveBudget>();
 
         private const float MatchSyncInterval = 0.20f;
-        private const float MoveBaseLeeway = 0.85f;
-        private const float MoveMaxMetresPerSecond = 28.0f;
+        // ⚠️ THE TWO MOVEMENT NUMBERS LIVE IN `Core.MoveBudget` NOW, WITH THE RULE THAT USES
+        // THEM. `CLAUDE.md` § 4: every number that matters is asserted in the engine-free core,
+        // and a constant beside a rule in a different assembly is a constant that drifts from it.
+        // This one is kept here because it bounds a VELOCITY rather than a distance.
+        private const float MoveMaxVelocityHeadroom = 8.0f;
         private const float IntentPoseLeeway = 2.25f;
 
         public LobbySeatInfo GetSeatInfo(int slot)
@@ -412,6 +422,15 @@ namespace TumbangPreso.Net
         private static bool Finite(Vector3 value) =>
             Finite(value.x) && Finite(value.y) && Finite(value.z);
 
+        /// <summary>
+        /// ⚠️ A ROTATION NEEDS THIS AS MUCH AS A POSITION AND HAD NO OVERLOAD AT ALL. Assigning a
+        /// non-finite `Quaternion` to a `Transform` is the same failure as a non-finite position:
+        /// Unity refuses the write, logs once per frame, and the object is left wherever it last
+        /// was, which reads as a prop that has stopped replicating rather than as a bad packet.
+        /// </summary>
+        private static bool Finite(Quaternion value) =>
+            Finite(value.x) && Finite(value.y) && Finite(value.z) && Finite(value.w);
+
         private static bool PlausibleIntentPose(CharacterMotor unit, Vector3 position)
         {
             if (unit == null || !Finite(position)) return false;
@@ -419,27 +438,65 @@ namespace TumbangPreso.Net
             return delta.sqrMagnitude <= IntentPoseLeeway * IntentPoseLeeway;
         }
 
+        /// <summary>
+        /// Whether the host will believe a client's claim about where its own body is.
+        ///
+        /// ⚠️⚠️ THE ALLOWANCE USED TO RENEW PER PACKET, SO PACKET FREQUENCY BOUGHT DISTANCE. The
+        /// body of this method computed `MoveBaseLeeway + rate * (now - lastAccepted)` and
+        /// compared ONE step against it: the rate term is honest and the 0.85 m constant was
+        /// handed out on every accepted message, at whatever interval the CLIENT chose. Measured
+        /// against the old formula, one second of server time bought **70.5 m at 50 Hz, 453 m at
+        /// 500 Hz and 4278 m at 5 kHz**, in an arena 14 m across, with every individual step
+        /// looking perfectly plausible. `docs/TODO.md` § 149.1.
+        ///
+        /// ⚠️⚠️ AND THE ANSWER IS NOT A PACKET-RATE LIMIT. A rate limit answers "how often may
+        /// you speak" and the question is "how far may you have gone": one tuned for 50 Hz
+        /// refuses a client that legitimately submits at 144, and a loose one still multiplies
+        /// the budget by its own slack. `Core.MoveBudget` is a balance of METRES that accrues
+        /// with the host's own clock, so the number of packets it is spent in cannot change the
+        /// total.
+        ///
+        /// ⚠️ THE BUDGET IS SPENT LAST AND ONLY ON ACCEPTANCE. Every other refusal above it costs
+        /// nothing, which is the property `docs/TODO.md` § 149.1 asks for by name: *a rejected
+        /// movement request must not refresh the allowance a later request spends.*
+        ///
+        /// ⚠️ NON-FINITE VALUES ARE REFUSED BEFORE ANY COMPARISON. `Finite` is checked first
+        /// because in C# every ordinary comparison against NaN is FALSE, so a range test written
+        /// the obvious way passes a NaN straight through. `Core.MoveBudget.TryTravel` carries the
+        /// same guard again for its own callers. § 149.9.
+        /// </summary>
         private bool AcceptMove(int slot, CharacterMotor unit, Vector3 position,
                                 float yaw, Vector3 velocity)
         {
             if (unit == null || !Finite(position) || !Finite(yaw) || !Finite(velocity)) return false;
+
             if (Mathf.Abs(position.x) > AIController.PlayableHalfX + 1.0f ||
                 Mathf.Abs(position.z) > AIController.PlayableHalfZ + 1.0f ||
                 position.y < -5.0f || position.y > 20.0f)
                 return false;
 
-            double now = Time.realtimeSinceStartupAsDouble;
-            double dt = _lastAcceptedMoveAt.TryGetValue(slot, out double previous)
-                ? Math.Max(0.0, Math.Min(2.0, now - previous))
-                : Time.fixedDeltaTime;
-            float allowance = MoveBaseLeeway + MoveMaxMetresPerSecond * (float)dt;
-            if ((position - unit.transform.position).sqrMagnitude > allowance * allowance)
+            if (velocity.magnitude > Core.MoveBudget.MetresPerSecond + MoveMaxVelocityHeadroom)
                 return false;
 
-            if (velocity.magnitude > MoveMaxMetresPerSecond + 8.0f) return false;
+            return MoveBudgetFor(slot).TryTravel(Time.realtimeSinceStartupAsDouble,
+                                                 Vector3.Distance(position, unit.transform.position));
+        }
 
-            _lastAcceptedMoveAt[slot] = now;
-            return true;
+        /// <summary>
+        /// This seat's movement balance, made on first use.
+        ///
+        /// ⚠️ THE HOST'S OWN CLOCK IS THE ONLY INPUT THE BUDGET TAKES BESIDES THE DISTANCE.
+        /// `Time.realtimeSinceStartupAsDouble` is monotonic and is not on the wire, which is the
+        /// whole point: a peer being limited must not be able to move the clock the limit is
+        /// measured against.
+        /// </summary>
+        private Core.MoveBudget MoveBudgetFor(int slot)
+        {
+            if (_moveBudgets.TryGetValue(slot, out var budget)) return budget;
+
+            budget = new Core.MoveBudget();
+            _moveBudgets[slot] = budget;
+            return budget;
         }
 
         private static CharacterMotor Unit(int slot)
@@ -645,12 +702,46 @@ namespace TumbangPreso.Net
             var lobby = NetSession.Instance?.Lobby;
             if (lobby == null) return;
 
+            // ⚠️⚠️ THE TOKEN IS THE ONE THIS HOST APPROVED, NEVER THE ONE IN THIS MESSAGE, AND
+            // THAT IS THE WHOLE OF `docs/TODO.md` § 149.2's FIRST HALF. `LobbySession.Admit`
+            // treats a matching token as a fast reconnect and hands over the matching record's
+            // seat; believing a client-supplied token therefore let one peer take another's
+            // chair (with the victim left connected and still submitting movement for it), and
+            // let any peer MOVE ITSELF by identifying under a token nobody holds. Neither needed
+            // anything the client does not already send.
+            //
+            // ⚠️ THE FALLBACK IS THE MESSAGE'S OWN TOKEN AND IT IS NOT A HOLE. `ApprovedTokenFor`
+            // answers null only when this host approved no connection for that id, which is the
+            // solo and LAN-host path where `IdentifyServerRpc` calls straight through with
+            // `peerId` 0 and there is no approval step to have pinned anything.
+            string approved = NetSession.Instance?.ApprovedTokenFor(senderClientId);
+            if (!string.IsNullOrEmpty(approved)) token = approved;
+
+            // ⚠️⚠️ ADMISSION IS ONCE PER TRANSPORT SESSION AND A REPEAT IS A RETRY.
+            // `docs/TODO.md` § 149.2's second half. `Identify` is resent by design (see
+            // `HostLateJoin`: *"`HandleIdentify` calls this on EVERY identify, not only the
+            // first"*), and every repeat used to re-run the whole ARRIVAL fan-out: three
+            // ClientRpcs, the ready tally, the lobby picks, the picks and a WORLD SNAPSHOT, all
+            // of them broadcast to every peer. A client can send this message as fast as it
+            // likes, so that is an amplifier any admitted peer can point at the room, and it
+            // needs no token and no modified anything beyond a loop.
+            //
+            // ⚠️ IT IS ITS OWN SET AND NOT `_spawned`. That one exists to send the world snapshot
+            // once and its header records the last time somebody widened it: the seat handover
+            // was gated on it and a re-identifying peer therefore kept the host's AI on its
+            // chair. One set, one meaning.
+            bool firstIdentify = _identified.Add(peerId);
+
             var record = lobby.Admit(peerId, token, name);
 
             // ⚠️ THE SECOND ARRIVAL PATH, AND IT NEEDS THE GUARD AS MUCH AS THE FIRST. A peer
             // reaches `Admit` through the approval hello and again through this message, and a
             // check wired into only one of them is a check with a documented way around it.
-            NetSession.Instance?.VerifyArrival(peerId, accountPlayerId, handleProof);
+            //
+            // ⚠️ ONCE PER SESSION. `VerifyArrivalAsync` is a live call to the account endpoint,
+            // so a peer that resent `Identify` in a loop was asking the host to spend a service
+            // request per message on its behalf.
+            if (firstIdentify) NetSession.Instance?.VerifyArrival(peerId, accountPlayerId, handleProof);
 
             int resolvedCharPick = charPick >= 0 ? charPick : 0;
             int resolvedCanPick = canPick >= 0 ? canPick : 0;
@@ -689,9 +780,25 @@ namespace TumbangPreso.Net
 
             NetSession.Instance?.SetStatus($"{lobby.PeerCount} connected, seat {record.Seat}");
 
-            BroadcastReadyTally();
-
+            // ⚠️ THE HANDOVER RUNS ON EVERY IDENTIFY AND MUST KEEP DOING SO. `HostLateJoin`'s own
+            // header records why: it is idempotent, and gating it was what left the host's AI
+            // driving a chair a re-identifying player had already taken.
             HostLateJoin(peerId);
+
+            // ⚠️⚠️ EVERYTHING BELOW IS BROADCAST TO THE WHOLE ROOM, WHICH IS WHY A REPEAT MUST
+            // NOT REACH IT. These four are the arrival fan-out: the room's ready tally, the lobby
+            // picks, the seat picks and a full world snapshot. They exist because ONE peer
+            // arrived, and re-running them on a resent message turns a retry into a broadcast
+            // storm any admitted client can drive at packet rate. `docs/TODO.md` § 149.2.
+            //
+            // ⚠️ THE RETRY IS NOT LEFT WITH NOTHING. Everything above this point is either
+            // idempotent state (the picks and the authorised cosmetics) or a message addressed to
+            // the SENDER (its mode, its map, its difficulty, its seating), which is exactly the
+            // set a peer resending `Identify` because it thinks the first one was lost needs to
+            // receive again.
+            if (!firstIdentify) return;
+
+            BroadcastReadyTally();
             BroadcastLobbyPicks();
             BroadcastPicks();
             BroadcastWorldSnapshot();
@@ -1306,6 +1413,24 @@ namespace TumbangPreso.Net
         {
             if (!NetAuthority.IsHost) return;
 
+            // ⚠️⚠️ THE CLAMP DOES NOT REJECT NaN AND THAT WAS A LIVE DENIAL OF SERVICE. In C#
+            // every ordinary comparison against NaN is FALSE, and `Mathf.Clamp` is exactly
+            // `if (v < min) v = min; else if (v > max) v = max; return v;`, so a NaN falls
+            // through both branches and comes out unchanged. `Time.timeScale = NaN` then goes to
+            // the host AND to every peer through `SyncTime` below, and any spectator could send
+            // it: `OnReqTimeMsg` checks that the sender is a watcher and never checked the
+            // NUMBER. ±Infinity was already handled, because those DO compare, which is what
+            // makes NaN the one that got through. `docs/TODO.md` § 149.9.
+            //
+            // ⚠️ REFUSED RATHER THAN CLAMPED TO A GUESS. A NaN is not a big number to bring into
+            // range, it is a malformed request, and picking 1.0 for it would un-pause a match
+            // somebody had deliberately paused.
+            if (!Finite(scale))
+            {
+                Debug.LogWarning("[Net] refused a non-finite time scale request.");
+                return;
+            }
+
             float safe = Mathf.Clamp(scale, 0.0f, 1.0f);
 
             // ⚠ THE HITSTOP IS ENDED FIRST, on every peer, because it is the other writer of
@@ -1331,6 +1456,12 @@ namespace TumbangPreso.Net
             if (!FromHost(senderClientId)) return;
 
             reader.ReadValueSafe(out float scale);
+
+            // ⚠️⚠️ `Mathf.Clamp` DOES NOT REJECT NaN, so this line could set a client's
+            // `Time.timeScale` to NaN and freeze it. `HostSetTimeScale` refuses one now, which
+            // means an honest host cannot send it; this is the same guard on the receiving side,
+            // because a corrupted packet is not an honest host. `docs/TODO.md` § 149.9.
+            if (!Finite(scale)) return;
 
             Hitstop.End();
             Time.timeScale = Mathf.Clamp(scale, 0.0f, 1.0f);
@@ -1675,6 +1806,19 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out float staminaCurrent);
             reader.ReadValueSafe(out float staminaIdle);
             reader.ReadValueSafe(out float fatigueLeft);
+
+            // ⚠️⚠️ A NON-FINITE POSE MAKES A BODY VANISH AND SPAMS THE LOG ONCE A FRAME, and at a
+            // venue that reads as "the game broke" rather than as one bad packet. `Transform`
+            // refuses the write, so the body stays where it last was while every snapshot after
+            // it is also refused. `docs/TODO.md` § 149.9.
+            if (!Finite(pos) || !Finite(yaw) || !Finite(velocity)) return;
+
+            // ⚠️ AND THE STATE FLOATS, because they feed `Stamina` and the stun stack. A NaN in a
+            // stamina bar makes every `>=` comparison against it false, which is a body that can
+            // never spend and never regenerate: silent, permanent, and invisible in a log.
+            if (!Finite(stunLeft) || !Finite(stunTotal) || !Finite(tripLeft) ||
+                !Finite(tripTotal) || !Finite(tripMashRemoved) || !Finite(staminaCurrent) ||
+                !Finite(staminaIdle) || !Finite(fatigueLeft)) return;
 
             var unit = Unit(slot);
             if (unit == null) return;
@@ -2535,6 +2679,12 @@ namespace TumbangPreso.Net
             if (slot < 0 || slot >= Balance.PlayerCount || abilitySlot < 0 || abilitySlot > 2)
                 return;
 
+            // ⚠️ THE REQUEST SIDE (`OnReqAbilityMsg`) CHECKS THESE AND THE PLAY SIDE DID NOT.
+            // Every effect this places reads the position and the forward, and a NaN reaches a
+            // `Transform` through the zone it spawns. § 149.9.
+            if (!Finite(position) || !Finite(forward) || !Finite(aimPoint) || !Finite(heldSeconds))
+                return;
+
             Unit(slot)?.AbilitySystem?.ApplyNetworkCast(
                 (Abilities.HeroAbilitySystem.Slot)abilitySlot,
                 position, forward, aimPoint, heldSeconds, authoritative: false);
@@ -2697,7 +2847,14 @@ namespace TumbangPreso.Net
         // `CountDenial` returns early on an index past the end, so a stale length is a whole verb
         // whose refusals are counted nowhere and whose absence reads as "it is never refused".
         private readonly int[] _denialsSent = new int[System.Enum.GetValues(typeof(DeniedVerb)).Length];
-        private readonly int[] _denialsTaken = new int[3];
+
+        // ⚠️⚠️ AND THE RECEIVING TALLY WAS STILL A LITERAL 3 ON THE LINE UNDER THE WARNING ABOUT
+        // A LITERAL 3. `Slide` is index 3, `CountDenial` returns early past the end of the array,
+        // so every refused slide a client took back was counted NOWHERE and the absence read as
+        // "the slide is never refused". The pair of counters exists precisely to separate "the
+        // host never refused" from "the refusal never arrived", and one of the two was blind to
+        // the newest verb. `docs/TODO.md` § 145.12.
+        private readonly int[] _denialsTaken = new int[System.Enum.GetValues(typeof(DeniedVerb)).Length];
 
         private static void CountDenial(int[] tally, string direction, int slot, DeniedVerb verb)
         {
@@ -2719,7 +2876,20 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out int slot);
             reader.ReadValueSafe(out byte verb);
 
-            if (!ValidSlot(slot) || verb > (byte)DeniedVerb.Shove) return;
+            // ⚠️⚠️ THIS BOUND WAS `> (byte)DeniedVerb.Shove` AND IT DROPPED EVERY SLIDE REFUSAL
+            // ON THE FLOOR. `Slide` is 3 and `Shove` is 2, so a client that predicted a slide the
+            // host refused kept the 2.45 s cooldown, kept the 25 stamina it had already spent,
+            // and kept its steering narrowed to 0.35 for most of a second, for a verb the host
+            // never ran. `RollBackRefusedVerb` had a whole `case DeniedVerb.Slide` arm written
+            // for exactly this and **nothing could ever reach it**, because the message was
+            // discarded one function earlier.
+            //
+            // ⚠️ SO IT IS THE ENUM'S OWN LENGTH NOW RATHER THAN THE LAST NAME SOMEBODY
+            // REMEMBERED. A fifth verb appended to `DeniedVerb` is silently unreachable under a
+            // named bound and correct under this one, which is the same argument the tally arrays
+            // below make about their own size. `docs/TODO.md` § 145.12.
+            if (!ValidSlot(slot) ||
+                verb >= System.Enum.GetValues(typeof(DeniedVerb)).Length) return;
 
             // ⚠️ ONLY THIS PEER'S OWN SEAT. The other three bodies are replicas that never
             // predicted a verb, so a refusal naming one of them is a message with nothing to act
@@ -3805,7 +3975,34 @@ namespace TumbangPreso.Net
 
                 unit.PlayerName = human ? info.Name : "";
                 unit.IsBot = !human;
+
+                // ⚠⚠ THE PERSISTENT RECORD FOLLOWS THE ROSTER ON EVERY PEER, WHICH IS WHAT MAKES
+                // IT COMPARABLE BETWEEN THEM. `MatchInstaller.BuildSeat` writes `SeatOrigin` once
+                // from the roster this peer happened to hold when the arena opened, and a client
+                // that joins before the fourth player does records that chair as a bot's forever.
+                // The host corrects its own copy in `HostTakeSeatBackFromBot`; this is the same
+                // correction on the peers that learn about a seat from the broadcast instead.
+                //
+                // ⚠️ THE REVERSE IS DELIBERATELY NOT DONE HERE. A seat going UNOCCUPIED is a
+                // departure, and only the host may decide that a chair was handed over
+                // (`HostPeerLeft`, which sets `HandedToBot`). A client inferring it from a roster
+                // packet would be a second writer of the fact `SeatHandover` reads.
+                if (human) unit.NoteSeatClaimedByAPerson(MatchIsUnderway());
             }
+        }
+
+        /// <summary>
+        /// Whether a round has actually started, for the seat-origin question.
+        ///
+        /// ⚠️ BEFORE THE WHISTLE A CHAIR CHANGING HANDS IS THE ROSTER SETTLING; AFTER IT, A BOT
+        /// HAS ALREADY PLAYED PART OF THE MATCH IN THAT CHAIR. `CharacterMotor
+        /// .NoteSeatClaimedByAPerson` carries the whole argument, and this is the one fact it
+        /// cannot work out for itself without reaching into the match.
+        /// </summary>
+        private static bool MatchIsUnderway()
+        {
+            var match = GameServices.Match;
+            return match != null && match.RoundNumber >= 1;
         }
 
         /// <summary>
@@ -4729,6 +4926,11 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out int s2Ch);
             reader.ReadValueSafe(out float ultCd);
 
+            // ⚠️ A NaN COOLDOWN IS A COOLDOWN THAT NEVER EXPIRES. Every `> 0.0f` test against it
+            // is false, so the ability reads as READY for ever on that peer while the host refuses
+            // every cast: the deck lights up and nothing happens. § 149.9.
+            if (!Finite(ultimateCharge) || !Finite(s1Cd) || !Finite(s2Cd) || !Finite(ultCd)) return;
+
             SyncAbilityStateClientRpc(slot, ultimateCharge, s1Cd, s1Ch, s2Cd, s2Ch, ultCd);
         }
 
@@ -4751,6 +4953,12 @@ namespace TumbangPreso.Net
             for (int slot = 0; slot < attackerIdle.Length; slot++)
                 reader.ReadValueSafe(out attackerIdle[slot]);
 
+            // ⚠️ THE ROUND CLOCK AND THE TWO ANTI-STALL CLOCKS. A NaN in `timeLeft` is a round
+            // whose remaining time compares false against every bound, so the HUD reads blank and
+            // nothing ends. § 149.9.
+            if (!Finite(timeLeft) || !Finite(tayaCampSeconds)) return;
+            foreach (float idle in attackerIdle) if (!Finite(idle)) return;
+
             SyncWorldSnapshotClientRpc(roundNumber, defenderSlot, timeLeft, scores, inProgress,
                                        roundActive);
             GameServices.Round?.ApplyNetworkTournamentState(tayaCampSeconds, attackerIdle);
@@ -4768,6 +4976,8 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out Quaternion rot);
             reader.ReadValueSafe(out bool isUpright);
             reader.ReadValueSafe(out int skinIndex);
+
+            if (!Finite(pos) || !Finite(rot)) return;
 
             SyncLataClientRpc(pos, rot, isUpright, skinIndex);
         }
@@ -4792,6 +5002,12 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out int affinity);
             reader.ReadValueSafe(out int throwerSlot);
 
+            // ⚠️ A NON-FINITE TSINELAS IS A TSINELAS THAT DISAPPEARS. `Transform` refuses the
+            // write, so the shoe stays wherever it last was while every snapshot afterwards is
+            // refused too, and the retrieval this whole game is about becomes impossible on that
+            // peer with nothing in the log but a repeating engine warning. `docs/TODO.md` § 149.9.
+            if (!Finite(pos) || !Finite(rot) || !Finite(velocity) || !Finite(pektusSpin)) return;
+
             SyncSlipperClientRpc(seatOfOrigin, ownerSlot, inPlay, holderSlot, pos, rot, state,
                                  velocity, pektusSpin, affinity, throwerSlot);
         }
@@ -4807,6 +5023,8 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out Vector3 pos);
             reader.ReadValueSafe(out Quaternion rot);
 
+            if (!Finite(pos) || !Finite(rot)) return;
+
             GameServices.Round?.Lata?.ApplySnapshotPose(pos, rot);
         }
 
@@ -4820,6 +5038,7 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out Vector3 velocity);
 
             if (!ValidSlot(seatOfOrigin)) return;
+            if (!Finite(pos) || !Finite(rot) || !Finite(velocity)) return;
 
             FindSlipper(seatOfOrigin)?.ApplySnapshotPose(pos, rot, velocity);
         }
@@ -4869,7 +5088,11 @@ namespace TumbangPreso.Net
                 // `HostPeerLeft` drops has to go: the arriving player must not inherit a movement
                 // rate window or a reset channel opened by the bot that was sitting there.
                 _resetChannelStart.Remove(peerRecord.Seat);
-                _lastAcceptedMoveAt.Remove(peerRecord.Seat);
+
+                // ⚠️ THE ARRIVING PLAYER DOES NOT INHERIT THE BOT'S BALANCE, in either direction.
+                // A drained budget would refuse their first steps and a full one would hand them
+                // a bank; `Core.MoveBudget.Forget` starts the next owner on the burst.
+                _moveBudgets.Remove(peerRecord.Seat);
 
                 var unit = Unit(peerRecord.Seat);
                 if (unit != null)
@@ -4879,6 +5102,16 @@ namespace TumbangPreso.Net
 
                     unit.IsBot = false;
                     unit.PlayerName = peerRecord.Name;
+
+                    // ⚠⚠ AND THE PERSISTENT RECORD, WHICH WAS THE HALF THAT NEVER MOVED. A host
+                    // that opens the arena before its peers arrive, which is every
+                    // `-tp-dedicated` referee and every `-tp-autostart` host, installs all four
+                    // chairs as `SeatOrigin.Bot`, and `NoteSeatOrigin(Human)` is deliberately a
+                    // no-op. So the chair stopped being driven by an AI here and went on being
+                    // RECORDED as a bot's for the whole match, which is what
+                    // `SeatHandover.RatingMovesFor` and `HumanSeats` read. `docs/TODO.md`
+                    // § 145.4b measured it: a referee and two clients, three different rosters.
+                    unit.NoteSeatClaimedByAPerson(MatchIsUnderway());
 
                     // ⚠⚠ THE MIRROR OF `HostPeerLeft`'S CALL. The returning player drives this
                     // body now, so the host must STOP broadcasting it or its own stale copy
@@ -4999,7 +5232,15 @@ namespace TumbangPreso.Net
                 return true;
             }
 
-            if (_nm == null || !_nm.IsListening || _nm.CustomMessagingManager == null) return false;
+            // ⚠️⚠️ `IsConnectedClient`, AND THIS LINE SAID `IsListening` WHILE THE SUMMARY ABOVE
+            // IT DESCRIBED THE CORRECT RULE. `docs/TODO.md` § 149.3. `IsListening` goes true the
+            // instant `StartClient` is called, well before approval finishes, so a vote sent in
+            // that window went to a transport with no route: `SendNamedMessage` reports nothing,
+            // this method answered TRUE, and `BufferSkipVote` cleared its held press believing it
+            // had voted. `DeclareReadyServerRpc` is the same shape one screen away and had the
+            // right condition, which is what makes this a copy of the note and not of the code.
+            if (_nm == null || !_nm.IsConnectedClient || _nm.CustomMessagingManager == null)
+                return false;
 
             // ⚠️ NO PAYLOAD AT ALL. The vote carries no data and the voter is `senderClientId`,
             // which the transport supplies and the sender cannot type. A placeholder byte here
@@ -5061,6 +5302,12 @@ namespace TumbangPreso.Net
 
             _spawned.Remove(peerId);
 
+            // ⚠️ A TRANSPORT THAT LEFT AND COMES BACK IS A NEW SESSION AND GETS THE FULL ARRIVAL
+            // AGAIN. Leaving this set would make a genuine reconnect the quiet path: no ready
+            // tally, no picks, no world snapshot, and a peer standing in an arena it was never
+            // told about.
+            _identified.Remove(peerId);
+
             // ⚠️ THE PER-PEER RATE BUDGETS ARE KEYED BY TRANSPORT ID AND MUST BE DROPPED WITH IT.
             // Client ids are handed out monotonically rather than reused, so a lobby that runs
             // all evening otherwise accumulates one dictionary entry per connection forever.
@@ -5092,7 +5339,7 @@ namespace TumbangPreso.Net
                     // bot is about to. A half-finished reset channel or a movement rate window
                     // left over from the peer that dropped would be applied to its replacement.
                     _resetChannelStart.Remove(seat);
-                    _lastAcceptedMoveAt.Remove(seat);
+                    _moveBudgets.Remove(seat);
 
                     // ⚠️⚠️ AND THE WIND-UP IS CANCELLED ON EVERYBODY ELSE'S SCREEN, WHICH
                     // NOTHING DID UNTIL 2026-09-04. `Carrier._observedCharge` is set by a
@@ -5343,5 +5590,16 @@ namespace TumbangPreso.Net
         }
 
         private readonly HashSet<int> _spawned = new HashSet<int>();
+
+        /// <summary>
+        /// Which transport sessions have already been admitted through <c>Identify</c>.
+        ///
+        /// ⚠️ SEPARATE FROM <see cref="_spawned"/> ON PURPOSE. That one means "has been sent the
+        /// world snapshot" and its header records what happened the last time somebody reused it
+        /// for a second question. This one means "has already run the arrival fan-out", and both
+        /// are cleared by `HostPeerLeft` because a transport that left and came back is a new
+        /// session by definition. `docs/TODO.md` § 149.2.
+        /// </summary>
+        private readonly HashSet<int> _identified = new HashSet<int>();
     }
 }
