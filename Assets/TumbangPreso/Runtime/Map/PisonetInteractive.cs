@@ -35,7 +35,28 @@ namespace TumbangPreso
 
             string callout = Callouts[Random.Range(0, Callouts.Length)];
             ComicPopup.Spawn(transform.position + Vector3.up * 1.5f, callout, UI.UiTheme.Highlight, 1.2f);
-            GameServices.Audio?.PlayAtVaried("score_award", transform.position, 1.25f, 1.45f, 0.8f);
+            // ⚠️⚠️ THIS PLAYED `score_award` AND THE BOOTH AWARDS NOTHING. No `AddScore`, no
+            // `Hud.ReportStyle`, nothing: it is scenery. Two independent wrongs came out of that
+            // one cue name and both are player-facing.
+            //
+            // ⚠️⚠️ FIRST, `score_award` MEANS "YOUR SCORE JUST CHANGED". It is exactly what
+            // `Hud.OnScored` plays for a knockdown, a tag and a penalty, so a piece of street
+            // furniture was telling the player they had earned something, in a game whose whole
+            // hype layer exists to say precisely that.
+            //
+            // ⚠️⚠️ SECOND, IT IS IN `AudioCues.DuckTriggers`, SO BRUSHING PAST DUCKED THE MUSIC.
+            // `AudioDirector.DuckIfAnnouncement` is hooked in the PLAY path by design, so that
+            // the countdown and the round end do not each have to remember the bed exists; the
+            // cost of that design is that anything borrowing an announcement's cue name inherits
+            // its duck silently. `BuildPisonetRow` builds THREE terminals on Ilalim ng Tulay and
+            // this re-arms every 3.0 s, so a scrap by the shopfronts could push the OST down over
+            // and over for as long as it lasted.
+            //
+            // ⚠️ `ui_click` IS NOT A DUCK TRIGGER AND CLAIMS NOTHING ABOUT THE SCOREBOARD, which
+            // is the whole of the argument for it. The pitch window is unchanged: 1.25 to 1.45 is
+            // already what was turning this into a coin blip. Whether a click is the RIGHT coin
+            // sound is 🧑's ear per `CLAUDE.md` § 6, and it is in `Attention.md` § 18.
+            GameServices.Audio?.PlayAtVaried("ui_click", transform.position, 1.25f, 1.45f, 0.8f);
 
             if (ScreenLight != null)
             {
