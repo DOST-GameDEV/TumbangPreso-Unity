@@ -624,6 +624,7 @@ namespace TumbangPreso.PlayTests
                 // the first round's bodies and count nothing for the seven after it.
                 tally.WatchFaces(seats);
                 tally.SampleFeet(seats);
+                tally.SampleSlides(seats);
 
                 yield return null;
             }
@@ -880,6 +881,53 @@ namespace TumbangPreso.PlayTests
             // -------------------------------------------------------------------
             public int Emotes, Hops;
 
+            // -------------------------------------------------------------------
+            // ⚠️⚠️ SLIDES ARE COUNTED BECAUSE THE ONE QUESTION `docs/TODO.md` § 145.6 PUTS FIRST
+            // COULD NOT BE ASKED OF THIS REPORT AT ALL. That row says the sweep's first job is
+            // *"the retrieval slide (§ 146) as the first thing compared against a pre-slide
+            // sweep"*, and every metric this probe printed was a score event, a throw or a
+            // pickup: **there was no number anywhere in the repository for how often the slide
+            // is actually used.** So both of § 146's failure modes — *"nobody uses it means the
+            // recovery is too long; normal retrieval stopping means it is too cheap"* — read
+            // IDENTICALLY here, which is the same pair the emote counter above was added for
+            // (*"the difference between 'the celebration is tuned to be rare' and 'the
+            // celebration does not exist'"*).
+            //
+            // ⚠️ COUNTED OFF THE COOLDOWN EDGE, NOT OFF THE KEY, for `Hops`' reason one row up.
+            // `AIController.StepSlideIntent` taps `Verb.Lunge` and `CombatVerbs.StepSlide` can
+            // still refuse it: a fatigued bar, a live cooldown, a shoe already in reach. Only
+            // `ReleaseSlide` writes `_slideCooldown`, so a rising edge on `SlideCooldownLeft` is
+            // the verb having actually been SPENT, which is exactly the line `NoteLungeAttempt`
+            // draws for the taya's dash.
+            //
+            // ⚠️ AND `Retrievals` BESIDE IT IS WHAT MAKES IT READ. Slides alone say how much the
+            // move is used; slides against retrievals say what FRACTION of the run back in was a
+            // commitment, and that ratio is the thing a person is being asked to judge.
+            // -------------------------------------------------------------------
+            public int Slides;
+
+            /// <summary>One count per slide actually spent. See the note on <see cref="Slides"/>
+            /// for why the cooldown and not the button.</summary>
+            public void SampleSlides(List<CharacterMotor> seats)
+            {
+                foreach (var seat in seats)
+                {
+                    if (seat == null) continue;
+
+                    var verbs = seat.GetComponent<CombatVerbs>();
+                    if (verbs == null) continue;
+
+                    _slideCooling.TryGetValue(seat, out bool wasCooling);
+                    bool isCooling = verbs.SlideCooldownLeft > 0.0f;
+
+                    if (isCooling && !wasCooling) Slides++;
+                    _slideCooling[seat] = isCooling;
+                }
+            }
+
+            private readonly Dictionary<CharacterMotor, bool> _slideCooling =
+                new Dictionary<CharacterMotor, bool>();
+
             public Tally(GameMode mode) => _mode = mode;
 
             public void Subscribe(MatchDirector match, RoundDirector round)
@@ -1017,7 +1065,8 @@ namespace TumbangPreso.PlayTests
                    $"throws {Throws}  retrievals {Retrievals}  lata restores {LataRestores}\n" +
                    $"camp penalties {CampPenalties}  idle penalties {IdlePenalties}\n" +
                    $"skill uses {SkillUses}  ultimate uses {UltimateUses}  kits seen {SawAnyKit}\n" +
-                   $"emotes {Emotes}  hops {Hops}";
+                   $"emotes {Emotes}  hops {Hops}\n" +
+                   $"slides {Slides}";
         }
     }
 }

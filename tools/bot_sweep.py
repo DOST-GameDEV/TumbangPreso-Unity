@@ -100,6 +100,19 @@ METRICS = {
     "idle penalties": re.compile(r"idle penalties\s+(\d+)"),
     "skill uses": re.compile(r"skill uses\s+(\d+)"),
     "ultimate uses": re.compile(r"ultimate uses\s+(\d+)"),
+
+    # ⚠️⚠️ THE METRIC § 145.6 ASKS FOR FIRST, AND UNTIL 2026-09-06 NOTHING PRINTED IT.
+    # That row's own words: the sweep's first job is "the retrieval slide (§ 146) as the first
+    # thing compared against a pre-slide sweep". Every metric above is a score event, a throw
+    # or a pickup, so § 146's two failure modes -- "nobody uses it means the recovery is too
+    # long; normal retrieval stopping means it is too cheap" -- produced identical reports.
+    # `BotBehaviourProbe.Tally.SampleSlides` counts the cooldown edge, which is the verb being
+    # SPENT rather than the button being pressed.
+    #
+    # ⚠️ READ IT AGAINST `retrievals`, NOT ALONE. What a person is being asked to judge is the
+    # FRACTION of the run back in that was a commitment, and a raw count of slides cannot say
+    # whether that is a lot.
+    "slides": re.compile(r"slides\s+(\d+)"),
 }
 
 
@@ -128,11 +141,43 @@ def config_digest():
     return h.hexdigest()[:12]
 
 
-def run_probe(seed, mode, map_name):
-    """One Unity launch, one seed. Returns the parsed report or None."""
+ARM_NAME = re.compile(r"^bot-behaviour-(Classic|HeroStrike)-(\w+)\.txt$")
+
+
+def parse_report(path):
+    """The metric rows out of one `bot-behaviour-*.txt`."""
+    text = path.read_text(encoding="utf-8", errors="replace")
+    row = {}
+    for name, pattern in METRICS.items():
+        m = pattern.search(text)
+        row[name] = int(m.group(1)) if m else None
+    return row
+
+
+def run_probe(seed, mode, map_name, arms=None):
+    """
+    One Unity launch, one seed. Returns the parsed report for the named arm, or None.
+
+    ⚠️⚠️ ONE LAUNCH ALREADY PLAYS EVERY ARM AND THIS HARNESS USED TO THROW ALL BUT ONE AWAY.
+    `BotBehaviourProbe` runs both modes on both maps in a single fixture and writes a report per
+    combination, so asking for Classic on Eskinita and then asking for Hero Strike on Eskinita
+    cost TWO full sweeps for data that one had already produced. At five to eight minutes a
+    launch and five to eight seeds an arm, that is the difference between one sitting and four.
+    `arms` collects every report the launch wrote; the named arm is still the headline and the
+    json's `runs` key still holds exactly that arm, so `--compare` is untouched.
+
+    ⚠️ EVERY UNSUFFIXED REPORT IS DELETED FIRST, NOT JUST THE ONE BEING READ. A stale file from a
+    previous launch parses perfectly and would be recorded as this seed's result, which is the
+    worst kind of wrong number: plausible, precise and about a different run. ⚠️ The LABELLED
+    reports (`...-ship-a.txt` and friends) are left alone: they belong to deliberate A/B runs and
+    are not what this sweep writes.
+    """
     report = LOGS / f"bot-behaviour-{mode}-{map_name}.txt"
-    if report.exists():
-        report.unlink()
+
+    if LOGS.exists():
+        for stale in LOGS.glob("bot-behaviour-*.txt"):
+            if ARM_NAME.match(stale.name):
+                stale.unlink()
 
     cmd = [str(UNITY), "-batchmode", "-runTests", "-projectPath", str(ROOT),
            "-buildTarget", BUILD_TARGET, "-testPlatform", "PlayMode",
@@ -144,14 +189,22 @@ def run_probe(seed, mode, map_name):
 
     subprocess.run(cmd, cwd=str(ROOT), capture_output=True, text=True, errors="replace")
 
+    if arms is not None:
+        for written in sorted(LOGS.glob("bot-behaviour-*.txt")):
+            m = ARM_NAME.match(written.name)
+            if not m:
+                continue
+
+            arm = f"{m.group(1)} on {m.group(2)}"
+            row = parse_report(written)
+            row["seed"] = seed
+            arms.setdefault(arm, []).append(row)
+
     if not report.exists():
         return None
 
-    text = report.read_text(encoding="utf-8", errors="replace")
-    row = {"seed": seed}
-    for name, pattern in METRICS.items():
-        m = pattern.search(text)
-        row[name] = int(m.group(1)) if m else None
+    row = parse_report(report)
+    row["seed"] = seed
     return row
 
 
@@ -333,10 +386,11 @@ def main():
 
     seeds = SEEDS[:max(1, min(args.seeds, len(SEEDS)))]
     rows = []
+    arms = {}
 
     for seed in seeds:
         print(f"  seed {seed} ...", flush=True)
-        row = run_probe(seed, args.mode, args.map_name)
+        row = run_probe(seed, args.mode, args.map_name, arms)
         if row is None:
             print(f"    no report written; the run did not reach the probe")
             continue
@@ -374,6 +428,30 @@ def main():
         lines.append(f"| {name} | {s['n']} | {s['min']} | {s['max']} | {s['mean']} | "
                      f"{s['median']} | {s['stdev']} | **{s['spread_pct']}%** |")
 
+    # ⚠️⚠️ THE OTHER ARMS COST NOTHING AND THEY ARE WHERE THE SHAPE OF THE GAME SHOWS.
+    # `BotBehaviourProbe` plays every mode on every map in one fixture, so these are the SAME
+    # launches read four ways rather than four sweeps. ⚠️ The headline arm above is still the
+    # one `--compare` reads; this table is for looking at the loop, not for an A/B.
+    if len(arms) > 1:
+        lines.append("")
+        lines.append("## Every arm the same launches produced")
+        lines.append("")
+        lines.append("⚠️ **`slides` against `retrievals` is the ratio to read**, not the slide "
+                     "count on its own. `docs/TODO.md` § 146: nobody using it means the recovery "
+                     "is too long and normal retrieval stopping means it is too cheap, and only "
+                     "the fraction of retrievals that were a commitment can tell those apart.")
+        lines.append("")
+        arm_header = ["arm", "n"] + list(METRICS)
+        lines.append("| " + " | ".join(arm_header) + " |")
+        lines.append("|" + "---|" * len(arm_header))
+
+        for arm in sorted(arms):
+            cells = [arm, str(len(arms[arm]))]
+            for name in METRICS:
+                s = summarise(arms[arm], name)
+                cells.append(f"{s['mean']} ({s['min']}-{s['max']})" if s else "-")
+            lines.append("| " + " | ".join(cells) + " |")
+
     lines.append("")
     lines.append("## Every run")
     lines.append("")
@@ -397,6 +475,12 @@ def main():
         "generated": datetime.datetime.now().isoformat(timespec="seconds"),
         "runs": rows,
         "summary": {n: summarise(rows, n) for n in METRICS},
+
+        # ⚠️ ADDED BESIDE `runs` RATHER THAN REPLACING IT. `--compare` reads `runs`, and a sweep
+        # written before this key existed has to keep comparing against one written after it.
+        "arms": {arm: {"runs": arm_rows,
+                       "summary": {n: summarise(arm_rows, n) for n in METRICS}}
+                 for arm, arm_rows in arms.items()},
     }
 
     destination = pathlib.Path(args.out) if args.out else (LOGS / "bot-sweep.json")
