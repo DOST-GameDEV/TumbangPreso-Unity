@@ -170,7 +170,7 @@ GROUPS = [
         "AntiAliasStateProbe", "CosmeticSurfaceProbe", "GameplayShots", "ModelFacingProbe",
         "MsaaResolveProbe", "NationalsShowcaseProbe", "NearFadeProbe", "ToneSweep",
         "WorldOutlineCoverageProbe", "MatchFrameRateProbe", "HudPerformanceProbe",
-        "ReplayCaptureProbe",
+        "ReplayCaptureProbe", "AbilityStressProbe",
     ]),
 
     ("services", """
