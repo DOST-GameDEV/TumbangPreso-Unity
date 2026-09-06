@@ -782,6 +782,18 @@ ears are an ordinary child now, so the search **does** return them, and without 
 scene load disables the game's only listener and the whole game goes silent with no error and no
 warning. `ExactlyOneListenerIsEnabledAfterASceneLoad`.
 
+**Proved able to fail.** With the follow commented out, `AudioListenerProbe` reports **5 cases,
+3 passed, 2 failed**, and both messages are the defect in its own words:
+
+> *the listener is at (0.00, 0.00, 0.00) and the camera is at (-1.80, 1.25, 9.00). Every 3D cue
+> is panning from there.* — 9.26 m against a 0.05 m bound
+>
+> *the view moved to (4.00, 8.00, -9.00) and the ears stayed at (0.00, 0.00, 0.00).* — 12.69 m
+
+⚠️ **THE OTHER THREE CASES STAYED GREEN**, which is what says the two that failed are about the
+follow and not about the fixture: the parked one-shot, the two routes and the single listener
+are all independent of where the ears are.
+
 ### 151.2 ⚠️⚠️ THE MANDATORY SECOND HALF: THIRTEEN CALL SITES FAKED A POSITION, AND FOUR INVENTED THE SAME WORKAROUND
 
 ⚠️ **THE NUMBER IS THIRTEEN AND THE COMMIT THAT LANDED IT SAYS ELEVEN.** The count was taken from
@@ -1285,7 +1297,13 @@ players (`MatchInstaller`: *"The ready press is readable in the world, not only 
 so a first-person arm clip would animate the one view in which the gesture means nothing.
 `BodyOnlyActions` is that list and its header says a row without a sentence is how this comes
 back. ⚠️ **The test can only see LITERALS**; the hero kits pass their action names as
-constructor arguments and are `HeroPresentationTests`' problem, which already covers them. ⚠️ **The kick was
+constructor arguments and are `HeroPresentationTests`' problem, which already covers them.
+
+**Proved able to fail.** Run against the arm removed again, EditMode reports **54 cases, 53
+passed, 1 failed**, and the message names the defect rather than a bound:
+
+> *these action names reach ViewmodelArms.PlayAction and resolve to null, so the first-person
+> hand does not move for them: **slide**.* ⚠️ **The kick was
 never gone** (`Rig?.ViewmodelKick(Vector3.forward, 1.1f)` is on the line below), which is exactly
 why this could ship without looking broken: the view still moved and the arm did not.
 
@@ -1417,6 +1435,23 @@ allowlist, because some cues are correctly private: `stamina_empty` is feedback 
 and nobody else's business, and `respawn` needs an authority reading before anybody decides. That
 allowlist is `OWNER_DRIVEN`'s contract applied one file over, and its rows must assert the line
 that makes each claim true, exactly as that one does.
+
+### 151.17 ✅ EVERY REGRESSION THIS PASS ADDED HAS BEEN SEEN RED
+
+⚠️⚠️ **`docs/TODO.md` § 150.1'S RULE, APPLIED TO ALL FIVE:** *"A regression that has not been seen
+red is not a regression."* Each was run against the defect it was written for, and each names the
+defect rather than reporting a bound.
+
+| Regression | Run against | Result |
+|---|---|---|
+| `audit_presentation_reach.py`'s `hitstop` pattern | the pre-fix `Lata.cs` | `HOST-ONLY hitstop Lata.cs:210 HostKnockDown()`, **101 sites, 100 reachable, 1 HOST-ONLY** |
+| `NoWorldCueIsFiredAtTheOriginOrAtTheCameraToFakeBeingNonDiegetic` | replayed over `fe9baa16` | **44 positional call sites, 10 files faked**; over `HEAD`, 32 and 0 |
+| `EveryVerbActionNameResolvesOnTheViewmodelArm` | the `"slide"` arm removed again | **54 cases, 53 passed, 1 failed**, naming `slide` |
+| `AudioListenerProbe`, the two follow cases | the follow commented out | **5 cases, 3 passed, 2 failed**, at 9.26 m and 12.69 m against 0.05 m |
+| `AbilityStressProbe`'s leak assertion | ⚠️ **not seen red, and it is written down rather than claimed.** Producing a real leak means breaking a `HeroHazards` lifetime on purpose, which is a change to shipping code to test a test. **What IS demonstrated is that it discriminates**: the same assertion run twice on one machine gave +13 and +23 against an allowance of 103, while the pile itself is +513 |
+
+⚠️ **THE ONE THAT WAS NOT PROVED SAYS SO IN ITS OWN ROW.** A table of five green ticks with one
+of them unearned is worse than four, because it teaches the next reader to skim the column.
 
 ### 151.12 ⚠️ WHAT WAS DELIBERATELY NOT DONE
 
