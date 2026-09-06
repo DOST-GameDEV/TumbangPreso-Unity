@@ -224,6 +224,23 @@ namespace TumbangPreso.EditorTools.MapKit
             EditorApplication.Exit(ok ? 0 : 1);
         }
 
+        /// <summary>
+        /// ⚠️⚠️ THIS IS NOT THE WHOLE REBUILD, AND CALLING IT ALONE SHIPS A MAP WITH NO ROAD
+        /// TEXTURE. It authors the scene from an EMPTY one, so every pass that runs AFTER it is
+        /// discarded, and `AsphaltRoadSurface` is one of those: the road reverts to the flat kit
+        /// swatch and nothing in the editor complains.
+        ///
+        /// **`MapKit.IlalimNgTulayPipeline.Run` is the entry point.** It authors the fascia,
+        /// calls this, lays the asphalt, gates the geometry and captures the showcase, in that
+        /// order, because its own header says the order matters and a missed step is invisible.
+        ///
+        /// ⚠️ **ONE TEST IN THE REPOSITORY NOTICES, AND IT IS NOT A MAP CHECK**:
+        /// `MapSurfaceTests.IlalimUsesOneContinuousAsphaltSkinAndNoPatchSlabs`, *"Expected: 1,
+        /// But was: 0"*. `MapGeometryCheck` passes with **0 findings** on the broken scene,
+        /// because a missing skin is not a floating prop, and a render of it looks like a road.
+        /// This warning is here rather than only in the pipeline's header because THIS is the
+        /// method somebody reaches for. `docs/TODO.md` § 151.5.
+        /// </summary>
         public static bool Execute()
         {
             Debug.Log("[IlalimNgTulayBuilder] Starting map construction...");
