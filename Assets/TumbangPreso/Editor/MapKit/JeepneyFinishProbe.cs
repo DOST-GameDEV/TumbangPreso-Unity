@@ -74,9 +74,16 @@ namespace TumbangPreso.EditorTools
                               : ""));
             sb.AppendLine();
 
-            sb.AppendLine($"  {"material",-34} {"shader",-40} {"has_M",6} {"metal",6} " +
-                          $"{"has_S",6} {"smooth",7} {"map",4}");
-            sb.AppendLine("  " + new string('-', 108));
+            // ⚠️⚠️ THE glTFast COLUMNS WERE ADDED AFTER THE FIX, AND WITHOUT THEM THIS TABLE
+            // WOULD REPORT A WORKING FINISH AS A BROKEN ONE FOREVER. The first run answered
+            // § 144.8 cause 1 by printing `has_M False` on all seventeen; `WriteFinish` now
+            // writes `metallicFactor` and `roughnessFactor` as well, and a probe that still
+            // reads only URP Lit's two names would keep printing exactly the same failing row
+            // against a jeepney that is finally chrome. A measurement that cannot see the fix
+            // is the `audit_audio_reach.py` fault (`CLAUDE.md` § 7.1) one folder over.
+            sb.AppendLine($"  {"material",-30} {"shader",-32} {"has_M",6} {"metal",6} " +
+                          $"{"has_S",6} {"smooth",7} {"metalF",7} {"roughF",7} {"map",4}");
+            sb.AppendLine("  " + new string('-', 116));
 
             int rows = 0;
             var seen = new HashSet<Material>();
@@ -91,11 +98,15 @@ namespace TumbangPreso.EditorTools
 
                         bool hasM = m.HasProperty("_Metallic");
                         bool hasS = m.HasProperty("_Smoothness");
+                        bool hasMf = m.HasProperty("metallicFactor");
+                        bool hasRf = m.HasProperty("roughnessFactor");
 
                         sb.AppendLine(
-                            $"  {Trim(m.name, 34),-34} {Trim(m.shader != null ? m.shader.name : "(none)", 40),-40} " +
+                            $"  {Trim(m.name, 30),-30} {Trim(m.shader != null ? m.shader.name : "(none)", 32),-32} " +
                             $"{hasM,6} {(hasM ? m.GetFloat("_Metallic").ToString("0.00") : "-"),6} " +
                             $"{hasS,6} {(hasS ? m.GetFloat("_Smoothness").ToString("0.00") : "-"),7} " +
+                            $"{(hasMf ? m.GetFloat("metallicFactor").ToString("0.00") : "-"),7} " +
+                            $"{(hasRf ? m.GetFloat("roughnessFactor").ToString("0.00") : "-"),7} " +
                             $"{(m.IsKeywordEnabled("_METALLICSPECGLOSSMAP") ? "yes" : "no"),4}");
                         rows++;
                     }
@@ -119,10 +130,13 @@ namespace TumbangPreso.EditorTools
             // the shiniest surface the dullest one.
             DumpShaderProperties(sb, seen);
             sb.AppendLine();
-            sb.AppendLine("⚠️ READ `has_M` FIRST. False on a material the finish pass targets is");
-            sb.AppendLine("   § 144.8 cause 1, the cheapest and most likely: the property names do");
-            sb.AppendLine("   not exist on the shader glTFast built, both writes were skipped, and");
-            sb.AppendLine("   nothing logged. `_finish` in a name says the pass ran and made a copy.");
+            sb.AppendLine("⚠️ READ THE FOUR VALUE COLUMNS TOGETHER. `has_M` False with a NUMBER under");
+            sb.AppendLine("   metalF/roughF is the FIXED state: glTFast's shader declares its own");
+            sb.AppendLine("   names and `WriteFinish` writes both sets. All four blank on a material");
+            sb.AppendLine("   named `_finish` is § 144.8 cause 1 returning: the property names do not");
+            sb.AppendLine("   exist on the shader, every write is skipped, and NOTHING logs it.");
+            sb.AppendLine("⚠️ roughF IS THE INVERSE OF smooth. 0.80 smoothness is 0.20 roughness, so");
+            sb.AppendLine("   the CHROME is the row with the LOWEST roughF, not the highest.");
             sb.AppendLine();
             sb.AppendLine("⚠️ A NAME WITHOUT `_finish` IS EITHER A SURFACE THE SELECTION REFUSED ON");
             sb.AppendLine("   PURPOSE (the livery, the bench seats, glass, rubber, plastic) OR");

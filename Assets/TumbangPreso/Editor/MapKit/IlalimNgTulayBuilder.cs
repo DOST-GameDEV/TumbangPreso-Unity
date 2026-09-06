@@ -545,6 +545,60 @@ namespace TumbangPreso.EditorTools.MapKit
                 skyMat.SetFloat("_Rotation", 72.0f);
                 RenderSettings.skybox = skyMat;
             }
+
+            BuildNorthBoundaryReflection(lightGroup.transform);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THIS SCENE HELD **ZERO** REFLECTION PROBES AND IS THE MAP WITH THE ONE METAL PROP
+        /// ON IT, WHICH IS THE SECOND HALF OF `docs/TODO.md` § 144.8 AND NOT AN OPTIONAL POLISH.
+        /// `JeepneyFinishProbe` measured both causes together on 2026-09-05: every
+        /// `_Metallic`/`_Smoothness` write was silently discarded (see `WriteFinish`), **and**
+        /// `reflection probes in the scene: 0`.
+        ///
+        /// **Metal is reflection.** A surface with `metallicFactor = 0.95` and nothing to
+        /// reflect does not render as chrome, it renders as a flat dark patch, so fixing the
+        /// property names alone would have produced a fifth render of *"this js white shit"* with
+        /// the bug genuinely fixed underneath it. § 144.8 guessed this cause was *"less likely"*
+        /// than the names because the map draws with a skybox; a skybox alone gives a mirror-flat
+        /// ambient, and what reads as chrome is the shape of the deck overhead and the shopfronts
+        /// beside it bending across a bumper.
+        ///
+        /// ⚠️ REALTIME AND BAKED ONCE AT AWAKE, NOT BAKED INTO THE LIGHTMAP. Every scene in this
+        /// project is GENERATED (`SceneBuilder`), so anything that depends on somebody having run
+        /// a lighting bake after the last rebuild is a finish that disappears the next time the
+        /// map is regenerated and nobody notices. `OnAwake` costs six face renders once, at load,
+        /// on a street where nothing in this probe's box ever moves.
+        ///
+        /// ⚠️ IT SITS OVER THE NORTH BOUNDARY BECAUSE THAT IS WHERE THE JEEPNEY IS, at
+        /// (-2.8, ·, 30.0), and the box reaches back far enough to cover the other four boundary
+        /// vehicles. ⚠️⚠️ **IT DELIBERATELY DOES NOT COVER THE PLAY AREA.** A probe over the box
+        /// would put a second lighting term on every character in the fight for the sake of one
+        /// parked prop, and `docs/VISION.md` § 2's whole argument is that the fourteen metres the
+        /// game is played in are a readability budget rather than a place to spend effects.
+        ///
+        /// ⚠️ 128, NOT 256. The prop is 4.5 m of vehicle read from at least twenty metres away
+        /// across a boundary nobody stands on. `CLAUDE.md` § 6.0 forbids decimating sourced ART
+        /// for performance; this is a render setting on a probe this session is adding, which is
+        /// a different thing, and it is sized to what the frame can actually resolve.
+        /// </summary>
+        private static void BuildNorthBoundaryReflection(Transform parent)
+        {
+            var go = new GameObject("NorthBoundaryReflection");
+            go.transform.SetParent(parent, false);
+            go.transform.localPosition = new Vector3(-2.8f, 3.2f, 26.0f);
+
+            var probe = go.AddComponent<ReflectionProbe>();
+
+            probe.mode = UnityEngine.Rendering.ReflectionProbeMode.Realtime;
+            probe.refreshMode = UnityEngine.Rendering.ReflectionProbeRefreshMode.OnAwake;
+            probe.timeSlicingMode = UnityEngine.Rendering.ReflectionProbeTimeSlicingMode.AllFacesAtOnce;
+            probe.resolution = 128;
+            probe.size = new Vector3(30.0f, 14.0f, 22.0f);
+            probe.nearClipPlane = 0.3f;
+            probe.farClipPlane = 90.0f;
+            probe.shadowDistance = 40.0f;
+            probe.importance = 1;
         }
 
         private static void BuildGameplayRig(Transform parent)
@@ -3316,8 +3370,16 @@ namespace TumbangPreso.EditorTools.MapKit
                     {
                         metal = new Material(source) { name = $"{source.name}_finish" };
 
-                        if (metal.HasProperty(MetallicId)) metal.SetFloat(MetallicId, metallic);
-                        if (metal.HasProperty(SmoothnessId)) metal.SetFloat(SmoothnessId, smoothness);
+                        if (!WriteFinish(metal, metallic, smoothness))
+                        {
+                            Debug.LogWarning(
+                                $"[IlalimNgTulayBuilder] '{source.name}' uses shader " +
+                                $"'{source.shader.name}', which declares none of the four " +
+                                "metal/roughness properties this builder knows. The finish was " +
+                                "NOT applied. Run Tumbang Preso > Probes > Jeepney finish and add " +
+                                "the names it prints to WriteFinish rather than retuning the " +
+                                "numbers, which is docs/TODO.md § 144.8 happening again.");
+                        }
 
                         // URP Lit ignores `_Metallic` entirely while a metallic-gloss MAP is
                         // bound, and reads the map instead. None of these materials has one, and
@@ -3425,8 +3487,77 @@ namespace TumbangPreso.EditorTools.MapKit
         private static readonly Dictionary<Material, Material> JeepneyMetals =
             new Dictionary<Material, Material>();
 
+        /// <summary>
+        /// ⚠️⚠️ THE FINISH WAS WRITTEN THROUGH URP LIT'S PROPERTY NAMES AND THE JEEPNEY IS NOT
+        /// DRAWN BY URP LIT, SO EVERY WRITE WAS SILENTLY DISCARDED FOR THE WHOLE LIFE OF THIS
+        /// PASS. `docs/TODO.md` § 144.8, measured by `JeepneyFinishProbe` on 2026-09-05:
+        ///
+        /// | | |
+        /// |---|---|
+        /// | Materials on the placed prop | **17**, every one named `..._finish` |
+        /// | Shader, on all 17 | **`glTF/PbrMetallicRoughness`** |
+        /// | `HasProperty("_Metallic")` | **False on all 17** |
+        /// | `HasProperty("_Smoothness")` | **False on all 17** |
+        ///
+        /// The `_finish` suffix on all seventeen is the proof that the selection logic ran, made
+        /// its copies and kept them: the material table was right, the numbers were right, and
+        /// `if (HasProperty(...))` turned the two lines that mattered into a no-op that logs
+        /// nothing. 🧑 saw *"this js white shit gang"* across four renders because there was
+        /// never anything to see.
+        ///
+        /// ⚠️⚠️ BOTH NAME SETS ARE WRITTEN, NOT THE ONE THIS IMPORT HAPPENS TO PRODUCE.
+        /// glTFast picks its shader from the render pipeline it detects at import time, and
+        /// which one it lands on has already changed once across versions of that package. A
+        /// builder that writes only the names it saw today is one package upgrade from being
+        /// exactly this bug again, and the failure mode is silence.
+        ///
+        /// ⚠️⚠️ AND `roughnessFactor` IS THE INVERSE OF SMOOTHNESS. The chrome's authored 0.80
+        /// smoothness is **0.20 roughness**; transcribing the existing table straight across
+        /// would make the shiniest surface on the jeepney the dullest one, which is a wrong
+        /// answer that looks like a fix.
+        ///
+        /// ⚠️ IT RETURNS WHETHER ANYTHING LANDED. The caller warns on false, because "the
+        /// property names are wrong" produced no error the first time and cost four renders.
+        /// </summary>
+        private static bool WriteFinish(Material metal, float metallic, float smoothness)
+        {
+            bool wrote = false;
+
+            if (metal.HasProperty(MetallicId))
+            {
+                metal.SetFloat(MetallicId, metallic);
+                wrote = true;
+            }
+
+            if (metal.HasProperty(SmoothnessId))
+            {
+                metal.SetFloat(SmoothnessId, smoothness);
+                wrote = true;
+            }
+
+            if (metal.HasProperty(MetallicFactorId))
+            {
+                metal.SetFloat(MetallicFactorId, metallic);
+                wrote = true;
+            }
+
+            if (metal.HasProperty(RoughnessFactorId))
+            {
+                metal.SetFloat(RoughnessFactorId, 1.0f - smoothness);
+                wrote = true;
+            }
+
+            return wrote;
+        }
+
         private static readonly int MetallicId = Shader.PropertyToID("_Metallic");
         private static readonly int SmoothnessId = Shader.PropertyToID("_Smoothness");
+
+        /// ⚠️ glTFast's own names, read off the shader by `JeepneyFinishProbe` rather than
+        /// guessed: it declares `metallicFactor`, `roughnessFactor` and `baseColorFactor`, all
+        /// three without the leading underscore Unity's built-in shaders use.
+        private static readonly int MetallicFactorId = Shader.PropertyToID("metallicFactor");
+        private static readonly int RoughnessFactorId = Shader.PropertyToID("roughnessFactor");
         private static readonly int BaseMapId = Shader.PropertyToID("_BaseMap");
         private static readonly int MainTexId = Shader.PropertyToID("_MainTex");
         private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
