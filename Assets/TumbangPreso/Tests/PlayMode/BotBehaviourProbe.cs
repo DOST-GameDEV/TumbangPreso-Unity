@@ -648,6 +648,62 @@ namespace TumbangPreso.PlayTests
             log.AppendLine($"physics phase at the whistle: {phase * 1000.0f:F3} ms " +
                            $"after {aligned} aligning frame(s)");
             log.AppendLine(tally.Describe());
+
+            // ⚠️⚠️ THE PACING COLUMNS COME OFF `MatchStatsCollector` RATHER THAN OFF A SECOND
+            // COUNTER, AND THAT IS THE WHOLE POINT. The tally above counts what a WATCHER can
+            // see; the collector is what the game itself records for a career, and it already
+            // holds five figures nothing here was printing: shove usage, lunge accuracy,
+            // retrievals taken UNDER PRESSURE, defence ticks, and how long a seat took to commit
+            // its first throw. Building a second telemetry layer to ask "is the loop happening"
+            // would be a subsystem where a `foreach` will do.
+            //
+            // ⚠️⚠️ `RetrievalsUnderPressure` IS THE ONE THIS GAME IS ABOUT AND A PLAIN RETRIEVAL
+            // COUNT IS NOT. `MatchRecord`'s own note: *"A slipper collected while the taya is
+            // across the box measures walking; the same pickup made inside the taya's reach
+            // measures the game."* `docs/VISION.md` § 0.
+            //
+            // ⚠️ AND `DefenceTicks` IS HERE BECAUSE IT WAS BEING DERIVED AND THE ARITHMETIC DID
+            // NOT RECONCILE. Subtracting the knockdown, tag and sabotage awards from the four
+            // final scores left more seconds of can-standing than the match has live round time,
+            // so the model was wrong somewhere. **"Is defence dominating everything" is one of
+            // the questions this probe exists to answer and this is the column that answers it**,
+            // measured rather than inferred.
+            //
+            // ⚠️ IT IS THE FINISHED RECORD, NOT A LIVE READ. `Last` is written by `OnMatchEnded`,
+            // which this loop has already waited for, and it has been through
+            // `MatchRecordRules.Normalise`, so a number here is one the career layer would have
+            // accepted rather than a raw counter.
+            //
+            // ⚠️ A NULL RECORD IS A REAL ANSWER AND IS PRINTED AS ONE. The collector is
+            // host-gated and refuses to run without a live match; silence here would read as
+            // "the loop produced nothing" rather than as "nobody was counting".
+            var record = GameServices.Stats != null ? GameServices.Stats.Last : null;
+
+            if (record == null || record.Players == null)
+            {
+                log.AppendLine("stats: no MatchRecord was produced, so the pacing columns are "
+                               + "ABSENT rather than zero.");
+            }
+            else
+            {
+                log.AppendLine($"{"seat",4} {"throws",7} {"knocks",7} {"retr",5} {"underP",7} "
+                               + $"{"tags",5} {"shove",8} {"lunge",8} {"defTick",8} "
+                               + $"{"1stThrow",9} {"metres",7}");
+
+                foreach (var p in record.Players)
+                {
+                    if (p == null) continue;
+
+                    log.AppendLine(
+                        $"{p.Slot,4} {p.Throws,7} {p.Knockdowns,7} {p.Retrievals,5} "
+                        + $"{p.RetrievalsUnderPressure,7} {p.Tags,5} "
+                        + $"{p.ShoveHits + "/" + p.ShoveAttempts,8} "
+                        + $"{p.LungeHits + "/" + p.LungeAttempts,8} "
+                        + $"{p.DefenceTicks,8} "
+                        + $"{(p.TimeToFirstThrow >= 0.0f ? p.TimeToFirstThrow.ToString("F1") : "-"),9} "
+                        + $"{p.DistanceTravelled,7:F0}");
+                }
+            }
             // ⚠️ THE CAST IS PART OF THE MEASUREMENT. Two runs with different heroes in the
             // seats are two different experiments, and until this line existed that difference
             // was invisible in a report full of counts.
