@@ -597,7 +597,21 @@ namespace TumbangPreso
 
                 // The wind-up is audible as well as visible. It is the taya's cue that a throw
                 // is coming, and it is the only one that reaches a player who is looking away.
-                GameServices.Audio?.PlayAt("throw_charge", transform.position);
+                //
+                // ⚠️⚠️ AND UNTIL 2026-09-06 IT REACHED NOBODY BUT THE THROWER, WHICH IS THE ONE
+                // PLAYER THE SENTENCE ABOVE IS NOT ABOUT. `StepAttacker` reads `intent`, so it
+                // runs only on the peer that owns this seat; a plain `GameServices.Audio` call
+                // there plays on that machine and travels nowhere. **The VISIBLE half of this
+                // same wind-up was networked on purpose** — `BroadcastCharge` sends
+                // `SetThrowCharge` and its header says *"IT TICKS ON EVERY PEER, which is what
+                // makes the wind-up counterplay work"* — so the look travelled and the sound
+                // stayed home. `docs/TODO.md` § 151.15, which also records that no audit in the
+                // repository could see it: the two reach audits ask about host GATES and
+                // `audit_cue_relay` only walks `NetCue` sites.
+                //
+                // ⚠️ VARIED AS WELL, because the throw is the most frequent verb in the game and
+                // this is therefore the sample a player hears more than any other.
+                NetCue.PlayVaried("throw_charge", transform.position);
                 return;
             }
 

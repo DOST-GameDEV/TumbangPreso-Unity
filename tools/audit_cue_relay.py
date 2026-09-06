@@ -91,6 +91,31 @@ OWNER_DRIVEN = [
         "why": "StepShove runs only on the peer whose input filled Intent, so the swing is "
                "played once and relayed once.",
     },
+
+    # ⚠️⚠️ THESE TWO WERE NOT RELAYED AT ALL UNTIL 2026-09-06 AND NOTHING COULD SEE IT.
+    # An owner-driven `GameServices.Audio.PlayAt` is not host-gated, so `audit_audio_reach.py`
+    # and `audit_presentation_reach.py` both report it reachable by every peer, which is true
+    # of the CODE and false of the SOUND: the method runs on one machine because `Intent` is
+    # only filled on one machine. And it is not a `NetCue` site, so THIS tool never looked at
+    # it either. `docs/TODO.md` § 151.15 is the hole; it is written down and not yet closed.
+    {
+        "file": "CombatVerbs.cs",
+        "cue": "dash",
+        "guard": "if (!_motor.Intent.JustPressed(Verb.Lunge)) return;",
+        "why": "StepSlide runs only on the peer whose input filled Intent, so the committed "
+               "retrieval is played once and relayed once. It was a plain Audio.PlayAt until "
+               "2026-09-06, so three players out of four could not hear an attacker commit, "
+               "which is the read docs/VISION.md section 0 says the game is built around.",
+    },
+    {
+        "file": "Carrier.cs",
+        "cue": "throw_charge",
+        "guard": "if (!_charging && intent.Pressed(Verb.SpecialAbility))",
+        "why": "StepAttacker runs only on the peer whose input filled Intent. Its own comment "
+               "says the wind-up is the taya's cue that a throw is coming, and the VISIBLE half "
+               "of the same wind-up was already networked through BroadcastCharge, so the look "
+               "travelled and the sound stayed home until 2026-09-06.",
+    },
 ]
 
 

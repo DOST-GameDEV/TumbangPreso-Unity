@@ -1985,11 +1985,17 @@ namespace TumbangPreso.Net
                 return;
             }
 
-            // ⚠️ THE LUNGE'S CLIP, DELIBERATELY. `CharacterAnimator.PlayAction` and
-            // `ViewmodelArms.PlayAction` both resolve by name and neither knows a "slide"; both
-            // moves are a body-led dash, so a shared clip that reads correctly beats a name that
-            // resolves to nothing. `docs/TODO.md` § 146 carries the art note.
-            BroadcastAction(slot, "lunge", senderClientId);
+            // ⚠️⚠️ THIS SAID `"lunge"` AND THE REASON WRITTEN HERE FOR IT EXPIRED THE DAY BEFORE
+            // ANYBODY READ IT AGAIN. The comment argued *"`CharacterAnimator.PlayAction` and
+            // `ViewmodelArms.PlayAction` both resolve by name and neither knows a `slide`"*,
+            // which was true until `docs/TODO.md` § 150.8 added the `"slide"` chain in
+            // `40fc347c`. **The half that stayed true was the VIEWMODEL's, and that was a defect
+            // rather than an argument**: § 151.13a, the first-person arm resolving to null.
+            //
+            // ⚠️ BOTH NAMES STILL RESOLVE TO THE SAME CLIP TODAY, so this changes nothing on any
+            // screen. It changes what happens on the day a real slide clip lands, which is that
+            // everybody sees the same one. `ASTRA.md` task 3.
+            BroadcastAction(slot, "slide", senderClientId);
         }
 
         public void RequestShoveServerRpc(int slot, Vector3 from, Vector3 facing)

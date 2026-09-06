@@ -523,7 +523,14 @@ namespace TumbangPreso
             // Godot reached the autoload directly (`AudioManager.play_at`). GameServices is
             // this port's stand-in for the nine autoloads, and it is null in a bare test
             // scene, so the call is guarded rather than assumed.
-            GameServices.Audio?.PlayAt("respawn", transform.position);
+            // ⚠️ VARIED. This is a 1-vs-3 game and a respawn follows every tag, so it is one of
+            // the most repeated sounds in a round, which is exactly the case
+            // `AudioDirector.PlayAtVaried`'s header was written for.
+            //
+            // ⚠️ ITS REACH IS DELIBERATELY NOT CHANGED IN THE SAME PASS. This sits behind
+            // `MayMutateGameplayState`, and deciding whether it should relay needs an authority
+            // reading rather than a guess; `docs/TODO.md` § 151.15 is where that is written down.
+            GameServices.Audio?.PlayAtVaried("respawn", transform.position);
         }
 
         /// <summary>
@@ -789,7 +796,12 @@ namespace TumbangPreso
             bool fatigued = Stamina.IsFatigued;
 
             if (fatigued && !_wasFatigued)
-                GameServices.Audio?.PlayAt("stamina_empty", transform.position);
+                // ⚠️ VARIED, for the reason on the respawn above: the bar bottoms out several
+                // times a round per seat. ⚠️ AND IT STAYS PRIVATE ON PURPOSE, unlike the throw
+                // wind-up and the slide: your own bar running out is feedback about you, and
+                // telling the taya when an attacker is fatigued would be handing over a read the
+                // game does not otherwise give. `docs/TODO.md` § 151.15.
+                GameServices.Audio?.PlayAtVaried("stamina_empty", transform.position);
 
             _wasFatigued = fatigued;
 

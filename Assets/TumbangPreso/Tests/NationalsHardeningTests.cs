@@ -1624,6 +1624,103 @@ namespace TumbangPreso.Tests
                 + "is belongs at the thing that made it.");
         }
 
+        // -------------------------------------------------------------------
+        // § 151.13a  THE FIRST-PERSON ARM RESOLVES EVERY VERB THE GAME ASKS FOR
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// ⚠️⚠️ THE RETRIEVAL SLIDE LOST ITS FIRST-PERSON ARM CLIP FOR A DAY AND NOTHING NOTICED.
+        ///
+        /// `CharacterAnimator.PlayAction` forwards to `CameraRig.PlayViewmodelAction`, and its own
+        /// header calls that the single bridge so that *"a verb added later cannot forget to"*
+        /// reach the arm. **What that cannot guarantee is that the arm knows the NAME.**
+        /// `CharacterAnimator` resolves CHAINS and walks past a clip the rig lacks;
+        /// `ViewmodelArms.PlayAction` is a flat conditional and returns `null`.
+        ///
+        /// So `40fc347c` renamed the slide's action from `"lunge"` to `"slide"`, taught the body
+        /// the new name, and did not teach the arm: `PlayAction("lunge")` had reached `LungeClip`
+        /// and `PlayAction("slide")` reached nothing. ⚠️ **The view still moved**, because
+        /// `ReleaseSlide` calls `ViewmodelKick` on the next line, which is exactly why it could
+        /// ship without looking broken.
+        ///
+        /// ⚠️⚠️ `ViewmodelArms` ALREADY CARRIES THIS FAULT AS A ⚠️⚠️ FOR FOUR OTHER VERBS
+        /// (*"`grab`, `punch`, `lunge` AND `shove` REACHED `PlayAction` AND RESOLVED TO null"*),
+        /// and it came back through a RENAME rather than through an omission, which is why that
+        /// block's own lesson did not catch it. `HeroPresentationTests` applies this standard to
+        /// the eighteen hero casts; **nothing applied it to the verbs every character has in
+        /// every mode.**
+        ///
+        /// ⚠️ THE NAMES ARE DISCOVERED FROM THE SOURCE AND THE ASSERTION IS BEHAVIOURAL, which is
+        /// `InputSurfaceProbe`'s rule (*"DISCOVERS SCREENS INSTEAD OF LISTING THEM"*): a listed
+        /// set is a second place to forget, and the whole defect here is a name that got out of
+        /// step with a table. ⚠️ **It can only see LITERALS**, so a name held in a variable is
+        /// invisible to it; the hero kits pass theirs as constructor arguments and are
+        /// `HeroPresentationTests`' problem, not this one.
+        /// </summary>
+        [Test]
+        public void EveryVerbActionNameResolvesOnTheViewmodelArm()
+        {
+            string runtime = Path.Combine(Application.dataPath, "TumbangPreso", "Runtime");
+
+            var asked = new SortedSet<string>(System.StringComparer.Ordinal);
+
+            foreach (string file in Directory.GetFiles(runtime, "*.cs", SearchOption.AllDirectories))
+            {
+                string code = CodeOnly(File.ReadAllText(file));
+
+                foreach (Match m in Regex.Matches(code, @"PlayAction\s*\(\s*""([a-z0-9-]+)"""))
+                    asked.Add(m.Groups[1].Value);
+            }
+
+            Assert.Greater(asked.Count, 0,
+                "no PlayAction call sites with a literal name were found at all, so this test is "
+                + "measuring nothing. The method was renamed; point it at the new name.");
+
+            // ⚠️ AN INACTIVE OBJECT, SO `Awake` DOES NOT RUN. `ViewmodelArms.Awake` builds the arm
+            // geometry out of Resources, and none of that is needed to ask which clip a name
+            // resolves to. Building it would make this test load meshes for no reason and leave
+            // a hierarchy behind.
+            var go = new GameObject("ViewmodelArmsProbe");
+            go.SetActive(false);
+
+            try
+            {
+                var arms = go.AddComponent<CameraSystem.ViewmodelArms>();
+                var unresolved = new List<string>();
+
+                foreach (string name in asked)
+                {
+                    if (BodyOnlyActions.Contains(name)) continue;
+                    if (!arms.PlayAction(name)) unresolved.Add(name);
+                }
+
+                Assert.IsEmpty(unresolved,
+                    "these action names reach ViewmodelArms.PlayAction and resolve to null, so "
+                    + "the first-person hand does not move for them: "
+                    + string.Join(", ", unresolved)
+                    + ". Add an arm for each, or add it to BodyOnlyActions with the reason.");
+            }
+            finally
+            {
+                Object.DestroyImmediate(go);
+            }
+        }
+
+        /// <summary>
+        /// Actions that are correctly third-person only, each with the reason.
+        ///
+        /// ⚠️ `ready` IS A THUMBS-UP FOR THE OTHER PLAYERS AND NOT FOR THE PERSON MAKING IT.
+        /// `MatchInstaller`'s own comment: *"The ready press is readable in the world, not only on
+        /// the HUD: the other players can see somebody signal that they are set."* A first-person
+        /// arm clip for it would animate the one view in which the gesture means nothing, between
+        /// rounds, and it resolves to `emote-yes` on the body.
+        ///
+        /// ⚠️ A ROW HERE IS A CLAIM AND NEEDS A SENTENCE. Adding a name to silence a failure,
+        /// without one, is how § 151.13a comes back.
+        /// </summary>
+        private static readonly HashSet<string> BodyOnlyActions =
+            new HashSet<string>(System.StringComparer.Ordinal) { "ready" };
+
         /// <summary>The text between an open bracket and its matching close, nesting aware.</summary>
         private static string ArgumentText(string code, int afterOpenBracket)
         {

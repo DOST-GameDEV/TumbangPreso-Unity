@@ -186,7 +186,13 @@ namespace TumbangPreso
             // because a dash is meant to hit the camera harder than a push.
             Animator?.PlayAction("shove");
             Rig?.ViewmodelKick(Vector3.forward);
-            NetCue.Play("bump_swing", transform.position);
+            // ⚠️ VARIED, LIKE EVERY OTHER CUE THAT FIRES THIS OFTEN.
+            // `AudioDirector.PlayAtVaried`'s own header states the rule, and the throw release,
+            // the pickup, the landing, the jump, the bump and the tag all obey it; the shove did
+            // not. ⚠️ `PlayVaried` and not `PlayAtVaried`: this was already relayed and must stay
+            // relayed. `audit_cue_relay.py`'s `CALL` pattern covers both names, so its
+            // `OWNER_DRIVEN` row for this cue still binds.
+            NetCue.PlayVaried("bump_swing", transform.position);
 
             if (NetAuthority.ShouldRequest())
             {
@@ -548,7 +554,27 @@ namespace TumbangPreso
             forward.y = 0.0f;
             _motor.ApplyImpulse(forward.normalized * Balance.SlideSpeed);
 
-            GameServices.Audio?.PlayAt("dash", transform.position);
+            // ⚠️⚠️ THROUGH `NetCue`, BECAUSE THREE PLAYERS OUT OF FOUR COULD NOT HEAR A SLIDE.
+            // `StepSlide` reads `_motor.Intent`, so it runs only on the peer that owns the seat,
+            // and `HostResolveSlide` plays no cue at all: the one player who already knew they
+            // had committed was the only one told about it. **The taya is who that sound is
+            // for.** `docs/VISION.md` § 0 is the argument: the run back in is the moment worth
+            // reading, and an attacker committing is the loudest thing that happens during it.
+            //
+            // ⚠️ THE SAME SHAPE `bump_swing` ALREADY HAS, and `tools/audit_cue_relay.py` carries
+            // an `OWNER_DRIVEN` row for each: input-driven, played once locally, relayed once.
+            //
+            // ⚠️ A REFUSED SLIDE HAS ALREADY MADE ITS SOUND, AND THAT TRADE IS THE SHOVE'S.
+            // `StepShove` plays before the host resolves too. Waiting for the host would put the
+            // sound a round trip after the press on every client, which is worse for the one verb
+            // this is trying to make legible.
+            //
+            // ⚠️ AND IT IS VARIED NOW. `AudioDirector.PlayAtVaried`: *"Repeated slippers,
+            // footsteps and impacts otherwise expose that they are the exact same recording
+            // within seconds."* ⚠️⚠️ `dash` is ALSO what `bump_swing` aliases to, so a shove and
+            // a committed slide are the same recording; that is a sound-source call rather than
+            // an engineering one and it is `Attention.md` § 18.1.
+            NetCue.PlayVaried("dash", transform.position);
 
             if (NetAuthority.ShouldRequest())
             {
@@ -557,7 +583,14 @@ namespace TumbangPreso
             }
             else if (NetAuthority.IsNetworked)
             {
-                Net.MatchRpc.Instance?.BroadcastAction(_motor.PlayerSlot, "lunge");
+                // ⚠️⚠️ `"slide"`, MATCHING THE `PlayAction` ABOVE. This said `"lunge"`, so the
+                // peer that slid asked for one clip and the three watching it were told another.
+                // § 150.8 renamed the two `PlayAction` sites and not the two BROADCAST sites, and
+                // it is invisible today only because both names resolve to `attack-kick-right` on
+                // the CC0 rig. **The day `ASTRA.md` task 3 lands, the owner would see the slide
+                // and everybody else a kick**, which is the hardest class of animation bug to
+                // attribute: the clip works, on one machine.
+                Net.MatchRpc.Instance?.BroadcastAction(_motor.PlayerSlot, "slide");
             }
         }
 

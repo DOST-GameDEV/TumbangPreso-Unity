@@ -859,6 +859,32 @@ namespace TumbangPreso.CameraSystem
                   : clip == "grab" ? GrabClip
                   : clip == "punch" ? PunchClip
                   : clip == "lunge" ? LungeClip
+
+                  // ⚠️⚠️ THE RETRIEVAL SLIDE, AND WITHOUT THIS LINE THE FIRST-PERSON HAND DID
+                  // NOTHING AT ALL FOR IT. `docs/TODO.md` § 150.8 renamed both slide call sites
+                  // from `"lunge"` to `"slide"` in `40fc347c` and called it *"a rename with a
+                  // hook in it, not a behaviour change"*. That is true of `CharacterAnimator`,
+                  // which resolves CHAINS and walks past the missing clip to
+                  // `attack-kick-right`, and false here: this is a flat lookup by NAME, so the
+                  // rename turned a working arm clip into `null`. Read out of the history rather
+                  // than asserted: before that commit both sites read `PlayAction("lunge")`.
+                  //
+                  // ⚠️⚠️ IT IS THE SAME FAULT THE § FOUR BASE VERBS BLOCK ABOVE RECORDS FOR
+                  // `grab`, `punch`, `lunge` AND `shove`, and it came back through a RENAME
+                  // rather than through an omission, which is why the block's own lesson did not
+                  // catch it. `NationalsHardeningTests
+                  // .EveryVerbActionNameResolvesOnTheViewmodelArm` is what stops a third time: it
+                  // discovers the names from the runtime source and DRIVES this method with them.
+                  //
+                  // ⚠️ THE KICK WAS NEVER GONE, WHICH IS WHY THIS COULD SHIP WITHOUT LOOKING
+                  // BROKEN. `CombatVerbs.ReleaseSlide` calls `ViewmodelKick` on the line below
+                  // its `PlayAction`, so the VIEW still moved and only the ARM did not.
+                  //
+                  // ⚠️ THE LUNGE'S KEYS, DELIBERATELY, WHICH IS THE VIEWMODEL'S VERSION OF THE
+                  // BODY'S FALLTHROUGH. Both are a body-led dash and `docs/TODO.md` § 146.6 has
+                  // the real clip queued in `ASTRA.md`; when it lands this is one field, not a
+                  // hunt through call sites.
+                  : clip == "slide" ? LungeClip
                   : clip == "shove" ? ShoveClip
                   : clip == "slam" ? SlamClip
                   : clip == "cast" || clip == "thrust" || clip == "dash" ? ThrustClip
