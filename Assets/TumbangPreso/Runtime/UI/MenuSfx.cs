@@ -79,7 +79,7 @@ namespace TumbangPreso.UI
             _lastFrame[cue] = frame;
 
             var audio = GameServices.Audio;
-            if (audio != null) audio.PlayAt(cue, Vector3.zero);
+            if (audio != null) audio.PlayUi(cue);
         }
 
         private static readonly Dictionary<string, int> _lastFrame = new Dictionary<string, int>();

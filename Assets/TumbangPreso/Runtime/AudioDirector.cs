@@ -18,6 +18,10 @@ namespace TumbangPreso
     /// session. A cue nobody plays is either a missing call or a dead registration, and both
     /// are worth finding from a probe rather than from a player.
     /// </summary>
+    /// ⚠️ THE EXECUTION ORDER IS FOR THE EARS AND NOTHING ELSE. See `LateUpdate`: the listener
+    /// copies the pose `CameraRig.LateUpdate` has just written, and two `LateUpdate`s with no
+    /// declared order run in whichever order Unity felt like.
+    [DefaultExecutionOrder(1000)]
     public sealed class AudioDirector : MonoBehaviour
     {
         private struct Cue
@@ -50,13 +54,95 @@ namespace TumbangPreso
         /// both existed for the entire session and neither was ever disabled. `BootSting` no
         /// longer creates a listener of its own; it calls `GameServices.Ensure()` so this object
         /// exists first, and this is now the ONLY place in the game a listener is ever created.
+        /// ⚠️⚠️ AND SINCE 2026-09-06 THE LISTENER IS ON ITS OWN CHILD RATHER THAN ON THIS
+        /// OBJECT, WHICH IS FORCED BY THE VOICE POOL AND NOT A TIDINESS PREFERENCE.
+        /// `TakeVoice` parents every pooled voice to THIS transform, and a pooled voice is
+        /// parked at a world position and left there for the length of an impact. So moving this
+        /// object to follow the player would drag every ringing one-shot along with it: a
+        /// slipper landing behind you would travel with your ears and never fall behind you at
+        /// all. The ears are a sibling of the voices, not their parent.
         private void Awake()
         {
-            gameObject.AddComponent<AudioListener>();
+            BuildEars();
 
             LoadCuesFromResources();
 
             UnityEngine.SceneManagement.SceneManager.sceneLoaded += (_, __) => KeepOneListener();
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE ONE LISTENER SAT AT WORLD ORIGIN FOR THE WHOLE PORT, AND EVERY 3D CUE IN THE
+        /// GAME WAS THEREFORE PANNED FROM THE MIDDLE OF THE MAP RATHER THAN FROM THE PLAYER.
+        /// `docs/TODO.md` § 150.7 has the measurement. Every pooled voice is `spatialBlend = 1`
+        /// with a 2 m to 32 m linear rolloff, and the listener was added to `~GameServices`,
+        /// which is created at the origin and never moved, parented or rotated. Two consequences,
+        /// and the second is the one that mattered:
+        ///
+        /// - **Attenuation** ran 1.00 at the centre of the box to 0.74 at a corner
+        ///   (`Balance.ConfinementRadius` 7.0, so a corner is 9.9 m out): audible, modest.
+        /// - ⚠️⚠️ **Panning was anchored to the WORLD.** A player standing at `(-5, 0, 0)` heard
+        ///   a slipper land at `(+5, 0, 0)`, ten metres directly in FRONT of them, panned hard
+        ///   RIGHT, because that is world `+X` of the origin. Front and back did not exist at
+        ///   all. `docs/VISION.md` § 0 is why that is not cosmetic here: the whole tension of
+        ///   this game is the run back in for your tsinelas, and hearing which side the taya is
+        ///   closing from is part of that read.
+        ///
+        /// ⚠️ IT IS STILL EXACTLY ONE LISTENER. `KeepOneListener` is unchanged in intent: the
+        /// answer to a stale listener is not a second one per camera.
+        /// </summary>
+        private void BuildEars()
+        {
+            var go = new GameObject("Ears");
+            go.transform.SetParent(transform, false);
+
+            _ears = go.AddComponent<AudioListener>();
+        }
+
+        private AudioListener _ears;
+
+        /// <summary>
+        /// The ears ride the camera this machine is actually looking through.
+        ///
+        /// ⚠️⚠️ `Camera.main` IS THE RIGHT QUESTION HERE AND A `CameraRig` REFERENCE IS NOT,
+        /// BECAUSE THE RIG IS ONLY ONE OF THE FOUR THINGS THAT CAN BE THE LOCAL VIEW.
+        /// `MatchInstaller` tags the gameplay camera, the spectator camera and the watch camera
+        /// `MainCamera` in turn, and `DebugPlayerSwitcher`'s own header records the consequence
+        /// from the other side: *"`Camera.main` IS THE SPECTATOR'S OWN OBJECT WHENEVER ONE IS
+        /// UP"*. So this one lookup already covers FPP, TPP, the emote orbit (the same rig
+        /// swinging out and back), the spectator rig, a possession change, a role change, a seat
+        /// change and a scene transition, and it needs no notification from any of them: the tag
+        /// moves and the ears follow on the next frame.
+        ///
+        /// ⚠️ AND IT IS ASKED EVERY FRAME RATHER THAN CACHED. A cached camera is a reference
+        /// that outlives the match it belonged to, which is § 149.8 and § 150.1's fault twice
+        /// over; `Camera.main` is an engine-side cached lookup invalidated when a tag or an
+        /// enabled flag moves, so asking it is cheaper than being wrong about it.
+        ///
+        /// ⚠️ WITH NO CAMERA THE EARS GO HOME TO THE RIG ROOT, which is the origin, which is
+        /// exactly the pre-2026-09-06 behaviour. A headless probe and the dedicated server both
+        /// take that branch, so nothing about their measured audio changes.
+        ///
+        /// ⚠️ `[DefaultExecutionOrder]` PUTS THIS AFTER `CameraRig.LateUpdate`, WHICH IS WHERE
+        /// THE CAMERA POSE IS WRITTEN. Without it the two `LateUpdate`s run in an undefined
+        /// order and the ears would sometimes carry the previous frame's pose. One frame is
+        /// inaudible; a pose that alternates between two frames' worth of head rotation is a
+        /// stereo image that jitters, and it would only ever show up as "the audio feels loose".
+        /// </summary>
+        private void LateUpdate()
+        {
+            if (_ears == null) return;
+
+            var head = UnityEngine.Camera.main;
+
+            if (head == null)
+            {
+                _ears.transform.localPosition = Vector3.zero;
+                _ears.transform.localRotation = Quaternion.identity;
+                return;
+            }
+
+            _ears.transform.SetPositionAndRotation(head.transform.position,
+                                                   head.transform.rotation);
         }
 
         /// <summary>
@@ -70,19 +156,24 @@ namespace TumbangPreso
         /// own, and destroying a component out of somebody else's scene is how a re-import
         /// silently puts it back.
         ///
-        /// ⚠️ THIS LOOP CANNOT SEE `mine`, AND THAT IS FINE NOW. `mine` lives on a
-        /// `HideAndDontSave` object, so `FindObjectsByType` never returns it even with
-        /// `FindObjectsInactive.Include` — that exclusion is what let this object's listener and
-        /// BootSting's coexist unseen (see the ⚠️ on Awake). The loop no longer needs to find
-        /// `mine`; it only needs to find and disable whatever a SCENE brings, which is an
-        /// ordinary object and not hidden. `mine` is held by direct reference and is never a
-        /// member of the set this searches, so the `listener == mine` check below only ever
-        /// short-circuits nothing found; it is kept because a false positive here (disabling the
-        /// real listener) would be silent, and the guard costs nothing to leave in.
+        /// ⚠️⚠️ THE `listener == mine` GUARD USED TO SHORT-CIRCUIT NOTHING AND IS NOW THE ONLY
+        /// THING KEEPING THE GAME AUDIBLE. This note read *"THIS LOOP CANNOT SEE `mine`, AND
+        /// THAT IS FINE NOW"*, and that was true while the listener lived on `~GameServices`
+        /// itself: the root is `HideAndDontSave` and `FindObjectsByType` never returns those, so
+        /// the search could not reach it however it was written. **The ears are an ordinary child
+        /// object now** (see `BuildEars`, and the voice-pool reason it had to move), so this
+        /// search DOES return them, and without the guard the very first scene load would
+        /// disable the game's only listener and everything would go silent with no warning and
+        /// no error. Do not "simplify" the check away because the comment above it once said it
+        /// did nothing.
+        ///
+        /// ⚠️ THE EARS ARE HELD BY DIRECT REFERENCE, NOT LOOKED UP. `GetComponent` on this object
+        /// answers null now, and a null `mine` would disable every listener in the scene and
+        /// re-enable none of them.
         /// </summary>
         private void KeepOneListener()
         {
-            var mine = GetComponent<AudioListener>();
+            var mine = _ears;
 
             foreach (var listener in FindObjectsByType<AudioListener>(FindObjectsInactive.Include,
                                                                       FindObjectsSortMode.None))
@@ -220,6 +311,82 @@ namespace TumbangPreso
         }
 
         /// <summary>
+        /// § THE NON-DIEGETIC ROUTE. A cue that is not IN the world: a score award, the round
+        /// end, a menu click, the hitmarker.
+        ///
+        /// ⚠️⚠️ THIS HAD TO BE ADDED ON THE SAME DAY THE LISTENER LEARNED TO MOVE, AND WITHOUT
+        /// IT THAT FIX BREAKS EVERY UI SOUND IN THE GAME. Seven call sites fire a cue at
+        /// `Vector3.zero` (`score_award` three times, `match_win`, `round_end`, `MenuSfx`, the
+        /// hitmarker), and until 2026-09-06 that worked precisely BECAUSE the listener never
+        /// moved: a cue at the origin was a cue at the listener, so it played centred at full
+        /// volume. With ears that follow the player those same calls become 3D sounds sitting at
+        /// the middle of the map, attenuating and panning as the player walks. **The menu click
+        /// would have panned.**
+        ///
+        /// ⚠️⚠️ IT IS A NAMED SECOND ROUTE AND NOT A `spatialBlend` PARAMETER ON THE FIRST ONE,
+        /// AND THAT IS DELIBERATE. `docs/TODO.md` § 150.9 records the existing shape as a genuine
+        /// strength: `PlayAt`, `PlayAtVaried` and `PlayImpact` all REQUIRE a position, so a
+        /// stationary 2D world cue is impossible to write by accident. Relaxing that into an
+        /// optional argument would hand every future call site the chance to make the mistake
+        /// silently. A caller now has to say which of the two things it means, out loud, in the
+        /// method name.
+        ///
+        /// ⚠️ THE POOLS ARE SEPARATE FOR THE REASON `WorldVoices` GIVES. `default_bus_layout.tres`
+        /// pooled 20 voices as 8 UI plus 12 world, and the split is what stops a fight stealing
+        /// the menu's click or a menu stealing a hit. Sharing one pool would put the hitmarker
+        /// in the queue behind twelve ringing impacts, which is exactly the moment it is needed.
+        /// </summary>
+        public void PlayUi(string id, float volumeScale = 1.0f)
+            => PlayUiVaried(id, 1.0f, 1.0f, volumeScale);
+
+        /// <summary>The 2D route with a pitch window, for a UI cue that repeats. See
+        /// <see cref="PlayUi"/> for why this is a separate route rather than a flag.</summary>
+        public void PlayUiVaried(string id, float pitchMin = 1.0f, float pitchMax = 1.0f,
+                                 float volumeScale = 1.0f)
+        {
+            if (!_cues.TryGetValue(id, out var cue))
+            {
+                Debug.LogWarning($"[Audio] no cue registered for '{id}'.");
+                return;
+            }
+
+            cue.EverPlayed = true;
+            _cues[id] = cue;
+
+            var voice = TakeUiVoice();
+
+            voice.clip = cue.Clip;
+            voice.pitch = Random.Range(Mathf.Min(pitchMin, pitchMax),
+                                       Mathf.Max(pitchMin, pitchMax));
+            voice.volume = cue.Volume * SfxScale() * Mathf.Clamp(volumeScale, 0.0f, 1.25f);
+            voice.Play();
+
+            DuckIfAnnouncement(id);
+        }
+
+        /// <summary>
+        /// A raw clip on the 2D route, for the one caller that holds a clip rather than a cue id.
+        ///
+        /// ⚠️ IT EXISTS FOR `SplashScreen`'S BOOT STING FALLBACK, which used
+        /// `AudioSource.PlayClipAtPoint(clip, Vector3.zero)`. That helper always builds a 3D
+        /// source, so it is the eighth site the moving listener would have broken, and it is the
+        /// one the `Vector3.zero` grep finds last because it does not go through this class at
+        /// all. ⚠️ The volume is passed through rather than looked up: this clip has no cue row
+        /// and therefore no authored trim, and inventing one here would be a second mix table.
+        /// </summary>
+        public void PlayClipUi(AudioClip clip, float volume)
+        {
+            if (clip == null) return;
+
+            var voice = TakeUiVoice();
+
+            voice.clip = clip;
+            voice.pitch = 1.0f;
+            voice.volume = Mathf.Clamp01(volume);
+            voice.Play();
+        }
+
+        /// <summary>
         /// ⚠️ THE LIFT IS POLLED, NOT EVENT-DRIVEN, and that is the cheaper correct answer.
         /// The round clock has no "fifteen seconds left" event to subscribe to, and adding one
         /// would put an audio concern into the rules layer. `SetLift` is idempotent, so calling
@@ -327,7 +494,21 @@ namespace TumbangPreso
 
             if (_voices.Count < WorldVoices)
             {
-                var go = new GameObject($"Voice{_voices.Count}");
+                // ⚠️⚠️ `WorldVoice`, NOT `Voice`, AND THE RENAME IS A COLLISION BEING BROKEN
+                // RATHER THAN A TIDY-UP. `Audio.VoiceDirector` is a SECOND component on this same
+                // `~GameServices` object, so it shares this transform, and `BuildVoices` there
+                // creates its two announcer sources as children literally named `Voice0` and
+                // `Voice1` at `spatialBlend = 0`. **Two systems were naming their children
+                // identically under one parent.** Nothing in the game noticed, because both hold
+                // direct references and neither looks anything up by name; what it cost was a
+                // probe. `AudioListenerProbe` reached for `Voice0`, got the ANNOUNCER's 2D source
+                // parked at the origin, and reported the world route as flat and unpositioned:
+                // two failures that both described the fix being broken when it was not.
+                //
+                // ⚠️ THE THREE POOLS READ AS THREE THINGS NOW: `WorldVoice*` is 3D one-shots,
+                // `UiVoice*` is the non-diegetic route, and `Voice*` is the announcer. Do not
+                // give a fourth pool a name that starts with any of them.
+                var go = new GameObject($"WorldVoice{_voices.Count}");
                 go.transform.SetParent(transform, false);
 
                 var made = go.AddComponent<AudioSource>();
@@ -350,6 +531,43 @@ namespace TumbangPreso
             // Full and all ringing: steal round-robin, which is the oldest start.
             var stolen = _voices[_nextVoice];
             _nextVoice = (_nextVoice + 1) % _voices.Count;
+            return stolen;
+        }
+
+        /// <summary>
+        /// The UI half of `default_bus_layout.tres`'s twenty: 8 UI plus 12 world.
+        ///
+        /// ⚠️ 2D AND PARKED AT THE RIG ROOT. A `spatialBlend = 0` source ignores its transform
+        /// entirely, so the position is documentation rather than behaviour; it is parented here
+        /// so it lives and dies with the services object like every other voice.
+        /// </summary>
+        private const int UiVoices = 8;
+
+        private readonly List<AudioSource> _uiVoices = new List<AudioSource>(UiVoices);
+        private int _nextUiVoice;
+
+        private AudioSource TakeUiVoice()
+        {
+            foreach (var free in _uiVoices)
+                if (!free.isPlaying) return free;
+
+            if (_uiVoices.Count < UiVoices)
+            {
+                var go = new GameObject($"UiVoice{_uiVoices.Count}");
+                go.transform.SetParent(transform, false);
+
+                var made = go.AddComponent<AudioSource>();
+
+                made.spatialBlend = 0.0f;
+                made.playOnAwake = false;
+                made.dopplerLevel = 0.0f;
+
+                _uiVoices.Add(made);
+                return made;
+            }
+
+            var stolen = _uiVoices[_nextUiVoice];
+            _nextUiVoice = (_nextUiVoice + 1) % _uiVoices.Count;
             return stolen;
         }
 

@@ -251,15 +251,18 @@ namespace TumbangPreso.UI
         /// red tint. `MusicDirector.Play` crossfades, and it is idempotent on the name, so the
         /// lobby this screen leads back to does not restart the track.
         ///
-        /// ⚠ THE STING IS PLAYED AT THE CAMERA, like every other UI cue in the project
-        /// (`Hud`'s `sfx_super_ready` is the pattern). The audio rig is 3D, so a cue played at
-        /// the origin of a match whose camera is thirty metres away arrives quiet and panned.
+        /// ⚠️⚠️ THIS HEADER DIAGNOSED § 150.7 A WEEK BEFORE ANYBODY FIXED IT, AND THE CURE IS NOW
+        /// A NAMED ROUTE RATHER THAN A COORDINATE. It read *"THE STING IS PLAYED AT THE CAMERA,
+        /// like every other UI cue in the project. The audio rig is 3D, so a cue played at the
+        /// origin of a match whose camera is thirty metres away arrives quiet and panned"* —
+        /// which is exactly right, and describes a game whose listener was nailed to the world
+        /// origin. Four screens independently invented the same workaround. `AudioDirector.PlayUi`
+        /// is the honest version of it: the listener rides the camera now, and a cue that is not
+        /// in the world does not get a position at all.
         /// </summary>
         private void PlayTheWin()
         {
-            var camera = UnityEngine.Camera.main;
-            GameServices.Audio?.PlayAt(
-                "match_win", camera != null ? camera.transform.position : Vector3.zero);
+            GameServices.Audio?.PlayUi("match_win");
 
             GameServices.Music?.Play("menu", GameServices.MenuTrack);
         }

@@ -148,11 +148,17 @@ namespace TumbangPreso.UI
             // ⚠️ ONLY IF THE EARLY HOOK DID NOT ALREADY START IT. On a normal launch the sting
             // is already playing across the Unity logo; this is the fallback for entering the
             // scene directly in the editor.
+            // ⚠️⚠️ ON THE 2D ROUTE, BECAUSE `AudioSource.PlayClipAtPoint` IS ALWAYS 3D. It
+            // builds a throwaway source with `spatialBlend = 1`, and firing it at `Vector3.zero`
+            // was only ever centred and full-volume because the game's one listener also sat at
+            // the origin. `AudioDirector.LateUpdate` moved the listener onto the camera on
+            // 2026-09-06 (`docs/TODO.md` § 150.7), so this is the eighth non-diegetic site and
+            // the one a `Vector3.zero` grep finds last: it never went through `AudioDirector` at
+            // all. A boot sting that pans is not a boot sting.
             if (_sting != null && !BootSting.Started)
             {
                 var s = Settings.SettingsStore.Current;
-                AudioSource.PlayClipAtPoint(_sting, Vector3.zero,
-                                            Mathf.Clamp01(s.SfxGain));
+                GameServices.Audio?.PlayClipUi(_sting, Mathf.Clamp01(s.SfxGain));
             }
 
             if (_clip != null)

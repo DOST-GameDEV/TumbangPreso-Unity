@@ -1553,6 +1553,95 @@ namespace TumbangPreso.Tests
                 + "for a zone or a hazard, as CheskaHeroKit and DanteHeroKit already do.");
         }
 
+        // -------------------------------------------------------------------
+        // § 150.7  THE LISTENER MOVED, SO A FAKED POSITION IS NOW A DEFECT
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// ⚠️⚠️ ELEVEN CALL SITES FAKED A POSITION TO WORK AROUND A LISTENER THAT COULD NOT MOVE,
+        /// AND EVERY ONE OF THEM BECAME A BUG ON THE DAY IT COULD.
+        ///
+        /// Seven fired a world cue at `Vector3.zero` (`score_award` three times, `match_win`,
+        /// `round_end`, `MenuSfx`, the hitmarker) and four fired at `Camera.main.transform
+        /// .position`. Both are the same trick: the game's only listener was nailed to the world
+        /// origin, so a cue at the origin was a cue at the listener and played centred at full
+        /// volume. `MatchResult.PlayTheWin` even wrote the diagnosis down a week early —
+        /// *"The audio rig is 3D, so a cue played at the origin of a match whose camera is thirty
+        /// metres away arrives quiet and panned"* — and then shipped the workaround rather than
+        /// the fix.
+        ///
+        /// With ears on the camera (`AudioDirector.LateUpdate`, `docs/TODO.md` § 150.7) the
+        /// `Vector3.zero` sites become 3D sounds sitting in the middle of the map, so **the menu
+        /// click would pan as the player walks**, and the `Camera.main` sites become a
+        /// coincidence that happens to work. `AudioDirector.PlayUi` is the named route both
+        /// should use.
+        ///
+        /// ⚠️⚠️ THIS IS A SOURCE-TEXT TEST ON PURPOSE AND § 149.7's RULE IS WHY IT STAYS. *"The
+        /// compiler cannot see that something is NOT called"*, and it cannot see that a
+        /// `Vector3` argument is a lie either: every one of these eleven sites compiled
+        /// perfectly, ran, and produced audio. Nothing behavioural can fail on them, because
+        /// there is no wrong answer at the API boundary. `AudioListenerProbe` owns the behaviour;
+        /// this owns the shape.
+        /// </summary>
+        [Test]
+        public void NoWorldCueIsFiredAtTheOriginOrAtTheCameraToFakeBeingNonDiegetic()
+        {
+            string runtime = Path.Combine(Application.dataPath, "TumbangPreso", "Runtime");
+
+            var faked = new List<string>();
+            int sites = 0;
+
+            // ⚠️ THE POSITIONAL ROUTES ONLY. `PlayUi`, `PlayUiVaried` and `PlayClipUi` take no
+            // position at all, which is the whole point of them being separate methods, and
+            // `TryGetClip` hands the clip to a caller that drives its own moving source.
+            var call = new Regex(@"\.\s*(?:PlayAt|PlayAtVaried|PlayImpact)\s*\(");
+
+            foreach (string file in Directory.GetFiles(runtime, "*.cs", SearchOption.AllDirectories))
+            {
+                string code = CodeOnly(File.ReadAllText(file));
+
+                foreach (Match m in call.Matches(code))
+                {
+                    sites++;
+
+                    string args = ArgumentText(code, m.Index + m.Length);
+
+                    if (!args.Contains("Vector3.zero") && !args.Contains("Camera.main")) continue;
+
+                    faked.Add(Path.GetFileName(file));
+                }
+            }
+
+            Assert.Greater(sites, 0,
+                "no positional audio call sites found at all, so this test is measuring nothing. "
+                + "The methods were renamed; point it at the new names rather than deleting it.");
+
+            Assert.IsEmpty(faked,
+                "these files fire a POSITIONAL cue at the world origin or at the camera, which "
+                + "is the workaround for a listener that no longer exists: "
+                + string.Join(", ", faked)
+                + ". A cue that is not in the world belongs on AudioDirector.PlayUi; a cue that "
+                + "is belongs at the thing that made it.");
+        }
+
+        /// <summary>The text between an open bracket and its matching close, nesting aware.</summary>
+        private static string ArgumentText(string code, int afterOpenBracket)
+        {
+            int depth = 0;
+
+            for (int i = afterOpenBracket; i < code.Length; i++)
+            {
+                char c = code[i];
+
+                if (c == '(' || c == '[') depth++;
+                else if (c == ')' && depth == 0)
+                    return code.Substring(afterOpenBracket, i - afterOpenBracket);
+                else if (c == ')' || c == ']') depth--;
+            }
+
+            return string.Empty;
+        }
+
         /// <summary>
         /// How many top-level arguments the call starting just after an open bracket has.
         ///

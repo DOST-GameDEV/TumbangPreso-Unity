@@ -646,10 +646,14 @@ namespace TumbangPreso.UI
             // ⚠️ THE SOUND IS PLAYED FROM HERE, NOT FROM THE GATE, so every caller gets it for
             // free and the pop animation and its sound can never drift apart by a frame. The
             // announcer's "Tatlo! Dalawa! Isa! Simula!" is wired separately, off the same event.
-            GameServices.Audio?.PlayAt(tick == "GO!" ? "countdown_go" : "countdown_tick",
-                                       UnityEngine.Camera.main != null
-                                           ? UnityEngine.Camera.main.transform.position
-                                           : Vector3.zero);
+            // ⚠️⚠️ THE `Camera.main` POSITION HERE WAS A WORKAROUND FOR A LISTENER THAT NEVER
+            // MOVED, AND IT IS A NAMED 2D ROUTE NOW. `MatchResult.PlayTheWin` spelled the
+            // disease out in its own header: *"The audio rig is 3D, so a cue played at the origin
+            // of a match whose camera is thirty metres away arrives quiet and panned"*, so four
+            // non-diegetic cues learned to fire at the camera to cancel that out. The listener
+            // rides the camera as of 2026-09-06 (`docs/TODO.md` § 150.7), which makes the trick
+            // harmless and pointless at once: a countdown is not IN the arena, so it says so.
+            GameServices.Audio?.PlayUi(tick == "GO!" ? "countdown_go" : "countdown_tick");
 
             // ⚠️⚠️ THE MATCH BED STARTS AT THE FIRST COUNTDOWN TICK, NOT WHEN THE ARENA LOADS.
             // `audio_manager.gd` hooks it on exactly this cue and explains why: the round does
@@ -866,7 +870,7 @@ namespace TumbangPreso.UI
             // penalised still hears and feels it once a second. What went is the reading.
             if (e == ScoreEvent.TayaCampPenalty || e == ScoreEvent.UnretrievedSlipperPenalty)
             {
-                GameServices.Audio?.PlayAtVaried("score_award", Vector3.zero, 0.78f, 0.86f, 0.65f);
+                GameServices.Audio?.PlayUiVaried("score_award", 0.78f, 0.86f, 0.65f);
                 return;
             }
 
@@ -881,7 +885,7 @@ namespace TumbangPreso.UI
             // your screen. The SOUND is the match reacting, and the original plays it off
             // `score_changed` without asking whose slot it was.
             int points = MatchRules.PointsFor(e);
-            GameServices.Audio?.PlayAtVaried("score_award", Vector3.zero,
+            GameServices.Audio?.PlayUiVaried("score_award",
                                              points < 0 ? 0.78f : 0.96f,
                                              points < 0 ? 0.86f : 1.04f,
                                              points < 0 ? 0.65f : 0.9f);
@@ -4364,7 +4368,7 @@ namespace TumbangPreso.UI
             _hitmarker.color = color;
             _hitmarker.rectTransform.localScale = Vector3.one * 1.6f;
             _hitmarker.enabled = true;
-            GameServices.Audio?.PlayAt("sfx_hitmarker", UnityEngine.Camera.main != null ? UnityEngine.Camera.main.transform.position : Vector3.zero);
+            GameServices.Audio?.PlayUi("sfx_hitmarker");
         }
 
         public static void TriggerHitmarker(Color color, string symbol = "💥")
@@ -4679,8 +4683,11 @@ namespace TumbangPreso.UI
             if (_streetHype >= 100.0f && !_streetHypeMaxCelebrated)
             {
                 _streetHypeMaxCelebrated = true;
-                GameServices.Audio?.PlayAtVaried("sfx_super_ready", _local.transform.position,
-                                                 1.02f, 1.10f, 0.9f);
+                // ⚠️ 2D: Street Hype is Classic's own bottom-of-screen readout and this is its
+                // ceiling being reached. Fired at `_local.transform.position` it was inaudibly
+                // different in FPP and quietly off-centre in TPP, where the camera sits behind
+                // the body. A HUD celebration has no place in the arena.
+                GameServices.Audio?.PlayUiVaried("sfx_super_ready", 1.02f, 1.10f, 0.9f);
                 ShowToast("HALIMAW HYPE  ·  KEEP THE RALLY ALIVE", 1.8f);
             }
         }
@@ -5843,10 +5850,9 @@ namespace TumbangPreso.UI
                 if (!_lastUltReady)
                 {
                     _lastUltReady = true;
-                    GameServices.Audio?.PlayAt("sfx_super_ready",
-                        UnityEngine.Camera.main != null
-                            ? UnityEngine.Camera.main.transform.position
-                            : Vector3.zero);
+                    // ⚠️ 2D: an ultimate coming off cooldown is a fact about YOUR kit, not an
+                    // event at a place. Same `Camera.main` workaround as the countdown above.
+                    GameServices.Audio?.PlayUi("sfx_super_ready");
                     if (_local != null) Visual.ComicPopup.Super(_local.transform.position);
                 }
 

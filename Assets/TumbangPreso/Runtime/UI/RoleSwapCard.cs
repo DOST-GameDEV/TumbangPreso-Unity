@@ -127,7 +127,7 @@ namespace TumbangPreso.UI
             _bufferRemaining = Core.Balance.WarmupBufferDuration;
             _isBufferActive = true;
 
-            GameServices.Audio?.PlayAt("round_end", Vector3.zero);
+            GameServices.Audio?.PlayUi("round_end");
 
             StopAllCoroutines();
             StartCoroutine(RunTimeline(nextRound));

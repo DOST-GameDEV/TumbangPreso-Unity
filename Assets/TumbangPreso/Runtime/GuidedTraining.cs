@@ -436,7 +436,7 @@ namespace TumbangPreso
                 : 0.0f;
             float pitch = Mathf.Lerp(1.00f, 1.50f, climb);
 
-            GameServices.Audio?.PlayAtVaried("score_award", Vector3.zero, pitch, pitch, 0.85f);
+            GameServices.Audio?.PlayUiVaried("score_award", pitch, pitch, 0.85f);
 
             StartCoroutine(AdvanceAfterBeat());
         }
@@ -834,7 +834,7 @@ namespace TumbangPreso
                     // `CompleteLesson` climbs a fifth over seventeen steps and then stops; a
                     // route that ended on the same sound as step sixteen would be seventeen
                     // notifications rather than an arc with a finish on it.
-                    GameServices.Audio?.PlayAt("match_win", Vector3.zero);
+                    GameServices.Audio?.PlayUi("match_win");
                     break;
             }
 

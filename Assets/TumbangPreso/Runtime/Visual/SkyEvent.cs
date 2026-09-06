@@ -184,12 +184,14 @@ namespace TumbangPreso.Visual
         /// would put a crack in three other players' ears with nothing on their screens to
         /// explain it, which is worse than silence. It goes networked when § 25.1 does.
         /// </summary>
+        /// ⚠️ 2D, BECAUSE THE SKY HAS NO POSITION. This fired at `Camera.main`'s own transform,
+        /// which is the workaround four screens invented for a listener pinned to the world
+        /// origin (`docs/TODO.md` § 150.7, and `MatchResult.PlayTheWin` for the diagnosis). A
+        /// weather bed is over the whole street by definition: panning it toward one corner of
+        /// the map would be a claim the effect does not make.
         private static void Announce(Look look)
         {
-            var listener = UnityEngine.Camera.main;
-            Vector3 at = listener != null ? listener.transform.position : Vector3.zero;
-
-            GameServices.Audio?.PlayAtVaried(CueFor(look), at, 0.97f, 1.03f, 1.0f);
+            GameServices.Audio?.PlayUiVaried(CueFor(look), 0.97f, 1.03f, 1.0f);
         }
 
         private static string CueFor(Look look)

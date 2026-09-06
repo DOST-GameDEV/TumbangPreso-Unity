@@ -153,6 +153,7 @@ GROUPS = [
         "AiLaneTests", "ArenaBoundsProbe", "BotMotionProbe", "CarriedSlipperSelfHideProbe",
         "CarryTests", "EmoteCameraProbe", "EmoteLifecycleProbe", "FppFrameProbe",
         "RetrievalSlideTests", "HitFreezeProbe", "SecondMatchLifecycleProbe",
+        "AudioListenerProbe",
         "FppOccluderProbe", "LandedHighlightTests", "LataFloatProbe", "MatchRunTests",
         "MultiplayerModelSwapSelfHideProbe", "ScoreWitnessProbe", "SeatAnnouncementTests",
         "SessionRestartTests", "SoloPracticeTests", "SteeringTests", "StunFrostTests",
