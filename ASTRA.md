@@ -23,7 +23,11 @@ which is the rule `docs/TODO.md`'s queue already states about controller support
   nobody has reviewed yet. One task, finished properly, beats three started.
 * **Test it.** § "How to verify a clip" below is the whole procedure; it is a render, not a
   description.
-* **Commit it.**
+* ⚠️⚠️ **COMMIT EACH FINISHED PIECE AS IT LANDS. DO NOT SAVE IT ALL FOR THE END OF THE SESSION.**
+  🧑 2026-09-06: *"ask astra to commit each important shit one at a time bcz i dont have much
+  usage on it (only on plus plan)"*. **The usage runs out mid-task, and when it does, whatever is
+  not committed is gone.** One task per session is still the rule; several commits inside that
+  task is the point. § "When to commit" below is the list.
 * **Mark completion here**: tick the box, and add what you actually shipped under the task.
 * ⚠️ **STOP AFTER THAT TASK.** Even if the next one looks like ten minutes.
 
@@ -166,12 +170,48 @@ finished.**
 `CLAUDE.md` § 3: sole-authored, **no `Co-Authored-By` trailer of any kind**, no mention of any AI
 tooling anywhere in the repository, and **no em dashes**. Comment the WHY at length. Push.
 
+⚠️ **THIS IS THE LAST COMMIT OF THE SESSION, NOT THE ONLY ONE.** See § "When to commit" below;
+by the time you reach this step the clip should already be in git.
+
+---
+
 ### Step 8 · Stop
 
 Even if the next task looks like ten minutes. The rule is at the top of this file and it exists
 because usage here is limited.
 
 ---
+
+## When to commit, and why it is not once at the end
+
+⚠️⚠️ **THE USAGE ALLOWANCE RUNS OUT MID-TASK AND EVERYTHING UNCOMMITTED GOES WITH IT.** 🧑
+2026-09-06: *"ask astra to commit each important shit one at a time bcz i dont have much usage on
+it (only on plus plan)"*. This is not a git-hygiene preference. **A session that dies with an
+exported `.glb` sitting uncommitted in the working tree has produced nothing**, and the next
+session starts from the same blank Blender file.
+
+**Commit at every one of these, separately:**
+
+| Commit when | Because |
+|---|---|
+| **one clip is exported and reimported**, before you render it | A clip on disk and in git is work that survives. A clip on disk only is not. ⚠️ **If the task is a hero, that is three commits, one per clip** — not one commit for the hero |
+| **`Build Roster Book` has run and reported clips** | It rewrites `Resources/Roster/*.asset`, which are real files. Committing the `.glb` and not the roster entry ships the § Step 4 fault into the repository rather than merely into your session |
+| **before any Unity launch or render** | A batchmode launch is minutes and is where the allowance goes. ⚠️ **Nothing you have already made should be at risk while you wait for a picture** |
+| **the render is taken** | The PNG is the review. Commit it with the clip it is of, versioned filename and all (`CLAUDE.md` § 6.1) |
+| **the task is ticked here** | The `ASTRA.md` edit is part of the work, not paperwork after it |
+
+⚠️ **PUSH EACH ONE.** `CLAUDE.md` § 2.2: *"FINISHED MEANS PUSHED. Committed and waiting is not
+done."* On a laptop that may not come back to this task for a week, a local commit is only half
+of the protection.
+
+⚠️⚠️ **AND COMMIT WORK IN PROGRESS RATHER THAN LOSING IT, IF YOU ARE ABOUT TO RUN OUT.** A clip
+that is half right, committed, with a commit message saying exactly what is wrong with it and what
+you were going to do next, is worth far more than a clean tree. **Say so in the message and leave
+the box here unticked**; the next session reads the message and carries on. The one thing that
+must never happen is a session ending with something good in the working tree and nothing in git.
+
+⚠️ **A COMMIT IS CHEAP AND A LOST SESSION IS NOT.** Do not batch them to keep the log tidy. The
+log being tidy has never once been worth an afternoon of animation.
 
 ## How to verify a clip
 
@@ -261,8 +301,11 @@ animations appropriate for skills and what theyre doing btw dont js spam the sam
 does and its cast time; a cast whose animation is longer than its cast time reads as lag. The
 ability kits are in `Assets/TumbangPreso/Runtime/Abilities/`.
 
-⚠️ **ONE HERO IS A REASONABLE SESSION.** Three clips, rendered, committed, ticked. If you take
-that route, tick the hero here and leave the box above open:
+⚠️ **ONE HERO IS A REASONABLE SESSION.** Three clips, rendered, committed, ticked.
+⚠️⚠️ **AND THAT IS THREE COMMITS, ONE PER CLIP, NOT ONE COMMIT FOR THE HERO.** See § "When to
+commit": if the allowance runs out after the second clip, two clips should be in git and the
+third should be a message saying what was left. If you take that route, tick the hero here and
+leave the box above open:
 
 - [ ] SEAN &nbsp;&nbsp; - [ ] ZACK &nbsp;&nbsp; - [ ] DANTE &nbsp;&nbsp; - [ ] CHESKA &nbsp;&nbsp; - [ ] NEMU &nbsp;&nbsp; - [ ] PHAISTER
 
