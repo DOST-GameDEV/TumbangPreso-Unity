@@ -207,7 +207,21 @@ namespace TumbangPreso
                 return;
             }
 
-            Hitstop.Trigger(0.045f, 0.10f);
+            // ⚠️⚠️ THE FREEZE MOVED OUT OF HERE ON 2026-09-06 AND IT IS THE SAME DEFECT THIS
+            // METHOD ALREADY CARRIES TWO NOTES ABOUT. `Hitstop.Trigger(0.045f, 0.10f)` was on
+            // this line, inside a method that opens `if (!NetAuthority.ShouldResolve()) return;`,
+            // so **the impact frame on the biggest payoff in the game landed on the host and on
+            // nobody else.** 🧑 2026-08-29: *"make sure that all host sided shit is seen by
+            // everyone and not js host"*. The sound, the popup, the hitmarker, the burst, the
+            // confetti and the camera punch were all moved for exactly this reason and the
+            // freeze was left behind, because it is neither a cue nor a `MatchFlair` kind and
+            // `tools/audit_presentation_reach.py` had no pattern that could see it. It has one
+            // now.
+            //
+            // ⚠️ THE TAG ALREADY DOES IT THE RIGHT WAY AND IS THE PRECEDENT, not a new idea:
+            // `MatchFlair.PlayTag` calls `Hitstop.Trigger()` from the replicated path, so all
+            // four screens get the tag's beat. `AnnounceUprightChange` is this event's
+            // equivalent of that path and is reached exactly once per peer.
             SetUpright(false);
             _toppleTimer = Balance.ToppleTime;
 
@@ -406,6 +420,20 @@ namespace TumbangPreso
                 Visual.ComicPopup.Spawn(transform.position + Vector3.up * 0.8f, "RESTORED!", UI.UiTheme.Defense, 1.2f);
                 return;
             }
+
+            // ⚠️⚠️ THE IMPACT FRAME, ON EVERY SCREEN RATHER THAN ON THE HOST'S. It used to sit
+            // in `HostKnockDown` behind the authority gate; see the note there for why that made
+            // the loudest moment in a round land flat for three players out of four.
+            //
+            // ⚠️ THE NUMBERS ARE UNCHANGED AND THAT IS DELIBERATE. 0.045 s at 0.10 scale is what
+            // shipped and what the host has been feeling all along; this pass is fixing WHO gets
+            // it, not how hard it is. `Attention.md` is where "is it heavy enough" belongs, since
+            // only a person can answer it and only against a build where all four peers agree.
+            //
+            // ⚠️ RE-ENTRANT CALLS ARE IGNORED BY `Hitstop` ITSELF, so the listen host, which
+            // reaches this through `SetUpright` and never through `ApplySnapshotState`, cannot
+            // stack two freezes even if that ever changed.
+            Hitstop.Trigger(0.045f, 0.10f);
 
             GameServices.Voice?.OnLataKnocked();
             string callout = UI.SceneFlow.SelectedMode == GameMode.Classic

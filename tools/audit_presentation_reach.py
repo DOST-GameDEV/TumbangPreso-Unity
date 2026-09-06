@@ -48,6 +48,19 @@ FEEDBACK = {
     "style": re.compile(r"Hud\.ReportStyle\("),
     "stars": re.compile(r"DizzyStars\.\w+\("),
     "shake": re.compile(r"\.ImpactPunch\("),
+
+    # ⚠️⚠️ ADDED 2026-09-06, AND IT FOUND ONE ON THE FIRST RUN. `Lata.HostKnockDown` called
+    # `Hitstop.Trigger(0.045f, 0.10f)` from inside a `ShouldResolve()` gate, so the impact
+    # frame on the single biggest payoff in the game happened on the host and on nobody else.
+    # Every other piece of that method's feedback had already been moved for exactly this
+    # reason and this one was left behind, because a time-scale change reads as simulation
+    # rather than as presentation and this table had no pattern for it.
+    #
+    # ⚠️ IT IS PRESENTATION, AND `Hitstop`'s OWN HEADER SAYS SO: *"one bounded freeze on the
+    # frame an ultimate detonates, felt by the whole match, which is a shared event that
+    # deserves a shared beat"*. A shared beat that one peer gets is the definition of what
+    # this audit hunts. `MatchFlair.PlayTag` is the shape that is already correct.
+    "hitstop": re.compile(r"Hitstop\.Trigger\("),
 }
 
 # Calls that are ALREADY the fix. A relayed cue is correct by construction and
