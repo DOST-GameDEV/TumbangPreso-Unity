@@ -12,7 +12,7 @@ human judgement ('does this FEEL right', 'is this the art we want') or a credent
 Every item below says **what is already done**, so nobody redoes it, and **what exactly is being
 asked of you**, so it is one sitting rather than a project.
 
-Last reviewed 2026-09-04, branch `abilities-rework`.
+Last reviewed 2026-09-06, branch `main`.
 
 ---
 
@@ -623,41 +623,64 @@ lost and it is a few minutes in SETTINGS rather than anything that cannot be red
 
 ---
 
-## 18 · The spatial audio has no listener at the player, and fixing it needs your ear
+## 18 · ⚠️⚠️ BUILT 2026-09-06. THE SPATIAL AUDIO NOW COMES FROM YOUR HEAD, AND IT NEEDS YOUR EAR
 
-**Found by measurement 2026-09-05, written up in full as `docs/TODO.md` § 150.7.** This is a
-finding rather than a change: **nothing about the audio has been altered yet**, because the fix
-touches the spatial image of every cue in the game at once and `CLAUDE.md` § 6 makes sound
-provisional until you have heard it in play.
+⚠️⚠️ **THIS IS THE BIGGEST SINGLE CHANGE TO HOW THE GAME SOUNDS SINCE THE PORT STARTED, AND IT IS
+THE ONE THING IN THIS SESSION THAT CANNOT BE SIGNED OFF FROM A COMMAND LINE.** Put headphones on
+and play one round. Everything below is what to listen for.
 
-**What is actually true right now.** The only `AudioListener` in the game sits on the
-`~GameServices` object, which is created at world origin and never moves, never rotates and is
-never parented to anything. `AudioDirector.KeepOneListener` actively disables any listener a scene
-brings, including one on the arena camera. Every pooled voice is fully 3D
-(`spatialBlend = 1.0`).
+**What was wrong, and it was wrong for the whole port.** The only `AudioListener` in the game sat
+on the `~GameServices` object, which is created at world origin and never moved, never rotated and
+was never parented to anything, while every pooled voice is fully 3D (`spatialBlend = 1.0`). So
+the game computed distance and stereo pan **from the middle of the map rather than from your
+ears**: standing on the left of the arena, a slipper landing straight in front of you was panned
+to the RIGHT, because it was on the right-hand side of the ARENA. A sound behind you panned left.
+Front and back did not exist at all. `docs/TODO.md` § 150.7 has the arithmetic.
 
-**So the game computes distance and stereo pan from the middle of the map rather than from your
-ears.** Standing on the left of the arena, a slipper landing straight in front of you is panned to
-the right, because it is on the right-hand side of the ARENA. A sound behind you pans left. The
-attenuation is the smaller half of it (1.00 at the centre falling to 0.74 at a corner); **the
-panning is the part that is telling you something untrue.**
+**What changed.** The listener is on its own object that rides whatever camera you are actually
+looking through, every frame: first person, third person, the emote swing, the spectator rig, a
+possession, a seat change, a role change and a rematch are all the same event to it. And the
+**thirteen** cues that are NOT in the world got a named 2D route of their own
+(`AudioDirector.PlayUi`), because they only ever sounded right before by standing exactly where
+the listener was parked.
 
-⚠️ **THE FIX HAS A SECOND HALF THAT IS NOT OPTIONAL.** Seven cues are deliberately fired at the
-world origin (`score_award`, `match_win`, `round_end`, the menu clicks, the hitmarker) and they
-sound right today **only because** the listener happens to sit there too. The moment the listener
-follows you, those become 3D sounds parked at the centre of the map. They need an explicit 2D path
-in the same change.
-
-**What we need you to judge, once it is built:**
+**What we need you to judge:**
 
 1. **Does a slipper landing behind you read as behind you?** That is the whole point of the change.
 2. **Do the taya's footsteps read as approaching**, and from the right side?
 3. **Do the UI and score sounds still sit flat and centred**, at the same loudness wherever you are
    standing? If any menu click starts drifting or getting quieter as you walk, the second half is
    wrong.
-4. **Is anything now too quiet at the far corner?** The rolloff was tuned against a listener that
-   never moved, so the numbers may want a second look once the listener is in the right place.
+4. **Is anything now too quiet at the far corner?** ⚠️⚠️ **THIS IS THE ONE MOST LIKELY TO NEED A
+   NUMBER CHANGED, AND NOBODY HAS TOUCHED IT.** Every voice is a 2 m to 32 m linear rolloff, and
+   those numbers were chosen against a listener that never moved, so they were only ever measured
+   from the middle of the map. The longest sightline in the box is now about 20 m corner to
+   corner, which lands at **41 per cent volume**. If a throw from the far corner has stopped
+   registering, say so and the rolloff gets re-derived; **it was deliberately left alone in this
+   pass** because changing the listener and the curve in one go makes it impossible to say which
+   one you are hearing.
+5. **Third person specifically.** In TPP the ears are at the CAMERA, which sits behind your body,
+   so a sound at your own feet is a couple of metres away rather than nought. That is correct (you
+   hear from where you see) and it is also the case most likely to feel odd. If it does, say which
+   view you were in.
 
-⚠️ **It is not urgent for the nationals** unless you think the audio is actively misleading you in
-play. It has been this way for the whole port, so it is a real improvement rather than a
-regression to repair.
+⚠️ **It is a real improvement rather than a regression to repair.** It has been this way for the
+whole port, so nothing is worse than it was yesterday; if it turns out to be worse for you, the
+listener follow is one method in `AudioDirector` and the 2D route stays either way.
+
+### 18.1 · Two sound-source calls the same pass turned up, and neither is code
+
+**Both are `CLAUDE.md` § 6: code can prove a cue fires correctly, ears decide whether the recording
+is the right one.**
+
+1. ⚠️⚠️ **THE SHOVE AND THE RETRIEVAL SLIDE PLAY THE SAME RECORDING.** `bump_swing` is an alias for
+   `dash` in `AudioCues.Aliases`, and `CombatVerbs.ReleaseSlide` asks for `dash` directly, so an
+   attacker committing to a slide and an attacker shoving somebody sound identical. **Those are the
+   two most different decisions an attacker makes**, and the taya is reading which one just
+   happened. Both have a pitch window now, which helps a little and does not separate them. **If
+   they are hard to tell apart in play, say so and one of them gets its own file**; picking that
+   file is a sound choice rather than an engineering one.
+2. ⚠️ **THE PISONET BOOTH USED TO PLAY THE SCORE STING AND NOW PLAYS `ui_click` PITCHED UP**
+   (`docs/TODO.md` § 151.11). It had to stop playing `score_award`, which claimed points and ducked
+   the music bed; whether a pitched-up click is a good *coin clink* is a different question and it
+   is yours. It is one line if you want something else.

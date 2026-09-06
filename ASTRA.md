@@ -55,13 +55,132 @@ already correct. ⚠️ **If your clips start coming from a library (Mixamo or s
 becomes the right answer and `ModelImportSetup` has to be revisited.** Raise it here; do not flip
 it quietly.
 
-### How to verify a clip
+⚠️⚠️ **AND DO NOT GO LOOKING FOR THAT SETTING IN THE INSPECTOR, BECAUSE THERE IS NO RIG TAB ON
+THESE FILES.** Unity has no native glTF support, so **glTFast's ScriptedImporter owns every
+`.glb` here and `ModelImporter` does not** — the paragraph above states an INTENT that is true of
+how the clips were authored, not a checkbox anybody set. Step 3 below has the whole of it,
+including the silent no-op `ModelImportSetup`'s own header records from the last time somebody
+assumed otherwise.
+
+---
+
+## How a session runs, end to end
+
+⚠️⚠️ **READ THIS WHOLE SECTION BEFORE OPENING BLENDER.** Five of the eight steps below are the
+ones that make a clip actually reach a player, and **four of the five fail silently**: the
+character simply stands still, or plays the old fallback, with no error anywhere. Every warning
+here is a fault that has already happened in this repository and is recorded in the file it
+happened in.
+
+### Step 0 · Pick ONE task and say which
+
+`ASTRA.md`'s rules: one unchecked task per session, finished, rendered, committed, ticked. For
+task 1 that means **one hero, three clips** rather than eighteen clips badly.
+
+### Step 1 · Find the rig you are animating, and do not build a new one
+
+| | |
+|---|---|
+| The twelve street characters | `Assets/TumbangPreso/Art/characters/persons/character-{male,female}-{a..f}.glb` |
+| The six heroes | `Assets/TumbangPreso/Art/characters/persons/team-{sean,zack,dante,cheska,nemu,phaister}.glb` |
+| The pets | `Assets/TumbangPreso/Art/characters/pets/` |
+
+Each `.glb` carries **its own skeleton and about 32 clips already**. ⚠️⚠️ **YOU ARE ADDING AN
+ACTION TO AN EXISTING RIG, NOT RETARGETING ONTO IT.** `CLAUDE.md` § 6: the clips ship with their
+own rig and are authored against it, which is why the import is Generic rather than Humanoid.
+**If your clips ever start coming from a library (Mixamo or similar), stop and say so here** —
+Humanoid becomes the right answer and `ModelImportSetup` has to be revisited. Do not flip it
+quietly.
+
+⚠️ **BLENDER IS `C:\Program Files\Blender Foundation\Blender 5.2\blender.exe`** and it is not on
+PATH. `tools/build_slipper_models.py` is the shape the repo already uses for a headless run:
+`blender -b --factory-startup --python tools/<script>.py -- <args>`.
+
+### Step 2 · Name the ACTION exactly the clip name. The name is the entire contract
+
+`CharacterAnimator.ResolveChain` walks a chain of names and plays **the first one the rig actually
+carries**. glTF exports each action as a clip named after the action, so **the Blender action name
+IS the Unity clip name.**
+
+* Task 1: `hero-sean-dash`, `hero-zack-summon`, and the other sixteen, spelled exactly as the
+  table in the queue below spells them.
+* Task 3: `slide`.
+
+⚠️⚠️ **A MISSPELLED NAME IS NOT AN ERROR, IT IS A SILENT FALLBACK.** `ResolveChain` *"returns
+null rather than a guess when nothing matches"*, and every one of these chains has a stock clip
+in its second slot, so `hero-sean-dashh` produces exactly what shipping nothing produces: the old
+animation, no warning, no log line. **Check the name against the table by copy and paste, not by
+eye.**
+
+⚠️ **`__preview`-prefixed clips are filtered out** by `CacheClips` and by `RosterBookBuilder`.
+Do not name anything that way.
+
+### Step 3 · Export the `.glb` back over the same path
+
+Same filename, same folder. The `.glb.meta` beside it holds the asset GUID that every roster
+entry, prefab and scene points at; **a new filename is a new GUID and breaks all of them.**
+
+⚠️ **NOTHING IN THE UNITY IMPORT INSPECTOR NEEDS SETTING, AND THERE IS NO RIG TAB TO SET.**
+Unity has no native glTF support, so **glTFast's ScriptedImporter owns these files, not
+`ModelImporter`** — `ModelImportSetup`'s own header records an earlier version that cast to
+`ModelImporter`, got null for every character, skipped them all and logged *"fixed 0 character
+models"* as though they were already correct. glTFast already emits the Animator the animation
+layer needs (with a **null controller**, which is correct for Playables). ⚠️ **Do not "fix" the
+null controller by authoring an AnimatorController.** That is exactly what the Playables graph
+exists to avoid.
+
+### Step 4 · ⚠️⚠️ RUN `Build Roster Book`, OR THE CLIP DOES NOT SHIP
+
+**This is the step that is not obvious, and skipping it produces a clip that works perfectly in
+the editor and does not exist in the built game.**
+
+```bash
+"/c/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe" -batchmode -projectPath . -executeMethod TumbangPreso.EditorTools.RosterBookBuilder.Build -logFile Logs/roster.log
+```
+
+(The menu item is **Tumbang Preso > Build Roster Book**.)
+
+⚠️⚠️ **WHY, IN `RosterEntryAsset.Clips`' OWN WORDS:** the clips are sub-assets of the `.glb`, and
+*"an asset nothing points at is stripped from the player. Nothing pointed at them: the animator
+looked them up through the AssetDatabase, which does not exist in a build, so **every character in
+every build stood still**."* `RosterBookBuilder` sweeps every clip out of each `.glb` into
+`RosterEntryAsset.Clips`, which is a real serialised reference, and that is what both makes them
+ship and makes them findable.
+
+⚠️ **IT ALSO FAILS LOUDLY IF THE EXPORT WENT WRONG**, which is the cheapest check you have:
+*"'<id>' has a model with no clips. That character will not animate."*
+
+### Step 5 · Verify it resolves, before you look at it
+
+⚠️ **The question is not "does the clip exist", it is "does `PlayAction` reach it".** The chain,
+the roster book and the rig all have to agree. `RosterBookBuilder`'s log line is the first half;
+a render of the pose is the second.
+
+### Step 6 · Render it. Show, do not describe
+
+See the section below. ⚠️ **A clip change with no picture attached cannot be reviewed and is not
+finished.**
+
+### Step 7 · Commit, tick the box here, and say what shipped
+
+`CLAUDE.md` § 3: sole-authored, **no `Co-Authored-By` trailer of any kind**, no mention of any AI
+tooling anywhere in the repository, and **no em dashes**. Comment the WHY at length. Push.
+
+### Step 8 · Stop
+
+Even if the next task looks like ten minutes. The rule is at the top of this file and it exists
+because usage here is limited.
+
+---
+
+## How to verify a clip
 
 ⚠️⚠️ **SHOW, DO NOT DESCRIBE** (`CLAUDE.md` § 6.1). A model or animation change with no render
 attached cannot be judged.
 
 * Render through the **in-engine probe pipeline**, never an external renderer: the toon shader,
-  the ink outline and Unity's linear colour conversion are the look.
+  the ink outline and Unity's linear colour conversion are the look. **A Blender viewport render
+  is not a picture of this game.**
 * ⚠️⚠️ **VERSION THE FILENAME EVERY TIME** (`zack_ult_v1.png`, `zack_ult_v2.png`). Chat clients
   cache by filename, so overwriting a render conducts the whole review against an image that is
   no longer on disk.
@@ -70,6 +189,40 @@ attached cannot be judged.
 * `docs/CANONICAL_RENDERING_PIPELINE.md` has the commands and five recorded pitfalls. ⚠️ It is
   written for another tool and its "MANDATE FOR ALL AGENTS" heading is that tool's; where it
   disagrees with `CLAUDE.md`, `CLAUDE.md` wins.
+
+⚠️⚠️ **AND HERE IS THE HONEST STATE OF THE TOOLING, BECAUSE THE SENTENCE ABOVE OVERSOLD IT UNTIL
+2026-09-06: EVERY EXISTING CHARACTER PROBE PHOTOGRAPHS FRAME ZERO.** `HeroTurnaroundProbe` and
+`PersonSwapProbe` both call `clip.SampleAnimation(model, 0.0f)`, so what they render is **the
+first pose of a clip and nothing else**. That is the right tool for "is this the right character,
+wearing the right thing, at the right scale" and it is **useless for judging an animation**, which
+is a thing that happens over time.
+
+| What you need to show | What to use |
+|---|---|
+| the character is intact, scaled and skinned | `Tumbang Preso > Probe All Heroes Turnaround`, `Probe Person Swap`, `Shoot Model Sheet` |
+| **the motion** | ⚠️ **A strip of frames across the clip.** `docs/TODO.md` § 151.16 is the engineering item for a probe that takes one; **until it lands, say in your handoff that the motion was not photographed** rather than attaching a frame-0 render and calling it verified |
+| the effect a cast draws | `Tumbang Preso > Capture Ability Showcase` (`AbilityShowcaseProbe`), and ⚠️ it **fails a run where one effect blows more than 12 per cent of the frame to white**. `docs/VISION.md` § 2 rule 5 |
+
+⚠️ **DO NOT BUILD THE FRAME-STRIP PROBE YOURSELF.** It is a `.cs` file, which is the line drawn
+below. Ask for it; it is written up and small.
+
+---
+
+---
+
+## What is NOT yours, and what to hand back instead
+
+⚠️⚠️ **THE LINE IS: A CLIP AND ITS RIG ARE YOURS. ANYTHING THAT NEEDS A `.cs` EDIT IS NOT.**
+When you hit one, write it into this file as a new numbered task **with what is wrong, where it
+lives and what done looks like**, and say so in your handoff. Do not make the edit.
+
+| If you find you need | It belongs to |
+|---|---|
+| a new entry in `CharacterAnimator`'s chain table | engineering. The eighteen `hero-*` names and `slide` are **already** in it; a NINETEENTH name is a code change |
+| a first-person ARM clip | ⚠️⚠️ engineering, and this is the sharp one. `ViewmodelArms.PlayAction` is a **flat lookup with no chain**, unlike the body's, so a name it does not know resolves to `null` and the hand simply does not move. `docs/TODO.md` § 151.13a is that exact fault costing the retrieval slide its arm for a day. **A viewmodel clip needs a new field in that file. Ask for it.** |
+| a balance number changed to fit a clip | 🧑. `Attention.md`, never `Balance.cs` |
+| "every player sees the same cinematic" | engineering. `NetSession.ProtocolVersion` may not be moved by animation work |
+| a new VFX system | engineering, and read `docs/VISION.md` § 2 first |
 
 ---
 
@@ -178,6 +331,34 @@ change, exactly like the `hero-*` slots above.
 🧑's own test: *"I can safely approach and pick this up normally, OR I can commit"*. **Nobody has
 felt it yet.** If your clip makes the recovery read as longer or shorter than it is, say so here
 rather than retuning the constant.
+
+---
+
+## What the 2026-09-06 engineering pass changed underneath you, and what it did NOT
+
+⚠️⚠️ **NOTHING IN THAT PASS REPLACED A HOOK WITH A HARDCODED EFFECT, AND THAT WAS AN EXPLICIT
+CONSTRAINT ON IT RATHER THAN LUCK.** `docs/TODO.md` § 151 is the record. **Every API this file
+depends on is untouched**: the `hero-*` and `viewmodel` action chains in `CharacterAnimator`, the
+`HeroHazards.Spawn*` and `CreateExplosionVisual` surfaces, `MatchFlair`, `HitFeel`, the camera
+hooks (`ImpactPunch`, `Shake`, `HoldFrame`, `ViewmodelKick`) and the audio hooks. Task 3's
+`"slide"` action name is still a name with no clip behind it, falling through to the lunge exactly
+as § 150.8 left it.
+
+**Three things did change and each makes a task here easier rather than harder:**
+
+- ⚠️ **The audio is spatial from the player's head now** (§ 151.1). A cast, an impact or a
+  footstep you time an animation against is heard from where the camera is, so **an animation's
+  timing against its sound is now judgeable in a build.** Before, both were computed from the
+  middle of the map and a cue landing "on the left" told you nothing about the clip.
+- ⚠️ **The lata knockdown's impact frame reaches every peer** (§ 151.3). If you animate anything
+  around the tumba, all four screens now hold the same 0.045 s beat, so a clip cut to it lands the
+  same everywhere instead of only on the host's.
+- ⚠️⚠️ **`AbilityStressProbe` is a frame-time and object-count measurement of the whole effects
+  pile** (§ 151.8, `Logs/ability-stress.txt`). **Use it when you make an effect prettier.** It
+  reports a quiet arm, a first cast and a WARM cast, and the warm one is the number that says
+  whether what you added costs anything in play. ⚠️ It also asserts that nothing is left behind
+  after two piles' lifetimes, so an effect that forgets to clean itself up fails there rather than
+  becoming *"the game gets slower the longer you play"* at the venue.
 
 ---
 
