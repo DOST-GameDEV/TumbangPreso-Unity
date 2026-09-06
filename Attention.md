@@ -581,6 +581,31 @@ probe's.** Play a Classic round as an attacker and say which it is.
 ⚠️ **IT PLAYS THE LUNGE CLIP** because both moves are a body-led dash and the rig has one. A slide
 of its own is art work.
 
+#### ⚠️⚠️ 2026-09-06: THE SWEEP IS RUN NOW, AND IT SAYS 74 PER CENT
+
+**Six seeds, Classic on Eskinita, `docs/TODO.md` § 151.9 and
+`docs/reports/bot-sweep-2fde55d32246.md`: 129.7 slides against 176.2 retrievals.** Steady across
+every seed (123 to 136).
+
+**That is nearer "too cheap" than "too long", and it is the reason to actually play the round.**
+⚠️ **It is NOT the bots spamming it**, which was the other thing worth ruling out: the AI refuses
+the slide when the shoe is already within reach, when the bar is fatigued, and when the run is
+neither contested nor already late, so all 129 were runs it had decided were worth hurrying.
+
+⚠️⚠️ **NOTHING WAS RETUNED ON THE STRENGTH OF THAT NUMBER AND NOTHING SHOULD BE.** A bot has
+perfect information about where every tsinelas is and no fear of being tagged. **The question is
+still yours and it is still one round**: does normal walk-up retrieval still feel like a real
+choice, or has it stopped happening?
+
+#### ⚠️ AND A SECOND, SMALLER THING THE SAME SWEEP TURNED UP
+
+**Ilalim ng Tulay is the only arm with dead time in it.** Idle penalties, which mean a tsinelas sat
+where nobody went back for it, are **0 in all six Classic seeds** and **0 to 48 on Ilalim ng
+Tulay**, with one seed carrying nearly all of it. That is a map question rather than a balance one
+and it is **written down rather than chased** (§ 151.9). ⚠️ **If you ever see a tsinelas that
+cannot be retrieved on that map, that is this**, and saying where it was standing closes it in one
+sitting.
+
 ### 17.3 ⚠️ THE `ui_*` DC OFFSET IS STILL YOUR CALL AND IS OFF THE QUEUE
 
 Carried over from § 144.3 rather than new. `ui_click` sits at a DC offset of **-0.121**, which is
