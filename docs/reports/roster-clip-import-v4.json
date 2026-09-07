@@ -1,0 +1,289 @@
+{
+  "scope": "Unity imported clips and serialized roster references, not motion photography",
+  "rosters": [
+    {
+      "roster": "person_aling_nena",
+      "model": "character-female-e",
+      "guid": "fd1a64d4d17b1b44db5250827bd09dd7",
+      "serialized_clip_count": 33,
+      "glb_clip_count": 33,
+      "artifact": "2e0a4ec96f437b389d3b96b3e47e1c88",
+      "resolved_names": 33,
+      "missing_names": [],
+      "authored_present": [
+        "slide"
+      ]
+    },
+    {
+      "roster": "person_ate_girlie",
+      "model": "character-female-b",
+      "guid": "36455a6c812628f448e8533f630f047e",
+      "serialized_clip_count": 33,
+      "glb_clip_count": 33,
+      "artifact": "83cf9b34d028758b44a5991778050e10",
+      "resolved_names": 33,
+      "missing_names": [],
+      "authored_present": [
+        "slide"
+      ]
+    },
+    {
+      "roster": "person_bayan",
+      "model": "character-male-f",
+      "guid": "0dc875b93a83da942bd17f72970c2968",
+      "serialized_clip_count": 33,
+      "glb_clip_count": 33,
+      "artifact": "da1d4bb3a62159977ef22cce0a307c89",
+      "resolved_names": 33,
+      "missing_names": [],
+      "authored_present": [
+        "slide"
+      ]
+    },
+    {
+      "roster": "person_bebang",
+      "model": "character-female-c",
+      "guid": "d8ebae840337ee04ebd8d247b70c9bb2",
+      "serialized_clip_count": 33,
+      "glb_clip_count": 33,
+      "artifact": "21a050c93a771cf4502b01e918e9e89f",
+      "resolved_names": 33,
+      "missing_names": [],
+      "authored_present": [
+        "slide"
+      ]
+    },
+    {
+      "roster": "person_cheska",
+      "model": "team-cheska",
+      "guid": "3e63fe1880311ed48a4f884d1b06caf3",
+      "serialized_clip_count": 33,
+      "glb_clip_count": 33,
+      "artifact": "4521a2386dbdbf7e3939c7e1bb51322e",
+      "resolved_names": 33,
+      "missing_names": [],
+      "authored_present": [
+        "slide"
+      ]
+    },
+    {
+      "roster": "person_custom",
+      "model": "team-custom",
+      "guid": "7e12dca6d6462d3499df2522cdc7d8fc",
+      "serialized_clip_count": 39,
+      "glb_clip_count": 39,
+      "artifact": "5e1412276e51dc9365dca61427bf8faf",
+      "resolved_names": 39,
+      "missing_names": [],
+      "authored_present": [
+        "hero-sean-dash",
+        "hero-sean-ignite",
+        "hero-sean-supernova",
+        "hero-zack-charge",
+        "hero-zack-sprint",
+        "hero-zack-summon",
+        "slide"
+      ]
+    },
+    {
+      "roster": "person_custom_base",
+      "model": "team-custom-base",
+      "guid": "95f0936607894920861b73a0588f1cb1",
+      "serialized_clip_count": 39,
+      "glb_clip_count": 39,
+      "artifact": "8d780a2cfc581c56845646b97db85646",
+      "resolved_names": 39,
+      "missing_names": [],
+      "authored_present": [
+        "hero-sean-dash",
+        "hero-sean-ignite",
+        "hero-sean-supernova",
+        "hero-zack-charge",
+        "hero-zack-sprint",
+        "hero-zack-summon",
+        "slide"
+      ]
+    },
+    {
+      "roster": "person_dante",
+      "model": "team-dante",
+      "guid": "82bee2b8d4d3f2145858341b11f256cd",
+      "serialized_clip_count": 33,
+      "glb_clip_count": 33,
+      "artifact": "29f0b765baf77932f8dd0ee12b1242ca",
+      "resolved_names": 33,
+      "missing_names": [],
+      "authored_present": [
+        "slide"
+      ]
+    },
+    {
+      "roster": "person_inday",
+      "model": "character-female-a",
+      "guid": "e82e0dfc4134bbc4fa42de2624161abc",
+      "serialized_clip_count": 33,
+      "glb_clip_count": 33,
+      "artifact": "c70e9b9caffd8c685428fc72f909b1b6",
+      "resolved_names": 33,
+      "missing_names": [],
+      "authored_present": [
+        "slide"
+      ]
+    },
+    {
+      "roster": "person_jun_jun",
+      "model": "character-male-d",
+      "guid": "a7abdfc8d758c634c8518c1af3fef0d7",
+      "serialized_clip_count": 33,
+      "glb_clip_count": 33,
+      "artifact": "83236ccf45701910f3fa4fe2f6cb40fa",
+      "resolved_names": 33,
+      "missing_names": [],
+      "authored_present": [
+        "slide"
+      ]
+    },
+    {
+      "roster": "person_kuya_boy",
+      "model": "character-male-b",
+      "guid": "c6d6044d86592bc40b66cd723262f8c9",
+      "serialized_clip_count": 33,
+      "glb_clip_count": 33,
+      "artifact": "35c0891059e8e5a86c2601947d8272ce",
+      "resolved_names": 33,
+      "missing_names": [],
+      "authored_present": [
+        "slide"
+      ]
+    },
+    {
+      "roster": "person_lola_pacing",
+      "model": "character-female-d",
+      "guid": "faa815748ddd7ca45a09bf6d4f900d3c",
+      "serialized_clip_count": 33,
+      "glb_clip_count": 33,
+      "artifact": "da56e763f6fa98ff635fdbf6db063639",
+      "resolved_names": 33,
+      "missing_names": [],
+      "authored_present": [
+        "slide"
+      ]
+    },
+    {
+      "roster": "person_mang_kanor",
+      "model": "character-male-e",
+      "guid": "d1c9d88c7d83a6d4e8b29bf82a2514e1",
+      "serialized_clip_count": 33,
+      "glb_clip_count": 33,
+      "artifact": "38e7e2d5010fc982c497afe8a09ee9f9",
+      "resolved_names": 33,
+      "missing_names": [],
+      "authored_present": [
+        "slide"
+      ]
+    },
+    {
+      "roster": "person_maring",
+      "model": "character-female-f",
+      "guid": "89405228939d1da40b0bea9315f46507",
+      "serialized_clip_count": 33,
+      "glb_clip_count": 33,
+      "artifact": "a9eb3cf5697e898c587ce166c764e921",
+      "resolved_names": 33,
+      "missing_names": [],
+      "authored_present": [
+        "slide"
+      ]
+    },
+    {
+      "roster": "person_nemu",
+      "model": "team-nemu",
+      "guid": "7676dcd54c4ea354cb98cc98cae5ce52",
+      "serialized_clip_count": 33,
+      "glb_clip_count": 33,
+      "artifact": "5a224af5257b3f237bb0803b63d66b93",
+      "resolved_names": 33,
+      "missing_names": [],
+      "authored_present": [
+        "slide"
+      ]
+    },
+    {
+      "roster": "person_phaister",
+      "model": "team-phaister",
+      "guid": "125949951d798714b8212b9fe39f1d58",
+      "serialized_clip_count": 33,
+      "glb_clip_count": 33,
+      "artifact": "78854b8519dad6410a0a8904b4725252",
+      "resolved_names": 33,
+      "missing_names": [],
+      "authored_present": [
+        "slide"
+      ]
+    },
+    {
+      "roster": "person_sean",
+      "model": "team-sean",
+      "guid": "fb30bc927417e4440980d86112851a72",
+      "serialized_clip_count": 36,
+      "glb_clip_count": 36,
+      "artifact": "e1e8c742d0fc5d89787b3c3172f0dc74",
+      "resolved_names": 36,
+      "missing_names": [],
+      "authored_present": [
+        "hero-sean-dash",
+        "hero-sean-ignite",
+        "hero-sean-supernova",
+        "slide"
+      ]
+    },
+    {
+      "roster": "person_tikboy",
+      "model": "character-male-c",
+      "guid": "887d5574b304e864bbc9a89865030825",
+      "serialized_clip_count": 33,
+      "glb_clip_count": 33,
+      "artifact": "481ae5360acc7539cef3a0604a4cc00e",
+      "resolved_names": 33,
+      "missing_names": [],
+      "authored_present": [
+        "slide"
+      ]
+    },
+    {
+      "roster": "person_totoy",
+      "model": "character-male-a",
+      "guid": "69e40f83dcada164ebeb7c8bd68397e5",
+      "serialized_clip_count": 33,
+      "glb_clip_count": 33,
+      "artifact": "071d66477eb8f5a67f66da5487fc4950",
+      "resolved_names": 33,
+      "missing_names": [],
+      "authored_present": [
+        "slide"
+      ]
+    },
+    {
+      "roster": "person_zack",
+      "model": "team-zack",
+      "guid": "79e2cc658c98e374e9bac5dc9ba57217",
+      "serialized_clip_count": 36,
+      "glb_clip_count": 36,
+      "artifact": "7e48157cfe6762826c015a8455beb0be",
+      "resolved_names": 36,
+      "missing_names": [],
+      "authored_present": [
+        "hero-zack-charge",
+        "hero-zack-sprint",
+        "hero-zack-summon",
+        "slide"
+      ]
+    }
+  ],
+  "count": 20,
+  "roster_assets_the_rosterbook_does_not_hold": [
+    "person_berto",
+    "person_iggy"
+  ],
+  "entries_with_unresolved_clips": []
+}

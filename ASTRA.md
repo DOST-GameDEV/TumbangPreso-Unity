@@ -337,6 +337,76 @@ transitions in a match, and the first-person `viewmodelAction`s (`thrust-fire`,
 
 Suggested motion identity: explosive, sharp, electrical, aggressive.
 
+**Authored 2026-09-07, on `team-zack.glb`, `team-custom.glb` and
+`team-custom-base.glb`. Unchecked for the one reason every task here is unchecked:
+nothing can photograph an animation** (`docs/TODO.md` § 151.16). Same argument as
+Sean for why they were authored at all: `docs/TODO.md` § 151.19.
+
+⚠️⚠️ **ZACK IS BUILT AGAINST SEAN RATHER THAN BESIDE HIM.** 🧑, 2026-09-02, looking
+at the two kits: *"the kit of zack and sean are the exact fricking same"*. That was
+about the ABILITIES and `ZackHeroKit` records the split it caused. **It applies twice
+over to the animation**, because two heroes who move the same way are one hero with two
+colour ramps however different the payloads are.
+
+| | Sean | Zack |
+|---|---|---|
+| **Shape** | one axis, symmetric, thrust from the hips | bladed and side-on, halves opposing: torso twists against the hips, arms counter-swing |
+| **Rhythm** | coil, extension, dead stop, settle | snap, then an electrical chatter instead of a settle |
+| **The ultimate** | symmetric and VERTICAL, because he IS the meteor | asymmetric and DIRECTIONAL, because Thunderstrike is aimed up to 7 m away and he is pointing at it |
+| **Feet** | Supernova leaps, 0.160 clear of the road | the call lifts him onto his toes, 0.074 |
+| **Peak speed** | 3293 deg/s | **4677 deg/s** |
+
+⚠️ **TWO OF THE THREE CARRY NO IMPACT, AND THE ABSENCE IS INHERITED FROM
+`BuildZackSprint`'S OWN ARGUMENT, WHICH IS RIGHT:** *"Bolt Sprint is LOCOMOTION, not a
+strike: it is a skating cycle held for the whole dash, and there is no instant at which
+anything lands. Snapping a cycle to a stop would read as the animation breaking."* The
+tool takes `punch: None` now, and `tools/verify_hero_action.py` drops its impact
+assertions for exactly the clips that declare no impact, keeping the two that apply to
+any cast at all: it has to MOVE, and it has to END WHERE IT STARTED.
+
+⚠️ **THE LEGS TAKE A ROLL AS WELL AS A PITCH NOW, AND ZACK IS WHY.** A pitch alone
+swings a leg forward and back, which is a run. **A skater's push is LATERAL**: the leg
+goes out to the side and the body carves over it, and that is the whole difference
+between Bolt Sprint and a sprint. Sean's tables carry zeros in both new columns and his
+three clips re-export byte for byte identical, which is how that was checked.
+
+### ⚠️⚠️ THE VERIFIER REFUSED TWO OF THE THREE TABLES, AND BOTH REFUSALS WERE RIGHT
+
+**Magnet.** The first table snapped the arm from rest to -96 degrees in 0.05 s and then
+closed it 44 degrees at the catch, so **the fastest frame in the clip was the OPENING**.
+Whichever moment is fastest is the one a player reads as the event, whatever the table
+calls the punch, and this ability's readable moment is the tsinelas ARRIVING in his
+hand: that is the difference between *"he is doing something"* and *"he has his shoe
+back and is about to throw it"*. The reach is 0.07 s now and the catch sweeps 75 degrees
+into a dead stop. ⚠️ **This clip gained a punch the procedural one does not have**,
+and that is the one place Zack's tables argue with `HeroAbilityClips`: its header is
+right that a buzz has no impact, and MAGNET's buzz is the WIND-UP rather than the whole
+gesture.
+
+**Thunderstrike.** The first table had no hold, so it raised the arm through 220 degrees
+and dropped it through 58, and the fastest frame landed in the middle of the RAISE. The
+note it was refusing is `BuildZackSummon`'s own: *"The bolt comes DOWN. The raise at 0.28
+is the call and it stays smooth."* The card says **"Hold to pick a spot, let go"**, so
+the hold is nine frames of almost nothing now and the release sweeps 83 degrees in
+0.09 s.
+
+**Verified: fifteen clip checks across the three rigs, one Blender re-import each.**
+
+| Clip | Impact | Peak speed | Silhouette |
+|---|---|---|---|
+| `hero-zack-sprint` | **none, by design** | 1264 deg/s | widest pose 87 degrees; a carve rather than a fold |
+| `hero-zack-charge` | 0.30, the catch | **4564 deg/s**, 8.6 per cent one frame later | reach to -96 degrees, caught to -20 |
+| `hero-zack-summon` | 0.45, the release | **4677 deg/s**, 2.8 per cent after | widest pose 177 degrees, height 0.63 to 0.86 against a 0.79 standing height |
+
+**The timings are the procedural ones**: 0.60, 0.40 and 0.75 seconds. ⚠️ **The catch
+was fitted INSIDE Magnet's existing 0.40 rather than added to the end**, because
+lengthening a cast to suit an animation is the retune this file forbids.
+
+**Still open for Zack:** the motion photograph, a person feeling it in a match, and the
+first-person `viewmodelAction`s (`sprint-electric`, `overcharge`, `summon-lightning`),
+which are engineering's hook. Task 6 covers that class for Sean and the same is true
+here.
+
 ### 1C. Dante
 
 - [ ] **DANTE: all three hero casts, then STOP**

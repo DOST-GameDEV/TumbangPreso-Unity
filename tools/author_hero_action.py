@@ -270,6 +270,83 @@ HEROES = {
             "grounded": (0.00, 0.12, 0.45, 0.55, 0.62, 0.75),
         },
     },
+    # ⚠️⚠️ DANTE IS THE THIRD DIRECTION, AND THAT IS THE WHOLE BRIEF. Sean's power goes
+    # FORWARD along one axis. Zack's goes SIDEWAYS, bladed and counter-rotating.
+    # **Dante's goes DOWN, into the floor, and he never travels at all.** He plants,
+    # widens, and drives mass through his own centre. `contact` is 1 in all three of his
+    # clips and there is not one airborne beat in the kit: Supernova leaps and
+    # Thunderstrike goes up on its toes, and a Dante who left the road would be
+    # borrowing from both.
+    #
+    # ⚠️ THE STANCE IS THE SIGNATURE AND IT IS THE LEG ROLL THAT DRAWS IT. Every cast
+    # splays both legs outward (positive roll on the left, negative on the right, which
+    # is outward on this rig) into a braced base no other hero uses. His arms move
+    # TOGETHER, low and wide, and never take the graceful overhead arc Sean and Zack
+    # both own: they come up short of vertical and hammer down. His head stays low and
+    # forward like a bull rather than being thrown back.
+    #
+    # ⚠️ AND HIS RECOVERIES ARE LONG BECAUSE HE IS HEAVY. Sean settles in 0.13 s after
+    # his ultimate lands and Dante takes 0.45, which is most of the reason his clips are
+    # the longest in the game at 0.55, 0.65 and 0.85.
+    "dante": {
+        "hero-dante-stomp": {
+            "punch": 0.30,
+            # SEISMIC STOMP. The knee comes up, the body gathers UP, and then everything
+            # goes down at once. ⚠️ There are no knees, so the raise is the whole left
+            # leg pitched forward and the solve keeps the RIGHT foot on the road: with
+            # `contact` at 1 the lowest vertex is the planted foot, which is exactly what
+            # a one-legged stance should key.
+            "beats": [
+                (0.00, 1.0, 0.00, 0.00,   0, 0, 0,    0, 0,    0, 0,   0, 0,    0, 0,     0, 0),
+                (0.18, 1.0, 0.00, -0.02, -14, 0, 0, -10, 0,  -58, 6,   4, -6,   20, 26,   20, -26),
+                (0.30, 1.0, 0.00, 0.03,  34, 0, 0,  22, 0,     8, 20, -6, -20, -12, 34,  -12, -34),
+                (0.38, 1.0, 0.00, 0.02,  26, 0, 0,  17, 0,     6, 15, -4, -15,  -6, 26,   -6, -26),
+                (0.55, 1.0, 0.00, 0.00,   0, 0, 0,   0, 0,     0, 0,   0, 0,     0, 0,     0, 0),
+            ],
+            "grounded": (0.00, 0.18, 0.30, 0.38, 0.55),
+        },
+        "hero-dante-roar": {
+            "punch": 0.32,
+            # DEMONIC CARAPACE. ⚠️⚠️ THE STOMP GOES DOWN AND THIS GOES OUT, which is the
+            # only thing keeping his two skills apart: they are both a plant and a drop,
+            # and one of them has to be a WIDENING or Dante has one skill twice. He draws
+            # in small, then the legs splay, the shoulders come up, and both arms drive
+            # down and OUT into the flex. The card is *"Nothing stuns, shoves or slips
+            # you"*, so the pose that holds afterwards is the read: he is bigger now.
+            "beats": [
+                (0.00, 1.0, 0.00, 0.00,   0, 0, 0,    0, 0,    0, 0,   0, 0,    0, 0,     0, 0),
+                (0.15, 1.0, 0.00, -0.02, 22, 0, 0,   16, 0,   -6, -4,  5, 4,  -40, -22, -40, 22),
+                (0.32, 1.0, 0.00, 0.02, -16, 0, 0,  -20, 0,  -10, 26, 12, -26,  14, 40,   14, -40),
+                (0.44, 1.0, 0.00, 0.01, -11, 0, 0,  -14, 0,   -8, 22, 10, -22,  11, 34,   11, -34),
+                (0.65, 1.0, 0.00, 0.00,   0, 0, 0,    0, 0,    0, 0,   0, 0,    0, 0,     0, 0),
+            ],
+            "grounded": (0.00, 0.15, 0.32, 0.44, 0.65),
+        },
+        "hero-dante-fissure": {
+            "punch": 0.40,
+            # TITAN FISSURE. ⚠️ IT SPLITS THE COURT AHEAD OF HIM, not under him:
+            # `telegraphRange` is 2.2 and the radius is 4.5, so the slam has to land
+            # FORWARD of his feet or the animation is telling the other three the wrong
+            # place to not be standing. Both arms come up short of vertical, hold, and
+            # then go down and forward into the road.
+            #
+            # ⚠️⚠️ THE HOLD AT 0.30 IS WHAT MAKES THIS THE BIGGEST THING IN HIS KIT
+            # RATHER THAN THE SECOND BIGGEST. Without it the slam had 0.18 s to travel
+            # and read slower than the stomp's knee drop, which would put his ultimate
+            # below his first skill on the one measurement this project has for force. It
+            # is also just correct for a titan: the weight hangs before it falls.
+            "beats": [
+                (0.00, 1.0, 0.00, 0.00,   0, 0, 0,    0, 0,    0, 0,   0, 0,    0, 0,     0, 0),
+                (0.22, 1.0, 0.00, -0.03, -36, 0, 0,  -30, 0,  -8, 22, 10, -22, -128, 16, -128, -16),
+                (0.30, 1.0, 0.00, -0.03, -34, 0, 0,  -28, 0,  -8, 22, 10, -22, -126, 16, -126, -16),
+                (0.40, 1.0, 0.00, 0.06,  56, 0, 0,   34, 0, -20, 28, 16, -28,  -34, 6,   -34, -6),
+                (0.52, 1.0, 0.00, 0.05,  44, 0, 0,   27, 0, -16, 24, 13, -24,  -26, 5,   -26, -5),
+                (0.62, 1.0, 0.00, 0.03,  30, 0, 0,   18, 0, -11, 17,  9, -17,  -18, 4,   -18, -4),
+                (0.85, 1.0, 0.00, 0.00,   0, 0, 0,    0, 0,   0, 0,   0, 0,     0, 0,     0, 0),
+            ],
+            "grounded": (0.00, 0.22, 0.30, 0.40, 0.52, 0.62, 0.85),
+        },
+    },
 }
 
 
