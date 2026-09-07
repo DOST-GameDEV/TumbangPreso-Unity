@@ -125,20 +125,33 @@ def measure(path, name, spec):
                         "step": round(step, 3)})
 
     by_time = {s["time"]: s for s in samples}
-    punch = by_time[spec["punch"]]
     last = samples[-1]
+    widest = max(samples, key=lambda s: s["swing"])
 
     rates = [(b["time"], b["step"] / (b["time"] - a["time"]))
              for a, b in zip(samples, samples[1:]) if b["time"] > a["time"]]
     peak_t, peak = max(rates, key=lambda r: r[1])
-    after = [r for t, r in rates if t > punch["time"]]
 
-    assert abs(peak_t - punch["time"]) <= PEAK_WINDOW, (
-        name, "the fastest frame is at", peak_t, "and the punch is at", punch["time"])
-    assert after and after[0] <= peak * STOP_RATIO, (
-        name, "it does not stop on the impact:", round(after[0], 1),
-        "against a peak of", round(peak, 1))
-    assert punch["swing"] > STRIKE_FLOOR, (name, punch["swing"])
+    # ⚠️ A CLIP WITH NO PUNCH IS NOT AN UNCHECKED CLIP, IT IS A DIFFERENT CLAIM.
+    # `hero-zack-sprint` is a skating cycle and `HeroAbilityClips` argues, correctly,
+    # that snapping a cycle to a stop reads as the animation breaking. So the impact
+    # assertions are dropped for exactly the clips that declare no impact, and the two
+    # that apply to any cast at all still hold: it has to MOVE, and it has to end where
+    # it started.
+    punch = by_time[spec["punch"]] if spec["punch"] is not None else None
+    after = [r for t, r in rates if punch and t > punch["time"]]
+
+    if punch is not None:
+        assert abs(peak_t - punch["time"]) <= PEAK_WINDOW, (
+            name, "the fastest frame is at", peak_t, "and the punch is at",
+            punch["time"])
+        assert after and after[0] <= peak * STOP_RATIO, (
+            name, "it does not stop on the impact:", round(after[0], 1),
+            "against a peak of", round(peak, 1))
+        assert punch["swing"] > STRIKE_FLOOR, (name, punch["swing"])
+
+    assert widest["swing"] > STRIKE_FLOOR, (
+        name, "nothing in this clip moves: widest pose is", widest["swing"], "degrees")
     assert last["swing"] < REST_TOLERANCE, (
         name, "the last frame is", last["swing"], "degrees off rest")
 
@@ -146,9 +159,11 @@ def measure(path, name, spec):
         assert by_time[t]["floor"] > -0.005, (name, t, by_time[t]["floor"])
 
     return {"file": Path(path).name, "clip": name, "duration": duration,
-            "punch": spec["punch"], "punch_swing_deg": punch["swing"],
+            "punch": spec["punch"],
+            "punch_swing_deg": punch["swing"] if punch else None,
+            "widest_pose_deg": widest["swing"], "widest_pose_at": widest["time"],
             "peak_speed_deg_s": round(peak, 1), "peak_speed_at": peak_t,
-            "speed_after_impact_deg_s": round(after[0], 1),
+            "speed_after_impact_deg_s": round(after[0], 1) if after else None,
             "standing_height": round(by_time[0.0]["top"], 5),
             "top_range": [round(min(s["top"] for s in samples), 5),
                           round(max(s["top"] for s in samples), 5)],

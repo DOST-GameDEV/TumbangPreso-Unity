@@ -53,10 +53,22 @@ PERSONS = Path('Assets/TumbangPreso/Art/characters/persons')
 ROSTER = Path('Assets/TumbangPreso/Resources/Roster')
 BOOK = Path('Assets/TumbangPreso/Resources/RosterBook.asset')
 
-# Clips this project authors into the rigs itself. They are named so the report can say
-# out loud whether the work of the last two sessions actually shipped, and so a missing
-# one is a headline rather than a row.
-AUTHORED = ('slide', 'hero-sean-dash', 'hero-sean-ignite', 'hero-sean-supernova')
+# Clips this project authors into the rigs itself, so the report can say out loud
+# whether that work actually shipped and a missing one is a headline rather than a row.
+#
+# ⚠️ IT IS READ FROM THE AUTHORING TOOL RATHER THAN LISTED HERE. A hand-written list is
+# what this file was replaced for: a checker carrying a list cannot see the thing added
+# after the list was written, and the next hero session adds three more names.
+#
+# ⚠️⚠️ AS TEXT, NOT BY IMPORTING IT, and that is not laziness. `author_hero_action`
+# imports `glb_action`, which imports `mathutils`, which exists only inside Blender: an
+# import here would make this audit runnable only under `blender --background`, which is
+# a ten-second launch to ask a question about a dictionary. Reading the source as text
+# is `SceneScriptCheck`'s technique and it is the right one for the same reason.
+AUTHORED = ('slide',) + tuple(sorted(set(re.findall(
+    r'^\s+"(hero-[a-z]+-[a-z]+)": \{$',
+    (Path(__file__).resolve().parent / 'author_hero_action.py').read_text(
+        encoding='utf-8'), re.M))))
 
 CLIP_TYPE = 3
 

@@ -55,9 +55,13 @@ from glb_action import Rig, append_action, rotations
 # that produces the same read, hanging at the start and fastest in the last few degrees.
 SNAP = 2.6
 
-# Beat layout, one row per pose:
-#   t, root x/y/z, torso pitch/yaw/roll, head pitch/yaw, leg-left pitch, leg-right
-#   pitch, arm-left pitch/spread, arm-right pitch/spread.
+# Beat layout, one row per pose, in `FIELDS` order.
+#
+# ⚠️ THE LEGS TAKE A ROLL AS WELL AS A PITCH, AND ZACK IS WHY. A pitch alone swings a
+# leg forward and back, which is a run. A skater's push is LATERAL: the leg goes out to
+# the side and the body carves over it, and that is the difference between Bolt Sprint
+# and a sprint. Sean's tables carry zeros in both roll columns and are unchanged by
+# their arrival, which was checked by re-authoring his three clips and diffing the file.
 #
 # ⚠️ SIGNS, MEASURED OFF THE SLIDE RATHER THAN GUESSED. Negative pitch swings a limb
 # FORWARD. An arm hangs at 0 after the T-pose drop, points straight forward at -90,
@@ -65,7 +69,7 @@ SNAP = 2.6
 # Head pitch is positive DOWN, so a body folded forward with a negative head is looking
 # where it is going.
 FIELDS = ("t", "contact", "ry", "rz", "tp", "ty", "tr", "hp", "hy",
-          "ll", "lr", "alp", "als", "arp", "ars")
+          "ll", "llr", "lr", "lrr", "alp", "als", "arp", "ars")
 
 # ⚠️⚠️ THIS RIG CANNOT CROUCH, AND EVERY CLIP THAT TRIED TO PUT ITS FEET THROUGH
 # THE ROAD. There are no knees: a leg is one rigid segment from the hip to the sole, so
@@ -95,12 +99,12 @@ HEROES = {
             # he is looking down the lane he is about to set on fire, and a tucked head
             # would read as a stumble rather than as a launch.
             "beats": [
-                (0.00, 1.0, 0.00, 0.00,   4, 0, 0,   2, 0,    0,   0,    0, 0,     0, 0),
-                (0.08, 1.0, 0.00, -0.02, 30, 0, 0, -14, 0,  -24,  16,  -40, 6,   -40, -6),
-                (0.25, 1.0, 0.00, 0.13,  48, 0, 0, -36, 0,  -26,  30,   80, 18,   80, -18),
-                (0.34, 1.0, 0.00, 0.12,  41, 0, 0, -29, 0,  -19,  24,   66, 15,   66, -15),
-                (0.42, 1.0, 0.00, 0.08,  29, 0, 0, -20, 0,  -11,  15,   45, 11,   45, -11),
-                (0.55, 1.0, 0.00, 0.00,   4, 0, 0,   2, 0,    0,   0,    0, 0,     0, 0),
+                (0.00, 1.0, 0.00, 0.00,   4, 0, 0,   2, 0,    0, 0,   0, 0,    0, 0,     0, 0),
+                (0.08, 1.0, 0.00, -0.02, 30, 0, 0, -14, 0,  -24, 0,  16, 0,  -40, 6,   -40, -6),
+                (0.25, 1.0, 0.00, 0.13,  48, 0, 0, -36, 0,  -26, 0,  30, 0,   80, 18,   80, -18),
+                (0.34, 1.0, 0.00, 0.12,  41, 0, 0, -29, 0,  -19, 0,  24, 0,   66, 15,   66, -15),
+                (0.42, 1.0, 0.00, 0.08,  29, 0, 0, -20, 0,  -11, 0,  15, 0,   45, 11,   45, -11),
+                (0.55, 1.0, 0.00, 0.00,   4, 0, 0,   2, 0,    0, 0,   0, 0,    0, 0,     0, 0),
             ],
             # ⚠️ CONTACT 1 THROUGHOUT, EVEN THOUGH THE IMPULSE CARRIES 1.5 UP. The
             # motor owns his real height; this clip owns his shape, and a rush along a
@@ -115,11 +119,11 @@ HEROES = {
             # power whose effect happens later, so the cast has to LOOK finished or the
             # three people deciding whether to cross his lane have nothing to go on.
             "beats": [
-                (0.00, 1.0, 0.00, 0.00,   0, 0, 0,   0, 0,    0,   0,    0, 0,     0, 0),
-                (0.10, 1.0, 0.00, -0.01, -6, 18, -4, 4, 14,  -6,   6,  -18, -20,  48, 28),
-                (0.28, 1.0, 0.00, 0.02,  16, -14, 6, 12, -8,  -9,  10,   40, 22, -92, -14),
-                (0.34, 1.0, 0.00, 0.02,  11, -9, 4,   8, -5,  -6,   7,   32, 18, -78, -11),
-                (0.45, 1.0, 0.00, 0.00,   0, 0, 0,    0, 0,    0,   0,    0, 0,    0, 0),
+                (0.00, 1.0, 0.00, 0.00,   0, 0, 0,   0, 0,    0, 0,   0, 0,    0, 0,     0, 0),
+                (0.10, 1.0, 0.00, -0.01, -6, 18, -4, 4, 14,  -6, 0,   6, 0,  -18, -20,  48, 28),
+                (0.28, 1.0, 0.00, 0.02,  16, -14, 6, 12, -8,  -9, 0,  10, 0,   40, 22, -92, -14),
+                (0.34, 1.0, 0.00, 0.02,  11, -9, 4,   8, -5,  -6, 0,   7, 0,   32, 18, -78, -11),
+                (0.45, 1.0, 0.00, 0.00,   0, 0, 0,    0, 0,    0, 0,   0, 0,    0, 0,     0, 0),
             ],
             "grounded": (0.00, 0.10, 0.28, 0.34, 0.45),
         },
@@ -133,13 +137,13 @@ HEROES = {
             # anticipation is what makes the drop read, and a beat that barely moves is
             # the readable way to spend a tenth of a second not moving.
             "beats": [
-                (0.00, 1.0, 0.00, 0.00,    0, 0, 0,    0, 0,   0,   0,    0, 0,    0, 0),
-                (0.14, 1.0, 0.00, 0.00,   36, 0, 0,   10, 0,  -8,   6,   72, 14,  72, -14),
-                (0.35, 0.0, 0.22, 0.05,  -34, 0, 0,  -46, 0,  28,  24, -158, 10, -158, -10),
-                (0.50, 0.0, 0.18, 0.04,  -24, 0, 0,  -38, 0,  22,  18, -150, 9,  -150, -9),
-                (0.65, 1.0, 0.00, 0.02,   64, 0, 0,   36, 0, -16,  13,  -30, 5,   -30, -5),
-                (0.78, 1.0, 0.00, 0.01,   44, 0, 0,   24, 0, -10,   8,   26, 8,    26, -8),
-                (1.00, 1.0, 0.00, 0.00,    0, 0, 0,    0, 0,   0,   0,    0, 0,    0, 0),
+                (0.00, 1.0, 0.00, 0.00,    0, 0, 0,    0, 0,   0, 0,   0, 0,    0, 0,    0, 0),
+                (0.14, 1.0, 0.00, 0.00,   36, 0, 0,   10, 0,  -8, 0,   6, 0,   72, 14,  72, -14),
+                (0.35, 0.0, 0.22, 0.05,  -34, 0, 0,  -46, 0,  28, 0,  24, 0, -158, 10, -158, -10),
+                (0.50, 0.0, 0.18, 0.04,  -24, 0, 0,  -38, 0,  22, 0,  18, 0, -150, 9,  -150, -9),
+                (0.65, 1.0, 0.00, 0.02,   64, 0, 0,   36, 0, -16, 0,  13, 0,  -30, 5,   -30, -5),
+                (0.78, 1.0, 0.00, 0.01,   44, 0, 0,   24, 0, -10, 0,   8, 0,   26, 8,    26, -8),
+                (1.00, 1.0, 0.00, 0.00,    0, 0, 0,    0, 0,   0, 0,   0, 0,    0, 0,    0, 0),
             ],
             # ⚠️ THE ONLY TWO BEATS IN SEAN'S KIT THAT LEAVE THE GROUND, and they say
             # so with `contact` 0 rather than by hoping a number is big enough. Between
@@ -149,24 +153,152 @@ HEROES = {
             "grounded": (0.00, 0.14, 0.65, 0.78, 1.00),
         },
     },
+    # ⚠️⚠️ ZACK IS BUILT AGAINST SEAN, NOT BESIDE HIM. 🧑, 2026-09-02, looking at the
+    # two kits: *"the kit of zack and sean are the exact fricking same"*. That was about
+    # the ABILITIES and `ZackHeroKit` records the split it caused, but it applies twice
+    # over to the animation, because two heroes who move the same way are one hero with
+    # two colour ramps however different the payloads are.
+    #
+    # **Sean thrusts along ONE axis, symmetric, and stops dead. Zack is BLADED and
+    # STACCATO.** He turns side-on to travel and leads with a shoulder; his halves
+    # oppose each other, torso twisting against the hips and arms counter-swinging; and
+    # his poses arrive in a snap followed by an electrical chatter rather than a settle.
+    # Where Sean's ultimate is symmetric and vertical, because he IS the meteor, Zack's
+    # is asymmetric and DIRECTIONAL, because Thunderstrike is aimed up to 7 m away and
+    # he is pointing at it. Every symmetric pose in Sean's tables has an asymmetric
+    # counterpart here, on purpose.
+    "zack": {
+        "hero-zack-sprint": {
+            # ⚠️⚠️ NO PUNCH, AND THE ABSENCE IS INHERITED FROM `BuildZackSprint`'S OWN
+            # ARGUMENT, WHICH IS RIGHT: *"Bolt Sprint is LOCOMOTION, not a strike: it is
+            # a skating cycle held for the whole dash, and there is no instant at which
+            # anything lands. Snapping a cycle to a stop would read as the animation
+            # breaking."* Two push-glide cycles in 0.60 s against the ability's 2.5 s
+            # `Duration`, so the chain loops it rather than playing it once and stopping.
+            "punch": None,
+            # The carve is the whole silhouette: a deep fold, the torso twisted side-on
+            # to the direction of travel, and the body rolled INTO the turn. The push leg
+            # goes out to the side (roll) and back (pitch); the glide leg stays under
+            # him. Arms counter-swing across the body, which is what a skater does with
+            # them and what a runner does not.
+            "beats": [
+                (0.00, 1.0, 0.00, 0.00,   0, 0, 0,    0, 0,    0, 0,   0, 0,    0, 0,    0, 0),
+                (0.15, 1.0, 0.00, 0.05,  34, -20, -15, -22, 16, 22, -18, -30, 6, -62, -8,  52, -6),
+                (0.30, 1.0, 0.00, 0.08,  37, 20, 15,  -24, -16, -32, 5, 24, 20,  50, 6, -66, 8),
+                (0.45, 1.0, 0.00, 0.05,  33, -16, -12, -20, 13, 19, -15, -27, 5, -55, -7, 46, -5),
+                (0.60, 1.0, 0.00, 0.00,   0, 0, 0,    0, 0,    0, 0,   0, 0,    0, 0,    0, 0),
+            ],
+            "grounded": (0.00, 0.15, 0.30, 0.45, 0.60),
+        },
+        "hero-zack-charge": {
+            # ⚠️⚠️ THIS ONE GAINS A PUNCH THAT THE PROCEDURAL CLIP DOES NOT HAVE, AND THE
+            # REASON IS THE ABILITY RATHER THAN THE ANIMATION. `BuildZackCharge` is a
+            # 0.40 s vibration with no impact, and its header's argument holds for a
+            # buzz. But MAGNET's whole effect is that **the tsinelas arrives in his
+            # hand**, and that is an event the other three players have to be able to
+            # read: it is the difference between "he is doing something" and "he has his
+            # shoe back and is about to throw it". So the buzz is the wind-up and the
+            # CATCH at 0.34 is the impact.
+            "punch": 0.30,
+            # The arm snaps out open toward the shoe, the body braces AWAY from the pull,
+            # the chatter runs while the tsinelas is dragged in, and the hand closes to
+            # the chest. ⚠️ The chatter beats are 0.04 s apart, which is two and a bit
+            # frames, so they read as a buzz rather than as a sine. ⚠️ The clip is 0.40 s,
+            # which is `BuildZackCharge`'s length: the catch was fitted INSIDE it rather
+            # than added to the end, because lengthening a cast to suit an animation is
+            # the retune `ASTRA.md` forbids.
+            #
+            # ⚠️⚠️ THE CATCH HAD TO BE MADE BIGGER THAN THE REACH, AND THE VERIFIER IS
+            # WHAT SAID SO. The first table snapped the arm from rest to -96 degrees in
+            # 0.05 s and then closed it 44 degrees at the catch, so the fastest frame in
+            # the clip was the OPENING and the impact check failed, correctly: whichever
+            # moment is fastest is the one a player reads as the event, whatever the
+            # table calls the punch. The reach is 0.07 s now and the catch sweeps 75
+            # degrees into a dead stop, so the shoe arriving is the loudest thing in it.
+            "beats": [
+                (0.00, 1.0, 0.00, 0.00,   0, 0, 0,    0, 0,    0, 0,   0, 0,   0, 0,     0, 0),
+                (0.07, 1.0, 0.00, -0.02, -12, -22, 6, -6, -18, -8, 0,   9, 0,  34, 26,  -96, -18),
+                (0.11, 1.0, 0.00, -0.02, -9, -18, 2,  -3, -15, -8, 0,   9, 0,  30, 22,  -90, -14),
+                (0.15, 1.0, 0.00, -0.02, -13, -24, 8, -7, -19, -8, 0,   9, 0,  36, 28,  -99, -20),
+                (0.19, 1.0, 0.00, -0.02, -8, -17, 1,  -2, -14, -8, 0,   9, 0,  29, 21,  -88, -13),
+                (0.23, 1.0, 0.00, -0.01, -13, -23, 7, -7, -19, -7, 0,   8, 0,  35, 27,  -97, -19),
+                (0.25, 1.0, 0.00, -0.01, -14, -25, 8, -8, -20, -7, 0,   8, 0,  36, 28,  -95, -20),
+                (0.30, 1.0, 0.00, 0.03,  20, 18, -6,  16, 13,  -12, 0, 13, 0,  48, 31,  -20, -34),
+                (0.35, 1.0, 0.00, 0.01,  13, 11, -3,  10, 8,   -7, 0,   8, 0,  31, 20,  -13, -22),
+                (0.40, 1.0, 0.00, 0.00,   0, 0, 0,     0, 0,    0, 0,   0, 0,   0, 0,     0, 0),
+            ],
+            "grounded": (0.00, 0.07, 0.15, 0.23, 0.30, 0.35, 0.40),
+        },
+        "hero-zack-summon": {
+            # ⚠️ THE PUNCH IS 0.45 AND IT IS THE POINT, NOT THE RAISE. `BuildZackSummon`
+            # says it in one line and it is worth keeping: *"The bolt comes DOWN. The
+            # raise at 0.28 is the call and it stays smooth."*
+            "punch": 0.45,
+            # ⚠️⚠️ ONE ARM, NOT TWO, WHICH IS THE WHOLE SEPARATION FROM SUPERNOVA. The
+            # procedural version throws both arms overhead and slams both down, which is
+            # Sean's ultimate with a different particle system. Thunderstrike is AIMED,
+            # up to `MaxRange` 7 m away, so the body has to end up pointing at somewhere
+            # that is not where it is standing: the right arm calls the sky, the whole
+            # torso untwists through the strike, and the arm finishes level and forward
+            # at the spot. The left arm is a counterweight thrown back, which is what
+            # makes the twist read from any angle.
+            #
+            # ⚠️⚠️ THE HOLD AT 0.36 IS THE ABILITY'S OWN WORD AND IT IS ALSO WHAT MAKES
+            # THE STRIKE THE FASTEST THING IN THE CLIP. The card reads *"Hold to pick a
+            # spot, let go and the sky opens on it"*, and the first table had no hold: it
+            # raised the arm through 220 degrees and then dropped it through 58, so the
+            # verifier reported the fastest frame in the middle of the RAISE and refused
+            # the clip. It was right, and the note it was refusing is `BuildZackSummon`'s
+            # own: *"The bolt comes DOWN. The raise at 0.28 is the call and it stays
+            # smooth."* The raise is longer and shallower now, the hold is nine frames of
+            # almost nothing, and the release sweeps 83 degrees in 0.09 s into a stop.
+            "beats": [
+                (0.00, 1.0, 0.00, 0.00,   0, 0, 0,    0, 0,    0, 0,   0, 0,    0, 0,     0, 0),
+                (0.12, 1.0, 0.00, -0.02, 26, 26, 8,  16, 20,  -7, 0,   8, 0,   44, 10,   20, 10),
+                (0.30, 0.55, 0.09, 0.02, -34, 30, 14, -48, 22, -18, 0, 15, 0,   64, 18, -160, 26),
+                (0.36, 0.80, 0.04, 0.02, -32, 28, 13, -46, 21, -17, 0, 14, 0,   62, 17, -158, 25),
+                (0.45, 1.0, 0.00, 0.05,  40, -26, -12, 26, -20, -24, 0, 20, 0,  74, 20,  -75, -34),
+                (0.55, 1.0, 0.00, 0.04,  30, -18, -8,  18, -14, -17, 0, 14, 0,  56, 15,  -88, -26),
+                (0.62, 1.0, 0.00, 0.03,  34, -22, -10, 22, -17, -20, 0, 17, 0,  64, 17,  -80, -30),
+                (0.75, 1.0, 0.00, 0.00,   0, 0, 0,     0, 0,    0, 0,   0, 0,   0, 0,     0, 0),
+            ],
+            # ⚠️ THE CALL LIFTS HIM ONTO HIS TOES RATHER THAN OFF THE GROUND, so `contact`
+            # is 0.55 at the apex and not 0. He is reaching, not jumping, and a
+            # Thunderstrike that left the road would read as the same leap Supernova
+            # already owns, which is the whole thing these two kits are being kept apart
+            # from.
+            "grounded": (0.00, 0.12, 0.45, 0.55, 0.62, 0.75),
+        },
+    },
 }
 
 
 def sample(beats, punch, t):
-    """The pose at t, with the hang-and-snap ease on the run into the impact."""
+    """The pose at t, with the hang-and-snap ease on the run into the impact.
+
+    ⚠️⚠️ `punch` MAY BE `None`, AND THE ABSENCE IS A DESIGN DECISION RATHER THAN AN
+    OMISSION. `HeroAbilityClips` makes the argument in its own words about two of Zack's
+    three: Bolt Sprint is LOCOMOTION, *"a skating cycle held for the whole dash, and
+    there is no instant at which anything lands. Snapping a cycle to a stop would read
+    as the animation breaking."* A clip with no punch is smoothstep throughout, and the
+    verifier drops its impact assertions for exactly that clip rather than being talked
+    out of them globally.
+    """
     for a, b in zip(beats, beats[1:]):
         if t <= b[0] + 1e-8:
             u = max(0.0, min(1.0, (t - a[0]) / (b[0] - a[0])))
-            u = u ** SNAP if abs(b[0] - punch) < 1e-6 else u * u * (3 - 2 * u)
+            snapping = punch is not None and abs(b[0] - punch) < 1e-6
+            u = u ** SNAP if snapping else u * u * (3 - 2 * u)
             return [x + (y - x) * u for x, y in zip(a[1:], b[1:])]
     raise ValueError(t)
 
 
 def angles_from(values):
-    contact, ry, rz, tp, ty, tr, hp, hy, ll, lr, alp, als, arp, ars = values
+    (contact, ry, rz, tp, ty, tr, hp, hy,
+     ll, llr, lr, lrr, alp, als, arp, ars) = values
     return (contact, ry, rz,
             {"root": (0, 0, 0), "torso": (tp, ty, tr), "head": (hp, hy, 0),
-             "leg-left": (ll, 0, 0), "leg-right": (lr, 0, 0),
+             "leg-left": (ll, 0, llr), "leg-right": (lr, 0, lrr),
              "arm-left": (alp, 0, als), "arm-right": (arp, 0, ars)})
 
 
