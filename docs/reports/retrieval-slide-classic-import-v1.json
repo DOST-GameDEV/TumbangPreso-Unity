@@ -1,0 +1,162 @@
+{
+  "scope": "Unity imported clip and serialized body-action resolution, not motion photography",
+  "rosters": [
+    {
+      "roster": "person_aling_nena",
+      "model": "character-female-e",
+      "guid": "fd1a64d4d17b1b44db5250827bd09dd7",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "2e0a4ec96f437b389d3b96b3e47e1c88",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_ate_girlie",
+      "model": "character-female-b",
+      "guid": "36455a6c812628f448e8533f630f047e",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "83cf9b34d028758b44a5991778050e10",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_bayan",
+      "model": "character-male-f",
+      "guid": "0dc875b93a83da942bd17f72970c2968",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "da1d4bb3a62159977ef22cce0a307c89",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_bebang",
+      "model": "character-female-c",
+      "guid": "d8ebae840337ee04ebd8d247b70c9bb2",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "8047646c4b1bb5034bdde26cf0f03a7b",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_inday",
+      "model": "character-female-a",
+      "guid": "e82e0dfc4134bbc4fa42de2624161abc",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "c70e9b9caffd8c685428fc72f909b1b6",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_jun_jun",
+      "model": "character-male-d",
+      "guid": "a7abdfc8d758c634c8518c1af3fef0d7",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "83236ccf45701910f3fa4fe2f6cb40fa",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_kuya_boy",
+      "model": "character-male-b",
+      "guid": "c6d6044d86592bc40b66cd723262f8c9",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "222f3630bfe7eec31d1649d73a610a96",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_lola_pacing",
+      "model": "character-female-d",
+      "guid": "faa815748ddd7ca45a09bf6d4f900d3c",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "d63d4dcd7da1568bf19e0074e7732309",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_mang_kanor",
+      "model": "character-male-e",
+      "guid": "d1c9d88c7d83a6d4e8b29bf82a2514e1",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "38e7e2d5010fc982c497afe8a09ee9f9",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_maring",
+      "model": "character-female-f",
+      "guid": "89405228939d1da40b0bea9315f46507",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "a9eb3cf5697e898c587ce166c764e921",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_tikboy",
+      "model": "character-male-c",
+      "guid": "887d5574b304e864bbc9a89865030825",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "481ae5360acc7539cef3a0604a4cc00e",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_totoy",
+      "model": "character-male-a",
+      "guid": "69e40f83dcada164ebeb7c8bd68397e5",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "071d66477eb8f5a67f66da5487fc4950",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    }
+  ],
+  "count": 12
+}

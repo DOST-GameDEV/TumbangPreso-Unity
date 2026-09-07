@@ -363,13 +363,39 @@ If the visual design requires an engineering hook, document it and hand it back.
 
 - [ ] **A real retrieval-slide clip replacing the reused lunge**
 
-Authoring checkpoint 2026-09-07: `tools/author_retrieval_slide.py` adds the exact
-`slide` action while preserving source mesh, skin, material, texture and existing
-animation data. The first export covers the Classic rigs. Task remains unchecked
-until roster rebuilding, clip resolution and remaining rig coverage are verified.
+Verified partial checkpoint 2026-09-07: the twelve `character-*.glb` Classic rigs
+now carry `slide`, with their rebuilt roster references committed and pushed.
+`tools/author_retrieval_slide.py` preserves source mesh, skin, material, texture,
+all 32 existing clips and their binary payload. It adds 64 samples over 0.95 s.
 The motion uses a split-leg hip skid, right-hand ground sweep, trailing left arm
-and slower braced recovery over 0.95 seconds. No gameplay timing was changed.
-Unity motion photography remains blocked by `docs/TODO.md` section 151.16.
+and slower braced recovery. No gameplay timing or `.cs` was changed.
+
+Verification completed on the Classic rigs:
+* `tools/verify_retrieval_slide.py` independently imported each GLB in Blender
+  and sampled deformed meshes at nine times. All twelve passed floor clearance,
+  body lowering and duration assertions. Representative playback and contact /
+  recovery poses were inspected in Blender. This is not a Unity render.
+* Unity 6000.5.8f1 `RosterBookBuilder.Build` completed with `[RosterBook] OK`:
+  20 people, 6 cans, 10 slippers. Twelve roster entries gained a slide reference.
+* `tools/audit_slide_import.py` followed those serialized references into Unity's
+  actual imported artifacts. All twelve name `slide`, with seven rotation curves,
+  and the existing body action chain chooses that name first. Evidence is in
+  `docs/reports/retrieval-slide-classic-import-v1.json`. No network playback claim.
+
+Remaining, before checking task 3:
+* Apply and verify the common retrieval action on `team-sean`, `team-zack`,
+  `team-dante`, `team-cheska`, `team-nemu`, `team-phaister`, `team-custom` and
+  `team-custom-base`, one rig at a time. None of those files was edited here.
+  Inspect each rig's rest transforms and limb proportions before authoring; the
+  script deliberately refuses a nontranslation rest transform instead of guessing.
+* Rebuild the roster for those exports and audit the new serialized references.
+* Unity motion photography remains blocked by `docs/TODO.md` section 151.16.
+  Use that probe if it has landed; do not claim frame-zero photographs prove motion.
+* Final in-game motion / transition judgement and player build remain outstanding.
+  The separate first-person lunge mapping is task 4 below, owned by engineering.
+
+The session stopped at the user's low-usage checkpoint. Task 3 is intentionally
+unchecked. No hero skill or ultimate task has been started.
 
 Unity clip name:
 
