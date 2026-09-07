@@ -50,6 +50,7 @@ MonoBehaviour:
   - {fileID: -6296422904094572024, guid: a7abdfc8d758c634c8518c1af3fef0d7, type: 3}
   - {fileID: -9152534441998152959, guid: a7abdfc8d758c634c8518c1af3fef0d7, type: 3}
   - {fileID: -4813772699318269175, guid: a7abdfc8d758c634c8518c1af3fef0d7, type: 3}
+  - {fileID: -4776023958905061225, guid: a7abdfc8d758c634c8518c1af3fef0d7, type: 3}
   Palette:
   - {r: 0.992157, g: 0.894118, b: 0.780392, a: 1}
   - {r: 0.380392, g: 0.796078, b: 0.545098, a: 1}
