@@ -251,6 +251,83 @@ Before animating that hero:
 
 Suggested motion identity: fiery, forceful, energetic, confident.
 
+**Authored 2026-09-07. Left unchecked for the same single reason as task 3: nothing in
+the repository can photograph an animation** (`docs/TODO.md` § 151.16). Everything else
+below is done, verified and pushed.
+
+⚠️⚠️ **THEY WERE NOT MISSING, AND THAT IS THE REASON FOR AUTHORING THEM.**
+`Runtime/Visual/HeroAbilityClips.cs` builds all fifteen procedurally and its timing
+section is good work. **But `docs/TODO_Archive.md` § 80.8 records, still open, that it
+fills non-legacy clips with `AnimationClip.SetCurve` at runtime**, which is the same
+editor-versus-player API that made the dance a T-pose in every build: in a player it
+returns a valid clip with ZERO curves, and a valid empty clip is the bind pose. § 80.6
+fixed that for the dance by baking it; the casts were left because baking meant 342
+curve assets across 18 hierarchies. **An authored action needs neither.** It ships as a
+`.glb` sub-asset the roster already serialises, and `CharacterAnimator
+.BuildGeneratedClips` registers a procedural clip only when the name is still free, so
+an authored one wins with no `.cs` change. `docs/TODO.md` § 151.19 is the entry.
+
+**Rigs: `team-sean.glb`, `team-custom.glb` and `team-custom-base.glb`.** A custom
+character borrows a WHOLE hero kit (`docs/VISION.md` § 6, one `HeroKitId` field), so a
+saved character running Sean's kit casts `hero-sean-dash` on a custom rig and would
+otherwise have fallen through the chain to a kick.
+
+**The timings are the procedural ones and were deliberately not redesigned**, because
+they are derived from the abilities: 0.55 s against Flame Rush's 0.6 s `Duration`,
+0.45 s for Ignition Cannon because its effect happens LATER and only the chambering is
+visible, and 1.00 s against Supernova's 0.4 s `UltimateWindup`, 0.55 s `_airTimer` and
+0.85 s `_impactTimeout`. Retuning them would be changing gameplay to suit an animation.
+**What is authored is the pose.**
+
+**The motion language, which is the thing the three share:** he thrusts from the hips
+along ONE axis and stops dead. A coil, one explosive extension, a braced arrest, a
+settle. ⚠️ **His arms rake BACK behind the line of travel rather than reaching along
+it**, which is what makes him read as propelled rather than as swinging. Flame Rush
+sends that forward, Ignition Cannon spends it through one arm with the body counter
+rotating, and Supernova turns it on its end, up and then inverted. With every effect
+hidden: a launch, a round being chambered, and the launch again, bigger, coming down.
+
+⚠️⚠️ **THIS RIG CANNOT CROUCH, AND THAT CHANGED HOW ALL THREE ARE BUILT.** There are
+no knees, so lowering the hips lowers the feet, and the shoe extends FORWARD of the
+ankle, so swinging a leg backward rotates the toe DOWN. The first pass put the trailing
+toe **0.100 below the road** at the sprinter's set and **0.142 under** at the ultimate's
+landing. ⚠️ **The procedural clips carry a smaller version of the same thing**:
+`BuildSeanDash` keys `localPosition.y` to -0.04 with the legs still at rest. So the
+crouch is spent on the SPINE and the root height is SOLVED: a per-beat `contact` term
+places the lowest skinned vertex exactly on the road wherever the body is standing on
+it, and hands back the authored lift only where it is genuinely airborne, which is the
+apex and the hang.
+
+**Verified, nine clips, one Blender re-import each** (`tools/verify_hero_action.py`):
+name, duration, impact, return to rest and floor clearance.
+
+| Clip | Peak speed | After one frame | Silhouette |
+|---|---|---|---|
+| `hero-sean-dash` | **1956 deg/s**, exactly on the 0.25 impact | 5.9 per cent | forward extent 0.20 to 0.50 |
+| `hero-sean-ignite` | **1847 deg/s** on 0.28 | 2.3 per cent | he RISES onto the strike rather than sinking |
+| `hero-sean-supernova` | **3293 deg/s** on 0.65 | 3.0 per cent | height 0.53 to 1.02 against a 0.85 standing height, feet 0.16 clear of the road |
+
+**The ultimate carries the largest peak speed, the largest height range and the largest
+forward extent of the three**, which is this file's own test for it.
+
+⚠️⚠️ **AND THE IMPACT CHECK HAD TO BE REWRITTEN, BECAUSE THE FIRST VERSION ASSERTED
+THE WRONG THING.** It demanded the punch frame be the FURTHEST pose from rest, and
+Supernova failed it correctly: that clip's furthest pose is the apex, both arms 158
+degrees overhead, while the impact is a 30 degree arm and a 64 degree fold. **A strike
+is not the biggest pose. It is the fastest arrival followed by a stop.** The check is
+frame-to-frame speed now.
+
+⚠️ **The diagnosis of that failure found a second measurement bug worth the same
+note.** `Quaternion.rotation_difference().angle` does NOT take the shortest path: it
+returns `2 * acos(w)` over the full circle, so a three degree change across the hang
+read as **357**, and the verifier announced a 21,429 deg/s frame in the quietest part of
+the clip. The exported samples were checked pair by pair and carry no sign flip at all.
+The angle is folded now.
+
+**Still open for Sean:** the motion photograph (§ 151.16), a person feeling the
+transitions in a match, and the first-person `viewmodelAction`s (`thrust-fire`,
+`ignite`, `supernova-slam`), which are engineering's hook and not this rig's.
+
 ### 1B. Zack
 
 - [ ] **ZACK: all three hero casts, then STOP**
@@ -425,10 +502,16 @@ which is the check that the solver is a correction and not a rewrite.
   measured AGAINST"*.
 * Unity 6000.5.8f1 `RosterBookBuilder.Build`: `[RosterBook] OK. 20 people, 6 cans,
   10 slippers.` **All twenty live roster entries carry the slide reference.**
-* `tools/audit_slide_import.py`: **20 of 20**, following each serialized reference into
+* `tools/audit_clip_import.py`: **20 of 20**, following each serialized reference into
   Unity's own imported artifact. Every one names `slide`, carries seven rotation
   curves, and `CharacterAnimator`'s body-action chain still picks that name first.
   Evidence: `docs/reports/retrieval-slide-roster-import-v2.json`. No network claim.
+  ⚠️ **That tool was `audit_slide_import.py` and asked about ONE clip by its
+  hard-coded `fileID`**, so Sean's three casts landed and it had nothing to say about
+  them: `CLAUDE.md` § 4a's *"a checker that carries a list cannot see the thing added
+  after the list"*. It walks the roster's whole `Clips` array now and compares the names
+  it resolves against the animations actually in the `.glb`.
+  `docs/reports/roster-clip-import-v3.json` is the current evidence.
 * ⚠️⚠️ **THAT AUDIT ALSO RAN ON EXACTLY ONE MACHINE UNTIL TODAY.** It shelled out
   to `rg`, which is not a dependency of this repository: the only copy on this profile
   is inside a VS Code extension folder, so it died with a `WinError 2` before reading
@@ -513,6 +596,32 @@ retuning the gameplay.
   first-person hook, verified alongside the body's 0.95-second slide. No movement,
   pickup or cooldown retuning. This requires engineering; no `.cs` was edited.
 
+
+### 5. `PersonSwapProbe` asserts every rig carries the same clip count (engineering)
+
+- [ ] `Assets/TumbangPreso/Editor/PersonSwapProbe.cs` compares
+  `team-custom-base.glb`'s clip count against `character-female-a.glb`'s and reports
+  *"FAIL: the clip set did not survive the rebuild"* when they differ. **They now
+  differ for a correct reason**: clips are authored per character, so that rig holds 36
+  (32 source, `slide`, and Sean's three casts, because a custom character borrows a
+  whole hero kit) against 33. Every further hero session widens the gap.
+  Done means a SUPERSET check, which is what the assertion always meant: the rebuilt
+  rig must not have LOST any of the base rig's clips, and `oldClips.Except(clips)` is
+  the finding. `docs/TODO.md` § 151.20. Not a build gate, and no `.cs` was edited here.
+
+### 6. Sean's three first-person viewmodel actions (engineering)
+
+- [ ] `SeanHeroKit` names `thrust-fire`, `ignite` and `supernova-slam` as
+  `viewmodelAction`s, and `Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.cs` is where
+  those resolve. The body clips authored on 2026-09-07 cannot reach them, exactly as
+  task 4 records for `slide`. Done means the first-person arms match the body's three
+  casts. Same rule as task 4: no movement, cooldown or balance retuning.
+
+### 7. "32 clips" is a stale count in three `.cs` comments (engineering)
+
+- [ ] `ModelImportSetup`, `RosterEntryAsset` and `DanceClip` each state that a rig
+  carries 32 clips. It is 33 on most and 36 on three, and it moves every hero session.
+  The fix is to stop naming a number rather than to update it. `docs/TODO.md` § 151.20.
 
 The recent engineering pass preserved the hooks Astra depends on:
 

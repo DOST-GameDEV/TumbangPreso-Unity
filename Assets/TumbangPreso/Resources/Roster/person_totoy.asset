@@ -40,6 +40,7 @@ MonoBehaviour:
   - {fileID: 2652845254095363116, guid: 69e40f83dcada164ebeb7c8bd68397e5, type: 3}
   - {fileID: -4718476750892910589, guid: 69e40f83dcada164ebeb7c8bd68397e5, type: 3}
   - {fileID: 6316130324300929012, guid: 69e40f83dcada164ebeb7c8bd68397e5, type: 3}
+  - {fileID: -4776023958905061225, guid: 69e40f83dcada164ebeb7c8bd68397e5, type: 3}
   - {fileID: -2344400992752741691, guid: 69e40f83dcada164ebeb7c8bd68397e5, type: 3}
   - {fileID: 6669351404405404641, guid: 69e40f83dcada164ebeb7c8bd68397e5, type: 3}
   - {fileID: -4832708865683171987, guid: 69e40f83dcada164ebeb7c8bd68397e5, type: 3}
@@ -50,7 +51,6 @@ MonoBehaviour:
   - {fileID: -6296422904094572024, guid: 69e40f83dcada164ebeb7c8bd68397e5, type: 3}
   - {fileID: -9152534441998152959, guid: 69e40f83dcada164ebeb7c8bd68397e5, type: 3}
   - {fileID: -4813772699318269175, guid: 69e40f83dcada164ebeb7c8bd68397e5, type: 3}
-  - {fileID: -4776023958905061225, guid: 69e40f83dcada164ebeb7c8bd68397e5, type: 3}
   Palette:
   - {r: 0.992157, g: 0.894118, b: 0.780392, a: 1}
   - {r: 0.184314, g: 0.490196, b: 0.309804, a: 1}
