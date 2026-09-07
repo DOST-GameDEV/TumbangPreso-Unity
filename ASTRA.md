@@ -406,6 +406,16 @@ retuning the gameplay.
 
 ## Current engineering context
 
+### 4. First-person retrieval arm still explicitly selects the lunge (engineering)
+
+- [ ] `Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.cs`, `PlayAction`, maps
+  `slide` directly to `LungeClip`. Adding the body GLB action cannot replace this
+  generated first-person arm motion. The existing camera kick also remains.
+  Done means a dedicated low reaching/recovering arm action on the existing
+  first-person hook, verified alongside the body's 0.95-second slide. No movement,
+  pickup or cooldown retuning. This requires engineering; no `.cs` was edited.
+
+
 The recent engineering pass preserved the hooks Astra depends on:
 
 * `hero-*` action chains
