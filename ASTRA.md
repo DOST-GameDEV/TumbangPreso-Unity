@@ -363,6 +363,14 @@ If the visual design requires an engineering hook, document it and hand it back.
 
 - [ ] **A real retrieval-slide clip replacing the reused lunge**
 
+Authoring checkpoint 2026-09-07: `tools/author_retrieval_slide.py` adds the exact
+`slide` action while preserving source mesh, skin, material, texture and existing
+animation data. The first export covers the Classic rigs. Task remains unchecked
+until roster rebuilding, clip resolution and remaining rig coverage are verified.
+The motion uses a split-leg hip skid, right-hand ground sweep, trailing left arm
+and slower braced recovery over 0.95 seconds. No gameplay timing was changed.
+Unity motion photography remains blocked by `docs/TODO.md` section 151.16.
+
 Unity clip name:
 
 `slide`

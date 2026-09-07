@@ -1376,6 +1376,11 @@ two (`stamina_empty`) is correctly private anyway.
 
 ### 151.16 ⚠️⚠️ OPEN: EVERY CHARACTER PROBE PHOTOGRAPHS FRAME ZERO, SO NOTHING CAN VERIFY AN ANIMATION
 
+2026-09-07: retrieval-slide authoring has begun under `ASTRA.md` task 3. The new
+`slide` is 0.95 seconds, with contact poses at 0.14, 0.25 and 0.342 seconds and
+recovery through 0.95 seconds. These are useful sample times for this outstanding
+probe. Blender pose inspection is not Unity motion photography; this item stays open.
+
 **`ASTRA.md`'s whole queue is animation work and its "How to verify a clip" section pointed at a
 pipeline that cannot verify a clip.** `HeroTurnaroundProbe` and `PersonSwapProbe` both pose the rig
 with `clip.SampleAnimation(model, 0.0f)`, so what comes out is **the first frame and nothing
