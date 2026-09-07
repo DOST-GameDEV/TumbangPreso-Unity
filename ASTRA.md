@@ -833,8 +833,38 @@ retuning the gameplay.
 ### 7. "32 clips" is a stale count in three `.cs` comments (engineering)
 
 - [ ] `ModelImportSetup`, `RosterEntryAsset` and `DanceClip` each state that a rig
-  carries 32 clips. It is 33 on most and 36 on three, and it moves every hero session.
-  The fix is to stop naming a number rather than to update it. `docs/TODO.md` § 151.20.
+  carries 32 clips. It is 33 on most, 36 on the six hero rigs and 51 on the two custom
+  ones, and it moves every time this queue is worked. The fix is to stop naming a number
+  rather than to update it. `docs/TODO.md` § 151.20.
+
+### 8. ⚠️⚠️ SECTION 2 HAS NO ACTION NAME TO ATTACH TO, WHICH BLOCKS ALL SIX OF IT (engineering)
+
+- [ ] **The ultimate comic-book cinematics (§ 2A to § 2F) cannot be delivered under this
+  file's own rules as it stands.** `CharacterAnimator`'s chain table holds exactly 39
+  names: the stock set, `slide`, and the eighteen `hero-*` casts authored on 2026-09-07.
+  **There is no cinematic name.** So a clip authored for one would be a `.glb` sub-asset
+  nothing ever asks for, and the only way to reach it is to add a row to the chain table,
+  which this file forbids in as many words: *"Do not edit the chain table unless
+  engineering explicitly asks you to."*
+
+  ⚠️ **THE REST OF THE PRESENTATION IS ALREADY ENGINEERING'S BY THIS FILE'S OWN TABLE.**
+  § 2 asks for a *"short controlled global cinematic freeze"*, comic-book framing and
+  speed lines. `TumbangPreso.Hitstop` owns the bounded global freeze and § 2 says so;
+  framing is `CameraRig`, whose header records that it is deliberately NOT hitstop; and a
+  graphic treatment is a new VFX system, which the *"What is not yours"* table assigns to
+  engineering by name. **What is left over for Astra is the POSE**, and the pose is the
+  half with no hook.
+
+  **Done means one of two decisions, and it is a decision rather than work:**
+  1. **A named action per hero** (`hero-<name>-intro`, or one shared `ultimate-intro`)
+     added to the chain table, plus whatever plays it during the freeze. Then § 2 becomes
+     six ordinary Astra sessions of exactly the shape § 1 just was.
+  2. **Or the cinematic is a CAMERA and VFX feature over the existing cast clip**, in
+     which case § 2 is not animation work at all and should move to `docs/TODO.md`.
+
+  ⚠️ **Do not answer this by quietly widening § 1's clips.** Each hero's ultimate cast is
+  already the strongest thing in its own kit, measured, and stretching one to double as a
+  cinematic pose would spend the separation the six motion languages were built on.
 
 The recent engineering pass preserved the hooks Astra depends on:
 
