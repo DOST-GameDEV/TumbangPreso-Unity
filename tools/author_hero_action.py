@@ -31,15 +31,23 @@ segment is smoothstep, which already leaves the punch pose from rest. The oversh
 authored as a beat rather than as a tangent, because a pose somebody can read in the
 table is a pose somebody can fix.
 
-SEAN'S MOTION LANGUAGE, WHICH IS THE THING THE THREE HAVE TO SHARE:
-**He thrusts from the hips along ONE axis and stops dead.** A coil, a single explosive
-extension, a braced arrest, a settle. ⚠️ **His arms rake BACK, behind the line of
-travel, rather than reaching along it**, which is the detail that makes him read as
-propelled rather than as swinging, and it is the same shape in all three: Flame Rush
-sends it forward, Ignition Cannon spends it through one arm with the body counter
-rotating, and Supernova turns the whole thing on its end, up and then inverted. Ask the
-question `ASTRA.md` asks: with every effect hidden, the rush is a launch, the cannon is
-a round being chambered, and the ultimate is the launch again, bigger, coming down.
+⚠️⚠️ EACH HERO IS ONE DIRECTION AND NO TWO MAY SHARE IT, WHICH IS THE ONE RULE THIS
+TABLE IS ORGANISED AROUND. `ASTRA.md`: *"Each hero should have a distinct motion
+language"*, and *"if all VFX disappeared, would this still unmistakably be this hero's
+ultimate?"* The per-hero comment below each key says what that hero's direction IS,
+and the numbers it quotes are the verifier's rather than adjectives:
+
+| | The direction | Feet | Impact stops within |
+|---|---|---|---|
+| **Sean** | FORWARD, one axis, symmetric, arms raked back behind the line of travel | Supernova LEAPS, 0.160 clear | 2.3 to 5.9 per cent of peak |
+| **Zack** | SIDEWAYS, bladed, halves opposing, snap then electrical chatter | the call goes onto the TOES, 0.074 | 2.8 to 8.6 per cent |
+| **Dante** | DOWN, wide, planted, heavy, and he never travels | 0.000 in all three clips | 1.4 to 5.7 per cent |
+| **Cheska** | NOWHERE. She stays upright and spends a hand, then HOLDS | a controlled rise, 0.022 | **0.0 to 0.7 per cent** |
+
+⚠️ THE LAST COLUMN IS THE CLEAREST OF THE FOUR AND IT WAS NOT DESIGNED, IT WAS
+MEASURED. Cheska's casts stop harder than anybody's because ice is the element that
+stops, which `BuildCheskaRaise` said first: *"The pillars lock. Ice is the one element
+that STOPS, so it should stop."*
 """
 import argparse
 import json
@@ -345,6 +353,78 @@ HEROES = {
                 (0.85, 1.0, 0.00, 0.00,   0, 0, 0,    0, 0,   0, 0,   0, 0,     0, 0,     0, 0),
             ],
             "grounded": (0.00, 0.22, 0.30, 0.40, 0.52, 0.62, 0.85),
+        },
+    },
+    # ⚠️⚠️ CHESKA IS THE ONE WHO COMMITS NOTHING, WHICH IS THE FOURTH THING A BODY CAN
+    # DO WITH A CAST. The other three all spend their whole mass: Sean forward, Zack
+    # sideways, Dante down. **She stays upright and spends a hand.** Her spine barely
+    # moves, her feet stay under her and turned out, and the power is one forearm
+    # describing an exact shape in a single plane. Torso pitch never passes 22 degrees in
+    # her kit against Dante's 56, and that number is the difference, not a coincidence.
+    #
+    # ⚠️ AND SHE IS THE ONLY ONE WHO HOLDS. Every clip here ends its impact on a HOLD
+    # beat that barely moves before it lowers, because ice is the element that STOPS and
+    # `BuildCheskaRaise` already says so in one line: *"The pillars lock. Ice is the one
+    # element that STOPS, so it should stop."* Sean settles, Zack chatters, Dante takes
+    # his weight back slowly. Cheska arrives, holds, and then puts her arm down.
+    "cheska": {
+        "hero-cheska-frostwave": {
+            "punch": 0.28,
+            # PERMAFROST SHEET. ⚠️ It is aimed and thrown to `MaxRange`, so the sweep has
+            # to finish POINTING somewhere: the hand draws across the chest and then goes
+            # out and down in a flat plane, palm toward the ground it is about to freeze.
+            #
+            # ⚠️⚠️ THE DRAW IS 0.16 AND THE SWEEP IS 0.12, AND THE FIRST TABLE HAD IT THE
+            # OTHER WAY ROUND. With a 0.12 s draw the hand crossed the chest faster than
+            # it left it, so the fastest frame in the clip was the WIND-UP and the
+            # verifier refused it. Same fault as Zack's Magnet, one hero later, and the
+            # same answer: whichever moment is quickest is the one a player reads as the
+            # cast, so the anticipation has to be the slow half by construction.
+            "beats": [
+                (0.00, 1.0, 0.00, 0.00,   0, 0, 0,    0, 0,    0, 0,   0, 0,    0, 0,     0, 0),
+                (0.16, 1.0, 0.00, -0.01,  4, 16, 3,   4, 12,  -5, 3,   4, -3,   20, 14,  -70, -40),
+                (0.28, 1.0, 0.00, 0.02,   6, -14, -4, 2, -12, -9, 5,   7, -5,   28, 20,  -40, 44),
+                (0.38, 1.0, 0.00, 0.02,   5, -13, -3, 2, -11, -8, 4,   6, -4,   26, 18,  -38, 41),
+                (0.50, 1.0, 0.00, 0.00,   0, 0, 0,    0, 0,    0, 0,   0, 0,    0, 0,     0, 0),
+            ],
+            "grounded": (0.00, 0.16, 0.28, 0.38, 0.50),
+        },
+        "hero-cheska-raise": {
+            "punch": 0.30,
+            # ICE BARRICADE. Both palms come up together and lock. ⚠️ The wall stops
+            # bodies AND tsinelas, so the pose that holds is a barrier made with her own
+            # forearms: it is the one gesture in the game that says "nothing comes past
+            # this" without touching anybody.
+            "beats": [
+                (0.00, 1.0, 0.00, 0.00,   0, 0, 0,    0, 0,    0, 0,   0, 0,    0, 0,     0, 0),
+                (0.14, 1.0, 0.00, -0.01, 10, 0, 0,    8, 0,   -4, 2,   3, -2,   30, -6,   30, 6),
+                (0.30, 1.0, 0.00, 0.02,  -8, 0, 0,  -14, 0,   -4, 5,   3, -5,  -95, 8,   -95, -8),
+                (0.40, 1.0, 0.00, 0.02,  -7, 0, 0,  -12, 0,   -4, 5,   3, -5,  -93, 7,   -93, -7),
+                (0.55, 1.0, 0.00, 0.00,   0, 0, 0,    0, 0,    0, 0,   0, 0,    0, 0,     0, 0),
+            ],
+            "grounded": (0.00, 0.14, 0.30, 0.40, 0.55),
+        },
+        "hero-cheska-nova": {
+            "punch": 0.32,
+            # GLACIAL NOVA. Compression, then one flat radial opening. ⚠️⚠️ THE DRAW-IN
+            # IS LONG AND THE OPENING IS SHORT, which is what makes this the biggest
+            # thing in her kit rather than the second biggest: Ice Barricade's forearms
+            # travel 125 degrees in 0.16 s and would otherwise be the fastest moment she
+            # has. The nova opens 0.20 to 0.32, which is twelve hundredths for a wider
+            # sweep, and then holds longer than either skill.
+            #
+            # ⚠️ SHE RISES, SHE DOES NOT LEAP. `contact` 0.70 at the burst lifts her onto
+            # the balls of her feet and no further. Supernova leaves the road by 0.160 and
+            # Dante never leaves it at all; a controlled hero needs a third answer.
+            "beats": [
+                (0.00, 1.0, 0.00, 0.00,   0, 0, 0,    0, 0,    0, 0,   0, 0,    0, 0,     0, 0),
+                (0.20, 1.0, 0.00, -0.02, 14, 0, 0,   12, 0,   -4, -3,  3, 3,   -96, -52, -96, 52),
+                (0.32, 0.70, 0.03, 0.02, -22, 0, 0, -38, 0,   -6, 12,  5, -12,  10, 74,   10, -74),
+                (0.44, 0.85, 0.01, 0.02, -20, 0, 0, -35, 0,   -6, 11,  5, -11,   9, 70,    9, -70),
+                (0.56, 1.0, 0.00, 0.01, -10, 0, 0, -18, 0,    -3, 6,   2, -6,    5, 36,    5, -36),
+                (0.70, 1.0, 0.00, 0.00,   0, 0, 0,    0, 0,    0, 0,   0, 0,    0, 0,     0, 0),
+            ],
+            "grounded": (0.00, 0.20, 0.56, 0.70),
         },
     },
 }
