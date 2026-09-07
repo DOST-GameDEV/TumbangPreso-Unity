@@ -46,8 +46,8 @@ either of those.
 | **P2** | 151.9 | ⚠️ **FOUND AND NOT CHASED: a 90 s taya round credits 133 to 144 seconds of defence ticks**, consistently across all four seats, and the match simulates **766 s** for what should be 4 x 90 s plus buffers. The run holds 82 knockdowns and 144 tags, each a bounded `Hitstop` at a `Time.timeScale` between 0.03 and 0.35, so a round clock and a tick clock disagreeing about scaled time would produce this shape | Log both clocks across one round rather than reasoning about it. ⚠️ **Every EVENT COUNT in the sweep is unaffected** (a tag is a tag whatever the clock says) and nothing about scoring was touched. § 151.9 |
 | **P2** | 151.9 | ⚠️ **FOUND AND NOT CHASED: the taya's LUNGE lands 5 times in 125 attempts, 4 per cent**, while the same match records 144 tags, so `StepPunch` is doing essentially all of the tagging | ⚠️ **This may measure AI aim rather than balance**: `DoHunt`'s own note records the taya firing lunges *"into whatever direction it last walked in"*. Telling the two apart is `AiDiagnosticProbe` at 1x with the decisions written out. **Nothing was retuned.** § 151.9 |
 | **P1** | 151.16 | ⚠️⚠️ **NOTHING IN THE REPOSITORY CAN PHOTOGRAPH AN ANIMATION, AND `ASTRA.md`'s WHOLE QUEUE IS ANIMATION.** `HeroTurnaroundProbe` and `PersonSwapProbe` both pose the rig with `clip.SampleAnimation(model, 0.0f)`: frame zero, nothing else. So `CLAUDE.md` § 6.1's *"show, do not describe"* cannot be obeyed for a clip, and eighteen hero casts would be judged from bind poses | A probe that writes a STRIP of poses sampled across `clip.length` through the existing camera and shader. `HeroTurnaroundProbe` is most of it already; the change is the sample time and composing side by side, which `ModelSheet` does. ⚠️ **It is now AFTER: twenty rigs carry `slide` and nothing has photographed one.** § 151.16 |
-| **P1** | 151.20 | ⚠️⚠️ **CAUSED BY THE ANIMATION PASS AND NOT YET FIXED: `PersonSwapProbe` FAILS ON A RIG THAT IS CORRECT.** It asserts `clips.Count == oldClips.Count` between `team-custom-base` and `character-female-a`, and those are **36** and **33** now, because clips are authored per character. A red probe for a thing that works is § 124.11 | A superset check rather than an equality one, which is what it always meant: `oldClips.Except(clips)` is the finding and extra clips are the point. ⚠️ Not a build gate. ⚠️ The same assumption is the literal 32 in nine places. § 151.20 |
-| **P1** | 151.19 | ⚠️⚠️ **THE EIGHTEEN PROCEDURAL HERO CASTS USE THE PLAYER-ONLY CURVE API THAT MADE THE DANCE A T-POSE.** `docs/TODO_Archive.md` § 80.8, archived while still open. `HeroAbilityClips.BuildAll` fills non-legacy clips with `SetCurve` at runtime, which returns a valid EMPTY clip in a player, and an empty clip is the bind pose. **Nobody has opened a player and cast an ability** | Either diagnose one cast in a built player, or author the remaining fifteen into the rigs, which closes it by construction and is already `ASTRA.md`'s queue. ⚠️ Three are closed that way already (`hero-sean-*`). ⚠️ § 80.8's reason for deferring, 342 baked curve assets, does not apply to an authored action. § 151.19 |
+| **P1** | 151.20 | ⚠️⚠️ **CAUSED BY THE ANIMATION PASS AND NOT YET FIXED: `PersonSwapProbe` FAILS ON A RIG THAT IS CORRECT.** It asserts `clips.Count == oldClips.Count` between `team-custom-base` and `character-female-a`, and those are **51** and **33** now, because clips are authored per character. A red probe for a thing that works is § 124.11 | A superset check rather than an equality one, which is what it always meant: `oldClips.Except(clips)` is the finding and extra clips are the point. ⚠️ Not a build gate. ⚠️ The same assumption is the literal 32 in nine places. § 151.20 |
+| **P2** | 151.19 | ⚠️ **THE EIGHTEEN PROCEDURAL HERO CASTS USE THE PLAYER-ONLY CURVE API THAT MADE THE DANCE A T-POSE, AND ALL EIGHTEEN ARE AUTHORED NOW, SO THE EXPOSURE IS CLOSED AND THE OBSERVATION IS NOT.** `docs/TODO_Archive.md` § 80.8, archived while still open. `HeroAbilityClips.BuildAll` fills non-legacy clips with `SetCurve` at runtime, which returns a valid EMPTY clip in a player, and an empty clip is the bind pose. **Nobody has opened a player and cast an ability** | Cast one ability in a built player and look at it, which nothing has yet done. ⚠️ The authored clips win the name lookup on every rig the roster loads, so this is now about what `HeroAbilityClips` is still the fallback FOR rather than about the casts. § 151.19 |
 | **P2** | 151.18 | ⚠️ **FOUND AND NOT FIXED: two of the 22 `person_*.asset` files belong to no id in `Roster.People`.** `person_berto.asset` and `person_iggy.asset` match nothing, so `RosterBookBuilder.Fill` never opens them and the build logs `20 people` against 22 files. They still carry a model, a palette and a full entry shape, **so anything enumerating that folder to find out what ships gets 22 and two rigs no player can select**, which is what happened to the retrieval-slide pass | Delete the two, and make `Fill`'s caller assert that every `person_*.asset` on disk has an id, beside the `no model mapped` error already there. ⚠️ The second half is the one that matters: an orphan nothing checks for comes back. § 151.18 also carries a second finding about rig ROOT NODE names that must NOT be fixed |
 | **P2** | 151.15 | ⚠️⚠️ **FOUND AND NOT FIXED, AND IT IS THE HOLE ALL THREE OF THIS PASS'S CUE DEFECTS CAME THROUGH: nothing asks whether a NON-`NetCue` world cue is heard by anybody but the peer that fired it.** `audit_audio_reach.py` asks only about host GATES, `audit_presentation_reach.py` the same, and `audit_cue_relay.py` only walks `NetCue` sites. **An owner-driven `GameServices.Audio.PlayAt` is invisible to all three**, which is how the throw wind-up and the retrieval slide shipped audible to one player each | Classify every positional `GameServices.Audio` site as host-only, owner-driven or every-peer, the way `audit_cue_relay` already classifies `NetCue` ones, with a named allowlist for the cues that are correctly private (your own stamina bar). § 151.15 |
 | **P2** | 151.6 | ⚠️ **FOUND AND NOT FIXED: the hazard placement rule and the gate that checks it disagree by 5.6 m.** `IlalimNgTulayBuilder` states the bound as distance from the can and the maps obey it (the one live hazard is 8.551 m out, outside the confinement box entirely). **`MapGeometryCheck` only refuses one centred inside `LataClearance`, which is 1.4**, so a hazard dropped at 3 m from the can passes every gate in the repository | Re-derive the bound, or give hazards their own constant. ⚠️ **Do not simply raise `LataClearance`**: the same check measures every non-hazard prop against it and 7.0 would start refusing the street. § 151.6 |
@@ -1429,8 +1429,9 @@ if (clips.Count != oldClips.Count)
     report.AppendLine("FAIL: the clip set did not survive the rebuild.");
 ```
 
-`team-custom-base` holds **36** now (32 source, `slide`, and Sean's three casts, because
-a custom character borrows a whole hero kit) and `character-female-a` holds **33**. So
+`team-custom-base` holds **51** now (32 source, `slide`, and all eighteen hero casts,
+because a custom character borrows a whole hero kit) and `character-female-a` holds
+**33**. So
 that probe reports the clip set as not having survived a rebuild that went perfectly.
 
 ⚠️ **THAT IS EXACTLY § 124.11'S FAULT AND IT IS WORTH THE SAME URGENCY.** *"A green
@@ -1484,22 +1485,29 @@ into this fix because baking all 18 casts across 18 model-specific paths adds 34
 curve assets."* **An action authored into the `.glb` needs no baking at all.** It ships
 as a sub-asset, `RosterEntryAsset.Clips` already serialises it, and
 `BuildGeneratedClips` registers a procedural clip only `if (!_clips.ContainsKey(kvp.Key))`,
-so the authored one wins on name with no code change. **Three of the eighteen slots are
-already closed that way**: `hero-sean-dash`, `hero-sean-ignite` and
-`hero-sean-supernova` are real actions on `team-sean.glb`, `team-custom.glb` and
-`team-custom-base.glb` as of 2026-09-07 (`ASTRA.md` task 1A).
+so the authored one wins on name with no code change. **All eighteen slots are closed that way as of
+2026-09-07**, `ASTRA.md` § 1A to § 1F: each hero's three actions on that hero's own rig,
+and all eighteen on `team-custom.glb` and `team-custom-base.glb`.
 
-⚠️ **FIFTEEN REMAIN, AND THEY ARE ALREADY QUEUED AS ANIMATION WORK** in `ASTRA.md`
-§ 1B to § 1F, one hero per session. So this entry is not asking for a second effort; it
-is recording **why that queue is a correctness fix and not only an art pass**, so nobody
-closes it as cosmetic or reintroduces the procedural path as a shortcut.
+⚠️⚠️ **ALL EIGHTEEN ARE AUTHORED AS OF 2026-09-07 AND THE STRUCTURAL EXPOSURE IS
+THEREFORE CLOSED, WHICH IS NOT THE SAME AS THE ENTRY BEING CLOSED.** Every hero rig
+carries its own three actions and both custom rigs carry all eighteen, because a custom
+character borrows a whole hero kit. `docs/reports/roster-clip-import-v5.json` follows
+every serialised reference into Unity's own imported artifacts: 20 of 20 characters,
+0 unresolved. **On any rig the roster loads, `BuildGeneratedClips` now finds the name
+already taken and never registers the procedural clip at all**, so whether `SetCurve`
+works in a player has stopped mattering for the hero casts.
 
-**Done looks like** either of these, and the first is cheap:
+**What is left is the OBSERVATION, and it is still worth buying**, because everything
+above is an argument about which clip wins a name lookup rather than a report from a
+built player:
 
-1. **Diagnose one cast in a built player**, which is what § 80.8 asked for and what
-   nothing has done. If the procedural clips are in fact empty in a build, say so here
-   with the observation, because that turns fifteen art tasks into fifteen P1s.
-2. **The remaining fifteen authored into the rigs**, which closes it by construction.
+1. **Cast one ability in a built player and look at it.** That is what § 80.8 asked for
+   and what nothing has done. ⚠️ **If the procedural clips do turn out to be empty in a
+   build, that is a finding about the OTHER things `HeroAbilityClips` is the fallback
+   for** (a rig with no authored action, a test fixture, a probe), not about the casts.
+2. **Do not delete `HeroAbilityClips.cs` before that observation exists**, and see the
+   warning below.
 
 ⚠️ **DO NOT DELETE `HeroAbilityClips.cs` ON THE STRENGTH OF THIS.** It is the fallback
 for any rig that has no authored action, its timing section is the source of the impact

@@ -416,6 +416,44 @@ here.
 
 Suggested motion identity: heavy, grounded, violent, powerful.
 
+**Authored 2026-09-07 on `team-dante.glb` and both custom rigs. Unchecked for the one
+reason every task here is unchecked** (`docs/TODO.md` § 151.16).
+
+⚠️⚠️ **DANTE IS THE THIRD DIRECTION AND THAT IS THE WHOLE BRIEF.** Sean's power goes
+FORWARD. Zack's goes SIDEWAYS. **Dante's goes DOWN, into the floor, and he never travels
+at all.** He plants, widens, and drives mass through his own centre. **That claim is
+measured**: `contact` is 1 in all three of his clips and the verifier reports his feet
+**0.000** clear of the road in every one, against Supernova's 0.160 leap and
+Thunderstrike's 0.074 rise onto the toes. He is the only hero in the cast with no lift
+anywhere.
+
+⚠️ **THE STANCE IS THE SIGNATURE AND THE LEG ROLL IS WHAT DRAWS IT.** Every cast
+splays both legs outward into a braced base no other hero uses. His arms move TOGETHER,
+low and wide, and never take the graceful overhead arc Sean and Zack both own: they come
+up short of vertical and hammer down. His head stays low and forward like a bull rather
+than being thrown back. His recoveries are long because he is heavy, which is most of
+why his are the longest clips in the game.
+
+⚠️ **HIS TWO SKILLS ARE BOTH A PLANT AND A DROP, SO ONE OF THEM HAD TO BE A WIDENING**
+or he has one skill twice. The stomp goes down and the carapace goes OUT.
+
+| Clip | Impact | Peak speed | Note |
+|---|---|---|---|
+| `hero-dante-stomp` | 0.30 | 1546 deg/s, 5.7 per cent after | the knee comes up and everything goes down at once |
+| `hero-dante-roar` | 0.32 | 1114 deg/s, 2.5 per cent after | **the smallest pose in the game at 40 degrees**, which is right for a buff whose read is that he is bigger afterwards rather than that he hit something |
+| `hero-dante-fissure` | 0.40 | **4128 deg/s**, 1.4 per cent after | widest pose 164 degrees, height 0.55 to 0.86 against a 0.79 standing height |
+
+⚠️ **THE HOLD AT 0.30 IS WHY THE ULTIMATE IS THE BIGGEST THING IN HIS KIT RATHER THAN
+THE SECOND BIGGEST.** Without it the slam had 0.18 s to travel and read slower than the
+stomp's knee drop, which would have put his ultimate below his first skill on the one
+measurement this project has for force. It is also correct for a titan: the weight hangs
+before it falls. ⚠️ **The slam lands FORWARD of his feet**, because `telegraphRange`
+is 2.2 and the radius 4.5; a slam straight down would tell the other three the wrong
+place to not be standing.
+
+All three tables passed the verifier on the first attempt. Timings are the procedural
+ones: 0.55, 0.65, 0.85.
+
 ### 1D. Cheska
 
 - [ ] **CHESKA: all three hero casts, then STOP**
@@ -424,6 +462,40 @@ Suggested motion identity: heavy, grounded, violent, powerful.
   - `hero-cheska-nova`
 
 Suggested motion identity: controlled, elegant, sharp, cold, deliberate.
+
+**Authored 2026-09-07 on `team-cheska.glb` and both custom rigs. Unchecked for the same
+one reason** (`docs/TODO.md` § 151.16).
+
+⚠️⚠️ **SHE IS THE ONE WHO COMMITS NOTHING, WHICH IS THE FOURTH THING A BODY CAN DO
+WITH A CAST.** The other three all spend their whole mass. **She stays upright and spends
+a hand.** Her torso pitch never passes 22 degrees against Dante's 56, her feet stay under
+her and turned out rather than splayed, and the power is one forearm describing an exact
+shape in a single plane.
+
+⚠️⚠️ **AND SHE IS THE ONLY ONE WHO HOLDS.** Every clip ends its impact on a hold beat
+that barely moves before it lowers, because ice is the element that STOPS and
+`BuildCheskaRaise` said it first: *"The pillars lock. Ice is the one element that STOPS,
+so it should stop."* **That turned out to be the clearest of the six separations and it
+was measured rather than designed.** Speed one frame after the impact, as a fraction of
+the peak: **Cheska 0.0 to 0.7 per cent**, Dante 1.4 to 5.7, Sean 2.3 to 5.9, Zack 2.8 to
+8.6.
+
+| Clip | Impact | Peak speed | Note |
+|---|---|---|---|
+| `hero-cheska-frostwave` | 0.28 | 1385 deg/s, **0.0 per cent after** | a dead stop, aimed and finishing pointed at the sheet |
+| `hero-cheska-raise` | 0.30 | 2144 deg/s, 0.7 per cent after | the widest pose in her kit at 103 degrees |
+| `hero-cheska-nova` | 0.32 | **3053 deg/s**, 0.4 per cent after | a 0.022 rise onto the balls of her feet |
+
+⚠️ **HER ULTIMATE IS THE FASTEST AND LONGEST-HELD THING IN HER KIT BUT NOT THE WIDEST
+POSE**, and that is left as it is rather than tuned away: a wall is made with the
+forearms in front of the body and a nova opens to the sides. **Forcing the pose wider to
+win a number would be fitting the art to the metric.**
+
+⚠️ Permafrost Sheet's first table was refused and the refusal was right, for the third
+time in three heroes and the same reason each time: with a 0.12 s draw the hand crossed
+the chest faster than it left it, so the fastest frame in the clip was the WIND-UP.
+Whichever moment is quickest is the one a player reads as the cast, so the anticipation
+has to be the slow half by construction. Timings: 0.50, 0.55, 0.70.
 
 ### 1E. Nemu
 
@@ -434,6 +506,42 @@ Suggested motion identity: controlled, elegant, sharp, cold, deliberate.
 
 Suggested motion identity: ghostly, floating, unnatural, playful, unsettling.
 
+**Authored 2026-09-07 on `team-nemu.glb` and both custom rigs. Unchecked for the same
+one reason** (`docs/TODO.md` § 151.16).
+
+⚠️⚠️ **SHE IS THE ONE WHO DOES NOT PLANT, AND IT IS THE ONLY THING SHE HAS THAT
+NOBODY ELSE CAN BORROW.** Four heroes stand on the road to cast and Dante's whole
+identity is that he never leaves it. **Hers is that she never touches it**: her feet are
+clear of the road in all three clips, **0.042, 0.037 and 0.094**, and `contact` runs to
+0.05 in the middle of her ultimate. No beat in her kit is a push-off. She rises without
+pressing on anything, which is the one thing a body cannot do.
+
+⚠️ **HER LIMBS ARRIVE BEFORE HER TORSO, WHICH IS EVERYBODY ELSE BACKWARDS.** The other
+five lead with the trunk and let the extremities follow; her arms hit their extreme a
+beat EARLY and the torso catches up, which is what makes a body read as being carried
+rather than as moving itself. Her two legs drift the same way rather than opposing,
+which no living stance does.
+
+⚠️ `BuildNemuGhoststep` already made half of this argument and it is kept whole:
+*"Nemu going part-ghost is the single power in the game that should have NO weight ...
+Every other hero gets a frame where the world stops. Hers does not, and that is what
+makes it hers."* **Her ghost step measures 693 deg/s of peak, the slowest cast in the
+game by a factor of two.**
+
+⚠️⚠️ **HER ULTIMATE COLLAPSES INWARD AND EVERY OTHER ULTIMATE STRIKES OUTWARD**,
+which is the clearest single frame of separation in the six kits. Supernova comes down,
+Thunderstrike points, Titan Fissure splits, Glacial Nova opens, Grand Coven falls.
+**Devouring Seance PULLS**: she rises with her arms wide and is then dragged in and
+folded toward the thing she opened. The word in the card is *"consuming"*.
+
+| Clip | Impact | Peak speed | Note |
+|---|---|---|---|
+| `hero-nemu-ghoststep` | **none, by design** | 693 deg/s | the slowest cast in the game |
+| `hero-nemu-project` | 0.26 | 2437 deg/s, 3.3 per cent after | the body looks EMPTIED by it: chest open, head back, one arm flung after the thing that left |
+| `hero-nemu-seance` | 0.38 | **5293 deg/s**, 0.0 per cent after | widest pose 157 degrees, feet 0.094 clear |
+
+All three tables passed the verifier on the first attempt. Timings: 0.50, 0.50, 0.80.
+
 ### 1F. Phaister
 
 - [ ] **PHAISTER: all three hero casts, then STOP**
@@ -442,6 +550,39 @@ Suggested motion identity: ghostly, floating, unnatural, playful, unsettling.
   - `hero-phaister-eclipse`
 
 Suggested motion identity: theatrical, magical, deliberate, witch-like.
+
+**Authored 2026-09-07 on `team-phaister.glb` and both custom rigs. Unchecked for the same
+one reason** (`docs/TODO.md` § 151.16).
+
+⚠️⚠️ **SHE PERFORMS, AND THAT IS THE SIXTH AND LAST DIRECTION.** The other five are
+all doing something TO the court: Sean drives through it, Zack points at it, Dante breaks
+it, Cheska freezes a piece of it, Nemu is taken out of it. **She is doing something IN
+FRONT of it.** Every cast passes through a FLOURISH beat, an off-axis pose neither the
+gather nor the strike would reach on its own, and finishes front-on with the chest open
+and held for the room. It is the difference between casting a spell and presenting one.
+
+⚠️ **THE ORNAMENT IS WHAT SEPARATES HER FROM CHESKA, WHO IS THE OTHER ONE WHO HOLDS.**
+Cheska takes the shortest line between rest and the shape, then stops. Phaister takes the
+long way round on purpose. Same stillness at the end, opposite route to it.
+
+⚠️ **SHADOW BLINK IS HER ONE EXCEPTION AND THE CONTRAST IS THE POINT**: no flourish,
+because a blink has no time to have one. `BuildPhaisterBlink` already drew the
+neighbouring line between her and Nemu, that a ghost step is a state you drift in and a
+blink is instantaneous.
+
+| Clip | Impact | Peak speed | Note |
+|---|---|---|---|
+| `hero-phaister-hex` | 0.34 | 2946 deg/s, 2.4 per cent after | draws the sigil through the flourish, then stamps it forward at the chalk |
+| `hero-phaister-blink` | 0.24 | 2389 deg/s, 2.5 per cent after | collapse inward, thrown open front-on on the far side |
+| `hero-phaister-eclipse` | 0.62 | **5728 deg/s**, 0.7 per cent after | **the widest pose in the game at 179 degrees** |
+
+⚠️ **GRAND COVEN CARRIES THE LONGEST ANTICIPATION IN THE SIX KITS**, which
+`BuildPhaisterEclipse` states as a requirement rather than a flourish: *"§ 4.3 asks for a
+wind-up so the payoff has a moment; this is the longest anticipation of the six kits,
+which is what an arena-wide power should cost to cast."* **Sixteen frames pass between
+the arms reaching the sky and the night coming down.**
+
+All three tables passed the verifier on the first attempt. Timings: 0.55, 0.42, 0.95.
 
 ---
 
@@ -672,20 +813,22 @@ retuning the gameplay.
 - [ ] `Assets/TumbangPreso/Editor/PersonSwapProbe.cs` compares
   `team-custom-base.glb`'s clip count against `character-female-a.glb`'s and reports
   *"FAIL: the clip set did not survive the rebuild"* when they differ. **They now
-  differ for a correct reason**: clips are authored per character, so that rig holds 36
-  (32 source, `slide`, and Sean's three casts, because a custom character borrows a
-  whole hero kit) against 33. Every further hero session widens the gap.
+  differ for a correct reason**: clips are authored per character, so that rig holds 51
+  (32 source, `slide`, and all eighteen hero casts, because a custom character borrows a
+  whole hero kit) against 33.
   Done means a SUPERSET check, which is what the assertion always meant: the rebuilt
   rig must not have LOST any of the base rig's clips, and `oldClips.Except(clips)` is
   the finding. `docs/TODO.md` § 151.20. Not a build gate, and no `.cs` was edited here.
 
-### 6. Sean's three first-person viewmodel actions (engineering)
+### 6. Eighteen first-person viewmodel actions (engineering)
 
-- [ ] `SeanHeroKit` names `thrust-fire`, `ignite` and `supernova-slam` as
-  `viewmodelAction`s, and `Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.cs` is where
-  those resolve. The body clips authored on 2026-09-07 cannot reach them, exactly as
-  task 4 records for `slide`. Done means the first-person arms match the body's three
-  casts. Same rule as task 4: no movement, cooldown or balance retuning.
+- [ ] Every hero ability names a `viewmodelAction`, and
+  `Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.cs` is where those resolve. **The
+  eighteen body clips authored on 2026-09-07 cannot reach any of them**, exactly as
+  task 4 records for `slide`: `thrust-fire`, `ignite`, `supernova-slam`,
+  `sprint-electric`, `overcharge`, `summon-lightning`, `stomp-heavy`, `carapace-guard`,
+  `fissure-slam` and the rest. Done means the first-person arms match the body's casts.
+  Same rule as task 4: no movement, cooldown or balance retuning.
 
 ### 7. "32 clips" is a stale count in three `.cs` comments (engineering)
 
