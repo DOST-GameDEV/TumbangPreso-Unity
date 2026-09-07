@@ -18,7 +18,8 @@ arm is as long as the shoulder is high on twenty of them (ratio 1.008 to 1.023, 
 the fingertips graze the ground with the arm hanging straight down) and 0.712 on
 `team-sean` and `team-iggy`, whose shoulder stands at 0.430 above a 0.306 arm. Those
 two CANNOT touch the floor at any arm angle: they are 0.124 short standing still.
-Applied blind, the shared pose left their hand 0.104 above the ground at contact,
+Applied blind, the shared pose left their hand 0.101 above the ground across the
+whole contact window,
 which is a character miming a pickup rather than making one.
 
 So the reach is SOLVED per rig rather than posed, and `REACH_FRACTION` below is the
@@ -69,6 +70,16 @@ BEATS = [
 # spread from 0.00 to 12.25 per cent because nothing was solving for it. Re-derive it
 # with `tools/inspect_slide_rig.py` over the cast rather than nudging it.
 REACH_FRACTION = 0.0617
+
+# ⚠️⚠️ THE SOLVE IS AGAINST THE WHOLE CONTACT WINDOW AND NOT AGAINST ITS DEEPEST
+# BEAT, WHICH IS THE BUG THAT FOUND THIS LINE. Solving at 0.25 s alone rolled
+# `character-male-b` 23.4 degrees, because that rig's clearance at 0.25 was the
+# cast's worst at 12.25 per cent. Its clearance at 0.14 was already 6.27 per cent,
+# so the same roll drove THAT beat to zero: the hand became the lowest vertex, the
+# pelvis solve lifted the body to stand on it, and the hip stopped skidding a tenth
+# of a second before the pose the solver was looking at. The three beats are one
+# move and the binding one is whichever is lowest.
+CONTACT = (0.14, 0.25, 0.342)
 
 # The correction rides the torso's own pitch curve, so it is full at the deepest
 # contact and exactly zero at 0.95 s where that curve returns to rest. A clip that
@@ -156,6 +167,9 @@ def author(path):
         low = min(y(v) for v in vertices)
         return min(y(v) for v in hand) - low
 
+    def reach(roll):
+        return min(clearance(t, roll) for t in CONTACT)
+
     # ⚠️⚠️ ROLL, NOT PITCH, AND THAT WAS MEASURED BOTH WAYS BEFORE IT WAS CHOSEN.
     # Extra torso PITCH also brings the hand down and folds the whole silhouette with
     # it: on `team-sean` the 20 degrees that reach the ground drop the head from 74 to
@@ -168,11 +182,11 @@ def author(path):
     # hand back UP: 20 degrees more made the gap WORSE, 0.104 to 0.181.
     target = REACH_FRACTION * height
     reach_roll = 0.0
-    if clearance(0.25, 0.0) > target:
+    if reach(0.0) > target:
         lo, hi = 0.0, 40.0
         for _ in range(40):
             mid = (lo + hi) / 2
-            if clearance(0.25, mid) > target:
+            if reach(mid) > target:
                 lo = mid
             else:
                 hi = mid
@@ -222,9 +236,11 @@ def author(path):
             'authored_height':round(height,5),
             'reach_roll_deg':round(reach_roll,3),
             'reach_roll_clamped':reach_clamped,
-            'reach_at_contact':round(clearance(0.25,reach_roll),5),
-            'reach_fraction':round(clearance(0.25,reach_roll)/height,5),
-            'reach_fraction_unsolved':round(clearance(0.25,0.0)/height,5),
+            'reach_at_contact':round(reach(reach_roll),5),
+            'reach_fraction':round(reach(reach_roll)/height,5),
+            'reach_fraction_unsolved':round(reach(0.0)/height,5),
+            'reach_per_beat':{str(t):round(clearance(t,reach_roll)/height,5)
+                              for t in CONTACT},
             'original_clips_preserved':len(before['animations']),
             'original_binary_preserved':True}
 

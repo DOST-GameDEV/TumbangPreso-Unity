@@ -363,39 +363,111 @@ If the visual design requires an engineering hook, document it and hand it back.
 
 - [ ] **A real retrieval-slide clip replacing the reused lunge**
 
-Verified partial checkpoint 2026-09-07: the twelve `character-*.glb` Classic rigs
-now carry `slide`, with their rebuilt roster references committed and pushed.
-`tools/author_retrieval_slide.py` preserves source mesh, skin, material, texture,
-all 32 existing clips and their binary payload. It adds 64 samples over 0.95 s.
-The motion uses a split-leg hip skid, right-hand ground sweep, trailing left arm
-and slower braced recovery. No gameplay timing or `.cs` was changed.
+Verified checkpoint 2026-09-07, second pass: **every rig the game actually ships now
+carries `slide`**, and the reach is solved per rig rather than posed once.
 
-Verification completed on the Classic rigs:
-* `tools/verify_retrieval_slide.py` independently imported each GLB in Blender
-  and sampled deformed meshes at nine times. All twelve passed floor clearance,
-  body lowering and duration assertions. Representative playback and contact /
-  recovery poses were inspected in Blender. This is not a Unity render.
-* Unity 6000.5.8f1 `RosterBookBuilder.Build` completed with `[RosterBook] OK`:
-  20 people, 6 cans, 10 slippers. Twelve roster entries gained a slide reference.
-* `tools/audit_slide_import.py` followed those serialized references into Unity's
-  actual imported artifacts. All twelve name `slide`, with seven rotation curves,
-  and the existing body action chain chooses that name first. Evidence is in
-  `docs/reports/retrieval-slide-classic-import-v1.json`. No network playback claim.
+**Twenty characters, not twenty-two files.** `Assets/TumbangPreso/Resources/Roster/`
+holds 22 `person_*.asset` files and `Roster.People` owns 20 ids, so
+`RosterBookBuilder.Fill` never touches `person_berto.asset` or `person_iggy.asset`
+and the build logs `20 people`. ⚠️ **Those two orphans are what makes the model list
+look longer than it is**: they point at `team-bayan.glb` and `team-iggy.glb`, which no
+shipped character uses. This file's list of eight remaining rigs was correct.
+`team-bayan.glb` and `team-iggy.glb` were authored anyway and are kept that way, at no
+cost: `team-iggy` is the same skeleton as `team-sean` and `team-bayan` the same as
+`team-dante`, so leaving them behind would have left a trap for whoever wires one up.
+`team-inday.glb` is deliberately NOT authored: it is `build_person_voxel.py`'s output
+target and a probe subject, and nothing in the roster loads it.
 
-Remaining, before checking task 3:
-* Apply and verify the common retrieval action on `team-sean`, `team-zack`,
-  `team-dante`, `team-cheska`, `team-nemu`, `team-phaister`, `team-custom` and
-  `team-custom-base`, one rig at a time. None of those files was edited here.
-  Inspect each rig's rest transforms and limb proportions before authoring; the
-  script deliberately refuses a nontranslation rest transform instead of guessing.
-* Rebuild the roster for those exports and audit the new serialized references.
-* Unity motion photography remains blocked by `docs/TODO.md` section 151.16.
-  Use that probe if it has landed; do not claim frame-zero photographs prove motion.
-* Final in-game motion / transition judgement and player build remain outstanding.
-  The separate first-person lunge mapping is task 4 below, owned by engineering.
+### What the inspection found, because it changed the clip
 
-The session stopped at the user's low-usage checkpoint. Task 3 is intentionally
-unchecked. No hero skill or ultimate task has been started.
+`tools/inspect_slide_rig.py` is new and exists for this file's own instruction to
+inspect proportions rather than assume the Classic poses fit. Two rigs do not fit.
+
+⚠️⚠️ **THE JOINT ANGLES ARE NOT THE ANIMATION. THE REACH IS.** Where a hand ends
+up is the angle times the limb length, and this cast does not share limb lengths.
+Right arm length against shoulder height is **1.008 to 1.023 on twenty of the
+twenty-two rigs**, so a hanging arm grazes the ground. It is **0.712 on `team-sean`
+and `team-iggy`**: a 0.306 arm on a 0.430 shoulder, which is 0.124 short of the floor
+standing still. Applied blind, the shared pose left their hand **0.101 above the
+ground across the whole contact window**, and this clip is a reach toward a slipper.
+
+So `author_retrieval_slide.py` now bisects one extra torso roll per rig, on the
+torso's own pitch envelope so it is full at contact and exactly zero at 0.95 s, until
+the hand clears the ground by `REACH_FRACTION` of that rig's own height. **The target
+is 6.17 per cent and it is not zero on purpose**: pelvis height is solved from the
+lowest skinned vertex, so a hand on the floor becomes the contact point and lifts the
+hip off it, which deletes the skid.
+
+| Decision | Why, measured |
+|---|---|
+| **Roll, not pitch** | Extra torso pitch also brings the hand down and folds the whole silhouette with it: the 20 degrees that reach the ground drop `team-sean`'s head from 74 to **61 per cent** of standing height, so the tall character face-plants while the cast skids. Roll drops the reaching shoulder alone, 74.0 to **73.2** for the same result |
+| **Not the arm at all** | The authored -125 degrees is already past the bottom of the arm's arc, so more of it swings the hand back UP. Twenty degrees more made the gap **worse**, 0.104 to 0.181 |
+| **Solved over the contact WINDOW, not its deepest beat** | Solving at 0.25 s alone rolled `character-male-b` 23.4 degrees, and its 0.14 s beat was already at target, so the same roll drove THAT beat to zero: the hand became the lowest vertex and the hip stopped skidding a tenth of a second before the pose the solver was watching. `CONTACT` is all three beats now, and male-b needs **0.317** degrees |
+
+**Only four rigs needed a correction**: `team-sean` and `team-iggy` at 17.832 degrees,
+`character-female-d` at 2.445, `character-female-c` at 2.195, `character-male-b` at
+0.317. **The other eighteen re-exported byte-identical to what shipped on 2026-09-07**,
+which is the check that the solver is a correction and not a rewrite.
+
+### Verification that was actually done
+
+* `tools/verify_retrieval_slide.py`: **22 of 22 pass**, each a separate Blender launch
+  that re-imports the exported GLB through the glTF importer and measures **deformed
+  meshes** at nine times. Floor clearance, body lowering, duration, and now the reach.
+  Body drop **13.28 to 29.19 per cent** of each rig's own standing height, reach
+  **0.00 to 6.17 per cent**. ⚠️ **This is not a Unity render.**
+* ⚠️⚠️ **AND ONE OF ITS BOUNDS WAS WRONG BEFORE IT COULD SAY SO.** The body
+  lowering check read `> 0.1` and refused `team-nemu` at **0.0983** for a perfectly
+  good slide: that rig stands **0.598** against the cast's 1.000, so an absolute bound
+  written from one rig's height refuses a shorter one for being short. Both bounds are
+  fractions of the rig's own standing height now. Same family as `docs/VISION.md` § 2's
+  footprint rule stated in two units, and `CLAUDE.md` § 6.2c's *"what is this size
+  measured AGAINST"*.
+* Unity 6000.5.8f1 `RosterBookBuilder.Build`: `[RosterBook] OK. 20 people, 6 cans,
+  10 slippers.` **All twenty live roster entries carry the slide reference.**
+* `tools/audit_slide_import.py`: **20 of 20**, following each serialized reference into
+  Unity's own imported artifact. Every one names `slide`, carries seven rotation
+  curves, and `CharacterAnimator`'s body-action chain still picks that name first.
+  Evidence: `docs/reports/retrieval-slide-roster-import-v2.json`. No network claim.
+* ⚠️⚠️ **THAT AUDIT ALSO RAN ON EXACTLY ONE MACHINE UNTIL TODAY.** It shelled out
+  to `rg`, which is not a dependency of this repository: the only copy on this profile
+  is inside a VS Code extension folder, so it died with a `WinError 2` before reading
+  an artifact, which reads like a broken import rather than a missing binary. The scan
+  is python and single-pass now.
+* ⚠️⚠️ **AND WHAT IT KEYS ON CHANGED, WHICH IS A FACT ABOUT THE ART.** Two kinds
+  of artifact hold the clip: one carries the source asset path, and one carries **only
+  the curve bindings**, with no path, no guid in any byte order and not even the file
+  name. So the artifact is identified by the hierarchy its curves address, which is the
+  better key anyway, because that hierarchy is the exact thing that has to match the rig
+  at runtime. ⚠️ **The root name has to be READ from each `.glb` rather than assumed
+  from the file name: three team rigs carry another character's name at their root**
+  (`team-dante`'s is `team-bayan`, `team-cheska`'s is `team-inday`, `team-sean`'s is
+  `team-iggy`), left over from the rig each was branched off. Harmless in the game,
+  where every clip in a file addresses that file's own hierarchy. Not harmless to
+  anything matching by name: it attributed `team-dante`'s artifact to `team-bayan` and
+  then reported `team-dante` as having no imported slide at all.
+
+### Remaining, before checking task 3
+
+* ⚠️⚠️ **NOTHING HAS PHOTOGRAPHED THE MOTION.** `docs/TODO.md` § 151.16 is still
+  open and still engineering's: every character probe in the repository samples
+  `clip.SampleAnimation(model, 0.0f)`. Blender deformation sampling is evidence that
+  the clip moves the mesh; it is not a picture of the clip in this game's camera,
+  shader and outline. Do not let the numbers above stand in for one.
+* **Nobody has felt it in a match.** Transitions into and out of `slide`, whether the
+  0.95 s recovery reads as vulnerable, and whether the reach lands near the tsinelas at
+  the moment the pickup fires. No player build was made in this session.
+* **The first-person arm is still the lunge**, which is task 4 below and engineering's.
+  The body clip cannot reach it.
+* ⚠️ `character-female-a` is the one rig whose reach reads **0.000** and whose solve
+  is a no-op, and it is not a good number. It carries **28 vertices weighted to the
+  right arm reaching 0.451 from the shoulder** against the cast's 0.290, so what the
+  measurement calls a hand is an accessory or a sleeve, and that geometry rather than
+  the hip is what touches the floor through its skid. Worth an eye before this rig's
+  slide is called finished; it is not a reason to hold the other twenty-one.
+
+Task 3 stays unchecked for the first three of those. No hero skill or ultimate task
+has been started.
 
 Unity clip name:
 

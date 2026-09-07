@@ -45,7 +45,8 @@ either of those.
 | **ASTRA** | 146.6 | ⚠️⚠️ **THE RETRIEVAL SLIDE'S CLIP, THE HERO CASTS AND THE ULTIMATE CINEMATICS ARE ANIMATION WORK AND ARE NOT THIS QUEUE'S.** They are owned by Astra and queued in [`../ASTRA.md`](../ASTRA.md), one task per session. Same split as § 142 above | Nothing here. ⚠️ **The CODE side of § 146.6 is done**: both call sites ask for `"slide"` and the chain falls through to the lunge clip until a real one lands, so the clip drops in by name with no code change (§ 150.8). ⚠️ The FEEL of the numbers is `Attention.md` § 17.2 |
 | **P2** | 151.9 | ⚠️ **FOUND AND NOT CHASED: a 90 s taya round credits 133 to 144 seconds of defence ticks**, consistently across all four seats, and the match simulates **766 s** for what should be 4 x 90 s plus buffers. The run holds 82 knockdowns and 144 tags, each a bounded `Hitstop` at a `Time.timeScale` between 0.03 and 0.35, so a round clock and a tick clock disagreeing about scaled time would produce this shape | Log both clocks across one round rather than reasoning about it. ⚠️ **Every EVENT COUNT in the sweep is unaffected** (a tag is a tag whatever the clock says) and nothing about scoring was touched. § 151.9 |
 | **P2** | 151.9 | ⚠️ **FOUND AND NOT CHASED: the taya's LUNGE lands 5 times in 125 attempts, 4 per cent**, while the same match records 144 tags, so `StepPunch` is doing essentially all of the tagging | ⚠️ **This may measure AI aim rather than balance**: `DoHunt`'s own note records the taya firing lunges *"into whatever direction it last walked in"*. Telling the two apart is `AiDiagnosticProbe` at 1x with the decisions written out. **Nothing was retuned.** § 151.9 |
-| **P1** | 151.16 | ⚠️⚠️ **NOTHING IN THE REPOSITORY CAN PHOTOGRAPH AN ANIMATION, AND `ASTRA.md`'s WHOLE QUEUE IS ANIMATION.** `HeroTurnaroundProbe` and `PersonSwapProbe` both pose the rig with `clip.SampleAnimation(model, 0.0f)`: frame zero, nothing else. So `CLAUDE.md` § 6.1's *"show, do not describe"* cannot be obeyed for a clip, and eighteen hero casts would be judged from bind poses | A probe that writes a STRIP of poses sampled across `clip.length` through the existing camera and shader. `HeroTurnaroundProbe` is most of it already; the change is the sample time and composing side by side, which `ModelSheet` does. ⚠️ **Before the first clip lands, not after.** § 151.16 |
+| **P1** | 151.16 | ⚠️⚠️ **NOTHING IN THE REPOSITORY CAN PHOTOGRAPH AN ANIMATION, AND `ASTRA.md`'s WHOLE QUEUE IS ANIMATION.** `HeroTurnaroundProbe` and `PersonSwapProbe` both pose the rig with `clip.SampleAnimation(model, 0.0f)`: frame zero, nothing else. So `CLAUDE.md` § 6.1's *"show, do not describe"* cannot be obeyed for a clip, and eighteen hero casts would be judged from bind poses | A probe that writes a STRIP of poses sampled across `clip.length` through the existing camera and shader. `HeroTurnaroundProbe` is most of it already; the change is the sample time and composing side by side, which `ModelSheet` does. ⚠️ **It is now AFTER: twenty rigs carry `slide` and nothing has photographed one.** § 151.16 |
+| **P2** | 151.18 | ⚠️ **FOUND AND NOT FIXED: two of the 22 `person_*.asset` files belong to no id in `Roster.People`.** `person_berto.asset` and `person_iggy.asset` match nothing, so `RosterBookBuilder.Fill` never opens them and the build logs `20 people` against 22 files. They still carry a model, a palette and a full entry shape, **so anything enumerating that folder to find out what ships gets 22 and two rigs no player can select**, which is what happened to the retrieval-slide pass | Delete the two, and make `Fill`'s caller assert that every `person_*.asset` on disk has an id, beside the `no model mapped` error already there. ⚠️ The second half is the one that matters: an orphan nothing checks for comes back. § 151.18 also carries a second finding about rig ROOT NODE names that must NOT be fixed |
 | **P2** | 151.15 | ⚠️⚠️ **FOUND AND NOT FIXED, AND IT IS THE HOLE ALL THREE OF THIS PASS'S CUE DEFECTS CAME THROUGH: nothing asks whether a NON-`NetCue` world cue is heard by anybody but the peer that fired it.** `audit_audio_reach.py` asks only about host GATES, `audit_presentation_reach.py` the same, and `audit_cue_relay.py` only walks `NetCue` sites. **An owner-driven `GameServices.Audio.PlayAt` is invisible to all three**, which is how the throw wind-up and the retrieval slide shipped audible to one player each | Classify every positional `GameServices.Audio` site as host-only, owner-driven or every-peer, the way `audit_cue_relay` already classifies `NetCue` ones, with a named allowlist for the cues that are correctly private (your own stamina bar). § 151.15 |
 | **P2** | 151.6 | ⚠️ **FOUND AND NOT FIXED: the hazard placement rule and the gate that checks it disagree by 5.6 m.** `IlalimNgTulayBuilder` states the bound as distance from the can and the maps obey it (the one live hazard is 8.551 m out, outside the confinement box entirely). **`MapGeometryCheck` only refuses one centred inside `LataClearance`, which is 1.4**, so a hazard dropped at 3 m from the can passes every gate in the repository | Re-derive the bound, or give hazards their own constant. ⚠️ **Do not simply raise `LataClearance`**: the same check measures every non-hazard prop against it and 7.0 would start refusing the street. § 151.6 |
 | **P2** | 127 | The taya ring and attacker disc need their non-colour distinction finished | § 127.3 |
@@ -1376,10 +1377,15 @@ two (`stamina_empty`) is correctly private anyway.
 
 ### 151.16 ⚠️⚠️ OPEN: EVERY CHARACTER PROBE PHOTOGRAPHS FRAME ZERO, SO NOTHING CAN VERIFY AN ANIMATION
 
-2026-09-07: retrieval-slide authoring has begun under `ASTRA.md` task 3. The new
-`slide` is 0.95 seconds, with contact poses at 0.14, 0.25 and 0.342 seconds and
-recovery through 0.95 seconds. These are useful sample times for this outstanding
-probe. Blender pose inspection is not Unity motion photography; this item stays open.
+2026-09-07: retrieval-slide authoring is COMPLETE under `ASTRA.md` task 3 and this
+item is what stops it being ticked. **All twenty shipped rigs carry `slide`**, the
+roster serializes it, and `tools/audit_slide_import.py` follows every reference into
+Unity's own imported artifact. **None of that is a picture of the motion.** The clip is
+0.95 seconds with contact at 0.14, 0.25 and 0.342 seconds and recovery through 0.95;
+those are the sample times this probe wants, and `team-sean` is the rig to shoot first
+because it is the one whose pose is CORRECTED rather than shared (`ASTRA.md` task 3 has
+the arithmetic). Blender deformation sampling proves the mesh moves. It is not this
+game's camera, shader or outline, and it cannot answer whether the slide reads.
 
 **`ASTRA.md`'s whole queue is animation work and its "How to verify a clip" section pointed at a
 pipeline that cannot verify a clip.** `HeroTurnaroundProbe` and `PersonSwapProbe` both pose the rig
@@ -1405,6 +1411,48 @@ gets a worse review.
 
 ⚠️ **AND IT IS WORTH DOING BEFORE THE FIRST CLIP LANDS, NOT AFTER.** The alternative is judging
 eighteen hero casts from still frames and then re-judging them.
+
+### 151.18 ⚠️ OPEN: TWO ROSTER ASSETS ON DISK BELONG TO NOBODY, AND ONE RIG IN THREE IS NAMED AFTER A DIFFERENT CHARACTER
+
+**Both were found while auditing the retrieval slide across the whole cast, and neither
+is animation work.** They are here because `ASTRA.md` hands back anything needing a
+`.cs` edit or a call about shipped data.
+
+**`Assets/TumbangPreso/Resources/Roster/` holds 22 `person_*.asset` files and
+`Roster.People` owns 20 ids.** `person_berto.asset` and `person_iggy.asset` match no
+id: there is no `berto` (the character is `bayan`, display name BERTO, and it already
+has `person_bayan.asset`) and no `iggy` at all. `RosterBookBuilder.Fill` iterates the
+truth list, so it never opens either file, which is why the build logs `[RosterBook] OK.
+20 people` against 22 files on disk and neither stale asset has been refreshed for as
+long as they have existed.
+
+⚠️⚠️ **THE COST IS NOT DISK, IT IS THAT THEY READ AS LIVE CHARACTERS TO EVERYTHING THAT
+IS NOT `RosterBookBuilder`.** They carry a model reference, a palette and a full entry
+shape, so a session enumerating `person_*.asset` to find out what ships gets 22 and two
+extra rigs, `team-bayan.glb` and `team-iggy.glb`, that no player can ever select. **This
+session did exactly that and started authoring ten rigs for a job that needed eight**,
+which cost nothing here because the two extras are duplicate skeletons, and would not
+have been free for anything more expensive than an animation clip.
+
+**Done looks like** either deleting the two assets, or making the builder assert that
+every `person_*.asset` on disk corresponds to an id in `Roster.People`. ⚠️ **The second
+is the better half** and is the same argument `InputSurfaceProbe` makes about
+discovering screens rather than listing them: an orphan that nothing checks for is an
+orphan that comes back. It is one `Debug.LogError` in `Fill`'s caller and it belongs
+beside the `no model mapped` error already there.
+
+⚠️ **AND THE SECOND FINDING IS ABOUT THE ART RATHER THAN THE DATA: three team rigs carry
+another character's name at their root node.** `team-dante.glb`'s root is `team-bayan`,
+`team-cheska.glb`'s is `team-inday` and `team-sean.glb`'s is `team-iggy`, left over from
+whichever rig each was branched off. **In the game this is harmless and must stay that
+way**: every clip in a `.glb` addresses that file's own hierarchy by path, so renaming a
+root would invalidate all 33 clips in the file at once, which is exactly the silent
+failure `PersonSwapProbe.CheckAnimationBinds` was written to catch. **It is not harmless
+to tooling that matches by name.** `tools/audit_slide_import.py` attributed
+`team-dante`'s imported clip to `team-bayan` and then reported `team-dante` as having no
+imported slide at all, which reads as a failed import rather than as a naming collision.
+It reads the root out of each `.glb` and asserts the twenty are distinct now. **Anything
+else keying on a rig's name should do the same, and nothing should rename the roots.**
 
 ### 151.15 ⚠️⚠️ OPEN: NOTHING ASKS WHETHER A NON-`NetCue` WORLD CUE IS HEARD BY ANYBODY ELSE
 

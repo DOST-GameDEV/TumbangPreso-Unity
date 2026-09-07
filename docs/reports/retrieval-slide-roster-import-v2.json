@@ -1,0 +1,296 @@
+{
+  "scope": "Unity imported clip and serialized body-action resolution, not motion photography",
+  "rosters": [
+    {
+      "roster": "person_aling_nena",
+      "model": "character-female-e",
+      "guid": "fd1a64d4d17b1b44db5250827bd09dd7",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "2e0a4ec96f437b389d3b96b3e47e1c88",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_ate_girlie",
+      "model": "character-female-b",
+      "guid": "36455a6c812628f448e8533f630f047e",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "83cf9b34d028758b44a5991778050e10",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_bayan",
+      "model": "character-male-f",
+      "guid": "0dc875b93a83da942bd17f72970c2968",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "da1d4bb3a62159977ef22cce0a307c89",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_bebang",
+      "model": "character-female-c",
+      "guid": "d8ebae840337ee04ebd8d247b70c9bb2",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "21a050c93a771cf4502b01e918e9e89f",
+          "name": "slide",
+          "rotation_curves": 7
+        },
+        {
+          "artifact": "8047646c4b1bb5034bdde26cf0f03a7b",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_cheska",
+      "model": "team-cheska",
+      "guid": "3e63fe1880311ed48a4f884d1b06caf3",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "4521a2386dbdbf7e3939c7e1bb51322e",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_custom",
+      "model": "team-custom",
+      "guid": "7e12dca6d6462d3499df2522cdc7d8fc",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "7946fc949067142df20240642c3cf521",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_custom_base",
+      "model": "team-custom-base",
+      "guid": "95f0936607894920861b73a0588f1cb1",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "c6528bc11476be313568c4a458ca8cd1",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_dante",
+      "model": "team-dante",
+      "guid": "82bee2b8d4d3f2145858341b11f256cd",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "29f0b765baf77932f8dd0ee12b1242ca",
+          "name": "slide",
+          "rotation_curves": 7
+        },
+        {
+          "artifact": "c2b1548b6ceb0675e91de39899e61fff",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_inday",
+      "model": "character-female-a",
+      "guid": "e82e0dfc4134bbc4fa42de2624161abc",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "c70e9b9caffd8c685428fc72f909b1b6",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_jun_jun",
+      "model": "character-male-d",
+      "guid": "a7abdfc8d758c634c8518c1af3fef0d7",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "83236ccf45701910f3fa4fe2f6cb40fa",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_kuya_boy",
+      "model": "character-male-b",
+      "guid": "c6d6044d86592bc40b66cd723262f8c9",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "222f3630bfe7eec31d1649d73a610a96",
+          "name": "slide",
+          "rotation_curves": 7
+        },
+        {
+          "artifact": "35c0891059e8e5a86c2601947d8272ce",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_lola_pacing",
+      "model": "character-female-d",
+      "guid": "faa815748ddd7ca45a09bf6d4f900d3c",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "d63d4dcd7da1568bf19e0074e7732309",
+          "name": "slide",
+          "rotation_curves": 7
+        },
+        {
+          "artifact": "da56e763f6fa98ff635fdbf6db063639",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_mang_kanor",
+      "model": "character-male-e",
+      "guid": "d1c9d88c7d83a6d4e8b29bf82a2514e1",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "38e7e2d5010fc982c497afe8a09ee9f9",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_maring",
+      "model": "character-female-f",
+      "guid": "89405228939d1da40b0bea9315f46507",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "a9eb3cf5697e898c587ce166c764e921",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_nemu",
+      "model": "team-nemu",
+      "guid": "7676dcd54c4ea354cb98cc98cae5ce52",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "5a224af5257b3f237bb0803b63d66b93",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_phaister",
+      "model": "team-phaister",
+      "guid": "125949951d798714b8212b9fe39f1d58",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "78854b8519dad6410a0a8904b4725252",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_sean",
+      "model": "team-sean",
+      "guid": "fb30bc927417e4440980d86112851a72",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "3a61f18c2577a622620bade9344b9886",
+          "name": "slide",
+          "rotation_curves": 7
+        },
+        {
+          "artifact": "c15069210ce445d4755483cf394c31ea",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_tikboy",
+      "model": "character-male-c",
+      "guid": "887d5574b304e864bbc9a89865030825",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "481ae5360acc7539cef3a0604a4cc00e",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_totoy",
+      "model": "character-male-a",
+      "guid": "69e40f83dcada164ebeb7c8bd68397e5",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "071d66477eb8f5a67f66da5487fc4950",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    },
+    {
+      "roster": "person_zack",
+      "model": "team-zack",
+      "guid": "79e2cc658c98e374e9bac5dc9ba57217",
+      "fileID": -4776023958905061225,
+      "imported": [
+        {
+          "artifact": "7d9093e1af21a282eba97fc582773bef",
+          "name": "slide",
+          "rotation_curves": 7
+        }
+      ]
+    }
+  ],
+  "count": 20,
+  "roster_assets_without_a_slide_reference": [
+    "person_berto",
+    "person_iggy"
+  ],
+  "slide_artifacts_no_shipped_rig_claims": []
+}
