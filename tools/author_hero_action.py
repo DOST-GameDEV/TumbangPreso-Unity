@@ -427,6 +427,138 @@ HEROES = {
             "grounded": (0.00, 0.20, 0.56, 0.70),
         },
     },
+    # ⚠️⚠️ NEMU IS THE ONE WHO DOES NOT PLANT, AND IT IS THE ONLY THING SHE HAS THAT
+    # NOBODY ELSE CAN BORROW. Four heroes stand on the road to cast; Dante's whole
+    # identity is that he never leaves it. Hers is that she never touches it. `contact`
+    # runs to 0.05 in the middle of her ultimate and no beat in her kit is a push-off:
+    # she rises without pressing on anything, which is the one thing a body cannot do.
+    #
+    # ⚠️ AND HER LIMBS ARRIVE BEFORE HER TORSO, WHICH IS EVERYBODY ELSE BACKWARDS. Sean,
+    # Zack, Dante and Cheska all lead with the trunk and let the extremities follow; her
+    # arms hit their extreme a beat EARLY and the torso catches up, which is what makes
+    # a body read as being carried rather than as moving itself. The asymmetry is part of
+    # it: her two legs drift the same way rather than opposing, which no living stance
+    # does.
+    #
+    # ⚠️ `BuildNemuGhoststep` ALREADY MADE HALF OF THIS ARGUMENT AND IT IS KEPT WHOLE:
+    # *"Nemu going part-ghost is the single power in the game that should have NO weight:
+    # she is untaggable while it runs, and the whole read is that the body stops being a
+    # body. Every other hero gets a frame where the world stops. Hers does not, and that
+    # is what makes it hers."*
+    "nemu": {
+        "hero-nemu-ghoststep": {
+            "punch": None,
+            "beats": [
+                (0.00, 1.00, 0.00, 0.00,   0, 0, 0,    0, 0,    0, 0,   0, 0,   0, 0,    0, 0),
+                (0.15, 0.30, 0.05, 0.03, -10, 14, -12, -16, 20, -14, 8,  6, 4,  36, 22,  24, -10),
+                (0.30, 0.15, 0.07, 0.05,  -6, -12, 10, -12, -18, -6, -6, 16, -10, 20, 30, 40, -18),
+                (0.42, 0.70, 0.02, 0.02,  -3, -5, 4,   -5, -8,  -2, -2,  6, -4,   8, 14, 16, -8),
+                (0.50, 1.00, 0.00, 0.00,   0, 0, 0,    0, 0,    0, 0,   0, 0,   0, 0,    0, 0),
+            ],
+            "grounded": (0.00, 0.50),
+        },
+        "hero-nemu-project": {
+            # ASTRAL HIJACK. ⚠️ The punch is the moment the spirit LEAVES, so the body has
+            # to look emptied by it: the chest opens, the head goes back, and one arm is
+            # flung out after the thing that left. The card is *"Possess your familiar"*,
+            # and a cast that reached out and grabbed would be describing the opposite.
+            "punch": 0.26,
+            "beats": [
+                (0.00, 1.00, 0.00, 0.00,   0, 0, 0,    0, 0,    0, 0,   0, 0,    0, 0,     0, 0),
+                (0.14, 0.60, 0.03, -0.02, 16, -10, -8, 12, -14, -8, 4,   4, 2,   30, 16,  -56, -30),
+                (0.26, 0.25, 0.06, 0.04, -34, 10, 6,  -42, 12, -20, -6, 14, -8,  58, -20, -104, 26),
+                (0.34, 0.45, 0.04, 0.03, -24, 7, 4,   -30, 8,  -14, -4, 10, -6,  42, -14, -88, 20),
+                (0.50, 1.00, 0.00, 0.00,   0, 0, 0,    0, 0,    0, 0,   0, 0,    0, 0,     0, 0),
+            ],
+            "grounded": (0.00, 0.50),
+        },
+        "hero-nemu-seance": {
+            # DEVOURING SEANCE. ⚠️⚠️ IT COLLAPSES INWARD AND EVERY OTHER ULTIMATE IN THE
+            # GAME STRIKES OUTWARD, which is deliberate and is the clearest single frame
+            # of separation in the six kits. Supernova comes down, Thunderstrike points,
+            # Titan Fissure splits, Glacial Nova opens. Hers PULLS: she rises with her
+            # arms wide, and then the whole body is dragged in and folded toward the
+            # thing she opened. The word in the card is *"consuming"*.
+            "punch": 0.38,
+            "beats": [
+                (0.00, 1.00, 0.00, 0.00,   0, 0, 0,    0, 0,    0, 0,   0, 0,     0, 0,     0, 0),
+                (0.20, 0.10, 0.10, -0.02, -22, -14, -10, -34, 16, -10, 6,  8, -6, -130, 40, -124, -46),
+                (0.30, 0.05, 0.11, -0.01, -20, -12, -9,  -32, 14,  -9, 5,  7, -5, -128, 38, -122, -44),
+                (0.38, 0.15, 0.05, 0.03,  44, -14, 8,   30, -12, -30, -8, -24, 8,  -26, -44, -30, 40),
+                (0.50, 0.30, 0.04, 0.02,  38, -11, 6,   25, -9,  -25, -6, -20, 6,  -22, -36, -26, 33),
+                (0.62, 0.60, 0.02, 0.01,  18, -5, 3,    12, -4,  -12, -3, -10, 3,  -10, -17, -12, 15),
+                (0.80, 1.00, 0.00, 0.00,   0, 0, 0,     0, 0,     0, 0,   0, 0,    0, 0,     0, 0),
+            ],
+            "grounded": (0.00, 0.80),
+        },
+    },
+    # ⚠️⚠️ PHAISTER PERFORMS, AND THAT IS THE SIXTH AND LAST DIRECTION. The other five
+    # are all doing something TO the court: Sean drives through it, Zack points at it,
+    # Dante breaks it, Cheska freezes a piece of it, Nemu is taken out of it. **She is
+    # doing something IN FRONT of it.** Every cast here passes through a FLOURISH beat,
+    # an off-axis pose neither the gather nor the strike would reach on its own, and
+    # every one of them finishes front-on with the chest open and the pose held for the
+    # room. It is the difference between casting a spell and presenting one.
+    #
+    # ⚠️ IT IS THE ORNAMENT THAT SEPARATES HER FROM CHESKA, WHO IS THE OTHER ONE WHO
+    # HOLDS. Cheska is minimal and exact: the shortest line between rest and the shape,
+    # then stop. Phaister takes the long way round on purpose. Same stillness at the end,
+    # opposite route to it, and the flourish beat is where that lives in the table.
+    #
+    # ⚠️ SHADOW BLINK IS HER ONE EXCEPTION AND THE CONTRAST IS THE POINT. It has no
+    # flourish, because a blink has no time to have one: she collapses inward and is
+    # thrown open somewhere else. `BuildPhaisterBlink` already made the neighbouring
+    # argument about her and Nemu: *"Ghost Step is a state you enter and drift in, so it
+    # has no frame where the world stops. A blink is INSTANTANEOUS."*
+    "phaister": {
+        "hero-phaister-hex": {
+            # Draw the sigil, then stamp it into the ground. ⚠️ It is aimed to `MaxRange`,
+            # so the stamp finishes reaching FORWARD at the chalk rather than at her own
+            # feet, the same requirement Titan Fissure has and for the same reason.
+            "punch": 0.34,
+            "beats": [
+                (0.00, 1.0, 0.00, 0.00,   0, 0, 0,    0, 0,    0, 0,   0, 0,    0, 0,     0, 0),
+                (0.12, 1.0, 0.00, -0.01, 10, 18, 4,   8, 14,  -4, 0,   3, 0,   24, 20,  -30, 34),
+                (0.24, 1.0, 0.00, 0.00, -6, -6, 8,  -20, -10, -6, 3,   5, -3,  34, 26, -118, -26),
+                (0.34, 1.0, 0.00, 0.05,  30, 0, 0,   24, 0,  -14, 8,  11, -8,  46, 30,  -52, 40),
+                (0.42, 1.0, 0.00, 0.04,  24, 0, 0,   19, 0,  -11, 6,   9, -6,  37, 24,  -46, 34),
+                (0.55, 1.0, 0.00, 0.00,   0, 0, 0,    0, 0,    0, 0,   0, 0,    0, 0,     0, 0),
+            ],
+            "grounded": (0.00, 0.12, 0.24, 0.34, 0.42, 0.55),
+        },
+        "hero-phaister-blink": {
+            # Collapse inward, then snap out of the far side, thrown open and front-on.
+            "punch": 0.24,
+            "beats": [
+                (0.00, 1.0, 0.00, 0.00,   0, 0, 0,    0, 0,    0, 0,   0, 0,    0, 0,     0, 0),
+                (0.12, 0.90, 0.00, -0.03, 26, 0, 0,  20, 0,   -3, 0,   2, 0,   -70, -50, -70, 50),
+                (0.24, 0.60, 0.03, 0.06, -20, 0, 0, -26, 0,  -10, 12,  8, -12,  30, 52,   30, -52),
+                (0.32, 0.85, 0.01, 0.04, -14, 0, 0, -18, 0,   -7, 8,   6, -8,   22, 44,   22, -44),
+                (0.42, 1.0, 0.00, 0.00,   0, 0, 0,    0, 0,    0, 0,   0, 0,    0, 0,     0, 0),
+            ],
+            "grounded": (0.00, 0.12, 0.32, 0.42),
+        },
+        "hero-phaister-eclipse": {
+            # GRAND COVEN. ⚠️⚠️ THE HOLD IS THE POINT AND IT IS THE LONGEST ANTICIPATION
+            # IN THE SIX KITS, which `BuildPhaisterEclipse` states as a requirement rather
+            # than a flourish: *"`Hero_Strike_Balance.md` § 4.3 asks for a wind-up so the
+            # payoff has a moment; this is the longest anticipation of the six kits, which
+            # is what an arena-wide power should cost to cast."* Sixteen frames pass
+            # between the arms reaching the sky and the night coming down.
+            "punch": 0.62,
+            "beats": [
+                (0.00, 1.0, 0.00, 0.00,   0, 0, 0,    0, 0,    0, 0,   0, 0,     0, 0,     0, 0),
+                (0.20, 1.0, 0.00, -0.02, 20, 0, 0,   16, 0,   -5, 0,   4, 0,    40, -14,  40, 14),
+                (0.36, 1.0, 0.00, -0.01, -10, 0, 0, -20, 0,   -6, 4,   5, -4,  -96, 62,  -96, -62),
+                (0.44, 0.80, 0.03, 0.01, -34, 0, 0, -46, 0,   -8, 6,   6, -6, -166, 18, -166, -18),
+                (0.52, 0.80, 0.03, 0.01, -33, 0, 0, -45, 0,   -8, 6,   6, -6, -164, 17, -164, -17),
+                (0.62, 1.0, 0.00, 0.06,  34, 0, 0,   28, 0,  -16, 16, 13, -16,  -10, 66,  -10, -66),
+                (0.74, 1.0, 0.00, 0.05,  26, 0, 0,   21, 0,  -12, 12, 10, -12,   -6, 58,   -6, -58),
+                (0.95, 1.0, 0.00, 0.00,   0, 0, 0,    0, 0,    0, 0,   0, 0,     0, 0,     0, 0),
+            ],
+            "grounded": (0.00, 0.20, 0.36, 0.62, 0.74, 0.95),
+        },
+    },
 }
 
 
