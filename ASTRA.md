@@ -840,9 +840,13 @@ retuning the gameplay.
 ### 8. ⚠️⚠️ SECTION 2 HAS NO ACTION NAME TO ATTACH TO, WHICH BLOCKS ALL SIX OF IT (engineering)
 
 - [ ] **The ultimate comic-book cinematics (§ 2A to § 2F) cannot be delivered under this
-  file's own rules as it stands.** `CharacterAnimator`'s chain table holds exactly 39
-  names: the stock set, `slide`, and the eighteen `hero-*` casts authored on 2026-09-07.
-  **There is no cinematic name.** So a clip authored for one would be a `.glb` sub-asset
+  file's own rules as it stands.** `CharacterAnimator`'s chain table holds the stock set,
+  `slide`, and the eighteen `hero-*` casts authored on 2026-09-07. **There is no
+  cinematic name in it.** ⚠️ **No count is given here on purpose**, which is `CLAUDE.md`
+  § 4a's rule about a number outliving the list it describes; the first draft of this
+  entry said 39 and the table holds 32, because a `grep` for `{ "` catches bone names as
+  well as action names. **Read `CharacterAnimator`'s table, do not trust a total.** So a
+  clip authored for a cinematic would be a `.glb` sub-asset
   nothing ever asks for, and the only way to reach it is to add a row to the chain table,
   which this file forbids in as many words: *"Do not edit the chain table unless
   engineering explicitly asks you to."*
