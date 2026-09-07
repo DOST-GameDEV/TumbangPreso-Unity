@@ -26,19 +26,15 @@ So the reach is SOLVED per rig rather than posed, and `REACH_FRACTION` below is 
 target. See its comment for why the target is not zero.
 """
 import argparse
-import copy
 import json
 import math
 from pathlib import Path
-import struct
 import sys
 
 import bpy
-from mathutils import Euler, Matrix, Vector, Quaternion
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from glb_mesh_dump import read_glb, read_accessor
-from build_person_voxel import write_glb
+from glb_action import Rig, append_action, rotations as bone_rotations
 
 # Seconds, root yaw/roll, torso pitch/yaw/roll, head pitch, left/right leg
 # pitch, left/right arm pitch/roll. The fast drop precedes the long vulnerable
@@ -102,70 +98,30 @@ def pose(t):
 
 
 def author(path):
-    g, original = read_glb(str(path))
-    assert not any(a.get('name') == 'slide' for a in g['animations']), 'slide already exists; restore the source before reauthoring'
-    before = copy.deepcopy(g)
-    blob = bytearray(original)
-    nodes = g['nodes']
-    ids = {n.get('name'):i for i,n in enumerate(nodes)}
-    assert all(n in ids for n in pose(0))
-    parents = {c:i for i,n in enumerate(nodes) for c in n.get('children',[])}
-    rest = {}
-    def world(i, rotations=None):
-        n = nodes[i]
-        assert 'matrix' not in n and 'rotation' not in n and 'scale' not in n, 'Inspect nontranslation rest rig first'
-        local = Matrix.Translation(Vector(n.get('translation',(0,0,0))))
-        if rotations and n.get('name') in rotations:
-            local = local @ rotations[n['name']].to_matrix().to_4x4()
-        return (world(parents[i],rotations) @ local) if i in parents else local
-    for i in range(len(nodes)):
-        rest[i] = world(i)
-    # Each source's real skinned vertices determine floor contact, so different
-    # limb lengths never require changing the bind pose or burying a foot.
-    vertices = []
-    for n in nodes:
-        if 'skin' not in n:
-            continue
-        joints = g['skins'][n['skin']]['joints']
-        for prim in g['meshes'][n['mesh']]['primitives']:
-            at = prim['attributes']
-            positions = read_accessor(g,original,at['POSITION'])
-            weights = read_accessor(g,original,at['WEIGHTS_0'])
-            indices = read_accessor(g,original,at['JOINTS_0'])
-            for p,ws,js in zip(positions,weights,indices):
-                vertices.append([(joints[j], w, rest[joints[j]].inverted() @ Vector(p))
-                                 for j,w in zip(js,ws) if w > 0])
-    floor = min(sum((rest[j] @ p).y*w for j,w,p in v) for v in vertices)
+    # ⚠️ THE SURGERY IS `tools/glb_action.py`'s NOW, AND WHAT IS LEFT HERE IS THE POSE.
+    # It was one file until the hero casts needed the same buffer append; a second
+    # transcription of it would have been the copy that drifts. `Rig` loads and asserts,
+    # `append_action` writes and asserts, and this function decides where the body goes.
+    rig = Rig(path)
+    assert all(n in rig.ids for n in pose(0))
+
     # ⚠️ THE REACHING HAND IS THE VERTICES THE RIGHT ARM OWNS, found by weight rather
     # than by name: this rig has no hand bone, so the arm is one rigid limb whose far
     # end is the hand by geometry alone.
-    hand = [v for v in vertices
-            if sum(w for j,w,_ in v if nodes[j].get('name')=='arm-right') > 0.5]
+    hand = rig.owned_by('arm-right')
     assert hand, 'no vertices are owned by arm-right; the reach cannot be measured'
-    height = max(sum((rest[j] @ p).y*w for j,w,p in v) for v in vertices) - floor
 
     def rotations(t, roll):
         """The pose at t, with the solved reach roll on the torso's own envelope."""
         angles = dict(pose(t))
         pitch, yaw, tilt = angles['torso']
         angles['torso'] = (pitch, yaw, tilt + roll * pitch / MAX_TORSO_PITCH)
-        out = {n:Euler(tuple(math.radians(v) for v in a),'XYZ').to_quaternion()
-               for n,a in angles.items()}
-        # The source is T-pose, not arms-down. Lower the rigid arms first, then
-        # swing about the shoulder's lateral axis. Reversing this multiplication
-        # leaves the arms spread because pitching a horizontal arm cannot reach.
-        for name,sign in [('arm-left',-1),('arm-right',1)]:
-            pitch,_,spread=angles[name]
-            out[name]=(Quaternion((1,0,0),math.radians(pitch)) @
-                       Quaternion((0,0,1),math.radians(sign*80+spread)))
-        return out
+        return bone_rotations(angles)
 
     def clearance(t, roll):
-        matrices = {j:world(j,rotations(t,roll)) for j in rest}
-        def y(v):
-            return sum((matrices[j] @ p).y*w for j,w,p in v)
-        low = min(y(v) for v in vertices)
-        return min(y(v) for v in hand) - low
+        matrices = rig.posed(rotations(t, roll))
+        low = rig.lowest(matrices)
+        return min(rig.height_of(v, matrices) for v in hand) - low
 
     def reach(roll):
         return min(clearance(t, roll) for t in CONTACT)
@@ -180,7 +136,7 @@ def author(path):
     # ⚠️ And extra ARM pitch is the one that does not work at all. The authored -125
     # degrees is already past the bottom of the arm's arc, so more of it swings the
     # hand back UP: 20 degrees more made the gap WORSE, 0.104 to 0.181.
-    target = REACH_FRACTION * height
+    target = REACH_FRACTION * rig.height
     reach_roll = 0.0
     if reach(0.0) > target:
         lo, hi = 0.0, 40.0
@@ -195,54 +151,28 @@ def author(path):
     # clamped, so the report says so rather than letting a bad pose through quietly.
     reach_clamped = reach_roll >= 39.999
 
-    times = sorted(set([round(i/60,8) for i in range(58)] + [b[0] for b in BEATS]))
-    tracks = {name:[] for name in pose(0)}
-    heights=[]
+    times = sorted(set([round(i/60, 8) for i in range(58)] + [b[0] for b in BEATS]))
+    order = list(pose(0))
+    tracks = {name: [] for name in order}
+    heights = []
+
     for t in times:
         rots = rotations(t, reach_roll)
-        matrices = {j:world(j,rots) for j in rest}
-        low = min(sum((matrices[j] @ p).y*w for j,w,p in v) for v in vertices)
-        heights.append((0.0,floor-low,0.0))
-        for n,q in rots.items():
-            tracks[n].append((q.x,q.y,q.z,q.w))
-    def add(values,kind):
-        blob.extend(b'\0'*((-len(blob))%4))
-        start=len(blob)
-        for value in values:
-            blob.extend(struct.pack('<'+'f'*len(value),*value))
-        view=len(g['bufferViews'])
-        g['bufferViews'].append({'buffer':0,'byteOffset':start,'byteLength':len(blob)-start})
-        idx=len(g['accessors'])
-        acc={'bufferView':view,'componentType':5126,'count':len(values),'type':kind}
-        if kind=='SCALAR':
-            acc.update(min=[values[0][0]],max=[values[-1][0]])
-        g['accessors'].append(acc)
-        return idx
-    clock=add([(t,) for t in times],'SCALAR')
-    clip={'name':'slide','samplers':[],'channels':[]}
-    for name,values,kind,prop in [(n,v,'VEC4','rotation') for n,v in tracks.items()]+[('root',heights,'VEC3','translation')]:
-        output=add(values,kind)
-        clip['channels'].append({'sampler':len(clip['samplers']),'target':{'node':ids[name],'path':prop}})
-        clip['samplers'].append({'input':clock,'output':output,'interpolation':'LINEAR'})
-    g['animations'].append(clip)
-    g['buffers'][0]['byteLength']=len(blob)
-    for key in ('nodes','skins','meshes','materials','textures','images'):
-        assert g.get(key)==before.get(key), key
-    assert g['animations'][:-1]==before['animations']
-    assert blob[:len(original)]==original
-    write_glb(str(path),g,blob)
-    return {'file':path.name,'clip':'slide','duration':times[-1],'samples':len(times),
-            'pelvis_drop':round(-min(v[1] for v in heights),5),
-            'authored_height':round(height,5),
-            'reach_roll_deg':round(reach_roll,3),
-            'reach_roll_clamped':reach_clamped,
-            'reach_at_contact':round(reach(reach_roll),5),
-            'reach_fraction':round(reach(reach_roll)/height,5),
-            'reach_fraction_unsolved':round(reach(0.0)/height,5),
-            'reach_per_beat':{str(t):round(clearance(t,reach_roll)/height,5)
-                              for t in CONTACT},
-            'original_clips_preserved':len(before['animations']),
-            'original_binary_preserved':True}
+        matrices = rig.posed(rots)
+        heights.append((0.0, rig.floor - rig.lowest(matrices), 0.0))
+        for n, q in rots.items():
+            tracks[n].append((q.x, q.y, q.z, q.w))
+
+    report = append_action(rig, 'slide', times, tracks, heights, order=order)
+    report.update(pelvis_drop=round(-min(v[1] for v in heights), 5),
+                  reach_roll_deg=round(reach_roll, 3),
+                  reach_roll_clamped=reach_clamped,
+                  reach_at_contact=round(reach(reach_roll), 5),
+                  reach_fraction=round(reach(reach_roll) / rig.height, 5),
+                  reach_fraction_unsolved=round(reach(0.0) / rig.height, 5),
+                  reach_per_beat={str(t): round(clearance(t, reach_roll) / rig.height, 5)
+                                  for t in CONTACT})
+    return report
 
 
 if __name__=='__main__':
