@@ -6,6 +6,11 @@ The rules of this repository. Read this first, every session.
 [`docs/TODO.md`](docs/TODO.md).** Everything else is reference;
 [`docs/README.md`](docs/README.md) indexes it.
 
+Presentation and polish sessions should also consult
+[`docs/NATIONALS_POLISH.md`](docs/NATIONALS_POLISH.md), the current strategic roadmap
+for game feel, presentation and Nationals polish. The required read order above and
+the existing engineering, animation and human-judgment queues remain unchanged.
+
 Every ⚠️ below replaced something that actually went wrong. None of them are style
 preferences. If one looks removable, read the sentence after it.
 

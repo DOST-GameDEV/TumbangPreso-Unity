@@ -1,5 +1,10 @@
 # INSPIRATION.md: what to steal from games that work, and how it lands here
 
+> **Current-roadmap clarification, 2026-09-08:** this remains research,
+> inspiration, rejected ideas and reference reasoning. Its prompts and combined
+> order with FUTURE.md are historical priorities, not the current implementation
+> order. Consult [NATIONALS_POLISH.md](NATIONALS_POLISH.md) for what matters next.
+
 **What this file is.** A study of the systems that keep people playing other games, each one
 turned into something specific for a four-player Filipino street game with a rotating taya.
 It is the WHY behind [`FUTURE.md`](FUTURE.md), which is the WHAT and the WHEN. **Its ten

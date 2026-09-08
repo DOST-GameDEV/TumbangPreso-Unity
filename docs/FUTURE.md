@@ -1,5 +1,11 @@
 # FUTURE.md: turning Tumbang Preso into a game people come back to
 
+> **Retired as the active implementation roadmap, 2026-09-08.** This systems-era
+> plan remains historical/reference material. Preserve its content and section
+> anchors so existing references stay valid. Its prompts and combined order with
+> INSPIRATION.md are no longer the default next-work order. The current forward
+> roadmap is [docs/NATIONALS_POLISH.md](NATIONALS_POLISH.md).
+
 **What this file is.** An ordered build plan for the live-service and competitive half of the
 game: accounts, a database, profiles, stats, matchmaking, ranked, progression, unlockables,
 customisation, controller, mobile, tournaments. Every phase carries a **PROMPT** block written to
