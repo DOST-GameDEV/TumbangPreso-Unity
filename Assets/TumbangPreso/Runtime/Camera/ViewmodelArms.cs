@@ -214,6 +214,8 @@ namespace TumbangPreso.CameraSystem
         private float _phase;
 
         private bool _carrying;
+        private Quaternion _actionReturnFrom = Quaternion.identity;
+        private float _actionReturnLeft;
         private string _currentHeroId;
         private bool _heroInitialized;
         private bool _built;
@@ -227,6 +229,21 @@ namespace TumbangPreso.CameraSystem
         /// <summary>Show or hide the slipper in the viewmodel hand.</summary>
         public void SetHolding(bool holding)
         {
+            // ⚠️⚠️ A SUCCESSFUL SLIDE CHANGES STATE IN THE MIDDLE OF ITS ARM ACTION. The
+            // pickup sweep can award the tsinelas during the 0.34 s travel, while the authored
+            // body continues into a vulnerable rise for the rest of its 0.95 s. Letting the
+            // slide rotation continue on top of the carry pivot twists the held shoe through
+            // the wrist; clearing the clip with no return blend snaps the hand upright on the
+            // exact frame possession appears. Both contradict the same successful pickup.
+            //
+            // The shoe becomes visible immediately because possession is authoritative and
+            // must not be delayed for presentation. Only the residual local arm rotation is
+            // eased home while the existing pivot interpolation converges on the real carry
+            // pose. A failed slide never enters this branch, so animation alone cannot display
+            // a shoe or imply that the pickup succeeded.
+            if (holding && !_carrying && ReferenceEquals(_clip, SlideClip))
+                BeginActionReturn(SlideCarryBlendSeconds);
+
             _carrying = holding;
             if (_heldSlipper != null) _heldSlipper.gameObject.SetActive(holding);
         }
@@ -564,6 +581,40 @@ namespace TumbangPreso.CameraSystem
             new Key(0.62f, 0.00f,  0.00f, 0.0f),
         };
 
+        /// <summary>
+        /// The attacker's committed retrieval slide, matched to Sean's approved body reference.
+        ///
+        /// ⚠️⚠️ THIS IS NOT THE LUNGE WITH A LARGER ANGLE. The lunge reaches quickly at
+        /// 0.10 s, stays extended while a tag can land, and is home by 0.62 s. The slide drives
+        /// lower, holds its road reach at the body's 0.140 and 0.250 s contacts, begins lifting
+        /// at 0.342 s, then spends the remainder of the body's 0.950 s on recovery. That leaves
+        /// the taya's tag arm visibly distinct and keeps the first-person decision synchronized
+        /// with the separately authored third-person clip without restating a gameplay timer.
+        ///
+        /// These are presentation samples, not pickup windows. Possession is still decided by
+        /// <c>CombatVerbs</c>; <see cref="SetHolding"/> alone changes the visible carry state.
+        /// </summary>
+        private static readonly Key[] SlideClip =
+        {
+            new Key(0.000f, 0.00f,  0.00f,  0.00f),
+            new Key(0.140f, 1.18f, -0.30f, -0.12f),
+            new Key(0.250f, 1.18f, -0.30f, -0.12f),
+            new Key(0.342f, 0.98f, -0.25f, -0.08f),
+            new Key(0.543f, 0.58f, -0.15f, -0.04f),
+            new Key(0.814f, 0.18f, -0.05f,  0.00f),
+            new Key(0.950f, 0.00f,  0.00f,  0.00f),
+        };
+
+        /// <summary>The approved body clip's duration, exposed for focused presentation tests.</summary>
+        public const float SlideSeconds = 0.950f;
+
+        /// <summary>
+        /// Time used to release the reaching wrist into carry after a real pickup. It is shorter
+        /// than the body's rise but long enough to cover multiple 60 Hz frames, so the change is
+        /// visible as a recovery rather than a one-frame correction.
+        /// </summary>
+        public const float SlideCarryBlendSeconds = 0.18f;
+
         /// <summary>The attacker's shove. Pushes OUTWARD as well as forward, where the punch and
         /// the lunge go inward, so it does not read as a weak jab: a shove moves a body sideways
         /// and the arm should say so.</summary>
@@ -880,11 +931,12 @@ namespace TumbangPreso.CameraSystem
                   // BROKEN. `CombatVerbs.ReleaseSlide` calls `ViewmodelKick` on the line below
                   // its `PlayAction`, so the VIEW still moved and only the ARM did not.
                   //
-                  // ⚠️ THE LUNGE'S KEYS, DELIBERATELY, WHICH IS THE VIEWMODEL'S VERSION OF THE
-                  // BODY'S FALLTHROUGH. Both are a body-led dash and `docs/TODO.md` § 146.6 has
-                  // the real clip queued in `ASTRA.md`; when it lands this is one field, not a
-                  // hunt through call sites.
-                  : clip == "slide" ? LungeClip
+                  // ⚠️⚠️ ITS OWN LOW REACH NOW. The body action and this generated arm are
+                  // separate animation systems, so the authored GLB could not replace the
+                  // lunge selected here. `SlideClip` carries the same three contact samples and
+                  // 0.950 s recovery as Sean's approved reference while keeping `LungeClip`
+                  // unchanged for the taya's tag.
+                  : clip == "slide" ? SlideClip
                   : clip == "shove" ? ShoveClip
                   : clip == "slam" ? SlamClip
                   : clip == "cast" || clip == "thrust" || clip == "dash" ? ThrustClip
@@ -909,6 +961,7 @@ namespace TumbangPreso.CameraSystem
                   : null;
 
             _clipTime = 0.0f;
+            _actionReturnLeft = 0.0f;
 
             // ⚠️ THE PER-CLIP SLEEVE IMPULSES WENT WITH THE SOLVER. See the field block at the
             // top of this class: they fed `ViewmodelClothPhysics`, and the recoil they added was
@@ -930,6 +983,16 @@ namespace TumbangPreso.CameraSystem
             {
                 _rightArm.localRotation = Quaternion.Euler(WindupCarry * WindupRad * _charge * Mathf.Rad2Deg,
                                                            0.0f, 0.0f);
+                return;
+            }
+
+            if (_actionReturnLeft > 0.0f)
+            {
+                _actionReturnLeft = Mathf.Max(0.0f, _actionReturnLeft - dt);
+                float t = 1.0f - _actionReturnLeft / SlideCarryBlendSeconds;
+                t = t * t * (3.0f - 2.0f * t);
+                _rightArm.localRotation = Quaternion.Slerp(_actionReturnFrom,
+                                                           Quaternion.identity, t);
                 return;
             }
 
@@ -961,6 +1024,13 @@ namespace TumbangPreso.CameraSystem
                                                            ToUnityLocal(_clip[i].Godot), t);
                 return;
             }
+        }
+
+        private void BeginActionReturn(float seconds)
+        {
+            _actionReturnFrom = _rightArm != null ? _rightArm.localRotation : Quaternion.identity;
+            _actionReturnLeft = Mathf.Max(0.0001f, seconds);
+            _clip = null;
         }
 
         private void Awake() => EnsureBuilt();

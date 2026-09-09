@@ -42,7 +42,7 @@ either of those.
 | **P2** | 149.5 | **Repeated scene lookups in network hot paths.** Seat to `CharacterMotor`, seat to `Slipper`, the current `Lata` | ⚠️ **Measure first**: the exact APIs, the real call frequency, and whether the path is per packet or per frame. If it is negligible, record the number and leave the code alone. § 149.5. ⚠️ The two the row names first are **already caches, not scene searches**; the live surface is the AI and the combat sweep |
 | **P2** | 149.7 | **The test suite's own value.** Source-text assertions that duplicate behavioural coverage, and a protocol floor checked twice | ⚠️ **For every test removed, name the stronger test that now owns that invariant.** Never delete a failing one to green the suite. § 149.7 |
 | **P2** | 147.3 | **The game records its own good moments and nothing draws them.** Markers exist, are deterministic, are deduplicated and name a replay window | One reader. § 147.3 lists the three cheapest in order, and `CLAUDE.md` § 6.2's four questions come first |
-| **ASTRA** | 146.6 | ⚠️⚠️ **THE RETRIEVAL SLIDE'S CLIP, THE HERO CASTS AND THE ULTIMATE CINEMATICS ARE ANIMATION WORK AND ARE NOT THIS QUEUE'S.** They are owned by Astra and queued in [`../ASTRA.md`](../ASTRA.md), one task per session. Same split as § 142 above | Nothing here. ⚠️ **The CODE side of § 146.6 is done**: both call sites ask for `"slide"` and the chain falls through to the lunge clip until a real one lands, so the clip drops in by name with no code change (§ 150.8). ⚠️ The FEEL of the numbers is `Attention.md` § 17.2 |
+| **ASTRA** | 146.6 | ⚠️⚠️ **THE RETRIEVAL SLIDE'S BODY CLIP, THE HERO CASTS AND THE ULTIMATE CINEMATICS ARE ANIMATION WORK AND ARE NOT THIS QUEUE'S.** They are owned by Astra and queued in [`../ASTRA.md`](../ASTRA.md), one task per session. Same split as § 142 above | Nothing here. ⚠️ **The generated first-person arm is closed in § 151.23 and ASTRA task 4**: it now has its own low reach, failed recovery and successful transition into actual carry, with the lunge unchanged. Task 3 remains open for the body clip's full-speed match review. ⚠️ The FEEL of the numbers is `Attention.md` § 17.2 |
 | **P2** | 151.9 | ⚠️ **FOUND AND NOT CHASED: a 90 s taya round credits 133 to 144 seconds of defence ticks**, consistently across all four seats, and the match simulates **766 s** for what should be 4 x 90 s plus buffers. The run holds 82 knockdowns and 144 tags, each a bounded `Hitstop` at a `Time.timeScale` between 0.03 and 0.35, so a round clock and a tick clock disagreeing about scaled time would produce this shape | Log both clocks across one round rather than reasoning about it. ⚠️ **Every EVENT COUNT in the sweep is unaffected** (a tag is a tag whatever the clock says) and nothing about scoring was touched. § 151.9 |
 | **P2** | 151.9 | ⚠️ **FOUND AND NOT CHASED: the taya's LUNGE lands 5 times in 125 attempts, 4 per cent**, while the same match records 144 tags, so `StepPunch` is doing essentially all of the tagging | ⚠️ **This may measure AI aim rather than balance**: `DoHunt`'s own note records the taya firing lunges *"into whatever direction it last walked in"*. Telling the two apart is `AiDiagnosticProbe` at 1x with the decisions written out. **Nothing was retuned.** § 151.9 |
 | **P2** | 151.21 | ⚠️⚠️ **`PersonSwapProbe` STILL READS `RESULT: FAIL`, AND THE THREE REMAINING FAILS ARE THE SUBJECT RIG BEING BALD AND FACELESS ON PURPOSE.** § 151.20’s clip-count fault is closed; what is left is *"nothing uses slot 8. The face is drawn in it"*, *"could not find face ink"* and *"no slot-2 vertices"* against `team-custom-base.glb`, which § 112 built that way. § 124.11 on the probe that owns `CheckAnimationBinds` | The checks ask the rig they are pointed at: either the face and hair assertions move behind a property the naked base sets, or the probe gains a second subject that has both. ⚠️ **Do not delete them**; § 112.12 is what that family of check catches. Not a build gate. § 151.21 |
@@ -61,6 +61,13 @@ behind § 143.9, and the list of real pads behind § 138 are all in
 which is the whole reason the split exists.
 
 ✅ **Closed by the 2026-09-09 animation-review pass: § 151.16 and § 151.20.** Together they were the reason an authored clip could not be approved: nothing here could photograph motion, and the one probe that owns `CheckAnimationBinds` went red on a rig that was correct. `ClipMotionStrip` is the strip and `PersonSwapProbe.MissingBaseClips` is the superset rule, with `AnimationReviewTests` asserting both. ⚠️⚠️ **NEITHER CLOSES AN ANIMATION.** Sean's subsequent isolated strip review keeps the clip unchanged, recorded in `ASTRA.md` task 3 and archived section 151.22. Full-speed match transitions, pickup alignment and human feel remain open; the first-person arm is task 4.
+
+✅ **Closed by the 2026-09-09 first-person slide pass: § 151.23 and ASTRA task 4.**
+`ViewmodelArms` now owns a 0.950 s low reach and recovery distinct from the lunge,
+and an authoritative pickup blends that reach into the existing carry pose without
+letting animation invent possession. Versioned action frames and focused successful
+and failed tests are archived with the section. Human feel remains `Attention.md`
+section 17.2, and the body clip's broader live-match review remains ASTRA task 3.
 
 ✅ **Closed by the 2026-09-04 hardening pass and no longer listed here: § 143.1, § 143.2, § 143.3, § 143.4, § 143.5, § 143.6, § 143.7, § 143.8, § 143.10, § 143.11, § 143.12, § 143.13, § 143.14, § 143.16, § 143.18.** Each one keeps its own subsection under § 143 with the measurement that closed it. **A done row is a row every future session reads and skips**, which is how an execution index turns back into the 22,930-line file this queue exists to replace.
 
@@ -2497,8 +2504,11 @@ a worse retrieval than walking, and the probe would report the feature making th
 
 ### 146.6 ⚠️ OPEN: THE ART, AND THE NUMBERS AFTER A HUMAN HAS FELT THEM
 
-- **It plays the lunge clip.** Both moves are a body-led dash and the rig has one; a slide of its
-  own is art work rather than code work. A shared clip that reads correctly beats a wrong one.
+- **The body and first-person arm have dedicated slide motion now.** All twenty shipped body
+  entries resolve their authored `slide`, and section 151.23 closes the separate generated arm
+  with a low reach, failed recovery and successful transition into carry. ⚠️ **What remains
+  is full-speed match review**, including the remote body transition and pickup alignment, not
+  another fallback replacement. `ASTRA.md` task 3 keeps that boundary.
 - ⚠️⚠️ **THE FEEL IS `Attention.md`'S AND NOT THIS QUEUE'S.** Every number above is derived and
   every derivation is written down, and *"do NOT make the punishment so severe that nobody uses
   it, do NOT make it so safe that normal retrieval becomes obsolete"* is a judgement a probe
@@ -11199,6 +11209,9 @@ EditMode test on the host-side clamp and rate limit.
 
 ## The archive index
 
+- **151.23, dedicated first-person retrieval slide, CLOSED 2026-09-09:** own low
+  reach and recovery, authoritative transition into carry, versioned action evidence
+  and focused successful/failed tests in [TODO_Archive.md](TODO_Archive.md).
 - **151.22, Sean retrieval-slide strip review, CLOSED 2026-09-09:** kept unchanged;
   five judgments, corrected hand-height record and evidence limits in
   [TODO_Archive.md](TODO_Archive.md). Full task 3 remains open for match review.

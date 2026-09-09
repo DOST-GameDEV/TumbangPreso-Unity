@@ -21418,3 +21418,96 @@ capture was performed for this documentation-only review. No human approval is
 claimed. Full task 3 stays open for live transitions and pickup alignment;
 `Attention.md` section 17.2 owns feel, task 4 owns the first-person arm, and the
 already-recorded `character-female-a` accessory contact is a separate rig task.
+
+---
+
+## 151.23 · DEDICATED FIRST-PERSON RETRIEVAL SLIDE, CLOSED 2026-09-09
+
+First polish batch increment 4 on `ASTRAReworks`. The body clip and generated
+first-person arm are separate systems, so task 3's authored `slide` could not
+replace `ViewmodelArms.PlayAction("slide")` selecting `LungeClip`.
+
+**What landed.** `ViewmodelArms` now owns a dedicated seven-key `SlideClip` over
+0.950 s. It holds a low forward reach at Sean's approved 0.140 and 0.250 s body
+contacts, begins withdrawal at 0.342 s and recovers through 0.543 and 0.814 s to
+rest at 0.950 s. `LungeClip` remains its shorter 0.620 s tag reach and is unchanged.
+The existing camera kick is unchanged.
+
+**Carry is a state transition, not an animation claim.** A successful pickup is
+observed through the existing per-frame `Carrier.Held` poll. When that state turns
+true during `SlideClip`, the visible shoe appears at the reaching hand immediately,
+the residual wrist rotation releases over 0.180 s and the existing pivot interpolation
+converges on the actual carry pose. A miss never enters that branch, completes the
+whole slide recovery and keeps `HeldSlipper` inactive. No animation key can award
+or fake possession.
+
+**Versioned evidence.** `docs/reports/motion/fpp_slide_v1.txt` records the timings,
+reading and evidence boundary. The six accompanying PNGs show failed contact,
+recovery and rest, successful pickup and carry, plus lunge at the same 0.140 s under
+the same FPP camera. At contact the slide's fist is below the frame while the lunge's
+fist remains visible in the lower centre. By 0.542 s the failed hand is returning,
+and at 0.950 s it is at rest without a shoe. On success the SIKE appears at the
+still-reaching hand one 60 Hz frame after possession and is in the existing carry
+presentation at 0.450 s.
+
+**Focused verification.** EditMode is **4/4**: the new successful/failed 60 Hz arm
+test, runtime-discovered verb action resolution, all three input surfaces on the
+shared Lunge action, and Sean's body resolving `slide` at slot 0. Targeted PlayMode
+is **18/18**: all sixteen `RetrievalSlideTests` plus both `InputReaderTests`.
+The gameplay fixture drives the real `Verb.Lunge` press and covers successful pickup,
+refused and failed slides, commitment, recovery, walls and ownership. The shipped
+input asset carries right mouse button and left trigger, while `InputCatalogue`
+carries the touch LUNGE target. Remote source still broadcasts literal `"slide"`,
+which resolves to Sean's slot-0 body clip recorded in section 151.22.
+
+The broader gates were also run. Core is **559/559**, default EditMode is
+**442/442**, and all eight editor checks pass in one launch. The six repository
+reach, authority and wire audits named by `CLAUDE.md` pass: 0 ungated effects on
+another body, 0 host-only audio sites, 0 ungated relayed cues, 0 host-only
+presentation sites, 0 unreachable wire entries and 0 mismatched messages. The
+diagnostic audio-file audit still reports its six already-recorded DC-offset
+findings, including the three `ui_*` files owned by `Attention.md` section 17.3;
+this task did not rewrite sounds to silence an unrelated diagnostic.
+
+⚠️ **The default PlayMode aggregate remains an unreliable gate exactly as open section
+126.8 records.** This run wrote a real non-empty XML, **202 total, 130 passed, 64
+failed and 8 skipped**, after fixtures contaminated later worlds. The failures
+include ten `RetrievalSlideTests` which pass **16/16** in the isolated focused run,
+so they are not evidence against this change. The honest task-level result is the
+isolated 18/18 gameplay/input run above; no unrelated aggregate red was edited.
+
+The isolated touch-surface fixture is **4/6** for its already-open result-screen
+finding: `TouchControlsCanvas/LookArea` covers the three result buttons on all
+three maps. Its verb construction checks pass, and section 126 already records
+the unrelated red. This slide did not edit UI or the controller-support work owned
+on another branch.
+
+**Player verification.** `GameBuilder.BuildWindows` passed its build-time gates,
+purged the previous output and wrote a fresh **967 MB** Windows player in **129 s**
+to `C:/Users/matth/Desktop/TumbangPreso-Unity/TumbangPreso.exe`. The executable and
+data directory were created at 19:11 on this run. That exact player then hosted an
+all-bot Eskinita session for 15.0 s and exited 0 through `NetStateReport`: round 1
+active, 4 seats moving, 2 lata flips, 2 held slippers and non-zero scores. This is
+a shipped-player smoke verification, not the human FPP/remote feel capture retained
+below.
+
+No movement, slide distance, pickup range, cooldown, stamina, score, input mapping,
+network behavior or unrelated camera behavior changed.
+
+### Unresolved findings, with owner and done criteria
+
+1. **Human feel, `Attention.md` section 17.2.** No automated result can approve
+   whether the 0.950 s exposed recovery is fair or whether normal retrieval still
+   feels like a real choice. Done means one Classic round records the player's
+   explicit judgment after ordinary, successful-slide and failed-slide pickups.
+2. **Full-speed body transition and remote viewpoint, `ASTRA.md` task 3.** The
+   first-person arm ran at 60 Hz and the remote action/slot contract is asserted,
+   but this increment did not manufacture a second physical player or claim a new
+   two-process match capture. Done means the built player records one owner FPP and
+   one observer view through entry, pickup alignment and failed recovery at speed.
+3. **Physical device feel, `Attention.md` section 17.2.** The existing mouse, pad
+   and touch routes are exercised by their shared input contracts and gameplay verb,
+   not by a physical controller or handset in this automated run. Done means the
+   same successful and failed slide is pressed once on each available device with
+   no dropped edge or different outcome. Controller-support implementation remains
+   owned elsewhere and was not edited.

@@ -749,6 +749,24 @@ namespace TumbangPreso.Tests
                 "Lunge already answers the pad, so an attacker can reach the slide on one.");
             Assert.IsFalse(string.IsNullOrEmpty(lunge.TouchLabel),
                 "And a thumb, which is the button that used to do nothing for an attacker.");
+
+            var asset = Resources.Load<UnityEngine.InputSystem.InputActionAsset>("TumbangPreso");
+            Assert.IsNotNull(asset, "The shipped input asset is missing.");
+            var action = asset.FindAction("Player/Lunge", false);
+            Assert.IsNotNull(action, "The shared Lunge action is missing from the shipped map.");
+
+            bool mouse = false;
+            bool pad = false;
+            foreach (var binding in action.bindings)
+            {
+                if (binding.effectivePath == "<Mouse>/rightButton") mouse = true;
+                if (binding.effectivePath == lunge.GamepadPath) pad = true;
+            }
+
+            Assert.IsTrue(mouse,
+                "Keyboard and mouse lost the right-button path that reaches the slide.");
+            Assert.IsTrue(pad,
+                "The catalogue promises a pad path that the shipped input asset does not bind.");
         }
 
         // -------------------------------------------------------------------
@@ -1627,6 +1645,89 @@ namespace TumbangPreso.Tests
         // -------------------------------------------------------------------
         // § 151.13a  THE FIRST-PERSON ARM RESOLVES EVERY VERB THE GAME ASKS FOR
         // -------------------------------------------------------------------
+
+        /// <summary>
+        /// ⚠️⚠️ THE SLIDE HAS ITS OWN FIRST-PERSON MOTION AND POSSESSION IS THE ONLY
+        /// THING THAT CAN TURN IT INTO CARRY. The body GLB cannot drive these generated arms,
+        /// which is why resolving the name alone did not close ASTRA task 4. Exercise the arm
+        /// at 60 Hz in both outcomes: a real pickup must keep the current reach on its first
+        /// frame and then converge on the carry pose, while a miss must finish the full recovery
+        /// with the held shoe still hidden. The lunge comparison protects the gameplay read
+        /// which this change exists to separate.
+        /// </summary>
+        [Test]
+        public void SlideArmReachesLowThenRecoversIntoCarryOnlyOnPickup()
+        {
+            var go = new GameObject("ViewmodelSlideProbe");
+
+            try
+            {
+                var arms = go.AddComponent<CameraSystem.ViewmodelArms>();
+                arms.EnsureBuilt();
+                arms.SetHolding(false);
+
+                Transform pivot = go.transform.Find("RightPivot");
+                Transform arm = go.transform.Find("RightPivot/Arm");
+                Transform shoe = go.transform.Find("RightPivot/Arm/HeldSlipper");
+                Assert.IsNotNull(pivot);
+                Assert.IsNotNull(arm);
+                Assert.IsNotNull(shoe);
+
+                Vector3 restPosition = pivot.localPosition;
+
+                Assert.IsTrue(arms.PlayAction("slide"));
+                arms.StepVisuals(0.14f, snap: true);
+                Quaternion slideReach = arm.localRotation;
+
+                Assert.IsTrue(arms.PlayAction("lunge"));
+                arms.StepVisuals(0.14f, snap: true);
+                Quaternion lungeReach = arm.localRotation;
+
+                Assert.Greater(Quaternion.Angle(slideReach, lungeReach), 15.0f,
+                    "Slide and lunge still present the same first-person reach.");
+                Assert.Greater(Quaternion.Angle(Quaternion.identity, slideReach),
+                    Quaternion.Angle(Quaternion.identity, lungeReach) + 15.0f,
+                    "The retrieval arm is not visibly lower than the taya's tag reach.");
+
+                // Successful path. Reach the body's second contact, then award possession.
+                Assert.IsTrue(arms.PlayAction("slide"));
+                arms.StepVisuals(0.25f, snap: true);
+                Quaternion atPickup = arm.localRotation;
+                arms.SetHolding(true);
+
+                Assert.IsTrue(shoe.gameObject.activeSelf,
+                    "A real pickup did not enter the actual carry state.");
+                Assert.Less(Quaternion.Angle(atPickup, arm.localRotation), 0.01f,
+                    "The wrist snapped on the exact frame possession appeared.");
+
+                arms.StepVisuals(1.0f / 60.0f);
+                Assert.Greater(Quaternion.Angle(Quaternion.identity, arm.localRotation), 5.0f,
+                    "The successful slide discarded its reach in one frame.");
+
+                for (int i = 0; i < 18; i++) arms.StepVisuals(1.0f / 60.0f);
+
+                Assert.Less(Quaternion.Angle(Quaternion.identity, arm.localRotation), 0.1f,
+                    "The reaching wrist did not recover into the carry pose.");
+                Assert.Greater(Vector3.Distance(restPosition, pivot.localPosition), 0.1f,
+                    "Possession never converged on the existing carry pose.");
+
+                // Failed path. A miss receives the complete 0.95 s recovery and no shoe.
+                arms.SetHolding(false);
+                arms.StepVisuals(0.0f, snap: true);
+                Assert.IsTrue(arms.PlayAction("slide"));
+                for (int i = 0; i < 58; i++) arms.StepVisuals(1.0f / 60.0f);
+
+                Assert.IsFalse(shoe.gameObject.activeSelf,
+                    "A failed slide falsely confirmed possession.");
+                Assert.Less(Quaternion.Angle(Quaternion.identity, arm.localRotation), 0.2f,
+                    "The failed slide did not recover by the body's 0.950 s endpoint.");
+                Assert.AreEqual(0.950f, CameraSystem.ViewmodelArms.SlideSeconds, 0.0001f);
+            }
+            finally
+            {
+                Object.DestroyImmediate(go);
+            }
+        }
 
         /// <summary>
         /// ⚠️⚠️ THE RETRIEVAL SLIDE LOST ITS FIRST-PERSON ARM CLIP FOR A DAY AND NOTHING NOTICED.

@@ -18,6 +18,7 @@ namespace TumbangPreso.EditorTools
         /// review two iterations of an arm in one sitting.
         /// </summary>
         private const string Version = "v21";
+        private const string SlideVersion = "v1";
         private const int Width = 1280;
         private const int Height = 720;
 
@@ -257,6 +258,49 @@ namespace TumbangPreso.EditorTools
             arms.SetCharge(-1.0f);
             arms.StepVisuals(0.016f, snap: true);
 
+            // --- 5. RETRIEVAL SLIDE, BOTH OUTCOMES, BESIDE THE LUNGE ---------------------
+            //
+            // ⚠️⚠️ THESE FRAMES ARE THE GENERATED FIRST-PERSON ARM, NOT THE BODY CLIP.
+            // `ClipMotionStrip` proves Sean's GLB action and cannot see this separate system.
+            // The failed sequence samples the approved body's contact, withdrawal and endpoint;
+            // the success sequence changes holding only after the second contact, which is how
+            // the same arm has to enter the existing carry pose without inventing possession.
+            // The lunge frame is captured under the same camera and light so "distinct" is a
+            // comparison rather than a claim made from two unrelated pictures.
+            const string slideOut = "docs/reports/motion";
+            Directory.CreateDirectory(slideOut);
+
+            arms.SetCharacter("sean");
+            if (heldSource != null) arms.MatchSkin(heldSource);
+            cam.transform.position = new Vector3(0.0f, 0.12f, -0.16f);
+            cam.transform.rotation = Quaternion.Euler(22.0f, 0.0f, 0.0f);
+
+            arms.SetHolding(false);
+            arms.StepVisuals(0.0f, snap: true);
+            arms.PlayAction("slide");
+            CaptureAfter(arms, cam, rt, 0.140f,
+                Path.Combine(slideOut, $"fpp_slide_failed_contact_{SlideVersion}.png"));
+            CaptureAfter(arms, cam, rt, 0.402f,
+                Path.Combine(slideOut, $"fpp_slide_failed_recovery_{SlideVersion}.png"));
+            CaptureAfter(arms, cam, rt, 0.408f,
+                Path.Combine(slideOut, $"fpp_slide_failed_rest_{SlideVersion}.png"));
+
+            arms.SetHolding(false);
+            arms.StepVisuals(0.0f, snap: true);
+            arms.PlayAction("slide");
+            arms.StepVisuals(0.250f, snap: true);
+            arms.SetHolding(true);
+            CaptureAfter(arms, cam, rt, 1.0f / 60.0f,
+                Path.Combine(slideOut, $"fpp_slide_success_pickup_{SlideVersion}.png"));
+            CaptureAfter(arms, cam, rt, 11.0f / 60.0f,
+                Path.Combine(slideOut, $"fpp_slide_success_carry_{SlideVersion}.png"));
+
+            arms.SetHolding(false);
+            arms.StepVisuals(0.0f, snap: true);
+            arms.PlayAction("lunge");
+            CaptureAfter(arms, cam, rt, 0.140f,
+                Path.Combine(slideOut, $"fpp_lunge_compare_{SlideVersion}.png"));
+
             if (heldSource != null) UnityEngine.Object.DestroyImmediate(heldSource.gameObject);
 
             cam.targetTexture = null;
@@ -267,6 +311,24 @@ namespace TumbangPreso.EditorTools
             UnityEngine.Object.DestroyImmediate(fillLightGo);
 
             Debug.Log("[FppArmsSnapshotTool] Captured FPP arms screenshots for all characters successfully!");
+        }
+
+        private static void CaptureAfter(CameraSystem.ViewmodelArms arms, Camera cam,
+                                         RenderTexture target, float seconds, string path)
+        {
+            // One 60 Hz step at a time. A single large delta samples the same key, but it does
+            // not exercise the successful carry interpolation that these frames exist to show.
+            float left = Mathf.Max(0.0f, seconds);
+            const float step = 1.0f / 60.0f;
+            while (left > 0.0001f)
+            {
+                float dt = Mathf.Min(step, left);
+                arms.StepVisuals(dt);
+                left -= dt;
+            }
+
+            cam.Render();
+            SaveTexture(target, path);
         }
 
         /// <summary>

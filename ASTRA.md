@@ -864,12 +864,19 @@ retuning the gameplay.
 
 ### 4. First-person retrieval arm still explicitly selects the lunge (engineering)
 
-- [ ] `Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.cs`, `PlayAction`, maps
-  `slide` directly to `LungeClip`. Adding the body GLB action cannot replace this
-  generated first-person arm motion. The existing camera kick also remains.
-  Done means a dedicated low reaching/recovering arm action on the existing
-  first-person hook, verified alongside the body's 0.95-second slide. No movement,
-  pickup or cooldown retuning. This requires engineering; no `.cs` was edited.
+- [x] **Closed 2026-09-09.** `ViewmodelArms.PlayAction("slide")` now selects a
+  dedicated `SlideClip`, not `LungeClip`. Its reach holds at Sean's approved body
+  contacts 0.140/0.250 s, withdraws from 0.342 s and returns over the body's full
+  0.950 s. A real pickup alone enters the existing carry pose through a 0.18 s
+  wrist release; a miss completes the recovery with the viewmodel shoe hidden.
+  `LungeClip` is unchanged and the existing camera kick remains.
+
+  Focused EditMode evidence drives both outcomes at 60 Hz and compares the slide
+  against the lunge. The action capture records failed contact/recovery/rest,
+  successful pickup/carry and the lunge under one camera in
+  `docs/reports/motion/fpp_*_v1.png`. `docs/TODO_Archive.md` section 151.23 carries
+  the full verification boundary. No movement, pickup, cooldown, authority or
+  input value changed.
 
 
 ### 5. `PersonSwapProbe` asserts every rig carries the same clip count (engineering) ✅ DONE 2026-09-09

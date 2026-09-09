@@ -1,0 +1,55 @@
+FIRST-PERSON RETRIEVAL SLIDE
+action: slide
+viewmodel: generated ViewmodelArms action
+body reference: Sean slide, slot 0
+
+TIMING
+body and arm duration: 0.950 s
+body review contacts: 0.140, 0.250, 0.342 s
+arm low hold: 0.140 to 0.250 s
+arm withdrawal begins: 0.342 s
+successful pickup wrist release: 0.180 s into the existing carry pose
+
+CAPTURE
+camera: existing FppArmsSnapshotTool gameplay camera, 1280x720
+character: Sean
+held skin: SIKE, the tool's existing hardest-case multi-surface shoe
+
+failed contact:  fpp_slide_failed_contact_v1.png, 0.140 s
+failed recovery: fpp_slide_failed_recovery_v1.png, 0.542 s
+failed rest:     fpp_slide_failed_rest_v1.png, 0.950 s
+success pickup:  fpp_slide_success_pickup_v1.png, 0.267 s
+success carry:   fpp_slide_success_carry_v1.png, 0.450 s
+lunge compare:   fpp_lunge_compare_v1.png, 0.140 s
+
+READING
+At 0.140 s the slide drives the right hand below the bottom of the FPP frame,
+leaving the lowered forearm and cuff as the road reach. Under the same camera the
+lunge keeps its fist inside the lower centre of the frame. They are visibly
+different decisions. The missed slide brings the hand back through the frame at
+0.542 s and reaches its ordinary resting presentation at 0.950 s without ever
+showing the held shoe.
+
+On success, possession is changed after the body's second approved contact at
+0.250 s. One 60 Hz frame later the real viewmodel shoe appears at the still-reaching
+hand rather than after a wrist snap. At 0.450 s the wrist is neutral and the pivot
+has converged on the existing carry presentation. Animation never sets possession;
+SetHolding(true), polled from Carrier.Held, is the only entry into this branch.
+
+VERIFICATION BOUNDARY
+The focused action test steps successful and failed arm paths at 60 Hz, compares
+slide against lunge, and asserts the shoe stays hidden on failure. RetrievalSlideTests
+drive the shared Verb.Lunge press through the real successful and refused gameplay
+paths. Input contract coverage checks the shipped right mouse button, gamepad left
+trigger and touch LUNGE target. The remote body path still broadcasts the literal
+"slide", and Sean's committed report resolves that action at slot 0.
+
+No human full-speed feel approval, physical controller or handset run, or new
+two-process player capture is claimed by this report. Those are retained under
+Attention.md section 17.2, ASTRA.md task 3 and the unresolved findings in archived
+section 151.23.
+
+The fresh Windows player was built after these frames and launched through its
+shipped diagnostic route for 15.0 seconds: round 1 active on Eskinita, four seats
+moving, lata and slipper state changing, clean exit. That proves the artifact boots
+and runs a live match; it does not turn the diagnostic camera into FPP feel evidence.
